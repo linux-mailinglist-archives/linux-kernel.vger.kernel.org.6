@@ -1,75 +1,62 @@
-Return-Path: <linux-kernel+bounces-441187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F459ECAC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D28C39ECACE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 12:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FDB328050A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:59:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE39285EA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 11:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF22204F8C;
-	Wed, 11 Dec 2024 10:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC233211A06;
+	Wed, 11 Dec 2024 11:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OgRdTJpx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MasPMn0r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A18239BC5;
-	Wed, 11 Dec 2024 10:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0195F239BCB;
+	Wed, 11 Dec 2024 11:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733914788; cv=none; b=PSjnuKbSPRy25f0oAM8wevKss3R3E1Q7ukt6AdmuFV+yU8V3m8nRKikjPQKRCZQEphG0vkKH/HZvCrLmvQ/w0bDg/fbJ28bGiu0DgoDLyP6MzNrGDCUBan96fmD0oEQPvpnFHQ19BngqTsrkbBKTKOOQIoACWy7Idc24b4YyEM4=
+	t=1733914831; cv=none; b=Kzib8jjpjG7BsSl0ljZx7Qu7+f8Otp9DCcPgPED3onz6CTf7/+cHBUbIuMG2YqmbDYlNmrO0zW2v9WDIx+rSiTf5AN0GbehiMgNQLyU8uv+rTEDYqATSDCOmkLyal7ONY5PFWGhg7s/MNaJ6Imp8S5mc5lDt+Qxyrtv76dH1I/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733914788; c=relaxed/simple;
-	bh=Pe4oCHbl1yzjp86WYi9eKFyVzUBDM0RjNx5Xc5LRh/w=;
+	s=arc-20240116; t=1733914831; c=relaxed/simple;
+	bh=4OzPg3WyJaJKdfR65t5nQR/nppUaqHxzmltFY/EM0Es=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAufaA0gyFkls24zyHptiDk0WTYSCfAe7Jx0gclKlWLAhdQBBqQ2E3zmtUEZKDOXDecJJXvJkG8FUGdNAO/V37K8esSSRQbdSRxQoAsSAfFqNHwZdxZBPz+Umwwn7UIAMiy9rMMOy38vO2VvXlxjVHfCTCV8JKGUZCWsucCU8uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OgRdTJpx; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733914787; x=1765450787;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Pe4oCHbl1yzjp86WYi9eKFyVzUBDM0RjNx5Xc5LRh/w=;
-  b=OgRdTJpx8kIj7Ebnwetm1JC0CxpnOA7Gb0puxiOZtZuRJdGr44GSsGCi
-   xwXMV+8+JILrnmeLANPRR/VmQxpPlztz2DrxkWdog99SG8GLRRfT7Tk3X
-   h0oC+83mU6mfj7ZF4+wzm+VI4OJopYxOwx2eVW2METmV36KqMXAESspi8
-   fD1f92CllbzDcMi7SYhIBcBW5f/3VdcHCDKFnQpfpWYa//SyFxJB2DcgD
-   w4Ge1i3wsWFavrG0fs7mstSSmo1CNcYIMpJLcWZQEl6pnVAKjH7JD8v8d
-   VkgEXe5RCVPOyiAimhj0XBy8/DH3IlwwnQ6YZ0Bka0pTrKffdLEDhjfip
-   Q==;
-X-CSE-ConnectionGUID: hYDIrpyrThqz2N0m29uI5Q==
-X-CSE-MsgGUID: fM5/TddST9CZHvQHUu3cEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="34428971"
-X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
-   d="scan'208";a="34428971"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 02:59:46 -0800
-X-CSE-ConnectionGUID: PsvhwuFIRWq8wuSSlyeMTw==
-X-CSE-MsgGUID: pUA8euRQTKqnOgF94p6CiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="95582073"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 02:59:44 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tLKRS-00000006V7T-1HsB;
-	Wed, 11 Dec 2024 12:59:42 +0200
-Date: Wed, 11 Dec 2024 12:59:42 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] spi: Unify and simplify fwnode related checks
-Message-ID: <Z1lwnqGZsO_x8h0k@smile.fi.intel.com>
-References: <20241208195635.1271656-1-andriy.shevchenko@linux.intel.com>
- <fc015f10-9780-4e2a-9dcf-de7e4b253be2@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cvtHqLpYlyJ+1mdo6NqyJx5ff3ICPjvm0BTfyN1uJJ6JTKgwusfsHZtKqDnkkvA4OHRA20gG+1gPKlO1xxJer3vJHXLO9Ceifp+Ey/PwSC21H0GsmT3VGRKqvsVqHVUL4Hl+Lcm3VZraP9X11Ans43RcDQ6YyGj7B1/akV/JcMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MasPMn0r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09DAAC4CED2;
+	Wed, 11 Dec 2024 11:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733914830;
+	bh=4OzPg3WyJaJKdfR65t5nQR/nppUaqHxzmltFY/EM0Es=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MasPMn0r40dd6N6g9uhAiJK2oRd8DGgx0Hthbfz4wzmwHiiQ1WPQb4mwSXYJsfpjz
+	 5So5nsBG2XKwIKw3QQf21w99qbQkV+g93JSajw4XDFuEdxk+U7qaM8KF1o0XwoqDBC
+	 uPlZKgU3e2hY/W5MseUb8VbtpWav1ZiLTV1lHRuA=
+Date: Wed, 11 Dec 2024 11:59:54 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
+Message-ID: <2024121128-mutt-twice-acda@gregkh>
+References: <20241210224947.23804-1-dakr@kernel.org>
+ <20241210224947.23804-2-dakr@kernel.org>
+ <2024121112-gala-skincare-c85e@gregkh>
+ <2024121111-acquire-jarring-71af@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,21 +65,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fc015f10-9780-4e2a-9dcf-de7e4b253be2@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <2024121111-acquire-jarring-71af@gregkh>
 
-On Wed, Dec 11, 2024 at 09:42:33AM +0530, Mukesh Kumar Savaliya wrote:
-> On 12/8/2024 9:33 PM, Andy Shevchenko wrote:
-> > couple of cleanups on top of recently added change.
-> please add what exactly cleanups done ? Recently added change is not that
-> something someone would check as part of this patch.
-> Description would be helpful.
+On Wed, Dec 11, 2024 at 11:48:23AM +0100, Greg KH wrote:
+> On Wed, Dec 11, 2024 at 11:45:20AM +0100, Greg KH wrote:
+> > On Tue, Dec 10, 2024 at 11:46:28PM +0100, Danilo Krummrich wrote:
+> > > In a subsequent patch we introduce the `Registration` abstraction used
+> > > to register driver structures. Some subsystems require the module name on
+> > > driver registration (e.g. PCI in __pci_register_driver()), hence pass
+> > > the module name to `Module::init`.
+> > 
+> > Nit, we don't need the NAME of the PCI driver (well, we do like it, but
+> > that's not the real thing), we want the pointer to the module structure
+> > in the register_driver call.
+> > 
+> > Does this provide for that?  I'm thinking it does, but it's not the
+> > "name" that is the issue here.
+> 
+> Wait, no, you really do want the name, don't you.  You refer to
+> "module.0" to get the module structure pointer (if I'm reading the code
+> right), but as you have that pointer already, why can't you just use
+> module->name there as well as you have a pointer to a valid module
+> structure that has the name already embedded in it.
 
-But each patch has its description. Or I didn't get the request, sorry.
+In digging further, it's used by the pci code to call into lower layers,
+but why it's using a different string other than the module name string
+is beyond me.  Looks like this goes way back before git was around, and
+odds are it's my fault for something I wrote a long time ago.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I'll see if I can just change the driver core to not need a name at all,
+and pull it from the module which would make all of this go away in the
+end.  Odds are something will break but who knows...
 
+thanks,
 
+greg k-h
 
