@@ -1,161 +1,95 @@
-Return-Path: <linux-kernel+bounces-442296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA479EDA52
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:45:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D2F9EDA57
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:46:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420581654FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6FE11884B3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158351F2389;
-	Wed, 11 Dec 2024 22:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F6A1F2390;
+	Wed, 11 Dec 2024 22:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVoxkqD/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jqhFX5Xj"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFA52594A0;
-	Wed, 11 Dec 2024 22:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685FF1D934B
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733957124; cv=none; b=C2nlFZ6u0jF50kejLmP6NHUBepcH+mDJGh0VVWc0RecCLX7UsEv4tNEeIRLUU+PYqTpad3ORFYAW9d78LNVUbViq6XDYZlmBKXjgWawurGqKh6FualAENx4QnAyiZapIq3ftvLyyzCzOlxaSot9c/UAGe2zK+j4YbkbINTPXLu4=
+	t=1733957169; cv=none; b=ktMbbq5a64rAiJ3o1E3MhvXA4FmswoUuzRZeo3oaQ6lYKkfJ34DMbElc7ZTI4J3fwhnHeDSUb7IvXEnPd0qpTpHwTQ848UWh3YRV4xMisnFhRVuDaMp3bCgKChVs7tk0ZFt9lF2q3jAfUGC4y9t/l9XxgcmJkPlAgg91fQVGBwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733957124; c=relaxed/simple;
-	bh=oliX2ZWsSJgL44apGvDiit+a6avUCWIMKdH/FEVNQg4=;
+	s=arc-20240116; t=1733957169; c=relaxed/simple;
+	bh=FcSfuk63zX4e+IOlVIn6NBUThr7+axWMhxL5rCaztjI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Anvn8ZjgmyO+yOGE9MfPbYLdyeCzRINi6/5qi6fCGYUMmX/6dVHBDB3WhUw8mXCs59SGjNY1HF19h/pq1ooSi9KM0uzeUC2yuQPYtUPRB5G2grunHCN9TNtmg6OnRuqdv9e/fjcB7qrod5CKhwa/LjyQV/LhBmIgIoGbodD+3zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVoxkqD/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF4EC4CED2;
-	Wed, 11 Dec 2024 22:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733957124;
-	bh=oliX2ZWsSJgL44apGvDiit+a6avUCWIMKdH/FEVNQg4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PVoxkqD/vchratwBVtUL+vK9OWQfCVTfnXZ4FVOFXhAU5ZBpuiliyYJB6D4oHW4r9
-	 9V6pjV3dvct2cG+qXtsaZo5suIymmqn9fu1O6tR/ioBCMa/cQCUkDpEJL+0e0gnOXg
-	 tWOPO/PYWJAa5IahCxvDM81gVX9j9ViMJ1i+Ta//VTnr/1M/j90DgDE1ZobY3REXNU
-	 AVcgJZVdsnqtbm3ZTnGYf4xAHCgkIQaYURP2kGqoNzMapxRtF+Y7WvJM8YzX12Q4H8
-	 vWN6TaC/XVjZh3/bNTfA+AwIBYCV9ZyEyIZTvLz8tFshkBXCu/3anxA+Ubh6eYeqot
-	 ErgJ5H6AV39MA==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	James Clark <james.clark@linaro.org>,
-	Quentin Monnet <qmo@kernel.org>
-Subject: [PATCH 2/2] tools build feature: Don't set feature-libcap=1 if libcap-devel isn't available
-Date: Wed, 11 Dec 2024 19:45:09 -0300
-Message-ID: <20241211224509.797827-3-acme@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241211224509.797827-1-acme@kernel.org>
-References: <20241211224509.797827-1-acme@kernel.org>
+	 MIME-Version:Content-Type; b=q58RCNW4KzAKLmDtQ17VSy9leGC42nNg/+QgjvRkf3M3/esq5q45Uhdh0iIGVR3AzZ8iDwouOmVSAMtDwwLEVDphf/cngQn6vP1oxGsx0gA+DnVoQXamO2YDA5ELhbk7rEFe/DtJWbC20cKDbtG8w0c0XOJbM7aaz+lNlI8N0/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jqhFX5Xj; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=J4uMrsFePi+DBZGlK5bC9jVrtcVa4XLjgvOYdofBgAk=; b=jqhFX5XjB/uFDDyAKv3HRztSoj
+	04+EpIK8Wy8R0kLFcrvEvVJ3CXHLSU4O0LAzyunfRuJTWluoX/By3EFoPcR1z+HTClA9Sla1E2W4h
+	JWKcWX1fnjsXPpGHTyHDyd2M/Yx/bYbpNupYoPe08Jv+P+Dp9LCxfwFu6Ack0xgu9YahDdG9eb3WZ
+	MGMPBlrNKG4PCMnNdQowdxBMIgyd4mtcGg0ddjfqI5i4hx3MaB/cGLcqmGvDfFNE7WI0JLCH0S+y/
+	oWuBcILHtr7MSRIvvKSAIdLPlrWh6dVemfTyjv308c+UEiGlXh5V2LdtrzOucZgrM/kRiV3Sn16Qx
+	sneBq5Og==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tLVSi-0000ON-0w; Wed, 11 Dec 2024 23:45:44 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	kernel@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: dw_hdmi_qp: Simplify clock handling
+Date: Wed, 11 Dec 2024 23:45:39 +0100
+Message-ID: <173395708761.2509957.6810456712864653104.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241202-dw-hdmi-qp-rk-clk-bulk-v1-1-60a7cc9cd74e@collabora.com>
+References: <20241202-dw-hdmi-qp-rk-clk-bulk-v1-1-60a7cc9cd74e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-libcap isn't tested in the tools/build/feature/test-all.c fast path
-feature detection process, so don't set it as available if test-all
-manages to build.
+On Mon, 02 Dec 2024 22:27:34 +0200, Cristian Ciocaltea wrote:
+> Make use of the recently introduced devm_clk_bulk_get_all_enabled()
+> helper to simplify the code a bit.
+> 
+> 
 
-There are other users of this feature detection mechanism, and they
-explicitely ask for libcap to be tested, so are not affected by this
-patch, for instance, with this patch in place:
+Applied, thanks!
 
-  $ make -C tools/bpf/bpftool/ clean
-  <SNIP>
-  make: Leaving directory '/home/acme/git/perf-tools-next/tools/bpf/bpftool'
-  ⬢ [acme@toolbox perf-tools-next]$ make -C tools/bpf/bpftool/
-  make: Entering directory '/home/acme/git/perf-tools-next/tools/bpf/bpftool'
+[1/1] drm/rockchip: dw_hdmi_qp: Simplify clock handling
+      commit: 19851fa2ba9824bede16f55234f63d9423897c3d
 
-  Auto-detecting system features:
-  ...                         clang-bpf-co-re: [ on  ]
-  ...                                    llvm: [ on  ]
-  ...                                  libcap: [ on  ]
-  ...                                  libbfd: [ on  ]
-  ...                             libelf-zstd: [ on  ]
-  <SNIP>
-    LINK    bpftool
-  make: Leaving directory '/home/acme/git/perf-tools-next/tools/bpf/bpftool'
-  $
-  $ sudo rpm -e libcap-devel
-  $ make -C tools/bpf/bpftool/
-  <SNIP>
-  make: Entering directory '/home/acme/git/perf-tools-next/tools/bpf/bpftool'
-
-  Auto-detecting system features:
-  ...                         clang-bpf-co-re: [ on  ]
-  ...                                    llvm: [ on  ]
-  ...                                  libcap: [ OFF ]
-  ...                                  libbfd: [ on  ]
-  ...                             libelf-zstd: [ on  ]
-
-  $
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Quentin Monnet <qmo@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/build/Makefile.feature | 2 --
- tools/build/feature/Makefile | 2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index 52600e4d33af8712..e25cdb7db40e3f3d 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -73,7 +73,6 @@ FEATURE_TESTS_BASIC :=                  \
-         glibc                           \
-         libbfd                          \
-         libbfd-buildid			\
--        libcap                          \
-         libelf                          \
-         libelf-getphdrnum               \
-         libelf-gelf_getnote             \
-@@ -150,7 +149,6 @@ FEATURE_DISPLAY ?=              \
-          glibc                  \
-          libbfd                 \
-          libbfd-buildid		\
--         libcap                 \
-          libelf                 \
-          libnuma                \
-          numa_num_possible_cpus \
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index 043dfd00fce72d8f..cbf751b6f0f76225 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -110,7 +110,7 @@ all: $(FILES)
- __BUILD = $(CC) $(CFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.c,$(@F)) $(LDFLAGS)
-   BUILD = $(__BUILD) > $(@:.bin=.make.output) 2>&1
-   BUILD_BFD = $(BUILD) -DPACKAGE='"perf"' -lbfd -ldl
--  BUILD_ALL = $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd -lcap
-+  BUILD_ALL = $(BUILD) -fstack-protector-all -O2 -D_FORTIFY_SOURCE=2 -ldw -lelf -lnuma -lelf -lslang $(FLAGS_PERL_EMBED) $(FLAGS_PYTHON_EMBED) -DPACKAGE='"perf"' -lbfd -ldl -lz -llzma -lzstd
- 
- __BUILDXX = $(CXX) $(CXXFLAGS) -MD -Wall -Werror -o $@ $(patsubst %.bin,%.cpp,$(@F)) $(LDFLAGS)
-   BUILDXX = $(__BUILDXX) > $(@:.bin=.make.output) 2>&1
+Best regards,
 -- 
-2.47.0
-
+Heiko Stuebner <heiko@sntech.de>
 
