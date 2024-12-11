@@ -1,117 +1,105 @@
-Return-Path: <linux-kernel+bounces-441006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E309EC7C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:54:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFA09EC7C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:54:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA77165797
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F15A31660E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2451EBFF9;
-	Wed, 11 Dec 2024 08:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61A21E9B36;
+	Wed, 11 Dec 2024 08:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMfU30ya"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="jgRS2uZJ"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B699B1C5F12;
-	Wed, 11 Dec 2024 08:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219741C5F12;
+	Wed, 11 Dec 2024 08:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733907243; cv=none; b=HNbdvI1jdeumG1mPadgRiFVFJsknHyKu2PlES0JZ31UckycINCcKxQettfzIit24G3mY7stFv/1fRjrMC8p3SIv8cuRQlV3BuaA9ZPa2n0JTmRNpsx65nOCN6CUlXixzp0GJ9E3VKzALb6/rF/ElQwIjOd3rjFTffgugJxLBDIw=
+	t=1733907262; cv=none; b=GKEn6Q3dk4X8yEpdMqVqWbKSU11Vhj4/HAlFOK7WSW5MZImWKwf2uwRJvxxXyHHCGXsJep1lQc85l2xh4Oha/8T1l9KbQWVNsfSee0HuK26RoMvpiMbj/HFUwX3fnnWdvRsMLJX58f10e61qXTm581nWRxgTO3ch3PdQ5xPFsdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733907243; c=relaxed/simple;
-	bh=txMINcnCj5mm5Ch6Zgv6/itCQUSG/85S+XOofa3NB9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ak66uzEMx8D9OK0zxLPtDqmTiUoPttTfOx8QLHxCvVTO7iB+GdPiX/bH8ttYhFJUtFPACJcIWMEmT3EQdFNOZW1IFXQR5GTQuhORo5gKY2SJmrCeZ4N/I8X3I7Qit4ybmN6E1mh8MiDS8Wck8nkKdXK9sQiHdYn8uD3EK/TyoTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMfU30ya; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF3BDC4CED2;
-	Wed, 11 Dec 2024 08:54:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733907243;
-	bh=txMINcnCj5mm5Ch6Zgv6/itCQUSG/85S+XOofa3NB9s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HMfU30yalywPqrUVI3mgV92H77pRd+W0mhjm4TDGY7odG2NDGEsyfB5vYwCBiIYc2
-	 dhk8J3bilAxjTrsiz9CK+sPArs5PZujxGtKlEObvwL8gHCPyb9SoanSRsAlERcrbGc
-	 1KxdlNIBj0EfcaDUJeqN/OQfKZWn0qbm1u7WQtsLkMJcUjsirno9b6nEkgH3hVKQqw
-	 xVbpF2iWZNKoh5nDZAYCv6ZPu5RupMu8nMjXgi25WfFi/aHXRZsOo0yj3+Ofk1FAkp
-	 gQCqpEM/QhSYXVCcvbMZV5u98LfhOBqs1dRFbHGJ05+0iLwzoopDirgFlN3cABil8l
-	 nBN+tVjpA+K/g==
-Date: Wed, 11 Dec 2024 09:53:59 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Cheng Jiang <quic_chejiang@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
-	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, quic_jiaymao@quicinc.com, quic_shuaz@quicinc.com, 
-	quic_zijuhu@quicinc.com, quic_mohamull@quicinc.com
-Subject: Re: [PATCH v4 1/4] dt-bindings: net: bluetooth: qca: Expand
- firmware-name property
-Message-ID: <vbwg7djb4me6i4ow2q74ltqjxvkxeulhzyq4n6ak7aifhtf36f@x66pjje2iu6u>
-References: <20241210151636.2474809-1-quic_chejiang@quicinc.com>
- <20241210151636.2474809-2-quic_chejiang@quicinc.com>
+	s=arc-20240116; t=1733907262; c=relaxed/simple;
+	bh=gt/brD+bFKcK0ciXmNboabynGmPsZN1ysJlSHAaLOWs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=le5sjdv0s5tdFmEiHFtxliGmmJQ+8KSgplJQj7Ft1xA4d99Y1NHUDjIGmeOvztGB95a2NpZDxRzrndwL6do44GzP+IsOayvvh6ScVLAfU6WnggcM3haW7N8VygT2ikvd+3mOewFQx1G/2R1h6TQpVCaAcwo2wbus+tpq5pG2E/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=jgRS2uZJ; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Y7TtJ3jS2z9snp;
+	Wed, 11 Dec 2024 09:54:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1733907256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hgxGiDC40w1nBBtzUl+GNZ+rfEtSNj7LHPhUGuQr2aw=;
+	b=jgRS2uZJNbPEVpIg0Vr8fWPf3xxgJzwuh4TArvMRlD9w4XwhDGYFI0KEyebhNhgGXe4GvS
+	iwyXoiNqIxiTTd+my5L91J9W5hXPwfF2o/+9sXsMlNjlRqiph8c3vL4ZsMynrDI7EJtSn5
+	8Zaj2Op4NrSS/426FhGFX91TSCSwX+JxNQ/+//7B+UpKmFonktE/Oil31RBk5UCkOrGPuv
+	xm7KuTWswkAM8XaIaaoOmO6fYuufgO5dEpKI+UWu+68iVwOs+3DqAOtF3iSDCSGn6cuxjj
+	vmvAMzEV/OSU1FN8zeOJu8kAM7bYRhqDuzMFB2bsW6C028mEFBGlqg1Z87EYEg==
+Message-ID: <376c445a-9437-4bdd-9b67-e7ce786ae2c4@mailbox.org>
+Date: Wed, 11 Dec 2024 09:54:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241210151636.2474809-2-quic_chejiang@quicinc.com>
+Subject: Re: [REGRESSION] from 74a0e79df68a8042fb84fd7207e57b70722cf825: VFIO
+ PCI passthrough no longer works
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ regressions@lists.linux.dev, Tom Lendacky <thomas.lendacky@amd.com>
+References: <52914da7-a97b-45ad-86a0-affdf8266c61@mailbox.org>
+ <Z1hiiz40nUqN2e5M@google.com>
+ <93a3edef-dde6-4ef6-ae40-39990040a497@mailbox.org>
+ <9e827d41-a054-5c04-6ecb-b23f2a4b5913@amd.com> <Z1jEDFpanEIVz1sY@google.com>
+Content-Language: en-GB
+From: Simon Pilkington <simonp.git@mailbox.org>
+In-Reply-To: <Z1jEDFpanEIVz1sY@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: 89z9y4wrg7c6jtbyixkhzihp6uj115ee
+X-MBO-RS-ID: c5aa5748a771390c19e
 
-On Tue, Dec 10, 2024 at 11:16:33PM +0800, Cheng Jiang wrote:
-> Expand the firmware-name property to specify the names of NVM and
-> rampatch firmware to load. This update will support loading specific
-> firmware (nvm and rampatch) for certain chips, like the QCA6698
-> Bluetooth chip, which shares the same IP core as the WCN6855 but has
-> different RF components and RAM sizes, requiring new firmware files.
+On 10/12/2024 23:43, Sean Christopherson wrote:
+> Unless you (Tom) disagree, I vote to simply drop the offending code, i.e. make
+> all supported bits fully writable from the guest.  KVM is firmly in the wrong here,
+> and I can't think of any reason to disallow the guest from clearing LFENCE_SERIALIZE.
 > 
-> We might use different connectivity boards on the same platform. For
-> example, QCA6698-based boards can support either a two-antenna or
-> three-antenna solution, both of which work on the sa8775p-ride platform.
-> Due to differences in connectivity boards and variations in RF
-> performance from different foundries, different NVM configurations are
-> used based on the board ID.
-> 
-> So In firmware-name, if the NVM file has an extension, the NVM file will
-> be used. Otherwise, the system will first try the .bNN (board ID) file,
-> and if that fails, it will fall back to the .bin file.
-> 
-> Possible configurations:
-> firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
-> firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
-> firmware-name = "QCA6698/hpnv21.bin";
-> 
-> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
-> ---
->  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml           | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> index 7bb68311c..2782d2325 100644
-> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> @@ -101,7 +101,10 @@ properties:
->    max-speed: true
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 6a350cee2f6c..5a82ead3bf0f 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -3201,15 +3201,6 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+>                 if (data & ~supported_de_cfg)
+>                         return 1;
 >  
->    firmware-name:
-> -    description: specify the name of nvm firmware to load
-> +    description:
-> +      If one item is present, specify the name of the NVM firmware to load.
-> +      If two items are present, the first item specifies the name of the NVM,
-> +      and the second specifies the name of the rampatch firmware to load.
+> -               /*
+> -                * Don't let the guest change the host-programmed value.  The
+> -                * MSR is very model specific, i.e. contains multiple bits that
+> -                * are completely unknown to KVM, and the one bit known to KVM
+> -                * is simply a reflection of hardware capabilities.
+> -                */
+> -               if (!msr->host_initiated && data != svm->msr_decfg)
+> -                       return 1;
+> -
+>                 svm->msr_decfg = data;
+>                 break;
+>         }
+> 
 
-Don't repeat constraints in free form text. Use proper constraints so
-you can validate your DTS. And then actually do validate your DTS...
-
-Best regards,
-Krzysztof
+This also produces a good kernel.
 
 
