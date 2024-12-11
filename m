@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-441827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F689ED49E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:19:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDB29ED4A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:20:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DAA4168A15
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EB9281275
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA6C2010F6;
-	Wed, 11 Dec 2024 18:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC0E202F9D;
+	Wed, 11 Dec 2024 18:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x1KBqYF4"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4eJwPPod"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AD024632E
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 18:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDF224632E
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 18:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733941184; cv=none; b=GIdW9i7yShjG4D1EGXx6NZsxeEyYfcqmIHVqdbK2OePsCn1RWXo7LoLg9p0x7NRx0CEi6p501ZS+0CAvFBf722zZBm9rTsK/qy0vNBLqXarm7JaVShE9GT/W4FfPgXaTGQPXv0vJg29XbpYIW8kDZfPpPY/FbU+kEdpDbUvJKD0=
+	t=1733941237; cv=none; b=seCOiKyVZbHxlPcMFelOZWy8HzLNeTEvJDKWeWJIc2hbxT6aznclCTtJQW03Z+O6ayMb61an7xHGnz5wv+2mE+cus6T/TwlaX+HK3UO827d+zZvAM3jS0s3t9vW16dz4RWPtDVBmcX6PuW4pfAAsbFIeXVl9qiZ4WAL7ap7k7NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733941184; c=relaxed/simple;
-	bh=ZbCbmR5jMjwAnZZJyPRIhcuLAcSixii4vmbFPSCb34E=;
+	s=arc-20240116; t=1733941237; c=relaxed/simple;
+	bh=eLQNLd5wRv8SOWkCMUttN5dD8JyVnkMs9ZHP4OQrzcs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=avsY7kfp/TtLbDE2xLRVLMED13fIh1n/35+yCGrkySpoxrv3yn9iYEQDJM+lmPHx/iWUolcDae1eWvaxt9BWEZ//9rEkzTrlnnxKqC7cEUjW6yAvSobAqAOq1TyBjtioCqF2kqxP1KI5QCH4Mse71CcsQcIXwfba10Ozrq/HRFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x1KBqYF4; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=qvDHX2QDfZ0FBrjKC9naIl130EypSyjgZKdr97ETE7Jw0NUvYygW4LEFBVcDQ33wxDj6DHidbSyrT9gEUGkbCSe3RjjPxh9z8Ux4LyhpENeLUHClNt1na5rva4rNDTXactHrcrRJV/wYbrNx5aVnvV6RhBUKfL7vNwW+/M+l2BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4eJwPPod; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2efa74481fdso3713167a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:19:42 -0800 (PST)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-728e3d9706dso1802120b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:20:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733941182; x=1734545982; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733941235; x=1734546035; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sRvlwWxZGciZrSI2v4VPIECYyumLg4e7Uoks/odo7g8=;
-        b=x1KBqYF4CpAI7Vlpul6bsyBLkkmzPiDAdJ2ueBbeUM3QdWkcplyYFvhUrekbehWxlb
-         fBCAMBO5EQJgrtG24WoOertvLDPAP2p5ZCq4JRLckQPcxxkPPZ3LZeYMDjhippvl6NPF
-         YaTsEGl/nGMALv6fmcWlWrgsht2jgsS5ugSBoJh93+29W9/PKuUh9ftsztKR81rUpGRB
-         1jxX8PfiXxIIVq3LPTAfFMVJZgNGJXnMc3csPGOW8QG9C0aJjUw4dWaby7y1WMA6cM8k
-         PvV5Syi7Lwo9Zp3LXZKmnBD2+6xf7L279Mny0f7BsHxRFDZy4xNuE0itUJ5s+1IH3ssn
-         2uCw==
+        bh=t+Ox1uza8Q79A6RwFeyGkXs+VHW6BnofeA5s7qSYG3M=;
+        b=4eJwPPodg6mtnp3VFSBnHN396zCQKMsddDlh5NS8jZqSShPHLqM4mHxNfqXeBygMwR
+         lVAQ38m9BzqChj+byZ21K+XX5JjzRVaR7vxVUxiTJ501mVPAt4PYdX9hzN4xobsdi1UI
+         g+I6lYegvVJjlKWZZVTVu9uS1olmtiNsW6h5P4lBBYSSKBDrgJzx4dWecfcniPExwY4o
+         BGJM2II5ziQLi6OY+xeOiJAIygxIIRzl1ycWylY0G1NVPWElZ8lcGi21tdiOOb/fM0OB
+         PmEHHu3L2Q0yHk5/YVTTNnj1j5AixR24thMLxMNu0FJwhpCcjsv9ygJa0RqLPl2aMXs3
+         hVMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733941182; x=1734545982;
+        d=1e100.net; s=20230601; t=1733941235; x=1734546035;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sRvlwWxZGciZrSI2v4VPIECYyumLg4e7Uoks/odo7g8=;
-        b=TUvDxhnKFOG9lKzXEfdauAKpCER+0vgtdGVI6OqNWAiC8u7hSW03tfLpuwFesqB713
-         0gDZ58z9UC7YyqzzoQHw2pTkj6Ma6gtXP+v8eRuFQGUmmHaa09vija/PDMIWI1WxNWdq
-         zVcpdGKlk/qahbgI3fBasgSG93q3LNprxNBbt7z2Mzh89cGR/T4kh0N4HVi6RcgTXtt1
-         Rp+tCQo48w5f4Vnw1Cfqxq6/pQYObY+2SgyND4RoFurKIJ7FFBDYoKhagUZNQfF6wCkt
-         HHuCmwOrhl2yQSmJPrXEWuiGg8ZHfz6PNRkBrdO/ab/10ZC34vFPD5MUqMjHyoX0Bvch
-         t54w==
-X-Forwarded-Encrypted: i=1; AJvYcCWYNv4h3MtvsxXfkmr03gXfGqbBN7XcvZ+/8RYHYP50HfCGS9cNT8Qs2qoOIzNg537m3QnI4LPmtS9CJaM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeplomkGgukKkXjeYoRoaLceROqSru5NJxHjsS9NNpnSMSbw9F
-	ygIgNphgHfd9RzAZP150VZ3YBGIahDkv0ZKlFggpso7d31QHKubvaCBf8VXYH9/8MBtoDnKgO2a
-	7SA==
-X-Google-Smtp-Source: AGHT+IGAQad98x+9buqedyejzr8w3DIDOOBuC1wPAHcLmV8x5kvdALMYM6oNb2Usre2fXUAEDTniyhyr28c=
-X-Received: from pjbrr8.prod.google.com ([2002:a17:90b:2b48:b0:2e5:8726:a956])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d06:b0:2ee:c2df:5d30
- with SMTP id 98e67ed59e1d1-2f12808c011mr5454846a91.26.1733941181703; Wed, 11
- Dec 2024 10:19:41 -0800 (PST)
-Date: Wed, 11 Dec 2024 10:19:40 -0800
-In-Reply-To: <20241111102749.82761-7-iorlov@amazon.com>
+        bh=t+Ox1uza8Q79A6RwFeyGkXs+VHW6BnofeA5s7qSYG3M=;
+        b=iK2jrdQxIKnSfQhoUbwngIXatMInC75pYqK8tgO7kEy192P8Gg4ldJzWGK4Ygl1751
+         Da+tyASJDUNYQgrwdA/cdKS7W/xxp2bRkbs3AcdUVGHY8NMlLgZsO1WY+4Y43w6drkYP
+         n7fnPnMls5bS9XwNCdbLrCIFlK7cZkv1LU840yuVZ5gHMafGgNgyAQGEcMHPOLW2mnHp
+         2HuOp6J2TQ3Ofj3ZdpEP05gRFAki5bndIBIN2VQmfyXoOc5xTi9rzVMU2dCwXxuONiFH
+         LiSJF0Mryvfj6hNYkDloTyn2Yqb8Np1gt82NfAeNy1zGKsIXTBJWvsKHbyd07tMWOjkU
+         wQFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWWpKkNKE212Dq6nljDiqXCSKxBAUEGtpSXx3N0RveCllcMLUrY7U6ClrHweyroumqsfSBrKZ/Mq46P8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDc22ffc+9Y/sAG7gVlLAx/nKvsY5++F19e563ITWy+y8R5SkS
+	kC9WTdpJlTV/IO26/B4dz+eBW2gJBzvLISw+Uq5w3AtlpUkef7s5D+nmbTH1WAuOM+cteazgeCZ
+	ZSA==
+X-Google-Smtp-Source: AGHT+IEZfd8RpvX3OL8+D64SC/c6EBzqjS61c4iGRcc1nCHXG9qtDFB2g/ZbpKx2mvqm2c2s2Smm91XqVPU=
+X-Received: from pfwy4.prod.google.com ([2002:a05:6a00:1c84:b0:725:ceac:b484])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:10c8:b0:728:eb32:356c
+ with SMTP id d2e1a72fcca58-728faa1fcb5mr375468b3a.11.1733941235183; Wed, 11
+ Dec 2024 10:20:35 -0800 (PST)
+Date: Wed, 11 Dec 2024 10:20:33 -0800
+In-Reply-To: <20241111102749.82761-1-iorlov@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20241111102749.82761-1-iorlov@amazon.com> <20241111102749.82761-7-iorlov@amazon.com>
-Message-ID: <Z1nXvL05VXShYpYR@google.com>
-Subject: Re: [PATCH v2 6/6] selftests: KVM: Add test case for MMIO during vectoring
+References: <20241111102749.82761-1-iorlov@amazon.com>
+Message-ID: <Z1nX8aCfZMvJ4co4@google.com>
+Subject: Re: [PATCH v2 0/6] Enhance event delivery error handling
 From: Sean Christopherson <seanjc@google.com>
 To: Ivan Orlov <iorlov@amazon.com>
 Cc: bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com, 
@@ -84,68 +84,32 @@ Cc: bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com,
 Content-Type: text/plain; charset="us-ascii"
 
 On Mon, Nov 11, 2024, Ivan Orlov wrote:
-> Extend the 'set_memory_region_test' with a test case which covers the
-> MMIO during vectoring error handling. The test case
+> Currently, the situation when guest accesses MMIO during vectoring is
+> handled differently on VMX and SVM: on VMX KVM returns internal error,
+> when SVM goes into infinite loop trying to deliver an event again and
+> again.
 > 
-> 1) Sets an IDT descriptor base to point to an MMIO address
-> 2) Generates a #GP in the guest
-> 3) Verifies that we got a correct exit reason and suberror code
-> 4) Verifies that we got a corrent reported GPA in internal.data[3]
+> This patch series eliminates this difference by returning a KVM internal
+> error when guest performs MMIO during vectoring for both VMX and SVM.
 > 
-> Also, add a definition of non-canonical address to processor.h
+> Also, introduce a selftest test case which covers the error handling
+> mentioned above.
 > 
-> Signed-off-by: Ivan Orlov <iorlov@amazon.com>
-> ---
 > V1 -> V2:
-> - Get rid of pronouns, redundant comments and incorrect wording
-> - Define noncanonical address in processor.h
-> - Fix indentation and wrap lines at 80 columns
+> - Make commit messages more brief, avoid using pronouns
+> - Extract SVM error handling into a separate commit
+> - Introduce a new X86EMUL_ return type and detect the unhandleable
+> vectoring error in vendor-specific check_emulate_instruction instead of
+> handling it in the common MMU code (which is specific for cached MMIO)
 > 
->  .../selftests/kvm/include/x86_64/processor.h  |  2 +
->  .../selftests/kvm/set_memory_region_test.c    | 51 +++++++++++++++++++
->  2 files changed, 53 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/x86_64/processor.h b/tools/testing/selftests/kvm/include/x86_64/processor.h
-> index 1a60c99b5833..997df5003edb 100644
-> --- a/tools/testing/selftests/kvm/include/x86_64/processor.h
-> +++ b/tools/testing/selftests/kvm/include/x86_64/processor.h
-> @@ -1165,6 +1165,8 @@ void vm_install_exception_handler(struct kvm_vm *vm, int vector,
->  /* If a toddler were to say "abracadabra". */
->  #define KVM_EXCEPTION_MAGIC 0xabacadabaULL
->  
-> +#define NONCANONICAL 0xaaaaaaaaaaaaaaaaull
+> Ivan Orlov (6):
+>   KVM: x86: Add function for vectoring error generation
+>   KVM: x86: Add emulation status for vectoring during MMIO
+>   KVM: VMX: Handle vectoring error in check_emulate_instruction
+>   KVM: SVM: Handle MMIO during vectroing error
+>   selftests: KVM: extract lidt into helper function
+>   selftests: KVM: Add test case for MMIO during vectoring
 
-Uber nit, I much prefer to place this definition at the top of the header.  More
-specifically, it needs to not be in the middle of the selftest's exception fixup
-code.
-
-> +
->  /*
->   * KVM selftest exception fixup uses registers to coordinate with the exception
->   * handler, versus the kernel's in-memory tables and KVM-Unit-Tests's in-memory
-> diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
-> index a1c53cc854a5..d65a9f20aa1a 100644
-> --- a/tools/testing/selftests/kvm/set_memory_region_test.c
-> +++ b/tools/testing/selftests/kvm/set_memory_region_test.c
-> @@ -553,6 +553,56 @@ static void test_add_overlapping_private_memory_regions(void)
->  	close(memfd);
->  	kvm_vm_free(vm);
->  }
-> +
-> +static void guest_code_mmio_during_vectoring(void)
-> +{
-> +	const struct desc_ptr idt_desc = {
-> +		.address = MEM_REGION_GPA,
-> +		.size = 0xFFF,
-> +	};
-> +
-> +	set_idt(&idt_desc);
-> +
-> +	/* Generate a #GP by dereferencing a non-canonical address */
-> +	*((uint8_t *)NONCANONICAL) = 0x1;
-
-Now I'm curious what happens if this uses vcpu_arch_put_guest(), i.e. if the
-test forces KVM to emulate the write.
-
-No action needed, the test is a-ok as-is.  I'm really just curious :-)
+Minor nits throughout, but unless you disagree with my suggestions, I'll fix them
+up when applying, i.e. no need to post a v3.
 
