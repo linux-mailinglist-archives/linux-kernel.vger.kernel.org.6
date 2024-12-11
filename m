@@ -1,165 +1,226 @@
-Return-Path: <linux-kernel+bounces-441094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D94B9EC959
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:40:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38ABA9EC95C
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F381882B88
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:40:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF39D16A23B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D939F1C548E;
-	Wed, 11 Dec 2024 09:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD409236F8D;
+	Wed, 11 Dec 2024 09:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XvHAG5d7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F+CWh6Xy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7171A83FE;
-	Wed, 11 Dec 2024 09:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B26B236FB7;
+	Wed, 11 Dec 2024 09:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733910003; cv=none; b=adp/XAFTxl3/msGX9DCNUEREKpInU9A8Jgx3aOqYjvzvba0e0ekYWDAWHDaJAbGjR/G+SlIrlUyq/1secFSdSh7as3RNRTTIPSyHGQ2bHwhP0+PJtiUbDQrRFal4fbv3J3i6cJru2a4J08WEUd+j8fDvin/KiCfKdfzgs54iMKQ=
+	t=1733910056; cv=none; b=dvjRp0fri4skjHEtCDM9Y5nhslT2Ne6Z0BtQtPVf+wzf+hK00cU5zysi+I6Y6lN7/O8QGeBP2BkyGQAxFl1MfiF4cchRTFTVhAjbgfQdDjQ41iqKs27mJ6sORFJOGOqsjeXNC+/z7sA8ZC3tga+9jv69X6mQ55wgem3p+igW0ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733910003; c=relaxed/simple;
-	bh=mHQ+ad39TvGwZRHDCEPD0kzUEV03xj3+IaU03Zrdm/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UuXE9Vjl1dlPQ5MV685/0dyH/0CwBwvRBC/iTjVYjc31CqIZGU8PDZeKjSLcfI1iRLY4VTxYd/Hd1OwFpDm5ez4axAt8wREd6ydYcIHVECzp0zfI+Tvu8CvP4W0WxtIHhwJi825suN5DyZzMQOw/kPImSHcGpwjbgys8TXqgppQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XvHAG5d7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB42jbs029986;
-	Wed, 11 Dec 2024 09:39:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7Ka+weawCvsnlrfXVb4OAOsW+ZIREokDJZdciu4q1R8=; b=XvHAG5d7IO1Ste2N
-	3CcCL3IQn75FQIkaZaZNPBfAu12L6rWkviwZy8ZggU0YzccYuO++1L5f9iqNMNVC
-	sX/a6KJjYEM+FyQkMvMJTL9c3h8KyYV42qIiFUc4o+nfn0557l2DYFxteqx7hpAA
-	Qdh8jrMpB+KmxlwIFbBefAXcKBehQqp8GtzNw//cC4PsTFWRomLMJHmYI4w0uY+/
-	Ek6xbmi2yxcPF4vaLcjPb/VEyjzJ+tu6QUJTMUby3V1nygcew5uASpZlj86xJUAG
-	R5Innn15mc5GormbsZWwSUkZOtJVtxJcSbyS+G/vDfjbw2Th0uFsmNHtfoAhRd6V
-	KB3r4w==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eqr32uh5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 09:39:56 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB9dtFD013485
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 09:39:55 GMT
-Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
- 2024 01:39:49 -0800
-Message-ID: <62afbaea-67b1-4572-9e78-d1dbe5fae20a@quicinc.com>
-Date: Wed, 11 Dec 2024 17:39:47 +0800
+	s=arc-20240116; t=1733910056; c=relaxed/simple;
+	bh=GS5Z33ohQY2/h9ot0AUWoBG8q6TtS3G7qEZ7HPbHInU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FIrl3z1ZolgAb9bIviBCjWQh7B5sFI0gmYXID85T25/ApojygVoQjH+OWz9ynHlGUEsm0kw57c9TiHJR6XkS2J97NXIz8h17EZMX+8ZAbNdpSjF1CAHx5XqNeoGgBwckid0/Z5qIougJzDtWbU5YPhxCpa4In61eEsFh64/pvRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F+CWh6Xy; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733910054; x=1765446054;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GS5Z33ohQY2/h9ot0AUWoBG8q6TtS3G7qEZ7HPbHInU=;
+  b=F+CWh6Xy90nal7PeqTxrCEwAFSMmk0C+lhkxr+TOsWAyCx9ixXSUptNU
+   CTP+WgdB/12RgBic7hh+fX/1dj+jlm2UQQKdkpz73me+wkKtbaGZ4Q9fB
+   0oVmdpQZ1AyLVzmbgacYuTbpC/tlpERpOtPJnIG4K04GKQ9AOfne4Co/U
+   ehthCBhNpFWu0vL681Ro2jfsflNRmzMJPpBePm6/MPTLgNMN93HRey6AN
+   CLsbliecXZA/FJsdMxZdSn4/OyWBUiwY84qhztI8fRzynlQOQvQJp80qG
+   E6YyS4KDseOptuTYV2Klekdu/D31MIl/5DjVMIx3rgNb+RtzFiEyljdOG
+   A==;
+X-CSE-ConnectionGUID: a+IrBPUiTlyxNZAIez5DCw==
+X-CSE-MsgGUID: rQArnoC9T16PZ1IqClp6bA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="37117047"
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="37117047"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 01:40:54 -0800
+X-CSE-ConnectionGUID: jLknP7QSS2y7aIPjuiF0Kg==
+X-CSE-MsgGUID: ejgYfS7HRvCb5auIaQiC5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="95604206"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa009.jf.intel.com with SMTP; 11 Dec 2024 01:40:49 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 11 Dec 2024 11:40:48 +0200
+Date: Wed, 11 Dec 2024 11:40:48 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev, akuchynski@google.com,
+	pmalani@chromium.org, jthies@google.com,
+	dmitry.baryshkov@linaro.org, badhri@google.com,
+	rdbabiera@google.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/7] usb: typec: Only use SVID for matching altmodes
+Message-ID: <Z1leIAhqopg_We9F@kuha.fi.intel.com>
+References: <20241206233830.2401638-1-abhishekpandit@chromium.org>
+ <20241206153813.v4.1.Ie0d37646f18461234777d88b4c3e21faed92ed4f@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindings: net: bluetooth: qca: Expand
- firmware-name property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao
-	<quic_rjliao@quicinc.com>,
-        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_jiaymao@quicinc.com>, <quic_shuaz@quicinc.com>,
-        <quic_zijuhu@quicinc.com>, <quic_mohamull@quicinc.com>
-References: <20241210151636.2474809-1-quic_chejiang@quicinc.com>
- <20241210151636.2474809-2-quic_chejiang@quicinc.com>
- <vbwg7djb4me6i4ow2q74ltqjxvkxeulhzyq4n6ak7aifhtf36f@x66pjje2iu6u>
-Content-Language: en-US
-From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-In-Reply-To: <vbwg7djb4me6i4ow2q74ltqjxvkxeulhzyq4n6ak7aifhtf36f@x66pjje2iu6u>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 52UO7AVT3UtDZNe9f-x84-hwdxQ55qum
-X-Proofpoint-GUID: 52UO7AVT3UtDZNe9f-x84-hwdxQ55qum
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015 mlxlogscore=999
- suspectscore=0 mlxscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110072
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206153813.v4.1.Ie0d37646f18461234777d88b4c3e21faed92ed4f@changeid>
 
-Hi Krzysztof,
-
-On 12/11/2024 4:53 PM, Krzysztof Kozlowski wrote:
-> On Tue, Dec 10, 2024 at 11:16:33PM +0800, Cheng Jiang wrote:
->> Expand the firmware-name property to specify the names of NVM and
->> rampatch firmware to load. This update will support loading specific
->> firmware (nvm and rampatch) for certain chips, like the QCA6698
->> Bluetooth chip, which shares the same IP core as the WCN6855 but has
->> different RF components and RAM sizes, requiring new firmware files.
->>
->> We might use different connectivity boards on the same platform. For
->> example, QCA6698-based boards can support either a two-antenna or
->> three-antenna solution, both of which work on the sa8775p-ride platform.
->> Due to differences in connectivity boards and variations in RF
->> performance from different foundries, different NVM configurations are
->> used based on the board ID.
->>
->> So In firmware-name, if the NVM file has an extension, the NVM file will
->> be used. Otherwise, the system will first try the .bNN (board ID) file,
->> and if that fails, it will fall back to the .bin file.
->>
->> Possible configurations:
->> firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
->> firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
->> firmware-name = "QCA6698/hpnv21.bin";
->>
->> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->> ---
->>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml           | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->> index 7bb68311c..2782d2325 100644
->> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->> @@ -101,7 +101,10 @@ properties:
->>    max-speed: true
->>  
->>    firmware-name:
->> -    description: specify the name of nvm firmware to load
->> +    description:
->> +      If one item is present, specify the name of the NVM firmware to load.
->> +      If two items are present, the first item specifies the name of the NVM,
->> +      and the second specifies the name of the rampatch firmware to load.
+On Fri, Dec 06, 2024 at 03:38:12PM -0800, Abhishek Pandit-Subedi wrote:
+> Mode in struct typec_altmode is used to indicate the index of the
+> altmode on a port, partner or plug. It is used in enter mode VDMs but
+> doesn't make much sense for matching against altmode drivers or for
+> matching partner to port altmodes.
 > 
-> Don't repeat constraints in free form text. Use proper constraints so
-> you can validate your DTS. And then actually do validate your DTS...
-> 
-It seems unnecessary to add this description, so I will drop this change. Is that okay?
+> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
 
-> Best regards,
-> Krzysztof
-> 
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
+> ---
+> 
+> (no changes since v3)
+> 
+> Changes in v3:
+> - Removed mode from altmode device ids
+> - Updated modalias for typecd bus to remove mode
+> - Re-ordered to start of series
+> 
+> Changes in v2:
+> - Update altmode_match to ignore mode entirely
+> - Also apply the same behavior to typec_match
+> 
+>  drivers/usb/typec/altmodes/displayport.c | 2 +-
+>  drivers/usb/typec/altmodes/nvidia.c      | 2 +-
+>  drivers/usb/typec/bus.c                  | 6 ++----
+>  drivers/usb/typec/class.c                | 4 ++--
+>  scripts/mod/devicetable-offsets.c        | 1 -
+>  scripts/mod/file2alias.c                 | 4 +---
+>  6 files changed, 7 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/altmodes/displayport.c b/drivers/usb/typec/altmodes/displayport.c
+> index 2f03190a9873..3245e03d59e6 100644
+> --- a/drivers/usb/typec/altmodes/displayport.c
+> +++ b/drivers/usb/typec/altmodes/displayport.c
+> @@ -791,7 +791,7 @@ void dp_altmode_remove(struct typec_altmode *alt)
+>  EXPORT_SYMBOL_GPL(dp_altmode_remove);
+>  
+>  static const struct typec_device_id dp_typec_id[] = {
+> -	{ USB_TYPEC_DP_SID, USB_TYPEC_DP_MODE },
+> +	{ USB_TYPEC_DP_SID },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(typec, dp_typec_id);
+> diff --git a/drivers/usb/typec/altmodes/nvidia.c b/drivers/usb/typec/altmodes/nvidia.c
+> index fe70b36f078f..2b77d931e494 100644
+> --- a/drivers/usb/typec/altmodes/nvidia.c
+> +++ b/drivers/usb/typec/altmodes/nvidia.c
+> @@ -24,7 +24,7 @@ static void nvidia_altmode_remove(struct typec_altmode *alt)
+>  }
+>  
+>  static const struct typec_device_id nvidia_typec_id[] = {
+> -	{ USB_TYPEC_NVIDIA_VLINK_SID, TYPEC_ANY_MODE },
+> +	{ USB_TYPEC_NVIDIA_VLINK_SID },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(typec, nvidia_typec_id);
+> diff --git a/drivers/usb/typec/bus.c b/drivers/usb/typec/bus.c
+> index aa879253d3b8..ae90688d23e4 100644
+> --- a/drivers/usb/typec/bus.c
+> +++ b/drivers/usb/typec/bus.c
+> @@ -454,8 +454,7 @@ static int typec_match(struct device *dev, const struct device_driver *driver)
+>  	const struct typec_device_id *id;
+>  
+>  	for (id = drv->id_table; id->svid; id++)
+> -		if (id->svid == altmode->svid &&
+> -		    (id->mode == TYPEC_ANY_MODE || id->mode == altmode->mode))
+> +		if (id->svid == altmode->svid)
+>  			return 1;
+>  	return 0;
+>  }
+> @@ -470,8 +469,7 @@ static int typec_uevent(const struct device *dev, struct kobj_uevent_env *env)
+>  	if (add_uevent_var(env, "MODE=%u", altmode->mode))
+>  		return -ENOMEM;
+>  
+> -	return add_uevent_var(env, "MODALIAS=typec:id%04Xm%02X",
+> -			      altmode->svid, altmode->mode);
+> +	return add_uevent_var(env, "MODALIAS=typec:id%04X", altmode->svid);
+>  }
+>  
+>  static int typec_altmode_create_links(struct altmode *alt)
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 4b3047e055a3..febe453b96be 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -237,13 +237,13 @@ static int altmode_match(struct device *dev, void *data)
+>  	if (!is_typec_altmode(dev))
+>  		return 0;
+>  
+> -	return ((adev->svid == id->svid) && (adev->mode == id->mode));
+> +	return (adev->svid == id->svid);
+>  }
+>  
+>  static void typec_altmode_set_partner(struct altmode *altmode)
+>  {
+>  	struct typec_altmode *adev = &altmode->adev;
+> -	struct typec_device_id id = { adev->svid, adev->mode, };
+> +	struct typec_device_id id = { adev->svid };
+>  	struct typec_port *port = typec_altmode2port(adev);
+>  	struct altmode *partner;
+>  	struct device *dev;
+> diff --git a/scripts/mod/devicetable-offsets.c b/scripts/mod/devicetable-offsets.c
+> index 9c7b404defbd..d3d00e85edf7 100644
+> --- a/scripts/mod/devicetable-offsets.c
+> +++ b/scripts/mod/devicetable-offsets.c
+> @@ -237,7 +237,6 @@ int main(void)
+>  
+>  	DEVID(typec_device_id);
+>  	DEVID_FIELD(typec_device_id, svid);
+> -	DEVID_FIELD(typec_device_id, mode);
+>  
+>  	DEVID(tee_client_device_id);
+>  	DEVID_FIELD(tee_client_device_id, uuid);
+> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
+> index c4cc11aa558f..218ccb7150bf 100644
+> --- a/scripts/mod/file2alias.c
+> +++ b/scripts/mod/file2alias.c
+> @@ -1343,14 +1343,12 @@ static int do_tbsvc_entry(const char *filename, void *symval, char *alias)
+>  	return 1;
+>  }
+>  
+> -/* Looks like: typec:idNmN */
+> +/* Looks like: typec:idN */
+>  static int do_typec_entry(const char *filename, void *symval, char *alias)
+>  {
+>  	DEF_FIELD(symval, typec_device_id, svid);
+> -	DEF_FIELD(symval, typec_device_id, mode);
+>  
+>  	sprintf(alias, "typec:id%04X", svid);
+> -	ADD(alias, "m", mode != TYPEC_ANY_MODE, mode);
+>  
+>  	return 1;
+>  }
+> -- 
+> 2.47.0.338.g60cca15819-goog
+
+-- 
+heikki
 
