@@ -1,120 +1,101 @@
-Return-Path: <linux-kernel+bounces-440767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500849EC3E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:11:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DC69EC3E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:13:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E0718896B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:13:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D751BCA0A;
+	Wed, 11 Dec 2024 04:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UEQ4SN63"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCC8D282B46
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:11:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB90C1BC07E;
-	Wed, 11 Dec 2024 04:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mdiZNIjb"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48132451C0
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 04:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DE22451C0;
+	Wed, 11 Dec 2024 04:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733890279; cv=none; b=UM2+J2DvJH3tPkNf9ZjZWF2JHA6qtOacaNl9o3PIbkHBXlebIWwsn/8ZjhV22mtd3yMRbtAqqnN7EeAKar71o6FmIkKPQqHEJunmCMvYaTgyf2+jOshsI+9hFt8akBXilVPpOS6EJSwJfD9yyzsN8gi2ryReaNE4/akr+nqxc+U=
+	t=1733890384; cv=none; b=YpIVGHXZYhJsRL/HUU8t6xti+HlhY+UoalBYJXM0NMuRi8/XK++HTsCTzccGMeISqSD0TI9MiWJw8JLLz/b7roSvx9QGgbfGZYhuvp0PmjamCiFkEfpmrV4t4IBzWVXiArJixvRLrgFernfckK5Mi/VBW4JpfVoP+X5Aw/lks00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733890279; c=relaxed/simple;
-	bh=c58nihJmzHp29pA8kzUOhA1/r5iZuRgG591QDfhfr88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f0N/Gh3l2iaT6oQVCi6L4AoFK0wyPbuif6ssz9UC3Zk9sQCP28x6FrLq5ojNg+Uc0N9omjhWpclY+6r+WOzfyDTzxNiTYMswmU9ZYHUvETChE56MsVRwI1kwQom+e8beYlLCgmZNAQ7xtesIBK/QrjB/0wor8J9EOH0U1xMw77I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mdiZNIjb; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ee76befe58so5606740a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 20:11:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733890277; x=1734495077; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AQNAPGLTYqHsPyMqQBEBauzuDY5B9rUBU0gS2x2EpUg=;
-        b=mdiZNIjb7IoLBTIGVdoijIl4XlFX32csG+eaY75bTWRSmGgApoXb6in5RB9YtPPS0g
-         Lkm7N+RC+3SQaOGHt9gi1verqgrm5P2Rt1r1uQO1RDGNoZKEarbc/cr1G2Wqvf5MrbNF
-         1MuetSgSL4TePI5X0Y48T3jiRSCHLC1nwWeM0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733890277; x=1734495077;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AQNAPGLTYqHsPyMqQBEBauzuDY5B9rUBU0gS2x2EpUg=;
-        b=fhMMUglWUh+4kKzF9jqdUN5v4aXMaKHfEOuNi/Df6HA5BQWFI0J6fjsNQHONiPlUdP
-         789PzsUF6ULaCVUAKpJVsM1dqSc6IdLOT+mf++i9Ow0kGq65r4c2VMBdpoay7U8BRt0C
-         5b3Vr8Jj7CceQ2FQXzisGqphoZIz+QD3jcE6wu6R8jLlVg/zotaMsxL193QzfxQe3DaX
-         4lriksnwLY7oTblM22DXqoHigioo0GIfWYSl+DfZHkjhQxxUJacQcQm6q4bwNZfayicW
-         aqCTfEIgbbDAXbt+tS0rKTtxIvkKfuSZbLcJTeUEvQgzFMDhqzu06QDiiIjTFHjUM9u2
-         DhFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMS+j6sbS6OQ3AlVGiXoYBbEu0bbmSYO6ZLjWTWYuKUvKynnKAdOHTz0sZu3L6TTg2gWzMaKrqdoK8GPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfb2nlkFSID7kooAIdEqmadajMerEA+qE7OD+emnl/VNE7tKfY
-	1StaXFKyzwf+yphvcwI7Q24dlUMwPl5dBk81+Lm7Q7FXhA3jui9h1+6zWhO8Fw==
-X-Gm-Gg: ASbGncsaGS6DdGx/zAkW2abnIxMpba2mSy2z+zpFPBZaHpbaM7t+p/kFP/rTDVt50KJ
-	scqeS1SPu1oxNh4wWRwfDQFSv1+Tsg6BpLS/jzbn9T8PxkEGmGGu6YjFFdtKA33FSVVpqYdo6oZ
-	njAriJvNidydACRZq645rE+8Q2f3wYTOj27m61u65GKhev2YgDdHaiPkYTpD89CNXLyH+7zwpgt
-	FjF83IGnaX5Bc6KJZg6Vd3dUprAUpfM2q7Uk1Em8OwTfPTUo3V1gMMtjA==
-X-Google-Smtp-Source: AGHT+IEECCaYjCvHpajq5DN4jssUNSh9mlYRCPVm4jNMCrBot9wxnihWKK5FQR/46e75Oq6BZhGukA==
-X-Received: by 2002:a17:90b:3d04:b0:2ee:fa0c:cebc with SMTP id 98e67ed59e1d1-2f127fd863bmr2557461a91.20.1733890277006;
-        Tue, 10 Dec 2024 20:11:17 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:4d97:9dbf:1a3d:bc59])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd438e4bf1sm4517606a12.25.2024.12.10.20.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 20:11:16 -0800 (PST)
-Date: Wed, 11 Dec 2024 13:11:12 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] zram: cond_resched() in writeback loop
-Message-ID: <20241211041112.GC2091455@google.com>
-References: <20241210105420.1888790-1-senozhatsky@chromium.org>
- <20241210105420.1888790-2-senozhatsky@chromium.org>
- <20241210165456.288ed82b8a66a08ac36a4d15@linux-foundation.org>
+	s=arc-20240116; t=1733890384; c=relaxed/simple;
+	bh=E2F3b1bQJkzdomVIs5BF/wCw/gPcD0biRlPDlHZopJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tdIqWw1/4fzjXd6Vy/g1Al53Rnu3oNkmM09tpSQ9MERPb0mbOvD6KrN4+R6nOhCzu+JsSXTBjS7AmsuLWhs2zfGAQ4IxQ3ZC48Tozh45pW0T18doqIFBip6peSOjX51oOQCt2e3E+Was07Er1ChMMlxOSwbzRZsaIdwcrRVNqdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UEQ4SN63; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB1fJCB014853;
+	Wed, 11 Dec 2024 04:12:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VTpfjSUW2xCgCg4eQchraixMNAcSxEXEtSGNOTf6gD0=; b=UEQ4SN63Ra89HNob
+	U/ivYuG2ulugKRfSr1/8tZLMQIn80Yl6PY0lzVfMWmyNqSQOqopJea0njQkXcbhP
+	j+ZbC+p7gIKG81xZn5w5BjwkJBEgVKftP532JDCU0eNIL2MYtCp1JQvNMGvWFMFs
+	MyCvnaC5mGYzbBRwJY+owX6VYZOJc+9qBJMK8wHiGxonCfcMS8dIpiLXjREBWPGq
+	t4jOtY9p5MP4uuZ4lY7fwXoRkYGPFGqCIhyGRRn/CYcmKrWlmzJ0kjkesaijHB1X
+	1ZzMpWLaxF/+QAm2FOuaoKvmEix4FXNgwtgQ46knKc21Z3NC7YdrxWyt11hrFM5H
+	pFAOIw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3nbq41-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 04:12:43 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB4Cgch008458
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 04:12:43 GMT
+Received: from [10.50.34.16] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 10 Dec
+ 2024 20:12:41 -0800
+Message-ID: <fc015f10-9780-4e2a-9dcf-de7e4b253be2@quicinc.com>
+Date: Wed, 11 Dec 2024 09:42:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210165456.288ed82b8a66a08ac36a4d15@linux-foundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/2] spi: Unify and simplify fwnode related checks
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mark Brown
+	<broonie@kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241208195635.1271656-1-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <20241208195635.1271656-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0doB6mXiz3dB1c952m0FRPTHlAw6xiDu
+X-Proofpoint-ORIG-GUID: 0doB6mXiz3dB1c952m0FRPTHlAw6xiDu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ mlxlogscore=647 lowpriorityscore=0 adultscore=0 clxscore=1011 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412110029
 
-On (24/12/10 16:54), Andrew Morton wrote:
-> On Tue, 10 Dec 2024 19:53:55 +0900 Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
-> 
-> > Writeback loop can run for quite a while (depending on
-> > wb device performance, compression algorithm and the
-> > number of entries we writeback), so we need to do
-> > cond_resched() there, similarly to what we do in
-> > recompress loop.
-> > 
-> > ...
-> >
-> > --- a/drivers/block/zram/zram_drv.c
-> > +++ b/drivers/block/zram/zram_drv.c
-> > @@ -889,6 +889,8 @@ static ssize_t writeback_store(struct device *dev,
-> >  next:
-> >  		zram_slot_unlock(zram, index);
-> >  		release_pp_slot(zram, pps);
-> > +
-> > +		cond_resched();
-> >  	}
-> >  
-> >  	if (blk_idx)
-> 
-> Should this be treated as a hotfix?  With a -stable backport?
 
-Actually... can I please ask you to drop this [1] particular patch for
-now?  The stall should not happen, because submit_bio_wait() is a
-rescheduling point (in blk_wait_io()).  So I'm not sure why I'm seeing
-unhappy watchdogs.
 
-[1] https://lore.kernel.org/mm-commits/20241211005510.842DFC4CED6@smtp.kernel.org
+On 12/8/2024 9:33 PM, Andy Shevchenko wrote:
+> couple of cleanups on top of recently added change.
+please add what exactly cleanups done ? Recently added change is not 
+that something someone would check as part of this patch.
+Description would be helpful.
+
 
