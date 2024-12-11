@@ -1,262 +1,174 @@
-Return-Path: <linux-kernel+bounces-441852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136F49ED4E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:50:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33AD39ED526
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:55:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22BC0282400
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:50:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E63EF28417A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D28A207A18;
-	Wed, 11 Dec 2024 18:49:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7DB243B94;
+	Wed, 11 Dec 2024 18:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="G3pycDTM"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16611C3F27;
-	Wed, 11 Dec 2024 18:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F14320A5CF;
+	Wed, 11 Dec 2024 18:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733942997; cv=none; b=fyGD6cnjPiOv5LlEXtcJ0otPSwu3vIbQPVj80IthDDCaHn3ij6MaziUZltTGccrIYRNB6VQJf9XpUmeJOVtowr75nIf/V73uNPP2KfXpTrMyAYP0GWJ0DUC9gWyzum07ijo6FeAwmOkCc/rvTFbUFGg1upxppHU9ToO5G4fRqzw=
+	t=1733943090; cv=none; b=dbApn/r+vGoKXQxtafB6+NFefN/Yuz9qvAJXC2lfWeE5vulut/msYDf3KnUbiV2T7CmSCmgzA16A4GlRwmNg3L9Zq94MGo8GrhbhxqANN7kQsIyRLdMKmZ15zHv0crxO3Hi28jdBlw5opBmtBMSYbfvtKx0wVW8Pbs94aYw8U2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733942997; c=relaxed/simple;
-	bh=R2X2+Rg4gZ4Otv4c0CzKb4uZ6UjdpqXDSDT0oHwTEgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WTIO+oASx6z4HPRJ2LfhQsqIr2Z3kGXZ30nr8BVlVGGaq/eLSHDvusfdf+5m16apT/FqVo5lbAIBUpeC0BvoaOm6kVX60SL7aPEHhyfBW1pjUNgLXNrRqp8xLOAFefJ0uh/jfSRkI50zVRa2uFv/BX216ClKeGV+g/wd8cabZEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 640BCC4CED2;
-	Wed, 11 Dec 2024 18:49:56 +0000 (UTC)
-Date: Wed, 11 Dec 2024 13:49:54 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: [PATCH v2] tracing: Fix trace output when pointer hash is disabled
-Message-ID: <20241211134954.66d20807@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733943090; c=relaxed/simple;
+	bh=WoyA7OWH5Qvlen/f3neg+ScdJPR1D5h1M4EMJoCaJTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=riNsjwxpqdTZc9LkntXXMv8Gnf9k7OLNCkUYsBeqGMmk3VHFPjNR3P5OQ1C5cT7ZRUBZ9J3SPwSoeQmMvuFyDC1eOfPvpJN5oDJaZ87DuC0C2cURFczlmjo4HztRkG8ifosEh0XNtqzkiv+DTDTdxb7yJZItMoHKqjzkfxGlj68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=G3pycDTM; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BC2E640E0286;
+	Wed, 11 Dec 2024 18:51:23 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id eoAceNr_HFv2; Wed, 11 Dec 2024 18:51:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733943079; bh=RA2H9U4SxryZDWZnv9X2f5ptbQod2yGxSYJICJzMCz0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G3pycDTMFk8B3cISrO2F6Z0q59dVwQ/FUYRL8QOxOEIE85iLHEHOICBOz2VAYWRxQ
+	 No5+BgmcDlYoDIboRebBepFj6GOnlkJfwRCHP0ESPNSvnb/r/5XwQ9Nq5OQBWCdMyb
+	 cPWN2Irxf8y1BSkIgYq529I8MvyaXfjRteIOGg2suIom6BHnDYYrxLIHLYMlkqFjqK
+	 5YGNnFpRzWJIQUcxuI0ncudCNJtkSkCigcZBGRrzcJcBH+lNT4J+PxwLJUPnKUc+g/
+	 bjNzKsqyKFOeWLjRvFV5rF+lYQr6ue6X4MHayOxBVGtuoU5gD+wHNGNhmhuQkzBiR5
+	 KjHZcni/9UQeZtjgoTTMt2/+LpJcpmlFyS02WFqAraVPzQu7h1c4py4/K7kUK+bMki
+	 c4icbj29bhnWgqFxFpmyFAp7vHxjjo30QI7wpCb+FuTCEZsh/tvHmT9QQiiY/U/pVP
+	 T3r+hzjUE6k5UMJF9DlA6frXok/cyMXekNk/jQnrpqaldlmm1eRl7VkEtHBnWReKLF
+	 NzA5sRDlvLs0yzDuQZKU2kk0V1FDmkaw3aK2WCwvM8c/uQE0eSNN2E9AUO9zJk1n0C
+	 EyZdYPT9hTc6jBgOLErNUiBpzL/4gwm14L/D5O1MA9h01XFAQmUZXcE5rw1RgOJqL6
+	 8OL6tLgSq5VS9cedbGkuZFwc=
+Received: from zn.tnic (p200300ea971f93ce329c23ffFea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:93ce:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7C19E40E0289;
+	Wed, 11 Dec 2024 18:51:15 +0000 (UTC)
+Date: Wed, 11 Dec 2024 19:51:09 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Avadhut Naik <avadhut.naik@amd.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] EDAC/amd64: Fix possible module load failure on some
+ UMC usage combinations
+Message-ID: <20241211185109.GFZ1nfHQBJB4rdXXSI@fat_crate.local>
+References: <20241210212054.3895697-1-avadhut.naik@amd.com>
+ <20241211110729.GAZ1lycaGYmjgNDGv9@fat_crate.local>
+ <20241211154637.GA1923270@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241211154637.GA1923270@yaz-khff2.amd.com>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, Dec 11, 2024 at 10:46:37AM -0500, Yazen Ghannam wrote:
+> Looks good overall. We can even remove the "nid" variable and just use
+> "pvt->mc_node_id" directly in the debug message. This is another remnant
+> from when this function did register accesses.
 
-The "%p" in the trace output is by default hashes the pointer. An option
-was added to disable the hashing as reading trace output is a privileged
-operation (just like reading kallsyms). When hashing is disabled, the
-iter->fmt temp buffer is used to add "x" to "%p" into "%px" before sending
-to the svnprintf() functions.
+Ok, done.
 
-The problem with using iter->fmt, is that the trace_check_vprintf() that
-makes sure that trace events "%pX" pointers are not dereferencing freed
-addresses (and prints a warning if it does) also uses the iter->fmt to
-save to and use to print out for the trace file. When the hash_ptr option
-is disabled, the "%px" version is added to the iter->fmt buffer, and that
-then is passed to the trace_check_vprintf() function that then uses the
-iter->fmt as a temp buffer. Obviously this caused bad results.
+Avadhut, can you pls verify this fixes your issue too?
 
-This was noticed when backporting the persistent ring buffer to 5.10 and
-added this code without the option being disabled by default, so it failed
-one of the selftests because the sched_wakeup was missing the "comm"
-field:
+I'll run it on my boxes too, to make sure nothing breaks.
 
-     cat-907     [006] dN.4.   249.722403: sched_wakeup: comm= pid=74 prio=120 target_cpu=006
+Thx.
 
-Instead of showing:
-
-  <idle>-0       [004] dNs6.    49.076464: sched_wakeup: comm=sshd-session pid=896 prio=120 target_cpu=0040
-
-To fix this, change trace_check_vprintf() to modify the iter->fmt instead
-of copying to it. If the fmt passed in is not the iter->fmt, first copy
-the entire fmt string to iter->fmt and then iterate the iter->fmt. When
-the format needs to be processed, perform the following like actions:
-
-  save_ch = p[i];
-  p[i] = '\0';
-  trace_seq_printf(&iter->seq, p, str);
-  p[i] = save_ch;
-
-Cc: stable@vger.kernel.org
-Fixes: efbbdaa22bb78 ("tracing: Show real address for trace event arguments")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
-Changes since v1: https://lore.kernel.org/20241210172533.04bcd5f7@batman.local.home
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
+Date: Wed, 11 Dec 2024 12:07:42 +0100
+Subject: [PATCH] EDAC/amd64: Simplify ECC check on unified memory controllers
 
-- Added "goto print_fmt;" to jump to the "give up and print fmt" code as
-  p is no longer "const char *" and wasn't initialized to point to const char *fmt.
-  (caught by kernel test robot)
+The intent of the check is to see whether at least one UMC has ECC
+enabled. So do that instead of tracking which ones are enabled in masks
+which are too small in size anyway and lead to not loading the driver on
+Zen4 machines with UMCs enabled over UMC8.
 
+Fixes: e2be5955a886 ("EDAC/amd64: Add support for AMD Family 19h Models 10h-1Fh and A0h-AFh")
+Reported-by: Avadhut Naik <avadhut.naik@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: <stable@kernel.org>
+Link: https://lore.kernel.org/r/20241210212054.3895697-1-avadhut.naik@amd.com
+---
+ drivers/edac/amd64_edac.c | 32 ++++++++++----------------------
+ 1 file changed, 10 insertions(+), 22 deletions(-)
 
- kernel/trace/trace.c | 90 +++++++++++++++++++++++++++-----------------
- 1 file changed, 55 insertions(+), 35 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index be62f0ea1814..fbc9cdfd9c22 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -3711,8 +3711,10 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index ddfbdb66b794..5d356b7c4589 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -3362,36 +3362,24 @@ static bool dct_ecc_enabled(struct amd64_pvt *pvt)
+ 
+ static bool umc_ecc_enabled(struct amd64_pvt *pvt)
  {
- 	long text_delta = 0;
- 	long data_delta = 0;
--	const char *p = fmt;
- 	const char *str;
-+	char save_ch;
-+	char *buf = NULL;
-+	char *p;
- 	bool good;
- 	int i, j;
+-	u8 umc_en_mask = 0, ecc_en_mask = 0;
+-	u16 nid = pvt->mc_node_id;
+ 	struct amd64_umc *umc;
+-	u8 ecc_en = 0, i;
++	bool ecc_en = false;
++	int i;
  
-@@ -3720,7 +3722,7 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 		return;
++	/* Check whether at least one UMC is enabled: */
+ 	for_each_umc(i) {
+ 		umc = &pvt->umc[i];
  
- 	if (static_branch_unlikely(&trace_no_verify))
--		goto print;
-+		goto print_fmt;
- 
- 	/*
- 	 * When the kernel is booted with the tp_printk command line
-@@ -3735,8 +3737,21 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 
- 	/* Don't bother checking when doing a ftrace_dump() */
- 	if (iter->fmt == static_fmt_buf)
--		goto print;
-+		goto print_fmt;
- 
-+	if (fmt != iter->fmt) {
-+		int len = strlen(fmt);
-+		while (iter->fmt_size < len + 1) {
-+			/*
-+			 * If we can't expand the copy buffer,
-+			 * just print it.
-+			 */
-+			if (!trace_iter_expand_format(iter))
-+				goto print_fmt;
+-		/* Only check enabled UMCs. */
+-		if (!(umc->sdp_ctrl & UMC_SDP_INIT))
+-			continue;
+-
+-		umc_en_mask |= BIT(i);
+-
+-		if (umc->umc_cap_hi & UMC_ECC_ENABLED)
+-			ecc_en_mask |= BIT(i);
++		if (umc->sdp_ctrl & UMC_SDP_INIT &&
++		    umc->umc_cap_hi & UMC_ECC_ENABLED) {
++			ecc_en = true;
++			break;
 +		}
-+		strscpy(iter->fmt, fmt, iter->fmt_size);
-+	}
-+	p = iter->fmt;
- 	while (*p) {
- 		bool star = false;
- 		int len = 0;
-@@ -3748,14 +3763,6 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 		 * as well as %p[sS] if delta is non-zero
- 		 */
- 		for (i = 0; p[i]; i++) {
--			if (i + 1 >= iter->fmt_size) {
--				/*
--				 * If we can't expand the copy buffer,
--				 * just print it.
--				 */
--				if (!trace_iter_expand_format(iter))
--					goto print;
--			}
- 
- 			if (p[i] == '\\' && p[i+1]) {
- 				i++;
-@@ -3788,10 +3795,11 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 		if (!p[i])
- 			break;
- 
--		/* Copy up to the %s, and print that */
--		strncpy(iter->fmt, p, i);
--		iter->fmt[i] = '\0';
--		trace_seq_vprintf(&iter->seq, iter->fmt, ap);
-+		/* Print up to the %s */
-+		save_ch = p[i];
-+		p[i] = '\0';
-+		trace_seq_vprintf(&iter->seq, p, ap);
-+		p[i] = save_ch;
- 
- 		/* Add delta to %pS pointers */
- 		if (p[i+1] == 'p') {
-@@ -3837,6 +3845,8 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 			good = trace_safe_str(iter, str, star, len);
- 		}
- 
-+		p += i;
-+
- 		/*
- 		 * If you hit this warning, it is likely that the
- 		 * trace event in question used %s on a string that
-@@ -3849,41 +3859,51 @@ void trace_check_vprintf(struct trace_iterator *iter, const char *fmt,
- 		if (WARN_ONCE(!good, "fmt: '%s' current_buffer: '%s'",
- 			      fmt, seq_buf_str(&iter->seq.seq))) {
- 			int ret;
-+#define TEMP_BUFSIZ 1024
-+
-+			if (!buf) {
-+				char *buf = kmalloc(TEMP_BUFSIZ, GFP_KERNEL);
-+				if (!buf) {
-+					/* Need buffer to read address */
-+					trace_seq_printf(&iter->seq, "(0x%px)[UNSAFE-MEMORY]", str);
-+					p += j + 1;
-+					goto print;
-+				}
-+			}
-+			if (len >= TEMP_BUFSIZ)
-+				len = TEMP_BUFSIZ - 1;
- 
- 			/* Try to safely read the string */
- 			if (star) {
--				if (len + 1 > iter->fmt_size)
--					len = iter->fmt_size - 1;
--				if (len < 0)
--					len = 0;
--				ret = copy_from_kernel_nofault(iter->fmt, str, len);
--				iter->fmt[len] = 0;
--				star = false;
-+				ret = copy_from_kernel_nofault(buf, str, len);
-+				buf[len] = 0;
- 			} else {
--				ret = strncpy_from_kernel_nofault(iter->fmt, str,
--								  iter->fmt_size);
-+				ret = strncpy_from_kernel_nofault(buf, str, 1024);
- 			}
- 			if (ret < 0)
- 				trace_seq_printf(&iter->seq, "(0x%px)", str);
- 			else
--				trace_seq_printf(&iter->seq, "(0x%px:%s)",
--						 str, iter->fmt);
--			str = "[UNSAFE-MEMORY]";
--			strcpy(iter->fmt, "%s");
-+				trace_seq_printf(&iter->seq, "(0x%px:%s)", str, buf);
-+			trace_seq_puts(&iter->seq, "[UNSAFE-MEMORY]");
- 		} else {
--			strncpy(iter->fmt, p + i, j + 1);
--			iter->fmt[j+1] = '\0';
-+			save_ch = p[j + 1];
-+			p[j + 1] = '\0';
-+			if (star)
-+				trace_seq_printf(&iter->seq, p, len, str);
-+			else
-+				trace_seq_printf(&iter->seq, p, str);
-+			p[j + 1] = save_ch;
- 		}
--		if (star)
--			trace_seq_printf(&iter->seq, iter->fmt, len, str);
--		else
--			trace_seq_printf(&iter->seq, iter->fmt, str);
- 
--		p += i + j + 1;
-+		p += j + 1;
  	}
-  print:
- 	if (*p)
- 		trace_seq_vprintf(&iter->seq, p, ap);
-+	kfree(buf);
-+	return;
-+ print_fmt:
-+	trace_seq_vprintf(&iter->seq, fmt, ap);
+ 
+-	/* Check whether at least one UMC is enabled: */
+-	if (umc_en_mask)
+-		ecc_en = umc_en_mask == ecc_en_mask;
+-	else
+-		edac_dbg(0, "Node %d: No enabled UMCs.\n", nid);
+-
+-	edac_dbg(3, "Node %d: DRAM ECC %s.\n", nid, (ecc_en ? "enabled" : "disabled"));
++	edac_dbg(3, "Node %d: DRAM ECC %s.\n", pvt->mc_node_id, (ecc_en ? "enabled" : "disabled"));
+ 
+-	if (!ecc_en)
+-		return false;
+-	else
+-		return true;
++	return ecc_en;
  }
  
- const char *trace_event_format(struct trace_iterator *iter, const char *fmt)
+ static inline void
 -- 
-2.45.2
+2.43.0
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
