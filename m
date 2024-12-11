@@ -1,260 +1,211 @@
-Return-Path: <linux-kernel+bounces-442058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D18D39ED772
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:46:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F119ED774
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2080F1888DD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:46:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCAB91674B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD342210E9;
-	Wed, 11 Dec 2024 20:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C08622689C;
+	Wed, 11 Dec 2024 20:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Sino7N4R"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHV2rwch"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3208D259486;
-	Wed, 11 Dec 2024 20:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733950008; cv=pass; b=SPB7AJJHLwWKBZiWhOrrnh8FZ8BHD3AeJXGcSTnz97JbxSoLwOsh6xEMiLHe9n7NvWKTDVbNeDWncGm8S0qCGPT/3UxxmOsckOtViAcy7QUq4AEuJHpSOHJcMlru6CYsmY+GCVPcuCMral9L41eAMwndTdXNn/+XpxuMhOwSe4w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733950008; c=relaxed/simple;
-	bh=RmSK6AsmG2uId15th8lKdy6IVZGu7c1GXJwp4ekgKmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMwq+GH2oRZ8yCw1IvTkG+SjZ6HBptxN4+OHA/k4Ewagq4kG+COpjuSd7a8jW5T/QSyfez5MgghtuaWNnoJgoGyV6E4hk4wCY4twQaO03DBJN4X5+RUyCbXYVh/QhJt16xQVfKHiq6XGBkTiwn0YKYgykh9wZfrt+u/WOKb9tBA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Sino7N4R; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733949964; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QWcyrFWnH4Y8H6dcwOzQqEaV0SEsvqACGw54o4ftlIBQZQMPCflngtcHs5EKV73OQ0aXa9gPSDaOuQR7OOmH9rwu04smquzcA1ixDtnn49s4W/lbYyuwClyH8xAyy2zoDIe+wx/IbNJ4MFli2D14/Pf1MPyr2Gb6nERd1YfyDRA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733949964; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VXPnSM3GTeNHeZYS08ax4CHEV8xlYT9lwfiCoPy3wAo=; 
-	b=TV1XJ29RZRs8Pi93Xy3tFq6zNZEBDkQqe5CMpOdunqWrQFCi/HwxJsQMTulUUbph1rMUPvX4+2u0C1YSReKi5spqU67NoyKHp9+fVkaIk7ioYy/SoURdEuOYT9VnRFnb0yX1yiSIVJ/gnYIz+BPcSsV0Y1zfjkbHPQR1MvIevls=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733949964;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=VXPnSM3GTeNHeZYS08ax4CHEV8xlYT9lwfiCoPy3wAo=;
-	b=Sino7N4RbmipXtCFYryGQLF7QQDQl7IENYBxr4OW4yWdWQMtTU0qZTVA2UprbBnW
-	O9hqjiALFjS8CkIS23V6c4EEt89XgASA6+0+A5ByUc1g0myWRG0SqEfebzHsNebTYXt
-	RRvuFBDhaQCDEcgatpw+zwDBG/gCu9e7ZZOVqOHA=
-Received: by mx.zohomail.com with SMTPS id 1733949962296297.8827041831578;
-	Wed, 11 Dec 2024 12:46:02 -0800 (PST)
-Received: by mercury (Postfix, from userid 1000)
-	id BCA1A10604B1; Wed, 11 Dec 2024 21:45:56 +0100 (CET)
-Date: Wed, 11 Dec 2024 21:45:56 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Peter Geis <pgwipeout@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, 
-	=?utf-8?B?QWRyacOhbiBNYXJ0w61uZXo=?= Larumbe <adrian.larumbe@collabora.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
-	Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kernel@collabora.com, 
-	Dragan Simic <dsimic@manjaro.org>
-Subject: Re: [PATCH v5 3/7] pmdomain: rockchip: forward
- rockchip_do_pmu_set_power_domain errors
-Message-ID: <xe2wqm4ktutycxj7x4rskz4pn4cfmoci6zcgfxecmvc5bu7cqi@mqxi3pnehqq3>
-References: <20241211143044.9550-1-sebastian.reichel@collabora.com>
- <20241211143044.9550-4-sebastian.reichel@collabora.com>
- <CAMdYzYqLq=kSC8fiBapRS_8w0s8PaL9Yd46VgM56YbTEmUG1xA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668DD2036F6;
+	Wed, 11 Dec 2024 20:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733950031; cv=none; b=pqIUDbT5cl/INj/oofnuAA5QHbd4/eFLZHryhVB0D912N3vz2145R8WGbz+rqFet7JUTs2iFCZBx11mdaiMLyK8iSahdA1bYk+Px9LuuUt/+XOklHWP+5d7jaxTZW5Q/UV0AmY+pGO+EjQouBZYRQUSDHMN4goHWWEK9Z87zEWQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733950031; c=relaxed/simple;
+	bh=aknAFx8VaUwPVga7KKu4RUZNHyfZuQaVaB1D3qt7qZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ohjzOWKYRnDh+qpHVoOjxyriUiGulEFGNBKnmMOaK7eQz5PaGCY9Y9PN7blJ/Y9ocgRFF6wU/a2O3YRXtUQ1QbBipQK93xPvoXhpgPxLwaKvjbjLOM/rOTJXy+ECiGUMJcDhCv8jqB+CzFSlAow4iKR/PDEOgzyw2Enn0HFUP9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHV2rwch; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C69C9C4CED2;
+	Wed, 11 Dec 2024 20:47:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733950030;
+	bh=aknAFx8VaUwPVga7KKu4RUZNHyfZuQaVaB1D3qt7qZ4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=QHV2rwch1gz59dvCZw7JoUC2YzoswfWi76w8T8rY/qqAxs688/XXJGJBv3TAGBpp5
+	 yYDg7ahXE+Ejki3N83rRS6ysfCK9v4XlLwwJKhPfR5ZijS8wQz1PZivpNbKNKsjjVO
+	 6TZ/b/cqGF6d++KC6QfNhZDi8Uf+GPB7+ztgmftdPXVN8grzfNMmcs0ahHNWYtPb1T
+	 CEVOOHbJohTaHYVWKW3au0/ZZAj4WVzR4vfIPB7cOgTpuWJqlR6at7IDrEgPlyDyTV
+	 Lfnn/lZNreZYil7ihPnRBzUtwkpcbUhqE+9g8PNO0JN9WCv5peVnziOvr8E8RZMVay
+	 vTUKhHoSbndtg==
+Date: Wed, 11 Dec 2024 14:47:09 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jian-Hong Pan <jhp@endlessos.org>,
+	Alex Williamson <alex.williamson@redhat.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@endlessos.org,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	"David E. Box" <david.e.box@linux.intel.com>, kvm@vger.kernel.org
+Subject: Re: [PATCH v13] PCI/ASPM: Make pci_save_aspm_l1ss_state save both
+ child and parent's L1SS configuration
+Message-ID: <20241211204709.GA3305716@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pgyuyhmom73rgyyw"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMdYzYqLq=kSC8fiBapRS_8w0s8PaL9Yd46VgM56YbTEmUG1xA@mail.gmail.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/233.945.80
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241115072200.37509-3-jhp@endlessos.org>
 
+[+to Alex, +cc kvm]
 
---pgyuyhmom73rgyyw
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 3/7] pmdomain: rockchip: forward
- rockchip_do_pmu_set_power_domain errors
-MIME-Version: 1.0
+On Fri, Nov 15, 2024 at 03:22:02PM +0800, Jian-Hong Pan wrote:
+> PCI devices' parameters on the VMD bus have been programmed properly
+> originally. But, cleared after pci_reset_bus() and have not been restored
+> correctly. This leads the link's L1.2 between PCIe Root Port and child
+> device gets wrong configs.
 
-Hello Peter,
+17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for
+suspend/resume") appeared in v6.9 and added a bug in the save/restore
+path: we save the device L1SS state, but restore both the device L1SS
+state and the parent's L1SS state (when the parent state may be junk)
+afterwards.
 
-On Wed, Dec 11, 2024 at 02:53:34PM -0500, Peter Geis wrote:
-> On Wed, Dec 11, 2024 at 9:32=E2=80=AFAM Sebastian Reichel
-> <sebastian.reichel@collabora.com> wrote:
-> >
-> > Currently rockchip_do_pmu_set_power_domain prints a warning if there
-> > have been errors turning on the power domain, but it does not return
-> > any errors and rockchip_pd_power() tries to continue setting up the
-> > QOS registers. This usually results in accessing unpowered registers,
-> > which triggers an SError and a full system hang.
-> >
-> > This improves the error handling by forwarding the error to avoid
-> > kernel panics.
->=20
-> I think we should merge your patch here with my patch for returning
-> errors from rockchip_pmu_set_idle_request [1].
+Jian-Hong sees this on VMD, which makes sense because vmd uses
+pci_reset_bus() when enabling the VMD domain.
 
-I will have a look.
+But this should be a problem for any device reset, so I added you,
+Alex, in case you've seen this with the resets VFIO does?
 
-> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> > Tested-by: Heiko Stuebner <heiko@sntech.de>
-> > Tested-by: Adrian Larumbe <adrian.larumbe@collabora.com> # On Rock 5B
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > ---
-> >  drivers/pmdomain/rockchip/pm-domains.c | 34 +++++++++++++++++---------
-> >  1 file changed, 22 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/=
-rockchip/pm-domains.c
-> > index a161ee13c633..8f440f2883db 100644
-> > --- a/drivers/pmdomain/rockchip/pm-domains.c
-> > +++ b/drivers/pmdomain/rockchip/pm-domains.c
-> > @@ -533,16 +533,17 @@ static int rockchip_pmu_domain_mem_reset(struct r=
-ockchip_pm_domain *pd)
-> >         return ret;
-> >  }
-> >
-> > -static void rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain=
- *pd,
-> > -                                            bool on)
-> > +static int rockchip_do_pmu_set_power_domain(struct rockchip_pm_domain =
-*pd,
-> > +                                           bool on)
-> >  {
-> >         struct rockchip_pmu *pmu =3D pd->pmu;
-> >         struct generic_pm_domain *genpd =3D &pd->genpd;
-> >         u32 pd_pwr_offset =3D pd->info->pwr_offset;
-> >         bool is_on, is_mem_on =3D false;
-> > +       int ret;
-> >
-> >         if (pd->info->pwr_mask =3D=3D 0)
-> > -               return;
-> > +               return 0;
-> >
-> >         if (on && pd->info->mem_status_mask)
-> >                 is_mem_on =3D rockchip_pmu_domain_is_mem_on(pd);
-> > @@ -557,16 +558,21 @@ static void rockchip_do_pmu_set_power_domain(stru=
-ct rockchip_pm_domain *pd,
-> >
-> >         wmb();
-> >
-> > -       if (is_mem_on && rockchip_pmu_domain_mem_reset(pd))
-> > -               return;
-> > +       if (is_mem_on) {
-> > +               ret =3D rockchip_pmu_domain_mem_reset(pd);
-> > +               if (ret)
-> > +                       return ret;
-> > +       }
-> >
-> > -       if (readx_poll_timeout_atomic(rockchip_pmu_domain_is_on, pd, is=
-_on,
-> > -                                     is_on =3D=3D on, 0, 10000)) {
-> > -               dev_err(pmu->dev,
-> > -                       "failed to set domain '%s', val=3D%d\n",
-> > -                       genpd->name, is_on);
-> > -               return;
-> > +       ret =3D readx_poll_timeout_atomic(rockchip_pmu_domain_is_on, pd=
-, is_on,
-> > +                                       is_on =3D=3D on, 0, 10000);
-> > +       if (ret) {
-> > +               dev_err(pmu->dev, "failed to set domain '%s' %s, val=3D=
-%d\n",
-> > +                       genpd->name, on ? "on" : "off", is_on);
-> > +               return ret;
-> >         }
-> > +
-> > +       return 0;
-> >  }
-> >
-> >  static int rockchip_pd_power(struct rockchip_pm_domain *pd, bool power=
-_on)
-> > @@ -592,7 +598,11 @@ static int rockchip_pd_power(struct rockchip_pm_do=
-main *pd, bool power_on)
-> >                         rockchip_pmu_set_idle_request(pd, true);
-> >                 }
-> >
-> > -               rockchip_do_pmu_set_power_domain(pd, power_on);
-> > +               ret =3D rockchip_do_pmu_set_power_domain(pd, power_on);
-> > +               if (ret < 0) {
-> > +                       clk_bulk_disable(pd->num_clks, pd->clks);
-> > +                       return ret;
->=20
-> Looking at it, we shouldn't return directly from here because the
-> mutex never gets unlocked.
+We also save/restore for suspend, but I suppose we don't notice the
+problem there because in that case we save state for *all* devices,
+so the parent state should be valid when we restore.
 
-Yes, we should do that after patch 2/7 from this series :)
+> Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
+> bridge and NVMe device should have the same LTR1.2_Threshold value.
+> However, they are configured as different values in this case:
+> 
+> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
+>   ...
+>   Capabilities: [200 v1] L1 PM Substates
+>     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+>       T_CommonMode=0us LTR1.2_Threshold=0ns
+>     L1SubCtl2: T_PwrOn=0us
+> 
+> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
+>   ...
+>   Capabilities: [900 v1] L1 PM Substates
+>     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+>       T_CommonMode=0us LTR1.2_Threshold=101376ns
+>     L1SubCtl2: T_PwrOn=50us
 
-> Instead of repeating clk_bulk_disable and return ret for each failure,
-> we can initialize ret =3D 0, have a goto: out pointing to
-> clk_bulk_disable, and change return 0 to return ret at the end.
+I think T_PwrOn should also be the same for both devices, FWIW.
 
-Right now there is only a single clk_bulk_disable() in an error
-case, so I did not use the typical error goto chain. I suppose
-it makes a lot more sense with proper error handling for the calls
-to rockchip_pmu_set_idle_request().
+In fact, I think L1SS should be configured identically for both ends
+of the link, with the exceptions of Link Activation and
+Common_Mode_Restore_Time, which are RsvdP for the Upstream Port.
 
-Greetings,
-
--- Sebastian
-
->=20
-> What do you think?
->=20
-> Very Respectfully,
-> Peter Geis
->=20
-> [1] https://lore.kernel.org/linux-rockchip/20241210013010.81257-2-pgwipeo=
-ut@gmail.com/
->=20
-> > +               }
-> >
-> >                 if (power_on) {
-> >                         /* if powering up, leave idle mode */
-> > --
-> > 2.45.2
-> >
-> >
-> > _______________________________________________
-> > Linux-rockchip mailing list
-> > Linux-rockchip@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
---pgyuyhmom73rgyyw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdZ+fcACgkQ2O7X88g7
-+poitxAApbTTrpEjlB2v52/YhGg5DXkiutsrUhEmLjEn5X8QpxlCWLwT0NXPGdgi
-VbJKJtKTrJAHlE1ckkg3XApoJbqSHWqsjOtvc6m8D1GINUKOiK3sj8DUg6EK/dTy
-PVGXwigbmpjud6JcbRLSLarsdoCu4SAuuIr77Lvw/b8f29mpA5AeAEQBEgEdCGpX
-WBcNaYdmnSKy341CqQHISRteNiTwooY0s+22MaSfMErxyv1yfCYdzKBHq9p5wSi5
-Txq5w6oKZ5ASPzStI7jX/KK7Dl6eqi8I91bxbP+ddPHtVw+7LWzPmk3lu4/Zc8pq
-qiPHQ20psK4XeSfhFHGl0aElE8x3LD/CFydUa3VM1gkz8tofcgQgtfZ9p/in7TKj
-e7uc4I+KbJQx89Gz20ioAC3q92o179O6JqbomKoYyEcsXfSpzrDwZ2X4g3X+mvsM
-IRetDXYaakkfYfiRK8I36FjP/kiPRBaS3vlch1k+j8wgyVJmgV8bGrNejET/U0ls
-+hrz3lheTZoPw4caoqn7mGQy6iIcMfk6C26IgYWtGgmhgTJn5L/K/r6pJHXrevq6
-m9yKdkJcXbbH5lh5zVFQnbrcGTDI5v+oV5hNKcxpIAwZZF0mJAwb+HWgkn1uSuJu
-cBbLIBr5U2ZcT1DmSNDsYSCRufYW87NXv0l8wVVKAvgtc66TQrg=
-=FhZH
------END PGP SIGNATURE-----
-
---pgyuyhmom73rgyyw--
+> Here is VMD mapped PCI device tree:
+> 
+> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
+>  | ...
+>  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
+>               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
+> 
+> When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
+> restores NVMe's state before and after reset. Then, when it restores the
+> NVMe's state, ASPM code restores L1SS for both the parent bridge and the
+> NVMe in pci_restore_aspm_l1ss_state(). The NVMe's L1SS is restored
+> correctly. But, the parent bridge's L1SS is restored with a wrong value 0x0
+> because the parent bridge's L1SS wasn't saved by pci_save_aspm_l1ss_state()
+> before reset.
+> 
+> To avoid pci_restore_aspm_l1ss_state() restore wrong value to the parent's
+> L1SS config like this example, make pci_save_aspm_l1ss_state() save the
+> parent's L1SS config, if the PCI device has a parent.
+> 
+> Link: https://lore.kernel.org/linux-pci/CAPpJ_eexU0gCHMbXw_z924WxXw0+B6SdS4eG9oGpEX1wmnMLkQ@mail.gmail.com/
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218394
+> Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for suspend/resume")
+> Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Reviewed-by: David E. Box <david.e.box@linux.intel.com>
+> ---
+> v9:
+> - Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD instead.
+> 
+> v10:
+> - Drop the v9 fix about drivers/pci/controller/vmd.c
+> - Fix in PCIe ASPM to make it symmetric between pci_save_aspm_l1ss_state()
+>   and pci_restore_aspm_l1ss_state()
+> 
+> v11:
+> - Introduce __pci_save_aspm_l1ss_state as a resusable helper function
+>   which is same as the original pci_configure_aspm_l1ss
+> - Make pci_save_aspm_l1ss_state invoke __pci_save_aspm_l1ss_state for
+>   both child and parent devices
+> - Smooth the commit message
+> 
+> v12:
+> - Update the commit message
+> 
+> v13:
+> - Tweak the commit message to make it more like a general fix
+> - When pci_alloc_dev() prepares the pci_dev, it sets the pci_dev's bus.
+>   So, let pci_save_aspm_l1ss_state() access pdev's bus directly.
+> - Add comment in pci_save_aspm_l1ss_state() to describe why it does not
+>   save both the PCIe device and the parent's L1SS config like
+>   pci_restore_aspm_l1ss_state() directly.
+> 
+>  drivers/pci/pcie/aspm.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 28567d457613..0bcd060aab32 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -79,7 +79,7 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
+>  			ERR_PTR(rc));
+>  }
+>  
+> -void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> +static void __pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+>  {
+>  	struct pci_cap_saved_state *save_state;
+>  	u16 l1ss = pdev->l1ss;
+> @@ -101,6 +101,22 @@ void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+>  	pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
+>  }
+>  
+> +void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> +{
+> +	struct pci_dev *parent = pdev->bus->self;
+> +
+> +	__pci_save_aspm_l1ss_state(pdev);
+> +
+> +	/*
+> +	 * Save parent's L1 substate configuration, if the parent has not saved
+> +	 * state. It avoids pci_restore_aspm_l1ss_state() restore wrong value to
+> +	 * parent's L1 substate configuration. However, the parent might be
+> +	 * nothing, if pdev is a PCI bridge.
+> +	 */
+> +	if (parent && !parent->state_saved)
+> +		__pci_save_aspm_l1ss_state(parent);
+> +}
+> +
+>  void pci_restore_aspm_l1ss_state(struct pci_dev *pdev)
+>  {
+>  	struct pci_cap_saved_state *pl_save_state, *cl_save_state;
+> -- 
+> 2.47.0
+> 
 
