@@ -1,168 +1,208 @@
-Return-Path: <linux-kernel+bounces-441383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FB89ECD97
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:46:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD619ECDA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 14:47:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8668D2839A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:46:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24CEA161496
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 13:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D4B23690E;
-	Wed, 11 Dec 2024 13:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178872368F6;
+	Wed, 11 Dec 2024 13:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R328R+Vn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y/LKFdFE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA35422913A;
-	Wed, 11 Dec 2024 13:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6A2233687;
+	Wed, 11 Dec 2024 13:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733924717; cv=none; b=Pps8BBQKSOoZhGeDi/B1LbqtHrzBCwmitnakCaLmvOl+tdgoONr2eCGGYzwXqRPzh7mB/sw1jR5Fd4TwdjrrabSVSElGe02Ehs/3XRrE5bYEt+Xx5ejqjoK4VJlO1Gm0jpDFyhVT+2Uf59Lxrz3Dkl5KT6orXuSJhZiQ79yDyUg=
+	t=1733924772; cv=none; b=aSFg+sJd5Q9axB3M0XCPOOcBrBpLdSAPOIavRk1tG0Zp+y6ibLWcaeXhkyXiYfAMd/j/3ORJJ2EZ7O7eRlXjzShwnNrxlTUoF22kEEBkbu1UDDGRQOn335XTN34MxozCoGBgHr6epK9sF8DjAncRC35H2bTFavg1/DcaHPgedfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733924717; c=relaxed/simple;
-	bh=1Vh/lJfGergY2Cfgz9dLUhsUnujS1YPQPim9cgg0SbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cI5/dNKnbXWw6cJZ0du1/L4laInjRnGRM9CEnJkvgeWFMPN1XMDIsl99H8f4b3kktN/jINTwBDBPQm8jBGoZ/OLKvw/nUSgrCwqEV6tmnDhLMl0Hg9mYunBGPPKIRDwPwbQoxKWIFrFmJvVY+OrJBqqbBWvF2zb16Xm9xfmSWzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R328R+Vn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7387C4CED2;
-	Wed, 11 Dec 2024 13:45:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733924716;
-	bh=1Vh/lJfGergY2Cfgz9dLUhsUnujS1YPQPim9cgg0SbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R328R+VnTFMGl2Bx2kJgIzuAEMWHWICYjeNWB3ONLfLywltos6VGbVPSkbtHEINis
-	 uvi6iR+nE0BP8TadOkB27BB35U6quNc3rZ63G+XOdU6aJ7YxMIzCCu/s0pq2uAcRYR
-	 S8Mgx16Z5y7iogzag2JObGCjmYgl/QewVu9Oq8zU=
-Date: Wed, 11 Dec 2024 14:45:14 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 01/16] rust: pass module name to `Module::init`
-Message-ID: <2024121121-gimmick-etching-40fb@gregkh>
-References: <20241210224947.23804-1-dakr@kernel.org>
- <20241210224947.23804-2-dakr@kernel.org>
- <2024121112-gala-skincare-c85e@gregkh>
- <2024121111-acquire-jarring-71af@gregkh>
- <2024121128-mutt-twice-acda@gregkh>
- <2024121131-carnival-cash-8c5f@gregkh>
- <Z1mEAPlSXA9c282i@cassiopeiae>
- <Z1mG14DMoIzh6xtj@cassiopeiae>
- <2024121109-ample-retrain-bde0@gregkh>
- <Z1mUG8ruFkPhVZwj@cassiopeiae>
+	s=arc-20240116; t=1733924772; c=relaxed/simple;
+	bh=P2PQ2vFtUndMC7zzOBl61FW7HLiReXx8jF9TSzVoLxE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UPUylM+gSXF3JY7IbRWnVwM/BMNllakuUetncdvRXNfjt20RXgE1SQAlY2085GaiP9rTOZW73xZ93+P69U4yHyybRutnl6MjoZiwe7tH6lWliBK8O2uNd058R7hGDlh9pOFpKoNfewgffOrAkBSf3XJN6HY0I/PRC4Lm4HoZdk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y/LKFdFE; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733924770; x=1765460770;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=P2PQ2vFtUndMC7zzOBl61FW7HLiReXx8jF9TSzVoLxE=;
+  b=Y/LKFdFEfM5RH9tbLPmctoazcmK+0A3/UZDIJaQWGTN8rd3873W66i6N
+   iKAcOFQFvRyC4ZVerc85HUIuTnLK5cXyFTC00jJqs+/ijwUKIGDTM5hVh
+   +JtGs/Y4w+Wr+haoboT+6m64/pLHmcjlx6a80Ob3xS+fR0x7xEQj+AQwF
+   AJNou4Hsi4nFk3DGo4448AjRMyDDLLodv2Ozb2DV4CfwiS/qsCgcuq5gs
+   otoPJPAOZ3S3yrsF4Mj+kttiCTjZs7woj7Mc3TFFxWt8qnz7ZvG3+T54U
+   69T3qwyndAXoszVTst4Oq8MxsOfoG9ulg9uw8+soyj2ffAuU39LJDMu10
+   A==;
+X-CSE-ConnectionGUID: kpOPQ+n9RGKpg0k8Ll5qkg==
+X-CSE-MsgGUID: DzNerxBsTWm4x4LCOgEEdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="44912752"
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="44912752"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 05:46:03 -0800
+X-CSE-ConnectionGUID: OLxoQH+DRBqZwHS+Zy/tYA==
+X-CSE-MsgGUID: FewiAaAbTiGaI8FZj+15Ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="95634672"
+Received: from p12ill20yoongsia.png.intel.com ([10.88.227.28])
+  by fmviesa007.fm.intel.com with ESMTP; 11 Dec 2024 05:45:59 -0800
+From: Song Yoong Siang <yoong.siang.song@intel.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH iwl-next v2 1/1] igc: Improve XDP_SETUP_PROG process
+Date: Wed, 11 Dec 2024 21:45:32 +0800
+Message-Id: <20241211134532.3489335-1-yoong.siang.song@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1mUG8ruFkPhVZwj@cassiopeiae>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 02:31:07PM +0100, Danilo Krummrich wrote:
-> On Wed, Dec 11, 2024 at 02:14:37PM +0100, Greg KH wrote:
-> > On Wed, Dec 11, 2024 at 01:34:31PM +0100, Danilo Krummrich wrote:
-> > > On Wed, Dec 11, 2024 at 01:22:33PM +0100, Danilo Krummrich wrote:
-> > > > On Wed, Dec 11, 2024 at 12:05:10PM +0100, Greg KH wrote:
-> > > > > On Wed, Dec 11, 2024 at 11:59:54AM +0100, Greg KH wrote:
-> > > > > > On Wed, Dec 11, 2024 at 11:48:23AM +0100, Greg KH wrote:
-> > > > > > > On Wed, Dec 11, 2024 at 11:45:20AM +0100, Greg KH wrote:
-> > > > > > > > On Tue, Dec 10, 2024 at 11:46:28PM +0100, Danilo Krummrich wrote:
-> > > > > > > > > In a subsequent patch we introduce the `Registration` abstraction used
-> > > > > > > > > to register driver structures. Some subsystems require the module name on
-> > > > > > > > > driver registration (e.g. PCI in __pci_register_driver()), hence pass
-> > > > > > > > > the module name to `Module::init`.
-> > > > > > > > 
-> > > > > > > > Nit, we don't need the NAME of the PCI driver (well, we do like it, but
-> > > > > > > > that's not the real thing), we want the pointer to the module structure
-> > > > > > > > in the register_driver call.
-> > > > > > > > 
-> > > > > > > > Does this provide for that?  I'm thinking it does, but it's not the
-> > > > > > > > "name" that is the issue here.
-> > > > > > > 
-> > > > > > > Wait, no, you really do want the name, don't you.  You refer to
-> > > > > > > "module.0" to get the module structure pointer (if I'm reading the code
-> > > > > > > right), but as you have that pointer already, why can't you just use
-> > > > > > > module->name there as well as you have a pointer to a valid module
-> > > > > > > structure that has the name already embedded in it.
-> > > > > > 
-> > > > > > In digging further, it's used by the pci code to call into lower layers,
-> > > > > > but why it's using a different string other than the module name string
-> > > > > > is beyond me.  Looks like this goes way back before git was around, and
-> > > > > > odds are it's my fault for something I wrote a long time ago.
-> > > > > > 
-> > > > > > I'll see if I can just change the driver core to not need a name at all,
-> > > > > > and pull it from the module which would make all of this go away in the
-> > > > > > end.  Odds are something will break but who knows...
-> > > > > 
-> > > > > Nope, things break, the "name" is there to handle built-in modules (as
-> > > > > the module pointer will be NULL.)
-> > > > > 
-> > > > > So what you really want is not the module->name (as I don't think that
-> > > > > will be set), but you want KBUILD_MODNAME which the build system sets.
-> > > > 
-> > > > That's correct, and the reason why I pass through this name argument.
-> > > > 
-> > > > Sorry I wasn't able to reply earlier to save you some time.
-> > > > 
-> > > > > You shouldn't need to pass the name through all of the subsystems here,
-> > > > > just rely on the build system instead.
-> > > > > 
-> > > > > Or does the Rust side not have KBUILD_MODNAME?
-> > > > 
-> > > > AFAIK, it doesn't (or didn't have at the time I wrote the patch).
-> > > > 
-> > > > @Miguel: Can we access KBUILD_MODNAME conveniently?
-> > > 
-> > > Actually, I now remember there was another reason why I pass it through in
-> > > `Module::init`.
-> > > 
-> > > Even if we had env!(KBUILD_MODNAME) already, I'd want to use it from the bus
-> > > abstraction code, e.g. rust/kernel/pci.rs. But since this is generic code, it
-> > > won't get the KBUILD_MODNAME from the module that is using the bus abstraction.
-> > 
-> > Rust can't do that in a macro somehow that all pci rust drivers can pull
-> > from?
-> 
-> The problem is that register / unregister is encapsulated within methods of the
-> abstraction types. So the C macro trick (while generally possible) isn't
-> applicable.
+Improve XDP_SETUP_PROG process by avoiding unnecessary link down event.
 
-Really?  You can't have something in a required "register()" type function?
-Something for when the driver "instance" is created as part of
-pci::Driver?  You do that today in your sample driver for the id table:
-	const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
+This patch is tested by using ip link set xdpdrv command to attach a simple
+XDP program which always return XDP_PASS.
 
-Something else called DRIVER_NAME that you could then set:
-	const DRIVER_NAME: env!(KBUILD_MODNAME);
+Before this patch, attaching xdp program will cause ptp4l to lost sync for
+few seconds, as shown in ptp4l log below:
+  ptp4l[198.082]: rms    4 max    8 freq   +906 +/-   2 delay    12 +/-   0
+  ptp4l[199.082]: rms    3 max    4 freq   +906 +/-   3 delay    12 +/-   0
+  ptp4l[199.536]: port 1 (enp2s0): link down
+  ptp4l[199.536]: port 1 (enp2s0): SLAVE to FAULTY on FAULT_DETECTED (FT_UNSPECIFIED)
+  ptp4l[199.600]: selected local clock 22abbc.fffe.bb1234 as best master
+  ptp4l[199.600]: port 1 (enp2s0): assuming the grand master role
+  ptp4l[199.600]: port 1 (enp2s0): master state recommended in slave only mode
+  ptp4l[199.600]: port 1 (enp2s0): defaultDS.priority1 probably misconfigured
+  ptp4l[202.266]: port 1 (enp2s0): link up
+  ptp4l[202.300]: port 1 (enp2s0): FAULTY to LISTENING on INIT_COMPLETE
+  ptp4l[205.558]: port 1 (enp2s0): new foreign master 44abbc.fffe.bb2144-1
+  ptp4l[207.558]: selected best master clock 44abbc.fffe.bb2144
+  ptp4l[207.559]: port 1 (enp2s0): LISTENING to UNCALIBRATED on RS_SLAVE
+  ptp4l[208.308]: port 1 (enp2s0): UNCALIBRATED to SLAVE on MASTER_CLOCK_SELECTED
+  ptp4l[208.933]: rms  742 max 1303 freq   -195 +/- 682 delay    12 +/-   0
+  ptp4l[209.933]: rms  178 max  274 freq   +387 +/- 243 delay    12 +/-   0
 
-Also, I think you will want this for when a single module registers
-multiple drivers which I think can happen at times, so you could
-manually override the DRIVER_NAME field.
+After this patch, attaching xdp program no longer cause ptp4l to lost sync,
+as shown on ptp4l log below:
+  ptp4l[201.183]: rms    1 max    3 freq   +959 +/-   1 delay     8 +/-   0
+  ptp4l[202.183]: rms    1 max    3 freq   +961 +/-   2 delay     8 +/-   0
+  ptp4l[203.183]: rms    2 max    3 freq   +958 +/-   2 delay     8 +/-   0
+  ptp4l[204.183]: rms    3 max    5 freq   +961 +/-   3 delay     8 +/-   0
+  ptp4l[205.183]: rms    2 max    4 freq   +964 +/-   3 delay     8 +/-   0
 
-And if DRIVER_NAME doesn't get set, well, you just don't get the module
-symlink in sysfs, just like what happens today if you don't provide that
-field (but for PCI drivers, the .h file does it automatically for you.)
+Besides, before this patch, attaching xdp program will cause flood ping to
+loss 10 packets, as shown in ping statistics below:
+  --- 169.254.1.2 ping statistics ---
+  100000 packets transmitted, 99990 received, +6 errors, 0.01% packet loss, time 34001ms
+  rtt min/avg/max/mdev = 0.028/0.301/3104.360/13.838 ms, pipe 10, ipg/ewma 0.340/0.243 ms
 
-Anyway, this is a driver issue, NOT a module issue, so having to "plumb"
-the module name all the way down through this really isn't the best
-abstraction to do here from what I can tell.
+After this patch, attaching xdp program no longer cause flood ping to loss
+any packets, as shown in ping statistics below:
+  --- 169.254.1.2 ping statistics ---
+  100000 packets transmitted, 100000 received, 0% packet loss, time 32326ms
+  rtt min/avg/max/mdev = 0.027/0.231/19.589/0.155 ms, pipe 2, ipg/ewma 0.323/0.322 ms
 
-thanks,
+On the other hand, this patch is also tested with tools/testing/selftests/
+bpf/xdp_hw_metadata app to make sure XDP zero-copy is working fine with
+XDP Tx and Rx metadata. Below is the result of last packet after received
+10000 UDP packets with interval 1 ms:
+  poll: 1 (0) skip=0 fail=0 redir=10000
+  xsk_ring_cons__peek: 1
+  0x55881c7ef7a8: rx_desc[9999]->addr=8f110 addr=8f110 comp_addr=8f110 EoP
+  rx_hash: 0xFB9BB6A3 with RSS type:0x1
+  HW RX-time:   1733923136269470866 (sec:1733923136.2695) delta to User RX-time sec:0.0000 (43.280 usec)
+  XDP RX-time:   1733923136269482482 (sec:1733923136.2695) delta to User RX-time sec:0.0000 (31.664 usec)
+  No rx_vlan_tci or rx_vlan_proto, err=-95
+  0x55881c7ef7a8: ping-pong with csum=ab19 (want 315b) csum_start=34 csum_offset=6
+  0x55881c7ef7a8: complete tx idx=9999 addr=f010
+  HW TX-complete-time:   1733923136269591637 (sec:1733923136.2696) delta to User TX-complete-time sec:0.0001 (108.571 usec)
+  XDP RX-time:   1733923136269482482 (sec:1733923136.2695) delta to User TX-complete-time sec:0.0002 (217.726 usec)
+  HW RX-time:   1733923136269470866 (sec:1733923136.2695) delta to HW TX-complete-time sec:0.0001 (120.771 usec)
+  0x55881c7ef7a8: complete rx idx=10127 addr=8f110
 
-greg k-h
+Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
+---
+V2 changelog:
+ - show some examples of problem in commit msg. (Vinicius)
+ - igc_close()/igc_open() are too big a hammer for installing a new XDP
+   program. Only do we we really need. (Vinicius)
+---
+ drivers/net/ethernet/intel/igc/igc_xdp.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/igc/igc_xdp.c b/drivers/net/ethernet/intel/igc/igc_xdp.c
+index 869815f48ac1..64b04aad614c 100644
+--- a/drivers/net/ethernet/intel/igc/igc_xdp.c
++++ b/drivers/net/ethernet/intel/igc/igc_xdp.c
+@@ -14,6 +14,7 @@ int igc_xdp_set_prog(struct igc_adapter *adapter, struct bpf_prog *prog,
+ 	bool if_running = netif_running(dev);
+ 	struct bpf_prog *old_prog;
+ 	bool need_update;
++	int i;
+ 
+ 	if (dev->mtu > ETH_DATA_LEN) {
+ 		/* For now, the driver doesn't support XDP functionality with
+@@ -24,8 +25,13 @@ int igc_xdp_set_prog(struct igc_adapter *adapter, struct bpf_prog *prog,
+ 	}
+ 
+ 	need_update = !!adapter->xdp_prog != !!prog;
+-	if (if_running && need_update)
+-		igc_close(dev);
++	if (if_running && need_update) {
++		for (i = 0; i < adapter->num_rx_queues; i++) {
++			igc_disable_rx_ring(adapter->rx_ring[i]);
++			igc_disable_tx_ring(adapter->tx_ring[i]);
++			napi_disable(&adapter->rx_ring[i]->q_vector->napi);
++		}
++	}
+ 
+ 	old_prog = xchg(&adapter->xdp_prog, prog);
+ 	if (old_prog)
+@@ -36,8 +42,13 @@ int igc_xdp_set_prog(struct igc_adapter *adapter, struct bpf_prog *prog,
+ 	else
+ 		xdp_features_clear_redirect_target(dev);
+ 
+-	if (if_running && need_update)
+-		igc_open(dev);
++	if (if_running && need_update) {
++		for (i = 0; i < adapter->num_rx_queues; i++) {
++			napi_enable(&adapter->rx_ring[i]->q_vector->napi);
++			igc_enable_tx_ring(adapter->tx_ring[i]);
++			igc_enable_rx_ring(adapter->rx_ring[i]);
++		}
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
+
 
