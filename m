@@ -1,158 +1,126 @@
-Return-Path: <linux-kernel+bounces-442044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666239ED74E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:37:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD7F9ED751
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:38:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2497E163C8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:37:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CBAB188A1D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E416420B810;
-	Wed, 11 Dec 2024 20:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A9F225A56;
+	Wed, 11 Dec 2024 20:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RjHgHMd0"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gejs+bbB"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B00A209695
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F7E225A33
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733949467; cv=none; b=eFAKlu5ECG1QAAwRPNG6jc0s+G6MGil7uHb0H9a02RcYfRL7pNuVSgLEhtyGvwjihZjkk6TsIJZ00u15jACZoOecctw1kCiC+k3jodYfQjZqtv9gS1AZU8a4Hi/dqDV+9ZnbOgkRBgJJW6THIT/Y7db51nlIFaJKNqwwcdGnOk0=
+	t=1733949472; cv=none; b=fbXGVd3JzfByqjLiPw0+BBxcN/9EBP/YkDHzSqPy9k8ziqN5ybhfCjw9JIG+cj/HbTwIR8d+d8s6gEyQmBBtjcN3AEZ8tm76ccfFBMYZjMKOvIAnhrhWNCEkFn4GN03EWIUWLyEf5zlGoj2bG+10F3YlR+g9ulmroPjFxG5tzu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733949467; c=relaxed/simple;
-	bh=9YSjFkd0Ikd+gYJR9d1ukXVWZnbDGV+dFE1EVawD6Bg=;
-	h=Content-Type:Message-ID:Date:MIME-Version:To:Cc:From:Subject; b=RsyjQlvO6wEgPEv2D11GV0W5D8vfHG4R663IfuamjMi+JNJkP5EHZxSy+1CRjgVE1ze6MO/oYG+sJx0NF+imZ+XlaQZnSXF2w3fB164yd18EFZOiiO8L7EBhjbX+uk87XGxuDKBE0w5l2woIfRPSF9AKfZb7P21ZvWpDYKzFMWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RjHgHMd0; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-844ba46e0e4so176753939f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:37:44 -0800 (PST)
+	s=arc-20240116; t=1733949472; c=relaxed/simple;
+	bh=py3efSUAyRMleagDedwpV2XljaINIU+e6U/z0umBLxs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=G0QdHBfm2Gp6KDEP39b18o18hOjTeikfnaPidOjRvA7DW9fyrIEvVPC3g8F1SZsYX3FeWQYQ3Mf/mJymp0/db7oH6MRrv17ic5IFrblxn5VbB8b9Lr7ORun+qegnTc1cLh7zibpGpXboLs+IMpRF25x+KzPLSlaUBdKpe49xqDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gejs+bbB; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434ab114753so47824995e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:37:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1733949463; x=1734554263; darn=vger.kernel.org;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=SxohKwxXt9yfnit8Y5nOLuGD3ESesQ489Y5a7mGse+U=;
-        b=RjHgHMd0+Kgs6uvj26+3ydKZq1uc/w/dPVsc8YWu05HNV3AYTSMPMpQuclGTcYkfhl
-         lBP2o3L/MtApTBSmRomGMQwGkWSKeWREj1LM/SrEkOQTtRnp7agcZqMyhshPH5m0IHnb
-         JgMV5R76kMpOhwhDC4KY8+VE1rbhOmeHPGchw=
+        d=linaro.org; s=google; t=1733949468; x=1734554268; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HlaSWtOv+uqBTc8ZWTohBmESKhd/YTad6Sqvxj+0fo4=;
+        b=gejs+bbBIH7xBtEifsPyN7YEwSTJuxCzXsUoBzRCiio33Ymlf+BcVhInOm8OxL/xH5
+         8ZGWdudPENKYgSruWg6ZauU2dgj0GH35/9cXo6DjxLGS8bCtBlSZdL9VPaNVqAqN0lMd
+         MB6eZX8RT+fIwpneFjkwJLoqm6RcIwwxMhYjBf7Qk6GYj/ZGf3lya7x0m5GYFn16uXSy
+         vBUCUGi6jUzlCt/04x75yfXWscZVyCPa85Ngzj4ulMw/ctlqIzBeFyb+jZKIqBlAiUq7
+         g14zGq6Sm+JaIr2Ow5qCLzycGhaKJk9+/r8ZWbgOU4ohyuDPd/2v/JXMlY0S0JlJtghG
+         fa+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733949463; x=1734554263;
-        h=subject:from:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SxohKwxXt9yfnit8Y5nOLuGD3ESesQ489Y5a7mGse+U=;
-        b=ZTZpDocl8+7ySgpNXBEIkodew1QkIX7BiqCTURv2VB7FZkCo68hwP3F0TJB712i+/n
-         YvNDzbfJTsc5MDq9iO2Gk58RhCeP2HZtqEDG35ly7dQW9hs6sQTGMeirmdxC5d3DlZYO
-         tEvdZgzr381xyQ1JBDPk7jXmeT+VUlc2snyuggcbcIYN9CDzXlivkS5RqTE+S0mhrWfm
-         Qx3JLdV/A8q2lJekAidsrXvTaT4VL0vMCyj+kSuqvkQ1YGDsOYIYTE6gvA1nZVbUBXDh
-         FVK1yskgxS+e2Cmmuv4jIxzQ2OfHWBr+6M2haGPcBw2zOIgeyAELkXS43gJ5t4bRMJ6y
-         uHig==
-X-Forwarded-Encrypted: i=1; AJvYcCU5J8C3iO4tCu+5JiAM39iRzOhjqDrZAYqlqrn/faVJubfjnAAxUScFQ7O/98B9LndoCQnKNWkxVn5oBWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTkfaHyOdtnaVwAa4nuyZGNq+5UweVOKhthruEe9gd8QxLxeii
-	GpZFP9WDxMKpJWrmYto2LpItepy1JJWRg2NOsyltK4pT+WDWlQP54W7ypdW+SC0=
-X-Gm-Gg: ASbGnctatCkr1sPUZbLbsZAqwSOfuIqmCwTDQOExk4RQx1Eq47hSPHtI5Bqhubgg52u
-	YJS5QobPNqh4AaGeBq0OgLSiTYj0FPTsvksDHUmmUn4DEYt1iuVycFFLx7TVTLIN/1FooCOoXU0
-	uklQK7msv+UOJUYZkORAD5VEprN47u1GrHabAqzesCOYf5JVNe0evbkWj/DdbFMYAtQEBVPX9A+
-	xkWflxAHQoTEvBvixQ9Pt03nNRKj8EdcQCfbBJayHlfMT/bBOb3U9tjH3YSsuH3JA==
-X-Google-Smtp-Source: AGHT+IFakvpKG+9hRpBEPAnACboJindxqb6rGLetngrQQzz2gzfaNZLtJ0K6Ssj2ijKWbbPgS6FmwA==
-X-Received: by 2002:a05:6602:1612:b0:843:ea96:f707 with SMTP id ca18e2360f4ac-844d7472524mr106813539f.8.1733949463429;
-        Wed, 11 Dec 2024 12:37:43 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-844d3f37f77sm25248039f.46.2024.12.11.12.37.42
+        d=1e100.net; s=20230601; t=1733949468; x=1734554268;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HlaSWtOv+uqBTc8ZWTohBmESKhd/YTad6Sqvxj+0fo4=;
+        b=F69y09hrNgygPjbnYumdFJyj8Yu+BgE93+MzZtvXp6NB+BCgZjWYQN8u04ib8+D028
+         P3kDCz2J8K8qtS+Dm+ECvjw+OKz5GBkvz9Srh5ZZuVOZR8AfT9w18ncw9Uq7SloDbqJ0
+         AZdUC/XEbz1rv9Uy25k3p7bUNZUU4+7nRgoAJn4NsyCCL2qAoPdw0mtKt2OkwxcYGW3Z
+         WsDPzH+qJN16Al7TFENd8zm7LX5DgNtL9A8+J7T/og+C+OhJ45AQ47foG/ZsxbapGMEG
+         cMMX5AHjeqSw6YYo9ajTkIFD7sHvwGrMlL0+fZmrOVSrLGhqhSICOec8hPG1P+yKHwVg
+         ke6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXqjJOXE6rvb7IJuoEMez0goCVAjr7Jmy0U6r1q1IB2o3fuX/laBwf7jNLm/qzeTZkOWcuqdrxKiLcapLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQg2Z7fw++buB0NXYQP45YdoPpyykVjTAUOPf07TPPlgdBwtt3
+	u+pO+RbLcw5e/+iWoNV+YOuIS70DxekuMNZk2YXzwguowMmpNA6K6USmPmZJyFM=
+X-Gm-Gg: ASbGnctCeRC2wTmgzgcpUFceMP1KEoaBBbtL6f0hbkRtlb/lgZY3y4FvpvEEmGYYbQA
+	BfR2LWsZPIIAVChcHrYAf3KY5JBau8jwHUVmdzDEFHzlHAvYeaY/tjcIAEJhUwQRn+y9VXPAtLU
+	CxaJ9KFjDXg3LQINa7neGQ/CPGMoGvjzKjRkj00zjX4vgj9RCINrguMrWDo3UDCOUl6LZISZy4c
+	e9ZbdQFd9/uZC98prgs1p41ZYr+DLHW2KEr+aGBxJXOWaerlOyTXBX4
+X-Google-Smtp-Source: AGHT+IHMqAvhHC5dNEzt4Ji77GJgaTqFedpYNmwmOTQLG9a8yXEQAvuJOLZ9//3kNsztFbc6usJwig==
+X-Received: by 2002:a05:600c:b86:b0:436:1c04:aa8e with SMTP id 5b1f17b1804b1-4361c3746c2mr37514545e9.16.1733949468341;
+        Wed, 11 Dec 2024 12:37:48 -0800 (PST)
+Received: from localhost ([2.222.231.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f44eaac7sm130892245e9.42.2024.12.11.12.37.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 12:37:42 -0800 (PST)
-Content-Type: multipart/mixed; boundary="------------LuOvLp4AF8WW5w5iynxNMIZU"
-Message-ID: <e3c2e67e-c80f-417c-a44f-e2f568e90d44@linuxfoundation.org>
-Date: Wed, 11 Dec 2024 13:37:41 -0700
+        Wed, 11 Dec 2024 12:37:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-From: Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] Kselftest fixes for Linux 6.13-rc3
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 11 Dec 2024 20:37:46 +0000
+Message-Id: <D695SBZSGF7W.3ONJO2E84XN0@linaro.org>
+Subject: Re: [PATCH v1 03/10] arm64: dts: qcom: qrb4210-rb2: add wcd937x
+ codec support
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: <broonie@kernel.org>, <konradybcio@kernel.org>,
+ <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
+ <srinivas.kandagatla@linaro.org>, <tiwai@suse.com>, <lgirdwood@gmail.com>,
+ <perex@perex.cz>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>, <dmitry.baryshkov@linaro.org>,
+ <linux-sound@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241101053154.497550-1-alexey.klimov@linaro.org>
+ <20241101053154.497550-4-alexey.klimov@linaro.org>
+ <a4z5awo6xodgjnmgrqd2hvf2ta2yhexsoyilbprz3vkimymc77@pqp3bgc2fgdh>
+In-Reply-To: <a4z5awo6xodgjnmgrqd2hvf2ta2yhexsoyilbprz3vkimymc77@pqp3bgc2fgdh>
 
-This is a multi-part message in MIME format.
---------------LuOvLp4AF8WW5w5iynxNMIZU
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Fri Nov 1, 2024 at 7:59 AM GMT, Krzysztof Kozlowski wrote:
+> On Fri, Nov 01, 2024 at 05:31:47AM +0000, Alexey Klimov wrote:
+> >  &tlmm {
+> >  	gpio-reserved-ranges =3D <43 2>, <49 1>, <54 1>,
+> >  			       <56 3>, <61 2>, <64 1>,
+> > @@ -691,6 +731,21 @@ sdc2_card_det_n: sd-card-det-n-state {
+> >  		drive-strength =3D <2>;
+> >  		bias-pull-up;
+> >  	};
+> > +
+> > +	wcd_reset_n: wcd-reset-n-state {
+> > +		pins =3D "gpio82";
+> > +		function =3D "gpio";
+> > +		drive-strength =3D <16>;
+> > +		output-high;
+> > +	};
+> > +
+> > +	wcd_reset_n_sleep: wcd-reset-n-sleep-state {
+>
+> Where is it used?
 
-Hi Linus,
+Right. I'll remove it.
 
-Please pull the following fixes update for Linux 6.13-rc3.
+Thanks,
+Alexey
 
-linux_kselftest-fixes-6.13-rc3
-
--- fixes the offset for kprobe syntax error test case when checking the
-    BTF arguments on 64-bit powerpc.
-
-Note: This fix has been in linux-next since last week. I had to drop
-a patch and rebase this morning.
-
-diff is attached.
-
-thanks,
--- Shuah
-
-----------------------------------------------------------------
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
-
-   Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.13-rc3
-
-for you to fetch changes up to 777f290ab328de333b85558bb6807a69a59b36ba:
-
-   selftests/ftrace: adjust offset for kprobe syntax error test (2024-12-11 10:08:04 -0700)
-
-----------------------------------------------------------------
-linux_kselftest-fixes-6.13-rc3
-
--- fixes the offset for kprobe syntax error test case when checking the
-    BTF arguments on 64-bit powerpc.
-
-----------------------------------------------------------------
-Hari Bathini (1):
-       selftests/ftrace: adjust offset for kprobe syntax error test
-
-  tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-----------------------------------------------------------------
---------------LuOvLp4AF8WW5w5iynxNMIZU
-Content-Type: text/x-patch; charset=UTF-8;
- name="linux_kselftest-fixes-6.13-rc3.diff"
-Content-Disposition: attachment;
- filename="linux_kselftest-fixes-6.13-rc3.diff"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWdpdCBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2Z0cmFjZS90ZXN0LmQva3By
-b2JlL2twcm9iZV9zeW50YXhfZXJyb3JzLnRjIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMv
-ZnRyYWNlL3Rlc3QuZC9rcHJvYmUva3Byb2JlX3N5bnRheF9lcnJvcnMudGMKaW5kZXggYTE2
-YzZhNmY2MDU1Li44ZjFjNThmMGMyMzkgMTAwNjQ0Ci0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2Vs
-ZnRlc3RzL2Z0cmFjZS90ZXN0LmQva3Byb2JlL2twcm9iZV9zeW50YXhfZXJyb3JzLnRjCisr
-KyBiL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2Z0cmFjZS90ZXN0LmQva3Byb2JlL2twcm9i
-ZV9zeW50YXhfZXJyb3JzLnRjCkBAIC0xMTEsNyArMTExLDcgQEAgY2hlY2tfZXJyb3IgJ3Ag
-dmZzX3JlYWQgJGFyZyogXiRhcmcqJwkJIyBET1VCTEVfQVJHUwogaWYgIWdyZXAgLXEgJ2tl
-cm5lbCByZXR1cm4gcHJvYmVzIHN1cHBvcnQ6JyBSRUFETUU7IHRoZW4KIGNoZWNrX2Vycm9y
-ICdyIHZmc19yZWFkIF4kYXJnKicJCQkjIE5PRkVOVFJZX0FSR1MKIGZpCi1jaGVja19lcnJv
-ciAncCB2ZnNfcmVhZCs4IF4kYXJnKicJCSMgTk9GRU5UUllfQVJHUworY2hlY2tfZXJyb3Ig
-J3AgdmZzX3JlYWQrMjAgXiRhcmcqJwkJIyBOT0ZFTlRSWV9BUkdTCiBjaGVja19lcnJvciAn
-cCB2ZnNfcmVhZCBeaG9nZScJCQkjIE5PX0JURkFSRwogY2hlY2tfZXJyb3IgJ3Aga2ZyZWUg
-XiRhcmcxMCcJCQkjIE5PX0JURkFSRyAoZXhjZWVkIHRoZSBudW1iZXIgb2YgcGFyYW1ldGVy
-cykKIGNoZWNrX2Vycm9yICdyIGtmcmVlIF4kcmV0dmFsJwkJCSMgTk9fUkVUVkFMCg==
-
---------------LuOvLp4AF8WW5w5iynxNMIZU--
 
