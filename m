@@ -1,114 +1,100 @@
-Return-Path: <linux-kernel+bounces-442226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24FFA9ED991
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:23:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A64C19ED98F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF45164DD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:23:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2972C164C90
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB6A1F0E55;
-	Wed, 11 Dec 2024 22:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E101F0E50;
+	Wed, 11 Dec 2024 22:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VgroUNht"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P2Sol11E"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4E01A841F;
-	Wed, 11 Dec 2024 22:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359091A841F
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733955804; cv=none; b=ilgxxUUot87e/ckhkicUc6LvwRiFYYEdUvcAdocpveyboHj//1SXyEsyyin4aqIdncBWw9vkLrNqhUyD8WQU1bZzVh1q3mt+qUP9aP/HV7xR1oIBx4FxVVShyLKIAwKYwFjm0JJueI4kBnhkSLXAbbZZBAXRyy4bm2MlwHpCkhc=
+	t=1733955780; cv=none; b=aqbhy84Oh67kEz+uZ2iwcXr40z2lcH4hMUyI7uRyFdTycaVDeK7gNd2lVixC4tPjuSq3zAOsg+ueSbPo8PG8FmpoHEYAMVUXc7yEf7yiUNl6kGtptvntX8VwXQrJCC5WJ/Aog/I0beCA72/tTIQ4Q9iCc+OG+Qpx+3JrkrVQhe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733955804; c=relaxed/simple;
-	bh=FAHaJzqzxhNMZUVphM4CCAPbYqfD6DAlT1PbmpRowAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgU6g5WqKbALueTdLtjh2pEql7etCc75OzV274sjJpM4PiEidujhTSLo8NzXrRF2f9vQOkHLjka+MWQsAk9yDBwwlgEqWMAxJpJIlyHqvbg5iOWMmkmpbtn0asMSBDGxmIG6eNR0pTwhCcjXK1aXNmAYb8i2+DXzXklV2izYZgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VgroUNht; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8CD2140E02BC;
-	Wed, 11 Dec 2024 22:23:18 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Za_wmwg4_34v; Wed, 11 Dec 2024 22:23:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733955795; bh=Ew8nV/ChJV7CVLh5nxiJBga8I8SZyEPbO518A/BfRuA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VgroUNhtZd5joOyUMAT4CY3FiyX434MVYvhhDb2aj3y0CAM7oGobPhG3BqA5gcsKo
-	 4bwdr5vlq+Kxs7NxNTduteizrtOa0ZgO/GbvCuOudFrT1PrbQ08+IIh9KkB4iDsFps
-	 aE69hFYeLw6jdbyniGWm2pU8Zdc02NL55s4j6G3VqAMAwBH0Xf4dkAZVExhrCECNs0
-	 AAU7vwhXQaJplePBfGuNhSvzblH3amPeYAfJUsk/Q/wp/86jS3jTpXAeIAnh5zov2w
-	 hKMBue8UNvduT4NZoLu4omz/p0+y/qMYXAUtSOTDg7LDhGMSQqWN+Xpjo97eFJ9MxI
-	 /iywiRjeYTndDkqaZCK7/gmkusik4iCLCwKNtz5il/UOOKzF7xNP7BxQzhjp/gQbsY
-	 hhkM4AA1QEJyMbD70udJSpDh+ShunVYQRvlizcJIXQa0CgoTaLHA2PfcawFG+4ywrV
-	 6D7Y0elZu07io7zSaNgFuqgz93d8t75qKIsyLvhvCwWu7Csz2ftIj7um8YRtthiOZF
-	 H9Gv9ZYU56pyQcfh5sh0Mma+96WCOFdWVme/ZOMRaK1cGWQQc2TqD5doPyqHQdWoax
-	 OSiS9+xEV5jepO0vuy/BJjD7IC1XfXqt9F8Kk0+rxDqdXRvbQtbN3IcjOo3Xt90FNq
-	 BJo9UmngeTsd966DUcDQZZfg=
-Received: from zn.tnic (p200300Ea971F93ce329c23FffEA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:93ce:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DAF6240E02B9;
-	Wed, 11 Dec 2024 22:23:03 +0000 (UTC)
-Date: Wed, 11 Dec 2024 23:22:57 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: "Nikunj A. Dadhania" <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, kvm@vger.kernel.org, mingo@redhat.com,
-	tglx@linutronix.de, dave.hansen@linux.intel.com, pgonda@google.com,
-	seanjc@google.com, pbonzini@redhat.com
-Subject: Re: [PATCH v15 04/13] x86/sev: Change TSC MSR behavior for Secure
- TSC enabled guests
-Message-ID: <20241211222257.GKZ1oQwZcSXSMXPvoY@fat_crate.local>
-References: <20241203090045.942078-1-nikunj@amd.com>
- <20241203090045.942078-5-nikunj@amd.com>
- <20241209155718.GBZ1cTXp2XsgtvUzHm@fat_crate.local>
- <0477b378-aa35-4a68-9ff6-308aada2e790@amd.com>
- <15e82ca3-9166-cdb4-7d66-e1c6600919d7@amd.com>
- <20241211190023.GGZ1nhR7YQWGysKeEW@fat_crate.local>
- <984f8f36-8492-9278-81b3-f87b9b193597@amd.com>
+	s=arc-20240116; t=1733955780; c=relaxed/simple;
+	bh=MJDBBPfSDpJWtJb9BzIGgtoPQLKoUXO+S1ieKhazaPs=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ciqi2rbY/Ek4dxkQXiMQBbLn1PvNdGTy1ZjKpzvyNAL8di0UMwcZyiw/L+RcNTOD+pwYI1LoRJ1dE1AF7QsBeT9vTMOCiSYTfyqPGoQdZYvYyFsnPOFbqKeZTijiikoInP19ewVWla6/i7CHGm8IPS/8+AXmq3oVk5mRPuArszg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=P2Sol11E; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6d918f066c1so19471926d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:22:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733955778; x=1734560578; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MJDBBPfSDpJWtJb9BzIGgtoPQLKoUXO+S1ieKhazaPs=;
+        b=P2Sol11EiF+BRUH5l630TlPhZpoR9HSMW80yPpBQawS/wbma2PheYJoOxH8VWGJhws
+         8CBK9FGtQGoOcq+d9duGrNfOG5zWaQPiJAyS6wWFS72wEIt0Jncvjz1aHszqY+c10qY/
+         Jw7QLYQXcxhmRze9ypwUoQ34C2DV5T693TFrI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733955778; x=1734560578;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MJDBBPfSDpJWtJb9BzIGgtoPQLKoUXO+S1ieKhazaPs=;
+        b=EoexU0XvjcWvJxTU8OtWgMcLyN83OUdwW6G86kvH/g7K1WrUUAYfTbW2uTjaLwJeBh
+         Zp5Q4ckGElSe4wpWe9pyQXfcEUvlrZHvu8dmD6y5Sw1H5RzWvutMYhgBB4mM1Zghz+by
+         w43MI7Crcc6+idhfW5g0PTEkfavhbBGJH6duH+48PcEpdCOxihzFbNj6HkMo9mV36gPR
+         SwemQ47jY1XgvYEL+HDKwSXVwnzLJwtDbo9LHCTcS8XjXDmDIHmAIReIYRzn0cj1g+aK
+         yYTRrblgoCkYdRbtuwJXfXKnyftDo63f3V+yrvp6RKHiryiUl4KBSCziDremku68hWkZ
+         JJeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcSJ5FbIe1ObLS/yqPk4a3VeDItUYyQs4I9CXFs58z4HvM8WriZZxrw1OTioemxtJInxFar9DmybNWZy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylz3NanlUlBQfplEqRmsBi4/SbV//3XWaPFYKk4kxmQPLXkQef
+	s4wRdlUY+rY09YunyNhWwr/gWyoRqlB0Rnxrj7ZuNstBXW5JMSuxsgJ3zV0iJr6BmJJgQD5g8Oa
+	F4qZyERW5UuH6rBk2is/Sb6PXxF7BcQS3sqKV
+X-Gm-Gg: ASbGnctQai05dvUXCM0EYFNg2BvAjcd1TttWqh858sVHq3IcXbvI9Kxe/+UlRi5JWlE
+	jRb+/VTT4igOwDBNQ/d6k20bgunwA5xJPhG9vClQe+tEiHqXidl72edefQS11jbs=
+X-Google-Smtp-Source: AGHT+IGzWdM0tmUIo9hkCU9nyE01NRmj3O1QuD2Ba95w/TbRxxu4YMhY0/0gBbnPplq8JU4pMlDSW05l9pl+kUE9bGI=
+X-Received: by 2002:ad4:5ccb:0:b0:6d8:8a60:ef2c with SMTP id
+ 6a1803df08f44-6dae38e69a4mr17111236d6.2.1733955778063; Wed, 11 Dec 2024
+ 14:22:58 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Dec 2024 14:22:57 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <984f8f36-8492-9278-81b3-f87b9b193597@amd.com>
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-7-d9187ea96dad@linaro.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-7-d9187ea96dad@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Wed, 11 Dec 2024 14:22:57 -0800
+Message-ID: <CAE-0n50_NvLiWmfNnQJJKLn=BYA82vmPgy+6Vdpe8x+u6fwn1w@mail.gmail.com>
+Subject: Re: [PATCH v2 07/14] drm/msm/dp: move/inline ctrl register functions
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Dec 11, 2024 at 04:01:31PM -0600, Tom Lendacky wrote:
-> It could be any reason... maybe the hypervisor wants to know when this
-> MSR used in order to tell the guest owner to update their code. Writing
-> to or reading from that MSR is not that common, so I would think we want
-> to keep the same behavior that has been in effect.
+Quoting Dmitry Baryshkov (2024-12-02 02:06:37)
+> Move CTRL-related functions to dp_ctrl.c, inlining one line wrappers
+> during this process. The enable/disable functions have been split to the
+> enable/disable or enter/exit pairs. The IRQ and HPD related functions
+> are left in dp_catalog.c, pending later cleanup.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-Ah, I thought you're gonna say something along the lines of, yeah, we must use
-the HV GHCB protocol because of <raisins> and there's no other way this could
-work.
-
-> But if we do want to make this change, maybe do it separate from the
-> Secure TSC series since it alters the behavior of SEV-ES guests and
-> SEV-SNP guests without Secure TSC.
-
-Already suggested so - this should be a separate patch.
-
-It would be interesting to see if it brings any improvement by avoiding the HV
-call... especially since RDTSC is used a *lot* and prominently at that in
-sched_clock, for example.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
