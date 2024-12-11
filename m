@@ -1,76 +1,172 @@
-Return-Path: <linux-kernel+bounces-440673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537039EC2B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:03:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1EA9EC2BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:04:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC6F1884ADD
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:03:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2391889C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06F31FCCF2;
-	Wed, 11 Dec 2024 03:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0A91FCFE8;
+	Wed, 11 Dec 2024 03:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OsoHKIn9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OlJmHNOi"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191A983CDA
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 03:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EDC1FCCFF;
+	Wed, 11 Dec 2024 03:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733886197; cv=none; b=kCWagNdKNK9dhODbbwjcdBemBSLpeB89hU9Gz6yNjLt5oviiG5eWpgG7oBqk4ZFeK4B2t0NHUnHUBSc45LedhSi3nI68jd1mkmOzxZoM+/EP4k+zT8N8LJb2106d9sXBi3QRK82lkYgXeZjxch0qHfADJD3q4nfYm+TZ4EGQR1Y=
+	t=1733886240; cv=none; b=fIM7qkeYq1khVimSvW49w/LWocq6/2roYAnd3TFxUQ7kiSJkwkLgd4PeQqRuAV0UfK6CMQnOkcO1fB7h8Jv8sHkMz2yxkXkP7HkhBOvZgExWENpiKt2WDeJWOuAE6FOGe3+VWd17tECcnILOzQree7tT3yJKJLwtX8JOcCMfDOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733886197; c=relaxed/simple;
-	bh=E/lhZPj4DeLvxLut2s0Qf5o8AxJ++i7JicIASmQPprM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ICoHQo3DU4ByT0v8euAttGEYlbEFCHNA6nCmAjm++OLi2AbrAtZK++AVOpdhMpBZz5Mqc4HOKq+8UyJkw7hOxTRptDyv4eLisNHBbxb7ifN6RSYbnoTyzHUE0q9uqddyyG0P69/ZvzTvRcnImV3VeODTXjENqwe6++xJeoi1bsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OsoHKIn9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F85AC4CEDD;
-	Wed, 11 Dec 2024 03:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1733886196;
-	bh=E/lhZPj4DeLvxLut2s0Qf5o8AxJ++i7JicIASmQPprM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OsoHKIn9VCz7vgsKsHyR8kX1EGIqgwW0ponS/2Bp5xzI7EmjLcuQzBfoVsHmwnwPx
-	 v6qwHlkD/CsX70xmOPrNFN290BY0/5SHjv2eT3O98byuTS/jdaNrvHxTSZsxma1cD0
-	 ouMz29p/CpPTZq9V9FZiTk2SZs7QHdLvenEb7cJU=
-Date: Tue, 10 Dec 2024 19:03:15 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Junjie Fu <fujunjie1@qq.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, willy@infradead.org,
- sj@kernel.org
-Subject: Re: [PATCH] mempolicy.h: Remove unnecessary header file inclusions
- with no test failure
-Message-Id: <20241210190315.5eeffc66cbbc23269f492275@linux-foundation.org>
-In-Reply-To: <tencent_FEC6C2E299EBF3F95E516ADED98362A4F805@qq.com>
-References: <tencent_FEC6C2E299EBF3F95E516ADED98362A4F805@qq.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733886240; c=relaxed/simple;
+	bh=DDpAtKF/oowSoN8XffL/c6pDjqE88/M5myb+dT2M7Yc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JfmJEvEK2wvjWs1CDCj8wYfGAjOm4tbTXwf8ZBHwPtR9PvFQQThU+RnB6DZScKgz8MLc9OSCrQglLwUfV960O0KNDnWbWAjskhSS/TECz/4E5UmL+sBkt0rqe4fxYD6Z6/cxZS74jvuGdSIiUD3G+gYXDZz8hPGxpKIpDtVvY58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OlJmHNOi; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43616bf3358so1292055e9.3;
+        Tue, 10 Dec 2024 19:03:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733886236; x=1734491036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4XSI9POCm7SdknhGW4h9dj1RnB/B3vkPocb0A/f7nkM=;
+        b=OlJmHNOiIkPO2hyG/M/obbfZDfti8FavtiV9RM+yDHXGbuiz9pn383Ookqzc7ZsRtC
+         S+bJwmPQ92sl7tp/rUvo44kRmCYp+xW9VqT0TDyOq3M+4ZegvpW70NBt7ixDCZG6vo9w
+         TVvlAGQHZQpxlZgrPMgVkdD1Wvk3Uzd1JwcC1TJa+ghYAk06un0x+A/NcAtQSeh4xv+o
+         Mib5YLZFjvi3nMV+R/lEPdrW7yrlro2cPxBKdWXet634OqCR8YBFmxpKIpwjAU6TPWJK
+         MiAX7qBd/IMpw9KhkCvn1Jk3gSVUcuIslx56beNxirDC/QEDyEl0bj8rH0873SekcbJD
+         XfPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733886236; x=1734491036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4XSI9POCm7SdknhGW4h9dj1RnB/B3vkPocb0A/f7nkM=;
+        b=ST2vZQCvm02kayiNCnBnmntIlvPVP0P4nfoMwsRvRKdySQHWkhvtXbCp4QjMg+vnVw
+         qpsIudAFCVLvV5kVlUm2K5NgWWp7Xkr0vgpCPDdX5rBTxQza7kbFfannWBYH2giT9kOD
+         jxfoqy0V8wd3bx4RTZ2vUN2oPuyBiVHaKlTg/Ez0BVJijmY6Sj2Fvg0lvKpiAmnLzwq+
+         aO+3ZBkiJS+wLLaZvzZeBGAZDeZnQAxFQ7e/Gg9wwSzh3viD79WLcPJIr+2G3NnVMFZ9
+         g8z6Exgc0GTFSgXV3TwDRlM7dfdIj/GopXJk9n2lM7e/+k6JFGTbMPZh0LR8qE4NCWSa
+         0g4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVwdIuXw9C8M0tjaoxBOnNfzyzL9No6+wGLx5XoVQ/g8wj5qX1ElVHZyIUX9K9UsG2OsT7DKdYPxNaAJVoz@vger.kernel.org, AJvYcCWzQsCaJvgj4iyfXVq8oJ5Duh2LYD6dmpa7pLr16t28inK2CPpgzTC6UyLI0XTUWY1nhAFACg5C7O2Wfw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YztKrEV+r+pDUsyW0tiPaGq21Hpqj5wQ8+nATkxlsraixqe59CX
+	SHtpaIuX0m93I7psMXSf5Fv54Np5Vb+dLKbpIbhCi3hARDW0+7X2v577ZViL6YNXsvmbY95Ditr
+	oXsuwb2FHFMMgTjfBpbTHuqxSgoY=
+X-Gm-Gg: ASbGnctLgLTzE9+Oj5fAStN9SwpKGK5bRGYdKZFmSh9kJ3SJbJI5KgURdo3vpTOFc8F
+	R7TMpGfitx2yKM2Z0hUq5eOEJYH97fHeLRdLD
+X-Google-Smtp-Source: AGHT+IHKkv5rLmj5rSA7P4IhKZ3DF1Y1dC0Gjq3K+6f1TGnoWkwDbt4bi4uuNqkdr8c9T8zRhC01Xv6CJzGLkIj94T4=
+X-Received: by 2002:a05:6000:1acf:b0:386:3c21:b1f7 with SMTP id
+ ffacd0b85a97d-3864cea3a60mr352113f8f.7.1733886236178; Tue, 10 Dec 2024
+ 19:03:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
+ <20241209115522.3741093-2-yukuai1@huaweicloud.com> <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
+ <6e384b29-50d2-64bd-0d08-fc0f086c1cbd@huaweicloud.com> <7081765f-28d7-f594-1221-6034b9e88899@huaweicloud.com>
+ <d9733af5-b16b-4644-9d6d-84fbacf334e0@acm.org> <CAHJ8P3J-KwGU_ZffmSmoFkhUX1q=9Q7Dk15yPEXYME_JQHH5tA@mail.gmail.com>
+ <48ee35f1-dbbe-b4ff-2507-9c0e7bd4db0d@huaweicloud.com>
+In-Reply-To: <48ee35f1-dbbe-b4ff-2507-9c0e7bd4db0d@huaweicloud.com>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Wed, 11 Dec 2024 11:03:45 +0800
+Message-ID: <CAHJ8P3KcCB1OT9UDqcU3q7d+xQpVpqnFnsJ4Qav_fB6EZ3QB9Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] block/mq-deadline: Revert "block/mq-deadline: Fix
+ the tag reservation code"
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, axboe@kernel.dk, akpm@linux-foundation.org, 
+	yang.yang@vivo.com, ming.lei@redhat.com, osandov@fb.com, 
+	paolo.valente@linaro.org, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
+	"yukuai (C)" <yukuai3@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 11 Dec 2024 10:52:30 +0800 Junjie Fu <fujunjie1@qq.com> wrote:
-
-> Due to my previous patch not including pagemap.h in fs/aio.c, a test
-> failure occurred. In this patch, it has been fixed.
-> 
-> Previous patch address:
-> https://lore.kernel.org/all/tencent_08B979048FE091821B290B18AE97E70DC507@qq.com/
-> 
-
-The previous patch had a changelog.  This one effectively has none.
-
-So, please resend, with a full standalone changelog.
-
-Prepare that changelog in a manner which is suitable for inclusion into
-the permanent kernel record.  References to earlier versions of the
-patch are uninteresting in that context.
+Yu Kuai <yukuai1@huaweicloud.com> =E4=BA=8E2024=E5=B9=B412=E6=9C=8811=E6=97=
+=A5=E5=91=A8=E4=B8=89 10:58=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi,
+>
+> =E5=9C=A8 2024/12/11 10:38, Zhiguo Niu =E5=86=99=E9=81=93:
+> > Bart Van Assche <bvanassche@acm.org> =E4=BA=8E2024=E5=B9=B412=E6=9C=881=
+1=E6=97=A5=E5=91=A8=E4=B8=89 04:33=E5=86=99=E9=81=93=EF=BC=9A
+> >>
+> >> On 12/9/24 10:22 PM, Yu Kuai wrote:
+> >>> First of all, are we in the agreement that it's not acceptable to
+> >>> sacrifice performance in the default scenario just to make sure
+> >>> functional correctness if async_depth is set to 1?
+> >>
+> >> How much does this affect performance? If this affects performance
+> >> significantly I agree that this needs to be fixed.
+> >>
+> >>> If so, following are the options that I can think of to fix this:
+> >>>
+> >>> 1) make async_depth read-only, if 75% tags will hurt performance in s=
+ome
+> >>> cases, user can increase nr_requests to prevent it.
+> >>> 2) refactor elevator sysfs api, remove eq->sysfs_lock and replace it
+> >>> with q->sysfs_lock, so deadline_async_depth_store() will be protected
+> >>> against changing hctxs, and min_shallow_depth can be updated here.
+> >>> 3) other options?
+> >>
+> >> Another option is to remove the ability to configure async_depth. If i=
+t
+> >> is too much trouble to get the implementation right without causing
+> >> regressions for existing workloads, one possibility is to remove suppo=
+rt
+> >> for restricting the number of asynchronous requests in flight.
+> > Hi Bart,
+> > I think it is very useful to restrict asynchronous requests when IO
+> > loading is very heavy by aysnc_depth.
+> > the following is my androidbench experiment in android device(sched_tag=
+=3D128):
+> > 1. setting heavy IO
+> > while true; do fio -directory=3D/data -direct=3D0 -rw=3Dwrite -bs=3D64M
+> > -size=3D1G -numjobs=3D5 -name=3Dfiotest
+> > 2. run androidbench  and results=EF=BC=9A
+> >                  orignial async_depth
+> > async_depth=3Dnr_requests*3/4      delta
+> > seq read             33.176                                216.49
+> >                        183.314
+> > seq write             28.57                                  62.152
+> >                           33.582
+> > radom read         1.518                                  1.648
+> >                          0.13
+> > radom write         3.546                                  4.27
+> >                            0.724
+> > and our customer also feedback there is optimization when they test
+> > APP cold start and benchmark after tunning async_depth.
+>
+> So do you guys writing async_depth? Looks like you're using
+> nr_requests*3/4. If this is the case, the above option 1) is still
+> working for you guys. However, in this test, I think the lower
+> async_depth is, the better result you'll get.
+Hi Kuai,
+yes, we modify async_depth to nr_reqeusts*3/4 by sysfs.
+thanks!
+>
+> Thanks,
+> Kuai
+>
+>
+> > thanks=EF=BC=81
+> >>
+> >> Thanks,
+> >>
+> >> Bart.
+> >>
+> > .
+> >
+>
+>
 
