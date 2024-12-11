@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-441076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F15D9EC913
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:30:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02E431675F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:30:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785AD1A83F1;
-	Wed, 11 Dec 2024 09:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyyqoWvW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C60B9EC91E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:32:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2A5236FBC;
-	Wed, 11 Dec 2024 09:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B846A284C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:31:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5A31EC4DB;
+	Wed, 11 Dec 2024 09:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ih91x07p"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF661A83E9;
+	Wed, 11 Dec 2024 09:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733909405; cv=none; b=ufKJ+hlW/4/YaZRJuBnDdq7U63u6kpva7HZfNnifyqty9PKIoO7xfo8BTZOD0yOiJXcw+AykbxDQ8sGZ3RIis6LxIKHq70lNiC9BA+gBN8HGSUjq4LO0OUgVwWMhDIExloDSmpDJgh6WKxxpDAXs0TD8sK1eW/dkku+Zvg9ZL0I=
+	t=1733909493; cv=none; b=DzrSZqhe+UKeSeEcIr0GqIP5244E9miHimEBos0o0ej6eMQtrcyQKDH8wg/jV8Ne5n2pRm/AX5ZmBzZd9AoRJfxQh921gIjLoD2fJjRMfbESJ3b+Rd1Zog8t8QYQ9Kk8SBFlVvsDXINfIHRacIAhUCEAB7jWieGh/pphvnASWJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733909405; c=relaxed/simple;
-	bh=gVRl4kdZgtoj0eklg7ILQcwVJ0aZh2Qywqranpfvyb4=;
+	s=arc-20240116; t=1733909493; c=relaxed/simple;
+	bh=n5YgshR1sFfXUiS//KEredRhU0DpugW9DrAjNrcfVvE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQtdib3mKS0PEL4zKmldxvExI606MFxw/f003iEtMLRf3GKZcFo21xvZ7E0BzrX8Ol6yRK7kMxduUuq4tdVEzs7GTEzSnIequIWUV65prDqyF1SQ4QtvKq2d8cIe9wgt3VXsvbrY/nwq21ZYkBoT/fTqXHWgEaJJNPDMGdZ3xQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyyqoWvW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE4A3C4CED2;
-	Wed, 11 Dec 2024 09:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733909405;
-	bh=gVRl4kdZgtoj0eklg7ILQcwVJ0aZh2Qywqranpfvyb4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DyyqoWvWCVQrxGKhl9ezuwh9naIG+KL2zLJ+zW+0mv8z57L5GZ5FJUbMVftyFMqLM
-	 v7+LzpuKRUdWYOt61vZ10D6+CtAdEzEvOHoG01BchA55wQEAHsz6FplfwNZuXAdVLQ
-	 /4SeNp9+v3wDauVNTLuczxiYiKKEuswI9kH/HB2hCkU5L5g/a4pUJupoplSdwzXfzg
-	 lu1wpDCJFk3MsQ12gMpCSUgPhCOHLoIpAVBqKl6ct3XTXTyE7DMGxmf2tiveL4iVB/
-	 APF+uEutJTPUTA1ASp2MV5ljNTDpieUfEyo1bZyAByD8podxbzSp8RFj9Z6IpVO11e
-	 qc+F4I+hkMtpQ==
-Date: Wed, 11 Dec 2024 10:30:01 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Stefan Raufhake <raufhakestefan@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, s.raufhake@beckhoff.com, 
-	s.dirkwinkel@beckhoff.com, Stefan Raufhake <s.raufhake@beckhoff.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 1/1] power: supply: gpio-charger: Support to disable
- charger
-Message-ID: <4tvn5k6zbsbyc2n3r2jnkrasyfhzfua4cap6ql65yjfmwzu3xw@lx6jmqvzypqv>
-References: <20241210092343.3537-1-raufhakestefan@gmail.com>
- <20241210092343.3537-2-raufhakestefan@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnlE9XRywsBmyfvb0Quh6p4GverWV73+oAsSTzFEzKJTWhQAcXkxiHTQQ+kMRIz6Jyf3+nyOwHrwjd2ugTXhAtA8M1Np0SbGQSKSwFEcgE/E2XG9kYSxn/rwBBcPNTLGFbxmBL2zb8DlCUraG77HfkXuTE7+lCFcPe41sPXItIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ih91x07p; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=fEl58DL4MAFxwTJpgb3U+ILMMojCdQUomfAFX9LGcFA=; b=ih91x07ptKzgvYvaZFqB8HkGp0
+	S3jxXecIsMf8iPyMFc1jli0GDmZBr3S8IDuY3/RrzuhQzzE0vuFQXnBm9ptKMVD6RbIfXDjr04OHW
+	+sGtLQudD91dYkQ5MCBnIemPulnRszwNSGQnSMSapehxH7rubyqEfSJ//Eq7pAQFltq4qIXESOlFe
+	Qp2GhLRc6LwKkk9NVVVmTZhRqWw8qm+jCN4BMuBI/Krq8+HkadFPGWVGSHi5xbAPVxmweeSU2+3ns
+	WnraUcKtzmmK1P6GTLHRIfKVgHju4tyY9OC0bOWnEM9Fo28w00N7FZm/TMCDQkiT2wZ2c0dtajH2M
+	JLOkT+3g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tLIqe-000iLO-0Q;
+	Wed, 11 Dec 2024 17:30:57 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 11 Dec 2024 17:30:56 +0800
+Date: Wed, 11 Dec 2024 17:30:56 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, upstream@airoha.com,
+	Richard van Schagen <vschagen@icloud.com>
+Subject: Re: [PATCH v8 3/3] crypto: Add Inside Secure SafeXcel EIP-93 crypto
+ engine support
+Message-ID: <Z1lb0ImxhhFs4Kuz@gondor.apana.org.au>
+References: <20241210204853.18765-1-ansuelsmth@gmail.com>
+ <20241210204853.18765-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241210092343.3537-2-raufhakestefan@gmail.com>
+In-Reply-To: <20241210204853.18765-4-ansuelsmth@gmail.com>
 
-On Tue, Dec 10, 2024 at 09:23:43AM +0000, Stefan Raufhake wrote:
-> From: Stefan Raufhake <s.raufhake@beckhoff.de>
-> 
-> Some GPIO-controlled power supplies can be turned off (charging disabled).
-> Support changing the charging state by setting charge_type to
-> POWER_SUPPLY_CHARGE_TYPE_STANDARD and disabling charging by setting
-> charge_type to POWER_SUPPLY_CHARGE_TYPE_NONE. One potential use case for
-> this is disabling battery backup on a UPS.
-> 
-> Signed-off-by: Stefan Raufhake <s.raufhake@beckhoff.de>
-> ---
->  .../bindings/power/supply/gpio-charger.yaml   |  6 +++
->  drivers/power/supply/gpio-charger.c           | 43 +++++++++++++++++++
->  2 files changed, 49 insertions(+)
-> 
-
-<form letter>
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-</form letter>
-
-> diff --git a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> index 89f8e2bcb2d7..084520bfc040 100644
-> --- a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> @@ -44,6 +44,10 @@ properties:
->      maxItems: 32
->      description: GPIOs used for current limiting
->  
-> +  enable-gpios:
-> +    maxItems: 1
-> +    description: GPIO is used to enable/disable the charger
+On Tue, Dec 10, 2024 at 09:48:33PM +0100, Christian Marangi wrote:
+>
+> +	/*
+> +	 * Consume remaining data.
+> +	 * 1. Loop until we consume all the data in block of 64bytes
+> +	 * 2. Send full block of 64bytes
+> +	 * 3. Skip sending last block for future update() or for final() to
+> +	 *    enable HASH_FINALIZE bit.
+> +	 */
+> +	while (to_consume > 0) {
+> +		int to_read = min(to_consume, SHA256_BLOCK_SIZE);
 > +
+> +		block = kzalloc(sizeof(*block), GFP_KERNEL);
 
-You did not respond to my comments, nothing improved. Without
-explanation based on hardware - which I asked - this is still a no.
+You should avoid allocating memory.  If you really must do it,
+then it needs to be GFP_ATOMIC, and your algorithm needs to set
+CRYPTO_ALG_ALLOCATES_MEMORY which means that it won't be used
+by the storage layer as memory allocations may lead to dead-lock.
 
-Implement and respond fully to previous feedback.
+The preferred way to access extra memory is through the request
+context structure.
 
-Best regards,
-Krzysztof
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
