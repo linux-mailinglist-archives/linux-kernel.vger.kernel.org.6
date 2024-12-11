@@ -1,149 +1,159 @@
-Return-Path: <linux-kernel+bounces-441090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C199EC948
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:38:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FA6C169EE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:38:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF8B1DFD89;
-	Wed, 11 Dec 2024 09:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fUBC4IBN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0D49EC944
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 10:38:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BF6236FBF;
-	Wed, 11 Dec 2024 09:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373E2281546
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 09:38:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F66D1BD9C1;
+	Wed, 11 Dec 2024 09:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOzmD3S/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47C0236FBF;
+	Wed, 11 Dec 2024 09:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733909894; cv=none; b=SPVOLDeKE/W9VKfZ/uS9+eEiiy1YCuuF0uKpAUfT2u3wihFZ660rS/DX9i2FwlhfcvFoWEm6nsn8t0YaNasXJ+wAY3sm/zW90/xsegmESYknSmwcuUes6Q4/DvW+TwZMBZzi+W5q9ypE4hx0aUiYw86j39heUb3YkievIytizB8=
+	t=1733909882; cv=none; b=d507XucL0fRD4J2dr6Ghf34m358oyN6sD6YvEfohplG6ViW+GiwyIKpF9p5N3TN6W9KCgMPBjKXAAzob+wb3EJX9+advCPbz1FLfyYSYJAv+2dM91E/okFXbgwqBQq9RDp7stasp7SNtVm0gm4VhUdI5m+zfgnuZLDD2qT7igR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733909894; c=relaxed/simple;
-	bh=irR/tG80Hr7oiSUNb906KeHzwHrdB5TuOgJG4tynl54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jgWLlia8sf/tjEhHHeWGib6m98eZciwVmdFuRgBOVtreiMZDTbDy/BvgRgBPztQI8+AB9OogK7MHcVv92s2FTDqs3GMtb8NHTO5E2WmP6R1dAISLygXy5JIrisyUo6AcxmzSCSQPbSHt68u0Ko+ZX5JvwoZ+u9JiXdtKId5nZhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fUBC4IBN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BB2Ord9001566;
-	Wed, 11 Dec 2024 09:38:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	i4PlrbuYYZMbVLs/vrzao9epuZImIpDmugP7brd+zuQ=; b=fUBC4IBNjVaIDpeH
-	QypiN4u+AxsgwYXCwkRWZ0/PF3xuIzO4w/NcQ9Vskdt4vhRWuowBJKXXU8vcelR8
-	337aCvAtWjijQn6FVC3k7mzT5Dh/KwTrc/opQ6hs33XArDGceASUHKFVz9Mf0M0L
-	8WELcLSZUUZNT2/60sCEf2VLon8RVYlJxVrWdCFq9Rky8hJBYn8HcicYoPeTgxrk
-	aYkJ3C/PejMzsC1azpaJTx8pxGMkolC4cUaUyuV4zpR2NueW/NzuLTx5+1xzYFDi
-	zqzA1wr2rWu6QGgT7eudqIkIwNyEbwrSU2gET3hyFs6EKNCUr0cTIJCQEG1rOpc2
-	LWQ99w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f1xd15q8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 09:38:07 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BB9c6lC020263
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 09:38:06 GMT
-Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
- 2024 01:38:01 -0800
-Message-ID: <b7acd819-f37b-470a-9366-2460be1075e2@quicinc.com>
-Date: Wed, 11 Dec 2024 17:37:58 +0800
+	s=arc-20240116; t=1733909882; c=relaxed/simple;
+	bh=li9KvKGtNQTPrbwV+H5ciVeIkjmU6ah0biDJSzitd/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=txT4UCPoGuGYNcB02yZP7f1JDe9sT5Wcxn8+3tqMfCrY7M5Jh5WmSwwNCHeEkfMcNlN1FURUGLYTdGxn1txDEIkQIB2JQ1+L+TqSUQazFJq0/Q09yil24wwHh87GMYzjqqeX3cEiSzqONOifjLwZdYtfJ9+RFCPimkmNsIUiqTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOzmD3S/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DB2DC4CED2;
+	Wed, 11 Dec 2024 09:38:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733909882;
+	bh=li9KvKGtNQTPrbwV+H5ciVeIkjmU6ah0biDJSzitd/E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iOzmD3S/eOYo8FLhlYnpQeZjivgLR7HiWsFljppsTK5VgfMafgHqzyoWTRnx9mVfr
+	 93CKNJO/xsBmRo7uVSqUaG4p4fyjSTetoZEfVHVm67VeXGrYX2qU7u3mkGVp8qnDwx
+	 jGnRexDibe3drsLRV9Bj2W/NlZEBxonLAYScvELFvdN1715df3vpyFo1ylIIgUekA5
+	 466/I8Kh4FiYW9BplTIEFJBOwk4yLnBDO59fx6ALP/Pz1avPCRaImUfWvom6AksLYQ
+	 iiaWZqo3jp0n0xFadcFCftL5wYu0YZpZEXJPzHWAVQD2d9ui5TDrJSmiPbxX+Gnlw6
+	 MVzC/HVF1XWDA==
+Date: Wed, 11 Dec 2024 10:37:59 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-media@vger.kernel.org, Singo Chang <singo.chang@mediatek.com>, 
+	Nancy Lin <nancy.lin@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, 
+	Xavier Chang <xavier.chang@mediatek.com>, Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v2 1/8] dt-bindings: mailbox: mediatek: Add GCE header
+ file for MT8196
+Message-ID: <ozifi65uycmxc5hqeu4onbths5u7dg532iufjxplsjw4jjmhf6@6bdsaabd7hl7>
+References: <20241211032256.28494-1-jason-jh.lin@mediatek.com>
+ <20241211032256.28494-2-jason-jh.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] Expand firmware-name property to load specific
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao
-	<quic_rjliao@quicinc.com>,
-        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_jiaymao@quicinc.com>, <quic_shuaz@quicinc.com>,
-        <quic_zijuhu@quicinc.com>, <quic_mohamull@quicinc.com>
-References: <20241210151636.2474809-1-quic_chejiang@quicinc.com>
- <hzw3ocj7vzmnnqbgpqxd3if3hww5jsvldhre2s67yugbf4xpfo@3lgyxdiket2e>
-Content-Language: en-US
-From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-In-Reply-To: <hzw3ocj7vzmnnqbgpqxd3if3hww5jsvldhre2s67yugbf4xpfo@3lgyxdiket2e>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: JEK_uBGMnmXV58ULfewE4OLogldibL01
-X-Proofpoint-GUID: JEK_uBGMnmXV58ULfewE4OLogldibL01
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 mlxscore=0 clxscore=1015 bulkscore=0 adultscore=0
- suspectscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110072
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241211032256.28494-2-jason-jh.lin@mediatek.com>
 
-Hi Krzysztof,
+On Wed, Dec 11, 2024 at 11:22:49AM +0800, Jason-JH.Lin wrote:
+> Add the Global Command Engine (GCE) header file to define the GCE
+> thread priority, GCE subsys ID and GCE events for MT8196.
 
-On 12/11/2024 4:53 PM, Krzysztof Kozlowski wrote:
-> On Tue, Dec 10, 2024 at 11:16:32PM +0800, Cheng Jiang wrote:
->> Expand the firmware-name property to specify the names of NVM and
->> rampatch firmware to load.
->>
->> This update will support loading specific firmware (nvm and rampatch)
->> for certain chips, like the QCA6698 Bluetooth chip, which shares the
->> same IP core as the WCN6855 but has different RF components and RAM
->> sizes, requiring new firmware files.
->>
->> Different connectivity boards may be attached to the same platform. For
->> example, QCA6698-based boards can support either a two-antenna or
->> three-antenna solution, both of which work on the sa8775p-ride platform.
->> Due to differences in connectivity boards and variations in RF
->> performance from different foundries, different NVM configurations are
->> used based on the board ID.
->>
->> So In firmware-name, if the NVM file has an extension, the NVM file will
->> be used. Otherwise, the system will first try the .bNN (board ID) file,
->> and if that fails, it will fall back to the .bin file.
->>
->> Possible configurations:
->> firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
->> firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
->> firmware-name = "QCA6698/hpnv21.bin";
->>
->> ---
->> v4:
->>   1. Split nvm and rampatch changes to 2 commits
->>   2. Code fix according to review comments
+This we see from the diff. What we do not see is why priority is a
+binding. Looking briefly at existing code: it is not a binding, there is
+no driver user.
+
 > 
-> Which comments? What exactly did you fix? This cannot be vague.
+> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+> ---
+>  .../dt-bindings/mailbox/mediatek,mt8196-gce.h | 1439 +++++++++++++++++
+>  1 file changed, 1439 insertions(+)
+>  create mode 100644 include/dt-bindings/mailbox/mediatek,mt8196-gce.h
 > 
-Ack.
-> Best regards,
-> Krzysztof
-> 
+> diff --git a/include/dt-bindings/mailbox/mediatek,mt8196-gce.h b/include/dt-bindings/mailbox/mediatek,mt8196-gce.h
+> new file mode 100644
+> index 000000000000..860d69100157
+> --- /dev/null
+> +++ b/include/dt-bindings/mailbox/mediatek,mt8196-gce.h
+> @@ -0,0 +1,1439 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> +/*
+> + * Copyright (c) 2024 MediaTek Inc.
+> + *
+> + */
+> +
+> +#ifndef _DT_BINDINGS_GCE_MT8196_H
+> +#define _DT_BINDINGS_GCE_MT8196_H
+> +
+> +/* GCE thread priority */
+> +#define CMDQ_THR_PRIO_LOWEST	0
+> +#define CMDQ_THR_PRIO_1		1
+> +#define CMDQ_THR_PRIO_2		2
+> +#define CMDQ_THR_PRIO_3		3
+> +#define CMDQ_THR_PRIO_4		4
+> +#define CMDQ_THR_PRIO_5		5
+> +#define CMDQ_THR_PRIO_6		6
+> +#define CMDQ_THR_PRIO_HIGHEST	7
+> +
+> +/* GCE subsys table */
+> +#define SUBSYS_1300XXXX		0
+> +#define SUBSYS_1400XXXX		1
+> +#define SUBSYS_1401XXXX		2
+> +#define SUBSYS_1402XXXX		3
+> +#define SUBSYS_1502XXXX		4
+> +#define SUBSYS_1880XXXX		5
+> +#define SUBSYS_1881XXXX		6
+> +#define SUBSYS_1882XXXX		7
+> +#define SUBSYS_1883XXXX		8
+> +#define SUBSYS_1884XXXX		9
+> +#define SUBSYS_1000XXXX		10
+> +#define SUBSYS_1001XXXX		11
+> +#define SUBSYS_1002XXXX		12
+> +#define SUBSYS_1003XXXX		13
+> +#define SUBSYS_1004XXXX		14
+> +#define SUBSYS_1005XXXX		15
+> +#define SUBSYS_1020XXXX		16
+> +#define SUBSYS_1028XXXX		17
+> +#define SUBSYS_1700XXXX		18
+> +#define SUBSYS_1701XXXX		19
+> +#define SUBSYS_1702XXXX		20
+> +#define SUBSYS_1703XXXX		21
+> +#define SUBSYS_1800XXXX		22
+> +#define SUBSYS_1801XXXX		23
+> +#define SUBSYS_1802XXXX		24
+> +#define SUBSYS_1804XXXX		25
+> +#define SUBSYS_1805XXXX		26
+> +#define SUBSYS_1808XXXX		27
+> +#define SUBSYS_180aXXXX		28
+> +#define SUBSYS_180bXXXX		29
+> +#define SUBSYS_NO_SUPPORT	99
+> +
+> +/*
+> + * GCE General Purpose Register (GPR) support
+> + * Leave note for scenario usage here
+> + */
+> +/* GCE: write mask */
+
+That's a definite no-go. Register masks are not bindings.
+
+> +#define GCE_GPR_R00		0x0
+> +#define GCE_GPR_R01		0x1
+
+Best regards,
+Krzysztof
 
 
