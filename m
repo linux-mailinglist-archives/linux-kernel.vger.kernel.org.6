@@ -1,304 +1,134 @@
-Return-Path: <linux-kernel+bounces-440706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A73A9EC31E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:22:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58971889B1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:22:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7CA21126F;
-	Wed, 11 Dec 2024 03:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KVeBY+lK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7379EC330
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:23:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE5D20C493
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 03:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E017281D4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:23:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA0522915F;
+	Wed, 11 Dec 2024 03:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="kApDiNmB"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA70F20C000;
+	Wed, 11 Dec 2024 03:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733887347; cv=none; b=M9jvgKUfpgTDZILgcAzpB74sLEvc5Tm/27eHrRni3Bv6A/ZOmNunJCOmzyyBY1gdpYH2tK6AV5VvVsENwLdVCrRwyfDX82UOD3cbcKug0VSAFclc0DO0pMEhxNVrK4jLr7T9m2t0dRQBlMUXwQN2str6A+zrktoicGu02rvvwjU=
+	t=1733887388; cv=none; b=Hs/04aXOdd+JBBOPI+3audEeuJzO7bYHEBEm7PQjv5DGOodteP6K59Y4p4JdGtb3Muz648WdcZC/t7hKaKlAFZ/nzN8IPUoCcMN/BBC4zgahu9Mt1bu6CbSj1ePL2lp6kSIp/pWE2GoGM72lS36vok55sGRu3f0oeALP967qntw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733887347; c=relaxed/simple;
-	bh=DH4VDPy+9YI7ulTmM5YVyRvQT99eqA2nEqtOa8X683c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MefDZBBOLHFXBZc2C5HDqqioDmMgDZzZx3DeJ5sl2jvmBMuAIFDu6vY3Wc7WAR2Et6rXuuiEFMhcV+/rsamEaVxeeg3NUnWIlW6FbfpF3I+brAp4UBRNkkZiDCdhKSywDN4nCYypjxtmrWx4O2XT3y8EoVDCFQH4iZzRwMX0MUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KVeBY+lK; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733887346; x=1765423346;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=DH4VDPy+9YI7ulTmM5YVyRvQT99eqA2nEqtOa8X683c=;
-  b=KVeBY+lKyWGivv2EFWJ9u0nRTVJBMH637bkGHc4im0azPG6ix+ehhzdY
-   bzavh96GYR+cKGvUVgSG9CQ17yVIvGw9HqtKx6oyylAtn1g7gQQTmLJp1
-   Txxq12WhIKVypvAgc/TLSJ6DJs488ZxUAHWEIRAxClG3baY3sfljUvaYL
-   2GsmDhVw+i1d9yA5IfdiPTivDdxFaHn/WQTQA9oTUSkghP7+NNU3eyaph
-   XXScRn32QYpnlv/MPznm9jSv3zxoJaPgKfL0gVSpxZn9oWf1OkPa16Xbm
-   Xy6Pix1TY9jEL7D7uAe4JjttRgzq4MbHvHphAuq7zS4SKpYy8DEjQLiM2
-   g==;
-X-CSE-ConnectionGUID: IjsyiijxT2CgRMt3cVsX1g==
-X-CSE-MsgGUID: ZNOjDsuyQGauq9m2JVOuZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="51785416"
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="51785416"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 19:22:25 -0800
-X-CSE-ConnectionGUID: aZPvx75GT/OaZonPCQA5Ig==
-X-CSE-MsgGUID: pyF+pwKOQyuHXua0PtSUEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="118878402"
-Received: from ibarbour-mobl.amr.corp.intel.com (HELO bxing-mobl1.clients.intel.com) ([10.246.116.49])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 19:22:24 -0800
-From: Cedric Xing <cedric.xing@intel.com>
-Date: Tue, 10 Dec 2024 21:22:16 -0600
-Subject: [PATCH RFC v3 2/2] tsm: Add TVM Measurement Sample Code
+	s=arc-20240116; t=1733887388; c=relaxed/simple;
+	bh=MSmYHjlj6UzLNtoLb9EKbLVZf4MyQ0EgklgBomxysFY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=idHpeTu3VFtdDjrZ0NPWb6ojtspF3oX9CQZZdbHCZZo1LyXFJuue/XxM7la95UJnTCOVWBwdfhrV0z87DCjj2k+77OWn1YRJybkxoQRzaPsZgRIWbJJx+HL9kQNn/2gqWIBUpW1fAq0QvFgBWPExpCHsyN7zBCOZYiG6hoie6wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=kApDiNmB; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 38e61b3ab76f11efbd192953cf12861f-20241211
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=0KJPkukya59nfR1aGhl7T2oGpeA9UVjg5hfMTy1E8j0=;
+	b=kApDiNmBd/kpFvYlEry3Htj7EsXzUt92K2V4SVCXWUA55Wl4bT22N9270juSlHuZWT+CGKjVSBBGCxk8sYZF1VsZEMANEprAU4FRRn+DS8pnxQVggfhsFZQrK9eUrtIZFbbrpxsmGahE/gYmefLS9KyzDgukFLm9dTvLJbWl4g0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:127a1e49-b043-4adf-986c-cdcf697e45b6,IP:0,U
+	RL:0,TC:0,Content:36,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:6
+X-CID-META: VersionHash:6493067,CLOUDID:e266c53b-e809-4df3-83cd-88f012b9e9ba,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:3,EDM:2,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 38e61b3ab76f11efbd192953cf12861f-20241211
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 125515625; Wed, 11 Dec 2024 11:22:59 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 11 Dec 2024 11:22:58 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 11 Dec 2024 11:22:58 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Chun-Kuang Hu
+	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
+	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>, Singo Chang
+	<singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Moudy Ho
+	<moudy.ho@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jason-jh Lin
+	<jason-jh.lin@mediatek.corp-partner.google.com>
+Subject: [PATCH v2 0/8] Add GCE support for MT8196
+Date: Wed, 11 Dec 2024 11:22:48 +0800
+Message-ID: <20241211032256.28494-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241210-tsm-rtmr-v3-2-5997d4dbda73@intel.com>
-References: <20241210-tsm-rtmr-v3-0-5997d4dbda73@intel.com>
-In-Reply-To: <20241210-tsm-rtmr-v3-0-5997d4dbda73@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>, 
- Samuel Ortiz <sameo@rivosinc.com>, 
- James Bottomley <James.Bottomley@HansenPartnership.com>, 
- Lukas Wunner <lukas@wunner.de>, 
- Dionna Amalie Glaze <dionnaglaze@google.com>, 
- Qinkun Bao <qinkun@google.com>, Mikko Ylinen <mikko.ylinen@linux.intel.com>, 
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
+X-MTK: N
 
-This sample kernel module demonstrates how to make MRs accessible to user
-mode through TSM.
+From: Jason-jh Lin <jason-jh.lin@mediatek.corp-partner.google.com>
 
-Once loaded, this module registers a virtual measurement provider with the
-TSM core and will result in the directory tree below.
+This patch series adds support for the MediaTek MT8196 SoC in the CMDQ
+driver and related subsystems. The changes include adding compatible
+names and properties, updating driver data to accommodate hardware
+changes, and modifying the usage of CMDQ API to support non-subsys ID
+hardware.
 
-/sys/kernel/tsm
-└── measurement-example
-    ├── config_mr
-    │   └── sha512
-    │       └── digest
-    ├── report_digest
-    │   └── sha512
-    │       └── digest
-    ├── rtmr0
-    │   └── sha256
-    │       └── digest
-    ├── rtmr1
-    │   └── sha384
-    │       └── digest
-    ├── rtmr_crypto_agile
-    │   ├── sha256
-    │   │   └── digest
-    │   └── sha384
-    │       └── digest
-    └── static_mr
-        └── sha384
-            └── digest
-
-Among the MRs in this example:
-
-- `static_mr` and `config_mr` are *Readonly* (static) MRs.
-- `rtmr0` is an RTMR with `TSM_MR_F_W` **cleared**, preventing direct
-  extensions; as a result, `rtmr0/sha256/digest` is read-only.
-- `rtmr1` is an RTMR with `TSM_MR_F_W` **set**, permitting direct
-  extensions; thus, `rtmr1/sha384/digest` is writable.
-- `rtmr_crypto_agile` demonstrates a "single" MR that supports multiple
-  hash algorithms. Each supported algorithm has a corresponding digest,
-  usually referred to as a "bank" in TCG terminology. In this specific
-  sample, the 2 banks are aliased to `rtmr0` and `rtmr1`, respectively.
-- `report_digest` contains the digest of the internal report structure
-  living in this sample module's memory. It is to demonstrate the use of
-  the `TSM_MR_F_L` flag. Its value changes each time an RTMR is extended.
-
-More details can be found in `samples/tsm/measurement-example.c`.
-
-Signed-off-by: Cedric Xing <cedric.xing@intel.com>
 ---
- MAINTAINERS                       |   1 +
- samples/Kconfig                   |   4 ++
- samples/Makefile                  |   1 +
- samples/tsm/Makefile              |   2 +
- samples/tsm/measurement-example.c | 113 ++++++++++++++++++++++++++++++++++++++
- 5 files changed, 121 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4c833fa9e388..a4074cea0f16 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -23848,6 +23848,7 @@ S:	Maintained
- F:	Documentation/ABI/testing/configfs-tsm
- F:	drivers/virt/coco/tsm*.c
- F:	include/linux/tsm.h
-+F:	samples/tsm/*
- 
- TRUSTED SERVICES TEE DRIVER
- M:	Balint Dobszay <balint.dobszay@arm.com>
-diff --git a/samples/Kconfig b/samples/Kconfig
-index b288d9991d27..8159d3ca6487 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -184,6 +184,10 @@ config SAMPLE_TIMER
- 	bool "Timer sample"
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
- 
-+config SAMPLE_TSM
-+	tristate "TSM measurement sample"
-+	depends on TSM_REPORTS
-+
- config SAMPLE_UHID
- 	bool "UHID sample"
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
-diff --git a/samples/Makefile b/samples/Makefile
-index b85fa64390c5..891f5c12cd39 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -39,3 +39,4 @@ obj-$(CONFIG_SAMPLE_KMEMLEAK)		+= kmemleak/
- obj-$(CONFIG_SAMPLE_CORESIGHT_SYSCFG)	+= coresight/
- obj-$(CONFIG_SAMPLE_FPROBE)		+= fprobe/
- obj-$(CONFIG_SAMPLES_RUST)		+= rust/
-+obj-$(CONFIG_SAMPLE_TSM)		+= tsm/
-diff --git a/samples/tsm/Makefile b/samples/tsm/Makefile
-new file mode 100644
-index 000000000000..3969a59221e9
---- /dev/null
-+++ b/samples/tsm/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_SAMPLE_TSM) += measurement-example.o
-diff --git a/samples/tsm/measurement-example.c b/samples/tsm/measurement-example.c
-new file mode 100644
-index 000000000000..c5d6f44211dc
---- /dev/null
-+++ b/samples/tsm/measurement-example.c
-@@ -0,0 +1,113 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright(c) 2024 Intel Corporation. All rights reserved. */
-+
-+#define pr_fmt(x) KBUILD_MODNAME ": " x
-+
-+#include <linux/module.h>
-+#include <linux/tsm.h>
-+#include <crypto/hash_info.h>
-+#include <crypto/hash.h>
-+
-+struct {
-+	u8 static_mr[SHA384_DIGEST_SIZE];
-+	u8 config_mr[SHA512_DIGEST_SIZE];
-+	u8 rtmr0[SHA256_DIGEST_SIZE];
-+	u8 rtmr1[SHA384_DIGEST_SIZE];
-+	u8 user_data[SHA512_DIGEST_SIZE];
-+	u8 report_digest[SHA512_DIGEST_SIZE];
-+} example_report = {
-+	.static_mr = "static_mr",
-+	.config_mr = "config_mr",
-+	.rtmr0 = "rtmr0",
-+	.rtmr1 = "rtmr1",
-+	.user_data = "user_data",
-+};
-+
-+DEFINE_FREE(shash, struct crypto_shash *, if (!IS_ERR(_T)) crypto_free_shash(_T));
-+
-+static int example_report_refresh(struct tsm_measurement *tmr,
-+				  const struct tsm_measurement_register *mr)
-+{
-+	pr_debug("%s(%s,%s)\n", __func__, tmr->name, mr->mr_name);
-+	struct crypto_shash *tfm __free(shash) =
-+		crypto_alloc_shash(hash_algo_name[HASH_ALGO_SHA512], 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+	return crypto_shash_tfm_digest(tfm, (u8 *)&example_report,
-+				       offsetof(typeof(example_report), report_digest),
-+				       example_report.report_digest);
-+}
-+
-+static int example_report_extend_mr(struct tsm_measurement *tmr,
-+				    const struct tsm_measurement_register *mr, const u8 *data)
-+{
-+	SHASH_DESC_ON_STACK(desc, 0);
-+	int rc;
-+
-+	pr_debug("%s(%s,%s)\n", __func__, tmr->name, mr->mr_name);
-+
-+	desc->tfm = crypto_alloc_shash(hash_algo_name[mr->mr_hash], 0, 0);
-+	if (IS_ERR(desc->tfm))
-+		return PTR_ERR(desc->tfm);
-+
-+	rc = crypto_shash_init(desc);
-+	if (!rc)
-+		rc = crypto_shash_update(desc, mr->mr_value, mr->mr_size);
-+	if (!rc)
-+		rc = crypto_shash_finup(desc, data, mr->mr_size, mr->mr_value);
-+
-+	crypto_free_shash(desc->tfm);
-+	return rc;
-+}
-+
-+#define MR_(mr, hash) .mr_value = &example_report.mr, TSM_MR_(mr, hash)
-+static const struct tsm_measurement_register example_mrs[] = {
-+	/* static MR, read-only */
-+	{ MR_(static_mr, SHA384) },
-+	/* config MR, read-only */
-+	{ MR_(config_mr, SHA512) },
-+	/* RTMR, direct extension prohibited */
-+	{ MR_(rtmr0, SHA256) | TSM_MR_F_RTMR },
-+	/* RTMR, direct extension allowed */
-+	{ MR_(rtmr1, SHA384) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	/* RTMR, crypto agile, alaised to rtmr0 and rtmr1, respectively */
-+	{ .mr_value = &example_report.rtmr0,
-+	  TSM_MR_(rtmr_crypto_agile, SHA256) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	{ .mr_value = &example_report.rtmr1,
-+	  TSM_MR_(rtmr_crypto_agile, SHA384) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	/* most CC archs allow including user data in attestation */
-+	{ MR_(report_digest, SHA512) | TSM_MR_F_L },
-+	/* terminating NULL entry */
-+	{}
-+};
-+#undef MR_
-+
-+static struct tsm_measurement example_measurement_provider = {
-+	.name = "measurement-example",
-+	.mrs = example_mrs,
-+	.refresh = example_report_refresh,
-+	.extend = example_report_extend_mr,
-+};
-+
-+static int __init measurement_example_init(void)
-+{
-+	int rc;
-+
-+	rc = tsm_register_measurement(&example_measurement_provider);
-+	pr_debug("tsm_register_measurement(%p)=%d\n", &example_measurement_provider, rc);
-+	return rc;
-+}
-+
-+static void __exit measurement_example_exit(void)
-+{
-+	int rc;
-+
-+	rc = tsm_unregister_measurement(&example_measurement_provider);
-+	pr_debug("tsm_unregister_measurement(%p)=%d\n", &example_measurement_provider, rc);
-+}
-+
-+module_init(measurement_example_init);
-+module_exit(measurement_example_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Sample tsm_measurement implementation");
+Change in v2:
+1. Remove the constant and fix warning in dt-bindings.
+2. Remove the pa_base parameter of CMDQ APIs and related modification.
+3. Move subsys checking to client drivers and use 2 alternative
+   CMDQ APIs to achieve the same functionality.
+
+---
+
+Jason-JH.Lin (8):
+  dt-bindings: mailbox: mediatek: Add GCE header file for MT8196
+  dt-bindings: mailbox: mediatek: Add MT8196 support for gce-mailbox
+  mailbox: mtk-cmdq: Add driver data to support for MT8196
+  soc: mediatek: mtk-cmdq: Add pa_base parsing for unsupported subsys ID
+    hardware
+  soc: mediatek: mtk-cmdq: Add mminfra_offset compatibility for DRAM
+    address
+  soc: mediatek: Add programming flow for unsupported subsys ID hardware
+  drm/mediatek: Add programming flow for unsupported subsys ID hardware
+  media: mediatek: mdp3: Add programming flow for unsupported subsys ID
+    hardware
+
+ .../mailbox/mediatek,gce-mailbox.yaml         |    4 +
+ drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |   34 +-
+ drivers/mailbox/mtk-cmdq-mailbox.c            |  107 +-
+ .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    |   26 +-
+ .../platform/mediatek/mdp3/mtk-mdp3-comp.h    |   41 +-
+ drivers/soc/mediatek/mtk-cmdq-helper.c        |   53 +-
+ drivers/soc/mediatek/mtk-mmsys.c              |   16 +-
+ drivers/soc/mediatek/mtk-mutex.c              |   12 +-
+ .../dt-bindings/mailbox/mediatek,mt8196-gce.h | 1439 +++++++++++++++++
+ include/linux/mailbox/mtk-cmdq-mailbox.h      |    3 +
+ include/linux/soc/mediatek/mtk-cmdq.h         |    1 +
+ 11 files changed, 1701 insertions(+), 35 deletions(-)
+ create mode 100644 include/dt-bindings/mailbox/mediatek,mt8196-gce.h
 
 -- 
 2.43.0
