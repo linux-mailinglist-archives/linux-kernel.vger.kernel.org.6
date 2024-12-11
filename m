@@ -1,251 +1,209 @@
-Return-Path: <linux-kernel+bounces-442329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24FB59EDB03
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:11:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 644649EDB09
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:13:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6F11889CAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:13:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C1A1F2C23;
+	Wed, 11 Dec 2024 23:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IT+nonDH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ED6E2832CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:11:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADFB1F2C23;
-	Wed, 11 Dec 2024 23:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOyoSWR6"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48491EC4FF;
-	Wed, 11 Dec 2024 23:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D32195;
+	Wed, 11 Dec 2024 23:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733958701; cv=none; b=TXG57ioNhPSbWl54X/wzmtsNuPEBdZTKUVUIOctqRoB++6N01+XFAM4TTNT6v6rFXVo17TSGm92bkLncCImjXhwwwHqbTARtt375upFZyA7lyc47B1IKia6SJ23j/111cm6tAoQ/YmHCRGND+58ux8EvMZCgApt6MJazZVW+pJc=
+	t=1733958815; cv=none; b=eC+UPWPhsqrUGxCUP9uJz7Qyx8KbcanoNA5g9vIjwaAKAKPeTJ4Uv2GjuFlEPG/PTdCZysBBIddh+GMGOP0dZ8g8MoJym/LK/7cCCLAznFrCyoRpwNJNVKbkWdv6u6HbRrfX9PBQ9ZTqB2MU/BTyQ0M12wIb1R/gv9pYrjrDRqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733958701; c=relaxed/simple;
-	bh=8dYracxQcqXH7RO7AuMCREdDCK+nw64UWPDNSr72gKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NwW+I/fR4M9LA5v1wXbiX4QjjwSI/9xkm/NmrxY/DTQt75EMG7gClTfbdDQVjs2V1mWPNlqkbU34sZhjZjdn8kuIlLBNzaAP2YjhUWGuzxBuyCoEwwUh6ca8MDPDMkFkMCgf+Uc75jkgs/1NleeqjJ7onl1U8iXSoAbGESwcZDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOyoSWR6; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3d14336f0so9209411a12.3;
-        Wed, 11 Dec 2024 15:11:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733958698; x=1734563498; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7DEsYbv+14YcD3cx8SHU+N63+rhoslsxxNsNwT6XSRs=;
-        b=QOyoSWR6nKUYLPQgIlONQ/PDjgn3+z4Fmx7CMyMOBo1XYhhdXmTR1lLkmF4BnfTWgm
-         U+lPQ9QNRcJL1nX/27+BtEQPAl7L66wK2nSmppk4Uo4iqrnD13+x9IHt6z1nBqqj4Ley
-         fk3Cg2YGAI3bQggkYuRjxfwiY2ub9mOomvzskCDVoWqmSrodtWVsvKJ+RPoafnpERMwD
-         Fw1kc/SQMXlVA9ao3jfpUdjpKg1/wNF7uQmouTXr1POuAVf6hnX0OqIB0VbAO8RZD0wg
-         UxzrnhWU3cy7Yf7gBjuONCJv/wja1XHiiVSB0X8wMZk/GNA7cVpDqUnxL/56/5GlKWSI
-         MVAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733958698; x=1734563498;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7DEsYbv+14YcD3cx8SHU+N63+rhoslsxxNsNwT6XSRs=;
-        b=Bqym6w8cUS1B6nCogY5QByZon04Kwiu6WgSlXxoNdPehKKbTqXdIYnDaGefsHI37gD
-         KOzGyYsSIvuix9497g0OUtDuE3mX2YmcHUQx5z3S4dV7m/D6EpGoG39sxlqXeiLTLcsH
-         nz5s6RLag+1w4ii87GaOggD/1nlD7b3VFK0sNccSF3F1kZlVeRo7029Pa/w8/vONeDv4
-         6+UiZrmFKhF+cJSscWu1Bctd35Z6abUATnvj7UQSSKCXCF603sJqqsKisRRV+3xlc7Rz
-         cWmrYikKkgkYew7e0AWZVQuFqPAgBO1TV3zzO9f5hikgKC8irjfQQCjSIwmwoBmE7Q+0
-         Itwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDLzQZSFnDJS5snA2KRBigTYJXNKCBXb0KkpFIpQYW77GuIAM0yFzwf5QtqMO6HWEZM1fbH8NXf9Eh3ehe@vger.kernel.org, AJvYcCVarw30CdvvdsqFLHjsPXjWQ6vnIK8r8olBSR3yeVaoT9Ji8LEGodcsvyYOfzdmirjGeLnOeelteYNK@vger.kernel.org, AJvYcCVf9BWEUYP/8qTk1+Ptz0e9VA7W4T1eJkg+uU8igBtID1GKYDzJC9I9gmt8fWQpVoAAfgYMZa7uCiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGl5uoVrVd8S07gzuu9msWzdX+/SSvYQaxnRuCp5fwHszrdHPt
-	V/gvWKK/tyLqA/loys37Jsa6DM1SmsgXmm4LE7UFOVxIghrj00hSFO+3bKpybE71aU6piRfsBgn
-	6ePSElqNP0jys/3rC4qQSPDLXb0uC3I87
-X-Gm-Gg: ASbGncsCcgRxqhQc6asLli0bNYBGBQL5947gmEKx+cE2i+C6J5vSONxMdYbFBQ8Oidf
-	uPu+m0PBTQmQmVbpcWNU5HPSdqYyl/1mBmDFwR5U=
-X-Google-Smtp-Source: AGHT+IEYnXu22m40I+M5yIWPJ0DddwBgpRlRSQLnu5K7XsASm55CzvCUktO2mqurNfbV8WshyxJABShiYjVjYlW2C5o=
-X-Received: by 2002:a05:6402:2114:b0:5d0:d9e6:fea1 with SMTP id
- 4fb4d7f45d1cf-5d4330d3799mr3651305a12.19.1733958697900; Wed, 11 Dec 2024
- 15:11:37 -0800 (PST)
+	s=arc-20240116; t=1733958815; c=relaxed/simple;
+	bh=Fs0YvPZYFfeum0uMpaC2y/EnUl1y1ZIuYN+2dIo5QeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfdHvzB9pnXk/IkCrwcZ7ubHq3nBkp+zwB+mTucdsMfOyPK0PyrGujMN6ojeBwtKDtpSpU+nEitSQylOrLWTZ19V+Bl9e0Zs9RLgmDlJ/pwXghc2VXv03bb3Kl7pHoLAIaNyJQTeR7++QRmFh9g0Cp3Bkp4IawBMOneSWb+sAUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IT+nonDH; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733958814; x=1765494814;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Fs0YvPZYFfeum0uMpaC2y/EnUl1y1ZIuYN+2dIo5QeY=;
+  b=IT+nonDHXkE/IjwH3/1hVLjyzOcgCe0B+FN41NTwIpw+/dd0Sey4eMlb
+   bscur/qI80NXQs8c4rbXbSfXYF5KRyxistCFCJJKEgvLA4Pv445CfNmPt
+   jWsKIUav2xNMUkFDsoqAtlwF/kaXKH2WZuz3BUtKtSNHvG9axa7blpgab
+   TTCTATDjTFctYzHgGAfbdlrxPNJuif7sqAzn4refAAMkH+AegI25HkmtZ
+   dldGIfAL9/HeqlHONtRYyVTnoRiLW6KtNQ9UGDJ1OPPSTpbahq1XD253C
+   v058k51pvmjLqnaO7f6I96ops3RyrRJbhDLW8jnBB0bFHFot9aWHIeeq5
+   Q==;
+X-CSE-ConnectionGUID: dDBtzksxSFuig1a5cZUnDw==
+X-CSE-MsgGUID: 17Ts8s5fSYiYdEYbqhfSkw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="38046231"
+X-IronPort-AV: E=Sophos;i="6.12,226,1728975600"; 
+   d="scan'208";a="38046231"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 15:13:33 -0800
+X-CSE-ConnectionGUID: GR6vQ/SaRQiFUeoopuAIzQ==
+X-CSE-MsgGUID: nwFvvL8HQwSfClzTThLOiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="100950648"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 11 Dec 2024 15:13:28 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLVtV-0007C9-0z;
+	Wed, 11 Dec 2024 23:13:25 +0000
+Date: Thu, 12 Dec 2024 07:12:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	linux-efi@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	stable@vger.kernel.org, Tyler Hicks <code@tyhicks.com>,
+	Brian Nguyen <nguyenbrian@microsoft.com>,
+	Jacob Pan <panj@microsoft.com>, Allen Pais <apais@microsoft.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	KONDO =?utf-8?B?S0FaVU1BKOi/keiXpOOAgOWSjOecnyk=?= <kazuma-kondo@nec.com>,
+	Kees Cook <kees@kernel.org>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Aditya Garg <gargaditya08@live.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] efi: make the min and max mmap slack slots configurable
+Message-ID: <202412120620.ZY2X03AR-lkp@intel.com>
+References: <20241209162449.48390-1-hamzamahfooz@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211143044.9550-1-sebastian.reichel@collabora.com>
- <20241211143044.9550-4-sebastian.reichel@collabora.com> <CAMdYzYqLq=kSC8fiBapRS_8w0s8PaL9Yd46VgM56YbTEmUG1xA@mail.gmail.com>
- <xe2wqm4ktutycxj7x4rskz4pn4cfmoci6zcgfxecmvc5bu7cqi@mqxi3pnehqq3>
-In-Reply-To: <xe2wqm4ktutycxj7x4rskz4pn4cfmoci6zcgfxecmvc5bu7cqi@mqxi3pnehqq3>
-From: Peter Geis <pgwipeout@gmail.com>
-Date: Wed, 11 Dec 2024 18:11:24 -0500
-Message-ID: <CAMdYzYpDXHtz_Fq5NJXqTdxVTcJcHkjcjU4-J=zwmE0BWmSsNw@mail.gmail.com>
-Subject: Re: [PATCH v5 3/7] pmdomain: rockchip: forward rockchip_do_pmu_set_power_domain
- errors
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Elaine Zhang <zhangqing@rock-chips.com>, 
-	=?UTF-8?Q?Adri=C3=A1n_Mart=C3=ADnez_Larumbe?= <adrian.larumbe@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Chen-Yu Tsai <wens@csie.org>, 
-	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kernel@collabora.com, 
-	Dragan Simic <dsimic@manjaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209162449.48390-1-hamzamahfooz@linux.microsoft.com>
 
-On Wed, Dec 11, 2024 at 3:46=E2=80=AFPM Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
-> Hello Peter,
->
-> On Wed, Dec 11, 2024 at 02:53:34PM -0500, Peter Geis wrote:
-> > On Wed, Dec 11, 2024 at 9:32=E2=80=AFAM Sebastian Reichel
-> > <sebastian.reichel@collabora.com> wrote:
-> > >
-> > > Currently rockchip_do_pmu_set_power_domain prints a warning if there
-> > > have been errors turning on the power domain, but it does not return
-> > > any errors and rockchip_pd_power() tries to continue setting up the
-> > > QOS registers. This usually results in accessing unpowered registers,
-> > > which triggers an SError and a full system hang.
-> > >
-> > > This improves the error handling by forwarding the error to avoid
-> > > kernel panics.
-> >
-> > I think we should merge your patch here with my patch for returning
-> > errors from rockchip_pmu_set_idle_request [1].
->
-> I will have a look.
->
-> > > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> > > Tested-by: Heiko Stuebner <heiko@sntech.de>
-> > > Tested-by: Adrian Larumbe <adrian.larumbe@collabora.com> # On Rock 5B
-> > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > > ---
-> > >  drivers/pmdomain/rockchip/pm-domains.c | 34 +++++++++++++++++-------=
---
-> > >  1 file changed, 22 insertions(+), 12 deletions(-)
-> > >
-> > > diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomai=
-n/rockchip/pm-domains.c
-> > > index a161ee13c633..8f440f2883db 100644
-> > > --- a/drivers/pmdomain/rockchip/pm-domains.c
-> > > +++ b/drivers/pmdomain/rockchip/pm-domains.c
-> > > @@ -533,16 +533,17 @@ static int rockchip_pmu_domain_mem_reset(struct=
- rockchip_pm_domain *pd)
-> > >         return ret;
-> > >  }
-> > >
-> > > -static void rockchip_do_pmu_set_power_domain(struct rockchip_pm_doma=
-in *pd,
-> > > -                                            bool on)
-> > > +static int rockchip_do_pmu_set_power_domain(struct rockchip_pm_domai=
-n *pd,
-> > > +                                           bool on)
-> > >  {
-> > >         struct rockchip_pmu *pmu =3D pd->pmu;
-> > >         struct generic_pm_domain *genpd =3D &pd->genpd;
-> > >         u32 pd_pwr_offset =3D pd->info->pwr_offset;
-> > >         bool is_on, is_mem_on =3D false;
-> > > +       int ret;
-> > >
-> > >         if (pd->info->pwr_mask =3D=3D 0)
-> > > -               return;
-> > > +               return 0;
-> > >
-> > >         if (on && pd->info->mem_status_mask)
-> > >                 is_mem_on =3D rockchip_pmu_domain_is_mem_on(pd);
-> > > @@ -557,16 +558,21 @@ static void rockchip_do_pmu_set_power_domain(st=
-ruct rockchip_pm_domain *pd,
-> > >
-> > >         wmb();
-> > >
-> > > -       if (is_mem_on && rockchip_pmu_domain_mem_reset(pd))
-> > > -               return;
-> > > +       if (is_mem_on) {
-> > > +               ret =3D rockchip_pmu_domain_mem_reset(pd);
-> > > +               if (ret)
-> > > +                       return ret;
-> > > +       }
-> > >
-> > > -       if (readx_poll_timeout_atomic(rockchip_pmu_domain_is_on, pd, =
-is_on,
-> > > -                                     is_on =3D=3D on, 0, 10000)) {
-> > > -               dev_err(pmu->dev,
-> > > -                       "failed to set domain '%s', val=3D%d\n",
-> > > -                       genpd->name, is_on);
-> > > -               return;
-> > > +       ret =3D readx_poll_timeout_atomic(rockchip_pmu_domain_is_on, =
-pd, is_on,
-> > > +                                       is_on =3D=3D on, 0, 10000);
-> > > +       if (ret) {
-> > > +               dev_err(pmu->dev, "failed to set domain '%s' %s, val=
-=3D%d\n",
-> > > +                       genpd->name, on ? "on" : "off", is_on);
-> > > +               return ret;
-> > >         }
-> > > +
-> > > +       return 0;
-> > >  }
-> > >
-> > >  static int rockchip_pd_power(struct rockchip_pm_domain *pd, bool pow=
-er_on)
-> > > @@ -592,7 +598,11 @@ static int rockchip_pd_power(struct rockchip_pm_=
-domain *pd, bool power_on)
-> > >                         rockchip_pmu_set_idle_request(pd, true);
-> > >                 }
-> > >
-> > > -               rockchip_do_pmu_set_power_domain(pd, power_on);
-> > > +               ret =3D rockchip_do_pmu_set_power_domain(pd, power_on=
-);
-> > > +               if (ret < 0) {
-> > > +                       clk_bulk_disable(pd->num_clks, pd->clks);
-> > > +                       return ret;
-> >
-> > Looking at it, we shouldn't return directly from here because the
-> > mutex never gets unlocked.
->
-> Yes, we should do that after patch 2/7 from this series :)
+Hi Hamza,
 
-That's excellent!
+kernel test robot noticed the following build warnings:
 
->
-> > Instead of repeating clk_bulk_disable and return ret for each failure,
-> > we can initialize ret =3D 0, have a goto: out pointing to
-> > clk_bulk_disable, and change return 0 to return ret at the end.
->
-> Right now there is only a single clk_bulk_disable() in an error
-> case, so I did not use the typical error goto chain. I suppose
-> it makes a lot more sense with proper error handling for the calls
-> to rockchip_pmu_set_idle_request().
+[auto build test WARNING on efi/next]
+[also build test WARNING on linus/master v6.13-rc2 next-20241211]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If you'd like, I can base my v2 on this patch series with the changes
-I'm suggesting?
+url:    https://github.com/intel-lab-lkp/linux/commits/Hamza-Mahfooz/efi-make-the-min-and-max-mmap-slack-slots-configurable/20241210-002724
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git next
+patch link:    https://lore.kernel.org/r/20241209162449.48390-1-hamzamahfooz%40linux.microsoft.com
+patch subject: [PATCH] efi: make the min and max mmap slack slots configurable
+config: x86_64-buildonly-randconfig-002-20241210 (https://download.01.org/0day-ci/archive/20241212/202412120620.ZY2X03AR-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241212/202412120620.ZY2X03AR-lkp@intel.com/reproduce)
 
->
-> Greetings,
->
-> -- Sebastian
->
-> >
-> > What do you think?
-> >
-> > Very Respectfully,
-> > Peter Geis
-> >
-> > [1] https://lore.kernel.org/linux-rockchip/20241210013010.81257-2-pgwip=
-eout@gmail.com/
-> >
-> > > +               }
-> > >
-> > >                 if (power_on) {
-> > >                         /* if powering up, leave idle mode */
-> > > --
-> > > 2.45.2
-> > >
-> > >
-> > > _______________________________________________
-> > > Linux-rockchip mailing list
-> > > Linux-rockchip@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-rockchip
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412120620.ZY2X03AR-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/firmware/efi/libstub/mem.c:23: warning: Function parameter or struct member 'n' not described in 'efi_get_memory_map'
+
+
+vim +23 drivers/firmware/efi/libstub/mem.c
+
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10   7  
+1d9b17683547348 Heinrich Schuchardt 2020-02-18   8  /**
+1d9b17683547348 Heinrich Schuchardt 2020-02-18   9   * efi_get_memory_map() - get memory map
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  10   * @map:		pointer to memory map pointer to which to assign the
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  11   *			newly allocated memory map
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  12   * @install_cfg_tbl:	whether or not to install the boot memory map as a
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  13   *			configuration table
+1d9b17683547348 Heinrich Schuchardt 2020-02-18  14   *
+1d9b17683547348 Heinrich Schuchardt 2020-02-18  15   * Retrieve the UEFI memory map. The allocated memory leaves room for
+8e602989bc52479 Hamza Mahfooz       2024-12-09  16   * up to CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS additional memory map entries.
+1d9b17683547348 Heinrich Schuchardt 2020-02-18  17   *
+1d9b17683547348 Heinrich Schuchardt 2020-02-18  18   * Return:	status code
+1d9b17683547348 Heinrich Schuchardt 2020-02-18  19   */
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  20  efi_status_t efi_get_memory_map(struct efi_boot_memmap **map,
+8e602989bc52479 Hamza Mahfooz       2024-12-09  21  				bool install_cfg_tbl,
+8e602989bc52479 Hamza Mahfooz       2024-12-09  22  				unsigned int *n)
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10 @23  {
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  24  	int memtype = install_cfg_tbl ? EFI_ACPI_RECLAIM_MEMORY
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  25  				      : EFI_LOADER_DATA;
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  26  	efi_guid_t tbl_guid = LINUX_EFI_BOOT_MEMMAP_GUID;
+8e602989bc52479 Hamza Mahfooz       2024-12-09  27  	unsigned int nr = CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS;
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  28  	struct efi_boot_memmap *m, tmp;
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10  29  	efi_status_t status;
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  30  	unsigned long size;
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10  31  
+8e602989bc52479 Hamza Mahfooz       2024-12-09  32  	BUILD_BUG_ON(!is_power_of_2(CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS) ||
+8e602989bc52479 Hamza Mahfooz       2024-12-09  33  		     !is_power_of_2(CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS) ||
+8e602989bc52479 Hamza Mahfooz       2024-12-09  34  		     CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS >=
+8e602989bc52479 Hamza Mahfooz       2024-12-09  35  		     CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS);
+8e602989bc52479 Hamza Mahfooz       2024-12-09  36  
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  37  	tmp.map_size = 0;
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  38  	status = efi_bs_call(get_memory_map, &tmp.map_size, NULL, &tmp.map_key,
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  39  			     &tmp.desc_size, &tmp.desc_ver);
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  40  	if (status != EFI_BUFFER_TOO_SMALL)
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  41  		return EFI_LOAD_ERROR;
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  42  
+8e602989bc52479 Hamza Mahfooz       2024-12-09  43  	do {
+8e602989bc52479 Hamza Mahfooz       2024-12-09  44  		size = tmp.map_size + tmp.desc_size * nr;
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  45  		status = efi_bs_call(allocate_pool, memtype, sizeof(*m) + size,
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  46  				     (void **)&m);
+8e602989bc52479 Hamza Mahfooz       2024-12-09  47  		nr <<= 1;
+8e602989bc52479 Hamza Mahfooz       2024-12-09  48  	} while (status == EFI_BUFFER_TOO_SMALL &&
+8e602989bc52479 Hamza Mahfooz       2024-12-09  49  		 nr <= CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS);
+8e602989bc52479 Hamza Mahfooz       2024-12-09  50  
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10  51  	if (status != EFI_SUCCESS)
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  52  		return status;
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10  53  
+8e602989bc52479 Hamza Mahfooz       2024-12-09  54  	if (n)
+8e602989bc52479 Hamza Mahfooz       2024-12-09  55  		*n = nr;
+8e602989bc52479 Hamza Mahfooz       2024-12-09  56  
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  57  	if (install_cfg_tbl) {
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  58  		/*
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  59  		 * Installing a configuration table might allocate memory, and
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  60  		 * this may modify the memory map. This means we should install
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  61  		 * the configuration table first, and re-install or delete it
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  62  		 * as needed.
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  63  		 */
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  64  		status = efi_bs_call(install_configuration_table, &tbl_guid, m);
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  65  		if (status != EFI_SUCCESS)
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  66  			goto free_map;
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  67  	}
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  68  
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  69  	m->buff_size = m->map_size = size;
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  70  	status = efi_bs_call(get_memory_map, &m->map_size, m->map, &m->map_key,
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  71  			     &m->desc_size, &m->desc_ver);
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  72  	if (status != EFI_SUCCESS)
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  73  		goto uninstall_table;
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10  74  
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  75  	*map = m;
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  76  	return EFI_SUCCESS;
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10  77  
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  78  uninstall_table:
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  79  	if (install_cfg_tbl)
+171539f5a90e3fd Ard Biesheuvel      2022-09-15  80  		efi_bs_call(install_configuration_table, &tbl_guid, NULL);
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  81  free_map:
+eab3126571ed1e3 Ard Biesheuvel      2022-06-03  82  	efi_bs_call(free_pool, m);
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10  83  	return status;
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10  84  }
+f57db62c67c1c9d Ard Biesheuvel      2020-02-10  85  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
