@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-441968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 871B49ED647
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:18:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612069ED630
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FDF8188B4D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589B61626BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5B7243B90;
-	Wed, 11 Dec 2024 18:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EE0236952;
+	Wed, 11 Dec 2024 18:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bC3U23W0"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2068.outbound.protection.outlook.com [40.107.237.68])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wD3E3avN"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2086.outbound.protection.outlook.com [40.107.223.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49A623693F
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 18:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EB523692C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 18:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943491; cv=fail; b=ibWe6TWH8C2KbTGpnhGV6+IaIj+y8kByYcRtM4MlU2bdeR3G6dk0DezwLtpqdYmYlSyYKVXHXdmNyOoLAKs1MrNX4Rs/2fymp9/1upTPjWHzHruCGAN0R5kZPmmr8awdCnynuV8wAuYz67qW5B+LvxApVAgQd9uvN+h5w0RJmGE=
+	t=1733943512; cv=fail; b=gqsgA/Jbo9N1oYsCsU5NrSrHSvD4M0wGqFYKUq1Jpj7nWqLMIxPngQfC0Tp2nGc3qbqRVtsmTsR1zn8HTms38IfK338UBXzgUBfUeyOEiOhiYDUVbI6/dYtdpQ7PnpXANtM/OthENuNMObqTlYcLi/kl77bnSxvM44cBVHDobsw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943491; c=relaxed/simple;
-	bh=orVU3DpIUNHREqyvCb7Lx9japWgoQxgoSZMfx8sJvHQ=;
+	s=arc-20240116; t=1733943512; c=relaxed/simple;
+	bh=Uw3bB+CuLgj4X7zY/PDQKWKN6sIEDhLWBytko2m18T4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LXtyYdHfp+F1WChIMp+T3SG2KHfpCGg//OL9LYmreLnErrQtFUaZ5adcETwM46AR4TvjYA9ZXb+kXaX5KQ3b+gykPR8dLBwXy2Pd6gVUboTf8J/qO0vd0hzHE2kdWR8D1Y+1SxFumN+54b2dW5hudc6F21caUKmCALWmmMgeEWk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bC3U23W0; arc=fail smtp.client-ip=40.107.237.68
+	 MIME-Version:Content-Type; b=s6WZCi8+2Eho2LkFhIvzKIMv7UBZLFxk0TVRUXZUie5NCPUCovqX542FdFDbETVLNpWNjZ5MLasuYwq1Jr4MHdFggbPPlt0oWIpXKaxYgTRtie2lSFMxDiZuwmiSW06k7WvC1cD+fwhwe6042CW1iPZSSD4xpJDbHNMNlrwWPoI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wD3E3avN; arc=fail smtp.client-ip=40.107.223.86
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m9j6KSi+srA+xXuZIKHmjlmhklSNWwKvIpUKNQGrya9DuLowyuf1FWYkyegCZ0nyFqD59kxq9Hr8P8aXBpWnN0Y9WQDacN/Uce0IGKjQoqkOddGxh9MXKgJ/i9fp2SoziRNnUNpuvO8Bk6JOor249dd1C3YMUlw0qkYLHy97drOgP7eLMmmyJteYujuxyAWFruRqs3PaRhrf0xwV5YbjovZaDAU51L0lq5KIyhey3zPeEM/UCrDOUvfg0X0hse7Bpg78LhyM8bYPCZuWhz4CBVqwu0HoRTsP6K2rFzD8GPWJz0RTAmG5Gr6o+RXB+qw6DyqZQDYCEZQ09WWfTIw6AQ==
+ b=d8vZdQ07nk0QeK8spTeS66ShHg63g+z/aBj1Ow9fkZ+02GNnlktKg+k+qJcPR/ua3+sR4nm3FNrYMxe6q6EpR+XA67G6y0cQGR2JzWuk+FHPKrSSxHLKcDvL4UGuKYD8FsPueLUN4/rzjosQ3ZnubmGkUErcOeoa+F6dyvBjgBQ7KTclmP9zSSy+D1uJuT0EUwPKv+tgshTbjSmSseO4PEwpdacJJfyPHirlEgX+waNdi/4UwtKo05uq8MCFhi1w9G3SJdbjPQHUzSko0Rlk/hof6NPZls8M3ReHlnPE/lHotwwOlI27SXIdk3QgudjLm5G8wT0QPVe0pCkgUkT0qA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=czR4LFJ0nw50Wlh0iMcFwavhn1+iCqr2DFUhIwIVjBM=;
- b=eTr17aSl1KYeBclj4YJiHr9O5oefLW60XXavz8+3ozodxUnNjCWySdF7HoMzahB8QN9PX2+jhlF733A4V8oNY8vUa/mrfXtfl8l6UmbtmSSn+u1+Fuxlh0Wb1x7gi4z1OMwtGq5X82tsMFTJf8wIfSMD/sUaqWfIYmeEsOcJX9Av76yYuaf7M60wRmzUd6xRwCyLRcEFXrSU38jNMXBEcCrFsuUP+U2JVgt7g2li1ai2Z92FEcpTXSjHiQqHNPEA6lHbdysH8nqU25pMVDiefhp+JSN58Tq7/fKDKutYnU+ypbnh+Y6Mj9tuEk0s1FLs7gT7tP/6voQV81m1B/PSZg==
+ bh=YSLnuv+OaEpnFLdjjGptwzgvpg9YCKa0ZWNocp6fJ/A=;
+ b=UfVYLWuIBxNPLRCjP91R6XK5tMFDf+c+SCjH8/T957pCd687NOZk7MuaJ83inJwEDbleQAjaj+ATuufBBJLbp7fuOEcQB1gczcuZauxIueflAGEnEgUOVY7ZGXIhIrBLxmQEY3LlUHNiwo5EYXWIX0xOp4hSM4Nj5qcB5gueegQXKsI/OsDXT3FYPF+9ZPph+H8OS44eIl4NtyXPMsObfYjKK5w1PAcMx2c44Mxvz91kXfV1SiM4xzec9ouaw6k/2ygU82tMZFkZVoEhuTynJnKnmXAr+6AJuxkeiJfuI9uThm/B9hggPCgLqt+XKDuZbPgHmeDdnN5yuFCeqvRteQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=czR4LFJ0nw50Wlh0iMcFwavhn1+iCqr2DFUhIwIVjBM=;
- b=bC3U23W02cje9QEVuqHdSqvDoBSKYLpu01ZLT33rbxnhOYQItOWrqzpaGNhcAL//f7kZt6HCQzZKPNk8LOTviI1IU19P4Zd6CJW/BUGH3DxfZKgJiH4b1SZ0eQ5hPRgbbNsMuyS7gtrQkGWQwGUcw7QAvF1ZC7mV6ZeIkEvGMGk=
-Received: from PH7P221CA0075.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:328::26)
- by DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) with
+ bh=YSLnuv+OaEpnFLdjjGptwzgvpg9YCKa0ZWNocp6fJ/A=;
+ b=wD3E3avNE7SHKwZqqXbKdnVTiQr5oMA/rHRRwYgmk7oir8VRBYd/73jS4Hc7UJxYynChEuTBdNjFetVCf/eyIiEX+0tlvQe/T98oVqR9Hgo35Wke++YKAKMQbAjkmGDm9x4O96pNG/KEzMARdiSR1C5agQkGP0+Sjr2goZy3280=
+Received: from DM6PR17CA0023.namprd17.prod.outlook.com (2603:10b6:5:1b3::36)
+ by DS7PR12MB6046.namprd12.prod.outlook.com (2603:10b6:8:85::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Wed, 11 Dec
- 2024 18:58:05 +0000
-Received: from CY4PEPF0000EE37.namprd05.prod.outlook.com
- (2603:10b6:510:328:cafe::55) by PH7P221CA0075.outlook.office365.com
- (2603:10b6:510:328::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.16 via Frontend Transport; Wed,
- 11 Dec 2024 18:58:04 +0000
+ 2024 18:58:26 +0000
+Received: from CY4PEPF0000EE33.namprd05.prod.outlook.com
+ (2603:10b6:5:1b3:cafe::5) by DM6PR17CA0023.outlook.office365.com
+ (2603:10b6:5:1b3::36) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.15 via Frontend Transport; Wed,
+ 11 Dec 2024 18:58:24 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE37.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ CY4PEPF0000EE33.mail.protection.outlook.com (10.167.242.39) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8251.15 via Frontend Transport; Wed, 11 Dec 2024 18:58:04 +0000
+ 15.20.8251.15 via Frontend Transport; Wed, 11 Dec 2024 18:58:24 +0000
 Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 11 Dec
- 2024 12:57:57 -0600
+ 2024 12:58:16 -0600
 From: K Prateek Nayak <kprateek.nayak@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
@@ -83,9 +83,9 @@ CC: "H. Peter Anvin" <hpa@zytor.com>, Dietmar Eggemann
 	<tim.c.chen@linux.intel.com>, Mario Limonciello <mario.limonciello@amd.com>,
 	Meng Li <li.meng@amd.com>, Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy"
 	<gautham.shenoy@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: [PATCH 6/8] sched/fair: Do not compute NUMA Balancing stats unnecessarily during lb
-Date: Wed, 11 Dec 2024 18:55:49 +0000
-Message-ID: <20241211185552.4553-7-kprateek.nayak@amd.com>
+Subject: [PATCH 7/8] sched/fair: Do not compute overloaded status unnecessarily during lb
+Date: Wed, 11 Dec 2024 18:55:50 +0000
+Message-ID: <20241211185552.4553-8-kprateek.nayak@amd.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241211185552.4553-1-kprateek.nayak@amd.com>
 References: <20241211185552.4553-1-kprateek.nayak@amd.com>
@@ -101,104 +101,87 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE37:EE_|DS7PR12MB9473:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e166dad-20ee-4bc9-058b-08dd1a15be2b
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE33:EE_|DS7PR12MB6046:EE_
+X-MS-Office365-Filtering-Correlation-Id: f95855c8-1285-4217-8065-08dd1a15ca21
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|7416014|36860700013;
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NWCHPaQ9aIo0SrRYs+MCxmMB1o2dXeHQk0+4MlF9kCVZhvSr/BqhDp8madsb?=
- =?us-ascii?Q?jMVt71oi+3yICdOYdWP2WiebHMyn7rkBkZPvMOP+sTfZl6JFExAANsBj5O5a?=
- =?us-ascii?Q?o9nwiI8I8pq3gI1wLtdzuIWrKyPG55GLGs1OUOxsDl+ZaZdeUC3pHxFE5ajU?=
- =?us-ascii?Q?5pchSRXkVb2TlnM0Uy1RsUcWGrwucrG80N/Ngdko8sWJgPVN9oxNpqidebga?=
- =?us-ascii?Q?KE8kEoE8BOckIzzyUYzZeq0cIfiL+aE7lscectur9qA6ElzDfHbXjVKO5Ohj?=
- =?us-ascii?Q?7aRgQoVHMpeZGxq/9tk5AW2uTfxqljbA1uVWdans3EEfdrhwAXatm4pri/Hw?=
- =?us-ascii?Q?AXBAyTdpv4T01F9xbCbdS5M7K1atJAAET7cJPVePhgNVXkMKvEhNAmO15jsS?=
- =?us-ascii?Q?Vs3Q/P3kI5yScsQDK8n0kw9VMegOGEC8mmHxrkLv6zuN4gOhzaTNzElbJ9WX?=
- =?us-ascii?Q?2u9Fgj+IdSMTvQTDBFW/+SlkkyPI6DiOxb34z/gHb1KoSFkYPKw1RTakclTy?=
- =?us-ascii?Q?nd4LnxxSukwEefscCxnvT1BK5DRlipSyIwbN7DULGAWEYcEMMVAxreEarH5z?=
- =?us-ascii?Q?nSJH1H1JD5cVaqipsp6eXL/p+uQeFBQf5fii4GzvPvM9Du/o8sTPCcHngoF/?=
- =?us-ascii?Q?0JlZ5+NQGhz8rNvPSJVt32xsF+614DAYYn4XeQ+iobEl22Ca+YnpdQ+h6exZ?=
- =?us-ascii?Q?N6o5L9L0jL+Q9dHO9Nqz7wXVe6qbLfor94PoTavp/BeAw1dNhK6DdbmT+8KI?=
- =?us-ascii?Q?MHksdWQrCPEmg2mFHawESnhjwcWW9WjRvdGKZMRWKVehCKBnE+WW/G02kYeU?=
- =?us-ascii?Q?ZZNZmu0wdf3RN0ZstrvRhz4ax1mMAK6mNtYo6CJeebgB7UDPYkNhfSNUIqq5?=
- =?us-ascii?Q?NdPCe9JrSJHinoHz0KX21TQBy0IAVrmhIe5yj7QOZ8PxI53WhVCmvy8hlqDu?=
- =?us-ascii?Q?liOUqmKCOpd039X01KQQWxUyvPQTokadUtj3Rt/4q/CrYAw1YB8BWd+UkBm1?=
- =?us-ascii?Q?Ftm6Utv44i7FljcaV5ZV56XSpbRt14/b2KYLE1iiEkQt9ykHGOA/SFJPg+Yh?=
- =?us-ascii?Q?6W2h7h2PUKPohDBVQyF6Yz3xFAhWUqmFTNYo42W4thkZ+ys2aAq6mm/L9S9V?=
- =?us-ascii?Q?hbLM84xmoescAU9z1JFqQ5xrm4HChwgUBSws3/iLKFZWy+cSUdwP0MwVSb3m?=
- =?us-ascii?Q?Ju4cSEeaqhRK6VFWF7wrlujBq6527Dd+OanxUknaufT1Yxb4pk/kvthWndKD?=
- =?us-ascii?Q?wsBNpxlnuZipQjzbH8d1dirgZu80BJ5hhhr/p3iJpaevZW6yDbB5ZbB+5G2x?=
- =?us-ascii?Q?QLLpLTUmfGdMaG56iJ0UXaX/RJlsTe26r8TD4RDOS2gUqL+7bSGxSVibJBu9?=
- =?us-ascii?Q?FdDhj7saIjQoV97lVH+FzIdkntl+hZNyPqMfbk8BMzdDW02OrJ3sqBROvizy?=
- =?us-ascii?Q?lL4Rdz9+Eetmq4yvItMdQzfa+wST4K1L?=
+	=?us-ascii?Q?Vwnv1NialWr21Zk1qA3XIWaT43WGbt4OKBLjAIE9Hinkzl0Fu9vay3SPiFpt?=
+ =?us-ascii?Q?PTuj0VTTAPEMmVp/c6WIm3AEJJr7e1mSJV05gIOylxXa/OwNxaTnSrVWq4Nk?=
+ =?us-ascii?Q?zeLFAmIOcUv8RCyesehBMBfL41+W+4o5LHUU+pBlPpvxZTuxsfyaGv0Cf7Sc?=
+ =?us-ascii?Q?+ig9RPEDzkk7ASfW8ysB8THhovp6421bu4/KHHIT4lpu+vjOady211tj9KM2?=
+ =?us-ascii?Q?6Z8Q6oKFmjHYDzVKqd8Jj+Y7dC+A3YjWb63nQopjtUV7bz0Ar/0snhU6Vxb2?=
+ =?us-ascii?Q?El+F8kEplNq3jyr/9LgDrnm37jEOzABm7lSWH/1vwbYhytjPYXvRik5MF1mV?=
+ =?us-ascii?Q?rOiCSYPp9/NpaqGTIbv0acfZqR+6Cd45Cv78lYuicTgt76f190AmdWnKq9iE?=
+ =?us-ascii?Q?vGKe4FXoYzL+XfuDpdeUD2L9DybUidj9y1ti1TdQ7iJPpvIMiiqdBcxgomgs?=
+ =?us-ascii?Q?w5w7GWFnqoelSLbuR9GX3hYw8Oi2WXdjvnyhuygZrnsWqI4fcqpPJr/jrtTC?=
+ =?us-ascii?Q?fkvUnNOKGJ15EdkYu/PnkpOA/7r4QYnKyyns37w2tybWVVMF/k6Ocyd0XYYX?=
+ =?us-ascii?Q?M30nmO/7LQMzopDXpanFJWXzwOI06z4P38LqmfS1kmBI9Wz/lYdEd4vTAnNR?=
+ =?us-ascii?Q?xPIRIYOSv0qVN9ViN/F/FcJPZEunYg+Wg+LYIhmiiyFQwJgb6MGru+7qRyxT?=
+ =?us-ascii?Q?S0hLzUcdMLppEs8j1KS95IjVHMgq6Kg47o/1/yYCw68XVoY1kQGHAiJHyweU?=
+ =?us-ascii?Q?RqevqFgRgR2vh/cyzwdzasTn33BIEGQv7+iOVvtWl90F1FmIVXPoNiyQAUzK?=
+ =?us-ascii?Q?wcS7d2+Q6OWg4AeWjjZ3JTITLVLJDlDEW2FNA+SRmTbONqIva8WMhNSmvfqs?=
+ =?us-ascii?Q?3j24jjHBt5SKk0AWHI2aEARisI558jj6NSjUgcoclmpYSldM7VUxzKas94Gr?=
+ =?us-ascii?Q?eTtrGZ8xzpmdRm28lM7uJnClMKmTbm8wyrYBdaweceWExdD0uRZYMRT2FRMj?=
+ =?us-ascii?Q?18gS9LIa5CWp9p2HjNAeXx4+oXDtC2nvFihMaCgkZHDaXmmvj0nnDXVeO53M?=
+ =?us-ascii?Q?HzAbj5rcmYgSafk2ilTulUdn2CkP+ecFljV9c+dZ8UCK+4xVTcSlF7blKdld?=
+ =?us-ascii?Q?qUqIF/QKiMlkk9iJ86w4me32h8d57BoOmE2IhZGikWWiVMDCOYrW9U4K6bDE?=
+ =?us-ascii?Q?JPQibHXsLUO81D2T/nGURY5tuxWZqoyEdYg84zle+sY7vjqng1msqpit326N?=
+ =?us-ascii?Q?Wh/1DQ27GDr4+aJbPzm+pFKqchieGHsEOT+TQ7qNtxCSuQP1caJebYb2NQvb?=
+ =?us-ascii?Q?pAj+NuEY3H9oNFFh7g5kg7ILyVrL0glxG+B3z+pGebfDzlFolK0Cv0TwrNQH?=
+ =?us-ascii?Q?0R+3ePRB4xpxOko1Dk/aRuolqnabn28goRvOg305eJodgy2aDRwk2GcnqN0b?=
+ =?us-ascii?Q?lvx9xBQ7vNwFIT5IM8JhUakgv0n46X4y?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(7416014)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 18:58:04.1885
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 18:58:24.2588
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e166dad-20ee-4bc9-058b-08dd1a15be2b
+X-MS-Exchange-CrossTenant-Network-Message-Id: f95855c8-1285-4217-8065-08dd1a15ca21
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE37.namprd05.prod.outlook.com
+	CY4PEPF0000EE33.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9473
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6046
 
-Aggregate nr_numa_running and nr_preferred_running when load balancing
-at NUMA domains only. While at it, also move the aggregation below the
-idle_cpu() check since an idle CPU cannot have any preferred tasks.
+Only set sg_overloaded when computing sg_lb_stats() at the highest sched
+domain since rd->overloaded status is updated only when load balancing
+at the highest domain. While at it, move setting of sg_overloaded below
+idle_cpu() check since an idle CPU can never be overloaded.
 
 Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 ---
- kernel/sched/fair.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ kernel/sched/fair.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2c4ebfc82917..ec2a79c8d0e7 100644
+index ec2a79c8d0e7..3f36805ecdca 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -10340,7 +10340,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 				      bool *sg_overloaded,
- 				      bool *sg_overutilized)
- {
--	int i, nr_running, local_group;
-+	int i, nr_running, local_group, sd_flags = env->sd->flags;
+@@ -10358,9 +10358,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 		nr_running = rq->nr_running;
+ 		sgs->sum_nr_running += nr_running;
  
- 	memset(sgs, 0, sizeof(*sgs));
- 
-@@ -10364,10 +10364,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+-		if (nr_running > 1)
+-			*sg_overloaded = 1;
+-
  		if (cpu_overutilized(i))
  			*sg_overutilized = 1;
  
--#ifdef CONFIG_NUMA_BALANCING
--		sgs->nr_numa_running += rq->nr_numa_running;
--		sgs->nr_preferred_running += rq->nr_preferred_running;
--#endif
- 		/*
- 		 * No need to call idle_cpu() if nr_running is not 0
- 		 */
-@@ -10377,10 +10373,17 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+@@ -10373,6 +10370,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
  			continue;
  		}
  
-+#ifdef CONFIG_NUMA_BALANCING
-+		/* Only fbq_classify_group() uses this to classify NUMA groups */
-+		if (sd_flags & SD_NUMA) {
-+			sgs->nr_numa_running += rq->nr_numa_running;
-+			sgs->nr_preferred_running += rq->nr_preferred_running;
-+		}
-+#endif
- 		if (local_group)
- 			continue;
- 
--		if (env->sd->flags & SD_ASYM_CPUCAPACITY) {
-+		if (sd_flags & SD_ASYM_CPUCAPACITY) {
- 			/* Check for a misfit task on the cpu */
- 			if (sgs->group_misfit_task_load < rq->misfit_task_load) {
- 				sgs->group_misfit_task_load = rq->misfit_task_load;
++		/* Overload indicator is only updated at root domain */
++		if (!env->sd->parent && nr_running > 1)
++			*sg_overloaded = 1;
++
+ #ifdef CONFIG_NUMA_BALANCING
+ 		/* Only fbq_classify_group() uses this to classify NUMA groups */
+ 		if (sd_flags & SD_NUMA) {
 -- 
 2.34.1
 
