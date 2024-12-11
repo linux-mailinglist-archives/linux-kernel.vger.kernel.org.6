@@ -1,122 +1,190 @@
-Return-Path: <linux-kernel+bounces-441823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140459ED48E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:16:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22989ED493
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ED44167852
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:16:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0893188B06B
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B9A201015;
-	Wed, 11 Dec 2024 18:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8562B20408B;
+	Wed, 11 Dec 2024 18:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuQJBaa/"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjArjt8j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B303024632E;
-	Wed, 11 Dec 2024 18:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4770201002;
+	Wed, 11 Dec 2024 18:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733941007; cv=none; b=Anjdd0g0Fbjoy89T3c96LTEGs9woJMHBFZKxl4vLsmIvcP1uJ8xVinOrnhPp3OlajB0X4AhoXwMjgL/9IRayRS0+8aIakhmE7ZxFyV7BGMpUcYqDs93/4CM2QFyY6DD4l9PMnTHj6CvL5F2Fc5mjHHN/K828f0tO8dwmrNHdcRU=
+	t=1733941028; cv=none; b=QwUMTvIX9zrXUOghK8SKRtrUNt6BdtJqmwrPV9Bj0/f9g2243h6sqDCc3Mex6wTBQgngQqACp4m44ZbPVa2k89PDk1309s3cIbRGCLy0Ce4weHYmxBvY/WHDiHh5fD5FUe2KiZZVKB7JveJ1thsOblM0Iv1aIpHtxW48mL7v9cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733941007; c=relaxed/simple;
-	bh=J9kdOOYNwMHlj+AhnO0iZVcuqVZL58lRYPegPbfcWlo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p3xGKQpzkfVX+9xOf9ovv+JNjEX0ZgnQ77Qi9c+JPkCCBcMVLflr90s9hxLadVnwtShmX0a9Fm35DLUoTFlhYuxFM3Kd6wYLPh3ZiZAT3/oxXAbrMvB1ulOx+554DJ5W4Gx3bPRFHT4w8jxIpNRBtPH0hjlzJSKJFZUDTedXB7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuQJBaa/; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2161eb95317so52911915ad.1;
-        Wed, 11 Dec 2024 10:16:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733941005; x=1734545805; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A18LOoCt5dPiy/l1Xyxb4dGNfh36+AUTCKlwqGR+Rvo=;
-        b=PuQJBaa/gDckXRRAmUXJUSxV/VJyrTyaYXlEmJxkHs3NZZLSJI1Sm/YiTwXz3LVxb2
-         KDItNiYVFxalPAIR8L4zoFEnuh3dpdepe+iwdfy/FMOg2bdLiSYxt51dQgL1IEMcYcMx
-         xv08M5fF44FTtMGlZE9ivF04s6CSOxhPH3eWvZcTLvIaYhg9fGQQd3tngadQ359TcE3Q
-         Ry4zqQ4u7DEpZQwkVFvICPjYMzv/b/xbTXfQZlzMsR9yXfilRXie/xnokkBT7PxX/Kbk
-         HgvoQaLHvqrGh3Ptkqu8HJi0Rsg/ZyrIRAXuctoUUHGFonoVwAvwht+zgcQL6ZUxbwpn
-         ocPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733941005; x=1734545805;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A18LOoCt5dPiy/l1Xyxb4dGNfh36+AUTCKlwqGR+Rvo=;
-        b=LYhCWisfWUnbQ2V5+s7CnuJMgmVJtAKtLsmYBVZbtQ+2MdCygJT9cIFfshdA5Y1uPh
-         2F7SWWR3Fm+2mmueZ40bkTkrdB+SHE+DDPLBuIef3ZWyQrF3bZuvfGDUKjid7IGrBoVQ
-         xIDUKZsOcf0PI2wwOT0DFkosU/2+y3sa2F9rfbF8Dc/K3yH0xVhsGFrN4W1V80A1rR0k
-         7sIMehg87LUaKhq85K/gqgguHh9rdTC6XZaTgTUN0WcVua2+o5A4lYPCFVBD1g9YZnV8
-         TnN/mxzeEaRCPOOtb6NUu0AgBOiMCswsZRqA0aiwkYCLHe0XAPtcIOWS1s98+bEZPBpu
-         s1cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWku2RhiHmSlyIBVJnnFPPO/Da3HX5KNA7kuyNWEPUfdTdBSg8iEu4/h79mFGXXpgXeXXWkV5bTFfAML5t4gYI=@vger.kernel.org, AJvYcCXJg4Qml+u38Itu0n3wnmWYOcgsP4fGrNDZsm0A0VOk+jpIicEJAuIIKy1n20tY0jLLL6evlWcmHeQ3RRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYC2t+jOiwBhQbC7i6JA8OefJuVCJwY3AxOTZ7TaH633/tBu42
-	4rtfPFcgbC7hcjGnxNx5IrxQuLlB7Qhb7T06kklPmiNdO9w2odY0
-X-Gm-Gg: ASbGnculQ21iPcAb3uk67kXhhChIDmF1DhBsV2vRRq9CfZB+Af43dlTJTIdQScbvrF/
-	hEVdDf/QvEK5RDuFut2DlIvxg4xDSjT3xZqHHriF0J0yZ7s4dLJZiUvfrXkpmC+fymJCWEcf2k1
-	ooHdb/NvcTEAV38Kqmv8vufycYB9O/8esMqvl+JZgiSNzEdf43nVXe3YXV6h7LWJxy/76y3HlSj
-	LvY+NreuZ/QvigWxvOCgzugHFpo8jazYzIj137a3R7hPWnYbhIl3eUXlmmK1lqLKwdLTg==
-X-Google-Smtp-Source: AGHT+IEBUXksE5yTVKC7+bYcmKa7mSoCvBULo19rlfRjo+HR6E+xHox3N1GpsJTMWeJBPpe79Hn2aQ==
-X-Received: by 2002:a17:902:f682:b0:216:3889:6f6f with SMTP id d9443c01a7336-217783b5c80mr47256705ad.17.1733941004890;
-        Wed, 11 Dec 2024 10:16:44 -0800 (PST)
-Received: from localhost.localdomain ([2402:e280:21c5:223:2c08:f85:3644:ef6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216542077bbsm52261875ad.61.2024.12.11.10.16.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 10:16:44 -0800 (PST)
-From: eisantosh95@gmail.com
-To: 
-Cc: eisantosh95@gmail.com,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rust: Fix EXPORT_SYMBOL_RUST_GPL macro to follow guidelines
-Date: Wed, 11 Dec 2024 23:46:39 +0530
-Message-Id: <20241211181639.19848-1-eisantosh95@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733941028; c=relaxed/simple;
+	bh=7MLzO1E7Zd3RDrU3Vs1tmk8Jw0vd7w/FoS3e93gR2Zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eNAMRjvHqFbKU0t0wF1HPq1pi4wOV4efOonPtiWdbK2Gz6rpczIitO5rb0BAycHxjpXYVYXHL3QJXkFFlG4HT9gBQ44EF7ZTrHZqIwfVoZw4kCib2A9vNMlHjWcFTPzjRbvw5lnheO5O1eg8y6/7WPgawGe6UEgxGjxcGrABf6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cjArjt8j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D6CC4CED2;
+	Wed, 11 Dec 2024 18:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733941027;
+	bh=7MLzO1E7Zd3RDrU3Vs1tmk8Jw0vd7w/FoS3e93gR2Zc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cjArjt8j5uqDhJSBOz/WfyTRdHlkPPV2tOJfHj+tzfZ3922dxxb7KLuS6FlKB3RM0
+	 1nYWpfocvbOND+lqKek+q1kwuVb3NaUviklkeJai0AN4RquyLPADGQ46OEYkUCnlwX
+	 zIzJ+zXHbrIywU+wHkMmRk4tecP1gZ4HtpaBDaMK3gKuwm3lGNVVJ4Vn4DqmxTUckB
+	 CHgmtWqq6PMdt8/oOy7hmJvrgPTwc7EqA0B8uNlGbU9UsQuOt7dHU2KRe7RYJYFAf2
+	 bQd4vXca2npq1RUdLU0fhTgiVayPVsvwennSnnhPDyIjSEpjf1Q0GTkUiCXRaXs542
+	 WFnSdMGOx6x+Q==
+Date: Wed, 11 Dec 2024 10:17:06 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Andrey Albershteyn <aalbersh@kernel.org>,
+	John Garry <john.g.garry@oracle.com>
+Subject: Re: [RFC 2/3] xfs_io: Add ext4 support to show FS_IOC_FSGETXATTR
+ details
+Message-ID: <20241211181706.GB6678@frogsfrogsfrogs>
+References: <cover.1733902742.git.ojaswin@linux.ibm.com>
+ <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
 
-From: Santosh Mahto <eisantosh95@gmail.com>
+On Wed, Dec 11, 2024 at 01:24:03PM +0530, Ojaswin Mujoo wrote:
+> Currently with stat we only show FS_IOC_FSGETXATTR details
+> if the filesystem is XFS. With extsize support also coming
+> to ext4 make sure to show these details when -c "stat" or "statx"
+> is used.
+> 
+> No functional changes for filesystems other than ext4.
+> 
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> ---
+>  io/stat.c | 38 +++++++++++++++++++++-----------------
+>  1 file changed, 21 insertions(+), 17 deletions(-)
+> 
+> diff --git a/io/stat.c b/io/stat.c
+> index 326f2822e276..d06c2186cde4 100644
+> --- a/io/stat.c
+> +++ b/io/stat.c
+> @@ -97,14 +97,14 @@ print_file_info(void)
+>  		file->flags & IO_TMPFILE ? _(",tmpfile") : "");
+>  }
+>  
+> -static void
+> -print_xfs_info(int verbose)
+> +static void print_extended_info(int verbose)
+>  {
+> -	struct dioattr	dio;
+> -	struct fsxattr	fsx, fsxa;
+> +	struct dioattr dio;
+> +	struct fsxattr fsx, fsxa;
+> +	bool is_xfs_fd = platform_test_xfs_fd(file->fd);
+>  
+> -	if ((xfsctl(file->name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
+> -	    (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
+> +	if ((ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
+> +		(is_xfs_fd && (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa) < 0))) {
 
-Warning found by checkpatch.pl script.
+Urgh... perhaps we should call FS_IOC_FSGETXATTR and if it returns zero
+print whatever is returned, no matter what filesystem we think is
+feeding us information?
 
-Signed-off-by: Santosh Mahto <eisantosh95@gmail.com>
----
- rust/exports.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+e.g.
 
-diff --git a/rust/exports.c b/rust/exports.c
-index 587f0e776aba..4b34734d77c8 100644
---- a/rust/exports.c
-+++ b/rust/exports.c
-@@ -13,7 +13,7 @@
- 
- #include <linux/export.h>
- 
--#define EXPORT_SYMBOL_RUST_GPL(sym) extern int sym; EXPORT_SYMBOL_GPL(sym)
-+#define EXPORT_SYMBOL_RUST_GPL(sym) EXPORT_SYMBOL_GPL(sym)
- 
- #include "exports_core_generated.h"
- #include "exports_helpers_generated.h"
--- 
-2.25.1
+	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
+		if (is_xfs_fd || (errno != EOPNOTSUPP &&
+				  errno != ENOTTY))
+			perror("FS_IOC_GETXATTR");
+	} else {
+		printf(_("fsxattr.xflags = 0x%x "), fsx.fsx_xflags);
+		...
+	}
 
+	if (ioctl(file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
+		if (is_xfs_fd || (errno != EOPNOTSUPP &&
+				  errno != ENOTTY))
+			perror("XFS_IOC_FSGETXATTRA");
+	} else {
+		printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
+	}
+
+That way we don't have to specialcase platform_test_*_fd() for every
+other filesystem that might want to return real fsxattr results?
+Same idea for DIOINFO.
+
+--D
+
+>  		perror("FS_IOC_FSGETXATTR");
+>  	} else {
+>  		printf(_("fsxattr.xflags = 0x%x "), fsx.fsx_xflags);
+> @@ -113,14 +113,18 @@ print_xfs_info(int verbose)
+>  		printf(_("fsxattr.extsize = %u\n"), fsx.fsx_extsize);
+>  		printf(_("fsxattr.cowextsize = %u\n"), fsx.fsx_cowextsize);
+>  		printf(_("fsxattr.nextents = %u\n"), fsx.fsx_nextents);
+> -		printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
+> +		if (is_xfs_fd)
+> +			printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
+>  	}
+> -	if ((xfsctl(file->name, file->fd, XFS_IOC_DIOINFO, &dio)) < 0) {
+> -		perror("XFS_IOC_DIOINFO");
+> -	} else {
+> -		printf(_("dioattr.mem = 0x%x\n"), dio.d_mem);
+> -		printf(_("dioattr.miniosz = %u\n"), dio.d_miniosz);
+> -		printf(_("dioattr.maxiosz = %u\n"), dio.d_maxiosz);
+> +
+> +	if (is_xfs_fd) {
+> +		if ((xfsctl(file->name, file->fd, XFS_IOC_DIOINFO, &dio)) < 0) {
+> +			perror("XFS_IOC_DIOINFO");
+> +		} else {
+> +			printf(_("dioattr.mem = 0x%x\n"), dio.d_mem);
+> +			printf(_("dioattr.miniosz = %u\n"), dio.d_miniosz);
+> +			printf(_("dioattr.maxiosz = %u\n"), dio.d_maxiosz);
+> +		}
+>  	}
+>  }
+>  
+> @@ -167,10 +171,10 @@ stat_f(
+>  		printf(_("stat.ctime = %s"), ctime(&st.st_ctime));
+>  	}
+>  
+> -	if (file->flags & IO_FOREIGN)
+> +	if (file->flags & IO_FOREIGN && !platform_test_ext4_fd(file->fd))
+>  		return 0;
+>  
+> -	print_xfs_info(verbose);
+> +	print_extended_info(verbose);
+>  
+>  	return 0;
+>  }
+> @@ -440,10 +444,10 @@ statx_f(
+>  				ctime((time_t *)&stx.stx_btime.tv_sec));
+>  	}
+>  
+> -	if (file->flags & IO_FOREIGN)
+> +	if (file->flags & IO_FOREIGN && !platform_test_ext4_fd(file->fd))
+>  		return 0;
+>  
+> -	print_xfs_info(verbose);
+> +	print_extended_info(verbose);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.43.5
+> 
+> 
 
