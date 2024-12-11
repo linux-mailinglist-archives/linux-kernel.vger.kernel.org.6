@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-440787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAF19EC43C
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:25:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F3C9EC43E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0D01285750
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:25:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E1D285856
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC3A1C5492;
-	Wed, 11 Dec 2024 05:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB051C5CBC;
+	Wed, 11 Dec 2024 05:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mF7xvjDU"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Sty0aD9s"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C801E1C4A1B
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2929C1C549A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733894687; cv=none; b=DjRoWlhazgxRW1CdTkqQIbpXYUQqMoZPJtP+R3SxebjkUGkQg+8r4D+CXbNU+NTHaHLmoVYHkOX5Tk3MbP94/jSqe5bSTqdQP1QiGMHbSf30WgfD3R6oEx6MF0ewsNCRYknoq9RjnUfoG/llExU4RQJhXe7j8gBsg1j5abTdTNk=
+	t=1733894689; cv=none; b=M+m8YAD/0OK1/S5WRH1NaIuoUwcvNK4A2vljWfq+V8gWjxHu8M5T7x4R7rycLYrpNRv1690naN+qek4ydqPLlhypM4LWZV6ZhX0McDIIcbgtrMJ6UF0Vq4uJwy3Buv/phIXFHES2xwwEwRd5RDGuvi/aMQlZJQzOcSHdDFcmhVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733894687; c=relaxed/simple;
-	bh=ma6H2iGhdXvq7DvBYNbKjSI6vfExx+HzX5G1hbSkTcU=;
+	s=arc-20240116; t=1733894689; c=relaxed/simple;
+	bh=bzA0tsgUBJTNJPvzbR8N6/Oiyp4w69Y5EsNtOEj+tV4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dcI13I9v5gygQQFZxbvowN8D6nS6kCOzqgKb0SCHYJPtd3Wp5SQfyzEAe3UL2too1yTAUVMEJ++r6aX62GsfT4zJZRTrMG9XjSD4+6no9tz2CZEgLhQsZa/+Jj7Al1wg/XT1FjYzbD02h5lxszGski6fXrVNVJhnK0ErxJKQPHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mF7xvjDU; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version; b=iqWxlg6wZ7hCRcz7YG/xZk8fKE+JMyQgCUJIg0q/rjxYOXcTieNqLmsGrCf/hIk3U3R7oXhFBzp/nl1Pt1bLSEcsEoe9y1TssDx7LLgnYVzXHmaHCfcv/201dkvSIv525FIlD+8yNqxnij5ggwInl0wXgMcbQQHpp4SkJKmJ2Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Sty0aD9s; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-728e78c4d7bso271485b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:24:45 -0800 (PST)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7fcfb7db9bfso4883057a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:24:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733894685; x=1734499485; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1733894687; x=1734499487; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nsRd6GbIRJnWNHqT+PNa/aW5xM64tEdGNTQseKpNp3U=;
-        b=mF7xvjDUctCwvujKPSUzRGtggUp35zX2Lj9MpfTNsEb39xaNsQNCwcwtPwzdD85qDx
-         YapIHrR6aWFPLSxws6Jh/CUmBLPCQyIAzC1dXCrqPf0F89GXXJYXK74pOL6EJeYZ86d7
-         obUBt09AX+TK0ehLY7WmxeKI91wW2QoKGMi6U=
+        bh=+37Ej0Mm9yXagdLEw7xP+d3kLglfqR3xptBmnje5WIo=;
+        b=Sty0aD9sISMsEJSH/fhTn3AeEIrjCyJdNq4LJhoIfsSQndkISeKXHqH0Ui4T7QCg0p
+         9Wb54FS6r6n5Gl+lieMwNvhXhkr6o7vN5OJzMf3c2Fu1Gl0sqw+cERF0iRWZ+9BrlYzM
+         Dl/kZMFFkQaNDOXkBRVdn5lrmMxOyocAU/GNM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733894685; x=1734499485;
+        d=1e100.net; s=20230601; t=1733894687; x=1734499487;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nsRd6GbIRJnWNHqT+PNa/aW5xM64tEdGNTQseKpNp3U=;
-        b=nF5idxi/Xr+FxWVDh8Ae8iNvSdkbbw/7CoWYdX7JssQPzTDbUiUetok9UHWH9YzcwX
-         r7EQ/0Xjn7VuhxKksdvWbYwB7LS9kHlKt4ZlzMP2v7hTZf6r3A2MjmzZiHorim0/Hvgf
-         Fo9nYTTCLwUmhrQse3RWuslpLbFegjQF8ozTUa2owGrHYMl82DDReelqnjHTShnZjW1b
-         QB2CSJcZ6FDTvOvzKL8Sgq0hT5GUNv9ZK195zNj/XXR4VGqGHR7hR/g5V+8bTrwkGuWL
-         tK2UvCzSh/0R00mEe4cneVFfYtuNKjKpXxNftfHM3YEW5BqQLZ2xP1rhnMUyRm1QsBDz
-         3LsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsw3rFbIlACJ5+ZeooX/RjX/FwFKyu9iVhV08YcZr5EaM0EncOpxnyu2kwb7PFAdvlk4G8NmIX/ziRJ7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT8/khfSvJipK6bD9+82oR367SmzgOg2tu+WtYX/x02oVk7m3Z
-	Hc6/L61LDar2rqxdDr24at0uHR65k8gSZtkBvU/P80u8DjlGLgHOTuRAyVRPaw==
-X-Gm-Gg: ASbGnctptbyyPx29+XBNOFDPLI6cnyf/sVCesaYCIm0nG7h2CszDi64z18k7yCnnO9t
-	U18QAJNwpOEecUVy0uvGpih49VIp6fQxbOkBMk9fpAVL5RHS/uaSGvgycs4Q6hhAKCNbCap/tKZ
-	OuLkIdZjs/aLnrIeGBbva0hEkrMQMxI83sOX0LxjdK2GoNc9SbZLty3BMtbEcUraJa9DclmAq5C
-	HAjp2vgoYN8KCEF9Z81o/0TXozmrU4nvS1/rK8A2T/m47MsRo0/zNYZpATWYELVOftSTcug
-X-Google-Smtp-Source: AGHT+IFFxMXga6SeAVOQ7rY1CRuplpzUNVLLhXZiU0yZmrw4h4sktygVKCOPI2atcjtR3UsWVfl7nw==
-X-Received: by 2002:a05:6a00:c92:b0:725:e3e5:624f with SMTP id d2e1a72fcca58-728eda6a3fbmr2265644b3a.0.1733894685041;
-        Tue, 10 Dec 2024 21:24:45 -0800 (PST)
+        bh=+37Ej0Mm9yXagdLEw7xP+d3kLglfqR3xptBmnje5WIo=;
+        b=eVSotalaBBhjU6Nln7uy3shU8IDKzIwEIkAZt/ECsehekiBdf5WyENtDh6K0GCbr6w
+         T5JcMSTYj1K0mM5dbGXbbV7og9vUVdZhb7l8X9yuPwwQHT68E+6omjniBbkHPk1YgEuj
+         Le44b1HSgZPRzjZgWkLmmqznN+cHf7DYqn9FuDWrSCOlo7UbcceTYGBK5QtGpJS+XoPR
+         dlidL3dGv2U2FDELTN1s6O+JMzONf1nOb6//0deGjAV0ybTc/l//62/K2lrr1k+RG3b1
+         8XgM35+aZabmOtvf2PejZylZuAsFph7OLzovGsIxm+K6hsQnbuup1AenJPk5WtRM0i1Y
+         T0Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhYSg/PaTEXkW39ilr/OjCARDTD0mzArR+Ch/KXzqZEuK/rusuOIca6AYBkWQhCT7yRbC+lGx5c5iV85E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+CpGxx2HSLlQN4MTmsuFyZlWIScnk94JHBRBPlXIO2goxdNxq
+	ZX0lh7/v8eNoOdm3Zft07De0n8Zot3F8Lbjxbkbch+IwWJmYP6r5N6OCbY0crw==
+X-Gm-Gg: ASbGnct5xFqfnE7hvW2qX4G/hSJfB8j/MmO+3dG19UHtbNi3IfppF/slyk1TxypxbeL
+	7nN93rXC7b2fheM0prkDYxdQ/WPvM29sAeaq7CKqkYcH7lvRBD59m5i/JZsHYixA/eWv65U1exr
+	ASbE93nNdTBXrgUkTNKULMjTNldUWB67vVcUuni+1qTP+arbAdY2Y8DQfrN6dEyjm+rX61H56wD
+	V11qQlkCMnEWMRKXo0leePhjg9pCgYO4YVJvEeSns2iarsmQcsm0hkHZG3jscDTi+Pi0plg
+X-Google-Smtp-Source: AGHT+IEnDOL+LPNNcjtycQIWGHlAJTgKm/mNrg0sjuKMLfoIK4R2jRd0ukkjYLye/s1Gfn5Kr4iv/A==
+X-Received: by 2002:a05:6a20:3d96:b0:1e1:b062:f403 with SMTP id adf61e73a8af0-1e1c1337146mr3393676637.34.1733894687682;
+        Tue, 10 Dec 2024 21:24:47 -0800 (PST)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:4dfb:c0ae:6c93:d01e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e66801e2sm5397702b3a.160.2024.12.10.21.24.42
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e66801e2sm5397702b3a.160.2024.12.10.21.24.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 21:24:44 -0800 (PST)
+        Tue, 10 Dec 2024 21:24:47 -0800 (PST)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Mark Brown <broonie@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -80,9 +80,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-mediatek@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] arm64: dts: mediatek: mt8192-asurada: Drop regulator-compatible property
-Date: Wed, 11 Dec 2024 13:24:22 +0800
-Message-ID: <20241211052427.4178367-5-wenst@chromium.org>
+Subject: [PATCH 5/8] arm64: dts: mediatek: mt8195-cherry: Drop regulator-compatible property
+Date: Wed, 11 Dec 2024 13:24:23 +0800
+Message-ID: <20241211052427.4178367-6-wenst@chromium.org>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 In-Reply-To: <20241211052427.4178367-1-wenst@chromium.org>
 References: <20241211052427.4178367-1-wenst@chromium.org>
@@ -104,17 +104,17 @@ Drop the "regulator-compatible" property from the board dts. The
 property values are the same as the node name, so everything should
 continue to work.
 
-Fixes: 3183cb62b033 ("arm64: dts: mediatek: asurada: Add SPMI regulators")
+Fixes: 260c04d425eb ("arm64: dts: mediatek: cherry: Enable MT6315 regulators on SPMI bus")
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
-index 741af6a7f197..516fba9b3c6d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
-@@ -1580,7 +1580,6 @@ mt6315_6: pmic@6 {
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+index 2c7b2223ee76..5056e07399e2 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+@@ -1285,7 +1285,6 @@ mt6315@6 {
  
  		regulators {
  			mt6315_6_vbuck1: vbuck1 {
@@ -122,22 +122,14 @@ index 741af6a7f197..516fba9b3c6d 100644
  				regulator-name = "Vbcpu";
  				regulator-min-microvolt = <400000>;
  				regulator-max-microvolt = <1193750>;
-@@ -1590,7 +1589,6 @@ mt6315_6_vbuck1: vbuck1 {
- 			};
- 
- 			mt6315_6_vbuck3: vbuck3 {
--				regulator-compatible = "vbuck3";
- 				regulator-name = "Vlcpu";
- 				regulator-min-microvolt = <400000>;
- 				regulator-max-microvolt = <1193750>;
-@@ -1607,7 +1605,6 @@ mt6315_7: pmic@7 {
+@@ -1303,7 +1302,6 @@ mt6315@7 {
  
  		regulators {
  			mt6315_7_vbuck1: vbuck1 {
 -				regulator-compatible = "vbuck1";
  				regulator-name = "Vgpu";
  				regulator-min-microvolt = <400000>;
- 				regulator-max-microvolt = <800000>;
+ 				regulator-max-microvolt = <1193750>;
 -- 
 2.47.0.338.g60cca15819-goog
 
