@@ -1,237 +1,154 @@
-Return-Path: <linux-kernel+bounces-440694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DF09EC2FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:11:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D179EC2E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 04:09:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8C5286165
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:11:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65996165F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 03:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3E620A5D6;
-	Wed, 11 Dec 2024 03:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390FC207A34;
+	Wed, 11 Dec 2024 03:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MO+v5p/l"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2064.outbound.protection.outlook.com [40.107.21.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7ajyQOf"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0806921766F;
-	Wed, 11 Dec 2024 03:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733886630; cv=fail; b=DHaK78Vi+pr3bzw9r3hDKNiIY1K8m7Uybqr1ZiiSiiQVLmyG9xXEA0RzXpd+DVf8bGMyntYUllDKmCgWrKxn3MzN5A0WQh7ZyYpgltJKwy0HzuZS3vHRM9fQ/U6iemuvBy3ZdKwXg7w2vXroVN5ENmJz6LTkWT61VuuudZYO+GI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733886630; c=relaxed/simple;
-	bh=oROrbigEnbxBbJQZmQCz+t1ZoYRdoE4L/rIVMdGvE9E=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qdtUXy5wqJz4B3Q3X2xtX6ZfboWF1x5FGDPza6hjJbBkRlZTqX/tRdZnL+K/qfoJHlMfqPqn+wPF9kG9z/HkfDUfC92wi+gZekOIPi4Jn+/9qLWNSeR0T9N9uWzLYLGvG1f1tzARpiyX6KNcb0i9lSPjZTGs3jT5JV1KMHtReGk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MO+v5p/l; arc=fail smtp.client-ip=40.107.21.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tiUhax+7Qlt5q3NqLcwUlsCGm9PqxPNWA19NOv/EvezHE8dKFq5pInuybmj053mMHlhSf3VckPHA9z7o4AuaKmbtWaVebVqAwMpaaoh7vv66TPg7nf7ZXk4NGWV5CdLJuOqeeszONVRD+m0gIcluEUlcoZGC4RvZj1QtT0HTba486uCEA5SfGwX65Sej/BkUQqg7PQLVITt4uj9YlzwDtGqYjdyHUGmuJrdQt9JJuwue8AWJXQf/7FLtYpvVbIZPac4vYhm38kLiMoqScno16DDY6J/tdWKrIpjxnZxlIgZedOpRjuzvTQo069tCrFM1eXToxwCoNF/fUDeyT34dXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mJK8WWOvDdKnJn03HGc+yupP/YXIOxc9ngBNgUkeoqw=;
- b=UvU1z716SV9vCBVrHNI0HoYNtchIaROV51Vonn0v0/Dekxzy/qVCoCPu8j5ioW065wL9cGZppjOEGj2mBPglVz8bA3tYQtiANKniQtcfwFEAimnnBMWpVDsYLDP4WQAEy1Z3XAsx2l7i4MJGRSot/JYrQSUNIGPQY2KTKFZyvINkTyJWcW/76HVsDvckJ+RkRly+ZnjYBfykevWX9FZl90SNHJ4kLeJhZpPIwN9RqmPQ7fDqABPOdI8RE89YN9rJfylJDGu0e9ZUtWxZqTcBSyufXMK9iD9bvLR/0HdahIkBB1Vd6kzON0Lai36Emri0iYnpL4bWWPQzXud4perI8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mJK8WWOvDdKnJn03HGc+yupP/YXIOxc9ngBNgUkeoqw=;
- b=MO+v5p/l3lk+LxMP/BOFeeK1L0SXgWRhctdZMwoOUtZPmDKni+6jK+XGhH1dU5120DqWotukFfWwi9E42NI8uYM4jPCsqMhyuyFSkXvm85dFCVIYWqq8GroECRBZRGIkvhHsdSU2aYZfTAvPNR2X9+Fy8A02i1lJURUTvlrHNJYS9uz29ClhE1FDj876qAh+2uza5nHnVMGs+Zj7zrEftsli/3vooLsE/tr/qx5KjO64fkku+194/Cav6VNIRX7i2fjK1N9yQwwCahm/jaAUFdXmlXcoZ3xFMANdlYppVzvX8x+qjBLGZlroWmyBa1NCL82bO3YYLOgpsM/nkyR87w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
- by AM8PR04MB8033.eurprd04.prod.outlook.com (2603:10a6:20b:234::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.19; Wed, 11 Dec
- 2024 03:10:24 +0000
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::7be0:296:768c:e891%6]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
- 03:10:24 +0000
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: vkoul@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v6 6/6] ASoC: fsl_easrc: register m2m platform device
-Date: Wed, 11 Dec 2024 11:08:49 +0800
-Message-Id: <20241211030849.1834450-7-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20241211030849.1834450-1-shengjiu.wang@nxp.com>
-References: <20241211030849.1834450-1-shengjiu.wang@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0032.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::12) To AM0PR04MB7044.eurprd04.prod.outlook.com
- (2603:10a6:208:191::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7516F30C;
+	Wed, 11 Dec 2024 03:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733886579; cv=none; b=OAHawm4ST1p8D9ee60ClwzsugoytZ4OWIXcDiKT9kkQ8GT/w1tpUHUj80CvU83vlloMmNmCD5tUg/EZXLFhVW+l8MRn9hTCF5MbcC6IOIGQAqKWOn34xyrNEYjR8eLG+UfrnjzJP87k92qYDPqa2GWBBABABtlNGTttImzPIlk4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733886579; c=relaxed/simple;
+	bh=WmrUd5Nu2a7eyR1oMIbgS0v2IvziIaAtqv+1/FXypfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GccejTh0JJJPDMQTKZAOHW6aNovRMMdTpOpFuVeQP6dRQr2PeopOhNrqcH5EwE7bOFLHOAKSW9XYLRO+xMIIEstCvHGKC/7cQPkT88u0XnENyBibgNIORsMnm4vbJvcM0Fha/4sb4wxTfVThsbQv0G/PIgcu6/R2olZFNRwm1/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7ajyQOf; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38637614567so1787361f8f.3;
+        Tue, 10 Dec 2024 19:09:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733886576; x=1734491376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jrvqNyhKC4J4j6+ceUZ/ULpbNEbVa+Y8QtWcj7x+I1k=;
+        b=h7ajyQOffZmh9ww0ivtWKKy8vMYNHeHAMJFaXVLLu4r5L9kn42BHVvZJwaKsXM6dWP
+         y6bjtg5jSEv6Vuj3oXrs+IQo+uUaC1tI51o2jePhJlmDKlj/a8Dp6UH22ImXXRKnVzI3
+         qXPxLEEeexnsI+R/ENqR58CC6LGR9MBWpTKYdlYs9Pj5OtzQZlFgF9fPjXc+Pd48xov4
+         C+KlTN+jcfI/XYs3tjySIzXZ4sa1RlxR0RSQ+rsYHAXJGCzCwcNsgIr48+SYRCFdyXzQ
+         e2NZAls04TEMisZo0L5IN6krzssGkfFOM8S9wLwgX43MlH4kYjwnP7afWRM1uFjcwQGm
+         Oqlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733886576; x=1734491376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jrvqNyhKC4J4j6+ceUZ/ULpbNEbVa+Y8QtWcj7x+I1k=;
+        b=HYkdxNF3TZYxq0dH0839rQDUrwcEVhb3x3nfBM4oouXgMC1R5DZnSkIdYz5bpGGXy6
+         83pdpTq+fzPmtjQHOlb02gEBcOnre0hNfiVzvoyl0Gw7jsI05BcTizReFMx0x2ddMaOi
+         vhEX4INvBDbvY5kxRKy84dFddq+KOQrIywV9BUb7dDRas6l5CB2JppO/j6cMPMpF2mDC
+         Xovw4rG6dsOBgtS78unQLGtBN1rblkNx7lLJKg0KY/DE/+yBHSuHVyDOLgXkqxKCN/od
+         yH3UF4dBWjKZevOoOCJnl4RL/t10Pae+0OSGv/nxL51ZWy+CNH5BiUIDIlfLuYSsLp9W
+         g1ig==
+X-Forwarded-Encrypted: i=1; AJvYcCViJ7kOcp0Sqg3CMbEff0FyT4mlM9zrGjtJ/BLGqunhau2T0KRJia3SwMNaqhW3aYI4YEah5L36faslkleGgP8f@vger.kernel.org, AJvYcCXrzr6IZzuPc1aSzTTZdfnLO5g6UJeYfeVBSDhjsF+k1S4nwE/uP49jY5Af5CBOzgFPmhL4atSOaFkdFIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxjiy/urAIuH1OdV+Dy793RhHSQa8akR6VnyVNq0FGPZBqqHQU
+	v2NZ9cbu3I9n+bmZKpB4k7gKuWdxoJPDjgvMdaH5cXvqDtDfAkeQKUgKjwl/miRAbDGBQCIYd41
+	Hm/HkopWyG86wdA10NSq+lGtHBQ8=
+X-Gm-Gg: ASbGnct5NouLhSwZ949Ckm0einvuMzfRPEgUYY6js4mmkYlCHUciebNN7y7Q9kfb+JP
+	0y4+b7wLAg+7NopZoB3qvC5Jx8RCHRPIqNA==
+X-Google-Smtp-Source: AGHT+IHtYGYEAAmYOf8dXiFVQC5xP/l+aAUTsx/Mqvp+fp0NoPDfS4GQ9TBCXwwLk8+JKMb0nNq5SQgzCMv7a2Qk7lk=
+X-Received: by 2002:a5d:6486:0:b0:386:4a60:6650 with SMTP id
+ ffacd0b85a97d-3864cec5bd0mr853962f8f.42.1733886576197; Tue, 10 Dec 2024
+ 19:09:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|AM8PR04MB8033:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8bec2f83-ccee-410b-3eaa-08dd19915ac0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nzsXn9prrCVIBZ9PqEuVKD2XvvPOIGDICyIWSYmuRB5UatXT3F+g48ysE1nw?=
- =?us-ascii?Q?7Auv1Tutzw5UvMB3Lf8nGI306lUzlndcg2XnOvxqASQorMowcfjrPkPxCRxx?=
- =?us-ascii?Q?XnJIviPLhL21B0pf0kqFaHKrPX/YASNXiyUqq6Y0QFBhZggWA2GWhfgXecEX?=
- =?us-ascii?Q?yMGFl63QOqolAvK+frGjGCEFTHgB9hsgJ2JudMHR17z0mZIeGVLRvTI9JLaw?=
- =?us-ascii?Q?5LrY+uzL9U7ILGaMzbZs0B4m+onE885sFcADj5NOZBlPn8+RqEakJVpEOlGf?=
- =?us-ascii?Q?94tCQdmlOcTBM3wXJN/ziYD2ot6g8Rbuc/B+7BDaeRVYT6PifyyRmdMofg+r?=
- =?us-ascii?Q?uNzHEav/M0W1L4DLx+xEQx8THSnyjYXiyUzLwRtR6kW2jto1BozGYX4ThbLh?=
- =?us-ascii?Q?E0VAHK0fbMYtBkr+swfgg/TP8tgAgQTnlXRzIKm0H3IFuNSBcLD35HQoPY54?=
- =?us-ascii?Q?1liQIVwTZOkpvjsJFg6xo2mkRCtIemnCg73RBtmMwPZi95VmIcqjKezMxPj1?=
- =?us-ascii?Q?1Eu04v65fYEhfKMp/CAnSkV7CS6u0cDx1vrdtrn9Hn1wbCEDydkcM/8NRe7B?=
- =?us-ascii?Q?y7W02WqectGdWR3OF7Ll5MKSJKBtjo/LTQU4J4+GU7HcJr391bySoGP5iVnE?=
- =?us-ascii?Q?pEzg+Szm0/sAFOGYl6K+dJd42Y8DYj2Z0CBBk+uySLkNgSkFtlZQmK88uNDF?=
- =?us-ascii?Q?ffdvEhQ0+ly+2LH8oJlOLynJngx4aXQj+IDFnieAupWblu7AV8P3Nx1JNcDH?=
- =?us-ascii?Q?Dj2BYyeaUe9Uuo7Uom7f36oZM9Tg0gxuGVavYohODXB/woJsr1TEKJiaYmTX?=
- =?us-ascii?Q?iVpYgzBwE9vWOu+e6rjm3WHTYuSinGFQmmR88x2A9ok+NoafOTbz+oS7R3tG?=
- =?us-ascii?Q?NTUP89jbT/n3fSaN67PYqnwx+pCg3TI8XiuSt4M4GB9FHKKqT4gdEGKf12Yw?=
- =?us-ascii?Q?3TpUHMAyLSf7zGORoo+qHP38Q8JLClQCzlEfb+tolBajGOQlu/H0tKye9/yW?=
- =?us-ascii?Q?Uz09cVidwgxXoGoRVZhfMYGArb/hkCVe6rOH8LGgQAk5L7lZBGkh0pn5YVNC?=
- =?us-ascii?Q?bWRdRMfp2xEy8GZO7B1L7J20g8nKOQYy2VNDXyY/3qOV6dWbydg1wbIsAJ7c?=
- =?us-ascii?Q?V0JLjbvBXJD9nPSKpm7GtjRfLFputN9py28ZTqpOi7dsH2oSUPNRTILyubAB?=
- =?us-ascii?Q?1o6XTxIhKN+X+He3PryM5ZE5qzeMwog0d+fYe8CxAJsOOTrHDug+BWUoYG2W?=
- =?us-ascii?Q?oLhdV7YAM2STBWYK/nU9+O/N/3uN5uDrU74xDT5Za56rzcmckrEaJEKDwTy5?=
- =?us-ascii?Q?w8sBapKVw+rM4DiceTyYF1vaYUoJCK5KQX9nKo172bIvbiXavxA9wldMNH+t?=
- =?us-ascii?Q?P2FGhUkyMCaz94aZUIO4hLxV++Mvkgu/JUpYSXUQA6Bi6gkiV0Hh0XgXd5up?=
- =?us-ascii?Q?/zngBZBUndc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nxUSfzAJxEkdDBpty2YhUB3Abs6/3053Jfk/kmLy92B/eQRgnzmy4vYOcqpR?=
- =?us-ascii?Q?D+I9laydrmEtrpWLlvUQdP2FB4kGZhU1mke3ZyO+7zfYhPa06be6E/ltYfW+?=
- =?us-ascii?Q?YGGD+1hjMbuEEc8k8hKNFLyaC4bKQ1mescOfFravrUnMOVtpiSFl9/GxnCuV?=
- =?us-ascii?Q?AspJDwxkLMIfn/fMo7crWPyLdZMjeesHVfvLkPdCQrohM6SZW1CXYgoFikjF?=
- =?us-ascii?Q?Amhztj3+U0op7ahBZ+Tc2m2e3QWY5IKnG1Xfd3AnNV71dO5mGmgBZmIX17sc?=
- =?us-ascii?Q?vIF+Ys34fYAHEAz/G3tkrhSXTXqgPkQJ65HVq0YbelRksKq+pfySXkMHPSAN?=
- =?us-ascii?Q?JaH1Gopsf+3RBwI11XRqQ8dgaaWESg0LDfEZypfj4vG2MzpcyhcsbIjUYCez?=
- =?us-ascii?Q?3/SIsGHaMmS4K7J3Y2KDB/NvTMSAcGNepQuH+BGplAa7a2jIgx8qR/NmY9ZI?=
- =?us-ascii?Q?zBoNoOVa3cVq3fxrV4UlSNsxA5ldFBqP9+E48nyBq0f/u6wB7F+d7jCutZ19?=
- =?us-ascii?Q?6L9cfFCnJqY/WDCbOeTGbeHVSe70nlJP8VMFd/g2Q0mbFK6YJEf+klL+cpTZ?=
- =?us-ascii?Q?SJABUj3BKfsW7bUGLajIOSnHXguRDsPKEBizsSIk1B8lrEI6Un34f6ZZn/wr?=
- =?us-ascii?Q?trxbt1Ovv00JmkfvAzPKiG/rgZSw8sHVN2n5JfLOE+54I3Qi4twGWwlOUfYw?=
- =?us-ascii?Q?ShxGLQ5Gh64VgnfV4MhEcPddshFkzEOcsNXff7c2xo15rJzigF+SUVSs7R5f?=
- =?us-ascii?Q?Lc6b/D+phED4ribIF1X2f7iOs8MaJ96RaQ6HpV+RC505knGivh4wUilgg7yf?=
- =?us-ascii?Q?rF7IjqgUlGLFxmd/qjnglfUIlPgi1nQbWNCYblvglR8jirB8V9bGyt7EGvcO?=
- =?us-ascii?Q?RsI+W3marZnSIom59o2G6Ys1KiHywH9x/zeNewYoWzmrZNGMPpCQKhZH5Oxr?=
- =?us-ascii?Q?nDMexPpk1sWaqbHnrDIl+9LwtfCm9lBvtWu7nN57Au5qSr/yBUFURfcb26/S?=
- =?us-ascii?Q?bHBxpRbny1S9+GHkaseciCbHYJkSB/S78o7ji/I2gT6OvaP1tvX9Hr9QScoG?=
- =?us-ascii?Q?3bE+57rl4FU2XMVWUmG9Q6ALGpFDDIEMDCCPi6jHoOJyNeYPjdye+ew8mIdE?=
- =?us-ascii?Q?XSAJ8NW+HopSWy9bmfEO1KBIyqIOSODqWqw5JWn3CKnsM9SsAwqVoPHxwIOT?=
- =?us-ascii?Q?l2Z4a/6wHoktVCv/YmWw6Bz6nvPLMbnBtJSdtCeOsZ2ihepgBxqFV92CZWPZ?=
- =?us-ascii?Q?68Kqh8mDiJtqpj/a5fvKT4KSDXUV/XmsjwWaguXrPXthIfTbrrzKSuL/yGPc?=
- =?us-ascii?Q?kmU7sYBi9zCdZaoNd+icjiVq5Z1yeaSSTB09fyEG54QgE+AW2m46MAOOfNE4?=
- =?us-ascii?Q?l8YRFeFSk9TTaNqniHyAYVOYsSsi+iV4PoCfeKKnGVer6kJzaZf3kLO8QT8v?=
- =?us-ascii?Q?tgWhD6MGx7yFw8iUR45aSSIZ8hwqbXOe04q+8/uyYQsR70tNYhHDg/zVuXvv?=
- =?us-ascii?Q?l5Xb/8jaRYiNJH51OGb3KSBIePV399B375pLYQTmDy4usFMHql/Ml1d/UCVd?=
- =?us-ascii?Q?FVNprKTFhH8t/WkqEzyB7UffMnTY0xFYtnEQ12qb?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bec2f83-ccee-410b-3eaa-08dd19915ac0
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 03:10:24.2469
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: F1+6LI6ww+03ib7Df7MorPY8xmEmolnUI2sN6rJxyOJUvNzOfYvY4ppd47fDeXjKJNXNhtTqDpTg9FWeCcdGBg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB8033
+References: <20241209-b4-ovpn-v14-0-ea243cf16417@openvpn.net> <20241209-b4-ovpn-v14-17-ea243cf16417@openvpn.net>
+In-Reply-To: <20241209-b4-ovpn-v14-17-ea243cf16417@openvpn.net>
+From: Xiao Liang <shaw.leon@gmail.com>
+Date: Wed, 11 Dec 2024 11:08:59 +0800
+Message-ID: <CABAhCOSJCoZFuevjcwvdJ+==TpGEJZPmvvHfT=U3Kf_-Ob+BnA@mail.gmail.com>
+Subject: Re: [PATCH net-next v14 17/22] ovpn: implement peer
+ add/get/dump/delete via netlink
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, 
+	ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Register m2m platform device,that user can
-use M2M feature.
+On Mon, Dec 9, 2024 at 6:48=E2=80=AFPM Antonio Quartulli <antonio@openvpn.n=
+et> wrote:
+[...]
+> +/**
+> + * ovpn_nl_peer_modify - modify the peer attributes according to the inc=
+oming msg
+> + * @peer: the peer to modify
+> + * @info: generic netlink info from the user request
+> + * @attrs: the attributes from the user request
+> + *
+> + * Return: a negative error code in case of failure, 0 on success or 1 o=
+n
+> + *        success and the VPN IPs have been modified (requires rehashing=
+ in MP
+> + *        mode)
+> + */
+> +static int ovpn_nl_peer_modify(struct ovpn_peer *peer, struct genl_info =
+*info,
+> +                              struct nlattr **attrs)
+> +{
+> +       struct sockaddr_storage ss =3D {};
+> +       struct ovpn_socket *ovpn_sock;
+> +       u32 sockfd, interv, timeout;
+> +       struct socket *sock =3D NULL;
+> +       u8 *local_ip =3D NULL;
+> +       bool rehash =3D false;
+> +       int ret;
+> +
+> +       if (attrs[OVPN_A_PEER_SOCKET]) {
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Jaroslav Kysela <perex@perex.cz>
----
- sound/soc/fsl/fsl_easrc.c | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
+Similar to link attributes in other tunnel drivers (e.g. IFLA_GRE_LINK,
+IFLA_GRE_FWMARK), user-supplied sockets could have sockopts
+(e.g. oif, fwmark, TOS). Since some of them may affect encapsulation
+and routing decision, which are supported in datapath? And do we need
+some validation here?
 
-diff --git a/sound/soc/fsl/fsl_easrc.c b/sound/soc/fsl/fsl_easrc.c
-index f17a185a1910..f404a39009e1 100644
---- a/sound/soc/fsl/fsl_easrc.c
-+++ b/sound/soc/fsl/fsl_easrc.c
-@@ -2204,6 +2204,12 @@ static int fsl_easrc_probe(struct platform_device *pdev)
- 		goto err_pm_disable;
- 	}
- 
-+	ret = fsl_asrc_m2m_init(easrc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to init m2m device %d\n", ret);
-+		return ret;
-+	}
-+
- 	return 0;
- 
- err_pm_disable:
-@@ -2213,6 +2219,10 @@ static int fsl_easrc_probe(struct platform_device *pdev)
- 
- static void fsl_easrc_remove(struct platform_device *pdev)
- {
-+	struct fsl_asrc *easrc = dev_get_drvdata(&pdev->dev);
-+
-+	fsl_asrc_m2m_exit(easrc);
-+
- 	pm_runtime_disable(&pdev->dev);
- }
- 
-@@ -2313,10 +2323,29 @@ static int fsl_easrc_runtime_resume(struct device *dev)
- 	return ret;
- }
- 
-+static int fsl_easrc_suspend(struct device *dev)
-+{
-+	struct fsl_asrc *easrc = dev_get_drvdata(dev);
-+	int ret;
-+
-+	fsl_asrc_m2m_suspend(easrc);
-+	ret = pm_runtime_force_suspend(dev);
-+	return ret;
-+}
-+
-+static int fsl_easrc_resume(struct device *dev)
-+{
-+	struct fsl_asrc *easrc = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = pm_runtime_force_resume(dev);
-+	fsl_asrc_m2m_resume(easrc);
-+	return ret;
-+}
-+
- static const struct dev_pm_ops fsl_easrc_pm_ops = {
- 	RUNTIME_PM_OPS(fsl_easrc_runtime_suspend, fsl_easrc_runtime_resume, NULL)
--	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
--				pm_runtime_force_resume)
-+	SYSTEM_SLEEP_PM_OPS(fsl_easrc_suspend, fsl_easrc_resume)
- };
- 
- static struct platform_driver fsl_easrc_driver = {
--- 
-2.34.1
+[...]
+> +static int ovpn_nl_send_peer(struct sk_buff *skb, const struct genl_info=
+ *info,
+> +                            const struct ovpn_peer *peer, u32 portid, u3=
+2 seq,
+> +                            int flags)
+> +{
+> +       const struct ovpn_bind *bind;
+> +       struct nlattr *attr;
+> +       void *hdr;
+> +
+> +       hdr =3D genlmsg_put(skb, portid, seq, &ovpn_nl_family, flags,
+> +                         OVPN_CMD_PEER_GET);
+> +       if (!hdr)
+> +               return -ENOBUFS;
+> +
+> +       attr =3D nla_nest_start(skb, OVPN_A_PEER);
+> +       if (!attr)
+> +               goto err;
+> +
+> +       if (nla_put_u32(skb, OVPN_A_PEER_ID, peer->id))
+> +               goto err;
+> +
 
+I think it would be helpful to include the netns ID and supported sockopts
+of the peer socket in peer info message.
 
