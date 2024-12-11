@@ -1,58 +1,89 @@
-Return-Path: <linux-kernel+bounces-442306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31A79EDA68
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:52:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CBBA9EDA69
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B4C1886525
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF82A1885606
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FBB1F0E22;
-	Wed, 11 Dec 2024 22:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5CA1EC4E0;
+	Wed, 11 Dec 2024 22:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAM6/sS/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VsqtcorI"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65BE195;
-	Wed, 11 Dec 2024 22:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14571C5497
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733957558; cv=none; b=ueHMAO7MHA3x9cMjiMz3Z0RWiCpFGrvVtZKmn4Khz1L5aE96Favk3R5cdtt7vZ6xpekX/rOTImLa5CAGbbzejEY9PFE/1VF/MPdcK1NLc0gMeGrWwPyawjcnp0mQafdyjp1bQkIWmbhVeR1rsOLMXutFkiM/H5ijTJ9O7vEbdqo=
+	t=1733957564; cv=none; b=EPzRgti3IeAXxPJDgWifXY210DSfweGm2fImpqNkQ9fzA1q16IuOk2aglRFmt4fNJKPX6m0SbjwEKahCv3fzBiVOO49yLjz05bNeC5/+SM9Jh6SHbj7NiOZG359iYhFcTPPLukDasC+jTZ/z86HZyb+XeRit09K2veoiEe1HkaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733957558; c=relaxed/simple;
-	bh=b5VyzikGKIB0cjxAiPQdaJJ6qbpuXhnHUPZygNDS1TE=;
+	s=arc-20240116; t=1733957564; c=relaxed/simple;
+	bh=vrvqy58xGiO1WMhROBtmXIyu9sVa+DLAprL0zNPPebM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujYBMYtR0aqozLfVHSZpiR4Lk9QwqZq06lW05HOl2J5QTz8uoLNGrtpuJi83NCxJ9/PTTJawNA7Gv9dny2nDYEjsSOqALvThfDQOIlvuRwj/S6uWG8SzLyUGNsY9+u9Lie6oRVnR7sg7f3z9a+G3YZe0r7Qghw6lHAL33F0lc2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAM6/sS/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2B2FC4CED2;
-	Wed, 11 Dec 2024 22:52:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733957558;
-	bh=b5VyzikGKIB0cjxAiPQdaJJ6qbpuXhnHUPZygNDS1TE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gAM6/sS/DDkUGCT1cwQVT9xI2FYkZwN7H6NXxQn09QDARo3xDo4ZuZaZQXgN+QBak
-	 8WL5xib2RyfIaxsiNeNcXq/Te9IpzA9gjsn8HfXAufwOQgz0mtr3eOneSuzGprKUdX
-	 V3WK+24vnVeNQvO/8UpDsEEiyvoozILw5Zsf6zi5YziRih2D2cNUzkDqeEWwlsowqu
-	 V8UfZDbRUlymxGii92Ox21eo6Q0YcevhF0+2C3Q/HCxs/G145raK24mQZVVcbrfDj9
-	 et+GAdugkuOhJ4WaL+CpaPc0EkYSNhMEWd7FxqKg7wZq68fjZFJXbBVQZg9zJuOR59
-	 Ekjz7jiu6Dsfg==
-Date: Wed, 11 Dec 2024 19:52:35 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: Re: [RFC/PATCH] perf trace: Add --syscall-period option
-Message-ID: <Z1oXs1xjCG1Ee27p@x1>
-References: <20241211222110.2430610-1-namhyung@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nde8cz8mdiJ6MNak03slNywk4+ZR+deEpsLjZjnpEGZZ/qowoHOtUgzn/8wdNvyqVpyiSgAZ9bFrLsxUMFjEzu9F3UkYs32fQpJaCd/8+oyWTPOOISjqguIaX9IKQlJg0au3h25TFbh77eVUAqptwmKszmF7rSaHTnTWvuGa0VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VsqtcorI; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53ff1f7caaeso5077865e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 14:52:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733957560; x=1734562360; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NY0DaHYgseRDWZY4d4IDidbyN2YiOVi5DaD5aAxmd4A=;
+        b=VsqtcorIkH8HLjbGQT7XYDEULYbjOvHCDy4AFo4NGy5VMY6U5pq5b6ERUCXIirjCJR
+         41SOim1hKB1gciAJF+5CmUQS1dSXODK9pNOUvAGTa7bYy4ZhM5bHz9Q7it2Q6lznOUSw
+         Zwk+R2rP9FrAa4v0NtTPVzIXCzsDiZe9tfuyvKhpEArAeU6ps2cMXO7pW/Spte9VHGeN
+         l+glnChL+qKiKEou7d2hm2pMag9ab2E1ezOtgjYlWE5lWvjNgHvWwLLCIPvbNo1CnEt/
+         p2fb9ROlkb6KIUlZbk1foWnR9np4tWhXaDtr2dhF9R0TC77tVjFo8fr5DJPWn9iZOPLq
+         cZ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733957560; x=1734562360;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NY0DaHYgseRDWZY4d4IDidbyN2YiOVi5DaD5aAxmd4A=;
+        b=aWuJA8CJe3guPtb31sWnNkSK/GatKSDlirLbB4YOoJkmZd9KmPEuw3UtU6fS3RD9e8
+         jP0nPDg3G/eWbfSDWZmOsMWkfKjqgz8Nc8X35bt/kGde+sv7DZn38w0C/76ZfEmsG4Ia
+         li1hCdNUw1TFC/qsL/DR9jWCOg53h2WewIdzHdA0ph7JZkEY7FbpiOXAde9+yO/bdD+8
+         IDCw2H6XxzWGzf9rQJsjHJV5HtaoMS8Zu8HNSRLL0gsSMG3vICtNi5phjANx6c1/ayJG
+         /AFaLDWTsV7IDYxKS2IxqSO78UoeEeaAQB4iSJJVsYCWmxKmzYwqQDQ3paMirJq/lqie
+         P3bA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsT2vkBEnrcut6xSdlmtkeDS6jkJFGtp7OYSQDQs3PRKj/BZE3YyLC3AkczogM6QgL80oVyW8vks/FzE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOwfmCF2Tv5/YyVjsa1Q6Bs31wTePmwe7jSJABtTuRRQvoK1a1
+	BhVh8Y3OE1NZzKuWtXBoD3NopoaycdAdhrcwOV6GnLgTcA9hoUAxHGl4hXdqqng=
+X-Gm-Gg: ASbGncuJUGxTH2EQazuwmxzUbWnkBKa+xEIYwqZbFZ0vlqLIeN+PJieYFZIqtqjiuEr
+	YGKxQ9KMNfQy4p0erBeAceMQm/9ISevWcAOXHE/dj4/KDfzwH2zD3bCBlAAPNioS45US+o5W6FS
+	k6UuvpldNZPquxM/YCCqGg6+bol54980ARsB9C92PKUgQ7ARuy5Elb6FhIElqZL0hQ5PK1HsZCb
+	pC87HSy0Qz35SNDGoxDUUNAmg3IUFpVfRUC+zCF3WpcN8SRQFcMiEO7h6AiBfpZiur+3S4yyjX4
+	8fagBNlNBqkRWmVZ305Bzi/8++NAGBwizw==
+X-Google-Smtp-Source: AGHT+IF9HHn7otIsRRSetNzaUeXvxCJbkji7UoBVMa3gLuVqW6w3nM5oSY6llrPi+iNGIGJkdw3BTA==
+X-Received: by 2002:a05:6512:3e05:b0:53e:350a:7298 with SMTP id 2adb3069b0e04-5402a5e4b93mr1104975e87.25.1733957559885;
+        Wed, 11 Dec 2024 14:52:39 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401a5360bcsm1378038e87.174.2024.12.11.14.52.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 14:52:38 -0800 (PST)
+Date: Thu, 12 Dec 2024 00:52:36 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] drm: bridge: adv7511: fill i2s stream capabilities
+Message-ID: <rilzmak24odk34q3rglnkmi23e7warmd6dytx2opkhjl3kjujm@fqxqydwhcluy>
+References: <20241210134254.2967524-1-olivier.moysan@foss.st.com>
+ <20241210134254.2967524-2-olivier.moysan@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,200 +92,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241211222110.2430610-1-namhyung@kernel.org>
+In-Reply-To: <20241210134254.2967524-2-olivier.moysan@foss.st.com>
 
-On Wed, Dec 11, 2024 at 02:21:10PM -0800, Namhyung Kim wrote:
-> This option is to implement the event sampling for system calls.
-> The period is given in msec as it shows the time in msec.
+On Tue, Dec 10, 2024 at 02:42:52PM +0100, Olivier Moysan wrote:
+> Set no_i2s_capture flag in hdmi_codec_pdata structure to report
+> that the ADV7511 HDMI bridge does not support i2s audio capture.
 > 
->   # perf trace -C 0 --syscall-period 100 sleep 1
->            ? (         ): fleetspeakd/1828559  ... [continued]: futex())                                            = -1 ETIMEDOUT (Connection timed out)
->        0.050 (100.247 ms): gnome-shell/572531 recvmsg(fd: 10<socket:[3355761]>, msg: 0x7ffef8b39d20)                = 40
->      100.357 (100.149 ms): pipewire-pulse/572245 read(fd: 5<anon_inode:[eventfd]>, buf: 0x7ffc0b9dc8f0, count: 8)      = 8
->      200.553 (100.268 ms): NetworkManager/3424 epoll_wait(epfd: 19<anon_inode:[eventpoll]>, events: 0x5607b85bb880, maxevents: 6) = 0
->      300.876 (         ): mon/4932 poll(ufds: 0x7fa392784df0, nfds: 1, timeout_msecs: 100)            ...
->      400.901 ( 0.025 ms): TaskCon~ller #/620145 futex(uaddr: 0x7f3fc596fa00, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
->      300.876 (100.123 ms): mon/4932  ... [continued]: poll())                                             = 0 (Timeout)
->      500.901 ( 0.012 ms): evdefer/2/2335122 futex(uaddr: 0x5640baac5198, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
->      602.701 ( 0.017 ms): Compositor/1992200 futex(uaddr: 0x7f1a51dfdd40, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
->      705.589 ( 0.017 ms): JS Watchdog/947933 futex(uaddr: 0x7f4cac1d4240, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
->      812.667 ( 0.027 ms): fix/1985151 futex(uaddr: 0xc0008f7148, op: WAKE|PRIVATE_FLAG, val: 1)             = 1
->      912.807 ( 0.017 ms): Xorg/572315 setitimer(value: 0x7ffc375d6ba0)                                      = 0
-> 
-> The timestamp is kept in a per-cpu array and the allowed task is saved
-> in a hash map.
-
-Interesting concept, and one that is done just on the BPF part, so I
-think we should at least warn a user that is running this on a build
-without BPF skels.
-
-Will try it tomorrow,
-
-- Arnaldo
- 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
 > ---
->  tools/perf/Documentation/perf-trace.txt       |  6 ++
->  tools/perf/builtin-trace.c                    |  5 ++
->  .../bpf_skel/augmented_raw_syscalls.bpf.c     | 67 ++++++++++++++++++-
->  3 files changed, 76 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
-> index 6e0cc50bbc13fc7f..9f338a8c5357a67e 100644
-> --- a/tools/perf/Documentation/perf-trace.txt
-> +++ b/tools/perf/Documentation/perf-trace.txt
-> @@ -241,6 +241,12 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
->  	printing using the existing 'perf trace' syscall arg beautifiers to map integer
->  	arguments to strings (pid to comm, syscall id to syscall name, etc).
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+> index 61f4a38e7d2b..28ae81ca3651 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+> @@ -234,6 +234,7 @@ static const struct hdmi_codec_pdata codec_data = {
+>  	.ops = &adv7511_codec_ops,
+>  	.max_i2s_channels = 2,
+>  	.i2s = 1,
+> +	.no_i2s_capture = 1,
+
+Does it support spdif capture?
+
+>  	.spdif = 1,
+>  };
 >  
-> +--syscall-period::
-> +	Trace a system call in the given period (in msec).  This implements
-> +	sampling for syscalls in order to reduce the monitoring overhead.
-> +	For example, setting the sysall period to 100 (msec) means it will
-> +	sample a syscall and next one after 100 msec.
-> +
->  
->  PAGEFAULTS
->  ----------
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 3c46de1a8d79bfe6..789eb0ffd5f90b61 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -185,6 +185,7 @@ struct trace {
->  	} stats;
->  	unsigned int		max_stack;
->  	unsigned int		min_stack;
-> +	unsigned long		sample_period_ms;
->  	int			raw_augmented_syscalls_args_size;
->  	bool			raw_augmented_syscalls;
->  	bool			fd_path_disabled;
-> @@ -5219,6 +5220,7 @@ int cmd_trace(int argc, const char **argv)
->  		     "start"),
->  	OPT_BOOLEAN(0, "force-btf", &trace.force_btf, "Prefer btf_dump general pretty printer"
->  		       "to customized ones"),
-> +	OPT_ULONG(0, "syscall-period", &trace.sample_period_ms, "syscall sampling period in ms"),
->  	OPTS_EVSWITCH(&trace.evswitch),
->  	OPT_END()
->  	};
-> @@ -5326,6 +5328,9 @@ int cmd_trace(int argc, const char **argv)
->  				bpf_program__set_autoattach(prog, /*autoattach=*/false);
->  		}
->  
-> +		if (trace.sample_period_ms)
-> +			trace.skel->rodata->sample_period = trace.sample_period_ms * NSEC_PER_MSEC;
-> +
->  		err = augmented_raw_syscalls_bpf__load(trace.skel);
->  
->  		if (err < 0) {
-> diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> index 4a62ed593e84edf8..12272620dcd73700 100644
-> --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> @@ -113,6 +113,22 @@ struct pids_filtered {
->  	__uint(max_entries, 64);
->  } pids_filtered SEC(".maps");
->  
-> +struct sample_timestamp {
-> +	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-> +	__type(key, int);
-> +	__type(value, __u64);
-> +	__uint(max_entries, 1);
-> +} sample_timestamp SEC(".maps");
-> +
-> +struct sample_filtered {
-> +	__uint(type, BPF_MAP_TYPE_HASH);
-> +	__type(key, pid_t);
-> +	__type(value, bool);
-> +	__uint(max_entries, MAX_CPUS);
-> +} sample_filtered SEC(".maps");
-> +
-> +const volatile __u64 sample_period;
-> +
->  struct augmented_args_payload {
->  	struct syscall_enter_args args;
->  	struct augmented_arg arg, arg2; // We have to reserve space for two arguments (rename, etc)
-> @@ -428,6 +444,44 @@ static bool pid_filter__has(struct pids_filtered *pids, pid_t pid)
->  	return bpf_map_lookup_elem(pids, &pid) != NULL;
->  }
->  
-> +static bool sample_filter__allow_enter(__u64 timestamp, pid_t pid)
-> +{
-> +	int idx = 0;
-> +	__u64 *prev_ts;
-> +	bool ok = true;
-> +
-> +	/* default behavior */
-> +	if (sample_period == 0)
-> +		return true;
-> +
-> +	prev_ts = bpf_map_lookup_elem(&sample_timestamp, &idx);
-> +
-> +	if (prev_ts) {
-> +		if ((*prev_ts + sample_period) > timestamp)
-> +			return false;
-> +		*prev_ts = timestamp;
-> +	} else {
-> +		bpf_map_update_elem(&sample_timestamp, &idx, &timestamp, BPF_ANY);
-> +	}
-> +
-> +	bpf_map_update_elem(&sample_filtered, &pid, &ok, BPF_ANY);
-> +
-> +	return true;
-> +}
-> +
-> +static bool sample_filter__allow_exit(pid_t pid)
-> +{
-> +	/* default behavior */
-> +	if (sample_period == 0)
-> +		return true;
-> +
-> +	if (!bpf_map_lookup_elem(&sample_filtered, &pid))
-> +		return false;
-> +
-> +	bpf_map_delete_elem(&sample_filtered, &pid);
-> +	return true;
-> +}
-> +
->  static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
->  {
->  	bool augmented, do_output = false;
-> @@ -526,7 +580,9 @@ static int augment_sys_enter(void *ctx, struct syscall_enter_args *args)
->  SEC("tp/raw_syscalls/sys_enter")
->  int sys_enter(struct syscall_enter_args *args)
->  {
-> +	pid_t pid = getpid();
->  	struct augmented_args_payload *augmented_args;
-> +
->  	/*
->  	 * We start len, the amount of data that will be in the perf ring
->  	 * buffer, if this is not filtered out by one of pid_filter__has(),
-> @@ -537,7 +593,10 @@ int sys_enter(struct syscall_enter_args *args)
->  	 * initial, non-augmented raw_syscalls:sys_enter payload.
->  	 */
->  
-> -	if (pid_filter__has(&pids_filtered, getpid()))
-> +	if (pid_filter__has(&pids_filtered, pid))
-> +		return 0;
-> +
-> +	if (!sample_filter__allow_enter(bpf_ktime_get_ns(), pid))
->  		return 0;
->  
->  	augmented_args = augmented_args_payload();
-> @@ -561,9 +620,13 @@ int sys_enter(struct syscall_enter_args *args)
->  SEC("tp/raw_syscalls/sys_exit")
->  int sys_exit(struct syscall_exit_args *args)
->  {
-> +	pid_t pid = getpid();
->  	struct syscall_exit_args exit_args;
->  
-> -	if (pid_filter__has(&pids_filtered, getpid()))
-> +	if (pid_filter__has(&pids_filtered, pid))
-> +		return 0;
-> +
-> +	if (!sample_filter__allow_exit(pid))
->  		return 0;
->  
->  	bpf_probe_read_kernel(&exit_args, sizeof(exit_args), args);
 > -- 
-> 2.47.0.338.g60cca15819-goog
+> 2.25.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
