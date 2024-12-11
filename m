@@ -1,45 +1,64 @@
-Return-Path: <linux-kernel+bounces-440592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4019EC17A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F01A99EC181
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 02:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF78D282200
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:24:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992F928230D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 01:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C347346F;
-	Wed, 11 Dec 2024 01:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082037080E;
+	Wed, 11 Dec 2024 01:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lCjAqtM/"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JQQnkSS9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078B5179BD;
-	Wed, 11 Dec 2024 01:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DD52451E2;
+	Wed, 11 Dec 2024 01:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733880259; cv=none; b=E3YhTYFx83WHpa63H8JjDFpqGVqLo8vhPXZmsPNcXhGUnwMHHpKy9qu+BTlSv9oa6mjAkJx2glMCRd24wxp3SAPE/AbGEfFG1hQOthsFXdvFNvj9LGJ3NeuGsV8xtEv/hobUmwPe42xbXpBRzWLvttz5LYsKmk2GObqJyUB89NY=
+	t=1733880676; cv=none; b=drzr9+IrhpPu62Bur2fcl9MACW+oe/pDs2zUUjFjNZZ/iUBJrcwQ8U4b/XwSy9hwf/SjUkxEwpc8mVgu93m7gnTcWpAsLuEuT+Z2obLnPvJ6N7/U/RjTeRkYR8AJESkSCBvp8GQKAvAo+cs9LyrFgERd8pzCeATpMrl3WqVmxdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733880259; c=relaxed/simple;
-	bh=roMrJ4xY7RhyaKy22kBbzezoTLoOe175jEiPV0n1qww=;
+	s=arc-20240116; t=1733880676; c=relaxed/simple;
+	bh=yaftARiUbVgBvmlunQ3xyF3c9wGFVBGc/49CctniBO4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kht/LKMOaNrHqPA955iQPLa8S8Z7O/WZ837PkgnbPOcSHlhq1nY1ETNxZLMpyHjjoKtzT/yuv5tKRtIuIx3vEMVc9m528Ffagx1z9UeMix2NSkO7IL0oM7scQzIPhtkahFD5Iohh1y3bsMJXzCsoFjEyLuT5RG+3j5D2mv/tCtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lCjAqtM/; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733880252; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=QLiF3+1wxeQNn+Qj/FRUqScT1++3cQ1MFzbwCBVRb9c=;
-	b=lCjAqtM/oA0qdEtrZ0+sUcfBXUGzcwst45vqa2LcQAkj/gduluZDrQE1oOzeQB9vTSB2EIPmVdLrblmAGhM/YL2OV7no1TQKNnqS5GQ1uBVEDv0Eno1bkjJCFyKanrt3V0/+uwcaYLuwsSjd1vmnVhIJAveHTNTJ3F8kZLeiGx8=
-Received: from 30.166.1.177(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WLGFXUW_1733880251 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Dec 2024 09:24:11 +0800
-Message-ID: <f8786f53-eff0-4fd7-9c4d-c5733f648c6e@linux.alibaba.com>
-Date: Wed, 11 Dec 2024 09:24:09 +0800
+	 In-Reply-To:Content-Type; b=LfGS+gpe95q8PGF8GwGK31DKwl4gGib10S0KtQTRw0MFv4HhxDAucZIjFJkGuAqzpZZamvrQIaCa08Iv7BzbgAWCcOg4Gv0DsirgAvMYlTztD5nsWawbmgdUjYS8wRfx4nilwgLd4ICaqhDwlS09qQJ/XCpFDcK/Fi/muLsw4Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JQQnkSS9; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733880675; x=1765416675;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=yaftARiUbVgBvmlunQ3xyF3c9wGFVBGc/49CctniBO4=;
+  b=JQQnkSS9whdnpkPGMz7H3q4GImuTr6+kMWUOZitqoxxBhG1mzLqZSqta
+   UOlWtqEWVhXybSVUlq4aStBeol/ylUchvbJoUhlOhnyz42kRs+Tln2o6c
+   dzHWgBAEwI72wSCGfa5eVPcXtN9p8fgirHYkxc1cRFYEZSMS/kNNLrdRo
+   xDjU8R37/SWBla6R+zcY44OIgHNUwtVsNxP19ElvsnBkjAswGTSlgvsrP
+   t458eDYqx/aSvZh3tZSMepXMP4ASCCYbNzltLtc2XlRlEZ+RNlydalzpu
+   lCnVBD8owaBZQMrgyCkXUqBCEOPLiYx1+PBF2e9K9OL1iAHurvP3zilqN
+   A==;
+X-CSE-ConnectionGUID: eQsdeC+kSbCsgLMw7R1xig==
+X-CSE-MsgGUID: yTBluM0xQuqwi6lT1SKD1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="33583246"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="33583246"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 17:31:14 -0800
+X-CSE-ConnectionGUID: kqN5becJTOK3I2HK628D+Q==
+X-CSE-MsgGUID: +2W1NSC9QkSfNVJdHlqNpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="100658085"
+Received: from unknown (HELO [10.238.9.154]) ([10.238.9.154])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 17:31:10 -0800
+Message-ID: <6251ba39-bc90-44ad-bdf3-8de2222dcb72@linux.intel.com>
+Date: Wed, 11 Dec 2024 09:31:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,55 +66,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/dwc_pcie: Qualify RAS DES VSEC Capability by Vendor,
- Revision
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- Krishna chaitanya chundru <quic_krichai@quicinc.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20241210145335.GA3239578@bhelgaas>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20241210145335.GA3239578@bhelgaas>
+Subject: Re: [PATCH 00/18] KVM: TDX: TDX "the rest" part
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: seanjc@google.com, kvm@vger.kernel.org, rick.p.edgecombe@intel.com,
+ kai.huang@intel.com, adrian.hunter@intel.com, reinette.chatre@intel.com,
+ xiaoyao.li@intel.com, tony.lindgren@linux.intel.com,
+ isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
+ linux-kernel@vger.kernel.org
+References: <20241210182512.252097-2-pbonzini@redhat.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20241210182512.252097-2-pbonzini@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-在 2024/12/10 22:53, Bjorn Helgaas 写道:
-> On Tue, Dec 10, 2024 at 08:04:17PM +0800, Shuai Xue wrote:
->> 在 2024/12/10 06:29, Bjorn Helgaas 写道:
->>> From: Bjorn Helgaas <bhelgaas@google.com>
->>>
->>> PCI Vendor-Specific (VSEC) Capabilities are defined by each vendor.
->>> Devices from different vendors may advertise a VSEC Capability with the DWC
->>> RAS DES functionality, but the vendors may assign different VSEC IDs.
->>>
->>> Search for the DWC RAS DES Capability using the VSEC ID and VSEC Rev
->>> chosen by the vendor.
-> 
->>> -	for (vid = dwc_pcie_vendor_ids; vid->vendor_id; vid++) {
->>> +	for (vid = dwc_pcie_pmu_vsec_ids; vid->vendor_id; vid++) {
->>
->> How about checking the pdev->vendor with vid->vendor_id before
->> search the vesc cap?
->>
->> +		if (pdev->vendor != vid->vendor_id)
->> +			continue;
-> 
-> Every user of VSEC needs to specify the (Vendor ID, VSEC ID) and
-> verify that the Vendor ID matches the device Vendor ID, so
-> pci_find_vsec_capability() does this check internally, so I don't
-> think we need to do it here.
+
+On 12/11/2024 2:25 AM, Paolo Bonzini wrote:
+> Applied to kvm-coco-queue, thanks.  For now I used v1 of "TDX vCPU
+> enter/exit" as it was posted, but I will check out the review comments
+> later.
+>
+> Paolo
+Hi Paolo,
+
+The the following two fixup patches to v1 of "TDX vCPU enter/exit" related
+to the later sections.
+
+One is https://github.com/intel/tdx/commit/22b7001fbb58771bf133a64e1b22fb9e47d8a11f
+, make tdx_vcpu_enter_exit() noinstr based on the discussion:
+https://lore.kernel.org/kvm/Z0SVf8bqGej_-7Sj@google.com/
 
 
-I see. LGTM. Also, I quickly tested it on Yitian 710 and it works as expected.
-
-Reviewed-and-tested-by: Shuai Xue <xueshuai@linux.alibaba.com>
-
-Thanks.
-
-Best Regards,
-Shuai
+The other is https://github.com/intel/tdx/commit/13828e0b586eed6618ccdef9e4f58b09358564d2
+, move the check of VCPU_TD_STATE_INITIALIZED from tdx_vcpu_run() to
+tdx_vcpu_pre_run() based on the discussion:
+https://lore.kernel.org/kvm/837bbbc7-e7f3-4362-a745-310fe369f43d@intel.com/
+So the check for VCPU_TD_STATE_INITIALIZED in tdx_handle_exit() is dropped in
+"TDX hypercalls may exit to userspace"
 
