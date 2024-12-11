@@ -1,103 +1,181 @@
-Return-Path: <linux-kernel+bounces-441924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC829ED5AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:05:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC869ED5C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:06:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 907A9281CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:05:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AD68283D4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585B72510AC;
-	Wed, 11 Dec 2024 18:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FDF253D2D;
+	Wed, 11 Dec 2024 18:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZufNAOI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C57252496;
-	Wed, 11 Dec 2024 18:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBEA253D02;
+	Wed, 11 Dec 2024 18:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943218; cv=none; b=bE++CPq/MgHVMbPsxKvIb+YmevyvVEqATwYQSbcY6bw8lkIBa0jvkMEACKTdCOhnZ4MKhV5y2VNhdZe7iY4PG+JKGqZx82mRCmnED4Ca8HITWMKcD/Dtwb4+fQByr8dFKFsFw4PO6NMa18sc2nKaCsz2uqxy/EkaEBfnjA57LH4=
+	t=1733943237; cv=none; b=QbzEycrZUfD4u3f1heJJ2YEMixuMRGeMJBlNMwcgescQbpHpS4C0YTUNIo2weU4n5tFe+cwnB0xL2tuZVuZEpQACqQ1ZBJ/ZL6KN+7ijNJunvykMpHFL3w4t2j2DDes3ercm6wuLIbSLEJ8QTI6Jvc1euJ99JtGkuHmgf1IVpas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943218; c=relaxed/simple;
-	bh=avb4WuD0VNAVSZQsNE1CfG9LwILOm46zt+jwD3q4+sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gl93P5x6v/EBvDNPSj6zcjrf0zFQDPaMczNxOuuLSV+AzT99kCBBfSJsyUyyJd67SDFHLNPCgGu0K66c1apoxDaVm5MmoGR/sVSzU1yzjqDG1tBe0SYFmx3ab9BUCbxWWfWdQeDKa+JwWhRTVq1VaBqYwwRk8Om9L0G6n721W7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2795AC4CEDE;
-	Wed, 11 Dec 2024 18:53:37 +0000 (UTC)
-Date: Wed, 11 Dec 2024 13:53:35 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH] fgraph: Still initialize idle shadow stacks when starting
-Message-ID: <20241211135335.094ba282@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733943237; c=relaxed/simple;
+	bh=cMHujGTwR/Y+8zeiO+d9MOKlVyHMMOTiGn/MHw7K/Kg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KoAGqu2ztN6rknOTtc4DJZAl1cbQ6TGVboJNrGrqLQ869HTaHQ73uRkOwBniAAzGzkxJaWpcl1phjE0jtOtrbvj1DfJ+khW/bjpyA24Hq+FnrZ1GtkqXLgEk5jNnvrWIpr5QFWangelwWYpr3ieDVib8f1NW/YQqud23CRqW7Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZufNAOI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85452C4CED2;
+	Wed, 11 Dec 2024 18:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733943237;
+	bh=cMHujGTwR/Y+8zeiO+d9MOKlVyHMMOTiGn/MHw7K/Kg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZZufNAOI0Zc+hbZ27Hr7VtnT8eejc1nzh6B/jR64d6QMi1ui/rot05ls1FKCMB3ve
+	 mMrsSx4iSlVYuMAT5IeHLR1OZZK/ela4o8/khj0ciVpBiZhVqyT3N1BPOsh/BpOrNl
+	 MFWWeT4sKmw6jBu8A9iifkGzDZuTT4YLjxibGaHmxrjjruAD4feTTwYhi3LEZkkKzT
+	 +L6EAEjRkeXwukGubwCLaV/MW/4pWpZbuOycNPB/9CKpftBv4BxMTyvVr5ulN6YGBA
+	 kN5eMx/4BB+2KZl8UFKLN87EFmNIOjy7u0WwkL7HmSUks5/9QGKmgiV3NaehgIrUui
+	 5+f6Np2bwG+yA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: James Hilliard <james.hilliard1@gmail.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-watchdog@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 01/10] watchdog: it87_wdt: add PWRGD enable quirk for Qotom QCML04
+Date: Wed, 11 Dec 2024 13:53:42 -0500
+Message-ID: <20241211185355.3842902-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.15.173
+Content-Transfer-Encoding: 8bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+From: James Hilliard <james.hilliard1@gmail.com>
 
-A bug was discovered where the idle shadow stacks were not initialized
-for offline CPUs when starting function graph tracer, and when they came
-online they were not traced due to the missing shadow stack. To fix
-this, the idle task shadow stack initialization was moved to using the
-CPU hotplug callbacks. But it removed the initialization when the
-function graph was enabled. The problem here is that the hotplug
-callbacks are called when the CPUs come online, but the idle shadow
-stack initialization only happens if function graph is currently
-active. This caused the online CPUs to not get their shadow stack
-initialized.
+[ Upstream commit 43439076383a7611300334d1357c0f8883f40816 ]
 
-The idle shadow stack initialization still needs to be done when the
-function graph is registered, as they will not be allocated if function
-graph is not registered.
+For the watchdog timer to work properly on the QCML04 board we need to
+set PWRGD enable in the Environment Controller Configuration Registers
+Special Configuration Register 1 when it is not already set, this may
+be the case when the watchdog is not enabled from within the BIOS.
 
-Cc: stable@vger.kernel.org
-Fixes: 2c02f7375e65 ("fgraph: Use CPU hotplug mechanism to initialize idle shadow stacks")
-Reported-by: Linus Walleij <linus.walleij@linaro.org>
-Closes: https://lore.kernel.org/all/CACRpkdaTBrHwRbbrphVy-=SeDz6MSsXhTKypOtLrTQ+DgGAOcQ@mail.gmail.com/
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20241025063441.3494837-1-james.hilliard1@gmail.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/fgraph.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/watchdog/it87_wdt.c | 39 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 0bf78517b5d4..ddedcb50917f 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -1215,7 +1215,7 @@ void fgraph_update_pid_func(void)
- static int start_graph_tracing(void)
+diff --git a/drivers/watchdog/it87_wdt.c b/drivers/watchdog/it87_wdt.c
+index 843f9f8e39177..239947df613db 100644
+--- a/drivers/watchdog/it87_wdt.c
++++ b/drivers/watchdog/it87_wdt.c
+@@ -20,6 +20,8 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/bits.h>
++#include <linux/dmi.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -40,6 +42,7 @@
+ #define VAL		0x2f
+ 
+ /* Logical device Numbers LDN */
++#define EC		0x04
+ #define GPIO		0x07
+ 
+ /* Configuration Registers and Functions */
+@@ -71,6 +74,12 @@
+ #define IT8784_ID	0x8784
+ #define IT8786_ID	0x8786
+ 
++/* Environment Controller Configuration Registers LDN=0x04 */
++#define SCR1		0xfa
++
++/* Environment Controller Bits SCR1 */
++#define WDT_PWRGD	0x20
++
+ /* GPIO Configuration Registers LDN=0x07 */
+ #define WDTCTRL		0x71
+ #define WDTCFG		0x72
+@@ -233,6 +242,21 @@ static int wdt_set_timeout(struct watchdog_device *wdd, unsigned int t)
+ 	return ret;
+ }
+ 
++enum {
++	IT87_WDT_OUTPUT_THROUGH_PWRGD	= BIT(0),
++};
++
++static const struct dmi_system_id it87_quirks[] = {
++	{
++		/* Qotom Q30900P (IT8786) */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_NAME, "QCML04"),
++		},
++		.driver_data = (void *)IT87_WDT_OUTPUT_THROUGH_PWRGD,
++	},
++	{}
++};
++
+ static const struct watchdog_info ident = {
+ 	.options = WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING,
+ 	.firmware_version = 1,
+@@ -254,8 +278,10 @@ static struct watchdog_device wdt_dev = {
+ 
+ static int __init it87_wdt_init(void)
  {
- 	unsigned long **ret_stack_list;
--	int ret;
-+	int ret, cpu;
++	const struct dmi_system_id *dmi_id;
+ 	u8  chip_rev;
+ 	u8 ctrl;
++	int quirks = 0;
+ 	int rc;
  
- 	ret_stack_list = kcalloc(FTRACE_RETSTACK_ALLOC_SIZE,
- 				 sizeof(*ret_stack_list), GFP_KERNEL);
-@@ -1223,6 +1223,12 @@ static int start_graph_tracing(void)
- 	if (!ret_stack_list)
- 		return -ENOMEM;
+ 	rc = superio_enter();
+@@ -266,6 +292,10 @@ static int __init it87_wdt_init(void)
+ 	chip_rev  = superio_inb(CHIPREV) & 0x0f;
+ 	superio_exit();
  
-+	/* The cpu_boot init_task->ret_stack will never be freed */
-+	for_each_online_cpu(cpu) {
-+		if (!idle_task(cpu)->ret_stack)
-+			ftrace_graph_init_idle_task(idle_task(cpu), cpu);
++	dmi_id = dmi_first_match(it87_quirks);
++	if (dmi_id)
++		quirks = (long)dmi_id->driver_data;
++
+ 	switch (chip_type) {
+ 	case IT8702_ID:
+ 		max_units = 255;
+@@ -326,6 +356,15 @@ static int __init it87_wdt_init(void)
+ 		superio_outb(0x00, WDTCTRL);
+ 	}
+ 
++	if (quirks & IT87_WDT_OUTPUT_THROUGH_PWRGD) {
++		superio_select(EC);
++		ctrl = superio_inb(SCR1);
++		if (!(ctrl & WDT_PWRGD)) {
++			ctrl |= WDT_PWRGD;
++			superio_outb(ctrl, SCR1);
++		}
 +	}
 +
- 	do {
- 		ret = alloc_retstack_tasklist(ret_stack_list);
- 	} while (ret == -EAGAIN);
+ 	superio_exit();
+ 
+ 	if (timeout < 1 || timeout > max_units * 60) {
 -- 
-2.45.2
+2.43.0
 
 
