@@ -1,184 +1,139 @@
-Return-Path: <linux-kernel+bounces-440781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8C39EC427
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:13:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC81C1886503
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:13:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9001C07FE;
-	Wed, 11 Dec 2024 05:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XdH1zUkz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EBD99EC433
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:24:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27701BDAA0;
-	Wed, 11 Dec 2024 05:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8DC1285782
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:24:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280F71C07E2;
+	Wed, 11 Dec 2024 05:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RC8+PZ2G"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC611BEF74
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733893972; cv=none; b=QQePcSyQYWXVTc6DZevszPBlA8ksqjrGD+4DjrLTgF9IqfSt7cV32Azoswb+1sPxEyEyrXtfzgJwhAQB267cS6TpkB9zUcRNhYmlMkECIxX9lL8KO4y289WcmuYhzVs//9n17crX3Aqa1WwCd9o5kcI7oPrYUdH2Y/Mgz+ai7Zc=
+	t=1733894676; cv=none; b=HV1HkGJhUw1IItDtE3A4+6fkbg1KyatN1VyS5kqzIQkN1JF0cM3Y4ZtKkzgmHgzzSFGqojWIfJD5vTTdQrCTb51/JVBJbolXJFncRBWdyChYhO8cHO2AZANw5/PgWHeyW1nH8+C/zuqR0OVCcSz5fP8Wk/B79vAXg67TGrRV/QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733893972; c=relaxed/simple;
-	bh=TmSuMxI+37qp//b+Vc1lTofp/uZJ35cEAzMFBvx1dhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2h5JnKqNXgBKDBOy6scftRLETwRpJZ0Sqei28K6tO4Ipu2OgqnEn5DZWz56UPs8HWbcijG6Xlpj1Cxl/tr/SBFoWG5zUhUaQE3R5wDpYpj/pvCe67K2xcbEm/M5PBo/I6wIBSZnGLwpnRs3EENsfRM/hD5QDkN6hb2RziCMizc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XdH1zUkz; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733893970; x=1765429970;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TmSuMxI+37qp//b+Vc1lTofp/uZJ35cEAzMFBvx1dhw=;
-  b=XdH1zUkzuEAEePZl7khXDrBC5Fgh+QVTRjQV4iH3nE6JNvs2qUoch9tM
-   +APab0HRsPg+UER6JsK7Rh/FffhS1HLuCXBnrC7q+9EJQTVcEQH53/e1i
-   3D9xKHtiUJ8OLTZE+IY1bTJNwyZsyRmajq4jsO1YKGJlpIRWg2w1NWLAK
-   NMx2xx23fwN5xSdn8ASOYPjBUW1WKl1FC2JVuqUFNiD1/EQfqB0oe4tBK
-   JGGr6Y1z54TVXrAUXIyH74c/a6HrWjEv/N+cAWE9jq2/mg1oQ32mBbIa6
-   UQkPIHpE3PQSAdoxRQaPCKvd+urk6aaiorHas0gIpIEFQXYK0Uj/CbjS/
-   Q==;
-X-CSE-ConnectionGUID: tczH6gCSTc+LRu0ZHqMomw==
-X-CSE-MsgGUID: BfhAedCTRJ6izDy0y+hAvA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="33989696"
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="33989696"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 21:12:49 -0800
-X-CSE-ConnectionGUID: aq4+8XcnQbiDK1Q+Njg5aA==
-X-CSE-MsgGUID: sEnUX6MqT9ajffeP+66V+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="100715439"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 10 Dec 2024 21:12:46 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tLF1f-0006J7-0o;
-	Wed, 11 Dec 2024 05:12:43 +0000
-Date: Wed, 11 Dec 2024 13:12:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	linux-ext4@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Mingming Cao <cmm@us.ibm.com>, Kalpak Shah <kalpak@clusterfs.com>,
-	linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	syzbot+57934e2c8e7a99992e41@syzkaller.appspotmail.com
-Subject: Re: [PATCH] ext4: only test for inode xattr state when expanding
- inode
-Message-ID: <202412111225.cNzuFVRM-lkp@intel.com>
-References: <20241210174850.4027690-1-cascardo@igalia.com>
+	s=arc-20240116; t=1733894676; c=relaxed/simple;
+	bh=otYeShkAnGaMRzpsS7tfYUNkIhd1EXYWi/E+Tcp+/7A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d3B321eU/miLNzQ/1tULx1V/YQOaFRC6dxi0jluYZN0XIcCq6Lm3OcLSOBKexO/A27nIYbkKf4dnEnXJrXNIE/Z+qHbPqTXUWpzj3OZ0v+2EA3a6jrkXsz5YsCbcw9Z82qfv8Lwpio8iY/v/9olFxNcymZDhuhfrAnZ7637EdVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RC8+PZ2G; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-728e729562fso1044108b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:24:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733894674; x=1734499474; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9rNAO84080ar9QYUBnFcj+nugyjxelBE79eeObQSfkg=;
+        b=RC8+PZ2G5wzJnsG7YEbQp2+TmszGV3VEzRzqcy9/MSPdFOq8YjNYBKoRCGLG6fB7nT
+         U2x53v9z1nTusdefaMbYFjmRNhw4VLfWC3ReuPcLoIcfrehrxWBvV9KTBAbBGNnxO2ao
+         FxDC8Wg7y3rQH081XmEzaxTbWt4HQL6hxQs6w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733894674; x=1734499474;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9rNAO84080ar9QYUBnFcj+nugyjxelBE79eeObQSfkg=;
+        b=Bd7z/f8yCjXQELQo9KczSv9y/ZSkXrzTEkgSTUoQg8sD4U8TTSkTq4yaZxJ9gQFf0w
+         VP99UNL9EmbCOa4E5j0NCbx66mLfG09Xk5fiiuY9Xbetg2vBqoEHCsofMVwdF5GK/n1V
+         0XrX/Saw+hVIJ1Jy3JENF2iudftNFj3eZFl1zlNKQ6Ioyl4i8mHVMfXizSkskvogQ3tl
+         +Q2iNc7g2JPz3sH4DzngB0Jx4ZUiMeshbpun9zluiWC4aZ5VLu/Mp3NVn4Mc6m3sAtQ3
+         wJKhdUR9mXvABAMi6ihq6a3vBYutMCgIsUxhCPusVOf9YB4Ue+OxtqPAIwzcJ3JKgK7V
+         MabQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWv+dgF39WJ6foJPOKI4vrXRGQZ4T/jMSwkTkjrFtgleaBsO22t0kZehtyc5sKP6lyKak/VHw7B6TP0ORI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaOSDFD4lWdUg5fWc+u+UP4MZo+KCI99is2z7wdKJCAvdhjtMY
+	RYbMK8HjSqthxkxcE/JjnShdE1ikYIrKJj+AqVfy+aQAhhRoLa7IzjjqtSmUjA==
+X-Gm-Gg: ASbGncuzCB0mpYrCGBddtI1+K6dxVbVa7+05bvuwCNmZTuLfRQTo8s4xux9hpVVmAM8
+	SF2dh37BklGZR60i6glSU1kLpO9Ccug6DqxRgaW9HWiFLknghSYAURI4JsSV8SUVlPkR9JoPX4U
+	9fYqoeMZuU/QuQyYlvHUr+akkzSnL2CLtuQyV3+Ai/VMG+HmUgKdh71FiBO4fbI2R+vAH14uNNF
+	07Gm22UG6sJXQAde4QtZnZFeBgJJKvEnjgk9RZXwEmI16fRFyFpW1WDENhv6NR2Kxg3yiC6
+X-Google-Smtp-Source: AGHT+IGRXZyCR9vBPnWrRkfxCl9FFb1KFJmcBVsUf9/kW06iS0cwlLUslN7QIGTATGDeY32DTij/Zg==
+X-Received: by 2002:a05:6a00:1915:b0:728:e969:d4b7 with SMTP id d2e1a72fcca58-728ed3e8533mr2451508b3a.12.1733894674483;
+        Tue, 10 Dec 2024 21:24:34 -0800 (PST)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:4dfb:c0ae:6c93:d01e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e66801e2sm5397702b3a.160.2024.12.10.21.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 21:24:33 -0800 (PST)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	devicetree@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] arm64: dts: mediatek: Drop regulator-compatible property
+Date: Wed, 11 Dec 2024 13:24:18 +0800
+Message-ID: <20241211052427.4178367-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210174850.4027690-1-cascardo@igalia.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Thadeu,
+Hi folks,
 
-kernel test robot noticed the following build warnings:
+This series drops usage of the long deprecated "regulator-compatible"
+property from MediaTek device tree files. The property was introduced
+in 2012, and then subsequently deprecated after two months. It was
+never carried over during the binding YAML conversion.
 
-[auto build test WARNING on tytso-ext4/dev]
-[also build test WARNING on linus/master v6.13-rc2 next-20241210]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Drop the property from the MT6315 regulator binding, and all MediaTek
+device tree files. IMO it should never have been used to begin with.
+This also gets rid of any validation errors [1] related to them.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thadeu-Lima-de-Souza-Cascardo/ext4-only-test-for-inode-xattr-state-when-expanding-inode/20241211-015015
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-patch link:    https://lore.kernel.org/r/20241210174850.4027690-1-cascardo%40igalia.com
-patch subject: [PATCH] ext4: only test for inode xattr state when expanding inode
-config: csky-randconfig-002-20241211 (https://download.01.org/0day-ci/archive/20241211/202412111225.cNzuFVRM-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241211/202412111225.cNzuFVRM-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412111225.cNzuFVRM-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   fs/ext4/inode.c: In function '__ext4_expand_extra_isize':
->> fs/ext4/inode.c:5818:41: warning: variable 'header' set but not used [-Wunused-but-set-variable]
-    5818 |         struct ext4_xattr_ibody_header *header;
-         |                                         ^~~~~~
+Please have a look.
 
 
-vim +/header +5818 fs/ext4/inode.c
+Thanks
+ChenYu
 
-ac27a0ec112a089 Dave Kleikamp                 2006-10-11  5811  
-c03b45b853f5829 Miao Xie                      2017-08-06  5812  static int __ext4_expand_extra_isize(struct inode *inode,
-c03b45b853f5829 Miao Xie                      2017-08-06  5813  				     unsigned int new_extra_isize,
-c03b45b853f5829 Miao Xie                      2017-08-06  5814  				     struct ext4_iloc *iloc,
-c03b45b853f5829 Miao Xie                      2017-08-06  5815  				     handle_t *handle, int *no_expand)
-c03b45b853f5829 Miao Xie                      2017-08-06  5816  {
-c03b45b853f5829 Miao Xie                      2017-08-06  5817  	struct ext4_inode *raw_inode;
-c03b45b853f5829 Miao Xie                      2017-08-06 @5818  	struct ext4_xattr_ibody_header *header;
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5819  	unsigned int inode_size = EXT4_INODE_SIZE(inode->i_sb);
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5820  	struct ext4_inode_info *ei = EXT4_I(inode);
-c03b45b853f5829 Miao Xie                      2017-08-06  5821  	int error;
-c03b45b853f5829 Miao Xie                      2017-08-06  5822  
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5823  	/* this was checked at iget time, but double check for good measure */
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5824  	if ((EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize > inode_size) ||
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5825  	    (ei->i_extra_isize & 3)) {
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5826  		EXT4_ERROR_INODE(inode, "bad extra_isize %u (inode size %u)",
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5827  				 ei->i_extra_isize,
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5828  				 EXT4_INODE_SIZE(inode->i_sb));
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5829  		return -EFSCORRUPTED;
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5830  	}
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5831  	if ((new_extra_isize < ei->i_extra_isize) ||
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5832  	    (new_extra_isize < 4) ||
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5833  	    (new_extra_isize > inode_size - EXT4_GOOD_OLD_INODE_SIZE))
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5834  		return -EINVAL;	/* Should never happen */
-4ea99936a1630f5 Theodore Ts'o                 2019-11-07  5835  
-c03b45b853f5829 Miao Xie                      2017-08-06  5836  	raw_inode = ext4_raw_inode(iloc);
-c03b45b853f5829 Miao Xie                      2017-08-06  5837  
-c03b45b853f5829 Miao Xie                      2017-08-06  5838  	header = IHDR(inode, raw_inode);
-c03b45b853f5829 Miao Xie                      2017-08-06  5839  
-c03b45b853f5829 Miao Xie                      2017-08-06  5840  	/* No extended attributes present */
-555d75b1e3bf941 Thadeu Lima de Souza Cascardo 2024-12-10  5841  	if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR)) {
-c03b45b853f5829 Miao Xie                      2017-08-06  5842  		memset((void *)raw_inode + EXT4_GOOD_OLD_INODE_SIZE +
-c03b45b853f5829 Miao Xie                      2017-08-06  5843  		       EXT4_I(inode)->i_extra_isize, 0,
-c03b45b853f5829 Miao Xie                      2017-08-06  5844  		       new_extra_isize - EXT4_I(inode)->i_extra_isize);
-c03b45b853f5829 Miao Xie                      2017-08-06  5845  		EXT4_I(inode)->i_extra_isize = new_extra_isize;
-c03b45b853f5829 Miao Xie                      2017-08-06  5846  		return 0;
-c03b45b853f5829 Miao Xie                      2017-08-06  5847  	}
-c03b45b853f5829 Miao Xie                      2017-08-06  5848  
-8994d11395f8165 Jan Kara                      2022-12-07  5849  	/*
-8994d11395f8165 Jan Kara                      2022-12-07  5850  	 * We may need to allocate external xattr block so we need quotas
-8994d11395f8165 Jan Kara                      2022-12-07  5851  	 * initialized. Here we can be called with various locks held so we
-8994d11395f8165 Jan Kara                      2022-12-07  5852  	 * cannot affort to initialize quotas ourselves. So just bail.
-8994d11395f8165 Jan Kara                      2022-12-07  5853  	 */
-8994d11395f8165 Jan Kara                      2022-12-07  5854  	if (dquot_initialize_needed(inode))
-8994d11395f8165 Jan Kara                      2022-12-07  5855  		return -EAGAIN;
-8994d11395f8165 Jan Kara                      2022-12-07  5856  
-c03b45b853f5829 Miao Xie                      2017-08-06  5857  	/* try to expand with EAs present */
-c03b45b853f5829 Miao Xie                      2017-08-06  5858  	error = ext4_expand_extra_isize_ea(inode, new_extra_isize,
-c03b45b853f5829 Miao Xie                      2017-08-06  5859  					   raw_inode, handle);
-c03b45b853f5829 Miao Xie                      2017-08-06  5860  	if (error) {
-c03b45b853f5829 Miao Xie                      2017-08-06  5861  		/*
-c03b45b853f5829 Miao Xie                      2017-08-06  5862  		 * Inode size expansion failed; don't try again
-c03b45b853f5829 Miao Xie                      2017-08-06  5863  		 */
-c03b45b853f5829 Miao Xie                      2017-08-06  5864  		*no_expand = 1;
-c03b45b853f5829 Miao Xie                      2017-08-06  5865  	}
-c03b45b853f5829 Miao Xie                      2017-08-06  5866  
-c03b45b853f5829 Miao Xie                      2017-08-06  5867  	return error;
-c03b45b853f5829 Miao Xie                      2017-08-06  5868  }
-c03b45b853f5829 Miao Xie                      2017-08-06  5869  
+[1] https://lore.kernel.org/all/173386568696.497617.3727087837255802552.robh@kernel.org/
+
+Chen-Yu Tsai (8):
+  regulator: dt-bindings: mt6315: Drop regulator-compatible property
+  arm64: dts: mediatek: mt8173-evb: Drop regulator-compatible property
+  arm64: dts: mediatek: mt8173-elm: Drop regulator-compatible property
+  arm64: dts: mediatek: mt8192-asurada: Drop regulator-compatible
+    property
+  arm64: dts: mediatek: mt8195-cherry: Drop regulator-compatible
+    property
+  arm64: dts: mediatek: mt8195-demo: Drop regulator-compatible property
+  arm64: dts: medaitek: mt8395-nio-12l: Drop regulator-compatible
+    property
+  arm64: dts: mediatek: mt8395-genio-1200-evk: Drop regulator-compatible
+    property
+
+ .../bindings/regulator/mt6315-regulator.yaml  |  6 -----
+ arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  | 23 -------------------
+ arch/arm64/boot/dts/mediatek/mt8173-evb.dts   | 23 -------------------
+ .../boot/dts/mediatek/mt8192-asurada.dtsi     |  3 ---
+ .../boot/dts/mediatek/mt8195-cherry.dtsi      |  2 --
+ arch/arm64/boot/dts/mediatek/mt8195-demo.dts  |  9 --------
+ .../dts/mediatek/mt8395-genio-1200-evk.dts    |  2 --
+ .../dts/mediatek/mt8395-radxa-nio-12l.dts     |  2 --
+ 8 files changed, 70 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0.338.g60cca15819-goog
+
 
