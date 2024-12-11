@@ -1,135 +1,138 @@
-Return-Path: <linux-kernel+bounces-441719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9070B9ED305
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:03:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC519ED308
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:03:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E92F169063
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:02:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAABD163A1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77F11DAC90;
-	Wed, 11 Dec 2024 17:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11091DDC11;
+	Wed, 11 Dec 2024 17:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="k4IbfY3s";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="k4IbfY3s"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="avWXRrWP"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06E71D934B;
-	Wed, 11 Dec 2024 17:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733936574; cv=none; b=JQ4JEgZwaMLcibKd7y/xfDJ80iqV1WnQJ7NAsYqLDy80yiQEFsxC9jafBaRnjhIioOI7Muo0vVSBIfOIaYKv/WfUlEHToBVtMnE1AIfo8/phPOAHeLN/hp7o5ZPrEOKzB9cGSUerDsERkldtNJeaafufsqKqLOKDTKvhm3hSfvo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733936574; c=relaxed/simple;
-	bh=9FBHdM5vw9ed3NmvDQfzEc4hChmQSrZEU3I0PFW8D/Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hrnV4kZosW2np7jwTrhQxM0jld8YiOb83REP4Q6tATsv4PuaNpQc+yFs/GqP7IeG4sWiee4zfsuPrr+0NnQvTeKzZL8sX1Ajg5G+SFIMCeL4Qr9H1xJd8vv7h2mTGGifdtlVoJamyEKFocttYvsXGOBS6IqDbaQgmaRBICc3Mzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=k4IbfY3s; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=k4IbfY3s; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1733936571;
-	bh=9FBHdM5vw9ed3NmvDQfzEc4hChmQSrZEU3I0PFW8D/Q=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=k4IbfY3sBVufrN53CdC4Ny5AyHCQkg/t0Nl+Wt8Jcz5p6KVOZ4xlf1ICtQ91P55DR
-	 LfVYdF1rjx7vtiwO8D8Pd7t/lSUB43dYZxHxQ6syYRXP1pQ7AMre393eoOqEbbYQrL
-	 YSRocspkK6EAga3ISIZ5LqXC1KI4l4V9VxEZHsaA=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id E16DC128B0EE;
-	Wed, 11 Dec 2024 12:02:51 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id haiLfIhCz8St; Wed, 11 Dec 2024 12:02:51 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1733936571;
-	bh=9FBHdM5vw9ed3NmvDQfzEc4hChmQSrZEU3I0PFW8D/Q=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=k4IbfY3sBVufrN53CdC4Ny5AyHCQkg/t0Nl+Wt8Jcz5p6KVOZ4xlf1ICtQ91P55DR
-	 LfVYdF1rjx7vtiwO8D8Pd7t/lSUB43dYZxHxQ6syYRXP1pQ7AMre393eoOqEbbYQrL
-	 YSRocspkK6EAga3ISIZ5LqXC1KI4l4V9VxEZHsaA=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3EB6A128B0ED;
-	Wed, 11 Dec 2024 12:02:50 -0500 (EST)
-Message-ID: <9083d4cd50649ea1971e31445c554f44e8d12bf9.camel@HansenPartnership.com>
-Subject: Re: [PATCH 3/3] x86/sev: add a SVSM vTPM platform device
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>, Stefano Garzarella
-	 <sgarzare@redhat.com>, linux-coco@lists.linux.dev
-Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>,  Peter Huewe <peterhuewe@gmx.de>, "H. Peter
- Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org,  x86@kernel.org,
- Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>,  Jarkko
- Sakkinen <jarkko@kernel.org>, linux-kernel@vger.kernel.org, Ingo Molnar
- <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Claudio Carvalho
- <cclaudio@linux.ibm.com>, Dov Murik <dovmurik@linux.ibm.com>
-Date: Wed, 11 Dec 2024 12:02:49 -0500
-In-Reply-To: <f8c6c1e0-a42d-6fa6-a10e-925592d7992f@amd.com>
-References: <20241210143423.101774-1-sgarzare@redhat.com>
-	 <20241210143423.101774-4-sgarzare@redhat.com>
-	 <f8c6c1e0-a42d-6fa6-a10e-925592d7992f@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F5024634F
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733936605; cv=pass; b=qKcgulT5T3UDVy8cCd8vq5vypjGT+uI2ag/6jK8LW6P9o1V/Qwppfyqzjrqp4wIaoIt7xpC0gGqvVJrZRNs4a+Tu5M4s3Nmzy3LI3E+XDWRRhepweCJbw3x2+pbJ7abpXrop5KppgxDwXtCDxLITdILvKUNSg5lVG3kWtRN39Ec=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733936605; c=relaxed/simple;
+	bh=7xn/7yhgoP+YU/GPG0LL5MbbdwmSJNFaJKAdhgcU5cQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jDyyeSYwPs6NS3K07WAl5pzDoQQnS0USa0wft+b0gCyLzl8RRukv7X2tfoCz7s65brgCJ2lmc+7xpkNRdSEiRAQ4OlUiemvZTEL9hPfsT56wFK8aLVBybDvPTs5mYfxMQbkiVAi1cFlinix+9q95uMtCkUbM+XbQj0eiVqp3iOs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=avWXRrWP; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733936582; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dK8JK0kbZKxjv++k/4k8p7Z8/goU52BzSiOI7dcXMBedTlx4EVtlGaOnSMrmhWquQS/sVY605pf2Mpo7BXIiwdvibpHO+zgioeyuIhlpClqVG4K85fdvG8wVp6FTzZBxJh8qUjV77OQGjEy2srpsQczxmW5YbrtbQnE8SyKbJho=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733936582; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=PjTBpQFNQ1d0TWGoaimrCIzB0pWOahz/CZSyOIvp154=; 
+	b=O6pHPgjgG+Rl/a457dDuPNFUrSDRr0BCE8zb1b+MYSsqLkp4BluHYz9Fpa2kHPBSmPkdEUNl4m7UgK1dWA2QaMSyKWJ+0uPbZ6rLr4N/l43Al0WY+Ashq6q7O6vWXjAy9hTO5K6wA6VHc6T6Nt2k7RTbs9OHDAvoD23Y4Mnjztg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733936582;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=PjTBpQFNQ1d0TWGoaimrCIzB0pWOahz/CZSyOIvp154=;
+	b=avWXRrWPJJ2KIYsuoCAgAAqw17RPDmHcGgelskmqiTKZhBorxW36JAoGiiUZIarL
+	NcLmG8FlBTqFrGigU1pCPfKpXqu9T1B4d6yinLtQ+1QNN8N1jCVTfd6tCvTexHqoCid
+	o/n0kPH4eO/pCM+cm3OiTwvXH12QqXtFny9Q4FsI=
+Received: by mx.zohomail.com with SMTPS id 1733936578719892.8241132723481;
+	Wed, 11 Dec 2024 09:02:58 -0800 (PST)
+Date: Wed, 11 Dec 2024 17:02:54 +0000
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Mihail Atanassov <mihail.atanassov@arm.com>
+Cc: nd@arm.com, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH v4 2/2] Documentation/gpu: Add fdinfo meanings of
+ drm-*-internal memory tags
+Message-ID: <bvqjlomae7w34nawaqtrnthqvcypjui4cperriorzlv7uhngxb@4pqbagnew7in>
+References: <20241211163436.381069-1-adrian.larumbe@collabora.com>
+ <20241211163436.381069-3-adrian.larumbe@collabora.com>
+ <85010ca7-0c34-4be6-9dfa-5be742ded25d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <85010ca7-0c34-4be6-9dfa-5be742ded25d@arm.com>
 
-On Wed, 2024-12-11 at 10:30 -0600, Tom Lendacky wrote:
-> On 12/10/24 08:34, Stefano Garzarella wrote:
-[...]
-> > +static bool is_svsm_vtpm_send_command_supported(void)
-> > +{
-> > +       struct svsm_call call = {};
-> > +       u64 send_cmd_mask = 0;
-> > +       u64 platform_cmds;
-> > +       u64 features;
-> > +       int ret;
-> > +
-> > +       call.caa = svsm_get_caa();
-> > +       call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
-> > +
-> > +       ret = svsm_perform_call_protocol(&call);
-> > +
-> > +       if (ret != SVSM_SUCCESS)
-> > +               return false;
-> > +
-> > +       features = call.rdx_out;
-> > +       platform_cmds = call.rcx_out;
-> > +
-> > +       /* No feature supported, it must be zero */
-> > +       if (features)
-> > +               return false;
+Hi Mihail,
+
+On 11.12.2024 16:40, Mihail Atanassov wrote:
+> Hi Adrián,
 > 
-> I think this check should be removed. The SVSM currently returns all
-> zeroes for the features to allow for future support. If a new feature
-> is added in the future, this then allows a driver that supports that
-> feature to operate with a version of an SVSM that doesn't have that
-> feature implemented. It also allows a version of the driver that
-> doesn't know about that feature to work with an SVSM that has that
-> feature.
+> On 11/12/2024 16:34, Adrián Larumbe wrote:
+> > A previous commit enabled display of driver-internal kernel BO sizes
+> > through the device file's fdinfo interface.
+> > 
+> > Expand the description of the relevant driver-specific key:value pairs
+> > with the definitions of the new drm-*-internal ones.
+> > 
+> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> > ---
+> >   Documentation/gpu/panthor.rst | 14 ++++++++++++++
+> >   1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/Documentation/gpu/panthor.rst b/Documentation/gpu/panthor.rst
+> > index 3f8979fa2b86..c6d8236e3665 100644
+> > --- a/Documentation/gpu/panthor.rst
+> > +++ b/Documentation/gpu/panthor.rst
+> > @@ -26,6 +26,10 @@ the currently possible format options:
+> >        drm-cycles-panthor:     94439687187
+> >        drm-maxfreq-panthor:    1000000000 Hz
+> >        drm-curfreq-panthor:    1000000000 Hz
+> > +     drm-total-internal:     10396 KiB
+> > +     drm-shared-internal:    0
 > 
-> A feature added to the vTPM shouldn't alter the behavior of something
-> that isn't using or understands that feature.
+> You give an example of `drm-shared-internal`...
+> 
+> > +     drm-active-internal:    10396 KiB
+> > +     drm-resident-internal:  10396 KiB
+> >        drm-total-memory:       16480 KiB
+> >        drm-shared-memory:      0
+> >        drm-active-memory:      16200 KiB
+> > @@ -44,3 +48,13 @@ driver by writing into the appropriate sysfs node::
+> >   Where `N` is a bit mask where cycle and timestamp sampling are respectively
+> >   enabled by the first and second bits.
+> > +
+> > +Possible `drm-*-internal` key names are: `total`, `active` and `resident`.
+> 
+> ... but don't list it as a valid key name here.
 
-I actually don't think this matters, because I can't see any reason to
-use the SVSM features flag for the vTPM.  The reason is that the TPM
-itself contains a versioned feature mechanism that external programs
-already use, so there's no real need to duplicate it.
+I do mention slightly further below that that key:value pair is at the time being unused,
+but I've thought of a possible interpretation that could be part of another commit.
 
-That said, I'm happy with either keeping or removing this.
+> > +These values convey the sizes of the internal driver-owned shmem BO's that
+> > +aren't exposed to user-space through a DRM handle, like queue ring buffers,
+> > +sync object arrays and heap chunks. Because they are all allocated and pinned
+> > +at creation time, `drm-resident-internal` and `drm-total-internal` should always
+> > +be equal. `drm-active-internal` shows the size of kernel BO's associated with
+> > +VM's and groups currently being scheduled for execution by the GPU.
+> > +`drm-shared-memory` is unused at present, but in the future it might stand for
+> > +the size of the Firmware regions, since they do not belong to an open file context.
+> 
+> -- 
+> Mihail Atanassov <mihail.atanassov@arm.com>
 
-Regards,
-
-James
-
+Adrian Larumbe
 
