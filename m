@@ -1,390 +1,102 @@
-Return-Path: <linux-kernel+bounces-442127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12FA9ED850
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:19:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1751886E60
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:19:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8C41EC4D2;
-	Wed, 11 Dec 2024 21:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bgm6ucBb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E8F9ED853
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 22:19:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02891C5CDB
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BEAE282D39
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:19:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6122D1E9B35;
+	Wed, 11 Dec 2024 21:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k7zbKkyl"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DA31E9B36
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 21:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733951950; cv=none; b=L+X9qHCy+CGxNCssz6htRKA5eSwkJFmKukx+Mm2iIemF2bnAn2T58odjnCn2W6zeAk7NcpDUe5XBClCGCh6UXKjpshPBLBc4D1SDWiZ7iSo8hE/KQH8BWW4pDmyRMueDWqD1/nL0tF5Nb8EUNRh7G0SAtYL3kFj35dPFQeaMMeU=
+	t=1733951974; cv=none; b=fmwZjSFD19ewM587tvcKAsqjRcnmmiYP5aTp7pOxOhKFUQItXJxkt1kiMx4JqoHBxTYzBrK0dSocageXW/3MMQ30hL+RqfbjrybsRpYqSfQeWcxB2mWEU2TfenlEEWgkapjsiuM5hRhFKmfeeOz3DA98QDS/SsAq00Fp6UAEfDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733951950; c=relaxed/simple;
-	bh=OubSwpfp7lfF5L2IgmX5LsjYr4bTJ5fMy2aZYhqorwo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=We4+oMS70GF1MtvL1NVJb5tk/bkMy+xmbIyafjIMow0aDRhljnED7wih3LBU7s+na4C+FzomFSULcqlqqquWia0JtcN/u4QrT/VGXU0MBzVnvR8J2JSxYYRHhAajv9Azca7eWfQyhhwmyQhNhEPSmsxff8v0nktwiUBI247wHPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bgm6ucBb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHD4UX015003;
-	Wed, 11 Dec 2024 21:18:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TKK9DAgc0xTYmSj3b/3Uh1BYrxJnWRWY6+Zu4M3Jo1o=; b=bgm6ucBbr+wQ7K5y
-	h/++nmrbdHNzf6og8U2+o1T3PIeYBw8xee2PRvcKy7VDSib4nKVtQ6jhQyUiXNi4
-	q/IRZOCJe2a2JacvAHzsKeXLgoFFQY8WoL+TFpDplRXOeJx34nT7b3j+5FH7aA7k
-	zQGp1CL+fmGPEL/zxfeBmKiZxy9JTJWiUBZ536WqTPgdxvP/CRyAXnJTXEnmfsoX
-	8/KBqCBLc1yYecPoIU8vE69kVUPxQ7TvOeOKtaFhaFiiPVRxHKDWkhuBvw1KS8rg
-	0NcrJrpX/whDLIij/TyyJgReMoNRjEKRWp1y1NKnXTCNWOPWAVukvqwLm3WYtKGF
-	QzwqIQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f7dpj3cg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 21:18:59 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BBLIwGl024685
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Dec 2024 21:18:58 GMT
-Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 11 Dec 2024 13:18:58 -0800
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-Date: Wed, 11 Dec 2024 13:18:43 -0800
-Subject: [PATCH v3 2/2] drm/tests: Add test for
- drm_atomic_helper_commit_modeset_disables()
+	s=arc-20240116; t=1733951974; c=relaxed/simple;
+	bh=HYpTBgw49iGGQnoZixVyDOp+jWreZ3c1N/xlRY2EXfY=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fpJ3nhq+8ZIdXctOIjgdEs+v62q4uav2/ftSTXhmWEWmOvj9GY4DbKmxA0Rl3ahbVd9xD3aoqIPIWcMkn8CHwOASP2WHEP321tv4+b3ogGXgtIEDK9v6zkHbHAcgc0DunMgUEDqJyNpk1fRIl325YGyQfgUE0vY5+4D/Wx+8Vro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k7zbKkyl; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3d18886010so308900276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 13:19:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733951972; x=1734556772; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HYpTBgw49iGGQnoZixVyDOp+jWreZ3c1N/xlRY2EXfY=;
+        b=k7zbKkylDfXQKrfwtGV+Eii+as6j+ngABWpEa73iwgd/nKCSeKpcXS7GzUDU42Tk8o
+         l0Tv2uJjhbEsjvXnN2AVoo9kde3Xr98kXAuchQmeipFsMk+xC3li7iA4x9SKE4qHbCaU
+         Oxv61kve+EQPNvT8ptmlgcwd0aeViaPNpt9zU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733951972; x=1734556772;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HYpTBgw49iGGQnoZixVyDOp+jWreZ3c1N/xlRY2EXfY=;
+        b=k32eUGIwOaShqzneE2UKoRaAkkjG2OKJ8DVY12M20ogxAo/26odmW94lfDD/yW4/IU
+         +YfesstGOhjTmcFNvvKqtlS5AcGFMqFtqdNan2gjWwPeHkIA4BaQCJbS3JgZj5p6Uy+K
+         Ps8QfYSFed1I6nEG+mn58Wnre/NLLAY8U//3IWJM2xEDjcfk5cVUmDlknD5T7DyOVF8W
+         04gyOQE9CKGp9Bjjz1mHaRhvowoJ3YIjPM5ERjStpuZ8bt4TPeEzLXsBEcxx/O2ZXH0J
+         AWVuNl11IzJOK9MwXBtWRytS34634beNlzdZCmLvqSsJCvbO3OchGZ2FLvZOyStpXsSf
+         Y4+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWeC1ogPchAE8rdXRI/LQY4Lq+tshvyyYVrg2KDIo1u/QAZlZKoFeM8kmK6SBv2v30Zce+G4744bNfm7DI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw0/VMUN8STH+e/wPt+UXbiLuaL57xV4iIO/Kw/5aCLgXnvZzQ
+	xw44j9TzxEKUBbWwd4aDWYbuH4NiNMPXCHYgSKyFWSTuqjjsB4tIBYkzAjN+a9puTc1QX6WFIbL
+	wb+hFJSk5JOEGTsBCi6ly/mkcAX/IMBUMyGeR
+X-Gm-Gg: ASbGncsLCva2vbEHsa+VB8CAJcbLZSsMmmjras4BG2zBL6Wbb9w2i8/2IalnloSfljP
+	s5L9v4RotGAidXTExfDMsZxhzyM8MLOzqi3ySl/2IToM9RU+sPQOYddSzgkY/ipc=
+X-Google-Smtp-Source: AGHT+IG0n1apsTNyaVMm69eKfJ0OWmTmr6rAMEZdQLhM95ckH8dadOxw475UNN17L54dURE+0mDPgl6bERAbF28z3lI=
+X-Received: by 2002:a05:6902:2709:b0:e3c:9ed1:4944 with SMTP id
+ 3f1490d57ef6-e3d8fb607a4mr1059614276.1.1733951972207; Wed, 11 Dec 2024
+ 13:19:32 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 11 Dec 2024 13:19:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241211-abhinavk-modeset-fix-v3-2-0de4bf3e7c32@quicinc.com>
-References: <20241211-abhinavk-modeset-fix-v3-0-0de4bf3e7c32@quicinc.com>
-In-Reply-To: <20241211-abhinavk-modeset-fix-v3-0-0de4bf3e7c32@quicinc.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: <quic_abhinavk@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <robdclark@gmail.com>, Jessica Zhang <quic_jesszhan@quicinc.com>
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733951937; l=9053;
- i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
- bh=OubSwpfp7lfF5L2IgmX5LsjYr4bTJ5fMy2aZYhqorwo=;
- b=hdqeNphQ0HMw7QDeckmw30N+0OcEZqYukuCroo8d63GQKSuYKUh7Qfd1yCrMM4SH6PsBxeZzA
- D27f9pYMaGzDPXQZR7IqQXxTssJFL1xD5NwBI4n64fJhIdCsBK4xGsW
-X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
- pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Vf28Ux0EB_100z0Dfqh49-sRq-u9oVBC
-X-Proofpoint-ORIG-GUID: Vf28Ux0EB_100z0Dfqh49-sRq-u9oVBC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1015
- mlxlogscore=999 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412110149
+In-Reply-To: <20241202-fd-dp-audio-fixup-v2-1-d9187ea96dad@linaro.org>
+References: <20241202-fd-dp-audio-fixup-v2-0-d9187ea96dad@linaro.org> <20241202-fd-dp-audio-fixup-v2-1-d9187ea96dad@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Date: Wed, 11 Dec 2024 13:19:31 -0800
+Message-ID: <CAE-0n533qmCvd78GncN=cEkYqvfQ8ejs3xr7E=ucUJ8SqfSeDA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/14] drm/msm/dp: set safe_to_exit_level before
+ printing it
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add a subtest to check that modeset is called when the connector is
-changed
+Quoting Dmitry Baryshkov (2024-12-02 02:06:31)
+> Rather than printing random garbage from stack and pretending that it is
+> the default safe_to_exit_level, set the variable beforehand.
+>
+> Fixes: d13e36d7d222 ("drm/msm/dp: add audio support for Display Port on MSM")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202411081748.0PPL9MIj-lkp@intel.com/
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
----
-Changes in v3:
-- Use BUILD_BUG_ON to check connectors and encoders array sizes (Dmitry)
-- Renamed functions to be more test-specific (Dmitry)
-- Added comment description for test (Dmitry)
-- Return get_modes_fixed() directly within the encoder get_modes
-  function (Dmitry)
-- Move drm_connector local variable declaration to top of function
-  (Dmitry)
-- Changed drm_test_modeset() to a more descriptive name
----
- drivers/gpu/drm/tests/Makefile                |   1 +
- drivers/gpu/drm/tests/drm_atomic_state_test.c | 244 ++++++++++++++++++++++++++
- 2 files changed, 245 insertions(+)
-
-diff --git a/drivers/gpu/drm/tests/Makefile b/drivers/gpu/drm/tests/Makefile
-index 56dab563abd7a7ee7c147bd6b4927e2436b82e1d..0109bcf7faa54993cce337f522eae78f0fa6ffcb 100644
---- a/drivers/gpu/drm/tests/Makefile
-+++ b/drivers/gpu/drm/tests/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_DRM_KUNIT_TEST_HELPERS) += \
- 	drm_kunit_helpers.o
- 
- obj-$(CONFIG_DRM_KUNIT_TEST) += \
-+	drm_atomic_state_test.o \
- 	drm_buddy_test.o \
- 	drm_cmdline_parser_test.o \
- 	drm_connector_test.o \
-diff --git a/drivers/gpu/drm/tests/drm_atomic_state_test.c b/drivers/gpu/drm/tests/drm_atomic_state_test.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..be1f780249450ead7fbfd19ea98c96b442a94478
---- /dev/null
-+++ b/drivers/gpu/drm/tests/drm_atomic_state_test.c
-@@ -0,0 +1,244 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Test cases for the drm_atomic_state helpers
-+ *
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_atomic_uapi.h>
-+#include <drm/drm_kunit_helpers.h>
-+#include <drm/drm_probe_helper.h>
-+
-+#define DRM_TEST_ENC_0 BIT(0)
-+#define DRM_TEST_ENC_1 BIT(1)
-+#define DRM_TEST_ENC_2 BIT(2)
-+
-+#define DRM_TEST_CONN_0 BIT(0)
-+
-+static const struct drm_display_mode drm_atomic_test_mode = {
-+	DRM_MODE("1024x768", 0, 65000, 1024, 1048,
-+		 1184, 1344, 0, 768, 771, 777, 806, 0,
-+		 DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC)
-+};
-+
-+struct drm_atomic_test_priv {
-+	struct drm_device drm;
-+	struct drm_plane *plane;
-+	struct drm_crtc *crtc;
-+	struct drm_encoder encoders[3];
-+	struct drm_connector connectors[2];
-+};
-+
-+static int modeset_counter;
-+
-+static void drm_test_encoder_mode_set(struct drm_encoder *encoder,
-+				      struct drm_crtc_state *crtc_state,
-+				      struct drm_connector_state *conn_state)
-+{
-+	modeset_counter++;
-+}
-+
-+static const struct drm_encoder_helper_funcs drm_atomic_test_encoder_funcs = {
-+	.atomic_mode_set	= drm_test_encoder_mode_set,
-+};
-+
-+static const struct drm_connector_funcs dummy_connector_funcs = {
-+	.atomic_destroy_state	= drm_atomic_helper_connector_destroy_state,
-+	.atomic_duplicate_state	= drm_atomic_helper_connector_duplicate_state,
-+	.reset			= drm_atomic_helper_connector_reset,
-+};
-+
-+static int drm_atomic_test_dummy_get_modes(struct drm_connector *connector)
-+{
-+	return drm_connector_helper_get_modes_fixed(connector,
-+						    &drm_atomic_test_mode);
-+}
-+
-+static const struct drm_connector_helper_funcs dummy_connector_helper_funcs = {
-+	.get_modes	= drm_atomic_test_dummy_get_modes,
-+};
-+
-+static struct drm_atomic_test_priv *
-+drm_atomic_test_init_drm_components(struct kunit *test, bool has_connectors)
-+{
-+	struct drm_atomic_test_priv *priv;
-+	struct drm_encoder *enc;
-+	struct drm_connector *conn;
-+	struct drm_device *drm;
-+	struct device *dev;
-+	int ret;
-+
-+	dev = drm_kunit_helper_alloc_device(test);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
-+
-+	priv = drm_kunit_helper_alloc_drm_device(test, dev,
-+						 struct drm_atomic_test_priv,
-+						 drm,
-+						 DRIVER_MODESET | DRIVER_ATOMIC);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv);
-+	test->priv = priv;
-+
-+	drm = &priv->drm;
-+	priv->plane = drm_kunit_helper_create_primary_plane(test, drm,
-+							    NULL,
-+							    NULL,
-+							    NULL, 0,
-+							    NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv->plane);
-+
-+	priv->crtc = drm_kunit_helper_create_crtc(test, drm,
-+						  priv->plane, NULL,
-+						  NULL,
-+						  NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv->crtc);
-+
-+	for (int i = 0; i < ARRAY_SIZE(priv->encoders); i++) {
-+		enc = &priv->encoders[i];
-+
-+		ret = drmm_encoder_init(drm, enc, NULL,
-+					DRM_MODE_ENCODER_DSI, NULL);
-+		KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+		enc->possible_crtcs = drm_crtc_mask(priv->crtc);
-+	}
-+
-+	priv->encoders[0].possible_clones = DRM_TEST_ENC_0 | DRM_TEST_ENC_1;
-+	priv->encoders[1].possible_clones = DRM_TEST_ENC_0 | DRM_TEST_ENC_1;
-+	priv->encoders[2].possible_clones = DRM_TEST_ENC_2;
-+
-+	if (!has_connectors)
-+		goto done;
-+
-+	BUILD_BUG_ON(ARRAY_SIZE(priv->connectors) > ARRAY_SIZE(priv->encoders));
-+
-+	for (int i = 0; i < ARRAY_SIZE(priv->connectors); i++) {
-+		conn = &priv->connectors[i];
-+
-+		ret = drmm_connector_init(drm, conn, &dummy_connector_funcs,
-+					  DRM_MODE_CONNECTOR_DSI, NULL);
-+		KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+		drm_connector_helper_add(conn, &dummy_connector_helper_funcs);
-+		drm_encoder_helper_add(&priv->encoders[i],
-+				       &drm_atomic_test_encoder_funcs);
-+
-+		drm_connector_attach_encoder(conn, &priv->encoders[i]);
-+	}
-+
-+done:
-+	drm_mode_config_reset(drm);
-+
-+	return priv;
-+}
-+
-+static int set_up_atomic_state(struct kunit *test,
-+			       struct drm_atomic_test_priv *priv,
-+			       struct drm_connector *connector,
-+			       struct drm_modeset_acquire_ctx *ctx)
-+{
-+	struct drm_device *drm = &priv->drm;
-+	struct drm_crtc *crtc = priv->crtc;
-+	struct drm_atomic_state *state;
-+	struct drm_connector_state *conn_state;
-+	struct drm_crtc_state *crtc_state;
-+	int ret;
-+
-+	state = drm_kunit_helper_atomic_state_alloc(test, drm, ctx);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
-+
-+	if (connector) {
-+		conn_state = drm_atomic_get_connector_state(state, connector);
-+		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
-+
-+		ret = drm_atomic_set_crtc_for_connector(conn_state, crtc);
-+		KUNIT_EXPECT_EQ(test, ret, 0);
-+	}
-+
-+	crtc_state = drm_atomic_get_crtc_state(state, crtc);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
-+
-+	ret = drm_atomic_set_mode_for_crtc(crtc_state, &drm_atomic_test_mode);
-+	KUNIT_EXPECT_EQ(test, ret, 0);
-+
-+	crtc_state->enable = true;
-+	crtc_state->active = true;
-+
-+	if (connector) {
-+		ret = drm_atomic_commit(state);
-+		KUNIT_ASSERT_EQ(test, ret, 0);
-+	} else {
-+		// dummy connector mask
-+		crtc_state->connector_mask = DRM_TEST_CONN_0;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Test that the DRM encoder mode_set() is called when the atomic state
-+ * connectors are changed but the CRTC mode is not.
-+ */
-+static void drm_test_check_connector_changed_modeset(struct kunit *test)
-+{
-+	struct drm_atomic_test_priv *priv;
-+	struct drm_modeset_acquire_ctx *ctx;
-+	struct drm_connector *old_conn, *new_conn;
-+	struct drm_atomic_state *state;
-+	struct drm_device *drm;
-+	struct drm_connector_state *new_conn_state, *old_conn_state;
-+	int ret, initial_modeset_count;
-+
-+	priv = drm_atomic_test_init_drm_components(test, true);
-+	KUNIT_ASSERT_NOT_NULL(test, priv);
-+
-+	drm = &priv->drm;
-+	old_conn = &priv->connectors[0];
-+	new_conn = &priv->connectors[1];
-+
-+	ctx = drm_kunit_helper_acquire_ctx_alloc(test);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
-+
-+	// first modeset to enable
-+	ret = set_up_atomic_state(test, priv, old_conn, ctx);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	state = drm_kunit_helper_atomic_state_alloc(test, drm, ctx);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
-+
-+	new_conn_state = drm_atomic_get_connector_state(state, new_conn);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, new_conn_state);
-+
-+	old_conn_state = drm_atomic_get_connector_state(state, old_conn);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, old_conn_state);
-+
-+	ret = drm_atomic_set_crtc_for_connector(old_conn_state, NULL);
-+	KUNIT_EXPECT_EQ(test, ret, 0);
-+
-+	ret = drm_atomic_set_crtc_for_connector(new_conn_state, priv->crtc);
-+	KUNIT_EXPECT_EQ(test, ret, 0);
-+
-+	initial_modeset_count = modeset_counter;
-+
-+	// modeset_disables is called as part of the atomic commit tail
-+	ret = drm_atomic_commit(state);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+	KUNIT_ASSERT_EQ(test, modeset_counter, initial_modeset_count + 1);
-+}
-+
-+static struct kunit_case drm_test_check_modeset_test[] = {
-+	KUNIT_CASE(drm_test_check_connector_changed_modeset),
-+	{}
-+};
-+
-+static struct kunit_suite drm_test_check_modeset_test_suite = {
-+	.name = "drm_validate_modeset",
-+	.test_cases = drm_test_check_modeset_test,
-+};
-+
-+kunit_test_suite(drm_test_check_modeset_test_suite);
-+
-+MODULE_AUTHOR("Jessica Zhang <quic_jesszhan@quicinc.com");
-+MODULE_DESCRIPTION("Test cases for the drm_atomic_helper functions");
-+MODULE_LICENSE("GPL");
-
--- 
-2.34.1
-
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
