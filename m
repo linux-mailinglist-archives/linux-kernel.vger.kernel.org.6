@@ -1,132 +1,123 @@
-Return-Path: <linux-kernel+bounces-441947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD239ED5F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:10:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3338F9ED5F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:11:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD7328110A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9012188BAFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548192571FF;
-	Wed, 11 Dec 2024 18:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF2423F322;
+	Wed, 11 Dec 2024 18:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioI09ZMX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="a2LMBlUp"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2DC2571EC;
-	Wed, 11 Dec 2024 18:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF4023F31C
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 18:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943274; cv=none; b=Kjuh7eYMnDYUZ+bvC0cCau+mVi5g8LdFSRlDaXoTsDmenXGJBg1SvOL23cETkHo8L0m2qJKJFzkt5w02q7u8GpWPodzEd4vnnD2ai8UZvLvRevJkRgoRVczpu6/MxmLxrRFzI9jaWSd2mD1jk6KZoqvbDCuIVXxKMg7A1XE2KQY=
+	t=1733943257; cv=none; b=n6IDw1eYfueG8RleEdpSkGkBB8M5NbKfMxqJQ8XL380UVe7JmQYhlOksxUo3MEvCaes6mA5PTRgl25ZfdjeZOH0kHxzLEGpsyGxqaIEhPWHJI7HIfsy2QcjPjGeqL7m+odYGjHVk+fi1BKQDvcYJWCV+UT8GUfWIIs0hKjxXUeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943274; c=relaxed/simple;
-	bh=abLzIOoeqegwBKW22/IQl8qmfu8k5E7rnoJ2fhX+uyE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gp99PmvwKAVrkczaofFY4dp2h7u7ymo9Ot2Amp4hURDklFGuJKndQDmi8YVVICez2zTEmyq647Bd/aq/7LcLfCvCz3fCuO8pqxkAxUWk+/tTQtNGVX2qnaFVpHLW5kUHUgPpUi+3zEAu/G3XhhMF2xJjv2hR6G8Ilxd+nyZU9+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioI09ZMX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78887C4CED4;
-	Wed, 11 Dec 2024 18:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733943274;
-	bh=abLzIOoeqegwBKW22/IQl8qmfu8k5E7rnoJ2fhX+uyE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ioI09ZMXQUsSTeBg+iNt4jGGSkv6HKb9Sk11XkvniiFqHY4cCkjWTFxPkPWa3Phwc
-	 W3LSPfKpSDNv2FYMsHKs9U0uF60TPXJxnJOFwpZeSZuxXdUjtk+LK4oxat842+NJED
-	 1s0B/Cr8Th6/aAYZ2wSJIX6JP9LAgjVjpv5ZL43/YnHSpKyNQF73gkHWGzTRhT/oPM
-	 K2wsWL9XJHAF5IRYW2XvY+oR/PFVTmzhr4K/t5JGLaPk7gyBSMBaTsaNBSHUSORZz3
-	 f0bLAq8SUNUKHGnPaYH92nznlao4xrKe3L2r1woqDLzonzx0dVrOrvn6LY4zPK84or
-	 d6g+gAcBit8GA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Lion Ackermann <nnamrec@gmail.com>,
-	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Sasha Levin <sashal@kernel.org>,
-	jhs@mojatatu.com,
-	xiyou.wangcong@gmail.com,
-	jiri@resnulli.us,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	cake@lists.bufferbloat.net,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 07/10] net: sched: fix ordering of qlen adjustment
+	s=arc-20240116; t=1733943257; c=relaxed/simple;
+	bh=ytIXkitzIgnaQXw1DgIpHBXtGpsP36TUADendYz/D8w=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=ZbDEAgJzUjDShsvAX6g1GLkc2URco/A3UQ1LGrUAE8Dg62o17d6tfJ0C/Wd5tc2/aDP/0o41+/L9Bt1J7f8byWLtxzJuFCQQUT1DVN1xHF8z4axUKCaCMuGfBHuj27Lo1IgfpYT9qy8dhw+a526rbxraBf3lsZ5nHUl5fWxntSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=a2LMBlUp; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4675fc06969so47089441cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 10:54:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1733943254; x=1734548054; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XevGW6C4cKdzpoiOoSBk/jtqXJQOxnp3pV3eD14Kncw=;
+        b=a2LMBlUpzLImQqsd84lDXj0lDeIjrq28cISCxLzqc3EwAWJe+wqomGKsAAqLlgmZww
+         4WPwJ4srUp1xkJM7g0dPmOaYsSsNpzZYMbpsbhpIkiDVMWHt/xThfCSmh+K1r3lqxopm
+         FaKj+3XDZR3YUdbjB6ZCDd/7FDBJLsNNoHCJG0BHhvhtHfJP0ly8GfVMS75aN1QTDn2j
+         wxsVFueszlmusy/mdqlCJCxHcjK4rap3rcU6VAsFHVeTpP0npVOhDANRzCvUqY4k6QPt
+         WqM6OCUl7qGBwthaQS6Fme2HBQ/h3LtZXBuVd+J1d1q42fJMI6CndX3gdEtP//zRl8hR
+         jKWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733943254; x=1734548054;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XevGW6C4cKdzpoiOoSBk/jtqXJQOxnp3pV3eD14Kncw=;
+        b=D95hlUGFJ/UvutlI16rcULhXqnNJCsukt1I8TlUY/h/UFAyBquhZcJCB5SrgOuSNMS
+         zfpcn0MpmjQNZaBJB/e8lRH2/Pf7rlIFmezfFGZk5sd38WfdG/Qicecnpm4FdYIDDcw5
+         VkKV4rwRKulSeNtwd1feKI1RfUPsJptEwbKUhdX3wEzxzSW4v7sTboiQRoYNditAAFlg
+         6+3ZNBs8azFaz+peY+d/oH02OvBzwRz/iHS3GeLIbjymolzQyKAMDHtMpnQZdxTNUgls
+         4+d836///fBuKieyyTQ5AI1ltcwamZLca4Ss3o9Oh/Avs/LlDIXCt8VibnAvHbIQuIcL
+         avmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSOrtFC0V8EdxZvy3+2/z4JRKmWAZ3AOIYBfHHoFL9HeGFhfz+JluF7KcuarNdpzjzrCqDv3oRaLX5xhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweNFWEheBeSiF6LsjdfEuvG9C4eqZCeKHdKgKFhVp3+XYguAFg
+	5j7sd4xynqZp1Yup9kcSu2N+19eRKe5giqnI1pTEx0y5YX35ASNlDq8agIe/zg==
+X-Gm-Gg: ASbGncu6K89yO1O7HZi9flLGlMEdV/M1iPu6GRqEyimumTZShppu86Xccg/8Jw5NLGK
+	34++U7QvmjpGxN0ihHK7Iwm4fRwhwSlN7unF76EcY012isA+k34LKOFFzzfkw4IW0dfIBB3+Njy
+	BeN27xRlcg1NNIwK030FUvr0aZN45ebG+4rRJzdj973uXz1hTRyCcBM4ut2B4+IxCX/P6XJMCDf
+	oA/V3o8rfXvtmQHicbNHaVFoBsMhinDi7wr+bj47YTec9z5
+X-Google-Smtp-Source: AGHT+IFZrtArQk5gSvhPTSsM3vS4f/5WaozCWQBNYMA0H/wDIeqaekdqq8xGvtO0/3PS/0d/l016Gg==
+X-Received: by 2002:ac8:58ce:0:b0:466:b29a:9b10 with SMTP id d75a77b69052e-46796234999mr7410631cf.42.1733943254155;
+        Wed, 11 Dec 2024 10:54:14 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4676a25e32esm31050801cf.21.2024.12.11.10.54.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 10:54:13 -0800 (PST)
 Date: Wed, 11 Dec 2024 13:54:13 -0500
-Message-ID: <20241211185419.3843138-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241211185419.3843138-1-sashal@kernel.org>
-References: <20241211185419.3843138-1-sashal@kernel.org>
+Message-ID: <e43da8418fc54a5eba7cdbb594b24bb9@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.230
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20241211_1304/pstg-lib:20241211_1304/pstg-pwork:20241211_1304
+From: Paul Moore <paul@paul-moore.com>
+To: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
+Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, selinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] selinux: use native iterator types
+References: <20241125110646.50799-1-cgoettsche@seltendoof.de>
+In-Reply-To: <20241125110646.50799-1-cgoettsche@seltendoof.de>
 
-From: Lion Ackermann <nnamrec@gmail.com>
+On Nov 25, 2024 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
+> 
+> Use types for iterators equal to the type of the to be compared values.
+> 
+> Reported by clang:
+> 
+>     security/selinux/ss/sidtab.c:126:2: warning: comparison of integers of different signs: 'int' and 'unsigned long' [-Wsign-compare]
+>       126 |         hash_for_each_rcu(sidtab->context_to_sid, i, entry, list) {
+>           |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     ./include/linux/hashtable.h:139:51: note: expanded from macro 'hash_for_each_rcu'
+>       139 |         for ((bkt) = 0, obj = NULL; obj == NULL && (bkt) < HASH_SIZE(name);\
+>           |                                                     ~~~  ^ ~~~~~~~~~~~~~~~
+> 
+>     security/selinux/selinuxfs.c:1520:23: warning: comparison of integers of different signs: 'int' and 'unsigned int' [-Wsign-compare]
+>      1520 |         for (cpu = *idx; cpu < nr_cpu_ids; ++cpu) {
+>           |                          ~~~ ^ ~~~~~~~~~~
+> 
+>     security/selinux/hooks.c:412:16: warning: comparison of integers of different signs: 'int' and 'unsigned long' [-Wsign-compare]
+>       412 |         for (i = 0; i < ARRAY_SIZE(tokens); i++) {
+>           |                     ~ ^ ~~~~~~~~~~~~~~~~~~
+> 
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> ---
+>  security/selinux/hooks.c     | 2 +-
+>  security/selinux/selinuxfs.c | 2 +-
+>  security/selinux/ss/sidtab.c | 4 ++--
+>  3 files changed, 4 insertions(+), 4 deletions(-)
 
-[ Upstream commit 5eb7de8cd58e73851cd37ff8d0666517d9926948 ]
+Merged into selinux/dev, thanks Christian.
 
-Changes to sch->q.qlen around qdisc_tree_reduce_backlog() need to happen
-_before_ a call to said function because otherwise it may fail to notify
-parent qdiscs when the child is about to become empty.
-
-Signed-off-by: Lion Ackermann <nnamrec@gmail.com>
-Acked-by: Toke Høiland-Jørgensen <toke@toke.dk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/sched/sch_cake.c  | 2 +-
- net/sched/sch_choke.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/sched/sch_cake.c b/net/sched/sch_cake.c
-index 4ddb43a6644ab..8d9c0b98a747b 100644
---- a/net/sched/sch_cake.c
-+++ b/net/sched/sch_cake.c
-@@ -1541,7 +1541,6 @@ static unsigned int cake_drop(struct Qdisc *sch, struct sk_buff **to_free)
- 	b->backlogs[idx]    -= len;
- 	b->tin_backlog      -= len;
- 	sch->qstats.backlog -= len;
--	qdisc_tree_reduce_backlog(sch, 1, len);
- 
- 	flow->dropped++;
- 	b->tin_dropped++;
-@@ -1552,6 +1551,7 @@ static unsigned int cake_drop(struct Qdisc *sch, struct sk_buff **to_free)
- 
- 	__qdisc_drop(skb, to_free);
- 	sch->q.qlen--;
-+	qdisc_tree_reduce_backlog(sch, 1, len);
- 
- 	cake_heapify(q, 0);
- 
-diff --git a/net/sched/sch_choke.c b/net/sched/sch_choke.c
-index 25d2daaa81227..f3805bee995bb 100644
---- a/net/sched/sch_choke.c
-+++ b/net/sched/sch_choke.c
-@@ -124,10 +124,10 @@ static void choke_drop_by_idx(struct Qdisc *sch, unsigned int idx,
- 	if (idx == q->tail)
- 		choke_zap_tail_holes(q);
- 
-+	--sch->q.qlen;
- 	qdisc_qstats_backlog_dec(sch, skb);
- 	qdisc_tree_reduce_backlog(sch, 1, qdisc_pkt_len(skb));
- 	qdisc_drop(skb, sch, to_free);
--	--sch->q.qlen;
- }
- 
- struct choke_skb_cb {
--- 
-2.43.0
-
+--
+paul-moore.com
 
