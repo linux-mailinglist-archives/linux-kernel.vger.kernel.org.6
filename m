@@ -1,119 +1,138 @@
-Return-Path: <linux-kernel+bounces-441956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CEB59ED621
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:14:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC209ED629
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:15:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77FD318876A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:12:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42AB5188D8A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 19:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B775E258DAC;
-	Wed, 11 Dec 2024 18:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AC925949B;
+	Wed, 11 Dec 2024 18:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZD1viP+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LdjFUTiu"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15026231A55;
-	Wed, 11 Dec 2024 18:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1913B23FD2E;
+	Wed, 11 Dec 2024 18:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733943294; cv=none; b=q0ACks0aak3zrmvtDZwJhaByr0c9spx26jSVxXhNWs8S8voGYbMPb0479SpNDgnBK/7VwedM0ceUE8TMUIDPIXTP13wSQqJBDM8SvAptN2z95pQhaG2xxGQPSiHhjWfjyao0KO460G2gDPTLQhKQdmNlc2Ba794+YzZW8+2VIz0=
+	t=1733943299; cv=none; b=u2pV4sS6kGCSC2LRdUilvUYurekHJII9AB8Iq0/yTzdutGVtOT84YkCngbdxjEsmzf2bAnUT7AnqfgFuWoskZsdZ35XOOOs32CIBLtxu6rjEIosPdUkG4nJJOFRrg87buNpJSMTfQ7xnrSLCVSqEy2nTL05InhHIWWeV5o779yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733943294; c=relaxed/simple;
-	bh=CCDFKS6vMByGtpQTlwrzuoSGCamZCdlwbcG/B6kvv5Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s/aLh86I6ssGE+tyNtvgOrP8EAnhKuyZ+tPTt+rvDE7s6NCKtM2SUuZIf7pEotUTtF+d9zGxz89d/RAYZzBDFMC/+WAKkOeNcPd6kSKwOnz76O6LYayrhoxqOjFeOZZaCs4gskBmxhdq3v90zmI6vviaS1GLXDlKUU4U275cUmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZD1viP+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42D4BC4CEDD;
-	Wed, 11 Dec 2024 18:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733943293;
-	bh=CCDFKS6vMByGtpQTlwrzuoSGCamZCdlwbcG/B6kvv5Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jZD1viP+kw0HsYfMRSV7mRpynmNmRllGobIktreIQIn+BT2CHeIf7vVH9pElO7PWA
-	 U7oss1t2aanUlRfVeMpIbgj0wzMT2TELzyKfBWs/QP/beHvpPIG0vhb5MqFhwxWB13
-	 Iun9hR+bM6ckDdmB5AXwRKgs/1vcF+C79dzAaNwOHFbsCIExO31SrBTrL4s6ZWQoN2
-	 H9xLQgKDfP5Oxr0yVznoHWdouHHA2pPIzvhYFrKEAVxKGvaDcPqcNoCNW2guNqrQUX
-	 P/eFScMADaH/emzhz8xUTgHiB/B2k7rIU0OTVrEtgSljU39sAUasSGzqLifXyhFrmP
-	 Jb38bgXMNo0Tw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ranjan Kumar <ranjan.kumar@broadcom.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Sasha Levin <sashal@kernel.org>,
-	sathya.prakash@broadcom.com,
-	sreekanth.reddy@broadcom.com,
-	suganath-prabu.subramani@broadcom.com,
-	James.Bottomley@HansenPartnership.com,
-	MPT-FusionLinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 6/7] scsi: mpt3sas: Diag-Reset when Doorbell-In-Use bit is set during driver load time
-Date: Wed, 11 Dec 2024 13:54:39 -0500
-Message-ID: <20241211185442.3843374-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241211185442.3843374-1-sashal@kernel.org>
-References: <20241211185442.3843374-1-sashal@kernel.org>
+	s=arc-20240116; t=1733943299; c=relaxed/simple;
+	bh=VsLFDWRcpPe3Dn5zdglydGPNIzRwNv5JSeTvfZ/Qy2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ssXZkk9aB4BD0zEVRqrCx8iih1KNcP1uuyt0i5yzrtVasaohs6Iy7M1Q4w2dJtBXh/6a844fbKLwnKeMUQzR5HN1JBgezpI0ENR9t7xjiEBCa/VVK5x+3DgpT+RVw3a6ku2mnZ1qXOHSKlvLF5/l4jmDISsri+6HYSKpy9nvIsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LdjFUTiu; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBBvEqW025841;
+	Wed, 11 Dec 2024 18:54:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=tbLHFR
+	PDkwEfVtwHNEpSw/kwG8L4VWUBxBNMVuE96VA=; b=LdjFUTiuXWUKZ6mM4O9XLG
+	gmwtrZbGjjVytZHNRMRohvR+Zfz8GsPFggEzvHP/gTlainJ2H1QGiXNv2u/JS1+3
+	iWO64eJk1mc4ja/LBD2oaNu7RX6lRoqxzD4rUgpVPpm1OQCKWfr1Dh4+fp8AJ2gb
+	TbOcZaXlMhBN9A43H8/KusFR9nkye2v+/QMSEwqvTbLdwxxYWl1eWqQ2pl181gUJ
+	H/zkbXgsbDS9UfREoXocjOQxsEIYLIiFlln04LZTjt96WYA2dOoJYwzJYiY9Kdop
+	2261Lu8US03fyDY0VRbbDK5kAktE75WFB1wDiZsC2FDZi7bnnvC6/ytMx/BsdZ/A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqej7p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 18:54:51 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BBIspac005666;
+	Wed, 11 Dec 2024 18:54:51 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqej7k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 18:54:51 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHIF9B017421;
+	Wed, 11 Dec 2024 18:54:50 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1u0qf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 11 Dec 2024 18:54:50 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BBIskpJ62456262
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 11 Dec 2024 18:54:47 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D37E220043;
+	Wed, 11 Dec 2024 18:54:46 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CC09520040;
+	Wed, 11 Dec 2024 18:54:45 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.171.81.50])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Wed, 11 Dec 2024 18:54:45 +0000 (GMT)
+Date: Wed, 11 Dec 2024 19:54:40 +0100
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com,
+        tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        horms@kernel.org, linux-rdma@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dust Li
+ <dust.li@linux.alibaba.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH net-next RESEND v3 2/2] net/smc: support ipv4 mapped
+ ipv6 addr client for smc-r v2
+Message-ID: <20241211195440.54b37a79.pasic@linux.ibm.com>
+In-Reply-To: <20241211023055.89610-3-guangguan.wang@linux.alibaba.com>
+References: <20241211023055.89610-1-guangguan.wang@linux.alibaba.com>
+	<20241211023055.89610-3-guangguan.wang@linux.alibaba.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.286
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ojddAGxzXGN6xT6MqxVDlPPu-LDffvjO
+X-Proofpoint-GUID: bIA3QC9xMxVzuWVB8X2EzXkTV9ipzQ-Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=639 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412110133
 
-From: Ranjan Kumar <ranjan.kumar@broadcom.com>
+On Wed, 11 Dec 2024 10:30:55 +0800
+Guangguan Wang <guangguan.wang@linux.alibaba.com> wrote:
 
-[ Upstream commit 3f5eb062e8aa335643181c480e6c590c6cedfd22 ]
+> AF_INET6 is not supported for smc-r v2 client before, even if the
+> ipv6 addr is ipv4 mapped. Thus, when using AF_INET6, smc-r connection
+> will fallback to tcp, especially for java applications running smc-r.
+> This patch support ipv4 mapped ipv6 addr client for smc-r v2. Clients
+> using real global ipv6 addr is still not supported yet.
+> 
+> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+> Reviewed-by: Wen Gu <guwen@linux.alibaba.com>
+> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+> Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
+> Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
 
-Issue a Diag-Reset when the "Doorbell-In-Use" bit is set during the
-driver load/initialization.
+Sorry for the late remark, but does this need a Fixes tag? I mean
+my gut feeling is that this is a bugfix -- i.e. should have been
+working from the get go -- and not a mere enhancement. No strong
+opinions here.
 
-Signed-off-by: Ranjan Kumar <ranjan.kumar@broadcom.com>
-Link: https://lore.kernel.org/r/20241110173341.11595-2-ranjan.kumar@broadcom.com
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/scsi/mpt3sas/mpt3sas_base.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 1bc23e8ee748a..69023ddceb59f 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -5695,11 +5695,12 @@ _base_handshake_req_reply_wait(struct MPT3SAS_ADAPTER *ioc, int request_bytes,
- 	int i;
- 	u8 failed;
- 	__le32 *mfp;
-+	int ret_val;
- 
- 	/* make sure doorbell is not in use */
- 	if ((ioc->base_readl(&ioc->chip->Doorbell) & MPI2_DOORBELL_USED)) {
- 		ioc_err(ioc, "doorbell is in use (line=%d)\n", __LINE__);
--		return -EFAULT;
-+		goto doorbell_diag_reset;
- 	}
- 
- 	/* clear pending doorbell interrupts from previous state changes */
-@@ -5789,6 +5790,10 @@ _base_handshake_req_reply_wait(struct MPT3SAS_ADAPTER *ioc, int request_bytes,
- 			    le32_to_cpu(mfp[i]));
- 	}
- 	return 0;
-+
-+doorbell_diag_reset:
-+	ret_val = _base_diag_reset(ioc);
-+	return ret_val;
- }
- 
- /**
--- 
-2.43.0
-
+Halil
 
