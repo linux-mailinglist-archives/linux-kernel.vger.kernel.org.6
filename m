@@ -1,256 +1,149 @@
-Return-Path: <linux-kernel+bounces-440874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633829EC5B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A289EC5C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 08:42:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70F8D285CF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA6E285C93
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 07:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67181C5F1D;
-	Wed, 11 Dec 2024 07:41:52 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9307B1CC899;
+	Wed, 11 Dec 2024 07:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzCs9W07"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6FC1C5F0C;
-	Wed, 11 Dec 2024 07:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEB22451E2;
+	Wed, 11 Dec 2024 07:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733902912; cv=none; b=G2dAuH0H48rLAzY4l7NqokVWdNfwQesE1+ULQ+ePWjpvszkf2qeKWkzU0ry/O/X81hjYrvDlHhCPaRxqc/xgbJNzzAzMolE2yPngkMjii+HCoziLbkgjL3EKg7IKTmUqju+ipNklxL5HqAFB8GE8iILDxZ+/n/sCG0wJwGQ008A=
+	t=1733902951; cv=none; b=jiT1ue0oSF9E8VD252Ssuc0Yis6o4GeCO/8pjxQ6FkHRFv5y5c2X5QCBuDIQQzCeTHO3jjpBFUQqFJhLz5xW0/9d9kCp8xodBByCa6ZsRYwWKUJcOO+JR5e1JKu+6lFp6BCiJzNGVaYHcPYQ0/SXJdrA3EAP8GSlL9M8ohHtbVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733902912; c=relaxed/simple;
-	bh=xXbfIkQs4FpPZZWOQhPiNikznCbdkVjiqu8L1MMHCk8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=IXrW1Z0XjiFdz4h3kctoGo2wWcBxs/3wMYtFNA32rZEr2/WpyW8g+BrMgvx1oXwalDuQA34rAImJVGRkLDCrdY68H6v4S2CPVnMtURHRH0NIy4KeCj4rDO16GjVSeqYFP0Bhn3jNWDGm8FBD1wP9EoAqjDdJPHh3tbKDMUqfl2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Y7SCK0k3XzHx08;
-	Wed, 11 Dec 2024 15:38:53 +0800 (CST)
-Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
-	by mail.maildlp.com (Postfix) with ESMTPS id 296F21802D0;
-	Wed, 11 Dec 2024 15:41:46 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 11 Dec 2024 15:41:45 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 11 Dec
- 2024 15:41:45 +0800
-Message-ID: <4499f49f-e846-66c6-3017-deb5bc63c31f@huawei.com>
-Date: Wed, 11 Dec 2024 15:41:44 +0800
+	s=arc-20240116; t=1733902951; c=relaxed/simple;
+	bh=2uMUDx+CZ3m3qrGORQssIpf9SkBZEr5sXYGVq8CLbbk=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=lj3naEnJZKZXlscbVNc7M+4aNr8y77vAWFAfilfLaGIxwu7EQuK8XDHbYfk2JkYpu9jt+5CFzWhx+ICpRzu/lsgqhxAfnFnn7ABnxmGFt4tLtMqAE+JFccHt5zwQ7eCqTTivmBCkYPhCarrgQ9hdf/81JPEyDV8ubcKqQM1P7KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzCs9W07; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6363CC4CED2;
+	Wed, 11 Dec 2024 07:42:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733902951;
+	bh=2uMUDx+CZ3m3qrGORQssIpf9SkBZEr5sXYGVq8CLbbk=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=lzCs9W07TRdYy9JWVA19UEcEu4CvACr8Yh0wQYYSfGHV9Xmm3k/fpbGlRqmHhrV+4
+	 m+NXNTf0ojEsKvo2HABNezvu0E3y4f8qwtj50O+Tpecim7ilciV/YQzBLNsRpBxgh2
+	 kFcAO8hw1xQeAKLLWrzRXln1VFfP4BsLZkJYWlflCYYKj1xjZBYezOsESJaMXsh8Tr
+	 hQ+/FOtWX9XeTV7X9iJbxMRHo8S8Byh7AJhYOGIti6Ul764xlpsl746ormGsN6d2KW
+	 ZfV5twBXO7B+t0Fxemw7h0pYOWhdCFQdt/A+Rzvz9BButSX+3CHe4CYkaTdr1ABqIe
+	 IMFDpd1/B9rEg==
+From: Kalle Valo <kvalo@kernel.org>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,  Jozsef Kadlecsik
+ <kadlec@netfilter.org>,  "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,  Julia Lawall
+ <Julia.Lawall@inria.fr>,  Nicolas Palix <nicolas.palix@imag.fr>,  Daniel
+ Mack <daniel@zonque.org>,  Haojian Zhuang <haojian.zhuang@gmail.com>,
+  Robert Jarzmik <robert.jarzmik@free.fr>,  Russell King
+ <linux@armlinux.org.uk>,  Heiko Carstens <hca@linux.ibm.com>,  Vasily
+ Gorbik <gor@linux.ibm.com>,  Alexander Gordeev <agordeev@linux.ibm.com>,
+  Christian Borntraeger <borntraeger@linux.ibm.com>,  Sven Schnelle
+ <svens@linux.ibm.com>,  Ofir Bitton <obitton@habana.ai>,  Oded Gabbay
+ <ogabbay@kernel.org>,  Lucas De Marchi <lucas.demarchi@intel.com>,  Thomas
+ =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,  Rodrigo
+ Vivi
+ <rodrigo.vivi@intel.com>,  Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+  Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
+ <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>,  Jeroen de Borst
+ <jeroendb@google.com>,  Praveen Kaligineedi <pkaligineedi@google.com>,
+  Shailend Chand <shailend@google.com>,  Andrew Lunn
+ <andrew+netdev@lunn.ch>,  James Smart <james.smart@broadcom.com>,  Dick
+ Kennedy <dick.kennedy@broadcom.com>,  "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>,  "Martin K. Petersen"
+ <martin.petersen@oracle.com>,  Roger Pau =?utf-8?Q?Monn=C3=A9?=
+ <roger.pau@citrix.com>,
+  Jens Axboe <axboe@kernel.dk>,  Jeff Johnson <jjohnson@kernel.org>,
+  Catalin Marinas <catalin.marinas@arm.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Jack Wang <jinpu.wang@cloud.ionos.com>,
+  Marcel Holtmann <marcel@holtmann.org>,  Johan Hedberg
+ <johan.hedberg@gmail.com>,  Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Florian Fainelli
+ <florian.fainelli@broadcom.com>,  Ray Jui <rjui@broadcom.com>,  Scott
+ Branden <sbranden@broadcom.com>,  Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,  Xiubo Li <xiubli@redhat.com>,
+  Ilya Dryomov <idryomov@gmail.com>,  Josh Poimboeuf <jpoimboe@kernel.org>,
+  Jiri Kosina <jikos@kernel.org>,  Miroslav Benes <mbenes@suse.cz>,  Petr
+ Mladek <pmladek@suse.com>,  Joe Lawrence <joe.lawrence@redhat.com>,
+  Jaroslav Kysela <perex@perex.cz>,  Takashi Iwai <tiwai@suse.com>,  Louis
+ Peens <louis.peens@corigine.com>,  Michael Ellerman <mpe@ellerman.id.au>,
+  Nicholas Piggin <npiggin@gmail.com>,  Christophe Leroy
+ <christophe.leroy@csgroup.eu>,  Naveen N Rao <naveen@kernel.org>,
+  Madhavan Srinivasan <maddy@linux.ibm.com>,
+  netfilter-devel@vger.kernel.org,  coreteam@netfilter.org,
+  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,  cocci@inria.fr,
+  linux-arm-kernel@lists.infradead.org,  linux-s390@vger.kernel.org,
+  dri-devel@lists.freedesktop.org,  intel-xe@lists.freedesktop.org,
+  linux-scsi@vger.kernel.org,  xen-devel@lists.xenproject.org,
+  linux-block@vger.kernel.org,  linux-wireless@vger.kernel.org,
+  ath11k@lists.infradead.org,  linux-mm@kvack.org,
+  linux-bluetooth@vger.kernel.org,  linux-staging@lists.linux.dev,
+  linux-rpi-kernel@lists.infradead.org,  ceph-devel@vger.kernel.org,
+  live-patching@vger.kernel.org,  linux-sound@vger.kernel.org,
+  oss-drivers@corigine.com,  linuxppc-dev@lists.ozlabs.org,  Anna-Maria
+ Behnsen <anna-maria@linutronix.de>,  Jeff Johnson
+ <quic_jjohnson@quicinc.com>
+Subject: Re: [PATCH v3 14/19] wifi: ath11k: Convert timeouts to
+ secs_to_jiffies()
+References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
+	<20241210-converge-secs-to-jiffies-v3-14-ddfefd7e9f2a@linux.microsoft.com>
+Date: Wed, 11 Dec 2024 09:42:11 +0200
+In-Reply-To: <20241210-converge-secs-to-jiffies-v3-14-ddfefd7e9f2a@linux.microsoft.com>
+	(Easwar Hariharan's message of "Tue, 10 Dec 2024 22:02:45 +0000")
+Message-ID: <87sequr7ho.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v1 1/4] hwmon: (acpi_power_meter) Fix using uninitialized
- variables
-From: "lihuisong (C)" <lihuisong@huawei.com>
-To: Guenter Roeck <linux@roeck-us.net>
-CC: <jdelvare@suse.com>, <liuyonglong@huawei.com>, <zhanjie9@hisilicon.com>,
-	<zhenglifeng1@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<linux-hwmon@vger.kernel.org>
-References: <20241125093415.21719-1-lihuisong@huawei.com>
- <20241125093415.21719-2-lihuisong@huawei.com>
- <aa6e1c02-b8bf-4d25-ad21-2018af72e16f@roeck-us.net>
- <b801388b-6bc7-5e96-dd29-e68ed8c970df@huawei.com>
- <f9fc4989-f416-4d88-bc3e-ab7b9fddb4d9@roeck-us.net>
- <c66d312a-098a-84d3-0895-02d78ae3ecc9@huawei.com>
- <77fce1aa-96eb-4c3c-ab0a-a33de46b333b@roeck-us.net>
- <87367d88-b10e-29d6-2712-f8f5c24e52a4@huawei.com>
-In-Reply-To: <87367d88-b10e-29d6-2712-f8f5c24e52a4@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain
 
-Hi Guenter,
+Easwar Hariharan <eahariha@linux.microsoft.com> writes:
 
-Can you take a look at my following reply? Looking forward to your reply.
+> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> secs_to_jiffies(). As the value here is a multiple of 1000, use
+> secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
+>
+> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+> the following Coccinelle rules:
+>
+> @@ constant C; @@
+>
+> - msecs_to_jiffies(C * 1000)
+> + secs_to_jiffies(C)
+>
+> @@ constant C; @@
+>
+> - msecs_to_jiffies(C * MSEC_PER_SEC)
+> + secs_to_jiffies(C)
+>
+> Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> ---
+>  drivers/net/wireless/ath/ath11k/debugfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-/Huisong
+I assume we can take this to our ath.git tree, please let us know if
+that's not the case.
 
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-在 2024/11/27 11:43, lihuisong (C) 写道:
-> Hi Guenter，
->
-> How about the modification as below? But driver doesn't know what the 
-> time is to set resource->power_alarm to false.
->
-> 在 2024/11/27 0:19, Guenter Roeck 写道:
->> On 11/25/24 23:03, lihuisong (C) wrote:
->>>
->>> 在 2024/11/26 12:04, Guenter Roeck 写道:
->>>> On 11/25/24 17:56, lihuisong (C) wrote:
->>>>> Hi Guente,
->>>>>
->>>>> Thanks for your timely review.
->>>>>
->>>>> 在 2024/11/26 0:03, Guenter Roeck 写道:
->>>>>> On 11/25/24 01:34, Huisong Li wrote:
->>>>>>> The 'power1_alarm' attribute uses the 'power' and 'cap' in the
->>>>>>> acpi_power_meter_resource structure. However, these two fields 
->>>>>>> are just
->>>>>>> updated when user query 'power' and 'cap' attribute, or hardware 
->>>>>>> enforced
->>>>>>> limit. If user directly query the 'power1_alarm' attribute 
->>>>>>> without queryng
->>>>>>> above two attributes, driver will use the uninitialized 
->>>>>>> variables to judge.
->>>>>>> In addition, the 'power1_alarm' attribute needs to update power 
->>>>>>> and cap to
->>>>>>> show the real state.
->>>>>>>
->>>>>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->>>>>>> ---
->>>>>>>   drivers/hwmon/acpi_power_meter.c | 10 ++++++++++
->>>>>>>   1 file changed, 10 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/hwmon/acpi_power_meter.c 
->>>>>>> b/drivers/hwmon/acpi_power_meter.c
->>>>>>> index 2f1c9d97ad21..4c3314e35d30 100644
->>>>>>> --- a/drivers/hwmon/acpi_power_meter.c
->>>>>>> +++ b/drivers/hwmon/acpi_power_meter.c
->>>>>>> @@ -396,6 +396,9 @@ static ssize_t show_val(struct device *dev,
->>>>>>>       struct acpi_device *acpi_dev = to_acpi_device(dev);
->>>>>>>       struct acpi_power_meter_resource *resource = 
->>>>>>> acpi_dev->driver_data;
->>>>>>>       u64 val = 0;
->>>>>>> +    int ret;
->>>>>>> +
->>>>>>> +    guard(mutex)(&resource->lock);
->>>>>>>         switch (attr->index) {
->>>>>>>       case 0:
->>>>>>> @@ -423,6 +426,13 @@ static ssize_t show_val(struct device *dev,
->>>>>>>               val = 0;
->>>>>>>           break;
->>>>>>>       case 6:
->>>>>>> +        ret = update_meter(resource);
->>>>>>> +        if (ret)
->>>>>>> +            return ret;
->>>>>>> +        ret = update_cap(resource);
->>>>>>> +        if (ret)
->>>>>>> +            return ret;
->>>>>>> +
->>>>>>>           if (resource->power > resource->cap)
->>>>>>>               val = 1;
->>>>>>>           else
->>>>>>
->>>>>>
->>>>>> While technically correct, the implementation of this attribute 
->>>>>> defeats its
->>>>>> purpose. It is supposed to reflect the current status as reported 
->>>>>> by the
->>>>>> hardware. A real fix would be to use the associated notification 
->>>>>> to set or
->>>>>> reset a status flag, and to report the current value of that flag 
->>>>>> as reported
->>>>>> by the hardware.
->>>>> I know what you mean.
->>>>> The Notify(power_meter, 0x83) is supposed to meet your proposal IIUC.
->>>>> It's good, but it depands on hardware support notification.
->>>>>>
->>>>>> If there is no notification support, the attribute should not 
->>>>>> even exist,
->>>>>> unless there is a means to retrieve its value from ACPI (the 
->>>>>> status itself,
->>>>>> not by comparing temperature values).
->>>>> Currently, the 'power1_alarm' attribute is created just when 
->>>>> platform support the power meter meassurement(bit0 of the 
->>>>> supported capabilities in _PMC).
->>>>> And it doesn't see if the platform support notifications.
->>>>>  From the current implementation of this driver, this sysfs can 
->>>>> also reflect the status by comparing power and cap,
->>>>> which is good to the platform that support hardware limit from 
->>>>> some out-of-band mechanism but doesn't support any notification.
->>>>>
->>>>
->>>> The point is that this can also be done from userspace. Hardware 
->>>> monitoring drivers
->>>> are supposed to provide hardware attributes, not software 
->>>> attributes derived from it.
->>>>
->>> So this 'power1_alarm' attribute can be exposed when platform 
->>> supports hardware enforced limit and notifcations when the hardware 
->>> limit is enforced, right?
->>> If so, we have to change the condition that driver creates this 
->>> sysfs interface.
->>
->> This isn't about enforcing anything, it is about reporting an alarm
->> if the power consumed exceeds the maximum configured.
->>
-> -->
->
-> index 2f1c9d97ad21..b436ebd863e6
-> --- a/drivers/hwmon/acpi_power_meter.c
-> +++ b/drivers/hwmon/acpi_power_meter.c
-> @@ -84,6 +84,7 @@ struct acpi_power_meter_resource {
->         u64             power;
->         u64             cap;
->         u64             avg_interval;
-> +       bool            power_alarm;
->         int                     sensors_valid;
->         unsigned long           sensors_last_updated;
->         struct sensor_device_attribute  sensors[NUM_SENSORS];
-> @@ -396,6 +397,9 @@ static ssize_t show_val(struct device *dev,
->         struct acpi_device *acpi_dev = to_acpi_device(dev);
->         struct acpi_power_meter_resource *resource = 
-> acpi_dev->driver_data;
->         u64 val = 0;
-> +       int ret;
-> +
-> +       guard(mutex)(&resource->lock);
->
->         switch (attr->index) {
->         case 0:
-> @@ -423,10 +427,21 @@ static ssize_t show_val(struct device *dev,
->                         val = 0;
->                 break;
->         case 6:
-> -               if (resource->power > resource->cap)
-> -                       val = 1;
-> -               else
-> -                       val = 0;
-> +               /* report alarm status based on the notification if 
-> support. */
-> +               if (resource->caps.flags & POWER_METER_CAN_NOTIFY) {
-> +                       val = resource->power_alarm;
-> +               } else {
-> +                       ret = update_meter(resource);
-> +                       if (ret)
-> +                               return ret;
-> +                       ret = update_cap(resource);
-> +                       if (ret)
-> +                               return ret;
-> +                       if (resource->power > resource->cap)
-> +                               val = 1;
-> +                       else
-> +                               val = 0;
-> +               }
->                 break;
->         case 7:
->         case 8:
-> @@ -853,6 +868,7 @@ static void acpi_power_meter_notify(struct 
-> acpi_device *device, u32 event)
->                 sysfs_notify(&device->dev.kobj, NULL, 
-> POWER_AVG_INTERVAL_NAME);
->                 break;
->         case METER_NOTIFY_CAPPING:
-> +               resource->power_alarm = true;
->                 sysfs_notify(&device->dev.kobj, NULL, POWER_ALARM_NAME);
->                 dev_info(&device->dev, "Capping in progress.\n");
->                 break;
->
->> .
->
-> .
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
