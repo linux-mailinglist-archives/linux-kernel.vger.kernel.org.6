@@ -1,166 +1,152 @@
-Return-Path: <linux-kernel+bounces-442054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2F29ED765
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:41:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F4B9ED766
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 21:42:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C599418839D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:41:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D43F166A9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 20:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A57211A0E;
-	Wed, 11 Dec 2024 20:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D4C211A0B;
+	Wed, 11 Dec 2024 20:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="jAc4zyL4"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="rVWUf29r"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C75C209695;
-	Wed, 11 Dec 2024 20:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C665D20ADC5
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733949665; cv=none; b=fRJ/IMh4YQ5XT6gBvM2UeqxNVQAoJ0fsBeqnYfvI74lzX5g1lF0VjS8d7aadS0BSexZlC27Ka/NB2KKPQ4eU1FlPMpmyssvnvr0xZxMuZmcOLcN60nDBMcs5W8kdWKpdy+2TekH3Lwg82AZNI7fSOWqfK+vBSS5CgTMaOKiqUHs=
+	t=1733949760; cv=none; b=WauNtG6f4kML0QKKTWBEBK8DU+EEAtWpBoc466YA/OIfw7yKmzF8iSX+VcMJhx52RKZhsq4ZfGmHs/RjNOKT/9RohXpYklT/6EQ8zV/2dzYXr6bsQJmbmJqsTgrV3m8o6ukdmi9SgoQYTLB+7tIBGGPK+jCYDjIuN3iNjVsdJB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733949665; c=relaxed/simple;
-	bh=tYZU+K0uzwr+EtSHqAvINqlV6dTSsope7yHk2ChjW1s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c83OklTdTDV7IlKNAXI7/4PsFnd0xoeQNXr+lXOezSh4PtBA/b0x2q7JsroUjE569hgVGYaEP3sYUEbatyTbfOnOq7LcBJ7cgzcl265/1h0deoEHDaV9wtvc3eXQLDbuSWcjS8oUxQbedEY6pjuqwErqdoxC0oXOFLydjdx65nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=jAc4zyL4; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1733949659;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vUZouHY51dv6HhTZgqqmU/lpMVbWxcnkaVUPPMXUAZE=;
-	b=jAc4zyL4AS+0IZUZUCfQT5892wMBNOB7of3Yw0n+Fwb3yT3HYETJNSCzHAwl1Ec9XVvYNx
-	U6TdHs4Ev2HbQL7vZUkxLuq2IGqRvbZ8MdLYhmdQEOeTF9G4Fa11bLkKyLGc5lndcVYaP3
-	ouEI7hZUp7wBpU4utxaPigCjquCxzpVXbJzPT/k6pGBEUsr1fADPteBsGFbup2WMUVhSjS
-	xKUq7j3yi0bvEFuXtuKgv+8sxKM3mnhwGe9ogPw3H7858COKxngjqsedRiFDmr4/TMdQeK
-	hOWn/d9msKePGM1IC7gHTXUlygs50diCV5wzRcuXToYD9vvaIO8sREMK3YavTg==
-To: linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	Peter Geis <pgwipeout@gmail.com>
-Subject: [PATCH v2] arm64: dts: rockchip: Delete redundant RK3328 GMAC stability fixes
-Date: Wed, 11 Dec 2024 21:40:52 +0100
-Message-Id: <fe05ecccc9fe27a678ad3e700ea022429f659724.1733943615.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1733949760; c=relaxed/simple;
+	bh=zt+gFce7p9BmlGHKA/G5UtDVOqnwFe3Mu9Nc5y11DvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTW5L8YJO+AV6kmiSHHVceF41aSRJnhirJwAoGM1xDcFd23ISwSUsO8xr9ZR2zmczqijbYMRFnj47Z0X7Cj9xq4MQPMAYYugI0FbvwTddBuoP/9YIszB3dshrzYTTyST+MbSuoekSs7sFmWE++Eo4ZHCRuRxboGT6PG30OdLCTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=rVWUf29r; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d932b5081eso14131686d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 12:42:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1733949757; x=1734554557; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QqbNdfAl0+PnKaqyg/McU4dzsm66c1ARzs60VG3n/Q=;
+        b=rVWUf29rgfOHsIWkogKVYykvGQDi1cCGzo5rNxJvYOdlxcfUDC8UT/CuWfUL1+klRQ
+         ivsbxQKUfdxq5suQ4HcnL/NN+JC47xc0w7eEowRr2wes473c92MhYJAnBSb34s4/sAL6
+         wbuPkDvClYJwwMcTg5+2/UEr7x9LgCAJrzXFG9BUZLLRtZHfyMFwO6pAL1Xj7LJyz2vG
+         NEIFPsr+uNYMaLZdOBdBT8VQN705g7eGhKYWRUkPYW5sU2CS1NILxuIhp9BKgLfKkI6w
+         1ZAXOp47GUJ18rD8Qnus47B+x9twXFESGiORtkrLN1VQ1OFAEUG4jpuD7z88YlbDVZjK
+         WSBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733949757; x=1734554557;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9QqbNdfAl0+PnKaqyg/McU4dzsm66c1ARzs60VG3n/Q=;
+        b=Hc/TxvaFa4gQZGaoHn5wj+9VtUl7yHS6I5C++SzM6igelOkuDYhh8caJsRapDMIDln
+         d05NUdowY9eKu11aUMtWK2BKl7dsElvYLZ12r9YrujZN3zbXrvAVR+toK4Cc7TY9w/i+
+         T93eQYyeLoFofYqYO7q8odbIN0eRiZsLrLDsU5QM8bTs6T5PdClrADuZqQYo71p0owxz
+         CKIBkpXTEEQhlLeEDrSHZCH3F14HKh7zTVzedU3+XHCwg5oiMBBBVlNlI4p5KAP2oVNP
+         hJmRPfZqa9ZKT7t7CDHX8oNJ1kXHSCwAhE1rCuH2QhM1vg7xsxw/jqJrChn18xTE6TQx
+         rC2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWN7NKtCpWi09KdxL1WwBe44gvckL4M5oRaNRsGdzshPDQ40dccIpu55oWoWUGih4Qt1Ti2Neumjn9XTzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEEFbK1HQCPT4r1/Uvukg8d0irWq5rvy+yhqZTacNNcPmgLfnl
+	7z0dX+0oOrAemI8/aXCSWinc8IcZ4ZytGu2QEm3xO6DQqPChhcE26v4Qk03fdQ==
+X-Gm-Gg: ASbGnctI7YvuqqpfGjQ7+v/A6s3SKbMlU50D1W/WY6+o0xT1x+uaFL56Tz1F9wnvV6w
+	M0+yGbrT2cF6PYzgyGY5l2M9x0dj1x7aey13E9sSzPyCUL8JRSQJVTaB6uOVjAAyFGPp2elEA7K
+	cPFr6W6fib6eMfpviuKzBJc4W3WwGUVyKmVGOtbB8fJ+xhpjIaJiKUXGcZsKe5/XUhXTDeHHg0q
+	h9lePHKlwonBePRbD6z8S/vs5oBUDeYUJorN8xRL4Cy8mTs6zvOxCc=
+X-Google-Smtp-Source: AGHT+IF9wfnACETnd7h+8oR2ewgyIJnzStpbi5TxIuMnorvz2Mi4NfAoRC3aWnanTSJRpGzamD/DJA==
+X-Received: by 2002:a05:6214:258e:b0:6d8:83bd:5cfb with SMTP id 6a1803df08f44-6dae38e22f9mr10593686d6.10.1733949757648;
+        Wed, 11 Dec 2024 12:42:37 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::5dad])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d907713550sm43096176d6.6.2024.12.11.12.42.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 12:42:37 -0800 (PST)
+Date: Wed, 11 Dec 2024 15:42:33 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, rbm@suse.com,
+	skhan@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] lib/math: Add int_sqrt test suite
+Message-ID: <ad95d09e-ddbe-4d43-bf22-00c2008823d8@rowland.harvard.edu>
+References: <20241211203425.26136-1-luis.hernandez093@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211203425.26136-1-luis.hernandez093@gmail.com>
 
-Since the commit 8a469ee35606 ("arm64: dts: rockchip: Add txpbl node for
-RK3399/RK3328"), having "snps,txpbl" properties defined as Ethernet stability
-fixes in RK3328-based board dts(i) files is redundant, because that commit
-added the required fix to the RK3328 SoC dtsi, so let's delete them.
+On Wed, Dec 11, 2024 at 03:34:24PM -0500, Luis Felipe Hernandez wrote:
+> Adds test suite for integer based square root function.
+> 
+> The test suite is designed to verify the correctness of the int_sqrt()
+> math library function.
+> 
+> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+> ---
 
-It has been determined that the Ethernet stability fixes no longer require
-"snps,rxpbl", "snps,aal" and "snps,force_thresh_dma_mode" properties, [1][2]
-out of which the last two also induce performance penalties, so let's delete
-these properties from the relevant RK3328-based board dts(i) files.
+I don't know why you CC'ed linux-usb for this patch.  But as long as you 
+did...
 
-This commit completes the removal of these redundant "snps,*" DT properties
-that was started by a patch from Peter Geis. [3]
+> diff --git a/lib/math/tests/int_sqrt_kunit.c b/lib/math/tests/int_sqrt_kunit.c
+> new file mode 100644
+> index 000000000000..a94c68816a1a
+> --- /dev/null
+> +++ b/lib/math/tests/int_sqrt_kunit.c
+> @@ -0,0 +1,60 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +#include <kunit/test.h>
+> +#include <linux/limits.h>
+> +#include <linux/math.h>
+> +#include <linux/module.h>
+> +#include <linux/string.h>
+> +
+> +struct test_case_params {
+> +	unsigned long x;
+> +	unsigned long expected_result;
+> +	const char *name;
+> +};
+> +
+> +static const struct test_case_params params[] = {
+> +	{ 0, 0, "edge case: square root of 0" },
+> +	{ 1, 1, "perfect square: square root of 1" },
+> +	{ 2, 1, "non-perfect square: square root of 2" },
+> +	{ 3, 1, "non-perfect square: sqaure root of 3" },
 
-[1] https://lore.kernel.org/linux-rockchip/CAMdYzYpj3d7Rq0O0QjV4r6HEf_e07R0QAhPT2NheZdQV3TnQ6g@mail.gmail.com/
-[2] https://lore.kernel.org/linux-rockchip/CAMdYzYpnx=pHJ+oqshgfZFp=Mfqp3TcMmEForqJ+s9KuhkgnqA@mail.gmail.com/
-[3] https://lore.kernel.org/linux-rockchip/20241210013010.81257-7-pgwipeout@gmail.com/
+s/sqau/squa/
 
-Cc: Peter Geis <pgwipeout@gmail.com>
-Acked-by: Peter Geis <pgwipeout@gmail.com>
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
----
+> +	{ 4, 2, "perfect square: square root of 4" },
+> +	{ 5, 2, "non-perfect square: square  root of 5" },
 
-Notes:
-    Changes in v2:
-      - Added "snps,force_thresh_dma_mode" to the set of redundant properties
-        deleted from RK3328 board dts(i) files, as suggested by Peter, [2] and
-        updated the patch description to reflect the set extension
-      - Collected Acked-by tag from Peter [2]
-    
-    Link to v1: https://lore.kernel.org/linux-rockchip/e00f08d2351e82d6acd56271a68c7ed05b3362e8.1733901896.git.dsimic@manjaro.org/T/#u
+s/square  root/square root/
 
- arch/arm64/boot/dts/rockchip/rk3328-a1.dts                | 1 -
- arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi        | 1 -
- arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dtsi | 1 -
- arch/arm64/boot/dts/rockchip/rk3328-rock-pi-e.dts         | 3 ---
- arch/arm64/boot/dts/rockchip/rk3328-rock64.dts            | 1 -
- 5 files changed, 7 deletions(-)
+> +	{ 6, 2, "non-perfect square: square root of 6" },
+> +	{ 7, 2, "non-perfect square: square root of 7" },
+> +	{ 8, 2, "non-perfect square: square root of 8" },
+> +	{ 9, 3, "perfect square: square root of 9" },
+> +	{ 16, 4, "perfect square: square root of 16" },
+> +	{ 81, 9, "perfect square: square root of 81" },
+> +	{ 256, 16, "perfect square: square root of 256" },
+> +	{ 2147483648, 46340, "large input: square root of 2147483648" },
+> +	{ 4294967295, 65535, "edge case: ULONG_MAX for 32-bit" },
+> +};
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-a1.dts b/arch/arm64/boot/dts/rockchip/rk3328-a1.dts
-index 824183e515da..24baaa7f1d8c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-a1.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-a1.dts
-@@ -110,7 +110,6 @@ &gmac2io {
- 	phy-supply = <&vcc_io>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&rgmiim1_pins>;
--	snps,aal;
- 	snps,pbl = <0x4>;
- 	tx_delay = <0x26>;
- 	rx_delay = <0x11>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi
-index f9fab35aed23..d5f129e304e5 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2.dtsi
-@@ -142,7 +142,6 @@ &gmac2io {
- 	phy-supply = <&vcc_io_33>;
- 	pinctrl-0 = <&rgmiim1_pins>;
- 	pinctrl-names = "default";
--	snps,aal;
- 
- 	mdio {
- 		compatible = "snps,dwmac-mdio";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dtsi b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dtsi
-index 181ec6de0019..9ec93f61433e 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dtsi
-@@ -113,7 +113,6 @@ &gmac2io {
- 	phy-supply = <&vcc_io>;
- 	pinctrl-0 = <&rgmiim1_pins>;
- 	pinctrl-names = "default";
--	snps,aal;
- 
- 	mdio {
- 		compatible = "snps,dwmac-mdio";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock-pi-e.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock-pi-e.dts
-index 3e08e2fd0a78..59dead1cc503 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-rock-pi-e.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-rock-pi-e.dts
-@@ -153,9 +153,6 @@ &gmac2io {
- 	phy-supply = <&vcc_io>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&rgmiim1_pins>;
--	snps,aal;
--	snps,rxpbl = <0x4>;
--	snps,txpbl = <0x4>;
- 	tx_delay = <0x26>;
- 	rx_delay = <0x11>;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-index 90fef766f3ae..2ed602d44ec8 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-@@ -144,7 +144,6 @@ &gmac2io {
- 	phy-mode = "rgmii";
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&rgmiim1_pins>;
--	snps,force_thresh_dma_mode;
- 	snps,reset-gpio = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
- 	snps,reset-active-low;
- 	snps,reset-delays-us = <0 10000 50000>;
+For the higher numbers (16, 81, etc.), you should test N-1 (and maybe 
+also N+1) as well as N.
+
+Alan Stern
 
