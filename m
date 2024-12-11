@@ -1,166 +1,205 @@
-Return-Path: <linux-kernel+bounces-441801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49A99ED431
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:58:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 714EC9ED434
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:58:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD0F3165C92
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0F8280E5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4271FF1D1;
-	Wed, 11 Dec 2024 17:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XsHXVk/g"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2378201025;
+	Wed, 11 Dec 2024 17:58:45 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4FE1FF1D0
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3761D6DA4;
+	Wed, 11 Dec 2024 17:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733939909; cv=none; b=qb7nCjTFN3yXhtNmDDYT90XLrMR/2ThuGlloOiLRQaAehtPFVg233L1/7HflDO4WkMqHHzrjTqWGMM8rPczI9lVPRdWNP8Xi4Kv2JPmNNfGvDrdY3yUM2xQHLeG5+X2QQiIR3cudsDGv5VkBfZWi+CRHgPL0gPToMHCTIM62NJk=
+	t=1733939925; cv=none; b=RD2jG5B+OeoeyBcIA0j6oDxAdzH4Q0kuiGeZlbLtXwDd/id06pCmv/vpGaMETvTjW6amVaUU0XCfeUmHbre8y/2z8Yv4dBOcX8fGAAaSz4OqhdbC3G+rdE3ULB/xgufBhs7wPHATUiSxAaYTRrmtUEfLhCoPOI4HEZVjVtdkc0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733939909; c=relaxed/simple;
-	bh=R3T11l8xt1aGZ6P9H11qj4eLnK8r2GPCU6lVevf41bU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BaFEZAKGE0LQY4+qKAbir9MzIZhXKjvxxGQ0jjy8OuQYBRXdLltEGPlq4yH0AggLbFkZlG/74D5r1zJyMeFXYKmwvpOeboA1qZgob7NMFeX4joy6fO8jAroOHANj+/+wAD8JD5USXQ6TWToZi2/wm3ArsJuvrVbwkfMZk4f6Kf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XsHXVk/g; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a814c54742so2865ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 09:58:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733939906; x=1734544706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gFoTN4ef6tsaYaPXHrZT3l6uMHwk3tr1FxPfQlIdTqE=;
-        b=XsHXVk/gUp1n/P2qs5daDpxWxsG/EDXYUkHfMPzT+XQkmw4Y/VXn1h5eA8cMZ2Ie3D
-         pM5hWtm36M43FDhMEm+nZBmMuC6hO+wtZIEDzPryVM4OHxLiEUMGZ1BZWlbZWKWihNHr
-         5v/mtHiQu9kCyrxVGsIkYKD7qRt2p5uedf6aNrPzcX8YgpVNZg6fiATzQ4nN5DCayluD
-         cmRSXa4EDvqy4uKmHZxUni5DTQYd25EdYn8hp/1dS1P3ZXwerJ+lVnDyZAYC8L4GCdAC
-         lhv/IIaHk3afC1c+9JfE3fchSzYQMYud0dUYn1qNwuMlOK58bE5eDA72rRJJGRt0OlMc
-         djVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733939906; x=1734544706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gFoTN4ef6tsaYaPXHrZT3l6uMHwk3tr1FxPfQlIdTqE=;
-        b=EGQ7gtQJAb/KrVoGztDEuSABUHdnpCGM8ifWs0ZsZVHJHtEcFufQCTHMRJx0U0qG6N
-         QvOqhyCZackq5TzsjtXOQccOhVFKU8SOCKqG+M3dr0JxKcaUm8AsICa0/tlhh9s3+BEk
-         3kKqSoAsZci1x67Z0q8lFavRr6Z1ubNi02CopWFc65ahPRlCBMqRihhP0R8GkEueJX+W
-         yrIQo1jpA/bX/Afi3aEfHRZjuSq/uePs+by+DiIAGj0/D06GmVFX1glGRjm8BBHHibUL
-         UdTH8JgweOSFodWdYwXmyBu+vQqPNyQf6Zk/eaSh/3KEPNvmLieu3lyUA52eMGSMixuO
-         FsJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWan88kKWsZGchnh9tnEoNWALzhiSFzvJF3r44KlFKG7hzQVNal8SWAQdjDK/ZJ/7T7FlaAEXbrdc98rjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKbomafqlcw6bl7zI2pV4wkc+pKsfT7QzQoU0h7prj6/2CMUfI
-	nDHfzSm4Wv2Emu3zCc3HZhWEDcG490t1u2/q6WoupYWzU0E2WRKowOri5teD1JVXyEj7XDJ5cxF
-	L2hU/dQWo5CZgYQM4oIhkVybkj0/3W68dfverJ0KZdmby5kAnS8jqFsk=
-X-Gm-Gg: ASbGncuua/YDN/l7iQnYhlq4Go9dr6UjDMz5WdXgVflX66o/vOeasL7EbR53AQZPGi5
-	H3SEvoc2Xu1pIONafCQPHD2icu6TJsZcLmiNA
-X-Google-Smtp-Source: AGHT+IHDUGLYwHXig3aPIIAKQG3r40UaPaRtA3rpSGtI44vdk6Im5yMjdEylYcZQsSBzcdLJC2Q34UzaQjz94xGLGt4=
-X-Received: by 2002:a05:6e02:3388:b0:3a7:d85a:b1bd with SMTP id
- e9e14a558f8ab-3ac42aa9446mr488505ab.4.1733939904140; Wed, 11 Dec 2024
- 09:58:24 -0800 (PST)
+	s=arc-20240116; t=1733939925; c=relaxed/simple;
+	bh=cGUL1g5soNzNs/G21jrfWDbCv/UQ7rxtUG3ID63/8RI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=b/imKcGwB2szwSeHSDiGkEUJTkjnk6Zm1p9ZZPtsUkWjfT1rWQ7M3JqHTm9W7gtNj8F4T7QEQpL8bnNb44hGX+cEAN2mX+PZFJuSJNmcdpkOJ8UdblS1GVS62DjTQEn0IbKcd8D+H56qNlpjRuMIuMTZB76snNmno9BtB7yV+zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y7jtd4XGNz6D8bR;
+	Thu, 12 Dec 2024 01:55:21 +0800 (CST)
+Received: from frapeml100007.china.huawei.com (unknown [7.182.85.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 87E06140442;
+	Thu, 12 Dec 2024 01:58:38 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100007.china.huawei.com (7.182.85.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 11 Dec 2024 18:58:38 +0100
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Wed, 11 Dec 2024 18:58:38 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Shiju Jose <shiju.jose@huawei.com>, Dan Williams
+	<dan.j.williams@intel.com>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "linux-cxl@vger.kernel.org"
+	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "bp@alien8.de" <bp@alien8.de>, "tony.luck@intel.com"
+	<tony.luck@intel.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "mchehab@kernel.org"
+	<mchehab@kernel.org>, "dave@stgolabs.net" <dave@stgolabs.net>, "Jonathan
+ Cameron" <jonathan.cameron@huawei.com>, "dave.jiang@intel.com"
+	<dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
+	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
+	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
+ Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH v17 05/18] cxl: Add Get Supported Features command for
+ kernel usage
+Thread-Topic: [PATCH v17 05/18] cxl: Add Get Supported Features command for
+ kernel usage
+Thread-Index: AQHbPQkFb4DhmQwolUmt5xqDd6N+ZLLZxDuAgAQrVZCAA3+90A==
+Date: Wed, 11 Dec 2024 17:58:37 +0000
+Message-ID: <6e9c128e888c4cacb04b5dd53b1d1b79@huawei.com>
+References: <20241122180416.1932-1-shiju.jose@huawei.com>
+	<20241122180416.1932-6-shiju.jose@huawei.com>
+	<67536f6987656_10a08329480@dwillia2-xfh.jf.intel.com.notmuch>
+ <e72011454204462eb8ccf10eef56106c@huawei.com>
+In-Reply-To: <e72011454204462eb8ccf10eef56106c@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211061010.806868-1-irogers@google.com> <7c118b40-3b31-46d0-8967-e7c35f6a4868@linaro.org>
-In-Reply-To: <7c118b40-3b31-46d0-8967-e7c35f6a4868@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 11 Dec 2024 09:58:11 -0800
-Message-ID: <CAP-5=fVxPaSYtB62ZqcLOG1F9Va-0rwBWUCiVNdaBpmsGXUVaA@mail.gmail.com>
-Subject: Re: [PATCH v1] perf test stat: Avoid hybrid assumption when virtualized
-To: James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 1:50=E2=80=AFAM James Clark <james.clark@linaro.org=
-> wrote:
+>-----Original Message-----
+>From: Shiju Jose <shiju.jose@huawei.com>
+>Sent: 09 December 2024 14:28
+>To: Dan Williams <dan.j.williams@intel.com>; linux-edac@vger.kernel.org;
+>linux-cxl@vger.kernel.org; linux-acpi@vger.kernel.org; linux-mm@kvack.org;
+>linux-kernel@vger.kernel.org
+>Cc: bp@alien8.de; tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
+>mchehab@kernel.org; dave@stgolabs.net; Jonathan Cameron
+><jonathan.cameron@huawei.com>; dave.jiang@intel.com;
+>alison.schofield@intel.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
+>david@redhat.com; Vilas.Sridharan@amd.com; leo.duran@amd.com;
+>Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
+>Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
+>naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
+>somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
+>duenwen@google.com; gthelen@google.com;
+>wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+>wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
+><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>; Roberto
+>Sassu <roberto.sassu@huawei.com>; kangkang.shen@futurewei.com;
+>wanghuiqiang <wanghuiqiang@huawei.com>; Linuxarm
+><linuxarm@huawei.com>
+>Subject: RE: [PATCH v17 05/18] cxl: Add Get Supported Features command for
+>kernel usage
 >
-> On 11/12/2024 6:10 am, Ian Rogers wrote:
-> > The cycles event will fallback to task-clock in the hybrid test when
-> > running virtualized. Change the test to not fail for this.
-> >
-> > Fixes: a6b8bb2addd0 ("perf test: Add a test for default perf stat comma=
-nd")
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >   tools/perf/tests/shell/stat.sh | 10 +++++++---
-> >   1 file changed, 7 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/st=
-at.sh
-> > index 5a2ca2bcf94d..60cea07350e1 100755
-> > --- a/tools/perf/tests/shell/stat.sh
-> > +++ b/tools/perf/tests/shell/stat.sh
-> > @@ -165,9 +165,13 @@ test_hybrid() {
-> >
-> >     if [ "$pmus" -ne "$cycles_events" ]
-> >     then
-> > -    echo "hybrid test [Found $pmus PMUs but $cycles_events cycles even=
-ts. Failed]"
-> > -    err=3D1
-> > -    return
-> > +     # If virtualized the software task-clock event will be used.
-> > +     if ! perf stat -- true 2>&1 | grep -q "task-clock"
-> > +     then
-> > +       echo "hybrid test [Found $pmus PMUs but $cycles_events cycles e=
-vents. Failed]"
-> > +       err=3D1
-> > +       return
-> > +     fi
-> >     fi
-> >     echo "hybrid test [Success]"
-> >   }
+>>-----Original Message-----
+>>From: Dan Williams <dan.j.williams@intel.com>
+>>Sent: 06 December 2024 21:41
+>>To: Shiju Jose <shiju.jose@huawei.com>; linux-edac@vger.kernel.org;
+>>linux- cxl@vger.kernel.org; linux-acpi@vger.kernel.org;
+>>linux-mm@kvack.org; linux- kernel@vger.kernel.org
+>>Cc: bp@alien8.de; tony.luck@intel.com; rafael@kernel.org;
+>>lenb@kernel.org; mchehab@kernel.org; dan.j.williams@intel.com;
+>>dave@stgolabs.net; Jonathan Cameron <jonathan.cameron@huawei.com>;
+>>dave.jiang@intel.com; alison.schofield@intel.com;
+>>vishal.l.verma@intel.com; ira.weiny@intel.com; david@redhat.com;
+>>Vilas.Sridharan@amd.com; leo.duran@amd.com; Yazen.Ghannam@amd.com;
+>>rientjes@google.com; jiaqiyan@google.com; Jon.Grimm@amd.com;
+>>dave.hansen@linux.intel.com; naoya.horiguchi@nec.com;
+>>james.morse@arm.com; jthoughton@google.com;
+>somasundaram.a@hpe.com;
+>>erdemaktas@google.com; pgonda@google.com; duenwen@google.com;
+>>gthelen@google.com; wschwartz@amperecomputing.com;
+>>dferguson@amperecomputing.com; wbs@os.amperecomputing.com;
+>>nifan.cxl@gmail.com; tanxiaofei <tanxiaofei@huawei.com>; Zengtao (B)
+>><prime.zeng@hisilicon.com>; Roberto Sassu <roberto.sassu@huawei.com>;
+>>kangkang.shen@futurewei.com; wanghuiqiang <wanghuiqiang@huawei.com>;
+>>Linuxarm <linuxarm@huawei.com>; Shiju Jose <shiju.jose@huawei.com>
+>>Subject: Re: [PATCH v17 05/18] cxl: Add Get Supported Features command
+>>for kernel usage
+>>
+>>shiju.jose@ wrote:
+>>> From: Dave Jiang <dave.jiang@intel.com>
+>>>
+>>> CXL spec r3.1 8.2.9.6.1 Get Supported Features (Opcode 0500h) The
+>>> command retrieve the list of supported device-specific features
+>>> (identified by UUID) and general information about each Feature.
+>>>
+>>> The driver will retrieve the feature entries in order to make checks
+>>> and provide information for the Get Feature and Set Feature command.
+>>> One of the main piece of information retrieved are the effects a Set
+>>> Feature command would have for a particular feature.
+>>>
+>>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+>>> Co-developed-by: Shiju Jose <shiju.jose@huawei.com>
+>>> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+>>> ---
+>>>  drivers/cxl/core/mbox.c      | 179 +++++++++++++++++++++++++++++++++++
+>>>  drivers/cxl/cxlmem.h         |  44 +++++++++
+>>>  drivers/cxl/pci.c            |   4 +
+>>>  include/cxl/mailbox.h        |   4 +
+>>>  include/uapi/linux/cxl_mem.h |   1 +
+>>>  5 files changed, 232 insertions(+)
+>>
+>>Hi Shiju,
+>>
+>>So I commented yesterday on this patch that is also duplicated in
+>>Dave's series have a merge order ordering plan to propose.
 >
-> Hi Ian,
+>Hi Dan,
 >
-> Isn't the distinction between task-clock and cpu-clock whether the event
-> is per-cpu or not?
->
-> $ perf stat -C 1 -- true 2>&1 | grep cpu-clock
->                1.49 msec cpu-clock       #    0.917 CPUs utilized
->
-> $ perf stat -- true 2>&1 | grep task-clock
->                0.30 msec task-clock      #    0.366 CPUs utilized
->
-> The test uses per-task mode so this change makes it always pass, even
-> when the number of cycles events doesn't match the PMUs.
+>Thanks for the suggestions.
+>I tested your suggestions for CXL features commands in the fwctl series, i=
+n the
+>EDAC CXL features setup, as replied.
 
-So I'm confused by the test, but it has caused a passing test to be
-broken for me when I run virtualized. The test is checking a cycles
-event is opened on each hybrid PMU, but this is conflated with
-checking perf stat's "default" output. The cycles event will fall back
-to task-clock in per-task mode but we also open a task-clock in
-default mode. Should:
-```
-if [ "$pmus" -ne "$cycles_events" ]
-```
-be something like this then:
-```
-# The expectation is that default output will have a cycles events on
-each hybrid
-# PMU, but in situations with no cycles PMU events, like
-virtualized,this can fall
-# back to task-clock and so the end count may be 0. Fail if neither
-condition holds.
-if [ "$pmus" -ne "$cycles_events" ] && [ "$pmus" -ne "0" ]
-```
+Please find updated patches for your suggestions are shared here.
+https://github.com/shijujose4/linux/tree/edac-enhancement-ras-features_for_=
+v18
+
+However next version (v18) of EDAC series will send after receiving feedbac=
+ks from Borislav=20
+on v17 EDAC patches.
+
+>>
+>>> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c index
+[...]
+>
 
 Thanks,
-Ian
+Shiju
 
