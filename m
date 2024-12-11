@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-441700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D172C9ED2C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:52:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10969ED2C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AB5188353A
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:52:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77D41882675
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 16:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392D01DE4F8;
-	Wed, 11 Dec 2024 16:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875391DDC3B;
+	Wed, 11 Dec 2024 16:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="W29RHsa1";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="W29RHsa1"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2077.outbound.protection.outlook.com [40.107.247.77])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="f/lRgIB3";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="f/lRgIB3"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2058.outbound.protection.outlook.com [40.107.22.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0C31DEFDC
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE321DE8BA
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.58
 ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733935892; cv=fail; b=le58rBuKvAr5bLfHnrLyO7g6TSU3t+L69MXgmF5lobZNbLcObXbcc7sg1+dQNPcAvdDHa9g5XK3Ihrhfii56Q8QeknLdoc32xLj6e/xT61HpKnWcd4t6GMMWHaQgTLnrXcQJkFVUEQ7vDXj7BTcyUkvURjgDDdQm1CXWLd3sNAE=
+	t=1733935885; cv=fail; b=t1JCEXUq4IR0xPdWyGDMEDlf9DvVxd7jOTHIuuOjygvB+UmT1EhZQ0pDq15Yhdgn/ycd+AyZ2vd0XbWLKQFVKUjAS9mZkcAu44Ruli6y+iU4qWJWIyHi1SyQ9yDDT0X9QweIxpdudNz/7VvmP91Bcy23mIThjhMbYosxjdQaHmE=
 ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733935892; c=relaxed/simple;
-	bh=/QI/R6xet5hp5lIhRP+pMSe73gJy71lewLzW3pJ6akY=;
+	s=arc-20240116; t=1733935885; c=relaxed/simple;
+	bh=etIDknxbtc1S0vQu+Jn/sK87Lkmm7aDS0DY3eZEGYn4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iLdD4pUgNjfBlkfi7n/AleCOETH5gP0GjGnzpqVNz5y3uDGycz7YFcV4D7ofSpC6fDqHlYAaJiC0awRHcINncw3+G+c+/veaQxcL6ATYrhQBG47+pePk+qmVuSmOGeA1nxhzEiASzkIseKvk+osVpMadZMA2ZIqgeQBMDw9CiK4=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=W29RHsa1; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=W29RHsa1; arc=fail smtp.client-ip=40.107.247.77
+	 Content-Type:MIME-Version; b=COqAE9KICpVPo5bzOUviNt+h1qo2I/TBLDOdesGdJ0HY3IR9YI3NWaQ4ySIY3ys/iJUmGudJM21orCbL8JSjHsNRSA7wiWC7fYmHe3EBIxF2oy5TDsoeY4CoOGDifWdipPHQ/jNruKAtl9UCbz4FbeDIwokxhi6syhoTHFJJczs=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=f/lRgIB3; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=f/lRgIB3; arc=fail smtp.client-ip=40.107.22.58
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=GZHSFW8hbSTIriGMD9+hge1Hg3d6ROAKrVkRwTveimOjLwjpDSWaecWjy+VoJsB3cM9bP3D6bQJ4CvcU0Na9xAJPawBTtF833s/RWokhP0jxDDpZutudcIPvbHT0E35ZzGTH0E19xtaWswm5w7xYsXmXZ5Bod0ViN01E80tGfH5JcX6/Ska2yKRLaVQieyEoBJtdsLBYw8hflbqImEeivU8mJ5zUIDj2bIqJZ2gSVx60evWoSryNxYh15dQjLcA8vrdn43KFVIPjoOlKm9pFKXJSRKOvihObOjNslhovCkjiPHPzeYz0sGbbskxuBBwm3qoXg0XGD1Ts/9dpk8Mi0w==
+ b=Z4MML9G8sEh/97nAOSF69MHnJ8p58fBo/LFTndrFXBljvnIv8SL0g442z31K8mBMa+E7EtLjtUpYQzgaI7rO4ADEU0pm3mhpg5or1DMnNCINNPtCNZZKR/obQJlaEw1Abura4/gCrIs6gvcSb5LPVmpE6u7VFbtUS9hYB6Nc9KVCITk6xW/GTbgPvAtUyrAmjknQUF6pD4KhowAo+wFpJh1UTqGNmvii2nm+2UWch4LK8dA9YrM7GY/KnOq78eJRkgUC8cF3u7u1d0RNSaDoWAfYhfHgCVnWUQcn2RS++9p6fcp2Qsssz66+SUPh+3zDD1Hi3x2aS6kx4gdIgvkCMw==
 ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xSnbtu7/4b0xcoVBcmxU4opQ6rHX/5VJgVS4QuzkGCY=;
- b=RndwGbBLiLBLk1yWSqbmcZU9t2Ci1V+B0N/YmQWpPZL3GYAmca4u8NSHFW1C6Whq5vPFUrzIoKIJlkmQYZY+/qndQusBntFw9DEAvuay+DV5LwrQgryiw8QStKAxPa1TDI9mCvn4zddDYUGwCku+COqounepUD7V/OYxlv4AnQXMeiO7tzDace7WkTHPb/YnGQWCu6stVVu0oGMmJbWy/oXUd5F9rk1r71Fuy28Ay9oRm546tRPbEX6w+ZVIn2c2D1Gf2ZsTH+Jt88CcnEbZzWcRyvsTuV19ua33lDYA58ZNklOpEDhP596j89IY1av5Op+6K5jxbDf2QLbgbMbRQQ==
+ bh=bKg/67rYZmh6NYjhU9gjQ53VEeK6A3Xe2GXQM/vg0RA=;
+ b=mI17xF+CrgDTW3nH2n4GEFeU6GSqZj6cPFWxjiH1uOzShBOok01pNZRR922HlOmk9qlon2jFNsBujBOFKEunXMpSlYkJRKVUYRfg1uxsni/dxfLl3TIKtaS/TkQRGQkBIK+HEuCGXMi8thc6aOw8ndcle5wBLwK9fdNWgDD+z5V2ZqHm4WoGY7jN3ZHWNQYLp/OpairMrxBCopwQtZ84FAzAl03dN3a7PyWtcPACphVjmpQsBsmoXv/SYzeo2bgJ/x5w+fPdEjdCXDM81rtjgHoI92wp3uc8VfVDGbirglmnR2IqYKRo36YMVsFZ3Ro2jlM2igDujM6v+JpEywa2hQ==
 ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
  63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
@@ -46,18 +46,18 @@ ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
  dmarc=[1,1,header.from=arm.com])
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xSnbtu7/4b0xcoVBcmxU4opQ6rHX/5VJgVS4QuzkGCY=;
- b=W29RHsa1JUnD8APJJU/Pkjdia1uxOQc7DwIFOYQAZKLBAUbQAQ9nd+8WeR4TY4/0f/h4Qk8E7eUjJbtLaEFmhsmtPRQHaEeLm19MWlo4dju9DOknENvoXCeLSejbVWNUMPmVO19KpN3HJFZofO0R6Q+VeIikGRrtugK2WmnwQ1k=
-Received: from AS9PR04CA0071.eurprd04.prod.outlook.com (2603:10a6:20b:48b::20)
- by PAXPR08MB6671.eurprd08.prod.outlook.com (2603:10a6:102:13b::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
- 2024 16:51:18 +0000
-Received: from AM2PEPF0001C70C.eurprd05.prod.outlook.com
- (2603:10a6:20b:48b:cafe::21) by AS9PR04CA0071.outlook.office365.com
- (2603:10a6:20b:48b::20) with Microsoft SMTP Server (version=TLS1_3,
+ bh=bKg/67rYZmh6NYjhU9gjQ53VEeK6A3Xe2GXQM/vg0RA=;
+ b=f/lRgIB3WwsDA92oUJsLaYiFWDCc3Lmk4rMMtmnJwRl08lIZme1i1/i5O8UgbOF/gSQQDvpkcIfQJZyJTkE6MnyApG206yASckrBpfgPiJfnzeglB6oeci5zUCxMDQaodsMOi5S4ahdO7nWlYc1d0TAXV0KahF9SnUwhyRvGRL0=
+Received: from AS9PR0301CA0019.eurprd03.prod.outlook.com
+ (2603:10a6:20b:468::29) by GV2PR08MB8677.eurprd08.prod.outlook.com
+ (2603:10a6:150:b9::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Wed, 11 Dec
+ 2024 16:51:15 +0000
+Received: from AMS1EPF0000004B.eurprd04.prod.outlook.com
+ (2603:10a6:20b:468:cafe::d6) by AS9PR0301CA0019.outlook.office365.com
+ (2603:10a6:20b:468::29) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.15 via Frontend Transport; Wed,
- 11 Dec 2024 16:51:18 +0000
+ 11 Dec 2024 16:51:14 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
  smtp.mailfrom=arm.com; dkim=pass (signature was verified)
  header.d=arm.com;dmarc=pass action=none header.from=arm.com;
@@ -66,46 +66,46 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
  pr=C
 Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM2PEPF0001C70C.mail.protection.outlook.com (10.167.16.200) with Microsoft
+ AMS1EPF0000004B.mail.protection.outlook.com (10.167.16.136) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.15
- via Frontend Transport; Wed, 11 Dec 2024 16:51:18 +0000
-Received: ("Tessian outbound 9c6259131e4d:v524"); Wed, 11 Dec 2024 16:51:17 +0000
+ via Frontend Transport; Wed, 11 Dec 2024 16:51:14 +0000
+Received: ("Tessian outbound 2d228e31de9a:v524"); Wed, 11 Dec 2024 16:51:14 +0000
 X-CheckRecipientChecked: true
-X-CR-MTA-CID: 0cf303c8a12e35c1
-X-TessianGatewayMetadata: Erkx3mfIPFDV+UBvGmTwpPGEsBZElLkAyVxmVk9GCqp67IqFZhyBnl7nr7Wtd+KfLBh9wZo4x4WfJ0cQpcU6Y77lJAy9IK5R1sENjUs4CqyBCZKuODKNakRtilROawAPJjHyMJxJjMBpcuOrrWdHKx8ItqW0PQqG/mmdd+CNBzU=
+X-CR-MTA-CID: e164a7827162b85c
+X-TessianGatewayMetadata: wxMRNHlx9L39bHspbKxLxr3AW2TQwIOmcja+JkZbt6ndO7KrG6k7fbFn9JAVIFINwvb34QoJWgMk0+f77oTF0BCt/g562l/FRzjcvr95SyoAxnFTloAhkO29/FYta8QOeKVapRv/IPWKjaj6s25sXFY2/PQenyogqGHc+MkZSXw=
 X-CR-MTA-TID: 64aa7808
-Received: from L1c19647b0b3f.1
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id F35F1243-C2CA-471D-9E3B-B6656E8F2F07.1;
-	Wed, 11 Dec 2024 16:51:06 +0000
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L1c19647b0b3f.1
+Received: from Lf4c2a157c311.2
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 213540C7-8374-4E74-9716-3B02186A3045.1;
+	Wed, 11 Dec 2024 16:51:08 +0000
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id Lf4c2a157c311.2
     (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-    Wed, 11 Dec 2024 16:51:06 +0000
+    Wed, 11 Dec 2024 16:51:08 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jubFSn72R58paVuwGhmcbClcor13WMqYVkAg6jPoCa5ev0iT57hR2Hlvrtm0sm7MIBdlh57YHciHk/X+Uoe+S2OkMSdZsUFBd7Ywm6RDKQHmC+GugSmOIMSImeBVLQkEhDYnjwTaomQKyOEjPe5uWP9UalPLxWfR2ZiiGouK1q2MbXTWZRAwkF9tS0rNmJqTY8xTP49hmJDF2ztbir6iFWcryNdY8gTHvJAFHFtR73/gXnPbiBnoxjxswVcPV7LaLiLR7zhQjs2d6XIapbFo+b/qFbqWgRghkcZv+fh9wQSvXIAqH2yk6LVVRPeesUZ1tNwGFkJ+gDvUEJ+0YdVkVA==
+ b=yF9QsjirKIV4mkm8N0xCPNHQzMBC4X35fdg1bEpzQARAW++4jBiXwkMCdIX0aYHOGmiFLGY6bNwVY4LJ+DBfqfyStLLt1MF9/i58wsfP/aZgaTya7saUDkoVB14DsYgR+dWyTG0Pw973H2waq76bceTa7ztw7JsnPz9nvq4F3f8lzYAEIrIbublMlMCTl4aEI2Pw3Y6oo82F9YDQqEU+ViHTbTi2SYiiFkaDAQw5M2frAmtxXYrPZajaqXxgMKs8nAX+mQ/w8OvM2msuixIcNazB7uCOyTDWhWm17wTTz+FJtS8P8I4/Kg3x4cTknnLds7SdOOn6IrkJ2begyhyKcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xSnbtu7/4b0xcoVBcmxU4opQ6rHX/5VJgVS4QuzkGCY=;
- b=lM0R+/7a/OHkHzncTpjM/bPYM3Hvfk7B7cwHWEziVJxb2W6lx5W+wYDm2ChO7Sg4cZSARmAuTnQheGyFmZ7ZX261ueWRNX5YMUyOMsvxkDbEwDNbnSDVC3JIj++uONd3cSnDpK4+Ar4pMghpmyEK3qtp4qCEM0LQasbin0hfO1PkUXfTxfkX896vuhSCqjikW9hsc94jN0YLKl/hIx3phoXZnmxjypSkwQw8ns46YGXz8hkzRnS8h0pKPdHNDLBzK0MgXoIXJG/rfEahREKMoBOV8kTg3wQnfcM0Me+P2TdogE1Rth9uIHXXlsFJoh4b5fS9ERiKMo68BmS22YdZiw==
+ bh=bKg/67rYZmh6NYjhU9gjQ53VEeK6A3Xe2GXQM/vg0RA=;
+ b=rrY0Ptvf4H2LzMAIEExGZjXFrBbTk3RFGID0Bha3+olL+MOBnhNStUIvP21r5rhMiU7aH6Aj1n9vQ296B+hMso8thTV2GpA+3tAByp7wbWFv36/GSRKajOjJGBrFyNH6oGEXfrDa5D36pTMoXFPVf85wBRSA8Culfy6B9SDzCvO4KEQo1WPdbKg7dLGc+ojMjgYVxIz+fhDoZp99ce9mLVr8UqsN0UYuA68ooIni3tyMoMVUCdgqmPigGbWfAUlnispVtriQZrSz/uWFK7uTsZ9UfPN2JRlSx/IM0FBV6jwX7o8HS9Fd3ytmD0IyLvLn62KBiy77yNTj1nNfXESCug==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
  header.d=arm.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xSnbtu7/4b0xcoVBcmxU4opQ6rHX/5VJgVS4QuzkGCY=;
- b=W29RHsa1JUnD8APJJU/Pkjdia1uxOQc7DwIFOYQAZKLBAUbQAQ9nd+8WeR4TY4/0f/h4Qk8E7eUjJbtLaEFmhsmtPRQHaEeLm19MWlo4dju9DOknENvoXCeLSejbVWNUMPmVO19KpN3HJFZofO0R6Q+VeIikGRrtugK2WmnwQ1k=
+ bh=bKg/67rYZmh6NYjhU9gjQ53VEeK6A3Xe2GXQM/vg0RA=;
+ b=f/lRgIB3WwsDA92oUJsLaYiFWDCc3Lmk4rMMtmnJwRl08lIZme1i1/i5O8UgbOF/gSQQDvpkcIfQJZyJTkE6MnyApG206yASckrBpfgPiJfnzeglB6oeci5zUCxMDQaodsMOi5S4ahdO7nWlYc1d0TAXV0KahF9SnUwhyRvGRL0=
 Authentication-Results-Original: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=arm.com;
 Received: from AM6PR08MB3317.eurprd08.prod.outlook.com (2603:10a6:209:42::28)
- by DU0PR08MB8422.eurprd08.prod.outlook.com (2603:10a6:10:406::6) with
+ by DU0PR08MB8493.eurprd08.prod.outlook.com (2603:10a6:10:406::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Wed, 11 Dec
- 2024 16:51:02 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.19; Wed, 11 Dec
+ 2024 16:51:04 +0000
 Received: from AM6PR08MB3317.eurprd08.prod.outlook.com
  ([fe80::e42a:494c:6581:1897]) by AM6PR08MB3317.eurprd08.prod.outlook.com
  ([fe80::e42a:494c:6581:1897%7]) with mapi id 15.20.8230.016; Wed, 11 Dec 2024
- 16:51:02 +0000
+ 16:51:04 +0000
 From: Lukas Zapolskas <lukas.zapolskas@arm.com>
 To: Boris Brezillon <boris.brezillon@collabora.com>,
 	Steven Price <steven.price@arm.com>,
@@ -121,16 +121,16 @@ Cc: dri-devel@lists.freedesktop.org,
 	Mihail Atanassov <mihail.atanassov@arm.com>,
 	nd@arm.com,
 	Lukas Zapolskas <lukas.zapolskas@arm.com>
-Subject: [RFC v2 6/8] drm/panthor: Implement the counter sampler and sample handling
-Date: Wed, 11 Dec 2024 16:50:22 +0000
-Message-Id: <20241211165024.490748-7-lukas.zapolskas@arm.com>
+Subject: [RFC v2 7/8] drm/panthor: Add suspend/resume handling for the performance counters
+Date: Wed, 11 Dec 2024 16:50:23 +0000
+Message-Id: <20241211165024.490748-8-lukas.zapolskas@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241211165024.490748-1-lukas.zapolskas@arm.com>
 References: <20241211165024.490748-1-lukas.zapolskas@arm.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO2P265CA0169.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a::13) To AM6PR08MB3317.eurprd08.prod.outlook.com
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P265CA0218.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:33a::19) To AM6PR08MB3317.eurprd08.prod.outlook.com
  (2603:10a6:209:42::28)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -139,8 +139,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-TrafficTypeDiagnostic:
-	AM6PR08MB3317:EE_|DU0PR08MB8422:EE_|AM2PEPF0001C70C:EE_|PAXPR08MB6671:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4adae965-a6e6-4e92-7be5-08dd1a0408c7
+	AM6PR08MB3317:EE_|DU0PR08MB8493:EE_|AMS1EPF0000004B:EE_|GV2PR08MB8677:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05174565-27f9-4219-1b05-08dd1a04068b
 X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
 x-checkrecipientrouted: true
 NoDisclaimer: true
@@ -148,1291 +148,236 @@ X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?VGJYQnZZNE5ZY1FFZTN0Wm8vMnFDNDhmdUxPcllhMkFTdUNacVJVUUExNWJF?=
- =?utf-8?B?ZFNEbzYzMG5HTjVhaFRsc1Fyb1c5ZU9OSTJVZmE5b2RJb1VjZk9ZcVpBTDhJ?=
- =?utf-8?B?UTlPK1V6cjlxL2J3L2JwZlU3RlBRSDVHQ0tEbStXTWhjRzdPeDF4cG9xUDZn?=
- =?utf-8?B?RndsL0RwbHlDQ20vRnA4YmdQWDVEYzM3Y0dlWHFEUVVJYW1weGlNM0NsSElW?=
- =?utf-8?B?aTMvQTBxc1RpMnhkdWZxQ05ncERqYklqNG4yNytiOXRTaUVHdHlCeTVDdUZu?=
- =?utf-8?B?U3JxN0xMYm1XUHR6Q1l6bVBPenNianVlTnB6RWY2eVVCOGFGM1dKOG1RUC9K?=
- =?utf-8?B?MUdhRXR3a0Zhc0h6YytDMGx6ejdCeWJ3ZGtzQXZBVG1RQXppak9yWmlFN0ZL?=
- =?utf-8?B?VzY2VFNsN0xGOFkrcnZ4K1ppWnJsWkF3S3lPazBGcXFIV1MxVU1VZTRHK3VJ?=
- =?utf-8?B?LzZxL1REYkJOVHh5WVl6WlFMOW42aFlwMGNncldBWHdmZEhHcXdSRGpyNGFQ?=
- =?utf-8?B?VTh2UCtMdkpDK1JyUEJHRjdLS3V3YUtheDNTRkhBQ0xQaTYyZ0JtV2NhU1Nu?=
- =?utf-8?B?bFJ3LzhDTVNZT2RLU3pqcjNkT3IxaCtCVXlocHRxMkdYc2ZLQm5kRmY3V2xr?=
- =?utf-8?B?WG1VWDcxR3EzdVF4RW13U1lITWJGY1B6N01jMHo4QjhzQlhEd2h3SWtIdG10?=
- =?utf-8?B?MnVEL1ZjaGJZcEJJbGJhTGpJQUo2RGIvVGd1UFgxeWNrNitKRFQwaEViK3N5?=
- =?utf-8?B?OUl4SXhudUFCMDNXOFJsSDF5N1NQcVRYa2pEL1lpOTRvWkdHQTRYUWxPemtT?=
- =?utf-8?B?WTRDQVlzUVZTV3hsaXdGaVBRbnlEVm5CaHNpSXFpWUNrcUlzWlNKOUoxWFl4?=
- =?utf-8?B?dUwySHhZWEdyM3Rwb3pERnBid2FnVFIrS0xkMnM3aVEyNitMZDhDbG1IM2w0?=
- =?utf-8?B?V3BQY00xb1dkSkczTy9hN2hUR05vRVA5OXdGbjcrb0k4czJieXIxcmhISlhW?=
- =?utf-8?B?LzdLYWtGZGJxZ0dHdkdHWXJoSnlDZXVYSnJ3SXhwQ2xST2hXZk5KSi9OdGp0?=
- =?utf-8?B?TStjdlNzdG5VNERUOUZDYVZkRzF2MElDeHFyMWNleng4dlIwOUh4NXluaEN5?=
- =?utf-8?B?QkNsQ0ZDaEl2WHRNQmlPVWJ2end1blhOTVJzSVVvT2FIRlg2WW4ydnRJbVhL?=
- =?utf-8?B?djc3YVp1TFEvYU50L0hpeDdoTGRDL0h3UUlhQWQ0K3QzemN4MDE0dmc2With?=
- =?utf-8?B?cDJOdEZJNDFCcW9ma3FBVzQvS0hseDBhS21mOUg0dFJmZWJTaXhYUHV5aXI4?=
- =?utf-8?B?Y3laVmh5Mm1JeGZPbUZTTDN5by9Uc1FZTVIra1NpSzBxL3g1bGM5MFU0aEcx?=
- =?utf-8?B?dkYzUGZ0RlYyRzVoTFFReGlYRXRaR2dpaVZHOHVaY2dvSkZEWjBaaSs5TDVm?=
- =?utf-8?B?anVVaFpjemFBbUN0d0Z2YTBWV2VXVytpUzhqd095azQ2elFHWjFPVTBiSzE1?=
- =?utf-8?B?ZWNRTHpzSjhTLzIyWGx6c0NwSy8xaGtDWDFEbXBVcjdRdTZMbzBmb042c1pl?=
- =?utf-8?B?UVVGV1FJdU5nRUl2cGQxdXhmTXhKQ0tQTjl2U3NtNFN6RXBmVzlUZlQraVpp?=
- =?utf-8?B?RVRGY0Zaa3g0QjlrakJheHVId2hBcFBOMUpRc0dyTUlrNDBSS2MraG9FRWg4?=
- =?utf-8?B?RUVxbldiZVRYL0tkd01LT3B3MG56QUxXQmdESUF1V2kyL1UxaHU1bExZMnk1?=
- =?utf-8?B?WjF3RGFPVDh5cnhrR1J6czV4T0VqeEtvSzA3eTc3MjJTWGo2UnlGeDRBUWdl?=
- =?utf-8?B?cURteUY5SUhTdkZSR3hhUT09?=
+ =?us-ascii?Q?Q4MaBE183tweZDq/aeTaI4GBfoVDzQYgCcL6URYthgYr9aJdUtHpxI2NXw8/?=
+ =?us-ascii?Q?ST7wYEQGv3GQ4y6izI7a1OxBzRLLctAJnApYuyMGQRtNmMtLpaq8JvGReL0Y?=
+ =?us-ascii?Q?9EzbTLTDjNI78wvxFQ+E/dKTwZLLSUQ2yrhDSCVa3U6DgJ9Iw10rpGOkv8YP?=
+ =?us-ascii?Q?1WKwowaYoazePZ3S2d/DfEcAZ+6IuX6MtF//je9USC2GhW5ScvdXsXww9NQv?=
+ =?us-ascii?Q?RrzDJ/Rc/UbTrOro/Q5HMVGJ51ksMsoJ6NhnT6d8mdG+T636ap4N+J/ucuWf?=
+ =?us-ascii?Q?ZVCVwdUxn3QyV0Xh7LnlZz5aqcFEycQLkwAQYmFwfSZPTiRZUC88dn4xRu8U?=
+ =?us-ascii?Q?4eGaN2Rmy+G66WgaksB7v2K3VMd9BrcSwJJCvXBnARMJ4ymVqHc333HLJxEU?=
+ =?us-ascii?Q?nlF0IVkPMCuBfo663b5RGCPFbaeqvDywN2b8EMMrNl0NMY6Af9e853v0D9GV?=
+ =?us-ascii?Q?wl3486c+9vfxPZJm79SXn8KNv3S/71ZCOcZy0a0XIW0BC14mbBSmkpG7Nw0R?=
+ =?us-ascii?Q?QJYUYqDctkwzdye1NIiXCXWMNwt54vhWxAwBOQshDehF69qUXy1It9rAoIjA?=
+ =?us-ascii?Q?5VjLr83sFohuWPNnC//yUAcX66bkxyU9HjAPfN+3qJOE3Q9UYUtjxk3tIRvz?=
+ =?us-ascii?Q?hPenQJz555Aqsv10P+Hn+1309GAu8VEuFUI5+SkSaT3hy8P9OMgp06N2StFG?=
+ =?us-ascii?Q?h81q+IoEuV+E/ITzCntayMKBmOh4dg4VZLTGTqgcXJnRLACoesVfwWuWscu1?=
+ =?us-ascii?Q?9CcsFdqaGbKILvnoDIDYk2oW4RjX5DoOJcH58IjRVkPh4+gj8qvZEH+6ibdh?=
+ =?us-ascii?Q?Lmi7juAt1IG1nHZyQeMgfwNCmzEo6NbKnsBCth107EmUu/CZ4wXweT89y1Og?=
+ =?us-ascii?Q?blooTyT2sk7VePS9aXjsbY8owj1dxnntcV0d84Q65lQnU0Xf3hzUwT5g52xC?=
+ =?us-ascii?Q?88L3l0WQ2sY/6vuspOArhHsIqERKJznmYVKLLFRH7D7F3ZM9qRoqR8JSbUfv?=
+ =?us-ascii?Q?iy4+eD7iApGtk/Lp/OLUAZQ3S78wGniitHx2YQVr4J5C66wRXwXiYEmKP5Dh?=
+ =?us-ascii?Q?ujIRQc23ln5ddgP50BiGGIzoQ5e0gHDFmBK0oDb1qFp8+EwkMJ0wWCA9WmTw?=
+ =?us-ascii?Q?6pMM6lpgoCCyaSoWU4g9wRp/hMJY8OxiyH32eH07y/SaL4aw091JWxg2JAvT?=
+ =?us-ascii?Q?iN67f6kUMYDakQW+pRldQgRCOufThLnYunI1WtTLtKB/911x1pb7iJ5BHnQ3?=
+ =?us-ascii?Q?Bsrl1Lc4YqhverYR0fdJxPcAsWGWk9xJ7J/EpUXTnSnuEidswqmpTevk3gnj?=
+ =?us-ascii?Q?uNM3iqv/o2AvZN/9M3qTHp8asy4+w+XUp8cVPoNn6glwjQ=3D=3D?=
 X-Forefront-Antispam-Report-Untrusted:
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR08MB3317.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB8422
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB8493
 Original-Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=arm.com;
 X-EOPAttributedMessage: 0
 X-MS-Exchange-SkipListedInternetSender:
  ip=[2603:10a6:209:42::28];domain=AM6PR08MB3317.eurprd08.prod.outlook.com
 X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM2PEPF0001C70C.eurprd05.prod.outlook.com
+ AMS1EPF0000004B.eurprd04.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	7a7f4b6b-5fc6-4a01-43ff-08dd1a03ff01
+	9f9ca443-e79e-4f73-1fd8-08dd1a040060
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|376014|82310400026|35042699022|1800799024|36860700013;
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|14060799003|35042699022|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TlhTcmJSbHJNbzEvUXFZUnpjYVhVTmdWekx5Q0lYQ2JKWlduMHNaUjRrcjZ4?=
- =?utf-8?B?ajBLdmpFMzFEaDRQV3dwcE5NdnRvSlZjby8wZU9KOTFrOWJpQ3BQUGNLb2w2?=
- =?utf-8?B?YVFWZnQ3WDFvL2FiMDEwZmFvTjJYRGpSWW14YktLaVBEeUpzYUxLOFBZVENm?=
- =?utf-8?B?YTRURTliZ1JVMHU4NTZLQmwrbmJxeXV4RGVrQUgwVHNrZ0syNjJtMlllTjQ2?=
- =?utf-8?B?Y2VLdGNaVklsTWMvbmMyTmQxM2FnUFd4ZDREdHd4S2ErUlg5UzlFdWtCQWpP?=
- =?utf-8?B?T3JnVXVIUStkMjBwNFJBZUc4VE5DMHU3S0ROVlFGSHlzcDRPMVMvcDZCeXA3?=
- =?utf-8?B?SThTMVc4Y1F1cG44ekJ4bVlKeGxoU1RBcGYyVThYMGQyNks0VjVWYzNRVEVY?=
- =?utf-8?B?TGFOZkh5MEFtQWVNUGVDQ042a2NQTXdQTkN5M3Z2TGhFaFQ1QzUvY3U1WXpR?=
- =?utf-8?B?Rml2TzJKVzNVbEdvNC9URitoczhPYkpEMzQrRDlTWWJqa0w2RHpXNis2WTV1?=
- =?utf-8?B?OVBpUUdYQXc4ZGJxbkhYZlNERmhvZDF4QlRkUFVZNW5EOGZ4WVprc0JRb1JW?=
- =?utf-8?B?ZVorS3JFb3RYc2JWWXplNlBtTXhTYXpZUTdqZ2c4YWJ4N2pDaGlRK0lMY0tk?=
- =?utf-8?B?WW5GVmFGVVdBTVVmaUdyakJTZXZVQXdGMWg1dEhYVVQ2akE3cFpFcUxqNVRK?=
- =?utf-8?B?enkrV25RckZiMWo4SjE2ekNZK3gvRVBKeTFHZ2syMWpmdTlmQlE0MEc3Wkk4?=
- =?utf-8?B?Q043bG9lc0lYOHBlM2JYZWcxS3FDVG1Qbm0xY2F2S0gvZXV3NDQwVFZ3OGx6?=
- =?utf-8?B?QUhkek5aekpIOTlwaGFFWWEyZER0T0VzdCtoaXh2Y0RRS1RHelRueWxUcWJs?=
- =?utf-8?B?UVVZWWdMY2g1d3NyeU1GY05MNm0rNmwyOHlESzlKcFViWW9NUlE3RjFuaE1o?=
- =?utf-8?B?aXVkR3JLQ3BuU1JneFdXMFN1R2cvL1REY3dKbDNJUDVFMFhMRkZVM2dNc1dx?=
- =?utf-8?B?cCt5QWJsSWNHeDBqVFo1TWoyZVdMZVI3QU1pQlpVUVJBSGF1c25SQmdkb0x2?=
- =?utf-8?B?a1V1VEdHV2pqRjVIRG9vZ3p6RXR4bGNWUTJSMzJhdktKZE05eUQ5NXoybUhk?=
- =?utf-8?B?SG9uSWwyN1d3cTRXVEZLVmthd3lQbkZ0K2diSnJNdkhKR2xxZkZsbzBpU1hO?=
- =?utf-8?B?QkpycXd2cVJjRzU1WFJUcEpMbE1JTTZ6b3dORU9HaDdGRFJ2YndOaTBLMXN6?=
- =?utf-8?B?YU0yN2Y0ZnpEU09scXVtbFRvdUdrb3BYN09KM2Ztd29MNVZ6VXlxTk1qWGJS?=
- =?utf-8?B?SGxKK1Npc3BRbDdHQlZ6Tll5Yi84UllONVBLaTltL0hLc1ZOZUM4K2NaM2tk?=
- =?utf-8?B?M3QyOEtiUzR0VkRLMzZoTitBUkxuS09BSysvWTRRV3MrU0FsMWVldGNESjJZ?=
- =?utf-8?B?bkVFL2MxSFU2bUkvZGFZMHlDSHM1VkFsOXhsS2RDWGVMRjRCS0dCUmE1TTJy?=
- =?utf-8?B?MnB4WUxweGhqNkVIU1NLYk5Za1VsUWF1VGRlMDJvdWd0M0VDeGVDb1hmVWhx?=
- =?utf-8?B?WkFMR0p5QURxRGpnTXdqN2RGVVJ1Y0c1NDZsNlJWYStkaFg4QStaT0pWMzh3?=
- =?utf-8?B?UWlOSnMyU3dsY1haMXpiOERKcnBIY0tPSkJ0SC9iMzQ0L0xlL1NhSkExa0Fk?=
- =?utf-8?B?aVVpT1Z6QlNta3V0cU0reTFlNGRDZndtbW5DaVQvSnFlS2VFekE2Q0dqbVYy?=
- =?utf-8?B?VmgwZ0ZtVnJXaEtMOWJEZnhwbVRXRGpXMlZ0UGJhZ203RnZ1cUdOVlRXS2xQ?=
- =?utf-8?B?SHp3cHlBc29LSDMya0dpOWRwdjNsTUxWQ2xnSEZTYzdJSlpYOWJQenAwU2x0?=
- =?utf-8?B?M0ZHS3RQQ1h5bWpybXNJbVZJeDlBRXRXNFl5a1VBd2Y3M0dkb3p1VVpRWUo4?=
- =?utf-8?B?eFdJYzRBZTMxQjdtQjhPc2tsQjZFRUU3cmVscjYrb1Q5MThOY1ZPeGNHZFRn?=
- =?utf-8?B?Zjdsc25VcStRPT0=?=
+	=?us-ascii?Q?bMmBkJAgvXj9B3wCEc0BTmCXJVKRfsNIaS8aPAcNZ5ewnsrjnQYBK92Y8of6?=
+ =?us-ascii?Q?t0mMoo55iLRZRzZ0qTtHH7EKd7x/NvI12WBpcCxydRDrGIiyk5xRZtST53Ng?=
+ =?us-ascii?Q?oQ8Yi39lt1kfXeyUxvwyT7reQFMPNzu8lPZqJnp55tMPJwx8Xu5wu+4VpVUZ?=
+ =?us-ascii?Q?WF7jYsQxtaPuY6yvrtpfQ19PYHSZJ6dLu6QGuT5JOQtSR948tZCsOQuQcUEu?=
+ =?us-ascii?Q?SBxlwkpc6Ju28NwrRISivDF5S/JOGCgZ/fh5zEQV4+7QIiJEZet/vVr2fCCJ?=
+ =?us-ascii?Q?UpIvDFVKfM0VgaMj5fMEOXBLd1gnA583F/nw9cGdvgDnciGIMvFMT9kLB+hL?=
+ =?us-ascii?Q?3pgHA8Hh/h5vULzEeqCTlNqhLJu11ks830MYFpaiV1IQbp3CgZyICHMCnsKo?=
+ =?us-ascii?Q?TAPSFfQR1nuDL3AXpPkhxeRgJsgUYBrCWSuOZ34ePWbbuY+xW0Th+BG1tR0A?=
+ =?us-ascii?Q?BbnGm4Gf/RAJ1q+1EdKPNQePehZn/Y9+ElaCw50HhnM8HxiuzVx6YmMERz2H?=
+ =?us-ascii?Q?kz3R2Vbct5hP5L8PK/WUpvVWqB4MydL3N7t97BVcHwhGouWe7+kZJkOxFdHk?=
+ =?us-ascii?Q?7/DofKxlmzvBZhgZSIYmG+AP2SlTcXdgXG1EXlI+WqG6vyCgoYoU74yjeN4g?=
+ =?us-ascii?Q?2MKgq7fYDnj2ldKVLsMZeJ54HuVu6xo85LXqqAM2/IyVxqnJw+HLcdUcjKU6?=
+ =?us-ascii?Q?MsKem9bucjmz2VEQX8FeEDBn6wJ31QG9qWJdbsonvjjRGYpYzkN0K8Be1tgH?=
+ =?us-ascii?Q?yGyNjlR4ZJtojGk4hPPFZjiM7efYctHLTYsoSAOUyV4mdGkb+Q6cNpjW6NK/?=
+ =?us-ascii?Q?bDEkNNHPpZ5zAJnatSG1wTAB0HrQ3KEQd3O+XfJ0bSHnRmDsU027KR0s6/UF?=
+ =?us-ascii?Q?tZxHBPZyy06Sr8oaVify/ZzDzk6ZiLtCq2agGGEojCJXU1i/3OzfjrrNo0mf?=
+ =?us-ascii?Q?BpqDQkTr3iLqGIJKz5MYSvfq+H+fXIFBw929GDKb2REPoWh6Z/I3NuvzhSeJ?=
+ =?us-ascii?Q?QWdsiWua9hcFaFHOrULTbr/E/HEEkvF2BjtHSsH88v1UxlRvSfKucpeTRotU?=
+ =?us-ascii?Q?KETvgkx+PXyMYiJrQDzKh3DXHJxoy8kMASdFWcaGd5/kA9ihf0VDFEUHjGEE?=
+ =?us-ascii?Q?LzHjID7GRwM4WuR0rG+pWdsULXvzG6u1ZweW+kFNiKb5SiDNaZeRi+dAdate?=
+ =?us-ascii?Q?um590uGh8xaiS2Er9ZOAx9PHIrgv1SCEzP880mbIdrllnGPIMgLFYjkgN+0F?=
+ =?us-ascii?Q?qKQ7oX5M/FzgeZngkfbtT+jLq3Y5aj+9zOisNoZpDyiJEYDrVoppZwpo/tQt?=
+ =?us-ascii?Q?9BRz+PEB9rmdyRfVYWZ3nDBzMZozsf8JajW8RQXgo4DBzLOre1hRh/SO4bnv?=
+ =?us-ascii?Q?AoZKUZWX4WgWdeeVF9Vkl+DwxJZRZuXpQXoD0E0WdKkKcy5OCNWF05hsAKdZ?=
+ =?us-ascii?Q?mRjll0TU39JcEYrDm8/eRT4NuHg3GSoEoYnE88ZnCpGtV7NO5T7WSg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:64aa7808-outbound-1.mta.getcheckrecipient.com;CAT:NONE;SFS:(13230040)(14060799003)(376014)(82310400026)(35042699022)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:64aa7808-outbound-1.mta.getcheckrecipient.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(14060799003)(35042699022)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 16:51:18.5335
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 16:51:14.7668
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4adae965-a6e6-4e92-7be5-08dd1a0408c7
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05174565-27f9-4219-1b05-08dd1a04068b
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	AM2PEPF0001C70C.eurprd05.prod.outlook.com
+	AMS1EPF0000004B.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR08MB6671
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB8677
 
-From: Adrián Larumbe <adrian.larumbe@collabora.com>
-
-The sampler aggregates counter and set requests coming from userspace
-and mediates interactions with the FW interface, to ensure that user
-sessions cannot override the global configuration.
-
-From the top-level interface, the sampler supports two different types
-of samples: clearing samples and regular samples. Clearing samples are
-a special sample type that allow for the creation of a sampling
-baseline, to ensure that a session does not obtain counter data from
-before its creation.
-
-Upon receipt of a relevant interrupt, corresponding to one of the three
-relevant bits of the GLB_ACK register, the sampler takes any samples
-that occurred, and, based on the insert and extract indices, accumulates
-them to an internal storage buffer after zero-extending the counters
-from the 32-bit counters emitted by the hardware to 64-bit counters
-for internal accumulation.
-
-When the performance counters are enabled, the FW ensures no counter
-data is lost when entering and leaving non-counting regions by producing
-automatic samples that do not correspond to a GLB_REQ.PRFCNT_SAMPLE
-request. Such regions may be per hardware unit, such as when a shader
-core powers down, or global. Most of these events do not directly
-correspond to session sample requests, so any intermediary counter data
-must be stored into a temporary accumulation buffer.
-
-If there are sessions waiting for a sample, this accumulated buffer will
-be taken, and emitted for each waiting client. During this phase,
-information like the timestamps of sample request and sample emission,
-type of the counter block and block index annotations are added to the
-sample header and block headers. If no sessions are waiting for
-a sample, this accumulation buffer is kept until the next time a sample
-is requested.
-
-Special handling is needed for the PRFCNT_OVERFLOW interrupt, which is
-an indication that the internal sample handling rate was insufficient.
-
-The sampler also maintains a buffer descriptor indicating the structure
-of a firmware sample, since neither the firmware nor the hardware give
-any indication of the sample structure, only that it is composed out of
-three parts:
- - the metadata is an optional initial counter block on supporting
-   firmware versions that contains a single counter, indicating the
-   reason a sample was taken when entering global non-counting regions.
-   This is used to provide coarse-grained information about why a sample
-   was taken to userspace, to help userspace interpret variations in
-   counter magnitude.
- - the firmware component of the sample is composed out of a global
-   firmware counter block on supporting firmware versions.
- - the hardware component is the most sizeable of the three and contains
-   a block of counters for each of the underlying hardware resources. It
-   has a fixed structure that is described in the architecture
-   specification, and contains the command stream hardware block(s), the
-   tiler block(s), the MMU and L2 blocks (collectively named the memsys
-   blocks) and the shader core blocks, in that order.
-The structure of this buffer changes based on the firmware and hardware
-combination, but is constant on a single system.
-
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-Co-developed-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
 Signed-off-by: Lukas Zapolskas <lukas.zapolskas@arm.com>
 ---
- drivers/gpu/drm/panthor/panthor_fw.c   |   5 +
- drivers/gpu/drm/panthor/panthor_fw.h   |   9 +-
- drivers/gpu/drm/panthor/panthor_perf.c | 882 ++++++++++++++++++++++++-
- drivers/gpu/drm/panthor/panthor_perf.h |   2 +
- include/uapi/drm/panthor_drm.h         |   5 +-
- 5 files changed, 892 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/panthor/panthor_device.c |  3 +
+ drivers/gpu/drm/panthor/panthor_perf.c   | 86 ++++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_perf.h   |  2 +
+ 3 files changed, 91 insertions(+)
 
-diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-index e9530d1d9781..cd68870ced18 100644
---- a/drivers/gpu/drm/panthor/panthor_fw.c
-+++ b/drivers/gpu/drm/panthor/panthor_fw.c
-@@ -1000,9 +1000,12 @@ static void panthor_fw_init_global_iface(struct panthor_device *ptdev)
+diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+index 1a81a436143b..69536fbdb5ef 100644
+--- a/drivers/gpu/drm/panthor/panthor_device.c
++++ b/drivers/gpu/drm/panthor/panthor_device.c
+@@ -475,6 +475,7 @@ int panthor_device_resume(struct device *dev)
+ 		ret = drm_WARN_ON(&ptdev->base, panthor_fw_resume(ptdev));
+ 		if (!ret) {
+ 			panthor_sched_resume(ptdev);
++			panthor_perf_resume(ptdev);
+ 		} else {
+ 			panthor_mmu_suspend(ptdev);
+ 			panthor_gpu_suspend(ptdev);
+@@ -543,6 +544,7 @@ int panthor_device_suspend(struct device *dev)
+ 	    drm_dev_enter(&ptdev->base, &cookie)) {
+ 		cancel_work_sync(&ptdev->reset.work);
  
- 	/* Enable interrupts we care about. */
- 	glb_iface->input->ack_irq_mask = GLB_CFG_ALLOC_EN |
-+					 GLB_PERFCNT_SAMPLE |
- 					 GLB_PING |
- 					 GLB_CFG_PROGRESS_TIMER |
- 					 GLB_CFG_POWEROFF_TIMER |
-+					 GLB_PERFCNT_THRESHOLD |
-+					 GLB_PERFCNT_OVERFLOW |
- 					 GLB_IDLE_EN |
- 					 GLB_IDLE;
++		panthor_perf_suspend(ptdev);
+ 		/* We prepare everything as if we were resetting the GPU.
+ 		 * The end of the reset will happen in the resume path though.
+ 		 */
+@@ -561,6 +563,7 @@ int panthor_device_suspend(struct device *dev)
+ 			panthor_mmu_resume(ptdev);
+ 			drm_WARN_ON(&ptdev->base, panthor_fw_resume(ptdev));
+ 			panthor_sched_resume(ptdev);
++			panthor_perf_resume(ptdev);
+ 			drm_dev_exit(cookie);
+ 		}
  
-@@ -1031,6 +1034,8 @@ static void panthor_job_irq_handler(struct panthor_device *ptdev, u32 status)
- 		return;
- 
- 	panthor_sched_report_fw_events(ptdev, status);
-+
-+	panthor_perf_report_irq(ptdev, status);
- }
- PANTHOR_IRQ_HANDLER(job, JOB, panthor_job_irq_handler);
- 
-diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
-index db10358e24bb..7ed34d2de8b4 100644
---- a/drivers/gpu/drm/panthor/panthor_fw.h
-+++ b/drivers/gpu/drm/panthor/panthor_fw.h
-@@ -199,9 +199,10 @@ struct panthor_fw_global_control_iface {
- 	u32 group_num;
- 	u32 group_stride;
- #define GLB_PERFCNT_FW_SIZE(x) ((((x) >> 16) << 8))
-+#define GLB_PERFCNT_HW_SIZE(x) (((x) & GENMASK(15, 0)) << 8)
- 	u32 perfcnt_size;
- 	u32 instr_features;
--#define PERFCNT_FEATURES_MD_SIZE(x) ((x) & GENMASK(3, 0))
-+#define PERFCNT_FEATURES_MD_SIZE(x) (((x) & GENMASK(3, 0)) << 8)
- 	u32 perfcnt_features;
- };
- 
-@@ -211,7 +212,7 @@ struct panthor_fw_global_input_iface {
- #define GLB_CFG_ALLOC_EN			BIT(2)
- #define GLB_CFG_POWEROFF_TIMER			BIT(3)
- #define GLB_PROTM_ENTER				BIT(4)
--#define GLB_PERFCNT_EN				BIT(5)
-+#define GLB_PERFCNT_ENABLE			BIT(5)
- #define GLB_PERFCNT_SAMPLE			BIT(6)
- #define GLB_COUNTER_EN				BIT(7)
- #define GLB_PING				BIT(8)
-@@ -234,7 +235,6 @@ struct panthor_fw_global_input_iface {
- 	u32 doorbell_req;
- 	u32 reserved1;
- 	u32 progress_timer;
--
- #define GLB_TIMER_VAL(x)			((x) & GENMASK(30, 0))
- #define GLB_TIMER_SOURCE_GPU_COUNTER		BIT(31)
- 	u32 poweroff_timer;
-@@ -244,6 +244,9 @@ struct panthor_fw_global_input_iface {
- 	u64 perfcnt_base;
- 	u32 perfcnt_extract;
- 	u32 reserved3[3];
-+#define GLB_PRFCNT_CONFIG_SIZE(x) ((x) & GENMASK(7, 0))
-+#define GLB_PRFCNT_CONFIG_SET(x) (((x) & GENMASK(1, 0)) << 8)
-+#define GLB_PRFCNT_METADATA_ENABLE BIT(10)
- 	u32 perfcnt_config;
- 	u32 perfcnt_csg_select;
- 	u32 perfcnt_fw_enable;
 diff --git a/drivers/gpu/drm/panthor/panthor_perf.c b/drivers/gpu/drm/panthor/panthor_perf.c
-index 42d8b6f8c45d..d62d97c448da 100644
+index d62d97c448da..727e66074eab 100644
 --- a/drivers/gpu/drm/panthor/panthor_perf.c
 +++ b/drivers/gpu/drm/panthor/panthor_perf.c
-@@ -15,7 +15,9 @@
- 
- #include "panthor_device.h"
- #include "panthor_fw.h"
-+#include "panthor_gem.h"
- #include "panthor_gpu.h"
-+#include "panthor_mmu.h"
- #include "panthor_perf.h"
- #include "panthor_regs.h"
- 
-@@ -26,6 +28,41 @@
-  */
- #define PANTHOR_PERF_EM_BITS (BITS_PER_TYPE(u64) * 2)
- 
-+/**
-+ * PANTHOR_PERF_FW_RINGBUF_SLOTS - Number of slots allocated for individual samples when configuring
-+ *                                 the performance counter ring buffer to firmware. This can be
-+ *                                 used to reduce memory consumption on low memory systems.
-+ */
-+#define PANTHOR_PERF_FW_RINGBUF_SLOTS (32)
-+
-+/**
-+ * PANTHOR_CTR_TIMESTAMP_LO - The first architecturally mandated counter of every block type
-+ *                            contains the low 32-bits of the TIMESTAMP value.
-+ */
-+#define PANTHOR_CTR_TIMESTAMP_LO (0)
-+
-+/**
-+ * PANTHOR_CTR_TIMESTAMP_HI - The register offset containinig the high 32-bits of the TIMESTAMP
-+ *                            value.
-+ */
-+#define PANTHOR_CTR_TIMESTAMP_HI (1)
-+
-+/**
-+ * PANTHOR_CTR_PRFCNT_EN - The register offset containing the enable mask for the enabled counters
-+ *                         that were written to memory.
-+ */
-+#define PANTHOR_CTR_PRFCNT_EN (2)
-+
-+/**
-+ * PANTHOR_HEADER_COUNTERS - The first four counters of every block type are architecturally
-+ *                           defined to be equivalent. The fourth counter is always reserved,
-+ *                           and should be zero and as such, does not have a separate define.
-+ *
-+ *                           These are the only four counters that are the same between different
-+ *                           blocks and are consistent between different architectures.
-+ */
-+#define PANTHOR_HEADER_COUNTERS (4)
-+
- /**
-  * enum panthor_perf_session_state - Session state bits.
-  */
-@@ -158,6 +195,135 @@ struct panthor_perf_session {
- 	struct kref ref;
- };
- 
-+struct panthor_perf_buffer_descriptor {
-+	/**
-+	 * @block_size: The size of a single block in the FW ring buffer, equal to
-+	 *              sizeof(u32) * counters_per_block.
-+	 */
-+	size_t block_size;
-+
-+	/**
-+	 * @buffer_size: The total size of the buffer, equal to (#hardware blocks +
-+	 *               #firmware blocks) * block_size.
-+	 */
-+	size_t buffer_size;
-+
-+	/**
-+	 * @available_blocks: Bitmask indicating the blocks supported by the hardware and firmware
-+	 *                    combination. Note that this can also include blocks that will not
-+	 *                    be exposed to the user.
-+	 */
-+	DECLARE_BITMAP(available_blocks, DRM_PANTHOR_PERF_BLOCK_MAX);
-+	struct {
-+		/** @offset: Starting offset of a block of type @type in the FW ringbuffer. */
-+		size_t offset;
-+
-+		/** @type: Type of the blocks between @blocks[i].offset and @blocks[i+1].offset. */
-+		enum drm_panthor_perf_block_type type;
-+
-+		/** @block_count: Number of blocks of the given @type, starting at @offset. */
-+		size_t block_count;
-+	} blocks[DRM_PANTHOR_PERF_BLOCK_MAX];
-+};
-+
-+
-+/**
-+ * struct panthor_perf_sampler - Interface to de-multiplex firmware interaction and handle
-+ *                               global interactions.
-+ */
-+struct panthor_perf_sampler {
-+	/** @sample_requested: A sample has been requested. */
-+	bool sample_requested;
-+
-+	/**
-+	 * @last_ack: Temporarily storing the last GLB_ACK status. Without storing this data,
-+	 *            we do not know whether a toggle bit has been handled.
-+	 */
-+	u32 last_ack;
-+
-+	/**
-+	 * @enabled_clients: The number of clients concurrently requesting samples. To ensure that
-+	 *                   one client cannot deny samples to another, we must ensure that clients
-+	 *                   are effectively reference counted.
-+	 */
-+	atomic_t enabled_clients;
-+
-+	/**
-+	 * @sample_handled: Synchronization point between the interrupt bottom half and the
-+	 *                  main sampler interface. Must be re-armed solely on a new request
-+	 *                  coming to the sampler.
-+	 */
-+	struct completion sample_handled;
-+
-+	/** @rb: Kernel BO in the FW AS containing the sample ringbuffer. */
-+	struct panthor_kernel_bo *rb;
-+
-+	/**
-+	 * @sample_size: The size of a single sample in the FW ringbuffer. This is computed using
-+	 *               the hardware configuration according to the architecture specification,
-+	 *               and cross-validated against the sample size reported by FW to ensure
-+	 *               a consistent view of the buffer size.
-+	 */
-+	size_t sample_size;
-+
-+	/**
-+	 * @sample_slots: Number of slots for samples in the FW ringbuffer. Could be static,
-+	 *		  but may be useful to customize for low-memory devices.
-+	 */
-+	size_t sample_slots;
-+
-+	/**
-+	 * @config_lock: Lock serializing changes to the global counter configuration, including
-+	 *               requested counter set and the counters themselves.
-+	 */
-+	struct mutex config_lock;
-+
-+	/**
-+	 * @ems: List of enable maps of the active sessions. When removing a session, the number
-+	 *       of requested counters may decrease, and the union of enable masks from the multiple
-+	 *       sessions does not provide sufficient information to reconstruct the previous
-+	 *       enable mask.
-+	 */
-+	struct list_head ems;
-+
-+	/** @em: Combined enable mask for all of the active sessions. */
-+	struct panthor_perf_enable_masks *em;
-+
-+	/**
-+	 * @desc: Buffer descriptor for a sample in the FW ringbuffer. Note that this buffer
-+	 *        at current time does some interesting things with the zeroth block type. On
-+	 *        newer FW revisions, the first counter block of the sample is the METADATA block,
-+	 *        which contains a single value indicating the reason the sample was taken (if
-+	 *        any). This block must not be exposed to userspace, as userspace does not
-+	 *        have sufficient context to interpret it. As such, this block type is not
-+	 *        added to the uAPI, but we still use it in the kernel.
-+	 */
-+	struct panthor_perf_buffer_descriptor desc;
-+
-+	/**
-+	 * @sample: Pointer to an upscaled and annotated sample that may be emitted to userspace.
-+	 *          This is used both as an intermediate buffer to do the zero-extension of the
-+	 *          32-bit counters to 64-bits and as a storage buffer in case the sampler
-+	 *          requests an additional sample that was not requested by any of the top-level
-+	 *          sessions (for instance, when changing the enable masks).
-+	 */
-+	u8 *sample;
-+
-+	/** @sampler_lock: Lock used to guard the list of sessions requesting samples. */
-+	struct mutex sampler_lock;
-+
-+	/** @sampler_list: List of sessions requesting samples. */
-+	struct list_head sampler_list;
-+
-+	/** @set_config: The set that will be configured onto the hardware. */
-+	u8 set_config;
-+
-+	/**
-+	 * @ptdev: Backpointer to the Panthor device, needed to ring the global doorbell and
-+	 *         interface with FW.
-+	 */
-+	struct panthor_device *ptdev;
-+};
- 
- struct panthor_perf {
- 	/**
-@@ -175,6 +341,9 @@ struct panthor_perf {
- 	 * @sessions: Global map of sessions, accessed by their ID.
- 	 */
- 	struct xarray sessions;
-+
-+	/** @sampler: FW control interface. */
-+	struct panthor_perf_sampler sampler;
- };
- 
- /**
-@@ -247,6 +416,23 @@ static struct panthor_perf_enable_masks *panthor_perf_create_em(struct drm_panth
- 	return em;
+@@ -433,6 +433,17 @@ static void panthor_perf_em_zero(struct panthor_perf_enable_masks *em)
+ 		bitmap_zero(em->mask[i], PANTHOR_PERF_EM_BITS);
  }
  
-+static void panthor_perf_em_add(struct panthor_perf_enable_masks *dst_em,
-+		const struct panthor_perf_enable_masks *const src_em)
++static bool panthor_perf_em_empty(const struct panthor_perf_enable_masks *const em)
 +{
++	bool empty = true;
 +	size_t i = 0;
 +
 +	for (i = DRM_PANTHOR_PERF_BLOCK_FW; i <= DRM_PANTHOR_PERF_BLOCK_LAST; i++)
-+		bitmap_or(dst_em->mask[i], dst_em->mask[i], src_em->mask[i], PANTHOR_PERF_EM_BITS);
-+}
++		empty &= bitmap_empty(em->mask[i], PANTHOR_PERF_EM_BITS);
 +
-+static void panthor_perf_em_zero(struct panthor_perf_enable_masks *em)
-+{
-+	size_t i = 0;
-+
-+	for (i = DRM_PANTHOR_PERF_BLOCK_FW; i <= DRM_PANTHOR_PERF_BLOCK_LAST; i++)
-+		bitmap_zero(em->mask[i], PANTHOR_PERF_EM_BITS);
++	return empty;
 +}
 +
  static void panthor_perf_destroy_em_kref(struct kref *em_kref)
  {
  	struct panthor_perf_enable_masks *em = container_of(em_kref, typeof(*em), refs);
-@@ -270,6 +456,12 @@ static u32 session_read_extract_idx(struct panthor_perf_session *session)
- 	return smp_load_acquire(session->extract_idx);
+@@ -1652,6 +1663,81 @@ void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_per
+ 	}
  }
  
-+static void session_write_insert_idx(struct panthor_perf_session *session, u32 idx)
-+{
-+	/* Userspace needs the insert index to know where to look for the sample. */
-+	smp_store_release(session->insert_idx, idx);
-+}
-+
- static u32 session_read_insert_idx(struct panthor_perf_session *session)
- {
- 	return *session->insert_idx;
-@@ -349,6 +541,70 @@ static struct panthor_perf_session *session_find(struct panthor_file *pfile,
- 	return session;
- }
- 
-+static u32 compress_enable_mask(unsigned long *const src)
-+{
-+	size_t i;
-+	u32 result = 0;
-+	unsigned long clump;
-+
-+	for_each_set_clump8(i, clump, src, PANTHOR_PERF_EM_BITS) {
-+		const unsigned long shift = div_u64(i, 4);
-+
-+		result |= !!(clump & GENMASK(3, 0)) << shift;
-+		result |= !!(clump & GENMASK(7, 4)) << (shift + 1);
-+	}
-+
-+	return result;
-+}
-+
-+static void expand_enable_mask(u32 em, unsigned long *const dst)
-+{
-+	size_t i;
-+	DECLARE_BITMAP(emb, BITS_PER_TYPE(u32));
-+
-+	bitmap_from_arr32(emb, &em, BITS_PER_TYPE(u32));
-+
-+	for_each_set_bit(i, emb, BITS_PER_TYPE(u32))
-+		bitmap_set(dst, i * 4, 4);
-+}
-+
-+/**
-+ * panthor_perf_block_data - Identify the block index and type based on the offset.
-+ *
-+ * @desc:   FW buffer descriptor.
-+ * @offset: The current offset being examined.
-+ * @idx:    Pointer to an output index.
-+ * @type:   Pointer to an output block type.
-+ *
-+ * To disambiguate different types of blocks as well as different blocks of the same type,
-+ * the offset into the FW ringbuffer is used to uniquely identify the block being considered.
-+ *
-+ * In the future, this is a good time to identify whether a block will be empty,
-+ * allowing us to short-circuit its processing after emitting header information.
-+ */
-+static void panthor_perf_block_data(struct panthor_perf_buffer_descriptor *const desc,
-+		size_t offset, u32 *idx, enum drm_panthor_perf_block_type *type)
-+{
-+	unsigned long id;
-+
-+	for_each_set_bit(id, desc->available_blocks, DRM_PANTHOR_PERF_BLOCK_LAST) {
-+		const size_t block_start = desc->blocks[id].offset;
-+		const size_t block_count = desc->blocks[id].block_count;
-+		const size_t block_end = desc->blocks[id].offset +
-+			desc->block_size * block_count;
-+
-+		if (!block_count)
-+			continue;
-+
-+		if ((offset >= block_start) && (offset < block_end)) {
-+			*type = desc->blocks[id].type;
-+			*idx = div_u64(offset - desc->blocks[id].offset, desc->block_size);
-+
-+			return;
-+		}
-+	}
-+}
-+
- static size_t session_get_max_sample_size(const struct drm_panthor_perf_info *const info)
- {
- 	const size_t block_size = get_annotated_block_size(info->counters_per_block);
-@@ -358,6 +614,520 @@ static size_t session_get_max_sample_size(const struct drm_panthor_perf_info *co
- 	return sizeof(struct drm_panthor_perf_sample_header) + (block_size * block_nr);
- }
- 
-+static u32 panthor_perf_handle_sample(struct panthor_device *ptdev, u32 extract_idx, u32 insert_idx)
-+{
-+	struct panthor_perf *perf = ptdev->perf;
-+	struct panthor_perf_sampler *sampler = &ptdev->perf->sampler;
-+	const size_t ann_block_size =
-+		get_annotated_block_size(ptdev->perf_info.counters_per_block);
-+	u32 i;
-+
-+	for (i = extract_idx; i != insert_idx; i = (i + 1) % sampler->sample_slots) {
-+		u8 *fw_sample = (u8 *)sampler->rb->kmap + i * sampler->sample_size;
-+
-+		for (size_t fw_off = 0, ann_off = sizeof(struct drm_panthor_perf_sample_header);
-+				fw_off < sampler->desc.buffer_size;
-+				fw_off += sampler->desc.block_size)
-+
-+		{
-+			u32 idx;
-+			enum drm_panthor_perf_block_type type;
-+			DECLARE_BITMAP(expanded_em, PANTHOR_PERF_EM_BITS);
-+			struct panthor_perf_counter_block *blk =
-+				(typeof(blk))(perf->sampler.sample + ann_off);
-+			const u32 prfcnt_en = blk->counters[PANTHOR_CTR_PRFCNT_EN];
-+
-+			panthor_perf_block_data(&sampler->desc, fw_off, &idx, &type);
-+
-+			/**
-+			 * TODO Data from the metadata block must be used to populate the
-+			 * block state information.
-+			 */
-+			if (type == DRM_PANTHOR_PERF_BLOCK_METADATA)
-+				continue;
-+
-+			expand_enable_mask(prfcnt_en, expanded_em);
-+
-+			blk->header = (struct drm_panthor_perf_block_header) {
-+				.clock = 0,
-+				.block_idx = idx,
-+				.block_type = type,
-+				.block_states = DRM_PANTHOR_PERF_BLOCK_STATE_UNKNOWN
-+			};
-+			bitmap_to_arr64(blk->header.enable_mask, expanded_em, PANTHOR_PERF_EM_BITS);
-+
-+			u32 *block = (u32 *)(fw_sample + fw_off);
-+
-+			/*
-+			 * The four header counters must be treated differently, because they are
-+			 * not additive. For the fourth, the assignment does not matter, as it
-+			 * is reserved and should be zero.
-+			 */
-+			blk->counters[PANTHOR_CTR_TIMESTAMP_LO] = block[PANTHOR_CTR_TIMESTAMP_LO];
-+			blk->counters[PANTHOR_CTR_TIMESTAMP_HI] = block[PANTHOR_CTR_TIMESTAMP_HI];
-+			blk->counters[PANTHOR_CTR_PRFCNT_EN] = block[PANTHOR_CTR_PRFCNT_EN];
-+
-+			for (size_t k = PANTHOR_HEADER_COUNTERS;
-+					k < ptdev->perf_info.counters_per_block;
-+					k++)
-+				blk->counters[k] += block[k];
-+
-+			ann_off += ann_block_size;
-+		}
-+	}
-+
-+	return i;
-+}
-+
-+static size_t panthor_perf_get_fw_reported_size(struct panthor_device *ptdev)
-+{
-+	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
-+
-+	size_t fw_size = GLB_PERFCNT_FW_SIZE(glb_iface->control->perfcnt_size);
-+	size_t hw_size = GLB_PERFCNT_HW_SIZE(glb_iface->control->perfcnt_size);
-+	size_t md_size = PERFCNT_FEATURES_MD_SIZE(glb_iface->control->perfcnt_features);
-+
-+	return md_size + fw_size + hw_size;
-+}
-+
-+#define PANTHOR_PERF_SET_BLOCK_DESC_DATA(desc, typ, blk_count, offset) \
-+	({ \
-+		(desc)->blocks[(typ)].type = (typ); \
-+		(desc)->blocks[(typ)].offset = (offset); \
-+		(desc)->blocks[(typ)].block_count = (blk_count);  \
-+		if ((blk_count))                                    \
-+			set_bit((typ), (desc)->available_blocks); \
-+		(offset) + ((desc)->block_size) * (blk_count); \
-+	 })
-+
-+static int panthor_perf_setup_fw_buffer_desc(struct panthor_device *ptdev,
-+		struct panthor_perf_sampler *sampler)
-+{
-+	const struct drm_panthor_perf_info *const info = &ptdev->perf_info;
-+	const size_t block_size = info->counters_per_block * sizeof(u32);
-+	struct panthor_perf_buffer_descriptor *desc = &sampler->desc;
-+	const size_t fw_sample_size = panthor_perf_get_fw_reported_size(ptdev);
-+	size_t offset = 0;
-+
-+	desc->block_size = block_size;
-+
-+	for (enum drm_panthor_perf_block_type type = 0; type < DRM_PANTHOR_PERF_BLOCK_MAX; type++) {
-+		switch (type) {
-+		case DRM_PANTHOR_PERF_BLOCK_METADATA:
-+			if (info->flags & DRM_PANTHOR_PERF_BLOCK_STATES_SUPPORT)
-+				offset = PANTHOR_PERF_SET_BLOCK_DESC_DATA(desc,
-+					DRM_PANTHOR_PERF_BLOCK_METADATA, 1, offset);
-+			break;
-+		case DRM_PANTHOR_PERF_BLOCK_FW:
-+			offset = PANTHOR_PERF_SET_BLOCK_DESC_DATA(desc, type, info->fw_blocks,
-+					offset);
-+			break;
-+		case DRM_PANTHOR_PERF_BLOCK_CSG:
-+			offset = PANTHOR_PERF_SET_BLOCK_DESC_DATA(desc, type, info->csg_blocks,
-+					offset);
-+			break;
-+		case DRM_PANTHOR_PERF_BLOCK_CSHW:
-+			offset = PANTHOR_PERF_SET_BLOCK_DESC_DATA(desc, type, info->cshw_blocks,
-+					offset);
-+			break;
-+		case DRM_PANTHOR_PERF_BLOCK_TILER:
-+			offset = PANTHOR_PERF_SET_BLOCK_DESC_DATA(desc, type, info->tiler_blocks,
-+					offset);
-+			break;
-+		case DRM_PANTHOR_PERF_BLOCK_MEMSYS:
-+			offset = PANTHOR_PERF_SET_BLOCK_DESC_DATA(desc, type, info->memsys_blocks,
-+					offset);
-+			break;
-+		case DRM_PANTHOR_PERF_BLOCK_SHADER:
-+			offset = PANTHOR_PERF_SET_BLOCK_DESC_DATA(desc, type, info->shader_blocks,
-+					offset);
-+			break;
-+		case DRM_PANTHOR_PERF_BLOCK_MAX:
-+			drm_WARN_ON_ONCE(&ptdev->base,
-+					"DRM_PANTHOR_PERF_BLOCK_MAX should be unreachable!");
-+			break;
-+		}
-+	}
-+
-+	/* Computed size is not the same as the reported size, so we should not proceed in
-+	 * initializing the sampling session.
-+	 */
-+	if (offset != fw_sample_size)
-+		return -EINVAL;
-+
-+	desc->buffer_size = offset;
-+
-+	return 0;
-+}
-+
-+static int panthor_perf_fw_stop_sampling(struct panthor_device *ptdev)
-+{
-+	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
-+	u32 acked;
-+	int ret;
-+
-+	if (~READ_ONCE(glb_iface->input->req) & GLB_PERFCNT_ENABLE)
-+		return 0;
-+
-+	panthor_fw_update_reqs(glb_iface, req, 0, GLB_PERFCNT_ENABLE);
-+	gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
-+	ret = panthor_fw_glb_wait_acks(ptdev, GLB_PERFCNT_ENABLE, &acked, 100);
-+	if (ret)
-+		drm_warn(&ptdev->base, "Could not disable performance counters");
-+
-+	return ret;
-+}
-+
-+static int panthor_perf_fw_start_sampling(struct panthor_device *ptdev)
-+{
-+	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
-+	u32 acked;
-+	int ret;
-+
-+	if (READ_ONCE(glb_iface->input->req) & GLB_PERFCNT_ENABLE)
-+		return 0;
-+
-+	panthor_fw_update_reqs(glb_iface, req, GLB_PERFCNT_ENABLE, GLB_PERFCNT_ENABLE);
-+	gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
-+	ret = panthor_fw_glb_wait_acks(ptdev, GLB_PERFCNT_ENABLE, &acked, 100);
-+	if (ret)
-+		drm_warn(&ptdev->base, "Could not enable performance counters");
-+
-+	return ret;
-+}
-+
-+static void panthor_perf_fw_write_em(struct panthor_perf_sampler *sampler,
-+		struct panthor_perf_enable_masks *em)
-+{
-+	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(sampler->ptdev);
-+	u32 perfcnt_config;
-+
-+	glb_iface->input->perfcnt_csf_enable =
-+		compress_enable_mask(em->mask[DRM_PANTHOR_PERF_BLOCK_CSHW]);
-+	glb_iface->input->perfcnt_shader_enable =
-+		compress_enable_mask(em->mask[DRM_PANTHOR_PERF_BLOCK_SHADER]);
-+	glb_iface->input->perfcnt_mmu_l2_enable =
-+		compress_enable_mask(em->mask[DRM_PANTHOR_PERF_BLOCK_MEMSYS]);
-+	glb_iface->input->perfcnt_tiler_enable =
-+		compress_enable_mask(em->mask[DRM_PANTHOR_PERF_BLOCK_TILER]);
-+	glb_iface->input->perfcnt_fw_enable =
-+		compress_enable_mask(em->mask[DRM_PANTHOR_PERF_BLOCK_FW]);
-+	glb_iface->input->perfcnt_csg_enable =
-+		compress_enable_mask(em->mask[DRM_PANTHOR_PERF_BLOCK_CSG]);
-+
-+	perfcnt_config = GLB_PRFCNT_CONFIG_SIZE(PANTHOR_PERF_FW_RINGBUF_SLOTS);
-+	perfcnt_config |= GLB_PRFCNT_CONFIG_SET(sampler->set_config);
-+	glb_iface->input->perfcnt_config = perfcnt_config;
-+
-+	/**
-+	 * The spec mandates that the host zero the PRFCNT_EXTRACT register before an enable
-+	 * operation, and each (re-)enable will require an enable-disable pair to program
-+	 * the new changes onto the FW interface.
-+	 */
-+	WRITE_ONCE(glb_iface->input->perfcnt_extract, 0);
-+}
-+
-+static void session_populate_sample_header(struct panthor_perf_session *session,
-+		struct drm_panthor_perf_sample_header *hdr)
-+{
-+	hdr->block_set = 0;
-+	hdr->user_data = session->user_data;
-+	hdr->timestamp_start_ns = session->sample_start_ns;
-+	/**
-+	 * TODO This should be changed to use the GPU clocks and the TIMESTAMP register,
-+	 * when support is added.
-+	 */
-+	hdr->timestamp_end_ns = ktime_get_raw_ns();
-+}
-+
-+/**
-+ * session_patch_sample - Update the PRFCNT_EN header counter and the counters exposed to the
-+ *                        userspace client to only contain requested counters.
-+ *
-+ * @ptdev: Panthor device
-+ * @session: Perf session
-+ * @sample: Starting offset of the sample in the userspace mapping.
-+ *
-+ * The hardware supports counter selection at the granularity of 1 bit per 4 counters, and there
-+ * is a single global FW frontend to program the counter requests from multiple sessions. This may
-+ * lead to a large disparity between the requested and provided counters for an individual client.
-+ * To remove this cross-talk, we patch out the counters that have not been requested by this
-+ * session and update the PRFCNT_EN, the header counter containing a bitmask of enabled counters,
-+ * accordingly.
-+ */
-+static void session_patch_sample(struct panthor_device *ptdev,
-+		struct panthor_perf_session *session, u8 *sample)
-+{
-+	const struct drm_panthor_perf_info *const perf_info = &ptdev->perf_info;
-+
-+	const size_t block_size = get_annotated_block_size(perf_info->counters_per_block);
-+	const size_t sample_size = session_get_max_sample_size(perf_info);
-+
-+	for (size_t i = 0; i < sample_size; i += block_size) {
-+		size_t ctr_idx;
-+		DECLARE_BITMAP(em_diff, PANTHOR_PERF_EM_BITS);
-+		struct panthor_perf_counter_block *blk = (typeof(blk))(sample + block_size);
-+		enum drm_panthor_perf_block_type type = blk->header.block_type;
-+		unsigned long *blk_em = session->enabled_counters->mask[type];
-+
-+		bitmap_from_arr64(em_diff, blk->header.enable_mask, PANTHOR_PERF_EM_BITS);
-+
-+		bitmap_andnot(em_diff, em_diff, blk_em, PANTHOR_PERF_EM_BITS);
-+
-+		for_each_set_bit(ctr_idx, em_diff, PANTHOR_PERF_EM_BITS)
-+			blk->counters[ctr_idx] = 0;
-+
-+		bitmap_to_arr64(blk->header.enable_mask, blk_em, PANTHOR_PERF_EM_BITS);
-+	}
-+}
-+
-+static int session_copy_sample(struct panthor_device *ptdev,
-+		struct panthor_perf_session *session)
-+{
-+	struct panthor_perf *perf = ptdev->perf;
-+	const size_t sample_size = session_get_max_sample_size(&ptdev->perf_info);
-+	const u32 insert_idx = session_read_insert_idx(session);
-+	const u32 extract_idx = session_read_extract_idx(session);
-+	u8 *new_sample;
-+
-+	if (!CIRC_SPACE_TO_END(insert_idx, extract_idx, session->ringbuf_slots))
-+		return -ENOSPC;
-+
-+	new_sample = session->samples + extract_idx * sample_size;
-+
-+	memcpy(new_sample, perf->sampler.sample, sample_size);
-+
-+	session_populate_sample_header(session,
-+			(struct drm_panthor_perf_sample_header *)new_sample);
-+
-+	session_patch_sample(ptdev, session, new_sample +
-+			sizeof(struct drm_panthor_perf_sample_header));
-+
-+	session_write_insert_idx(session, (insert_idx + 1) % session->ringbuf_slots);
-+
-+	/* Since we are about to notify userspace, we must ensure that all changes to memory
-+	 * are visible.
-+	 */
-+	wmb();
-+
-+	eventfd_signal(session->eventfd);
-+
-+	return 0;
-+}
-+
-+#define PERFCNT_IRQS (GLB_PERFCNT_OVERFLOW | GLB_PERFCNT_SAMPLE | GLB_PERFCNT_THRESHOLD)
-+
-+void panthor_perf_report_irq(struct panthor_device *ptdev, u32 status)
-+{
-+	struct panthor_perf *const perf = ptdev->perf;
-+	struct panthor_perf_sampler *sampler;
-+	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
-+
-+	if (!(status & JOB_INT_GLOBAL_IF))
-+		return;
-+
-+	if (!perf)
-+		return;
-+
-+	sampler = &perf->sampler;
-+
-+	/* TODO This needs locking. */
-+	const u32 ack = READ_ONCE(glb_iface->output->ack);
-+	const u32 fw_events = sampler->last_ack ^ ack;
-+
-+	sampler->last_ack = ack;
-+
-+	if (!(fw_events & PERFCNT_IRQS))
-+		return;
-+
-+	/* TODO Fix up the error handling for overflow. */
-+	if (fw_events & GLB_PERFCNT_OVERFLOW)
-+		return;
-+
-+	if (fw_events & (GLB_PERFCNT_SAMPLE | GLB_PERFCNT_THRESHOLD)) {
-+		const u32 extract_idx = READ_ONCE(glb_iface->input->perfcnt_extract);
-+		const u32 insert_idx = READ_ONCE(glb_iface->output->perfcnt_insert);
-+
-+		WRITE_ONCE(glb_iface->input->perfcnt_extract,
-+				panthor_perf_handle_sample(ptdev, extract_idx, insert_idx));
-+	}
-+
-+	scoped_guard(mutex, &sampler->sampler_lock)
-+	{
-+		struct list_head *pos, *temp;
-+
-+		list_for_each_safe(pos, temp, &sampler->sampler_list) {
-+			struct panthor_perf_session *session = list_entry(pos,
-+					struct panthor_perf_session, waiting);
-+
-+			session_copy_sample(ptdev, session);
-+			list_del_init(pos);
-+
-+			session_put(session);
-+		}
-+	}
-+
-+	memset(sampler->sample, 0, session_get_max_sample_size(&ptdev->perf_info));
-+	sampler->sample_requested = false;
-+	complete(&sampler->sample_handled);
-+}
-+
-+
-+static int panthor_perf_sampler_init(struct panthor_perf_sampler *sampler,
-+		struct panthor_device *ptdev)
-+{
-+	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
-+	struct panthor_kernel_bo *bo;
-+	u8 *sample;
-+	int ret;
-+
-+	ret = panthor_perf_setup_fw_buffer_desc(ptdev, sampler);
-+	if (ret) {
-+		drm_err(&ptdev->base,
-+				"Failed to setup descriptor for FW ring buffer, err = %d", ret);
-+		return ret;
-+	}
-+
-+	bo = panthor_kernel_bo_create(ptdev, panthor_fw_vm(ptdev),
-+			sampler->desc.buffer_size * PANTHOR_PERF_FW_RINGBUF_SLOTS,
-+			DRM_PANTHOR_BO_NO_MMAP,
-+			DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC | DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
-+			PANTHOR_VM_KERNEL_AUTO_VA);
-+
-+	if (IS_ERR_OR_NULL(bo))
-+		return IS_ERR(bo) ? PTR_ERR(bo) : -ENOMEM;
-+
-+	ret = panthor_kernel_bo_vmap(bo);
-+	if (ret)
-+		goto cleanup_bo;
-+
-+	sample = devm_kzalloc(ptdev->base.dev,
-+			session_get_max_sample_size(&ptdev->perf_info), GFP_KERNEL);
-+	if (ZERO_OR_NULL_PTR(sample)) {
-+		ret = -ENOMEM;
-+		goto cleanup_vmap;
-+	}
-+
-+	glb_iface->input->perfcnt_as = panthor_vm_as(panthor_fw_vm(ptdev));
-+	glb_iface->input->perfcnt_base = panthor_kernel_bo_gpuva(bo);
-+	glb_iface->input->perfcnt_extract = 0;
-+	glb_iface->input->perfcnt_csg_select = GENMASK(glb_iface->control->group_num, 0);
-+
-+	sampler->rb = bo;
-+	sampler->sample = sample;
-+	sampler->sample_slots = PANTHOR_PERF_FW_RINGBUF_SLOTS;
-+
-+	sampler->em = panthor_perf_em_new();
-+
-+	mutex_init(&sampler->sampler_lock);
-+	mutex_init(&sampler->config_lock);
-+	INIT_LIST_HEAD(&sampler->sampler_list);
-+	INIT_LIST_HEAD(&sampler->ems);
-+	init_completion(&sampler->sample_handled);
-+
-+	sampler->ptdev = ptdev;
-+
-+	return 0;
-+
-+cleanup_vmap:
-+	panthor_kernel_bo_vunmap(bo);
-+
-+cleanup_bo:
-+	panthor_kernel_bo_destroy(bo);
-+
-+	return ret;
-+}
-+
-+static void panthor_perf_sampler_term(struct panthor_perf_sampler *sampler)
++static int panthor_perf_sampler_resume(struct panthor_perf_sampler *sampler)
 +{
 +	int ret;
 +
-+	if (sampler->sample_requested)
-+		wait_for_completion_killable(&sampler->sample_handled);
-+
-+	panthor_perf_fw_write_em(sampler, &(struct panthor_perf_enable_masks) {});
-+
-+	ret = panthor_perf_fw_stop_sampling(sampler->ptdev);
-+	if (ret)
-+		drm_warn_once(&sampler->ptdev->base, "Sampler termination failed, ret = %d", ret);
-+
-+	devm_kfree(sampler->ptdev->base.dev, sampler->sample);
-+
-+	panthor_kernel_bo_destroy(sampler->rb);
-+}
-+
-+static int panthor_perf_sampler_add(struct panthor_perf_sampler *sampler,
-+		struct panthor_perf_enable_masks *const new_em,
-+		u8 set)
-+{
-+	int ret = 0;
-+
-+	guard(mutex)(&sampler->config_lock);
-+
-+	/* Early check for whether a new set can be configured. */
 +	if (!atomic_read(&sampler->enabled_clients))
-+		sampler->set_config = set;
-+	else
-+		if (sampler->set_config != set)
-+			return -EBUSY;
++		return 0;
 +
-+	kref_get(&new_em->refs);
-+	list_add_tail(&sampler->ems, &new_em->link);
-+
-+	panthor_perf_em_add(sampler->em, new_em);
-+	pm_runtime_get_sync(sampler->ptdev->base.dev);
-+
-+	if (atomic_read(&sampler->enabled_clients)) {
-+		ret = panthor_perf_fw_stop_sampling(sampler->ptdev);
-+		if (ret)
-+			return ret;
++	if (!panthor_perf_em_empty(sampler->em)) {
++		guard(mutex)(&sampler->config_lock);
++		panthor_perf_fw_write_em(sampler, sampler->em);
 +	}
-+
-+	panthor_perf_fw_write_em(sampler, sampler->em);
 +
 +	ret = panthor_perf_fw_start_sampling(sampler->ptdev);
 +	if (ret)
 +		return ret;
 +
-+	atomic_inc(&sampler->enabled_clients);
-+
 +	return 0;
 +}
 +
-+static int panthor_perf_sampler_remove(struct panthor_perf_sampler *sampler,
-+		struct panthor_perf_enable_masks *session_em)
++static int panthor_perf_sampler_suspend(struct panthor_perf_sampler *sampler)
 +{
 +	int ret;
-+	struct list_head *em_node;
 +
-+	guard(mutex)(&sampler->config_lock);
-+
-+	list_del_init(&session_em->link);
-+	kref_put(&session_em->refs, panthor_perf_destroy_em_kref);
-+
-+	panthor_perf_em_zero(sampler->em);
-+	list_for_each(em_node, &sampler->ems)
-+	{
-+		struct panthor_perf_enable_masks *curr_em =
-+			container_of(em_node, typeof(*curr_em), link);
-+
-+		panthor_perf_em_add(sampler->em, curr_em);
-+	}
++	if (!atomic_read(&sampler->enabled_clients))
++		return 0;
 +
 +	ret = panthor_perf_fw_stop_sampling(sampler->ptdev);
 +	if (ret)
 +		return ret;
 +
-+	atomic_dec(&sampler->enabled_clients);
-+	pm_runtime_put_sync(sampler->ptdev->base.dev);
-+
-+	panthor_perf_fw_write_em(sampler, sampler->em);
-+
-+	if (atomic_read(&sampler->enabled_clients))
-+		return panthor_perf_fw_start_sampling(sampler->ptdev);
 +	return 0;
++}
++
++/**
++ * panthor_perf_suspend - Prepare the performance counter subsystem for system suspend.
++ * @ptdev: Panthor device.
++ *
++ * Indicate to the performance counters that the system is suspending.
++ *
++ * This function must not be used to handle MCU power state transitions: just before MCU goes
++ * from on to any inactive state, an automatic sample will be performed by the firmware, and
++ * the performance counter firmware state will be restored on warm boot.
++ *
++ * Return: 0 on success, negative error code on failure.
++ */
++int panthor_perf_suspend(struct panthor_device *ptdev)
++{
++	struct panthor_perf *perf = ptdev->perf;
++
++	if (!perf)
++		return 0;
++
++	return panthor_perf_sampler_suspend(&perf->sampler);
++}
++
++/**
++ * panthor_perf_resume - Resume the performance counter subsystem after system resumption.
++ * @ptdev: Panthor device.
++ *
++ * Indicate to the performance counters that the system has resumed. This must not be used
++ * to handle MCU state transitions, for the same reasons as detailed in the kerneldoc for
++ * @panthor_perf_suspend.
++ *
++ * Return: 0 on success, negative error code on failure.
++ */
++int panthor_perf_resume(struct panthor_device *ptdev)
++{
++	struct panthor_perf *perf = ptdev->perf;
++
++	if (!perf)
++		return 0;
++
++	return panthor_perf_sampler_resume(&perf->sampler);
 +}
 +
  /**
-  * panthor_perf_init - Initialize the performance counter subsystem.
-  * @ptdev: Panthor device
-@@ -370,6 +1140,7 @@ static size_t session_get_max_sample_size(const struct drm_panthor_perf_info *co
- int panthor_perf_init(struct panthor_device *ptdev)
- {
- 	struct panthor_perf *perf;
-+	int ret;
- 
- 	if (!ptdev)
- 		return -EINVAL;
-@@ -386,12 +1157,93 @@ int panthor_perf_init(struct panthor_device *ptdev)
- 		.max = 1,
- 	};
- 
-+	ret = panthor_perf_sampler_init(&perf->sampler, ptdev);
-+	if (ret)
-+		goto cleanup_perf;
-+
- 	drm_info(&ptdev->base, "Performance counter subsystem initialized");
- 
- 	ptdev->perf = perf;
- 
--	return 0;
-+	return ret;
-+
-+cleanup_perf:
-+	devm_kfree(ptdev->base.dev, perf);
-+
-+	return ret;
-+}
-+
-+
-+static void panthor_perf_fw_request_sample(struct panthor_perf_sampler *sampler)
-+{
-+	struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(sampler->ptdev);
-+
-+	panthor_fw_toggle_reqs(glb_iface, req, ack, GLB_PERFCNT_SAMPLE);
-+	gpu_write(sampler->ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
-+}
-+
-+/**
-+ * panthor_perf_sampler_request_clearing - Request a clearing sample.
-+ * @sampler: Panthor sampler
-+ *
-+ * Perform a synchronous sample that gets immediately discarded. This sets a baseline at the point
-+ * of time a new session is started, to avoid having counters from before the session.
-+ *
-+ */
-+static int panthor_perf_sampler_request_clearing(struct panthor_perf_sampler *sampler)
-+{
-+	scoped_guard(mutex, &sampler->sampler_lock) {
-+		if (!sampler->sample_requested) {
-+			panthor_perf_fw_request_sample(sampler);
-+			sampler->sample_requested = true;
-+		}
-+	}
-+
-+	return wait_for_completion_timeout(&sampler->sample_handled,
-+			msecs_to_jiffies(1000));
-+}
-+
-+/**
-+ * panthor_perf_sampler_request_sample - Request a counter sample for the userspace client.
-+ * @sampler: Panthor sampler
-+ * @session: Target session
-+ *
-+ * A session that has already requested a sample cannot request another one until the previous
-+ * sample has been delivered.
-+ *
-+ * Return:
-+ * * %0       - The sample has been requested successfully.
-+ * * %-EBUSY  - The target session has already requested a sample and has not received it yet.
-+ */
-+static int panthor_perf_sampler_request_sample(struct panthor_perf_sampler *sampler,
-+		struct panthor_perf_session *session)
-+{
-+	struct list_head *head;
-+
-+	reinit_completion(&sampler->sample_handled);
-+
-+	guard(mutex)(&sampler->sampler_lock);
-+
-+	/*
-+	 * If a previous sample has not been handled yet, the session cannot request another
-+	 * sample. If this happens too often, the requested sample rate is too high.
-+	 */
-+	list_for_each(head, &sampler->sampler_list) {
-+		struct panthor_perf_session *cur_session = list_entry(head,
-+				typeof(*cur_session), waiting);
-+
-+		if (session == cur_session)
-+			return -EBUSY;
-+	}
-+
-+	if (list_empty(&sampler->sampler_list) && !sampler->sample_requested)
-+		panthor_perf_fw_request_sample(sampler);
- 
-+	sampler->sample_requested = true;
-+	list_add_tail(&session->waiting, &sampler->sampler_list);
-+	session_get(session);
-+
-+	return 0;
- }
- 
- static int session_validate_set(u8 set)
-@@ -483,7 +1335,12 @@ int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf
- 		goto cleanup_eventfd;
- 	}
- 
-+	ret = panthor_perf_sampler_add(&perf->sampler, em, setup_args->block_set);
-+	if (ret)
-+		goto cleanup_em;
-+
- 	INIT_LIST_HEAD(&session->waiting);
-+
- 	session->extract_idx = ctrl_map.vaddr;
- 	*session->extract_idx = 0;
- 	session->insert_idx = session->extract_idx + 1;
-@@ -507,12 +1364,15 @@ int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf
- 	ret = xa_alloc_cyclic(&perf->sessions, &session_id, session, perf->session_range,
- 			&perf->next_session, GFP_KERNEL);
- 	if (ret < 0)
--		goto cleanup_em;
-+		goto cleanup_sampler_add;
- 
- 	kref_init(&session->ref);
- 
- 	return session_id;
- 
-+cleanup_sampler_add:
-+	panthor_perf_sampler_remove(&perf->sampler, em);
-+
- cleanup_em:
- 	kref_put(&em->refs, panthor_perf_destroy_em_kref);
- 
-@@ -540,6 +1400,8 @@ int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf
- static int session_stop(struct panthor_perf *perf, struct panthor_perf_session *session,
- 		u64 user_data)
- {
-+	int ret;
-+
- 	if (!test_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state))
- 		return 0;
- 
-@@ -552,6 +1414,10 @@ static int session_stop(struct panthor_perf *perf, struct panthor_perf_session *
- 
- 	session->user_data = user_data;
- 
-+	ret = panthor_perf_sampler_request_sample(&perf->sampler, session);
-+	if (ret)
-+		return ret;
-+
- 	clear_bit(PANTHOR_PERF_SESSION_ACTIVE, session->state);
- 
- 	/* TODO Calls to the FW interface will go here in later patches. */
-@@ -573,8 +1439,7 @@ static int session_start(struct panthor_perf *perf, struct panthor_perf_session
- 	if (session->sample_freq_ns)
- 		session->user_data = user_data;
- 
--	/* TODO Calls to the FW interface will go here in later patches. */
--	return 0;
-+	return panthor_perf_sampler_request_clearing(&perf->sampler);
- }
- 
- static int session_sample(struct panthor_perf *perf, struct panthor_perf_session *session,
-@@ -601,15 +1466,16 @@ static int session_sample(struct panthor_perf *perf, struct panthor_perf_session
- 	session->sample_start_ns = ktime_get_raw_ns();
- 	session->user_data = user_data;
- 
--	/* TODO Calls to the FW interface will go here in later patches. */
--	return 0;
-+	return panthor_perf_sampler_request_sample(&perf->sampler, session);
- }
- 
- static int session_destroy(struct panthor_perf *perf, struct panthor_perf_session *session)
- {
-+	int ret = panthor_perf_sampler_remove(&perf->sampler, session->enabled_counters);
-+
- 	session_put(session);
- 
--	return 0;
-+	return ret;
- }
- 
- static int session_teardown(struct panthor_perf *perf, struct panthor_perf_session *session)
-@@ -813,6 +1679,8 @@ void panthor_perf_unplug(struct panthor_device *ptdev)
- 
- 	xa_destroy(&perf->sessions);
- 
-+	panthor_perf_sampler_term(&perf->sampler);
-+
- 	devm_kfree(ptdev->base.dev, ptdev->perf);
- 
- 	ptdev->perf = NULL;
+  * panthor_perf_unplug - Terminate the performance counter subsystem.
+  * @ptdev: Panthor device.
 diff --git a/drivers/gpu/drm/panthor/panthor_perf.h b/drivers/gpu/drm/panthor/panthor_perf.h
-index bfef8874068b..3485e4a55e15 100644
+index 3485e4a55e15..a22a511a0809 100644
 --- a/drivers/gpu/drm/panthor/panthor_perf.h
 +++ b/drivers/gpu/drm/panthor/panthor_perf.h
-@@ -31,4 +31,6 @@ int panthor_perf_session_sample(struct panthor_file *pfile, struct panthor_perf
- 		u32 sid, u64 user_data);
- void panthor_perf_session_destroy(struct panthor_file *pfile, struct panthor_perf *perf);
+@@ -16,6 +16,8 @@ struct panthor_perf;
+ void panthor_perf_info_init(struct panthor_device *ptdev);
  
-+void panthor_perf_report_irq(struct panthor_device *ptdev, u32 status);
-+
- #endif /* __PANTHOR_PERF_H__ */
-diff --git a/include/uapi/drm/panthor_drm.h b/include/uapi/drm/panthor_drm.h
-index 576d3ad46e6d..a29b755d6556 100644
---- a/include/uapi/drm/panthor_drm.h
-+++ b/include/uapi/drm/panthor_drm.h
-@@ -441,8 +441,11 @@ enum drm_panthor_perf_feat_flags {
-  * enum drm_panthor_perf_block_type - Performance counter supported block types.
-  */
- enum drm_panthor_perf_block_type {
-+	/** DRM_PANTHOR_PERF_BLOCK_METADATA: Internal use only. */
-+	DRM_PANTHOR_PERF_BLOCK_METADATA = 0,
-+
- 	/** @DRM_PANTHOR_PERF_BLOCK_FW: The FW counter block. */
--	DRM_PANTHOR_PERF_BLOCK_FW = 1,
-+	DRM_PANTHOR_PERF_BLOCK_FW,
+ int panthor_perf_init(struct panthor_device *ptdev);
++int panthor_perf_suspend(struct panthor_device *ptdev);
++int panthor_perf_resume(struct panthor_device *ptdev);
+ void panthor_perf_unplug(struct panthor_device *ptdev);
  
- 	/** @DRM_PANTHOR_PERF_BLOCK_CSG: A CSG counter block. */
- 	DRM_PANTHOR_PERF_BLOCK_CSG,
+ int panthor_perf_session_setup(struct panthor_device *ptdev, struct panthor_perf *perf,
 -- 
 2.25.1
 
