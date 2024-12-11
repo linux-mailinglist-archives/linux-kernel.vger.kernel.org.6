@@ -1,186 +1,101 @@
-Return-Path: <linux-kernel+bounces-441765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-441766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2B39ED3DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:41:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A8D1889B95
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:41:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A2E1FF1C6;
-	Wed, 11 Dec 2024 17:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jN0+EohD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159F89ED3DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 18:42:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119091FF1B4;
-	Wed, 11 Dec 2024 17:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CD762862C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 17:42:15 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E2F1FF1C5;
+	Wed, 11 Dec 2024 17:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bCv5qjyJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3871FECD2
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733938840; cv=none; b=J+uhkj3GE8l45lFUtswbWJ+M+u/e/8uxSUXVwwdVRsbA3Z2iCaTP100zs0D70IgPWfsD0pp7iMKRDrbSDkNJyILv0oVutg8DJ4W/LSNVHypUgBrBdeRyXo/AXOKB3G29bu8DWrbyrPtx5jd+d5VDItemZHZohJWSiFm6khr+rEU=
+	t=1733938931; cv=none; b=Rr6dvkac8t3FtjDk7ZynoF8yJii58pfade/ECIghOzAm4gucntzAd29MRbhPoLbeohUUWlrXi2sBFFrmtdtk1KO00IOazWIoV3/uGyGRMRxot3qk3Ki9WaXvFBp1dd9WlUFZwOo+XNUh+SuemrQMTyOT4QYKJG/MT6zLeSB6tq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733938840; c=relaxed/simple;
-	bh=7yO+0JOWcw0rv4ZXgLl4IZjD04zJh6IohJpO9cxyyR4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s5Tvcc7nM3bcfkzXIp/QZgoAV8a/lEwvofWGlW0AE+XjJKrRYKXub5BZDLW1yXM2/QsSKJIv/ywl3Zd2s+ulQIHXL1hlStj0gdbbjbFYIwUvN+9iDlCq97GhNNAQVxOAOXlZZ3u5UiHacPO+f/Sg5g6WceyGrUKXUwRyXBaqXDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jN0+EohD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A0FC4CED2;
-	Wed, 11 Dec 2024 17:40:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733938839;
-	bh=7yO+0JOWcw0rv4ZXgLl4IZjD04zJh6IohJpO9cxyyR4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jN0+EohD6he6UDoJlTpTfDWT/wwFototv80uKDF1b5BMq6m036pgZ+IgmxeBqnKpF
-	 fc3+FO1HDyrs3NEoh9O+5mfLuqYQvVivDSWCu0hqokW/8phl6au4ToL9gSmoZT3nWn
-	 Afe201ZRmJJgjyYkXEhLLLc0+9WorLzkIA2kI5YAVKP4UxKZ7DTbGnEvLc0mH33swc
-	 P6Xx5kTW5Tq32xHNBbepXxXzeC3JefDmQ8y6lo5Zz2n3vncjHI9QLukrphrc/A+BZ7
-	 hkb39ihNED62ZcKleRTqf+JYp4I+lXeYfAmDfmOXuZ6wPOgNsg3t/veK4w16tqrmVy
-	 90Z8qKtxj5uzg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tLQhR-002lbb-7S;
-	Wed, 11 Dec 2024 17:40:37 +0000
-Date: Wed, 11 Dec 2024 17:40:36 +0000
-Message-ID: <86o71irucr.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>
-Cc: ryan.roberts@arm.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	corbet@lwn.net,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1733938931; c=relaxed/simple;
+	bh=qXu8dTjdB54vg2eNS9OB9yQqJWpu/QszOFjUbU7yuXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=a46zyDEzlOK4vG4zLOToA84iVErEWHOlqs864Pm6qBuLaZBFJWI/n6frIjyOMnp/Nv+feM7O0cKo/Jz2RlrRwaBqARHETr5ihkdjbBgRpewiqJAvz8ZvF8274w+avlVRvsLBLMdbLsYkom/6POxm81GKUsuldhiIKMIwIZWS304=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bCv5qjyJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733938928;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qXu8dTjdB54vg2eNS9OB9yQqJWpu/QszOFjUbU7yuXI=;
+	b=bCv5qjyJAxkClizCG1jgbARVva8aZnJrIHXFcjoTNgXfnVWF8UNSKO/EmJZAYQHctMJuNI
+	ENf96QZ29S7zmM7vWKkSxwS9VcbLXUTaUQ/GY2iJB61aiUldO9NasqqILIVTehQRa8lpY6
+	CYrESK9lqn1t+UXRnUaPWdNcH+dwUhI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-313-uJzm67B0MeOQ3jz9N9ZhFA-1; Wed,
+ 11 Dec 2024 12:42:03 -0500
+X-MC-Unique: uJzm67B0MeOQ3jz9N9ZhFA-1
+X-Mimecast-MFC-AGG-ID: uJzm67B0MeOQ3jz9N9ZhFA
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D1BD71955F28;
+	Wed, 11 Dec 2024 17:42:01 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.126])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 202C719560AA;
+	Wed, 11 Dec 2024 17:41:56 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: quic_yuzha@quicinc.com
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	jtornosm@redhat.com,
+	kvalo@kernel.org,
 	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [RESEND RFC PATCH v1 1/5] arm64: Add TLB Conflict Abort Exception handler to KVM
-In-Reply-To: <20241211160218.41404-2-miko.lenczewski@arm.com>
-References: <20241211160218.41404-1-miko.lenczewski@arm.com>
-	<20241211160218.41404-2-miko.lenczewski@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linux-wireless@vger.kernel.org,
+	quic_cjhuang@quicinc.com,
+	vbenes@redhat.com
+Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations are supported
+Date: Wed, 11 Dec 2024 18:41:55 +0100
+Message-ID: <20241211174155.30782-1-jtornosm@redhat.com>
+In-Reply-To: <d8705140-e335-47e0-ac70-47d8592fb18c@quicinc.com>
+References: <d8705140-e335-47e0-ac70-47d8592fb18c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: miko.lenczewski@arm.com, ryan.roberts@arm.com, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, 11 Dec 2024 16:01:37 +0000,
-Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com> wrote:
->=20
-> Currently, KVM does not handle the case of a stage 2 TLB conflict abort
-> exception. The Arm ARM specifies that the worst-case handling of such an
-> exception requires a `tlbi vmalls12e1`.
+> Got it, you use Networkmanager, so that the add interface type will
+> always be managed. But it's still work fine in my device that I use
+> "hostapd hostapd2.conf" to up the second ap.
+Yes, it works for you because you don't have a manager and/or your initial
+situation was clean and/or without other needs/services.
 
-Not quite. It says (I_JCCRT):
+For us it was enough to be able to come back to the initial interface
+combination, but it seems that you prefer to have a common configuration
+for everything.
+So, since I think it is your final intention, please, go ahead with your
+proposed interface combination and then I will debug myself to try complete
+and/or reuse in some way.
 
-<quote>
-* For the EL1&0 translation regime, when stage 2 translations are in
-  use, either VMALLS12E1 or ALLE1.
-</quote>
+Thanks
 
-> Perform such an invalidation when this exception is encountered.
+Best regards
+Jose Ignacio
 
-What you fail to describe is *why* this is needed. You know it, I know
-it, but not everybody does. A reference to the ARM ARM would
-definitely be helpful.
-
->=20
-> Signed-off-by: Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com>
-> ---
->  arch/arm64/include/asm/esr.h | 8 ++++++++
->  arch/arm64/kvm/mmu.c         | 6 ++++++
->  2 files changed, 14 insertions(+)
->=20
-> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
-> index d1b1a33f9a8b..8a66f81ca291 100644
-> --- a/arch/arm64/include/asm/esr.h
-> +++ b/arch/arm64/include/asm/esr.h
-> @@ -121,6 +121,7 @@
->  #define ESR_ELx_FSC_SEA_TTW(n)	(0x14 + (n))
->  #define ESR_ELx_FSC_SECC	(0x18)
->  #define ESR_ELx_FSC_SECC_TTW(n)	(0x1c + (n))
-> +#define ESR_ELx_FSC_TLBABT	(0x30)
-> =20
->  /* Status codes for individual page table levels */
->  #define ESR_ELx_FSC_ACCESS_L(n)	(ESR_ELx_FSC_ACCESS + (n))
-> @@ -464,6 +465,13 @@ static inline bool esr_fsc_is_access_flag_fault(unsi=
-gned long esr)
->  	       (esr =3D=3D ESR_ELx_FSC_ACCESS_L(0));
->  }
-> =20
-> +static inline bool esr_fsc_is_tlb_conflict_abort(unsigned long esr)
-> +{
-> +	esr =3D esr & ESR_ELx_FSC;
-> +
-> +	return esr =3D=3D ESR_ELx_FSC_TLBABT;
-> +}
-> +
->  /* Indicate whether ESR.EC=3D=3D0x1A is for an ERETAx instruction */
->  static inline bool esr_iss_is_eretax(unsigned long esr)
->  {
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index c9d46ad57e52..c8c6f5a97a1b 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1756,6 +1756,12 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
->  	ipa =3D fault_ipa =3D kvm_vcpu_get_fault_ipa(vcpu);
->  	is_iabt =3D kvm_vcpu_trap_is_iabt(vcpu);
-> =20
-> +	if (esr_fsc_is_tlb_conflict_abort(esr)) {
-> +		// does a `tlbi vmalls12e1is`
-
-nit: this isn't a very useful comment.
-
-> +		__kvm_tlb_flush_vmid(&vcpu->kvm->arch.mmu);
-> +		return 1;
-> +	}
-
-That's not enough, unfortunately. A nested VM has *many* VMIDs (the
-flattening of all translation contexts that the guest uses).
-
-So you can either iterate over all the valid VMIDs owned by this
-guest, or more simply issue a TLBI ALLE1, which will do the trick in a
-much more efficient way.
-
-The other thing is that you are using an IS invalidation, which is
-farther reaching than necessary. Why would you invalidate the TLBs for
-CPUs that are only innocent bystanders? A non-shareable invalidation
-seems preferable to me.
-
-> +
->  	if (esr_fsc_is_translation_fault(esr)) {
->  		/* Beyond sanitised PARange (which is the IPA limit) */
->  		if (fault_ipa >=3D BIT_ULL(get_kvm_ipa_limit())) {
-
-But it also begs the question: why only KVM, and not the host? This
-handler will only take effect for a TLB Conflict abort delivered from
-an EL1 guest to EL2.
-
-However, it doesn't seem to me that the host is equipped to deal with
-this sort of exception for itself. Shouldn't you start with that?
-
-Thanks,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
 
