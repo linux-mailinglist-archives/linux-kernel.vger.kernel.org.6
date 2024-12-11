@@ -1,599 +1,320 @@
-Return-Path: <linux-kernel+bounces-440797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4A29EC45E
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:33:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B369EC460
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 06:36:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B31167ADF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024381679CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 05:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D157E1C1F34;
-	Wed, 11 Dec 2024 05:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A361C1F08;
+	Wed, 11 Dec 2024 05:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OUfnmVmL"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hGvxGSa4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF6333993
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733895196; cv=none; b=I0/CkwO5LmuJHyB40PEFIrjjtFdlMhsxWgA4IjjdOWf0htAz3yDvFuTNq57zfQqIhQs+vD8h4yCkC4HP1dmZ/1gjLlh4etIFn0pDnXn5jhViSd+l4e71HdgDDVA/WGPrxZPTtSPzJ28Kzt1PKPVD4Zg+jL+0d54O/jpI1DLWpqE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733895196; c=relaxed/simple;
-	bh=OF6oI5ueIyKXJT8qJr+f0gd7PmjRNdlzpvD5cy4jzzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JG1Vj1MEN/xLA3bEJ75dN0nA0NehJdD+sHm84CF2194DZ9lH1pngA02h5blra1GjV6iVajG84sXRRx6hAYw1wLLIrAFUvF9cOOG4X3igHoXPYKa9f2nL/tsfBLMsiFPn2aZnTUAzZerC4d1YL3TQn0yA7IjdXFaQuduz1mQ8uDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OUfnmVmL; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21564262babso6755765ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 21:33:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733895194; x=1734499994; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iL0S77s8sue7wDSiMx9oEAzjFbMEM/4/98X0yr6AQos=;
-        b=OUfnmVmLl523pj5fMGGCcK0Kq+135N2kwf1umg8GDvjQaOoNlZHi3e/uFu+cu4e45X
-         4yDYJKg6YBDvEyWBVlLEsc5BpJ7yyOXxinWjbtiH588T+/Pv1RUVUGmEeL/+KpqKh7j+
-         igflwiewZNQJs2iVv+4MqMriL8vv8GZBSveeo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733895194; x=1734499994;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iL0S77s8sue7wDSiMx9oEAzjFbMEM/4/98X0yr6AQos=;
-        b=osKcLk3lfw3C9pZyMlBt5HZW2mciAUu2SkVpbY42wPL2V29oRsKb/gsfvUt3mDtXml
-         U9NZYpI/AE1L8zgzkGfvDyZareaaFlrGZ1xcG41DxKj7qjRq2x+A1hWjrv78AFn0BF5F
-         dAynzCXR+68WL4M0Q+ce0yykTZzxjbQL/ow3QDc3guQimbLYY87lPB7HVks9MRk7g/fW
-         +xpUCay3A2l892liPkwKwpOYV7Z22WnX8p21DtRD3jt/9G/jfOEF0/5rAxxk3DEkVOT5
-         TZxowTp2znrpq/3UtzMJkiOz/HjWkmmvCM7dxo6Ht50g8kzbAnCAnd4+5qyZk8+xKnvI
-         xJ3Q==
-X-Gm-Message-State: AOJu0YybJdl85D2H6lpKkV9DwlE56DY9wOR/8APb8P6mg6cA4rjF8mYf
-	HOKVZ2SqbnEvja/tvqN7dFrQIfwPiZHkkCRFZa9AZohFMXUDFdcT43M8Lrc3lQ==
-X-Gm-Gg: ASbGnct6Ahsit17hsVq7Eyt9c7GU4gkeJeyKqbQR999D04HXN/1/BYCPsrcDfj1/m/Y
-	bGpAzs0eXIRoNwgYEHfLLkGLTaSo4jbJlsn/Mm6JIWYkaLf9QPHGdJvPpwx5c9Iuj3KDSYeJbhl
-	+ur4e8hQZkHfcSsMUPIZH4/RHAT9JTe6EsbZyBRGdqAkG1PSSgkHdb11r5FS42OJbHqCHVGHG5H
-	spnEWejaIYzW89926yODF3Upo8E1s6mIJ/l9CnhWxQfrS63xFXDTnCB17mWCJ7djS2Prl3CUV4v
-	PYd+83acgL7Q4eE=
-X-Google-Smtp-Source: AGHT+IEodioB8WIDbacAHjqbGik1UB8Zl0dTrnRUlOKRwzSo0V/bCLKhgz9DK/mJjkSKbCn4PnTMlA==
-X-Received: by 2002:a17:902:ec84:b0:215:5926:2db2 with SMTP id d9443c01a7336-2177851de76mr10375475ad.7.1733895194123;
-        Tue, 10 Dec 2024 21:33:14 -0800 (PST)
-Received: from localhost (238.76.127.34.bc.googleusercontent.com. [34.127.76.238])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2162b13d486sm66496625ad.191.2024.12.10.21.33.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 21:33:13 -0800 (PST)
-From: jeffxu@chromium.org
-To: akpm@linux-foundation.org,
-	vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@Oracle.com,
-	broonie@kernel.org,
-	skhan@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	jorgelo@chromium.org,
-	keescook@chromium.org,
-	pedro.falcato@gmail.com,
-	rdunlap@infradead.org,
-	jannh@google.com,
-	Jeff Xu <jeffxu@chromium.org>
-Subject: [RFC PATCH v1 1/1] selftest/mm: refactor mseal_test
-Date: Wed, 11 Dec 2024 05:33:11 +0000
-Message-ID: <20241211053311.245636-2-jeffxu@google.com>
-X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-In-Reply-To: <20241211053311.245636-1-jeffxu@google.com>
-References: <20241211053311.245636-1-jeffxu@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0504A0A
+	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 05:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733895380; cv=fail; b=bUBzUfqwNZO1PJKMHTFfty/gQ/MaYZPDyfmJdXqnnhRXdWl6Js2tSkGMH5o1QN4PhfQ7zdzJTVqdDZdlKhNXGpWgiP2TG2BnBudBjZ3KiX4toIbKBqLNChoLJ47HEfSPIDf1TiH/UcHieItC1kV6i6dtrUXIHoDQzMDhpgVwobI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733895380; c=relaxed/simple;
+	bh=zvvhkMVWowQVJ2sLOquSIF7Zzh37ALHBwLI4Mg2fDZg=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=rWENKrGm+s6qAoacstIqBfiVEBVbmOr2m1FpsOF8UKGufodF8m+wH2h0AewVzcIWPwZrKusckeVpYIkTw807DugbgWjViMUGcCXmFZBZ6ukMXivhhauFGD7R1FhupRpKTd/dQvVHYNi6AMDPczYe+7FHFSzzLboPlPiWj6LCM5M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hGvxGSa4; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733895379; x=1765431379;
+  h=date:from:to:cc:subject:message-id:
+   content-transfer-encoding:mime-version;
+  bh=zvvhkMVWowQVJ2sLOquSIF7Zzh37ALHBwLI4Mg2fDZg=;
+  b=hGvxGSa48MV56f4I3bALcBZAfeT4TkZs2hqx7XXC0xIWuRGLEbalez/T
+   Z5bEagmzxt2UCWDC82CTG96BixZaZ/0ToU+RNWX30huH50dMZ4y04XY7z
+   /y/TGq+GdAEaqx0QZ7TvWIZ2VDEnqZ1Xo1l5NpDsWz/ZODnXEgRIVeAzH
+   Kc2QFMoMMkZhM5IcvvZBAdreWYKnAEdQglOg5nBgbIHvwfdhE6c/t8lM+
+   5D8xsGK6A+O4kka7yaK4cyXlQk5OKI17jCe2p2L6sg56M5URUqbfhPxXb
+   Q6ZGsW/h8KikhEHpPrixoVEWub3WmkadYz4BUSAjE5rJTmkwOIMiahEUy
+   Q==;
+X-CSE-ConnectionGUID: C+fQ/b1sS6uP4kTyZOqLRg==
+X-CSE-MsgGUID: RliFu4lLQ+qp3S4m09/MgQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="44734678"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="44734678"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Dec 2024 21:36:18 -0800
+X-CSE-ConnectionGUID: XRJ9/E/SQVueyOV2094sRw==
+X-CSE-MsgGUID: P4XlnuSqR8eM7IGMuD7x0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="95870005"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Dec 2024 21:36:17 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 10 Dec 2024 21:36:17 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 10 Dec 2024 21:36:17 -0800
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.173)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 10 Dec 2024 21:36:16 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hWpLAnCWTw6P5Y1QLKS+Zn3rUxgmXNjANoTHB3Aj0pDuz6ZwHDtwwrChwoWkpEFJCgtQx3eUGo56ox6enJVkvRNHWv3TBGP06F1Vx5cQq4IwLcHzEwiYPI/PtWllMbsXRYS10zPLsiZ25RjZKWZk3OZt0cMxhNVvllslZn1Qlbaah3QIhAdU3nYh/mxI99JU2gJ/YtZ7bgwQyvChmLU18UJbqfngRRggHC6GwHQjC5CuMsJmpue9khNeTpZ1tJsdCda5UeUUpfceTiVZkXLobD7yACEeHCu9YMSLbjuoQFnkJKRZjEMN4QqrKiTMbkO1VaFsddPFeoefTm1G8BmiTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xdNFqWpzZf+er5gd/PgKG7WbhdNRGH0glH1FdREd5cs=;
+ b=JklXORWAGNjoH+bxYpT2x9RksPtKkF+gcQ/EDcrV6aQwk6A47BweMqojKIYZQtbSs1+FUpBn3hhEy8JkuJ6MI4mby7HBFtwjxv/5ubkEbYcHw8L/H19y2DrViOENTr7exsiRMk3YAco2Iw0H8RqmmYBY+pYpOisl2oHW/nLxMZHXPmqqjSoo8BIa5byUF7hdVb4sOP27LnXD4RrNrGi9lQ5rEzRl49cutwLG4f64TI07ENBy4XFBjnZqO3s/78XFDoGEA1q+NLS2NnjYLj/Z/w8iwaJD4Ht7RvhPIY1B17KZQ4GuMucWh+b2peSVrfw2H0Qb+3N5xM+ISMRh8kdJaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by CY8PR11MB7799.namprd11.prod.outlook.com (2603:10b6:930:78::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Wed, 11 Dec
+ 2024 05:36:14 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%6]) with mapi id 15.20.8251.008; Wed, 11 Dec 2024
+ 05:36:14 +0000
+Date: Wed, 11 Dec 2024 13:36:06 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Carlos Eduardo Gallo Filho <gcarlos@disroot.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Maxime Ripard <mripard@kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<oliver.sang@intel.com>
+Subject: [linus:master] [drm/tests]  d219425604:
+ WARNING:at_drivers/gpu/drm/drm_framebuffer.c:#drm_framebuffer_free[drm]
+Message-ID: <202412111305.163da841-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: SGAP274CA0002.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::14)
+ To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|CY8PR11MB7799:EE_
+X-MS-Office365-Filtering-Correlation-Id: 79725e05-a54b-4f4c-8583-08dd19a5ba72
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?QCZ91SRBzpebPSufdsQDgWIpYIp1YvECUKj9bQE561lDvZEpQj/DCJeYcvl5?=
+ =?us-ascii?Q?KMeoIKkYJg+08zKD0WoFWZtECqPtL4h16kMx/8hzEpPpDQuhzwbbUA0B9TD8?=
+ =?us-ascii?Q?SVc+ilWDeE0QIAK/7VUuNp3Rw6jHLDfXnG/d4vsnFBCX//agHmNYkvAT1M1S?=
+ =?us-ascii?Q?mTTe2LOz8FSLjZS5mC+94PyuY0mnvco8DdlJpDjITjcB2qqO+zI+shoBCVJu?=
+ =?us-ascii?Q?mrzbIyBPLZHaNwRjWdQ3prFke0Z1vWhBQXQO16q1RgzrANz9X+l1Sg83tOpc?=
+ =?us-ascii?Q?Mg5lVmZf7Bv0oK/k0SAsDOJBoB7zPXrhiM0yUJ4w6weooGvyYnqZQaDyZEmU?=
+ =?us-ascii?Q?TUqCVPkpFj6vUIXQGn/MqxO36mcAkcJWvd4h6qgBZRrULD1ufwOzgdqaYorI?=
+ =?us-ascii?Q?bAYp2XkNf035PHNOMBfix6kZE98HjDIelLO0IqN02jV/Y235gzUYVzJTfKNC?=
+ =?us-ascii?Q?fXtHnXtBfMnxlOCOES5s4iYyjdBXLYnam7A31SQo541rT/h6PEYw8sO9OsL7?=
+ =?us-ascii?Q?acINBtUHwNbO8T6mt0Ap5pY7Oj1rpAUJOjOu/74+7F0iXivv3hQqkN+truFS?=
+ =?us-ascii?Q?5RJp8uJXufUjgjc1uf9tZHOHXxee6OCa9rgCV2iD8qhY14pw63v7J2LHsmO3?=
+ =?us-ascii?Q?qhynONAQW9wKod+6f+2sQZaURYns56PqX3cxjLz2YV6UP33hx+rqyI8xzMFf?=
+ =?us-ascii?Q?rNKjlc/XUn6CC9Lmy50hhaGsCFsNMY4/lAgTr1Yl+kcl6XMPrdJJcGEAQlxr?=
+ =?us-ascii?Q?bZFKMZMc+3LAoor1Th3x/p90HoSoB9x0IK8iqdb7h4ajk7t6ciK1on6iWv/o?=
+ =?us-ascii?Q?fwxeFS8Fti85gxya2wrC4gphgkWI+vMX00wjBjsN3+wsg5mJZbSMuTb3mOE7?=
+ =?us-ascii?Q?PSe1P18x6HJnQlFVJvWzrT3AFeJd5HsgP5KVIGEgQJb6yD4plAF6TmOWLSj9?=
+ =?us-ascii?Q?mMVpXtKda590B7z6bCannbRlvCMgLU4jUpG9dUoa7nH4ELjNlMUrcYZHCX3C?=
+ =?us-ascii?Q?ywJKDHRAQeX+jx315zG5IB06eUMAImJ/jDAcCqGxrULCTMGy/OqNQsGUUm5O?=
+ =?us-ascii?Q?OyyiQYV8qE1d6r6Rx6djUgRCZqX3ce0SwQAmV+y8SJiLU4RQOEFltxseA8f7?=
+ =?us-ascii?Q?Sujj5DIFFGRsJqNSFl3/HWQOs7NpnuEsfmZ3/yFWFAJzvEqh/Mb91hNVUxGp?=
+ =?us-ascii?Q?7Zubkeu5834pT1lyBZshPEtzaOrQM6X1XodriF8Fn9DY9LocOApGX+lYeU+K?=
+ =?us-ascii?Q?7AdwcYbKBWo9fQuWhrwtTUU+uQwM8/SG3bvC9zh40BVXAx+Pw96Ncg7eOi0N?=
+ =?us-ascii?Q?1rwoGlKa2kk4FTo8X6/VpaQLc4/ZS4rm8hkVK4rVyOh4GKuusSNLhdJza+d3?=
+ =?us-ascii?Q?BLlqYrc=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DuY3UpPlPY+zGNsyzbztysbR7cyk8yJQoem0Fx0hw2HBCMhmKdn6O7lxIiLa?=
+ =?us-ascii?Q?kS1cYWvQERiAQV2dcbX2WcLKx+Rf/Bpk28Ugb6iHKF1EJlyKAyFxlM78v1fi?=
+ =?us-ascii?Q?FXOe7k3WEekw7+stNdqE1om0+PfUX82qFYpwhqSY5+W/ejAorGxHwCRwpCSh?=
+ =?us-ascii?Q?4XePFjYL+s8Ne1KrBJ8P9JOy64ueXkIHVtiXLcsgI3IqE6eMjKLlUjddlE+H?=
+ =?us-ascii?Q?9xfxzSoLg0PX23Aooqx30OcyMQanggb6pkMcXOH1HU4ewRxRBHoL2yNaqHVK?=
+ =?us-ascii?Q?yRCTRbFB8Nwu7IMr7HaOecoZ5gxE2DG/hBDfSMIhzWcfwPtjPnb7cA9HRdOx?=
+ =?us-ascii?Q?libdh2WxoMaq5PkcJRJcwXoMLQIDr+vpeWmEdWbeB6RBgoC/D7Uk+NDGLkn0?=
+ =?us-ascii?Q?rw44YRHWAnK2m85NuqrvgSvr0mWG3+6zsHiYZU4jldRuPkBTKgZmPgheRIAk?=
+ =?us-ascii?Q?I662iuivKqRC93xV67vBbFZBxQUFZquljABgfE7J+Zl5IZiZpZFCaneaGuBG?=
+ =?us-ascii?Q?RHCG/cmYxMdRPfEx2lt6aTIdC93euD1J3Rk37NrOYqZDxz7LT4SY11Wy6uNX?=
+ =?us-ascii?Q?zxgi+HFTwSH+ejT8EOGI8oHXECvXRWvW93xrZGgob+/+7fyUKW7N671nztv8?=
+ =?us-ascii?Q?g1lbAyi3dzJFN+vfNJdCfJAlFvKQ5tFSA2ZG9X2swOFyRjlv86TrEWAaSjrF?=
+ =?us-ascii?Q?rCeSfX+EDZyPQ3mDcEI5PW8M+5P7phLPDaxvGb3qHBv/qHVy5tBFs+HkP4Zr?=
+ =?us-ascii?Q?R8mgrM09B7ail7fTyraRibd6I/DkIxZCMKXASABaR/M+3ZbBWLBzOB3SIwcU?=
+ =?us-ascii?Q?kYlS/lNWxLonm95j09/kPyE3+Ck3KU9TFDaoAchQJkie/1TNtxCb+BodrdC6?=
+ =?us-ascii?Q?7A+g3lviOtXxAd6mKHBX7vdaA7EJ7Ny1ftuyoNlfJKGxiwSrijBNXFvG1xYZ?=
+ =?us-ascii?Q?K5DnhvYM9/Vh6Dwpwfz17f1ApHni/UnceT9CJ+k0xoPKLTcLu5Lp/65DF8h3?=
+ =?us-ascii?Q?HqLMgObEI7p4SOqk2rjUXaIol8dH7tXksHvBbNUIU7FXl9m9CnX99gJOJ45f?=
+ =?us-ascii?Q?KQLmZLXzMaWNu4ebhNHU49ooiH5jfRDBc0f8ilrpurtRm05boa5TmkGIxGni?=
+ =?us-ascii?Q?zVYl8j+fl2sbcDNYpufpOM2RcuZvdD1Ht6+uhqCgCPpp2/3o9o/nMkS6+H2a?=
+ =?us-ascii?Q?wyMJ91LfT1pEWZ54Pd3T/iouBfalXsbacwNQzgHEcKZUjvDnquq4tw3tHy6o?=
+ =?us-ascii?Q?gePGfgNTp09KdydxApZTve7emvW/djw53V/KBouts4Cbl1S7Xi0fmpPcJKXL?=
+ =?us-ascii?Q?RtiNndAPU0UXpJoopdT8WVgOXII9mNA4HTUP7/AozS21vl6ZWuII+bS4Uv0s?=
+ =?us-ascii?Q?ECKy3PwoFWA/uK0a6MgWXlIy624fo3q/iOAz6zz7fFcdZBjyDLDfathe2gZ3?=
+ =?us-ascii?Q?lqFNAj0gORzCPBLxDAJBWIXBCU4KpGDgH94uis52uLD/QP7KFztzf8+vrCwZ?=
+ =?us-ascii?Q?+1YtexxZO8YUEfFjV2fGnxJo8S6QsMvFLH4E6fbbTQWThtntGg5yB8+SifTI?=
+ =?us-ascii?Q?bortynqFqmjeI1YWpKFiaiMwWVZkWjnMNM0e5IZUYmwcvY5tPt9lKbvI0lTt?=
+ =?us-ascii?Q?zQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79725e05-a54b-4f4c-8583-08dd19a5ba72
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2024 05:36:14.5925
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ECVuUZlLsQqKi/QwikFj04FsaXNjtvWng++U5T2uH16mFxmR2e05hcTD1DgL268L8fYSGK6eoIUdfGm7hXW7Tw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7799
+X-OriginatorOrg: intel.com
 
-From: Jeff Xu <jeffxu@chromium.org>
 
-This change creates the initial version of memorysealing.c.
 
-The introduction of memorysealing.c, which replaces mseal_test.c and
-uses the kselftest_harness, aims to initiate a discussion on using the
-selftest harness for memory sealing tests. Upon approval of this
-approach, the migration of tests from mseal_test.c to memorysealing.c
-can be implemented in a step-by-step manner.
+Hello,
 
-This tests addresses following feedback from previous reviews:
+kernel test robot noticed "WARNING:at_drivers/gpu/drm/drm_framebuffer.c:#dr=
+m_framebuffer_free[drm]" on:
 
-1> Use kselftest_harness instead of custom macro, such as EXPECT_XX,
-ASSERT_XX, etc.  (Lorenzo Stoakes, Mark Brown) [1]
+commit: d2194256049910d286cd6c308c2689df521d8842 ("drm/tests: Add test for =
+drm_framebuffer_free()")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-2> Use MAP_FAILED to check the return of mmap (Lorenzo Stoakes).
+[test failed on linus/master      7503345ac5f5e82fd9a36d6e6b447c016376403a]
+[test failed on linux-next/master ebe1b11614e079c5e366ce9bd3c8f44ca0fbcc1b]
 
-3>  Adding a check for vma size and prot bits. The discussion for
-    this can be found in [2] [3], here is a brief summary:
-    This is to follow up on Pedro’s in-loop change (from
-    can_modify_mm to can_modify_vma). When mseal_test is initially
-    created, they have a common pattern:  setup memory layout,
-    seal the memory, perform a few mm-api steps, verify return code
-    (not zero).  Because of the nature of out-of-loop,  it is sufficient
-    to just verify the error code in a few cases.
+in testcase: kunit
+version:=20
+with following parameters:
 
-    With Pedro's in-loop change, the sealing check happens later in the
-    stack, thus there are more things and scenarios to verify. And there
-    was feedbacks to me that mseal_test should be extensive enough to
-    discover all regressions. Hence I'm adding check for vma size and prot
-    bits.
+	group: group-00
 
-In this change: we created two fixtures:
 
-Fixture basic:   This creates a single VMA, the VMA has a
-PROT_NONE page at each end to prevent auto-merging.
+config: x86_64-rhel-9.4-kunit
+compiler: gcc-12
+test machine: 8 threads Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz (Skylake) w=
+ith 16G memory
 
-Fixture wo_vma: Two VMAs back to end, a PROT_NONE page at each
-end to prevent auto-merging.
+(please refer to attached dmesg/kmsg for entire log/backtrace)
 
-In addition, I add one test (mprotec) in each fixture to demo the tests.
 
-[1] https://lore.kernel.org/all/20240830180237.1220027-5-jeffxu@chromium.org/
-[2] https://lore.kernel.org/all/CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com/
-[3] https://lore.kernel.org/all/2qywbjb5ebtgwkh354w3lj3vhaothvubjokxq5fhyri5jeeton@duqngzo3swjz/
 
-Signed-off-by: Jeff Xu <jeffxu@chromium.org>
----
- tools/testing/selftests/mm/.gitignore      |   1 +
- tools/testing/selftests/mm/Makefile        |   1 +
- tools/testing/selftests/mm/memorysealing.c | 182 +++++++++++++++++++++
- tools/testing/selftests/mm/memorysealing.h | 116 +++++++++++++
- tools/testing/selftests/mm/mseal_test.c    |  67 +-------
- 5 files changed, 301 insertions(+), 66 deletions(-)
- create mode 100644 tools/testing/selftests/mm/memorysealing.c
- create mode 100644 tools/testing/selftests/mm/memorysealing.h
+If you fix the issue in a separate patch/commit (i.e. not just a new versio=
+n of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202412111305.163da841-lkp@intel.co=
+m
 
-diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
-index a51a947b2d1d..982234a99f20 100644
---- a/tools/testing/selftests/mm/.gitignore
-+++ b/tools/testing/selftests/mm/.gitignore
-@@ -57,3 +57,4 @@ hugetlb_dio
- pkey_sighandler_tests_32
- pkey_sighandler_tests_64
- guard-pages
-+memorysealing
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index 93a46ac633df..08876624f46d 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -67,6 +67,7 @@ TEST_GEN_FILES += map_populate
- ifneq (,$(filter $(ARCH),arm64 riscv riscv64 x86 x86_64))
- TEST_GEN_FILES += memfd_secret
- endif
-+TEST_GEN_FILES += memorysealing
- TEST_GEN_FILES += migration
- TEST_GEN_FILES += mkdirty
- TEST_GEN_FILES += mlock-random-test
-diff --git a/tools/testing/selftests/mm/memorysealing.c b/tools/testing/selftests/mm/memorysealing.c
-new file mode 100644
-index 000000000000..e10032528b64
---- /dev/null
-+++ b/tools/testing/selftests/mm/memorysealing.c
-@@ -0,0 +1,182 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+#define _GNU_SOURCE
-+#include "../kselftest_harness.h"
-+#include <asm-generic/unistd.h>
-+#include <errno.h>
-+#include <syscall.h>
-+#include "memorysealing.h"
-+
-+/*
-+ * To avoid auto-merging, create a VMA with PROT_NONE pages at each end.
-+ * If unsuccessful, return MAP_FAILED.
-+ */
-+static void *setup_single_address(int size, int prot)
-+{
-+	int ret;
-+	void *ptr;
-+	unsigned long page_size = getpagesize();
-+
-+	ptr = mmap(NULL, size + 2 * page_size, prot,
-+		MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-+
-+	if (ptr == MAP_FAILED)
-+		return MAP_FAILED;
-+
-+	/* To avoid auto-merging, change to PROT_NONE at each end. */
-+	ret = sys_mprotect(ptr, page_size, PROT_NONE);
-+	if (ret != 0)
-+		return MAP_FAILED;
-+
-+	ret = sys_mprotect(ptr + size + page_size, page_size, PROT_NONE);
-+	if (ret != 0)
-+		return MAP_FAILED;
-+
-+	return ptr + page_size;
-+}
-+
-+FIXTURE(basic)
-+{
-+	unsigned long page_size;
-+	unsigned long size;
-+	void *ptr;
-+};
-+
-+/*
-+ * Setup for basic:
-+ * Single VMA with 4 pages, prot = (PROT_READ | PROT_WRITE).
-+ */
-+FIXTURE_SETUP(basic)
-+{
-+	int prot;
-+
-+	self->page_size = getpagesize();
-+
-+	if (!mseal_supported())
-+		SKIP(return, "mseal is not supported");
-+
-+	/* Create a single VMA with 4 pages, prot as PROT_READ | PROT_WRITE. */
-+	self->size = self->page_size * 4;
-+	self->ptr = setup_single_address(self->size, PROT_READ | PROT_WRITE);
-+	EXPECT_NE(self->ptr, MAP_FAILED);
-+
-+	EXPECT_EQ(self->size, get_vma_size(self->ptr, &prot));
-+	EXPECT_EQ(PROT_READ | PROT_WRITE, prot);
-+};
-+
-+FIXTURE_TEARDOWN(basic)
-+{
-+}
-+
-+FIXTURE(two_vma)
-+{
-+	unsigned long page_size;
-+	unsigned long size;
-+	void *ptr;
-+};
-+
-+/*
-+ * Setup for two_vma:
-+ * Two consecutive VMAs, each with 2 pages.
-+ * The first VMA:  prot = PROT_READ.
-+ * The second VMA: prot = (PROT_READ | PROT_WRITE).
-+ */
-+FIXTURE_SETUP(two_vma)
-+{
-+	int prot;
-+	int ret;
-+
-+	self->page_size = getpagesize();
-+
-+	if (!mseal_supported())
-+		SKIP(return, "mseal is not supported");
-+
-+	/* Create a single VMA with 4 pages, prot as PROT_READ | PROT_WRITE. */
-+	self->size = getpagesize() * 4;
-+	self->ptr = setup_single_address(self->size, PROT_READ | PROT_WRITE);
-+	EXPECT_NE(self->ptr, MAP_FAILED);
-+
-+	/* Use mprotect to split as two VMA. */
-+	ret = sys_mprotect(self->ptr, self->page_size * 2, PROT_READ);
-+	ASSERT_EQ(ret, 0);
-+
-+	/* Verify the first VMA is 2 pages and prot bits */
-+	EXPECT_EQ(self->page_size * 2, get_vma_size(self->ptr, &prot));
-+	EXPECT_EQ(PROT_READ, prot);
-+
-+	/* Verify the second VMA is 2 pages and prot bits */
-+	EXPECT_EQ(self->page_size * 2,
-+		get_vma_size(self->ptr + self->page_size * 2, &prot));
-+	EXPECT_EQ(PROT_READ | PROT_WRITE, prot);
-+};
-+
-+FIXTURE_TEARDOWN(two_vma)
-+{
-+}
-+
-+/*
-+ * Verify mprotect is blocked.
-+ */
-+TEST_F(basic, mprotect_basic)
-+{
-+	int ret;
-+	unsigned long size;
-+	int prot;
-+
-+	/* Seal the mapping. */
-+	ret = sys_mseal(self->ptr, self->size, 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	/* Verify mprotect is blocked. */
-+	ret = sys_mprotect(self->ptr, self->size, PROT_READ);
-+	EXPECT_GT(0, ret);
-+	EXPECT_EQ(EPERM, errno);
-+
-+	/* Verify the VMA (sealed) isn't changed */
-+	size = get_vma_size(self->ptr, &prot);
-+	EXPECT_EQ(self->size, size);
-+	EXPECT_EQ(PROT_READ | PROT_WRITE, prot);
-+}
-+
-+/*
-+ * Seal both VMAs in one mseal call.
-+ * Verify mprotect is blocked on both VMAs in various cases.
-+ */
-+TEST_F(two_vma, mprotect)
-+{
-+	int ret;
-+	int prot;
-+	unsigned long size;
-+
-+	/* Seal both VMAs in one mseal call. */
-+	ret = sys_mseal(self->ptr, self->size, 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	/* Verify mprotect is rejected on the first VMA. */
-+	ret = sys_mprotect(self->ptr, self->page_size * 2,
-+		PROT_READ | PROT_EXEC);
-+	EXPECT_GT(0, ret);
-+	EXPECT_EQ(EPERM, errno);
-+
-+	/* Verify mprotect is rejected on the second VMA. */
-+	ret = sys_mprotect(self->ptr, self->page_size * 2,
-+		PROT_READ | PROT_EXEC);
-+	EXPECT_GT(0, ret);
-+	EXPECT_EQ(EPERM, errno);
-+
-+	/* Attempt of mprotect two VMAs at the same call is blocked */
-+	ret = sys_mprotect(self->ptr, self->size,
-+		PROT_READ | PROT_EXEC);
-+	EXPECT_GT(0, ret);
-+	EXPECT_EQ(EPERM, errno);
-+
-+	/* Verify both VMAs aren't changed. */
-+	size = get_vma_size(self->ptr, &prot);
-+	EXPECT_EQ(self->page_size * 2, size);
-+	EXPECT_EQ(PROT_READ, prot);
-+
-+	size = get_vma_size(self->ptr + self->page_size * 2, &prot);
-+	EXPECT_EQ(self->page_size * 2, size);
-+	EXPECT_EQ(PROT_READ | PROT_WRITE, prot);
-+}
-+
-+TEST_HARNESS_MAIN
-diff --git a/tools/testing/selftests/mm/memorysealing.h b/tools/testing/selftests/mm/memorysealing.h
-new file mode 100644
-index 000000000000..aee6e6700028
---- /dev/null
-+++ b/tools/testing/selftests/mm/memorysealing.h
-@@ -0,0 +1,116 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <syscall.h>
-+
-+/*
-+ * Define sys_xyx to call syscall directly.
-+ * This is needed because we want to avoid calling glibc and
-+ * test syscall directly.
-+ * The only exception is mmap, which _NR_mmap2 is not defined for
-+ * some ARM architecture.
-+ */
-+static inline int sys_mseal(void *start, size_t len, unsigned long flags)
-+{
-+	int sret;
-+
-+	errno = 0;
-+	sret = syscall(__NR_mseal, start, len, flags);
-+	return sret;
-+}
-+
-+static inline int sys_mprotect(void *ptr, size_t size, unsigned long prot)
-+{
-+	int sret;
-+
-+	errno = 0;
-+	sret = syscall(__NR_mprotect, ptr, size, prot);
-+	return sret;
-+}
-+
-+static inline int sys_mprotect_pkey(void *ptr, size_t size,
-+	unsigned long orig_prot, unsigned long pkey)
-+{
-+	int sret;
-+
-+	errno = 0;
-+	sret = syscall(__NR_pkey_mprotect, ptr, size, orig_prot, pkey);
-+	return sret;
-+}
-+
-+static inline int sys_munmap(void *ptr, size_t size)
-+{
-+	int sret;
-+
-+	errno = 0;
-+	sret = syscall(__NR_munmap, ptr, size);
-+	return sret;
-+}
-+
-+static inline int sys_madvise(void *start, size_t len, int types)
-+{
-+	int sret;
-+
-+	errno = 0;
-+	sret = syscall(__NR_madvise, start, len, types);
-+	return sret;
-+}
-+
-+static inline void *sys_mremap(void *addr, size_t old_len, size_t new_len,
-+	unsigned long flags, void *new_addr)
-+{
-+	void *sret;
-+
-+	errno = 0;
-+	sret = (void *) syscall(__NR_mremap, addr, old_len, new_len, flags, new_addr);
-+	return sret;
-+}
-+
-+/*
-+ * Parsing /proc/self/maps to get VMA's size and prot bit.
-+ */
-+static unsigned long get_vma_size(void *addr, int *prot)
-+{
-+	FILE *maps;
-+	char line[256];
-+	int size = 0;
-+	uintptr_t  addr_start, addr_end;
-+	char protstr[5];
-+	*prot = 0;
-+
-+	maps = fopen("/proc/self/maps", "r");
-+	if (!maps)
-+		return 0;
-+
-+	while (fgets(line, sizeof(line), maps)) {
-+		if (sscanf(line, "%lx-%lx %4s", &addr_start, &addr_end, protstr) == 3) {
-+			if (addr_start == (uintptr_t) addr) {
-+				size = addr_end - addr_start;
-+				if (protstr[0] == 'r')
-+					*prot |= PROT_READ;
-+				if (protstr[1] == 'w')
-+					*prot |= PROT_WRITE;
-+				if (protstr[2] == 'x')
-+					*prot |= PROT_EXEC;
-+				break;
-+			}
-+		}
-+	}
-+	fclose(maps);
-+	return size;
-+}
-+
-+static inline bool mseal_supported(void)
-+{
-+	int ret;
-+	void *ptr;
-+	unsigned long page_size = getpagesize();
-+
-+	ptr = mmap(NULL, page_size, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-+	if (ptr == MAP_FAILED)
-+		return false;
-+
-+	ret = sys_mseal(ptr, page_size, 0);
-+	if (ret < 0)
-+		return false;
-+
-+	return true;
-+}
-diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
-index ad17005521a8..8dd20341de3d 100644
---- a/tools/testing/selftests/mm/mseal_test.c
-+++ b/tools/testing/selftests/mm/mseal_test.c
-@@ -517,30 +517,6 @@ static void test_seal_twice(void)
- 	REPORT_TEST_PASS();
- }
- 
--static void test_seal_mprotect(bool seal)
--{
--	void *ptr;
--	unsigned long page_size = getpagesize();
--	unsigned long size = 4 * page_size;
--	int ret;
--
--	setup_single_address(size, &ptr);
--	FAIL_TEST_IF_FALSE(ptr != (void *)-1);
--
--	if (seal) {
--		ret = seal_single_address(ptr, size);
--		FAIL_TEST_IF_FALSE(!ret);
--	}
--
--	ret = sys_mprotect(ptr, size, PROT_READ | PROT_WRITE);
--	if (seal)
--		FAIL_TEST_IF_FALSE(ret < 0);
--	else
--		FAIL_TEST_IF_FALSE(!ret);
--
--	REPORT_TEST_PASS();
--}
--
- static void test_seal_start_mprotect(bool seal)
- {
- 	void *ptr;
-@@ -658,41 +634,6 @@ static void test_seal_mprotect_unalign_len_variant_2(bool seal)
- 	REPORT_TEST_PASS();
- }
- 
--static void test_seal_mprotect_two_vma(bool seal)
--{
--	void *ptr;
--	unsigned long page_size = getpagesize();
--	unsigned long size = 4 * page_size;
--	int ret;
--
--	setup_single_address(size, &ptr);
--	FAIL_TEST_IF_FALSE(ptr != (void *)-1);
--
--	/* use mprotect to split */
--	ret = sys_mprotect(ptr, page_size * 2, PROT_READ | PROT_WRITE);
--	FAIL_TEST_IF_FALSE(!ret);
--
--	if (seal) {
--		ret = seal_single_address(ptr, page_size * 4);
--		FAIL_TEST_IF_FALSE(!ret);
--	}
--
--	ret = sys_mprotect(ptr, page_size * 2, PROT_READ | PROT_WRITE);
--	if (seal)
--		FAIL_TEST_IF_FALSE(ret < 0);
--	else
--		FAIL_TEST_IF_FALSE(!ret);
--
--	ret = sys_mprotect(ptr + page_size * 2, page_size * 2,
--			PROT_READ | PROT_WRITE);
--	if (seal)
--		FAIL_TEST_IF_FALSE(ret < 0);
--	else
--		FAIL_TEST_IF_FALSE(!ret);
--
--	REPORT_TEST_PASS();
--}
--
- static void test_seal_mprotect_two_vma_with_split(bool seal)
- {
- 	void *ptr;
-@@ -1876,7 +1817,7 @@ int main(void)
- 	if (!pkey_supported())
- 		ksft_print_msg("PKEY not supported\n");
- 
--	ksft_set_plan(88);
-+	ksft_set_plan(84);
- 
- 	test_seal_addseal();
- 	test_seal_unmapped_start();
-@@ -1889,9 +1830,6 @@ int main(void)
- 	test_seal_zero_length();
- 	test_seal_twice();
- 
--	test_seal_mprotect(false);
--	test_seal_mprotect(true);
--
- 	test_seal_start_mprotect(false);
- 	test_seal_start_mprotect(true);
- 
-@@ -1904,9 +1842,6 @@ int main(void)
- 	test_seal_mprotect_unalign_len_variant_2(false);
- 	test_seal_mprotect_unalign_len_variant_2(true);
- 
--	test_seal_mprotect_two_vma(false);
--	test_seal_mprotect_two_vma(true);
--
- 	test_seal_mprotect_two_vma_with_split(false);
- 	test_seal_mprotect_two_vma_with_split(true);
- 
--- 
-2.47.1.613.gc27f4b7a9f-goog
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20241211/202412111305.163da841-lkp@=
+intel.com
+
+
+[  152.407500][ T4768] ------------[ cut here ]------------
+[  152.418100][ T4768] drm-kunit-mock-device drm_test_framebuffer_free.drm-=
+kunit-mock-device: [drm] drm_WARN_ON(!list_empty(&fb->filp_head))
+[  152.418134][ T4768] WARNING: CPU: 6 PID: 4768 at drivers/gpu/drm/drm_fra=
+mebuffer.c:832 drm_framebuffer_free+0x126/0x1a0 [drm]
+[  152.441735][ T4768] Modules linked in: drm_framebuffer_test drm_kunit_he=
+lpers linear_ranges snd_hda_codec_hdmi snd_ctl_led snd_hda_codec_realtek sn=
+d_hda_codec_generic snd_hda_scodec_component intel_rapl_msr intel_rapl_comm=
+on x86_pkg_temp_thermal btrfs intel_powerclamp coretemp kvm_intel blake2b_g=
+eneric xor kvm raid6_pq libcrc32c snd_soc_avs snd_soc_hda_codec crct10dif_p=
+clmul snd_hda_ext_core i915 snd_soc_core sd_mod snd_compress sg snd_hda_int=
+el ipmi_devintf ipmi_msghandler crc32_generic crc32_pclmul snd_intel_dspcfg=
+ cec snd_intel_sdw_acpi intel_gtt snd_hda_codec ttm snd_hda_core crc32c_int=
+el drm_display_helper snd_hwdep ahci snd_pcm mei_wdt ghash_clmulni_intel dr=
+m_kms_helper libahci wmi_bmof rapl drm_buddy snd_timer video intel_cstate m=
+ei_me snd libata intel_uncore intel_pmc_core serio_raw mei pcspkr soundcore=
+ intel_pch_thermal intel_vsec wmi pmt_telemetry acpi_pad pmt_class binfmt_m=
+isc drm fuse loop dm_mod ip_tables chacha_generic poly1305_generic [last un=
+loaded: drm_format_test]
+[  152.528270][ T4768] CPU: 6 UID: 0 PID: 4768 Comm: kunit_try_catch Tainte=
+d: G S  B            N 6.11.0-rc7-01411-gd21942560499 #1
+[  152.539795][ T4768] Tainted: [S]=3DCPU_OUT_OF_SPEC, [B]=3DBAD_PAGE, [N]=
+=3DTEST
+[  152.546473][ T4768] Hardware name: HP HP Z240 SFF Workstation/802E, BIOS=
+ N51 Ver. 01.63 10/05/2017
+[  152.555399][ T4768] RIP: 0010:drm_framebuffer_free+0x126/0x1a0 [drm]
+[  152.561797][ T4768] Code: 8b 74 24 50 4d 85 f6 74 28 4c 89 e7 e8 f3 fc 7=
+8 c2 48 c7 c1 80 39 4c c0 4c 89 f2 48 c7 c7 e0 39 4c c0 48 89 c6 e8 5a 08 e=
+4 c0 <0f> 0b e9 2e ff ff ff 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1
+[  152.581167][ T4768] RSP: 0018:ffffc90001397c08 EFLAGS: 00010282
+[  152.587067][ T4768] RAX: 0000000000000000 RBX: ffffc90001397cc8 RCX: 000=
+0000000000027
+[  152.594872][ T4768] RDX: 0000000000000027 RSI: 0000000000000004 RDI: fff=
+f8883c9930bc8
+[  152.602675][ T4768] RBP: ffffc90001397ca0 R08: 0000000000000001 R09: fff=
+fed1079326179
+[  152.610478][ T4768] R10: ffff8883c9930bcb R11: 0000000000000001 R12: fff=
+f888108fad000
+[  152.618275][ T4768] R13: ffff888435067000 R14: ffff888434a6ca80 R15: fff=
+fc90000a8f650
+[  152.626076][ T4768] FS:  0000000000000000(0000) GS:ffff8883c9900000(0000=
+) knlGS:0000000000000000
+[  152.634820][ T4768] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  152.641241][ T4768] CR2: 0000559f29c1e540 CR3: 000000043c06a003 CR4: 000=
+00000003706f0
+[  152.649038][ T4768] DR0: ffffffff8757a458 DR1: ffffffff8757a459 DR2: fff=
+fffff8757a45a
+[  152.656837][ T4768] DR3: ffffffff8757a45b DR6: 00000000fffe0ff0 DR7: 000=
+0000000000600
+[  152.664639][ T4768] Call Trace:
+[  152.667783][ T4768]  <TASK>
+[  152.670576][ T4768]  ? __warn+0xc8/0x250
+[  152.674496][ T4768]  ? drm_framebuffer_free+0x126/0x1a0 [drm]
+[  152.680289][ T4768]  ? report_bug+0x25d/0x2c0
+[  152.684640][ T4768]  ? handle_bug+0x3c/0x70
+[  152.688816][ T4768]  ? exc_invalid_op+0x13/0x40
+[  152.693338][ T4768]  ? asm_exc_invalid_op+0x16/0x20
+[  152.698206][ T4768]  ? drm_framebuffer_free+0x126/0x1a0 [drm]
+[  152.703996][ T4768]  ? drm_framebuffer_free+0x126/0x1a0 [drm]
+[  152.709806][ T4768]  drm_test_framebuffer_free+0x188/0x510 [drm_framebuf=
+fer_test]
+[  152.717270][ T4768]  ? __pfx_drm_test_framebuffer_free+0x10/0x10 [drm_fr=
+amebuffer_test]
+[  152.725247][ T4768]  ? __pfx_drm_mode_config_init_release+0x10/0x10 [drm=
+]
+[  152.732090][ T4768]  ? __drmm_add_action+0x19f/0x280 [drm]
+[  152.737636][ T4768]  ? __schedule+0x6ea/0x1670
+[  152.742077][ T4768]  ? __pfx_read_tsc+0x10/0x10
+[  152.746598][ T4768]  ? ktime_get_ts64+0x82/0x240
+[  152.751206][ T4768]  kunit_try_run_case+0x176/0x440
+[  152.756078][ T4768]  ? try_to_wake_up+0x74d/0x1610
+[  152.760859][ T4768]  ? __pfx_kunit_try_run_case+0x10/0x10
+[  152.766242][ T4768]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
+[  152.771970][ T4768]  ? set_cpus_allowed_ptr+0x81/0xb0
+[  152.777006][ T4768]  ? __pfx_set_cpus_allowed_ptr+0x10/0x10
+[  152.782565][ T4768]  ? __pfx_kunit_try_run_case+0x10/0x10
+[  152.787945][ T4768]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x1=
+0
+[  152.794713][ T4768]  kunit_generic_run_threadfn_adapter+0x7c/0xe0
+[  152.800784][ T4768]  kthread+0x2d7/0x3c0
+[  152.804712][ T4768]  ? __pfx_kthread+0x10/0x10
+[  152.809145][ T4768]  ret_from_fork+0x30/0x70
+[  152.813410][ T4768]  ? __pfx_kthread+0x10/0x10
+[  152.817843][ T4768]  ret_from_fork_asm+0x1a/0x30
+[  152.822455][ T4768]  </TASK>
+[  152.825331][ T4768] ---[ end trace 0000000000000000 ]---
+
+
+--=20
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
