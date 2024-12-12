@@ -1,149 +1,124 @@
-Return-Path: <linux-kernel+bounces-444086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A776F9F0097
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:56:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 646C19F009A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:57:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0CF21887DCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:56:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE31E16AA96
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67A11DED45;
-	Thu, 12 Dec 2024 23:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1941DEFE2;
+	Thu, 12 Dec 2024 23:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sfZidjAg"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BtxJPCZq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4001547F5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342741DED7C
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734047805; cv=none; b=kCXM8837dqZUJyDWwhAQuN9q+HzCSluIFC2377gBjEkTdh2d0YW4+5HyYSdfgbtGC9Zk4x+80WCWfZCkml1z1SwxypiusUfW0Ke980j2TTuWspbxbDmgW00cMPvevMnoFuvjVLj+inMmxfI/pMsioa/aD9XlbBUAVpGlEB7Qxjc=
+	t=1734047818; cv=none; b=fYd6h8LCSZVrTKo1SwwUbdakRvB3H6bIN7ZASGQUp78g5ZRCfnDN0RXbktKF8VQV2xaBx6lxX0rLi/yHPrtLMs5Ucc2HG7Q4wiV2qB/CWdimdQk6L5TajT3fJojv1XPmWPW5Z5OO64+hQrlHZ/dOUG3dboG8MzSuJlRGo50TEm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734047805; c=relaxed/simple;
-	bh=OAqxoR0E3k1d3Zicqw0ChBG2rot6oEjKv+BbQAAHrKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WUQXBIzZdZ+yiDUX1TzY70Ia89nAsisJhGm+fQhM4gtCVqt+gj6q9Q9N2f+6/mQBH/ezpb1GGrzGBmP4iT7wdMxX+ch4+BKErsWloMunOuv8gAkA15d9Q+3eixV+/OMKym1F40rfwRgpEZe248vVKjFyEmM0WxWT1/0OB/137zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sfZidjAg; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a9d0c28589so58415ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:56:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734047803; x=1734652603; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LB5bX3v/DMA7yD60ulRchWAjL+y6HgiWpq/uuN5wDvI=;
-        b=sfZidjAgT84BeF+mu96SCQRAYVmRUIhiF8R7qs+XXBSXMWCabXSvsoeVXPlIMrSWn9
-         Fx9c6tMnEBFzaR0oSqFkcjPx4QKyjQkY/L7e0ewnBLTbQgqUUqKD5KW88hXXHsXxl7L3
-         K+f0Z27ilPrFJ3uO/kqhPo27Jn5q9JdCXGQzCxga1b6bA8rhGi1R0a39iNujrethUwcI
-         fKhGYivHwuPJTkbGFOAXJXtE8N4duj8SH7pjySZ3S/WM1XBku3sK+lmKbPW2lACRe6GN
-         rz82+Lu8dkwHxa8hyRskbS6fa4zta+WEc8V7hYlztwFkXf1CEiqvF5AZx3T1Cfr3PNSB
-         dS1w==
+	s=arc-20240116; t=1734047818; c=relaxed/simple;
+	bh=aypqBEDo7cxiaQTVJnF2pXmioUjFcR+5fj45JQdYhgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mrRONvyk9Jkmx1bDFF/SKCVxBY/IjwnqM7TwOW3HsALNyVQpyLVFKpFb8XUV1wMEktRgfwjYWeRc+OTBWPO7lJgkAoOUVKRXTqJ8pWR5F0eMBPksV9G1fptPA9MCuRKbf6fxinswokgp8bJamMI8ntqgZC52o6tsA/+dJboFJLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BtxJPCZq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCGcgKv019800
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:56:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	igkze4eNvMlgvzpqcEPf2X9VDFsvbmDI+1YMKHbfq4A=; b=BtxJPCZq328LwSdu
+	+HOEKW+BHMKvUkpMRZu4bo0yu0dUqfHn6m5Z9hWE6GZtKgZ1YG9TnYSKfOAaJZUQ
+	jQcZ/2rhDxTT12cJ55KIT0LoHjyUHcxk7cXehZbWul8+mOS6ij42bZTDKc9Hr+nz
+	+PWX/kRFdMOGVbYjMsezxNB5THPdLh+28+ezZi8xOWkGjR8kqk3EjcxvofPxtq02
+	OuAko0+T1AI6A4gvdh5+rmgGleg4r5wrUCKIXlMUFRkSCHj0auXsn2Cwuqlglk5j
+	LOSrXQaY6YHnvb9duE5e3myaZfVgRaGC44rjrylI4Oy8RWOxMP4bMIxjztAVOa5L
+	vny8Og==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ffdyv49m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:56:56 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4679fb949e8so1738731cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:56:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734047803; x=1734652603;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LB5bX3v/DMA7yD60ulRchWAjL+y6HgiWpq/uuN5wDvI=;
-        b=Rb+ja/xNChZBmDfXjlS0FcnBmXJnfOr+6Zp1WhNWdcT0o/rDoN8/KgCOek0DZKw4nF
-         hW7rOlndmc4RRnB9bod2pWCL/U0OVj/7C6UNc3dr71lagJifEKnRMU3U59YFiKBQ5v+p
-         kirsHk3lWk4P559ep4UoTELu8PI/GdBKBQWyB1vhZ+kwZoa6mlznZH7TPz+9rCsAWrJw
-         pspNqKE2A8n0iPaPrHOkxCMumS2ikdTV28s9UdrIu+MOwMv6laaaqERZ1p5yoDrg1MNU
-         jRoSMKkHCLPd3xQRaB0f466kXZ0cGiRia1yC9gG/uwZFb7z40ACELFS76Ant6s6sZ81Q
-         wI6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVXcubns2j+Q8NKPAzYTty2zJVl/P/AznLpBL9ZPY03p3jfFV1ymVGJNgn0+5BGeD/pD8fTfkdy9jc6z1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAFYpU7Xa+j110kW4zLZWD0jbgkfHNSN7iaz915QOOMVkqd9zk
-	wznUK5Cada6Ov5dA+NZXZM1Ma/f+ryQFOX7tpvvw536V/yX922cpjOQV6VU48O3cn4Qz3pg2Spv
-	BMegfI9i3thCVtE1JSfbZ+AT67QvyiatIIV6Q
-X-Gm-Gg: ASbGncudTrEp5afGQZF7/25mYE8Jn2Y4OzW/KLMufpszGvoTze7rS9hKKpGMofxWk6v
-	S7xua/eggRX4yUHTRSSY0VQmG7QamZlTGntxO7ms=
-X-Google-Smtp-Source: AGHT+IFE0MXaXTiKwdCeEqzuur+/EXqmoUorCxXi8ZAavQNCLD4dCXv4DKrdTry+I1dAHgrFT+uoWbkSKulwbk7M6w8=
-X-Received: by 2002:a05:6e02:180d:b0:3a7:c7fc:1fdd with SMTP id
- e9e14a558f8ab-3b0267494a7mr461345ab.3.1734047802699; Thu, 12 Dec 2024
- 15:56:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734047815; x=1734652615;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=igkze4eNvMlgvzpqcEPf2X9VDFsvbmDI+1YMKHbfq4A=;
+        b=CqJVPKUxoTZFHCujwPEG4H86o9AgwznhSqRXtj1hNB4cjqBogVshINx3x+tIwRJzXi
+         Y4GsiT2s0G9q02UoHy0KW4CEPmwg8CkDU4ZXfIEUbalHWYfgXDgzwmd8eZajEC0+SsUk
+         OFyORqnrFag5NfVPm5sTgFkzUuAM5DSfBLteu3nWWsfqbddbBb3sw3OJS6ZIRiprP9kL
+         YcBgs1jQJHLQuDjn9XlGfDl95w5if1TLOja4jbOJiNtge61cp+Ka0NkCPWSi0oDMrBOQ
+         2q7rU1/isK870Txt0jrOmyNvS8ScMeRNuAriOy+5ivu+ZkvIXplWpZ0l/l84hqAXzc4r
+         50kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnSCWE5oABBi2kDcyRuCsoVrCs/7VKGFwItGVQcjUo2uoNAY3yU2s2QTbc1mMSGav6B4KwtYgZlgTmWxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMjsDh6XKy7R6IKTy1MGhv/vqcLNFCHux6wdF0pNiri+fomSWv
+	Uvjzk/ifM40kdCcmot/UTuVj6bYRtCuEVFREe1PMOax5YieWvE7oYjyK7yk1iGN1XKgSW0FvE5L
+	YxAmtK5Hz5HzUl2YB6J8XGiwLXbRjOK7K1JPGY9yP/wVOthxTgI1SE0Nc2ZN7ODk=
+X-Gm-Gg: ASbGncsvdTKFoQs19res9/EJndXCjjOE+4JhZ2FTcrn9qcMKPT+htBMYBbEVbsyRzqw
+	iAK7adWUAMgwEMm8BYZIsUfyPLx/TeiitQnbWEDeuXAYShts8uI8jYCYuxhSChYUQcDbXQZ1gaZ
+	P6KilEQj3s0uCZHG88QqmdJ30mSqOXLFX1NQUA5Pkhq+44JiLZSxImP54L6US9wq8BDe9q0LV8i
+	Y+tNo8XptB8lj8VrCSaUElqp7a902QCsrPcsPYTQz/ki5d8ykAXD2MMyWnFb5nBpG0arFLkIcL/
+	gzRghwdenySc0x07XcB+NbJpPPzaeXHq3gCz
+X-Received: by 2002:a05:622a:48f:b0:467:95c2:d8a3 with SMTP id d75a77b69052e-467a575541bmr4033611cf.6.1734047815097;
+        Thu, 12 Dec 2024 15:56:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEVdy+xBxzqm0XQW/NYiBLzG2Pc2PWxSKMVl5eSX5gu4+DsOJ6TJe0k3mLn1vWEbfRN0MJg9w==
+X-Received: by 2002:a05:622a:48f:b0:467:95c2:d8a3 with SMTP id d75a77b69052e-467a575541bmr4033481cf.6.1734047814774;
+        Thu, 12 Dec 2024 15:56:54 -0800 (PST)
+Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3d00a0370sm9142689a12.6.2024.12.12.15.56.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 15:56:54 -0800 (PST)
+Message-ID: <553d1727-18bd-4e8f-8e05-80818dc50284@oss.qualcomm.com>
+Date: Fri, 13 Dec 2024 00:56:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127212655.922196-1-namhyung@kernel.org>
-In-Reply-To: <20241127212655.922196-1-namhyung@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 12 Dec 2024 15:56:31 -0800
-Message-ID: <CAP-5=fW5bbxXakiFuUAG-HTH2aH_hTXQjJp6o-bZcjcPvNmVrA@mail.gmail.com>
-Subject: Re: [PATCH] perf tools: Avoid unaligned pointer operations
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] arm64: dts: qcom: ipq5424: Add TRNG node
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
+References: <20241206072057.1508459-1-quic_mdalam@quicinc.com>
+ <20241206072057.1508459-2-quic_mdalam@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241206072057.1508459-2-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: z1y9PEUx6AHQLdM9OiJAMGWvnOZkKdXb
+X-Proofpoint-GUID: z1y9PEUx6AHQLdM9OiJAMGWvnOZkKdXb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ phishscore=0 mlxlogscore=768 lowpriorityscore=0 mlxscore=0 adultscore=0
+ spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412120173
 
-On Wed, Nov 27, 2024 at 1:26=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> The sample data is 64-bit aligned basically but raw data starts with
-> 32-bit length field and data follows.  In perf_event__synthesize_sample
-> it treats the sample data as a 64-bit array.  And it needs some trick
-> to update the raw data properly.
->
-> But it seems some compilers are not happy with this and the program dies
-> siliently.  I found the sample parsing test failed without any messages
-> on affected systems.
->
-> Let's update the code to use a 32-bit pointer directly and make sure the
-> result is 64-bit aligned again.  No functional changes intended.
->
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+On 6.12.2024 8:20 AM, Md Sadre Alam wrote:
+> add TRNG (Truly Random Number Generator) node for ipq5424
+> 
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
 > ---
->  tools/perf/util/synthetic-events.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthet=
-ic-events.c
-> index a58444c4aed1f1ea..385383ef6cf1edaf 100644
-> --- a/tools/perf/util/synthetic-events.c
-> +++ b/tools/perf/util/synthetic-events.c
-> @@ -1686,12 +1686,16 @@ int perf_event__synthesize_sample(union perf_even=
-t *event, u64 type, u64 read_fo
->         }
->
->         if (type & PERF_SAMPLE_RAW) {
-> -               u.val32[0] =3D sample->raw_size;
-> -               *array =3D u.val64;
-> -               array =3D (void *)array + sizeof(u32);
-> +               u32 *array32 =3D (void *)array;
-> +
-> +               *array32 =3D sample->raw_size;
-> +               array32++;
-> +
-> +               memcpy(array32, sample->raw_data, sample->raw_size);
-> +               array =3D (void *)(array32 + (sample->raw_size / sizeof(u=
-32)));
->
-> -               memcpy(array, sample->raw_data, sample->raw_size);
-> -               array =3D (void *)array + sample->raw_size;
-> +               /* make sure the array is 64-bit aligned */
-> +               BUG_ON(((long)array) / sizeof(u64));
 
-I think you intended:
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-BUG_ON(((long)array) % sizeof(u64));
-
-Thanks,
-Ian
-
->         }
->
->         if (type & PERF_SAMPLE_BRANCH_STACK) {
-> --
-> 2.47.0.338.g60cca15819-goog
->
+Konrad
 
