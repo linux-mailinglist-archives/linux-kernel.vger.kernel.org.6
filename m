@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-442917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE0B9EE3FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:21:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DE59EE3FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:21:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2DA4188904D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:21:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C49F283E34
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76772101AF;
-	Thu, 12 Dec 2024 10:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6842101B4;
+	Thu, 12 Dec 2024 10:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h2BwonQa"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BUWHPaG/"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A683C1F2373
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9662101A8
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733998870; cv=none; b=X5L7y7Y9CQn3uGf3/8MTrqqekDIXNhfxtZS66txjEUbR+S9UJMCeDraFMVkMzvyAY+aA3GDZuzJoZjQ68cAU4xW2LreQIK5FQJbnUaych0pd/bdyclLJlq4C8yrXAuBHURb6QuOF58FPhJ7Svd7XS93hs+hz0k1HRAJmseqEt0E=
+	t=1733998890; cv=none; b=XeOSeza9FoABcAp+vxobCDoYeMFYMC1VKeGrbdleS+JVuOM/XkEL+c84kSXlhW+SnxcM5bzIU3mjlZeyVp+1SRCNWbK+LirNNiCg6KWSbZ/90wufN1CtFpXaB0iSBsjpgirt9MsD7MpMhtsALsOpneZ83EIFS9GbFrlBaUcKLbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733998870; c=relaxed/simple;
-	bh=nXv8eQcVVBYoG8g/p1GxpunK5y5cLR0ljCXgOQaPAM0=;
+	s=arc-20240116; t=1733998890; c=relaxed/simple;
+	bh=j4TuiQPppQLM9fiKLtPZCHoESHsydyX1DN6RPXno1UE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pUYrhEugvizfDSyZcHj63NoanssIaCQw/q0IWtT7VQSps3CA9k2ZK+CXuHBkvOHiCMVlDX7U8hixC13G+pGG6HVLl8k2pJTQ3LRz7qlGRFBlJzTlBiTWP49xBQ++qkGqW2KvysgfobqylCAjs3jRsRalyUCxiP+7kYwt7v8zODA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h2BwonQa; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:Content-Type; b=tEARuLyQYHtArzewkjh+M4p2IKjBB/FJdfVk6YrHJLp4T1f5ezkWizzR9CvijdaqND5thPGjbqMppIUDy8VVz7QYml6rPuikkGaLe2uzaILEkUfI2m57vu/nG14KISLzhHc91Rjj44tXBS/yhZT/f7b7m9hNQ3kZswJQc1GgAZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BUWHPaG/; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434f398a171so525285e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:21:07 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434f398a171so525715e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:21:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733998866; x=1734603666; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733998887; x=1734603687; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pzQGJmvH+r/yv9jwC3++jU/5AXa6EzZFVLdWoY0TuKk=;
-        b=h2BwonQaCRtsWCl4wCUZyw9eRBu/FoUDElCJblXvUD/zRz6rG0MY/WL4cu8BbHaNJy
-         heX760p4tZb06fHKSadK/EblC8q9S5B9YgNh/blgZ6WyHvbpLmyY3T5uMy3F7CEYTo1T
-         KwcVyIsd1Brw3qz4SiLm0yIRUY5Rj2NTZLtFqiQwoDw4I8rkX6xuGxqUP8jYwYc7ruYi
-         i/jQop22Qp15JVm5oN4SdTpBywDluaDFAUs5VM6jkZbYu5edTcgjGe1tV05HjWe3Z6et
-         zwi9jd6qyo4/UzCgR0NI2XD8KDEqMUZvMply17JbB/8r1JdlR0i3lrQAkQ0U4X8McGuI
-         uQXg==
+        bh=fke4O3DZIsPBXopAuMCgSIChzUf1Or43DEXH3RtJKvM=;
+        b=BUWHPaG/pyLi7gxW07qNn0p9/CqY1uKrPn1YhuSMXWkeYkNyRkAwO1GUhC2DaN3r38
+         zBmoi1Pt00jd/fH/RonjdO1g+MSm/6LQd0BYglZSNin5o53ciO0xw1g0f6yokrt3lmEZ
+         Yd3aKE3rg5DUlLX9tQhHVy43VoD7WXEDKFFTQWsu+Urd9qO+m3rFrt+CiJRz3W9gu0BL
+         Wv6IpT+WG/BHbqf2WSuFl1OC/GJl8Te1wbBvPMe9CqBXZMbhVR303E3b+cVqW5s+TELl
+         aiiEdyw7KgEarkunURL/pMtVKTI5mq/wXTYklsTl8QkIbxiNVckS2T7K2t6TWyRoF1is
+         Lvig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733998866; x=1734603666;
+        d=1e100.net; s=20230601; t=1733998887; x=1734603687;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pzQGJmvH+r/yv9jwC3++jU/5AXa6EzZFVLdWoY0TuKk=;
-        b=C47DXV3g55MaM0XemgZuKK+MO25mI/CAm1UjRK1Ur0AMuSGpr+fYZE72QREE0bDuA6
-         6DXpiqrN0/D18wZyjnQlSK8lWnzlwa/9zX2MNwYChngsw6tFYZ61eZAV59FCspSU3ZeU
-         G6IlW3hA0OJ2su8ncuw4wTd2xJJrmhh8dY9cfOrNmRAf9v7L3oxMoLIx66I1fff//vS2
-         Z8jYWjvFfdM2Lub5qsXxaVkFZ+mYyCXdgPgq/2UenKhGxXwLzAiSG78K3nXEbZ02cJQz
-         FLg9dAo9+/joGedIu+0Gv+SXH1sq3X7vEgZUZg7MfuC+LL9P/e3DB7klFDeD+hJoJxbC
-         j0vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVa34zlHeyqLC2NygwrKFeYBdE/44j1r/TApBBdhfm6Cu+0/Hemytg0ZpS2fuHaGrsSZiqemcQ9SpKGAcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWcPqkegYrs2CdShDGhRZAIKTYJ3KuLG8NYgic6AGO5IGOJM2M
-	s2EsKDrT8jHxYvVZ4aFMRu/rQX2u6hxAjMs+w4CTELUB8VWZXcUbAa9BkqT/aL8=
-X-Gm-Gg: ASbGnctXHcV32REqwUU9EzeLdeOPAiLrGtHG2R1CJ1pXPb1Lqf9HdPkcB/RHkWr0chT
-	S5hKk+/I6RFdONdaDM9FM10vLx3C+Zg19uEfsCc4RggNsjEUH1nJA8VW2ci7YenkhxsT3WkPoUC
-	cAAIBMIZFgKlEPZIiRqSTFF1niwWJFPNDV4jjjnogLZwfXnKvHbeh+7nms8sa5VzudmCNI9mW2+
-	jMbs4MH6dUNpKtajP0p8oudMAGYCJBqWo61ElJJRG7b7bzBIx9g9Vb13wsSZ7sjubTbsf3xfYEa
-X-Google-Smtp-Source: AGHT+IE7Wr1brjnYyJz+kx//UHL05ClFVdjQfpqxjAH8jEHL7klZAmd+vx/9Vm0jtpTbsqjpVqsz8Q==
-X-Received: by 2002:a05:600c:4450:b0:432:dc5a:b301 with SMTP id 5b1f17b1804b1-4361c41832amr17669115e9.8.1733998866012;
-        Thu, 12 Dec 2024 02:21:06 -0800 (PST)
+        bh=fke4O3DZIsPBXopAuMCgSIChzUf1Or43DEXH3RtJKvM=;
+        b=knahCoCgTHSNu1+XzKiflc39MNNKbdqh7xy9C4jUEjNFs3XKqUnGMJy2OdVb6WfdGs
+         q2nUsg4bGXfuJnHBurJVV211loT2gPXEt8FyarAAi1ZxQzLvdKoteiH4Dr2hm0edAEMH
+         Uw4PQvnL2oThRSGqDBRFQzs1gFhM91DVVedhvg8SlQnIe+NRwx2gvFUoMKWX+2SDVJag
+         /SnfgR6w5ElG7mREVGMD4XTtf49/mk8XEoQ17//2aC8fplxbyjyoewYPTKrx/1nNWJi1
+         EQuP5qje88Pjn/ZTICvh5ArDoZC8T1qTqVPku8znq5Fxv3yGkyCt5y8ocr7ktydxadOp
+         2+Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvSz4jVs7epIXQIl9GToJMAVwRwj6vI7JMIH/PtQHo/C5rZev1OZKTTvrwRB1A79Uov4MPZjebzXHFN3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy43DZOf6/IxFbJoW88pgtMVIKsqx8wIY61TIPgxKK7m+xKz3VD
+	TpYskcPPVUDtIskm1nFf1R9WWyNGq2CH/PK1i+mh9nU8XP18v6fXrK69ztt5sEo=
+X-Gm-Gg: ASbGncuB4qhcCw30siRy4ji7dGTvpbkUbpRKcPYSPMJFyGSTWMrSJ1FOIXmWr1AlRiQ
+	BAwJcJoD3Ml8fVHqzQ5R0kG8AqU/uV/emZ3nlAJadXmdwJm3DKJt0z/I3+pmsyMKQ+HvK1jK2pl
+	wHULgL+USQzi1B+ubcoU9nKdSwTw2HVlmBV/Dz41w0/DAUz8sKq92Ju1aX+WtDHmP/TfF8Hp514
+	1kNU+HjKREhO5sUErN5xV4pmw5F6JyrAw0ll6g13Dx/+D4WCOnGQDxvRjCgXtqmzSB6ZueY1NJ8
+X-Google-Smtp-Source: AGHT+IEcDdNRYWnvjCFEOsKyDvJiRhKNRQ1eVSRm7pLVduVuKq1rXUwsE5Gc/9YVe8Jw1Y7nTqaF8A==
+X-Received: by 2002:a05:6000:2ae:b0:385:f1f2:13cf with SMTP id ffacd0b85a97d-3864ce55683mr1853061f8f.5.1733998887082;
+        Thu, 12 Dec 2024 02:21:27 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362557c6cdsm12094055e9.15.2024.12.12.02.21.04
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878248f680sm3668445f8f.9.2024.12.12.02.21.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 02:21:05 -0800 (PST)
-Message-ID: <c6ac74d3-d3b5-44d3-bb12-8965034dbb15@linaro.org>
-Date: Thu, 12 Dec 2024 11:21:03 +0100
+        Thu, 12 Dec 2024 02:21:26 -0800 (PST)
+Message-ID: <f19b4400-b94b-47ff-8431-2363d396284e@linaro.org>
+Date: Thu, 12 Dec 2024 11:21:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,7 +80,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mfd: syscon: Fix race in device_node_get_regmap()
+Subject: Re: [PATCH 2/3] mfd: syscon: Remove the platform driver support
 To: "Rob Herring (Arm)" <robh@kernel.org>, Lee Jones <lee@kernel.org>,
  Arnd Bergmann <arnd@arndb.de>, Pankaj Dubey <pankaj.dubey@samsung.com>,
  Heiko Stuebner <heiko@sntech.de>, Liviu Dudau <liviu.dudau@arm.com>,
@@ -90,7 +90,7 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  Will McVicker <willmcvicker@google.com>, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
 References: <20241211-syscon-fixes-v1-0-b5ac8c219e96@kernel.org>
- <20241211-syscon-fixes-v1-1-b5ac8c219e96@kernel.org>
+ <20241211-syscon-fixes-v1-2-b5ac8c219e96@kernel.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -137,26 +137,31 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20241211-syscon-fixes-v1-1-b5ac8c219e96@kernel.org>
+In-Reply-To: <20241211-syscon-fixes-v1-2-b5ac8c219e96@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 11/12/2024 21:57, Rob Herring (Arm) wrote:
-> It is possible for multiple, simultaneous callers calling
-> device_node_get_regmap() with the same node to fail to find an entry in
-> the syscon_list. There is a period of time while the first caller is
-> calling of_syscon_register() that subsequent callers also fail to find
-> an entry in the syscon_list and then call of_syscon_register() a second
-> time.
+> The platform driver is dead code. It is not used by DT platforms since
+> commit bdb0066df96e ("mfd: syscon: Decouple syscon interface from
+> platform devices") which said:
 > 
-> Fix this by keeping the lock held until after of_syscon_register()
-> completes and adds the node to syscon_list. Convert the spinlock to a
-> mutex as many of the functions called in of_syscon_register() may sleep.
+>     For non-DT based platforms, this patch keeps syscon platform driver
+>     structure so that syscon can be probed and such non-DT based drivers
+>     can use syscon_regmap_lookup_by_pdev API and access regmap handles.
+>     Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
+>     we can completely remove platform driver of syscon, and keep only helper
+>     functions to get regmap handles.
 > 
-> Fixes: bdb0066df96e ("mfd: syscon: Decouple syscon interface from platform devices")
+> The last user of syscon_regmap_lookup_by_pdevname() was removed in 2018.
+> syscon_regmap_lookup_by_pdevname() was then removed in 2019, but that
+> commit failed to remove the rest of the platform driver.
+> 
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+FWIW:
+
 Tested on arm64: Qualcomm SM8450
-Tested on armv7: Exynos5422
+Tested on armv7: Samsung Exynos5422
 
 Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
