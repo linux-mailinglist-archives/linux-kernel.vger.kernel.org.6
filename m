@@ -1,124 +1,199 @@
-Return-Path: <linux-kernel+bounces-443350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D8C9EEE2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:54:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A109EEDB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:50:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3666A16DC41
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3A9E28B621
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDD3223E69;
-	Thu, 12 Dec 2024 15:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B0E2253EF;
+	Thu, 12 Dec 2024 15:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GYekcX5M"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/bUYKJb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186742210CD
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518822135AC;
+	Thu, 12 Dec 2024 15:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018510; cv=none; b=GdYZLhHhglskAJ9o9uXbkPaJ2ji0B2W0bK4SfvTRv2o6W1jn6ZHiZjYrbtuoB3q0uGCBvFKY7qEMffVJb4gaPm1yZJWNgnwdMpLUy+cSSM5jcCZ2YGy6XUcGa9s+KLS9lFmq7f2OmmvsmiAm3Prau30DvCVrZN9F+b1YSvuLnmE=
+	t=1734018531; cv=none; b=W9sSl4O2L2U2GkPE9vnkT394xhOL7a/dfmAqG+xH7bfz7TpkUj3AsgMRk0vqdpW+t9UOx0qHD42bhcqXtsdANNKtI+hEhiVHT/NcE1rXdlShhUXCCln+edTIGieYIBYf5qeMV3tdkOGYKbGoAcR4UOlf5NChcOUknZZIG0mzgiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018510; c=relaxed/simple;
-	bh=TMFV4DzKyPPAfoOQ6tLwtGLtOGvpKCjN8AV48PlDsoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JdXSPwE+Rst+byWMrydUq1pd1vtWZfcoqBVKJduG9xbwkCCDKwVOw0RGBe2+pTNH5rRZwHJXqODz2vHsLOkeKkTWFJ2jzq5dDZrs87XBT0Xd5J1JeNWVLk50rqR4fxKO96DX0WBUwfB1OFGQQWaqbUyY05RdkwDHyah6TnBQ+q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GYekcX5M; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a8180205f3so7351035ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:48:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734018507; x=1734623307; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PvBx/w2DhSklV4ojnPJsBMakpCIKbBPJ0+ZbaVI4zHA=;
-        b=GYekcX5MlMuaMNE3LLOO4GQGxJZRFf+TcETm5lJ4cgJ1VNKm5Rs+WEwKI9ProMZjy9
-         cy1o5Cm6AOQo29DKT7BrU/7ayQlJuk5TPmNLoWWq9ekxn2s8Nu8HE3+t2WFVLk/O8MgE
-         9ez7VN02ATqrCwMHdwUA1rWXeIluVJeBd6ChFoqYbWBvwWh0vEP06z8KspKvD8Dszea1
-         pmtBaKerDl+gahaonybh1cw1zcjHywPaSV+v8FynkbLqV1FcH7a8YG6QaL3NkOZYvxkw
-         wP0FBl5FC6dHpNdSbJlE8Eb8Aih5ARwNXiqxgEm+P521b3mOBx/sZGOsVLpj3f8CpdjQ
-         qhwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734018507; x=1734623307;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PvBx/w2DhSklV4ojnPJsBMakpCIKbBPJ0+ZbaVI4zHA=;
-        b=EDqB4ZzdWk/VlOCPBURVW8VdX0JgtznPsnpsUyfQhNvFDgOSIpsHfHvBBIJokF0jA2
-         oz2ZmRcjctwbdkevUdgjIDqMXG7y1zMt4ifCVtJx8LXp50YI3htPu2ge0zeNaVWG1qye
-         dSM8e1eFgX42TRpVv1C5xmW32T73cD2aQwBx2KcKqTVet+K5tXd//Z9rRpcLhBpBlbXD
-         gdtks3Pi2cmWYiKS9Yp+5obgoY2DUSRuIJLlfUslV8OkWyyHrM7+guEcw8+e86zYYWSI
-         hrLNUuv9owPL4pY53PwduPpZWLA/NXhqLX8UTVc6ax7c/UvWoHfrYuWrscc3GWAEOnu8
-         Ooeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnP3+4c/0U9oZrv8DDh3QB2HSBdiJc95LR0xEhE9Auiz1pedsFRsSSE9Q4AKwrV4Iqb83aw3Cg2TMxuT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFAPg2w5/R9V9F1yf4vQ4L/+MPlGEUDUW/3pjczoCq2b3OCQd4
-	pQPbzo4bSRJBLr+ouyjD9LM23PC81xsZvEYSUvNZwim2Qq16DzZTtV/2XMxnrTU=
-X-Gm-Gg: ASbGncsCtSo7Z7iTn/TGu59XVEHizWoZJcROBesXgJAISKaIh2E7lIpQCNSHd2gX50G
-	FqHkR6SWhB1T1D3h1SF1+hOnjUe8atrBiwJyZIcHrQx0U/gn4QKc19gSau2koccgDCvk04hBS18
-	CuXNnc8PqXVKgfUhZ6YVlwCkJjR5yf3/oRe6ja3Mb9fL9FnPfe1nOCGj75K/XgJsieQ4WiaUI9S
-	jSxBWq1QfdPCKjp7CvNXNGt4/qtsglYNx9k36tWH2wwQqA3L7gW
-X-Google-Smtp-Source: AGHT+IHAQGTQIEr3hJAJZPVw8dHIc1jCD+zOwFKHo7t0IBPz9msmAmKUzqJ4fHZUe037ZAO0zcn+QA==
-X-Received: by 2002:a05:6e02:214d:b0:3a7:cce2:d349 with SMTP id e9e14a558f8ab-3ae70e32b20mr5044935ab.8.1734018507220;
-        Thu, 12 Dec 2024 07:48:27 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a808e1e0d6sm44607975ab.63.2024.12.12.07.48.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 07:48:26 -0800 (PST)
-Message-ID: <04e11417-cf68-4014-a7f7-e51392352e9d@kernel.dk>
-Date: Thu, 12 Dec 2024 08:48:25 -0700
+	s=arc-20240116; t=1734018531; c=relaxed/simple;
+	bh=mPQRjGnXG+0+zoGZDl5Y97k8+OqQv9RO2G0rAjvoyKY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ai9R4f+MLldIxOV4HamYo4G93ubeYQq+3SbTCoIsIP8zZ2fSM2r/ygC0npK1BuTBa9tR8XpaidW2qWMRqDQWweM7KewC0ZYaLowcAXfcYAPe5oETZSzmBXLO/m8G0yVP5sn4mCiKU6OiZ9mMYKs/2+4EjAiHOuaeZhwClWk2EZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/bUYKJb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC8A2C4CECE;
+	Thu, 12 Dec 2024 15:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734018530;
+	bh=mPQRjGnXG+0+zoGZDl5Y97k8+OqQv9RO2G0rAjvoyKY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t/bUYKJbZsL4NErnW6sI1MyJPkUK7Hv57rjXC85kfmtivjpCAObRUlSFkXC+d9CXB
+	 t2Bamp1jnF20qAQkkikv6oIQDOGtDdaKPPI01VOEwAUaXOPZsdjIYZWtBFTeuAEz+k
+	 vmnFsk0YDzr7PRMdphvaSzrXRJ80OEguZGCPY0s7uHQan0wEr0BU6iiGXVp0r9YPr7
+	 0ORymP+FrOe80StbudP5EhOKebE8G9WA4PepWvqhxQt19C9TP9XtKS5hncChOkCFcF
+	 k3IggTfO0HwhXoQ7f1hANm2IpfegpgSdXW2XCp5J0Blf1dNpT3BnLa3yRfjFxc+oqd
+	 5MkejfcODGxpA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tLlQl-0037eT-Ge;
+	Thu, 12 Dec 2024 15:48:48 +0000
+Date: Thu, 12 Dec 2024 15:48:47 +0000
+Message-ID: <86h678sy00.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>,
+	catalin.marinas@arm.com,	will@kernel.org,	corbet@lwn.net,
+	oliver.upton@linux.dev,	joey.gouly@arm.com,	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,	linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [RESEND RFC PATCH v1 2/5] arm64: Add BBM Level 2 cpu feature
+In-Reply-To: <2b1cc228-a8d5-4383-ab25-abbbcccd2e2c@arm.com>
+References: <20241211160218.41404-1-miko.lenczewski@arm.com>
+	<20241211160218.41404-3-miko.lenczewski@arm.com>
+	<87cyhxs3xq.wl-maz@kernel.org>
+	<084c5ada-51af-4c1a-b50a-4401e62ddbd6@arm.com>
+	<86ikrprn7w.wl-maz@kernel.org>
+	<2b1cc228-a8d5-4383-ab25-abbbcccd2e2c@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
-To: Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
- <djwong@kernel.org>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
- linux-kernel@vger.kernel.org, willy@infradead.org, kirill@shutemov.name,
- bfoster@redhat.com
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
- <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
- <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
- <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
- <20241204055241.GA7820@frogsfrogsfrogs> <Z1gh0lCqkCoUKHtC@infradead.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Z1gh0lCqkCoUKHtC@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ryan.roberts@arm.com, miko.lenczewski@arm.com, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 12/10/24 4:11 AM, Christoph Hellwig wrote:
-> On Tue, Dec 03, 2024 at 09:52:41PM -0800, Darrick J. Wong wrote:
->> <shrug> RWF_DONTCACHE, to match {I,DCACHE}_DONTCACHE ? ;)
->>
->> They sound pretty similar ("load this so I can do something with it,
->> evict it immediately if possible") though I wouldn't rely on people
->> outside the kernel being familiar with the existing dontcaches.
+On Thu, 12 Dec 2024 15:05:24 +0000,
+Ryan Roberts <ryan.roberts@arm.com> wrote:
 > 
-> FYI, another word for dontcache.  uncached just has too many conotations
-> in the kernel context.
+> On 12/12/2024 14:26, Marc Zyngier wrote:
+> > On Thu, 12 Dec 2024 10:55:45 +0000,
+> > Ryan Roberts <ryan.roberts@arm.com> wrote:
+> >>
+> >> On 12/12/2024 08:25, Marc Zyngier wrote:
+> >>>> +
+> >>>> +	local_flush_tlb_all();
+> >>>
+> >>> The elephant in the room: if TLBs are in such a sorry state, what
+> >>> guarantees we can make it this far?
+> >>
+> >> I'll leave Miko to respond to your other comments, but I wanted to address this
+> >> one, since it's pretty fundamental. We went around this loop internally and
+> >> concluded that what we are doing is architecturally sound.
+> >>
+> >> The expectation is that a conflict abort can only be generated as a result of
+> >> the change in patch 4 (and patch 5). That change makes it possible for the TLB
+> >> to end up with a multihit. But crucially that can only happen for user space
+> >> memory because that change only operates on user memory. And while the TLB may
+> >> detect the conflict at any time, the conflict abort is only permitted to be
+> >> reported when an architectural access is prevented by the conflict. So we never
+> >> do anything that would allow a conflict for a kernel memory access and a user
+> >> memory conflict abort can never be triggered as a result of accessing kernel memory.
+> >>
+> >> Copy/pasting comment from AlexC on the topic, which explains it better than I can:
+> >>
+> >> """
+> >> The intent is certainly that in cases where the hardware detects a TLB conflict
+> >> abort, it is only permitted to report it (by generating an exception) if it
+> >> applies to an access that is being attempted architecturally. ... that property
+> >> can be built from the following two properties:
+> >>
+> >> 1. The TLB conflict can only be reported as an Instruction Abort or a Data Abort
+> >>
+> >> 2. Those two exception types must be reported synchronously and precisely.
+> >> """
+> > 
+> > I totally agree with this. The issue is that nothing says that the
+> > abort is in any way related to userspace.
+> > 
+> >>>
+> >>> I honestly don't think you can reliably handle a TLB Conflict abort in
+> >>> the same translation regime as the original fault, given that we don't
+> >>> know the scope of that fault. You are probably making an educated
+> >>> guess that it is good enough on the CPUs you know of, but I don't see
+> >>> anything in the architecture that indicates the "blast radius" of a
+> >>> TLB conflict.
+> >>
+> >> OK, so I'm claiming that the blast radius is limited to the region of memory
+> >> that we are operating on in contpte_collapse() in patch 4. Perhaps we need to go
+> >> re-read the ARM and come back with the specific statements that led us to that
+> >> conclusion?
+> 
+> From the ARM:
+> """
+> RFCPSG: If level 1 or level 2 is supported and the Contiguous bit in a set of
+> Block descriptors or Page descriptors is changed, then a TLB conflict abort can
+> be generated because multiple translation table entries might exist within a TLB
+> that translates the same IA.
+> """
+> 
+> Although I guess it's not totally explicit, I've interpretted that as saying
+> that conflicting TLB entries can only arise for the IA range for which the
+> contiguous bits have been modified in the translation tables.
 
-Sure, we can go with DONTCACHE instead. Only thing I don't like about
-that is that you can use uncached as a verb and adjective, eg talking
-about uncached IO. Talking about dontcached IO sounds pretty weird.
+Right, that's reassuring, thanks for digging that one.
 
-As I've said previously in this and other threads, I don't feel too
-strongly about the in-kernel naming, I care more about the exposed
-name. And uncached does seem to be the most descriptive and most
-easily understandable by users.
+> Given we are only fiddling with the contiguous bits for user space mappings in
+> this way, that's why I'm asserting we will only get a conflict abort for user
+> space mappings... assuming the absence of kernel bugs, anyway...
+
+For now. But if you dare scanning the list, you'll find a lot of
+people willing to do far more than just that. Including changing the
+shape of the linear map.
+
+>
+> > 
+> > But we don't know for sure what caused this conflict by the time we
+> > arrive in the handler. It could equally be because we have a glaring
+> > bug somewhere on the kernel side, even if you are *now* only concerned
+> > with userspace.
+> 
+> OK I see what you are saying; previously a conflict abort would have led to
+> calling do_bad(), which returns 1, which causes do_mem_abort() to either kill
+> the kernel or the process depending on the origin of the abort. (although if it
+> came from kernel due to bug, we're just hoping that the conflict doesn't affect
+> the path through the handler). With this change, we always assume we can fix it
+> with the TLBI.
+> 
+> How about this change to ensure we still die for issues originating from the kernel?
+> 
+> if (!user_mode(regs) || !system_supports_bbml2())
+> 		return do_bad(far, esr, regs);
+
+That wouldn't catch a TLB conflict on get_user(), would it?
+
+> > If anything, this should absolutely check for FAR_EL1 and assert that
+> > this is indeed caused by such change.
+> 
+> I'm not really sure how we would check this reliably? Without patch 5, the
+> problem is somewhat constrained; we could have as many changes in flight as
+> there are CPUs so we could keep a list of all the {mm_struct, VA-range} that are
+> being modified. But if patch 5 is confirmed to be architecturally sound, then
+> there is no "terminating tlbi" so there is no bound on the set of {mm_struct,
+> VA-range}'s that could legitimately cause a conflict abort.
+
+I didn't mean to imply that we should identify the exact cause of the
+abort. I was hoping to simply check that FAR_EL1 reports a userspace
+VA. Why wouldn't that work?
+
+	M.
 
 -- 
-Jens Axboe
-
+Without deviation from the norm, progress is not possible.
 
