@@ -1,182 +1,146 @@
-Return-Path: <linux-kernel+bounces-442846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4155D9EE2D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:25:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819749EE2D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2385D188B4CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:25:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D6216264B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B919E20E6EF;
-	Thu, 12 Dec 2024 09:23:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DA820E6E7;
-	Thu, 12 Dec 2024 09:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0720B211708;
+	Thu, 12 Dec 2024 09:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M7WAJLyh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AEE21149E;
+	Thu, 12 Dec 2024 09:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733995408; cv=none; b=CiEnW90YHpmF7dnJcoTy0xFATiq0lJ35gfbxOpJnA22U3anN+fOQ91dZeVIUxapIjZY/MgPm3+TSN65hPv9VA065ldKRkpV+TWAFXrtjS2gVAw4V15UqMB7HxG4dGiq7NDzTPnYTF3uwv26Sqe3XyRjn8DJMXbEKOFXxHYSe/ks=
+	t=1733995465; cv=none; b=bmSVGbhhHskaqwi7jkiFsuS6emzja7q4jktmNmhyrYJzAyYPOxKI1OevoHbPfQlwm2T7jKqbpw5oJ/hTWqbOeXHeg5dyAlsMIKNvMG5mGOk9cfe1AAbHcf2kTa5G5JfNhx9lnNLMmE3WLsa84DVL8/V9MynbZwos4/907BwsqBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733995408; c=relaxed/simple;
-	bh=LpuCZ0zn9wOcs7NjXo1QHfxAcyOWNdCR9dbvUV4Dv1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NWOUT4m5TiW9hgFOb0Zxkyq0GT1rp98dMkQvwzqXsVJJzUkLXSWwYWwd45ccAr1JwUgafmRP87uN1g+T5LbAVKy41qO8TDSFJOn9E5U4KBcGnchvQizNNPLKJtaUPU7l6lRH68pnXxxm7XnEPQU3XIFrJbri+cHqqSPYcrgh7rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A0F1169E;
-	Thu, 12 Dec 2024 01:23:52 -0800 (PST)
-Received: from [10.57.92.2] (unknown [10.57.92.2])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50E893F5A1;
-	Thu, 12 Dec 2024 01:23:22 -0800 (PST)
-Message-ID: <5d4ccb2c-da45-4471-9bb1-90212b50dad7@arm.com>
-Date: Thu, 12 Dec 2024 09:23:20 +0000
+	s=arc-20240116; t=1733995465; c=relaxed/simple;
+	bh=6E/T+GZ5juoXqET0Uv5nEv8S2NdF/YnTyLRun6ttthE=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=aW6vWOQ3n3smkGrZ2fRpvBpOSTzCZtzGo2SiQV/yRe522xQXlaByH5YMryeMoBATRYL0vzinM9BHQgBiw5i0GImQXQ7zwmZQ5AqJuYef+XtxstPoMpsFxxql/JrVWkwmrIioSDE8uUeYZWflAQMZPYXfLJPQadfB/Zi0jibITjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M7WAJLyh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7QhB0029905;
+	Thu, 12 Dec 2024 09:24:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vruSfhkHwPeSC3Q/54ME5b
+	1o6qN3z5UKTYp8dgse4f8=; b=M7WAJLyhOPLPGiu3NKcHoww0oa98JZg9w6tlsV
+	CaXdoJQAVAIVk8QWKC+VvslNh8unINRHUEOZrRjpAMJUbRwVyyW/Iq/5F0H7sESC
+	QYWUyTcYbFkyM8wm1k3UcbKtLHLRAN1KxDeq/1KNFvlp/ropcGtygYtzfA0i5Xkh
+	QqpbjI4KqTdjrRgc11ugO0Mslp6imfiMV3J/LnumLHr+LUgO31jyFyrtgcHndmYx
+	91tpMwog6lcP2/fwJtyHgNHiTUEhAFsDb3ZcZ1CQ61ivCp+RgGDZ5bgAju+Qlbko
+	YiPwm3wMaKNi5OQpTHIaimD2bNlOkuwu9NN8jTARioB0sbLw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd4xtd2n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 09:24:19 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC9OIYw022235
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 09:24:18 GMT
+Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 12 Dec 2024 01:24:12 -0800
+From: Lijuan Gao <quic_lijuang@quicinc.com>
+Subject: [PATCH 0/6] Correct the number of GPIOs in gpio-ranges for QCS615
+ and QCS8300
+Date: Thu, 12 Dec 2024 17:23:59 +0800
+Message-ID: <20241212-correct_gpio_ranges-v1-0-c5f20d61882f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND RFC PATCH v1 1/5] arm64: Add TLB Conflict Abort Exception
- handler to KVM
-Content-Language: en-GB
-To: Marc Zyngier <maz@kernel.org>,
- =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net,
- oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
- yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- kvmarm@lists.linux.dev
-References: <20241211160218.41404-1-miko.lenczewski@arm.com>
- <20241211160218.41404-2-miko.lenczewski@arm.com>
- <86o71irucr.wl-maz@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <86o71irucr.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK+rWmcC/x2MQQqAIBAAvxJ7TsilKPpKhIhutheVNSKI/p51H
+ JiZGwoJU4G5uUHo5MIpVtBtA263MZBiXxmww16j1solEXKHCZmTkc8oivxkcbAekUaoZRba+Pq
+ vy/o8L/14FZdlAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Jingyi
+ Wang" <quic_jingyw@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Lijuan Gao <quic_lijuang@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733995452; l=1516;
+ i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
+ bh=6E/T+GZ5juoXqET0Uv5nEv8S2NdF/YnTyLRun6ttthE=;
+ b=UkpbjoW625oPEv/ILcZLPBMjVnya1NYP4EXRextdWohGRO61Oqpc9U67sTu4STeRagz7NFRK+
+ ed+sshQow09CBtSQqM27T2e1qhoYuVmQ9xhXiVvrEAd1UeDz8ATVYZ7
+X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
+ pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jqWGCh8gCKNZgrLQP0h_wPmOZYPrS16z
+X-Proofpoint-GUID: jqWGCh8gCKNZgrLQP0h_wPmOZYPrS16z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=653 phishscore=0 adultscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 impostorscore=0 clxscore=1011
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120065
 
-On 11/12/2024 17:40, Marc Zyngier wrote:
-> On Wed, 11 Dec 2024 16:01:37 +0000,
-> Mikołaj Lenczewski <miko.lenczewski@arm.com> wrote:
->>
->> Currently, KVM does not handle the case of a stage 2 TLB conflict abort
->> exception. The Arm ARM specifies that the worst-case handling of such an
->> exception requires a `tlbi vmalls12e1`.
-> 
-> Not quite. It says (I_JCCRT):
-> 
-> <quote>
-> * For the EL1&0 translation regime, when stage 2 translations are in
->   use, either VMALLS12E1 or ALLE1.
-> </quote>
-> 
->> Perform such an invalidation when this exception is encountered.
-> 
-> What you fail to describe is *why* this is needed. You know it, I know
-> it, but not everybody does. A reference to the ARM ARM would
-> definitely be helpful.
-> 
->>
->> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
->> ---
->>  arch/arm64/include/asm/esr.h | 8 ++++++++
->>  arch/arm64/kvm/mmu.c         | 6 ++++++
->>  2 files changed, 14 insertions(+)
->>
->> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
->> index d1b1a33f9a8b..8a66f81ca291 100644
->> --- a/arch/arm64/include/asm/esr.h
->> +++ b/arch/arm64/include/asm/esr.h
->> @@ -121,6 +121,7 @@
->>  #define ESR_ELx_FSC_SEA_TTW(n)	(0x14 + (n))
->>  #define ESR_ELx_FSC_SECC	(0x18)
->>  #define ESR_ELx_FSC_SECC_TTW(n)	(0x1c + (n))
->> +#define ESR_ELx_FSC_TLBABT	(0x30)
->>  
->>  /* Status codes for individual page table levels */
->>  #define ESR_ELx_FSC_ACCESS_L(n)	(ESR_ELx_FSC_ACCESS + (n))
->> @@ -464,6 +465,13 @@ static inline bool esr_fsc_is_access_flag_fault(unsigned long esr)
->>  	       (esr == ESR_ELx_FSC_ACCESS_L(0));
->>  }
->>  
->> +static inline bool esr_fsc_is_tlb_conflict_abort(unsigned long esr)
->> +{
->> +	esr = esr & ESR_ELx_FSC;
->> +
->> +	return esr == ESR_ELx_FSC_TLBABT;
->> +}
->> +
->>  /* Indicate whether ESR.EC==0x1A is for an ERETAx instruction */
->>  static inline bool esr_iss_is_eretax(unsigned long esr)
->>  {
->> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
->> index c9d46ad57e52..c8c6f5a97a1b 100644
->> --- a/arch/arm64/kvm/mmu.c
->> +++ b/arch/arm64/kvm/mmu.c
->> @@ -1756,6 +1756,12 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
->>  	ipa = fault_ipa = kvm_vcpu_get_fault_ipa(vcpu);
->>  	is_iabt = kvm_vcpu_trap_is_iabt(vcpu);
->>  
->> +	if (esr_fsc_is_tlb_conflict_abort(esr)) {
->> +		// does a `tlbi vmalls12e1is`
-> 
-> nit: this isn't a very useful comment.
-> 
->> +		__kvm_tlb_flush_vmid(&vcpu->kvm->arch.mmu);
->> +		return 1;
->> +	}
-> 
-> That's not enough, unfortunately. A nested VM has *many* VMIDs (the
-> flattening of all translation contexts that the guest uses).
-> 
-> So you can either iterate over all the valid VMIDs owned by this
-> guest, or more simply issue a TLBI ALLE1, which will do the trick in a
-> much more efficient way.
-> 
-> The other thing is that you are using an IS invalidation, which is
-> farther reaching than necessary. Why would you invalidate the TLBs for
-> CPUs that are only innocent bystanders? A non-shareable invalidation
-> seems preferable to me.
-> 
->> +
->>  	if (esr_fsc_is_translation_fault(esr)) {
->>  		/* Beyond sanitised PARange (which is the IPA limit) */
->>  		if (fault_ipa >= BIT_ULL(get_kvm_ipa_limit())) {
-> 
-> But it also begs the question: why only KVM, and not the host? This
-> handler will only take effect for a TLB Conflict abort delivered from
-> an EL1 guest to EL2.
+The UFS_RESET pin is expected to be wired to the reset pin of the
+primary UFS memory, it's a general purpose output pin. Reorder it and
+expose it as a gpio, so that the UFS driver can toggle it.
 
-Hi Marc,
+The QCS615 TLMM pin controller has GPIOs 0-122, so correct the
+gpio-rangs to 124.
 
-I believe the intent of this patch is to protect the host/KVM against a guest
-that is using BBML2. The host/KVM always assumes BBML0 and therefore doesn't do
-any operations that are allowed by the arch to cause a conflict abort. Therefore
-the host doesn't need to handle it. But a guest could be taking advantage of
-BBML2 and therefore it's architiecturally possible for a conflict abort to be
-raised to EL2. I think today that would take down the host?
+The QCS8300 TLMM pin controller has GPIOs 0-132, so correct the
+gpio-rangs to 134.
 
-So really I think this could be considered a stand-alone KVM hardening improvement?
+Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+---
+Lijuan Gao (6):
+      dt-bindings: pinctrl: qcom: correct gpio-ranges in examples for qcs615
+      dt-bindings: pinctrl: qcom: correct gpio-ranges in examples for qcs8300
+      pinctrl: qcom: correct the number of ngpios for QCS615
+      pinctrl: qcom: correct the number of ngpios for QCS8300
+      arm64: dts: qcom: correct gpio-ranges for QCS615
+      arm64: dts: qcom: correct gpio-ranges for QCS8300
 
-> 
-> However, it doesn't seem to me that the host is equipped to deal with
-> this sort of exception for itself. Shouldn't you start with that?
+ Documentation/devicetree/bindings/pinctrl/qcom,qcs615-tlmm.yaml  | 2 +-
+ Documentation/devicetree/bindings/pinctrl/qcom,qcs8300-tlmm.yaml | 2 +-
+ arch/arm64/boot/dts/qcom/qcs615.dtsi                             | 2 +-
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi                            | 2 +-
+ drivers/pinctrl/qcom/pinctrl-qcs615.c                            | 2 +-
+ drivers/pinctrl/qcom/pinctrl-qcs8300.c                           | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+---
+base-commit: 91e71d606356e50f238d7a87aacdee4abc427f07
+change-id: 20241211-correct_gpio_ranges-ed8a25ad22e7
 
-If the host isn't doing any BBML2 operations it doesn't need to handle it, I
-don't think? Obviously that changes later in the series and Miko is adding the
-required handling to the host.
-
-Thanks,
-Ryan
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
+Best regards,
+-- 
+Lijuan Gao <quic_lijuang@quicinc.com>
 
 
