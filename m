@@ -1,162 +1,133 @@
-Return-Path: <linux-kernel+bounces-443327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15BB9EED26
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:42:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314B49EED78
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:47:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4992853BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:42:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3F41881CA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20DF2210F8;
-	Thu, 12 Dec 2024 15:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FC74F218;
+	Thu, 12 Dec 2024 15:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="OOV9IzEh";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="OOV9IzEh"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Vse3fTTr"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B684F218;
-	Thu, 12 Dec 2024 15:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF5822332E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018106; cv=none; b=ara4FVfFVBcbtZqOL6ULjED9WcEHm1/uLL4zHYUPDsCY43qnRlHJrPL+4pEz1qTeO4BJ1XhI3XeZgV7wJmpCdGF6JDbTC7rwatX2yXcjZzN16MgNMk67xBfQuX5L7knl+OE3rrQWEiMm3ZapsP4cT1yhghJFtWpqHDQf+V6Ldu4=
+	t=1734018134; cv=none; b=C/A6T+pXa2dI31Yy+Aq9GgWLlJOgi0ELR0Ffrz+NMoVSEJoeZ2NCQRAmWcbLHtYaVSn6tVU78XPNDxjvFHq0mCzce9UCmyn5kX40L0rbkr+NLd03Jm54GgP79z46CysrWgNkt+N5VRj2+nM4FZLMzc1GdZEbbT+D04E3cN6wrtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018106; c=relaxed/simple;
-	bh=Y4hfRV5JAL5Zf/G0FNRWVrMda1GQ3RgDyZg7dpGJlgU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OKzmCHAm6XVY8INQKBkQ47qdfpyM8LmDOSxRYP5G/Syb703aADLwOiJWABAjdC/OV1Jq5sCrJ2SXbamjxmfI79HBcohKXOR0DTNbUV11yXCPln7pzvdmPhJuJYlg0oaPY9u6Hb1OPjfgnV1ZecAlo4CGFoiFlU8XqPmtBTDq1no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=OOV9IzEh; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=OOV9IzEh; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1734018103;
-	bh=Y4hfRV5JAL5Zf/G0FNRWVrMda1GQ3RgDyZg7dpGJlgU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=OOV9IzEhgnfoak6Q87cxXM3y0LlIqY8ls0KitsjP4Mo2cf5qW8CuFMg/Tj3qTo+Nj
-	 /NBbs0+U3PRRAnE8kQxkDfIamPHJWLKqnmZMOddlydhbu3ZkEsVvuUP57Yvt19x1m6
-	 YxjWfOAKB8hHTw6j5QJiIVN9cmhb3NFpndfXzRAI=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id C1B14128B0C0;
-	Thu, 12 Dec 2024 10:41:43 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id 7aKhnxa6fKry; Thu, 12 Dec 2024 10:41:43 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1734018103;
-	bh=Y4hfRV5JAL5Zf/G0FNRWVrMda1GQ3RgDyZg7dpGJlgU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=OOV9IzEhgnfoak6Q87cxXM3y0LlIqY8ls0KitsjP4Mo2cf5qW8CuFMg/Tj3qTo+Nj
-	 /NBbs0+U3PRRAnE8kQxkDfIamPHJWLKqnmZMOddlydhbu3ZkEsVvuUP57Yvt19x1m6
-	 YxjWfOAKB8hHTw6j5QJiIVN9cmhb3NFpndfXzRAI=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	s=arc-20240116; t=1734018134; c=relaxed/simple;
+	bh=0q8mlQEy0J+I4DWwpUxeu+0EtljdiPHM6OnTkMleXwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cWnFpX0Ok6/uUpQy/zMQW/UNA3cYlUwerPJ0ptCV+XOQXLDRAfdiXDgUD6ybt68osvZxbla5umT0cydnVTsoA1HFRT7WvgbHLnnuh2oGg7IfirFYm9IMa6fTwmCX1zs5h08jS9YULZ2BPoM25qpr3ARAHzIn20c2ROKTGal5pSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Vse3fTTr; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7EB3140E02BF;
+	Thu, 12 Dec 2024 15:42:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Hox2oPTNzDA5; Thu, 12 Dec 2024 15:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1734018119; bh=Q8eUsO5h4j8d3CiWORqehW6Q+X/HXCg0642KKtarsxs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vse3fTTr3vE9f9RAgi3cdRCfTxqKukQaqAasP0EXWLSyjPTA4RKUwc6Kn465+mR26
+	 1bbgRDqe3Zz/DHxRyZvZAUQ1pQvobf4ja32LX43oY6n3k48pv7Ks7URgiLIZ4Yvw7H
+	 Dcr/0hC3VoAQtmzRaTfx0iIid1uJb31jJYrNuP6rFLpnzZ7uTXU4jmujti22/jifLR
+	 F6RwriY+Przvc+srLBkat5ELd37vTkFbXYxcZjsuCeUaEEq03vNQlMSvUe6uN59VMo
+	 voIDxGK56DHXWG+h+kdNSHsmwkyG3lS+vOZ+rHEmufRUMYNxmZauxyHdQWFB+4ooQm
+	 yQ9B1lxthsv1j1VWeN+k3Wweda9F4ohughPGO+fqfwWcEBDrZHg6lOCzEcA2IItCAo
+	 rirl3ZKnj5kdiELN8xIPxi7ahJv6q87eNjhxuGJoWFVR4gOmY+OWRrWGAohIjEBdMB
+	 4olVdYVRi5box/AoobVAwJdv4NYLQXUvLxM8oG3Vt84z7j70KmRv1qaUDM5vEuq7r9
+	 DSXSH/9zmG7jpu0e4RMn2OkU2y4zQCIlQU4uHAra2vYuJbUhIAl/nRh32KzsmXb2cC
+	 Vzgj+7JWiV+28SSZ2Y+EVI6Pv3VeqDsI12A1qa4bXcInIJnyhC3Zak+bffhLGS9e+p
+	 ZPj8bvqmlJM9pdlP8uWjtWHk=
+Received: from zn.tnic (p200300Ea971F93c0329C23fFFeA6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:93c0:329c:23ff:fea6:a903])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3F90E12801E8;
-	Thu, 12 Dec 2024 10:41:42 -0500 (EST)
-Message-ID: <d84a9a960e419cf8cbfd086e8210b6c4a112d04f.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/3] tpm: add generic platform device
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Claudio Carvalho <cclaudio@linux.ibm.com>, Tom Lendacky
- <thomas.lendacky@amd.com>, linux-coco@lists.linux.dev, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Peter Huewe
- <peterhuewe@gmx.de>, "H. Peter Anvin" <hpa@zytor.com>, 
- linux-integrity@vger.kernel.org, x86@kernel.org, Joerg Roedel
- <jroedel@suse.de>,  Jason Gunthorpe <jgg@ziepe.ca>, Jarkko Sakkinen
- <jarkko@kernel.org>,  linux-kernel@vger.kernel.org, Ingo Molnar
- <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Dov Murik
- <dovmurik@linux.ibm.com>, Oliver Steffen <osteffen@redhat.com>
-Date: Thu, 12 Dec 2024 10:41:40 -0500
-In-Reply-To: <cnq6nzhvrsas6ud7t4woybktpesepm7a3sq5sd5yldq4hr5kyl@ezm4xi3o7eax>
-References: <20241210143423.101774-1-sgarzare@redhat.com>
-	 <20241210143423.101774-2-sgarzare@redhat.com>
-	 <zzi3fvbo2rnb2d76soseuekwaqe22ifnrhhjplqhvw6x26lbb4@nmcqylrenzyj>
-	 <b92113a11f121dc4d485b5ba522c8c8c0781d1be.camel@HansenPartnership.com>
-	 <cnq6nzhvrsas6ud7t4woybktpesepm7a3sq5sd5yldq4hr5kyl@ezm4xi3o7eax>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 41EDD40E02C1;
+	Thu, 12 Dec 2024 15:41:49 +0000 (UTC)
+Date: Thu, 12 Dec 2024 16:41:43 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: Re: [PATCH v6 7/8] x86/sev: Add full support for a segmented RMP
+ table
+Message-ID: <20241212154143.GDZ1sEN_ANTQrd1GAW@fat_crate.local>
+References: <cover.1733172653.git.thomas.lendacky@amd.com>
+ <c3c5acb445f9cdea6d5c0f16ff961aca65c05528.1733172653.git.thomas.lendacky@amd.com>
+ <20241212091152.GEZ1qo2CJgP_V7Xvma@fat_crate.local>
+ <b1ba3ffe-4336-4901-fe35-03971ae1f82b@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b1ba3ffe-4336-4901-fe35-03971ae1f82b@amd.com>
 
-On Thu, 2024-12-12 at 16:30 +0100, Stefano Garzarella wrote:
-> On Thu, Dec 12, 2024 at 09:35:46AM -0500, James Bottomley wrote:
-> > On Thu, 2024-12-12 at 10:51 +0100, Stefano Garzarella wrote:
-> > > On Tue, Dec 10, 2024 at 03:34:21PM +0100, Stefano Garzarella
-> > > wrote:
-> > [...]
-> > > > +static int tpm_platform_recv(struct tpm_chip *chip, u8 *buf,
-> > > > size_t len)
-> > > > +{
-> > > > +       struct tpm_resp *resp = (struct tpm_resp *)buffer;
-> > > > +
-> > > > +       if (resp->size < 0)
-> > > > +               return resp->size;
-> > > 
-> > > While reviewing Oliver's work for the driver in edk2[1], I
-> > > noticed that there wasn't this check and asked to add it, but
-> > > talking to him and looking in the code/spec, we realized that
-> > > it's strange that tpm_resp.size field is signed.
-> > > 
-> > >  From SVSM spec it looks like it can't be negative:
-> > > 
-> > >      Table 17: TPM_SEND_COMMAND Response Structure
-> > > 
-> > >      Byte     Size        Meaning
-> > >      Offset   (Bytes)
-> > >      0x000    4           Response size (in bytes)
-> > >      0x004    Variable    Variable Response
-> > > 
-> > > And also Coconut SVSM remap it to the `responseSize` of the TCG
-> > > TPM implementation which is unsigned:
-> > > 
-> > >      LIB_EXPORT void _plat__RunCommand(
-> > >          uint32_t        requestSize,   // IN: command buffer size
-> > >          unsigned char*  request,       // IN: command buffer
-> > >          uint32_t*       responseSize,  // IN/OUT: response buffer
-> > > size
-> > >          unsigned char** response       // IN/OUT: response buffer
-> > >      )
-> > > 
-> > > @James, @Claudio, @Tom, should we use u32 for tpm_resp.size?
-> > 
-> > The original idea was to allow the protocol to return an error
-> > (like out of memory or something) before the command ever got to
-> > the TPM rather than having to wrap it up in a TPM error.  However,
-> > that's done in the actual return from the SVSM call, which the
-> > sendrecv routine checks, so I agree this can be removed and a u32
-> > done for the length.
-> 
-> Thanks for the details!
-> I'll fix it in v2 and put a comment also in the edk2 PR.
-> 
-> > Dov did recommend we should check the returned length against the
-> > maximum allowable:
-> > 
-> > https://lore.kernel.org/linux-coco/f7d0bd07-ba1b-894e-5e39-15fb1817bc8b@linux.ibm.com/
-> 
-> I added in this version the check he suggested:
-> 
->         if (resp->size > TPM_PLATFORM_MAX_BUFFER - sizeof(*resp))
->                 return -EINVAL;  // Invalid response from the
-> platform TPM
-> 
-> Were you referring to that?
+On Thu, Dec 12, 2024 at 08:46:21AM -0600, Tom Lendacky wrote:
+> I find it more readable :)
 
-Yes, the theory being that we're required to provide a buffer of this
-length for the response, but if someone can inject a bogus response
-they could induce us to copy beyond the end of the buffer we provided.
+I know. :)
 
-Regards,
+> But, ok, I'll switch to the if statement, especially since you want the
+> probed_size check moved here and that only applies to the contiguous RMP
+> table.
 
-James
+Bah, I misread.
 
+contiguous_rmptable_setup has:
+
+        if (!probed_rmp_size)
+                return false;
+
+and the segmented:
+
+segmented_rmptable_setup:
+
+	
+	if (!probed_rmp_base)
+		return false;
+
+Forget what I said - keep those checks in the respective functions. Sorry.
+
+> Just matching the way it's done in the contiguous table probe, but I can
+> redo.
+
+Please.
+
+The pattern is:
+
+	do thing
+	check above thing's retval
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
