@@ -1,136 +1,89 @@
-Return-Path: <linux-kernel+bounces-442742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF399EE117
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:19:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB333188B3B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:19:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4521020DD6A;
-	Thu, 12 Dec 2024 08:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ioJAYtTb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B52B9EE10D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:18:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32C1126C01;
-	Thu, 12 Dec 2024 08:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2504282D6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:18:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DA120C462;
+	Thu, 12 Dec 2024 08:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZRmKGHf1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E61D20C009;
+	Thu, 12 Dec 2024 08:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991523; cv=none; b=E/buPLu6ICj/ZXJCGNWLVeUqPg+FUuEuo66aPJuZAj7FIlRCDfO1VjcGW98xicbs62r2FL4pQ5sPKcybclSZE1qdfkUVgraaIgTTW7UeQa9LwFhcjkSi/KEYzMnDXnrRKFys6adl/r9Hl1ij6E0YfKxC8Kt/wk7Oiaj4Jj+9x7o=
+	t=1733991515; cv=none; b=UYyDLangzhMMN1L2NsOXQJn3boRdlHH/qWul4hlfPALK8uuDRz+vYNAYv7arOB6TACuitJdTEaXJtTnz0R+cidKemwi6LxTJx8QmVXnPfmh3rmpqxElvw4ho66YiQ7fMDFp+nuj1SlDlSYhHwz8yLidjCQ39OfnBqrRwIYnyT8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991523; c=relaxed/simple;
-	bh=dVHHLoWyfFDn4SykayA6jpY7XugJsCld6W0h27L/1oo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=O/GghdHBAsGmuAnUvH7FaGSPonZpNyNWl3WJNJwrifbENY7scj8pUROE0BUL9mFL9AqLvZzYXsxEHR0Xi3bnmDz2y3BmGLGfOP24RuN8QbwNT1iJuIFBnu/pVfV1AVkLRVu9ZtvcEB7TGGadsneMFFx3WzYFjYysJsT9txxhPcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioJAYtTb; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733991522; x=1765527522;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=dVHHLoWyfFDn4SykayA6jpY7XugJsCld6W0h27L/1oo=;
-  b=ioJAYtTbNBFonlxPrUh0yGbFolMi4Z7osuz3yrhoWGoJ2SoaxqZ5BRiM
-   kedP89Iwalsk/aV4KeZu1H08UcgJleo07WMkPGJqcg7qNBDD/KHHBsRQm
-   a63OvafedMU4NTcgLd+f50h59Mm8byzAgWtGqPmu5+OhzOV6lFJOyYZO9
-   ZUd2lU30vm+MYICc3AFtWZwdxx7w7NlR5X2ZxnlPIsODymOdDzk3EwI7m
-   1qrKRQqrmjwg1M0aJDbpvIExrIfyKr8rVu0GbSOisBz2u+I0bhDbdJk88
-   ANGB7XqdV8pPlXSvKpYlBqZkcZVRoVcFrk1S+QmPxbtB1AocxVvRgGBuP
-   w==;
-X-CSE-ConnectionGUID: HfQnmDw+R2eH/H8w2YIqrQ==
-X-CSE-MsgGUID: JCe5ne/6Samuom5oKi6FVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="38086244"
-X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
-   d="scan'208";a="38086244"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 00:18:41 -0800
-X-CSE-ConnectionGUID: AIQA0pf8S+KINcKZiVC2wA==
-X-CSE-MsgGUID: 5JT1BapkSSCqRnj0Cwzaiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
-   d="scan'208";a="96397015"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.101])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 00:18:33 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Johan Hovold
- <johan@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Karol Herbst <kherbst@redhat.com>, Lyude
- Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v2 1/4] drm/dp: Add helper to set LTTPRs in transparent
- mode
-In-Reply-To: <3omcjrgfkdmw466ok7gej2jge25vtwzaiycwz2xgejwppyvkza@rhssgk7xz4hj>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241211-drm-dp-msm-add-lttpr-transparent-mode-set-v2-0-d5906ed38b28@linaro.org>
- <20241211-drm-dp-msm-add-lttpr-transparent-mode-set-v2-1-d5906ed38b28@linaro.org>
- <Z1mk08SHEd5_vc99@hovoldconsulting.com>
- <3omcjrgfkdmw466ok7gej2jge25vtwzaiycwz2xgejwppyvkza@rhssgk7xz4hj>
-Date: Thu, 12 Dec 2024 10:18:30 +0200
-Message-ID: <87pllxxqjt.fsf@intel.com>
+	s=arc-20240116; t=1733991515; c=relaxed/simple;
+	bh=/NdEOIdaBTTmlN/1YJBk7TcJe9e+1DlVJvKlF+ySpuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=liLBCs9GFYObuSgxR3lR6rPWTC+fSOaQWPpKHefyWxMQEjjgY029xgNwrL4dtHCDXrEImR0DSQoyqoMw1V46ODGgHsL2vpxVKCVTgC6VIHGkQuAjlzug0QJD/byQIywPssHkSsGOUxl6YCgDBMfe1aSFqlqAWnuT8/Uek++gkrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZRmKGHf1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7125BC4CECE;
+	Thu, 12 Dec 2024 08:18:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733991514;
+	bh=/NdEOIdaBTTmlN/1YJBk7TcJe9e+1DlVJvKlF+ySpuM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZRmKGHf11uRE6X8nPQPFvHiUoJK4QIrHTJDxu9TPJyLJt2MfjMiTivrXc03KEwgRS
+	 GaWEUEFhzlqV45M94vL8gp4VB+e/pB1M8wl6citu5VRTDl2r92aDMzcr4KG1X4lyIC
+	 657q/KeYaghxjWaLrZnJ9TnkUn3VmIsV2gNIIQ6g=
+Date: Thu, 12 Dec 2024 09:18:31 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Heming Zhao <heming.zhao@suse.com>
+Cc: Joseph Qi <joseph.qi@linux.alibaba.com>, ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	Heming Zhao <heing.zhao@suse.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] ocfs2: Revert "ocfs2: fix the la space leak when
+ unmounting an ocfs2 volume"
+Message-ID: <2024121218-corner-repair-09fa@gregkh>
+References: <20241204033243.8273-1-heming.zhao@suse.com>
+ <20241204033243.8273-2-heming.zhao@suse.com>
+ <6c3e1f5a-916c-4959-a505-d3d3917e5c9c@linux.alibaba.com>
+ <79b86b7b-8a65-49b8-aa33-bb73de47ad37@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79b86b7b-8a65-49b8-aa33-bb73de47ad37@suse.com>
 
-On Wed, 11 Dec 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> On Wed, Dec 11, 2024 at 03:42:27PM +0100, Johan Hovold wrote:
->> On Wed, Dec 11, 2024 at 03:04:12PM +0200, Abel Vesa wrote:
->>  
->> > +/**
->> > + * drm_dp_lttpr_set_transparent_mode - set the LTTPR in transparent mode
->> > + * @aux: DisplayPort AUX channel
->> > + * @enable: Enable or disable transparent mode
->> > + *
->> > + * Returns 0 on success or a negative error code on failure.
->> > + */
->> > +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable)
->> > +{
->> > +	u8 val = enable ? DP_PHY_REPEATER_MODE_TRANSPARENT :
->> > +			  DP_PHY_REPEATER_MODE_NON_TRANSPARENT;
->> > +	int ret = drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE, val);
->> > +
->> > +	return ret == 1 ? 0 : ret;
->> 
->> This looks correct, but I had to go look at drm_dp_dpcd_writeb() to make
->> sure it never returns 0 (for short transfers).
->> 
->> > +}
->> > +EXPORT_SYMBOL(drm_dp_lttpr_set_transparent_mode);
->> 
->> This appears to be what the driver currently uses, but why not
->> EXPORT_SYMBOL_GPL?
->
-> $ git grep EXPORT_SYMBOL drivers/gpu/drm/*.c | wc -l
-> 962
-> $ git grep EXPORT_SYMBOL_GPL drivers/gpu/drm/*.c | wc -l
-> 93
+On Wed, Dec 04, 2024 at 02:46:15PM +0800, Heming Zhao wrote:
+> On 12/4/24 11:47, Joseph Qi wrote:
+> > 
+> > 
+> > On 12/4/24 11:32 AM, Heming Zhao wrote:
+> > > This reverts commit dfe6c5692fb5 ("ocfs2: fix the la space leak when
+> > > unmounting an ocfs2 volume").
+> > > 
+> > > In commit dfe6c5692fb5, the commit log stating "This bug has existed
+> > > since the initial OCFS2 code." is incorrect. The correct introduction
+> > > commit is 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()").
+> > > 
+> > 
+> > Could you please elaborate more how it happens?
+> > And it seems no difference with the new version. So we may submit a
+> > standalone revert patch to those backported stable kernels (< 6.10).
+> 
+> commit log from patch [2/2] should be revised.
+> change: This bug has existed since the initial OCFS2 code.
+> to    : This bug was introduced by commit 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()")
 
-It's even more tilted under display/.
+So can you please send a new version of this series?
 
-BR,
-Jani.
+thanks,
 
-
--- 
-Jani Nikula, Intel
+greg k-h
 
