@@ -1,45 +1,86 @@
-Return-Path: <linux-kernel+bounces-442669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E599EE013
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:14:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A12779EE016
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:16:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B947165680
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:14:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36708165646
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD0220A5D1;
-	Thu, 12 Dec 2024 07:14:25 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425B8259481;
+	Thu, 12 Dec 2024 07:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MH4zeCUu"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E598F209F33
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E4420ADE5
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733987665; cv=none; b=ujMLp/DMg4bQR9AI4G0ChYVTYv/BhPC100uyzxgvkq/DmlZqPX/q5cNBaq6VS57wx2XOviHwMDFGm4rYZUEttWnhOS1QmtKXR/EvHMh62i7xnj4Sb6JzP4wELlJTAz/ic28FHPOhGoVDYD4aP30U6wDOQhuTN3orwxOvoZ7DGtw=
+	t=1733987762; cv=none; b=lbOrM/j0yhIdcMQ6wVEBEStFc7YTT+2+YlM28qdT6mL11rMN5awtyVhqTKCrDMZY9g9CXweUqCQA6idtMWXK04MYYdLOjD7DUWacnJ1/Nox/sGJFdlIq9m9OYvHoEPAOMfSrbXCa5NeL23FOo/YkZ+PDdYjd02r31KAhXx6lv4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733987665; c=relaxed/simple;
-	bh=hl0b4LicWQS3tXqT83aGHU3v7Vt+LOCxtkD/uO/X+uY=;
+	s=arc-20240116; t=1733987762; c=relaxed/simple;
+	bh=/GRsmos36cXMIlpR9JSwG1RkBUOM946AIKMMDjyXANQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YOW2woBGliUDAFp466qSXPiXDYrAIGL8lxx5/LY9H0s+J5VlLQduYrzRU+N6rzD1I8TCGx6ZZ1ZmrN5T5Va4vc8+DeIitjJhqjp/v7+ggNMdw6xrUVAEyx6yky1T30sWYZnafCj9dAykcxx/H7+DfHt6pK25dD4qEe7J62X+M4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id F177068D07; Thu, 12 Dec 2024 08:14:18 +0100 (CET)
-Date: Thu, 12 Dec 2024 08:14:18 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Baochen Qiang <quic_bqiang@quicinc.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	linux-kernel <linux-kernel@vger.kernel.org>, iommu@lists.linux.dev
-Subject: Re: missing clear bdr in check_ram_in_range_map()?
-Message-ID: <20241212071418.GA6638@lst.de>
-References: <64931fac-085b-4ff3-9314-84bac2fa9bdb@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R1kuVGWGC0a0yJOb+d53xID7+QU6DVRIG0paQrurgDxc7qymSlfxPfqkD4gTMDzEsLF6Y7v6qNKzlPOK1XxGL5NNG7VfX5Lmns8gnq47UqKQwFg7ZWJda3z5n4tAySvT6DCODBseTGA1zf8iodjyi2M7Gn25b2pQNgh5cB3MAm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MH4zeCUu; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fc41b4c78bso148861a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:16:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733987760; x=1734592560; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3L98iE6iEgWKW2dRYjbdeCK1aiyyhjOykPkAdKGjuiA=;
+        b=MH4zeCUu+Ca5VInJmSz6Xa7lXCkjv0TH9VZokTjrQW5AAp9gEbVCyQnW5KxR++4bRT
+         jJFgMpwhXWSHSTX3bqdCf3KQBKKGnUsAeDVygS9h8OkBK0RSKOoMx4CHO9RLp/Nr9WtG
+         2N6zRByEjp6ShHIpPuuKjrrJ4ZiE+E9bS5vyse+JpzmUyb43GOhBVFmNbFp9w+4LIB/3
+         AtVRn7LtIRlwqNbdHxHhguj3hdUlcLkH2A/FlvX4gG5xfD3xH8g+4+B/4HDvnuKmYPVG
+         AGevP3CMCxCt1KS6qjjjWJtNqfpAc6pQTMwFlwLY90H3WAFeXeJbO3J7Kb4Feo4mHtGS
+         60YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733987760; x=1734592560;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3L98iE6iEgWKW2dRYjbdeCK1aiyyhjOykPkAdKGjuiA=;
+        b=tBz3Fs31t9euYGysTEoZrFan1aCs3tyyNYK4ispRs7Tx0ddpLz+hCCzOWFJmYNcs/m
+         ewOydPoP9dWXCWpGlFBH7GKv+ehugJVfZkNF5IpPrwJkhmpHoKyCA5dN/YwebEWYf3Z+
+         rLy/40kFFuGNO8iJCeBTRVp8NK/hgBtMZ0LF8MibhzdgsUVpc3ilQ91NMjqQyPm2P94c
+         P3Y4qtpxY0UFQp5A26GXoJo3u6bRo4foCLf43y3DtYnL0LjFsz2Ico64zIEdoQI/TIWB
+         GP3Fbo3dMN5YaVp0qFqsRJ+IenupiQDo1l1YikAO2GsoeaR600jn4KIC9XN6ZMjbn39P
+         FnRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyF7h5shDeSLcvUz01IsNfJeVNHLe7mPhBdiRarhzsFjI3P3fYjK4aRx1dILlXzcNuBmOlBQ0uKt4q0Tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOtzmYt/5ZiYWKYgoKzRF7Knt1qHAnb2+5HUW3MdDeAuay2Rk9
+	tR0KHuCd7XA6b+Dmlzo4cBtl/ff+IrpVPn7sIfUs4D7E4XalN0wggvjg4ZTY11Y=
+X-Gm-Gg: ASbGncvBlS+uwc0ftxAIGWmFAhWB5uiHICeafumMDU9OJTB6L4zszi9z6CxFGw4jCZI
+	6sPwF5A3OPq09dcpicPi3dkGenGnXGI1+8fEv784ClyCkB1d119ybQqz2FIZmZoEA6vPcDISzkR
+	DR6ct7UfIeuHqIpyHj49NWqqSnqfmcltgc8L4xUA2MsbZGtz6b66Cdg2CZ9i8GOchTWDRKV6HmD
+	oOnlUy5t2tBNAsWCUwKxRcdRrHLzbzp4zfrV7Xmm3Cmp8J6fqoqLzacQLY=
+X-Google-Smtp-Source: AGHT+IEUOkvi+y7f3A5lyEr4YtS9iRRSj52GzIA+ZuP4cB/sOWfFEYg7en1hPsQli/qSrMewFNomsQ==
+X-Received: by 2002:a17:90b:38cc:b0:2ee:7a4f:9265 with SMTP id 98e67ed59e1d1-2f127fc7463mr10057310a91.15.1733987760404;
+        Wed, 11 Dec 2024 23:16:00 -0800 (PST)
+Received: from localhost ([122.172.83.132])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142e0ce50sm563653a91.39.2024.12.11.23.15.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 23:15:59 -0800 (PST)
+Date: Thu, 12 Dec 2024 12:45:57 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v7 1/2] dt-bindings: cpufreq: Document support for Airoha
+ EN7581 CPUFreq
+Message-ID: <20241212071557.76viy5b7ottf7jck@vireshk-i7>
+References: <20241206211145.2823-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,72 +89,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <64931fac-085b-4ff3-9314-84bac2fa9bdb@quicinc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241206211145.2823-1-ansuelsmth@gmail.com>
 
-On Mon, Dec 09, 2024 at 06:50:06PM +0800, Baochen Qiang wrote:
-> Hi,
+On 06-12-24, 22:11, Christian Marangi wrote:
+> On newer Airoha SoC, CPU Frequency is scaled indirectly with SMC commands
+> to ATF.
 > 
-> while checking check_ram_in_range_map() I am confused by the condition set/check on bdr.
-> If I am reading the code correctly, if bdr is set once, it would never get cleared, hence
-> that function will always returns 0.
+> A virtual clock is exposed. This virtual clock is a get-only clock and
+> is used to expose the current global CPU clock. The frequency info comes
+> by the output of the SMC command that reports the clock in MHz.
 > 
-> should we clear bdr before each new iteration?
+> The SMC sets the CPU clock by providing an index, this is modelled as
+> performance states in a power domain.
+> 
+> CPUs can't be individually scaled as the CPU frequency is shared across
+> all CPUs and is global.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+> Changes v7:
+> - Add more info to the description for usage of clock and
+>   performance-domain
+> - Drop redundant nodes from example
 
-I think so.  Even better refactor the code so that the non-NULL bdr
-doesn't leak out:
+Applied. Thanks.
 
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 5b4e6d3bf7bc..181e244f410a 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -584,6 +584,22 @@ int dma_direct_supported(struct device *dev, u64 mask)
- 	return mask >= phys_to_dma_unencrypted(dev, min_mask);
- }
- 
-+static const struct bus_dma_region *dma_find_range(struct device *dev,
-+		unsigned long start_pfn)
-+{
-+	const struct bus_dma_region *m;
-+
-+	for (m = dev->dma_range_map; PFN_DOWN(m->size); m++) {
-+		unsigned long cpu_start_pfn = PFN_DOWN(m->cpu_start);
-+
-+		if (start_pfn >= cpu_start_pfn &&
-+		    start_pfn - cpu_start_pfn < PFN_DOWN(m->size))
-+			return m;
-+	}
-+
-+	return NULL;
-+}
-+
- /*
-  * To check whether all ram resource ranges are covered by dma range map
-  * Returns 0 when further check is needed
-@@ -593,23 +609,14 @@ static int check_ram_in_range_map(unsigned long start_pfn,
- 				  unsigned long nr_pages, void *data)
- {
- 	unsigned long end_pfn = start_pfn + nr_pages;
--	const struct bus_dma_region *bdr = NULL;
--	const struct bus_dma_region *m;
- 	struct device *dev = data;
- 
- 	while (start_pfn < end_pfn) {
--		for (m = dev->dma_range_map; PFN_DOWN(m->size); m++) {
--			unsigned long cpu_start_pfn = PFN_DOWN(m->cpu_start);
-+		const struct bus_dma_region *bdr;
- 
--			if (start_pfn >= cpu_start_pfn &&
--			    start_pfn - cpu_start_pfn < PFN_DOWN(m->size)) {
--				bdr = m;
--				break;
--			}
--		}
-+		bdr = dma_find_range(dev, start_pfn);
- 		if (!bdr)
- 			return 1;
--
- 		start_pfn = PFN_DOWN(bdr->cpu_start) + PFN_DOWN(bdr->size);
- 	}
- 
+-- 
+viresh
 
