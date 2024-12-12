@@ -1,137 +1,91 @@
-Return-Path: <linux-kernel+bounces-444033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4859EFFD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:06:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B1D9EFFD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:08:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E091286BFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:06:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8E91885BCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E976C1DE3DF;
-	Thu, 12 Dec 2024 23:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8DB1DE89B;
+	Thu, 12 Dec 2024 23:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9Bs+p30"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=chaosfield.at header.i=jakob.riepler@chaosfield.at header.b="g70W0U+Z"
+Received: from sender2-op-o11.zoho.eu (mail360-sender21.zoho.eu [185.230.214.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB011D63E0;
-	Thu, 12 Dec 2024 23:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734044781; cv=none; b=RGvJQ68haUF3zZDdCBZLknafshaSaycoBE8Y30EHVXfXKiA14TxuHoYZlCIb1zdJQEIUU5ugbAKZEAejcgUAuGuGXzPhqvLqiuhKSOnQ0yNIAcWrt1e0ee7P1YtI2FDpDqBt+N3ZsW+50Yw2OY1+39MQhtIo7GNeOsS3EWOZ4P8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734044781; c=relaxed/simple;
-	bh=1QyYg9px6x+Do7hzdoQd9Z7TnY5QYoK9ZJS1lww/lvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDHUGYSpmwMj+ognuGWzfANbS9+XHfzwQRmFzTBDkCENxNOYJAgFfhTg7uRgN1Rr7KXFCldXm2pfgGEJyC1/XkX2ierm7tL9THTO+ila+iRq3M81Yrv4sICRwXUGBQP3ygoVXVNEbt1labuxanQDRi2K3y4cokF6HRIqDA07Atc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9Bs+p30; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FDFC4CECE;
-	Thu, 12 Dec 2024 23:06:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734044777;
-	bh=1QyYg9px6x+Do7hzdoQd9Z7TnY5QYoK9ZJS1lww/lvA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U9Bs+p30ZZ6reALiJiX5gpny44mJKU9bDfpcA06V+h7IXpnb8V59zwE+lPBf7Xby5
-	 kldZsBooIz0fj0O2di1A6rXZM+J4PlQ2y50gmpwgP8W/UUOK9zRLjg/5wRXP6Ail61
-	 X+Vrd9Nof1Uyoj7oFjFZSycoZqfsmQzWhcHbV2S41ac5w7mJjubwd4OP7/64CnRFwH
-	 z0F2jjBsKudO5QvKYw+RpVRYtAVcuzyTLxzgjk/pJw26Djr1+QhFopOJqtr9sJcpcX
-	 PXhLy1Q4MR3SeRPQTxgkWDWeH6F0p1JO7MOVrWSQYtokZlV67aMGYcISDZJC1FB8u7
-	 Nb3qlmh2zUT7A==
-Date: Thu, 12 Dec 2024 23:06:16 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Saurabh Sengar <ssengar@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
-	avladu@cloudbasesolutions.com
-Subject: Re: [PATCH] tools: hv: Fix cross-compilation
-Message-ID: <Z1tsaJJhUsSilZqq@liuwe-devbox-debian-v2>
-References: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F1B1D63E0
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.230.214.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734044908; cv=pass; b=HXvqYW51ngXbsJSeUaYYSUps+Ck5mFCQz7GHEy/5+GAsq/Dj/lwrgkpHSntAlv/8CEhWQ557P1ixmBltvxmWZgf9Tl727YM7AqdOW8lz8mhPEOd0iPQAiGkfVAjEH2Oh2VPZQZAfOZpek1jA7dicWF2DZidJ60HpmGZz9RIAL4w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734044908; c=relaxed/simple;
+	bh=fOeJ+VId+r8rs1PtzHqzP6oBzIM1aJl9uxiUAGon0r8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PXFgCPwVARuQ/O6Zn4Kf7rT0BXv5Rtb+rxCeffGVMv+9P4QyQ3A/S4bNjA56qXE3tF6KXkG6bmOKC06UujnKkhfx6BuxNw5z0Hs+eIKT7pPcrROwQDQYedNOckAYg0MKVBI1FLvWdRTNyZlNDdAq4pSejvp/3QPYPncJuwmAcTI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chaosfield.at; spf=pass smtp.mailfrom=chaosfield.at; dkim=pass (1024-bit key) header.d=chaosfield.at header.i=jakob.riepler@chaosfield.at header.b=g70W0U+Z; arc=pass smtp.client-ip=185.230.214.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chaosfield.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chaosfield.at
+ARC-Seal: i=1; a=rsa-sha256; t=1734044871; cv=none; 
+	d=zohomail.eu; s=zohoarc; 
+	b=buPMkNkGUYplLP41rFnWGvqef7N83S4oqdORtvZTKaUgEDAqtQe/6nmRLe8Dmmee+llVnJ7+CqnztLe6k4a9/QhjKmpN/MT/w+YdrqHskhbE7/Q2FCRjF6227/pcgXaSLd8BcWbbx1L7rL1Bgfr5+Hyl/2Q4sm8sutsYzgc0ln8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
+	t=1734044871; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Qss3BnfSWtjL5lPZ7nnPFbAgulpX61J2zjVH612BlJk=; 
+	b=O88HzqYhAKQN9+Uv+SdEnNaYnghoE5W3Jt2lt5VQn031p5t+Hn2ng8HKj7z9FcjUrV7lBBNZCrmjLmeYYuxaEKBFXLpHluuiCntdAdyjrzrhEGyg2JHCdmDEpi/Qf27yS2VXikXeGJjGNecYRECSyWs4ZwMz0GOhWlKOz2zDvuc=
+ARC-Authentication-Results: i=1; mx.zohomail.eu;
+	dkim=pass  header.i=chaosfield.at;
+	spf=pass  smtp.mailfrom=jakob.riepler@chaosfield.at;
+	dmarc=pass header.from=<jakob.riepler@chaosfield.at>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734044871;
+	s=zohoeu1; d=chaosfield.at; i=jakob.riepler@chaosfield.at;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Qss3BnfSWtjL5lPZ7nnPFbAgulpX61J2zjVH612BlJk=;
+	b=g70W0U+Z1hhCo9nLEV78f5PdvbqqRU5RnrU4xFJ3oeIZGSWKkl4JBkeYQcO/TzRq
+	7r43aA63wAE5s/UalLY5qQ4lEnw/asJKaOVUDOQ7l8QYv9VIhrfAJ5uuqOs27PAXoRb
+	b/r2PI1vsj/J8fNpwADkUEKBRwBURKB/6MYg36H4=
+Received: by mx.zoho.eu with SMTPS id 1734044868365346.6246386230723;
+	Fri, 13 Dec 2024 00:07:48 +0100 (CET)
+Message-ID: <d021d011-d5d4-4692-973a-f5a45be8db94@chaosfield.at>
+Date: Fri, 13 Dec 2024 00:07:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] leds: pwm-multicolor: Disable PWM when going to
+ suspend
+To: Lee Jones <lee@kernel.org>, Jakob Riepler <jakob+lkml@chaosfield.at>
+Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+References: <d7d930bc-4c82-4272-b2c6-88f7cac5a3e1@chaosfield.at>
+ <50bbd767-b0e0-4788-975b-f5d9598208e5@chaosfield.at>
+ <20241212174356.GJ7139@google.com>
+Content-Language: de-DE, en-GB-large
+From: Jakob Riepler <jakob.riepler@chaosfield.at>
+In-Reply-To: <20241212174356.GJ7139@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Thu, Dec 12, 2024 at 12:28:34AM -0800, Saurabh Sengar wrote:
-> Use the native ARCH only incase it is not set, this will allow
-> the cross complilation where ARCH is explicitly set. Add few
-> info prints as well to know what arch and toolchain is getting
-> used to build it.
+> I get a warning that this patch is corrupt as well.
 > 
-> Additionally, simplify the check for ARCH so that fcopy daemon
-> is build only for x86_64.
-> 
-> Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio driver")
-> Reported-by: Adrian Vladu <avladu@cloudbasesolutions.com>
-> Closes: https://lore.kernel.org/linux-hyperv/Z1Y9ZkAt9GPjQsGi@liuwe-devbox-debian-v2/
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> ---
->  tools/hv/Makefile | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/hv/Makefile b/tools/hv/Makefile
-> index 34ffcec264ab..d29e6be6309b 100644
-> --- a/tools/hv/Makefile
-> +++ b/tools/hv/Makefile
-> @@ -2,7 +2,7 @@
->  # Makefile for Hyper-V tools
->  include ../scripts/Makefile.include
->  
-> -ARCH := $(shell uname -m 2>/dev/null)
-> +ARCH ?= $(shell uname -m 2>/dev/null)
->  sbindir ?= /usr/sbin
->  libexecdir ?= /usr/libexec
->  sharedstatedir ?= /var/lib
-> @@ -20,18 +20,26 @@ override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
->  override CFLAGS += -Wno-address-of-packed-member
->  
->  ALL_TARGETS := hv_kvp_daemon hv_vss_daemon
-> -ifneq ($(ARCH), aarch64)
-> +ifeq ($(ARCH), x86_64)
+> How are you creating them?
 
-Technically speaking, you can also build this for x86 (32bit). Whether
-anybody uses it is another question.
+`git format-patch` and thunderbird with the settings mentioned in the 
+kernel documentation.
 
->  ALL_TARGETS += hv_fcopy_uio_daemon
->  endif
->  ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
->  
->  ALL_SCRIPTS := hv_get_dhcp_info.sh hv_get_dns_info.sh hv_set_ifconfig.sh
->  
-> -all: $(ALL_PROGRAMS)
-> +all: info $(ALL_PROGRAMS)
->  
->  export srctree OUTPUT CC LD CFLAGS
->  include $(srctree)/tools/build/Makefile.include
->  
-> +info:
-> +	@echo "---------------------"
-> +	@echo "Building for:"
-> +	@echo "CC $(CC)"
-> +	@echo "LD $(LD)"
-> +	@echo "ARCH $(ARCH)"
-> +	@echo "---------------------"
+> Please use `git format-patch`, `git send-email` or `b4`.
 
-I don't think this is needed. Anyone who's building the kernel source
-should know what tool chain they are using and architecture they're
-building for.
+If you'd like I can resend with a different mail server - I had trouble 
+setting up `git send-email` with my primary mail provider (enforced oauth)
 
-Thanks,
-Wei.
-
-> +
->  HV_KVP_DAEMON_IN := $(OUTPUT)hv_kvp_daemon-in.o
->  $(HV_KVP_DAEMON_IN): FORCE
->  	$(Q)$(MAKE) $(build)=hv_kvp_daemon
-> -- 
-> 2.43.0
-> 
+- Jakob
 
