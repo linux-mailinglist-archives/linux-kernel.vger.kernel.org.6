@@ -1,175 +1,87 @@
-Return-Path: <linux-kernel+bounces-442873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4859EE34A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:42:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1466D9EE350
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16CE31888EA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:41:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7111165F42
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC2320FAAD;
-	Thu, 12 Dec 2024 09:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PLclz1s0"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CFE20FAB1;
+	Thu, 12 Dec 2024 09:42:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED7A20E011;
-	Thu, 12 Dec 2024 09:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CBC20E6FD
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733996510; cv=none; b=GEAPRAeU3PNelflrAi+iruc6o3jhIxmbYa0I+7uUQoyoQFFWqUimknbc1MKitwf9MC7fcoJV2w1YYATS9S6lAxo+MEahfto3MZOIS48iuc5g7Jnq9GJjjhttAkVpkqaivLGxVlOUz41MpriW9wZAyrZRNu3lm5Ek6P5mqF+kj+Y=
+	t=1733996526; cv=none; b=BNPgT5BXjHlwLz0J+3fMipHdkBHO1MFNKcpPXxewSvllH8xF+F81D/MTuDm9olmsM7gVKLmvzgI0Cn00CgYepr3ysAEXfFTRmHespnpBw74LgidrpRQSZ5/o4+hWfovdTPNYGWIly49Y6M5CwIQE3o8MBkSO4GM3x0DVI3jrGy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733996510; c=relaxed/simple;
-	bh=obaLmOxLmJXlb/CDjZv7Zm7XxIZBGmVcCgDa31nx99o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CHppzX0ZLn71cdu9NVgGGF/ZyW+yOV1J2mgQRmi0md7vnhhGMYl2hyqhMXygzTbhuh8UH6qZxcMazxNxB9o8poBVMdxVHtU1zDV5b5b8sbjpt8aa8y56Rwk6hVADBnl7DIr4Ul96Eh9OxpWhEUiQP3dE892YbCB3WyXbBSpHV2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PLclz1s0; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [IPv6:2001:b07:6462:5de2:459e:1ee6:26ea:2d31])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 704D0229;
-	Thu, 12 Dec 2024 10:41:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733996471;
-	bh=obaLmOxLmJXlb/CDjZv7Zm7XxIZBGmVcCgDa31nx99o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PLclz1s0qjNNBqIxl/K970Ib6OkbcTqMouuTpqmv/mxbDaPDWEtV7+UKlSW9Sqlcn
-	 8mzpmc+lMnONoa8Tq2Y2V9H2mNN3qKQBGWXHqex6yplhm1KGY7W2GPcVjOeVMrvIMr
-	 ONmGF/fEodK8ZPUjeBvXGi9DBj0XzGPD0LNIwbtw=
-Date: Thu, 12 Dec 2024 10:41:42 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Keke Li <keke.li@amlogic.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
-	dan.scally@ideasonboard.com
-Subject: Re: [PATCH v4 02/10] media: platform: Add c3 mipi csi2 driver
-Message-ID: <2jc3sqihnj7sd7vjj7542nntc45eratyxi7diuaewlbqqbixbp@vlgkpv6vm6wr>
-References: <20241205-c3isp-v4-0-cb1868be0105@amlogic.com>
- <20241205-c3isp-v4-2-cb1868be0105@amlogic.com>
- <5sen6lv5xg4hjdc4j2l6k5iywqpllbutoaebyln74aeuplawtu@nmpmzgwkkgih>
- <0fc7f15c-66be-4ba0-9549-51ba87f48690@amlogic.com>
+	s=arc-20240116; t=1733996526; c=relaxed/simple;
+	bh=OwYXylwfYH62gDE1vEppfvvoJhFrbItR9EK4tnFEe9A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=A+RMkjED1C7G2lgyWqI5jvzA689Y3wbF6TR/eyhVgbK7/mXb9D70AjtHGc3ddEmjZLGQCGEzqEYk+FPL2ipdLAivOiw9rVxeHmDa6WYhsbob+jSSo124qpTMKdsj9kkwWeI3RRl3q32KzOAGZYmETQH9h/6e4e78P1S0DfI8nBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a812f562bbso8567405ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:42:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733996524; x=1734601324;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IoGw1IqN0FR0iMUViX1uqkkOZgTQLNI4d09xwAsG7gE=;
+        b=ewlGd1JvBVE8HU0niv/Mu5jDxNs8tIoEgARK+IlQKH1m+EN3ohNn5b0vj5HKm6SyI+
+         fLqYFkVuGS/tW/xvXTy11dbDEJKvRdZzTRsfxyyltCYV1HNplux7CHxvcEtsvrzpaRQx
+         289OCKotprDn4ikxtL4MCPUBIV69OjzoZ2NJBiEvjIfHcMEZTijxP6/fhIdeZtBoTy7g
+         Dz7X5uw6lHl6S+jkxf8jGVMTyzkL3/tT46dX8ufJqHLOycQxv8IruHdvHADwLyUpkDD1
+         QBb8GVtbaFveQlE32MbD8xyLg+dfavi0GhSBGaj5b1QL8hETHpcQVBcwuktkkr/xHoyB
+         +pEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIDbZjfszHVlShjkuTTm54urVnD/bJTcAC+u0ltlHu1VIHnVZjtH9HbNJ4ND8HFJlauInnvtI43RSIx7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5gBTto7377ESEUmXG0hrZkYxOishWMsCF0qI1/6bxpz8RwGJW
+	5L48v2NpF6OyiapEUTqFnOXp7nXIYVLbg7si8zbNCTwhs8uyU46UWQerqW0oL3pZQexTP++jINu
+	Q5t703SuzQFD10IaIhrw2+mfLXDUnjQP7nFgzCCvHTGd44EUjIDzeV/E=
+X-Google-Smtp-Source: AGHT+IGg6LOgoMkIWV+xPyT2+bTdbaRhI7WxXVTs1zA9pXIMLOM7hYKFYPYRTtgK7PViQbQQuggyrBGX7QONdZoHIawLgpZqZFfr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0fc7f15c-66be-4ba0-9549-51ba87f48690@amlogic.com>
+X-Received: by 2002:a05:6e02:19c7:b0:3a7:5cda:2769 with SMTP id
+ e9e14a558f8ab-3ac48d9eda6mr27140315ab.12.1733996524016; Thu, 12 Dec 2024
+ 01:42:04 -0800 (PST)
+Date: Thu, 12 Dec 2024 01:42:03 -0800
+In-Reply-To: <20241212082232.rr5qK%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675aafeb.050a0220.20c8bc.0000.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_rename_cat
+From: syzbot <syzbot+93f4402297a457fc6895@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Keke
+Hello,
 
-On Thu, Dec 12, 2024 at 05:08:27PM +0800, Keke Li wrote:
->
-> On 2024/12/12 16:41, Jacopo Mondi wrote:
-> > [ EXTERNAL EMAIL ]
-> >
-> > Hi Keke,
-> >    a question for Laurent and Sakari
-> >
-> > On Thu, Dec 05, 2024 at 05:04:28PM +0800, Keke Li via B4 Relay wrote:
-> > > From: Keke Li <keke.li@amlogic.com>
-> > >
-> > > This driver is used to receive mipi data from image sensor.
-> > >
-> > > Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
-> > > Signed-off-by: Keke Li <keke.li@amlogic.com>
-> > [snip]
-> >
-> > > +
-> > > +static int c3_mipi_csi_configure_clocks(struct csi_device *csi)
-> > > +{
-> > > +     const struct csi_info *info = csi->info;
-> > > +     int ret;
-> > > +     u32 i;
-> > > +
-> > > +     for (i = 0; i < info->clock_num; i++)
-> > > +             csi->clks[i].id = info->clocks[i];
-> > > +
-> > > +     ret = devm_clk_bulk_get(csi->dev, info->clock_num, csi->clks);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     for (i = 0; i < info->clock_num; i++) {
-> > > +             if (!info->clock_rates[i])
-> > > +                     continue;
-> > > +             ret = clk_set_rate(csi->clks[i].clk, info->clock_rates[i]);
-> > > +             if (ret) {
-> > > +                     dev_err(csi->dev, "Failed to set %s rate %u\n", info->clocks[i],
-> > > +                             info->clock_rates[i]);
-> > > +                     return ret;
-> > > +             }
-> > > +     }
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > [snip]
-> >
-> > > +
-> > > +static const struct csi_info c3_mipi_csi_info = {
-> > > +     .clocks = {"vapb", "phy0"},
-> > > +     .clock_rates = {0, 200000000},
-> > > +     .clock_num = 2
-> > > +};
-> > > +
-> > > +static const struct of_device_id c3_mipi_csi_of_match[] = {
-> > > +     { .compatible = "amlogic,c3-mipi-csi2",
-> > > +       .data = &c3_mipi_csi_info,
-> > > +     },
-> > > +     { },
-> > > +};
-> > All the drivers in this patch series implement the same pattern when
-> > it comes to handling clock. There's a list of clock providers in the
-> > driver associated with a clock frequency. The driver bulk_get the
-> > clocks and set_rate() using the per-compatible info table.
-> >
-> > Do you think this should rather come from dts using the
-> > assigned-clocks and assigned-clock-rates properties ?
->
-> Yes,  I think your suggestion is OK.
->
-> Will test it.
->
-> If apply your suggestion, do I need to modify the relevant yaml file?
->
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Do you mean the binding files ?
+Reported-by: syzbot+93f4402297a457fc6895@syzkaller.appspotmail.com
+Tested-by: syzbot+93f4402297a457fc6895@syzkaller.appspotmail.com
 
-You could add to the example
+Tested on:
 
---- a/Documentation/devicetree/bindings/media/amlogic,c3-isp.yaml
-+++ b/Documentation/devicetree/bindings/media/amlogic,c3-isp.yaml
-@@ -73,6 +73,8 @@ examples:
-             clocks = <&clkc_periphs CLKID_VAPB>,
-                      <&clkc_periphs CLKID_ISP0>;
-             clock-names = "vapb", "isp0";
-+            assigned-clocks = <&clkc_periphs CLKID_ISP0>;
-+            assigned-clock-rates = <400000000>;
-             interrupts = <GIC_SPI 145 IRQ_TYPE_EDGE_RISING>;
+commit:         231825b2 Revert "unicode: Don't special case ignorable..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1313ebe8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ff1d7fae8f4492d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=93f4402297a457fc6895
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12e3fb30580000
 
-             port {
-
-
-As your binding document has "additionalProperties: false" I thought
-you had to add:
-
-  assigned-clocks: true
-  assigned-clock-rates: true
-
-As in my understanding "additionalProperties: false" means "whatever
-is not explicitly allowed is forbidden". However I might be wrong as
-validating the binding even without the two above entries work well
-(and I see other bindings doing the same)
-
-DT maintainers are in cc
+Note: testing is done by a robot and is best-effort only.
 
