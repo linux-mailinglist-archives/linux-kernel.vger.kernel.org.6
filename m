@@ -1,125 +1,223 @@
-Return-Path: <linux-kernel+bounces-443416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052599EF00B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:24:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D589EEEE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242831894AD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:13:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 248751890F6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD0E24352D;
-	Thu, 12 Dec 2024 15:59:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555F92210DF;
-	Thu, 12 Dec 2024 15:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FA92185A0;
+	Thu, 12 Dec 2024 15:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GhBa2UBz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD1514A82
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734019164; cv=none; b=Pqw2mBZqnk57sNil3BfNCx0wPcqycDN/C9w3BPWnf2yIll8Cfb/M/F7gJT6nu8O2kHSGNkkRVrn2AUq83GOBbOwlj4RgF1pfs43ZXVnPZ/zLMaZM7G3U1IW6qX7ae0L2XpQ5LJt/I78CS4dgaiGqDx9nLreIN32SyEJeCXtcTtg=
+	t=1734018998; cv=none; b=Gi66LcSotUwWNQh0SCwfvQmwM/xyBtHXgkSjPGd9mUgmvKOFNI7Djsip1z+IS51boTux20HafojlZGiDgPBwrm7ZoXG30lYVioaLlm3C/manXyYBQvN8rvDjZuNVsJNO10hR+AUnquqqPYECo2r8zSyszbK50RI1ZHWHw+SYsSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734019164; c=relaxed/simple;
-	bh=htyA68FieJOP69TX3kYzNwjqycLAUVfrP3PNbCaBpUs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ubhF44uIa9U0TOBamUr8OAjkoUH/qJ7p0zo5ApFkPMzupbrVYtEK8/E+zrJTe46pTFOasGgLWyUlw0UeT7iBA5VRozGXu1TuObVBbWMxuD8QIcmPp43+/Vxv7tflP4ATR08IpE9/q5KaaUsQdkZyUMLkPCCKHYyjlv9vm2GLFRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDDFE176C;
-	Thu, 12 Dec 2024 07:59:50 -0800 (PST)
-Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.39.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7EDF03F720;
-	Thu, 12 Dec 2024 07:59:19 -0800 (PST)
-From: Steven Price <steven.price@arm.com>
-To: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-Subject: [PATCH v6 43/43] KVM: arm64: Allow activating realms
-Date: Thu, 12 Dec 2024 15:56:08 +0000
-Message-ID: <20241212155610.76522-44-steven.price@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241212155610.76522-1-steven.price@arm.com>
-References: <20241212155610.76522-1-steven.price@arm.com>
+	s=arc-20240116; t=1734018998; c=relaxed/simple;
+	bh=3C4Yt5oeNRaxZqqS6cTEgAB9qT5fjNpBMGuaoHcL2gk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BAkwYuCQVeH1X9FD2ZpPhU5b2hpVoAaQoRPNH97eXdjLrFlocaoSEcQIzlvWXIJ19uHowU0Br9HRTVaQ+b1nYZAr+1LXAPDepnJUwElcMJhqUS/6p3Y431E4U8SrmAqYyjzEhLagTfSDmf2+KHHFwJ0SBZx7O6osQBuTvH+WYWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GhBa2UBz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC9kZeG030094
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:56:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	n3nqq3ds2PAwM46hFlxa1nrVPoI1aem45H25wLz0YZc=; b=GhBa2UBzDWDC9qNH
+	PyDoEL6SJBJmonT+danyYZyzmWIv2g9+Oo/nj1/YYmW+uI7BYqeFfTRuWP7DFLNu
+	1EeUurdeptMgCP4rArd/ZC9NK1R3thQS2F7WMjA/H4bYAw2641wGvHo8cydmoozp
+	nVd/x4kOVwncwO+7CMBvy01BGo41AegqEcvXR4eYTusFPCxILVOaHW1IkEVdsJOi
+	lTyYV63/7AWiovZ1aKIuD5AxSIOwyYPklN24lKrjuBmx8ZG4j79g6vwbaXW1Imox
+	jHv17FXzLoE+0bSt3YcyH9GiENQmlsZRsXdPWXsbXl/BSztn82I0IcZs+Nxm7h+2
+	QrcEDw==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fwgeh0x9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:56:35 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b667e652c4so4661785a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:56:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734018994; x=1734623794;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n3nqq3ds2PAwM46hFlxa1nrVPoI1aem45H25wLz0YZc=;
+        b=Kb9DW1BlT0ZqKeBu2LbwrMgmlFYdmrLJCGLKH9EARSiMa5D3haKof5x4QeFWQf8vIS
+         veDXmU01QMy8YJt9PTLrsUogzfzhBQ3cxEp5RM2S/TYmnPhTBwx6aCjtK7yrfiJ8zTbN
+         2Gol/F6Qqu4a/uExAAuEd/lPtyf4I9PAga34qUVNLBCPeug0ifVSHQCWQkZUBXew4XnU
+         V6x00bZn4YbNKOVy2RGklVlVEXDo+dn56yHH9sQ1jQuI8EWTGWrdZLEBd1cp5bN+Dkzy
+         th3K8t1L/TRjAwFbaH/k+lcyTXE97sN1pAPDUrTbJlimA7w640KUSel1/y/l3ys1GkAB
+         Rg2g==
+X-Forwarded-Encrypted: i=1; AJvYcCV2wZ1WG9h0UArLU1EvTtso7+3hnEHqwSpijayT7A7/CMvw9gj3KDjn5Z+YcBbUHrfUd9mZSFcxy3FGOQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB+A58UewrPyvpLqST5C8rzbsg8Z1tNO1bv4PXhAqhq8Gc5LGN
+	clTfBP4fIIJTBlNr5pmu21fS66eADjJHr4dy4LmaGOjIud91LVDfUQwsiwyu3ypiMpoECEMwBUn
+	jV5LlFMzpNERvVKvEt8sbxeSVUMnjwyTewlsZQeaUyNAKAyk+eaARrWJKgqprYpo=
+X-Gm-Gg: ASbGncs5tMNBUTXWwtfH+qfG1gvyBL9KmeHEpyomZVDGvf/NGtbFWFgBLbDz96KEATG
+	cEvgEMX+enAY1FSi3KJTiCYNLd53IQfxX7glJfFYC+JeD48kFnlbqdeKkCXN+MDMXI+nRz9hGEp
+	ZztZmxwOpw1rE4NdpSMZdJZbDq7X7yzpw1eOI9kMg11BdOFZWsqwRh3y6zWSVhSaHS2W9qZSJGu
+	swVGnqq5dShzg8n5KWGUkFgVwlpfYclSiH+H226T+wMsKfLhQlYB3qArI1kQwIRzFNfnQXrU4a9
+	/Kg24W+wc4hjh8G4r6RLYvIuv9Nvy02BQOs76A==
+X-Received: by 2002:a05:622a:199a:b0:467:5462:4a18 with SMTP id d75a77b69052e-467a13dbb86mr5797601cf.0.1734018994480;
+        Thu, 12 Dec 2024 07:56:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHrTTXRfbuepculS9NtXEOABh5da5aY3tMlxBBBwXa+/U6qTkKw/SXlHeil5FX0OuqtidmsCw==
+X-Received: by 2002:a05:622a:199a:b0:467:5462:4a18 with SMTP id d75a77b69052e-467a13dbb86mr5797071cf.0.1734018993424;
+        Thu, 12 Dec 2024 07:56:33 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa683f9a8fbsm626885266b.37.2024.12.12.07.56.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 07:56:32 -0800 (PST)
+Message-ID: <8ad1db59-9326-461a-ba8e-52891922eb3b@oss.qualcomm.com>
+Date: Thu, 12 Dec 2024 16:56:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/7] Add support to load QUP SE firmware from
+To: neil.armstrong@linaro.org, Konrad Dybcio
+ <konrad.dybcio@oss.qualcomm.com>,
+        Viken Dadhaniya
+ <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
+        andersson@kernel.org, konradybcio@kernel.org, johan+linaro@kernel.org,
+        dianders@chromium.org, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
+Cc: =quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
+References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
+ <9d5e5b8b-aeaf-4ec8-b34a-8edeaec20037@oss.qualcomm.com>
+ <42b1c187-e924-4690-8338-4c694f3e16d9@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <42b1c187-e924-4690-8338-4c694f3e16d9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: Zwp4u8ki6hqMKzT483TTXRmOZjRrhPEo
+X-Proofpoint-ORIG-GUID: Zwp4u8ki6hqMKzT483TTXRmOZjRrhPEo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 clxscore=1015
+ impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120115
 
-Add the ioctl to activate a realm and set the static branch to enable
-access to the realm functionality if the RMM is detected.
+On 9.12.2024 3:45 PM, neil.armstrong@linaro.org wrote:
+> On 05/12/2024 16:59, Konrad Dybcio wrote:
+>> On 4.12.2024 4:03 PM, Viken Dadhaniya wrote:
+>>> In Qualcomm SoCs, firmware loading for Serial Engines (SE) in the QUP
+>>> hardware has traditionally been managed by TrustZone (TZ). This setup
+>>> handled Serial Engines(SE) assignments and access control permissions,
+>>> ensuring a high level of security but limiting flexibility and
+>>> accessibility.
+>>>   This limitation poses a significant challenge for developers who need more
+>>> flexibility to enable any protocol on any of the SEs within the QUP
+>>> hardware.
+>>>   To address this, we are introducing a change that opens the firmware
+>>> loading mechanism to the Linux environment. This enhancement increases
+>>> flexibility and allows for more streamlined and efficient management. We
+>>> can now handle SE assignments and access control permissions directly
+>>> within Linux, eliminating the dependency on TZ.
+>>>   We propose an alternative method for firmware loading and SE
+>>> ownership/transfer mode configuration based on device tree configuration.
+>>> This method does not rely on other execution environments, making it
+>>> accessible to all developers.
+>>>   For SEs used prior to the kernel, their firmware will be loaded by the
+>>> respective image drivers (e.g., Debug UART, Secure or trusted SE).
+>>> Additionally, the GSI firmware, which is common to all SEs per QUPV3 core,
+>>> will not be loaded by Linux driver but TZ only. At the kernel level, only
+>>> the SE protocol driver should load the respective protocol firmware.
+>>
+>> I think this is a great opportunity to rethink the SE node in general.
+>>
+>> Currently, for each supported protocol, we create a new node that
+>> differs in (possibly) interconnects and pinctrl states. These are really
+>> defined per-SE however and we can programmatically determine which ones
+>> are relevant.
+>>
+>> With the growing number of protocols supported, we would have to add
+>> 20+ nodes in some cases for each one of them. I think a good one would
+>> look like:
+>>
+>> geni_se10: serial-engine@abcdef {
+>>     compatible = "qcom,geni-se";
+>>
+>>     reg
+>>     clocks
+>>     power-domains
+>>     interconnects
+>>     ...
+>>
+>>     status
+>>
+>>     geni_se10_i2c: i2c {
+>>         // i2c-controller.yaml
+>>     };
+>>
+>>     geni_se10_spi: spi {
+>>         // spi-controller.yaml
+>>     };
+>>
+>>     ...
+>> }
+>>
+>> Or maybe even get rid of the subnodes and restrict that to a single
+>> se-protocol = <SE_PROTOCOL_xyz> property, if the bindings folks agree.
+>>
+>> We could extend the DMA APIs to dynamically determine the protocol
+>> ID and get rid of hardcoding it.
+>>
+>> And then we could spawn an instance of the spi, i2c, etc. driver from
+>> the GENI SE driver.
+> 
+> How/where would you add the peripheral subnodes ? A Serial Engine can only be a
+> single type on a board, but I agree we could have a "generic" serial engine node
+> that would be differenciated in the board DT with the protocol, and use the bindings
+> yaml checked to properly check the subnodes/properties depending on the protocol
+> property.
+> 
+> But we would still need all the serial nodes in the SoC DT.
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/kvm/rme.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+Correct, but NUM_PROTOCOLS times less. NUM_PROTOCOLS is 3 upstream as
+of right now, but it's much higher in general (which will trickle
+upstream one day or another).
 
-diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-index 3116ecee37a8..39d056e5c5b2 100644
---- a/arch/arm64/kvm/rme.c
-+++ b/arch/arm64/kvm/rme.c
-@@ -1147,6 +1147,20 @@ static int kvm_init_ipa_range_realm(struct kvm *kvm,
- 	return realm_init_ipa_state(realm, addr, end);
- }
- 
-+static int kvm_activate_realm(struct kvm *kvm)
-+{
-+	struct realm *realm = &kvm->arch.realm;
-+
-+	if (kvm_realm_state(kvm) != REALM_STATE_NEW)
-+		return -EINVAL;
-+
-+	if (rmi_realm_activate(virt_to_phys(realm->rd)))
-+		return -ENXIO;
-+
-+	WRITE_ONCE(realm->state, REALM_STATE_ACTIVE);
-+	return 0;
-+}
-+
- /* Protects access to rme_vmid_bitmap */
- static DEFINE_SPINLOCK(rme_vmid_lock);
- static unsigned long *rme_vmid_bitmap;
-@@ -1296,6 +1310,9 @@ int kvm_realm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
- 		r = kvm_populate_realm(kvm, &args);
- 		break;
- 	}
-+	case KVM_CAP_ARM_RME_ACTIVATE_REALM:
-+		r = kvm_activate_realm(kvm);
-+		break;
- 	default:
- 		r = -EINVAL;
- 		break;
-@@ -1567,5 +1584,5 @@ void kvm_init_rme(void)
- 	if (rme_vmid_init())
- 		return;
- 
--	/* Future patch will enable static branch kvm_rme_is_available */
-+	static_branch_enable(&kvm_rme_is_available);
- }
--- 
-2.43.0
+> 
+> This may make the software support harder, meaning we would either need to
+> have the same compatible probed in sequence from the i2c/spi/uart driver until
+> one matches the protocol, or have the qup driver spawn an auxiliary device.
 
+No, just read back the protocol id from hardware (if the SE is running), or
+from some DT property (if we need to load the FW ourselves).
+
+Then, based on that, we can call
+
+platform_device_register_data(dev, "geni_i2c", ...) 
+
+(or similar)
+
+> Honestly, not sure it would be much simpler...
+
+Not sure if I'm happy to maintain NUM_QUPs * NUM_SEs * NUM_PROTOCOLS DT nodes,
+per each platform separately..
+
+Konrad
 
