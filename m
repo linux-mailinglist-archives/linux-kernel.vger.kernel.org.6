@@ -1,97 +1,134 @@
-Return-Path: <linux-kernel+bounces-443459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C899EF136
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:36:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0F8517AD3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:30:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9B5241F5D;
-	Thu, 12 Dec 2024 16:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A2lkm+7i"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC719EF0BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:31:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D845240378;
-	Thu, 12 Dec 2024 16:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9B929BC1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:31:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664C6242ABE;
+	Thu, 12 Dec 2024 16:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAVdikrs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC45223E81;
+	Thu, 12 Dec 2024 16:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734020356; cv=none; b=njc+ERYOIOLE5+LMXrhilDfZAN1JDHbdKz/opJYvLN0ZMdgRB/SzBVR5LPn/YBjOIeaVKJeN/d3AjLAGkPrd7/4xMZbyrX8l4OqCTmQu9KyAkTgqbqO5vQwu+DZBHy0RzzZWJs/gzfIdDxdS/gYWzM25BpIwM2xl+iyD1kKtfsU=
+	t=1734020360; cv=none; b=brQaxMW8tyaPvuRMgBs7bKmKcBi4VuAsdeKb/4mFjtvC2P8tYEdEJP/e0f/NOiFxODiCc2V00AcNdXRhAQcFcscv9zj2IM5n32I11glKBVZmoXgTutAAZte3QZnSOLInHuogwCxblX7jEF0eqJ/37MbL1bPw5MDkFnJXlO0CTx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734020356; c=relaxed/simple;
-	bh=iHlvAPhIVvz36WX+GSreWLasztM4a4d7Y4bjIdntYxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tSqNzC/oHKtnEGq4PHt5Uz+ef5FJUIeKLBsP2ro7czMcMwiwgkeeeWgqiNAOCwNwFoRMECUIa74Ud/sirCSvpXu3aqFWmK+TEHRzN2knYl7Sl8QVQ0dpHkXm4j1Q/GRiUxGUQUJa8npaIyJj6Ozj+z4AgFaF10IjoCitzbG7lTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A2lkm+7i; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 87B2A1BF208;
-	Thu, 12 Dec 2024 16:19:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734020346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=weEPs92x2QpmerZO6QwiNlk+2/x1aW0o/MH6bYLLXS0=;
-	b=A2lkm+7i/0O+VjBtCEN/O+xn/nj1go/JjrSekE+++rT3XURWq4gwZgIDgaQVehENc0D6Xh
-	gQvgMn/y7noHWdGgZnVha1m2f98ojdiQsBPO1XLif1oi6E0Gzx2S/82cPX6/Lfr+vQgXoQ
-	MLT/P+1gr6/RghCeU7fdV6rhTSIOysu0tWkFQA0BZ0uET5mAPBtHBoQt2CCsWm6wuk7RuE
-	1TJu+gHW/upesLXnLsNjI+DXMxor7YY199t4MtWuNDkT7+yP15DvzSG4IwB5KUL6V9HFec
-	VWbWySIg2213SykvPOngxIflDwLFSOLJauFcqQhmw08m0XWkwG82g9bZW8/mRw==
-Date: Thu, 12 Dec 2024 17:19:04 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
- linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 1/1] pwm: Add support for pwm nexus dt bindings
-Message-ID: <20241212171904.3350e04d@bootlin.com>
-In-Reply-To: <20241202164459.157672-1-herve.codina@bootlin.com>
-References: <20241202164459.157672-1-herve.codina@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1734020360; c=relaxed/simple;
+	bh=3AlOJhFTa74OLr0nCvOAPlZ30e88mSroZvtJ8JdF1jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WEI6itztq+yW49cqXpZZ22R46f5wp65oxymfV2aKdiXuMP7Hr6rXNS8HwR3pZq5gQMMWb6vQxQ5ss1SVzHIdeEukzKR+5oaSzWRQ+OC8Zf9CROtrhw2EzwM2/zhj9rIfdiyPPBpqWIb0nZ1vZIXP3JjIjvZyqStarfNBaXRF+gE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAVdikrs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E316C4CECE;
+	Thu, 12 Dec 2024 16:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734020360;
+	bh=3AlOJhFTa74OLr0nCvOAPlZ30e88mSroZvtJ8JdF1jw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hAVdikrsaA4tJPnyQebLfJSNlbyz0F8ABNnwNk7leMEEX2zU/cJHsCMBxkb740hRN
+	 BuwQ2hivIioOBgDuQRr+yr67sxla3T65BZ7+PgI1YTf3SvCtgh5OPGXMwpbAGPgPfQ
+	 E6CQ4QLTJcDZqtOBUXIRi2BR9SoXNBaCOLHdDpkb5fDTT7EAJ3XBZZ/XJgERIp65yB
+	 4Io/g6EHwGdN7OUamZp9uwgcRKsaiaMPwoKBFLiYksGypvczNotYZlbTTNG7k2ysxF
+	 WrQYSjcj56XJ3f3jV/y0Ctbs7U0f7I4+1lM8azaszo3n8uzdyPb5TlZc9wckc6htPL
+	 ebdV0doL9U5aQ==
+Date: Thu, 12 Dec 2024 08:19:19 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Andrey Albershteyn <aalbersh@kernel.org>,
+	John Garry <john.g.garry@oracle.com>
+Subject: Re: [RFC 2/3] xfs_io: Add ext4 support to show FS_IOC_FSGETXATTR
+ details
+Message-ID: <20241212161919.GA6657@frogsfrogsfrogs>
+References: <cover.1733902742.git.ojaswin@linux.ibm.com>
+ <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
+ <20241211181706.GB6678@frogsfrogsfrogs>
+ <Z1oTOUCui9vTgNoM@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1oTOUCui9vTgNoM@dread.disaster.area>
 
-Hi Uwe,
+On Thu, Dec 12, 2024 at 09:33:29AM +1100, Dave Chinner wrote:
+> On Wed, Dec 11, 2024 at 10:17:06AM -0800, Darrick J. Wong wrote:
+> > On Wed, Dec 11, 2024 at 01:24:03PM +0530, Ojaswin Mujoo wrote:
+> > > Currently with stat we only show FS_IOC_FSGETXATTR details
+> > > if the filesystem is XFS. With extsize support also coming
+> > > to ext4 make sure to show these details when -c "stat" or "statx"
+> > > is used.
+> > > 
+> > > No functional changes for filesystems other than ext4.
+> > > 
+> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > ---
+> > >  io/stat.c | 38 +++++++++++++++++++++-----------------
+> > >  1 file changed, 21 insertions(+), 17 deletions(-)
+> > > 
+> > > diff --git a/io/stat.c b/io/stat.c
+> > > index 326f2822e276..d06c2186cde4 100644
+> > > --- a/io/stat.c
+> > > +++ b/io/stat.c
+> > > @@ -97,14 +97,14 @@ print_file_info(void)
+> > >  		file->flags & IO_TMPFILE ? _(",tmpfile") : "");
+> > >  }
+> > >  
+> > > -static void
+> > > -print_xfs_info(int verbose)
+> > > +static void print_extended_info(int verbose)
+> > >  {
+> > > -	struct dioattr	dio;
+> > > -	struct fsxattr	fsx, fsxa;
+> > > +	struct dioattr dio;
+> > > +	struct fsxattr fsx, fsxa;
+> > > +	bool is_xfs_fd = platform_test_xfs_fd(file->fd);
+> > >  
+> > > -	if ((xfsctl(file->name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
+> > > -	    (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
+> > > +	if ((ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
+> > > +		(is_xfs_fd && (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa) < 0))) {
+> > 
+> > Urgh... perhaps we should call FS_IOC_FSGETXATTR and if it returns zero
+> > print whatever is returned, no matter what filesystem we think is
+> > feeding us information?
+> 
+> Yes, please. FS_IOC_FSGETXATTR has been generic functionality for
+> some time, we should treat it the same way for all filesystems.
+> 
+> > e.g.
+> > 
+> > 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
+> > 		if (is_xfs_fd || (errno != EOPNOTSUPP &&
+> > 				  errno != ENOTTY))
+> > 			perror("FS_IOC_GETXATTR");
+> 
+> Why do we even need "is_xfs_fd" there? XFS will never give a
+> EOPNOTSUPP or ENOTTY error to this or the FS_IOC_GETXATTRA ioctl...
 
-On Mon,  2 Dec 2024 17:44:59 +0100
-Herve Codina <herve.codina@bootlin.com> wrote:
+Yeah, in hindsight I don't think it's needed for FS_IOC_FSGETXATTR, but
+it's definitely nice for XFS_IOC_FSGETXATTRA (which is not implemented
+outside xfs) so that you don't get unnecessary error messages on ext4.
 
-> Platforms can have a standardized connector/expansion slot that exposes
-> signals like PWMs to expansion boards in an SoC agnostic way.
-> 
-> The support for nexus node [1] has been added to handle those cases in
-> commit bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through
-> a nexus node") and the gpio subsystem adopted the support in commit
-> c11e6f0f04db ("gpio: Support gpio nexus dt bindings")
-> 
-> Add support for nexus node dt binding in the pwm subsystem.
-> 
-> [1] https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  drivers/pwm/core.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
+--D
 
-Any feedback on this patch?
-
-Best regards,
-Hervé
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
