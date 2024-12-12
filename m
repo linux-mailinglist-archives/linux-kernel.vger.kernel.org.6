@@ -1,249 +1,133 @@
-Return-Path: <linux-kernel+bounces-442921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFF99EE40C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:25:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258759EE411
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:26:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FCC01882A70
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:25:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D040A1882E24
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D55021129A;
-	Thu, 12 Dec 2024 10:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4106211273;
+	Thu, 12 Dec 2024 10:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QT5hy2eT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R0LOOB0s";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QT5hy2eT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R0LOOB0s"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aJ3SWmA4"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2BD18B467;
-	Thu, 12 Dec 2024 10:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924A22101AC
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733999091; cv=none; b=UcwgH8HBlwmQRwKNNOy/NXUEh/AXg4c3XOOT3NwWjq6lfd19R0x9AeNsSAxHN7ddMtSGp1g2YYxXZ9XERkq974TmDcUDcmCKWGREXqXx2t0KH2u275cOkHnvvxFHeb7ePko6NPYknwfUtYL5Kn+Sw/hO+Q5B30J4W7mdN3NNP+U=
+	t=1733999194; cv=none; b=pB5N/VggJOznBe/onEEN/r/jNEn+Ou1/cRXX+y1rSwF7JTNhbMdRU0Eve2uuPbxRUR1k3mlV1WZCk18DPkdt9j1fiEyU6/A/0NZmn1FzSy3nCC3m+VzMkTe8sH8TugQ3O3k8C8KPF2Jim8IKby9wqTiFj34Wti98aSTOQ8zwyUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733999091; c=relaxed/simple;
-	bh=elSn5EMKBSJAe1t5atIhWgNvGF8K+SoHvOCXEqaepOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4rYGGhvwrgDmaxFTK11kYlubTLlxhljsHXfqXKnGkCfr4zfBFPxfBihUsyScWU4xiidpVE237zVzlvpdyChnN2h5VVkx9FYl9Ptv7PRR4/WpByyKmJJee4D+X6mYaZy/MAOIYD7wJCjrpX7SQO4U73slffAPCdfAOVYqRlA7Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QT5hy2eT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R0LOOB0s; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QT5hy2eT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R0LOOB0s; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 997F61F445;
-	Thu, 12 Dec 2024 10:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733999087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
-	b=QT5hy2eTFO0raA091ld/V4Xtv5Xize9dcNyYNy3kMeXhbsHswPFHLQfX/J8+FS1IWRVAK9
-	nDQlkW9APRuqOa6mMnJjEZ79VBuKqKgz4mKvvxAAmgDG8XIlWWHpXfIgd4rQSjI7p8sgkF
-	Ld848Owpi1CJJHLUSNRCwZo22w2eNpQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733999087;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
-	b=R0LOOB0skr8gVNQv2sbsKWpwVO8Vt8TWroYwZiNOGiOUvdC3xvM9MCJs/ZKMFthK9PsyS8
-	EL7fG7bXbE781HBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QT5hy2eT;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=R0LOOB0s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733999087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
-	b=QT5hy2eTFO0raA091ld/V4Xtv5Xize9dcNyYNy3kMeXhbsHswPFHLQfX/J8+FS1IWRVAK9
-	nDQlkW9APRuqOa6mMnJjEZ79VBuKqKgz4mKvvxAAmgDG8XIlWWHpXfIgd4rQSjI7p8sgkF
-	Ld848Owpi1CJJHLUSNRCwZo22w2eNpQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733999087;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
-	b=R0LOOB0skr8gVNQv2sbsKWpwVO8Vt8TWroYwZiNOGiOUvdC3xvM9MCJs/ZKMFthK9PsyS8
-	EL7fG7bXbE781HBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84CAA13939;
-	Thu, 12 Dec 2024 10:24:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MfEoIO+5WmdOIQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Dec 2024 10:24:47 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1A52FA0894; Thu, 12 Dec 2024 11:24:43 +0100 (CET)
-Date: Thu, 12 Dec 2024 11:24:43 +0100
-From: Jan Kara <jack@suse.cz>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	kpsingh@kernel.org, mattbobrowski@google.com, liamwisehart@meta.com,
-	shankaran@meta.com
-Subject: Re: [PATCH v3 bpf-next 4/6] bpf: fs/xattr: Add BPF kfuncs to set and
- remove xattrs
-Message-ID: <20241212102443.umqdrvthsi6r4ioy@quack3>
-References: <20241210220627.2800362-1-song@kernel.org>
- <20241210220627.2800362-5-song@kernel.org>
+	s=arc-20240116; t=1733999194; c=relaxed/simple;
+	bh=jVswUeBk2R+z9ZnLjLAPKeYEEMow4andpI80HQc9KSE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RstGm5Wwn33FS1IL+ev2OBdnUrQEXoRJ7L8xk81v6jSSeIIX04QXb6o+0rK8F5N9XhGupGEQCMY0lvO8cTPcKwylw1GbQzSu1MIKXeRwVljNRikgz7ygijk+e54GtUguQ3Rbnj+A0YcgMBzTdGbDiWGrKI/19vtU5JnI3qw8q2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aJ3SWmA4; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa66ead88b3so75454266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:26:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733999191; x=1734603991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jVswUeBk2R+z9ZnLjLAPKeYEEMow4andpI80HQc9KSE=;
+        b=aJ3SWmA4KW0pFlp/GrBX1QWlBYRcizdNjbVpZAFJKMqJAiJBTiDaJz+GKBdgHj6Vf4
+         KncicSeLN7hlfaT1MLkduV6ReE67pcwtFiGl94lI6YZ4JaErQ4ChtRJyngzG9ZlrYg5o
+         k1bHb7mNiFI0yXovQbvQFCERNoo0LgdIEuqtdkeRwasrqs/IzETdeSYKIJSn+mE/rMXT
+         QgpWfMj1DHp8iuLwhZFtauMq1gLL6zMSz8kvc99kd8qzfBZ0CreupOb3epmLn6L1V1he
+         sjNY6aHjnUuYRiJMCbr1ttk5fmvV533cBpxJcOssgCth0Nr7e1RhrtCNKPoKmiWMJHrE
+         pZ6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733999191; x=1734603991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jVswUeBk2R+z9ZnLjLAPKeYEEMow4andpI80HQc9KSE=;
+        b=l7lIpF5lMQPspwsr/aqk5ncu7ztrpQrIwAdBteiuEPnEZEFZ6BUqFwwjasJcvgYfBa
+         ADgG1zDEdZEWAImR9es2H7DAuAssCuE7NRifl7inibHUQJJbXNeTknGcg/ERyntK8G09
+         iHzg8/djVo44ljx7GIEtHoJ30kkR2W1u0ukVxgJpgmBE3UKWZyj2goeI7dr+7b0Ne057
+         2DV602s/JUcg7VxeLpJ8Fjcd2/JRwkUMgztox8FByAjEsj0Kp12xrZIi2kLgfFtqXG3f
+         KwJVHlxJ+Nggvrr50SGkXvZqu229GLQ4PqIWoWBzQh3Sd6BhnOqw0Eqo80VTPDhO8IPe
+         0ZFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtG4jBjPrB1+sgzgZJeAFQG6LVDazon2Ctu9dxnraxdVyWHSat90c3A6TVI2GnqlfnV2iuWQTcxVw9oqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJCrhMIDdCAV31qT1Kjnk3UXmx3TI/lPnIqa4C0mPnBQRya0py
+	ssN0Dsjk7LkkbDqRkgqSLUt5cnkorCfV0Obolw4ij2NCzrY6Jvpjo7AE6KDqPAaLgZnNJwT5Rvs
+	/usgnToTAJRtuTio7Sntg/c4lCkyI0F/cz5A6OA==
+X-Gm-Gg: ASbGncvHa4klq+bzHrUUFSSy3AO4mzTFqqI4cRgmiUq+aXT05SKnO5SRF9cFsq6M6zJ
+	jrhLV8mtwbThf1SSBtbJc7AxA0BVv4okIrX7D
+X-Google-Smtp-Source: AGHT+IH5yAN/gbiLL76Dk6LGA9jPui58kjRG4i8N9veQAZCoYkURqjEfO9YzuGA80yAQIDSiR81lnOHnHecPK3+61BY=
+X-Received: by 2002:a17:907:9548:b0:aa6:7737:1991 with SMTP id
+ a640c23a62f3a-aa6b10f5f65mr510217466b.2.1733999190969; Thu, 12 Dec 2024
+ 02:26:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210220627.2800362-5-song@kernel.org>
-X-Rspamd-Queue-Id: 997F61F445
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241212075303.2538880-1-neelx@suse.com> <ac4c4ae5-0890-4f47-8a85-3c4447feaa90@wdc.com>
+ <CAPjX3FcAZM4dSbnMkTpJPNJMcPDxKbEMwbg3ScaTWVg+5JqfDg@mail.gmail.com>
+ <133f4cb5-516d-4e11-b03a-d2007ff667ee@wdc.com> <CAPjX3FchmM24-Afv7ueeK-Z1zBYivfj4yKXhVq6bARiGjqQOwQ@mail.gmail.com>
+ <9d5b4776-e3c8-449c-bb0d-c200a1f76603@wdc.com> <CAPjX3FdU1mOkRr+JVE+S4og4NvjFerZhHC_qupFBTgjn9=s8MA@mail.gmail.com>
+ <a8047d3a-ab45-42f0-8c60-f00829e40518@wdc.com>
+In-Reply-To: <a8047d3a-ab45-42f0-8c60-f00829e40518@wdc.com>
+From: Daniel Vacek <neelx@suse.com>
+Date: Thu, 12 Dec 2024 11:26:20 +0100
+Message-ID: <CAPjX3Fexb19AcchSttsmm=JCcobBBCPXxF6_qkK=_yuqtgNRRg@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: fix a race in encoded read
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Omar Sandoval <osandov@fb.com>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, 
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 10-12-24 14:06:25, Song Liu wrote:
-> Add the following kfuncs to set and remove xattrs from BPF programs:
-> 
->   bpf_set_dentry_xattr
->   bpf_remove_dentry_xattr
->   bpf_set_dentry_xattr_locked
->   bpf_remove_dentry_xattr_locked
-> 
-> The _locked version of these kfuncs are called from hooks where
-> dentry->d_inode is already locked.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
+On Thu, Dec 12, 2024 at 11:10=E2=80=AFAM Johannes Thumshirn
+<Johannes.Thumshirn@wdc.com> wrote:
+>
+> On 12.12.24 10:35, Daniel Vacek wrote:
+> > On Thu, Dec 12, 2024 at 10:14=E2=80=AFAM Johannes Thumshirn
+> > <Johannes.Thumshirn@wdc.com> wrote:
+> >> It got recently force pushed, 34725028ec5500018f1cb5bfd55c669c7bbf1346
+> >> it is now, sorry.
+> >
+> > Yeah, this looks very similar and it should fix the bug as well. In
+> > fact the fix part looks exactly the same, I just also changed the
+> > slab/stack allocation while you changed the atomic/refcount. But these
+> > are unrelated, IIUC. I actually planned to split it into two patches
+> > but David told me it's not necessary and I should send it as it is.
+> >
+> > Just nitpicking about your patch, the subject says simplify while I
+> > don't really see any simplification.
+> > Also it does not mention the UAF bug leading to crashes it fixes,
+> > missing the Fixes: and CC: stable tags.
+> >
+> > What do we do now?
+>
+> I think it's up to David if he want's to send the patch for this rc or
+> not. In my test environment the part that went upstream was sufficient
+> to fix the UAF, so this was the part that actually went to Linus first.
 
-A few comments below.
+But it (I assume you are referring to `05b36b04d74a`) does not really
+fix the UAF. I'm still able to get the same crashes even with this
+commit applied. That was actually where I originally started testing.
 
-> @@ -161,6 +162,160 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
->  	return bpf_get_dentry_xattr(dentry, name__str, value_p);
->  }
->  
-> +static int bpf_xattr_write_permission(const char *name, struct inode *inode)
-> +{
-> +	if (WARN_ON(!inode))
-> +		return -EINVAL;
-> +
-> +	/* Only allow setting and removing security.bpf. xattrs */
-> +	if (!match_security_bpf_prefix(name))
-> +		return -EPERM;
-> +
-> +	return inode_permission(&nop_mnt_idmap, inode, MAY_WRITE);
-> +}
-> +
-> +static int __bpf_set_dentry_xattr(struct dentry *dentry, const char *name,
-> +				  const struct bpf_dynptr *value_p, int flags, bool lock_inode)
-> +{
-> +	struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
-> +	struct inode *inode = d_inode(dentry);
-> +	const void *value;
-> +	u32 value_len;
-> +	int ret;
-> +
-> +	ret = bpf_xattr_write_permission(name, inode);
-> +	if (ret)
-> +		return ret;
+> @Dave can you send '34725028ec55 ("btrfs: simplify waiting for encoded
+> read endios")' in the next PR? I can update the Fixes tag.
 
-The permission checking should already happen under inode lock. Otherwise
-you'll have TTCTTU races.
+The commit message definitely needs to be updated mentioning that this
+actually fixes the UAF which `05b36b04d74a` does not really address.
 
-> +
-> +	value_len = __bpf_dynptr_size(value_ptr);
-> +	value = __bpf_dynptr_data(value_ptr, value_len);
-> +	if (!value)
-> +		return -EINVAL;
-> +
-> +	if (lock_inode)
-> +		inode_lock(inode);
-> +	ret = __vfs_setxattr(&nop_mnt_idmap, dentry, inode, name,
-> +			     value, value_len, flags);
-> +	if (!ret) {
-> +		fsnotify_xattr(dentry);
-
-Do we really want to generate fsnotify event for this? I expect
-security.bpf is an internal bookkeeping of a BPF security module and
-generating fsnotify event for it seems a bit like generating it for
-filesystem metadata modifications. On the other hand as I'm checking IMA
-generates fsnotify events when modifying its xattrs as well. So probably
-this fine. OK.
-
-...
-
-> +static int __bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str,
-> +				     bool lock_inode)
-> +{
-> +	struct inode *inode = d_inode(dentry);
-> +	int ret;
-> +
-> +	ret = bpf_xattr_write_permission(name__str, inode);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (lock_inode)
- +		inode_lock(inode);
-
-The same comment WRT inode lock as above.
-
-> +	ret = __vfs_removexattr(&nop_mnt_idmap, dentry, name__str);
-> +	if (!ret) {
-> +		fsnotify_xattr(dentry);
-> +
-> +		/* This xattr is removed by BPF LSM, so we do not call
-> +		 * security_inode_post_removexattr.
-> +		 */
-> +	}
-> +	if (lock_inode)
-> +		inode_unlock(inode);
-> +	return ret;
-> +}
-
-									Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--nX
 
