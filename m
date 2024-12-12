@@ -1,359 +1,249 @@
-Return-Path: <linux-kernel+bounces-443558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7965C9EF693
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:27:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB462189C630
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:20:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729EC2210F1;
-	Thu, 12 Dec 2024 17:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fioZx9sP"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2051.outbound.protection.outlook.com [40.107.20.51])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37289EF5F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:21:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D73205501;
-	Thu, 12 Dec 2024 17:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734024035; cv=fail; b=GSJe7ooNgmcOb4dKgRj0mMZeXKZq4ltJeBmOOr4vZjzABVSqCmodObehq9vHreaW02t/rfdBWDsWXGbi+jNNP9VjwRUvY9xftoHAbwNJVwWT609nL1J57mw6GDrYdlTPr58BNpBxxkoFsh5/+mXLOkr1yc6G1A+j9FqXl/RDLqw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734024035; c=relaxed/simple;
-	bh=hQ0UIeFxBcscW8sPl4UzVWJPr8J3mEeVLEro0MeqEFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Wf6dGcjW7OEUf98z66sxCCtwWngerkR21E7Wo4wLxfZl2nUw3EwhTEe0+yXtWA63k6dffEireW00OK7r5TB72/aU/9nWnYMXQ2pIhXFJIHVJ2SmRCdsAemO1Fp364kLDoD7wicRH6pU8uYhAsaNHsNMYQtitNqEaSMa2KQrtzt0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fioZx9sP; arc=fail smtp.client-ip=40.107.20.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qC6TLfuXPUm/Fbv04cnAu2GkbF9TuAelVpbROknuvYfOIAP9gDQSBiN7Ehkecc4Puyu+eoJ4R1ugtSDa76ME7vEBzMJ31h+C4r0rNEhz9inPmnRqqxjWq023KdFUVANC2Xo42uMJfcvP410E5GcWmoBEDbUSwIatWZ7G+kbRXtxcEorGeBhMLttOk0ukfmuhEYgxBATWhpRkNxPX1EH4tIY0qmude9b0kt/LTCDwK53Xpmt7ihdVkAzd9kLpbJDUXrNFI8GniqXHrc+upSA4nuY3xOIRb6iJJtMTKM2AMmDsgB4r3IfgO7nvKic4VWSpaO/g0Xws4Rnl7fIUmOWhhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7zGxeCqPgoLqqebWL+vT0386AcK7KLqEXnVwLav59fA=;
- b=SkXMN6PUGBaUM2yv1px0cxsgF4w8TonGgr7Fbte9Byy7q6EUHZ/R6mXqpA9ve73Xkmefy95gfUcIJoWi73AWAk9l8W7/wpWvSuzn5J+Ltso0l7m8hB/XrhECy43XqIgFFL9BqnnDBdDlXETC7hrZbI3cqupL1uZW0V6swOlkBcAZJ3dcScNVm/sOeoaAMoLuxFYDT6nQ5gN3XaWgf2DhBkhEIgAhtN1tM6XXUckOOY63ciyMxsSK+Qk5mBYAjrT1ZsvZTm0kJ90V9sWD/ZLX3Ii4E2mnYHvkgcGug07c9P+m+cHGEP0uuG/fg4nJdKZpJI/mythNAuWncHFV3xILtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7zGxeCqPgoLqqebWL+vT0386AcK7KLqEXnVwLav59fA=;
- b=fioZx9sPlhli1NVrsHxtzF+Z7K2A4Cr21Tog3OfUAstsUXguh+P1yTBMwIdpspCl9vEaHLyEqS5zGnpjpTnF4rKkfxGm1+x1VQl73/Os/T4spr9IudwD4oyXaYlROyXu0HEc5ZHu6HLnOQXg2nRBUKRhN7e8/CurOAzxw8UcK6cnrfJ6IC975mYO2aILDswCziAEx4fvsM+LO05Yu5DWK+Cx8IrY+ChuYN0Uj4y0T7FyoHmAZLN99xoT90PlCNdnap1zYotzXjt5P/07dVAybJNjPVjQVQpB7jIBVgEb5bxkJjFry99FnVIH0k7iOsDe6gYVFKK4tyfR4PLSO+NfoA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by PAXPR04MB8389.eurprd04.prod.outlook.com (2603:10a6:102:1bf::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Thu, 12 Dec
- 2024 17:20:29 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8251.015; Thu, 12 Dec 2024
- 17:20:29 +0000
-Date: Thu, 12 Dec 2024 19:20:26 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next] net: dsa: sja1105: let phylink help with
- the replay of link callbacks
-Message-ID: <20241212172026.ivjkhm7s2qt6ejyz@skbuf>
-References: <20241003140754.1229076-1-vladimir.oltean@nxp.com>
- <Z1sHtZXuOvJe3Ruu@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1sHtZXuOvJe3Ruu@shell.armlinux.org.uk>
-X-ClientProxiedBy: BE1P281CA0023.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:15::10) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3156C286782
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:21:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC6413CA93;
+	Thu, 12 Dec 2024 17:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SRnNMPmW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88658217F40
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734024040; cv=none; b=cQEURuM3uKoCNPLi1Ksx/egfGhqBShEkA/kheatD1096sECmpn1Fphmir8jC6ZLs4z0GOCTconXr24uXjlve1VynOWWEPmMhacuH2/BifKlt64VWSHaEquMTz3XJNt1PBLUnh3h4SJNJhvhg0aLshkYIoskSX+DOd+47YDL7VGI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734024040; c=relaxed/simple;
+	bh=wVldXEGvzH1k7BfnFQuOJJ+F7XR5my/3uSlz2+Z8LzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YYQU6pPkhER6Y6qVcqgrsTTelQNvVWwGg31dV3lRNYuBxmrWz0j/GF/NCLY2jZDEcioji8c9B9qUP/4zK44hIffCtf5sgmUZttnNdbZGTHFl50CjDj4ygC+VBq8tA5qt+DZKtjXhIu3pgYMXQMR7L4M/gxXNxkx3GeXp0CTd4PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SRnNMPmW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCCVr3k001154
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:20:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0Kx1TU4YS8jObM52KPLjLHbZ3qgoPlP9G8kSo38Mghs=; b=SRnNMPmWWkK+KGqP
+	w+13WrlVEJmGIsFmAUkEnUj55PUpcA6b9YYXvGa27YXABHi2bjl/IUPc9zRBOk4r
+	wwhNU4Ir7IdCFBP3fSaHn6whUFZwCHlqjX/pAKa+TyNs9aLQznB2Tlp/elRBlgNO
+	OOQ1LSrNOGTtuchqcBFGK+SxzhbJ2whQJM+0VxOsJxWBkFwaWcNoBOO13Jxh+XXO
+	sFafjjDYZkf08j2mOs57hLVA+uA1Tplw3eSOCO704a42Pm0DvtXxKqCsTPobiZ2W
+	zabGIfGEBEapU3nuQsxqglg2HsbrhJLO8MO52Twdhmds+WLOuzMbsx20ozlCSDK4
+	arnzoA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fqes27fa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:20:37 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7b6f134dac1so4220285a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:20:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734024036; x=1734628836;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Kx1TU4YS8jObM52KPLjLHbZ3qgoPlP9G8kSo38Mghs=;
+        b=E5PYf7vVR7CTSuoy3sRasvE5y5YqRt/qhGlmUB7LqMyUGyrATEZWOxPzagc8B59XDE
+         2l6fWuf9z1F8lds3dI/fQz6mzVTvi5RkIEJIDp8rkhBgphKrS1K04lXbKt2Acwz1khdp
+         XhLNdAh54Q3AaLlzGB2fle1g670VpnoncaQp67q/l1FkC1D7BJALLP1lmByHArT4Bmf7
+         IoRS/XA1WGSyxDeBzcV8xlIU08neWkgT5yBbaEBsV/Hd8M1NWvdUBywA/9mobLM9hV3N
+         7yBX1m/M5rgMLki3MgZDmoiudIK9ef0Y1MUmqIOWrBVIHOILIskZ/+doAGG+MNof02FB
+         R38w==
+X-Forwarded-Encrypted: i=1; AJvYcCVq+u9CPp87Ek/ezVTCFq2UPAvn+EqlPhWHEDkf0GrjLtBsPnQevBowv9+w3z7rJb4UX9oFs2iFVLpjF8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwphIKNxGaECOby+Tgahh4PHBM2HapY/PbWU4viDIpA1jOIIxi4
+	2oeDNn99R5py9BeD8Jet8oAl7RUveej5T/gntDtgkd6LL3LSCUbjIoe033s8Tw0r+79v02l6Sy2
+	VRaNvGeUF9RvNm84pfQC7H9SimEyTbsu+h0USu2776R80tfrjNgP/BuGlRjlg4wc=
+X-Gm-Gg: ASbGnctqWUKrNPJM5yNsBb4IHzpTXDcmeVmqLA2bTUUfVz18BG7BVHkY6G04kMCq90c
+	Z6eK2yyqBJ1J8Q77kendv5BkrFW8t1s3TXEvXyOF7DvIHmlIufeKGn0XxbkdVxH3y2+Ck95bENV
+	DO0L3+f3Nqbr00YJeM50AThoW717Lw0AtRZGJP1gpRN83QQxXOtW+808MzT1GglhT3y87PvaIVK
+	LMVm22fiyCi7QkN3+EGB+6rQlpPCBe4TELfa2ZC2vcwUhqzyWHPMsbnIdKLALRrT4T76V7rFOuN
+	5LJ3qHfIdw/PKRQASu+wGYSYNiIL6pCSrh/lcQ==
+X-Received: by 2002:a05:620a:460c:b0:7b6:e196:2219 with SMTP id af79cd13be357-7b6f88ed8c5mr67433585a.2.1734024036434;
+        Thu, 12 Dec 2024 09:20:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGicxkJf3ENFhs4jDVWOE8vh5/6sw8tekuW8ZQkM73188uhx/Pnj1T+/I1+utYPkNjFa46aJA==
+X-Received: by 2002:a05:620a:460c:b0:7b6:e196:2219 with SMTP id af79cd13be357-7b6f88ed8c5mr67429385a.2.1734024035567;
+        Thu, 12 Dec 2024 09:20:35 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6a7e199aasm366108666b.28.2024.12.12.09.20.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 09:20:35 -0800 (PST)
+Message-ID: <70647a37-6196-4179-803d-35add798fa0b@oss.qualcomm.com>
+Date: Thu, 12 Dec 2024 18:20:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PAXPR04MB8389:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ba2c332-8ef6-4d8c-cbfc-08dd1ad14697
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?w3BE9lz0zjTTuR15NoCu3Pb0btZkygz4nUrn0vwISV0pG4BsqP7/c7HL3eRM?=
- =?us-ascii?Q?MPM9t5TNfCYp+fVsfIynehvH5FvwYgCjJIeTyW41lUOiYz8lDZX8BKBFMwBB?=
- =?us-ascii?Q?dnvRu7i+kOLFOFVIQul50JcOtyRg2XJVC+8BYCpqF3u0LLhy0+vO7meM5Wt6?=
- =?us-ascii?Q?L8KBGFnbjh2UQeLohVDHjk8OOFXe3IC0o+93QcHfmNJCGK7ShB0+D4ZxRULn?=
- =?us-ascii?Q?tD8D2RAaY2nt4AWkWoQpeDrbJ6cPkOD6FKPXe/bLNvAbXzVGKbqsA0MAFghy?=
- =?us-ascii?Q?YetvcLq19W/H1xFc7FZW8prot5p/QW3bI3p0KQx699hIY8qmHeXhZPVX2VHF?=
- =?us-ascii?Q?UzhlhPUEI2QqIWwxC3P3rLFH2Cf9HPVjzeOfnmwUnZHOxP9Mq6YvnWmxiqGl?=
- =?us-ascii?Q?6fBmIkDY2bloUmqq5YkHe2WD57T9ZgH+TRZNlufMGja5WSNJJiEIHH8Fvmj9?=
- =?us-ascii?Q?2gh1iawAbHAgXHS97OeoiwQwwHVDhvDwAyk6Zhd7Vt1hOr25YTnBKEtjvtTh?=
- =?us-ascii?Q?LiaTWz1G42HwGWbuSzFW8RsXT0n8NRX71EI+UGNuP1m1MmYkF88YJzXrwk+i?=
- =?us-ascii?Q?Zqxf8G6y9ZKhTUgJEPIYZBn0OzYJWC2NQX6jZniMvtEgEUwrI7Y0hdvOStFT?=
- =?us-ascii?Q?E2mONy2I0A2g6wI4dPi3nbSCNZQXGA96JPWyviTkalKlUtYaDcJZXr0Os7qH?=
- =?us-ascii?Q?AVoAz7MSvpY1OU+qulwHiprfL7rk7RmCNrrE89xgKLSCCh6W8yHXciZquQEu?=
- =?us-ascii?Q?sjHngjKgAlE6avt7Lp1AYjIKrVic4e94g4jmdLr8KBe4E5CIIcOHE/pHP7e5?=
- =?us-ascii?Q?APo0S/2R1rB9OrPH0g8So5LOQ+8QujTaE1CQtd0RtMxA4qeRDrW18nfokw7q?=
- =?us-ascii?Q?fTw5BBEMS/Hj6GzPKhzhn6Va/C66ePkjm12YvhWKFOa4cKhAAy4ebLpqIB9X?=
- =?us-ascii?Q?DFdTofmGqozgpOBeWNcQPE2qN+Ia+Q0hLYkD0Ha0OUJ17tVmCmxxl6ol5HFx?=
- =?us-ascii?Q?8KtQTs55/r6EKT4eg2K96+AJiShGRy+jXZJc/8h+0NHjLd+VhUpgfncGIxYa?=
- =?us-ascii?Q?DmFPKHYAA0U0CPMHVdoE3+V9LbfXD8x6BRMmoIROBD3INE9nGC3ZJyZc3BoU?=
- =?us-ascii?Q?aOztMEu2jynYBRDNR0WvlK1YuMqXMb+HUgHf+rB/u97krT1hi6zuOGw/tyCL?=
- =?us-ascii?Q?pluIgfy23BwIpCLQQCxa6sNi1IQG2NVn54YAuxrrONxXtiz6iFqpzXbL4jx4?=
- =?us-ascii?Q?OH73X1Nh8GXIT4aJ5As/fqdL2htTIy52Pqandl2ysA4wnr0elR7qjH78ae4x?=
- =?us-ascii?Q?iDFHv3s8uJhIehdZshdswhzznCPHinXubrKLK0rvAjya1w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1IM80UeHpjic41n26zDvzEJUvmBD7k2vAeWlx5WqFRt3+sH4Tv2BUXAWOt1l?=
- =?us-ascii?Q?N8LCXLoeGvVI8Jmbd2N68mW9NCDKtcRx+azhOhoKpEkekYqf1vTqJlJDY5sw?=
- =?us-ascii?Q?FSsyoJHWvi7PXYtyFY3dDmQaJJOpoY0clxnR+Ikn/HcuxkCgAYktkvJy9hcb?=
- =?us-ascii?Q?e2QhhaYRnnU2UugNaKq3ogl+hi3eLI8e5/bzhAhFCQe3dWAeLS7d1ToMuXba?=
- =?us-ascii?Q?yGJ/qUEpG15Lf9FRcOYMbw0yiCLMJz9CvEnyp5kZoY81OQvs3AOh+WNvoOOh?=
- =?us-ascii?Q?BcPSLGXA1Ec0LjG9VCB0DaOSrQNADSPsYDq4uZo102dQ4emwTI59/QSPasqH?=
- =?us-ascii?Q?xGTwpzeg6vjC3dMekVrKiYDx8iNoeyAvuJm5sM72eDq4T5Qct1cSCJlqq7Ft?=
- =?us-ascii?Q?hP+Lxyyd03kZR8IeVZV7Kxi7BpX9/ynt9RvBi67bXi1hXUN9qahkM34QfmJN?=
- =?us-ascii?Q?oKaoMY/1osEI4Op1xNwYcIcz0Q3r7YIz/I9dKtaxdYyIsUPmT7cPuzKa3Ea1?=
- =?us-ascii?Q?6NHQMf3pUKrQvVfWiS04KFnc6aoGKnGJojnha3a9cYN2HCg9gsNDS2eQ6SqR?=
- =?us-ascii?Q?41MpzxC6ScSg+b7d0XiaLb97XbIThrmVjVpAAD8zGvXw152pzl8a0cVqyOMB?=
- =?us-ascii?Q?3tSxeYMPx5cXy2I1jFUl2xvPhPNNFdTVx6oTbGyutyBstlm2h6FBq7aWz5l5?=
- =?us-ascii?Q?kJqjNt+pLaProsx2oj1SW3mRlDOBKw9LEH3/cQya3f6nD1vhTtR8ycnWLihd?=
- =?us-ascii?Q?m+jEYZB/aTwCtUlYpMgxLrfhZJsnSdJsg/x5TLhz/gFvIKo6FRw8RWQh+dR2?=
- =?us-ascii?Q?9/gqhyVvpAHK067dgj6QwAmQQfSE1i2NBanYwqdcgQsuYbWzOcgm/jJ7pQHh?=
- =?us-ascii?Q?14X09OsYjkcEGtrWbgJxAf69ZJEYNFFqEszAADQrlpKWYliBLR9pW/IrL8u0?=
- =?us-ascii?Q?V4zrsOZrKWYjjpDJPJ/+roKIINsDTiEMgehy8z9RbBeES847kIMZYQz9FbQb?=
- =?us-ascii?Q?eQN9IG4HJT+ukS/rhuAzmtTei1FpAPFEIdpxRVAyR7+88XhDQLPnuidtuV83?=
- =?us-ascii?Q?l7PF5vaJgJnJXx3cPzAiATEKVfD8gIRX7YJG7+umEDEM85gQKZXp8yVS5geI?=
- =?us-ascii?Q?sEsqmbjJLuj1IaIIHit46VYeutoRiRrO9ZkUsaA1m81uSJTX++YsEKSwaovP?=
- =?us-ascii?Q?hNMO4RxLTm7Zz9osuWJx5HVp7dV4m6ND17zSHdT+KDOAiv3BI1hnuvyv64Cm?=
- =?us-ascii?Q?O1I62DcrAvwgxtNAPRfyD2ZxpJPR6p9YCoENrEQcoYe3HsoUgbDcS6dEwD6d?=
- =?us-ascii?Q?dcxXbafBszSO3MoNUX/obRaZ8XCY8SFYmDCxnQANuxtmg6fNJEsvZrALIetA?=
- =?us-ascii?Q?liBjSgHWrf/GWFJRBivw0/tDGABh0Pi0JKDjuB+scadg3jE7WtI1Kx450r9H?=
- =?us-ascii?Q?QN32FXtdXNw7zKH/rsHcgDb1bFbrr3cWkYGVVkPi3mUoGmBLFCAofNvATG9C?=
- =?us-ascii?Q?L1E014ZmgR2dtxfBi+Ji3WRtMP19Buw1Iqyr4+12igM6x3s0hfPQEZGh35zz?=
- =?us-ascii?Q?hYbl1oL4IjL5wgSS0ZoKkk+kosLRBbH7IjnDwSdTTQh/f9DVCNWGnOGrxF6o?=
- =?us-ascii?Q?fA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ba2c332-8ef6-4d8c-cbfc-08dd1ad14697
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 17:20:29.2372
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PT5q5OOFzMjxW47rmRg16fXT2OAX5e0LelU6w8FjEtWGLBFFPG07I6rN2sNhEIqJBhKSUOQIQcZbv0pN56GdBw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8389
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/14] ASoC: codecs: wsa881x: split into common and
+ soundwire drivers
+To: Alexey Klimov <alexey.klimov@linaro.org>, broonie@kernel.org,
+        konradybcio@kernel.org, konrad.dybcio@oss.qualcomm.com,
+        andersson@kernel.org, srinivas.kandagatla@linaro.org
+Cc: tiwai@suse.com, lgirdwood@gmail.com, perex@perex.cz, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, dmitry.baryshkov@linaro.org,
+        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241212004727.2903846-1-alexey.klimov@linaro.org>
+ <20241212004727.2903846-8-alexey.klimov@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241212004727.2903846-8-alexey.klimov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: vEDRYSKO_RJwHcUshX1W0JnPffiS0of0
+X-Proofpoint-ORIG-GUID: vEDRYSKO_RJwHcUshX1W0JnPffiS0of0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 phishscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120124
 
-On Thu, Dec 12, 2024 at 03:56:37PM +0000, Russell King (Oracle) wrote:
-> On Thu, Oct 03, 2024 at 05:07:53PM +0300, Vladimir Oltean wrote:
-> > sja1105_static_config_reload() changes major settings in the switch and
-> > it requires a reset. A use case is to change things like Qdiscs (but see
-> > sja1105_reset_reasons[] for full list) while PTP synchronization is
-> > running, and the servo loop must not exit the locked state (s2).
-> > Therefore, stopping and restarting the phylink instances of all ports is
-> > not desirable, because that also stops the phylib state machine, and
-> > retriggers a seconds-long auto-negotiation process that breaks PTP.
+On 12.12.2024 1:47 AM, Alexey Klimov wrote:
+> This is required in order to introduce wsa881x driver that works
+> in analog mode and is configurable via i2c only.
+> Functional changes, if any, are kept to be minimal and common
+> parts or parts that can be shared are moved into wsa881x-common
+> helper driver.
+> The regmap config structure now contains 0x3000 offset as required
+> by soundwire spec.
 > 
-> However:
+> While at this, also fix the typo in WSA881X_ADC_EN_SEL_IBIAS
+> register name and rename wsa881x_set_sdw_stream() to
+> wsa881x_set_stream().
 > 
-> > ptp4l[63.553]: master offset         14 s2 freq    -896 path delay       765
-> > $ ip link set br0 type bridge vlan_filtering 1
-> > [   63.983283] sja1105 spi2.0 sw0p0: Link is Down
-> > [   63.991913] sja1105 spi2.0: Link is Down
-> > [   64.009784] sja1105 spi2.0: Reset switch and programmed static config. Reason: VLAN filtering
-> > [   64.020217] sja1105 spi2.0 sw0p0: Link is Up - 1Gbps/Full - flow control off
-> > [   64.030683] sja1105 spi2.0: Link is Up - 1Gbps/Full - flow control off
-> > ptp4l[64.554]: master offset       7397 s2 freq   +6491 path delay       765
-> > ptp4l[65.554]: master offset         38 s2 freq   +1352 path delay       765
-> > ptp4l[66.554]: master offset      -2225 s2 freq    -900 path delay       764
-> 
-> doesn't this change in offset and frequency indicate that the PTP clock
-> was still disrupted, and needed to be re-synchronised? If it was
-> unaffected, then I would have expected the offset and frequency to
-> remain similar to before the reset happened.
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
 
-Regarding expectations: I cannot avoid having _some_ disruption, as the
-hardware doesn't have proper assist for this operation. It's an automotive
-switch intended to be used with a static configuration programmed once.
-Offloading the dynamic Linux network stack is somewhat outside of its
-design intentions.
+[...]
 
-The driver measures the time elapsed, in the CLOCK_REALTIME domain,
-during the switch reset, and then reprograms the switch PTP clock with
-the value pre-reset plus that elapsed time. It's still better than
-leaving the PTP time in January 1970, which would require the user space
-PTP stack to exit the "servo locked" state and perform a clock step.
+> +
+> +int wsa881x_digital_mute(struct snd_soc_dai *dai, int mute, int stream)
+> +{
+> +	struct snd_soc_component *component = dai->component;
+> +
+> +	if (mute)
+> +		snd_soc_component_update_bits(component,
+> +					      WSA881X_SPKR_DRV_EN, 0x80, 0x00);
+> +	else
+> +		snd_soc_component_update_bits(component,
+> +					      WSA881X_SPKR_DRV_EN, 0x80, 0x80);
 
-I also haven't actually shown the post-reset output when it has reached
-the steady state again, just a few seconds worth of ouput, that's why
-the frequency adjustment is not yet equal to the previous value.
+mute ? 0x00 : BIT(7)
 
-There are ways to further reduce the convergence time in real life systems,
-which I didn't bother to apply here, like synchronize CLOCK_REALTIME to
-the switch PHC (to better approximate the leap missed during switch reset),
-or increasing the Sync packet interval (SJA1105 is frequently used with
-gPTP which has a Sync interval of 125 ms, here I tested with 1 s).
-It still really doesn't compare at all to the disruption caused by
-alternatives such as dropping the link in the PHY, or not restoring the
-PTP time at all.
+you can even return it for good measure
 
-> Nevertheless...
-> 
-> > @@ -1551,7 +1552,8 @@ static void phylink_resolve(struct work_struct *w)
-> >  	}
-> >  
-> >  	if (mac_config) {
-> > -		if (link_state.interface != pl->link_config.interface) {
-> > +		if (link_state.interface != pl->link_config.interface ||
-> > +		    pl->force_major_config) {
-> >  			/* The interface has changed, force the link down and
-> >  			 * then reconfigure.
-> >  			 */
-> > @@ -1561,6 +1563,7 @@ static void phylink_resolve(struct work_struct *w)
-> >  			}
-> >  			phylink_major_config(pl, false, &link_state);
-> >  			pl->link_config.interface = link_state.interface;
-> > +			pl->force_major_config = false;
-> >  		}
-> >  	}
-> 
-> This will delay the major config until the link comes up, as mac_config
-> only gets set true for fixed-link and PHY when the link is up. For
-> inband mode, things get less certain, because mac_config will only be
-> true if there is a PHY present and the PHY link was up. Otherwise,
-> inband leaves mac_config false, and thus if force_major_config was
-> true, that would persist indefinitely.
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(wsa881x_digital_mute);
+> +
+> +void wsa881x_init_common(struct wsa881x_priv *wsa881x)
+> +{
+> +	struct regmap *rm = wsa881x->regmap;
+> +	unsigned int val = 0;
+> +
+> +	/* Bring out of analog reset */
+> +	regmap_update_bits(rm, WSA881X_CDC_RST_CTL, 0x02, 0x02);
+> +
+> +	/* Bring out of digital reset */
+> +	regmap_update_bits(rm, WSA881X_CDC_RST_CTL, 0x01, 0x01);
+> +	regmap_update_bits(rm, WSA881X_CLOCK_CONFIG, 0x10, 0x10);
+> +	regmap_update_bits(rm, WSA881X_SPKR_OCP_CTL, 0x02, 0x02);
+> +	regmap_update_bits(rm, WSA881X_SPKR_MISC_CTL1, 0xC0, 0x80);
+> +	regmap_update_bits(rm, WSA881X_SPKR_MISC_CTL1, 0x06, 0x06);
+> +	regmap_update_bits(rm, WSA881X_SPKR_BIAS_INT, 0xFF, 0x00);
+> +	regmap_update_bits(rm, WSA881X_SPKR_PA_INT, 0xF0, 0x40);
+> +	regmap_update_bits(rm, WSA881X_SPKR_PA_INT, 0x0E, 0x0E);
+> +	regmap_update_bits(rm, WSA881X_BOOST_LOOP_STABILITY, 0x03, 0x03);
+> +	regmap_update_bits(rm, WSA881X_BOOST_MISC2_CTL, 0xFF, 0x14);
+> +	regmap_update_bits(rm, WSA881X_BOOST_START_CTL, 0x80, 0x80);
+> +	regmap_update_bits(rm, WSA881X_BOOST_START_CTL, 0x03, 0x00);
+> +	regmap_update_bits(rm, WSA881X_BOOST_SLOPE_COMP_ISENSE_FB, 0x0C, 0x04);
+> +	regmap_update_bits(rm, WSA881X_BOOST_SLOPE_COMP_ISENSE_FB, 0x03, 0x00);
 
-Ok, I certainly wasn't careful enough when analyzing the existing code path.
-If I understand you correctly, you're thinking something like this should be
-sufficient to avoid depending on bool mac_config? The diff is
-incremental over the change posted here.
+All these could use some #defines..
 
--- >8 --
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index 3dcd1f47093a..893acab0d9bd 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -1712,20 +1712,18 @@ static void phylink_resolve(struct work_struct *w)
- 	if (pl->act_link_an_mode != MLO_AN_FIXED)
- 		phylink_apply_manual_flow(pl, &link_state);
- 
--	if (mac_config) {
--		if (link_state.interface != pl->link_config.interface ||
--		    pl->force_major_config) {
--			/* The interface has changed, force the link down and
--			 * then reconfigure.
--			 */
--			if (cur_link_state) {
--				phylink_link_down(pl);
--				cur_link_state = false;
--			}
--			phylink_major_config(pl, false, &link_state);
--			pl->link_config.interface = link_state.interface;
--			pl->force_major_config = false;
-+	if ((mac_config && link_state.interface != pl->link_config.interface) ||
-+	    pl->force_major_config) {
-+		/* The interface has changed or a forced major configuration
-+		 * was requested, so force the link down and then reconfigure.
-+		 */
-+		if (cur_link_state) {
-+			phylink_link_down(pl);
-+			cur_link_state = false;
- 		}
-+		phylink_major_config(pl, false, &link_state);
-+		pl->link_config.interface = link_state.interface;
-+		pl->force_major_config = false;
- 	}
- 
- 	if (link_state.link != cur_link_state) {
--- >8 --
+> +
+> +	regmap_read(rm, WSA881X_OTP_REG_0, &val);
+> +	if (val)
+> +		regmap_update_bits(rm, WSA881X_BOOST_PRESET_OUT1, 0xF0, 0x70);
 
-Not worth it, IMO, to complicate the logic with yet one more layer of
-"ifs" for the pl->link_config.interface and pl->force_major_config
-reassignment. It's ok if they are assigned their current values, when
-the code block is entered on a transition of the other variable.
+And this, a comment..
 
-> > +void phylink_replay_link_begin(struct phylink *pl)
-> > +{
-> > +	ASSERT_RTNL();
-> > +
-> > +	phylink_run_resolve_and_disable(pl, PHYLINK_DISABLE_STOPPED);
-> 
-> I would prefer this used a different disable flag, so that...
-> 
-> > +}
-> > +
-> > +void phylink_replay_link_end(struct phylink *pl)
-> > +{
-> > +	ASSERT_RTNL();
-> > +
-> > +	pl->force_major_config = true;
-> > +	phylink_enable_and_run_resolve(pl, PHYLINK_DISABLE_STOPPED);
-> 
-> this can check that phylink_replay_link_begin() was previously called
-> to catch programming errors. There shouldn't be any conflict with
-> phylink_start()/phylink_stop() since the RTNL is held, but I think
-> its still worth checking that phylink_replay_link_begin() was
-> indeed called previously.
+> +
+> +	regmap_update_bits(rm, WSA881X_BOOST_PRESET_OUT2, 0xF0, 0x30);
+> +	regmap_update_bits(rm, WSA881X_SPKR_DRV_EN, 0x08, 0x08);
+> +	regmap_update_bits(rm, WSA881X_BOOST_CURRENT_LIMIT, 0x0F, 0x08);
+> +	regmap_update_bits(rm, WSA881X_SPKR_OCP_CTL, 0x30, 0x30);
+> +	regmap_update_bits(rm, WSA881X_SPKR_OCP_CTL, 0x0C, 0x00);
+> +	regmap_update_bits(rm, WSA881X_OTP_REG_28, 0x3F, 0x3A);
+> +	regmap_update_bits(rm, WSA881X_BONGO_RESRV_REG1, 0xFF, 0xB2);
+> +	regmap_update_bits(rm, WSA881X_BONGO_RESRV_REG2, 0xFF, 0x05);
+> +}
+> +EXPORT_SYMBOL_GPL(wsa881x_init_common);
+> +
+> +int wsa881x_probe_common(struct wsa881x_priv **wsa881x, struct device *dev)
+> +{
+> +	struct wsa881x_priv *wsa;
+> +
+> +	wsa = devm_kzalloc(dev, sizeof(*wsa), GFP_KERNEL);
+> +	if (!wsa)
+> +		return -ENOMEM;
+> +
+> +	wsa->dev = dev;
+> +	wsa->sd_n = devm_gpiod_get_optional(dev, "powerdown",
+> +					    GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+> +	if (IS_ERR(wsa->sd_n))
+> +		return dev_err_probe(dev, PTR_ERR(wsa->sd_n),
+> +				     "Shutdown Control GPIO not found\n");
+> +	/*
+> +	 * Backwards compatibility work-around.
+> +	 *
+> +	 * The SD_N GPIO is active low, however upstream DTS used always active
+> +	 * high.  Changing the flag in driver and DTS will break backwards
+> +	 * compatibility, so add a simple value inversion to work with both old
+> +	 * and new DTS.
+> +	 *
+> +	 * This won't work properly with DTS using the flags properly in cases:
+> +	 * 1. Old DTS with proper ACTIVE_LOW, however such case was broken
+> +	 *    before as the driver required the active high.
+> +	 * 2. New DTS with proper ACTIVE_HIGH (intended), which is rare case
+> +	 *    (not existing upstream) but possible. This is the price of
+> +	 *    backwards compatibility, therefore this hack should be removed at
+> +	 *    some point.
+> +	 */
+> +	wsa->sd_n_val = gpiod_is_active_low(wsa->sd_n);
+> +	if (!wsa->sd_n_val)
+> +		dev_warn(dev,
+> +			 "Using ACTIVE_HIGH for shutdown GPIO. Your DTB might be outdated or you use unsupported configuration for the GPIO.");
+> +
+> +	dev_set_drvdata(dev, wsa);
+> +	gpiod_direction_output(wsa->sd_n, !wsa->sd_n_val);
+> +
+> +	*wsa881x = wsa;
+> +
+> +	return 0;
 
-This should be fine, right?
--- >8 --
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index 893acab0d9bd..c9fb0bb024d5 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -34,6 +34,7 @@ enum {
- 	PHYLINK_DISABLE_STOPPED,
- 	PHYLINK_DISABLE_LINK,
- 	PHYLINK_DISABLE_MAC_WOL,
-+	PHYLINK_DISABLE_REPLAY,
- 
- 	PCS_STATE_DOWN = 0,
- 	PCS_STATE_STARTING,
-@@ -4070,7 +4071,7 @@ void phylink_replay_link_begin(struct phylink *pl)
- {
- 	ASSERT_RTNL();
- 
--	phylink_run_resolve_and_disable(pl, PHYLINK_DISABLE_STOPPED);
-+	phylink_run_resolve_and_disable(pl, PHYLINK_DISABLE_REPLAY);
- }
- EXPORT_SYMBOL_GPL(phylink_replay_link_begin);
- 
-@@ -4093,8 +4094,13 @@ void phylink_replay_link_end(struct phylink *pl)
- {
- 	ASSERT_RTNL();
- 
-+	if (WARN(!test_bit(PHYLINK_DISABLE_REPLAY,
-+			   &pl->phylink_disable_state),
-+		 "phylink_replay_link_end() called without a prior phylink_replay_link_begin()\n"))
-+		return;
-+
- 	pl->force_major_config = true;
--	phylink_enable_and_run_resolve(pl, PHYLINK_DISABLE_STOPPED);
-+	phylink_enable_and_run_resolve(pl, PHYLINK_DISABLE_REPLAY);
- 	flush_work(&pl->resolve);
- }
- EXPORT_SYMBOL_GPL(phylink_replay_link_end);
--- >8 --
+There's no usage of wsa881x, so you can drop this dance
 
-> Other than those points, I think for sja1105 this is a better approach,
-> and as it's lightweight in phylink, I don't think having this will add
-> much maintenance burden, so I'm happy with the approach.
-
-Thanks, this is encouraging. I'll continue to work on it, and then clean
-up what's left in sja1105, as mentioned in the commit message.
-
-I've retested with both changes, and it still appears to work.
+Konrad
 
