@@ -1,245 +1,175 @@
-Return-Path: <linux-kernel+bounces-442825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FBE79EE27C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:18:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E27299EE27D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:19:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 234C81886A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3797284179
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA63C20E01B;
-	Thu, 12 Dec 2024 09:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B38120E01B;
+	Thu, 12 Dec 2024 09:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dKENARD9"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPY+M4Ev"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376D2204C36
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136CA204C36
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733995106; cv=none; b=oO8lNqAzgWhHl97Nqv67cPWnm9TLzJqMRx2DJkFbOV04c95GTKg8X2KQZDAhcLYpOWT68fAG9+JSmPv6S3W4wkZjrLMjKcxKeCDrBgQyVvbX1/el7OdQ/wzMgS4W3TkSAqza1aAkW10b2DyTWk5jqRgaSme0RsLgQ2YDbZ+CuZM=
+	t=1733995151; cv=none; b=O3YnlYsRjHktdIWdaOiHYQr84DD3HwMUqRQ50GJOhKcmCNw6jX9OnxiCE8R8mO5EkZ+pPdYe32W52uBvAZWREYbwFSmaHntZoTsTDOuzg0L33zbfqnP74oY/9uVZS/KNAD2rgkoLPREqBjqy8YAP8uPNCbOsN1c9sMbY1r7G83U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733995106; c=relaxed/simple;
-	bh=6qKrpe3+y2KjL5rliSgwC0hGkGAif3rAve6L620C768=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s0KrGvcgMwfHtWTzP9ChBeX2sBEE+LcBeSzkt9XIT72Fy8I008FYRG8H9fSmM33k0Wn9MnlD3fDREedrzdzajzLtHd6+0jwUCfPyH8hGQi9oSVPbLIspml0vu2emSOG5oapNghgovVWkskCFVVOo8mnKsFQZfaotFa/iXWVLeEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dKENARD9; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53df80eeeedso369941e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:18:23 -0800 (PST)
+	s=arc-20240116; t=1733995151; c=relaxed/simple;
+	bh=c/rmTbU+GJWgA3he8Ah/ZUdi0VIhRgyvy/SJqXEbMK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LqVr1mdU0Pp7xjzuYKG1WpPSrgrZXr1DXEGqQZSf0V5n9GeZcd+gHanH2pV3IK0P2rGHV7PDIEoUTn1VGuGyoGUlwtQY1k4lfmQOlF5D9YLHJr/DM5WJ9Vmfr3gYl8ev4dKd4TbBaSq2H7DgzSVgVcAHNGSMrRE9/F17NlUOT9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPY+M4Ev; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3863494591bso165179f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:19:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733995102; x=1734599902; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BvOLGgu+RtTzazwHxmT0a+oMtvGtLbiK35Nxn71eTwk=;
-        b=dKENARD9t+EsIAic20MKva/SZ2p9QHFQCY+X7zhoN4zVbzeS/T1WrSc3G0KZIJcmog
-         Yd2M8MxsPos5vz5PMOrkIRgLF1BbKKQU/ht4yuK4OTp0oQD75VDyei3XmE1yAIQftpJ8
-         n7UGSzJhODDXAOXwoiHFO7HHrWREMSGisldBctP6DuYgI0duKt3JX3EkCRIGts4jhJCZ
-         ZxqaGp81YHnwH09t4TDZaN6HUNadVt6YaPHgWEhR7e2ANBSv5Koq5t1j12IeFULzTUET
-         UWzBhaRpeiBVvdUaIqApz+iF8E5pYi/swVqZQivz7+HQmlhEVB32BZsugw+7q5TnZDe/
-         i58Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733995102; x=1734599902;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733995148; x=1734599948; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BvOLGgu+RtTzazwHxmT0a+oMtvGtLbiK35Nxn71eTwk=;
-        b=YaNupHu9jtxqijnLYssED4PcNB0+ZxzQtWXYheq15NQREzEHnFuMw+EkbeAfwVHqkc
-         lii+kShTILkGsn/jjlDnPEsuowbSznxJXv7TP7SAx5+0NR7q1BLd1J9eZPIY+XLroZ+4
-         R5xV+jWg39Hp26O8hKCp+uXDeklkbSVmCIWcYL5kOUR5YsPnYGPGJvFbopiqXXF9pv+n
-         sTNPRiIltkHZhamUvvh/Kir6t7nLsRV/9hHcXZDSu6iytBPh1MVcNXKIgMA/qcKmo97m
-         7GySvsG3X8gM/9fuq5RTsWWFv3Z1o2kiiF7sDAacQyl5IKUOH0QeQiu+JK+aUhvQxPJ/
-         xZgw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9TNICqAAvmmU9XkzSEBeIVlxydX4yZi4cALEy2mEQPrneHFWeDVlr+2G3sPeWrCoAM0OHTUG3+WZXaMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3NPapPm2AyeGQ/E2ICOTLNtN48Xm4imB45XIRW1vsxwfqGUg+
-	LkSQ4ImG3vBTNbQpxhhaMZJ2VGpWi+EVfAJpBSIZjAAOEioNpGMH27PpKaN4TQ0=
-X-Gm-Gg: ASbGncuCNggq/pLOeZ3BPkpa8cnTRiaIGlReuFnbwCyfuTK8nuPdTXyXfbgUpb15mCL
-	7c4QNGkVJaMvUntB4wEX2spWb+s0/8hTLzL+SvypGV6GpvauKW4SrhD6hL+e3uKDZv7uldg0EqD
-	cnML82xKb8kA800U+UfT15A6PmjsW6ZeO1eSePJQEE7/9WJMAaEdHaofG2nd6R2n86m0UejBSno
-	zXTYA8ku5BjnhmYznq1cCgHXV9Z+Vb2s8aA2IogT+d7al3dtEsYOEu48hNjTQ1yO0KC8jdTLOn8
-	gh3M5pebfsxaP5PTpuy0YWWYp6R9B927zM6O
-X-Google-Smtp-Source: AGHT+IFa4qzzNpW/mOzSbufvxsnMziRCXTlbdkN6AxAUpz/Lu22DHLGc6saz2iXswDPN9Ey7Hybn8Q==
-X-Received: by 2002:a05:6512:2384:b0:53e:23ec:b2e7 with SMTP id 2adb3069b0e04-54032d3c271mr236824e87.34.1733995102250;
-        Thu, 12 Dec 2024 01:18:22 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3022397e845sm11998941fa.66.2024.12.12.01.18.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 01:18:21 -0800 (PST)
-Date: Thu, 12 Dec 2024 11:18:18 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Xin Ji <xji@analogixsemi.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, bliang@analogixsemi.com, 
-	qwen@analogixsemi.com, treapking@google.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] drm/bridge:anx7625: Update HDCP status at
- atomic_enable()
-Message-ID: <vkrl7om7hepboovp2uivcnernia3ygqwrj3y3kkjydeclwvrk5@7tkdc4etkcjs>
-References: <20241212055110.1862487-1-xji@analogixsemi.com>
+        bh=B0a9uVHj0MFII1RtSBeG+K+r0Fep1zBrIePBFN8AAic=;
+        b=JPY+M4EvgvRusl36tzanpqjHQzDEBgPSGXrod/cSgR6gwXeuJCqb7wi2zIRef4f/Rx
+         Kh5lCXny7yT5hOQp13evH3qzbD81L1QceJt5xnkVtn6cnyEN6wjGWIAIZoPUT59MKTex
+         nEU8/W5grrk2Xz4+wiX0az8djCezffm6n7S/ccVJATlyQ+6eSWDrLwEyc51bUnS1Op+Y
+         p0I5SLtcpGH+4qEzSWt+puuqK0yOO1JkPKRc609NevApfkQB1hPdqk9VsfzGeL9B8oEN
+         nwxV0EscnaXC41oh608QvMdgfkm0Y9dlbOhnokX/htCKvj2XxW2kuGl1BCINk1yuf8g5
+         tRrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733995148; x=1734599948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B0a9uVHj0MFII1RtSBeG+K+r0Fep1zBrIePBFN8AAic=;
+        b=QUxcf+lhgz45zxcMIbKUeRB1c+a+sgXJGxuYU6+rkrCbXQnRkEiVUOUrVgxCq8lakX
+         DLybwVQLPKc7pOMkhOzdWXfTY3deBsxwHtbelSfWqTig3SOuqSiW5QbkFUfUplfrZzjV
+         b3PCle/Jqa7kLGkPmmpjHXo9lcd0NA23GlBWkxvU6/lVlb6xZMz6rH3LjlhIFzflWJ1d
+         su4qRspgZKHU0CFeTVbDiC2aADeh4p5x/Lttw3esKBTbA1Yuxx8st2dEtyl/iEFzaB9Z
+         rBWogxLs0TCl6+UTIUqU+Ooei7fUuE8tX8PJ+tGymxyC0+TG8gBUVYrfLKy1hVSAyNmD
+         HJCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8Lx8v30PB+xWa60yC7arhOp0Ny5ZoTwfdk3prpqignfEDzlvjucJ/RgNRDzYRK3Og/4awfl/Oxa0XX8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwglyxRSLI1mIeHPXMXLNP4QAtShf8HVsqnMYKDCDPtxmje/6Dd
+	laqotD7eauWysS3O0MG2fX1scFcLM2226U4xmmCRmqDFdB1NUDW5SRyjXOphc5QidTeFahic5mT
+	RSdXGPGZZuCjYAk+Vai7bGg3gtPTPJ7CNLkw=
+X-Gm-Gg: ASbGncs4euSL/vFo0/kJUmNeCp6YGFiyjgRdFsw9ef6cYB78eu/e97d0p2EPfVtDaWm
+	lbguPYiLppB3+mdhy9gN6yBlOKVLwjR/DwySYBss=
+X-Google-Smtp-Source: AGHT+IHgSIGyFnE08dyyP5NFrnFmPIIBGih2q0tSX3ULomU1UQVEgWDpmRj4F49p7i9YNu4ESNPLZDHhphuv4WV+WZs=
+X-Received: by 2002:a5d:47c6:0:b0:385:f062:c2df with SMTP id
+ ffacd0b85a97d-3864ce4968emr5512699f8f.11.1733995148067; Thu, 12 Dec 2024
+ 01:19:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212055110.1862487-1-xji@analogixsemi.com>
+References: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
+ <86cyi5tanz.wl-maz@kernel.org>
+In-Reply-To: <86cyi5tanz.wl-maz@kernel.org>
+From: richard clark <richard.xnu.clark@gmail.com>
+Date: Thu, 12 Dec 2024 17:18:56 +0800
+Message-ID: <CAJNi4rPDVXS3Ft3nHLXvMzHmn9d10Nz4Pxeduoe+v5HaK=CEAg@mail.gmail.com>
+Subject: Re: Question about interrupt prioriyt of ARM GICv3/4
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	will@kernel.org, "Russell King (Oracle)" <linux@armlinux.org.uk>, 
+	Mark Rutland <mark.rutland@arm.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	richard clark <richard.xnu.clark@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 12, 2024 at 01:51:10PM +0800, Xin Ji wrote:
-> When user enabled HDCP feature, userspace will set HDCP content
-> to DRM_MODE_CONTENT_PROTECTION_DESIRED. Next, anx7625 will update
-> HDCP content to DRM_MODE_CONTENT_PROTECTION_ENABLED if down stream
-> support HDCP feature.
-> 
-> However once HDCP content turn to DRM_MODE_CONTENT_PROTECTION_ENABLED
-> userspace will not update the HDCP content to
-> DRM_MODE_CONTENT_PROTECTION_UNDESIRED until monitor disconnect.
+Hi M,
 
-It seems you've ingored a part of the previous review comment. It's the
-userspace who triggers the ENABLED -> UNDESIRED transition, not the
-kernel side. The change to move HDCP handling to atomic_enable() looks
-fine, the change to disable HDCP is not (unless I misunderstand
-something).
-
-> 
-> So, anx7625 driver move hdcp content value checking from bridge
-> interface .atomic_check() to .atomic_enable(), then update hdcp content
-> according from currently HDCP status. And also disabled HDCP in bridge
-> interface .atomic_disable().
-> 
-> Signed-off-by: Xin Ji <xji@analogixsemi.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 74 ++++++++++++++---------
->  1 file changed, 46 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> index a2675b121fe4..f96ce5665e8d 100644
-> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_data *ctx)
->  				 TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
->  }
->  
-> +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ctx)
-> +{
-> +	struct device *dev = ctx->dev;
-> +
-> +	if (!ctx->connector)
-> +		return;
-> +
-> +	anx7625_hdcp_disable(ctx);
-> +
-> +	ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> +	drm_hdcp_update_content_protection(ctx->connector,
-> +					   ctx->hdcp_cp);
-> +
-> +	dev_dbg(dev, "update CP to UNDESIRE\n");
-> +}
-> +
->  static int anx7625_hdcp_enable(struct anx7625_data *ctx)
->  {
->  	u8 bcap;
-> @@ -2149,34 +2165,6 @@ static int anx7625_connector_atomic_check(struct anx7625_data *ctx,
->  	if (cp == ctx->hdcp_cp)
->  		return 0;
->  
-> -	if (cp == DRM_MODE_CONTENT_PROTECTION_DESIRED) {
-> -		if (ctx->dp_en) {
-> -			dev_dbg(dev, "enable HDCP\n");
-> -			anx7625_hdcp_enable(ctx);
-> -
-> -			queue_delayed_work(ctx->hdcp_workqueue,
-> -					   &ctx->hdcp_work,
-> -					   msecs_to_jiffies(2000));
-> -		}
-> -	}
-> -
-> -	if (cp == DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
-> -		if (ctx->hdcp_cp != DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> -			dev_err(dev, "current CP is not ENABLED\n");
-> -			return -EINVAL;
-> -		}
-> -		anx7625_hdcp_disable(ctx);
-> -		ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> -		drm_hdcp_update_content_protection(ctx->connector,
-> -						   ctx->hdcp_cp);
-> -		dev_dbg(dev, "update CP to UNDESIRE\n");
-> -	}
-> -
-> -	if (cp == DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> -		dev_err(dev, "Userspace illegal set to PROTECTION ENABLE\n");
-> -		return -EINVAL;
-> -	}
-> -
->  	return 0;
->  }
->  
-> @@ -2425,6 +2413,8 @@ static void anx7625_bridge_atomic_enable(struct drm_bridge *bridge,
->  	struct anx7625_data *ctx = bridge_to_anx7625(bridge);
->  	struct device *dev = ctx->dev;
->  	struct drm_connector *connector;
-> +	struct drm_connector_state *conn_state;
-> +	int cp;
->  
->  	dev_dbg(dev, "drm atomic enable\n");
->  
-> @@ -2439,6 +2429,32 @@ static void anx7625_bridge_atomic_enable(struct drm_bridge *bridge,
->  	_anx7625_hpd_polling(ctx, 5000 * 100);
->  
->  	anx7625_dp_start(ctx);
-> +
-> +	conn_state = drm_atomic_get_new_connector_state(state->base.state, connector);
-> +
-> +	if (WARN_ON(!conn_state))
-> +		return;
-> +
-> +	cp = conn_state->content_protection;
-> +	if (cp == DRM_MODE_CONTENT_PROTECTION_DESIRED) {
-> +		if (ctx->dp_en) {
-> +			dev_dbg(dev, "enable HDCP\n");
-> +			anx7625_hdcp_enable(ctx);
-> +
-> +			queue_delayed_work(ctx->hdcp_workqueue,
-> +					   &ctx->hdcp_work,
-> +					   msecs_to_jiffies(2000));
-> +		}
-> +	}
-> +
-> +	if (cp == DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
-> +		if (ctx->hdcp_cp != DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> +			dev_err(dev, "current CP is not ENABLED\n");
-> +			return;
-> +		}
-> +
-> +		anx7625_hdcp_disable_and_update_cp(ctx);
-> +	}
->  }
->  
->  static void anx7625_bridge_atomic_disable(struct drm_bridge *bridge,
-> @@ -2449,6 +2465,8 @@ static void anx7625_bridge_atomic_disable(struct drm_bridge *bridge,
->  
->  	dev_dbg(dev, "drm atomic disable\n");
->  
-> +	anx7625_hdcp_disable_and_update_cp(ctx);
-> +
->  	ctx->connector = NULL;
->  	anx7625_dp_stop(ctx);
->  
-> -- 
-> 2.25.1
-> 
-
--- 
-With best wishes
-Dmitry
+On Fri, Dec 6, 2024 at 5:37=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrote:
+>
+> On Fri, 06 Dec 2024 08:33:11 +0000,
+> richard clark <richard.xnu.clark@gmail.com> wrote:
+> >
+> > Hi,
+> > Currently seems the GICv3/4 irqchip configures all the interrupts as
+> > the same priority, I am thinking about to minimize the latency of the
+> > interrupt for a particular device, e.g, the arm arch_timer in the RTL
+> > system. The question is,
+> > 1. Why don't we provide a /proc or /sys interface for the enduser to
+> > set the priority of a specific interrupt(SPI/PPI)?
+>
+> I'm afraid this really has nothing to do with any particular interrupt
+> architecture.
+>
+> Before thinking of exposing the interrupt priority to userspace, you
+> should look at what this translates into for the kernel once you allow
+> interrupts to be preempted by another one with a higher priority.
+>
+Interrupt priority doesn't necessarily mean the preemption, seems
+you're talking about the interrupt preemption harm according to your
+statement followed.Frankly I am just thinking higher priority will win
+the lower ones in case massive external interrupts received in the GIC
+level (you see I am still talking about GIC, not kernel)
+>
+> This means that at every point where you would normally see a
+> local_irq_save(), spinlock_irqsave() or equivalent, you would need to
+> explicitly specify the priority that you allow for preemption. You
+> should then make sure that any code that can be run during an
+> interrupt is reentrant. You need to define which data structures can
+> be manipulated at which priority level... The list goes on.
+>
+irqsave just masks the interrupt from the point of cpu, I don't think
+it will mess things up if preemption really happens (no? then what the
+side-effect is for the nested interrupt handling in the softirq part.
+damage the semantic of the lock primitives?)
+>
+> If you want a small taste of the complexity, just look at what
+> handling NMIs (or even pseudo-NMIs in the case of GICv3) means, and
+> generalise it to not just two, but an arbitrary range of priorities.
+>
+> If you want the full blown experience, look at the BSDs and their use
+> of spl*(). I don't think anyone has any plan to get there, and the RT
+> patches have shown that there is little need for it.
+>
+As supplement=EF=BC=8Cthe fiq is suggested to be used as an alternative to =
+the
+higher priority in the RT area...
+>
+> > 2. Is there any way to verify the higher priority interrupt will have
+> > more dominant to be selected to the CPU (IOW, the priority is really
+> > working) in case of multiple different interrupts asserted to the GIC
+> > at the same time(some debug registers of GIC like GICD_REEMPT_CNT :-)
+> > to record higher priority wins)?
+>
+> The GIC architecture makes no promise that the interrupt you
+> acknowledge is the highest priority pending interrupt, because this is
+> by definition a very racy process.
+>
+> Also, even on busy systems, you will very rarely see two interrupts
+> targeting the same CPU being made pending at the same time, so that
+> the interrupt delivery system would have to arbitrate between the two.
+> That's because interrupts are vanishingly rare in the grand scheme of
+> things.
+>
+1. I am trying to stress the external interrupts to the core#0 via the
+stress-ng tool with one of interrupt being configured as higher
+priority to see the benchmark data, it's time consuming as you can
+image, still is in progress(BTW, I can't see any lockup similar hang
+in the system with a higher priority configured)
+2. This raises a very interesting question and I am also very curious
+about is, what is the purpose for the GIC to introduce the interrupt
+priority features, a placeholder feature reserved for the future? Ah,
+hardware prefer to provide more functionalities than its being
+actually used by software, any other justification except that?
+>
+> Thanks,
+>
+>         M.
+>
+> --
+> Without deviation from the norm, progress is not possible.
 
