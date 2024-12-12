@@ -1,119 +1,121 @@
-Return-Path: <linux-kernel+bounces-442991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453159EE51B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:33:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 022869EE51D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:33:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03694282B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:33:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF22166D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E63211702;
-	Thu, 12 Dec 2024 11:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B794A20E02D;
+	Thu, 12 Dec 2024 11:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dk4cN6NT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ALBAcTv6"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F10290F;
-	Thu, 12 Dec 2024 11:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EAC1F0E57
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734003192; cv=none; b=D1WhYIxdTZoHNbzk7Dritcxd2cOFkF9Lg+sFLntwx/QsCYaR/b7RJzUhmonk0H00AuKarFGuPde2s2vV5s9ZvKruC5ciaaWJCwm7FGkaJhG/8CCZmnvJQZ2LLW9UHVPXE4Ql7ChrHX5NvGZp06djURVSvZxk5ofOYwClzN6jlFE=
+	t=1734003205; cv=none; b=gdrLP8kJjoMy6b2OsQfyvJx6nJB0Z4O5jxcFI+tU4xa9NKi+hC1o1ih0hGffl0Tih1TN/zE37H+kY4Rw/vAR1sjv1sfxHiNcVraNq5icTUemB0kEGcmKQBh2sTQfOnc9bZRTDXWQiVmu1gnFkV0iqsz5kER8HHzOOLvisKDW+1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734003192; c=relaxed/simple;
-	bh=bI+wKiXz+sjwrXGi9W8a7W5Mqy1BmYf1t3VdgNU8DeE=;
+	s=arc-20240116; t=1734003205; c=relaxed/simple;
+	bh=G6qeZL6zC4j3j8VIBGH88kPG1jhUAIZKaaTLasnNDY4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YuriFMTmMCYGFY5vWEAAmAcYP+pCrUtAjc9sCyoDOD/qbWQmPXew66usHcENnAJP9w5Pj59ID1c34Ut0qmCDkPVuRb8RfGWjEh3W/oROo7JO5NAc/b+G+spRkoJtDHNQNiBKjiopUqJ7bfGUOWZ7sWh06TWtChSMM5Z8PRcL9WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dk4cN6NT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E3BC4CED4;
-	Thu, 12 Dec 2024 11:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734003192;
-	bh=bI+wKiXz+sjwrXGi9W8a7W5Mqy1BmYf1t3VdgNU8DeE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Dk4cN6NTIy2EYGlRKrBLcv8H25jiVzfMj+JOS+5UV3Q6EiSqkPEvqWwc4w7MMOylo
-	 o/DH1ZUOM8UkfVfIMd8gN+z5G39uY4kSPbqjN0lMevSrvzs2PdHwguxSMWXz9iotEZ
-	 fYn4pz+J2iIQ/1lgydd29BcI5TNCjOmJKnikWAt9Tb+fyCcnrx09XtDBlbChM335dM
-	 HrQdGVJx336iJSTYcIjD4CK6/EAgIbf4dbr84Bke5HKdqxBf6+R96Ui1nSMOOZ99y+
-	 Iq88KR0ONVsEbL9CB3TywJTtsVQQEYqAaO3jDnvPe+bz34WzQ4fbOIY+mH8/YUVutW
-	 48SY8Dk2mTf1w==
-Date: Thu, 12 Dec 2024 11:33:05 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 2/9] arm64/sysreg: Update ID_AA64ISAR3_EL1 to DDI0601
- 2024-09
-Message-ID: <248dea18-bfad-4ec9-9a7d-5c87c7f48c84@sirena.org.uk>
-References: <20241203-arm64-2024-dpisa-v3-0-a6c78b1aa297@kernel.org>
- <20241203-arm64-2024-dpisa-v3-2-a6c78b1aa297@kernel.org>
- <20241210170953.GB16075@willie-the-truck>
- <b859bdcd-7343-4d53-9f3a-f374deca725a@sirena.org.uk>
- <20241211224015.GB17836@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bCpT03VQYBU/n/uaYCtPMeR2Q5WdazKeWxbLmXkyPkku+q0Ab7NHu28h+MCd/44oLVfee+VO4GH6cVlYajuc7/GeiJjwt3ayiin7CuzwjfeZbEUwlzh8AQINBF+lpJlbGoZtfeKVyCBianYaQ2S/ISEwZinlV/7jONberhMWE5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ALBAcTv6; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361f796586so5495905e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 03:33:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734003202; x=1734608002; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u5a+MQf0Hip9QArkqxNik21FxUn3e2NhEp21qq8cqaU=;
+        b=ALBAcTv6aK3TxVRX9rz6e9R1b7GKP0hD6hxxohvkW24XI6A0UZKTC2cJsLBGRwB0k/
+         qjj/0C5BIN2+f68whLY1VNXgYFt/aR67Xb+19YRHiTVN6Q8YsizDz1xTusFd0GxnCjvM
+         TY/1H0EgXXCcOC9VmA07sihTCtIbZknekMyQZ2vYGWjAy1VwsnJ9DHlT5Dfjf69Do/4d
+         XQNldDlQ1d1ockvFU4p1K9zu0ZFuZloy8nbeNeqZGilrHGrBqn47PJtSXBn18QFK4wG0
+         o4WOyV2TC3rKsywBfTqOfNbkrld6I7tnjVX1kcfZVc+c3LX1d3XxAiR3NczlGv8YXbPt
+         iFfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734003202; x=1734608002;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u5a+MQf0Hip9QArkqxNik21FxUn3e2NhEp21qq8cqaU=;
+        b=ooPynACItuoMR2YgBJ4aF7kdBeIoko4ZwRvZBJZUX0lELFtgI54y6CG14hRdNIm/Kn
+         5u7dEzjDkbfCKjx1ue0eZSVYcVLTEm6Vx9aQ4pEA6uQKjwnC48JGJRHhOCs6Nxak+r/c
+         s4AkdN91c1W3mnWNtociUn201tlBIHrzL/PEu+iaJroqygKIE+jU4h4k1xRxMGW8N9AI
+         uOKwq7Hp9yEIBkn3XMqrBF1tDTbl+ty6iQuHyavbd1Bv168zYsDQpqaZH2DbKifLua7h
+         5l0gHQ4tU0+dxug9k3jbyWGwDz1cjsXb7R+4a/p7Svq/mXDc6VkXgszhmUlit5/WsMb9
+         idcg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/f71/hxmhtN/yaMq3db+R8e2p03xvU41VTdV8Mo3T7pXDhskd234C2md1tdQjT2CuZAdGJPb4r92UlhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6FaQsoo5+Ah90XLNbIflmcZk8qpfoCD8Tv2e2fRNix5chh8zG
+	h7UidMlGLpPP3oS3EmUiwo2tFagp8GXCzylgyzDMt2duvSfh2LYul/mqx0uvIw==
+X-Gm-Gg: ASbGnctUe1jqRvzJWa/Lgy7KsmlVtY+0lnkADVrmXt+Izd48vgq2+yKI3LNQt/C3Qy4
+	aZpzB3CzRqtGyrLVII9sTcpj53qoDunUbTMA7FxLr0Q2aObTGN20K9d4fbEs2BvRPLHB9sxf0ud
+	vhfdLZPi32HDqeEvzmP0eZhGz4gHHIfupOkuGe3HAbwaAMv3MSl+1PAd2w0GU7EH/p3bhzcbdib
+	tT8rzx7dRVJ+GcsPWvIMYPVcLhVJlpTmM2z2M0rQ4wINeudHD3e9RLY6RNpy28InpbAuCziuTVD
+	+537ZVx8EiWldfE=
+X-Google-Smtp-Source: AGHT+IFftUzg2KTR00FQjwA57ZaLYqw/4a8Hb6V4ISjZn49Uf12Ozmj8QlHhzs/NZ8VdbA1gsYccMg==
+X-Received: by 2002:a5d:64e5:0:b0:385:d7f9:f16c with SMTP id ffacd0b85a97d-3864cec7614mr5970842f8f.46.1734003201711;
+        Thu, 12 Dec 2024 03:33:21 -0800 (PST)
+Received: from google.com (61.134.90.34.bc.googleusercontent.com. [34.90.134.61])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa699487854sm470265966b.13.2024.12.12.03.33.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 03:33:21 -0800 (PST)
+Date: Thu, 12 Dec 2024 11:33:17 +0000
+From: Quentin Perret <qperret@google.com>
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v3 4/6] arm64/kvm: Avoid invalid physical addresses to
+ signal owner updates
+Message-ID: <Z1rJ_dMJJzGOmjNs@google.com>
+References: <20241212081841.2168124-8-ardb+git@google.com>
+ <20241212081841.2168124-12-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cChPOZNdbKWWH8te"
-Content-Disposition: inline
-In-Reply-To: <20241211224015.GB17836@willie-the-truck>
-X-Cookie: All is fear in love and war.
-
-
---cChPOZNdbKWWH8te
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241212081841.2168124-12-ardb+git@google.com>
 
-On Wed, Dec 11, 2024 at 10:40:15PM +0000, Will Deacon wrote:
-> On Tue, Dec 10, 2024 at 06:43:05PM +0000, Mark Brown wrote:
+On Thursday 12 Dec 2024 at 09:18:46 (+0100), Ard Biesheuvel wrote:
+> @@ -908,6 +892,9 @@ static bool stage2_leaf_mapping_allowed(const struct kvm_pgtable_visit_ctx *ctx,
+>  	if (data->force_pte && ctx->level < KVM_PGTABLE_LAST_LEVEL)
+>  		return false;
+>  
+> +	if (data->annotation && ctx->level == KVM_PGTABLE_LAST_LEVEL)
+> +		return true;
+> +
 
-> > Yes, the issues here are not technical ones.  Though there are some
-> > complications -  eg, IIRC the XML doesn't encode the signedness of
-> > fields like we do and there's areas where we've deliberately diverged.
-> > Given the amount of review I end up having to do of sysreg changes your
-> > reasoning is especially apparent to me.  I've passed this feedback on
-> > (again).
+I don't think it's a problem, but what's the rationale for checking
+ctx->level here? The data->force_pte logic should already do this for us
+and be somewhat orthogonal to data->annotation, no?
 
-> One thing we _could_ do is have a tool (in-tree) that takes two copies
-> of the sysreg file (i.e. before and after applying a diff) along with a
-> copy of the XML and, for the the new fields being added, shows how the
-> XML represents those compared to the diff. It should then be relatively
-> straightforward to flag the use of an unallocated encoding (like we had
-> here) and also things like assigning a field name to a RES0 region.
+Either way, the patch looks good to me
 
-> So this wouldn't be generating the patches from the XML, but more like
-> using the XML as an oracle in a linter.
+  Reviewed-by: Quentin Perret <qperret@google.com>
 
-That'd be useful, yes - unfortunately I think that's still something I
-can't work on myself at the moment for the above mentioned non-technical
-reasons.
+Cheers,
+Quentin
 
---cChPOZNdbKWWH8te
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdayfAACgkQJNaLcl1U
-h9Bo9wf8DjHXD65QAeLiB/WQD6MKK2q1vhHifOtaL+lp7nN90YodMEadPyi1bgC0
-7kGLdiSnfBrGie39QosDOpgsd8FrzTWBLbvr7eoAWBjuhNZlFmz0S1sMsZ5eESte
-qFb6DrYC1LG2RbGC6TUy+CUW8gxKmzVYlbES/17f1lrq3v1yH5QSKhZNu2o1uSIJ
-FneGYGH2H23/rX8qM+0QVZlRgiRkUN1AFmlZPOol5YpDCwgppQH4VBMoRgg/kKVs
-4tOIqWWuDBnQ0thBa4o7EeoN+qS7iHl7mEzTkbHxse7zMe+mg3Ffs8jgdtxN55In
-2Rt9VoKhAE5mbSmIlPhZUM08qgHkBA==
-=OGMy
------END PGP SIGNATURE-----
-
---cChPOZNdbKWWH8te--
+>  	return kvm_block_mapping_supported(ctx, phys);
+>  }
 
