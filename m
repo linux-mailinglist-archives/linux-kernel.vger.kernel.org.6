@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-443925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E9E9EFDB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:53:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DBC99EFDB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D2F2164105
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AB1E188D419
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A041ABECF;
-	Thu, 12 Dec 2024 20:53:35 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB11E1C9B97;
+	Thu, 12 Dec 2024 20:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="N3V2wTpN"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC4554723
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7C4174EF0
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734036815; cv=none; b=toO6bw3gPmNmKpd/qD+TC6XHKa4agHo9BNu55eZ/LmZCPpEt7fAXXoIqT/NUNMVSNjKC7LP/p0yYkZC6c26pLdwtuXC+Q9pClxW7YJnGhKQLa2ltFwG/7uFSPoj53RK4EDVUs1457S8tkRWJ1hQNMHY1TLSc3Nktza5WH2ZdCjk=
+	t=1734037022; cv=none; b=sIeLBKcxbP3mAUxPC9PqtLIR33QmRI/baNHdoHoLE8Ze5JK4546+I0N3yNEw3HbjPUMzO/H5ojjsKb8ec+lwzxfFWGi/ok3BsVUj6rxpMPBBNqX6Rap4pbdX0MuGs0LxcD0Bq84Mg6Utd7GypZJUDmNzFyadvdT41vsbbpLdeuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734036815; c=relaxed/simple;
-	bh=90zsgfNyEA0soUTRq2/zVQmf8gv4uGz6upO5C01Mz/s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FyljsPs26tyahVdxBAwJH/04yUgrFfg+lGHthdSHVfxWm7ktM0Z/rzSyAOl6PciSyQ4x45Ss3tbnemQ5MNG6wenRjBz5ey4nUHjUXOe/emlMoD6xtpG/PuIXtJjSc8IdTArCuW23iy29qVgt9DjVZig4gywjP3op+4jTLIv7O00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7e4bfae54so10352025ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:53:33 -0800 (PST)
+	s=arc-20240116; t=1734037022; c=relaxed/simple;
+	bh=OOwZCUb+iP3kBmv9zRpt0uMTiqTyzgTaYygvmgcQ7CU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PrqRFe6mDIrn1AA7fZqAIrWiXqy2f6UE67YRoMO9NvIDfsvOT58QMIYT4lFFOtqjCtopC3LoF2BefG1muCFN3L5SKFdnHNnkQG0F5fqLPcukAd7vjSvHQUyYy3JEv2TTKYHXmHF27vxwqPzg5lFB2er2Rt7BirJCGvfZieQQegY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=N3V2wTpN; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21680814d42so9694395ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:56:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734037018; x=1734641818; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tN0Np0I/Y4AvFV8aJjEc8kjQ4MihsgPm5ajnYSHONIQ=;
+        b=N3V2wTpNs+XSHNF9t34zBhvFL5jHoyelGlhjxQ+aFxhlyPBQ8EDlooUdhNpDuMJIER
+         VdOyyAnRzUiuwSLBLzEm8rkGwf4Lue/yJRAFrpM7KHY/j4sHmfxcnFTx6BuefphjY+jA
+         NSfXAmRPCFZB0vZJHdqeewQnDHJn6UYZKbQKgbL2JABuDGjcRt50cJCKhKdS9rUqC9k7
+         WLfCELhMrdvMUUhAylxcN5Z5z+TBcLQcWwZzrsfjGRZiMYpPQkezqW2cqW7yyQrd6Hoa
+         3sW/YP/3eN8LAy5R+83NNGQQXVFw8k9RE9bZm+XDIyk/zaWoj4T3Aru2jgwRZPmugnQA
+         DewQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734036812; x=1734641612;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2hbvWjKqPP1qsg4dKWn1bkxaqNABr3frYovaiNPZY7E=;
-        b=aLFsj22tAEUhWXgxD6AzbrBlWxgJMkM4G+jyoyxWo+rJm4kBsLEencvjgGGMvHDVcM
-         luselL/rc/UoyV+mPJpqKIie8/8wCfOI8YigRty41nVDrjWIDf1wJvVokn8G0MrtX3Rp
-         YL4u/5IfNaqKCvmPI2piU8mEz77HTU4zUDiJ9KHZvdXJWXw6qw1xVQE03YpmABTNe7xJ
-         cFhMqCd087trjnXPSD4ZQFqHo0t/uSGDhraQdvtZcalUO2Rm//N6QDIsN5btrBwV4m7V
-         IMcSNDfIDEzbhsbBb3WS6kavWxbRjouAgWFjVXDaxl/m2U5Oy3r09UFfXV8zcvptB+lB
-         B+8g==
-X-Gm-Message-State: AOJu0YyFM6/sQdRWBtW6qLS1sdTUspCBJmEsPd2Yw5m4inxfnZVTZUrd
-	T23uVQgq9N/3ZdCm4Iq2sHpmKU92Yb/LSw9J107qa0sLx/pVxG7x58rg6/caUzWxysS2VbdHJ4c
-	WgcJCpDd1IzQszSeQMdAq3bp+wI9FRSGWmfbuz00bWYmnys8MjbYozmgjmA==
-X-Google-Smtp-Source: AGHT+IGmov1xtidN7m5njnidm/lmbmvC/DUhzpPswMUHg7L9oufCugv8IiL8Set/TpdEJ6kQXDt6I+I+kzAkt/t2eQRbDMr9KUew
+        d=1e100.net; s=20230601; t=1734037018; x=1734641818;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tN0Np0I/Y4AvFV8aJjEc8kjQ4MihsgPm5ajnYSHONIQ=;
+        b=vaDvq6MGmeOvPc7EeD0h78SdLS9Us1H6H2fmrSQCLUrwPXLT1rF8FruG7WzNQRH4Lj
+         6BdazEWsd7cctVxNlraBFhGKxuedP4ri9nv3qsBAahj6G07Jui25LctT+D0yeVqSVHVA
+         RmxT+HkdtZrsGPGbIbnp8/zqpXuRKzsLwZd5WJr9isTLSjXXQ0mXg4DSoc9GUzUd6AB3
+         LEirD8uLXE6jxXSRkR67YjjQ4LZuHx5O0Dz5yuiJehL10qC73yDTDiKddbdfR77tV70Q
+         XpE0CRczxIXO2GaXWOXb0eQfAChCDza2O4LouVa3ZLdALOMgQ2kcenkGU1uQweeIcOQi
+         6i1A==
+X-Forwarded-Encrypted: i=1; AJvYcCU1hQER8vyKFCulqR6Z7MvFBNNZi5AaUEQVLbLNyfa9+1hFVaYgzT3FYR2NsC+yXJJYC8eU3a79Jcsus3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKEb22OnQfPcBVLnxp0rUox1lrUTKhRsKrAptKiv92fVG0TRQQ
+	beQ133YBwzqz1Uy6t9KUL2VMf56OTFETs07mYT9fSErtb0ja7V8qRQsvyOD/BzA=
+X-Gm-Gg: ASbGnctvSGuWBihYGwf1OwqYkvU4ojC5OtW2ZgsA9wOrohEfhBsfwPRC618UoCKc3rJ
+	B7BUt6eIxQU0mYin/gOqTdK9eO8EKqA9oVi3ifSzNF5fRBYJxB3oMevpqdezECjKhnk9BDf1zwE
+	xsbxWTq4Ebt/JjXMbavoYJBmydoAXDPAdQo0j0GNWeARnhRspBZAhdoiC4ez4DU/90JNW59zFxZ
+	HfVdY88kBAlYmP4wABAqrzFdumSvgEEaATDX5PSEJbrojiA8JUbs480V+wURl6i68JBKg==
+X-Google-Smtp-Source: AGHT+IEXAiBGQzLsJG95dn4oVog9wDVG/U9w68CWre1GKqNIKH0u3bVdjPlSX71Hw1mqCrUyOUt07Q==
+X-Received: by 2002:a17:903:22c7:b0:212:67a5:ab2d with SMTP id d9443c01a7336-21892a3fdf8mr2207705ad.44.1734037018404;
+        Thu, 12 Dec 2024 12:56:58 -0800 (PST)
+Received: from atishp.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2162e53798asm94019785ad.60.2024.12.12.12.56.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 12:56:58 -0800 (PST)
+From: Atish Patra <atishp@rivosinc.com>
+Subject: [PATCH 0/3] Collect guest/host statistics during the redirected
+ traps
+Date: Thu, 12 Dec 2024 12:56:53 -0800
+Message-Id: <20241212-kvm_guest_stat-v1-0-d1a6d0c862d5@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c5:b0:3a7:6d14:cc29 with SMTP id
- e9e14a558f8ab-3aff470fe92mr3202685ab.1.1734036812698; Thu, 12 Dec 2024
- 12:53:32 -0800 (PST)
-Date: Thu, 12 Dec 2024 12:53:32 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675b4d4c.050a0220.599f4.00ba.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING in notifier_call_chain (2)
-From: syzbot <syzbot+c81bea693d8cd125f5f2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABVOW2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0Mj3eyy3Pj00tTikvjiksQS3aRkEzNLMzPTJBNDAyWgpoKi1LTMCrC
+ B0bG1tQDWHDJDYAAAAA==
+To: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>
+Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Atish Patra <atishp@rivosinc.com>, Quan Zhou <zhouquan@iscas.ac.cn>
+X-Mailer: b4 0.15-dev-13183
 
-Hello,
+As discussed in the patch[1], this series adds the host statistics for
+traps that are redirected to the guest. Since there are 1-1 mapping for
+firmware counters as well, this series enables those so that the guest
+can collect information about these exits via perf if required.
 
-syzbot found the following issue on:
+I have included the patch[1] as well in this series as it has not been
+applied and there will be likely conflicts while merging both.
 
-HEAD commit:    231825b2e1ff Revert "unicode: Don't special case ignorable..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1019ebe8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b874549ac3d0b012
-dashboard link: https://syzkaller.appspot.com/bug?extid=c81bea693d8cd125f5f2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/09aec3e43efa/disk-231825b2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/41d874d46d24/vmlinux-231825b2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d92b7bdbbe5c/bzImage-231825b2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c81bea693d8cd125f5f2@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-Invalid notifier called!
-WARNING: CPU: 1 PID: 24239 at kernel/notifier.c:79 notifier_call_chain+0x395/0x410 kernel/notifier.c:79
-Modules linked in:
-CPU: 1 UID: 0 PID: 24239 Comm: init Not tainted 6.13.0-rc2-syzkaller-00036-g231825b2e1ff #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:notifier_call_chain+0x395/0x410 kernel/notifier.c:79
-Code: 00 44 89 f8 48 83 c4 30 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 79 27 34 00 90 48 c7 c7 20 13 6c 8b e8 cc 72 f4 ff 90 <0f> 0b 90 90 e9 70 fd ff ff e8 5d 27 34 00 90 0f 0b 90 e9 2e fe ff
-RSP: 0018:ffffc9000b5d7cc8 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff88807d6558c8 RCX: ffffffff815a5079
-RDX: ffff88806677a440 RSI: ffffffff815a5086 RDI: 0000000000000001
-RBP: 00000000fffffffd R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 000000000006dc30 R12: dffffc0000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f27f7527500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005575df75b600 CR3: 0000000031b0c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- blocking_notifier_call_chain kernel/notifier.c:380 [inline]
- blocking_notifier_call_chain+0x69/0xa0 kernel/notifier.c:368
- kernel_shutdown_prepare kernel/reboot.c:299 [inline]
- kernel_power_off+0x1c/0xb0 kernel/reboot.c:702
- __do_sys_reboot+0x376/0x3e0 kernel/reboot.c:777
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f27f76808b4
-Code: f0 ff ff 73 01 c3 48 8b 0d 71 55 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 89 fa be 69 19 12 28 bf ad de e1 fe b8 a9 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 10 48 8b 15 45 55 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007fff502ede88 EFLAGS: 00000246 ORIG_RAX: 00000000000000a9
-RAX: ffffffffffffffda RBX: 000000000000000c RCX: 00007f27f76808b4
-RDX: 000000004321fedc RSI: 0000000028121969 RDI: 00000000fee1dead
-RBP: 000000004321fedc R08: 0000000000000000 R09: 0000000000000000
-R10: 00007fff502ede60 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fff502edee8 R14: 000055e8723c1169 R15: 00007f27f785ea80
- </TASK>
-
-
+Signed-off-by: Atish Patra <atishp@rivosinc.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Atish Patra (2):
+      RISC-V: KVM: Update firmware counters for various events
+      RISC-V: KVM: Add new exit statstics for redirected traps
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Quan Zhou (1):
+      RISC-V: KVM: Redirect instruction access fault trap to guest
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ arch/riscv/include/asm/kvm_host.h |  5 +++++
+ arch/riscv/kvm/vcpu.c             |  7 ++++++-
+ arch/riscv/kvm/vcpu_exit.c        | 37 +++++++++++++++++++++++++++++++++----
+ 3 files changed, 44 insertions(+), 5 deletions(-)
+---
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+change-id: 20241212-kvm_guest_stat-bc469665b410
+--
+Regards,
+Atish patra
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
