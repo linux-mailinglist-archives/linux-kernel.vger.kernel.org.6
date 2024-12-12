@@ -1,127 +1,156 @@
-Return-Path: <linux-kernel+bounces-443851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144499EFCB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:44:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A394D9EFCB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:48:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BF181631C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:44:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558D5289FA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB67319C543;
-	Thu, 12 Dec 2024 19:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0DC193084;
+	Thu, 12 Dec 2024 19:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="A1C0asuM"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PIhlBHXQ"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39E118A6B5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DEC25948B
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734032679; cv=none; b=ElKDMf82X5CHN8n+79LvB1My6bMSmN/2PGZd35bTiDjB5rglbA6NbbtVQKciST8amfW0gg6gDCg1CRezj9klCFHiiKTyeD7mHW8kZmQAW5SdBZYVImAMsz2FDfFLFxofvtrbg5V7vzNT3UqN5YVsDLQ0ZOpbVVPO61TibM1IOcY=
+	t=1734032903; cv=none; b=K1FOhUUch4NpPOMljxe0Hb9zogr4zGZPDhrUsdIDMzKgFb4odCmlY2NlHwgOOmPrJ9Mo/2zXfnIYNL7MAViqqC1SM04rKmW9lHb7wWNboHfjIbU5oGdg6rc+Z8OyYqhuY63hm0sOxUs4FFJr0JZnveo9o62HnlM6ZmGWDw4oPkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734032679; c=relaxed/simple;
-	bh=45Ud0Mn2aNdFEQLclVcWubuH1Q8UAhrJeGlwWksFBLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sz7pQcKOaWDkjpii4eOE8i3Tt+1JZSLiKYg/wd0g6M6WYuh/BwOtJ5qIMHU/BLYIsFsUdhZeKf9/vo6PBi2txqCG0iuX9EWr1OvrPJIj4ZsRnwI8NYmi+kg2AkZ0QEo9C3uw0tl93YAl/CBIrShIjUkKsenHt6sqMl7pJAmGXZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=A1C0asuM; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-46772a0f8fbso8667491cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:44:37 -0800 (PST)
+	s=arc-20240116; t=1734032903; c=relaxed/simple;
+	bh=IczXGAF+eM1R/n6n4f5k72EKL4WE9hhqzfJUbDYrWKk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZCQtQMk+USCdq0C+QVpPXphn+5P5BjEa4tuPgfd8Wn5RMxVz9iX48XX7go/IICPzvLE78gdHwJ2K2e1f8gPmiSKb8be+5ANXhcUbbc3HFmCsjmigQiZIn2gw29AsNF8u+UGpxSn/m68ujR7v4aludZckWKwZ7gFaeGztvNZbnmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PIhlBHXQ; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5189a440a65so488103e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:48:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1734032677; x=1734637477; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mtig8lXsoUwLD51T1aq3aT1xZ4mrN3No+06U1nAA6eA=;
-        b=A1C0asuMT0apj/rmDRKm1EeIV96/ox1RZo6u0NfCJMQulFp/7GpQt1YlqLDARmDf7O
-         Fx5TRsTxGiYuDwVdItnhbHQQM4B+SE/3InHTclNpLpzQHkLBHpjtfUEps3yxVrNUTYrj
-         F5p6kX/dw25Ao9af1aOviwzxQ1jS4ylVTeB804aiZGeBUPwN3X+hpROPI6Ss7u5dWiBp
-         Jng7mI3UEw9Y28NwONbsyRJNqaYuD+Qb9oqSOVexDfKGNx0JNdsahMw0VVQaj+98CsHC
-         i8LPyXh60av8j0FQzYZ75y37jTAtVPSoGzOgS3Rva36z8c6eU46clLeHXyqgs3pS+XJI
-         DC3w==
+        d=linaro.org; s=google; t=1734032899; x=1734637699; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BlbbI/g+hRuUgF8qGy3bJAgo11Dj0VWxvIagMZzWOus=;
+        b=PIhlBHXQbq98ZmFqAlZAd3bNKAIJkTKuq2mQi0uJq4NoN7A1KEo5sVGgMBc1olSjrE
+         aHhsplFimZy6b2Y9jMS4GlMQ5jjOUO5OhAzCZHTS5h0HBi7oBJDsb/6Xh+B8Wg9F4ZGb
+         YdIY4XMeNYsYCM5KSpd2UlNyZ+xOoEQ4Cl8riDY6n0O82MriucH1bv2wfm4mtlYgyq0P
+         UQ9sZfF/60PvIWHE4vSPBEIIRLSQd/isV32CjrHtVXbGCoHsJ+/RP5JlYVcKbX/CrStC
+         ur5lID5czfRheXfHmCt424sJAslxX5Gfc4TXFoNB0LTq2CLuhHz0A5J0UCFzhVyDbbDm
+         ejFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734032677; x=1734637477;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mtig8lXsoUwLD51T1aq3aT1xZ4mrN3No+06U1nAA6eA=;
-        b=DQaTw/Gei3cA1BUv4XOw+3RYEv4Y1AP32j2UWzQcikPT+jUvviXJxKzumvpo844xy9
-         xSZWe9sJ0Gio9kgwTkYgCjviiykOvZlAYh7614UrxlKfefFyk3lJPGtALI1CFHx5vO4z
-         zazXBCj2ZMgbT76Xa4x6abB6aTiPTuGwuHYGmrUQYPFMOygLzN14tayteilXpK9I1W4W
-         +TW/whCFZUViOMyPanVSHm3MgjtKYc6lvLUDkth73Qa8hRkmhF2vAcVkh+27uonbdUr+
-         g64C0G2pH1bqzUn79DqlZNSA8rhahh1TbqLy0XCU84/haFRpv5ZthzMhNuqFgX3rXwf9
-         vx9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUFQtTSVrohe8w+Df85XfmNCe/NAhK7tvPLD00WAqxl7AS/OvoSWTonEAByhgNRo4SGrevaZ26v3kfGANA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCZmKYugMGuXvtRFHDhu61GgLJB5dqDFBXzCqRAdRThm3NyAwU
-	hY+lNB0UU/fSECGA6KMIJ6obX6XWSvDyBQ2DVu/yKRkkFEjl9g2G2MQPA57Zwns=
-X-Gm-Gg: ASbGnctLSDH9ZSTRq3axpg/nqIURyFv4XJd4fSf+nEJA+5tQFsH1dUInFfOBOdwN/y8
-	0Agka08u9Hm8dykhh5k4lsSGXaq6kOvS2oj5+W1Ir575/ZYVDvB7a0vXejsIuaWotY+edQ9zs32
-	zp9zMLWLf47RH0/cXQ3TRtZySvc6enpzk2haHJCXuOCYgbL1iG4I5e+fJ6OwIv7VYTTdTG4DYQv
-	c+50bhPkojJ5+3u9A4CqHt6CAqShsCjO0FqAmoIqNiAVxDUNrxz4SEkr8gzBAyIy6lMAB+fYKm7
-	bGZHo3elqI7NjzRZ9H6QuPLSV5SiYw==
-X-Google-Smtp-Source: AGHT+IE1sxaWouFki1wTNuqW4Mldx9O5wExQbsXpYwJ4pEsT62nJIL+C/8F//xL6ak8oICXCgpkwJg==
-X-Received: by 2002:a05:622a:1114:b0:466:9f89:3d6b with SMTP id d75a77b69052e-467a156ffb2mr26650471cf.24.1734032676656;
-        Thu, 12 Dec 2024 11:44:36 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46783eb0d91sm28376531cf.63.2024.12.12.11.44.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 11:44:35 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tLp6x-000000001Zr-0B7D;
-	Thu, 12 Dec 2024 15:44:35 -0400
-Date: Thu, 12 Dec 2024 15:44:35 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: iommu@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, robdclark@gmail.com, joro@8bytes.org,
-	robin.murphy@arm.com, jean-philippe@linaro.org, nicolinc@nvidia.com,
-	vdonnefort@google.com, qperret@google.com, tabba@google.com,
-	danielmentz@google.com, tzukui@google.com
-Subject: Re: [RFC PATCH v2 40/58] KVM: arm64: smmu-v3: Add map/unmap pages
- and iova_to_phys
-Message-ID: <20241212194435.GA5484@ziepe.ca>
-References: <20241212180423.1578358-1-smostafa@google.com>
- <20241212180423.1578358-41-smostafa@google.com>
+        d=1e100.net; s=20230601; t=1734032899; x=1734637699;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BlbbI/g+hRuUgF8qGy3bJAgo11Dj0VWxvIagMZzWOus=;
+        b=NEzL8QqgXtepAoPLykodEtcG04+qMIYuJlv0zTusoi/cvofFTUUxRvkIYCdcel5qQV
+         fuJZZWlhGL8iX6bMNnvu4AVY/C3sHc4qxjYpiqXVIybYPUF1WZGucPW9IrgHQkVqJKwM
+         syv0qQvvrRlJ4CkLOYbknbDAOiVhnOM631U7U2Xw+p3aTt6aP/XffVMKIw6nVY1iAesm
+         Z1eC9Zz7yNog8w2fLAL7Nj6a5A/F9BsaIp47dZ1XDm4yROx7eWz91ObVDnspZ/hcbFWK
+         AvhPXaXQIuJshOSwt5khQzM/OXsg5aTBZL69cTNYBI7nYCSPocuH/RxIrCVT9PntDuUu
+         CMOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkFNs0+yohxWqCk1bsDA/t2cUlJm70ZqVOFhORknt9UNG1/6qoTlHvN0LWaNLi0SNXV5Wnrgfz51Vutc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc7eAbyyLCOQx1HJGbKgzCRbyFEKZeLnE83+RINR12cDpxGQq8
+	eMfh/EzBIuuHaYkxPoHlfFybFtQ3zwlML94W3+RbsqD3i/R85bPTVhunm6gjUm06ROkdvENVA7h
+	Ct8HLGfhGCKH1+Oxri4mk47Za7RVw34pOAKWfog==
+X-Gm-Gg: ASbGncuj0dxrzA0iMsW12TR/noZvRGkPLHia/4rSTvcgCBeQu6zzRqByrrD1dH0YuAY
+	Gzi6iyHyEfRS2o3jj3Dtw2uw8n7b5VfcBup8m
+X-Google-Smtp-Source: AGHT+IFBe0k1ufkZG205NB2FpxYW8UXDiGTPL48pwGMQjlmQbagnb8MkD4Y4QDURyIAwIg3y5dWgFpLofgO5GFaugWY=
+X-Received: by 2002:a05:6122:8c17:b0:515:d032:796b with SMTP id
+ 71dfb90a1353d-518ca48a3d8mr68111e0c.11.1734032899050; Thu, 12 Dec 2024
+ 11:48:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212180423.1578358-41-smostafa@google.com>
+References: <20241212144306.641051666@linuxfoundation.org> <CA+G9fYuX2BsEOCZPC+2aJZ6mEh10kGY69pEQU3oo1rmK-8kTRg@mail.gmail.com>
+ <CA+G9fYu3SmdFKRkSDU0UV=bMs69UHx8UOeuniqTSD9haQ2yBvQ@mail.gmail.com>
+In-Reply-To: <CA+G9fYu3SmdFKRkSDU0UV=bMs69UHx8UOeuniqTSD9haQ2yBvQ@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 13 Dec 2024 01:18:07 +0530
+Message-ID: <CA+G9fYvV21_-3QYWh_gmKMRZ89AYn-KM99DbmghsLQJEL2+4Nw@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/466] 6.12.5-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 12, 2024 at 06:04:04PM +0000, Mostafa Saleh wrote:
-> Add map_pages and iova_to_phys HVC code, which
-> mainly calls the io-pgtable.
-> 
-> For unmap_pages, we rely on IO_PGTABLE_QUIRK_UNMAP_INVAL, where the
-> driver first calls unmap_pages which invalidate all the pages as
-> a typical unmap, issuing all the necessary TLB invalidations.
-> Then, we will start a page table with 2 callbacks:
-> - visit_leaf: for each unmapped leaf, it would decrement the refcount
->   of the page using __pkvm_host_unuse_dma(), reversing the what IOMMU
->   core does in map.
-> - visit_post_table: this would free any invalidated tables as they
->   wouldn't be freed because of the quirk.
+On Fri, 13 Dec 2024 at 01:04, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> On Thu, 12 Dec 2024 at 23:35, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >
+> > On Thu, 12 Dec 2024 at 20:30, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > This is the start of the stable review cycle for the 6.12.5 release.
+> > > There are 466 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > >
+> > > Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> > > Anything received after that time might be too late.
+> > >
+> > > The whole patch series can be found in one patch at:
+> > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.5-rc1.gz
+> > > or in the git tree and branch at:
+> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> > > and the diffstat can be found below.
+> > >
+> > > thanks,
+> > >
+> > > greg k-h
+> >
+> > The riscv builds failed on Linux stable-rc linux-6.12.y due to following build
+> > warnings / errors.
+> >
+> > riscv:
+> >   * build/gcc-13-defconfig
+> >   * build/clang-19-defconfig
+> >   * build/clang-nightly-defconfig
+> >   * build/gcc-8-defconfig
+> >
+> > First seen on Linux stable-rc linux-6.12.y v6.12.4-467-g3f47dc0fd5b1,
+> >   Good: v6.12.4
+> >   Bad:  6.12.5-rc1
+> >
+> >
+> > Build log:
+> > -----------
+> > kernel/time/timekeeping.c: In function 'timekeeping_debug_get_ns':
+> > kernel/time/timekeeping.c:263:17: error: too few arguments to function
+> > 'clocksource_delta'
+> >   263 |         delta = clocksource_delta(now, last, mask);
+> >       |                 ^~~~~~~~~~~~~~~~~
+> > In file included from kernel/time/timekeeping.c:30:
+> > kernel/time/timekeeping_internal.h:18:19: note: declared here
+> >    18 | static inline u64 clocksource_delta(u64 now, u64 last, u64
+> > mask, u64 max_delta)
+> >       |                   ^~~~~~~~~~~~~~~~~
+> > make[5]: *** [scripts/Makefile.build:229: kernel/time/timekeeping.o] Error 1
+>
+> The bisect log pointing to first bad commit,
+>
+>     clocksource: Make negative motion detection more robust
+>     commit 76031d9536a076bf023bedbdb1b4317fc801dd67 upstream.
 
-I don't know if the timelines will work out, but the pagetable stuff
-I'm working on will let you write a much more appropriate
-implementation for pkvm's usage than trying to hack it into the
-iopgtable code like this.
+This issue was fixed in the upstream by adding the following patch,
+  timekeeping: Remove CONFIG_DEBUG_TIMEKEEPING
+  commit d44d26987bb3df6d76556827097fc9ce17565cb8 upstream
 
-Even the iommu focused routines I have got now would solve this
-problem because they allways spit out a linked list of all the memory
-to free after map/unmap and never internally free it..
-
-Jason
+- Naresh
 
