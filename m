@@ -1,213 +1,137 @@
-Return-Path: <linux-kernel+bounces-444032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B139EFFC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:03:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4859EFFD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:06:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187351884636
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:03:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E091286BFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5451DE3DF;
-	Thu, 12 Dec 2024 23:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E976C1DE3DF;
+	Thu, 12 Dec 2024 23:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gf9HzgX5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9Bs+p30"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1361E493;
-	Thu, 12 Dec 2024 23:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB011D63E0;
+	Thu, 12 Dec 2024 23:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734044622; cv=none; b=gi7aOzXIPHhWRhSVzujN6s9T/4JPCTDPKvQcpskYaRKOiiobhe6lwrmuGUYrpFMSkJW5wIPXkE1hSzTjwIVpHhRNEsGNTYtom9NapfrjNe838WdxbXlCHkkCzPEuPLXcM8muhoC7s6ZLG5yTqAfM0UdGJ6SrJBJsN3duYkqrUY4=
+	t=1734044781; cv=none; b=RGvJQ68haUF3zZDdCBZLknafshaSaycoBE8Y30EHVXfXKiA14TxuHoYZlCIb1zdJQEIUU5ugbAKZEAejcgUAuGuGXzPhqvLqiuhKSOnQ0yNIAcWrt1e0ee7P1YtI2FDpDqBt+N3ZsW+50Yw2OY1+39MQhtIo7GNeOsS3EWOZ4P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734044622; c=relaxed/simple;
-	bh=yPk8uKKugJ6GC7AonBJQuaUBvHzwAG0kW4HbwfcGikg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KraLqchxHJuobnP8IK0hRhmk9orVnq8KX3JPfLsC2czsDa+6nzI21Sl4P/1Edubg+uxnu0RiBtgJ7DvBFaMrfa68bAHKl/zjZuYpjRNWZsrkzKggwD4lshJv5akbslahrtTQtF7mcdYveb4G23nM7guvVNzXNGpp9OAW8nWDfls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gf9HzgX5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE91C4CECE;
-	Thu, 12 Dec 2024 23:03:41 +0000 (UTC)
+	s=arc-20240116; t=1734044781; c=relaxed/simple;
+	bh=1QyYg9px6x+Do7hzdoQd9Z7TnY5QYoK9ZJS1lww/lvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDHUGYSpmwMj+ognuGWzfANbS9+XHfzwQRmFzTBDkCENxNOYJAgFfhTg7uRgN1Rr7KXFCldXm2pfgGEJyC1/XkX2ierm7tL9THTO+ila+iRq3M81Yrv4sICRwXUGBQP3ygoVXVNEbt1labuxanQDRi2K3y4cokF6HRIqDA07Atc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9Bs+p30; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FDFC4CECE;
+	Thu, 12 Dec 2024 23:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734044621;
-	bh=yPk8uKKugJ6GC7AonBJQuaUBvHzwAG0kW4HbwfcGikg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gf9HzgX5iwVnNYglbpy3jVk6r87o9MwxIHogGk4Q7hMMZ6vTNXwBvZzWyGavkRDoz
-	 ZHHqkCsPNB6Kwrd2t/gX9Kc+F00lsm2LZ4yTOsx1JMZIY7SmpapDZOn3e4ioLz9LnM
-	 +Vce/gSoCuUYq+RUPKdjd5wIDViOLFUN3Bn2TOq+vwfJN77b9ESZt9JP6nM5t3c8rC
-	 16xpbDSmt5OrLlo3fGccGGZ20uTGbqUWLpp2gIs5h6rDfv2+IQdZXRR8Uy1deEILp9
-	 zH240cEJGhGFfVAfo90DwCFNRu82tJBfCMpx9hsAVgHFkp1bqjAIuXYBLIZwYFByQK
-	 ZltPHIUXsvgYg==
-Date: Thu, 12 Dec 2024 17:03:40 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jian-Hong Pan <jhp@endlessos.org>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux@endlessos.org,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	"David E. Box" <david.e.box@linux.intel.com>
-Subject: Re: [PATCH v13] PCI/ASPM: Make pci_save_aspm_l1ss_state save both
- child and parent's L1SS configuration
-Message-ID: <20241212230340.GA3267194@bhelgaas>
+	s=k20201202; t=1734044777;
+	bh=1QyYg9px6x+Do7hzdoQd9Z7TnY5QYoK9ZJS1lww/lvA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U9Bs+p30ZZ6reALiJiX5gpny44mJKU9bDfpcA06V+h7IXpnb8V59zwE+lPBf7Xby5
+	 kldZsBooIz0fj0O2di1A6rXZM+J4PlQ2y50gmpwgP8W/UUOK9zRLjg/5wRXP6Ail61
+	 X+Vrd9Nof1Uyoj7oFjFZSycoZqfsmQzWhcHbV2S41ac5w7mJjubwd4OP7/64CnRFwH
+	 z0F2jjBsKudO5QvKYw+RpVRYtAVcuzyTLxzgjk/pJw26Djr1+QhFopOJqtr9sJcpcX
+	 PXhLy1Q4MR3SeRPQTxgkWDWeH6F0p1JO7MOVrWSQYtokZlV67aMGYcISDZJC1FB8u7
+	 Nb3qlmh2zUT7A==
+Date: Thu, 12 Dec 2024 23:06:16 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Saurabh Sengar <ssengar@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ssengar@microsoft.com,
+	avladu@cloudbasesolutions.com
+Subject: Re: [PATCH] tools: hv: Fix cross-compilation
+Message-ID: <Z1tsaJJhUsSilZqq@liuwe-devbox-debian-v2>
+References: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241115072200.37509-3-jhp@endlessos.org>
+In-Reply-To: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
 
-On Fri, Nov 15, 2024 at 03:22:02PM +0800, Jian-Hong Pan wrote:
-> PCI devices' parameters on the VMD bus have been programmed properly
-> originally. But, cleared after pci_reset_bus() and have not been restored
-> correctly. This leads the link's L1.2 between PCIe Root Port and child
-> device gets wrong configs.
+On Thu, Dec 12, 2024 at 12:28:34AM -0800, Saurabh Sengar wrote:
+> Use the native ARCH only incase it is not set, this will allow
+> the cross complilation where ARCH is explicitly set. Add few
+> info prints as well to know what arch and toolchain is getting
+> used to build it.
 > 
-> Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
-> bridge and NVMe device should have the same LTR1.2_Threshold value.
-> However, they are configured as different values in this case:
+> Additionally, simplify the check for ARCH so that fcopy daemon
+> is build only for x86_64.
 > 
-> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
->   ...
->   Capabilities: [200 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
->       PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=0us LTR1.2_Threshold=0ns
->     L1SubCtl2: T_PwrOn=0us
+> Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio driver")
+> Reported-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+> Closes: https://lore.kernel.org/linux-hyperv/Z1Y9ZkAt9GPjQsGi@liuwe-devbox-debian-v2/
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> ---
+>  tools/hv/Makefile | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
 > 
-> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
->   ...
->   Capabilities: [900 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
->       PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=0us LTR1.2_Threshold=101376ns
->     L1SubCtl2: T_PwrOn=50us
+> diff --git a/tools/hv/Makefile b/tools/hv/Makefile
+> index 34ffcec264ab..d29e6be6309b 100644
+> --- a/tools/hv/Makefile
+> +++ b/tools/hv/Makefile
+> @@ -2,7 +2,7 @@
+>  # Makefile for Hyper-V tools
+>  include ../scripts/Makefile.include
+>  
+> -ARCH := $(shell uname -m 2>/dev/null)
+> +ARCH ?= $(shell uname -m 2>/dev/null)
+>  sbindir ?= /usr/sbin
+>  libexecdir ?= /usr/libexec
+>  sharedstatedir ?= /var/lib
+> @@ -20,18 +20,26 @@ override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+>  override CFLAGS += -Wno-address-of-packed-member
+>  
+>  ALL_TARGETS := hv_kvp_daemon hv_vss_daemon
+> -ifneq ($(ARCH), aarch64)
+> +ifeq ($(ARCH), x86_64)
+
+Technically speaking, you can also build this for x86 (32bit). Whether
+anybody uses it is another question.
+
+>  ALL_TARGETS += hv_fcopy_uio_daemon
+>  endif
+>  ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+>  
+>  ALL_SCRIPTS := hv_get_dhcp_info.sh hv_get_dns_info.sh hv_set_ifconfig.sh
+>  
+> -all: $(ALL_PROGRAMS)
+> +all: info $(ALL_PROGRAMS)
+>  
+>  export srctree OUTPUT CC LD CFLAGS
+>  include $(srctree)/tools/build/Makefile.include
+>  
+> +info:
+> +	@echo "---------------------"
+> +	@echo "Building for:"
+> +	@echo "CC $(CC)"
+> +	@echo "LD $(LD)"
+> +	@echo "ARCH $(ARCH)"
+> +	@echo "---------------------"
+
+I don't think this is needed. Anyone who's building the kernel source
+should know what tool chain they are using and architecture they're
+building for.
+
+Thanks,
+Wei.
+
+> +
+>  HV_KVP_DAEMON_IN := $(OUTPUT)hv_kvp_daemon-in.o
+>  $(HV_KVP_DAEMON_IN): FORCE
+>  	$(Q)$(MAKE) $(build)=hv_kvp_daemon
+> -- 
+> 2.43.0
 > 
->
-> Here is VMD mapped PCI device tree:
-> 
-> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
->  | ...
->  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
->               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
-> 
-> When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
-> restores NVMe's state before and after reset. Then, when it restores the
-> NVMe's state, ASPM code restores L1SS for both the parent bridge and the
-> NVMe in pci_restore_aspm_l1ss_state(). The NVMe's L1SS is restored
-> correctly. But, the parent bridge's L1SS is restored with a wrong value 0x0
-> because the parent bridge's L1SS wasn't saved by pci_save_aspm_l1ss_state()
-> before reset.
-
-I think the important thing here is that currently
-pci_save_aspm_l1ss_state() saves only the child L1SS state, but
-pci_restore_aspm_l1ss_state() restores both parent and child, and the
-parent state is garbage.
-
-Obviously nothing specific to VMD or NVMe or SATA.
-
-> To avoid pci_restore_aspm_l1ss_state() restore wrong value to the parent's
-> L1SS config like this example, make pci_save_aspm_l1ss_state() save the
-> parent's L1SS config, if the PCI device has a parent.
-
-I tried to simplify the commit log and the patch so it's a little more
-parallel with pci_restore_aspm_l1ss_state().  Please comment and test.
-
-Bjorn
-
-commit c93935e3ac92 ("PCI/ASPM: Save parent L1SS config in pci_save_aspm_l1ss_state()")
-Author: Jian-Hong Pan <jhp@endlessos.org>
-Date:   Fri Nov 15 15:22:02 2024 +0800
-
-    PCI/ASPM: Save parent L1SS config in pci_save_aspm_l1ss_state()
-    
-    After 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for
-    suspend/resume"), pci_save_aspm_l1ss_state(dev) saves the L1SS state for
-    "dev", and pci_restore_aspm_l1ss_state(dev) restores the state for both
-    "dev" and its parent.
-    
-    The problem is that unless pci_save_state() has been used in some other
-    path and has already saved the parent L1SS state, we will restore junk to
-    the parent, which means the L1 Substates likely won't work correctly.
-    
-    Save the L1SS config for both the device and its parent in
-    pci_save_aspm_l1ss_state().  When restoring, we need both because L1SS must
-    be enabled at the parent (the Downstream Port) before being enabled at the
-    child (the Upstream Port).
-    
-    Link: https://lore.kernel.org/r/20241115072200.37509-3-jhp@endlessos.org
-    Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for suspend/resume")
-    Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218394
-    Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-    Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-    [bhelgaas: parallel save/restore structure, simplify commit log]
-
-
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index 28567d457613..e0bc90597dca 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -81,24 +81,47 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
- 
- void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
- {
-+	struct pci_dev *parent = pdev->bus->self;
- 	struct pci_cap_saved_state *save_state;
--	u16 l1ss = pdev->l1ss;
- 	u32 *cap;
- 
-+	/*
-+	 * If this is a Downstream Port, we never restore the L1SS state
-+	 * directly; we only restore it when we restore the state of the
-+	 * Upstream Port below it.
-+	 */
-+	if (pcie_downstream_port(pdev) || !parent)
-+		return;
-+
-+	if (!pdev->l1ss || !parent->l1ss)
-+		return;
-+
- 	/*
- 	 * Save L1 substate configuration. The ASPM L0s/L1 configuration
- 	 * in PCI_EXP_LNKCTL_ASPMC is saved by pci_save_pcie_state().
- 	 */
--	if (!l1ss)
--		return;
--
- 	save_state = pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1SS);
- 	if (!save_state)
- 		return;
- 
- 	cap = &save_state->cap.data[0];
--	pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL2, cap++);
--	pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
-+	pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL2, cap++);
-+	pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL1, cap++);
-+
-+	if (parent->state_saved)
-+		return;
-+
-+	/*
-+	 * Save parent's L1 substate configuration so we have it for
-+	 * pci_restore_aspm_l1ss_state(pdev) to restore.
-+	 */
-+	save_state = pci_find_saved_ext_cap(parent, PCI_EXT_CAP_ID_L1SS);
-+	if (!save_state)
-+		return;
-+
-+	cap = &save_state->cap.data[0];
-+	pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL2, cap++);
-+	pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL1, cap++);
- }
- 
- void pci_restore_aspm_l1ss_state(struct pci_dev *pdev)
 
