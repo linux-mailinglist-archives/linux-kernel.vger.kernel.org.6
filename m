@@ -1,47 +1,85 @@
-Return-Path: <linux-kernel+bounces-443261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD239EE971
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:57:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 017B99EE977
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69CE1888B56
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969491884EE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496A8215777;
-	Thu, 12 Dec 2024 14:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79341215F5A;
+	Thu, 12 Dec 2024 14:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2L0oe8D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ieWMtjHx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9969021571D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBF521577D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734015427; cv=none; b=iLKj5rYFo14yI5WFVLcO3YEuRPaomRgC1awkiV+JtjUoLptqOrvYS9EgOqBY1Lgp/fReW/32piR8geZN+vWjdZg3/QjtCHM/8KFzTMjGlw0h2v7swPpRufY0wW4pDsGySxy0nTD9y8NJFkeZX9S8IviTB5roq4iLRV91E3rl96E=
+	t=1734015519; cv=none; b=SZsz0XyXW9ZKm9XZ/MD3HA8ITbE9yrWh3hF2IAqbBYTUelMsY//o5ggC9/f4F7kZxMYush4VuOCePucGYRWwn+OtgUqScf4p6QQrPbbhB62Uxj59qSbmENzjAGxN3kKxr58GGTLN5e5HnjXyOgg6k2E75r5pXefpfFMh/SHgcWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734015427; c=relaxed/simple;
-	bh=uwblZSevv2D3PFiP82htjEa+bQ21czz1NNrxjWSAzwY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ajzqOiQOqGp++Kc0m5XDQlT8FOj47jNhWRdJ0mr4PyBHUzukvLpZ0npqgASkgb5gKihLc2Ciw3+DomTTAqGQyHkAKlQXR+sVBbFRx1jWyj+TQzlWtVm6PaTB+hCwAwDBWO3m4fcsa2sz37D2rkh6kkHbwDliysN+B2zTAUA4qb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2L0oe8D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF58C4CECE;
-	Thu, 12 Dec 2024 14:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734015427;
-	bh=uwblZSevv2D3PFiP82htjEa+bQ21czz1NNrxjWSAzwY=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=D2L0oe8DEjgL/j+ayC2RToRh4lBZ2ZB64HVhkG2k4UIjQI0+r/z8snRbHzriqXgsM
-	 sFssW8hpK45lsZkZTrwY8teJCkBStFhtDNrtIF4uoZCnxStZsBIxITRqehsviS1Sps
-	 /kHXZ4K7noeEzR9d8ZIKgHTYpXfN3wPSiHdzKa8DvsWAH5JkQGqramcv6uzvvxCkRM
-	 Pj8VDzKagXITZlyObKm+IuNIjuDgViR9IY3hmq1xemrjvzCLIb888fuOJ7w492XWJ8
-	 BQRWX+uc74+tM6c+ASNNkZckGgtnjaMQJQ5t6dPJ2p6KNuIlYqt+YQ1ws8Q2R5Emq8
-	 ccfr/DV1KKCCQ==
-Message-ID: <6b31083d-aaf0-43a0-bc3d-bbb5d3055a5e@kernel.org>
-Date: Thu, 12 Dec 2024 22:57:08 +0800
+	s=arc-20240116; t=1734015519; c=relaxed/simple;
+	bh=G6Z2o7H+YRsuJn5EHuxMgQuZNMoz/Zu4aqlYRNiWXyI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p2gQeSo2zdgkDma49GCuCoqaPlDN7C5sLeFb6OaBvecrq4stPSJ4qIsTYHmUtaEoncbs0cZ7pnyn1F20FoDVQdyEH76FC2rMXBmXc36ltCy6gdtSOohyHrvlH+oelThi0ITJcqm4XkYtkkdiLDm1Fs3wNENzgw7jgQ2ORuBHXs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ieWMtjHx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734015517;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mp7PByfrT26c6XlUU6lXZIxvrN1DU5qMvcLQpbxnk5A=;
+	b=ieWMtjHx/VA8JrMSRqY63odCgsUs32B8CbSf0fmzSTCiV7aAXJ3Uxxmmio9VfBnYnzw4Db
+	5n/VHlD1v+BrNfgsJRb5dF5JoUy/vATckEKVm1XrLdTjwgrc0appiED284JnH/YTXkYbHp
+	xugjBJDACvd8J4C0Z9aE59oVsIjH73c=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-412-01mZsNMoOWqkI94WSdcm9A-1; Thu, 12 Dec 2024 09:58:35 -0500
+X-MC-Unique: 01mZsNMoOWqkI94WSdcm9A-1
+X-Mimecast-MFC-AGG-ID: 01mZsNMoOWqkI94WSdcm9A
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4359eb032c9so5690215e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:58:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734015514; x=1734620314;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mp7PByfrT26c6XlUU6lXZIxvrN1DU5qMvcLQpbxnk5A=;
+        b=HBkYLFw8S+DxOHNp2cawZiRUpU1IhdHi7QklbIxG3lBFA3abkHLFC+pZ4dx27c6UxG
+         qZfhzZg1ubdrcPFQ/PDEiIC/YzEqSk86+pegVxWNWdx5nj47VIWeK4O6TyMFPU3YfNwt
+         sXQAfUAr/wTOUFPrkBJXxQWc/6bc1VzaO6f2ayJtMNZfk1jEI2fpp7olA3Cd1hx9jf1U
+         14MFInCyQZF5YFMQIlarM75KVdc7vw+P1DHmfUuNFFsIh3lJGMoO0akRzrqPhE7opd62
+         4sD1iyPoGKrKn+ITOs2BUdo4oV2VVE+NsAqY73ELXTYU7CTK2gmXopC353gADSlE5jUh
+         dStw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3z5DKzFGhCU2u22WsjpXf47e+FsFW4vxmQGbuMGGS+k4Be9uQwbH62ucccbFrtsoxSIwfQbSfo0k+AiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSZhiDABJ4gH5jxoHCq3vFCQieSxDJTaNf+u37GGFUKYI+jJq5
+	brvtGdkxsr7pr1EgsDfgiLmhE71SS38mtyO8hrQG21c21hdpGZ2Mpf2koVH6087bzrntxxW1z0H
+	b3UY/DUWdC9tHXu42iWPR2wgqlJZjJKb7e+wJBrzsjfjdwlKIMjXIo0UB32DiLQ==
+X-Gm-Gg: ASbGncsOEgQsV5I3X/jTBqg/C0k4ROOFfg6Fd7Cr8JkjvdF1/Iqv+CQRwz/bcUswdsC
+	MMkABOQDv0TNBjYW+ZcKGIzuotQhlr5jZ8o5kt8X7R+hKSIlBVBrJkBCa78mFtKx0hZ4V05YLxp
+	/+n1SY5dUQ+wZwYWlpdq+qXFZdUjOQ9NQW0a04r/mi6R5FQw1r2nigPsQ7e6UG+OIPiBPmdCUCV
+	C3VhHIxPvS1J7k+PkNXS7yM1wdlcXKYHGPJ7O9er7CZZnxtxY8ZaEHAgVKG0rnJNiegkf7nh6nL
+	uCOsDFk=
+X-Received: by 2002:a05:600c:1e89:b0:435:21a1:b109 with SMTP id 5b1f17b1804b1-436228239d4mr34776265e9.2.1734015514537;
+        Thu, 12 Dec 2024 06:58:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHoQPXURHNGvrny3f7vl2oVT9jWXY7D4FX6dkSlxmx2R9PGBk/+viTtA90lBPMFXjybTLaFQQ==
+X-Received: by 2002:a05:600c:1e89:b0:435:21a1:b109 with SMTP id 5b1f17b1804b1-436228239d4mr34775655e9.2.1734015514130;
+        Thu, 12 Dec 2024 06:58:34 -0800 (PST)
+Received: from [192.168.88.24] (146-241-48-67.dyn.eolo.it. [146.241.48.67])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559edc3sm19213025e9.22.2024.12.12.06.58.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 06:58:33 -0800 (PST)
+Message-ID: <a6d7a4ee-929e-4bee-80bf-a7b4f4f89f4a@redhat.com>
+Date: Thu, 12 Dec 2024 15:58:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +87,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH V2] f2fs: The GC triggered by ioctl also needs
- to mark the segno as victim
-To: Yongpeng Yang <yangyongpeng1@oppo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20241204033113.4133027-1-yangyongpeng1@oppo.com>
+Subject: Re: [PATCH v3 11/11] Remove devres from pci_intx()
+To: Philipp Stanner <pstanner@redhat.com>, amien Le Moal
+ <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ Basavaraj Natikar <basavaraj.natikar@amd.com>, Jiri Kosina
+ <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov
+ <oakad@yahoo.com>, Sudarsana Kalluru <skalluru@marvell.com>,
+ Manish Chopra <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Rasesh Mody <rmody@marvell.com>,
+ GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
+ Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+ Sanjay R Mehta <sanju.mehta@amd.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>,
+ Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Alex Williamson <alex.williamson@redhat.com>, Juergen Gross
+ <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ Mario Limonciello <mario.limonciello@amd.com>, Chen Ni <nichen@iscas.ac.cn>,
+ Ricky Wu <ricky_wu@realtek.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Breno Leitao <leitao@debian.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Kevin Tian <kevin.tian@intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Yi Liu <yi.l.liu@intel.com>, Kunwu Chan <chentao@kylinos.cn>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Ankit Agrawal <ankita@nvidia.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org, netdev@vger.kernel.org,
+ linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
+ linux-pci@vger.kernel.org, kvm@vger.kernel.org,
+ xen-devel@lists.xenproject.org
+References: <20241209130632.132074-2-pstanner@redhat.com>
+ <20241209130632.132074-13-pstanner@redhat.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-Autocrypt: addr=chao@kernel.org; keydata=
- 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
-In-Reply-To: <20241204033113.4133027-1-yangyongpeng1@oppo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241209130632.132074-13-pstanner@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024/12/4 11:31, Yongpeng Yang wrote:
-> In SSR mode, the segment selected for allocation might be the same as
-> the target segment of the GC triggered by ioctl, resulting in the GC
-> moving the CURSEG_I(sbi, type)->segno.
-> Thread A				Thread B or Thread A
-> - f2fs_ioc_gc_range
->   - __f2fs_ioc_gc_range(.victim_segno=segno#N)
->    - f2fs_gc
->     - __get_victim
->      - f2fs_get_victim
->      : segno#N is valid, return segno#N as source segment of GC
-> 					- f2fs_allocate_data_block
-> 						- need_new_seg
-> 						- get_ssr_segment
-> 						- f2fs_get_victim
-> 						: get segno #N as destination segment
-> 						- change_curseg
+On 12/9/24 14:06, Philipp Stanner wrote:
+> pci_intx() is a hybrid function which can sometimes be managed through
+> devres. This hybrid nature is undesirable.
 > 
-> Fixes: e066b83c9b40 ("f2fs: add ioctl to flush data from faster device to cold area")
-> Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
+> Since all users of pci_intx() have by now been ported either to
+> always-managed pcim_intx() or never-managed pci_intx_unmanaged(), the
+> devres functionality can be removed from pci_intx().
+> 
+> Consequently, pci_intx_unmanaged() is now redundant, because pci_intx()
+> itself is now unmanaged.
+> 
+> Remove the devres functionality from pci_intx(). Have all users of
+> pci_intx_unmanaged() call pci_intx(). Remove pci_intx_unmanaged().
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+>  drivers/misc/cardreader/rtsx_pcr.c            |  2 +-
+>  drivers/misc/tifm_7xx1.c                      |  6 +--
+>  .../net/ethernet/broadcom/bnx2x/bnx2x_main.c  |  2 +-
+>  drivers/net/ethernet/brocade/bna/bnad.c       |  2 +-
+>  drivers/ntb/hw/amd/ntb_hw_amd.c               |  4 +-
+>  drivers/ntb/hw/intel/ntb_hw_gen1.c            |  2 +-
+>  drivers/pci/devres.c                          |  4 +-
+>  drivers/pci/msi/api.c                         |  2 +-
+>  drivers/pci/msi/msi.c                         |  2 +-
+>  drivers/pci/pci.c                             | 43 +------------------
+>  drivers/vfio/pci/vfio_pci_core.c              |  2 +-
+>  drivers/vfio/pci/vfio_pci_intrs.c             | 10 ++---
+>  drivers/xen/xen-pciback/conf_space_header.c   |  2 +-
+>  include/linux/pci.h                           |  1 -
+>  14 files changed, 22 insertions(+), 62 deletions(-)
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+For the net bits:
 
-Thanks,
+Acked-by: Paolo Abeni <pabeni@redhat.com>
+
 
