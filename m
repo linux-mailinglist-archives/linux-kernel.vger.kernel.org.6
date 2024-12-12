@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-442675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A96E9EE028
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:20:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502489EE02E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDFFD1883529
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74BE6164178
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB57E20ADF1;
-	Thu, 12 Dec 2024 07:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F8E20ADFC;
+	Thu, 12 Dec 2024 07:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JY66ghJ7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9s1MAoo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3C9259485;
-	Thu, 12 Dec 2024 07:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC42259485;
+	Thu, 12 Dec 2024 07:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733988011; cv=none; b=K7Ps61RxdB27G0tIYVeJ9sNfw2ctMBcn+9gG7bgP8AlvYcFT1ZEaHbwh6NC+kCxU3xsedjM8pdCwGK3q+v1hjEBcAXSoLBU0JhTyz9rJQ30+3kBFc8D06sc2o6ehNmP2d0XNs8+A5DnVmCLQFv93sPSFWyYOr1oSdZusyfdurRg=
+	t=1733988048; cv=none; b=tzYPMfA5YOKbWuyrKdVxtzifiOLJbPQhBks1ZTdtCOx2i/6NZmnTyZ1vyYfBlFy+iwEm6AHeFck2lgoIURiRM/is4eaxWJ+/JiLiW9oUt6YUwnaSJpaIQGEKSnIU9RBiOSf2r/aKOQlNugz+WOwkwjVlMzYpQ3g+iYXF3xnfqMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733988011; c=relaxed/simple;
-	bh=6Ri8IP/B/7EsHxKZjeJyUIP+NcIoxWnyAQZWysjxBVU=;
+	s=arc-20240116; t=1733988048; c=relaxed/simple;
+	bh=+9rt0PRfIWzVxs0bppBKdIprXJmp3kFXb9fiuE6Pokg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IRXEiBr1IbN5nFPZnlk90zQ2fLqbFDfjMdt5jJF9DdQKP+syqiGLKierNE0EvxCRyE073+B17R27maX0fxhjFjPogChcF7eDWAiBwe+b2z/8MCu0M45/pF+ltiSAa4ehSiaofz7b87GK+jcb563Ghs3OOPTYKIllJ7UACNm2WYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JY66ghJ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B31CAC4CECE;
-	Thu, 12 Dec 2024 07:20:03 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=OGG9ZenQWkEB1m1kBERNPrvvRyVr0aoflX4Za5fVU92KkT0zHo6Nv7L/kGBZTv3x9qIueiTr3Ql9YQomnjYjTWgxog6B4WYtc82GJJFuSGXNUHkHWD5Y5Fxn0W8fZYxLrdU57MYr7ZfYzTC9T+ZSYzYbsTSaYfR0SU+DLLYbUc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9s1MAoo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C48C4CECE;
+	Thu, 12 Dec 2024 07:20:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733988010;
-	bh=6Ri8IP/B/7EsHxKZjeJyUIP+NcIoxWnyAQZWysjxBVU=;
+	s=k20201202; t=1733988047;
+	bh=+9rt0PRfIWzVxs0bppBKdIprXJmp3kFXb9fiuE6Pokg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JY66ghJ74hd/i2e7ZI/W3+6ojvRb8zUSchDan/ecwDjIjGYQCmUgf5K1kiLzvguZ0
-	 gfZ5NuxEbDOQrj3S85YQQbNoU778IWoEHuNNhex3tWRlgJfXdVOo9f/4629VWfsAlC
-	 ap9m8pcPvg1wUBVKSiJycPqbhCf5TzLd3Y1heYxSgFKuoM4TT2wDxNpWQy2IuaNQbp
-	 RTYekfoADtEIpDtZ5Oy+egjPIM8ex9UWTWNo9tkIxM3rLxBzQX2GmocTFy8sb4Kntf
-	 6EHqdk6AYXz2FwD7CJO4noDSO2DyY58M8jZyotcI+fNcXmrZYccgvSLEV247unSW5K
-	 Q+Z/y4JxIQ4Dg==
-Message-ID: <8cf7e03a-7994-4dd5-b496-e00b4827ee22@kernel.org>
-Date: Thu, 12 Dec 2024 08:20:01 +0100
+	b=Q9s1MAooaGf2212S1+2rxj+Tbt1GtxsbeGkx6GutSPrK42HibpIXmDyTpSxEDsd30
+	 cfSAvMMVmImpgpnRPSZshrAF/VEYsGgjy7M6cziwxi0NEmyqbAXwBH8Z3pwJ3eh2I8
+	 C37jvROVwg7uJOysaZadSZFw+BsJwQ4Lq9w+1OxKBdy9tf9XdZEsKgVlKDwL3k6zF2
+	 t79giWp++33ERVWmLDNDOZ1AiDyRXKL45hNQ2h56Xqyexetddh0XLHi3QRRmrOzn6C
+	 g6vCkQEVxiKTRFdcYzMRBgrFqIa4PfeD/mP86AjuIxVQ0qR6+CCctJBM/g/1kz6UB4
+	 0yviVyZm1KPWw==
+Message-ID: <e9caf0fe-a77f-40cb-9fc3-9da3d95f27ca@kernel.org>
+Date: Thu, 12 Dec 2024 08:20:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] dt-bindings: mailbox: mediatek: Add MT8196 support
- for gce-mailbox
+Subject: Re: [PATCH v2 1/8] dt-bindings: mailbox: mediatek: Add GCE header
+ file for MT8196
 To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
 Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
  "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
@@ -75,9 +75,9 @@ Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
  "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 References: <20241211032256.28494-1-jason-jh.lin@mediatek.com>
- <20241211032256.28494-3-jason-jh.lin@mediatek.com>
- <yhfxpflyumevs66sdwgiiyuablpfxfxw3e7ybrxju7ssicmnu5@truuiuvxlq6e>
- <64326843358d450c9172f3dea1c85e7422e20430.camel@mediatek.com>
+ <20241211032256.28494-2-jason-jh.lin@mediatek.com>
+ <ozifi65uycmxc5hqeu4onbths5u7dg532iufjxplsjw4jjmhf6@6bdsaabd7hl7>
+ <04f7bd2a7d69ab7d02c88cf05bda5ae0c4cb6573.camel@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -123,33 +123,101 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <64326843358d450c9172f3dea1c85e7422e20430.camel@mediatek.com>
+In-Reply-To: <04f7bd2a7d69ab7d02c88cf05bda5ae0c4cb6573.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 12/12/2024 04:41, Jason-JH Lin (林睿祥) wrote:
+On 12/12/2024 04:05, Jason-JH Lin (林睿祥) wrote:
 > Hi Krzysztof,
 > 
 > Thanks for the reviews.
 > 
-> On Wed, 2024-12-11 at 10:39 +0100, Krzysztof Kozlowski wrote:
+> On Wed, 2024-12-11 at 10:37 +0100, Krzysztof Kozlowski wrote:
 >> External email : Please do not click links or open attachments until
 >> you have verified the sender or the content.
 >>
 >>
->> On Wed, Dec 11, 2024 at 11:22:50AM +0800, Jason-JH.Lin wrote:
->>> Add compatible name and iommus property for MT8196.
->>>
->>> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
->>> ---
->>>  .../devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml     | 4
->>> ++++
->>>  1 file changed, 4 insertions(+)
+>> On Wed, Dec 11, 2024 at 11:22:49AM +0800, Jason-JH.Lin wrote:
+>>> Add the Global Command Engine (GCE) header file to define the GCE
+>>> thread priority, GCE subsys ID and GCE events for MT8196.
 >>
->> Headers are never separate from the bindings patch...
+>> This we see from the diff. What we do not see is why priority is a
+>> binding. Looking briefly at existing code: it is not a binding, there
+>> is
+>> no driver user.
+>>
 > 
-> Do you mean I need to merge [PATCH 1/8] and [PATCH 2/8] into 1 patch?
-I asked this last time.
+> This priority value is used to configure the priority level for each
+> GCE hardware thread, so it is a necessary hardware attribute.
+
+I did not say these are not "hardware". I said these are not bindings.
+Bring arguments why these are bindings.
+
+> 
+> It's hard to find where the priority is used in existing driver code
+> because we parsed it from DTS.
+
+So not a binding.
+
+> 
+> It is used in all mediaTeks' DTS using the GCE.
+> For example, in mt8195.dts:
+> 
+> vdosys0: syscon@1c01a000 {
+>     compatible = "mediatek,mt8195-vdosys0", "mediatek,mt8195-mmsys",
+> "syscon";
+>     reg = <0 0x1c01a000 0 0x1000>;
+>     mboxes = <&gce0 0 CMDQ_THR_PRIO_4>;
+>     #clock-cells = <1>;
+>     mediatek,gce-client-reg = <&gce0 SUBSYS_1c01XXXX 0xa000 0x1000>;
+> }
+> 
+> CMDQ driver(mtk-cmdq-mailbox.c) will get the args parsed from mboxes
+> property in cmdq_xlate() and then it will store CMDQ_THR_PRIO_4 to the
+> specific thread structure. 
+
+So not a binding.
+
+> The user of CMDQ driver will send command to CMDQ driver by 
+> cmdq_mbox_send_data(), and this priority setting will be configured to
+> GCE hardware thread.
+
+And other things there are the same, we do not talk only about this one
+thing. I asked last time to drop which is not a binding.
+
+
+...
+
+>>> +
+>>> +/*
+>>> + * GCE General Purpose Register (GPR) support
+>>> + * Leave note for scenario usage here
+>>> + */
+>>> +/* GCE: write mask */
+>>
+>> That's a definite no-go. Register masks are not bindings.
+>>
+> 
+> I'm sorry to the confusion.
+> 
+> These defines are the index of GCE General Purpose Register for
+> generating instructions, they are not register masks.
+
+Index of register is also sounding like register.
+
+> 
+> The comment "/* GCE: write mask */" is briefly describe that the usage
+> of GCE_GPR_R0 and GCE_GPR_R01 is used to store the register mask when
+> GCE executing the WRITE instruction. And it can also store the register
+> mask of POLL and READ instruction.
+> 
+> I will add more words to make this comment clearer, like this:
+> /*GCE: store the mask of instruction */
+
+Not sure, because I feel you just avoid doing what is right and keep
+pushing your own narrative. Where is it used in the driver?
+
+I just looked for "GCE_GPR_R00" - no usage at all. So not a binding.
 
 Best regards,
 Krzysztof
