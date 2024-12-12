@@ -1,78 +1,93 @@
-Return-Path: <linux-kernel+bounces-442729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD739EE0E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:08:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F269EE0E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:09:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D71C168B16
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:08:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F2C168327
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A62620CCF8;
-	Thu, 12 Dec 2024 08:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I65s+1dw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C9020CCD5;
-	Thu, 12 Dec 2024 08:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0982A20B7F2;
+	Thu, 12 Dec 2024 08:09:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD29B204F96
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733990906; cv=none; b=hu5+T+Lrj4o1RyUJtMziZmsZx7n1GWARVYQnFg+EhGzIqsDxSuUIsYlCR70oLtS5DelqoIBTTpBkXpMZkCBG2La/Vv8CiT8McrlUkqj+ULN8JtNW+xEvaByvoHFVr8JOLHygLxVmXq8P92gZhFqOGZn1jrbIm1Dc64InjGffXdE=
+	t=1733990960; cv=none; b=O1AoQSIsASaQI1i93Nha6YYBcfRr8F6vumO8fv9Nf5EaTldDUJe1bE+zitZUdW9uEhrmaqaMuNSpEmbXdQ1MsC5rGURSVhVj4Oc1xI2L926jbuydR+XlMlggDmEH/TtZKOuyz7HDz6aKDatsau9uzsruOm4PkTsHu+dLOPKlWwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733990906; c=relaxed/simple;
-	bh=iTu94tkLBfASIn9nPAb8LQ8+jAIiVJzN8RQ4ZD7V5TQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bHl8mPXOXRCdZBRUZfCqlJ7jLvs3mj5jPgy70A0lkRP+zAbsutuBPAG5KmDxjBI0HlvmsSAXctRRANguAOEiZXBatjHXbVsVMAEOMxEzjPspFSlkrXdQJgWFtwd19bEMZ/Qld+xpKJBjGOnUXJLKwQOSpnXLBe2QpzFuRaOoSns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I65s+1dw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF29C4CECE;
-	Thu, 12 Dec 2024 08:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733990906;
-	bh=iTu94tkLBfASIn9nPAb8LQ8+jAIiVJzN8RQ4ZD7V5TQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I65s+1dwNpNXqzgKqmOMajGKlPo0TJqt6k7A4edklgjbpfuCHCSCLmN54yiQrHcJ/
-	 Wj7I/Qg9Pnaw0IS16fp5ivx4ldDPpsqsPBx0BJ1gdeM8USWmJVgAOX/bzhkkK6ne8M
-	 FrTsXRQZmsCAfZiFv7DXCnTrRZOIInx2impLfNWQDYB1c8f+HnaKiYir9GsnFjTApc
-	 P9YCflyQDpFD6mliar7ub2vKujb7bu2UjKxMc9m0NHY59/mAFdEkJD6k/vh0jT77fq
-	 vAYGMoAKT/Z6qT77BLQ6YZpA2qUX10kLqd3V92PAkubmdsrcsrYheyuL64Tv19/gLN
-	 +01B6TXg6KMtA==
-Date: Thu, 12 Dec 2024 09:08:22 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	eraretuya@gmail.com
-Subject: Re: [PATCH v6 3/7] dt-bindings: iio: accel: adxl345: add
- interrupt-names
-Message-ID: <scybtk2qyy6m55klkj6tsv2snmcqp2zjbkzwfh5dv2p6cjjeud@xjq4vsxjszex>
-References: <20241211230648.205806-1-l.rubusch@gmail.com>
- <20241211230648.205806-4-l.rubusch@gmail.com>
+	s=arc-20240116; t=1733990960; c=relaxed/simple;
+	bh=E6LdvKY2hZ41K5gteMkurkHJILBEeRiMyScR25JrLiU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wh1ROjB4RPHB2vg5muOKpgRFtEsvppOVIgJKOnAnlg4zfiC2Wxoy+qKBYuRllBlSOGqf6Lb0f6OhuNrwChGPXR5n2Kh36J7m1qoLAbHf3XwzQ33GRHPxAhHd2D/430Baib++/7v4DpvcMVqZX1CkVkbTIr83KFyfogOpvLqcnac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC754169E;
+	Thu, 12 Dec 2024 00:09:38 -0800 (PST)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A07C3F5A1;
+	Thu, 12 Dec 2024 00:09:09 -0800 (PST)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	bp@alien8.de,
+	dan.j.williams@intel.com,
+	dave.hansen@linux.intel.com,
+	david@redhat.com,
+	jane.chu@oracle.com,
+	osalvador@suse.de,
+	tglx@linutronix.de
+Subject: [PATCH v2 0/2] Remove problematic include in <asm/set_memory.h>
+Date: Thu, 12 Dec 2024 08:09:02 +0000
+Message-ID: <20241212080904.2089632-1-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241211230648.205806-4-l.rubusch@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 11:06:44PM +0000, Lothar Rubusch wrote:
-> Add interrupt-names INT1 and INT2 for the two interrupt lines of the
-> sensor. Only one line will be connected for incoming events. The driver
-> needs to be configured accordingly. If no interrupt line is set up, the
-> sensor will fall back to FIFO bypass mode and still measure, but no
-> interrupt based events are possible.
+This series removes an unnecessary and potentially problematic include
+of <linux/mm.h> in <asm/set_memory.h>. There is no functional difference
+in v2 compared to v1.
 
-There was interrupt before and it was required, so I do not understand
-last statement. You describe case which is impossible.
+v1..v2:
+* Squashed include fixups into the last patch removing the include from
+  <asm/set_memory.h>. [Borislav's suggestion]
+* Moved new include in <asm/smp.h>.  [Borislav's suggestion]
 
-Best regards,
-Krzysztof
+v1: https://lore.kernel.org/all/20241210184610.2080727-1-kevin.brodsky@arm.com/
+
+- Kevin
+
+Cc: bp@alien8.de
+Cc: dan.j.williams@intel.com
+Cc: dave.hansen@linux.intel.com
+Cc: david@redhat.com
+Cc: jane.chu@oracle.com
+Cc: osalvador@suse.de
+Cc: tglx@linutronix.de
+---
+Kevin Brodsky (2):
+  x86/mm: Remove unused __set_memory_prot()
+  x86/mm: Remove unnecessary include in set_memory.h
+
+ arch/x86/include/asm/set_memory.h       |  2 --
+ arch/x86/include/asm/smp.h              |  2 +-
+ arch/x86/mm/pat/set_memory.c            | 13 -------------
+ drivers/virt/coco/sev-guest/sev-guest.c |  1 +
+ 4 files changed, 2 insertions(+), 16 deletions(-)
+
+
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+-- 
+2.47.0
 
 
