@@ -1,291 +1,203 @@
-Return-Path: <linux-kernel+bounces-442528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C9A9EDDCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 911649EDDCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:01:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65F3E168201
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:01:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5166B167FCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F7F1F60A;
-	Thu, 12 Dec 2024 03:00:59 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779ED13D52B;
+	Thu, 12 Dec 2024 03:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hM3U6Zvd"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8CE2594A1;
-	Thu, 12 Dec 2024 03:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5551F60A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 03:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733972459; cv=none; b=WPmatyexR0L2EqlPnQ20J2mtuP5WcFfgBiWQmSrsMWw4pvkkVIAe47+QuRpdFr1sP1RsCoLR4Uk4zdkFA8rEwlkp8lkfo+c/zs4bnyvBen5ZRQ56/ojZjNgJE9A6Pvem2mjDJzVGh2lAxkEbykYvJ9QsOhOj0Sy4kDrvcb/ZVbY=
+	t=1733972490; cv=none; b=kI9ukd88ipatrX7Ew5vZBGwSUB9VEfa4gDB55RGolYoHxTgT7Tjkz7sSLLbC8KHunvdP98w4VIC9ZaFIGHUty8ZGAtbEBGNUwr+qJn0RmaaoLfiqx8P5X6YLXNUZidZ5XfrtELkpMOj4bf6IddRfRuuc3nOyPhA5VXgF/z1nuQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733972459; c=relaxed/simple;
-	bh=gqpwqc7XhSdhKlNjwFBbo2a2zKHYZOAkqi06zbjTld0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=d1e+uqFvytbq3XHMt4+sSJ15+8bKiOLyjDlk3mLsglLAfeOzOnZ3oDCNnkTAGTuCe67OhUR+RrmQIb37n/DbR8IiJtdIM5K1MnBmkBNFKMpcyY+XsrSHnxgaIlpb1vvPo+5f7PqiiYqOScsnwtHi0eDV48CpQRt0DF1FiCpOrjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Y7y0P2bSvz20ljC;
-	Thu, 12 Dec 2024 11:01:09 +0800 (CST)
-Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4258F1A0188;
-	Thu, 12 Dec 2024 11:00:52 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 12 Dec 2024 11:00:52 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Dec
- 2024 11:00:51 +0800
-Message-ID: <2068a450-7752-c47b-edfc-cb2a00ac4402@huawei.com>
-Date: Thu, 12 Dec 2024 11:00:46 +0800
+	s=arc-20240116; t=1733972490; c=relaxed/simple;
+	bh=Kj782q7cX4/busFyfYXHzTNL6TIc9uOw33GwG6x2Ekk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nynRzBdROBYBvDLjOucDCaFDMpDPWmI/dQhsNZn2CCTF4tC0yqUBXP8ML6I+efdRryF/8tWgCsDN4IPccoGBHEGyo+KG+sLwa3wqrnU4meIK0M/2bIZ8YqYzt7hURfbAFT1/mC6mDPJRPAGqWyh3G5Gaoi60gwI/T4Y7BV7DDhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hM3U6Zvd; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-467896541e1so79571cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 19:01:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733972488; x=1734577288; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fXguPs9/u7xacodqeOh7BKGSfUT5UVdPBVuE8pC7yn8=;
+        b=hM3U6ZvdSf3s89uUk+pFRqpghlrF7vRcQDypGjgbal7RSAP/iEVMkTjAo54nshx98p
+         PnyKGAemfPzREPiaCwqx3U+WSZNKPiksOgq94PI5pPzEAebwIXJhZaJEhYCXhIS3W0Te
+         v5zk/E1MTDLOr/Yj1F0YUJTBS8cCVc8tQkJKJxyx+2Kg7OPOr9y/CIZFcsxb1E+lK7HJ
+         uHMA0fftMQj9hyMyDsgIOTmy6QHnL02itepZ/8oWbibGvVAEfqqGIqDPKafBcWEcZj+1
+         1yXJRm5xIvsZ0dmJJlaNoasl97YL9at+Esn4PDWMxsS9KMRHP3hpb+li8rZJe68xaD/4
+         07aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733972488; x=1734577288;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fXguPs9/u7xacodqeOh7BKGSfUT5UVdPBVuE8pC7yn8=;
+        b=rJJJEKmqpMA4nu3brmQoYLTWZfizUfcbw0tPnKeHKInXTEdtsnhh93fpFY9ckWLSWu
+         AInyCO+iIGNy3nwxm60giOCnQPJur+AZQx/72e/B50LU++aIimR8hmOiLYI1b0lLgQnN
+         RlAD1wUS8cBUJk35rq9UsUi54qbaAMwE+dZplJA4W27YsmQ/dTgU6NiaRWRpfY8IWRhI
+         1i1oaxxR7OrRXFcUgaXeE/YdieQzGezdky3vE2UotPTWWcciIMHvonSSa3LnbHNUARou
+         cWrJR7tAGb3qPGOYnh/1wHmrSftppFSypMipvtx7T7UYb6XADFQx2ROilMybdxiCPRVx
+         aCyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3ppitH0ScVxJPAq7cdGBV79S+jSdAa7oBTLPGscJaq/WPzxP/SpmpkJdBljrSgP5VSw9exrgifc024AA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjUhmOH9OER8/0bOv4HgGsPKtAn0y5tXuITC2nelaYJ/9MmqtB
+	01mFiBkWmYnFkdw/cf71npl8LKdfP9dhaM1+rHnPRivNrH8aacncOf3O86sJzgfr5CeZKqIpHL6
+	hV7FuvdIPCDPqxjx3vb9xhELiLyTmMJzH1vYG
+X-Gm-Gg: ASbGncsBtzz8wlz7ZAflfrlrPZT6T2j3LW7+gIi1Lsq616XL6BQZWsIGmrQVsH6lK0c
+	aphRWMM2W+H6ylnvJ6F5f/IHC6mMz8kiGpde2hG8xxLzBPYFMl5HKxccTBOU4cdzXxxMW
+X-Google-Smtp-Source: AGHT+IHpj3jpVRoMz+xnVrcuUcoE0Wz2BdvQqBZ7aptyXt8bFeS01OnOmjKmsAbYjWH2WPp11bMrk3Uw90Ab7Sp2xZw=
+X-Received: by 2002:a05:622a:5a16:b0:466:923f:a749 with SMTP id
+ d75a77b69052e-467981befbcmr1102041cf.15.1733972487746; Wed, 11 Dec 2024
+ 19:01:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v1 1/4] hwmon: (acpi_power_meter) Fix using uninitialized
- variables
-To: Guenter Roeck <linux@roeck-us.net>, <linux-hwmon@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <jdelvare@suse.com>, <liuyonglong@huawei.com>, <zhanjie9@hisilicon.com>,
-	<zhenglifeng1@huawei.com>
-References: <20241125093415.21719-1-lihuisong@huawei.com>
- <20241125093415.21719-2-lihuisong@huawei.com>
- <aa6e1c02-b8bf-4d25-ad21-2018af72e16f@roeck-us.net>
- <b801388b-6bc7-5e96-dd29-e68ed8c970df@huawei.com>
- <f9fc4989-f416-4d88-bc3e-ab7b9fddb4d9@roeck-us.net>
- <c66d312a-098a-84d3-0895-02d78ae3ecc9@huawei.com>
- <77fce1aa-96eb-4c3c-ab0a-a33de46b333b@roeck-us.net>
- <87367d88-b10e-29d6-2712-f8f5c24e52a4@huawei.com>
- <1ce7718c-0bf8-4009-9240-fc6e2363ed54@roeck-us.net>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <1ce7718c-0bf8-4009-9240-fc6e2363ed54@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+References: <20241111205506.3404479-1-surenb@google.com> <20241111205506.3404479-4-surenb@google.com>
+ <ZzLgZTH9v5io1Elx@casper.infradead.org> <CAJuCfpHpGSpix8+mB76Virb+HAMrOqB3wG8E4EXPrRCnBoBGeA@mail.gmail.com>
+ <20241210223850.GA2484@noisy.programming.kicks-ass.net> <CAJuCfpETJZVFYwf+P=6FnY_6n8E7fQsKH6HrOV1Q_q9cFizEKw@mail.gmail.com>
+ <20241211082541.GQ21636@noisy.programming.kicks-ass.net> <CAJuCfpEMYhAmOPwjGO+j1t+069MJZxUs1O1co-zJ4+vEeXCtng@mail.gmail.com>
+In-Reply-To: <CAJuCfpEMYhAmOPwjGO+j1t+069MJZxUs1O1co-zJ4+vEeXCtng@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 11 Dec 2024 19:01:16 -0800
+Message-ID: <CAJuCfpGOOcRAJ46sbPRoCUNuuhi2fnkM97F=CfZ1=_N5ZFUcLw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
+	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com, 
+	pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 11, 2024 at 7:20=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Wed, Dec 11, 2024 at 12:25=E2=80=AFAM Peter Zijlstra <peterz@infradead=
+.org> wrote:
+> >
+> > On Tue, Dec 10, 2024 at 03:37:50PM -0800, Suren Baghdasaryan wrote:
+> >
+> > > > Replace vm_lock with vm_refcnt. Replace vm_detached with vm_refcnt =
+=3D=3D 0
+> > > > -- that is, attach sets refcount to 1 to indicate it is part of the=
+ mas,
+> > > > detached is the final 'put'.
+> > >
+> > > I need to double-check if we ever write-lock a detached vma. I don't
+> > > think we do but better be safe. If we do then that wait-until() shoul=
+d
+> > > accept 0x8000'0001 as well.
+> >
+> > vma_start_write()
+> >   __is_vma_write_locked()
+> >     mmap_assert_write_locked(vma->vm_mm);
+> >
+> > So this really should hold afaict.
+> >
+> > > > RCU lookup does the inc_not_zero thing, when increment succeeds, co=
+mpare
+> > > > mm/addr to validate.
+> > > >
+> > > > vma_start_write() already relies on mmap_lock being held for writin=
+g,
+> > > > and thus does not have to worry about writer-vs-writer contention, =
+that
+> > > > is fully resolved by mmap_sem. This means we only need to wait for
+> > > > readers to drop out.
+> > > >
+> > > > vma_start_write()
+> > > >         add(0x8000'0001); // could fetch_add and double check the h=
+igh
+> > > >                           // bit wasn't already set.
+> > > >         wait-until(refcnt =3D=3D 0x8000'0002); // mas + writer ref
+> > > >         WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
+> > > >         sub(0x8000'0000);
+> > > >
+> > > > vma_end_write()
+> > > >         put();
+> > >
+> > > We don't really have vma_end_write(). Instead it's vma_end_write_all(=
+)
+> > > which increments mm_lock_seq unlocking all write-locked VMAs.
+> > > Therefore in vma_start_write() I think we can sub(0x8000'0001) at the
+> > > end.
+> >
+> > Right, I know you don't, but you should :-), I've suggested adding this
+> > before.
+>
+> I'll look into adding it. IIRC there was some issue with that but I
+> can't recall...
+>
+> >
+> > > > vma_start_read() then becomes something like:
+> > > >
+> > > >         if (vm_lock_seq =3D=3D mm_lock_seq)
+> > > >           return false;
+> > > >
+> > > >         cnt =3D fetch_inc(1);
+> > > >         if (cnt & msb || vm_lock_seq =3D=3D mm_lock_seq) {
+> > > >           put();
+> > > >           return false;
+> > > >         }
+> > > >
+> > > >         return true;
+> > > >
+> > > > vma_end_read() then becomes:
+> > > >         put();
+> > > >
+> > > >
+> > > > and the down_read() from uffffffd requires mmap_read_lock() and thu=
+s
+> > > > does not have to worry about writers, it can simpy be inc() and put=
+(),
+> > > > no?
+> > >
+> > > I think your proposal should work. Let me try to code it and see if
+> > > something breaks.
 
-在 2024/12/12 9:51, Guenter Roeck 写道:
-> On 11/26/24 19:43, lihuisong (C) wrote:
->> Hi Guenter，
->>
->> How about the modification as below? But driver doesn't know what the 
->> time is to set resource->power_alarm to false.
->>
-> It's a start, but incomplete because power_alarm must be reset.
->
-> See below.
->
->> 在 2024/11/27 0:19, Guenter Roeck 写道:
->>> On 11/25/24 23:03, lihuisong (C) wrote:
->>>>
->>>> 在 2024/11/26 12:04, Guenter Roeck 写道:
->>>>> On 11/25/24 17:56, lihuisong (C) wrote:
->>>>>> Hi Guente,
->>>>>>
->>>>>> Thanks for your timely review.
->>>>>>
->>>>>> 在 2024/11/26 0:03, Guenter Roeck 写道:
->>>>>>> On 11/25/24 01:34, Huisong Li wrote:
->>>>>>>> The 'power1_alarm' attribute uses the 'power' and 'cap' in the
->>>>>>>> acpi_power_meter_resource structure. However, these two fields 
->>>>>>>> are just
->>>>>>>> updated when user query 'power' and 'cap' attribute, or 
->>>>>>>> hardware enforced
->>>>>>>> limit. If user directly query the 'power1_alarm' attribute 
->>>>>>>> without queryng
->>>>>>>> above two attributes, driver will use the uninitialized 
->>>>>>>> variables to judge.
->>>>>>>> In addition, the 'power1_alarm' attribute needs to update power 
->>>>>>>> and cap to
->>>>>>>> show the real state.
->>>>>>>>
->>>>>>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->>>>>>>> ---
->>>>>>>>   drivers/hwmon/acpi_power_meter.c | 10 ++++++++++
->>>>>>>>   1 file changed, 10 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/drivers/hwmon/acpi_power_meter.c 
->>>>>>>> b/drivers/hwmon/acpi_power_meter.c
->>>>>>>> index 2f1c9d97ad21..4c3314e35d30 100644
->>>>>>>> --- a/drivers/hwmon/acpi_power_meter.c
->>>>>>>> +++ b/drivers/hwmon/acpi_power_meter.c
->>>>>>>> @@ -396,6 +396,9 @@ static ssize_t show_val(struct device *dev,
->>>>>>>>       struct acpi_device *acpi_dev = to_acpi_device(dev);
->>>>>>>>       struct acpi_power_meter_resource *resource = 
->>>>>>>> acpi_dev->driver_data;
->>>>>>>>       u64 val = 0;
->>>>>>>> +    int ret;
->>>>>>>> +
->>>>>>>> +    guard(mutex)(&resource->lock);
->>>>>>>>         switch (attr->index) {
->>>>>>>>       case 0:
->>>>>>>> @@ -423,6 +426,13 @@ static ssize_t show_val(struct device *dev,
->>>>>>>>               val = 0;
->>>>>>>>           break;
->>>>>>>>       case 6:
->>>>>>>> +        ret = update_meter(resource);
->>>>>>>> +        if (ret)
->>>>>>>> +            return ret;
->>>>>>>> +        ret = update_cap(resource);
->>>>>>>> +        if (ret)
->>>>>>>> +            return ret;
->>>>>>>> +
->>>>>>>>           if (resource->power > resource->cap)
->>>>>>>>               val = 1;
->>>>>>>>           else
->>>>>>>
->>>>>>>
->>>>>>> While technically correct, the implementation of this attribute 
->>>>>>> defeats its
->>>>>>> purpose. It is supposed to reflect the current status as 
->>>>>>> reported by the
->>>>>>> hardware. A real fix would be to use the associated notification 
->>>>>>> to set or
->>>>>>> reset a status flag, and to report the current value of that 
->>>>>>> flag as reported
->>>>>>> by the hardware.
->>>>>> I know what you mean.
->>>>>> The Notify(power_meter, 0x83) is supposed to meet your proposal 
->>>>>> IIUC.
->>>>>> It's good, but it depands on hardware support notification.
->>>>>>>
->>>>>>> If there is no notification support, the attribute should not 
->>>>>>> even exist,
->>>>>>> unless there is a means to retrieve its value from ACPI (the 
->>>>>>> status itself,
->>>>>>> not by comparing temperature values).
->>>>>> Currently, the 'power1_alarm' attribute is created just when 
->>>>>> platform support the power meter meassurement(bit0 of the 
->>>>>> supported capabilities in _PMC).
->>>>>> And it doesn't see if the platform support notifications.
->>>>>>  From the current implementation of this driver, this sysfs can 
->>>>>> also reflect the status by comparing power and cap,
->>>>>> which is good to the platform that support hardware limit from 
->>>>>> some out-of-band mechanism but doesn't support any notification.
->>>>>>
->>>>>
->>>>> The point is that this can also be done from userspace. Hardware 
->>>>> monitoring drivers
->>>>> are supposed to provide hardware attributes, not software 
->>>>> attributes derived from it.
->>>>>
->>>> So this 'power1_alarm' attribute can be exposed when platform 
->>>> supports hardware enforced limit and notifcations when the hardware 
->>>> limit is enforced, right?
->>>> If so, we have to change the condition that driver creates this 
->>>> sysfs interface.
->>>
->>> This isn't about enforcing anything, it is about reporting an alarm
->>> if the power consumed exceeds the maximum configured.
->>>
->> -->
->>
->> index 2f1c9d97ad21..b436ebd863e6
->> --- a/drivers/hwmon/acpi_power_meter.c
->> +++ b/drivers/hwmon/acpi_power_meter.c
->> @@ -84,6 +84,7 @@ struct acpi_power_meter_resource {
->>          u64             power;
->>          u64             cap;
->>          u64             avg_interval;
->> +       bool            power_alarm;
->>          int                     sensors_valid;
->>          unsigned long           sensors_last_updated;
->>          struct sensor_device_attribute  sensors[NUM_SENSORS];
->> @@ -396,6 +397,9 @@ static ssize_t show_val(struct device *dev,
->>          struct acpi_device *acpi_dev = to_acpi_device(dev);
->>          struct acpi_power_meter_resource *resource = 
->> acpi_dev->driver_data;
->>          u64 val = 0;
->> +       int ret;
->> +
->> +       guard(mutex)(&resource->lock);
->>
->>          switch (attr->index) {
->>          case 0:
->> @@ -423,10 +427,21 @@ static ssize_t show_val(struct device *dev,
->>                          val = 0;
->>                  break;
->>          case 6:
->> -               if (resource->power > resource->cap)
->> -                       val = 1;
->> -               else
->> -                       val = 0;
->> +               /* report alarm status based on the notification if 
->> support. */
->> +               if (resource->caps.flags & POWER_METER_CAN_NOTIFY) {
->> +                       val = resource->power_alarm;
->> +               } else {
->> +                       ret = update_meter(resource);
->> +                       if (ret)
->> +                               return ret;
->> +                       ret = update_cap(resource);
->> +                       if (ret)
->> +                               return ret;
->> +                       if (resource->power > resource->cap)
->> +                               val = 1;
->> +                       else
->> +                               val = 0;
->> +               }
->
-> It would have to be something like
->
->         ret = update_meter(resource);
->         if (ret)
->             return ret;
->
->         val = resource->power_alarm || resource->power > resource->cap;
->         /* clear alarm if no longer active */
->         resource->power_alarm &= resource->power > resource->cap;
->
-> This ensures that alarms are cached if supported, and that cached 
-> values are
-> reported at once. It is far from perfect but the best I can think of 
-> since
-> there is no notification that the alarm is cleared.
->
-Indeed, since there is no notification that the alarm is cleared, driver 
-have to compare 'power' and 'cap' to clear it anyway.
-If platform support notify to OSPM, driver also need to update 'power' 
-to show this alarm status.
-In this case, no need to update 'cap' which can be updated by nofity 
-0x82 event, right? But this also depands on the initialization of the 
-"resource->cap" the probe phase needs to add.
-For the platform doesn't support notify, driver have to update 'cap' and 
-'power' to show this status, right?
+Ok, I tried it out and things are a bit more complex:
+1. We should allow write-locking a detached VMA, IOW vma_start_write()
+can be called when vm_refcnt is 0. In that situation add(0x8000'0001)
+leads to "addition on 0; use-after-free". Maybe I can introduce a new
+refcnt function which does not complain when adding to 0?
+2. Adding 0x80000000 saturates refcnt, so I have to use a lower bit
+0x40000000 to denote writers.
+3. Currently vma_mark_attached() can be called on an already attached
+VMA. With vma->detached being a separate attribute that works fine but
+when we combine it with the vm_lock things break (extra attach would
+leak into lock count). I'll see if I can catch all the cases when we
+do this and clean them up (not call vma_mark_attached() when not
+necessary).
 
-But considering above two cases, directly to update 'power' and 'cap' is 
-simple to handle this without more switch case.
-what do you think, Guenter?
+> >
+> > Btw, for the wait-until() and put() you can use rcuwait; that is the
+> > simplest wait form we have. It's suitable because we only ever have the
+> > one waiter.
 >
->>                  break;
->>          case 7:
->>          case 8:
->> @@ -853,6 +868,7 @@ static void acpi_power_meter_notify(struct 
->> acpi_device *device, u32 event)
->>                  sysfs_notify(&device->dev.kobj, NULL, 
->> POWER_AVG_INTERVAL_NAME);
->>                  break;
->>          case METER_NOTIFY_CAPPING:
->> +               resource->power_alarm = true;
->>                  sysfs_notify(&device->dev.kobj, NULL, 
->> POWER_ALARM_NAME);
->>                  dev_info(&device->dev, "Capping in progress.\n");
->>                  break;
->>
->>> .
->>
->
->
-> .
+> Yes, Davidlohr mentioned that before. I'll do that. Thanks!
 
