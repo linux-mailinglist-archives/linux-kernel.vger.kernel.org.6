@@ -1,99 +1,130 @@
-Return-Path: <linux-kernel+bounces-444001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAED09EFF2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:19:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17259EFF2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:20:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 479A3188DE3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:19:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA5B3165113
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E031DDA3E;
-	Thu, 12 Dec 2024 22:19:43 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B791DE2BF;
+	Thu, 12 Dec 2024 22:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMl3HLAi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52291898FB;
-	Thu, 12 Dec 2024 22:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680A31898FB;
+	Thu, 12 Dec 2024 22:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734041982; cv=none; b=T4RXlE2ncwaA7YByj29JBY3q6h3mHUKwd7XxEMy4p1rw/V5rK2pJ74LgzL/x+otYxmd08zWYkqxPrjWfTzp89euXlw2G3cmTAnw2xe4bbcxam2Xkh5KHc6SjCct6IsirMIUO5fku7SQuQiskYm7F6I/vZGaFEhQ5DImbDJBtJPU=
+	t=1734042027; cv=none; b=r482oOx1cnuwmmG4oCmSK3d8Lnywic2waXX4PjVub3pWk6JbTS1X2hSDLKwtsye+8f4VYXT0bwUBxc5uhSHAwHfRcQ6jZzYJwCSqG4VZ2o1+DYzX6gP6VdPiUT34y2/3ExFvvSEUqZAmThrLiq8D4OD2hExE0CIgXOw2S5gkbpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734041982; c=relaxed/simple;
-	bh=Qeg6OJQQ6kun3/JAf5Pb3BaIG7UVY+QE1ngviEjCeNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uduh1SPrVSndLGdpJ+MyoQnnO7rxV/CkJw44CvICGfb6gV6kPbeSrfH+Tmp0LPAlcY7S+zRsHWws7fpIuLRleN5QltkQ/dmbdRkpSwHzr7kr4jHTuVxzGthlaRLnZh/ueUJN2vg5m9/Vg+7nGFpbZJorAZtU1YKSM6SNzQJwFRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from localhost.localdomain (unknown [95.90.243.58])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id E616561E64783;
-	Thu, 12 Dec 2024 23:18:30 +0100 (CET)
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-To: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	James Bottomley <JBottomley@Parallels.com>,
-	Nagalakshmi Nandigama <Nagalakshmi.Nandigama@lsi.com>
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>,
-	Sreekanth Reddy <Sreekanth.Reddy@lsi.com>,
-	MPT-FusionLinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] scsi: mpt3sas: Set ioc->manu_pg11.EEDPTagMode directly to 1
-Date: Thu, 12 Dec 2024 23:18:12 +0100
-Message-ID: <20241212221817.78940-2-pmenzel@molgen.mpg.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241212221817.78940-1-pmenzel@molgen.mpg.de>
-References: <20241212221817.78940-1-pmenzel@molgen.mpg.de>
+	s=arc-20240116; t=1734042027; c=relaxed/simple;
+	bh=Euez+aVTh49Mk/2aVnr4lDGpmD6U9EafApiYnIIo8Qk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rLoZHX5wmc1VMmDQJZCKutnamyOPs80Zwe9oEauKqoTwTl9Z3MeUXeh7h97B+hUDNTu2OeVWuhSbxTITflArI6e5ugG/HgJc7cbQmlpah5Z60AS+77pvzLKWWcAaYV9KWMSzlXqHjsjGuVaxikG78BW+rwZ9IEbS3Tq0WqjYkvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMl3HLAi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92D0C4CECE;
+	Thu, 12 Dec 2024 22:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734042026;
+	bh=Euez+aVTh49Mk/2aVnr4lDGpmD6U9EafApiYnIIo8Qk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=rMl3HLAi94TZEwbzVW7r066X0WVDRn4Wrm3d4hBHpzJK5fG8VLLJRmhr3jGWn04LZ
+	 inzesMZYRbXReQjbIi/PCi22qKFFv7OtN7dXJoAdB1D+OY2PUXf+o6BRQTo7lqu4Qr
+	 PhjoZ+bKYFy7r6znkjq0iLwcKL9HTMMM3z78cDUuCWnz7/ZZA/mrA6lOZEIakLVQsE
+	 zDwKGncKu5V55qYqa5QzcM+udJDqkGeysnis38t04KRhG9zpveecS/lSouJ1lK9sJy
+	 y00Q8e1qI0x9q7rKtNyAq3HgWICmtdMP4mJN0WoR1LFfPsdrV3qzDz62rkygrvJeyB
+	 zOk56TLN7+4hA==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Thu, 12 Dec 2024 23:19:37 +0100
+Subject: [PATCH] arm64: dts: qcom: sc8280xp: Fix up remoteproc register
+ space sizes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241212-topic-8280_rproc_reg-v1-1-bd1c696e91b0@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAHhhW2cC/x3MTQqAIBBA4avErBN0Kvu5SoSETTWblDEiiO6et
+ PwW7z2QSJgSDMUDQhcnDkeGKQvw+3xspHjJBtRYGzSozhDZqw477SRK8E5oU6bxtrI1tr2tIKd
+ RaOX7347T+34SePqDZgAAAA==
+X-Change-ID: 20241212-topic-8280_rproc_reg-15c636427963
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Johan Hovold <johan+linaro@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734042023; l=1873;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=Od5FRWnmYJBcQ9mV22FaCDysBzrqiaL4nHuQZFMLqjM=;
+ b=M165IkQlL6xZVmj+X/ISVja5iTJPoyq8KDkYcCVaHi9at1EsHtiNb++fmR8r7QvrrGS99eC0D
+ ooBPFpn0p63BqwNL9Sd0nK7h2e7AU/WRJZM0RdQs2t2urv+CCimm1mt
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-Currently, the code does:
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-    if (x == 0) {
-    	x &= ~0x3;
-	x |= 0x1;
-    }
+Make sure the remoteproc reg ranges reflect the entire register space
+they refer to.
 
-Zeroing bits 0 and 1 of a variable that is 0 is not necessary. So
-directly set the variable to 1.
+Since they're unused by the driver, there's no functional change.
 
-Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Fixes: f92363d12359 ("[SCSI] mpt3sas: add new driver supporting 12GB SAS")
-Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Fixes: 152d1faf1e2f ("arm64: dts: qcom: add SC8280XP platform")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 ---
- drivers/scsi/mpt3sas/mpt3sas_base.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 87fcafce947c..2cd0bb606d88 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -5629,8 +5629,7 @@ _base_static_config_pages(struct MPT3SAS_ADAPTER *ioc)
- 	if (!ioc->is_gen35_ioc && ioc->manu_pg11.EEDPTagMode == 0) {
- 		pr_err("%s: overriding NVDATA EEDPTagMode setting from 0 to 1.\n",
- 		    ioc->name);
--		ioc->manu_pg11.EEDPTagMode &= ~0x3;
--		ioc->manu_pg11.EEDPTagMode |= 0x1;
-+		ioc->manu_pg11.EEDPTagMode = 0x1;
- 		mpt3sas_config_set_manufacturing_pg11(ioc, &mpi_reply,
- 		    &ioc->manu_pg11);
- 	}
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+index ef06d1ac084d3205a149feff880f457822dca2b4..c97d1eeaf890f7ac2814297bff299c0bdd0ddd04 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+@@ -2743,7 +2743,7 @@ usb_2_qmpphy1: phy@88f1000 {
+ 
+ 		remoteproc_adsp: remoteproc@3000000 {
+ 			compatible = "qcom,sc8280xp-adsp-pas";
+-			reg = <0 0x03000000 0 0x100>;
++			reg = <0 0x03000000 0 0x10000>;
+ 
+ 			interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
+@@ -5254,7 +5254,7 @@ cpufreq_hw: cpufreq@18591000 {
+ 
+ 		remoteproc_nsp0: remoteproc@1b300000 {
+ 			compatible = "qcom,sc8280xp-nsp0-pas";
+-			reg = <0 0x1b300000 0 0x100>;
++			reg = <0 0x1b300000 0 0x10000>;
+ 
+ 			interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_nsp0_in 0 IRQ_TYPE_EDGE_RISING>,
+@@ -5385,7 +5385,7 @@ compute-cb@14 {
+ 
+ 		remoteproc_nsp1: remoteproc@21300000 {
+ 			compatible = "qcom,sc8280xp-nsp1-pas";
+-			reg = <0 0x21300000 0 0x100>;
++			reg = <0 0x21300000 0 0x10000>;
+ 
+ 			interrupts-extended = <&intc GIC_SPI 887 IRQ_TYPE_EDGE_RISING>,
+ 					      <&smp2p_nsp1_in 0 IRQ_TYPE_EDGE_RISING>,
+
+---
+base-commit: 3e42dc9229c5950e84b1ed705f94ed75ed208228
+change-id: 20241212-topic-8280_rproc_reg-15c636427963
+
+Best regards,
 -- 
-2.45.2
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
