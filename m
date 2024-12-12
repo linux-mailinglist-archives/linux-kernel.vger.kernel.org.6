@@ -1,63 +1,55 @@
-Return-Path: <linux-kernel+bounces-442854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9089EE2EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:27:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8669EE2FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:27:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADB9A281A28
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20401694C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6CD212FB2;
-	Thu, 12 Dec 2024 09:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF0120E6FA;
+	Thu, 12 Dec 2024 09:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jHMnIMmy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="aCGkhcMj"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C732210188;
-	Thu, 12 Dec 2024 09:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8E41D89ED;
+	Thu, 12 Dec 2024 09:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733995485; cv=none; b=giuv7UGc0Vi7oLLgdtneC+ha5PhUUaaE7SkEPsVfSuqWuOx1pnzBz0iQUPcL2GgPpULT40oSK0515RJ5vcg8+e/en0lGq4PaWbeU94+2oxo2F7/7HZL6SI4kyC9OQY4hXX3Ustq0w9NrMf5sVlVSGWlR2oo7/gLE05+1D0JlXxU=
+	t=1733995543; cv=none; b=TJI2lccrEO9MgyV7CZV6/U3h6igimUNnyqVe6Xio5X/2DYI+v/3/QWl2f7XWoQWMKJSCThA5CRRxknsOTiN2iVXnFVPaRbiOlOHw1JJ4PR3DmlJXikT+O4eU5zlx8eVlMv8TtJf1L2X9Trq77ounHsD6jDa5iBddEuCscjGE5vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733995485; c=relaxed/simple;
-	bh=vCwIhGCjXmjCA1Ma9uLFUEilpiYAlaITDHBCZV3B3xU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=YMazuY86gFivVBSZCnoFpGSjc+8V6yWLz7xkd/h65EWMEBoWZSffdXsT3HQuL5jrGgf6DRcijjU4jkYQNCLIbWHnuEH8B5CDnB1A91jJA8OgEADGIYJ6cK7JRxbx54FEzO12M9z0ibTgDQd0liWkhseAbNiKrO5XRYxMP0QVPoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jHMnIMmy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7qAXk032186;
-	Thu, 12 Dec 2024 09:24:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H5LtfJQ/X6iDOog7zMSQfkIHxNYMjH3TDsbDmW8i4gs=; b=jHMnIMmy3brPRvkH
-	SKoEZGuTIaUzUJaRmbMFu+TMr2DT/xxeNp9NdOb+ivnOUGp/4Ba8RBrrpBE/0wCs
-	vhIu+S51EkzrFBKnE87E23m2Nb7PzC/CIsn7KqmXHphOfYhFUcMJMUlaWtG9yAIP
-	RVi4aqstYxWEJtsZFOu06sGU4If2xt3blbaGeFd+Glu+ospYrwAi6JSePunbiGf/
-	/+U8IaPTj/tuDcFORUkhuxVCdOKf1eJP2q+MYH7zqEC/1y/0OzhPTWgDKoQXi2/9
-	3CLQGhP0/MFpl2k82JVqExyZKwYX9OtwjHlFCu2sed0jilqT9rqQoQBTdMaUvFQ2
-	WmJ2LQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f6tfbnju-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 09:24:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC9OeTi031749
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 09:24:40 GMT
-Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 12 Dec 2024 01:24:34 -0800
-From: Lijuan Gao <quic_lijuang@quicinc.com>
-Date: Thu, 12 Dec 2024 17:24:05 +0800
-Subject: [PATCH 6/6] arm64: dts: qcom: correct gpio-ranges for QCS8300
+	s=arc-20240116; t=1733995543; c=relaxed/simple;
+	bh=/WPFleMRaz6XFkze61Xn6g7S/ixNgriaPjSFy27wn7Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PesUEyLPduoFYe3dPGmx0G99gdaxKydOJKq37AfPv/KWOcksRoENq6GoGE02+Mce1kxEodf+ConWg+r7R4wIKQQE+pS+1JXGY3mwzoyH4bpdof95azHRHoW26U+Cc8t5BRnQq817ppXy+vbOr8h1ylwXTQkPDBgjrDEL2NewQhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=aCGkhcMj; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:From:Sender:Reply-To:Subject:Date:Message-ID:
+	To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fbgQZq0gSQQJCZVPop/zN/gMfXXbA+Ii4vYjXcq6OpM=; b=aCGkhcMjOnFAXx2RTt7vUORW7E
+	WB+/9NIoI//XHHJ+bckKH9mOHGvDYzzL9WmQ/qgJn6z01lI61OJ6dD2YE7WoM2cPhBqFzzugfHV39
+	a/5kR7PKkB557MxgVBu1LGgchRJKvkrVPuhb1jvL4YelKZrded/XpDBxHa7i/FOeSuWbnYxoDPBFt
+	SbgrdIs43Cdi3dFBF7BJ8C/sZPS5ZLUjMOJNzxZaer9xNPKeO7oGL6rgTZbq1PZt6HULT60X25xAu
+	JP2AVmbmeJjTmyQQrr5JRvzyv5VPUAyemxp5VuOefQ6lPdQReqezu1h7m5Ds8rQww4+TuLjsZ9w+G
+	hGT2o80g==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1tLfRi-008xkM-3K;
+	Thu, 12 Dec 2024 10:25:22 +0100
+From: Nicolas Schier <nicolas@fjasle.eu>
+Date: Thu, 12 Dec 2024 10:24:38 +0100
+Subject: [PATCH] kbuild: deb-pkg: Do request initrd for user-mode-linux
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,73 +58,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241212-correct_gpio_ranges-v1-6-c5f20d61882f@quicinc.com>
-References: <20241212-correct_gpio_ranges-v1-0-c5f20d61882f@quicinc.com>
-In-Reply-To: <20241212-correct_gpio_ranges-v1-0-c5f20d61882f@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Jingyi
- Wang" <quic_jingyw@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Lijuan Gao <quic_lijuang@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733995452; l=930;
- i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
- bh=vCwIhGCjXmjCA1Ma9uLFUEilpiYAlaITDHBCZV3B3xU=;
- b=w+W3WF3kQoLwjmYrXjKI7sLkJeHlHrk4L8f6KD8OKjfbHaV9uUUStyVrVouwmAzvhNOcoxPTx
- OdugC6s5BqjAbEbsFC4EIZLPLlHyElUNJ9sKUZqQ7eSbjloN5rCYd+O
-X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
- pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DC4x-V6h9tQ5jBP2VdOtxJdGGvJ1rLiJ
-X-Proofpoint-ORIG-GUID: DC4x-V6h9tQ5jBP2VdOtxJdGGvJ1rLiJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=470 malwarescore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120065
+Message-Id: <20241212-kbuild-deb-pkg-no-initrd-for-um-v1-1-23243b5c7093@fjasle.eu>
+X-B4-Tracking: v=1; b=H4sIANarWmcC/x3NQQqDMBBG4avIrPuDGcRir1K6MGZiB9tEJrUUx
+ Ls3uPw27+1UxFQK3ZqdTL5aNKcKd2loeo5pFmioJm65c+wYi9/0FRDEY11mpAxN+rGAmA3bG26
+ 6+mH0HLnvqFZWk6i/83B/HMcfvwG4k3EAAAA=
+X-Change-ID: 20241212-kbuild-deb-pkg-no-initrd-for-um-1c7b9ab2f264
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nick Terrell <terrelln@fb.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nicolas Schier <nicolas@fjasle.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2681; i=nicolas@fjasle.eu;
+ h=from:subject:message-id; bh=/WPFleMRaz6XFkze61Xn6g7S/ixNgriaPjSFy27wn7Q=;
+ b=owEBbQKS/ZANAwAIAQdSCnAWJhJpAcsmYgBnWqv//11SOB//zpvX7vnRqZBU9iQ6ppLNvjf1D
+ TmmiPp9jTmJAjMEAAEIAB0WIQSHQTenhzckp4G+wsYHUgpwFiYSaQUCZ1qr/wAKCRAHUgpwFiYS
+ aSByEACuKX+vOpxVo3ufIpQedx55ditHau+2lZf8vYK423Zot3NFO6ng6smsf5TPiGojBNfeyDd
+ yaoEvVarNP+OVvlbW1vwYT5/GCCOX7XU6YwcH5MuGn1eYtDxBTiIf3LbWgY98FWyMhDvEpDLINE
+ 3OlhSCgqPQe4tAtqugPtKTbyljyYK/BZyJI6/Fa9sWkFLADiGYQ3OtljwZ5htc8gB/deuMhDPlD
+ Kscp1ls6+dH+NLmt9tZdQFZ6R9thimZu0PP69PYuIxFw8cqMa2yQgLaA5Njm8j55z1brzyaHnMv
+ syP/1ELgKDNlWcxm4XftwScp9RDvWmWa/L9ib6jF9mA2dszMkJxzOJ3A/hVob6LiCr5D8MPu2VT
+ iYTBdZ4txUQKTzCV5CMcTIbfkFqcsbpPy79DCdObgYk7QC1bV7A7GX8/Jp7AmfbnEhEO2wsYLx4
+ 9c6NRPsr2FaJzx940DT7MhGfODtWuRfCy63y3ES9QJsJSZvNsC4jAcFQKrRlYPjbO2N6l2RAx+h
+ b47SkaVVcEc055l9UrpcquyAdUJ006Xe+jB+VGZSLXMgxFPNkCc4FikM2dERpbD8PnmzFUGXmPD
+ UMOBYI8D2zGCDYJTszd+YMmoX0kU7xgsOGmGJPWwCsiDLgOa+XHReljyOldfw5S5haFLmtHB1lV
+ 6qUBVCGU7IaQZbw==
+X-Developer-Key: i=nicolas@fjasle.eu; a=openpgp;
+ fpr=18ED52DBE34F860EE9FBC82B7D97093255A0CE7F
 
-The QCS8300 TLMM pin controller has GPIOs 0-132, it also has UFS_RESET
-pin for primary UFS memory reset, so correct the gpio-ranges for the UFS
-driver can toggle it.
+Do not request initramfs-tools to build an initrd image for
+user-mode-linux.
 
-Fixes: 7be190e4bdd2 ("arm64: dts: qcom: add QCS8300 platform")
-Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+Building and installing a user-mode-linux Debian package with
+
+    make bindeb-pkg ARCH=um
+    apt install ./user-mode-linux-*.deb
+
+fails reasonable due to missing kernel config in /boot
+(KVER=6.13.0-rc2-00006-g8f2db654f79c):
+
+    update-initramfs: Generating /usr/bin/initrd.img-${KVER}
+    grep: /boot/config-${KVER}: No such file or directory
+    W: zstd compression (CONFIG_RD_ZSTD) not supported by kernel, using
+     gzip
+    grep: /boot/config-${KVER}: No such file or directory
+    E: gzip compression (CONFIG_RD_GZIP) not supported by kernel
+    update-initramfs: failed for /usr/bin/initrd.img-${KVER} with 1.
+    run-parts: /etc/kernel/postinst.d/initramfs-tools exited with return
+     code 1
+    ...
+    dpkg: error processing package user-mode-linux-${KVER} (--configure):
+     installed user-mode-linux-${KVER} package post-installation script
+     subprocess returned error exit status 1
+    Errors were encountered while processing:
+     user-mode-linux-${KVER}
+    E: Sub-process /usr/bin/dpkg returned an error code (1)
+
+There is no need to build initrd for user-mode-linux, so stop requesting
+it.
+
+Signed-off-by: Nicolas Schier <nicolas@fjasle.eu>
 ---
- arch/arm64/boot/dts/qcom/qcs8300.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/package/builddeb | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-index 73abf2ef9c9f..07d6d3ff4365 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-@@ -971,7 +971,7 @@ tlmm: pinctrl@f100000 {
- 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			gpio-ranges = <&tlmm 0 0 133>;
-+			gpio-ranges = <&tlmm 0 0 134>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 			wakeup-parent = <&pdc>;
+diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+index b497b933901013b1b8b82c2c340a88c9257c6193..d88ee487a1f2cfa3365350abe5b2203f48980d36 100755
+--- a/scripts/package/builddeb
++++ b/scripts/package/builddeb
+@@ -46,10 +46,12 @@ install_linux_image () {
+ 		cp System.map "${pdir}/usr/lib/uml/modules/${KERNELRELEASE}/System.map"
+ 		cp ${KCONFIG_CONFIG} "${pdir}/usr/share/doc/${pname}/config"
+ 		gzip "${pdir}/usr/share/doc/${pname}/config"
++		initrd_wanted=No
+ 	else
+ 		mkdir -p "${pdir}/boot"
+ 		cp System.map "${pdir}/boot/System.map-${KERNELRELEASE}"
+ 		cp ${KCONFIG_CONFIG} "${pdir}/boot/config-${KERNELRELEASE}"
++		initrd_wanted=$(if_enabled_echo CONFIG_BLK_DEV_INITRD Yes No)
+ 	fi
+ 
+ 	# Not all arches have the same installed path in debian
+@@ -82,7 +84,7 @@ install_linux_image () {
+ 		export DEB_MAINT_PARAMS="\$*"
+ 
+ 		# Tell initramfs builder whether it's wanted
+-		export INITRD=$(if_enabled_echo CONFIG_BLK_DEV_INITRD Yes No)
++		export INITRD=${initrd_wanted}
+ 
+ 		# run-parts will error out if one of its directory arguments does not
+ 		# exist, so filter the list of hook directories accordingly.
 
+---
+base-commit: 8f2db654f79c7fa579c64eda2b5db44553d6e513
+change-id: 20241212-kbuild-deb-pkg-no-initrd-for-um-1c7b9ab2f264
+
+Best regards,
 -- 
-2.46.0
+Nicolas
 
 
