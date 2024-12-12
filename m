@@ -1,136 +1,136 @@
-Return-Path: <linux-kernel+bounces-442739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5679EE10A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:18:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF399EE117
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:19:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB333188B3B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:19:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4521020DD6A;
+	Thu, 12 Dec 2024 08:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ioJAYtTb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A975B2810FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:18:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAB320C466;
-	Thu, 12 Dec 2024 08:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lxhE+TWe"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890F6126C01;
-	Thu, 12 Dec 2024 08:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32C1126C01;
+	Thu, 12 Dec 2024 08:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991502; cv=none; b=SLF5jRg/tLub1ibBaMfM8sUuEpR8myNBY2N1JKAsax/cgMbjHg3eGHwhOGC0MVqisTe5hziOzsxVbct2K8+HH/7KSEwctqVgc6b25wZ/JU0uEScEk0hHvysUHDhhaPDyWEa3sAR/kjs2+6+BSiidfRwdgS9HSah8lR/ILjETVVs=
+	t=1733991523; cv=none; b=E/buPLu6ICj/ZXJCGNWLVeUqPg+FUuEuo66aPJuZAj7FIlRCDfO1VjcGW98xicbs62r2FL4pQ5sPKcybclSZE1qdfkUVgraaIgTTW7UeQa9LwFhcjkSi/KEYzMnDXnrRKFys6adl/r9Hl1ij6E0YfKxC8Kt/wk7Oiaj4Jj+9x7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991502; c=relaxed/simple;
-	bh=9u0EssyiR9jPCJXXENhMiwaH0C7px6oEo+PfyB7UW9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fwfHc4aqINDzhDLnJI2v8VHk+ZWP/xDOI4Ic5yldAiKtDZV+W166T+CO61BF7zvEbOekp807up1nm7VZWHOWQ1l+1qi/JgHWIVA1e0S9rGpqOq8EnvyPWXKoO7fI9N3OSdgc9zzF78PMHWpYh5l4skNs2mRq2toB3C1NDkO+PyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lxhE+TWe; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id LeOatTTIgshnBLeObtEztn; Thu, 12 Dec 2024 09:18:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733991489;
-	bh=00Te5LkHVNFFflrQpCPuLSqGbddJ7mVyn5/l4cEM7RM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=lxhE+TWej8depxWvfP6sIBSAshiRXQiOXDFWjYfE9kuLSQQfff1Cs/8R1tcmPfFEC
-	 O6FkK6gtt5zr9de2K6DZ+xwkeOms6NfisLex3Ytcc7/2Wbw5C+UAFmAHtUbukAliW+
-	 mNPuyYcLY8zvtM4YFweUzbhS0uUIrUZhpd5XWKbvybwilv26KasVgwUFwASTAzkT5V
-	 GCDnU/E7C4dXbBVrdroSijReZQBG45fpD3waUIqdfSv4Yoixvs7wrmw1jVaR3eAQ0E
-	 tYiQXSfLT/H6uo3yJ5SQ2VfQyh3qrpQ0XORLmFOZDgsOBrUbxdZ4Fiu0SvfLKZB094
-	 ZXfkUTi77H3mA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 12 Dec 2024 09:18:09 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <a50f9f86-b0f4-484a-85ef-9dd1e5737d83@wanadoo.fr>
-Date: Thu, 12 Dec 2024 09:18:04 +0100
+	s=arc-20240116; t=1733991523; c=relaxed/simple;
+	bh=dVHHLoWyfFDn4SykayA6jpY7XugJsCld6W0h27L/1oo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O/GghdHBAsGmuAnUvH7FaGSPonZpNyNWl3WJNJwrifbENY7scj8pUROE0BUL9mFL9AqLvZzYXsxEHR0Xi3bnmDz2y3BmGLGfOP24RuN8QbwNT1iJuIFBnu/pVfV1AVkLRVu9ZtvcEB7TGGadsneMFFx3WzYFjYysJsT9txxhPcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioJAYtTb; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733991522; x=1765527522;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=dVHHLoWyfFDn4SykayA6jpY7XugJsCld6W0h27L/1oo=;
+  b=ioJAYtTbNBFonlxPrUh0yGbFolMi4Z7osuz3yrhoWGoJ2SoaxqZ5BRiM
+   kedP89Iwalsk/aV4KeZu1H08UcgJleo07WMkPGJqcg7qNBDD/KHHBsRQm
+   a63OvafedMU4NTcgLd+f50h59Mm8byzAgWtGqPmu5+OhzOV6lFJOyYZO9
+   ZUd2lU30vm+MYICc3AFtWZwdxx7w7NlR5X2ZxnlPIsODymOdDzk3EwI7m
+   1qrKRQqrmjwg1M0aJDbpvIExrIfyKr8rVu0GbSOisBz2u+I0bhDbdJk88
+   ANGB7XqdV8pPlXSvKpYlBqZkcZVRoVcFrk1S+QmPxbtB1AocxVvRgGBuP
+   w==;
+X-CSE-ConnectionGUID: HfQnmDw+R2eH/H8w2YIqrQ==
+X-CSE-MsgGUID: JCe5ne/6Samuom5oKi6FVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="38086244"
+X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
+   d="scan'208";a="38086244"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 00:18:41 -0800
+X-CSE-ConnectionGUID: AIQA0pf8S+KINcKZiVC2wA==
+X-CSE-MsgGUID: 5JT1BapkSSCqRnj0Cwzaiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
+   d="scan'208";a="96397015"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.101])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 00:18:33 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Johan Hovold
+ <johan@kernel.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Karol Herbst <kherbst@redhat.com>, Lyude
+ Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2 1/4] drm/dp: Add helper to set LTTPRs in transparent
+ mode
+In-Reply-To: <3omcjrgfkdmw466ok7gej2jge25vtwzaiycwz2xgejwppyvkza@rhssgk7xz4hj>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241211-drm-dp-msm-add-lttpr-transparent-mode-set-v2-0-d5906ed38b28@linaro.org>
+ <20241211-drm-dp-msm-add-lttpr-transparent-mode-set-v2-1-d5906ed38b28@linaro.org>
+ <Z1mk08SHEd5_vc99@hovoldconsulting.com>
+ <3omcjrgfkdmw466ok7gej2jge25vtwzaiycwz2xgejwppyvkza@rhssgk7xz4hj>
+Date: Thu, 12 Dec 2024 10:18:30 +0200
+Message-ID: <87pllxxqjt.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] net: mdio: Add RTL9300 MDIO driver
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, lee@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, tsbogend@alpha.franken.de,
- hkallweit1@gmail.com, linux@armlinux.org.uk, markus.stockhausen@gmx.de
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20241211235342.1573926-1-chris.packham@alliedtelesis.co.nz>
- <20241211235342.1573926-5-chris.packham@alliedtelesis.co.nz>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241211235342.1573926-5-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Le 12/12/2024 à 00:53, Chris Packham a écrit :
-> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
-> switches with integrated SoC. There are 4 physical SMI interfaces on the
-> RTL9300 but access is done using the switch ports so a single MDIO bus
-> is presented to the rest of the system.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+On Wed, 11 Dec 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> On Wed, Dec 11, 2024 at 03:42:27PM +0100, Johan Hovold wrote:
+>> On Wed, Dec 11, 2024 at 03:04:12PM +0200, Abel Vesa wrote:
+>>  
+>> > +/**
+>> > + * drm_dp_lttpr_set_transparent_mode - set the LTTPR in transparent mode
+>> > + * @aux: DisplayPort AUX channel
+>> > + * @enable: Enable or disable transparent mode
+>> > + *
+>> > + * Returns 0 on success or a negative error code on failure.
+>> > + */
+>> > +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable)
+>> > +{
+>> > +	u8 val = enable ? DP_PHY_REPEATER_MODE_TRANSPARENT :
+>> > +			  DP_PHY_REPEATER_MODE_NON_TRANSPARENT;
+>> > +	int ret = drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE, val);
+>> > +
+>> > +	return ret == 1 ? 0 : ret;
+>> 
+>> This looks correct, but I had to go look at drm_dp_dpcd_writeb() to make
+>> sure it never returns 0 (for short transfers).
+>> 
+>> > +}
+>> > +EXPORT_SYMBOL(drm_dp_lttpr_set_transparent_mode);
+>> 
+>> This appears to be what the driver currently uses, but why not
+>> EXPORT_SYMBOL_GPL?
+>
+> $ git grep EXPORT_SYMBOL drivers/gpu/drm/*.c | wc -l
+> 962
+> $ git grep EXPORT_SYMBOL_GPL drivers/gpu/drm/*.c | wc -l
+> 93
 
-...
+It's even more tilted under display/.
 
-> +	err = regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL_1,
-> +			   PHY_CTRL_RWOP | PHY_CTRL_TYPE | PHY_CTRL_CMD);
-> +	if (err)
-> +		return err;
-> +
-> +	err = regmap_read_poll_timeout(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL_1,
-> +				       val, !(val & PHY_CTRL_CMD), 10, 100);
-> +	if (err)
-> +		return err;
-> +
-> +	if (val & PHY_CTRL_FAIL) {
-> +		err = -ENXIO;
-> +		return err;
+BR,
+Jani.
 
-Nitpick: return -ENXIO; and remove the { }
 
-> +	}
-> +
-> +	return err;
-
-Nitpick: return 0;
-
-> +}
-> +
-> +static int realtek_mdiobus_init(struct realtek_mdio_priv *priv)
-> +{
-> +	u32 port_addr[5] = { };
-> +	u32 poll_sel[2] = { 0, 0 };
-
-Nitpick: Why {} in on case and {0,0} in the other one?
-
-> +	u32 glb_ctrl_mask = 0, glb_ctrl_val = 0;
-> +	int i, err;
-> +
-> +	for (i = 0; i < MAX_PORTS; i++) {
-> +		int pos;
-> +
-> +		if (priv->smi_bus[i] > 3)
-> +			continue;
-> +
-> +		pos = (i % 6) * 5;
-> +		port_addr[i / 6] |=  priv->smi_addr[i] << pos;
-> +
-> +		pos = (i % 16) * 2;
-> +		poll_sel[i / 16] |= priv->smi_bus[i] << pos;
-> +	}
-
-...
-
-CJ
-
+-- 
+Jani Nikula, Intel
 
