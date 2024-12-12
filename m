@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-443226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D7D9EE90A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:37:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 136739EE91C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB57A1881F93
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:37:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14164168AD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936402153D2;
-	Thu, 12 Dec 2024 14:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="svVMeYP1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7641223324;
+	Thu, 12 Dec 2024 14:38:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E784820E716
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2928223339
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734014249; cv=none; b=pI/rIL/nAfymlg5qAQp8yzxRMHIEndJMM0cxNcu8iUI78tWvBlOzZxLxe5ojcCjLTwoUgVC1WFtPPYe9NRaxIRQkcXM7alDIusJhtLozKHHpWzE0h1GtNhZU7e+NwKrMJcaoyKDHTs6DtVu7Yzt8olKj17L/cTE23FRtyhohzFk=
+	t=1734014286; cv=none; b=HXoXqsOcmVV/SMVnYDh/dvGh+mHHniy7/7PMXnQ4AgVhSx8o6Thd0TCe/VBg27xJFhV1MEsQw4TddByky+c+QrD3vHRn2IU0H9rqtJzlRB+6SfvGX0H5WoOFpjAh9kFH5SH14C4JhUofC1WCa5C7JvGnrH7jPkQhH3RnVp4EHlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734014249; c=relaxed/simple;
-	bh=WsYDpOccyVPoDy4C8ZsKQB/iVD9Pz0H1m0VQR/wlZro=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sXAliEw156Z/rNPXARZe/Aj0xvS404ny8twLPk0H8hh/bUG7QFegiDVUjgyyfBeUPWJlyuM9dfiBKbXB0YZAMR9stggx1C/1XHUsjh0vDpVQCjsnFHT1Z3g0V//dawA5L2Hl1wQ9gE4YRmFVKMq5X2v+JpXqneVcFPNqhldEYhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=svVMeYP1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F383C4CED4;
-	Thu, 12 Dec 2024 14:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734014248;
-	bh=WsYDpOccyVPoDy4C8ZsKQB/iVD9Pz0H1m0VQR/wlZro=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=svVMeYP1FzPClq2uVocAQss0DKp9XPiEk5Nl+z812Oni0C8cb8ZZI6RnN+3Q2dgac
-	 EI2Tf2V0qM7TRrHI3uyOb+suoP70wMdRKY54gptewoejv13Wqnmpl9K4v4QRJ9M5K0
-	 psURjxYZTu7YBov3HmN6zf+E7e2+dh8ZFlXD6FDeJiLW6q2C+wIsPzMLe/Rw8MnEhA
-	 Wb7vhWPy2K6rxTvV7xyaLU3HbwRsfyOCJJJqtvpcSLEFV+lWLJPqMwOjNLUsojUuNM
-	 vtMu5kgn3y/tah7ZQ4CUHdstv/CCCDTrnFBMWAOtKxlFRJTkXnhIlNxRgvQgWxF5N/
-	 taxHxtz+5YzEA==
-Message-ID: <60207b33-ed3c-48ef-95f6-076c2c12f177@kernel.org>
-Date: Thu, 12 Dec 2024 22:37:29 +0800
+	s=arc-20240116; t=1734014286; c=relaxed/simple;
+	bh=wRPXTTcvzE1/hW5hRm+lkqIhyFeY0E6JzT6LLVTgbhg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=g/OE1wP/O0jfvg/PfveFYFs7hUKkDPmNtEAJ+9nNpkShyhiSeTIjg9VEp2RCLIujiR3q9+jNNGWvlxuBA6iSZVCeYsj7Xea5wZPbDqdiUOp8A9KYiWKVY4pPzLE0Gpd4LjtLczCO9hBKSF/qwPtxZJfkWFSdIxSsZLAgdi8BHME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a9cefa1969so6257335ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:38:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734014282; x=1734619082;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m0gvdui7FbksT7OTFX5a7TvcKbA/YbVlR11UKArxqOs=;
+        b=TpxPteZCqUqa7EpKbfI/pSDAI+e74HK3xHn8mw4hImoZGlKrJZ7DZUUSTpo+ugFmy7
+         /pX/pPDKfryHhGwsMpqdcUNjBSfHP5oxczPpkzcYVxoTPWb1AYkaEBwZUBxxgPh7lVzq
+         PhIV4+bxCjy1iYcmNudg/JaDjiYdaFoXwB9gfSzGFMixAxxD8q0ucVYv2Q73YYIgoSiu
+         1kLtRh419xAxDehGRh7i7teXrD7Cy8p8SI+uIBJZWEAA3yh2iShxEbWD84vsI7oZBhBv
+         bo6aUW6Ug44ylVRnzkUydltAxYIfTDTzf8eKyAtLpa7hdVNAd3soz6olmM4cq8qU0vyP
+         z6NQ==
+X-Gm-Message-State: AOJu0YyqJMplpj6Tl/A8fswLh3tHnDcdZpPzdmVzzJ5ZYlvkvdFiqZJz
+	4cqAsCcVQKVonoFFK3c+H/ZVj8F4bu0czItHlvYsd9V4HVwJrvsjmaD6nxtvMudtyau9TarCG9d
+	61cZLT/5bqR15V/pPvPMp9zYYcE0XUFuLhCrbTW1oQj/UaKryw1z314o=
+X-Google-Smtp-Source: AGHT+IGuLgry+67vnKLaPqpKFNqtaiYvjJSvbDCjv0mB6hLExwGGDdio61i9DkdbQ5mun7RxHl8FDVsJfz073JFwRq2YOuXknXAE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] erofs: use `struct erofs_device_info` for the primary
- device
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
-References: <20241212133504.2047178-1-hsiangkao@linux.alibaba.com>
- <20241212133504.2047178-2-hsiangkao@linux.alibaba.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-Autocrypt: addr=chao@kernel.org; keydata=
- xsFNBFYs6bUBEADJuxYGZRMvAEySns+DKVtVQRKDYcHlmj+s9is35mtlhrLyjm35FWJY099R
- 6DL9bp8tAzLJOMBn9RuTsu7hbRDErCCTiyXWAsFsPkpt5jgTOy90OQVyTon1i/fDz4sgGOrL
- 1tUfcx4m5i5EICpdSuXm0dLsC5lFB2KffLNw/ZfRuS+nNlzUm9lomLXxOgAsOpuEVps7RdYy
- UEC81IYCAnweojFbbK8U6u4Xuu5DNlFqRFe/MBkpOwz4Nb+caCx4GICBjybG1qLl2vcGFNkh
- eV2i8XEdUS8CJP2rnp0D8DM0+Js+QmAi/kNHP8jzr7CdG5tje1WIVGH6ec8g8oo7kIuFFadO
- kwy6FSG1kRzkt4Ui2d0z3MF5SYgA1EWQfSqhCPzrTl4rJuZ72ZVirVxQi49Ei2BI+PQhraJ+
- pVXd8SnIKpn8L2A/kFMCklYUaLT8kl6Bm+HhKP9xYMtDhgZatqOiyVV6HFewfb58HyUjxpza
- 1C35+tplQ9klsejuJA4Fw9y4lhdiFk8y2MppskaqKg950oHiqbJcDMEOfdo3NY6/tXHFaeN1
- etzLc1N3Y0pG8qS/mehcIXa3Qs2fcurIuLBa+mFiFWrdfgUkvicSYqOimsrE/Ezw9hYhAHq4
- KoW4LQoKyLbrdOBJFW0bn5FWBI4Jir1kIFHNgg3POH8EZZDWbQARAQABzRlDaGFvIFl1IDxj
- aGFvQGtlcm5lbC5vcmc+wsF3BBMBCgAhBQJWLOm1AhsDBQsJCAcDBRUKCQgLBRYCAwEAAh4B
- AheAAAoJEKTPgB1/p52Gm2MP/0zawCU6QN7TZuJ8R1yfdhYr0cholc8ZuPoGim69udQ3otet
- wkTNARnpuK5FG5la0BxFKPlazdgAU1pt+dTzCTS6a3/+0bXYQ5DwOeBPRWeFFklm5Frmk8sy
- wSTxxEty0UBMjzElczkJflmCiDfQunBpWGy9szn/LZ6jjIVK/BiR7CgwXTdlvKcCEkUlI7MD
- vTj/4tQ3y4Vdx+p7P53xlacTzZkP+b6D2VsjK+PsnsPpKwaiPzVFMUwjt1MYtOupK4bbDRB4
- NIFSNu2HSA0cjsu8zUiiAvhd/6gajlZmV/GLJKQZp0MjHOvFS5Eb1DaRvoCf27L+BXBMH4Jq
- 2XIyBMm+xqDJd7BRysnImal5NnQlKnDeO4PrpFq4JM0P33EgnSOrJuAb8vm5ORS9xgRlshXh
- 2C0MeyQFxL6l+zolEFe2Nt2vrTFgjYLsm2vPL+oIPlE3j7ToRlmm7DcAqsa9oYMlVTTnPRL9
- afNyrsocG0fvOYFCGvjfog/V56WFXvy9uH8mH5aNOg5xHB0//oG9vUyY0Rv/PrtW897ySEPh
- 3jFP/EDI0kKjFW3P6CfYG/X1eaw6NDfgpzjkCf2/bYm/SZLV8dL2vuLBVV+hrT1yM1FcZotP
- WwLEzdgdQffuQwJHovz72oH8HVHD2yvJf2hr6lH58VK4/zB/iVN4vzveOdzlzsFNBFYs6bUB
- EADZTCTgMHkb6bz4bt6kkvj7+LbftBt5boKACy2mdrFFMocT5zM6YuJ7Ntjazk5z3F3IzfYu
- 94a41kLY1H/G0Y112wggrxem6uAtUiekR9KnphsWI9lRI4a2VbbWUNRhCQA8ag7Xwe5cDIV5
- qb7r7M+TaKaESRx/Y91bm0pL/MKfs/BMkYsr3wA1OX0JuEpV2YHDW8m2nFEGP6CxNma7vzw+
- JRxNuyJcNi+VrLOXnLR6hZXjShrmU88XIU2yVXVbxtKWq8vlOSRuXkLh9NQOZn7mrR+Fb1EY
- DY1ydoR/7FKzRNt6ejI8opHN5KKFUD913kuT90wySWM7Qx9icc1rmjuUDz3VO+rl2sdd0/1h
- Q2VoXbPFxi6c9rLiDf8t7aHbYccst/7ouiHR/vXQty6vSUV9iEbzm+SDpHzdA8h3iPJs6rAb
- 0NpGhy3XKY7HOSNIeHvIbDHTUZrewD2A6ARw1VYg1vhJbqUE4qKoUL1wLmxHrk+zHUEyLHUq
- aDpDMZArdNKpT6Nh9ySUFzlWkHUsj7uUNxU3A6GTum2aU3Gh0CD1p8+FYlG1dGhO5boTIUsR
- 6ho73ZNk1bwUj/wOcqWu+ZdnQa3zbfvMI9o/kFlOu8iTGlD8sNjJK+Y/fPK3znFqoqqKmSFZ
- aiRALjAZH6ufspvYAJEJE9eZSX7Rtdyt30MMHQARAQABwsFfBBgBCgAJBQJWLOm1AhsMAAoJ
- EKTPgB1/p52GPpoP/2LOn/5KSkGHGmdjzRoQHBTdm2YV1YwgADg52/mU68Wo6viStZqcVEnX
- 3ALsWeETod3qeBCJ/TR2C6hnsqsALkXMFFJTX8aRi/E4WgBqNvNgAkWGsg5XKB3JUoJmQLqe
- CGVCT1OSQA/gTEfB8tTZAGFwlw1D3W988CiGnnRb2EEqU4pEuBoQir0sixJzFWybf0jjEi7P
- pODxw/NCyIf9GNRNYByUTVKnC7C51a3b1gNs10aTUmRfQuu+iM5yST5qMp4ls/yYl5ybr7N1
- zSq9iuL13I35csBOn13U5NE67zEb/pCFspZ6ByU4zxChSOTdIJSm4/DEKlqQZhh3FnVHh2Ld
- eG/Wbc1KVLZYX1NNbXTz7gBlVYe8aGpPNffsEsfNCGsFDGth0tC32zLT+5/r43awmxSJfx2P
- 5aGkpdszvvyZ4hvcDfZ7U5CBItP/tWXYV0DDl8rCFmhZZw570vlx8AnTiC1v1FzrNfvtuxm3
- 92Qh98hAj3cMFKtEVbLKJvrc2AO+mQlS7zl1qWblEhpZnXi05S1AoT0gDW2lwe54VfT3ySon
- 8Klpbp5W4eEoY21tLwuNzgUMxmycfM4GaJWNCncKuMT4qGVQO9SPFs0vgUrdBUC5Pn5ZJ46X
- mZA0DUz0S8BJtYGI0DUC/jAKhIgy1vAx39y7sAshwu2VILa71tXJ
-In-Reply-To: <20241212133504.2047178-2-hsiangkao@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:cda4:0:b0:3a7:d672:652d with SMTP id
+ e9e14a558f8ab-3ae589a78b3mr5245425ab.16.1734014282679; Thu, 12 Dec 2024
+ 06:38:02 -0800 (PST)
+Date: Thu, 12 Dec 2024 06:38:02 -0800
+In-Reply-To: <20241212142157.3707515-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675af54a.050a0220.1334be.003f.GAE@google.com>
+Subject: Re: [syzbot] [net?] [afs?] WARNING in rxrpc_send_data
+From: syzbot <syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/12/12 21:35, Gao Xiang wrote:
-> Instead of just listing each one directly in `struct erofs_sb_info`
-> except that we still use `sb->s_bdev` for the primary block device.
-> 
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Hello,
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in rxrpc_send_data
 
-Thanks,
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6653 at net/rxrpc/sendmsg.c:296 rxrpc_alloc_txqueue net/rxrpc/sendmsg.c:296 [inline]
+WARNING: CPU: 0 PID: 6653 at net/rxrpc/sendmsg.c:296 rxrpc_send_data+0x2969/0x2b30 net/rxrpc/sendmsg.c:390
+Modules linked in:
+CPU: 0 UID: 0 PID: 6653 Comm: syz.0.16 Not tainted 6.13.0-rc1-syzkaller-00417-gf3674384709b-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+RIP: 0010:rxrpc_alloc_txqueue net/rxrpc/sendmsg.c:296 [inline]
+RIP: 0010:rxrpc_send_data+0x2969/0x2b30 net/rxrpc/sendmsg.c:390
+Code: 24 48 48 89 de e8 97 35 ab f6 4c 39 f3 b8 00 fe ff ff 41 bf fc ff ff ff 44 0f 44 f8 45 31 f6 e9 71 fd ff ff e8 98 30 ab f6 90 <0f> 0b 90 48 8b 7c 24 28 e8 aa d0 09 f7 e9 46 fd ff ff 89 d9 80 e1
+RSP: 0018:ffffc90003d4f3a0 EFLAGS: 00010293
+RAX: ffffffff8af44188 RBX: ffff88805a8bce80 RCX: ffff8880263e8000
+RDX: 0000000000000000 RSI: 00000000000000ff RDI: ffff888034486440
+RBP: ffffc90003d4f650 R08: ffff88803448643f R09: 0000000000000000
+R10: ffff888034486340 R11: ffffed1006890c88 R12: ffff88805a8bce48
+R13: 1ffff1100b5179cf R14: ffff888034486000 R15: 0000000000000000
+FS:  00007fc905bbc6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000559e43303950 CR3: 0000000025e2a000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ rxrpc_do_sendmsg+0x1569/0x1910 net/rxrpc/sendmsg.c:763
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:726
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2583
+ ___sys_sendmsg net/socket.c:2637 [inline]
+ __sys_sendmmsg+0x36a/0x720 net/socket.c:2726
+ __do_sys_sendmmsg net/socket.c:2753 [inline]
+ __se_sys_sendmmsg net/socket.c:2750 [inline]
+ __x64_sys_sendmmsg+0xa0/0xb0 net/socket.c:2750
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc904d7ff19
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc905bbc058 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 00007fc904f45fa0 RCX: 00007fc904d7ff19
+RDX: 0000000000000001 RSI: 0000000020005c00 RDI: 0000000000000003
+RBP: 00007fc904df3cc8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fc904f45fa0 R15: 00007ffcacaf6308
+ </TASK>
+
+
+Tested on:
+
+commit:         f3674384 Merge branch 'net-smc-two-features-for-smc-r'
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17821be8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
+dashboard link: https://syzkaller.appspot.com/bug?extid=ff11be94dfcd7a5af8da
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17ec1be8580000
+
 
