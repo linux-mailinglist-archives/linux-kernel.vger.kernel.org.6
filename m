@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-443053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C819EE64D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:07:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B4D79EE659
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:09:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26004162D47
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:06:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66FFB16086A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD2F212D8A;
-	Thu, 12 Dec 2024 12:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOPPW2lL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64133212D66;
-	Thu, 12 Dec 2024 12:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AEA212B0F;
+	Thu, 12 Dec 2024 12:09:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DD7259495;
+	Thu, 12 Dec 2024 12:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734005195; cv=none; b=MbhtObSANxlqwcR0fGfNhT7qLvJvxrNZ7UnuABVGOvtpTLLoh6KdbEjC+OzYtgBdAsI2TfKoHtvJOn4LULE4z4N7cfL2SBQi8C3PrkySsBQWYWVRiZ2xIBWJ7gSWxhkJ4rRw3jhz+2n1n/1zvOH+OWS8pvhGMtVJJW87ntjrgIo=
+	t=1734005384; cv=none; b=eIOYeW6bE/ky/EDdYtwVJ6hB1TePifMG3Ig4gxjgppWQhxKA0tRJtnjQMiw9fJUUhCnN/MWfCj4AnKTTI+08YqR3DGltcnNKkjR2cg+VLe+U1SV7bL5dOTbUOhT3l+pQqkIN6ECRS3dbsAjSZI/1sXn6L8As09+pLf+aBOX3ue4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734005195; c=relaxed/simple;
-	bh=ZizdM55Ba4mlDI4F2QZatAUuD6hBE1ZGtByMBWaKgfY=;
+	s=arc-20240116; t=1734005384; c=relaxed/simple;
+	bh=XF4noY+86Jp0DsYD/q3KZwDyyRyJQ4sWwBl4yWo4NwA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I+tqSg4s+SsfeQG5ggENfVhibwV0Mxa15nfRQxxWTJGJAdhVNAkoyGTfasq6UAOg/hzZ+A46Np6dwqrEvY1lSIWbuxTcPYRNmvidI2fzQx/z5vJTJE2Q21bJUAtf67iKF4HsJFv2UXQgyHyTqSHFFfwTk478kC6+0LN2Pj4UnZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOPPW2lL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D83CC4CECE;
-	Thu, 12 Dec 2024 12:06:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734005195;
-	bh=ZizdM55Ba4mlDI4F2QZatAUuD6hBE1ZGtByMBWaKgfY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hOPPW2lLfbC6LfVCH41sdrAYtkuD1BXQnB/gKrJUTKKE0DOlJCJMS2iZSd9ZyNjHw
-	 bpN7fOagXrmFZ7LNXTFOlR9UzDeYmpX2lIvkZLM319JybnSb4XUZwZzxOpnm/CUaUz
-	 00gwPxKW9jnzN8mNCt6UImN+tYXEtvMdJPhEsLA1Kqxp5yQFSu4oEL/Vxvhvhh1+HS
-	 +h6biE55fdeESjX5MEGDX6a86bxswNDq21P0pBb7s//XrCYr44EuPasEcN0BaNO2iK
-	 B2AKhBemagN09zSAvSBWDegO4hT7BaKouMw5/Sv4iLiNh2Bb9DvdYAS66SG1RE7dyt
-	 iYk0Kr0OPvuzA==
-Message-ID: <6ccbf7a8-21d3-4de7-b60d-cc51de323712@kernel.org>
-Date: Thu, 12 Dec 2024 14:06:30 +0200
+	 In-Reply-To:Content-Type; b=b6Mm8jLh0Hz3qYiccbcnwvEKpt6xi6i5s04qpvf0InaN8MGSooojjTyfI6j7M4LxpOihquNWebx1mWgkHzWJDgZlOewhW97kHMR1UQntmo5iO4e3HnXkshMuVYanQabT6o11UQtDbIJxEtaw921u5ziYA0pGFC4DBfVkOfbU7XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EEA9153B;
+	Thu, 12 Dec 2024 04:10:08 -0800 (PST)
+Received: from [10.1.37.59] (e127648.arm.com [10.1.37.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A01EC3F720;
+	Thu, 12 Dec 2024 04:09:38 -0800 (PST)
+Message-ID: <097bee29-64b5-444d-a3ae-81c2dcc35ae7@arm.com>
+Date: Thu, 12 Dec 2024 12:09:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,76 +41,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usb: dwc3: dwc3-am62: Re-initialize controller if lost
- power in PM suspend
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Siddharth Vadapalli <s-vadapalli@ti.com>, "srk@ti.com" <srk@ti.com>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241209-am62-dwc3-io-ddr-v2-1-da320392b509@kernel.org>
- <20241210225840.r22ds7g3rt4zelnq@synopsys.com>
+Subject: Re: [PATCH v1] PM: EM: Move sched domains rebuild function from
+ schedutil to EM
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Pierre Gondois <pierre.gondois@arm.com>
+References: <4977135.31r3eYUQgx@rjwysocki.net>
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241210225840.r22ds7g3rt4zelnq@synopsys.com>
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <4977135.31r3eYUQgx@rjwysocki.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 11/12/2024 00:58, Thinh Nguyen wrote:
-> On Mon, Dec 09, 2024, Roger Quadros wrote:
->> If controller looses power during PM suspend then re-initialize
->> it. We use the DEBUG_CFG register to track if controller lost power
->> or was reset in PM suspend.
->>
->> Move all initialization code into dwc3_ti_init() so it can be re-used.
->>
->> Signed-off-by: Roger Quadros <rogerq@kernel.org>
->> ---
->> Changes in v2:
->> - fixed macro USBSS_DEBUG_CFG_OFF to 0
->> - Link to v1: https://urldefense.com/v3/__https://lore.kernel.org/r/20241122-am62-dwc3-io-ddr-v1-1-cc4956449420@kernel.org__;!!A4F2R9G_pg!fQlfE8tlmLW59YBhswZnfOSf_zypGRcqWV312B5A0NF0rLaOFPvTkWaPzCoKpz9E-2iihXpR87fFTrfubb-v$ 
->> ---
->>  drivers/usb/dwc3/dwc3-am62.c | 82 +++++++++++++++++++++++++++++---------------
->>  1 file changed, 55 insertions(+), 27 deletions(-)
->>
->> diff --git a/drivers/usb/dwc3/dwc3-am62.c b/drivers/usb/dwc3/dwc3-am62.c
->> index 5e3d1741701f..7eef945b1f89 100644
->> --- a/drivers/usb/dwc3/dwc3-am62.c
->> +++ b/drivers/usb/dwc3/dwc3-am62.c
->> @@ -108,6 +108,9 @@
->>  
->>  #define DWC3_AM62_AUTOSUSPEND_DELAY	100
->>  
->> +#define USBSS_DEBUG_CFG_OFF		0x0
->> +#define USBSS_DEBUG_CFG_DISABLED	0x7
->> +
->>  struct dwc3_am62 {
->>  	struct device *dev;
->>  	void __iomem *usbss;
->> @@ -117,6 +120,7 @@ struct dwc3_am62 {
->>  	unsigned int offset;
->>  	unsigned int vbus_divider;
->>  	u32 wakeup_stat;
->> +	void __iomem *phy;
+On 12/12/24 12:01, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> This is an odd way to name the iomem. I would associate "phy" to a
-> device more than an iomem. How about phy_regs?
+> Function sugov_eas_rebuild_sd() defined in the schedutil cpufreq governor
+> implements generic functionality that may be useful in other places.  In
+> particular, there is a plan to use it in the intel_pstate driver in the
+> future.
 > 
-> In any case, it's just minor nit. Regardless whether you want to rename
-> it or not:
-
-I agree with you that it is better to rename. I'll post a v3 soon.
-
+> For this reason, move it from schedutil to the energy model code and
+> rename it to em_rebuild_sched_domains().
 > 
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> This also helps to get rid of some #ifdeffery in schedutil which is a
+> plus.
 > 
-> BR,
-> Thinh
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
--- 
-cheers,
--roger
-
+As already mentioned during the RFC, fine with me FWIW.
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
