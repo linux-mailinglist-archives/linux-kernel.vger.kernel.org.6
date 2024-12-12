@@ -1,87 +1,136 @@
-Return-Path: <linux-kernel+bounces-442738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0E79EE107
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:17:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5679EE10A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56692280F37
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A975B2810FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BC920C46A;
-	Thu, 12 Dec 2024 08:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAB320C466;
+	Thu, 12 Dec 2024 08:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSm2RCRh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lxhE+TWe"
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FF5126C01;
-	Thu, 12 Dec 2024 08:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890F6126C01;
+	Thu, 12 Dec 2024 08:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991470; cv=none; b=crTJNwP3xasPV0AMi5FFjHAReZ9CRm7hMI25X28KY+y8xdwo8kBdZ3Gre0G+N9ahwquPO+FvijkWWiNzRhW5UlX7X+kgjx0dP09ului1gIXBEViqdQHRC0eXqxV7bKdotQy/4qqEdXskHkS8zxqrKeIge/eMRlc3+ABJ0rb28fE=
+	t=1733991502; cv=none; b=SLF5jRg/tLub1ibBaMfM8sUuEpR8myNBY2N1JKAsax/cgMbjHg3eGHwhOGC0MVqisTe5hziOzsxVbct2K8+HH/7KSEwctqVgc6b25wZ/JU0uEScEk0hHvysUHDhhaPDyWEa3sAR/kjs2+6+BSiidfRwdgS9HSah8lR/ILjETVVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991470; c=relaxed/simple;
-	bh=9L8I21enfW9cEAjR+NIYJvYAjvbWbGI6CWCsEgxGvOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jyLfBjnVN4vaBuVgcSM56ZWCxEWEy8GGbL4OMz9/P+CDG0vRItA5JcMb3lsNYt/8utP5aR/vSuX+qxZtfosHmHEQdSJWqIycJMUSLCJd+Pn+zR6E+L5D91SnYUhpIRmzJbCRXhgnZvcAi9qPzhsjZag4HqY4+uBZlSaTiSMgq2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSm2RCRh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFC03C4CECE;
-	Thu, 12 Dec 2024 08:17:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733991470;
-	bh=9L8I21enfW9cEAjR+NIYJvYAjvbWbGI6CWCsEgxGvOM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tSm2RCRhyRfgXBimI0IUQRlYVDBL42c7/flr9mv++UgonqsjrKTnwFh0fvzwbdICJ
-	 qfrat0q/51IMZaQYIcF/uNbbtrt1uhoOJSsq4W1R9Q8qfukE3VPFtlVFNpzaNRxN1D
-	 fZ22f1Y+spDrtToReY5rQTYwTNJsE82ul72AEalx6nOHR8oSq/UgqoVwVtiXcY/BCV
-	 Zrzk+D7JqiR2NhOUZ2HKK6vO5qFW7TVbzgc0EtbHyM02EkJ8eRHWwdBIeGgw8wGdCE
-	 J1QJC1k4/lzBo2gfEQD3aduJLREZ11C7opg+gv1bJxHTfwarwpVRgW/SbpyiTKHR9r
-	 TauA3NvxGedbA==
-Date: Thu, 12 Dec 2024 09:17:47 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ryan.Wanner@microchip.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
-	mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de, dharma.b@microchip.com, 
-	mihai.sain@microchip.com, romain.sioen@microchip.com, varshini.rajendran@microchip.com, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v3 07/13] dt-bindings: clock: Add SAMA7D65 PMC compatible
- string
-Message-ID: <faf3547rv7easjc6rwewzn3xdp2y2zc4opsbqvhvsbi6e5g6fd@dkcdkiycp5op>
-References: <cover.1733505542.git.Ryan.Wanner@microchip.com>
- <5252a28531deaee67af1edd8e72d45ca57783464.1733505542.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1733991502; c=relaxed/simple;
+	bh=9u0EssyiR9jPCJXXENhMiwaH0C7px6oEo+PfyB7UW9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fwfHc4aqINDzhDLnJI2v8VHk+ZWP/xDOI4Ic5yldAiKtDZV+W166T+CO61BF7zvEbOekp807up1nm7VZWHOWQ1l+1qi/JgHWIVA1e0S9rGpqOq8EnvyPWXKoO7fI9N3OSdgc9zzF78PMHWpYh5l4skNs2mRq2toB3C1NDkO+PyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lxhE+TWe; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id LeOatTTIgshnBLeObtEztn; Thu, 12 Dec 2024 09:18:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1733991489;
+	bh=00Te5LkHVNFFflrQpCPuLSqGbddJ7mVyn5/l4cEM7RM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=lxhE+TWej8depxWvfP6sIBSAshiRXQiOXDFWjYfE9kuLSQQfff1Cs/8R1tcmPfFEC
+	 O6FkK6gtt5zr9de2K6DZ+xwkeOms6NfisLex3Ytcc7/2Wbw5C+UAFmAHtUbukAliW+
+	 mNPuyYcLY8zvtM4YFweUzbhS0uUIrUZhpd5XWKbvybwilv26KasVgwUFwASTAzkT5V
+	 GCDnU/E7C4dXbBVrdroSijReZQBG45fpD3waUIqdfSv4Yoixvs7wrmw1jVaR3eAQ0E
+	 tYiQXSfLT/H6uo3yJ5SQ2VfQyh3qrpQ0XORLmFOZDgsOBrUbxdZ4Fiu0SvfLKZB094
+	 ZXfkUTi77H3mA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 12 Dec 2024 09:18:09 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <a50f9f86-b0f4-484a-85ef-9dd1e5737d83@wanadoo.fr>
+Date: Thu, 12 Dec 2024 09:18:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5252a28531deaee67af1edd8e72d45ca57783464.1733505542.git.Ryan.Wanner@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] net: mdio: Add RTL9300 MDIO driver
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, lee@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, tsbogend@alpha.franken.de,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, markus.stockhausen@gmx.de
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-mips@vger.kernel.org
+References: <20241211235342.1573926-1-chris.packham@alliedtelesis.co.nz>
+ <20241211235342.1573926-5-chris.packham@alliedtelesis.co.nz>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241211235342.1573926-5-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 06, 2024 at 12:59:52PM -0700, Ryan.Wanner@microchip.com wrote:
-> From: Dharma Balasubiramani <dharma.b@microchip.com>
+Le 12/12/2024 à 00:53, Chris Packham a écrit :
+> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
+> switches with integrated SoC. There are 4 physical SMI interfaces on the
+> RTL9300 but access is done using the switch ports so a single MDIO bus
+> is presented to the rest of the system.
 > 
-> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
-> since the SAMA7D65 PMC shares the same properties and clock requirements
-> as the SAMA7G5.
-> 
-> Export MCK3 and MCK5 to be accessed and referenced in DT to assign to
-> the clocks property for sama7d65 SoC.
-> 
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+...
 
-Best regards,
-Krzysztof
+> +	err = regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL_1,
+> +			   PHY_CTRL_RWOP | PHY_CTRL_TYPE | PHY_CTRL_CMD);
+> +	if (err)
+> +		return err;
+> +
+> +	err = regmap_read_poll_timeout(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL_1,
+> +				       val, !(val & PHY_CTRL_CMD), 10, 100);
+> +	if (err)
+> +		return err;
+> +
+> +	if (val & PHY_CTRL_FAIL) {
+> +		err = -ENXIO;
+> +		return err;
+
+Nitpick: return -ENXIO; and remove the { }
+
+> +	}
+> +
+> +	return err;
+
+Nitpick: return 0;
+
+> +}
+> +
+> +static int realtek_mdiobus_init(struct realtek_mdio_priv *priv)
+> +{
+> +	u32 port_addr[5] = { };
+> +	u32 poll_sel[2] = { 0, 0 };
+
+Nitpick: Why {} in on case and {0,0} in the other one?
+
+> +	u32 glb_ctrl_mask = 0, glb_ctrl_val = 0;
+> +	int i, err;
+> +
+> +	for (i = 0; i < MAX_PORTS; i++) {
+> +		int pos;
+> +
+> +		if (priv->smi_bus[i] > 3)
+> +			continue;
+> +
+> +		pos = (i % 6) * 5;
+> +		port_addr[i / 6] |=  priv->smi_addr[i] << pos;
+> +
+> +		pos = (i % 16) * 2;
+> +		poll_sel[i / 16] |= priv->smi_bus[i] << pos;
+> +	}
+
+...
+
+CJ
 
 
