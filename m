@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-443648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E6E9EFA7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:13:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7EF9EFA78
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:12:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A37C18809DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:10:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87E69172875
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86D9235C51;
-	Thu, 12 Dec 2024 18:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BB5226165;
+	Thu, 12 Dec 2024 18:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZkR2KeaX"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HDkly875"
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4941B235C4A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D2E2368E9
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734026737; cv=none; b=e3eGB/ksOb7UmqOXWYGFtJn++3QayoXGTYN4bUyQYzcl9TGF/8Wa1L2qxWXOzWqmCJds+jze/PODZidvJU9nCwsm9V/WalBUuvc/ECrZ+XlZxhb+ICS72CGeCvDPAR0bNQNX6wqXSQxLQZOuil0ytvh2Q0CeHG4YsRqdnBeJY5k=
+	t=1734026738; cv=none; b=KpQFt2zbKgTt8Udxmu/KGtkp+mxMveQaIbTokNkdBTJpxoH8rDfLBTuW3hDopdih69TiyhiUIN++HYRmnmahLTa4kdr5YpPKUKAIWt3AOrDJCA6bmNnp8mvxn8duuoLKRIJvHGW7ShCHtmpOFpHIF2KBJJNSmvUsIC17LCb7WDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734026737; c=relaxed/simple;
-	bh=QIyUf9RC5tml3wUiGzlbTmMFJHl3q8rlahMnK3AQH94=;
+	s=arc-20240116; t=1734026738; c=relaxed/simple;
+	bh=Z2UHwzkM46eNyOELnlSu5KplZV6dyg6FmiiX5LeoOuQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hwhYUHb2J6UBSRLsUViS35aDjbDVuKvejgAlLWJLoyvxd24GFQH7wBuMxtYQ7nff5HKHDmc70ZlpPnnFxIWzKCrXeDSOkwAZ5Frhw3GKVyrb0u4Lk2RPKeOt5NExEA1qeZX8OBlHoVD0bWXRG0hs8VSxHzFFdqm1DWE9DjMW2c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZkR2KeaX; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=PMInivWQegoOMo97bI5x2Uk6sxiu5pZvIQ497fxdg0o1Y39xQ99lcPliBZ34MTWFmqaK3C2AMwKsuVxo/V48SjMzAU6SDuuM6BgA1SZEMCNEpUTsLviqhP+826lGPicq8SCRV7hmqmbmAMMK2aJ3+B2Ij05paiywhfMyvlp+ONk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HDkly875; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43628594d34so2694115e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:05:35 -0800 (PST)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43582d49dacso8227735e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:05:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734026734; x=1734631534; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734026736; x=1734631536; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZNgwB6X8v5j4gzxppU/t/fZqzqcDrO7o9YkYVnh2wA=;
-        b=ZkR2KeaX+Z+QId8bD4jYvQ0/1IjdG5Qcd07yl8GZXDVUwqYTIiCLqA/SVZgNIl5TG7
-         T65oyFPS2H65kdCpIPE55uP9LzThGMZ4y/iGis01G1uwhvyNvpBRiuFmf1lbo2oQnW2A
-         3ZmEglzeB/tFmauVtBPuvMPETrVz/uC997gRuQC9lYBALozy9GwsoC1T5MuQV09T4MPJ
-         WbK4uhP4Thd/hM0ubgSpCPwzCRhpT6SLfs5+Of8bt1bgwPDDTg0d0Job8P3HaCqzV1wR
-         odwAChUiw+04XTKqJWbzeGWi97rw3yS3QnnfE1Y7XigDNCiDByqRa3IB0orvL5+PdQiZ
-         46/g==
+        bh=YdMuO2gtmeL3RMqWaakXFL6M4DlcZZq40B5WqzcNta4=;
+        b=HDkly875IfJkYrNdjky4itPOkt4EsAS85atpFDpufJ7IoUw41Nlgl43AvWc9EnqW3/
+         4iZUQYwdEJwkF3OPs8a2OLcoNck6pekbBtbViea/KuwR/R3IBvCiLBv6O+5AK9j8MzLv
+         xtH1r7qKOOZ+dvORe4M6CUpP1lAaviWMQ/yNFGSlxtttTkp4+c08bCzVudoQ//IXgmij
+         0mvre9HNEbGsscOHdgVqtyNQma/S5jd5LRKYB6lfpNPV2Nr1s8hrr8+ca8sZEuRy9UnR
+         12wIUyPedjEWEhg4rSV5cP3ZHAV07/uwUPNhieZmDm5F7R/kVlJRt/IGZgXB3bLKUP+P
+         JfBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734026734; x=1734631534;
+        d=1e100.net; s=20230601; t=1734026736; x=1734631536;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZNgwB6X8v5j4gzxppU/t/fZqzqcDrO7o9YkYVnh2wA=;
-        b=v89+GpAGxEYn9j1r2vuzuN/kjRKPPkNhtsduAFv3aqFuKw+56iFM3gl2KfOyCwvxP6
-         H/JdADIL+NzYfji4q/bq6jYlmDY7qMBvMPBQtSG+JrLJKYRk7oBPAyeacFeRe7Xv8aXA
-         ZWCgWfvHU6/IN5xV/mx1qRVYAcVKQNCaz2By/tXY1XNL5wBWigBBYf3kn8kDJ3zweipO
-         0u5iOrd6RLuCskjxK/eBczX1hpwD9M1L7IJ2TlgP4hUCqwcrJjilrNYQzIxUbzdtENnM
-         YFQGajEbvfExGaUH0bmh4TD5TJ853MwgX+3+5d7AN1Ig+n0TyiaR3N0TZjAbxLMEkkk7
-         +nJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWixd9qilnN33hM9lilhCngW6JCJCq3APJ799gv93rBHw9mxMUvTJIgIm0SX5wnn8I7sR8/XcqwmQpmb3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw90e6PhsYeOcxAE++OZvlAPVbU+GDwaIgqC9EieBIbAGEMuEnn
-	Z6nVIpQm7JdmwXDNsTzK1SP8D9IlF2jjrFdOeuWOko5MD2XiDJi/yY7nRpvkzU7khIH9RZdlhHP
-	2suBsl9g4zQ==
-X-Google-Smtp-Source: AGHT+IFU5A2xYG/aIaT/yYE5/fNPeYIneyer4lpXo+usrcm3VGdKeb0NPMFh6orkypYDcbhz8IOsQoPR+yxjUA==
-X-Received: from wmmu14.prod.google.com ([2002:a05:600c:ce:b0:434:f0a3:7876])
+        bh=YdMuO2gtmeL3RMqWaakXFL6M4DlcZZq40B5WqzcNta4=;
+        b=VR6aDsoihucg9tA7okcz8SDytnmgOc6UKrnnUzmKTYrO5K66ZBmsge7PmEHc7kqh8n
+         QR86A7Muc6J80+rnCDRb+DZo2x6FxJzHkavRQusSwSMXc/lfeZbXL96i6Bk9ynA+sxMV
+         +Y6NAOZZ56LImW83/iYu1KqX8HCWOc2EGyu23feBxriXoCTlK8C/uKou9e/Dk8Mu+EXQ
+         gjy64EniPr0p6cpRBS3RSbRTf0wuUk7RsazMQAuIP/GOvWE0Pk3gorXMP++yV19Lq22D
+         u4AfyFgoMUkY4283Hqd9tExVA7Bg8lK5W3B9q3slvKUAqbFlSCoFq2VRUXk1XyEVUszk
+         i8kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW47X1MB+/oYpkaB/gGLDGqdAjFsSSYTllsT+l8EZd+yGKedvGKK9HOWzMinhd7glP0EMOAFwfb3XdSHdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZAgspnSLrYdyK9S/B9n86APY3SM0jaLBspJsk8H6/Rw0ltzOE
+	O+7VkaOeJHhZ1gDEYobQE6r8BJtvqq/2SMB0wm4UZRt8jAxAFBnwjHage86cH4EskISAg4A8Tj9
+	k/aL2bsL3hw==
+X-Google-Smtp-Source: AGHT+IFhLgvU2Rm+DNubCv6JNasQpuX6sd+/DiydVh4HkRumx8mqOJN1mpnAimZm+KH9fDL3y3s/kc2a4/LuEQ==
+X-Received: from wmso20.prod.google.com ([2002:a05:600c:5114:b0:436:1abf:b8fe])
  (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3593:b0:434:f297:8e85 with SMTP id 5b1f17b1804b1-4361c3aaeeemr77507485e9.10.1734026733780;
- Thu, 12 Dec 2024 10:05:33 -0800 (PST)
-Date: Thu, 12 Dec 2024 18:03:48 +0000
+ 2002:a05:600c:5028:b0:435:172:5052 with SMTP id 5b1f17b1804b1-4362282768bmr38379225e9.1.1734026735825;
+ Thu, 12 Dec 2024 10:05:35 -0800 (PST)
+Date: Thu, 12 Dec 2024 18:03:49 +0000
 In-Reply-To: <20241212180423.1578358-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241212180423.1578358-1-smostafa@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212180423.1578358-25-smostafa@google.com>
-Subject: [RFC PATCH v2 24/58] KVM: arm64: iommu: Support DABT for IOMMU
+Message-ID: <20241212180423.1578358-26-smostafa@google.com>
+Subject: [RFC PATCH v2 25/58] KVM: arm64: iommu: Add SMMUv3 driver
 From: Mostafa Saleh <smostafa@google.com>
 To: iommu@lists.linux.dev, kvmarm@lists.linux.dev, 
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -87,128 +87,106 @@ Cc: catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
 	Mostafa Saleh <smostafa@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Soon, SMMUv3 driver would be added and it would need to emulate
-access to some of its MMIO space.
+From: Jean-Philippe Brucker <jean-philippe@linaro.org>
 
-Add a handler for DABTs for IOMMU drivers to be able to do so.
+Add the skeleton for an Arm SMMUv3 driver at EL2.
 
+Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
 Signed-off-by: Mostafa Saleh <smostafa@google.com>
 ---
- arch/arm64/kvm/hyp/include/nvhe/iommu.h |  2 ++
- arch/arm64/kvm/hyp/nvhe/iommu/iommu.c   | 17 +++++++++++++++++
- arch/arm64/kvm/hyp/nvhe/mem_protect.c   | 19 +++++++++++++++++--
- 3 files changed, 36 insertions(+), 2 deletions(-)
+ arch/arm64/kvm/hyp/nvhe/Makefile            |  2 ++
+ arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c | 22 +++++++++++++++++++++
+ drivers/iommu/Kconfig                       |  9 +++++++++
+ include/kvm/arm_smmu_v3.h                   | 18 +++++++++++++++++
+ 4 files changed, 51 insertions(+)
+ create mode 100644 arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
+ create mode 100644 include/kvm/arm_smmu_v3.h
 
-diff --git a/arch/arm64/kvm/hyp/include/nvhe/iommu.h b/arch/arm64/kvm/hyp/include/nvhe/iommu.h
-index 06d12b35fa3e..cff75d67d807 100644
---- a/arch/arm64/kvm/hyp/include/nvhe/iommu.h
-+++ b/arch/arm64/kvm/hyp/include/nvhe/iommu.h
-@@ -21,6 +21,7 @@ size_t kvm_iommu_map_pages(pkvm_handle_t domain_id,
- size_t kvm_iommu_unmap_pages(pkvm_handle_t domain_id, unsigned long iova,
- 			     size_t pgsize, size_t pgcount);
- phys_addr_t kvm_iommu_iova_to_phys(pkvm_handle_t domain_id, unsigned long iova);
-+bool kvm_iommu_host_dabt_handler(struct kvm_cpu_context *host_ctxt, u64 esr, u64 addr);
+diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/Makefile
+index d846962e7246..edfd8a11ac90 100644
+--- a/arch/arm64/kvm/hyp/nvhe/Makefile
++++ b/arch/arm64/kvm/hyp/nvhe/Makefile
+@@ -16,6 +16,8 @@ hyp-obj-$(CONFIG_TRACING) += clock.o events.o trace.o
+ hyp-obj-$(CONFIG_MODULES) += modules.o
+ hyp-obj-y += $(lib-objs)
  
- /* Flags for memory allocation for IOMMU drivers */
- #define IOMMU_PAGE_NOCACHE				BIT(0)
-@@ -49,6 +50,7 @@ struct kvm_iommu_ops {
- 	phys_addr_t (*iova_to_phys)(struct kvm_hyp_iommu_domain *domain, unsigned long iova);
- 	void (*iotlb_sync)(struct kvm_hyp_iommu_domain *domain,
- 			   struct iommu_iotlb_gather *gather);
-+	bool (*dabt_handler)(struct kvm_cpu_context *host_ctxt, u64 esr, u64 addr);
- };
++hyp-obj-$(CONFIG_ARM_SMMU_V3_PKVM) += iommu/arm-smmu-v3.o
++
+ $(obj)/hyp.lds: $(src)/hyp.lds.S FORCE
+ 	$(call if_changed_dep,cpp_lds_S)
  
- int kvm_iommu_init(void);
-diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-index fbab335d3490..e45dadd0c4aa 100644
---- a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-+++ b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-@@ -4,6 +4,10 @@
-  *
-  * Copyright (C) 2022 Linaro Ltd.
-  */
+diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c b/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
+new file mode 100644
+index 000000000000..d2a570c9f3ec
+--- /dev/null
++++ b/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * pKVM hyp driver for the Arm SMMUv3
++ *
++ * Copyright (C) 2022 Linaro Ltd.
++ */
 +#include <asm/kvm_hyp.h>
-+
-+#include <hyp/adjust_pc.h>
-+
- #include <kvm/iommu.h>
- 
- #include <nvhe/iommu.h>
-@@ -375,6 +379,19 @@ phys_addr_t kvm_iommu_iova_to_phys(pkvm_handle_t domain_id, unsigned long iova)
- 	return phys;
- }
- 
-+bool kvm_iommu_host_dabt_handler(struct kvm_cpu_context *host_ctxt, u64 esr, u64 addr)
-+{
-+	bool ret = false;
-+
-+	if (kvm_iommu_ops && kvm_iommu_ops->dabt_handler)
-+		ret = kvm_iommu_ops->dabt_handler(host_ctxt, esr, addr);
-+
-+	if (ret)
-+		kvm_skip_host_instr();
-+
-+	return ret;
-+}
-+
- static int iommu_power_on(struct kvm_power_domain *pd)
- {
- 	struct kvm_hyp_iommu *iommu = container_of(pd, struct kvm_hyp_iommu,
-diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-index a428ad9ca871..0fae651107db 100644
---- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-+++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-@@ -16,6 +16,7 @@
- #include <hyp/fault.h>
- 
- #include <nvhe/gfp.h>
++#include <kvm/arm_smmu_v3.h>
 +#include <nvhe/iommu.h>
- #include <nvhe/memory.h>
- #include <nvhe/mem_protect.h>
- #include <nvhe/mm.h>
-@@ -799,11 +800,16 @@ static int handle_host_perm_fault(struct kvm_cpu_context *host_ctxt, u64 esr, u6
- 	return handled ? 0 : -EPERM;
- }
- 
-+static bool is_dabt(u64 esr)
++
++size_t __ro_after_init kvm_hyp_arm_smmu_v3_count;
++struct hyp_arm_smmu_v3_device *kvm_hyp_arm_smmu_v3_smmus;
++
++static int smmu_init(void)
 +{
-+	return ESR_ELx_EC(esr) == ESR_ELx_EC_DABT_LOW;
++	return -ENOSYS;
 +}
 +
- void handle_host_mem_abort(struct kvm_cpu_context *host_ctxt)
- {
- 	struct kvm_vcpu_fault_info fault;
- 	u64 esr, addr;
--	int ret = 0;
-+	int ret = -EPERM;
++/* Shared with the kernel driver in EL1 */
++struct kvm_iommu_ops smmu_ops = {
++	.init				= smmu_init,
++};
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index b3aa1f5d5321..fea5d6a8b90b 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -437,6 +437,15 @@ config TEGRA241_CMDQV
+ 	  CMDQ-V extension.
+ endif
  
- 	esr = read_sysreg_el2(SYS_ESR);
- 	if (!__get_fault_info(esr, &fault)) {
-@@ -817,7 +823,15 @@ void handle_host_mem_abort(struct kvm_cpu_context *host_ctxt)
- 	}
- 
- 	addr = (fault.hpfar_el2 & HPFAR_MASK) << 8;
--	ret = host_stage2_idmap(addr);
-+	addr |= fault.far_el2 & FAR_MASK;
++config ARM_SMMU_V3_PKVM
++	bool "ARM SMMUv3 support for protected Virtual Machines"
++	depends on KVM && ARM64
++	help
++	  Enable a SMMUv3 driver in the KVM hypervisor, to protect VMs against
++	  memory accesses from devices owned by the host.
 +
-+	if (is_dabt(esr) && !addr_is_memory(addr) &&
-+	    kvm_iommu_host_dabt_handler(host_ctxt, esr, addr))
-+		goto return_to_host;
++	  Say Y here if you intend to enable KVM in protected mode.
 +
-+	/* If not handled, attempt to map the page. */
-+	if (ret == -EPERM)
-+		ret = host_stage2_idmap(addr);
- 
- 	if ((esr & ESR_ELx_FSC_TYPE) == ESR_ELx_FSC_PERM)
- 		ret = handle_host_perm_fault(host_ctxt, esr, addr);
-@@ -827,6 +841,7 @@ void handle_host_mem_abort(struct kvm_cpu_context *host_ctxt)
- 	else
- 		BUG_ON(ret && ret != -EAGAIN);
- 
-+return_to_host:
- 	trace_host_mem_abort(esr, addr);
- }
- 
+ config S390_IOMMU
+ 	def_bool y if S390 && PCI
+ 	depends on S390 && PCI
+diff --git a/include/kvm/arm_smmu_v3.h b/include/kvm/arm_smmu_v3.h
+new file mode 100644
+index 000000000000..521028b3ff71
+--- /dev/null
++++ b/include/kvm/arm_smmu_v3.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __KVM_ARM_SMMU_V3_H
++#define __KVM_ARM_SMMU_V3_H
++
++#include <asm/kvm_asm.h>
++#include <kvm/iommu.h>
++
++struct hyp_arm_smmu_v3_device {
++	struct kvm_hyp_iommu	iommu;
++};
++
++extern size_t kvm_nvhe_sym(kvm_hyp_arm_smmu_v3_count);
++#define kvm_hyp_arm_smmu_v3_count kvm_nvhe_sym(kvm_hyp_arm_smmu_v3_count)
++
++extern struct hyp_arm_smmu_v3_device *kvm_nvhe_sym(kvm_hyp_arm_smmu_v3_smmus);
++#define kvm_hyp_arm_smmu_v3_smmus kvm_nvhe_sym(kvm_hyp_arm_smmu_v3_smmus)
++
++#endif /* __KVM_ARM_SMMU_V3_H */
 -- 
 2.47.0.338.g60cca15819-goog
 
