@@ -1,227 +1,336 @@
-Return-Path: <linux-kernel+bounces-442473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABB99EDD43
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:01:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A05E39EDD45
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:03:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1967188A15D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C421188A21C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF0B70825;
-	Thu, 12 Dec 2024 02:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2087084A35;
+	Thu, 12 Dec 2024 02:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KJuiza55"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="FkfvRBUX"
+Received: from rcdn-iport-5.cisco.com (rcdn-iport-5.cisco.com [173.37.86.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09583259490;
-	Thu, 12 Dec 2024 02:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733968860; cv=fail; b=Sk1I9hextdNOtrM9VAK5P8q75+NssHbdGd7sZEDMgTOn5TM4mcG9IER10SN34X3tMNzb4hJMP6iSxenWnsZ/eJzTrOn1C8ck0XfdUMOpafe92GXJUtutwMJz+ffO+Rw3N8C0abkyskRUL0ONb9MyVIwP+aI4QLrzjFwekbkrlCc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733968860; c=relaxed/simple;
-	bh=AE/i/g5rImCEXJ3Aagt5xwWm6J28PF1GsWgPLxMJCts=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kb2x2/e9Gv2llVJm3EknG99yRqzI0AauauMUzkUk2aIY7v0QCWc7ckLn8aIFFN5wuBhkyQDq3UtdPWMSTUwnwEaMqxoOJmYfG0W0kiO/qkhhVUaf4e/eaNp/kb8dtw4CdwFdNNxaEZ0l+qsoc7Fj+7SfYEl74/Xv1G1TQj0k5GA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KJuiza55; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733968858; x=1765504858;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=AE/i/g5rImCEXJ3Aagt5xwWm6J28PF1GsWgPLxMJCts=;
-  b=KJuiza55fQY2WK48uwl+Q/JXC3er0RueCv+mJzbMscVrolXAZU9NYJHj
-   +a8HcczWlMnJJtcjY2CzJBP4sZUs+ftDURh8QwSYkRtP2mKidtq+kEZGv
-   dRrcDEyvaSmqEYXXscWuGrAjH6tN8XUkvxN9iO77lRJKJBiPy3WWX5HVf
-   PsENUocu4pBsE7Bfn8QRXEaGc+D0PsXG95zxSP5RPgTppUyxewcZpR1CV
-   c7V1sYh7f3WYf8ulVWSxWyv2aMRM1yzA1l0DDK2ZYlOzTPpviSs1jcusD
-   9aILq7HMzlzl5OYC6pCjw3aRlVCvkvmThovWMdTqVcHlLni1zbaqP2+UG
-   w==;
-X-CSE-ConnectionGUID: AG39X+lfQ7WtglUZSuS9hA==
-X-CSE-MsgGUID: NkfmfThDRcmPUmWGtQXw4w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="37212098"
-X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
-   d="scan'208";a="37212098"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 18:00:57 -0800
-X-CSE-ConnectionGUID: U1c00bT+RPSEHkj/dEN1rQ==
-X-CSE-MsgGUID: V8LcmZpvQ+C+AH6Hc+zkoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="101127793"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Dec 2024 18:00:56 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 11 Dec 2024 18:00:55 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 11 Dec 2024 18:00:55 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.171)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 11 Dec 2024 18:00:55 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qg+CoHw7ytN0lPxmD04Cx8AQfcc8AathjgI0124H+txTtqIgcc5cgXepbs5TbnVPOXhrv6Npu2N9ThpjsbyQcL5CFqlw7UUzRS5eK2C+TKOFILrLLU8srgvY1VZI/Th57kJlhA/VdSmS1uCCPabtKfKxC+UnbjYLq9hcbWs3ZcAMWAIxObg2q66UVmIye5p5dYe60722L2oEfFG07Z31vu0r9+5h0p+Fx0fHxQZyDp5knFQojhZ+mCLTYJrJFncW5nFMFI83nbO+AfzhsPS+VUDrNAIiclS/EbFcqHUBtQ6RW/02Oz9vCXeHNO6kaAsTV2hgyrEXOGeBZrqdf8bT3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/x/1fO1jSEAl9qk33ZFFuCTjS/CM1JProwfb3ZtTpdA=;
- b=ysFrD12e1w3L7gZr1PQxE9H5lvRG6dDoFmLJZSI1y3yTqHHhyI1MhWCVveBHHO+G4HOruteMBLvKndMfMk5mFg+Txc/PLc6JBqn9YQ65554bdJUTAgFXmgdRf0rSqm7QpiEpZGs7NPysiYgCdImEtiHv9TCq2UOLvCIamkHt2QVo++UlikIqfe+yedpdedUBMU+uqmUVdlRTRCfzB9AJprjg707D5K3d0P3zaf4eWEbwL5yeoqHyBBiwF0V63Nd7BjDdxNfQnzaRdLbx5rFJNti2Msek+G9r1nxvEGK7iRHcWbznv+1CPPnIWe0xE9E2w/Up69ZKa6dsRcpNfvrMhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by MW3PR11MB4553.namprd11.prod.outlook.com (2603:10b6:303:2c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.14; Thu, 12 Dec
- 2024 02:00:51 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%6]) with mapi id 15.20.8251.008; Thu, 12 Dec 2024
- 02:00:51 +0000
-Date: Thu, 12 Dec 2024 10:00:39 +0800
-From: Oliver Sang <oliver.sang@intel.com>
-To: Namhyung Kim <namhyung@kernel.org>
-CC: Arnaldo Carvalho de Melo <acme@kernel.org>, <oe-lkp@lists.linux.dev>,
-	<lkp@intel.com>, <linux-kernel@vger.kernel.org>, James Clark
-	<james.clark@linaro.org>, Ravi Bangoria <ravi.bangoria@amd.com>, Kan Liang
-	<kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>, Atish Patra
-	<atishp@atishpatra.org>, Mingwei Zhang <mizhang@google.com>, Kajol Jain
-	<kjain@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>, Palmer Dabbelt
-	<palmer@rivosinc.com>, <linux-perf-users@vger.kernel.org>,
-	<oliver.sang@intel.com>
-Subject: Re: [linus:master] [perf tools]  af954f76ee:
- perf-sanity-tests.Test_data_symbol.fail
-Message-ID: <Z1pDx0TFKsYZvGCl@xsang-OptiPlex-9020>
-References: <202411301431.799e5531-lkp@intel.com>
- <Z04ZUHaGdsBapIEL@google.com>
- <Z1BhfpYWpUQ0p+qR@xsang-OptiPlex-9020>
- <Z1DNJpDzCIBFrIZT@google.com>
- <Z1DV0lN8qHSysX7f@google.com>
- <Z1HHClaOwjJnR5gr@x1>
- <Z1nLcMDTFAFuX809@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z1nLcMDTFAFuX809@google.com>
-X-ClientProxiedBy: SG2PR02CA0048.apcprd02.prod.outlook.com
- (2603:1096:3:18::36) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FA98837;
+	Thu, 12 Dec 2024 02:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733969021; cv=none; b=Jnqemi8OZAfqZVjY/7gCZ7yDx5H7Haj5UFlQoXRvlfIVeSwx3WRS8Ew5qP03nqnS5EE9P5DZdgXaGlh0sZ2Lgvn2dx2pVDOOBjkznS5MqR4Ul/ltDq9jZTu7UBPf4x9No03hNyloSYbY0vRT1IQL3lvaEZtkHp9aWyV3zdybORw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733969021; c=relaxed/simple;
+	bh=S0lWGYjQ/3lew7L7+OCK2dxxtyKvrlPSfSkPOXxTNf4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=raEviKQXqksmbwHCQizI59Qm2Is4cXvUgDsCpjAgnkJ8fLaVpZuAvXuNi923lIIsXYg+5FR01mfuBZHwZrG/3+Rb0ziLU1YI0VttBToZcjXlXkpGtPHm2UmrxmYcyq4b8c5fhab4yGy79G7JuteTSxg8IAjMsoN+oPpIVgUIyi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=FkfvRBUX; arc=none smtp.client-ip=173.37.86.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=cisco.com; i=@cisco.com; l=8908; q=dns/txt; s=iport;
+  t=1733969019; x=1735178619;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CfLGEkRajjEGnc+mdj8GF+RxsbjZCxcvoomF0VCDaAw=;
+  b=FkfvRBUXXE2PNtmGAUWCdmKCo48QDRTjZ1uKySILgtSe2hFaXDd/hjsO
+   ZV4RcxyKDlZHIfwkWOmvbEawyYBu8rC/uFsSpmzAQp3psjXyv2MHN9i3l
+   RCmntdL1w0hiI+wQ5qTizxBCTouhOZm9IRUV9cQV3wl0HDkM+SEZ6tVTH
+   I=;
+X-CSE-ConnectionGUID: MX9XVcEZQAy4GrskToQkSQ==
+X-CSE-MsgGUID: JFyx30ZVT3mn1gm62mU0QA==
+X-IPAS-Result: =?us-ascii?q?A0B2AwAdQ1pn/5T/Ja1aglyCHC+BT0MZlnKBFp0FgX4PA?=
+ =?us-ascii?q?QEBD0QEAQGFB4ptAiY0CQ4BAgQBAQEBAwIDAQEBAQEBAQEBAQELAQEFAQEBA?=
+ =?us-ascii?q?gEHBYEOE4YIhl0rCwFGSQGDL1iCZQOvGoF5M4EB3jOBbYFIjUpwhHcnFQaBS?=
+ =?us-ascii?q?USBFYJyB4JBgzkChXoEgjxMghuDeZ0ASIEhA1khARABVRMNCgsHBYF1AzkMC?=
+ =?us-ascii?q?zEVg2BGPYJJaUk3Ag0CNoIkfIJNhRmEaWMvAwMDA4M5hiSCGYFfQAMLGA1IE?=
+ =?us-ascii?q?Sw3FBsGPm4Hn2QOgQ4BIisuK0g6DggfBQY4kkIdB0ePP4IggTSfToQkmh6HJ?=
+ =?us-ascii?q?hozhASNBZlImHujXDE3hGaBZzyBWTMaCBsVgyNRGQ+OLRbEBiVuAgcLAQEDC?=
+ =?us-ascii?q?Y9UgXsBAQ?=
+IronPort-Data: A9a23:4eVsHKs/aiHJgQS2W7irIQ5tEufnVEdfMUV32f8akzHdYApBsoF/q
+ tZmKTvSPquNazD0KtxxPdm2/UpQvMCAm9JkQVRrqHpkFiJGgMeUXt7xwmUckM+xwmwvaGo9s
+ q3yv/GZdJhcokf0/0nrav656yEhjclkf5KkYMbcICd9WAR4fykojBNnioYRj5Vh6TSDK1vlV
+ eja/YuGYjdJ5xYuajhIsvja8Usy1BjPkGpwUmIWNKgjUGD2zxH5PLpHTYmtIn3xRJVjH+LSb
+ 47r0LGj82rFyAwmA9Wjn6yTWhVirmn6ZFXmZtJ+AsBOszAazsAA+v9T2Mk0NS+7vw60c+VZk
+ 72hg3AfpTABZcUgkMxFO/VR/roX0aduoNcrKlDn2SCfItGvn3bEm51T4E8K0YIw39YmMV9F2
+ M4hASFRQQqYhN6x+bGAc7w57igjBJGD0II3oHpsy3TdSP0hW52GGvyM7t5D1zB2jcdLdRrcT
+ 5NGMnw0M1KaPkAJYwtHYH49tL/Aan3XcDRCtFORrKkf6GnIxws327/oWDbQUobbGJgKzhvB+
+ Aoq+UzbLAAKb4St9wbe93T1ieqRxybGALs7QejQGvlCxQf7KnYoIB8bV1GTpfi/l174Wthab
+ UcT/0IGqKEo6E2tCMHwQxCiu3OClhkGUtFUHqsx7wTl4q7V5RuJQ2sJVDhMbPQ4u8IsAz8nz
+ FmEm5XuHzMHmLmUT2+Ns6yftjKaJycYNykBaDUCQA9D5MPsyLzflTrVRdplVarwhdrvFHSpm
+ naBrTM1gPMYistjO7iHwG0rSgmE/vDhJjPZLC2LNo55xmuVvLKYWrE=
+IronPort-HdrOrdr: A9a23:Qigqp6iK2qbLu8WppmSNjsDx4nBQXukji2hC6mlwRA09TyVXra
+ yTdZMgpH3JYVkqNk3I9errBEDiewK+yXcW2+gs1N6ZNWGMhILCFu5fBOXZrgHIKmnX6vNd2a
+ B8c6J3FdH8SWRhgd2S2njcLz9Z+rm6GGTCv5a485+rJjsaD51d0w==
+X-Talos-CUID: =?us-ascii?q?9a23=3AIbkIbmnnILMKwL+C3Y5wUNEzStXXOVjtnUfuKGK?=
+ =?us-ascii?q?KME94FJKPUlys/5pnqPM7zg=3D=3D?=
+X-Talos-MUID: =?us-ascii?q?9a23=3AaagzlA4QMevLe4+P2SSial5TxoxKzbW+Uxg/r6l?=
+ =?us-ascii?q?dvs/dOikuYTKg1A2eF9o=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.12,227,1728950400"; 
+   d="scan'208";a="295578516"
+Received: from rcdn-l-core-11.cisco.com ([173.37.255.148])
+  by rcdn-iport-5.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 12 Dec 2024 02:03:32 +0000
+Received: from fedora.cisco.com (unknown [10.24.83.168])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kartilak@cisco.com)
+	by rcdn-l-core-11.cisco.com (Postfix) with ESMTPSA id E685818000265;
+	Thu, 12 Dec 2024 02:03:29 +0000 (GMT)
+From: Karan Tilak Kumar <kartilak@cisco.com>
+To: sebaddel@cisco.com
+Cc: arulponn@cisco.com,
+	djhawar@cisco.com,
+	gcboffa@cisco.com,
+	mkai2@cisco.com,
+	satishkh@cisco.com,
+	aeasi@cisco.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Karan Tilak Kumar <kartilak@cisco.com>
+Subject: [PATCH v7 00/15] Introduce support for Fabric Discovery and... 
+Date: Wed, 11 Dec 2024 18:02:57 -0800
+Message-ID: <20241212020312.4786-1-kartilak@cisco.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|MW3PR11MB4553:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33f34bd1-35bd-4f27-eb49-08dd1a50cde1
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?G3Y+ZaiZAIA42/QwWPK2Q9g4efkZuo/wMlf7xW5QpDyo1UV+i31V0yZnY+tE?=
- =?us-ascii?Q?z3FIsmPJOqYPO3wR5yVO9pihCb+kr9aMObnFtGhxb2FAHaNmq/iTNzbtu7W6?=
- =?us-ascii?Q?gzZvhPrukiWnfrP2A96XSMYOhkJLfY17UsaSVQGMRTUPI8MbmxWU21rTzRTg?=
- =?us-ascii?Q?wufTo1nH7IKHRdnFVuNhUQ0b6q1Wvjt2uJXbkCPreIzH4SylT+CcUN/KjmFa?=
- =?us-ascii?Q?hvk30zXxR7ArM1DgV8CizLuAPMmcyJ+ArRQ8B0V7TsHaPmziZ0zf7AJOZLm/?=
- =?us-ascii?Q?hfXxeLhDx4qJpPti/b0v92ACq/wPJL1L4uyLoyJlghzfcwqcjes9tBSDw2L7?=
- =?us-ascii?Q?Xm5QrhENqc5CYrX1FbCV0nhiRlxspJX2xnxXxpVGON4M0ZXlIg4qySSe6K7D?=
- =?us-ascii?Q?ui1tGswhFu5nBKotGTBzjhFuSsK+6d0b3zkOW03+YIaFfDjwtPcBnxYOoTcd?=
- =?us-ascii?Q?SFSoYQoehxod6f2phMae4LfQYNYCD5yXwI2yHr3qf4eaCGTJFqDWw3myjIhI?=
- =?us-ascii?Q?QFEbgeO/neuIb9JNP5xWALrwGIpwdrLjtwk+nhxmKK59I7SyUVGWoiPxP8hj?=
- =?us-ascii?Q?ctEHlr2zWCiaYZ/xB9h+Qv6XyPCkFQdPO50yldowa8qcoGnB9EWBecRttX1j?=
- =?us-ascii?Q?3HY7f6+WRAflXxOQlmhqc51eWpSddvUrKWv2BMBycmKpp1h6NUjWxKaGLWaP?=
- =?us-ascii?Q?Qpts5pJXRksXeYdEKrY7EDvu946sFGcfdoVc61ioq3UKPc3crp5QvRSfdcvh?=
- =?us-ascii?Q?wEu1vDBylAztaGJBeUGE6TY4ouVqviffm7YbhvdPTkNkXMfw7fzK2V6KJAP+?=
- =?us-ascii?Q?cdRlhFd/goBfv9caGsyognG/7gcVTPB6R7doLMgdBpH8YjcVIt9Yb8xOdgi4?=
- =?us-ascii?Q?wfpxfmkvU95dsNQyMnGkkFp8d//ckFeHpEj6wm4uPkUu6pMC0hQtXe5EH/Zl?=
- =?us-ascii?Q?T/9Hxj7AXRzSjCOmZEvzjwrp1xfKXiA3USOd021XmIwGG30dtSV3UtcR5x+5?=
- =?us-ascii?Q?mCiFTLefmeLNgy4caHtDcG7LNaw8eYa/SfmfcLeHlqTvDRN0vFAajyjdhRtZ?=
- =?us-ascii?Q?uRmNATrkeRlO3gb61lWK+Ey4AiwszKe4KVcc9y1PPwa6wGmLqrii41f/TzU/?=
- =?us-ascii?Q?JE1x0g1vWr6Ej1W8jjPHMXqw0QvsON43Te0bJlNl/Ej9NpiyTFfZy27i5/We?=
- =?us-ascii?Q?cEks0ezst9k7CkeuFux8cg9noU7FaffPPrjzQJyys3W019DrLrfEr107Cl3q?=
- =?us-ascii?Q?BCcdf/hCGAjxuOmN8ppyA3upUBOrk0hTpQFJG8Aih7wcbM6TROd5Otvbq03W?=
- =?us-ascii?Q?A0ktvHpcLmPjlFYbyOTyd+v8/nBpf2nFSfY8O5sjGpYTug=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pvvr4mILdBsveelCTNhZJZrx9ToSH67HEW9Cqn8sC7uzcjjrOhqpNRMypTAf?=
- =?us-ascii?Q?3+3zjNKjOmIql2UAZeSzqj51q/HYHqs0CiQcFt3SMA5YsqqcjOrQac66Xdkb?=
- =?us-ascii?Q?iS8GpvvLZLZkNJQw+T5bATkM0FI90yTC5tzWV7Wn+yG0DruEZW0UMpAKZw2X?=
- =?us-ascii?Q?HN38BsSNFEaAVD38fRU0CDIUZrT4prMxE4FuGXz/S/+6UBKT0fFgj9IztTAP?=
- =?us-ascii?Q?GeL7zB8x1uTZYEA6W0Atgp1AE3djFOFxDWnxausa4QqTzl7+Bq7VGtGrUk5P?=
- =?us-ascii?Q?vtHa7PzOLZ1Dxs5bagqjRm6DKyHf8ZBwOlu9ySCrXxwj+o+QLSfA+bjMVZL+?=
- =?us-ascii?Q?esVQDB2vtFWdLUSR54Qvkh0xBUM+RSB29gA4vWB44zv3DyuNoQGY/zQDEdJD?=
- =?us-ascii?Q?lO31IGGqmcDwiQ4gAHQcFkaRAqVXXwn0OlWdTipLq/tXLAW8d1IWMFywJ1oZ?=
- =?us-ascii?Q?R4Pn0RXGrc/mixfyZBiCh5FROY19kacmAwd4glFMYxzV+8uIGoZYmbmCSvt7?=
- =?us-ascii?Q?0i+alFzjCaU6M9t5vQ9b+adtYovn4ns2G+MT+VNnbcFNwUR6+80Pk9FHu7s2?=
- =?us-ascii?Q?DnIa+ZepmyNvj5QJ2rortyR7s91PpnuF8VPXrC+MILRvYi7bDD/EgUDka4gF?=
- =?us-ascii?Q?9EYWZ50CBSxQ3n9/1/G7rmG9gdfU0XU4pQpLHwrDuAtqNFvQ7TlnAkLUhIqr?=
- =?us-ascii?Q?KYrcvt/OxRNE42oUhWFoBHP1Uv9VotQxrpVXC1KG78dIKjgiK7P6/lGxy5QS?=
- =?us-ascii?Q?00v0dmvVoqCFYBxelR5fjc60l02ZM/GcQvapDE4DZU0A6qdtRxynOYrKRP8p?=
- =?us-ascii?Q?tMZ2Qg6C8AIW39GOnWpxIV7j4Ewknf0zH8PAAwcj6k7SJESsx5DoQIYMH8hQ?=
- =?us-ascii?Q?GpRQ3PlElJSDIQSP/eeRJBLnkbzTyXUV6WbL1zIzAYKuUhqMhKpeK4ERf7Ci?=
- =?us-ascii?Q?D4iv8IN6sBce5WChZ3uN7GS/3OUoK5NInBZGvD72gOsBG4UbMiH0tBaJ24wD?=
- =?us-ascii?Q?ThK9t/Q6Z391zuhkEhSz4+QTBmix5mOHbkUXNd6OExDFrlW2ETpt2ePcE40y?=
- =?us-ascii?Q?6EJxgmDGA+MurlROZ4l7j/Hp2fB+K3SwWYS2j6wLXOcBS1GdfUgSbmo8CeJ4?=
- =?us-ascii?Q?uKsCADmaV15Iuq/eCW7odZ7Th+kqcpjVJi5BXva1n7A7IZCcFfGswU4BmABQ?=
- =?us-ascii?Q?BAxv0r9C30GPym3NlNpxFGOAyf9IOr1SH0pH9aOPE+nLbUIzlP+32zLfcUv4?=
- =?us-ascii?Q?zPsOqykmIeSCfoZb3nwlLHRSS6IWZlNx9on5FrepwpuokPm2s11dIGu2JZcL?=
- =?us-ascii?Q?oHt9KvVz0h7w8gXvNcuniTc2B0BaohYLsnrQu8s9qry53FVnZPnNHv2iwOm/?=
- =?us-ascii?Q?/CsDnOEl+cfbLvVsdXc3D5hLOZZV2WNzrnr0hPQ3+FqrWEoJvdSTcvBz5eQO?=
- =?us-ascii?Q?2mF6DFEEoE77XgVFiSWO5sgJWw3uPnga2RZD5Ip8CLhjCkAm5Wy9QW2+aldu?=
- =?us-ascii?Q?dMU32Gfh43gUBJra85oGpDZT7LvkRN7Td6mtN2ve+oWk4IFCy71WeFH/aGuv?=
- =?us-ascii?Q?fB6ZPsf2RNyzkJugHcv5sBDLco0HMXdRmO1zAjKSALmq130Wfk3MZ+e0iysG?=
- =?us-ascii?Q?pA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33f34bd1-35bd-4f27-eb49-08dd1a50cde1
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 02:00:51.2257
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nzNpAV6AdkIrlVazv4kFAVNR5iVZRXo9VmQpoYoSt4nDV20xA2qHzMI9uJ9RtIcGDq+IqSZFOOY1SQt6YmUkFQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4553
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-Authenticated-User: kartilak@cisco.com
+X-Outbound-SMTP-Client: 10.24.83.168, [10.24.83.168]
+X-Outbound-Node: rcdn-l-core-11.cisco.com
 
-hi,  Namhyung,
+...Login Services
 
-On Wed, Dec 11, 2024 at 09:27:12AM -0800, Namhyung Kim wrote:
+Hi Martin, reviewers,
 
-[...]
+This cover letter describes the feature: add support for Fabric
+Discovery and Login Services (FDLS) to fnic driver.
 
-> > It should have that precise level reflected in the evsel name :-\
-> > 
-> > Ran out of time, hope the above helps.
-> > 
-> > Apart from that, from a purely regression fix, your patch gets the
-> > previous behaviour, from this isolated test I made, so:
-> > 
-> > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> Applied to perf-tools, thanks!
+This functionality is needed to support port channel RSCN (PC-RSCN)
+handling and serves as a base to create FC-NVME initiators
+(planned later), and eCPU handling (planned later).
 
-sorry for late. just FYI.
+It is used to discover the fabric and target ports associated with the
+fabric.
+It will then login to the target ports that are zoned to it.
+The driver uses the tport structure presented by FDLS.
 
-we finally finished the test with your patch, and confirmed
-perf-sanity-tests.Test_data_symbol can pass now.
+Port channel RSCN is a Cisco vendor specific RSCN
+event. It is applicable only to Cisco UCS fabrics.
 
-Tested-by: kernel test robot <oliver.sang@intel.com>
+In cases where the eCPU in the UCS VIC (Unified Computing Services
+Virtual Interface Card) hangs, a fabric log out is sent to the fabric.
+Upon successful log out from the fabric, the IO path is failed over
+to a new path.
 
-> 
-> Best regards,
-> Namhyung
-> 
-> 
+Generally from a feature perspective, the code is divided into adding
+support for this functionality initially. Then, code has been added to
+modify the IO path and interfaces. Finally, support for port channel
+RSCN handling has been added.
+
+Here are the headers of some of the salient patches:
+
+o add headers and definitions for FDLS
+o add support for fabric based solicited requests and responses
+o add support for target based solicited requests and responses
+o add support for unsolicited requests and responses
+o add support for FDMI
+o add support for FIP
+o add functionality in fnic to support FDLS
+o modify IO path to use FDLS and tport
+o modify fnic interfaces to use FDLS
+o add support to handle port channel RSCN
+
+Even though the patches have been made into a series, some patches are
+heavier than others. But, every effort has been made to keep the
+purpose of each patch as a single-purpose, and to compile cleanly.
+All the individual patches compile cleanly. The compiler used is
+GCC 13.3. Some function calls have been coded as placeholders with
+appropriate comments to avoid compiler warnings.
+
+This patchset has been tested as a whole. Therefore, the tested-by
+fields have been added only to one patch in the set.
+I've refrained from adding tested-by to most of the patches,
+so as to not mislead the reviewer/reader.
+
+A brief note on the unit tests:
+
+o. Perform zone in zone out testing in a loop: remove a target
+port from the zone, add it to the zone in a loop. 1000+ iterations
+of this test have been successful.
+o. Configure multipathing, and run link flaps on single link.
+IOs drop briefly, but pick up as expected.
+o. Configure multipathing, and run link flaps on two links, with a
+30 second delay in between. IOs drop briefly, but pick up as expected.
+o. Module load/unload test.
+o. Repeat the above tests with 1 queue and 64 queues.
+All tests were successful.
+
+Please consider this patch series for the next merge window.
+
+Changes between v1 and v2:
+	Replace pr_err with printk.
+	Replace simultaneous use of fc_tport_abts_s and tport_abts with
+    just tport_abts.
+	Incorporate review comments by Hannes:
+		Replace pr_info with dev_info.
+		Replace pr_err with dev_err.
+		Restore usage of tagset iterators.
+		Replace fnic_del_tport_timer_sync macro calls with function
+		calls.
+		Use the correct kernel-doc format.
+		Replace definitions with standard definitions from
+		fc_els.h.
+		Replace htonll() with get_unaligned_be64().
+		Use standard definitions from scsi_transport_fc.h for
+		port speeds.
+		Refactor definitions in struct fnic to avoid cache holes.
+		Replace memcmp with not equal to operator.
+		Fix indentation.
+		Replace fnic_del_fabric_timer_sync macro calls to function
+		calls.
+		Rename fc_abts_s to fc_tport_abts_s.
+		Modify fc_tport_abts_s to be a global frame.
+		Rename variable pfc_abts to tport_abts.
+		Modify functions with returns in the middle to if else
+		clauses.
+		Remove double newline.
+		Fix indentation in fnic_send_frame.
+		Add fnic_del_fabric_timer_sync as an inline function.
+		Add fnic_del_tport_timer_sync as an inline function.
+		Modify fc_abts_s variable name to fc_fabric_abts_s.
+		Modify fc_fabric_abts_s to be a global frame.
+		Rename pfc_abts to fabric_abts.
+		Remove redundant patch description.
+		Replace htonll() with get_unaligned_be64().
+		Replace raw values with macro names.
+		Remove fnic_del_fabric_timer_sync macro.
+		Remove fnic_del_tport_timer_sync macro.
+		Add fnic_del_fabric_timer_sync function declaration.
+		Add fnic_del_tport_timer_sync function declaration.
+		Move FDMI function declaration.
+		Modify patch heading and description appropriately.
+	Incorporate review comments from John:
+		Remove unreferenced variable.
+		Use standard definitions of true and false.
+		Replace if else clauses with switch statement.
+		Use kzalloc instead of kmalloc.
+		Modify fnic_send_fcoe_frame to not send a return value.
+		Replace int return value with void.
+	Fix warning from kernel test robot:
+		Remove version.h
+
+Changes between v2 and v3:
+    Incorporate review comments from Hannes:
+        Replace redundant structure definitions with standard
+        definitions.
+		Replace static OXIDs with pool-based OXIDs for fabric.
+		Replace static OXIDs with pool-based OXIDs for targets.
+		Remove multiple endian macro copies.
+		Modify locking as applicable.
+	Incorporate review comments from John:
+		Replace GFP_ATOMIC with GFP_KERNEL where applicable.
+	Replace fnic->host with fnic->lport->host in some patches to
+	prevent compilation errors.
+	Fix issues found by kernel test robot.
+	Refactor fnic_std_ba_acc definition to fix compilation warning.
+	Refactor fnic_fdls_remove_tport to fix null pointer exception.
+	Modify scsi_unload to fix null pointer exception during fnic_remove.
+
+Changes between v3 and v4:
+	Fix kernel test robot warnings.
+	Rebase code to 6.12/scsi-queue.
+
+Changes between v4 and v5:
+	Remove unnecessary tabs from the bottom of fip.h.
+	Incorporate review comments from Martin:
+		Remove newline at the end of files.
+		Modify attribution appropriately.
+		Refactor call to fnic_fdls_start_flogi.
+		Refactor call to fdls_get_tgt_oxid_pool.
+		Modify fnic_get_stats to suppress compiler warning.
+
+Changes between v5 and v6:
+	Rebase to 6.14/scsi-queue.
+    Incorporate review comments from Martin:
+        Remove GCC 13.3 warnings.
+    Incorporate review comments from Hannes:
+		Refactor function definitions to top of file.
+		Modify OXID allocation and reclaim design.
+		Allocate OXID from a mempool.
+		Allocate frames from a mempool.
+		Modify frame initialization.
+		Modify frame send by avoiding memcpy in hot path.
+		Add comments.
+		Replace tag walk with scsi_host_busy_iter.
+		Replace custom definitions with standard definitions.
+		Split FDMI patch into PCI patch and FDMI patch.
+		Refactor FDMI macros into fnic_main.c.
+		Replace FDMI custom definition with standard definition.
+
+Changes between v6 and v7:
+	Fix test robot warnings.
+
+Thanks and regards,
+Karan
+
+Karan Tilak Kumar (15):
+  scsi: fnic: Replace shost_printk with dev_info/dev_err
+  scsi: fnic: Add headers and definitions for FDLS
+  scsi: fnic: Add support for fabric based solicited requests and
+    responses
+  scsi: fnic: Add support for target based solicited requests and
+    responses
+  scsi: fnic: Add support for unsolicited requests and responses
+  scsi: fnic: Add Cisco hardware model names
+  scsi: fnic: Add and integrate support for FDMI
+  scsi: fnic: Add and integrate support for FIP
+  scsi: fnic: Add functionality in fnic to support FDLS
+  scsi: fnic: Modify IO path to use FDLS
+  scsi: fnic: Modify fnic interfaces to use FDLS
+  scsi: fnic: Add stats and related functionality
+  scsi: fnic: Code cleanup
+  scsi: fnic: Add support to handle port channel RSCN
+  scsi: fnic: Increment driver version
+
+ drivers/scsi/fnic/Makefile                |    5 +-
+ drivers/scsi/fnic/fdls_disc.c             | 5019 +++++++++++++++++++++
+ drivers/scsi/fnic/fdls_fc.h               |  253 ++
+ drivers/scsi/fnic/fip.c                   | 1008 +++++
+ drivers/scsi/fnic/fip.h                   |  157 +
+ drivers/scsi/fnic/fnic.h                  |  290 +-
+ drivers/scsi/fnic/fnic_attrs.c            |   12 +-
+ drivers/scsi/fnic/fnic_debugfs.c          |   30 +-
+ drivers/scsi/fnic/fnic_fcs.c              | 1743 +++----
+ drivers/scsi/fnic/fnic_fdls.h             |  434 ++
+ drivers/scsi/fnic/fnic_fip.h              |   48 -
+ drivers/scsi/fnic/fnic_io.h               |   14 +-
+ drivers/scsi/fnic/fnic_isr.c              |   28 +-
+ drivers/scsi/fnic/fnic_main.c             |  731 +--
+ drivers/scsi/fnic/fnic_pci_subsys_devid.c |  131 +
+ drivers/scsi/fnic/fnic_res.c              |   77 +-
+ drivers/scsi/fnic/fnic_scsi.c             | 1161 +++--
+ drivers/scsi/fnic/fnic_stats.h            |   49 +-
+ drivers/scsi/fnic/fnic_trace.c            |   81 +-
+ 19 files changed, 9340 insertions(+), 1931 deletions(-)
+ create mode 100644 drivers/scsi/fnic/fdls_disc.c
+ create mode 100644 drivers/scsi/fnic/fdls_fc.h
+ create mode 100644 drivers/scsi/fnic/fip.c
+ create mode 100644 drivers/scsi/fnic/fip.h
+ create mode 100644 drivers/scsi/fnic/fnic_fdls.h
+ delete mode 100644 drivers/scsi/fnic/fnic_fip.h
+ create mode 100644 drivers/scsi/fnic/fnic_pci_subsys_devid.c
+
+-- 
+2.47.0
+
 
