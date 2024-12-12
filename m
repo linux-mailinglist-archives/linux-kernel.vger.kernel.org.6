@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-442754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0839EE12A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:22:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1845A9EE12D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:23:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CAAF2834D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:22:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CBC2283885
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3901A20CCF6;
-	Thu, 12 Dec 2024 08:22:37 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC5120C494;
+	Thu, 12 Dec 2024 08:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VleVo90u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F47620C491
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724F820C030;
+	Thu, 12 Dec 2024 08:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991756; cv=none; b=tO6Ay99goDiWdZfWpr4y30p+7gG+R0vlDAjw7uhRpj9mRDtx8p6Zr8Sg0G8R3Pa78Y4PGQYxUb6wa8XWN5vUS0cCwpsQRUvMjKP/3eOyTxq9bOsDHH13ZCD3Wpd07bkC5GcobwkndqXh/JD83ALk8DUEW1T0j4xU3fLgXkEGInw=
+	t=1733991767; cv=none; b=g2BirX+OMojlwUhbA18Y3QjCMrjEr9dJRnPQ/WgEIjP1hFg/MOGs/Cu7p29kmw3Y0F6PuYHsQYa4/SB7xOLpHup/4Y9aDQ+DPx17KYdz0IKf4bOeU3BupFM8CxJ6r4LXbm2yHOCc8D07XYCF3G4RqILR5N105WygaIy8fPtZ+x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991756; c=relaxed/simple;
-	bh=PhGq18nzYMSBTDMTbNGpAYmympEoHWQY2Dag48ZP8uQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fsmchT7HjFoh0DiqO96wVhEyGXiNdrY3CYDZrWRsFioLIe1VV3D6eXFkupm1/gh1lBEfhaHxEPtJgGWV8T+DCP+/G60ZzX2Vm7iHIMmmiesF9iZSKXM6/m20wwVSTOQ+12SxGcWK52bv9Nv6vRLHBVHM4TrKlw7TK6JUpYTCs8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-844dfe8dad5so36645139f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:22:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733991754; x=1734596554;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WtOOIcnxJ+Mj13bnw/HJxyJB2w9A8masx1lR466c5Xs=;
-        b=CIvtTD95yW5WCY9voJXwYll4s3pJF0d3wB0fr5qAacGHzsYXT6O8MVGMeYM+ntc6oq
-         piYJrDqbOBkEcFOID44vGw53MJ1GVYuNlBHkftNMfNH1wgXNcs37Y9Qy3+eBFfm6fKPO
-         QcHOlchDfsrnuiB5NV7hoBgIV5cfDqQ4SJQoReRrLgrOmY++RdAloL/K1OnrvR2R8m+N
-         LSLd4WMzT+2Y5D8IxcsZt6ZeWt2ltET+gxQvR7xttxMQujmBS1E9s9lPOPobDp+kuoG9
-         /qiZ8QDf6AUohlX5IaLCk8AQhZC0RfFQ0wpBOz+WZxhPKZ+1uGUVPBvbi+uuY9em3W9b
-         ycrg==
-X-Gm-Message-State: AOJu0YwuVhPoyzYwqD+eDOqKGUhBE/mLb5LVujcgj0BVsAibmeNTdIAp
-	0DJvmwfRe4Upx0/nK5f0Y/jVk88+baClbx5SJem//Om4Z5elXusXRzT8F4dybZzgzCNoV2CsF4H
-	GGYSSBH4FqcKOBnP2sFhPBGSHCMeU/taIg9xE/yyZ2qWnspVPtkOfAJk=
-X-Google-Smtp-Source: AGHT+IGiQUFV4e9gisUlJuPAldAzzWKk//yAe5fw7mjhJIvEzmdpEf5x8+1ZQa8CFxfXrCc3wXEPURwwNpB6EjjU3aZLLA7AWXc+
+	s=arc-20240116; t=1733991767; c=relaxed/simple;
+	bh=3w6JwqEh1b6LGc9CdhEWu+2Vi3hcS2jK0TgPSdAt/0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ViBqv60Pq0nEJNMPW6K3DT48kOrsad7fpL8LxRAWxuSCL0m/KZ6Q0Hzim346rcVK3VInC2Zi/v7faaoN4hIljLK9C6f7HCBbINpKkBIztI4TNtArsDximfktTn6g5ERCQPgYG8f+7FH/HBHt5HhAMxHSHWodQBlqbQNGp6fzl30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VleVo90u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A339C4CECE;
+	Thu, 12 Dec 2024 08:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733991767;
+	bh=3w6JwqEh1b6LGc9CdhEWu+2Vi3hcS2jK0TgPSdAt/0o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VleVo90uZS4UD97FBA4QOHW9ymIgoFO0+bupgBIfksChmKYI2uAb6hEnMNDzgLY1z
+	 0zzoDIVAAyeP0t8YEtbobF3MDiHY/b/xwyRRVhL/ErfnnXRTfWM9jwSqrao1dlpoJG
+	 hu9FcDWfUdNNHmuUnfO7zAOH4Gop7GfvJYyhtmfAMgcHY6dJvaJrhCJviraLUwjcH/
+	 kBNagXr0NVbtBSkYn1fPK2nfcRxLdsryrLquvmt+nkrvyCEUvrkzgRkyuDiTMUA+7J
+	 +02/zl+VZ/aIyaBTmQIOBYGdOCG4qAx3Rax01PM2DwMVFUw/ZMRQdmgywrzYO400gb
+	 HWbckcvUh9SkA==
+Date: Thu, 12 Dec 2024 09:22:43 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Frank <Li@nxp.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v3 1/1] dt-bindings: PCI: mobiveil: convert
+ mobiveil-pcie.txt to yaml format
+Message-ID: <elx5pr5pvq24useuomzoxtsetmcw6admoo3iyte44kxpt47snf@w6w7kwpwonqm>
+References: <20241211171318.4129818-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa4:b0:3a9:e2f3:8dc4 with SMTP id
- e9e14a558f8ab-3ac4c8715ccmr27623005ab.20.1733991754494; Thu, 12 Dec 2024
- 00:22:34 -0800 (PST)
-Date: Thu, 12 Dec 2024 00:22:34 -0800
-In-Reply-To: <0000000000001db56d06076f6861@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675a9d4a.050a0220.17f54a.007f.GAE@google.com>
-Subject: Re: [syzbot] Re: KMSAN: uninit-value in hfsplus_rename_cat()
-From: syzbot <syzbot+93f4402297a457fc6895@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241211171318.4129818-1-Frank.Li@nxp.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Dec 11, 2024 at 12:13:16PM -0500, Frank Li wrote:
+> Convert device tree binding doc mobiveil-pcie.txt to yaml format. Merge
+> layerscape-pcie-gen4.txt into this file.
+> 
+> Additional change:
+> - interrupt-names: "aer", "pme", "intr", which align order in examples.
+> - reg-names: reorder as csr_axi_slave, config_axi_slave to match
+> layerscape-pcie-gen4 and existed Layerscape DTS users.
+> 
+> Fix below CHECK_DTBS warning:
+> arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dtb: /soc/pcie@3400000: failed to match any schema with compatible: ['fsl,lx2160a-pcie']
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-***
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Subject: Re: KMSAN: uninit-value in hfsplus_rename_cat()
-Author: dmantipov@yandex.ru
+Best regards,
+Krzysztof
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 231825b2e1ff6ba799c5eaf396d3ab2354e37c6b
-
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 948b8aaee33e..9352efbbf736 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -360,6 +360,12 @@ static int hfsplus_reconfigure(struct fs_context *fc)
- 			pr_warn("filesystem is marked journaled, leaving read-only.\n");
- 			sb->s_flags |= SB_RDONLY;
- 			fc->sb_flags |= SB_RDONLY;
-+		} else {
-+			pr_err("remount from read-ony to read-write "
-+			       "is not supported, leaving read-only.\n");
-+			sb->s_flags |= SB_RDONLY;
-+			fc->sb_flags |= SB_RDONLY;
-+			return -ENOSYS;
- 		}
- 	}
- 	return 0;
 
