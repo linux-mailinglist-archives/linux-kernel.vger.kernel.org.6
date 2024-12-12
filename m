@@ -1,182 +1,217 @@
-Return-Path: <linux-kernel+bounces-443051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40AA9EE63C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:05:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342D19EE648
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:07:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D25E289F61
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7374A1881360
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D130212B2D;
-	Thu, 12 Dec 2024 12:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fYOOdp9y"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB788210F5E;
-	Thu, 12 Dec 2024 12:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4912116EC;
+	Thu, 12 Dec 2024 12:06:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BB41A841D;
+	Thu, 12 Dec 2024 12:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734005117; cv=none; b=jhGmb2AB7t9aIGnIIibyA3BjRtWD04/ZltFenRvv57WTJrGkBdDNFxgb76wpL5MmaC9mObb7URO7mo0kKNsMILztIJG+WbBRTY1WG5GGsGOsChZfRjKnjKYnmDuH9qN80Yw1JUuw+9oFaop1JmcPf/c+hBUWPQMKfLoz1JM5BAY=
+	t=1734005191; cv=none; b=MKGQIbfE7qJgQpyaWD7tLW8CsoZQQp8YM6R6Uhi3M1MDXQHx5VGzda78Kbj8FTYHV7+n4Ya+Nuh4J8CKQGk+7/eRrx2+oJl3XVDofFjubK3dJXvHZO7BYkKBAZIO47QtyOTIFtjl6J/0Ey2EHJMYWds3Ru+94tkA2aR+Dy/oG8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734005117; c=relaxed/simple;
-	bh=dczLnZD9ji8Trn9VosWQYezAvBkKMhVWPVVwWcNhnZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D51Vgu6A4ACHNJwnuGYILlTYRpDr6Vt+fYrA77dF7k9RCEELR2V8wIYJvU5hFet9eupTZv7aC9V8ftkOre/4K8sqwdIefEdsFqyNBJxPPWwv6xoKqiHOxBr3+J5BQx1LbkhtejoxMKAEFCqPzVT0e/zVGYiqPeow0GiPKOpTLKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fYOOdp9y; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7HOWv012053;
-	Thu, 12 Dec 2024 12:05:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=2a3k1mkd0XcuQRayXOuU+WcpNVU7Q/
-	sxbzZYUDe0PV8=; b=fYOOdp9yuiOKakr7DVaDTJGGKj1r2LlGVTzdPHZy7lc3GL
-	k4F9y0sdCU94hbvGAvTLZo1bOG4l0eBbtIHC3DZnaPz7OQvtmNxhem/5zbYyFEZt
-	531SN8vtBjcWLFdsKqIYCQgRXVzr3egaxMxDf3c6uSre4sCoLsdWYy1TgJyYfeBQ
-	lxWWPeSFIleHkwOaLGarEgxMKuNCLPPEI632SBKMK32G0SH3znW8RWkSKeWXDC+h
-	HblqSjg3fZRrdWB2XWq2TRc6EGWnUzvI7Ty/ekXKNX91Hq2eVKLqB1absHy3lb3Q
-	R8mWgOlcxWD0K+Qxcg99i6PyTvWTuCz1UZhHW6MQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce3942g0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 12:05:11 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BCC4sIs001959;
-	Thu, 12 Dec 2024 12:05:11 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce3942fw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 12:05:10 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCBVfcd017421;
-	Thu, 12 Dec 2024 12:05:10 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1yv9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 12:05:09 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BCC58vG64291274
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Dec 2024 12:05:08 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4201620040;
-	Thu, 12 Dec 2024 12:05:08 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AF7DE2004B;
-	Thu, 12 Dec 2024 12:05:06 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 12 Dec 2024 12:05:06 +0000 (GMT)
-Date: Thu, 12 Dec 2024 17:35:04 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrey Albershteyn <aalbersh@kernel.org>,
-        John Garry <john.g.garry@oracle.com>
-Subject: Re: [RFC 1/3] include/linux.h: Factor out generic
- platform_test_fs_fd() helper
-Message-ID: <Z1rRcFbDR4IbjyVl@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <cover.1733902742.git.ojaswin@linux.ibm.com>
- <5996d6854a16852daca5977063af6f2af2f0f4ca.1733902742.git.ojaswin@linux.ibm.com>
- <20241211180902.GA6678@frogsfrogsfrogs>
+	s=arc-20240116; t=1734005191; c=relaxed/simple;
+	bh=hBlpEh26Bst9cNZHzQZCHocOCXzfhyNIb15FPFX9j/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sj8S4o2p5ibRjs2Wk/kDNZS1KKb/+A+p12jpJFZbN15zo8XG2uovEZjuax3AsqCIkReDrRbU8xcOdmK9fRe9JwBlJsUiKKCTiE4biA21xANCYbdjM2xLFKirD9tnXh5gNMeHBXmV/RYkiNBUw9R+bjcKUi2o3DxA7CkD9zdNKCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0330E153B;
+	Thu, 12 Dec 2024 04:06:55 -0800 (PST)
+Received: from [10.1.37.59] (e127648.arm.com [10.1.37.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D38713F720;
+	Thu, 12 Dec 2024 04:06:22 -0800 (PST)
+Message-ID: <a383eb2a-7752-4c2c-8792-dda9a05b2a53@arm.com>
+Date: Thu, 12 Dec 2024 12:06:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211180902.GA6678@frogsfrogsfrogs>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: FN5KEreYSzSgbTaaoJ1nGUk6XxbA0WAO
-X-Proofpoint-ORIG-GUID: TKdWiGCsZquPg3lnTsMpmCa3OJxrf8_L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0 mlxlogscore=831
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120086
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] cpufreq: schedutil: Ignore rate limit when scaling up
+ with FIE present
+To: Sultan Alsawaf <sultan@kerneltoast.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Beata Michalska <Beata.Michalska@arm.com>, Qais Yousef
+ <qyousef@layalina.io>, Pierre Gondois <pierre.gondois@arm.com>,
+ Lukasz Luba <lukasz.luba@arm.com>
+References: <20241212015734.41241-1-sultan@kerneltoast.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20241212015734.41241-1-sultan@kerneltoast.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 11, 2024 at 10:09:02AM -0800, Darrick J. Wong wrote:
-> On Wed, Dec 11, 2024 at 01:24:02PM +0530, Ojaswin Mujoo wrote:
-> > Factor our the generic code to detect the FS type out of
-> > platform_test_fs_fd(). This can then be used to detect different file
-> > systems types based on magic number.
-> > 
-> > Also, add a helper to detect if the fd is from an ext4 filesystem.
-> > 
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >  include/linux.h | 25 +++++++++++++++++--------
-> >  1 file changed, 17 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/include/linux.h b/include/linux.h
-> > index e9eb7bfb26a1..52c64014c57f 100644
-> > --- a/include/linux.h
-> > +++ b/include/linux.h
-> > @@ -43,13 +43,7 @@ static __inline__ int xfsctl(const char *path, int fd, int cmd, void *p)
-> >  	return ioctl(fd, cmd, p);
-> >  }
-> >  
-> > -/*
-> > - * platform_test_xfs_*() implies that xfsctl will succeed on the file;
-> > - * on Linux, at least, special files don't get xfs file ops,
-> > - * so return 0 for those
-> > - */
-> > -
-> > -static __inline__ int platform_test_xfs_fd(int fd)
-> > +static __inline__ int platform_test_fs_fd(int fd, long type)
-> >  {
-> >  	struct statfs statfsbuf;
-> >  	struct stat statbuf;
-> > @@ -60,7 +54,22 @@ static __inline__ int platform_test_xfs_fd(int fd)
-> >  		return 0;
-> >  	if (!S_ISREG(statbuf.st_mode) && !S_ISDIR(statbuf.st_mode))
-> >  		return 0;
-> > -	return (statfsbuf.f_type == 0x58465342);	/* XFSB */
-> > +	return (statfsbuf.f_type == type);
-> > +}
-> > +
-> > +/*
-> > + * platform_test_xfs_*() implies that xfsctl will succeed on the file;
-> > + * on Linux, at least, special files don't get xfs file ops,
-> > + * so return 0 for those
-> > + */
-> > +static __inline__ int platform_test_xfs_fd(int fd)
-> > +{
-> > +	return platform_test_fs_fd(fd, 0x58465342); /* XFSB */
-> > +}
-> > +
-> > +static __inline__ int platform_test_ext4_fd(int fd)
-> > +{
-> > +	return platform_test_fs_fd(fd, 0xef53); /* EXT4 magic number */
-> 
-> Should this be pulling EXT4_SUPER_MAGIC from linux/magic.h?
+On 12/12/24 01:57, Sultan Alsawaf wrote:
+> From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
 
-Oh right, thanks for pointing out. I'll use that for the magic numbers.
-
-Thanks,
-ojaswin
+Hi Sultan,
+(Adding further CCs that might be interested in this)
+Good to see some input here again, if it becomes a regular thing,
+which I would welcome, you might want to look into git send-email
+or b4 relay, at least in my inbox this series looks strange.
+Also no cover letter.
 
 > 
-> --D
+> When schedutil disregards a frequency transition due to the transition rate
+> limit, there is no guaranteed deadline as to when the frequency transition
+> will actually occur after the rate limit expires. For instance, depending
+> on how long a CPU spends in a preempt/IRQs disabled context, a rate-limited
+> frequency transition may be delayed indefinitely, until said CPU reaches
+> the scheduler again. This also hurts tasks boosted via UCLAMP_MIN.
+
+Realistically this will be the tick at worst for the systems you care about,
+I assume.
+
 > 
-> >  }
-> >  
-> >  static __inline__ int platform_test_xfs_path(const char *path)
-> > -- 
-> > 2.43.5
-> > 
-> > 
+> For frequency transitions _down_, this only poses a theoretical loss of
+> energy savings since a CPU may remain at a higher frequency than necessary
+> for an indefinite period beyond the rate limit expiry.
+
+theoretical?
+
+> 
+> For frequency transitions _up_, however, this poses a significant hit to
+> performance when a CPU is stuck at an insufficient frequency for an
+> indefinitely long time. In latency-sensitive and bursty workloads
+> especially, a missed frequency transition up can result in a significant
+> performance loss due to a CPU operating at an insufficient frequency for
+> too long.
+
+The term significant implies you have some numbers, please go ahead and
+share them then.
+
+I'm not sure if you're aware of Qais' series that also intends to ignore the
+rate-limit (in certain cases).
+https://lore.kernel.org/lkml/20240728184551.42133-1-qyousef@layalina.io/
+I would mostly agree with your below argument regarding FIE and did lean
+towards dropping it altogether. The main issue I had with Qais' series
+was !fast_switch platforms and the resulting preemption by the DL task
+(Often on a remote, possibly idle CPU of the same perf-domain).
+Unlimited frequency updates can really hurt both power and throughput there.
+
+Fortunately given the low-pass filter nature of PELT, without some special
+workloads, most calls to cpufreq_update_util() are dropped because there
+is no resulting frequency change anyway.
+
+You keeping the rate-limit when reducing the frequency might be enough to
+work around the issue though. I will run some experiments like I did for
+Qais' series.
+
+I'll also go and check for unintended changes in iowait boost (that
+interacts with the rate-limit too).
+
+> 
+> When support for the Frequency Invariant Engine (FIE) _isn't_ present, a
+> rate limit is always required for the scheduler to compute CPU utilization
+> with some semblance of accuracy: any frequency transition that occurs
+> before the previous transition latches would result in the scheduler not
+> knowing the frequency a CPU is actually operating at, thereby trashing the
+> computed CPU utilization.
+> 
+> However, when FIE support _is_ present, there's no technical requirement to
+> rate limit all frequency transitions to a cpufreq driver's reported
+> transition latency. With FIE, the scheduler's CPU utilization tracking is
+> unaffected by any frequency transitions that occur before the previous
+> frequency is latched.
+> 
+> Therefore, ignore the frequency transition rate limit when scaling up on
+> systems where FIE is present. This guarantees that transitions to a higher
+> frequency cannot be indefinitely delayed, since they simply cannot be
+> delayed at all.
+> 
+> Signed-off-by: Sultan Alsawaf (unemployed) <sultan@kerneltoast.com>
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 35 +++++++++++++++++++++++++++-----
+>  1 file changed, 30 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index e51d5ce730be..563baab89a24 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -59,10 +59,15 @@ static DEFINE_PER_CPU(struct sugov_cpu, sugov_cpu);
+>  
+>  /************************ Governor internals ***********************/
+>  
+> -static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> +static bool sugov_should_rate_limit(struct sugov_policy *sg_policy, u64 time)
+>  {
+> -	s64 delta_ns;
+> +	s64 delta_ns = time - sg_policy->last_freq_update_time;
+> +
+> +	return delta_ns < sg_policy->freq_update_delay_ns;
+> +}
+>  
+> +static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> +{
+>  	/*
+>  	 * Since cpufreq_update_util() is called with rq->lock held for
+>  	 * the @target_cpu, our per-CPU data is fully serialized.
+> @@ -87,17 +92,37 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>  		return true;
+>  	}
+>  
+> -	delta_ns = time - sg_policy->last_freq_update_time;
+> +	/*
+> +	 * When frequency-invariant utilization tracking is present, there's no
+> +	 * rate limit when increasing frequency. Therefore, the next frequency
+> +	 * must be determined before a decision can be made to rate limit the
+> +	 * frequency change, hence the rate limit check is bypassed here.
+> +	 */
+> +	if (arch_scale_freq_invariant())
+> +		return true;
+>  
+> -	return delta_ns >= sg_policy->freq_update_delay_ns;
+> +	return !sugov_should_rate_limit(sg_policy, time);
+>  }
+>  
+>  static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
+>  				   unsigned int next_freq)
+>  {
+> +	/*
+> +	 * When a frequency update isn't mandatory (!need_freq_update), the rate
+> +	 * limit is checked again upon frequency reduction because systems with
+> +	 * frequency-invariant utilization bypass the rate limit check entirely
+> +	 * in sugov_should_update_freq(). This is done so that the rate limit
+> +	 * can be applied only for frequency reduction when frequency-invariant
+> +	 * utilization is present. Now that the next frequency is known, the
+> +	 * rate limit can be selectively applied to frequency reduction on such
+> +	 * systems. A check for arch_scale_freq_invariant() is omitted here
+> +	 * because unconditionally rechecking the rate limit is cheaper.
+> +	 */
+>  	if (sg_policy->need_freq_update)
+>  		sg_policy->need_freq_update = false;
+> -	else if (sg_policy->next_freq == next_freq)
+> +	else if (next_freq == sg_policy->next_freq ||
+> +		 (next_freq < sg_policy->next_freq &&
+> +		  sugov_should_rate_limit(sg_policy, time)))
+>  		return false;
+>  
+>  	sg_policy->next_freq = next_freq;
+
+Code seems to match your description FWIW.
+Maybe the comments could be trimmed somewhat.
+
+Regards,
+Christian
 
