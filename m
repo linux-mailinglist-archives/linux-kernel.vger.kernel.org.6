@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-443500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC729EF25D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:48:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DAD09EF399
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:01:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3FEF290954
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:48:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7476217AA70
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D20222D6D;
-	Thu, 12 Dec 2024 16:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A816622D4C6;
+	Thu, 12 Dec 2024 16:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aDgLeLlp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i4tNv6W3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7877621CFEA
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD6A223C54
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734021478; cv=none; b=bGr+Lsh+nqjYPgblDiPGOkLVaBvzyNsczVh6AyZGWAJgsqRy7nIDNgWZzEq08wxWpCfv3dcn7mYmcXTCiqzBQWmVx3+hQtw72OUxXFi5U3IPDn5jMdPEQ0/fCBOVaeXBf4BSlLLosO6ekzKUazaSuJzICbBDgwOay1OKLil2d/I=
+	t=1734021607; cv=none; b=CC4FRN90fzwfGcGU0d5iMrqx5UqpGG2ap/95iXX0NlXzE92zkha+nDB8FpGvVmo80l2G4A3psZw9w48n+DKDnjhUbsCIPjolCmq90+4qnUk9Pp66GZENcW1XyBufmxhcSyWMLx96GYIL07gndc9EsKbMS9eJscoDSBcFJcm0WK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734021478; c=relaxed/simple;
-	bh=xZTwFG5FLgiskzYbaYyz22Fpos3eeBfumtIPuyDJaDw=;
+	s=arc-20240116; t=1734021607; c=relaxed/simple;
+	bh=kEb3ESkZIpLBxO6ChQiW2DNV3iem/uNx8Umljn2afxw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B9TxVbvu0D5KbkxTHGjxqRLyZgVvHKte+Kd7jjUFPVzFAk4vxRckIXw8tdD9bI34M5pwAHpkmDDNri4lrkQ2ehaMUb19EVAFL+Z1fM4RQqfkuqifqsTeYuxCRs8E5+Z8svWvvzk+UmCsnuTQWwOtRWVlaSNL/GbZfRKpftNPBhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aDgLeLlp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734021475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2/JWnOJW6U543Vpbg6PAvnRfuu/1KbMmqtG+gC1ifEE=;
-	b=aDgLeLlp+lVhmibXtwArbI3wK7QHyy8invECR7GoXrjE3qh8HcDmVl2O9IFR0SY4GTMc9B
-	cg+Kyclh9Cd5L3T5EBKpPVcaN2fgFPQGb2/Kobx51tc06aCE8WIAUZ6ZH5yCBU8NxNbdN9
-	MmdaWqK/+QbaNJoV2bV26IO3fVMhaCA=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-573-vY5cGxwbO9q4_rDisyuqBw-1; Thu, 12 Dec 2024 11:37:53 -0500
-X-MC-Unique: vY5cGxwbO9q4_rDisyuqBw-1
-X-Mimecast-MFC-AGG-ID: vY5cGxwbO9q4_rDisyuqBw
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385d52591d6so492017f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:37:53 -0800 (PST)
+	 In-Reply-To:Content-Type; b=t++zvyene6igQesWLpFQCOT0+L9CJkX98v3ZsVbO+NgnaqiQfiEvK9Xt3wXTISGN7mIGzF5FE9150pWZ2jBkzrKxG2wFHavlGPTydDOrfd7UOa3VXD/M0/75+4Ri/hj+W5XHpzRQl01t5hmkbJgZD+575LGqf10jw3Vz1m9mPsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i4tNv6W3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCGNImH029994
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:40:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kEb3ESkZIpLBxO6ChQiW2DNV3iem/uNx8Umljn2afxw=; b=i4tNv6W3zFrwF6Lz
+	U/YjN2U8CUtzwk18QI3LAExBBwxyDKk65ly/sjvMIkaeUu7cYrlLMiGd6WQDoCBL
+	oa3fM/o3kGxJLHLgPzbjgrKyCf45BuktOChaqTl205j+kSqmwAfMDbshikCc+CSu
+	l4JZ7gh/2kwnj0Ci/kURxfZjxiA0SF9DJfJolm0eXyNOoWvrLVJLiSQ5Dpxm6Si+
+	bTxEN2d7CdcHnCLn4XQFBlf7twbsN66Nxl5+02UrxwlCqzSd6kysEkcrScSgw5pZ
+	PcdR5PI7UZzY6J85ehJWHK8Kfr0+46pJ5v3THx3GIvfYkH6aDc3+z6gSmrZ1PAhs
+	fsdYRw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw4c11f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:40:04 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-466a20c8e57so1733211cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:40:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734021473; x=1734626273;
+        d=1e100.net; s=20230601; t=1734021603; x=1734626403;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2/JWnOJW6U543Vpbg6PAvnRfuu/1KbMmqtG+gC1ifEE=;
-        b=ggETa7/QVs81l5eqQMtCQ9MJlfYtvq1GfJysQwB7CgtC10zst0KMzl2L4LTXiQdXPx
-         kyqtljbcLdJso9c78gvyCO7R7SHQKln89xeEsbp5iCQjh4Onj9xCvW1d5ZldEv1JP5Ci
-         /TDdk8zQDzZiweZrvxEahHnIlL9TabdoMBnSDo+P630qX/+kLVTnuIbYFbq1V8E1je35
-         Xjq10s+QP63BBqL7QlnLiI+fq1zVKR4k3nuk97phVC8WvAdcHvnlR+teB8Yta32NOf45
-         /RVFwkWJARJSn9BLcN6cMOOJIEXNDD/E6l9ttb9x0BKf7dl1Rsa9dBkiScGqJzou/0YM
-         NpHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUo9fYDLhrfZwU62fb9mhb2Rs1sBq0hQLEFcCYMpqilz5etdz6AXbsds96MYJMI6ymqrCINzIrlvA8oK+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Bo3I7TpCmEQ91Ehj3pP2GyZaZrJiGwSAmn3mgYylEfoXzCZo
-	rGHr5WSJ0ZHtaDI4zCdwFBanLPJlviT8Q0MD0zKhS5voC84vlg3ZiC+epoFzv+adTD/sg4HUjeQ
-	fnhqtQTa5DCsFlXW2CxP78b0U7jiN6g2aaUZ69ijek4mDF2NdeTJ8H8pzpHqRSQ==
-X-Gm-Gg: ASbGnct6aIGO4HGDOlxLBhPzpUp719Exd7GjaT1ZZg5yOuUdXtZTyEw5FmofZvJeRD9
-	h4ifRSJzI7+3ABo3f3UC+5ve5q4IRmem/P4BMdtBT5Cz0eQvjBbaQi0qrYgJhZjpkUi1v6Mt8gx
-	ZPzMtMW+gDG7hY/tw+Ks0DlYTSFYEXBvblZriNPqxr69IsSe1d/XQS26Rkqy+9oZ80G/IBlorKH
-	gJJ4LPGoKTKSQRZP4bg8nzvUG1pkwjEm1On676j7oEU8nCneDzCywU4RVAOndnDyC6dDZoreD6o
-	4HuoyEtEaSELUMEWQV6q
-X-Received: by 2002:a5d:4249:0:b0:386:4a16:dadb with SMTP id ffacd0b85a97d-387887df18amr2620127f8f.11.1734021472709;
-        Thu, 12 Dec 2024 08:37:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGCqlzDJSGcOyDg622o0aLIqYnr1Qin7+BQ7+u2XkYPDbcqPlEzDuaHUAQTIOSWuZs3wfMVew==
-X-Received: by 2002:a5d:4249:0:b0:386:4a16:dadb with SMTP id ffacd0b85a97d-387887df18amr2620105f8f.11.1734021472309;
-        Thu, 12 Dec 2024 08:37:52 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362571776asm20890445e9.40.2024.12.12.08.37.49
+        bh=kEb3ESkZIpLBxO6ChQiW2DNV3iem/uNx8Umljn2afxw=;
+        b=WNSiOqSL2+sSyb1r4sExYHsxxvyL4Mioo/2vLyIPjeMZfuyjt7hRXo/v9Hq/NQnNVv
+         0JXAGohRT9t3qBAu50Qogg5YVnLaOKYrDgPELB5qPJSRVY2hVY4XJNks3A0sWHjVtx8k
+         p8HkmkEVagPhwvAxFdpU4NYMdRzfs/mdHIhNCTqmzs8PwkXZFey0H45QWB/8Pp6D5qWH
+         1fL8S8PwCa/QZqEJDpdx8+pg7fgvfatNcJs5KsZoc5StKYBumziubvegeE+Bnc3mqD7a
+         VfKbtHJD8DpAF8CLrIdY+kqfIdzxqOcHQZJj1G078BFeamfzIS6CHPzwcrjd0Od9D0k0
+         nL5w==
+X-Forwarded-Encrypted: i=1; AJvYcCW7I8pWhU2upOZvTx4C0dPEezqx4ygsGZJUCZl//G/BUh9e7bh7nWFUOVSYBlyHTJG6CIfETlqVa0Bdxs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywatue1DwwgghsWluuPAMZRJ91X4IoQuOj8lODSUIQJz/Swbs4K
+	0aTzPqwoFa8zw1SdZEdJQx0H+M7ctDp8ovBY4elhldpop1q70baCp1XyOIfLq1u7J/3FIQFV8cm
+	h+WdKuIcq6Uviz2ipUzW66D+bSlomcTr8Vy9ivt6nKyAumBy9BekXxzJhYESBFjw=
+X-Gm-Gg: ASbGnct2pbthpARwuFw2Zc14RT2ORwTW8BZvZ7p4XjrvOKS0+GtwBCvZ73XrAGmB1tx
+	UegElTmxCUbzMPk+paqXZoqb4Woh52qS9lSYpzA/Ja5KLfw4FRaFqTJBqdz4zsj6K7WO5GKaG1e
+	hQz6cd6OszlXjpr3DR5Z547rOEWkSTa97/G+wJmh+v/bUCbze22LPXKVhJ1efMWbeOUlo9PcpQ/
+	AhZBqLkNIibho9Lsevv8JfamPXWVb8D+o6TmWjPy8pB6bvTDM/eEWihfUC7DttF0u9bcnMC0nrF
+	XfeFtp0o1SaqVbdE/tX63rcZbmkWhcvVQQreFw==
+X-Received: by 2002:a05:622a:a:b0:467:885e:2c6e with SMTP id d75a77b69052e-467a14ceb0amr6505881cf.1.1734021603234;
+        Thu, 12 Dec 2024 08:40:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGLvFj8TYhHqAdCQaswyICMngZInZ1e+XWLZkhVURT+fAjQH7mI/i/omj8bnfV+3LE8tBfFAQ==
+X-Received: by 2002:a05:622a:a:b0:467:885e:2c6e with SMTP id d75a77b69052e-467a14ceb0amr6505581cf.1.1734021602915;
+        Thu, 12 Dec 2024 08:40:02 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69dd81272sm450830866b.161.2024.12.12.08.40.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 08:37:51 -0800 (PST)
-Message-ID: <eaffbf5e-ecb0-4aa3-8d05-da090494f8c3@redhat.com>
-Date: Thu, 12 Dec 2024 17:37:44 +0100
+        Thu, 12 Dec 2024 08:40:02 -0800 (PST)
+Message-ID: <1b25b929-b14a-44be-acd0-b5f4f95241b7@oss.qualcomm.com>
+Date: Thu, 12 Dec 2024 17:39:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,69 +88,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/log: select CONFIG_FONT_SUPPORT
-To: Arnd Bergmann <arnd@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- John Ogness <john.ogness@linutronix.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Andreas Larsson <andreas@gaisler.com>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241212154003.1313437-1-arnd@kernel.org>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20241212154003.1313437-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 09/14] ASoC: dt-bindings: qcom,wsa881x: extend
+ description to analog mode
+To: Alexey Klimov <alexey.klimov@linaro.org>, broonie@kernel.org,
+        konradybcio@kernel.org, konrad.dybcio@oss.qualcomm.com,
+        andersson@kernel.org, srinivas.kandagatla@linaro.org
+Cc: tiwai@suse.com, lgirdwood@gmail.com, perex@perex.cz, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, dmitry.baryshkov@linaro.org,
+        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241212004727.2903846-1-alexey.klimov@linaro.org>
+ <20241212004727.2903846-10-alexey.klimov@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241212004727.2903846-10-alexey.klimov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: A8WB6TVOhOpMJ4z_138beqogKYDyy20j
+X-Proofpoint-GUID: A8WB6TVOhOpMJ4z_138beqogKYDyy20j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=802
+ clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120119
 
-On 12/12/2024 16:39, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Without fonts, this fails to link:
-> 
-> drivers/gpu/drm/clients/drm_log.o: in function `drm_log_init_client':
-> drm_log.c:(.text+0x3d4): undefined reference to `get_default_font'
-> 
-> Select this, like the other users do.
+On 12.12.2024 1:47 AM, Alexey Klimov wrote:
+> WSA881X also supports analog mode when device is configured via i2c
+> only. Document it, add properties, new compatibles and example.
 
-Thanks for the fix, I'm sorry I missed that dependency.
+IIUC, this can work both with i2c only and soundwire only. That's
+not fun to describe in bindings..
 
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+I was thinking, maybe something like [1] referencing and i2c host
+would be fitting, but now I doubt that given we don't even need a
+swr device node..
 
-> 
-> Fixes: f7b42442c4ac ("drm/log: Introduce a new boot logger to draw the kmsg on the screen")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/gpu/drm/clients/Kconfig | 1 +
->   lib/fonts/Kconfig               | 2 +-
->   2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/clients/Kconfig b/drivers/gpu/drm/clients/Kconfig
-> index c18decc90200..7b81fd0f4cae 100644
-> --- a/drivers/gpu/drm/clients/Kconfig
-> +++ b/drivers/gpu/drm/clients/Kconfig
-> @@ -77,6 +77,7 @@ config DRM_CLIENT_LOG
->   	select DRM_CLIENT
->   	select DRM_CLIENT_SETUP
->   	select DRM_DRAW
-> +	select FONT_SUPPORT
->   	help
->   	  This enable a drm logger, that will print the kernel messages to the
->   	  screen until the userspace is ready to take over.
-> diff --git a/lib/fonts/Kconfig b/lib/fonts/Kconfig
-> index 3ac26bdbc3ff..ae59b5b4e225 100644
-> --- a/lib/fonts/Kconfig
-> +++ b/lib/fonts/Kconfig
-> @@ -10,7 +10,7 @@ if FONT_SUPPORT
->   
->   config FONTS
->   	bool "Select compiled-in fonts"
-> -	depends on FRAMEBUFFER_CONSOLE || STI_CONSOLE || DRM_PANIC
-> +	depends on FRAMEBUFFER_CONSOLE || STI_CONSOLE || DRM_PANIC || DRM_CLIENT_LOG
->   	help
->   	  Say Y here if you would like to use fonts other than the default
->   	  your frame buffer console usually use.
+Konrad
 
+[1] https://lore.kernel.org/linux-arm-msm/20241112-qps615_pwr-v3-1-29a1e98aa2b0@quicinc.com/
 
