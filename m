@@ -1,110 +1,94 @@
-Return-Path: <linux-kernel+bounces-443954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B9A9EFE09
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:14:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954879EFDE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC9C188A7A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A90B3166F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD0C1C5F1C;
-	Thu, 12 Dec 2024 21:14:51 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4496D1C5F1C;
+	Thu, 12 Dec 2024 21:08:07 +0000 (UTC)
+Received: from algol.kleine-koenig.org (algol.kleine-koenig.org [162.55.41.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A2A13FD72;
-	Thu, 12 Dec 2024 21:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45A31D54FA;
+	Thu, 12 Dec 2024 21:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.55.41.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734038091; cv=none; b=spv0ayJXlp3wyeyHHYItf241YgCV/4QN3BcOJEHJHZaSAxs8mIq08iLKNJ7prVBbftQRJQZyOjUvCXYztShewpvmEr7dQinFj7OPKBARRXOIIhtjIoAGbvMGarhu7snqvRJfyxl/htAMf+5L2DJJBraU9tOVMw1z14mK4Lc+qnk=
+	t=1734037686; cv=none; b=YF2fFouPfXydAxjSmQ/2QZ8mzRc5BitcW/a5xfGySXeDonB7HM63vl9ncMsCOCLHHCR5QMA6TPtBmZOZY3OJuRNB31gxU8naGOWuMxtqTVbnup58uWlHF9XO5mlYjhPAVG+6WnH7qfF61MBXqgtkG2I0NSv0T+nPqN9zojjf8gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734038091; c=relaxed/simple;
-	bh=T4urowiJ2qizH6LDk0ZS8i32It4fsmj9/7Poghekv1o=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=G7zU+Lfv1sNAyFWmz+heiKTV8b1UMf81MqGtAXS8yfamaBCBRLzlkF8UzXigLGLZ0DfDRuF4yIekSx3jFgJcYQ5ESPMpnqC7OL1LX1EPrdxkW3AHrALtaCD3d1QlPSWJ4MdlLS9N5R3hNhzj8+EVAT6JLuFx0Pm0p6/0BtNOkFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id EB6B1A09A2;
-	Thu, 12 Dec 2024 20:56:37 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id C69626000E;
-	Thu, 12 Dec 2024 20:56:18 +0000 (UTC)
-Date: Thu, 12 Dec 2024 15:56:34 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: LKML <linux-kernel@vger.kernel.org>,
- Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] fgraph: Still initialize idle shadow stacks when starting
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CACRpkdbrJ6ERLeMxBPXykCk+mgUkiYGVYqVSnTCKzu=9DBgy6w@mail.gmail.com>
-References: <20241211135335.094ba282@batman.local.home> <CACRpkdbrJ6ERLeMxBPXykCk+mgUkiYGVYqVSnTCKzu=9DBgy6w@mail.gmail.com>
-Message-ID: <81D30FDF-BC8A-4189-A1D1-25BB66C19172@goodmis.org>
+	s=arc-20240116; t=1734037686; c=relaxed/simple;
+	bh=X8ZYQyxfTsRwAqrB3b4m8it0qVmfkjAPbW64L5DFXes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=idtyqkCjvEbX7ZQf8fvxosa0+j50TVWwzyWY8QtrQ3g3v5V2oMT95vmB2X3AOmSlEC6+AYesX47Gw4Plowf+IYN+A1RtJQFWpu0V63zOSeHQMTANCS92Qrm1XOfBOCwDFZ0IGVCDl+YulaOZaX9533YLDZL8Pk6Nzp0X2j7KB4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=kleine-koenig.org; arc=none smtp.client-ip=162.55.41.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kleine-koenig.org
+Received: by algol.kleine-koenig.org (Postfix, from userid 1000)
+	id 1A332F51FB7; Thu, 12 Dec 2024 21:58:14 +0100 (CET)
+Date: Thu, 12 Dec 2024 21:58:13 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Jakob Riepler <jakob+lkml@chaosfield.at>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] leds: pwm-multicolor: Disable PWM when going to
+ suspend
+Message-ID: <rlq3efs5vorukieyj7h5lohpji3svowjpozisbizwihej6kgds@zxxksgdiuwgy>
+References: <d7d930bc-4c82-4272-b2c6-88f7cac5a3e1@chaosfield.at>
+ <50bbd767-b0e0-4788-975b-f5d9598208e5@chaosfield.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wt5yqy63j6fghig7"
+Content-Disposition: inline
+In-Reply-To: <50bbd767-b0e0-4788-975b-f5d9598208e5@chaosfield.at>
+
+
+--wt5yqy63j6fghig7
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: C69626000E
-X-Rspamd-Server: rspamout03
-X-Stat-Signature: hd7xhry7uz1a5famsq1f1z6kgdxtnjzf
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/HttJSC/SNhmg9CSbz18q9TbTnZTYLSVE=
-X-HE-Tag: 1734036978-984619
-X-HE-Meta: U2FsdGVkX180CCpS5Wz+zFpi3eIDVcaZpBq4w+SwBPKQKA2Df7xHQ0t1lOLXuUjcd4Fc8RRuVBshMriDhkGCK7MRjkl3qZTKzmNLYDUJlWnGQULV9DH9CeGh06BOkhP8l9exna5kBYSiUCfTLTuLvRascvdXiwpPfg5IvZDqhh/2xJtVLlL/6qQGzQGlwy+PfelElAzh3za0b/A6HQJnO5QZZBtk6Cx8rrmvdo2v7g8bCnCMfBvvEycu0f29I7d87cfHCLJ0YrhAChQM92QxhN/2dlyKuDakPV1tV0atzG6AgwdadPW85DYl3rIDPVYcnSTuv69tG0YODSgpGuumZSAslxWhFRgDxMDlYLXelaJrxlDlae/RJza4eiTXWrrSxi+vvCp1N6Ex0evLxEx4bPaa3tWpP/JBDujfTY72UdncKnuzJvZ2PlqrHdDC81FOmJ3qd+eRJIKDlyYkknCTvIxOERxsyYFg7xF1CoVR88tOnYmKQ8pijW76J7pV14eh
+Subject: Re: [PATCH v2] leds: pwm-multicolor: Disable PWM when going to
+ suspend
+MIME-Version: 1.0
 
+On Mon, Dec 02, 2024 at 01:07:51PM +0100, Jakob Riepler wrote:
+> This fixes suspend on platforms like stm32mp1xx, where the PWM consumer
+> has to be disabled for the PWM to enter suspend.
+> Another positive side effect is that active-low LEDs now properly
+> turn off instead of going back to full brightness when they are set to 0.
+>=20
+> Link: https://lore.kernel.org/all/20240417153846.271751-2-u.kleine-koenig=
+@pengutronix.de/
+> Signed-off-by: Jakob Riepler <jakob+lkml@chaosfield.at>
 
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
 
-On December 12, 2024 3:49:37 PM EST, Linus Walleij <linus=2Ewalleij@linaro=
-=2Eorg> wrote:
->On Wed, Dec 11, 2024 at 7:53=E2=80=AFPM Steven Rostedt <rostedt@goodmis=
-=2Eorg> wrote:
->
->> From: Steven Rostedt <rostedt@goodmis=2Eorg>
->>
->> A bug was discovered where the idle shadow stacks were not initialized
->> for offline CPUs when starting function graph tracer, and when they cam=
-e
->> online they were not traced due to the missing shadow stack=2E To fix
->> this, the idle task shadow stack initialization was moved to using the
->> CPU hotplug callbacks=2E But it removed the initialization when the
->> function graph was enabled=2E The problem here is that the hotplug
->> callbacks are called when the CPUs come online, but the idle shadow
->> stack initialization only happens if function graph is currently
->> active=2E This caused the online CPUs to not get their shadow stack
->> initialized=2E
->>
->> The idle shadow stack initialization still needs to be done when the
->> function graph is registered, as they will not be allocated if function
->> graph is not registered=2E
->>
->> Cc: stable@vger=2Ekernel=2Eorg
->> Fixes: 2c02f7375e65 ("fgraph: Use CPU hotplug mechanism to initialize i=
-dle shadow stacks")
->> Reported-by: Linus Walleij <linus=2Ewalleij@linaro=2Eorg>
->> Closes: https://lore=2Ekernel=2Eorg/all/CACRpkdaTBrHwRbbrphVy-=3DSeDz6M=
-SsXhTKypOtLrTQ+DgGAOcQ@mail=2Egmail=2Ecom/
->> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis=2Eorg>
->
->Yep that solves my issue and I can go on debugging my boot!
->Tested-by: Linus Walleij <linus=2Ewalleij@linaro=2Eorg>
->
->Thanks for patching this up so quickly Stephen, you're the best=2E
->
+Best regards
+Uwe
 
-No problem, but I don't know who this "Stephen" is? ;-)
+--wt5yqy63j6fghig7
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- Steve
+-----BEGIN PGP SIGNATURE-----
 
->Yours,
->Linus Walleij
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdbTmMACgkQj4D7WH0S
+/k7/ugf/WBqnHunrE5w+U4cloDCKuHLEugerBVzBN+KCKznMP2BFN+G1SGc56H1u
+I0VP07zI+GxKPLt74pQfhQlqNG2l0pZGKP7xkvXgsaZngpAEzFEUIOr0+SfXWyHo
+S6oXIvnKUE+LJSyv/JuH7PEnga4/zAuf9E/LEhEtnws9w4bo7vS2QnjvCLjAfmR2
+FmHdHFJ7gw1KYMAe2ZiygEmfF+51I/BWq1419hf5BG6ki97BZQFjOqcyxdcQVRV9
+jv7SK9HJqMU9CNCPiWFcIFAJdGxaBavCg8jmon4rBn6tL8lJiM5OdMQa1u3Itmk5
+JIwxMXd5K5RJLTZRWylf1FbRZOJNqw==
+=sO9I
+-----END PGP SIGNATURE-----
+
+--wt5yqy63j6fghig7--
 
