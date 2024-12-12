@@ -1,249 +1,276 @@
-Return-Path: <linux-kernel+bounces-442629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C079EDF95
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:43:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9520C9EDF96
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E6F168988
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:43:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 219901888DB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578D6204C30;
-	Thu, 12 Dec 2024 06:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675DE186E27;
+	Thu, 12 Dec 2024 06:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="IDt4qYDR"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2126.outbound.protection.outlook.com [40.107.117.126])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iou0YadI"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E91F204C1E;
-	Thu, 12 Dec 2024 06:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.126
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733985779; cv=fail; b=D5z0qcQjBxqe70crDDX7X9qK+1Kx5mc6t4y7iWAe+U72MqM5BYZ3GdSp0ByGhQI+k++nsOil/fMBBcz9bjwTBU0hfKK2be+2AGIlGbmk6ZhyPZAm3+vSjkdLLSvidgUc5QOAW+nOJyNSAmAszSiY+zMglFWPwVkaNfNkHoBMclY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733985779; c=relaxed/simple;
-	bh=fa+1OUUh3pCEBskNYpOR/LWaodgOqc+p018QMxrlVEk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cdFHt3YcMqz7EI0RTOArVRI0ZreSdF+MDRpK4f4dQ6xWIbWGZCAZkpFDbJT1XkNA06J1+CyKhIcFT65siEHmpvC8+H4svTes2/dZQaYqRexMGVh8/O6ZkV0VOWcKlBslPBCJVv98pX5rbDNNoaoaPVLD0qnXH+QCgzqjysn28Wg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=IDt4qYDR; arc=fail smtp.client-ip=40.107.117.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ub3nm77uUS8db46IpPTN21Nxog5ESjG6nMmlfBk32CeWbrE6+qEQ4X0JgDo3nlcpVyiBSlw+73wQoN9SE8pVrsSnLLS9IpbivMGAqU8puHy7qGkG3jbIKXEmAGCYUNFW/9nOp/jItJSUf3NdDAuASaIDebHtYdCLu7o8m1TLMIXqJMpUSJhc/LGs+cBW7/B6BM3klISDcrGLANT2AXftXOFwVyCgRxSZePYPRoRNimLFThu/mFgF3qlRUWV9clxjUEY/qYmwH+XT4uk+NhCCseldllX12fbU9gBVOdBS5VAK+60J9zT9EA51gFMhR27t6kF2/bq9b+GarR5KJ6Pv2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8eJIRtlOg2jav8RgqjPMQ3+Q53H167/yNmfvxegay4U=;
- b=lws425p1dM2VjaSboXMOKvKnNvizdvxhHFZj2GPwKt8z0Ej/KlxbN0+5+qRMtQr4XvQcE017UFll8MJtfLBvtWQ/R2s1MuUAO2l1V0WW4t1WIoGaa9/w9M+NevzcHJoM4CCTGCZyhvwbKYoycvP72C0afprBBJ44BPlw0hH51uQ0XfkOW5RC25oXo6cmsTMcjiexf6EU8zOphzcRPZoDjwv3hCxczPYvMYu4VIXaHeT7j5/f51QDnoWFas5zRfqHDEWpEpwNQsaMp44n3Ey8S9w33xxdztHNSwW4d3Zo6nM1HlWUFS/T64uKHPTbrsT2YJReqxcmFobD3tIeuSLBsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8eJIRtlOg2jav8RgqjPMQ3+Q53H167/yNmfvxegay4U=;
- b=IDt4qYDRWx7BSRhIXzUQqUjp9xU1Jv61nRc8ZDeyGk4Nplq/yS+XyzRKTYshJEuNyvSOzjuxccv+/j3pyopEXcCr+kML0oDAwyf+acWXO2686VlynbglW75eg08WpIf90fgoUHe28czQbhqNJx/lqaS29HUwEG0d93PGtLjfSyAJbG5neazX9nvKewe6xX/+u7VSGfWdUUaB+GuZ509/zv4o0gaSGc3yHy/66O1axq8EDQ7IYb/faYf8btsbeTlvq8wy/cd0nsvelc/M+RnHuMhR7oUCi35pyFfuXRZYQ4NNJVlQ6LxuIHvkeiN5fsZiUd2fTGnPtZdZGbyTb1WctQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com (2603:1096:405:8a::9)
- by SEZPR03MB6957.apcprd03.prod.outlook.com (2603:1096:101:a9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Thu, 12 Dec
- 2024 06:42:54 +0000
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f]) by TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f%6]) with mapi id 15.20.8230.010; Thu, 12 Dec 2024
- 06:42:54 +0000
-Message-ID: <fa258e39-2492-4c9b-892f-b54cdeb4bd8d@amlogic.com>
-Date: Thu, 12 Dec 2024 14:42:50 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/10] media: Add C3ISP_PARAMS and C3ISP_STATS meta
- formats
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kieran.bingham@ideasonboard.com, laurent.pinchart@ideasonboard.com,
- dan.scally@ideasonboard.com
-References: <20241205-c3isp-v4-0-cb1868be0105@amlogic.com>
- <20241205-c3isp-v4-6-cb1868be0105@amlogic.com>
- <6h2epavsgxonytbar2wv7qv6ojuzryst6gqjcceuccoxubwh64@5wqchwktrivu>
-Content-Language: en-US
-From: Keke Li <keke.li@amlogic.com>
-In-Reply-To: <6h2epavsgxonytbar2wv7qv6ojuzryst6gqjcceuccoxubwh64@5wqchwktrivu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KL1PR01CA0105.apcprd01.prod.exchangelabs.com
- (2603:1096:820:3::21) To TYSPR03MB8627.apcprd03.prod.outlook.com
- (2603:1096:405:8a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D851204C24
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733986135; cv=none; b=bvl3RsVr+q1OnWBVJPe6BodAdZUEjyHKpLBNsaU0+HTj8/lG/Jl0WMpmR9GwaMqdzL5D8yPbfGfr6PdPuNc3AzdC91mFM9UIJc9/lhl/LtjtGGQ5KkPWCLvviaGDa5gEnD25bkPSkLiT+Rb6fz9w5AiYSTJuY9dY75dQFeOwqKk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733986135; c=relaxed/simple;
+	bh=VqqJcvxXZrvlTbYe0LNlCSestoEj06ZhHzy4x89km8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YUMD+MmIKeR9U7TlVE4vW6qzhBc4FtF7bL2gQm9DyPjdsui3bJH0HyQ+BIqhDuRxd+M9m6ztnp8XfrrFDR05qe4nWezxP7tOXdXuX9Q7rlXPOHynIetdJIWWwS1SyTR9HSqg6lMBOF96nZube02Pf+qYPedDCQhJgUo1hHwIkKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iou0YadI; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4675936f333so108301cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:48:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733986131; x=1734590931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kkJY3geoX0M1zaTua7B16V9O+RTw/DvF3frv9xA0mIU=;
+        b=iou0YadIRL6PUN5q+HeOuHRXG9yTAFTPqhkhJGLAE7uRDshui4mqMz8bOgKtiN0a0S
+         gyp/8lPvA0vyGsgG95Inb9Kjs2l2EZuMeX4WecbtnEpiDc30aSItDZI0l77ub8ugQ+hT
+         EMXDQ+cNty+/opxP3Ijj+dOEOrBG6Q87UCpqwtJndB4sTUz4jQ7eUZQk8siv2NoyUz9+
+         kcXACcSqEZrJGkhJuP9VHDWwmuVan9XjnlTKrmBb5KWFHM9xtegCXPoBEoFLgGQw0nNo
+         rwGfDDbp5jBlM5mBXif4Wn1orx0UcALRRBqjLgWlXLMx67Je7CgrloxbYBsN3wip8jU7
+         eGHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733986131; x=1734590931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kkJY3geoX0M1zaTua7B16V9O+RTw/DvF3frv9xA0mIU=;
+        b=qme0eHdT3LL+HiMYYTclHwttjt7tE/3yHgFvL1mP2wWwYEuZNEG15ioz032oFAbPY7
+         8tzmmyL9cugDLO5XrsJHTfT57yHahawOeVrlmZ9ikQI8A9td79hzqU66t3eUyC9gOnPO
+         JLEnku6IRNmop27+AAT7e+YsMYdVRLMA3+6LrDeciD1dbcGqUHv032YqXTK1MsuRSQPw
+         oVciuIBY3VypIB9PVT1cw6QW8Vt05/ERkZc06yfZBZ+4f4+aWrYJhch04CwB2ZO0p1R0
+         1buRNuNtoQLWT3NOal8AIp+qsSW5nY6/wHC77qQfZ8hirI5FFYyws6eM6l+5/mjxalT8
+         1THQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdTpCKUXftJaSjHPvoE3zbGhKAOw6ShIvf63Y3yNJ/CLBD9Q8Zg6czPR+3L5QaJN4Cr417u7EbZkoaI5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUeffm97k7M503GZkqVbwH3Ha6hdkBjo2fj9lK7Tzg8HlycDIL
+	bmGHtfueGTeIuWmBxPSNgqrYpEoyCtv60UYCRWH/0dvHrOvlkLK/DCMbjiR1CL53MsDa2g0sW0f
+	bAOvDqFOkmBQsm0JiXzZ+Q3SwrxWT3FpsvMayNGl+6OtrfPWg7ER+0jY=
+X-Gm-Gg: ASbGncss6o+iVlCsuDV2y+GVL/VPyLYt7wh2MK1HOKC/+PHonQ+lKENBDf0K571p89r
+	1YoQNEuQxU7Be5f/Q8zNrikYxgcQkpgRZQ27TjGfOhr+fY4rtO4knoK0SVqU7LPri6719
+X-Google-Smtp-Source: AGHT+IF7OcsWjiCJWyQIZu4uDTQO9WOQ1Bgwd6KubdmTsqssR+D0yuVSAOf6N6OT40WJlIXDufXXmkYiDAqbEh/ZMkY=
+X-Received: by 2002:a05:622a:4c16:b0:467:8416:d99e with SMTP id
+ d75a77b69052e-46798201583mr1668951cf.21.1733986131121; Wed, 11 Dec 2024
+ 22:48:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR03MB8627:EE_|SEZPR03MB6957:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9abb502c-1f0b-4db1-f817-08dd1a7834cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MTluaGdhU1FCaldPWHdIbHBoZGJyRk9uNi9GdW9NU3V3d2lVRzJzbUtOZG5U?=
- =?utf-8?B?MDZOcUNxVHhNSmVmVUd4clhYZXcrT2xITHI2cFFlYjEyMEMwdlpLWFh2Mmpo?=
- =?utf-8?B?aEptbnRpVlhVc2JINmJhSU9UNksvZit4bzhrTWFmZWxIM1ZnWmtPTHRJSlNz?=
- =?utf-8?B?RjNaSmVkemhmRXQ1VmU1UmEwd21oYUVOVkJhQ0pJaWRCOG9Lb3owZGdDVitS?=
- =?utf-8?B?VGFpbXVLMGY5b01jblBQZm1UQlRRVFdhTnVvUHMwRU8ydDNhU01WUU5kcVE1?=
- =?utf-8?B?ZThmTjlkQWFlQkdPOUFiZFhJdVNqeUlOc3lqSnJGN3V6RnNkM0dHS0NPTzRO?=
- =?utf-8?B?TGE1czVwM3FiZW1XNkNtVGVvWlNTblhCZ1NXemZaZlZwalI3L3NpVERxc1Jx?=
- =?utf-8?B?UjJ0bjNQcWhNajIrMXJLV0oxVEp5ODVZVEwyS050dzBHT2ZCa1hxT29uOFhI?=
- =?utf-8?B?Rk9SUGdqWVhVSjBscXZlU0ZZQTl2T1JtYTRtOHEzbFRDeXYxVUwzSHFEdUJ3?=
- =?utf-8?B?VmdPa3lKaUd5Ykg4a1I3aCszdlkxcjVyRTVzOUlqYUdqdTk1dldtWWJjWkdz?=
- =?utf-8?B?L3dhdXdTbnUxNFJXaHlSbjNPSTY2MDBmQnQ3WC9tdkhTRGtOcXB2ZmIwWmYx?=
- =?utf-8?B?bThiVVZjWjFIWldJTnd1L2FGT3ZxalZXckpKZnRPZHkxM2p3QmIxdlN4dXk3?=
- =?utf-8?B?aWRHcTlNZUxBdVhjR01YeGZlZGtNMEFpVEIxM29QWTdpMXdMeThzQWRhVi9S?=
- =?utf-8?B?QUg5Mk80S2VvVEpXQVF0djFCRVorMFJ2RTNlWU1XK3FYV0lOOS9zQVdjUlRn?=
- =?utf-8?B?S2hGcmZkMFNHcGw5VldjdHNvZWw5L3FzWXA4WXdrazVieUVMZGtCTlU2dHQ0?=
- =?utf-8?B?UFBqMjJXTFgybktyR1VTbUJLTC9paTE3QVMvSnlsWmdWbVVjN0FqRW9yKzRn?=
- =?utf-8?B?b2UrZXFaTXArWXZsendYNjdNVUpHMW9JcmRrL2pZSTZqMzIxbk1RRlVuL2w1?=
- =?utf-8?B?VDVEbVdDMFpqeUdTem83UFFTZkhDMStLdVZkTFBHeUo1ZHdsUnNrRTBicmFL?=
- =?utf-8?B?Y1I2ZXVBM1pENFdURk5vQ1ZuVTFScFpqZ3Q0aUJPeWVrZmFIOHNxbFFra3Uv?=
- =?utf-8?B?Y3FZTXN5WXBjcFd0eThWcUpnWEVYNXJPWDVncXFLdm01bWVoRkhpMVFJTldq?=
- =?utf-8?B?V0NEZXZtUG1mZU4xUWlwaVZ1a1Z1YnVQditkaEh5MmxCZzlNMG1qR25ONnBW?=
- =?utf-8?B?VVBoSmdaWEI5ejV5MENJL0gzQWxnNFJNcEZNanA3RzlSSnF0SkZqUUhENW5I?=
- =?utf-8?B?amx0ZzMxWStON1E0TThDeGxOQ2VGUTZ5bHFMcCsrYlIvR24yOGpmejJEMnhM?=
- =?utf-8?B?VlFXc245N0RlQjRVTUllR0V6eDBEcWowbHlSODVxRTBCMGt2NVVpUFUvdy9w?=
- =?utf-8?B?dzJ4eWhBcjVNVS9SbjlOT1VkbzAwclRPcHBjTUc5VGlvSzI1eHI1aEtzcmFG?=
- =?utf-8?B?WTQ5NW42QTB0dmFuckl6ME41SDQrNUpNK2k5U3ZFcUFVUHU4RVoydThRalRC?=
- =?utf-8?B?RVcrZjNEcExQZXMyUndPdHNLZEoxbEJQZU02YUZXNTROc2l3djF5SnhkTVNK?=
- =?utf-8?B?WnVFNWd5cGRkcTYwNXZDTnlWWm5MNHRLMGlWUURDeHZEUUtvd2RIZzI3Qm9a?=
- =?utf-8?B?REdWRFFidzA1NDh2dUc1QWdXTU0vMGI3MVg3ckFDOTdBcmlFVy9KVS94Rmp6?=
- =?utf-8?B?SEVtdUswbU1FZytxVyszTkFhRlN4dm1rbVlFMWY2TVN4ODVkN2NwS09BU20w?=
- =?utf-8?B?LzBpMGJBWFJLNGJxd2NCTTRzMmxpOHl5RWJNbjV6eTc3UjhEQUJxckNIZ0p6?=
- =?utf-8?Q?KNzlPj6iC/ZtY?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR03MB8627.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?anZSN3RwOGZsaFZNTWNrSUwrSGh1MHlnMEREOWlkaGJJSDFKSVhvUnJMNDlx?=
- =?utf-8?B?OWxhU0ZFNjJZcktMT1VISzIxZkxpRXl5KzMxQnVRVEUvM3djV0p1Q2kzcGRw?=
- =?utf-8?B?a0txbmlqY3pIbVdWeFc4aTNaWVpKd2tjc2ozT0hhSDdLNWRXNDJ0SkxLNkhl?=
- =?utf-8?B?dGdsMVI5ZUZMb3RxUXVsSzZWeS9WN1h1QnpXZ0lWSUhXVGdzaFVXNE0yS29w?=
- =?utf-8?B?aW94Q3poWjAvU2tXaXFYcVcyTk1ESnJIN3VBVVQxZVl2VllxZHpoUC9GMEdG?=
- =?utf-8?B?OExmM3hwNjc4ODVoV0RZYWh5cU8zQlA1a0I2M2hHcWJnUnQwYlVpdDBTL0NO?=
- =?utf-8?B?Q3k5OWNDamNGWGNPZ25NY2RyejIzd0h4djBiSVRDeUpVdmV3UDRkQmpIRzRn?=
- =?utf-8?B?TkdINDZIN1hIbW9KaDlORks1ZjJqWlhQUzA3WUVVcWpRT0k3YkxFcXVMNE10?=
- =?utf-8?B?aGtDWjB3bG1qbzhJN0UxcklZYUFNL0ZkT1lOS0ZtaVpPZVBOZzNZNGlhUFFS?=
- =?utf-8?B?MUpVcGEva0xCY0twbHRzUTdSQVI4UnhDa3BnWnhacFZsSzlRZmRZbXdwd1NU?=
- =?utf-8?B?UVZES3dOMExWSWdRMjJLZXlkQ1BNZUk3UEYwTmQ0SU5NeE5tbVZ3Y3NKZ1A3?=
- =?utf-8?B?c04yZlpRWGZKbUNxc0VPZkNvZ3FXWkpaNTB4RitCa0hGeXd5QXF1M3U3SWpD?=
- =?utf-8?B?NlF5cnpCTEwySks4YWZ2VFlsaWg4UzN4RXphOHF2WnhIanpjVzE0d25rVFo2?=
- =?utf-8?B?dlFxcllqODBOZzUvbDZhNmtlV1lsNm1PcW84N00yZzdkaHFEVUdMdkdoVWhZ?=
- =?utf-8?B?Mmc3a1d3eENYc0RHN0ptZjFkWDVENU5xMEVSQ0F6ODBmRDQyYmROSVFsNll1?=
- =?utf-8?B?MWEzYUZUdHpxNEFBTS9RRXJNajFqaWpaY1VWaSs4UnRJd0NaVW9TZVNHYklx?=
- =?utf-8?B?ZTlkV2tBOHA5MFB4VFFjY0RzcGU0MnF0azZ2S09ZYmFBRmdMRlZUeEUra2hQ?=
- =?utf-8?B?dUhSbnR5MnJMOEFMeks5K3VNVHNteUR2UUVSNUFQTUJiMXdsYUdjL0Nxdjh5?=
- =?utf-8?B?OXM2V3lITW9yR2ZpK056bXY0VU96eUptclRzS2NvaVJ0Wm55VzJaZ3pWa0ZY?=
- =?utf-8?B?ak1oSVNKVkJzSndzdjFqTXVwRTNwWDVSQUw4bnlCVGdwTEEyb3VQY2ZQZVh2?=
- =?utf-8?B?cHUyd2d2VHJiMzZxQnVFcDR5NE8yWDN4ZVRibDlUNlVJQzF0MU5jWXZXdCtv?=
- =?utf-8?B?S1FyQlVMRzlXVTFBMW5VR2djZW1RTDhRNWlZTFdMYXRzSnhRUkhUMFFMcmtV?=
- =?utf-8?B?Y3NqT2JOMnRnZDZyVFhqUzVmSUVoZFIwQUJCWWZXR1AzbEZXdGwwcjUwWC9p?=
- =?utf-8?B?aE5kaXVBRmRHb01MRVVpQzljMWRwL3ZXYzNnWDlZOFBwZWp0ZCtQYmxFbUg4?=
- =?utf-8?B?clJvV3BFMTN4eXh0K1BzTFk1dnZSZEtkQldCOVNka0hRT2thZzhmYk16d2xT?=
- =?utf-8?B?dlpjZjNwTzM0ZE1tYlN2SzVrZ1lRSFNFMXpIMkdDWURPK2FRZXZsWWdxb1ZB?=
- =?utf-8?B?ME9YaUFocXZMd1ZHTWNFeUw3eGE3bVNJcklhTXBsRStrSnpTeWtxQzk4Vnln?=
- =?utf-8?B?Y0UvdTNpdWY2QUVZOXlnS21WNE5JY1hiZHY5MndtWFBsSkRhcjZiWE1PTlN4?=
- =?utf-8?B?SlVlSFRTM0VlNXRqQU9CRW1mOFo2YzIwdlZlN0ZONmwwSllrSHY5amJrd2pu?=
- =?utf-8?B?bVREL2VZblIxVCt1OStxQUxtQWlRWUMzbjlvMHpDOW9Yd01vNEpZYjZEWHgr?=
- =?utf-8?B?L0M4akorQ0F5ZmJjLzlRSGhsS0c0bDJZc2NZbG40dUN6TWhIYWRGOEU2dGQ2?=
- =?utf-8?B?b0R3TWRta2VSYkFkZ29EbmdxUEcyVmVXYmJsSDRibEF1QytkSVJBdnpYakdB?=
- =?utf-8?B?Ukt5NHdsWnJ5WlRySW9HWmZQMWxXcEpibEVoRGZPUVJnT05KOFc0YjBvODJN?=
- =?utf-8?B?czgzRnU3NHNSaGZVblVKZFVHRFF6VG1sSWlpcERjMnNZbi9lSmVrbHFpdEFK?=
- =?utf-8?B?VkFLNHRMaENUWWh2bXErUzlnYVp5ZHc5dGxiUGpRSzhYMWhXaW5KOVRjYUNR?=
- =?utf-8?Q?Wiscxoal8NHosgXQ34k5xeB0w?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9abb502c-1f0b-4db1-f817-08dd1a7834cc
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR03MB8627.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 06:42:54.3114
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1DL7lMnAqib8gnq3jbePu9W6+93BerA+YNEyg5tx/SDi5XGlfak2nGjrfLrshjwVmz45mMwkR5LsMgp4H1SBFQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB6957
+References: <a945dde6-90da-2490-e900-74fd4d47286d@linux.dev> <20241212013723.113408-1-hao.ge@linux.dev>
+In-Reply-To: <20241212013723.113408-1-hao.ge@linux.dev>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 11 Dec 2024 22:48:40 -0800
+Message-ID: <CAJuCfpFoFGmFwVdmKbv7DKxyxLMMacKwsW=Nzn77vsT3GrYUbA@mail.gmail.com>
+Subject: Re: [PATCH v4] mm/alloc_tag: Fix panic when CONFIG_KASAN enabled and
+ CONFIG_KASAN_VMALLOC not enabled
+To: Hao Ge <hao.ge@linux.dev>
+Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>, 
+	Ben Greear <greearb@candelatech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jacopo
-
-Thanks very much for your reply.
-
-On 2024/12/12 00:04, Jacopo Mondi wrote:
-> [ EXTERNAL EMAIL ]
+On Wed, Dec 11, 2024 at 5:38=E2=80=AFPM Hao Ge <hao.ge@linux.dev> wrote:
 >
-> Hi Keke
+> From: Hao Ge <gehao@kylinos.cn>
 >
-> On Thu, Dec 05, 2024 at 05:04:32PM +0800, Keke Li via B4 Relay wrote:
->> From: Keke Li <keke.li@amlogic.com>
->>
->> C3ISP_PARAMS is the C3 ISP Parameters format.
->> C3ISP_STATS is the C3 ISP Statistics format.
->>
->> Reviewed-by: Daniel Scally <dan.scally@ideasonboard.com>
->> Signed-off-by: Keke Li <keke.li@amlogic.com>
->> ---
->>   drivers/media/v4l2-core/v4l2-ioctl.c | 2 ++
->>   include/uapi/linux/videodev2.h       | 4 ++++
->>   2 files changed, 6 insertions(+)
->>
->> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
->> index 0304daa8471d..dae34b1170d7 100644
->> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
->> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
->> @@ -1460,6 +1460,8 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->>        case V4L2_META_FMT_RK_ISP1_PARAMS:      descr = "Rockchip ISP1 3A Parameters"; break;
->>        case V4L2_META_FMT_RK_ISP1_STAT_3A:     descr = "Rockchip ISP1 3A Statistics"; break;
->>        case V4L2_META_FMT_RK_ISP1_EXT_PARAMS:  descr = "Rockchip ISP1 Ext 3A Params"; break;
->> +     case V4L2_META_FMT_C3ISP_PARAMS:        descr = "Amlogic C3 ISP Parameters"; break;
->> +     case V4L2_META_FMT_C3ISP_STATS:         descr = "Amlogic C3 ISP Statistics"; break;
->>        case V4L2_PIX_FMT_NV12_8L128:   descr = "NV12 (8x128 Linear)"; break;
->>        case V4L2_PIX_FMT_NV12M_8L128:  descr = "NV12M (8x128 Linear)"; break;
->>        case V4L2_PIX_FMT_NV12_10BE_8L128:      descr = "10-bit NV12 (8x128 Linear, BE)"; break;
->> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->> index e7c4dce39007..eda30640a7a3 100644
->> --- a/include/uapi/linux/videodev2.h
->> +++ b/include/uapi/linux/videodev2.h
->> @@ -858,6 +858,10 @@ struct v4l2_pix_format {
->>   #define V4L2_META_FMT_RK_ISP1_STAT_3A        v4l2_fourcc('R', 'K', '1', 'S') /* Rockchip ISP1 3A Statistics */
->>   #define V4L2_META_FMT_RK_ISP1_EXT_PARAMS     v4l2_fourcc('R', 'K', '1', 'E') /* Rockchip ISP1 3a Extensible Parameters */
->>
->> +/* Vendor specific - used for C3_ISP */
->> +#define V4L2_META_FMT_C3ISP_PARAMS   v4l2_fourcc('C', 'P', 'R', 'M') /* Amlogic C3 ISP Parameters */
->> +#define V4L2_META_FMT_C3ISP_STATS    v4l2_fourcc('C', 'S', 'T', 'S') /* Amlogic C3 ISP Statistics */
-> I would have used ('C', '3', 'P', 'M') and ('C', '3', 'S', 'T').
-> Matter of tastes I guess, but if you will happen to have a different
-> format for, say, C7, this would help keeping them separate.
+> When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
+> is not enabled, we may encounter a panic during system boot.
+>
+> Because we haven't allocated pages and created mappings
+> for the shadow memory corresponding to module_tags region,
+> similar to how it is done for execmem_vmalloc.
+>
+> The difference is that our module_tags are allocated on demand,
+> so similarly,we also need to allocate shadow memory regions on demand.
+> However, we still need to adhere to the MODULE_ALIGN principle.
 
+nit: the above wording is a bit unclear. Instead of module_tags I
+would call it "memory for module allocation tags". So, I would change
+the above paragraph to:
 
-Will use ('C', '3', 'P', 'M') and ('C', '3', 'S', 'T').
+The memory for module allocation tags is allocated on demand,
+therefore we need to allocate shadow memory on demand as well in
+MODULE_ALIGN blocks.
 
 >
-> Up to you
-> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> Here is the log for panic:
 >
-> Thanks
->    j
+> [   18.349421] BUG: unable to handle page fault for address: fffffbfff809=
+2000
+> [   18.350016] #PF: supervisor read access in kernel mode
+> [   18.350459] #PF: error_code(0x0000) - not-present page
+> [   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PT=
+E 0
+> [   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> [   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+=
+ #3
+> [   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
+> [   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 0=
+0 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <=
+48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
+> [   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
+> [   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff8=
+2a7ceac
+> [   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc=
+0490000
+> [   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff=
+809201d
+> [   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc=
+0490000
+> [   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000=
+000002c
+> [   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlG=
+S:0000000000000000
+> [   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 000000000=
+0771ef0
+> [   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
+0000000
+> [   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
+0000400
+> [   18.362020] PKRU: 55555554
+> [   18.362261] Call Trace:
+> [   18.362481]  <TASK>
+> [   18.362671]  ? __die+0x23/0x70
+> [   18.362964]  ? page_fault_oops+0xc2/0x160
+> [   18.363318]  ? exc_page_fault+0xad/0xc0
+> [   18.363680]  ? asm_exc_page_fault+0x26/0x30
+> [   18.364056]  ? move_module+0x3cc/0x8a0
+> [   18.364398]  ? kasan_check_range+0xba/0x1b0
+> [   18.364755]  __asan_memcpy+0x3c/0x60
+> [   18.365074]  move_module+0x3cc/0x8a0
+> [   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
+> [   18.365841]  ? early_mod_check+0x3dc/0x510
+> [   18.366195]  load_module+0x72/0x1850
+> [   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
+> [   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
+> [   18.367262]  init_module_from_file+0xd1/0x130
+> [   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
+> [   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
+> [   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+> [   18.368938]  idempotent_init_module+0x22c/0x790
+> [   18.369332]  ? simple_getattr+0x6f/0x120
+> [   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
+> [   18.370110]  ? fdget+0x58/0x3a0
+> [   18.370393]  ? security_capable+0x64/0xf0
+> [   18.370745]  __x64_sys_finit_module+0xc2/0x140
+> [   18.371136]  do_syscall_64+0x7d/0x160
+> [   18.371459]  ? fdget_pos+0x1c8/0x4c0
+> [   18.371784]  ? ksys_read+0xfd/0x1d0
+> [   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
+> [   18.372525]  ? do_syscall_64+0x89/0x160
+> [   18.372860]  ? do_syscall_64+0x89/0x160
+> [   18.373194]  ? do_syscall_64+0x89/0x160
+> [   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
+> [   18.373952]  ? do_syscall_64+0x89/0x160
+> [   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
+> [   18.374701]  ? do_syscall_64+0x89/0x160
+> [   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
+> [   18.375416]  ? clear_bhb_loop+0x25/0x80
+> [   18.375748]  ? clear_bhb_loop+0x25/0x80
+> [   18.376119]  ? clear_bhb_loop+0x25/0x80
+> [   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 >
->> +
->>   /* Vendor specific - used for RaspberryPi PiSP */
->>   #define V4L2_META_FMT_RPI_BE_CFG     v4l2_fourcc('R', 'P', 'B', 'C') /* PiSP BE configuration */
->>   #define V4L2_META_FMT_RPI_FE_CFG     v4l2_fourcc('R', 'P', 'F', 'C') /* PiSP FE configuration */
->>
->> --
->> 2.47.0
->>
->>
->>
+> Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated are=
+a calculation")
+> Reported-by: Ben Greear <greearb@candelatech.com>
+> Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@=
+candelatech.com/
+> Suggested-by: Suren Baghdasaryan <surenb@google.com>
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+
+Other than that nit, LGTM.
+
+Acked-by: Suren Baghdasaryan <surenb@google.com>
+
+> ---
+> v4: Based on Suren's suggestion for modification (to make the code simple=
+r),
+>     modify the code.
+>     Update the comments in the code due to the modifications made to the =
+code.
+>     Add Suggested-by: Suren Baghdasaryan <surenb@google.com>
+>
+> v3: Adjusting the title because the previous one was a bit unclear.
+>     Suren has pointed out that our condition for determining whether
+>     to allocate shadow memory is unreasonable.We have adjusted our method
+>     to use every 8 pages as an index (idx), and we will make decisions ba=
+sed
+>     on this idx when determining whether to allocate shadow memory.
+>
+> v2: Add comments to facilitate understanding of the code.
+>     Add align nr << PAGE_SHIFT to MODULE_ALIGN,even though kasan_alloc_mo=
+dule_shadow
+>     already handles this internally,but to make the code more readable an=
+d user-friendly
+>
+> commit 233e89322cbe ("alloc_tag: fix module allocation
+> tags populated area calculation") is currently in the
+> mm-hotfixes-unstable branch, so this patch is
+> developed based on the mm-hotfixes-unstable branch.
+> ---
+>  lib/alloc_tag.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index f942408b53ef..c5bdfa297a35 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -407,6 +407,8 @@ static int vm_module_tags_populate(void)
+>
+>         if (phys_end < new_end) {
+>                 struct page **next_page =3D vm_module_tags->pages + vm_mo=
+dule_tags->nr_pages;
+> +               unsigned long old_shadow_end =3D ALIGN(phys_end, MODULE_A=
+LIGN);
+> +               unsigned long new_shadow_end =3D ALIGN(new_end, MODULE_AL=
+IGN);
+>                 unsigned long more_pages;
+>                 unsigned long nr;
+>
+> @@ -421,7 +423,19 @@ static int vm_module_tags_populate(void)
+>                                 __free_page(next_page[i]);
+>                         return -ENOMEM;
+>                 }
+> +
+>                 vm_module_tags->nr_pages +=3D nr;
+> +
+> +               /*
+> +                * Kasan allocates 1 byte of shadow for every 8 bytes of =
+data.
+> +                * When kasan_alloc_module_shadow allocates shadow memory=
+,
+> +                * its unit of allocation is a page.
+> +                * Therefore, here we need to align to MODULE_ALIGN.
+> +                */
+> +               if (old_shadow_end < new_shadow_end)
+> +                       kasan_alloc_module_shadow((void *)old_shadow_end,
+> +                                                 new_shadow_end - old_sh=
+adow_end,
+> +                                                 GFP_KERNEL);
+>         }
+>
+>         /*
+> --
+> 2.25.1
+>
 
