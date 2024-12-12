@@ -1,164 +1,76 @@
-Return-Path: <linux-kernel+bounces-442790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7449EE1D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:50:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EDBA9EE1DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:51:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 959F6284236
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:50:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AEB1284110
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843CF20E00E;
-	Thu, 12 Dec 2024 08:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYVVMFy4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44EE220E311;
+	Thu, 12 Dec 2024 08:51:41 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98D7148FED;
-	Thu, 12 Dec 2024 08:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B8920C499;
+	Thu, 12 Dec 2024 08:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733993419; cv=none; b=hMKVHzgueDzGZ8PP6pkZsRlFq44QIadcz5YtcPD3vBQ906K7eJDb+ZSbpp3bHag569kTbTSJAdXlfkynqHviVb5eoD4ZEnItd5QLTt0v5oeQphNB1AJKbiM7I9XlNbTM0Nct9EdgyHGEs/QtDEiH/Ji+4ijkYCZIwzBcFajfyyY=
+	t=1733993500; cv=none; b=H904vKbEvfQX05IfOeek2mZeELC6HfnOFGedHcm22lut07Q0Q9BOnFvV1evr1IrZ0G3MJ++VY5E41MnaIiya0rqqZSm0/A60JHZVpo1c4+I+k17sM6TIUBukNGervcANvZA9fhbdBV5vdM4QFT6f4mB6m5rUvnWUz4itHOH/HCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733993419; c=relaxed/simple;
-	bh=zgsaiFELnog4Xiom7qwaEuaJS+Gl1kORV0fiEphdXaM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O/0ExCJ4u6qFBUhSRbIur7mCWTT3Eit+XSvYXntbNrJ6Wycgkki5XBbKm2/n6LK/BZPJKs7uoO04WEqZ55bEAXS/JudMT33TBOvx9722udlcA7s7P9HEgX99acuK9DHuXCfIQ98ze6U/cW5MxELuHgCDodfy7vlUncTa1pHxuDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kYVVMFy4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 659C3C4CECE;
-	Thu, 12 Dec 2024 08:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733993417;
-	bh=zgsaiFELnog4Xiom7qwaEuaJS+Gl1kORV0fiEphdXaM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kYVVMFy4ufIN76e6GyVm6iB4f5LjG16IcfW7uVpQr6sgVxpXo41AW/xv5wEGLB9Ve
-	 b/B8sqnCvpDo0VwF8awAng/J8PQjLv7faesdgiqmRYautwSfLo2QQ0S9FVXDNOegUl
-	 zB0J4Gc6M4WDyLtuCyQCstGVOFbYfUk1GIc+hgn1Ba+FzxsARTJaCB3AeAjBbHn5j2
-	 4yeZBiJIo9UgxbSVrp3h2w1QNHupelqwWAUHGwFp+273tckBBucRgM6FfWlglCC/7g
-	 ddsvv0O0AGpvpEfaQGF3zZYNxoZ9EjjmllHH+NA1h2j2du970W2wXSoju5otbMd4s+
-	 6klzlx38+EWyQ==
-Received: from 82-132-221-83.dab.02.net ([82.132.221.83] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tLeti-0030Yi-Rd;
-	Thu, 12 Dec 2024 08:50:15 +0000
-Date: Thu, 12 Dec 2024 08:50:12 +0000
-Message-ID: <87bjxhs2t7.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Pavan Kondeti <quic_pkondeti@quicinc.com>
-Cc: Akhil P Oommen
-	<quic_akhilpo@quicinc.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul
-	<sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie
-	<airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Elliot Berman
-	<quic_eberman@quicinc.com>,
-	<linux-arm-msm@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>,
-	<freedreno@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
-In-Reply-To: <c197264b-3791-493a-b717-3dfd844de922@quicinc.com>
-References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
-	<87ed2fs03w.wl-maz@kernel.org>
-	<92cee905-a505-4ce9-9bbc-6fba4cea1d80@quicinc.com>
-	<86sequsdtp.wl-maz@kernel.org>
-	<c197264b-3791-493a-b717-3dfd844de922@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733993500; c=relaxed/simple;
+	bh=iqBPjOHCYyKvzbs7HPUNqqYSdMIjZfsoY2MJDOOLROU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iac3n6VRe0tEzRSt3wRx7zCrhAxKaq+W4GYJJkuBTDB1H6IMe/eU9W3Ge9O/msI/HgF2iwqKMxnjS+hNenyYQhjRbeb/p0F8PzCyxZdpRzVZRaJJQTF5K6odShWnriBSWCnf6ttBouvdePjVcINypeVzKjor/CQ8sCPDwLSAvtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 96FF068D1F; Thu, 12 Dec 2024 09:51:31 +0100 (CET)
+Date: Thu, 12 Dec 2024 09:51:31 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v4 12/18] mm/hmm: provide generic DMA managing logic
+Message-ID: <20241212085131.GF9376@lst.de>
+References: <cover.1733398913.git.leon@kernel.org> <cc8a96bf19ca2dd404b55c20ac83fd1a600ad838.1733398913.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 82.132.221.83
-X-SA-Exim-Rcpt-To: quic_pkondeti@quicinc.com, quic_akhilpo@quicinc.com, robdclark@gmail.com, sean@poorly.run, konradybcio@kernel.org, quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch, quic_eberman@quicinc.com, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc8a96bf19ca2dd404b55c20ac83fd1a600ad838.1733398913.git.leon@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, 12 Dec 2024 05:31:00 +0000,
-Pavan Kondeti <quic_pkondeti@quicinc.com> wrote:
-> 
-> On Wed, Dec 11, 2024 at 10:40:02AM +0000, Marc Zyngier wrote:
-> > On Wed, 11 Dec 2024 00:37:34 +0000,
-> > Pavan Kondeti <quic_pkondeti@quicinc.com> wrote:
-> > > 
-> > > On Tue, Dec 10, 2024 at 09:24:03PM +0000, Marc Zyngier wrote:
-> > > > > +static int a6xx_switch_secure_mode(struct msm_gpu *gpu)
-> > > > > +{
-> > > > > +	int ret;
-> > > > > +
-> > > > > +#ifdef CONFIG_ARM64
-> > > > > +	/*
-> > > > > +	 * We can access SECVID_TRUST_CNTL register when kernel is booted in EL2 mode. So, use it
-> > > > > +	 * to switch the secure mode to avoid the dependency on zap shader.
-> > > > > +	 */
-> > > > > +	if (is_kernel_in_hyp_mode())
-> > > > > +		goto direct_switch;
-> > > > 
-> > > > No, please. To check whether you are *booted* at EL2, you need to
-> > > > check for is_hyp_available(). Whether the kernel runs at EL1 or EL2 is
-> > > > none of the driver's business, really. This is still absolutely
-> > > > disgusting from an abstraction perspective, but I guess we don't have
-> > > > much choice here.
-> > > > 
-> > > 
-> > > Thanks Marc. Any suggestions on how we can make is_hyp_mode_available()
-> > > available for modules? Do you prefer exporting
-> > > kvm_protected_mode_initialized and __boot_cpu_mode symbols directly or
-> > > try something like [1]?
-> > 
-> > Ideally, neither. These were bad ideas nine years ago, and they still
-> > are. The least ugly hack I can come up with is the patch below, and
-> > you'd write something like:
-> > 
-> > 	if (cpus_have_cap(ARM64_HAS_EL2_OWNERSHIP))
-> > 		blah();
-> > 
-> > This is obviously completely untested.
-> > 
-> 
-> I have tested your patch. It works as intended. Thanks Marc.
+> +dma_addr_t hmm_dma_map_pfn(struct device *dev, struct hmm_dma_map *map,
+> +			   size_t idx, struct pci_p2pdma_map_state *p2pdma_state);
 
-Note that you will probably get some push-back from the arm64
-maintainers on this front, because this is a fairly incomplete (and
-fragile) solution.
+Please avoid the overly long line.
 
-It would be much better if the discriminant came from the device tree.
-After all, the hypervisor is fscking-up^W^Wchanging the programming
-model of the GPU, and that should be reflected in the DT. Because for
-all intent and purposes, this is not the same hardware anymore.
-
-The GPU isn't the only device that needs fixing in that way: the
-SMMUv3 needs to be exposed to the OS, and the PCIe ports need to be
-linked to it and the ITS. So at the end of the day, detecting EL2 only
-serves a limited purpose. You need to handle these cases, and might as
-well put the GPU in the same bag.
-
-Which means that you'd either have a pair of static DTs (one that
-exposes the brokenness of the firmware, and one that doesn't), or you
-go the dtbhack route to compose the DT at boot time.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
