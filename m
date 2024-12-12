@@ -1,136 +1,120 @@
-Return-Path: <linux-kernel+bounces-443877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF8F9EFD15
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:12:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33279EFD17
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:13:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9084728A9D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B5E1889787
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D4D1A7273;
-	Thu, 12 Dec 2024 20:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F5A18732A;
+	Thu, 12 Dec 2024 20:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="euQmEP8S"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rlg26fio"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769A51B0F39
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4222D189F2F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734034330; cv=none; b=Q6LEKqn9BUewOsHsdAzFq1bl63Cgi7dTASy9iaOdZphuLr8743mOu7eHJE7ZW6lLZJksi5F2xThqXXpsD8hpwwVLBL4yb4FrifWdZwDpc5DhR79Q90oOefJ5PLbdJtk9CPKVK8UQnhTL/a8thKC1A7zwC2HuanZ0mjQBuAHKITc=
+	t=1734034414; cv=none; b=Nxj7ijb6U0AtQJymJU3ruCGvYzZE5yd/KzhSXJry6kc1+mIttm1AVgjTKhmOrG7D42yAltjGlh18YavL5DCX5Ybdp8EJXEqZgHLzXAtImyWazEcb1codhLpehy2cdwmLbquQ0BhzhoxEp6Lcoo4os7gLkTQIfHtxITx0ciJNqvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734034330; c=relaxed/simple;
-	bh=Gn8LXgpHJ7J4ykqP4qWw1kr83wxu++0ImTRJMyjaBXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OJiWviWCZSuhqXE80uqIDptgkC7FqxWwcaOiMNQgUOnEYMcwEebPenJYWkpZCDX1rVLODDQNeyh3PSVbX0rVHs8ALT+zrZfZH6T72lgHE8CDt99A1sxrXGzxSFzKDr1EEmysexR+r6qwR8VEahKKkYxVLu+2sH+zl9quxyRM6CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=euQmEP8S; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCFnYmw001900
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:12:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Cn60/1VALbVSHyxZswztHQTAh6tMGf69Zd26GEOzv2Y=; b=euQmEP8SgwLi6gXb
-	7ah+4x7z6Yof1gNodNdEdPHtXTfHRlT8ksysw1bBm9TIG8NuycmufO9uU7anuPhX
-	RYTKUFc9ssxPsi2yP5lgX/b6ju8xEJ54PybTohuOpJ7+/LSzm7ONIOz18O9QXMcG
-	JT2MyhRVM0DsidpC5qG+F/9pIGO84RPCb87LDPrt0DY3hy4PuecVCP7VMc66tsDp
-	GdD9+bDqHJD3TbUOR9F3hhte4ZtFvcauNcmtMUDCuGYUihk0ykL+aRo/tsAVavT6
-	YSuxc1MzHosZ0XFNcwiwwjWDm6Ik2dhTngov/mTU6vewIlGEe7HWqk3twGZyfIZs
-	iRV1nw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eyg66nap-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:12:08 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-20d15285c87so12246715ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:12:08 -0800 (PST)
+	s=arc-20240116; t=1734034414; c=relaxed/simple;
+	bh=jh8JIzPDcDvaxnMiTYtccygjmk3pmlrbS8sl6s1c7Zc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LHGoDpLx0s6+wFHF+v8CnnR5LM5pxfFmVPhMIDJW88aCbchEke1/uGSRwcaCI/UatJh2Oje47LLSNAn4dbObxgleJXsgLOIpVL1aiVaAD102WAqxOGdMEapooLgxRpxbzQf9nogPzNVq5JPJpJCEg0o/tRRdA83d2ZG7lvnR18Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rlg26fio; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a1fe2b43so9697895e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:13:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734034410; x=1734639210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4HPyEvm17GBvzoW45zFO/cFfcaMLUtMaXTixIZs2i7U=;
+        b=Rlg26fio5M/UJkrm4oUFek0AkK7FXP0mZxskbev2Pf0b/C3k6hY+KcSl0sIi3vrOt6
+         geAVwvwGuHM92B6O5PFL0mYwXivojq60RXLPsMW9cl+rFBH9dgauuKFjTrC6bJ5/g3SZ
+         X22b1r7KNtNDx+S4G7sRrP8AFk7p3JPRnKRT1M9vsqO5lwRo5CHffoWgPy4/jjqyvMhk
+         ppbX4XTj+dCWeUYSJ+XWpjbnoPCsJfpunyExI2z+4gF1MTAe8IsI6R/4Z/H9OVptYBzz
+         w4ZvhlktDMtNPbChVFY1eLVP3K7iYy1ZReUJopcUb4RcksGpAzm87Ugm64rlznF0VTEh
+         pyGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734034327; x=1734639127;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cn60/1VALbVSHyxZswztHQTAh6tMGf69Zd26GEOzv2Y=;
-        b=DKLeMuRpkJv/8AfDCzhIrnYaMQDHfGE/XmrIIIeOR5Xg7O7rg0h9tWSEmqXIqlKXUC
-         U9oB5q4A4IKdsQH1V6q3n6OkUVO+vigM+BZzCZk8LbDU+SkwM2svDXmec97lfZQxKzpn
-         vBDmuVaM017MdXOeMLoHebKn1pfeSRVtcDgOdM/euyooQHclPbEP3xdEcrdMqr9O6p6K
-         UQWyKdPRGxqtl0eXXphzjzdaGz/xozWzCV973GfLlgYttNSqKKYUbq07Z3DX+nXcq4YC
-         W9XwSHxeB3YOevxXx3icYux1zP7cHafpLAbfssRC7tRxxVbft9RqUQEPoOsAEnb3lk+e
-         cVog==
-X-Forwarded-Encrypted: i=1; AJvYcCXAKt42TkUz2a6ntlAcAdbu1tcqnNRv9SQ+Rb0RKAtYz/GdsbeGwh2Kt6ENadpxijW5BFkeKdC5tXYtM74=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoCcIG/mmuKbxU7WuvJnJyQbAjNqqk1Mxg1oSWAoZhIam4i8BO
-	rcRK7FkbMxtAfrOm6bPAGTj/kFbezj3NJyfddNM/B19UIV6jbncuC9aXBhfC5cmnVynoujSyxNN
-	nxVzNZHnYykcW0omJCvRDopYmog8fxKaSYwyUq32ZLwKkMtKoRyMYpg3q4S+hWZA=
-X-Gm-Gg: ASbGncurhTsGQ8DgpsggC/2o7WD4NvF823ktyMzmCOgBohfaEd6EK63Z5SnZ3GYmuib
-	L5oJvcyK3WEldKjCdV4ra5pAizHfu4ZZtiDSXTzedfjg7wRVCi5ofi6mca5gcb5HyH5Zl+jE5Oq
-	+vj6GLYEEHFzSrLjNFMpbwukjnVyJSnpPZhGMNcfizNMrtgI2gSE7COfzsK/gOS8JwIYy9jXu5N
-	i02k6+lyWn2uWrJqU2atE1JeDhOwnF49a5r0eGZ7w2Lh28MMNPzJGfcDr5XIQbB24sXzO/CXdbQ
-	YXYUDi9CYhJ0wflHwqnq/dn3m/Q6QGqA86tHtDH2lO+U9306uw==
-X-Received: by 2002:a17:902:cf0a:b0:216:56c7:98a7 with SMTP id d9443c01a7336-21892a53c03mr320075ad.53.1734034327002;
-        Thu, 12 Dec 2024 12:12:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGQnkV60nuXYwfd4uSDUWCeLS7eRkdx9f0zXNnaVtas+WKnSX7+ic35la0rrPuCP3CL3PVXbQ==
-X-Received: by 2002:a17:902:cf0a:b0:216:56c7:98a7 with SMTP id d9443c01a7336-21892a53c03mr319665ad.53.1734034326636;
-        Thu, 12 Dec 2024 12:12:06 -0800 (PST)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142fc305dsm1696109a91.52.2024.12.12.12.12.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 12:12:06 -0800 (PST)
-Message-ID: <e9552968-64c2-4e98-bbcd-37a7498422ab@oss.qualcomm.com>
-Date: Thu, 12 Dec 2024 12:12:04 -0800
+        d=1e100.net; s=20230601; t=1734034410; x=1734639210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4HPyEvm17GBvzoW45zFO/cFfcaMLUtMaXTixIZs2i7U=;
+        b=j4Gj2TutZpAxg7PcT9aFtv9ghvVQUukaoMulEOcx86iAjq6EMekM7wJaw0nSw3KEmR
+         DpwTgO9FyxAbxUfOAB0FIBn+YDqqoEBP19vleVaUInyX848hZsK3OLwIsrc5wsmIzoWu
+         1PnZBjzmXTMD/vpotaGvPJGxZZI80MJomdJoFxRh8DhllfUAYRkqrBwl5S/iXRVblipA
+         kQRDwnzqOWlEfQGaPOaue9mFKdSa6lp8fi6RDz7QiObozCRwBCtUaeDBld7RFQ3TUhGW
+         SsXnMmIiUUSkwPz4IYEi9riL0mdVGJjXCKP1m/acr6SMsjWbvkGl5p5z8wGkhFfJwKc+
+         PirQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWF6Kith0CNDj25Hinm5wxex8nEIUWwpxPJ9hgSs6PvG/qOyCl13jD2PuzlqvY6bGU4R5ElJh2KiH8d7Uw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqM0KRoSCMA61WUhlA+cmyuTiAu8Iu5RQQKwAzgisk4kia5rOE
+	Fw2tfqvmyMsNblG0UAzX+VD83lX737AsoIHFT5DfLXIh0jMBB8U0vBQg2cBJREQ=
+X-Gm-Gg: ASbGnctaxFH6cs4hNaTQRZUF92HdsJMuZ0/zhRCxNbZsaAZtIgZ5iaSWnYLXklINWhH
+	bwmM/Wvo8vBLjrXKQkXfTCD2g7sXr5aDGoUu8TPPA60oujIBJbAznhff5tkIBcZOfSp4GMM/DrY
+	lSjFUGixDrAum261ULLqUtlid+q7YYnZ9lv/TTXE3dBa9WpWiMOFyGhJeJEhe9zx79vbBmKREuO
+	8w6mb4hOJjVXNWAx6Dev1cnC9MwtZp3I3ODQqExLUp/qCcmgID1JJjzr1fUEv+JLhO9ve1y6QaL
+	J1fSWuo=
+X-Google-Smtp-Source: AGHT+IFXQspiqBdmbRT6aNUguvteUfRABjK20wuypAXO3Cy9E2/nEt8aUJ7Kt3q0K7+56mw4GAzNNg==
+X-Received: by 2002:a5d:47a8:0:b0:385:ddd2:6ab7 with SMTP id ffacd0b85a97d-387877b9729mr3711969f8f.52.1734034410444;
+        Thu, 12 Dec 2024 12:13:30 -0800 (PST)
+Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878248e600sm5039931f8f.7.2024.12.12.12.13.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 12:13:29 -0800 (PST)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: rafael@kernel.org
+Cc: Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org (open list:THERMAL),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] thermal/thresholds: Fix uapi header macros leading to a compilation error
+Date: Thu, 12 Dec 2024 21:13:10 +0100
+Message-ID: <20241212201311.4143196-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 2/2] wifi: ath11k: Convert timeouts to
- secs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: Jeroen de Borst <jeroendb@google.com>,
-        Praveen Kaligineedi <pkaligineedi@google.com>,
-        Shailend Chand <shailend@google.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Kalle Valo <kvalo@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath11k@lists.infradead.org
-References: <20241212-netdev-converge-secs-to-jiffies-v4-0-6dac97a6d6ab@linux.microsoft.com>
- <20241212-netdev-converge-secs-to-jiffies-v4-2-6dac97a6d6ab@linux.microsoft.com>
- <27cc63e7-1a63-4ba5-8c7a-12a78ad6d9fa@oss.qualcomm.com>
- <cc1d5e08-92e0-46d8-badb-2a61482200cf@linux.microsoft.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <cc1d5e08-92e0-46d8-badb-2a61482200cf@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Tx7QN5wnmYS2nsNeEPficWNqvKBnFCyH
-X-Proofpoint-ORIG-GUID: Tx7QN5wnmYS2nsNeEPficWNqvKBnFCyH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- mlxlogscore=890 phishscore=0 suspectscore=0 mlxscore=0 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120146
+Content-Transfer-Encoding: 8bit
 
-On 12/12/2024 11:17 AM, Easwar Hariharan wrote:
-> This is some sort of weird interaction between b4 and git send-email. I
-> used git send-email to send the patches after writing them out with b4
-> send so as to edit "net-next" into the subject line. It's good to know
-> to not mix the tools in the future.
-> 
-> I can resend from the branch with git send-email directly to avoid this
-> if preferred.
-Note that if you have a recent version, b4 prep --set-prefixes can add the
-tags to the subject (and keep track of them in the cover letter metadata)
+The macros giving the direction of the crossing thresholds use the BIT
+macro which is not exported to the userspace. Consequently when an
+userspace program includes the header, it fails to compile.
+
+Replace the macros by their litteral to allow the compilation of
+userspace program using this header.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ include/uapi/linux/thermal.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/thermal.h b/include/uapi/linux/thermal.h
+index ba8604bdf206..349718c271eb 100644
+--- a/include/uapi/linux/thermal.h
++++ b/include/uapi/linux/thermal.h
+@@ -3,8 +3,8 @@
+ #define _UAPI_LINUX_THERMAL_H
+ 
+ #define THERMAL_NAME_LENGTH	20
+-#define THERMAL_THRESHOLD_WAY_UP	BIT(0)
+-#define THERMAL_THRESHOLD_WAY_DOWN	BIT(1)
++#define THERMAL_THRESHOLD_WAY_UP	0x1
++#define THERMAL_THRESHOLD_WAY_DOWN	0x2
+ 
+ enum thermal_device_mode {
+ 	THERMAL_DEVICE_DISABLED = 0,
+-- 
+2.43.0
 
 
