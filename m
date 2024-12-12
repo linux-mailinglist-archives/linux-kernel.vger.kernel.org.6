@@ -1,236 +1,309 @@
-Return-Path: <linux-kernel+bounces-442807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9429EE23A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:06:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2F19EE24A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:10:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BCCA28321C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A991883B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0134220E305;
-	Thu, 12 Dec 2024 09:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68C420E31C;
+	Thu, 12 Dec 2024 09:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="WqftByaH"
-Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Bm2MQOWk"
+Received: from mail-m15579.qiye.163.com (mail-m15579.qiye.163.com [101.71.155.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91108204C3D;
-	Thu, 12 Dec 2024 09:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733994360; cv=fail; b=AAZTjhGYkSl6K9qcRac/08N0y/OxIJ44E8OMTwu4ZBpkUFvdpeX3HKaEieQguzJsbNVesEa4AyZY1PSbvRlv0kvDvP7eMJ4//cIIsBP4a8l7YjmzH6jrlkw8b9cLIIqqjJo5091IGM/kQR3BEIzSFfQmxCRokD8YNWxOU+IhRRc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733994360; c=relaxed/simple;
-	bh=1EDtfWpqgbd3qf8LCnVfa85cbeY4+MEHxr4ibZ0WinM=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=toFn2ij7+7/e3p6ML+03adk93ivQFhxxz3dZEj0UuGdLUag/h5nZBtMPcZTXp8HxMLB+YOD5LF2ySWpWMVi+Zbz1XL2s5MTmi/uu+TJcorQnYTCFGF6NhuBDxAm9K4mk2Bc7G1BcRvA6NzsZwOD7OrBxa4989iixY2WzPD1LYwg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=WqftByaH; arc=fail smtp.client-ip=185.183.30.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209322.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC6Eg5P032268;
-	Thu, 12 Dec 2024 09:05:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=
-	content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=S1; bh=Yl80H2HXLTm6/0ouPQJ2aiWfS7dpkpC
-	xu8UnSJRWiDI=; b=WqftByaHh5N7rqYj7gniYNNy7MRne99E0iEsHiY8CgO5xCq
-	QPnt/e4VS+vEn6tOkdwuuaue/4CxgfziQ9Enxi74AeXHWkOc8Q3+tve450tmURZZ
-	0TGoZWxe+B8okFmtIJSTgMa9n8To8MdTb1/CrAgkc8UPXz0L7kMOrlvuEpURyIWX
-	MU+c0FdvttpcOFZBuvVZFkso5Z6d2axvO6DAXDpaCvmGgkA4TpyZSbYFCOv5+/Aw
-	E7PGA2zCoQqKszeYEKGuCvMcmaJj1xtYovksuCOSFNVpNgCo09XGIb6NItkkCFoh
-	0rshXeJhrEb82PKrya7q6blRrDIMHCjCdtxOwPg==
-Received: from apc01-tyz-obe.outbound.protection.outlook.com (mail-tyzapc01lp2045.outbound.protection.outlook.com [104.47.110.45])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 43cd54ccdp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Dec 2024 09:05:06 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=egUp7en1ctMn/zyeNWgaZB522uI59w9Nbp8ea2W/tWYElhLhrZkKCw/OKjyWhelpB5/ZTZc7BS8yzb+jO8tYaliV5+KqZj7mFm7yhhCFM58AjK2qdE7l2xX08I0rMuh1LInUmv2hK/44wi9yw8LJHR1OABK8swZohVYg2ILBjgymBWZJIA32C4ySSg2/0IUlNBiScTyX6b15JGQzCuFIvzQSwiPozAIaTSaPOUDSOy0WA2I+yH1jGyfmadwzQs6XgitJR2y1gixOoTo7OGONGvj5aISur7VW3na0U6e0foK+KHSFrXkDiKgiF3njeCTfP5BMyQR6PJgQV/weDejJ0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yl80H2HXLTm6/0ouPQJ2aiWfS7dpkpCxu8UnSJRWiDI=;
- b=cgx478coeVjPKERp2upxidL8hf7/v4jKAMqXZdP2J8hWhiqSzUpiwb8v4gRhOPI3D+5+pos++OD2BV4bZCDEnsNyKQeTxMwPSHuGbSVNGxcvWC/NU7tOCeEHvQrPpzy/8CFUfIlrdh09xxGmLBFMJrLh36gPWoSIGNJVWTyui5ytgN7tzWkJOxdOA3UopyqbDiPK7AatfRrMgQBjvaYL++59fWFkBrIUPBeydnRsk14MUDIAU2MKlZbz0IqJQlBq45otsEWh9VXbstGbMDewST6rdc9P8w6IhTF5WZ3FjKIqeemBdZqGTrz9hfvWpRNB8JdbE9tZd3UY1tjJCBi1Eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
- by KL1PR0401MB6211.apcprd04.prod.outlook.com (2603:1096:820:9b::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Thu, 12 Dec
- 2024 09:04:52 +0000
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06]) by PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06%4]) with mapi id 15.20.8230.008; Thu, 12 Dec 2024
- 09:04:52 +0000
-From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To: syzbot <syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "eric.snowberg@oracle.com" <eric.snowberg@oracle.com>,
-        "jmorris@namei.org"
-	<jmorris@namei.org>,
-        "linux-integrity@vger.kernel.org"
-	<linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>,
-        "paul@paul-moore.com"
-	<paul@paul-moore.com>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>,
-        "roberto.sassu@huaweicloud.com" <roberto.sassu@huaweicloud.com>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "syzkaller-bugs@googlegroups.com"
-	<syzkaller-bugs@googlegroups.com>,
-        "willy@infradead.org"
-	<willy@infradead.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] KMSAN: uninit-value in
- ima_add_template_entry (2)
-Thread-Topic: [syzbot] [integrity?] [lsm?] KMSAN: uninit-value in
- ima_add_template_entry (2)
-Thread-Index: AQHbHaL+d4YYZYraA06ZwOMR7289y7Lirhxo
-Date: Thu, 12 Dec 2024 09:04:51 +0000
-Message-ID:
- <PUZPR04MB631619A22F03DDBDC97905DD813F2@PUZPR04MB6316.apcprd04.prod.outlook.com>
-References: <66fcf5a0.050a0220.f28ec.04f9.GAE@google.com>
- <670c1a2f.050a0220.3e960.0043.GAE@google.com>
-In-Reply-To: <670c1a2f.050a0220.3e960.0043.GAE@google.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|KL1PR0401MB6211:EE_
-x-ms-office365-filtering-correlation-id: 2458293c-0ded-4344-3b1d-08dd1a8c09a4
-x-proofpoint-id: d8690225-876f-412f-87c6-a7cb45557a4c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|10070799003|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?F+9TOPRNadHT/ZHqDa5M70Rw4h67+sTt0D7TXkKcFAhkm3aCbCCLbksTua?=
- =?iso-8859-1?Q?GZMwm3FAGf3v7MCyWwJzcdXTxdLuAwstinYwGU3P9KltuhTtvSR5nCV+56?=
- =?iso-8859-1?Q?Dz5VzHWgMSmtdharcShvSII8Co5M/J9jShyYwWH68JH86SnZYJb5qYaZpZ?=
- =?iso-8859-1?Q?l97ZVI6PfIkMJEwUxKLOTKm4/96mS5IcY5jkWD6kI5uLrGgRZZOv1b7DQL?=
- =?iso-8859-1?Q?yOihvdXEP5FauExFCpwGPIHbhTblg2HUoaWpACsYmMQoSIBN78b5uFkDIi?=
- =?iso-8859-1?Q?7JVS7mHky0N3kifxTlZ+2HhnEZg88ajSl/z1Q4SrFseSe6OgthVxqV2M0W?=
- =?iso-8859-1?Q?tQwKYqPNQkeLkj4IXTeJvzxp9gV+d4lHydu3YZBB2+mKbQlYGBIhyhWNwL?=
- =?iso-8859-1?Q?CSL8eapWQuC/+oX798ph/gC++dhKl53PHdygDHDn+D/USBF8WKrcCdhUtd?=
- =?iso-8859-1?Q?6CnraBMkf7/cYSXQkVBK0BG+5yBZ0NdanM5NXzDTVA1yj8smwREsVJ91oI?=
- =?iso-8859-1?Q?Mw+O1gibQo7dZp7qqezeWcokmPgN3xgWdNa7vXyAXonDZ3X+GeSNqZV815?=
- =?iso-8859-1?Q?w5zycWb351eOIFFdzP5Tu6sCynSOouY4LXYLIBbxzUfIbgeWzmhvRf+PMB?=
- =?iso-8859-1?Q?QHoTHiNai1E9eHpa5VVkp/fcH0kbwCqn5Fpelnys0kG+vorkScyPFGrxMb?=
- =?iso-8859-1?Q?m0z2dnldt8LzBKayv9AuHeH+AmsXLxAJ84Oop9yU4+ghA7KcemTwEDjjo+?=
- =?iso-8859-1?Q?t+8c6rNjlfnvq1dnPdMchU4Bb4m7+0e7UWQ6GBM6+xK6+JvJezzN4KzwbA?=
- =?iso-8859-1?Q?2vMk7EceEpB/pzF01iybzg34OChVAjBXvCUBhmFeLXQ3YrcKDpxFOUbBr5?=
- =?iso-8859-1?Q?bWN169EaxDMJJ/yepdxzBtyBUzFAWFHCohlBBtpOIR0+Q3X/dAjD6VboeY?=
- =?iso-8859-1?Q?BcxgF9GyHBJ35A2W3r2Ggwhh1KfhEui6x9lQimAhni++CVWPFki+fe3Pzn?=
- =?iso-8859-1?Q?2M4Vk34JBxdmz+twiwnecaeMLsTTXNmNJyZLwwc8w/iovtSOF2kItuJOYM?=
- =?iso-8859-1?Q?NXxgaG4Rz1cPpPmtDHenKsJDnAEU16Qh64eZ+iF8vtTxEU77xikcA5O9Rt?=
- =?iso-8859-1?Q?VkE7QN/M6HFFc46SH6cRKDpawNNbAUE1UQzSeRBxAh8mdD10r94rQgag7e?=
- =?iso-8859-1?Q?dQdc3Agi3M5x72c/QyFAyH+7GzFUZMzyY/4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(10070799003)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?k1DfZB3Tuy/9v51XfunBHvPTt6ofrZJANRHOj7SwrkE2rUTx5dPWYRkLXk?=
- =?iso-8859-1?Q?jagGHABwQ4uhPBAMavJSWwLi9k1EsJYrzgeNNVfBj1prRZyhkeC0aOk7gi?=
- =?iso-8859-1?Q?IJKoZQG1dRLVkpPbWKEHb7y7zPXWWMuWMhYKqlHjKudc4xx4JEIrXMYPUS?=
- =?iso-8859-1?Q?DNyiyKXLNUcrAMfxUo2Ok579FB0zV+BpA5ZOLwxaNbXw+7E0B2AN1u0UrA?=
- =?iso-8859-1?Q?l9/w76XMlGKgv/ednoVwSqovyC5ieRGAopexy3iChVlhshw5uR9zjwZwQ/?=
- =?iso-8859-1?Q?O1fz6ncc+HSDDaBYX2VWB9xNhHS8GEyUm2+YKrX9H2PbhuBNTwQoSBZdvF?=
- =?iso-8859-1?Q?kFiTYXCFWweO8dNITMclCWMCcVNque4U69ZQFR+CH3pisvOK5hDzobs0fG?=
- =?iso-8859-1?Q?ymgRS7NsfnI6LBYxg+fXIDE4vGgkX8WRA22dkdv802G6zmtrSHqgGOhvPN?=
- =?iso-8859-1?Q?SZz/ufHgZX76u2JJ/xDu0NeND6SPmso0W+rauHiQ7Zvbcs58fCTA4RY1V6?=
- =?iso-8859-1?Q?nVTDyV4+CPAulAyxk/+/E/gdMrls+Ezgc2Ur7ctgarp2EVWJnCezrSAaga?=
- =?iso-8859-1?Q?vtN5Lw3AfawggjqxD+prwRo6+Elr/XZQFLTab22cJT9nFw7jgOBf6CKFdX?=
- =?iso-8859-1?Q?Pl9Peu0iUsFa9OyM2DLMl4WdV1Moq6foJnVTmAVmHPJ91jq1m1XiFaMP8k?=
- =?iso-8859-1?Q?S37YHI1iuD6vKs7grXFoy3EakhYNOhkY/+2EFiTlwpkvDE/onF3n8l9A0r?=
- =?iso-8859-1?Q?dHRhVcB//qCFNBkyjPU5qiIxtRXTqzEV3KzU2cEf5VK3apoJ+qj7AD+jR8?=
- =?iso-8859-1?Q?RLqUeZDNqmuuF7Up/B0Q2cTcTOhLtYgPTE92RGheDeayC/wedkGoA9vsII?=
- =?iso-8859-1?Q?k5z1dNWkrebWquIxVCwG9xBNtuqWBa5ylUANxhaMbXC4rd/Kfoj5aPCsI9?=
- =?iso-8859-1?Q?L5kR7aD9kNUnSIdF00egFsmoKl3koCZJ7sX2h9iCImC9wwHK7U0oYUqjn0?=
- =?iso-8859-1?Q?uKnMi1ddQlLG8HOhbFz7Sza3roizJd20EwGQB9RCs0cCfxhrdot7arZoU4?=
- =?iso-8859-1?Q?nfmwa3foG3TNDmicnhDoFaOf30Ch7LC2R1ta8BHfr3peu6sT5GV55FljNL?=
- =?iso-8859-1?Q?0ftX3JoKvAvDXQRAsILgqkEtOVD2PJkptGc47MdYGN7HULxuidIIsQWmY7?=
- =?iso-8859-1?Q?T1OgItCxf/2XXOIk6Usm6z8Wh9dAwq2Hncqbuaa5sQAViyHJAqUN1+d6l6?=
- =?iso-8859-1?Q?t8baZgFC34huDNGyYM4vs7rXGIT9zXYOXfReqG8SntlcC/o+4S0KnHAEHF?=
- =?iso-8859-1?Q?UnXvX+h5iyRVPgQGtl5Kmc2Cxxej0BSMtvxbzLtlqF7RI8vXjHPhpaedtC?=
- =?iso-8859-1?Q?HbVWVvN7q4zxLaBTbiqECXJknubbjLkFnN8DBhdCRD11hBWfOp9e73I6nc?=
- =?iso-8859-1?Q?972QbbEhXtvTmcxJvfARRwkm5A+NNQhpOZVdAHlXxMKCvObwrqDxL69Le1?=
- =?iso-8859-1?Q?yYz3eBwaPqdiF5mYkdFqLLGa1QbaB0J1JaEhMIZXyUOo07hgyrP+2c0Zxm?=
- =?iso-8859-1?Q?TOr4MfttV8jyFYOEx6tbNiIzeJ1hvLyDa3TosOILNyIKa9f7UY7YWOVvUb?=
- =?iso-8859-1?Q?m7sV93LeIJU4+jSHjrLtYKvqqnLX4MZK7RUJa5N0KnLnjdBZ8y7LnID7Wa?=
- =?iso-8859-1?Q?XAgfEbgsBS5kbfGyzXY=3D?=
-Content-Type: multipart/mixed;
-	boundary="_002_PUZPR04MB631619A22F03DDBDC97905DD813F2PUZPR04MB6316apcp_"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D9913E40F;
+	Thu, 12 Dec 2024 09:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.79
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733994649; cv=none; b=c8Kj/U/zDyh/Vo7nWnYAmnrADtBfPAZsqAWDaJaJDRqMACFCSL/Hry8OPXo3pAOyCEUMRpUZWu5/qyGHzK99siD+BTEqFOzNInP88wsHDUouqE9Ak/aBDrtc9II1tm4GCEypaYbK63S4xmbNyu/UtFKJCAH+1DmZlP6nsrKHjGw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733994649; c=relaxed/simple;
+	bh=jwYrXDddRG3PR4qyYG5gwWlBh42QqTd8zTyJJlniWlY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BZgNrnpoydXEoM/szrOVcG7DkRiPMbgsbJXWsfehaPx9tsNcR9dJ6ptw4fP2aZNxbZkyj5cTEmVxpkNT6lvRy9BWfHjqqt9EttgTWUp/NxFP9Kcm6oKYFlj+LRhaV4KGeN8gsx1AOlYx8SGc3n0Nf8Ek8dF3PRmNFZn7JRZU2eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Bm2MQOWk; arc=none smtp.client-ip=101.71.155.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 587970be;
+	Thu, 12 Dec 2024 16:55:19 +0800 (GMT+08:00)
+Message-ID: <f6fd6efe-73bb-4aa2-a075-9a03c39951df@rock-chips.com>
+Date: Thu, 12 Dec 2024 16:55:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	7YYSGdVxyTJoa8xSOFhAfo2q1ttLAYCo3ggqX4aQKqc/N0dHf8J9u8BqLZgEjPof97k6l8GoxP3kvAmr4n3wEuFepECHDYJF2eU13kSPRCHX/tC8ccYB/kgAcElDD+npMrkRH2qDp110nv2EfUi+L60hjuOTFFEM1ffa1WQ6HUq3c+xnlFZZ688Fc1L2LGfarqJW9DRn3jrV4/tSDwR5L4HVq64vmLJX5ub0+yYZvTrE3XJMq8gA9MhaCCU4PH5tYCDmKvmbh07uh5sr+jP4KCUtuO9qT2Ysm5VvThm0/x+A/9Ve35YYIBEl6WAIBQCN7xb4vE5JSIsJOqKo7/d4gHNmnY4bA8gcBH7eH/MKnbe0/Yi9CN7GJAwm4hzIoSMaq4KJjRw+JfHB6Nahdd+zA9VF3AR+nLzl1XBAeyL5196Zeas5AtzrWXLG/bcp7yuCMIqxUrkd1/FsgIX5Yvh4oP52st8uvBInHd0EIvrixL2+zXDKgyD8Qykjm/95MqHRVpXZ1UTVdr+zhN8H8S0M/qf60d0HoYyznWUMG0Gr6ECOxhCAoXj6PYAuswPbkLCu63hDtzX1kAcZ3QDwJ1HTAil6km554gxVLpUcfBm41TL37OukrTvUxP2g6cYOiubq
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2458293c-0ded-4344-3b1d-08dd1a8c09a4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2024 09:04:51.5451
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lopiPFS4sVoBYKgdlpZ1WRm799DkMkgEFS2DKpL3Qi8NXg7j45E46nqAdspNRp6AUscjaWhPKqNk/LIsljLSaw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0401MB6211
-X-Proofpoint-GUID: -5AijMovdV9yg1Rsmq1Wxi-fhm8shWBg
-X-Proofpoint-ORIG-GUID: -5AijMovdV9yg1Rsmq1Wxi-fhm8shWBg
-X-Sony-Outbound-GUID: -5AijMovdV9yg1Rsmq1Wxi-fhm8shWBg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-12_03,2024-12-10_01,2024-11-22_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 06/10] drm/bridge: analogix_dp: Add support for phy
+ configuration.
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: heiko@sntech.de, robh@kernel.org, conor+dt@kernel.org,
+ algea.cao@rock-chips.com, rfoss@kernel.org, devicetree@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ sebastian.reichel@collabora.com, dri-devel@lists.freedesktop.org,
+ hjc@rock-chips.com, kever.yang@rock-chips.com,
+ linux-rockchip@lists.infradead.org, vkoul@kernel.org,
+ andy.yan@rock-chips.com, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, l.stach@pengutronix.de
+References: <20241127075157.856029-1-damon.ding@rock-chips.com>
+ <20241127075157.856029-7-damon.ding@rock-chips.com>
+ <twhosvpoyafo472gqsblpvxmuewe2lkqufxabp2q7o636uinfm@unzyfv2pchqn>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <twhosvpoyafo472gqsblpvxmuewe2lkqufxabp2q7o636uinfm@unzyfv2pchqn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk1DT1YYHk1DQkkaHUtOGUpWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a93ba14685803a3kunm587970be
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MzI6Qjo4FTIPOjQOCTcYCB0h
+	DS8wCT9VSlVKTEhIQkJITElKQ09MVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFMTE1JNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=Bm2MQOWkXjx8Pf9F3W4LsD7hTW78m7eB7oq2XDcJbwtsVGle3yaMemLVAEN+zVoWZx1sSiKi07Y1Rcxs8X+7lH/hi9FsqJO5eqOVWzogYs3zRK3doeb9Kv0vTMPvpyP88zoti2YuAe7NHqy+LN/uRRr11+USss2pTU7MU1cFiqk=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=FoVNNZh4L/GMNtlxTr6ggp+PnIEfUziJ14W8Sk9sycA=;
+	h=date:mime-version:subject:message-id:from;
 
---_002_PUZPR04MB631619A22F03DDBDC97905DD813F2PUZPR04MB6316apcp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Hi Dmitry,
 
-#syz test=
+On 2024/11/30 16:53, Dmitry Baryshkov wrote:
+> On Wed, Nov 27, 2024 at 03:51:53PM +0800, Damon Ding wrote:
+>> Add support to configurate link rate, lane count, voltage swing and
+>> pre-emphasis with phy_configure(). It is helpful in application scenarios
+>> where analogix controller is mixed with the phy of other vendors.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> ---
+>>   .../drm/bridge/analogix/analogix_dp_core.c    |  4 +-
+>>   .../drm/bridge/analogix/analogix_dp_core.h    |  2 +
+>>   .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 90 +++++++++++++++++++
+>>   3 files changed, 94 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> index 6f10d88a34c5..7624ed13cdbf 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+>> @@ -1672,7 +1672,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_probe);
+>>   
+>>   int analogix_dp_suspend(struct analogix_dp_device *dp)
+>>   {
+>> -	phy_power_off(dp->phy);
+>> +	analogix_dp_phy_power_off(dp);
+> 
+> Why?
+> 
+>>   
+>>   	if (dp->plat_data->power_off)
+>>   		dp->plat_data->power_off(dp->plat_data);
+>> @@ -1696,7 +1696,7 @@ int analogix_dp_resume(struct analogix_dp_device *dp)
+>>   	if (dp->plat_data->power_on)
+>>   		dp->plat_data->power_on(dp->plat_data);
+>>   
+>> -	phy_power_on(dp->phy);
+>> +	analogix_dp_phy_power_on(dp);
+> 
+> Why?
+> 
 
---_002_PUZPR04MB631619A22F03DDBDC97905DD813F2PUZPR04MB6316apcp_
-Content-Type: text/x-patch; name="v1-0001-exfat-zero-new-buffer.patch"
-Content-Description: v1-0001-exfat-zero-new-buffer.patch
-Content-Disposition: attachment;
-	filename="v1-0001-exfat-zero-new-buffer.patch"; size=1196;
-	creation-date="Thu, 12 Dec 2024 09:03:54 GMT";
-	modification-date="Thu, 12 Dec 2024 09:03:54 GMT"
-Content-Transfer-Encoding: base64
+These changes for phy_power_on()/phy_power_off() may be unnecessary. I 
+will just put the phy_set_mode() before phy_power_on() in next version.
 
-RnJvbSA1MWIwZTNjZmM1YzBjNGFjMDAwMGZmOTdkMjM2ZDI0MzQ2MThmN2ZjIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBZdWV6aGFuZyBNbyA8WXVlemhhbmcuTW9Ac29ueS5jb20+CkRh
-dGU6IFRodSwgMTIgRGVjIDIwMjQgMTY6Mjk6MjMgKzA4MDAKU3ViamVjdDogW1BBVENIIHYxXSBl
-eGZhdDogemVybyBuZXcgYnVmZmVyCgpTaWduZWQtb2ZmLWJ5OiBZdWV6aGFuZyBNbyA8WXVlemhh
-bmcuTW9Ac29ueS5jb20+Ci0tLQogZnMvZXhmYXQvZmlsZS5jIHwgNiArKysrKysKIDEgZmlsZSBj
-aGFuZ2VkLCA2IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9mcy9leGZhdC9maWxlLmMgYi9m
-cy9leGZhdC9maWxlLmMKaW5kZXggYTI1ZDdlYjc4OWY0Li5kOTE0Mzc4MzE4MzUgMTAwNjQ0Ci0t
-LSBhL2ZzL2V4ZmF0L2ZpbGUuYworKysgYi9mcy9leGZhdC9maWxlLmMKQEAgLTU0NSw2ICs1NDUs
-NyBAQCBzdGF0aWMgaW50IGV4ZmF0X2V4dGVuZF92YWxpZF9zaXplKHN0cnVjdCBmaWxlICpmaWxl
-LCBsb2ZmX3QgbmV3X3ZhbGlkX3NpemUpCiAJd2hpbGUgKHBvcyA8IG5ld192YWxpZF9zaXplKSB7
-CiAJCXUzMiBsZW47CiAJCXN0cnVjdCBmb2xpbyAqZm9saW87CisJCXVuc2lnbmVkIGxvbmcgb2Zm
-OwogCiAJCWxlbiA9IFBBR0VfU0laRSAtIChwb3MgJiAoUEFHRV9TSVpFIC0gMSkpOwogCQlpZiAo
-cG9zICsgbGVuID4gbmV3X3ZhbGlkX3NpemUpCkBAIC01NTQsNiArNTU1LDkgQEAgc3RhdGljIGlu
-dCBleGZhdF9leHRlbmRfdmFsaWRfc2l6ZShzdHJ1Y3QgZmlsZSAqZmlsZSwgbG9mZl90IG5ld192
-YWxpZF9zaXplKQogCQlpZiAoZXJyKQogCQkJZ290byBvdXQ7CiAKKwkJb2ZmID0gb2Zmc2V0X2lu
-X2ZvbGlvKGZvbGlvLCBwb3MpOworCQlmb2xpb196ZXJvX25ld19idWZmZXJzKGZvbGlvLCBvZmYs
-IG9mZiArIGxlbik7CisKIAkJZXJyID0gb3BzLT53cml0ZV9lbmQoZmlsZSwgbWFwcGluZywgcG9z
-LCBsZW4sIGxlbiwgZm9saW8sIE5VTEwpOwogCQlpZiAoZXJyIDwgMCkKIAkJCWdvdG8gb3V0OwpA
-QCAtNTYzLDYgKzU2Nyw4IEBAIHN0YXRpYyBpbnQgZXhmYXRfZXh0ZW5kX3ZhbGlkX3NpemUoc3Ry
-dWN0IGZpbGUgKmZpbGUsIGxvZmZfdCBuZXdfdmFsaWRfc2l6ZSkKIAkJY29uZF9yZXNjaGVkKCk7
-CiAJfQogCisJcmV0dXJuIDA7CisKIG91dDoKIAlyZXR1cm4gZXJyOwogfQotLSAKMi40My4wCgo=
+>>   
+>>   	analogix_dp_init_dp(dp);
+>>   
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> index 774d11574b09..a76079d61768 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+>> @@ -232,5 +232,7 @@ int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
+>>   			     struct dp_sdp *vsc, bool blocking);
+>>   ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+>>   			     struct drm_dp_aux_msg *msg);
+>> +void analogix_dp_phy_power_on(struct analogix_dp_device *dp);
+>> +void analogix_dp_phy_power_off(struct analogix_dp_device *dp);
+>>   
+>>   #endif /* _ANALOGIX_DP_CORE_H */
+>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+>> index 3afc73c858c4..809bb0c72d18 100644
+>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
+>> @@ -11,6 +11,7 @@
+>>   #include <linux/gpio/consumer.h>
+>>   #include <linux/io.h>
+>>   #include <linux/iopoll.h>
+>> +#include <linux/phy/phy.h>
+>>   
+>>   #include <drm/bridge/analogix_dp.h>
+>>   
+>> @@ -513,10 +514,27 @@ void analogix_dp_enable_sw_function(struct analogix_dp_device *dp)
+>>   void analogix_dp_set_link_bandwidth(struct analogix_dp_device *dp, u32 bwtype)
+>>   {
+>>   	u32 reg;
+>> +	int ret;
+>>   
+>>   	reg = bwtype;
+>>   	if ((bwtype == DP_LINK_BW_2_7) || (bwtype == DP_LINK_BW_1_62))
+>>   		writel(reg, dp->reg_base + ANALOGIX_DP_LINK_BW_SET);
+>> +
+>> +	if (dp->phy) {
+>> +		union phy_configure_opts phy_cfg = {0};
+>> +
+>> +		phy_cfg.dp.lanes = dp->link_train.lane_count;
+> 
+> You can drop this, .set_lanes is false.
+> 
+>> +		phy_cfg.dp.link_rate =
+>> +			drm_dp_bw_code_to_link_rate(dp->link_train.link_rate) / 100;
+>> +		phy_cfg.dp.set_lanes = false;
+>> +		phy_cfg.dp.set_rate = true;
+>> +		phy_cfg.dp.set_voltages = false;
+> 
+> You don't need to set those to false, it's cleared by = {0};
+> 
+>> +		ret = phy_configure(dp->phy, &phy_cfg);
+>> +		if (ret && ret != -EOPNOTSUPP) {
+>> +			dev_err(dp->dev, "%s: phy_configure() failed: %d\n", __func__, ret);
+>> +			return;
+>> +		}
+>> +	}
+>>   }
+>>   
+>>   void analogix_dp_get_link_bandwidth(struct analogix_dp_device *dp, u32 *bwtype)
+>> @@ -530,9 +548,24 @@ void analogix_dp_get_link_bandwidth(struct analogix_dp_device *dp, u32 *bwtype)
+>>   void analogix_dp_set_lane_count(struct analogix_dp_device *dp, u32 count)
+>>   {
+>>   	u32 reg;
+>> +	int ret;
+>>   
+>>   	reg = count;
+>>   	writel(reg, dp->reg_base + ANALOGIX_DP_LANE_COUNT_SET);
+>> +
+>> +	if (dp->phy) {
+>> +		union phy_configure_opts phy_cfg = {0};
+>> +
+>> +		phy_cfg.dp.lanes = dp->link_train.lane_count;
+>> +		phy_cfg.dp.set_lanes = true;
+>> +		phy_cfg.dp.set_rate = false;
+>> +		phy_cfg.dp.set_voltages = false;
+> 
+> Likewise
+> 
+>> +		ret = phy_configure(dp->phy, &phy_cfg);
+>> +		if (ret && ret != -EOPNOTSUPP) {
+>> +			dev_err(dp->dev, "%s: phy_configure() failed: %d\n", __func__, ret);
+>> +			return;
+>> +		}
+>> +	}
+>>   }
+>>   
+>>   void analogix_dp_get_lane_count(struct analogix_dp_device *dp, u32 *count)
+>> @@ -546,10 +579,39 @@ void analogix_dp_get_lane_count(struct analogix_dp_device *dp, u32 *count)
+>>   void analogix_dp_set_lane_link_training(struct analogix_dp_device *dp)
+>>   {
+>>   	u8 lane;
+>> +	int ret;
+>>   
+>>   	for (lane = 0; lane < dp->link_train.lane_count; lane++)
+>>   		writel(dp->link_train.training_lane[lane],
+>>   		       dp->reg_base + ANALOGIX_DP_LN0_LINK_TRAINING_CTL + 4 * lane);
+>> +
+>> +	if (dp->phy) {
+>> +		union phy_configure_opts phy_cfg = {0};
+>> +
+>> +		for (lane = 0; lane < dp->link_train.lane_count; lane++) {
+>> +			u8 training_lane = dp->link_train.training_lane[lane];
+>> +			u8 vs, pe;
+>> +
+>> +			vs = (training_lane & DP_TRAIN_VOLTAGE_SWING_MASK) >>
+>> +			     DP_TRAIN_VOLTAGE_SWING_SHIFT;
+>> +			pe = (training_lane & DP_TRAIN_PRE_EMPHASIS_MASK) >>
+>> +			     DP_TRAIN_PRE_EMPHASIS_SHIFT;
+>> +			phy_cfg.dp.voltage[lane] = vs;
+>> +			phy_cfg.dp.pre[lane] = pe;
+>> +		}
+>> +
+>> +		phy_cfg.dp.lanes = dp->link_train.lane_count;
+>> +		phy_cfg.dp.link_rate =
+>> +			drm_dp_bw_code_to_link_rate(dp->link_train.link_rate) / 100;
+> 
+> You can drop these two.
 
---_002_PUZPR04MB631619A22F03DDBDC97905DD813F2PUZPR04MB6316apcp_--
+Indeed, all the needless assignments for phy_configure() will be deleted 
+in next version.
+
+> 
+>> +		phy_cfg.dp.set_lanes = false;
+>> +		phy_cfg.dp.set_rate = false;
+>> +		phy_cfg.dp.set_voltages = true;
+>> +		ret = phy_configure(dp->phy, &phy_cfg);
+>> +		if (ret && ret != -EOPNOTSUPP) {
+>> +			dev_err(dp->dev, "%s: phy_configure() failed: %d\n", __func__, ret);
+>> +			return;
+>> +		}
+>> +	}
+>>   }
+>>   
+>>   u32 analogix_dp_get_lane_link_training(struct analogix_dp_device *dp, u8 lane)
+>> @@ -1053,3 +1115,31 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
+>>   
+>>   	return -EREMOTEIO;
+>>   }
+>> +
+>> +void analogix_dp_phy_power_on(struct analogix_dp_device *dp)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = phy_set_mode(dp->phy, PHY_MODE_DP);
+>> +	if (ret) {
+>> +		dev_err(dp->dev, "%s: phy_set_mode() failed: %d\n", __func__, ret);
+>> +		return;
+>> +	}
+>> +
+>> +	ret = phy_power_on(dp->phy);
+>> +	if (ret) {
+>> +		dev_err(dp->dev, "%s: phy_power_on() failed: %d\n", __func__, ret);
+> 
+> There is already a dev_err() call in phy_power_on().
+> 
+>> +		return;
+>> +	}
+>> +}
+>> +
+>> +void analogix_dp_phy_power_off(struct analogix_dp_device *dp)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = phy_power_off(dp->phy);
+>> +	if (ret) {
+>> +		dev_err(dp->dev, "%s: phy_power_off() failed: %d\n", __func__, ret);
+> 
+> There is already a dev_err() call in phy_power_off().
+> 
+>> +		return;
+>> +	}
+>> +}
+>> -- 
+>> 2.34.1
+>>
+>>
+>> _______________________________________________
+>> Linux-rockchip mailing list
+>> Linux-rockchip@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> 
+
+Best regards,
+Damon
+
 
