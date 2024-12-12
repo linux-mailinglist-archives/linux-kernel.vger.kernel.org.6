@@ -1,194 +1,182 @@
-Return-Path: <linux-kernel+bounces-442845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8559EE2CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:25:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4155D9EE2D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F5FF1888FDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:25:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2385D188B4CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F8F211265;
-	Thu, 12 Dec 2024 09:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXs4Shio"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAD0210F5E;
-	Thu, 12 Dec 2024 09:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B919E20E6EF;
+	Thu, 12 Dec 2024 09:23:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DA820E6E7;
+	Thu, 12 Dec 2024 09:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733995356; cv=none; b=Em3nDM+pTRd6lxq+Slv5N93SBCTpRu9jPrkyo6/Ylaaumr9JHkKAVwmrpPHyjpqTjpNHi+pWhRQrdSLgsvwSrh239J5rivcqcB/oCmYb8gorIbydElqlK1osscAcjwHoeMWkSTk7uwS8ZDMinQ6j+xdTgRPOoEmUJBr9wRI0YwQ=
+	t=1733995408; cv=none; b=CiEnW90YHpmF7dnJcoTy0xFATiq0lJ35gfbxOpJnA22U3anN+fOQ91dZeVIUxapIjZY/MgPm3+TSN65hPv9VA065ldKRkpV+TWAFXrtjS2gVAw4V15UqMB7HxG4dGiq7NDzTPnYTF3uwv26Sqe3XyRjn8DJMXbEKOFXxHYSe/ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733995356; c=relaxed/simple;
-	bh=MH76A8RrBVeEauyXdzge4bB1tbBOOSK8hzAcOTLGZu4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DG8jGCoEcdatyAjkOOkBqZOGsWbI3XxH0itP6RDVxoXRdlfaUgIiV2S9Pyl6pRcxkVWfAgaI7qoxKkPvEHQNIMo6+/pby3kK1V/J2cpxz+TWGrXd67Ca1yPwjbEYSNrgBhDY+NSmNPc3SyO3qPloqu4zwdYssKEW7+Xhvmd0/xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXs4Shio; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4361fe642ddso3652785e9.2;
-        Thu, 12 Dec 2024 01:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733995353; x=1734600153; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9/8qAprzepzOhI9hq4ABjT0H5BvreqQl8xCmHayUS8c=;
-        b=eXs4Shio6ac1r7QEKWNtJP3FrfXt15FR7EuCHN5XatULVJ33jejdBd628nCkHai8wa
-         JXHISyqGs/QxfRGhnbfzX2PZMz3wq39/Ce2WaMDeIoJeXyQlMHKnVs33U+1NSjmkvupD
-         YbbKZbcmUPX23HRIFS4KLz7ZS7f2iJhpIbhXTorEKAbDnCKLmplxFxYfFc2j1Siakhza
-         Iqu5TB38YJ1baeuMTF5SHWJJbJMyop/N+e/L9uXjyVzNnAk3a14PL8XPIW6VcSuE68M3
-         rWOGpk3arRzs2j4rEzljNmjbK72+PC6hslhJH0F5NG8fwwJAp/lzDFHF7Gix4YqfhF9n
-         gXrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733995353; x=1734600153;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/8qAprzepzOhI9hq4ABjT0H5BvreqQl8xCmHayUS8c=;
-        b=BzYUk5qicSOYbyuRZKbzllJIijI/Cv2V3wrfg9v65YgF6thmjXae537/nPS+lRmhu8
-         8Ywlug1N1unNsrw/M270twQPRksZ3evhcwhNDIu1PF/JwoqJJoZ10DibJxwhjiST9s2S
-         Vgpu1ydZLOnL+f6g7FZYKqgVq8tg7IbCgenAh2vkNSf/dPDwODeMXq2qNzUO3OeA0gD1
-         oC7mdoIS0ORqEhNWv14QbCSjwZNUiJb2L20f4+RXxq7jaYGXH2EcbuMvMoxUXxNO4Bb7
-         BkLklyD/Vyj/c4Gxp4qnoTsWAKxyM5CzoQiQXeEhGwGLAnE/rbsrxNGJRQKuHFyQ6wbv
-         WTXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdueEg13+PTcuxqllZoNoEX29xFrGn+ic2fmJ3Koo0kh4DbUpVFg5N9Nq8nl4jtPVVbGw2yE1TXK4YrTJr@vger.kernel.org, AJvYcCUyFjYgl8gWJgybJJimyep9a8jw9xtykd7Fp6q4Wjkt0ABb38ZRl2IHIZMJKilNbbP3Klc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjVECAZ4rQepQM7OxjftmveDphCq0KYB6CKtRYhPwnYBSLeNQW
-	1t0g2vtBNkLma+72ZpwvGW6CgNn+FmkQb1Twd1xrI2WpRqZ94LYO
-X-Gm-Gg: ASbGncuFxX7v+FRSGZh8DYzl/LmNFdGUylGc9hIbbDXPbyEsl9hQj16EAAtLHahnIlX
-	aYGdFIRPYSwnmHeTOy20ddHBCxCaqzZjm8u5pHX7BF4gtoBvm0WlQ1Aw5DjPcqsBtIH5dsfm4p8
-	Mw/CaphehA5s7VTxF3tdXiuSffebAYlf2PoRXQAw5oEajChqCS9Ny2MnqzGLq6/hxHWzjMtl+6k
-	zEwpZd1FwWC+WcWtxb0RsK4B61D3NXP4FMiPOtvCHKhrZG1wMDkQIfaUiHRK9RqoiFOrtDtgCOc
-	u3Zl+H8hA9byrK/k7hoyXNnc1AVwGg==
-X-Google-Smtp-Source: AGHT+IF5BcgvSTVBRtoBdBseMDIWG1i+t5YhY/Nf3IWtocZuQeNr3CTNju1EKFip3g+LBHDjf7c81A==
-X-Received: by 2002:a05:600c:4e4b:b0:434:a0bf:98ea with SMTP id 5b1f17b1804b1-4361c35cc4bmr46472845e9.9.1733995353163;
-        Thu, 12 Dec 2024 01:22:33 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625717c9fsm10563025e9.44.2024.12.12.01.22.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 01:22:32 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 12 Dec 2024 10:22:30 +0100
-To: Jiri Olsa <olsajiri@gmail.com>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: Laura Nao <laura.nao@collabora.com>, alan.maguire@oracle.com,
-	bpf@vger.kernel.org, chrome-platform@lists.linux.dev,
-	kernel@collabora.com, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on
-Message-ID: <Z1qrVu2Pv6qXI9tD@krava>
-References: <Z1LvfndLE1t1v995@krava>
- <20241210135501.251505-1-laura.nao@collabora.com>
- <Z1n_wGj0CGjh_gLP@krava>
+	s=arc-20240116; t=1733995408; c=relaxed/simple;
+	bh=LpuCZ0zn9wOcs7NjXo1QHfxAcyOWNdCR9dbvUV4Dv1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NWOUT4m5TiW9hgFOb0Zxkyq0GT1rp98dMkQvwzqXsVJJzUkLXSWwYWwd45ccAr1JwUgafmRP87uN1g+T5LbAVKy41qO8TDSFJOn9E5U4KBcGnchvQizNNPLKJtaUPU7l6lRH68pnXxxm7XnEPQU3XIFrJbri+cHqqSPYcrgh7rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A0F1169E;
+	Thu, 12 Dec 2024 01:23:52 -0800 (PST)
+Received: from [10.57.92.2] (unknown [10.57.92.2])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50E893F5A1;
+	Thu, 12 Dec 2024 01:23:22 -0800 (PST)
+Message-ID: <5d4ccb2c-da45-4471-9bb1-90212b50dad7@arm.com>
+Date: Thu, 12 Dec 2024 09:23:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND RFC PATCH v1 1/5] arm64: Add TLB Conflict Abort Exception
+ handler to KVM
+Content-Language: en-GB
+To: Marc Zyngier <maz@kernel.org>,
+ =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net,
+ oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
+ yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kvmarm@lists.linux.dev
+References: <20241211160218.41404-1-miko.lenczewski@arm.com>
+ <20241211160218.41404-2-miko.lenczewski@arm.com>
+ <86o71irucr.wl-maz@kernel.org>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <86o71irucr.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1n_wGj0CGjh_gLP@krava>
 
-On Wed, Dec 11, 2024 at 10:10:24PM +0100, Jiri Olsa wrote:
-> On Tue, Dec 10, 2024 at 02:55:01PM +0100, Laura Nao wrote:
-> > Hi Jiri,
-> > 
-> > Thanks for the feedback!
-> > 
-> > On 12/6/24 13:35, Jiri Olsa wrote:
-> > > On Fri, Nov 15, 2024 at 06:17:12PM +0100, Laura Nao wrote:
-> > >> On 11/13/24 10:37, Laura Nao wrote:
-> > >>>
-> > >>> Currently, KernelCI only retains the bzImage, not the vmlinux
-> > >>> binary. The
-> > >>> bzImage can be downloaded from the same link mentioned above by
-> > >>> selecting
-> > >>> 'kernel' from the dropdown menu (modules can also be downloaded the
-> > >>> same
-> > >>> way). I’ll try to replicate the build on my end and share the
-> > >>> vmlinux
-> > >>> with DWARF data stripped for convenience.
-> > >>>
-> > >>
-> > >> I managed to reproduce the issue locally and I've uploaded the
-> > >> vmlinux[1]
-> > >> (stripped of DWARF data) and vmlinux.raw[2] files, as well as one of
-> > >> the
-> > >> modules[3] and its btf data[4] extracted with:
-> > >>
-> > >> bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko >
-> > >> cros_kbd_led_backlight.ko.raw
-> > >>
-> > >> Looking again at the logs[5], I've noticed the following is reported:
-> > >>
-> > >> [    0.415885] BPF: 	 type_id=115803 offset=177920 size=1152
-> > >> [    0.416029] BPF:
-> > >> [    0.416083] BPF: Invalid offset
-> > >> [    0.416165] BPF:
-> > >>
-> > >> There are two different definitions of rcu_data in '.data..percpu',
-> > >> one
-> > >> is a struct and the other is an integer:
-> > >>
-> > >> type_id=115801 offset=177920 size=1152 (VAR 'rcu_data')
-> > >> type_id=115803 offset=177920 size=1152 (VAR 'rcu_data')
-> > >>
-> > >> [115801] VAR 'rcu_data' type_id=115572, linkage=static
-> > >> [115803] VAR 'rcu_data' type_id=1, linkage=static
-> > >>
-> > >> [115572] STRUCT 'rcu_data' size=1152 vlen=69
-> > >> [1] INT 'long unsigned int' size=8 bits_offset=0 nr_bits=64
-> > >> encoding=(none)
-> > >>
-> > >> I assume that's not expected, correct?
-> > > 
-> > > yes, that seems wrong.. but I can't reproduce with your config
-> > > together with pahole 1.24 .. could you try with latest one?
-> > 
-> > I just tested next-20241210 with the latest pahole version (1.28 from
-> > the master branch[1]), and the issue does not occur with this version
-> > (I can see only one instance of rcu_data in the BTF data, as expected).
-> > 
-> > I can confirm that the same kernel revision still exhibits the issue
-> > with pahole 1.24.
-> > 
-> > If helpful, I can also test versions between 1.24 and 1.28 to identify
-> > which ones work.
+On 11/12/2024 17:40, Marc Zyngier wrote:
+> On Wed, 11 Dec 2024 16:01:37 +0000,
+> Mikołaj Lenczewski <miko.lenczewski@arm.com> wrote:
+>>
+>> Currently, KVM does not handle the case of a stage 2 TLB conflict abort
+>> exception. The Arm ARM specifies that the worst-case handling of such an
+>> exception requires a `tlbi vmalls12e1`.
 > 
-> I managed to reproduce finally with gcc-12, but had to use pahole 1.25,
-> 1.24 failed with unknown attribute
+> Not quite. It says (I_JCCRT):
 > 
-> 	[95096] VAR 'rcu_data' type_id=94868, linkage=static
-> 	[95098] VAR 'rcu_data' type_id=4, linkage=static
-> 	type_id=95096 offset=177088 size=1152 (VAR 'rcu_data')
-> 	type_id=95098 offset=177088 size=1152 (VAR 'rcu_data')
+> <quote>
+> * For the EL1&0 translation regime, when stage 2 translations are in
+>   use, either VMALLS12E1 or ALLE1.
+> </quote>
+> 
+>> Perform such an invalidation when this exception is encountered.
+> 
+> What you fail to describe is *why* this is needed. You know it, I know
+> it, but not everybody does. A reference to the ARM ARM would
+> definitely be helpful.
+> 
+>>
+>> Signed-off-by: Mikołaj Lenczewski <miko.lenczewski@arm.com>
+>> ---
+>>  arch/arm64/include/asm/esr.h | 8 ++++++++
+>>  arch/arm64/kvm/mmu.c         | 6 ++++++
+>>  2 files changed, 14 insertions(+)
+>>
+>> diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+>> index d1b1a33f9a8b..8a66f81ca291 100644
+>> --- a/arch/arm64/include/asm/esr.h
+>> +++ b/arch/arm64/include/asm/esr.h
+>> @@ -121,6 +121,7 @@
+>>  #define ESR_ELx_FSC_SEA_TTW(n)	(0x14 + (n))
+>>  #define ESR_ELx_FSC_SECC	(0x18)
+>>  #define ESR_ELx_FSC_SECC_TTW(n)	(0x1c + (n))
+>> +#define ESR_ELx_FSC_TLBABT	(0x30)
+>>  
+>>  /* Status codes for individual page table levels */
+>>  #define ESR_ELx_FSC_ACCESS_L(n)	(ESR_ELx_FSC_ACCESS + (n))
+>> @@ -464,6 +465,13 @@ static inline bool esr_fsc_is_access_flag_fault(unsigned long esr)
+>>  	       (esr == ESR_ELx_FSC_ACCESS_L(0));
+>>  }
+>>  
+>> +static inline bool esr_fsc_is_tlb_conflict_abort(unsigned long esr)
+>> +{
+>> +	esr = esr & ESR_ELx_FSC;
+>> +
+>> +	return esr == ESR_ELx_FSC_TLBABT;
+>> +}
+>> +
+>>  /* Indicate whether ESR.EC==0x1A is for an ERETAx instruction */
+>>  static inline bool esr_iss_is_eretax(unsigned long esr)
+>>  {
+>> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+>> index c9d46ad57e52..c8c6f5a97a1b 100644
+>> --- a/arch/arm64/kvm/mmu.c
+>> +++ b/arch/arm64/kvm/mmu.c
+>> @@ -1756,6 +1756,12 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
+>>  	ipa = fault_ipa = kvm_vcpu_get_fault_ipa(vcpu);
+>>  	is_iabt = kvm_vcpu_trap_is_iabt(vcpu);
+>>  
+>> +	if (esr_fsc_is_tlb_conflict_abort(esr)) {
+>> +		// does a `tlbi vmalls12e1is`
+> 
+> nit: this isn't a very useful comment.
+> 
+>> +		__kvm_tlb_flush_vmid(&vcpu->kvm->arch.mmu);
+>> +		return 1;
+>> +	}
+> 
+> That's not enough, unfortunately. A nested VM has *many* VMIDs (the
+> flattening of all translation contexts that the guest uses).
+> 
+> So you can either iterate over all the valid VMIDs owned by this
+> guest, or more simply issue a TLBI ALLE1, which will do the trick in a
+> much more efficient way.
+> 
+> The other thing is that you are using an IS invalidation, which is
+> farther reaching than necessary. Why would you invalidate the TLBs for
+> CPUs that are only innocent bystanders? A non-shareable invalidation
+> seems preferable to me.
+> 
+>> +
+>>  	if (esr_fsc_is_translation_fault(esr)) {
+>>  		/* Beyond sanitised PARange (which is the IPA limit) */
+>>  		if (fault_ipa >= BIT_ULL(get_kvm_ipa_limit())) {
+> 
+> But it also begs the question: why only KVM, and not the host? This
+> handler will only take effect for a TLB Conflict abort delivered from
+> an EL1 guest to EL2.
 
-so for me the difference seems to be using gcc-12 and this commit in linux tree:
-  dabddd687c9e percpu: cast percpu pointer in PERCPU_PTR() via unsigned long
+Hi Marc,
 
-which adds extra __pcpu_ptr variable into dwarf, and it has the same
-address as the per cpu variable and that confuses pahole
+I believe the intent of this patch is to protect the host/KVM against a guest
+that is using BBML2. The host/KVM always assumes BBML0 and therefore doesn't do
+any operations that are allowed by the arch to cause a conflict abort. Therefore
+the host doesn't need to handle it. But a guest could be taking advantage of
+BBML2 and therefore it's architiecturally possible for a conflict abort to be
+raised to EL2. I think today that would take down the host?
 
-it ends up with adding per cpu variable twice.. one with real type
-(type_id=94868) and the other with unsigned long type (type_id=4)
+So really I think this could be considered a stand-alone KVM hardening improvement?
 
-however this got fixed in pahole 1.28 commit:
-  47dcb534e253 btf_encoder: Stop indexing symbols for VARs
+> 
+> However, it doesn't seem to me that the host is equipped to deal with
+> this sort of exception for itself. Shouldn't you start with that?
 
-which filters out __pcpu_ptr variable completely, adding Stephen to the loop
+If the host isn't doing any BBML2 operations it doesn't need to handle it, I
+don't think? Obviously that changes later in the series and Miko is adding the
+required handling to the host.
 
-with gcc-14 the __pcpu_ptr variable has VSCOPE_OPTIMIZED scope, so it won't
-get into btf even without above pahole fix
+Thanks,
+Ryan
 
-I suggest gcc/pahole upgrade ;-)
+> 
+> Thanks,
+> 
+> 	M.
+> 
 
-thanks,
-jirka
 
