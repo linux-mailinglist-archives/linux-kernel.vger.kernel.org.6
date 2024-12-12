@@ -1,175 +1,107 @@
-Return-Path: <linux-kernel+bounces-443117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 849959EE788
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:12:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8707B9EE78D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:14:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE472166403
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:14:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E1E214236;
+	Thu, 12 Dec 2024 13:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Yv+GVMEZ"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FDE0282AAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:12:54 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AB1213E97;
-	Thu, 12 Dec 2024 13:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1bW2rhya"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240BB20E6F5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 13:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A33209F5F;
+	Thu, 12 Dec 2024 13:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734009169; cv=none; b=H5bFeNKOBkXtJtI1H/aVleemGaO2MPgH180IY3h8PAvMKy3T8Q2Vye8+M5d5urVCSzyNG+gRWP+hfESC9AvaTDlSSOZIA+AteeSMm1b2+DGPDGuxtSPXdrXYyeiPSdjYVR7CLYDqd3Ulf7v9ZLgxmneUrubsAiCqRT+1EcXQ7KE=
+	t=1734009239; cv=none; b=Mr75rDuzyQdQuVBYNE6OKA2o9HY41O2BOBf6l+J9YibBfCzykyiZd65NHJIq66NVnhEtPgaHGmdVrntIBFQYoObLQlLAyqUxUBFw3nil3vnymJgI+wM46jwBqIpTqUTO1NFSgtJ6gTuiiYMcn1+1efwTAz3CGUstT3Yv09rlhVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734009169; c=relaxed/simple;
-	bh=pPPWX8Ivwy/gV0ty75BIy0qQGhmfgM1RmE/XDdVKt8U=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IlUqgmY0+UqdkzT7y+a/CeS1SbufHVJ4rZP41v6GCpF9dqi30FGce6/S+kgPWYXySR/3kckVj3s95JjjBg3rbf2x2Is0R3hDMhxTAuZOosqtafo//8f9Oy9CkDemfq+rywLpP4RU19R7o+Ot3t6BnCV1TixqySItYByYY4F011w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1bW2rhya; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-436228ebc5eso3707475e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 05:12:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734009166; x=1734613966; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NxSuGPEUP4LGoJOZXmNeFLCDtdbxnqDmxNJo3hcCyNU=;
-        b=1bW2rhyaLQJcZvinBZBocgLtwNUd3DgBFVZO72qi3sDmF+0hE8pZ9yz+65hOrzIhZ5
-         rRQd5GEPsjspa7ayuE4xbuntAaKocs1waTZTQqwlOMImyYgG5sMucR2xndcMYp43dMb4
-         8YbISEFnucMNIdwDBVBtCSTj6tg1pVfUE5m0mYaHhdaACwmGnzCivZGkpgVTEOjlwF0w
-         X1oypEfoBqokb+W7ii1TNbQQ5BvdMlVRgjDUK3ixpaYc8sfI676ltMCFLFPTQm58E8wm
-         XwhOliyDpBjy0MlC/5I6vASXg8q7+0yxvjL07iXtBwTzUXW/Rg88Klk7VL92DnquEdTG
-         iLlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734009166; x=1734613966;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NxSuGPEUP4LGoJOZXmNeFLCDtdbxnqDmxNJo3hcCyNU=;
-        b=GE9Y3E6V3holUUy4k5FUpr/E/naRO37cp969SZZU8pb4yo3z0Zxel8ngRG5ONWDffk
-         THeY1wFcboFsZThWIFCEajst06/iA+VhDBuOSQD1JK11ZvDIsPCsgAGNfhaHCODXqbri
-         XwM1bYaQvLTE0OBqFG8GYx830BbMK89L5/Yg7Iu2bKI0A157x0iE7PpIDwm9Km3HzI5P
-         DGa7akE58yVJPFXL/Aoa+6Gt2MposqzYgGi8OXU6gJ4cSwxrm+OFr6V6Cd+8Gr9Cfy7U
-         XUNEO289cIq6YBhgtL8qQygs5FaITcOICqe1Qv2nlq0Ft9/sNX5F0mqoCvW/brGXUUvU
-         +XnQ==
-X-Gm-Message-State: AOJu0Yx/T5KG2PwR8tt7kz6dz42OME0v2oX4sX6qNfQ4CTjezbINpjaK
-	KUq/lvk425dr8bViVv3lm3TUoX4tdIswcELDuVuK9oqi/yYp1tXzNwj8JtsuDI0Mv1j69PZqjp8
-	tskLDxZFPyvba1g==
-X-Google-Smtp-Source: AGHT+IH7UrSbTZN32BOx/05eHD1pdfafDslL/a9FKykKJ3ljqCd1tCecl999iQwnPEAm1PM6/DHtB7MRoBx7ReQ=
-X-Received: from wmpe39.prod.google.com ([2002:a05:600c:4ba7:b0:42c:bfc2:aa72])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:83c9:b0:434:f270:a513 with SMTP id 5b1f17b1804b1-4361c4011d4mr50051315e9.29.1734009166642;
- Thu, 12 Dec 2024 05:12:46 -0800 (PST)
-Date: Thu, 12 Dec 2024 13:12:37 +0000
+	s=arc-20240116; t=1734009239; c=relaxed/simple;
+	bh=8ZxdqX3677DIbR7WzIe7BoYgv1eV+CE7CNkvztLo224=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O7fGRqVjStJ+uqQCQa5S3GiTi6tYFxIe2jCTNyTSJLCZ4+Z8wOASZHMR1LVq/bvAd0T3j2nrwvnWSBooWAL8Qoo0dVwGVk0X4GIlTANaMSkvmroWHXUpy1y2d4IChU2m8xocpMbsE2pNLzRFxCWstlSIxGgJ5LW/kN/sKtYadjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Yv+GVMEZ; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1734009230; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=I/mdsBc2XXbIj10bhSyyhla6NBjcnS9BYPIXBNq4lm0=;
+	b=Yv+GVMEZERG878asvO5T6KTBSxXTajRiksDeLqejOop9gA/lzM6gimThnScORpwQcAIiJqcZ7LdUJe5+0vENdiMpz83mvQARg+oGaFMRowac9N9ebeXjcEAsBQsqXVIuQCxyo0sFNTJ6r0UIx9nzz6JMPUbPfCjv+p0MBjSCfiA=
+Received: from 30.221.100.127(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WLLqqd-_1734009227 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 12 Dec 2024 21:13:49 +0800
+Message-ID: <a3535b6a-8bd9-4ab8-a2a1-8919927af9f1@linux.alibaba.com>
+Date: Thu, 12 Dec 2024 21:13:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3030; i=aliceryhl@google.com;
- h=from:subject; bh=pPPWX8Ivwy/gV0ty75BIy0qQGhmfgM1RmE/XDdVKt8U=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnWuB6x0lQJd/Xt6RpUUS60L1VWB5rtefkWy4Qx
- x7GTJ1d9fqJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ1rgegAKCRAEWL7uWMY5
- RlDlEACJpkq1ieFKxKefZcE02/A6D2POl4XhDtXPCUbRv0LwB1npNJPz1adDpL5XnZRjCUHtjm9
- AmB3qS3xEJ0g+qBQ5s8p8ndri8gROxUdNQ9YMKf6dZer9a05hWrwUUYf5MNMjCiNdlZR+paZyOF
- 941DkiaIBBdRyg+rZvyJYadqjYhYMcK439Aj7YFyelyCSl+k+jr9WH96NAIlnQIg377Ys4uu8Br
- 5MYeie8SSjOtDfOi/vFfLZ2q9fzTVmQspQm6zXbR7TrKn41tHpL0lypfW35HY0WOxAHbwAyL569
- MByT8GZ76KL/p8Tmi2tJghvnaHEPGMzbJALdz1JFNShutatc6AAEiGCmxkC0omPsuSNxX2GMlmV
- L+trhDeql+LHVcoD31X8s/eF8rwIwEik+yPQtBHci5IZgQ/G5kX7tfXu4FuTINY7T9h6TIxvAuV
- nk9zA7p7/rckaVXtRFYVnxZlCUE83omOoCoGh+l9y+MeNxQzrRaHldBHfaRFRlW2aMIanTBeuFR
- lszvgSG4FthjEAbydv+bohXhRZJ+IT99/qfj7hzbIueUAkYwgXSaZwCqgZXTSonlzUrCYlXAd0H
- YaqRK8InTyUVMD1tmua/iC84JMly4iwzBOfLNSGDbpuydVzkHQNj89x675oV+yWbHzGypr1jmKE +snT2nC7oVzpT6w==
-X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212131237.1988409-1-aliceryhl@google.com>
-Subject: [PATCH] tracepoint: reduce duplication of __DO_TRACE_CALL
-From: Alice Ryhl <aliceryhl@google.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next RESEND v3 2/2] net/smc: support ipv4 mapped ipv6
+ addr client for smc-r v2
+To: Paolo Abeni <pabeni@redhat.com>, Halil Pasic <pasic@linux.ibm.com>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com,
+ tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, horms@kernel.org,
+ linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dust Li <dust.li@linux.alibaba.com>
+References: <20241211023055.89610-1-guangguan.wang@linux.alibaba.com>
+ <20241211023055.89610-3-guangguan.wang@linux.alibaba.com>
+ <20241211195440.54b37a79.pasic@linux.ibm.com>
+ <c67f6f4d-2291-41c8-8a89-aa0ae8f2ecd9@redhat.com>
+Content-Language: en-US
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+In-Reply-To: <c67f6f4d-2291-41c8-8a89-aa0ae8f2ecd9@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The logic for invoking __DO_TRACE_CALL was extracted to a static inline
-function called __rust_do_trace_##name so that Rust can call it
-directly. This logic does not include the static branch, to avoid a
-function call when the tracepoint is disabled.
 
-Since the C code needs to perform the same logic after checking the
-static key, this logic is currently duplicated. Thus, remove this
-duplication by having C call the static inline function too.
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- include/linux/tracepoint.h | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+On 2024/12/12 20:49, Paolo Abeni wrote:
+> On 12/11/24 19:54, Halil Pasic wrote:
+>> On Wed, 11 Dec 2024 10:30:55 +0800
+>> Guangguan Wang <guangguan.wang@linux.alibaba.com> wrote:
+>>
+>>> AF_INET6 is not supported for smc-r v2 client before, even if the
+>>> ipv6 addr is ipv4 mapped. Thus, when using AF_INET6, smc-r connection
+>>> will fallback to tcp, especially for java applications running smc-r.
+>>> This patch support ipv4 mapped ipv6 addr client for smc-r v2. Clients
+>>> using real global ipv6 addr is still not supported yet.
+>>>
+>>> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+>>> Reviewed-by: Wen Gu <guwen@linux.alibaba.com>
+>>> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+>>> Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
+>>> Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
+>>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>>
+>> Sorry for the late remark, but does this need a Fixes tag? I mean
+>> my gut feeling is that this is a bugfix -- i.e. should have been
+>> working from the get go -- and not a mere enhancement. No strong
+>> opinions here.
+> 
+> FTR: my take is this is really a new feature, as the ipv6 support for
+> missing from the smc-r v2 introduction and sub-system maintainers
+> already implicitly agreed on that via RB tags.
+> 
+> Cheers,
+> 
+> /P
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 76d9055b2cff..a351763e6965 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -218,7 +218,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- #define __DEFINE_RUST_DO_TRACE(name, proto, args)			\
- 	notrace void rust_do_trace_##name(proto)			\
- 	{								\
--		__rust_do_trace_##name(args);				\
-+		__do_trace_##name(args);				\
- 	}
- 
- /*
-@@ -268,41 +268,35 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 
- #define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
- 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
--	static inline void __rust_do_trace_##name(proto)		\
-+	static inline void __do_trace_##name(proto)			\
- 	{								\
- 		if (cond) {						\
- 			guard(preempt_notrace)();			\
- 			__DO_TRACE_CALL(name, TP_ARGS(args));		\
- 		}							\
- 	}								\
- 	static inline void trace_##name(proto)				\
- 	{								\
--		if (static_branch_unlikely(&__tracepoint_##name.key)) { \
--			if (cond) {					\
--				guard(preempt_notrace)();		\
--				__DO_TRACE_CALL(name, TP_ARGS(args));	\
--			}						\
--		}							\
-+		if (static_branch_unlikely(&__tracepoint_##name.key))	\
-+			__do_trace_##name(args);			\
- 		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
- 			WARN_ONCE(!rcu_is_watching(),			\
- 				  "RCU not watching for tracepoint");	\
- 		}							\
- 	}
- 
- #define __DECLARE_TRACE_SYSCALL(name, proto, args, data_proto)		\
- 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
--	static inline void __rust_do_trace_##name(proto)		\
-+	static inline void __do_trace_##name(proto)			\
- 	{								\
- 		guard(rcu_tasks_trace)();				\
- 		__DO_TRACE_CALL(name, TP_ARGS(args));			\
- 	}								\
- 	static inline void trace_##name(proto)				\
- 	{								\
- 		might_fault();						\
--		if (static_branch_unlikely(&__tracepoint_##name.key)) {	\
--			guard(rcu_tasks_trace)();			\
--			__DO_TRACE_CALL(name, TP_ARGS(args));		\
--		}							\
-+		if (static_branch_unlikely(&__tracepoint_##name.key))	\
-+			__do_trace_##name(args);			\
- 		if (IS_ENABLED(CONFIG_LOCKDEP)) {			\
- 			WARN_ONCE(!rcu_is_watching(),			\
- 				  "RCU not watching for tracepoint");	\
+Agree.
+This patch enlarges the scope of using SMCRv2, so I think it is a new feature.
 
-base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
--- 
-2.47.0.338.g60cca15819-goog
-
+Thanks,
+Guangguan Wang
 
