@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-442670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A12779EE016
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:16:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9097D9EE01C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:16:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36708165646
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:16:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8CF16699B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425B8259481;
-	Thu, 12 Dec 2024 07:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C366520B206;
+	Thu, 12 Dec 2024 07:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MH4zeCUu"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CDokDu33"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E4420ADE5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C83B20B1EE
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733987762; cv=none; b=lbOrM/j0yhIdcMQ6wVEBEStFc7YTT+2+YlM28qdT6mL11rMN5awtyVhqTKCrDMZY9g9CXweUqCQA6idtMWXK04MYYdLOjD7DUWacnJ1/Nox/sGJFdlIq9m9OYvHoEPAOMfSrbXCa5NeL23FOo/YkZ+PDdYjd02r31KAhXx6lv4k=
+	t=1733987799; cv=none; b=AMbKjby6Z6hrWyFUR9EmcCJatF5g45m736IXOYerJaliuMR2ZIq4qnH76Y9orwIxTEGgSxuwsyfQ93zEF+SUUyY40iM59ULOypZe1lARYZgS4ZJKUgj545sJfjkUFrf89ZaEelrsQigO+7bdmug0vPLOCGdZtv+eLJVBIVunNoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733987762; c=relaxed/simple;
-	bh=/GRsmos36cXMIlpR9JSwG1RkBUOM946AIKMMDjyXANQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1kuVGWGC0a0yJOb+d53xID7+QU6DVRIG0paQrurgDxc7qymSlfxPfqkD4gTMDzEsLF6Y7v6qNKzlPOK1XxGL5NNG7VfX5Lmns8gnq47UqKQwFg7ZWJda3z5n4tAySvT6DCODBseTGA1zf8iodjyi2M7Gn25b2pQNgh5cB3MAm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MH4zeCUu; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fc41b4c78bso148861a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:16:00 -0800 (PST)
+	s=arc-20240116; t=1733987799; c=relaxed/simple;
+	bh=DejVLYwyaxDBWkB6wpXp+Xf4jpr49GQR6BvFRUTtCD0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tPoUNhgQQjdJ9C4Ic06joEwVVQnuxCD3xVPorl6kIBykp9fH2ioXqTWk4NAaBhqfD2SfuP3HDdj7Vvr7dwbUrxqE7kKym9jArQmYzvn5zV+oV2QqRtHyRo9Pbd4maWe+0LCx4AMVUfMcT3fWLbolFKoY3YIUvNZ1CV9vPr+9ymg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CDokDu33; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4675936f333so112621cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:16:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733987760; x=1734592560; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3L98iE6iEgWKW2dRYjbdeCK1aiyyhjOykPkAdKGjuiA=;
-        b=MH4zeCUu+Ca5VInJmSz6Xa7lXCkjv0TH9VZokTjrQW5AAp9gEbVCyQnW5KxR++4bRT
-         jJFgMpwhXWSHSTX3bqdCf3KQBKKGnUsAeDVygS9h8OkBK0RSKOoMx4CHO9RLp/Nr9WtG
-         2N6zRByEjp6ShHIpPuuKjrrJ4ZiE+E9bS5vyse+JpzmUyb43GOhBVFmNbFp9w+4LIB/3
-         AtVRn7LtIRlwqNbdHxHhguj3hdUlcLkH2A/FlvX4gG5xfD3xH8g+4+B/4HDvnuKmYPVG
-         AGevP3CMCxCt1KS6qjjjWJtNqfpAc6pQTMwFlwLY90H3WAFeXeJbO3J7Kb4Feo4mHtGS
-         60YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733987760; x=1734592560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1733987796; x=1734592596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3L98iE6iEgWKW2dRYjbdeCK1aiyyhjOykPkAdKGjuiA=;
-        b=tBz3Fs31t9euYGysTEoZrFan1aCs3tyyNYK4ispRs7Tx0ddpLz+hCCzOWFJmYNcs/m
-         ewOydPoP9dWXCWpGlFBH7GKv+ehugJVfZkNF5IpPrwJkhmpHoKyCA5dN/YwebEWYf3Z+
-         rLy/40kFFuGNO8iJCeBTRVp8NK/hgBtMZ0LF8MibhzdgsUVpc3ilQ91NMjqQyPm2P94c
-         P3Y4qtpxY0UFQp5A26GXoJo3u6bRo4foCLf43y3DtYnL0LjFsz2Ico64zIEdoQI/TIWB
-         GP3Fbo3dMN5YaVp0qFqsRJ+IenupiQDo1l1YikAO2GsoeaR600jn4KIC9XN6ZMjbn39P
-         FnRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWyF7h5shDeSLcvUz01IsNfJeVNHLe7mPhBdiRarhzsFjI3P3fYjK4aRx1dILlXzcNuBmOlBQ0uKt4q0Tw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOtzmYt/5ZiYWKYgoKzRF7Knt1qHAnb2+5HUW3MdDeAuay2Rk9
-	tR0KHuCd7XA6b+Dmlzo4cBtl/ff+IrpVPn7sIfUs4D7E4XalN0wggvjg4ZTY11Y=
-X-Gm-Gg: ASbGncvBlS+uwc0ftxAIGWmFAhWB5uiHICeafumMDU9OJTB6L4zszi9z6CxFGw4jCZI
-	6sPwF5A3OPq09dcpicPi3dkGenGnXGI1+8fEv784ClyCkB1d119ybQqz2FIZmZoEA6vPcDISzkR
-	DR6ct7UfIeuHqIpyHj49NWqqSnqfmcltgc8L4xUA2MsbZGtz6b66Cdg2CZ9i8GOchTWDRKV6HmD
-	oOnlUy5t2tBNAsWCUwKxRcdRrHLzbzp4zfrV7Xmm3Cmp8J6fqoqLzacQLY=
-X-Google-Smtp-Source: AGHT+IEUOkvi+y7f3A5lyEr4YtS9iRRSj52GzIA+ZuP4cB/sOWfFEYg7en1hPsQli/qSrMewFNomsQ==
-X-Received: by 2002:a17:90b:38cc:b0:2ee:7a4f:9265 with SMTP id 98e67ed59e1d1-2f127fc7463mr10057310a91.15.1733987760404;
-        Wed, 11 Dec 2024 23:16:00 -0800 (PST)
-Received: from localhost ([122.172.83.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142e0ce50sm563653a91.39.2024.12.11.23.15.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 23:15:59 -0800 (PST)
-Date: Thu, 12 Dec 2024 12:45:57 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v7 1/2] dt-bindings: cpufreq: Document support for Airoha
- EN7581 CPUFreq
-Message-ID: <20241212071557.76viy5b7ottf7jck@vireshk-i7>
-References: <20241206211145.2823-1-ansuelsmth@gmail.com>
+        bh=fAqzJau5MNI7uhPzwJwwA8EW7jYEvVF2H0CgK8xErAM=;
+        b=CDokDu33ErgXHJgmMUYBZGBh2R94rI5HVN67qCsYgyuxKKM4h1rS1so/YgGAijdFJi
+         rLRD3qEydjcZ1iXw/NoWSJq0SeDDCC/tvSV61me43Yggh4RroF1FnfeBhKXLLmyiZqqL
+         2kmpcDEYz6YfOdOXAW3R1CUW3r0nTPc86bUtvnjRKxvIV6bDvdh0AJI0iOK/AZaggUss
+         OwmR8FvLHWjSv+IJsdCeyA/BoLJoxss9xeUnLt3q9OgfxbI9ioWYueQ43leNjLnq6aQY
+         YYig2QGqxImPwKkdFrFKm4ijSHx4S5jX+RbhATedeolOMdPjSOAqh+2ZvhsFTJmCFZ6l
+         xiDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733987796; x=1734592596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fAqzJau5MNI7uhPzwJwwA8EW7jYEvVF2H0CgK8xErAM=;
+        b=w1KBSGvB8UoWy1vzKotw0917dkhBUvZxRPWVSD1bJ7+3iqJQzXCJ0iVMZndlhOLnH2
+         evNdv1RKQr5KBzzto921lsZlJ0o6JyVmY/X9+Cdj5GtesP/DiIRte76tWCL9qM+RXiR8
+         z3OZR/RCy0VGtntmp+riMa7bumYs1igZKBNSPnmwAT/y5ozfMbxNG0efBeDHLwJP5kuz
+         QErlTfK07y0iEof0sAiSSOegEaL8WiQRw7byAXhP8ld5iTaTzGxcVocpTNlrxlU8kVMq
+         Ahm5FYVRq/og9LKE+c40+EtLG/7+zGEnbBjOZvj0jRCKSJ1EZSPZtTOywwuWx0aQeJA4
+         bIww==
+X-Forwarded-Encrypted: i=1; AJvYcCXhxa035XC5yimeFE3Dqso23AQCqu6VkoM4+mfOswbTTvv4ll/wDgfcSoOG/rHOc2yYNVzfG8+TF9CA7XY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCEHTXaQQns+sp3X9mhugDB2VJN4cnSMNT7cofSrfRlJIjzeTZ
+	dRq8IK08CDRVfMmTbgiFA85AQt+KLjjJE8bv/VfaY+FV5jHwDqqb4w5z+JzIVaYfV8UNh+DU/9+
+	snXPK7ZIbjRhKZDmuEt4MngejmZM2IqqP1dnX1qyA9qkyL1l9+hBg
+X-Gm-Gg: ASbGncvMzzjZS0Rw32QTRGTH8CH9XMVsNbdJSrN+c7G+Yutfd4n0+QnskYNjcl1bsVU
+	jNyj9zoCB7+zk9dTXUMsrt8Q7Jpkt7ZfAV6rC1ppJVZD7Z3xllaBF+TzAYfW8nFN78/94
+X-Google-Smtp-Source: AGHT+IGgAPHIygAP8O+rI1KHXuuM3G5cHRMeOHQ7eC5ChWIlENkidXiO0dR8zJiRe2OJ2witO/aX1uih99/P6Sng88s=
+X-Received: by 2002:a05:622a:1cc6:b0:466:8646:c72 with SMTP id
+ d75a77b69052e-46798246560mr1625341cf.25.1733987796309; Wed, 11 Dec 2024
+ 23:16:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206211145.2823-1-ansuelsmth@gmail.com>
+References: <20241211085616.2471901-1-quic_zhenhuah@quicinc.com>
+In-Reply-To: <20241211085616.2471901-1-quic_zhenhuah@quicinc.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 11 Dec 2024 23:16:25 -0800
+Message-ID: <CAJuCfpHP2QAhiYmzaAJgxy7A4H3mYep5NKL-iQRy3xSazZ13LQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/code_tag: Skip displaying the code_tag if it is not called
+To: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06-12-24, 22:11, Christian Marangi wrote:
-> On newer Airoha SoC, CPU Frequency is scaled indirectly with SMC commands
-> to ATF.
-> 
-> A virtual clock is exposed. This virtual clock is a get-only clock and
-> is used to expose the current global CPU clock. The frequency info comes
-> by the output of the SMC command that reports the clock in MHz.
-> 
-> The SMC sets the CPU clock by providing an index, this is modelled as
-> performance states in a power domain.
-> 
-> CPUs can't be individually scaled as the CPU frequency is shared across
-> all CPUs and is global.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+On Wed, Dec 11, 2024 at 12:56=E2=80=AFAM Zhenhua Huang
+<quic_zhenhuah@quicinc.com> wrote:
+>
+> /proc/allocinfo is full of callsites which are not called at all.
+> Let's only output if the callsite actually been invoked.
+
+No, I disagree. Allocation that was never invoked is not the same as
+no allocation at all. How would we know the difference if we filter
+out the empty ones?
+If you don't want to see all the unused sites, you can filter them in
+the userspace. I also suspect that for practical purposes you would
+want to filter small ones (below some threshold) as well.
+
+>
+> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
 > ---
-> Changes v7:
-> - Add more info to the description for usage of clock and
->   performance-domain
-> - Drop redundant nodes from example
-
-Applied. Thanks.
-
--- 
-viresh
+>  lib/alloc_tag.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index 35f7560a309a..06fb7eb5c0bc 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -95,10 +95,12 @@ static void alloc_tag_to_text(struct seq_buf *out, st=
+ruct codetag *ct)
+>         struct alloc_tag_counters counter =3D alloc_tag_read(tag);
+>         s64 bytes =3D counter.bytes;
+>
+> -       seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls);
+> -       codetag_to_text(out, ct);
+> -       seq_buf_putc(out, ' ');
+> -       seq_buf_putc(out, '\n');
+> +       if (bytes || counter.calls) {
+> +               seq_buf_printf(out, "%12lli %8llu ", bytes, counter.calls=
+);
+> +               codetag_to_text(out, ct);
+> +               seq_buf_putc(out, ' ');
+> +               seq_buf_putc(out, '\n');
+> +       }
+>  }
+>
+>  static int allocinfo_show(struct seq_file *m, void *arg)
+> --
+> 2.25.1
+>
 
