@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-443037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6887D9EE603
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DFF9EE621
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA653285E17
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:01:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23804288114
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B002147FE;
-	Thu, 12 Dec 2024 11:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ZNOtM1KG"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401F7212B29;
+	Thu, 12 Dec 2024 12:01:14 +0000 (UTC)
+Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [195.16.41.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7832288E5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340B921148E;
+	Thu, 12 Dec 2024 12:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.16.41.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734004490; cv=none; b=ufp9lH9qWHm0qM2O21vO7HNBuXbpT4+IN3ekg/Fms3rdL6osedG3yZX6WypEK/MqJbjQlbaZT/bSZBWEiQI2vqo9iUVNtqsUnWbhTaCPoyncJEmYv+mRxq30KGWwf+LFPSEgKvRzr+tc8sXbFwA0SDXnQ5PHLpjN6/J1f8EQjfU=
+	t=1734004873; cv=none; b=sk+i5adYk/AC9gMC77nWEa8KSdPcsq8cHdJQPFHujI9GD1SBk+g4ah+6LQ7mUqJZ5MSIu+hiRNJA+dDVWNTlnidvN939TQbXzeRpycdCG4wbChkxJkikK4dnhdp4zCbJsSOUpWNg83AWCIQ8hiIlPWIOtqh/M1yO6VGxtsAZerE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734004490; c=relaxed/simple;
-	bh=1XJH+j4IJIIke0IBSeywdnhf4g+AbrpLY8ypOEZSdxQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZIY7I+YtCsnpHp6LK01uMHs0ZIHzKZVWzoDbU+KwyOHHnhoWF18qwOivPbC9m1BlCHGF6R2YnWAvKqD9i9nj1Vk42EwhmiG63bQGwybcOKx22QsTKZ1WrA+WZuzpLwvi8a3zSmmOPwDGv2bZVLHm3HVVlalCTmw0w4/7hlqqDnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ZNOtM1KG; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e396c98af22so320333276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 03:54:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1734004486; x=1734609286; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QO/kWUsb4uL9LlTqLCCAldTNWq3Gj6otKLX1s/PNWac=;
-        b=ZNOtM1KGpBHNIPErn/tHjPmkZsfFRyDJ7xvTzo65/X6rGUk1zqk9Th9/DMLZNCrNZ2
-         LNoXXqcy/kgMgsSxE8MDRlGr2IiwQwcggjaMKeOPg5lQiNQYLtYe/uOIxAp6v7q+rlZB
-         +9e3oHtghPq7OFgsofw7XH8cFUpsBv7EjmKWLIK9MAGu1E68EoalPfRrsIp2afADs0eD
-         rcUtd0q2n+AtUIel0OBKmm76Bb3bZSIwURFkXIVNcbkaCK13qJvZEGPC/pdLgX73cCQf
-         11PvPfwmCsqzvdu8fkE4R7lXckYgsjTBZdKMU7ONh7D3tO6vWbkaKHuJchous+uLbar5
-         +VpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734004486; x=1734609286;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QO/kWUsb4uL9LlTqLCCAldTNWq3Gj6otKLX1s/PNWac=;
-        b=VLpYaWqjWClras+Z+EAB0vqRZ2ljMrdXIsBi6RF4tp4xJfF5ohJ2HeJTueicJgLz0I
-         8omYHqeQ1hqrQhUedrswUA3IMGSj6XlU/fwN4/kdbff/qS9QHxqEo+YFrTiF8cQKPG/C
-         hhyHJ4IrERmSGzfYufakrGOyLrbOuk6IxwCshP09bwybRSe+lfIsl0Vobv0RIyb0suLv
-         4rSeTK8g/5xwe2gD/dk2TRGvVlyReUusZ+6Lv9qrZrLq7k/R3RuPRdU+EPZ6w3mcB+JU
-         PHrFzIgQkF6tcO2aWgcbYHyKWq+rAei+/9N/9n0vLvPkMX5UJ/Ssp65FrAvtNki0cRZn
-         mQWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIGb8WV8/v8GP+a2Im1YVj2lmooRumoIEU2ZhFf5Dppolw+PzwYVfXPVBHy/LMB+5LBd0qlTDAGYi3WHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyykkJ37UJtF1kc6C+FjKGPu4aTr4UuWfXeMc1Wa5ECMtnvD5d3
-	vV2zTYaqf/XhJLeuF+VX6XPofGB/sKVsE2eXpzCNvMt1mo8et4it7JS/6VQTxb0u+IThFpKhqD/
-	J8C109Ql/o7WkOviUesYoExuMiNW3G35ZNPTfiQ==
-X-Gm-Gg: ASbGncv+Uss/0NVhQ1EyJuDrWZX4VU3yYX8ZNGs4Sawmm8wvY/a+ULT67yORP9sGo9a
-	ArR014FwTInPuLBJYCgmnGbEYIcZ8G7GO6D4ZfQ==
-X-Google-Smtp-Source: AGHT+IEZF99x3Z73R94L+ljBCygUUX+Knk3vSPh2S8Sa4SUHrFwCAM7NZhFFUD6/0ncFI/p+axz2uwCX+vrS2ZOL06w=
-X-Received: by 2002:a05:6902:2701:b0:e38:87bf:8e65 with SMTP id
- 3f1490d57ef6-e41b8dd9f38mr127426276.0.1734004486531; Thu, 12 Dec 2024
- 03:54:46 -0800 (PST)
+	s=arc-20240116; t=1734004873; c=relaxed/simple;
+	bh=oRKnZBLoKIqnGH9CpV9Mrk6QPMZVHbvlgIvNDD8MwEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DJUtK5JZcQ0OoaHIvN9AT8c+w1CbYJSzQKdOdyy1cWps0JoWue6poDM42Jqwm4fyY8RSduGNzXgWoketFn58NsiH+CWzTtmrz33t9eu3QKUp7jTQanhr+3dklPqcm/Fw21sQ1KtFZ+nI8RXvlk+CDMCdhnupIOjRk+RBaeAmIFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=195.16.41.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw02.astralinux.ru (Postfix) with ESMTP id 07DA31F4D5;
+	Thu, 12 Dec 2024 14:55:38 +0300 (MSK)
+Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail04.astralinux.ru [10.177.185.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
+	Thu, 12 Dec 2024 14:55:37 +0300 (MSK)
+Received: from [10.198.20.57] (unknown [10.198.20.57])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Y89s23mbzzkWxV;
+	Thu, 12 Dec 2024 14:55:34 +0300 (MSK)
+Message-ID: <1599fa5a-5507-4b9c-8b18-2d5e5c7fe694@astralinux.ru>
+Date: Thu, 12 Dec 2024 14:55:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
-In-Reply-To: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 12 Dec 2024 11:54:28 +0000
-Message-ID: <CAPY8ntD9XzrzrhX=1XojjcZmRm60KLc39HZq0bJ9cEq0J7nQ9g@mail.gmail.com>
-Subject: Re: [PATCH next] drm/vc4: unlock on error in vc4_hvs_get_fifo_frame_count()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 1/1] cpufreq: amd-pstate: add check for
+ cpufreq_cpu_get's return value
+Content-Language: ru
+To: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: lvc-project@linuxtesting.org, Huang Rui <ray.huang@amd.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Perry Yuan <perry.yuan@amd.com>,
+ "Limonciello, Mario" <Mario.Limonciello@amd.com>,
+ "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>
+References: <20241106182000.40167-1-abelova@astralinux.ru>
+ <20241106182000.40167-2-abelova@astralinux.ru>
+From: Anastasia Belova <abelova@astralinux.ru>
+In-Reply-To: <20241106182000.40167-2-abelova@astralinux.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 44 0.3.44 5149b91aab9eaefa5f6630aab0c7a7210c633ab6, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 189792 [Dec 12 2024]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2024/12/12 07:32:00 #26886604
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 
-Hi Dan
+Just a friendly reminder.
 
-Thanks for the patch.
+Cc'ing Mario Limonciello and Gautham Ranjal Shenoy.
 
-On Thu, 12 Dec 2024 at 11:31, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On 11/6/24 9:19 PM, Anastasia Belova wrote:
+> From: Anastasia Belova <abelova@astralinux.ru>
 >
-> Presumably the default path is never used.  However, if it were used for
-> some reason then call drm_dev_exit() before returning.
-
-Correct - the default path would mean something badly wrong.
-Without it though, if you add an extra enum value it throws a compiler
-warning of an unhandled case.
-
-> Fixes: 8f2fc64773be ("drm/vc4: Fix reading of frame count on GEN5 / Pi4")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> commit 5493f9714e4cdaf0ee7cec15899a231400cb1a9f upstream.
+>
+> cpufreq_cpu_get may return NULL. To avoid NULL-dereference check it
+> and return in case of error.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> Reviewed-by: Perry Yuan <perry.yuan@amd.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/cpufreq/amd-pstate.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-> index b42027636c71..4f524ec126e7 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> @@ -522,7 +522,7 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
->                 break;
->         default:
->                 drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
-> -               return 0;
-> +               field = 0;
-
-field is initialised to 0 anyway to handle the cases where fifo is out of range.
-
-Personally I'd like to see a break in there to ensure we don't
-accidentally end up with a fall-through situation if another case got
-added at the end. I don't know how others feel.
-
-  Dave
-
->         }
->
->         drm_dev_exit(idx);
-> --
-> 2.45.2
->
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 8c16d67b98bf..0fc5495c935a 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -579,9 +579,14 @@ static void amd_pstate_adjust_perf(unsigned int cpu,
+>   	unsigned long max_perf, min_perf, des_perf,
+>   		      cap_perf, lowest_nonlinear_perf, max_freq;
+>   	struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+> -	struct amd_cpudata *cpudata = policy->driver_data;
+> +	struct amd_cpudata *cpudata;
+>   	unsigned int target_freq;
+>   
+> +	if (!policy)
+> +		return;
+> +
+> +	cpudata = policy->driver_data;
+> +
+>   	if (policy->min != cpudata->min_limit_freq || policy->max != cpudata->max_limit_freq)
+>   		amd_pstate_update_min_max_limit(policy);
+>   
 
