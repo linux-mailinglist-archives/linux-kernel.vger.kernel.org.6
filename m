@@ -1,313 +1,400 @@
-Return-Path: <linux-kernel+bounces-443441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC609EF0AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:30:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABB93189CDA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:24:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5805522655F;
-	Thu, 12 Dec 2024 16:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QYcxf6MT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A829EF02D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:25:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430042210CF;
-	Thu, 12 Dec 2024 16:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734020023; cv=fail; b=MdB6rrit4Zc+hjHoO6DsZU6tl5IHe7vi6eK4OsmXYYWbgNr7KYJkIeTPpQtMorSY52I0gfm5I5vPu3eO4HoqkecITsWrkg6ODLAKAVxOpiK6G8d+lwNIwYOtAUQtg37l5GJPivK//VTrHWM8/dXwAmpaeD/kECyAY1pRo9821vA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734020023; c=relaxed/simple;
-	bh=MnGdUkDS1p9aYLzJlE5qXa3hmnF/BCV3GLK8ej5IEpI=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=CLc9DFdsks9x2DdzQRaNJZC+8BQXE5mNziVVOa20NhlpFavM+iWLLGQGESO5+ANd546k80lZAC/Mm/3lRXpEYpn6gBIhuZBHDA2TWER2V4hAt9+T1hfRTbk2GD5tdA/+DUgVBALv9NzaOVgMBX4iyn2Xj9Pv321pbl6GEifc5wo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QYcxf6MT; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734020022; x=1765556022;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=MnGdUkDS1p9aYLzJlE5qXa3hmnF/BCV3GLK8ej5IEpI=;
-  b=QYcxf6MTNepU7DbparN6utQP12IS7r2wTl8H8I8HbEvYZjjzUNspxUjw
-   VilGX87SQiRvB1xMngsduBhABGyky4QPZrtyibCh1NFRQaddlV8XD4W++
-   v8xl/hFFsfi5f3aszU/Nr3OTh7peyfTCnCJi/5/83VJ7aUsUKw/a8T749
-   lBewL0yfWCjhTNrLuYZI0G5uFWfyINd0YLHbpUdhpzw4XybQ5iVXtr1yB
-   6O0xDX4Z8K66Q2fu+6JZWC35Aa7oLr//07KEx1Afam37WD1Iiwp/6mnJd
-   toCIvLBMoFZsKOFmFY9IvtaTHDfqzpQFkXSYOwlhFUzsK/34rppLHpSI5
-   A==;
-X-CSE-ConnectionGUID: oYWvlwJ4RM65Zce7DFd/Hg==
-X-CSE-MsgGUID: jVMNRZVWRqi17rJi4v9mjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34172573"
-X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
-   d="scan'208";a="34172573"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 08:13:32 -0800
-X-CSE-ConnectionGUID: BHmGfWttSkCk6Y8w+FLs0Q==
-X-CSE-MsgGUID: jjSka4FUTW216gs+gb6p8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
-   d="scan'208";a="96013334"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Dec 2024 08:13:31 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 12 Dec 2024 08:13:23 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Thu, 12 Dec 2024 08:13:23 -0800
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.46) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 12 Dec 2024 08:12:58 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yYIuF1l89xZJx29dCAUKqraHMnNtDaWg4Zcnr7ylJq8sD8auNKrYWyo9+YJOrr5WBMG56EDKPCgoF7ygsd+6QEUOY4kC76TeKeKKfdpmo2Adj73rJ6MaIBfvFVLGpoWUsM2J8A9tAI7DLn8rtpLAJ/qymMrqA/ZPFTrx6POQWslfiqphOpu8y3hQbJ7GGcrmqpACi2GsjGrXUqBnym8sFblg3x3NnQEyN8NxMT7zCqQHyzYQdj57TAFIlGxo6f9V3XIxaHZJU3RGPVOq0lh9uGgIhNh6BNRd4N4hDkRdkW3SSJMj4mfvxpSf4tj8FIdaFyPICgvcK/OPn+AHXvgikA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Up6jcr1tonkzV04Sz7JtXQEYBG4teZEXPMzGfHTVo3w=;
- b=o+PhteOcWmSUbb25sj8w7GlxqJ4xZRX9fGEvt3Qg3ZcSiPWufPMwpfPnSwLa8z447dkyua9v/crH7vWf4F4yC6KTOscr6bjgyn9zJBWOOxWPouzQaMChfecpfXkdE6pGM8BBsW7a8XMpj8ytcSbj04Rprc9LlicDo4GjVEVTJQVuEoTbPOLE8u0tUOSIJ0/rbg8f+h5bQlmA4368yqTC2a97c3Te74fj3qMQWPe4u+etxS6yvS6E/zjWpvN5TgRMeZbPYK5JZMX6Lgw73x4thFgKHuqdV0y1Ywj+cXi6Fbu6jhURsnHoGC2xg2fQASuRFHdrgIo+vJgJuiV8+qGu4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by DS0PR11MB6373.namprd11.prod.outlook.com (2603:10b6:8:cb::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Thu, 12 Dec
- 2024 16:12:41 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%6]) with mapi id 15.20.8251.008; Thu, 12 Dec 2024
- 16:12:40 +0000
-Date: Fri, 13 Dec 2024 00:12:31 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Christian Brauner <brauner@kernel.org>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Christian Brauner
-	<christianvanbrauner@gmail.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <oliver.sang@intel.com>
-Subject: [brauner-vfs:work.pidfs.maple_tree] [pidfs] 93d6e4cbc8:
- WARNING:inconsistent_lock_state
-Message-ID: <202412122317.e295e7c-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SG2PR02CA0089.apcprd02.prod.outlook.com
- (2603:1096:4:90::29) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 483E328FC99
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:25:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0A9229675;
+	Thu, 12 Dec 2024 16:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NH8FSCkx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072A2229665;
+	Thu, 12 Dec 2024 16:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734020079; cv=none; b=m54d0qXrZ5xxFX21jQUMjuUebR7at6WS+cjrshbtiEjLuod3Dvg0aafKpz5lKqBWMkWAuPGBywfHTeAqD+MLOsRzOlDBrzxZsAQUnEnskGAhyz5c4x6NMSXLJh/zo1tXiYwg90wjTxZA/9QXcN+I4fHYCPe102fyODafyOfcw1k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734020079; c=relaxed/simple;
+	bh=egvFnmqYg+JWrBeEqC24t5PZ9YjSy50VDbevzNSgIvc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SOp0U48B9/JZHppekrAS15YeINNKKZiQczUBVfzSAtqdYpA79FEoQjyLzvHXE/O/v5OSJ1MN8pmpbLbUmUaLmtnYoBGw7ibHHhC15VTGacs1kpvx3PGT8qzeY5FSAoOuGKJXjjegu5RtKPKg0yBhibSM86vIC6/n0v7JpIQBtF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NH8FSCkx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E6A3C4CECE;
+	Thu, 12 Dec 2024 16:14:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734020078;
+	bh=egvFnmqYg+JWrBeEqC24t5PZ9YjSy50VDbevzNSgIvc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NH8FSCkxN4olXoYB+fcI4oe2fE7IGlgcbRzwz+Oq06IB/4JLtAMVlJPJVwtUASqva
+	 1GIfuS1jh1RMfXNUWwVJE5XA/MDDOqi6t5ElDhrKbwRooafhvMUMMWgnci32XGADNe
+	 xEGVw2p5vKLvYUe5cRTXFJFLwdjk2YHFMYTvPenQmk2UORVpMzNbt/lWYoYTOaYHOK
+	 erCPMrJ55ad0x/ch2N2N9mmT7NCMtur8Skbdy/PbEHco+hEZvYYhovZWslwwT0uM9d
+	 Oa2gTCSv44ktgWHu1hfwW/Nocb1p9b3oFTUzJHPDzwew0ty+kTJGj1DZuYus4E8gn0
+	 Bn2TyVPIugObQ==
+From: Jakub Kicinski <kuba@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pabeni@redhat.com
+Subject: [GIT PULL] Networking for v6.13-rc3
+Date: Thu, 12 Dec 2024 08:14:37 -0800
+Message-ID: <20241212161437.3823483-1-kuba@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|DS0PR11MB6373:EE_
-X-MS-Office365-Filtering-Correlation-Id: ec4d5772-627d-4ff3-8950-08dd1ac7cd88
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bYGa/uezCb2j4bVVjUfX6iUoE9+lehRH5KGkI7jFujlP1kZJCf79LK3lhjbC?=
- =?us-ascii?Q?alwCq7TL124QGjrbYVrRmnYYrRwCGzZSmnbrQrCmPp5tB6r3rh+im9k1zcY0?=
- =?us-ascii?Q?1+Xp6erWB2sfk58UrDLh0muDfzecbS9CJ0EMSqDHj16y3H21mGU3AxXX91JY?=
- =?us-ascii?Q?Vr6bkwqE9iKsOqqlj2CP9qbH7pHhV8003ExeZb7fVgl5IuUPRI6938YqTVGr?=
- =?us-ascii?Q?GV6iPD4O8b9peoZAPjDcZ6f79KPD2sHPAazHvrVJYgOrlmCPgRs0bQboijHT?=
- =?us-ascii?Q?syssUXQHGdpxZ+NrJkM+MBY616KMiXWerDAAjM8taav3KqZHs/jgPJakeWKt?=
- =?us-ascii?Q?AFbeH4xsA84ZOCSZo2b3I0VPbOclkz03+LLOwLFl4k7jvP0JGyZ32xHc4k+Z?=
- =?us-ascii?Q?IFdm/RvKtvIap/qI+1JfbPvsZDw4wfMeriQC7JXRN1HLIeLBHZMHGT4b07yj?=
- =?us-ascii?Q?RuaVZ4WP6t8zHkoIiJ0em98md0pc2tI4AOfS2rm4FVJOFBwIF93DtAKlc9TX?=
- =?us-ascii?Q?SdObink/wpeoy9vV2uAgxSiked8BZ1Y5vLAh7CdDZkd3qNx2C/vXOS40MWr4?=
- =?us-ascii?Q?q1kfJ/Pk/e8HpUXYsXYR6ICtBDRNXNN1IymkmmtRTzNFnroC9boXGF57LsSZ?=
- =?us-ascii?Q?sueLqYx3qGL5VJtdCvylPATmH6GXXym/582QkKH+IHPMDjZVv1KsE+xnlpHX?=
- =?us-ascii?Q?Q8HxP3OM99wQGP/l2W5JzI9b6oS9P+UAaWRMOlNhAnm5P9Uh5n+x8L8E3Eof?=
- =?us-ascii?Q?zzjemYMtWToHmzZ6b4QzJ8zPeKO4mZqogbzHATD2VShV7br6jqCs3lx908td?=
- =?us-ascii?Q?OlVmz4NBkl1JeHGDkjXU3EAq/lxmYHo7cUnIHjNoKPYogJvvFtGRoI2LxVT6?=
- =?us-ascii?Q?G10zQbp+5qZDCb/PyDydY+ny29B8bcrEH2YPwxzmTLq6C9yE9nYGoyqSlrhq?=
- =?us-ascii?Q?Z2h+U/ivgmKoz/+uxNUstCZMLUz7hRmYQ8bK2T1RZJfuYH9vi5XdbWuhogJA?=
- =?us-ascii?Q?YombG91JoQRI3m1/fR7vPk76a7WY4qDpFwH/lOl1h9jSpuOmG5fBiwF4h9oF?=
- =?us-ascii?Q?J2uTJMzQt7z15yS+7GqqBZi88gjD+9G/fvjZB7BEp9N9HbXiFmTTe6l2aNQa?=
- =?us-ascii?Q?MoOoOLmuSY05g8tQHaj8A3cWpmo35cB8Gv/BENz4lf+qb3kbLeFDJF7SXSS4?=
- =?us-ascii?Q?Ni1ygKdKEiFUjRmLKFdtHl8dhKtsppdurj+u0+npV/opGfP73dhQxLeCw+To?=
- =?us-ascii?Q?kZnTbNTmQD/3FrUhNkFPZMVNHhfPtJiZnNsh/wvB/WO9wRFpSKX0Vn2aUOo4?=
- =?us-ascii?Q?THAbh/+a3PSpVWJ9ZIx/NSlo?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SbIIpU9fHqAiKM/JtslB/f07aXf9tNNxwCaOm+yBUxw/yIP1unCtiYAjw2tq?=
- =?us-ascii?Q?uDukQfJ97Jt0K92OY5oxOdi2LBjDz0F8sWUokAZD0rLRSnzIV0wmMTA2f0EC?=
- =?us-ascii?Q?n/ERebrBAoYPiHfsJBzHU3UCLkzKg0GWYUv7OqSXT4ymfR89Ly9iKXAnVqv0?=
- =?us-ascii?Q?jt0qO+M2XG+cQtIHMHxfU+LEKzQdEhmkN6I8KMjx3mqpELmPsnime5YCb52u?=
- =?us-ascii?Q?9ccKE9hU3WhYpT76sGgGLRe9zSysnr7cH1zQvXNxoiEX9EwRyVwMEGXu3toM?=
- =?us-ascii?Q?1t8jdVCbwWMuRxRw89D+t8GDoFytiHPnMTRFd9BbSrJxRacNV3Dd/ts/uT7T?=
- =?us-ascii?Q?quZDOKZZcDkQktf1ARV+khSxK4JW/1qspThBLklDW845toJBD89TEaEL7trl?=
- =?us-ascii?Q?leL9FpEQq9K9mKrIgqsTC1pBjfVAlA9nrRpb9Ht8poqIGFW+jlUyHAld4Sdz?=
- =?us-ascii?Q?IE3Ruly/0fE9Wc/M6VuDMz+dCbxacAUv8wi8dpTVEFzEPt9X88f1BAeOrBnw?=
- =?us-ascii?Q?DFduJUawlqqHE38Og6qFnz/dczl9hbz/2IaVyRCwtP7Y8haTWx1DMnezJjFO?=
- =?us-ascii?Q?n8V+FLVQc4sFDcv2qkB6Y5LNC8zGCxQrbC9eSPbvQ/eEWm4mEgORCQsrDJTX?=
- =?us-ascii?Q?g5WcHJGDE9b3LWKUalFA6+3Q8uAFML+VrzOG5olil+C+7dR0QomC8MEe7VlW?=
- =?us-ascii?Q?NzyqC1/NoccHGaUGrBPxeO8YqVlJ53US+erpLU+bBRtii98IagungXgHERvy?=
- =?us-ascii?Q?ltzoIW9t7IHpkrJ5XDGG4L/KUHTHVMgfs1QlXwbm/xkYDPj13+2uJYx3xOxw?=
- =?us-ascii?Q?HhGysfNf6ezqNGuvFUpALqQjmc/X4Ye3aUxaocLt9BMJ58OssESCqSZdq+u/?=
- =?us-ascii?Q?ndNGDssuaqXx+UBcQCXTOM1id/aGaeGWlJ1+rW+VVM1eVJhvreMKpFR9zalZ?=
- =?us-ascii?Q?WSTQ9Ma0O0CdLfQH0t+4CSlSh2mdDigl5KiVt5dX1vp408WbQkpixU1N3KTt?=
- =?us-ascii?Q?/0JAPmNmOJXi8208F9178vsantXpNh5qskKJhOn+JC1/CrxEaHHvXr14nb4a?=
- =?us-ascii?Q?z6tffFKYqGHwn5wjhG0ap35RcPSPtciYlYrBhksZWefLMIAjwz7qQ6KCOw3g?=
- =?us-ascii?Q?pJ4zoZfNGj4LsJbc5f6FD2nrzYRsmo9W0tXyTcljlbKNrfA7SbTxQ5lVyJFv?=
- =?us-ascii?Q?QlvZMgF+loufqjTPhP0kuIjKKrWg/O5wrlNgpkOZcOkrdDz6xfnyJQwv0BXU?=
- =?us-ascii?Q?EIXXOXcTVZ8RSQMF2IYeLEXNXHe6LqYO0RqZF5Gpd/z9uftj9tZUVWMAS4G/?=
- =?us-ascii?Q?T3Qxz4t7bms9Z/dzcqCkUDQ/YtvATKLdO6y2ww5OryZfw1Fg/l5vwirix1zu?=
- =?us-ascii?Q?yO2w6r8SbgRkBKwHJKLVMBHtoTwTdy9MpV2Z8rF3NehBd38GWLNW3ceoWkf0?=
- =?us-ascii?Q?p3xqYI4mtKJeexsZ+ZzHNr/WhdyraSJ7uUuQ58GwVvUkkwZfo5+/jo7LGH2x?=
- =?us-ascii?Q?hv2xwghq8TLn9YHVzHXMri4CrWtSpDJaYGizeqWR5lxQz+VycLTiQeHIgCxX?=
- =?us-ascii?Q?SLaTs96OKF91Sesdr0VDucyxSDDm4mfpCo7VJJrzAZedoYmbHTPcNc9ihTV9?=
- =?us-ascii?Q?UQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec4d5772-627d-4ff3-8950-08dd1ac7cd88
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 16:12:40.6596
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J6+Smq2quxoTIpI83/yosqZHvqU/hmulJNkGh+4bySesZWdMpxD6ZNizP9oxRbhnBG+1hQTkpaoqSPYtgS9xUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6373
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi Linus!
 
+The file rename may stand out, the code is from this merge window.
 
-Hello,
+The following changes since commit 896d8946da97332d4dc80fa1937d8dd6b1c35ad4:
 
-kernel test robot noticed "WARNING:inconsistent_lock_state" on:
+  Merge tag 'net-6.13-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-12-05 10:25:06 -0800)
 
-commit: 93d6e4cbc8375acb1995cee651b2ffbc0c8d4393 ("pidfs: use maple tree")
-https://git.kernel.org/cgit/linux/kernel/git/vfs/vfs.git work.pidfs.maple_tree
+are available in the Git repository at:
 
-in testcase: boot
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.13-rc3
 
-config: i386-randconfig-053-20241211
-compiler: clang-19
-test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+for you to fetch changes up to ad913dfd8bfacdf1d2232fe9f49ccb025885ef22:
 
-(please refer to attached dmesg/kmsg for entire log/backtrace)
+  Merge tag 'for-net-2024-12-12' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth (2024-12-12 07:10:40 -0800)
 
+----------------------------------------------------------------
+Including fixes from bluetooth, netfilter and wireless.
 
-+-------------------------------------------------+------------+------------+
-|                                                 | 6c31256f35 | 93d6e4cbc8 |
-+-------------------------------------------------+------------+------------+
-| WARNING:inconsistent_lock_state                 | 0          | 12         |
-| inconsistent{HARDIRQ-ON-W}->{IN-HARDIRQ-W}usage | 0          | 12         |
-+-------------------------------------------------+------------+------------+
+Current release - fix to a fix:
 
+ - rtnetlink: fix error code in rtnl_newlink()
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202412122317.e295e7c-lkp@intel.com
+ - tipc: fix NULL deref in cleanup_bearer()
 
+Current release - regressions:
 
-[   15.226693][    C0] WARNING: inconsistent lock state
-[   15.227260][    C0] 6.13.0-rc1-00019-g93d6e4cbc837 #1 Not tainted
-[   15.227912][    C0] --------------------------------
-[   15.228468][    C0] inconsistent {HARDIRQ-ON-W} -> {IN-HARDIRQ-W} usage.
-[   15.229168][    C0] wrapper/381 [HC1[1]:SC0[0]:HE0:SE1] takes:
-[ 15.229787][ C0] 447eb710 (&sighand->siglock){?.+.}-{3:3}, at: __lock_task_sighand (kernel/signal.c:1379 (discriminator 2))
-[   15.230624][    C0] {HARDIRQ-ON-W} state was registered at:
-[   15.231210][    C0] irq event stamp: 52
-[ 15.231660][ C0] hardirqs last enabled at (51): do_user_addr_fault (arch/x86/include/asm/irqflags.h:42 arch/x86/include/asm/irqflags.h:97 arch/x86/mm/fault.c:1283)
-[ 15.232611][ C0] hardirqs last disabled at (52): common_interrupt (arch/x86/kernel/irq.c:?)
-[ 15.233569][ C0] softirqs last enabled at (0): copy_process (kernel/fork.c:2341 (discriminator 1))
-[ 15.234486][ C0] softirqs last disabled at (0): 0x0
-[   15.235177][    C0]
-[   15.235177][    C0] other info that might help us debug this:
-[   15.236041][    C0]  Possible unsafe locking scenario:
-[   15.236041][    C0]
-[   15.236854][    C0]        CPU0
-[   15.237265][    C0]        ----
-[   15.237667][    C0]   lock(&sighand->siglock);
-[   15.238169][    C0]   <Interrupt>
-[   15.238586][    C0]     lock(&sighand->siglock);
-[   15.239121][    C0]
-[   15.239121][    C0]  *** DEADLOCK ***
-[   15.239121][    C0]
-[   15.240047][    C0] 7 locks held by wrapper/381:
-[ 15.240569][ C0] #0: 5913922c (&mm->mmap_lock){++++}-{4:4}, at: lock_mm_and_find_vma (arch/x86/include/asm/jump_label.h:36 include/linux/mmap_lock.h:35 include/linux/mmap_lock.h:164 mm/memory.c:6149 mm/memory.c:6209)
-[ 15.241559][ C0] #1: 427b0200 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire (include/linux/rcupdate.h:336)
-[ 15.242471][ C0] #2: 427b0200 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire (include/linux/rcupdate.h:336)
-[ 15.243393][ C0] #3: 427b0200 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire (include/linux/rcupdate.h:336)
-[ 15.244337][ C0] #4: 591391e0 (&mm->page_table_lock){+.+.}-{3:3}, at: __pte_offset_map_lock (include/linux/spinlock.h:? mm/pgtable-generic.c:402)
-[ 15.245377][ C0] #5: 427b0200 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire (include/linux/rcupdate.h:336)
-[ 15.246296][ C0] #6: 427b0200 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire (include/linux/rcupdate.h:336)
-[   15.247226][    C0]
-[   15.247226][    C0] stack backtrace:
-[   15.247920][    C0] CPU: 0 UID: 0 PID: 381 Comm: wrapper Not tainted 6.13.0-rc1-00019-g93d6e4cbc837 #1 30133bc52252e570a7a9e29c909fe9dc5601a36c
-[   15.249200][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[   15.250283][    C0] Call Trace:
-[   15.250696][    C0]  <IRQ>
-[ 15.251056][ C0] ? dump_stack_lvl (lib/dump_stack.c:122)
-[ 15.251566][ C0] ? dump_stack (lib/dump_stack.c:129)
-[ 15.252058][ C0] ? print_usage_bug (kernel/locking/lockdep.c:4040)
-[ 15.252605][ C0] ? mark_lock_irq (kernel/locking/lockdep.c:4052 kernel/locking/lockdep.c:?)
-[ 15.253148][ C0] ? save_trace (kernel/locking/lockdep.c:556 kernel/locking/lockdep.c:591)
-[ 15.253670][ C0] ? mark_lock (kernel/locking/lockdep.c:4749)
-[ 15.254165][ C0] ? __lock_acquire (kernel/locking/lockdep.c:?)
-[ 15.254684][ C0] ? __lock_acquire (kernel/locking/lockdep.c:4670)
-[ 15.255167][ C0] ? __lock_acquire (kernel/locking/lockdep.c:4670)
-[ 15.255655][ C0] ? __lock_acquire (kernel/locking/lockdep.c:4670)
-[ 15.256175][ C0] ? lock_acquire (kernel/locking/lockdep.c:5849)
-[ 15.256702][ C0] ? __lock_task_sighand (kernel/signal.c:1379 (discriminator 2))
-[ 15.257287][ C0] ? trace_raw_output_signal_deliver (include/linux/rcupdate.h:336)
-[ 15.257972][ C0] ? _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162)
-[ 15.258556][ C0] ? __lock_task_sighand (kernel/signal.c:1379 (discriminator 2))
-[ 15.259131][ C0] ? __lock_task_sighand (kernel/signal.c:1379 (discriminator 2))
-[ 15.259716][ C0] ? group_send_sig_info (kernel/signal.c:1267 kernel/signal.c:1418)
-[ 15.260283][ C0] ? kill_pid_info_type (kernel/signal.c:1458)
-[ 15.260838][ C0] ? posixtimer_rearm_itimer (kernel/time/itimer.c:177)
-[ 15.261436][ C0] ? kill_pid_info (kernel/signal.c:1472)
-[ 15.261905][ C0] ? it_real_fn (kernel/time/itimer.c:185)
-[ 15.262339][ C0] ? __hrtimer_run_queues (kernel/time/hrtimer.c:1739 (discriminator 256))
-[ 15.262845][ C0] ? _raw_spin_lock_irqsave (include/linux/spinlock_api_smp.h:110 kernel/locking/spinlock.c:162)
-[ 15.263418][ C0] ? hrtimer_interrupt (kernel/time/hrtimer.c:1865 (discriminator 2))
-[ 15.263979][ C0] ? mask_and_ack_8259A (arch/x86/kernel/i8259.c:158 (discriminator 1))
-[ 15.264560][ C0] ? timer_interrupt (arch/x86/kernel/time.c:40)
-[ 15.265102][ C0] ? __handle_irq_event_percpu (kernel/irq/handle.c:158)
-[ 15.265744][ C0] ? handle_irq_event (kernel/irq/handle.c:193 kernel/irq/handle.c:210)
-[ 15.266295][ C0] ? handle_level_irq (include/linux/irq.h:348 kernel/irq/chip.c:614 kernel/irq/chip.c:650)
-[ 15.266831][ C0] ? handle_untracked_irq (kernel/irq/chip.c:629)
-[ 15.267408][ C0] ? __handle_irq (arch/x86/kernel/irq_32.c:97 arch/x86/kernel/irq_32.c:155)
-[   15.267916][    C0]  </IRQ>
-[ 15.268283][ C0] ? __common_interrupt (include/asm-generic/irq_regs.h:28 (discriminator 3) arch/x86/kernel/irq.c:288 (discriminator 3))
-[ 15.268842][ C0] ? common_interrupt (arch/x86/kernel/irq.c:278 (discriminator 9))
-[ 15.269399][ C0] ? asm_common_interrupt (arch/x86/entry/entry_32.S:693)
-[ 15.269968][ C0] ? filemap_map_pages (arch/x86/include/asm/bitops.h:206 (discriminator 2) arch/x86/include/asm/bitops.h:238 (discriminator 2) include/asm-generic/bitops/instrumented-non-atomic.h:142 (discriminator 2) include/linux/page-flags.h:824 (discriminator 2) include/linux/page-flags.h:845 (discriminator 2) mm/filemap.c:3677 (discriminator 2))
-[ 15.270526][ C0] ? filemap_map_pages (arch/x86/include/asm/bitops.h:206 (discriminator 2) arch/x86/include/asm/bitops.h:238 (discriminator 2) include/asm-generic/bitops/instrumented-non-atomic.h:142 (discriminator 2) include/linux/page-flags.h:824 (discriminator 2) include/linux/page-flags.h:845 (discriminator 2) mm/filemap.c:3677 (discriminator 2))
-[ 15.271086][ C0] ? rcu_read_unlock (init/main.c:1376)
-[ 15.271633][ C0] ? rcu_lock_acquire (include/linux/rcupdate.h:346)
-[ 15.272201][ C0] ? rcu_lock_acquire (include/linux/rcupdate.h:337 (discriminator 1))
-[ 15.272764][ C0] ? filemap_read_folio (mm/filemap.c:3633)
-[ 15.273339][ C0] ? handle_mm_fault (mm/memory.c:5280 mm/memory.c:5313 mm/memory.c:5456 mm/memory.c:3979 mm/memory.c:5801 mm/memory.c:5944 mm/memory.c:6112)
-[ 15.273892][ C0] ? filemap_read_folio (mm/filemap.c:3633)
-[ 15.274430][ C0] ? do_user_addr_fault (arch/x86/mm/fault.c:1389)
-[ 15.275002][ C0] ? exc_page_fault (arch/x86/include/asm/irqflags.h:19 arch/x86/include/asm/irqflags.h:87 arch/x86/include/asm/irqflags.h:147 arch/x86/mm/fault.c:1489 arch/x86/mm/fault.c:1539)
-[ 15.275539][ C0] ? pvclock_clocksource_read_nowd (arch/x86/mm/fault.c:1494)
-[ 15.276210][ C0] ? handle_exception (arch/x86/entry/entry_32.S:1055)
-[ 15.276776][ C0] ? pvclock_clocksource_read_nowd (arch/x86/mm/fault.c:1494)
+ - ip: fix warning about invalid return from in ip_route_input_rcu()
 
+Current release - new code bugs:
 
+ - udp: fix L4 hash after reconnect
 
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20241212/202412122317.e295e7c-lkp@intel.com
+ - eth: lan969x: fix cyclic dependency between modules
 
+ - eth: bnxt_en: fix potential crash when dumping FW log coredump
 
+Previous releases - regressions:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ - wifi: mac80211:
+   - fix a queue stall in certain cases of channel switch
+   - wake the queues in case of failure in resume
 
+ - splice: do not checksum AF_UNIX sockets
+
+ - virtio_net: fix BUG()s in BQL support due to incorrect accounting
+   of purged packets during interface stop
+
+ - eth: stmmac: fix TSO DMA API mis-usage causing oops
+
+ - eth: bnxt_en: fixes for HW GRO: GSO type on 5750X chips and
+   oops due to incorrect aggregation ID mask on 5760X chips
+
+Previous releases - always broken:
+
+ - Bluetooth: improve setsockopt() handling of malformed user input
+
+ - eth: ocelot: fix PTP timestamping in presence of packet loss
+
+ - ptp: kvm: x86: avoid "fail to initialize ptp_kvm" when simply
+   not supported
+
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+
+----------------------------------------------------------------
+Aditya Kumar Singh (1):
+      wifi: cfg80211: clear link ID from bitmap during link delete after clean up
+
+Anumula Murali Mohan Reddy (1):
+      cxgb4: use port number to set mac addr
+
+Benjamin Lin (1):
+      wifi: mac80211: fix station NSS capability initialization order
+
+Dan Carpenter (2):
+      net/mlx5: DR, prevent potential error pointer dereference
+      rtnetlink: fix error code in rtnl_newlink()
+
+Daniel Borkmann (5):
+      net, team, bonding: Add netdev_base_features helper
+      bonding: Fix initial {vlan,mpls}_feature set in bond_compute_features
+      bonding: Fix feature propagation of NETIF_F_GSO_ENCAP_ALL
+      team: Fix initial vlan_feature set in __team_compute_features
+      team: Fix feature propagation of NETIF_F_GSO_ENCAP_ALL
+
+Daniel Machon (5):
+      net: lan969x: fix cyclic dependency reported by depmod
+      net: lan969x: fix the use of spin_lock in PTP handler
+      net: sparx5: fix FDMA performance issue
+      net: sparx5: fix default value of monitor ports
+      net: sparx5: fix the maximum frame length register
+
+Daniele Palmas (1):
+      net: usb: qmi_wwan: add Telit FE910C04 compositions
+
+Danielle Ratson (3):
+      selftests: mlxsw: sharedbuffer: Remove h1 ingress test case
+      selftests: mlxsw: sharedbuffer: Remove duplicate test cases
+      selftests: mlxsw: sharedbuffer: Ensure no extra packets are counted
+
+David S. Miller (1):
+      Merge branch 'net-sparx5-lan969x-fixes'
+
+Emmanuel Grumbach (2):
+      wifi: mac80211: wake the queues in case of failure in resume
+      wifi: mac80211: fix a queue stall in certain cases of CSA
+
+Eric Dumazet (3):
+      tipc: fix NULL deref in cleanup_bearer()
+      net: lapb: increase LAPB_HEADER_LEN
+      net: defer final 'struct net' free in netns dismantle
+
+Felix Fietkau (1):
+      wifi: mac80211: fix vif addr when switching from monitor to station
+
+Florian Westphal (1):
+      netfilter: nf_tables: do not defer rule destruction via call_rcu
+
+Frederik Deweerdt (1):
+      splice: do not checksum AF_UNIX sockets
+
+Frédéric Danis (1):
+      Bluetooth: SCO: Add support for 16 bits transparent voice setting
+
+Geetha sowjanya (1):
+      octeontx2-af: Fix installation of PF multicast rule
+
+Haoyu Li (2):
+      wifi: mac80211: init cnt before accessing elem in ieee80211_copy_mbssid_beacon
+      wifi: cfg80211: sme: init n_channels before channels[] access
+
+Hongguang Gao (1):
+      bnxt_en: Fix potential crash when dumping FW log coredump
+
+Issam Hamdi (1):
+      wifi: mac80211: fix mbss changed flags corruption on 32 bit systems
+
+Iulia Tanasescu (4):
+      Bluetooth: iso: Always release hdev at the end of iso_listen_bis
+      Bluetooth: iso: Fix recursive locking warning
+      Bluetooth: iso: Fix circular lock in iso_listen_bis
+      Bluetooth: iso: Fix circular lock in iso_conn_big_sync
+
+Jakub Kicinski (9):
+      Merge branch 'selftests-mlxsw-add-few-fixes-for-sharedbuffer-test'
+      Merge branch 'bnxt_en-bug-fixes'
+      Merge branch 'ocelot-ptp-fixes'
+      Merge branch 'qca_spi-fix-spi-specific-issues'
+      Merge tag 'wireless-2024-12-10' of https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless
+      Merge branch 'net-renesas-rswitch-several-fixes'
+      Merge branch 'mana-fix-few-memory-leaks-in-mana_gd_setup_irqs'
+      Merge tag 'batadv-net-pullrequest-20241210' of git://git.open-mesh.org/linux-merge
+      Merge tag 'for-net-2024-12-12' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
+
+Jesse Van Gavere (1):
+      net: dsa: microchip: KSZ9896 register regmap alignment to 32 bit boundaries
+
+Koichiro Den (6):
+      virtio_net: correct netdev_tx_reset_queue() invocation point
+      virtio_net: replace vq2rxq with vq2txq where appropriate
+      virtio_ring: add a func argument 'recycle_done' to virtqueue_resize()
+      virtio_net: ensure netdev_tx_reset_queue is called on tx ring resize
+      virtio_ring: add a func argument 'recycle_done' to virtqueue_reset()
+      virtio_net: ensure netdev_tx_reset_queue is called on bind xsk for tx
+
+Kuniyuki Iwashima (1):
+      ip: Return drop reason if in_dev is NULL in ip_route_input_rcu().
+
+Lin Ma (1):
+      wifi: nl80211: fix NL80211_ATTR_MLO_LINK_ID off-by-one
+
+Luiz Augusto von Dentz (2):
+      Bluetooth: hci_core: Fix sleeping function called from invalid context
+      Bluetooth: hci_event: Fix using rcu_read_(un)lock while iterating
+
+Martin Ottens (1):
+      net/sched: netem: account for backlog updates from child qdisc
+
+Maxim Levitsky (2):
+      net: mana: Fix memory leak in mana_gd_setup_irqs
+      net: mana: Fix irq_contexts memory leak in mana_gd_setup_irqs
+
+Michael Chan (2):
+      bnxt_en: Fix GSO type for HW GRO packets on 5750X chips
+      bnxt_en: Fix aggregation ID mask to prevent oops on 5760X chips
+
+Michal Luczaj (1):
+      Bluetooth: Improve setsockopt() handling of malformed user input
+
+MoYuanhao (1):
+      tcp: check space before adding MPTCP SYN options
+
+Nikita Yushchenko (6):
+      net: renesas: rswitch: fix possible early skb release
+      net: renesas: rswitch: fix race window between tx start and complete
+      net: renesas: rswitch: fix leaked pointer on error path
+      net: renesas: rswitch: avoid use-after-put for a device tree node
+      net: renesas: rswitch: handle stop vs interrupt race
+      net: renesas: rswitch: fix initial MPIC register setting
+
+Paolo Abeni (3):
+      Merge branch 'virtio_net-correct-netdev_tx_reset_queue-invocation-points'
+      udp: fix l4 hash after reconnect
+      Merge tag 'nf-24-12-11' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
+
+Petr Machata (1):
+      Documentation: networking: Add a caveat to nexthop_compat_mode sysctl
+
+Phil Sutter (2):
+      selftests: netfilter: Stabilize rpath.sh
+      netfilter: IDLETIMER: Fix for possible ABBA deadlock
+
+Remi Pommarel (3):
+      batman-adv: Do not send uninitialized TT changes
+      batman-adv: Remove uninitialized data in full table TT response
+      batman-adv: Do not let TT changes list grows indefinitely
+
+Robert Hodaszi (1):
+      net: dsa: tag_ocelot_8021q: fix broken reception
+
+Russell King (Oracle) (1):
+      net: stmmac: fix TSO DMA API usage causing oops
+
+Simon Horman (1):
+      MAINTAINERS: Add ethtool.h to NETWORKING [GENERAL]
+
+Stefan Wahren (2):
+      qca_spi: Fix clock speed for multiple QCA7000
+      qca_spi: Make driver probing reliable
+
+Thadeu Lima de Souza Cascardo (1):
+      Bluetooth: btmtk: avoid UAF in btmtk_process_coredump
+
+Thomas Weißschuh (1):
+      ptp: kvm: x86: Return EOPNOTSUPP instead of ENODEV from kvm_arch_ptp_init()
+
+Vladimir Oltean (6):
+      net: mscc: ocelot: fix memory leak on ocelot_port_add_txtstamp_skb()
+      net: mscc: ocelot: improve handling of TX timestamp for unknown skb
+      net: mscc: ocelot: ocelot->ts_id_lock and ocelot_port->tx_skbs.lock are IRQ-safe
+      net: mscc: ocelot: be resilient to loss of PTP packets during transmission
+      net: mscc: ocelot: perform error cleanup in ocelot_hwstamp_set()
+      net: dsa: felix: fix stuck CPU-injected packets with short taprio windows
+
+ Documentation/networking/ip-sysctl.rst             |   6 +
+ MAINTAINERS                                        |   4 +-
+ drivers/bluetooth/btmtk.c                          |  20 +-
+ drivers/net/bonding/bond_main.c                    |  10 +-
+ drivers/net/dsa/microchip/ksz_common.c             |  42 ++---
+ drivers/net/dsa/ocelot/felix_vsc9959.c             |  17 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c          |  18 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h          |   9 +-
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h         |   2 +-
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c    |   2 +-
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c         |   5 +-
+ .../net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c |  18 +-
+ .../mellanox/mlx5/core/steering/sws/dr_domain.c    |   4 +-
+ drivers/net/ethernet/microchip/Kconfig             |   1 -
+ drivers/net/ethernet/microchip/Makefile            |   1 -
+ drivers/net/ethernet/microchip/lan969x/Kconfig     |   5 -
+ drivers/net/ethernet/microchip/lan969x/Makefile    |  13 --
+ drivers/net/ethernet/microchip/sparx5/Kconfig      |   6 +
+ drivers/net/ethernet/microchip/sparx5/Makefile     |   6 +
+ .../microchip/{ => sparx5}/lan969x/lan969x.c       |   9 +-
+ .../microchip/{ => sparx5}/lan969x/lan969x.h       |   0
+ .../{ => sparx5}/lan969x/lan969x_calendar.c        |   0
+ .../microchip/{ => sparx5}/lan969x/lan969x_regs.c  |   0
+ .../{ => sparx5}/lan969x/lan969x_vcap_ag_api.c     |   0
+ .../{ => sparx5}/lan969x/lan969x_vcap_impl.c       |   0
+ .../ethernet/microchip/sparx5/sparx5_calendar.c    |   2 -
+ .../net/ethernet/microchip/sparx5/sparx5_main.c    |  15 +-
+ .../net/ethernet/microchip/sparx5/sparx5_mirror.c  |   3 +-
+ .../net/ethernet/microchip/sparx5/sparx5_port.c    |   2 +-
+ drivers/net/ethernet/microchip/sparx5/sparx5_ptp.c |   1 -
+ drivers/net/ethernet/microsoft/mana/gdma_main.c    |   6 +-
+ drivers/net/ethernet/mscc/ocelot_ptp.c             | 207 +++++++++++++--------
+ drivers/net/ethernet/qualcomm/qca_spi.c            |  26 ++-
+ drivers/net/ethernet/qualcomm/qca_spi.h            |   1 -
+ drivers/net/ethernet/renesas/rswitch.c             |  95 ++++++----
+ drivers/net/ethernet/renesas/rswitch.h             |  14 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   7 +-
+ drivers/net/team/team_core.c                       |  11 +-
+ drivers/net/usb/qmi_wwan.c                         |   3 +
+ drivers/net/virtio_net.c                           |  31 ++-
+ drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c  |   2 +-
+ drivers/ptp/ptp_kvm_x86.c                          |   6 +-
+ drivers/virtio/virtio_ring.c                       |  12 +-
+ include/linux/dsa/ocelot.h                         |   1 +
+ include/linux/netdev_features.h                    |   7 +
+ include/linux/virtio.h                             |   6 +-
+ include/net/bluetooth/bluetooth.h                  |  10 +-
+ include/net/bluetooth/hci_core.h                   | 108 +++++++----
+ include/net/lapb.h                                 |   2 +-
+ include/net/mac80211.h                             |   7 +-
+ include/net/net_namespace.h                        |   1 +
+ include/net/netfilter/nf_tables.h                  |   4 -
+ include/soc/mscc/ocelot.h                          |   2 -
+ net/batman-adv/translation-table.c                 |  58 ++++--
+ net/bluetooth/hci_core.c                           |  10 +-
+ net/bluetooth/hci_event.c                          |  33 ++--
+ net/bluetooth/hci_sock.c                           |  14 +-
+ net/bluetooth/iso.c                                |  77 ++++++--
+ net/bluetooth/l2cap_core.c                         |  12 +-
+ net/bluetooth/l2cap_sock.c                         |  20 +-
+ net/bluetooth/rfcomm/core.c                        |   6 +
+ net/bluetooth/rfcomm/sock.c                        |   9 +-
+ net/bluetooth/sco.c                                |  52 +++---
+ net/core/net_namespace.c                           |  20 +-
+ net/core/rtnetlink.c                               |   4 +-
+ net/dsa/tag_ocelot_8021q.c                         |   2 +-
+ net/ipv4/datagram.c                                |   8 +-
+ net/ipv4/route.c                                   |   3 +-
+ net/ipv4/tcp_output.c                              |   6 +-
+ net/mac80211/cfg.c                                 |  17 +-
+ net/mac80211/ieee80211_i.h                         |  49 ++++-
+ net/mac80211/iface.c                               |  23 +--
+ net/mac80211/mesh.c                                |   6 +-
+ net/mac80211/mlme.c                                |   2 -
+ net/mac80211/util.c                                |  26 +--
+ net/netfilter/nf_tables_api.c                      |  32 ++--
+ net/netfilter/xt_IDLETIMER.c                       |  52 +++---
+ net/sched/sch_netem.c                              |  22 ++-
+ net/tipc/udp_media.c                               |   7 +-
+ net/unix/af_unix.c                                 |   1 +
+ net/wireless/nl80211.c                             |   2 +-
+ net/wireless/sme.c                                 |   1 +
+ net/wireless/util.c                                |   3 +-
+ .../selftests/drivers/net/mlxsw/sharedbuffer.sh    |  55 ++++--
+ tools/testing/selftests/net/netfilter/rpath.sh     |  18 +-
+ 85 files changed, 857 insertions(+), 583 deletions(-)
+ delete mode 100644 drivers/net/ethernet/microchip/lan969x/Kconfig
+ delete mode 100644 drivers/net/ethernet/microchip/lan969x/Makefile
+ rename drivers/net/ethernet/microchip/{ => sparx5}/lan969x/lan969x.c (97%)
+ rename drivers/net/ethernet/microchip/{ => sparx5}/lan969x/lan969x.h (100%)
+ rename drivers/net/ethernet/microchip/{ => sparx5}/lan969x/lan969x_calendar.c (100%)
+ rename drivers/net/ethernet/microchip/{ => sparx5}/lan969x/lan969x_regs.c (100%)
+ rename drivers/net/ethernet/microchip/{ => sparx5}/lan969x/lan969x_vcap_ag_api.c (100%)
+ rename drivers/net/ethernet/microchip/{ => sparx5}/lan969x/lan969x_vcap_impl.c (100%)
 
