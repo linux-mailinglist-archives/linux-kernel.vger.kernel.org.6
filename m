@@ -1,113 +1,182 @@
-Return-Path: <linux-kernel+bounces-442468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF619EDD30
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:47:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450AB9EDD31
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FDA1161DFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:47:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7D691614E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7257042A82;
-	Thu, 12 Dec 2024 01:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CAB42AA0;
+	Thu, 12 Dec 2024 01:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MraSIfeh"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="llPLJC+H"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001B73C38
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD2E2746B;
+	Thu, 12 Dec 2024 01:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733968058; cv=none; b=RqtYwYDbERzDHDbccEWn4rIcPlIpM0Dfhtz+7+7tA0SQY9wUE4n/qcZnjuvTMAuXCaWMCNxKOqj8j+25nLTb3VYDlpLwV0aF3B+Tu5RtI7owPJTTpHbCCIx5ak87N/mdyBnfD/ZsGLTPiGumQY2YIRtJ3Oc0zX4Ha+tFdJ7ldnU=
+	t=1733968073; cv=none; b=ua64zChjDr1xfz3ntn1BupBUham85Sst/DrDakttK2U8D6xzJvkxJRdyHkEoEuWLMahtYuuEaA0NFJaRprfSumHw2r6g5XAuRWtUnfN5kHa9eN038vjqKnVY+SZUj4b/X9bVH+Rh+TO/I/dsFU3DcDK1c0jE3QidVlxqjzNdXs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733968058; c=relaxed/simple;
-	bh=H2oOdkgf1KHP3tRs/kLe5rjuaHPg/00+31UJttts1qg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fj7oTDp0dNOa+JnvYf7rHd9XQw7VDOlCdOv/Z+ntARiaXzsJIj1Ter/SpR/vE3Go5iTnrKP4rt6Mei7i/g5ad6x3ykrUmArlr6jUJjCtj43a6rmy5Y0FKToJQtGw2v1JGChwEaxyGBpvpabMeAUNlKolW15txmUOtfEqEnB9/kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MraSIfeh; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733968048; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=Kqj9qK6jIh62y524FbW8f6U5KVgY1gRKxB0ZmR0iD0E=;
-	b=MraSIfehPygJ3PGrLe81JW317bt3RLjGjsypmIzXUIVg4jWvEZw9/TMQ6rnZTCa+vvBRUydeQ2K+mpVmjSIeHnH/ePngiDqAhYvHAgpYd1q11hONWNNf4VkR4lBl+sWQtUrRgZMTjl4YiiiKEFgr5eTgyoJsBSmZtxicPgKGa8c=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WLJtAS3_1733968038 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 12 Dec 2024 09:47:27 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: harry.wentland@amd.com
-Cc: sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] drm/amd/display: use swap() in update_phy_id_mapping()
-Date: Thu, 12 Dec 2024 09:47:17 +0800
-Message-Id: <20241212014717.14286-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1733968073; c=relaxed/simple;
+	bh=wUDRX1Cz5nIjftyAqN53Bs8hElIkNN9sDwndPoPkPVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eZ8tEhgdEVX+Gi6AgsMNU+GjTkj901WqzyZMUZ4nkgspqBhV5g9iXSnSbgvUIFUbQqAdyoVJZSY/srBOc5+2sFzNDirahv63SmteeSmbQJD0E/L0ZUTyeoicsih8qgwX3mYfqpD6HQvnPuls/ySZ3WHhls33pYdDRdatlUpSVKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=llPLJC+H; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6efa5bf5202so813807b3.3;
+        Wed, 11 Dec 2024 17:47:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733968070; x=1734572870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a0HtzVwueR5GnNcN4RgYbJNVdlawrGYFmTzkDhMIhmM=;
+        b=llPLJC+HAOEXWnlDKjP+cVnpvER9EudIeiQlSRBPSjXP+Lxs8852pp1ZO/joy8V13u
+         eifZz+AqG6CibYjiEfz18iLZXlJuSLWrolKj8oR4MfXamJxSyAXjmWc7bjRF80wfqpCI
+         2T44fKozDG2Gg4v2Fb+NYSJ4ajX5sBbxFPLsbTfhiz5S2uUMXDjWpNHYTpe69Suy8gV0
+         OJf/Lw9IrWBw2jzRj5UPtgPXd3nODkTSfYfH0pi/GS5lgRVCsnebWvLlLvanzBtIpZA5
+         BC49mK8+x01TwLAD2siCAiPFaiYKdIlsdgENQl1cln1sFg5h67UPoElNq4FbPsvEkQ2L
+         Q7KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733968070; x=1734572870;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a0HtzVwueR5GnNcN4RgYbJNVdlawrGYFmTzkDhMIhmM=;
+        b=lvId9wA+ilM1wm+GRARxJpjK+eNxcj2rIwTdAWVk+Lcd47y+3KAJtRgdvqOvwxtJXa
+         a76xUr04ZRaQsAVMTYXq+rDoS4yrWh/R70iNL0dac9m9dI+VW2IMeHmtDj4VmR/SIyn0
+         Gz8MCySM8jD/jY5+FrBKEI8S0ANmwQ8qHulNfhDZGLM/AlDTkKntnGrlmiHaHpfJPEqY
+         nNMR98/2PnEqwqP5cNmTkJc41rfUBPblJ0T+CwR81SXrh3B9lBXjxc8vaMT+kWC/0MHq
+         Zaq1KwrREypOyl7MUYSWTIiALoY6J6pbBLB/jLylHuqYuLLYMwhZVX1EPeu22Wl4Mn8R
+         96ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUFHFxCghUNpfqsBa4GtoKTxtFi/4MUUW5tUHeaPZRkPAWqLCOc/2+ACDwJUoU12fJNjdy0JOfDUJKwWYo=@vger.kernel.org, AJvYcCVmnOoIaYz8yIaLZd7RIwNmrfAGhmfD8LZYrxpwFVdWPULI5Y6jCVCayvUJndXOeXQVuZHfiTK5eWxmn3BliJ143w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOF7gkF5TvS12xRSW16FOBsHijWPxAIIDKgfPuDEmAQJt2tAqg
+	IvU+IbRKRR+1Q8DV2jkcqxDioyYXkJyY92CgFHD6l0/XfffIwbXQ8gSkhArBLAMr5S8OZ9634Vr
+	oc8/kiH2ihHUYmR9tkIh2Xbk3RpY=
+X-Gm-Gg: ASbGnctJlw7Xqd28v0xohNhnixoJCLCAPns9eFwDTIn/6e7tYR7q44G8hip2qYYxKKE
+	oBDNIPaWMoYInL+UHMcaE8z+NNyy4YY7Z22As
+X-Google-Smtp-Source: AGHT+IHUB22sWR1v4hhXtVGBviLhoQIvBhG8bmkZD08wclx8UPtWzSgvoaoFMyfNFVD71+C2g19KIi98MiobZXO6MtU=
+X-Received: by 2002:a05:690c:3501:b0:6ef:58f9:4c0d with SMTP id
+ 00721157ae682-6f19e871112mr16016857b3.39.1733968070298; Wed, 11 Dec 2024
+ 17:47:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241211222110.2430610-1-namhyung@kernel.org> <Z1oXs1xjCG1Ee27p@x1>
+ <CAP-5=fXYke_n7TDe+mB-webNH7vCvea7ZVPqfqygw7bTNd8G3g@mail.gmail.com>
+In-Reply-To: <CAP-5=fXYke_n7TDe+mB-webNH7vCvea7ZVPqfqygw7bTNd8G3g@mail.gmail.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Wed, 11 Dec 2024 17:47:39 -0800
+Message-ID: <CAH0uvogs8EAzLemVQXq238KGFXJhD2TBhpXHQUnRYaQtcn_HPQ@mail.gmail.com>
+Subject: Re: [RFC/PATCH] perf trace: Add --syscall-period option
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use existing swap() function rather than duplicating its implementation.
+Hello Ian,
 
-./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c:185:47-48: WARNING opportunity for swap().
-./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c:125:53-54: WARNING opportunity for swap().
+On Wed, Dec 11, 2024 at 5:34=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Wed, Dec 11, 2024 at 2:52=E2=80=AFPM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Wed, Dec 11, 2024 at 02:21:10PM -0800, Namhyung Kim wrote:
+> > > This option is to implement the event sampling for system calls.
+> > > The period is given in msec as it shows the time in msec.
+> > >
+> > >   # perf trace -C 0 --syscall-period 100 sleep 1
+> > >            ? (         ): fleetspeakd/1828559  ... [continued]: futex=
+())                                            =3D -1 ETIMEDOUT (Connection=
+ timed out)
+> > >        0.050 (100.247 ms): gnome-shell/572531 recvmsg(fd: 10<socket:[=
+3355761]>, msg: 0x7ffef8b39d20)                =3D 40
+> > >      100.357 (100.149 ms): pipewire-pulse/572245 read(fd: 5<anon_inod=
+e:[eventfd]>, buf: 0x7ffc0b9dc8f0, count: 8)      =3D 8
+> > >      200.553 (100.268 ms): NetworkManager/3424 epoll_wait(epfd: 19<an=
+on_inode:[eventpoll]>, events: 0x5607b85bb880, maxevents: 6) =3D 0
+> > >      300.876 (         ): mon/4932 poll(ufds: 0x7fa392784df0, nfds: 1=
+, timeout_msecs: 100)            ...
+> > >      400.901 ( 0.025 ms): TaskCon~ller #/620145 futex(uaddr: 0x7f3fc5=
+96fa00, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
+> > >      300.876 (100.123 ms): mon/4932  ... [continued]: poll())        =
+                                     =3D 0 (Timeout)
+> > >      500.901 ( 0.012 ms): evdefer/2/2335122 futex(uaddr: 0x5640baac51=
+98, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
+> > >      602.701 ( 0.017 ms): Compositor/1992200 futex(uaddr: 0x7f1a51dfd=
+d40, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
+> > >      705.589 ( 0.017 ms): JS Watchdog/947933 futex(uaddr: 0x7f4cac1d4=
+240, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
+> > >      812.667 ( 0.027 ms): fix/1985151 futex(uaddr: 0xc0008f7148, op: =
+WAKE|PRIVATE_FLAG, val: 1)             =3D 1
+> > >      912.807 ( 0.017 ms): Xorg/572315 setitimer(value: 0x7ffc375d6ba0=
+)                                      =3D 0
+> > >
+> > > The timestamp is kept in a per-cpu array and the allowed task is save=
+d
+> > > in a hash map.
+> >
+> > Interesting concept, and one that is done just on the BPF part, so I
+> > think we should at least warn a user that is running this on a build
+> > without BPF skels.
+> >
+> > Will try it tomorrow,
+> >
+> > - Arnaldo
+> >
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > ---
+> > >  tools/perf/Documentation/perf-trace.txt       |  6 ++
+> > >  tools/perf/builtin-trace.c                    |  5 ++
+> > >  .../bpf_skel/augmented_raw_syscalls.bpf.c     | 67 +++++++++++++++++=
++-
+> > >  3 files changed, 76 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Doc=
+umentation/perf-trace.txt
+> > > index 6e0cc50bbc13fc7f..9f338a8c5357a67e 100644
+> > > --- a/tools/perf/Documentation/perf-trace.txt
+> > > +++ b/tools/perf/Documentation/perf-trace.txt
+> > > @@ -241,6 +241,12 @@ the thread executes on the designated CPUs. Defa=
+ult is to monitor all CPUs.
+> > >       printing using the existing 'perf trace' syscall arg beautifier=
+s to map integer
+> > >       arguments to strings (pid to comm, syscall id to syscall name, =
+etc).
+> > >
+> > > +--syscall-period::
+> > > +     Trace a system call in the given period (in msec).  This implem=
+ents
+> > > +     sampling for syscalls in order to reduce the monitoring overhea=
+d.
+> > > +     For example, setting the sysall period to 100 (msec) means it w=
+ill
+> > > +     sample a syscall and next one after 100 msec.
+>
+> Is this similar to the -D/--delay option to perf-record? Perhaps share th=
+e name?
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=12335
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c  | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+I think this is more like a throttling for the perf trace output,
+instead of a one-time delay or a range of enabled time like -D, as the
+prev_ts here is continuously updated. This restricts the maximum
+sampling frequency to 1 / syscall-period, meaning every syscall is
+sampled just after the syscall-period has passed.
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
-index 309c7999faa6..6fdc306a4a86 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
-@@ -120,11 +120,8 @@ static void update_phy_id_mapping(struct amdgpu_device *adev)
- 	for (idx = connector_cnt; idx > 1 ; idx--) {
- 		for (idx_2 = 0; idx_2 < (idx - 1); idx_2++) {
- 			if (sort_connector[idx_2]->dc_link->link_enc_hw_inst >
--				sort_connector[idx_2 + 1]->dc_link->link_enc_hw_inst) {
--				aconnector = sort_connector[idx_2];
--				sort_connector[idx_2] = sort_connector[idx_2 + 1];
--				sort_connector[idx_2 + 1] = aconnector;
--			}
-+			    sort_connector[idx_2 + 1]->dc_link->link_enc_hw_inst)
-+				swap(sort_connector[idx_2], sort_connector[idx_2 + 1]);
- 		}
- 	}
- 
-@@ -180,11 +177,8 @@ static void update_phy_id_mapping(struct amdgpu_device *adev)
- 						}
- 					}
- 
--					if (swap) {
--						aconnector = sort_connector[j];
--						sort_connector[j] = sort_connector[j + 1];
--						sort_connector[j + 1] = aconnector;
--					}
-+					if (swap)
-+						swap(sort_connector[j], sort_connector[j + 1]);
- 				}
- 			}
- 
--- 
-2.32.0.3.g01195cf9f
-
+Thanks,
+Howard
 
