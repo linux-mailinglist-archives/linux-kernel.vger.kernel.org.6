@@ -1,123 +1,181 @@
-Return-Path: <linux-kernel+bounces-443218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81D29EE8EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:34:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 682959EE8F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344212835B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:34:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63F5283C5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0DF2153E4;
-	Thu, 12 Dec 2024 14:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE6B2153DD;
+	Thu, 12 Dec 2024 14:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="qJFFmuYS"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="akf5SeEV"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A3C21423F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D93855897;
+	Thu, 12 Dec 2024 14:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734014034; cv=none; b=bNkors40lARORpPo6O+5lbp+PFroyCRSC6cNhjU2gWmU62pTEearo1AWuqFyEJzcKFXzBxtJtF6XxUlBxYdzq8wdBEcZTMTCBErR1iQpXZmgzGM27zavZJ5KuX9BYjYrax1M6ad8zRlG90LG+DDPWzSODLQb8TgR6ZrDmV7l1wY=
+	t=1734014098; cv=none; b=VZ3v4ff1dMfhMVfnC608vIWYYockWX03yoguwyahNAZUqyOFO4L5bhjUEM7BZtzX7hK6qhDziswZVYpOPFGAqk3N6CWVm7Ip7fkkUfZBLThHxqP2JTUxyKvC5gl8ECIS1ANz9mxt/n6cPy1iVfP8sinr2uCDJ9SzX0TN/HA1gco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734014034; c=relaxed/simple;
-	bh=TUSHR09MWIWScyPuNYIlwYC+tS8CQ8KKfqKuUWMBs0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DNekCC+XxWSUPpg8de4YVpmgYigMgE+Q2ID4SF7z96tUFXKqQeteVigxadIO6NQyGOUGOggUFYeA32Il2Ep0b+Q/SRXEBSs49GOoip7I02XSBedSZJYi+7eaqdkYapN1GAlCBQPpk1PjZhZo4dVo44ClMKC3PlIGfynI57HPFe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=qJFFmuYS; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e39f43344c5so479492276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:33:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1734014031; x=1734618831; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oixWL2nrZMsUYl4DXg/df5eSVmWCM6y/4WgYjFxHm8U=;
-        b=qJFFmuYSXeeh1wE0JiaGEgc4QEzLmn1PWUEPJYBk4c7w2awheWT9GAuLR5aZcXuYGV
-         f+E83pOww8bVa/ZSDbi2YbZRcdJPRO0826TLa2wtVbJf28P4y2JtPztEoo8VNv3O4Tmt
-         T78Xo/UTMSfWnuQdYHMp64P2hkEU5tYlxJdEq9ydhemb+QjNPRyp1TvQHpY1G3LX1fn3
-         +hrio+aQRzyPFt3kKb5a+cf88R3/IJ7VCYetGWLkf38OfsFhlAi5AoLYSxtiwLOBp0Rw
-         6CMWafrpN2+YwJxyM87xYhC5trA4V+PNm4uzbJ/xWkQjZuTMbMhVDUYdddFtSV+YSRx/
-         3z2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734014031; x=1734618831;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oixWL2nrZMsUYl4DXg/df5eSVmWCM6y/4WgYjFxHm8U=;
-        b=UyK7vQhSIJZpZ2T82hrNnj9B6lGt8Qx05RSPET9GqjVt/LG7DZehBVg5KiCRyx7bKl
-         tQ7wPd5nOGzq9Kc6aK1lJw771rmUHvz2Q74XR/qPfQNmJ+LaMDfR6Lf3mrWQxALUvxGK
-         Xy7dcGNxVLgS9EvWWZGkvswpbAiNIp7vtLgOiT1GzqtkpFX95YPYvksMKiqkeUrBlKKS
-         vOu8BjeFrro/By37A0krbGi0aitLwCDNjmPC1WVMAuI6IoYYr8HdyKTT42Ws9eC/q0bF
-         yAxVZvHZVZs1PVi98SNeWEm55VfTks4mc2Zsd+u/pJCtMQ+4f6a/fZH3h/0v6x4yB8lT
-         Y8lA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/712ZhRZd8Y1pWlMkjkcDgl6mrdWefvSnEMtXP8UFn5l+MBoM3rPVyZNMRJL7N4tBpHJ3SDtokowD/04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfBd5nx2wUjep7Nah3f/UpIPRgfp2EsudD1xZip+qQmrOXMQej
-	FhWGg5Y6kq7vPKO4Ga7L+XEIVXo8OxeNqz4ATXPcmxQQXno+0NDhtRpu20uuo+IGyapfU1XG8xk
-	uGHqcerO34vgTlyYS1eycW31pcw0QECJ78T8ltQ==
-X-Gm-Gg: ASbGncvw5tkyDoJnYCLsuDzFJOkHhotLPUc+ibqNHEEhMAMi3MutivkORrZ7vOP23GP
-	8nTXDZL/WFv0XxoF9wpCriFjnCTIE8wMNiVAKMg==
-X-Google-Smtp-Source: AGHT+IGDLkQcBMnIFEczxKe7BF1CvAuA2ofNG6CIH7QxnJ28sfgBPj/eIhdCC4W8Y62+oAcJWg9iNMMiz9hdeyHHgTE=
-X-Received: by 2002:a05:6902:72f:b0:e39:86a0:aeba with SMTP id
- 3f1490d57ef6-e41c7b58a86mr526641276.34.1734014031430; Thu, 12 Dec 2024
- 06:33:51 -0800 (PST)
+	s=arc-20240116; t=1734014098; c=relaxed/simple;
+	bh=f8wwbNlUI4/hCgH0ao1Kdr78oJ1QPgQ7FcpPKSXXwbA=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=f4Tx0zDk++4JdKCsHbP/aUYF9m+yVyebjbUKk4OZTq7m+4xV5hhzckiMmUoXMZNIqET0YMtfYs7dVpQssClBoj3oYSvNIMeM3mN8TdeYarJxAW8PON/Ywo+A6UBCDKjC3fVQ8I7OuSYav5oExk5MaupwpeuscI4Hr4PLNPOanyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=akf5SeEV; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734014094;
+	bh=f8wwbNlUI4/hCgH0ao1Kdr78oJ1QPgQ7FcpPKSXXwbA=;
+	h=Subject:From:To:Date:In-Reply-To:References:From;
+	b=akf5SeEVlGo+i/UJl7eiwQ2rJRSYE4IdnAV8l6kJoNXOF7YmMcgEibCPzVq6NhRXN
+	 UmiC3kf+e27EzXJKp8j148YVny3HW2EPXGud9MEsYJ560Hwp/f/SfIS6E8z7etWbKg
+	 QJ7/vdxAJG4utBVouRPoeYOCIwUB644lWkOVKNnrAQk1jFngijdu40Q5SraOPCMw47
+	 CAa6u+weUvLBINW4ijgeDm5bpZODfgiXoTu9FNLCKcmD3obRa6gB0MqhOLfK7v9Bjj
+	 oNGtBHpfnguStu1WANmxJa0s/rIDaKS5iF/LBjaH9mtIwKx9ogrCu9o8A/Bx/CwSKA
+	 MRNTsHYqpxfwA==
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::7a9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D6FF817E3779;
+	Thu, 12 Dec 2024 15:34:52 +0100 (CET)
+Message-ID: <f04760c3631784cf40e077ab84a76f508ab96012.camel@collabora.com>
+Subject: Re: [PATCH v2 1/3] media: uapi: add WebP uAPI
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Hugues Fruchet <hugues.fruchet@foss.st.com>, Mauro Carvalho Chehab	
+ <mchehab@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>, Fritz Koenig	 <frkoenig@chromium.org>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,  Daniel Almeida
+ <daniel.almeida@collabora.com>, Andrzej Pietrasiewicz
+ <andrzej.p@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Date: Thu, 12 Dec 2024 09:34:51 -0500
+In-Reply-To: <20241120110105.244413-2-hugues.fruchet@foss.st.com>
+References: <20241120110105.244413-1-hugues.fruchet@foss.st.com>
+	 <20241120110105.244413-2-hugues.fruchet@foss.st.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <b61a81b2-0101-43bd-a4f6-09cf3a016484@stanley.mountain>
-In-Reply-To: <b61a81b2-0101-43bd-a4f6-09cf3a016484@stanley.mountain>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 12 Dec 2024 14:33:33 +0000
-Message-ID: <CAPY8ntBkQ9PrNx51g+W6TPTLhFjQrTC1vitbV6TVCwq8GUOLwA@mail.gmail.com>
-Subject: Re: [PATCH v2 next] drm/vc4: unlock on error in vc4_hvs_get_fifo_frame_count()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Dec 2024 at 12:47, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> The default statement is never used in real life.  However, if it were
-> used for some reason then call drm_dev_exit() before returning.
->
-> Fixes: 8f2fc64773be ("drm/vc4: Fix reading of frame count on GEN5 / Pi4")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Hi Hugues,
 
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+as you know, naming is hard and I had to think about this one a little, see my
+comment below.
 
-Thanks for the update.
-  Dave
-
+Le mercredi 20 novembre 2024 à 12:01 +0100, Hugues Fruchet a écrit :
+> This patch adds the WebP picture decoding kernel uAPI.
+> 
+> This design is based on currently available VP8 API implementation and
+> aims to support the development of WebP stateless video codecs
+> on Linux.
+> 
+> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
 > ---
-> v2: style fixes
->
->  drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-> index b42027636c71..4811d794001f 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> @@ -522,7 +522,7 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
->                 break;
->         default:
->                 drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
-> -               return 0;
-> +               break;
->         }
->
->         drm_dev_exit(idx);
-> --
-> 2.45.2
->
+>  Documentation/userspace-api/media/v4l/biblio.rst  |  9 +++++++++
+>  .../userspace-api/media/v4l/pixfmt-compressed.rst | 15 +++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c              |  1 +
+>  include/uapi/linux/videodev2.h                    |  1 +
+>  4 files changed, 26 insertions(+)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/biblio.rst b/Documentation/userspace-api/media/v4l/biblio.rst
+> index 35674eeae20d..df3e963fc54f 100644
+> --- a/Documentation/userspace-api/media/v4l/biblio.rst
+> +++ b/Documentation/userspace-api/media/v4l/biblio.rst
+> @@ -447,3 +447,12 @@ AV1
+>  :title:     AV1 Bitstream & Decoding Process Specification
+>  
+>  :author:    Peter de Rivaz, Argon Design Ltd, Jack Haughton, Argon Design Ltd
+> +
+> +.. _webp:
+> +
+> +WEBP
+> +====
+> +
+> +:title:     WEBP picture Bitstream & Decoding Process Specification
+> +
+> +:author:    Google (https://developers.google.com/speed/webp)
+> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> index 806ed73ac474..e664e70b0619 100644
+> --- a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> +++ b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> @@ -169,6 +169,21 @@ Compressed Formats
+>  	this pixel format. The output buffer must contain the appropriate number
+>  	of macroblocks to decode a full corresponding frame to the matching
+>  	capture buffer.
+> +    * .. _V4L2-PIX-FMT-WEBP-FRAME:
+> +
+> +      - ``V4L2_PIX_FMT_WEBP_FRAME``
+> +      - 'WEBP'
+> +      - WEBP VP8 parsed frame, excluding WEBP RIFF header, keeping only the VP8
+> +	bistream including the frame header, as extracted from the container.
+> +	This format is adapted for stateless video decoders that implement a
+> +	WEBP pipeline with the :ref:`stateless_decoder`.
+> +	Metadata associated with the frame to decode is required to be passed
+> +	through the ``V4L2_CID_STATELESS_VP8_FRAME`` control.
+> +	See the :ref:`associated Codec Control IDs <v4l2-codec-stateless-vp8>`.
+> +	Exactly one output and one capture buffer must be provided for use with
+> +	this pixel format. The output buffer must contain the appropriate number
+> +	of macroblocks to decode a full corresponding frame to the matching
+> +	capture buffer.
+
+So after reading more about it, I think we should avoid the usage of the WEBP
+name, as WEBP is clearly a RIFF based container format and supports 2 totally
+different codecs. I think we should instead call this
+V4L2_PIX_FMT_VP8_INTRA_FRAME. We should still document that these are used by
+WebP for lossy compression, so that  readers can correlate.
+
+Some folks will still wonder why a separate format, and the I still hold that it
+fits better for the case we have one driver, with one video node that can handle
+both, since you can probe these by simply using VIDIOC_ENUM_FMT, its easily
+discoverable without introducing a new control, etc.
+
+regards,
+Nicolas
+
+>  
+>      * .. _V4L2-PIX-FMT-VP9:
+>  
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 0304daa8471d..e2ff03d0d773 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1501,6 +1501,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
+>  		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
+>  		case V4L2_PIX_FMT_VP8_FRAME:    descr = "VP8 Frame"; break;
+> +		case V4L2_PIX_FMT_WEBP_FRAME:    descr = "WEBP VP8 Frame"; break;
+>  		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
+>  		case V4L2_PIX_FMT_VP9_FRAME:    descr = "VP9 Frame"; break;
+>  		case V4L2_PIX_FMT_HEVC:		descr = "HEVC"; break; /* aka H.265 */
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index e7c4dce39007..09fff269e852 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -757,6 +757,7 @@ struct v4l2_pix_format {
+>  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /* SMPTE 421M Annex L compliant stream */
+>  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
+>  #define V4L2_PIX_FMT_VP8_FRAME v4l2_fourcc('V', 'P', '8', 'F') /* VP8 parsed frame */
+> +#define V4L2_PIX_FMT_WEBP_FRAME v4l2_fourcc('W', 'B', 'P', 'F') /* WEBP VP8 parsed frame */
+>  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
+>  #define V4L2_PIX_FMT_VP9_FRAME v4l2_fourcc('V', 'P', '9', 'F') /* VP9 parsed frame */
+>  #define V4L2_PIX_FMT_HEVC     v4l2_fourcc('H', 'E', 'V', 'C') /* HEVC aka H.265 */
+
 
