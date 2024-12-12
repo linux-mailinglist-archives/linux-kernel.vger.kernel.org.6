@@ -1,132 +1,529 @@
-Return-Path: <linux-kernel+bounces-444082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256219F008C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:53:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B879B9F008A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:53:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AF3188231E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A4916B933
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45D71DEFCC;
-	Thu, 12 Dec 2024 23:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98221DED45;
+	Thu, 12 Dec 2024 23:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mXNfIm3w"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WBzIGe/E"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF19E1547F5;
-	Thu, 12 Dec 2024 23:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8509A1547F5;
+	Thu, 12 Dec 2024 23:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734047598; cv=none; b=RrOQ28piP9pQKFA6yv2aO9f5k5wd8kq6JvgqtFwZlL/GvYv8vHXHn6tb6xXF7aGyXooFWYdJk/MHcC5EGLFis+b9wnFdvZlGFhFYjV3geZfHgi2uRkvAp8YI+ieCoArNxTmZnCGNz+Qy9N37ZU46RHWfFigc3C5nzv2MQViDmsg=
+	t=1734047612; cv=none; b=MDV4hqa0TFjFEIV3dMsCYU6/UtkjozkzyVuJ9Cn7L/4KuK7o7XAup3SGdDQ0AdpWnKMqdKJN4md/2lqbOUIAfP0XubOzzSeJ5Hs9XwdIY3/x6CYZOVMFp3/GwUKT5TZi5a/yrBLyizgMpVfK6lCZY8OikprshKE+BmMXRALuqK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734047598; c=relaxed/simple;
-	bh=q/BFDvTD+XNDmTs8p8/kib7zSnWMPGFmxweFAg1eUuo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WY3o0m8sdQ4l/VnCxTEpawQXyS+k0cnLSrT/uw7KYMdgOwACXMkkwqEot7LiVsmi+JC5oBoxo7YHoJwGosDfBcnWkvmmTVb6Z8FuiS2GaMAsePmlI/s30j1tuXQf6e5EfXAf9iE+b0FOKf1t31eTMhyn0MFH5v1NlyEbbgRbTtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mXNfIm3w; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ee67e9287fso1034174a91.0;
-        Thu, 12 Dec 2024 15:53:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734047596; x=1734652396; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4QXCu0v5SnxIo/0aSLhOo9DU4qZRN1PKMZDr7ioEmoo=;
-        b=mXNfIm3wXu+j+di6DT7QDbrskx/5bIGGOKhPNLZuGzj235F8jeByAF5OPYvjuVIlfy
-         EejwyI5mJyCQnyoTGpnU4Smog82TAlJ8faWmtJJVj6/1UvBgmPXgka2K4fepq7LT7BKj
-         RhpkFhejNLIEohffCT5hBMoOp9vrajNxWIqrY1Fzm9vJdK2vB3SkJ68htVErl4nGnVEf
-         A08+93JWXu+n4ICHqcemI0lTCl2cUvvxkuBOIouAVgTXk9VbCvaHg2beQL82AOWfoTaO
-         5PoVt+Nt5FxCKJFdRbVtgdimvhXl3CdkZXxJrqMP0e+Wp0a80jPc2YXXqBgEdZDVxS5i
-         LqbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734047596; x=1734652396;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4QXCu0v5SnxIo/0aSLhOo9DU4qZRN1PKMZDr7ioEmoo=;
-        b=WYnqBQ0r7hw9Pnl+d7Hg6vvlT25+mKCxPmUwOgh7/PsEB0Xrz7hqXZmSw2Z1F4uEe9
-         fzevWimJVgigj8Khuf1xgvhDn9AcPEPRt8a77yAt+CWb2kROlBVlR7MLdaeg3d80lMne
-         ekZpPTS0qgKc/IuVdN4OivEPVuOoGZj0N1/tbgkscXs8Z+3sfR6bVG2o0UFJ2U+S2lk2
-         bBRN7AwH+l3/49p0y2n5w/zukLpZxZKUP1iKmb9MN7gz+TA5agImArx4Q+HOu3aXOGuI
-         L6NveWYS6CtbQRV3SzbaNBiluPd8iJWMniFU9xjR62d5OLTlFY7hg4h1MnNM2yohm5R9
-         l5/A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1GIaGb8Fo7c1OsI1K+Sa9JvNvkVmkHnsDzNSfH+zoRhUswaHYZ0ejn+es7EDdwQG35L5GOpzpU+TctX14Tgyevg==@vger.kernel.org, AJvYcCUI8thUqF8/cAzZ4jOqNkiH2rF/gSG94JIgbnb5frPLBg+QWLLelCUY342pVzfRKrXV1b8=@vger.kernel.org, AJvYcCWJoEP3+T37ENW335LXbkl6bUX9Ng6MINcUeuRGRGZWaPZ5SjW/2bL/dxNmGRb8r3nvQ6L5C7X9NMfNyU/7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwABFTPDw/k8dgRaC1FHsyxW4rg3HWCDURD146HkFqqR//x2HEj
-	iEJrCDRJARLDlmooJj0yM6TRkWcKZx76KE6KII7oUCeyauh15I59XnMCqNnKHBsCt06vUyBBYKD
-	n1eVLIp/EKLbTYeOybFK6V7VnFa8=
-X-Gm-Gg: ASbGncvJmNQbs3gDG84abtwhCOaIguZks/tjwtQEJvwBV6DNdhLoG6ioK0IiS4eWmcT
-	PqR8aG8097OSNZ3hdbQco6rOhLVjDMacruPyj+Cs/yYQJCD3UnVbLDg==
-X-Google-Smtp-Source: AGHT+IHhbAiFyFvd1Mfo23FPBSYkHdTUphfvtJyTgTXBo8HJBq5GRGK9fuMA3UKGzWz63K+XgLlcQXDkhtdDrlN44qQ=
-X-Received: by 2002:a17:90b:548b:b0:2ee:fb6b:7d7e with SMTP id
- 98e67ed59e1d1-2f2900a9fe7mr1013356a91.30.1734047595981; Thu, 12 Dec 2024
- 15:53:15 -0800 (PST)
+	s=arc-20240116; t=1734047612; c=relaxed/simple;
+	bh=kGZRO8S0gxioBrvdVNli9fWRuqyeZamrVdA3n0N5dPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A9N//AtHbkyxGijvBCNs94qeJmSvwsLpqdD/hSVHKh6QuhVJa4lefddfoV/L0OCBO8Uhv0/MaalCDolJOXfWr2Ye/ic9A1qUhGgHgqxTeOJ4BIJkdqxAHjsZkjEee7esSFCMx8fGnnsT8Ola0HTp4yd44XdA9bOYEfB7201SDxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WBzIGe/E; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCH1CqL032195;
+	Thu, 12 Dec 2024 23:53:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	986POXnZPr4/71pBkeYiMWO/F9wMbWHutnRVWDCvA1o=; b=WBzIGe/E80labssg
+	PE85Kn5x6OY5xrOBDyzAOjDYGKSuqh6xMX9Uv5Nbxj91qlZobPzqjLvlWkQfKwoR
+	CzFkiDg/kpw+qeT37UdhMhsPWE6LVeN5ouHB8gHwkw+yKdOQyJRodo6HB7KdCLpr
+	5EJIxqtoIHVeWFYUNxwLiyDQPhhhLj1qXI28cpPFiwZj/WjpD9Rr/I26luhEO+jP
+	KRZVe60l77+9I8jylhINPqlquAuhmnvxc/CBZJnz0WGwzoyKVj4EU5vpiDwPla8U
+	3nZci739qeKcL3bR6Fylzh0BXUp9Zhp/Qll+5c1lKdILU3uB8TEuMBJq82855y+3
+	ptmkvA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f6tfdsd7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 23:53:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BCNrK7m028634
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 23:53:20 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
+ 2024 15:53:19 -0800
+Message-ID: <9a9ff3a5-5c01-45fd-a89a-b8305baac5bd@quicinc.com>
+Date: Thu, 12 Dec 2024 15:53:18 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211093114.263742-1-leo.yan@arm.com> <Z1mREhJElE6cSrPT@x1> <20241211202630.GA3169297@e132581.arm.com>
-In-Reply-To: <20241211202630.GA3169297@e132581.arm.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 12 Dec 2024 15:53:03 -0800
-Message-ID: <CAEf4Bzbu_4sgb_cfC0K3fR+AMfAivJyprsENNZf129qieFCitg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] bpftool: Fix the static linkage failure
-To: Leo Yan <leo.yan@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Quentin Monnet <qmo@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Nick Terrell <terrelln@fb.com>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Guilherme Amadio <amadio@gentoo.org>, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/14] drm/msm/dp: use msm_dp_utils_pack_sdp_header()
+ for audio packets
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Paloma Arellano <quic_parellan@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241212-fd-dp-audio-fixup-v3-0-0b1c65e7dba3@linaro.org>
+ <20241212-fd-dp-audio-fixup-v3-9-0b1c65e7dba3@linaro.org>
+ <070dea1a-c300-4968-ba24-011625e4c133@quicinc.com>
+ <CAA8EJpqO=AjVGEnZHNbM5+Mnu2gMN96kABBLM5XHh3NMMGFtjw@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJpqO=AjVGEnZHNbM5+Mnu2gMN96kABBLM5XHh3NMMGFtjw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PDj07o6YuKy_7a2WcubgBIeZFORm7Pt5
+X-Proofpoint-ORIG-GUID: PDj07o6YuKy_7a2WcubgBIeZFORm7Pt5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120172
 
-On Wed, Dec 11, 2024 at 12:26=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
->
-> On Wed, Dec 11, 2024 at 10:18:10AM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Wed, Dec 11, 2024 at 09:31:11AM +0000, Leo Yan wrote:
-> > > This series follows up on the discussion in [1] for fixing the static
-> > > linkage issue in bpftool.
-> > >
-> > > Patch 01 introduces a new feature for libelf-zstd.  If this feature
-> > > is detected, it means the zstd lib is required by libelf.
-> > >
-> > > Patch 02 is a minor improvement for linking the zstd lib in the perf.
-> > >
-> > > Patch 03 fixes the static build failure by linking the zstd lib when
-> > > the feature-libelf-zstd is detected.
-> >
-> > So, this was originally reported as a perf build failure when trying a
-> > static build, so something not so common, no urgency, I guess, but it
-> > involves a tools/perf/bpftool/Makefile change, I think I can process
-> > this as I'll then test it in the many build containers for old distros =
-I
-> > have, ok?
->
-> As Quentin said in another reply, there is a delta change between the
-> Linux perf tree and bpf-next tree.  So this series has a conflict on
-> bpf-next tree but it can be applied cleanly on perf tree.
->
-> Before I respin to update the commit logs based on comments, I need BPF
-> maintainers agreement with Arnaldo on proceeding on which source tree
-> to proceed with.
->
 
-I think it's fine to route this through a perf tree.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+On 12/12/2024 2:28 PM, Dmitry Baryshkov wrote:
+> On Thu, 12 Dec 2024 at 23:41, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 12/11/2024 3:41 PM, Dmitry Baryshkov wrote:
+>>> Use msm_dp_utils_pack_sdp_header() and call msm_dp_write_link() directly
+>>> to program audio packet data. Use 0 as Packet ID, as it was not
+>>> programmed earlier.
+>>>
+>>> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>    drivers/gpu/drm/msm/dp/dp_audio.c | 288 +++++++++-----------------------------
+>>>    1 file changed, 66 insertions(+), 222 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/dp/dp_audio.c b/drivers/gpu/drm/msm/dp/dp_audio.c
+>>> index 5cbb11986460d1e4ed1890bdf66d0913e013083c..1aa52d5cc08684a49102e45ed6e40ac2b13497c7 100644
+>>> --- a/drivers/gpu/drm/msm/dp/dp_audio.c
+>>> +++ b/drivers/gpu/drm/msm/dp/dp_audio.c
+>>> @@ -14,6 +14,7 @@
+>>>    #include "dp_catalog.h"
+>>>    #include "dp_audio.h"
+>>>    #include "dp_panel.h"
+>>> +#include "dp_reg.h"
+>>>    #include "dp_display.h"
+>>>    #include "dp_utils.h"
+>>>
+>>> @@ -28,251 +29,94 @@ struct msm_dp_audio_private {
+>>>        struct msm_dp_audio msm_dp_audio;
+>>>    };
+>>>
+>>> -static u32 msm_dp_audio_get_header(struct msm_dp_catalog *catalog,
+>>> -             enum msm_dp_catalog_audio_sdp_type sdp,
+>>> -             enum msm_dp_catalog_audio_header_type header)
+>>> -{
+>>> -     return msm_dp_catalog_audio_get_header(catalog, sdp, header);
+>>> -}
+>>> -
+>>> -static void msm_dp_audio_set_header(struct msm_dp_catalog *catalog,
+>>> -             u32 data,
+>>> -             enum msm_dp_catalog_audio_sdp_type sdp,
+>>> -             enum msm_dp_catalog_audio_header_type header)
+>>> -{
+>>> -     msm_dp_catalog_audio_set_header(catalog, sdp, header, data);
+>>> -}
+>>> -
+>>>    static void msm_dp_audio_stream_sdp(struct msm_dp_audio_private *audio)
+>>>    {
+>>>        struct msm_dp_catalog *catalog = audio->catalog;
+>>> -     u32 value, new_value;
+>>> -     u8 parity_byte;
+>>> -
+>>> -     /* Config header and parity byte 1 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     new_value = 0x02;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_1_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_1_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     /* Config header and parity byte 2 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_2);
+>>> -     new_value = value;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_2_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_2_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_2);
+>>> -
+>>> -     /* Config header and parity byte 3 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_3);
+>>> -
+>>> -     new_value = audio->channels - 1;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_3_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_3_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 3: value = 0x%x, parity_byte = 0x%x\n",
+>>> -             value, parity_byte);
+>>> -
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_STREAM, DP_AUDIO_SDP_HEADER_3);
+>>> +     struct dp_sdp_header sdp_hdr = {
+>>> +             .HB0 = 0x00,
+>>> +             .HB1 = 0x02,
+>>> +             .HB2 = 0x00,
+>>> +             .HB3 = audio->channels - 1,
+>>> +     };
+>>> +     u32 header[2];
+>>> +
+>>> +     msm_dp_utils_pack_sdp_header(&sdp_hdr, header);
+>>> +
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_STREAM_0, header[0]);
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_STREAM_1, header[1]);
+>>>    }
+>>
+>> This patch is changing the programming behavior.
+>>
+>> Earlier it was using a read/modify/write on each register. Now, its just
+>>    a write. I checked a few chipsets, the reset value of registers was 0,
+>> so that part is okay.
+> 
+> Except that it was not a correct RMW, it was read, OR new data without
+> clearing the bitfield, write. So it has been working mostly by a
+> miracle,
+> 
+>>
+>> But, for the MMSS_DP_AUDIO_STREAM_0 register, earlier we were writing
+>> only the upper nibble, that is bits 15:0 of DP_AUDIO_SDP_HEADER_0 was
+>> kept as-it-is, but now this patch is changing that to 0. What was the
+>> reason for that change?
+> 
+> It is described in the commit message: "Use 0 as Packet ID, as it was not
+> programmed earlier."
+> 
 
-> Thanks,
-> Leo
+The part of using 0 as Packet ID is but not the behavior of changing the 
+RMW which is also pretty significant. That was all happening under the hood.
+
+>>
+>> This is true for all the APIs being touched in this file.
+>>
+>> I guess the whole point of having that audio map in the catalog was to
+>> preserve the read values of these registers. I have to check what was
+>> the reason behind that as once again this was before I worked on this
+>> driver as well.
+>>
+>> So technically there are two parts to this change:
+>>
+>> 1) dropping read for each header and directly just writing it
+>> 2) Writing the registers directly instead of going through catalog
+>>
+>> It seems like (1) and (2) are independent. I hope (1) was not the reason
+>> to have started this whole rework.
+> 
+> Yes, the driver spends a lot of effort to preserve the data that will
+> be rewritten when the function is called to write the next header
+> byte. So it is useless. Only HB0 has been preserved, PacketID. If for
+> some reason we are generating a stream with the non-zero ID, it should
+> be explicit, not implicitly 'preserved'.
+> 
+
+I am trying to understand why this was being preserved. Audio 
+programming is half in DP driver and half in ADSP. I dont know if the 
+expectation was that packet ID will be programmed elsewhere and not in 
+HLOS code hence it was preserved.
+
+> So, the reasons were:
+> - fix the RMW cycles to drop old values from the registers
+> - use new msm_dp_utils_pack_sdp_header()
+> - get rid of the useless indirection through the catalog and enum
+> msm_dp_catalog_audio_header_type
+> - write registers in an efficient way.
+> - if we ever have a set of functions to handle DP infoframes (like we
+> do for HDMI), make the MSM DP driver ready to be converted to such
+> functions.
+
+
+The only reason the current driver needed to go through the catalog map 
+was that it was trying to write one header at a time. And in the 
+registers, 2 headers are mapped to one register. So a map was needed. I 
+do not know the reason for breaking up the writes into one header at a 
+time like I already mentioned so I am trying to gather that info. 
+Without knowing the reason it might seem useless but its my duty to make 
+sure nothing was overlooked.
+
+
+
+> 
+>>
+>>>
+>>>    static void msm_dp_audio_timestamp_sdp(struct msm_dp_audio_private *audio)
+>>>    {
+>>>        struct msm_dp_catalog *catalog = audio->catalog;
+>>> -     u32 value, new_value;
+>>> -     u8 parity_byte;
+>>> -
+>>> -     /* Config header and parity byte 1 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     new_value = 0x1;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_1_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_1_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     /* Config header and parity byte 2 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_2);
+>>> -
+>>> -     new_value = 0x17;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_2_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_2_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_2);
+>>> -
+>>> -     /* Config header and parity byte 3 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_3);
+>>> -
+>>> -     new_value = (0x0 | (0x11 << 2));
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_3_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_3_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 3: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_TIMESTAMP, DP_AUDIO_SDP_HEADER_3);
+>>> +     struct dp_sdp_header sdp_hdr = {
+>>> +             .HB0 = 0x00,
+>>> +             .HB1 = 0x01,
+>>> +             .HB2 = 0x17,
+>>> +             .HB3 = 0x0 | (0x11 << 2),
+>>> +     };
+>>> +     u32 header[2];
+>>> +
+>>> +     msm_dp_utils_pack_sdp_header(&sdp_hdr, header);
+>>> +
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_TIMESTAMP_0, header[0]);
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_TIMESTAMP_1, header[1]);
+>>>    }
+>>>
+>>>    static void msm_dp_audio_infoframe_sdp(struct msm_dp_audio_private *audio)
+>>>    {
+>>>        struct msm_dp_catalog *catalog = audio->catalog;
+>>> -     u32 value, new_value;
+>>> -     u8 parity_byte;
+>>> -
+>>> -     /* Config header and parity byte 1 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     new_value = 0x84;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_1_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_1_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     /* Config header and parity byte 2 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_2);
+>>> -
+>>> -     new_value = 0x1b;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_2_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_2_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_2);
+>>> -
+>>> -     /* Config header and parity byte 3 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_3);
+>>> -
+>>> -     new_value = (0x0 | (0x11 << 2));
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_3_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_3_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 3: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     new_value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_INFOFRAME, DP_AUDIO_SDP_HEADER_3);
+>>> +     struct dp_sdp_header sdp_hdr = {
+>>> +             .HB0 = 0x00,
+>>> +             .HB1 = 0x84,
+>>> +             .HB2 = 0x1b,
+>>> +             .HB3 = 0x0 | (0x11 << 2),
+>>> +     };
+>>> +     u32 header[2];
+>>> +
+>>> +     msm_dp_utils_pack_sdp_header(&sdp_hdr, header);
+>>> +
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_INFOFRAME_0, header[0]);
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_INFOFRAME_1, header[1]);
+>>>    }
+>>>
+>>>    static void msm_dp_audio_copy_management_sdp(struct msm_dp_audio_private *audio)
+>>>    {
+>>>        struct msm_dp_catalog *catalog = audio->catalog;
+>>> -     u32 value, new_value;
+>>> -     u8 parity_byte;
+>>> -
+>>> -     /* Config header and parity byte 1 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     new_value = 0x05;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_1_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_1_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     /* Config header and parity byte 2 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_2);
+>>> -
+>>> -     new_value = 0x0F;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_2_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_2_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_2);
+>>> -
+>>> -     /* Config header and parity byte 3 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_3);
+>>> -
+>>> -     new_value = 0x0;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_3_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_3_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 3: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_COPYMANAGEMENT, DP_AUDIO_SDP_HEADER_3);
+>>> +     struct dp_sdp_header sdp_hdr = {
+>>> +             .HB0 = 0x00,
+>>> +             .HB1 = 0x05,
+>>> +             .HB2 = 0x0f,
+>>> +             .HB3 = 0x00,
+>>> +     };
+>>> +     u32 header[2];
+>>> +
+>>> +     msm_dp_utils_pack_sdp_header(&sdp_hdr, header);
+>>> +
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_COPYMANAGEMENT_0, header[0]);
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_COPYMANAGEMENT_1, header[1]);
+>>>    }
+>>>
+>>>    static void msm_dp_audio_isrc_sdp(struct msm_dp_audio_private *audio)
+>>>    {
+>>>        struct msm_dp_catalog *catalog = audio->catalog;
+>>> -     u32 value, new_value;
+>>> -     u8 parity_byte;
+>>> -
+>>> -     /* Config header and parity byte 1 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_ISRC, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     new_value = 0x06;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_1_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_1_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 1: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_ISRC, DP_AUDIO_SDP_HEADER_1);
+>>> -
+>>> -     /* Config header and parity byte 2 */
+>>> -     value = msm_dp_audio_get_header(catalog,
+>>> -                     DP_AUDIO_SDP_ISRC, DP_AUDIO_SDP_HEADER_2);
+>>> -
+>>> -     new_value = 0x0F;
+>>> -     parity_byte = msm_dp_utils_calculate_parity(new_value);
+>>> -     value |= ((new_value << HEADER_BYTE_2_BIT)
+>>> -                     | (parity_byte << PARITY_BYTE_2_BIT));
+>>> -     drm_dbg_dp(audio->drm_dev,
+>>> -                     "Header Byte 2: value = 0x%x, parity_byte = 0x%x\n",
+>>> -                     value, parity_byte);
+>>> -     msm_dp_audio_set_header(catalog, value,
+>>> -             DP_AUDIO_SDP_ISRC, DP_AUDIO_SDP_HEADER_2);
+>>> +     struct dp_sdp_header sdp_hdr = {
+>>> +             .HB0 = 0x00,
+>>> +             .HB1 = 0x06,
+>>> +             .HB2 = 0x0f,
+>>> +             .HB3 = 0x00,
+>>> +     };
+>>> +     u32 header[2];
+>>> +     u32 reg;
+>>> +
+>>> +     /* XXX: is it necessary to preserve this field? */
+>>> +     reg = msm_dp_read_link(catalog, MMSS_DP_AUDIO_ISRC_1);
+>>> +     sdp_hdr.HB3 = FIELD_GET(HEADER_3_MASK, reg);
+>>> +
+>>> +     msm_dp_utils_pack_sdp_header(&sdp_hdr, header);
+>>> +
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_ISRC_0, header[0]);
+>>> +     msm_dp_write_link(catalog, MMSS_DP_AUDIO_ISRC_1, header[1]);
+>>>    }
+>>>
+>>>    static void msm_dp_audio_setup_sdp(struct msm_dp_audio_private *audio)
+>>>
+> 
+> 
+> 
 
