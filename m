@@ -1,181 +1,249 @@
-Return-Path: <linux-kernel+bounces-442919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E159EE401
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:22:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFF99EE40C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:25:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9BA1889A30
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:22:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FCC01882A70
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DB32101AF;
-	Thu, 12 Dec 2024 10:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D55021129A;
+	Thu, 12 Dec 2024 10:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MRiqTXAg"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QT5hy2eT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R0LOOB0s";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QT5hy2eT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R0LOOB0s"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE13518B467
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2BD18B467;
+	Thu, 12 Dec 2024 10:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733998930; cv=none; b=XKkcDpkWitB4Ew26LEHN9UEbDiomfzuGBPXUT0kVg228ABs/YVYwtwZT76I4P7Je5bOsJ2la2MmKqxjLdcwgAcEitAXNLcGwMOAWMBlGX+1ib83ncoUZvowU9/+XL0vdB510JCfliYEiEIG6SXl+N2OIHjth9rY5rShhl6dtJdg=
+	t=1733999091; cv=none; b=UcwgH8HBlwmQRwKNNOy/NXUEh/AXg4c3XOOT3NwWjq6lfd19R0x9AeNsSAxHN7ddMtSGp1g2YYxXZ9XERkq974TmDcUDcmCKWGREXqXx2t0KH2u275cOkHnvvxFHeb7ePko6NPYknwfUtYL5Kn+Sw/hO+Q5B30J4W7mdN3NNP+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733998930; c=relaxed/simple;
-	bh=0WjRTqsRl1idaLk0Obzmu+C+MjSbu/qou87tjORo4jI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fzENCj1fCdi6bfmPcSCWzJ4TT3sSUehMHz17u7zcRGDRmKFEprkrHMUo702DdFaaLxXR60Ye/EpPomfNzFAHWM4g9dKYmR07LSOVHJ2MVoXYXrn4yIQMAWKjwEknUOqIViveyIxDIOHWwiYTkPDPv6oK1bGitYxU0K8EgJ3oUHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MRiqTXAg; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-435f8f29f8aso2824215e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:22:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733998926; x=1734603726; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=c645PNElfeFM12UdgKMeAmcuHLZRg8JK7eBZ7/1+xnY=;
-        b=MRiqTXAg5UVObnVSW4U2BdNwcRgX5W4owvE2uQJoNavAOsuf4SLMxYmYqKWMSP1h0v
-         +CHokkmGOYgsl05VR4uacPrIErCT9Z9YZ4mkjSTzwR3TwPLWyy7BXu/UPWzD8w+rqoFc
-         NmSJNeNpxyLrajlvLTgSwOTKSkXdnUgDhYmBZJS7H8H7tGw7Eq5DPIdjfWr6CBOYp8uG
-         mRBndsu+pR20qI6HxoGiRMTDasO0R3fhV65bnrf1sDw98fzMZBGNYKQhWbhnSjK0DwX4
-         J9LizszZmHubAUKp8h6foRFMADAX01mAJV4dytBhuFX3FwUMPlQyfvH9xZqYdWkKoYFI
-         tC6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733998926; x=1734603726;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c645PNElfeFM12UdgKMeAmcuHLZRg8JK7eBZ7/1+xnY=;
-        b=dwhURDKxmf+MeYbZOmDEBm3AR5mkqcDiZOF1mjrnvPQz4wygR1uBy0OTRlPQ8RTyZw
-         QJQ+1uhHfeS559VYdHc9wd8T4df/lC5tyXXBaORjn67rYo7aZXQTYttDkvqVs2bcsWbW
-         FVxjdRF0+bljC5UjwmWrGnIx7ocKjgUHEaxMSi5rXLNGurF6nAKsHbe3d9QfYxRM1HbH
-         mgBr9gYtq0L9ONUNGVx9Gfmnbb9KG0BMbcFl2iK8ono123ErDW/FOymTFzX7Ol7OBWre
-         IFewXkQYKXXyG6+mQRnIofUqx8sJhdbo0y3wyHBUYN1eE0RJdnBC3BE6uPKibTNBaqwU
-         6T2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXOxXqGdt21Cl6UcyRqrg9VrM9e+dEzsN0SbPIqNbN6j0R997hWy+mipA+///cNUHwPhQ+A7AZzOuCf4AI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznqcmD5yJWcXTf9YyjXORA/Jm/9FjMmQNeFkFC0KFhVSVxya9z
-	PKYNMUptQ/itc8Bmw21mPDd10FZDWxCtEF7PUQFclsV82R29aq5k7qJ2nsYTD/RlVPwJ4CV6ikg
-	=
-X-Gm-Gg: ASbGnctfFvRpJLQVx8FS7An2+hzA0T3D06yJ9SSIDsQVeoXRElDZuQjL/eAwYiRKTuL
-	mSHWxOM2UIk7+ACm42bMd9ETUpHRQHqnjBGuknokIaEDKxB9KxeS7Pp+AnT9YDlsdWSQVFl0BVY
-	agXJUpeCO34UYbj5g5onha2f+B4Z3sSCi/89O+F/qMEXhareRIUWeGjo1unPhS2oRWJ7gOJUxOA
-	2VOs7PlNurndBmwvGvqzkkNpIo/XOTtm7PAu/7UzgP+BLosPP2bpZuiV7JRYBItmP8vzuyjqwgz
-	/tCPV37gFdPI1syan6FG1ZqCrhuqNQc6JQ2D5larVQ==
-X-Google-Smtp-Source: AGHT+IEEpl5WnfVqD5Eyl1PeCZc5X0OZKvY51dNZlWpRgEl0ZIGnyTAoD5sXkKoKOCY9S9gRMv6sMg==
-X-Received: by 2002:a05:600c:4450:b0:436:1aa6:b8ee with SMTP id 5b1f17b1804b1-4361c346a7emr52444405e9.2.1733998926105;
-        Thu, 12 Dec 2024 02:22:06 -0800 (PST)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559eaf6sm12181355e9.20.2024.12.12.02.22.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 02:22:05 -0800 (PST)
-Message-ID: <cbc389e4-3b69-4681-ad66-6102b0ed0cae@suse.com>
-Date: Thu, 12 Dec 2024 11:22:04 +0100
+	s=arc-20240116; t=1733999091; c=relaxed/simple;
+	bh=elSn5EMKBSJAe1t5atIhWgNvGF8K+SoHvOCXEqaepOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4rYGGhvwrgDmaxFTK11kYlubTLlxhljsHXfqXKnGkCfr4zfBFPxfBihUsyScWU4xiidpVE237zVzlvpdyChnN2h5VVkx9FYl9Ptv7PRR4/WpByyKmJJee4D+X6mYaZy/MAOIYD7wJCjrpX7SQO4U73slffAPCdfAOVYqRlA7Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QT5hy2eT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R0LOOB0s; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QT5hy2eT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R0LOOB0s; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 997F61F445;
+	Thu, 12 Dec 2024 10:24:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733999087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
+	b=QT5hy2eTFO0raA091ld/V4Xtv5Xize9dcNyYNy3kMeXhbsHswPFHLQfX/J8+FS1IWRVAK9
+	nDQlkW9APRuqOa6mMnJjEZ79VBuKqKgz4mKvvxAAmgDG8XIlWWHpXfIgd4rQSjI7p8sgkF
+	Ld848Owpi1CJJHLUSNRCwZo22w2eNpQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733999087;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
+	b=R0LOOB0skr8gVNQv2sbsKWpwVO8Vt8TWroYwZiNOGiOUvdC3xvM9MCJs/ZKMFthK9PsyS8
+	EL7fG7bXbE781HBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=QT5hy2eT;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=R0LOOB0s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733999087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
+	b=QT5hy2eTFO0raA091ld/V4Xtv5Xize9dcNyYNy3kMeXhbsHswPFHLQfX/J8+FS1IWRVAK9
+	nDQlkW9APRuqOa6mMnJjEZ79VBuKqKgz4mKvvxAAmgDG8XIlWWHpXfIgd4rQSjI7p8sgkF
+	Ld848Owpi1CJJHLUSNRCwZo22w2eNpQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733999087;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSUUxzG9opR3Xi0ZHSRkRiPyIbSVnqpTCvgStZMvOmg=;
+	b=R0LOOB0skr8gVNQv2sbsKWpwVO8Vt8TWroYwZiNOGiOUvdC3xvM9MCJs/ZKMFthK9PsyS8
+	EL7fG7bXbE781HBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84CAA13939;
+	Thu, 12 Dec 2024 10:24:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MfEoIO+5WmdOIQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 12 Dec 2024 10:24:47 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1A52FA0894; Thu, 12 Dec 2024 11:24:43 +0100 (CET)
+Date: Thu, 12 Dec 2024 11:24:43 +0100
+From: Jan Kara <jack@suse.cz>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	kpsingh@kernel.org, mattbobrowski@google.com, liamwisehart@meta.com,
+	shankaran@meta.com
+Subject: Re: [PATCH v3 bpf-next 4/6] bpf: fs/xattr: Add BPF kfuncs to set and
+ remove xattrs
+Message-ID: <20241212102443.umqdrvthsi6r4ioy@quack3>
+References: <20241210220627.2800362-1-song@kernel.org>
+ <20241210220627.2800362-5-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/xen/mmu: Increase MAX_CONTIG_ORDER
-To: Thierry Escande <thierry.escande@vates.tech>
-Cc: sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
- xen-devel@lists.xenproject.org, Juergen Gross <jgross@suse.com>,
- linux-kernel@vger.kernel.org
-References: <20241204171346.458105-1-thierry.escande@vates.tech>
- <ccb28ccc-531c-4ead-9a27-76cc430f8c35@suse.com>
- <cc61bdce-47af-45ea-8ace-173adef9ae41@vates.tech>
-Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-In-Reply-To: <cc61bdce-47af-45ea-8ace-173adef9ae41@vates.tech>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210220627.2800362-5-song@kernel.org>
+X-Rspamd-Queue-Id: 997F61F445
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 11.12.2024 19:20, Thierry Escande wrote:
-> Hi Jan,
+On Tue 10-12-24 14:06:25, Song Liu wrote:
+> Add the following kfuncs to set and remove xattrs from BPF programs:
 > 
-> On 09/12/2024 11:04, Jan Beulich wrote:
->> On 04.12.2024 18:14, Thierry Escande wrote:
->>> With change 9f40ec84a797 (xen/swiotlb: add alignment check for dma
->>> buffers), the driver mpt3sas fails to load because it cannot allocate
->>> its DMA pool for an allocation size of ~2,3 MBytes. This is because the
->>> alignement check added by 9f40ec84a797 fails and
->>> xen_swiotlb_alloc_coherent() ends up calling
->>> xen_create_contiguous_region() with a size order of 10 which is too high
->>> for the current max value.
->>>
->>> This patch increases the MAX_CONTIG_ORDER from 9 to 10 (4MB) to allow
->>> such allocations.
->>>
->>> Signed-off-by: Thierry Escande <thierry.escande@vates.tech>
->>> ---
->>>  arch/x86/xen/mmu_pv.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
->>> index 55a4996d0c04..7f110740e1a2 100644
->>> --- a/arch/x86/xen/mmu_pv.c
->>> +++ b/arch/x86/xen/mmu_pv.c
->>> @@ -2200,7 +2200,7 @@ void __init xen_init_mmu_ops(void)
->>>  }
->>>  
->>>  /* Protected by xen_reservation_lock. */
->>> -#define MAX_CONTIG_ORDER 9 /* 2MB */
->>> +#define MAX_CONTIG_ORDER 10 /* 4MB */
->>>  static unsigned long discontig_frames[1<<MAX_CONTIG_ORDER];
->>
->> While lacking respective commentary, bumping this value imo also needs to
->> take into account Xen itself, at least commit-message-wise. The bumping is
->> fine for Dom0 in any event. It is also fine for DomU-s with the defaults
->> built into the hypervisor (orders 12 and 10 respectively for x86 and Arm),
->> yet especially for Arm (and in the future PPC and RISC-V) any further
->> bumping would be less straightforward.
+>   bpf_set_dentry_xattr
+>   bpf_remove_dentry_xattr
+>   bpf_set_dentry_xattr_locked
+>   bpf_remove_dentry_xattr_locked
 > 
-> Thanks for pointing this out. On the Xen side, CONFIG_CTLDOM_MAX_ORDER
-> and CONFIG_HWDOM_MAX_ORDER seem big enough on all architectures. But I
-> see CONFIG_DOMU_MAX_ORDER set to 9 (also all archs). Won't that be a
-> problem for drivers trying to allocate more than that from a domU ?
-
-A driver assumes a (physical) device to be in the DomU, at which point it
-is CONFIG_PTDOM_MAX_ORDER which applies (PT standing for pass-through).
-
->> However - does the driver really need this big a contiguous chunk? It
->> would seem far more desirable to me to break that up some, if possible.
+> The _locked version of these kfuncs are called from hooks where
+> dentry->d_inode is already locked.
 > 
-> Since this works on bare metal I'm afraid the driver maintainer (mpt
-> fusion driver) will just tell me to fix Xen.
+> Signed-off-by: Song Liu <song@kernel.org>
 
-Well. The bigger such allocations, the larger the risk that on systems
-that have been up for a while such allocations can't be fulfilled anymore
-even in the bare metal case.
+A few comments below.
 
-Jan
+> @@ -161,6 +162,160 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
+>  	return bpf_get_dentry_xattr(dentry, name__str, value_p);
+>  }
+>  
+> +static int bpf_xattr_write_permission(const char *name, struct inode *inode)
+> +{
+> +	if (WARN_ON(!inode))
+> +		return -EINVAL;
+> +
+> +	/* Only allow setting and removing security.bpf. xattrs */
+> +	if (!match_security_bpf_prefix(name))
+> +		return -EPERM;
+> +
+> +	return inode_permission(&nop_mnt_idmap, inode, MAY_WRITE);
+> +}
+> +
+> +static int __bpf_set_dentry_xattr(struct dentry *dentry, const char *name,
+> +				  const struct bpf_dynptr *value_p, int flags, bool lock_inode)
+> +{
+> +	struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
+> +	struct inode *inode = d_inode(dentry);
+> +	const void *value;
+> +	u32 value_len;
+> +	int ret;
+> +
+> +	ret = bpf_xattr_write_permission(name, inode);
+> +	if (ret)
+> +		return ret;
+
+The permission checking should already happen under inode lock. Otherwise
+you'll have TTCTTU races.
+
+> +
+> +	value_len = __bpf_dynptr_size(value_ptr);
+> +	value = __bpf_dynptr_data(value_ptr, value_len);
+> +	if (!value)
+> +		return -EINVAL;
+> +
+> +	if (lock_inode)
+> +		inode_lock(inode);
+> +	ret = __vfs_setxattr(&nop_mnt_idmap, dentry, inode, name,
+> +			     value, value_len, flags);
+> +	if (!ret) {
+> +		fsnotify_xattr(dentry);
+
+Do we really want to generate fsnotify event for this? I expect
+security.bpf is an internal bookkeeping of a BPF security module and
+generating fsnotify event for it seems a bit like generating it for
+filesystem metadata modifications. On the other hand as I'm checking IMA
+generates fsnotify events when modifying its xattrs as well. So probably
+this fine. OK.
+
+...
+
+> +static int __bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str,
+> +				     bool lock_inode)
+> +{
+> +	struct inode *inode = d_inode(dentry);
+> +	int ret;
+> +
+> +	ret = bpf_xattr_write_permission(name__str, inode);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (lock_inode)
+ +		inode_lock(inode);
+
+The same comment WRT inode lock as above.
+
+> +	ret = __vfs_removexattr(&nop_mnt_idmap, dentry, name__str);
+> +	if (!ret) {
+> +		fsnotify_xattr(dentry);
+> +
+> +		/* This xattr is removed by BPF LSM, so we do not call
+> +		 * security_inode_post_removexattr.
+> +		 */
+> +	}
+> +	if (lock_inode)
+> +		inode_unlock(inode);
+> +	return ret;
+> +}
+
+									Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
