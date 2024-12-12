@@ -1,221 +1,146 @@
-Return-Path: <linux-kernel+bounces-442589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF419EDEB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:10:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5FAB9EDEEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:28:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00844283CB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2A6167B0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9028116FF4E;
-	Thu, 12 Dec 2024 05:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2407917F4F2;
+	Thu, 12 Dec 2024 05:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B6rdBSCP"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mHDfh5SJ"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4071DA4E;
-	Thu, 12 Dec 2024 05:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038D816DC28;
+	Thu, 12 Dec 2024 05:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733980229; cv=none; b=FNOkuOM+lWNWlBqn62NqIcqg4Mui30fK/NkXVrgCBLHvLbQ4MdCYHrfJ4o1Tnt57QOZwjgGE4O+yKUPNnyzF8EAP/Hacx1Vg+5YK3Vnxk6mlh+ExwGapslO5ZRhIAlgbSoRSj6k5Tq+0Zwh8COFHTwp0D+q/kvZOiIPJ9x7K7pQ=
+	t=1733981280; cv=none; b=d5BupylUznLUZ20PEwr6M/yRDeKZv1Lkxr1WcZcakM0PlRkVb4EPyrBHMfTxukQS4zo41CtrFEggXBkHfYFltrYN42Te280ImB+Mb/ZwRTzDEOCxEe2c6pLXP/l84QTEO4Z2d7HK4+ekdUbydHoY/gz8cU3orFpLer0KvaanyxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733980229; c=relaxed/simple;
-	bh=hI0EGDPmpP7XnD6A+7EcRF/bfUEgIBo0whGbTy18VlA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dHH2tmnCDRgdKP7u7fKSSxNE4Pisi0+ZfYw8Irhk7iWYrwpN09ye4rcIqmhWetxcQI0yf66/hESVdgQmhlvLPZl+46pIoeRq+c44ALU7DiMoFF2Oc1eiMgf3JjcziEDku6lkLfUOlvuMXxLRCr9cpqR3LJl+2wiBzp3q+SSkDm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B6rdBSCP; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733980224;
-	bh=hI0EGDPmpP7XnD6A+7EcRF/bfUEgIBo0whGbTy18VlA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B6rdBSCP9h676c8clZYZaXnW6OJAvCH9vRGJFhKXO/Pfac5/85AD5LzEd/+VtM2Hl
-	 VOKnKCwkyqxc2+mv9wejP1ZEJTBQ3mjtNEcpqCSr18v4xzbxhrMU7ylAwjJYcp8BUf
-	 IIQ/CoqUKzl/R4qvazwtrygEkb9X/xry3zXqJJ5HDFHhy4RZaSkJDPaR0QZwenlFi7
-	 X24ZVRiaPAWSswhD6GDwMnY9xIkVfRFeGsgoO1AFMbjEGn1cJJ4TcXrQVgYpo+gFjO
-	 e0K3dpOYe3Ero5WIvC7P2S8yV8n2D0L+UoxpoDmv6xch5D1HR0LfnQZ5BVc1wKLbXc
-	 quwAsMIgDbIbg==
-Received: from [192.168.50.250] (unknown [171.76.86.135])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BBA7917E1067;
-	Thu, 12 Dec 2024 06:10:19 +0100 (CET)
-Message-ID: <ed90ca8c-ed81-419f-a5db-a4e8bcd35835@collabora.com>
-Date: Thu, 12 Dec 2024 10:40:16 +0530
+	s=arc-20240116; t=1733981280; c=relaxed/simple;
+	bh=qp0i5w/u39t3jbXhVMeRQCOlDTJ4v3kQ6Qs1em2ybJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZBmB1prfHkn6FB1SEt6NYyxFZ63Gg+U0TJuZNJCEf149wMG+69DAYyActd2BuL9YOSDKt/3XIEWkjq3CurfDl21P0YyGDAxxdhz5iWHYNkjNDTJFsAKrpN0L4LKIg4zUSyPgKMc2Wg1h3u78M5GbfeCoa1Fn/tQAN/WbJSz2ZRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mHDfh5SJ; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6ef8028fe9fso1834257b3.2;
+        Wed, 11 Dec 2024 21:27:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733981278; x=1734586078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i2jQavP4ta6B4Cbqnu1IGli2ZwXsJRL5QsCRRyBteD4=;
+        b=mHDfh5SJQP+HIePXtVlkvBf2FRCtretS6vVkF4QOvrzmUM9gXKatBDWKpq8xJNTrrc
+         fxbsr28Ln0iInO1oQDlJ09JPNw5vkaYjsOdVl1rhXh1krqa3Ombz+G12VHPt/FeV4qBS
+         opas9J3A+gVVCMCT1+9NJ9hvm4m93B7Efb2ed20mTYaELI38zQIES7eepmUdbiPGyhIA
+         An23NXM972ctVGXGIafTW0rZu8tvESOfRGF2pK0Z4xbaPgspKCTtAY0Mg0eatiFZ2uHu
+         vPNQ8+d8LE+r2nNsCsPD7sAU7tZd7kLuMVcSseiSuzcGcTb4lsy/qnTZhpfqLCjb7Vsa
+         xojw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733981278; x=1734586078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i2jQavP4ta6B4Cbqnu1IGli2ZwXsJRL5QsCRRyBteD4=;
+        b=MhchKkJ6AFALxTi8dEdQh5LqzuA1dNxIW66wImlZei2Y9appkDIE63BXd8VP99irhM
+         8D4GFkKHWFQVf9hANJSwOQ5R0oK0Z5/hvSVqB9Gd2PixZQ3p6gBEHh4dIQphNeRdjY08
+         Eox1bk4Wqx8kSd005uU0xTAw9H98Uh3lAqr+KMteece/Nwqqp/W1WiihylWKoaiYGjSc
+         5UU7F80gOUxReSPmtx9qakTW2wLG/Bw6OU1mzOMUNkFiWKzWseK2a4zdfeWVKQWfeWUZ
+         Lu8NN+z1X8GyA0f4Zrvf//yxGfFSvtRYkMaBqsTxOubE6I7SQ5FsWDKZ0EFa485D8Rdn
+         E7DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3RnsTOJijdK+9GGDlO0fJQB8SmvaxIXanpwg+kZcj6959XZa8UkO2aezo+DnmjaQWEQKN4p8ZrCp25k5n@vger.kernel.org, AJvYcCUJkIv0zvdY38ma9IJm810eTixMY2RfUX7ULm6MBnWB0PwTKitDrx81Nqq9S8WZQ9jgDd9v94HRMwo=@vger.kernel.org, AJvYcCUbhLHoPHK19WtURQ34faZrPMRbcwjA0UHbqpiKTxEYY5mXvfASARFdms14AhwY8Ny+V/7iPy4UAzuktWs1iLU=@vger.kernel.org, AJvYcCUfMWOlpQCYeeKZRAUuB1TgIGikSo5LE1BfZp98W1qrx6anwsKCGsFYC5cAi2K2SUlFHDy8vFtnANdkpz4=@vger.kernel.org, AJvYcCUzWJl07K2EpOlF+vVJGCcQEEolKF0KZZmEs8DjV/MNDUzvOH6Ed2l6S3sy1kFOYQJQrUGr+9giD2Ta@vger.kernel.org, AJvYcCX3Z5D/p1iCpfIQx/2elza+/Wi0y4+TmU+eUgzSrY7G36R0jM2dKln4k0eQRSHraU4G4yXp0/JhtGNGXw==@vger.kernel.org, AJvYcCXm+zHuWwEo3eX3JIZRZyCZXTs0y1qjixscBuXC4eqLgZTFkiwHkf4p1RPHRrovUCjzezEm7C8H8dQb@vger.kernel.org, AJvYcCXr5YixUF63Jf3WjDg2TUu8ELQkaIRhrWUdXfW8fvRozSGSBApRG0nL+oo9jwagNQsX3qx9i0Qh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOQraaoPhxpySDDNf4lLt0a+MKupDzmoSRkI/lTTsJRmIqJAIL
+	nRgCMmfI50tdgFSjUqzXxRci0xuZdPbsKRac0qgNMsgmMNhyqx2fnnXKPiGnKWk3hYuiyRC5sEP
+	eERfs/FQFWh9UJC28J94n/aEmyBs=
+X-Gm-Gg: ASbGncvsgnEwA5EGm8LflYi2gufq8ko55BRGJDcF/j78TgZlV3BXtfLbjKd22HgWqVL
+	paNh5ONWMtJIi9WDqu0ZqpPGaaPuPElu0ncHEffYlCLgQ+lKDJFkcnGBFN0eSCy6LvztB2Ro=
+X-Google-Smtp-Source: AGHT+IFdrPaTPZ9GejJx+R+k192Po7wThLXGiNtYgpHneGtofpZWdqMlRAawKJACPdSwzsCirltSWXVY1xz5qEDY38E=
+X-Received: by 2002:a05:690c:7249:b0:6ef:6a91:4965 with SMTP id
+ 00721157ae682-6f19e861030mr21004747b3.37.1733981277626; Wed, 11 Dec 2024
+ 21:27:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/ci: add kms_cursor_legacy@torture-bo to apq8016
- flakes
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Helen Mae Koike Fornazier <helen.koike@collabora.com>
-Cc: Rob Clark <robdclark@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>,
- dri-devel <dri-devel@lists.freedesktop.org>,
- freedreno <freedreno@lists.freedesktop.org>
-References: <20241204-cursor_tor_skip-v1-1-f5f0bba5df7b@quicinc.com>
- <193931869a5.f923adf2270026.8321075661083367617@collabora.com>
- <20a3955e-3d10-47c5-8e68-d70342805010@quicinc.com>
- <19393604e18.f9b6fe7d298023.1937039548910081216@collabora.com>
- <a03ae7e8-391e-4303-91fc-15a59979fd2a@quicinc.com>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <a03ae7e8-391e-4303-91fc-15a59979fd2a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241210104524.2466586-1-tmyu0@nuvoton.com> <20241210104524.2466586-2-tmyu0@nuvoton.com>
+ <68d1490a-ba67-480b-943f-afa56e5b8436@kernel.org>
+In-Reply-To: <68d1490a-ba67-480b-943f-afa56e5b8436@kernel.org>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Thu, 12 Dec 2024 13:27:46 +0800
+Message-ID: <CAOoeyxVAbf45g-PGiDiUkZoBrSq6mRvAwHdoC6OCjEUYAUS=Lw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] mfd: Add core driver for Nuvoton NCT6694
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Abhinav / Helen,
+Dear Krzysztof,
 
-On 12/12/24 01:48, Abhinav Kumar wrote:
-> Hi Helen / Vignesh
-> 
-> On 12/4/2024 12:33 PM, Helen Mae Koike Fornazier wrote:
->>
->>
->>
->>
->> ---- On Wed, 04 Dec 2024 16:21:26 -0300 Abhinav Kumar  wrote ---
->>
->>   > Hi Helen
->>   >
->>   > On 12/4/2024 11:14 AM, Helen Mae Koike Fornazier wrote:
->>   > > Hi Abhinav,
->>   > >
->>   > > Thanks for your patch.
->>   > >
->>   > >
->>   > >
->>   > > ---- On Wed, 04 Dec 2024 15:55:17 -0300 Abhinav Kumar  wrote ---
->>   > >
->>   > >   > From the jobs [1] and [2] of pipeline [3], its clear that
->>   > >   > kms_cursor_legacy@torture-bo is most certainly a flake and
->>   > >   > not a fail for apq8016. Mark the test accordingly to match 
->> the results.
->>   > >   >
->>   > >   > [1] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67676481
+Thank you for your comments,
 
-The test passes - kms_cursor_legacy@torture-bo,UnexpectedImprovement(Pass)
+Krzysztof Kozlowski <krzk@kernel.org> =E6=96=BC 2024=E5=B9=B412=E6=9C=8810=
+=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=8810:38=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> > +
+> > +     dev_set_drvdata(dev, nct6694);
+> > +     usb_set_intfdata(iface, nct6694);
+> > +
+> > +     ret =3D mfd_add_hotplug_devices(dev, nct6694_dev, ARRAY_SIZE(nct6=
+694_dev));
+> > +     if (ret)
+> > +             goto err_mfd;
+> > +
+> > +     dev_info(dev, "Probed device: (%04X:%04X)\n", id->idVendor, id->i=
+dProduct);
+>
+> Drop. Duplicating existing messages and interfaces. Your driver is
+> supposed to be silent on success.
+>
 
->>   > >   > [2] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67677430
+Okay, I will drop it in v4.
 
-There are no test failures
+> > +     return 0;
+> > +
+> > +err_mfd:
+> > +     usb_kill_urb(nct6694->int_in_urb);
+> > +err_urb:
+> > +     usb_free_urb(nct6694->int_in_urb);
+> > +     return dev_err_probe(dev, ret, "Probe failed\n");
+>
+> No, this should go to individual call causing errors so this will be
+> informative. Above is not informative at all and kernel already reports
+> this, so drop.
+>
 
->>   > >   > [3]: https://gitlab.freedesktop.org/drm/msm/-/pipelines/1322770
+Okay, I will drop it in v4.
 
-The job is same as 2
+> > +}
+> > +
+> > +static void nct6694_usb_disconnect(struct usb_interface *iface)
+> > +{
+> > +     struct usb_device *udev =3D interface_to_usbdev(iface);
+> > +     struct nct6694 *nct6694 =3D usb_get_intfdata(iface);
+>
 
-In this case, the test passes and deqp-runner does not report it as 
-flake. So we only need to remove it from fails file.
-
-
->>   > >   >
->>   > >   > Signed-off-by: Abhinav Kumar quic_abhinavk@quicinc.com>
->>   > >   > ---
->>   > >   >  drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt | 5 +++++
->>   > >   >  1 file changed, 5 insertions(+)
->>   > >   >
->>   > >   > diff --git 
->> a/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt 
->> b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
->>   > >   > new file mode 100644
->>   > >   > index 000000000000..18639853f18f
->>   > >   > --- /dev/null
->>   > >   > +++ b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
->>   > >   > @@ -0,0 +1,5 @@
->>   > >   > +# Board Name: msm-apq8016-db410c
->>   > >   > +# Failure Rate: 100
->>   > >
->>   > > Is failure rate is 100%, isn't it a fail than?
->>   > > (I know we have other cases with Failure Rate: 100, maybe we 
->> should fix them as well)
->>   > >
->>   >
->>   > Maybe I misunderstood the meaning of "Failure rate" for a flake.
->>   >
->>   > I interpreted this as this test being flaky 100% of the time :)
->>
->> Ah right, I see, inside deqp-runner (that auto-retries).
->>
->> I'd like to hear Vignesh's opinion on this.
->>
->> (In any case, we probably should document this better)
-
-deqp-runner reports new (not present in flakes file) or known (present 
-in flakes file) flakes
-
-2024-12-11 07:25:44.709666: Some new flakes found:
-2024-12-11 07:25:44.709676:   kms_lease@page-flip-implicit-plane
-
-2024-12-11 13:15:16.482890: Some known flakes found:
-2024-12-11 13:15:16.482898: 
-kms_async_flips@async-flip-with-page-flip-events-atomic
-
-we add it to flakes file if deqp runner reports new flakes. Another case 
-where we update flake tests is when a test passes in one run but fails 
-in another, but deqp-runner does not report it as flake.
-
-Regards,
-Vignesh
-
->>
->> Regards,
->> Helen
->>
-> 
-> Can you let me know which way we need to go?
-> 
-> Just in case I did post a v2 fixing this, 
-> https://patchwork.freedesktop.org/patch/627276/
-> 
-> If thats the way to go, can you pls take a look?
-> 
-> Thanks
-> 
-> Abhinav
->>   >
->>   > Out of the 3 runs of the test, it passed 2/3 times and failed 1/3.
->>   >
->>   > So its fail % actually is 33.33% in that case.
->>   >
->>   > I think I saw a Failure rate of 100% on msm-sm8350-hdk-flakes.txt and
->>   > mistook that as the rate at which flakes are seen.
->>   >
->>   > Let me fix this up as 33%
->>   >
->>   > > Regards,
->>   > > Helen
->>   > >
->>   > >   > +# IGT Version: 1.28-ga73311079
->>   > >   > +# Linux Version: 6.12.0-rc2
->>   > >   > +kms_cursor_legacy@torture-bo
->>   > >   >
->>   > >   > ---
->>   > >   > base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
->>   > >   > change-id: 20241204-cursor_tor_skip-9d128dd62c4f
->>   > >   >
->>   > >   > Best regards,
->>   > >   > --
->>   > >   > Abhinav Kumar quic_abhinavk@quicinc.com>
->>   > >   >
->>   > >   >
->>   > >
->>   >
->>
+Best regards,
+Ming
 
