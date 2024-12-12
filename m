@@ -1,250 +1,86 @@
-Return-Path: <linux-kernel+bounces-442733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88119EE0E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:09:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9AD9EE0EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:11:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3BEB168B16
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:09:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2C316484A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4A320B7E6;
-	Thu, 12 Dec 2024 08:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEECF20B81C;
+	Thu, 12 Dec 2024 08:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SNlNKtzi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tPEtKOvV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="28i2Gvu3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BocMPKWP"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYuGrqh+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02F120B7EA
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EDC1FECD6;
+	Thu, 12 Dec 2024 08:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733990970; cv=none; b=kOEgZawqR7LxwHm0jacv30USnePP4pWhRuDg/li/aQ3vIz2xwJnuOwDR/is3E8A5VG9dgzxdWKMK829D9xHFfGM4wzobdRMTVc5Dcv60ROx1cFV6b+mXEIMNTRqG/LKfdPx+y9KtxOMT4I7SXe37GUBOPTk8YohiR8k4Wpykfe0=
+	t=1733991091; cv=none; b=rQRaOc5r3an+/2BW0l3qlMvaTRJ49bAPLeqyN99R9l5gTRCusl9OsSmOatiGpSvFjDCvCg5PPaV4n7l8VCD7CvqrWndBL1W0qv4Q7T+pG39u8w9FKExI5vRxLYQkdlaQx1L961D5D48QtT8sU3cs0jWBgeM28AsqWsrjZEoj5eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733990970; c=relaxed/simple;
-	bh=xZZLTsPX8WrlmydO0wZSZjbSiiPKvOPs0GgC+En9wwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AgWHIBDVlXj7MTQY/XQcDoRrjDtUPeTZmSrym03N6YEHlXQ0ds/4qfocMyB/YMJ7U+L0PW6nnhlsrXeotjJrvBzDh2Oa/jIZxP12sPTqlXlnYFNZi1P3IavUhphcs39X9VVmL2JCf1Qr8PvlwMhyGMcSTOPCJ7RSG0QaWcllldY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SNlNKtzi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tPEtKOvV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=28i2Gvu3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BocMPKWP; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 125FF1F6E6;
-	Thu, 12 Dec 2024 08:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733990965; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7AJvRSTmRRscys3LOfJ82c+7pL7bTjjxmrmQRVhQxag=;
-	b=SNlNKtziCzqGzIy3F5P1yuaQhIcZu57FkHvSXqPWx52+MWFiibKoEDEi7iPi+jGbXgcqIQ
-	UUXbsTAdZpmeaZmIzynQORFa4ABQQITZDSBMg5u7TSjkjAr9NdmFJXqqO8knhivkSjL59g
-	gpQJo/jMkt1VnV/mvjmCyghkjIGX1KI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733990965;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7AJvRSTmRRscys3LOfJ82c+7pL7bTjjxmrmQRVhQxag=;
-	b=tPEtKOvV3rhKaOtPQl5LN796VVVWlY0pif7ualHj4Nc0JcWGmtksYTAjgSbqI52aMs0kMo
-	0PIkVyjevuZL6pDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=28i2Gvu3;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=BocMPKWP
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733990964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7AJvRSTmRRscys3LOfJ82c+7pL7bTjjxmrmQRVhQxag=;
-	b=28i2Gvu3K+VOo/53u2uAqNc8VzBhMn4xzHbHOyI3Jt6zHmzMOiAKJrbUOuG7g0Sq/w02tm
-	Kp+2HcAFOrYDZHnfnPQRKnYi1iYxIHKGlkjs3CMVhx+tXtTHIVnpFOesOvzC1VRJIWCcP9
-	tv4uxgCIG3uQ0PoUvF3/TaKsZo4dSrw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733990964;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7AJvRSTmRRscys3LOfJ82c+7pL7bTjjxmrmQRVhQxag=;
-	b=BocMPKWPUtAh0xM8k1Tzj+Yo4zlry9YCtwb3wfV8n8xB6PFg9r4Ix1otIt5fVEnI8srt+l
-	x28U+opYoPEGoWCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F011313508;
-	Thu, 12 Dec 2024 08:09:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AuwEOjOaWmeKdAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 12 Dec 2024 08:09:23 +0000
-Message-ID: <31245905-9704-4ab3-931f-4c4aa6c05ac4@suse.cz>
-Date: Thu, 12 Dec 2024 09:09:23 +0100
+	s=arc-20240116; t=1733991091; c=relaxed/simple;
+	bh=aeQtjkwpV2j59R4fd0CzGkLXDmXpVmYnKfv+AhRGHt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFb4p6SdQdsn1RbGctv34y4agaLTJW20LP3Wc5UgcbfVC/sLk2AS6iCfJkb+wNdBMLQzaHeywzqfpHE4c+DuveUWGuCkyxMyKCULZY+bA2kodYGUkjaQr5rw8aYroBDfnB+ZCaQiaPn4O7GhnGjnK8w9Vploe3sfNK2lONpIRHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYuGrqh+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4313CC4CECE;
+	Thu, 12 Dec 2024 08:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733991090;
+	bh=aeQtjkwpV2j59R4fd0CzGkLXDmXpVmYnKfv+AhRGHt8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BYuGrqh+Au0n6c/9nQJtVydb7ZvrLTofLdxYrx7MrHypQV6rFolvuZBO9zyw/l2jV
+	 sgznjo999E15acEghUxTCSd69oswcB6d1zzbS1In6X27za9fnR/yVhJlHuNbQAA1PN
+	 nYmOZ64cre1EAB5++p4sKFKSdoNaJj3DVKRnYPYZ2KAaOTv7/yLrmDRgY1y8qYvIME
+	 zm2Y+qDkJOtM+/PQmPZB71Cg1/5ekWdDFz7AI0Mx4xq8Yovawfov4I0cpXiM6sugEx
+	 PkJH8+2r+6PSEWR0R1r6KXrogGLNwU5pvirUmQ6jZLNnglAhKUQUVHkxk+CI9EKblZ
+	 Kaid+0jC4JaNQ==
+Date: Thu, 12 Dec 2024 09:11:27 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	eraretuya@gmail.com
+Subject: Re: [PATCH v6 4/7] dt-bindings: iio: accel: adxl345: make interrupts
+ not a required property
+Message-ID: <iqdm3x6fhyosqkm4mdknf6ee2idizq3p2nt7rjqgtuzxr75iaj@tcdl2e6l5g2s>
+References: <20241211230648.205806-1-l.rubusch@gmail.com>
+ <20241211230648.205806-5-l.rubusch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: update MEMORY MAPPING section
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn
- <jannh@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- David Hildenbrand <david@redhat.com>
-References: <20241211105315.21756-1-lorenzo.stoakes@oracle.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241211105315.21756-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 125FF1F6E6
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241211230648.205806-5-l.rubusch@gmail.com>
 
-On 12/11/24 11:53, Lorenzo Stoakes wrote:
-> Update the MEMORY MAPPING section to contain VMA logic as it makes no
-> sense to have these two sections separate.
-> 
-> Additionally, add files which permit changes to the attributes and/or
-> ranges spanned by memory mappings, in essence anything which might alter
-> the output of /proc/$pid/[s]maps.
-> 
-> This is necessarily fuzzy, as there is not quite as good separation of
-> concerns as we would ideally like in the kernel. However each of these
-> files interacts with the VMA and memory mapping logic in such a way as to
-> be inseparatable from it, and it is important that they are maintained in
-> conjunction with it.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Wed, Dec 11, 2024 at 11:06:45PM +0000, Lothar Rubusch wrote:
+> Remove interrupts from the list of required properties. The ADXL345
+> provides two interrupt lines. Anyway, the interrupts are an option, to
+> be used for additional event features. The driver can measure without
+> interrupts. Hence, interrupts should never have been required for the
+> ADXL345. Thus having interrupts required can be considered to be a
+> mistake.
 
-Yeah having MEMORY MAPPING and VMA separate but with same people wasn't
-necessary. MEMORY MAPPING is IMHO the correct superset and the newly added
-files there make sense to me.
+Partially this explains my question on previous patch, so consider
+reordering them.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+And with combined knowledge, your driver now depends on interrupt names
+to setup interrupts. "interrupts" property alone is not sufficient, so
+you should encode it in the binding and explain in rationale why this is
+required (it is a change in ABI).
 
-> ---
->  MAINTAINERS | 23 ++++++++---------------
->  1 file changed, 8 insertions(+), 15 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 68d825a4c69c..fb91389addd7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15071,7 +15071,15 @@ L:	linux-mm@kvack.org
->  S:	Maintained
->  W:	http://www.linux-mm.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> +F:	mm/mlock.c
->  F:	mm/mmap.c
-> +F:	mm/mprotect.c
-> +F:	mm/mremap.c
-> +F:	mm/mseal.c
-> +F:	mm/vma.c
-> +F:	mm/vma.h
-> +F:	mm/vma_internal.h
-> +F:	tools/testing/vma/
->  
->  MEMORY TECHNOLOGY DEVICES (MTD)
->  M:	Miquel Raynal <miquel.raynal@bootlin.com>
-> @@ -25019,21 +25027,6 @@ F:	include/uapi/linux/vsockmon.h
->  F:	net/vmw_vsock/
->  F:	tools/testing/vsock/
->  
-> -VMA
-> -M:	Andrew Morton <akpm@linux-foundation.org>
-> -M:	Liam R. Howlett <Liam.Howlett@oracle.com>
-> -M:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> -R:	Vlastimil Babka <vbabka@suse.cz>
-> -R:	Jann Horn <jannh@google.com>
-> -L:	linux-mm@kvack.org
-> -S:	Maintained
-> -W:	https://www.linux-mm.org
-> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-> -F:	mm/vma.c
-> -F:	mm/vma.h
-> -F:	mm/vma_internal.h
-> -F:	tools/testing/vma/
-> -
->  VMALLOC
->  M:	Andrew Morton <akpm@linux-foundation.org>
->  R:	Uladzislau Rezki <urezki@gmail.com>
+https://elixir.bootlin.com/linux/v6.8-rc3/source/Documentation/devicetree/bindings/example-schema.yaml#L193
+
+Best regards,
+Krzysztof
 
 
