@@ -1,224 +1,221 @@
-Return-Path: <linux-kernel+bounces-442588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CBFC9EDEB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:08:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7428518812ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:08:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B78F178383;
-	Thu, 12 Dec 2024 05:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Akzz8KeD"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2087.outbound.protection.outlook.com [40.107.92.87])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF419EDEB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:10:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188ED1DA4E;
-	Thu, 12 Dec 2024 05:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733980095; cv=fail; b=aLS/jAh0wFci2xGukoN3yBWtwbzMr87jcCqmg1wx8G7Bw26aA+y2Y1/IGnkpUEPgfWJIVlYtlg6Nm++UCEo0ZhCGUQFv6+1tVHJLt06fLzXsGvTeq5nVLo/c5vdFo3tn3GXPQ+egpFmouSRIaZ0TVb0kJPK1ZzYWwFvtgT6bKqk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733980095; c=relaxed/simple;
-	bh=ZmYNcaEtn1GezKjrnCiExNkitMS8WPemfcIOl1PE/YQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uaQxfeD1m4IjkWMUXLnWxb8VZPoJvptB85kFwa7FdcsB9X6dZxMCVRAbboZtvDzMxkYcUD4vqt7b0XqY/6gR9Aj+S2sm41o9jZmbY2yzzVz9BbpI0+UVSCDqr8A/vonAqD7ekkD9Z/3I1QJACt4NnW6mOo5MZkKuFdQ/eTyRX1o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Akzz8KeD; arc=fail smtp.client-ip=40.107.92.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S7iENrtFQAmBA5mgNEu5hrw+AXxEqDxS6tr1jdvO5sMtgi2JmOs1zESMmgEF3Cg6qVYgvLXLI4CW/bxKFftlt9DxILMSoDGtJRsYTM4q4IYUbkKaGNkdVl1UJiyZBnUfznUiUtJY7KlvYxmBxUrTwVExPqWSYeliGqM4I65rSWHX1A3DLGHG4s5i4PrLJn9E6/tbjagCMJCmLnSIwrHNROwf4scB2ZRmeZYAX9u6M8ez4x7PT1HsU+Jur7cZnyU7gPKQxeGMWGAWPIcd50ZEwsBC7/6ZHZF7NNmzTuIaPo/pkV7ICdeLimuP4dC2wm1upFjDsVONjZIHfdDUXd2BTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=egj3LIjI/5f32NYPFHGvkFjpCEFiZAfx/8ogqKJO2vU=;
- b=ok3QSx+dCIGOCjsmyE62/KGMw3PU7y3AKoQbXojV+0UPgYhcaOZqw4L2OjaJNSCdsr2t4si5sdRxOyAyWbwC2/jsYlvnvFMgGQOiYSyaZ9cdR8Gz47HOh6yHS8RtEc9CCMaSSJRjKYloiGlBB1NEajup5zQyn/ywUXNSvwRH9l51XtKeanA8Vhx8UHvAF/HuRlMQSlP31wr1Un9bQy8TKQADfJH+Aw9hGmGgc5+zcywlqWZQj0HWfqBvmS9JCR6/V1S7RnqGbZLDAZxE1TFHaUk9PT5wnAcoKPAjZDR4qvZ1utqtTk0jM8r+iXgGW1TQRkeOEI4Pyos8zBixnNtl4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=egj3LIjI/5f32NYPFHGvkFjpCEFiZAfx/8ogqKJO2vU=;
- b=Akzz8KeDG6ri2z6IW8n1tNfXS2ZZf6LbvZ/o+Zpgq67g37R8VpaToKzg2LtsMZQEOL1bO5WvURdNKtKyORmpPfoKNZSku5WQEi2xPRyjGC2nx3v2C+uwOVlc1kyvAn1lrVI30NtNPdZfFctgBDpvQ0ILMConfkeSmpBA+8K/B+U=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6317.namprd12.prod.outlook.com (2603:10b6:208:3c2::12)
- by DM4PR12MB6064.namprd12.prod.outlook.com (2603:10b6:8:af::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Thu, 12 Dec
- 2024 05:08:11 +0000
-Received: from MN0PR12MB6317.namprd12.prod.outlook.com
- ([fe80::6946:6aa5:d057:ff4]) by MN0PR12MB6317.namprd12.prod.outlook.com
- ([fe80::6946:6aa5:d057:ff4%3]) with mapi id 15.20.8251.015; Thu, 12 Dec 2024
- 05:08:11 +0000
-Message-ID: <bb4d34a7-e303-49c7-9bd9-3b97909e9ed2@amd.com>
-Date: Thu, 12 Dec 2024 10:37:29 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 07/13] x86/sev: Mark Secure TSC as reliable
- clocksource
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
- kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
- pbonzini@redhat.com
-References: <20241203090045.942078-1-nikunj@amd.com>
- <20241203090045.942078-8-nikunj@amd.com>
- <20241211203214.GDZ1n2zvfqjYj4TpzB@fat_crate.local>
-Content-Language: en-US
-From: Nikunj A Dadhania <nikunj@amd.com>
-In-Reply-To: <20241211203214.GDZ1n2zvfqjYj4TpzB@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PEPF000001A9.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c04::f) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00844283CB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:10:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9028116FF4E;
+	Thu, 12 Dec 2024 05:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B6rdBSCP"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4071DA4E;
+	Thu, 12 Dec 2024 05:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733980229; cv=none; b=FNOkuOM+lWNWlBqn62NqIcqg4Mui30fK/NkXVrgCBLHvLbQ4MdCYHrfJ4o1Tnt57QOZwjgGE4O+yKUPNnyzF8EAP/Hacx1Vg+5YK3Vnxk6mlh+ExwGapslO5ZRhIAlgbSoRSj6k5Tq+0Zwh8COFHTwp0D+q/kvZOiIPJ9x7K7pQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733980229; c=relaxed/simple;
+	bh=hI0EGDPmpP7XnD6A+7EcRF/bfUEgIBo0whGbTy18VlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dHH2tmnCDRgdKP7u7fKSSxNE4Pisi0+ZfYw8Irhk7iWYrwpN09ye4rcIqmhWetxcQI0yf66/hESVdgQmhlvLPZl+46pIoeRq+c44ALU7DiMoFF2Oc1eiMgf3JjcziEDku6lkLfUOlvuMXxLRCr9cpqR3LJl+2wiBzp3q+SSkDm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B6rdBSCP; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733980224;
+	bh=hI0EGDPmpP7XnD6A+7EcRF/bfUEgIBo0whGbTy18VlA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=B6rdBSCP9h676c8clZYZaXnW6OJAvCH9vRGJFhKXO/Pfac5/85AD5LzEd/+VtM2Hl
+	 VOKnKCwkyqxc2+mv9wejP1ZEJTBQ3mjtNEcpqCSr18v4xzbxhrMU7ylAwjJYcp8BUf
+	 IIQ/CoqUKzl/R4qvazwtrygEkb9X/xry3zXqJJ5HDFHhy4RZaSkJDPaR0QZwenlFi7
+	 X24ZVRiaPAWSswhD6GDwMnY9xIkVfRFeGsgoO1AFMbjEGn1cJJ4TcXrQVgYpo+gFjO
+	 e0K3dpOYe3Ero5WIvC7P2S8yV8n2D0L+UoxpoDmv6xch5D1HR0LfnQZ5BVc1wKLbXc
+	 quwAsMIgDbIbg==
+Received: from [192.168.50.250] (unknown [171.76.86.135])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BBA7917E1067;
+	Thu, 12 Dec 2024 06:10:19 +0100 (CET)
+Message-ID: <ed90ca8c-ed81-419f-a5db-a4e8bcd35835@collabora.com>
+Date: Thu, 12 Dec 2024 10:40:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6317:EE_|DM4PR12MB6064:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22697f59-1be9-4e1d-b6a6-08dd1a6ae7bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T052TDd6akhDUlRqWDBYUGlaQmZSZ3JTZ3FxRWhBSFlyaEQzckZFdlltOTBq?=
- =?utf-8?B?dFVPVE1KOTlITnJrSWNwb0JWUHF5cFRGb1EwcGZXRWszdHlWVktFTmFYTjc3?=
- =?utf-8?B?dWR4MnBJRWY5STI4RUFNaGlRNC9CS09xc3BUNVA1dzVMUjBpYmRMYXZIYzlC?=
- =?utf-8?B?ZFhNVDJtRE5PRUwwdi9GTGFpMDJJV2tJNE94c1g5bm5CT3JDK3lzOU5lOEhL?=
- =?utf-8?B?UWlTREo2NXVSNTMzeS8raWJQMFlEL2Q1M0lldHhFTFh1Yi9IUk9pd0VObGFL?=
- =?utf-8?B?NUVWQ1dKWkhNcmpTaDAwcHZYT1c2YWJQL1dqVzk0M203RXVJYkp4cXdtQzBt?=
- =?utf-8?B?b29IdHJhRGY2OUZ4bTdKMENML3hmSUFTVW1FaTlmZDhUY2F4LzUwV2dTTFht?=
- =?utf-8?B?TEFoajBId0dSLys5eDJoT1FpWmdkRFh0WFRHQ1h3VkNjcGJlWUgvM3BNZlUv?=
- =?utf-8?B?QnJ0WVJaTWhnalBiNDJJaklCNERwblM0TWhNMklFWXY1aFYrQkdSUlpGeTVp?=
- =?utf-8?B?c1o3LzRPZGlJRENQVkkyckhvUExhbnhORXFlbWNOR0tyazFxNXlOUjBtalhG?=
- =?utf-8?B?NU4xZ1RXMzNCMW9GZGo2OFhFUjdiY0JvVUxvSU56ZWpLcnlhWkZtbHpzblJM?=
- =?utf-8?B?cVNIbkp1dk9UUDFhU3NtSURnRkgwc0tWdis4VjZSZ1JzbUltc1JrSHlZbjhG?=
- =?utf-8?B?UjVSR1dHOWZ2YjVFVGhGZEQwNmFkYkZBVVVHREFpZTRxbURGcFI5N3U0L2Fu?=
- =?utf-8?B?ZC9qVDd0Uml1eS9aS0pYK1pRS09LMkh4VGE5RFREekJyZytkOVBLd3FIOWRt?=
- =?utf-8?B?K3pPaXJzZVliYWR6b0VwTXVPRDhwNVdYOXBVbGJiTnhQdWtkeHhXc2JUYkdN?=
- =?utf-8?B?M3ZyRGZ0Rk5CdkFzcklzYlBaZzN5WmFtVTlFZXp6N3dQUHpxZ1I1R01zVnVX?=
- =?utf-8?B?ZVJ5bXBwYXZsTjk5Vk9KM2o0S2xoL2s3NjhKQkRRaTE4eUxsUmV2MmdpdXkz?=
- =?utf-8?B?TTFhSkZ3bGJJNmJGeVFKYWdEalJZbVhpOUNvUHdKaFYxZ1Z0T1dvckpWZlVV?=
- =?utf-8?B?c3RnTkpNMmdjWDMyNTNIMlZWeDIxaHdmWVlRdDdCVFEzTHMwK0dZZEErRmtX?=
- =?utf-8?B?eVZJcitDNjAyVVl3VTg4YW5BTkFzWmMwaWF4Q291bnpON1Y4VVhDMHZKalJW?=
- =?utf-8?B?a3ZQMTRULzNmRFhISUNCQVE2TENqZTlUbk1RMGQvR01PYnBTYkt3ejV5UUV4?=
- =?utf-8?B?RTlSb0NYdFdnL3lRQVU0bXJEM205K2orZHpqa0tUVUNEMXlQaFBIWDBkMERB?=
- =?utf-8?B?RG1vWkVhZVRuQWVkMXQ0UXo2bUNTbnpRaWZhNndKeU1vd2pVRTI4MFV3TFFV?=
- =?utf-8?B?RHR4a2dlbWJnREIxcDNCV1BJZWtWUVZrZDJTdUJkRjlJNmNlOGszZlNvbHR0?=
- =?utf-8?B?M25QMkorNWhPeWhhOVNZMVk5RU1jazZqVHdwdzNWRUJ4K0I1SlR1a1Iwczdn?=
- =?utf-8?B?MWlOcWpyL0hnd3BRVnlPaExXYnFPSzhyUm1weDNtVHVOUHZ4RlFwVFNIaGxN?=
- =?utf-8?B?czRFWHZmS3FHb2hnK3ZDRENmdVI3RXFqZm5HWDQxT3podllrMmJweHdOUW81?=
- =?utf-8?B?Si9WbVEwQ2JMNENNbmV1ci9mYm8rR09EWTQ4QWowNlluaGM2eks0djhxUWt6?=
- =?utf-8?B?ODYrS2Z1RmVXY2NqdnliTjY2c1RXdWNxamd3bEl4M2pXblh4REhFcmRRdWNM?=
- =?utf-8?B?SjFRaXJrbUxwTHlNelZiRTBTeXJJc09tWVNYUVVHdDJHYzVCbEJNMEZ3RUpV?=
- =?utf-8?B?dHVSMTgxRFIramNxR0hiQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6317.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MU1mbWJGV21pSW9odnovclo1WXlVbjBQWktGNzZhdWp3NXUvdWVvU0o0dmE0?=
- =?utf-8?B?N0pUOS8zVGNNL05yVkhtbzdRRlBVTEV4RzNKSHhObzQvUStXdStobVVVK2dS?=
- =?utf-8?B?RGNhRnNodWs5VmI2MW1qUnUzWExLaDlMejNabld0a3plM2w3TVpOaDY1YWZC?=
- =?utf-8?B?U1gwK041dS8vc2pHYWhUbjRSdHNtU1djU3NLTXZhSmhBUmlrL05rT1MrN2VV?=
- =?utf-8?B?RlBGUFhoV09RRGR4NWFYM0xjVTZwZncyVzV6a2JaQnplekRrYmJCalB0TTAx?=
- =?utf-8?B?QmpweEJLSkd1VEg3Uk40bENUVUMxRW9sc3ZmK21zQ1pBK2JtZG9xK2pXS0c5?=
- =?utf-8?B?K3ptM3VjaEN4c0VHS0hvL05wMjJaYTJpVnZNVC9MQVBpa1FnTS9NZldHd3pD?=
- =?utf-8?B?SG5jeSs4R3BQemNrUndLUTMxa3liU2tnclRHNGxrY3pyOW5wbUVYQTBXMXBz?=
- =?utf-8?B?VHR1VXhOZlo5Vkg2T3FiVkVYd09XTG8xRHdSR0ZSQTJURXJ3SFExM1lkalk0?=
- =?utf-8?B?blNtbEZYVHBuZVRvV0JuYXlKWHEwL2dIS2NNdlNHMXpTVlZBZTFkL2UzMjdI?=
- =?utf-8?B?eE9YOVNXY3QwVWNNSDQyVGh0V2RLYXJsaGtROGRjMXYvRWFyVjJBNzhDRnpi?=
- =?utf-8?B?M01CYWh6Ym5pd2VrRHhzSVlHTThTM01jOGNtdkR4aWRocjN3aEl6akRackxO?=
- =?utf-8?B?VDRzOW9ycU5EVVNEbjBRYm54YmxHZWxQaVMwV216UWJReUFaaUZITlFTYndW?=
- =?utf-8?B?NU5pcVUyakFja2l3MjBKc3l4QVBqem5PY2xKcmxaRnFObUYzeWlWZmV1cUZE?=
- =?utf-8?B?YlNTQ1k2bWN2S0lNbUdWVS9SMDhvV2dsRHM4d201Ujk0Q3pqNm90OWVidFds?=
- =?utf-8?B?UmJydFg5YVFYVnlzcmZHalZKdUcwNjFFUGs1VEQvTDEvdXFpNkJ6L2x4ZGVO?=
- =?utf-8?B?Uzc3WkdPMXIrZWtjSUlIaktpcEpJTXJGZ2FQMkJPVEhuNmdPU2hLN3lCQ2pq?=
- =?utf-8?B?SFlSU3FySWl2cVhwdE1UWDdycWZJdTR3K3pWK1hESlZjOFNTWGdrU01mZ2wv?=
- =?utf-8?B?V1haYmRvUk04aE5lWDNadnU4c0NsKzVsVS94TG1scVd5cE5JNzNkZ1RSamx3?=
- =?utf-8?B?dEI4Vll2citxM3pLbE96UVM2U0VReHdnTkdnKzJ4eHQrUXVBYVJ1SGlIQ3cw?=
- =?utf-8?B?RytLSU9Gd3NZbHE4eVVCRWczcU5SK1B3Z3J2VE9HVHRQZWV5blJyR0JjcVI4?=
- =?utf-8?B?QmVaWEZ3RHZKeS9KVEZBTVpQTHpvRHRjeGZJVlBuUGhoVmxMZHZGUTBZeFZo?=
- =?utf-8?B?Y0IrRTZ4QmV6d2NIRmMxY3hlMHVoNjY3a24xUlBSdWdMUENxU3RJN1BiWFBq?=
- =?utf-8?B?aDVlYnlMdEhxY0ZZQzVGZ0ZyeHVqa2xaZXl0SnFRZkI0K3poV3BZRlJvSUFZ?=
- =?utf-8?B?ejExQSs2TGs2bVROL3I5c2FZd2dHckRIa3JGSGpMMG82RDM2bENJcGMrcHNR?=
- =?utf-8?B?aHdVTnoxdklzdEJhZ1hEa1FnSE8vUnkyTk9xZnJoMzBhaU0yZ3E4YnpsMUMy?=
- =?utf-8?B?K2JWbmtWNi9wdjdLemVMWGFJb1dtVDFTaUxzMUFjUjBZRGJ6TG5taHFnU1Jz?=
- =?utf-8?B?S3o5ak5zTHdKREEzZi9WZ1FpUzBmc2FRSHgrWlZ4RWJ4NGxPZDdhT1ZtV0dX?=
- =?utf-8?B?c0hLeUdud1lrVGVLbys2ZG80TzgyOVFwaW1vbGI1aWpZUWNMUWg1SXNEeFU3?=
- =?utf-8?B?alM5WjJVWVBoeUJrK3ZGZ0JqL3pyckZGazdNSkMyUzMwZmFEWmxVUlVwa0tN?=
- =?utf-8?B?MFc3U1ptQXRUdGdrOXNCclpibEViYXQ2NXBCNzZETUFDR3FGRm5GaTZ6eUwv?=
- =?utf-8?B?VW5wVGV0SW9ZUHE2TkpoOE9nbk9pMEEyZ2xwVE9qeHdpL1JqMkdXV2JITjVI?=
- =?utf-8?B?cTZhRWpySVpMNTZaNThvUGRlTW9GTjA2RVd1TjdSUUJxMTJtVHQ2czFVWEU1?=
- =?utf-8?B?Qmh4ZFlVY3NmUDdZOGlkd0MzRmNSRW5aRVdxU1BSVjFEN2htc0YvT1U3bi93?=
- =?utf-8?B?eDV3Wi9QQmNqU3poVTQyYnJ6OGZuTkVxNWNxQTh6bkVuUEhodWpSeUFPUE9u?=
- =?utf-8?Q?N9rFWzdidE7SvhSKsBxEL1YtQ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22697f59-1be9-4e1d-b6a6-08dd1a6ae7bd
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 05:08:10.9398
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7o7DILmTpHfVcsg3cXjfVGx2HIvzoLK0337X4et6rL7E8gj+TdmvcLTVsZoxjV82WMV6wWpF2K56mIamSOnxBQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6064
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/ci: add kms_cursor_legacy@torture-bo to apq8016
+ flakes
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Helen Mae Koike Fornazier <helen.koike@collabora.com>
+Cc: Rob Clark <robdclark@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ freedreno <freedreno@lists.freedesktop.org>
+References: <20241204-cursor_tor_skip-v1-1-f5f0bba5df7b@quicinc.com>
+ <193931869a5.f923adf2270026.8321075661083367617@collabora.com>
+ <20a3955e-3d10-47c5-8e68-d70342805010@quicinc.com>
+ <19393604e18.f9b6fe7d298023.1937039548910081216@collabora.com>
+ <a03ae7e8-391e-4303-91fc-15a59979fd2a@quicinc.com>
+Content-Language: en-US
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <a03ae7e8-391e-4303-91fc-15a59979fd2a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 12/12/2024 2:02 AM, Borislav Petkov wrote:
-> On Tue, Dec 03, 2024 at 02:30:39PM +0530, Nikunj A Dadhania wrote:
->> diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
->> index 774f9677458f..fa0bc52ef707 100644
->> --- a/arch/x86/mm/mem_encrypt_amd.c
->> +++ b/arch/x86/mm/mem_encrypt_amd.c
->> @@ -541,6 +541,10 @@ void __init sme_early_init(void)
->>  	 * kernel mapped.
->>  	 */
->>  	snp_update_svsm_ca();
->> +
->> +	/* Mark the TSC as reliable when Secure TSC is enabled */
->> +	if (sev_status & MSR_AMD64_SNP_SECURE_TSC)
->> +		setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
+Hi Abhinav / Helen,
+
+On 12/12/24 01:48, Abhinav Kumar wrote:
+> Hi Helen / Vignesh
 > 
-> What happens if someone writes MSR 0x10 on some CPU and thus makes the TSCs on
-> the host unsynchronized and that CPU runs a SecureTSC guest?
-> 
-> That guest would use RDTSC and get wrong values and turn the guest into
-> a mess, right?
+> On 12/4/2024 12:33 PM, Helen Mae Koike Fornazier wrote:
+>>
+>>
+>>
+>>
+>> ---- On Wed, 04 Dec 2024 16:21:26 -0300 Abhinav Kumar  wrote ---
+>>
+>>   > Hi Helen
+>>   >
+>>   > On 12/4/2024 11:14 AM, Helen Mae Koike Fornazier wrote:
+>>   > > Hi Abhinav,
+>>   > >
+>>   > > Thanks for your patch.
+>>   > >
+>>   > >
+>>   > >
+>>   > > ---- On Wed, 04 Dec 2024 15:55:17 -0300 Abhinav Kumar  wrote ---
+>>   > >
+>>   > >   > From the jobs [1] and [2] of pipeline [3], its clear that
+>>   > >   > kms_cursor_legacy@torture-bo is most certainly a flake and
+>>   > >   > not a fail for apq8016. Mark the test accordingly to match 
+>> the results.
+>>   > >   >
+>>   > >   > [1] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67676481
 
-No, SecureTSC guest keeps on ticking forward even when the HV has written to 
-MSR 0x10 on the CPU where the SecureTSC guest is running.
+The test passes - kms_cursor_legacy@torture-bo,UnexpectedImprovement(Pass)
 
-I performed following experiment to confirm the behavior:
+>>   > >   > [2] : https://gitlab.freedesktop.org/drm/msm/-/jobs/67677430
 
-1) Started the SecureTSC guest pinned to CPU10
+There are no test failures
 
-host $ taskset -c 10 ./bootg_sectsc.sh
+>>   > >   > [3]: https://gitlab.freedesktop.org/drm/msm/-/pipelines/1322770
 
-2) Read TSC MSR on guest
+The job is same as 2
 
-guest $ sudo rdmsr 0x10
-8005a5b2d634c
+In this case, the test passes and deqp-runner does not report it as 
+flake. So we only need to remove it from fails file.
 
-3) Set TSC MSR to 0 on CPU10 on host.
 
-host $ sudo wrmsr -p 10 0x10 0
-host $ sudo rdmsr -p 10 0x10
-4846ad0
+>>   > >   >
+>>   > >   > Signed-off-by: Abhinav Kumar quic_abhinavk@quicinc.com>
+>>   > >   > ---
+>>   > >   >  drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt | 5 +++++
+>>   > >   >  1 file changed, 5 insertions(+)
+>>   > >   >
+>>   > >   > diff --git 
+>> a/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt 
+>> b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
+>>   > >   > new file mode 100644
+>>   > >   > index 000000000000..18639853f18f
+>>   > >   > --- /dev/null
+>>   > >   > +++ b/drivers/gpu/drm/ci/xfails/msm-apq8016-flakes.txt
+>>   > >   > @@ -0,0 +1,5 @@
+>>   > >   > +# Board Name: msm-apq8016-db410c
+>>   > >   > +# Failure Rate: 100
+>>   > >
+>>   > > Is failure rate is 100%, isn't it a fail than?
+>>   > > (I know we have other cases with Failure Rate: 100, maybe we 
+>> should fix them as well)
+>>   > >
+>>   >
+>>   > Maybe I misunderstood the meaning of "Failure rate" for a flake.
+>>   >
+>>   > I interpreted this as this test being flaky 100% of the time :)
+>>
+>> Ah right, I see, inside deqp-runner (that auto-retries).
+>>
+>> I'd like to hear Vignesh's opinion on this.
+>>
+>> (In any case, we probably should document this better)
 
-4) Read TSC MSR on guest again
+deqp-runner reports new (not present in flakes file) or known (present 
+in flakes file) flakes
 
-guest $ sudo rdmsr 0x10
-8005d18a7144f
+2024-12-11 07:25:44.709666: Some new flakes found:
+2024-12-11 07:25:44.709676:   kms_lease@page-flip-implicit-plane
+
+2024-12-11 13:15:16.482890: Some known flakes found:
+2024-12-11 13:15:16.482898: 
+kms_async_flips@async-flip-with-page-flip-events-atomic
+
+we add it to flakes file if deqp runner reports new flakes. Another case 
+where we update flake tests is when a test passes in one run but fails 
+in another, but deqp-runner does not report it as flake.
 
 Regards,
-Nikunj
+Vignesh
 
+>>
+>> Regards,
+>> Helen
+>>
+> 
+> Can you let me know which way we need to go?
+> 
+> Just in case I did post a v2 fixing this, 
+> https://patchwork.freedesktop.org/patch/627276/
+> 
+> If thats the way to go, can you pls take a look?
+> 
+> Thanks
+> 
+> Abhinav
+>>   >
+>>   > Out of the 3 runs of the test, it passed 2/3 times and failed 1/3.
+>>   >
+>>   > So its fail % actually is 33.33% in that case.
+>>   >
+>>   > I think I saw a Failure rate of 100% on msm-sm8350-hdk-flakes.txt and
+>>   > mistook that as the rate at which flakes are seen.
+>>   >
+>>   > Let me fix this up as 33%
+>>   >
+>>   > > Regards,
+>>   > > Helen
+>>   > >
+>>   > >   > +# IGT Version: 1.28-ga73311079
+>>   > >   > +# Linux Version: 6.12.0-rc2
+>>   > >   > +kms_cursor_legacy@torture-bo
+>>   > >   >
+>>   > >   > ---
+>>   > >   > base-commit: 798bb342e0416d846cf67f4725a3428f39bfb96b
+>>   > >   > change-id: 20241204-cursor_tor_skip-9d128dd62c4f
+>>   > >   >
+>>   > >   > Best regards,
+>>   > >   > --
+>>   > >   > Abhinav Kumar quic_abhinavk@quicinc.com>
+>>   > >   >
+>>   > >   >
+>>   > >
+>>   >
+>>
 
