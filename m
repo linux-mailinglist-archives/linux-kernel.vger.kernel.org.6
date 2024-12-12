@@ -1,116 +1,156 @@
-Return-Path: <linux-kernel+bounces-443578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A2B9EF7F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E8A9EF811
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:39:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FFFC2871B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 193A6292D68
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD704223711;
-	Thu, 12 Dec 2024 17:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F99B22333D;
+	Thu, 12 Dec 2024 17:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4rgW3kF9"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nPore93d"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB73222D67
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C243B2210F1
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734025099; cv=none; b=ThDdLyR4+pYa5i5agZ40QNWVKW+22sT9Uqhn15TRzD/DYeWYAo260LG3LqszPYXgQqAx3Gaf4RqtF8JykCiXv0NiNoQhvoenNlK+lk4srmSw/I778Vu5aOfvm5oiMCdJ4wzqa2+nULi16Hme4ve+kpApIcBhHH4+4NaTK6veH/0=
+	t=1734025147; cv=none; b=fsuoMB2uy8eJPBiRt18dX0AI4qSzXSjvp6WwGLoYaDkJBEn6GgiBfid5K628aZdR/PmhD8feGuWcl7S/Lm61ALitFnJ3hok7WnkSeNEc4hpePAybXC1JZ5dgMEzZZaVY7iUR44m4KHN9gNE/kAWlqpFPVDx0EN+ab3D/wMWSSks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734025099; c=relaxed/simple;
-	bh=aWTVrxmG5W3tIhT6neWuRFNEJ1LBgRdw+hgIKFCMjK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lOfR3Ddd+o0aUkyB81vSOHdtjwFaqYPPR6iMuNAINwWBMAWGYtSYuq/+bT/WT9XbV2YQorGFLGK4IDw4SDw+nYGCOj1duUUOOIZ0mzVF5s1sX+SFIg6mea0eYys5spSV4y+ms0VhersFhe05mN4T3Au+EK1WamPpn5UK/kc6ZNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4rgW3kF9; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-540218726d5so887350e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:38:17 -0800 (PST)
+	s=arc-20240116; t=1734025147; c=relaxed/simple;
+	bh=eMaa+1s6Oic+vVrJQSezrnGXV/UwpVx0e4bkfGVOXxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgLAbRfa9be4R6Zz77saubKrY5oeeFUNbxRgIL/jNHDa7j5yOCsy/CO3y4AKBwUAPsAfzJ+DrWXwOsvAnql1OgahImeBcxRfDu2nktbmWHy1FozWPgV0hnVPZKlDq2lJOesd6FXCIXO59fmay8g+GRrzX/9BbD3PNOHFit+WVLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nPore93d; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-435004228c0so11696915e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:39:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734025095; x=1734629895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aWTVrxmG5W3tIhT6neWuRFNEJ1LBgRdw+hgIKFCMjK8=;
-        b=4rgW3kF9468wmzu5vD3JP2gqmc4PdmJAWEx2DVd80dOtBAnwJwaaxmm/DAHJO3bYIY
-         dQWCVSDktLwQ7VY7erI49aRt1NVP9Nb8iMD1j9Crza7t+fvbyyFizPyhloGYOoiVmJ3c
-         ovIboTYbmYkTrK0uh2L3wuTGWqPvaAuGUf+d4VhxkefASUIIvl6HFQ8lLUc5zj8c+UOQ
-         ZQA9obp/zn2gqu7MkONKg9YGFMOCf9MGc75qK5wYbjo2pRCPS6QRmRYbxzz4/OdM7Ybo
-         W417cELTTjvLWTl56/QqSTvb3EVIQ4+Pmk1q76lMX+90km/kwUu0PzVhXFoNnPRk/QNb
-         43vA==
+        d=linaro.org; s=google; t=1734025143; x=1734629943; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RdPPbRbtOCRVKhqUGeFsn5kZ9oH7JqJR4etx+rwghdA=;
+        b=nPore93dEANJsEg2OKBvSY3ymc8yyZlkD6KWRJof844YprztL46LhpnT4NcIn3Q9E9
+         UT2vIO9AIZRUiz6vDK83dCrs5fLm8DGriEAzc1fHlB2i6fhhBOqdWiLWlpkjo6FwBo+5
+         3hhT8X8CsJGv8yiYZhvhbGeo38KBglhRxjj7aYRWUyy+5kxmV3upcKwUkEZzO5ypNMz7
+         BYh4fDt0Uq5T/9HbPc4U2zWMlkqYhJ13zszw05X/vZXSqqv5xWBP7WaCQM/S+Onpx0Pv
+         flY/S5xFbjbeuIkGS94ttAZfILAJ85ny2S4UZskQCKPuz6SJ3fj6nEIZBLYWQRD4KJGX
+         aMaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734025095; x=1734629895;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aWTVrxmG5W3tIhT6neWuRFNEJ1LBgRdw+hgIKFCMjK8=;
-        b=lbxMVa8M7X+kYoBZ5Hc5oUJ5BtRBZZaQUIMW3bR652dqNNZw89QO7CmkVX9mu7raCB
-         2HT9bv21Ydh8ennSySBtDFRqHTWe1wogUQ0FcENNd0JUwZLW6tl9IWX2hyxMvPTrRY+f
-         GoC8eAZ97MpwMkInTpnB/OtoW7tzhjPf1MzO/TPHJYnQ95N8d1ekPIeE/wcjDHSnboDs
-         mHIP7pQSOZOBHMb3DRJ4CBexKkuiOc83FrMNy7VY/z029JoRITUcvJfL9dtzvUN52fmy
-         Yl1D9tpIOJ4Ca/nOfDwtqfSa8uUZ9rGDuU1h2CDcxGObsbNx9ne1Fq1TeiamQZcZOb7l
-         vLkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWejUPmRLIHZh6D76arFNNo8SwaXMlPQ0IvOYsdNAzhWFDGOAPl/MoUkhQfpCeoSTg+l7BSjs66NUoyYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yytu/oQn4mA0BUBZN8o8i+5I76V4xXcqjTWikckr3Tm/0uQ96FG
-	mQH25gQyaY8VDdPZM/irFs81xocTy9MCUVaYiJITSwHU8Pm4Ku0rb2ui8MIqCg+7HJwnASdWRtR
-	B3pfC6fU2rjbbFsZ4f/JYY1HVqAW/6A1iIgLw
-X-Gm-Gg: ASbGncv6VbDZw3sRYKaqj/13oTWe9cub6WADS3hbDgE2noS6FcoUkrIF/ow5UIVol1H
-	kBRBOraSc8Ue1cSz9vIfxh0gOZDQFaDMRYqSlkA==
-X-Google-Smtp-Source: AGHT+IH015phUurBpWFmQa3s3RBwJ8PNrtRSaF1ujp3Q451/4hYQAF7Ccw77Ht0ZKlUC+7RE7PoqmmdadfJXIZMtLLU=
-X-Received: by 2002:a05:6512:124f:b0:540:1e51:b919 with SMTP id
- 2adb3069b0e04-54034112534mr504071e87.31.1734025095447; Thu, 12 Dec 2024
- 09:38:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734025143; x=1734629943;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RdPPbRbtOCRVKhqUGeFsn5kZ9oH7JqJR4etx+rwghdA=;
+        b=sWGh1GbCKT6lghl+Gd0AQUsN7yPnavToHpx4hSfzzP7HjcdrcQJ4XioAfXZso1XUPw
+         eIvlSuQffmcoGmoHheskpGo7sLbN1Pnli4iMTrp3Xz1j08I6ETBOhE1rwCD5LvAjl8Qz
+         a3LASsEnjoC/nAT31sTPdpqUWDWyVZdu4MKEgdETgt4Zsvq3XSsIJpXL8b8rTtkIywCf
+         OgzME/+YZFkKx0upOoTrfmB3lxZdYrlZv2c1M5W74+q3dmikwAfWEgsrUnqb5XFLqKX5
+         zt4OCKTDgzyNHChO21x/tF3JCtL/o7x5nzRnuTSOfo6Ryt2kmxLo5bpPQkJhRYxp921R
+         BJSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVh1xGpoEWZjsDvARrIFe9Ufcw/zTyoemyjB9NdZsKRK8oJ84nEdA3KF1gMjGeRPs2SaX5wFTcDVtJy6To=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLU06P5OnlUuRQfWGBtEWMrZYR+8dPivxVWEtNQOb2OCsoaDN9
+	za97h4e4KeeQhSKy6E0AKg/scxL2GwqdHyhrO10csmVZ6tukONkbVgHOSs3PlRs=
+X-Gm-Gg: ASbGncut3uM1kwL5XJXWZKRZYT3I7kbAGdeV00dQoM1TI1YLaJFF5HF3QZVxrbaZRt4
+	pUIC0bN2gFdAzKZh6GYnDwE21oM3kjNiOa9pQ7wrlSEkj3kpBxlg4+xtFi4FPqnWCptSu3QVsxp
+	o2sKUq9CNx+NrVKRYfNq9GvnnYq2iFBzoMHilli32GXPQdYimK0PiB2thWjg3cZC9IJXFxPAJ/I
+	cVx8KM2P8Z3+frDp0HCB2fUxloDox90QrHyR+Al0Z1MxIZEc96vAlE=
+X-Google-Smtp-Source: AGHT+IE7M7KWizuTlmdXgepOOA1ZHa8E1i/d7gI8YHUlTjMROy7G2A2HxSU/h0+zZY2Hehz8nbuVQQ==
+X-Received: by 2002:a05:600c:34cc:b0:434:fbe2:4f with SMTP id 5b1f17b1804b1-4361c430b5cmr72148245e9.23.1734025141596;
+        Thu, 12 Dec 2024 09:39:01 -0800 (PST)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878251bcabsm4731291f8f.87.2024.12.12.09.39.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 09:39:01 -0800 (PST)
+Date: Thu, 12 Dec 2024 19:38:59 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] arm64: dts: qcom: x1e80100: Describe the SDHC
+ controllers
+Message-ID: <Z1sfs2L49LqTtYSs@linaro.org>
+References: <20241212-x1e80100-qcp-sdhc-v4-0-a74c48ee68a3@linaro.org>
+ <20241212-x1e80100-qcp-sdhc-v4-1-a74c48ee68a3@linaro.org>
+ <f2964623-63e9-44cd-b328-d502b5fddcd2@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212-netdev-converge-secs-to-jiffies-v4-0-6dac97a6d6ab@linux.microsoft.com>
- <20241212-netdev-converge-secs-to-jiffies-v4-1-6dac97a6d6ab@linux.microsoft.com>
-In-Reply-To: <20241212-netdev-converge-secs-to-jiffies-v4-1-6dac97a6d6ab@linux.microsoft.com>
-From: Praveen Kaligineedi <pkaligineedi@google.com>
-Date: Thu, 12 Dec 2024 09:38:03 -0800
-Message-ID: <CA+f9V1OK39b5hNoVZqu6AfPJqGsB4_5iyAK24Oit-tjmxrk7jA@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 1/2] gve: Convert timeouts to secs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Jeroen de Borst <jeroendb@google.com>, Shailend Chand <shailend@google.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	ath11k@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2964623-63e9-44cd-b328-d502b5fddcd2@oss.qualcomm.com>
 
-On Thu, Dec 12, 2024 at 9:33=E2=80=AFAM Easwar Hariharan
-<eahariha@linux.microsoft.com> wrote:
->
-> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
-> secs_to_jiffies(). As the value here is a multiple of 1000, use
-> secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication=
-.
->
-> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci wit=
-h
-> the following Coccinelle rules:
->
-> @@ constant C; @@
->
-> - msecs_to_jiffies(C * 1000)
-> + secs_to_jiffies(C)
->
-> @@ constant C; @@
->
-> - msecs_to_jiffies(C * MSEC_PER_SEC)
-> + secs_to_jiffies(C)
->
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
-Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
+On 24-12-12 18:34:37, Konrad Dybcio wrote:
+> On 12.12.2024 5:50 PM, Abel Vesa wrote:
+> > The X Elite platform features two SDHC v5 controllers.
+> > 
+> > Describe the controllers along with the pin configuration in TLMM
+> > for the SDC2, since they are hardwired and cannot be muxed to any
+> > other function. The SDC4 pin configuration can be muxed to different
+> > functions, so leave those to board specific dts.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 142 +++++++++++++++++++++++++++++++++
+> >  1 file changed, 142 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > index c18b99765c25c901b3d0a3fbaddc320c0a8c1716..1584df66ea915230995f0cf662cde813f4ae02a1 100644
+> > --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > @@ -4094,6 +4094,108 @@ lpass_lpicx_noc: interconnect@7430000 {
+> >  			#interconnect-cells = <2>;
+> >  		};
+> >  
+> > +		sdhc_2: mmc@8804000 {
+> > +			compatible = "qcom,x1e80100-sdhci", "qcom,sdhci-msm-v5";
+> > +			reg = <0 0x08804000 0 0x1000>;
+> > +
+> > +			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 223 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-names = "hc_irq", "pwr_irq";
+> > +
+> > +			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
+> > +				 <&gcc GCC_SDCC2_APPS_CLK>,
+> > +				 <&rpmhcc RPMH_CXO_CLK>;
+> > +			clock-names = "iface", "core", "xo";
+> > +			iommus = <&apps_smmu 0x520 0>;
+> > +			qcom,dll-config = <0x0007642c>;
+> > +			qcom,ddr-config = <0x80040868>;
+> > +			power-domains = <&rpmhpd RPMHPD_CX>;
+> > +			operating-points-v2 = <&sdhc2_opp_table>;
+> > +
+> > +			interconnects = <&aggre2_noc MASTER_SDCC_2 0 &mc_virt SLAVE_EBI1 0>,
+> > +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_SDCC_2 0>;
+> 
+> The comment regarding ICC defines from v3 still stands
+
+Urgh, missed that one. Will respin next week with that addressed as
+well.
+
+> 
+> the rest of the patch looks good
+> 
+> Konrad
+
+Thanks for reviewing!
+
+Abel
 
