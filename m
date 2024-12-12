@@ -1,210 +1,167 @@
-Return-Path: <linux-kernel+bounces-442465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E329EDD28
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:38:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527E09EDD2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1060E1681BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84C7C1889894
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F355464B;
-	Thu, 12 Dec 2024 01:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AC957CBE;
+	Thu, 12 Dec 2024 01:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VCFRbxkM"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dL8TQ+GG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B297CF16
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19C0EADC
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733967502; cv=none; b=rwSOWYUuPnSkjRAIkUhcmmHA7SyP5rWD/5IBtbxwFudp7QJypZO1Z7aCGVxkBkBqONVMMPIb+DH2S/CDlx48oa3N2CtCTzYt7RPCfaG/CktlU+eIMFr3si9319bKViJLzhVKxMYypR09SfGQQnSmd76MKHhTIWW1WXURCOe/Ztk=
+	t=1733967865; cv=none; b=iod+C5yJHhdKVioBDZwoAgXAhrg9wwU4UPf6nf4AIqtqGCw6ROJiLf0vDJh1sWkhQ5LOrBF9MXUzQGPRiQLUyZiNeUqUrJhxcOIhiCH7UAf+aI30/fGxZ+eJCeKRtGIL76myYeNsr0DvHiSajXc3WRgiVAd8zID+rQ4DnNVE0vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733967502; c=relaxed/simple;
-	bh=Xx2WlBa15PynuyV1qtYoACDIplVhi1qnUeEYPrRsX10=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W07FFy4E2z5sPoneOd+6gW42qm1ofo55gD0YbbufTA3JwsaH46RdDqnPnPdIlRR6Q8bx/qyqoeiBrRzMOvbJZKiHG3aS+YTDUr8x2xKo9F6I+0nmaGAONHrvdy2F2TEctLc4afOKFAkIbAdhRnA/t/L4hrl3+Pdz28bD2PIeM2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VCFRbxkM; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733967495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eFSCeKh2XG4V4HSsQcvawPOsbfqsyYaaE6SNHpbCJWw=;
-	b=VCFRbxkMxMnqGeN6WIi6CWEH8GGv7QFnflIuyzUiMEb7nq03ypAekfZaBBzWUPgPvoq8zi
-	EDjJrReKx+/kBH0rFA6Dg+FrHekKKnKGURsKHIAitqu2X+qhkYrCDhzr0v+L1QsCCh2Rck
-	iAzU0N0Rz0C2Ag4Rq4+bkfNlPQyrNMk=
-From: Hao Ge <hao.ge@linux.dev>
-To: surenb@google.com,
-	kent.overstreet@linux.dev,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	hao.ge@linux.dev,
-	Hao Ge <gehao@kylinos.cn>,
-	Ben Greear <greearb@candelatech.com>
-Subject: [PATCH v4] mm/alloc_tag: Fix panic when CONFIG_KASAN enabled and CONFIG_KASAN_VMALLOC not enabled
-Date: Thu, 12 Dec 2024 09:37:23 +0800
-Message-Id: <20241212013723.113408-1-hao.ge@linux.dev>
-In-Reply-To: <a945dde6-90da-2490-e900-74fd4d47286d@linux.dev>
-References: <a945dde6-90da-2490-e900-74fd4d47286d@linux.dev>
+	s=arc-20240116; t=1733967865; c=relaxed/simple;
+	bh=34vk6AEt+sQ+WlXMU2daDueKQ3iZvBQUNASg9c9mZCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ROcvFqe5zY8ZD1qRdwevrCEOPrYWmIj9VxgXzIi560I/0/XK57hEorUTXMCl4b7Uk3GGSFYBkFsGBryf/zc1GZ9To4VvBVujfVp+1B4wAcpNGqTP3AzuUNwYDHMiLQ5Sv+Q7Jx/5zf+dwGDMUqHAa/7KM8zgbpDrFyPVJM5veaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dL8TQ+GG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D5EEC4CED2;
+	Thu, 12 Dec 2024 01:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733967864;
+	bh=34vk6AEt+sQ+WlXMU2daDueKQ3iZvBQUNASg9c9mZCA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dL8TQ+GGYSGiOYTO3ti9GFhqBl6GdZSyHfRMQxVaI4S9arYXMR5OlJxcNLJHpd8c9
+	 cmwUoWG0B1V5MHJNEfbzhnmRZ6EfSrnV3DIHGwtBLaLyNXPfbTpL+QfvCvuP70tiAQ
+	 Wyq3KGygkjL5pAHn7suGi/F1PvYCjeg1rx9VCja/h+NzOP2rxhRjvh1/6o40CZw9q/
+	 CMXwFf1/gwKHwbX8xEhYRFJRzRH+5PEe0P7OnL0uPYUptWC7PBVW8/V7dLMf0YQV2S
+	 F5pW3wCIpltmF9FBCbFzDQZbsFW8dvpAI2qNCn3VRWPEFLXarBYqV9ZTks/yZ+qK0G
+	 GiPYvr0PDNtvQ==
+Date: Wed, 11 Dec 2024 18:44:18 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+	Dave Young <dyoung@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, jpoimboe@kernel.org,
+	bsz@amazon.de
+Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
+ instead of RWX
+Message-ID: <20241212014418.GA532802@ax162>
+References: <20241205153343.3275139-1-dwmw2@infradead.org>
+ <20241205153343.3275139-14-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205153343.3275139-14-dwmw2@infradead.org>
 
-From: Hao Ge <gehao@kylinos.cn>
+Hi David,
 
-When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
-is not enabled, we may encounter a panic during system boot.
+On Thu, Dec 05, 2024 at 03:05:19PM +0000, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> All writes to the page now happen before it gets marked as executable
+> (or after it's already switched to the identmap page tables where it's
+> OK to be RWX).
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>  arch/x86/kernel/machine_kexec_64.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index c9fd60f8f806..9232ad1562c8 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -323,7 +323,7 @@ int machine_kexec_prepare(struct kimage *image)
+>  
+>  	__memcpy(control_page, __relocate_kernel_start, reloc_end - reloc_start);
+>  
+> -	set_memory_x((unsigned long)control_page, 1);
+> +	set_memory_rox((unsigned long)control_page, 1);
+>  
+>  	return 0;
+>  }
+> @@ -333,6 +333,7 @@ void machine_kexec_cleanup(struct kimage *image)
+>  	void *control_page = page_address(image->control_code_page);
+>  
+>  	set_memory_nx((unsigned long)control_page, 1);
+> +	set_memory_rw((unsigned long)control_page, 1);
+>  
+>  	free_transition_pgtable(image);
+>  }
+> -- 
+> 2.47.0
+> 
 
-Because we haven't allocated pages and created mappings
-for the shadow memory corresponding to module_tags region,
-similar to how it is done for execmem_vmalloc.
+I just bisected a change in behavior that I see in to this change in
+-next as commit 5a82223e0743 ("x86/kexec: Mark relocate_kernel page as
+ROX instead of RWX"). I usually kexec my machines by running:
 
-The difference is that our module_tags are allocated on demand,
-so similarly,we also need to allocate shadow memory regions on demand.
-However, we still need to adhere to the MODULE_ALIGN principle.
+  # kexec --load /boot/vmlinuz-linux --initrd /boot/initramfs-linux.img --reuse-cmdline
 
-Here is the log for panic:
+  # systemctl kexec
 
-[   18.349421] BUG: unable to handle page fault for address: fffffbfff8092000
-[   18.350016] #PF: supervisor read access in kernel mode
-[   18.350459] #PF: error_code(0x0000) - not-present page
-[   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PTE 0
-[   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
-[   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #3
-[   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
-[   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
-[   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
-[   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff82a7ceac
-[   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc0490000
-[   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff809201d
-[   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc0490000
-[   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000000002c
-[   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlGS:0000000000000000
-[   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 0000000000771ef0
-[   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   18.362020] PKRU: 55555554
-[   18.362261] Call Trace:
-[   18.362481]  <TASK>
-[   18.362671]  ? __die+0x23/0x70
-[   18.362964]  ? page_fault_oops+0xc2/0x160
-[   18.363318]  ? exc_page_fault+0xad/0xc0
-[   18.363680]  ? asm_exc_page_fault+0x26/0x30
-[   18.364056]  ? move_module+0x3cc/0x8a0
-[   18.364398]  ? kasan_check_range+0xba/0x1b0
-[   18.364755]  __asan_memcpy+0x3c/0x60
-[   18.365074]  move_module+0x3cc/0x8a0
-[   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
-[   18.365841]  ? early_mod_check+0x3dc/0x510
-[   18.366195]  load_module+0x72/0x1850
-[   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
-[   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
-[   18.367262]  init_module_from_file+0xd1/0x130
-[   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
-[   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
-[   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
-[   18.368938]  idempotent_init_module+0x22c/0x790
-[   18.369332]  ? simple_getattr+0x6f/0x120
-[   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
-[   18.370110]  ? fdget+0x58/0x3a0
-[   18.370393]  ? security_capable+0x64/0xf0
-[   18.370745]  __x64_sys_finit_module+0xc2/0x140
-[   18.371136]  do_syscall_64+0x7d/0x160
-[   18.371459]  ? fdget_pos+0x1c8/0x4c0
-[   18.371784]  ? ksys_read+0xfd/0x1d0
-[   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
-[   18.372525]  ? do_syscall_64+0x89/0x160
-[   18.372860]  ? do_syscall_64+0x89/0x160
-[   18.373194]  ? do_syscall_64+0x89/0x160
-[   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
-[   18.373952]  ? do_syscall_64+0x89/0x160
-[   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
-[   18.374701]  ? do_syscall_64+0x89/0x160
-[   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
-[   18.375416]  ? clear_bhb_loop+0x25/0x80
-[   18.375748]  ? clear_bhb_loop+0x25/0x80
-[   18.376119]  ? clear_bhb_loop+0x25/0x80
-[   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+to cleanly shutdown userspace then kexec into the new kernel after
+installing it via the package manager. After this change, I get sent to
+systemd-boot after running 'systemctl kexec', which selects the default
+entry, my distribution kernel.
 
-Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
-Reported-by: Ben Greear <greearb@candelatech.com>
-Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@candelatech.com/
-Suggested-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
-v4: Based on Suren's suggestion for modification (to make the code simpler),
-    modify the code.
-    Update the comments in the code due to the modifications made to the code.
-    Add Suggested-by: Suren Baghdasaryan <surenb@google.com>
+I just see:
 
-v3: Adjusting the title because the previous one was a bit unclear.
-    Suren has pointed out that our condition for determining whether
-    to allocate shadow memory is unreasonable.We have adjusted our method
-    to use every 8 pages as an index (idx), and we will make decisions based
-    on this idx when determining whether to allocate shadow memory.
+  [  OK  ] Reached target Reboot via kexec.
+  BdsDxe: loading Boot0007 "Linux Boot Manager" from HD(1,GPT,4B5AFD80-5EC7-47FC-83EA-7EC88ACB15A7,0x800,0x200000)/\EFI\systemd\systemd-bootx64.efi
+  BdsDxe: starting Boot0007 "Linux Boot Manager" from HD(1,GPT,4B5AFD80-5EC7-47FC-83EA-7EC88ACB15A7,0x800,0x200000)/\EFI\systemd\systemd-bootx64.efi
 
-v2: Add comments to facilitate understanding of the code.
-    Add align nr << PAGE_SHIFT to MODULE_ALIGN,even though kasan_alloc_module_shadow
-    already handles this internally,but to make the code more readable and user-friendly
+then the systemd-boot menu in QEMU when reproducing this there.
 
-commit 233e89322cbe ("alloc_tag: fix module allocation
-tags populated area calculation") is currently in the
-mm-hotfixes-unstable branch, so this patch is
-developed based on the mm-hotfixes-unstable branch.
----
- lib/alloc_tag.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Is this expected? If not, I am happy to provide any information or test
+patches as necessary.
 
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index f942408b53ef..c5bdfa297a35 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -407,6 +407,8 @@ static int vm_module_tags_populate(void)
- 
- 	if (phys_end < new_end) {
- 		struct page **next_page = vm_module_tags->pages + vm_module_tags->nr_pages;
-+		unsigned long old_shadow_end = ALIGN(phys_end, MODULE_ALIGN);
-+		unsigned long new_shadow_end = ALIGN(new_end, MODULE_ALIGN);
- 		unsigned long more_pages;
- 		unsigned long nr;
- 
-@@ -421,7 +423,19 @@ static int vm_module_tags_populate(void)
- 				__free_page(next_page[i]);
- 			return -ENOMEM;
- 		}
-+
- 		vm_module_tags->nr_pages += nr;
-+
-+		/*
-+		 * Kasan allocates 1 byte of shadow for every 8 bytes of data.
-+		 * When kasan_alloc_module_shadow allocates shadow memory,
-+		 * its unit of allocation is a page.
-+		 * Therefore, here we need to align to MODULE_ALIGN.
-+		 */
-+		if (old_shadow_end < new_shadow_end)
-+			kasan_alloc_module_shadow((void *)old_shadow_end,
-+						  new_shadow_end - old_shadow_end,
-+						  GFP_KERNEL);
- 	}
- 
- 	/*
--- 
-2.25.1
+Cheers,
+Nathan
 
+# bad: [91e71d606356e50f238d7a87aacdee4abc427f07] Add linux-next specific files for 20241211
+# good: [7cb1b466315004af98f6ba6c2546bb713ca3c237] Merge tag 'locking_urgent_for_v6.13_rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect start '91e71d606356e50f238d7a87aacdee4abc427f07' '7cb1b466315004af98f6ba6c2546bb713ca3c237'
+# good: [9bad64b10df19351b07b2b93048635b5f8ead706] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect good 9bad64b10df19351b07b2b93048635b5f8ead706
+# good: [bbc8183219f75fe643d317bd335742adf512e7e1] Merge branch 'for-next' of https://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git
+git bisect good bbc8183219f75fe643d317bd335742adf512e7e1
+# bad: [0628a859f2df1bda9b05393f4eb931fa41c81296] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git
+git bisect bad 0628a859f2df1bda9b05393f4eb931fa41c81296
+# good: [c768ae7d664f116d55257647d7c60e4980b3f740] Merge branch 'next' of git://github.com/cschaufler/smack-next
+git bisect good c768ae7d664f116d55257647d7c60e4980b3f740
+# bad: [93a9ff8f5de55d40ab01b36227307b9e1aa61f16] Merge branch into tip/master: 'x86/boot'
+git bisect bad 93a9ff8f5de55d40ab01b36227307b9e1aa61f16
+# good: [72f64caa52d11b73c0b886aafaa3f549b49a3b84] Merge branch into tip/master: 'perf/core'
+git bisect good 72f64caa52d11b73c0b886aafaa3f549b49a3b84
+# good: [2a77e4be12cb58bbf774e7c717c8bb80e128b7a4] sched/fair: Untangle NEXT_BUDDY and pick_next_task()
+git bisect good 2a77e4be12cb58bbf774e7c717c8bb80e128b7a4
+# good: [4b5bc2ec9a239bce261ffeafdd63571134102323] x86/kexec: Allocate PGD for x86_64 transition page tables separately
+git bisect good 4b5bc2ec9a239bce261ffeafdd63571134102323
+# good: [b7155dfd4999211247cce40be2665c71235ab094] x86/kexec: Eliminate writes through kernel mapping of relocate_kernel page
+git bisect good b7155dfd4999211247cce40be2665c71235ab094
+# bad: [a3eaa2be7004ed7ce5cf8939c660e44a15fc3665] x86/sysfs: Constify 'struct bin_attribute'
+git bisect bad a3eaa2be7004ed7ce5cf8939c660e44a15fc3665
+# bad: [5a82223e0743fb36bcb99657772513739d1a9936] x86/kexec: Mark relocate_kernel page as ROX instead of RWX
+git bisect bad 5a82223e0743fb36bcb99657772513739d1a9936
+# good: [93e489ad7a4694bb2fe8110f5012f85bd3eee65a] x86/kexec: Clean up register usage in relocate_kernel()
+git bisect good 93e489ad7a4694bb2fe8110f5012f85bd3eee65a
+# first bad commit: [5a82223e0743fb36bcb99657772513739d1a9936] x86/kexec: Mark relocate_kernel page as ROX instead of RWX
 
