@@ -1,658 +1,147 @@
-Return-Path: <linux-kernel+bounces-443943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCBC9EFDE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B49B19EFDE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:05:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D56528470E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:05:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8F3283E8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D4F1D88A6;
-	Thu, 12 Dec 2024 21:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130361C07FC;
+	Thu, 12 Dec 2024 21:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MC5KxPaJ"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V05B3CoU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8DB1ABECF;
-	Thu, 12 Dec 2024 21:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0B81B1D61
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734037510; cv=none; b=EaGOBvgohnt7h5YI/3f4i8Sxntg3yHskGUbpkninWK2eHrCSAzcwGR8MBqTMikhYvtR1JHafTouUBuBCsYsmQ3xl4r+RB2Pe3D0jvZzcp4NrXCnz74yXVN0pOCL3syUGGssSTaQxY60ZLgHU3iMKP8Vg+3z9k+jqQarVZSGXMck=
+	t=1734037537; cv=none; b=uoLSrEvebwH1vFDUeba/w44jGFcDyTFpccPfsh1GI3e1mJQwa9vfrwZwEE99sd6uo1EEOquCO4Uk5LYH4TSEnaDw3SGwmdxr522dKbopIj2sVH3om4yrlxeatapH7/ZNf1VBnQNqpk6yCMzVqbdMZxbkVHMiLRSxxl0e6jkwBdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734037510; c=relaxed/simple;
-	bh=UWMeF1PoN42OrxAPGMmTU7JwlcyY+s0ur4BSNBz/QN8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QxDT4khzZilCoO7Hv6qhmaRH7FP9sVPIU+6gRMBut94a7F9nAZ305/D6NUFGLu21rjch+1nRhAHPuC2eUWyIahtpFYP99B43VYRlyIJswWvfjB1djZW9NbzTcjVNbowya/7r4q9rF3lKpPVupQ1NnMTvt1iyPdBaBHvhp+EVKzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MC5KxPaJ; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=2oq4TIFVL+FuwfLB2he8sUGZl50//VKkKFGaaFhsjJI=; b=MC5KxPaJ2NLCdRWwo6beE+vUoo
-	J7+BqK+f91QN0AIhVP0+laElv3cwvgaEBDEs1rcMbqc92brPfJPKW38T0nlAjWy7Qvs91RB7pb7mb
-	gfkL1Gz9/4udkN5mPYMm8XyYIlqNlQe+SOuFBnvgbR+FBGRW7+z04Cb/Zg9cuHrJd8l/vI9qmmwss
-	oJMd5Qj2Xp6hnOvJVfIL2bqnbUE4LmmUzkjJj+AbpDKsVSpsUx4icm0BKmYvrTrKmU3K2uB1eN3V6
-	n2aJDIcsjt/sYFHWrdMIU8WVvWgc+/2JiT54GCKLRfJbpcTnn4xzvs+zvMgY2hQFQNsNU7TdzG4rY
-	UDQwCdiQ==;
-Received: from [179.193.1.214] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tLqMZ-002Oni-IW; Thu, 12 Dec 2024 22:04:48 +0100
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kernel-dev@igalia.com,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v4 2/2] selftests/futex: Create test for robust list
-Date: Thu, 12 Dec 2024 18:04:36 -0300
-Message-ID: <20241212210436.112076-3-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241212210436.112076-1-andrealmeid@igalia.com>
-References: <20241212210436.112076-1-andrealmeid@igalia.com>
+	s=arc-20240116; t=1734037537; c=relaxed/simple;
+	bh=HkIXnwbd83xBtq3FAhtCkWRu/rUIFNfl+9jygBaZldU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SsHpc8Kwkx/RREkhyKrahSlHICAm5fiBcy320XHW31pNlJimQt8LcKQQT7Gn/oBg7IJLZaT0UNqQ5nwQt7XUrPps2d0gV8/UU21zMS4Y45zhdT2P061TY7JretuV1buFG1h7ZkyfV7IIzmRjVsMdNiorxwdQwHfrXr/477rPV08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V05B3CoU; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734037536; x=1765573536;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=HkIXnwbd83xBtq3FAhtCkWRu/rUIFNfl+9jygBaZldU=;
+  b=V05B3CoUKMQvKc/5Mw60uacc+PMMC/44BY8cjq2nyTOOAiC0ri82EhpW
+   SrSlgAu6Hvh7rtVa/rblBh2/EdQaX5AsW1/uDFwoGXp3kZ8ExDJHsHe/1
+   HYIlVzBpSWf0ETjbMdfAKqPZTu1wJTuyu1vHuIfd7vtX+RIXSa8KWYpSc
+   hXriNxZtoUgNupTHUGDB5qQesNOwxdR80eKpsh2Vh5i/ErWZZVVOjg+Jd
+   5TZJJpM/+IXnJV6RSl3hS/Fo74dhWWYh6QqwzZ2mIXjwzc6J8t9R3b5Tz
+   thNfJ31BMH1AGJKK4si0GQvdjWIAAyLdp1ol72+IsKStD5ORJXQvVw9s4
+   Q==;
+X-CSE-ConnectionGUID: h+rjqcySTZWrJXV+k9p9Hg==
+X-CSE-MsgGUID: ik/k3vyKSeyAzAGkvk5tlA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="51895603"
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="51895603"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 13:05:35 -0800
+X-CSE-ConnectionGUID: iDFw6JpEQHaVmAjtudOpgw==
+X-CSE-MsgGUID: CyHbdKEhSjKzpRjeGVvQcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="127346646"
+Received: from mesiment-mobl2.amr.corp.intel.com (HELO [10.125.110.139]) ([10.125.110.139])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 13:05:33 -0800
+Message-ID: <964ba4d574c8be56b2479d87b56956c9f59bb617.camel@linux.intel.com>
+Subject: Re: [PATCH 4/8] x86/topology: Remove x86_smt_flags and use
+ cpu_smt_flags directly
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Peter Zijlstra
+ <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
+ Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
+ Schneider <vschneid@redhat.com>, "Rafael J. Wysocki"
+ <rafael.j.wysocki@intel.com>,  Ricardo Neri
+ <ricardo.neri-calderon@linux.intel.com>, Mario Limonciello
+ <mario.limonciello@amd.com>,  Meng Li <li.meng@amd.com>, Huang Rui
+ <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Date: Thu, 12 Dec 2024 13:05:32 -0800
+In-Reply-To: <20241211185552.4553-5-kprateek.nayak@amd.com>
+References: <20241211185552.4553-1-kprateek.nayak@amd.com>
+	 <20241211185552.4553-5-kprateek.nayak@amd.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Create a test for the robust list mechanism. Test the following uAPI
-operations:
+On Wed, 2024-12-11 at 18:55 +0000, K Prateek Nayak wrote:
+> x86_*_flags() wrappers were introduced with commit d3d37d850d1d
+> ("x86/sched: Add SD_ASYM_PACKING flags to x86 ITMT CPU") to add
+> x86_sched_itmt_flags() in addition to the default domain flags for SMT
+> and MC domain.
+>=20
+> commit 995998ebdebd ("x86/sched: Remove SD_ASYM_PACKING from the
+> SMT domain flags") removed the ITMT flags for SMT domain but not the
+> x86_smt_flags() wrappers which directly returns cpu_smt_flags().
+>=20
+> Remove x86_smt_flags() and directly use cpu_smt_flags() to derive the
+> flags for SMT domain. No functional changes intended.
+>=20
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
-- Creating a robust mutex where the lock waiter is wake by the kernel
-  when the lock owner died
-- Setting a robust list to the current task
-- Getting a robust list from the current task
-- Getting a robust list from another task
-- Using the list_op_pending field from robust_list_head struct to test
-  robustness when the lock owner dies before completing the locking
-- Setting a invalid size for syscall argument `len`
+Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v2:
-- Dropped kselftest_harness include, using just futex test API
-- This is the expected output:
+Tim
 
- TAP version 13
- 1..6
- ok 1 test_robustness
- ok 2 test_set_robust_list_invalid_size
- ok 3 test_get_robust_list_self
- ok 4 test_get_robust_list_child
- ok 5 test_set_list_op_pending
- ok 6 test_robust_list_multiple_elements
- # Totals: pass:6 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Changes from v1:
-- Change futex type from int to _Atomic(unsigned int)
-- Use old futex(FUTEX_WAIT) instead of the new sys_futex_wait()
----
- .../selftests/futex/functional/.gitignore     |   1 +
- .../selftests/futex/functional/Makefile       |   3 +-
- .../selftests/futex/functional/robust_list.c  | 513 ++++++++++++++++++
- 3 files changed, 516 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/futex/functional/robust_list.c
-
-diff --git a/tools/testing/selftests/futex/functional/.gitignore b/tools/testing/selftests/futex/functional/.gitignore
-index fbcbdb6963b3..4726e1be7497 100644
---- a/tools/testing/selftests/futex/functional/.gitignore
-+++ b/tools/testing/selftests/futex/functional/.gitignore
-@@ -9,3 +9,4 @@ futex_wait_wouldblock
- futex_wait
- futex_requeue
- futex_waitv
-+robust_list
-diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
-index f79f9bac7918..b8635a1ac7f6 100644
---- a/tools/testing/selftests/futex/functional/Makefile
-+++ b/tools/testing/selftests/futex/functional/Makefile
-@@ -17,7 +17,8 @@ TEST_GEN_PROGS := \
- 	futex_wait_private_mapped_file \
- 	futex_wait \
- 	futex_requeue \
--	futex_waitv
-+	futex_waitv \
-+	robust_list
- 
- TEST_PROGS := run.sh
- 
-diff --git a/tools/testing/selftests/futex/functional/robust_list.c b/tools/testing/selftests/futex/functional/robust_list.c
-new file mode 100644
-index 000000000000..f4b582a3c790
---- /dev/null
-+++ b/tools/testing/selftests/futex/functional/robust_list.c
-@@ -0,0 +1,513 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2024 Igalia S.L.
-+ *
-+ * Robust list test by André Almeida <andrealmeid@igalia.com>
-+ *
-+ * The robust list uAPI allows userspace to create "robust" locks, in the sense
-+ * that if the lock holder thread dies, the remaining threads that are waiting
-+ * for the lock won't block forever, waiting for a lock that will never be
-+ * released.
-+ *
-+ * This is achieve by userspace setting a list where a thread can enter all the
-+ * locks (futexes) that it is holding. The robust list is a linked list, and
-+ * userspace register the start of the list with the syscall set_robust_list().
-+ * If such thread eventually dies, the kernel will walk this list, waking up one
-+ * thread waiting for each futex and marking the futex word with the flag
-+ * FUTEX_OWNER_DIED.
-+ *
-+ * See also
-+ *	man set_robust_list
-+ *	Documententation/locking/robust-futex-ABI.rst
-+ *	Documententation/locking/robust-futexes.rst
-+ */
-+
-+#define _GNU_SOURCE
-+
-+#include "futextest.h"
-+#include "logging.h"
-+
-+#include <errno.h>
-+#include <pthread.h>
-+#include <signal.h>
-+#include <stdatomic.h>
-+#include <stdbool.h>
-+#include <stddef.h>
-+#include <sys/mman.h>
-+#include <sys/wait.h>
-+
-+#define STACK_SIZE (1024 * 1024)
-+
-+#define FUTEX_TIMEOUT 3
-+
-+static pthread_barrier_t barrier, barrier2;
-+
-+int set_robust_list(struct robust_list_head *head, size_t len)
-+{
-+	return syscall(SYS_set_robust_list, head, len);
-+}
-+
-+int get_robust_list(int pid, struct robust_list_head **head, size_t *len_ptr)
-+{
-+	return syscall(SYS_get_robust_list, pid, head, len_ptr);
-+}
-+
-+/*
-+ * Basic lock struct, contains just the futex word and the robust list element
-+ * Real implementations have also a *prev to easily walk in the list
-+ */
-+struct lock_struct {
-+	_Atomic(unsigned int) futex;
-+	struct robust_list list;
-+};
-+
-+/*
-+ * Helper function to spawn a child thread. Returns -1 on error, pid on success
-+ */
-+static int create_child(int (*fn)(void *arg), void *arg)
-+{
-+	char *stack;
-+	pid_t pid;
-+
-+	stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
-+		     MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
-+	if (stack == MAP_FAILED)
-+		return -1;
-+
-+	stack += STACK_SIZE;
-+
-+	pid = clone(fn, stack, CLONE_VM | SIGCHLD, arg);
-+
-+	if (pid == -1)
-+		return -1;
-+
-+	return pid;
-+}
-+
-+/*
-+ * Helper function to prepare and register a robust list
-+ */
-+static int set_list(struct robust_list_head *head)
-+{
-+	int ret;
-+
-+	ret = set_robust_list(head, sizeof(struct robust_list_head));
-+	if (ret)
-+		return ret;
-+
-+	head->futex_offset = (size_t) offsetof(struct lock_struct, futex) -
-+			     (size_t) offsetof(struct lock_struct, list);
-+	head->list.next = &head->list;
-+	head->list_op_pending = NULL;
-+
-+	return 0;
-+}
-+
-+/*
-+ * A basic (and incomplete) mutex lock function with robustness
-+ */
-+static int mutex_lock(struct lock_struct *lock, struct robust_list_head *head, bool error_inject)
-+{
-+	_Atomic(unsigned int) *futex = &lock->futex;
-+	unsigned int zero = 0;
-+	int ret = -1;
-+	pid_t tid = gettid();
-+
-+	/*
-+	 * Set list_op_pending before starting the lock, so the kernel can catch
-+	 * the case where the thread died during the lock operation
-+	 */
-+	head->list_op_pending = &lock->list;
-+
-+	if (atomic_compare_exchange_strong(futex, &zero, tid)) {
-+		/*
-+		 * We took the lock, insert it in the robust list
-+		 */
-+		struct robust_list *list = &head->list;
-+
-+		/* Error injection to test list_op_pending */
-+		if (error_inject)
-+			return 0;
-+
-+		while (list->next != &head->list)
-+			list = list->next;
-+
-+		list->next = &lock->list;
-+		lock->list.next = &head->list;
-+
-+		ret = 0;
-+	} else {
-+		/*
-+		 * We didn't take the lock, wait until the owner wakes (or dies)
-+		 */
-+		struct timespec to;
-+
-+		clock_gettime(CLOCK_MONOTONIC, &to);
-+		to.tv_sec = to.tv_sec + FUTEX_TIMEOUT;
-+
-+		tid = atomic_load(futex);
-+		/* Kernel ignores futexes without the waiters flag */
-+		tid |= FUTEX_WAITERS;
-+		atomic_store(futex, tid);
-+
-+		ret = futex_wait((futex_t *) futex, tid, &to, 0);
-+
-+		/*
-+		 * A real mutex_lock() implementation would loop here to finally
-+		 * take the lock. We don't care about that, so we stop here.
-+		 */
-+	}
-+
-+	head->list_op_pending = NULL;
-+
-+	return ret;
-+}
-+
-+/*
-+ * This child thread will succeed taking the lock, and then will exit holding it
-+ */
-+static int child_fn_lock(void *arg)
-+{
-+	struct lock_struct *lock = (struct lock_struct *) arg;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	if (ret)
-+		ksft_test_result_fail("set_robust_list error\n");
-+
-+	ret = mutex_lock(lock, &head, false);
-+	if (ret)
-+		ksft_test_result_fail("mutex_lock error\n");
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	/*
-+	 * There's a race here: the parent thread needs to be inside
-+	 * futex_wait() before the child thread dies, otherwise it will miss the
-+	 * wakeup from handle_futex_death() that this child will emit. We wait a
-+	 * little bit just to make sure that this happens.
-+	 */
-+	sleep(1);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Spawns a child thread that will set a robust list, take the lock, register it
-+ * in the robust list and die. The parent thread will wait on this futex, and
-+ * should be waken up when the child exits.
-+ */
-+static void test_robustness()
-+{
-+	struct lock_struct lock = { .futex = 0 };
-+	struct robust_list_head head;
-+	_Atomic(unsigned int) *futex = &lock.futex;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	ASSERT_EQ(ret, 0);
-+
-+	/*
-+	 * Lets use a barrier to ensure that the child thread takes the lock
-+	 * before the parent
-+	 */
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = create_child(&child_fn_lock, &lock);
-+	ASSERT_NE(ret, -1);
-+
-+	pthread_barrier_wait(&barrier);
-+	ret = mutex_lock(&lock, &head, false);
-+
-+	/*
-+	 * futex_wait() should return 0 and the futex word should be marked with
-+	 * FUTEX_OWNER_DIED
-+	 */
-+	ASSERT_EQ(ret, 0);
-+	if (ret != 0)
-+		printf("futex wait returned %d", errno);
-+
-+	ASSERT_TRUE(*futex | FUTEX_OWNER_DIED);
-+
-+	pthread_barrier_destroy(&barrier);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+/*
-+ * The only valid value for len is sizeof(*head)
-+ */
-+static void test_set_robust_list_invalid_size()
-+{
-+	struct robust_list_head head;
-+	size_t head_size = sizeof(struct robust_list_head);
-+	int ret;
-+
-+	ret = set_robust_list(&head, head_size);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = set_robust_list(&head, head_size * 2);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ret = set_robust_list(&head, head_size - 1);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ret = set_robust_list(&head, 0);
-+	ASSERT_EQ(ret, -1);
-+	ASSERT_EQ(errno, EINVAL);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+/*
-+ * Test get_robust_list with pid = 0, getting the list of the running thread
-+ */
-+static void test_get_robust_list_self()
-+{
-+	struct robust_list_head head, head2, *get_head;
-+	size_t head_size = sizeof(struct robust_list_head), len_ptr;
-+	int ret;
-+
-+	ret = set_robust_list(&head, head_size);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = get_robust_list(0, &get_head, &len_ptr);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(get_head, &head);
-+	ASSERT_EQ(head_size, len_ptr);
-+
-+	ret = set_robust_list(&head2, head_size);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = get_robust_list(0, &get_head, &len_ptr);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(get_head, &head2);
-+	ASSERT_EQ(head_size, len_ptr);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+static int child_list(void *arg)
-+{
-+	struct robust_list_head *head = (struct robust_list_head *) arg;
-+	int ret;
-+
-+	ret = set_robust_list(head, sizeof(struct robust_list_head));
-+	if (ret)
-+		ksft_test_result_fail("set_robust_list error\n");
-+
-+	pthread_barrier_wait(&barrier);
-+	pthread_barrier_wait(&barrier2);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Test get_robust_list from another thread. We use two barriers here to ensure
-+ * that:
-+ *   1) the child thread set the list before we try to get it from the
-+ * parent
-+ *   2) the child thread still alive when we try to get the list from it
-+ */
-+static void test_get_robust_list_child()
-+{
-+	pid_t tid;
-+	int ret;
-+	struct robust_list_head head, *get_head;
-+	size_t len_ptr;
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ret = pthread_barrier_init(&barrier2, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	tid = create_child(&child_list, &head);
-+	ASSERT_NE(tid, -1);
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	ret = get_robust_list(tid, &get_head, &len_ptr);
-+	ASSERT_EQ(ret, 0);
-+	ASSERT_EQ(&head, get_head);
-+
-+	pthread_barrier_wait(&barrier2);
-+
-+	pthread_barrier_destroy(&barrier);
-+	pthread_barrier_destroy(&barrier2);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+static int child_fn_lock_with_error(void *arg)
-+{
-+	struct lock_struct *lock = (struct lock_struct *) arg;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	if (ret)
-+		ksft_test_result_fail("set_robust_list error\n");
-+
-+	ret = mutex_lock(lock, &head, true);
-+	if (ret)
-+		ksft_test_result_fail("mutex_lock error\n");
-+
-+	pthread_barrier_wait(&barrier);
-+
-+	sleep(1);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Same as robustness test, but inject an error where the mutex_lock() exits
-+ * earlier, just after setting list_op_pending and taking the lock, to test the
-+ * list_op_pending mechanism
-+ */
-+static void test_set_list_op_pending()
-+{
-+	struct lock_struct lock = { .futex = 0 };
-+	struct robust_list_head head;
-+	_Atomic(unsigned int) *futex = &lock.futex;
-+	int ret;
-+
-+	ret = set_list(&head);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+
-+	ret = create_child(&child_fn_lock_with_error, &lock);
-+	ASSERT_NE(ret, -1);
-+
-+	pthread_barrier_wait(&barrier);
-+	ret = mutex_lock(&lock, &head, false);
-+
-+	ASSERT_EQ(ret, 0);
-+	if (ret != 0)
-+		printf("futex wait returned %d", errno);
-+
-+	ASSERT_TRUE(*futex | FUTEX_OWNER_DIED);
-+
-+	pthread_barrier_destroy(&barrier);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+#define CHILD_NR 10
-+
-+static int child_lock_holder(void *arg)
-+{
-+	struct lock_struct *locks = (struct lock_struct *) arg;
-+	struct robust_list_head head;
-+	int i;
-+
-+	set_list(&head);
-+
-+	for (i = 0; i < CHILD_NR; i++) {
-+		locks[i].futex = 0;
-+		mutex_lock(&locks[i], &head, false);
-+	}
-+
-+	pthread_barrier_wait(&barrier);
-+	pthread_barrier_wait(&barrier2);
-+
-+	sleep(1);
-+	return 0;
-+}
-+
-+static int child_wait_lock(void *arg)
-+{
-+	struct lock_struct *lock = (struct lock_struct *) arg;
-+	struct robust_list_head head;
-+	int ret;
-+
-+	pthread_barrier_wait(&barrier2);
-+	ret = mutex_lock(lock, &head, false);
-+
-+	if (ret)
-+		ksft_test_result_fail("mutex_lock error\n");
-+
-+	if (!(lock->futex | FUTEX_OWNER_DIED))
-+		ksft_test_result_fail("futex not marked with FUTEX_OWNER_DIED\n");
-+
-+	return 0;
-+}
-+
-+/*
-+ * Test a robust list of more than one element. All the waiters should wake when
-+ * the holder dies
-+ */
-+static void test_robust_list_multiple_elements()
-+{
-+	struct lock_struct locks[CHILD_NR];
-+	int i, ret;
-+
-+	ret = pthread_barrier_init(&barrier, NULL, 2);
-+	ASSERT_EQ(ret, 0);
-+	ret = pthread_barrier_init(&barrier2, NULL, CHILD_NR + 1);
-+	ASSERT_EQ(ret, 0);
-+
-+	create_child(&child_lock_holder, &locks);
-+
-+	/* Wait until the locker thread takes the look */
-+	pthread_barrier_wait(&barrier);
-+
-+	for (i = 0; i < CHILD_NR; i++)
-+		create_child(&child_wait_lock, &locks[i]);
-+
-+	/* Wait for all children to return */
-+	while (wait(NULL) > 0);
-+
-+	pthread_barrier_destroy(&barrier);
-+	pthread_barrier_destroy(&barrier2);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+void usage(char *prog)
-+{
-+	printf("Usage: %s\n", prog);
-+	printf("  -c	Use color\n");
-+	printf("  -h	Display this help message\n");
-+	printf("  -v L	Verbosity level: %d=QUIET %d=CRITICAL %d=INFO\n",
-+	       VQUIET, VCRITICAL, VINFO);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int c;
-+
-+	while ((c = getopt(argc, argv, "cht:v:")) != -1) {
-+		switch (c) {
-+		case 'c':
-+			log_color(1);
-+			break;
-+		case 'h':
-+			usage(basename(argv[0]));
-+			exit(0);
-+		case 'v':
-+			log_verbosity(atoi(optarg));
-+			break;
-+		default:
-+			usage(basename(argv[0]));
-+			exit(1);
-+		}
-+	}
-+
-+	ksft_print_header();
-+	ksft_set_plan(6);
-+
-+	test_robustness();
-+	test_set_robust_list_invalid_size();
-+	test_get_robust_list_self();
-+	test_get_robust_list_child();
-+	test_set_list_op_pending();
-+	test_robust_list_multiple_elements();
-+
-+	ksft_print_cnts();
-+	return 0;
-+}
--- 
-2.47.1
+> ---
+>  arch/x86/kernel/smpboot.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+>=20
+> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+> index b5a8f0891135..6e300897b7ee 100644
+> --- a/arch/x86/kernel/smpboot.c
+> +++ b/arch/x86/kernel/smpboot.c
+> @@ -482,12 +482,6 @@ static int x86_core_flags(void)
+>  	return cpu_core_flags() | x86_sched_itmt_flags();
+>  }
+>  #endif
+> -#ifdef CONFIG_SCHED_SMT
+> -static int x86_smt_flags(void)
+> -{
+> -	return cpu_smt_flags();
+> -}
+> -#endif
+>  #ifdef CONFIG_SCHED_CLUSTER
+>  static int x86_cluster_flags(void)
+>  {
+> @@ -519,7 +513,7 @@ static void __init build_sched_topology(void)
+> =20
+>  #ifdef CONFIG_SCHED_SMT
+>  	x86_topology[i++] =3D (struct sched_domain_topology_level){
+> -		cpu_smt_mask, x86_smt_flags, SD_INIT_NAME(SMT)
+> +		cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT)
+>  	};
+>  #endif
+>  #ifdef CONFIG_SCHED_CLUSTER
 
 
