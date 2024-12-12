@@ -1,147 +1,233 @@
-Return-Path: <linux-kernel+bounces-442712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352CA9EE0A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:55:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078A5167B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:55:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66BA20B7E6;
-	Thu, 12 Dec 2024 07:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l6Hf+qEV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4739EE0BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:57:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6556220ADE2
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6B12867E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:57:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067BE20B7E4;
+	Thu, 12 Dec 2024 07:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ftPvew5p"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F7C202F9D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733990135; cv=none; b=KFxalgE3WfhYPh11OpUZ14WF9y4pqYf+Jkbz2ZRqro3SKnc9GoeBt8tO8lTvE2oQ4HFj75WCWq79n3F6yetyrPNiB7GXbjjcOdVjuBkX+HoomssKQk6d5jNi/kJHe02X5mN4JPxFx5o/VmreJvAPTsXQEZUF2Lrad3bOqpWNHSQ=
+	t=1733990256; cv=none; b=oXgggrtenXeO5KbaO5g8LBzZ7KbJs5wUWSTlEFx7uWciwXPWSdUUl/UrfuByBDZ41z/p9O6VTPciFeKaMCQCnJOQ6rqnrOfhlJfXGKgrWXS62xp1v4lsxDaXkNzceuIVVUtQ7J24d+qV7LwgkSny6AfedpoopVrP2EHnpQy0ktQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733990135; c=relaxed/simple;
-	bh=UhNWU2tGfAci2njpbZCAWV5dGcf9OARUUQhbJ12YPQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOeH7IWiKd0EY5AOoOuvJYRyZa1CHohpak49vI0/5WnolvnSwqUnUNkeyLH17eBMmt5P7TQHR0v/ysDmHF+FUkTIbynzkqi7Zx7aT3ChJCW1fQvEN3u0MdavGFrnjxIRy5JQoDSwHmJLgnndgFSUhC3oPJTP7nMsUA6ChE2IvIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l6Hf+qEV; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733990132; x=1765526132;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UhNWU2tGfAci2njpbZCAWV5dGcf9OARUUQhbJ12YPQQ=;
-  b=l6Hf+qEVko/4teOtCGNBRXtMIIA2AmhjWYoHs6NzS5UMnMghgCt0kRP+
-   E9KbCS4yTUrU3dZghaT1ttjwwiba3S2ZtZ2NIajguYFzN62daXOKmlaeJ
-   UZTEP1Oyowj1Zzz/vsrgoS/fWGLwgAokzPkMV8MVt9CTtiASh4EVqQK1/
-   4q4a8Jd0sANkl/Vhba4WmNRVyx+/mWsbPTI3hV1pWkCzBNY+R1hqZsQA5
-   iNvjE3b0nzA8La1flGSyiuX5ZxpVwnouDM8leorzQ5te0uGqX+2GfqYQz
-   ftSd+U6P6lda2wReyUKt1NN4Wiaz5eBXwW3OFHo3obCiGtdATFi+eY+P3
-   Q==;
-X-CSE-ConnectionGUID: d1ak6LgDRSmyPeSeEuLlHg==
-X-CSE-MsgGUID: NkypidwfQIugQK3R/jL9Jg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="45781413"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="45781413"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 23:55:32 -0800
-X-CSE-ConnectionGUID: iPZ5d7eJQ56Lg0oV1v+8Pg==
-X-CSE-MsgGUID: CUMN4fCTRfqAIhYsN7UpuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
-   d="scan'208";a="96693738"
-Received: from ksztyber-mobl2.ger.corp.intel.com (HELO himmelriiki) ([10.245.245.25])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 23:55:29 -0800
-Date: Thu, 12 Dec 2024 09:55:20 +0200
-From: Mikko Ylinen <mikko.ylinen@linux.intel.com>
-To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, x86@kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Xiaoyao Li <xiaoyao.li@intel.com>, linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: Re: [PATCH v4] virt: tdx-guest: Handle GetQuote request error code
-Message-ID: <Z1qW6C4I5Rbju-F-@himmelriiki>
-References: <20240411022250.4091435-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+	s=arc-20240116; t=1733990256; c=relaxed/simple;
+	bh=lMS9mzxdUofoVuv/CBlu23JLYnMawY1N3dIo+GQHa/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gYRbZo+vbjHQzESnophtE8W5P/5aj3eJK80FFjrp5AtrzuCxpvPivzOLxV9wHwLep+WD8EkzRN4SVNO5GEJ8g8XMC1mwtAdtu8hQLPoT2szZIdX2xFEgFnz+6eoqSeVZOcLicdD647Vuv8I7hasrNsBMOkVREgeCspg0+yL5ToA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ftPvew5p; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC6mqnf029640;
+	Thu, 12 Dec 2024 07:57:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=zVSpZe
+	iiisuY2jLF6K0NbwIBhEDOKkDLe1d8fSnP5K0=; b=ftPvew5peqavgKPt8+S6cC
+	i4XiTSdf9kB7J9mim/a7s50izvZHzctbkqaCzCrADm9ypiEOVaLTcfnTdVcuAwNL
+	Hq39xznFfbBL4qs8Y3XGVNVsc8qYhLjz2l07ik1EMgIE9dL5GHH3mL/tpUhMN/h3
+	ZvHE/qZC8srlacGwUMSm7Pl3czMQYUxooJjGuqt3zn4UP8mifEzfsBQJDCFoMf6e
+	beJre2A7nVkLeIyATMTlyTBbyzGZZvKmfb2PmbgCn7YcOEqicmihP7lpYUYaS0/R
+	wW1x0xqlxrGE+BlP+FIdWvIjhyePX3v0cvHZlGR+iCqc8QXGgK2Ni6+2dXNtBajg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsjshhk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 07:57:17 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BC7lZfB023145;
+	Thu, 12 Dec 2024 07:57:17 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsjshhg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 07:57:17 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC6Hv6T016926;
+	Thu, 12 Dec 2024 07:57:16 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12yf8vh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 07:57:16 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BC7vCEC50135492
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Dec 2024 07:57:12 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A39F32004B;
+	Thu, 12 Dec 2024 07:57:12 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5821A20049;
+	Thu, 12 Dec 2024 07:57:07 +0000 (GMT)
+Received: from [9.61.244.241] (unknown [9.61.244.241])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 12 Dec 2024 07:57:06 +0000 (GMT)
+Message-ID: <50681cca-20f3-4583-997e-8e571edaeef5@linux.ibm.com>
+Date: Thu, 12 Dec 2024 13:27:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240411022250.4091435-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc/pseries/eeh: Fix get PE state translation
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Vaibhav Jain <vaibhav@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        mpe@ellerman.id.au, linux-kernel@vger.kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, maddy@linux.ibm.com, naveen@kernel.org,
+        ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
+References: <20241107042027.338065-1-nnmlinux@linux.ibm.com>
+ <87ttc8d0vf.fsf@gmail.com> <87cyiq3px0.fsf@vajain21.in.ibm.com>
+ <87zflswebb.fsf@gmail.com>
+Content-Language: en-US
+From: Narayana Murty N <nnmlinux@linux.ibm.com>
+In-Reply-To: <87zflswebb.fsf@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: rmYE5Qsp52-V6bBHfdHXs7JLbJsnn3Bo
+X-Proofpoint-ORIG-GUID: KAqzacUqbdHTA5Y0vfT2d9HJCObp6C-x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412120050
 
-Hi,
 
-On Thu, Apr 11, 2024 at 02:22:50AM +0000, Kuppuswamy Sathyanarayanan wrote:
-> The tdx-guest driver marshals quote requests via hypercall to have a
-> quoting enclave sign attestation evidence about the current state of
-> the TD. There are 2 possible failures, a transport failure (failure
-> to communicate with the quoting agent) and payload failure (a failed
-> quote). The driver only checks the former, update it to consider the
-> latter payload errors as well.
-> 
-> Fixes: f4738f56d1dc ("virt: tdx-guest: Add Quote generation support using TSM_REPORTS")
-> Reported-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Closes: https://lore.kernel.org/linux-coco/6bdf569c-684a-4459-af7c-4430691804eb@linux.intel.com/T/#u
-> Reviewed-by: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Acked-by: Kai Huang <kai.huang@intel.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> ---
-> 
-> Changes since v3:
->  * Rebased on top of v6.9-rc1
->  * Added Dan's Reviewed-by tag.
-> 
-> Changes since v2:
->  * Updated the commit log (Dan)
->  * Removed pr_err message.
-> 
-> Changes since v1:
->  * Updated the commit log (Kirill)
-> 
->  drivers/virt/coco/tdx-guest/tdx-guest.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/virt/coco/tdx-guest/tdx-guest.c b/drivers/virt/coco/tdx-guest/tdx-guest.c
-> index 1253bf76b570..c39f0007958d 100644
-> --- a/drivers/virt/coco/tdx-guest/tdx-guest.c
-> +++ b/drivers/virt/coco/tdx-guest/tdx-guest.c
-> @@ -228,6 +228,11 @@ static int tdx_report_new(struct tsm_report *report, void *data)
->  		goto done;
->  	}
->  
-> +	if (quote_buf->status != GET_QUOTE_SUCCESS) {
-> +		ret = -EIO;
-> +		goto done;
-> +	}
-> +
->  	buf = kvmemdup(quote_buf->data, quote_buf->out_len, GFP_KERNEL);
->  	if (!buf) {
->  		ret = -ENOMEM;
+On 22/11/24 1:26 AM, Ritesh Harjani (IBM) wrote:
+> Vaibhav Jain <vaibhav@linux.ibm.com> writes:
+>
+>> Hi Ritesh,
+>>
+>> Thanks for looking into this patch. My responses on behalf of Narayana
+>> below:
+>>
+>> "Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
+>>
+>>> Narayana Murty N <nnmlinux@linux.ibm.com> writes:
+>>>
+>>>> The PE Reset State "0" obtained from RTAS calls
+>>>> ibm_read_slot_reset_[state|state2] indicates that
+>>>> the Reset is deactivated and the PE is not in the MMIO
+>>>> Stopped or DMA Stopped state.
+>>>>
+>>>> With PE Reset State "0", the MMIO and DMA is allowed for
+>>>> the PE.
+>>> Looking at the PAPR spec - I do agree that it states the same. i.e.
+>>> The "0" Initial PE state means the "Not Reset", "Load/Store allowed" &
+>>> "DMA allowed" (Normal Operations).
+>>>
+>>>> The function pseries_eeh_get_state() is currently
+>>>> not indicating that to the caller because of  which the
+>>>> drivers are unable to resume the MMIO and DMA activity.
+>>> It's new to me, but could you help explain the user visible effect
+>>> of what gets broken. Since this looks like pseries_eeh_get_state() has
+>>> always been like this when it got first implemented.
+>>> Is there also a unit test somewhere which you are testing?
+>> Without this patch a userspace process performing VFIO EEH-Recovery wont
+>> get the correct indication that EEH recovery is completed. Test code at
+>> [2] has an example test case that uses VFIO to inject an EEH error on to
+>> a pci-device and then waits on it to reach 'EEH_PE_STATE_NORMAL' state
+>> . That state is never reached without this patch.
+>>
+>> [2] :
+>> https://github.com/nnmwebmin/vfio-ppc-tests/commit/006d8fdc41a4
+>>
+> Right. Thanks for helping with that test code. It's much clearer now. So
+> after the error inject and/or the PE hot reset, the PE is never reaching
+> it's normal state. That is due to this kernel bug in the pseries EEH
+> handling, where it fails to advertise the MMIO & DMA enabled capability
+> flag back to the caller. This therefore can cause the userspace VFIO
+> driver to incorrectly assume that MMIO/DMA operations cannot be done.
+>
+>>> IIUC eeh_pe_get_state() was implemented[1] for supporting EEH for VFIO PCI
+>>> devices. i.e. the VFIO_EEH_PE_GET_STATE operation of VFIO EEH PE ioctl op
+>>> uses pseries_eeh_get_state() helper to query PE state on pseries LPAR.
+>>> So are you suggesting that EEH functionality for VFIO PCI device was
+>>> never enabled/tested before on pseries?
+>> VFIO-EEH had been broken for pseries for a quite some time and was
+>> recently fixed in kernel. So this issue was probably not discovered
+>> until recently when we started testing with userspace VFIO.
+>>
+> ohk right, then maybe we might have started testing it after the eeh
+> error inject op was implemented for pseries here [1].
+>
+> [1]: https://lore.kernel.org/linuxppc-dev/20240909140220.529333-1-nnmlinux@linux.ibm.com/#t
+>
+>>> [1]: https://lore.kernel.org/all/1402364517-28561-3-git-send-email-gwshan@linux.vnet.ibm.com/
+>>>
+>>> Checking the powernv side of implementation I do see that it does
+>>> enables the EEH_STATE_[MMIO|DMA]_ENABLED flags in the result mask for
+>>> the callers. So doing the same for pseries eeh get state implementation
+>>> does look like the right thing to do here IMO.
+>>>
+>>>> The patch fixes that by reflecting what is actually allowed.
+>>> You say this is "fixes" so I am also assuming you are also looking for
+>>> stable backports of this? If yes - could you please also add the "Fixes"
+>>> tag and cc stable?
+>> Yes, agree will re-send adding the fixes tag.
+>>
+> Yes and maybe let's also add some more context & information to the
+> commit message from this discussion.
+>
+> -ritesh
+yes Ritesh, added fixes tag and send it to the stable branch also.
+>
+>>> -ritesh
+>>>
+>>>> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+>>>> ---
+>>>>   arch/powerpc/platforms/pseries/eeh_pseries.c | 6 ++++--
+>>>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
+>>>> index 1893f66371fa..b12ef382fec7 100644
+>>>> --- a/arch/powerpc/platforms/pseries/eeh_pseries.c
+>>>> +++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
+>>>> @@ -580,8 +580,10 @@ static int pseries_eeh_get_state(struct eeh_pe *pe, int *delay)
+>>>>   
+>>>>   	switch(rets[0]) {
+>>>>   	case 0:
+>>>> -		result = EEH_STATE_MMIO_ACTIVE |
+>>>> -			 EEH_STATE_DMA_ACTIVE;
+>>>> +		result = EEH_STATE_MMIO_ACTIVE	|
+>>>> +			 EEH_STATE_DMA_ACTIVE	|
+>>>> +			 EEH_STATE_MMIO_ENABLED	|
+>>>> +			 EEH_STATE_DMA_ENABLED;
+>>>>   		break;
+>>>>   	case 1:
+>>>>   		result = EEH_STATE_RESET_ACTIVE |
+>>>> -- 
+>>>> 2.45.2
+>> -- 
+>> Cheers
+>> ~ Vaibhav
 
-Would it be possible to get this queued?
+Thank you Ritesh and Vaibhav for reviewing the patch. Please find the
 
-I had the same fix implemented as I ran into the same issue but then
-noticed this had already been sent out.
+changes addressed in 
+https://lore.kernel.org/all/20241212075044.10563-1-nnmlinux@linux.ibm.com/.
 
-One possible improvement here could be to add a reason for the error
-to make it more consistent with the other error paths above:
+Regards,
 
-pr_err("GetQuote failed, status:%llx\n", quote_buf->status);
+Narayana Murty N
 
-Anyway, it works as expected as it is so:
 
-Tested-by: Mikko Ylinen <mikko.ylinen@linux.intel.com>
-
--- Mikko
 
