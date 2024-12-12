@@ -1,192 +1,112 @@
-Return-Path: <linux-kernel+bounces-443474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737969EF143
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:36:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40989EF255
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:48:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E4302861E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:36:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D87C189BC6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C27F23E6C1;
-	Thu, 12 Dec 2024 16:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A8D22655B;
+	Thu, 12 Dec 2024 16:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VGgmxxLH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ThQai3kJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB9922A1C0;
-	Thu, 12 Dec 2024 16:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCD6225411
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734020742; cv=none; b=a1uDBUUQsSjW2AdCcuigPyrsNnGowPv5tLN9vrisAMNgqVUbDyitGwjjSp99icTpz2l6xg23s+CgZ6JiJpdSFMB7liEYyfSnRTH+h8mhMEhlzifEmAt7MjFHY6jTNTallPXi9tPXMfZdcPk4jGLbXmuf40RokHXYpkXehClzd0I=
+	t=1734020693; cv=none; b=hNlajM+fFtfB3Khdp1xZEn6DODcsNnR1bMga8+OLIPCg+tyh1JAfEm1O6HoGuHnhZ2caifTIlt2K32xsF1Opt2D7Sd3ppxfzGaWwCzE2aDnI2CEfi/5L2EAJKTzy5FLLFqmY53Hx6IEDiPZ/kzcShbG4X3GP4kfYFC0cuQ2Zmx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734020742; c=relaxed/simple;
-	bh=/80D6SSlGn7n1xvUC5voFQwABZp0R2C/r631Sf2IRfQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oWQ4t1IZy9eaYqEdgMnbnb5VZtTGYY+BnEpB2S1b/VPzLIoquzoW/uVown5N2TS/IFdVNI4u/uc/nhAA0h4hfDUPUXyYnfSye2z7so0dDzyy6M8/E71Oi8CSthcJK7P0axBk3b5ocbpW6dfwTYsm+juPdxoOovgr3TGtkbgh+sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VGgmxxLH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7wX6T030073;
-	Thu, 12 Dec 2024 16:25:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	l/1hRtL88eL8s2U9Di8ClmmpZhI+xqSo8rdmBhnrAjc=; b=VGgmxxLHRhTgBPwy
-	kQzOKPGCTEe9BwccXSYWlHgU0xwjRNq1MZ408UopA8jJt/fAvGjji2w+jcyV6bW6
-	0C7gghUksGBPkGMmxVBvpvsaYrtJzzkZpunD4Gn8ik4kaW6GN9wuWiNB2vMsigw/
-	3rFOZ+xpe8O3wmfDIKYYcsn89YZsD1Z1y+pPpCwGbk2WHtw+YiJ/096qQ1ywOONl
-	VVp3kbiJ51pkBXdww+FRKHTEeAS94PQApgZ74KvvwrnBFGoTUKAsZ5GSV7tqr+m6
-	fS7RJmYkDbkbcnIdaxFazFJBlgWvKrGuYKhDd7M8mf+3FelZBEAKiDM+l9gSPjlU
-	m9q5gw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw4byye-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 16:25:29 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BCGPSk8014761
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 16:25:28 GMT
-Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 12 Dec 2024 08:25:21 -0800
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Bard Liao
-	<yung-chuan.liao@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>, "Takashi
- Iwai" <tiwai@suse.com>
-CC: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-        Sanyog Kale
-	<sanyog.r.kale@intel.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_pkumpatl@quicinc.com>, <kernel@quicinc.com>,
-        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Subject: [PATCH v5 4/4] ASoC: qcom: sdw: Add get and set channel maps support from codec to cpu dais
-Date: Thu, 12 Dec 2024 21:53:34 +0530
-Message-ID: <20241212162334.36739-5-quic_mohs@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241212162334.36739-1-quic_mohs@quicinc.com>
-References: <20241212162334.36739-1-quic_mohs@quicinc.com>
+	s=arc-20240116; t=1734020693; c=relaxed/simple;
+	bh=ybvh2LCs1jiATsTUws2yLPCzIB7crBX5rhe0jzCJ0uw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P55FSGbXWNsvvSmiAbZDiapvaWQ/SNogV4DQIY/JwdYTAqkENjlgby9+1Uh7W2qIFykIwL0hyrd7KMwi65SyzzvZ1T/icY9RlL0qEZse+eLzGX0tfY+blfX02VbTpGP817weFQFqxeddHn0K+Pfwsf2F7QdbCwTU0DiYt1ozeUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ThQai3kJ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734020691; x=1765556691;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ybvh2LCs1jiATsTUws2yLPCzIB7crBX5rhe0jzCJ0uw=;
+  b=ThQai3kJ7YZgRdYjr8hKOAxjzbIjIV/G3Ttz5aOLCtHViRWMthsv6oI2
+   Rs7p4RC0gQ88HSTmVEBp44qrmbDtsNzv2agIiokSPWVb017/rI98gKjp8
+   dUoOLvWWgdVa1vKD/hyo82hS3qq7FaF26KlE1e7qMqCD3Ahe7qSmsn/gm
+   0igTVGjwJDQCevVfYicarwNb3zGFAjdQEifd2T7UJUFmStlpwRqdO+lqQ
+   /76sXanQovoCF7KLXab436C8sSrMgEZY56mHS/v2vDV6MiePGuvepz0NI
+   qsP8RK9bz2Y5CQ3j8SU/5gYwmFfQcfkWbrIIPcowwpKuat7hkBAwOq+zt
+   w==;
+X-CSE-ConnectionGUID: ZdZXnMDyROShsx1/YGONew==
+X-CSE-MsgGUID: 8oHEoVZ+QwCZ2N4INLkP7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34688802"
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="34688802"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 08:24:50 -0800
+X-CSE-ConnectionGUID: 4l0s1ysIT0KAEIdiF1KARg==
+X-CSE-MsgGUID: N33rhWbZTyKgBKZYqknKTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="96355689"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 08:24:49 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tLlzZ-00000006xwk-39dJ;
+	Thu, 12 Dec 2024 18:24:45 +0200
+Date: Thu, 12 Dec 2024 18:24:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: Re: [PATCH v2 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
+Message-ID: <Z1sOTf6UZbruptnl@smile.fi.intel.com>
+References: <20241118123254.620519-1-andriy.shevchenko@linux.intel.com>
+ <514964ea-0795-41d6-91d3-f3d4f193fc6d@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: CbMJFmKfZ1pk65Ju96SOug-iGSAyq2jh
-X-Proofpoint-GUID: CbMJFmKfZ1pk65Ju96SOug-iGSAyq2jh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120118
+In-Reply-To: <514964ea-0795-41d6-91d3-f3d4f193fc6d@csgroup.eu>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Add get and set channel maps support from codec to cpu dais.
+On Mon, Nov 18, 2024 at 03:10:09PM +0100, Christophe Leroy wrote:
+> Le 18/11/2024 à 13:31, Andy Shevchenko a écrit :
+> > Remove legacy-of-mm-gpiochip.h header file. The above mentioned
+> > file provides an OF API that's deprecated. There is no agnostic
+> > alternatives to it and we have to open code the logic which was
+> > hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
+> > drivers are using their own labeling schemas and resource retrieval
+> > that only a few may gain of the code deduplication, so whenever
+> > alternative is appear we can move drivers again to use that one.
+> > 
+> > As a side effect this change fixes a potential memory leak on
+> > an error path, if of_mm_gpiochip_add_data() fails.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Implemented logic to get the channel map in case of only sdw stream and
-set channel map only for specific cpu dais.
+Thanks, what's next?
 
-Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
----
- drivers/soundwire/qcom.c |  5 ++---
- sound/soc/qcom/sdw.c     | 34 +++++++++++++++++++++++++++++++---
- 2 files changed, 33 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/soundwire/qcom.c b/drivers/soundwire/qcom.c
-index 86763ba3a3b2..eb0cf725872e 100644
---- a/drivers/soundwire/qcom.c
-+++ b/drivers/soundwire/qcom.c
-@@ -1276,11 +1276,10 @@ static void *qcom_swrm_get_sdw_stream(struct snd_soc_dai *dai, int direction)
- }
- 
- static int qcom_swrm_set_channel_map(struct snd_soc_dai *dai,
--				     unsigned int tx_num, unsigned int *tx_slot,
--				     unsigned int rx_num, unsigned int *rx_slot)
-+				     unsigned int tx_num, const unsigned int *tx_slot,
-+				     unsigned int rx_num, const unsigned int *rx_slot)
- {
- 	struct qcom_swrm_ctrl *ctrl = dev_get_drvdata(dai->dev);
--	struct sdw_stream_runtime *sruntime = ctrl->sruntime[dai->id];
- 	int i;
- 
- 	if (tx_slot) {
-diff --git a/sound/soc/qcom/sdw.c b/sound/soc/qcom/sdw.c
-index f2eda2ff46c0..d4d8ed46e6ff 100644
---- a/sound/soc/qcom/sdw.c
-+++ b/sound/soc/qcom/sdw.c
-@@ -25,7 +25,9 @@ int qcom_snd_sdw_startup(struct snd_pcm_substream *substream)
- 	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
- 	struct sdw_stream_runtime *sruntime;
- 	struct snd_soc_dai *codec_dai;
--	int ret, i;
-+	int ret, i, j;
-+	u32 rx_ch[SDW_MAX_PORTS], tx_ch[SDW_MAX_PORTS];
-+	u32 rx_ch_cnt = 0, tx_ch_cnt = 0;
- 
- 	sruntime = sdw_alloc_stream(cpu_dai->name);
- 	if (!sruntime)
-@@ -35,9 +37,35 @@ int qcom_snd_sdw_startup(struct snd_pcm_substream *substream)
- 		ret = snd_soc_dai_set_stream(codec_dai, sruntime,
- 					     substream->stream);
- 		if (ret < 0 && ret != -ENOTSUPP) {
--			dev_err(rtd->dev, "Failed to set sdw stream on %s\n",
--				codec_dai->name);
-+			dev_err(rtd->dev, "Failed to set sdw stream on %s\n", codec_dai->name);
- 			goto err_set_stream;
-+		} else if (ret == -ENOTSUPP) {
-+			/* Ignore unsupported */
-+			continue;
-+		}
-+
-+		ret = snd_soc_dai_get_channel_map(codec_dai, &tx_ch_cnt, tx_ch,
-+						  &rx_ch_cnt, rx_ch);
-+		if (ret != 0 && ret != -ENOTSUPP) {
-+			dev_err(rtd->dev, "Failed to get codec chan map %s\n", codec_dai->name);
-+			goto err_set_stream;
-+		} else if (ret == -ENOTSUPP) {
-+			/* Ignore unsupported */
-+			continue;
-+		}
-+	}
-+
-+	switch (cpu_dai->id) {
-+	case RX_CODEC_DMA_RX_0:
-+	case TX_CODEC_DMA_TX_3:
-+		if (tx_ch_cnt || rx_ch_cnt) {
-+			for_each_rtd_codec_dais(rtd, j, codec_dai) {
-+				ret = snd_soc_dai_set_channel_map(codec_dai,
-+								  tx_ch_cnt, tx_ch,
-+								  rx_ch_cnt, rx_ch);
-+				if (ret != 0 && ret != -ENOTSUPP)
-+					goto err_set_stream;
-+			}
- 		}
- 	}
- 
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
