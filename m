@@ -1,102 +1,170 @@
-Return-Path: <linux-kernel+bounces-443913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F61C9EFD71
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:28:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD779EFD79
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:31:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0062C28BA82
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:28:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0C5628B5C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5A11AF0B4;
-	Thu, 12 Dec 2024 20:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A1518E04D;
+	Thu, 12 Dec 2024 20:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oCTWCing"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMWLupDB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2567A18FDA9
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F033A1422D4
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734035276; cv=none; b=WDk45UmMohdzqYLjEYMyKSqpWqHs/n9lM5/sZ+N1cpdhkbW0lNvJqm145+uzjpJSZed9sgeQ+q8r4jocWAptE67UbkIT+/02FaE+CfgOojwz5kDbVja9elQmkEF4bB9tpylwW510K8JzVjDvp74H4L/0Um9bgr3MsJHybyaijIU=
+	t=1734035499; cv=none; b=Rw7A+ZXuqadWmnI954a20p4xZi9dk5O2xEaVXZpHIypTptbU/XXOMXAqQpmJ/RSMshrwEUwTYjDzzmHTtsU+KOmt/xiZJCM/SQ9b+GHdzIVjTTd80aLVECqKK0SHNuFUuj6nG82forognrJie2/Ixky0VjxV3FvmjS/jUuKFTUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734035276; c=relaxed/simple;
-	bh=2rXihmp9pWl3LzrM5tfFee/d+Lbi3u9PgbARXkqiJbU=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iUmpk/X3ar/dctZLiHN8bek4vZnqZMaQGtAIij7T1BkuyCMK6T/XFRZA2k1EzUlPCEvUp4YEhLoaJSKZJB1k7nzEPyU+HcStscX+LxMsgcbgG+tAh030F6qknG5zmX54z8yeb3SfS3qOxbkl6r274sJlwejPjG6n0DEPhTCCKNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oCTWCing; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3a0acba5feso747858276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:27:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734035273; x=1734640073; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IyH3eYb6Cm9AtiFQGPmrG/m4h3r5bZXGHe1sNdWmzvY=;
-        b=oCTWCingdSS0MKYxILzGFoZI3ig1yvRCXI1FpH+6zlnmOcyndtUMNsipQRd+B51GM/
-         SjJmn3toOfZAKLlquy+AGjTH6DMaDR6qNu58vCYuflKr1BPeuhHMThRmPELPEE1wMjpd
-         sPbolgDS0zUCKElVIzGAMPoc5FbN9ZzFaiW9o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734035273; x=1734640073;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IyH3eYb6Cm9AtiFQGPmrG/m4h3r5bZXGHe1sNdWmzvY=;
-        b=DKCcIZOZuHuoFx26nKQ+4R9UANJzR8Qe4z77jTEcaufi/BpxkkXCyc7BWJNIeNgru2
-         iugwkO7PmwWf6Lhz/b/LPgs6E3texRXIWbM+rlIgPiSioiWdjMDynwiS9y/wQIdprg0m
-         7jRVstny2xbVYB1eRYc+D2Pw1vyPY5ueRPsv7pTL9d/CX8qnC/1nhouvIENNqBFUB4gZ
-         Krx3pJm3NM/x0KherXF9w0Bcs8Zf6Eb9yXKbQ+XXFYVx17CDixkBcJPBl2kZeivSC8f9
-         tcl1u5hCLoxnKy2UVrvP8Qrv6dWspOEcLxEAUCOddjZUD+rWloEOYawbUOsF3WdItXam
-         WmlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqkkRxznyRKThWYL6BTg/FiWwn4DwCa1z11LbDyfe/L35sZwzx7T5R73gnOWrVQOhsaZS8MAyqGsRuBis=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVWKx6ovi1ceEWFRNBvHKYyluqX/24RDoK10Cub/l7N49kHECP
-	TyZQoIVBvWsRrzfB+OwJHoCy1ta8G2LORLj8Xu31VkVkt8ygTMC4YT33fhNc6eVJXHbPy13H8SJ
-	lFI3rGsyowAe8E0x6z/VTbpm4xatSkhi1BxTh
-X-Gm-Gg: ASbGncv9Y8iSCmiW3uvkmGh0LHbDpAtYXMExJuLU1v3rdrA59lZjkbL+vPS/1xjxtfb
-	C5+lc/py9G/wh+zjL2Bu1U3OEIIbZ6+I+fHG6eP6mJEbxuUFHz+nxllpYdekJFk5f2Q==
-X-Google-Smtp-Source: AGHT+IG3KC9ssh6ekayVwqUK7Km4JQfm8yz6hlNQTxOXGgPcqzMW7GAJJi4TlQ/fXN099DQlJcEjq7UgjR3xUuloAyA=
-X-Received: by 2002:a05:6902:1b8e:b0:e3c:7fca:716e with SMTP id
- 3f1490d57ef6-e43491ff2aamr112163276.6.1734035273092; Thu, 12 Dec 2024
- 12:27:53 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 12 Dec 2024 12:27:52 -0800
+	s=arc-20240116; t=1734035499; c=relaxed/simple;
+	bh=CueMbdhBBRN/E3nJAMpNrY1ck9YZIV4/Dfc8HiUOcbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=peUH8LwrjWh3DTFUNLfRMo2fOTOcGAuSG8leP2AO/d9mwHijTudZkYhIVeTUBWl2Ai5dO8KhwfG5eXBdAdxHBjkaYJcv6++hVCl2Dxgq3uReqJrqzNOAzhVMKAK/o91+spHCLOy1AVIZh4OxVQVdp9aB03I3OYRzyA3+S7yQC1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMWLupDB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4D46C4CECE;
+	Thu, 12 Dec 2024 20:31:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734035498;
+	bh=CueMbdhBBRN/E3nJAMpNrY1ck9YZIV4/Dfc8HiUOcbM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AMWLupDB0lyLNW85/ApiYYhd/Q1QhRuERiR7elsk9Pa9ccYEXuHvhM5WpvDtIizaD
+	 0iw5tsbMk/7G4g+bjjwrgiO6cJoZ1h8RPVj54Fi116yDasFH520hRgfNxHna1/purW
+	 jBi53RvPjLC1L1UEXvagSWvMXDO6o2CTRluUJHiHpTb27ozIntKH2XmEKfMfmbKvVP
+	 wo5WNmRGa4YaRh8BdYQba4Y0hmznLA/dN4c3dUD/zC+eeYxcdAWzpi8x1hp2qUfjKD
+	 j+xAfYPd1RNy0a5gC5wUMEpS74u7eZXh1Nav8sbX1pleJJljcTwnDQsg0EFsXNerxs
+	 NQRNBWmRYH+jQ==
+Date: Thu, 12 Dec 2024 13:31:32 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: "Ning, Hongyu" <hongyu.ning@linux.intel.com>, kexec@lists.infradead.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+	Dave Young <dyoung@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, jpoimboe@kernel.org,
+	bsz@amazon.de
+Subject: Re: [PATCH] x86/kexec: Only write through identity mapping of
+ control page
+Message-ID: <20241212203132.GA1627368@ax162>
+References: <20241205153343.3275139-1-dwmw2@infradead.org>
+ <20241205153343.3275139-14-dwmw2@infradead.org>
+ <20241212014418.GA532802@ax162>
+ <10a4058d9a667ca7aef7e1862375c2da84ef53a3.camel@infradead.org>
+ <20241212150408.GA542727@ax162>
+ <38aaf87162d10c79b3d3ecae38df99e89ad16fce.camel@infradead.org>
+ <20241212174243.GA2149156@ax162>
+ <9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241212-fd-dp-audio-fixup-v3-0-0b1c65e7dba3@linaro.org>
-References: <20241212-fd-dp-audio-fixup-v3-0-0b1c65e7dba3@linaro.org>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
-Date: Thu, 12 Dec 2024 12:27:52 -0800
-Message-ID: <CAE-0n526i3eZbSsoyLgO=MFPb1_mU_v9c-zgMrdQGWgUvj-+Ug@mail.gmail.com>
-Subject: Re: [PATCH v3 00/14] drm/msm/dp: perform misc cleanups
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Paloma Arellano <quic_parellan@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
-Cc: Douglas Anderson <dianders@chromium.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org>
 
-Quoting Dmitry Baryshkov (2024-12-11 15:41:35)
-> - Fix register programming in the dp_audio module
-> - Rework most of the register programming functions to be local to the
->   calling module rather than accessing everything through huge
->   dp_catalog monster.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Thu, Dec 12, 2024 at 08:11:19PM +0000, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> The virtual mapping of the control page may have been _PAGE_GLOBAL and
+> thus its PTE might not have been flushed on the %cr3 switch and it might
+> effectively still be read-only. Move the writes to it down into the
+> identity_mapped() function where the same %rip-relative addressing will
+> get the new mapping.
+> 
+> The stack is fine, as that's using the identity mapped address anyway.
+> 
+> Fixes: 5a82223e0743 ("x86/kexec: Mark relocate_kernel page as ROX instead of RWX")
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Reported-by: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219592
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+
 > ---
+>  arch/x86/kernel/relocate_kernel_64.S | 32 +++++++++++++++++-----------
+>  1 file changed, 20 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+> index 553d67845b84..b9c80b3091c8 100644
+> --- a/arch/x86/kernel/relocate_kernel_64.S
+> +++ b/arch/x86/kernel/relocate_kernel_64.S
+> @@ -90,22 +90,17 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
+>  	movq	kexec_pa_table_page(%rip), %r9
+>  	movq	%r9, %cr3
+>  
+> -	/* Save %rsp and CRs. */
+> -	movq    %rsp, saved_rsp(%rip)
+> -	movq	%rax, saved_cr3(%rip)
+> -	movq	%cr0, %rax
+> -	movq	%rax, saved_cr0(%rip)
+> -	/* Leave CR4 in %r13 to enable the right paging mode later. */
+> -	movq	%cr4, %r13
+> -	movq	%r13, saved_cr4(%rip)
+> -
+> -	/* save indirection list for jumping back */
+> -	movq	%rdi, pa_backup_pages_map(%rip)
+> +	/*
+> +	 * The control page still might not be writable because the original
+> +	 * kernel PTE may have had the _PAGE_GLOBAL bit set. Don't write to
+> +	 * it except through the *identmap* address.
+> +	 */
+>  
+>  	/* Save the preserve_context to %r11 as swap_pages clobbers %rcx. */
+>  	movq	%rcx, %r11
+>  
+>  	/* setup a new stack at the end of the physical control page */
+> +	movq	%rsp, %rbp
+>  	lea	PAGE_SIZE(%rsi), %rsp
+>  
+>  	/* jump to identity mapped page */
+> @@ -118,6 +113,19 @@ SYM_CODE_END(relocate_kernel)
+>  
+>  SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+>  	UNWIND_HINT_END_OF_STACK
+> +
+> +	/* Save original %rsp and CRs. */
+> +	movq    %rbp, saved_rsp(%rip)
+> +	movq	%rax, saved_cr3(%rip)
+> +	movq	%cr0, %rax
+> +	movq	%rax, saved_cr0(%rip)
+> +	/* Leave CR4 in %r13 to enable the right paging mode later. */
+> +	movq	%cr4, %r13
+> +	movq	%r13, saved_cr4(%rip)
+> +
+> +	/* save indirection list for jumping back */
+> +	movq	%rdi, pa_backup_pages_map(%rip)
+> +
+>  	/*
+>  	 * %rdi	indirection page
+>  	 * %rdx start address
+> @@ -185,7 +193,7 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
+>  	 *  - Machine check exception on TDX guest, if it was enabled before.
+>  	 *    Clearing MCE might not be allowed in TDX guests, depending on setup.
+>  	 *
+> -	 * Use R13 that contains the original CR4 value, read in relocate_kernel().
+> +	 * Use R13 that contains the original CR4 value
+>  	 * PAE is always set in the original CR4.
+>  	 */
+>  	andl	$(X86_CR4_PAE | X86_CR4_LA57), %r13d
+> -- 
+> 2.47.0
+> 
+> 
 
-For the series
 
-Tested-by: Stephen Boyd <swboyd@chromium.org> # sc7180-trogdor
 
