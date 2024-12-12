@@ -1,164 +1,119 @@
-Return-Path: <linux-kernel+bounces-442643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C70929EDFB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:59:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99479EDFBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:00:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C28C285DA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:59:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6C61691E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31FF204F65;
-	Thu, 12 Dec 2024 06:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AADB205AAF;
+	Thu, 12 Dec 2024 06:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VH2tGkHZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WlhgRDsq"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BACF204C2D;
-	Thu, 12 Dec 2024 06:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8946204F97;
+	Thu, 12 Dec 2024 06:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733986693; cv=none; b=QqvVJBEGoDXSf3E1a5x/nBGRzA0BOxjUnU3SrwSLGNZava2/74rNoUhDCGKfACn/ypkKLVffmm4WFGGFig2do+zjEVqxflRy5tZr3aSN1vlTbT09hrCLnklRV3wLFB4azOFeeXP5YIeri5YeO2sjBdogSMoztXnIZhNRMDPyrgU=
+	t=1733986712; cv=none; b=gVTLn2QUVQ7WyFicjJWrpD+4L2Y/7rkMYk+FcKD/7afCpq980jsuOytCuY/EGXlN9BtSHpd5s4QecbfcdPWgyNHNfvjjD1jIf3VZgSlmlxUtihpHLOu45wFh441l01BYYe+1FTYgdouZAEQzUhQc3K4456GNEaYCftEbrS63cFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733986693; c=relaxed/simple;
-	bh=VhCYiqyYvaqC3KiVmWV3iXEcW4mzn2QL662FFwdB0gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ItPj40n4tIP14DKp0t1QBCo8B68faHZcpk3bcwC7lpjDW0U0flvWjpi9zy++C4p0Q+OVNh3fHaTlJY2bQoJafD8uJw8LO407ppBmfH04jgqoQNPAYXioM1WQN9mFgZ6ovZFtLVmYDCvMo5VoD8UqpfhcarKgpXi9Ru28tpEaqtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VH2tGkHZ; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733986692; x=1765522692;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VhCYiqyYvaqC3KiVmWV3iXEcW4mzn2QL662FFwdB0gg=;
-  b=VH2tGkHZLX+qWDZFjzJxqeBZ9afdWUDbHrgvQ6wpCtZnY69cnKSyc4WV
-   cOf4yjLTe/IcOqOHW++dETZDi19OVkiEtwQe4rLor5ofVm+0Je6duarDj
-   UjI6KrvrWfW1j+qwp7Q7oVP0mVCvdk3ic7IEG60gnxKTXt9M2gVUGHhsd
-   EIYbndj7AGguPSPYDDDM28c1a3aJx961yHM1yMjfvYOQDQemXROA7d+Gt
-   yCEafNyRYGtp9imMwE8OO9jZXQ/1BQ1//MXwoNgcYDjX5jgfFUhu5k9+t
-   Jgj70ZZjblCGIr1LJw1EHklN4KlOZ8Q1PTNLxXMjxl8Lx3wcFwKxJ9ad2
-   w==;
-X-CSE-ConnectionGUID: iWVQH/MfSy+UJHs22kjMww==
-X-CSE-MsgGUID: 4ASbv9jpQAifrHP/SC7MYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="37231041"
-X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
-   d="scan'208";a="37231041"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 22:58:11 -0800
-X-CSE-ConnectionGUID: qDCc1EIfQI2BpWkROLzIOw==
-X-CSE-MsgGUID: BloVe2i4RwG3tFszWvxFaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="127127232"
-Received: from unknown (HELO desk) ([10.125.145.3])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 22:58:09 -0800
-Date: Wed, 11 Dec 2024 22:58:09 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [PATCH v5 9/9] x86/rfds: Exclude P-only parts from the RFDS affected
- list
-Message-ID: <20241211-add-cpu-type-v5-9-2ae010f50370@linux.intel.com>
-X-Mailer: b4 0.14.1
-References: <20241211-add-cpu-type-v5-0-2ae010f50370@linux.intel.com>
+	s=arc-20240116; t=1733986712; c=relaxed/simple;
+	bh=tl3YxfABMq/tz/S4rtg5u0jspXirem5riBalXgnXggg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UB12sEu4a5rJDRU+zOtbJf0dGkraxPjtJJh8CTMrN8Opuba1XZJdfazVSI2Di1AG38W6RhosqWlf6G/IFISrQq0M3PbDU6/SfetpYTQN84nNhoZI5akdO57GSe1dbz59AuxsB1iSYxxE7yLd/h9Luqcw0pEt/CXN+I/BCpzn0EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WlhgRDsq; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6efe4324f96so2166087b3.1;
+        Wed, 11 Dec 2024 22:58:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733986710; x=1734591510; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4SBbQIRgkoPJ+zE2Mc145HJltZD8ZKGkbTApj4NmDlM=;
+        b=WlhgRDsqPrN3haeUwYNzKbW4/pMUY5uH/+of8dbnb7/DANaA7B0bnEPsK/kOBPmPPO
+         vLzQC7Hih2ykC7jKfuhe/EV7oxVxA/hZ7yrKrSxiAlUW6W8mCK9KxLoG0a3hYIUGCh+X
+         YXXcmkeDJL0rdWiE8pS0aiiHNv0jjM30Men2NF45kLN5pCCsQ2MG4PYdC64khsUWB2Jx
+         2e+t6Ps7b35nXRMqjcHTczTCEgOUKIXg86LJ3yU/t7T40FcHpjJBiS0ufMTP4Jh97wkI
+         1uSw5qRlMkQqTGizHSTmgjjlyJtQzxXYld0VJPS5/P+GxuczRtdX9b8W/bZoW0YC31v/
+         VkmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733986710; x=1734591510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4SBbQIRgkoPJ+zE2Mc145HJltZD8ZKGkbTApj4NmDlM=;
+        b=NlXrAFVOeFTiwhbJdLAEi0rAcK5Ie+eQ9k8ouMT5z3pa4epNY7llklDBbOjnlI/Fp6
+         shoA6L8bzHIyjLabWcG4z9Dy2JLsrPmeOh0ei/QkAj16YUVp1m3za/HXvCGcuz/uT/vJ
+         gPsh6L4qzTsLqs6awXi9y9jrLCr2FQcIDPznYeUMKTrdYS/xgQxQTV4/7JDmEaLBnEp9
+         6VfByUrBvJTI/kHrXK8YN98lLlbJtPxJOP3M1tMhq6WBOZWhm7ViDwq6h2aeJB19SIE3
+         aAJVOpzg/Sob/Bk9MWf88xLZChdCgsQXjagxIMhNgGqN0qiTbc4oE0AJ8wBp7ZiMp4Dc
+         +mAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUexvv/WSM0tS4yCYiUQQCkS9J8aDveKrzLN8oDPgrNQ1RnTWr0UFMa/5DJenklo5V4SrpvDCxtBskcxA==@vger.kernel.org, AJvYcCV9ziBi4zrUnpIDE/3j+KZZz2LXjvwRGxqNeUpo98Ze8JuBufpmBvVYsAJf+vdTC0IxnAYU1bTlvRRm8EY=@vger.kernel.org, AJvYcCVNxU9lZC5PugbGf8oQQ+Lw2sSW5MJ8pODz343gD9ph3EpnEry2Bs4SdTnCKoTXSjXQx0+ikRjA@vger.kernel.org, AJvYcCVQl96U9ynubGQLYvEZZhM+GHoq8qLOTnjUYA7GBN3f0jCVkzEiTVgljF9F2YpRViGKT1xJyOwUkAJi2Om3@vger.kernel.org, AJvYcCWEJuLRaHLboFmo/kc9p0owpRmGTIpt6zKoChvlNV9PBK7eIsN5WAbtGfa/hyWVjbVEi2n2zmOYt7I6jd4505A=@vger.kernel.org, AJvYcCX+ajFMYet8tlpEqoajQSwN6Snur1kbhanLq1ksBtu8XQYpZpOFejugJZKa5auHrQbstTqJOufZkOw=@vger.kernel.org, AJvYcCX0qQgxyJfroRd8DstDB5W/mCSQW3KG8WPrdlLDkqzlsl1pKldJc3L/94/5BlXK8kjX4Efje/npM1nZ@vger.kernel.org, AJvYcCXpdBIYrJybyqkYSxhQWyC5v0dTaHCuDlKLaEmWSWouk0QBCagi48eMVomz7zYq99/NTrLuFockrKWn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8df0HDyoy4tIMD4bFAR1G6BnpvcSJ2cjssY0QXD6lYVoQFcGD
+	3aZDf12FAceImLP6VRwrs2qOpRkFEcHGlA3mNKVLg7sWXn4WQVA0/DXC1OY8pvTUbd4E+d24JoD
+	F2XaHL34T7MBZj6+VHBj4s+EKj7hLmqi5
+X-Gm-Gg: ASbGncsuRmTSrdS5xoQ9DzVk4lIX8VC/R0lk+jV5vjWH+waXFEL90+s0fvEqxao4QH+
+	spPdxfilDSuDY1lcbGUH2aCDilw8MsaD2fZwYVBXNQENx3bxRS2bgLJy5ea9L7vkv8wJ5m6Q=
+X-Google-Smtp-Source: AGHT+IHc27VmMPaQKcl6qXX4RmzgpwyBgTIEhwQilPevJCxIgXv2yqNK/gefN8IqBrHmgs1Ap5dwa7zLzHGXTy4QZuA=
+X-Received: by 2002:a05:690c:640c:b0:6ef:6035:8298 with SMTP id
+ 00721157ae682-6f19e861171mr20988847b3.36.1733986709785; Wed, 11 Dec 2024
+ 22:58:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211-add-cpu-type-v5-0-2ae010f50370@linux.intel.com>
+References: <20241210104524.2466586-1-tmyu0@nuvoton.com> <20241210104524.2466586-3-tmyu0@nuvoton.com>
+ <CAMRc=Men4QM3a2rydxDYwLjJLYPB7Uid=y_DJ8YNa-So2H3NQQ@mail.gmail.com>
+In-Reply-To: <CAMRc=Men4QM3a2rydxDYwLjJLYPB7Uid=y_DJ8YNa-So2H3NQQ@mail.gmail.com>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Thu, 12 Dec 2024 14:58:18 +0800
+Message-ID: <CAOoeyxXP5nY5edzW32sx+QS7sCSzhykQe9v6f-OHWOStwBDggw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] gpio: Add Nuvoton NCT6694 GPIO support
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RFDS only affects Atom parts. Vendor/Family/Model matching in the affected
-processor table makes Alderlake and Raptorlake P-only parts affected (which
-are not affected in reality). This is because the affected hybrid and
-E-only parts have the same Family/Model as the unaffected P-only parts.
+Dear Bartosz,
 
-Match CPU-type as Atom to exclude P-only parts as RFDS affected.
+Thank you for your comments,
 
-Note, a guest with the same Family/Model as the affected part may not have
-leaf 1A enumerated to know its CPU-type, but it should not be a problem as
-guest's Family/Model can anyways be inaccurate. Moreover, RFDS_NO or
-RFDS_CLEAR enumeration by the VMM decides the affected status of the guest.
+Bartosz Golaszewski <brgl@bgdev.pl> =E6=96=BC 2024=E5=B9=B412=E6=9C=8810=E6=
+=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=888:46=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Looks much better now. Please address one more issue I just noticed.
+>
+> > +
+> > +       mutex_init(&data->irq_lock);
+>
+> This is never destroyed. Please use devm_mutex_init() preferably to
+> not add remove(). Also, the other mutex doesn't seem to be initialized
+> at all.
+>
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
- Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst | 8 --------
- arch/x86/kernel/cpu/common.c                                 | 9 +++++++--
- 2 files changed, 7 insertions(+), 10 deletions(-)
+Understood! I will address the issue and include the missing part in
+the next patch.
+For other drivers that use mutex_init() without destroying it should
+also be changed to devm_mutex_init(), right?
 
-diff --git a/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst b/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst
-index 0585d02b9a6c..ad15417d39f9 100644
---- a/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst
-+++ b/Documentation/admin-guide/hw-vuln/reg-file-data-sampling.rst
-@@ -29,14 +29,6 @@ Below is the list of affected Intel processors [#f1]_:
-    RAPTORLAKE_S            06_BFH
-    ===================  ============
- 
--As an exception to this table, Intel Xeon E family parts ALDERLAKE(06_97H) and
--RAPTORLAKE(06_B7H) codenamed Catlow are not affected. They are reported as
--vulnerable in Linux because they share the same family/model with an affected
--part. Unlike their affected counterparts, they do not enumerate RFDS_CLEAR or
--CPUID.HYBRID. This information could be used to distinguish between the
--affected and unaffected parts, but it is deemed not worth adding complexity as
--the reporting is fixed automatically when these parts enumerate RFDS_NO.
--
- Mitigation
- ==========
- Intel released a microcode update that enables software to clear sensitive
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 6c45b8bed9fc..a82d6184e1d0 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1207,6 +1207,11 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
- #define VULNBL_INTEL_STEPPINGS(vfm, steppings, issues)	\
- 	X86_MATCH_VFM_STEPPINGS(INTEL_##vfm, steppings, issues)
- 
-+#define VULNBL_INTEL_TYPE(vfm, cpu_type, issues)			\
-+	X86_MATCH_VFM_CPU_TYPE(INTEL_##vfm,				\
-+			       INTEL_CPU_TYPE_##cpu_type,	\
-+			       issues)
-+
- #define VULNBL_AMD(family, blacklist)		\
- 	VULNBL(AMD, family, X86_MODEL_ANY, blacklist)
- 
-@@ -1255,9 +1260,9 @@ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
- 	VULNBL_INTEL(		TIGERLAKE,		GDS),
- 	VULNBL_INTEL(		LAKEFIELD,		MMIO | MMIO_SBDS | RETBLEED),
- 	VULNBL_INTEL(		ROCKETLAKE,		MMIO | RETBLEED | GDS),
--	VULNBL_INTEL(		ALDERLAKE,		RFDS),
-+	VULNBL_INTEL_TYPE(	ALDERLAKE,	ATOM,	RFDS),
- 	VULNBL_INTEL(		ALDERLAKE_L,		RFDS),
--	VULNBL_INTEL(		RAPTORLAKE,		RFDS),
-+	VULNBL_INTEL_TYPE(	RAPTORLAKE,	ATOM,	RFDS),
- 	VULNBL_INTEL(		RAPTORLAKE_P,		RFDS),
- 	VULNBL_INTEL(		RAPTORLAKE_S,		RFDS),
- 	VULNBL_INTEL(		ATOM_GRACEMONT,		RFDS),
-
--- 
-2.34.1
-
-
+Best regards,
+Ming
 
