@@ -1,39 +1,74 @@
-Return-Path: <linux-kernel+bounces-443272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406CB9EE9FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:07:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACEF9EEA11
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:08:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD0CA16A1E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:05:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FFCB188C229
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DA72165EA;
-	Thu, 12 Dec 2024 15:05:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA952156FF;
-	Thu, 12 Dec 2024 15:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBB721578A;
+	Thu, 12 Dec 2024 15:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A+/cQo00"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B773211476;
+	Thu, 12 Dec 2024 15:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734015929; cv=none; b=mgiqppAuLNSjDOYqfaZf8rl/uB0leWgpfwMcPksUKXOnf9y3v3owB1qSw34B9Vmv0ZFb7mEenXKeqaBsQkvXHiB2aS8vE6wXrfyzwTC2JIgSXviHlm+qBBWqPPKCqBDye9woD0vkCGz2V3HsKuhhmVIODJj12pusROdZ2T9eeik=
+	t=1734015972; cv=none; b=V714bVAHBuzyWvX+S85YbMB2OUMUptQGsl6yQrGWYmwC8D+zsEsYwuIAwo/SMKiLA/qFUiDaTErUtqK33+pwKBdvszerRWk2L+qT6S7b0nb4BWdCf+AcN7TOw9I+t5YUP3r5eeA5MltqCabmYEnDHsBFC1QbqL/Z67RKnFltfzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734015929; c=relaxed/simple;
-	bh=z3oBJl9NNxgVEM5YXZk6/8Ne2+HCX2A0fwmyGUHK4VM=;
+	s=arc-20240116; t=1734015972; c=relaxed/simple;
+	bh=OcB66Q420Ubip3QtsEjUK9jZPSQRj4+xByUQv4HKQrA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i//ppOUDtGfdtU5AZIReUIBaqoojz9llkVSCC8TnGybcAVxtp6bUd4QLO6HtGLYVsNbkXKfiPGI5yWWIOWOuMmtzE4SEkPlST5PkDIgZcKOVZN+H7AYjY+ksF8P/TdTxnH2fO9W1cWHyxIkQ1DkS0ICRjfZlzZYSWRMEZ4aDuvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FBD9169E;
-	Thu, 12 Dec 2024 07:05:55 -0800 (PST)
-Received: from [10.1.27.173] (XHFQ2J9959.cambridge.arm.com [10.1.27.173])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F7873F720;
-	Thu, 12 Dec 2024 07:05:25 -0800 (PST)
-Message-ID: <2b1cc228-a8d5-4383-ab25-abbbcccd2e2c@arm.com>
-Date: Thu, 12 Dec 2024 15:05:24 +0000
+	 In-Reply-To:Content-Type; b=ToVypapXDG223JDCwpExz+LTDqDiZq/XRD7slFMsvcfFEgLwAGiTo/I2P8w8xw0L6KR5+s4xqKlVqfuN6fkOyhJ9kALmD2myHe1E8UmHiuqZBh4FqSUAvALicHbsZJusy6ayFmtQLbleTRNzgiNVQI0ZBSqcctbaTRH9IwOQh9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A+/cQo00; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCEv8Uh005493;
+	Thu, 12 Dec 2024 15:06:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=A3wFlE
+	PsdZzBUkWZ/nTr4CdKM+UAzPoBfwV1B9uNa6U=; b=A+/cQo00vkfox+8iNsOh/7
+	53x08x8HuG35+VpOrAnGS7M0I34Ww8Oozv39ww7tqD/3Icac/YzWgPDwT2qPfjly
+	6ybDoPi0fojabGFKsehb+kDSRVBdVe4XMMO1k5S92cwcbv/Fuob0id3ym8jk5wUj
+	6YCBsnk/x+YYDtc8FMX1yX0/KESjRUkC16f7DOoBLJ+31rkO8UypboXyZdvXZyGD
+	T5lEcNh8oOacI/LqgQg9k+wATLkg97566BJDMcByIglTWvkfJQSX+4TRodp+vHEe
+	07BB+ppDwlUlyryPyZ6V2vGbjHeErq1lWRNaQzSfvAh5dy38Nui/ULL4MDjKSuEQ
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsqm3xp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 15:06:07 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCD26be016919;
+	Thu, 12 Dec 2024 15:06:07 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12yh9b9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 15:06:07 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BCF63R335521222
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Dec 2024 15:06:03 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3391C20043;
+	Thu, 12 Dec 2024 15:06:03 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8A20D20040;
+	Thu, 12 Dec 2024 15:06:02 +0000 (GMT)
+Received: from [9.179.9.164] (unknown [9.179.9.164])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 12 Dec 2024 15:06:02 +0000 (GMT)
+Message-ID: <7a1c036c-05db-4770-ace3-9cff1cb7c12d@linux.ibm.com>
+Date: Thu, 12 Dec 2024 16:06:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,129 +76,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND RFC PATCH v1 2/5] arm64: Add BBM Level 2 cpu feature
-Content-Language: en-GB
-To: Marc Zyngier <maz@kernel.org>
-Cc: =?UTF-8?Q?Miko=C5=82aj_Lenczewski?= <miko.lenczewski@arm.com>,
- catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net,
- oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
- yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- kvmarm@lists.linux.dev
-References: <20241211160218.41404-1-miko.lenczewski@arm.com>
- <20241211160218.41404-3-miko.lenczewski@arm.com>
- <87cyhxs3xq.wl-maz@kernel.org> <084c5ada-51af-4c1a-b50a-4401e62ddbd6@arm.com>
- <86ikrprn7w.wl-maz@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <86ikrprn7w.wl-maz@kernel.org>
+Subject: Re: [PATCH 1/5] s390/crypto/cpacf: Constify 'struct bin_attribute'
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Niklas Schnelle
+ <schnelle@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241211-sysfs-const-bin_attr-s390-v1-0-be01f66bfcf7@weissschuh.net>
+ <20241211-sysfs-const-bin_attr-s390-v1-1-be01f66bfcf7@weissschuh.net>
+Content-Language: de-DE
+From: Holger Dengler <dengler@linux.ibm.com>
+In-Reply-To: <20241211-sysfs-const-bin_attr-s390-v1-1-be01f66bfcf7@weissschuh.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: lMhQAL7SGzKOdOaA-LTiOGBh4uNYFCYU
+X-Proofpoint-GUID: lMhQAL7SGzKOdOaA-LTiOGBh4uNYFCYU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=686 adultscore=0
+ lowpriorityscore=0 clxscore=1011 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120108
 
-On 12/12/2024 14:26, Marc Zyngier wrote:
-> On Thu, 12 Dec 2024 10:55:45 +0000,
-> Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 12/12/2024 08:25, Marc Zyngier wrote:
->>>> +
->>>> +	local_flush_tlb_all();
->>>
->>> The elephant in the room: if TLBs are in such a sorry state, what
->>> guarantees we can make it this far?
->>
->> I'll leave Miko to respond to your other comments, but I wanted to address this
->> one, since it's pretty fundamental. We went around this loop internally and
->> concluded that what we are doing is architecturally sound.
->>
->> The expectation is that a conflict abort can only be generated as a result of
->> the change in patch 4 (and patch 5). That change makes it possible for the TLB
->> to end up with a multihit. But crucially that can only happen for user space
->> memory because that change only operates on user memory. And while the TLB may
->> detect the conflict at any time, the conflict abort is only permitted to be
->> reported when an architectural access is prevented by the conflict. So we never
->> do anything that would allow a conflict for a kernel memory access and a user
->> memory conflict abort can never be triggered as a result of accessing kernel memory.
->>
->> Copy/pasting comment from AlexC on the topic, which explains it better than I can:
->>
->> """
->> The intent is certainly that in cases where the hardware detects a TLB conflict
->> abort, it is only permitted to report it (by generating an exception) if it
->> applies to an access that is being attempted architecturally. ... that property
->> can be built from the following two properties:
->>
->> 1. The TLB conflict can only be reported as an Instruction Abort or a Data Abort
->>
->> 2. Those two exception types must be reported synchronously and precisely.
->> """
+On 11/12/2024 18:54, Thomas Weißschuh wrote:
+> The sysfs core now allows instances of 'struct bin_attribute' to be
+> moved into read-only memory. Make use of that to protect them against
+> accidental or malicious modifications.
 > 
-> I totally agree with this. The issue is that nothing says that the
-> abort is in any way related to userspace.
-> 
->>>
->>> I honestly don't think you can reliably handle a TLB Conflict abort in
->>> the same translation regime as the original fault, given that we don't
->>> know the scope of that fault. You are probably making an educated
->>> guess that it is good enough on the CPUs you know of, but I don't see
->>> anything in the architecture that indicates the "blast radius" of a
->>> TLB conflict.
->>
->> OK, so I'm claiming that the blast radius is limited to the region of memory
->> that we are operating on in contpte_collapse() in patch 4. Perhaps we need to go
->> re-read the ARM and come back with the specific statements that led us to that
->> conclusion?
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 
-From the ARM:
-"""
-RFCPSG: If level 1 or level 2 is supported and the Contiguous bit in a set of
-Block descriptors or Page descriptors is changed, then a TLB conflict abort can
-be generated because multiple translation table entries might exist within a TLB
-that translates the same IA.
-"""
+Reviewed-by: Holger Dengler <dengler@linux.ibm.com>
 
-Although I guess it's not totally explicit, I've interpretted that as saying
-that conflicting TLB entries can only arise for the IA range for which the
-contiguous bits have been modified in the translation tables.
-
-Given we are only fiddling with the contiguous bits for user space mappings in
-this way, that's why I'm asserting we will only get a conflict abort for user
-space mappings... assuming the absence of kernel bugs, anyway...
-
-> 
-> But we don't know for sure what caused this conflict by the time we
-> arrive in the handler. It could equally be because we have a glaring
-> bug somewhere on the kernel side, even if you are *now* only concerned
-> with userspace.
-
-OK I see what you are saying; previously a conflict abort would have led to
-calling do_bad(), which returns 1, which causes do_mem_abort() to either kill
-the kernel or the process depending on the origin of the abort. (although if it
-came from kernel due to bug, we're just hoping that the conflict doesn't affect
-the path through the handler). With this change, we always assume we can fix it
-with the TLBI.
-
-How about this change to ensure we still die for issues originating from the kernel?
-
-if (!user_mode(regs) || !system_supports_bbml2())
-		return do_bad(far, esr, regs);
-
-> 
-> If anything, this should absolutely check for FAR_EL1 and assert that
-> this is indeed caused by such change.
-
-I'm not really sure how we would check this reliably? Without patch 5, the
-problem is somewhat constrained; we could have as many changes in flight as
-there are CPUs so we could keep a list of all the {mm_struct, VA-range} that are
-being modified. But if patch 5 is confirmed to be architecturally sound, then
-there is no "terminating tlbi" so there is no bound on the set of {mm_struct,
-VA-range}'s that could legitimately cause a conflict abort.
-
-Thanks,
-Ryan
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
+-- 
+Mit freundlichen Grüßen / Kind regards
+Holger Dengler
+--
+IBM Systems, Linux on IBM Z Development
+dengler@linux.ibm.com
 
 
