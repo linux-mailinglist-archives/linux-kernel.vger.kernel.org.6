@@ -1,168 +1,115 @@
-Return-Path: <linux-kernel+bounces-443939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F259EFDCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:04:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C779EFDDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:05:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A948216197E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:04:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9937B163A27
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC091BC9F4;
-	Thu, 12 Dec 2024 21:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C4A1C9B62;
+	Thu, 12 Dec 2024 21:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z/G3DwgQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="IIDBg6s8"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED411922E4
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908E9189B91;
+	Thu, 12 Dec 2024 21:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734037472; cv=none; b=DYWMcp/2zJ9wfBvqYQPQ6GF1i9RPa1he41L2ehZi285t37XglHFHEePVxwn6rXq+4tG8k5K+YAjXdt3TTDrEFFwU9+OrdmDIq+MEp5r7u5rDqw37ltqJoWT+NHnv1QriFxWU/CzmR40LCy1gQTDVUkX6ScHu5G1yj+iB02uWXkY=
+	t=1734037508; cv=none; b=DHLiRtISIur7ZPGt3Vk/0+AGlXX6AaWuTnJN9uhp4LufSpP1wP4hd9aswNPWfWAYXCWLFdTgjSuov+fDvobx4cx51W/EKILOoJNFqX1KVz26nj1xnb3WyhizppTm7sA5Fd/NO/zp0epNQCsh41OLTXUhdtdsdkrqnG7o0a9c2BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734037472; c=relaxed/simple;
-	bh=aJpqbvI4STgzb2cQr1nzOQxdJ7I4Sxmsit523/V0kCw=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=WX9c5sjf64FWa0JJ4NBfnMTgueoeo0Mi9uZx5bYwKU9RvfId7Tb/ap2qdaKtWON1C4BckFXQXo4l6grrQg475JcMUPZbCWz3YGxks8uztAlKtUfEe931Q9frXSbx2/HOBf/aEZtNMrEP/1zxWQzcinG3VNMr8KjOXHun0p/0UJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z/G3DwgQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734037470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UJ061P1Dr12VwDcDgqIvm5UI7xtypEyUk8M1AhY3aQo=;
-	b=Z/G3DwgQ0n3gzmDruCWPiiFZ1RymucBeKOTuHyfcXlaxI1gftKFCeCOd7KV25/MBE5CFm2
-	f0JbpEyJF0ihZ7zRT1bK+gPEMZ8sSuf6fNlf7C6ZRfZFW3xWG4RSgoFX9hLup36K+ufVC/
-	NgRKotfWNV9bUn0LogCALhQILx0gP7E=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-213-czDF83xzOtO6XfRDMqo_9Q-1; Thu,
- 12 Dec 2024 16:04:26 -0500
-X-MC-Unique: czDF83xzOtO6XfRDMqo_9Q-1
-X-Mimecast-MFC-AGG-ID: czDF83xzOtO6XfRDMqo_9Q
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5DD1419560A5;
-	Thu, 12 Dec 2024 21:04:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 663B91956052;
-	Thu, 12 Dec 2024 21:04:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    Jakub Kicinski <kuba@kernel.org>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] rxrpc: Fix ability to add more data to a call once MSG_MORE deasserted 
+	s=arc-20240116; t=1734037508; c=relaxed/simple;
+	bh=0LHuRmoljngdSD9c+1N7oQMp2u8ZMuceW5H/pbkyORg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lN91PiySiYzjYVO3MCm9NQ/Yvay/7ZPSF6Sw3eMU2RMD5HlYCb55n4/aWfVboyrj3lkk4OGCwW2I3J6M3LlDxfNi+w+/eZoiuIzD5+zCKXhnaOH/SxBQbTGFToGKxY93+3PIxZZBaeP5xDyQyUSggKQtLWgfIdHCvranudNfKuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=IIDBg6s8; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Dblla7udreygadXARpvlhJgD7EDNMt9ieS+Bqs3OkTw=; b=IIDBg6s8bKy1h8w52VcPk+Ix+E
+	8YSbNT2BN56Kt22Aq60rJJFA+41BVJDOr5Y4/VXbDIBhuDgg7jU+9j9Dn4Y1tjWYP7z7+xyFZfmHo
+	lp901ImPHOqm8tv69QFHN+7uV8XCXRjIaXrTvtmzwA2cmqdCAckfYEJ1zijeCW7Rir2Ov+pHnL1/7
+	4PKLMS5gzKoqS7LRI3CwlJudmUatrLdJYu3YIEXI0XwUMhU9OPslAlqlAaUx6erAg2Z+0Nx3jwrC+
+	GFbIS8j9MT0ftf9hjJMJnahi3k4EZrWTH1MLbsTZDSl1kjxSc4/Hsnxvyvy1V363yGmdTWXVVbByG
+	Z23GOJzg==;
+Received: from [179.193.1.214] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tLqMT-002Oni-EK; Thu, 12 Dec 2024 22:04:41 +0100
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kernel-dev@igalia.com,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v4 0/2] selftests/futex: Create test for robust list
+Date: Thu, 12 Dec 2024 18:04:34 -0300
+Message-ID: <20241212210436.112076-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2870479.1734037462.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 12 Dec 2024 21:04:22 +0000
-Message-ID: <2870480.1734037462@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-When userspace is adding data to an RPC call for transmission, it must pas=
-s
-MSG_MORE to sendmsg() if it intends to add more data in future calls to
-sendmsg().  Calling sendmsg() without MSG_MORE being asserted closes the
-transmission phase of the call (assuming sendmsg() adds all the data
-presented) and further attempts to add more data should be rejected.
+This patchset creates a selftest for the robust list interface, to track
+regressions and assure that the interface keeps working as expected.
 
-However, this is no longer the case.  The change of call state that was
-previously the guard got bumped over to the I/O thread, which leaves a
-window for a repeat sendmsg() to insert more data.  This previously went
-unnoticed, but the more recent patch that changed the structures behind th=
-e
-Tx queue added a warning:
+In this version I removed the kselftest_harness include, but I expanded the
+current futex selftest API a little bit with basic ASSERT_ macros to make the
+test easier to write and read. In the future, hopefully we can move all futex
+selftests to the kselftest_harness API anyway.
 
-        WARNING: CPU: 3 PID: 6639 at net/rxrpc/sendmsg.c:296 rxrpc_send_da=
-ta+0x3f2/0x860
+This is the expected output:
+    
+TAP version 13
+1..6
+ok 1 test_robustness
+ok 2 test_set_robust_list_invalid_size
+ok 3 test_get_robust_list_self
+ok 4 test_get_robust_list_child
+ok 5 test_set_list_op_pending
+ok 6 test_robust_list_multiple_elements
+# Totals: pass:6 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-and rejected the additional data, returning error EPROTO.
+Changelog
+v4:
+- Fixed clang warning "robust_list.c:121: converts between pointers to integer types
+with different sign"
 
-Fix this by adding a guard flag to the call, setting the flag when we queu=
-e
-the final packet and then rejecting further attempts to add data with
-EPROTO.
+v3: https://lore.kernel.org/lkml/20241010011142.905297-1-andrealmeid@igalia.com/
+- Create ASSERT_ macros for futex selftests
+- Dropped kselftest_harness include, using just futex test API
 
-Fixes: 2d689424b618 ("rxrpc: Move call state changes from sendmsg to I/O t=
-hread")
-Reported-by: syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/r/6757fb68.050a0220.2477f.005f.GAE@google.=
-com/
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
----
- net/rxrpc/ar-internal.h |    1 +
- net/rxrpc/sendmsg.c     |    8 ++++++++
- 2 files changed, 9 insertions(+)
+André Almeida (2):
+  selftests/futex: Add ASSERT_ macros
+  selftests/futex: Create test for robust list
 
-diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
-index 0c0a3c89dba3..718193df9d2e 100644
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -571,6 +571,7 @@ enum rxrpc_call_flag {
- 	RXRPC_CALL_RX_LAST,		/* Received the last packet (at rxtx_top) */
- 	RXRPC_CALL_TX_LAST,		/* Last packet in Tx buffer (at rxtx_top) */
- 	RXRPC_CALL_TX_ALL_ACKED,	/* Last packet has been hard-acked */
-+	RXRPC_CALL_TX_NO_MORE,		/* No more data to transmit (MSG_MORE deasserted=
-) */
- 	RXRPC_CALL_SEND_PING,		/* A ping will need to be sent */
- 	RXRPC_CALL_RETRANS_TIMEOUT,	/* Retransmission due to timeout occurred */
- 	RXRPC_CALL_BEGAN_RX_TIMER,	/* We began the expect_rx_by timer */
-diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
-index c4c8b718cafa..0e8da909d4f2 100644
---- a/net/rxrpc/sendmsg.c
-+++ b/net/rxrpc/sendmsg.c
-@@ -266,6 +266,7 @@ static void rxrpc_queue_packet(struct rxrpc_sock *rx, =
-struct rxrpc_call *call,
- 	/* Order send_top after the queue->next pointer and txb content. */
- 	smp_store_release(&call->send_top, seq);
- 	if (last) {
-+		set_bit(RXRPC_CALL_TX_NO_MORE, &call->flags);
- 		rxrpc_notify_end_tx(rx, call, notify_end_tx);
- 		call->send_queue =3D NULL;
- 	}
-@@ -329,6 +330,13 @@ static int rxrpc_send_data(struct rxrpc_sock *rx,
- 	bool more =3D msg->msg_flags & MSG_MORE;
- 	int ret, copied =3D 0;
- =
+ .../selftests/futex/functional/.gitignore     |   1 +
+ .../selftests/futex/functional/Makefile       |   3 +-
+ .../selftests/futex/functional/robust_list.c  | 513 ++++++++++++++++++
+ .../testing/selftests/futex/include/logging.h |  28 +
+ 4 files changed, 544 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/futex/functional/robust_list.c
 
-+	if (test_bit(RXRPC_CALL_TX_NO_MORE, &call->flags)) {
-+		trace_rxrpc_abort(call->debug_id, rxrpc_sendmsg_late_send,
-+				  call->cid, call->call_id, call->rx_consumed,
-+				  0, -EPROTO);
-+		return -EPROTO;
-+	}
-+
- 	timeo =3D sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
- =
-
- 	ret =3D rxrpc_wait_to_be_connected(call, &timeo);
+-- 
+2.47.1
 
 
