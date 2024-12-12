@@ -1,217 +1,165 @@
-Return-Path: <linux-kernel+bounces-442911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A10C9EE3D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:13:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796AC9EE3DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:13:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F57218894F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49877168326
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28232101AF;
-	Thu, 12 Dec 2024 10:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DF82101B7;
+	Thu, 12 Dec 2024 10:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fCR2SNSe"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wetterwald-eu.20230601.gappssmtp.com header.i=@wetterwald-eu.20230601.gappssmtp.com header.b="R1/ETQcZ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D11C1F949
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1021F949
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733998415; cv=none; b=nwonaQ+Mg6o+o0ipQsxXpQPIWAWYuZWqp1rg2ywTAi2pbddIZ62YBgpf4/bNDCGav+InqG7d7hdioxHuuaM2WEjCV1pcyjwOwRW1q0uiaSXkPaUYidItex580rtzOvevFAFxWEbsxF6Sw4f7+QlfQ/6z9aZ43LDBfZRw8BSQkwI=
+	t=1733998424; cv=none; b=B2aIooF3AKnQOWt1nRTCcodXMpdVtKCVCEdJMvcmJRPsikoHEvqh28ExTH8KUI+YdVV2Op8WFahNzfWs2F4gyn/zwZ1rZ6eFj6WyCsY3+FACbTws57p4fYUImeIjAa0M/i+HJAngvplpYnmPMvjw0ZJltrb/CnVKnqMSWLnBQ3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733998415; c=relaxed/simple;
-	bh=4HIWtFV37En8Z7xZDF5i/+XpdRbky2W7O+FRZ0Zrtf4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BmGAd8J0QPptrsEsr72eIZbKz61FMFotZFQc2ga6K2P+lTXOXgKai01cBm7expkmmQgUsHL1Rh+ZroAlOCbxXhmgWtQZS5+xkUXUHOZ0t7sZvoc/ESHmGbiRZ/UBLd1kP2Nhq2wD9uRMXU7vk/7SAHprOha5JDqrKCYLsNLndwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fCR2SNSe; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4HIWtFV37En8Z7xZDF5i/+XpdRbky2W7O+FRZ0Zrtf4=; b=fCR2SNSeYfiCgz5olZrhr/ivL9
-	Jgz6/RXmfJ/Zfx+J1M5hn0MBqnzlfgzV1nFHSkZLKc8WwExui2Cd/TxTf5BDJ7G9CGAjLWrgclFPk
-	GkKLAYb88whUh9/9tc2uuUfBOf5a8v855iMF/E/APyTJbE5sZTlBD6ZZRjsYPdylSRYn0xwopY4Cr
-	2+ZUzDkScQXLe6rw3+hNfaR+UAGnw0qMQTPXYR335fggeDcpWNEYZvukh84tPAyQyQayM6miQUBsC
-	QaF//CLKJbRJYKt2/ZWbwSczr4/DffTDT+Mnqt0p1ggIw5N1wjnJovTN9Mc2mdqW38f41JALVHss3
-	b5XEnJ9Q==;
-Received: from 54-240-197-238.amazon.com ([54.240.197.238] helo=freeip.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLgC9-00000004vZK-3ebp;
-	Thu, 12 Dec 2024 10:13:22 +0000
-Message-ID: <b4104c271b461dc1958ffac299d6741746a0728a.camel@infradead.org>
-Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
- instead of RWX
-From: David Woodhouse <dwmw2@infradead.org>
-To: "Ning, Hongyu" <hongyu.ning@linux.intel.com>, kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Kai Huang <kai.huang@intel.com>, Nikolay
- Borisov <nik.borisov@suse.com>,  linux-kernel@vger.kernel.org, Simon Horman
- <horms@kernel.org>, Dave Young <dyoung@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, jpoimboe@kernel.org,  bsz@amazon.de
-Date: Thu, 12 Dec 2024 10:13:20 +0000
-In-Reply-To: <5bb26488-f5fb-4186-92c3-de6a07631f91@linux.intel.com>
-References: <20241205153343.3275139-1-dwmw2@infradead.org>
-	 <20241205153343.3275139-14-dwmw2@infradead.org>
-	 <5bb26488-f5fb-4186-92c3-de6a07631f91@linux.intel.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-MFODfwyI2dERy4RSXKOr"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1733998424; c=relaxed/simple;
+	bh=vjl7udsYZj5OR0YkaT5BnoL0taUATJBU3cEYKFx+4Qs=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=AETF3WSZLsAKhalxjVsxJMXrxk5r5XjS7/EjGQO4ByklpMIm/cQBD0XzK7O+2FOavbTHPo3IkKTg+Ml9f/o8sWKuLXZ3UZKlKbD3oxQ8SvKrTQEBahP/Whw0VYgixWT0+X3SjGgmBeXqljBi2kVA7dRU05kq/XAXeLIsy2PaUPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wetterwald.eu; spf=pass smtp.mailfrom=wetterwald.eu; dkim=pass (2048-bit key) header.d=wetterwald-eu.20230601.gappssmtp.com header.i=@wetterwald-eu.20230601.gappssmtp.com header.b=R1/ETQcZ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wetterwald.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wetterwald.eu
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5401b7f7141so365661e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:13:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wetterwald-eu.20230601.gappssmtp.com; s=20230601; t=1733998419; x=1734603219; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EI22DQzZVDVnTxt6RUW2tG/G1/4buJh4utbAY1WkjKk=;
+        b=R1/ETQcZbyNaT1jKipWPxf5q7K5RFNblywKBwILI7dFsRsHFhV8MUqqoH0kBcyhYfv
+         lRYz/Tf4H2iF6WHxfP34ib0h5tGryT3vu27QoWVgjPeWcCi2jgwCWv+tdwkn4zHNb/xu
+         lDdVbDcPFH4Q4bPnXcBVsnZNOQJEg7770xMsYIxmE8+PRs5QRYrrpL1Ow4Y1GuWRflPY
+         5VsmCL66PTf1fQMb01n7Xd0YIucvDKtcoGAS8jAY4bwv5+HWdBZyxEOdpWqg5LVj4ohy
+         EhQezTaQLDpHWpwPWi+njIO6HdvHaTNda2Mb0SmoXeVL8k6t7EiMrsM4Q3HtGj+F/CaF
+         9lJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733998419; x=1734603219;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EI22DQzZVDVnTxt6RUW2tG/G1/4buJh4utbAY1WkjKk=;
+        b=G5rJR7tbz2jYAjiERPr5Ec4fhgTnpDuMQ4n9s2u4D/Hjvmmhsi2iep/Dg3riglXZF9
+         XZk7vttgxSzUKTKg8RqAEh4vBgo8FaQTpqqUNvCcqtkSLg5v1KZ2X9JlWU7HqDxAHIHP
+         6SItpADScY6BPyl6V8K0S116iH7in9/ynqvuiccOhcalED4vOxbN+jYmFBQlFpFSuCWO
+         AvbdlvFUanSjNYt2Ff9nHWlrFFag8xHb7svtuYNR53GpZusSCIv6hLjAbS68zbqh0/Gz
+         n+xFIFerrbjx4Q/ACtdfFrN8JwOfxccsejvRjgY2Mcr7QeKQRp64tiRpQTWZM5K/JIKq
+         rDtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQo42kOeXZ+yID4gCRMyRjtHfUr6VpXZe4U1mBjzjFpr6mf5/AiEdTV6jiCO3qAArF4dstg91/iXP8Slg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEAJvKQunDqJgbUXlGm1Uwopnm4xTe8pM4zWqwttO4+gvdBLqm
+	DGkoQ7Cs/TmMSmoCd0IbIjth/jgIzJ5eCXnsUV3nz1rIa7xRL179bltOf0dxBCNJIUhms81qIyh
+	hIyYgdDJbwC62Y+5KmIcpVg2WGNVqYfSRzLENeJ5uXV3ghtvgg64=
+X-Gm-Gg: ASbGnctE4SDU+uyfs10mciTdhFGWTAWxIP2UGwh9+bndkgygJvlry1yoH29ANNQlUkJ
+	8oOkTCsCoY2HTzniJx6LISHuNzwKXE4sdSEAl6H+sf60xD0OyRyCJcJ9O9oIMSLUBBjPFkg==
+X-Google-Smtp-Source: AGHT+IE3hiuuk4G/KOtpfY7TlYPOOY0d5gVRWjcYEGOWpovgfyQ6kA/hV98D39NWqWy30GJxW18y+khOQn1iZgitaHc=
+X-Received: by 2002:a05:6512:1089:b0:540:2160:1f80 with SMTP id
+ 2adb3069b0e04-54032d49048mr218103e87.40.1733998418616; Thu, 12 Dec 2024
+ 02:13:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
-
-
---=-MFODfwyI2dERy4RSXKOr
+From: Martin Wetterwald <martin@wetterwald.eu>
+Date: Thu, 12 Dec 2024 11:13:27 +0100
+Message-ID: <CAFERDQ2hLHek+0ViVqbqgOD+4xwC2ZwK1KhgGdLP_zGnonEs4w@mail.gmail.com>
+Subject: Raspberry Pi 3B: Failed to create device link with soc:firmware:gpio
+To: f.fainelli@gmail.com, saravanak@google.com, stefan.wahren@i2se.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-12-12 at 11:03 +0800, Ning, Hongyu wrote:
->=20
-> Hi David,
->=20
-> I've hit some kdump/kexec regression issue for guest kernel in KVM/QEMU=
-=20
-> based VM and reported in https://bugzilla.kernel.org/show_bug.cgi?id=3D21=
-9592.
->=20
-> based on further git bisect, it seems to be related with this commit,
-> would you help to take a look?
+Hello Saravana and Florian,
 
-Thanks for the report; I'll take a look. Please could you share your
-kernel .config?
+Back in 2023, you discussed about an issue concerning the Raspberry Pi 4, that
+you fixed in commit 1a5ecc73b2bfeffe036212d4a6bfacee053ab0a1:
+https://lore.kernel.org/lkml/03b70a8a-0591-f28b-a567-9d2f736f17e5@gmail.com/
+https://lore.kernel.org/all/20230302023509.319903-1-saravanak@google.com/
 
-Also, you say that this is in QEMU running on an IA64 host. Is that
-true, or did you mean x86_64 host? Are you using OVMF or SeaBIOS as the
-QEMU firmware?
+Today, I notice I see the same issue, but it's with the Raspberry Pi 3B (V1.2).
+I'm using the upstream kernel 6.12.3, with the upstream DTB.
 
-In the short term, I think that just reverting the 'offending' commit
-should be OK. I'd *prefer* not to leave the page RWX for the whole time
-period that the image is loaded, but that's how it's been on i386 for
-ever anyway.
+You can find my kernel miniconfig (basis being allnoconfig) here:
+https://gist.github.com/mwetterw/299bb1317fccf9e68125cb0f5da7384c
 
---=-MFODfwyI2dERy4RSXKOr
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+During boot, I see following messages:
+> Bluetooth: HCI UART driver ver 2.3
+> Bluetooth: HCI UART protocol H4 registered
+> Bluetooth: HCI UART protocol Broadcom registered
+> bcm2835-mbox 3f00b880.mailbox: mailbox enabled
+> 3f201000.serial: ttyAMA0 at MMIO 0x3f201000 (irq = 99, base_baud = 0) is a PL011 rev2
+> raspberrypi-firmware soc:firmware: Attached to firmware from 2024-09-13T16:00:14
+> uart-pl011 3f201000.serial: Failed to create device link (0x180) with soc:firmware:gpio
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMjEyMTAxMzIwWjAvBgkqhkiG9w0BCQQxIgQgYGhPpeq5
-zbK73o7ysEUB6g4qtRPF18ZalyCAKvGgGOwwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCcL0+EIMcdR3T08extT5iYzthJTEkf2Y4i
-Ib7Aly9tAZTtbYTU9TfCIkcNRW/t2nTFqchGf1YOMnvZQh+vK2v19hLSBL9N0jW/b3Ikh3FOLx58
-kn5GhOTKTvodZm1uQEljxsBDcU76Ug6QLBHYvNDCtq3fAbpnMBUrHRjjkKvytnCo1BCC+7jHI+9O
-5qIP+j1iJe71iaXi9jRBVvZGY8+dzvb82j2Y81OWL8y+fZxDaIW1jecs4eKyMJqlqkIj405iR2Rm
-1N8Ikh9G8s/MRrQqf3qT/Y8MbkBszu2daX2B64+DJYRdZyiWjQ7QoY+WgFvS93scm9WVhjHTm7K0
-zx3aW3sNCSACLGF+OtY5ba/qP0sLZTEYqDQ7EIwSCzvAIIbOeTRVRsOVZg5/cRwLZ9bMoWWZAEdY
-hRCJKIPr4bXbFgCbzARODM14vKmRxjXXonnO9wJEdWPnZpKV0QcFszBLinITc/3O9ItwFrUAvvuK
-n8LDo/z8VsTkHz8QaFFlTVdqt2PXN8XC6qtAz7dPT9/Tao9SLo0FbWaSZynT4fjUN7PiJe1W8P/H
-g2hVc6+FdhK6iCO1mlGdesBy2qQRAxCHUZ5wWNaESge9aMAbqkUYOz/EX9PLqoLjSt95yGOTz18c
-zUSmoCdlr+rrvjvh8XMayfM1CoW1kddyTQZRBpBjBgAAAAAAAA==
+Here is an extract of the relevant FDT nodes.
+Because my setup involves first the proprietary GPU firmware, then the U-Boot
+bootloader before finally launching the kernel, I used following command in
+order to make sure I see the same FDT as Linux:
 
+> ssh rpi 'cat /sys/firmware/fdt' | fdtdump -
 
---=-MFODfwyI2dERy4RSXKOr--
+> firmware {
+>     compatible = "raspberrypi,bcm2835-firmware", "simple-mfd";
+>     mboxes = <0x0000001b>;
+>     phandle = <0x0000001c>;
+>     clocks {
+>         compatible = "raspberrypi,firmware-clocks";
+>         #clock-cells = <0x00000001>;
+>         phandle = <0x00000015>;
+>     };
+>     gpio {
+>         compatible = "raspberrypi,firmware-gpio";
+>         gpio-controller;
+>         #gpio-cells = <0x00000002>;
+>         gpio-line-names = "BT_ON", "WL_ON", "STATUS_LED", "LAN_RUN", "HDMI_HPD_N", "CAM_GPIO0", "CAM_GPIO1", "PWR_LOW_N";
+>         status = "okay";
+>         phandle = <0x0000000a>;
+>     };
+> };
+
+> serial@7e201000 {
+>     compatible = "arm,pl011", "arm,primecell";
+>     reg = <0x7e201000 0x00000200>;
+>     interrupts = <0x00000002 0x00000019>;
+>     clocks = <0x00000007 0x00000013 0x00000007 0x00000014>;
+>     clock-names = "uartclk", "apb_pclk";
+>     arm,primecell-periphid = <0x00241011>;
+>     status = "okay";
+>     pinctrl-names = "default";
+>     pinctrl-0 = <0x00000008 0x00000009>;
+>     phandle = <0x00000048>;
+>     bluetooth {
+>         compatible = "brcm,bcm43438-bt";
+>         max-speed = <0x001e8480>;
+>         shutdown-gpios = <0x0000000a 0x00000000 0x00000000>;
+>         phandle = <0x00000049>;
+>     };
+> };
+
+If I understand correctly, the serial dev bus, together with
+CONFIG_BT_HCI_UART, CONFIG_BT_HCI_UART_BCM, and if associated to the correct
+DTB nodes describing the bluetooth chip, should allow the kernel to handle the
+serial Bluetooth HCI himself, without the userspace needing to launch user
+space tools like hciattach or btattach?
+
+Is the log
+
+> uart-pl011 3f201000.serial: Failed to create device link (0x180) with soc:firmware:gpio
+
+a hint to the reason why the kernel doesn't automatically handle my Bluetooth
+HCI over serial?
+
+How to solve this log error, and how to let the kernel handle the HCI himself?
+Am I missing kernel configuration flags?
+
+Thanks!
+Martin
 
