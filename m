@@ -1,141 +1,130 @@
-Return-Path: <linux-kernel+bounces-443479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC9E9EF22D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:46:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDD69EF1C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:40:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78958174B9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EBB228CB22
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182632288C0;
-	Thu, 12 Dec 2024 16:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DB72358A1;
+	Thu, 12 Dec 2024 16:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7O5RU96"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7EtNjJm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144A922EA0F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DF6223C49;
+	Thu, 12 Dec 2024 16:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734020998; cv=none; b=rGj/cqEfIg18Eavlz+oFUE8ACeOjnys5fXyVl2neJV68ieLFS1KQS3WURah+Q9YJDtSqleKcO8L6gN5Dvac9zzDSGpwl/EhYr27GxzRUsF2rmaWnD9/S32SLFcboz5Al9xGBauFo1u6wjiCISEFdQxRRKaLHKd53npo4DvYFSN8=
+	t=1734021151; cv=none; b=C2qZsQO/RA9x6NuvJRbL0CeZ7wviGG19sMb/ArYv7djSb7fo1AWJmcNjMZMm8VAXVo8N0DqiUUipxopKKaD3Cs+FabRk6CaHrMoRWhOv8pMX0Bzv3oyDlFlDDRZ3QAlJdGRVoljfUwi8whnQOQr9sABldpe5XSuAIrG5Pd97F5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734020998; c=relaxed/simple;
-	bh=gWB0BRFebjk00pC71MJN03tHjsq+//flbOeVjL0eWzk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 Cc:Content-Type; b=FwOqg/Hwd8taPjkYOwT3xhbnbSz2Z6IY8xRldTyFpT99n7dxOwpzYU07inhAPItNViVV/aydF/h+3J7s4pgtLu4BOE3816fp0Hfm943q9LdjhspbmW+bDPFlDRfMouYDHHf90aUBHAQ/WY03cuZcvnQWQ4ydga36EVgTEAbyv08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7O5RU96; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f26c517979so6086097b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:29:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734020996; x=1734625796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XEKKU4f34dN8LXHWBVKUE3kcH8a2Htoh1juEAfVgWR0=;
-        b=W7O5RU96fefaWLzwkMtvwQdVvIiEYMn/3BFp4ZKh3IlYPdAKJHxwRokJqvHVh5vjOF
-         opJrL7olE8df8sIUtvUdVvAooHkcwUz6KX/DQJ06Kxo9XzcRnjmW8XMmTvl0oJDIijwq
-         N+CGw+/EzDfviEeSsYYSJqK28tIZgDlJKICF2+yJC7eZC08p6ckj8fdDNSEpxjPweSSB
-         ZxQxOQ2/rugb0RbMY/4nxPW+hTn898JTwvPTMwPmJCMD7nW8pznIB7FYz2BEbRlsGBWC
-         /5NL0JXSipMUtGKCmLdzE25+yLVlhEmDIT2wRI9XkQHKxdJ6ydqwpWY/zFFAzs1DVXla
-         PgzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734020996; x=1734625796;
-        h=content-transfer-encoding:cc:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XEKKU4f34dN8LXHWBVKUE3kcH8a2Htoh1juEAfVgWR0=;
-        b=YFPEKMkRf46nCal1PaV9ja840LymYaKPeqUq1e33ZO1KqIDv04L+YtxRB5zKoAmRBd
-         k+gwpUZDOnfmoAPtUtsPn7+2AghDfl5OHTz352XaLLe6lgu8kcMw2wmu5DCqzbORhTlO
-         mR0ISlWvD8FbUio04dtU7H/rO6C1SBFlkCMCXG7oD0qbLgVo3v9EZ+2uqu/NBIUzjXEh
-         09lpGbuNjEQK1+CkPmv1SVde4QdI25ejznNN5Ffuhkc9fVor56BH6yY+DZUuxxp0xT+x
-         Gt0Bhk8JlDt5z9SgpnEQNwSbrq/F8g6ZKU5nCp+HPq0pctiDRFRaEMIxNT5Sg67J+CzN
-         M6rw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEnbJg5J5nDHaOS2kExILpmwdD2rCbofcqWGj2VxQYJG7YAn3VGS+7t6kujm8Jgi9ENI6rVLFNqp0d05Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvKsoSQPVMZvFGzLJ6Hs9PIRzWqPzmXfb3NMMMKPnzPsyA/uUm
-	h90b1nOBNfEllPxgN9MWFnlF25aOJxcV7MzzWzwmNXMCZ23L5RD/4FhzclJRlyrAeAqA4W4Ga3W
-	NstKB0eUafSDp670wZ3J5AfRLh7wZM7FvAB8=
-X-Gm-Gg: ASbGncvkptvBKptxAdUa1ujGpMM4Th5CnKDmkdVYGZrtoJUAL47xdU/llwmNT3rH0xH
-	8qEeSJuZak5c4YATzsg0DDZNiFxCH75To+jQXRYY=
-X-Received: by 2002:a05:690c:6903:b0:6ef:9e74:c09b with SMTP id
- 00721157ae682-6f27534f4c5mt11112017b3.33.1734020995845; Thu, 12 Dec 2024
- 08:29:55 -0800 (PST)
+	s=arc-20240116; t=1734021151; c=relaxed/simple;
+	bh=UnNsjVl9T8pR/QWF88dG0A0jiZl2JqShggpSz3fwk44=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BpP0V7ZZOTaykJiTpwQaMJ1XlIbiJ2JI7DHrepfQrzYUD48P9HKcO9NM/rY1fUQxzHJ8hMjxx3z4p6lZB10zJlo+ftF24Bi7oAcqtVbjIiGTePvnbMUArvPJWNxIEDIMqpJNu+ZQhr9dlHmmjheRjNGR6+XJu23NwNBQQfsn0oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7EtNjJm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E082C4CED0;
+	Thu, 12 Dec 2024 16:32:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734021151;
+	bh=UnNsjVl9T8pR/QWF88dG0A0jiZl2JqShggpSz3fwk44=;
+	h=From:Date:Subject:To:Cc:From;
+	b=G7EtNjJmHm7iQXwtQ7mmPU5ny8spzosyhU7ahYPT+sSQQ2HOSuPVhLOfTttb7lKB7
+	 dV3FkYIH1aoG4qz1pFykDABCPXpqxbJAJuqvXVOHsJJKspIAYRNSuEWTOVmd57NeY+
+	 SrjW7dg9I0b3AihPB+OdgBHu5ka8RWnYUvtzlMMQMe90+DBf2zRcPyu9eJbNGw/ZXT
+	 N8gy38GyPMyCL1HOZTfLP59Jf15qELYFWBq9yqLpL92so4WJ8F+/ZbfMK2JJQ1mn4l
+	 YJj+AJQDe87tvzg9xmyMezc23Yso+i6nFeTY7qHD6HzrRXuMaVMtvdscIFbVELInXm
+	 2Bzdm9NY9h+Nw==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Thu, 12 Dec 2024 17:32:24 +0100
+Subject: [PATCH v2] soc: qcom: llcc: Enable LLCC_WRCACHE at boot on X1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212162547.225880-1-rick.wertenbroek@gmail.com>
-In-Reply-To: <20241212162547.225880-1-rick.wertenbroek@gmail.com>
-From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Date: Thu, 12 Dec 2024 17:29:19 +0100
-Message-ID: <CAAEEuhrgqa+qDzr6O-FR8XYUHm05h2Nd4HG7=XVt9u7zqQm3yA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: endpoint: Replace magic number "6" by PCI_STD_NUM_BARS
-Cc: rick.wertenbroek@heig-vd.ch, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241212-topic-llcc_x1e_wrcache-v2-1-e44d3058d06c@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIABcQW2cC/4WNUQqDMBBEryL73UiyBqX96j2KSFjXuqCmTay1i
+ Hdv6gX6M/AG5s0GkYNwhEu2QeBFovgpAZ4yoN5Nd1bSJgbUaA3qSs3+IaSGgahZDTfvQI56VqW
+ tdKUZW1NoSONH4E7WQ3yrE/cSZx8+x89ifu1f5WKUUVggl67r7Jnt1ceYP19uID+OeQqo933/A
+ s9lF9LDAAAA
+X-Change-ID: 20241207-topic-llcc_x1e_wrcache-647070e2d130
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Johan Hovold <johan@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734021148; l=1510;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=PPtrvo1XgcJOV3eG8wmUzEJEepR+DXELhYukjcb+8n8=;
+ b=QGEDpHbQr2p5cgyEbnyDfAPVMdK0TpQl+oVWDa8q67GG6m6FtaLaCLD9B0nmVohBsi34L7wRY
+ pwnTEUu6XoFDnxnrZYujOeL4Ot0azI+UAxgCSSqO4y1cAggXA3a+PXP
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Thu, Dec 12, 2024 at 5:25=E2=80=AFPM Rick Wertenbroek
-<rick.wertenbroek@gmail.com> wrote:
->
-> Replace the constant "6" by PCI_STD_NUM_BARS, as defined in
-> include/uapi/linux/pci_regs.h:
->
-> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-> ---
->  include/linux/pci-epf.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-> index 18a3aeb62ae4..ee6156bcbbd0 100644
-> --- a/include/linux/pci-epf.h
-> +++ b/include/linux/pci-epf.h
-> @@ -157,7 +157,7 @@ struct pci_epf {
->         struct device           dev;
->         const char              *name;
->         struct pci_epf_header   *header;
-> -       struct pci_epf_bar      bar[6];
-> +       struct pci_epf_bar      bar[PCI_STD_NUM_BARS];
->         u8                      msi_interrupts;
->         u16                     msix_interrupts;
->         u8                      func_no;
-> @@ -174,7 +174,7 @@ struct pci_epf {
->         /* Below members are to attach secondary EPC to an endpoint funct=
-ion */
->         struct pci_epc          *sec_epc;
->         struct list_head        sec_epc_list;
-> -       struct pci_epf_bar      sec_epc_bar[6];
-> +       struct pci_epf_bar      sec_epc_bar[PCI_STD_NUM_BARS];
->         u8                      sec_epc_func_no;
->         struct config_group     *group;
->         unsigned int            is_bound;
-> --
-> 2.25.1
->
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-The commit message was supposed to state :
+Do so in accordance with the internal recommendations.
+
+Fixes: b3cf69a43502 ("soc: qcom: llcc: Add configuration data for X1E80100")
+Cc: stable@vger.kernel.org
+Reviewed-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Changes in v2:
+- Cc stable
+- Add more context lines
+- Pick up r-b
+- Link to v1: https://lore.kernel.org/r/20241207-topic-llcc_x1e_wrcache-v1-1-232e6aff49e4@oss.qualcomm.com
+---
+ drivers/soc/qcom/llcc-qcom.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+index 32c3bc887cefb87c296e3ba67a730c87fa2fa346..1560db00a01248197e5c2936e785a5ea77f74ad8 100644
+--- a/drivers/soc/qcom/llcc-qcom.c
++++ b/drivers/soc/qcom/llcc-qcom.c
+@@ -2997,20 +2997,21 @@ static const struct llcc_slice_config x1e80100_data[] = {
+ 		.bonus_ways = 0xfff,
+ 		.cache_mode = 0,
+ 	}, {
+ 		.usecase_id = LLCC_WRCACHE,
+ 		.slice_id = 31,
+ 		.max_cap = 1024,
+ 		.priority = 1,
+ 		.fixed_size = true,
+ 		.bonus_ways = 0xfff,
+ 		.cache_mode = 0,
++		.activate_on_init = true,
+ 	}, {
+ 		.usecase_id = LLCC_CAMEXP0,
+ 		.slice_id = 4,
+ 		.max_cap = 256,
+ 		.priority = 4,
+ 		.fixed_size = true,
+ 		.bonus_ways = 0x3,
+ 		.cache_mode = 0,
+ 	}, {
+ 		.usecase_id = LLCC_CAMEXP1,
 
 ---
+base-commit: 3e42dc9229c5950e84b1ed705f94ed75ed208228
+change-id: 20241207-topic-llcc_x1e_wrcache-647070e2d130
 
-PCI: endpoint: Replace magic number "6" by PCI_STD_NUM_BARS
-
-Replace the constant "6" by PCI_STD_NUM_BARS, as defined in
-include/uapi/linux/pci_regs.h:
-#define PCI_STD_NUM_BARS       6       /* Number of standard BARs */
-
-Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-
----
-
-But the line starting with # got eaten away as a comment.
-Sorry about that.
 Best regards,
-Rick
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
