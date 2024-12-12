@@ -1,188 +1,135 @@
-Return-Path: <linux-kernel+bounces-444006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915E99EFF35
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:21:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3729EFF3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E172281427
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A443281FB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C281DC07D;
-	Thu, 12 Dec 2024 22:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0A61DDC14;
+	Thu, 12 Dec 2024 22:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TtpmvQDJ"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SsF6rDsm"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDA31898FB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 22:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1822F2F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 22:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734042107; cv=none; b=NgYhdT7dC5dh/sjijkpYgDVxlAUqAucklJBs38yqkjl3IaHVAMbn+wjB9uT/xUqfkaddiMSRqChXb4My9qYG7chFi/vSZ0MvhWHdLnVZCaza86vdGUVGYiEyHv6ODAfVpXZ5j879TYhbJ5Xc25a5R0NSoouDJOUIlVbLZ8YWAPg=
+	t=1734042343; cv=none; b=GBtdj7bbFg/itu57K46ZN437zu6y1olN7u17wpV9Cy2lzQ9zEYHPCmNBFwaCRsB6zERx8HCQPQQjmmX6LW1hXssJfFusmquB7VUTQnGORQEGczX47som982V3nlfkAMHF1C+b0pNyVLxLUFHyYhd/drg8VDe80oJQD4lBovuhRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734042107; c=relaxed/simple;
-	bh=V6FMZ7ioP0vNk4aJJm/g31gyQ2HLySVPxZfp/chprss=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hbqiKGktnnFmoiGLBMHpxv733RFbwvgi+RV/QkY/jsDXeKffOEHqTublsW9xTSixglAR1H+5d/dnhueyKUTTp8u1qKiQ6KGZDmHLw0kp2tXXs9h9Jzq91720CCfXQjtat473OVPGFqrk5ooKWa8FdRxUQmu6/2/Hz7JSMwWLObg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TtpmvQDJ; arc=none smtp.client-ip=209.85.210.202
+	s=arc-20240116; t=1734042343; c=relaxed/simple;
+	bh=b/3CRAdu+7T5QJ4e6en1KgG9dbEf1XStUpVNzdnyvog=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OCNcqrj9juxy/N/qih6y234i5C0vHt2OhR2LUDSL5V+nbIn7uYO+ohRM2DlsrT6sOHytMRDjhtfnnFsfHDR6peDSQGJfFbE+RSspdTPu/pt9WabDWMnYqainGIAXBBWxTsl/P44nNXC1J4F+sRCWvjVcdR5nXlpoygF6beYrIlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SsF6rDsm; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-729046e1283so432093b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:21:45 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-728eb2e190cso1035888b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:25:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734042105; x=1734646905; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5GhVzS8goU7s3tTksfKULA1xC2PbflGLIcaAH9yyqBw=;
-        b=TtpmvQDJPSXMO9SH8DmXrs/QW8q388zGPffyH9lWUKLh3uXzfir/xkn2Pbbr3/lMte
-         Uw/Ei4XnRgCm9mP40Q50z5oNph4NwPFyFErhJvRWq+Qjg/+gZw43+zR2JO+RqoADTY5B
-         kl1ZVGR0Py6KZeu4JZ1qyYENs2+S5iMl6oe6yjBvZ/fjBIxA5+R/d5Nyyduo6yQfxkVV
-         E92WWxmuoWoYwUiT29uvEQhGFjnleqc2eF13mrjcRunYrFzKOdPd78M19gMTBqgVrods
-         M+Zk1WNrqYKqQ6fx8xeftHpUVC2fXUhFQ0V6+f4FCbZP3uikONgj4AU1LiqEGwJ/W957
-         S1Ag==
+        d=google.com; s=20230601; t=1734042342; x=1734647142; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZeVEYyAeRFWzZUfEKgzMQxC3tRUbE6NlpO6Eh07fKpo=;
+        b=SsF6rDsmdBTlDdVAoozOF36NToBrSeOtneghfO+3+at6SD9LQoXpquYGIeEh4NXkIM
+         7RxtXF+apf+/7GowtAN/W77X0GtxEqvXfawVKfZDq8Ols8dr4Q4xYD7cmnoldX1yb8s9
+         7m9yfIdhRwKcAITxQerx4BN5PrERKPPSTBag5D8HBFJg9NDeC1NvHIWkAEOftLY+meDF
+         ReyPAwddquSxzoqnLAYWKlflv00b2UZV8Z6YUXiK4zmshKC3TVMI3+mCLpHKlg6+ikGa
+         2QQtuZDZPK49cSlh3TPTMQu0sPkVf9+NagHP/bznPzd/8oaJ1Dy0e+gfC3UvaaIDeBe9
+         tJsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734042105; x=1734646905;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5GhVzS8goU7s3tTksfKULA1xC2PbflGLIcaAH9yyqBw=;
-        b=T04Yls2vt2zRsUu5+CGfhcOZ7oP51fXdrsqU5pAlHPJBAVTTXbAz8g6g7NB8zsdbja
-         GFgzBuS/aK0OzXzSF8PyWFaNDzpf1LkM9BKY/wLb7sQYtBt8YrZTCJd6is0FqAnTwb1d
-         Hv4YcYTi7+xK4VrdGHKfX4HxZ8I/6H7QMQhLV3C2e/2WbglNpj4kGriaS14CHOaitogz
-         chrF1lL4gOWlHr+wSF7Dc/iCxV2TJGzZxRmEfIXNM6eCP/Ryeba9n+eNBjwc9Binl46B
-         KVnH94MnCzRlUiPNgHNA/FsbEWYkovqpybSeOw1an4m5hZoj4K/xMxzoUoX1/OWEK1Ba
-         xHyw==
-X-Gm-Message-State: AOJu0YyIi0gIhoPWoQADlNPSYd2tkdhMoAnHFfQleUInbBY9+IEdVCw5
-	3qu+kR3Eu4u0WIgu11qnW3XDMXWpWn6QnSdkToOyMBUP9CsbOJ06EjJEYkCdcgVyqImlu0FaEGi
-	zH8VIYVGMkgnXsB05NNjUiPsQfBsmVaUClhD7aUNHpVxGKgfbZtdLPLjL5y/M8bU/BBd/K8XlYP
-	iugdh/egonUg1sDYwW6gLWRv09wDXa7Cb+abzt6Al6Gisq
-X-Google-Smtp-Source: AGHT+IEzqgC1HlDDGkUIhUJndc2DDikgtBHeBew+E7ym34sXAgkgVftU6bLUIK9Yfpa9YEO4MRU5uZ5+IGNE
-X-Received: from pfay32.prod.google.com ([2002:a05:6a00:1820:b0:725:d2c1:3f5f])
- (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:b56:b0:727:3c37:d5f9
- with SMTP id d2e1a72fcca58-7290c26863dmr323501b3a.26.1734042104600; Thu, 12
- Dec 2024 14:21:44 -0800 (PST)
-Date: Thu, 12 Dec 2024 14:21:33 -0800
+        d=1e100.net; s=20230601; t=1734042342; x=1734647142;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZeVEYyAeRFWzZUfEKgzMQxC3tRUbE6NlpO6Eh07fKpo=;
+        b=UJKDzy+FmyCCip8LwTsrqbQ8zwxw2cKx0+LnervzhBCdInVPO5NKN2TJx6oE03D7HE
+         YQKReYVOe7MEWOlIKLoy4kIRLAvO7G5NrxPeWv3+Ig14UL5c1ewlIVis8jnoHBMtmoTQ
+         GNgNSFlbzWTwAnlvvjNgKRXRwMZW4pSobjA9S8W2FSbKMhCpINIgYdQfI+vgFl1nubH1
+         24TJD85n6mmTlV67dyW6GZjnKvIn+8dRCkIcO3Eu1DDlq8ljZhtA+toO5S45MrZFjfsH
+         eIMqF6j3yahkoyGnyzu/kM/PRaVy7n/KOimhoaQ5hqOLeAvQLotvzCOBsH45QKs1WN6F
+         Td7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVMA192aXreqNTzgXOdEETAPSBv6i7eIROj7B84uGLOPDNhRxYVurTWMJuwovVk6Abp1FdTcUzG/BqJOZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyiip8b+8knsrsoTZnRF6N4hBc4lCl5rVZP4eMpKYKwHmT1Ello
+	vOZILELcLYNBpM+Wj4EianuMnQm11DR6mvsPvbbc4SjOwKVG7xWv1KduH8tX8nQxNar4vhKqSJc
+	r7w==
+X-Google-Smtp-Source: AGHT+IGeog0JTNRLA0KDM2T3PGKhKDD4c0F8DMDQlKvrmOtVMEuF6PyrIFHqMD/w4E0ENaVhrbHRstdPXF4=
+X-Received: from pfiu11.prod.google.com ([2002:a05:6a00:124b:b0:727:3a40:52d7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1893:b0:725:f1b1:cb9f
+ with SMTP id d2e1a72fcca58-7290c25d946mr382070b3a.20.1734042341886; Thu, 12
+ Dec 2024 14:25:41 -0800 (PST)
+Date: Thu, 12 Dec 2024 14:25:40 -0800
+In-Reply-To: <20241208083743.77295-1-kniv@yandex-team.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212222138.2400498-1-jstultz@google.com>
-Subject: [RFC][PATCH] locking/rtmutex: Make sure we wake anything on the
- wake_q when we release the lock->wait_lock
-From: John Stultz <jstultz@google.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: John Stultz <jstultz@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bert Karwatzki <spasswolf@web.de>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+References: <20241208083743.77295-1-kniv@yandex-team.ru>
+Message-ID: <Z1ti5K6hs6-sWIG_@google.com>
+Subject: Re: [PATCH v2 6.1] KVM: x86/mmu: Ensure that kvm_release_pfn_clean()
+ takes exact pfn from kvm_faultin_pfn()
+From: Sean Christopherson <seanjc@google.com>
+To: Nikolay Kuratov <kniv@yandex-team.ru>
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="us-ascii"
 
-Bert reported seeing occasional boot hangs when running with
-PREEPT_RT and bisected it down to commit 894d1b3db41c
-("locking/mutex: Remove wakeups from under mutex::wait_lock").
+On Sun, Dec 08, 2024, Nikolay Kuratov wrote:
+> Since 5.16 and prior to 6.13 KVM can't be used with FSDAX
+> guest memory (PMD pages). To reproduce the issue you need to reserve
+> guest memory with `memmap=` cmdline, create and mount FS in DAX mode
+> (tested both XFS and ext4), see doc link below. ndctl command for test:
+> ndctl create-namespace -v -e namespace1.0 --map=dev --mode=fsdax -a 2M
+> Then pass memory object to qemu like:
+> -m 8G -object memory-backend-file,id=ram0,size=8G,\
+> mem-path=/mnt/pmem/guestmem,share=on,prealloc=on,dump=off,align=2097152 \
+> -numa node,memdev=ram0,cpus=0-1
+> QEMU fails to run guest with error: kvm run failed Bad address
+> and there are two warnings in dmesg:
+> WARN_ON_ONCE(!page_count(page)) in kvm_is_zone_device_page() and
+> WARN_ON_ONCE(folio_ref_count(folio) <= 0) in try_grab_folio() (v6.6.63)
+> 
+> It looks like in the past assumption was made that pfn won't change from
+> faultin_pfn() to release_pfn_clean(), e.g. see
+> commit 4cd071d13c5c ("KVM: x86/mmu: Move calls to thp_adjust() down a level")
+> But kvm_page_fault structure made pfn part of mutable state, so
+> now release_pfn_clean() can take hugepage-adjusted pfn.
+> And it works for all cases (/dev/shm, hugetlb, devdax) except fsdax.
+> Apparently in fsdax mode faultin-pfn and adjusted-pfn may refer to
+> different folios, so we're getting get_page/put_page imbalance.
+> 
+> To solve this preserve faultin pfn in separate local variable
+> and pass it in kvm_release_pfn_clean().
+> 
+> Patch tested for all mentioned guest memory backends with tdp_mmu={0,1}.
+> 
+> No bug in upstream as it was solved fundamentally by
+> commit 8dd861cc07e2 ("KVM: x86/mmu: Put refcounted pages instead of blindly releasing pfns")
+> and related patch series.
+> 
+> Link: https://nvdimm.docs.kernel.org/2mib_fs_dax.html
+> Fixes: 2f6305dd5676 ("KVM: MMU: change kvm_tdp_mmu_map() arguments to kvm_page_fault")
+> Co-developed-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Reviewed-by: Sean Christopherson <seanjc@google.com>
 
-It looks like I missed a few spots where we drop the wait_lock and
-potentially call into schedule without waking up the tasks on the
-wake_q structure. Since the tasks being woken are ww_mutex tasks
-they need to be able to run to release the mutex and unblock the
-task that currently is planning to wake them. Thus we can deadlock.
+First off, thank you very much for the fixes+backports, and testing!
 
-So make sure we wake the wake_q tasks when we unlock the wait_lock.
+However, in the future, please don't record a Reviewed-by or Acked-tag unless it
+is explicitly given, especially for backports to LTS kernels.  I know it's weird
+and pedantic in this case since I provided the code, but it's still important to
+give maintainers the opportunity to review exactly what will be applied.
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Bert Karwatzki <spasswolf@web.de>
-Cc: kernel-team@android.com
-Reported-by: Bert Karwatzki <spasswolf@web.de>
-Closes: https://lore.kernel.org/lkml/20241211182502.2915-1-spasswolf@web.de
-Fixes: 894d1b3db41c ("locking/mutex: Remove wakeups from under mutex::wait_lock")
-Signed-off-by: John Stultz <jstultz@google.com>
----
- kernel/locking/rtmutex.c     | 18 ++++++++++++++++--
- kernel/locking/rtmutex_api.c |  2 +-
- 2 files changed, 17 insertions(+), 3 deletions(-)
+Anyways, all the patches look good and Greg has grabbed them, so there's nothing
+more to be done.
 
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index e858de203eb6f..697a56d3d949b 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1292,7 +1292,13 @@ static int __sched task_blocks_on_rt_mutex(struct rt_mutex_base *lock,
- 	 */
- 	get_task_struct(owner);
- 
-+	preempt_disable();
- 	raw_spin_unlock_irq(&lock->wait_lock);
-+	/* wake up any tasks on the wake_q before calling rt_mutex_adjust_prio_chain */
-+	wake_up_q(wake_q);
-+	wake_q_init(wake_q);
-+	preempt_enable();
-+
- 
- 	res = rt_mutex_adjust_prio_chain(owner, chwalk, lock,
- 					 next_lock, waiter, task);
-@@ -1596,6 +1602,7 @@ static void __sched remove_waiter(struct rt_mutex_base *lock,
-  *			 or TASK_UNINTERRUPTIBLE)
-  * @timeout:		 the pre-initialized and started timer, or NULL for none
-  * @waiter:		 the pre-initialized rt_mutex_waiter
-+ * @wake_q:		 wake_q of tasks to wake when we drop the lock->wait_lock
-  *
-  * Must be called with lock->wait_lock held and interrupts disabled
-  */
-@@ -1603,7 +1610,8 @@ static int __sched rt_mutex_slowlock_block(struct rt_mutex_base *lock,
- 					   struct ww_acquire_ctx *ww_ctx,
- 					   unsigned int state,
- 					   struct hrtimer_sleeper *timeout,
--					   struct rt_mutex_waiter *waiter)
-+					   struct rt_mutex_waiter *waiter,
-+					   struct wake_q_head *wake_q)
- 	__releases(&lock->wait_lock) __acquires(&lock->wait_lock)
- {
- 	struct rt_mutex *rtm = container_of(lock, struct rt_mutex, rtmutex);
-@@ -1634,7 +1642,13 @@ static int __sched rt_mutex_slowlock_block(struct rt_mutex_base *lock,
- 			owner = rt_mutex_owner(lock);
- 		else
- 			owner = NULL;
-+		preempt_disable();
- 		raw_spin_unlock_irq(&lock->wait_lock);
-+		if (wake_q) {
-+			wake_up_q(wake_q);
-+			wake_q_init(wake_q);
-+		}
-+		preempt_enable();
- 
- 		if (!owner || !rtmutex_spin_on_owner(lock, waiter, owner))
- 			rt_mutex_schedule();
-@@ -1708,7 +1722,7 @@ static int __sched __rt_mutex_slowlock(struct rt_mutex_base *lock,
- 
- 	ret = task_blocks_on_rt_mutex(lock, waiter, current, ww_ctx, chwalk, wake_q);
- 	if (likely(!ret))
--		ret = rt_mutex_slowlock_block(lock, ww_ctx, state, NULL, waiter);
-+		ret = rt_mutex_slowlock_block(lock, ww_ctx, state, NULL, waiter, wake_q);
- 
- 	if (likely(!ret)) {
- 		/* acquired the lock */
-diff --git a/kernel/locking/rtmutex_api.c b/kernel/locking/rtmutex_api.c
-index 33ea31d6a7b3b..191e4720e5466 100644
---- a/kernel/locking/rtmutex_api.c
-+++ b/kernel/locking/rtmutex_api.c
-@@ -383,7 +383,7 @@ int __sched rt_mutex_wait_proxy_lock(struct rt_mutex_base *lock,
- 	raw_spin_lock_irq(&lock->wait_lock);
- 	/* sleep on the mutex */
- 	set_current_state(TASK_INTERRUPTIBLE);
--	ret = rt_mutex_slowlock_block(lock, NULL, TASK_INTERRUPTIBLE, to, waiter);
-+	ret = rt_mutex_slowlock_block(lock, NULL, TASK_INTERRUPTIBLE, to, waiter, NULL);
- 	/*
- 	 * try_to_take_rt_mutex() sets the waiter bit unconditionally. We might
- 	 * have to fix that up.
--- 
-2.47.1.613.gc27f4b7a9f-goog
-
+Thanks again!
 
