@@ -1,50 +1,60 @@
-Return-Path: <linux-kernel+bounces-443529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83E3A9EF3D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:03:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EE39EF3CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 118EA28DE36
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:03:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7682A287A17
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA89226531;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29288225A56;
 	Thu, 12 Dec 2024 16:59:15 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="mBG5Lml7"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C683213E6B;
-	Thu, 12 Dec 2024 16:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCD92F44;
+	Thu, 12 Dec 2024 16:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734022755; cv=none; b=P2mPSMRIq5zlnF1+yVDra5M8K1Re0CYDkS9/NuPKo9X3apPe2fqh8kCsF16571eIY7wpScjLla1/q97sh+q+tPpfXtU0e14I7yvjzdMEaAtXf5GHj+uoezvTv7t5hF1nUaCUZrmTe9bJ2SA6PQCWvd1jGi8cYHFuOdLACGqlgFQ=
+	t=1734022754; cv=none; b=d6I9uF9D94c/Gn5Qg4mCsYPrTGHZsL6Oa2u+ny5An5kWnrGJF4dGAkgWdJyzt2TDEv88AzQjRygYdvBuUdkkOkzKg3f+gQ6uQfK8UcbJoI5xKiqGeP+uBXASmTx8IlDWVP39XuIJzKAV0OM1hMEEP42IAEEVr75mB2EMxj1MAic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734022755; c=relaxed/simple;
-	bh=UoVn7YgqG67MmpzHVdBzGefEpiXVqwUID793qHLxEb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GXAvtfckz5+aQ/hvNzkU6B3E4AsOjV7QwDqG32kjzS23qbIvfZHUrSLORuaDU7xtArmsCWOIPmWWeypNL/LuEly7nvodUyTflw0uSciKYRtA0NjUnXLq8hg8tyRZ/dw0tTz0a0f5rEayF5awY0oNEy7HUldQtJWYjq+LThsjoao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from [2601:18c:9101:a8b6:82e7:cf5d:dfd9:50ef] (helo=fangorn)
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tLmVe-0000000073q-41Zi;
-	Thu, 12 Dec 2024 11:57:55 -0500
-Date: Thu, 12 Dec 2024 11:57:54 -0500
-From: Rik van Riel <riel@surriel.com>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Balbir Singh <balbirs@nvidia.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@kernel.org>, Roman Gushchin
- <roman.gushchin@linux.dev>, hakeel Butt <shakeel.butt@linux.dev>, Muchun
- Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>,
- cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-team@meta.com, Nhat Pham <nphamcs@gmail.com>
-Subject: [PATCH v2] memcg: allow exiting tasks to write back data to swap
-Message-ID: <20241212115754.38f798b3@fangorn>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1734022754; c=relaxed/simple;
+	bh=BL7BBjJaNhrAlT5QrscsxpVfzBSAe+uykL7b6/KyTcY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bqkTx2fmoQxxeNtctMb0R41PJgHVZx6BK9DDNeneRsP62Lk+Wz2O3XOhbXWXHhWa7/TUFuan+SB2pgCdVcVLl/BrlKp862EYex+7wnVqPVhPYv2dESVJrk3WRh4O19eW/z+od9KgfPQmsUGdtOn5sYS9ZO6VmINfelW9H7jN4i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=mBG5Lml7; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1734022751;
+	bh=BL7BBjJaNhrAlT5QrscsxpVfzBSAe+uykL7b6/KyTcY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=mBG5Lml7HJtK4c1BUb2gu7vTEaIx0JsCrKEusawKm2t1dS24KoC/NpaKQc0vDRppD
+	 aHJ+T0K95oZeA/VKalqE0SuK74cwmAITkZaLE1v5QAmEL+JFvMo2i49gUaaBKkkIVY
+	 AeifUehhDnQ59coArstVsV39QGqnYwjYpZUCsDCQ=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id C874C401F4; Thu, 12 Dec 2024 08:59:11 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id C5E6D401C4;
+	Thu, 12 Dec 2024 08:59:11 -0800 (PST)
+Date: Thu, 12 Dec 2024 08:59:11 -0800 (PST)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Jens Axboe <axboe@kernel.dk>
+cc: Christoph Hellwig <hch@infradead.org>, 
+    "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org, 
+    linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com, 
+    linux-kernel@vger.kernel.org, willy@infradead.org, kirill@shutemov.name, 
+    bfoster@redhat.com
+Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
+In-Reply-To: <04e11417-cf68-4014-a7f7-e51392352e9d@kernel.dk>
+Message-ID: <2f79ff03-48ee-54bf-b928-e9519b3edfc7@gentwo.org>
+References: <20241203153232.92224-2-axboe@kernel.dk> <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org> <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk> <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org> <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
+ <20241204055241.GA7820@frogsfrogsfrogs> <Z1gh0lCqkCoUKHtC@infradead.org> <04e11417-cf68-4014-a7f7-e51392352e9d@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,58 +62,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Sender: riel@surriel.com
 
-A task already in exit can get stuck trying to allocate pages, if its
-cgroup is at the memory.max limit, the cgroup is using zswap, but
-zswap writeback is enabled, and the remaining memory in the cgroup is
-not compressible.
+On Thu, 12 Dec 2024, Jens Axboe wrote:
 
-This seems like an unlikely confluence of events, but it can happen
-quite easily if a cgroup is OOM killed due to exceeding its memory.max
-limit, and all the tasks in the cgroup are trying to exit simultaneously.
+> On 12/10/24 4:11 AM, Christoph Hellwig wrote:
+> > On Tue, Dec 03, 2024 at 09:52:41PM -0800, Darrick J. Wong wrote:
+> >> <shrug> RWF_DONTCACHE, to match {I,DCACHE}_DONTCACHE ? ;)
+> >>
+> >> They sound pretty similar ("load this so I can do something with it,
+> >> evict it immediately if possible") though I wouldn't rely on people
+> >> outside the kernel being familiar with the existing dontcaches.
+> >
+> > FYI, another word for dontcache.  uncached just has too many conotations
+> > in the kernel context.
+>
+> Sure, we can go with DONTCACHE instead. Only thing I don't like about
+> that is that you can use uncached as a verb and adjective, eg talking
+> about uncached IO. Talking about dontcached IO sounds pretty weird.
+>
+> As I've said previously in this and other threads, I don't feel too
+> strongly about the in-kernel naming, I care more about the exposed
+> name. And uncached does seem to be the most descriptive and most
+> easily understandable by users.
 
-When this happens, it can sometimes take hours for tasks to exit,
-as they are all trying to squeeze things into zswap to bring the group's
-memory consumption below memory.max.
-
-Allowing these exiting programs to push some memory from their own
-cgroup into swap allows them to quickly bring the cgroup's memory
-consumption below memory.max, and exit in seconds rather than hours.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
----
-v2: use mm_match_cgroup as suggested by Yosry Ahmed
-
- mm/memcontrol.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 7b3503d12aaf..ba1cd9c04a02 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5371,6 +5371,18 @@ bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
- 	if (!zswap_is_enabled())
- 		return true;
- 
-+	/*
-+	 * Always allow exiting tasks to push data to swap. A process in
-+	 * the middle of exit cannot get OOM killed, but may need to push
-+	 * uncompressible data to swap in order to get the cgroup memory
-+	 * use below the limit, and make progress with the exit.
-+	 */
-+	if (unlikely(current->flags & PF_EXITING)) {
-+		struct mm_struct *mm = READ_ONCE(current->mm);
-+		if (mm && mm_match_cgroup(mm, memcg))
-+			return true;
-+	}
-+
- 	for (; memcg; memcg = parent_mem_cgroup(memcg))
- 		if (!READ_ONCE(memcg->zswap_writeback))
- 			return false;
--- 
-2.47.0
+The page is cached while the operation is ongoing. "Transitory" would be
+more accurate and it is a new term that was not used with pages before.
 
 
 
