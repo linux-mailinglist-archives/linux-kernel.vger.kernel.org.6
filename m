@@ -1,112 +1,104 @@
-Return-Path: <linux-kernel+bounces-443502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FB59EF320
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:56:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0874C9EEA46
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C558A189EF87
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:49:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60AA188D5A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B3422A80F;
-	Thu, 12 Dec 2024 16:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47507216606;
+	Thu, 12 Dec 2024 15:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BvwxTDZA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="ir+Sg0XV"
+Received: from pv50p00im-zteg10011401.me.com (pv50p00im-zteg10011401.me.com [17.58.6.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9279F22A807;
-	Thu, 12 Dec 2024 16:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3319F21660B
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734021523; cv=none; b=iiHgJSSYJwfynRAySd8lMqq5nTnLOMNEZc/163LkpUP7P07c4G+muF69m4F+Ckq7UqL2WVU91M5W+cZLLdmIKgsF8xc+ICfUtW8rjVc0ban9U9f63qXlPFn+D5mi5y1IGvwVlz6o+USwwQ8wcq41xf+PXykra27ROldDbEyXK1s=
+	t=1734016079; cv=none; b=KNb3+7/FiUnEKyS9j7WQrbmTOIQL4xS3//R1OQJxt115qPFmkwxD5RVUSIJrBHboB9KqA1YMKNMbbnCa1oL+s99p0stkWaKXEL8/T4cWsaTVm1cB2icRWKli+DnPsWdlP9/sW0SzhFYtjtjDc+Q2IN5KhABZuyFZoknIhI2GWD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734021523; c=relaxed/simple;
-	bh=dCwBoF/JvVoaWyl0On4q9IEO+WlDd1hVKy0v5/Yo8v8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gId49iFkcvNsTs9C5QTFgGt6wkNPNLhjH2yCN0WBHV15f/3HE4a/mv9gXELBmqz4C4YzTJTJmRBkBGhnBwS4Mp9OXJ0Xd2PnjJwKfMNHKH70aAUTCM+R3lyqqk3AEyElFgAzvJgdtZdkbQC8PWAtbE81sA+nG+9zQKPKXKX5+OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BvwxTDZA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DA96C4CED0;
-	Thu, 12 Dec 2024 16:38:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734021523;
-	bh=dCwBoF/JvVoaWyl0On4q9IEO+WlDd1hVKy0v5/Yo8v8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BvwxTDZApTMSRKWue2UyIzO+c794j9pXwiAoLuSNZN4LGXdy5KmkmhNXv3vj2KGnn
-	 TETFUAkC7TWzIg9BnzrzDdV3prvDfR3sxr4i6pR1zOC4dSRBIW5yUAy0WHDqtwJ/vN
-	 QXzptYPVX5YAWwucF9DyopDQCo7VHm0hTvBNI8j8=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	"zack.rusin@broadcom.com, thomas.hellstrom@linux.intel.com, christian.koenig@amd.com, ray.huang@amd.com, airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, ajay.kaher@broadcom.com, alexey.makhalov@broadcom.com, vasavi.sirnapalli@broadcom.com, Ye Li" <ye.li@broadcom.com>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Ye Li <ye.li@broadcom.com>
-Subject: [PATCH 6.1 762/772] drm/ttm: Print the memory decryption status just once
-Date: Thu, 12 Dec 2024 16:01:47 +0100
-Message-ID: <20241212144421.429793574@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241212144349.797589255@linuxfoundation.org>
-References: <20241212144349.797589255@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1734016079; c=relaxed/simple;
+	bh=doQxPVzGWziwxyREawjlfslIzJOEBIwlGwBz7kfSYxg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qrwchNjwm4iPNiY1i4shrfUtEHQfPJVaBRtivPk4QjsXatFNzltkMpAGoiRx5EfsdCfw6f1PyCuqxDjuCJ5hjkOv2BtPw+BQtPHyxMsD560SchOOq+zVvZHMZZqXef/d0vEBKyb6uDKsXO0HOHLnBNqN5F8Xo5Y0HSH2BHBTCh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=ir+Sg0XV; arc=none smtp.client-ip=17.58.6.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1734016077;
+	bh=Y657PHepeCM4YKXKWvciAElOeTFE5M9NAbpEcEmX/do=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:
+	 x-icloud-hme;
+	b=ir+Sg0XVgsedQ65YlYDCANn69LaFR+se/YH452aygyuGc2iFkheCo+IYYX1q+SB0h
+	 Cl8AJojnxDw+fcFSbUxX+UnREO0Bk2Nlhl9VL3j2oaJ2OgOuzes+imuIlKU8Neg44G
+	 nBBbwJms1hOy7Ba06ZNaORLahWF8YivY+dIC6ve1fTqYzvsGpk8f8fHtErEAKLAq4D
+	 SrHY7/DCNLucF+LtEHFk5TIcjm2u0hC33cSDEax09E+fgT+ngJLBY0Pgb7XCFnXyd4
+	 EI2hlwTQadr3aQq94gzlj2mOINOEblNo53AEgtn2qwnbX/4XXr4PuBg7nQqJYiXTYa
+	 kW49ZKsZkP2PA==
+Received: from [192.168.29.172] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10011401.me.com (Postfix) with ESMTPSA id 5BDBA34BA9AA;
+	Thu, 12 Dec 2024 15:07:47 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Subject: [PATCH net 0/2] net: Fix 2 OF device node refcount leakage issues
+Date: Thu, 12 Dec 2024 23:06:53 +0800
+Message-Id: <20241212-drivers_fix-v1-0-a3fbb0bf6846@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA38WmcC/x2M0QpAQBQFf0X32ZZdlvIrkmQP7svSXW1K/t3N4
+ 0zNPJQgjER98ZAgc+IjKtiyoGWf4wbDQZlc5RrrqtYE4QxJ08q36Wq/+hbBY+lIi1Og+r8NFHH
+ R+L4fHWxl0mIAAAA=
+X-Change-ID: 20241206-drivers_fix-735f56ed5ec7
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ Kory Maincent <kory.maincent@bootlin.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Justin Chen <justin.chen@broadcom.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: UaOEoChBY_NlL3gq-XIUOe0mQESBMOYL
+X-Proofpoint-ORIG-GUID: UaOEoChBY_NlL3gq-XIUOe0mQESBMOYL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-12_09,2024-12-12_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 mlxscore=0
+ mlxlogscore=839 adultscore=0 spamscore=0 clxscore=1011 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412120110
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-6.1-stable review patch.  If anyone has any objections, please let me know.
+This patch series is to fix 2 OF device node refcount leakage issues.
 
-------------------
-
-From: Zack Rusin <zack.rusin@broadcom.com>
-
-commit 27906e5d78248b19bcdfdae72049338c828897bb upstream.
-
-Stop printing the TT memory decryption status info each time tt is created
-and instead print it just once.
-
-Reduces the spam in the system logs when running guests with SEV enabled.
-
-Signed-off-by: Zack Rusin <zack.rusin@broadcom.com>
-Fixes: 71ce046327cf ("drm/ttm: Make sure the mapped tt pages are decrypted when needed")
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Cc: Thomas Hellström <thomas.hellstrom@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Cc: <stable@vger.kernel.org> # v5.14+
-Link: https://patchwork.freedesktop.org/patch/msgid/20240408155605.1398631-1-zack.rusin@broadcom.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ye Li <ye.li@broadcom.com>
-Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 ---
- drivers/gpu/drm/ttm/ttm_tt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Zijun Hu (2):
+      net: pse-pd: tps23881: Fix device node refcount leakage in tps23881_get_of_channels()
+      net: bcmasp: Fix device node refcount leakage in bcmasp_probe()
 
---- a/drivers/gpu/drm/ttm/ttm_tt.c
-+++ b/drivers/gpu/drm/ttm/ttm_tt.c
-@@ -90,7 +90,7 @@ int ttm_tt_create(struct ttm_buffer_obje
- 	 */
- 	if (bdev->pool.use_dma_alloc && cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT)) {
- 		page_flags |= TTM_TT_FLAG_DECRYPTED;
--		drm_info(ddev, "TT memory decryption enabled.");
-+		drm_info_once(ddev, "TT memory decryption enabled.");
- 	}
- 
- 	bo->ttm = bdev->funcs->ttm_tt_create(bo, page_flags);
+ drivers/net/ethernet/broadcom/asp2/bcmasp.c | 1 +
+ drivers/net/pse-pd/tps23881.c               | 1 +
+ 2 files changed, 2 insertions(+)
+---
+base-commit: ff7afaeca1a15fbeaa2c4795ee806c0667bd77b2
+change-id: 20241206-drivers_fix-735f56ed5ec7
 
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
