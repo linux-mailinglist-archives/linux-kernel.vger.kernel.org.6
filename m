@@ -1,241 +1,247 @@
-Return-Path: <linux-kernel+bounces-442681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749E59EE03F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:29:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3829EE042
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17BFE166A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F8B8166B1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD2820B7F7;
-	Thu, 12 Dec 2024 07:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1381E2308;
+	Thu, 12 Dec 2024 07:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kk+9TPQr"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZgcWHW7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A8020B1FF
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA6A25949C;
+	Thu, 12 Dec 2024 07:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733988579; cv=none; b=IZRcxJcv+3LoRDrFl0PyeV2P2omil8EsD0ECh6KzHq9kMwpHnsKoJvhM53LIvgwsXhIpuGRGBaN231kdw0tHK6q/5SjlavRuFWswQrxIhGWQjw+29kGrwNsXossRo1eB/ENxPwdMjDQGgVbb4Qzybo1Z6W2r9RlbVPTZlb26bIE=
+	t=1733988655; cv=none; b=oVZDVa+Ofbv4cJOcxI7hQmwpuq3qF8M0OSFqfgHhaw55VXZyqW5SBX9ho/HRuM+QoCCGMwASO0aih/MF+L8vBNvqaMQytJXYyxce941tySbeFI4VBb1xgYX6VKSBNX8fWp6ikk5LMW/05wO8Nj2C3OkEhE+mt9FfqRwU4Mnxios=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733988579; c=relaxed/simple;
-	bh=etcohdZi/fyZ2O7SjGaJsa+Y/8oHTZlOiVTv2NEoqhM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JWlpDf4+OX4lO2NAj66/Qi0a2uk07PB+asEoBvVYkADSEngcS60cy6yHdnWs14O1iurgXX2yuNrA2elHyLGECMMjeEA5GzVkwrOx1A8jYuLjgVVkcl93fj9TI6PhWSC3gAx+SVNi3Mg2Lu5tnBIwHxvujdy4AO/lFC4kpreHRGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Kk+9TPQr; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53e3a5fa6aaso1510640e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:29:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733988576; x=1734593376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qUsFBs9SgSTwKf+euhdAY/mle8iwODWJW4g1nHNMk9c=;
-        b=Kk+9TPQr5DB51FJc/RnESwXPCoCOtrlM6KImHsVcmCWiSp2woNMxU/b3/d7wl2f+SC
-         KftVP5b7vqGI7FgLH06bhe9Co5FGbKJN2Sb84l12JeHkKOxodZpDi12WqGAjDIab3Wnv
-         l/R1VsU7RnMmfLw5axNoVWJqMUPYwRA9fueNg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733988576; x=1734593376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qUsFBs9SgSTwKf+euhdAY/mle8iwODWJW4g1nHNMk9c=;
-        b=Bq5t7execRIv+PAEQbti6Xc1/3N+KKGsEImyev3WsPJJ6UpiVrjVJA5HHUtMeRaOJa
-         lipjJXFUwspSRGxb0w5LaOnYVZmFSrQI0hKN9uyRH1lSHVnhRao3svcA8i3B8E7XBvPD
-         2bR1h1YVHppIOJYFxFSSXNalWAg0WRHztwT9U04XXfXhyjdF25TvaD51cPPtgf6+aeJR
-         qGVIOn0tqXDcYOEqpxqhhpvFt3IR5u5okDTfiD5BXXYouwRJz69iwCd2KgLBS2buuW+k
-         JKJUda0x8x42cFm4OUwObGJELliUR6hg6Aw1GV1dCBrTyfy5D1SWuuCN7CfJzSYKTbmW
-         oA5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVoYyj9ZQMnCzDiMn9sEmIxzkt7AewOeK8Kwz2rW0TPSljC9aOCNo1VF9iWs5RfS4PUGAn1GEkBcm+zta4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg7xUDpmpKGgMZ3ROaBTp/hCo8rPMpP+NcA5Q6AQ57jskuQsWH
-	iguiZfExgEbMaThnJBYddSXURuY27PL7tAtAgagdozksaCwB4BXyGyeVeYNUzJnyCKzw4tTT77T
-	udaslNWwnv6LTzhB/g7E0gMjkFUhXOzBOHXXm
-X-Gm-Gg: ASbGncuKikpC2IzEhEAC+oa6b/d6tP9URb3DJFjNGJyBLx1gAVwYjjiS9PcGnWKG55N
-	KeFmMtxViOItiKuVdoCDMlN81fefyC+hRilE5r8CUaM5wPi/2z4ZAnEKEUhXbp5FUbg==
-X-Google-Smtp-Source: AGHT+IGUfV18odEMnZdd40vklSttluOoWFDdHf+m8pFREqeQLEQ0rE9DZYkQWg+goJ0kE03UC7Ud2rvX2aZz+ThhYWA=
-X-Received: by 2002:a05:6512:3d8a:b0:540:2add:c1f1 with SMTP id
- 2adb3069b0e04-54032d5611dmr89184e87.18.1733988576033; Wed, 11 Dec 2024
- 23:29:36 -0800 (PST)
+	s=arc-20240116; t=1733988655; c=relaxed/simple;
+	bh=02WbMay/6n5pohBRn8sk6qrHHfJNfrDwwyguwwmAKAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TC59AqXJ/vGK501Mb1qTrkmTq01rf6mmnpqLy0lxtgOpYqvV/QBKhIl4IQ7hiW9azfXZta3/aMOUGdEOMaQJGNTQ1yrT6TbBineC343Ekcq872SJBcJtiPQjEeZLWOiCAHStBniE36TMRcDNRuO0EWLuP8o+B0zPBdmmmtE3TkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZgcWHW7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF9C5C4CECE;
+	Thu, 12 Dec 2024 07:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733988655;
+	bh=02WbMay/6n5pohBRn8sk6qrHHfJNfrDwwyguwwmAKAw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aZgcWHW7Lkvf1rxORFRhk+WEP1WFSaMGKTWXUJH3hcjNCgtDC6/TKVsdy1li+T0l7
+	 GF0PHqs8U+07bPDWM1z0HhOLuAiiyokHVnsMjsdqpxly2MoxM5h5Usugk2TbNTncex
+	 Lwkmdbxc93zARixUd7vMeFRlM6uiH3hmD9zRwCursOGO4OU3RKUQ3z+bo1y2ku4QaD
+	 kYT0df8yZlhG5qqZ5oI1KWlQMgbMprxx2qi43SAuqCpiiylafLpcwhBJ3z/rxe+afC
+	 t//FPlai/oEEoy7+GixsITRgn6k+DgJmRl2iVYpIDIHh7iHu3AGrEvg22k9sXtMGgM
+	 sv9zQRltecDbQ==
+Message-ID: <6030c66b-b6fe-4a9f-a766-cbea8b3ad2d0@kernel.org>
+Date: Thu, 12 Dec 2024 08:30:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212055110.1862487-1-xji@analogixsemi.com>
-In-Reply-To: <20241212055110.1862487-1-xji@analogixsemi.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 12 Dec 2024 15:29:25 +0800
-Message-ID: <CAGXv+5FDTqGhE3kZ=b5Mkp4gzuKtMfcdG_63MewDGvJEb-QyaQ@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/bridge:anx7625: Update HDCP status at atomic_enable()
-To: Xin Ji <xji@analogixsemi.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	bliang@analogixsemi.com, qwen@analogixsemi.com, treapking@google.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: phy: qcom,qmp-pcie: add optional current
+ load properties
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, vkoul@kernel.org,
+ kishon@kernel.org, dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
+ neil.armstrong@linaro.org, andersson@kernel.org, konradybcio@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241204105249.3544114-1-quic_ziyuzhan@quicinc.com>
+ <20241204105249.3544114-2-quic_ziyuzhan@quicinc.com>
+ <qvjtwilukxbeaxnbyzfkdsfkktm6p4yv3sgx3rbugpb6qkcbjy@rohvixslizhh>
+ <20241211062053.vxdpovlmetvyx3za@thinkpad>
+ <33697bd9-02f4-4a9a-b8c0-4930d7fdaee2@kernel.org>
+ <20241211082404.p7fbmhooikmipxvm@thinkpad>
+ <3c7ddb08-38db-44b3-a7a7-ec7b270a408f@kernel.org>
+ <20241211115034.4hrpmninbx5uryev@thinkpad>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241211115034.4hrpmninbx5uryev@thinkpad>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 1:51=E2=80=AFPM Xin Ji <xji@analogixsemi.com> wrote=
-:
->
-> When user enabled HDCP feature, userspace will set HDCP content
-> to DRM_MODE_CONTENT_PROTECTION_DESIRED. Next, anx7625 will update
-> HDCP content to DRM_MODE_CONTENT_PROTECTION_ENABLED if down stream
-> support HDCP feature.
->
-> However once HDCP content turn to DRM_MODE_CONTENT_PROTECTION_ENABLED
-> userspace will not update the HDCP content to
-> DRM_MODE_CONTENT_PROTECTION_UNDESIRED until monitor disconnect.
->
-> So, anx7625 driver move hdcp content value checking from bridge
-> interface .atomic_check() to .atomic_enable(), then update hdcp content
-> according from currently HDCP status. And also disabled HDCP in bridge
-> interface .atomic_disable().
->
-> Signed-off-by: Xin Ji <xji@analogixsemi.com>
-> ---
+On 11/12/2024 12:50, Manivannan Sadhasivam wrote:
+> On Wed, Dec 11, 2024 at 10:52:11AM +0100, Krzysztof Kozlowski wrote:
+>> On 11/12/2024 09:24, Manivannan Sadhasivam wrote:
+>>> On Wed, Dec 11, 2024 at 09:09:18AM +0100, Krzysztof Kozlowski wrote:
+>>>> On 11/12/2024 07:20, Manivannan Sadhasivam wrote:
+>>>>> On Thu, Dec 05, 2024 at 11:23:11AM +0100, Krzysztof Kozlowski wrote:
+>>>>>> On Wed, Dec 04, 2024 at 06:52:47PM +0800, Ziyue Zhang wrote:
+>>>>>>> On some platforms, the power supply for PCIe PHY is not able to provide
+>>>>>>> enough current when it works in LPM mode. Hence, PCIe PHY driver needs to
+>>>>>>> set current load to vote the regulator to HPM mode.
+>>>>>>>
+>>>>>>> Document the current load as properties for each power supply PCIe PHY
+>>>>>>> required, namely vdda-phy-max-microamp, vdda-pll-max-microamp and
+>>>>>>> vdda-qref-max-microamp, respectively.PCIe PHY driver should parse them to
+>>>>>>> set appropriate current load during PHY power on.
+>>>>>>>
+>>>>>>> This three properties are optional and not mandatory for those platforms
+>>>>>>> that PCIe PHY can still work with power supply.
+>>>>>>
+>>>>>>
+>>>>>> Uh uh, so the downstream comes finally!
+>>>>>>
+>>>>>> No sorry guys, use existing regulator bindings for this.
+>>>>>>
+>>>>>
+>>>>> Maybe they got inspired by upstream UFS bindings?
+>>>>> Documentation/devicetree/bindings/ufs/ufs-common.yaml:
+>>>>>
+>>>>> vcc-max-microamp
+>>>>> vccq-max-microamp
+>>>>> vccq2-max-microamp
+>>>>
+>>>> And it is already an ABI, so we cannot do anything about it.
+>>>>
+>>>>>
+>>>>> Regulator binding only describes the min/max load for the regulators and not
+>>>>
+>>>> No, it exactly describes min/max consumers can use. Let's quote:
+>>>> "largest current consumers may set"
+>>>> It is all about consumers.
+>>>>
+>>>>> consumers. What if the consumers need to set variable load per platform? Should
+>>>>
+>>>> Then each platform uses regulator API or regulator bindings to set it? I
+>>>> don't see the problem here.
+>>>>
+>>>>> they hardcode the load in driver? (even so, the load should not vary for each
+>>>>> board).
+>>>>
+>>>> The load must vary per board, because regulators vary per board. Of
+>>>> course in practice most designs could be the same, but regulators and
+>>>> their limits are always properties of the board, not the SoC.
+>>>>
+>>>
+>>> How the consumer drivers are supposed to know the optimum load?
+>>>
+>>> I don't see how the consumer drivers can set the load without hardcoding the
+>>> values. And I could see from UFS properties that each board has different
+>>> values.
+>>
+>>
+>> Drivers do not need to know, it's not the driver's responsibility. If
+> 
+> What? I think there is a misunderstanding here. The intention of these proposed
+> properties is to allow the PHY driver to set the required load of the regulator
+> using regulator_set_load() API. As per the API description:
 
-No need to resend, but please provide a changelog under the "---" line
-so reviewers know what you changed in this new version.
+This makes sense. I referred to property description to learn what it is
+really doing. I found nothing, because it is empty, so that's how we
+waste time...
 
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 74 ++++++++++++++---------
->  1 file changed, 46 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/=
-bridge/analogix/anx7625.c
-> index a2675b121fe4..f96ce5665e8d 100644
-> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_data =
-*ctx)
->                                  TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
->  }
->
-> +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ctx)
-> +{
-> +       struct device *dev =3D ctx->dev;
-> +
-> +       if (!ctx->connector)
-> +               return;
-> +
-> +       anx7625_hdcp_disable(ctx);
-> +
-> +       ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> +       drm_hdcp_update_content_protection(ctx->connector,
-> +                                          ctx->hdcp_cp);
-> +
-> +       dev_dbg(dev, "update CP to UNDESIRE\n");
-> +}
-> +
->  static int anx7625_hdcp_enable(struct anx7625_data *ctx)
->  {
->         u8 bcap;
-> @@ -2149,34 +2165,6 @@ static int anx7625_connector_atomic_check(struct a=
-nx7625_data *ctx,
->         if (cp =3D=3D ctx->hdcp_cp)
->                 return 0;
->
-> -       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_DESIRED) {
-> -               if (ctx->dp_en) {
-> -                       dev_dbg(dev, "enable HDCP\n");
-> -                       anx7625_hdcp_enable(ctx);
-> -
-> -                       queue_delayed_work(ctx->hdcp_workqueue,
-> -                                          &ctx->hdcp_work,
-> -                                          msecs_to_jiffies(2000));
-> -               }
-> -       }
-> -
-> -       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
-> -               if (ctx->hdcp_cp !=3D DRM_MODE_CONTENT_PROTECTION_ENABLED=
-) {
-> -                       dev_err(dev, "current CP is not ENABLED\n");
-> -                       return -EINVAL;
-> -               }
-> -               anx7625_hdcp_disable(ctx);
-> -               ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> -               drm_hdcp_update_content_protection(ctx->connector,
-> -                                                  ctx->hdcp_cp);
-> -               dev_dbg(dev, "update CP to UNDESIRE\n");
-> -       }
-> -
-> -       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> -               dev_err(dev, "Userspace illegal set to PROTECTION ENABLE\=
-n");
-> -               return -EINVAL;
-> -       }
-> -
->         return 0;
->  }
->
-> @@ -2425,6 +2413,8 @@ static void anx7625_bridge_atomic_enable(struct drm=
-_bridge *bridge,
->         struct anx7625_data *ctx =3D bridge_to_anx7625(bridge);
->         struct device *dev =3D ctx->dev;
->         struct drm_connector *connector;
-> +       struct drm_connector_state *conn_state;
-> +       int cp;
->
->         dev_dbg(dev, "drm atomic enable\n");
->
-> @@ -2439,6 +2429,32 @@ static void anx7625_bridge_atomic_enable(struct dr=
-m_bridge *bridge,
->         _anx7625_hpd_polling(ctx, 5000 * 100);
->
->         anx7625_dp_start(ctx);
-> +
-> +       conn_state =3D drm_atomic_get_new_connector_state(state->base.sta=
-te, connector);
-> +
-> +       if (WARN_ON(!conn_state))
-> +               return;
-> +
-> +       cp =3D conn_state->content_protection;
-> +       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_DESIRED) {
-> +               if (ctx->dp_en) {
-> +                       dev_dbg(dev, "enable HDCP\n");
-> +                       anx7625_hdcp_enable(ctx);
-> +
-> +                       queue_delayed_work(ctx->hdcp_workqueue,
-> +                                          &ctx->hdcp_work,
-> +                                          msecs_to_jiffies(2000));
-> +               }
-> +       }
-> +
-> +       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
-> +               if (ctx->hdcp_cp !=3D DRM_MODE_CONTENT_PROTECTION_ENABLED=
-) {
-> +                       dev_err(dev, "current CP is not ENABLED\n");
-> +                       return;
-> +               }
-> +
-> +               anx7625_hdcp_disable_and_update_cp(ctx);
-> +       }
->  }
->
->  static void anx7625_bridge_atomic_disable(struct drm_bridge *bridge,
-> @@ -2449,6 +2465,8 @@ static void anx7625_bridge_atomic_disable(struct dr=
-m_bridge *bridge,
->
->         dev_dbg(dev, "drm atomic disable\n");
->
-> +       anx7625_hdcp_disable_and_update_cp(ctx);
-> +
->         ctx->connector =3D NULL;
->         anx7625_dp_stop(ctx);
->
-> --
-> 2.25.1
->
+> 
+> 'Consumer devices notify their supply regulator of the maximum power they will
+> require (can be taken from device datasheet in the power consumption tables)
+> when they change operational status and hence power state'.
+> 
+> IIUC, your concern is that the devicetree shouldn't specify the load for each
+
+My concern is that Qualcomm put here regulator constraints and call them
+device load. And empty property name does not help me to think other way.
+
+How can I verify the number that it was taken from UFS device manual,
+not from PMIC?
+
+> consumer but just the min/max load of the regulator. And the consumer driver
+> should figure out the load and set it accordingly.
+
+With your above explanation I think the actual consumer load, if it is
+depending on the board, have place in DT. But:
+
+> 
+> Correct me if I'm wrong.
+> 
+> In that case, I was wondering if the load set by the driver is going to vary
+> between platforms (boards) or not (question to Ziyue Zhang). If it varies
+> between SoC, then we can hardcode the load in driver based on compatible.
+
+Yeah, maybe each  it is implied by compatible and not board dependent.
+Then just like everything implied by compatibles: should not be placed
+in DT.
+
+We already follow this approach for several other Qualcomm drivers, e.g.
+display.
+
+> 
+>> If
+>> these are constraints per board, then regulator properties apply and
+>> there is no difference between this "vdd-max-microamp = 10" and
+>> "regulator-max-microamp".
+>>
+> 
+> There is a difference. Regulator properties are just threshold. So unless the
+> consumer sets the load, they won't take effect. I think you got confused by the
+> 'max' wording in the proposed properties?
+
+Yes and confused by its description in the binding.
+
+> 
+>> If this varies runtime, then your property is already not suitable and
+>> very limited and you should use OPP table.
+>>
+> 
+> The consumer driver may request different loads based on their operational
+> state.
+
+Then anyway maybe this should be OPP table (assuming it is board specific).
+
+Best regards,
+Krzysztof
 
