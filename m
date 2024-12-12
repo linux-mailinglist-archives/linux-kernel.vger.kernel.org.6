@@ -1,94 +1,88 @@
-Return-Path: <linux-kernel+bounces-443242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C407C9EE91F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:41:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DA09EE926
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:42:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242031631D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:41:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299C0188B192
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8302E21770A;
-	Thu, 12 Dec 2024 14:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F2C21CFE2;
+	Thu, 12 Dec 2024 14:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hoTk6hFS"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="Md77kE50"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2049.outbound.protection.outlook.com [40.107.247.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C453E222D4B
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734014310; cv=none; b=BE7XO7aorfkmXgOd+JAGYasvUq5CfV7Xan+NIFunIOEwHwDl7bAmcuJw0R6eupbHatPa7HFlBjwvc1pmyVF26ENhmRZMwFAs+jujHJ2sbiVLWdS0+TkXaVE9HTereUyQAZpUZu/rZaQQx07eE6FvOyDwFD7N2Q9BwGu5u420DBY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734014310; c=relaxed/simple;
-	bh=85oMj2fZoa9tv2lnOop9OuEYiv4tSNwyvlVAgPEcKBc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DkpkhTuhleJhatLLD2hwzMsEc5ZP0zToR+CIQLkoDwerAS8zMqhrZMp3km+rYqZgWHvHMOwmHRZCyKi/lpHRwjBJaYSr6QNIHkD3HfdqFG/mvz1WBz8P7UVNV0kU3I8sKMu3xnRwG15rwAOwuCRqF+Cb6Jl4Ualr7lIUXFpslUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hoTk6hFS; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3862d6d5765so446419f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:38:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1734014307; x=1734619107; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AIOlizfCIWzvmSjIRb9eyhPMVHCE5sYO+dZRoNpnJeg=;
-        b=hoTk6hFSQWWygcYq/RLrtyBUJM7DzMrnbCbIwefYd7Ro01Nlfe4anlx6abVHfaDBRU
-         WHFxrhcfUQjZx8pp0uckNATFAB94OOgwVY+Cs9SpM2iLY2TvdUqgfWwXSmvcKcqfyYiw
-         Sd4KF/jNE9Bws1L3oactSDHu0uN+67XZfPOa86SHhdq1BePl+pVesHAQshN28vfvZqJQ
-         /T3TaW6V+LfXXF5ZutUq2rEWo/CAK7RPAPYo0YKRSAAVL5X82GjiUIs+3TwZmnuwWCHw
-         R0Ts+cmBtlAQV2zKw5N3/NDfEvVAB8OJcdYDKm/Cr/3/paspHKFdqLbRqS9PBAlnfmW4
-         SXLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734014307; x=1734619107;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AIOlizfCIWzvmSjIRb9eyhPMVHCE5sYO+dZRoNpnJeg=;
-        b=Pl8XtnDgdjaqkP3vqEW8EJaWBobLwPueCSOtLad/aavmz1I3LM03BTfJYcusdGXNXO
-         0KHfI8s4w75ZMI07ALIfLwMCn3L25UUqKmx0jrb78FKfMdr2LojsJ8nDLURbRoCU7I/7
-         uDfZhTc7hgDDfGGwl3ZjYeBaSiQhUJCSiNaHKIg5GeVkTFa0bbWHCCcpKbJeKkUrNQxY
-         7WKx3+Y35sH5tM+F2iIs5zNDWSAn/eBlsQg7Ie2nFKieg3O3xjVu+tmZhmPhXM7Jh0nZ
-         PvRU5r4IC97F7wfnZfv39qLctZZV20Y9kAm2ZXnAhdGYXDMh9YCoysAtJerI4OD2AR4B
-         97PA==
-X-Forwarded-Encrypted: i=1; AJvYcCWs2G7pAiTaijO/FT9XcA9uW5mcauBPBFa6hCLTMHaZVvz7+svpzVGbJiBtkrjMqHJlTXl/GQ7Rxe16faI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqfRp1INvlsK4nvqbVfpjgIS+8StgZ6VpqFEOUCnWy9Bvreay8
-	xp6RMcuESNXJt1jUo/0npNiN82TqQqVhxRKkbImQ03BMp0q0XG17wdgxgbtRAYc=
-X-Gm-Gg: ASbGncuM5/M7mBXDOZPQekjAQPvuixdsKE8DUQ3wTgx7tugkO6To5m1dS/L771l87ar
-	3LP1+qvHoS3tswIPvq5KTa5XHBr01LVo+5pFPGG5Egtqi/xMudlgSabmU1CVI+3GLkEsm4MgN1V
-	1UDlOjdn82m23GXX91IKlwDqzuU9x9XzZIfj93PXMYkFm8Vibw/UXD1I7YtdiOuoNlm10TwiuM+
-	Kf+ONyWHr4OTKmYUqYytXhV8I/rv/fH//0ONr2k61mR+lbhYtYbH5d7
-X-Google-Smtp-Source: AGHT+IFds6b+rb/IVEt/FaqatdXbo9IXwM0+rdLbsbHi9Vl/oF4STGa7tMC6n4HsFYumZKjKywdEZQ==
-X-Received: by 2002:a05:6000:156d:b0:385:df73:2f3a with SMTP id ffacd0b85a97d-3864ce5429cmr5944931f8f.14.1734014306975;
-        Thu, 12 Dec 2024 06:38:26 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:11e8:e55a:1c06:3078])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559edc3sm18681545e9.22.2024.12.12.06.38.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 06:38:26 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Davis <afd@ti.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Subject: Re: [PATCH v2 1/2] gpio: omap: allow building the module with COMPILE_TEST=y
-Date: Thu, 12 Dec 2024 15:38:25 +0100
-Message-ID: <173401430334.14078.3117546385632251439.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241205120610.40644-1-brgl@bgdev.pl>
-References: <20241205120610.40644-1-brgl@bgdev.pl>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D508215719
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734014337; cv=fail; b=dHRcIubetGm6kYq9JXlTU+iF5de9SldRtQ5w8raR6gXW8YprGywV8WJsjgtizFMTzcAlB2FWqhoDW9AnDLnfKMerY+oluTpatKjVEgCbs8kLUp2laENDPvznLJmawfPasnqyG/ZPhzJEgAxjZLsPi75TqMfFW6jbpBiHArLfrNM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734014337; c=relaxed/simple;
+	bh=3+LdlRGs9mWWwetmB4g3BIVxtWEmT5HnG+Wriufh/Bs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=fbl2SaKmApKmqSYHezHQZh55QiDxDXRm0VR8cJ87tly8gY/Tkw1xFcAEdvWpQ1X5toCURTNjyAhmxhwVR72g/zW5EwL9yCjOb2GTGIzKpbVJJTIMYkkdme51AXxqiIyPIwEeXog4HnOMTLJKHHg9g+0aUxsXWYWgj8GVH3WKTzY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=Md77kE50; arc=fail smtp.client-ip=40.107.247.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JQ7vMp9bdmr+GqmR3Y/mBmMw2wtKyIVak+vJj4H7EeCZooUZ+aXicG3KSqCXIbrvwN8WvkrffamDMdxTYaAw0z0H0+SB0iR1FWb6bJJsY06c0igXOeXKT+cCiKwruRhBhhnT0o7Qd9CnLS4R1/Zxn3HVCvjSH5oYsxYUh+z4vImhwLdCGXIs/HRW+zAbhD0xund9hmV98ncN/gHTNVSk1ZBI9epvX8vJVRG+XmmA0S8bWQp5z8eULUnDuziWQtWcScJo6rnnbYX55tOGF2dMZo57g7ltAmU9V/Tz6I6VDuf+BmZbBtu2F9kpsm3R+eh/spX3dgfRiaXYN86L4WSSig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u30tsaFF0rybH8MkBjkpC0TaIPLlaSaxtdJHc2toSV8=;
+ b=KTy7zk4rtNB4lNVsxaVHQuL2k9MGC6xYvnLW3jAlkMR8nVCDSFGJnpYf2M86EgBen9aUAsfS96p4bZZiddBSx38X2XIkGBKy/kiWGGJpBlzyeq2eDXF8F6TAO+8Rh1ugJ4GZc2wWh/Q+gwp18QQpp8dFEABeuuBoOTQ7GuIrwHrSSkbmwhweYtakr/pQ1VQDBwM1y7YfIMe/dVJ65g/yOSzjERyw/0Oo+Vy4f8qIRG8PDyPzPsk+gcX0vTUfQIwIEEQtgLMkapy+TvwBydmp+3mp51fr+7gnRmqruJnQctMgK9C/xsSjGdFzRoj8jFCH2t9GcYqUJKud8KkAuSsrkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u30tsaFF0rybH8MkBjkpC0TaIPLlaSaxtdJHc2toSV8=;
+ b=Md77kE50G2kg/2hbACb2IaEaB9Gj0HBkNsmCbVNxk916AvPOexH3Fl4YD3wMb6gptTC2Ab9qo4kVb/XihQfmP/tIIIR/AgTnAa58SVXmeCC3HKP2yDRdItRg46UvwqnhrcQThEVXjVudzr4KBk0QiTraHzU8YdTS+Oe5ZWP5M3I=
+Received: from DU2PR04CA0182.eurprd04.prod.outlook.com (2603:10a6:10:28d::7)
+ by AS2PR02MB8950.eurprd02.prod.outlook.com (2603:10a6:20b:5f1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Thu, 12 Dec
+ 2024 14:38:52 +0000
+Received: from DB3PEPF0000885E.eurprd02.prod.outlook.com
+ (2603:10a6:10:28d:cafe::7c) by DU2PR04CA0182.outlook.office365.com
+ (2603:10a6:10:28d::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.15 via Frontend Transport; Thu,
+ 12 Dec 2024 14:38:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DB3PEPF0000885E.mail.protection.outlook.com (10.167.242.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8251.15 via Frontend Transport; Thu, 12 Dec 2024 14:38:51 +0000
+Received: from SE-MAIL21W.axis.com (10.20.40.16) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Dec
+ 2024 15:38:50 +0100
+Received: from se-mail01w.axis.com (10.20.40.7) by SE-MAIL21W.axis.com
+ (10.20.40.16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Dec
+ 2024 15:38:50 +0100
+Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 12 Dec 2024 15:38:50 +0100
+Received: from pc39391-2017.se.axis.com (pc39391-2017.se.axis.com [10.92.82.2])
+	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 884841AE;
+	Thu, 12 Dec 2024 15:38:50 +0100 (CET)
+Received: by pc39391-2017.se.axis.com (Postfix, from userid 10612)
+	id 837174373974; Thu, 12 Dec 2024 15:38:50 +0100 (CET)
+From: Stefan Ekenberg <stefan.ekenberg@axis.com>
+Date: Thu, 12 Dec 2024 15:38:40 +0100
+Subject: [PATCH v3] drm/bridge: adv7533: Reset DSI receiver logic
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,29 +90,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241212-adv7533-dsi-reset-v3-1-c6b9a5c524cf@axis.com>
+X-B4-Tracking: v=1; b=H4sIAG/1WmcC/23OMQ6DMAxA0augzHWFE0KhU+9RdQiJKR4KKEERF
+ eLuDagDA+O35GcvIpBnCuKeLcJT5MBDn0JdMmE7078J2KUWMpcFYl6BcfGmlQIXGDwFmqCoKlu
+ 2TaOpkCLtjZ5annfz+UrdcZgG/91PRNymfw3ViRYREEqLeVmT0q1TDzNzuNrhIzYsyiNQnwEyA
+ YTS2vQPSW0OwLquP/b6YzfyAAAA
+X-Change-ID: 20241108-adv7533-dsi-reset-488c6fbb5e42
+To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@axis.com>, Biju Das <biju.das.jz@bp.renesas.com>, Stefan Ekenberg
+	<stefan.ekenberg@axis.com>
+X-Mailer: b4 0.14.2
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB3PEPF0000885E:EE_|AS2PR02MB8950:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd1dd496-de1f-4ab3-be9e-08dd1abab26c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RmRidnBxbU1SOG5WZlFGSWZJWEdqQmNVMjhJUmZiaDh4MHpiV3ZhWjIrMkNO?=
+ =?utf-8?B?Y3NabnhPbVdUY0xVRHJoQ3h5bFJiN2dBd1dTM00yNG1aYXdCNFpFWXU4VkV2?=
+ =?utf-8?B?VFVIWHl6dFlBYkt0dEV2VkhGYWZsTnpyRlZtOUJrSWdvZWlMTWNJTnR6ci9C?=
+ =?utf-8?B?a0phZUFVZDBSbmxzd1pqSTBGQ3pWWjdJVFJsazA1TVBzSHVOcVFMVDUrMFdl?=
+ =?utf-8?B?dExEVWYzOGlFU09VMUJkNVEwTzdEeUdTTkRvNkVFMW1PT1VVQjBIYUptcnZ1?=
+ =?utf-8?B?Y0h3L2g1b3JleVNVcGZFVFdjR2svSjNNNURkanFRMDBJdUVWNi96VXprN2E1?=
+ =?utf-8?B?S0lzdzVnd0xNcG1OdzdCc1B0QnY0WXZ5bUpxT2YyUy82cTE5cHExbkluQTFK?=
+ =?utf-8?B?R1pHejhCK2h6TDhGTHVLKzJXK09wVjh6eGlzY01za0hXOU5ucXJUazFzOFBl?=
+ =?utf-8?B?cGJKUnRLMlZlQ1ZPaGZ3RWhDT1RudnZaeFVGRWljRUJGbVRSTDZ1SVpXZ0Va?=
+ =?utf-8?B?WDdLbkozZkg5S1VLdDZhdEYvUVRXSkl2ZSt2T1JrVUFtc1IrQ20zREI4WkIv?=
+ =?utf-8?B?MFFqSEV0RHNrZWFiV3JGOG1XbDIyMGVZdDdmalZ5NWpNdzF1YmlqWjFzUU9V?=
+ =?utf-8?B?L2p4OTlZRVFYd0lnQ3hpeG9VRC9FL2RFNW81MjVRakc3YjE5VnU5NEdOYUlK?=
+ =?utf-8?B?WS9USi96WTl5RFJDUUpodk5IOEZIbmJRNHpneTVmYkdEVHRnU2NsQ2RTK3JG?=
+ =?utf-8?B?d1JBeGJnMnJWcC9FdDRyZTNrUHRsc2J2V25FSnI4VHIxVW55WmorYUI0b2FR?=
+ =?utf-8?B?VFdiWklSSFBqV0NoOC85QmZZNStOVEZJeTdkTW03OTFJdmdIa3dJbVVRMm9u?=
+ =?utf-8?B?M2pBWmlHK1lISFcyT0N6ZlFzbTRvQkpKYTdSQ0pjWjhGaE9QZTBGZmFGdzU4?=
+ =?utf-8?B?MXAwQzl3WDJMWGdROExBSkFSRVRnMHJtRkxCS2s4NGVqK1dFSjFUaXVEdnFt?=
+ =?utf-8?B?RFVra0tROXdUbDhuWHBkMVBkeXdaQURxeEQ3bFZ4NjhiVVhIQWZzbnM4Tk10?=
+ =?utf-8?B?SkYzb0JoVloxLzZTbElMYlZrQ0lPSVQvLzdnYk5aSFY4cVVlVlQ5S2NiU1or?=
+ =?utf-8?B?Uk1aZ2I2eVc2a0JJYWpBVmV5UkJ4WGJOSTNOdUI0ODdsQmw2dnZDRVVFTCtl?=
+ =?utf-8?B?K3RkTnlwbWV1NlhOZ2lqeC9UcUdsZEJ5MjJGaDc2VElab3YvQ0kzOGdyRFhH?=
+ =?utf-8?B?VjloS1NvS3JrbHlkMXEzZDZxUW5OT0kwdUR6VHQzcUpJQytiNHNIODlLc1ZB?=
+ =?utf-8?B?QVhTY3JianZRMWNwWWxFZXE2dWlha0JTaktzdHhjVlVXMUZjVzM5Z2pLRml4?=
+ =?utf-8?B?Vmc1U0F3Nmp4dit6WWJNei96bEJJQ1F6Zlh5TFdyMXRRVFBUMEo5OVgyMUVi?=
+ =?utf-8?B?RDBlL0YrbmpZSnJMNEpLNVhJZ2JXUTkyWklMOGFSTnRQQUh3TDdMOUFwMG5j?=
+ =?utf-8?B?K0hCSnVob0dTMHpwZkdaOHFtZW9OeUZ1czV3R0hSZk1aakphREdpK09vU3cv?=
+ =?utf-8?B?T1lOUEdkb2FuOWpTbmEwWldtaTd0UHRPNnlZLzVOS3EvTnBpYW50WUhjTzZs?=
+ =?utf-8?B?ZTV0aW1tbXU0STJ3eWdMaG1WZHdsRUR6Yy9DRmtwYkxtUFN5SEg5Y1hJaS9m?=
+ =?utf-8?B?WWY1MExTUSttcVBMM1hZUVJoVDlLUktmWFE5OVEzSmNiME1lbnJqakFjcThU?=
+ =?utf-8?B?Mno5aXJUU0NlRVFaQ05Ja1Y5L1k1aTh5aTRRdHc4VVhOQXpYbmpPVElZbzFu?=
+ =?utf-8?B?ZGVRbVVpRkg0bWtES1BVM1FmSkYyY1NYcVJJNFJtNHk2ckZLZVBjY2d1dk85?=
+ =?utf-8?B?ckpPczhibFk5WENxcEhONEVkQW45d0xSV2ZRNzdYemFVaElrczN5QnIxOHY2?=
+ =?utf-8?B?Z2VRTmU5L2I5S1JJMmwzcDlsU3R1VmhYTm1PdjZodWhUYU5qL2dsTHI4T285?=
+ =?utf-8?B?Z2JZNGVVTmpBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 14:38:51.5563
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd1dd496-de1f-4ab3-be9e-08dd1abab26c
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB3PEPF0000885E.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR02MB8950
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Reset DSI receiver logic during power on. The need for this change was
+discovered when investigating issue with ADV7535. The symptom of the
+problem was that ADV7535 continuously outputs a black image. This
+happened for about 10% of the times that ADV7535 was powered on. The
+rest of the times the image was as expected.
 
+The solution in this patch (placement of reset and sleep time of 200ms)
+is implemented as outlined by the Analog Devices support team.
 
-On Thu, 05 Dec 2024 13:06:09 +0100, Bartosz Golaszewski wrote:
-> For better build coverage, allow building the gpio-omap driver with
-> COMPILE_TEST Kconfig option enabled.
-> 
-> While at it: simplify the dependencies and drop the dependency on ARM as
-> it's already implied by ARCH_OMAP.
-> 
-> 
-> [...]
+Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+Fixes: 8501fe4b14a35 ("drm: bridge: adv7511: Add support for ADV7535")
+Signed-off-by: Stefan Ekenberg <stefan.ekenberg@axis.com>
+---
+Changes in v3:
+- Add Fixes tag
+- Link to v2: https://lore.kernel.org/r/20241119-adv7533-dsi-reset-v2-1-e12cce42e25a@axis.com
 
-Applied, thanks!
+Changes in v2:
+- Add Tested-by tag
+- Link to v1: https://lore.kernel.org/r/20241113-adv7533-dsi-reset-v1-1-6c1069e35fd3@axis.com
+---
+ drivers/gpu/drm/bridge/adv7511/adv7533.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-[1/2] gpio: omap: allow building the module with COMPILE_TEST=y
-      commit: 934bacb6441afdb77093a46b3138f81cbcde7d81
-[2/2] gpio: omap: save two lines by using devm_clk_get_prepared()
-      commit: b7bbaff8c1bccf48958e52f6f03593fc47906b5d
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7533.c b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+index 4481489aaf5ebf164313c86cbf3447d2d7914ab9..93085c2b872ed98f4ee394236dc66c568c0e5ccf 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7533.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+@@ -67,6 +67,15 @@ void adv7533_dsi_power_on(struct adv7511 *adv)
+ {
+ 	struct mipi_dsi_device *dsi = adv->dsi;
+ 
++	/*
++	 * Reset DSI receiver block logic to avoid ADV7535 startup problem.
++	 * Without this reset it sometimes continuously fails to receive
++	 * incoming DSI packets and outputs black image.
++	 */
++	regmap_write(adv->regmap_cec, 0x26, 0x18);
++	msleep(200);
++	regmap_write(adv->regmap_cec, 0x26, 0x38);
++
+ 	if (adv->use_timing_gen)
+ 		adv7511_dsi_config_timing_gen(adv);
+ 
+
+---
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+change-id: 20241108-adv7533-dsi-reset-488c6fbb5e42
 
 Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Stefan Ekenberg <stefan.ekenberg@axis.com>
+
 
