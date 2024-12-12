@@ -1,103 +1,144 @@
-Return-Path: <linux-kernel+bounces-443354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF0F9EEDDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:51:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3269EEE80
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:57:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FD8428566E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:51:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725C218909EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC31223C5A;
-	Thu, 12 Dec 2024 15:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EE2221D9F;
+	Thu, 12 Dec 2024 15:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HssL/8vf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="z13txCqD"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047A42210CD;
-	Thu, 12 Dec 2024 15:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BAF217F34
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018628; cv=none; b=YIareyA81Xf/tsaA5AN/J7mLblP5WUmNVRlb6qsPKP7/+zpqiLMvtOxLoPeG7cqMAiFpFvZ+I0R1Zaw53O0Kpkgs/ODrbGu2p/8EYFzP72OARWyaotlDPBRJtKazSz47ciYkyjYxbf27iziR9yqbwEUOnpGR6/h+R6Hxu4HVHJA=
+	t=1734018681; cv=none; b=KSeacgdyUZZ/cSCNhe8kjFlki1FZVBH0SU4UViN9dEozWcjX3SfKQIDB+ZZYJyYIwaqafHEMeUXM4lzfffQ/4xtSg7KXdyT46SOQQI1unrD1QnS2SeDeS2R+VBEHOqMrCFuVvH78WPNaNa7cXuU9hTppu/fes3EstqxD9sFIWFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018628; c=relaxed/simple;
-	bh=SAvTRNNbapiAg5dpA9PyCGERpK6EazCw4Yr2O+tX678=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ezXwR7oe5Ef7k2UqXIOfs/hmqPbKJotcMlvAUlcAp9DEO0Nq5Mxs000L1jyPbB+HuqVRRC+AjP8UvC+QNycZtTJChWzKAO+LLSq/V5EJmxc/J7A2mzuGpUl2O+SsqsI2o5tfSwuYjCyRw6+q9dwFQTtS8yKID1PK1vKgHjc0LNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HssL/8vf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF80FC4CED3;
-	Thu, 12 Dec 2024 15:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734018625;
-	bh=SAvTRNNbapiAg5dpA9PyCGERpK6EazCw4Yr2O+tX678=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HssL/8vfQavJjMJ2WBf/N2FweKs9mml17vBqy+alDd7BzaE3eCS6i3GCHQJgpV2oA
-	 oK9F4NqcXezotmGu70QTtWMu/rHmNi18b41Bm4YKNnjuBCMkVcXOsJSfxmj56fAa+d
-	 /zyy00RvFs39afAAf/peAEXiXUd8uFRDpHDgeHp+pyoeZd9PcdIn1iPr34uby+cym2
-	 PpbbLvEVwd/wjkiSrTWLB8I7rI+feVUjQoT4cmuyrT85La3ueNAwBUjiJVxiF6qj5j
-	 hru9t07sNo7fM7DHA8GB+67CtI6WJUyiLVSbxFC0oEQrqykd8VB2pOqEUTwURgzvqP
-	 X8r2M6BUNe+iA==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3003c0c43c0so7811261fa.1;
-        Thu, 12 Dec 2024 07:50:25 -0800 (PST)
-X-Gm-Message-State: AOJu0Yz0lZ6A3o9rhXZ0/hBOX/n8DdueCrK2Ku49L4u8vTOpJwyEj08Z
-	y8R8+NXUmjqJruio3hPE9wpkIfpKaH9B+pD4oRTQwZSLYPz+t0B+0cYqTHRZowpXqltKdIjPAum
-	SO1pl64HFM9TJ8QJErhoExkzA7LI=
-X-Google-Smtp-Source: AGHT+IEqcQZ0DjYZD0cBKnUgKIy6QbViNthhBj/SQzjcLeD8uNbIMPhOGGDD1hiQno/0oqEpCBXkQGyQ5UFUjKy6CIA=
-X-Received: by 2002:a05:651c:1507:b0:300:329e:23fb with SMTP id
- 38308e7fff4ca-30251e89840mr3539601fa.34.1734018624470; Thu, 12 Dec 2024
- 07:50:24 -0800 (PST)
+	s=arc-20240116; t=1734018681; c=relaxed/simple;
+	bh=9J8jgbGZLhDCNXQIcS/IOQVlyOG+dfCc22YlvHx/Cmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bSBhAaCFfPaI9OWATfZyIophyFniQ0CeA30+UaIshGEdtMXU9w1FN0T1VPD02jROc3yVOEtPrOXtsJsoL7H8YELk93vm0g5H6PZ+YsSWt646hJQR6s/3iNQuBVypNBB8KX4+UtcCPZYVoXIIzOsJwwh+jvada7x15YI+TWl5fPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=z13txCqD; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-844d555491eso26896039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:51:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734018679; x=1734623479; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uvdjuc+ov0Ox3XKRZz9jrd61LllD+9QFwqPFhdFIKF0=;
+        b=z13txCqD/dsUWtKVnp9uSCwCfn5RDFufQTCYpZftcNldL+O+JKcoeX0HswelpBcS35
+         1h2KJtyV5SqH9nV9N7WX7Cr9uh6A9iAveeOMvlj7Niuxk8CZRJDxSik3yivx4iXTMBEI
+         tsfxblcl614/znEPPyFTvUlNT1D/EOrSgN9PObq02Y0vFc3CAmnp/vUGdTerc/65hPry
+         W2Erp8kCZeenyIcKUDGbIoLCxGfErpqFKHYaYrkSj+5VBsPdU3TVdeON9JuUnR+Dq+kM
+         JbUNrYWK4hfuxEimpBTN3T54BuwYW++N7SFclhAcW+Czf5SI5uOKKs0EpJPem6CFGZ9M
+         DL1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734018679; x=1734623479;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uvdjuc+ov0Ox3XKRZz9jrd61LllD+9QFwqPFhdFIKF0=;
+        b=m5rs/208oQQIwuvcEL7FdWQT6iSb3cXitYrl6wMBYhPELx25bVZozOd+CjZNH68bfN
+         ItgfEI8FYRuY3IJOuZRdltQGGKlbNzNyJsj0X2IMP2akX11JmmB6PZWT5XvQ+PcJnn9f
+         f737hYh6isgW+fhxxxlDgMTATgO2xeQJikoZkzYOLf8QZYtn3HOxS7z7yHoEpxl69ehg
+         wZonXhkNzj+ZPc4C+vBx7YesR10t+fUNw6gUxAyeLAAmGaI9lVM/6+DOM3tURWbPADXN
+         326avcopY49m93ZJ4/aDLSINnL6jgiV41RRVM67LYaEJY2MqTczdoVy5ev5m/XMsKvCW
+         swtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDb+VMTkfDraozwHZndkFumGrVaYLBVcHcxQFGWgvxsu4azRLDWVFJQdJqcuwdDS4ILE6+nXZn8XHXkI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4plDEtGUAlPpfc7GnQQhvcy4h8jOYAQVzgp5hpcNW+JvNP+HW
+	NyXWNilG3NdhnpxKkgkC5lpKEEZOTYX0yXP9ZkBvcJr5NpZ96Y1EXcl8Yu3j57U=
+X-Gm-Gg: ASbGncvGEbqFtvoZqUpKqYAxI8OOqg4DDGil7eglYK32I1nEqDVU1+Sd80+3L2S/w/Q
+	mErKbsoSUEAy8UE4lYpvaGpnzpyUQ4K6kShgHWoZEVD9a41QujnVw+jXPU1IKCUZQRzmI9k7Vvv
+	Ce12d4S+2mL58u8cvZ4F5JO/uttnnxMB9WCqCR9Uux9Yloz7SQmE+r+SszjNgFUa8VgOtiMPimS
+	jENidkseNrQ1Oov7QMPnk2gWHeOhEJkftVE56NnjRLVP+UkiIok
+X-Google-Smtp-Source: AGHT+IGuinfFR09bO8lUOpxQ1zSi+sA0KfqYwuqKm9s7gPVryn5wyMJJDgrJmONT7vL8CQbH+cZ8kQ==
+X-Received: by 2002:a05:6602:6d0c:b0:843:e008:95b7 with SMTP id ca18e2360f4ac-844e552b920mr79385139f.0.1734018679383;
+        Thu, 12 Dec 2024 07:51:19 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e286222d9dsm3865412173.148.2024.12.12.07.51.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 07:51:18 -0800 (PST)
+Message-ID: <e492e934-c162-430a-94b6-32d1ec29a782@kernel.dk>
+Date: Thu, 12 Dec 2024 08:51:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212154619.2235767-1-masahiroy@kernel.org>
-In-Reply-To: <20241212154619.2235767-1-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 13 Dec 2024 00:49:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASMT1k_sTpUDnzBE1Mho0faqzo_ZpouEoPvL5mAS8f_zQ@mail.gmail.com>
-Message-ID: <CAK7LNASMT1k_sTpUDnzBE1Mho0faqzo_ZpouEoPvL5mAS8f_zQ@mail.gmail.com>
-Subject: Re: [PATCH] modpost: distinguish same module paths from different
- dump files
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/12] mm/filemap: make buffered writes work with
+ RWF_UNCACHED
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+ linux-kernel@vger.kernel.org, willy@infradead.org, kirill@shutemov.name,
+ bfoster@redhat.com
+References: <20241203153232.92224-2-axboe@kernel.dk>
+ <20241203153232.92224-13-axboe@kernel.dk>
+ <20241206171740.GD7820@frogsfrogsfrogs>
+ <39033717-2f6b-47ca-8288-3e9375d957cb@kernel.dk>
+ <Z1gmk_X9RrG7O0Fi@infradead.org>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <Z1gmk_X9RrG7O0Fi@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Dec 13, 2024 at 12:46=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
->
-> Since commit 13b25489b6f8 ("kbuild: change working directory to external
-> module directory with M=3D"), module paths are always relative to the top
-> of the external module tree.
->
-> The module paths recorded in Module.symvers is no longer globally unique
+On 12/10/24 4:31 AM, Christoph Hellwig wrote:
+> On Fri, Dec 06, 2024 at 11:22:55AM -0700, Jens Axboe wrote:
+>>> Honestly, I'm not a fan of foliop_uncached or foliop_is_uncached.
+>>
+>> It definitely is what I would elegantly refer to as somewhat of a
+>> hack... But it's not _that_ bad imho.
+> 
+> It's pretty horrible actually.
 
-    is -> are
+Tell us how you really feel :-)
 
-> when they are passed via KBUILD_EXTRA_SYMBOLS for building other external
-> modules, which may result in false positive "exported twice" errors.
-> Such errors should not occur because external modules should be able to
-> override in-tree modules.
->
-> To address this, record the dump file path in struct module and check it
-> when searching for a module.
->
-> Fixes: 13b25489b6f8 ("kbuild: change working directory to external module=
- directory with M=3D")
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Closes: https://lore.kernel.org/all/eb21a546-a19c-40df-b821-bbba80f19a3d@=
-nvidia.com/
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+>>> I think these two macros are only used for ext4 (or really, !iomap)
+>>> support, right?  And that's only to avoid messing with ->write_begin?
+>>
+>> Indeed, ideally we'd change ->write_begin() instead. And that probably
+>> should still be done, I just did not want to deal with that nightmare in
+>> terms of managing the patchset. And honestly I think it'd be OK to defer
+>> that part until ->write_begin() needs to be changed for other reasons,
+>> it's a lot of churn just for this particular thing and dealing with the
+>> magic pointer value (at least to me) is liveable.
+> 
+> ->write_begin() really should just go away, it is a horrible interface.
+> Note that in that past it actually had a flags argument, but that got
+> killed a while ago.
+> 
+>>> What if you dropped ext4 support instead? :D
+>>
+>> Hah, yes obviously that'd be a solution, then I'd need to drop btrfs as
+>> well. And I would kind of prefer not doing that ;-)
+> 
+> Btrfs doesn't need it.  In fact the code would be cleaner and do less
+> work with out, see the patch below.  And for ext4 there already is an
+> iomap conversion patch series on the list that just needs more review,
+> so skipping it here and growing the uncached support through that sounds
+> sensible.
 
+I can certainly defer the ext4 series if the below sorts out btrfs, if
+that iomap conversion series is making progress. Don't have an issue
+slotting behind that.
 
---=20
-Best Regards
-Masahiro Yamada
+I'll check and test your btrfs tweak, thanks!
+
+-- 
+Jens Axboe
 
