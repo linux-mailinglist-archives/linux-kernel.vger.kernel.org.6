@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-443613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA9E9EFA38
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:02:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF7A9EFA4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:05:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45FC928AB1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E4218902CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8EA222D79;
-	Thu, 12 Dec 2024 18:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3A22236F0;
+	Thu, 12 Dec 2024 18:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4+Vfvzf"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MaZq5cEy"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47ED22332E;
-	Thu, 12 Dec 2024 18:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF38223E61;
+	Thu, 12 Dec 2024 18:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734026537; cv=none; b=jVkbiCqfda6T8TWHOVyBiAUBHIBAtO+43T3GE/ZTh+nId32OPZNZIfowD1oLhok4aib0q907I926F4LJRovov5kq6wCMLgQTeafQUCCTh9B10aFteLpcVbU8UfPM3404rzYWNnCbUw/LBNn7kDI4dZwwrtx17oaOSTYhU8ZuaXI=
+	t=1734026540; cv=none; b=jv8dHn3XklqY24KJBvnxMc8dJMBypYNNmOEoEjM4XFZdcbta4ZiZ5AgMPpoOYm7TN0WU9DXgKSBXr1OuzCw5WM1veryZr8RcRuc926wLUTo37mZmwPyKhetBrOdkLBeIkEx6lQE1bpUAHsICLgXPng0s8/8VcJcl3TIIRjW13ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734026537; c=relaxed/simple;
-	bh=Z4wVBF0PHj8Zq5EQV7Us0YE2VClVTJCMcUE2buYl+h4=;
+	s=arc-20240116; t=1734026540; c=relaxed/simple;
+	bh=XWV97xP/r4UDSQKDouWkQk3sT3ICD6AkRujtrirfj0g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=avy1VBuI0Gpl3a757wvhE6aW7KTgojECZShiA/k2gHkiDxoQub5hd8QQuxqZbcl3U3Zj6/uGuvMo6jVoWYCbDJ/m14NRGYi1p0rZSRm9uJgHrFA7LohQG+KbVRI/cp2riWZdTeuSomoUhuCaKLN8ZAe558xqsuKsarbnHAcrJ2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4+Vfvzf; arc=none smtp.client-ip=209.85.167.43
+	 MIME-Version; b=j+rk9c6Iv4K9Z3gtgXjxj8Ao3kqDwbWj4NfRHu8Xdv/P3SkdG3crz9xkxqALyDbTH6vl9l/dEi0RIRhnQaDYmby79V6br1mSl+jwqmEt+Jf1uem7sY8chf5uXDbhNrB1pY8hwElPUb7amjSTb9Q7H15p3WLjJqCN1S/FqUv68uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MaZq5cEy; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5401d3ea5a1so970512e87.3;
-        Thu, 12 Dec 2024 10:02:15 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53e28cf55cdso782250e87.3;
+        Thu, 12 Dec 2024 10:02:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734026534; x=1734631334; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734026536; x=1734631336; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tH4hkCLHUFdjR9ahFZD+4T/NQJlUp6AP/fKB9gG9Cew=;
-        b=c4+Vfvzf4A5EVqBEVI/gePjYo/DtU90dggTNSmhfUss5n3NlXgwFnRy80eY7TyowMN
-         KMUBYljPeq3HLYBRMqUse/U5i7XbBCO9h2E1AJdZ7MhaQ6thwlUlT6l4OxctVz6NUOiM
-         WVe6se+I7UMh7AQKkJUGF2ekyQHqvAdVUDF6CwPGVYYdASY6IiXeYZEBc3x6hGc7lFq6
-         09U7Fl4e4QJ3bVRpS9aF2CdRWV1ZAd54hRuQBv7yZzQ8+O4cHQqqtbndgm3TN4weR8Bb
-         YaS8fBYal7gTw4IPuaNtYJ03E4rogz6BfHAi92Ucsj/CRhqbUf2m4S8jVWGsCWSNlaro
-         Fbuw==
+        bh=Hv8QfUHYhhVaP7flYxocwH+u3wceiEtGo25bo7k3AuU=;
+        b=MaZq5cEyRdXeIeUevgkjLoPuKuz3kbGcqDTPmSlVMTqsUnoZX3QfD+HRRzSqVHiBmj
+         K64ujbP2vNI8NCwisElu6mCAtBQ7/KBoY80AiBqHmXZAeXLaPbMRfPRnBPSVVQ9fIMaX
+         2is3XJZsN8vTiHhWKooRYxvt68cVzB0JxvHmgWJfWZGuMsPgbt8Kep3JZ4amTwYb7hL9
+         r3BsqFD7yXVug+3Tvy0wVYdpx3HUHV6wU8jf1H8MSojz+uk6U0OEA6X4jY7562AnpyUA
+         DNA9/N1Pd3Gm0WCGjIgC20N2AigYPDqtR9wyavgWj8roUXTNvawEl/DnG6LDx8X/Jd60
+         sKvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734026534; x=1734631334;
+        d=1e100.net; s=20230601; t=1734026536; x=1734631336;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tH4hkCLHUFdjR9ahFZD+4T/NQJlUp6AP/fKB9gG9Cew=;
-        b=MGQ+Eq2zc00Ket3iOkTUz4PyTtJkC2/Z9k89M4N2+mM1xricerD3GhwoqeCrVeofae
-         5WC8wY4h9EC6JmUeW6uedduU7pmMpxQvcBzFNmA1Jc/r1i1jfxL9+tXecNfv23oEGLTX
-         93Tau/UGIaVEbB56HKg66w/V0eN465r0zIQJsBPZemj1hQvtR5tEi+xY50Bf91+spatd
-         yQ4pPq3DzFYwfsTGx9o57UPumfpmefbMbydFE1iUm+XpXLnMzJdqT/rurveWHAtfzyvv
-         /A2UpvUOPBLaxuTajecAfLPu4FtH9PDqOpmbtFRyPdN2cvp/3ENWbiZasqep8KTI7/7h
-         0G4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXhcxqVh9/ccW0fK4Tkvk6VxJFJssiylrgGth/VNNHhNzL043bIQFVeZuQshRy7z6t7/F5OU8RXacDICX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF+hAG5O0sYVdk95LiHjAfdEXObGYxbOcUMn8H409QyGXbPcUS
-	91KIkrFWp5JxsMV4gTO3iSCRP3yHmdjys6vSBz+sGRTmY2iZ0IT4
-X-Gm-Gg: ASbGncuti2AVV1rlS2llxzIz10bRWMuA1ijmgc9biGZTDBh5EqPQv574kxnRLNcVnJW
-	Mu1g7idn9nNky4rMSX1p1J8UXoQSsXGdbbGi48Y8uuH+Rsa9ZkyFbKUa93v5ytOVbpGhFwk2uXf
-	VPQRRrN1T78ZPfbkIV/jFQ6Ui86Mws/fKT1OxxoabyaBkLzdTZijLPsYpIWq/AV6ZYLPc9C52Eb
-	lsDmZfmciejSMQusvG9rX+wr2MpAxrdShkt94r85Ag3qfzNh01+
-X-Google-Smtp-Source: AGHT+IEKLvPMI5CiAsBGeGMYPXutOtLCJKZ20+8zR8pPilM981v0MVz8wxdnXFoxtX1lsxgDEQ77sQ==
-X-Received: by 2002:a05:6512:3b13:b0:53e:350a:7298 with SMTP id 2adb3069b0e04-54034111a86mr428178e87.25.1734026533208;
-        Thu, 12 Dec 2024 10:02:13 -0800 (PST)
+        bh=Hv8QfUHYhhVaP7flYxocwH+u3wceiEtGo25bo7k3AuU=;
+        b=ehDfvcBIJLWKamCw6YboJalWYKZjcSEvR/2U6hQOxNhEBX24oMUutgHVIaxvaCEHBk
+         H4hOTzHLiORGs4SQKcTCID4pKPcS421OmlF8QXW+mY/eeaw7nhvDHsopsOlu3n/JVVsp
+         MExzxtQV41L6aKsLrWTt64sbCUt+3Zxgi7fPMWRrlnU7nwvrRlxwHXR6Yh6sTxr+WqfY
+         ZyYk9SIN/5xgwGjegD6yDn0U9h0S13qWpuEWAWrdviBsUEP1gLqiOYiMmxiDbXMK8svB
+         dbe9I1PWSCDgxMeFXScnL5mYehSrJyBiO6Q0ZRIxZrrdiCCfpoUz8hf0umVeXFFRAl1i
+         zSWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfXC2omZ3r5f84pYaH5wHa9683P1hZYjaUfQ+97b8dVLSKmbH8hTu1bCUEK0jDWpC8lgunMZuCTTv61m8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnvRENzrvmKg+qDR1MqxBDqHcvNjDNEngh3DLK+iGxZg8PI8kP
+	Tr6VoJJO+22yDtDpjk43dvfS+OkGoeLZPW5MEKt9WGoK90cbXFzV
+X-Gm-Gg: ASbGncuYEBbDoiuZJrKCT82eC+x0XDESw0mnuWU8w3NeZy3INniN8BS6swoMlct4YM6
+	2CbabYkyFjs5onVqGGomAyBEgIT1EHHXlxHa6OCuhHyQr+mEG2N3GNHvkQcAlXpiZKdfMLnwbE2
+	cPD90JgK4+tDuMRQpjzG68lAfSXge6aKftm6RzcJZON0G3rnu05bIh4iLWY2ea/cu/NfPSMRUFG
+	/nReIEm2JpyhKtrOmlj/UZfr5WYMhS0wVGl2hIV4od5f7sbGQRf
+X-Google-Smtp-Source: AGHT+IEBa7W43d+GZY0D/NIRGJ6K2KBC2g84iLkFM9fwOtfd8BrPro/IcWJVgAX73Jiv6rWzaqnyWw==
+X-Received: by 2002:a05:6512:690:b0:540:3561:969d with SMTP id 2adb3069b0e04-540356196d3mr8441e87.49.1734026534397;
+        Thu, 12 Dec 2024 10:02:14 -0800 (PST)
 Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e39375d36sm1940645e87.7.2024.12.12.10.02.12
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e39375d36sm1940645e87.7.2024.12.12.10.02.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 10:02:12 -0800 (PST)
+        Thu, 12 Dec 2024 10:02:13 -0800 (PST)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To: linux-mm@kvack.org,
 	"Paul E . McKenney" <paulmck@kernel.org>,
@@ -85,9 +85,9 @@ Cc: RCU <rcu@vger.kernel.org>,
 	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: [PATCH v2 2/5] rcu/kvfree: Move some functions under CONFIG_TINY_RCU
-Date: Thu, 12 Dec 2024 19:02:05 +0100
-Message-Id: <20241212180208.274813-3-urezki@gmail.com>
+Subject: [PATCH v2 3/5] rcu/kvfree: Adjust names passed into trace functions
+Date: Thu, 12 Dec 2024 19:02:06 +0100
+Message-Id: <20241212180208.274813-4-urezki@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241212180208.274813-1-urezki@gmail.com>
 References: <20241212180208.274813-1-urezki@gmail.com>
@@ -99,150 +99,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently when a tiny RCU is enabled, the tree.c file is not
-compiled, thus duplicating function names do not conflict with
-each other.
+Currently trace functions are supplied with "rcu_state.name"
+member which is located in the structure. The problem is that
+the "rcu_state" structure variable is local and can not be
+accessed from another place.
 
-Because of moving of kvfree_rcu() functionality to the SLAB,
-we have to reorder some functions and place them together under
-CONFIG_TINY_RCU macro definition. Therefore, those functions name
-will not conflict when a kernel is compiled for CONFIG_TINY_RCU
-flavor.
+To address this, this preparation patch passes "slab" string
+as a first argument.
 
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- kernel/rcu/tree.c | 90 +++++++++++++++++++++++++----------------------
- 1 file changed, 47 insertions(+), 43 deletions(-)
+ kernel/rcu/tree.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index e69b867de8ef..b3853ae6e869 100644
+index b3853ae6e869..6ab21655c248 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -3653,16 +3653,6 @@ static void kfree_rcu_monitor(struct work_struct *work)
- 		schedule_delayed_monitor_work(krcp);
- }
+@@ -3379,14 +3379,14 @@ kvfree_rcu_bulk(struct kfree_rcu_cpu *krcp,
+ 		rcu_lock_acquire(&rcu_callback_map);
+ 		if (idx == 0) { // kmalloc() / kfree().
+ 			trace_rcu_invoke_kfree_bulk_callback(
+-				rcu_state.name, bnode->nr_records,
++				"slab", bnode->nr_records,
+ 				bnode->records);
  
--static enum hrtimer_restart
--schedule_page_work_fn(struct hrtimer *t)
--{
--	struct kfree_rcu_cpu *krcp =
--		container_of(t, struct kfree_rcu_cpu, hrtimer);
--
--	queue_delayed_work(system_highpri_wq, &krcp->page_cache_work, 0);
--	return HRTIMER_NORESTART;
--}
--
- static void fill_page_cache_func(struct work_struct *work)
- {
- 	struct kvfree_rcu_bulk_data *bnode;
-@@ -3698,27 +3688,6 @@ static void fill_page_cache_func(struct work_struct *work)
- 	atomic_set(&krcp->backoff_page_cache_fill, 0);
- }
+ 			kfree_bulk(bnode->nr_records, bnode->records);
+ 		} else { // vmalloc() / vfree().
+ 			for (i = 0; i < bnode->nr_records; i++) {
+ 				trace_rcu_invoke_kvfree_callback(
+-					rcu_state.name, bnode->records[i], 0);
++					"slab", bnode->records[i], 0);
  
--static void
--run_page_cache_worker(struct kfree_rcu_cpu *krcp)
--{
--	// If cache disabled, bail out.
--	if (!rcu_min_cached_objs)
--		return;
--
--	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
--			!atomic_xchg(&krcp->work_in_progress, 1)) {
--		if (atomic_read(&krcp->backoff_page_cache_fill)) {
--			queue_delayed_work(system_unbound_wq,
--				&krcp->page_cache_work,
--					msecs_to_jiffies(rcu_delay_page_cache_fill_msec));
--		} else {
--			hrtimer_init(&krcp->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--			krcp->hrtimer.function = schedule_page_work_fn;
--			hrtimer_start(&krcp->hrtimer, 0, HRTIMER_MODE_REL);
--		}
--	}
--}
--
- // Record ptr in a page managed by krcp, with the pre-krc_this_cpu_lock()
- // state specified by flags.  If can_alloc is true, the caller must
- // be schedulable and not be holding any locks or mutexes that might be
-@@ -3779,6 +3748,51 @@ add_ptr_to_bulk_krc_lock(struct kfree_rcu_cpu **krcp,
- 	return true;
- }
+ 				vfree(bnode->records[i]);
+ 			}
+@@ -3417,7 +3417,7 @@ kvfree_rcu_list(struct rcu_head *head)
+ 		next = head->next;
+ 		debug_rcu_head_unqueue((struct rcu_head *)ptr);
+ 		rcu_lock_acquire(&rcu_callback_map);
+-		trace_rcu_invoke_kvfree_callback(rcu_state.name, head, offset);
++		trace_rcu_invoke_kvfree_callback("slab", head, offset);
  
-+#if !defined(CONFIG_TINY_RCU)
-+
-+static enum hrtimer_restart
-+schedule_page_work_fn(struct hrtimer *t)
-+{
-+	struct kfree_rcu_cpu *krcp =
-+		container_of(t, struct kfree_rcu_cpu, hrtimer);
-+
-+	queue_delayed_work(system_highpri_wq, &krcp->page_cache_work, 0);
-+	return HRTIMER_NORESTART;
-+}
-+
-+static void
-+run_page_cache_worker(struct kfree_rcu_cpu *krcp)
-+{
-+	// If cache disabled, bail out.
-+	if (!rcu_min_cached_objs)
-+		return;
-+
-+	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
-+			!atomic_xchg(&krcp->work_in_progress, 1)) {
-+		if (atomic_read(&krcp->backoff_page_cache_fill)) {
-+			queue_delayed_work(system_unbound_wq,
-+				&krcp->page_cache_work,
-+					msecs_to_jiffies(rcu_delay_page_cache_fill_msec));
-+		} else {
-+			hrtimer_init(&krcp->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+			krcp->hrtimer.function = schedule_page_work_fn;
-+			hrtimer_start(&krcp->hrtimer, 0, HRTIMER_MODE_REL);
-+		}
-+	}
-+}
-+
-+void __init kfree_rcu_scheduler_running(void)
-+{
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		struct kfree_rcu_cpu *krcp = per_cpu_ptr(&krc, cpu);
-+
-+		if (need_offload_krc(krcp))
-+			schedule_delayed_monitor_work(krcp);
-+	}
-+}
-+
- /*
-  * Queue a request for lazy invocation of the appropriate free routine
-  * after a grace period.  Please note that three paths are maintained,
-@@ -3944,6 +3958,8 @@ void kvfree_rcu_barrier(void)
- }
- EXPORT_SYMBOL_GPL(kvfree_rcu_barrier);
- 
-+#endif /* #if !defined(CONFIG_TINY_RCU) */
-+
- static unsigned long
- kfree_rcu_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
- {
-@@ -3985,18 +4001,6 @@ kfree_rcu_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
- 	return freed == 0 ? SHRINK_STOP : freed;
- }
- 
--void __init kfree_rcu_scheduler_running(void)
--{
--	int cpu;
--
--	for_each_possible_cpu(cpu) {
--		struct kfree_rcu_cpu *krcp = per_cpu_ptr(&krc, cpu);
--
--		if (need_offload_krc(krcp))
--			schedule_delayed_monitor_work(krcp);
--	}
--}
--
- /*
-  * During early boot, any blocking grace-period wait automatically
-  * implies a grace period.
+ 		if (!WARN_ON_ONCE(!__is_kvfree_rcu_offset(offset)))
+ 			kvfree(ptr);
 -- 
 2.39.5
 
