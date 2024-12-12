@@ -1,123 +1,128 @@
-Return-Path: <linux-kernel+bounces-442916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826399EE3F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:19:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C2C9EE405
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:23:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3891889013
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:19:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF15163264
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21512101B4;
-	Thu, 12 Dec 2024 10:19:13 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5882101B4;
+	Thu, 12 Dec 2024 10:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NMKWlrZJ"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EFD20E02C;
-	Thu, 12 Dec 2024 10:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7B618B467;
+	Thu, 12 Dec 2024 10:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733998753; cv=none; b=josOilj5MbC4I7aYQ/7tXrQ09yVsmutebR7E32pU94egNeS+X5nhrF6f18NLhk6wBCvhfn0mW72cdG0dmg2FACYtGCVUa+DcRpxQ3uZVhkKqIxUlADqDzdgmd5YiKSMw9+C8NDXVhu7g/0clsrTto/Z24+NwJkhTNi2LGT6wypM=
+	t=1733998995; cv=none; b=VgeW+6LHypG3vq7tE+Im9B3svezNXBRferDdP3fenTX4F1TseNsFLyl0S9meRaoWPyMhS4HCz5y0iU/P6V6iv4xgI/BMNYU4pT8yuM+KSaXqHH/QjC1eYDW8T8PdbtnExZeW9WcuzCyvUBHuHnPQUj8fQH5Z0ubyCHzRSOPnYNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733998753; c=relaxed/simple;
-	bh=hnnh1ud49QqX1E1UbJ24ijhdVRhE3HXpcad8vHLOfbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CeM2PrsKPbrZ9t2Ol8zv2MULlEoYvoj4RxJ59E94agGQTTL7bg9AqHdf0S/ofEo59OijUuzi4a3m0YjDhJP7N7hhUhUu0PmYvXT/iTqUS4fF/b4gyAOq1Y6FoON/VpwFgzVniYlX2gNgIMJJkYuAllwOzkeAyaJNPCaJBFHERwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Thu, 12 Dec 2024 18:19:01 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: linux-riscv@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, cyy@cyyself.name, daniel.lezcano@linaro.org,
-	tglx@linutronix.de, samuel.holland@sifive.com, anup@brainfault.org,
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, lkundrak@v3.sk,
-	devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jesse Taube <mr.bossman075@gmail.com>,
-	inochiama@outlook.com, zhangmeng.kevin@spacemit.com,
-	jszhang@kernel.org, matthias.bgg@kernel.org, kevin.z.m@hotmail.com
-Subject: Re: [PATCH v5 00/10] riscv: add initial support for SpacemiT K1
-Message-ID: <20241212101901-GYA2292414@gentoo>
-References: <20240730-k1-01-basic-dt-v5-0-98263aae83be@gentoo.org>
- <173395638199.1729195.1529576042123666894.git-patchwork-notify@kernel.org>
+	s=arc-20240116; t=1733998995; c=relaxed/simple;
+	bh=m/ZEM5rWMje0gye0dN1nFRvCN3Q6uae/ZVnP28Iu/AE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cuuf6++y9KZt8BP9KcuJX1ORSh03cony2fr+LCUlhc9rFokiziTANuYo5/ZnKcYG1EXV+MQi//q1SIC8T+zMlyVNk874esxbF7O0qFxsRT+E6gYb8dCYNVnoAUU0TBzqM7g4/bW0E6nIzNj1U9Uj4aV8pNswRPUirPbuAAJmvis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NMKWlrZJ; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC6PZoi025473;
+	Thu, 12 Dec 2024 11:22:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	imvmMoXZ9/lX7k57eRk+iPS5zu2P97QZjz1NfVU5Z6A=; b=NMKWlrZJKJ6GxD7r
+	rCaYfH803/je5mfEepO6UXg4n9wv+cfKDkcZaVRqvu6kR4e54N80P0VafKtbg4Sy
+	ovDkNyw4i6c0E+A+XZr4FnI0GaV/xz9EXW20bLTeI/zHNarRXIOtQkXzoJcS6iCD
+	AvcWqshiK4iFC6J5nHHetdCDG6XpamqKZkd+YniA91sYrLj+tsovoLcJPbl8kuf2
+	T7ikeHdfFrzWXbWE9IonQys1rrlUxVudIHxEg6l2wiYQywMukTdkzBRG2LxMUFgF
+	bcNWRLAKDfKjD5bRudV2i9aKix+9dqppc0IbwS8ah6W2G4OuQc9guIynzgSOX/sL
+	rnxdYA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ftj7131f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 11:22:37 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9B35A40044;
+	Thu, 12 Dec 2024 11:21:30 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D8C3A2698EA;
+	Thu, 12 Dec 2024 11:20:55 +0100 (CET)
+Received: from localhost (10.48.86.108) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 12 Dec
+ 2024 11:20:52 +0100
+From: =?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <clement.legoffic@foss.st.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck
+	<linux@roeck-us.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>
+CC: =?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <clement.legoffic@foss.st.com>,
+        Marek Vasut <marex@denx.de>, <linux-watchdog@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] watchdog: stm32_iwdg: fix error message during driver probe
+Date: Thu, 12 Dec 2024 11:20:50 +0100
+Message-ID: <20241212102050.374501-1-clement.legoffic@foss.st.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241211163457.301140-1-clement.legoffic@foss.st.com>
+References: <20241211163457.301140-1-clement.legoffic@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173395638199.1729195.1529576042123666894.git-patchwork-notify@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Hi Conor:
+The commit 3ab1663af6c1 ("watchdog: stm32_iwdg: Add pretimeout support")
+introduces the support for the pre-timeout interrupt.
 
-On 22:33 Wed 11 Dec     , patchwork-bot+linux-riscv@kernel.org wrote:
-> Hello:
-> 
-> This series was applied to riscv/linux.git (fixes)
-> by Conor Dooley <conor.dooley@microchip.com>:
-> 
-> On Tue, 30 Jul 2024 00:28:03 +0000 you wrote:
-> > SpacemiT K1 is an ideal chip for some new extension such as RISC-V Vector
-> > 1.0 and Zicond evaluation now. Add initial support for it to allow more
-> > people to participate in building drivers to mainline for it.
-> > 
-> > This kernel has been tested upon Banana Pi BPI-F3 board on vendor U-Boot
-> > bootflow generated by Armbian SDK[1] and patched OpenSBI[2] to enable
-> > Zicboz, which does not in the vendor dts on its U-Boot. Then successfully
-> > booted to busybox on initrd with this log[3].
-> > 
-> > [...]
-> 
-> Here is the summary with links:
->   - [v5,01/10] dt-bindings: vendor-prefixes: add spacemit
->     https://git.kernel.org/riscv/c/7cf3e9bfc63d
-If I understand correctly, only patch [01/10] of this series was accepted
-to 6.13-rc1
+The support for this interrupt is optional but the driver uses the
+platform_get_irq() wich produces an error message during the driver
+probe if we don't have any `interrupts` property in the DT.
 
-for the rest of patches, they would be expected to go through SpacemiT's
-SoC tree? which should I take care of them.. so if no objection, I'd like to
-queue them at branch k1/dt-for-next [1] first, we might rebase or revert if
-something happens before merging (since the clock driver is still under review)
+Use the platform_get_irq_optional() API to get rid of the error message
+as this property is optional.
 
-Let me know what you think..
+Fixes: 3ab1663af6c1 ("watchdog: stm32_iwdg: Add pretimeout support")
+Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+---
+v1 -> v2: Change the commit message because it only prints an error
+message and dont break the DT backward compatibility.
 
-Link: https://github.com/spacemit-com/linux/tree/k1/dt-for-next [1]
- 
+drivers/watchdog/stm32_iwdg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->   - [v5,02/10] dt-bindings: riscv: Add SpacemiT X60 compatibles
->     (no matching commit)
->   - [v5,03/10] dt-bindings: riscv: add SpacemiT K1 bindings
->     (no matching commit)
->   - [v5,04/10] dt-bindings: timer: Add SpacemiT K1 CLINT
->     (no matching commit)
->   - [v5,05/10] dt-bindings: interrupt-controller: Add SpacemiT K1 PLIC
->     (no matching commit)
->   - [v5,06/10] dt-bindings: serial: 8250: Add SpacemiT K1 uart compatible
->     (no matching commit)
->   - [v5,07/10] riscv: add SpacemiT SoC family Kconfig support
->     (no matching commit)
->   - [v5,08/10] riscv: dts: add initial SpacemiT K1 SoC device tree
->     (no matching commit)
->   - [v5,09/10] riscv: dts: spacemit: add Banana Pi BPI-F3 board device tree
->     (no matching commit)
->   - [v5,10/10] riscv: defconfig: enable SpacemiT SoC
->     (no matching commit)
-> 
-> You are awesome, thank you!
-> -- 
-> Deet-doot-dot, I am a bot.
-> https://korg.docs.kernel.org/patchwork/pwbot.html
-> 
-> 
+diff --git a/drivers/watchdog/stm32_iwdg.c b/drivers/watchdog/stm32_iwdg.c
+index d700e0d49bb95..8ad06b54c5adc 100644
+--- a/drivers/watchdog/stm32_iwdg.c
++++ b/drivers/watchdog/stm32_iwdg.c
+@@ -286,7 +286,7 @@ static int stm32_iwdg_irq_init(struct platform_device *pdev,
+ 	if (!wdt->data->has_early_wakeup)
+ 		return 0;
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+-	irq = platform_get_irq(pdev, 0);
++	irq = platform_get_irq_optional(pdev, 0);
+ 	if (irq <= 0)
+ 		return 0;
+
+
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+--
+2.34.1
+
 
