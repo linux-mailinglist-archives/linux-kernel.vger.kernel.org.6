@@ -1,103 +1,145 @@
-Return-Path: <linux-kernel+bounces-443431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD939EF0E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:32:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A38A1750AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:21:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA01238E18;
-	Thu, 12 Dec 2024 16:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kx3uPknH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC189EEFEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:22:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6427226194
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A141728C42F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:22:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254E423D408;
+	Thu, 12 Dec 2024 16:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G+iUBLpN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6A323A57D;
+	Thu, 12 Dec 2024 16:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734019882; cv=none; b=M/t5BI8VqB7gCWf9NgyuH9sx/WVDNvqEWyEyL/rbpZ0FAzavlyb1nKgwKMD9/AazEwHOGdKDh3jJnSNEUI0A7l546fwd5ULe4qyWVRWOAIcmIwuVrIauK3sIsnSR6l9TQJIoCQwyO88fZ+ZnjAdEUGqUEAHrNMWlA+XC0uSQ6CY=
+	t=1734019942; cv=none; b=rcLwEKF+b5zzVzChZ6x9gUa5F1V57/Rq7oIZGoApGPMjsS/tCtagB2wUIXENEmXhnPdIiZKfUroi6Ggx6g2/jYMtDc8zfA2Hg178SCXPExV+0ujfnonlwP/rbvj8BtG+8XlPNqASvjH3uTedyOXBfAjxniBV4K9xN9K2f423Upw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734019882; c=relaxed/simple;
-	bh=dZ4VZAM7FcWZqocKTmrpQrhxyIrk8tVMApXVzVdvLhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cU8mHNOCYrVA1d/c2YR0nWM4JyIPyR/isp8Jm2lrHSUbqeA54NTVQnRpGZS3GgIyfeYWRvt6Xp3c/WH5M4i8VLkALJ5Ji6IOXbnLzi00/LgSMAGPkbWvwlbV0O5kerEUqaPzV0UM/LgpeNJ7NEx8W/oIkpp94CawhWpWcN5JYlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kx3uPknH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E30BC4CEDF;
-	Thu, 12 Dec 2024 16:11:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734019882;
-	bh=dZ4VZAM7FcWZqocKTmrpQrhxyIrk8tVMApXVzVdvLhI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kx3uPknHgsY5YLmOlqZ+PYIfqD4j8GA0jZpQxNfBxH+7fhXIHv+aaqrvTMYP1V+/2
-	 FtOt1kkjWv6xZOuJYtL1ovJfo2dpPpgJP/zfDvvq2UuTSt/V+G8ZJ3pSNQ8LAaADlG
-	 KDB/nh/gI+5eyUb9NHCOsmzuc1wEv6PQq9ZW+CRZ0XlarK3720M8FBN1B+817yvgCY
-	 a7JxrLkwLBSUWmq3W4QjavY9iYvFCc5EUXs8bZL6R7wMOUlIKNKVFJq4uQ6MvF4SG+
-	 FKz1iP+tBJR7obyvb5XZlm6/dZicQRFHEZ1hs5C3OCbiRc8dS/PqYwpJZsn5ijPOgy
-	 Dn+D5ozW0ArHw==
-Date: Thu, 12 Dec 2024 16:11:20 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Yeongjin Gil <youngjin.gil@samsung.com>, chao@kernel.org,
-	daehojeong@google.com, linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, Sungjong Seo <sj1557.seo@samsung.com>,
-	Sunmin Jeong <s_min.jeong@samsung.com>,
-	Jaewook Kim <jw5454.kim@samsung.com>
-Subject: Re: [PATCH v2] f2fs: compress: don't redirty sparse cluster during
- {,de}compress
-Message-ID: <Z1sLKDtRa3wX2Z9g@google.com>
-References: <CGME20240819083433epcas1p3861b773a5b21eea6f0332036a71bb5d7@epcas1p3.samsung.com>
- <20240819083430.31852-1-youngjin.gil@samsung.com>
- <644671fc-b35d-4c53-ae25-356963466339@stanley.mountain>
+	s=arc-20240116; t=1734019942; c=relaxed/simple;
+	bh=1TMME1kP2hfu/YZ05jUvk6Ycg32OMzIFV/Y/+2IkH60=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=JyTB/G28xWUk0SHiHkGmIXPG+3of5Iobloexoxa7W8mg5LXW4Gockrc1Y6cDS9QRs3aKd4N0c2foe3aTDAfFaHXtpeX5odqgNsab2RmwnGp8KAz938XeajecLfaIAiU7rOYA8o6JvOiltn8KuHOLOX8fx8NATPSKL3FAOgZWPLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G+iUBLpN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCG1a4j015027;
+	Thu, 12 Dec 2024 16:12:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ulvd3+cRywO2XnoW+tg4pqeltZkcuC5gOOFgXhwnpIE=; b=G+iUBLpN63o/XFSS
+	HPGTM/UFust953igbTiaQoMcopRqJ9Vjh61xXzJC4BV4WJ0mrLNlbnxjKl9rhhjd
+	eFDJZgoCV6lloCvVuIuF7Ws29Hd9rvAUrAYcpNzvUtcPx5JvSM+L+XxLEhpE1itc
+	mbeGDtQAHOQVfKez+zrypY0KcO5P7WJiJbcl/9+t/ndYh/BWKw1IcEMN+GNaieY6
+	IaAp6cpLBqQoahyuHjw+olaGJ1jt6FONcUS0nnbsdAGRtNAJwQcXlTRZ74FhFflG
+	1fTWLYF7kX7t73LuyJ77GFcs8rkq0RXWzqXy/VhPxJy/1LUzykbcTOShP9RU5sXZ
+	ug1zQg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f7dpmtp2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 16:12:02 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BCGC1Sj027258
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 16:12:01 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 12 Dec 2024 08:11:53 -0800
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Date: Thu, 12 Dec 2024 21:41:21 +0530
+Subject: [PATCH RFC v2 2/5] dt-bindings: mfd: qcom,spmi-pmic: Add MBG
+ thermal monitor ref
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <644671fc-b35d-4c53-ae25-356963466339@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241212-mbg-v2-support-v2-2-3249a4339b6e@quicinc.com>
+References: <20241212-mbg-v2-support-v2-0-3249a4339b6e@quicinc.com>
+In-Reply-To: <20241212-mbg-v2-support-v2-0-3249a4339b6e@quicinc.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano
+	<daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, Lee Jones
+	<lee@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Amit Kucheria
+	<amitk@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>, <quic_kamalw@quicinc.com>,
+        <quic_jprakash@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: z1M2RHen855N6H25jugvgAbqhRmYxeNJ
+X-Proofpoint-ORIG-GUID: z1M2RHen855N6H25jugvgAbqhRmYxeNJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1011
+ mlxlogscore=999 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120117
 
-On 12/12, Dan Carpenter wrote:
-> On Mon, Aug 19, 2024 at 05:34:30PM +0900, Yeongjin Gil wrote:
-> > In f2fs_do_write_data_page, when the data block is NULL_ADDR, it skips
-> > writepage considering that it has been already truncated.
-> > This results in an infinite loop as the PAGECACHE_TAG_TOWRITE tag is not
-> > cleared during the writeback process for a compressed file including
-> > NULL_ADDR in compress_mode=user.
-> > 
-> > This is the reproduction process:
-> > 
-> > 1. dd if=/dev/zero bs=4096 count=1024 seek=1024 of=testfile
-> > 2. f2fs_io compress testfile
-> > 3. dd if=/dev/zero bs=4096 count=1 conv=notrunc of=testfile
-> > 4. f2fs_io decompress testfile
-> > 
-> > To prevent the problem, let's check whether the cluster is fully
-> > allocated before redirty its pages.
-> > 
-> 
-> We were discussing how to detect these sorts of things in the future.
-> Presumably a user found this by chance?  Xfstests has two tests which deal
-> with compression tests/f2fs/002 and tests/f2fs/007.  But it feels like
-> xfstests is not really the right place for this sort of thing, it would
-> be better as part of some sort of fuzz testing.
-> 
-> What do you think?
+Add reference to the newly added MBG thermal monitor bindings.
 
-Yeah, agreed that we must have tests to catch this. One way may be creating
-some basic disk images having some possible valid layout to see f2fs can
-work as intended. I feel we can put it in xfstests as wel?
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+ Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Chao, thoughts?
+diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
+index 11da55644262fada1bcd215943078330332156aa..3a1acb658960329e881d67e264d221764bcec57e 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
+@@ -209,6 +209,10 @@ patternProperties:
+     $ref: /schemas/leds/backlight/qcom-wled.yaml#
+     unevaluatedProperties: false
+ 
++  "temperature-sensor@[0-9a-f]+$":
++    type: object
++    $ref: /schemas/thermal/qcom-spmi-mbg-tm.yaml#
++
+ required:
+   - compatible
+   - reg
 
-> 
-> regards,
-> dan carpenter
+-- 
+2.25.1
+
 
