@@ -1,54 +1,85 @@
-Return-Path: <linux-kernel+bounces-442924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DFD9EE416
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:28:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE419EE418
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 772FE188BD73
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:28:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F271631A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A80210F6E;
-	Thu, 12 Dec 2024 10:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B11210F57;
+	Thu, 12 Dec 2024 10:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RmalG9PH"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eoNrv3kT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8692101A3;
-	Thu, 12 Dec 2024 10:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6E12101A3
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733999278; cv=none; b=uzGJW4G7DAVBqagKbyyiOWlYnEJ08KTCxYEMVBe7S/UwJrpe2iG8gcYEm3r+gq5VrT3OtD5inRjKVT2khBNO4zB22FzVViL6g39fGoytuwEvqPvqWh2YoJvgRJE0VFwMeDD/87SaoGF3X7E2Y0nyvkx+qmK3Nz+1S5HTZMT+Qv4=
+	t=1733999286; cv=none; b=IZyCy4A/rIp/tTs7bOOxyHWEDUW0jevjJGfBfwan2+WYUuq9ZRpSkFQivTMdZDAzs9g6xtibEa0VxoMlzW+DisYf5tMLmNz2gg6sD45ImhCx/zqjvHpz8VcU0k6lLua20VQxBzoQo27sy8K6FkF6UxwN8h24QXox8cX9JNCQGxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733999278; c=relaxed/simple;
-	bh=DLrR9DvNEGy896WEuOkI4qVaTUviwn0zBvUtMaDFUeQ=;
+	s=arc-20240116; t=1733999286; c=relaxed/simple;
+	bh=C5aJ/cCEhq5/s8GG03LZ46SonuUtCC5hmJzefRQuci8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RlWaP2W52LlGfTyHQaRh869ZVoJqlk6w+M8b9Oe9/Aaw5YHgYBx5kg9ssJVAZcCOuJU87AIhEmzzEXFfxiLB/KvZireeRNfmaw2C46G/n0vn1AToHuaM/2dPR43TwU+Ju/sUEzCRVMUfGVInICwTzKtJT9zekrFQY1F1dyHUwrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RmalG9PH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733999274;
-	bh=DLrR9DvNEGy896WEuOkI4qVaTUviwn0zBvUtMaDFUeQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RmalG9PHOrb25SCruoUFZylPL/u2f5QgwpAZWBbSEhAXiJgtEiPj1MNi0dWlFKRye
-	 tY2eo0osFH/1HmsClI1TF9ipGymNCLK7D8XXxmbO9ccQZOrgRLyYvwTYxdc9oa/8QQ
-	 epz/pbrbOBhc7AqECMmAzqj4Jhiaf///6SLznrY7gQEEwBSDAWsoQ4fjnkx2WJZ7CR
-	 cl+BPm+AAX5F9vENdXGE4ZuCRs9fOkOC2Iaqf0z8HcMp0GuFsH1Pm/e+0Zthqsb5f7
-	 HVfkv9i7NwX9GPypAbtAsIudbZ8pdrFwGuYk9e3gA6B3drQnEORdjz33DGjSjkWPDE
-	 tszN+/h87ARiw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0D62517E35D8;
-	Thu, 12 Dec 2024 11:27:54 +0100 (CET)
-Message-ID: <5d06211b-5ee2-48dd-9334-7c8bcffb894e@collabora.com>
-Date: Thu, 12 Dec 2024 11:27:53 +0100
+	 In-Reply-To:Content-Type; b=g9ejL6i3eB1QD5qU/+IxdMhl18N1wCTKwxggrID4U/EmgF+dTWIVTjrCx4bbmUnVq1H6UQ2uoD0VfAXn6Syb25R17RBbfEok9OdRsfzDb6Hrg4ejduIRkTZIejOshHEfWr8mIIgn7JsE0kyUkuMk7fbO4VHkqPPvtlMkgqEtVIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eoNrv3kT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733999283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RVaq2qSCQwPtfs8iwrJJIk50sgodNy897IFKHraNxV0=;
+	b=eoNrv3kTdyGCALLyubC7sVES50C1ca68qHvpX/blnr1ujX8Fb+Nmd27KhJ2hMy1i5b1/eu
+	tP1a7i+yWJ1HT5vf7Kcy+5u2HbWF3yQ0qnHAja1QDdMm5RdA5MMnzvJJh+LTtrLJSmCuIW
+	yf3AEyFt7qBAm5wWfAqrBwxVSwp0Z4I=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-629-B0z29henPqONoWbDPcYPlg-1; Thu, 12 Dec 2024 05:28:02 -0500
+X-MC-Unique: B0z29henPqONoWbDPcYPlg-1
+X-Mimecast-MFC-AGG-ID: B0z29henPqONoWbDPcYPlg
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-436225d4389so4243555e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:28:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733999281; x=1734604081;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RVaq2qSCQwPtfs8iwrJJIk50sgodNy897IFKHraNxV0=;
+        b=McOfygHmuc1Z+QQsuCmcHgdL7NV/nDdbmVJBWWPHj4/0kSDDjJfO4gXEpkdXKljB5P
+         zRJwCWtl9NtpWP8cUTgFNYNYCEmdTgmX3f2DrpduW7Kke8lHNA/nkaTpWGRc5wcH1yoO
+         jlADAhhPwDVuAPDUpfm4cV0G+EfmgPiE7cYjJ38MlJcdV6Bh1nKs9Rm3amofV5Dv+xpg
+         3XLIXq6GbjBInIXwJreF5Xq8PRTwB4G1yPrMRSfhPj1cFO4S5wljOxOubig6rzyKeHSQ
+         fPSTBgyRZJGv1Um8VrqYSex+ovmdzbM5RMitjEnEX8Uj0VScAVjTwubJpkvlFcI8M6eT
+         oXSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUku+50rRPGDw9U0wjLXracWWdU1I/7tNA2IctRN2s9RjvyJDhsdbQwZl8JztIcFhAgHubtLE2h3j7XHPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1uVQ6arEF3rVuyBSTWTrxA0faEA66hW1++E8PmX75xtlqUEjY
+	HI+jgYC4RKMH5w6zU9GCHfLAq+DVly48sEhsXZX/6xvA9JBmgWpBAXMZFfDVZJ3on+HPuq8kqdM
+	XYUkPfiiPgPiol178RV9cOeLb5t1fTi2+ShxsjlXRplDehSVl7XYDK/NzIzhlGw==
+X-Gm-Gg: ASbGncvZbuPnHcktkMeKqRy24umqqg54WpDSkN/bj0iSSozvBmS09cDK6xjrUT9or41
+	kBxCQ5c2ulLocqbvvOouZPyB/ZHoJDEOwN2rTn+wYmFm1DVPEshpMC3fBFPTl8FZsV+DjdO4OgA
+	yLDB64gqYz8uf6wjePwWi9ZjVRMuXxUy8aA4b/5MLZxL6j8dKZsmbbE3CBwedmvdv9qdvHFJHKf
+	6Cw1lYRdFBTgHjYWrHt9euXuv/I+AU5OCnCjanE9oH4SusSuakO0EJfyg8Ip/RfRvGtoCxU3/2X
+	Bi622CkJgeF33XD2j4G5
+X-Received: by 2002:a05:600c:1f13:b0:434:92f8:54a8 with SMTP id 5b1f17b1804b1-43622e1d89fmr17568225e9.0.1733999281034;
+        Thu, 12 Dec 2024 02:28:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGJgRY5o2EC5V/rXg0TUe4GYsezYBjI8CpktJ+KXMUbQXgvlQPxsTnXuvrx2+8Cjx8dMTUWOQ==
+X-Received: by 2002:a05:600c:1f13:b0:434:92f8:54a8 with SMTP id 5b1f17b1804b1-43622e1d89fmr17568045e9.0.1733999280683;
+        Thu, 12 Dec 2024 02:28:00 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436256b7d46sm12216165e9.35.2024.12.12.02.27.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 02:28:00 -0800 (PST)
+Message-ID: <4dccaf7d-09b1-49c6-a9de-ec327eafaf13@redhat.com>
+Date: Thu, 12 Dec 2024 11:27:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,165 +87,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: memory-controllers: Add mediatek
- common-dramc dt-bindings
-To: Crystal Guo <crystal.guo@mediatek.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20241212090029.13692-1-crystal.guo@mediatek.com>
- <20241212090029.13692-3-crystal.guo@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241212090029.13692-3-crystal.guo@mediatek.com>
+Subject: Re: [PATCH] drm/client: Fix drm client endless Kconfig loop
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ John Ogness <john.ogness@linutronix.de>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+ bluescreen_avenger@verizon.net, Caleb Connolly <caleb.connolly@linaro.org>,
+ Petr Mladek <pmladek@suse.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: Dan Carpenter <dan.carpenter@linaro.org>
+References: <20241212091153.1592096-1-jfalempe@redhat.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20241212091153.1592096-1-jfalempe@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 12/12/24 09:59, Crystal Guo ha scritto:
-> Add devicetree binding for mediatek common-dramc driver.
+On 12/12/2024 10:11, Jocelyn Falempe wrote:
+> if DRM_CLIENT_SELECTION is enabled, and none of the client is, the
+> "Default DRM Client" choice is empty, and this makes Kconfig goes
+> into an infinite loop of:
 > 
-> The DRAM controller of MediaTek SoC provides an interface to
-> get the current data rate of DRAM.
+>    Default DRM Client
+>    choice[1-0?]: 0
+>    Default DRM Client
+>    choice[1-0?]: 0
+>    Default DRM Client
+>    choice[1-0?]: 0
+>    ....
 > 
-> Signed-off-by: Crystal Guo <crystal.guo@mediatek.com>
+> So only allow the choice if at least one of the client is selected.
+
+I've pushed it to drm-misc-next, endless Kconfig loop is not fun for CI.
+
+Best regards,
+
+-- 
+
+Jocelyn
+
+> 
+> Fixes: f7b42442c4ac ("drm/log: Introduce a new boot logger to draw the kmsg on the screen")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> Tested-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->   .../mediatek,common-dramc.yaml                | 129 ++++++++++++++++++
->   1 file changed, 129 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml
+>   drivers/gpu/drm/clients/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml b/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml
-> new file mode 100644
-> index 000000000000..c9e608c7f183
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml
-> @@ -0,0 +1,129 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +# Copyright (c) 2024 MediaTek Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/memory-controllers/mediatek,common-dramc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek Common DRAMC (DRAM Controller)
-
-MediaTek DRAM Controller (DRAMC)
-
-> +
-> +maintainers:
-> +  - Crystal Guo <crystal.guo@mediatek.com>
-> +
-> +description: |
-> +  The DRAM controller of MediaTek SoC provides an interface to
-> +  get the current data rate of DRAM.
-
-No, the DRAM Controller does much more than just that.
-
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,common-dramc
-
-Absolutely no! Compatibles are per-soc.
-
-mediatek,mt8186-dramc
-mediatek,mt8188-dramc
-mediatek,mt8195-dramc
-
-etc
-
-> +
-> +  reg:
-> +    minItems: 9
-> +    items:
-> +      - description: DRAMC_AO_CHA_BASE
-> +      - description: DRAMC_AO_CHB_BASE
-> +      - description: DRAMC_AO_CHC_BASE
-> +      - description: DRAMC_AO_CHD_BASE
-
-All those channels are sequential in AO->NAO, in the sense that
-every channel is:
-
-CH0     AO: 0x10230000   len: 0x4000
-CH0    NAO: 0x10234000   len: 0x2000
-CH0 PHY_AO: 0x10236000   len: 0x2000
-CH0 PHY_AO: 0x10238000   len: 0x2000
-
-So the reg can be simplified as
-
-minItems: 4
-items:
-   - description: DRAM Controller Channel 0
-   - description: DRAM Controller Channel 1
-   - description: DRAM Controller Channel 2
-   - description: DRAM Controller Channel 3
-
-
-> +      - description: DRAMC_NAO_CHA_BASE
-> +      - description: DRAMC_NAO_CHB_BASE
-> +      - description: DRAMC_NAO_CHC_BASE
-> +      - description: DRAMC_NAO_CHD_BASE
-> +      - description: DDRPHY_AO_CHA_BASE
-> +      - description: DDRPHY_AO_CHB_BASE
-> +      - description: DDRPHY_AO_CHC_BASE
-> +      - description: DDRPHY_AO_CHD_BASE
-> +      - description: DDRPHY_NAO_CHA_BASE
-> +      - description: DDRPHY_NAO_CHB_BASE
-> +      - description: DDRPHY_NAO_CHC_BASE
-> +      - description: DDRPHY_NAO_CHD_BASE
-> +      - description: SLEEP_BASE
-
-You're not using the SLEEP_BASE iospace, and that's not even really specific
-to the DRAM Controller. Drop it.
-
-> +
-> +  support-ch-cnt:
-> +    maxItems: 1
-
-Don't tell me that the DRAM Controller in MediaTek SoCs cannot see how many
-channels are actually occupied by a DRAM bank, because I will be really skeptical.
-
-You can autodetect that in the driver, you don't need a DT property for that.
-
-> +
-> +  fmeter-version:
-> +    maxItems: 1
-> +    description:
-> +      Fmeter version for calculating dram data rate
-
-The Fmeter version is SoC-specific, you need platform data, not DT property.
-
-> +
-> +  crystal-freq:
-> +    maxItems: 1
-> +    description:
-> +      Reference clock rate in MHz
-
-Is this crystal an external component, or is it integrated into the SoC?
-
-> +
-> +  shu-of:
-> +    maxItems: 1
-
-There's no description, what is shu-of?
-
-> +
-> +  pll-id: true
-> +  shu-lv: true
-> +  sdmpcw: true
-> +  posdiv: true
-> +  fbksel: true
-> +  dqsopen: true
-> +  async-ca: true
-> +  dq-ser-mode: true
-
-Same for these ones, please describe them - but then remember: if those parameters
-are board-specific, they can stay here, otherwise those go in platform data.
-
-Besides, I doubt that those are board specific.
-
-Regards,
-Angelo
+> diff --git a/drivers/gpu/drm/clients/Kconfig b/drivers/gpu/drm/clients/Kconfig
+> index c18decc90200..82a7d4e584dd 100644
+> --- a/drivers/gpu/drm/clients/Kconfig
+> +++ b/drivers/gpu/drm/clients/Kconfig
+> @@ -87,6 +87,7 @@ config DRM_CLIENT_LOG
+>   choice
+>   	prompt "Default DRM Client"
+>   	depends on DRM_CLIENT_SELECTION
+> +	depends on DRM_FBDEV_EMULATION || DRM_CLIENT_LOG
+>   	default DRM_CLIENT_DEFAULT_FBDEV
+>   	help
+>   	  Selects the default drm client.
+> 
+> base-commit: 19851fa2ba9824bede16f55234f63d9423897c3d
 
 
