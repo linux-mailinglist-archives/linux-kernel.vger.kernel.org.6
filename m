@@ -1,189 +1,154 @@
-Return-Path: <linux-kernel+bounces-442442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC86C9EDCD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:50:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A21169EDCDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:53:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90E22168A0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:50:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E48D1160E88
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF0C17CA0B;
-	Thu, 12 Dec 2024 00:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB16F1E4A9;
+	Thu, 12 Dec 2024 00:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cf0yDtv6"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIdJieHL"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804E81885BE
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782A83201;
+	Thu, 12 Dec 2024 00:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733964481; cv=none; b=Uzslgl2NtNn4yo+12b+o+epdR20lZJfrk25IqEUXXLP837xlbKudTPVunK6BWx6dPiSdpw9cSHNCzvAdwpw3eupqyg139Y7PzgJ4TT/NwznKmdUk+U24ht8pvkSZqrZLt/6dKPQ7lG5L6j5IRzdz0jj0ZqtbdFDFwtoFYeOmGds=
+	t=1733964819; cv=none; b=hlAh7asY/xPYYGaCUOnsCnpP2sYUvXehXyWtQsIb0eFm+Sfp/O6Hc1J0wtfZi/2jHix1RSE8GhPYXavEYwnKICz1c6zZmB5P66QbvqpQCHDutjbuzn4VN38BkbZ6hQmfG4JkChNwZJQQ/rNcuM/iEUWRFGRyMgYOMui5ZHLGVo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733964481; c=relaxed/simple;
-	bh=QzuIeMsbqn06WI5qhPV1wr/oyc12cKZ+XBOtXN5CYbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Oa7QQJ391tG/EDle3CLozGGEuygblzK/WSxzpmr814cdUNzgj21SnQj5/Le0QpNu/IZLzEt3M5k+rJr4lCPkJFN9Z26NBqUvt8DFG+Iy/jDp3oe9ygKcl3kX7IhrBUpLdYR1UCP2BNKXW4JksgoFSg6dQUxUhxA2ZtfhgtT3gHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cf0yDtv6; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385ddcfc97bso15669f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:47:59 -0800 (PST)
+	s=arc-20240116; t=1733964819; c=relaxed/simple;
+	bh=byN7WDhdPTMpRrfEUsWe2vdT3nvwPjmqUy7rdxVn538=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PRi3/RHhi4GVbFc1DZBljlX3g8ccQMda+b/PWZ2tRwJZXas7j5JSZ0XMhnrUOtTBCr7vCGCU1dmwtdRBPpeaGsWp4rNM6gyD6MWHm6bucIJYCPAPqnrugOdUblKjcGJY1EZU1kz+m6aIM6dnWRmjcju9Kj9WJbqVjVuVIp5ClkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIdJieHL; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43622354a3eso276955e9.1;
+        Wed, 11 Dec 2024 16:53:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733964478; x=1734569278; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733964816; x=1734569616; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8YUv9wXf1xeMulszUqTOEITp7UUlDCUgSWoOEuWnA1U=;
-        b=Cf0yDtv61ODSF0SdIoYHtgfcMmCSDWWtc/iE3ul6sPR6qU4XVCOI3tDDXgvhgF6SQG
-         n10ix4qfFx+qAvU4XHjm3zpvwLR9N/FqS1MsByQMCwwz4N1aKH6C81c66QDnQv9FKze/
-         cjfo+YgZsKg3mzhObTqbx8tYbOwDFY/2kRS7mvQQvA+RpeEyHujBB8AOuM88t661GzAu
-         JiUZwBW31X2g0Zfv7rZHUxRGz3QDWTPI51FZbn1uOM62LY+zWaFOKfRrr8wwtcLcTTIj
-         jS6plzepqGM15KRz3j9Vl4F4oyslsOCBZji7jeqx2SGjL0pF1qGg39EDnkTzHXwlYqY2
-         kPHw==
+        bh=pKnB4XecQCWi7/usSFJOWTDJcNSr9AZUZeqZRViJV3I=;
+        b=cIdJieHL3UTZUOF0ljKarlyfv9AvfhH9clyYM2A3rtbGwN0tX070Sqm5s5bTStMU2j
+         GFTrRsxO21xhT3430EWQHwglX52tL7DzZn3DRNpQLBufxpVlRm0VYu1U2WMc/+jA55Lr
+         qGXsRv4bF3IZPoqYgUPpxzxRgKWXcZs+HzIzAjzRuZ9DjJLqZE77lgD6hMCcizrbWr8j
+         p5VvV4LR5QP/w6gjPB4r+6L8N3PmW87km/wRr6WZ35FcMpqeVB/QdTndgeU49QSFMPR1
+         isUAU2g2oXPPDLtzsycOTQE8QZ869NrrJZKmP+y0rxJVUDWW07mjrNEUtau9lJf0UKI1
+         Ui0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733964478; x=1734569278;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733964816; x=1734569616;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8YUv9wXf1xeMulszUqTOEITp7UUlDCUgSWoOEuWnA1U=;
-        b=YkYIWLyZFYyEDVyZ/uhDulQgKAIp5gkrMrGrDokkc0LjWhzXXPdqr0hTmIX8b3RVqV
-         b/d7VLzg4uxaDVU/AzqqpZlzZx9iqB7kv1SPrREqExBbxyI6R7kAnssMbVsJrjHdAnNS
-         SWqGKr09A09JCTeDpj5y/MbN/pl+tWMDzV9ZHAuEu3ki6z2fB40X0B6Qfw4D7Zc04jLK
-         4X7R1gCLAnnCuLBt6FNt0n3bHvCDCKqZwoJ9gAudNP3ILOvuuiib9enMAc+CLUrYDQSx
-         uSLgTL2vA5VOuMDwk8ne+lPSE2uVW3UVkisSALs2e2C2nyHeZpeXZCq/NHrNsQ05poxL
-         IPsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWE2U8uRNn9FBbW5TxeTohxSHq3oMFWqbgsYfZAfFZq57R7l1wsbnxRoRO6dpwu++AN//kKxdjNbQZwkek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrUgsgd5OBYYcGzqdCRxfWJXWoKy8xHi/VCGFhscraloUOKx0c
-	p1n15gtSd1Zr4ZnmYQqL96pFJzSuw8H3BZjw+Ij6hKn5bsqmBMoz6drwGlVm5hc=
-X-Gm-Gg: ASbGncvQjBAv5eTUvfGzLkR7qsyjZ9ps7KRhb5pJrp6SA5SGHKkraLYkz5HgceEeWY1
-	T2U2iqgOCQY/LxOGWD9Yn1nyvJziejobf9mPYIiIBWwaZpy9DVz2+eTQC5JkIAO5HIRVezYZ4sI
-	yAUW3GS523NDalFu+uWZSUmMALNHpiXR76erDI3GMOpiOquEAnBSUYxql9qJZwZ9T32k63tc4Tv
-	h/D3posl2LUXbnyt6/WaZDkiCKEqwcVLLx9Dh3e83rT7ut/3SHhqrgXh37BuvwQEVAg2bZk
-X-Google-Smtp-Source: AGHT+IGJvDlNsdYx4DutxMjQy1pOyYpJ0oJ3EbMe3FkPnkQ/U4TLzzGqGgOOv0KPDA2qNTcXJbpfuQ==
-X-Received: by 2002:a5d:6f1e:0:b0:385:ea11:dd92 with SMTP id ffacd0b85a97d-3878768e6a0mr1224692f8f.15.1733964477946;
-        Wed, 11 Dec 2024 16:47:57 -0800 (PST)
-Received: from localhost.localdomain ([2.222.231.247])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4ef4sm2459660f8f.39.2024.12.11.16.47.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 16:47:56 -0800 (PST)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: broonie@kernel.org,
-	konradybcio@kernel.org,
-	konrad.dybcio@oss.qualcomm.com,
-	andersson@kernel.org,
-	srinivas.kandagatla@linaro.org
-Cc: tiwai@suse.com,
-	lgirdwood@gmail.com,
-	perex@perex.cz,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	dmitry.baryshkov@linaro.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 14/14] ASoC: qcom: sm8250: force single channel via RX_1 output for qrb4210
-Date: Thu, 12 Dec 2024 00:47:27 +0000
-Message-ID: <20241212004727.2903846-15-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241212004727.2903846-1-alexey.klimov@linaro.org>
-References: <20241212004727.2903846-1-alexey.klimov@linaro.org>
+        bh=pKnB4XecQCWi7/usSFJOWTDJcNSr9AZUZeqZRViJV3I=;
+        b=mfLCQM2+LssJy5kxhkKTCktwvchMlpCfkivPiFWTCgSeDiur4NKzQU+dFqufGNWJmE
+         l+kqzTxwltOYDQVSVMMaenCJV7+nHXEkiEz236n5VjGZPSjncV6hqDOLYygAmb4A2vcR
+         g+YZsa9Jz6H3QVx3gA0VExVDcYXleKuf0P4O3ZIczMWlffkZfIprf4GO4MLqFa0yeZcZ
+         oD/PkknkRakz3+qE8OO88lSgTbwU5//sT07stcZ09+JDw9fLmzo2NO34ddbRzorQt/q4
+         Yh3Ep1tyqI3XCJfm1gfaM4L7UqZUL5XrWAbdCmHS8ccOjNBcauU/WrbkeJBWSWNEe4aL
+         vUZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkKOH9VjlrVYknD2Gn8x6K1wk+jhNt7kB1jqH/hvJPt8lOPH9O/Up//cJLhixrtyJeR2NtvA/A/2EVu58SKg==@vger.kernel.org, AJvYcCWjCOT1fl3uj3sJiH1AbYmdzCnzwXkTfudowIeWKxxnaIbLMInqxNSGks7ABPIusSpZaR4=@vger.kernel.org, AJvYcCWqwL8bgYu4Qpxds3HB92lZfkNv8P638AKeKw/VDVu5iu+oWlnP/UERB5QZkJMzT+wpCe3O6yu6Ft0S7bax@vger.kernel.org
+X-Gm-Message-State: AOJu0YzemwLXR+MjMiJ+nAcoGmDXbJFeeD1zCaf1MAqtL4OtG1SllZAT
+	4/YDVMN/lpxi/PnDEPYOnzKhG7y9q+QcORG7AiuER8pNzIVANexodIxu/3PsrCXLdS1H2tRg4UP
+	RYvqoxQZqJWJ2ISE0gIpDyW/jQsg=
+X-Gm-Gg: ASbGncsqEwU6qhBgYWECMv3RUnM2HAhAYb9HDK2M/pfCfbv5AQ4uNsdSkMiMKIPe3YX
+	3A8D9iSgaemJNBXxRFkYoefjKXed665wNarhMcQSAyssOTAnwKiw=
+X-Google-Smtp-Source: AGHT+IH/mKsp0uN60R/gKzDmnIlqvZmGyvhQfrkTddN+zAT1YjYpi6/NHhpaljgC5NNzO2XrR4KrR4NQ1VhoEo9PuMY=
+X-Received: by 2002:a05:600c:1f0d:b0:434:a923:9310 with SMTP id
+ 5b1f17b1804b1-4361c3c5015mr39402995e9.15.1733964815558; Wed, 11 Dec 2024
+ 16:53:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <AM6PR03MB508010982C37DF735B1EAA0E993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB50804FA149F08D34A095BA28993D2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <20241210-eckig-april-9ffc098f193b@brauner> <CAADnVQKdBrX6pSJrgBY0SvFZQLpu+CMSshwD=21NdFaoAwW_eg@mail.gmail.com>
+ <AM6PR03MB508072B5D29C8BD433AD186E993E2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB508072B5D29C8BD433AD186E993E2@AM6PR03MB5080.eurprd03.prod.outlook.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 11 Dec 2024 16:53:24 -0800
+Message-ID: <CAADnVQK3toLsVLVYjGVXEuQGWUKF98OG9ogAQbJ4UeER42ZyGg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v5 4/5] bpf: Make fs kfuncs available for SYSCALL
+ and TRACING program types
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Christian Brauner <brauner@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In case of mono configurations we need to enforce single channel
-output. This is required for audio playback on QRB4210 RB2 board
-since it has only one WSA8815 amplifier.
-Implement data variant for qrb4210-rb2-sndcard with
-sm8250_qrb4210_fixup_params() that does that.
+On Wed, Dec 11, 2024 at 1:29=E2=80=AFPM Juntong Deng <juntong.deng@outlook.=
+com> wrote:
+>
+> On 2024/12/10 18:58, Alexei Starovoitov wrote:
+> > On Tue, Dec 10, 2024 at 6:43=E2=80=AFAM Christian Brauner <brauner@kern=
+el.org> wrote:
+> >>
+> >> On Tue, Dec 10, 2024 at 02:03:53PM +0000, Juntong Deng wrote:
+> >>> Currently fs kfuncs are only available for LSM program type, but fs
+> >>> kfuncs are generic and useful for scenarios other than LSM.
+> >>>
+> >>> This patch makes fs kfuncs available for SYSCALL and TRACING
+> >>> program types.
+> >>
+> >> I would like a detailed explanation from the maintainers what it means
+> >> to make this available to SYSCALL program types, please.
+> >
+> > Sigh.
+> > This is obviously not safe from tracing progs.
+> >
+> >  From BPF_PROG_TYPE_SYSCALL these kfuncs should be safe to use,
+> > since those progs are not attached to anything.
+> > Such progs can only be executed via sys_bpf syscall prog_run command.
+> > They're sleepable, preemptable, faultable, in task ctx.
+> >
+> > But I'm not sure what's the value of enabling these kfuncs for
+> > BPF_PROG_TYPE_SYSCALL.
+>
+> Thanks for your reply.
+>
+> Song said here that we need some of these kfuncs to be available for
+> tracing functions [0].
+>
+> If Song saw this email, could you please join the discussion?
+>
+> [0]:
+> https://lore.kernel.org/bpf/CAPhsuW6ud21v2xz8iSXf=3DCiDL+R_zpQ+p8isSTMTw=
+=3DEiJQtRSw@mail.gmail.com/
+>
+> For BPF_PROG_TYPE_SYSCALL, I think BPF_PROG_TYPE_SYSCALL has now
+> exceeded its original designed purpose and has become a more general
+> program type.
+>
+> Currently BPF_PROG_TYPE_SYSCALL is widely used in HID drivers, and there
+> are some use cases in sched-ext (CRIB is also a use case, although still
+> in infancy).
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- sound/soc/qcom/sm8250.c | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
+hid switched to use struct_ops prog type.
+I believe syscall prog type in hid is a legacy code.
+Those still present might be leftovers for older kernels.
 
-diff --git a/sound/soc/qcom/sm8250.c b/sound/soc/qcom/sm8250.c
-index 45e0c33fc3f3..b54acaee8dd1 100644
---- a/sound/soc/qcom/sm8250.c
-+++ b/sound/soc/qcom/sm8250.c
-@@ -23,8 +23,23 @@ struct sm8250_snd_data {
- 	struct sdw_stream_runtime *sruntime[AFE_PORT_MAX];
- 	struct snd_soc_jack jack;
- 	bool jack_setup;
-+	void (*sndcard_fixup_params)(struct snd_interval *channels,
-+				     struct snd_soc_dai *cpu_dai);
- };
- 
-+static void sm8250_qrb4210_fixup_params(struct snd_interval *channels,
-+					struct snd_soc_dai *cpu_dai)
-+{
-+	/* QRB410 RB2 board has only one WSA8815 amplifier */
-+	switch (cpu_dai->id) {
-+	case RX_CODEC_DMA_RX_1:
-+		channels->min = channels->max = 1;
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
- static int sm8250_snd_init(struct snd_soc_pcm_runtime *rtd)
- {
- 	struct sm8250_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
-@@ -35,14 +50,19 @@ static int sm8250_snd_init(struct snd_soc_pcm_runtime *rtd)
- static int sm8250_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
- 				     struct snd_pcm_hw_params *params)
- {
-+	struct sm8250_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
- 	struct snd_interval *rate = hw_param_interval(params,
- 					SNDRV_PCM_HW_PARAM_RATE);
- 	struct snd_interval *channels = hw_param_interval(params,
- 					SNDRV_PCM_HW_PARAM_CHANNELS);
-+	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
- 
- 	rate->min = rate->max = 48000;
- 	channels->min = channels->max = 2;
- 
-+	if (data->sndcard_fixup_params)
-+		data->sndcard_fixup_params(channels, cpu_dai);
-+
- 	return 0;
- }
- 
-@@ -168,6 +188,7 @@ static int sm8250_platform_probe(struct platform_device *pdev)
- 	if (!data)
- 		return -ENOMEM;
- 
-+	data->sndcard_fixup_params = device_get_match_data(&pdev->dev);
- 	card->dev = dev;
- 	dev_set_drvdata(dev, card);
- 	snd_soc_card_set_drvdata(card, data);
-@@ -181,9 +202,10 @@ static int sm8250_platform_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id snd_sm8250_dt_match[] = {
--	{.compatible = "qcom,sm8250-sndcard"},
--	{.compatible = "qcom,qrb4210-rb2-sndcard"},
--	{.compatible = "qcom,qrb5165-rb5-sndcard"},
-+	{.compatible = "qcom,sm8250-sndcard", .data = NULL },
-+	{.compatible = "qcom,qrb4210-rb2-sndcard",
-+	 .data = sm8250_qrb4210_fixup_params },
-+	{.compatible = "qcom,qrb5165-rb5-sndcard", .data = NULL },
- 	{}
- };
- 
--- 
-2.45.2
+sched-ext is struct_ops only. No syscall progs there.
 
+> As BPF_PROG_TYPE_SYSCALL becomes more general, it would be valuable to
+> make more kfuncs available for BPF_PROG_TYPE_SYSCALL.
+
+Maybe. I still don't understand how it helps CRIB goal.
 
