@@ -1,115 +1,152 @@
-Return-Path: <linux-kernel+bounces-443994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 878DB9EFEDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:59:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F2289EFEE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:59:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F19E16A5D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:59:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D9A16BDF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8051D9353;
-	Thu, 12 Dec 2024 21:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3B01DB54C;
+	Thu, 12 Dec 2024 21:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b5eswKZG"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAnVga2y"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0369F19E971
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9354219E971;
+	Thu, 12 Dec 2024 21:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734040755; cv=none; b=hdA8FSc0ahpVE4z5HCWfKFWfVq/iEbfUAqWc7akmSvxNm9bH7eL+T22JCA15W8rU6W/IB8Tg9OLBuX6QTRX8bJgd4sUHI1TFw6kaXNCpKD9ORamehobsa8sA6AEFB8eLRrz/FOWAQCwriz57YExSphrQOaD2949Xa1S5O9hybgI=
+	t=1734040773; cv=none; b=dUPobGpdVpX4ZJmaBpz38saRWKC0q/NlWzwXi2YU/5HofHudmHabd+8BzkWOC/36fKnIlZwCZN3U+fRHvkcvrwsHLtigsEh+vEJcgOv/se40DR0eODGs4bTRRm+zvmnbWkZAu/X4UxdgKtc2nXG9vp0hLpIWWmfzeOIXZF6FFgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734040755; c=relaxed/simple;
-	bh=AIRbs0nHA+63xxKe9qa0dYo6lKLKDLTvh2ProTbRsU8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=INRXssKfMg2d3ktrNf4jLU/9D6eAGOuvnG1HMzYKGF0tLCYtvDHXy6I60Sgmqzn4rtSc8XORsmL6DgKFrt+KQ7diwi202NouZqLqTbPVTXtI/AC+VENjFsyCKCszga2PRa/hK7h1J7gFRKodTGZG2yZ9CJ9YZYTazfKShe3415Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b5eswKZG; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=AIRbs0nHA+63xxKe9qa0dYo6lKLKDLTvh2ProTbRsU8=; b=b5eswKZGrYzlVU7X16HC9ZAND6
-	cDUFA06Uiyrh/E4ibpIEN08FzG5HKJxlS4lkacFwbRSpSNY1ttgBgmBz2B3SYQXGzEy2JeAtpkKa1
-	4vebzywCPvZzMnnCwh2hPq4JKVJM0LFYN40roRanifGuoEVSHTjmfF9wA2F/kxq20yE+jprbBSvnE
-	UaTGjvQZSMu1WY5fFrePxhJ850wyxkgDgeWsnIZ0i/HZjvlyTMH3E6MqVwDlqblPYeLpDv8BtuFQP
-	4+JQoalDMi5F55pPl0/DEDp1odtSLhLbpeh3VNxqm/LoKSsE7xp/TtA6tNcEI1QUzFKln76iCNpxZ
-	Nt7l4jZQ==;
-Received: from [2001:8b0:10b:5:fc92:5b26:d347:4188] (helo=[IPv6:::1])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLrD4-000000048Pg-2d3W;
-	Thu, 12 Dec 2024 21:59:03 +0000
-Date: Thu, 12 Dec 2024 21:59:02 +0000
-From: David Woodhouse <dwmw2@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>, Nathan Chancellor <nathan@kernel.org>
-CC: "Ning, Hongyu" <hongyu.ning@linux.intel.com>, kexec@lists.infradead.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
- linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
- Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- jpoimboe@kernel.org, bsz@amazon.de
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/kexec=3A_Only_write_thr?=
- =?US-ASCII?Q?ough_identity_mapping_of_control_page?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <a14ff894-9268-4a62-87bd-3b2553e0bc01@intel.com>
-References: <20241205153343.3275139-1-dwmw2@infradead.org> <20241205153343.3275139-14-dwmw2@infradead.org> <20241212014418.GA532802@ax162> <10a4058d9a667ca7aef7e1862375c2da84ef53a3.camel@infradead.org> <20241212150408.GA542727@ax162> <38aaf87162d10c79b3d3ecae38df99e89ad16fce.camel@infradead.org> <20241212174243.GA2149156@ax162> <9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org> <4517cb69-3c5c-4e75-8a14-dab136b29c19@intel.com> <212CBB8E-CC94-4A56-8399-1419D8F2FA5C@infradead.org> <a14ff894-9268-4a62-87bd-3b2553e0bc01@intel.com>
-Message-ID: <6CCE1B41-1865-4B09-8CEF-B83932775C3D@infradead.org>
+	s=arc-20240116; t=1734040773; c=relaxed/simple;
+	bh=0Qcd1C5ekZDwZRlvntarCvboFADYCqBWFhVLzL/bV/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TDmvkDIWeF7Qw67uUtQusGJaYkUYRK0n1ZtA1h7mnFtPonVKSMWHHM1JD/AcOKhjEeIE4aXEDM0jOXbD7seZFwaexiRQ0gx9LEhoQHJQctQ73yNIi9KsmayEzeVeUEcy7qtGs8paKEGtSZAiuVwgCQB65GYAjNdQw6RZUyPW8lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAnVga2y; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21628b3fe7dso10193995ad.3;
+        Thu, 12 Dec 2024 13:59:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734040771; x=1734645571; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=A5peXfR2vV2MBIAnwlkieYycRNFeSbPFid3Ej/BgX6c=;
+        b=eAnVga2yyuzifgA/m8syJjVRCAayDrJGUFHPqX+KzWjaebzmL+49SCAcQvDB3AZZaq
+         bY7QF8YhnMJaSM4g8axBf76458dMRshjDKKuuc9CJ283H8j6gObizl3/GS9Qa7KylVx4
+         S1CNbICAK/cvTIgf/t+QQhDTfRM7qr6qDZbZkJZETRuuBDKjSLl6XwAg/Kbm60xtxMTp
+         UD1q9Pdh0DPOgkdDkm21fy94LCsTYBRlv7YUs4B0J6Ej+QDf5xrDK6SSH5ieFl7d8GgP
+         2j4UG3GAhy+vmRhmv6wnOPMTHf6RBwcqO9QryUCW20uCLH6Chi6zrx7JFC11PCUA0nTH
+         w9Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734040771; x=1734645571;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A5peXfR2vV2MBIAnwlkieYycRNFeSbPFid3Ej/BgX6c=;
+        b=boFxNHVGK+wIBPrl6giPZOJgsRmkzSaydi/qGVu8EBXvxT27CVL3ZuIfSictYdCBbn
+         J29R9XT/vMdamvpYfj3eCts/Ecy5EDHMgm0Mu3dlUKGgnPCm2cVUXwmbEYSrDxTHz0lV
+         SVOP+dHctm+wqz0IFUzwN+Cldzg9mH065+dql5/HT0L8ld20uZeO8ugGnkzDheoTTzte
+         gl0uRec35908Z3CkqAPuwCkQ40d5Wy+IMOlcjXMTmLUQCN6691e4GAqikknNq0j4uivW
+         6VgzEFr5CuxHuJ6oqOZREL4iGK3yKuLdDre9lD0w3V4wa+WgNEPGFCXlg6rmESXCNzxw
+         uxYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzdMtPc7DdYhrmCzDSXcwqWjPmN+nKIXFWHo2jKnL59YeMRSbq0ac0Q91kFEPVkyh0cI6TUVZTlmbq+IujpA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyXjepJQrwlf7obmJgdZNDlJkQdOkfjjSrzWfKENA0K+6aHbu3
+	lP9MvArAZQ7jydIGXH92ylx1Eo5yuxIglrUAxMEHdkTnDopnuBoV
+X-Gm-Gg: ASbGnctI8zl2iNNiTgFk7+A2lXb72smdOMgVOgF94NO2ehz1JWyABGjGvxBPt4pmmmh
+	xwLY8p1BgsieeKM2/s/bH+lZPszrDoDm4hGnB8o2OWDSHBiorQ5cQK5uj88oRPSiY9V+uHrPTDJ
+	Uwxgsh4qWdBAyPeHdbC7Q28qarBy/fGTgiuQGL263G9E4yBAtVDw8yusE7a9JK4CKmjOZPrR//l
+	gT5x0/KxWe0pQo/PV+lv1kIP/La0o3J9KQtLD6lL2/4a0ugwSaGSP0znnumkubBZ5hYvfVSbtRf
+	ziMOhDOt6g8pphCHier/PRl0kCHvGQ==
+X-Google-Smtp-Source: AGHT+IEpJDQV6DF8Vr9O7nQZBmDdruqjLhvmTkraVciT329i7zf0IVZ5PbHY1caaMZrlc86M/3txQA==
+X-Received: by 2002:a17:902:f68c:b0:216:48f4:4f1a with SMTP id d9443c01a7336-218929c3556mr4085375ad.16.1734040770669;
+        Thu, 12 Dec 2024 13:59:30 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd156e1e20sm12967544a12.32.2024.12.12.13.59.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 13:59:29 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <648b3de2-2055-405f-8624-8e8bab584311@roeck-us.net>
+Date: Thu, 12 Dec 2024 13:59:28 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] watchdog: da9052_wdt: add support for bootstatus
+ bits
+To: Marcus Folkesson <marcus.folkesson@gmail.com>,
+ Support Opensource <support.opensource@diasemi.com>,
+ Lee Jones <lee@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>
+Cc: linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+References: <20241210-da9052-wdt-v2-0-95a5756e9ac8@gmail.com>
+ <20241210-da9052-wdt-v2-2-95a5756e9ac8@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241210-da9052-wdt-v2-2-95a5756e9ac8@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 12 December 2024 21:43:57 GMT, Dave Hansen <dave=2Ehansen@intel=2Ecom> w=
-rote:
->On 12/12/24 13:32, David Woodhouse wrote:
->> On 12 December 2024 21:18:10 GMT, Dave Hansen <dave=2Ehansen@intel=2Eco=
-m> wrote:
->>> On 12/12/24 12:11, David Woodhouse wrote:
->>>> From: David Woodhouse <dwmw@amazon=2Eco=2Euk>
->>>>
->>>> The virtual mapping of the control page may have been _PAGE_GLOBAL an=
-d
->>>> thus its PTE might not have been flushed on the %cr3 switch and
->>>> it might effectively still be read-only=2E Move the writes to it
->>>> down into the identity_mapped() function where the same
->>>> %rip-relative addressing will get the new mapping=2E
->>>>=20
->>>> The stack is fine, as that's using the identity mapped address
->>>> anyway=2E
->>>=20
->>> Shouldn't we also ensure that Global entries don't bite anyone
->>> else? Something like the completely untested attached patch?
->> Doesn't hurt, but this is an identity mapping so absolutely
->> everything other than this one page is going to be in the low
->> (positive) part of the canonical address space, so won't have had
->> global pages in the first place will they?
->
->Right, it's generally _not_ a problem=2E But it _can_ be a surprising
->problem which is why we're all looking at it today=2E ;)
->
->> Probably a kind thing to do for whatever we're passing control to
->> though :)
->>=20
->> I'll round it up into the tree and send it out with the next batch of
->> debug support=2E Care to give me a SoB for it? You can
->> s/CR0_PGE/CR4_PGE/ too if you like but I can do that myself as well=2E
->Here's a fixed one with a changelog and a SoB=2E Still 100% gloriously
->untested though=2E
-Ta=2E I'll play with it in the morning=2E May actually shift it earlier an=
-d use it instead of my other fix, so we can actually write to the virtual a=
-ddress=2E
+On 12/10/24 07:24, Marcus Folkesson wrote:
+> Enable support for these bootstatus bits:
+>      WDIOF_CARDRESET
+>      WDIOF_OVERHEAT
+>      WDIOF_POWERUNDER
+> 
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
 
