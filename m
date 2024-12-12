@@ -1,204 +1,241 @@
-Return-Path: <linux-kernel+bounces-442680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B0C9EE03E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:29:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749E59EE03F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:29:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BAB2281604
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17BFE166A21
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7AA20B1FC;
-	Thu, 12 Dec 2024 07:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD2820B7F7;
+	Thu, 12 Dec 2024 07:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="J4NN+21D"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kk+9TPQr"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1669F45027;
-	Thu, 12 Dec 2024 07:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A8020B1FF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733988576; cv=none; b=ApWp8sAEkXGqp0BJz9SUN5vLSeamZR6m9DKmkxqLS01NnjOvFB2bHWj1Q4Ij97Jfo+u/ECwDJvaSMzg4bOemovLRT05nPlT0Po/syCOJfpqeEvboPUTRMyXoI+Ts59NPxe1zDkLkoZGcZz6wsOa0eOb/fGMAfxKc7bSWCLpo6IA=
+	t=1733988579; cv=none; b=IZRcxJcv+3LoRDrFl0PyeV2P2omil8EsD0ECh6KzHq9kMwpHnsKoJvhM53LIvgwsXhIpuGRGBaN231kdw0tHK6q/5SjlavRuFWswQrxIhGWQjw+29kGrwNsXossRo1eB/ENxPwdMjDQGgVbb4Qzybo1Z6W2r9RlbVPTZlb26bIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733988576; c=relaxed/simple;
-	bh=5dLiOhUKaCVKsArGKXDPWzoqvg9T37jPkUsIDJWiRg8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qD7GejuokevEGHjZT1KnjZ8tl/LwCzi5IQH3LPdDY+dbfH+gJuHYkko3QsHRWkynqEs0aaGGBvqfTQ4PRhdUQxav/c+uhGjYim9fExK2phut+1nWEzEkJ1Ebl4s84Ye5w7Bv5lCepF6Td0WFyynqNhE+RpbicoJ3K4kKqkzCRAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=J4NN+21D; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC2s8jn001463;
-	Thu, 12 Dec 2024 07:29:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OybyDqhRyS7zewunA4/2FtQ2IjJn/DxV8X7ZYsb+0kA=; b=J4NN+21DBOJ/yViK
-	lCihi9bLjtZXqaPknnlYkZODfkKmxT5YOpkAYxcrISvpmIPTBHZRBRj3rM/8IGZN
-	KQ3wlMbmecoNM0E4eGOxafUY5BsnQMb0C+LEl9JuUF3j9hpqzqt62RM+FYACp/7A
-	rWT5bHdY4zXOHVlu0LoCEyfber9WEqLhqPz576QjqOg8lTUx31CamM5EIi1VDKmR
-	zBoje+ubA2ckM1+0uZ0jpWP+uopRZKzMBdma/sfRi6cOxUJ5d4O1Z5JJePEiXZ7O
-	fDk2xIcKMpkenTNTU2rWCiBbhcbUUdaJfSmI6KQnI9YyVmiy25qjqoF/W/+7Vqi7
-	lPMKSg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fqes0js7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 07:29:26 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC7TPrt001979
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 07:29:25 GMT
-Received: from [10.253.8.225] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
- 2024 23:29:19 -0800
-Message-ID: <16d109d8-d1be-4ecb-ba25-8e21e9d48dad@quicinc.com>
-Date: Thu, 12 Dec 2024 15:29:16 +0800
+	s=arc-20240116; t=1733988579; c=relaxed/simple;
+	bh=etcohdZi/fyZ2O7SjGaJsa+Y/8oHTZlOiVTv2NEoqhM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JWlpDf4+OX4lO2NAj66/Qi0a2uk07PB+asEoBvVYkADSEngcS60cy6yHdnWs14O1iurgXX2yuNrA2elHyLGECMMjeEA5GzVkwrOx1A8jYuLjgVVkcl93fj9TI6PhWSC3gAx+SVNi3Mg2Lu5tnBIwHxvujdy4AO/lFC4kpreHRGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Kk+9TPQr; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53e3a5fa6aaso1510640e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:29:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733988576; x=1734593376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qUsFBs9SgSTwKf+euhdAY/mle8iwODWJW4g1nHNMk9c=;
+        b=Kk+9TPQr5DB51FJc/RnESwXPCoCOtrlM6KImHsVcmCWiSp2woNMxU/b3/d7wl2f+SC
+         KftVP5b7vqGI7FgLH06bhe9Co5FGbKJN2Sb84l12JeHkKOxodZpDi12WqGAjDIab3Wnv
+         l/R1VsU7RnMmfLw5axNoVWJqMUPYwRA9fueNg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733988576; x=1734593376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qUsFBs9SgSTwKf+euhdAY/mle8iwODWJW4g1nHNMk9c=;
+        b=Bq5t7execRIv+PAEQbti6Xc1/3N+KKGsEImyev3WsPJJ6UpiVrjVJA5HHUtMeRaOJa
+         lipjJXFUwspSRGxb0w5LaOnYVZmFSrQI0hKN9uyRH1lSHVnhRao3svcA8i3B8E7XBvPD
+         2bR1h1YVHppIOJYFxFSSXNalWAg0WRHztwT9U04XXfXhyjdF25TvaD51cPPtgf6+aeJR
+         qGVIOn0tqXDcYOEqpxqhhpvFt3IR5u5okDTfiD5BXXYouwRJz69iwCd2KgLBS2buuW+k
+         JKJUda0x8x42cFm4OUwObGJELliUR6hg6Aw1GV1dCBrTyfy5D1SWuuCN7CfJzSYKTbmW
+         oA5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVoYyj9ZQMnCzDiMn9sEmIxzkt7AewOeK8Kwz2rW0TPSljC9aOCNo1VF9iWs5RfS4PUGAn1GEkBcm+zta4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg7xUDpmpKGgMZ3ROaBTp/hCo8rPMpP+NcA5Q6AQ57jskuQsWH
+	iguiZfExgEbMaThnJBYddSXURuY27PL7tAtAgagdozksaCwB4BXyGyeVeYNUzJnyCKzw4tTT77T
+	udaslNWwnv6LTzhB/g7E0gMjkFUhXOzBOHXXm
+X-Gm-Gg: ASbGncuKikpC2IzEhEAC+oa6b/d6tP9URb3DJFjNGJyBLx1gAVwYjjiS9PcGnWKG55N
+	KeFmMtxViOItiKuVdoCDMlN81fefyC+hRilE5r8CUaM5wPi/2z4ZAnEKEUhXbp5FUbg==
+X-Google-Smtp-Source: AGHT+IGUfV18odEMnZdd40vklSttluOoWFDdHf+m8pFREqeQLEQ0rE9DZYkQWg+goJ0kE03UC7Ud2rvX2aZz+ThhYWA=
+X-Received: by 2002:a05:6512:3d8a:b0:540:2add:c1f1 with SMTP id
+ 2adb3069b0e04-54032d5611dmr89184e87.18.1733988576033; Wed, 11 Dec 2024
+ 23:29:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: phy: qcom,qmp-pcie: add optional current
- load properties
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "Krzysztof
- Kozlowski" <krzk@kernel.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <abel.vesa@linaro.org>, <neil.armstrong@linaro.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_qianyu@quicinc.com>
-References: <20241204105249.3544114-1-quic_ziyuzhan@quicinc.com>
- <20241204105249.3544114-2-quic_ziyuzhan@quicinc.com>
- <qvjtwilukxbeaxnbyzfkdsfkktm6p4yv3sgx3rbugpb6qkcbjy@rohvixslizhh>
- <20241211062053.vxdpovlmetvyx3za@thinkpad>
- <33697bd9-02f4-4a9a-b8c0-4930d7fdaee2@kernel.org>
- <20241211082404.p7fbmhooikmipxvm@thinkpad>
- <3c7ddb08-38db-44b3-a7a7-ec7b270a408f@kernel.org>
- <20241211115034.4hrpmninbx5uryev@thinkpad>
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-In-Reply-To: <20241211115034.4hrpmninbx5uryev@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WpBSgAiqzoP_c1xrOTCrxXhE9a0ibP_a
-X-Proofpoint-ORIG-GUID: WpBSgAiqzoP_c1xrOTCrxXhE9a0ibP_a
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 clxscore=1011 malwarescore=0
- mlxlogscore=999 priorityscore=1501 bulkscore=0 phishscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120050
+References: <20241212055110.1862487-1-xji@analogixsemi.com>
+In-Reply-To: <20241212055110.1862487-1-xji@analogixsemi.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 12 Dec 2024 15:29:25 +0800
+Message-ID: <CAGXv+5FDTqGhE3kZ=b5Mkp4gzuKtMfcdG_63MewDGvJEb-QyaQ@mail.gmail.com>
+Subject: Re: [PATCH v3] drm/bridge:anx7625: Update HDCP status at atomic_enable()
+To: Xin Ji <xji@analogixsemi.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	bliang@analogixsemi.com, qwen@analogixsemi.com, treapking@google.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Dec 12, 2024 at 1:51=E2=80=AFPM Xin Ji <xji@analogixsemi.com> wrote=
+:
+>
+> When user enabled HDCP feature, userspace will set HDCP content
+> to DRM_MODE_CONTENT_PROTECTION_DESIRED. Next, anx7625 will update
+> HDCP content to DRM_MODE_CONTENT_PROTECTION_ENABLED if down stream
+> support HDCP feature.
+>
+> However once HDCP content turn to DRM_MODE_CONTENT_PROTECTION_ENABLED
+> userspace will not update the HDCP content to
+> DRM_MODE_CONTENT_PROTECTION_UNDESIRED until monitor disconnect.
+>
+> So, anx7625 driver move hdcp content value checking from bridge
+> interface .atomic_check() to .atomic_enable(), then update hdcp content
+> according from currently HDCP status. And also disabled HDCP in bridge
+> interface .atomic_disable().
+>
+> Signed-off-by: Xin Ji <xji@analogixsemi.com>
+> ---
 
-在 12/11/2024 7:50 PM, Manivannan Sadhasivam 写道:
-> On Wed, Dec 11, 2024 at 10:52:11AM +0100, Krzysztof Kozlowski wrote:
->> On 11/12/2024 09:24, Manivannan Sadhasivam wrote:
->>> On Wed, Dec 11, 2024 at 09:09:18AM +0100, Krzysztof Kozlowski wrote:
->>>> On 11/12/2024 07:20, Manivannan Sadhasivam wrote:
->>>>> On Thu, Dec 05, 2024 at 11:23:11AM +0100, Krzysztof Kozlowski wrote:
->>>>>> On Wed, Dec 04, 2024 at 06:52:47PM +0800, Ziyue Zhang wrote:
->>>>>>> On some platforms, the power supply for PCIe PHY is not able to provide
->>>>>>> enough current when it works in LPM mode. Hence, PCIe PHY driver needs to
->>>>>>> set current load to vote the regulator to HPM mode.
->>>>>>>
->>>>>>> Document the current load as properties for each power supply PCIe PHY
->>>>>>> required, namely vdda-phy-max-microamp, vdda-pll-max-microamp and
->>>>>>> vdda-qref-max-microamp, respectively.PCIe PHY driver should parse them to
->>>>>>> set appropriate current load during PHY power on.
->>>>>>>
->>>>>>> This three properties are optional and not mandatory for those platforms
->>>>>>> that PCIe PHY can still work with power supply.
->>>>>>
->>>>>> Uh uh, so the downstream comes finally!
->>>>>>
->>>>>> No sorry guys, use existing regulator bindings for this.
->>>>>>
->>>>> Maybe they got inspired by upstream UFS bindings?
->>>>> Documentation/devicetree/bindings/ufs/ufs-common.yaml:
->>>>>
->>>>> vcc-max-microamp
->>>>> vccq-max-microamp
->>>>> vccq2-max-microamp
->>>> And it is already an ABI, so we cannot do anything about it.
->>>>
->>>>> Regulator binding only describes the min/max load for the regulators and not
->>>> No, it exactly describes min/max consumers can use. Let's quote:
->>>> "largest current consumers may set"
->>>> It is all about consumers.
->>>>
->>>>> consumers. What if the consumers need to set variable load per platform? Should
->>>> Then each platform uses regulator API or regulator bindings to set it? I
->>>> don't see the problem here.
->>>>
->>>>> they hardcode the load in driver? (even so, the load should not vary for each
->>>>> board).
->>>> The load must vary per board, because regulators vary per board. Of
->>>> course in practice most designs could be the same, but regulators and
->>>> their limits are always properties of the board, not the SoC.
->>>>
->>> How the consumer drivers are supposed to know the optimum load?
->>>
->>> I don't see how the consumer drivers can set the load without hardcoding the
->>> values. And I could see from UFS properties that each board has different
->>> values.
->>
->> Drivers do not need to know, it's not the driver's responsibility. If
-> What? I think there is a misunderstanding here. The intention of these proposed
-> properties is to allow the PHY driver to set the required load of the regulator
-> using regulator_set_load() API. As per the API description:
->
-> 'Consumer devices notify their supply regulator of the maximum power they will
-> require (can be taken from device datasheet in the power consumption tables)
-> when they change operational status and hence power state'.
->
-> IIUC, your concern is that the devicetree shouldn't specify the load for each
-> consumer but just the min/max load of the regulator. And the consumer driver
-> should figure out the load and set it accordingly.
->
-> Correct me if I'm wrong.
->
-> In that case, I was wondering if the load set by the driver is going to vary
-> between platforms (boards) or not (question to Ziyue Zhang). If it varies
-> between SoC, then we can hardcode the load in driver based on compatible.
+No need to resend, but please provide a changelog under the "---" line
+so reviewers know what you changed in this new version.
 
-Hi Mani, Krzystof
-
-Now we set  the current to 165mA which is the max power supply the regulator
-can provide, so this is platform(boards) related. But we think PCIe PHY needs
-to set the current value we need, which is soc related.
-
-BRs
-Ziyue
-
->> If
->> these are constraints per board, then regulator properties apply and
->> there is no difference between this "vdd-max-microamp = 10" and
->> "regulator-max-microamp".
->>
-> There is a difference. Regulator properties are just threshold. So unless the
-> consumer sets the load, they won't take effect. I think you got confused by the
-> 'max' wording in the proposed properties?
+>  drivers/gpu/drm/bridge/analogix/anx7625.c | 74 ++++++++++++++---------
+>  1 file changed, 46 insertions(+), 28 deletions(-)
 >
->> If this varies runtime, then your property is already not suitable and
->> very limited and you should use OPP table.
->>
-> The consumer driver may request different loads based on their operational
-> state.
+> diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/=
+bridge/analogix/anx7625.c
+> index a2675b121fe4..f96ce5665e8d 100644
+> --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
+> +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+> @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_data =
+*ctx)
+>                                  TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
+>  }
 >
-> - Mani
+> +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ctx)
+> +{
+> +       struct device *dev =3D ctx->dev;
+> +
+> +       if (!ctx->connector)
+> +               return;
+> +
+> +       anx7625_hdcp_disable(ctx);
+> +
+> +       ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
+> +       drm_hdcp_update_content_protection(ctx->connector,
+> +                                          ctx->hdcp_cp);
+> +
+> +       dev_dbg(dev, "update CP to UNDESIRE\n");
+> +}
+> +
+>  static int anx7625_hdcp_enable(struct anx7625_data *ctx)
+>  {
+>         u8 bcap;
+> @@ -2149,34 +2165,6 @@ static int anx7625_connector_atomic_check(struct a=
+nx7625_data *ctx,
+>         if (cp =3D=3D ctx->hdcp_cp)
+>                 return 0;
+>
+> -       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_DESIRED) {
+> -               if (ctx->dp_en) {
+> -                       dev_dbg(dev, "enable HDCP\n");
+> -                       anx7625_hdcp_enable(ctx);
+> -
+> -                       queue_delayed_work(ctx->hdcp_workqueue,
+> -                                          &ctx->hdcp_work,
+> -                                          msecs_to_jiffies(2000));
+> -               }
+> -       }
+> -
+> -       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
+> -               if (ctx->hdcp_cp !=3D DRM_MODE_CONTENT_PROTECTION_ENABLED=
+) {
+> -                       dev_err(dev, "current CP is not ENABLED\n");
+> -                       return -EINVAL;
+> -               }
+> -               anx7625_hdcp_disable(ctx);
+> -               ctx->hdcp_cp =3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
+> -               drm_hdcp_update_content_protection(ctx->connector,
+> -                                                  ctx->hdcp_cp);
+> -               dev_dbg(dev, "update CP to UNDESIRE\n");
+> -       }
+> -
+> -       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_ENABLED) {
+> -               dev_err(dev, "Userspace illegal set to PROTECTION ENABLE\=
+n");
+> -               return -EINVAL;
+> -       }
+> -
+>         return 0;
+>  }
+>
+> @@ -2425,6 +2413,8 @@ static void anx7625_bridge_atomic_enable(struct drm=
+_bridge *bridge,
+>         struct anx7625_data *ctx =3D bridge_to_anx7625(bridge);
+>         struct device *dev =3D ctx->dev;
+>         struct drm_connector *connector;
+> +       struct drm_connector_state *conn_state;
+> +       int cp;
+>
+>         dev_dbg(dev, "drm atomic enable\n");
+>
+> @@ -2439,6 +2429,32 @@ static void anx7625_bridge_atomic_enable(struct dr=
+m_bridge *bridge,
+>         _anx7625_hpd_polling(ctx, 5000 * 100);
+>
+>         anx7625_dp_start(ctx);
+> +
+> +       conn_state =3D drm_atomic_get_new_connector_state(state->base.sta=
+te, connector);
+> +
+> +       if (WARN_ON(!conn_state))
+> +               return;
+> +
+> +       cp =3D conn_state->content_protection;
+> +       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_DESIRED) {
+> +               if (ctx->dp_en) {
+> +                       dev_dbg(dev, "enable HDCP\n");
+> +                       anx7625_hdcp_enable(ctx);
+> +
+> +                       queue_delayed_work(ctx->hdcp_workqueue,
+> +                                          &ctx->hdcp_work,
+> +                                          msecs_to_jiffies(2000));
+> +               }
+> +       }
+> +
+> +       if (cp =3D=3D DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
+> +               if (ctx->hdcp_cp !=3D DRM_MODE_CONTENT_PROTECTION_ENABLED=
+) {
+> +                       dev_err(dev, "current CP is not ENABLED\n");
+> +                       return;
+> +               }
+> +
+> +               anx7625_hdcp_disable_and_update_cp(ctx);
+> +       }
+>  }
+>
+>  static void anx7625_bridge_atomic_disable(struct drm_bridge *bridge,
+> @@ -2449,6 +2465,8 @@ static void anx7625_bridge_atomic_disable(struct dr=
+m_bridge *bridge,
+>
+>         dev_dbg(dev, "drm atomic disable\n");
+>
+> +       anx7625_hdcp_disable_and_update_cp(ctx);
+> +
+>         ctx->connector =3D NULL;
+>         anx7625_dp_stop(ctx);
+>
+> --
+> 2.25.1
 >
 
