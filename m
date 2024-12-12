@@ -1,48 +1,74 @@
-Return-Path: <linux-kernel+bounces-443097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9245E9EE71F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:54:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3DC9EE720
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F3A16619C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:53:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0CDE1661C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9022139CB;
-	Thu, 12 Dec 2024 12:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NK/cACG2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8600C2139CB;
+	Thu, 12 Dec 2024 12:54:50 +0000 (UTC)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E6E1714D7;
-	Thu, 12 Dec 2024 12:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A2C1714D7;
+	Thu, 12 Dec 2024 12:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734008035; cv=none; b=ZYGE/fLT77oo+KsjJrB6uzEne7r3cThKd0VKmaXDCNeCbMguELqddO5qouSs5YnjbM7xG/LgaCD7mOAWH4oC/tEc0o69YtLqrRURfhp6td4XbIyGhh9GJ9p13vtX0yDkDZ2Q2+bxY5+MCJnCdAxIlv3+yEfHS7xQsycSNm/7oXY=
+	t=1734008090; cv=none; b=K+w7gUHU/Ae/IrOSMxvJyUOvSeehOjM5EgxC2vbNDNuKxvpKLhIleET4CCnun0OJoySOhHPdHdbhmf4/P8LYIZYZ/oIqpWNhcENxvAhQBJSh2Zo61w61ge0/lwZ1xRGLcGAKTeSUeY4Z+r6slE7RL3pT+6Iaf412nJ17u/+jlC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734008035; c=relaxed/simple;
-	bh=9xK+bD2b7sbieZJy2qOzFPpKDsVao4fDuCk+++MxMe8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XoK97X6P/LedhVIKf83KRPN27rhyUbZlMJnDFgKwVB11jPryzySIIwGev/fNeaptb92dsiTTwYCmlEju5jyY4mQducRFMhc1QdnNGBM8OQWY4h2sw+jPS7JqLLT7jn5cN56uoarsyyV5bKj6ymGpCvraURzWrwc60ntUWeEOt8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NK/cACG2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04DD1C4CED0;
-	Thu, 12 Dec 2024 12:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734008034;
-	bh=9xK+bD2b7sbieZJy2qOzFPpKDsVao4fDuCk+++MxMe8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=NK/cACG2Tl7aQTGSCTD6oRjmGhKgx+HLEPnOBJObSwW65cLk7aua4BQrWKPj5bYo0
-	 Al/+Bj3BPLdL3uSxM825THkprloIO89GF8UDrv3smxjmLEPDVPu4qZRjKpC3ugZuaq
-	 hADAkEG8ldFJwPbs8b21NXLEMEPeAWe8K1UhGvCBrRg+QVtu+/A/XZK/NZTIxuITaR
-	 eYr7MJ4m6TBgfbjRpcyaA1ehBnGN2eOWAJrvaf9POdxXKBXwn3v7+Dx7h2B1iusqZ4
-	 UVM2np7IhMODrl5WenAg1+Uhw7N4V4y9gN9lI7u8LsHmQSrBN/hG74F1bWLe3RWBeN
-	 Ih/coeBgkfUjg==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Thu, 12 Dec 2024 14:53:45 +0200
-Subject: [PATCH v3] usb: dwc3: dwc3-am62: Re-initialize controller if lost
- power in PM suspend
+	s=arc-20240116; t=1734008090; c=relaxed/simple;
+	bh=cj3QOIiWTKzKxX5xV/DwC/gpQ+j9r5EIa2WuZCSQLfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pwLC8WyWpDaqTmvT7aKIuQ6q7wvAtX681uNzA2r6b2ymMXdhlnG6ITaszxxse/jIyV/EIj6Nm7T1GJgl3Ni11iR0lcYEWrHRiQ6xfA7ZNQOhfyV85nmjrzPK7SXC48rteGeXSq9wFiHAHqj0kG9hFWMBv1MD1Ka7GwkKqzEAwP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d4e2aa7ea9so1042896a12.2;
+        Thu, 12 Dec 2024 04:54:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734008087; x=1734612887;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5K3LXkF6vdSz2gq/Hqz8occjAgDdUQkiCLkkIuUs/Zc=;
+        b=UYWAi6vkmM1bB6jGF3dtGSVkxpx0GgTBNC413gVRkdfzmYBXxTNr3b/SwDRQnGNPL2
+         80brjuCGZyYZ1C9kCdPVR+BOdVUHR2oDAeg0Aev1Dr8c2fEz8H0Ofupcmdj638+ZlaW8
+         43rRsj6znRw8BBZ5BfPyu7pJW2SUEFv6ZRoc7m1XMFlInFeifJjysbeDO+ppbLe4uSUr
+         VOXyMkv9qclvnzgmKve4yesQMfZC2oWpScrJ9LnWuTMWjyW8QTyD9ochlc1zHEcDLdCD
+         GUC1zxuePi9Exz8CgUxncPHmT2BfmTtqziuroGNXbQPYjwYl2VtqZ5aNzIPEn/odTZLW
+         2liQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU61ddKMiFS6X1ejvj1fEGR4TJnlVJsvAxMDHbwNP81aWVjqGlu/BN4PmhA5yufh3DFF3WvujKjNZJpJEIW@vger.kernel.org, AJvYcCUGCaJAPsTml3xJNCjSA4QOOehca5ZCT2OJB023mfxdwMFJelI0nmyT6U5iSibT4IlomzAXW70wHzXZ7w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjGmr0Qn2YejXysdmTpSrPfQWgeUXB0oidl5U5IXqlWpy5W72x
+	CpFqHyOSaYOv2fGaXZV6m+pGlmdFwuNPzqzLZOkYbwFHNaHNU0QV
+X-Gm-Gg: ASbGnctCTZGb4kIGFXwTBARLigcmtI1rX/iIvDmS8p/9ycVsa0fCpdIAr9dkg/Q3cjm
+	pVGQp74qF9HleD0tzZPYGiEkb1hZ23126GHubydFPbR6DLlYrZhd8pAQ2yvr8xWu16UvaafbPd3
+	VYGqV1Ygxk3dgXzXq2tuENrvkw5vAhgmT7BO6nKAR6hS3hQ+KpsY+iN8YChn3nrVDUSAe6dr1gv
+	0H/Mx/pXDax47uSB9C2w7p2QKwh46r2++gnCKx4zfOfAOlzezGs1BSoNbT1SgwN19ycSluh4sPn
+	Lu7vX2c3GuQrb2KARgAIp6M0rKpmQHxHmn1xNIM=
+X-Google-Smtp-Source: AGHT+IETeg4T03CGls7OXkkjorlHltmXhLmucnnjRQ+laZwNFV0+5F68gUAsCmIKYG8BylO0Ov5SnA==
+X-Received: by 2002:a05:6402:50cd:b0:5d2:2768:4f10 with SMTP id 4fb4d7f45d1cf-5d63238c8a6mr165537a12.17.1734008086543;
+        Thu, 12 Dec 2024 04:54:46 -0800 (PST)
+Received: from nuc.fritz.box (p200300f6f7081700fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f708:1700:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c74c3d5sm10309638a12.52.2024.12.12.04.54.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 04:54:46 -0800 (PST)
+From: Johannes Thumshirn <jth@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>
+Cc: Johannes Thumshirn <jth@kernel.org>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johannes Thumshirn <johannes.thjumshirn@wdc.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH 0/3] btrfs: reduce repeated calls to btrfs_need_stripe_tree_update()
+Date: Thu, 12 Dec 2024 13:54:25 +0100
+Message-ID: <20241212-btrfs_need_stripe_tree_update-cleanups-v1-0-d842b6d8d02b@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,217 +76,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241212-am62-dwc3-io-ddr-v3-1-10b95cd7e9c0@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANjcWmcC/33NQQrCMBCF4auUrB1JJmkxrryHuEiT2A5qUxKJS
- undTbsRQVz+D+abiSUfySe2ryYWfaZEYSghNxWzvRk6D+RKM+SohEAEc2sQ3MNKoADORZCtbZu
- dNFoYzsrZGP2Znit5PJXuKd1DfK0fsljWP1gWIMBapetGKa2QHy4+Dv66DbFji5bxIyDXPwQsg
- jMSudTY1lx/CfM8vwGPR9148wAAAA==
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, srk@ti.com, 
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5647; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=9xK+bD2b7sbieZJy2qOzFPpKDsVao4fDuCk+++MxMe8=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBnWtzg4Fwo7sKtT8PCFQGicSWwuJH+CA3VhsHID
- mFQnzugAleJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZ1rc4AAKCRDSWmvTvnYw
- k2g9EADX+CQijhz6bAMSh28+1f/90Mf9WYzRocahYT+S6gnacnc5WteZ9beMxD5N4U5/GyUNpAP
- CotBCK+VjiBnjDUhn56kaQ6hoB66vC/WZ1aqR3tdAoSrhNMkjsZEf9lKFhCf8osUzk+PNfOQbaQ
- o2+oBVTisktRtyx71ZKS/D9TK49t/9T8TAvGFYSMtPhHyT/PLTMcBI5XJyizs7T+rdoGcrN1QNI
- 80Fqy+D0b0IUAj/4MYWLTSrjSxIPBXD89KD0l1yuaxQPtsR1YgyLV8NW759LZ7qshp4cqKcMsN2
- LKmyeRssQSUJiIwBpimtLW0l5WoIkRXl/922B2HV0mMZznwW6NajAiAU5n3zLWeXc8roYy2E/EF
- 33WJ1dh/R3HXGdVgD2ZuNGahU0dW8Cy9+iWMIGUH2Yxm0a78qwJaRR2Y+aV8lTXCI/w4/YZAQ64
- jJzeyKxv5XQRGltZP2yIoCn1VaWpWGg27SejDbDUqJD5qmGWocYpsvTnsqV+HC54gc04AZDNhUP
- ilTpxk3GFEV/JsEMDacWkZ2aJ7XEeMlwZmdVvpUiXjVPXnrwbn1B86RkFZeFur4k1FXLH7lbA3K
- Zu5bQM4pir1HfrGsM98uhynfE2JtOjVnrJtGlFAUQxh4K+AR95QGQ42krICaRhbM3Pjelr4geJ+
- FYBFZlhOsJ0gxsw==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+X-Change-ID: 20241212-btrfs_need_stripe_tree_update-cleanups-166f5e7e894c
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=951; i=jth@kernel.org; h=from:subject:message-id; bh=cj3QOIiWTKzKxX5xV/DwC/gpQ+j9r5EIa2WuZCSQLfQ=; b=owGbwMvMwCV2ad4npfVdsu8YT6slMaRH3XnsenPCCSbJW382zTsZM+N7Rtqab03iW4zXv3229 afb7/fqPR2lLAxiXAyyYoosx0Nt90uYHmGfcui1GcwcViaQIQxcnAIwkU1bGP7wZsf8z+DxfKP3 lDnwc9b7DX4u8hlbRKMkz/1nkP3MMjOSkeHOkQpGteLtLwzWHd/Aben17texKXZSk53rFcs1rKa X/uQCAA==
+X-Developer-Key: i=jth@kernel.org; a=openpgp; fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
+Content-Transfer-Encoding: 8bit
 
-If controller looses power during PM suspend then re-initialize
-it. We use the DEBUG_CFG register to track if controller lost power
-or was reset in PM suspend.
+When working on RST backed RAID56 I was looking for a way to plumb the "use
+RST or not" decision into the bio submission code and this way found that
+we can cache the return of btrfs_need_raid_stripe_tree_update() in the
+btrfs_io_context (and btrfs_io_stripe) so there's no need to do multiple
+lookups for the same I/O.
 
-Move all initialization code into dwc3_ti_init() so it can be re-used.
-
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Signed-off-by: Johannes Thumshirn <johannes.thjumshirn@wdc.com>
 ---
-Changes in v3:
-- renamed member phy to phy_regs as it is PHY register space
-- Added Acked-by from Thinh Nguyen
-- Link to v2: https://lore.kernel.org/r/20241209-am62-dwc3-io-ddr-v2-1-da320392b509@kernel.org
+Johannes Thumshirn (3):
+      btrfs: cache stripe tree usage in io_geometry
+      btrfs: cache RAID stripe tree decission in btrfs_io_context
+      btrfs: pass btrfs_io_geometry to is_single_device_io
 
-Changes in v2:
-- fixed macro USBSS_DEBUG_CFG_OFF to 0
-- Link to v1: https://lore.kernel.org/r/20241122-am62-dwc3-io-ddr-v1-1-cc4956449420@kernel.org
+ fs/btrfs/bio.c     |  3 +--
+ fs/btrfs/volumes.c | 17 ++++++++++-------
+ fs/btrfs/volumes.h |  2 ++
+ 3 files changed, 13 insertions(+), 9 deletions(-)
 ---
- drivers/usb/dwc3/dwc3-am62.c | 82 +++++++++++++++++++++++++++++---------------
- 1 file changed, 55 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-am62.c b/drivers/usb/dwc3/dwc3-am62.c
-index 5e3d1741701f..a740d3d70e87 100644
---- a/drivers/usb/dwc3/dwc3-am62.c
-+++ b/drivers/usb/dwc3/dwc3-am62.c
-@@ -108,6 +108,9 @@
- 
- #define DWC3_AM62_AUTOSUSPEND_DELAY	100
- 
-+#define USBSS_DEBUG_CFG_OFF		0x0
-+#define USBSS_DEBUG_CFG_DISABLED	0x7
-+
- struct dwc3_am62 {
- 	struct device *dev;
- 	void __iomem *usbss;
-@@ -117,6 +120,7 @@ struct dwc3_am62 {
- 	unsigned int offset;
- 	unsigned int vbus_divider;
- 	u32 wakeup_stat;
-+	void __iomem *phy_regs;
- };
- 
- static const int dwc3_ti_rate_table[] = {	/* in KHZ */
-@@ -184,15 +188,47 @@ static int phy_syscon_pll_refclk(struct dwc3_am62 *am62)
- 	return 0;
- }
- 
-+static int dwc3_ti_init(struct dwc3_am62 *am62)
-+{
-+	int ret;
-+	u32 reg;
-+
-+	/* Read the syscon property and set the rate code */
-+	ret = phy_syscon_pll_refclk(am62);
-+	if (ret)
-+		return ret;
-+
-+	/* Workaround Errata i2409 */
-+	if (am62->phy_regs) {
-+		reg = readl(am62->phy_regs + USB_PHY_PLL_REG12);
-+		reg |= USB_PHY_PLL_LDO_REF_EN | USB_PHY_PLL_LDO_REF_EN_EN;
-+		writel(reg, am62->phy_regs + USB_PHY_PLL_REG12);
-+	}
-+
-+	/* VBUS divider select */
-+	reg = dwc3_ti_readl(am62, USBSS_PHY_CONFIG);
-+	if (am62->vbus_divider)
-+		reg |= 1 << USBSS_PHY_VBUS_SEL_SHIFT;
-+
-+	dwc3_ti_writel(am62, USBSS_PHY_CONFIG, reg);
-+
-+	clk_prepare_enable(am62->usb2_refclk);
-+
-+	/* Set mode valid bit to indicate role is valid */
-+	reg = dwc3_ti_readl(am62, USBSS_MODE_CONTROL);
-+	reg |= USBSS_MODE_VALID;
-+	dwc3_ti_writel(am62, USBSS_MODE_CONTROL, reg);
-+
-+	return 0;
-+}
-+
- static int dwc3_ti_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *node = pdev->dev.of_node;
- 	struct dwc3_am62 *am62;
- 	unsigned long rate;
--	void __iomem *phy;
- 	int i, ret;
--	u32 reg;
- 
- 	am62 = devm_kzalloc(dev, sizeof(*am62), GFP_KERNEL);
- 	if (!am62)
-@@ -228,29 +264,17 @@ static int dwc3_ti_probe(struct platform_device *pdev)
- 
- 	am62->rate_code = i;
- 
--	/* Read the syscon property and set the rate code */
--	ret = phy_syscon_pll_refclk(am62);
--	if (ret)
--		return ret;
--
--	/* Workaround Errata i2409 */
--	phy = devm_platform_ioremap_resource(pdev, 1);
--	if (IS_ERR(phy)) {
-+	am62->phy_regs = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(am62->phy_regs)) {
- 		dev_err(dev, "can't map PHY IOMEM resource. Won't apply i2409 fix.\n");
--		phy = NULL;
--	} else {
--		reg = readl(phy + USB_PHY_PLL_REG12);
--		reg |= USB_PHY_PLL_LDO_REF_EN | USB_PHY_PLL_LDO_REF_EN_EN;
--		writel(reg, phy + USB_PHY_PLL_REG12);
-+		am62->phy_regs = NULL;
- 	}
- 
--	/* VBUS divider select */
- 	am62->vbus_divider = device_property_read_bool(dev, "ti,vbus-divider");
--	reg = dwc3_ti_readl(am62, USBSS_PHY_CONFIG);
--	if (am62->vbus_divider)
--		reg |= 1 << USBSS_PHY_VBUS_SEL_SHIFT;
- 
--	dwc3_ti_writel(am62, USBSS_PHY_CONFIG, reg);
-+	ret = dwc3_ti_init(am62);
-+	if (ret)
-+		return ret;
- 
- 	pm_runtime_set_active(dev);
- 	pm_runtime_enable(dev);
-@@ -258,7 +282,6 @@ static int dwc3_ti_probe(struct platform_device *pdev)
- 	 * Don't ignore its dependencies with its children
- 	 */
- 	pm_suspend_ignore_children(dev, false);
--	clk_prepare_enable(am62->usb2_refclk);
- 	pm_runtime_get_noresume(dev);
- 
- 	ret = of_platform_populate(node, NULL, NULL, dev);
-@@ -267,11 +290,6 @@ static int dwc3_ti_probe(struct platform_device *pdev)
- 		goto err_pm_disable;
- 	}
- 
--	/* Set mode valid bit to indicate role is valid */
--	reg = dwc3_ti_readl(am62, USBSS_MODE_CONTROL);
--	reg |= USBSS_MODE_VALID;
--	dwc3_ti_writel(am62, USBSS_MODE_CONTROL, reg);
--
- 	/* Device has capability to wakeup system from sleep */
- 	device_set_wakeup_capable(dev, true);
- 	ret = device_wakeup_enable(dev);
-@@ -338,6 +356,9 @@ static int dwc3_ti_suspend_common(struct device *dev)
- 		dwc3_ti_writel(am62, USBSS_WAKEUP_STAT, USBSS_WAKEUP_STAT_CLR);
- 	}
- 
-+	/* just to track if module resets on suspend */
-+	dwc3_ti_writel(am62, USBSS_DEBUG_CFG, USBSS_DEBUG_CFG_DISABLED);
-+
- 	clk_disable_unprepare(am62->usb2_refclk);
- 
- 	return 0;
-@@ -348,7 +369,14 @@ static int dwc3_ti_resume_common(struct device *dev)
- 	struct dwc3_am62 *am62 = dev_get_drvdata(dev);
- 	u32 reg;
- 
--	clk_prepare_enable(am62->usb2_refclk);
-+	reg = dwc3_ti_readl(am62, USBSS_DEBUG_CFG);
-+	if (reg != USBSS_DEBUG_CFG_DISABLED) {
-+		/* lost power/context */
-+		dwc3_ti_init(am62);
-+	} else {
-+		dwc3_ti_writel(am62, USBSS_DEBUG_CFG, USBSS_DEBUG_CFG_OFF);
-+		clk_prepare_enable(am62->usb2_refclk);
-+	}
- 
- 	if (device_may_wakeup(dev)) {
- 		/* Clear wakeup config enable bits */
-
----
-base-commit: cdd30ebb1b9f36159d66f088b61aee264e649d7a
-change-id: 20241122-am62-dwc3-io-ddr-3bcb683a91a0
+base-commit: f7e8118a1c33aff911c3ce414d3e832eaba6b36d
+change-id: 20241212-btrfs_need_stripe_tree_update-cleanups-166f5e7e894c
 
 Best regards,
 -- 
-Roger Quadros <rogerq@kernel.org>
+Johannes Thumshirn <jth@kernel.org>
 
 
