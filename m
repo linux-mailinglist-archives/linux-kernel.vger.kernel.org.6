@@ -1,92 +1,111 @@
-Return-Path: <linux-kernel+bounces-442977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F83D9EE4E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:21:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDB59EE4E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:20:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6EC2828A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1A81886F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7D5211704;
-	Thu, 12 Dec 2024 11:21:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDD92116EE;
+	Thu, 12 Dec 2024 11:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRP0c1zt"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435972116EE
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA431C5497;
+	Thu, 12 Dec 2024 11:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734002465; cv=none; b=CP1L0vPErL7K+kvtB+DGkwABmt5cya42F+xwAM/e4/l/qNZxDCrHPWiaN1jXOcXPf0R5nvLrAL/0kYEDxz270Qdwy56f2+rjfWjykg+2RXRCHqpHsT0XtipMAZB/jUuAV1NAkUdlAFgUc8xQ9/4q9rLB+NX9y2zxp5NRzwEYTQ0=
+	t=1734002449; cv=none; b=mP5EdW4F+lZpoY/dh/cWmPR0Vc8PDC9Oaf/GJ1Zd+RqjM4cWnl9RiAXSSsCY+cJqXLULoVNEaZh2I8iRVuY5MIXfIdYlkJo2uT4LhwKsOODOhXpOQktR3KwaN8HvD+xn5ZCzF8P9R+13Fap5cvArdgP73YNkIR2uLe0BIAF4oYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734002465; c=relaxed/simple;
-	bh=Y4XI4Ells3mnYGRwVSRKFnxFRULix5bUEreIKmF5zqE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EK5adTV7ye7iyLYjUWdqZMXGltMvPWs2AMtlnmozOsHNnOUeeNb61HFMGyYwDeAD0k7/A/NsFmpxTDwrpoo7Ca3+buEXVnDwnNUcjhHMnmx6bcVO/gY7pbVHW8klZSq5FRxGn0sE3uasHrV18u3PNZ1ugCcDbh45Rg3W7sthsbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a9d4ea9e0cso4588455ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 03:21:03 -0800 (PST)
+	s=arc-20240116; t=1734002449; c=relaxed/simple;
+	bh=K0alDfkVRM4GixWQKBi2xildKzL+uQdSn1BMJJNZuUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cugggi4aMdi86+PCznVTM8AmyOxlqijH512VWkaGI1XzIG5nWNr6XjhhHLiFq9oqyqSiohs/KK/7GrcXsPJneuZV7IDYMwA83PsG+5hlO+jx0rg+ttUIbus8z73hWi4T94s+wCM9AGqIYXxIwo9rzonpPFajnzBRkscG1yNWBAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRP0c1zt; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3f28a4fccso681187a12.2;
+        Thu, 12 Dec 2024 03:20:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734002446; x=1734607246; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ED5hrp2kgt2dd8xV3Z1fC0SU7DMXRbtJN8k9vIkCfGI=;
+        b=QRP0c1zt7EMUr7tUZOOgcH1soNvvaaaQR0ZneiojJaEF3EEPMhHYErE59fYpiGdqow
+         TxqfC/vq5fiMobQgX9EF+b1MtVCjdnVZGZvuYdd2AtqGeOlcayf7RLEN20kGOjUH0Dy+
+         TOJK2QJqne1C1onm+On7ENBzF7BfzSoTM4ZVb9/4eK9kwbhMdPMCmnpNkWDxPuRA8rwt
+         JwRa+CgsWos86ltzWKtUCyXimioFkdjYhC+GAMX2FBVT7LFl1ctQq7TnSOLcMLSKbNNc
+         X3+flR2pqB3ypkn7r0ahN8Wv4h9f7wXuVtVCGKiTCK4W16utaBIxXb3Ua8zj3194VzT3
+         Nq1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734002463; x=1734607263;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1734002446; x=1734607246;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=efoVXz7q0jZIiG+6cenIdyRJUBuEPqT6nO/eaTRVO+A=;
-        b=fQu3SP2fK5Y8oIoX3R6rIiIY5tUCYLQuNy+4M3j/gQctZkXWRZP54zg5l1eukYnuWc
-         R+5tyyFhM8rwWlFrfFt3m06ADc+RKe6wOtkDyjQfuEdeadww+mzfEtYmL0DaVujhasEf
-         rbzup67MiOWwgjAjpt5seQTShS4pEoNRM4qfM9g7ZRx+HAKMApTAGl/vxoRC0PQY9UFv
-         9yCBBMp4rROtSUIifV5VDSjVxiWiYku6MdFS+DSK+3fxG+4PO73IpWqK5Ah5ay/QdJdG
-         sun9wxjWLY7/JJbkdhDoh87OfVdwuDF5L2OuZ+zFIpKT2pt38cxVaXGtD4Np3UUdeAXQ
-         +Jgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCtJZbeOFTkMJNzwGXqKVD4UeAPU4rJEEpAwUUn6G+jYuWa/7o37iUihteRVr9zBYfiK1T/T3sM8E1aKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuN3XQzJOHqqvhaFNuHuL6JEvVHKD4M4/LWULfmEwE/qRK0kUd
-	BTdrq83TE10a4QxG5BKBSpV/WGXW/I/UBOF5l3vTOicBdVceepnUqWfKylQKMwM3xm95UF3GIjl
-	Oc7zXswvej1geA+cFzTRYcRx/0jU+Cu1sbgi/ryS7JVkPAM/Qdx3ta20=
-X-Google-Smtp-Source: AGHT+IGaaDO3YVXqZI6iELV8/LOtGxjLYb6+FlxKhT4QZJSL0KbR4UQseJ8xjs+4CBrXQw0L7MIhbZIugmVDrByK6corfJLZHVNH
+        bh=ED5hrp2kgt2dd8xV3Z1fC0SU7DMXRbtJN8k9vIkCfGI=;
+        b=L4bouc6ud3cDkD8Tvs0mrXYTy7kQl8UBdK+sm4BjyLd2/j4dyWGfGdP6OlFvsyX/cQ
+         yxtSW6ENJbveTL9rAMDJEuNpuczrA8+ePXNHxmVuorQp07DYpc2hXqaTL+FOoojX9hZO
+         GOVYg3yBItuzqpU4p3EiU5DbosRNHVmiUmH0zOT573e7UEIgnConC7892NmjC3aJnHf6
+         5bPq7jWs3LURNOybmo7J2opYpRFhGZ914L7XOFclXdmuV3o8o4ZVFdIA9+QeY1ZzNJ//
+         LCR3a60r4RcPFZQPXD4Bh2Qmgt4v36/lVjV6FI7WzyZHdDnCZAhpOEkcLRtIE6BbIwZL
+         oJiA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6O2FI+fFjF8x7oN4ACSGK1kc7EG0QngbFMlQ1LBdKMDX6B5mWDfiilUqVN7sYIXjyl2U1rUvwzQ==@vger.kernel.org, AJvYcCXa3BMdrvyV5v0/wTqNDS1JoLAKyCBEK+3ap1xfiR/8Kflvvvao2AECW/HcishmeUOOwyqPRWGp0BKJRRmr@vger.kernel.org
+X-Gm-Message-State: AOJu0YymVOPePWh4OUqW0N/zhdPAO7yqIhunzpZS/aQSc97Ll/K8XA2T
+	kDlK/Ei00npwwWtw+ANk1fJ7C0H9NJj9iSgqbFFM/6tnE4adjU1A2EdvEw==
+X-Gm-Gg: ASbGncsNNTcbWsbfcLUnRaRkHbgYZ0iE5IjYNWOcucwepouIuD4RsBvjsoGQN4qXvj/
+	zfs74fQtbLzFTw6LIon+8A/RSw1PQP6MB5uznBQKTP18QymD3DoEEQAT5NqClJVlPGlYllU/uTD
+	7gMWVwGmr0dmcrGKG5DKE/6qMWQp3qjaR4Ci4wlZIYNQBC8X8ybAuY1i230Fd62KRvviWB/KZRM
+	FAtOhQksk+bI37MG8heKsfdo+AMOe5ju0GDT7oL7qUiiQ7yhSn1eBWgg1bUNo7YZQk=
+X-Google-Smtp-Source: AGHT+IGuSK2rW46YEXzDTA50F+TrXwFJ2X3gZtjBu9Q5sloS3kAV1HVs7/ZUWG9+rrK7foKVs6DtFg==
+X-Received: by 2002:a05:6402:2786:b0:5d0:d183:cc05 with SMTP id 4fb4d7f45d1cf-5d4e8f65a64mr665041a12.5.1734002446178;
+        Thu, 12 Dec 2024 03:20:46 -0800 (PST)
+Received: from [192.168.42.68] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3df02f416sm7461599a12.8.2024.12.12.03.20.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 03:20:45 -0800 (PST)
+Message-ID: <54192dd9-d4e6-49ba-82b4-01710d9f7925@gmail.com>
+Date: Thu, 12 Dec 2024 11:21:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d8f:b0:3a7:a553:72f with SMTP id
- e9e14a558f8ab-3ac4b436698mr22783755ab.18.1734002463268; Thu, 12 Dec 2024
- 03:21:03 -0800 (PST)
-Date: Thu, 12 Dec 2024 03:21:03 -0800
-In-Reply-To: <PUZPR04MB631619A22F03DDBDC97905DD813F2@PUZPR04MB6316.apcprd04.prod.outlook.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675ac71f.050a0220.20c8bc.0002.GAE@google.com>
-Subject: Re: [syzbot] [lsm?] [integrity?] KMSAN: uninit-value in
- ima_add_template_entry (2)
-From: syzbot <syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com>
-To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	roberto.sassu@huawei.com, roberto.sassu@huaweicloud.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org, yuezhang.mo@sony.com, 
-	zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [io-uring] use-after-free in io_cqring_wait
+To: chase xd <sl1589472800@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CADZouDQ7TcKn8gz8_efnyAEp1JvU1ktRk8PWz-tO0FXUoh8VGQ@mail.gmail.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <CADZouDQ7TcKn8gz8_efnyAEp1JvU1ktRk8PWz-tO0FXUoh8VGQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 12/12/24 10:08, chase xd wrote:
+> Syzkaller hit 'KASAN: use-after-free Read in io_cqring_wait' bug.
+> 
+> ==================================================================
+> BUG: KASAN: use-after-free in io_cqring_wait+0x16bc/0x1780
+> io_uring/io_uring.c:2630
+> Read of size 4 at addr ffff88807d128008 by task syz-executor994/8389
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+So kernel reads CQ head/tail and get a UAF. The ring was allocated
+while resizing rings and was also deleted while resizing rings, but
+those could be different resize attempts.
 
-Reported-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
-Tested-by: syzbot+91ae49e1c1a2634d20c0@syzkaller.appspotmail.com
+Jens, considering the lack of locking on the normal waiting path,
+while swapping rings what prevents waiters from seeing an old ring?
+I'd assume that's the problem at hand.
 
-Tested on:
+-- 
+Pavel Begunkov
 
-commit:         231825b2 Revert "unicode: Don't special case ignorable..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b56cdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d5bd2f63a4859d
-dashboard link: https://syzkaller.appspot.com/bug?extid=91ae49e1c1a2634d20c0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=133e6cdf980000
-
-Note: testing is done by a robot and is best-effort only.
 
