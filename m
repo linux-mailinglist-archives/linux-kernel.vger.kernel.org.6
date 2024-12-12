@@ -1,304 +1,119 @@
-Return-Path: <linux-kernel+bounces-442990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBBB9EE518
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:32:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88BA2188718A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:32:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4360E211A29;
-	Thu, 12 Dec 2024 11:32:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 453159EE51B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:33:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCAB211A1D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03694282B73
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:33:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E63211702;
+	Thu, 12 Dec 2024 11:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dk4cN6NT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F10290F;
+	Thu, 12 Dec 2024 11:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734003150; cv=none; b=hSL8t+uIefRaHMXziFPSypZ2LEytX0jq7/FD31CRw3Tkf6E8LKKlASekTGIBCn+vS1yKKYcRrl2y0rhTakz6KuWNZYo9oapIA3IrmQAVQtJ1ndO9yRucd1wDvf+0zgsgL8aybrVGOaZaPYBP812sgyHR6SwF5E/gso8jCNaW3r0=
+	t=1734003192; cv=none; b=D1WhYIxdTZoHNbzk7Dritcxd2cOFkF9Lg+sFLntwx/QsCYaR/b7RJzUhmonk0H00AuKarFGuPde2s2vV5s9ZvKruC5ciaaWJCwm7FGkaJhG/8CCZmnvJQZ2LLW9UHVPXE4Ql7ChrHX5NvGZp06djURVSvZxk5ofOYwClzN6jlFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734003150; c=relaxed/simple;
-	bh=ZVAihSvgfQuty8ITI57swW//l7DPkKP5Slf6S0lJ0pA=;
+	s=arc-20240116; t=1734003192; c=relaxed/simple;
+	bh=bI+wKiXz+sjwrXGi9W8a7W5Mqy1BmYf1t3VdgNU8DeE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J1i4mdiBxRMKKGTAEF7m/Z/CwNE2JUCXBRG2wA7PPV2MhDHxtnyIs46SVWFFSuXfuRzPkvkT8JpiCfTvJkiYyXYh3czO7a4RQOnu6or8snen/lIV361sa2LifTRTmjxSPym7nc/J3w4NJbiPEK177ZsrIUGFhL9cUtXxMPsstNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tLhQC-0005QD-1I; Thu, 12 Dec 2024 12:31:56 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tLhQA-0031XP-1e;
-	Thu, 12 Dec 2024 12:31:55 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tLhQB-00COyC-0X;
-	Thu, 12 Dec 2024 12:31:55 +0100
-Date: Thu, 12 Dec 2024 12:31:55 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Pengfei Li <pengfei.li_1@nxp.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 2/2] thermal: imx91: Add support for i.MX91 thermal
- monitoring unit
-Message-ID: <20241212113155.wfbbmxcrtcefzuha@pengutronix.de>
-References: <20241210-imx91tmu-v2-0-5032aad4d88e@nxp.com>
- <20241210-imx91tmu-v2-2-5032aad4d88e@nxp.com>
- <20241211154622.f2jwwrqansk6il3o@pengutronix.de>
- <Z1m+O1UV4HD+7Rr2@lizhi-Precision-Tower-5810>
- <20241211185705.7b5uw26loobibzln@pengutronix.de>
- <Z1n4h/AxzthB0V9l@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YuriFMTmMCYGFY5vWEAAmAcYP+pCrUtAjc9sCyoDOD/qbWQmPXew66usHcENnAJP9w5Pj59ID1c34Ut0qmCDkPVuRb8RfGWjEh3W/oROo7JO5NAc/b+G+spRkoJtDHNQNiBKjiopUqJ7bfGUOWZ7sWh06TWtChSMM5Z8PRcL9WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dk4cN6NT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E3BC4CED4;
+	Thu, 12 Dec 2024 11:33:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734003192;
+	bh=bI+wKiXz+sjwrXGi9W8a7W5Mqy1BmYf1t3VdgNU8DeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dk4cN6NTIy2EYGlRKrBLcv8H25jiVzfMj+JOS+5UV3Q6EiSqkPEvqWwc4w7MMOylo
+	 o/DH1ZUOM8UkfVfIMd8gN+z5G39uY4kSPbqjN0lMevSrvzs2PdHwguxSMWXz9iotEZ
+	 fYn4pz+J2iIQ/1lgydd29BcI5TNCjOmJKnikWAt9Tb+fyCcnrx09XtDBlbChM335dM
+	 HrQdGVJx336iJSTYcIjD4CK6/EAgIbf4dbr84Bke5HKdqxBf6+R96Ui1nSMOOZ99y+
+	 Iq88KR0ONVsEbL9CB3TywJTtsVQQEYqAaO3jDnvPe+bz34WzQ4fbOIY+mH8/YUVutW
+	 48SY8Dk2mTf1w==
+Date: Thu, 12 Dec 2024 11:33:05 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 2/9] arm64/sysreg: Update ID_AA64ISAR3_EL1 to DDI0601
+ 2024-09
+Message-ID: <248dea18-bfad-4ec9-9a7d-5c87c7f48c84@sirena.org.uk>
+References: <20241203-arm64-2024-dpisa-v3-0-a6c78b1aa297@kernel.org>
+ <20241203-arm64-2024-dpisa-v3-2-a6c78b1aa297@kernel.org>
+ <20241210170953.GB16075@willie-the-truck>
+ <b859bdcd-7343-4d53-9f3a-f374deca725a@sirena.org.uk>
+ <20241211224015.GB17836@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cChPOZNdbKWWH8te"
+Content-Disposition: inline
+In-Reply-To: <20241211224015.GB17836@willie-the-truck>
+X-Cookie: All is fear in love and war.
+
+
+--cChPOZNdbKWWH8te
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z1n4h/AxzthB0V9l@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 24-12-11, Frank Li wrote:
-> On Wed, Dec 11, 2024 at 07:57:05PM +0100, Marco Felsch wrote:
-> > On 24-12-11, Frank Li wrote:
-> > > On Wed, Dec 11, 2024 at 04:46:22PM +0100, Marco Felsch wrote:
-> > > > On 24-12-10, Frank Li wrote:
-> > > > > From: Pengfei Li <pengfei.li_1@nxp.com>
-> > > > >
-> > > > > Introduce support for the i.MX91 thermal monitoring unit, which features a
-> > > > > single sensor for the CPU. The register layout differs from other chips,
-> > > > > necessitating the creation of a dedicated file for this.
-> > > > >
-> > > > > Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > > ---
-> > > > > change from v1 to v2
-> > > > > - use low case for hexvalue
-> > > > > - combine struct imx91_tmu and tmu_sensor
-> > > > > - simplify imx91_tmu_start() and imx91_tmu_enable()
-> > > > > - use s16 for imx91_tmu_get_temp(), which may negative value
-> > > > > - use reverse christmas tree style
-> > > > > - use run time pm
-> > > > > - use oneshot to sample temp
-> > > > > - register thermal zone after hardware init
-> > > > > ---
-> > > > >  drivers/thermal/Kconfig         |  10 ++
-> > > > >  drivers/thermal/Makefile        |   1 +
-> > > > >  drivers/thermal/imx91_thermal.c | 265 ++++++++++++++++++++++++++++++++++++++++
-> > > > >  3 files changed, 276 insertions(+)
-> > > > >
-> 
-> [...]
-> 
-> > > > > +	platform_set_drvdata(pdev, tmu);
-> > > > > +
-> > > > > +	/* disable the monitor during initialization */
-> > > > > +	imx91_tmu_enable(tmu, false);
-> > > > > +	imx91_tmu_start(tmu, false);
-> > > >
-> > > > No need to disable it here since both bits (ENABLE and START) are 0
-> > > > after a reset.
-> > >
-> > > Maybe uboot enable it. We can't depend on reset value without really set
-> > > hardware reset bit.
-> >
-> > So the module can't be rested e.g. by disabling module power? Having a
-> > dedicated reset mechanism would be much simpler instead of writing each
-> > reg-field to the default value.
-> 
-> Not all module can be power off individual. Normally, it should have sw
-> reset bit in controller. but I have not find it in this module.
-> 
-> >
-> > > > > +	ret = imx91_init_from_nvmem_cells(tmu);
-> > > > > +	if (ret) {
-> > > > > +		writel_relaxed(DEFAULT_TRIM1_CONFIG, tmu->base + TRIM1);
-> > > > > +		writel_relaxed(DEFAULT_TRIM2_CONFIG, tmu->base + TRIM2);
-> > > > 			^
-> > > > Can you please anwer if _relaxed API is sufficient? I don't know why you
-> > > > making use of the _relaxed API here anyway. We have only a few MMIO
-> > > > accesses here, so why can't we use the writel() instead? This applies to
-> > > > the whole driver.
-> > >
-> > > There are not big difference writel_relaxed() or writel() for this driver.
-> > > Just original owner pick one.
-> >
-> > NACK, the difference is that _relaxed() APIs don't guarantee the order
-> > the register access is done.
-> 
-> It is totally wrong. *_relexed() API can guarantee the register access
-> order. Only can't guarantee order with other memory. such as
-> 
-> 1 writel_related(A, 0)
-> 2. x = 3
-> 3 writel_related(B, 1)
-> 
-> Hardware/memory model, require B=1 must be after A=0, but not necessary
-> after x=3, that's means (2) x=3 may happen after 3.
-> 
-> if use writel(), guarantee 1, 2, 3 as order.  Here have not DMA involved.
-> So not any impact if (2) after (3).
-> 
-> Typically, only below case have to use writel().
-> 2 (update DMA descritpor), 3 start DMA,
-> 
-> Additional, writel() also can't guarantee register access is done!!!!
-> 
-> writel() just means you send a write command to bus. Not guarantee to reach
-> target module. typical case is
-> 
-> writel(A, 0);
-> udelay(1);
-> writel(A, 1);
-> 
-> The interval between A=1 and A=0 may less than 1us if timer have not use
-> MMIO register. (arm system counter).
-> 
-> In this driver, the only valuable benefit by using writel() instead of
-> writel_relexed() is "short function name".
+On Wed, Dec 11, 2024 at 10:40:15PM +0000, Will Deacon wrote:
+> On Tue, Dec 10, 2024 at 06:43:05PM +0000, Mark Brown wrote:
 
-You're right, I had to check the documentation once again. The _relaxed
-API is fine by me, thank you also for the clarification.
+> > Yes, the issues here are not technical ones.  Though there are some
+> > complications -  eg, IIRC the XML doesn't encode the signedness of
+> > fields like we do and there's areas where we've deliberately diverged.
+> > Given the amount of review I end up having to do of sysreg changes your
+> > reasoning is especially apparent to me.  I've passed this feedback on
+> > (again).
 
-> > > > > +	}
-> > > > > +
-> > > > > +	/* The typical conv clk is 4MHz, the output freq is 'rate / (div + 1)' */
-> > > > > +	rate = clk_get_rate(tmu->clk);
-> > > > > +	div = (rate / 4000000) - 1;
-> > > > > +	if (div > FIELD_GET(DIV_MASK, DIV_MASK))
-> > > > 			^
-> > > > This misuse the FIELD_GET() API. Instead please add a define e.g. DIV_MAX.
-> > >
-> > > I don't think so, It avoid define another macro DIV_MAX, which may miss
-> > > defined, the related marco should come from one source.
-> > >
-> > > For example:
-> > >
-> > > DIV_MASK is GENMASK(23, 16),  DIV_MAX is 256. But if hardware upgrade,
-> > > DIV_MASK to GENMASK(24, 16), DIV_MAX is quite easy to forget update it and
-> > > hard to find such mis-match when div value < 256.
-> >
-> > We not talking about "possible" other HW. For now it's just this one and
-> > using FIELD_GET() this way is seems odd, at least to me.
-> 
-> If you look implement of FIELD_GET()
-> (typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));, it will be
-> reasonable.
+> One thing we _could_ do is have a tool (in-tree) that takes two copies
+> of the sysreg file (i.e. before and after applying a diff) along with a
+> copy of the XML and, for the the new fields being added, shows how the
+> XML represents those compared to the diff. It should then be relatively
+> straightforward to flag the use of an unallocated encoding (like we had
+> here) and also things like assigning a field name to a RES0 region.
 
-I know the implementation and still IMHO it's not the correct usage at
-least to me. What's wrong is that a mask doesn't define the possible
-values for a reg-field, e.g. GENMASK(1, 0) could allow all values from 0
-to 3 but the HW may allow only 0 and 1.
+> So this wouldn't be generating the patches from the XML, but more like
+> using the XML as an oracle in a linter.
 
-> Hardware IP may update in future, bitwidth of field may expand.
+That'd be useful, yes - unfortunately I think that's still something I
+can't work on myself at the moment for the above mentioned non-technical
+reasons.
 
-Please see above.
+--cChPOZNdbKWWH8te
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > > > > +		return -EINVAL;
-> > > > 			^
-> > > > 		dev_err_probe()
-> > > > > +
-> > > > > +	/* Set divider value and enable divider */
-> > > > > +	writel_relaxed(DIV_EN | FIELD_PREP(DIV_MASK, div), tmu->base + REF_DIV);
-> > > > > +
-> > > > > +	/* Set max power up delay: 'Tpud(ms) = 0xFF * 1000 / 4000000' */
-> > > > > +	writel_relaxed(FIELD_PREP(PUDL_MASK, 100U), tmu->base + PUD_ST_CTRL);
-> > > > 		^
-> > > > You dont need to repeat the default value, so this line can be dropped.
-> > > >
-> > > > > +
-> > > > > +	/*
-> > > > > +	 * Set resolution mode
-> > > > > +	 * 00b - Conversion time = 0.59325 ms
-> > > > > +	 * 01b - Conversion time = 1.10525 ms
-> > > > > +	 * 10b - Conversion time = 2.12925 ms
-> > > > > +	 * 11b - Conversion time = 4.17725 ms
-> > > > > +	 */
-> > > > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x3), tmu->base + CTRL1_CLR);
-> > > > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x1), tmu->base + CTRL1_SET);
-> > > >
-> > > > Same here, you repeat the module default after reset, so please drop it.
-> > > >
-> > > > > +	writel_relaxed(CTRL1_MEAS_MODE_MASK, tmu->base + CTRL1_CLR);
-> > > > > +	writel_relaxed(FIELD_PREP(CTRL1_MEAS_MODE_MASK, CTRL1_MEAS_MODE_SINGLE),
-> > > > > +		       tmu->base + CTRL1_SET);
-> > > > > +
-> > > > > +	clk_disable_unprepare(tmu->clk);
-> > > >
-> > > > Drop this, and
-> > > >
-> > > > > +	pm_runtime_set_suspended(dev);
-> > > >
-> > > > replace this with: pm_runtime_set_active();
-> > >
-> > > No big difference, if set_active, we need add Enable TMU here. I can
-> > > change to set_active.
-> >
-> > You don't need to manually disable the clock, it would be done by the
-> > runtime-pm.
-> 
-> Yes, runtime-pm can disable clock, but it need align harware and run time
-> state before enable runtime pm.
-> 
-> There are two options
-> 1 disable all hardware resources and pm_runtime_set_suspended()
-> 2. enable all hardware resources and set_active()
+-----BEGIN PGP SIGNATURE-----
 
-I know.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdayfAACgkQJNaLcl1U
+h9Bo9wf8DjHXD65QAeLiB/WQD6MKK2q1vhHifOtaL+lp7nN90YodMEadPyi1bgC0
+7kGLdiSnfBrGie39QosDOpgsd8FrzTWBLbvr7eoAWBjuhNZlFmz0S1sMsZ5eESte
+qFb6DrYC1LG2RbGC6TUy+CUW8gxKmzVYlbES/17f1lrq3v1yH5QSKhZNu2o1uSIJ
+FneGYGH2H23/rX8qM+0QVZlRgiRkUN1AFmlZPOol5YpDCwgppQH4VBMoRgg/kKVs
+4tOIqWWuDBnQ0thBa4o7EeoN+qS7iHl7mEzTkbHxse7zMe+mg3Ffs8jgdtxN55In
+2Rt9VoKhAE5mbSmIlPhZUM08qgHkBA==
+=OGMy
+-----END PGP SIGNATURE-----
 
-> After algned, use runtime pm API to controller it.
-> 
-> I choose option1, you prefer option 2.
-
-I know this too and I'm fine with it albeit I would like option 2 more
-because:
- - based on pm-runtime API only
- - easier to enable autosuspend feature
-
-Regards,
-  Marco
-
-> Frank
-> >
-> > Regards,
-> >   Marco
-> >
-> >
-> [...]
-> > > > > +
-> > > > > +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
-> > > > > +MODULE_DESCRIPTION("i.MX91 Thermal Monitor Unit driver");
-> > > > > +MODULE_LICENSE("GPL");
-> > > > >
-> > > > > --
-> > > > > 2.34.1
-> > > > >
-> > > > >
-> > >
-> 
+--cChPOZNdbKWWH8te--
 
