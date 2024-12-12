@@ -1,295 +1,233 @@
-Return-Path: <linux-kernel+bounces-442928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFAD69EE41F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:30:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D98F9EE421
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BBB41889133
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:30:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5152D1889FDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F65210190;
-	Thu, 12 Dec 2024 10:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B41C211268;
+	Thu, 12 Dec 2024 10:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="immnlbY6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PYRMNLfd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/l91I6Tm";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PYRMNLfd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/l91I6Tm"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CE3211485
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9563610F2;
+	Thu, 12 Dec 2024 10:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733999424; cv=none; b=hoMwERPxvA6CLL7qj3txVQNejOQRIqiq5xszIwIIBHWpsgwkUICxbvK01Q0MthrN/V1fxvxp67vPzdDwWHBlfUFuV2d4VuTZoV/TnkzRky4Evt7rWeblMvbF17oAtp8nb8kGkxtTy9XhmonKlUhHqKvUqLatyO+UYkkPDFg2mRY=
+	t=1733999440; cv=none; b=Awf4vMycrO5a0sKegAMlcJiDsZq15hIPEmjR9gO0x6AhzkI7oJxYpTLTnYTMtDJZGkRXL8RO4GOpbgHTUQksR5DmrkPp+m1KRdnZzwI2edIxfusACauzMIxK0dUZkj+IfDuAkAgG5uGf8pWoiUX8V/ub8mwQNIRUAOsQk6IKQnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733999424; c=relaxed/simple;
-	bh=72mK5YZuf/pa2S7na61zkID7Ctc5PfzzpxCoHZZQgVM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UBP6TKrAbYVvdLdg1bT52wekEe3qgppIIUvs7gsVTFKhRNOPlqn0F0lEj1hnXnq93iiG/9HzVzUJDjYerGxe1uwSzHax1UV2pRYuPSAOGXHWfR3H0tguSgwjqXN9vQJAQPdrWMaTPeWSBKv2cRs22skH9/2yI0ZwQJnKDr79Hog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=immnlbY6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HN9Y7ELJ2Ns4Rm5BYxgEavxb6TgAru9gwwq/IhU09h4=; b=immnlbY6PP7BCotFnp8b2tmvuA
-	lLehE8Y3gUbsqkhcyTtyZkviulXSRY4kN1crEU5lrx536fL6VAjYxIURq8bt/dUF/gfJ7IVJmUGUt
-	GkTIRE/rHcAVvnr54a/gNC/33m87+pSFTAJQ9SxVVUlS91C+EwxTLcr6Ph8Xp0DRhJefDQnx4m6Jn
-	Dt7sqbTf76IMGbqzAxkMDc41xatxTYnVp0AGDOshxsru/qJTW65oS/1Ec+89kzLlvIL8WkYAFoPP1
-	3NPo93iKNFL3Wt8hp7FUJWJ9p4p1rjvGbjmymaqCZsc0sRcVh5WVakvuibTPTvfWMBdWKnWGYiIJe
-	GfNtARbw==;
-Received: from 54-240-197-238.amazon.com ([54.240.197.238] helo=freeip.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLgSR-000000050lo-2cnO;
-	Thu, 12 Dec 2024 10:30:11 +0000
-Message-ID: <10a4058d9a667ca7aef7e1862375c2da84ef53a3.camel@infradead.org>
-Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
- instead of RWX
-From: David Woodhouse <dwmw2@infradead.org>
-To: Nathan Chancellor <nathan@kernel.org>, "Ning, Hongyu"
-	 <hongyu.ning@linux.intel.com>
-Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>,  "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
- linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, Dave Young
- <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- jpoimboe@kernel.org, bsz@amazon.de
-Date: Thu, 12 Dec 2024 10:30:10 +0000
-In-Reply-To: <20241212014418.GA532802@ax162>
-References: <20241205153343.3275139-1-dwmw2@infradead.org>
-	 <20241205153343.3275139-14-dwmw2@infradead.org>
-	 <20241212014418.GA532802@ax162>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-U3V50r4KUyX/UkUvsdhO"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1733999440; c=relaxed/simple;
+	bh=JYIXVSkEKRUlowh48LuJjbTtvx4Cfw+mUDvsE1F6NVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VNNYosTEwKjnxmKyR4pt26F+xCqajqzANPX2wBIVKmcJlnNKJ5/BOgvqSRDRTvorxCD0ZvpZZ5C2xoRwXV8TCCBFQQy+9ge7SmptW0rwLTMrZbrUVXRR0xqUbdfpH13ulrt96r/bA+6n7MhrqIqgMqXzVwvJ6PH8CYnuTpBVo94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PYRMNLfd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/l91I6Tm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PYRMNLfd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/l91I6Tm; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BFEFD1F445;
+	Thu, 12 Dec 2024 10:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733999436; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jmt8yBQ6ShXzUXwOUOUaJoeXsGES/8ZDpWR5ho4hHYo=;
+	b=PYRMNLfdKfscC0/bLPF1b8/Ame8L0UPHp8QYarL3jTj17qYgByrJvLZXQkHqtSsqtpa1H1
+	7hpfD5VNQd9rY7DoSdD+inNJijGHegOZ42rgO6+LLNRmXvDqqOI4tlPVl2hqXg9bvg19OW
+	os8mAYjrm7+wP/y2Fyq9lIxxuWE0aWU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733999436;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jmt8yBQ6ShXzUXwOUOUaJoeXsGES/8ZDpWR5ho4hHYo=;
+	b=/l91I6TmfNc31FgmeVw/t2AcMmx8UBSqNkoYgmOUz400VQ06vYQaZzy8CHzhWuFnNeIAID
+	uKz/F/UZOA7JeiBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733999436; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jmt8yBQ6ShXzUXwOUOUaJoeXsGES/8ZDpWR5ho4hHYo=;
+	b=PYRMNLfdKfscC0/bLPF1b8/Ame8L0UPHp8QYarL3jTj17qYgByrJvLZXQkHqtSsqtpa1H1
+	7hpfD5VNQd9rY7DoSdD+inNJijGHegOZ42rgO6+LLNRmXvDqqOI4tlPVl2hqXg9bvg19OW
+	os8mAYjrm7+wP/y2Fyq9lIxxuWE0aWU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733999436;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=jmt8yBQ6ShXzUXwOUOUaJoeXsGES/8ZDpWR5ho4hHYo=;
+	b=/l91I6TmfNc31FgmeVw/t2AcMmx8UBSqNkoYgmOUz400VQ06vYQaZzy8CHzhWuFnNeIAID
+	uKz/F/UZOA7JeiBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AEB4D13939;
+	Thu, 12 Dec 2024 10:30:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rPW2KUy7WmdUIwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 12 Dec 2024 10:30:36 +0000
+Message-ID: <e683b73f-4bf3-47be-b08a-4fd2fe6adff5@suse.cz>
+Date: Thu, 12 Dec 2024 11:30:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v1 0/5] Move kvfree_rcu() into SLAB
+Content-Language: en-US
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+References: <20241210164035.3391747-1-urezki@gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20241210164035.3391747-1-urezki@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,kvack.org,linux-foundation.org];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
+On 12/10/24 17:40, Uladzislau Rezki (Sony) wrote:
+> Hello!
 
---=-U3V50r4KUyX/UkUvsdhO
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi and thanks!
 
-On Wed, 2024-12-11 at 18:44 -0700, Nathan Chancellor wrote:
-> Hi David,
->=20
-> On Thu, Dec 05, 2024 at 03:05:19PM +0000, David Woodhouse wrote:
-> > From: David Woodhouse <dwmw@amazon.co.uk>
-> >=20
-> > All writes to the page now happen before it gets marked as executable
-> > (or after it's already switched to the identmap page tables where it's
-> > OK to be RWX).
-> >=20
-> > Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> > ---
-> > =C2=A0 arch/x86/kernel/machine_kexec_64.c | 3 ++-
-> > =C2=A0 1 file changed, 2 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machi=
-ne_kexec_64.c
-> > index c9fd60f8f806..9232ad1562c8 100644
-> > --- a/arch/x86/kernel/machine_kexec_64.c
-> > +++ b/arch/x86/kernel/machine_kexec_64.c
-> > @@ -323,7 +323,7 @@ int machine_kexec_prepare(struct kimage *image)
-> > =C2=A0=20
-> > =C2=A0=C2=A0	__memcpy(control_page, __relocate_kernel_start, reloc_end =
-- reloc_start);
-> > =C2=A0=20
-> > -	set_memory_x((unsigned long)control_page, 1);
-> > +	set_memory_rox((unsigned long)control_page, 1);
-> > =C2=A0=20
-> > =C2=A0=C2=A0	return 0;
-> > =C2=A0 }
-> > @@ -333,6 +333,7 @@ void machine_kexec_cleanup(struct kimage *image)
-> > =C2=A0=C2=A0	void *control_page =3D page_address(image->control_code_pa=
-ge);
-> > =C2=A0=20
-> > =C2=A0=C2=A0	set_memory_nx((unsigned long)control_page, 1);
-> > +	set_memory_rw((unsigned long)control_page, 1);
-> > =C2=A0=20
-> > =C2=A0=C2=A0	free_transition_pgtable(image);
-> > =C2=A0 }
-> > --=20
-> > 2.47.0
-> >=20
->=20
-> I just bisected a change in behavior that I see in to this change in
-> -next as commit 5a82223e0743 ("x86/kexec: Mark relocate_kernel page as
-> ROX instead of RWX"). I usually kexec my machines by running:
->=20
-> =C2=A0 # kexec --load /boot/vmlinuz-linux --initrd /boot/initramfs-linux.=
-img --reuse-cmdline
->=20
-> =C2=A0 # systemctl kexec
->=20
-> to cleanly shutdown userspace then kexec into the new kernel after
-> installing it via the package manager. After this change, I get sent to
-> systemd-boot after running 'systemctl kexec', which selects the default
-> entry, my distribution kernel.
->=20
-> I just see:
->=20
-> =C2=A0 [=C2=A0 OK=C2=A0 ] Reached target Reboot via kexec.
-> =C2=A0 BdsDxe: loading Boot0007 "Linux Boot Manager" from HD(1,GPT,4B5AFD=
-80-5EC7-47FC-83EA-7EC88ACB15A7,0x800,0x200000)/\EFI\systemd\systemd-bootx64=
-.efi
-> =C2=A0 BdsDxe: starting Boot0007 "Linux Boot Manager" from HD(1,GPT,4B5AF=
-D80-5EC7-47FC-83EA-7EC88ACB15A7,0x800,0x200000)/\EFI\systemd\systemd-bootx6=
-4.efi
->=20
-> then the systemd-boot menu in QEMU when reproducing this there.
->=20
-> Is this expected? If not, I am happy to provide any information or test
-> patches as necessary.
+> This series is based on v6.12 kernel.
 
-No, definitely not expected. Thanks for the report. I'll see if I can
-reproduce it; please could you share your kernel .config?
+Could it be rebased to v6.13-rc1, which is a basis for most -next branches?
+Right now patch 5 doesn't apply on v6.13-rc1.
 
-Please could you also confirm that it still occurs if you don't use
-systemctl; for speed of testing I have mostly been booting my test
-kernel with no actual root file system; just an initrd which does
-'kexec -f' immediately.
+Please also Cc all slab maintainers/reviewers.
 
-Since you are running in QEMU, if you can reproduce with this patch to
-QEMU itself which should dump the CPU state on a triple-fault, it would
-be very useful please:
+> It is an attempt to move the kvfree_rcu()
+> into MM from the kernel/rcu/ place. I split the series into a few patches so it
+> is easier to follow a migration process.
 
---- a/accel/kvm/kvm-all.c
-+++ b/accel/kvm/kvm-all.c
-@@ -3133,6 +3133,7 @@ int kvm_cpu_exec(CPUState *cpu)
-             ret =3D EXCP_INTERRUPT;
-             break;
-         case KVM_EXIT_SHUTDOWN:
-+            cpu_dump_state(cpu, stderr, CPU_DUMP_CODE);
-             qemu_system_reset_request(SHUTDOWN_CAUSE_GUEST_RESET);
-             ret =3D EXCP_INTERRUPT;
-             break;
+I think this is not the best approach. The individual diffs are not easy to
+follow because they copy code or delete code separately, and not move it in
+a single commit. I get a much better overview when I diff the whole series
+against baseline, then git highlights pure moves and local changes nicely.
 
-If you get output from that, please also send the output of 'objdump -S
-arch/x86/kernel/relocate_kernel_64.o' to help interpret it.
+Having moves recorded properly would also make it possible for "git blame
+-C" to show changes that were made in the old file before the move, but with
+copy and deletion in separate commits it doesn't work.
+(but note it seems it doesn't work so great even if I squash everything to
+one patch - were the functions reodered?)
 
-Thanks.
+And with this approach you also need the temporary changes.
 
---=-U3V50r4KUyX/UkUvsdhO
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+What I think could work better is to do:
+- preparatory changes in the existing location
+  - splitting out kvfree_rcu_init() and calling separately in start_kernel()
+  - renaming shrinkers
+  - adjusting the names passed to trace_rcu_...()
+  - maybe even adding the CONFIG_TINY_RCU guards even if redundant
+- one big move of code between files, hopefully needing no or minimal
+adjustments after the preparatory steps
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMjEyMTAzMDEwWjAvBgkqhkiG9w0BCQQxIgQgdzgdBGtQ
-4FNZ3fhyG/7GlGtYCC9Gm82QsGw946h0k3wwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCpDHiZ9XHsriZYfQ1SO9PqOfipTZmXIG/A
-HVhs/q2MVnORoc80D+UbpXBgapT38Klz84wju8ZsBX72o5v/LiDUwq1/i4YW7bSiYeajxgAolsoi
-kAYHYvIOub05v+z8wms6FIGiLnpqXY9GMRcPOeZ955ZH7ERrLRheAifF5uTuNntgk81AGc1xYcWD
-bIZWSEXtghxgkUDSP+hcAmmYNB0DA+H+0TqrSQtNUFa29DOWPUYPVWboS3M1PaghoxWn6sDHPYtu
-2JNZj/+QIm61roZV9uLylsZbDaO/Ux4tVaMWMDryKDU863H6mbH1QkgfdC2Mez2G+wVQp1huNrsk
-7KqFXVGQGYarLrKZdssyOWk9FUngazRsJS6daWhPJS1G/hNhggGENX/l+8RM1HkgU/spE0tq6CEg
-Sgry2RZH7WEizbBrvaM7jKE9bIptpnRYdV8luFazIWuFDzRWjRqcFXMtO1/AnvQX0ikVgt7v7cEK
-onpmYm0yqA+Q4YjGgSJmsBi4CG0DxMn5qqpPzz2K2P5BYYqzwhVVOT1hXrtxAMqQFWVXQU4cCg3g
-oxSetJh6uuHBoBkSQUlWZWPKy0xZZHNJSfJI6SkTr3z4/uR9seV18QEMQgK9KDikOftG0tgkZeqg
-p4hfUzw53wRLzRvKpECyUjdvrLNWDMxt5lH+X+ix2QAAAAAAAA==
+Makes sense?
 
+Thanks,
+Vlastimil
 
---=-U3V50r4KUyX/UkUvsdhO--
+> As a result of this series, the main functionality is located under MM.
+> 
+> Uladzislau Rezki (Sony) (5):
+>   rcu/kvfree: Temporary reclaim over call_rcu()
+>   mm/slab: Copy main data structures of kvfree_rcu()
+>   mm/slab: Copy internal functions of kvfree_rcu()
+>   mm/slab: Copy a function of kvfree_rcu() initialization
+>   mm/slab: Move kvfree_rcu() into SLAB
+> 
+>  include/linux/slab.h |   1 +
+>  init/main.c          |   1 +
+>  kernel/rcu/tree.c    | 866 ------------------------------------------
+>  mm/slab_common.c     | 875 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 877 insertions(+), 866 deletions(-)
+> 
+
 
