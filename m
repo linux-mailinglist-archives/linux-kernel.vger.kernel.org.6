@@ -1,120 +1,236 @@
-Return-Path: <linux-kernel+bounces-443189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3438F9EE893
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:16:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C0F9EE87E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD411889007
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:16:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27BB5164507
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B666213E92;
-	Thu, 12 Dec 2024 14:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BDA21516C;
+	Thu, 12 Dec 2024 14:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="SsxpPxyj"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ls8wYXeN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B9A8837;
-	Thu, 12 Dec 2024 14:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9772147E5;
+	Thu, 12 Dec 2024 14:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734012968; cv=none; b=QYJvP6giwOWqSv0FwNT+pVB0xsxhkkuKdpaBXKp9vvr71SjkSTXKn59bxBDIoQb9g7TICsuW1w4MzsoJwr3ViwmJfcDuIleCQNdubsbntT1oXiZ7W1i/K7BLQl1oTBX6Enm33wIqZRJW3cPRw2Onv2JwJu6LrjHBGhlWD5r/0xw=
+	t=1734012683; cv=none; b=HbGkFMUxZdRqucvCqKku2Raf3k/vWPfugQapjrLA0gbCV4yx+KbS/aMJSRQYww0aOsZPLoTUQ/bnfrHltIlrw+afEdhKt4DqfSqhnflE9oI90THeMtlc1SsLMA2sGigesf3AFeMCaeLidz+G7QlKgUtCZhBcknZ0FLcnoY8Emfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734012968; c=relaxed/simple;
-	bh=088IuPWRDgUJCH0ISxjtKh5CPwEuOvZyXEosCcA4Rag=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WS/8Ba08ItP5BFGqI2wVcir9oxYI4AtYsWSplEi5xj6HcSB+9BpqkOCYkG4xfW3RKg/DsQG12q7J6BId6TR1+RdXpTvrTnwPKc4fBRpMNaYbf8FrhFj8HPQe3DTsL6JJRAGSz9izaX9ce3PI9LBCBAcTKI4h/jzshSQfyvgMdBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=SsxpPxyj; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id BF82B1F93C;
-	Thu, 12 Dec 2024 15:10:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1734012608;
-	bh=i4gRg92u7heNhpg6vOJodZ+D+uvY+K7mBytkbzc1ihE=; h=From:To:Subject;
-	b=SsxpPxyjcrFcPL6GJbAWr7SkbjA2mgIgBDNV7DIZflXRkx+I7LMuOxUnUZalkOSB3
-	 XZmQls6x+Wih8xfI0T+xNWN13TqjZ82S72idyiFNajWeU0R5YI74RVL5HSufnBz9Zl
-	 jrz0iA26EcpACwydg1+T/okRaMJ45ETJq74ZsU3gjAKTo2+QnJsbB0BJUvqMpTrt2j
-	 5/YwGAt1h+qlt2mCL/vRGs2H3fjZ/sHiQXb4wmhgj3KOgxB0ULyADVqFbO9/yW8Iuz
-	 Jf4jmOcMJoRjtpvdYV1sSh6sam+Ub+SU+4te43N+Q6ko5IJYYfa0bl60+4fscPB9Sw
-	 u/a5cVflb2osw==
-Date: Thu, 12 Dec 2024 15:10:03 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: linux-pm@vger.kernel.org, imx@lists.linux.dev
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Marek Vasut <marex@denx.de>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>
-Subject: imx8m-blk-ctrl: WARNING, no release() function
-Message-ID: <20241212141003.GA44219@francesco-nb>
+	s=arc-20240116; t=1734012683; c=relaxed/simple;
+	bh=3EpobGzETERsdulpRcIj2Hv8kaV36PySw0jBWYiwdzc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bThFDENG7lRPzAh2Idpy0PgDbqSbTlOJcImujfAQuTECnO5hgevBvuPTFPSluDxrfq+OyQf2AxSXs9AW6KMAlJrHQ08vIVXHpxO6U6PqELPSvXU66l8LKRC/5/TpCmw+cw4DD7hdo9VESJ5QBzByaR6qHjkydBuY+eJ6PYiS6LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ls8wYXeN; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734012682; x=1765548682;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=3EpobGzETERsdulpRcIj2Hv8kaV36PySw0jBWYiwdzc=;
+  b=ls8wYXeNgj9Gd9IksxujxIndfIA6z5pdUis3wklKon5dr36BBLnYiM0i
+   kj/YFdoEy/kvUor062osFfihGCtio1je57u/jstZ5RSmHlMDPy0KD8CSU
+   2muy+dtNRjp0KFd+ooGe9cSGrZIRSekxUIl4hjq5UfP1eerD9bZVmIs8P
+   +h4xOJKkzTBdJfVHDkUtYkMIBplejsVLTFs5KTyKaoMezvdZ4UeI/m+hk
+   jN00jWgkIKOrSp9nBxQXVVp4Exu8aZUSxuBkRFdz4vOL9lSF6LEi4RcQl
+   AaCWGzMzWSf2sQrssjo10W/94CYskmc8+Oz5BGcC/m2g5MAjGb4KmNJAw
+   g==;
+X-CSE-ConnectionGUID: rO5sg6+aSJKe0A5FZ3gNPA==
+X-CSE-MsgGUID: NH642JiBSjiTLmWY0Wsx/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="59825884"
+X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
+   d="scan'208";a="59825884"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 06:11:19 -0800
+X-CSE-ConnectionGUID: QNTSIgtDQDyX4HtVGrz/vw==
+X-CSE-MsgGUID: B1hx+sobQCS9mIHqveTbNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="127228595"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.137])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 06:11:13 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 12 Dec 2024 16:11:10 +0200 (EET)
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+    Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>
+Subject: Re: [PATCH v10 00/22] Add support for binding ACPI platform profile
+ to multiple drivers
+In-Reply-To: <CAJZ5v0hoD9ZBvsbE4bvfgJc09ijAY421vNngCYaz3qy-Cg2bdw@mail.gmail.com>
+Message-ID: <5cae1882-b7c2-9621-e732-336c893e017d@linux.intel.com>
+References: <20241206031918.1537-1-mario.limonciello@amd.com> <a34c7648-02cb-76e9-53f4-e54003c98ecb@linux.intel.com> <CAJZ5v0hoD9ZBvsbE4bvfgJc09ijAY421vNngCYaz3qy-Cg2bdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: multipart/mixed; boundary="8323328-126186957-1734012670=:936"
 
-Hello,
-on v6.13-rc2 (PREEMPT_RT, if it matters), I have the following warning
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-[    4.615793] ------------[ cut here ]------------
-[    4.615814] Device 'mediablk-mipi-csi2-1' does not have a release() function, it is broken and must be fixed. See Documentation/core-api/kobject.rst.
-[    4.618977] WARNING: CPU: 1 PID: 11 at /drivers/base/core.c:2569 device_release+0x80/0x94
-[    4.638974] Modules linked in: ecdh_generic ecc etnaviv(+) rfkill libaes samsung_dsim gpu_sched imx_sdma(+) governor_userspace imx_bus dwc3_imx8mp spi_nxp_fspi lontium_lt8912b ina2xx snd_soc_wm8904 ti_ads1015 industrialio_triggered_buffer kfifo_buf lm75 snvs_pwrkey pwm_imx27 nvmem_snvs_lpgpr imx8mm_thermal caam flexcan error can_dev spi_imx usb_conn_gpio display_connector roles gpio_keys fuse ipv6 autofs4
-[    4.639073] CPU: 1 UID: 0 PID: 11 Comm: kworker/u16:0 Not tainted 6.13.0-rc2-0.0.0-devel-00040-ga1625b19385c #1
-[    4.639082] Hardware name: Toradex Verdin iMX8M Plus WB on Dahlia Board (DT)
-[    4.639087] Workqueue: events_unbound deferred_probe_work_func
-[    4.639099] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    4.639107] pc : device_release+0x80/0x94
-[    4.639116] lr : device_release+0x80/0x94
-[    4.639122] sp : ffff80008142b910
-[    4.639125] x29: ffff80008142b910 x28: 00000000fffffdfb x27: ffff000005c92180
-[    4.639137] x26: ffff000000018028 x25: ffff000000046dc0 x24: ffff800080c43710
-[    4.639147] x23: 0000000100000001 x22: 0000000000000000 x21: ffff800080e43750
-[    4.639158] x20: 0000000000000000 x19: ffff000007cb06d8 x18: 0000000000000006
-[    4.639168] x17: 0000000000000001 x16: 0000000000000000 x15: 0000000000000002
-[    4.639179] x14: 0000000000001400 x13: ffff0000000a9110 x12: 0000000000225510
-[    4.639190] x11: 0000000000000000 x10: 00000000000009c0 x9 : ffff80008142b790
-[    4.639200] x8 : ffff00000013bba0 x7 : 000000000000002d x6 : 000000000113158e
-[    4.639210] x5 : 00000001134e0800 x4 : 0000000000000002 x3 : ffff000003b04c50
-[    4.639221] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff00000013b180
-[    4.639231] Call trace:
-[    4.639235]  device_release+0x80/0x94 (P)
-[    4.639245]  device_release+0x80/0x94 (L)
-[    4.639253]  kobject_put+0xb0/0x214
-[    4.639264]  put_device+0x14/0x24
-[    4.639272]  genpd_remove+0x114/0x248
-[    4.639281]  pm_genpd_remove+0x30/0x58
-[    4.639288]  imx8m_blk_ctrl_probe+0x36c/0x540
-[    4.639299]  platform_probe+0x68/0xdc
-[    4.639308]  really_probe+0xc0/0x39c
-[    4.639315]  __driver_probe_device+0x7c/0x14c
-[    4.639322]  driver_probe_device+0x3c/0x120
-[    4.639329]  __device_attach_driver+0xbc/0x160
-[    4.639336]  bus_for_each_drv+0x88/0xe8
-[    4.639346]  __device_attach+0xa0/0x1b4
-[    4.639353]  device_initial_probe+0x14/0x20
-[    4.639360]  bus_probe_device+0xb0/0xbc
-[    4.639366]  deferred_probe_work_func+0xa0/0xf0
-[    4.639373]  process_one_work+0x148/0x284
-[    4.639383]  worker_thread+0x2d0/0x3e4
-[    4.639391]  kthread+0x110/0x114
-[    4.639399]  ret_from_fork+0x10/0x20
-[    4.639409] ---[ end trace 0000000000000000 ]---
+--8323328-126186957-1734012670=:936
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-and more for other devices, from the same driver.
+On Tue, 10 Dec 2024, Rafael J. Wysocki wrote:
 
-Just reporting for the moment, in case someone has some ideas or wants to
-have a look.
+> Hi Ilpo,
+>=20
+> On Tue, Dec 10, 2024 at 6:30=E2=80=AFPM Ilpo J=C3=A4rvinen
+> <ilpo.jarvinen@linux.intel.com> wrote:
+> >
+> > Hi Rafael,
+> >
+> > This series seems ready and Mario has requested it to be merged through
+> > platform drivers tree despite majority of changes touching
+> > drivers/acpi/platform_profile.c because its API relates to many pdx86
+> > drivers.
+> >
+> > Is that fine with you?
+>=20
+> Yes, it is, thanks!
 
-Francesco
+Thanks all.
 
+The series has been applied into pdx86/platform-drivers-x86-platform-profil=
+e=20
+and then merged into the for-next branch.
+
+--=20
+ i.
+
+
+> > On Thu, 5 Dec 2024, Mario Limonciello wrote:
+> >
+> > > Currently there are a number of ASUS products on the market that happ=
+en to
+> > > have ACPI objects for amd-pmf to bind to as well as an ACPI platform
+> > > profile provided by asus-wmi.
+> > >
+> > > The ACPI platform profile support created by amd-pmf on these ASUS
+> > > products is "Function 9" which is specifically for "BIOS or EC
+> > > notification" of power slider position. This feature is actively used
+> > > by some designs such as Framework 13 and Framework 16.
+> > >
+> > > On these ASUS designs we keep on quirking more and more of them to tu=
+rn
+> > > off this notification so that asus-wmi can bind.
+> > >
+> > > This however isn't how Windows works.  "Multiple" things are notified=
+ for
+> > > the power slider position. This series adjusts Linux to behave simila=
+rly.
+> > >
+> > > Multiple drivers can now register an ACPI platform profile and will r=
+eact
+> > > to set requests.
+> > >
+> > > To avoid chaos, only positions that are common to both drivers are
+> > > accepted when the legacy /sys/firmware/acpi/platform_profile interfac=
+e
+> > > is used.
+> > >
+> > > This series also adds a new concept of a "custom" profile.  This allo=
+ws
+> > > userspace to discover that there are multiple driver handlers that ar=
+e
+> > > configured differently.
+> > >
+> > > This series also allows dropping all of the PMF quirks from amd-pmf.
+> > >
+> > > NOTE: Although this series changes code in acpi platform profile, I t=
+hink
+> > >       it is better to go through the platform-x86 tree as more driver=
+s can
+> > >       be introduced during the kernel cycle and should make the chang=
+es to
+> > >       support class interface when merging.
+> > >
+> > > v10:
+> > >  * Whitespace changes
+> > >  * Documentation update for custom in a single driver
+> > >
+> > > Mario Limonciello (22):
+> > >   ACPI: platform-profile: Add a name member to handlers
+> > >   platform/x86/dell: dell-pc: Create platform device
+> > >   ACPI: platform_profile: Add device pointer into platform profile
+> > >     handler
+> > >   ACPI: platform_profile: Add platform handler argument to
+> > >     platform_profile_remove()
+> > >   ACPI: platform_profile: Pass the profile handler into
+> > >     platform_profile_notify()
+> > >   ACPI: platform_profile: Move sanity check out of the mutex
+> > >   ACPI: platform_profile: Move matching string for new profile out of
+> > >     mutex
+> > >   ACPI: platform_profile: Use guard(mutex) for register/unregister
+> > >   ACPI: platform_profile: Use `scoped_cond_guard`
+> > >   ACPI: platform_profile: Create class for ACPI platform profile
+> > >   ACPI: platform_profile: Add name attribute to class interface
+> > >   ACPI: platform_profile: Add choices attribute for class interface
+> > >   ACPI: platform_profile: Add profile attribute for class interface
+> > >   ACPI: platform_profile: Notify change events on register and
+> > >     unregister
+> > >   ACPI: platform_profile: Only show profiles common for all handlers
+> > >   ACPI: platform_profile: Add concept of a "custom" profile
+> > >   ACPI: platform_profile: Make sure all profile handlers agree on
+> > >     profile
+> > >   ACPI: platform_profile: Check all profile handler to calculate next
+> > >   ACPI: platform_profile: Notify class device from
+> > >     platform_profile_notify()
+> > >   ACPI: platform_profile: Allow multiple handlers
+> > >   platform/x86/amd: pmf: Drop all quirks
+> > >   Documentation: Add documentation about class interface for platform
+> > >     profiles
+> > >
+> > >  .../ABI/testing/sysfs-platform_profile        |   5 +
+> > >  .../userspace-api/sysfs-platform_profile.rst  |  38 ++
+> > >  drivers/acpi/platform_profile.c               | 534 ++++++++++++++--=
+--
+> > >  .../surface/surface_platform_profile.c        |   8 +-
+> > >  drivers/platform/x86/acer-wmi.c               |  12 +-
+> > >  drivers/platform/x86/amd/pmf/Makefile         |   2 +-
+> > >  drivers/platform/x86/amd/pmf/core.c           |   1 -
+> > >  drivers/platform/x86/amd/pmf/pmf-quirks.c     |  66 ---
+> > >  drivers/platform/x86/amd/pmf/pmf.h            |   3 -
+> > >  drivers/platform/x86/amd/pmf/sps.c            |   4 +-
+> > >  drivers/platform/x86/asus-wmi.c               |   8 +-
+> > >  drivers/platform/x86/dell/alienware-wmi.c     |   8 +-
+> > >  drivers/platform/x86/dell/dell-pc.c           |  38 +-
+> > >  drivers/platform/x86/hp/hp-wmi.c              |   8 +-
+> > >  drivers/platform/x86/ideapad-laptop.c         |   6 +-
+> > >  .../platform/x86/inspur_platform_profile.c    |   7 +-
+> > >  drivers/platform/x86/thinkpad_acpi.c          |  16 +-
+> > >  include/linux/platform_profile.h              |   9 +-
+> > >  18 files changed, 559 insertions(+), 214 deletions(-)
+> > >  delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+> >
+> > --
+> >  i.
+> >
+>=20
+--8323328-126186957-1734012670=:936--
 
