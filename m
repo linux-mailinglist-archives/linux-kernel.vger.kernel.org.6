@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-443759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029869EFB7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:50:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F2A9EFB85
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:51:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B87AF28C31E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E4F516DFB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3E519F12A;
-	Thu, 12 Dec 2024 18:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5000E1D79B3;
+	Thu, 12 Dec 2024 18:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BSmgTCe4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GqAM9maM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E3E188917;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AB318FDAE;
 	Thu, 12 Dec 2024 18:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734029400; cv=none; b=aQlWnpwk6mb21SCWCDKu86Rffc9G4EsmG09z3TUPyN15MunTvc2D8pjkUOss6cY6is/uyd6V1f6eBu16UDIK8hCwUsw2s2m2wPprF2GlJI/+wXC1dy6CAcCU2Ve5ScJocN75fCe8Nvhcl2BiR5NS/3EB5+r6ag0YOccPjCkG5fg=
+	t=1734029400; cv=none; b=SfzAmXsZN2gnc2PbWjV9Evq99vpt/lmJSPwUFW+vlKB1GvnaRaj5f45qgtmbJFHg+5ZjO83VkGjkArfO+ubCd+BJvdo6UpoTD5v8dEsfBs6cWbarhjOccejcg0I8xkS89+t8IIEY9B6BkZ7vOGqmANN4gRWt+rXiU285I2yvVhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734029400; c=relaxed/simple;
-	bh=IJpDFL43PIQmlzhvMZy0oiR7KUJoDwLh5SiwYaWUY+w=;
+	bh=adrjhc2ILHgU48wVpxpLwqAyC/ZoOex7BnPn/Un6C5E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Iv6yAVyRWkeNwT7zMv8mOhNLBzCnx9WX/NoeO53Ay2KaIAE4aaDqLJkBfa2TRlzoRUhsp4xVj0p2ahjPVJ6Mn17r9YphKu3apmSAugvZn6LkpXsBDTgDCAUFy6H2MO6rA0MvwbJj74fB4Mus6d44Jv3qpVvXd3wLduRRi1q2tsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BSmgTCe4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44385C4CEDF;
+	 MIME-Version; b=OcYTE3mBv8rC58ffe3pvVljlOUgAf85kVwSenr3CWWkDm9tt1BZV5+xn70l+tPbgC9UCx9W8Y1olU6ILftGEbFs3PDObioL9U48RozKZ8UNZpEIGhCeJJPMUhz1k/x+22azSshfU5Vh/X6lSWAWn6z3xWwisjflwMNdw9sqaF0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GqAM9maM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A949C4CEE2;
 	Thu, 12 Dec 2024 18:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1734029400;
-	bh=IJpDFL43PIQmlzhvMZy0oiR7KUJoDwLh5SiwYaWUY+w=;
+	bh=adrjhc2ILHgU48wVpxpLwqAyC/ZoOex7BnPn/Un6C5E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BSmgTCe4n0fzdRLwPi6TKwobUHvr3OhUpM9EWO2D+CMDbHbQMSfKsw4NdWwvnXbYE
-	 RVlxNvEY2wt1ExjUdYiqjoS0qcVVmphmzytp7cT+dWlagxjlu7OCrUzE7Knu9Pq1kD
-	 6yKepJ7ceIlL1H8NjvVGtAdo5pX/aJwoBUIoZPVumWr1xYam2rBub5lU0yyboFC03H
-	 RWLRDeOCKLAFpNU/GeN20E2tQ4ivieYejSuPNFZrWxuiMqsOYsqUHkYYUb+dSGjAXA
-	 vxsTR8/2uVEF7aFpPCw5lfbW1sqkUtbC4Z1CCliMb38Ss096i0JKzOI2hcB79jDyoV
-	 qWoMoELAoPs3g==
+	b=GqAM9maMtgdw/iWHO9uplPO19rCifURb+ZFX+vgqWIlxHmjArDass905WAndJpBLT
+	 33X4BSLWG908H+ggzo/dokp23ipi5Ad3CFisTGvzDB/U+7WDQOq/Y2bCOWrJKwj6PU
+	 AIOJnEL7QhRSrN+7mdQf7e4feKTfcXuvjFjuWXUg42loXStBhz2XIDmJaVZLkCB99o
+	 1rnsFM6UEsF/AFRTtKFz4vbr6dNaNLwcLbnH8LSznpfeuyuTjIq2K/jqE1CWoeTFgX
+	 9LWwyIJVef0x3IpIkmlCCp3gWL974A5V03jl7EHykIuZUkkA8Z6lOyC0TKnT3+eDMC
+	 WH41bf6MO8QvA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id BF26BCE0FA8; Thu, 12 Dec 2024 10:49:59 -0800 (PST)
+	id C2303CE0FF1; Thu, 12 Dec 2024 10:49:59 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 05/18] rcutorture: Use finer-grained timeouts for rcu_torture_writer() polling
-Date: Thu, 12 Dec 2024 10:49:44 -0800
-Message-Id: <20241212184957.2127441-5-paulmck@kernel.org>
+Subject: [PATCH rcu 06/18] rcutorture: Add ->cond_sync_exp_full function to rcu_ops structure
+Date: Thu, 12 Dec 2024 10:49:45 -0800
+Message-Id: <20241212184957.2127441-6-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <62e4d9a4-18ad-49b3-9656-23e17b78033f@paulmck-laptop>
 References: <62e4d9a4-18ad-49b3-9656-23e17b78033f@paulmck-laptop>
@@ -62,67 +62,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The rcu_torture_writer() polling currently uses timeouts ranging from
-zero to 16 milliseconds to wait for the polled grace period to end.
-This works, but it would be better to have a higher probability of
-exercising races with the code that cleans up after a grace period.
-This commit therefore switches from these millisecond-scale timeouts
-to timeouts ranging from zero to 128 microseconds, and with a full
-microsecond's worth of timeout fuzz.
+The rcu_ops structure currently lacks a ->cond_sync_exp_full function,
+which prevents testign of conditional full-state polled grace periods.
+This commit therefore adds them, enabling testing this option.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ kernel/rcu/rcutorture.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 0bc6fc5822153..6067f2740247d 100644
+index 6067f2740247d..658ac46581d81 100644
 --- a/kernel/rcu/rcutorture.c
 +++ b/kernel/rcu/rcutorture.c
-@@ -1561,8 +1561,8 @@ rcu_torture_writer(void *arg)
- 							break;
- 						}
- 					WARN_ON_ONCE(ulo_size > 0 && i >= ulo_size);
--					torture_hrtimeout_jiffies(torture_random(&rand) % 16,
--								  &rand);
-+					torture_hrtimeout_us(torture_random(&rand) % 128, 1000,
-+							     &rand);
- 				}
- 				rcu_torture_pipe_update(old_rp);
- 				break;
-@@ -1582,8 +1582,8 @@ rcu_torture_writer(void *arg)
- 							break;
- 						}
- 					WARN_ON_ONCE(rgo_size > 0 && i >= rgo_size);
--					torture_hrtimeout_jiffies(torture_random(&rand) % 16,
--								  &rand);
-+					torture_hrtimeout_us(torture_random(&rand) % 128, 1000,
-+							     &rand);
- 				}
- 				rcu_torture_pipe_update(old_rp);
- 				break;
-@@ -1592,8 +1592,8 @@ rcu_torture_writer(void *arg)
- 				gp_snap = cur_ops->start_gp_poll_exp();
- 				rcu_torture_writer_state = RTWS_POLL_WAIT_EXP;
- 				while (!cur_ops->poll_gp_state_exp(gp_snap))
--					torture_hrtimeout_jiffies(torture_random(&rand) % 16,
--								  &rand);
-+					torture_hrtimeout_us(torture_random(&rand) % 128, 1000,
-+							     &rand);
- 				rcu_torture_pipe_update(old_rp);
- 				break;
- 			case RTWS_POLL_GET_EXP_FULL:
-@@ -1601,8 +1601,8 @@ rcu_torture_writer(void *arg)
- 				cur_ops->start_gp_poll_exp_full(&gp_snap_full);
- 				rcu_torture_writer_state = RTWS_POLL_WAIT_EXP_FULL;
- 				while (!cur_ops->poll_gp_state_full(&gp_snap_full))
--					torture_hrtimeout_jiffies(torture_random(&rand) % 16,
--								  &rand);
-+					torture_hrtimeout_us(torture_random(&rand) % 128, 1000,
-+							     &rand);
- 				rcu_torture_pipe_update(old_rp);
- 				break;
- 			case RTWS_SYNC:
+@@ -577,6 +577,7 @@ static struct rcu_torture_ops rcu_ops = {
+ 	.start_gp_poll_exp_full	= start_poll_synchronize_rcu_expedited_full,
+ 	.poll_gp_state_exp	= poll_state_synchronize_rcu,
+ 	.cond_sync_exp		= cond_synchronize_rcu_expedited,
++	.cond_sync_exp_full	= cond_synchronize_rcu_expedited_full,
+ 	.call			= call_rcu_hurry,
+ 	.cb_barrier		= rcu_barrier,
+ 	.fqs			= rcu_force_quiescent_state,
 -- 
 2.40.1
 
