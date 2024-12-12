@@ -1,209 +1,201 @@
-Return-Path: <linux-kernel+bounces-443752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F019EFB72
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:48:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C499EFB70
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:48:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF1628BEE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:48:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05C8E188F69A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696EF189B9C;
-	Thu, 12 Dec 2024 18:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C492E189BB1;
+	Thu, 12 Dec 2024 18:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="tq6orQL+"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZL7wUKv"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896FC2F2F;
-	Thu, 12 Dec 2024 18:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBA517AE1C;
+	Thu, 12 Dec 2024 18:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734029326; cv=none; b=jf4KQhmslcUoF+urzseL/Y68rI+OAjb6IlfPDE+0U9a9D2GTMZQkpDgGigFC1Lsr68TDpXE23jNDxlW9kx7a10qpDdYrLzOSX6DYIAxE9Yx6oM1Wwg1JdZPLhnbYuA+B79FZoX/B8OyTpPh5FK5nk98YJS1bMREersdw7kKMyx0=
+	t=1734029302; cv=none; b=TSqDobX9OQq5tsSeckfiIPgMgzh53uy/LzmKyGeDm6SVPRp4HUzA2tqhvEO+6hruQ08O6991ZQOME/PBJy7rB990dFH4QkJL7cthQh9FRsvtFfqqJ+rnqfS4HHOw0YcG2rMT8e4uO5V5zwHvWRT2BQaosBE6PY5PPczrLr9JIH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734029326; c=relaxed/simple;
-	bh=vFL9c+2PwzotBNq6ljdxHGHn07GU7AczLYkX2CkFbvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QV2m9QmkvvN3F9xWdw7O0A6L9SX8jqPiPjE9dvIkiSuDl0Oh7Feb/aU8O6gYb0XEVl4TAM9JqpFy89iFKbXAmagVTinuej86g27uaA/6WpP0OatvkKLHkw2RrRoo7HPEHrZE3Wf8o9f+sUyqdi8kDG4lUNOjBUqkPt2Rz/GDQaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=tq6orQL+; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4BCIm2MV1241973
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 12 Dec 2024 10:48:02 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4BCIm2MV1241973
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024111601; t=1734029285;
-	bh=LS5ebAaxhRt1oilTRh8UWqUtciFI640KhdT1USGVRBA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tq6orQL+5MP6ahCa64iKAgWb6ZPHNMgYBOwXTD0WmjfrfJvdhlNU6yVWg1Idcr0ge
-	 MqB2ILmOWMIT/7FcBD3L/GME7qvWeDoFrMbpZYHjF4dl4/BehH7zKZNnkOf8q812y5
-	 V9MNDsTSSJm0Ux5zISOWsNiPbETg2lRDRyVqPwUJ4BZldS3m8ZQhip9KvQBJv600F8
-	 S5/UGHDE4Ho/qxJbHC0fIE6ykYED71KlbBvu4kyoxn/hfFLDq2JpNX1+1KvpimdZAG
-	 cXltHPy7+To/N64SUaJGpny1uEZsXPST7kK0rOYimeMb++aTUMDeFj7DAtnCSeitzk
-	 cwYl4sFY18Tlg==
-Message-ID: <3ec986fa-2bf0-4c78-b532-343ad19436b2@zytor.com>
-Date: Thu, 12 Dec 2024 10:48:01 -0800
+	s=arc-20240116; t=1734029302; c=relaxed/simple;
+	bh=y66TGhyZiI/xinMoA3+ax5j9EcsCL7iZ6TSGDRE7gfk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=VRjWu5VcUvoE5JS+Gcmn0xQBEOEq4wM5hiXL6hbjr/Rwfq3juiG7bLZ+2WT+cv0NT3X37wQAtzmxT7i9xIRvk3BxShPbQjBQgaKtjLGhZNxcHIbd5+7wiFAwEgnlR0IuWOw835xVURtJOs3FZnXCzywkDKYqcKdPs8b3WRC938I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZL7wUKv; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434ab114753so6940255e9.0;
+        Thu, 12 Dec 2024 10:48:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734029298; x=1734634098; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lz4mZSKGSv4NGXMgMua0s9XSOiQMez0e8RgXR62d89Y=;
+        b=PZL7wUKv+zzpSmAsK3E9/IKOooCTz1oxzPvdauMxSDYx2tu80Ti2HTUBReb7/6NdSB
+         hCL1L9wzi870xDwok4e75aKPkpaijuHzP8DrrAEun/M8sFF5A2o2dvym0D0ylnwbD9x4
+         cT+JyEBC+my2iNkQQoJNxtRePtvNplg0dC8IGgzLLSHWYQBjwruksSX8JGb58bZ9v49G
+         LkG2jKzct236RxGoAa9vnAV9oVXpxyEu0SNZhGRc3KeZYjjmhtfJ6gRS/Udhqu4LwPNd
+         dEZzyd1CSjw1MhHNqM2c+GECLKw20m04qEhV4THvgi4v9AG4PebM6OoYJ5vRcMIYg81S
+         EoDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734029298; x=1734634098;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lz4mZSKGSv4NGXMgMua0s9XSOiQMez0e8RgXR62d89Y=;
+        b=T4RzXaSrpxfmAvXScGtdW2iUB+4lent4uc7EhwBQufNQsGnlb6IRCeJyA5PPgGL9hV
+         c2HZkqH4xhC7pe7sGOXn7yomIVPVojB7a1+pfDH14kPDD12Ig86CHwGQipVQ3+VBYxvl
+         UMthpDzt+3y9uIqZdRqiVrL1EOxYOsUF/M56H6VnOZu/zc1QmCMVvbrbkVvO0wpeNg00
+         3zN0SGqEx/AsX+tPCrdw+9NicQ3370psdcKlAHmh3L2Ue2FrKt/t15Yz2n9Gf9VASrKi
+         KdE28FRP9Iyj89yYa6QsGEwfFIoy+BRHaQ0DqqnNPpebLYQ3iOASg9aJej+GN/Gmq+j7
+         bdeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUiyIVypuitXvfAaKKVSUoN7JV3c60h7nHb491cAus2ctTSE6RQtSF4kfhu2yq09dvYIIAY5ZgVwqI=@vger.kernel.org, AJvYcCV904O2H1aNvQ4AUankuynA3dm+xIqSbeswKnps0s+gYpPl6ozmbSQdFpHk/QhRpa74X63ToEIc@vger.kernel.org, AJvYcCXRuihCX58rpyOnzDODFzIkSiAnXbHa0wDiAHGWZ/Lg1uTaWuy9xVXgpGrWAf+k8ANOS5/Wew47EJjoefyx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgTJogNLmSn1MBH7ixw2KUmd2RbAwihrhPFfCef+BCilPb+vi2
+	k4ei6gFCDn9HjsJB8NfpiR6+Z+50vqTd3v6k797KtMPlVaIIYD9C
+X-Gm-Gg: ASbGnctWIhGPgYeK2xOto7C3YaAe/5CuK5BtBFbRrt3SYeFNqNPNYjMhkREPLjs4Yl6
+	ZmFSsubkefJv2TrBSPrERbFqX08zBfn7jMZ7aqTGT7DgtJYFqaXVjp4HR58c+aP7TBjf+09sfnb
+	CihyEA1J+z9xUG8qSGbyHVyVjrEm560sz4FtUbhVpqKhnb8vl0/Qn4qexzChlFQYJOQgRZGwiCa
+	X9v7+f9LLVkWM0vheQY+kgTOljXSH1HwAb2j8sN9VFJ8zDoXQswzl9hZPzPdJKeCcjLyZQCg4A7
+	BUO4Ugl10Kvr2jZso8IxYnvUMZaA6n9bnMcXLdgpQbjWqhJeqeIf99LWF1cDgRjZLXfCuN8oi48
+	=
+X-Google-Smtp-Source: AGHT+IGLQfw3PglHjn4c1aX0F+hS2e5+eUY7Ebf3WsYFfXXZO6+bX5uqUhARMqBrHL+VaVAKR5++dw==
+X-Received: by 2002:a05:6000:21c8:b0:386:366d:5d0b with SMTP id ffacd0b85a97d-3864cea0510mr4866505f8f.55.1734029298380;
+        Thu, 12 Dec 2024 10:48:18 -0800 (PST)
+Received: from localhost (2a02-8389-41cf-e200-2ad7-4f83-0683-35cd.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:2ad7:4f83:683:35cd])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878251dd5bsm4734433f8f.99.2024.12.12.10.48.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 10:48:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 17/27] KVM: x86: Mark CR4.FRED as not reserved when
- guest can use FRED
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
-        corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
-References: <20241001050110.3643764-1-xin@zytor.com>
- <20241001050110.3643764-18-xin@zytor.com> <Zxn0tfA+k4ppu2WL@intel.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <Zxn0tfA+k4ppu2WL@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Dec 2024 19:48:16 +0100
+Message-Id: <D69Y31IERSV2.1R9057MJA27NS@gmail.com>
+From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
+To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>, "Jonathan Cameron"
+ <jic23@kernel.org>, "Lars-Peter Clausen" <lars@metafoo.de>, "Christian
+ Eggers" <ceggers@arri.de>
+Cc: "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] iio: light: as73211: fix channel handling in
+ only-color triggered buffer
+X-Mailer: aerc 0.18.2
+References: <20241212-iio_memset_scan_holes-v3-1-7f496b6f7222@gmail.com>
+ <e8564c63-0c2b-4327-8e39-767530b29b11@wanadoo.fr>
+In-Reply-To: <e8564c63-0c2b-4327-8e39-767530b29b11@wanadoo.fr>
 
-On 10/24/2024 12:18 AM, Chao Gao wrote:
->> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
->> index 03f42b218554..bfdd10773136 100644
->> --- a/arch/x86/kvm/vmx/vmx.c
->> +++ b/arch/x86/kvm/vmx/vmx.c
->> @@ -8009,6 +8009,10 @@ void vmx_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
->> 	kvm_governed_feature_check_and_set(vcpu, X86_FEATURE_LAM);
->> 	kvm_governed_feature_check_and_set(vcpu, X86_FEATURE_FRED);
->>
->> +	/* Don't allow CR4.FRED=1 before all of FRED KVM support is in place. */
->> +	if (!guest_can_use(vcpu, X86_FEATURE_FRED))
->> +		vcpu->arch.cr4_guest_rsvd_bits |= X86_CR4_FRED;
-> 
-> is this necessary? __kvm_is_valid_cr4() ensures that guests cannot set any bit
-> which isn't supported by the hardware.
-> 
-> To account for hardware/KVM caps, I think the following changes will work. This
-> will fix all other bits besides X86_CR4_FRED.
+Hi Christophe, thank you for your prompt feedback.
 
-This seems a generic infra improvement, maybe it's better for you to
-send it as an individual patch to Sean and the KVM mailing list?
+On Thu Dec 12, 2024 at 7:15 PM CET, Christophe JAILLET wrote:
+> Le 12/12/2024 =C3=A0 18:56, Javier Carrasco a =C3=A9crit=C2=A0:
+> > The channel index is off by one unit if AS73211_SCAN_MASK_ALL is not
+> > set (optimized path for color channel readings), and it must be shifted
+> > instead of leaving an empty channel for the temperature when it is off.
+> >
+> > Once the channel index is fixed, the uninitialized channel must be set
+> > to zero to avoid pushing uninitialized data.
+> >
+> > Add available_scan_masks for all channels and only-color channels to le=
+t
+> > the IIO core demux and repack the enabled channels.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 403e5586b52e ("iio: light: as73211: New driver")
+> > Tested-by: Christian Eggers <ceggers@arri.de>
+> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>
+> ...
+>
+> > diff --git a/drivers/iio/light/as73211.c b/drivers/iio/light/as73211.c
+> > index be0068081ebb..4be2e349a068 100644
+> > --- a/drivers/iio/light/as73211.c
+> > +++ b/drivers/iio/light/as73211.c
+> > @@ -177,6 +177,12 @@ struct as73211_data {
+> >   	BIT(AS73211_SCAN_INDEX_TEMP) | \
+> >   	AS73211_SCAN_MASK_COLOR)
+> >
+> > +static const unsigned long as73211_scan_masks[] =3D {
+> > +	AS73211_SCAN_MASK_ALL,
+> > +	AS73211_SCAN_MASK_COLOR,
+> > +	0,
+> > +};
+> > +
+> >   static const struct iio_chan_spec as73211_channels[] =3D {
+> >   	{
+> >   		.type =3D IIO_TEMP,
+> > @@ -672,9 +678,12 @@ static irqreturn_t as73211_trigger_handler(int irq=
+ __always_unused, void *p)
+> >
+> >   		/* AS73211 starts reading at address 2 */
+>
+> Should this comment be updated?
+>
+> Or maybe moved close to "if (*indio_dev->active_scan_mask =3D=3D
+> AS73211_SCAN_MASK_ALL)" below?
+>
 
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 4a93ac1b9be9..2bec3ba8e47d 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1873,6 +1873,7 @@ struct kvm_arch_async_pf {
->   extern u32 __read_mostly kvm_nr_uret_msrs;
->   extern bool __read_mostly allow_smaller_maxphyaddr;
->   extern bool __read_mostly enable_apicv;
-> +extern u64 __read_mostly cr4_reserved_bits;
->   extern struct kvm_x86_ops kvm_x86_ops;
->   
->   #define kvm_x86_call(func) static_call(kvm_x86_##func)
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 2617be544480..57d82fbcfd3f 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -393,8 +393,8 @@ static void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
->   	vcpu->arch.reserved_gpa_bits = kvm_vcpu_reserved_gpa_bits_raw(vcpu);
->   
->   	kvm_pmu_refresh(vcpu);
-> -	vcpu->arch.cr4_guest_rsvd_bits =
-> -	    __cr4_reserved_bits(guest_cpuid_has, vcpu);
-> +	vcpu->arch.cr4_guest_rsvd_bits = cr4_reserved_bits |
-> +					 __cr4_reserved_bits(guest_cpuid_has, vcpu);
->   
->   	kvm_hv_set_cpuid(vcpu, kvm_cpuid_has_hyperv(vcpu->arch.cpuid_entries,
->   						    vcpu->arch.cpuid_nent));
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 34b52b49f5e6..08b42bbd2342 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -119,7 +119,7 @@ u64 __read_mostly efer_reserved_bits = ~((u64)(EFER_SCE | EFER_LME | EFER_LMA));
->   static u64 __read_mostly efer_reserved_bits = ~((u64)EFER_SCE);
->   #endif
->   
-> -static u64 __read_mostly cr4_reserved_bits = CR4_RESERVED_BITS;
-> +u64 __read_mostly cr4_reserved_bits;
->   
->   #define KVM_EXIT_HYPERCALL_VALID_MASK (1 << KVM_HC_MAP_GPA_RANGE)
->   
-> @@ -1110,13 +1110,7 @@ EXPORT_SYMBOL_GPL(kvm_emulate_xsetbv);
->   
->   bool __kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
->   {
-> -	if (cr4 & cr4_reserved_bits)
-> -		return false;
-> -
-> -	if (cr4 & vcpu->arch.cr4_guest_rsvd_bits)
-> -		return false;
-> -
-> -	return true;
-> +	return !(cr4 & vcpu->arch.cr4_guest_rsvd_bits);
->   }
->   EXPORT_SYMBOL_GPL(__kvm_is_valid_cr4);
->   
-> 
->> +
->> 	vmx_setup_uret_msrs(vmx);
->>
->> 	if (cpu_has_secondary_exec_ctrls())
->> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
->> index 992e73ee2ec5..0ed91512b757 100644
->> --- a/arch/x86/kvm/x86.h
->> +++ b/arch/x86/kvm/x86.h
->> @@ -561,6 +561,8 @@ enum kvm_msr_access {
->> 		__reserved_bits |= X86_CR4_PCIDE;       \
->> 	if (!__cpu_has(__c, X86_FEATURE_LAM))           \
->> 		__reserved_bits |= X86_CR4_LAM_SUP;     \
->> +	if (!__cpu_has(__c, X86_FEATURE_FRED))          \
->> +		__reserved_bits |= X86_CR4_FRED;        \
->> 	__reserved_bits;                                \
->> })
->>
->> -- 
->> 2.46.2
->>
->>
+The comment is still true, as address =3D 1 stores the temperature, and
+the first color value can be found at address =3D 2. I think it used to
+be more relevant (even if it was not the correct approach) when the
+first received element was stored in chan[1]. Nevertheless, as it might
+not be obvious without knowing the address map, it could stay where it
+is.
 
+> >   		ret =3D i2c_master_recv(data->client,
+> > -				(char *)&scan.chan[1], 3 * sizeof(scan.chan[1]));
+> > +				(char *)&scan.chan[0], 3 * sizeof(scan.chan[0]));
+> >   		if (ret < 0)
+> >   			goto done;
+> > +
+> > +		/* Avoid pushing uninitialized data */
+> > +		scan.chan[3] =3D 0;
+> >   	}
+> >
+> >   	if (data_result) {
+> > @@ -682,9 +691,15 @@ static irqreturn_t as73211_trigger_handler(int irq=
+ __always_unused, void *p)
+> >   		 * Saturate all channels (in case of overflows). Temperature channe=
+l
+> >   		 * is not affected by overflows.
+> >   		 */
+> > -		scan.chan[1] =3D cpu_to_le16(U16_MAX);
+> > -		scan.chan[2] =3D cpu_to_le16(U16_MAX);
+> > -		scan.chan[3] =3D cpu_to_le16(U16_MAX);
+> > +		if (*indio_dev->active_scan_mask =3D=3D AS73211_SCAN_MASK_ALL) {
+>
+> Should [0]...
+>
+> > +			scan.chan[1] =3D cpu_to_le16(U16_MAX);
+> > +			scan.chan[2] =3D cpu_to_le16(U16_MAX);
+> > +			scan.chan[3] =3D cpu_to_le16(U16_MAX);
+> > +		} else {
+> > +			scan.chan[0] =3D cpu_to_le16(U16_MAX);
+> > +			scan.chan[1] =3D cpu_to_le16(U16_MAX);
+> > +			scan.chan[2] =3D cpu_to_le16(U16_MAX);
+>
+> ... and [3] be forced as-well?
+> (just a blind guess)
+>
+> CJ
+>
+
+in the first case (all channels are read), the temperature (scan[0])
+only has 12 bits, and there are no overflows. In the second case,
+scan.chan[3] is set to zero as it is not used, and there is no need to
+force the U16_MAX value.
+
+Best regards,
+Javier Carrasco
 
