@@ -1,127 +1,143 @@
-Return-Path: <linux-kernel+bounces-443447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8BE9EF165
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:38:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 842ED9EF12B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:35:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E83C188CE85
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3321886B9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B9A22C37B;
-	Thu, 12 Dec 2024 16:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WNwSBVpg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BywmcS0N"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6FC215764
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204AE22EA00;
+	Thu, 12 Dec 2024 16:18:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD0D21766D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734020212; cv=none; b=eHmyq4GU1Db8TP8pQ5qNHC1irjIxZYWqNp7YB4uwZiv9ROjI2oGPrzPlYzyM0FEPYWgs4QVKW0DiOok4QfjmAUF8mxctDyGQKRaCYBXamDQn9G5Q1LElqZoy3NXAuwJuQat2yQx7qRZL8HwttDPRqqtLocspvWS+jez3x79wyws=
+	t=1734020287; cv=none; b=ryLR09oMLN5vSgqGi4N8YRoBu8eOtetvXbPVp7AAIzY5Qs+N0vBCFBSyi5E276cgCMqTRRT2khDJ9JhohyBQvYlGuxxNqDhN6FvD6jRHQIBwzSUUua0gZcAorxbqGIkLVEBjE2+n/gPeIuPYoExHHAmeB6ZZENNulnO+PtkymE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734020212; c=relaxed/simple;
-	bh=7hNn7jsNox1lFgKagbGf7VI9/di+xBYjxR3qn+QQIJo=;
+	s=arc-20240116; t=1734020287; c=relaxed/simple;
+	bh=xgevdLwGTNobjsQOMjR47GjZl2x6LSdkJTVXoShkNrs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sl3zMduJ7iNuLUsjBLbcWocLkoEEKJBbS495Yu110Hqduexo7FfmztWrMd21lAW+Up6ALqsxEIB21adrsCUM05/Fo9uV+YdKW1eX1zHbZPQhawMbPKO7KBeul7gRY/Za2G7HTmzP07rwZ62RPlMVj2K4+dv2C79HIJsKwjnuBTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WNwSBVpg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BywmcS0N; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 12 Dec 2024 17:16:48 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734020209;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DsSzR0g1eP3SQqwrKDUeiAkzyQHkvWkas71Yt/ytVJo=;
-	b=WNwSBVpgKRGkpB3EsafyurBDzodZEwAJFSHr23R6U2QEjr5bdQf97IM07FbDMfsnIZwYtX
-	wITmwtxB15Ku117J6gRfiKEqmgdQgggvcXS1rMieLwJlBa2nsv7+Y1Kbg6ZafXlmwARBfr
-	MsHaXGVmZEbfvPMDiJFZBuZeBsCHdgY77Jxb5Of0uEX6gvEnkur2taWBq6WHRF1naZ49x1
-	HvbK2Qo+0E7Ej6owtk7+y9CN0MGHpaqogjwJljyvGbAf4FC4dzEcYKuqYPEvyNls9lUkgr
-	Y6C0cgyHKWHs6uO9eYPjfUchcV7mxlyXqVZcPRbKTB9GgD7kWIxR1UUeOu42JQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734020209;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DsSzR0g1eP3SQqwrKDUeiAkzyQHkvWkas71Yt/ytVJo=;
-	b=BywmcS0Nj3hHawH8wVZcBFS9cekQDl69EMyAI6zLMZ3L/pv12QNkvI+8/Pau13O4kqqjrQ
-	weHjxhBuk0YiiHDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v4 06/11] futex: Allow to re-allocate the private hash
- bucket.
-Message-ID: <20241212161648.W97qL77l@linutronix.de>
-References: <20241203164335.1125381-1-bigeasy@linutronix.de>
- <20241203164335.1125381-7-bigeasy@linutronix.de>
- <8734ivcgx7.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aNSsAcUj8LehKzWKcpU1MlUyEVKwG2L5Ex2yeJPWa56yAEQ/JlV4O1QwyUFr+CKI728ty/b2Lk3x9vfzwxbZKuN9QGT+ltGnIfwnXMyigyLhfrybppYa+kbuYfnZQpzT549m9w18VJla2CjtoEXGyZ08nCDr9njVRxriRVW6ph0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A6081764;
+	Thu, 12 Dec 2024 08:18:28 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B6213F720;
+	Thu, 12 Dec 2024 08:17:59 -0800 (PST)
+Date: Thu, 12 Dec 2024 16:17:56 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Zeng Heng <zengheng4@huawei.com>
+Cc: james.morse@arm.com, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, jonathan.cameron@huawei.com,
+	xiexiuqi@huawei.com
+Subject: Re: [RFC PATCH mpam mpam/snapshot/v6.12-rc1 v3 0/5] arm_mpam:
+ Introduce the Narrow-PARTID feature for MPAM driver
+Message-ID: <Z1sMtF9bvw5NZOC6@e133380.arm.com>
+References: <20241207092136.2488426-1-zengheng4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8734ivcgx7.ffs@tglx>
+In-Reply-To: <20241207092136.2488426-1-zengheng4@huawei.com>
 
-On 2024-12-10 23:27:32 [+0100], Thomas Gleixner wrote:
-> On Tue, Dec 03 2024 at 17:42, Sebastian Andrzej Siewior wrote:
-> > +static void futex_put_old_hb_p(struct futex_hash_bucket_private *hb_p)
-> > +{
-> > +	unsigned int slots = hb_p->hash_mask + 1;
-> > +	struct futex_hash_bucket *hb;
-> > +	DEFINE_WAKE_Q(wake_q);
-> > +	unsigned int i;
-> > +
-> > +	for (i = 0; i < slots; i++) {
-> > +		struct futex_q *this;
-> > +
-> > +		hb = &hb_p->queues[i];
-> > +
-> > +		spin_lock(&hb->lock);
-> > +		plist_for_each_entry(this, &hb->chain, list)
-> > +			wake_q_add(&wake_q, this->task);
-> > +		spin_unlock(&hb->lock);
-> > +	}
-> > +	futex_hash_priv_put(hb_p);
-> > +
-> > +	wake_up_q(&wake_q);
+Hi,
+
+On Sat, Dec 07, 2024 at 05:21:31PM +0800, Zeng Heng wrote:
+> The patch set is applied for mpam/snapshot/v6.12-rc1 branch of
+> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git
+> repository.
 > 
-> So you wake up all queued waiters and let themself requeue on the new
-> hash.
+> The narrow-partid feature in MPAM allows for a more efficient use of
+> PARTIDs by enabling a many-to-one mapping of reqpartids (requested PARTIDs)
+> to intpartids (internal PARTIDs). This mapping reduces the number of unique
+> PARTIDs needed, thus allowing more tasks or processes to be monitored and
+> managed with the available resources.
 > 
-> How is that safe against the following situation:
+> For a mixture of MSCs system, for MSCs that do not support narrow-partid,
+> we use the PARTIDs exceeding the number of closids as reqPARTIDs for
+> expanding the monitoring groups.
+
+Mixed systems still seem not to be handled completely by this series?
+
+You do cope with the scenario where some MSCs support Narrowing and
+some do not, but there is still the problem of incompatible controls.
+
+If a non-Narrowing MSC has controls that are not of the "partition
+bitmap" type, then splitting a resctrl control group across multiple
+PARTIDs is going to change the hardware regulation behaviour.  There
+does not seem to be any way to work around this be programming
+different control values (for example).  So, there may be over- or
+under-allocation of resources compared with what the user requests in
+resctrlfs.
+
+So, I think there is still a need to check which controls are present,
+and either disable the use of non-identity intPARTID<->reqPARTID
+mappings if incompatible controls are present (or don't expose those
+controls to resctrl).
+
+(If you were not trying to address this issue yet then that is not a
+problem for an RFC, but it is best to be clear about the
+limitations...)
+
+> In order to keep the existing resctrl API interface, the rmid contains both
+> req_idx and PMG information instead of PMG only under the MPAM driver. The
+> req_idx represents the req_idx-th sub-monitoring group under the control
+> group. The new rmid would be like:
 > 
->     CPU 0                               CPU 1
->     hb_p_old = mm->futex_hash_bucket;   hbp = mm->futex_hash_bucket;
->     mm->futex_hash_bucket = new;
->                                         // Referrence count succeeds!
->                                         rcuref_get(&hpb->refcnt);
->     futex_put_old_hb_p();
->                                         // Queues on old hash and
->                                         // is lost forever
->                                         queue(hbp);
+>     rmid = (req_idx << shift | pmg).
+> 
+> The new conversion relationship between closid/rmid and (req)PARTID/PMG is:
+> 
+>     (req)PARTID = (rmid.req_idx * n) + closid,
+>     PMG = rmid.pmg.
+> 
+> Each intPARTID has m reqPARTIDs, which are used to expand the number of
+> monitoring groups under the control group. Therefore, the number of
+> monitoring groups is no longer limited by the range of MPAM PMG, which
+> enhances the extensibility of the system's monitoring capabilities.
+> 
+> ---
+> Compared with v1:
+>   - Rebase this patch set on latest MPAM driver of the v6.12-rc1 branch.
+> 
+> Compared with v2:
+>   - Refactor closid/rmid pair translation
+>   - Simplify the logic of synchronize configuration
+>   - Remove reqPARTID pool
+> ---
 
-This does not happen. futex_q_lock() check if the hb is valid after
-locking the HB it obtained. So if the HB is still valid then
-futex_put_old_hb_p() will see/ wake it. If it is not then it will drop
-the lock and try again.
+This approach looks reasonable overall, and in this version the changes
+do seem to be better localised in the mpam_resctrl.c glue code now.
 
-However looking at your proposal below, it has some benefits. Let me
-implement this instead.
+I had also been working on a similar approach, so I have posted it for
+comparison [1] -- though the two approaches are doing pretty much the
+same thing, some details differ.
 
-Sebastian
+(Note, I have not addressed PARTID Narrowing at all yet; however,
+I think more thought is needed for that.)
+
+
+Note: Are there bisection issues with some of the patches in the
+series?  It looks like not all of the ID conversions are applied in the
+same patch, so I'm wondering whether strange behaviour may be seen at
+the intermediate commits.
+
+Cheers
+---Dave
+
+
+[1] [RFC PATCH 0/6] Introduce flexible CLOSID/RMID translation
+https://lore.kernel.org/lkml/20241212154000.330467-1-Dave.Martin@arm.com/
 
