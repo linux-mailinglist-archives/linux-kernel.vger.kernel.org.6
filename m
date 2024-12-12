@@ -1,232 +1,219 @@
-Return-Path: <linux-kernel+bounces-443821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D729EFC29
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:15:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C70C9EFC2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DD882827CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:15:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F39B28CB0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1E718A95E;
-	Thu, 12 Dec 2024 19:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30B4190497;
+	Thu, 12 Dec 2024 19:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAJ0HZGg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cvPMGS5S"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A578748D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DF6189B8B;
+	Thu, 12 Dec 2024 19:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734030947; cv=none; b=SSPMbEn1afPr3NG9Z4aYDsQiUZT2LG9ceQtrF5j96zscRy+9ZLDIKvKdRB7sH2k2MTtDqTvpTy0PuxlFxWhpp9fb+Wag0rTTLhAu1eN/rLPpGeSgKVeolEbQYCIB7lO7vA3Kiu1uFKNnPSjIXE7U6LO36bCZ2J/qk91yqFpoQTk=
+	t=1734030961; cv=none; b=dJR3kir8o1UOzmPkU0YHyZdYGD2yzlXfsAs61Fr1HbR9eXTr/4uvOh/tBBhCeIrDEQS7hEUzy5wffEWYbaRMFgihAzmReWVDeTgHsaAT8SuAXs4W14ya0GYpf3a975GKMrVAGhvJ/5Tv2+RpsoFsg4kFdzA6fGA4lspQMucPKpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734030947; c=relaxed/simple;
-	bh=WPmEWI88/cuChYjUpjNY9yOu0h1CAYhytdOy/sHtUd0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=X+6AGywgb93KsQc12he8wF2Gkg377XIe+uLHX/hN51HLfViefq+CcnQlAqjwzM9mr1kzdegpkm+w3mL6jQ9ViuUmTETKfTVjiUYpd6awpqBBmaGPE2IsdRK7920W5vDAgJUJk/9bDk7AYBPbTXv8C1QuBpkkwVl/IdcXohI9lS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAJ0HZGg; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734030947; x=1765566947;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=WPmEWI88/cuChYjUpjNY9yOu0h1CAYhytdOy/sHtUd0=;
-  b=NAJ0HZGgKDKo0VAtS1ByWhZfwzLVK6NriNEXY26j06rtmBZY+RdCAZ5H
-   QI96Fru2d4mrpnTEe9fd1MYpUbgNkskWlc4nKm8PBLwrE1/SL6lW9/yNi
-   dFEl6L22NZuR8sxfCFfn22iUDIeBPF/5H2A3og8k/55KfjuwE/MsKPkmm
-   9gRSxhAWu7uwLuL4y4gU7N54JQy4MsRW0yC/fcokT3rAlTs94DxvZfbIo
-   58ca8BWQWKynFi+AV0LIErb7tZFUXzGuNvdKWOcL3t7ivKzaOukZIfOpV
-   RavYcZQKZTD124UBcYECJQYP9UF9xINfu3Jtsp8J/gjCFfEz2mnoWaeQq
-   w==;
-X-CSE-ConnectionGUID: u13zJnA7QKaw8u9eOPlCeA==
-X-CSE-MsgGUID: gXOmBBD1SV2Di35cw7jpHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="56941413"
-X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
-   d="scan'208";a="56941413"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 11:15:46 -0800
-X-CSE-ConnectionGUID: 2iUwSh3vQMucky2PtRHAXg==
-X-CSE-MsgGUID: VZMLMkWYTpeHDi0MdCwIPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
-   d="scan'208";a="96067492"
-Received: from mesiment-mobl2.amr.corp.intel.com (HELO [10.125.110.139]) ([10.125.110.139])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 11:15:44 -0800
-Message-ID: <527d53cded892aea8f36b498ccd42f1bed0a347b.camel@linux.intel.com>
-Subject: Re: [PATCH 3/8] x86/itmt: Move the "sched_itmt_enabled" sysctl to
- debugfs
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Peter Zijlstra
- <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
- Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, "Rafael J. Wysocki"
- <rafael.j.wysocki@intel.com>,  Ricardo Neri
- <ricardo.neri-calderon@linux.intel.com>, Mario Limonciello
- <mario.limonciello@amd.com>,  Meng Li <li.meng@amd.com>, Huang Rui
- <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Date: Thu, 12 Dec 2024 11:15:43 -0800
-In-Reply-To: <20241211185552.4553-4-kprateek.nayak@amd.com>
-References: <20241211185552.4553-1-kprateek.nayak@amd.com>
-	 <20241211185552.4553-4-kprateek.nayak@amd.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1734030961; c=relaxed/simple;
+	bh=LGfX5ZgX2lsQWXfVjlgNlPppx3VLClAQOW8XBHOQHLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=U6VNcRR2oASes8pZezO5wGqLt5ekq9s4uM/HoElzM/CudhFB8oWuGVXQWrfWqoZsvORyT35W+MejhO8BgauwsMC9pBTWpjMMM1kwt2vzb2aQBB3Sg6QDJuimDPQb+lIOwIhXQXSxAsCJPctAJoKVCUcwe2QxkzgJcuO2dQY3+zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cvPMGS5S; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCCwqYX000445;
+	Thu, 12 Dec 2024 19:15:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	si5rphHa4Zkvnkh6M8fFKZ5yl3Cn3vMgEo7wPFfWRo8=; b=cvPMGS5SpoG9fjFF
+	XMI1NUHYPt9jdACaimDjswf8GD4xRdbDr5hVVYhHVm1NBF/7XqchCuGXpB+Z+uAu
+	z3jpfDfOgMvAHRV0lV5gS/zmJCQwczGRF04xsiQBjUYMS5kgZApsybQ/CC6C602h
+	jxQ6pK1Vs9U9/2bJpZn5hKRZNJ4qXGgCp8eOdT5f1ios7bXm9lZr6oA55955CmC3
+	eVr0MdSLgiTS1dwd0EagoELqO162Dz2b44Pc9Hx11FJmw6OEej7WLq39iNE8EMGv
+	fvJx7k4h9jla6s5fggnpwkAuGW9+ubOHnnl/73XH6+cHhcQlIZxg7ix6izET/RL2
+	rPZWQA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fqes2grh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 19:15:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BCJFo8j027764
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 19:15:50 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
+ 2024 11:15:49 -0800
+Message-ID: <5cb7b1b1-5596-4704-bd01-beaadf8bba51@quicinc.com>
+Date: Thu, 12 Dec 2024 11:15:48 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/14] drm/msm/dp: pull I/O data out of
+ msm_dp_catalog_private()
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Paloma Arellano <quic_parellan@quicinc.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241212-fd-dp-audio-fixup-v3-0-0b1c65e7dba3@linaro.org>
+ <20241212-fd-dp-audio-fixup-v3-4-0b1c65e7dba3@linaro.org>
+ <c5090fcc-d7ec-4d49-aa21-8d1aa7f6a1c7@quicinc.com>
+ <CAA8EJppOjAjFVUFSEXJMbJ4aV_MvzpeTuKDkL7P+t_Mw47YECw@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJppOjAjFVUFSEXJMbJ4aV_MvzpeTuKDkL7P+t_Mw47YECw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eLEz5zxPoOm2eDuCCX5cE5IukOzJBz05
+X-Proofpoint-ORIG-GUID: eLEz5zxPoOm2eDuCCX5cE5IukOzJBz05
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 phishscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120139
 
-On Wed, 2024-12-11 at 18:55 +0000, K Prateek Nayak wrote:
-> "sched_itmt_enabled" was only introduced as a debug toggle for any funky
-> ITMT behavior. Move the sysctl controlled from
-> "/proc/sys/kernel/sched_itmt_enabled" to debugfs at
-> "/sys/kernel/debug/x86/sched_itmt_enabled" with a notable change that a
-> cat on the file will return "Y" or "N" instead of "1" or "0" to
-> indicate that feature is enabled or disabled respectively.
->=20
 
-Valid values of setting "sched_itmt_enabled" likewise change from "1" or "0=
-"
-to "Y" or "N".=20
 
-> Since ITMT is x86 specific (and PowerPC uses SD_ASYM_PACKING too), the
-> toggle was moved to "/sys/kernel/debug/x86/" as opposed to
-> "/sys/kernel/debug/sched/"
->=20
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+On 12/12/2024 12:52 AM, Dmitry Baryshkov wrote:
+> On Thu, 12 Dec 2024 at 04:59, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 12/11/2024 3:41 PM, Dmitry Baryshkov wrote:
+>>> Having I/O regions inside a msm_dp_catalog_private() results in extra
+>>> layers of one-line wrappers for accessing the data. Move I/O region base
+>>> and size to the globally visible struct msm_dp_catalog.
+>>>
+>>> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>    drivers/gpu/drm/msm/dp/dp_catalog.c | 457 +++++++++++++++---------------------
+>>>    drivers/gpu/drm/msm/dp/dp_catalog.h |  12 +
+>>>    2 files changed, 197 insertions(+), 272 deletions(-)
+>>>
+>>
+>>
+>> Fundamentally, the whole point of catalog was that it needs to be the
+>> only place where we want to access the registers. Thats how this really
+>> started.
+>>
+>> This pre-dates my time with the DP driver but as I understand thats what
+>> it was for.
+>>
+>> Basically separating out the logical abstraction vs actual register writes .
+>>
+>> If there are hardware sequence differences within the controller reset
+>> OR any other register offsets which moved around, catalog should have
+>> been able to absorb it without that spilling over to all the layers.
+>>
+>> So for example, if we call dp_ctrl_reset() --> ctrl->catalog->reset_ctrl()
+>>
+>> Then the reset_ctrl op of the catalog should manage any controller
+>> version differences within the reset sequence.
+> 
+> The problem is that the register-level writes are usually not the best
+> abstraction. So, instead of designing the code around dp_catalog I'd
+> prefer to see actual hw / programming changes first.
+> 
 
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+So thats the issue here. If we did end up with registers and sequences 
+different for controller versions, the ctrl layer was expected to just 
+call a reset() op for example similar to the DPU example you gave. And 
+as you rightly noted, the dpu_hw_xxx files only expose the ops based on 
+version and the upper layers were supposed to just call into the ops 
+without knowing the register level details. Thats pretty much what 
+dp_ctrl tried to do here. We did not want to expose all the register 
+defines in those layers. This series is doing exactly opposite of that.
 
-Tim
+>>
+>> We do not use or have catalog ops today so it looks redundant as we just
+>> call the dp_catalog APIs directly but that was really the intention.
+>>
+>> Another reason which was behind this split but not applicable to current
+>> upstream driver is that the AUX is part of the PHY driver in upstream
+>> but in downstream, that remains a part of catalog and as we know the AUX
+>> component keeps changing with chipsets especially the settings. That was
+>> the reason of keeping catalog separate and the only place which should
+>> deal with registers and not the entire DP driver.
+>>
+>> The second point seems not applicable to this driver but first point
+>> still is. I do admit there is re-direction like ctrl->catalog
+>> instead of just writing it within dp_ctrl itself but the redirection was
+>> only because ctrl layers were not really meant to deal with the register
+>> programming. So for example, now with patch 7 of this series every
+>> register being written to i exposed in dp_ctrl.c and likewise for other
+>> files. That seems unnecessary. Because if we do end up with some
+>> variants which need separate registers written, then we will now have to
+>> end up touching every file as opposed to only touching dp_catalog.
+> 
+> Yes. I think that it's a bonus, not a problem. We end up touching the
+> files that are actually changed, so we see what is happening. Quite
+> frequently register changes are paired with the functionality changes.
+> 
 
-> ---
->  arch/x86/kernel/itmt.c | 56 ++++++++++++++++++++----------------------
->  1 file changed, 27 insertions(+), 29 deletions(-)
->=20
-> diff --git a/arch/x86/kernel/itmt.c b/arch/x86/kernel/itmt.c
-> index ee43d1bd41d0..9cea1fc36c18 100644
-> --- a/arch/x86/kernel/itmt.c
-> +++ b/arch/x86/kernel/itmt.c
-> @@ -19,6 +19,7 @@
->  #include <linux/sched.h>
->  #include <linux/cpumask.h>
->  #include <linux/cpuset.h>
-> +#include <linux/debugfs.h>
->  #include <linux/mutex.h>
->  #include <linux/sysctl.h>
->  #include <linux/nodemask.h>
-> @@ -34,45 +35,38 @@ static bool __read_mostly sched_itmt_capable;
->   * of higher turbo frequency for cpus supporting Intel Turbo Boost Max
->   * Technology 3.0.
->   *
-> - * It can be set via /proc/sys/kernel/sched_itmt_enabled
-> + * It can be set via /sys/kernel/debug/x86/sched_itmt_enabled
->   */
->  bool __read_mostly sysctl_sched_itmt_enabled;
-> =20
-> -static int sched_itmt_update_handler(const struct ctl_table *table, int =
-write,
-> -				     void *buffer, size_t *lenp, loff_t *ppos)
-> +static ssize_t sched_itmt_enabled_write(struct file *filp,
-> +					const char __user *ubuf,
-> +					size_t cnt, loff_t *ppos)
->  {
-> -	unsigned int old_sysctl;
-> -	int ret;
-> +	ssize_t result;
-> +	bool orig;
-> =20
->  	guard(mutex)(&itmt_update_mutex);
-> =20
-> -	if (!sched_itmt_capable)
-> -		return -EINVAL;
-> -
-> -	old_sysctl =3D sysctl_sched_itmt_enabled;
-> -	ret =3D proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> +	orig =3D sysctl_sched_itmt_enabled;
-> +	result =3D debugfs_write_file_bool(filp, ubuf, cnt, ppos);
-> =20
-> -	if (!ret && write && old_sysctl !=3D sysctl_sched_itmt_enabled) {
-> +	if (sysctl_sched_itmt_enabled !=3D orig) {
->  		x86_topology_update =3D true;
->  		rebuild_sched_domains();
->  	}
-> =20
-> -	return ret;
-> +	return result;
->  }
-> =20
-> -static struct ctl_table itmt_kern_table[] =3D {
-> -	{
-> -		.procname	=3D "sched_itmt_enabled",
-> -		.data		=3D &sysctl_sched_itmt_enabled,
-> -		.maxlen		=3D sizeof(unsigned int),
-> -		.mode		=3D 0644,
-> -		.proc_handler	=3D sched_itmt_update_handler,
-> -		.extra1		=3D SYSCTL_ZERO,
-> -		.extra2		=3D SYSCTL_ONE,
-> -	},
-> +static const struct file_operations dfs_sched_itmt_fops =3D {
-> +	.read =3D         debugfs_read_file_bool,
-> +	.write =3D        sched_itmt_enabled_write,
-> +	.open =3D         simple_open,
-> +	.llseek =3D       default_llseek,
->  };
-> =20
-> -static struct ctl_table_header *itmt_sysctl_header;
-> +static struct dentry *dfs_sched_itmt;
-> =20
->  /**
->   * sched_set_itmt_support() - Indicate platform supports ITMT
-> @@ -98,9 +92,15 @@ int sched_set_itmt_support(void)
->  	if (sched_itmt_capable)
->  		return 0;
-> =20
-> -	itmt_sysctl_header =3D register_sysctl("kernel", itmt_kern_table);
-> -	if (!itmt_sysctl_header)
-> +	dfs_sched_itmt =3D debugfs_create_file_unsafe("sched_itmt_enabled",
-> +						    0644,
-> +						    arch_debugfs_dir,
-> +						    &sysctl_sched_itmt_enabled,
-> +						    &dfs_sched_itmt_fops);
-> +	if (IS_ERR_OR_NULL(dfs_sched_itmt)) {
-> +		dfs_sched_itmt =3D NULL;
->  		return -ENOMEM;
-> +	}
-> =20
->  	sched_itmt_capable =3D true;
-> =20
-> @@ -131,10 +131,8 @@ void sched_clear_itmt_support(void)
-> =20
->  	sched_itmt_capable =3D false;
-> =20
-> -	if (itmt_sysctl_header) {
-> -		unregister_sysctl_table(itmt_sysctl_header);
-> -		itmt_sysctl_header =3D NULL;
-> -	}
-> +	debugfs_remove(dfs_sched_itmt);
-> +	dfs_sched_itmt =3D NULL;
-> =20
->  	if (sysctl_sched_itmt_enabled) {
->  		/* disable sched_itmt if we are no longer ITMT capable */
+Not exactly. Why should dp_ctrl really know that some register offset or 
+some block shift happened for example. It only needs to know when to 
+reset the hardware and not how. Thats the separation getting broken with 
+this.
 
+> For example (a very simple and dumb one), when designing code around
+> dp_catalog you ended up adding separate _p1 handlers.
+> Doing that from the data source point of view demands adding a stream_id param.
+> 
+
+I have not checked your comment on that series here but if your concern 
+is stream_id should not be stored in the catalog but just passed, thats 
+fine, we can change it. stream_id as a param is needed anyway because 
+the register programming layer needs to know which offset to use. This 
+series is not mitigating that fact.
+
+> In the DPU driver we also have version-related conditionals in the HW
+> modules rather than pushing all data access to dpu_hw_catalog.c &
+> counterparts.
+
+The dpu_hw_catalog.c and the dp_catalog.c are not the right files to 
+compare with each other. dp_catalog.c should be compared with 
+dpu_hw_xxx.c and as you noted, DPU version dependencies are handled in 
+those files only and not all over the files like what this series is doing.
+
+> I think it's better to make DP driver reflect DPU rather than keeping
+> a separate wrapper for no particular reason (note, DPU has hardware
+> abstractions, but on a block level, not on a register level).
+> 
+
+Thats the issue here. DPU hardware blocks are arranged according to the 
+sub-blocks both in the software interface document and hence the code 
+matches it file-by-file. DP registers are grouped by clock domains and 
+the file separation we have today does not match that anyway. Hence 
+grouping link registers writes or pixel clock register writes into 
+dp_ctrl is also not correct that way. Let catalog handle that separation 
+internally which it already does.
 
