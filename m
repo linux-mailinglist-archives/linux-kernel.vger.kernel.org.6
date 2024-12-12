@@ -1,114 +1,81 @@
-Return-Path: <linux-kernel+bounces-443806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46D99EFC02
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:05:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DD29EFC06
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:06:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 696B3188C004
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:06:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15CF18C910;
+	Thu, 12 Dec 2024 19:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaXrBdB9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A570B288ED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:05:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7D518FDC9;
-	Thu, 12 Dec 2024 19:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XXRpmOFS"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C42188722
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5533E188722;
+	Thu, 12 Dec 2024 19:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734030338; cv=none; b=Mwz94QKAGJhORKCfmnLYgoKfuVQ/jj4GDkZOBzn0ZMSGE4gXlhyO3tUG3oHuuxHduiASL+QV77ySai+nmgvQuPodx8fdE9l6ZyjEr0nPTyn5kS2gqqM+ylvW8yLOBJqCchbp+XPNa4p3JT6zQBLF5oV1c3nEy5OD0TBG1LiUMg8=
+	t=1734030376; cv=none; b=QUe0Nceaop0GKN4wZO4UEHm/ZfhfmWxYXTOjn70yiBFqoDPbfIB6i13DqlBvCV/JuCZCd2NYSNouqV/HH1PmNfsDg5xnzl62J+h/rRJ715D6qeaIMS8jCQopiQBzWX6/m7oJMRV9VHg1Oj2uJ8zJLAtAOXWtHixGIZnr8rbY+VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734030338; c=relaxed/simple;
-	bh=Dw47rf7cLJIaN7t10ASVEiOwdAE/23UQLgOS/2Rgsp8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=siXPTTIrJHBjaKP8h2QKF2nUD/kD2YIIjdnObFRt23p57EWrIrvQxmTWodrb+A7ZePlfcJw/FLka6C/i5dNnSk3lPIIMNjp4lBf+DWW5njcwfCJlzTyN/kgxMyLWcqqKu9X00XsDhHDnZnPllePwnJ1Vj7rbbl7f1+4+3yWfA5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XXRpmOFS; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ee36569f4cso949686a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:05:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734030336; x=1734635136; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VnYWrigOtuAf9LdwbPjTO9DkgxrnSgDFVgY1WMibPFs=;
-        b=XXRpmOFS34OVxXrCoBQW2tc+M0xbuEzUrALdiUN7QfRt44RE1gt946M6PSyGY34rm7
-         F3iXW+FdkRcoRsimw4gVUralS0QQNBbNhLWmc7g3J1VhFTF85pPVDHQEp/VR5E4rgLq9
-         YH3j13w7KdQPcuFZMuFeaJK3kV9nPkc42RYoNNnFLZBrbepR/5PniLTi+3Q3wE5WlWUS
-         IsUTOKLyR5mQUgetfgkcPtzeWQ6Xl2pr1g+FEUzatqW06+tT7I9dqHPwfy3Y8yANVrP/
-         R9nSssCFRcHYTLs48qqTEbmy2wkm6FlUT7LB8Qxoc21RE3/pAUrfLYuS4MKB5eusBM8S
-         KY1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734030336; x=1734635136;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VnYWrigOtuAf9LdwbPjTO9DkgxrnSgDFVgY1WMibPFs=;
-        b=DU7paNk0KgJhDPfNiGh98EjIM+T9Gj1ERzjzQ0VNCMwnihul66qrV/nEBoFRGAzNG1
-         +d+60SqM4+V/rRaaZaE9PmbSKNp7kGUzUUj2C2Y8vd+19JOPZ2dAxkTDqmzyuM+hJ73W
-         +AD+q3C8CJ806pDAjF7yHZuG+yaFYbt4my1jC+q8/dYu94jpcg/nfE3nzatzsjAAh+vC
-         JL4Xuytxy4OnXGyWil5HW+Rw4eUwtMqslk5MBZPqDpx3ngBwVKEwji6T7Zog3ltcMGAk
-         zXRFk7ek3R5+T09PkZHu9PkZAN7wTuvUq25d5T7+lwwCqHbv7Z0PkCuU9QO72DcCshdc
-         AxNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUu3Y6HjRe9iOFW7XYp/lCOF2vG2q2Rbb8pVszOS6DssoI9wbuMS3UZRDCaceWO9q5gIidXNvNnwIsUB4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPOPvAeh15up9TwNQeTwAW8+MbOA/wEo+ZB+dazQ0cXeX9BOgo
-	L2wUZhqq0ACza8wi/jB4pTvffgkw6m5JO+KOKbUUt7R8TV4yW8DxmSFCFy/nNQu9j9U7Mazg3H4
-	Tgw==
-X-Google-Smtp-Source: AGHT+IEdEhxrbv665tX5mqtqZnesDlC8QyYfPay6nTyYChemGnidc5QlP+2jSdQpsoMDrBFTy7xKqsXeQuk=
-X-Received: from pjbnc12.prod.google.com ([2002:a17:90b:37cc:b0:2ea:adc3:8daa])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d04:b0:2ea:6f19:1815
- with SMTP id 98e67ed59e1d1-2f13930b9b2mr7758202a91.24.1734030335893; Thu, 12
- Dec 2024 11:05:35 -0800 (PST)
-Date: Thu, 12 Dec 2024 11:05:34 -0800
-In-Reply-To: <3ec986fa-2bf0-4c78-b532-343ad19436b2@zytor.com>
+	s=arc-20240116; t=1734030376; c=relaxed/simple;
+	bh=VxgHNwFmaWCtepqB0u6AhFEsWJxOKzUcRPRFx3Fkmxk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fb4asm43+0kjFxMXvealTQh7tfuyW3J8fE6YTVKZEPH9oY5vfKPSO4ppk8VPIPMx9l+PNXXqCNoPHlg3oYEONVka+mN1IZ+kIGyZQ8uIg53aC+sfuz3LoyArFTng8cc3x2Q/rXZqRDqgjO62jdlfYMOssCALozfhrnkf94GzhSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaXrBdB9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82159C4CECE;
+	Thu, 12 Dec 2024 19:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734030375;
+	bh=VxgHNwFmaWCtepqB0u6AhFEsWJxOKzUcRPRFx3Fkmxk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=qaXrBdB9Q3HYnEM6YOOACHhwetUkuf2VImHN0U4aHtkLuzqdTIhFK5eFdG0TdlTdS
+	 862u4O1l/Bvwpc5Do3LJTNyFPNqoaiDrLUqP+7rbsQVAa7ZipvXeY89E0jHjhiTZiA
+	 2WF6Xn5JeCaMLVFTGqMXrTP44JWLjHQJMndHkyZKshla097WDwQowMn1sT6VPUB/w3
+	 wvVdTZWPi0LwKHTZj4l2DNabNxZwOhVc0bFUA3WrUAY7qcaqgwjCKTo1MeP33UpmYi
+	 bGh05dLcXB7lv9szDrMhw9qQNqkEva+QmsPnwdK39ifw9IPuPfriusSId9jKUJc77v
+	 x+Yvb+FeRjkWg==
+From: Lee Jones <lee@kernel.org>
+To: Support Opensource <support.opensource@diasemi.com>, 
+ Lee Jones <lee@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, 
+ Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+In-Reply-To: <20241210-da9052-wdt-v2-1-95a5756e9ac8@gmail.com>
+References: <20241210-da9052-wdt-v2-0-95a5756e9ac8@gmail.com>
+ <20241210-da9052-wdt-v2-1-95a5756e9ac8@gmail.com>
+Subject: Re: (subset) [PATCH v2 1/2] mfd: da9052: store result from
+ fault_log
+Message-Id: <173403037427.2377570.11343478504367875652.b4-ty@kernel.org>
+Date: Thu, 12 Dec 2024 19:06:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241001050110.3643764-1-xin@zytor.com> <20241001050110.3643764-18-xin@zytor.com>
- <Zxn0tfA+k4ppu2WL@intel.com> <3ec986fa-2bf0-4c78-b532-343ad19436b2@zytor.com>
-Message-ID: <Z1sz_oMq8yX--H7U@google.com>
-Subject: Re: [PATCH v3 17/27] KVM: x86: Mark CR4.FRED as not reserved when
- guest can use FRED
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin@zytor.com>
-Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org, 
-	peterz@infradead.org, andrew.cooper3@citrix.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Thu, Dec 12, 2024, Xin Li wrote:
-> On 10/24/2024 12:18 AM, Chao Gao wrote:
-> > > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > > index 03f42b218554..bfdd10773136 100644
-> > > --- a/arch/x86/kvm/vmx/vmx.c
-> > > +++ b/arch/x86/kvm/vmx/vmx.c
-> > > @@ -8009,6 +8009,10 @@ void vmx_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
-> > > 	kvm_governed_feature_check_and_set(vcpu, X86_FEATURE_LAM);
-> > > 	kvm_governed_feature_check_and_set(vcpu, X86_FEATURE_FRED);
-> > > 
-> > > +	/* Don't allow CR4.FRED=1 before all of FRED KVM support is in place. */
-> > > +	if (!guest_can_use(vcpu, X86_FEATURE_FRED))
-> > > +		vcpu->arch.cr4_guest_rsvd_bits |= X86_CR4_FRED;
-> > 
-> > is this necessary? __kvm_is_valid_cr4() ensures that guests cannot set any bit
-> > which isn't supported by the hardware.
-> > 
-> > To account for hardware/KVM caps, I think the following changes will work. This
-> > will fix all other bits besides X86_CR4_FRED.
+On Tue, 10 Dec 2024 16:24:40 +0100, Marcus Folkesson wrote:
+> Other sub-components (da9052-wdt) could use the result to determine
+> reboot cause.
+> Expose the result by make it part of the da9052 structure.
 > 
-> This seems a generic infra improvement, maybe it's better for you to
-> send it as an individual patch to Sean and the KVM mailing list?
+> 
 
-Already ahead of y'all :-)  (I think, I didn't look closely at this).
+Applied, thanks!
 
-https://lore.kernel.org/all/20241128013424.4096668-6-seanjc@google.com
+[1/2] mfd: da9052: store result from fault_log
+      commit: 2873c48377e5d68aebdbb3b6a6c191fda321ddbf
+
+--
+Lee Jones [李琼斯]
+
 
