@@ -1,119 +1,192 @@
-Return-Path: <linux-kernel+bounces-442645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99479EDFBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:00:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C439EDFC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6C61691E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:00:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E2BB188BF98
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AADB205AAF;
-	Thu, 12 Dec 2024 06:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7AA204F66;
+	Thu, 12 Dec 2024 07:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WlhgRDsq"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZTxInMDC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8946204F97;
-	Thu, 12 Dec 2024 06:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B383288DA;
+	Thu, 12 Dec 2024 07:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733986712; cv=none; b=gVTLn2QUVQ7WyFicjJWrpD+4L2Y/7rkMYk+FcKD/7afCpq980jsuOytCuY/EGXlN9BtSHpd5s4QecbfcdPWgyNHNfvjjD1jIf3VZgSlmlxUtihpHLOu45wFh441l01BYYe+1FTYgdouZAEQzUhQc3K4456GNEaYCftEbrS63cFQ=
+	t=1733986844; cv=none; b=bTVCiA2+7P4fIjYE55tZ5JuzOCorfLEivCoySMOQMwJrnNpa2z5d0axdSd9gEayKGXVU3QLcBlzFnIQ+xOHWHOYoPQ9bKvrQMS+rS6c3FYR0rFA4vqAZeRDO3eNxtvF4eqW/8KUZzvP6dJUi2+Wgcxi3IFiOGHZgw19Eek8TVHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733986712; c=relaxed/simple;
-	bh=tl3YxfABMq/tz/S4rtg5u0jspXirem5riBalXgnXggg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UB12sEu4a5rJDRU+zOtbJf0dGkraxPjtJJh8CTMrN8Opuba1XZJdfazVSI2Di1AG38W6RhosqWlf6G/IFISrQq0M3PbDU6/SfetpYTQN84nNhoZI5akdO57GSe1dbz59AuxsB1iSYxxE7yLd/h9Luqcw0pEt/CXN+I/BCpzn0EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WlhgRDsq; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6efe4324f96so2166087b3.1;
-        Wed, 11 Dec 2024 22:58:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733986710; x=1734591510; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4SBbQIRgkoPJ+zE2Mc145HJltZD8ZKGkbTApj4NmDlM=;
-        b=WlhgRDsqPrN3haeUwYNzKbW4/pMUY5uH/+of8dbnb7/DANaA7B0bnEPsK/kOBPmPPO
-         vLzQC7Hih2ykC7jKfuhe/EV7oxVxA/hZ7yrKrSxiAlUW6W8mCK9KxLoG0a3hYIUGCh+X
-         YXXcmkeDJL0rdWiE8pS0aiiHNv0jjM30Men2NF45kLN5pCCsQ2MG4PYdC64khsUWB2Jx
-         2e+t6Ps7b35nXRMqjcHTczTCEgOUKIXg86LJ3yU/t7T40FcHpjJBiS0ufMTP4Jh97wkI
-         1uSw5qRlMkQqTGizHSTmgjjlyJtQzxXYld0VJPS5/P+GxuczRtdX9b8W/bZoW0YC31v/
-         VkmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733986710; x=1734591510;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4SBbQIRgkoPJ+zE2Mc145HJltZD8ZKGkbTApj4NmDlM=;
-        b=NlXrAFVOeFTiwhbJdLAEi0rAcK5Ie+eQ9k8ouMT5z3pa4epNY7llklDBbOjnlI/Fp6
-         shoA6L8bzHIyjLabWcG4z9Dy2JLsrPmeOh0ei/QkAj16YUVp1m3za/HXvCGcuz/uT/vJ
-         gPsh6L4qzTsLqs6awXi9y9jrLCr2FQcIDPznYeUMKTrdYS/xgQxQTV4/7JDmEaLBnEp9
-         6VfByUrBvJTI/kHrXK8YN98lLlbJtPxJOP3M1tMhq6WBOZWhm7ViDwq6h2aeJB19SIE3
-         aAJVOpzg/Sob/Bk9MWf88xLZChdCgsQXjagxIMhNgGqN0qiTbc4oE0AJ8wBp7ZiMp4Dc
-         +mAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUexvv/WSM0tS4yCYiUQQCkS9J8aDveKrzLN8oDPgrNQ1RnTWr0UFMa/5DJenklo5V4SrpvDCxtBskcxA==@vger.kernel.org, AJvYcCV9ziBi4zrUnpIDE/3j+KZZz2LXjvwRGxqNeUpo98Ze8JuBufpmBvVYsAJf+vdTC0IxnAYU1bTlvRRm8EY=@vger.kernel.org, AJvYcCVNxU9lZC5PugbGf8oQQ+Lw2sSW5MJ8pODz343gD9ph3EpnEry2Bs4SdTnCKoTXSjXQx0+ikRjA@vger.kernel.org, AJvYcCVQl96U9ynubGQLYvEZZhM+GHoq8qLOTnjUYA7GBN3f0jCVkzEiTVgljF9F2YpRViGKT1xJyOwUkAJi2Om3@vger.kernel.org, AJvYcCWEJuLRaHLboFmo/kc9p0owpRmGTIpt6zKoChvlNV9PBK7eIsN5WAbtGfa/hyWVjbVEi2n2zmOYt7I6jd4505A=@vger.kernel.org, AJvYcCX+ajFMYet8tlpEqoajQSwN6Snur1kbhanLq1ksBtu8XQYpZpOFejugJZKa5auHrQbstTqJOufZkOw=@vger.kernel.org, AJvYcCX0qQgxyJfroRd8DstDB5W/mCSQW3KG8WPrdlLDkqzlsl1pKldJc3L/94/5BlXK8kjX4Efje/npM1nZ@vger.kernel.org, AJvYcCXpdBIYrJybyqkYSxhQWyC5v0dTaHCuDlKLaEmWSWouk0QBCagi48eMVomz7zYq99/NTrLuFockrKWn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8df0HDyoy4tIMD4bFAR1G6BnpvcSJ2cjssY0QXD6lYVoQFcGD
-	3aZDf12FAceImLP6VRwrs2qOpRkFEcHGlA3mNKVLg7sWXn4WQVA0/DXC1OY8pvTUbd4E+d24JoD
-	F2XaHL34T7MBZj6+VHBj4s+EKj7hLmqi5
-X-Gm-Gg: ASbGncsuRmTSrdS5xoQ9DzVk4lIX8VC/R0lk+jV5vjWH+waXFEL90+s0fvEqxao4QH+
-	spPdxfilDSuDY1lcbGUH2aCDilw8MsaD2fZwYVBXNQENx3bxRS2bgLJy5ea9L7vkv8wJ5m6Q=
-X-Google-Smtp-Source: AGHT+IHc27VmMPaQKcl6qXX4RmzgpwyBgTIEhwQilPevJCxIgXv2yqNK/gefN8IqBrHmgs1Ap5dwa7zLzHGXTy4QZuA=
-X-Received: by 2002:a05:690c:640c:b0:6ef:6035:8298 with SMTP id
- 00721157ae682-6f19e861171mr20988847b3.36.1733986709785; Wed, 11 Dec 2024
- 22:58:29 -0800 (PST)
+	s=arc-20240116; t=1733986844; c=relaxed/simple;
+	bh=tr3H9l9bGW6ozzkXMOSie+z2ipjQ3UPuQLVoO3W9s64=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BjRwxsh1cogknKad1bxgg4tCbnS8dyCMwlNMN5fAdpRlPo/ZZkl1ZBhS4vRbjxLhGN5elbYLZl+gjgAK3MFvNpE40fTOeo1rngMd/8PxpDsujI8MZKgqkQ1ney5I+v40CxZq3zmLiITlldlg8DNoRvBRbprxjwEto+bbX3PF6p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZTxInMDC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHD9T0027283;
+	Thu, 12 Dec 2024 07:00:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	542Z1YhSgDVb8yaviufnRA8DzBabzMl5pL3RWJoYS64=; b=ZTxInMDC9O01VbaD
+	pTAj7Kuff0O/thuJ+0syDGjLbK+UsqBrklpnDBvK7QI0H+z2zakGNEGUjCAGvtdN
+	Tm1e8j1Mq0N7O6M5HaowNemZJ4tffMH3vvSynuIEUfuscsZPhlXzL076mth+PpVq
+	/xtImtoKqXSfrsn4hzs7UaU+IHloUt35TozWPo4j6zPpcUKf5q0IxP8xCScXFlaF
+	rpZI5OQEwsFtir4JkSSnFEyKHjCUrA15S35Up/bfOTG0UMzG+spfFZtMMkLZFyBc
+	RQjr4WxDfEx7VIhp3jirE8mPjMXJw/z9eo4U8+atbL3KLSAQ24ReIOgEwP/tr+q5
+	EMbmdg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43etn8w9yu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 07:00:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC70bmw000595
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 07:00:37 GMT
+Received: from [10.50.15.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
+ 2024 23:00:32 -0800
+Message-ID: <2b0a4a87-b67c-4d24-9091-4a1d0c434815@quicinc.com>
+Date: Thu, 12 Dec 2024 12:30:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210104524.2466586-1-tmyu0@nuvoton.com> <20241210104524.2466586-3-tmyu0@nuvoton.com>
- <CAMRc=Men4QM3a2rydxDYwLjJLYPB7Uid=y_DJ8YNa-So2H3NQQ@mail.gmail.com>
-In-Reply-To: <CAMRc=Men4QM3a2rydxDYwLjJLYPB7Uid=y_DJ8YNa-So2H3NQQ@mail.gmail.com>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Thu, 12 Dec 2024 14:58:18 +0800
-Message-ID: <CAOoeyxXP5nY5edzW32sx+QS7sCSzhykQe9v6f-OHWOStwBDggw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/7] gpio: Add Nuvoton NCT6694 GPIO support
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 RESEND 1/2] dt-bindings: clock: Add Qualcomm SM6115
+ LPASS clock controller
+To: Alexey Klimov <alexey.klimov@linaro.org>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <krzk+dt@kernel.org>
+CC: <konradybcio@kernel.org>, <konrad.dybcio@oss.qualcomm.com>,
+        <robh@kernel.org>, <conor+dt@kernel.org>,
+        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241212002551.2902954-1-alexey.klimov@linaro.org>
+ <20241212002551.2902954-2-alexey.klimov@linaro.org>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <20241212002551.2902954-2-alexey.klimov@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: SXzxlJepK6j9VJZMM5FkPzJanUtT3e8Y
+X-Proofpoint-GUID: SXzxlJepK6j9VJZMM5FkPzJanUtT3e8Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 spamscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120046
 
-Dear Bartosz,
 
-Thank you for your comments,
 
-Bartosz Golaszewski <brgl@bgdev.pl> =E6=96=BC 2024=E5=B9=B412=E6=9C=8810=E6=
-=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=888:46=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Looks much better now. Please address one more issue I just noticed.
->
-> > +
-> > +       mutex_init(&data->irq_lock);
->
-> This is never destroyed. Please use devm_mutex_init() preferably to
-> not add remove(). Also, the other mutex doesn't seem to be initialized
-> at all.
->
+On 12/12/2024 5:55 AM, Alexey Klimov wrote:
+> From: Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+> SM6115 (and its derivatives or similar SoCs) has an LPASS clock
+> controller block which provides audio-related resets.
+> 
+> Add bindings for it.
+> 
+> Cc: Konrad Dybcio <konradybcio@kernel.org>
+> Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> [alexey.klimov] slightly changed the commit message
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+>  .../bindings/clock/qcom,sm6115-lpasscc.yaml   | 46 +++++++++++++++++++
+>  .../dt-bindings/clock/qcom,sm6115-lpasscc.h   | 15 ++++++
+>  2 files changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,sm6115-lpasscc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
+> new file mode 100644
+> index 000000000000..247b6b0a9f5a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm6115-lpasscc.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm6115-lpasscc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm LPASS Core & Audio Clock Controller on SM6115
+> +
+> +maintainers:
+> +  - Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Understood! I will address the issue and include the missing part in
-the next patch.
-For other drivers that use mutex_init() without destroying it should
-also be changed to devm_mutex_init(), right?
+Please check the mail id.
 
-Best regards,
-Ming
+> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> +
+> +description: |
+> +  Qualcomm LPASS core and audio clock controllers provide audio-related resets
+> +  on SM6115 and its derivatives.
+> +
+> +  See also::
+> +    include/dt-bindings/clock/qcom,sm6115-lpasscc.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sm6115-lpassaudiocc
+> +      - qcom,sm6115-lpasscc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#reset-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    lpass_audiocc: clock-controller@a6a9000 {
+> +        compatible = "qcom,sm6115-lpassaudiocc";
+> +        reg = <0x0a6a9000 0x1000>;
+> +        #reset-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,sm6115-lpasscc.h b/include/dt-bindings/clock/qcom,sm6115-lpasscc.h
+> new file mode 100644
+> index 000000000000..799274517c9a
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,sm6115-lpasscc.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2023, Linaro Ltd.
+> + */
+
+Do we need to update the Copyright year?
+
+Thanks & Regards,
+Manikanta.
 
