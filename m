@@ -1,135 +1,140 @@
-Return-Path: <linux-kernel+bounces-443221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06EC59EE8FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:35:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798279EE8FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:36:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07872818B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A5F18864E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4482153D2;
-	Thu, 12 Dec 2024 14:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E70215773;
+	Thu, 12 Dec 2024 14:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E9tKShSN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="QvdsJ27z";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="QvdsJ27z"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D43F42AA6;
-	Thu, 12 Dec 2024 14:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4877421506B;
+	Thu, 12 Dec 2024 14:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734014150; cv=none; b=U0Gdzq3+zJZIwL7VeM1MzYJaLgXTxPAwcZKGvDzkip3TZDAFMAnBrFFAOFDrArSP/J3N5HlAHwe/xDAz2nhE3d7YeZSR9PGUpStRteFo5NRYDKxULpxxJe80TcuOgVMTN6TOnThTWDlWblY40B3gIk+FLqUrWCDJvH2JF4Q5ZAY=
+	t=1734014152; cv=none; b=IjS6CDUCqGrQLhXX8wUWuilrANZrYPWTnDzfLZPO9cUcHUK3B4rECBkT/+p5nmgWICVsl2fyKCsj5OJbGM6LF+14u1/scg4Zl80c/Y0/mWSE51yExrLTxugBYwLedNNsbDuXwwjChUXOgFhLEA0bacdhPzKzDY0JRBTQ7nFtvjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734014150; c=relaxed/simple;
-	bh=pEIFIZJF8cngkjb+RiCN9/+fq9gFY1FVR3Tc3nK/LWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KliRGRNTjtlk+ZwW7lqReBzj29+rCL52pwwPFmF6dQhkX2QXZrZPXievyvjP6g0ybskvMR4PMcYoPuk95/kszbWSqY/QiMIr0TCxcIvJEK3n1ZIbZjneoDto+LLa5m/IIVioJvHx1egSnfXoZ9a3dzjrkH6RHHaAwshKx+jjZ1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E9tKShSN; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1734014152; c=relaxed/simple;
+	bh=/BRyeJOSctv9s1dQvG8sTNwD6gQGaxrOOiPNVZ+2V7Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kwT0VMjWbh9dPbeDX5dhAJjAv0KOHMaXg9ghVSYid9lURXQdlX9KRuUPS/ZKljZVtA7iLQgQdP9oGyqaei291rBA4cP8FR3vNjfNexp+xn+KIlvSELiPIE5nK5r7F7s25z/iynHTJ0R2Tv7jv3nlxRmZp94WK/4u5CZGZYqXyZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=QvdsJ27z; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=QvdsJ27z; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734014149; x=1765550149;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pEIFIZJF8cngkjb+RiCN9/+fq9gFY1FVR3Tc3nK/LWc=;
-  b=E9tKShSNxJ+buZFT+89eYyTDJmjMGmQjlc3jDF7rHuhe/M+KadOH6rAF
-   kbld6RS+u7UaTMlc222tIsN0oAfkGdlgcWVRMNHK78oPzXOVVCFpR0i8j
-   SvgbOVXsZaGD+C0qv7ytSafsNFUE1GEZxR2tiju1EkqEUmbVY54oguTgR
-   8NonyrgNvu//RS2woygikcUiCFgdCBchDoVWBBQMhFrFa26+V8chfDo40
-   tXE/UOFBjfnoP4uucrjAT848HqBT9aYu+aMBFFdJGvqBibv1/NkyQaKlB
-   8+Z1Il2P7jWxYnjGJF/GfRo/wW7OEiUzY7C3o3QX/HbgIWCDfhH3YKwSj
-   g==;
-X-CSE-ConnectionGUID: l85wFHVSR+6ZEzxz5NXW3A==
-X-CSE-MsgGUID: juC3scJvSjC20/rVjpqvbQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="56902934"
-X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
-   d="scan'208";a="56902934"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 06:35:49 -0800
-X-CSE-ConnectionGUID: XzhTQfCsQ3ObPfL0Q+ZzKg==
-X-CSE-MsgGUID: gOxbAqB1QLGOe4w1VFyx4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
-   d="scan'208";a="96655493"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 06:35:47 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tLkI5-00000006vKE-15tp;
-	Thu, 12 Dec 2024 16:35:45 +0200
-Date: Thu, 12 Dec 2024 16:35:45 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	Lars-Peter Clausen <lars@metafoo.de>, gregkh@linuxfoundation.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v1 1/2] driver core: Split devres APIs to device/devres.h
-Message-ID: <Z1r0wUHu8VO4baaI@smile.fi.intel.com>
-References: <20241203195340.855879-1-andriy.shevchenko@linux.intel.com>
- <20241203195340.855879-2-andriy.shevchenko@linux.intel.com>
- <20241208171001.4994e749@jic23-huawei>
- <Z1Y9uqGyq-yuxoEe@smile.fi.intel.com>
- <20241211182958.5afc82c4@jic23-huawei>
+	d=hansenpartnership.com; s=20151216; t=1734014149;
+	bh=/BRyeJOSctv9s1dQvG8sTNwD6gQGaxrOOiPNVZ+2V7Q=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=QvdsJ27z5wkJCJ5m43ZyRYBnzb7b+SoX2jhwxvSLRL24QScwT0W6YeZt4C56j3YhO
+	 eO8Q8rwjhEx2Rp0089mTePmHhllRLT6X/lJ+wWz3NMtgwqWRnsFEcMb/DJC4n/TVPx
+	 jx166VNefKJRiDQFJ6Upoeh2u7CRYTepsIYgDZi0=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id E708312879AF;
+	Thu, 12 Dec 2024 09:35:49 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id qTv-JLffv6fG; Thu, 12 Dec 2024 09:35:49 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1734014149;
+	bh=/BRyeJOSctv9s1dQvG8sTNwD6gQGaxrOOiPNVZ+2V7Q=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=QvdsJ27z5wkJCJ5m43ZyRYBnzb7b+SoX2jhwxvSLRL24QScwT0W6YeZt4C56j3YhO
+	 eO8Q8rwjhEx2Rp0089mTePmHhllRLT6X/lJ+wWz3NMtgwqWRnsFEcMb/DJC4n/TVPx
+	 jx166VNefKJRiDQFJ6Upoeh2u7CRYTepsIYgDZi0=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2BDBB1286F1F;
+	Thu, 12 Dec 2024 09:35:48 -0500 (EST)
+Message-ID: <b92113a11f121dc4d485b5ba522c8c8c0781d1be.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/3] tpm: add generic platform device
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stefano Garzarella <sgarzare@redhat.com>, Claudio Carvalho
+	 <cclaudio@linux.ibm.com>, Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-coco@lists.linux.dev, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Peter Huewe <peterhuewe@gmx.de>, "H. Peter
+ Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org, x86@kernel.org,
+ Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>, Jarkko
+ Sakkinen <jarkko@kernel.org>, linux-kernel@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>, Dov Murik
+ <dovmurik@linux.ibm.com>, Oliver Steffen <osteffen@redhat.com>
+Date: Thu, 12 Dec 2024 09:35:46 -0500
+In-Reply-To: <zzi3fvbo2rnb2d76soseuekwaqe22ifnrhhjplqhvw6x26lbb4@nmcqylrenzyj>
+References: <20241210143423.101774-1-sgarzare@redhat.com>
+	 <20241210143423.101774-2-sgarzare@redhat.com>
+	 <zzi3fvbo2rnb2d76soseuekwaqe22ifnrhhjplqhvw6x26lbb4@nmcqylrenzyj>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211182958.5afc82c4@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 11, 2024 at 06:29:58PM +0000, Jonathan Cameron wrote:
-> On Mon, 9 Dec 2024 02:45:46 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Sun, Dec 08, 2024 at 05:10:01PM +0000, Jonathan Cameron wrote:
-> > > On Tue,  3 Dec 2024 21:48:51 +0200
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > >   
-> > > > device.h is a huge header which is hard to follow and easy to miss
-> > > > something. Improve that by splitting devres APIs to device/devres.h.
-> > > > 
-> > > > In particular this helps to speedup the build of the code that includes
-> > > > device.h solely for a devres APIs.  
+On Thu, 2024-12-12 at 10:51 +0100, Stefano Garzarella wrote:
+> On Tue, Dec 10, 2024 at 03:34:21PM +0100, Stefano Garzarella wrote:
+[...]
+> > +static int tpm_platform_recv(struct tpm_chip *chip, u8 *buf,
+> > size_t len)
+> > +{
+> > +       struct tpm_resp *resp = (struct tpm_resp *)buffer;
+> > +
+> > +       if (resp->size < 0)
+> > +               return resp->size;
+> 
+> While reviewing Oliver's work for the driver in edk2[1], I noticed
+> that
+> there wasn't this check and asked to add it, but talking to him and
+> looking in the code/spec, we realized that it's strange that
+> tpm_resp.size field is signed.
+> 
+>  From SVSM spec it looks like it can't be negative:
+> 
+>      Table 17: TPM_SEND_COMMAND Response Structure
+> 
+>      Byte     Size        Meaning
+>      Offset   (Bytes)
+>      0x000    4           Response size (in bytes)
+>      0x004    Variable    Variable Response
+> 
+> And also Coconut SVSM remap it to the `responseSize` of the TCG TPM
+> implementation which is unsigned:
+> 
+>      LIB_EXPORT void _plat__RunCommand(
+>          uint32_t        requestSize,   // IN: command buffer size
+>          unsigned char*  request,       // IN: command buffer
+>          uint32_t*       responseSize,  // IN/OUT: response buffer
+> size
+>          unsigned char** response       // IN/OUT: response buffer
+>      )
+> 
+> @James, @Claudio, @Tom, should we use u32 for tpm_resp.size?
 
-...
+The original idea was to allow the protocol to return an error (like
+out of memory or something) before the command ever got to the TPM
+rather than having to wrap it up in a TPM error.  However, that's done
+in the actual return from the SVSM call, which the sendrecv routine
+checks, so I agree this can be removed and a u32 done for the length. 
+Dov did recommend we should check the returned length against the
+maximum allowable:
 
-> > > > -#include <linux/overflow.h>
-> > > > +  
-> > > Unrelated change.  
-> > 
-> > Which one? Blank line?
-> I think that's what I meant :)  Was a trivial comment though.
+https://lore.kernel.org/linux-coco/f7d0bd07-ba1b-894e-5e39-15fb1817bc8b@linux.ibm.com/
 
-Got it!
+Regards,
 
-...
-
-> > > > -#include <linux/cleanup.h>  
-> > > This header movement is unrelated.  
-> > 
-> > No problem to let it stay at the same place.
-> > 
-> > > I agree both are good but probably want to be a separate patch.
-> > > 
-> > > Otherwise this seems sensible to me, but your cc list seems a little short!
-> > > 
-> > > Greg and Rafael seems a good starting point so I've added them.  
-> > 
-> > Thanks! I need to check why they were not included into the original
-> > submission. Perhpas I need to amend MAINTAINERS,
-
-I added the file to MAINTAINERS locally.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+James
 
 
