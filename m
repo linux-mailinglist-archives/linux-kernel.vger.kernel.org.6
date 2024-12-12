@@ -1,265 +1,216 @@
-Return-Path: <linux-kernel+bounces-443873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8DA9EFD01
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:08:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFA39EFD08
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:10:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AF1C16BFF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E75D28B5BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCCB1ABECF;
-	Thu, 12 Dec 2024 20:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867FE1AD403;
+	Thu, 12 Dec 2024 20:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nC18HmEk"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aY3CVRav"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F411917D6;
-	Thu, 12 Dec 2024 20:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45994189F2F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734034131; cv=none; b=B82oJIzXM6AsawXMZgnQqjZ5zDjqyDjPwyyFPUtam0ygzuOBEH9bWQKaTDFttqQyF0CHFsH5vovgYj2xfMxsDgann1yJzYP4RiNl6gXVhG1CskPegGqH93aGddwjajN8fa4nYtYYTWHmxdkndH9041fWuv8gZdu54xg4a2+GSbE=
+	t=1734034237; cv=none; b=udgYRi4y21MHx5E+jCRZX3WKgszAKp96WMowWHfrWeMkNv/2P/u2CKwDFJAMCB4eaMcCRkq9Vpic4SLtISfc26vdEzv09uiP0UxnztUrax5okxiZIt36+mHG42Z7wZLmUyuO9yr6lhUmKKOCYQeGcDc1wv0yBOwuxYTIvbwLYpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734034131; c=relaxed/simple;
-	bh=rGlNM0MTKO9H5+NJ7e+yXuofUkMksUw402gZcNo+JtY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pkL4pkOlrrcBcg1dPfXCzyjd4bv6OZKoPSBhJmpSGEutp+GhT1aMT6vX5YurqLvoZdFpchOOq2d6af2W0+WmtR6pxMaYFBn8m27QtokgKWa9gQu8Br/zm/z2aBui7hQKUSHIk3+YfvgJJqZt+Vu4t2//cDwggPHRlBAL6Hzi79E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nC18HmEk; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9ec267b879so85627266b.2;
-        Thu, 12 Dec 2024 12:08:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734034127; x=1734638927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zN4Ym/UunmzCYsNSflmoKoSUjG0g5+VHwXB/fYxaNqo=;
-        b=nC18HmEkPWk2LHyQx694Tbr42oN7dFcjfH5A9N3keoz3zBUaE0/rtZORWjmLmy5EpH
-         gbq34HCneM6WwNhQLv85ughXiPO9Llki6vWL0soaIOjVUXoKI6/LaGV+dOfsfyihPMXN
-         osH911k6Xemv36oeCtZ65bC8+XT7OedAft59sXZ0/X7BRiFNVw2X1XC7T47zFsz9PYUB
-         e1921ouzKmOvJXwg5MBUrKJ82FFlyhifhPvBs8T/5fav/Bb8trkvK0QTBS+EfEx3roK/
-         JyTEHJcyu3fTDPEuCW9QLJM+OLcMeChVwPo+Jqx4nLIH86uIu745W6jQVW/webhagDaL
-         qOPQ==
+	s=arc-20240116; t=1734034237; c=relaxed/simple;
+	bh=Bxz+YkdqTXJhj1IXUUOktyRo00peAaveEIYfNEuFT8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yc84dFKoms7CFjEgxdz1EwWWAE6w7F246a4/rZ7U1ZkSNOCwGzAF8nUawIQZcbTQvqqFY28gRb9QM2GIcDOPAf1NIkZnQADwuWHdJ6rfOnbIb1Nc5dLzLLf5iRQ5j2QDX2CvLj9TfxEI8vRol1JHIuZcln9m4u8e+GhRwi0JRV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aY3CVRav; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCH5GWS028278
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:10:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wjxdlbcMpRCGG5unqfq3EXNXD44+uKiRk9D5zjKJmC4=; b=aY3CVRavkb2m86db
+	oStn4v46CvjwrtNysBCaNcrfKEpByuJZ4R7HlazTkpPTsjijt0XhK4X8cbtc5+Dk
+	AZ6j6ZWgWz8sncinaqoR265Xw/Ox2yeg384Zd0CXn+pgsYy0fvykKkai9ZrsrlCB
+	Y8tUDVBLwN/m7f6Rn9yxGCkhSvc3gB2KhbC5MdDiph20QqpoxGoocrisZWQU/TVy
+	y0BFqJ9nodlUlJrdXfLWfKl58ediBgCtXGwRKqTZJu3icEIV3zXA5qsIqN53k1am
+	z96+7/KxbZD0nA4XVkeGMxPMga1mQS3/Tas1R7FYLZq1kgUVDdKWPTlvP3Z7Ub+I
+	RjA9Qg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd4xv4gm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:10:34 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b6ee03d7d9so3361685a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:10:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734034127; x=1734638927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zN4Ym/UunmzCYsNSflmoKoSUjG0g5+VHwXB/fYxaNqo=;
-        b=e5WmD3OM7ojmI3VHMtI6OyaCFLVJWYldZk3ejd/9SNFRFWS3f+X8FrQQUcFqRKFxsx
-         /hMgH26BqA4X4Sp2dtNuqqR/xbtAN5Wi9DKXPQNXvSG8inwhbiHwcwL2Zm3Lta7iEI/A
-         CnEgjanK+/oshm7E0SXDW5Gf3GU4yX+7N2IFpv3oCnEE9+sAIyNisfHrwlVvDJoxPeVS
-         cBMpCC+YM8N1CL4kTMOh1AwsZC69nerNw64Q0/Lek+SM03UxZXUF6JJ1PrRIebvLVqW7
-         o82scXSZ90htrZfviEVGzNmTbUafxbXkqFG5xB6C9Nrg13QYRq7asIThwDyv05PJi7Dp
-         ycwA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Tn+g09L73kYuP+hssrO7SNypLGKd3FCoxrx2zzFkaXCTjFfu8KO13s7ol7dGm0T9L+uxQ/GRTJW2HQ==@vger.kernel.org, AJvYcCU5/8FwEbJzTjeBB3vZQ3BC6SAgue9GvuMPw9gbwk6evrCmhijw0EkEZQ7VL4uhxthrfFJRolWDEr8zCejv@vger.kernel.org, AJvYcCUQZZBTk1hr+RrghbPyHjooLFQL2HElizZGgA9EBrVkKHBXzvBsXkYyLUCvv76e+xzlie4PCb3r9XeF2+Y7@vger.kernel.org, AJvYcCWw7bTyHolEVY+fzNFpPhMcqbEEoBOApAbG1OKZvM5XDtX4ZN95Tv20l/EmbzYt+2b0lxV0FIEC4xhmpQ==@vger.kernel.org, AJvYcCXPhXMM48rvHNzILyBfCz4i3FgiiQH0TQ4DcpHGUNtIeuFzCgUWqBoXn13ETBeetS3OEPz33tqXcNkL3Q==@vger.kernel.org, AJvYcCXQJNRgRicRc566dtDi7tUn9SWSNwEstVWrQC/o9etEJ47T1J8KFKWSV5QeXVqnf5au7w4dOTPtJdt1tQ==@vger.kernel.org, AJvYcCXeJPenmMR3kJFk+Z8Tl7GjWv8wGurEJwC5sKuRvrs2ao+c7M/P6B7KXf5ilav3+ghwwU/HRQw0S7Y=@vger.kernel.org, AJvYcCXjtPVDUdDeerHQSwyF8193l0ssk4ek0vPty7Lpd51smRp99PB2Ejp4JD6c4va7iGc8b2WyrJvXQmOJGg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXzoLMJ/YL62gNnItcGvhUFoBaQ0iMiUgouE/Mv7uJXRcK2efE
-	RhA6c+3LeMIEUvsRZ0RER+4NfaFkBrI1fLjYzUtql0+3QjvJtKWmq3hIQ3bt9zBUnDsxIH3hGPb
-	s0LcfNGm7NDmG8w/oapZPXZyshTg=
-X-Gm-Gg: ASbGncuvWyWSD1Zh+XCt4PDA11TJdv6BrGUKoorhizN3mEUuYfzYyyFUf1m/UY1SZWq
-	yCCgQ0jRa0wVzqYT8VFA8ICEDf93G6WvL5N2pZwkT
-X-Google-Smtp-Source: AGHT+IFBjZrg88OqeWBDO1jTyqFkrRhdvj/sM97FkFYUxtUn8pc+yCVr/hdiAj5KO+SOUnoKUqWUM88SK7LqY4tEHG8=
-X-Received: by 2002:a17:907:3e9f:b0:aa6:64be:ff2d with SMTP id
- a640c23a62f3a-aab778c168emr3388966b.4.1734034126714; Thu, 12 Dec 2024
- 12:08:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734034234; x=1734639034;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wjxdlbcMpRCGG5unqfq3EXNXD44+uKiRk9D5zjKJmC4=;
+        b=FdtM2Smadhw2ovEI5hUnRGRMWwM2JlEO9E8jcVVH58F4TpR3GkhF8x6e7jod9MLBai
+         DTI49Zs1GWYSdJXCT5QuSyCFmQhcLiEBH04hyiQ8xqB3sKvdk2bDuE5CssiqhAtT1K3x
+         jVt9NQrkchfQP1aM83fC1/zlmP/7Eq3SC9e11uLC6OOFvhy2Ts0FCKW5a4G0cPoZQVvf
+         ahKR/YeZP9XISN26/aeSwrJUD84/PNyYM3bVw+2JI1B/Pzyk1XQYka2zput9KJuSn5Ya
+         iLYhAogG6XUwprKekwGyDS4+nG55Om5AULjsfkNKurCO5bfDx1A6xZU2ZdiBGPBCIbPK
+         +Fyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXe8dfe5ZW+wRnoRpqqg7XYrkqPpq9/dxoZhKbrtMwmRI7z7i+Us8oZWxiFBKZ/6GMpPFrDIBYW9uV1awY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhzOtshNaVLkKuHtRvWDl1T/diZRaO2PJ0Y61vRJeiYtNggBk9
+	yUavd4pEv9s898vU92f0/yyPfbdyxQu2z/XTSn9Jc60OpIunvoNl98zRlRv12EN2CB5aMdkGPYC
+	8ofvV13+U1CIvupuOSqKmzxD0/HPfsfy1WIgxVg9J0sLMdm2w1WiEU/fxOGW3Ro0=
+X-Gm-Gg: ASbGnctEu5Dj99KxSCetgWAvzNh5i+DQvHtVeZoHxghCRTjdf+o/NP6N5Zyslb4UpIl
+	HAaw9/JQ+xOQnkXCZ9BJNLZADOalwUSRkpKeHLA0x0iOzlWMNanTckFgPAQ7yWBuedUfQ68KP0e
+	66pbfRjYxfl0ji1xtOGvexEZqbeYfpqGBId6XRoEyFyL/GC2kkYSiPwSuR0D1Odi8IZl2dDtQLk
+	Aw7xs8Eo2jIOv+ZVx709Dpwtd936VPMsQi75NQ9ubuiHxoC0G31AFrLuMMBr5QcP6b1lXmIaot4
+	xhNsEnRf5BlIb5buwTalVw1XFpG+r8324SLrxQ==
+X-Received: by 2002:a05:620a:1998:b0:7b6:c6f8:1d28 with SMTP id af79cd13be357-7b6f87dd72amr93232985a.0.1734034234207;
+        Thu, 12 Dec 2024 12:10:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFyzEVU0feNufWuqaCY2OmYtIxnwTgK6tLBBZR+CdrFuuWuQrx4v5hWbS4yj4xOP2wEBnv9CQ==
+X-Received: by 2002:a05:620a:1998:b0:7b6:c6f8:1d28 with SMTP id af79cd13be357-7b6f87dd72amr93231885a.0.1734034233815;
+        Thu, 12 Dec 2024 12:10:33 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ecef4c07sm7164140a12.1.2024.12.12.12.10.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 12:10:32 -0800 (PST)
+Message-ID: <8d854f93-36da-4779-9ab0-381912aef4b4@oss.qualcomm.com>
+Date: Thu, 12 Dec 2024 21:10:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211232754.1583023-1-kaleshsingh@google.com> <20241211232754.1583023-2-kaleshsingh@google.com>
-In-Reply-To: <20241211232754.1583023-2-kaleshsingh@google.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Thu, 12 Dec 2024 12:08:35 -0800
-Message-ID: <CAHbLzkovqMsjti1g_G4dFj2mb4hneBPtR2eGTxTZmC717455-A@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v2 01/16] mm: Introduce generic_mmap_hint()
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: akpm@linux-foundation.org, vbabka@suse.cz, yang@os.amperecomputing.com, 
-	riel@surriel.com, david@redhat.com, minchan@kernel.org, jyescas@google.com, 
-	linux@armlinux.org.uk, tsbogend@alpha.franken.de, 
-	James.Bottomley@hansenpartnership.com, ysato@users.sourceforge.jp, 
-	dalias@libc.org, glaubitz@physik.fu-berlin.de, davem@davemloft.net, 
-	andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net, 
-	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com, 
-	leitao@debian.org, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org, 
-	kernel-team@android.com, android-mm@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/7] drm/msm: adreno: dynamically generate GMU bw table
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20241211-topic-sm8x50-gpu-bw-vote-v5-0-6112f9f785ec@linaro.org>
+ <20241211-topic-sm8x50-gpu-bw-vote-v5-3-6112f9f785ec@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241211-topic-sm8x50-gpu-bw-vote-v5-3-6112f9f785ec@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: Qsnj-PFn9DmU2nhSRIHxneTYEe61WwXp
+X-Proofpoint-GUID: Qsnj-PFn9DmU2nhSRIHxneTYEe61WwXp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=999 phishscore=0 adultscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 impostorscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120145
 
-On Wed, Dec 11, 2024 at 3:28=E2=80=AFPM Kalesh Singh <kaleshsingh@google.co=
-m> wrote:
->
-> Consolidate the hint searches from both directions (topdown and
-> bottomup) into generic_mmap_hint().
->
-> No functional change is introduced.
->
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+On 11.12.2024 9:29 AM, Neil Armstrong wrote:
+> The Adreno GPU Management Unit (GMU) can also scale the ddr
+> bandwidth along the frequency and power domain level, but for
+> now we statically fill the bw_table with values from the
+> downstream driver.
+> 
+> Only the first entry is used, which is a disable vote, so we
+> currently rely on scaling via the linux interconnect paths.
+> 
+> Let's dynamically generate the bw_table with the vote values
+> previously calculated from the OPPs.
+> 
+> Those entries will then be used by the GMU when passing the
+> appropriate bandwidth level while voting for a gpu frequency.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->
-> Changes in v2:
->   - MAP_FIXED case is also handled in arch_mmap_hint() since this is just=
- a
->     special case of the hint addr being "enforced", per Yang Shi.
->   - Consolidate error handling in arch_mmap_hint().
-
-Reviewed-by: Yang Shi <shy828301@gmail.com>
-
->
->  include/linux/sched/mm.h |  4 +++
->  mm/mmap.c                | 76 ++++++++++++++++++++++++----------------
->  2 files changed, 50 insertions(+), 30 deletions(-)
->
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index 928a626725e6..edeec19d1708 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -201,6 +201,10 @@ unsigned long mm_get_unmapped_area_vmflags(struct mm=
-_struct *mm,
->                                            unsigned long flags,
->                                            vm_flags_t vm_flags);
->
-> +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
-> +                               unsigned long len, unsigned long pgoff,
-> +                               unsigned long flags);
-> +
->  unsigned long
->  generic_get_unmapped_area(struct file *filp, unsigned long addr,
->                           unsigned long len, unsigned long pgoff,
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index df9154b15ef9..382b4eac5406 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -620,6 +620,47 @@ unsigned long vm_unmapped_area(struct vm_unmapped_ar=
-ea_info *info)
->         return addr;
+>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 48 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 47 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> index cb8844ed46b29c4569d05eb7a24f7b27e173190f..995526620d678cd05020315f771213e4a6943bec 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/list.h>
+>  
+>  #include <soc/qcom/cmd-db.h>
+> +#include <soc/qcom/tcs.h>
+>  
+>  #include "a6xx_gmu.h"
+>  #include "a6xx_gmu.xml.h"
+> @@ -259,6 +260,48 @@ static int a6xx_hfi_send_perf_table(struct a6xx_gmu *gmu)
+>  		NULL, 0);
 >  }
->
-> +/*
-> + * Look up unmapped area at the requested hint addr
-> + *
-> + * NOTE: MAP_FIXED is also handled here since it's a special case of
-> + * enforcing the hint address.
-> + *
-> + * Returns:
-> + *    ERR_VALUE: If the requested mapping is not valid
-> + *    0: If there isn't a sufficiently large hole at the hint addr.
-> + *    addr: If sufficient VA space is available at the hint address;
-> + *          or MAP_FIXED was specified.
-> + */
-> +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
-> +                               unsigned long len, unsigned long pgoff,
-> +                               unsigned long flags)
+>  
+> +static void a6xx_generate_bw_table(const struct a6xx_info *info, struct a6xx_gmu *gmu,
+> +				   struct a6xx_hfi_msg_bw_table *msg)
 > +{
-> +       struct mm_struct *mm =3D current->mm;
-> +       struct vm_area_struct *vma, *prev;
-> +       const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fla=
-gs);
+> +	unsigned int i, j;
 > +
-> +       /* requested length too big for entire address space */
-> +       if (len > mmap_end - mmap_min_addr)
-> +               return -ENOMEM;
+> +	for (i = 0; i < GMU_MAX_BCMS; i++) {
+> +		if (!info->bcms[i].name)
+> +			break;
+> +		msg->ddr_cmds_addrs[i] = cmd_db_read_addr(info->bcms[i].name);
+> +	}
+> +	msg->ddr_cmds_num = i;
 > +
-> +       if (flags & MAP_FIXED)
-> +               return addr;
+> +	for (i = 0; i < gmu->nr_gpu_bws; ++i)
+> +		for (j = 0; j < msg->ddr_cmds_num; j++)
+> +			msg->ddr_cmds_data[i][j] = gmu->gpu_ib_votes[i][j];
+> +	msg->bw_level_num = gmu->nr_gpu_bws;
 > +
-> +       if (!addr)
-> +               return 0;
+> +	/* Compute the wait bitmask with each BCM having the commit bit */
+> +	msg->ddr_wait_bitmask = 0;
+> +	for (j = 0; j < msg->ddr_cmds_num; j++)
+> +		if (msg->ddr_cmds_data[0][j] & BCM_TCS_CMD_COMMIT_MASK)
+> +			msg->ddr_wait_bitmask |= BIT(j);
 > +
-> +       addr =3D PAGE_ALIGN(addr);
-> +       vma =3D find_vma_prev(mm, addr, &prev);
-> +       if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &&
-> +           (!vma || addr + len <=3D vm_start_gap(vma)) &&
-> +           (!prev || addr >=3D vm_end_gap(prev)))
-> +               return addr;
+> +	/*
+> +	 * These are the CX (CNOC) votes - these are used by the GMU
+> +	 * The 'CN0' BCM is used on all targets, and votes are basically
+> +	 * 'off' and 'on' states with first bit to enable the path.
+> +	 */
 > +
-> +       /* Fallback to VA space search */
-> +       return 0;
-> +}
+
+/* The CNoC BCM only needs a simple off/on vote pair on all platforms */
+
+> +	msg->cnoc_cmds_addrs[0] = cmd_db_read_addr("CN0");
+> +	msg->cnoc_cmds_num = 1;
 > +
->  /* Get an address range which is currently unmapped.
->   * For shmat() with addr=3D0.
->   *
-> @@ -637,25 +678,13 @@ generic_get_unmapped_area(struct file *filp, unsign=
-ed long addr,
->                           unsigned long flags, vm_flags_t vm_flags)
->  {
->         struct mm_struct *mm =3D current->mm;
-> -       struct vm_area_struct *vma, *prev;
->         struct vm_unmapped_area_info info =3D {};
->         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fla=
-gs);
->
-> -       if (len > mmap_end - mmap_min_addr)
-> -               return -ENOMEM;
-> -
-> -       if (flags & MAP_FIXED)
-> +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
-> +       if (addr)
->                 return addr;
->
-> -       if (addr) {
-> -               addr =3D PAGE_ALIGN(addr);
-> -               vma =3D find_vma_prev(mm, addr, &prev);
-> -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &=
-&
-> -                   (!vma || addr + len <=3D vm_start_gap(vma)) &&
-> -                   (!prev || addr >=3D vm_end_gap(prev)))
-> -                       return addr;
-> -       }
-> -
->         info.length =3D len;
->         info.low_limit =3D mm->mmap_base;
->         info.high_limit =3D mmap_end;
-> @@ -685,27 +714,14 @@ generic_get_unmapped_area_topdown(struct file *filp=
-, unsigned long addr,
->                                   unsigned long len, unsigned long pgoff,
->                                   unsigned long flags, vm_flags_t vm_flag=
-s)
->  {
-> -       struct vm_area_struct *vma, *prev;
->         struct mm_struct *mm =3D current->mm;
->         struct vm_unmapped_area_info info =3D {};
->         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fla=
-gs);
->
-> -       /* requested length too big for entire address space */
-> -       if (len > mmap_end - mmap_min_addr)
-> -               return -ENOMEM;
-> -
-> -       if (flags & MAP_FIXED)
-> -               return addr;
-> -
->         /* requesting a specific address */
-> -       if (addr) {
-> -               addr =3D PAGE_ALIGN(addr);
-> -               vma =3D find_vma_prev(mm, addr, &prev);
-> -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &=
-&
-> -                               (!vma || addr + len <=3D vm_start_gap(vma=
-)) &&
-> -                               (!prev || addr >=3D vm_end_gap(prev)))
-> -                       return addr;
-> -       }
-> +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
-> +       if (addr)
-> +               return addr;
->
->         info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
->         info.length =3D len;
-> --
-> 2.47.0.338.g60cca15819-goog
->
->
+> +	msg->cnoc_cmds_data[0][0] = BCM_TCS_CMD(true, false, 0, 0);
+> +	msg->cnoc_cmds_data[1][0] = BCM_TCS_CMD(true, true, 0, BIT(0));
+
+While it evaluates to the same, I think this is logically 1 (as in, one
+unit of bus rate). The question of which bit that corresponds to is
+handled by the macro.
+
+Also, a7xx sets values in both x and y parts here, while a6xx only does
+so in the y part.
+
+> +
+> +	/* Compute the wait bitmask with each BCM having the commit bit */
+> +	msg->cnoc_wait_bitmask = 0;
+> +	for (j = 0; j < msg->cnoc_cmds_num; j++)
+> +		if (msg->cnoc_cmds_data[0][j] & BCM_TCS_CMD_COMMIT_MASK)
+> +			msg->cnoc_wait_bitmask |= BIT(j);
+
+This is a very fancy way to say msg->cnoc_wait_bitmask = BIT(0)
+
+Konrad
 
