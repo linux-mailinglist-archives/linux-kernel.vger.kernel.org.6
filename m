@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-443976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F869EFE7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:38:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BA79EFE83
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:40:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649D528D98C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43069188E8E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5EA1D9337;
-	Thu, 12 Dec 2024 21:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA2B1D9A6E;
+	Thu, 12 Dec 2024 21:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RrL7mEQO"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tB+VhFEi"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7757019995A;
-	Thu, 12 Dec 2024 21:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12DA19995A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734039520; cv=none; b=d43JvYEH/P+8jisX0+oBmEWgAJ9f1WEGbRd45DRzlhmaori9LOE2qmWTHCpskCJtkqHKO7UJA38fPLgOkh4Wf3CmUG09P5eMGd1SzRYJ9d82pQ+D82Q1WNOKLKK6imJdD8IhSa7KesWO7fmoDJOTpRrANDMedxmyJ60nHsrJIiI=
+	t=1734039592; cv=none; b=uP3+tA5jJgJwOpxWXPjPtxYw96nIqoh9NYNnaRnXHfQ3UD8CtkXCAxdITX+X15R6Wl7PoDO+qbzdQH+6Lh7wOk3e3lw2i6AWa+yT34a6p9uwyAx59vLK5J38CK2lzJAut2sSlbQdxWgRX+G/i0lz8sQDsPPcGM95KUxVleADM7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734039520; c=relaxed/simple;
-	bh=FVsAhf/L/A/1hExk6EI4BILQJE/BdwS8en2INWU/29g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ln2R2XkTlV0uS1c4yVPMpTHuTks6fRvnZpJbL+j8gQPeCYJcauM7FK+FGgOu5hX6bYJyhUyY5Da1t4hO44cf0paIhqCmvqOq0d/AZuF1CIGBAgwuoKNI40uWak2zw9iMBdAFnbcK3fBOH2VlEYXqwrXj7h9gDdC3rEmjWAG3zcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RrL7mEQO; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-725ed193c9eso935836b3a.1;
-        Thu, 12 Dec 2024 13:38:39 -0800 (PST)
+	s=arc-20240116; t=1734039592; c=relaxed/simple;
+	bh=BFF7B/YHgM7SJTvg2L26qhUZrX8EMejqPhajzYJe0H0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lNHjV4MBXij5lUS2lWU6b6iM3KOq2Zy1C3LQsDGvPF8XeNqi9d4nWqtg45Kl1M65DLuOyKJMhdSbCMUVQeGWEsQeN41wJJQreQU5anZqNf+f3oTEKHkml6fsobcaM4kW3wrbGsMOzIVDvP2/45dOE1TXz4pQLy/1Y9oygw4TsO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tB+VhFEi; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38634c35129so825542f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 13:39:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734039519; x=1734644319; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pZ5zZgnlUdJh8z0DW3NiXjiumc4XlLzMn30s1WWYCFM=;
-        b=RrL7mEQOEUPvIAK9OJDNxev2YC5vBMaX1AQdSwMX9kPD0eBocqbbDwAAUROh2qIEmx
-         0LUXoKSd23MYdjC2yJKGmVYzl0AdlGl+fSGWOaWSS9Yu1m2bXkebOkeTjQoAjBf8DyR2
-         MiXzbg/8apLQ5hR46ZX09lR4/qisIMk5zDFkLMvN7JFxliURUiR6dbl0S5wcLTPYCPfV
-         iIzUYs7rifFD1tbzelVBSwfoIENSv0BxbrKrvOa6/4sVGV/ZZdJ9E6nQgCl8XfVrtZpf
-         VMrhv7j6PP2mgkawc5X8lN56qZX4egNwhSAT6Mt6wXD7TarPtjhCw2OMwut/5hEqGw3S
-         xZyw==
+        d=linaro.org; s=google; t=1734039588; x=1734644388; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I0k1fvuKT9m1wErYutTpuyN8BLsuG8GZk48OKFLo0lA=;
+        b=tB+VhFEi3n27bni9TbK+z8VhfrIHAYgK0aBOjb51bMnaFpzIoTyV/R25HhBX0HvVHw
+         c7JXPm78aOFX/NT138f5GIqVvEx3lGqg2I2WNVgz7yng/ewT2Im3ZjyeGSIl12ONViea
+         944orILNNlSv4+ULcZNV/5Ki8/pb0LOQlWgLkXzqYhSSGswioSiZCh0YYedvRQVr50X+
+         3kjqddXYEpVzPfHxjyv7fh4YqeIBLJ6N0CZ90icI0vYZSJkdNuRCaiVW8fuPasAJjqkv
+         OiK0ZwPrXyOfvtF//7K2Dr/3l9+huvxwY6N/PxufSYDgpP8n9zsNfX9QgjiBVNjpC/0J
+         m/lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734039519; x=1734644319;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pZ5zZgnlUdJh8z0DW3NiXjiumc4XlLzMn30s1WWYCFM=;
-        b=t7o1nplEqyYwA+QQ8upwBi1henuYg3RxKdmtZN62AwIOiwM/pa8LIIIdlzzI5JKuIv
-         ZrZKl0b09XzDGlWeCoiDTIjKH/nIoc9g+5E0vPCe95s/vfOtilItfTJPUIE2d9scOCtH
-         P2zYg5lzllgG5ZFRiMbxVFRrWjH5Luc9nW70qq8FGvyPjJmodxUgewL7tCU8TcCFPSQT
-         +Uaiov8Oushc+8iQIyNZe8LWjG1nui+YOPV5ccFzA35wXVOUsg0b0yRIZuUofV7vgNns
-         dZrzO09l62JnNvIy7FEdfNk5qJhienGny3lF6cJZcRQBOeCbMM3qIng4tJ9QHMLIt/RA
-         +gtw==
-X-Forwarded-Encrypted: i=1; AJvYcCX50ItYS3M6OUZrQj7Sfn4mWJv5OeKigQgajMUFx42bAkQ8sJmQ/ID3M/nqu20hjUfXGldqwzrjKkNlrKI=@vger.kernel.org, AJvYcCXVmZCF4gqMrAZwTIKG46WBPWwbguExcHVkKsnnFUT0CCMM+gEzxpLQ+wxeFKvlr1e9h7jhk/vg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUZemGS+PqDO/B1HRZiE8bzurUL6lgc6eq31iSnJ2L2fsbK9x7
-	HIteF6BmVOXoGlCMyluPh49fvGzxtiTIt3tBqanB3wtIphWf+BsV
-X-Gm-Gg: ASbGncsVf+A3etPlOwFaAJlbOImTNN5uNegA/LR5//7vZkxtvEY5ng65R0LM9GoWN0U
-	Pl74E0i/vjTEh43HRm3X8QDfpfVN49UPfUxVLYH54yYgugU232u8/55sqT0xtIplxT2iE1bMSUY
-	B1Uc9kMiSA3pW3vjWouUe/YZhVhMjUW8VqWUJjpGBDySoH8lWQWsjlVERh9qFtfot9vt1TNsFR1
-	1DbtCDik6V1QNCbSQjbKIw1qMI5NAJ33dkMQkCZ8r0IUwkMoZTJ6oAH6ulOrRtnFHWfhT8m0C5Q
-	HXxu+Crt
-X-Google-Smtp-Source: AGHT+IGY7RCaXhDWkOiohikluaInFk753KShzMe0a+LB/ak/xr5+1bNnx0spv/17RPvzmUvXHDONfg==
-X-Received: by 2002:a05:6a00:f08:b0:725:f4c6:6b71 with SMTP id d2e1a72fcca58-7290c25a4c7mr211922b3a.20.1734039518574;
-        Thu, 12 Dec 2024 13:38:38 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29e8df0sm13750293b3a.68.2024.12.12.13.38.32
+        d=1e100.net; s=20230601; t=1734039588; x=1734644388;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=I0k1fvuKT9m1wErYutTpuyN8BLsuG8GZk48OKFLo0lA=;
+        b=P0o73/aowLNtGpIUT8pf2zVxFkm3Er/19N9/VOQRlbxy0vd0e1MMdrLU9QLCV9esar
+         Hi5NqjeuExRmPRF8CUrT1Qlng/eAqPEuHPbLrrUfqU92Tbiqp/PiYV3uC67oQ6G5zfPe
+         9qy1W5xMbIYsepO8QFwG0aOaYrEBzSyfOynLrsx26HKJWsQp3dBB806yVhhPnygsqJRw
+         /LjLBnrLUQ2YSmTG7uPZvHY5fRuekG0S2R0qTitl0HxWdHhS/C58yfakK+vDKxKd8tLZ
+         ekzHjXaR9S0+t+hFPTi/ybDcovGh7J/P9B6Q8ndSYgwQ5LanyZlNpDLbUU54Bgbwg5T8
+         jB/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVIjLMy53o5IGxdvUYXJm/kRVsrZaE071Z5k8u79iccHD2Hpsazw+FhOl/em1Ps8NgIWW9RoDQu45p5wtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb1YoCylPEuUGyp/GH7QNNx2GXXkcfEVwjbZQxGK2bDEupBQaF
+	rrM35DpvcSHP3JJaRY75Nw1Uan+Fd4ibBlvJT321HaWRUnzW57H8/bna7Topb6g=
+X-Gm-Gg: ASbGncvZWhPdBft7Ge25j/24LVCF9jtssqvlY1yHe5+L5c6JlYAIHYCbBYLiN166f+w
+	ICinzJrsuh2AX9y80mH3fP3iTY8WHgCSBYd5nipSSb8sDvqszneUgUD5BSkzryuNIZJkJhhvoMi
+	U5toKDwLL5PtC5XSNk1VdqXy0+bNdp7892C9ZCdAC1cOZcnmKdVEXPbSd7SY1GnhxWGNCVxIopq
+	gMXPdkMBU7s3UE+n4kxyBH5GHuYIN/Cpo2BwFYDBBwV/ttjsb6ZavzocLpoUK18TquPdy2TWIu7
+	GFGOMan4jBGZ8/W21ciSC757CqWwfKI3xg==
+X-Google-Smtp-Source: AGHT+IFdbMU+m/VBA7CRP6F9gkZQC7hZocBSfp3JyHJOM9EcJT7Yo+BQtQGBqVzNNych5hj5m0mWmg==
+X-Received: by 2002:a05:6000:98f:b0:382:47d0:64be with SMTP id ffacd0b85a97d-38880adab11mr126646f8f.29.1734039587874;
+        Thu, 12 Dec 2024 13:39:47 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:b98a:c6fe:3a5d:f20a? ([2a01:e0a:982:cbb0:b98a:c6fe:3a5d:f20a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514e86sm5175242f8f.72.2024.12.12.13.39.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 13:38:38 -0800 (PST)
-Message-ID: <c356563b-4137-403f-9f0f-29e9b38512ce@gmail.com>
-Date: Thu, 12 Dec 2024 13:38:31 -0800
+        Thu, 12 Dec 2024 13:39:47 -0800 (PST)
+Message-ID: <c0e588d9-1ba4-4486-a889-df0649c40180@linaro.org>
+Date: Thu, 12 Dec 2024 22:39:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,89 +82,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/772] 6.1.120-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241212144349.797589255@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
-In-Reply-To: <20241212144349.797589255@linuxfoundation.org>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v5 3/7] drm/msm: adreno: dynamically generate GMU bw table
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241211-topic-sm8x50-gpu-bw-vote-v5-0-6112f9f785ec@linaro.org>
+ <20241211-topic-sm8x50-gpu-bw-vote-v5-3-6112f9f785ec@linaro.org>
+ <8d854f93-36da-4779-9ab0-381912aef4b4@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <8d854f93-36da-4779-9ab0-381912aef4b4@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 12/12/24 06:49, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.120 release.
-> There are 772 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 12/12/2024 21:10, Konrad Dybcio wrote:
+> On 11.12.2024 9:29 AM, Neil Armstrong wrote:
+>> The Adreno GPU Management Unit (GMU) can also scale the ddr
+>> bandwidth along the frequency and power domain level, but for
+>> now we statically fill the bw_table with values from the
+>> downstream driver.
+>>
+>> Only the first entry is used, which is a disable vote, so we
+>> currently rely on scaling via the linux interconnect paths.
+>>
+>> Let's dynamically generate the bw_table with the vote values
+>> previously calculated from the OPPs.
+>>
+>> Those entries will then be used by the GMU when passing the
+>> appropriate bandwidth level while voting for a gpu frequency.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 48 ++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 47 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>> index cb8844ed46b29c4569d05eb7a24f7b27e173190f..995526620d678cd05020315f771213e4a6943bec 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>> @@ -6,6 +6,7 @@
+>>   #include <linux/list.h>
+>>   
+>>   #include <soc/qcom/cmd-db.h>
+>> +#include <soc/qcom/tcs.h>
+>>   
+>>   #include "a6xx_gmu.h"
+>>   #include "a6xx_gmu.xml.h"
+>> @@ -259,6 +260,48 @@ static int a6xx_hfi_send_perf_table(struct a6xx_gmu *gmu)
+>>   		NULL, 0);
+>>   }
+>>   
+>> +static void a6xx_generate_bw_table(const struct a6xx_info *info, struct a6xx_gmu *gmu,
+>> +				   struct a6xx_hfi_msg_bw_table *msg)
+>> +{
+>> +	unsigned int i, j;
+>> +
+>> +	for (i = 0; i < GMU_MAX_BCMS; i++) {
+>> +		if (!info->bcms[i].name)
+>> +			break;
+>> +		msg->ddr_cmds_addrs[i] = cmd_db_read_addr(info->bcms[i].name);
+>> +	}
+>> +	msg->ddr_cmds_num = i;
+>> +
+>> +	for (i = 0; i < gmu->nr_gpu_bws; ++i)
+>> +		for (j = 0; j < msg->ddr_cmds_num; j++)
+>> +			msg->ddr_cmds_data[i][j] = gmu->gpu_ib_votes[i][j];
+>> +	msg->bw_level_num = gmu->nr_gpu_bws;
+>> +
+>> +	/* Compute the wait bitmask with each BCM having the commit bit */
+>> +	msg->ddr_wait_bitmask = 0;
+>> +	for (j = 0; j < msg->ddr_cmds_num; j++)
+>> +		if (msg->ddr_cmds_data[0][j] & BCM_TCS_CMD_COMMIT_MASK)
+>> +			msg->ddr_wait_bitmask |= BIT(j);
+>> +
+>> +	/*
+>> +	 * These are the CX (CNOC) votes - these are used by the GMU
+>> +	 * The 'CN0' BCM is used on all targets, and votes are basically
+>> +	 * 'off' and 'on' states with first bit to enable the path.
+>> +	 */
+>> +
 > 
-> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> Anything received after that time might be too late.
+> /* The CNoC BCM only needs a simple off/on vote pair on all platforms */
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.120-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
+>> +	msg->cnoc_cmds_addrs[0] = cmd_db_read_addr("CN0");
+>> +	msg->cnoc_cmds_num = 1;
+>> +
+>> +	msg->cnoc_cmds_data[0][0] = BCM_TCS_CMD(true, false, 0, 0);
+>> +	msg->cnoc_cmds_data[1][0] = BCM_TCS_CMD(true, true, 0, BIT(0));
 > 
-> thanks,
+> While it evaluates to the same, I think this is logically 1 (as in, one
+> unit of bus rate). The question of which bit that corresponds to is
+> handled by the macro.
+
+"1" has not meaning, especially when we're supposed sending a bandwidth value, bit(0) means this bit has a special value
+
 > 
-> greg k-h
+> Also, a7xx sets values in both x and y parts here, while a6xx only does
+> so in the y part.
+> 
+>> +
+>> +	/* Compute the wait bitmask with each BCM having the commit bit */
+>> +	msg->cnoc_wait_bitmask = 0;
+>> +	for (j = 0; j < msg->cnoc_cmds_num; j++)
+>> +		if (msg->cnoc_cmds_data[0][j] & BCM_TCS_CMD_COMMIT_MASK)
+>> +			msg->cnoc_wait_bitmask |= BIT(j);
+> 
+> This is a very fancy way to say msg->cnoc_wait_bitmask = BIT(0)
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Fancy but we know how it's calculated...
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> 
+> Konrad
 
-There is a new warning though:
-
-scripts/mod/modpost.c:969:44: warning: excess elements in array initializer
-   969 |         .good_tosec = {ALL_TEXT_SECTIONS , NULL},
-       |                                            ^~~~
-scripts/mod/modpost.c:969:44: note: (near initialization for 
-‘sectioncheck[10].good_tosec’)
-   HOSTLD  scripts/mod/modpost
-
-
-
--- 
-Florian
 
