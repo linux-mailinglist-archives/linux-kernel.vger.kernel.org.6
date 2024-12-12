@@ -1,95 +1,88 @@
-Return-Path: <linux-kernel+bounces-443921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CF79EFD96
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:44:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08429EFD98
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:45:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E69A5167967
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB64D288BE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2201B395E;
-	Thu, 12 Dec 2024 20:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3291B0F14;
+	Thu, 12 Dec 2024 20:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="fISalG7f"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="Zeo3jD5f"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CC71917E8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9EB18801A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734036248; cv=none; b=gmJDrERUgBE2JKkxvbSV3CanndBLhd9nQfUR9yhqTPRN6a4JjXOLwXC+KcQ7MCNx+oF8OrFphL3DSce3z1S7OHGWp8khcvWbFP6MWOrfxMwsH9ptcBgKeJ/bBCcCHH15QMXbhSAj1wb15xytP1ue6qfDQ4GdyYBAXojrlQ+MwtU=
+	t=1734036324; cv=none; b=jgL1apCV9JvRbtPL0bSr0utf1X324UQdO3Ho9d/+8Xw/FJYTFU2cMxovl5YzG083JKinL/eeBpBhg+9n3Jt5vs5C7y3sTObPjG5zVS8e7ulmMUDXfVABlX3Afo0/4TlADb2oqMjXFT6oGjp9IKvaGlSLeVkPgJteqazQqFReV+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734036248; c=relaxed/simple;
-	bh=z7dvnp1wJwcgR0OOhWAnXX3y6XFU/RaQbm+Wh5D5GIk=;
+	s=arc-20240116; t=1734036324; c=relaxed/simple;
+	bh=nrj2pIbXa4KtNNUR/+3Perd5taMS9cdX0+a2FZqzY/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OGvPzA/quzpllUXniyuBq47JLBFTcS3iawmi1ovTQIPRImHnZ5jjXANGHCr6OHynpUvxsZ/lYkCavUJy2oeRLD+T1Bp1yxUuab4yekGroDaJRXXAMR6A61ig824Y9TsEVJO1fWptr1C0EpkGJObOL/PdGpktOKz1DSstY4o5VrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=fISalG7f; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21680814d42so9617905ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:44:05 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAhnioJTtlwXAt2iMxPAtYHL0IS8eIxcvTr/dGbh+gR5aw/slUyeC28Zy6wIVdMaWngLAqTHZrAGwo6xlenGBzXZDI9ZeRtzgmaty9PazRB/nx0CgAGhlhPf5bxv69PHgbBZN2jwF8W8hUaQx28jDN7UnNozTZRb/7xEONcvctQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=Zeo3jD5f; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d87ab49423so11363696d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:45:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1734036245; x=1734641045; darn=vger.kernel.org;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1734036318; x=1734641118; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gY9QpSeXkRgHpm7Ku8b4o1XavyERhHEQqI9K8o9LNoI=;
-        b=fISalG7fFANAr5rVUIbasREP6o7UE4XM7eAJbEGWcnRRR4R2IIsObu/t3TNL9a2Dnn
-         SaKXJdhkQI0V0J5LsKzl9yMSFXs6pDTy+pKoV0SjPUkOgS7JcWFVNeaI5I8i33Ff6NVx
-         +TQQCvwKyQz6O3A9imOCo1wshh+jOWFTa62apsZ/LO/BIbxBRY5yJWiiVesq1Sa+rjYa
-         +mH2CJMDmkywPuFr2F0bfseXEq/D69a+//KLdAg1J1wcGcGj8BjAYrBzzqDbRuT+oE/y
-         rubgu4DoL0mufdPFMSOkHlQtYjGl2fTRZta8j6IbnLkCwE0d0RNAVtI3lyqtXhuCeNDN
-         +CQg==
+        bh=TyQT77h23X+xU78cV1YaX8EfQe1q/U0zcpXq7aqXgvk=;
+        b=Zeo3jD5fkpghhzSQAxZVTI4cxuXOS05hFQ7N7NtScnfaWCUxRCoHStnQNXSooi/D6g
+         Yjb5t4+INN6afrPn3sK/A9RvZD10BqrpA8fmtq0N0X7Y/YTKPfxCGecLM9iteEK/9GHC
+         QiuNk7kzSyVBP02ov1rHNQ220Che6rnq4txSVkm+1UVD3FI2u8uee5EpGkkqu11gPOC+
+         oX7N/QHcQtDBWJGFfmwG/WHw+gUhuGOeLWAow479x6MyuTR0hCNJC07G87P83dED8DlT
+         J0MrNAfHnKcFF4SjSKxGTgXgHE9tz+Xsz54fMq/1BrOFmnRQyk/37jJXkBjP6/pLZDgS
+         jgRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734036245; x=1734641045;
+        d=1e100.net; s=20230601; t=1734036318; x=1734641118;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gY9QpSeXkRgHpm7Ku8b4o1XavyERhHEQqI9K8o9LNoI=;
-        b=PEJEiawoavqUvSeuESRINrVf9fjZtbNJa5I2M7hOfxQ38a5VXYUAm5lm5rjoC8E6t9
-         1GDksSAFTffNJ3TjuT+oovrflvgJh+HLQlzizvbpIBo/T7jgpCM62qQfhHG34T4d4BN3
-         2EdRcBspl58A0/QZmp6wavF1mAVjSRdJ4kk3DRTeTBc2L3kpIPedeScD/fZnvj9/H6SC
-         pkCT0jUyKvj+4oK+WeqXjVQ8iFq1Bw1Oafm/S+o4Eo0hOs0Yc2eF6GkqwhApnMbaYseH
-         /MwVHG2WWs1d7LwvM+pH23HokV3yPatea4QLfTJGT0hezF7xn+8Wj7U5IsdIWViT9lq0
-         SPiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGDAfneQID2WdGMj/rfD1nQK/46fXBHX04hOnZdsP2rJ2IulUD22gfybsqfXLujbk58QaQw4NniQUuyO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjn8358ZKEKD3OS5RH1X+QoCD+zae0m7KkyuRCHtyHj4BEknau
-	pGoA8X4zLPFBG4+ih3Z/Ey2oaBbDHv/NlH2BScb63XN+p2bvy6nDCntA8ek5xAk=
-X-Gm-Gg: ASbGncslMZuTIaEaK2URzXvXfcWdmnF0gdOiGxe7eruXGHFMFp8quQf7VBMgFsLyDOM
-	HOzdZrvWX86Gm5VZ33pBQE9FyrCFoAj1dubZZ9DoeF5NOSc4/F6skHmty3sroYPjTIogYPQxpnW
-	IZYAJS3yCk4w215QsOvEjjR6kjjJlc+r/lNRUUsauDYCmRdiKw3VN26bGrJ23Q931EgPPoRfz/l
-	W7t19dTOB9VnBhbvoWCqCG/GE63eg5hyN51+RWmqj/od35OmimAkYEqFKq9dDvInX9+Eamn5jdV
-	7UU5Oe8lvHXilvRTRk/O1WTL7MFtPA==
-X-Google-Smtp-Source: AGHT+IFikBPMpBDF7pd2lmWNowKlEuQrYWQcmYnDsTJx6agqxEvZabEob6zJiQBYVY3pZ7/94b/Img==
-X-Received: by 2002:a17:902:e748:b0:215:577b:ab77 with SMTP id d9443c01a7336-21892a40509mr1511235ad.39.1734036245314;
-        Thu, 12 Dec 2024 12:44:05 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21674098324sm50638695ad.52.2024.12.12.12.44.04
+        bh=TyQT77h23X+xU78cV1YaX8EfQe1q/U0zcpXq7aqXgvk=;
+        b=nbAbmyaeKkS8i5tSpJll/eOHEqQG21Y4wvCoOO/W3ePZHDo/gnlOzG13XBPDxIs5Mz
+         /Y49ToBzde4xFaQ3lapcuGqOKvZmcXfMzdpB0LQIBOFcA48M6pL/ekOVsGEveloOokzt
+         UkCVdfjasKdihgz2+bdPFHRI6rYwfT7Egfewg5pwExZ6bK3MsaKzDkE8mgOjOG5UjdTu
+         F4salo+8cqqvBk/k7f0nbHQtTA1SlwcLhiiDbyhRBqRtBYDR+/iDQditQJdU5aQbtl1J
+         QS8zeli/pmjfcoaDj44G6jbcM0Dd1rENOnoGXuQguhjWekTrygh9HUHHzb7CD5ix3+Z/
+         lAbA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/RYSMsP4+y5QJGYF9Lu1RQGDGnFlixzeqHcqeKK/bPKBOSD1CboKP/d3h7ZrUdLXYDeiIOXAJuiiBnVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxANjT3P2retgH91+WWqOQMr90BlRFdSTw/jSM7XPIzd0VkRp3
+	UL/IkUYqzInYck8FqXfEeoK0y9rQRE8eFCIDNsdtGW/7Eta3c4Qe8cE+sCHpu9A=
+X-Gm-Gg: ASbGncv1WcIM01VpX8mcIj4II8VgzsF0blJdQw52E+zExfP6nDTtMy9pe7CP8Bi2Yi5
+	vkVTCujRDnO9v2+1AUVJY6s9eU9Zk/nMute+eO/Xq4tCVagxNGvJl0W+ICb0asPvCX3hDthHN4q
+	FzQNmpkDODY6WqO+pixCeLP0so0YYBUxOFo5SWzsLDtDDrmIQoBWztkGl5OuD7b76IF15LhzFcX
+	1jjtA4BbNcek2S/KnL7uw8MPGJyVaCdX8M9ouQiqXgRBhd14CLmz0M=
+X-Google-Smtp-Source: AGHT+IFOLo1qW5rYvlQMb9BVGyYA7xOiMNbLd35SK/ZwdxiRQHpN+3OFqqXCWMQMrYJZ8PDm6T7V9g==
+X-Received: by 2002:a05:6214:248d:b0:6d8:b3a7:75ba with SMTP id 6a1803df08f44-6db0f827d9dmr29607546d6.45.1734036318577;
+        Thu, 12 Dec 2024 12:45:18 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:97cf:7b55:44af:acd6])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da6b651asm85285236d6.69.2024.12.12.12.45.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 12:44:04 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tLq2T-00000009wiF-3FPn;
-	Fri, 13 Dec 2024 07:44:01 +1100
-Date: Fri, 13 Dec 2024 07:44:01 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>,
-	John Garry <john.g.garry@oracle.com>
-Subject: Re: [RFC 2/3] xfs_io: Add ext4 support to show FS_IOC_FSGETXATTR
- details
-Message-ID: <Z1tLEQmRiZc7alBo@dread.disaster.area>
-References: <cover.1733902742.git.ojaswin@linux.ibm.com>
- <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
- <20241211181706.GB6678@frogsfrogsfrogs>
- <Z1oTOUCui9vTgNoM@dread.disaster.area>
- <20241212161919.GA6657@frogsfrogsfrogs>
+        Thu, 12 Dec 2024 12:45:17 -0800 (PST)
+Date: Thu, 12 Dec 2024 12:45:13 -0800
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Rik van Riel <riel@surriel.com>, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org
+Subject: Re: [PATCH] mm: allow exiting processes to exceed the memory.max
+ limit
+Message-ID: <20241212204513.GA50370@cmpxchg.org>
+References: <20241209124233.3543f237@fangorn>
+ <Z1cyExTkg3OoaJy5@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,132 +91,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241212161919.GA6657@frogsfrogsfrogs>
+In-Reply-To: <Z1cyExTkg3OoaJy5@tiehlicka>
 
-On Thu, Dec 12, 2024 at 08:19:19AM -0800, Darrick J. Wong wrote:
-> On Thu, Dec 12, 2024 at 09:33:29AM +1100, Dave Chinner wrote:
-> > On Wed, Dec 11, 2024 at 10:17:06AM -0800, Darrick J. Wong wrote:
-> > > On Wed, Dec 11, 2024 at 01:24:03PM +0530, Ojaswin Mujoo wrote:
-> > > > Currently with stat we only show FS_IOC_FSGETXATTR details
-> > > > if the filesystem is XFS. With extsize support also coming
-> > > > to ext4 make sure to show these details when -c "stat" or "statx"
-> > > > is used.
-> > > > 
-> > > > No functional changes for filesystems other than ext4.
-> > > > 
-> > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > > > ---
-> > > >  io/stat.c | 38 +++++++++++++++++++++-----------------
-> > > >  1 file changed, 21 insertions(+), 17 deletions(-)
-> > > > 
-> > > > diff --git a/io/stat.c b/io/stat.c
-> > > > index 326f2822e276..d06c2186cde4 100644
-> > > > --- a/io/stat.c
-> > > > +++ b/io/stat.c
-> > > > @@ -97,14 +97,14 @@ print_file_info(void)
-> > > >  		file->flags & IO_TMPFILE ? _(",tmpfile") : "");
-> > > >  }
-> > > >  
-> > > > -static void
-> > > > -print_xfs_info(int verbose)
-> > > > +static void print_extended_info(int verbose)
-> > > >  {
-> > > > -	struct dioattr	dio;
-> > > > -	struct fsxattr	fsx, fsxa;
-> > > > +	struct dioattr dio;
-> > > > +	struct fsxattr fsx, fsxa;
-> > > > +	bool is_xfs_fd = platform_test_xfs_fd(file->fd);
-> > > >  
-> > > > -	if ((xfsctl(file->name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > > > -	    (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
-> > > > +	if ((ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > > > +		(is_xfs_fd && (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa) < 0))) {
-> > > 
-> > > Urgh... perhaps we should call FS_IOC_FSGETXATTR and if it returns zero
-> > > print whatever is returned, no matter what filesystem we think is
-> > > feeding us information?
+On Mon, Dec 09, 2024 at 07:08:19PM +0100, Michal Hocko wrote:
+> On Mon 09-12-24 12:42:33, Rik van Riel wrote:
+> > It is possible for programs to get stuck in exit, when their
+> > memcg is at or above the memory.max limit, and things like
+> > the do_futex() call from mm_release() need to page memory in.
 > > 
-> > Yes, please. FS_IOC_FSGETXATTR has been generic functionality for
-> > some time, we should treat it the same way for all filesystems.
-> > 
-> > > e.g.
-> > > 
-> > > 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> > > 		if (is_xfs_fd || (errno != EOPNOTSUPP &&
-> > > 				  errno != ENOTTY))
-> > > 			perror("FS_IOC_GETXATTR");
-> > 
-> > Why do we even need "is_xfs_fd" there? XFS will never give a
-> > EOPNOTSUPP or ENOTTY error to this or the FS_IOC_GETXATTRA ioctl...
+> > This can hang forever, but it really doesn't have to.
 > 
-> Yeah, in hindsight I don't think it's needed for FS_IOC_FSGETXATTR, but
+> Are you sure this is really happening?
+> 
+> > 
+> > The amount of memory that the exit path will page into memory
+> > should be relatively small, and letting exit proceed faster
+> > will free up memory faster.
+> > 
+> > Allow PF_EXITING tasks to bypass the cgroup memory.max limit
+> > the same way PF_MEMALLOC already does.
+> > 
+> > Signed-off-by: Rik van Riel <riel@surriel.com>
+> > ---
+> >  mm/memcontrol.c | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 7b3503d12aaf..d1abef1138ff 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -2218,11 +2218,12 @@ int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+> >  
+> >  	/*
+> >  	 * Prevent unbounded recursion when reclaim operations need to
+> > -	 * allocate memory. This might exceed the limits temporarily,
+> > -	 * but we prefer facilitating memory reclaim and getting back
+> > -	 * under the limit over triggering OOM kills in these cases.
+> > +	 * allocate memory, or the process is exiting. This might exceed
+> > +	 * the limits temporarily, but we prefer facilitating memory reclaim
+> > +	 * and getting back under the limit over triggering OOM kills in
+> > +	 * these cases.
+> >  	 */
+> > -	if (unlikely(current->flags & PF_MEMALLOC))
+> > +	if (unlikely(current->flags & (PF_MEMALLOC | PF_EXITING)))
+> >  		goto force;
+> 
+> We already have task_is_dying() bail out. Why is that insufficient?
 
-*nod*
+Note that the current one goes to nomem, which causes the fault to
+simply retry. It doesn't actually make forward progress.
 
-> it's definitely nice for XFS_IOC_FSGETXATTRA (which is not implemented
-> outside xfs) so that you don't get unnecessary error messages on ext4.
+> It is currently hitting when the oom situation is triggered while your
+> patch is triggering this much earlier. We used to do that in the past
+> but this got changed by a4ebf1b6ca1e ("memcg: prohibit unconditional
+> exceeding the limit of dying tasks"). I believe the situation in vmalloc
+> has changed since then but I suspect the fundamental problem that the
+> amount of memory dying tasks could allocate a lot of memory stays.
 
-I don't think we even need it for FS_IOC_GETXATTRA - if the
-filesystem does not support that ioctl, we don't print the fields,
-nor do we output an error.
+Before that patch, *every* exiting task was allowed to bypass. That
+doesn't seem right, either. But IMO this patch then tossed the baby
+out with the bathwater; at least the OOM vic needs to make progress.
 
-After all, this "extended info" and it's only ever been printed
-for XFS, so we can define whatever semantics we want for foreign
-filesystem output right now. As long as XFS always prints the same
-info as it always has (i.e. all of it), we can do whatever we want
-with the foreign filesystem stuff.
+> There is still this
+> :     It has been observed that it is not really hard to trigger these
+> :     bypasses and cause global OOM situation.
+> that really needs to be re-evaluated.
 
-Keep in mind that we don't need platform tests for XFS files - that
-has already been done when the file was opened and the state stored
-in file->flags via the IO_FOREIGN flag. We already use that in the
-stat_f() to determine whether we print the "xfs info" or not.
+This is quite vague, yeah. And not clear if a single task was doing
+this, or a large number of concurrently exiting tasks all being
+allowed to bypass without even trying. I'm guessing the latter, simply
+because OOM victims *are* allowed to tap into the page_alloc reserves;
+we'd have seen deadlocks if a single task's exit path vmallocing could
+blow the lid on these.
 
-IOWs, I think all we need to do is  move where we check the
-IO_FOREIGN flag. i.e.:
-
-print_extented_info(file)
-{
-	struct dioattr  dio = {};
-        struct fsxattr  fsx = {}, fsxa = {};
-
-	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-		perror("FS_IOC_GETXATTR");
-		exitcode = 1;
-		return;
-	}
-
-	printf(_("fsxattr.xflags = 0x%x "), fsx.fsx_xflags);
-	printxattr(fsx.fsx_xflags, verbose, 0, file->name, 1, 1);
-	printf(_("fsxattr.projid = %u\n"), fsx.fsx_projid);
-	printf(_("fsxattr.extsize = %u\n"), fsx.fsx_extsize);
-	printf(_("fsxattr.cowextsize = %u\n"), fsx.fsx_cowextsize);
-	printf(_("fsxattr.nextents = %u\n"), fsx.fsx_nextents);
-
-	/* Only XFS supports FS_IOC_FSGETXATTRA and XFS_IOC_DIOINFO */
-	if (file->flags & IO_FOREIGN)
-		return;
-
-	if (ioctl(file->fd, FS_IOC_FSGETXATTRA, &fsxa)) < 0) {
-		perror("FS_IOC_GETXATTRA");
-		exitcode = 1;
-		return;
-	}
-	if ((xfsctl(file->name, file->fd, XFS_IOC_DIOINFO, &dio)) < 0) {
-		perror("XFS_IOC_DIOINFO");
-		exitcode = 1;
-		return;
-	}
-
-	printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
-	printf(_("dioattr.mem = 0x%x\n"), dio.d_mem);
-	printf(_("dioattr.miniosz = %u\n"), dio.d_miniosz);
-	printf(_("dioattr.maxiosz = %u\n"), dio.d_maxiosz);
-}
-
-Thoughts?
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I sent a patch in the other thread, we should discuss over there. I
+just wanted to address those two points made here.
 
