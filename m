@@ -1,135 +1,115 @@
-Return-Path: <linux-kernel+bounces-443085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BD99EE6DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:38:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1950165861
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:38:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18CA2101BA;
-	Thu, 12 Dec 2024 12:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K42NDTWk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD279EE6E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:40:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE6E212B2A;
-	Thu, 12 Dec 2024 12:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173C22831EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:40:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EB4213251;
+	Thu, 12 Dec 2024 12:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YrLrmx1N"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEDD2080D8;
+	Thu, 12 Dec 2024 12:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734007087; cv=none; b=b/IpzCo9pIaliAAUvqhb6IeiHYl0azt3tIp5C7YEZxGE18FEZT0BuIRTXzsn13f1zRVC5oX/eIUSYfhQGMYRqXd6ulVpDpU8cRRIJtMtVTavtkB+cT3VeRmW1/YjfS854sXBLoWck9f46Pnr4jcT2Ht2IqrDpKnRPIts2rxg1Yg=
+	t=1734007230; cv=none; b=iVshOwETsZhu8pn/P28+FZA8YYmHBDSnhUhkVnVqwJHnn5kS7qHpebyxJFs+pB3rQnfFlS/frx9KkZcaHueGAfzX7wTAgQCE5U2gcOymM57YDvIu/BGprQv7Rts6xP+sO7fg5o2AtEdrxgW47w8q2lge+UK7r1Yk5M0YjX0KovE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734007087; c=relaxed/simple;
-	bh=2hiFvC59FNpieiAYTQra9Yz/spEN5UV3papx3pMqLGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xp+MKqER4OrB+kNjLoydOaCwQy/eaujo1OyATCXcpPVLW4FtXXRPDKHvxzO/Ww/vEQp+QuNdFy6jDQJXCUwiDjLryc8acjK11vlVMs58Euc+4GM6wJAU1RVWVyXzirZRuyn9FN44HtuSqAtAk7+JghsrfKyDlQuKATph5dHjyZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K42NDTWk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD78C4CECE;
-	Thu, 12 Dec 2024 12:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734007086;
-	bh=2hiFvC59FNpieiAYTQra9Yz/spEN5UV3papx3pMqLGg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K42NDTWkAAzzbOpebO2EDvFMZGXoyFtxl5I4eJeMhPlV6sdiWq1HdbOVMVtthUQlQ
-	 tNppESFlHdKBqjzLH33QlTsen47jwcBrPFHlqAUluRoZqeixuQaErT4921Vf3B7No8
-	 nDpYW1oQPxauMftbWJF/+SX0GncDnm5Ax5UFHDdJlO8Mgwy3S3JLRt68NbCLx3jrLz
-	 7ixK/vczC//mok9W8frU1jFTifq+/MY6udLJXxCJCPysMoo0KCUAQp0ka9Rvp0gN+u
-	 KkyHC3BnuOBmUe8bt4PCqwi6LSGla+BULIEC+WfZslKK49Gckt5rQ3JGJ+UKYG2bAD
-	 w5Uvrmotft93A==
-Message-ID: <9ceb9f9d-633d-49e6-ab1b-1db739e4f2a4@kernel.org>
-Date: Thu, 12 Dec 2024 13:37:57 +0100
+	s=arc-20240116; t=1734007230; c=relaxed/simple;
+	bh=r1wFQ2XEw4h3NqlPy/Ig8PdgIYeLmggghPp5vpM+aTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u6aILJeHbwT5JxI+Z0VxwqS1C79Gfc+Z2gs2xv2PaFYuoUIHrpmkcM7RS/ZInwDs2WOkUegQ8+a6abN889f+5YPQGtWDhzL4N1lJ1HR1hIKxyHplaqHM2XoUXiFdt7WZCbJpekO8G77k/Aj/UXFcR/GiGwwCZKnzEL6V3QxXr7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YrLrmx1N; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ef718cb473so76879a91.1;
+        Thu, 12 Dec 2024 04:40:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734007227; x=1734612027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r1wFQ2XEw4h3NqlPy/Ig8PdgIYeLmggghPp5vpM+aTg=;
+        b=YrLrmx1Nl9HgF4rHw8ojYJ7uBKTZ6+UIrreGLX3+FP/601cVHoAnJ6FXwkNWgO7yuv
+         hhrk7WizxUbLR3hkV9vbj6MUKZY/gWk0SfwiUE2QaGw6aqNNZ3ltdualyQIbm2RyOFaq
+         Pzx/zSJKtj9IPrTSSrsCxs2Yr4790e2/NraElW+7UEDeiWlxxkRnq711G9Yr06DYZYrz
+         kVPb8NTA8pt6V0rnVqRT+40+sHl+c8THeRyQLA8x2c8gwPvFEmN1nUtDheaYls7mszXU
+         cw0InI17MT2DKqOnLYjwkVCgJ5fx5tC8efmTK3ZeqcWsKj7ChFuTEnF45sg1E0IfEVjF
+         roOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734007227; x=1734612027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r1wFQ2XEw4h3NqlPy/Ig8PdgIYeLmggghPp5vpM+aTg=;
+        b=GU0q2ORZc+y3L0pt0DfCx8UYyIj4Nn8FbdwOhGkLEzTgVmp7yY2+WsqNNSLdK4zB2d
+         Ur5WGRSz84vV3OfgQvDvy4UkFQ84gapSh0wpDAGPsYMI2BV6k+CHvKVApod/aAqxBkXa
+         vCgDKzc1e9smkK3+0VR+0mVkbHnP6/08eXwwNRyf7G16fbg3R9ibktvYpw3Ir4A0YEFy
+         Hm/n0nGafSxuyYaomRuPPwmQwAdpEuP4HpGQ6Uu7KZ5ByJAes1bdP0W1Yzxql6EOGKMZ
+         GYJp3/K2lCT67wJJY2AzOEPa6Se/4vX3Ipe2XUDTD8zlaX/3RxAn+mEHaeIXyVG9WwkR
+         wzbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFb2PC4mIWh3GM/6ED3oMWzQiW321PKtxPlNYGUuPiaamC40HV+htXeSODs/DrfPDPI4izjHPLeO20lm69@vger.kernel.org, AJvYcCW5NKhBVpbq987xL4M9nA/KCRzlEZ3nWPq0Y9vZcl/4ptGQyVSGj7YG4z2Pul8nNh6U+iGbO8iXtC9T@vger.kernel.org, AJvYcCWshMxfdc1IcnN8grUk5dngzj1AE5ULpsJWGyBfikeBxEvDxko8LkYv+wW24MsJKyMkUEdJMDzkgWHx2e3dnbynWQz5@vger.kernel.org, AJvYcCXz/WfFquriyPulsI4/c8cOVTrKrr9m3eEh9kwkwHrkuRd3+draZSkZLlYvKqkxdMwBxfm2FTuotzvJG3mXT0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxryXLDazyHIPrVjDcv9KunsiQK/nOkKH/yRoZxU5mZta+/xpYq
+	xKgRE0YrcfVjOcagWWyo1qSxodg4s2sfHpeGmrT546/PMm5v8PX+X1F3a5mc418zVStd949rH44
+	SQBvghrrFDleRtYmIN+Esn3XJh/8=
+X-Gm-Gg: ASbGncuSbUiw5UJnWRLpYpUCypk937dyvrvZ9dgqko1IC0b9R4nQy/FAEBuBqwsOxcs
+	M5MyRudfhvTHDGe3tG5cN8I/Euw7KRNlvSwOc/g==
+X-Google-Smtp-Source: AGHT+IGFpqHYpP+ryhHdXHcJSw/i/CLG0LKsPNa9VsJsTDjRyGichTiBKLOQwEEn9jpAx0lNH3xQvXBViE9Iz/QqtPc=
+X-Received: by 2002:a17:90b:3b87:b0:2ee:f59a:94d3 with SMTP id
+ 98e67ed59e1d1-2f127e2416fmr3955460a91.0.1734007227479; Thu, 12 Dec 2024
+ 04:40:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] arm64: dts: qcom: x1e80100: Add PCIe lane
- equalization preset properties
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Jingoo Han <jingoohan1@gmail.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- konrad.dybcio@oss.qualcomm.com, quic_mrana@quicinc.com,
- quic_vbadigan@quicinc.com, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-References: <20241212-preset_v2-v2-0-210430fbcd8a@oss.qualcomm.com>
- <20241212-preset_v2-v2-1-210430fbcd8a@oss.qualcomm.com>
- <beb7d859-8d68-49d9-8a35-b2ba50f00c33@kernel.org>
- <bd9d0b2b-cb69-3a20-8ae6-125c7010c1e5@quicinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <bd9d0b2b-cb69-3a20-8ae6-125c7010c1e5@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241030-tracepoint-v12-0-eec7f0f8ad22@google.com> <173395634899.1729195.7492083712432982213.git-patchwork-notify@kernel.org>
+In-Reply-To: <173395634899.1729195.7492083712432982213.git-patchwork-notify@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 12 Dec 2024 13:40:13 +0100
+Message-ID: <CANiq72mmO5SswxmdcLc0i_rY+ZVo4zY8AsmHPPBKb_Vmzk8+aw@mail.gmail.com>
+Subject: Re: [PATCH v12 0/5] Tracepoints and static branch in Rust
+To: patchwork-bot+linux-riscv@kernel.org
+Cc: Alice Ryhl <aliceryhl@google.com>, linux-riscv@lists.infradead.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	peterz@infradead.org, jpoimboe@kernel.org, jbaron@akamai.com, ardb@kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@kernel.org, 
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, arnd@arndb.de, linux-arch@vger.kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, seanjc@google.com, 
+	ubizjak@gmail.com, catalin.marinas@arm.com, will@kernel.org, maz@kernel.org, 
+	oliver.upton@linux.dev, mark.rutland@arm.com, ryan.roberts@arm.com, 
+	tabba@google.com, linux-arm-kernel@lists.infradead.org, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	apatel@ventanamicro.com, ajones@ventanamicro.com, alexghiti@rivosinc.com, 
+	conor.dooley@microchip.com, samuel.holland@sifive.com, chenhuacai@kernel.org, 
+	kernel@xen0n.name, maobibo@loongson.cn, yangtiezhu@loongson.cn, 
+	akpm@linux-foundation.org, zhaotianrui@loongson.cn, loongarch@lists.linux.dev, 
+	cmllamas@google.com, palmer@rivosinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/12/2024 13:32, Krishna Chaitanya Chundru wrote:
->> 2. There are no such properties. It does not look like you tested the
->> DTS against bindings. Please run `make dtbs_check W=1` (see
->> Documentation/devicetree/bindings/writing-schema.rst or
->> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
->> for instructions).
-> The property is added recently in to the dtschema in github repo, I
-> added the pull request details in the cover letter, I will add the
-> github link as part of the comment section for this patch in next
-> series.
-> 
-Mention in the commit msg or cover letter where are the bindings.
+On Wed, Dec 11, 2024 at 11:32=E2=80=AFPM <patchwork-bot+linux-riscv@kernel.=
+org> wrote:
+>
+> This series was applied to riscv/linux.git (fixes)
+> by Steven Rostedt (Google) <rostedt@goodmis.org>:
 
-Best regards,
-Krzysztof
+Hmm... This is already in mainline, and I don't see it in
+riscv/linux.git (fixes) -- I guess it was a mistake?
+
+Cheers,
+Miguel
 
