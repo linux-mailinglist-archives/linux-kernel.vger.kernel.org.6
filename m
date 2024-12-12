@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-442596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B08C9EDF0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:47:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDAA9EDF0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:50:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648B5188763D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:47:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735311889C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35B61714A5;
-	Thu, 12 Dec 2024 05:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF5A18595F;
+	Thu, 12 Dec 2024 05:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZSFTrNtt"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LxJPtnMV"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCCF29A9
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 05:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0297629A9;
+	Thu, 12 Dec 2024 05:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733982420; cv=none; b=GySoMR3/z4rGQd3IEBP+FbsxmJE2seCCtOTyP7kogyGzEe1pPrTcg2ubKp7IY8ZEgmNdJqbFz/BncDz3u8LuhyfbAD/Lf5S23vZ0K3XQYQb41W/uWAZNT5I2BrOlpARmc3Ygy8ZNfx4Z4t6f7zIJNbdp2N3jgFk6byLReaMoqcQ=
+	t=1733982622; cv=none; b=d6o2bs7qnyaWPiLaLUi1OoHC+pJ44cJyTB5/3LZg60f+BRXotxYiG9rd6VypgXh4FGK6PjEzZbNpiZfbS/lSN/uxCib88JET0MtohLGlA/s9ZP/fVI212H0f9XMhxKYW9remVIoLFQUlBsWmPvofB8lcNUe2dZysZt7nXKaLtJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733982420; c=relaxed/simple;
-	bh=vAsg1/tOcjagmKRe7K//OqOVvSnFtyYSN+tRVNJ+hpA=;
+	s=arc-20240116; t=1733982622; c=relaxed/simple;
+	bh=XPA+8hGnezDK/cAW5N+82NcAeOzLbG7VN/Ex6ABGO4g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dau8+5OYe6JXNAQF/uS3WVUaa/v3lIHxMNjaJiZFC449Jg1QArFIv3XuLu+R2myvBA6/gg/L9F/4TETuD4+J1GwAmtJXeZiwLKE3LH5ffq51HIBA6ZRrPOtg7VdHFBwkEEAf6e/HAE6suqgtdSitUpBgKaWGDlcmqnmiAgQru4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZSFTrNtt; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rf1rY/7sj/Wu6sowhswh/l7RBBknUJf2PhmpfLDwiowbESPKWoecO4mwITBu2kzACLdgqjxtLtS8GK95NEZqfTiLAlEg9EnfKn+Yr8QWDisWTamfeM3bfStGqSL+h+4GTYrD9jxNx5g/DmXU6d5gP9gQyKZyhdeaMXaeSgUsl6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LxJPtnMV; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YzV4kvVSP88W58d45Rn1P2/CIVICNeiP5Jr2YgR6xao=; b=ZSFTrNttEX6R8uWjV8S2O4sghy
-	AzAN5Q/ZIwGgYSfKF8uw+G/RqDwClaWe9aiiFK7/oSXE+yigqvoLbwnp9Qiv+vVEXSBTpzVERknvM
-	YhdgSAKU8ImH9btWN65xzUtbiCisYgTd5kmWAz1aq5UgHai2tsCj1EUENdL855chafuloWc4ba5q6
-	qv+rc1Jhg/Ghv0INuCd6iwbyRPsSUTQLZh6lwIhIAYFRq4+IqWIQrk2MJWqjeV+hfjX3Y8BU28ce8
-	cCEiYpAlV76XVyAZTD9fVB7UMKWg3aW3UiKCCZR+FLZuZhVITxBmjiTqXuXmdBSSFC+8ZGkpVSIZo
-	Fn8Gux3Q==;
+	bh=pcELzZSVcZp1+kgY3EddYDKju3cmFn5oocwvVGhpALw=; b=LxJPtnMVMgJ3H+5TJzZZ9z7wS+
+	RbHDYNbA8oyTIKQ8dXz8E9KQalQccSW/uJ+CD8jGmMTb6F+Iogje1GseuTRVuYxOnfDobUHnmbOOh
+	IYmuv96LZdVwrSIPEtv2LaUZsDgxxlTEvQfDaNj8p+u16ORUWAukW9oTg2vxO5Jp2YDRrBcqqR6YG
+	P0c22F1xHFrYZQFBk6vc3WU0+9BZzuNOgEJOsO5aLddQPTNfbtkSQK4EQGXn4iWPuPb0X8eC0seZa
+	L1KrbEKSTzpk1z4voFKA8PoR34ldMVgEwmc2/5IFgED+8BX+xvshdrHZ5VqcmmqIRYeTVLXzimy5o
+	Lk9hXYpA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLc2I-0000000Gyev-1zIr;
-	Thu, 12 Dec 2024 05:46:54 +0000
-Date: Wed, 11 Dec 2024 21:46:54 -0800
+	id 1tLc5b-0000000Gyq7-47gi;
+	Thu, 12 Dec 2024 05:50:19 +0000
+Date: Wed, 11 Dec 2024 21:50:19 -0800
 From: Christoph Hellwig <hch@infradead.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Christoph Hellwig <hch@infradead.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, bp@alien8.de,
-	dan.j.williams@intel.com, dave.hansen@linux.intel.com,
-	david@redhat.com, jane.chu@oracle.com, osalvador@suse.de,
-	tglx@linutronix.de
-Subject: Re: [PATCH 0/4] Remove problematic include in <asm/set_memory.h>
-Message-ID: <Z1p4zp1qnVyY-C2L@infradead.org>
-References: <20241210184610.2080727-1-kevin.brodsky@arm.com>
- <Z1kdQyHnPd0jgIgZ@infradead.org>
- <490f7554-62eb-48a3-a45d-a65e68794b58@arm.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	bfoster@redhat.com
+Subject: Re: [PATCH 14/17] iomap: make buffered writes work with RWF_UNCACHED
+Message-ID: <Z1p5my4wynAW_Vc3@infradead.org>
+References: <20241114152743.2381672-2-axboe@kernel.dk>
+ <20241114152743.2381672-16-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,24 +63,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <490f7554-62eb-48a3-a45d-a65e68794b58@arm.com>
+In-Reply-To: <20241114152743.2381672-16-axboe@kernel.dk>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Dec 11, 2024 at 09:14:07AM +0100, Kevin Brodsky wrote:
-> On 11/12/2024 06:04, Christoph Hellwig wrote:
-> > On Tue, Dec 10, 2024 at 06:46:06PM +0000, Kevin Brodsky wrote:
-> >> The need for this series arose from a completely unrelated series [1].
-> >> Long story short, that series causes <linux/mm.h> to include
-> >> <linux/set_memory.h>, which doesn't feel too unreasonable.
-> > It is entirely unreasoable. <linux/mm.h> is inclued just about
-> > everywhere and should not grow more fringe includes.
-> 
-> Understood, I did wonder about that. Then I suppose the best course of
-> action for the problematic patch in that other series [3] is to move
-> pagetable_{alloc,free} out of linux/mm.h.
+On Thu, Nov 14, 2024 at 08:25:18AM -0700, Jens Axboe wrote:
+> +	if (iocb->ki_flags & IOCB_UNCACHED)
+> +		iter.flags |= IOMAP_UNCACHED;
+>  
+> -	while ((ret = iomap_iter(&iter, ops)) > 0)
+> +	while ((ret = iomap_iter(&iter, ops)) > 0) {
+> +		if (iocb->ki_flags & IOCB_UNCACHED)
+> +			iter.iomap.flags |= IOMAP_F_UNCACHED;
 
-Yes, adding a new header for the page table helpers only used by arch
-code is probably a good idea. Or maybe they can actually fit into
-asm-generic/pgalloc.h?  
+iomap.flags and the IOMAP_F_* namespace is used to communicate flags
+from the file system to the iomap core, so this looks wrong.
+
+>  	size_t poff = offset_in_folio(folio, pos);
+>  	int error;
+>  
+> +	if (folio_test_uncached(folio))
+> +		wpc->iomap.flags |= IOMAP_F_UNCACHED;
+
+I guess this is what actually makes it work.  Note that with the iomap
+zoned series I posted yesteday things change a bit here in that the flags
+in the wpc are decouple from the iomap flags, and this would now become
+a wpc only flag as it isn't really a fs to iomap cummunication, but
+based on iomap / page cache state.
 
 
