@@ -1,195 +1,178 @@
-Return-Path: <linux-kernel+bounces-444071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED349F0043
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:38:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911261886CB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:38:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054E51DED5B;
-	Thu, 12 Dec 2024 23:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="VWg9PaCn"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89BFE9F0045
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:38:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09A81DE8AA;
-	Thu, 12 Dec 2024 23:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AE6F287CB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:38:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC171DF273;
+	Thu, 12 Dec 2024 23:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WSjPVaWT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1826A1DED73;
+	Thu, 12 Dec 2024 23:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734046669; cv=none; b=en870kJJ3SYwhHzOGGIpaIORQ5uywMgOTwgILzwaQthDzfkp7GnhrNz3lCSbBPG1wRWXlg8qKmAFCykJNG1LKADmeK82BwR7s9rP/KSr9Rd1juveem9cWwaD3im8FtBJLFHMSbZ8f9GC7ecgnj+jMrHaGHDV65r8HeXWe4gC/3c=
+	t=1734046670; cv=none; b=qKLTOWiVDqoC+Po7944qcU3wOEF/utJ7Klb4pHhAoGEnA3uFfCNG1J/Gm+kEPZXbX4DwKfs1bZPuIUBKDHTzWYX4qYepjw8f2iFDU1I4BwCoTag6yIYzyLw/y/OtqBH1FWWvKKMDw8eIaQk6p44+fzsuX1fWbL4WqyigacQ5bUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734046669; c=relaxed/simple;
-	bh=YTgEMDc0ikMsMdmEEB/QR41m3JqAvO/1aSO2jbjFmKU=;
+	s=arc-20240116; t=1734046670; c=relaxed/simple;
+	bh=RD1R3uZshcKjVMCmPINeH72aA2ptJrhOkxz4oZOI338=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ip0wTG4t4/GUBNapKTd8a9w2psaphWk9hm4zsLaXE2VDekT7KK3BAmlKO0aCfkmqS/7mB/QBl04IoBZ7deoXABp6xKi96xM54gAPn/EhFnqFc654P/eBxMe6qHWF0HrmLDPRSkZn9bXlwh4I1YCV96HkakXPpUTUnxPr8eifw7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=VWg9PaCn; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1734046664;
-	bh=YTgEMDc0ikMsMdmEEB/QR41m3JqAvO/1aSO2jbjFmKU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VWg9PaCnY4j0AOXd7bHrJi6VU59uMT+B1hkIr46eoGwwJSzXHsesuaIzQnH+6zqRZ
-	 l7JhpsEBSppDLM7lugrv9FpVAFJ16V7+dHMIuxPnskyGYUoulc0eE9LyatIiRyUfhc
-	 HkDSHsyZPfy8fkG+39skJUHnXurVfOQc1GitlGGI=
-Date: Fri, 13 Dec 2024 00:37:44 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH bpf] bpf: fix configuration-dependent BTF function
- references
-Message-ID: <a19b5fb2-9a82-42f2-81dd-17d96bb6ec9e@t-8ch.de>
-References: <20241213-bpf-cond-ids-v1-1-881849997219@weissschuh.net>
- <CAEf4BzYTYDcf7J0jhJP3cW5489jWXdfJcw-f-8yuTHcNmQ0cbw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C/7Mm1qbb5O4ul7EwZ2jgq3HDwXRG3f6EnLr0UOFHn46ChDgHe4X7KLH7wqO9cACuYnlMKrrAx2vKDGM6NCX8XzRmyxxAkZPGrS/AIMwXVfpequiTm3zCtekKPpJKcTKOzQ6nbrbVgp6kh1vh5Jj17ara9R6JRHZDUyg2UzcnWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WSjPVaWT; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734046669; x=1765582669;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RD1R3uZshcKjVMCmPINeH72aA2ptJrhOkxz4oZOI338=;
+  b=WSjPVaWTjkoAQM5JRx1slld9+ZMRZBFmjL/DxASnGjXr1RuwdKoVP4ZC
+   U68Pz6chtkTk16pC3vb3IYJhjv8lBaZhz1L3GXkDCVBKiwPDNL0IdH0gZ
+   ApgvDsEOItAHth5im4Z/Qv4xPKvLfM2+U3ijxs39lYV+t6PZlErLxb71B
+   HBQ+Maf0G1wVvNSLuSMjH/TMx4lZCmE6zYF5RsNbxMVC9bNcYkEpXowYT
+   LrCxwtNWDnu3F7OvvmEaim+rLcpmnJohE4bEPAWYM4xziIB0KGdWj6FOO
+   KcYtL7p9FjtUn9Aj7QtZ90VC1ftSiPuZGgPAUfLawrj1/AIwU4JN07XCl
+   A==;
+X-CSE-ConnectionGUID: YZByykCuShupudJJXtNcpA==
+X-CSE-MsgGUID: GHJk8ELoTKOaWvTm119Brg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34215555"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="34215555"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 15:37:48 -0800
+X-CSE-ConnectionGUID: V0Pal+3iSgOJLph32nmc+w==
+X-CSE-MsgGUID: yxpIU1AmRhyhti0fNs4BYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="133752553"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 15:37:48 -0800
+Date: Thu, 12 Dec 2024 15:37:46 -0800
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Babu Moger <babu.moger@amd.com>
+Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	peternewman@google.com, fenghua.yu@intel.com, x86@kernel.org,
+	hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org,
+	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com,
+	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
+	jpoimboe@kernel.org, perry.yuan@amd.com, andipan.das@amd.com,
+	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
+	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
+	mario.limonciello@amd.com, james.morse@arm.com,
+	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
+	eranian@google.com
+Subject: Re: [PATCH v10 16/24] x86/resctrl: Add interface to the assign
+ counter
+Message-ID: <Z1tzyrUYTFR_iHuJ@agluck-desk3>
+References: <cover.1734034524.git.babu.moger@amd.com>
+ <a72e23d8fe43038cd319403ed68b657fb36e23df.1734034524.git.babu.moger@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYTYDcf7J0jhJP3cW5489jWXdfJcw-f-8yuTHcNmQ0cbw@mail.gmail.com>
+In-Reply-To: <a72e23d8fe43038cd319403ed68b657fb36e23df.1734034524.git.babu.moger@amd.com>
 
-On 2024-12-12 15:27:12-0800, Andrii Nakryiko wrote:
-> On Thu, Dec 12, 2024 at 3:00 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> >
-> > These BTF functions are not available unconditionally,
-> > only reference them when they are available.
-> >
-> > Avoid the following build warnings:
-> >
-> >   BTF     .tmp_vmlinux1.btf.o
-> > btf_encoder__tag_kfunc: failed to find kfunc 'bpf_send_signal_task' in BTF
-> > btf_encoder__tag_kfuncs: failed to tag kfunc 'bpf_send_signal_task'
-> >   NM      .tmp_vmlinux1.syms
-> >   KSYMS   .tmp_vmlinux1.kallsyms.S
-> >   AS      .tmp_vmlinux1.kallsyms.o
-> >   LD      .tmp_vmlinux2
-> >   NM      .tmp_vmlinux2.syms
-> >   KSYMS   .tmp_vmlinux2.kallsyms.S
-> >   AS      .tmp_vmlinux2.kallsyms.o
-> >   LD      vmlinux
-> >   BTFIDS  vmlinux
-> > WARN: resolve_btfids: unresolved symbol prog_test_ref_kfunc
-> > WARN: resolve_btfids: unresolved symbol bpf_crypto_ctx
-> > WARN: resolve_btfids: unresolved symbol bpf_send_signal_task
-> > WARN: resolve_btfids: unresolved symbol bpf_modify_return_test_tp
-> > WARN: resolve_btfids: unresolved symbol bpf_dynptr_from_xdp
-> > WARN: resolve_btfids: unresolved symbol bpf_dynptr_from_skb
-> >
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >  kernel/bpf/helpers.c  | 4 ++++
-> >  kernel/bpf/verifier.c | 8 ++++++++
-> >  2 files changed, 12 insertions(+)
-> >
-> > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> > index 751c150f9e1cd7f56e6a2b68a7ebb4ae89a30d2d..5edf5436a7804816b7dcf1bbef2624d71a985f20 100644
-> > --- a/kernel/bpf/helpers.c
-> > +++ b/kernel/bpf/helpers.c
-> > @@ -3089,7 +3089,9 @@ BTF_ID_FLAGS(func, bpf_task_get_cgroup1, KF_ACQUIRE | KF_RCU | KF_RET_NULL)
-> >  BTF_ID_FLAGS(func, bpf_task_from_pid, KF_ACQUIRE | KF_RET_NULL)
-> >  BTF_ID_FLAGS(func, bpf_task_from_vpid, KF_ACQUIRE | KF_RET_NULL)
-> >  BTF_ID_FLAGS(func, bpf_throw)
-> > +#ifdef CONFIG_BPF_EVENTS
-> >  BTF_ID_FLAGS(func, bpf_send_signal_task, KF_TRUSTED_ARGS)
-> > +#endif
-> >  BTF_KFUNCS_END(generic_btf_ids)
-> >
-> >  static const struct btf_kfunc_id_set generic_kfunc_set = {
-> > @@ -3135,7 +3137,9 @@ BTF_ID_FLAGS(func, bpf_dynptr_is_null)
-> >  BTF_ID_FLAGS(func, bpf_dynptr_is_rdonly)
-> >  BTF_ID_FLAGS(func, bpf_dynptr_size)
-> >  BTF_ID_FLAGS(func, bpf_dynptr_clone)
-> > +#ifdef CONFIG_NET
-> >  BTF_ID_FLAGS(func, bpf_modify_return_test_tp)
-> > +#endif
-> 
-> It makes little sense to have bpf_prog_test_run_tracing() and
-> bpf_modify_return_test_tp() depend on CONFIG_NET... It's just
-> historically where BPF_PROG_TEST_RUN functionality was implemented,
-> but it seems like we need to move bpf_prog_test_run_tracing() and
-> other tracing-related testing stuff into kernel/trace/bpf_trace.c or
-> somewhere under kernel/bpf/ (core.c? helpers.c?)
+On Thu, Dec 12, 2024 at 02:15:19PM -0600, Babu Moger wrote:
+> +/*
+> + * Assign a hardware counter to event @evtid of group @rdtgrp.
+> + * Counter will be assigned to all the domains if rdt_mon_domain is NULL
+> + * else the counter will be assigned to specific domain.
+> + */
+> +int rdtgroup_assign_cntr_event(struct rdt_resource *r, struct rdtgroup *rdtgrp,
+> +			       struct rdt_mon_domain *d, enum resctrl_event_id evtid)
+> +{
+> +	int cntr_id, ret = 0;
+> +
+> +	if (!d) {
+> +		list_for_each_entry(d, &r->mon_domains, hdr.list) {
+> +			if (mbm_cntr_assigned(r, d, rdtgrp, evtid))
+> +				continue;
+> +
+> +			cntr_id = mbm_cntr_alloc(r, d, rdtgrp, evtid);
+> +			if (cntr_id <  0) {
+> +				rdt_last_cmd_puts("Domain Out of MBM assignable counters\n");
 
-I agree. But today these are the config values which are in effect.
-When the functions get moved, the config values can be adapted.
-With my commit "kbuild/btf: Propagate CONFIG_WERROR to resolve_btfids"
-in bpf-next the warnings can actually become errors.
-So I'd propose to apply this fix to avoid issues in the near future and
-then do a proper move without any urgency.
+Message could be more helpful by including the domain number.
 
-> >  BTF_ID_FLAGS(func, bpf_wq_init)
-> >  BTF_ID_FLAGS(func, bpf_wq_set_callback_impl)
-> >  BTF_ID_FLAGS(func, bpf_wq_start)
-> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > index 5e541339b2f6d1870561033fd55cca7144db14bc..77bbf58418fee7533bce539c8e005d2342ee1a48 100644
-> > --- a/kernel/bpf/verifier.c
-> > +++ b/kernel/bpf/verifier.c
-> > @@ -5526,7 +5526,9 @@ static bool in_rcu_cs(struct bpf_verifier_env *env)
-> >
-> >  /* Once GCC supports btf_type_tag the following mechanism will be replaced with tag check */
-> >  BTF_SET_START(rcu_protected_types)
-> > +#ifdef CONFIG_NET
-> >  BTF_ID(struct, prog_test_ref_kfunc)
-> > +#endif
-> >  #ifdef CONFIG_CGROUPS
-> >  BTF_ID(struct, cgroup)
-> >  #endif
-> > @@ -5534,7 +5536,9 @@ BTF_ID(struct, cgroup)
-> >  BTF_ID(struct, bpf_cpumask)
-> >  #endif
-> >  BTF_ID(struct, task_struct)
-> > +#ifdef CONFIG_CRYPTO
-> >  BTF_ID(struct, bpf_crypto_ctx)
-> > +#endif
-> >  BTF_SET_END(rcu_protected_types)
-> >
-> >  static bool rcu_protected_object(const struct btf *btf, u32 btf_id)
-> > @@ -11529,8 +11533,10 @@ BTF_ID(func, bpf_rdonly_cast)
-> >  BTF_ID(func, bpf_rbtree_remove)
-> >  BTF_ID(func, bpf_rbtree_add_impl)
-> >  BTF_ID(func, bpf_rbtree_first)
-> > +#ifdef CONFIG_NET
-> >  BTF_ID(func, bpf_dynptr_from_skb)
-> >  BTF_ID(func, bpf_dynptr_from_xdp)
-> > +#endif
-> >  BTF_ID(func, bpf_dynptr_slice)
-> >  BTF_ID(func, bpf_dynptr_slice_rdwr)
-> >  BTF_ID(func, bpf_dynptr_clone)
-> > @@ -11558,8 +11564,10 @@ BTF_ID(func, bpf_rcu_read_unlock)
-> >  BTF_ID(func, bpf_rbtree_remove)
-> >  BTF_ID(func, bpf_rbtree_add_impl)
-> >  BTF_ID(func, bpf_rbtree_first)
-> > +#ifdef CONFIG_NET
-> >  BTF_ID(func, bpf_dynptr_from_skb)
-> >  BTF_ID(func, bpf_dynptr_from_xdp)
-> > +#endif
-> >  BTF_ID(func, bpf_dynptr_slice)
-> >  BTF_ID(func, bpf_dynptr_slice_rdwr)
-> >  BTF_ID(func, bpf_dynptr_clone)
-> >
-> > ---
-> > base-commit: 5d287a7de3c95b78946e71d17d15ec9c87fffe7f
-> > change-id: 20241212-bpf-cond-ids-9bfbc64dd77b
-> >
-> > Best regards,
-> > --
-> > Thomas Weißschuh <linux@weissschuh.net>
-> >
+> +				continue;
+
+Not sure whether continuing is the right thing to do here. Sure the
+other domains may have available counters, but now you may have a
+confused status where some requested operations succeeded and others
+failed.
+
+> +			}
+> +
+> +			ret = resctrl_config_cntr(r, d, evtid, rdtgrp->mon.rmid,
+> +						  rdtgrp->closid, cntr_id, true);
+> +			if (ret)
+> +				goto out_done_assign;
+> +		}
+> +	} else {
+> +		if (mbm_cntr_assigned(r, d, rdtgrp, evtid))
+> +			goto out_done_assign;
+> +
+> +		cntr_id = mbm_cntr_alloc(r, d, rdtgrp, evtid);
+> +		if (cntr_id <  0) {
+> +			rdt_last_cmd_puts("Domain Out of MBM assignable counters\n");
+
+Ditto helpful to include domain number.
+
+> +			goto out_done_assign;
+
+When you run out of counters here, you still return 0 from this
+function. This means that updating via write to the "mbm_assign_control"
+file may return success, even though the operation failed.
+
+E.g. with no counters available:
+
+# cat available_mbm_cntrs
+0=0;1=0
+
+Try to set a monitor domain to record local bandwidth:
+
+# echo 'c1/m94/0=l;1=_;' > mbm_assign_control
+# echo $?
+0
+
+Looks like it worked!
+
+But it didn't.
+
+# cat ../last_cmd_status
+Domain Out of MBM assignable counters
+
+rdtgroup_assign_cntr_event() does say that it didn't if you think to
+check here.
+
+> +		}
+> +
+> +		ret = resctrl_config_cntr(r, d, evtid, rdtgrp->mon.rmid,
+> +					  rdtgrp->closid, cntr_id, true);
+> +	}
+> +
+> +out_done_assign:
+> +	if (ret)
+> +		mbm_cntr_free(r, d, rdtgrp, evtid);
+> +
+> +	return ret;
+> +}
+
+-Tony
 
