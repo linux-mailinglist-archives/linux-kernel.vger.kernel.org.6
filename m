@@ -1,172 +1,217 @@
-Return-Path: <linux-kernel+bounces-442638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C259EDFAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:58:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3639EDFAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:58:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDEE0284E47
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:58:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 482FB188952C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1576205AA2;
-	Thu, 12 Dec 2024 06:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAD6204C29;
+	Thu, 12 Dec 2024 06:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SdZ9+RXq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zv4XcVO6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970C3205513;
-	Thu, 12 Dec 2024 06:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1E82054E3
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733986664; cv=none; b=b4ujXErr3BeVK8wB3BI/wvKdw/G751DTkqUR4G+Z4e/gtasuYhLz09Lh5ntxUToCBLGliPUhNC4/nqlDlYL/sjwzaW35fWv/fW1JT951pbc8HX6w1lb1ctnIa30gufHjbBhtRlC97L6I+ITmtbndHE4Bvv7TlydT7M56sXDAutA=
+	t=1733986671; cv=none; b=WxB0io51muJzSvMA4T4cgDi5+vV8WWNhnzBJX6IjcM3ZEmb3n/8+VOTDw43pILm+qpLAbCS8hv4IsyjqCXgwpPBdZWT4nvfy0jxIrwi9NsFc2t5xC5paiSet7bp63V91YsifVCDw1t6sjQnxdfQCtbAwy4i3jGU+LPDcvfIwNcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733986664; c=relaxed/simple;
-	bh=0ZzOq2V4e+YFlxsyQdyiOKg5eryGrazxHADgZpLlQZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1oOeh2cp6RcHw8MW5daD2qUoKdM93ybRZVW8YyhiboGVbI9TV0R3fAliP7FikB0gj6ZWNYwWKbCqDGDrkuLRqaZXXvv1Z9vJXKFLEYRZXPrrEPywdVoH02M4K4IA15JkESZEjoKf2fWs6RuOZKIs2+HNQWsv8dHjlOqIj212FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SdZ9+RXq; arc=none smtp.client-ip=198.175.65.16
+	s=arc-20240116; t=1733986671; c=relaxed/simple;
+	bh=vybHcST6ntoDWy3VwtFCpJeXat9TBk2Da94y5UgeGRQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nVdUo5lZlFR8vxdsaU4lHoB0OosgFlEt1/mOLjF+RTnU8xXp9YBukAkNFVBY24FkpkzzW44olUHIfRnE4ucCo228a6cDJF8cpayQhOuXrFhD8IsDztxF5EfgvJT52/ZAsLsuJh0m4OIsuZxgUWzn+cpZMN1VqqaX3+suc6jKsYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zv4XcVO6; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733986663; x=1765522663;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0ZzOq2V4e+YFlxsyQdyiOKg5eryGrazxHADgZpLlQZY=;
-  b=SdZ9+RXqImyPZ47Fyylv3uJhrQn+DhP7lSGfJay+jUagYB0V60bp76lN
-   ldEYetEmnFwaXNsow8H6RsdQK+uXS+tMEMbYot2Yf2iaECMUqkr5fcjf7
-   h5bycjshpwUXqfoH/7k5zNTy3WU02xIpIJ85b1CS1lkTqbXqzHqvZOIHu
-   ugmpHb9OsIFLFtBt5K3lBFd0xVC9/ugKjr1RBpWuu35TRYeO/eEO0uJNh
-   Uw9s8pyzgq1aKdMtMNPwdqnVSN+NLG1NmCjHBpgABrg7BpCP64o22pSgS
-   xnZfRYg4If5Tx84P0Ysyf7d22PO3wLFXcANMduqt15IumqAlfHvlz+HnC
-   A==;
-X-CSE-ConnectionGUID: 5tlB9qHyT6Sz/ARp8I45eQ==
-X-CSE-MsgGUID: Ymqo3dDZQPqnAMOmTpBWcw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34533443"
+  t=1733986670; x=1765522670;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vybHcST6ntoDWy3VwtFCpJeXat9TBk2Da94y5UgeGRQ=;
+  b=Zv4XcVO6txBzp2NY+x7XxlKzJ848qzy887xUkM242SnVtMRvIJ8I0NgC
+   gJnFc/g4zJx0bNGp7EA721DvhMI8wxXZ/1DVJFl1eygZQvJuWVEBDHa/c
+   y0XWwUURVV0sfnpBeNAftOr8kxuFzo6LvKilgnSyP53yIdHrFj8E56c8N
+   omfIqXzNTVY4DvtKtDPDZXy2IgGkk0vP4U78Y3ySlo/1RofUGJghP+J7d
+   AL46iXKUOPoPJv4GsCYY6MtyBu2VoBDcnHkk1YWgSNspTIT0EtZrmYZ+i
+   rJHP2bgyv8Q2uiQxo3Q/Ioc4GNF1fOS2Oh7MMHu2zuIvEYCG+s4FcRxA7
+   w==;
+X-CSE-ConnectionGUID: /jyoP1ssQ9WhcKwq9uIqyg==
+X-CSE-MsgGUID: VllfFClhSHGr1XbVXTx0Jg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="51920218"
 X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
-   d="scan'208";a="34533443"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 22:57:43 -0800
-X-CSE-ConnectionGUID: XtP5uTU3RgiQDUa0Afba8Q==
-X-CSE-MsgGUID: Br6hWtE3SsOQdWdjiLZJVA==
+   d="scan'208";a="51920218"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 22:57:49 -0800
+X-CSE-ConnectionGUID: yEDmbbPGTOma0SUhG2F1SA==
+X-CSE-MsgGUID: vmQ8wgXESPCNU6HTYty9Vw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
-   d="scan'208";a="96223529"
-Received: from unknown (HELO desk) ([10.125.145.3])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 22:57:42 -0800
-Date: Wed, 11 Dec 2024 22:57:41 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [PATCH v5 4/9] x86/cpu: Remove get_this_hybrid_cpu_*()
-Message-ID: <20241211-add-cpu-type-v5-4-2ae010f50370@linux.intel.com>
-X-Mailer: b4 0.14.1
-References: <20241211-add-cpu-type-v5-0-2ae010f50370@linux.intel.com>
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="100686496"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.241.18]) ([10.124.241.18])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 22:57:46 -0800
+Message-ID: <27c37e1d-7812-40db-a75f-d1641b5674d8@linux.intel.com>
+Date: Thu, 12 Dec 2024 14:57:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211-add-cpu-type-v5-0-2ae010f50370@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Dan Carpenter <dan.carpenter@linaro.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] iommu/vt-d: Avoid draining PRQ in sva mm release path
+To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ "Liu, Yi L" <yi.l.liu@intel.com>
+References: <20241212021529.1104745-1-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276682CEF64D6D21658893D8C3F2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB5276682CEF64D6D21658893D8C3F2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Because calls to get_this_hybrid_cpu_type() and
-get_this_hybrid_cpu_native_id() are not required now. cpu-type and
-native-model-id are cached at boot in per-cpu struct cpuinfo_topology.
+On 2024/12/12 14:18, Tian, Kevin wrote:
+>> From: Lu Baolu<baolu.lu@linux.intel.com>
+>> Sent: Thursday, December 12, 2024 10:15 AM
+>>
+>> When a PASID is used for SVA by a device, it's possible that the PASID
+>> entry is cleared before the device flushes all ongoing DMA requests and
+>> removes the SVA domain. This can occur when an exception happens and
+>> the
+>> process terminates before the device driver stops DMA and calls the
+>> iommu driver to unbind the PASID.
+>>
+>> There's no need to drain the PRQ in the mm release path. Instead, the PRQ
+>> will be drained in the SVA unbind path.
+>>
+>> Unfortunately, commit c43e1ccdebf2 ("iommu/vt-d: Drain PRQs when
+>> domain
+>> removed from RID") changed this behavior by unconditionally draining the
+>> PRQ in intel_pasid_tear_down_entry(). This can lead to a potential
+>> sleeping-in-atomic-context issue.
+>>
+>> Smatch static checker warning:
+>>
+>> 	drivers/iommu/intel/prq.c:95 intel_iommu_drain_pasid_prq()
+>> 	warn: sleeping in atomic context
+>>
+>> To avoid this issue, prevent draining the PRQ in the SVA mm release path
+>> and restore the previous behavior.
+>>
+>> Fixes: c43e1ccdebf2 ("iommu/vt-d: Drain PRQs when domain removed from
+>> RID")
+>> Reported-by: Dan Carpenter<dan.carpenter@linaro.org>
+>> Closes:https://lore.kernel.org/linux-iommu/c5187676-2fa2-4e29-94e0-
+>> 4a279dc88b49@stanley.mountain/
+>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/intel/pasid.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+>> index 0f2a926d3bd5..5b7d85f1e143 100644
+>> --- a/drivers/iommu/intel/pasid.c
+>> +++ b/drivers/iommu/intel/pasid.c
+>> @@ -265,7 +265,8 @@ void intel_pasid_tear_down_entry(struct
+>> intel_iommu *iommu, struct device *dev,
+>>   		iommu->flush.flush_iotlb(iommu, did, 0, 0,
+>> DMA_TLB_DSI_FLUSH);
+>>
+>>   	devtlb_invalidation_with_pasid(iommu, dev, pasid);
+>> -	intel_iommu_drain_pasid_prq(dev, pasid);
+>> +	if (!fault_ignore)
+>> +		intel_iommu_drain_pasid_prq(dev, pasid);
+>>   }
+>>
+> As a regression fix:
+> 
+> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
+> 
+> But I doubt whether it's working as expected. According to the
+> description and code, intel_pasid_tear_down_entry() is called
+> twice: the 1st in the mm release path and the 2nd in the unbind
+> path. PRQ draining is skipped in the former.
+> 
+> But intel_pasid_tear_down_entry() has a check at the beginning:
+> 
+> 	pte = intel_pasid_get_entry(dev, pasid);
+> 	if (WARN_ON(!pte) || !pasid_pte_is_present(pte)) {
+> 		spin_unlock(&iommu->lock);
+> 		return;
+> 	}
+> 
+> The 1st invocation already clears the pasid entry with FPD set.
+> 
+> Then the 2nd invocation will return early instead of moving to
+> the point of PRQ draining.
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
- arch/x86/include/asm/cpu.h  | 14 --------------
- arch/x86/kernel/cpu/intel.c | 31 -------------------------------
- 2 files changed, 45 deletions(-)
+You are right.
 
-diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-index 98eced5084ca..0c8ec62789a1 100644
---- a/arch/x86/include/asm/cpu.h
-+++ b/arch/x86/include/asm/cpu.h
-@@ -50,20 +50,6 @@ static inline void split_lock_init(void) {}
- static inline void bus_lock_init(void) {}
- #endif
- 
--#ifdef CONFIG_CPU_SUP_INTEL
--u8 get_this_hybrid_cpu_type(void);
--u32 get_this_hybrid_cpu_native_id(void);
--#else
--static inline u8 get_this_hybrid_cpu_type(void)
--{
--	return 0;
--}
--
--static inline u32 get_this_hybrid_cpu_native_id(void)
--{
--	return 0;
--}
--#endif
- #ifdef CONFIG_IA32_FEAT_CTL
- void init_ia32_feat_ctl(struct cpuinfo_x86 *c);
- #else
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index d1de300af173..adb34184c74a 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -876,34 +876,3 @@ static const struct cpu_dev intel_cpu_dev = {
- };
- 
- cpu_dev_register(intel_cpu_dev);
--
--#define X86_HYBRID_CPU_TYPE_ID_SHIFT	24
--
--/**
-- * get_this_hybrid_cpu_type() - Get the type of this hybrid CPU
-- *
-- * Returns the CPU type [31:24] (i.e., Atom or Core) of a CPU in
-- * a hybrid processor. If the processor is not hybrid, returns 0.
-- */
--u8 get_this_hybrid_cpu_type(void)
--{
--	if (!cpu_feature_enabled(X86_FEATURE_HYBRID_CPU))
--		return 0;
--
--	return cpuid_eax(0x0000001a) >> X86_HYBRID_CPU_TYPE_ID_SHIFT;
--}
--
--/**
-- * get_this_hybrid_cpu_native_id() - Get the native id of this hybrid CPU
-- *
-- * Returns the uarch native ID [23:0] of a CPU in a hybrid processor.
-- * If the processor is not hybrid, returns 0.
-- */
--u32 get_this_hybrid_cpu_native_id(void)
--{
--	if (!cpu_feature_enabled(X86_FEATURE_HYBRID_CPU))
--		return 0;
--
--	return cpuid_eax(0x0000001a) &
--	       (BIT_ULL(X86_HYBRID_CPU_TYPE_ID_SHIFT) - 1);
--}
+We need to clear the Fault Processing Disabled bit in the unbind path if
+it is set and drain the PRQ. What about below code?
 
--- 
-2.34.1
+diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+index 5b7d85f1e143..45bd1b689674 100644
+--- a/drivers/iommu/intel/pasid.c
++++ b/drivers/iommu/intel/pasid.c
+@@ -244,11 +244,25 @@ void intel_pasid_tear_down_entry(struct 
+intel_iommu *iommu, struct device *dev,
 
+  	spin_lock(&iommu->lock);
+  	pte = intel_pasid_get_entry(dev, pasid);
+-	if (WARN_ON(!pte) || !pasid_pte_is_present(pte)) {
++	if (WARN_ON(!pte)) {
+  		spin_unlock(&iommu->lock);
+  		return;
+  	}
 
++	if (!pasid_pte_is_present(pte)) {
++		if (!pasid_pte_is_fault_disabled(pte)) {
++			WARN_ON(READ_ONCE(pte->val[0]) != 0);
++			spin_unlock(&iommu->lock);
++			return;
++		}
++
++		pasid_clear_entry(pe);
++		spin_unlock(&iommu->lock);
++		intel_iommu_drain_pasid_prq(dev, pasid);
++
++		return;
++	}
++
+  	did = pasid_get_domain_id(pte);
+  	pgtt = pasid_pte_get_pgtt(pte);
+  	intel_pasid_clear_entry(dev, pasid, fault_ignore);
+diff --git a/drivers/iommu/intel/pasid.h b/drivers/iommu/intel/pasid.h
+index 082f4fe20216..668d8ece6b14 100644
+--- a/drivers/iommu/intel/pasid.h
++++ b/drivers/iommu/intel/pasid.h
+@@ -73,6 +73,12 @@ static inline bool pasid_pte_is_present(struct 
+pasid_entry *pte)
+  	return READ_ONCE(pte->val[0]) & PASID_PTE_PRESENT;
+  }
+
++/* Get FPD(Fault Processing Disable) bit of a PASID table entry */
++static inline bool pasid_pte_is_fault_disabled(struct pasid_entry *pte)
++{
++	return READ_ONCE(pte->val[0]) & PASID_PTE_FPD;
++}
++
+  /* Get PGTT field of a PASID table entry */
+  static inline u16 pasid_pte_get_pgtt(struct pasid_entry *pte)
+  {
+
+Thanks,
+baolu
 
