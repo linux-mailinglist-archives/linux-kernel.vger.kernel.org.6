@@ -1,98 +1,105 @@
-Return-Path: <linux-kernel+bounces-443803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046F19EFBFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:00:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B512E9EFBFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:00:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169D5188987C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB86C16DAF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0C718CBFB;
-	Thu, 12 Dec 2024 19:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE73188722;
+	Thu, 12 Dec 2024 19:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eE1MtNIq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geUnC+k6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD961186607;
-	Thu, 12 Dec 2024 19:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0282B186607;
+	Thu, 12 Dec 2024 19:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734030033; cv=none; b=u7iHx9S22LLBVXmttdla//vnCIE/L3ZMpWBOGkvYdhiq8T+iQbiiIl/RNpn9z/+AXCWLxT/uu6ZyM08frZQ94Cv7+zE95/+YEhpWCi0OEExgBsqTN98V/J6YlLGfCfAgXMTOy2oNgaediZNc+M0cE0329GLm81yBj5glfEiUE2I=
+	t=1734030044; cv=none; b=OQohlBYf/TSjNS90hMQJX2G0xJsyRQEMfnFK2Vd6C6SaxWSX+jLg/HgBU6dOOH7xq3/4MnYRFV/xpkUfi1Xj4CncYRXzkimBlrFVbkwc4+y/d/Mj5AKhCfcKR+RlIdZlwiDc/NhLV5owQVZKW7N3D/kGoncY+4T4+qgkFLkcA8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734030033; c=relaxed/simple;
-	bh=nI3HeDyiaBOWdnA+gdK1JW4Xj2fk3KgJbK4ZlB//e7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JUfsTk0kIOCyVYO7MCEDHgE7S6qDeKrl6yd72i/YPhoeKXKVMlujn3jWBHnc3qhmaHx/VsO1jGbYkKTKcugo+Ba0A58y9LEnZsKR/HrfPyIq46VW06ue88dUre+jPt5po02+50Y9sRk3QJYxZ4hVWmUX8oe1a2Bjm1fHns6k4Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eE1MtNIq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3898CC4CED0;
-	Thu, 12 Dec 2024 19:00:33 +0000 (UTC)
+	s=arc-20240116; t=1734030044; c=relaxed/simple;
+	bh=oiZaV7j9gU2sJqIGqh0RC+7QYVeLo3vZ7KcMUOkYhrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWdFohcXuYmvISVBVmwYqe0ufW6n68R5SRbM4e7vNE38hA7MGkKX3KnvGma7E9jN+a03lie6C6eJm7cRBGgb+H4YyevGJC/VzUxy+5P30ukl2qpxBmdee5MPB/zlOZ9IPmT630sdYgENo0U2mSy6i6yIn20JlduSTm7fybihjtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geUnC+k6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01EA5C4CECE;
+	Thu, 12 Dec 2024 19:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734030033;
-	bh=nI3HeDyiaBOWdnA+gdK1JW4Xj2fk3KgJbK4ZlB//e7A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eE1MtNIqt2FyWrnRA1VUOPfVzI11qZXATbOno4b0zzdn3PqjV8lGZj/isgBerEZpl
-	 4hrZST77HqvuRczo6Ur5dk5ayDOmkna/fYiHfIVCmn1C1kcXOh8hSVY4IUv6d7wORR
-	 TvfGdiNaW2YvSuu7LUGpbMuQ8+stmlnBAUW3uPkC96kUnnBzQrf8j88wlX2Y3AXiSX
-	 yBVbvmFIXivzQ2Ghj+St6RojXVbwcGBL3g2pjgM3kV331zLiAwnNBMUlUEp+y7P2/k
-	 LDRJLNawZnexaiFK4dsDUwIOWqET85+3yvw9wH0IWL2WtLcTlxt+bGJvVPM6obTUAX
-	 YVHjvpmOmf18A==
-Date: Thu, 12 Dec 2024 13:00:32 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: rick.wertenbroek@heig-vd.ch, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Replace magic number "6" by
- PCI_STD_NUM_BARS
-Message-ID: <20241212190032.GA3356901@bhelgaas>
+	s=k20201202; t=1734030043;
+	bh=oiZaV7j9gU2sJqIGqh0RC+7QYVeLo3vZ7KcMUOkYhrE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=geUnC+k6xo6LAubga1czvSTQpJAiWqt5iQWZEXlMJkO+Wl2O/x89cwzATolcMgVI7
+	 wy7Px/TKXinUETYQqXNuwXnycxSm3R7mKEKfqxe8auA87lsrRbfYo5kgnK5Ywc+s+6
+	 6nQZLL4h+vOuhwK/7goN4L1RGiu0T7jz1Y+hVSqlPSURnLj0OoeKsPrAl41ri1IpYq
+	 V8uSlYHGPdWC0qJaSLrLn3gkGloen+ui8u3pOr656o48ul+MftHQpaAdl36ziQW8gc
+	 8Uuop8Ly1vhzwCPKNaHQ9TPKgLUvOzVLC8K4OhcrG2jcrvbAJPKJQekQx3yIaDdLB1
+	 k6pZmXuIB0O2w==
+Date: Thu, 12 Dec 2024 16:00:40 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
+	peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, nick.forrington@arm.com,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] perf lock: Add percpu-rwsem for type filter
+Message-ID: <Z1sy2NgchmkOOVt_@x1>
+References: <20241210200847.1023139-1-ctshao@google.com>
+ <20241210200847.1023139-2-ctshao@google.com>
+ <Z1nk1gxH9siszkwG@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241212162547.225880-1-rick.wertenbroek@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1nk1gxH9siszkwG@google.com>
 
-On Thu, Dec 12, 2024 at 05:25:47PM +0100, Rick Wertenbroek wrote:
-> Replace the constant "6" by PCI_STD_NUM_BARS, as defined in
-> include/uapi/linux/pci_regs.h:
-> 
-> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+On Wed, Dec 11, 2024 at 11:15:34AM -0800, Namhyung Kim wrote:
+> On Tue, Dec 10, 2024 at 12:08:21PM -0800, Chun-Tse Shao wrote:
+> > percpu-rwsem was missing in man page. And for backward compatibility,
+> > replace `pcpu-sem` with `percpu-rwsem` before parsing lock name.
+> > Tested `./perf lock con -ab -Y pcpu-sem` and `./perf lock con -ab -Y
+> > percpu-rwsem`
 
-Applied to pci/endpoint for v6.14, thanks!
+> > Fixes: 4f701063bfa2 ("perf lock contention: Show lock type with address")
+> > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
 
-> ---
->  include/linux/pci-epf.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-> index 18a3aeb62ae4..ee6156bcbbd0 100644
-> --- a/include/linux/pci-epf.h
-> +++ b/include/linux/pci-epf.h
-> @@ -157,7 +157,7 @@ struct pci_epf {
->  	struct device		dev;
->  	const char		*name;
->  	struct pci_epf_header	*header;
-> -	struct pci_epf_bar	bar[6];
-> +	struct pci_epf_bar	bar[PCI_STD_NUM_BARS];
->  	u8			msi_interrupts;
->  	u16			msix_interrupts;
->  	u8			func_no;
-> @@ -174,7 +174,7 @@ struct pci_epf {
->  	/* Below members are to attach secondary EPC to an endpoint function */
->  	struct pci_epc		*sec_epc;
->  	struct list_head	sec_epc_list;
-> -	struct pci_epf_bar	sec_epc_bar[6];
-> +	struct pci_epf_bar	sec_epc_bar[PCI_STD_NUM_BARS];
->  	u8			sec_epc_func_no;
->  	struct config_group	*group;
->  	unsigned int		is_bound;
-> -- 
-> 2.25.1
-> 
+> Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+
+Here the reviewer can also add info about where this should go, i.e.
+this is a fix, has a Fixes tag, but then there is extra work for
+maintainers to do: Is this a regression introduced in this merge window?
+Should this go to urgent or next? If the submitter adds this, it helps,
+if the reviewer agrees, even better, otherwise emit an opinion where it
+should go.
+
+In this specific case:
+
+⬢ [acme@toolbox perf-tools-next]$ git tag --contains 4f701063bfa2 | grep ^v[56] | grep -v -- -rc
+v6.10
+v6.11
+v6.12
+v6.4
+v6.5
+v6.6
+v6.7
+v6.8
+v6.9
+⬢ [acme@toolbox perf-tools-next]$
+
+Looks something its there for quite a while, so probably can go to
+perf-tools-next?
+
+- Arnaldo
 
