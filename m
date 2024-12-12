@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-443691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB929EFAA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:18:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D08739EFABB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:21:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88BCD16E9B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:19:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4B42288E1;
+	Thu, 12 Dec 2024 18:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="hVYs6qzJ"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C92FE28B34D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:18:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDA2226546;
-	Thu, 12 Dec 2024 18:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LctDjE9p"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BB0223C7A;
-	Thu, 12 Dec 2024 18:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51877223C69;
+	Thu, 12 Dec 2024 18:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734027098; cv=none; b=Hc8teiiv6gDLnExK2ZVlH8DWtJGUa3WdfKGRJqmcRBYargA6wHuAkamq5511vdqC952LC9j8XSCnevuPSwiw1E67fbO13YSh21ivCYnXKGElQ5HvVhn4TPPbpE4PQ6mxTIHnjeBwKcXSiqXEmgitqQcc5XCDi57KuIDKo2rg9I8=
+	t=1734027189; cv=none; b=JgiXJiN3c8fMpLAGcCXwzlf6R1JibaVo9tcL6K3b3lVhHHz4FdrFfeOPwoXGGAyYOBGlxL2p1TvWTV8+NdjUXbxhk3z9qSI9HdmgxfRXzHCVNTXd4WedzzbtMvPGPWoc5TsmqJ69zR6SQrHpF0mQ7V8WVGrgblVN7BpH+ODtrGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734027098; c=relaxed/simple;
-	bh=fmL3IjdHxzakIx4CxIGIr9XO6NTz4sWtktTZlSVEfDA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I9MroimIHoWPKnhoS7ivq3itzsReSL8MSJ7k8yYiQ/SIMYphWxg6wQUSEujalvMbTr+FdDOl7h6XT0V+r718JGXXZ35fPA5oUerF8fXd/v/KossnXtoqNoxtzvSAmoNuUZjOxWrjVnyYtN1dowzIHCl6LvOIeWZ+ZwlcNsbdDLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LctDjE9p; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d8f544d227so5458046d6.1;
-        Thu, 12 Dec 2024 10:11:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734027093; x=1734631893; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fmL3IjdHxzakIx4CxIGIr9XO6NTz4sWtktTZlSVEfDA=;
-        b=LctDjE9pjflGBSxQIJWdGBo+dYKcL6mW/voj/14wv3C5ywtsNTBytJ8IvbQkkPcGGz
-         gR0Xmp9t3QcKp5JZtNVZuaauIw87ZPersxdaRbaoLZW4GyANq2kTDgfHPSHphhcc9a3S
-         xqhdN6gqnlS58ZgKaGXzY8bMAhKCXFIHM0+irKDxpRQhAPvRmogjulhJRUEUi5e5vAIQ
-         nBevbgY8pWj8U+ynMbAqkzC3fESwM+Snd9lwrt1WmOHmb995hgIF+z/Lub93QQrZfhye
-         0nfN6xX9NWvmfnPORt29MKOwejGj8Hl2zzYIaXmd0YqIVKl6dYZBtBahxb3WDKlhY0Gr
-         haLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734027093; x=1734631893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fmL3IjdHxzakIx4CxIGIr9XO6NTz4sWtktTZlSVEfDA=;
-        b=Sre7dBkeNV1tAt2OaTzO0K8HKhlHB3nNArNQycxC+CPM9KmvMt5Dt19GyALV+sMzD7
-         ZKXop3j63f4ZC6nXnQhbPrGBZ925lvpEooUkD5XwblyvKrrIZywxjiar4E8zmk4Yyr9D
-         qMbVZf5ZKrfgv53idrefjXa/TXltls1ljVuN4dYe5N79q+k7vA34P1TLB9emAJ1Fz3UD
-         0t+7FPDWaXXhEwPsBfv7DsvML0my82Ls395Vu4TtNYfo1xpEKzxO40fM6RfUrOZX6e1U
-         wKYMRR2sj/txFXpVF73w+56x6fVc9dqIv730bz07vPhVu6tEh3V35Dw2yurhJycI+yHj
-         huog==
-X-Forwarded-Encrypted: i=1; AJvYcCVOxy4pLL7cJCFG4mW6Cie5dLyJnU0w0iIbGwFARD4Nm9pzibis+yaQPkvzU/f8/Oihv5kg48kierY96eow@vger.kernel.org, AJvYcCWlUJ1ZpcNiB3xAU+/h/z5PUOCChtDOXIEuNRuAF8rREYYhOo9XnlXhMgRbxiRLrETlUO44JAH8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTAh/1qx1nZ66yX0bk3Td6NdU3nGgj+FZIq5V9mXuARauSywdl
-	enfGjjqYUgddWlNSTvk7hCCiWWigQXB9QGY0QyoOOcDu++Jq0IDemM5N686s6Whx5mCMTUFSkUI
-	iWLRSgNhGSYv7M/5Ykq039+74T1Q=
-X-Gm-Gg: ASbGncsx0Es050L7+5ouFYjm4BtOUXiW/ZQjqva7F9i+1wVu51sMZjD5jDE+DPBq8fq
-	/A9hrC8gIguSIW/9BLxYFtwL1Ma6XMrXTMFVi20SYvq+oufXQPqsw3A==
-X-Google-Smtp-Source: AGHT+IGdSVDteaH2QQbaWou/DQ1MrAOaTamUlb5Me1k16b6VG4xFSaTPJKAjeBQlXrI/yb9wHqeA55Hx8Uz5Hkk9GWo=
-X-Received: by 2002:a05:6214:2584:b0:6d4:2910:7f12 with SMTP id
- 6a1803df08f44-6db0f827c69mr21459886d6.41.1734027093508; Thu, 12 Dec 2024
- 10:11:33 -0800 (PST)
+	s=arc-20240116; t=1734027189; c=relaxed/simple;
+	bh=klN8TCjAFsZYl5VMZCaq9NYaAK6GGI+tkrvt8Xgklug=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OzBs0yfGjBh0iT4rZ13PHmFv7/7PlDFw1iOkcU+eXO27+JnKz1HqCR+TMh3sMFps7IWKJYFPl+1ratOFsRFcf9/8XAqT0DSRi01m7i7MaDsV5fpTADg1FfAs8sC8sxCpd74KQeWLm8FI2OxlzohIWXTW9hH28ALYzZ8n/mLsI1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=hVYs6qzJ; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1734027180; x=1734286380;
+	bh=klN8TCjAFsZYl5VMZCaq9NYaAK6GGI+tkrvt8Xgklug=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=hVYs6qzJEJA34TDi5u2nX3e48/hJeb11/9ZfLDVytOk2XNKnViz09yPDxfDqfg9Km
+	 f0XmYUF1+pZpMJqhYFcL4RlHQCBCMlUEATp6cIkyv93qiQGqwqtzWXVBKl9rCTRGFa
+	 ioLJs98Bmy3VByFZACSkaK9y3fILWGgEnMwk9g65rlI1bgiX4a4mDtzVSoHb9stozv
+	 ZR99mVnWfigIx4M8i/TxnmLImmboguFF/elyvFm91l9otVfqIQnLx5I5MLTeTn7Jcx
+	 JhnBpl7iwZ0RqT8+xCFXoHK4Z3buakt3AeTbmfOfNHu4iqIQzQE+4mTIPdSG3wJr5z
+	 jPclEq+UGfjMA==
+Date: Thu, 12 Dec 2024 18:12:54 +0000
+To: Tejun Heo <tj@kernel.org>
+From: Ihor Solodrai <ihor.solodrai@pm.me>
+Cc: David Vernet <void@manifault.com>, sched-ext@meta.com, kernel-team@meta.com, linux-kernel@vger.kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH sched_ext/for-6.13-fixes] sched_ext: Fix invalid irq restore in scx_ops_bypass()
+Message-ID: <SJEarr1ol1z7N83mqHJjBmpXcXgHNnnuORHfziWINcHBQCJzY0RczexPKxdq_vE5cDYPeO3bx1RdsNhLqw5UYI40HSX9cPZ9rdmebYwwAP8=@pm.me>
+In-Reply-To: <Z1n9v7Z6iNJ-wKmq@slm.duckdns.org>
+References: <20241209152924.4508-1-void@manifault.com> <qC39k3UsonrBYD_SmuxHnZIQLsuuccoCrkiqb_BT7DvH945A1_LZwE4g-5Pu9FcCtqZt4lY1HhIPi0homRuNWxkgo1rgP3bkxa0donw8kV4=@pm.me> <Z1n9v7Z6iNJ-wKmq@slm.duckdns.org>
+Feedback-ID: 27520582:user:proton
+X-Pm-Message-ID: dea07f9fab95189ad454ec3ff2fb1b408d182190
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212115754.38f798b3@fangorn> <CAJD7tkY=bHv0obOpRiOg4aLMYNkbEjfOtpVSSzNJgVSwkzaNpA@mail.gmail.com>
-In-Reply-To: <CAJD7tkY=bHv0obOpRiOg4aLMYNkbEjfOtpVSSzNJgVSwkzaNpA@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 12 Dec 2024 10:11:22 -0800
-Message-ID: <CAKEwX=NyWC6UkC2DAPqi16kwTG3tgspQZmuGmcE928ghyiDeDg@mail.gmail.com>
-Subject: Re: [PATCH v2] memcg: allow exiting tasks to write back data to swap
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Rik van Riel <riel@surriel.com>, Balbir Singh <balbirs@nvidia.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, hakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 12, 2024 at 9:07=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> On Thu, Dec 12, 2024 at 8:58=E2=80=AFAM Rik van Riel <riel@surriel.com> w=
-rote:
->
-> I still think maybe this needs to be fixed on the memcg side, at least
-> by not making exiting tasks try really hard to reclaim memory to the
-> point where this becomes a problem. IIUC there could be other reasons
-> why reclaim may take too long, but maybe not as pathological as this
-> case to be fair. I will let the memcg maintainers chime in for this.
+On Wednesday, December 11th, 2024 at 1:01 PM, Tejun Heo <tj@kernel.org> wro=
+te:
 
-FWIW, we did have some internal discussions regarding this. We think
-that for now, this is a good-enough stopgap solution - it remains to
-be seen whether other more "permanent fixes" are needed, or will not
-also regress other scenarios. And they are definitely more complicated
-than the solution Rik is proposing here :)
+>=20
+>=20
+> While adding outer irqsave/restore locking, 0e7ffff1b811 ("scx: Fix racin=
+ess
+> in scx_ops_bypass()") forgot to convert an inner rq_unlock_irqrestore() t=
+o
+> rq_unlock() which could re-enable IRQ prematurely leading to the followin=
+g
+> warning:
+>=20
+> raw_local_irq_restore() called with IRQs enabled
+> WARNING: CPU: 1 PID: 96 at kernel/locking/irqflag-debug.c:10 warn_bogus_i=
+rq_restore+0x30/0x40
+> ...
+> Sched_ext: create_dsq (enabling)
+> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
+> pc : warn_bogus_irq_restore+0x30/0x40
+> lr : warn_bogus_irq_restore+0x30/0x40
+> ...
+> Call trace:
+> warn_bogus_irq_restore+0x30/0x40 (P)
+> warn_bogus_irq_restore+0x30/0x40 (L)
+> scx_ops_bypass+0x224/0x3b8
+> scx_ops_enable.isra.0+0x2c8/0xaa8
+> bpf_scx_reg+0x18/0x30
+> ...
+> irq event stamp: 33739
+> hardirqs last enabled at (33739): [<ffff8000800b699c>] scx_ops_bypass+0x1=
+74/0x3b8
+>=20
+> hardirqs last disabled at (33738): [<ffff800080d48ad4>] _raw_spin_lock_ir=
+qsave+0xb4/0xd8
+>=20
+>=20
+> Drop the stray _irqrestore().
+>=20
+> Signed-off-by: Tejun Heo tj@kernel.org
+>=20
+> Reported-by: Ihor Solodrai ihor.solodrai@pm.me
+>=20
+> Link: http://lkml.kernel.org/r/qC39k3UsonrBYD_SmuxHnZIQLsuuccoCrkiqb_BT7D=
+vH945A1_LZwE4g-5Pu9FcCtqZt4lY1HhIPi0homRuNWxkgo1rgP3bkxa0donw8kV4=3D@pm.me
+> Fixes: 0e7ffff1b811 ("scx: Fix raciness in scx_ops_bypass()")
+> Cc: stable@vger.kernel.org # v6.12
+> ---
+> kernel/sched/ext.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 7fff1d045477..98519e6d0dcd 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -4763,7 +4763,7 @@ static void scx_ops_bypass(bool bypass)
+> * sees scx_rq_bypassing() before moving tasks to SCX.
+> */
+> if (!scx_enabled()) {
+> - rq_unlock_irqrestore(rq, &rf);
+> + rq_unlock(rq, &rf);
+> continue;
+> }
 
->
-> If there's a fundamental reason why this cannot be fixed on the memcg
-> side, I don't object to this change.
->
-> Nhat, any objections on your end? I think your fleet workloads were
-> the first users of this interface. Does this break their expectations?
+Hi Tejun,
 
-I had similar concerns as yours, so we rolled the solution to the
-hosts in trouble. AFAICS:
 
-1. It allowed the pathological workload to make forward progress with
-the exiting procedure.
+I tried this patch on BPF CI: the pipeline ran 3 times
+successfully. That's 12 selftests/sched_ext runs in total.
 
-2. The other workloads (who also have memory.zswap.writeback disabled)
-did not observe any regression.
+https://github.com/kernel-patches/vmtest/actions/runs/12301284063
+
+Tested-by: Ihor Solodrai ihor.solodrai@pm.me
+
+Thanks for the fix!
 
