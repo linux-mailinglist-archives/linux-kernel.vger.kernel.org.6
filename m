@@ -1,228 +1,126 @@
-Return-Path: <linux-kernel+bounces-442766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 970D69EE149
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:31:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 231D69EE14D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:31:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D5FB283CC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:31:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CAD2165454
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC5A259496;
-	Thu, 12 Dec 2024 08:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993CC20C012;
+	Thu, 12 Dec 2024 08:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iaMktMKZ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="miwuHk0H"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4547518643
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649B218643
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733992275; cv=none; b=qykIFblM2Qg/xZycWFzDQlZzsIsmKoQr4pNXOD1973qHgMgcHUu+oUr0IVFO6QK35CF5eZ5X3pAXGeDVywx27x1+TU5Vrm/kBj4iyQNzSUJPhmA6LJ+KsG6tbJtKoGYEOwyBu1bd//woYlWBm0KLW/osaRzx1wWZunScn19TKHQ=
+	t=1733992286; cv=none; b=Bf579PwrphUQkH42kRHQSZ9JCAKvIrIDjWWOGiJ1xwS3SotLY7A1UH2oklR+2rOHDqVdjvHVBeFhJWI+EwGdRxkJ0+wyXVZU3t8m8MO1oSvrB8PrXmoUpnrx5x5K0GX027ptFoFpRL0BN2oqLYSx/hEELeeRj8v770arNKVHvDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733992275; c=relaxed/simple;
-	bh=Nlh6l2I6IYsoFDxqfXBnSMbDN8K+3kan1+aBElEYpQA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tefJRIGhSuAsvvfYqfdWbkGcMjkRzJtM5w8+V3ekFpK/uLEvXMdnZOZowWSL0kQvskdjC0KC5A1WLZqs0z1MZXn08rycprlZHRbMNPA7D2ZMiwZMylbRXrsFO+j9wKxv1slWKNBmaQrmnJP0lljgyyEt6I8Fx/iZhQ69+w9YLhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iaMktMKZ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43618283dedso2833795e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:31:13 -0800 (PST)
+	s=arc-20240116; t=1733992286; c=relaxed/simple;
+	bh=TtqwbhDdjTGWur/AFkn29pIoyLhmrdts8FFcsnS4ag8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o2JSb6ygrLn5lVXxqa77IUYuDqsqhHKunh5THtK4w7tQ1GE4x3iu9pcYFDf1a5IbbpajYH4LsiriTN95bKmmEQhp1kYoKQwYqTjqaOQwGrx6juxbbj4TPAsCcBhhiWFjK1pOrsy3bIUdjL1M4HEVkuVGLPksoH4lQKHW7R392XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=miwuHk0H; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa6b4cc7270so43858566b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:31:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733992272; x=1734597072; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5XYu4I8D9gBdmo7eYgjvc8ss5lWgqbeNPvu7neTItSw=;
-        b=iaMktMKZLli8MwMdL3EsdNfiXWbaDpL3Vj2eOl0Hnx+pVSBTO16L6rgMaAax4Q/n/m
-         WNGvZDA0/l3gZbSwuGopZ0JjwvAk9L5/McrlXIStsv9Faj3RN/lHliHL/tkAtbj7eNrV
-         dG/c+5yvLnteaV5PDjpNJAIlAeNIftbcr0mLBV75cfFSvtI0WTc3nmvO80cSu5DRJTGL
-         A+w/ufcguYy4eWXxqhuLx/VHN3Y6AO+mVsIG99DU/yt0+WSPaH15Z/SHJ2kkz7esYjpc
-         bt6Z0T/luO/7yLKZIxs5Ug5DdZZPoDGzwCrq48QJVpZSl39eFp2xS3QQ/2/IY+EVWEKj
-         ifXw==
+        d=google.com; s=20230601; t=1733992283; x=1734597083; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Etgz7RSgss7nTlumi/Zc3I+JdxVFiVXjCxhG6C9rmk=;
+        b=miwuHk0Hy1vp2KZ77bgD8ZIhIhw5WKaiNow/diXgivBAmH0hLCFjSQCP47XAxu79i3
+         spIZap9d3Xwi4MKBxAul9C3m/48RxzK46DP2XlzFLB2JW4qkn+l/Yke4+8D+uBWmkV7h
+         hAuxVxa1hYVbY2JQR8/AYaE763HooHpvnQazU6FHr2g8M4Rxegh6w7w5mp3muvMOU/RO
+         EBM7pDyS6w8JaU6BQ4o0f+LsANW5LOd9JSdt5269CVgoSAaksLDwn9U4yxs5HcQH9Ici
+         A9BlWcZPpDoZgZkZXSSW05A4qosk5tHCja8Nk4u3bRO9Zy7acqb/iYX8TpyrvGckA2OQ
+         CspA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733992272; x=1734597072;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5XYu4I8D9gBdmo7eYgjvc8ss5lWgqbeNPvu7neTItSw=;
-        b=anbgYA8sNjMMTWxUjX5g1eWtyGjRBJCzBqXx6qTgHAXTsJh9OB4ewL+b4PDsVbm4ZP
-         5701DH6LekVIK0pvqLQ2hzletAt7+UpKcaDhb06/+mcjm+YcSol2yZrEY+rjSHCnKrZS
-         qn5x1b74Sy48F4FLytNR93nm8/70hvDIQdaJdWQFaABXJ2CBKXM8Qv2ZMncfK1dwNMGg
-         jaQ7ZeLuti6NGYE6gUFr5HzAlG862XlKh5QhSCnetlbxAKSNcocVUZ5sKgBoCTF4wyCD
-         UlA99xrBstA2iA33lCw3GfB1Z0Jr6BT8m6ZNaMlH0czdTNp4fVqPKr7OcsWHIh1AvFF4
-         B1RA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcQz78/GzaTljXIc1SOUm5YiagOZRdCDJuZKtpbDHDGTPdoR3ECYHj9RMoD7iCOm2qVOnXSiOothQt1oY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzt2c95ILatzhtdi6a2EoBU/upUKLKXCjFoaFhQ1I+jX+Dzgzu
-	zPx9kjJyK2fq4qefQZ8sAoTl/6TcDYuCaVEuMzWrziHDXolKAHcBBOXeibn7nEM=
-X-Gm-Gg: ASbGncvFI/ZVnbYFDnY3f0FnTVPSxWYM4QqkQUMO3M/9frOi8wHwas4WVAo3cqsdTvV
-	2C0by3db+iCfBW5lQkzG5ZEfdVjldYmywhT1Rr12U4+GnWwBQvrrUchjX3fHffabP28t+DoBjTJ
-	KxgeSzqwL0Vb0P2+15DI0SyyhiNTnhQ6aFtTn23+VnbYlHfr3U0JK+eYlAqcTh8u10uJRtd0LIH
-	0EtaYC2Wsga4TCfOPp1OUoSaJ4OLIm/YR5dr861AG4kkmGQ/rsEC7s4oewY9Z+EbabwDXychP8V
-	KEsLoJlYDkbXmsJzMKp6lAHkLxUvin8kVQ==
-X-Google-Smtp-Source: AGHT+IFg5rVsYNoj1OLL00/jahvhS0YEuapxQEmBGH2dEHoxfZsQpcAyjRpBUgBdyI8WiwrhrVyjPA==
-X-Received: by 2002:a05:600c:348e:b0:435:14d:f61a with SMTP id 5b1f17b1804b1-436228638c1mr17805585e9.25.1733992271590;
-        Thu, 12 Dec 2024 00:31:11 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b98a:c6fe:3a5d:f20a? ([2a01:e0a:982:cbb0:b98a:c6fe:3a5d:f20a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436255830b0sm9467275e9.18.2024.12.12.00.31.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 00:31:11 -0800 (PST)
-Message-ID: <0d0a8157-32a4-4e8e-92cd-dac9a4471641@linaro.org>
-Date: Thu, 12 Dec 2024 09:31:09 +0100
+        d=1e100.net; s=20230601; t=1733992283; x=1734597083;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Etgz7RSgss7nTlumi/Zc3I+JdxVFiVXjCxhG6C9rmk=;
+        b=WErA0Go3fbclfhMXgyhk5ZmSCANdb4gLyCMTgYiJgiUXoyJbS2ZrxyFODpPrcOHhJR
+         IeJk8Xn0Nv9quCb+RSx0zfQwancVh393j9lvU/QS0OcnjdmU6QhLEPpX2+8LN2k4yQ1R
+         pYS+VTymBbZOwrtn4LgPpk25Dv1a6y+/KsD2u1G0Av8mOxctoCt6tAy7jm5dcbJK6Hyz
+         O6AFu+bP3ZUaFeVhNSso9IofuUcjkN2SXhbMqHnLsLHXJ5MuqAD/0ZSX04IQociKFiTD
+         sq9IxjbhmW7om0Lr9H+i7YfRr32A+wTWMaDYSVKpPx/apeZp6SdRvLihl8EH7CrUv9GS
+         jlEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnNf8bSvynVZuqzN/tHJXvFNcKgdSwcFh5hb0OwwLfcDzE6KSWem5IJSSl2Lu3j66nJ8Pt7QvDRVYQ03o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8QARVLmVIQpQ0Z9ip3z97JUlPaw5xtei7GWpKy4Nf0VAKobPU
+	1x7RiezjtV8dBOdcJW6StOhPpsax5gPtKc/M1laxU1VBiX6aKIaO1GyNdYRRPg==
+X-Gm-Gg: ASbGncsbzUgP42Retgc/HNb5HqOqW3LEeS6Mcip7CIsfdma4W4XOq3lFO/bLdfq0RXz
+	XZCw3HvAPHWuRqfslbWzEt+G7TfNh5SGBFmK/lrvWoLQHuFHsL29UTqwlWaEmJyaGuXHkBrbjuv
+	fnb40PgDNFIdHTpCVx7wJlxfmx5ven+ACXf3ObhIbwMTu/SmO7JWOQIBGR8Nmxbintjq0XbeT9v
+	VqCy9T8z66BjRO9i4nmJQk4+s2gGEYYnrF68lSAFNz46HEyJPshGe+Fo9jhM9bZOF0xuTjd5GGT
+	EJNOD7+BZN9rXC0R9998mee2bQ==
+X-Google-Smtp-Source: AGHT+IFD3lPy25E1CHURlBiI+488wd3G2AN3safpm/L9TeioPakNrgwNL3OiBG7nWK80XYFaJpY3wA==
+X-Received: by 2002:a05:6402:26d4:b0:5d2:7199:ac2 with SMTP id 4fb4d7f45d1cf-5d4e8f65be9mr479811a12.2.1733992282606;
+        Thu, 12 Dec 2024 00:31:22 -0800 (PST)
+Received: from google.com (97.176.141.34.bc.googleusercontent.com. [34.141.176.97])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6656f306csm759543766b.61.2024.12.12.00.31.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 00:31:21 -0800 (PST)
+Date: Thu, 12 Dec 2024 08:31:17 +0000
+From: Matt Bobrowski <mattbobrowski@google.com>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, kernel-team@meta.com,
+	andrii@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+	martin.lau@linux.dev, kpsingh@kernel.org
+Subject: Re: [PATCH bpf-next] bpf: lsm: Remove hook to bpf_task_storage_free
+Message-ID: <Z1qfVZDXLNoOjR9i@google.com>
+References: <20241212075956.2614894-1-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 1/4] drm/dp: Add helper to set LTTPRs in transparent
- mode
-To: Johan Hovold <johan@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@redhat.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-References: <20241211-drm-dp-msm-add-lttpr-transparent-mode-set-v2-0-d5906ed38b28@linaro.org>
- <20241211-drm-dp-msm-add-lttpr-transparent-mode-set-v2-1-d5906ed38b28@linaro.org>
- <Z1mk08SHEd5_vc99@hovoldconsulting.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <Z1mk08SHEd5_vc99@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241212075956.2614894-1-song@kernel.org>
 
-On 11/12/2024 15:42, Johan Hovold wrote:
-> On Wed, Dec 11, 2024 at 03:04:12PM +0200, Abel Vesa wrote:
->   
->> +/**
->> + * drm_dp_lttpr_set_transparent_mode - set the LTTPR in transparent mode
->> + * @aux: DisplayPort AUX channel
->> + * @enable: Enable or disable transparent mode
->> + *
->> + * Returns 0 on success or a negative error code on failure.
->> + */
->> +int drm_dp_lttpr_set_transparent_mode(struct drm_dp_aux *aux, bool enable)
->> +{
->> +	u8 val = enable ? DP_PHY_REPEATER_MODE_TRANSPARENT :
->> +			  DP_PHY_REPEATER_MODE_NON_TRANSPARENT;
->> +	int ret = drm_dp_dpcd_writeb(aux, DP_PHY_REPEATER_MODE, val);
->> +
->> +	return ret == 1 ? 0 : ret;
-> 
-> This looks correct, but I had to go look at drm_dp_dpcd_writeb() to make
-> sure it never returns 0 (for short transfers).
-> 
->> +}
->> +EXPORT_SYMBOL(drm_dp_lttpr_set_transparent_mode);
-> 
-> This appears to be what the driver currently uses, but why not
-> EXPORT_SYMBOL_GPL?
+On Wed, Dec 11, 2024 at 11:59:56PM -0800, Song Liu wrote:
+> free_task() already calls bpf_task_storage_free(). It is not necessary
+> to call it again on security_task_free(). Remove the hook.
 
-drivers/gpu/drm/display/drm_dp_helper.c is not GPL licenced, so
-this is the right macro to use.
+Acked-by: Matt Bobrowski <mattbobrowski@google.com>
 
-Neil
-
+> Signed-off-by: Song Liu <song@kernel.org>
 > 
->> +
->> +/**
->> + * drm_dp_lttpr_init - init LTTPR transparency mode according to DP standard
->> + *
->> + * @aux: DisplayPort AUX channel
->> + * @lttpr_count: Number of LTTPRs
->> + *
->> + * Returns 0 on success or a negative error code on failure.
->> + */
->> +int drm_dp_lttpr_init(struct drm_dp_aux *aux, int lttpr_count)
->> +{
->> +	if (!lttpr_count)
->> +		return 0;
->> +
->> +	/*
->> +	 * See DP Standard v2.0 3.6.6.1 about the explicit disabling of
->> +	 * non-transparent mode and the disable->enable non-transparent mode
->> +	 * sequence.
->> +	 */
->> +	drm_dp_lttpr_set_transparent_mode(aux, true);
+> ---
 > 
-> Error handling?
+> This was initially sent in a patchset [1]. However, this patch is not
+> closely related to other patches in the set, so sending it alone.
 > 
->> +
->> +	if (lttpr_count > 0 && !drm_dp_lttpr_set_transparent_mode(aux, false))
+> [1] https://lore.kernel.org/bpf/20241112083700.356299-1-song@kernel.org/
+> ---
+>  security/bpf/hooks.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> No need to check lttpr_count again here.
+> diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
+> index 3663aec7bcbd..db759025abe1 100644
+> --- a/security/bpf/hooks.c
+> +++ b/security/bpf/hooks.c
+> @@ -13,7 +13,6 @@ static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
+>  	#include <linux/lsm_hook_defs.h>
+>  	#undef LSM_HOOK
+>  	LSM_HOOK_INIT(inode_free_security, bpf_inode_storage_free),
+> -	LSM_HOOK_INIT(task_free, bpf_task_storage_free),
+>  };
+>  
+>  static const struct lsm_id bpf_lsmid = {
+> -- 
+> 2.43.5
 > 
->> +		return 0;
-> 
-> I'd check for errors instead of success here and do the rollback before
-> returning -EINVAL.
-> 
->> +
->> +	/*
->> +	 * Roll-back to tranparent mode if setting non-tranparent mode failed or
->> +	 * the number of LTTPRs is invalid
->> +	 */
->> +	drm_dp_lttpr_set_transparent_mode(aux, true);
->> +
->> +	return -EINVAL;
-> 
-> And return 0 explicitly here.
-> 
->> +}
->> +EXPORT_SYMBOL(drm_dp_lttpr_init);
-> 
-> In any case this works well and is needed for external display on the
-> Lenovo ThinkPad T14s, while not breaking the X13s which does not need
-> it:
-> 
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> 
-> Johan
-> 
-
 
