@@ -1,93 +1,96 @@
-Return-Path: <linux-kernel+bounces-443248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A900B9EE925
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:42:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 253AC9EE928
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:42:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D43289557
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:42:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9DF12894F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46C4223310;
-	Thu, 12 Dec 2024 14:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DF2223330;
+	Thu, 12 Dec 2024 14:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="G2Brxfjp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oj8Z3JQ8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE5D1D31A9;
-	Thu, 12 Dec 2024 14:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAA384D02;
+	Thu, 12 Dec 2024 14:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734014401; cv=none; b=CEt1QTWG5T8Rd7A7et2D9y3uq3FD1wUUpdVGitEoth7yCopz1OlydtsLubqjwNoJof8Y+ijd5lbnky+yspo1cVzQfuhbcnn/4vxXdkyuETC5V8lRJAnvcx0GpwKuzUj7aPwjemhPErXTt0zHmU7nSstTpI6mc5ytIahyYE9wIDU=
+	t=1734014415; cv=none; b=bwgSgzGywQbbiTbLXfQnu+qzIfOgLTkO2lD2GM13f3picjf2lxcLKukCVjI/PDm3PsUYkBOPFX5Z58OJmeWu6/Z2wUrC1O0eIaX1Qpq1Y5zskR+jrZ9bz1ELA81u5gHlquqJD1crgySNHJleJOuu7cinquAH9y94vKXaWJ0FTjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734014401; c=relaxed/simple;
-	bh=QqZueLPfTU0wpJXpITFDGRkQSvrbkHrFCfyn9LAYOok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DXHfFpUybaqAqSPgMvUALrvAzzaytLtGR2Ixd7tqaBWcNerNcB6r+ZzIbCZUrZivOVyllqzABVdIwUpkJfXswYPZZOTjXj5YapNaDVHw99fSeFFlv/weDQOjHuRaLRPA5L2jub9v4nKRTCkhhyeHN+IqtSXPY77i2HIbVCkSgf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=G2Brxfjp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA824C4CECE;
-	Thu, 12 Dec 2024 14:39:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734014400;
-	bh=QqZueLPfTU0wpJXpITFDGRkQSvrbkHrFCfyn9LAYOok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G2Brxfjp+F0H/6i8ldoC79A4N+tiR7F7lsfJfW9e/IkXnDRbVbJIFgAbpBtAzRaBO
-	 WWKW9fn8jog9KnCI7UJK1A4naF5wLD7DstY4yK2sxizCJIlGJmya4CTWxfQ2r0/eGF
-	 YHNCpF9j85P6i6mZuhcLbBnnJQgT7KC4LBmjAHEw=
-Date: Thu, 12 Dec 2024 15:39:57 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Raag Jadav <raag.jadav@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	mika.westerberg@linux.intel.com, dmitry.torokhov@gmail.com,
-	broonie@kernel.org, pierre-louis.bossart@linux.dev,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Introduce devm_kmemdup_array() helper
-Message-ID: <2024121242-saturday-aqua-9ac6@gregkh>
-References: <20241126172240.6044-1-raag.jadav@intel.com>
- <CACRpkdZqdE8gQCre=zR2cN17oKfwBSnWuVwzQsbRO7-ENVnPNg@mail.gmail.com>
- <Z0nNnsmYIil0OZpy@smile.fi.intel.com>
- <Z1Rfuo3jq7rO0cqb@black.fi.intel.com>
- <Z1r0EPC9gumruFKU@smile.fi.intel.com>
+	s=arc-20240116; t=1734014415; c=relaxed/simple;
+	bh=/Ky1TjEMqMmdBX6ENCab3yb/0zJeeh5IYioN9EiSoiA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=WqmmYR0RVhsGGKGid8XC26NfK51Ejgn35lDN3Zj54z4zX3E2vEwEuK5UUBUA56iTc/sLRwGmMaCdTq8D6CSqYrrBdCfbCCycwXKQPIoNmObAbreO0xZuqxoCVjnURthi06EBy0t67/VFpvxcfLKbiRq/QnkLjCIpJjJWHsllf0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oj8Z3JQ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46E93C4CED0;
+	Thu, 12 Dec 2024 14:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734014415;
+	bh=/Ky1TjEMqMmdBX6ENCab3yb/0zJeeh5IYioN9EiSoiA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=oj8Z3JQ8qgqeFoMOv0d9oqDruytqvr6L790Nh8dMYMrrA4I02IRZbKlX43hndHcuS
+	 u6d+GA9vNA6TlCAWeZxC+rGXOA8MrVIhE6C3RFl8NyHmTvMZxUKWgC5n5aGcEbgLkW
+	 FSCdeJLDzsof3F9IfrLr2aUXYuhX9dR3ji7zYrK/sf0ZfRjxts7Cx1iGbEOZxnsTmz
+	 HEDb0heCZueNH2otYHrh63r10WZF85I7P/Gx5u/TjSnoKkBc8INZjWwXt7IdxIa1rX
+	 YoPkbN1bGPhkJwke24++nteNDGJ/xPDaPlPcPyH7IOPEwDp/bEs2xjqxgwHe+0aaGV
+	 nB937KYV1PSHA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id A764E380A959;
+	Thu, 12 Dec 2024 14:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1r0EPC9gumruFKU@smile.fi.intel.com>
+Subject: Re: [PATCH net v2] net: renesas: rswitch: fix initial MPIC register
+ setting
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173401443152.2321054.1307990572279207194.git-patchwork-notify@kernel.org>
+Date: Thu, 12 Dec 2024 14:40:31 +0000
+References: <20241211053012.368914-1-nikita.yoush@cogentembedded.com>
+In-Reply-To: <20241211053012.368914-1-nikita.yoush@cogentembedded.com>
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: yoshihiro.shimoda.uh@renesas.com, andrew@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ geert+renesas@glider.be, netdev@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ michael.dege@renesas.com, christian.mardmoeller@renesas.com,
+ dennis.ostermann@renesas.com
 
-On Thu, Dec 12, 2024 at 04:32:48PM +0200, Andy Shevchenko wrote:
-> On Sat, Dec 07, 2024 at 04:46:18PM +0200, Raag Jadav wrote:
-> > On Fri, Nov 29, 2024 at 04:20:14PM +0200, Andy Shevchenko wrote:
-> > > On Fri, Nov 29, 2024 at 11:17:02AM +0100, Linus Walleij wrote:
-> > > > On Tue, Nov 26, 2024 at 6:22 PM Raag Jadav <raag.jadav@intel.com> wrote:
-> > > > 
-> > > > > This series introduces a more robust and cleaner devm_kmemdup_array()
-> > > > > helper and uses it across drivers.
-> > > > 
-> > > > For the series:
-> > > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > > > 
-> > > > It seems like Andy will push it to me which is excellent.
-> > > 
-> > > Yep, that's the plan after we get all necessary ACKs.
-> > 
-> > Greg, anything I can do to move this forward?
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Wed, 11 Dec 2024 10:30:12 +0500 you wrote:
+> MPIC.PIS must be set per phy interface type.
+> MPIC.LSC must be set per speed.
 > 
-> Greg, is it possible to give your Ack or comment or guidance of the preferences
-> with the first patch?
+> Do that strictly per datasheet, instead of hardcoding MPIC.PIS to GMII.
+> 
+> Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
+> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+> 
+> [...]
 
-$ mdfrm -c ~/mail/todo/
-2293 messages in /home/gregkh/mail/todo/
+Here is the summary with links:
+  - [net,v2] net: renesas: rswitch: fix initial MPIC register setting
+    https://git.kernel.org/netdev/net/c/fb9e6039c325
 
-Please be patient.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
