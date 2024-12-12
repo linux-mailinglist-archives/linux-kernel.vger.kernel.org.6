@@ -1,53 +1,57 @@
-Return-Path: <linux-kernel+bounces-443129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE12D9EE7C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C839EE883
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:12:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A26D282D4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:35:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7E1282F1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F38213E9E;
-	Thu, 12 Dec 2024 13:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1A5215041;
+	Thu, 12 Dec 2024 14:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MwNQEW91"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b="kBfQoS1G"
+Received: from 7.mo584.mail-out.ovh.net (7.mo584.mail-out.ovh.net [178.33.253.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898AD2135C3
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 13:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66BA211A0E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.33.253.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734010519; cv=none; b=pnk7eDJo4OKwvsWKqwLLDnqyIvoZJcl43RYt/Pk0mYtGmUaKNxjyHboygLooIVSkvdVdbE2KoIKkj/KciswB2COMA/dREYZi0ObaTzporxg/v79p1rN7E+9IRrQ4CU/tq1g/KWNIuZmqkLSgktZcOIeGPgOc3afJPIDhRXTXhNk=
+	t=1734012751; cv=none; b=eGfeZmReA40M1XlQVP5vtcC3s5arLTPORnUlKORIVcV0a2tz35X/t52ISIN7JudSOAmfdRv80EbCoZzITxrMoJE9KjtDdCx2s1XJbMXqzQpdoVOFr6njAW14U+GXOQTj8eR6y+b3RT1K/Xc0XwgxSpx6i5sOoybf4dPVjd86s0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734010519; c=relaxed/simple;
-	bh=jHWYbDUxHOT3K5iveDt+VlM2QAksn5TmjMMrbYhrKpQ=;
+	s=arc-20240116; t=1734012751; c=relaxed/simple;
+	bh=LKNUFFZfKSKOHNSpdPcuOO5Dy/4I5beAwCC4Zvt7BUs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PUgxRE1MSiOYbLXhGMTK67YuLG9Eqis2hRSUbD1MpL/9vUxNaTQsCPy3JdFdZe1rB2Mc/fC7qcUmWfU8jPAEZPCEek8/y8So1GRqNQGFc5voav49EehfSOQ5iJbSjgD7k30gMIAPgPfO9icE7+oM3zOv8QyRkASOErL3/e0KkGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MwNQEW91; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734010513; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=EA5SowTZmmM8Pbs3enBjnTmgnEvA/lWTg2GbvxtnxWs=;
-	b=MwNQEW91E/pk9BZ9OSXw7KgWe+HMK63mmD+9ho+5wDdEMd+wrWXytAvsa2nHdYCM+6lNpqFk2ZM10DkMZgmvVDv9jkjUaO8/CMjvdvqAF84kmcJdkRzP/4S9e7tJqwFPanrn9827jqg+bdv2UrqC0/kFSTC1LWyTa2+L9NdJeZc=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WLLvJq1_1734010511 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 12 Dec 2024 21:35:12 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH 3/4] erofs: reference `struct erofs_device_info` for erofs_map_dev
-Date: Thu, 12 Dec 2024 21:35:03 +0800
-Message-ID: <20241212133504.2047178-3-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241212133504.2047178-1-hsiangkao@linux.alibaba.com>
-References: <20241212133504.2047178-1-hsiangkao@linux.alibaba.com>
+	 MIME-Version; b=HH95fErpMRWX4hwPP64HKgq1cuFmWnGqAAcdqefB1LIVr2/BGBgQXEkaV9eH+/3D2qPHAKzzVn8cY28xGfSRGgIMg2adb8cUEWCLK44NLj0WTqTjK9vSIDImxrYcmBzcg19+BwmCPo8Mz+GvGBRgPZl0Pe0pW/z0NXXOdFm4yfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com; spf=pass smtp.mailfrom=3mdeb.com; dkim=pass (2048-bit key) header.d=3mdeb.com header.i=@3mdeb.com header.b=kBfQoS1G; arc=none smtp.client-ip=178.33.253.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=3mdeb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3mdeb.com
+Received: from director3.ghost.mail-out.ovh.net (unknown [10.108.2.21])
+	by mo584.mail-out.ovh.net (Postfix) with ESMTP id 4Y8D4P5K6dz1VxB
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 13:35:33 +0000 (UTC)
+Received: from ghost-submission-5b5ff79f4f-55ssz (unknown [10.110.164.228])
+	by director3.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 1C34F1FEAE;
+	Thu, 12 Dec 2024 13:35:33 +0000 (UTC)
+Received: from 3mdeb.com ([37.59.142.97])
+	by ghost-submission-5b5ff79f4f-55ssz with ESMTPSA
+	id ibp9OKTmWmcwAgAA4pvnYw
+	(envelope-from <sergii.dmytruk@3mdeb.com>); Thu, 12 Dec 2024 13:35:33 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-97G002d8dfedd3-b9b0-4d74-80c7-c1db180e7dc3,
+                    B639BF7A6EC39DD0505FDBB1524E94DB3A46F08D) smtp.auth=sergii.dmytruk@3mdeb.com
+X-OVh-ClientIp:176.111.183.174
+From: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
+To: linux-kernel@vger.kernel.org
+Cc: trenchboot-devel@googlegroups.com
+Subject: [RFC PATCH 6/9] x86: Prepare CPUs for post SKINIT launch
+Date: Thu, 12 Dec 2024 15:35:04 +0200
+Message-ID: <c855fab58cfee5fb994a5b24b279430a58cecf02.1734008878.git.sergii.dmytruk@3mdeb.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <cover.1734008878.git.sergii.dmytruk@3mdeb.com>
+References: <cover.1734008878.git.sergii.dmytruk@3mdeb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,126 +59,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 16619690000474158236
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrkeehgdehfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgvrhhgihhiucffmhihthhruhhkuceoshgvrhhgihhirdgumhihthhruhhkseefmhguvggsrdgtohhmqeenucggtffrrghtthgvrhhnpefhheefheduieelieekfffgfffgfedutdevleevvdfhfffgledvgfdtuddtheefieenucfkphepuddvjedrtddrtddruddpudejiedrudduuddrudekfedrudejgedpfeejrdehledrudegvddrleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehsvghrghhiihdrughmhihtrhhukhesfehmuggvsgdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheekgegmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=izgwlQ46nNmMsHssEh28+oXsbfGiczF61EsDbUUYuQs=;
+ c=relaxed/relaxed; d=3mdeb.com; h=From; s=ovhmo3617313-selector1;
+ t=1734010533; v=1;
+ b=kBfQoS1G9xQJ0upDtw6MEgncKqFru1S4Tykr2bwjoB3hYVeZXWwFYGeyG7CJQpR6nPdMuUJw
+ g0EPDwQb6EhBVUmvh3HV1nqDVEO+JIEfTQ2rpkfCL1Z0Lzw9Drc2Lvxya4DNUJD+n+7RAc06t/q
+ iAL1Qe3PA0FqncYQhWLtL6DPwHd/wud8pbVUZKssMKtsoC4JV04YwXB1PtMNtNMBRPLIWW1ehZk
+ hW5Y3OrEwvbphG002pOJmF3kC2uO9MDRtdU5GxE6IoG8NDDKeWFlpVI7ewuRDCIEjA/IJDvUbDQ
+ 0O2Hwdmmxhxd2llVs7UDRV+u+cZ8LyXy2yAhVEQRNcbxg==
 
-Record `m_sb` and `m_dif` to replace `m_fscache`, `m_daxdev`, `m_fp`
-and `m_dax_part_off` in order to simplify the codebase.
+From: Ross Philipson <ross.philipson@oracle.com>
 
-Note that `m_bdev` is still left since it can be assigned from
-`sb->s_bdev` directly.
+The SKINIT instruction disables the GIF and it must be re-enabled
+on the BSP and APs as they are started. Since enabling GIF also
+re-enables NMIs, it should be done after a valid IDT is loaded for
+each CPU.
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+SKINIT also already performed #INIT on the APs and it should be
+bypassed before issuing the startup IPIs.
+
+Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+Signed-off-by: Sergii Dmytruk <sergii.dmytruk@3mdeb.com>
 ---
- fs/erofs/data.c     | 26 ++++++++++----------------
- fs/erofs/fileio.c   |  2 +-
- fs/erofs/internal.h |  6 ++----
- 3 files changed, 13 insertions(+), 21 deletions(-)
+ arch/x86/kernel/slaunch.c | 23 +++++++++++++++++++++++
+ arch/x86/kernel/smpboot.c | 15 ++++++++++++++-
+ arch/x86/kernel/traps.c   |  4 ++++
+ 3 files changed, 41 insertions(+), 1 deletion(-)
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 0b0385fa3025..63840971976c 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -179,19 +179,13 @@ int erofs_map_blocks(struct inode *inode, struct erofs_map_blocks *map)
+diff --git a/arch/x86/kernel/slaunch.c b/arch/x86/kernel/slaunch.c
+index ff05f032e44f..3a6e4d22b54d 100644
+--- a/arch/x86/kernel/slaunch.c
++++ b/arch/x86/kernel/slaunch.c
+@@ -17,6 +17,7 @@
+ #include <asm/sections.h>
+ #include <asm/tlbflush.h>
+ #include <asm/e820/api.h>
++#include <asm/svm.h>
+ #include <asm/setup.h>
+ #include <asm/svm.h>
+ #include <asm/realmode.h>
+@@ -716,3 +717,25 @@ void slaunch_finalize(int do_sexit)
+ 	else if (boot_cpu_has(X86_FEATURE_SKINIT))
+ 		slaunch_finalize_skinit();
  }
++
++/*
++ * AMD specific SKINIT CPU setup and initialization.
++ */
++void slaunch_cpu_setup_skinit(void)
++{
++	u64 val;
++
++	if (!slaunch_is_skinit_launch())
++		return;
++
++	/*
++	 * We don't yet handle #SX. Disable INIT_REDIRECTION first, before
++	 * enabling GIF, so a pending INIT resets us, rather than causing a
++	 * panic due to an unknown exception.
++	 */
++	rdmsrl(MSR_VM_CR, val);
++	wrmsrl(MSR_VM_CR, val & ~(1 << SVM_VM_CR_INIT_REDIRECTION));
++
++	/* Enable Global Interrupts flag */
++	asm volatile ("stgi" ::: "memory");
++}
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 0c915e105a9b..a0e5971725d9 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -249,6 +249,12 @@ static void notrace start_secondary(void *unused)
  
- static void erofs_fill_from_devinfo(struct erofs_map_dev *map,
--				    struct erofs_device_info *dif)
-+		struct super_block *sb, struct erofs_device_info *dif)
- {
-+	map->m_sb = sb;
-+	map->m_dif = dif;
- 	map->m_bdev = NULL;
--	map->m_fp = NULL;
--	if (dif->file) {
--		if (S_ISBLK(file_inode(dif->file)->i_mode))
--			map->m_bdev = file_bdev(dif->file);
--		else
--			map->m_fp = dif->file;
--	}
--	map->m_daxdev = dif->dax_dev;
--	map->m_dax_part_off = dif->dax_part_off;
--	map->m_fscache = dif->fscache;
-+	if (dif->file && S_ISBLK(file_inode(dif->file)->i_mode))
-+		map->m_bdev = file_bdev(dif->file);
+ 	cpu_init_exception_handling();
+ 
++	/*
++	 * If this is an AMD SKINIT secure launch, some extra work is done
++	 * to prepare to start the secondary CPUs.
++	 */
++	slaunch_cpu_setup_skinit();
++
+ 	/*
+ 	 * Load the microcode before reaching the AP alive synchronization
+ 	 * point below so it is not part of the full per CPU serialized
+@@ -735,7 +741,14 @@ static int wakeup_secondary_cpu_via_init(u32 phys_apicid, unsigned long start_ei
+ 
+ 	preempt_disable();
+ 	maxlvt = lapic_get_maxlvt();
+-	send_init_sequence(phys_apicid);
++
++	/*
++	 * If this is an SKINIT secure launch, #INIT is already done on the APs
++	 * by issuing the SKINIT instruction. For security reasons #INIT
++	 * should not be done again.
++	 */
++	if (!slaunch_is_skinit_launch())
++		send_init_sequence(phys_apicid);
+ 
+ 	mb();
+ 
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 4fa0b17e5043..1603b2e6faa5 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -42,6 +42,7 @@
+ #include <linux/hardirq.h>
+ #include <linux/atomic.h>
+ #include <linux/iommu.h>
++#include <linux/slaunch.h>
+ 
+ #include <asm/stacktrace.h>
+ #include <asm/processor.h>
+@@ -1443,5 +1444,8 @@ void __init trap_init(void)
+ 	if (!cpu_feature_enabled(X86_FEATURE_FRED))
+ 		idt_setup_traps();
+ 
++	/* If SKINIT was done on the BSP, this is the spot to enable GIF */
++	slaunch_cpu_setup_skinit();
++
+ 	cpu_init();
  }
- 
- int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
-@@ -201,7 +195,7 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
- 	erofs_off_t startoff, length;
- 	int id;
- 
--	erofs_fill_from_devinfo(map, &EROFS_SB(sb)->dif0);
-+	erofs_fill_from_devinfo(map, sb, &EROFS_SB(sb)->dif0);
- 	map->m_bdev = sb->s_bdev;	/* use s_bdev for the primary device */
- 	if (map->m_deviceid) {
- 		down_read(&devs->rwsem);
-@@ -215,7 +209,7 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
- 			up_read(&devs->rwsem);
- 			return 0;
- 		}
--		erofs_fill_from_devinfo(map, dif);
-+		erofs_fill_from_devinfo(map, sb, dif);
- 		up_read(&devs->rwsem);
- 	} else if (devs->extra_devices && !devs->flatdev) {
- 		down_read(&devs->rwsem);
-@@ -228,7 +222,7 @@ int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *map)
- 			if (map->m_pa >= startoff &&
- 			    map->m_pa < startoff + length) {
- 				map->m_pa -= startoff;
--				erofs_fill_from_devinfo(map, dif);
-+				erofs_fill_from_devinfo(map, sb, dif);
- 				break;
- 			}
- 		}
-@@ -298,7 +292,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 
- 	iomap->offset = map.m_la;
- 	if (flags & IOMAP_DAX)
--		iomap->dax_dev = mdev.m_daxdev;
-+		iomap->dax_dev = mdev.m_dif->dax_dev;
- 	else
- 		iomap->bdev = mdev.m_bdev;
- 	iomap->length = map.m_llen;
-@@ -327,7 +321,7 @@ static int erofs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 		iomap->type = IOMAP_MAPPED;
- 		iomap->addr = mdev.m_pa;
- 		if (flags & IOMAP_DAX)
--			iomap->addr += mdev.m_dax_part_off;
-+			iomap->addr += mdev.m_dif->dax_part_off;
- 	}
- 	return 0;
- }
-diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
-index 3af96b1e2c2a..a61b8faec651 100644
---- a/fs/erofs/fileio.c
-+++ b/fs/erofs/fileio.c
-@@ -67,7 +67,7 @@ static struct erofs_fileio_rq *erofs_fileio_rq_alloc(struct erofs_map_dev *mdev)
- 					     GFP_KERNEL | __GFP_NOFAIL);
- 
- 	bio_init(&rq->bio, NULL, rq->bvecs, BIO_MAX_VECS, REQ_OP_READ);
--	rq->iocb.ki_filp = mdev->m_fp;
-+	rq->iocb.ki_filp = mdev->m_dif->file;
- 	return rq;
- }
- 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 6e91fcdeba94..59e7739b7c3b 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -354,11 +354,9 @@ enum {
- };
- 
- struct erofs_map_dev {
--	struct erofs_fscache *m_fscache;
-+	struct super_block *m_sb;
-+	struct erofs_device_info *m_dif;
- 	struct block_device *m_bdev;
--	struct dax_device *m_daxdev;
--	struct file *m_fp;
--	u64 m_dax_part_off;
- 
- 	erofs_off_t m_pa;
- 	unsigned int m_deviceid;
 -- 
-2.43.5
+2.47.1
 
 
