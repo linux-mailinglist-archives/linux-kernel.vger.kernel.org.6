@@ -1,57 +1,67 @@
-Return-Path: <linux-kernel+bounces-443331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEAE39EED45
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:44:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEBE9EED8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:48:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A10B4285C1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2BD16CF62
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1513D222D71;
-	Thu, 12 Dec 2024 15:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4876C22333E;
+	Thu, 12 Dec 2024 15:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZTSyhbE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GpY0p13a";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="EWJGSOPg"
+Received: from a7-47.smtp-out.eu-west-1.amazonses.com (a7-47.smtp-out.eu-west-1.amazonses.com [54.240.7.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42401222D68;
-	Thu, 12 Dec 2024 15:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F703217F46;
+	Thu, 12 Dec 2024 15:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018208; cv=none; b=UC2gzG/TZx9rI19KUuLdBjeyDrVNXv0t2EdwbDYWY1bpyD97DvldyoMA1mDDzAAd7eSEGzup0KsUCUA/fS0gbQQD8w99ds7lc3xSwxg6ruKNoiKRe3vAwQjKK08x4w6uPWilJ2te72+LzpjawYBPUgo6aqjW0AK8mYfPJqXsHc0=
+	t=1734018217; cv=none; b=aUVruf4JKEoXe95GS8UCLdMcSlDmYhmVjikeYKY1TnZrfmscJ+pVFLUeGbPZaI5TWiG0SoMjzfN3c5ocpj3ZmE5kVht1gKt7eT9dSzoZ9m6r/Y/rbrwMz447dAHLG/eUCaGvKZQA1RuxK73Zed1yH94c0w2/OrJHe2Q49C4ikBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018208; c=relaxed/simple;
-	bh=SxOy+O54beF7mqmszdcpVt9QZurotODus5niEge6VxA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c3mTvjldnM9i9d9qf4ilwPaHmJkefGsJWmUc6p1Hx3dkP46h+ynzvuDqPcFQ8emuB5ho5NLFejVMjQSJ3JWrjhNP21xSZZZd/AE84k+Pok01ajfOGT5MW7shpd1Qt2CtREwwKFftiCUndu3AWmoVwzLrb4kpMRjIFYhwonhVRoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZTSyhbE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB1DCC4CED4;
-	Thu, 12 Dec 2024 15:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734018206;
-	bh=SxOy+O54beF7mqmszdcpVt9QZurotODus5niEge6VxA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NZTSyhbEdVCOJbNv2/sb2vesrbJH8oYHg2gXpP08DkZcLhj9HBbwCeP7+1FpdwhU3
-	 CFEzPxaoudpQTT/ofcE8LuwlgbGFcndjVTcm+96KnCbctN9lAfFYF5U1OA2EBp4Hk4
-	 5F8eR/cyk3WUGd7yTljyzy2a6wsKG9eztu+u8mQ5bnUhQ26bdfoeM6dKsOwqB+IU0/
-	 c+ay0wfoIw1qn/v6BdUWKvWJSY6qp7Bo6+z9pGqJp+sJH8kWMIkm4xuDbXd8JCaiuQ
-	 /UPUFBm5RgX4wHXAH3Fqy//BtvyXp++LblmDgFvnFebxlCb8niSupqjvc6T7CQQ7vw
-	 bPaWdn2eihwPA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] staging: gpib: fix Makefiles
-Date: Thu, 12 Dec 2024 16:42:35 +0100
-Message-Id: <20241212154245.1411411-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241212154245.1411411-1-arnd@kernel.org>
-References: <20241212154245.1411411-1-arnd@kernel.org>
+	s=arc-20240116; t=1734018217; c=relaxed/simple;
+	bh=BaXocg+MHIdJ5iEhJoO7IWpl2ct1VQ9kpsjJPFAitGM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=imztafkx5XvwvBASVQ+b1zZdaTmmsCwzWT6ukioNu0tj2JF7DvmABMJ1wBXgABjoXWVIlMYcUwOejIopHaBWrpxEAhWpy8tS9Z8Jax5SCXgHb1fU1W44sITJMjNm2O5P23Yv7Jir/VLtlQDR0Mdmboi0CqzkodaSZviM3MVBQs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GpY0p13a; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=EWJGSOPg; arc=none smtp.client-ip=54.240.7.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=bc7lryepznv65m6r2ewkpoafjt4fiq42; d=collabora.com; t=1734018213;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=BaXocg+MHIdJ5iEhJoO7IWpl2ct1VQ9kpsjJPFAitGM=;
+	b=GpY0p13aRAC2pqzDPl8thWNyJ73XW4f1/2KRl/Fa2+CiXNcrtbz9+fR0nuxM5pKh
+	6sPgTRukzo7H4IB/gHHZPzTATQoRcFLd0jsTZZjCJukqBFhKhuc4CLClOyG2B9CoOdJ
+	/kqJ+l6eWE8AjkaZkPvIUjk81D8sXIJr8uV7EwHMzxucmHvbIGucDgCR+Oyq3G4qexB
+	QBfDHZ5x7RH/El+JVanBsUNKxBnnnJEuEW9L8L7+bo1aRVWRofo8jzo5eac4wqAL7aA
+	MCp3df5sKmpycfIWNfAO584n+4Ptd0QHST+ndloI+RNW5AGkLW829rmgZCnOjeBUU+1
+	WNHguWxCZQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1734018213;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=BaXocg+MHIdJ5iEhJoO7IWpl2ct1VQ9kpsjJPFAitGM=;
+	b=EWJGSOPgUvy2agff9iG4gq75WKwbAhclFM0nAcLgkrcgbfT0sV08xLqn6tBPgNcT
+	qULgrLKkLJVi3iTXOt73ToJHRvqQbk8Da1Kp74JgksLQIy23yTSdAGbkuoYRhu/dKM/
+	LJ8MdS2DFCgS+tpyN8NkAHbPNTYEJqzJAwlvMz4Q=
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+To: p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Subject: [PATCH v2 1/2] media: verisilicon: Store reference frames pixels format
+Date: Thu, 12 Dec 2024 15:43:33 +0000
+Message-ID: <01020193bb8a2706-6355fcf8-dd11-4685-8d3f-512a19423599-000000@eu-west-1.amazonses.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241212154328.84904-1-benjamin.gaignard@collabora.com>
+References: <20241212154328.84904-1-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,201 +69,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.12.12-54.240.7.47
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hantro decoder always produce tiled pixels formats but
+when the post-processor is used the destination pixels
+format is a non tiled pixels format. This led to compute
+wrong reference frame size and offsets.
+Getting and saving the correct tiled pixels format for 8
+and 10 bit stream solve the computation issues.
 
-Having gpib drivers built-in rather than as loadable modules causes
-link failure because the drivers are never actually built:
+Fluster VP9 score increase to 166/305 (vs 145/305).
+HEVC score is still 141/147.
 
-arm-linux-gnueabi-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_t1_delay':
-fmh_gpib.c:(.text+0x3b0): undefined reference to `nec7210_t1_delay'
-arm-linux-gnueabi-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_serial_poll_status':
-fmh_gpib.c:(.text+0x418): undefined reference to `nec7210_serial_poll_status'
-arm-linux-gnueabi-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_secondary_address':
-fmh_gpib.c:(.text+0x57c): undefined reference to `nec7210_secondary_address'
-arm-linux-gnueabi-ld: drivers/staging/gpib/fmh_gpib/fmh_gpib.o: in function `fmh_gpib_primary_address':
-fmh_gpib.c:(.text+0x5ac): undefined reference to `nec7210_primary_address'
-
-Change this to use the correct Makefile syntax, setting either obj-m or obj-y.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 ---
- drivers/staging/gpib/agilent_82350b/Makefile | 2 +-
- drivers/staging/gpib/agilent_82357a/Makefile | 2 +-
- drivers/staging/gpib/cb7210/Makefile         | 2 +-
- drivers/staging/gpib/cec/Makefile            | 2 +-
- drivers/staging/gpib/common/Makefile         | 2 +-
- drivers/staging/gpib/eastwood/Makefile       | 2 +-
- drivers/staging/gpib/gpio/Makefile           | 2 +-
- drivers/staging/gpib/hp_82335/Makefile       | 2 +-
- drivers/staging/gpib/hp_82341/Makefile       | 2 +-
- drivers/staging/gpib/ines/Makefile           | 2 +-
- drivers/staging/gpib/lpvo_usb_gpib/Makefile  | 2 +-
- drivers/staging/gpib/nec7210/Makefile        | 2 +-
- drivers/staging/gpib/ni_usb/Makefile         | 2 +-
- drivers/staging/gpib/pc2/Makefile            | 2 +-
- drivers/staging/gpib/tms9914/Makefile        | 2 +-
- drivers/staging/gpib/tnt4882/Makefile        | 2 +-
- 16 files changed, 16 insertions(+), 16 deletions(-)
+Version 2:
+- rebased on top of media-commiter/next
+- Add reviewed-by tags
 
-diff --git a/drivers/staging/gpib/agilent_82350b/Makefile b/drivers/staging/gpib/agilent_82350b/Makefile
-index d9236c92e04b..f24e1e713a63 100644
---- a/drivers/staging/gpib/agilent_82350b/Makefile
-+++ b/drivers/staging/gpib/agilent_82350b/Makefile
-@@ -1,2 +1,2 @@
+ drivers/media/platform/verisilicon/hantro.h   |  2 ++
+ .../media/platform/verisilicon/hantro_g2.c    |  2 +-
+ .../platform/verisilicon/hantro_postproc.c    | 32 +++++++------------
+ .../media/platform/verisilicon/hantro_v4l2.c  | 21 ++++++++++++
+ 4 files changed, 35 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/media/platform/verisilicon/hantro.h b/drivers/media/platform/verisilicon/hantro.h
+index 811260dc3c77..14fc6a3e2878 100644
+--- a/drivers/media/platform/verisilicon/hantro.h
++++ b/drivers/media/platform/verisilicon/hantro.h
+@@ -227,6 +227,7 @@ struct hantro_dev {
+  * @src_fmt:		V4L2 pixel format of active source format.
+  * @vpu_dst_fmt:	Descriptor of active destination format.
+  * @dst_fmt:		V4L2 pixel format of active destination format.
++ * @ref_fmt:		V4L2 pixel format of the reference frames format.
+  *
+  * @ctrl_handler:	Control handler used to register controls.
+  * @jpeg_quality:	User-specified JPEG compression quality.
+@@ -255,6 +256,7 @@ struct hantro_ctx {
+ 	struct v4l2_pix_format_mplane src_fmt;
+ 	const struct hantro_fmt *vpu_dst_fmt;
+ 	struct v4l2_pix_format_mplane dst_fmt;
++	struct v4l2_pix_format_mplane ref_fmt;
  
--obj-m += agilent_82350b.o
-+obj-$(CONFIG_GPIB_AGILENT_82350B) += agilent_82350b.o
-diff --git a/drivers/staging/gpib/agilent_82357a/Makefile b/drivers/staging/gpib/agilent_82357a/Makefile
-index 4a1d940fce2b..81a55c257a6e 100644
---- a/drivers/staging/gpib/agilent_82357a/Makefile
-+++ b/drivers/staging/gpib/agilent_82357a/Makefile
-@@ -1,4 +1,4 @@
+ 	struct v4l2_ctrl_handler ctrl_handler;
+ 	int jpeg_quality;
+diff --git a/drivers/media/platform/verisilicon/hantro_g2.c b/drivers/media/platform/verisilicon/hantro_g2.c
+index 5c1d799d8618..aae0b562fabb 100644
+--- a/drivers/media/platform/verisilicon/hantro_g2.c
++++ b/drivers/media/platform/verisilicon/hantro_g2.c
+@@ -47,7 +47,7 @@ irqreturn_t hantro_g2_irq(int irq, void *dev_id)
  
--obj-m += agilent_82357a.o
-+obj-$(CONFIG_GPIB_AGILENT_82357A) += agilent_82357a.o
+ size_t hantro_g2_chroma_offset(struct hantro_ctx *ctx)
+ {
+-	return ctx->dst_fmt.width * ctx->dst_fmt.height * ctx->bit_depth / 8;
++	return ctx->ref_fmt.plane_fmt[0].bytesperline *	ctx->ref_fmt.height;
+ }
  
+ size_t hantro_g2_motion_vectors_offset(struct hantro_ctx *ctx)
+diff --git a/drivers/media/platform/verisilicon/hantro_postproc.c b/drivers/media/platform/verisilicon/hantro_postproc.c
+index 232c93eea7ee..c435a393e0cb 100644
+--- a/drivers/media/platform/verisilicon/hantro_postproc.c
++++ b/drivers/media/platform/verisilicon/hantro_postproc.c
+@@ -194,35 +194,25 @@ void hantro_postproc_free(struct hantro_ctx *ctx)
  
-diff --git a/drivers/staging/gpib/cb7210/Makefile b/drivers/staging/gpib/cb7210/Makefile
-index 22e0214fc17d..cda0725d6487 100644
---- a/drivers/staging/gpib/cb7210/Makefile
-+++ b/drivers/staging/gpib/cb7210/Makefile
-@@ -1,4 +1,4 @@
- ccflags-$(CONFIG_GPIB_PCMCIA) := -DGPIB_PCMCIA
--obj-m += cb7210.o
-+obj-$(CONFIG_GPIB_CB7210) += cb7210.o
+ static unsigned int hantro_postproc_buffer_size(struct hantro_ctx *ctx)
+ {
+-	struct v4l2_pix_format_mplane pix_mp;
+-	const struct hantro_fmt *fmt;
+ 	unsigned int buf_size;
  
+-	/* this should always pick native format */
+-	fmt = hantro_get_default_fmt(ctx, false, ctx->bit_depth, HANTRO_AUTO_POSTPROC);
+-	if (!fmt)
+-		return 0;
+-
+-	v4l2_fill_pixfmt_mp(&pix_mp, fmt->fourcc, ctx->src_fmt.width,
+-			    ctx->src_fmt.height);
+-
+-	buf_size = pix_mp.plane_fmt[0].sizeimage;
++	buf_size = ctx->ref_fmt.plane_fmt[0].sizeimage;
+ 	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_H264_SLICE)
+-		buf_size += hantro_h264_mv_size(pix_mp.width,
+-						pix_mp.height);
++		buf_size += hantro_h264_mv_size(ctx->ref_fmt.width,
++						ctx->ref_fmt.height);
+ 	else if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_VP9_FRAME)
+-		buf_size += hantro_vp9_mv_size(pix_mp.width,
+-					       pix_mp.height);
++		buf_size += hantro_vp9_mv_size(ctx->ref_fmt.width,
++					       ctx->ref_fmt.height);
+ 	else if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_HEVC_SLICE) {
+-		buf_size += hantro_hevc_mv_size(pix_mp.width,
+-						pix_mp.height);
++		buf_size += hantro_hevc_mv_size(ctx->ref_fmt.width,
++						ctx->ref_fmt.height);
+ 		if (ctx->hevc_dec.use_compression)
+-			buf_size += hantro_hevc_compressed_size(pix_mp.width,
+-								pix_mp.height);
++			buf_size += hantro_hevc_compressed_size(ctx->ref_fmt.width,
++								ctx->ref_fmt.height);
+ 	}
+ 	else if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_AV1_FRAME)
+-		buf_size += hantro_av1_mv_size(pix_mp.width,
+-					       pix_mp.height);
++		buf_size += hantro_av1_mv_size(ctx->ref_fmt.width,
++					       ctx->ref_fmt.height);
  
-diff --git a/drivers/staging/gpib/cec/Makefile b/drivers/staging/gpib/cec/Makefile
-index f4638628ff29..b7141e23d4e0 100644
---- a/drivers/staging/gpib/cec/Makefile
-+++ b/drivers/staging/gpib/cec/Makefile
-@@ -1,3 +1,3 @@
+ 	return buf_size;
+ }
+diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c b/drivers/media/platform/verisilicon/hantro_v4l2.c
+index 2513adfbd825..2bce940a5822 100644
+--- a/drivers/media/platform/verisilicon/hantro_v4l2.c
++++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
+@@ -126,6 +126,24 @@ hantro_find_format(const struct hantro_ctx *ctx, u32 fourcc)
+ 	return NULL;
+ }
  
--obj-m += cec_gpib.o
-+obj-$(CONFIG_GPIB_CEC_PCI) += cec_gpib.o
++static int
++hantro_set_reference_frames_format(struct hantro_ctx *ctx)
++{
++	const struct hantro_fmt *fmt;
++	int dst_bit_depth = hantro_get_format_depth(ctx->vpu_dst_fmt->fourcc);
++
++	fmt = hantro_get_default_fmt(ctx, false, dst_bit_depth, HANTRO_AUTO_POSTPROC);
++	if (!fmt)
++		return -EINVAL;
++
++	ctx->ref_fmt.width = ctx->src_fmt.width;
++	ctx->ref_fmt.height = ctx->src_fmt.height;
++
++	v4l2_apply_frmsize_constraints(&ctx->ref_fmt.width, &ctx->ref_fmt.height, &fmt->frmsize);
++	return v4l2_fill_pixfmt_mp(&ctx->ref_fmt, fmt->fourcc,
++				   ctx->ref_fmt.width, ctx->ref_fmt.height);
++}
++
+ const struct hantro_fmt *
+ hantro_get_default_fmt(const struct hantro_ctx *ctx, bool bitstream,
+ 		       int bit_depth, bool need_postproc)
+@@ -595,6 +613,9 @@ static int hantro_set_fmt_cap(struct hantro_ctx *ctx,
  
-diff --git a/drivers/staging/gpib/common/Makefile b/drivers/staging/gpib/common/Makefile
-index 0c4c77bea75b..460586edb574 100644
---- a/drivers/staging/gpib/common/Makefile
-+++ b/drivers/staging/gpib/common/Makefile
-@@ -1,5 +1,5 @@
+ 	ctx->vpu_dst_fmt = hantro_find_format(ctx, pix_mp->pixelformat);
+ 	ctx->dst_fmt = *pix_mp;
++	ret = hantro_set_reference_frames_format(ctx);
++	if (ret)
++		return ret;
  
--obj-m += gpib_common.o
-+obj-$(CONFIG_GPIB_COMMON) += gpib_common.o
- 
- gpib_common-objs := gpib_os.o iblib.o
- 
-diff --git a/drivers/staging/gpib/eastwood/Makefile b/drivers/staging/gpib/eastwood/Makefile
-index c74056f959d0..384825195f77 100644
---- a/drivers/staging/gpib/eastwood/Makefile
-+++ b/drivers/staging/gpib/eastwood/Makefile
-@@ -1,3 +1,3 @@
- 
--obj-m += fluke_gpib.o
-+obj-$(CONFIG_GPIB_FLUKE) += fluke_gpib.o
- 
-diff --git a/drivers/staging/gpib/gpio/Makefile b/drivers/staging/gpib/gpio/Makefile
-index a31ded6e5924..00ea52abdda7 100644
---- a/drivers/staging/gpib/gpio/Makefile
-+++ b/drivers/staging/gpib/gpio/Makefile
-@@ -1,4 +1,4 @@
- 
--obj-m += gpib_bitbang.o
-+obj-$(CONFIG_GPIB_GPIO) += gpib_bitbang.o
- 
- 
-diff --git a/drivers/staging/gpib/hp_82335/Makefile b/drivers/staging/gpib/hp_82335/Makefile
-index 8b7a552e9355..305ce44ee48a 100644
---- a/drivers/staging/gpib/hp_82335/Makefile
-+++ b/drivers/staging/gpib/hp_82335/Makefile
-@@ -1,4 +1,4 @@
- 
--obj-m += hp82335.o
-+obj-$(CONFIG_GPIB_HP82335) += hp82335.o
- 
- 
-diff --git a/drivers/staging/gpib/hp_82341/Makefile b/drivers/staging/gpib/hp_82341/Makefile
-index 1fe7db4f8ca4..21367310a17e 100644
---- a/drivers/staging/gpib/hp_82341/Makefile
-+++ b/drivers/staging/gpib/hp_82341/Makefile
-@@ -1,2 +1,2 @@
- 
--obj-m += hp_82341.o
-+obj-$(CONFIG_GPIB_HP82341) += hp_82341.o
-diff --git a/drivers/staging/gpib/ines/Makefile b/drivers/staging/gpib/ines/Makefile
-index cdcaa59a4e39..6b6e480fd811 100644
---- a/drivers/staging/gpib/ines/Makefile
-+++ b/drivers/staging/gpib/ines/Makefile
-@@ -1,4 +1,4 @@
- ccflags-$(CONFIG_GPIB_PCMCIA) := -DGPIB_PCMCIA
--obj-m += ines_gpib.o
-+obj-$(CONFIG_GPIB_INES) += ines_gpib.o
- 
- 
-diff --git a/drivers/staging/gpib/lpvo_usb_gpib/Makefile b/drivers/staging/gpib/lpvo_usb_gpib/Makefile
-index 137511acce63..360553488e6d 100644
---- a/drivers/staging/gpib/lpvo_usb_gpib/Makefile
-+++ b/drivers/staging/gpib/lpvo_usb_gpib/Makefile
-@@ -1,3 +1,3 @@
- 
--obj-m += lpvo_usb_gpib.o
-+obj-$(CONFIG_GPIB_LPVO) += lpvo_usb_gpib.o
- 
-diff --git a/drivers/staging/gpib/nec7210/Makefile b/drivers/staging/gpib/nec7210/Makefile
-index 8d4d90f21109..64330f2e89d1 100644
---- a/drivers/staging/gpib/nec7210/Makefile
-+++ b/drivers/staging/gpib/nec7210/Makefile
-@@ -1,4 +1,4 @@
- 
--obj-m += nec7210.o
-+obj-$(CONFIG_GPIB_NEC7210) += nec7210.o
- 
- 
-diff --git a/drivers/staging/gpib/ni_usb/Makefile b/drivers/staging/gpib/ni_usb/Makefile
-index e22b3b21a62c..469c5d16add3 100644
---- a/drivers/staging/gpib/ni_usb/Makefile
-+++ b/drivers/staging/gpib/ni_usb/Makefile
-@@ -1,4 +1,4 @@
- 
--obj-m += ni_usb_gpib.o
-+obj-$(CONFIG_GPIB_NI_USB) += ni_usb_gpib.o
- 
- 
-diff --git a/drivers/staging/gpib/pc2/Makefile b/drivers/staging/gpib/pc2/Makefile
-index 8148425e0f87..481ee4296e1b 100644
---- a/drivers/staging/gpib/pc2/Makefile
-+++ b/drivers/staging/gpib/pc2/Makefile
-@@ -1,5 +1,5 @@
- 
--obj-m += pc2_gpib.o
-+obj-$(CONFIG_GPIB_PC2) += pc2_gpib.o
- 
- 
- 
-diff --git a/drivers/staging/gpib/tms9914/Makefile b/drivers/staging/gpib/tms9914/Makefile
-index 81b7e3cf104c..4705ab07f413 100644
---- a/drivers/staging/gpib/tms9914/Makefile
-+++ b/drivers/staging/gpib/tms9914/Makefile
-@@ -1,5 +1,5 @@
- 
--obj-m += tms9914.o
-+obj-$(CONFIG_GPIB_TMS9914) += tms9914.o
- 
- 
- 
-diff --git a/drivers/staging/gpib/tnt4882/Makefile b/drivers/staging/gpib/tnt4882/Makefile
-index f767c990db7a..04a4520ed3b7 100644
---- a/drivers/staging/gpib/tnt4882/Makefile
-+++ b/drivers/staging/gpib/tnt4882/Makefile
-@@ -1,5 +1,5 @@
- ccflags-$(CONFIG_GPIB_PCMCIA) := -DGPIB_PCMCIA
--obj-m += tnt4882.o
-+obj-$(CONFIG_GPIB_TNT4882) += tnt4882.o
- 
- tnt4882-objs := tnt4882_gpib.o mite.o
- 
+ 	/*
+ 	 * Current raw format might have become invalid with newly
 -- 
-2.39.5
+2.43.0
 
 
