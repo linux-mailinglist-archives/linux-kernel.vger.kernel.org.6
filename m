@@ -1,103 +1,79 @@
-Return-Path: <linux-kernel+bounces-443741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196CA9EFB4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:41:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D4C9EFB4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58E891625D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:41:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35FCF16C10A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4625E22540B;
-	Thu, 12 Dec 2024 18:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9507B223C79;
+	Thu, 12 Dec 2024 18:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="luD6Dp4X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdRz0dDv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE48223C40;
-	Thu, 12 Dec 2024 18:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F244320E6FE;
+	Thu, 12 Dec 2024 18:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734028865; cv=none; b=rdLZOMQ8dDcU7jkIFtSYukmp71Wgmcdq+9C5+KmcxTe42sXztG9cp/7p0/k7T5DYoM5aP25gcgrnnoDoJAi02pPhdUNATQe8nGDlUA4ONVuRjmL8hcNqPitbelNKgn3+xsYmcS0xiuB6Eo7nO0xGm7j+giDRJLwr5tKAFoOwDnk=
+	t=1734028930; cv=none; b=Kx/5P+nat6YlMzRTv0z5SKf0oQFl1NzUBIZN4zAuVj6j3svkgCObQaYgAX7mmziAjAyiR1BKpRpf6A7sO/xwESN6IE9JSvldF5HV8+TNoLLnF1BaTmcJbk2bQ0y4pFDOlQNq6y2on9oohIuS25IV7OM65bdUkomxYnJQfrNT7E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734028865; c=relaxed/simple;
-	bh=Cm3RpNEPByBsyU85TyLlrUed6ZFN4HOcl3ze1OsU+wU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sg1BboDZY0P97kUJ8ODrDDxRqaIpmgCAv+taZl9nIzOzhyoE1CDdwE4l+22MMcTySweUN/lAF33dkSPB6KDGQJu4R8G2HH2sNV5yfX3lPpl+XCbd8RV6Spn1aGY9tmyPGp/K3KLShhsOpZy0ki950ImUtHDjjOwmQt3SEipq1PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=luD6Dp4X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7787C4CECE;
-	Thu, 12 Dec 2024 18:41:04 +0000 (UTC)
+	s=arc-20240116; t=1734028930; c=relaxed/simple;
+	bh=pA3hzbi+UIvVcfwZZt/1zIEJpC4EwSq+soMiFM0DzTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=sSQpoW3jGmCHAa/UqN+N17Sa0eiLSnohBPyb0OW05anQXOcpGs9yjWnUPgsaC5gQmo8CW8Vm6ze+XxZaH6jhAA3ntpVA8KCzAG27gnT6LuE34byEZiCuT0JAlR0D5a2Dqo9kEfHvU8ZdmRBDZum5Z6OuJebkmNQfYmiOIHORcuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdRz0dDv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 849DBC4CECE;
+	Thu, 12 Dec 2024 18:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734028865;
-	bh=Cm3RpNEPByBsyU85TyLlrUed6ZFN4HOcl3ze1OsU+wU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=luD6Dp4XQBY6UGvQA1wOyhjs9LBkW2KpKu149AOmtODqOkJjVrbWE9TagyoISL1UC
-	 c5Q0H3TgUfIHsmq1MyvO6K98J18RNaDmg+gEsPC8O2yVgU3kZ/dC/nACzN+9jA+7ks
-	 1W9/rvbxr1001KmIBSj+lOJm+fPCqkHRIC9OdzRmQGnE23ESuM0t5Pid7eR7HoZJaR
-	 zDvj5y8MnW3UZUX3cdhENJSBEXrEx+EZ0WwEO8D/4pP8eMU6WC0R0t/6uVw7XuGg3Z
-	 Ll1vMSmg0QDvbUWNRfsW+Jn8Z9rZhdkkVky7TkZ249BYYI3e8KbBqhZxppp5KTVoNT
-	 Oy1D3KrPqAJcw==
-Date: Thu, 12 Dec 2024 15:41:02 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Avoid unaligned pointer operations
-Message-ID: <Z1suPi7XLncFKtG4@x1>
-References: <20241127212655.922196-1-namhyung@kernel.org>
- <CAP-5=fXtL-MFW5YW=5WsYNftCAj7MaXVwN8R3veuiODiC85bdg@mail.gmail.com>
+	s=k20201202; t=1734028929;
+	bh=pA3hzbi+UIvVcfwZZt/1zIEJpC4EwSq+soMiFM0DzTw=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=WdRz0dDv1834pdACamYIFN+6U4Ey6Lv5rm9IGtupFo/EYgQ9mTAkm5/i/Xfa8yEMN
+	 vij8/1smbtfboB4OBZcOVBmLUzyp/DceRfA9fpSRKzWlhuo9GcC1bOJi/M8vLgux9F
+	 DnnIURcx+t3UWmIZvVmGW5evlRVDuK+vWuxBG8Wa9tyIXOFya7miygFACCq78+xXF2
+	 f+3DTefSCporO5kWU5nq1QzJikjss8UM68k5gKd3Q2DhKkw3o6OyKEzbADF6zquHwf
+	 h5Lo52qdHtExl+pbXBx7iKjouz1Q+9ajcmnB2wlEgdABfPo4sg1T1RPVXcBDFJlTeY
+	 5J5+JNiBPHAvw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 20F9BCE0EE3; Thu, 12 Dec 2024 10:42:09 -0800 (PST)
+Date: Thu, 12 Dec 2024 10:42:09 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
+Subject: [PATCH rcu 0/2] No-CB changes for v6.14
+Message-ID: <c0daba35-f647-40cd-b556-3a04e03da93c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXtL-MFW5YW=5WsYNftCAj7MaXVwN8R3veuiODiC85bdg@mail.gmail.com>
 
-On Wed, Nov 27, 2024 at 04:51:15PM -0800, Ian Rogers wrote:
-> On Wed, Nov 27, 2024 at 1:26 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > The sample data is 64-bit aligned basically but raw data starts with
-> > 32-bit length field and data follows.  In perf_event__synthesize_sample
-> > it treats the sample data as a 64-bit array.  And it needs some trick
-> > to update the raw data properly.
+Hello!
 
-> > But it seems some compilers are not happy with this and the program dies
-> > siliently.  I found the sample parsing test failed without any messages
-> > on affected systems.
+This series contains NOCB updates:
 
-> > Let's update the code to use a 32-bit pointer directly and make sure the
-> > result is 64-bit aligned again.  No functional changes intended.
+1.	Use switch/case on NOCB timer state machine, courtesy of Frederic
+	Weisbecker.
 
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
- 
-> Reviewed-by: Ian Rogers <irogers@google.com>
+2.	Fix rcuog wake-up from offline softirq, courtesy of Frederic
+	Weisbecker.
 
-Looks good, applied to perf-tools-next since this is something that is
-not new nor looks urgent.
+						Thanx, Paul
 
-I think that since we have multiple maintainers, one for not urgent
-stuff/development and the other for the current window/urgent stuff,
-that we should express the expectation about where a patch should be
-processed, by having on the subject the tree the submitter thinks should
-take the patch, i.e. for this one:
+------------------------------------------------------------------------
 
-[PATCH next] perf tools: Avoid unaligned pointer operations
-
-While for urgent stuff we could do:
-
-[PATCH urgent] perf tools: Avoid unaligned pointer operations
-
-wdyt?
-
-- Arnaldo
+ b/kernel/rcu/tree.h      |    1 +
+ b/kernel/rcu/tree_nocb.h |   33 +++++++++++++++++++++++----------
+ kernel/rcu/tree_nocb.h   |   14 ++++++++++++--
+ 3 files changed, 36 insertions(+), 12 deletions(-)
 
