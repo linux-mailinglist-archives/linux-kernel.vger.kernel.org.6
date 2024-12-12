@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-444074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA319F0049
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:40:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3815E9F004B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:40:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 658E01673C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39B72167422
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D551DED71;
-	Thu, 12 Dec 2024 23:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794A61DED66;
+	Thu, 12 Dec 2024 23:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ZPuku1p1"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="snCozPmv"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F131DE8AA
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DDB1547F5
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734046811; cv=none; b=Z3Oc+gLtxZG26bXvoC6KTTKhJkiWy5dcW8UaQfmcYsMGj2ZH8w76MUH1F1ZfhlUDK+wQMrkeE3XBatojqQ/+3TljuvICcHomEScL4gLYpNH4EDx+K9NN1dGnJQNDxbdlOe0IN834j/pgEbKnDuQ4AnHstlZmR76PwJXwqJRg7gM=
+	t=1734046848; cv=none; b=DMI8yNZq8oE/184b58Qy7nm0ctcciPW7k4blQ3hi9DhPn4vi1rKf/dfa07dwnVFzrD/Kvdq9C3+8kYB/MHpv983+3LrGVaaR5Pga56H+wQG6VJiwI3ru5CXLaz7QAJANQq7Bj6sZwnC/qXoCbtJVmi03ZkwEqmQMySbBJlXDV60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734046811; c=relaxed/simple;
-	bh=VpM1KuXvsaXeqE4X7+jYLZq8lPUHybZbBaDZVdr2Ngs=;
+	s=arc-20240116; t=1734046848; c=relaxed/simple;
+	bh=lKtyB86TVcnf2xtPjY9K1wPTvUwz8WN+syPmpSv1ySM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=msqO2HgXm5//QPZ45EacCaH7rWv1usLqK7tUFnjq6TJC/BmNSk6atDWpB+pBG2oo2G8WmoHJVc0sZekUHfEYEvUlH6F7at6uFAvFHB9FlTGmXoZDwLmksbzxj29nMh+/MZ9k6m4RF1FiPoO6HbkWpNdia/PmFCgXP37LbsCzlMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ZPuku1p1; arc=none smtp.client-ip=209.85.210.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=kBmR1/9xlymE7elGMJEfHm8UR2VMXhkoUr6qPH8C6cr+7TUwzOAp1pQi9MgG+kQomoqE9fA1ejuTdfDKJBZNx60GXr1xi89WTA1idEwzYzQBHODSn1wTL2xsbn2OyQj1HZEMusErgscPZ0Sdcqp8hNSlObNk1FmxDU/dF5j3fm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=snCozPmv; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-725ef0397aeso1028601b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:40:09 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-216395e151bso7915835ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:40:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1734046809; x=1734651609; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1734046846; x=1734651646; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ut2NdVyfqDfrSUBP+LM4gv0HVcISGPIE6hkI+7uG05U=;
-        b=ZPuku1p1WWHKprMefBfqb3sr2p5L4NFHF8AXa+wExMNP6J8PpP9/wu4xmxBLhA/ks1
-         OISJFf0eK+IrYUXgKTNSkcovOwJgFouHWqgxf4WrQIE+mC6r+oB0/kGYjAGDAIlX/RmG
-         15SYdNDfKg2ZB5K+vmhX+ygSDAxOq8pGoknWYdpu+0AndHoRvbuo3Ux6aCc/Uhk3z+gk
-         wk1MhQXwQ7nsWpmXJJWFZgHpp9NF5FAOAR41sm0Ki1tKoQAlTXy9ANqUuPI2FHXJUDTo
-         C6fkvEH3Y8lJcHe/c30wkT8xY+Gv4dawJT88SQTGEjwXc7IqaeIrrIhaTDjVs4rN1njq
-         BvVA==
+        bh=YtPt+NGxaVThbCL864fM0RaS3IKqfIJPc9jpZV9yvm0=;
+        b=snCozPmvjvXo9TbNFB63R/cStJPfCgZi6BSmtuY9Wrqz3hWEe8MKAwYT5UMz6Zg9lr
+         cE7FDwu4SxzfFBWMkV5dr1AeA3lBJPzlUOnTAtdmDh04MyrNuXo8kVycr5Zft6OfakQG
+         BL5zlPhQZ1I/UXqZr5xVrGtlvH7AdHS0Ji7/wql26qx9VgjM8UTiRyrB9afFIv2B1B9b
+         vn2j876PRGMMXcjqOI08YCFRnuA8ZBxSBFo9+nprtK8ycmQhCvlAZDAaHG1KKAlZHnzI
+         f+pz1R/DyBta3OkfzXYJ4ISyS46gAd94c4SYvUuhsN7koNn2yc/hJx+fNuKyOlyq1PJ3
+         JQWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734046809; x=1734651609;
+        d=1e100.net; s=20230601; t=1734046846; x=1734651646;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ut2NdVyfqDfrSUBP+LM4gv0HVcISGPIE6hkI+7uG05U=;
-        b=iMkI7zLcc3nL883CJl6L2enzjDrTx5nTWZUcq/UNk1BeZaGUyn5m1auM9oR9YursNW
-         7NqSmmMDxO75EJiJieaT56Zh9A1js1mTOI5+MG9XnvfMEHNFx9+RLc2vBZJmupc4MZE7
-         5q3grg3QUwy1CtAfdF4V4Idxa0iQ3lBJCEvlZkCAw4MVPDilUfqjOEMAvi8uq/HTDn0A
-         b+wRkH5KxsSVSSQveoR6XqKnswJXcsXhmukUKwoB+y51x6ARQYzYFHLAGcbo4gD1TL1t
-         h52LgkUAC1DCEZDEWhtTQ+31Dxw1+ZQn/zb0qy2psnwMkCB/LZLVmxPMkFgOh0iPSh7v
-         MFag==
-X-Forwarded-Encrypted: i=1; AJvYcCVU8/40dxN3QzphBodAjvszg2f6JNXhHKSX6+kktRaSfrdMtvP+9essVZ0djmPRjDSUX1jWAyOW7x5yZnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZM2lp0Ktwc6Ru5cBu8wLsn26yK0x5iEJHJCtNKfRtZnyR216V
-	LQ+ZbkzaZwj8nkIoEF37MoRlaq9mR00Kd+fa3ujMoC3XFJu40T2SENlyq9N2Aho=
-X-Gm-Gg: ASbGnct4HwDtm6fViqYjFqOXVyO+qrNf03AtMq5FUw+k2HSYjBGhSWJcamgWYqn2iwK
-	G38PHVH/vPPREk3BPraDw8WYiI85/aY33J/AmG/+LL5T0bfJD3GdJMp418GqWGvUg3gPvscUGl3
-	meBhbLlhSBxhbuVl8HtceX8nkWMwN/dZbvqiJIiZou8fMIDf4BYGHcA/ytGOfJiNSgM355Vv9UQ
-	eiItD+BSECGfSHA/zW6mb2ebikNqlxemDBoEWGdEMfx/H3Xv9tQvR9wmKSlWl1H2w438TRhGyoi
-	ZWtsaiHg8rNypdzPRj0yzsf9ykLG8g==
-X-Google-Smtp-Source: AGHT+IEluMoT3eIBWnlrxyiDFTBrfKO9gjh/OfF42m0UDrGQrytFUgm9xpmZZaXXJJA5yM88W+Xmow==
-X-Received: by 2002:a05:6a20:b598:b0:1e0:d2f5:6eca with SMTP id adf61e73a8af0-1e1dfec94admr590326637.46.1734046808840;
-        Thu, 12 Dec 2024 15:40:08 -0800 (PST)
+        bh=YtPt+NGxaVThbCL864fM0RaS3IKqfIJPc9jpZV9yvm0=;
+        b=jH/znB6MdGPO/71qurNhbuhGvWRvrs/CwmHuLror4tI4fYaVDpwaXx6AKGGWiIRxoh
+         F+Acr/0YtS+38yrVsWvIS5qJgnfOQ6/crmzoGrt4/ruRb41msI3uTioCQlf3yh3zdFW+
+         skCBNhmtaizIQBQYaXjYRylSguM+RdH6ooIgEsh9KoigIdQU+dk8ctWv7Bx3wOkghQNR
+         dWLnJzo8vkos3sd6GTeKkNM8725r4AQ0u+bhv5L/FG0TeWG0SomVjHh8GXXcXV1ds5+h
+         +XVLVmpDufJIWEOiyKQHAINntZy9YBC4noYXEVB/AFFzC+LCdeCWjf6+KqcOLLPXUpWK
+         7Gxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV31HeXwL0wxFTj61t6/MVujmn7s3vPm+DyslW7jygE5bhQFIptBqdLd39Op29w4BGydtaI6uCm2UIfER8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeyTK3vP+bQ0Nu7fiyH+Ds9q8u4auNsjfY01E07xiWF26NshXs
+	Mrt/JJsK5ewBUOBG1vcjZnZHLfG48wAQs0jX6Ze1OpFJqFc/t3evCUsiWT0nAx4=
+X-Gm-Gg: ASbGncv2JGeFH7ddZWUcTY3t5M/QKUpx5jysb2Cm8JOMRtSe4jyDfoTAUDq4vyvlKQF
+	rFvuWVpC7/is5B5RzggWThcrfS3h91BUDXYn0tOfmAsez+w60qpP5XR21X18CYs3hpe5v84Tlc3
+	CHaBU7Ic0Pmc727yS0seHIELfeki14RmqGvvrjb8N3Z8rjaSqtJ9/0wwoqIrgjHA/eu6WAVA3c3
+	86RZmx5UhjGA3jLd1mysnOBoLLikj734NK3gheBIZn9cKN1scvgoDuyEwAd2O2CsGt6gYHOnMji
+	b8JIel6s8i/RdAhV4n0=
+X-Google-Smtp-Source: AGHT+IHasvIGuxHUXI2NyJSeoDqwRZO/H70rSg+7Mp41+lgvY4Ep9Ye7L2+5hbUCBmQE3POzW4IyNA==
+X-Received: by 2002:a17:903:2b03:b0:216:4b6f:dde5 with SMTP id d9443c01a7336-2178c7ff91amr81634355ad.13.1734046846496;
+        Thu, 12 Dec 2024 15:40:46 -0800 (PST)
 Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd48c5216fsm7905016a12.77.2024.12.12.15.40.08
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e66ba7sm128835425ad.100.2024.12.12.15.40.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 15:40:08 -0800 (PST)
+        Thu, 12 Dec 2024 15:40:45 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.98)
 	(envelope-from <david@fromorbit.com>)
-	id 1tLsmq-00000009zsG-16tl;
-	Fri, 13 Dec 2024 10:40:04 +1100
-Date: Fri, 13 Dec 2024 10:40:04 +1100
+	id 1tLsnT-00000009zsS-3Zih;
+	Fri, 13 Dec 2024 10:40:43 +1100
+Date: Fri, 13 Dec 2024 10:40:43 +1100
 From: Dave Chinner <david@fromorbit.com>
-To: syzbot <syzbot+cbcad0f3b7646f8653ee@syzkaller.appspotmail.com>
+To: syzbot <syzbot+449c80b8f4946f26184b@syzkaller.appspotmail.com>
 Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
 	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
 	tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_da_get_block_prep (2)
-Message-ID: <Z1t0VJRWuW-tMhf4@dread.disaster.area>
-References: <6759e8c7.050a0220.17f54a.0042.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_truncate
+Message-ID: <Z1t0ezKCaDF5kihd@dread.disaster.area>
+References: <6753e03f.050a0220.a30f1.0152.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,106 +91,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6759e8c7.050a0220.17f54a.0042.GAE@google.com>
+In-Reply-To: <6753e03f.050a0220.a30f1.0152.GAE@google.com>
 
-On Wed, Dec 11, 2024 at 11:32:23AM -0800, syzbot wrote:
+On Fri, Dec 06, 2024 at 09:42:23PM -0800, syzbot wrote:
 > Hello,
 > 
 > syzbot found the following issue on:
 > 
-> HEAD commit:    b5f217084ab3 Merge tag 'bpf-fixes' of git://git.kernel.org..
+> HEAD commit:    cdd30ebb1b9f module: Convert symbol namespace to string li..
 > git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=164170f8580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cbcad0f3b7646f8653ee
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15898330580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=449c80b8f4946f26184b
 > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > 
 > Unfortunately, I don't have any reproducer for this issue yet.
 > 
 > Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/4000132d9d47/disk-b5f21708.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/85cadac2b6fb/vmlinux-b5f21708.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/0321667f4cf4/bzImage-b5f21708.xz
+> disk image: https://storage.googleapis.com/syzbot-assets/658bd206f462/disk-cdd30ebb.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/12cb86080d87/vmlinux-cdd30ebb.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/5181aac6587a/bzImage-cdd30ebb.xz
 > 
 > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+cbcad0f3b7646f8653ee@syzkaller.appspotmail.com
+> Reported-by: syzbot+449c80b8f4946f26184b@syzkaller.appspotmail.com
 > 
-> loop4: detected capacity change from 0 to 2048
-> EXT4-fs (loop4): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: none.
 > ======================================================
-> WARNING: yossible circular locking dependency detected
-> 6.13.0-rc1-syzkaller-00316-gb5f217084ab3 #0 Not tainted
+> WARNING: possible circular locking dependency detected
+> 6.13.0-rc1-syzkaller-00002-gcdd30ebb1b9f #0 Not tainted
 > ------------------------------------------------------
-> syz.4.1456/13188 is trying to acquire lock:
-> ffff888040d89658 (&ei->i_data_sem){++++}-{4:4}, at: ext4_da_map_blocks fs/ext4/inode.c:1799 [inline]
-> ffff888040d89658 (&ei->i_data_sem){++++}-{4:4}, at: ext4_da_get_block_prep+0x428/0x1900 fs/ext4/inode.c:1873
+> syz-executor/11503 is trying to acquire lock:
+> ffff88807abcdbb0 (&ei->i_data_sem){++++}-{4:4}, at: ext4_truncate+0x994/0x11c0 fs/ext4/inode.c:4212
 > 
 > but task is already holding lock:
-> ffff888040d89498 (&ei->xattr_sem){++++}-{4:4}, at: ext4_da_convert_inline_data_to_extent fs/ext4/inline.c:846 [inline]
-> ffff888040d89498 (&ei->xattr_sem){++++}-{4:4}, at: ext4_da_write_inline_data_begin+0x2d3/0x1090 fs/ext4/inline.c:921
+> ffff888034d3a610 (sb_internal){++++}-{0:0}, at: __sb_start_write include/linux/fs.h:1725 [inline]
+> ffff888034d3a610 (sb_internal){++++}-{0:0}, at: sb_start_intwrite include/linux/fs.h:1908 [inline]
+> ffff888034d3a610 (sb_internal){++++}-{0:0}, at: ext4_evict_inode+0x2f4/0xf50 fs/ext4/inode.c:217
 > 
 > which lock already depends on the new lock.
 > 
 > 
 > the existing dependency chain (in reverse order) is:
 > 
-> -> #7 (&ei->xattr_sem){++++}-{4:4}:
+> -> #7 (sb_internal){++++}-{0:0}:
 >        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->        down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
->        ext4_readpage_inline+0x36/0x6b0 fs/ext4/inline.c:518
->        ext4_read_folio+0x174/0x340 fs/ext4/inode.c:3185
->        filemap_read_folio+0x14d/0x630 mm/filemap.c:2366
->        filemap_create_folio mm/filemap.c:2497 [inline]
->        filemap_get_pages+0x100a/0x2540 mm/filemap.c:2555
->        filemap_read+0x45c/0xf50 mm/filemap.c:2646
->        __kernel_read+0x515/0x9d0 fs/read_write.c:523
->        integrity_kernel_read+0xb0/0x100 security/integrity/iint.c:28
->        ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
->        ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
->        ima_calc_file_hash+0xae6/0x1b30 security/integrity/ima/ima_crypto.c:568
->        ima_collect_measurement+0x520/0xb10 security/integrity/ima/ima_api.c:293
->        process_measurement+0x1351/0x1fb0 security/integrity/ima/ima_main.c:372
->        ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
->        security_file_post_open+0xb9/0x280 security/security.c:3121
->        do_open fs/namei.c:3830 [inline]
->        path_openat+0x2ccd/0x3590 fs/namei.c:3987
->        do_filp_open+0x27f/0x4e0 fs/namei.c:4014
->        do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
->        do_sys_open fs/open.c:1417 [inline]
->        __do_sys_openat fs/open.c:1433 [inline]
->        __se_sys_openat fs/open.c:1428 [inline]
->        __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
+>        percpu_down_write+0x54/0x310 kernel/locking/percpu-rwsem.c:229
+>        sb_wait_write fs/super.c:1910 [inline]
+>        freeze_super+0x7cc/0xee0 fs/super.c:2118
+>        fs_bdev_freeze+0x1ac/0x320 fs/super.c:1484
+>        bdev_freeze+0xd8/0x220 block/bdev.c:257
+>        ext4_force_shutdown+0x319/0x550 fs/ext4/ioctl.c:822
+>        ext4_ioctl_shutdown fs/ext4/ioctl.c:857 [inline]
+>        __ext4_ioctl fs/ext4/ioctl.c:1580 [inline]
+>        ext4_ioctl+0x2145/0x58d0 fs/ext4/ioctl.c:1619
+>        vfs_ioctl fs/ioctl.c:51 [inline]
+>        __do_sys_ioctl fs/ioctl.c:906 [inline]
+>        __se_sys_ioctl+0xf7/0x170 fs/ioctl.c:892
 >        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
 >        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
 >        entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
-> -> #6 (mapping.invalidate_lock){++++}-{4:4}:
+> -> #6 (sb_pagefaults){++++}-{0:0}:
 >        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->        down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
->        filemap_invalidate_lock_shared include/linux/fs.h:873 [inline]
->        page_cache_ra_unbounded+0x143/0x8c0 mm/readahead.c:226
->        do_async_mmap_readahead mm/filemap.c:3231 [inline]
->        filemap_fault+0x82a/0x1950 mm/filemap.c:3330
->        __do_fault+0x137/0x460 mm/memory.c:4907
->        do_read_fault mm/memory.c:5322 [inline]
->        do_fault mm/memory.c:5456 [inline]
+>        percpu_down_read+0x44/0x1b0 include/linux/percpu-rwsem.h:51
+>        __sb_start_write include/linux/fs.h:1725 [inline]
+>        sb_start_pagefault include/linux/fs.h:1890 [inline]
+>        ext4_page_mkwrite+0x1ef/0xdf0 fs/ext4/inode.c:6158
+>        do_page_mkwrite+0x19a/0x480 mm/memory.c:3176
+>        do_shared_fault mm/memory.c:5398 [inline]
+>        do_fault mm/memory.c:5460 [inline]
 >        do_pte_missing mm/memory.c:3979 [inline]
->        handle_pte_fault+0x335a/0x68a0 mm/memory.c:5801
+>        handle_pte_fault+0x1235/0x68a0 mm/memory.c:5801
 >        __handle_mm_fault mm/memory.c:5944 [inline]
 >        handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6112
->        faultin_page mm/gup.c:1187 [inline]
->        __get_user_pages+0x1c82/0x49e0 mm/gup.c:1485
->        __get_user_pages_locked mm/gup.c:1751 [inline]
->        get_dump_page+0x155/0x2f0 mm/gup.c:2269
->        dump_user_range+0x14d/0x970 fs/coredump.c:943
->        elf_core_dump+0x3e9f/0x4790 fs/binfmt_elf.c:2129
->        do_coredump+0x229d/0x3100 fs/coredump.c:758
->        get_signal+0x140b/0x1750 kernel/signal.c:3002
->        arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
->        exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
->        exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
->        irqentry_exit_to_user_mode+0x7e/0x250 kernel/entry/common.c:231
->        exc_page_fault+0x590/0x8b0 arch/x86/mm/fault.c:1542
+>        do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
+>        handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+>        exc_page_fault+0x2b9/0x8b0 arch/x86/mm/fault.c:1539
 >        asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
 > 
 > -> #5 (&mm->mmap_lock){++++}-{4:4}:
