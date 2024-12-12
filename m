@@ -1,218 +1,199 @@
-Return-Path: <linux-kernel+bounces-442677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D3C9EE02F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:22:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7689EE032
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:23:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75DCE286620
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:22:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6361663B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD6C20ADE0;
-	Thu, 12 Dec 2024 07:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F5020B1EA;
+	Thu, 12 Dec 2024 07:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b4Qe457r"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8qXUcZ3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16610259485
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F7945027;
+	Thu, 12 Dec 2024 07:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733988155; cv=none; b=Nn1UOpvxOXhG48u+cz403pT+mLKcX70mE5bDUY1veKhrpqESoWhxoYTXD1ka0EAUAU1avVe6coH07EVGK2sVohLYon2z2gUETy6LwRHjPN8Udmy3ZFBR3RIBj2fZ2Itf514xvQ/qjAz92fjJbYyTseFeaHNjDWUACSkFYsAl7ac=
+	t=1733988209; cv=none; b=aobJFw0owFZt6vMUhfrBnclsVISWVCvnvuRk5gHPCIu5X/6VU9HqV56+/JVcmUfGZ2dcIIK5LZ3b7OksZExIkTg09RzXIJ55yKP1EftCFl02svOS/GDK80OxT4FAQum9G+Aqfe57ZQ2Pl4v+xgH0eu0Vi7z/lh3TZac/soCjskk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733988155; c=relaxed/simple;
-	bh=9oyqRCozzQ03KXI7soeAbZhc/tgkhTVV74thedp2iP8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Vargzknbv27HaTMraFSnGY42gIOu+VCXou6BsMUUBvLF0mBK+RGYdD/Qy7R69J/HU8C8sZg7jrQtyDl5rMUCOG9C8nUCJ7i4oxiIyeatgNcWP+2fRlHLrvLg/sw7uqrtBwbCS2MQHxs3kbnfiukKHwOQ/93X/EbEdZl9GZJawoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b4Qe457r; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733988149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NlTWbVHOMVhO0efCy+1fi+S46Uqcq2xQlBjVTfGcMIc=;
-	b=b4Qe457r3VA7BA2c6Z8QXRr8KDQe6VSkX4nc2p4uJvF0/gWJoOnfqf9TUEw+TauqfPs6Wz
-	sFnua9RTG1AMaj3A1LbTvPD7RPVIxqfUVwY5E+N5lE07EfjoIXawRPWcaAJ5Fa0J5EKA2V
-	aZ2BTpPPHoMuontb++1Vjowo6v7KdhQ=
-From: Hao Ge <hao.ge@linux.dev>
-To: surenb@google.com,
-	kent.overstreet@linux.dev,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	hao.ge@linux.dev,
-	Hao Ge <gehao@kylinos.cn>,
-	Ben Greear <greearb@candelatech.com>
-Subject: [PATCH v6] mm/alloc_tag: Fix panic when CONFIG_KASAN enabled and CONFIG_KASAN_VMALLOC not enabled
-Date: Thu, 12 Dec 2024 15:21:26 +0800
-Message-Id: <20241212072126.134572-1-hao.ge@linux.dev>
-In-Reply-To: <20241212070320.133419-1-hao.ge@linux.dev>
-References: <20241212070320.133419-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1733988209; c=relaxed/simple;
+	bh=JZk+vkzVVHoIxLeiYJCOuR339GJF+lQkjwNZYJNxM88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JLCUEtEnIvl8jsQzgVW7ryP6gs1ptotJnWWsuE+v3xRL0WWoY1McnS3ksiWf0CRnjRFXzQI/CDKbYh8vof/C/20ryh6VylGoDVohZToXsXdyyWojpEj/aGOW0XfvmLPI15LMAByRvGFPaDQayP+2OjHVU8+b4bgfE319neLwP20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8qXUcZ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B573C4CECE;
+	Thu, 12 Dec 2024 07:23:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733988209;
+	bh=JZk+vkzVVHoIxLeiYJCOuR339GJF+lQkjwNZYJNxM88=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K8qXUcZ3Z5yASYBvKbj7xTYYiXDIFjtIJKpALdYOYbHXSpNbnyoZizBtINLHgilDw
+	 Fd2NNAlV5V/Y62/PFS0x8N21tafJT1e9ZToploNZ2zyJG6BVkWKQwtrG5uPQPMIWTS
+	 z0Y0fBd+CClMHxNaLh6wIAxAsa+wu9QZpnm7WS9yR0JRb4TgBFwtjI9CCgf/eBecA/
+	 G44o010ZzG4jilRvLuNEXSZKVW6oF/pQ30qlXfY9TKS1+Qghse/AdXOo0Vr9RBAfxQ
+	 zdWu6tVmNS7ExsDXELMtIoIq4VrGTJ8brHMJzXXVD6VPlWH9LRZNxvsvey5ppi5edz
+	 tIkLVsZvsr7Mg==
+Message-ID: <44c97ee6-ba32-452c-8b83-ad39139fd310@kernel.org>
+Date: Thu, 12 Dec 2024 08:23:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 06/10] ASoC: dt-bindings: add wsa881x-i2c binding for
+ analog mode
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: broonie@kernel.org, konradybcio@kernel.org,
+ konrad.dybcio@oss.qualcomm.com, andersson@kernel.org,
+ srinivas.kandagatla@linaro.org, tiwai@suse.com, lgirdwood@gmail.com,
+ perex@perex.cz, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dmitry.baryshkov@linaro.org, linux-sound@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241101053154.497550-1-alexey.klimov@linaro.org>
+ <20241101053154.497550-7-alexey.klimov@linaro.org>
+ <woeeh7cosv47z4ckqbomfc3rqqxfolyfycgcz32do2yadg7xdj@geqank3dp55t>
+ <D695QHHBLGUF.7HOOI1E8RMTS@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <D695QHHBLGUF.7HOOI1E8RMTS@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Hao Ge <gehao@kylinos.cn>
+On 11/12/2024 21:35, Alexey Klimov wrote:
+> On Fri Nov 1, 2024 at 7:57 AM GMT, Krzysztof Kozlowski wrote:
+>> On Fri, Nov 01, 2024 at 05:31:50AM +0000, Alexey Klimov wrote:
+>>> Add binding document for WSA881X family of smart speaker amplifiers
+>>> that set to work in analog mode only and configurable via i2c only.
+>>> Such devices are found in Qualcomm QRB4210 RB2 boards with
+>>> SM4250/SM6115 SoCs.
+>>>
+>>> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>>> ---
+>>>  .../bindings/sound/qcom,wsa881x-i2c.yaml      | 103 ++++++++++++++++++
+>>>  1 file changed, 103 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/sound/qcom,wsa881x-i2c.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/sound/qcom,wsa881x-i2c.yaml b/Documentation/devicetree/bindings/sound/qcom,wsa881x-i2c.yaml
+>>> new file mode 100644
+>>> index 000000000000..51b040b134d2
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/sound/qcom,wsa881x-i2c.yaml
+>>
+>> Filename must match compatible.
+>>
+>>> @@ -0,0 +1,103 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/sound/qcom,wsa881x-i2c.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm WSA8810/WSA8815 Class-D Smart Speaker Amplifier in Analog mode
+>>> +
+>>> +maintainers:
+>>> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>> +  - Alexey Klimov <alexey.klimov@linaro.org>
+>>> +
+>>> +description: |
+>>> +  WSA8810 is a class-D smart speaker amplifier and WSA8815
+>>> +  is a high-output power class-D smart speaker amplifier.
+>>> +  Their primary operating mode uses a SoundWire digital audio
+>>> +  interface however the amplifier also supports analog mode and it
+>>> +  can be controlled via I2C. This binding is for I2C interface.
+>>> +
+>>> +allOf:
+>>> +  - $ref: dai-common.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: qcom,qrb4210-wsa881x-i2c-codec
+>>
+>> qrb4210 is a name of a board, not codec. i2c is redundant, codec as
+>> well. 'x' is not allowed.
+> 
+> qcom,qrb4210-wsa881x-i2c-codec came from qcom-soc.yaml with the advice
+> that it should be qcom,SoC-IP.
 
-When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
-is not enabled, we may encounter a panic during system boot.
+I am sorry, but qcom,soc.yaml is about SoC. Is this a SoC? It is the
+first time I see WSA integrated into the SoC.
 
-Because we haven't allocated pages and created mappings
-for the shadow memory corresponding to module allocation tags
-region,similar to how it is done for execmem_vmalloc.
+> 
+> Anyway I am working on updating the qcom,wsa881x.yaml as you pointed out
+> in another email.
+> 
+>> This is qcom,wsa8810 and qcom,wsa8815 compatible with it.
+>>
+> 
+> [..]
+> 
+>>> +
+>>> +      wsa881x@e {
+>>
+>> Node names should be generic. See also an explanation and list of
+>> examples (not exhaustive) in DT specification:
+>> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> 
+> The best I can come up with is "amplifier", or it should be at least "codec'.
 
-The memory for module allocation tags is allocated on demand,
-therefore we need to allocate shadow memory on demand as well in
-MODULE_ALIGN blocks.
+amplifier, speakers, you can check how this is called in 10 existing DTS
+files or their bindings for WSA speakers.
 
-Here is the log for panic:
 
-[   18.349421] BUG: unable to handle page fault for address: fffffbfff8092000
-[   18.350016] #PF: supervisor read access in kernel mode
-[   18.350459] #PF: error_code(0x0000) - not-present page
-[   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PTE 0
-[   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
-[   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #3
-[   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
-[   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
-[   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
-[   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff82a7ceac
-[   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc0490000
-[   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff809201d
-[   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc0490000
-[   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000000002c
-[   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlGS:0000000000000000
-[   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 0000000000771ef0
-[   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   18.362020] PKRU: 55555554
-[   18.362261] Call Trace:
-[   18.362481]  <TASK>
-[   18.362671]  ? __die+0x23/0x70
-[   18.362964]  ? page_fault_oops+0xc2/0x160
-[   18.363318]  ? exc_page_fault+0xad/0xc0
-[   18.363680]  ? asm_exc_page_fault+0x26/0x30
-[   18.364056]  ? move_module+0x3cc/0x8a0
-[   18.364398]  ? kasan_check_range+0xba/0x1b0
-[   18.364755]  __asan_memcpy+0x3c/0x60
-[   18.365074]  move_module+0x3cc/0x8a0
-[   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
-[   18.365841]  ? early_mod_check+0x3dc/0x510
-[   18.366195]  load_module+0x72/0x1850
-[   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
-[   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
-[   18.367262]  init_module_from_file+0xd1/0x130
-[   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
-[   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
-[   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
-[   18.368938]  idempotent_init_module+0x22c/0x790
-[   18.369332]  ? simple_getattr+0x6f/0x120
-[   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
-[   18.370110]  ? fdget+0x58/0x3a0
-[   18.370393]  ? security_capable+0x64/0xf0
-[   18.370745]  __x64_sys_finit_module+0xc2/0x140
-[   18.371136]  do_syscall_64+0x7d/0x160
-[   18.371459]  ? fdget_pos+0x1c8/0x4c0
-[   18.371784]  ? ksys_read+0xfd/0x1d0
-[   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
-[   18.372525]  ? do_syscall_64+0x89/0x160
-[   18.372860]  ? do_syscall_64+0x89/0x160
-[   18.373194]  ? do_syscall_64+0x89/0x160
-[   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
-[   18.373952]  ? do_syscall_64+0x89/0x160
-[   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
-[   18.374701]  ? do_syscall_64+0x89/0x160
-[   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
-[   18.375416]  ? clear_bhb_loop+0x25/0x80
-[   18.375748]  ? clear_bhb_loop+0x25/0x80
-[   18.376119]  ? clear_bhb_loop+0x25/0x80
-[   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
-Reported-by: Ben Greear <greearb@candelatech.com>
-Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@candelatech.com/
-Suggested-by: Suren Baghdasaryan <surenb@google.com>
-Acked-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
-v6: In the previous version, there was an omission
-    in the commit message where "module_tags"
-    should have been replaced with "module allocation tags".
-
-v5: Modify the commit message based on Suren's suggestions
-    Add Acked-by: Suren Baghdasaryan <surenb@google.com>
-
-v4: Based on Suren's suggestion for modification (to make the code simpler),
-    modify the code.
-    Update the comments in the code due to the modifications made to the code.
-    Add Suggested-by: Suren Baghdasaryan <surenb@google.com>
-
-v3: Adjusting the title because the previous one was a bit unclear.
-    Suren has pointed out that our condition for determining whether
-    to allocate shadow memory is unreasonable.We have adjusted our method
-    to use every 8 pages as an index (idx), and we will make decisions based
-    on this idx when determining whether to allocate shadow memory.
-
-v2: Add comments to facilitate understanding of the code.
-    Add align nr << PAGE_SHIFT to MODULE_ALIGN,even though kasan_alloc_module_shadow
-    already handles this internally,but to make the code more readable and user-friendly
-
-commit 233e89322cbe ("alloc_tag: fix module allocation
-tags populated area calculation") is currently in the
-mm-hotfixes-unstable branch, so this patch is
-developed based on the mm-hotfixes-unstable branch.
----
- lib/alloc_tag.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index f942408b53ef..c5bdfa297a35 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -407,6 +407,8 @@ static int vm_module_tags_populate(void)
- 
- 	if (phys_end < new_end) {
- 		struct page **next_page = vm_module_tags->pages + vm_module_tags->nr_pages;
-+		unsigned long old_shadow_end = ALIGN(phys_end, MODULE_ALIGN);
-+		unsigned long new_shadow_end = ALIGN(new_end, MODULE_ALIGN);
- 		unsigned long more_pages;
- 		unsigned long nr;
- 
-@@ -421,7 +423,19 @@ static int vm_module_tags_populate(void)
- 				__free_page(next_page[i]);
- 			return -ENOMEM;
- 		}
-+
- 		vm_module_tags->nr_pages += nr;
-+
-+		/*
-+		 * Kasan allocates 1 byte of shadow for every 8 bytes of data.
-+		 * When kasan_alloc_module_shadow allocates shadow memory,
-+		 * its unit of allocation is a page.
-+		 * Therefore, here we need to align to MODULE_ALIGN.
-+		 */
-+		if (old_shadow_end < new_shadow_end)
-+			kasan_alloc_module_shadow((void *)old_shadow_end,
-+						  new_shadow_end - old_shadow_end,
-+						  GFP_KERNEL);
- 	}
- 
- 	/*
--- 
-2.25.1
-
+Best regards,
+Krzysztof
 
