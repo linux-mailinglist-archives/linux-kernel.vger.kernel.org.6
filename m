@@ -1,239 +1,150 @@
-Return-Path: <linux-kernel+bounces-442999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFCB9EE54D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:45:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F277B9EE54F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:45:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5861887352
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:45:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F490188734C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E96211A20;
-	Thu, 12 Dec 2024 11:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E13D211A29;
+	Thu, 12 Dec 2024 11:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZ7PHaIa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="F1RtQkEN"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC0220C01A;
-	Thu, 12 Dec 2024 11:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960FE1F2C30
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734003900; cv=none; b=YMBNkIYeahun01HEd/7YefdbtL/Wu+VbL+RNPKbdPoN5cBZdc9zjy8xeijosiiUVChVAJCZ1N6SKdLUOV+7WZISPv8+EZupIVwLNXKj3su0VVJMmHuOcAP0Ruj85pVoRvuN8HUd7NI0hKqLecf6GNnnydT3wCL3a/Tdo6/a0jAs=
+	t=1734003919; cv=none; b=Hg/2Ktp/dqmmEM3BtceoOyF6u/D23ta4P0YimCgOZ7LXvJpCpR2WUYeDreBUH8S0h9PC750QNIcFnSnHBf/ZXeDVwskDTLwPV5jnPeJMwGEfWRcR0hIKdQL/KV5hhYAchOHT+VcXGK+N6BEHMgw0BlCwd4Hs5difghyQeydTOIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734003900; c=relaxed/simple;
-	bh=4GmCDohNAOfCN5wWOW+nZPuvP+Y3UIn9m30OSN5j1JY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+1jgmmxvGxfwAudC0pYoMaByqNUnmPWyhJ0fQsvKm0BI9P+UhGMzI7M6Qz9KMi88mpHroMol7wyU2TH2qtG6zmdAVs2cJ4U+OljuVQ5QCzcxWroxXaeoCLW50EDB4ArzI2/e+yyE7DWLZoBix/CAIhY/N4oI0140MOpoYW3phE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZ7PHaIa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C692C4CED1;
-	Thu, 12 Dec 2024 11:44:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734003899;
-	bh=4GmCDohNAOfCN5wWOW+nZPuvP+Y3UIn9m30OSN5j1JY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fZ7PHaIaPPzTVBHTSLkX1+O9i3Zzay8xBUl2gIG3heoj6Z+fk9meBl13EQtHQApDu
-	 Yw94mtEVg7nI8104jxTR94i4yw/MJJfGSIbgfp4ciEyhuk60ZjABeF4RAtV6cozv/I
-	 EGNGxUK2lp3f1g1KWx1NHWA8TvA/hfjKSjxFLH2UPn1Qx2/4rCVe38ivLVqwgjQkJQ
-	 fiBtT3zOeOtBw8cZRr8uVg3xQKACPhUNyLhUm2B2v7uXXG5XoBaSVVV9RhhmldzA0w
-	 wvtEu88criAqDPQ7R6jqh6P1tx4ccozYrt+Xoj44g5NveBFbwVr9Z9HLpvInw6lyxL
-	 PgsQDvsJRFdkg==
-Date: Thu, 12 Dec 2024 11:44:54 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: vkoul@kernel.org, perex@perex.cz, tiwai@suse.com,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v7 4/6] ASoC: fsl_asrc_m2m: Add memory to memory function
-Message-ID: <58b4a167-5a13-49b2-9b08-58c3041b772b@sirena.org.uk>
-References: <20241212074509.3445859-1-shengjiu.wang@nxp.com>
- <20241212074509.3445859-5-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1734003919; c=relaxed/simple;
+	bh=/AeMddT5I/7ORa8Vq3OjuCXXDJmjVLBFui+0F4NUov0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SqXOFVMHsnGI+mZsIIZHhyvORlPKyFauNwxscvQwpfiBOhwthu8TNHfHGqPNm09TFzOoYJd6ox2r0xxmted5aJcPyRtGJKiXnsw7H0r4haah6+wif/TvCrxlpP5bjV3263sEO3UxUFsiqSBzme/FzPOnUUtChSSlQnqruToPOgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=F1RtQkEN; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38625aa01b3so34771f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 03:45:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1734003916; x=1734608716; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gNJ2NNXOEYsaP47VU4MW29jbTvfPJgrGv8fsDcVmvbY=;
+        b=F1RtQkENIXfAgjAYovXI8VzSBq3iDlcCy62phGx7oYjCScIgNVh75Qc0fNpd2xPp7f
+         5axGrgF1ObTRxntC9aceDilI90b619MMDgyy/xZhnupCSa9YbriHSxATstGD3O4Do+7J
+         5V47sxX2hbmcNVAN/Tr1NAqNEVVLh3T6r0Gwm4caAnXN0deuIlwlRGD6L72wWH9yixEZ
+         cycuYd+8zWhuNE086LigVP1D+sT3dq8HEYzN988fCCMFdYQYyNRUI+3q4KBYzlPQJEhJ
+         LmKlLZHXuaB7EkWNkGNw6PQ3phoL8UN35gfDiVOzVVg5zwOCYBnkzN4k17XhnwSxP4A1
+         in0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734003916; x=1734608716;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gNJ2NNXOEYsaP47VU4MW29jbTvfPJgrGv8fsDcVmvbY=;
+        b=CMMvucqHzxS3o+h9TRNYrv4SFoZMsnIu4J77eOOeE0eIZX9quIDf6Aks2tKVBRENPl
+         YqIOrM6TAOw/mprnU9sm4Jfbu+3gc4XLLZNisLaHrJjYcNjAZoNQr6lloMPkYl0kI2NC
+         54uOf5N+zxBCb00JjR15zM6NVzLMouYHIQ4AX+3VwLQIiTvl0nJHL48guqmqLjC67qca
+         /owrydvscA3pucTRd8P58xjHyrY6kFNdrrFnSPkqqdHqv2Hhn4gGjgP9iHF5cZTgpPwK
+         +ySZVK1aJ5whH5fNYsceSW2y8BbdwoZFmLBd3GzLLcc4JwuhICDyYCtdWL1oAv/kG2Bw
+         4iYw==
+X-Gm-Message-State: AOJu0YzIWb3UKcxHgifjKJ3o5Wr5S58kBHU1OIom09dc4z+7xmZ3RX2G
+	7ObsMa+Q2zjonZLNmN7/9GZeiLUGJA6dQnoz/q0RHWpiSeqWDUD7Gy49hSEvNEs=
+X-Gm-Gg: ASbGncutLPWmgcvl76yexli//MNAc/SkiLljy3XxX0s1abrDlwjgwmNFTRokJBVHSy6
+	kCf1f2pnu5jm7wgUTofbmt0xt4rIEt3/fpm/k73UqfyIWkLqLbJg0UjhFBBmAJy+hAfsLee+cyR
+	WeVGoh9qChkzk0HT2p9Fjvq1lPkn6+mrEtn5WZ4Of2HcluoEf2dXAbZ1Pn2ksU39niZ504/bBVS
+	vAzUcg8802aVEDrzkDb4DzVybYVmXcP2tKTB46EuaX5GlWsfb3uwuSul+p1
+X-Google-Smtp-Source: AGHT+IEq35k9CwEbCU11uF2TKeyxIO7Vf7aoHPTQorzrPZxcWI2W9+Q+cuNSK/R6YL8Vw1DfHHFb5w==
+X-Received: by 2002:a5d:584d:0:b0:385:f1bc:7644 with SMTP id ffacd0b85a97d-3864ce55aa3mr2023500f8f.6.1734003915850;
+        Thu, 12 Dec 2024 03:45:15 -0800 (PST)
+Received: from [10.202.32.28] ([202.127.77.110])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21615dba950sm105039195ad.11.2024.12.12.03.45.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 03:45:15 -0800 (PST)
+Message-ID: <92d413be-286e-49b7-a234-b6e2c8c94581@suse.com>
+Date: Thu, 12 Dec 2024 19:45:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xCorpfkhpxX1YyjE"
-Content-Disposition: inline
-In-Reply-To: <20241212074509.3445859-5-shengjiu.wang@nxp.com>
-X-Cookie: You can't push on a string.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: Revert "ocfs2: fix the la space leak when
+ unmounting an ocfs2 volume"
+To: joseph.qi@linux.alibaba.com, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ ocfs2-devel@lists.linux.dev
+References: <20241212113107.9792-1-heming.zhao@suse.com>
+Content-Language: en-US
+From: Heming Zhao <heming.zhao@suse.com>
+In-Reply-To: <20241212113107.9792-1-heming.zhao@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi Greg,
 
---xCorpfkhpxX1YyjE
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The 4.19 branch also needs this patch.
 
-On Thu, Dec 12, 2024 at 03:45:07PM +0800, Shengjiu Wang wrote:
-> Implement the ASRC memory to memory function using
-> the compress framework, user can use this function with
-> compress ioctl interface.
->=20
-> This feature can be shared by ASRC and EASRC drivers
+- Heming
 
-This breaks an x86 allmodconfig build (using GCC 13):
+On 12/12/24 19:31, Heming Zhao wrote:
+> This reverts commit dfe6c5692fb5 ("ocfs2: fix the la space leak when
+> unmounting an ocfs2 volume").
+> 
+> In commit dfe6c5692fb5, the commit log "This bug has existed since the
+> initial OCFS2 code." is wrong. The correct introduction commit is
+> 30dd3478c3cd ("ocfs2: correctly use ocfs2_find_next_zero_bit()").
+> 
+> The influence of commit dfe6c5692fb5 is that it provides a correct
+> fix for the latest kernel. however, it shouldn't be pushed to stable
+> branches. Let's use this commit to revert all branches that include
+> dfe6c5692fb5 and use a new fix method to fix commit 30dd3478c3cd.
+> 
+> Fixes: dfe6c5692fb5 ("ocfs2: fix the la space leak when unmounting an ocfs2 volume")
+> Signed-off-by: Heming Zhao <heming.zhao@suse.com>
+> Cc: <stable@vger.kernel.org>
+> ---
+>   fs/ocfs2/localalloc.c | 19 -------------------
+>   1 file changed, 19 deletions(-)
+> 
+> diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+> index 8ac42ea81a17..5df34561c551 100644
+> --- a/fs/ocfs2/localalloc.c
+> +++ b/fs/ocfs2/localalloc.c
+> @@ -1002,25 +1002,6 @@ static int ocfs2_sync_local_to_main(struct ocfs2_super *osb,
+>   		start = bit_off + 1;
+>   	}
+>   
+> -	/* clear the contiguous bits until the end boundary */
+> -	if (count) {
+> -		blkno = la_start_blk +
+> -			ocfs2_clusters_to_blocks(osb->sb,
+> -					start - count);
+> -
+> -		trace_ocfs2_sync_local_to_main_free(
+> -				count, start - count,
+> -				(unsigned long long)la_start_blk,
+> -				(unsigned long long)blkno);
+> -
+> -		status = ocfs2_release_clusters(handle,
+> -				main_bm_inode,
+> -				main_bm_bh, blkno,
+> -				count);
+> -		if (status < 0)
+> -			mlog_errno(status);
+> -	}
+> -
+>   bail:
+>   	if (status)
+>   		mlog_errno(status);
 
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:186:68: warning: =E2=80=98s=
-truct snd_compr_task_runtime=E2=80=99 declared inside parameter list will n=
-ot be visible outside of this definition or declaration
-  186 | static void asrc_m2m_device_run(struct fsl_asrc_pair *pair, struct =
-snd_compr_task_runtime *task)
-      |                                                                    =
-^~~~~~~~~~~~~~~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c: In function =E2=80=98asrc_=
-m2m_device_run=E2=80=99:
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:212:26: error: invalid use =
-of undefined type =E2=80=98struct snd_compr_task_runtime=E2=80=99
-  212 |         in_buf_len =3D task->input_size;
-      |                          ^~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:279:13: error: invalid use =
-of undefined type =E2=80=98struct snd_compr_task_runtime=E2=80=99
-  279 |         task->output_size =3D out_dma_len;
-      |             ^~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c: At top level:
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:451:49: warning: =E2=80=98s=
-truct snd_compr_task_runtime=E2=80=99 declared inside parameter list will n=
-ot be visible outside of this definition or declaration
-  451 |                                          struct snd_compr_task_runt=
-ime *task)
-      |                                                 ^~~~~~~~~~~~~~~~~~~=
-~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c: In function =E2=80=98fsl_a=
-src_m2m_comp_task_create=E2=80=99:
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:465:13: error: invalid use =
-of undefined type =E2=80=98struct snd_compr_task_runtime=E2=80=99
-  465 |         task->input =3D dma_buf_export(&exp_info_in);
-      |             ^~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:466:24: error: invalid use =
-of undefined type =E2=80=98struct snd_compr_task_runtime=E2=80=99
-  466 |         if (IS_ERR(task->input)) {
-      |                        ^~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:467:35: error: invalid use =
-of undefined type =E2=80=98struct snd_compr_task_runtime=E2=80=99
-  467 |                 ret =3D PTR_ERR(task->input);
-      |                                   ^~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:475:13: error: invalid use =
-of undefined type =E2=80=98struct snd_compr_task_runtime=E2=80=99
-  475 |         task->output =3D dma_buf_export(&exp_info_out);
-      |             ^~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:476:24: error: invalid use =
-of undefined type =E2=80=98struct snd_compr_task_runtime=E2=80=99
-  476 |         if (IS_ERR(task->output)) {
-      |                        ^~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:477:35: error: invalid use =
-of undefined type =E2=80=98struct snd_compr_task_runtime=E2=80=99
-  477 |                 ret =3D PTR_ERR(task->output);
-      |                                   ^~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c: At top level:
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:523:48: warning: =E2=80=98s=
-truct snd_compr_task_runtime=E2=80=99 declared inside parameter list will n=
-ot be visible outside of this definition or declaration
-  523 |                                         struct snd_compr_task_runti=
-me *task)
-      |                                                ^~~~~~~~~~~~~~~~~~~~=
-~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c: In function =E2=80=98fsl_a=
-src_m2m_comp_task_start=E2=80=99:
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:528:35: error: passing argu=
-ment 2 of =E2=80=98asrc_m2m_device_run=E2=80=99 from incompatible pointer t=
-ype [-Werror=3Dincompatible-pointer-types]
-  528 |         asrc_m2m_device_run(pair, task);
-      |                                   ^~~~
-      |                                   |
-      |                                   struct snd_compr_task_runtime *
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:186:92: note: expected =E2=
-=80=98struct snd_compr_task_runtime *=E2=80=99 but argument is of type =E2=
-=80=98struct snd_compr_task_runtime *=E2=80=99
-  186 | static void asrc_m2m_device_run(struct fsl_asrc_pair *pair, struct =
-snd_compr_task_runtime *task)
-      |                                                             ~~~~~~~=
-~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c: At top level:
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:534:47: warning: =E2=80=98s=
-truct snd_compr_task_runtime=E2=80=99 declared inside parameter list will n=
-ot be visible outside of this definition or declaration
-  534 |                                        struct snd_compr_task_runtim=
-e *task)
-      |                                               ^~~~~~~~~~~~~~~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:540:47: warning: =E2=80=98s=
-truct snd_compr_task_runtime=E2=80=99 declared inside parameter list will n=
-ot be visible outside of this definition or declaration
-  540 |                                        struct snd_compr_task_runtim=
-e *task)
-      |                                               ^~~~~~~~~~~~~~~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:623:10: error: =E2=80=98str=
-uct snd_compr_ops=E2=80=99 has no member named =E2=80=98task_create=E2=80=99
-  623 |         .task_create =3D fsl_asrc_m2m_comp_task_create,
-      |          ^~~~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:623:24: warning: excess ele=
-ments in struct initializer
-  623 |         .task_create =3D fsl_asrc_m2m_comp_task_create,
-      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:623:24: note: (near initial=
-ization for =E2=80=98fsl_asrc_m2m_compr_ops=E2=80=99)
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:624:10: error: =E2=80=98str=
-uct snd_compr_ops=E2=80=99 has no member named =E2=80=98task_start=E2=80=99
-  624 |         .task_start =3D fsl_asrc_m2m_comp_task_start,
-      |          ^~~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:624:23: warning: excess ele=
-ments in struct initializer
-  624 |         .task_start =3D fsl_asrc_m2m_comp_task_start,
-      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:624:23: note: (near initial=
-ization for =E2=80=98fsl_asrc_m2m_compr_ops=E2=80=99)
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:625:10: error: =E2=80=98str=
-uct snd_compr_ops=E2=80=99 has no member named =E2=80=98task_stop=E2=80=99
-  625 |         .task_stop =3D fsl_asrc_m2m_comp_task_stop,
-      |          ^~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:625:22: warning: excess ele=
-ments in struct initializer
-  625 |         .task_stop =3D fsl_asrc_m2m_comp_task_stop,
-      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:625:22: note: (near initial=
-ization for =E2=80=98fsl_asrc_m2m_compr_ops=E2=80=99)
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:626:10: error: =E2=80=98str=
-uct snd_compr_ops=E2=80=99 has no member named =E2=80=98task_free=E2=80=99
-  626 |         .task_free =3D fsl_asrc_m2m_comp_task_free,
-      |          ^~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:626:22: warning: excess ele=
-ments in struct initializer
-  626 |         .task_free =3D fsl_asrc_m2m_comp_task_free,
-      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:626:22: note: (near initial=
-ization for =E2=80=98fsl_asrc_m2m_compr_ops=E2=80=99)
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c: In function =E2=80=98fsl_a=
-src_m2m_init=E2=80=99:
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:701:41: error: =E2=80=98SND=
-_COMPRESS_ACCEL=E2=80=99 undeclared (first use in this function); did you m=
-ean =E2=80=98SNDRV_COMPRESS_AVAIL=E2=80=99?
-  701 |         ret =3D snd_compress_new(card, 0, SND_COMPRESS_ACCEL, "ASRC=
- M2M", compr);
-      |                                         ^~~~~~~~~~~~~~~~~~
-      |                                         SNDRV_COMPRESS_AVAIL
-/build/stage/linux/sound/soc/fsl/fsl_asrc_m2m.c:701:41: note: each undeclar=
-ed identifier is reported only once for each function it appears in
-cc1: some warnings being treated as errors
-
---xCorpfkhpxX1YyjE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdazLUACgkQJNaLcl1U
-h9DcEgf+OJCZW0jgiKXMBoR3Ew+s4HvrHC3fxP0nd/Prc6FZAauL78YdYhJce2IO
-Bp2bONmgi4zDJCJM9+SR1kEonO1EI0hCluisw/T588uAXQfGe4bukCis09k7zaEn
-/w6FL5Na9sIbOGVLyEImrEDVgcm/XcekklQTrIifLdd51FWA4/9BYwV3LSKpaDX0
-icGNN5H9gKADDidG2fWdPtndf6mMtkxOmvW9/lGADAYRCRCuwjRSxfCgd4wN8MQs
-NithgGAj0D9hihQ5VNSo9+HYVdzBZ+9rFVEjiUD4WxdqSDUjmVFZJAqQfRzOaqsz
-kEcfFqKySi1g/P4F5smjSPnIr7A8AQ==
-=C/Kj
------END PGP SIGNATURE-----
-
---xCorpfkhpxX1YyjE--
 
