@@ -1,92 +1,274 @@
-Return-Path: <linux-kernel+bounces-442424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D949EDC99
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:39:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD8E9EDC9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C019167905
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:39:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 826CB1886972
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04857C2E0;
-	Thu, 12 Dec 2024 00:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5B017588;
+	Thu, 12 Dec 2024 00:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWdu1+Sh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NxL2NKsa"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAFCB640;
-	Thu, 12 Dec 2024 00:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EA2B660
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733963959; cv=none; b=YRhwGvpIFB59aTt+YLTHmDXtqmdVnOztUMz0Wc3mNZWvuVBcn3SYmOQGRml8C73kV4/JMQ3wzeUk6rHnUJTDfZQy41uQs3nfiqH9/v+k6RyGY6QI+QM6yDKkwy9OZkYoyEwSAo+4ikzdG3qNYD7zVXMTmT3mM25MZoo9TGoT7DE=
+	t=1733964259; cv=none; b=hQvECVDyAEUDwDTkxWU/FU9O7dsljtpHVNYq7Vb457h1NqdKNAYRZUy5GjNuZfc2DqLu2tEiHIXxvOT5PF0kszBdK5TJqDo5yihf6ogL9LJE7k79sE8Q+G4X6Jgy4aOWCGxrk1pI1Srt26CFR4nDmeXYnYsFfXVk9bNRJ2VdRH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733963959; c=relaxed/simple;
-	bh=gnb2mh8CwraORjHmYYAChk8fuaom8IZd6azBAgkPDzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DITW2wmKLuw9/vVcMIWX9Pp1Xi3tWc15yWVJ7h+Hhi7WRPV5vJCsS+xP+yP7pjxvkv0KXviIDFRuJypE9ihwNXq1B5UqIbYDM86Asdi5JTbNIcMvvhbPEABW/kqyF8sTY/K6TeOn2+48vCHoIGg5W71M1z6cnWGiusiRd3QItDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWdu1+Sh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F86EC4CED2;
-	Thu, 12 Dec 2024 00:39:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733963958;
-	bh=gnb2mh8CwraORjHmYYAChk8fuaom8IZd6azBAgkPDzk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RWdu1+ShHwcVyIFveYz+7tdi7P/7+lAJVS4FchUBvHDZx9YNuGU0GeHM4/08ZdkiS
-	 67xIr52N52vKlE5sWwVc1rhjSU6CRNGCdoUt3nO344V7Ph6DW8BJa2U833QOrJVEWf
-	 5828VLxI8Ecu1qQXaFlYZdumBWzbVCDiHkyU81wO1qMPkQMyL+mjqPmijfGXlmy1p0
-	 tL8wR59zdi23RqkoRor1vNbmgwETQEL0IVGbyeYYxCSQONRyIkrG3EldkuJbT1+590
-	 7Wsl3B90W//kUQLvPw6+kBMmwQT65lHtEBChnTF9af8trqveC4UoH3pcjuUVK9zyku
-	 NRKV1bY8ulVTw==
-Date: Wed, 11 Dec 2024 16:39:17 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 03/10] objtool: Handle PC relative relocation type
-Message-ID: <20241212003917.vqnqmkrjgfl2cqd6@jpoimboe>
-References: <20241207015915.1159-1-yangtiezhu@loongson.cn>
- <20241207015915.1159-4-yangtiezhu@loongson.cn>
- <20241209203544.axetpzva7vg3hsc5@jpoimboe>
- <9d14c8fa-d61d-bd12-efd7-5a17f4f8cb35@loongson.cn>
- <20241212003526.2kutif7m2svtbp6l@jpoimboe>
+	s=arc-20240116; t=1733964259; c=relaxed/simple;
+	bh=ZFVS4I3U02G+MOb/WaONSbROPbwinmZnTdyZOIJYGQE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Odi79oI2DpHkKP7Q/8j25O4YJMJaJxbT9sBpZVwymVIk0pk/bYCb6q+OYTnCQsrvy57QMn74fOoXc96Tv2VKP5exl5bAF9dV9cD2NtxfGZT+1RlO7EjtNOTXicsRF6paselMfHxAu8XA6+GnMrbaYEii9FMZG/QI/5aOZp4YIMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NxL2NKsa; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-72726ced3f3so71860b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:44:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733964257; x=1734569057; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0GkRvpUyUUxLXXslAyZysQj7PHEnMJz+mUJ4HaWmPQU=;
+        b=NxL2NKsaFnI7LLLaQWsL5BXo632MnXwwcESwnsfPqlpKvuVNEPM7TE2ZynILTdROEQ
+         w+BnkEr/V0MZkvYr5fUyVdhiGgcKWeptTlA4pm8V8xWM1URGV31Gfh2DWt+mN/oDI0oQ
+         LJdhhYYEIfkCTPYfphv2T00YfkYcKW3ehLOwlBT7OCVYIRuQZIjtQiXp108o9alZ0STQ
+         jdjeo2QlGKQL67dXKRh+oHHRaQpPOPK0yfLx8mfHXBWC0UwfSIZsvQh1WAXPtXSxvt5s
+         +NxNpstKZX4YJqMp2B2tLZhRqoJx/ZOSNBMARE9cYX1rHp9YuzWTgbYxu/MSUDvCdsbN
+         xrvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733964257; x=1734569057;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0GkRvpUyUUxLXXslAyZysQj7PHEnMJz+mUJ4HaWmPQU=;
+        b=vAZS8N/84zikIQkS/tn+HZVbKzdjiAqaiqmeqspwyaq8zdV4upCET2wCIHF5yd8BF0
+         ruqyBAqqoG8dFmdPJW1uWaU7Z6ARzB1aJ4LcshrRYnOBOkOJ9F8kdn95v7q/qomsAtO+
+         jaRN1B0xBNPMKybiT3gQTP6exKBdxI0AuLDCYLVQMwOq9l3yaJxsY8qzn52Mzx3y3vvT
+         55UoNwZn9rxE+qr/l4oFkWskDX0KewGVlVzurj4tq7DtetqH5gotvfAjx4n5Ev69qcme
+         n0v/2pY0cuCFYlwrT58vQhzI9G7RlNndm5qU6Y87K0A5kTkGLK+mJvjCqwfDIdCyTr2y
+         AkHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSDhwh54Oo/GLE18rhNKmj3Pf17mIULjpxdh2J2YcHghfLMVHrJxwl0HCvTd/I6KnXxkM8DIlH6ju93E4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCPk5iRX6vgzl8gHwO3Su8EfOBEVPuMqiR297aJXGl6b3d4O5W
+	LZwXqh6i3qocqFn1nFkM5JJsI7dxqm4R866Z+x5REQaTXQdAb/WSfDzoODbr7erEg8Jq/801BIS
+	o8Q==
+X-Google-Smtp-Source: AGHT+IGLrPsupm3n9RQUU7cbKc9unNn4H+/lMc4HrwrVEhDZfESFsJ247bMXfY2t5iDDz2zu6UJGqgtdBP4=
+X-Received: from pfaw15.prod.google.com ([2002:a05:6a00:ab8f:b0:725:d24b:1b95])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2394:b0:725:1de3:1c4a
+ with SMTP id d2e1a72fcca58-728fa9b8597mr1999672b3a.3.1733964257283; Wed, 11
+ Dec 2024 16:44:17 -0800 (PST)
+Date: Wed, 11 Dec 2024 16:44:16 -0800
+In-Reply-To: <20241211193706.469817-2-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241212003526.2kutif7m2svtbp6l@jpoimboe>
+Mime-Version: 1.0
+References: <20241211193706.469817-1-mlevitsk@redhat.com> <20241211193706.469817-2-mlevitsk@redhat.com>
+Message-ID: <Z1ox4OHNT6kkincQ@google.com>
+Subject: Re: [PATCH 1/4] KVM: VMX: read the PML log in the same order as it
+ was written
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 04:35:27PM -0800, Josh Poimboeuf wrote:
-> On Wed, Dec 11, 2024 at 11:16:33AM +0800, Tiezhu Yang wrote:
-> > When compiling on LoongArch, there are some PC relative relocation types
-> > for rodata, it needs to calculate the symbol offset with "S + A - PC" in
-> > this case according to the spec of "ELF for the LoongArch Architecture",
-> > the "PC" is the index of each jump table which is equal with the value
-> > of reloc_offset(reloc) - reloc_offset(table).
-> > 
-> > I will add the above description to the commit message to make it clear.
-> 
-> I understand how PC-relative addressing works.
-> 
-> The oddity here is that "PC" is the jump table's base address rather
-> than the entry address.  That has nothing to do with the ELF spec or
-> even how R_LARCH_32_PCREL is implemented.  Rather it seems to be a quirk
-> related to how loongarch jump table code expects the entries to be.
-> 
-> So the arch_adjust_offset() name seems wrong, as this is specific to
-> the jump table implementation, rather than relocs in general.
-> 
-> Instead call it arch_jump_table_sym_offset()?
+On Wed, Dec 11, 2024, Maxim Levitsky wrote:
+> X86 spec specifies that the CPU writes to the PML log 'backwards'
 
-BTW, do both GCC and Clang have this same behavior for loongarch?
+SDM, because this is Intel specific.
 
--- 
-Josh
+> or in other words, it first writes entry 511, then entry 510 and so on,
+> until it writes entry 0, after which the 'PML log full' VM exit happens.
+>=20
+> I also confirmed on the bare metal that the CPU indeed writes the entries
+> in this order.
+>=20
+> KVM on the other hand, reads the entries in the opposite order, from the
+> last written entry and towards entry 511 and dumps them in this order to
+> the dirty ring.
+>=20
+> Usually this doesn't matter, except for one complex nesting case:
+>=20
+> KVM reties the instructions that cause MMU faults.
+> This might cause an emulated PML log entry to be visible to L1's hypervis=
+or
+> before the actual memory write was committed.
+>=20
+> This happens when the L0 MMU fault is followed directly by the VM exit to
+> L1, for example due to a pending L1 interrupt or due to the L1's 'PML log=
+ full'
+> event.
+
+Hmm, this an L0 bug.  Exiting to L1 to deliver a pending IRQ in the middle =
+of an
+instruction is a blatant architectural violation.  As discussed in the RSM =
+=3D>
+SHUTDOWN thread[*], fixing this would require adding a flag to note that th=
+e vCPU
+needs to enter the guest before generating an exit to L1.
+
+Oof.  It's probably worse than that.  For this case, KVM would need to ensu=
+re the
+original instruction *completed*.  That would get really, really ugly.  And=
+ for
+something like VSCATTER, where each write can be completed independently, t=
+rying
+to do the right thing for PML would be absurdly complex.
+
+I'm not opposed to fudging around processing the PML log in the "correct" o=
+rder,
+because irrespective of this bug, populating the dirty ring using order in =
+which
+accesses occurred is probably a good idea.
+
+But, I can't help but wonder why KVM bothers emulating PML.  I can apprecia=
+te
+that avoiding exits to L1 would be beneficial, but what use case actually c=
+ares
+about dirty logging performance in L1?
+
+[*] https://lore.kernel.org/all/ZcY_GbqcFXH2pR5E@google.com
+
+> This problem doesn't have a noticeable real-world impact because this
+> write retry is not much different from the guest writing to the same page
+> multiple times, which is also not reflected in the dirty log. The users o=
+f
+> the dirty logging only rely on correct reporting of the clean pages, or
+> in other words they assume that if a page is clean, then no writes were
+> committed to it since the moment it was marked clean.
+>=20
+> However KVM has a kvm_dirty_log_test selftest, a test that tests both
+> the clean and the dirty pages vs the memory contents, and can fail if it
+> detects a dirty page which has an old value at the offset 0 which the tes=
+t
+> writes.
+>=20
+> To avoid failure, the test has a workaround for this specific problem:
+>=20
+> The test skips checking memory that belongs to the last dirty ring entry,
+> which it has seen, relying on the fact that as long as memory writes are
+> committed in-order, only the last entry can belong to a not yet committed
+> memory write.
+>=20
+> However, since L1's KVM is reading the PML log in the opposite direction
+> that L0 wrote it, the last dirty ring entry often will be not the last
+> entry written by the L0.
+>=20
+> To fix this, switch the order in which KVM reads the PML log.
+>=20
+> Note that this issue is not present on the bare metal, because on the
+> bare metal, an update of the A/D bits of a present entry, PML logging and
+> the actual memory write are all done by the CPU without any hypervisor
+> intervention and pending interrupt evaluation, thus once a PML log and/or
+> vCPU kick happens, all memory writes that are in the PML log are
+> committed to memory.
+>=20
+> The only exception to this rule is when the guest hits a not present EPT
+> entry, in which case KVM first reads (backward) the PML log, dumps it to
+> the dirty ring, and *then* sets up a SPTE entry with A/D bits set, and lo=
+gs
+> this to the dirty ring, thus making the entry be the last one in the
+> dirty ring.
+>=20
+> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 32 +++++++++++++++++++++-----------
+>  arch/x86/kvm/vmx/vmx.h |  1 +
+>  2 files changed, 22 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 0f008f5ef6f0..6fb946b58a75 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -6211,31 +6211,41 @@ static void vmx_flush_pml_buffer(struct kvm_vcpu =
+*vcpu)
+>  {
+>  	struct vcpu_vmx *vmx =3D to_vmx(vcpu);
+>  	u64 *pml_buf;
+> -	u16 pml_idx;
+> +	u16 pml_idx, pml_last_written_entry;
+> +	int i;
+> =20
+>  	pml_idx =3D vmcs_read16(GUEST_PML_INDEX);
+> =20
+>  	/* Do nothing if PML buffer is empty */
+> -	if (pml_idx =3D=3D (PML_ENTITY_NUM - 1))
+> +	if (pml_idx =3D=3D PML_LAST_ENTRY)
+
+Heh, this is mildly confusing, in that the first entry filled is actually c=
+alled
+the "last" entry by KVM.  And then below, pml_list_written_entry could poin=
+t at
+the first entry.
+
+The best idea I can come up with is PML_HEAD_INDEX and then pml_last_writte=
+n_entry
+becomes pml_tail_index.  It's not a circular buffer, but I think/hope head/=
+tail
+terminology would be intuitive for most readers.
+
+E.g. the for-loop becomes:
+
+	for (i =3D PML_HEAD_INDEX; i >=3D pml_tail_index; i--)
+		u64 gpa;
+
+		gpa =3D pml_buf[i];
+		WARN_ON(gpa & (PAGE_SIZE - 1));
+		kvm_vcpu_mark_page_dirty(vcpu, gpa >> PAGE_SHIFT);
+	}
+
+>  		return;
+> +	/*
+> +	 * PML index always points to the next available PML buffer entity
+> +	 * unless PML log has just overflowed, in which case PML index will be
+
+If you don't have a strong preference, I vote to do s/entity/entry and then=
+ rename
+PML_ENTITY_NUM =3D> NR_PML_ENTRIES (or maybe PML_LOG_NR_ENTRIES?).  I find =
+the
+existing "entity" terminology weird and unhelpful, and arguably wrong.
+
+  entity - a thing with distinct and independent existence.
+
+The things being consumed are entries in a buffer.
+
+> +	 * 0xFFFF.
+> +	 */
+> +	pml_last_written_entry =3D (pml_idx >=3D PML_ENTITY_NUM) ? 0 : pml_idx =
++ 1;
+> =20
+> -	/* PML index always points to next available PML buffer entity */
+> -	if (pml_idx >=3D PML_ENTITY_NUM)
+> -		pml_idx =3D 0;
+> -	else
+> -		pml_idx++;
+> -
+> +	/*
+> +	 * PML log is written backwards: the CPU first writes the entity 511
+> +	 * then the entity 510, and so on, until it writes the entity 0 at whic=
+h
+> +	 * point the PML log full VM exit happens and the logging stops.
+
+This is technically wrong.  The PML Full exit only occurs on the next write=
+.
+E.g. KVM could observe GUEST_PML_INDEX =3D=3D -1 without ever seeing a PML =
+Full exit.
+
+  If the PML index is not in the range 0=E2=80=93511, there is a page-modif=
+ication log-full
+  event and a VM exit occurs. In this case, the accessed or dirty flag is n=
+ot set,
+  and the guest-physical access that triggered the event does not occur.
 
