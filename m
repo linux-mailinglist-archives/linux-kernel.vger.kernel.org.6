@@ -1,142 +1,176 @@
-Return-Path: <linux-kernel+bounces-443082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFE59EE6D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:34:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C53589EE6D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71E96283561
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:34:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF72833D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0042C21325A;
-	Thu, 12 Dec 2024 12:34:19 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE244212B03;
+	Thu, 12 Dec 2024 12:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="YjfUP5rj"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D25211493;
-	Thu, 12 Dec 2024 12:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7CA204F97;
+	Thu, 12 Dec 2024 12:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734006858; cv=none; b=gvIe1MK0iEqx46V+hRsPLSIyy4/shqTWBPUUz5I8zGLt8g6KohIcNVSDdwieLOqiD/wNk1STDxQNdgbLHbPa2gUMqtj5fi/URSJtnuMMSTxXqTw3IGJeKihw6F/2GBeOA3RldXNcC5GeBdN7UCKH6cSSFyvc3vCreMGWhPfrvEw=
+	t=1734007017; cv=none; b=Ays8ByEdm4QfKZqDS+IE9VGCk7X7x8HgC659WglLzAUU3P7batFobzdlzYef5cdJ58n8zl830yD1mw6GyoZm18KS61Bwz7zv12ahhWd+v9GSAWdJxkYF1MM/ub1XtApbmYWzHyfqPxQULPTfXp71xVSZo61qRoZUg48i1SlddcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734006858; c=relaxed/simple;
-	bh=kuGc7LUr4NoH6Qx7IXS8GWBwCDQd5WS+8hnrdDTH1fs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=H4Ni7aLhl4yWFIhKKlhoTm/BhlDngZUUWm3qZTV9T3zzwfMR5sa856/hl6KLbofj2YRZorrkvskBIwpyD8UBraP40lssyWT31T2mz+CEelZCYmLY/A8rp20Tj4zg0FyE1KIVc7s1vH30bnpe+SfI2N4+rwAEJyGJHyAU7uytm8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y8Bj93ZYJz4f3lDh;
-	Thu, 12 Dec 2024 20:33:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C770B1A0359;
-	Thu, 12 Dec 2024 20:34:09 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP4 (Coremail) with SMTP id gCh0CgDHoYVB2FpnoESPEQ--.40606S2;
-	Thu, 12 Dec 2024 20:34:09 +0800 (CST)
-Subject: Re: [PATCH 2/2] jbd2: flush filesystem device before updating tail
- sequence
-To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
- <20241203014407.805916-3-yi.zhang@huaweicloud.com>
- <ca1c680f-f3f4-40b5-13af-f8ee49d99dae@huaweicloud.com>
- <ab380b0c-9a9b-4f16-a427-7fef8a2ef212@huaweicloud.com>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <027261aa-9d57-861a-fd78-0acd2d7836ec@huaweicloud.com>
-Date: Thu, 12 Dec 2024 20:34:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1734007017; c=relaxed/simple;
+	bh=LtIjPFgjVvhqbdwiOezw3/j2sS9WiRG1pdS1TFKBPOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYgP5JPNYInJmyw1GR9QKwVVUbvci4lrLD2snNABvVlWDq8XdNPghHLy5xhxJQY9OFBGTQqTjCAaEoC1HnaTR0/Gt0J9iEJn8qGK7H6hnnDOV7cJIMqI07KtY1VVuUh3xPRIqdJTv2Rt4co6MdMNJC9kqX+CovioHbUGCTLvdjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=YjfUP5rj; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0nHCYoVWqqYxpX4iR02WX2GCmdNTEeA3DktgXY8H7N0=; b=YjfUP5rjMJeEW+GNk/qi5WZRFK
+	4+Tmlh1B/VKtNgbhd40I1QpkVKUMfFMmLPQqLQkPjeTyTfts+ulMqa8pZHNpzk/bzn428DosHd0AG
+	HTtK+BQradfNtkwVOF315YU6wjrNIStNPK66PHW2i7zFpjuZgAycXO05PjDOwkJ7J0gXpFGZauHEK
+	OPvGWgMTciqkTl+0HFx0ovsJF19k4T5UhlxnYM2NuL87RIKn46cg662R3CPbvw+l0G5tJlLRjFaeF
+	5c01fmBPUn3E6wNLkXUWsXEGj0OTcWDJsPN79MCdyEhaR//xX1/HyCGkR+lPsxX/yv2kxtoBMY2B2
+	KUpd0o3w==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1tLiQr-00AOjU-RW;
+	Thu, 12 Dec 2024 13:36:41 +0100
+Date: Thu, 12 Dec 2024 13:36:37 +0100
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nick Terrell <terrelln@fb.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: deb-pkg: Do request initrd for user-mode-linux
+Message-ID: <20241212-rational-muskox-of-abundance-e9aab3@lindesnes>
+References: <20241212-kbuild-deb-pkg-no-initrd-for-um-v1-1-23243b5c7093@fjasle.eu>
+ <CAK7LNAT6pNpnytGpzf0NTS+VbohJNF-CCj6dUGW=xHVdkOT74g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ab380b0c-9a9b-4f16-a427-7fef8a2ef212@huaweicloud.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDHoYVB2FpnoESPEQ--.40606S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4fGrWfKw48JFyxXry8Grg_yoW8tF4fpF
-	y8Ca4jkrWkZF4UCFn7tF4kXFW2qrWqyFyUWFyDurnagw4qqwn3KFW7trySgF1qyr1S9w48
-	Xr1Igas2g34jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZYFZUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAT6pNpnytGpzf0NTS+VbohJNF-CCj6dUGW=xHVdkOT74g@mail.gmail.com>
 
-
-
-on 12/3/2024 3:24 PM, Zhang Yi wrote:
-> On 2024/12/3 14:53, Kemeng Shi wrote:
->>
->>
->> on 12/3/2024 9:44 AM, Zhang Yi wrote:
->>> From: Zhang Yi <yi.zhang@huawei.com>
->>>
->>> When committing transaction in jbd2_journal_commit_transaction(), the
->>> disk caches for the filesystem device should be flushed before updating
->>> the journal tail sequence. However, this step is missed if the journal
->>> is not located on the filesystem device. As a result, the filesystem may
->>> become inconsistent following a power failure or system crash. Fix it by
->>> ensuring that the filesystem device is flushed appropriately.
->>>
->>> Fixes: 3339578f0578 ("jbd2: cleanup journal tail after transaction commit")
->>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->>> ---
->>>  fs/jbd2/commit.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
->>> index 4305a1ac808a..f95cf272a1b5 100644
->>> --- a/fs/jbd2/commit.c
->>> +++ b/fs/jbd2/commit.c
->>> @@ -776,9 +776,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->>>  	/*
->>>  	 * If the journal is not located on the file system device,
->>>  	 * then we must flush the file system device before we issue
->>> -	 * the commit record
->>> +	 * the commit record and update the journal tail sequence.
->>>  	 */
->>> -	if (commit_transaction->t_need_data_flush &&
->>> +	if ((commit_transaction->t_need_data_flush || update_tail) &&
->>>  	    (journal->j_fs_dev != journal->j_dev) &&
->>>  	    (journal->j_flags & JBD2_BARRIER))
->>>  		blkdev_issue_flush(journal->j_fs_dev);
->>>
->> In journal_submit_commit_record(), we will submit commit block with REQ_PREFLUSH
->> which is supposed to ensure disk cache is flushed before writing commit block.
->> So I think the current code is fine.
->> Please correct me if I miss anything.
->>
+On Thu, Dec 12, 2024 at 09:12:58PM +0900, Masahiro Yamada wrote:
+> On Thu, Dec 12, 2024 at 6:25 PM Nicolas Schier <nicolas@fjasle.eu> wrote:
+> >
+> > Do not request initramfs-tools to build an initrd image for
+> > user-mode-linux.
+> >
+> > Building and installing a user-mode-linux Debian package with
+> >
+> >     make bindeb-pkg ARCH=um
+> >     apt install ./user-mode-linux-*.deb
+> >
+> > fails reasonable due to missing kernel config in /boot
+> > (KVER=6.13.0-rc2-00006-g8f2db654f79c):
+> >
+> >     update-initramfs: Generating /usr/bin/initrd.img-${KVER}
+> >     grep: /boot/config-${KVER}: No such file or directory
+> >     W: zstd compression (CONFIG_RD_ZSTD) not supported by kernel, using
+> >      gzip
+> >     grep: /boot/config-${KVER}: No such file or directory
+> >     E: gzip compression (CONFIG_RD_GZIP) not supported by kernel
+> >     update-initramfs: failed for /usr/bin/initrd.img-${KVER} with 1.
+> >     run-parts: /etc/kernel/postinst.d/initramfs-tools exited with return
+> >      code 1
+> >     ...
+> >     dpkg: error processing package user-mode-linux-${KVER} (--configure):
+> >      installed user-mode-linux-${KVER} package post-installation script
+> >      subprocess returned error exit status 1
+> >     Errors were encountered while processing:
+> >      user-mode-linux-${KVER}
+> >     E: Sub-process /usr/bin/dpkg returned an error code (1)
+> >
+> > There is no need to build initrd for user-mode-linux, so stop requesting
+> > it.
+> >
+> > Signed-off-by: Nicolas Schier <nicolas@fjasle.eu>
+> > ---
 > 
-> The commit I/O with REQ_PREFLUSH only flushes 'journal->j_dev', not
-> 'journal->j_fs_dev'. We need to flush journal->j_fs_dev to ensure that all
-> written metadata has been persisted to the filesystem disk, Until then, we
-> cannot update the tail sequence.
-My bad...
-Look good to me. Feel free to add:
-
-Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> I think this change is wrong.
 > 
-> Thanks,
-> Yi.
+> maint scripts do not make sense for user-mode-linux.
+
+yes, sure.  For completeness: The Debian user-mode-linux package has
+maintainter scripts for setting up / tearing down the
+update-alternatives link, but that is probably not needed here.
+
+I am going to send a new patch to install maint scripts only for non-um
+archs.
+
+Kind regards,
+Nicolas
+
+
+
 > 
 > 
+> 
+> 
+> 
+> >  scripts/package/builddeb | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+> > index b497b933901013b1b8b82c2c340a88c9257c6193..d88ee487a1f2cfa3365350abe5b2203f48980d36 100755
+> > --- a/scripts/package/builddeb
+> > +++ b/scripts/package/builddeb
+> > @@ -46,10 +46,12 @@ install_linux_image () {
+> >                 cp System.map "${pdir}/usr/lib/uml/modules/${KERNELRELEASE}/System.map"
+> >                 cp ${KCONFIG_CONFIG} "${pdir}/usr/share/doc/${pname}/config"
+> >                 gzip "${pdir}/usr/share/doc/${pname}/config"
+> > +               initrd_wanted=No
+> >         else
+> >                 mkdir -p "${pdir}/boot"
+> >                 cp System.map "${pdir}/boot/System.map-${KERNELRELEASE}"
+> >                 cp ${KCONFIG_CONFIG} "${pdir}/boot/config-${KERNELRELEASE}"
+> > +               initrd_wanted=$(if_enabled_echo CONFIG_BLK_DEV_INITRD Yes No)
+> >         fi
+> >
+> >         # Not all arches have the same installed path in debian
+> > @@ -82,7 +84,7 @@ install_linux_image () {
+> >                 export DEB_MAINT_PARAMS="\$*"
+> >
+> >                 # Tell initramfs builder whether it's wanted
+> > -               export INITRD=$(if_enabled_echo CONFIG_BLK_DEV_INITRD Yes No)
+> > +               export INITRD=${initrd_wanted}
+> >
+> >                 # run-parts will error out if one of its directory arguments does not
+> >                 # exist, so filter the list of hook directories accordingly.
+> >
+> > ---
+> > base-commit: 8f2db654f79c7fa579c64eda2b5db44553d6e513
+> > change-id: 20241212-kbuild-deb-pkg-no-initrd-for-um-1c7b9ab2f264
+> >
+> > Best regards,
+> > --
+> > Nicolas
+> >
+> 
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
+> 
 
+-- 
+Nicolas
 
