@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-442943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A949EE45F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:41:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934CC9EE460
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:42:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76CDC188A1FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B1D11888A59
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7A821146F;
-	Thu, 12 Dec 2024 10:41:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108EE10F2;
-	Thu, 12 Dec 2024 10:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000BB211273;
+	Thu, 12 Dec 2024 10:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gu4Su+l8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FEC10F2
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734000060; cv=none; b=T0Fjqi5j1iDMyl0Qf4Y3PCyKVf9CafenszS66FaErqy9Di0HWwjtoTAjAMznLRUSmz0B4krUzGa3/m2yYQody1EE/CUA2o3JOt7mS0tD7vwANMmBwSYSlTI8jm/5yzeHvM4kPoEps+6vmNBWwjE4Wtz9+pELooB8h5bq7Vebs/M=
+	t=1734000128; cv=none; b=hZyCsEYxY0ETSRgspEqzpJL7eeI9mSjHgjxpczhgrmQj66MeH1JnDicakiBj4N+tsazjkSaVnaw2oZMfUNwShKU3JZ0/Lgraq3cjOcZ/lf2ctc81U0uXSJhOpIwq99Fp8b3K+1zYa2bIx+SMoKHWd34av+/PuDw/QpXy+xCEVVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734000060; c=relaxed/simple;
-	bh=vGlExwmxZcW3eZ2MdG0oaOnLiSi5C480ajsfsL6G6zg=;
+	s=arc-20240116; t=1734000128; c=relaxed/simple;
+	bh=gv1Fm8Ouv/HCwT45oPjIs6p3Ag/Zg57NJsRNVma7Tw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hR/2nhsUxnwyS2TFAhmWNHG1JRqFtaqOYWfLm5oSVz0XgEJlj8MJU8N92cZnvXa3cVpkMbcqgHL9IC1e5vQpOIavTAiNRuu1bzc/NbHWpxlWq7+VFBOePc4NaOVBLJIAet7A8jhZST1pW6YsnfJNcCShLkf8uolVuWKgcWSIXHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79EF9169E;
-	Thu, 12 Dec 2024 02:41:25 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77F7F3F58B;
-	Thu, 12 Dec 2024 02:40:54 -0800 (PST)
-Date: Thu, 12 Dec 2024 10:40:46 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Pavan Kondeti <quic_pkondeti@quicinc.com>,
-	Akhil P Oommen <quic_akhilpo@quicinc.com>,
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Elliot Berman <quic_eberman@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
-Message-ID: <Z1q9rnzOlB9J5dXb@J2N7QTR9R3>
-References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
- <87ed2fs03w.wl-maz@kernel.org>
- <92cee905-a505-4ce9-9bbc-6fba4cea1d80@quicinc.com>
- <86sequsdtp.wl-maz@kernel.org>
- <c197264b-3791-493a-b717-3dfd844de922@quicinc.com>
- <87bjxhs2t7.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CnUBgCWBv0nu+KjbLc7qs1eVWptpMQFaD6YscWO2ichsJ9ZzRC5MUjBnikPYWdhoJKXPBosOscJgYf29pV7KXLz8Nr8fOAh7XDrFfCbDTjJyti0kEiVcWGtFod+BE5A/VS5pxdURq/KNZMLDPiL1EulHYKAX9DADqj5SIQQO3tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gu4Su+l8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 64A9440E02BA;
+	Thu, 12 Dec 2024 10:42:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id hwshfdfoRq-F; Thu, 12 Dec 2024 10:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1734000119; bh=/iRvr1QEfKcq7AaYI6rQz2llgJwnhnXTb0AvUQMtk14=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gu4Su+l8KuVVj2/598vXscyXyI4OUguzjM24oaD9rbj8FGWppLXEcZ3QQ/1zybH3i
+	 R7IOoBQDvD/AOH//nZoeQ9plMm5AurE/GvJwdheGlB9h72dwL6JS1/E+OIs1GStWXA
+	 z24MUSeec02LrYZZY4gezVHgzbjVkmxIA8Oeq5lzAhBCcazPftkgw5gebvNkMExvJo
+	 TdLHfyb+9F0+M8iM7bKVrrQVcLhLA7fGGSqnvXd6FBQ5vINSZQHIc4LkjkNB+cO7k6
+	 LQKDnFJLtM7J8mWipwDdVPq5bv1P8+WwTriNrF+zXgAT73tZdS3fDM3mPYNXyL8Poc
+	 W+VsBmbcYMRdbABJJenWZaOr6Tt/9HsVe1kgqzWfCNsEi0wNwJxJmeAv7Yy1axJPyg
+	 g3AHfCvrYJU1oO8Pnw2GbXZUJBxZjzbDuOocd+i/K2Kv/+/CB4je0teJANvlAWRTPg
+	 4CucBPDzdvvWyWBoQ0+t4E5DGpfYhOrtkhdXs/JRvp/KKB6Z4OyQVn7dj6JPzFET/f
+	 dne5vizDszrCZB30r+DEFeJx7445OspiMvHGGuOl5vyZGH8qMhxCjTWd/0xQZ7botZ
+	 rbN1PFPqCn8r1A21RnsaPBAXa+13WQfBhQa362rB6H+UE3XvEwKPikHmp6fpoHZErV
+	 X4dh78xG1XL/tkNRjWD1wGGI=
+Received: from zn.tnic (p200300Ea971F93ce329C23FFfeA6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:93ce:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 486FB40E0163;
+	Thu, 12 Dec 2024 10:41:49 +0000 (UTC)
+Date: Thu, 12 Dec 2024 11:41:42 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: "Kaplan, David" <David.Kaplan@amd.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 11/35] x86/bugs: Restructure spectre_v1 mitigation
+Message-ID: <20241212104142.GFZ1q95s5J62bjZdq_@fat_crate.local>
+References: <20241105215455.359471-1-david.kaplan@amd.com>
+ <20241105215455.359471-12-david.kaplan@amd.com>
+ <20241114064001.v6ogsiaptrh6oixc@desk>
+ <LV3PR12MB9265747DB95F1F54E826A971945B2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <LV3PR12MB92654B44C7BDB16BA140D342945B2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20241114161958.GIZzYjLgooyYCECCl0@fat_crate.local>
+ <LV3PR12MB92653BF71C474E72CB2C81DB945B2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20241114233339.ouzvp7pjvlgrnezs@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87bjxhs2t7.wl-maz@kernel.org>
+In-Reply-To: <20241114233339.ouzvp7pjvlgrnezs@jpoimboe>
 
-On Thu, Dec 12, 2024 at 08:50:12AM +0000, Marc Zyngier wrote:
-> On Thu, 12 Dec 2024 05:31:00 +0000,
-> Pavan Kondeti <quic_pkondeti@quicinc.com> wrote:
+On Thu, Nov 14, 2024 at 03:33:39PM -0800, Josh Poimboeuf wrote:
+> On Thu, Nov 14, 2024 at 04:45:37PM +0000, Kaplan, David wrote:
+> > 1) the CPU is not vulnerable (it doesn't have the bug)
+> > 2) the CPU is vulnerable but mitigations=off was passed
+> > 3) the CPU is vulnerable but the bug-specific mitigation was disabled (e.g., retbleed=off)
+> > 4) the CPU is vulnerable, mitigations were not disabled, but no mitigation is available (perhaps it wasn't compiled in)
 > > 
-> > On Wed, Dec 11, 2024 at 10:40:02AM +0000, Marc Zyngier wrote:
-> > > On Wed, 11 Dec 2024 00:37:34 +0000,
-> > > Pavan Kondeti <quic_pkondeti@quicinc.com> wrote:
-> > > > 
-> > > > On Tue, Dec 10, 2024 at 09:24:03PM +0000, Marc Zyngier wrote:
-> > > > > > +static int a6xx_switch_secure_mode(struct msm_gpu *gpu)
-> > > > > > +{
-> > > > > > +	int ret;
-> > > > > > +
-> > > > > > +#ifdef CONFIG_ARM64
-> > > > > > +	/*
-> > > > > > +	 * We can access SECVID_TRUST_CNTL register when kernel is booted in EL2 mode. So, use it
-> > > > > > +	 * to switch the secure mode to avoid the dependency on zap shader.
-> > > > > > +	 */
-> > > > > > +	if (is_kernel_in_hyp_mode())
-> > > > > > +		goto direct_switch;
-> > > > > 
-> > > > > No, please. To check whether you are *booted* at EL2, you need to
-> > > > > check for is_hyp_available(). Whether the kernel runs at EL1 or EL2 is
-> > > > > none of the driver's business, really. This is still absolutely
-> > > > > disgusting from an abstraction perspective, but I guess we don't have
-> > > > > much choice here.
-> > > > > 
-> > > > 
-> > > > Thanks Marc. Any suggestions on how we can make is_hyp_mode_available()
-> > > > available for modules? Do you prefer exporting
-> > > > kvm_protected_mode_initialized and __boot_cpu_mode symbols directly or
-> > > > try something like [1]?
-> > > 
-> > > Ideally, neither. These were bad ideas nine years ago, and they still
-> > > are. The least ugly hack I can come up with is the patch below, and
-> > > you'd write something like:
-> > > 
-> > > 	if (cpus_have_cap(ARM64_HAS_EL2_OWNERSHIP))
-> > > 		blah();
-> > > 
-> > > This is obviously completely untested.
-> > > 
+> > We absolutely should not print a message in case #1, because the CPU isn't vulnerable.  And we should probably always print a message in case 4 to warn the user.  Question is really about cases 2 and 3.
 > > 
-> > I have tested your patch. It works as intended. Thanks Marc.
+> > Today, some bugs print a message saying the CPU is vulnerable in case 2 and 3 (e.g., gds)
+> > Some bugs don't print a message in case 2, but do in case 3 (e.g., spectre_v1)
+> > Some don't print a message in case 2 or 3 (e.g., retbleed)
+> > 
+> > Case 4 is things like where you need SRSO mitigation but CONFIG_MITIGATION_SRSO was disabled.
+> > 
+> > So which do we want?  It would be nice to be consistent and I can do that while reworking these functions.
+> > 
+> > If we're going to argue that command line options mean the user knows
+> > what they're doing, that's probably an argument for saying do not
+> > print anything in cases 2 and 3 (since both relate to explicit command
+> > line options).  I'm not sure if it really makes sense to differentiate
+> > these cases.
 > 
-> Note that you will probably get some push-back from the arm64
-> maintainers on this front, because this is a fairly incomplete (and
-> fragile) solution.
+> IMO, mitigations=off shouldn't show any bug-specific messages, as user
+> doesn't care about the specifics, they just want everything off.
 > 
-> It would be much better if the discriminant came from the device tree.
-> After all, the hypervisor is fscking-up^W^Wchanging the programming
-> model of the GPU, and that should be reflected in the DT. Because for
-> all intent and purposes, this is not the same hardware anymore.
-
-FWIW I agree 100%, this should be described in DT.
-
-The cpucap doesn't describe the actual property we care about, and it
-cannot in general (e.g. for nested virt). I would strongly prefer to not
-have that as it's setting ourselves up for failure.
-
-> The GPU isn't the only device that needs fixing in that way: the
-> SMMUv3 needs to be exposed to the OS, and the PCIe ports need to be
-> linked to it and the ITS. So at the end of the day, detecting EL2 only
-> serves a limited purpose. You need to handle these cases, and might as
-> well put the GPU in the same bag.
+> That said, they still might want to see some kind of "all mitigations
+> disabled" message to indicate the option actually worked.
 > 
-> Which means that you'd either have a pair of static DTs (one that
-> exposes the brokenness of the firmware, and one that doesn't), or you
-> go the dtbhack route to compose the DT at boot time.
+> For similar reasons I'd argue the bug-specific toggle should show a
+> bug-specific vulnerable message.
 
-Liekwise, agreed on all of this.
+I guess that makes sense, and the bikeshed is already painted. :)
 
-Mark.
+I mean, there's always
+
+$ grep -r . /sys/devices/system/cpu/vulnerabilities/
+
+so it's not like we don't have that info anywhere...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
