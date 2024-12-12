@@ -1,211 +1,234 @@
-Return-Path: <linux-kernel+bounces-442622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A419EDF85
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D739EDF86
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9B5282F1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:36:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33DB282C32
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5295204C24;
-	Thu, 12 Dec 2024 06:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57120204C28;
+	Thu, 12 Dec 2024 06:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DQJSrYP2"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BD818787A;
-	Thu, 12 Dec 2024 06:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733985409; cv=none; b=g+6UxYP/p/KxM9RQs5G+C4POx7VHZNJWqFbP7r/4dVbiZgvFyL2iBS41qnIdoc/QaU/whzSuyTVL0uyvCASoZnba6yLI752nuZgFeT7BXzER1slRh/1DGQV6wsAvp3YG6VItyMsdDUjEsiQljsHTqXrH+D34x9Nc95QIj6hVL0E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733985409; c=relaxed/simple;
-	bh=lDxsjLZH7C0fyjI6xqhkI8A/ySf+QdmKlDuuqR0Qn10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qd4Pr9v47aSzHE+wLS0/QPiIIACyG8feTP07d8AxIUViO7qDrbGoQTyJ8fYJtW2equAI+BN07rCi++5ZpBgX5mUuyNzIh+UKUkEM21ZmeERD3BUnWBoCO5VumEsHQEOp9dzabUCWBpD772Tep52VBu01SL3FhAv6FlbESsxDFPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DQJSrYP2; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=fbgwpTLq4/KmJQlk9CjECQduA9917iRpi7SxM7z0tvU=;
-	b=DQJSrYP2zEpsiykAp2ADB9ArhOBM1SDAxMRsA4bh1mcWvt4s2LK9ed11/Numt2
-	6eY1+qW/bfH6sDCgv1b+0IML0yTptu9Sm5ua428aejweR1on/TzU4Vq9AaafAOKc
-	rNWdna4sQv06KHb5N8ip4UdtOqfcIbPOcHs5yULQNLQLg=
-Received: from iZ0xi1olgj2q723wq4k6skZ (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3L9LIg1pn8h06AA--.5157S2;
-	Thu, 12 Dec 2024 14:33:51 +0800 (CST)
-Date: Thu, 12 Dec 2024 14:33:43 +0800
-From: Jiayuan Chen <mrpre@163.com>
-To: John Fastabend <john.fastabend@gmail.com>
-Cc: bpf@vger.kernel.org, martin.lau@linux.dev, ast@kernel.org, 
-	edumazet@google.com, jakub@cloudflare.com, davem@davemloft.net, dsahern@kernel.org, 
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org, song@kernel.org, 
-	andrii@kernel.org, mhal@rbox.co, yonghong.song@linux.dev, daniel@iogearbox.net, 
-	xiyou.wangcong@gmail.com, horms@kernel.org
-Subject: Re: [PATCH bpf v2 1/2] bpf: fix wrong copied_seq calculation
-Message-ID: <f2pur5raimm5y3phmtwubf6yf3sniphwgql4c4k7md25lxcehm@3qwyp4zibnrd>
-References: <20241209152740.281125-1-mrpre@163.com>
- <20241209152740.281125-2-mrpre@163.com>
- <6758f4ce604d5_4e1720871@john.notmuch>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jr46Ni3q"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2083.outbound.protection.outlook.com [40.107.237.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE9954723;
+	Thu, 12 Dec 2024 06:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733985444; cv=fail; b=KlgwEnQUy7qgjH8axFEOZWbiUBGGI/xJe4Y9klIqYqiSLMZLxm5X5qDw8/bBnNJsv6hjLfFHpr1/rnEfq3MzI0NHCvvqYDUU/cmd4o2B0XNc8B3AzXVMFduJmU7X5yhsQ+RdpBpTj2jkysTzFEpFvWpcqxlk8uqSlZOgRlGgkMs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733985444; c=relaxed/simple;
+	bh=fymQH/nn7TE9VjrRkId8QaDYe721FUROTuVGbstLQTg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rvMArGr/1aOoynU2f8E7WZCpWeSf+D9k0tL1G2V4qu9CQ7dREzF6g/TKtVTdTqYSZt9bUbJhO28kqzGoh9/Eguk7KLJfhSmpAG864d2go2QQCxCXajD1bu+rgMU7TjnEwC4F4sc0K6z6Bks6OH0Aa1qOK2Nl0rZpLNc9hY/5PKo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jr46Ni3q; arc=fail smtp.client-ip=40.107.237.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t+ro+gUn87qn6XIOuBsa+q+KQ73P3biGHh65/CF0IiA8xcUN56ctIGKowqBKEBgUfu4YL5PbGducoC98rMaMToPYZZekoZ8kd3OknCFmXCvRoCZcjqdy26vKzwtar/YfgA5rMCIQogbS3Pvax9uKpL1C1pcXuTv2ZzbhhXnCywxmddFBs4tZPHQbZcgLRbM0weTiEQ5INkSg+1NAwRCTH5iG0/KsJx0C89Rhp5Fvs82vPBcB3QZMJnuLmm+EB4cD0n0QKR6X7/sXtYoDcJMu2vsT1HUtqBn8JF8CE21qqRh50rxSieRmLlyO3eXKpv6wd/HN4SockNNxXQGgG0KeQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XavV+GJTNnCd4r5clnnF87A+w66Y3anOR8aX8ksq4fk=;
+ b=mm3vn+TXnsCFzWRpFUHvG7+Y9difOD7rd+UmcMYHOyfgalMq9b9dGvwds6qvNjATAA6v1sNyjneZLBNrTzNSR5gVNGls1x7o0PRDfoMUDyxaxqTESrGTxOqTa0GJmSYNk14sKF+G6HsRZS/MXklf1WzyU9TjIR73VFxF3aKCYwOo6S1gmAhwthbKIP/gUKG7C66theqVYRB+iOTuO5KL/nmEOs382BHKqMiVzmkkSWtLkls550HCaNLWw4Trt5ULiGf3jAuZSKIm16OmP4mNH1y8Lk5/R7dRP2V2RwDPscebeEkU7DL8SbX8hIPovTOjicotdguzlDZX2qOubfJxdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XavV+GJTNnCd4r5clnnF87A+w66Y3anOR8aX8ksq4fk=;
+ b=jr46Ni3qqWHULxUX7z4YD58XuB2SUs3U+yJQWBJx//bmagHbCiHYusX4Id0xYu1TCB0qlUdRJL7jsvk4s4mPH7MMclyW5fpTq4KPPIKE1ndFp0YSE5SlyasY8RCywgrjGE8evPs0awJms4VrKxJ/gIW8EA+hhf+EfiZEQiM0PeM=
+Received: from CH2PR19CA0004.namprd19.prod.outlook.com (2603:10b6:610:4d::14)
+ by BL3PR12MB6545.namprd12.prod.outlook.com (2603:10b6:208:38c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Thu, 12 Dec
+ 2024 06:37:18 +0000
+Received: from CH1PEPF0000AD7C.namprd04.prod.outlook.com
+ (2603:10b6:610:4d:cafe::cd) by CH2PR19CA0004.outlook.office365.com
+ (2603:10b6:610:4d::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.23 via Frontend Transport; Thu,
+ 12 Dec 2024 06:37:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000AD7C.mail.protection.outlook.com (10.167.244.84) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8251.15 via Frontend Transport; Thu, 12 Dec 2024 06:37:18 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Dec
+ 2024 00:37:17 -0600
+From: Michael Roth <michael.roth@amd.com>
+To: <kvm@vger.kernel.org>
+CC: <linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <jroedel@suse.de>, <thomas.lendacky@amd.com>,
+	<pbonzini@redhat.com>, <seanjc@google.com>, <vbabka@suse.cz>,
+	<amit.shah@amd.com>, <pratikrajesh.sampat@amd.com>, <ashish.kalra@amd.com>,
+	<liam.merwick@oracle.com>, <david@redhat.com>, <vannapurve@google.com>,
+	<ackerleytng@google.com>, <quic_eberman@quicinc.com>
+Subject: [PATCH RFC v1 0/5] KVM: gmem: 2MB THP support and preparedness tracking changes
+Date: Thu, 12 Dec 2024 00:36:30 -0600
+Message-ID: <20241212063635.712877-1-michael.roth@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6758f4ce604d5_4e1720871@john.notmuch>
-X-CM-TRANSID:_____wD3L9LIg1pn8h06AA--.5157S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3XF4xGFyfuF17Kr4xKF4xXrb_yoW7Gw48pF
-	WkCayrKrnrJFyxu3WvyrZFqF1Sg395KFWYyr1rXayayrWqkrna9rykKF4ayFyrGrs8Zr1U
-	Zw4jqrsF9w1DAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uc2-nUUUUU=
-X-CM-SenderInfo: xpus2vi6rwjhhfrp/1tbiWw+zp2dagdk5pgAAs6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7C:EE_|BL3PR12MB6545:EE_
+X-MS-Office365-Filtering-Correlation-Id: a65610ff-84ff-452a-418f-08dd1a776ca5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Vs59m1KOEjlBas8MTOe0s9BtQEUnr8/I9w4gUdX90iusdhBc3jrr+R09iQaM?=
+ =?us-ascii?Q?q6TlvCTa/ciln8wxe6z5W8d8z5Zyug1vg8dag/hpcfUwjMR/GDUtpjg1B07M?=
+ =?us-ascii?Q?aDy1VfslTBeVAUKMlBRh8HnPGrqfKh9OKhfrgqmhS8ZzKIlKcc+tp3WE8giD?=
+ =?us-ascii?Q?UHX79jhWqnLmId0XjeFQJj3nbzV1ARbSHEiNANGeyFRVOXypK7GhOjyEgKhK?=
+ =?us-ascii?Q?H8Zyi/I7FyI5z9qHWZOSh9qt8geGnQwy63CdIN/wv/eTQsyXgC4sAi2NrBUP?=
+ =?us-ascii?Q?4HZjWSez6CmwWMkYPhgQDH8UmrNHWmBVxOmq5k1CsxN0qTgLwleFuGHOL99c?=
+ =?us-ascii?Q?zI5GvXm2b09J/PBYQUh+H/vdqziTYmXPXSZtmIwVKTSo2HPI7ZxKuSABfpvl?=
+ =?us-ascii?Q?m1Kcw+GKc1CnAw7usz3WGgiVPGDV18gClWqa8Vtwk7E/4LMUcXH64jVWAn1s?=
+ =?us-ascii?Q?vyxsO0NYzC5/U8SJcM+veBq8yX2TbAcaSzbZTwlaARmb5JwUA9SX6ti3F9UV?=
+ =?us-ascii?Q?nI/q1E25fP/Hdbqv6HYPtO/WNPEZih6oazGGIkRE+CLPC6tELA3JIwNUq2RU?=
+ =?us-ascii?Q?qQq2vZlDGV1btIW5aASrpl3LQMNW9d3fF/V+B+XlDWe2jk3XjpVUe85U68dL?=
+ =?us-ascii?Q?tSBUS+ris35uRKgc8vdxL1Z1tJNPhtbdF0G5lfLiMYl1aPqzZqej3EAy7koi?=
+ =?us-ascii?Q?hTPkRER7NALflJ+AsLqGhJG8ic8bJ603x0CXnzUNGlSMQUcO8CQE/N02xNmX?=
+ =?us-ascii?Q?mg5FE9n7d6SVIX4icyMj+J7PZH8lfG8XBB3YQqf6gvbmhYM9WlmPaAU2Eu6l?=
+ =?us-ascii?Q?70b1QPu/a76EmrekWeoxACOyIjk/egU632tHFKl0MWKh9QtvNMVmjmBAN827?=
+ =?us-ascii?Q?c2RWCSqd3ek9bMpz7010gGjSikMqmhAV75P9aImOb3gNC0lRuyQuPn+/VEfg?=
+ =?us-ascii?Q?MIy9bz2TfFSSJFu6G3ydKR0SalsX2QctoRF2m13FSfMsweJDSWupw97KyoyZ?=
+ =?us-ascii?Q?y30Q13Y7Vr/iC4APxLlqY6l+hp563ElXr3pbFkfZeL84PmApij9Tp8VL+QzS?=
+ =?us-ascii?Q?8Zi52u8TsVeD/YKjcZPD6OZIFz+zMzF0gE4KvdlTPSJUQ9M6Bmzd8YrQw+Q1?=
+ =?us-ascii?Q?8+pDYomDrHKF+jtUcZw1D4ZSHzwr2sbw3xNxYlpOY1hNQ/4OFKwRYoz/5Rem?=
+ =?us-ascii?Q?OKGRpDQZd6Rdi6KjtLjE58VvYY7TZQIHTa+4c1hbBW+fPkNy/6RTpoupBanY?=
+ =?us-ascii?Q?+LXkZIYI7wWaXvAFBZ8Rs7WN1wCijRpbJuQaZ6RPpBDYtPwmzvPs6h93tZBs?=
+ =?us-ascii?Q?oMYzk2a8XAEPsjHwgfX+H6/lHi9Sp2R+YeiNaPQySvGc5NbN0A2TcjS3AuJF?=
+ =?us-ascii?Q?uXuyyuSuJf+qUIZh3AGNyNDVeXj1amZ8nbElhaqwJU7ZNpQYksVZSvchWqf6?=
+ =?us-ascii?Q?FC78CdttQtXZ+YkXuYaoPCWZLjZVLE0kBWK8g7rNJ1MO51MdonIxxw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 06:37:18.1740
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a65610ff-84ff-452a-418f-08dd1a776ca5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7C.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6545
 
-On Tue, Dec 10, 2024 at 06:11:26PM -0800, John Fastabend wrote:
-> Jiayuan Chen wrote:
-> > 'sk->copied_seq' was updated in the tcp_eat_skb() function when the
-> > action of a BPF program was SK_REDIRECT. For other actions, like SK_PASS,
-> > the update logic for 'sk->copied_seq' was moved to
-> > tcp_bpf_recvmsg_parser() to ensure the accuracy of the 'fionread' feature.
-> > 
-> > It works for a single stream_verdict scenario, as it also modified
-> > 'sk_data_ready->sk_psock_verdict_data_ready->tcp_read_skb'
-> > to remove updating 'sk->copied_seq'.
-> > 
-> > However, for programs where both stream_parser and stream_verdict are
-> > active(strparser purpose), tcp_read_sock() was used instead of
-> > tcp_read_skb() (sk_data_ready->strp_data_ready->tcp_read_sock)
-> > tcp_read_sock() now still update 'sk->copied_seq', leading to duplicated
-> > updates.
-> > 
-> > In summary, for strparser + SK_PASS, copied_seq is redundantly calculated
-> > in both tcp_read_sock() and tcp_bpf_recvmsg_parser().
-> > 
-> > The issue causes incorrect copied_seq calculations, which prevent
-> > correct data reads from the recv() interface in user-land.
-> > 
-> > Modifying tcp_read_sock() or strparser implementation directly is
-> > unreasonable, as it is widely used in other modules.
-> > 
-> > Here, we introduce a method tcp_bpf_read_sock() to replace
-> > 'sk->sk_socket->ops->read_sock' (like 'tls_build_proto()' does in
-> > tls_main.c). Such replacement action was also used in updating
-> > tcp_bpf_prots in tcp_bpf.c, so it's not weird.
-> > (Note that checkpatch.pl may complain missing 'const' qualifier when we
-> > define the bpf-specified 'proto_ops', but we have to do because we need
-> > update it).
-> > 
-> > Also we remove strparser check in tcp_eat_skb() since we implement custom
-> > function tcp_bpf_read_sock() without copied_seq updating.
-> > 
-> > Since strparser currently supports only TCP, it's sufficient for 'ops' to
-> > inherit inet_stream_ops.
-> > 
-> > In strparser's implementation, regardless of partial or full reads,
-> > it completely clones the entire skb, allowing us to unconditionally
-> > free skb in tcp_bpf_read_sock().
-> > 
-> > Fixes: e5c6de5fa025 ("bpf, sockmap: Incorrectly handling copied_seq")
-> > Signed-off-by: Jiayuan Chen <mrpre@163.com>
-> 
-> [...]
-> 
-> > +/* The tcp_bpf_read_sock() is an alternative implementation
-> > + * of tcp_read_sock(), except that it does not update copied_seq.
-> > + */
-> > +static int tcp_bpf_read_sock(struct sock *sk, read_descriptor_t *desc,
-> > +			     sk_read_actor_t recv_actor)
-> > +{
-> > +	struct sk_buff *skb;
-> > +	int copied = 0;
-> > +
-> > +	if (sk->sk_state == TCP_LISTEN)
-> > +		return -ENOTCONN;
-> > +
-> > +	while ((skb = skb_peek(&sk->sk_receive_queue)) != NULL) {
-> > +		u8 tcp_flags;
-> > +		int used;
-> > +
-> > +		WARN_ON_ONCE(!skb_set_owner_sk_safe(skb, sk));
-> > +		tcp_flags = TCP_SKB_CB(skb)->tcp_flags;
-> > +		used = recv_actor(desc, skb, 0, skb->len);
-> 
-> Here the skb is still on the receive_queue how does this work with
-> tcp_try_coalesce()? So I believe you need to unlink before you
-> call the actor which creates a bit of trouble if recv_actor
-> doesn't want the entire skb.  
-> 
-> I think easier is to do similar logic to read_sock and track
-> offset and len? Did I miss something.
+This patchset is also available at:
 
-Thanks to John Fastabend.
+  https://github.com/amdese/linux/commits/snp-prepare-thp-rfc1
 
-Let me explain it.
-Now I only replace the read_sock handler when using strparser.
+and is based on top of Paolo's kvm-coco-queue-2024-11 tag which includes
+a snapshot of his patches[1] to provide tracking of whether or not
+sub-pages of a huge folio need to have kvm_arch_gmem_prepare() hooks issued
+before guest access:
 
-My previous implementation added the replacement of read_sock in
-sk_psock_start_strp() to more explicitly require replacement when using
-strparser, for instance:
-'''skmsg.c
-void sk_psock_start_strp(struct sock *sk, struct sk_psock *psock)
-{
-    ...
-    sk->sk_data_ready = sk_psock_strp_data_ready;
-    /* Replacement */
-    sk->sk_socket->ops->read_sock = tcp_bpf_read_sock;
-}
-'''
+  d55475f23cea KVM: gmem: track preparedness a page at a time
+  64b46ca6cd6d KVM: gmem: limit hole-punching to ranges within the file
+  17df70a5ea65 KVM: gmem: add a complete set of functions to query page preparedness
+  e3449f6841ef KVM: gmem: allocate private data for the gmem inode 
 
-As you can see that it only works for strparser.
-(The current implementation of replacement in tcp_bpf_update_proto()
-achieves the same effect just not as obviously.)
+  [1] https://lore.kernel.org/lkml/20241108155056.332412-1-pbonzini@redhat.com/
 
-So the current implementation of recv_actor() can only be strp_recv(),
-with the call stack as follows:
-'''
-sk_psock_strp_data_ready
-  -> strp_data_ready
-    -> strp_read_sock
-      -> strp_recv
-'''
+This series addresses some of the pending review comments for those patches
+(feel free to squash/rework as-needed), and implements a first real user in
+the form of a reworked version of Sean's original 2MB THP support for gmem.
 
-The implementation of strp_recv() will consume all input skb. Even if it
-reads part of the data, it will clone it, then place it into its own
-queue, expecting the caller to release the skb. I didn't find any
-logic like tcp_try_coalesce() (fix me if i miss something).
+It is still a bit up in the air as to whether or not gmem should support
+THP at all rather than moving straight to 2MB/1GB hugepages in the form of
+something like HugeTLB folios[2] or the lower-level PFN range allocator
+presented by Yu Zhao during the guest_memfd call last week. The main
+arguments against THP, as I understand it, is that THPs will become
+split over time due to hole-punching and rarely have an opportunity to get 
+rebuilt due to lack of memory migration support for current CoCo hypervisor
+implementations like SNP (and adding the migration support to resolve that
+not necessarily resulting in a net-gain performance-wise). The current
+plan for SNP, as discussed during the first guest_memfd call, is to
+implement something similar to 2MB HugeTLB, and disallow hole-punching
+at sub-2MB granularity.
 
-The record of the 'offset' is stored within its own context(strparser/_strp_msg).
-With all skbs and offset saved in strp context, the caller does not need to
-maintain it.
+However, there have also been some discussions during recent PUCK calls
+where the KVM maintainers have some still expressed some interest in pulling
+in gmem THP support in a more official capacity. The thinking there is that
+hole-punching is a userspace policy, and that it could in theory avoid
+holepunching for sub-2MB GFN ranges to avoid degradation over time.
+And if there's a desire to enforce this from the kernel-side by blocking
+sub-2MB hole-punching from the host-side, this would provide similar
+semantics/behavior to the 2MB HugeTLB-like approach above.
 
-I have also added various logic tests for this situation in the test
-case, and it works correctly. 
-> > +		/* strparser clone and consume all input skb
-> > +		 * even in waiting head or body status
-> > +		 */
-> > +		tcp_eat_recv_skb(sk, skb);
-> > +		if (used <= 0) {
-> > +			if (!copied)
-> > +				copied = used;
-> > +			break;
-> > +		}
-> > +		copied += used;
-> > +		if (!desc->count)
-> > +			break;
-> > +		if (tcp_flags & TCPHDR_FIN)
-> > +			break;
-> > +	}
-> > +	return copied;
-> > +}
-> > +
-> >  enum {
-> >  	TCP_BPF_IPV4,
-> >  	TCP_BPF_IPV6,
-> > @@ -595,6 +636,10 @@ enum {
+So maybe there is still some room for discussion about these approaches.
+
+Outside that, there are a number of other development areas where it would
+be useful to at least have some experimental 2MB support in place so that
+those efforts can be pursued in parallel, such as the preparedness
+tracking touched on here, and exploring how that will intersect with other
+development areas like using gmem for both shared and private memory, mmap
+support, guest_memfd library, etc., so my hopes are that this approach
+could be useful for that purpose at least, even if only as an out-of-tree
+stop-gap.
+
+Thoughts/comments welcome!
+
+[2] https://lore.kernel.org/all/cover.1728684491.git.ackerleytng@google.com/
+
+
+Testing
+-------
+
+Currently, this series does not default to enabling 2M support, but it
+can instead be switched on/off dynamically via a module parameter:
+
+  echo 1 >/sys/module/kvm/parameters/gmem_2m_enabled
+  echo 0 >/sys/module/kvm/parameters/gmem_2m_enabled
+
+This can be useful for simulating things like host pressure where we start
+getting a mix of 4K/2MB allocations. I've used this to help test that the
+preparedness-tracking still handles things properly in these situations.
+
+But if we do decide to pull in THP support upstream it would make more
+sense to drop the parameter completely.
+
+
+----------------------------------------------------------------
+Michael Roth (4):
+      KVM: gmem: Don't rely on __kvm_gmem_get_pfn() for preparedness
+      KVM: gmem: Don't clear pages that have already been prepared
+      KVM: gmem: Hold filemap invalidate lock while allocating/preparing folios
+      KVM: SEV: Improve handling of large ranges in gmem prepare callback
+
+Sean Christopherson (1):
+      KVM: Add hugepage support for dedicated guest memory
+
+ arch/x86/kvm/svm/sev.c   | 163 ++++++++++++++++++++++++++------------------
+ include/linux/kvm_host.h |   2 +
+ virt/kvm/guest_memfd.c   | 173 ++++++++++++++++++++++++++++++++++-------------
+ virt/kvm/kvm_main.c      |   4 ++
+ 4 files changed, 228 insertions(+), 114 deletions(-)
+
+
 
 
