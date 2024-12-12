@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-443732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49D89EFB40
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:39:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B459EFB46
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:40:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D466188CAF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75EB028ABE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FAF225404;
-	Thu, 12 Dec 2024 18:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0033322969A;
+	Thu, 12 Dec 2024 18:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZV9oNo9g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGnfxG/m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FCC222D7D;
-	Thu, 12 Dec 2024 18:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A4B2253E2;
+	Thu, 12 Dec 2024 18:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734028778; cv=none; b=a7IB86TQLkMTjDhY6c2Xkp/utickpmYimV1FA8cZ+u0g//Fh1YHvXmvFWmXUjnvsYWDtNww+qmFNNw47+5zS5J90waydoy9agaRZ6NPZLRRSe85UIc1P0w7hXsN6cUZdNNozzS79bzUqJ1hDTmDhw4xtCDgnzxlJOijInlvoh7o=
+	t=1734028778; cv=none; b=P1Iw1YArS9a7yoLZv+9m8PGwASqEGOnRMo0tGbGc4eFEWu4awCUwLeZ0jGdVdCt7P+W79XqN2akfm1eBKw5MpL7ZBBcNXgl4nTZIi2Rqjb7ig0Pv1dBVwRz10+7cxncmQMqOhc6R5x8Lz8zGB2ZYF+50nn6xLmgBN9QIUYNJHjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734028778; c=relaxed/simple;
-	bh=TgGDrUo443tEAwTGGMId9ohWtXzXSJj5mgIOxRAsba4=;
+	bh=NPrDpbJ1EYy/FKp6+0iFszw6r20I/MKhMPqZuoOvBWo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HWA1xcG8pbCgNTxZ8IdfjPguGPoXO62t3zw1KQA3oFaOnoOHAJLMK4iiG3/hPPMWDkNv0w7zjcd4SphhxBP/FZMcSaCG/VWzLHtyGaZhyGbNW0P3C2OE7S3jjDh0igBvUsU8CVWEe3n2MYq/EGzWf9AlSgMWfE0qRVpVsy8k3C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZV9oNo9g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB3FCC4CEDF;
+	 MIME-Version; b=uqp7b1Ks3uVIp8nJm1gmC1RXxCjIj0NhueQ4PB38H9dRa036rF7WL99R21Z38Q4sMfKTi1TMStrSUVhSPL5oR5PnHYTt3yIziQ4NzAOYMZ569vwgklwHkGghXF0xaMI58e9+GL1kID7T6gpFgzYpvi17hrD2z4Hzhh1hD0URDlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGnfxG/m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE085C4CEE6;
 	Thu, 12 Dec 2024 18:39:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1734028777;
-	bh=TgGDrUo443tEAwTGGMId9ohWtXzXSJj5mgIOxRAsba4=;
+	bh=NPrDpbJ1EYy/FKp6+0iFszw6r20I/MKhMPqZuoOvBWo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZV9oNo9gLzbVi3LoTTl+RQC3pqaV4iVooK5YPjTZQtIDrWY94sBELYWg+MISQLrwr
-	 f7EWBoe7iJ9rI1OfgQxEsnRYIkSVJBNj0PLvqnPmSSuUsNgzkH2P1blAt3N/H6+IaM
-	 2aE11dOVGqCm4oxzqVKwor+qMU9xd/nK+7wUkqorDVnpJampPktQF7kFfYAzaPNUzj
-	 VFYXmZzhYDGl9g7oy3gxYn6xcQFjoRseza0h17oNesnsGoGLL5fezeOPHtJu+r58YT
-	 p5AFQXMUBO3V5JWBUJnD9VO1rVr3LcxsABPhs2iTL1EuhlpyPW1+UvjODGEvf7gGUJ
-	 9+Y0amZ/0lseg==
+	b=VGnfxG/miUSrtoIo2HEXANEwnjjjg6FHXGttSUbXLVeyAAlJ1VVOl+JcLiH40X7vE
+	 q1Lx3QM3rZ9XnjGNQAf/GhrI5vUC7RN4ntCmszZJYFl9O76d564cO7NdZl5kettB74
+	 tDmAWwv1y9IrHXpfwqnKY6n7kD5R9f+uTEfyfqUuqtMEbGW4IcsdbOqqnbpf0OICLl
+	 XJYaNcfCxfQZ0ou6gmL8/2gUWSJJ6Ik1vWq7d4560aTDdi1GDJVUjFugVeNlf4ZcJh
+	 q0+ZC3yIwOvWTTkW1SF1DTti/pnk2HlwJjQ4K46SH9OqXXrtb7u+64CPjMnG3MB0zd
+	 lhf3dSFyyKYdg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 461A7CE0FA8; Thu, 12 Dec 2024 10:39:37 -0800 (PST)
+	id 48635CE0FF1; Thu, 12 Dec 2024 10:39:37 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>,
 	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH rcu 5/8] rcu: Make preemptible rcu_exp_handler() check idempotency
-Date: Thu, 12 Dec 2024 10:39:33 -0800
-Message-Id: <20241212183936.1936196-5-paulmck@kernel.org>
+Subject: [PATCH rcu 6/8] rcu: Add KCSAN exclusive-writer assertions for rdp->cpu_no_qs.b.exp
+Date: Thu, 12 Dec 2024 10:39:34 -0800
+Message-Id: <20241212183936.1936196-6-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <928b8031-2bfe-4c90-9952-7d331e027ae3@paulmck-laptop>
 References: <928b8031-2bfe-4c90-9952-7d331e027ae3@paulmck-laptop>
@@ -63,66 +63,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Although the non-preemptible implementation of rcu_exp_handler()
-contains checks to enforce idempotency, the preemptible version does not.
-The reason for this omission is that in preemptible kernels, there is
-no reporting of quiescent states from CPU hotplug notifiers, and thus
-no need for idempotency.
-
-In theory, anyway.
-
-In practice, accidents happen.  This commit therefore adds checks under
-WARN_ON_ONCE() to catch any such accidents.
+The value of rdp->cpu_no_qs.b.exp may be changed only by the corresponding
+CPU, and that CPU is not even allowed to race with itself, for example,
+via interrupt handlers.  This commit therefore adds KCSAN exclusive-writer
+assertions to check this constraint.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>
 ---
- kernel/rcu/tree_exp.h | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ kernel/rcu/tree_exp.h    | 4 ++++
+ kernel/rcu/tree_plugin.h | 1 +
+ 2 files changed, 5 insertions(+)
 
 diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index f3884393b9477..6985c998fe6b1 100644
+index 6985c998fe6b1..ce5b09921d04e 100644
 --- a/kernel/rcu/tree_exp.h
 +++ b/kernel/rcu/tree_exp.h
-@@ -746,7 +746,19 @@ static void rcu_exp_handler(void *unused)
- 	struct task_struct *t = current;
+@@ -262,6 +262,7 @@ static void rcu_report_exp_rdp(struct rcu_data *rdp)
  
- 	/*
--	 * First, the common case of not being in an RCU read-side
-+	 * First, is there no need for a quiescent state from this CPU,
-+	 * or is this CPU already looking for a quiescent state for the
-+	 * current grace period?  If either is the case, just leave.
-+	 * However, this should not happen due to the preemptible
-+	 * sync_sched_exp_online_cleanup() implementation being a no-op,
-+	 * so warn if this does happen.
-+	 */
-+	if (WARN_ON_ONCE(!(READ_ONCE(rnp->expmask) & rdp->grpmask) ||
-+			 READ_ONCE(rdp->cpu_no_qs.b.exp)))
-+		return;
-+
-+	/*
-+	 * Second, the common case of not being in an RCU read-side
- 	 * critical section.  If also enabled or idle, immediately
- 	 * report the quiescent state, otherwise defer.
- 	 */
-@@ -760,7 +772,7 @@ static void rcu_exp_handler(void *unused)
- 	}
- 
- 	/*
--	 * Second, the less-common case of being in an RCU read-side
-+	 * Third, the less-common case of being in an RCU read-side
- 	 * critical section.  In this case we can count on a future
- 	 * rcu_read_unlock().  However, this rcu_read_unlock() might
- 	 * execute on some other CPU, but in that case there will be
-@@ -781,7 +793,7 @@ static void rcu_exp_handler(void *unused)
- 		return;
- 	}
- 
--	// Finally, negative nesting depth should not happen.
-+	// Fourth and finally, negative nesting depth should not happen.
- 	WARN_ON_ONCE(1);
+ 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
+ 	WRITE_ONCE(rdp->cpu_no_qs.b.exp, false);
++	ASSERT_EXCLUSIVE_WRITER(rdp->cpu_no_qs.b.exp);
+ 	rcu_report_exp_cpu_mult(rnp, flags, rdp->grpmask, true);
  }
  
+@@ -721,6 +722,7 @@ static void rcu_exp_sel_wait_wake(unsigned long s)
+ /* Request an expedited quiescent state. */
+ static void rcu_exp_need_qs(void)
+ {
++	ASSERT_EXCLUSIVE_WRITER_SCOPED(*this_cpu_ptr(&rcu_data.cpu_no_qs.b.exp));
+ 	__this_cpu_write(rcu_data.cpu_no_qs.b.exp, true);
+ 	/* Store .exp before .rcu_urgent_qs. */
+ 	smp_store_release(this_cpu_ptr(&rcu_data.rcu_urgent_qs), true);
+@@ -753,6 +755,7 @@ static void rcu_exp_handler(void *unused)
+ 	 * sync_sched_exp_online_cleanup() implementation being a no-op,
+ 	 * so warn if this does happen.
+ 	 */
++	ASSERT_EXCLUSIVE_WRITER_SCOPED(rdp->cpu_no_qs.b.exp);
+ 	if (WARN_ON_ONCE(!(READ_ONCE(rnp->expmask) & rdp->grpmask) ||
+ 			 READ_ONCE(rdp->cpu_no_qs.b.exp)))
+ 		return;
+@@ -867,6 +870,7 @@ static void rcu_exp_handler(void *unused)
+ 	struct rcu_node *rnp = rdp->mynode;
+ 	bool preempt_bh_enabled = !(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK));
+ 
++	ASSERT_EXCLUSIVE_WRITER_SCOPED(rdp->cpu_no_qs.b.exp);
+ 	if (!(READ_ONCE(rnp->expmask) & rdp->grpmask) ||
+ 	    __this_cpu_read(rcu_data.cpu_no_qs.b.exp))
+ 		return;
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 3927ea5f7955c..bb7ca6eb9ef04 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -275,6 +275,7 @@ static void rcu_preempt_ctxt_queue(struct rcu_node *rnp, struct rcu_data *rdp)
+ 		rcu_report_exp_rdp(rdp);
+ 	else
+ 		WARN_ON_ONCE(rdp->cpu_no_qs.b.exp);
++	ASSERT_EXCLUSIVE_WRITER_SCOPED(rdp->cpu_no_qs.b.exp);
+ }
+ 
+ /*
 -- 
 2.40.1
 
