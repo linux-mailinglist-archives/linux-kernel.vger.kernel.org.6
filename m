@@ -1,228 +1,121 @@
-Return-Path: <linux-kernel+bounces-442763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4649EE13D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:26:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BB29EE13F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:28:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F633162021
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48BDA162D51
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FD320CCC1;
-	Thu, 12 Dec 2024 08:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA9820CCC1;
+	Thu, 12 Dec 2024 08:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtO68RtU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8924E20C474;
-	Thu, 12 Dec 2024 08:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N5/y837y"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9404558BA;
+	Thu, 12 Dec 2024 08:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991958; cv=none; b=qLk5XzTbI+VkmSxmYN8MiGhjVRiyidUlOq4eHVuCaXhTpatMVBoamp3V9GrYvnTPPCHBBqdNkUxeVQeV7Vr5Q8E0QJnyl05CqJaDNBvlnU5Vr6myFyNKpYe6xrZR0Dm5+ccANf9mv/OZkEBQHv1juJ4tE2v1tLYABN0eTifIYYc=
+	t=1733992121; cv=none; b=ndG1iaqDemNXFta4PCxfy0rZx/cIBWq1/fhloOTOudMUGqcc11ss/i8oxF9KmIpNSPZf0iuiXLwMihVBVDf3uzrLuemz/vsUCahbcbO6hRoe0z16saMwyDBpcUEkOwr1+cCm5/YBXz/6FRb4fwJ4eCt1m0AZhdvC0Wh98qSdzwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991958; c=relaxed/simple;
-	bh=kmHs2PAJbvHFUqqZBPUSZWdZYYxszVxXn4ozKc+Bfyw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BehsTDLs4LwIIARODXLX3jpqKvFXu0/+swPy1uw8iegJKmJlJJBmFhSMvdI2mry/X5CGkw56KVOn0wri+xfo+GhrHOqHA2ZfG7gJYzKXK6PO9RYElGNeZNLPbWigKnbrYRSfej/zOJiFdFZf6ChPQ6tcSUsiNOD5mMzQXEB6CJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtO68RtU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BBB9C4CED1;
-	Thu, 12 Dec 2024 08:25:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733991958;
-	bh=kmHs2PAJbvHFUqqZBPUSZWdZYYxszVxXn4ozKc+Bfyw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NtO68RtUdC//tpj5mYzv1AjVb+eLFer1cKb/4eWD0Vf7zqaeLvTtF/Jmll1nzVMqM
-	 zKHXgRCVN1IT3N1wP2z78hIS2O7e0xH9W3GOS5EINUHFCyS9hymKbrFLTU46cv01Sk
-	 M9yiyeWjPryzgG6jh6xg3KFM4BQALNvmYfy/QiEfTnoUlcL/Io6JgH9qOqnGrF5jor
-	 963QroR6ds3jbcheWZR/MH8cNxn/ylHhD5vP13kG0pCtEUk615hjyKHg91x0u+LsZB
-	 9VTxy0IyAgbYotRffyXvF058/Tgw2GAokjvGj3sedoJzLvhWeaK8lGPdXPyK/Gz+KA
-	 AIVw56D36DDew==
-Received: from 82-132-221-83.dab.02.net ([82.132.221.83] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tLeWB-002zrM-85;
-	Thu, 12 Dec 2024 08:25:55 +0000
-Date: Thu, 12 Dec 2024 08:25:53 +0000
-Message-ID: <87cyhxs3xq.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>
-Cc: ryan.roberts@arm.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	corbet@lwn.net,
-	oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [RESEND RFC PATCH v1 2/5] arm64: Add BBM Level 2 cpu feature
-In-Reply-To: <20241211160218.41404-3-miko.lenczewski@arm.com>
-References: <20241211160218.41404-1-miko.lenczewski@arm.com>
-	<20241211160218.41404-3-miko.lenczewski@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733992121; c=relaxed/simple;
+	bh=oyi0+49mkb2V9ZQTgaTzcjk3FjXvGKxD1y6nVU4+9RY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=V7Levit66vG9PkiUzDlQvPruNLFv33SPdrxe8rGKz3awuLFjGkL5FdbWGMmMu2Za+M9fFvciki68+GQvNFQqGB3LUWsEeoOG67Kk/9YUZ0Bw7YmGd5/WyJszk4nMCEY48e7Cijay/HzN/iV91IMJiXZeByIwggs8veG18CMCLUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=N5/y837y; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5F18720ACD66;
+	Thu, 12 Dec 2024 00:28:39 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5F18720ACD66
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1733992119;
+	bh=k4I45kyxnDNzHp98bbNcFbcUeN1YhvrRo8OzgJx/BxU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N5/y837yvlUvwy09IS0zYw5cnCSW5zzYRwKfd0y8+58FVs54Bih77jp1I0NGMHmNg
+	 v/awkANfqxR4gAHHNyCN6KmIthAoslBsmnzZeSd+RadCVdI2vWN8AV52R7eeF3sJvh
+	 owBhWCAAXc9pUfbt4UvoE6Z+Er/jPdgzBZ+XWzT4=
+From: Saurabh Sengar <ssengar@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ssengar@microsoft.com,
+	avladu@cloudbasesolutions.com
+Subject: [PATCH] tools: hv: Fix cross-compilation
+Date: Thu, 12 Dec 2024 00:28:34 -0800
+Message-Id: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 82.132.221.83
-X-SA-Exim-Rcpt-To: miko.lenczewski@arm.com, ryan.roberts@arm.com, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Ah, so this is where this is hiding. I missed it in my review of patch
-#1 yesterday.
+Use the native ARCH only incase it is not set, this will allow
+the cross complilation where ARCH is explicitly set. Add few
+info prints as well to know what arch and toolchain is getting
+used to build it.
 
-On Wed, 11 Dec 2024 16:01:38 +0000,
-Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com> wrote:
->=20
-> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
-> and this commit adds a dedicated BBML2 cpufeature to test against
-> support for.
->=20
-> In supporting BBM level 2, we open ourselves up to potential TLB
-> Conflict Abort Exceptions during expected execution, instead of only
-> in exceptional circumstances. In the case of an abort, it is
-> implementation defined at what stage the abort is generated, and
+Additionally, simplify the check for ARCH so that fcopy daemon
+is build only for x86_64.
 
-*IF* stage-2 is enabled. Also, in the case of the EL2&0 translation
-regime, no stage-2 applies, so it can only be a stage-1 abort.
+Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio driver")
+Reported-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+Closes: https://lore.kernel.org/linux-hyperv/Z1Y9ZkAt9GPjQsGi@liuwe-devbox-debian-v2/
+Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+---
+ tools/hv/Makefile | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-> the minimal set of required invalidations is also implementation
-> defined. The maximal set of invalidations is to do a `tlbi vmalle1`
-> or `tlbi vmalls12e1`, depending on the stage.
->=20
-> Such aborts should not occur on Arm hardware, and were not seen in
-> benchmarked systems, so unless performance concerns arise, implementing
+diff --git a/tools/hv/Makefile b/tools/hv/Makefile
+index 34ffcec264ab..d29e6be6309b 100644
+--- a/tools/hv/Makefile
++++ b/tools/hv/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for Hyper-V tools
+ include ../scripts/Makefile.include
+ 
+-ARCH := $(shell uname -m 2>/dev/null)
++ARCH ?= $(shell uname -m 2>/dev/null)
+ sbindir ?= /usr/sbin
+ libexecdir ?= /usr/libexec
+ sharedstatedir ?= /var/lib
+@@ -20,18 +20,26 @@ override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+ override CFLAGS += -Wno-address-of-packed-member
+ 
+ ALL_TARGETS := hv_kvp_daemon hv_vss_daemon
+-ifneq ($(ARCH), aarch64)
++ifeq ($(ARCH), x86_64)
+ ALL_TARGETS += hv_fcopy_uio_daemon
+ endif
+ ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+ 
+ ALL_SCRIPTS := hv_get_dhcp_info.sh hv_get_dns_info.sh hv_set_ifconfig.sh
+ 
+-all: $(ALL_PROGRAMS)
++all: info $(ALL_PROGRAMS)
+ 
+ export srctree OUTPUT CC LD CFLAGS
+ include $(srctree)/tools/build/Makefile.include
+ 
++info:
++	@echo "---------------------"
++	@echo "Building for:"
++	@echo "CC $(CC)"
++	@echo "LD $(LD)"
++	@echo "ARCH $(ARCH)"
++	@echo "---------------------"
++
+ HV_KVP_DAEMON_IN := $(OUTPUT)hv_kvp_daemon-in.o
+ $(HV_KVP_DAEMON_IN): FORCE
+ 	$(Q)$(MAKE) $(build)=hv_kvp_daemon
+-- 
+2.43.0
 
-Which systems? Given that you have deny-listed *all* half recent ARM
-Ltd implementations, I'm a bit puzzled.
-
-> the abort handlers with the worst-case invalidations seems like an
-> alright hack.
->=20
-> Signed-off-by: Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com>
-> ---
->  arch/arm64/include/asm/cpufeature.h | 14 ++++++++++++++
->  arch/arm64/kernel/cpufeature.c      |  7 +++++++
->  arch/arm64/mm/fault.c               | 27 ++++++++++++++++++++++++++-
->  arch/arm64/tools/cpucaps            |  1 +
->  4 files changed, 48 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm=
-/cpufeature.h
-> index 8b4e5a3cd24c..a9f2ac335392 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -866,6 +866,20 @@ static __always_inline bool system_supports_mpam_hcr=
-(void)
->  	return alternative_has_cap_unlikely(ARM64_MPAM_HCR);
->  }
-> =20
-> +static inline bool system_supports_bbml2(void)
-> +{
-> +	/* currently, BBM is only relied on by code touching the userspace page
-> +	 * tables, and as such we are guaranteed that caps have been finalised.
-> +	 *
-> +	 * if later we want to use BBM for kernel mappings, particularly early
-> +	 * in the kernel, this may return 0 even if BBML2 is actually supported,
-> +	 * which means unnecessary break-before-make sequences, but is still
-> +	 * correct
-
-Comment style, capitalisation, punctuation.
-
-> +	 */
-> +
-> +	return alternative_has_cap_unlikely(ARM64_HAS_BBML2);
-> +}
-> +
->  int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
->  bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
-> =20
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeatur=
-e.c
-> index 6ce71f444ed8..7cc94bd5da24 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -2917,6 +2917,13 @@ static const struct arm64_cpu_capabilities arm64_f=
-eatures[] =3D {
->  		.matches =3D has_cpuid_feature,
->  		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, EVT, IMP)
->  	},
-> +	{
-> +		.desc =3D "BBM Level 2 Support",
-> +		.capability =3D ARM64_HAS_BBML2,
-> +		.type =3D ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.matches =3D has_cpuid_feature,
-> +		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, BBM, 2)
-> +	},
->  	{
->  		.desc =3D "52-bit Virtual Addressing for KVM (LPA2)",
->  		.capability =3D ARM64_HAS_LPA2,
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index ef63651099a9..dc119358cbc1 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -844,6 +844,31 @@ static int do_tag_check_fault(unsigned long far, uns=
-igned long esr,
->  	return 0;
->  }
-> =20
-> +static int do_conflict_abort(unsigned long far, unsigned long esr,
-> +			     struct pt_regs *regs)
-> +{
-> +	if (!system_supports_bbml2())
-> +		return do_bad(far, esr, regs);
-> +
-> +	/* if we receive a TLB conflict abort, we know that there are multiple
-> +	 * TLB entries that translate the same address range. the minimum set
-> +	 * of invalidations to clear these entries is implementation defined.
-> +	 * the maximum set is defined as either tlbi(vmalls12e1) or tlbi(alle1).
-> +	 *
-> +	 * if el2 is enabled and stage 2 translation enabled, this may be
-> +	 * raised as a stage 2 abort. if el2 is enabled but stage 2 translation
-> +	 * disabled, or if el2 is disabled, it will be raised as a stage 1
-> +	 * abort.
-> +	 *
-> +	 * local_flush_tlb_all() does a tlbi(vmalle1), which is enough to
-> +	 * handle a stage 1 abort.
-
-Same comment about comments.
-
-> +	 */
-> +
-> +	local_flush_tlb_all();
-
-The elephant in the room: if TLBs are in such a sorry state, what
-guarantees we can make it this far?
-
-I honestly don't think you can reliably handle a TLB Conflict abort in
-the same translation regime as the original fault, given that we don't
-know the scope of that fault. You are probably making an educated
-guess that it is good enough on the CPUs you know of, but I don't see
-anything in the architecture that indicates the "blast radius" of a
-TLB conflict.
-
-Which makes me think that your KVM patch is equally broken on nVHE and
-hVHE. Such fault should probably be handled while at EL2, not after
-returning to EL1.
-
-Thanks,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
 
