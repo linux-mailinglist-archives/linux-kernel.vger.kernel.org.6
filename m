@@ -1,116 +1,98 @@
-Return-Path: <linux-kernel+bounces-442517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFA49EDDA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:27:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3CE9EDDA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6FF163593
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3377E162A76
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBAD1891A9;
-	Thu, 12 Dec 2024 02:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5320F13F43A;
+	Thu, 12 Dec 2024 02:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DeNwusmv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1lN/NV/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230D4193402;
-	Thu, 12 Dec 2024 02:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8096257D;
+	Thu, 12 Dec 2024 02:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733970321; cv=none; b=ebUhU1/bVesLfiLkjguMgB6qz/Oa6aF0soVjUvVeJxYH/SCImdnBffSbnVxd7UfFbNI4eWiyXENYkhV7z/YN3IL3wsqjMjhiUanOdWclEoplcagun7VHQy61NXCpU2V77WUC1AlWL0az0mBmThm8WJca4g3W7ZAUX0fAQcchdVU=
+	t=1733970495; cv=none; b=KeD7zFnBJL7vNXG5i7j2yLETzGipzjkqfFZ3G3XhAKqIYt5r1tB9WGm9ndEKxlo+l8DyG2isxEq+xg4lNIFLSrjlXwiPlw68nyc0kZYSMCxXmL+B7oCJEmwh3oq8BMVgmoXnWgo0GjPqGqNiBjXLklz6d6S4CvtsekVvMk2SmH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733970321; c=relaxed/simple;
-	bh=XVRwjFDMd2T6WW9jGbEMTj4CW4AGj1tebo56A4NVHk0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=IazOFoMCwjTcDbjRovkS9ql43oy2UwTBjwMxDZwYPpWIIz8E1EQ+d6/H1csaya2//8K7Lq7xS9Lbzl4EAnFamYCZlZP2m5TJr/UDsMx2/xmMyCzgNwBHShNqXLDmVI9JdTbYoQXHYfhDG8OgeGD0A20f8Sifr0xCoNdzPRdGpXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DeNwusmv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67302C4CED2;
-	Thu, 12 Dec 2024 02:25:20 +0000 (UTC)
+	s=arc-20240116; t=1733970495; c=relaxed/simple;
+	bh=XsiEYnxh+hvzn/XFOkHqruCHasjAtgFcOsO/3Lg/otk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UnX6ISpnUqVPrnM5C5S916cKZrRz1YkITRCeZX6T8ARX6b1gHRVtJm/HkYFrpxBtF+Su/fzkJLwi82fzbSLSnSewBofyBxeGvQPy6tlD31ldSdrfC5iZOOk3o34IpHx6NDp2C354RFtcabCi1e2TYdg3ud3u4okP3ANuUgMQIIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1lN/NV/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD2EC4CED2;
+	Thu, 12 Dec 2024 02:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733970320;
-	bh=XVRwjFDMd2T6WW9jGbEMTj4CW4AGj1tebo56A4NVHk0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=DeNwusmvQjakITW+mqHLLH3qa46uY6NehV4jxN06GpIfqUloQbP4HcmKagQ96OPZZ
-	 J+wzthkDPg8Al2NXXqvwJRPMeYaa5V1a574sjaVtGHGNeA/OXltqk+G4NvskQ7Ge/7
-	 g7JJyCG0h2cPg4f7sH5FprmpN6DKBTyUvRJtDJFvt4UXGX1OV8rX0+3quACyqbJLbK
-	 o8H+api44cGfEgBklElGwCVA0dsnhHj+Sh8YzEOymZDDTkFYGyp0r+i1SEG5m5AlX+
-	 t6a2cKMqtMM4FoBLxRzlcnk22zuJI2/7QUxfbj6udXm0oRiVeyLwIPKPMoxd27SkHT
-	 PW/LkGiRH7wMQ==
-Date: Wed, 11 Dec 2024 20:25:18 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1733970495;
+	bh=XsiEYnxh+hvzn/XFOkHqruCHasjAtgFcOsO/3Lg/otk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=N1lN/NV/HzLYJ59eTU2CTXKk1IRG0uF9xQPIBL9qPWPt4qbQk3Z+mAHN1HtR/goYO
+	 30UGr57Ge4SWphzeROlqd4KrN2ZWf7hOImC8FUHdgI/mOEhghjORThfo8tLc8Gy+Je
+	 Jij0LBX/iQM3yMOW3ueXouAFoMIkL3O9JKNfz0bEMlzQdbVv7bsO2/ePA1Y0UDJoDN
+	 VW7FgR2vXXNYJaIgu/qmkurJSbwqnjj+bRlS5fnu90suQmqX03FJH2+nl5Ed7aWRdn
+	 +PhvBooPZI5q9Wo7oZAk4YbL5LMgghxPypt7ZKZHyG0mTZnfFqzX2vudSxa9yjeEJX
+	 JAHnXyV8zPBoQ==
+Date: Wed, 11 Dec 2024 18:28:13 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>, Kaiyuan
+ Zhang <kaiyuanz@google.com>, Willem de Bruijn <willemb@google.com>,
+ Samiullah Khawaja <skhawaja@google.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>
+Subject: Re: [PATCH net-next v3 5/5] net: Document memory provider driver
+ support
+Message-ID: <20241211182813.789616ce@kernel.org>
+In-Reply-To: <CAHS8izOHfWPGaAF0Ri6sN5SVbvD9k_u2-_WmHJHcwu4HDEXj-Q@mail.gmail.com>
+References: <20241209172308.1212819-1-almasrymina@google.com>
+	<20241209172308.1212819-6-almasrymina@google.com>
+	<20241210195513.116337b9@kernel.org>
+	<CAHS8izOHfWPGaAF0Ri6sN5SVbvD9k_u2-_WmHJHcwu4HDEXj-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: lgirdwood@gmail.com, tiwai@suse.com, conor+dt@kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
- perex@perex.cz, dmitry.baryshkov@linaro.org, devicetree@vger.kernel.org, 
- broonie@kernel.org, konrad.dybcio@oss.qualcomm.com, andersson@kernel.org, 
- srinivas.kandagatla@linaro.org
-To: Alexey Klimov <alexey.klimov@linaro.org>
-In-Reply-To: <20241212004727.2903846-10-alexey.klimov@linaro.org>
-References: <20241212004727.2903846-1-alexey.klimov@linaro.org>
- <20241212004727.2903846-10-alexey.klimov@linaro.org>
-Message-Id: <173397031679.639542.8133765476022166585.robh@kernel.org>
-Subject: Re: [PATCH v2 09/14] ASoC: dt-bindings: qcom,wsa881x: extend
- description to analog mode
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 11 Dec 2024 09:53:36 -0800 Mina Almasry wrote:
+> Drivers doing their own recycling is not currently supported, AFAICT.
+> Adding support for it in the future and maintaining it is doable, but
+> a headache. I also noticed with IDPF you're nacking drivers doing
+> their own recycling anyway, so I thought why not just declare all such
+> use cases as not supported to make the whole thing much simpler.
+> Drivers can deprecate their recycling while adding support for netmem
+> which brings them in line with what you're enforcing for new drivers
+> anyway.
 
-On Thu, 12 Dec 2024 00:47:22 +0000, Alexey Klimov wrote:
-> WSA881X also supports analog mode when device is configured via i2c
-> only. Document it, add properties, new compatibles and example.
-> 
-> While at this, also adjust quotes.
-> 
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  .../bindings/sound/qcom,wsa881x.yaml          | 75 +++++++++++++++++--
->  1 file changed, 67 insertions(+), 8 deletions(-)
-> 
+IIRC IDPF was doing recycling based on the old page ref tricks,
+without any use of page pool at all. But without using page pool
+the driver will never acquire a netmem_ref in the first place.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> The specific reason: currently drivers will get_page pp pages to hold
+> on to them to do their own recycling, right? We don't even have a
+> get_netmem equivalent. We could add one (and for the TX path, which is
+> coming along, I do add one), but even then, the pp needs to detect
+> elevated references on net_iovs to exclude them from pp recycling. The
+> mp also needs to understand/keep track of elevated refcounts and make
+> sure the page is returned to it when the elevated refcounts from the
+> driver are dropped.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/qcom,wsa881x.example.dtb: amplifier@e: compatible: 'oneOf' conditional failed, one must be fixed:
-	'qcom,wsa8810' does not match '^qcom,(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm|x1e)[0-9]+(pro)?-.*$'
-	'qcom,wsa8810' does not match '^qcom,(sa|sc)8[0-9]+[a-z][a-z]?-.*$'
-	'qcom,wsa8810' does not match '^qcom,[ak]pss-wdt-(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm)[0-9]+.*$'
-	'qcom,wsa8810' does not match '^qcom,gcc-(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm)[0-9]+.*$'
-	'qcom,wsa8810' does not match '^qcom,mmcc-(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm)[0-9]+.*$'
-	'qcom,wsa8810' does not match '^qcom,pcie-(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm|x1e)[0-9]+.*$'
-	'qcom,wsa8810' does not match '^qcom,rpm-(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm)[0-9]+.*$'
-	'qcom,wsa8810' does not match '^qcom,scm-(apq|ipq|mdm|msm|qcm|qcs|q[dr]u|sa|sc|sd[amx]|sm|x1e)[0-9]+.*$'
-	'qcom,wsa8810' is not one of ['qcom,dsi-ctrl-6g-qcm2290', 'qcom,gpucc-sdm630', 'qcom,gpucc-sdm660', 'qcom,lcc-apq8064', 'qcom,lcc-ipq8064', 'qcom,lcc-mdm9615', 'qcom,lcc-msm8960', 'qcom,lpass-cpu-apq8016', 'qcom,usb-ss-ipq4019-phy', 'qcom,usb-hs-ipq4019-phy', 'qcom,vqmmc-ipq4019-regulator']
-	'qcom,wsa8810' is not one of ['qcom,ipq806x-gmac', 'qcom,ipq806x-nand', 'qcom,ipq806x-sata-phy', 'qcom,ipq806x-usb-phy-ss', 'qcom,ipq806x-usb-phy-hs']
-	from schema $id: http://devicetree.org/schemas/arm/qcom-soc.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241212004727.2903846-10-alexey.klimov@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+No? It should all just work. The page may get split / fragmented by 
+the driver or page_pool_alloc_netmem() which you're adding in this
+series. A fragmented net_iov will have an elevated refcount in exactly
+the same way as if the driver was stashing one ref to release later.
 
