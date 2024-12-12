@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-443204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A569EE8C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:28:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91ECA9EE8CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:29:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70D8B166672
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:28:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74B1F18897E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C112153C3;
-	Thu, 12 Dec 2024 14:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13B92153DC;
+	Thu, 12 Dec 2024 14:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="C25E5S3P"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xqhx2jRi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF56184D02
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF4A8837
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734013717; cv=none; b=bHNpLh9WdMmi6/JGiB+nJZUaaQXEUwLA6inIrB2qrWFtFl/Q7htlOIL4zp0w9oG/9SJ5+6tJe6DvtZu5CiU/rUiBIU32c5LUCgqrku33chevJUua2F9+5Y9miZr7cL4qsQssfvqbYH+gdWOCbSI57xmSc4DZAA1i0OieJOAkjr4=
+	t=1734013733; cv=none; b=GDKeT8u0j6J6bR1SbdreGbtAiw0TX9ZZIgFtgELt9ApKzfYbpO0Ww0SyLJUQYyT3/3Cjj1vyEi4rjVnF5icH+OpQ6MEPNW7xnZZLDpRVgmmLvb8MkcYi3RtwxPL/5rTAsq4+VQTMoDlrV557wZd5Uhk+Ie+WMqZLUmnp0LvnELM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734013717; c=relaxed/simple;
-	bh=NTvAln/IDG7xjORAFo53OF9UnbmAqt+wQ/HWM4jEFy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N6f1Hl2ap8fNpgPU7cDcBluKtSzmF7DJzZBnBGRYE38rTfsSJNMrAzY3cNIEPFaFDpu6GiPbj1/nDzXd96oeKFM7YLY34en7OfQ9RGZp/hRY3nPWUOGk6w3xsYQygwmkk2lEXeWBwS3UG4mMi83UkeV19tl8rF/efLUUDzUSrgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=C25E5S3P; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-844d67eb693so50215339f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:28:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734013713; x=1734618513; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gfT3X0hae33k9lYMBuaLlSL6M/DETLFxdAGxRb+Okr8=;
-        b=C25E5S3PzR4C7mwPPUfAZxsCKHc5fXivB2GfIzFbVq0cptfamjojE2GjTMu4/IOMQq
-         8GP9lWSfpXAqc7sIkRGKED7OuxOk7QNmlwT4BGW2Yn01s8ChjKXpEn0WYqNAHnSuFhGm
-         1gohqiwedMOgcKmtjHH9oMrSvldeujktTUsbdzMsQn9sC3ilE5X5pt1rpENNgjyjkodt
-         dA1y4M0PEL18tkqrPRAA5YpSmCRPESRpjg+y1eUKY4bsAVECDqNtd+P2u47GdNv5V13p
-         37GxWBv6rTPkRUKdH1cqsZx5j6pDAiYLBJvHzJGd4dc1GruQz2TtRHyz2J0q5mcLhQDX
-         lJFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734013713; x=1734618513;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gfT3X0hae33k9lYMBuaLlSL6M/DETLFxdAGxRb+Okr8=;
-        b=kP5dZT+rZGiBD343rj84GMOmjOQkrDYeBdxIcTX9nZndhTKMtLiuXcKHP/8SME3g20
-         Qi2QTFCXFjyE2Qu6qdqebVsT/UEiij/Re+UnzaGz+HTXev7AYrd8hRNZEQbySrNcaQMp
-         +dbFUJDCRzBtm/hqhXyI4I8A6TdPn+JKWleFqM7goHmwtQJGbIuq4DcH5XbUEY4U947V
-         7LQO2r9KRdvvn7oThKlVwZx2zitS2KiAzePZ0qa6am/EPabc9Uz3GVFZLDv8tudTYF9S
-         3eXHu73s5LHAtG35LhZl03EK4e2k5s9qc6F4SHXCtA/gICWmiggkU+TZ8pjZdpjzGsPU
-         glNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlHOecvU7rwf05wQbtQYvq014gir1XKCl4S9ZbBlNcT66dezXkLpxltP/ZXNtnCiAjOd7CuAo32oAx5hQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMI/fQc4NEUSO7ONmoxIe0S4U3uGvkWXtAXoNDskNn2pUl1HER
-	pi94ZO7sei2Xis8IW8ITTdIUN/yoAoN8Pcr2j3P/KVBxxiPZSqQpbqvwDudOgQg=
-X-Gm-Gg: ASbGncvVqmNc5+SCpC02/1jMgnGBFuUCXwKjf3+yK4XrOsA2S/LwMcQ1fypVNXxgmLv
-	ut8e1R5D4rqPprW20H8n7+1d5EFSH1A1gj9aXoP5hGUmzyLqDdJyWAevJt2fd0biMAXpXZGMouN
-	bZFbv0i5PFvtNO7+SfPqo1JJCkvkLVUy4lEbzCmew6BbHYdUE0DtmGvxSohm7nqjLxkOmZbvVoa
-	q8LBWvMjzxysLlCLHTAuGtSDZ/mCfYCkeaoyfXaHPTVRym0yEWD
-X-Google-Smtp-Source: AGHT+IEo716tZ/bf64k/pM3NNqQqr3GtHvW/buaqDLTjPaaZqAyM21XkFM8J+8Oq4OWE5W1X/+IKww==
-X-Received: by 2002:a05:6602:6b06:b0:842:ef83:d3cf with SMTP id ca18e2360f4ac-844e56ac550mr38232639f.11.1734013713655;
-        Thu, 12 Dec 2024 06:28:33 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-844d3d47507sm65658939f.27.2024.12.12.06.28.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 06:28:32 -0800 (PST)
-Message-ID: <f1f0be9c-b66c-4444-a63b-6bae05219944@kernel.dk>
-Date: Thu, 12 Dec 2024 07:28:32 -0700
+	s=arc-20240116; t=1734013733; c=relaxed/simple;
+	bh=NBrOJe97HyWxqbkFWU1zjLsc/TafGY4g/rTx0UOxLrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NP7bZBL9ZZWIhjg7hAgbUnBMMSiwb3WIn9PyWEb8R7BTCLXW9HyGaSj+ZrsK3IsH1ySsFDZP8ZJyeNoZ+R/0q2vKrSK9W3ZU779vSDddUa9jt1pycI64Q7eGF/8jab5zGlj7aFqE6mleQhqxZH2XogLlQoBYPKMyvBgA7p8yfvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xqhx2jRi; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734013732; x=1765549732;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NBrOJe97HyWxqbkFWU1zjLsc/TafGY4g/rTx0UOxLrc=;
+  b=Xqhx2jRiz7rNLBfZuUbavn0zmT8zSfN3W/OqsEQ4v17BBwrTt7x3tXup
+   2x6lplgRkKRMOLUedhgcAEnZlq8JIYxVxaWO84v1rJibNtAQ5fbr5+r88
+   YA9yZaCo0tgndNCF+0mbIGiuRJiBsHw6kNtBatuyYmoOG10qouR4syeAe
+   yip6LT6yI8eml2jvGZPkdiPgDI0DZQcMoHLQmbgwYCMhcedpZvXLkkHMu
+   HkoefCnm7R1tyPHjWrhmTGXS0gc9r+C+alThfJYxKU+YT3F4TvjireFoN
+   /ZyRfQr+PcJ3I/mbweA7vrhbm12f/UdCqn7Zvrkp8UPnMHCvTMGU24frQ
+   g==;
+X-CSE-ConnectionGUID: YYpRLkf2S72l3WjzkWKjyw==
+X-CSE-MsgGUID: 9BJwCxwCQGuk2YCj9glVcA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="45112546"
+X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
+   d="scan'208";a="45112546"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 06:28:51 -0800
+X-CSE-ConnectionGUID: nPoM7qa0SsC6TdyulO8oLw==
+X-CSE-MsgGUID: MaHIQt6QQ4ahIxAJgq7OPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
+   d="scan'208";a="127045775"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 06:28:49 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tLkBK-00000006vC7-46D5;
+	Thu, 12 Dec 2024 16:28:46 +0200
+Date: Thu, 12 Dec 2024 16:28:46 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v2 1/1] regmap: Synchronize cache for the page selector
+Message-ID: <Z1rzHvJDgPdlfEBK@smile.fi.intel.com>
+References: <20241122140357.1337686-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: possible deadlock in __wake_up_common_lock
-To: chase xd <sl1589472800@gmail.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CADZouDRFJ9jtXHqkX-PTKeT=GxSwdMC42zEsAKR34psuG9tUMQ@mail.gmail.com>
- <1a779207-4fa8-4b8e-95d7-e0568791e6ac@kernel.dk>
- <CADZouDQEe6gZgobLOAR+oy1u+Xjc4js=KW164n0ha7Yv+gma=g@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CADZouDQEe6gZgobLOAR+oy1u+Xjc4js=KW164n0ha7Yv+gma=g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122140357.1337686-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 12/11/24 4:46 AM, chase xd wrote:
-> Hi, the same payload triggers another deadlock scene with the fix:
+On Fri, Nov 22, 2024 at 04:03:20PM +0200, Andy Shevchenko wrote:
+> If the selector register is represented in each page, its value
+> in accordance to the debugfs is stale because it gets synchronized
+> only after the real page switch happens. Synchronize cache for
+> the page selector.
+> 
+> Before (offset followed by hexdump, the first byte is selector):
+> 
+>     // Real registers
+>     18: 05 ff 00 00 ff 0f 00 00 f0 00 00 00
+>     ...
+>     // Virtual (per port)
+>     40: 05 ff 00 00 e0 e0 00 00 00 00 00 1f
+>     50: 00 ff 00 00 e0 e0 00 00 00 00 00 1f
+>     60: 01 ff 00 00 ff ff 00 00 00 00 00 00
+>     70: 02 ff 00 00 cf f3 00 00 00 00 00 0c
+>     80: 03 ff 00 00 00 00 00 00 00 00 00 ff
+>     90: 04 ff 00 00 ff 0f 00 00 f0 00 00 00
+> 
+> After:
+> 
+>     // Real registers
+>     18: 05 ff 00 00 ff 0f 00 00 f0 00 00 00
+>     ...
+>     // Virtual (per port)
+>     40: 00 ff 00 00 e0 e0 00 00 00 00 00 1f
+>     50: 01 ff 00 00 e0 e0 00 00 00 00 00 1f
+>     60: 02 ff 00 00 ff ff 00 00 00 00 00 00
+>     70: 03 ff 00 00 cf f3 00 00 00 00 00 0c
+>     80: 04 ff 00 00 00 00 00 00 00 00 00 ff
+>     90: 05 ff 00 00 ff 0f 00 00 f0 00 00 00
 
-Looks like the same thing, are you sure you have the patch in that
-kernel?
+Anything should I do to move this fix forward?
+
+> Fixes: 6863ca622759 ("regmap: Add support for register indirect addressing.")
 
 -- 
-Jens Axboe
+With Best Regards,
+Andy Shevchenko
+
 
 
