@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-443636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1EE59EFA6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:11:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19909EFA5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:07:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B49D188E51A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:07:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8358328A14F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC311223316;
-	Thu, 12 Dec 2024 18:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0D922EA01;
+	Thu, 12 Dec 2024 18:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aslPYKtZ"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2ay029Pj"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D919322C35E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FCC22D4FA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734026715; cv=none; b=VT63IYOgKWf1LwJlUaq9EDVOkQMY+LFJCMMB3woyckiSiEe4snxfn3dH/0g0dXOIGswSylA6tVflRhIHrtGzVzQifpKprVLC0THeZDEcTCscr1BwbjAOjo/Z0RRijqB5UrIh8ErD9r9X2cp7uFwkWPfWTbMKvME9iQOavA5rFLM=
+	t=1734026716; cv=none; b=fKlZdDGS+zDw7lUfiNXsmlTPfqpQvby24b2zA4S8MHjIC+e9nT0IZvBh02V97RyB7HBfJEaUgsN8hiYI3v5D4I+sO2yzqofMw3D1XTojZAFRDRGAZNKV5jPlS7LCVc0SNRGfKUai0AmPivoP9Xe0lvkaaM5OKhbK5qFf5KSyr4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734026715; c=relaxed/simple;
-	bh=a/JQMVUSO4WSIOgI0iyk5RsJwLOyAIeGYUISnRCOPz4=;
+	s=arc-20240116; t=1734026716; c=relaxed/simple;
+	bh=3HJivu/WpNNE5R01tWNoZyPnqq7fKgTYFZUtNkKWCGs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=V26q9fEZ2tbayzomD0uo7gKbhgrGfzlQMe/7a+aRhfZKIRhe2dY7QF5mbooeEabL82wq+xJs+HbFYb2YNbCYzXX2geHSVPpoquUVEjiFAZttTVWTzh6uNnIGV6zeo93lzxWT/OHgIiOuq6JyEhJYIMzoxf33Ljt13NXXmCOAEOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aslPYKtZ; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=WYs2J4UPvmuwF9S1rpCKgk/CYrEW/0nNbPcJ4t4saP8UszOp2oWXFJwfVkXfbsPEhxco3WHHbW6WPPsqMjSur94N5R4DvLfde76NCe99iqr0SVqGgqqQvX9wanJ6VqeIF/ERjv27hoxJzbw/JWoR3duyydHGrWwlym7qFetYzJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2ay029Pj; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4361eb83f46so8306345e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:05:12 -0800 (PST)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-385d735965bso542529f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:05:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734026711; x=1734631511; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734026713; x=1734631513; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RS8qlDlci8/4Bym+8sOq6f7pGooq251OZRMaf+SOEgY=;
-        b=aslPYKtZdW++W0ffprp1QTcZi2efJd9MHDtD6jCVMgL5JMoFaajJ/YCa7FsAUxBwyx
-         uqI3+OqbTg2qjMvp/MpvG0ytPm6H0iXBb7fHNLLX5HpCsAEWBDPFo9mlJjNNBG35M6lM
-         evNrAjc1etOqjvPR1WkalPvlscbj5zWbvr49J3OetYOpbBdQPoIatvhx4T/F7wUybwMl
-         auvlBiPXilH7HIPP7LxEdSf1EFka7fOTIOJlF9I1ZOVxdWFDCoucL/r0Jlq8Ezb0c6Fh
-         qK7NwlPXvzvo1joz2iioRT2RSyIhlWrvca7bA72zWSaUzwUokricqRfR+UodSbrjYu9b
-         2wjg==
+        bh=cwdSo/iBYWKLrbHTG+HyNIQbWdtp/PGNH3wAwUOLzAc=;
+        b=2ay029PjwQvcnM8iOgcPMFYsCUrwzL06gqxWot0xuzeBDV8PvWitmz1j7RZIUduTxO
+         9+09A0UtGlKRyUXbMaxpw5Sh1F6jPQ3bGysD/Rqd4wopbl2z83rGylHjKlqC6tR/XR6j
+         hFj7LdnznEKpc0Lh9T5Fe+dkFNhZAPKjsjggqdzLqueAOomKb4d92NNozYecKpSTf8vJ
+         jus+j3BlPlTNh3Yf68y1m+QNDtn12l/KjYx1a10ytrg19Yn41hU8ka9G822X789UsoUg
+         E7dmJw1r6MnboIt++HQxiLPBGShwZ3iFzNy85UYYVZYg1MDhyfu5Ncwmp7dy/XnBYqLW
+         8jOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734026711; x=1734631511;
+        d=1e100.net; s=20230601; t=1734026713; x=1734631513;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RS8qlDlci8/4Bym+8sOq6f7pGooq251OZRMaf+SOEgY=;
-        b=WcbWeQswzp2GY879yZ/z4PyMDq6Sp8jRcQqvBg/Zuji5n58Ffq/d/tYUr6MX5IMbVQ
-         vKESm2mFYGiRnNTn8OyQnq0qvaxYB6hrp+r5w9hZ9g/YFxZZKiyPoWue+bU2fWJGtJie
-         zTtU3i3zm1/hk6HfJ0omdw8dlLGD01i9pCXUMq1mj7G0L0QKdCifskhyRnEp9sxcHZXV
-         IzwylbL0wBn6k4X7f2xNEFaI9xtH6+u4nLhab1mq7sc8Kt/htofhcZd6/sUXAXE+3sZg
-         5MIZpUjgnltHnnkGAztWLP0jIhpUW283ElfWuRL1OLLIH1rbdwTeQZv3y2QmlHtRpgjd
-         hLQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUseWk1W3HZicI2NBSGD9ikze8gm6IT1Vvzl8e9oRIyHz6YibgIIMqp2ELHD5CWqnXgfJlid60N5WYa+30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFA0fWanRqwiGXwf4YEf2RZwD1GTC2LmzvIcobfB+B25Yw49T+
-	ngZjckFVExMA+m1XOrZXBf8HRIfWLo1AxewLLXFgfbw4A5cXxu/ViP9Li4qR9yJHyj1Q6qNU4tV
-	c7vqg0rT7Qg==
-X-Google-Smtp-Source: AGHT+IEXzXpQhlLFADFsSKXZo9irA4liP3Y9eVpRtNsKhNXeGfOrD877Mo3P2mHA18Npm95BG/JFoGOJUDSq9w==
-X-Received: from wmbd18.prod.google.com ([2002:a05:600c:58d2:b0:434:a98d:6a1c])
+        bh=cwdSo/iBYWKLrbHTG+HyNIQbWdtp/PGNH3wAwUOLzAc=;
+        b=nGp1bWa9Z7rWBHN5MVi+T+jKQHSMY3igV4z5hctIkuFQMV37V33XizF/zjgO+xJ2/V
+         nrc/eCeAch+Uh5nqDklMr7I+dT1qb7SUmRqrVy2xd7VXjhB6g++uPgwlGo3rIjYdN0aF
+         Q5KmcgFMkGAaycXWUaGX7mcVHKNBIxqPRfuOtVmUJQtngIStkr2jayCtF8QIL8VWUpJL
+         uHi6dX4lFoDnjydZlnIvZVJuUnrbOk8T5pEm4eavICeaB/avFddX63cV/5uTzSQw5/Y9
+         O+ywPYkG9qwhW8Y3REt9v2m8QU/BuPrZHY833m2MvqsAQONO93GDAWYnya0NuQ7N5xqv
+         HnQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVe8OVrLrHc8hFa3CkDYpzHf0M7yhQTW/cJuPwnPcJfhAfJ+LpBHEToFQQj6AjfjJ9z+HbAWv5Y/EVrL3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0fgh34snFMEo9d80BeHqCitbtTz8pF0js1igV79CgahZ0mqxF
+	2muD5TpGQNo22P1aZv9lAMwrFOjAJr5jrG6gB5qL5HYvPtUE9dEB38O3mTh7Zavhs9CqB0Mw+Xy
+	u9QT61gsbnw==
+X-Google-Smtp-Source: AGHT+IFmbvEzDhykMqyy8OjOsZ2NeXlkTbt4cjtUEyGjwEAdXiFcByoXchIDeMneglUtq2nV1Br6AHE0eUe6Bg==
+X-Received: from wmom6.prod.google.com ([2002:a05:600c:4606:b0:436:16c6:831])
  (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:cc7:b0:434:f753:600f with SMTP id 5b1f17b1804b1-4361c3a6062mr66983595e9.19.1734026711336;
- Thu, 12 Dec 2024 10:05:11 -0800 (PST)
-Date: Thu, 12 Dec 2024 18:03:37 +0000
+ 2002:a05:6000:2b0e:b0:386:8ff:d20b with SMTP id ffacd0b85a97d-3864ce9f344mr5120606f8f.27.1734026713289;
+ Thu, 12 Dec 2024 10:05:13 -0800 (PST)
+Date: Thu, 12 Dec 2024 18:03:38 +0000
 In-Reply-To: <20241212180423.1578358-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241212180423.1578358-1-smostafa@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212180423.1578358-14-smostafa@google.com>
-Subject: [RFC PATCH v2 13/58] KVM: arm64: Introduce IOMMU driver infrastructure
+Message-ID: <20241212180423.1578358-15-smostafa@google.com>
+Subject: [RFC PATCH v2 14/58] KVM: arm64: pkvm: Add IOMMU hypercalls
 From: Mostafa Saleh <smostafa@google.com>
 To: iommu@lists.linux.dev, kvmarm@lists.linux.dev, 
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -87,231 +87,229 @@ Cc: catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
 	Mostafa Saleh <smostafa@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-To establish DMA isolation, KVM needs an IOMMU driver which provide
-certain ops, these ops are defined outside of the iommu_ops,
-and has 2 components:
-- kvm_iommu_driver (kernel): Implements simple interaction with
-  the kernel (init, remove,...)
-- kvm_iommu_ops (hypervisor): Implements paravirtual interface
-  (map, unmap, attach, detach,...)
+The unprivileged host IOMMU driver forwards some of the IOMMU API calls
+to the hypervisor, which installs and populates the page tables.
 
-Only one driver can be used and is registered with
-kvm_iommu_register_driver() by passing pointers to both ops.
+Note that this is not a stable ABI. Those hypercalls change with the
+kernel just like internal function calls.
 
-KVM will initialise the driver after it initialises and before the
-de-privilege point, which is a suitable point to establish trusted
-interaction between the host and the hypervisor, this also allows
-the host kernel to do one initialization from the kernel and avoid
-such complexity in the hypervisor as the kernel is still trusted at
-this point.
-
-Also, during the registration call, the pointer for the hypervisor
-ops will be initialised.
-
-The hypervisor init part is called from the finalise hypercall which
-is executed after the kernel kvm IOMMU driver init.
+One thing special about some of the IOMMU hypercalls, that they use
+newly added hyp_reqs_smccc_encode() to encode memory requests in
+the HVC return, leveraging X1, X2 and X3 registers as allowed SMCCC.
 
 Signed-off-by: Mostafa Saleh <smostafa@google.com>
 Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
 ---
- arch/arm64/include/asm/kvm_host.h       | 11 ++++++
- arch/arm64/kvm/Makefile                 |  2 +-
- arch/arm64/kvm/arm.c                    |  8 ++++-
- arch/arm64/kvm/hyp/include/nvhe/iommu.h | 13 +++++++
- arch/arm64/kvm/hyp/nvhe/Makefile        |  2 +-
- arch/arm64/kvm/hyp/nvhe/iommu/iommu.c   | 18 ++++++++++
- arch/arm64/kvm/hyp/nvhe/setup.c         |  5 +++
- arch/arm64/kvm/iommu.c                  | 47 +++++++++++++++++++++++++
- 8 files changed, 103 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm64/kvm/hyp/include/nvhe/iommu.h
- create mode 100644 arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
- create mode 100644 arch/arm64/kvm/iommu.c
+ arch/arm64/include/asm/kvm_asm.h        |  7 ++
+ arch/arm64/kvm/hyp/include/nvhe/iommu.h | 14 ++++
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 89 +++++++++++++++++++++++++
+ arch/arm64/kvm/hyp/nvhe/iommu/iommu.c   | 40 +++++++++++
+ 4 files changed, 150 insertions(+)
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 53916a7f0def..54416cfea573 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -1628,4 +1628,15 @@ void kvm_set_vm_id_reg(struct kvm *kvm, u32 reg, u64 val);
+diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
+index e4b391bdfdac..9ea155a04332 100644
+--- a/arch/arm64/include/asm/kvm_asm.h
++++ b/arch/arm64/include/asm/kvm_asm.h
+@@ -107,6 +107,13 @@ enum __kvm_host_smccc_func {
+ 	__KVM_HOST_SMCCC_FUNC___pkvm_hyp_alloc_mgt_refill,
+ 	__KVM_HOST_SMCCC_FUNC___pkvm_hyp_alloc_mgt_reclaimable,
+ 	__KVM_HOST_SMCCC_FUNC___pkvm_hyp_alloc_mgt_reclaim,
++	__KVM_HOST_SMCCC_FUNC___pkvm_host_iommu_alloc_domain,
++	__KVM_HOST_SMCCC_FUNC___pkvm_host_iommu_free_domain,
++	__KVM_HOST_SMCCC_FUNC___pkvm_host_iommu_attach_dev,
++	__KVM_HOST_SMCCC_FUNC___pkvm_host_iommu_detach_dev,
++	__KVM_HOST_SMCCC_FUNC___pkvm_host_iommu_map_pages,
++	__KVM_HOST_SMCCC_FUNC___pkvm_host_iommu_unmap_pages,
++	__KVM_HOST_SMCCC_FUNC___pkvm_host_iommu_iova_to_phys,
  
- unsigned long __pkvm_reclaim_hyp_alloc_mgt(unsigned long nr_pages);
- 
-+struct kvm_iommu_driver {
-+	int (*init_driver)(void);
-+	void (*remove_driver)(void);
-+};
-+
-+struct kvm_iommu_ops;
-+int kvm_iommu_register_driver(struct kvm_iommu_driver *kern_ops,
-+			      struct kvm_iommu_ops *el2_ops);
-+int kvm_iommu_init_driver(void);
-+void kvm_iommu_remove_driver(void);
-+
- #endif /* __ARM64_KVM_HOST_H__ */
-diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
-index f9e208273031..440897366e88 100644
---- a/arch/arm64/kvm/Makefile
-+++ b/arch/arm64/kvm/Makefile
-@@ -23,7 +23,7 @@ kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
- 	 vgic/vgic-v3.o vgic/vgic-v4.o \
- 	 vgic/vgic-mmio.o vgic/vgic-mmio-v2.o \
- 	 vgic/vgic-mmio-v3.o vgic/vgic-kvm-device.o \
--	 vgic/vgic-its.o vgic/vgic-debug.o
-+	 vgic/vgic-its.o vgic/vgic-debug.o iommu.o
- 
- kvm-$(CONFIG_HW_PERF_EVENTS)  += pmu-emul.o pmu.o
- kvm-$(CONFIG_ARM64_PTR_AUTH)  += pauth.o
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 94b210f36573..4b486323c0c9 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -2510,9 +2510,15 @@ static int __init kvm_hyp_init_protection(u32 hyp_va_bits)
- 	if (ret)
- 		return ret;
- 
-+	ret = kvm_iommu_init_driver();
-+	if (ret < 0)
-+		return ret;
-+
- 	ret = do_pkvm_init(hyp_va_bits);
--	if (ret)
-+	if (ret) {
-+		kvm_iommu_remove_driver();
- 		return ret;
-+	}
- 
- 	free_hyp_pgds();
- 
+ 	/*
+ 	 * Start of the dynamically registered hypercalls. Start a bit
 diff --git a/arch/arm64/kvm/hyp/include/nvhe/iommu.h b/arch/arm64/kvm/hyp/include/nvhe/iommu.h
-new file mode 100644
-index 000000000000..1ac70cc28a9e
---- /dev/null
+index 1ac70cc28a9e..908863f07b0b 100644
+--- a/arch/arm64/kvm/hyp/include/nvhe/iommu.h
 +++ b/arch/arm64/kvm/hyp/include/nvhe/iommu.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __ARM64_KVM_NVHE_IOMMU_H__
-+#define __ARM64_KVM_NVHE_IOMMU_H__
-+
-+#include <asm/kvm_host.h>
-+
-+struct kvm_iommu_ops {
-+	int (*init)(void);
-+};
-+
-+int kvm_iommu_init(void);
-+
-+#endif /* __ARM64_KVM_NVHE_IOMMU_H__ */
-diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/Makefile
-index 415cc51fe391..9e1b74c661d2 100644
---- a/arch/arm64/kvm/hyp/nvhe/Makefile
-+++ b/arch/arm64/kvm/hyp/nvhe/Makefile
-@@ -8,7 +8,7 @@ CFLAGS_switch.nvhe.o += -Wno-override-init
- hyp-obj-y := timer-sr.o sysreg-sr.o debug-sr.o switch.o tlb.o hyp-init.o host.o \
- 	 hyp-main.o hyp-smp.o psci-relay.o alloc.o early_alloc.o page_alloc.o \
- 	 cache.o setup.o mm.o mem_protect.o sys_regs.o pkvm.o stacktrace.o ffa.o \
--	 serial.o alloc_mgt.o
-+	 serial.o alloc_mgt.o iommu/iommu.o
- hyp-obj-y += ../vgic-v3-sr.o ../aarch32.o ../vgic-v2-cpuif-proxy.o ../entry.o \
- 	 ../fpsimd.o ../hyp-entry.o ../exception.o ../pgtable.o
- hyp-obj-$(CONFIG_LIST_HARDENED) += list_debug.o
-diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-new file mode 100644
-index 000000000000..3bd87d2084e9
---- /dev/null
-+++ b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * IOMMU operations for pKVM
-+ *
-+ * Copyright (C) 2022 Linaro Ltd.
-+ */
-+#include <nvhe/iommu.h>
-+
-+/* Only one set of ops supported, similary to the kernel */
-+struct kvm_iommu_ops *kvm_iommu_ops;
-+
-+int kvm_iommu_init(void)
-+{
-+	if (!kvm_iommu_ops || !kvm_iommu_ops->init)
-+		return -ENODEV;
-+
-+	return kvm_iommu_ops->init();
-+}
-diff --git a/arch/arm64/kvm/hyp/nvhe/setup.c b/arch/arm64/kvm/hyp/nvhe/setup.c
-index 9d09f5f471b9..4d36616a7f02 100644
---- a/arch/arm64/kvm/hyp/nvhe/setup.c
-+++ b/arch/arm64/kvm/hyp/nvhe/setup.c
-@@ -14,6 +14,7 @@
- #include <nvhe/early_alloc.h>
- #include <nvhe/ffa.h>
- #include <nvhe/gfp.h>
-+#include <nvhe/iommu.h>
- #include <nvhe/memory.h>
- #include <nvhe/mem_protect.h>
- #include <nvhe/mm.h>
-@@ -360,6 +361,10 @@ void __noreturn __pkvm_init_finalise(void)
- 	if (ret)
- 		goto out;
+@@ -4,6 +4,20 @@
  
-+	ret = kvm_iommu_init();
-+	if (ret)
-+		goto out;
+ #include <asm/kvm_host.h>
+ 
++/* Hypercall handlers */
++int kvm_iommu_alloc_domain(pkvm_handle_t domain_id, int type);
++int kvm_iommu_free_domain(pkvm_handle_t domain_id);
++int kvm_iommu_attach_dev(pkvm_handle_t iommu_id, pkvm_handle_t domain_id,
++			 u32 endpoint_id, u32 pasid, u32 pasid_bits);
++int kvm_iommu_detach_dev(pkvm_handle_t iommu_id, pkvm_handle_t domain_id,
++			 u32 endpoint_id, u32 pasid);
++size_t kvm_iommu_map_pages(pkvm_handle_t domain_id,
++			   unsigned long iova, phys_addr_t paddr, size_t pgsize,
++			   size_t pgcount, int prot);
++size_t kvm_iommu_unmap_pages(pkvm_handle_t domain_id, unsigned long iova,
++			     size_t pgsize, size_t pgcount);
++phys_addr_t kvm_iommu_iova_to_phys(pkvm_handle_t domain_id, unsigned long iova);
 +
- 	ret = fix_host_ownership();
- 	if (ret)
- 		goto out;
-diff --git a/arch/arm64/kvm/iommu.c b/arch/arm64/kvm/iommu.c
-new file mode 100644
-index 000000000000..ed77ea0d12bb
---- /dev/null
-+++ b/arch/arm64/kvm/iommu.c
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2023 Google LLC
-+ * Author: Mostafa Saleh <smostafa@google.com>
-+ */
-+
-+#include <asm/kvm_mmu.h>
-+#include <linux/kvm_host.h>
-+
-+struct kvm_iommu_driver *iommu_driver;
-+extern struct kvm_iommu_ops *kvm_nvhe_sym(kvm_iommu_ops);
-+
-+int kvm_iommu_register_driver(struct kvm_iommu_driver *kern_ops, struct kvm_iommu_ops *el2_ops)
+ struct kvm_iommu_ops {
+ 	int (*init)(void);
+ };
+diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+index 08c0ff823a55..9b224842c487 100644
+--- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
++++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+@@ -19,6 +19,7 @@
+ #include <nvhe/alloc.h>
+ #include <nvhe/alloc_mgt.h>
+ #include <nvhe/ffa.h>
++#include <nvhe/iommu.h>
+ #include <nvhe/mem_protect.h>
+ #include <nvhe/modules.h>
+ #include <nvhe/mm.h>
+@@ -1592,6 +1593,87 @@ static void handle___pkvm_hyp_alloc_mgt_reclaim(struct kvm_cpu_context *host_ctx
+ 	cpu_reg(host_ctxt, 2) = mc.nr_pages;
+ }
+ 
++static void handle___pkvm_host_iommu_alloc_domain(struct kvm_cpu_context *host_ctxt)
 +{
 +	int ret;
++	DECLARE_REG(pkvm_handle_t, domain, host_ctxt, 1);
++	DECLARE_REG(int, type, host_ctxt, 2);
 +
-+	if (WARN_ON(!kern_ops || !el2_ops))
-+		return -EINVAL;
++	ret = kvm_iommu_alloc_domain(domain, type);
++	hyp_reqs_smccc_encode(ret, host_ctxt, this_cpu_ptr(&host_hyp_reqs));
++}
 +
-+	/*
-+	 * Paired with smp_load_acquire(&iommu_driver)
-+	 * Ensure memory stores happening during a driver
-+	 * init are observed before executing kvm iommu callbacks.
-+	 */
-+	ret = cmpxchg_release(&iommu_driver, NULL, kern_ops) ? -EBUSY : 0;
-+	if (ret)
-+		return ret;
++static void handle___pkvm_host_iommu_free_domain(struct kvm_cpu_context *host_ctxt)
++{
++	int ret;
++	DECLARE_REG(pkvm_handle_t, domain, host_ctxt, 1);
 +
-+	kvm_nvhe_sym(kvm_iommu_ops) = el2_ops;
++	ret = kvm_iommu_free_domain(domain);
++	hyp_reqs_smccc_encode(ret, host_ctxt, this_cpu_ptr(&host_hyp_reqs));
++}
++
++static void handle___pkvm_host_iommu_attach_dev(struct kvm_cpu_context *host_ctxt)
++{
++	int ret;
++	DECLARE_REG(pkvm_handle_t, iommu, host_ctxt, 1);
++	DECLARE_REG(pkvm_handle_t, domain, host_ctxt, 2);
++	DECLARE_REG(unsigned int, endpoint, host_ctxt, 3);
++	DECLARE_REG(unsigned int, pasid, host_ctxt, 4);
++	DECLARE_REG(unsigned int, pasid_bits, host_ctxt, 5);
++
++	ret = kvm_iommu_attach_dev(iommu, domain, endpoint,
++				   pasid, pasid_bits);
++	hyp_reqs_smccc_encode(ret, host_ctxt, this_cpu_ptr(&host_hyp_reqs));
++}
++
++static void handle___pkvm_host_iommu_detach_dev(struct kvm_cpu_context *host_ctxt)
++{
++	int ret;
++	DECLARE_REG(pkvm_handle_t, iommu, host_ctxt, 1);
++	DECLARE_REG(pkvm_handle_t, domain, host_ctxt, 2);
++	DECLARE_REG(unsigned int, endpoint, host_ctxt, 3);
++	DECLARE_REG(unsigned int, pasid, host_ctxt, 4);
++
++	ret = kvm_iommu_detach_dev(iommu, domain, endpoint, pasid);
++	hyp_reqs_smccc_encode(ret, host_ctxt, this_cpu_ptr(&host_hyp_reqs));
++}
++
++static void handle___pkvm_host_iommu_map_pages(struct kvm_cpu_context *host_ctxt)
++{
++	unsigned long ret;
++	DECLARE_REG(pkvm_handle_t, domain, host_ctxt, 1);
++	DECLARE_REG(unsigned long, iova, host_ctxt, 2);
++	DECLARE_REG(phys_addr_t, paddr, host_ctxt, 3);
++	DECLARE_REG(size_t, pgsize, host_ctxt, 4);
++	DECLARE_REG(size_t, pgcount, host_ctxt, 5);
++	DECLARE_REG(unsigned int, prot, host_ctxt, 6);
++
++	ret = kvm_iommu_map_pages(domain, iova, paddr,
++				  pgsize, pgcount, prot);
++	hyp_reqs_smccc_encode(ret, host_ctxt, this_cpu_ptr(&host_hyp_reqs));
++}
++
++static void handle___pkvm_host_iommu_unmap_pages(struct kvm_cpu_context *host_ctxt)
++{
++	unsigned long ret;
++	DECLARE_REG(pkvm_handle_t, domain, host_ctxt, 1);
++	DECLARE_REG(unsigned long, iova, host_ctxt, 2);
++	DECLARE_REG(size_t, pgsize, host_ctxt, 3);
++	DECLARE_REG(size_t, pgcount, host_ctxt, 4);
++
++	ret = kvm_iommu_unmap_pages(domain, iova,
++				    pgsize, pgcount);
++	hyp_reqs_smccc_encode(ret, host_ctxt, this_cpu_ptr(&host_hyp_reqs));
++}
++
++static void handle___pkvm_host_iommu_iova_to_phys(struct kvm_cpu_context *host_ctxt)
++{
++	DECLARE_REG(pkvm_handle_t, domain, host_ctxt, 1);
++	DECLARE_REG(unsigned long, iova, host_ctxt, 2);
++
++	cpu_reg(host_ctxt, 1) = kvm_iommu_iova_to_phys(domain, iova);
++}
++
+ typedef void (*hcall_t)(struct kvm_cpu_context *);
+ 
+ #define HANDLE_FUNC(x)	[__KVM_HOST_SMCCC_FUNC_##x] = (hcall_t)handle_##x
+@@ -1649,6 +1731,13 @@ static const hcall_t host_hcall[] = {
+ 	HANDLE_FUNC(__pkvm_hyp_alloc_mgt_refill),
+ 	HANDLE_FUNC(__pkvm_hyp_alloc_mgt_reclaimable),
+ 	HANDLE_FUNC(__pkvm_hyp_alloc_mgt_reclaim),
++	HANDLE_FUNC(__pkvm_host_iommu_alloc_domain),
++	HANDLE_FUNC(__pkvm_host_iommu_free_domain),
++	HANDLE_FUNC(__pkvm_host_iommu_attach_dev),
++	HANDLE_FUNC(__pkvm_host_iommu_detach_dev),
++	HANDLE_FUNC(__pkvm_host_iommu_map_pages),
++	HANDLE_FUNC(__pkvm_host_iommu_unmap_pages),
++	HANDLE_FUNC(__pkvm_host_iommu_iova_to_phys),
+ };
+ 
+ static void handle_host_hcall(struct kvm_cpu_context *host_ctxt)
+diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
+index 3bd87d2084e9..9022fd612a49 100644
+--- a/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
++++ b/arch/arm64/kvm/hyp/nvhe/iommu/iommu.c
+@@ -16,3 +16,43 @@ int kvm_iommu_init(void)
+ 
+ 	return kvm_iommu_ops->init();
+ }
++
++int kvm_iommu_alloc_domain(pkvm_handle_t domain_id, int type)
++{
++	return -ENODEV;
++}
++
++int kvm_iommu_free_domain(pkvm_handle_t domain_id)
++{
++	return -ENODEV;
++}
++
++int kvm_iommu_attach_dev(pkvm_handle_t iommu_id, pkvm_handle_t domain_id,
++			 u32 endpoint_id, u32 pasid, u32 pasid_bits)
++{
++	return -ENODEV;
++}
++
++int kvm_iommu_detach_dev(pkvm_handle_t iommu_id, pkvm_handle_t domain_id,
++			 u32 endpoint_id, u32 pasid)
++{
++	return -ENODEV;
++}
++
++size_t kvm_iommu_map_pages(pkvm_handle_t domain_id,
++			   unsigned long iova, phys_addr_t paddr, size_t pgsize,
++			   size_t pgcount, int prot)
++{
 +	return 0;
 +}
 +
-+int kvm_iommu_init_driver(void)
++size_t kvm_iommu_unmap_pages(pkvm_handle_t domain_id, unsigned long iova,
++			     size_t pgsize, size_t pgcount)
 +{
-+	if (WARN_ON(!smp_load_acquire(&iommu_driver))) {
-+		kvm_err("pKVM enabled without an IOMMU driver, do not run confidential workloads in virtual machines\n");
-+		return -ENODEV;
-+	}
-+
-+	return iommu_driver->init_driver();
++	return 0;
 +}
 +
-+void kvm_iommu_remove_driver(void)
++phys_addr_t kvm_iommu_iova_to_phys(pkvm_handle_t domain_id, unsigned long iova)
 +{
-+	if (smp_load_acquire(&iommu_driver))
-+		iommu_driver->remove_driver();
++	return 0;
 +}
 -- 
 2.47.0.338.g60cca15819-goog
