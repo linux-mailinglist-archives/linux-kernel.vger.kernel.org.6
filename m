@@ -1,287 +1,398 @@
-Return-Path: <linux-kernel+bounces-443542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025139EF699
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:27:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79E8F9EF624
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:23:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4FF189D8B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:09:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F89A17E821
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CEA229692;
-	Thu, 12 Dec 2024 17:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8CC223C55;
+	Thu, 12 Dec 2024 17:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiA8ViTt"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YP1I15gC"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B64225A21;
-	Thu, 12 Dec 2024 17:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FA922333E;
+	Thu, 12 Dec 2024 17:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734023232; cv=none; b=jzRdvx0CZ+zxgFcNWmtFqFTXADY6fz38VopiB8L9HJeBExYL323D6Q+rQQ2/anvzQu92F+uKXEparKLXz1tLR9vJAg91QkUwi+j94zx3dJHzPKHW46SqHH45stSbTfajnedXtfxo4IMIx0ekmTl/LQdTiaIBhHiJPG7PI+l3ATU=
+	t=1734023346; cv=none; b=EopenDYf8dfVMi49nyacUGUmT+BoqnCyH+sOSOYwGpavqL3xlQJlJBCJZCPx3SFK/WN/fsoqCeFtymGfJHUibnMOkhB5IeT2pVElhKqYkZbR3Xl2Hubsqpqz0F0F88sjP6o+d1Gxt7TOx6Mu3TDbwRarrUvo8i6faSeooNrtZHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734023232; c=relaxed/simple;
-	bh=0vHE1w5O4zkSsS7UAGj/6U5b2nhWxF+ZfRvjGWZpNWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X91ZyC74PVosN47UQhJ1mYC1hhq1HwEGwdkZ2IxtoSueNDKmOYIaAbdVAen1GtXY35Jd0lQiGdeJR7YMy4eD55SjkyQPzP3Qsmgt1fUIeBjRaFhG6ELq2nrYIoAxrNcYqF2AR3MwgxoAtxpbc9iT3Lhiu7KGjCKBpEuByoRYO2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiA8ViTt; arc=none smtp.client-ip=209.85.219.51
+	s=arc-20240116; t=1734023346; c=relaxed/simple;
+	bh=gVhKPzyRDKzdYIaxDYQRP38ERruIyeTvxBckaT9u8xw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N27gXkdnufrSUTLWJrTVLCfVGx5cAOW9/001vbVEPcmANAzZKZgLfCeJUgP6u3lGrO/MyZtj8Kmyf4prgqUzI4YfkBpaN8jaf7rBfOLZy/+736LrUXAukVKmfJiTXONExlxCiVVQPI7bu5ZCPoFxUuSfyRoekf4C/g/hrBk8IHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YP1I15gC; arc=none smtp.client-ip=209.85.166.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d932b5081eso7707656d6.1;
-        Thu, 12 Dec 2024 09:07:10 -0800 (PST)
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a77bd62fdeso5710755ab.2;
+        Thu, 12 Dec 2024 09:09:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734023230; x=1734628030; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ydWT1UsTHYhWkkUUpo46STYyAYlSEKPTYHT7UawS7ks=;
-        b=NiA8ViTtOFsTFYeLKtVUM42RzV85SRpPEvmGsry0DX35KyepEjqGwx1PQLBd2V1B49
-         SyBkY99WoNpYeymC/VgIYmyt2nPKIGxB2Vi+dVP8ibr7UCMjJ5X3TMYn6NihbvWUreHc
-         LyR9Jq0QWdZnN3oQo+7gOYQfItoB2iOZPJ4dw1PfqwtpzWbaRLER12EpZIMhT0V1So0c
-         OBt5tWn/lOFCuJbkVkvIy+Db8Bv3lFg6HiSA3+WYy02t0p8pm3HSQgyT48dtKuMw3vms
-         gfAeqqPHDQohsTgUHyKPJ/JR4u6HChvCW+1TnqzYeopztaG1YihIGVpWnQcTu/I8/LuE
-         ZPcQ==
+        d=gmail.com; s=20230601; t=1734023343; x=1734628143; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wh2zFlYirOEce8wHvqNzCPR9OxzcDGMsRZId2rDGIFg=;
+        b=YP1I15gC/5BwsH1Rt+uFb7pJuTy9tfxySFDmK7KppqIC7aMuVn/oZwWjueXO1VNA3l
+         8etUCdCLXaAmA1VnwtUdnSoQcwjRjnmf+LGMw55rG2vzH+ufTf160o8Wh+oPJSvn+f/h
+         Jv7Up0m09gagmaDwka7/UK38kLBFxdhP+VGwt3UCHArnLsgf4CWb0BD5HkCpXLc60WxK
+         b5CXfQ8cJ4cy5XQAXv4rlMtjC1uZoXJonOve/rfJN2TnmVm4RMQgnjUbqrpMzJWFJBwR
+         AMjbjxVLdho7x97PbIlEVrhoSsM1x3NNCFfHzUEpAizbZJGPgi8m7vxbuexM8CsEuC3D
+         pyHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734023230; x=1734628030;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ydWT1UsTHYhWkkUUpo46STYyAYlSEKPTYHT7UawS7ks=;
-        b=IQvnJ43pfmEZxeU2PurFB5hGIXgfstn3d6V/Fe3U7SayV9qUQKAnFwUs0Gd4QJw6pU
-         uVZOytlShQSG1FNjrNcEQA+7i4k8pvy1jZ1h3G/rRsVljT4wWxV2t83srskWpWcH4I1b
-         JkWikbd0IRfJ5XPAUZ0AhttKeMVsgWYRSrrkzA43VVlmDrTO6LL2TfHwSqk3Zt0+1G0d
-         R5+Me3QbCQoemxyEoFVF7nhy+ELQLUMpNfvyv2lDdLS2v0xU9A3P3sEUnuM7zI0bW61G
-         sVbAwmtopifKsmwPSzIoI6dY1jgsiITPB8YVayC+5/vL426EaXhN3vSV4Cp7uF8CbTKm
-         HAGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8/qEwKMrdYNi8SzcWfnuRddW8bfsvcjpgKHwUJhUM/qMAi/tI/9R3MHkp2QSwvGmcrw7UoOUZH0WD2VEkSg==@vger.kernel.org, AJvYcCUAnTklY9mI+bRHC7d9l4Aef9q3OLF+h7FRpIel+K1Wfz09gzEhN+XkY8MDLFQd/ki/pJQX@vger.kernel.org, AJvYcCUDi5t3GNVwqxGaPs4WVPcSx2dikwQ/cM6NTRPV+gwk5YC6U/wR8NHI+8lWXnOf99e0H4dTMzBEniidn4Ac@vger.kernel.org, AJvYcCXSkn9PYKMz/IP0G5lnIo9kugjASgOFoZWbtvNHQcrkIhcTaNIGwi69Z3x25SwDKLOvVXpe/KChrTbY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7qLJVOgFajfbkuE+S9iMiQo5qksYo7mH+SLUGtISHymCPH4XH
-	rkKCC8iVlKIwOmbizTXJvOMmJi9qM8io8Xzf9mw9X+P9c9WZMswE
-X-Gm-Gg: ASbGnctUHpIkl/yg36hRPmQH8diKBThiPMo8gtoIIElkeOgQguso4cGQz8WdZ4U7p0E
-	i2Lcx8ywhAyHzyr2gMxDnQAyhklXtjb9EOIXKLnFz2K3PX/343XiBWcLrOaL1doVyCY6SVmpAnd
-	Ulnb+7djfaa0jpXQUM/thxc4sUVigMXmZymXk9HbX8MTVZ+2gMw5ihZnv9FO6IUukWDmFGl0o0y
-	j8h4O0bGWcFs1vtQveYoFO4rohHElhmh6+aroJKi8qTAv6X9Oj1eXBqsgve1zL5n86tywc5nSkf
-	aUiDTX+WRADuDO3pev5uHOUtFlb72xdvAXv6bKTe4VJiYy4=
-X-Google-Smtp-Source: AGHT+IE/GItMMPblFQfoWOS9p3WGWxqt+Dw6vxc/7QhfYnPKM6o9vZDfD5bjzG4xiPoNE/l5NgGouw==
-X-Received: by 2002:ad4:5aea:0:b0:6d8:8289:26ac with SMTP id 6a1803df08f44-6db0f860595mr18963176d6.45.1734023229749;
-        Thu, 12 Dec 2024 09:07:09 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da696993sm83743806d6.34.2024.12.12.09.07.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 09:07:08 -0800 (PST)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 6D25F1200066;
-	Thu, 12 Dec 2024 12:07:08 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 12 Dec 2024 12:07:08 -0500
-X-ME-Sender: <xms:PBhbZ3cQLAN_Jwg2nfFOrMDCfGaWRrRFbXQYziRhDf3g7DcjsoxX0A>
-    <xme:PBhbZ9MIOJjMK5Ci1Rx0U8drurfX5Z8vfCJ5hl7jTwxUEoI9Ax-i4QvrOS5GldGIS
-    FDYFAU9Gp3sTL-SeA>
-X-ME-Received: <xmr:PBhbZwisrTsmLp3KgtNCrMDg-4rt-GJSjviToXQq0H1yhXeXsULCxvGmzI4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeehgdelhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeegkeegtedtleffkeeftdevleeuieduveejgeei
-    kedvgeekudefteefieeivdeuleenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvpdhnsggprhgtphhtthhopeehjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    eprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprhhushhtqdhf
-    ohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgtuh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhgthh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehllhhvmheslhhishhtshdr
-    lhhinhhugidruggvvhdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhinhhugidrug
-    gvvhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegr
-    lhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:PBhbZ4_bxD1EdvvG1pcQ0R28qVCKk5b1Ij5sJnCIkw0wthcCOTXQcw>
-    <xmx:PBhbZzu6K9CAjXTJEmCre--Q3suO2c4QNTjNGWbz_PoA_d_m3CkCqQ>
-    <xmx:PBhbZ3HpOUUjR6jpHda2k5BsqDusYqLfOENcb4YvFpvKyqqICyKNQA>
-    <xmx:PBhbZ6N8LSYi4w1v6G2BzN1MBMLjz8Ug032w7mdTrpEt5IG0elKaqA>
-    <xmx:PBhbZ0NQTWjbv0n97eX1zsur6i2Rspp3fpybEeEVwF91xUUBuqTz31Wa>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Dec 2024 12:07:06 -0500 (EST)
-Date: Thu, 12 Dec 2024 09:07:00 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	llvm@lists.linux.dev, lkmm@lists.linux.dev,
-	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
- linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
- Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com,
- Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,	Albert Ou <aou@eecs.berkeley.edu>,
- linux-riscv@lists.infradead.org
-Subject: Re: [RFC v2 02/13] rust: sync: Add basic atomic operation mapping
- framework
-Message-ID: <Z1sYNOYJPzQmJXn6@boqun-archlinux>
-References: <20241101060237.1185533-1-boqun.feng@gmail.com>
- <20241101060237.1185533-3-boqun.feng@gmail.com>
- <CAH5fLghYjcb-mpR_rr2aC_W8rRb6g8jCFxgky7iEqVgmpHjf=Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1734023343; x=1734628143;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wh2zFlYirOEce8wHvqNzCPR9OxzcDGMsRZId2rDGIFg=;
+        b=IOifcMhSuQNyGEz9wYHxf+KEtmLMvr/AXUmElHUviC4XB6x8EoDdJzoHO4u5gXUpj1
+         jUMmjMC1zEocmYxLXbgkIIJioxH7L+UyZUrkgeOX9K4i6mc0ayPa+gFhbdNg0+mUiux3
+         mPC964ZijAF6qfnNTUDFOUQyyighjHsNlKM/+HCSg4eIyUhD7eTIDiTj/tYrEvAZXo4l
+         wRe8bhGQruScMeR/sfADfzK+uGJoj2oFNIWcxIEg3FQoHKR75GQvCXUAIXfa6rNcQ1NL
+         tRAl8eiOuF8zfl3rVQLafTDx+vmOXyDUOLINxNgDS66EG211fIi5v9nirV3sawTJnFBI
+         07AA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUlQN83qZ4oVwqj1KbUORjKRRJDUsWaTaaHETVX+BegTEt/Ijbcv5BLT7FeXtsTSfUgSUW263ggcI61gVw@vger.kernel.org, AJvYcCXPx8kDXcxS4JC3RzkWBMCGvbB3nAeVlBIRisgzZH0dC3lhEqRUhH82xxo+CBxhHM9t6S6PI70v4hZTvbg5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8OD+n43CnEnbHno0LWOhwYrAyZw42/Thg0ToXrsdYad7HzQVr
+	6Pd2MZQDJVSN4OQhNOQrj/plTWWgliPsCFBe43XdVg23L3TIQm7aRAN2MY8yD8x1wJHhpxqdefC
+	NGRfJLDKWvOZ+fVkmZPVRAn4Ctl4=
+X-Gm-Gg: ASbGncv6V/Iqu8xFcKeKTsE+rcI/zb0dWNMvOQkWJCvPHZhSqAPcuy+Dwd0/w/bRXFB
+	9joN9CcJYwxhnadto9KR3cUkphP4soZHuiw/uCmgSxp9ebvMI+zCygY+HRaf/RYhLhW8=
+X-Google-Smtp-Source: AGHT+IHOBEcHwVM1L/KwA0czMrrqFBDeYsTizttyCsGI/gpxEaBww5BPzG3hTX5xxyfSq4+baRCj9nzL8F4tOLytWj4=
+X-Received: by 2002:a05:6e02:1568:b0:3a7:e452:db4 with SMTP id
+ e9e14a558f8ab-3ae57ef8300mr10030475ab.16.1734023343067; Thu, 12 Dec 2024
+ 09:09:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLghYjcb-mpR_rr2aC_W8rRb6g8jCFxgky7iEqVgmpHjf=Q@mail.gmail.com>
+References: <20241205165419.54080-1-robdclark@gmail.com> <eca60b8e-8a8a-41c4-816a-d084822646f1@quicinc.com>
+In-Reply-To: <eca60b8e-8a8a-41c4-816a-d084822646f1@quicinc.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Thu, 12 Dec 2024 09:08:51 -0800
+Message-ID: <CAF6AEGtqSW1mpN14S8ffyV=tUG=0GTmNWq_oVEXo+0RYDJfOnA@mail.gmail.com>
+Subject: Re: [RFC] drm/msm: Add UABI to request perfcntr usage
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Antonino Maniscalco <antomani103@gmail.com>, 
+	Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 12, 2024 at 11:51:23AM +0100, Alice Ryhl wrote:
-> On Fri, Nov 1, 2024 at 7:03 AM Boqun Feng <boqun.feng@gmail.com> wrote:
+On Thu, Dec 12, 2024 at 7:59=E2=80=AFAM Akhil P Oommen <quic_akhilpo@quicin=
+c.com> wrote:
+>
+> On 12/5/2024 10:24 PM, Rob Clark wrote:
+> > From: Rob Clark <robdclark@chromium.org>
 > >
-> > Preparation for generic atomic implementation. To unify the
-> > ipmlementation of a generic method over `i32` and `i64`, the C side
-> > atomic methods need to be grouped so that in a generic method, they can
-> > be referred as <type>::<method>, otherwise their parameters and return
-> > value are different between `i32` and `i64`, which would require using
-> > `transmute()` to unify the type into a `T`.
+> > Performance counter usage falls into two categories:
 > >
-> > Introduce `AtomicIpml` to represent a basic type in Rust that has the
-> > direct mapping to an atomic implementation from C. This trait is sealed,
-> > and currently only `i32` and `i64` ipml this.
-> 
-> There seems to be quite a few instances of "impl" spelled as "ipml" here.
-> 
-
-Will fix!
-
-> > Further, different methods are put into different `*Ops` trait groups,
-> > and this is for the future when smaller types like `i8`/`i16` are
-> > supported but only with a limited set of API (e.g. only set(), load(),
-> > xchg() and cmpxchg(), no add() or sub() etc).
+> > 1. Local usage, where the counter configuration, start, and end read
+> >    happen within (locally to) a single SUBMIT.  In this case, there is
+> >    no dependency on counter configuration or values between submits, an=
+d
+> >    in fact counters are normally cleared on context switches, making it
+> >    impossible to rely on cross-submit state.
 > >
-> > While the atomic mod is introduced, documentation is also added for
-> > memory models and data races.
+> > 2. Global usage, where a single privilaged daemon/process is sampling
+> >    counter values across all processes for profiling.
 > >
-> > Also bump my role to the maintainer of ATOMIC INFRASTRUCTURE to reflect
-> > my responsiblity on the Rust atomic mod.
+> > The two categories are mutually exclusive.  While you can have many
+> > processes making local counter usage, you cannot combine global and
+> > local usage without the two stepping on each others feet (by changing
+> > counter configuration).
 > >
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > For global counter usage, there is already a SYSPROF param (since globa=
+l
+> > counter usage requires disabling counter clearing on context switch).
+> > This patch adds a REQ_CNTRS param to request local counter usage.  If
+> > one or more processes has requested counter usage, then a SYSPROF
+> > request will fail with -EBUSY.  And if SYSPROF is active, then REQ_CNTR=
+S
+> > will fail with -EBUSY, maintaining the mutual exclusivity.
+> >
+> > This is purely an advisory interface to help coordinate userspace.
+> > There is no real means of enforcement, but the worst that can happen if
+> > userspace ignores a REQ_CNTRS failure is that you'll get nonsense
+> > profiling data.
+> >
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
 > > ---
-> >  MAINTAINERS                    |   4 +-
-> >  rust/kernel/sync.rs            |   1 +
-> >  rust/kernel/sync/atomic.rs     |  19 ++++
-> >  rust/kernel/sync/atomic/ops.rs | 199 +++++++++++++++++++++++++++++++++
-> >  4 files changed, 222 insertions(+), 1 deletion(-)
-> >  create mode 100644 rust/kernel/sync/atomic.rs
-> >  create mode 100644 rust/kernel/sync/atomic/ops.rs
+> > kgsl takes a different approach, which involves a lot more UABI for
+> > assigning counters to different processes.  But I think by taking
+> > advantage of the fact that mesa (freedreno+turnip) reconfigure the
+> > counters they need in each SUBMIT, for their respective gl/vk perf-
+> > counter extensions, we can take this simpler approach.
+>
+> KGSL's approach is preemption and ifpc safe (also whatever HW changes
+> that will come up in future generations). How will we ensure that here?
+>
+> I have plans to bring up IFPC support in near future. Also, I brought up
+> this point during preemption series. But from the responses, I felt that
+> profiling was not considered a serious usecase. Still I wonder how the
+> perfcounter extensions work accurately with preemption.
+
+Re: IFPC, I think initially we have to inhibit IFPC when SYSPROF is active
+
+Longer term, I think we want to just save and restore all of the SEL
+regs as well as the counters themselves on preemption.  AFAIU
+currently only the counters themselves are saved/restored.  But there
+is only one 32b SEL reg for each 64b counter, so I'm not sure that you
+save that many cycles by not just saving/restoring the SEL regs as
+well.  (And of course with REQ_CNTRS the kernel knows which processes
+need counter save/restore and which do not, so you are only taking the
+extra context switch overhead if a process is actually using the
+perfcntrs.)
+
+Alternatively, I think we could just declare this as a userspace
+problem, and solve it with CP_SET_AMBLE PREAMBLE/POSTAMBLE?
+
+Just for background, rendernode UABI is exposed to all processes that
+can use the GPU, ie. basically everything.  Which makes it an
+attractive attack surface.  This is why I prefer minimalism when it
+comes to UABI, and not adding new ioctls and complexity in the kernel
+when it is not essential ;-)
+
+BR,
+-R
+
+> -Akhil
+>
 > >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index b77f4495dcf4..e09471027a63 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -3635,7 +3635,7 @@ F:        drivers/input/touchscreen/atmel_mxt_ts.c
-> >  ATOMIC INFRASTRUCTURE
-> >  M:     Will Deacon <will@kernel.org>
-> >  M:     Peter Zijlstra <peterz@infradead.org>
-> > -R:     Boqun Feng <boqun.feng@gmail.com>
-> > +M:     Boqun Feng <boqun.feng@gmail.com>
-> >  R:     Mark Rutland <mark.rutland@arm.com>
-> >  L:     linux-kernel@vger.kernel.org
-> >  S:     Maintained
-> > @@ -3644,6 +3644,8 @@ F:        arch/*/include/asm/atomic*.h
-> >  F:     include/*/atomic*.h
-> >  F:     include/linux/refcount.h
-> >  F:     scripts/atomic/
-> > +F:     rust/kernel/sync/atomic.rs
-> > +F:     rust/kernel/sync/atomic/
-> 
-> This is why mod.rs files are superior :)
-> 
-
-;-) Not going to do anything right now, but let me think about this.
-
-> > @@ -0,0 +1,19 @@
-> > +// SPDX-License-Identifier: GPL-2.0
+> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c |  2 +
+> >  drivers/gpu/drm/msm/msm_drv.c           |  5 ++-
+> >  drivers/gpu/drm/msm/msm_gpu.c           |  1 +
+> >  drivers/gpu/drm/msm/msm_gpu.h           | 29 +++++++++++++-
+> >  drivers/gpu/drm/msm/msm_submitqueue.c   | 52 ++++++++++++++++++++++++-
+> >  include/uapi/drm/msm_drm.h              |  1 +
+> >  6 files changed, 85 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/=
+msm/adreno/adreno_gpu.c
+> > index 31bbf2c83de4..f688e37059b8 100644
+> > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> > @@ -441,6 +441,8 @@ int adreno_set_param(struct msm_gpu *gpu, struct ms=
+m_file_private *ctx,
+> >               if (!capable(CAP_SYS_ADMIN))
+> >                       return UERR(EPERM, drm, "invalid permissions");
+> >               return msm_file_private_set_sysprof(ctx, gpu, value);
+> > +     case MSM_PARAM_REQ_CNTRS:
+> > +             return msm_file_private_request_counters(ctx, gpu, value)=
+;
+> >       default:
+> >               return UERR(EINVAL, drm, "%s: invalid param: %u", gpu->na=
+me, param);
+> >       }
+> > diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_dr=
+v.c
+> > index 6416d2cb4efc..bf8314ff4a25 100644
+> > --- a/drivers/gpu/drm/msm/msm_drv.c
+> > +++ b/drivers/gpu/drm/msm/msm_drv.c
+> > @@ -377,9 +377,12 @@ static void msm_postclose(struct drm_device *dev, =
+struct drm_file *file)
+> >        * It is not possible to set sysprof param to non-zero if gpu
+> >        * is not initialized:
+> >        */
+> > -     if (priv->gpu)
+> > +     if (ctx->sysprof)
+> >               msm_file_private_set_sysprof(ctx, priv->gpu, 0);
+> >
+> > +     if (ctx->counters_requested)
+> > +             msm_file_private_request_counters(ctx, priv->gpu, 0);
 > > +
-> > +//! Atomic primitives.
-> > +//!
-> > +//! These primitives have the same semantics as their C counterparts: and the precise definitions of
-> > +//! semantics can be found at [`LKMM`]. Note that Linux Kernel Memory (Consistency) Model is the
-> > +//! only model for Rust code in kernel, and Rust's own atomics should be avoided.
-> > +//!
-> > +//! # Data races
-> > +//!
-> > +//! [`LKMM`] atomics have different rules regarding data races:
-> > +//!
-> > +//! - A normal read doesn't data-race with an atomic read.
-> 
-> This was fixed:
-> https://github.com/rust-lang/rust/pull/128778
-> 
-
-Yeah, I was aware of that effort, and good to know it's finally merged.
-Thanks!
-
-This will be in 1.83, right? If so, we will still need the above until
-we bump up the minimal rustc version to 1.83 or beyond. I will handle
-this properly with the minimal rustc 1.83 (i.e. if this goes in first,
-will send a follow up patch). I will also mention in the above that this
-has been changed in 1.83.
-
-This also reminds that I should add that LKMM allows mixed-size atomic
-accesses (as non data race), I will add that in the version.
-
-> > +mod private {
-> > +    /// Sealed trait marker to disable customized impls on atomic implementation traits.
-> > +    pub trait Sealed {}
+> >       context_close(ctx);
+> >  }
+> >
+> > diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gp=
+u.c
+> > index 82f204f3bb8f..013b59ca3bb1 100644
+> > --- a/drivers/gpu/drm/msm/msm_gpu.c
+> > +++ b/drivers/gpu/drm/msm/msm_gpu.c
+> > @@ -991,6 +991,7 @@ int msm_gpu_init(struct drm_device *drm, struct pla=
+tform_device *pdev,
+> >       gpu->nr_rings =3D nr_rings;
+> >
+> >       refcount_set(&gpu->sysprof_active, 1);
+> > +     refcount_set(&gpu->local_counters_active, 1);
+> >
+> >       return 0;
+> >
+> > diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gp=
+u.h
+> > index e25009150579..83c61e523b1b 100644
+> > --- a/drivers/gpu/drm/msm/msm_gpu.h
+> > +++ b/drivers/gpu/drm/msm/msm_gpu.h
+> > @@ -195,12 +195,28 @@ struct msm_gpu {
+> >       int nr_rings;
+> >
+> >       /**
+> > -      * sysprof_active:
+> > +      * @sysprof_active:
+> >        *
+> > -      * The count of contexts that have enabled system profiling.
+> > +      * The count of contexts that have enabled system profiling plus =
+one.
+> > +      *
+> > +      * Note: refcount_t does not like 0->1 transitions.. we want to k=
+eep
+> > +      * the under/overflow checks that refcount_t provides, but allow
+> > +      * multiple on/off transitions so we track the logical value plus=
+ one.)
+> >        */
+> >       refcount_t sysprof_active;
+> >
+> > +     /**
+> > +      * @local_counters_active:
+> > +      *
+> > +      * The count of contexts that have requested local (intra-submit)
+> > +      * performance counter usage plus one.
+> > +      *
+> > +      * Note: refcount_t does not like 0->1 transitions.. we want to k=
+eep
+> > +      * the under/overflow checks that refcount_t provides, but allow
+> > +      * multiple on/off transitions so we track the logical value plus=
+ one.)
+> > +      */
+> > +     refcount_t local_counters_active;
+> > +
+> >       /**
+> >        * lock:
+> >        *
+> > @@ -383,6 +399,13 @@ struct msm_file_private {
+> >        */
+> >       int sysprof;
+> >
+> > +     /**
+> > +      * @counters_requested:
+> > +      *
+> > +      * Has the context requested local perfcntr usage.
+> > +      */
+> > +     bool counters_requested;
+> > +
+> >       /**
+> >        * comm: Overridden task comm, see MSM_PARAM_COMM
+> >        *
+> > @@ -626,6 +649,8 @@ void msm_submitqueue_destroy(struct kref *kref);
+> >
+> >  int msm_file_private_set_sysprof(struct msm_file_private *ctx,
+> >                                struct msm_gpu *gpu, int sysprof);
+> > +int msm_file_private_request_counters(struct msm_file_private *ctx,
+> > +                                   struct msm_gpu *gpu, int reqcntrs);
+> >  void __msm_file_private_destroy(struct kref *kref);
+> >
+> >  static inline void msm_file_private_put(struct msm_file_private *ctx)
+> > diff --git a/drivers/gpu/drm/msm/msm_submitqueue.c b/drivers/gpu/drm/ms=
+m/msm_submitqueue.c
+> > index 7fed1de63b5d..1e1e21e6f7ae 100644
+> > --- a/drivers/gpu/drm/msm/msm_submitqueue.c
+> > +++ b/drivers/gpu/drm/msm/msm_submitqueue.c
+> > @@ -10,6 +10,15 @@
+> >  int msm_file_private_set_sysprof(struct msm_file_private *ctx,
+> >                                struct msm_gpu *gpu, int sysprof)
+> >  {
+> > +     int ret =3D 0;
+> > +
+> > +     mutex_lock(&gpu->lock);
+> > +
+> > +     if (sysprof && (refcount_read(&gpu->local_counters_active) > 1)) =
+{
+> > +             ret =3D UERR(EBUSY, gpu->dev, "Local counter usage active=
+");
+> > +             goto out_unlock;
+> > +     }
+> > +
+> >       /*
+> >        * Since pm_runtime and sysprof_active are both refcounts, we
+> >        * call apply the new value first, and then unwind the previous
+> > @@ -18,7 +27,8 @@ int msm_file_private_set_sysprof(struct msm_file_priv=
+ate *ctx,
+> >
+> >       switch (sysprof) {
+> >       default:
+> > -             return UERR(EINVAL, gpu->dev, "Invalid sysprof: %d", sysp=
+rof);
+> > +             ret =3D UERR(EINVAL, gpu->dev, "Invalid sysprof: %d", sys=
+prof);
+> > +             goto out_unlock;
+> >       case 2:
+> >               pm_runtime_get_sync(&gpu->pdev->dev);
+> >               fallthrough;
+> > @@ -43,7 +53,45 @@ int msm_file_private_set_sysprof(struct msm_file_pri=
+vate *ctx,
+> >
+> >       ctx->sysprof =3D sysprof;
+> >
+> > -     return 0;
+> > +out_unlock:
+> > +     mutex_unlock(&gpu->lock);
+> > +
+> > +     return ret;
 > > +}
-> 
-> Just make the trait unsafe?
-> 
-
-And make the safety requirement of `AtomicImpl` something like:
-
-    The type must have the implementation for atomic operations.
-
-? Hmm.. I don't think that's a good safety requirement TBH. Actually the
-reason that we need to restrict `AtomicImpl` types is more of an
-iplementation issue (the implementation need to be done if we want to
-support i8 or i16) rather than safety issue. So a sealed trait is proper
-here. Does this make sense? Or am I missing something?
-
-Regards,
-Boqun
-
-> Alice
+> > +
+> > +int msm_file_private_request_counters(struct msm_file_private *ctx,
+> > +                                   struct msm_gpu *gpu, int reqctrs)
+> > +{
+> > +     int ret =3D 0;
+> > +
+> > +     mutex_lock(&gpu->lock);
+> > +
+> > +     if (reqctrs && (refcount_read(&gpu->sysprof_active) > 1)) {
+> > +             ret =3D UERR(EBUSY, gpu->dev, "System profiling active");
+> > +             goto out_unlock;
+> > +     }
+> > +
+> > +     if (reqctrs) {
+> > +             if (ctx->counters_requested) {
+> > +                     ret =3D UERR(EINVAL, gpu->dev, "Already requested=
+");
+> > +                     goto out_unlock;
+> > +             }
+> > +
+> > +             ctx->counters_requested =3D true;
+> > +             refcount_inc(&gpu->local_counters_active);
+> > +     } else {
+> > +             if (!ctx->counters_requested) {
+> > +                     ret =3D UERR(EINVAL, gpu->dev, "Not requested");
+> > +                     goto out_unlock;
+> > +             }
+> > +             refcount_dec(&gpu->local_counters_active);
+> > +             ctx->counters_requested =3D false;
+> > +     }
+> > +
+> > +out_unlock:
+> > +     mutex_unlock(&gpu->lock);
+> > +
+> > +     return ret;
+> >  }
+> >
+> >  void __msm_file_private_destroy(struct kref *kref)
+> > diff --git a/include/uapi/drm/msm_drm.h b/include/uapi/drm/msm_drm.h
+> > index 2342cb90857e..ae7fb355e4a1 100644
+> > --- a/include/uapi/drm/msm_drm.h
+> > +++ b/include/uapi/drm/msm_drm.h
+> > @@ -91,6 +91,7 @@ struct drm_msm_timespec {
+> >  #define MSM_PARAM_UBWC_SWIZZLE 0x12 /* RO */
+> >  #define MSM_PARAM_MACROTILE_MODE 0x13 /* RO */
+> >  #define MSM_PARAM_UCHE_TRAP_BASE 0x14 /* RO */
+> > +#define MSM_PARAM_REQ_CNTRS  0x15 /* WO: request "local" (intra-submit=
+) perfcntr usage  */
+> >
+> >  /* For backwards compat.  The original support for preemption was base=
+d on
+> >   * a single ring per priority level so # of priority levels equals the=
+ #
+>
 
