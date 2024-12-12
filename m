@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-442685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1918D9EE049
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:33:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C75D1887092
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:33:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59565202F9D;
-	Thu, 12 Dec 2024 07:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FNiUrBWH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D289EE054
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:38:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2867825949C;
-	Thu, 12 Dec 2024 07:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA29283E34
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:37:55 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B1020B1E5;
+	Thu, 12 Dec 2024 07:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qf795aDW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C27425949C;
+	Thu, 12 Dec 2024 07:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733988786; cv=none; b=MfR0PpaU0dCA6O6RDQJj03cyrXrd8Y4jOiC9U3+k40qBYd31+4EnqU7sU6pR+cd1NDMWkl0i27tC5SOBsDkycLdtaD6zmwyMD4p1UXZmsHYMuK7YNcg4olRyDyfymwu8/Pun4b7msgVnd3T0CcTCnXu/ztk6K07TrB8Lcug6d+U=
+	t=1733989068; cv=none; b=XBm3EMWSaJE2lLdfs8gN/LSWU9ppnoB9JBeSl73VN8yjhxv+n7h22YXXZOJahZcL6dwvNTTpSHLz2QnKvy2A8IctDJZWBPzZKj0IDXQ6tok6crMm9lgej5nP1T4H9EQINb+D/pZ85s9ynw/lfEo+HIUCUeHazGuegg2GRjDsWY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733988786; c=relaxed/simple;
-	bh=HA2Z23rv2sDqT8HfUnkxHEbwOJHRuO5D9olRu6M6QIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OZV8L9guEA5Mk5QlKyd1rZEwx9EDjIYVBhnPScS5IG3ZX+BSwEC2aW2ZuyLVIE6QMTh4SrnYKZgNZyauOZ7nGE83NM1Jqo053dooKMuGzRFN8tZNKw/J8ok16ek0MuZllrxk064lzA5l4Q2CLxmOyT31ZUYBXiJP9e75PRsxrII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FNiUrBWH; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733988785; x=1765524785;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HA2Z23rv2sDqT8HfUnkxHEbwOJHRuO5D9olRu6M6QIk=;
-  b=FNiUrBWHSJjK2QP15vCcqcxVXPxCTCIM7uNZVvssJ6zdfzuZ/UUxKM5N
-   5H45dYZOxNJahmqr7xlWel29CoQ+qzNIdSdsPSpGoXrlhZyMXfm+DD5OT
-   vy4DbSE7UuRBAc/iYrpPy8kOBz8swU3KqfUPXF3AnVvh9rwfIyK0w2etr
-   UZzKDX02k29eRnCXn9pGasPWmC4uddfxNx1uDOpoDfp85TMCkgZDKugqu
-   Tlkl/JmwpdZRkOVee9srZmfgZ3EQf5Hnt126pQhymtkrQdCjcgJbBLx0L
-   h48mVIgqWDJK8x3LVVw64N1eBroEe6zJAxWVfr4GLBzS39lzk8y3BJCB0
-   A==;
-X-CSE-ConnectionGUID: 6oQt1jk5R1evBWhu9Y4nSg==
-X-CSE-MsgGUID: oLL4EwLVRMegWoh3S/5yag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34301299"
-X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
-   d="scan'208";a="34301299"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 23:32:46 -0800
-X-CSE-ConnectionGUID: CgVLBUE4Swe4Pwfbw3tn0Q==
-X-CSE-MsgGUID: UPv8cmfnQomnWK9CqN+2ig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
-   d="scan'208";a="96385998"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 23:32:43 -0800
-Message-ID: <0751a7b8-f8d3-4e27-b710-0a2bd7d06f7e@intel.com>
-Date: Thu, 12 Dec 2024 09:32:36 +0200
+	s=arc-20240116; t=1733989068; c=relaxed/simple;
+	bh=bWhgbqqKM6P+PHutWafLF1olCioOfX7f1KTnV0RgvnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZTO3TsvM0gAXumQnRaL4H23EAffhMNG0sQD6v2ntDD0Kj1zV51w2sTjMX4hbRkk/UvR9+J5lpQso1wtrTstJuJT0NnwwsthsEAg90rI4X5B5eSUg7B0YU4Yl7vmCuKOOlVWQoTpPGGKj61NaoAd+dHpGMG4TmqkPZl94JTLvYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qf795aDW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82F7C4CECE;
+	Thu, 12 Dec 2024 07:37:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733989067;
+	bh=bWhgbqqKM6P+PHutWafLF1olCioOfX7f1KTnV0RgvnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qf795aDW6aHTxxKhIVVQ205leH7C98M19+0SyU2dbROJm7OLryGA/MRVKoz/+ktA1
+	 o2/i2A9MCz9TNu4iPLeRhJ1r8zZIp//KxLYdvpMPFYQIRaetxRk/ZcH+Ahl+rlZ7Uh
+	 mkQdutrdUTbOvqyM21lxMckv8NS5XRheK32NKebV4M5M/PCwWarFLZovu58XqxHNr8
+	 b5JtSIDJ6gE/koNKsWYFouU11aONhonJLcGkWCeHrGTQkKr4RkYeGZv2mzLZGqmCbm
+	 9A6izoJbp47awUwi+bnIAof1jHYf52VriT1KnLNriW3KzMH8KoBDd3OxbUnEoMb0Lt
+	 xw8WhUdJcQNNA==
+Date: Thu, 12 Dec 2024 08:37:43 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: broonie@kernel.org, konradybcio@kernel.org, 
+	konrad.dybcio@oss.qualcomm.com, andersson@kernel.org, srinivas.kandagatla@linaro.org, 
+	tiwai@suse.com, lgirdwood@gmail.com, perex@perex.cz, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, dmitry.baryshkov@linaro.org, 
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] qrb4210-rb2: add wsa audio playback and capture
+ support
+Message-ID: <iqpxa25taj7qkjjlkqk3qzxvvkinao3tp5vthayxlxpaam4mr6@2szcfdtaormu>
+References: <20241212004727.2903846-1-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] KVM: x86: Refactor __kvm_emulate_hypercall() into
- a macro
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tom Lendacky <thomas.lendacky@amd.com>, Binbin Wu
- <binbin.wu@linux.intel.com>, Isaku Yamahata <isaku.yamahata@intel.com>,
- Kai Huang <kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20241128004344.4072099-1-seanjc@google.com>
- <20241128004344.4072099-7-seanjc@google.com>
- <90577aad-552a-4cf8-a4a3-a4efcf997455@intel.com>
- <6423ec9d-46a2-43a3-ae9a-8e074337cd84@redhat.com>
- <Z1ier7QAy9qj7x4V@google.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <Z1ier7QAy9qj7x4V@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241212004727.2903846-1-alexey.klimov@linaro.org>
 
-On 10/12/24 22:03, Sean Christopherson wrote:
-> On Tue, Dec 10, 2024, Paolo Bonzini wrote:
->> On 11/28/24 09:38, Adrian Hunter wrote:
->>>
->>> For TDX, there is an RFC relating to using descriptively
->>> named parameters instead of register names for tdh_vp_enter():
->>>
->>> 	https://lore.kernel.org/all/fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com/
->>>
->>> Please do give some feedback on that approach.  Note we
->>> need both KVM and x86 maintainer approval for SEAMCALL
->>> wrappers like tdh_vp_enter().
->>>
->>> As proposed, that ends up with putting the values back into
->>> vcpu->arch.regs[] for __kvm_emulate_hypercall() which is not
->>> pretty:
->>
->> If needed we can revert this patch, it's not a big problem.
+On Thu, Dec 12, 2024 at 12:47:13AM +0000, Alexey Klimov wrote:
+> Issues with distorted sound and unstable volume on playback were resolved
+> and this patchset also includes support for onboard DMIC and thus
+> capturing feature.
 > 
-> I don't care terribly about the SEAMCALL interfaces.  I have opinions on what
-> would I think would be ideal, but I can live with whatever.
+> This implements the playback via the following path:
+> RX1 from DSP is connected to rxmacro which communicates with wcd codec
+> using soundwire. This goes into AUX input of wcd.
+> wcd codec outputs analog audio into wsa8815 amplifier.
+> Capturing works through vamacro using one onboard DMIC which is
+> directly connected to vamacro codec.
 > 
-> What I do deeply care about though is consistency within KVM, across vendors and
-> VM flavors.  And that means that guest registers absolutely need to be captured in
-> vcpu->arch.regs[].
+> Special thanks to Srini. Without his help and support this patchset
+> wouldn't be here.
+> 
+> Previous version:
+> https://lore.kernel.org/linux-sound/20241101053154.497550-1-alexey.klimov@linaro.org/
+> 
 
-In general, TDX host VMM does not know what guest register
-values are.
+Please start using b4.
 
-This case, where some GPRs are passed to the host VMM via
-arguments of the TDG.VP.VMCALL TDCALL, is really just a
-side effect of the choice of argument passing rather than
-any attempt to share guest registers with the host VMM.
+b4 diff '20241212004727.2903846-2-alexey.klimov@linaro.org'
+Checking for older revisions
+Grabbing search results from lore.kernel.org
+Nothing matching that query.
+---
+Analyzing 17 messages in the thread
+Could not find lower series to compare against.
 
-It could be regarded as more consistent to never use
-vcpu->arch.regs[] for confidential guests.
+
+> Changes since v2:
+> 
+> -- forcing single channel output for RX_1 channel is moved into drv variant;
+> -- added capture feature support hence some new patches and
+>    updates to pins description;
+> -- sorted headers in wsa881x-i2c driver, removed excessive ones;
+> -- removed of_gpio.h as suggested by Rob;
+> -- removed wrong bindings and updated already existing
+>    qcom,wsa881x.yaml as suggested by Krzysztof;
+> -- removed unused pins state description as suggested by Krzysztof;
+> -- reworked wsa881x-i2c driver
+>    (initialisation, pm, consts, some functions, etc);
+> -- usage of devm_kmemdup() in wsa881x-i2c probe() as a hint from Krzysztof;
+> -- updated commit messages where required;
+> -- not using i2c gpio bit-banging for wsa881x i2c;
+> -- made dtbs_check and dt_binding_check happy.
+> 
+> 
+> This series depends on:
+>  -- HDMI audio playback
+> https://lore.kernel.org/linux-arm-msm/20241204140027.2198763-1-alexey.klimov@linaro.org/
+> -- and LPASS clock controller
+> https://lore.kernel.org/linux-clk/20241212002551.2902954-1-alexey.klimov@linaro.org/
+
+This prevents merging anything to ASoC. I suggest decoupling
+dependencies or your patches will have to wait longer than needed.
+
+Best regards,
+Krzysztof
 
 
