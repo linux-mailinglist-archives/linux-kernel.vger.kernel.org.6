@@ -1,179 +1,169 @@
-Return-Path: <linux-kernel+bounces-443948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984239EFDED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:09:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32A49EFDF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D89289E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AECA9289E3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB1D1C2324;
-	Thu, 12 Dec 2024 21:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9836A1C5F1C;
+	Thu, 12 Dec 2024 21:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sI9WQo0h";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V2xBxaHc"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjQmOjDU"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77DA189BAF;
-	Thu, 12 Dec 2024 21:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297B11ABECF;
+	Thu, 12 Dec 2024 21:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734037743; cv=none; b=WNR+VT8svyAaRTrxzdJVjYU/VkypG7tMU2+08Tz0Xqr8NjHZLLFzW24kEmd6PmrYGZlxxvfElGKS8OywBg4T8WlvZaaSq8l9C+qGd6RBsxViHwh+sOW/bIp5aBN9ucxPXUQZztnbIphvaLMxrAnodwfh5tZ/tN9XbseYa2OWf1Y=
+	t=1734037759; cv=none; b=cIXCwjOfbbhcq5y+5jXY60DgfdrkoOojNJcNv62M3Fz5qFujkfg0ReJW23/sBRmMWUDsm0VZEfihwMWVjahgynPphy/RB3OLLZf2Hejimi7+slsoRJISRlY0Uvx66Ukxfi6T7tr1qCO52g4mFHex5i4lID2HRyS0OmhNWJeHCcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734037743; c=relaxed/simple;
-	bh=tq8SabrSNNl10xixFA1YpdWN/BgyhTYrgnAWPnPpstc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=icyYsr+Q7rRrvS45MVacd4yUptEoX6nqk0DGsZfaBrKuXFsEq4LL7qd1nMUQ/wZQM6PR/0E6PY+RMtCoQYP/A5JZvoEltRJUJsD1jwi1eLxAHzP60OQ/UGHmKut5k3ntliOA42VM0CNhyeIyGuukNFQNCKVHC0noMna522vSNeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sI9WQo0h; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V2xBxaHc; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8EE3F1383EA7;
-	Thu, 12 Dec 2024 16:09:00 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 12 Dec 2024 16:09:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1734037740;
-	 x=1734124140; bh=9IqZ6rAQRKbEW2J4TH6/7CA/VSmhrZDWQ3WoMQkxePk=; b=
-	sI9WQo0hT8RZfeLkFWtOxYBaixCFsKGWtj1oeld5wv+OdD59xfdJ/DXtsqqA5hQt
-	iqOuvNi/VCCSpWXoYZS39BY5IDFhiWrgN7uGOEI80sW1mD86lUNNrJYsuinhpIUd
-	yIhPLs4TywRs8rOz9rzJVi1JgzrdiimkQ65PkMgb0vc72c6LR+JnVMGUs4NEk77r
-	sTzT5VObzwIahbjTu14Sn072AKr3QmyqW4t6gUI+fj8oxqiYAtMZnJGpw6KFvWj9
-	/oN1Ya0/vGY1kQzpziYR1O6rbYPBKcOKtWSh2D/iBJcvpmOMOKrODid3HPvM9yZy
-	4mjyZbZRdPqpqpSkulf93g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734037740; x=
-	1734124140; bh=9IqZ6rAQRKbEW2J4TH6/7CA/VSmhrZDWQ3WoMQkxePk=; b=V
-	2xBxaHcyH7nhSIq8a4Shpv1fzPD4TS4/o7IMn+qgKdxGHqV8eH8bVojf4NDKmYId
-	wQ5mTyohsX3YXFFFXfGAVLTVSHsgcVGB32ZuEuPEcsvKgPnNjr/ytl8Rol4AdGUH
-	z4RYUE/LTQ4TSRFibOFJaAUAU9Y1y3XSO4DmEg/vuNB3umXTPRa+lqY4thL/yeSX
-	+gWisPsU3ubkDeY87y6wmDYrll/Y7H8BuqaYXv7BQKRu+NAHz633wh9LSFMjsRCc
-	Sl9zQV4xpWiKN9OVoZ2hImjbuMrL8rLGDuVpu5KmhMLyFaTOGnXlPY4RfqWnGL3Q
-	tyRAAaDN7xrgHEaKtYX0A==
-X-ME-Sender: <xms:6lBbZyw5SFn4lKEQCjXQULlKKQ3fuezYL-a0vCHYGD3K-FVjpKNC4A>
-    <xme:6lBbZ-T7owsIHjUc1TlBe8pyoFKFV3A4XgfmG_C3lywr1GwU4Q9tIxa9IUfSJ4uZZ
-    5abI64AlwCYCLWcu3w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeehgddugeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfeeg
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghp
-    thhtohepghhrrghfsegrmhgriihonhdrtghomhdprhgtphhtthhopegrthhishhhphesrg
-    htihhshhhprghtrhgrrdhorhhgpdhrtghpthhtoheprghnuhhpsegsrhgrihhnfhgruhhl
-    thdrohhrghdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhroh
-    huphdrvghupdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghp
-    thhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehmph
-    gvsegvlhhlvghrmhgrnhdrihgurdgruh
-X-ME-Proxy: <xmx:6lBbZ0VwsS4U5Dh3P7otMqmSIAVEsOO6G7LJsCShu6InWS5ECnRScA>
-    <xmx:6lBbZ4g36ua-0NY8XWqhtFeQFSxll2Gb7OcvFB5JwEkVcXBPt7efZw>
-    <xmx:6lBbZ0CZQR2tq0T2mN9rDgYjaqBp7grBCA0XYnDCiY-g_gO8TIGx1w>
-    <xmx:6lBbZ5JchKyroSqzawYqmB-bFcM24AfcbmVsrLAOC-nqaNsZvK-LMA>
-    <xmx:7FBbZ-xtl9XJ4zczjb9ueyrbQc4qE0emOqr48sDEu3vHDq2m0T8uPYzW>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 134EC2220072; Thu, 12 Dec 2024 16:08:58 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1734037759; c=relaxed/simple;
+	bh=bXEP5QAwTbHywlDHiYHTSr5iNZb/Wdfp8n3pBOFQJCQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EDkIaoZt9GA8E95EwW3P4I4FSJIHA5IGOn9ewXJBvGthNYUJ1FMYFPlgZMFE9G48P1r/EwE86Qz23sef/U9VyJGE3rPKRUH7saFeCyyWO3ZHtT2jOMv25frlhnYgfgNSrlqhVoM4LXw4c4HG4qBiVHV4B7kYTTbNiIlIstSs1lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KjQmOjDU; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d3d479b1e6so1266488a12.2;
+        Thu, 12 Dec 2024 13:09:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734037755; x=1734642555; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UO4ZpAmYWp4/F5rKGhPyqiik5BW8t5BEyIWB0ThHTVs=;
+        b=KjQmOjDUmxuxf+SUR4zzql5PdqIi4R99tQ/0LjkY6r0MnJ8vxgB97nqMkhkO/Zaq4l
+         gD7GCZXq35vfe60p/WjEZvyuLUVngLgM25/fp3cM7BMeuZBD99S4TIQKc45+J6Md+e2f
+         uEjITneU/Kpo4laTPaFbyNbWy7iANyptOQ0E62oY2oNbf0uU4P7xYmRhqUlmy2cq7YUe
+         ML6Ost48fyDeaRb6Q9dTkYSPslGsDNJLcrBoQMCCDIcuYaPtusOGk9x800quw3uQpEFr
+         uUH8bsZdzL2RwXjsqJFRWtspSydHPAfZPGodvwRAnRfxGbNVBrpLoady5O7xKd6EPtrw
+         ygzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734037755; x=1734642555;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UO4ZpAmYWp4/F5rKGhPyqiik5BW8t5BEyIWB0ThHTVs=;
+        b=S45KFpwKuKzLPV+pmppJFynMvs9IREydzqh2n5Q5EUnO7PT4ws8F4Y/bUlSKQBXJ+Y
+         KVp8CUuUPkYxJb5v7QNOtijCKBhob2Fjx3UGEKizAd13j//YFj6RBjkntaFJy2/QkOua
+         fsBuXDw5jKcZIRGaai7CYI1cnurO/D/ScUMi8FBDh/f+BaYtrY00q5JABr3xtgUAbEka
+         GT83ZHW/Ygx8YSSQkrJI4bBg9uCgyAFYlpd/HfgtJbG33qPIz73jYlOQ2zMsWSL/5Xf0
+         uBXvN17ilgPbVX7xenlpQHRB3hZohL0S7iyj1694SaxSj/u8m8VQlsc1C9OnQ/PeTowF
+         P20Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUODSh4LkEF2an0aQSBfrB4Hw2N0CAdAk1XxNkkSXRGoBwjyUdvwNev0daJCoOeR41Jk+FZMMosjurR@vger.kernel.org, AJvYcCVoC7iQtdbB7y+cFROqPThAPQ+pBRVB6BgyaWLp1KNzRMn7+hdcmuSBek9RZbD5HGkqq4GxGLDgTb3wwhhC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx3La4QtUa81JaDYxAiA90Jy+xocXtxCeqcChboHSRMoia6Q1D
+	ykmfdnZ/993esOQRl4yy2l3p8hn0GYBeWCgwkre3QOc08rLJlsrO
+X-Gm-Gg: ASbGncty3QDKLPXy80cMYMmMAJX+jcKgV7Ijp6qxRRb0WCiufwhFaerP+S9d8li6785
+	3j2PWPryYjeAl9byXbaiFpyrjZGRqI7lqnwvjiVuulPXqyVtLu2L4oVdqNWuMADvmEDP1E0ijC0
+	MpIPS9REA9Y9i01QJLiEb4t0EaJYXMpTaAQPIeIshM66qngikp7LRldYsLRIXohUgNMfcMxdWSb
+	Ty9Mblslw0bVsv8s1lKXsGvxKWlL8IfKIq7/KJhWBQysdvB+FBMvSCDZuv0Xhun7dwq
+X-Google-Smtp-Source: AGHT+IHnM8IzLGyED4qOi3bw6Se1FbUPjGyUA3xQHZbzHTeWslI/cln+zbu2cuEwfHecYK6pZPZXbg==
+X-Received: by 2002:a05:6402:254d:b0:5d2:7270:6128 with SMTP id 4fb4d7f45d1cf-5d633bb7db6mr3454905a12.25.1734037755187;
+        Thu, 12 Dec 2024 13:09:15 -0800 (PST)
+Received: from [192.168.31.111] ([194.39.226.133])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3d0f93d54sm9232348a12.68.2024.12.12.13.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 13:09:14 -0800 (PST)
+From: Markuss Broks <markuss.broks@gmail.com>
+Subject: [PATCH 0/3] Add Samsung SPEEDY serial bus host controller driver
+Date: Thu, 12 Dec 2024 23:09:00 +0200
+Message-Id: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 12 Dec 2024 22:08:37 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Arnd Bergmann" <arnd@kernel.org>, kvm@vger.kernel.org
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Naveen N Rao" <naveen@kernel.org>,
- "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Alexander Graf" <graf@amazon.com>, "Crystal Wood" <crwood@redhat.com>,
- "Anup Patel" <anup@brainfault.org>,
- "Atish Patra" <atishp@atishpatra.org>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>,
- "Albert Ou" <aou@eecs.berkeley.edu>,
- "Sean Christopherson" <seanjc@google.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Vitaly Kuznetsov" <vkuznets@redhat.com>,
- "David Woodhouse" <dwmw2@infradead.org>, "Paul Durrant" <paul@xen.org>,
- "Marc Zyngier" <maz@kernel.org>, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
-Message-Id: <1633f30e-d885-4f31-a14d-11881e16deb9@app.fastmail.com>
-In-Reply-To: <3589ad69-13df-40f1-88c2-55d39790bbac@csgroup.eu>
-References: <20241212125516.467123-1-arnd@kernel.org>
- <20241212125516.467123-3-arnd@kernel.org>
- <3589ad69-13df-40f1-88c2-55d39790bbac@csgroup.eu>
-Subject: Re: [RFC 2/5] powerpc: kvm: drop 32-bit booke
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOxQW2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0MD3eKC1NSUSt1UE+M005Q0oyTDFDMloOKCotS0zAqwQdGxtbUAAyh
+ 611gAAAA=
+X-Change-ID: 20241210-speedy-e43f5df2b1d6
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+ Markuss Broks <markuss.broks@gmail.com>, 
+ Maksym Holovach <nergzd@nergzd723.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734037753; l=2587;
+ i=markuss.broks@gmail.com; s=20241024; h=from:subject:message-id;
+ bh=bXEP5QAwTbHywlDHiYHTSr5iNZb/Wdfp8n3pBOFQJCQ=;
+ b=Qqa5y+6+LpADpVtQzixuS2lfh4uSGGJiNsRJi2hz8K6t7nqieTFL3Z4fHoGqM5N3KIF61V2wE
+ QZS9ce/cCGVAKXAMn2bMaLIMX/vZONzA6xrdE4aCE2oFzVluzcSbPlF
+X-Developer-Key: i=markuss.broks@gmail.com; a=ed25519;
+ pk=p3Bh4oPpeCrTpffJvGch5WsWNikteWHJ+4LBICPbZg0=
 
-On Thu, Dec 12, 2024, at 19:35, Christophe Leroy wrote:
-> Le 12/12/2024 =C3=A0 13:55, Arnd Bergmann a =C3=A9crit=C2=A0:
->> From: Arnd Bergmann <arnd@arndb.de>
+Hey,
 
->>=20
->> Support for 64-bit hosts remains unchanged, for both 32-bit and
->> 64-bit guests.
->>=20
+This series adds support for the Samsung SPEEDY serial bus host
+controller. Samsung SPEEDY (actually an acronym) is a proprietary
+Samsung 1 wire serial bus, which is used on various Samsung devices.
 
->>   arch/powerpc/include/asm/kvm_book3s_32.h    |  36 --
->>   arch/powerpc/include/asm/kvm_booke.h        |   4 -
->>   arch/powerpc/include/asm/kvm_booke_hv_asm.h |   2 -
->>   arch/powerpc/kvm/Kconfig                    |  22 +-
->>   arch/powerpc/kvm/Makefile                   |  15 -
->>   arch/powerpc/kvm/book3s_32_mmu_host.c       | 396 --------------
->>   arch/powerpc/kvm/booke.c                    | 268 ----------
->>   arch/powerpc/kvm/booke.h                    |   8 -
->>   arch/powerpc/kvm/booke_emulate.c            |  44 --
->>   arch/powerpc/kvm/booke_interrupts.S         | 535 -----------------=
---
->>   arch/powerpc/kvm/bookehv_interrupts.S       | 102 ----
->>   arch/powerpc/kvm/e500.c                     | 553 -----------------=
+This driver adds support for the version of controller without the
+IP_BATCHER block. It appears that block is a small MCU attached to
+the SPEEDY controller to offload the SPEEDY I/O tasks from the AP.
+IP_BATCHER is found on Exynos7885, but not found on Exynos9810 and
+Exynos8895. This version of driver should still work on Exynos7885
+though, but the IP_BATCHER is not supported at the moment.
+
+On Exynos9810, SPEEDY controllers are also mapped into MMIO space
+of other processors on the CPU. For example, APM also has a window
+to the SPEEDY IP, and it uses it for power-management related things.
+During testing however, it seems that if APM is not active the AP can
+access the SPEEDY controller freely and without interference from APM
+firmware.
+
+Things to improve:
+
+- SPEEDY host controller has an interrupt line to the AP, but current
+implementation uses polling instead,
+- add support for handling IP_BATCHER block,
+- add support for bulk transfers,
+- test on other SoCs (Exynos9820, 9830, 9840, ...).
+- runtime PM
+
+- Markuss
+
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+
+Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+
+Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
 ---
->>   arch/powerpc/kvm/e500.h                     |  40 --
->>   arch/powerpc/kvm/e500_emulate.c             | 100 ----
->>   arch/powerpc/kvm/e500_mmu_host.c            |  54 --
->>   arch/powerpc/kvm/e500mc.c                   |   5 +-
->>   arch/powerpc/kvm/trace_booke.h              |  14 -
->>   17 files changed, 4 insertions(+), 2194 deletions(-)
->>   delete mode 100644 arch/powerpc/include/asm/kvm_book3s_32.h
->>   delete mode 100644 arch/powerpc/kvm/book3s_32_mmu_host.c
->>   delete mode 100644 arch/powerpc/kvm/booke_interrupts.S
->>   delete mode 100644 arch/powerpc/kvm/e500.c
->
-> Left over ?
->
-> arch/powerpc/kernel/head_booke.h:#include <asm/kvm_asm.h>
-> arch/powerpc/kernel/head_booke.h:#include <asm/kvm_booke_hv_asm.h>
-> arch/powerpc/kernel/head_booke.h:       b=20
-> kvmppc_handler_\intno\()_\srr1
+Markuss Broks (3):
+      dt-bindings: soc: samsung: exynos-speedy: Document SPEEDY host controller bindings
+      soc: samsung: Add a driver for Samsung SPEEDY host controller
+      MAINTAINERS: Add entry for the Samsung Exynos SPEEDY host controller
 
-As far as I can tell, these are still needed for e5500/e6500,
-but you know more about the platform than I do.
+ .../bindings/soc/samsung/exynos-speedy.yaml        |  78 ++++
+ MAINTAINERS                                        |   7 +
+ drivers/soc/samsung/Kconfig                        |  13 +
+ drivers/soc/samsung/Makefile                       |   2 +
+ drivers/soc/samsung/exynos-speedy.c                | 457 +++++++++++++++++++++
+ include/linux/soc/samsung/exynos-speedy.h          |  56 +++
+ 6 files changed, 613 insertions(+)
+---
+base-commit: 1b2ab8149928c1cea2d7eca30cd35bb7fe014053
+change-id: 20241210-speedy-e43f5df2b1d6
 
-       Arnd
+Best regards,
+-- 
+Markuss Broks <markuss.broks@gmail.com>
+
 
