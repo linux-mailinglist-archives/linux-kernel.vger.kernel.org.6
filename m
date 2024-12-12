@@ -1,139 +1,141 @@
-Return-Path: <linux-kernel+bounces-443508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA359EF449
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:07:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A149EF44A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A5B17EAA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14A717D51F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC13C231A43;
-	Thu, 12 Dec 2024 16:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F332336A7;
+	Thu, 12 Dec 2024 16:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LU5s7nIn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4/z3xmrm"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2xMnYbA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04F2226520
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0ECA23236B;
+	Thu, 12 Dec 2024 16:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734021706; cv=none; b=TprQ/hZUoXCRyUX/8t3ppCKnhoMfrJO2DSLxnwVhbCtPPs/AWtQnWbfN0ts1/PCrjPlG++sM0w8/p+MMRkPApticjQW/hjbkH0+Y745n7tU8iqbLdri32VhRy8+ie7geI+7QphdNkiNYGT/AjVv1vfJwrtcxd1NRr/ALDbMp8zg=
+	t=1734021714; cv=none; b=X3WfWx3vBvNSglTjwF/4BWUSrdpzIYNKjy7479xouCGhIAUdBzGsNhBVTnUAXkNMxt6OQEBCQ0FB5sJlGNz2NOHXWhT0qFZd2pI80MzZaRdXskeNHGlwM0IVTMSH8drm0WdbP3sAdamsTXOiQ6TN86AavASxTJ3xKClYmLdL9l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734021706; c=relaxed/simple;
-	bh=vCVFSJ66Kjgi2LNxKT5NRtHkebS7PIVdYpJMSEypjuE=;
+	s=arc-20240116; t=1734021714; c=relaxed/simple;
+	bh=rnD2w38HGxhe3xIojnMw1nLLyIOcrO+dYYpscVFNKy8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKZdMmkHrLXbwlJ7t9iVpsqMRYANHG7SYT8YOZjqCTwhlBXOZDDCo8sfLiJqCYaoP9kRIEjpcZV4WN27G2nx4YNrZBejv81v5u04CJu0E2Rtm59S6Ob8ZeihcbxzHH0eEyllXdtCUJAtl/DerxmFfRvfpQcmXrdXB0mfg1FoxV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LU5s7nIn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4/z3xmrm; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 12 Dec 2024 17:41:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734021702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHHtUGU7DpOgU5PnduMLdKbW7NRwADcKVs8uErMNDqc=;
-	b=LU5s7nInVicH/WCV4gq9vSmUI/aE301rRV/a5vWAKt40r2OP4EwLqCcizbs1eRtimb7fhc
-	9dhlnQvNdb1b1DHGzJALuuq7JqKXcaTjcE59a6Xd85IgfCI0ynWSSzEaI7nK5YnCf5PQtJ
-	I9LnWxVVuAd289VN1hbHOTLGiyFlmMZe47yQWVWgstYeqy6yjYPx3QlloHgsUL//7yGluk
-	e8KRDC5ZEZQwMDdfcop8i84LxsfqUmQvKHfHT5zf8jWlBwfRFXUoL3PGtQ5VMeGxdnD5MY
-	FTc28Nb/o8g0CiPWjL2VxEDWZwn9hrxL4Id9VzEZg6ql+3pI9JJYW5fABgYJDA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734021702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHHtUGU7DpOgU5PnduMLdKbW7NRwADcKVs8uErMNDqc=;
-	b=4/z3xmrmDp8zynjFr0hQwCE1rm18M6gBqma6ny9LAizZFimnbSz6Fy+iGjvwEH+UOi/d5B
-	gG64u1V02GADoGAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v4 05/11] futex: Track the futex hash bucket.
-Message-ID: <20241212164140.esFLafG0@linutronix.de>
-References: <20241203164335.1125381-1-bigeasy@linutronix.de>
- <20241203164335.1125381-6-bigeasy@linutronix.de>
- <87a5d3cr6j.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=akxKesMwqesOaXeoUVJku973RtLWcGsr60v6Hlbc7RCBZJKbNMMn+wniySuSWK5PNuBQPxfTHis6QOx7gxVcN9n8Ac/qJWl2Tt1IpukfCWkUtdp+Gxz2Ik6mby+NpT2JC+UchQTr4Ncu5KA3JbBvXzUTPmOf9YugEPBBRed/iVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2xMnYbA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B054EC4CECE;
+	Thu, 12 Dec 2024 16:41:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734021713;
+	bh=rnD2w38HGxhe3xIojnMw1nLLyIOcrO+dYYpscVFNKy8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a2xMnYbA7bUTKf5yAjSHTT65c9h4KL17vAdHR8CiDIGUmE0ID2QfYfziNG5hrWNYv
+	 fdYmgdquBtET+aj0ty5WSMwQdVTIikJGQwMwJS5oy3mfkq65gRMmRw1qSt6BjS7f4S
+	 muUwavP6U2HfrKCJV+0Zh30dWzHyLp+q76R84tSTNhEhT80DiBoI6BOmTmrE/68vOv
+	 tvP5O/SDNNVLuej3wIjN76Wkn7gQm+C7oYvklz3jilgq60f0zLMR0WdzmJKYNYg2dC
+	 i8odM+fYNEaRPoqILp0QYR2pqWXRAZTgcjJBl2z3TjCFz9JoVBgsyT1AuKo6vJ4MMv
+	 EStYqxB3Hxn6Q==
+Date: Thu, 12 Dec 2024 16:41:49 +0000
+From: Simon Horman <horms@kernel.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH net-next] net: wan: framer: Simplify API
+ framer_provider_simple_of_xlate() implementation
+Message-ID: <20241212164149.GB73795@kernel.org>
+References: <20241211-framer-core-fix-v1-1-0688c6905a0b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87a5d3cr6j.ffs@tglx>
+In-Reply-To: <20241211-framer-core-fix-v1-1-0688c6905a0b@quicinc.com>
 
-On 2024-12-10 19:45:56 [+0100], Thomas Gleixner wrote:
-> > +void futex_hash_put(struct futex_hash_bucket *hb)
-> > +{
-> > +	struct futex_hash_bucket_private *hb_p;
-> > +
-> > +	if (hb->hb_slot == 0)
-> > +		return;
-> > +	hb_p = container_of(hb, struct futex_hash_bucket_private,
-> > +			    queues[hb->hb_slot - 1]);
+On Wed, Dec 11, 2024 at 09:28:20PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> Duh. This off by one abuse of hb_slot is really counter intuitive. It
-> took me a while to wrap my head around it.
+> Simplify framer_provider_simple_of_xlate() implementation by API
+> class_find_device_by_of_node().
+> 
+> Also correct comments to mark its parameter @dev as unused instead of
+> @args in passing.
+> 
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  drivers/net/wan/framer/framer-core.c | 20 +++++++-------------
+>  1 file changed, 7 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/net/wan/framer/framer-core.c b/drivers/net/wan/framer/framer-core.c
+> index f547c22e26ac2b9986e48ed77143f12a0c8f62fb..7b369d9c41613314860753b7927b209e58f45a91 100644
+> --- a/drivers/net/wan/framer/framer-core.c
+> +++ b/drivers/net/wan/framer/framer-core.c
+> @@ -732,8 +732,8 @@ EXPORT_SYMBOL_GPL(devm_framer_create);
+>  
+>  /**
+>   * framer_provider_simple_of_xlate() - returns the framer instance from framer provider
+> - * @dev: the framer provider device
+> - * @args: of_phandle_args (not used here)
+> + * @dev: the framer provider device (not used here)
+> + * @args: of_phandle_args
+>   *
+>   * Intended to be used by framer provider for the common case where #framer-cells is
+>   * 0. For other cases where #framer-cells is greater than '0', the framer provider
+> @@ -743,20 +743,14 @@ EXPORT_SYMBOL_GPL(devm_framer_create);
+>  struct framer *framer_provider_simple_of_xlate(struct device *dev,
+>  					       const struct of_phandle_args *args)
+>  {
+> -	struct class_dev_iter iter;
+> -	struct framer *framer;
+> -
+> -	class_dev_iter_init(&iter, &framer_class, NULL, NULL);
+> -	while ((dev = class_dev_iter_next(&iter))) {
+> -		framer = dev_to_framer(dev);
+> -		if (args->np != framer->dev.of_node)
+> -			continue;
+> +	struct device *target_dev;
+>  
+> -		class_dev_iter_exit(&iter);
+> -		return framer;
+> +	target_dev = class_find_device_by_of_node(&framer_class, args->np);
+> +	if (target_dev) {
+> +		put_device(target_dev);
+> +		return dev_to_framer(target_dev);
+>  	}
+>  
+> -	class_dev_iter_exit(&iter);
+>  	return ERR_PTR(-ENODEV);
 
-The really cute part is that this -1 gets optimized away and this
-container_of becomes just hb_p = hb - "hb_slot << 6" :)
+Hi Zijun Hu,
 
-> The structure has a 4 byte hole, so adding a private flag or such is
-> feasible without going over a cache line, unless lockdep or rt is
-> enabled, but in that case it expands into a second cache line anyway.
+FWIIW, I think it would be more idiomatic to have the non-error path in the
+main flow of execution, something like this (completely untested!):
 
-I have a whole cacheline to stash things because of futex_hash_bucket
-alignment:
-| struct futex_hash_bucket_private {
-|         rcuref_t                   users;                /*     0     4 */
-|         unsigned int               hash_mask;            /*     4     4 */
-|         struct callback_head       rcu __attribute__((__aligned__(8))); /*     8    16 */
-|         bool                       slots_invariant;      /*    24     1 */
-| 
-|         /* XXX 39 bytes hole, try to pack */
-| 
-|         /* --- cacheline 1 boundary (64 bytes) --- */
-|         struct futex_hash_bucket   queues[] __attribute__((__aligned__(64))); /*    64     0 */
-| 
-|         /* size: 64, cachelines: 1, members: 5 */
-|         /* sum members: 25, holes: 1, sum holes: 39 */
-|         /* forced alignments: 2, forced holes: 1, sum forced holes: 39 */
-| } __attribute__((__aligned__(64)));
+	target_dev = class_find_device_by_of_node(&framer_class, args->np);
+	if (!target_dev)
+		return ERR_PTR(-ENODEV);
 
-The hash bucket itself on RT is:
-| struct futex_hash_bucket {
-|         atomic_t                   waiters;              /*     0     4 */
-|         unsigned int               hb_slot;              /*     4     4 */
-|         spinlock_t                 lock;                 /*     8    32 */
-|         struct plist_head          chain;                /*    40    16 */
-| 
-|         /* size: 64, cachelines: 1, members: 4 */
-|         /* padding: 8 */
-| } __attribute__((__aligned__(64)));
+	put_device(target_dev);
+	return dev_to_framer(target_dev);
 
-so it still fits. However with lockdep enabled it acquires two
-cache lines and these additional 4 bytes don't make a change.
-On RT it doesn't make a difference because the spinlock_t is so huge.
-But for !RT struct futex_hash_bucket becomes 32 bytes so we could fit 2
-buckets into one cache line _if_ memory becomes a concern and cache
-bouncing is not an issue because it is only process wide.
+Also, is it safe to put_device(target_dev) before
+passing target_dev to dev_to_framer() ?
 
-> > +	futex_hash_priv_put(hb_p);
-> > +}
+>  }
+>  EXPORT_SYMBOL_GPL(framer_provider_simple_of_xlate);
 
-Sebastian
+...
 
