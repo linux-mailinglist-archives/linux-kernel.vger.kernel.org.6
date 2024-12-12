@@ -1,186 +1,397 @@
-Return-Path: <linux-kernel+bounces-444044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8107A9EFFFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ABFB9EFFFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65F7E16245F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF0F1162DB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664521DE89B;
-	Thu, 12 Dec 2024 23:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B427F1DE88E;
+	Thu, 12 Dec 2024 23:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tIziWVjW"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ADzf70oL"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0A01898EA;
-	Thu, 12 Dec 2024 23:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDD61D88C7
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734045545; cv=none; b=h6DRD3Ru3idepVoLC8Oqnd/hBKfUqcOyzild/MSgEZBNmuZK1lzUDYya08EXMfi5/KWONZwN3GByLLeZmOh9oDRqEvWAobtw5g8zafAf4OhPgnqXFKYOJXpRxTiPstoBwTrohTXIiUsDWVFZHfQt66lzoti2Zpby3an/gaz9N2g=
+	t=1734045567; cv=none; b=L6OXFnov/GFhPsaqagPxSM9RUXxdc27nNvcBNiD0K2dzxTWXBUJmuQI6THE26zNE+Kim4yL01vNDvsQBHDVRZOWlYH28Oa38kGe2Oz+1OhmTYaV1P56WFq7cV7rP7JKMAzOxkwLFak7rEzjz4b2v0uJUgh9jWGhCzROEX1Jm/po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734045545; c=relaxed/simple;
-	bh=JiVRTebdBbYpNpMKVTXkD+5m4cujpLNx5vppoDqpUwQ=;
+	s=arc-20240116; t=1734045567; c=relaxed/simple;
+	bh=Say8SdZIBsPOObAQUaRFDPsKjIzr2LAzEMwZ6A1o7N0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k5zLAxQ6lu3Dq/fNGpZwWp8ok3359D9EW6tFT5vZtrlfWySc/KAiIaEyunAdGxwmB8htqZa7JR1NVoPzmbRPSsP/Z4WHkvrW+LD0zPOIulUp+wRqQ6sYGfYqTu6AB1QhVY/QKENy6FgTsmdt9hH2zDJx2prYf/hZ85nOeLZ+Ffc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tIziWVjW; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1734045539;
-	bh=JiVRTebdBbYpNpMKVTXkD+5m4cujpLNx5vppoDqpUwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tIziWVjWVEWZGageBZbqcHeFU1t6+ebo+1OZElq8/8MFI+eb6os6voNBgv8MRELMa
-	 SQntCaygkDACB/fzBxig1zuvjyvALKv7BRvInG8aGPoCHqGUNZd+fFrbtss1jsVhUL
-	 lG8LeEjGXAZkWuSrArL+3rxYN1hT5s1cI6mo5Hck=
-Date: Fri, 13 Dec 2024 00:18:59 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Ihor Solodrai <ihor.solodrai@pm.me>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Kui-Feng Lee <kuifeng@fb.com>, 
-	Alan Maguire <alan.maguire@oracle.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] kbuild, bpf: Enable reproducible BTF generation
-Message-ID: <29f9911f-38b0-4634-95d4-0a55ef0a61fa@t-8ch.de>
-References: <20241211-pahole-reproducible-v1-1-22feae19bad9@weissschuh.net>
- <REDzg-0aL2-Qw7QvYCKTfsLGh6E6Iq8dgWJPo5a94ym2x5DiUkwdHA-naUtaDO7HJgvOr6zd201E5P_WAquOyOFIiUij6Bi183EyxPusDuo=@pm.me>
- <3b834807-9f20-4f04-b788-f45dfac5cb1f@t-8ch.de>
- <CAEf4BzZSB2nzhYag_LKACXXJLwqLLfddXMV9_JRGYi+Y48rC-w@mail.gmail.com>
- <acf36eab-f906-42f7-9299-1473c0451dd1@t-8ch.de>
- <CAEf4Bzaa+X4K3_NApFYHxWP1P7stnAvZH4to65D1600fie6H3w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l4M0bk3CrGatBPwS6q5NEMFxptJbE+Y9fSqQtlk64BQ3llkXc2p87slHvTZm4MjsdaKoY9/pzXZL6Qcx4WwAo4/d+JeRrRL4xG6fA4g9vAEFt2RGnmwG6eAyd8oxioYZFvWShO6odZe+BT1rX6KQxkHLA54AQWF5pzi8uNgaUnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ADzf70oL; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21675fd60feso13639105ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:19:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1734045565; x=1734650365; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZZOjWbiDxgUmQMPXtT1adt7JyPKENvySFY9iEzkevs=;
+        b=ADzf70oLxM1o31HJ9+195FosxFPaR2wDTD+5kJuT6efASnN9PYXLVDT6NGCGjgd/kh
+         ESiU75mPACGsnMx6Z4HRYOKdebF21YHdVW8APW/SO3UA6dJIlxJmYoV+4G9KCpZy/dHX
+         lyqO26TqRlZSoHGW4MawpYg0gDsinWjuTWCgwCyRQa/ghUAqd9Rqeh/SCgJVUnDp4Wo9
+         qmHJwaTu/e/q8nUUWV+1nHwQUkVwFgPhn/Bo5gS0jDMmMUDRZqVq55ZZ4q/Tz69VEaUA
+         YqiAo75Rpkq59wS7Ca2+arkOOe5B0aP/SPTOiYX2Tbu8B1LlI3LFdawLDYSglZF61HVx
+         r55g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734045565; x=1734650365;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wZZOjWbiDxgUmQMPXtT1adt7JyPKENvySFY9iEzkevs=;
+        b=OEHTUKigiR3NkxgligskvfyrpIgN6t2y1E80VEPUqFARAzYK+DBl6tQ+hFlynUsgtr
+         IQ7SMJv+xPXqjCmM67FvPKLeCYk0DNuagTStzq4EVmru7IVt0GNoR9aZG0RDk3hyNDPt
+         kpz52SwLwYY7GTIsDiJwGr9XZEFRg70aVC0tUbp6KGTR/M69ws+TJpRFbFbquHXYBUFZ
+         LR6ReQ0eP+rsgccRD3H9Q5K2YeCCQdv6xnRG0q6c9JzFfU2sIGxz4j5A/x95r8En0SpD
+         68kYyn8YDPa2HNjgPPcMuuSCoWqSYFdpO2RGQyuBNc6KVPvuXFShQ37tXyIzPbdqL9Pu
+         DLRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdpfG7JqDsASKGHvnSc879G2LdxJKPipdI1/3YGLtbUxc+A4vzZcnMlWQKNjRkb8VEAjF2NE8YGAuVYCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeNh2sBEpnJcfalQRic/SwOc8hZQ3GFIv/1wkVounkcsthVXUU
+	uEli0a7bEKybtHEVVoMKzFCPSLxqNsUa534q0wz23MVZuvqjv7tlJbk5shVi63A=
+X-Gm-Gg: ASbGncu2xUGDMlwCFsFFqQXXR96LrV5xr15SAZVEJPWkJPQG0+94iPs86JwMOorvLqt
+	9JOFQcwNW7cQA32p+E/Jcm6FbpmKQjBMBxGIIzqlQQu7B21J0iUknAk9G/OhjmrUdTC0piGL27P
+	yt8jHWd240FMcdgPEwi6mi5w1uuzJ8MwPwCKuHI90cr/PBm0VNYAomHfA+R3Iy1CCo7sBjZAQO1
+	tH1qZOyLDrmqUyt+knUnY88iPnNhSFnppmBja6jdAajRhNkW7dkHUs4lA7Vdwa9c7nTksMNdsbw
+	XiMF71f+rDk56RI20nA=
+X-Google-Smtp-Source: AGHT+IFoEUwtgBCzKJXdDVgPWWOZcnRClLn44YiR+59DMxCmWRI8jpMJU0Lq9UpsH0u3W9ZqUH8/fw==
+X-Received: by 2002:a17:902:ea08:b0:216:4169:f9d7 with SMTP id d9443c01a7336-21892997505mr8126755ad.2.1734045565011;
+        Thu, 12 Dec 2024 15:19:25 -0800 (PST)
+Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f0ab8fsm128979435ad.190.2024.12.12.15.19.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 15:19:24 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tLsSn-00000009zQh-0113;
+	Fri, 13 Dec 2024 10:19:21 +1100
+Date: Fri, 13 Dec 2024 10:19:20 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: syzbot <syzbot+5e01f56d1c53ac3749fb@syzkaller.appspotmail.com>
+Cc: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] possible deadlock in xfs_vn_update_time
+Message-ID: <Z1tveH23bU56IMcj@dread.disaster.area>
+References: <675b6694.050a0220.599f4.00bd.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bzaa+X4K3_NApFYHxWP1P7stnAvZH4to65D1600fie6H3w@mail.gmail.com>
+In-Reply-To: <675b6694.050a0220.599f4.00bd.GAE@google.com>
 
-On 2024-12-12 14:54:36-0800, Andrii Nakryiko wrote:
-> On Thu, Dec 12, 2024 at 1:07 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> >
-> > Hi Andrii,
-> >
-> > On 2024-12-12 11:23:03-0800, Andrii Nakryiko wrote:
-> > > On Tue, Dec 10, 2024 at 10:24 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > > > On 2024-12-11 00:17:02+0000, Ihor Solodrai wrote:
-> > > > > On Tuesday, December 10th, 2024 at 3:23 PM, Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > > > >
-> > > > > >
-> > > > > >
-> > > > > > Pahole v1.27 added a new BTF generation feature to support
-> > > > > > reproducibility in the face of multithreading.
-> > > > > > Enable it if supported and reproducible builds are requested.
-> > > > > >
-> > > > > > As unknown --btf_features are ignored, avoid the test for the pahole
-> > > > > > version to keep the line readable.
-> > > > > >
-> > > > > > Fixes: b4f72786429c ("scripts/pahole-flags.sh: Parse DWARF and generate BTF with multithreading.")
-> > > > > > Fixes: 72d091846de9 ("kbuild: avoid too many execution of scripts/pahole-flags.sh")
-> > > > > > Link: https://lore.kernel.org/lkml/4154d202-5c72-493e-bf3f-bce882a296c6@gentoo.org/
-> > > > > > Link: https://lore.kernel.org/lkml/20240322-pahole-reprodicible-v1-1-3eaafb1842da@weissschuh.net/
-> > > > > > Signed-off-by: Thomas Weißschuh linux@weissschuh.net
-> > > > > >
-> > > > > > ---
-> > > > > > scripts/Makefile.btf | 1 +
-> > > > > > 1 file changed, 1 insertion(+)
-> > > > > >
-> > > > > > diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
-> > > > > > index c3cbeb13de503555adcf00029a0b328e74381f13..da23265bc8b3cf43c0a1c89fbc4f53815a290e13 100644
-> > > > > > --- a/scripts/Makefile.btf
-> > > > > > +++ b/scripts/Makefile.btf
-> > > > > > @@ -22,6 +22,7 @@ else
-> > > > > >
-> > > > > > # Switch to using --btf_features for v1.26 and later.
-> > > > > > pahole-flags-$(call test-ge, $(pahole-ver), 126) = -j$(JOBS) --btf_features=encode_force,var,float,enum64,decl_tag,type_tag,optimized_func,consistent_func,decl_tag_kfuncs
-> > > > > > +pahole-flags-$(if $(KBUILD_BUILD_TIMESTAMP),y) += --btf_features=reproducible_build
-> > > > >
-> > > > > Hi Thomas,
-> > > > >
-> > > > > There are a couple of issues with reproducible_build flag which I
-> > > > > think are worth mentioning here. I don't know all the reasons behind
-> > > > > adding this now, and it's optional too, so feel free to discard my
-> > > > > comments.
-> > > > >
-> > > > > Currently with this flag, the BTF output is deterministic for a given
-> > > > > order of DWARF compilation units. So the BTF will be the same for the
-> > > > > same vmlinux binary. However, if the vmlinux is rebuilt due to an
-> > > > > incremental change in a source code, my understanding is that there is
-> > > > > no guarantee that DWARF CUs will be in the same order in the binary.
-> > > >
-> > > > The goal behind reproducible builds is to produce bit-by-bit idential
-> > > > binaries. If the CUs are in a different order then that requirement
-> > > > would have been broken there already.
-> > >
-> > > I'm curious, how do we guarantee that we get bit-by-bit identical
-> > > DWARF? Do we enforce the order of linking of .o files into the final
-> > > vmlinux? Is this described anywhere?
-> >
-> > The CU order has to be fixed, otherwise the non-debugging parts of the
-> > binary would not be reproducible either.
-> > For docs is Documentation/kbuild/reproducible-builds.rst, the linked
-> > reproducible-builds.org project has much more information.
-> >
-> > Also besides reproducible builds, lots of kernel components rely
-> > (accidentally or intentionally) on a stable initialization order, which
-> > is also defined by linking order.
-> >
-> > From Documentation/kbuild/makefiles.rst:
-> >
-> >         Link order is significant, because certain functions
-> >         (module_init() / __initcall) will be called during boot in the
-> >         order they appear. So keep in mind that changing the link
-> >         order may e.g. change the order in which your SCSI
-> >         controllers are detected, and thus your disks are renumbered.
-> >
-> > > > For an incremental build a full relink with *all* CUs is done, not only
-> > > > the changed once, so the order should always be the same.
-> > >
-> > > The concern here is whether linker guarantees that CUs' DWARF data
-> > > will be appended in exactly the same order in such case?
-> >
-> > Otherwise it wouldn't be reproducible in general.
-> > The pahole developers specifically implemented
-> > --btf_features=reproducible_build for use in the kernel; after I sent
-> > a precursor patch to this one (also linked in the patch):
-> >
-> > https://lore.kernel.org/lkml/20240322-pahole-reprodicible-v1-1-3eaafb1842da@weissschuh.net/
-> >
-> > In general the kernel already supports reproducible builds.
+On Thu, Dec 12, 2024 at 02:41:24PM -0800, syzbot wrote:
+> Hello,
 > 
-> Great, thanks for all the info!
+> syzbot found the following issue on:
 > 
-> I do agree with Ihor that KBUILD_BUILD_TIMESTAMP is a non-obvious and
-> surprising way to enable this behavior, but if that's what's used for
-> other aspects of kernel build I guess it's fine by me.
+> HEAD commit:    62b5a46999c7 Merge tag '6.13-rc1-smb3-client-fixes' of git..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1156c3e8580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c579265945b98812
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5e01f56d1c53ac3749fb
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/e972efbff321/disk-62b5a469.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/6b1ab872ed57/vmlinux-62b5a469.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/8dbcac9b80b9/bzImage-62b5a469.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5e01f56d1c53ac3749fb@syzkaller.appspotmail.com
+> 
+> XFS (loop8): Ending clean mount
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.13.0-rc1-syzkaller-00378-g62b5a46999c7 #0 Not tainted
+> ------------------------------------------------------
+> syz.8.1897/11319 is trying to acquire lock:
+> ffff88807ab0a610 (sb_internal#3){.+.+}-{0:0}, at: xfs_vn_update_time+0x1e9/0x5e0 fs/xfs/xfs_iops.c:1103
+> 
+> but task is already holding lock:
+> ffff8880347a1560 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+> ffff8880347a1560 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff+0x160/0x360 mm/util.c:578
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #5 (&mm->mmap_lock){++++}-{4:4}:
+>        __might_fault mm/memory.c:6751 [inline]
+>        __might_fault+0x11b/0x190 mm/memory.c:6744
+>        _inline_copy_from_user include/linux/uaccess.h:162 [inline]
+>        _copy_from_user+0x29/0xd0 lib/usercopy.c:18
+>        copy_from_user include/linux/uaccess.h:212 [inline]
+>        __blk_trace_setup+0xa8/0x180 kernel/trace/blktrace.c:626
+>        blk_trace_ioctl+0x163/0x290 kernel/trace/blktrace.c:740
+>        blkdev_ioctl+0x109/0x6d0 block/ioctl.c:682
+>        vfs_ioctl fs/ioctl.c:51 [inline]
+>        __do_sys_ioctl fs/ioctl.c:906 [inline]
+>        __se_sys_ioctl fs/ioctl.c:892 [inline]
+>        __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Agreed. So far KBUILD_BUILD_TIMESTAMP is really only used for timestamp
-related configuration. While it's not a perfect fit, adding yet another
-switch that needs to be specified can't be the answer, either.
+There's your problem - doing copy-in from userspace whilst holding
+a q->debugfs_mutex, thereby putting mm->mmap_lock under a block
+layer lock.
 
-Maybe the Kbuild maintainers have some preference?
+That then propagates through the block layer locking into filesystem
+locking orders (because filesystems do IO!), and finally lockdep
+complains because the filesystem is doing freeze protection
+under the mm->mmap_lock as it is required to do.
 
-> Ihor's work on making BTF generation more deterministic w.r.t. CU
-> order would automatically benefit --btf_features=reproducible_build in
-> the end and might make it unnecessary, but there is no need to block
-> on a completion of that work.
+Block layer issue, not XFS, so:
 
-Sounds good.
+#syz set subsystems: block
 
-[..]
+-Dave.
+
+
+> 
+> -> #4 (&q->debugfs_mutex){+.+.}-{4:4}:
+>        __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>        __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
+>        blk_mq_init_sched+0x42b/0x640 block/blk-mq-sched.c:473
+>        elevator_init_mq+0x2cd/0x420 block/elevator.c:610
+>        add_disk_fwnode+0x113/0x1300 block/genhd.c:413
+>        sd_probe+0xa86/0x1000 drivers/scsi/sd.c:4024
+>        call_driver_probe drivers/base/dd.c:579 [inline]
+>        really_probe+0x241/0xa90 drivers/base/dd.c:658
+>        __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+>        driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+>        __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+>        bus_for_each_drv+0x15a/0x1e0 drivers/base/bus.c:459
+>        __device_attach_async_helper+0x1d3/0x290 drivers/base/dd.c:987
+>        async_run_entry_fn+0x9f/0x530 kernel/async.c:129
+>        process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+>        process_scheduled_works kernel/workqueue.c:3310 [inline]
+>        worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+>        kthread+0x2c4/0x3a0 kernel/kthread.c:389
+>        ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> -> #3 (&q->q_usage_counter(queue)#50){++++}-{0:0}:
+>        blk_queue_enter+0x50f/0x640 block/blk-core.c:328
+>        blk_mq_alloc_request+0x59b/0x950 block/blk-mq.c:652
+>        scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
+>        scsi_execute_cmd+0x1eb/0xf40 drivers/scsi/scsi_lib.c:304
+>        read_capacity_16+0x213/0xe10 drivers/scsi/sd.c:2655
+>        sd_read_capacity drivers/scsi/sd.c:2824 [inline]
+>        sd_revalidate_disk.isra.0+0x1a06/0xa8d0 drivers/scsi/sd.c:3734
+>        sd_probe+0x904/0x1000 drivers/scsi/sd.c:4010
+>        call_driver_probe drivers/base/dd.c:579 [inline]
+>        really_probe+0x241/0xa90 drivers/base/dd.c:658
+>        __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+>        driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+>        __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+>        bus_for_each_drv+0x15a/0x1e0 drivers/base/bus.c:459
+>        __device_attach_async_helper+0x1d3/0x290 drivers/base/dd.c:987
+>        async_run_entry_fn+0x9f/0x530 kernel/async.c:129
+>        process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+>        process_scheduled_works kernel/workqueue.c:3310 [inline]
+>        worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+>        kthread+0x2c4/0x3a0 kernel/kthread.c:389
+>        ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> -> #2 (&q->limits_lock){+.+.}-{4:4}:
+>        __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+>        __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
+>        queue_limits_start_update include/linux/blkdev.h:949 [inline]
+>        loop_reconfigure_limits+0x407/0x8c0 drivers/block/loop.c:998
+>        loop_set_block_size drivers/block/loop.c:1473 [inline]
+>        lo_simple_ioctl drivers/block/loop.c:1496 [inline]
+>        lo_ioctl+0x901/0x18b0 drivers/block/loop.c:1559
+>        blkdev_ioctl+0x279/0x6d0 block/ioctl.c:693
+>        vfs_ioctl fs/ioctl.c:51 [inline]
+>        __do_sys_ioctl fs/ioctl.c:906 [inline]
+>        __se_sys_ioctl fs/ioctl.c:892 [inline]
+>        __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #1 (&q->q_usage_counter(io)#23){++++}-{0:0}:
+>        bio_queue_enter block/blk.h:75 [inline]
+>        blk_mq_submit_bio+0x1fb6/0x24c0 block/blk-mq.c:3092
+>        __submit_bio+0x384/0x540 block/blk-core.c:629
+>        __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+>        submit_bio_noacct_nocheck+0x698/0xd70 block/blk-core.c:739
+>        submit_bio_noacct+0x93a/0x1e20 block/blk-core.c:868
+>        xfs_buf_ioapply_map fs/xfs/xfs_buf.c:1586 [inline]
+>        _xfs_buf_ioapply+0x9f6/0xd70 fs/xfs/xfs_buf.c:1674
+>        __xfs_buf_submit+0x28b/0x820 fs/xfs/xfs_buf.c:1758
+>        xfs_buf_submit fs/xfs/xfs_buf.c:61 [inline]
+>        _xfs_buf_read fs/xfs/xfs_buf.c:809 [inline]
+>        xfs_buf_read_map+0x3fa/0xb70 fs/xfs/xfs_buf.c:873
+>        xfs_trans_read_buf_map+0x352/0x9a0 fs/xfs/xfs_trans_buf.c:304
+>        xfs_trans_read_buf fs/xfs/xfs_trans.h:213 [inline]
+>        xfs_read_agi+0x2a1/0x5c0 fs/xfs/libxfs/xfs_ialloc.c:2760
+>        xfs_ialloc_read_agi+0x10c/0x510 fs/xfs/libxfs/xfs_ialloc.c:2791
+>        xfs_dialloc_try_ag fs/xfs/libxfs/xfs_ialloc.c:1809 [inline]
+>        xfs_dialloc+0x898/0x1820 fs/xfs/libxfs/xfs_ialloc.c:1945
+>        xfs_qm_qino_alloc+0x2a7/0x7f0 fs/xfs/xfs_qm.c:996
+>        xfs_qm_init_quotainos+0x5f4/0x6c0 fs/xfs/xfs_qm.c:1845
+>        xfs_qm_init_quotainfo+0xf4/0xb20 fs/xfs/xfs_qm.c:824
+>        xfs_qm_mount_quotas+0x9c/0x6a0 fs/xfs/xfs_qm.c:1680
+>        xfs_mountfs+0x1ed1/0x2230 fs/xfs/xfs_mount.c:1030
+>        xfs_fs_fill_super+0x1557/0x1f50 fs/xfs/xfs_super.c:1791
+>        get_tree_bdev_flags+0x38e/0x620 fs/super.c:1636
+>        vfs_get_tree+0x92/0x380 fs/super.c:1814
+>        do_new_mount fs/namespace.c:3507 [inline]
+>        path_mount+0x14e6/0x1f20 fs/namespace.c:3834
+>        do_mount fs/namespace.c:3847 [inline]
+>        __do_sys_mount fs/namespace.c:4057 [inline]
+>        __se_sys_mount fs/namespace.c:4034 [inline]
+>        __x64_sys_mount+0x294/0x320 fs/namespace.c:4034
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #0 (sb_internal#3){.+.+}-{0:0}:
+>        check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>        validate_chain kernel/locking/lockdep.c:3904 [inline]
+>        __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
+>        lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+>        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>        __sb_start_write include/linux/fs.h:1725 [inline]
+>        sb_start_intwrite include/linux/fs.h:1908 [inline]
+>        xfs_trans_alloc+0x4fa/0x940 fs/xfs/xfs_trans.c:266
+>        xfs_vn_update_time+0x1e9/0x5e0 fs/xfs/xfs_iops.c:1103
+>        inode_update_time fs/inode.c:2124 [inline]
+>        touch_atime+0x352/0x5d0 fs/inode.c:2197
+>        file_accessed include/linux/fs.h:2539 [inline]
+>        xfs_file_mmap+0x4ad/0x630 fs/xfs/xfs_file.c:1581
+>        call_mmap include/linux/fs.h:2183 [inline]
+>        mmap_file mm/internal.h:124 [inline]
+>        __mmap_new_file_vma mm/vma.c:2291 [inline]
+>        __mmap_new_vma mm/vma.c:2355 [inline]
+>        __mmap_region+0x1789/0x2670 mm/vma.c:2456
+>        mmap_region+0x270/0x320 mm/mmap.c:1347
+>        do_mmap+0xc00/0xfc0 mm/mmap.c:496
+>        vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
+>        ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
+>        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
+>        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
+>        __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> other info that might help us debug this:
+> 
+> Chain exists of:
+>   sb_internal#3 --> &q->debugfs_mutex --> &mm->mmap_lock
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&mm->mmap_lock);
+>                                lock(&q->debugfs_mutex);
+>                                lock(&mm->mmap_lock);
+>   rlock(sb_internal#3);
+> 
+>  *** DEADLOCK ***
+> 
+> 2 locks held by syz.8.1897/11319:
+>  #0: ffff8880347a1560 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+>  #0: ffff8880347a1560 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff+0x160/0x360 mm/util.c:578
+>  #1: ffff88807ab0a420 (sb_writers#23){.+.+}-{0:0}, at: file_accessed include/linux/fs.h:2539 [inline]
+>  #1: ffff88807ab0a420 (sb_writers#23){.+.+}-{0:0}, at: xfs_file_mmap+0x4ad/0x630 fs/xfs/xfs_file.c:1581
+> 
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 11319 Comm: syz.8.1897 Not tainted 6.13.0-rc1-syzkaller-00378-g62b5a46999c7 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>  print_circular_bug+0x419/0x5d0 kernel/locking/lockdep.c:2074
+>  check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
+>  check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>  validate_chain kernel/locking/lockdep.c:3904 [inline]
+>  __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
+>  lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+>  percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>  __sb_start_write include/linux/fs.h:1725 [inline]
+>  sb_start_intwrite include/linux/fs.h:1908 [inline]
+>  xfs_trans_alloc+0x4fa/0x940 fs/xfs/xfs_trans.c:266
+>  xfs_vn_update_time+0x1e9/0x5e0 fs/xfs/xfs_iops.c:1103
+>  inode_update_time fs/inode.c:2124 [inline]
+>  touch_atime+0x352/0x5d0 fs/inode.c:2197
+>  file_accessed include/linux/fs.h:2539 [inline]
+>  xfs_file_mmap+0x4ad/0x630 fs/xfs/xfs_file.c:1581
+>  call_mmap include/linux/fs.h:2183 [inline]
+>  mmap_file mm/internal.h:124 [inline]
+>  __mmap_new_file_vma mm/vma.c:2291 [inline]
+>  __mmap_new_vma mm/vma.c:2355 [inline]
+>  __mmap_region+0x1789/0x2670 mm/vma.c:2456
+>  mmap_region+0x270/0x320 mm/mmap.c:1347
+>  do_mmap+0xc00/0xfc0 mm/mmap.c:496
+>  vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
+>  ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
+>  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
+>  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
+>  __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7eff20f7fed9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007eff1edf6058 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+> RAX: ffffffffffffffda RBX: 00007eff21145fa0 RCX: 00007eff20f7fed9
+> RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
+> RBP: 00007eff20ff3cc8 R08: 0000000000000004 R09: 0000000000000000
+> R10: 0000000000028011 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007eff21145fa0 R15: 00007ffe670abff8
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
+> 
+
+-- 
+Dave Chinner
+david@fromorbit.com
 
