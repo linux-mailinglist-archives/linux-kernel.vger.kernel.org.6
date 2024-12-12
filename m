@@ -1,70 +1,92 @@
-Return-Path: <linux-kernel+bounces-443045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 618119EE62C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:04:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CA29EE63A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:05:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D934288D13
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90D4188A6EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D6921481C;
-	Thu, 12 Dec 2024 12:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14741216E3A;
+	Thu, 12 Dec 2024 12:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PgMCsYUe"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LZrLrdTZ"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EBD211A1F;
-	Thu, 12 Dec 2024 12:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95ADD21577D;
+	Thu, 12 Dec 2024 12:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734004917; cv=none; b=njeiUtjXvLdBRM3ya1U0lIs6dH30NDCpbhLZdfQK9rdj8ZcOwwMM8PyDV71Z679rJtS6JzVRIGvS89b0g76sXv/SBO7Y2zJcIph9I97axWAtGzU0w0wkbB2l0CxB5cwbIFrePJAHAoQ1m0bfOOvbQetWjCzg1pF2L+fqNalbokA=
+	t=1734004920; cv=none; b=dn0/OZje+JhPzduhye/I2Z3RUf2jT/L1J9z47vdE/LSctwogDM2AYe9XMUVKpX6/Jm7IB1vxcFU82ExjQgPa0WKNZP5dplrbzxJqssqoqDnXzgF34ulrAbvsqRD9EC8Cq8K/mWg6tC79g2Rpo45dzNfFb4/K815x6x13BoYjLTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734004917; c=relaxed/simple;
-	bh=jSqSzyaLyhjRr8wizUe2Y6VnQwAVcfZKmXHFX8I3JZM=;
+	s=arc-20240116; t=1734004920; c=relaxed/simple;
+	bh=oxrCOLeKzuBBTX19y5H+zypH4b02mKV3KfmmQV0JUpQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fkiNF4AoOp7mXOwQPpUutwRfZ6OK/F7tWuqZcIXnWO2euxGSmlU1Av9fA+m4oMmQnMb7Ycdh2DlMbnW+Qpg7Xx3RRHdk6TBc++WZ8lHlaHkv7vsMaw2FxeJWn6eq4W1QCmM7QDpf/ETVEafS4xkPZxwtlzH2tARzxQsu/MvQiFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PgMCsYUe; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=chs8kHtge7jhj9hPJhn7V5CNCvA4fKVOBxopyTOr1+Q=; b=PgMCsYUeTR6A5WK2t4P+17j5Z1
-	sluClIdKbSv2dEywec3ZGs6mJB1P405+b3kfjmlChBUrrz85pGhJGpn2/HmbmmRzvI2kYEKA55OUc
-	R4e5Ev00pC8nbwVw/vmy75BfPnJWgf4+Bi2Bv8BvjruvgP1qEVgwb1m/0ruue0kgO6EYseNrn+Jak
-	FqnbRvwgK3uP6qtWpdsuRDe6pPj9vgIfGTEDnzGg0qi1eDU6FzyipWnHGmBTNlpxgH6MhyWuI3E4a
-	B9tSLc6/j582qChR+TovWU8IBcrEfV/fXOhAkN2ZTOYuCeHU53939wuIjjY/1g0CoM4Ewy4c+lEV5
-	dCAmBOWA==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLhsz-000000043Pt-1ohv;
-	Thu, 12 Dec 2024 12:01:41 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EF1563003FF; Thu, 12 Dec 2024 13:01:40 +0100 (CET)
-Date: Thu, 12 Dec 2024 13:01:40 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Elizabeth Figura <zfigura@codeweavers.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	wine-devel@winehq.org,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Arkadiusz Hiler <ahiler@codeweavers.com>,
-	Andy Lutomirski <luto@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH v6 00/28] NT synchronization primitive driver
-Message-ID: <20241212120140.GX21636@noisy.programming.kicks-ass.net>
-References: <20241209185904.507350-1-zfigura@codeweavers.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOk3MaJ3VaN8EietAssTSvtvAv40YdxldYhRZ3JMy14vyFVyTuOLUmVLTOZhrEybiS9HW87H0leULatWwn+il6btteTUVZrQArAOk7v6LSbiBk/2NhXTwUzlvhr/tfApssw9H+NLymmK0Fo/vUwtHPfWswA2l4onZ2ZLOKCFn6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LZrLrdTZ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC71xh2013689;
+	Thu, 12 Dec 2024 12:01:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=uMdurywD9XjfCVrf9DXjLrwRuO8D79
+	jzPa3O78TCAY0=; b=LZrLrdTZ+8P+MSpL57Sl91yMtXGslhY0ZrDP9MyaL+aSSu
+	/lBMWQIzpuPbnJ2cZBvnFaHG8vA6DiAknfX9w4dCC8gqw4ZR38cZQ+XgyNMooLxg
+	8fy13jPASkSxBvA96Zgqi0Sn9Ioz691nASAYZbqKqytVe9eEELHej5ZwL/aR6Ogr
+	FUAARSlZlEQQ+iUlumspRhrFyuCTaSFvPxejTmR5GT1gJUzc0URFoLNpB4acPYQh
+	+fzS1snBITtTCvtDq/XSnK0lc86N9BTQKCgtCxboeIRcEMYrFYDzQEJDZqOhQx2O
+	jqAf8RhVFw5z/zwyDnJU4MSrBb7ooA2qpMK7pxJw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce3941yn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 12:01:53 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BCBvTJD015036;
+	Thu, 12 Dec 2024 12:01:52 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce3941ye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 12:01:52 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC9bOQj032739;
+	Thu, 12 Dec 2024 12:01:51 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0psrdmt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 12:01:51 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BCC1oKr27329260
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Dec 2024 12:01:50 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0FEC220043;
+	Thu, 12 Dec 2024 12:01:50 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7944120040;
+	Thu, 12 Dec 2024 12:01:48 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 12 Dec 2024 12:01:48 +0000 (GMT)
+Date: Thu, 12 Dec 2024 17:31:43 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrey Albershteyn <aalbersh@kernel.org>,
+        John Garry <john.g.garry@oracle.com>
+Subject: Re: [RFC 2/3] xfs_io: Add ext4 support to show FS_IOC_FSGETXATTR
+ details
+Message-ID: <Z1rQp8UZz9s+BQM1@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1733902742.git.ojaswin@linux.ibm.com>
+ <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
+ <20241211181706.GB6678@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,41 +95,163 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241209185904.507350-1-zfigura@codeweavers.com>
+In-Reply-To: <20241211181706.GB6678@frogsfrogsfrogs>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ssASAEAzaYTugZioFGIun2jM2YWnwWiA
+X-Proofpoint-ORIG-GUID: dyRRgAjLFpmkAJwRg7MJK9C-pSv7S3LU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0 mlxlogscore=933
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120086
 
-On Mon, Dec 09, 2024 at 12:58:36PM -0600, Elizabeth Figura wrote:
-
-> I would like to repeat a question from the last round of review, though. Two
-> changes were suggested related to API design, which I did not make because the
-> APIs in question were already released in upstream Linux. However, the driver is
-> also completely nonfunctional and hidden behind BROKEN, so would this be
-> acceptable anyway? The changes in question are:
+On Wed, Dec 11, 2024 at 10:17:06AM -0800, Darrick J. Wong wrote:
+> On Wed, Dec 11, 2024 at 01:24:03PM +0530, Ojaswin Mujoo wrote:
+> > Currently with stat we only show FS_IOC_FSGETXATTR details
+> > if the filesystem is XFS. With extsize support also coming
+> > to ext4 make sure to show these details when -c "stat" or "statx"
+> > is used.
+> > 
+> > No functional changes for filesystems other than ext4.
+> > 
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
+> >  io/stat.c | 38 +++++++++++++++++++++-----------------
+> >  1 file changed, 21 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/io/stat.c b/io/stat.c
+> > index 326f2822e276..d06c2186cde4 100644
+> > --- a/io/stat.c
+> > +++ b/io/stat.c
+> > @@ -97,14 +97,14 @@ print_file_info(void)
+> >  		file->flags & IO_TMPFILE ? _(",tmpfile") : "");
+> >  }
+> >  
+> > -static void
+> > -print_xfs_info(int verbose)
+> > +static void print_extended_info(int verbose)
+> >  {
+> > -	struct dioattr	dio;
+> > -	struct fsxattr	fsx, fsxa;
+> > +	struct dioattr dio;
+> > +	struct fsxattr fsx, fsxa;
+> > +	bool is_xfs_fd = platform_test_xfs_fd(file->fd);
+> >  
+> > -	if ((xfsctl(file->name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
+> > -	    (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
+> > +	if ((ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
+> > +		(is_xfs_fd && (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa) < 0))) {
 > 
-> * rename NTSYNC_IOC_SEM_POST to NTSYNC_IOC_SEM_RELEASE (matching the NT
->   terminology instead of POSIX),
+> Urgh... perhaps we should call FS_IOC_FSGETXATTR and if it returns zero
+> print whatever is returned, no matter what filesystem we think is
+> feeding us information?
 > 
-> * change object creation ioctls to return the fds directly in the return value
->   instead of through the args struct. I would also still appreciate a
->   clarification on the advice in [1], which is why I didn't do this in the first
->   place.
+> e.g.
+> 
+> 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
+> 		if (is_xfs_fd || (errno != EOPNOTSUPP &&
+> 				  errno != ENOTTY))
+> 			perror("FS_IOC_GETXATTR");
+> 	} else {
+> 		printf(_("fsxattr.xflags = 0x%x "), fsx.fsx_xflags);
+> 		...
+> 	}
+> 
+> 	if (ioctl(file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
+> 		if (is_xfs_fd || (errno != EOPNOTSUPP &&
+> 				  errno != ENOTTY))
+> 			perror("XFS_IOC_FSGETXATTRA");
+> 	} else {
+> 		printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
+> 	}
+> 
+> That way we don't have to specialcase platform_test_*_fd() for every
+> other filesystem that might want to return real fsxattr results?
+> Same idea for DIOINFO.
 
-I see no problem making those changes; esp. since Arnd doesn't seem to
-object to the latter.
+Hi Darrick, thanks for the review.
 
-> Elizabeth Figura (28):
->   ntsync: Introduce NTSYNC_IOC_WAIT_ANY.
->   ntsync: Introduce NTSYNC_IOC_WAIT_ALL.
->   ntsync: Introduce NTSYNC_IOC_CREATE_MUTEX.
->   ntsync: Introduce NTSYNC_IOC_MUTEX_UNLOCK.
->   ntsync: Introduce NTSYNC_IOC_MUTEX_KILL.
->   ntsync: Introduce NTSYNC_IOC_CREATE_EVENT.
->   ntsync: Introduce NTSYNC_IOC_EVENT_SET.
->   ntsync: Introduce NTSYNC_IOC_EVENT_RESET.
->   ntsync: Introduce NTSYNC_IOC_EVENT_PULSE.
->   ntsync: Introduce NTSYNC_IOC_SEM_READ.
->   ntsync: Introduce NTSYNC_IOC_MUTEX_READ.
->   ntsync: Introduce NTSYNC_IOC_EVENT_READ.
->   ntsync: Introduce alertable waits.
+I agree that this looks like a more modular approach, I'll make the
+change. IIUC we basically want to perform the ioctls regardless of the
+FS and then handle the error/output accordingly here so that we wont need the 
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+    if (file->flags & IO_FOREIGN && !platform_test_ext4_fd(file->fd))
+            return 0;
+
+line in the stat functions, right?
+
+Also, with the suggested approach the user visible behavior might change
+subtly because earlier we used to fail if either FSGETXATTR or
+FGGETXATTRA failed but now theres a slim chance that we might print the
+output partially. It might not be a very big deal but just thought I'd
+point out.
+
+Regards,
+ojaswin
+
+> 
+> --D
+> 
+> >  		perror("FS_IOC_FSGETXATTR");
+> >  	} else {
+> >  		printf(_("fsxattr.xflags = 0x%x "), fsx.fsx_xflags);
+> > @@ -113,14 +113,18 @@ print_xfs_info(int verbose)
+> >  		printf(_("fsxattr.extsize = %u\n"), fsx.fsx_extsize);
+> >  		printf(_("fsxattr.cowextsize = %u\n"), fsx.fsx_cowextsize);
+> >  		printf(_("fsxattr.nextents = %u\n"), fsx.fsx_nextents);
+> > -		printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
+> > +		if (is_xfs_fd)
+> > +			printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
+> >  	}
+> > -	if ((xfsctl(file->name, file->fd, XFS_IOC_DIOINFO, &dio)) < 0) {
+> > -		perror("XFS_IOC_DIOINFO");
+> > -	} else {
+> > -		printf(_("dioattr.mem = 0x%x\n"), dio.d_mem);
+> > -		printf(_("dioattr.miniosz = %u\n"), dio.d_miniosz);
+> > -		printf(_("dioattr.maxiosz = %u\n"), dio.d_maxiosz);
+> > +
+> > +	if (is_xfs_fd) {
+> > +		if ((xfsctl(file->name, file->fd, XFS_IOC_DIOINFO, &dio)) < 0) {
+> > +			perror("XFS_IOC_DIOINFO");
+> > +		} else {
+> > +			printf(_("dioattr.mem = 0x%x\n"), dio.d_mem);
+> > +			printf(_("dioattr.miniosz = %u\n"), dio.d_miniosz);
+> > +			printf(_("dioattr.maxiosz = %u\n"), dio.d_maxiosz);
+> > +		}
+> >  	}
+> >  }
+> >  
+> > @@ -167,10 +171,10 @@ stat_f(
+> >  		printf(_("stat.ctime = %s"), ctime(&st.st_ctime));
+> >  	}
+> >  
+> > -	if (file->flags & IO_FOREIGN)
+> > +	if (file->flags & IO_FOREIGN && !platform_test_ext4_fd(file->fd))
+> >  		return 0;
+> >  
+> > -	print_xfs_info(verbose);
+> > +	print_extended_info(verbose);
+> >  
+> >  	return 0;
+> >  }
+> > @@ -440,10 +444,10 @@ statx_f(
+> >  				ctime((time_t *)&stx.stx_btime.tv_sec));
+> >  	}
+> >  
+> > -	if (file->flags & IO_FOREIGN)
+> > +	if (file->flags & IO_FOREIGN && !platform_test_ext4_fd(file->fd))
+> >  		return 0;
+> >  
+> > -	print_xfs_info(verbose);
+> > +	print_extended_info(verbose);
+> >  
+> >  	return 0;
+> >  }
+> > -- 
+> > 2.43.5
+> > 
+> > 
 
