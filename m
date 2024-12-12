@@ -1,95 +1,114 @@
-Return-Path: <linux-kernel+bounces-443429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABAD09EF066
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:27:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBC19EF0B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7879A167DBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F087188F6AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB7E236F8E;
-	Thu, 12 Dec 2024 16:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CF8237FCB;
+	Thu, 12 Dec 2024 16:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="dHW6kSOT"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UaBslxOg"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A085E225412;
-	Thu, 12 Dec 2024 16:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82191217F40;
+	Thu, 12 Dec 2024 16:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734019838; cv=none; b=ua4LsLbAJHOKkUBvYOO61cJvoXiIxPGAYQpY5+6cVFx83urJFG5Dyzl95IbC1A8iYyoPDJXeIYwLoI5pWgJzbiB6YH7S5IA+iCntNV+4jQeFmE0JhW0Srf4En2XKJmUlpBfdi9cEKMIAPbkYamFef4xLKkYOYUsQlZ6CxvhYMAg=
+	t=1734019853; cv=none; b=YLSwv7T1DCWXhou138dvrdOMu8njJO1KUqb5Au2TJyoWsn587v0sLH7cXE67WQoFFuD4Girdcqks6/qmCHqsQGe+9lDeIlKzheN8jhR7cfW8A+7A6glWNWh2Rm+6ruQvW/GgabF3/RChKRpLrHSgH7lxW/3KkeX82vHlKFIjyOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734019838; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=j/WABzTzm/P8gNfP/Kjgs+Io58Sg3H56dxea9huuFff6pQITkQU4sYvd6bRsJ3Qf4Yku86d7W39sZ2NQ6Tt9KMe4Uljum2HJRT8lh9UsmjI3d+M0qzPZiXwPizzdqodhyJLGYl6VJg6j2pKUpkbIj9pSCZRFYw9F0un0OHMC4wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=dHW6kSOT; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1734019833; x=1734624633; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dHW6kSOTRO0atGwBvjEBNx9VMLfoZpIa7lwm9vr7o3W/nu5hIhFloUtORNws79Da
-	 45eiWC7XpCraFAUfKfkr7mwf5v/m8KOtGzkL/W1PdikF2iu1NljTMGq9fsWXQZdKb
-	 7xJIaXqYpVgNGudAudgr+Bvr1WWgppM9E9JVDi3JifYAmhF87K9+UMIu6MV9YTi7n
-	 88fQG2uUTzgix70m0O1cOG63MIcHIneFVd/SSeZq37oBdGLnFdczQnaiaMrSTvKn8
-	 0LKZhFZCM1beiyctgP8gOvd7uhfjuhRO+o3bU4Mt2r/7/K1AsIFp+dCuaerBVsEYi
-	 KQZq4l9fDtiwLCOwkw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.33.232]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MMobO-1t5LLg3vtc-00QUWS; Thu, 12
- Dec 2024 17:10:32 +0100
-Message-ID: <e028e4ac-9058-487e-accf-063421e35832@gmx.de>
-Date: Thu, 12 Dec 2024 17:10:32 +0100
+	s=arc-20240116; t=1734019853; c=relaxed/simple;
+	bh=E8TTZbAWIR0jzsOWYV1xtJIvxfZDCTwBmvcEuKREfKQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IevxCDKHBrDOToyek4tzfamk1sSSyaEj7lfohP2x5Sa9AujSJykS9xHLbdjehVaHFSV7fUZ1CznJOEeC8ajCKY5Cwq5HtnMhvq6htzYWQGDSnhEu/XiaTLiaQ845AKMLW4DCyFJUgYnz4lmnMNCmPsE5cmcHPeDOPWzReOqN9tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UaBslxOg; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffa49f623cso7970841fa.1;
+        Thu, 12 Dec 2024 08:10:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734019849; x=1734624649; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cYUSJr9oHr+FftcJrfxtweePljXVaDj/rdTt+vSgojY=;
+        b=UaBslxOgUbr1jKNerH201d3BZKEk2thJH4o6uyTqp2zi1K9InGOdq0P6F/SuvCoWgO
+         Hs6afVMmtWbzE17q/8esEt5iRLd/e+923Cb0dvOj9H5G00ohVjI4ojKHFp+a8omaLm74
+         10cLiXJ4CfXEGE2pJ6XKpVcoNkEc10kP+Rd+FEut/8pF0jvXBvfVBKQuyiJ0Dp4ZH4/c
+         CPHdPyXyqW58HgThXpyYeSUR3C0fphmnRHVxSPEjVKF0Pzf7Qk+nxYxvj67XARo2A6Vn
+         SOVe81b9ZWeAmNE4aeVE/llLZ9C/mzIti0Vd0grAsKqC/pWF2Iy+X19Ee33Y9tPmP/7g
+         hSCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734019849; x=1734624649;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cYUSJr9oHr+FftcJrfxtweePljXVaDj/rdTt+vSgojY=;
+        b=dUiWL1ScpnJ76j53A27sKOPsZurUvpoybCdpb6Ti+IaoTjUaZRG34s4pcxotlSbeZp
+         jVVy5/xBzaAt5dfNXUfUFzyGx0tlPZz5J8zaxClS/hoYKDAGoX5LbThGhJz7nsQH6MVO
+         +XI/65KnW6fZC/Tj2xfWOaE1ryIgSa4Di13ei4Am7SAJmeX1GenYMqQmWybigOm0MwLG
+         wo6l+DDQqMwFo3u7vSk83LgvIOzs9mxSJ/BDA7dMUgCOgUm7gS7QEP/O5hL79GrLKwb7
+         q6qRhFeekXc4puzP+ZZYyqM0QPRlqAao68i0gDpvkg5vay1eWrTx6RnSgoDKIrXT2TlN
+         nhtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBEb/OnHu1yRKdUYuxMOUFRPk9jLprUHAzXnT/SmtMdfrvSCdwrHOqK/DRUD+nKJss5q2EmqgI1mBbrRc=@vger.kernel.org, AJvYcCX1nelNfkWFTrekimUO8f0NQL+RE07prbDI3SPxb+LLZ4ifXN1XRIF9P4TKh2CsABA4ldAEoFyBOb3N/qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQzCT6rg34yQ/fwRu+sgGDIHsaXT29vOg/6d2sVwka8IX90QzN
+	fDrir7Gk7D3dlsgUoCsjFe0rRE1W6H4CVFkpvAhEZu0N2qCbDtwoVeIRrst1cuSUSuKZyGhDV7m
+	Ngjq6Z1bl521VbwvupNqMhLEXzTk=
+X-Gm-Gg: ASbGncs7HN+Q29L6vDWifUI/v03W9BwqozpISbukhAqwNYWrfXcVE8jYEJe6Uh79+Lh
+	FFzY8jzo65G9B8AmUf0VCmsx8eQxl3tcVWqX1Er7lUcyO79xb9Lb7tnCvtw6Nzso8xyr2EQ==
+X-Google-Smtp-Source: AGHT+IEfxOaxJF02cqCb3o+35QthKCmm4+8U0/gTtwd0T+FvVSHeVgyOje6efKWJI1tAN9KX489WrZ5iZFjUW8eIxGo=
+X-Received: by 2002:a05:651c:2226:b0:300:39eb:1aae with SMTP id
+ 38308e7fff4ca-30251e30b03mr3100551fa.24.1734019849270; Thu, 12 Dec 2024
+ 08:10:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.12 000/466] 6.12.5-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:DNx8quqLI5bJOAIjgmRCWaKaa9imRGxPgHCgd1mG3b3ej3bICcf
- jG0sxHCHAl2+t6kWrfIOGULrZrYjpBLj9x75Y8M8mPjTjMiNUGDY44mdD6VGYA3pcjV6okI
- hDfNw4Rv7MKkWqi3EwG5TbdSmhR9qkh91lFlmB2scAgMAEhNYKD/6eOXWGy6ac8fuUOL9Yy
- EaDqDV3kWaFH2x0cXgrzg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Vxsk595eiw8=;Vip839rEdxicgs47xbksBje9aGL
- zlwlMWo1AWoNxVhnITtuFMCv5dBxgghkV4giWVyQBzy1qzu/bn4pBB+QZk8f5mnwYjK/punu5
- 0qSJe/Dhqi2O10kYTTTJgsq4EyGFVuImCoJIqb3w5o2WORYcGgxHGM2iugdSE8s08En5chQQ7
- /SNqmlyExkwDbqIqAEJl2ckvmTLNFd5x6KK+9yuVAyeJm8vC09PRNa1Q/URHPZ2/Sx8ERRQOx
- dAgFgio9BNKKfuVaJz5RGgMQOdXHjvqRhS1c55P7g81a5D1p13gVrAtrXOC0+34/CHb6sS/FM
- k54s7e12OIYN46p3+PeRiSFkjPHX6T2jKttYmuvsjPU46mi5gRf01IQWoI/kmEbi1we7Wji9D
- hbbl3alf0vTGIw60wwBfLZu4f4QyidkNCgTHcALgr7ezOl8Ab1sFOlAFrXD/vPsh4WR3szb5h
- 0xQ1bdEWvrJclmbp24uBiiwULYkL6uk2zSkbKA8+Mg9k4+T3NQ837B7Xm1tDopt2ZvnB0X5iy
- KIgnuPQGeZ0mw4eYIC8GMm17wQBm1aRmBGEvDZl0u59P3nqvC7s1SWTv60zgvf2X7G8qB+796
- 2zVaFd0sEriOCzspa3Rqszd3UqOimtk35OhPzFsi+1dRNKHhDSbrwFej8AZNu9z8wLfG8gYrp
- f/gi8O6aQXO2gEfjLnIA4/MShdslvVBY0PECiXgu18+Wd8p9d6FkSQQwv3jOPqhEtDCMJoAsU
- kTqyPueChMxYVSQScsI4NEbTREO7/A7wzItKdGxuQuAUhFCd/2Ew0Zc5eAtj3KYxzfCm85/5d
- wFCPssimBWtw3EascsNJ0CSkG8ZwRQoQ0wT49ulx52bTexaKsHXEG1ZSodJHMUvR0n4ZXPKrJ
- KwvKldnhbnctAGTWoTXOxvKBAb9OYu517+FYFetQN2KiRpYLfmB9x2FbxQ3g0OMIrYtvpG4wq
- Igx5V6Q/HD9QDcajZRJ1UZPZdOKqFHvKBW9d+TZPjRd5lAz1n3DBK2E3Tzv3Kjwwyr4tqL/xT
- eSU5zsQQjeKcSMSt0Li4siSdfakRUGU1uF6nG1jsKzE9QHJ+tIMO5/vwg+4GW6S0ZGfGQu38/
- tx1uEwCt4=
+References: <01020193bb8a24ad-99eafebb-3b0b-40c0-9b28-3a0dbc84327a-000000@eu-west-1.amazonses.com>
+In-Reply-To: <01020193bb8a24ad-99eafebb-3b0b-40c0-9b28-3a0dbc84327a-000000@eu-west-1.amazonses.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 12 Dec 2024 13:10:38 -0300
+Message-ID: <CAOMZO5DgW3YrpMJPCTzQ-LZCopB4tNPoJhyFQrr6RBvbnBu4VA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] media: verisilicon: fix reference padding issue
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, linux-media@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg
+On Thu, Dec 12, 2024 at 12:43=E2=80=AFPM Benjamin Gaignard
+<benjamin.gaignard@collabora.com> wrote:
+>
+> Hantro hardware is splited into two parts: the decoder which produce
+> tiled pixels formats and the post-processor which produce raster pixels
+> formats.
+> When post-processor is used the selected pixels format may not have the
+> some padding/stride than the decoder output pixels format. This led to
+> miscomputing chroma and motion vectors offsets so data are overlapping.
+> This series introduce a reference pixels format that decoder use to
+> compute the various needed offsets and size.
+>
+> With this series Fluster for VP9 tests is now 207/305 vs 145/305.
+> HEVC test score isn't impacted by these patches (still 141/147).
+>
+> Version 2:
+> - rebased on top of media-commiter/next
+> - Add reviewed-by tags
+>
+> Benjamin Gaignard (2):
+>   media: verisilicon: Store reference frames pixels format
+>   media: verisilicon: Fix IMX8 native pixels format steps values
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
-
-Thanks
-
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Do both patches deserve a Fixes tag?
 
