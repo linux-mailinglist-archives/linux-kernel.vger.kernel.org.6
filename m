@@ -1,201 +1,159 @@
-Return-Path: <linux-kernel+bounces-443519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1A79EF33C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 421BA9EF343
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:57:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F1C29176E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78B4284D4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE59622B59F;
-	Thu, 12 Dec 2024 16:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911C92253F1;
+	Thu, 12 Dec 2024 16:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p9CndFYr"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RisfHKDb"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD9C2144C0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A23222D68
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734022234; cv=none; b=F7aRbi8fprzW2pEzrO8y7LM3XNqS7jdWRrCAOh44fmPMSmTrwrlXlo65AcXOzM9voE9GWIcbU/8I5rtXHg/PaTBpRd/hPUtCWOTFdpdNZyCGOtZWIdY13r4kL+vckamXrUMQ8rEKod4XlzGJ3zvF7bV4o2L4AO9j+uM/L2AYihM=
+	t=1734022253; cv=none; b=Eufxnt6RUGclQYaGC+XeJUTAR51L3NEH5LJ9z72txi4oHPWO/zTO7QFx4YGY3OEXa4SuCnZY7+eh7fSXNBuAb8plmCQ1d39I/NMi8rHcNK66O6IWziPMFLB0sKwqkKRFBuEUqP6IUNxE8JH/3C8bep6Bo/Q55AKXnjfacKjfCeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734022234; c=relaxed/simple;
-	bh=dHloNiBUJ7bLsqmh9wIPd62e5v2PCyB3TZUo+KgkVQU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=toCRfR0D/6Gd5yLWMOCQo4F6wEYS+/V46J6QFTquukeOa8Bwxuw/6XGNbKqp+w4bTZkTeU6/YbGG9TyEUwuoro2O/rZfdrLCEta7OnfaYGhrvj4MkZAqS7Re/x3GqtNCHUfpfidzkm+aZzguQJZYbdMPcpKaVfpL0j3LddmtNww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p9CndFYr; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1734022253; c=relaxed/simple;
+	bh=BBhhYc6WiR9lrxb02YxPKhDO0cLFxCtxBdQvIJoPBZM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=smfaLZ3281tAg8hZkiVOc/6d72iLuJtRMFXtuqSapl9DIqlmMOurbeYVNzSOZxppyZ02cFayXGixWmmhYkWVfXrPz6BnZ1M373ehWvroo2MVtKw7T1Lh6DOCZ14rUEyLBZtiWR3d4FW+Ow0xWHdQdoVx3VQ0NthPK3glnQYC+9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RisfHKDb; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-725f2f79ed9so663167b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:50:32 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4361f664af5so9074485e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:50:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734022232; x=1734627032; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KCbfEF4lyl4HC7RLSlayiasY4pJVdnriIQ3YnsD1m5g=;
-        b=p9CndFYrLgz/gEudx1yI6gtcm6ft5U/lJG+F64I7HCcmNmqMzzM2bzGvIURERw8lHI
-         RRM41TQELbMmrfEyewnNxQlKQYPT70zTBUKDc5QQUF1R3VJ510QMAnZ+DPrxzgGFM/02
-         eVSYUqQ53qNE4wHBeMje2lAAWISRZV55o/rxbaLYl4T1YmOQWrbrjj5epGvmDD1FiyIA
-         LAm/87qDxqMk0/m73pk/Ow8VYj+y89em5uM5S97w/mgSUqZFIi5Ak3Xh8RC5pY9Ntriw
-         kMN248kOXHUJGH9dv/zVT+eOs+D1plYkcD5hUZtENAjRVVZBaO496VGN+HBxFssBneRn
-         4UOA==
+        d=linaro.org; s=google; t=1734022250; x=1734627050; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qPR/U5M933Efza0Sv+7ys+dvo2ugrwOUgeWtNHtA3sY=;
+        b=RisfHKDbgWpAHwnFsKRGpKvft4Y/R4Tsc/mdkBsBGMhPZ5fy/XVK1XrJQ4TSpiMa1m
+         X29sC0L51VM59G9saZU8bUalIOYJFT22pVXsGb7HbUYCuTmfqeRfsvInkhoFiuHwnGVu
+         2YgyCgUWsD4Gm8IFajR+qi0c36koKtcJfQv/439Gxw1SqshNv1ZLzuSLI0DHnetxSO9H
+         XjQQG+HYthfq/u2GP+ZsbfcvSg3NPaqG/otMnPhNcWKYndc2q38sQTNJq4VeZUarbCeo
+         cnj/swtHkaajSz1RuWy/fF2Vk4Z18+FJrQm2YDeLhd5Em4E0qMngDFBxXzL2xuqOmjKW
+         Yx9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734022232; x=1734627032;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1734022250; x=1734627050;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KCbfEF4lyl4HC7RLSlayiasY4pJVdnriIQ3YnsD1m5g=;
-        b=R6x4h1WgES6Mi3fZVCE5w38DZNRlGd49tWOGrPNakPhiA/F16meuIv6Ed2s7rkr8t7
-         5hQdyrPXqNlFNuFdgGUqf23NvrJpzweFyimevgsuK+JoIABYjpj3gts/oByZKXS9Y2sQ
-         9VM2wLQOKAlCa+KCAeSH4P25SW5NCzrnL6iBj0TfS64+com08KZuVL2o1CFLFc1zkG5Z
-         nIZwUp2G5m6b0QaDPncnAWzqaWyfD/Gw+ShAtJlMF8o0nm1skhXr0rlBuakmFzBOsuMi
-         bp9CsDvuPaKq1P5xTMLwu0+itx+grLQogcgeFgPOuZWXDrPaeeZcVyVW52tKKF3s/ey/
-         ueOQ==
-X-Gm-Message-State: AOJu0YzYIHLC5CVE/ENUF5qmeP96LnMCUAG/9eazpzAU7KyYYWBJ6ypb
-	GnOFXCCh6cIVtRTJAmDdan9BBsMqpGO17Zw6tNE/XfkfBFKr581Cd8PZVE5vt2cqlj58kdjW8bE
-	MZcfb33ed8tLqVyyEVlHwiWPZTqNNSU3oNXqdWA==
-X-Gm-Gg: ASbGncuecqfCpufWxhK2psF1A1nn0mVbbN4h1bqULEXmv9NFXLo0Lsev5BQG3V70bo9
-	aO46OnHo2eCe8F/tTarixXwbt5tyc3V4aF0hmNhpExNLEREpjsBjTuqHmoHPFRyw2z9E=
-X-Google-Smtp-Source: AGHT+IG8nR5vlKF90c2NpBuZITN8zh2ypGJYDwjdrM9VRjekVUmalhlBLf5HinS4nt4joQcQ8tfiL+9oJP36qwhb5R0=
-X-Received: by 2002:a05:6a20:1590:b0:1d4:fc66:30e8 with SMTP id
- adf61e73a8af0-1e1dab29f1amr1505647637.10.1734022231650; Thu, 12 Dec 2024
- 08:50:31 -0800 (PST)
+        bh=qPR/U5M933Efza0Sv+7ys+dvo2ugrwOUgeWtNHtA3sY=;
+        b=iT/kDp8XAVxZJFkRl4DdxVe8swo3lHpAF1nTcQH+Hn4W5ixj+3f4OI3gdP2yFp+3JL
+         HFTFVnfc9przXjNDFVcUJJAq5wynuolWe9RIiZ0WyvLE6YvX1m12XcYrRejy48EqTclV
+         /uvhE3o82GPVt8LBlRzWRHgpri1IV0BLnTe914xHn/q424V4Cny9K/9Lqw3pwK88V32E
+         qNRomL0ArWTUaeKYQVRQOK9vOrfCnGhsyAvoi0g7TZmU1h5Pn3SRhPaIUBeN/YNCUO/9
+         Ub+pUWJcLsPS0iFATN4dVvs1CXEGwjCqPF8ouvCwWQBNZUW4ujYuW/z/mz0k2iGo8Aw3
+         cX4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ5VVHK1EK6crTg7TJq8hgB3vOJrRwPbWVQ0TMypVXY/9rFcn2lQcZz/7MenUsb9YKoniD2afJBUZDHG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzISLfEiPAY0DChZnJL5oo1YDR1XIFMI0fgxi6GGHgUgtbNCrlo
+	zusu7a08fPNE5ZR/4eEop8Lbq2+07soamFFLlFoqJL8E1RPuCe/7Zb1gfuMEzQU=
+X-Gm-Gg: ASbGncvqNcUcYyXzACqCqvrlvm9z5L6JGly3/I2iNB82KSpWjVIeKE6KPUMdYoBzdls
+	2D7N1IoSM8MmNaRzA5xYo5Nw6OFTcUl2qaQqVGivJTKEoFteg3H3ytzMzQgggpRK+MHZ9+SC8eR
+	xVxoQx4XBWVC+gEqKyk8PiabxWerXRFw4fGFx70ukqfQbtrH9meyhurDt6h4OVn9TEecwLeoCzH
+	R+yuSVYYLy/QJ973LSQ/ugK3WXmSxpe6JGJ73ehReqxQsavg8MTGzq3
+X-Google-Smtp-Source: AGHT+IHqsOvfkm0NoySLQIwm20PgIu1++eFjQglP2vu3YdstNmTRycFfmHYYlymuN6Ezcto2U0UR6A==
+X-Received: by 2002:a05:6000:1543:b0:385:e1e8:40db with SMTP id ffacd0b85a97d-387876914c8mr3724631f8f.24.1734022250298;
+        Thu, 12 Dec 2024 08:50:50 -0800 (PST)
+Received: from [127.0.1.1] ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4a25sm4518264f8f.27.2024.12.12.08.50.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 08:50:49 -0800 (PST)
+From: Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH v4 0/2] arm64: dts: qcom: x1e80100: Describe SDCs and
+ enable support on QCP
+Date: Thu, 12 Dec 2024 18:50:38 +0200
+Message-Id: <20241212-x1e80100-qcp-sdhc-v4-0-a74c48ee68a3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212043102.584863-2-vishalc@linux.ibm.com>
-In-Reply-To: <20241212043102.584863-2-vishalc@linux.ibm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 12 Dec 2024 17:50:20 +0100
-Message-ID: <CAKfTPtA-h+wehFrYRHNTWjj4ZwOD9KWMhsaudytBdwNEHA0fVQ@mail.gmail.com>
-Subject: Re: [PATCH v4] sched/fair: Fix CPU bandwidth limit bypass during CPU hotplug
-To: Vishal Chourasia <vishalc@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	sshegde@linux.ibm.com, srikar@linux.ibm.com, vineethr@linux.ibm.com, 
-	zhangqiao22@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF4UW2cC/23NwQqDMAyA4VcZPa+jiVXrTnuPsUPXRi0Mde0oD
+ vHdV4WBY97yB/JlYoG8o8DOh4l5ii64vkshjwdmWt01xJ1NzVCgBCFKPgIpkSb+NAMPtjUcclN
+ CYbWtZMHS3eCpduNqXm+pWxdevX+vLyIs26+mdrQIXHBbUy1NhZoyuDxcp31/6n3DFi7ihgC5R
+ 2AiVKGoFFphTuKPyDYE4h6RJUIWRgqgDM29/iHmef4ADdtXqTkBAAA=
+X-Change-ID: 20241007-x1e80100-qcp-sdhc-15c716dad946
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-mmc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1577; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=BBhhYc6WiR9lrxb02YxPKhDO0cLFxCtxBdQvIJoPBZM=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnWxRiNIn+O0vKaFBYIqig8fVqQg6iFcWFAi7Qb
+ MsKtTzGbraJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZ1sUYgAKCRAbX0TJAJUV
+ VrA4D/9FjCuVtCYWL1NzbPmJ4SG5pwpxiXXPAYzUkBijxiM4nzDEN19c0Gz75XJkIaZnGbv5ezF
+ b7bKJRjOU3PxvvE4eMJVLmDq8LYjxaQF6Z16+V6qlb1EHSl9wnD3xie0w303b2ZvAN1FkROdjMw
+ UFaj4KRw28IFfh2P+US6So9kLg7S2rlbu19JOaOlKtg/d4Dq6fQ1gfdcFCSyGY0kX9TXxyoYmbn
+ ma8RAVr9CWOMoYCsOgoYMPEG97V2Su8XIe9QWnMB6gKNFFkJB4zQclSgjWH4Y5QtN+/vgS4ysaN
+ N6Ac2GDcpOZwydpC7xOjzEvkecSN3TjWtTG1+r738XmfTwyGOpC4slYzRlwA4zepOOz6feyd7BH
+ JpFZB6rgDWGViAHn1I5gwFvzlXh50vKUYJfx4RWExebvjulYZau7IHrYMnCCkniw786X2QZWIEz
+ IuZr+vHU1Ar1o6HOp961K2memMkuQ8yE4vj9Yj5xmNm9ygMW5dAJj+3lEorat+tbxTjV83vbRpb
+ yJ85AfCzYd4ysX/Z7PLq/c/pjB3muI2L0KWPwUl6+v517JXvBtiAB88awxOVv83TN614M6RCO7+
+ qUzhU6AiIafM0DYUEsRA7V2OT+mc479u638ZIiEnMGIWr3gdZnrAHyZBYShsqtNAB1vnfALWYBh
+ GTAlHF/eJOvCQ3w==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On Thu, 12 Dec 2024 at 05:32, Vishal Chourasia <vishalc@linux.ibm.com> wrote:
->
-> CPU controller limits are not properly enforced during CPU hotplug
-> operations, particularly during CPU offline. When a CPU goes offline,
-> throttled processes are unintentionally being unthrottled across all CPUs
-> in the system, allowing them to exceed their assigned quota limits.
->
-> Consider below for an example,
->
-> Assigning 6.25% bandwidth limit to a cgroup
-> in a 8 CPU system, where, workload is running 8 threads for 20 seconds at
-> 100% CPU utilization, expected (user+sys) time = 10 seconds.
->
-> $ cat /sys/fs/cgroup/test/cpu.max
-> 50000 100000
->
-> $ ./ebizzy -t 8 -S 20        // non-hotplug case
-> real 20.00 s
-> user 10.81 s                 // intended behaviour
-> sys   0.00 s
->
-> $ ./ebizzy -t 8 -S 20        // hotplug case
-> real 20.00 s
-> user 14.43 s                 // Workload is able to run for 14 secs
-> sys   0.00 s                 // when it should have only run for 10 secs
->
-> During CPU hotplug, scheduler domains are rebuilt and cpu_attach_domain
-> is called for every active CPU to update the root domain. That ends up
-> calling rq_offline_fair which un-throttles any throttled hierarchies.
->
-> Unthrottling should only occur for the CPU being hotplugged to allow its
-> throttled processes to become runnable and get migrated to other CPUs.
->
-> With current patch applied,
-> $ ./ebizzy -t 8 -S 20        // hotplug case
-> real 21.00 s
-> user 10.16 s                 // intended behaviour
-> sys   0.00 s
->
-> This also has another symptom, when a CPU goes offline, and if the cfs_rq
-> is not in throttled state and the runtime_remaining still had plenty
-> remaining, it gets reset to 1 here, causing the runtime_remaining of
-> cfs_rq to be quickly depleted.
->
-> Note: hotplug operation (online, offline) was performed in while(1) loop
->
-> Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
-> Suggested-by: Zhang Qiao <zhangqiao22@huawei.com>
-> Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+The X1E80100 has two SDHC controllers (called SDC2 and SDC4).
+Describe both of them and enable the SDC2 on QCP. This brings
+SD card support for the microSD port on QCP.
 
-With fixing the typo below
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+The SDC4 is described but there is no device outthere yet that makes
+use of it, AFAIK.
 
->
-> v3: https://lore.kernel.org/all/20241210102346.228663-2-vishalc@linux.ibm.com
-> v2: https://lore.kernel.org/all/20241207052730.1746380-2-vishalc@linux.ibm.com
-> v1: https://lore.kernel.org/all/20241126064812.809903-2-vishalc@linux.ibm.com
->
-> ---
->  kernel/sched/fair.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index aa0238ee4857..72746e75700c 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6679,6 +6679,10 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
->
->         lockdep_assert_rq_held(rq);
->
-> +       // Do not unthrottle for an active CPU
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Changes in v4:
+- Squashed the pinconf for SDC2 into the patch that describes the
+  controllers.
+- Reworded the commit messages a bit.
+- Link to v3: https://lore.kernel.org/r/20241022-x1e80100-qcp-sdhc-v3-0-46c401e32cbf@linaro.org
 
-typo: please use /* my comment */
+Changes in v3:
+- Reordered the default and sleep pinconfs. Also the bias and
+  drive-strength properties. As per Konrad's suggestion.
+- Link to v2: https://lore.kernel.org/r/20241014-x1e80100-qcp-sdhc-v2-0-868e70a825e0@linaro.org
 
-> +       if (cpumask_test_cpu(cpu_of(rq), cpu_active_mask))
-> +               return;
-> +
->         /*
->          * The rq clock has already been updated in the
->          * set_rq_offline(), so we should skip updating
-> @@ -6693,19 +6697,21 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
->                 if (!cfs_rq->runtime_enabled)
->                         continue;
->
-> -               /*
-> -                * clock_task is not advancing so we just need to make sure
-> -                * there's some valid quota amount
-> -                */
-> -               cfs_rq->runtime_remaining = 1;
->                 /*
->                  * Offline rq is schedulable till CPU is completely disabled
->                  * in take_cpu_down(), so we prevent new cfs throttling here.
->                  */
->                 cfs_rq->runtime_enabled = 0;
->
-> -               if (cfs_rq_throttled(cfs_rq))
-> -                       unthrottle_cfs_rq(cfs_rq);
-> +               if (!cfs_rq_throttled(cfs_rq))
-> +                       continue;
-> +
-> +               /*
-> +                * clock_task is not advancing so we just need to make sure
-> +                * there's some valid quota amount
-> +                */
-> +               cfs_rq->runtime_remaining = 1;
-> +               unthrottle_cfs_rq(cfs_rq);
->         }
->         rcu_read_unlock();
->
->
-> base-commit: 231825b2e1ff6ba799c5eaf396d3ab2354e37c6b
-> --
-> 2.47.0
->
+Changes in v2:
+- rebased on next-20241011
+- dropped the bindings schema update patch
+- dropped the sdhci-caps-mask properties from both
+  controllers as SDR104/SDR50 are actually supported
+- Link to v1: https://lore.kernel.org/r/20241008-x1e80100-qcp-sdhc-v1-0-dfef4c92ae31@linaro.org
+
+---
+Abel Vesa (2):
+      arm64: dts: qcom: x1e80100: Describe the SDHC controllers
+      arm64: dts: qcom: x1e80100-qcp: Enable SD card support
+
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts |  20 +++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi    | 142 ++++++++++++++++++++++++++++++
+ 2 files changed, 162 insertions(+)
+---
+base-commit: 91e71d606356e50f238d7a87aacdee4abc427f07
+change-id: 20241007-x1e80100-qcp-sdhc-15c716dad946
+
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
+
 
