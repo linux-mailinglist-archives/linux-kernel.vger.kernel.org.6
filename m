@@ -1,180 +1,170 @@
-Return-Path: <linux-kernel+bounces-444003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164B69EFF31
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:20:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595E29EFF32
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:21:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01974165AE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09244283CC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA631DE3DF;
-	Thu, 12 Dec 2024 22:20:29 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B0B1DDC23;
+	Thu, 12 Dec 2024 22:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ZwuLRPK"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A98F199FD3
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 22:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA781DC19A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 22:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734042029; cv=none; b=RWcb5nsOVmJJ25tNyxQIIItpb+Ygzg5Qyeq22Z4+4vIjYhwwF8LlVF7TytD80R0NGI3J9XHonH7mdFM+q+HcPn26xwxDcgd2wva7srvI2pBl6GqZc9busnLYOe0x7JuEzDRLAHofuU2uSGY+qPidL5qRsqMN+SiKsOLpDMrIC8k=
+	t=1734042045; cv=none; b=R0GBqIpP21rlmnHqUGDg+EppJLHw1ib02xENXBrm/KG7IKk9f3uHMtN8xBLp6MnRi+71/q0TWSnKOk9i9C3/O8elZgY/qan0lQyc+ywgwf3GAUKHOSyzerzN66p2Y4IEDNPOiBU2kyttoQCvEw9POO49lbEfvdZGlFZ3VvqWevw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734042029; c=relaxed/simple;
-	bh=lfUzYuEvRyQfqlRRIjEGqBRMKyxrhcD3WK1nSCc9brU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jZoLojKlyDUaXx536hq2L/orJcGHOtOQrLQ+x3yoXneUszI2xHY1rC/GRJUUTRPIszGBYB5dvJlrqYoCediWDVmHlVs8+TwPp5FnbQcxks5ttbApP3Pam4TsfUbAgvABtvtMhXJAtaEB67iYWCNhnj/epDTUyEcek2OHrGRH1AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a817e4aa67so10243705ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:20:27 -0800 (PST)
+	s=arc-20240116; t=1734042045; c=relaxed/simple;
+	bh=u1tWBAA4sulsIS2xftYo9r3ka5pE3Xc2cJTyRjh02LQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pZ+S4R2AyKebstNq870rbxYsDRDVYLJj5gBML880jIG50Ek/8J5ZJlV763xPoiD8wTiQU5w9bE9RjnPU0fE4b9HL2fPgF/IAbl2nc4xy0kUEJEOkU667mNtqLg8FphaT4dFpgJ1yaLrHHp/4HO+ukcrZeX6O+DFnnRJ0XwqdyUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ZwuLRPK; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a814c54742so18515ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:20:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734042043; x=1734646843; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ElZuDMxXTYOA5Hu16Xt2PEgtD4uBy7jHyc/pzjZ/7Yw=;
+        b=1ZwuLRPKdc1lUs5LQdMHfHAsfaQwBSUzD5HSRtNNTfeF3Mixb0DEdoZ57+TtB2hbQP
+         9Jht+czzteh2OcHlHkHNwWTIgOO4aamP+qG9YGNvFKyQZeo7QhO9mwvC10+OYQZQ7Qyj
+         TzNYBUVb1qROgB+LCKECGo03boUeRrfwAjzTYQnoPik9dhQy0+dEOi5DHixf4f/rAd4U
+         7UNfd9hA5EUvknUoANIpjG/2UbDhfkhkJopwJVVvYt3E+iah43qe5mgNIuOXJZe9ihy/
+         txHdS5ngdRKDoFloz3vNGKWaYYa4TW4TAVRqw8DEG+Jv3QJE2hTu+7pQvZlJTErZltQU
+         J1gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734042026; x=1734646826;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JiJBO4YkDGjPUE2+2UYWhhTh96UUa4D1CK2SB4rQoOo=;
-        b=EiLlYUkfTp6fQ2sTF9tb3BlSnUlPAUA7onbfGLHPoGjsMYBVie7LuN1VTrS8V5XUXI
-         MlwuXunNwzLGkWWZ6Ww7rKeitr+YnGG+eFzHa5m40TqkSyPzdxMPrqlIQqpOm9IyHEqp
-         jJjoTQQ0+akm3mid3IGMSNcBgJlSslWk8b2FANSewvXKd6aozxng+4HRCJmwvEkp13b1
-         BgRvSoDA65Inj2bZqHUTupsuqklGsUjSXLNMBS57Y/PjKuGiBJqNifNC7ndhB5hhCB47
-         ZhzrEZ229bwHTQyQ0BWDlhDsfWNCo8B6YOKzJhbkpUXDxx8uYCr57t2Tk+Gut3qSfqgb
-         jLog==
-X-Forwarded-Encrypted: i=1; AJvYcCVAMrVotVp4ooBJGIWYsDkvKUOKD9WKvN8xNJcoMQmMT6l2/dgmKTFidsfA+QzZyOff6vlLxUR2DWV5F6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9x9SrD9RsrRQQSqMOepo+xZhG+yXLR4dcIBUKIohyvqLeAD5V
-	FMTCSAWR8im9iqAYAzaX7qd9YFs5WlM9ZSW/qV0qRQdZpw8WdCteSGYqqWMHJePhzHs9WdjTjSk
-	D3zk9wR4aU+4gUnI4KKZUxyIkfW3Ns6TRDqN82/VQ7AcxrzNtYx1tJUA=
-X-Google-Smtp-Source: AGHT+IFSqmfgaPcHWmpvTo/ao95n0hiJiZnAyatoM1E9PBANifFfvSujaEvVpNT3kyW8BlvCMuoBQYbvdFJX04kONrc828Ja8Yah
+        d=1e100.net; s=20230601; t=1734042043; x=1734646843;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ElZuDMxXTYOA5Hu16Xt2PEgtD4uBy7jHyc/pzjZ/7Yw=;
+        b=FTlndCSXA+z74zY+yCR0J0SqJNP5w4/LeCOZ69wruPOO5rb766OKI5LwxK5V1nsMU2
+         9dqtDEPoPUNZt+tvsse+26e7ZMqy0YXRQB4PUac8bMrPtDLidFTd0JHZwPyYpMstfdy9
+         2U/K7fFh+eUMEQY8/oTnH2D3OnW/2+zVS1RQD1UbE28rxBrPoKTltVk0VTjYihHhIR/a
+         /SV09eK1ZOZR30OWt738mqpzBNLrtLej9Z77xYOLo4BSR51NXCwdNA9fvuts68TxvFnn
+         RZjKdmZj+mvEz4ZEF/NgD7ipdWi8XMldndzoy1PqnDpemXbiyvhGOI7T/M9xJmJNbulH
+         3bjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUK7fjiieQ4z3K0TDXvvgrbP2KbvQJpmHpYomBYbDVBR+PQvcRHoQQ7kE0Mtie2oni1rOf8tCDBtIHjfWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR/Quibn/vcf1yNBEQ8ydvgDYHrExYuh7b8flWbcD9kWt4uUtu
+	mZZui2k9qxvjKyyfCKJ5jKUODB7uc8XGDzyDfzGCdpTXOEsqoaxsc3GmpqvZFH9ffw5ZHp7yrUl
+	eFGZQchSa/JFZidEkzTSgDYVJUwfQN7tdLpmU
+X-Gm-Gg: ASbGncspSpl1h+WjzUMnvvYFFLvXCTjI4CupblsvtXLev3Djb2j6Lkt78RIphmEOI4E
+	nrxHsNE/CzFOoyahXMH+xV71Uk7cw6ZfLYneHQQw=
+X-Google-Smtp-Source: AGHT+IFgK8t076g3O1emjXp9rpsaxku8xjTGZi9+od1dZ4IXBGfeYBSzX4yh04z93ZbpCcNYwL8cIYlHr7gje7A1LrM=
+X-Received: by 2002:a05:6e02:1a0a:b0:3a7:a468:69e0 with SMTP id
+ e9e14a558f8ab-3b0267481e3mr241805ab.1.1734042042577; Thu, 12 Dec 2024
+ 14:20:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdaa:0:b0:3a7:8720:9e9e with SMTP id
- e9e14a558f8ab-3aff6213742mr4733235ab.2.1734042026777; Thu, 12 Dec 2024
- 14:20:26 -0800 (PST)
-Date: Thu, 12 Dec 2024 14:20:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675b61aa.050a0220.599f4.00bb.GAE@google.com>
-Subject: [syzbot] [tipc?] kernel BUG in __pskb_pull_tail
-From: syzbot <syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jmaloy@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tipc-discussion@lists.sourceforge.net, ying.xue@windriver.com
+References: <20241127212655.922196-1-namhyung@kernel.org> <CAP-5=fXtL-MFW5YW=5WsYNftCAj7MaXVwN8R3veuiODiC85bdg@mail.gmail.com>
+ <Z1suPi7XLncFKtG4@x1> <Z1tPCfRTkC5BjZq0@google.com>
+In-Reply-To: <Z1tPCfRTkC5BjZq0@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 12 Dec 2024 14:20:31 -0800
+Message-ID: <CAP-5=fWBX=H=JfL5R61UyBiB77mnCQ_tAQ-SO0T+jAr4x8gFdA@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: Avoid unaligned pointer operations
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Dec 12, 2024 at 1:01=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Thu, Dec 12, 2024 at 03:41:02PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Nov 27, 2024 at 04:51:15PM -0800, Ian Rogers wrote:
+> > > On Wed, Nov 27, 2024 at 1:26=E2=80=AFPM Namhyung Kim <namhyung@kernel=
+.org> wrote:
+> > > > The sample data is 64-bit aligned basically but raw data starts wit=
+h
+> > > > 32-bit length field and data follows.  In perf_event__synthesize_sa=
+mple
+> > > > it treats the sample data as a 64-bit array.  And it needs some tri=
+ck
+> > > > to update the raw data properly.
+> >
+> > > > But it seems some compilers are not happy with this and the program=
+ dies
+> > > > siliently.  I found the sample parsing test failed without any mess=
+ages
+> > > > on affected systems.
+> >
+> > > > Let's update the code to use a 32-bit pointer directly and make sur=
+e the
+> > > > result is 64-bit aligned again.  No functional changes intended.
+> >
+> > > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> >
+> > > Reviewed-by: Ian Rogers <irogers@google.com>
+> >
+> > Looks good, applied to perf-tools-next since this is something that is
+> > not new nor looks urgent.
+> >
+> > I think that since we have multiple maintainers, one for not urgent
+> > stuff/development and the other for the current window/urgent stuff,
+> > that we should express the expectation about where a patch should be
+> > processed, by having on the subject the tree the submitter thinks shoul=
+d
+> > take the patch, i.e. for this one:
+> >
+> > [PATCH next] perf tools: Avoid unaligned pointer operations
+> >
+> > While for urgent stuff we could do:
+> >
+> > [PATCH urgent] perf tools: Avoid unaligned pointer operations
+> >
+> > wdyt?
+>
+> Looks good.  It'd be really great if contributors can do this.
+>
+> But I also think 'next' should be the default so only 'urgent' would be
+> specified if needed.
 
-syzbot found the following issue on:
+Fwiw, I needed this fix, forgot about this change, and wrote my own by
+just sinking the unaligned array computation (that causes undefined
+behavior) into where it was used:
+```
+--- a/tools/perf/util/synthetic-events.c
++++ b/tools/perf/util/synthetic-events.c
+@@ -1690,10 +1690,9 @@ int perf_event__synthesize_sample(union
+perf_event *event, u64 type, u64 read_fo
+        if (type & PERF_SAMPLE_RAW) {
+                u.val32[0] =3D sample->raw_size;
+                *array =3D u.val64;
+-               array =3D (void *)array + sizeof(u32);
 
-HEAD commit:    96b6fcc0ee41 Merge branch 'net-dsa-cleanup-eee-part-1'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a74d44580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-dashboard link: https://syzkaller.appspot.com/bug?extid=4f66250f6663c0c1d67e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15eb0730580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117844f8580000
+-               memcpy(array, sample->raw_data, sample->raw_size);
+-               array =3D (void *)array + sample->raw_size;
++               memcpy((void *)array + sizeof(u32), sample->raw_data,
+sample->raw_size);
++               array =3D (void *)array + sizeof(u32) + sample->raw_size;
+        }
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c62feec036f0/disk-96b6fcc0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0dd481b2d92e/vmlinux-96b6fcc0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7f647dfdfac4/bzImage-96b6fcc0.xz
+        if (type & PERF_SAMPLE_BRANCH_STACK) {
+````
+Namhyung's change is better because of the BUG_ON. Perhaps that BUG_ON
+should appear after all the void* math that can create unaligned u64
+pointers in this function.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at net/core/skbuff.c:2849!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 6230 Comm: syz-executor132 Not tainted 6.13.0-rc1-syzkaller-00407-g96b6fcc0ee41 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
-RIP: 0010:__pskb_pull_tail+0x1568/0x1570 net/core/skbuff.c:2848
-Code: 38 c1 0f 8c 32 f1 ff ff 4c 89 f7 e8 92 96 74 f8 e9 25 f1 ff ff e8 e8 ae 09 f8 48 8b 5c 24 08 e9 eb fb ff ff e8 d9 ae 09 f8 90 <0f> 0b 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90004cbef30 EFLAGS: 00010293
-RAX: ffffffff8995c347 RBX: 00000000fffffff2 RCX: ffff88802cf45a00
-RDX: 0000000000000000 RSI: 00000000fffffff2 RDI: 0000000000000000
-RBP: ffff88807df0c06a R08: ffffffff8995b084 R09: 1ffff1100fbe185c
-R10: dffffc0000000000 R11: ffffed100fbe185d R12: ffff888076e85d50
-R13: ffff888076e85c80 R14: ffff888076e85cf4 R15: ffff888076e85c80
-FS:  00007f0dca6ea6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0dca6ead58 CR3: 00000000119da000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- skb_cow_data+0x2da/0xcb0 net/core/skbuff.c:5284
- tipc_aead_decrypt net/tipc/crypto.c:894 [inline]
- tipc_crypto_rcv+0x402/0x24e0 net/tipc/crypto.c:1844
- tipc_rcv+0x57e/0x12a0 net/tipc/node.c:2109
- tipc_l2_rcv_msg+0x2bd/0x450 net/tipc/bearer.c:668
- __netif_receive_skb_list_ptype net/core/dev.c:5720 [inline]
- __netif_receive_skb_list_core+0x8b7/0x980 net/core/dev.c:5762
- __netif_receive_skb_list net/core/dev.c:5814 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5905
- gro_normal_list include/net/gro.h:515 [inline]
- napi_complete_done+0x2b5/0x870 net/core/dev.c:6256
- napi_complete include/linux/netdevice.h:567 [inline]
- tun_get_user+0x2ea0/0x4890 drivers/net/tun.c:1982
- tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2057
- do_iter_readv_writev+0x600/0x880
- vfs_writev+0x376/0xba0 fs/read_write.c:1050
- do_writev+0x1b6/0x360 fs/read_write.c:1096
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0dca751f69
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0dca6ea218 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00007f0dca7dc438 RCX: 00007f0dca751f69
-RDX: 0000000000000002 RSI: 00000000200001c0 RDI: 0000000000000004
-RBP: 00007f0dca7dc430 R08: 00007ffdc30a1047 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f0dca7a92a4
-R13: 006e75742f74656e R14: 74656e2f7665642f R15: 796c27468c04729a
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__pskb_pull_tail+0x1568/0x1570 net/core/skbuff.c:2848
-Code: 38 c1 0f 8c 32 f1 ff ff 4c 89 f7 e8 92 96 74 f8 e9 25 f1 ff ff e8 e8 ae 09 f8 48 8b 5c 24 08 e9 eb fb ff ff e8 d9 ae 09 f8 90 <0f> 0b 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90004cbef30 EFLAGS: 00010293
-RAX: ffffffff8995c347 RBX: 00000000fffffff2 RCX: ffff88802cf45a00
-RDX: 0000000000000000 RSI: 00000000fffffff2 RDI: 0000000000000000
-RBP: ffff88807df0c06a R08: ffffffff8995b084 R09: 1ffff1100fbe185c
-R10: dffffc0000000000 R11: ffffed100fbe185d R12: ffff888076e85d50
-R13: ffff888076e85c80 R14: ffff888076e85cf4 R15: ffff888076e85c80
-FS:  00007f0dca6ea6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0dca6ead58 CR3: 00000000119da000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Ian
 
