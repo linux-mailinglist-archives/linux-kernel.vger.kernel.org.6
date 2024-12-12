@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-442747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A01929EE11C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:20:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA319EE11E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:20:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0EB016680C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:19:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B24E16512F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2433E20CCD5;
-	Thu, 12 Dec 2024 08:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD0E20E6F5;
+	Thu, 12 Dec 2024 08:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cHD60eAR"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZD4C5fYk"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C434620E03B
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF45B20E32A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991548; cv=none; b=anw/9+zw3oHIbcYeJ88UkmvpBwacaUwV4dnqnkP+F0pfHqqH+X4exIRSNN30B/L0vRgwLcyyW4Lv+bDgw9my8bmq4e8R533OTR9YBElJJzB0wDeDFaEoJc7WJ7FZO11VsQcpwB0d/9OHxgPeadlbaRUlEozBXq/Kb/XAOqX1VYw=
+	t=1733991550; cv=none; b=VXBKfszoCsRsRJoWlazgtJnWSOnsECR8KzAHE77Wf1/uLuMZorZwiagmRxm6pigmbI3jmyk6fjmSJGzEbZwtrZMYo5Z8l0T30qKV+I4NfGlqR9uJUyN6KVfF7pO2G+9PSOVixFmBdPbtUU+/PxeQYaBjwHACjIWCf0fyU6iM9V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991548; c=relaxed/simple;
-	bh=BSTbUB5aX34dwDYPRsloc7L4ndSO8jVihR1HUgb7228=;
+	s=arc-20240116; t=1733991550; c=relaxed/simple;
+	bh=rJox4UKc5PUt22rL72LAJ3+UpcvjdFOHhc+p89nZv98=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WCzZqAPaeFSCeXERF8NtMzDt8pp7zRD8CwKh8Me+t1DZjX9n+vYc0tErK0uhh3V1YKZ6CE/0PdbJqzFqKCLczrwTZVAfceGyM1nMvnSVPlklOml0Amv32lWs5Ye8iOu/FRq6+8C1XvskW6MolLoKQJd+Z29nH6c20aUmu/sg2J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cHD60eAR; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=DQ+KkvDHUD69zi2x6KJ50IS0jAJ2k3gIqMvt6SG3I5zTdCsw4+jSpbXTuS5P+yK9whMEBwQLn586DTff7zQRSGr3L/X0Nrd6eMPJAbkn4S4wdKsiYtGD4vSS/ei/G/GDLVlBuLnEziJAS/b60Ho/dR0B2l1io8N5Z8yp5WDEH6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZD4C5fYk; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-436248d1240so1967695e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:19:06 -0800 (PST)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-434f387f346so1883185e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:19:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733991545; x=1734596345; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733991547; x=1734596347; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6isFNd8zHOf41Of/wjxlI+b9qTAIYvxlEpDr2EkvB3U=;
-        b=cHD60eAREOV+wjzTAbZaxvLZ4WQhXHhg1AocX2wpDCFAaxRAp+GceT2L5Amzj8N7uH
-         YN6eD4Pl8AnWiZn7ZN6KbWtWPN4F3aQguNZAHzHAnPTqia5X3pd2IXrl0LUo4VblmGZ8
-         mkL2RRbdrPrCQCZc8yesVn2emTFnUmUURYRRnrvm8kFOSg92X7rMnV9xHOKluwanilBo
-         YI8uq4FCqs6DjOeG+vdWTVBpDflbf3rGPa3svgivSST+Is7QUyJSDcXQ3N0p6IES+3kw
-         UhNbYAzcTxgD/fXA1nOgk7oPfTcv8m09ZTfRJmZs+muZpYv0tZsL7K8XXv2+kVgDmMob
-         4Scg==
+        bh=HdgtdUqEBd5LKxpewIKQlxiAPN7TmKSwfgktC1/nR3M=;
+        b=ZD4C5fYkV5GqqnDYxS7JF4pyssXPAv0KQoP7PtZXaE+3RSxmz4ZRy4CZadOblTDyte
+         Eqy9+kUcNZ4WJ69m48vOksbHk/HeifA6pT3fS+oWWvPAlD2szwXBY8vYqrkqGKWxNdY0
+         MIkmI8dbSNdLHrNXkE3+AgUEIROX73bHF/kDth+JGkc1XokkRfjAqAz2uynbJLZfJ8sq
+         Qo8msUwwvElGFPIQn3n0rtKJ2xSplwOEJkP+4OEECj2Eo1o7EEPbT3nED1i1G9SQF7TU
+         Ts3hfA0KrpS/cHk5vIP1/exlG12li9xtuL58HmEvNtXC+bQGIqd/vfSkiL7FfCBPmoet
+         7ARg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733991545; x=1734596345;
+        d=1e100.net; s=20230601; t=1733991547; x=1734596347;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6isFNd8zHOf41Of/wjxlI+b9qTAIYvxlEpDr2EkvB3U=;
-        b=KPD7GD+SRoGyZ0/eStY680T8x4VRmrTK39OupWQ3mUDsdX7J4vMHrAiHiJJnWQfPPz
-         IRZpH4EPdrjcsP5j65zOZGxZt890kHoRZs2fh1bfe/0VwbNOvzO14IuUnNQgt5rJ7IQl
-         86L3nE45/6uAo5+SMcdS0OkehwA8eGt8S9+xS2klE5duotqJidtg30l/QBrcoMoQmO+8
-         dmiXUxyI/5s/DQLqnlefPuqztvn2jEfUeYbBGb4zbzD9GnJRDH+3DzekZH+ao91pmje4
-         pulNVtl/XI5tubvq8p6dakJuC1BhSGxRtfgOzddxyWbm/pD0gzEqeBmZks4DAGi5Ihq4
-         OH5Q==
-X-Gm-Message-State: AOJu0YyvX3VGQz6cJM3dPzqGU0h5Y3+qh6wyiFtobXv5DhuMBkXY8xzA
-	3dzEUHNQZW8gLE7PT/t0Jxqap7od0xAG2u/pr8nU8OXx/N3qY6eTYT/GSJdIG7jId8c1vw==
-X-Google-Smtp-Source: AGHT+IGiNwt46ersFJk8J3W4FvXc0YIFm/aDF3p261C7M4Bc1ps+NMc5UV9QpUddAEBdOk7TXMj8hL3G
-X-Received: from wmfv7.prod.google.com ([2002:a05:600c:15c7:b0:431:1903:8a3e])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:468a:b0:434:f0df:a14
- with SMTP id 5b1f17b1804b1-4361c34623dmr48042095e9.2.1733991545427; Thu, 12
- Dec 2024 00:19:05 -0800 (PST)
-Date: Thu, 12 Dec 2024 09:18:46 +0100
+        bh=HdgtdUqEBd5LKxpewIKQlxiAPN7TmKSwfgktC1/nR3M=;
+        b=m1rbV7z7do4etIm2lPHaeFGlOdpB/c98M1a3e4vpP+00msVRyuckK4agURRF1MNKpp
+         tULuQt39hIrVeIS8lHZ8uegkWhC9UxBBFyAkm7SG/BP1JGUFNiGAdmN1g4F/YwxyRkjs
+         JF/Yiwku3I6Rx0moKuz2decMUjq/utlxV+Tn30Ty5hCH1+RWX6+TMejOdaNJLo48ypng
+         w1kvAsRKLMSyEbThJa8l64elpQ6SN7Ev21rxtp/qBCfPATDwMdtNMx7WY2NPeUu95u3R
+         Orhmznj8jjjXnzVTcBgLc5OfwYBvZtvuWofC1S+38KHjgW8zju4r1/NhZO0no7Z6eJEZ
+         6Wow==
+X-Gm-Message-State: AOJu0YyJmQDvhU1ZaLoCMijzeyKxCaSWfSrbZtdDcVJbhBt8hLdcogEH
+	SfFoUtdScBZA1HOOF4CRDZHIEGtWjhew4NqwD1dNMsAOYE71dSCBDfCCYAIjJ8ZilRm7XQ==
+X-Google-Smtp-Source: AGHT+IGWPJvO6+9CCQmmFw3OSCuh5I3iyCbxp28yrcBF8dbr114C30A5zZAFQgAChqfAkJPHTDhYBmac
+X-Received: from wmqy11.prod.google.com ([2002:a05:600c:364b:b0:434:fc6f:e8c3])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:ac7:b0:436:aaf:7eb9
+ with SMTP id 5b1f17b1804b1-4362285f79fmr17388455e9.20.1733991547419; Thu, 12
+ Dec 2024 00:19:07 -0800 (PST)
+Date: Thu, 12 Dec 2024 09:18:47 +0100
 In-Reply-To: <20241212081841.2168124-8-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,15 +71,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241212081841.2168124-8-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4036; i=ardb@kernel.org;
- h=from:subject; bh=wxQBa7Qia0zG9OkBtRYf+Ymgq0cT+W+pOrTZLi6s8yQ=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIT1qTnpY6bHtf7P6ePhaAiaXMSobvfSe5hBzWDJBMM308
- rUKv7COUhYGMQ4GWTFFFoHZf9/tPD1RqtZ5lizMHFYmkCEMXJwCMBHLpQz/lAy4y1iv/gk7c5Pf
- 43HPlMeTvzDt/SSVFRO2fd8xC+01JQz/6w49Ovvy3pzpBR22RWy3irYtb9G3Wc7Xs3NS0IHlk67 eYgQA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2690; i=ardb@kernel.org;
+ h=from:subject; bh=vw43pFoSabaJKFXhQUhpwCIEl+ZhAtorVG0O+2+nOWw=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIT1qTub9hSnTjk48PK1RpV2XYXXNlqrNtyyiLh7s1n/+4
+ PPZT7ZRHaUsDGIcDLJiiiwCs/++23l6olSt8yxZmDmsTCBDGLg4BWAiFxUZGQ6vfyod9Ht3of+P
+ SYo920KmBTy4duOD/dJ7dlxsCjaKSv8Y/im7pDU+c+SIbvS/7bu477PN5Snpd9uubteI6Nf3Tlj byQIA
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212081841.2168124-12-ardb+git@google.com>
-Subject: [PATCH v3 4/6] arm64/kvm: Avoid invalid physical addresses to signal
- owner updates
+Message-ID: <20241212081841.2168124-13-ardb+git@google.com>
+Subject: [PATCH v3 5/6] arm64: Kconfig: force ARM64_PAN=y when enabling TTBR0
+ sw PAN
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
@@ -91,117 +91,72 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-The pKVM stage2 mapping code relies on an invalid physical address to
-signal to the internal API that only the annotations of descriptors
-should be updated, and these are stored in the high bits of invalid
-descriptors covering memory that has been donated to protected guests,
-and is therefore unmapped from the host stage-2 page tables.
+There are a couple of instances of Kconfig constraints where PAN must be
+enabled too if TTBR0 sw PAN is enabled, primarily to avoid dealing with
+the modified TTBR0_EL1 sysreg format that is used when 52-bit physical
+addressing and/or CnP are enabled (support for either implies support
+for hardware PAN as well, which will supersede PAN emulation if both are
+available)
 
-Given that these invalid PAs are never stored into the descriptors, it
-is better to rely on an explicit flag, to clarify the API and to avoid
-confusion regarding whether or not the output address of a descriptor
-can ever be invalid to begin with (which is not the case with LPA2).
+Let's simplify this, and always enable ARM64_PAN when enabling TTBR0 sw
+PAN. This decouples the PAN configuration from the VA size selection,
+permitting us to simplify the latter in subsequent patches. (Note that
+PAN and TTBR0 sw PAN can still be disabled after this patch, but not
+independently)
 
-That removes a dependency on the logic that reasons about the maximum PA
-range, which differs on LPA2 capable CPUs based on whether LPA2 is
-enabled or not, and will be further clarified in subsequent patches.
+To avoid a convoluted circular Kconfig dependency involving KCSAN, make
+ARM64_MTE select ARM64_PAN too, instead of depending on it.
 
-Cc: Quentin Perret <qperret@google.com>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/arm64/kvm/hyp/pgtable.c | 33 ++++++--------------
- 1 file changed, 10 insertions(+), 23 deletions(-)
+ arch/arm64/Kconfig | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-index 40bd55966540..ed600126161a 100644
---- a/arch/arm64/kvm/hyp/pgtable.c
-+++ b/arch/arm64/kvm/hyp/pgtable.c
-@@ -35,14 +35,6 @@ static bool kvm_pgtable_walk_skip_cmo(const struct kvm_pgtable_visit_ctx *ctx)
- 	return unlikely(ctx->flags & KVM_PGTABLE_WALK_SKIP_CMO);
- }
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 100570a048c5..c1ca21adddc1 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1379,7 +1379,6 @@ config ARM64_VA_BITS_48
  
--static bool kvm_phys_is_valid(u64 phys)
--{
--	u64 parange_max = kvm_get_parange_max();
--	u8 shift = id_aa64mmfr0_parange_to_phys_shift(parange_max);
--
--	return phys < BIT(shift);
--}
--
- static bool kvm_block_mapping_supported(const struct kvm_pgtable_visit_ctx *ctx, u64 phys)
- {
- 	u64 granule = kvm_granule_size(ctx->level);
-@@ -53,7 +45,7 @@ static bool kvm_block_mapping_supported(const struct kvm_pgtable_visit_ctx *ctx,
- 	if (granule > (ctx->end - ctx->addr))
- 		return false;
- 
--	if (kvm_phys_is_valid(phys) && !IS_ALIGNED(phys, granule))
-+	if (!IS_ALIGNED(phys, granule))
- 		return false;
- 
- 	return IS_ALIGNED(ctx->addr, granule);
-@@ -587,6 +579,9 @@ struct stage2_map_data {
- 
- 	/* Force mappings to page granularity */
- 	bool				force_pte;
-+
-+	/* Walk should update owner_id only */
-+	bool				annotation;
- };
- 
- u64 kvm_get_vtcr(u64 mmfr0, u64 mmfr1, u32 phys_shift)
-@@ -885,18 +880,7 @@ static u64 stage2_map_walker_phys_addr(const struct kvm_pgtable_visit_ctx *ctx,
- {
- 	u64 phys = data->phys;
- 
--	/*
--	 * Stage-2 walks to update ownership data are communicated to the map
--	 * walker using an invalid PA. Avoid offsetting an already invalid PA,
--	 * which could overflow and make the address valid again.
--	 */
--	if (!kvm_phys_is_valid(phys))
--		return phys;
--
--	/*
--	 * Otherwise, work out the correct PA based on how far the walk has
--	 * gotten.
--	 */
-+	/* Work out the correct PA based on how far the walk has gotten */
- 	return phys + (ctx->addr - ctx->start);
- }
- 
-@@ -908,6 +892,9 @@ static bool stage2_leaf_mapping_allowed(const struct kvm_pgtable_visit_ctx *ctx,
- 	if (data->force_pte && ctx->level < KVM_PGTABLE_LAST_LEVEL)
- 		return false;
- 
-+	if (data->annotation && ctx->level == KVM_PGTABLE_LAST_LEVEL)
-+		return true;
-+
- 	return kvm_block_mapping_supported(ctx, phys);
- }
- 
-@@ -923,7 +910,7 @@ static int stage2_map_walker_try_leaf(const struct kvm_pgtable_visit_ctx *ctx,
- 	if (!stage2_leaf_mapping_allowed(ctx, data))
- 		return -E2BIG;
- 
--	if (kvm_phys_is_valid(phys))
-+	if (!data->annotation)
- 		new = kvm_init_valid_leaf_pte(phys, data->attr, ctx->level);
- 	else
- 		new = kvm_init_invalid_leaf_owner(data->owner_id);
-@@ -1085,11 +1072,11 @@ int kvm_pgtable_stage2_set_owner(struct kvm_pgtable *pgt, u64 addr, u64 size,
- {
- 	int ret;
- 	struct stage2_map_data map_data = {
--		.phys		= KVM_PHYS_INVALID,
- 		.mmu		= pgt->mmu,
- 		.memcache	= mc,
- 		.owner_id	= owner_id,
- 		.force_pte	= true,
-+		.annotation	= true,
- 	};
- 	struct kvm_pgtable_walker walker = {
- 		.cb		= stage2_map_walker,
+ config ARM64_VA_BITS_52
+ 	bool "52-bit"
+-	depends on ARM64_PAN || !ARM64_SW_TTBR0_PAN
+ 	help
+ 	  Enable 52-bit virtual addressing for userspace when explicitly
+ 	  requested via a hint to mmap(). The kernel will also use 52-bit
+@@ -1431,7 +1430,6 @@ config ARM64_PA_BITS_48
+ config ARM64_PA_BITS_52
+ 	bool "52-bit"
+ 	depends on ARM64_64K_PAGES || ARM64_VA_BITS_52
+-	depends on ARM64_PAN || !ARM64_SW_TTBR0_PAN
+ 	help
+ 	  Enable support for a 52-bit physical address space, introduced as
+ 	  part of the ARMv8.2-LPA extension.
+@@ -1681,6 +1679,7 @@ config RODATA_FULL_DEFAULT_ENABLED
+ config ARM64_SW_TTBR0_PAN
+ 	bool "Emulate Privileged Access Never using TTBR0_EL1 switching"
+ 	depends on !KCSAN
++	select ARM64_PAN
+ 	help
+ 	  Enabling this option prevents the kernel from accessing
+ 	  user-space memory directly by pointing TTBR0_EL1 to a reserved
+@@ -1937,7 +1936,6 @@ config ARM64_RAS_EXTN
+ config ARM64_CNP
+ 	bool "Enable support for Common Not Private (CNP) translations"
+ 	default y
+-	depends on ARM64_PAN || !ARM64_SW_TTBR0_PAN
+ 	help
+ 	  Common Not Private (CNP) allows translation table entries to
+ 	  be shared between different PEs in the same inner shareable
+@@ -2132,7 +2130,7 @@ config ARM64_MTE
+ 	depends on AS_HAS_ARMV8_5
+ 	depends on AS_HAS_LSE_ATOMICS
+ 	# Required for tag checking in the uaccess routines
+-	depends on ARM64_PAN
++	select ARM64_PAN
+ 	select ARCH_HAS_SUBPAGE_FAULTS
+ 	select ARCH_USES_HIGH_VMA_FLAGS
+ 	select ARCH_USES_PG_ARCH_2
 -- 
 2.47.1.613.gc27f4b7a9f-goog
 
