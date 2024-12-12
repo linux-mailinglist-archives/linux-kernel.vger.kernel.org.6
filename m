@@ -1,329 +1,304 @@
-Return-Path: <linux-kernel+bounces-442989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B49DC9EE515
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:32:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBBB9EE518
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F5A166BF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:32:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88BA2188718A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B291F37CB;
-	Thu, 12 Dec 2024 11:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UFP3FOca";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ABDDnmqm"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4360E211A29;
+	Thu, 12 Dec 2024 11:32:31 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D6B290F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734003143; cv=fail; b=LH9Wfae2Bt/DCGApsUBSuqbVSsUi69LFTYrDT4szGW/Mmk6kXKECnJ9fUzaEg4EB6tdkI7eM39qHwGpDJMxwwGaDvep9KeYCbncaaoh774pMyKzAeZgUbf2s0ery5hljE8XZbR4rLv16HC4GSmAyKufjrQBATsDTKbCccOIPDSU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734003143; c=relaxed/simple;
-	bh=iTKZZMhA8oqFncnGd3N2lOymmMjhSK64A5rFdwl1xT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DiZIFmjIFZ7PgGpTOUNl6UsWbn+E7RPUqI5Ud2nhMrvQC48EN9FGaHZoHMplxRLti0ubhww0+eRcxmjkgE72XACanbzXK7TOEFigPS8UDh2IHyuTrFDkVv7z1D1qbCh1+8i8WatYaVDE5sCttgkEk3NEnQkrCjQSQSYuXOk6UGE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UFP3FOca; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ABDDnmqm; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC1u0qR013283;
-	Thu, 12 Dec 2024 11:32:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=B6oe+Pq6rU9NwlYR
-	MwQMj6eFcGdpaIE2gIl+GxD8STo=; b=UFP3FOcaEhHVbEnYoQeOsRjFV4WjXtOv
-	qA734pFX9douXGZdF9zygWB/VWwDA1OPoj9kOeVcMR2Qx3d7ZzKMLe0GJPKXnfzZ
-	eAophfjUzevEGF70xrN7af7y8E5ywa3135W/4RsKhz+aVLDLG0GgFWklsMqJid/f
-	VF6tPlTB0BGOpngcCx1H6KTz+tdCRK11igL3MVGEiIIZLqGEWWxut08YTEWUtxfY
-	rzK62QUpIA70+UsCcTlK/YpnXqMt1wPpyflMgNpV2HcE6W9+JMYMPPwwMjre1/Pu
-	XYynNRY293pPUiEI2hnvBETa07XXp4VlhMiDZ/F7Nycu26BQm6HgtQ==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43cd9atxcu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Dec 2024 11:32:05 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCAlWjw038005;
-	Thu, 12 Dec 2024 11:32:04 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2173.outbound.protection.outlook.com [104.47.58.173])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43ccthkrg3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Dec 2024 11:32:04 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hzaLQ5c2VQ7FGVObHHX0PPmNiY4NbfakXwLhmjK3/0sQx8HNFbV7+JqvgrfDoD+ajS1GgWbbImdBb3BNFY5zIpwxTxQGxpSwK/ltW/QBAJYZa6sAmA094CiXIz3zTMFqDZZvz0eIEUtIT5py9iQfZ0GEjxCuIAOvis0koS/yoljgB1zJxRaC8aflsLq0i/r/hV5pcmqni0Tt5zHtoXxLkbAUNrEAwZdCTBv4Eqsv0j59xENV1RY8K8rq0t3RIFdMA9r6548bsC/h+bVBwUDRx9IPN0YJZi/ia3RRpRziEzjLEIW5ll6RbrfoHEbg49PvrLRkCmS9/ckldbmYJPWBNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B6oe+Pq6rU9NwlYRMwQMj6eFcGdpaIE2gIl+GxD8STo=;
- b=RyXHPT5XDeemPLivn8PtZCM8aQa/WaL4N49K9Yf84N+1VDMa9TvDkqCPBz4iAbG/YwzZMOBVZF6iG1516/i7JCLEUPmeVBSbDMgyniuPeMXsCxr/uyO+9OM507OhV+s6LvyNBlq72a9Cv1dsLOue5ibiOf5dneoHRQVspD7NeY32+9GeSidD4+3dc27fsHf9qH4ixwE4O3PMSrN2cnl8TWUCtLK/pMs4G8f7n5MxmkAVrRZTkAtjvNVrXRC5+ob3Fg5z8maDI74yTt97sg1I74j3A9NyHr4nUrh0aiB189HVEs0qmrFpwl0B8CYFBxVwQHGdgJaCCZUksEJiEdYt3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B6oe+Pq6rU9NwlYRMwQMj6eFcGdpaIE2gIl+GxD8STo=;
- b=ABDDnmqm13G3kZ/bQv5LizOKRx5pPitMMJCzgolJOnblV3s3QIFrP07Fyy1uG5GXu9W1jewxMtKu1l9ljjip+owGYtqokfloES68NVvyuTO34QZDUJWkQz9EaUZ14mUKt4UfynleTwmvOU60g3/DYJGsW4N/jcTkkbVr+Ksu7LU=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by MN0PR10MB5909.namprd10.prod.outlook.com (2603:10b6:208:3cf::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Thu, 12 Dec
- 2024 11:32:02 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8251.008; Thu, 12 Dec 2024
- 11:32:01 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: add comments to do_mmap(), mmap_region() and vm_mmap()
-Date: Thu, 12 Dec 2024 11:31:52 +0000
-Message-ID: <20241212113152.28849-1-lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.47.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0320.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a4::20) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCAB211A1D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734003150; cv=none; b=hSL8t+uIefRaHMXziFPSypZ2LEytX0jq7/FD31CRw3Tkf6E8LKKlASekTGIBCn+vS1yKKYcRrl2y0rhTakz6KuWNZYo9oapIA3IrmQAVQtJ1ndO9yRucd1wDvf+0zgsgL8aybrVGOaZaPYBP812sgyHR6SwF5E/gso8jCNaW3r0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734003150; c=relaxed/simple;
+	bh=ZVAihSvgfQuty8ITI57swW//l7DPkKP5Slf6S0lJ0pA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1i4mdiBxRMKKGTAEF7m/Z/CwNE2JUCXBRG2wA7PPV2MhDHxtnyIs46SVWFFSuXfuRzPkvkT8JpiCfTvJkiYyXYh3czO7a4RQOnu6or8snen/lIV361sa2LifTRTmjxSPym7nc/J3w4NJbiPEK177ZsrIUGFhL9cUtXxMPsstNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tLhQC-0005QD-1I; Thu, 12 Dec 2024 12:31:56 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tLhQA-0031XP-1e;
+	Thu, 12 Dec 2024 12:31:55 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tLhQB-00COyC-0X;
+	Thu, 12 Dec 2024 12:31:55 +0100
+Date: Thu, 12 Dec 2024 12:31:55 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Frank Li <Frank.li@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengfei Li <pengfei.li_1@nxp.com>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 2/2] thermal: imx91: Add support for i.MX91 thermal
+ monitoring unit
+Message-ID: <20241212113155.wfbbmxcrtcefzuha@pengutronix.de>
+References: <20241210-imx91tmu-v2-0-5032aad4d88e@nxp.com>
+ <20241210-imx91tmu-v2-2-5032aad4d88e@nxp.com>
+ <20241211154622.f2jwwrqansk6il3o@pengutronix.de>
+ <Z1m+O1UV4HD+7Rr2@lizhi-Precision-Tower-5810>
+ <20241211185705.7b5uw26loobibzln@pengutronix.de>
+ <Z1n4h/AxzthB0V9l@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|MN0PR10MB5909:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1e149c1-f086-4fdb-52a1-08dd1aa098b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ib7vUANmZnvwfCk4lc+qUz2GOeTwFIW8s+/saZ9lBHzcLxxXFzc7SvD1RLwa?=
- =?us-ascii?Q?X0ZK7BJNTB/nMSn1Np3i03nLxGffNDsA0ITYnu1011oCjfblmbY75F03boEX?=
- =?us-ascii?Q?8ul05FIxx2tUEaJdqz7GbDh7Do1Cm7Chl8hUtidbqG4a+mTTITSXOkwJr95+?=
- =?us-ascii?Q?VHE96C8YXTnUEk09CD3DIQbFxKWFx/ksV51hWUk3agPD+3ZgOKqa9ICJMvP+?=
- =?us-ascii?Q?PAbAIQOKGJnBmAF0wC0cIuqVSKWsHI1R2MpsNmpDwR6SPT0jnQK4hzVVUOWY?=
- =?us-ascii?Q?vPR8lSgN+2s9ArosSWcX1V8mneDciRwMtRcRfkeoudqlq2Ns9lBVo2kLkXpD?=
- =?us-ascii?Q?5cDkkZFEJC/1CX9tpIPmqsCNPsiym6xRYuY/ByGoer2sMLkou2AI/bO8USKJ?=
- =?us-ascii?Q?fpedOD0xb2Vnqi57AEbqk49YkPMgBcx65bHWpqc1LP7vDmNf01MdXTvh9AX4?=
- =?us-ascii?Q?F8xJmyK9qwq7c9xglvIJvGww4/YKruznySfgaEnTxkR7SNxYLRRXXenTf0ax?=
- =?us-ascii?Q?UeQZ6gCANJGPc9eKpi9s2IjJXK+X70BDzGbWQfFimTXndWkLKtSKoVjoGb4I?=
- =?us-ascii?Q?MPXjeKHhs/uZ3wjncNN/iBEYMg0sLd0GErX/ewf2q1K2R8il/i/XN4lBuSBK?=
- =?us-ascii?Q?lWwi/DwTS4fDTHBLcJiy5ii+L4i+yRUI6vWxPIRHzkAlGM6BgDSiax644k+7?=
- =?us-ascii?Q?XojzzSzmcgTLG3ZjbsEmFuFjY/Fw2+WrWJy4KAsPrWrBY6zHLYsBuGvkDXCc?=
- =?us-ascii?Q?tL2ggH2Dufa325nmlwxisq7176vd5cjd0c7DKcSknIqJkvRoXB3HtEotcILh?=
- =?us-ascii?Q?RF7E2n5w0X9q7yuFDPxd2uT+t6Az8li8KYgG6E7vKlGYl6eSAqgTG5hcy91M?=
- =?us-ascii?Q?Ycng6e6WKDRv6XpW3/LnwKozQvG1LXOPnWVbul2KhbKjeHy0vVBDlDu8UJml?=
- =?us-ascii?Q?2729hHi7SOUSdpnnT/82VxgXPgXdnGLZEM9eXGAarv8otAFGxVCM+l2St2cl?=
- =?us-ascii?Q?KmptGCr49cXSgPhR9g9bd+1mtxesF4iDZ+V+YVp8/nzxhQmLO1vJt7rsELUv?=
- =?us-ascii?Q?leczDAWt2uOmWRCWjAUAtNecyF+RU+8r/d6S784iWCZ7tuo4NRJKZV7APQW2?=
- =?us-ascii?Q?DfWIp0t1ebeMYXCm7oO0K+0fKVJMtmzAk13xtFipNixDgrQHRDhjFYtDFRtE?=
- =?us-ascii?Q?aMKTdzDYnmMSYRw3jDsYdxZZVmwP04jRTvCF5P/R0HMi+TcVNLdTf46VxLbw?=
- =?us-ascii?Q?d8xbaykjXXWM9ZCzMV/4hjk5nJFkCLjxCOqY9FdaIYDoH9WpSS0h/i/H+1k5?=
- =?us-ascii?Q?NBnLkg4DBDS+ytajh/IDjZJR9hpKAwaphywjpb2wUjclvg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DpLw/JAnPy6ZkqQlTsL91jG3kqt2oxfHHEe2O6Onkx9Kz/ObnH69qqqwbDhK?=
- =?us-ascii?Q?SGRYJAhbXJ3yyeQS0QoMI31NcSNqcfk/F2qoAeMOWdZsUT5Iaux81la5fShy?=
- =?us-ascii?Q?lTgKzzGFMkqOjBrYLeUabwjSBw0DjXuLBzkfd609s1VfRx86+TlrTAV4838p?=
- =?us-ascii?Q?LS/sUraBfK+7+NaFMWT6Dju6K4S9jbZ4kB3TLUzsvnJ4SO+fJJeNcHR9qMNI?=
- =?us-ascii?Q?/XgUp5p0Bgmp9GkLP6PEbtWvmNdg1KCoHFojaUel29MFCayJStFGkwipV0+G?=
- =?us-ascii?Q?ZzchqCbNFuxRbbgmeQw0gYR3//NWdoUOb1G059nCOQnI8afH+L6Y+eMBeeRS?=
- =?us-ascii?Q?X6xR9MyMoK+hMN5JO6CX7j6Ds6qfDJZautV1z03D91108zfhdILCaHs+ovTN?=
- =?us-ascii?Q?TQAqw0SnVa7MBKYR5FM5jUnRvibZAFDO9k1ISv8GhXClUSBuTzdNeBnvCXCN?=
- =?us-ascii?Q?2WJ1pA9antXzANbMQC/Wq66g6Q2DgqF5GFlB7XBUMXrosTehSRe7Mvu8H4SE?=
- =?us-ascii?Q?qZk9ps2/wtRyYjaLXzNg5g1mLckULi8BesQrgWPmwXzsN4d0mTA1nekR4g2+?=
- =?us-ascii?Q?BL7qpFRx5nlC2cW4TZhvJ6H5IqqXCnB07ni2r+z9ibDAzGkL2t0ZLqvG5CIV?=
- =?us-ascii?Q?t6AtaPgpPCYMdtNdrUR/tNOjKxV3LxAaP2wK4LSd/fyPNjp8MS3XNgRBzdpU?=
- =?us-ascii?Q?dt8zSDrlEWjMES/lgk9Ght5EC09RFTDG0BcReYe+7CDxaTAePlRaiyTbwIGx?=
- =?us-ascii?Q?m4I6G47qLZQAOX/Cwq2oGHplYCvpkfAlpbEgUOKdRjdZTiu2sRW9fQpXiMiQ?=
- =?us-ascii?Q?tOLb2KSRonYqKV32GZfHzYvGkMTF28UsFjmWHJiO7dCOSzpYEHHYbwK12U8u?=
- =?us-ascii?Q?4CIfVLoaCt28i9N36bWqHbTvnQsHLwnFrzcO3WuBZz7S1Mq346olfi+c78vX?=
- =?us-ascii?Q?hwL7b7RylK+Hg2ibARm+cAKp+AADcu4eO/UlqSX7tli8MhcmzDneLKIXMxfi?=
- =?us-ascii?Q?Ybd4L/RS/ufPgurmrtfEfObaysYB992nphPoCfK6hVTPqU1+SeDCDQfz0RVJ?=
- =?us-ascii?Q?PyiRX6cXZs+b7XO1O7a5/YmStTklDnXbt7BAsk+w6GYF+A+ndLKmqyJ/EfEB?=
- =?us-ascii?Q?Rt4EIljH93QlP1Np2Rgg6KZ/Psgqc+kW9hPyGqCiFR5CzoLBpDIO0Jy0rXr5?=
- =?us-ascii?Q?rWkrmz3LkU9TjshcOb9owvCnB3ENbsfuFn9riYaYd9+crr0wjeQfaOseZ3cG?=
- =?us-ascii?Q?5o5bSFR6Y0bA2yGzU8W1UOtfplzFI5acjZFZnGUbwjHYVdmTLF5bYur/r3Hu?=
- =?us-ascii?Q?JRbIiO2hMq7iCTv9bb18zhq+HVAeZqabBOc10bjK/b6YhDCH9eyX3lglsnbb?=
- =?us-ascii?Q?Y2S2lIM+B6A+KG7Xb7rSloFcufGVS7La/bDAMRJSCt3EwKUd1YFwDbkHufFH?=
- =?us-ascii?Q?tknNEY+CNDqUVuS1sCplJesluZc6w/OMgWtor1qM0UAUCDw3GuzJ3TEiE1Eg?=
- =?us-ascii?Q?X8rllJ7xyTLfZUG7I/cR63/29BnjFe4VnzPJSS8jQHw/GJTPTuRw+g+z89xq?=
- =?us-ascii?Q?ayyYgEZGzIUsYq2uflDnzaVvJ6w+H78BjgW0pFYb4c8wqJj3gpnEpPG22dDh?=
- =?us-ascii?Q?Mw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	S2R/v8vN75fH3eBqV/bPwaGfjZs1v0BF89s02SMYSyk+6npQDH5YRgY50534MBxNitDOQTEaXM3VkPU/JTLMErjrBOl3CMDQLZEZrJAuUpu5c3E91cv4fCuFSCyVixvw8r1WBebqRlYvlHkNfnxsmaPbTPyOU8j0IhVCU76OPwjZ2LUeEpKKsxJX7Spr+HQqSO5jZnniDOabHl6xilsRJiwTdWgWnDPwmXjcGMr7KKRM0a+Dawjo46JoHwqYWL4oJiZKmIBxgL9HtF6OoeHhSKAGBH34kX0DMwQ7MH90rZrDMCDq9F3dcQBizdLNbFlNqVbQ5/2tfii1VFwOEFbIwWdrwRJurWOn8gWz2qT6tssw86OhD3LGgzO2UPRql8KtByhAYobwqlqr1qQinEM9AoJjsKfWaKBv1TWF2321LO3BHDTGvzFOXSXkYG2+7RLfq1Ef5LCTRsztF3daOR9K6/wHCHy3VKB0arK+HpZbUW+shJ0yEZU51leFTfp0Fs9YsxYerIwDiCcuVrt0CBuMqaMH0GyK6fjPibZWgNqjLxBQxHGl6icYQQAdAPRaNpJ4T2jwe2PXHuY9XtMtbHLhKnyGNWQ1ibafnMvMFGfiezk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1e149c1-f086-4fdb-52a1-08dd1aa098b8
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 11:32:01.8989
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gv6G25/sU97baRygxS6wqDHvVLrUMhknxpseERYzpOYdn49sZGClzgSLIY+wQhBrrNgZgeklonb323R/AmU8/PuaTYw35anCKvMfIfsyy3k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR10MB5909
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-12_06,2024-12-12_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 adultscore=0
- phishscore=0 bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412120082
-X-Proofpoint-GUID: cR3yOJjufo1Kcba5LerEgkELVTcwYhtV
-X-Proofpoint-ORIG-GUID: cR3yOJjufo1Kcba5LerEgkELVTcwYhtV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1n4h/AxzthB0V9l@lizhi-Precision-Tower-5810>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-It isn't always entirely clear to users the difference between do_mmap(),
-mmap_region() and vm_mmap(), so add comments to clarify what's going on in
-each.
+On 24-12-11, Frank Li wrote:
+> On Wed, Dec 11, 2024 at 07:57:05PM +0100, Marco Felsch wrote:
+> > On 24-12-11, Frank Li wrote:
+> > > On Wed, Dec 11, 2024 at 04:46:22PM +0100, Marco Felsch wrote:
+> > > > On 24-12-10, Frank Li wrote:
+> > > > > From: Pengfei Li <pengfei.li_1@nxp.com>
+> > > > >
+> > > > > Introduce support for the i.MX91 thermal monitoring unit, which features a
+> > > > > single sensor for the CPU. The register layout differs from other chips,
+> > > > > necessitating the creation of a dedicated file for this.
+> > > > >
+> > > > > Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > > ---
+> > > > > change from v1 to v2
+> > > > > - use low case for hexvalue
+> > > > > - combine struct imx91_tmu and tmu_sensor
+> > > > > - simplify imx91_tmu_start() and imx91_tmu_enable()
+> > > > > - use s16 for imx91_tmu_get_temp(), which may negative value
+> > > > > - use reverse christmas tree style
+> > > > > - use run time pm
+> > > > > - use oneshot to sample temp
+> > > > > - register thermal zone after hardware init
+> > > > > ---
+> > > > >  drivers/thermal/Kconfig         |  10 ++
+> > > > >  drivers/thermal/Makefile        |   1 +
+> > > > >  drivers/thermal/imx91_thermal.c | 265 ++++++++++++++++++++++++++++++++++++++++
+> > > > >  3 files changed, 276 insertions(+)
+> > > > >
+> 
+> [...]
+> 
+> > > > > +	platform_set_drvdata(pdev, tmu);
+> > > > > +
+> > > > > +	/* disable the monitor during initialization */
+> > > > > +	imx91_tmu_enable(tmu, false);
+> > > > > +	imx91_tmu_start(tmu, false);
+> > > >
+> > > > No need to disable it here since both bits (ENABLE and START) are 0
+> > > > after a reset.
+> > >
+> > > Maybe uboot enable it. We can't depend on reset value without really set
+> > > hardware reset bit.
+> >
+> > So the module can't be rested e.g. by disabling module power? Having a
+> > dedicated reset mechanism would be much simpler instead of writing each
+> > reg-field to the default value.
+> 
+> Not all module can be power off individual. Normally, it should have sw
+> reset bit in controller. but I have not find it in this module.
+> 
+> >
+> > > > > +	ret = imx91_init_from_nvmem_cells(tmu);
+> > > > > +	if (ret) {
+> > > > > +		writel_relaxed(DEFAULT_TRIM1_CONFIG, tmu->base + TRIM1);
+> > > > > +		writel_relaxed(DEFAULT_TRIM2_CONFIG, tmu->base + TRIM2);
+> > > > 			^
+> > > > Can you please anwer if _relaxed API is sufficient? I don't know why you
+> > > > making use of the _relaxed API here anyway. We have only a few MMIO
+> > > > accesses here, so why can't we use the writel() instead? This applies to
+> > > > the whole driver.
+> > >
+> > > There are not big difference writel_relaxed() or writel() for this driver.
+> > > Just original owner pick one.
+> >
+> > NACK, the difference is that _relaxed() APIs don't guarantee the order
+> > the register access is done.
+> 
+> It is totally wrong. *_relexed() API can guarantee the register access
+> order. Only can't guarantee order with other memory. such as
+> 
+> 1 writel_related(A, 0)
+> 2. x = 3
+> 3 writel_related(B, 1)
+> 
+> Hardware/memory model, require B=1 must be after A=0, but not necessary
+> after x=3, that's means (2) x=3 may happen after 3.
+> 
+> if use writel(), guarantee 1, 2, 3 as order.  Here have not DMA involved.
+> So not any impact if (2) after (3).
+> 
+> Typically, only below case have to use writel().
+> 2 (update DMA descritpor), 3 start DMA,
+> 
+> Additional, writel() also can't guarantee register access is done!!!!
+> 
+> writel() just means you send a write command to bus. Not guarantee to reach
+> target module. typical case is
+> 
+> writel(A, 0);
+> udelay(1);
+> writel(A, 1);
+> 
+> The interval between A=1 and A=0 may less than 1us if timer have not use
+> MMIO register. (arm system counter).
+> 
+> In this driver, the only valuable benefit by using writel() instead of
+> writel_relexed() is "short function name".
 
-This is compounded by the fact that we actually allow callers external to
-mm to invoke both do_mmap() and mmap_region() (!), the latter of which is
-really strictly speaking an internal memory mapping implementation detail.
+You're right, I had to check the documentation once again. The _relaxed
+API is fine by me, thank you also for the clarification.
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- mm/mmap.c | 79 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- mm/util.c | 17 ++++++++++++
- 2 files changed, 95 insertions(+), 1 deletion(-)
+> > > > > +	}
+> > > > > +
+> > > > > +	/* The typical conv clk is 4MHz, the output freq is 'rate / (div + 1)' */
+> > > > > +	rate = clk_get_rate(tmu->clk);
+> > > > > +	div = (rate / 4000000) - 1;
+> > > > > +	if (div > FIELD_GET(DIV_MASK, DIV_MASK))
+> > > > 			^
+> > > > This misuse the FIELD_GET() API. Instead please add a define e.g. DIV_MAX.
+> > >
+> > > I don't think so, It avoid define another macro DIV_MAX, which may miss
+> > > defined, the related marco should come from one source.
+> > >
+> > > For example:
+> > >
+> > > DIV_MASK is GENMASK(23, 16),  DIV_MAX is 256. But if hardware upgrade,
+> > > DIV_MASK to GENMASK(24, 16), DIV_MAX is quite easy to forget update it and
+> > > hard to find such mis-match when div value < 256.
+> >
+> > We not talking about "possible" other HW. For now it's just this one and
+> > using FIELD_GET() this way is seems odd, at least to me.
+> 
+> If you look implement of FIELD_GET()
+> (typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));, it will be
+> reasonable.
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index df9154b15ef9..61260369f034 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -277,8 +277,62 @@ static inline bool file_mmap_ok(struct file *file, struct inode *inode,
- 	return true;
- }
- 
--/*
-+/**
-+ * do_mmap() - Perform a userland memory mapping into the current process
-+ * address space of length @len with protection bits @prot, mmap flags @flags
-+ * (from which VMA flags will be inferred), and any additional VMA flags to
-+ * apply @vm_flags. If this is a file-backed mapping then the file is specified
-+ * in @file and page offset into the file via @pgoff.
-+ *
-+ * This function does not perform security checks on the file and assumes, if
-+ * @uf is non-NULL, the caller has provided a list head to track unmap events
-+ * for userfaultfd @uf.
-+ *
-+ * It also simply indicates whether memory population is required by setting
-+ * @populate, which must be non-NULL, expecting the caller to actually perform
-+ * this task itself if appropriate.
-+ *
-+ * This function will invoke architecture-specific (and if provided and
-+ * relevant, file system-specific) logic to determine the most appropriate
-+ * unmapped area in which to place the mapping if not MAP_FIXED.
-+ *
-+ * Callers which require userland mmap() behaviour should invoke vm_mmap(),
-+ * which is also exported for module use.
-+ *
-+ * Those which require this behaviour less security checks, userfaultfd and
-+ * populate behaviour, and who handle the mmap write lock themselves, should
-+ * call this function.
-+ *
-+ * Note that the returned address may reside within a merged VMA if an
-+ * appropriate merge were to take place, so it doesn't necessarily specify the
-+ * start of a VMA, rather only the start of a valid mapped range of length
-+ * @len bytes, rounded down to the nearest page size.
-+ *
-  * The caller must write-lock current->mm->mmap_lock.
-+ *
-+ * @file: An optional struct file pointer describing the file which is to be
-+ * mapped, if a file-backed mapping.
-+ * @addr: If non-zero, hints at (or if @flags has MAP_FIXED set, specifies) the
-+ * address at which to perform this mapping. See mmap (2) for details. Must be
-+ * page-aligned.
-+ * @len: The length of the mapping. Will be page-aligned and must be at least 1
-+ * page in size.
-+ * @prot: Protection bits describing access required to the mapping. See mmap
-+ * (2) for details.
-+ * @flags: Flags specifying how the mapping should be performed, see mmap (2)
-+ * for details.
-+ * @vm_flags: VMA flags which should be set by default, or 0 otherwise.
-+ * @pgoff: Page offset into the @file if file-backed, should be 0 otherwise.
-+ * @populate: A pointer to a value which will be set to 0 if no population of
-+ * the range is required, or the number of bytes to populate if it is. Must be
-+ * non-NULL. See mmap (2) for details as to under what circumstances population
-+ * of the range occurs.
-+ * @uf: An optional pointer to a list head to track userfaultfd unmap events
-+ * should unmapping events arise. If provided, it is up to the caller to manage
-+ * this.
-+ *
-+ * Returns: Either an error, or the address at which the requested mapping has
-+ * been performed.
-  */
- unsigned long do_mmap(struct file *file, unsigned long addr,
- 			unsigned long len, unsigned long prot,
-@@ -1016,6 +1070,29 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
- 	return do_vmi_munmap(&vmi, mm, start, len, uf, false);
- }
- 
-+/**
-+ * mmap_region() - Actually perform the userland mapping of a VMA into
-+ * current->mm with known, aligned and overflow-checked @addr and @len, and
-+ * correctly determined VMA flags @vm_flags and page offset @pgoff.
-+ *
-+ * This is an internal memory management function, and should not be used
-+ * directly.
-+ *
-+ * The caller must write-lock current->mm->mmap_lock.
-+ *
-+ * @file: If a file-backed mapping, a pointer to the struct file describing the
-+ * file to be mapped, otherwise NULL.
-+ * @addr: The page-aligned address at which to perform the mapping.
-+ * @len: The page-aligned, non-zero, length of the mapping.
-+ * @vm_flags: The VMA flags which should be applied to the mapping.
-+ * @pgoff: If @file is specified, the page offset into the file, if not then
-+ * the virtual page offset in memory of the anonymous mapping.
-+ * @uf: Optionally, a pointer to a list head used for tracking userfaultfd unmap
-+ * events.
-+ *
-+ * Returns: Either an error, or the address at which the requested mapping has
-+ * been performed.
-+ */
- unsigned long mmap_region(struct file *file, unsigned long addr,
- 			  unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
- 			  struct list_head *uf)
-diff --git a/mm/util.c b/mm/util.c
-index c1c3b06ab4f9..b7dc6fabaae5 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -587,6 +587,23 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
- 	return ret;
- }
- 
-+/*
-+ * Perform a userland memory mapping into the current process address space. See
-+ * the comment for do_mmap() for more details on this operation in general.
-+ *
-+ * This differs from do_mmap() in that:
-+ *
-+ * a. An offset parameter is provided rather than pgoff, which is both checked
-+ *    for overflow and page alignment.
-+ * b. mmap locking is performed on the caller's behalf.
-+ * c. Userfaultfd unmap events and memory population are handled.
-+ *
-+ * This means that this function performs essentially the same work as if
-+ * userland were invoking mmap (2).
-+ *
-+ * Returns either an error, or the address at which the requested mapping has
-+ * been performed.
-+ */
- unsigned long vm_mmap(struct file *file, unsigned long addr,
- 	unsigned long len, unsigned long prot,
- 	unsigned long flag, unsigned long offset)
--- 
-2.47.1
+I know the implementation and still IMHO it's not the correct usage at
+least to me. What's wrong is that a mask doesn't define the possible
+values for a reg-field, e.g. GENMASK(1, 0) could allow all values from 0
+to 3 but the HW may allow only 0 and 1.
 
+> Hardware IP may update in future, bitwidth of field may expand.
+
+Please see above.
+
+> > > > > +		return -EINVAL;
+> > > > 			^
+> > > > 		dev_err_probe()
+> > > > > +
+> > > > > +	/* Set divider value and enable divider */
+> > > > > +	writel_relaxed(DIV_EN | FIELD_PREP(DIV_MASK, div), tmu->base + REF_DIV);
+> > > > > +
+> > > > > +	/* Set max power up delay: 'Tpud(ms) = 0xFF * 1000 / 4000000' */
+> > > > > +	writel_relaxed(FIELD_PREP(PUDL_MASK, 100U), tmu->base + PUD_ST_CTRL);
+> > > > 		^
+> > > > You dont need to repeat the default value, so this line can be dropped.
+> > > >
+> > > > > +
+> > > > > +	/*
+> > > > > +	 * Set resolution mode
+> > > > > +	 * 00b - Conversion time = 0.59325 ms
+> > > > > +	 * 01b - Conversion time = 1.10525 ms
+> > > > > +	 * 10b - Conversion time = 2.12925 ms
+> > > > > +	 * 11b - Conversion time = 4.17725 ms
+> > > > > +	 */
+> > > > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x3), tmu->base + CTRL1_CLR);
+> > > > > +	writel_relaxed(FIELD_PREP(CTRL1_RES_MASK, 0x1), tmu->base + CTRL1_SET);
+> > > >
+> > > > Same here, you repeat the module default after reset, so please drop it.
+> > > >
+> > > > > +	writel_relaxed(CTRL1_MEAS_MODE_MASK, tmu->base + CTRL1_CLR);
+> > > > > +	writel_relaxed(FIELD_PREP(CTRL1_MEAS_MODE_MASK, CTRL1_MEAS_MODE_SINGLE),
+> > > > > +		       tmu->base + CTRL1_SET);
+> > > > > +
+> > > > > +	clk_disable_unprepare(tmu->clk);
+> > > >
+> > > > Drop this, and
+> > > >
+> > > > > +	pm_runtime_set_suspended(dev);
+> > > >
+> > > > replace this with: pm_runtime_set_active();
+> > >
+> > > No big difference, if set_active, we need add Enable TMU here. I can
+> > > change to set_active.
+> >
+> > You don't need to manually disable the clock, it would be done by the
+> > runtime-pm.
+> 
+> Yes, runtime-pm can disable clock, but it need align harware and run time
+> state before enable runtime pm.
+> 
+> There are two options
+> 1 disable all hardware resources and pm_runtime_set_suspended()
+> 2. enable all hardware resources and set_active()
+
+I know.
+
+> After algned, use runtime pm API to controller it.
+> 
+> I choose option1, you prefer option 2.
+
+I know this too and I'm fine with it albeit I would like option 2 more
+because:
+ - based on pm-runtime API only
+ - easier to enable autosuspend feature
+
+Regards,
+  Marco
+
+> Frank
+> >
+> > Regards,
+> >   Marco
+> >
+> >
+> [...]
+> > > > > +
+> > > > > +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
+> > > > > +MODULE_DESCRIPTION("i.MX91 Thermal Monitor Unit driver");
+> > > > > +MODULE_LICENSE("GPL");
+> > > > >
+> > > > > --
+> > > > > 2.34.1
+> > > > >
+> > > > >
+> > >
+> 
 
