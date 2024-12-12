@@ -1,324 +1,217 @@
-Return-Path: <linux-kernel+bounces-442910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9143C9EE3D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:12:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A10C9EE3D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:13:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1072167B9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F57218894F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98B12101AF;
-	Thu, 12 Dec 2024 10:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28232101AF;
+	Thu, 12 Dec 2024 10:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hkNhPD/c"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fCR2SNSe"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7831F949
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D11C1F949
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733998366; cv=none; b=ZwEpH4RddoKG5LXQs0UPlMdIUQbhtwT2/pZotwQ25of8ARWsEiBFSwflAW1KyrvbBvK5KipjWZl3nbSUIc/GIktqf9EphnADS8StocJAXHNFwVJH1XHWVh7rhA+O0xJkco6iMv/ZCJY+N1+u60IG1sY2gMbiPCdavyIHhZQf9Rc=
+	t=1733998415; cv=none; b=nwonaQ+Mg6o+o0ipQsxXpQPIWAWYuZWqp1rg2ywTAi2pbddIZ62YBgpf4/bNDCGav+InqG7d7hdioxHuuaM2WEjCV1pcyjwOwRW1q0uiaSXkPaUYidItex580rtzOvevFAFxWEbsxF6Sw4f7+QlfQ/6z9aZ43LDBfZRw8BSQkwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733998366; c=relaxed/simple;
-	bh=6FMKZSv0DdjoMHaLeHBYlpCT1/M4a/wNX0bG0ju8St4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fEk+JbtyfU5k29KOu0Re1w9HDU+LMJ/dQWCnpvRt9V+naG+WZT6ykn1OU7ilrE5YRBIJPmuzKAC7OKO/LHsWWVFZm0bQF4+rR2zemTWl5Woy9j/aihqSAS90nj4S9lShIgDo/EQ+GdUP++IVm3wWtEYtfDJDkr348ZdkmTxfXZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=hkNhPD/c; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43618283dedso3769805e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:12:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1733998362; x=1734603162; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/6L/m3gKnrPsaMxDrU89bXCWhOH8qgzGCoqHbE1Yj18=;
-        b=hkNhPD/cLT0vyTAbLHekCdBkv3wQrDpKlLBO+FGm4vaW0gzyAJVo8u/sRvK6f/8gvb
-         DZX2pnz0gUiiamTbhRWa6S0jQS7Uy/UI0vVbL0+mBxWEmnyFB6pbOtGWgXl8mqSn2LQE
-         7q+r8J5Ld4URV7NPV9FZNnLRE3MvbSDZRvnYc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733998362; x=1734603162;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/6L/m3gKnrPsaMxDrU89bXCWhOH8qgzGCoqHbE1Yj18=;
-        b=ay49YEGbRxUiqKnVr+HnRrTBnJ2ZT7DAVTnyw8V8zvr73FOAbFMOcZIQQHDNqQOmV4
-         40fwZY3Ke8ZJ04yYPEcfklvGd2Gh/D27jgZxk5PIMgcPkSuuOToWNAn9N/UIdI1jN8Od
-         wj5aMMLt6ZHPhB9s9vaMaFXDQoP0wuDgN7+sXndQhIw+FK/FJs1F9ONm87KYWnKl238c
-         CRFzD0qNyAxaEDdv59g0AffDdqvuzLO9kikeyg0HzBXr86EZzs6PVYLimsilt3iU9hst
-         VJ/u9PcF6RpP27PhWgAQxUS18IzDhyzS7Hm8MutU2IpK12AwmRvC5pw/ZbGrzibZ7LEl
-         WRIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkUAAAZBJr0KrmR/pwwvVqSj/I1zIsftLZ1B5flEewCCl3aZ+IPJMHDfxecNay7ZD7fwO+GaYlolApqEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAr+7TpsEzQ3AO4NnqbiaPD0p87wZKlemdjD8ZdhfjOwgVo3gU
-	aYZMUQe3FPwseNkTVbzUMwRvzmVWfCPtWpZcaC6muV6Umg/Y+bfYj5ITiS03tGg=
-X-Gm-Gg: ASbGncuWlhrPT5q+FilMT4scUYrJVYBTUSzneUJoDmEVWOlgP81vt6LvzjMGR6X1tjD
-	3MscbAFZ3naIOaaI99uk4xyhg8R7Ipyx8bYGaVIsGmKUAKDDn6qqTpXTOG26ZvD5G6M141Nn1cH
-	sUvckDq1dd4Rr6lIVgg3Cw4QL/6zKXoHPOPdEJRtD/3J0NYj2yy1YXei+Z9clvAXCn4ls+kRpt6
-	zXP8A/YpmlUpubUB2xy+Usu5QzAdAUYekHxUpe0zSeEJoOFqsEXrTpxCqN0gkbAAqPb
-X-Google-Smtp-Source: AGHT+IEvyP9FitM66cSZMMwydxM3tJNlBph+iYVkomM+fbp/4XM+0mwafLdeLXGjgJiZl+wAHekCvA==
-X-Received: by 2002:a05:600c:3b0e:b0:435:32e:8270 with SMTP id 5b1f17b1804b1-4362282e38dmr25784385e9.14.1733998362260;
-        Thu, 12 Dec 2024 02:12:42 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559f9b5sm12200215e9.26.2024.12.12.02.12.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 02:12:41 -0800 (PST)
-Date: Thu, 12 Dec 2024 11:12:39 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-	intel-xe@lists.freedesktop.org, lkml <linux-kernel@vger.kernel.org>,
-	Linux MM <linux-mm@kvack.org>, dri-devel@lists.freedesktop.org,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Maciej Patelczyk <maciej.patelczyk@intel.com>,
-	Jonathan Cavitt <jonathan.cavitt@intel.com>
-Subject: Re: [PATCH 14/26] drm/xe/eudebug: implement userptr_vma access
-Message-ID: <Z1q3F81k2TkUzKW7@phenom.ffwll.local>
-Mail-Followup-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-	intel-xe@lists.freedesktop.org, lkml <linux-kernel@vger.kernel.org>,
-	Linux MM <linux-mm@kvack.org>, dri-devel@lists.freedesktop.org,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Maciej Patelczyk <maciej.patelczyk@intel.com>,
-	Jonathan Cavitt <jonathan.cavitt@intel.com>
-References: <20241209133318.1806472-1-mika.kuoppala@linux.intel.com>
- <20241209133318.1806472-15-mika.kuoppala@linux.intel.com>
- <ec42fe8b-9be0-41cc-96f4-f1869c6bb7e6@amd.com>
- <Z1cNQTvGdAUPp4Y-@phenom.ffwll.local>
- <3c1cc9403eb50bc8c532d180f766eb7a429e8913.camel@linux.intel.com>
+	s=arc-20240116; t=1733998415; c=relaxed/simple;
+	bh=4HIWtFV37En8Z7xZDF5i/+XpdRbky2W7O+FRZ0Zrtf4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BmGAd8J0QPptrsEsr72eIZbKz61FMFotZFQc2ga6K2P+lTXOXgKai01cBm7expkmmQgUsHL1Rh+ZroAlOCbxXhmgWtQZS5+xkUXUHOZ0t7sZvoc/ESHmGbiRZ/UBLd1kP2Nhq2wD9uRMXU7vk/7SAHprOha5JDqrKCYLsNLndwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fCR2SNSe; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4HIWtFV37En8Z7xZDF5i/+XpdRbky2W7O+FRZ0Zrtf4=; b=fCR2SNSeYfiCgz5olZrhr/ivL9
+	Jgz6/RXmfJ/Zfx+J1M5hn0MBqnzlfgzV1nFHSkZLKc8WwExui2Cd/TxTf5BDJ7G9CGAjLWrgclFPk
+	GkKLAYb88whUh9/9tc2uuUfBOf5a8v855iMF/E/APyTJbE5sZTlBD6ZZRjsYPdylSRYn0xwopY4Cr
+	2+ZUzDkScQXLe6rw3+hNfaR+UAGnw0qMQTPXYR335fggeDcpWNEYZvukh84tPAyQyQayM6miQUBsC
+	QaF//CLKJbRJYKt2/ZWbwSczr4/DffTDT+Mnqt0p1ggIw5N1wjnJovTN9Mc2mdqW38f41JALVHss3
+	b5XEnJ9Q==;
+Received: from 54-240-197-238.amazon.com ([54.240.197.238] helo=freeip.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tLgC9-00000004vZK-3ebp;
+	Thu, 12 Dec 2024 10:13:22 +0000
+Message-ID: <b4104c271b461dc1958ffac299d6741746a0728a.camel@infradead.org>
+Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
+ instead of RWX
+From: David Woodhouse <dwmw2@infradead.org>
+To: "Ning, Hongyu" <hongyu.ning@linux.intel.com>, kexec@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, "Kirill A. Shutemov"
+ <kirill.shutemov@linux.intel.com>, Kai Huang <kai.huang@intel.com>, Nikolay
+ Borisov <nik.borisov@suse.com>,  linux-kernel@vger.kernel.org, Simon Horman
+ <horms@kernel.org>, Dave Young <dyoung@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, jpoimboe@kernel.org,  bsz@amazon.de
+Date: Thu, 12 Dec 2024 10:13:20 +0000
+In-Reply-To: <5bb26488-f5fb-4186-92c3-de6a07631f91@linux.intel.com>
+References: <20241205153343.3275139-1-dwmw2@infradead.org>
+	 <20241205153343.3275139-14-dwmw2@infradead.org>
+	 <5bb26488-f5fb-4186-92c3-de6a07631f91@linux.intel.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-MFODfwyI2dERy4RSXKOr"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3c1cc9403eb50bc8c532d180f766eb7a429e8913.camel@linux.intel.com>
-X-Operating-System: Linux phenom 6.11.6-amd64 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Dec 12, 2024 at 09:49:24AM +0100, Thomas Hellström wrote:
-> On Mon, 2024-12-09 at 16:31 +0100, Simona Vetter wrote:
-> > On Mon, Dec 09, 2024 at 03:03:04PM +0100, Christian König wrote:
-> > > Am 09.12.24 um 14:33 schrieb Mika Kuoppala:
-> > > > From: Andrzej Hajda <andrzej.hajda@intel.com>
-> > > > 
-> > > > Debugger needs to read/write program's vmas including
-> > > > userptr_vma.
-> > > > Since hmm_range_fault is used to pin userptr vmas, it is possible
-> > > > to map those vmas from debugger context.
-> > > 
-> > > Oh, this implementation is extremely questionable as well. Adding
-> > > the LKML
-> > > and the MM list as well.
-> > > 
-> > > First of all hmm_range_fault() does *not* pin anything!
-> > > 
-> > > In other words you don't have a page reference when the function
-> > > returns,
-> > > but rather just a sequence number you can check for modifications.
-> > 
-> > I think it's all there, holds the invalidation lock during the
-> > critical
-> > access/section, drops it when reacquiring pages, retries until it
-> > works.
-> > 
-> > I think the issue is more that everyone hand-rolls userptr. Probably
-> > time
-> > we standardize that and put it into gpuvm as an optional part, with
-> > consistent locking, naming (like not calling it _pin_pages when it's
-> > unpinnged userptr), kerneldoc and all the nice things so that we
-> > stop consistently getting confused by other driver's userptr code.
-> > 
-> > I think that was on the plan originally as an eventual step, I guess
-> > time
-> > to pump that up. Matt/Thomas, thoughts?
-> 
-> It looks like we have this planned and ongoing but there are some
-> complications and thoughts.
-> 
-> 1) A drm_gpuvm implementation would be based on vma userptrs, and would
-> be pretty straightforward based on xe's current implementation and, as
-> you say, renaming.
-> 
-> 2) Current Intel work to land this on the drm level is based on
-> drm_gpusvm (minus migration to VRAM). I'm not fully sure yet how this
-> will integrate with drm_gpuvm.
-> 
-> 3) Christian mentioned a plan to have a common userptr implementation
-> based off drm_exec. I figure that would be bo-based like the amdgpu
-> implemeentation still is. Possibly i915 would be interested in this but
-> I think any VM_BIND based driver would want to use drm_gpuvm /
-> drm_gpusvm implementation, which is also typically O(1), since userptrs
-> are considered vm-local.
-> 
-> Ideas / suggestions welcome
 
-So just discussed this a bit with Joonas, and if we use access_remote_vm
-for the userptr access instead of hand-rolling then we really only need
-bare-bones data structure changes in gpuvm, and nothing more. So
+--=-MFODfwyI2dERy4RSXKOr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-- add the mm pointer to struct drm_gpuvm
-- add a flag indicating that it's a userptr + userspace address to struct
-  drm_gpuva
-- since we already have userptr in drivers I guess there should be any
-  need to adjust the actual drm_gpuvm code to cope with these
+On Thu, 2024-12-12 at 11:03 +0800, Ning, Hongyu wrote:
+>=20
+> Hi David,
+>=20
+> I've hit some kdump/kexec regression issue for guest kernel in KVM/QEMU=
+=20
+> based VM and reported in https://bugzilla.kernel.org/show_bug.cgi?id=3D21=
+9592.
+>=20
+> based on further git bisect, it seems to be related with this commit,
+> would you help to take a look?
 
-Then with this you can write the access helper using access_remote_vm
-since that does the entire remote mm walking internally, and so there's
-no need to also have all the mmu notifier and locking lifted to gpuvm. But
-it does already give us some great places to put relevant kerneldocs (not
-just for debugging architecture, but userptr stuff in general), which is
-already a solid step forward.
+Thanks for the report; I'll take a look. Please could you share your
+kernel .config?
 
-Plus I think it'd would also be a solid first step that we need no matter
-what for figuring out the questions/options you have above.
+Also, you say that this is in QEMU running on an IA64 host. Is that
+true, or did you mean x86_64 host? Are you using OVMF or SeaBIOS as the
+QEMU firmware?
 
-Thoughts?
--Sima
+In the short term, I think that just reverting the 'offending' commit
+should be OK. I'd *prefer* not to leave the page RWX for the whole time
+period that the image is loaded, but that's how it's been on i386 for
+ever anyway.
 
-> 
-> > -Sima
-> > 
-> > > 
-> > > > v2: pin pages vs notifier, move to vm.c (Matthew)
-> > > > v3: - iterate over system pages instead of DMA, fixes iommu
-> > > > enabled
-> > > >      - s/xe_uvma_access/xe_vm_uvma_access/ (Matt)
-> > > > 
-> > > > Signed-off-by: Andrzej Hajda <andrzej.hajda@intel.com>
-> > > > Signed-off-by: Maciej Patelczyk <maciej.patelczyk@intel.com>
-> > > > Signed-off-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-> > > > Reviewed-by: Jonathan Cavitt <jonathan.cavitt@intel.com> #v1
-> > > > ---
-> > > >   drivers/gpu/drm/xe/xe_eudebug.c |  3 ++-
-> > > >   drivers/gpu/drm/xe/xe_vm.c      | 47
-> > > > +++++++++++++++++++++++++++++++++
-> > > >   drivers/gpu/drm/xe/xe_vm.h      |  3 +++
-> > > >   3 files changed, 52 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/xe/xe_eudebug.c
-> > > > b/drivers/gpu/drm/xe/xe_eudebug.c
-> > > > index 9d87df75348b..e5949e4dcad8 100644
-> > > > --- a/drivers/gpu/drm/xe/xe_eudebug.c
-> > > > +++ b/drivers/gpu/drm/xe/xe_eudebug.c
-> > > > @@ -3076,7 +3076,8 @@ static int xe_eudebug_vma_access(struct
-> > > > xe_vma *vma, u64 offset_in_vma,
-> > > >   		return ret;
-> > > >   	}
-> > > > -	return -EINVAL;
-> > > > +	return xe_vm_userptr_access(to_userptr_vma(vma),
-> > > > offset_in_vma,
-> > > > +				    buf, bytes, write);
-> > > >   }
-> > > >   static int xe_eudebug_vm_access(struct xe_vm *vm, u64 offset,
-> > > > diff --git a/drivers/gpu/drm/xe/xe_vm.c
-> > > > b/drivers/gpu/drm/xe/xe_vm.c
-> > > > index 0f17bc8b627b..224ff9e16941 100644
-> > > > --- a/drivers/gpu/drm/xe/xe_vm.c
-> > > > +++ b/drivers/gpu/drm/xe/xe_vm.c
-> > > > @@ -3414,3 +3414,50 @@ void xe_vm_snapshot_free(struct
-> > > > xe_vm_snapshot *snap)
-> > > >   	}
-> > > >   	kvfree(snap);
-> > > >   }
-> > > > +
-> > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64
-> > > > offset,
-> > > > +			 void *buf, u64 len, bool write)
-> > > > +{
-> > > > +	struct xe_vm *vm = xe_vma_vm(&uvma->vma);
-> > > > +	struct xe_userptr *up = &uvma->userptr;
-> > > > +	struct xe_res_cursor cur = {};
-> > > > +	int cur_len, ret = 0;
-> > > > +
-> > > > +	while (true) {
-> > > > +		down_read(&vm->userptr.notifier_lock);
-> > > > +		if (!xe_vma_userptr_check_repin(uvma))
-> > > > +			break;
-> > > > +
-> > > > +		spin_lock(&vm->userptr.invalidated_lock);
-> > > > +		list_del_init(&uvma->userptr.invalidate_link);
-> > > > +		spin_unlock(&vm->userptr.invalidated_lock);
-> > > > +
-> > > > +		up_read(&vm->userptr.notifier_lock);
-> > > > +		ret = xe_vma_userptr_pin_pages(uvma);
-> > > > +		if (ret)
-> > > > +			return ret;
-> > > > +	}
-> > > > +
-> > > > +	if (!up->sg) {
-> > > > +		ret = -EINVAL;
-> > > > +		goto out_unlock_notifier;
-> > > > +	}
-> > > > +
-> > > > +	for (xe_res_first_sg_system(up->sg, offset, len, &cur);
-> > > > cur.remaining;
-> > > > +	     xe_res_next(&cur, cur_len)) {
-> > > > +		void *ptr = kmap_local_page(sg_page(cur.sgl)) +
-> > > > cur.start;
-> > > 
-> > > The interface basically creates a side channel to access userptrs
-> > > in the way
-> > > an userspace application would do without actually going through
-> > > userspace.
-> > > 
-> > > That is generally not something a device driver should ever do as
-> > > far as I
-> > > can see.
-> > > 
-> > > > +
-> > > > +		cur_len = min(cur.size, cur.remaining);
-> > > > +		if (write)
-> > > > +			memcpy(ptr, buf, cur_len);
-> > > > +		else
-> > > > +			memcpy(buf, ptr, cur_len);
-> > > > +		kunmap_local(ptr);
-> > > > +		buf += cur_len;
-> > > > +	}
-> > > > +	ret = len;
-> > > > +
-> > > > +out_unlock_notifier:
-> > > > +	up_read(&vm->userptr.notifier_lock);
-> > > 
-> > > I just strongly hope that this will prevent the mapping from
-> > > changing.
-> > > 
-> > > Regards,
-> > > Christian.
-> > > 
-> > > > +	return ret;
-> > > > +}
-> > > > diff --git a/drivers/gpu/drm/xe/xe_vm.h
-> > > > b/drivers/gpu/drm/xe/xe_vm.h
-> > > > index 23adb7442881..372ad40ad67f 100644
-> > > > --- a/drivers/gpu/drm/xe/xe_vm.h
-> > > > +++ b/drivers/gpu/drm/xe/xe_vm.h
-> > > > @@ -280,3 +280,6 @@ struct xe_vm_snapshot
-> > > > *xe_vm_snapshot_capture(struct xe_vm *vm);
-> > > >   void xe_vm_snapshot_capture_delayed(struct xe_vm_snapshot
-> > > > *snap);
-> > > >   void xe_vm_snapshot_print(struct xe_vm_snapshot *snap, struct
-> > > > drm_printer *p);
-> > > >   void xe_vm_snapshot_free(struct xe_vm_snapshot *snap);
-> > > > +
-> > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64
-> > > > offset,
-> > > > +			 void *buf, u64 len, bool write);
-> > > 
-> > 
-> 
+--=-MFODfwyI2dERy4RSXKOr
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMjEyMTAxMzIwWjAvBgkqhkiG9w0BCQQxIgQgYGhPpeq5
+zbK73o7ysEUB6g4qtRPF18ZalyCAKvGgGOwwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCcL0+EIMcdR3T08extT5iYzthJTEkf2Y4i
+Ib7Aly9tAZTtbYTU9TfCIkcNRW/t2nTFqchGf1YOMnvZQh+vK2v19hLSBL9N0jW/b3Ikh3FOLx58
+kn5GhOTKTvodZm1uQEljxsBDcU76Ug6QLBHYvNDCtq3fAbpnMBUrHRjjkKvytnCo1BCC+7jHI+9O
+5qIP+j1iJe71iaXi9jRBVvZGY8+dzvb82j2Y81OWL8y+fZxDaIW1jecs4eKyMJqlqkIj405iR2Rm
+1N8Ikh9G8s/MRrQqf3qT/Y8MbkBszu2daX2B64+DJYRdZyiWjQ7QoY+WgFvS93scm9WVhjHTm7K0
+zx3aW3sNCSACLGF+OtY5ba/qP0sLZTEYqDQ7EIwSCzvAIIbOeTRVRsOVZg5/cRwLZ9bMoWWZAEdY
+hRCJKIPr4bXbFgCbzARODM14vKmRxjXXonnO9wJEdWPnZpKV0QcFszBLinITc/3O9ItwFrUAvvuK
+n8LDo/z8VsTkHz8QaFFlTVdqt2PXN8XC6qtAz7dPT9/Tao9SLo0FbWaSZynT4fjUN7PiJe1W8P/H
+g2hVc6+FdhK6iCO1mlGdesBy2qQRAxCHUZ5wWNaESge9aMAbqkUYOz/EX9PLqoLjSt95yGOTz18c
+zUSmoCdlr+rrvjvh8XMayfM1CoW1kddyTQZRBpBjBgAAAAAAAA==
+
+
+--=-MFODfwyI2dERy4RSXKOr--
 
