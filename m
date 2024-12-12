@@ -1,195 +1,224 @@
-Return-Path: <linux-kernel+bounces-443585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB29C9EF917
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:48:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66551189D0C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:43:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3C62253EB;
-	Thu, 12 Dec 2024 17:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2jxWGOb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FB09EF8AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:44:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEB6222D72
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B5362964D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:44:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B0722966A;
+	Thu, 12 Dec 2024 17:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MVOnnz53"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CAD225403
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734025370; cv=none; b=APBPLVhex+Luna0SDuh1ILaUt9CH8edycR1WXCoY0SmQ48s83btLnkpOJZT0Uhi5UNxYemV5yBVRo2fdJAukQMjld15NEvNPnc0VABmDVl4zhSS4fcopM23mLpjnlZc+yai6aNIBBGoAZUb0C5LpvC0Im5p+A9BT1YMXB795rpw=
+	t=1734025374; cv=none; b=MpwXXeK8r9pLB8jxNAG/KG1YcnuRRXOY853FVt4Rko/1a9JjmIN6ASrhWhoeCHYVR7Rxb99Vv3cKCRLAbUS9fwjzuKZuHOacV5V8+fKVXb9DmAcu6l2AFl+oi3WYInu4rcKJ/nVpgkqGwsUGP7/utS/iXmPiowGOWe0v0mj6jIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734025370; c=relaxed/simple;
-	bh=mL38+B3WmzlGzE9gik8JWUe5iqxZz7gEor3abGo0zA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uX+8QUiSyCebV4hpRUZnQ9+PopytS0e6ecyTpKxitDWUNLnzBd10NUrHX0QmBe+P2tBgGImL6evksjOHC2Pcjtk/SIJsXBu1Be7IVYUjN6F9/cqzeO2aK6RBPGUd5FOeUMBmLwAOoUYIcOsP83wfFZ2c/LG0dXrjYJbjmV6EpdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2jxWGOb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68A0C4CEE7;
-	Thu, 12 Dec 2024 17:42:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734025369;
-	bh=mL38+B3WmzlGzE9gik8JWUe5iqxZz7gEor3abGo0zA8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T2jxWGObLV/p6Q0fXx7esNLeLmx4/iZ9pXCBJDATMddk0JmxUVDaUwiS+CHOV+1Z3
-	 VMk1NkdnIe0CEXI5zpTp7X4dE1C8GvvuRECzzp1SB+y19WJFSoDX3j812dxUo4X2PK
-	 oVeTKPt8e5+L03+51DZ/ip4v5ZL+lXE4dQ1mT6IXfA005iIc5WVDP741bT+L5Dv/4L
-	 Mx3BNL6eIfSI9nOGNeU9e4a0CkwMk+tw+Uvl12ZQbLeqdlml37X7hLZoUvz9TM36mU
-	 QXUZfEHYOkPn3OeDnwvzkQFKyPKaVmOnB8n51DO4m91ZK7W9/Kh9r2n2f3dzL6Gzvc
-	 /RlxDEwPFu8vg==
-Date: Thu, 12 Dec 2024 10:42:43 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: "Ning, Hongyu" <hongyu.ning@linux.intel.com>, kexec@lists.infradead.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
-	Dave Young <dyoung@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>, jpoimboe@kernel.org,
-	bsz@amazon.de
-Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
- instead of RWX
-Message-ID: <20241212174243.GA2149156@ax162>
-References: <20241205153343.3275139-1-dwmw2@infradead.org>
- <20241205153343.3275139-14-dwmw2@infradead.org>
- <20241212014418.GA532802@ax162>
- <10a4058d9a667ca7aef7e1862375c2da84ef53a3.camel@infradead.org>
- <20241212150408.GA542727@ax162>
- <38aaf87162d10c79b3d3ecae38df99e89ad16fce.camel@infradead.org>
+	s=arc-20240116; t=1734025374; c=relaxed/simple;
+	bh=wAlK88JYcV847qs8c3xWU3FbShcCq8K9khJzpevf8PA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qmc9yu9H30uVJn45Fwf5l7ohBfVLUhxDLMIl12Fpao8LoLdNlpEI9Ha1ENsFgSxcnA+vsQLq0ImQXNSFW0RLoTwBkBMyOYusWx+i8mCxCsW5striADpiAMiv3mQFqLjgtsxXmsXcK/5SsLq3mKA9CGagi1wi3v6+velLP0SyjtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MVOnnz53; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCDDcE7000446
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:42:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GJcjv/I4Z4KqAcVR7dqnPgSMnHijRfhBkwkSl80xYAM=; b=MVOnnz53VTZ3eoc+
+	bEqJR53zHYbDvqzlK8/PXkGz4PgEQw9fjLl/0xK0DZzdsqZ1Uj3ITXxkIKtJMd4/
+	5wPE33DdY05p9gK+ftPKD9bjTRTV0mBOjszpP8Id56KfC9q5dejUJK2mZUZ4xVD6
+	ndB2kz70TKJUtvORoq9UaAWFOQJilVyXHmEpwj8EGDpBAzYCg0NLTtiLoId3zg9O
+	riexURUUjyZlaNkZc9SRTncpe/2wOtUTBqTRAXPc+iNbllR66WqW+QQkC8kVChFO
+	NJ4zc+aAy6CuhcLW1DmgGv6mdkKtZkJ2Nvu4n0+CCG7sux5pa6JPiVcVyXgb+lyt
+	3RFb5Q==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fqes2938-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:42:49 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d8824c96cdso2393086d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:42:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734025369; x=1734630169;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GJcjv/I4Z4KqAcVR7dqnPgSMnHijRfhBkwkSl80xYAM=;
+        b=gZ5zi8zt/msqe8c1OelPqDwdpnSPnNhWmQEWoZYJAqIXhBMMvySlc5N7jwnLkZI4R/
+         DdkY+AClyvZi90hxr4qhJ0ygYAYcZtw8KUy0BoYfVv5wZBavPTSWAzblvzvPtrn7BpUt
+         eqvPOD0+zzm/cDEobegMG4WYPvbyfM34cgeOt4XuQQt+yyTq4w/J5bjGt/Vo4qDJ9Snc
+         JshkQMZQni6sXUp9j9D7TPQO4CXxu2jvKCvISqbcbhxlOyB8utbxvXgDqb2MygLhJ+do
+         /R7nADBtcGAXgmkgtra7i0cyzxOj3XkT/g9r0cQ13OgG2qPlTL4bGpMuj13sC1afTg8Y
+         2Z2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVBXj/Gf0Eyna+aVg/LfQdzjzseECYFaDQHV0klpg7GsyYm63+sGCpsTOk8o8Q77aG0OnexAsbAk0DH9t4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxtW3hY/L2/Ijo1U+wmZRglcfEGT6nB9i110UkeL8zgcclumVg
+	p/WB+320N//QSZ43HFSXg+GnX/3cvKZgp8vbrgYvvxmr+ulq4nCYwIkNYg53o+PSs/HvYurtyNj
+	XIx+gjllb5IUm6y+WWvP9tjFsCKcutu6UxtW6HFvRAkXpgLSEYI2kzZ1Z50CGaO4=
+X-Gm-Gg: ASbGnctw068u9fUZDt9QjO0SGC/4Yu8eHwGvhY/PC1K34d/s82mqvQDrRdbbgZWu0vp
+	6934+XD7MKJbDIlChW8a/NWOPJZ9HMEgsywHhpfRBXJcpQ+1FAM0Nu86Zk53ULKaSdRlcZ+kCgT
+	eDe5L3UDYJYBNXU3hzxs/Eeb1iBUXS2OEY/hUpUyZPWOvqABLxr3xcTy4drtLSSOEPabvLVA4Yw
+	dmFyUc7RgGofhiKy7YpMuX6kAGnDvPbe/OMrfOqCNd0VvDZ2xg5QS+0LJ+/rzhcQjOTPlWFpysi
+	4m+lLXGNiXs01ZIRak+r6tWNJrG3nEwh10VB8A==
+X-Received: by 2002:a05:620a:4549:b0:7b6:d089:2749 with SMTP id af79cd13be357-7b6f8941a79mr61274885a.7.1734025369195;
+        Thu, 12 Dec 2024 09:42:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE9TEKccAFcMcJnSB0aDrqPhs1h8Hp8GL+jIWcf0PYQWUlYIJEoIbGnr5TfFdrzIRCcorD5/g==
+X-Received: by 2002:a05:620a:4549:b0:7b6:d089:2749 with SMTP id af79cd13be357-7b6f8941a79mr61273585a.7.1734025368701;
+        Thu, 12 Dec 2024 09:42:48 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6707a5110sm731706166b.36.2024.12.12.09.42.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 09:42:48 -0800 (PST)
+Message-ID: <efab0b18-f1f0-457a-b1d5-8734f178141d@oss.qualcomm.com>
+Date: Thu, 12 Dec 2024 18:42:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/4] Enable Bluetooth on qcs6490-rb3gen2 board
+To: Janaki Ramaiah Thota <quic_janathot@quicinc.com>,
+        "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, quic_anubhavg@quicinc.com,
+        Mark Brown <broonie@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        linux-pm@vger.kernel.org, quic_mohamull@quicinc.com,
+        quic_hbandi@quicinc.com, devicetree@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20241209103455.9675-1-quic_janathot@quicinc.com>
+ <173386568587.497565.1413799827375300987.robh@kernel.org>
+ <3c313557-ca99-4e6f-9d71-641e8c256126@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <3c313557-ca99-4e6f-9d71-641e8c256126@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <38aaf87162d10c79b3d3ecae38df99e89ad16fce.camel@infradead.org>
+X-Proofpoint-GUID: oSpmGHbt22WKNugfVfFoZl6cv5P5FdE5
+X-Proofpoint-ORIG-GUID: oSpmGHbt22WKNugfVfFoZl6cv5P5FdE5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 phishscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120126
 
-On Thu, Dec 12, 2024 at 05:00:00PM +0000, David Woodhouse wrote:
-> > 
-> > Here is the output that I see with that patch applied when rebooting via
-> > 'systemctl kexec':
-> > 
-> > RAX=000000010c070001 RBX=0000000000000000 RCX=0000000000000000 RDX=000000047fffb1a0
-> > RSI=000000011c444000 RDI=000000011c450002 RBP=ff1cd0424d6e8c00 RSP=ff4178d5c5aebc60
-> > R8 =0000000000000000 R9 =000000011c446000 R10=ffffffff909f3e00 R11=0000000000000003
-> > R12=0000000000000000 R13=0000000000000001 R14=00000000fee1dead R15=0000000000000000
-> > RIP=ff1cd0425c44401c RFL=00010002 [-------] CPL=0 II=0 A20=1 SMM=0 HLT=0
-> > ES =0018 0000000000000000 ffffffff 00c09300 DPL=0 DS�� [-WA]
-> > CS =0010 0000000000000000 ffffffff 00a09b00 DPL=0 CS64 [-RA]
-> > SS =0018 0000000000000000 ffffffff 00c09300 DPL=0 DS�� [-WA]
-> > DS =0018 0000000000000000 ffffffff 00c09300 DPL=0 DS�� [-WA]
-> > FS =0018 0000000000000000 ffffffff 00c09300 DPL=0 DS�� [-WA]
-> > GS =0018 0000000000000000 ffffffff 00c09300 DPL=0 DS�� [-WA]
-> > LDT=0000 0000000000000000 ffffffff 00c00000
-> > TR =0040 fffffe043fedb000 00004087 00008b00 DPL=0 TSS64-busy
-> > GDT=���� 0000000000000000 00000000
-> > IDT=���� 0000000000000000 00000000
-> > CR0=80050033 CR2=ff1cd0425c4441de CR3=000000011c446000 CR4=00771ef0
-> > DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000 DR3=0000000000000000
-> > DR6=00000000fffe0ff0 DR7=0000000000000400
-> > EFER=0000000000000d01
-> > Code=41 57 9c 6a 00 9d 0f 20 d8 4c 8b 0d ee 01 00 00 41 0f 22 d9 <48> 89 25 bb 01 00 00 48 89 05 c4 01 00 00 0f 20 c0 48 89 05 b2 01 00 00 41 0f 20 e5 4c 89
-> 
-> ...
-> 
-> > I have attached the output of 'objdump -S'. Please let me know if you
-> > would like any other information or testing.
-> 
-> 	/* Switch to the identity mapped page tables */
-> 	movq	%cr3, %rax
->    e:	0f 20 d8             	mov    %cr3,%rax
-> 	movq	kexec_pa_table_page(%rip), %r9
->   11:	4c 8b 0d 00 00 00 00 	mov    0x0(%rip),%r9        # 18 <relocate_kernel+0x18>
-> 	movq	%r9, %cr3
->   18:	41 0f 22 d9          	mov    %r9,%cr3
-> 
-> 	/* Save %rsp and CRs. */
-> 	movq    %rsp, saved_rsp(%rip)
->   1c:	48 89 25 00 00 00 00 	mov    %rsp,0x0(%rip)        # 23 <relocate_kernel+0x23>
-> 	movq	%rax, saved_cr3(%rip)
+On 12.12.2024 11:46 AM, Janaki Ramaiah Thota wrote:
 > 
 > 
-> So it's faulting when it tries to write to saved_rsp, which is the
-> first instruction after it loads the new page tables into %cr3.
+> On 12/11/2024 3:12 AM, Rob Herring (Arm) wrote:
+>>
+>> On Mon, 09 Dec 2024 16:04:51 +0530, Janaki Ramaiah Thota wrote:
+>>> - Patch 1/4 Add description of the PMU of the WCN6750 module.
+>>> - Patch 2/4 add and enable BT node for qcs6490-rb3gen board.
+>>> - Patch 3/4 use the power sequencer for wcn6750.
+>>> - Patch 4/4 add support for the WCN6750 PMU.
+>>>
+>>> ----
+>>> Changes from v4:
+>>> * Added reviewed tag by Krzysztof in p1
+>>> * Updated the p2 commit message with sw_ctrl and wifi-enable are
+>>>    handled in wifi FW.
+>>> * Added blank line between the nodes in p2
+>>> * Placed the structures in proper order in p4
+>>> * Link to v4: https://lore.kernel.org/all/20241204131706.20791-1-quic_janathot@quicinc.com/
+>>>
+>>> Changes from v3:
+>>> * Defined the PMU node and used the its output to power up BT
+>>> * Used power sequencer for wcn wcn6750 module
+>>> * Split the patch to multiple as per subtree
+>>> * Add description of the PMU of the WCN6750 module
+>>> * Include separate UART state node for sleep pin configuarion
+>>> * Link to v3: https://lore.kernel.org/linux-arm-msm/20241022104600.3228-1-quic_janathot@quicinc.com/
+>>>
+>>> Changes from v2:
+>>> * Sorted nodes alphabetically
+>>> * Link to v2: https://lore.kernel.org/linux-arm-msm/20241010105107.30118-1-quic_janathot@quicinc.com/
+>>>
+>>> Changes from v1:
+>>> * Corrected the board name in subject
+>>> * Link to v1: https://lore.kernel.org/linux-arm-msm/20241009111436.23473-1-quic_janathot@quicinc.com/
+>>>
+>>> Janaki Ramaiah Thota (4):
+>>>    regulator:·dt-bindings:·qcom,qca6390-pmu:·document wcn6750-pmu
+>>>    arm64: dts: qcom: qcs6490-rb3gen: add and enable BT node
+>>>    Bluetooth: hci_qca: use the power sequencer for wcn6750
+>>>    power: sequencing: qcom-wcn: add support for the WCN6750 PMU
+>>>
+>>>   .../bindings/regulator/qcom,qca6390-pmu.yaml  |  27 +++
+>>>   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 168 +++++++++++++++++-
+>>>   drivers/bluetooth/hci_qca.c                   |   2 +-
+>>>   drivers/power/sequencing/pwrseq-qcom-wcn.c    |  22 +++
+>>>   4 files changed, 217 insertions(+), 2 deletions(-)
+>>>
+>>> -- 
+>>>
+>>>
+>>>
+>>
+>>
+>> My bot found new DTB warnings on the .dts files added or changed in this
+>> series.
+>>
+>> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+>> are fixed by another series. Ultimately, it is up to the platform
+>> maintainer whether these warnings are acceptable or not. No need to reply
+>> unless the platform maintainer has comments.
+>>
+>> If you already ran DT checks and didn't see these error(s), then
+>> make sure dt-schema is up to date:
+>>
+>>    pip3 install dtschema --upgrade
+>>
+>>
+>> New warnings running 'make CHECK_DTBS=y qcom/qcs6490-rb3gen2.dtb' for 20241209103455.9675-1-quic_janathot@quicinc.com:
+>>
+>> arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'enable-gpios' is a required property
+>>     from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+>> arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'swctrl-gpios' is a required property
+>>     from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+>> arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'vddio-supply' is a required property
+>>     from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+>> arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'vddbtcxmx-supply' is a required property
+>>     from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+>> arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: bluetooth: 'vddasd-supply' is a required property
+>>     from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+>> arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: pinctrl@f100000: Unevaluated properties are not allowed ('qup_uart7_sleep' was unexpected)
+>>     from schema $id: http://devicetree.org/schemas/pinctrl/qcom,sc7280-pinctrl.yaml#
+>>
 > 
-> Before loading %cr3, the CPU is running on the original kernel page
-> tables, It's running from the *virtual* address of the control page,
-> which in your case is ff1cd0425c444000. In those old page tables, this
-> control page is read-only.
-> 
-> But in the newly-loaded page tables, this control page should be read-
-> write.�
-> 
-> What CPU is this? Shouldn't loading %cr3 have caused the existing TLB
-> entry to be flushed?
+> Since the DTS files for all boards using the WCN6750 BT chip are not updated according to the PMU node, updating the bluetooth/qualcomm-bluetooth.yaml file will result in similar warnings for other boards.
 
-The machine I have mainly been reproducing and testing this issue on is
-an Intel Xeon Gold 6314U but I initially noticed this problem on a few
-consumer AMD and Intel chips that I have locally.
+Oh I didn't forsee this.. You must fix up any bindings errors that
+result from your changes (i.e. binding errors are the same as compilation
+errors).
 
-> Can you tell me what happens if we don't write through *that* virtual
-> mapping of the page, but instead do it a few instructions later through
-> the identity mapping of the same page (which surely *won't* have an
-> older, non-writeable TLB entry already...)?
+That means patch 2 can't be merged unless the bluetooth dt-bindings
+are adjusted. And for the bindings to be adjusted, you'll have to also
+add the PMU node to all boards implementing wcn6750.
 
-Applying that diff on top of 5a82223e0743 makes the issue go away for
-me.
+Fortunately, they are all based on some variants of the same SoC, so
+they should all have the same power plumbing.
 
-> diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-> index 8bc86a1e056a..2763c509e513 100644
-> --- a/arch/x86/kernel/relocate_kernel_64.S
-> +++ b/arch/x86/kernel/relocate_kernel_64.S
-> @@ -70,6 +70,18 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
->  	movq	kexec_pa_table_page(%rip), %r9
->  	movq	%r9, %cr3
->  
-> +	/* setup a new stack at the end of the physical control page */
-> +	lea	PAGE_SIZE(%rsi), %rsp
-> +
-> +	/* jump to identity mapped page */
-> +	addq	$(identity_mapped - relocate_kernel), %rsi
-> +	ANNOTATE_RETPOLINE_SAFE
-> +	jmp	*%rsi
-> +	int3
-> +SYM_CODE_END(relocate_kernel)
-> +
-> +SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
-> +	UNWIND_HINT_END_OF_STACK
->  	/* Save %rsp and CRs. */
->  	movq    %rsp, saved_rsp(%rip)
->  	movq	%rax, saved_cr3(%rip)
-> @@ -85,19 +97,6 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
->  	/* Save the preserve_context to %r11 as swap_pages clobbers %rcx. */
->  	movq	%rcx, %r11
->  
-> -	/* setup a new stack at the end of the physical control page */
-> -	lea	PAGE_SIZE(%rsi), %rsp
-> -
-> -	/* jump to identity mapped page */
-> -	addq	$(identity_mapped - relocate_kernel), %rsi
-> -	pushq	%rsi
-> -	ANNOTATE_UNRET_SAFE
-> -	ret
-> -	int3
-> -SYM_CODE_END(relocate_kernel)
-> -
-> -SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
-> -	UNWIND_HINT_END_OF_STACK
->  	/*
->  	 * %rdi	indirection page
->  	 * %rdx start address
-> 
-
-
+Konrad
 
