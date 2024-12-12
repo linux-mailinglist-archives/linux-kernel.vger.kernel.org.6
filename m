@@ -1,53 +1,90 @@
-Return-Path: <linux-kernel+bounces-443089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9FE9EE6F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:44:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13599EE6FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:44:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C93C81659F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:44:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE3F2135C3;
+	Thu, 12 Dec 2024 12:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MO4rPOmF"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2056.outbound.protection.outlook.com [40.107.237.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F0A28259A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:44:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8C82135B4;
-	Thu, 12 Dec 2024 12:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="px8O/6sA"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D136F208984
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734007459; cv=none; b=gs8VirTk9Dp5cOW2S3XDhQsOQavahlWJmAGtPKou4z6BXBugYzF+ZE8qRXbgMmNq7+wMqx5vQganoUAdhsArUg+BPncqKyustDZcu8eLLHFxnfScj55sbL6rsm1mYsWQt+AiTHUGhhMxp1YG1YvPMO8nlZ85WGCHNs22qfI4RqY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734007459; c=relaxed/simple;
-	bh=1NTe3vuA08BMpFH7RYBFK5Es9ImktwuYC0WwrLinp+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aRQMgl9sctovem85SuljNatwMKBPqp80piGmov+UDoSHBNXlNogjT9xwXXVSPkkL5n8Zc/oLELsC18P/ZvO9Ur0SWyt08Zt0KJMhal+MjuhILz3bksFCGRDABsE6DksxwJkvc00VISkmqMl/hFb0ECKtROwmjsbrK4aeXlAaFEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=px8O/6sA; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=O+INq
-	O4y8ltpi7ZzYeIleiSEwEbhAQ3s82CpAInO1zU=; b=px8O/6sAak0qJk+fBV4+0
-	IWEV/Gvhfz5B/KJ02LqoFZ7qcqfhiW1ssZK9y1rVQbL1kZTA2J8zUbazHD+JVFJ+
-	EXbgNHCTT1WMmOsmGEHRfaJvSqgMg/NiBpxOipvNF/B0Hb8I/Vn87povRKd7imyB
-	UJEj6yxxDMLnqOd3Q93pc0=
-Received: from ProDesk.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3n9CF2lpn4CNzAA--.10830S2;
-	Thu, 12 Dec 2024 20:43:53 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: sebastian.reichel@collabora.com,
-	kever.yang@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH] drm/rockchip: Fix Copyright description
-Date: Thu, 12 Dec 2024 20:43:44 +0800
-Message-ID: <20241212124344.3121514-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7348B2135AC;
+	Thu, 12 Dec 2024 12:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734007474; cv=fail; b=RhQFZgF8Z3hUpqpQECS8cjBrBXQoN0391bYK73pvgafDwklE/d5oDLBSrmlx1jhvFmzb4UR3XfdvaNGP+G9c1loLtY1hi9Z+6+Ov7rq5w+olNCl4QOpiSGkX/AIAVc1jLF/CJe9M9VQpwT5goJuygQu8p5LW0UH+a9PfCZWEoCI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734007474; c=relaxed/simple;
+	bh=050jm9qI6BzLjVUSEqD/bLFmR8a3rvrzM609B/ToyGI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mvv31TpeENxzPVr8vsSLWNrfsaEEb3kxs5bxOtjqGHhjxpVLNIuq1vkJM8Vs3IaU8AQL09b4byWbZtMWK3SxCratrPvKGkoZfD3FRAsdsR5u2EjwYPYbuB5TdO8g953op2MhQrtAVAU8u23/zq4y62svO2QApRmt3LuAj6RGzP8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MO4rPOmF; arc=fail smtp.client-ip=40.107.237.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bLqYf/FfY0CUEyQpwiTFSj0UA9SYEmv428D55uHjC9+ny7xL6r/wXU6/LzKhpFoSYplrk9FCfZ97b8Q8c8eEoy/NHEcdjBTY2/kzTiXyyDbNA2e5+0P+X88J/iFoYZ/hDbobw2LEv24rpHH0QLWOCpcZ7xec169sBvmSGDQGW5cWdo3xAwbnmTjQ7AHMJrzbhbWx7FsO68Sc8ghrBB6GVP+eIHMr/n0bArhrKmuiHYN9vEBOEdp5PRufveKLyp/c0uUEU62GLK69uDMvwrsNjQjRrYrKmQrF7wouSyjJpEY08nshAD/LuDf7Drs7+aUFiI9M5Mpp7RPK5Ny8sH59bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=feOki6WXa8Dc2urtOMhGEJGkbjKgK/FQe20bWjCg1Yc=;
+ b=jYKBVPi0VtO43LURbbE6el1b62ZqbZ/g89JTtXeqwZSc1vecA40Mr6NE+Z5HzzHVjWb8Jg4ksvWQ26aHt68P2ZF1R+mno4Mfe76TvtVeXgX1NMdWw8KtjCwNgtM7Zd6Dg4QKHeKbMtZj420p/PVhxEogBh6TbB2nkXDSI+zcqI2yBliW5WGbXBYANkxWD4mIG1dv4aI4vKG1EpflOZvkacMdPw8G+t9yFFVBUZWO/U8HeyenzPMWnnLgQbrGcWPi4TsV47gfBozoZ/7AkM0leeuvtpV/1IJBFENbfaCMOLjh0Cx/8Qbz3GIdd1OcQp4uOU+76ukUyLqp+FtZx21ZjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=feOki6WXa8Dc2urtOMhGEJGkbjKgK/FQe20bWjCg1Yc=;
+ b=MO4rPOmFVXn7nAiUG55qLe00k9I5urWWeesxD5SGKB1MST/gLPugrwumdP4ijpBDnz0YRm8tQsu35RxqwD9gL4tE4r2XefgLXh4WZCeW66yLVvHWEKrn6tscV8fZVSU1PkVru0R9457kXw+0JCIM2jOcov53CLj3JygE7vZ+YaYoA8bHY4kszDxV3zPVZ3la7g3atk/5vKoHj9vK9Bl6d+jd+xyZXhtuQN/iz2JmUlH35sGasnkNKSLrB3o45bbAOEMRJ5YCCjB1fqUWufJoh4zXkA8qrpp4K6pkQMFf2OsJ2sBE+tyM/uuLlIfcTnN7rKtbBvhY4qcOu11Mo1h63g==
+Received: from SA9PR10CA0002.namprd10.prod.outlook.com (2603:10b6:806:a7::7)
+ by SA1PR12MB7412.namprd12.prod.outlook.com (2603:10b6:806:2b2::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Thu, 12 Dec
+ 2024 12:44:26 +0000
+Received: from SA2PEPF00001506.namprd04.prod.outlook.com
+ (2603:10b6:806:a7:cafe::b) by SA9PR10CA0002.outlook.office365.com
+ (2603:10b6:806:a7::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.15 via Frontend Transport; Thu,
+ 12 Dec 2024 12:44:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SA2PEPF00001506.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.15 via Frontend Transport; Thu, 12 Dec 2024 12:44:26 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Dec
+ 2024 04:44:18 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 12 Dec 2024 04:44:17 -0800
+Received: from NV-2XGVVG3.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 12 Dec 2024 04:44:14 -0800
+From: Kartik Rajput <kkartik@nvidia.com>
+To: <ldewangan@nvidia.com>, <jonathanh@nvidia.com>, <vkoul@kernel.org>,
+	<thierry.reding@gmail.com>, <rgumasta@nvidia.com>, <akhilrajeev@nvidia.com>,
+	<dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] dmaengine: tegra: Return correct DMA status when paused
+Date: Thu, 12 Dec 2024 18:14:12 +0530
+Message-ID: <20241212124412.5650-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,365 +92,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n9CF2lpn4CNzAA--.10830S2
-X-Coremail-Antispam: 1Uf129KBjvAXoW3uFy7GFWDWw4rtF48XFWkWFg_yoW8Xry8Xo
-	WvkF15Ja4rCFs3C34YyF1IqF1fuwnrtas3Cw4FkFsFvryUA3yUJrs0vrZYkF1YvryUAF4x
-	Aa10vrn8Ar1xAa48n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU2_HUDUUUU
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwazXmda1UBmygADsf
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001506:EE_|SA1PR12MB7412:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0a0fb5b5-1379-4aad-5471-08dd1aaab67e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JxTA86gh7SU0PYFfJLXagK89zcob7vWUvJkCR3TzdHDHZrVNyHjR1N6fsqPV?=
+ =?us-ascii?Q?q/IIuZ3NWWbnAnqZ6VRqnblNWnxWIJaNaq2VPTfTp1h2Qpzdc6zTgXSJNt78?=
+ =?us-ascii?Q?VJmiwZC02+h9gv0Dqqdwk84hIyZ3NpYru67rq+0VF2D8T5GQugMkjRTKUAB1?=
+ =?us-ascii?Q?3FGbFe/5Ufac6pufK/6YV2WBt5zihZd3FYJGh1plRWme/Kl+bj0s3QdXMezh?=
+ =?us-ascii?Q?nvVF/53Qcwxys0qamkC7R9I8JiQ5wcEg+ZwVDo2c1tGprNDczF04jrwWpV/P?=
+ =?us-ascii?Q?zqsrB9g8l+NwVuTt0e4OIRCGqxDeqnM+jS/dSyhozNX+wQ36szeffaKGXOro?=
+ =?us-ascii?Q?gNwI/qyCGRbws6H+Gl0I4v/bcVX3fOo07h3enJYYnx9OmeITCX2Ejxqf4usR?=
+ =?us-ascii?Q?Gv2sdsjchuq4Loy/OxGbsGIaXBvXPoVNGj8yghEx27dPMjbensXi0TII2bdR?=
+ =?us-ascii?Q?ygluxp/1Cu9wKr3KV8Ht44LX3eNhBDRFkK/rtu1iGwLa7fEDS3cGDvsQEhGd?=
+ =?us-ascii?Q?ZEvWHQX4CvKEmK3UAMXb3/7IONiVfnrASFo/mHMK3L9WhSpDAxVEJhewKuWC?=
+ =?us-ascii?Q?YnCX2/fHDYCdfkg/xXSBxB+BzeOz3HXzQn4BAfj8gYmSYK8wZ95QJwhVrC/m?=
+ =?us-ascii?Q?DEvm3v8uGWNz8q0KrNpSk1U0l/8cbss0snPSPG1NmeNenOVhdiIRU5QiUMp+?=
+ =?us-ascii?Q?4gv2xI8M9RW5rMZBuVdmpryFIQk/lmP0cocZ2t2ku/rduIg6FdA5Ov2VihLQ?=
+ =?us-ascii?Q?4okmy8QO8qastdBVnXNvUnBnyMMYX7RuI9IC0oQzl39T7sEaa4Ytp0yfKRpg?=
+ =?us-ascii?Q?PcKhzq2xyTbhuzhEUUmCLKxO4EFTt0Dqec2w0l2FoLG8e9qFI35U47t5jTdV?=
+ =?us-ascii?Q?UnZgtWv7U3LNEuiGhggD5Uv0SguS1w4wX7Qyb+lxKNIjWhdEC+1HZrDlBMaF?=
+ =?us-ascii?Q?Vd1Jn3su4G0EgruRXXBUbcwqCPntb3OKj61XO2YVSUM+V6msSXayyPRoVurt?=
+ =?us-ascii?Q?B2eUyXaasSHM9f+qPlR5gmxHa8mJzmYbHQgdoQVsJ8GjceYIM7vUhdVovg6i?=
+ =?us-ascii?Q?ziaAXvMzFNWxGncsDpQfd0Anxiz7C8LvjBXwa2kfW5Sb975LpF9q5i+K5SJz?=
+ =?us-ascii?Q?5t3xDUnaCENy/U1WPQmyiOd1NqJAzOG/qTZODu3fb0EoRWYSD5O+LOKriESl?=
+ =?us-ascii?Q?K4eGTlEMtePT9KOTVjLnbgqiSmmw5210rZN2YRZN155gqMkspKQdQW0Wzz08?=
+ =?us-ascii?Q?mXWQmkRMrYCob8op7RznAu/hPtqOjF466dkuf3pAnGf7BTJOi2MwygEJdnW/?=
+ =?us-ascii?Q?J2t5amjuNT6kICw3AITxL2ufp2dPER5OrgHpxQm2VTYZSzIohdxep/WAVfGT?=
+ =?us-ascii?Q?jkd3W9ip1GzHEnoe5Ps1reXVWM97SckseK8lT7MDbKP8w8uL2qYV9e3IW2Jz?=
+ =?us-ascii?Q?G5LSokPIxlz1fmKpis/9r6g0dsOir16L?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 12:44:26.3567
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a0fb5b5-1379-4aad-5471-08dd1aaab67e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00001506.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7412
 
-From: Andy Yan <andy.yan@rock-chips.com>
+From: Akhil R <akhilrajeev@nvidia.com>
 
-The company name has update to Rockchip Electronics Co., Ltd.
-since 2021.
-And change Co.Ltd to Co., Ltd. to fix mail server warning:
-DBL_SPAM(6.50)[co.ltd:url];
+Currently, the driver does not return the correct DMA status when a DMA
+pause is issued by the client drivers. This causes GPCDMA users to
+assume that DMA is still running, while in reality, the DMA is paused.
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Return DMA_PAUSED for tx_status() if the channel is paused in the middle
+of a transfer.
+
+Fixes: ee17028009d4 ("dmaengine: tegra: Add tegra gpcdma driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
 ---
+ drivers/dma/tegra186-gpc-dma.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 2 +-
- drivers/gpu/drm/rockchip/cdn-dp-core.c          | 2 +-
- drivers/gpu/drm/rockchip/cdn-dp-reg.c           | 2 +-
- drivers/gpu/drm/rockchip/cdn-dp-reg.h           | 2 +-
- drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c | 2 +-
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c     | 2 +-
- drivers/gpu/drm/rockchip/inno_hdmi.c            | 2 +-
- drivers/gpu/drm/rockchip/inno_hdmi.h            | 2 +-
- drivers/gpu/drm/rockchip/rk3066_hdmi.c          | 2 +-
- drivers/gpu/drm/rockchip/rk3066_hdmi.h          | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c     | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_drv.h     | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c      | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_fb.h      | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c     | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_gem.h     | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c     | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_vop.h     | 2 +-
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.h    | 2 +-
- drivers/gpu/drm/rockchip/rockchip_lvds.c        | 2 +-
- drivers/gpu/drm/rockchip/rockchip_lvds.h        | 2 +-
- drivers/gpu/drm/rockchip/rockchip_rgb.c         | 2 +-
- drivers/gpu/drm/rockchip/rockchip_rgb.h         | 2 +-
- drivers/gpu/drm/rockchip/rockchip_vop2_reg.c    | 2 +-
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c     | 2 +-
- drivers/gpu/drm/rockchip/rockchip_vop_reg.h     | 2 +-
- 26 files changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 546d13f19f9b..02876eb66e94 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -2,7 +2,7 @@
- /*
-  * Rockchip SoC DP (Display Port) interface driver.
-  *
-- * Copyright (C) Fuzhou Rockchip Electronics Co., Ltd.
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author: Andy Yan <andy.yan@rock-chips.com>
-  *         Yakir Yang <ykk@rock-chips.com>
-  *         Jeff Chen <jeff.chen@rock-chips.com>
-diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-index ff9d95e2c4d4..4b28121ffa42 100644
---- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
-+++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author: Chris Zhong <zyw@rock-chips.com>
-  */
+diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
+index cacf3757adc2..4d6fe0efa76e 100644
+--- a/drivers/dma/tegra186-gpc-dma.c
++++ b/drivers/dma/tegra186-gpc-dma.c
+@@ -231,6 +231,7 @@ struct tegra_dma_channel {
+ 	bool config_init;
+ 	char name[30];
+ 	enum dma_transfer_direction sid_dir;
++	enum dma_status status;
+ 	int id;
+ 	int irq;
+ 	int slave_id;
+@@ -393,6 +394,8 @@ static int tegra_dma_pause(struct tegra_dma_channel *tdc)
+ 		tegra_dma_dump_chan_regs(tdc);
+ 	}
  
-diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-index 33fb4d05c506..924fb1d3ece2 100644
---- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-+++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author: Chris Zhong <zyw@rock-chips.com>
-  */
++	tdc->status = DMA_PAUSED;
++
+ 	return ret;
+ }
  
-diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-index c7780ae3272a..13ed8cbdbafa 100644
---- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-+++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author: Chris Zhong <zyw@rock-chips.com>
-  */
+@@ -419,6 +422,8 @@ static void tegra_dma_resume(struct tegra_dma_channel *tdc)
+ 	val = tdc_read(tdc, TEGRA_GPCDMA_CHAN_CSRE);
+ 	val &= ~TEGRA_GPCDMA_CHAN_CSRE_PAUSE;
+ 	tdc_write(tdc, TEGRA_GPCDMA_CHAN_CSRE, val);
++
++	tdc->status = DMA_IN_PROGRESS;
+ }
  
-diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-index 1b64b6e39cc8..3398160ad75e 100644
---- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0+
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:
-  *      Chris Zhong <zyw@rock-chips.com>
-  *      Nickey Yang <nickey.yang@rock-chips.com>
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index 42bda4ffbbbd..e7a6669c46b0 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- * Copyright (c) 2014, Fuzhou Rockchip Electronics Co., Ltd
-+ * Copyright (c) 2014, Rockchip Electronics Co., Ltd.
-  */
+ static int tegra_dma_device_resume(struct dma_chan *dc)
+@@ -544,6 +549,7 @@ static void tegra_dma_xfer_complete(struct tegra_dma_channel *tdc)
  
- #include <linux/clk.h>
-diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockchip/inno_hdmi.c
-index b58e2a29294b..898d90155057 100644
---- a/drivers/gpu/drm/rockchip/inno_hdmi.c
-+++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  *    Zheng Yang <zhengyang@rock-chips.com>
-  *    Yakir Yang <ykk@rock-chips.com>
-  */
-diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.h b/drivers/gpu/drm/rockchip/inno_hdmi.h
-index a7edf3559e60..8b7ef3fac485 100644
---- a/drivers/gpu/drm/rockchip/inno_hdmi.h
-+++ b/drivers/gpu/drm/rockchip/inno_hdmi.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  *    Zheng Yang <zhengyang@rock-chips.com>
-  *    Yakir Yang <ykk@rock-chips.com>
-  */
-diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-index b0fc8ace2e41..403336397214 100644
---- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-+++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  *    Zheng Yang <zhengyang@rock-chips.com>
-  */
+ 	tegra_dma_sid_free(tdc);
+ 	tdc->dma_desc = NULL;
++	tdc->status = DMA_COMPLETE;
+ }
  
-diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.h b/drivers/gpu/drm/rockchip/rk3066_hdmi.h
-index 39a31c62a428..c3598ba7428c 100644
---- a/drivers/gpu/drm/rockchip/rk3066_hdmi.h
-+++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  *    Zheng Yang <zhengyang@rock-chips.com>
-  */
+ static void tegra_dma_chan_decode_error(struct tegra_dma_channel *tdc,
+@@ -716,6 +722,7 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
+ 		tdc->dma_desc = NULL;
+ 	}
  
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index 3e9f590c734e..bf1d4c5599fa 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  *
-  * based on exynos_drm_drv.c
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-index 24b4ce5ceaf1..8bcce08a34d9 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  *
-  * based on exynos_drm_drv.h
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-index cfe8b793d344..dcc1f07632c3 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  */
++	tdc->status = DMA_COMPLETE;
+ 	tegra_dma_sid_free(tdc);
+ 	vchan_get_all_descriptors(&tdc->vc, &head);
+ 	spin_unlock_irqrestore(&tdc->vc.lock, flags);
+@@ -769,6 +776,9 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ 	if (ret == DMA_COMPLETE)
+ 		return ret;
  
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.h b/drivers/gpu/drm/rockchip/rockchip_drm_fb.h
-index bae4e079dfb1..5179026b12d6 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  */
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-index 93ed841f5dce..6330b883efc3 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  */
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.h b/drivers/gpu/drm/rockchip/rockchip_drm_gem.h
-index 72f59ac6d258..cdeae36b91a1 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  */
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 69900138295b..57747f1cff26 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  */
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
-index 0cf512cc1614..f04c9731ae7b 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  */
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-index 2995988ef559..ca3f1613d51c 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  */
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-index aba733736ff7..385cf6881504 100644
---- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:
-  *      Mark Yao <mark.yao@rock-chips.com>
-  *      Sandy Huang <hjc@rock-chips.com>
-diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.h b/drivers/gpu/drm/rockchip/rockchip_lvds.h
-index 4ce967d23813..ca83d7b6bea7 100644
---- a/drivers/gpu/drm/rockchip/rockchip_lvds.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_lvds.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:
-  *      Sandy Huang <hjc@rock-chips.com>
-  *      Mark Yao <mark.yao@rock-chips.com>
-diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.c b/drivers/gpu/drm/rockchip/rockchip_rgb.c
-index dbfbde24698e..811020665120 100644
---- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:
-  *      Sandy Huang <hjc@rock-chips.com>
-  */
-diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.h b/drivers/gpu/drm/rockchip/rockchip_rgb.h
-index 1bd4e20e91eb..116f958b894d 100644
---- a/drivers/gpu/drm/rockchip/rockchip_rgb.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_rgb.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:
-  *      Sandy Huang <hjc@rock-chips.com>
-  */
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-index 4ee56ad7b811..cbabec73685b 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author: Andy Yan <andy.yan@rock-chips.com>
-  */
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-index 8998967f0c00..4e2099d86517 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  */
- 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.h b/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
-index fbf1bcc68625..addf8ca085f6 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0-only */
- /*
-- * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-+ * Copyright (C) Rockchip Electronics Co., Ltd.
-  * Author:Mark Yao <mark.yao@rock-chips.com>
-  */
- 
++	if (tdc->status == DMA_PAUSED)
++		ret = DMA_PAUSED;
++
+ 	spin_lock_irqsave(&tdc->vc.lock, flags);
+ 	vd = vchan_find_desc(&tdc->vc, cookie);
+ 	if (vd) {
 -- 
-2.34.1
+2.47.0
 
 
