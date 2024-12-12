@@ -1,140 +1,86 @@
-Return-Path: <linux-kernel+bounces-443222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798279EE8FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:36:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466DC9EE902
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:36:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A5F18864E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D2D16742E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E70215773;
-	Thu, 12 Dec 2024 14:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A902147FD;
+	Thu, 12 Dec 2024 14:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="QvdsJ27z";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="QvdsJ27z"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="kchngzSj"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4877421506B;
-	Thu, 12 Dec 2024 14:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B60A2153D2;
+	Thu, 12 Dec 2024 14:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734014152; cv=none; b=IjS6CDUCqGrQLhXX8wUWuilrANZrYPWTnDzfLZPO9cUcHUK3B4rECBkT/+p5nmgWICVsl2fyKCsj5OJbGM6LF+14u1/scg4Zl80c/Y0/mWSE51yExrLTxugBYwLedNNsbDuXwwjChUXOgFhLEA0bacdhPzKzDY0JRBTQ7nFtvjU=
+	t=1734014175; cv=none; b=TxCvFEgHcweY9APjITMbDGEUzwE4ETlp7RBSB5qkzl+0fQK3VeYZZhzBSmv7UiEc2z04RD3/TLrJFgpXE3IGiD01efuWxMzdThVwP3AtYZfgIZRKJWKFbbWvGyqDISFyKRvUlt0OIO+HDioBmuJXp8HLOxnk1Hc1kEqi9PoEA6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734014152; c=relaxed/simple;
-	bh=/BRyeJOSctv9s1dQvG8sTNwD6gQGaxrOOiPNVZ+2V7Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kwT0VMjWbh9dPbeDX5dhAJjAv0KOHMaXg9ghVSYid9lURXQdlX9KRuUPS/ZKljZVtA7iLQgQdP9oGyqaei291rBA4cP8FR3vNjfNexp+xn+KIlvSELiPIE5nK5r7F7s25z/iynHTJ0R2Tv7jv3nlxRmZp94WK/4u5CZGZYqXyZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=QvdsJ27z; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=QvdsJ27z; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1734014149;
-	bh=/BRyeJOSctv9s1dQvG8sTNwD6gQGaxrOOiPNVZ+2V7Q=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=QvdsJ27z5wkJCJ5m43ZyRYBnzb7b+SoX2jhwxvSLRL24QScwT0W6YeZt4C56j3YhO
-	 eO8Q8rwjhEx2Rp0089mTePmHhllRLT6X/lJ+wWz3NMtgwqWRnsFEcMb/DJC4n/TVPx
-	 jx166VNefKJRiDQFJ6Upoeh2u7CRYTepsIYgDZi0=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id E708312879AF;
-	Thu, 12 Dec 2024 09:35:49 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id qTv-JLffv6fG; Thu, 12 Dec 2024 09:35:49 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1734014149;
-	bh=/BRyeJOSctv9s1dQvG8sTNwD6gQGaxrOOiPNVZ+2V7Q=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=QvdsJ27z5wkJCJ5m43ZyRYBnzb7b+SoX2jhwxvSLRL24QScwT0W6YeZt4C56j3YhO
-	 eO8Q8rwjhEx2Rp0089mTePmHhllRLT6X/lJ+wWz3NMtgwqWRnsFEcMb/DJC4n/TVPx
-	 jx166VNefKJRiDQFJ6Upoeh2u7CRYTepsIYgDZi0=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2BDBB1286F1F;
-	Thu, 12 Dec 2024 09:35:48 -0500 (EST)
-Message-ID: <b92113a11f121dc4d485b5ba522c8c8c0781d1be.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/3] tpm: add generic platform device
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Stefano Garzarella <sgarzare@redhat.com>, Claudio Carvalho
-	 <cclaudio@linux.ibm.com>, Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-coco@lists.linux.dev, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Peter Huewe <peterhuewe@gmx.de>, "H. Peter
- Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org, x86@kernel.org,
- Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>, Jarkko
- Sakkinen <jarkko@kernel.org>, linux-kernel@vger.kernel.org, Ingo Molnar
- <mingo@redhat.com>,  Thomas Gleixner <tglx@linutronix.de>, Dov Murik
- <dovmurik@linux.ibm.com>, Oliver Steffen <osteffen@redhat.com>
-Date: Thu, 12 Dec 2024 09:35:46 -0500
-In-Reply-To: <zzi3fvbo2rnb2d76soseuekwaqe22ifnrhhjplqhvw6x26lbb4@nmcqylrenzyj>
-References: <20241210143423.101774-1-sgarzare@redhat.com>
-	 <20241210143423.101774-2-sgarzare@redhat.com>
-	 <zzi3fvbo2rnb2d76soseuekwaqe22ifnrhhjplqhvw6x26lbb4@nmcqylrenzyj>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1734014175; c=relaxed/simple;
+	bh=nUZxJTWypj8JfSnkBiydA2f4lpYBw/GKwXIKh2nFhe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e15CWcXd1PESVv90lk3Rk6xrdfdfpyA2RitR19y/Cpcih1FseDeFRLgbOOrVDNImkVPQDcCay9Yb2b/IsAtAsm5xqTIUjDcBHWCg/U7IWSAz1H7RXI3aT7ijsgeaCNQBlJvK2PWlsz5xmYAgWqAWnureaFsF7/YLDxACtVgKwEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=kchngzSj; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc (unknown [10.10.165.8])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 4968640755ED;
+	Thu, 12 Dec 2024 14:36:03 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 4968640755ED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1734014163;
+	bh=p2WyKkU+cEtAYkFhULkAi799mTRf4lFMSMN41qLYyGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kchngzSj9SbvgCT4iMIeQ9QlDyd994/fiX4HyxQApzmO0GglbTbUVRfOZocLdLSm8
+	 YBk5BFwPd7eupzbg7u8MdvBvXHYtCxQi3aEtVUtNdrcb6EvVA55u3BbpVhnAd5tX5I
+	 U2XZ4Nha5iGAIvZz4IhqH1y5ZHLQ3CCjMCyA1Enk=
+Date: Thu, 12 Dec 2024 17:35:59 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, x86@kernel.org,
+	Alexander Antonov <alexander.antonov@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH] perf/x86/uncore: avoid null-ptr-deref on error in
+ pmu_alloc_topology
+Message-ID: <20241212-b509bf429d38f4c579b5a2a2-pchelkin@ispras.ru>
+References: <20240204134841.80003-1-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240204134841.80003-1-pchelkin@ispras.ru>
 
-On Thu, 2024-12-12 at 10:51 +0100, Stefano Garzarella wrote:
-> On Tue, Dec 10, 2024 at 03:34:21PM +0100, Stefano Garzarella wrote:
-[...]
-> > +static int tpm_platform_recv(struct tpm_chip *chip, u8 *buf,
-> > size_t len)
-> > +{
-> > +       struct tpm_resp *resp = (struct tpm_resp *)buffer;
-> > +
-> > +       if (resp->size < 0)
-> > +               return resp->size;
+On Sun, 04. Feb 16:48, Fedor Pchelkin wrote:
+> If topology[die] array allocation fails then topology[die][idx] elements
+> can't be accessed on error path.
 > 
-> While reviewing Oliver's work for the driver in edk2[1], I noticed
-> that
-> there wasn't this check and asked to add it, but talking to him and
-> looking in the code/spec, we realized that it's strange that
-> tpm_resp.size field is signed.
+> Checking this on the error path probably looks more readable than
+> decrementing the counter in the allocation loop.
 > 
->  From SVSM spec it looks like it can't be negative:
+> Found by Linux Verification Center (linuxtesting.org).
 > 
->      Table 17: TPM_SEND_COMMAND Response Structure
-> 
->      Byte     Size        Meaning
->      Offset   (Bytes)
->      0x000    4           Response size (in bytes)
->      0x004    Variable    Variable Response
-> 
-> And also Coconut SVSM remap it to the `responseSize` of the TCG TPM
-> implementation which is unsigned:
-> 
->      LIB_EXPORT void _plat__RunCommand(
->          uint32_t        requestSize,   // IN: command buffer size
->          unsigned char*  request,       // IN: command buffer
->          uint32_t*       responseSize,  // IN/OUT: response buffer
-> size
->          unsigned char** response       // IN/OUT: response buffer
->      )
-> 
-> @James, @Claudio, @Tom, should we use u32 for tpm_resp.size?
+> Fixes: 4d13be8ab5d4 ("perf/x86/intel/uncore: Generalize IIO topology support")
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-The original idea was to allow the protocol to return an error (like
-out of memory or something) before the command ever got to the TPM
-rather than having to wrap it up in a TPM error.  However, that's done
-in the actual return from the SVSM call, which the sendrecv routine
-checks, so I agree this can be removed and a u32 done for the length. 
-Dov did recommend we should check the returned length against the
-maximum allowable:
+Hi,
 
-https://lore.kernel.org/linux-coco/f7d0bd07-ba1b-894e-5e39-15fb1817bc8b@linux.ibm.com/
+ping as the patch seems to have been missed. FWIW, it's still applicable to
+the mainline.
 
-Regards,
-
-James
-
+--
+Thanks,
+Fedor
 
