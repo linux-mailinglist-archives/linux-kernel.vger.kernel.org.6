@@ -1,175 +1,183 @@
-Return-Path: <linux-kernel+bounces-442826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27299EE27D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:19:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6D59EE280
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:19:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3797284179
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:19:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5B4284635
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B38120E01B;
-	Thu, 12 Dec 2024 09:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC90420E6E2;
+	Thu, 12 Dec 2024 09:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPY+M4Ev"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="eQJU7Rev"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136CA204C36
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74C5204C36
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733995151; cv=none; b=O3YnlYsRjHktdIWdaOiHYQr84DD3HwMUqRQ50GJOhKcmCNw6jX9OnxiCE8R8mO5EkZ+pPdYe32W52uBvAZWREYbwFSmaHntZoTsTDOuzg0L33zbfqnP74oY/9uVZS/KNAD2rgkoLPREqBjqy8YAP8uPNCbOsN1c9sMbY1r7G83U=
+	t=1733995180; cv=none; b=BLTdqUse2Xne/z3zXLqAk6k0Jst48rtEHed9ZwXRX9eJlXBryvPE0DCSzfWZEgiVyICe4SpxAMHv5ZI0CbX4BNPlNjXGjuXIaRHf4lNCMvLuqOS2ZShKkyjhrndh62vSSa7wfaGOm0zxYJppRbQiXy670n0f5F9jDkvzbB089c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733995151; c=relaxed/simple;
-	bh=c/rmTbU+GJWgA3he8Ah/ZUdi0VIhRgyvy/SJqXEbMK4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LqVr1mdU0Pp7xjzuYKG1WpPSrgrZXr1DXEGqQZSf0V5n9GeZcd+gHanH2pV3IK0P2rGHV7PDIEoUTn1VGuGyoGUlwtQY1k4lfmQOlF5D9YLHJr/DM5WJ9Vmfr3gYl8ev4dKd4TbBaSq2H7DgzSVgVcAHNGSMrRE9/F17NlUOT9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPY+M4Ev; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3863494591bso165179f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:19:09 -0800 (PST)
+	s=arc-20240116; t=1733995180; c=relaxed/simple;
+	bh=+XYxslf9807ANkkmItLTVtW58UAN7h4Ov1PT5JQxV70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mGpW/g+osmi/JuO157/9Q5zJU8d0cvqYSrbLrL1EUBbINbEJEgMr1yV40AFY7j3L6pFdM4pp53iw7OdhjcwLFqQeHw6wnPSYDXZ48GApVK7Qg89PJndR7azzkOfIV4/hSp29PQKu1q+lnXff2Z9P2ltxOSybGdUGiR6N0XMourI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=eQJU7Rev; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9ec267b879so69568266b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:19:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733995148; x=1734599948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B0a9uVHj0MFII1RtSBeG+K+r0Fep1zBrIePBFN8AAic=;
-        b=JPY+M4EvgvRusl36tzanpqjHQzDEBgPSGXrod/cSgR6gwXeuJCqb7wi2zIRef4f/Rx
-         Kh5lCXny7yT5hOQp13evH3qzbD81L1QceJt5xnkVtn6cnyEN6wjGWIAIZoPUT59MKTex
-         nEU8/W5grrk2Xz4+wiX0az8djCezffm6n7S/ccVJATlyQ+6eSWDrLwEyc51bUnS1Op+Y
-         p0I5SLtcpGH+4qEzSWt+puuqK0yOO1JkPKRc609NevApfkQB1hPdqk9VsfzGeL9B8oEN
-         nwxV0EscnaXC41oh608QvMdgfkm0Y9dlbOhnokX/htCKvj2XxW2kuGl1BCINk1yuf8g5
-         tRrQ==
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1733995175; x=1734599975; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dOT7SbPJ2rQiYOFe9U/+XO94gsWo7iytdYj0QsI0vmU=;
+        b=eQJU7RevsYAVcLLIoCNFBv3ISO7JlYYN5+OMTpYNix7MJu9lFgAuVE5JEGLH8XXRSN
+         Fk4Vms6DVsLepRkjnoliht7pgkH1AC7uF26j0noIHvcrueH4LsrVQcqSF1seo8f5UM60
+         lSqEYF9VL3jdk5DC0N0eY0RCzPRY1ZFTskkmGZka8qXp1uDLD2CgG5flSS+pgeu4ViU4
+         LtQmlSSKu6AvgSpWUc4um6mYCGSrReKABR2pnh22c2WoYQnYdvmKYS4t8VuGIBpFH76u
+         nwjDw98Hf0disync16tRgohk01Nr28h33V6EApR/GogAJfVUqJP89mOpiILiIvHwI2G9
+         BnpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733995148; x=1734599948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B0a9uVHj0MFII1RtSBeG+K+r0Fep1zBrIePBFN8AAic=;
-        b=QUxcf+lhgz45zxcMIbKUeRB1c+a+sgXJGxuYU6+rkrCbXQnRkEiVUOUrVgxCq8lakX
-         DLybwVQLPKc7pOMkhOzdWXfTY3deBsxwHtbelSfWqTig3SOuqSiW5QbkFUfUplfrZzjV
-         b3PCle/Jqa7kLGkPmmpjHXo9lcd0NA23GlBWkxvU6/lVlb6xZMz6rH3LjlhIFzflWJ1d
-         su4qRspgZKHU0CFeTVbDiC2aADeh4p5x/Lttw3esKBTbA1Yuxx8st2dEtyl/iEFzaB9Z
-         rBWogxLs0TCl6+UTIUqU+Ooei7fUuE8tX8PJ+tGymxyC0+TG8gBUVYrfLKy1hVSAyNmD
-         HJCA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8Lx8v30PB+xWa60yC7arhOp0Ny5ZoTwfdk3prpqignfEDzlvjucJ/RgNRDzYRK3Og/4awfl/Oxa0XX8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwglyxRSLI1mIeHPXMXLNP4QAtShf8HVsqnMYKDCDPtxmje/6Dd
-	laqotD7eauWysS3O0MG2fX1scFcLM2226U4xmmCRmqDFdB1NUDW5SRyjXOphc5QidTeFahic5mT
-	RSdXGPGZZuCjYAk+Vai7bGg3gtPTPJ7CNLkw=
-X-Gm-Gg: ASbGncs4euSL/vFo0/kJUmNeCp6YGFiyjgRdFsw9ef6cYB78eu/e97d0p2EPfVtDaWm
-	lbguPYiLppB3+mdhy9gN6yBlOKVLwjR/DwySYBss=
-X-Google-Smtp-Source: AGHT+IHgSIGyFnE08dyyP5NFrnFmPIIBGih2q0tSX3ULomU1UQVEgWDpmRj4F49p7i9YNu4ESNPLZDHhphuv4WV+WZs=
-X-Received: by 2002:a5d:47c6:0:b0:385:f062:c2df with SMTP id
- ffacd0b85a97d-3864ce4968emr5512699f8f.11.1733995148067; Thu, 12 Dec 2024
- 01:19:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733995175; x=1734599975;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dOT7SbPJ2rQiYOFe9U/+XO94gsWo7iytdYj0QsI0vmU=;
+        b=Sm5buctDUTWXiVU2eQSquwFRqSayUjuqCKJY6Bm4dHtJWJGyzT+uhm+kwpxEP03fBC
+         TjchU1WBpNNFYkfxHlTCtrbkT0ZdubEBlOkQG8D2MbcqcpQHsxzJKBsvrD5CCDqfIACd
+         BcPToBBPzJOBte0kDk2heHwRBVtt5ElTF9nLz5jjf6HMUjSdeGKbhpB9UAGpRvsxqxyn
+         SGOJzDQxQlrGZjCspWexPURygWQiMHCwFEFUYIwOD4auoWDtKx02B/gSGDrtggBjpQt9
+         IL3Q7N7mujy/Xyz6Ii0IbRtgP7Ow+p0R/b9SWG8IV5e00TGAO6IMrF8hAUlUzRHYm1Wf
+         Ma1w==
+X-Forwarded-Encrypted: i=1; AJvYcCX44pKeLddPSah4HJ9GA67OPzrA2gBEFHrEK8veea3wJdpizkoAS5SfjB349yUkffk57LKReCwuWA4OvA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+zHL33oXT2DBX8AAULxX8+YglheomLHTQPD2xsd3UWllFagaL
+	KPZ2MIGE5IfJ6MPz+ih0oKrEMI5RelEP9tskNXi+K+Mj9/bc+aTQjZp6in/Tygc=
+X-Gm-Gg: ASbGncvHi/2v7ni5HiNl/ofOzyLy9r4Rr73Ppy9Wq8Pm/A2YWaSQyg+jsb3kW3iR7c1
+	EEpbWusjVlsxLuk/8vN1mlrh+0Gj9SLjlAyrxtPV9rzTXovyip5Ni9F6plTnRneIi9vDV47icHZ
+	ZUOtk42yJ3+DGcuds/+JG5D+4RCLqcmeauQuvgkFYXRAbf5MohZJvdZbAntgb2lTxzLAtd9+uJO
+	VOJWqYDYA9Y+S2XY+v0jn0QtorhKZPd12YE+E2D0YKdvE5HVOLLr/Bic+U=
+X-Google-Smtp-Source: AGHT+IH1til71TqzpTAVwmRAgwAL54yooaxzeUzZ97FhI40WlFkHR2qJBaFdJHFiR4OgflPRhkitrA==
+X-Received: by 2002:a17:906:4d2:b0:aa6:b4b3:5925 with SMTP id a640c23a62f3a-aa6b4b36060mr462442666b.14.1733995175079;
+        Thu, 12 Dec 2024 01:19:35 -0800 (PST)
+Received: from [192.168.0.123] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa689a0a6fcsm549704566b.30.2024.12.12.01.19.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 01:19:34 -0800 (PST)
+Message-ID: <032ea83b-0df0-4c88-b0d1-153d9c1bf865@blackwall.org>
+Date: Thu, 12 Dec 2024 11:19:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
- <86cyi5tanz.wl-maz@kernel.org>
-In-Reply-To: <86cyi5tanz.wl-maz@kernel.org>
-From: richard clark <richard.xnu.clark@gmail.com>
-Date: Thu, 12 Dec 2024 17:18:56 +0800
-Message-ID: <CAJNi4rPDVXS3Ft3nHLXvMzHmn9d10Nz4Pxeduoe+v5HaK=CEAg@mail.gmail.com>
-Subject: Re: Question about interrupt prioriyt of ARM GICv3/4
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	will@kernel.org, "Russell King (Oracle)" <linux@armlinux.org.uk>, 
-	Mark Rutland <mark.rutland@arm.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	richard clark <richard.xnu.clark@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 1/2] bonding: fix xfrm offload feature setup on
+ active-backup mode
+To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>, Andy Gospodarek <andy@greyhouse.net>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241211071127.38452-1-liuhangbin@gmail.com>
+ <20241211071127.38452-2-liuhangbin@gmail.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20241211071127.38452-2-liuhangbin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi M,
+On 12/11/24 09:11, Hangbin Liu wrote:
+> The active-backup bonding mode supports XFRM ESP offload. However, when
+> a bond is added using command like `ip link add bond0 type bond mode 1
+> miimon 100`, the `ethtool -k` command shows that the XFRM ESP offload is
+> disabled. This occurs because, in bond_newlink(), we change bond link
+> first and register bond device later. So the XFRM feature update in
+> bond_option_mode_set() is not called as the bond device is not yet
+> registered, leading to the offload feature not being set successfully.
+> 
+> To resolve this issue, we can modify the code order in bond_newlink() to
+> ensure that the bond device is registered first before changing the bond
+> link parameters. This change will allow the XFRM ESP offload feature to be
+> correctly enabled.
+> 
+> Fixes: 007ab5345545 ("bonding: fix feature flag setting at init time")
+> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> ---
+>  drivers/net/bonding/bond_main.c    |  2 +-
+>  drivers/net/bonding/bond_netlink.c | 17 ++++++++++-------
+>  include/net/bonding.h              |  1 +
+>  3 files changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> index 49dd4fe195e5..7daeab67e7b5 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -4389,7 +4389,7 @@ void bond_work_init_all(struct bonding *bond)
+>  	INIT_DELAYED_WORK(&bond->slave_arr_work, bond_slave_arr_handler);
+>  }
+>  
+> -static void bond_work_cancel_all(struct bonding *bond)
+> +void bond_work_cancel_all(struct bonding *bond)
+>  {
+>  	cancel_delayed_work_sync(&bond->mii_work);
+>  	cancel_delayed_work_sync(&bond->arp_work);
+> diff --git a/drivers/net/bonding/bond_netlink.c b/drivers/net/bonding/bond_netlink.c
+> index 2a6a424806aa..7fe8c62366eb 100644
+> --- a/drivers/net/bonding/bond_netlink.c
+> +++ b/drivers/net/bonding/bond_netlink.c
+> @@ -568,18 +568,21 @@ static int bond_newlink(struct net *src_net, struct net_device *bond_dev,
+>  			struct nlattr *tb[], struct nlattr *data[],
+>  			struct netlink_ext_ack *extack)
+>  {
+> +	struct bonding *bond = netdev_priv(bond_dev);
+>  	int err;
+>  
+> -	err = bond_changelink(bond_dev, tb, data, extack);
+> -	if (err < 0)
+> +	err = register_netdevice(bond_dev);
+> +	if (err)
+>  		return err;
+>  
+> -	err = register_netdevice(bond_dev);
+> -	if (!err) {
+> -		struct bonding *bond = netdev_priv(bond_dev);
+> +	netif_carrier_off(bond_dev);
+> +	bond_work_init_all(bond);
+>  
+> -		netif_carrier_off(bond_dev);
+> -		bond_work_init_all(bond);
+> +	err = bond_changelink(bond_dev, tb, data, extack);
+> +	if (err) {
+> +		bond_work_cancel_all(bond);
+> +		netif_carrier_on(bond_dev);
 
-On Fri, Dec 6, 2024 at 5:37=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrote:
->
-> On Fri, 06 Dec 2024 08:33:11 +0000,
-> richard clark <richard.xnu.clark@gmail.com> wrote:
-> >
-> > Hi,
-> > Currently seems the GICv3/4 irqchip configures all the interrupts as
-> > the same priority, I am thinking about to minimize the latency of the
-> > interrupt for a particular device, e.g, the arm arch_timer in the RTL
-> > system. The question is,
-> > 1. Why don't we provide a /proc or /sys interface for the enduser to
-> > set the priority of a specific interrupt(SPI/PPI)?
->
-> I'm afraid this really has nothing to do with any particular interrupt
-> architecture.
->
-> Before thinking of exposing the interrupt priority to userspace, you
-> should look at what this translates into for the kernel once you allow
-> interrupts to be preempted by another one with a higher priority.
->
-Interrupt priority doesn't necessarily mean the preemption, seems
-you're talking about the interrupt preemption harm according to your
-statement followed.Frankly I am just thinking higher priority will win
-the lower ones in case massive external interrupts received in the GIC
-level (you see I am still talking about GIC, not kernel)
->
-> This means that at every point where you would normally see a
-> local_irq_save(), spinlock_irqsave() or equivalent, you would need to
-> explicitly specify the priority that you allow for preemption. You
-> should then make sure that any code that can be run during an
-> interrupt is reentrant. You need to define which data structures can
-> be manipulated at which priority level... The list goes on.
->
-irqsave just masks the interrupt from the point of cpu, I don't think
-it will mess things up if preemption really happens (no? then what the
-side-effect is for the nested interrupt handling in the softirq part.
-damage the semantic of the lock primitives?)
->
-> If you want a small taste of the complexity, just look at what
-> handling NMIs (or even pseudo-NMIs in the case of GICv3) means, and
-> generalise it to not just two, but an arbitrary range of priorities.
->
-> If you want the full blown experience, look at the BSDs and their use
-> of spl*(). I don't think anyone has any plan to get there, and the RT
-> patches have shown that there is little need for it.
->
-As supplement=EF=BC=8Cthe fiq is suggested to be used as an alternative to =
-the
-higher priority in the RT area...
->
-> > 2. Is there any way to verify the higher priority interrupt will have
-> > more dominant to be selected to the CPU (IOW, the priority is really
-> > working) in case of multiple different interrupts asserted to the GIC
-> > at the same time(some debug registers of GIC like GICD_REEMPT_CNT :-)
-> > to record higher priority wins)?
->
-> The GIC architecture makes no promise that the interrupt you
-> acknowledge is the highest priority pending interrupt, because this is
-> by definition a very racy process.
->
-> Also, even on busy systems, you will very rarely see two interrupts
-> targeting the same CPU being made pending at the same time, so that
-> the interrupt delivery system would have to arbitrate between the two.
-> That's because interrupts are vanishingly rare in the grand scheme of
-> things.
->
-1. I am trying to stress the external interrupts to the core#0 via the
-stress-ng tool with one of interrupt being configured as higher
-priority to see the benchmark data, it's time consuming as you can
-image, still is in progress(BTW, I can't see any lockup similar hang
-in the system with a higher priority configured)
-2. This raises a very interesting question and I am also very curious
-about is, what is the purpose for the GIC to introduce the interrupt
-priority features, a placeholder feature reserved for the future? Ah,
-hardware prefer to provide more functionalities than its being
-actually used by software, any other justification except that?
->
-> Thanks,
->
->         M.
->
-> --
-> Without deviation from the norm, progress is not possible.
+The patch looks good, but I'm curious why the carrier on here?
+
+> +		unregister_netdevice(bond_dev);
+>  	}
+>  
+>  	return err;
+> diff --git a/include/net/bonding.h b/include/net/bonding.h
+> index 8bb5f016969f..e5e005cd2e17 100644
+> --- a/include/net/bonding.h
+> +++ b/include/net/bonding.h
+> @@ -707,6 +707,7 @@ struct bond_vlan_tag *bond_verify_device_path(struct net_device *start_dev,
+>  int bond_update_slave_arr(struct bonding *bond, struct slave *skipslave);
+>  void bond_slave_arr_work_rearm(struct bonding *bond, unsigned long delay);
+>  void bond_work_init_all(struct bonding *bond);
+> +void bond_work_cancel_all(struct bonding *bond);
+>  
+>  #ifdef CONFIG_PROC_FS
+>  void bond_create_proc_entry(struct bonding *bond);
+
 
