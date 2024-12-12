@@ -1,90 +1,115 @@
-Return-Path: <linux-kernel+bounces-442452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0B19EDD03
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:20:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 657CE9EDD07
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:22:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85D1A164826
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:22:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C9055C29;
+	Thu, 12 Dec 2024 01:22:07 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64030283548
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:20:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0974154F95;
-	Thu, 12 Dec 2024 01:20:26 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B2432C85
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88E01C32;
+	Thu, 12 Dec 2024 01:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733966425; cv=none; b=UpwseiK1UfhofhZb4HRaLaHcLq/TaLzZxONOtnsLk5cnFRqXTbcOOcreRnh1+Q0+e16WiBoen0scw33/pW1UxcaaPgJjSM+AAPP+W1GuDmM2tshM1RitKOXtnZS0gVILcIaDvgOC9KMEHNb8k642d2Woodv1wr7oqkXLuO6qn+g=
+	t=1733966527; cv=none; b=Wjh8S64pt9byiylImN/Q9gw5traI4Z2dEWYFbB3DmvFzaD7qgRLUrEUk2D9YmdL1MKUox2GFYSb/exeY1XLe2wr9k6MPTzTUQfIHrG86thGqVNmAFNiZtXi8AfQQeaNu8CUwFeA4fXg9vK3mQatgeETRIMwH7UOMb4WUkWPQJ9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733966425; c=relaxed/simple;
-	bh=Ci7EZQO9kHYiX5WxBfEiOLQLfrqjq9Y5QgAw+/BRYKA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QwhXhuh391BNnB/E5RB686pCQEiaCqcdxtCvHBvm3qGdPBBxOii+J3v4LUZ1VAFwLEOhYKd1261YIR8X06MZpsxQXQPvqID27/CvAbf/niXkY3X8Zza9y9JeHxjL5lM/fvc3sY7iwXznGh6fQmVtPVaO4l5p8ZOQkJZ3pUTv6pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1675a3a4b958-dc27b;
-	Thu, 12 Dec 2024 09:20:12 +0800 (CST)
-X-RM-TRANSID:2ee1675a3a4b958-dc27b
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.102])
-	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee2675a3a4b1fa-50747;
-	Thu, 12 Dec 2024 09:20:11 +0800 (CST)
-X-RM-TRANSID:2ee2675a3a4b1fa-50747
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: tglx@linutronix.de
-Cc: mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] mm/x86: Redefine pgd_clear
-Date: Thu, 12 Dec 2024 09:20:09 +0800
-Message-Id: <20241212012009.2147-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1733966527; c=relaxed/simple;
+	bh=3pKrhCeOg9qDsfy04RPZL9X/rwaJyhlT/wlJPRJcS0E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=r1CNgMu96iBGfSlnV8iLp8NcmJmuA9gMgFq3Xf2OeTNReieZJ+f/lEwAoQHimmD3S6w99+GlvXVcRW7RVr62BBEqYWua1uiNwz5qb0R8U0BJsiCo/7omKYEOplx5N0DowNPAQsQmoLD7ad1ya+Wu3ad/Yw2UqCLpclK5Ml4EX6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tLXt7-000000006RP-1ScK;
+	Wed, 11 Dec 2024 20:21:09 -0500
+Message-ID: <1764e2fc8cff5b07aa9df1ae90a13986a3949250.camel@surriel.com>
+Subject: Re: [PATCH] memcg: allow exiting tasks to write back data to swap
+From: Rik van Riel <riel@surriel.com>
+To: Balbir Singh <balbirs@nvidia.com>, Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>, Roman Gushchin
+ <roman.gushchin@linux.dev>,  Shakeel Butt <shakeel.butt@linux.dev>, Muchun
+ Song <muchun.song@linux.dev>, Andrew Morton	 <akpm@linux-foundation.org>,
+ cgroups@vger.kernel.org, linux-mm@kvack.org, 	linux-kernel@vger.kernel.org,
+ kernel-team@meta.com, Nhat Pham <nphamcs@gmail.com>,  Yosry Ahmed
+ <yosryahmed@google.com>
+Date: Wed, 11 Dec 2024 20:21:08 -0500
+In-Reply-To: <766a28a1-c82b-46fd-b3b0-fe3b6024f462@nvidia.com>
+References: <20241211105336.380cb545@fangorn>
+	 <766a28a1-c82b-46fd-b3b0-fe3b6024f462@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Sender: riel@surriel.com
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Thu, 2024-12-12 at 10:15 +1100, Balbir Singh wrote:
+> On 12/12/24 02:53, Rik van Riel wrote:
+> >=20
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 7b3503d12aaf..03d77e93087e 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -5371,6 +5371,15 @@ bool
+> > mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
+> > =C2=A0	if (!zswap_is_enabled())
+> > =C2=A0		return true;
+> > =C2=A0
+> > +	/*
+> > +	 * Always allow exiting tasks to push data to swap. A
+> > process in
+> > +	 * the middle of exit cannot get OOM killed, but may need
+> > to push
+> > +	 * uncompressible data to swap in order to get the cgroup
+> > memory
+> > +	 * use below the limit, and make progress with the exit.
+> > +	 */
+> > +	if ((current->flags & PF_EXITING) && memcg =3D=3D
+> > mem_cgroup_from_task(current))
+> > +		return true;
+> > +
+> > =C2=A0	for (; memcg; memcg =3D parent_mem_cgroup(memcg))
+> > =C2=A0		if (!READ_ONCE(memcg->zswap_writeback))
+> > =C2=A0			return false;
+>=20
+> Rik,
+>=20
+> I am unable to understand the motivation here, so we want=20
+> mem_cgroup_zswap_writeback_enabled() to return true, it only
+> returns false if a memcg in the hierarchy has zswap_writeback
+> set to 0 (false). In my git-grep I can't seem to find how/why
+> that may be the case. I can see memcg starts of with the value
+> set to true, if CONFIG_ZSWAP is enabled.
+>=20
+> Your changelog above makes sense, but I am unable to map it to
+> the code changes.
+>=20
 
-Do not use the 'void' type in conditional expression.
+Wait, are you asking about the code that I'm
+adding, or about the code that was already
+there?
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- arch/x86/include/asm/pgtable.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I want to add the code that allows zswap
+writeback if the reclaiming task is exiting,
+and in the same cgroup as the to be written
+back memory.
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 593f10aabd45..c149e47122b8 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -74,7 +74,10 @@ extern pmdval_t early_pmd_flags;
- 
- #ifndef __PAGETABLE_P4D_FOLDED
- #define set_pgd(pgdp, pgd)		native_set_pgd(pgdp, pgd)
--#define pgd_clear(pgd)			(pgtable_l5_enabled() ? native_pgd_clear(pgd) : 0)
-+#define pgd_clear(pgd) do {						\
-+	if (pgtable_l5_enabled())					\
-+		native_pgd_clear(pgd);			\
-+} while (0)
- #endif
- 
- #ifndef set_p4d
--- 
-2.33.0
-
-
-
+--=20
+All Rights Reversed.
 
