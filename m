@@ -1,119 +1,143 @@
-Return-Path: <linux-kernel+bounces-443367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302079EEED6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:02:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FFBF1882ABB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:56:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BA66F2FE;
-	Thu, 12 Dec 2024 15:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbTyuEFz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38219EEEAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:00:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F08215764;
-	Thu, 12 Dec 2024 15:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 745ED28DA1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:00:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE9E22A7EB;
+	Thu, 12 Dec 2024 15:57:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8D3229696;
+	Thu, 12 Dec 2024 15:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018941; cv=none; b=HaA+Qukjxt+CksE8MEAFg9MngHr9DEIG/bWnUiAbN5mefpMiuUyT4gUpViKqRQKl8gTBMuuKXzkQbpQ2TReVMvKejWffvljvMNrWwu3WylfnVWxdMtHnGe/DbTfEs29LVMg5S6Ge8wdxoWO8L3vwegDuWs55JaIPxRAVTks9uDo=
+	t=1734019036; cv=none; b=ZZjNJ2OOL7sYkuNeXCnUQpb0j2h0vecAwGUrV5jVqAZiHOWMKWANSMDDg0H1WgFAqpbR61OUjLIdGXWGNqb3E3alLoFANz4z5vRWKX1TtcOq3laMNoTditN5tOlcxhngv0BYiI7ZRHBGI3YTnAUvzT9Rnd7eTkJ0etcjd7PpHOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018941; c=relaxed/simple;
-	bh=PKNBf0TCKuwNcifWvhSa7hUFVANZKsYx7vGJQEMnWHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oo3yWXeinRwcFx5xeplb7M8e7G3MBAiGur17IHghqY+fTz0AMxkQxv1xo3Dl1gnBXqk+W7RxDDLHnFCtEBbCNYbheuCrTaFPex47aPBk1zKrvx8yH5I5ar7Wxl7XTejV612SuBv5dnpAGwWlqXQpCNAjrjzZ3kMGTkgKnie8PtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbTyuEFz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9073DC4CED3;
-	Thu, 12 Dec 2024 15:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734018940;
-	bh=PKNBf0TCKuwNcifWvhSa7hUFVANZKsYx7vGJQEMnWHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JbTyuEFzQhdRJOmDrKJyk9vWtv59qHQf6NV5vzbP3QL+w07scAiTpND/D+fCd5C8M
-	 HGFo7Zr4lA5KuhQLh7wMkG5WWx5Kwal2PKprL1LophqlY/WN+VyLBpsZN7PTE0uCjd
-	 XCQ0F8h0QOZONPX2obr7xgnwPTHDCgpgZWYhjXMhHfrPQXzgzL7yfoJDVJvO65o1bq
-	 w/zHPnbEtKLRQh0t0kyUZvpJsBX6ZnpdESQlKb/vt8tTSwZJc/KFJ6+Q+rhQJ5VEUp
-	 PKEBQhBU2DPnV/ofyaUbQV54Hzth2cvwnkNcKOatzAiuYps8eAMqojXzk68jfIL7aF
-	 PBNJQBAh1PLCA==
-Date: Thu, 12 Dec 2024 15:55:33 +0000
-From: Lee Jones <lee@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, jic23@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	jdelvare@suse.com, linux@roeck-us.net,
-	srinivas.pandruvada@linux.intel.com, bentiss@kernel.org,
-	dmitry.torokhov@gmail.com, pavel@ucw.cz, ukleinek@debian.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-input@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v9 1/9] HID: hid-sensor-hub: don't use stale
- platform-data on remove
-Message-ID: <20241212155533.GG7139@google.com>
-References: <20241107114712.538976-1-heiko@sntech.de>
- <20241211120844.GD7139@google.com>
- <n914pn7o-pr9n-5ss0-p744-73402nnn843p@xreary.bet>
- <3196449.TQGk6oTFT5@diego>
- <4s41717n-3888-os6o-384n-7678n0361r0s@xreary.bet>
+	s=arc-20240116; t=1734019036; c=relaxed/simple;
+	bh=6P0VYfA+VmKm3ngO06jIsw7ZfLMrz0VWf1Hlq+xp+qM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t7H4B01bbKbJ2pVZjaPcyhJr9Ji+Fz6AKhVaWmEdk5xhwWgsaGob+VgyYSIWiU8GUTDDp3D0o6a+Cq2P6aZ8r/Z9rpeLvs5M8M4GzrT/LpaRItGAcp3Lw9nNh3aGFjFkhsIftrSCszHZ+3H6vMtufb0bqdtvdDuYlbk4USDNqFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0E7D1764;
+	Thu, 12 Dec 2024 07:57:42 -0800 (PST)
+Received: from e122027.cambridge.arm.com (e122027.cambridge.arm.com [10.1.39.50])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 018213F720;
+	Thu, 12 Dec 2024 07:57:10 -0800 (PST)
+From: Steven Price <steven.price@arm.com>
+To: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Steven Price <steven.price@arm.com>
+Subject: [PATCH v6 09/43] kvm: arm64: Expose debug HW register numbers for Realm
+Date: Thu, 12 Dec 2024 15:55:34 +0000
+Message-ID: <20241212155610.76522-10-steven.price@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241212155610.76522-1-steven.price@arm.com>
+References: <20241212155610.76522-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4s41717n-3888-os6o-384n-7678n0361r0s@xreary.bet>
 
-On Wed, 11 Dec 2024, Jiri Kosina wrote:
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-> On Wed, 11 Dec 2024, Heiko Stübner wrote:
-> 
-> > > > > > > This change was more or less a surprise find, because I wanted to make
-> > > > > > > the platform_data pointer in the mfd_cell struct const and this the hid
-> > > > > > > sensor hub stood out as doing something strange ;-) .
-> > > > > > > 
-> > > > > > > So patch 2 of this series actually depends on this change to not cause
-> > > > > > > build errors.
-> > > > > > 
-> > > > > > Ah, right.
-> > > > > > 
-> > > > > > > But seeing that we're after -rc6 alredy, I would assume the brunt of the 
-> > > > > > > mcu series might need to wait after 6.13-rc1 anyway - but I guess that 
-> > > > > > > depends on how Lee sees things ;-) .
-> > > > > > 
-> > > > > > OK, I am keeping my hands off it for the time being.
-> > > > > 
-> > > > > I can take it now with an Ack.
-> > > > 
-> > > > Looking to apply this set now.
-> > > > 
-> > > > Ack please.
-> > > 
-> > > I'd preferer if Srinivas could ack this as the more specific maintainer. 
-> > > Srinivas, please? 
-> > 
-> > The patch already includes the
-> >    Ack from Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> > from a previous version, so I guess it should be ok already?
-> 
-> Ah, I missed that, indeed, sorry for the noise.
-> 
-> With that
-> 
-> 	Acked-by: Jiri Kosina <jkosina@suse.com>
-> 
-> and Lee, please feel free to take it.
+Expose VM specific Debug HW register numbers.
 
-Thanks, will do.
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Steven Price <steven.price@arm.com>
+---
+ arch/arm64/kvm/arm.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
+diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+index 2bbf30d66424..c505ec61180a 100644
+--- a/arch/arm64/kvm/arm.c
++++ b/arch/arm64/kvm/arm.c
+@@ -78,6 +78,22 @@ bool is_kvm_arm_initialised(void)
+ 	return kvm_arm_initialised;
+ }
+ 
++static u32 kvm_arm_get_num_brps(struct kvm *kvm)
++{
++	if (!kvm_is_realm(kvm))
++		return get_num_brps();
++	/* Realm guest is not debuggable. */
++	return 0;
++}
++
++static u32 kvm_arm_get_num_wrps(struct kvm *kvm)
++{
++	if (!kvm_is_realm(kvm))
++		return get_num_wrps();
++	/* Realm guest is not debuggable. */
++	return 0;
++}
++
+ int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
+ {
+ 	return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
+@@ -350,7 +366,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_ARM_IRQ_LINE_LAYOUT_2:
+ 	case KVM_CAP_ARM_NISV_TO_USER:
+ 	case KVM_CAP_ARM_INJECT_EXT_DABT:
+-	case KVM_CAP_SET_GUEST_DEBUG:
+ 	case KVM_CAP_VCPU_ATTRIBUTES:
+ 	case KVM_CAP_PTP_KVM:
+ 	case KVM_CAP_ARM_SYSTEM_SUSPEND:
+@@ -358,6 +373,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_COUNTER_OFFSET:
+ 		r = 1;
+ 		break;
++	case KVM_CAP_SET_GUEST_DEBUG:
++		r = !kvm_is_realm(kvm);
++		break;
+ 	case KVM_CAP_SET_GUEST_DEBUG2:
+ 		return KVM_GUESTDBG_VALID_MASK;
+ 	case KVM_CAP_ARM_SET_DEVICE_ADDR:
+@@ -403,10 +421,10 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 		r = cpus_have_final_cap(ARM64_HAS_32BIT_EL1);
+ 		break;
+ 	case KVM_CAP_GUEST_DEBUG_HW_BPS:
+-		r = get_num_brps();
++		r = kvm_arm_get_num_brps(kvm);
+ 		break;
+ 	case KVM_CAP_GUEST_DEBUG_HW_WPS:
+-		r = get_num_wrps();
++		r = kvm_arm_get_num_wrps(kvm);
+ 		break;
+ 	case KVM_CAP_ARM_PMU_V3:
+ 		r = kvm_arm_support_pmu_v3();
 -- 
-Lee Jones [李琼斯]
+2.43.0
+
 
