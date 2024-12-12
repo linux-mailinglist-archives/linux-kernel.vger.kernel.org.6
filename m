@@ -1,203 +1,166 @@
-Return-Path: <linux-kernel+bounces-443465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8FCF9EF19D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:39:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4DD9EF25E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:48:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3878617B6C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 573CA18986CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29FF236FBA;
-	Thu, 12 Dec 2024 16:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B7823A1A1;
+	Thu, 12 Dec 2024 16:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FG5qBbGZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BPUYpORk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48826226540
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B59229678;
+	Thu, 12 Dec 2024 16:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734020550; cv=none; b=OSZLQJ5Yl5tfMfVfzpgx+k0I8KAUUQMp2m5KJLbBcODmK266mBOJl862qaFUbVEGP7dkSQQhbBVY1iFFOTYuykVGPSAp0JI15XbniBz99WkW6P70clxB+y/0tJamYblGZ1CZiL11a5tP4KmaqvuUvwtnezMs/iZmEB4CBuP5QqM=
+	t=1734020732; cv=none; b=ALXRBjtCJjq46RP6jb2QXgNeAEm+EdOf7ygKcSH9Fsv5X3WWX7InZ7A/M53rBZ8rFo9kxSvcbbW34gcfDA8Nxf5BmDH1nokE69L6WoAu6xx0kRf2+H+O0w2TigwZe2NztHzTK3kM3IZ8Y6T7RYBtn7txBDSgAeaw/klFjXog0SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734020550; c=relaxed/simple;
-	bh=0gZG4E+lI17ylP0f1KSzZLx6ghl2G3iZ0xfmkYVpC0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aod4As+EsMDwnDHxS8mgNcGEanUTwxQUa9/z2bArZ4cIC7xWIg362wyqO+eBpU3DBttB97rdIp/yd3Vf3fCQrezylnbAJWTGv9BxD24NBVkQMsi5xX7vuW80I1oEz6v14tDrMU33/tu1I6D55C3erE8bbrX6Krb4ZE/k5sdBdfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FG5qBbGZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E38C4CECE;
-	Thu, 12 Dec 2024 16:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734020550;
-	bh=0gZG4E+lI17ylP0f1KSzZLx6ghl2G3iZ0xfmkYVpC0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FG5qBbGZCMBihr7rFevPxWzXK77IQ6okBvEg2D4dRhnWcHbEHuTdIHNrjOD2S8VFr
-	 f6N/zXLc/+/FWQeJIgdTurh0VVOYQVrr4tMgtEn58Unb3PAG109HQTJ0J5adQcwmth
-	 oyR89XV/WP3/1spB/txmaVA8T/6T2sBaSW4i/NLK7iG7urz7OtstiPzMBjaqPQnS4u
-	 XQyzgyZGw+jjSlvjUx/ra+/lCpj84N8iu4d9vTGsy1YB4EvHI9TQmjSKzMq3hYbWGI
-	 E88meINsxfMpePD//iF6lqzqqi2bqbdk6P0CAYVI08hsfi+vytrW7WULTIkqjJPIO9
-	 MIaaqrsU58gwg==
-Date: Thu, 12 Dec 2024 16:22:27 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: yi sun <sunyibuaa@gmail.com>
-Cc: Yi Sun <yi.sun@unisoc.com>, chao@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com,
-	Hao_hao.Wang@unisoc.com, ke.wang@unisoc.com
-Subject: Re: [PATCH v3 5/5] f2fs: Optimize f2fs_truncate_data_blocks_range()
-Message-ID: <Z1sNw-rrvAnpwY3r@google.com>
-References: <20241104034545.497907-1-yi.sun@unisoc.com>
- <20241104034545.497907-6-yi.sun@unisoc.com>
- <CALpufv34r8cMv0BtGXWLd_LEBjtMGM+CZ=XpnsL8Qr8WOsOk6Q@mail.gmail.com>
+	s=arc-20240116; t=1734020732; c=relaxed/simple;
+	bh=vGAEDmrrxJR67HcmDsQm9Ej3F9JoAnhDptOHqFy3E6w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Py6trTGGzjSQZo7zCRhp7C6f/33mI3Qf9NbidmN3ffiYOQQgrL/qbj9Fa4e9BQkcvtmMJdLKXwO3iKI3/MQG+xlrixlVK+WVsiglfno3pFBBCxE2O5SD4OhIbCClfXGZlZbgOO5yeCLFG1LlOZZ0VHBTJ3mS5sB2QZ24vG4tUVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BPUYpORk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7pCd3002061;
+	Thu, 12 Dec 2024 16:25:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=VdNbqiA/jWA5zUEQ0a0xj5
+	sMueOUmzcP5KTmWF4092c=; b=BPUYpORkiAN3KNTFLS7stKUadprQi14kCkaR6N
+	5mK+Fqw0n5FdUmhKTaGNnZRzMqkxbT+Wm2LwUA2NSmEpfuZj06wlB753o5Txnb3+
+	gpa9qyVkVOKwDPYyM5gDx4E6cEgbCUezJKq7HLAKlCQFZnFcxPF8THzQsby+YOyB
+	Z2lPefX85O4Zi+P/dukweTdUf4hKAwe1u+kFEQCsI0rmQbfnu9gBSqkOVuxvIkwf
+	hNljXYac3HnSDeZEQrVEFtIsheKHZt2tDY5o+ucNjehgVV6YRRY76QRteRMV0lV8
+	JwBiwCfmfSYZgGS6yNLf6v7PhXFm+GuFUUaXsOm5ZgpMonBA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eyg663qg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 16:25:08 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BCGP7KW004935
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 16:25:07 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 12 Dec 2024 08:24:59 -0800
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Bard Liao
+	<yung-chuan.liao@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, "Takashi
+ Iwai" <tiwai@suse.com>
+CC: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+        Sanyog Kale
+	<sanyog.r.kale@intel.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_pkumpatl@quicinc.com>, <kernel@quicinc.com>,
+        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Subject: [PATCH v5 0/4] Add static channel mapping between soundwire master and slave
+Date: Thu, 12 Dec 2024 21:53:30 +0530
+Message-ID: <20241212162334.36739-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALpufv34r8cMv0BtGXWLd_LEBjtMGM+CZ=XpnsL8Qr8WOsOk6Q@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QTGaPIH4OGNnX62KYaGeXgMvSpvKw8y3
+X-Proofpoint-ORIG-GUID: QTGaPIH4OGNnX62KYaGeXgMvSpvKw8y3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 priorityscore=1501 adultscore=0 impostorscore=0
+ mlxlogscore=999 phishscore=0 suspectscore=0 mlxscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120118
 
-On 12/11, yi sun wrote:
-> Kindly ping.
-> I think there are no problems with the first few patches, but the
-> current patch may still have room for improvement. Do you have any
-> good suggestions?
+Add static channel map support between soundwire master and slave.
 
-Hi, may I ask for some basic tests? Have you run xfstests?
+Currently, the channel value for each soundwire port is hardcoded in the
+wcd937x-sdw driver and the same channel  value is configured in the
+soundwire master.
 
-> 
-> On Mon, Nov 4, 2024 at 11:46 AM Yi Sun <yi.sun@unisoc.com> wrote:
-> >
-> > Function f2fs_invalidate_blocks() can process continuous
-> > blocks at a time, so f2fs_truncate_data_blocks_range() is
-> > optimized to use the new functionality of
-> > f2fs_invalidate_blocks().
-> >
-> > Signed-off-by: Yi Sun <yi.sun@unisoc.com>
-> > ---
-> >  fs/f2fs/file.c | 72 +++++++++++++++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 68 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > index 9366e7fc7c39..d20cc5f36d4c 100644
-> > --- a/fs/f2fs/file.c
-> > +++ b/fs/f2fs/file.c
-> > @@ -612,6 +612,15 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
-> >         return finish_preallocate_blocks(inode);
-> >  }
-> >
-> > +static bool check_curr_block_is_consecutive(struct f2fs_sb_info *sbi,
-> > +                                       block_t curr, block_t end)
-> > +{
-> > +       if (curr - end == 1 || curr == end)
-> > +               return true;
-> > +       else
-> > +               return false;
-> > +}
-> > +
-> >  void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
-> >  {
-> >         struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-> > @@ -621,8 +630,27 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
-> >         int cluster_index = 0, valid_blocks = 0;
-> >         int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
-> >         bool released = !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks);
-> > +       /*
-> > +        * Temporary record location.
-> > +        * When the current  @blkaddr and @blkaddr_end can be processed
-> > +        * together, update the value of @blkaddr_end.
-> > +        * When it is detected that current @blkaddr is not continues with
-> > +        * @blkaddr_end, it is necessary to process continues blocks
-> > +        * range [blkaddr_start, blkaddr_end].
-> > +        */
-> > +       block_t blkaddr_start, blkaddr_end;
-> > +       /*.
-> > +        * To avoid processing various invalid data blocks.
-> > +        * Because @blkaddr_start and @blkaddr_end may be assigned
-> > +        * NULL_ADDR or invalid data blocks, @last_valid is used to
-> > +        * record this situation.
-> > +        */
-> > +       bool last_valid = false;
-> > +       /* Process the last @blkaddr separately? */
-> > +       bool last_one = true;
-> >
-> >         addr = get_dnode_addr(dn->inode, dn->node_page) + ofs;
-> > +       blkaddr_start = blkaddr_end = le32_to_cpu(*addr);
-> >
-> >         /* Assumption: truncation starts with cluster */
-> >         for (; count > 0; count--, addr++, dn->ofs_in_node++, cluster_index++) {
-> > @@ -638,24 +666,60 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
-> >                 }
-> >
-> >                 if (blkaddr == NULL_ADDR)
-> > -                       continue;
-> > +                       goto next;
-> >
-> >                 f2fs_set_data_blkaddr(dn, NULL_ADDR);
-> >
-> >                 if (__is_valid_data_blkaddr(blkaddr)) {
-> >                         if (time_to_inject(sbi, FAULT_BLKADDR_CONSISTENCE))
-> > -                               continue;
-> > +                               goto next;
-> >                         if (!f2fs_is_valid_blkaddr_raw(sbi, blkaddr,
-> >                                                 DATA_GENERIC_ENHANCE))
-> > -                               continue;
-> > +                               goto next;
-> >                         if (compressed_cluster)
-> >                                 valid_blocks++;
-> >                 }
-> >
-> > -               f2fs_invalidate_blocks(sbi, blkaddr, 1);
-> > +
-> > +               if (check_curr_block_is_consecutive(sbi, blkaddr, blkaddr_end)) {
-> > +                       /*
-> > +                        * The current block @blkaddr is continuous with
-> > +                        * @blkaddr_end, so @blkaddr_end is updated.
-> > +                        * And the f2fs_invalidate_blocks() is skipped
-> > +                        * until @blkaddr that cannot be processed
-> > +                        * together is encountered.
-> > +                        */
-> > +                       blkaddr_end = blkaddr;
-> > +                       if (count == 1)
-> > +                               last_one = false;
-> > +                       else
-> > +                               goto skip_invalid;
-> > +               }
-> > +
-> > +               f2fs_invalidate_blocks(sbi, blkaddr_start,
-> > +                                       blkaddr_end - blkaddr_start + 1);
-> > +               blkaddr_start = blkaddr_end = blkaddr;
-> > +
-> > +               if (count == 1 && last_one)
-> > +                       f2fs_invalidate_blocks(sbi, blkaddr, 1);
-> > +
-> > +skip_invalid:
-> > +               last_valid = true;
-> >
-> >                 if (!released || blkaddr != COMPRESS_ADDR)
-> >                         nr_free++;
-> > +
-> > +               continue;
-> > +
-> > +next:
-> > +               /* If consecutive blocks have been recorded, we need to process them. */
-> > +               if (last_valid == true)
-> > +                       f2fs_invalidate_blocks(sbi, blkaddr_start,
-> > +                                       blkaddr_end - blkaddr_start + 1);
-> > +
-> > +               blkaddr_start = blkaddr_end = le32_to_cpu(*(addr + 1));
-> > +               last_valid = false;
-> > +
-> >         }
-> >
-> >         if (compressed_cluster)
-> > --
-> > 2.25.1
-> >
+The Qualcomm board like the QCM6490-IDP require static channel map
+settings for the soundwire master and slave ports.
+
+If another boards which are using enable wcd937x, the channel mapping
+index values between master and slave may be different depending on the
+board hw design and requirements. If the above properties are not used
+in a SoC specific device tree, the channel mapping index values are set
+to default.
+
+With the introduction of the following channel mapping properties, it is
+now possible to configure the master channel mapping directly from the
+device tree.
+
+Added qcom_swrm_set_channel_map api to set the master channel values
+which allows more flexible to configure channel values in runtime for
+specific active soundwire ports.
+
+Add get and set channel maps support from codec to cpu dais in common
+Qualcomm sdw driver.
+
+Changes since v4:
+ - Update the order of channel map index values in v4-0001 dt-bindings patch as suggested by Krzysztof.
+ 
+Changes since v3:
+ - Change the order of channel map index values in v3-0002 dt-bindings patch as suggested by Krzysztof.
+ - Dropped V3-0001 patch which is not required.
+
+Changes since v2:
+ - Rephrase commit description v2-0001 dt-bindings patch as suggested by Krzysztof.
+
+Changes since v1:
+ - Modified the design and followed new approach to setting the master channel mask.
+ - Used existing set_channel_map api as suggested by Pierre-Louis
+ - Fixed the typo mistake in v1-0001 dt-bindings patch.
+ - Rephrase the commit description for all v1 patches.
+
+Mohammad Rafi Shaik (2):
+  ASoC: dt-bindings: wcd937x-sdw: Add static channel mapping support
+  ASoC: codecs: wcd937x: Add static channel mapping support in
+    wcd937x-sdw
+  soundwire: qcom: Add set_channel_map api support
+  ASoC: qcom: sdw: Add get and set channel maps support from codec to
+    cpu dais
+
+ .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++
+ drivers/soundwire/qcom.c                      | 26 +++++++++
+ sound/soc/codecs/wcd937x-sdw.c                | 39 ++++++++++++--
+ sound/soc/codecs/wcd937x.c                    | 53 ++++++++++++++++++-
+ sound/soc/codecs/wcd937x.h                    |  7 ++-
+ sound/soc/qcom/sdw.c                          | 34 ++++++++++--
+ 6 files changed, 185 insertions(+), 10 deletions(-)
+
+
+base-commit: 3e42dc9229c5950e84b1ed705f94ed75ed208228
+-- 
+2.34.1
+
 
