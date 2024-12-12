@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-443762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342859EFB84
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:51:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4B79EFB8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:51:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E01B128C72E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:51:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090CF16C47D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D62D1D6DDA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23F11D9353;
 	Thu, 12 Dec 2024 18:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lv9n2wj2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUwrqlbP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCD51917E8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F141D199235;
 	Thu, 12 Dec 2024 18:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734029400; cv=none; b=pNsz0Jlt9mJygBVZe01NhAuShFKJmaDdMVWHat3ZNxJgCjHTCAvf3zOwIMO/oSMh2J08nDgLJ0T6QYYN1LCFhMsAmV/y2t7Ki6eHUbM9SH2SVmoPgSkGCf1byzXLKiw/nAhu7SvskomgSTgAz1WsHX/H3CjSc7L4DOJqbSlDaBk=
+	t=1734029401; cv=none; b=BkP3z+hMvmYm83oYzGSqCYefV4/tQMPouwDsReCOwDK2dmhVlKspqOxJyLYafNWLtjCzo/32HpL9F51nPsdFJVH/Y+3WUyMjkQSEaVciI80bpi5wcUr+CIWp6zXYxT/dwQmYFMAXf5WLmmuhz56zZM1jDLi36OjMCKukyxScAFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734029400; c=relaxed/simple;
-	bh=EC44T8wipTNN3ub3B85kJOORyowKiTYlaaaJPPAvAJg=;
+	s=arc-20240116; t=1734029401; c=relaxed/simple;
+	bh=ez8yCvWMVST2UAfIwSmvM8yRLh2m1dbcYOg09od3Kgo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GPnniOCVpiEIdbvBrY+I4/guGC/ffIS9D7Gv1tM7zt0lJMlg3t+hkDbeFKv6g1m1NzNDaSTsnarIa83jygHufLocvMY0+YyUP9RABFVshKKZWJcm5WLSNDNLFCTAjkq7vxf+bIiMU4OsWQg8cwrLr6OxLFzYrWTooL2iprbzREE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lv9n2wj2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98CE5C4CED1;
+	 MIME-Version; b=Dxm3g86+z2ivPZANuFtQiH/74+qL/fi41XlfYbyi6NRrs7+izL453dgA00e1ACCKcAGQktQ3HEGDa/KmEypuwJ4yrkv3vJWNvf1/ET2imrP15Ey1WlwlbaPLvkzlIolXDpyJiR3ExAoKPzhUJ9NyJpoWb/UOKhf1MGEfYAILhMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUwrqlbP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4173C4CEE9;
 	Thu, 12 Dec 2024 18:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1734029400;
-	bh=EC44T8wipTNN3ub3B85kJOORyowKiTYlaaaJPPAvAJg=;
+	bh=ez8yCvWMVST2UAfIwSmvM8yRLh2m1dbcYOg09od3Kgo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Lv9n2wj2qvrpQyNo5+ch+30mRSYc5tVnNltpipdRBMm/nOdSLT1cqa0VqikTziF+G
-	 I+Dcj4OvoVHtIwqzABtB6NNdqLUJuUrnnvsmXma/T/wVDtSbA4gZYgqk1lnS67Ai3m
-	 +QxShEZfFV63EExT7cf5wMpV/eYJ4jTET4vD9WWmnL2P/cnTkBJMZnQggno5H++KhV
-	 wVlZV7r0Bo0uv7dqWAn+VXQ7YU/4wxTb6SpU1vmiLT9f7iRzmenneHyx3zLNBqLp6S
-	 J4XMWxcMUKYC15hwjugZZTg5JWTWr1g/5a0mErG1FdcbKU8oqMOd209sxUrdXp41l9
-	 uPpOmpZmUqGVw==
+	b=JUwrqlbPRQarGP5dI0LAV8pgKYUkSKf6pGfTwjoFhLjw3+e/z5wPX5e815vTUesPW
+	 tjc1qgbBbyDUa26xv3VWlWzbWncMMe5y6AsH/pqVbUR7UM4T2v5GbxMwz+oukbOO+y
+	 gTbMMpbORVWSlyoyMRfF6MeRVrPV2H4oNonnFu69ZU9RRC9TSPG4G4Z4I7dN8/OKR3
+	 hc89yktl0urAhULJsI8Td5r39CijpjjPXSZWk/xnUd0qcvN8PB8oZQkgMjB5GNnlm5
+	 kwC7Zbw3YfnNarXuQHW03Ooz1hs3Umc4sQmMJXLl6LZc3YAfztPoiQ7q1a3zM9G2X/
+	 NLllgd5Hc+UZg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D2C46CE13AA; Thu, 12 Dec 2024 10:49:59 -0800 (PST)
+	id D589BCE13BE; Thu, 12 Dec 2024 10:49:59 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 12/18] rcutorture: Ignore attempts to test preemption and forward progress
-Date: Thu, 12 Dec 2024 10:49:51 -0800
-Message-Id: <20241212184957.2127441-12-paulmck@kernel.org>
+Subject: [PATCH rcu 13/18] rcutorture: Add documentation for recent conditional and polled APIs
+Date: Thu, 12 Dec 2024 10:49:52 -0800
+Message-Id: <20241212184957.2127441-13-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <62e4d9a4-18ad-49b3-9656-23e17b78033f@paulmck-laptop>
 References: <62e4d9a4-18ad-49b3-9656-23e17b78033f@paulmck-laptop>
@@ -62,39 +62,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use of the rcutorture preempt_duration and the default-on fwd_progress
-kernel parameters can result in preemption of callback processing during
-forward-progress testing, which is an excellent way to OOM your test
-if your kernel offloads RCU callbacks.  This commit therefore treats
-preempt_duration in the same way as stall_cpu in CONFIG_RCU_NOCB_CPU=y
-kernels, prohibiting fwd_progress testing and splatting when rcutorture
-is built in (as opposed to being a loadable module).
+This commit adds kernel-parameters.txt documentation for rcutorture's
+(relatively) new gp_cond_exp, gp_cond_full, gp_cond_exp, gp_poll,
+gp_poll_exp, gp_poll_full, and gp_poll_exp module parameters.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../admin-guide/kernel-parameters.txt         | 36 ++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 8c7820a00f3c3..3595ce889b44f 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -3145,12 +3145,12 @@ static int __init rcu_torture_fwd_prog_init(void)
- 		fwd_progress = 0;
- 		return 0;
- 	}
--	if (stall_cpu > 0) {
--		VERBOSE_TOROUT_STRING("rcu_torture_fwd_prog_init: Disabled, conflicts with CPU-stall testing");
-+	if (stall_cpu > 0 || (preempt_duration > 0 && IS_ENABLED(CONFIG_RCU_NOCB_CPU))) {
-+		VERBOSE_TOROUT_STRING("rcu_torture_fwd_prog_init: Disabled, conflicts with CPU-stall and/or preemption testing");
- 		fwd_progress = 0;
- 		if (IS_MODULE(CONFIG_RCU_TORTURE_TEST))
- 			return -EINVAL; /* In module, can fail back to user. */
--		WARN_ON(1); /* Make sure rcutorture notices conflict. */
-+		WARN_ON(1); /* Make sure rcutorture scripting notices conflict. */
- 		return 0;
- 	}
- 	if (fwd_progress_holdoff <= 0)
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 65e5343b46cf9..03d13ca0604fc 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5362,7 +5362,23 @@
+ 
+ 	rcutorture.gp_cond= [KNL]
+ 			Use conditional/asynchronous update-side
+-			primitives, if available.
++			normal-grace-period primitives, if available.
++
++	rcutorture.gp_cond_exp= [KNL]
++			Use conditional/asynchronous update-side
++			expedited-grace-period primitives, if available.
++
++	rcutorture.gp_cond_full= [KNL]
++			Use conditional/asynchronous update-side
++			normal-grace-period primitives that also take
++			concurrent expedited grace periods into account,
++			if available.
++
++	rcutorture.gp_cond_exp_full= [KNL]
++			Use conditional/asynchronous update-side
++			expedited-grace-period primitives that also take
++			concurrent normal grace periods into account,
++			if available.
+ 
+ 	rcutorture.gp_exp= [KNL]
+ 			Use expedited update-side primitives, if available.
+@@ -5371,6 +5387,24 @@
+ 			Use normal (non-expedited) asynchronous
+ 			update-side primitives, if available.
+ 
++	rcutorture.gp_poll= [KNL]
++			Use polled update-side normal-grace-period
++			primitives, if available.
++
++	rcutorture.gp_poll_exp= [KNL]
++			Use polled update-side expedited-grace-period
++			primitives, if available.
++
++	rcutorture.gp_poll_full= [KNL]
++			Use polled update-side normal-grace-period
++			primitives that also take concurrent expedited
++			grace periods into account, if available.
++
++	rcutorture.gp_poll_exp_full= [KNL]
++			Use polled update-side expedited-grace-period
++			primitives that also take concurrent normal
++			grace periods into account, if available.
++
+ 	rcutorture.gp_sync= [KNL]
+ 			Use normal (non-expedited) synchronous
+ 			update-side primitives, if available.  If all
 -- 
 2.40.1
 
