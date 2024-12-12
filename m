@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-442889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C729EE384
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:57:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935559EE387
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ADBA165A3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:57:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9111889296
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C0E2101AF;
-	Thu, 12 Dec 2024 09:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F99210F45;
+	Thu, 12 Dec 2024 09:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwisyUAO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bPLGh9Gv"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2189220FABB;
-	Thu, 12 Dec 2024 09:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5534D20FABF;
+	Thu, 12 Dec 2024 09:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733997428; cv=none; b=uwxDdbXDu1wsP4WAxUwXcxouOfuHigYD8juGWLV7tNHD32IMxw8UIcKqDYnv9zSbe3UYkHeOc7YfiYUT7Xk4pL71hoSVVVK0jMv8fRAL1HrYXF9JRWXd5kQSgKsbTZGhgkisIJLPAcYFiDFEwpjY4fu/VZ3zPIms7Yj3G+LW0N8=
+	t=1733997445; cv=none; b=ZwAHpilaCj2TqQKSoHMZss5PG3Riw8Xflt3v7AVSNbuHBcvzQW/79oysBqSkDgWBJwiXHojVN/tabmy55mLAJIPrCASvrmHRWbH0arVPsiKBp+UNEbLTkr7NE7PN7v4EMsoHALzCo/nz5YfMErMqqy2DbqVdD4+JfihWWJX9BFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733997428; c=relaxed/simple;
-	bh=CR4xKt3dKhiMF/jgSb/r1xl+RaNR7Vqb2fCQvyj4HNs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jVoM4RfIPfrf5NfVELbxbfXAwSvpbrvxcMECMKUQS715Ca/0T0WUg3OLR68IgfI/sNonpfjMBzbG68PKEjsmpGdZ/DQqPGmMYVzkbfBR3p+7m11ioX3qiwRomgLzx74JJ7IDS+Zpc7/3OYi4G96DtIuzFCz81DS7b4vGmFvawm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwisyUAO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE41C4CED7;
-	Thu, 12 Dec 2024 09:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733997427;
-	bh=CR4xKt3dKhiMF/jgSb/r1xl+RaNR7Vqb2fCQvyj4HNs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dwisyUAO0Fe6OZk999b8H0f2W5l7v/tFtXoXFpH2iLDcjvQ2Jh+/cr/Oiikwk25Ea
-	 hpk9539OgJtSVYvyeBvqBs2mxR3IyU+Xxq1GUDel1LMdEN97lCrb2ACSNcJKnm0mjt
-	 HvxwR4/Pk9ZwAggD5eIZnVz/wezev9YpHja2gumgolOyK+UXqhefClt1oOAtPLbQfL
-	 POc3mTK8N7Vcvns+D9/ijUNSsiFPsvJWVehyFn/rY9+68WlRSXk2zy/Gqbq/dfimr1
-	 b6AsgRZsKCsGOO3Lsq9ygPPrTIYm4IU9ibALKy4Fa6W+OXI5HB3ZJq1j4Z5A8NdIRh
-	 JV2EDm/s3lhvw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tLfwP-0031hu-H5;
-	Thu, 12 Dec 2024 09:57:05 +0000
-Date: Thu, 12 Dec 2024 09:57:05 +0000
-Message-ID: <86msh1rzpq.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>,
-	catalin.marinas@arm.com,	will@kernel.org,	corbet@lwn.net,
-	oliver.upton@linux.dev,	joey.gouly@arm.com,	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [RESEND RFC PATCH v1 1/5] arm64: Add TLB Conflict Abort Exception handler to KVM
-In-Reply-To: <5d4ccb2c-da45-4471-9bb1-90212b50dad7@arm.com>
-References: <20241211160218.41404-1-miko.lenczewski@arm.com>
-	<20241211160218.41404-2-miko.lenczewski@arm.com>
-	<86o71irucr.wl-maz@kernel.org>
-	<5d4ccb2c-da45-4471-9bb1-90212b50dad7@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733997445; c=relaxed/simple;
+	bh=jgNmKoBjTrYcC0lC0JbKpXcDmXqGerA6jmuEIOLfzzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F9kiQ+YfaQ2VpebtLKau+hU+V66bQf0Aw+KE55ACyAkTpowwqUKsDNSlf15XfX3fmvEg+oGUn8flGj1gX8B2fYSaqoX0H4h5mGSGWdg3P1g5Le0Kux1KDMzjI0VBXDxLbJpxxmXIY9qRs7OHosH9bg/CSEprMOsMwmd4Zh1/0N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bPLGh9Gv; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733997441;
+	bh=jgNmKoBjTrYcC0lC0JbKpXcDmXqGerA6jmuEIOLfzzQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bPLGh9GvJ4KdKt2xWeUL6EPjJlJAwUaiDg0gNo3w6R9Z7pq9GQOTdEPGFdZScntVr
+	 TCO6IBuQ0BbQiDLZ1U0zyeVxHrJS5XqGogFXZ1e5TYXDh9sClAALz1Vd4HwZjpf6bK
+	 xGApa+l62/VmLqAF75bezZyfh2avOowupF3i2M7RhalAMTMYnrUspR3chn+uqQqIWS
+	 tsxUs9O/1k4fR4H6s4Cr49uLOke3kix20KxqDNLd8nmwZUpT/YkY3eEG72r81HrtnL
+	 OmUJTrv3RwUmSdzLxilj+yblAJx70arRm9QfPu93QTXPn60yqeWY5FAHeTVqKa/7qA
+	 phqglwm+fI3Nw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B7A3217E35F0;
+	Thu, 12 Dec 2024 10:57:20 +0100 (CET)
+Message-ID: <b75520cf-1377-4436-9ad4-ef5be4b372e7@collabora.com>
+Date: Thu, 12 Dec 2024 10:57:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: ryan.roberts@arm.com, miko.lenczewski@arm.com, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] regulator: dt-bindings: mt6315: Drop
+ regulator-compatible property
+To: Chen-Yu Tsai <wenst@chromium.org>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+Cc: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241211052427.4178367-1-wenst@chromium.org>
+ <20241211052427.4178367-2-wenst@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241211052427.4178367-2-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Ryan,
-
-On Thu, 12 Dec 2024 09:23:20 +0000,
-Ryan Roberts <ryan.roberts@arm.com> wrote:
+Il 11/12/24 06:24, Chen-Yu Tsai ha scritto:
+> The "regulator-compatible" property has been deprecated since 2012 in
+> commit 13511def87b9 ("regulator: deprecate regulator-compatible DT
+> property"), which is so old it's not even mentioned in the converted
+> regulator bindings YAML file. It should not have been used for new
+> submissions such as the MT6315.
 > 
-> Hi Marc,
+> Drop the property from the MT6315 regulator binding and its examples.
 > 
-> I believe the intent of this patch is to protect the host/KVM against a guest
-> that is using BBML2. The host/KVM always assumes BBML0 and therefore doesn't do
-> any operations that are allowed by the arch to cause a conflict abort. Therefore
-> the host doesn't need to handle it. But a guest could be taking advantage of
-> BBML2 and therefore it's architiecturally possible for a conflict abort to be
-> raised to EL2. I think today that would take down the host?
-> 
-> So really I think this could be considered a stand-alone KVM
-> hardening improvement?
+> Fixes: 977fb5b58469 ("regulator: document binding for MT6315 regulator")
+> Fixes: 6d435a94ba5b ("regulator: mt6315: Enforce regulator-compatible, not name")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-I'm not disputing the need for a TLB Conflict abort handler. It will
-be a good addition once we agree on what needs to be done.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-> > However, it doesn't seem to me that the host is equipped to deal with
-> > this sort of exception for itself. Shouldn't you start with that?
-> 
-> If the host isn't doing any BBML2 operations it doesn't need to handle it, I
-> don't think? Obviously that changes later in the series and Miko is adding the
-> required handling to the host.
-
-Yes, and that's what I overlooked yesterday, and I replied to that
-change this morning.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
