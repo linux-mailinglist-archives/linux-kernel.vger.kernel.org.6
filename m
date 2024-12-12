@@ -1,49 +1,88 @@
-Return-Path: <linux-kernel+bounces-443302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398C39EEC06
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:30:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39679EEC53
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:33:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE73C283B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:30:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9F41885872
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0C72210E8;
-	Thu, 12 Dec 2024 15:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E87E217F34;
+	Thu, 12 Dec 2024 15:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUhKd6vX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwMMp2Da"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB5D22069F;
-	Thu, 12 Dec 2024 15:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A4D212F9E;
+	Thu, 12 Dec 2024 15:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734017418; cv=none; b=Qg+qPaV47lT5/hTUR/h4U8pLN4oBiIi5InUiC2KK8+V8iMAZpjcTboCQJmmTculu3r0ZCvAXphn7elUHNwAKAg3yoLh/sCdnqrKIbK167kLOiviji1MgAhYFptl02iHFI0Q3zxj5hZxTx64K0OumxhW0DFg2Rsf+YWOp0TC2Jhc=
+	t=1734017503; cv=none; b=mgSLBv6N6/XBmAgjA6iGtReDySpoEIDBAJmnBvr1wGA0BDXg8HDcPO0Za2KVArhEe1xBu6hjakNQ8nFrlIhGqHMz1kJ0JZvIJGr/B6SirrE/qZiHrTnTUsD7cqCM4mISuU208RPLeHkoQOJaf+L0R77C+8DHKtn4Ilyn3tAQ5mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734017418; c=relaxed/simple;
-	bh=fRo28MlPeN080sVHAgv+Xk8U7MBZ4lUVusodbTjE80w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=lB64S+Y6ry4X9WZn1Vi6jtxcYlJTaeSEeQo8p3iFn2pgL/kvxG99TqKTnlQXLif3IuOPb+/00LjYThHJhi0oJ4bRvHQB7Y4OaMgsGPgtvUCL+oWg0ftjTPLvuxMFlmHUKiiDyS71H6NOuFv9WB29VmKt9DMafDBEt2VbUJ/m2vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUhKd6vX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AD27C4CECE;
-	Thu, 12 Dec 2024 15:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734017418;
-	bh=fRo28MlPeN080sVHAgv+Xk8U7MBZ4lUVusodbTjE80w=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nUhKd6vXhTRRV1mEAaYPgbgz+fTSDQUcQiQT0Ixvc4mZjTU03sfQP5plE4CQoPaM9
-	 3DgkydEoABMF7ysVVL5z6FsRMZ/rA0r/AIIoiiagVsjAXhTm7PUCOodlX1cNsqBXII
-	 eMg9szOtARBdR2jIyIhOUJUC0pasYNdMA5gcLeecGI6BPm7FLlTHjHH0NEcPXNfanE
-	 S9JcHy1UhViTVZ9WH1ODtbwNS/7URtcJ+fTNf/N4BrbKTCpvP+aGRD/3Bgl6vLfNM2
-	 F8G2l2P9AWM1D2IzX7Raam+7j8WL6n9utly3MKQriAuyBCrUNpkfjS40Ta/tX3WokK
-	 ppRIpCXECVxDw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE943380A959;
-	Thu, 12 Dec 2024 15:30:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1734017503; c=relaxed/simple;
+	bh=q1dc8Dt0cKtNCTV+mFc8Aw6w784D6QIr4l89OC5gXGs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bWPIIAXe3USj7zEiKLT49zwkSQMdpjl5QTQNDJKG2bLI3MI92C7C8iWwUEJ/Vll6sHQt7yk7/sEIYB81e8U3++oaIBEiBMIC7kp8B6Snah01EzObo0BUKC0VpeLJF7ZMfh55SA+OymxmkwnXdyPQaa5N4VmmrVw9MTXIllzgomc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fwMMp2Da; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3f57582a2so3665354a12.1;
+        Thu, 12 Dec 2024 07:31:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734017500; x=1734622300; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xQAH1ha0soBxIuENIBbCMfyr0YHcwaA/9Qw0+QVF+AY=;
+        b=fwMMp2DaE7/J2l4Fb41aOlu9XLuLGep+vF4J7uHpAyomhs6DSyUF07i2YygP+cbCJO
+         Sr4GLBtecOHJO0i2kCXkdOQougJ7LUzPGG5aghOWUBO51YcyN19Un4W+WtmnwiRfojtm
+         oqUdMg+AmYCH7yszj4lC1/bl+jcijdqyiSmUKCf7ZSf7U3fb+K2kAPFJhrcfJn+EKdmi
+         zqMpKxO5KIpt10nQ8faOqzy6w13wPQusUxNOu/aFWjOo0B/QACznfDem3AvTscHD4ox5
+         4P0/B84Q5qAedSgyHzIxyqYSnw+hqWkIISVnus0h/E4sLBIgnMjRyIw6GfWNoxL+GYq+
+         rkPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734017500; x=1734622300;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xQAH1ha0soBxIuENIBbCMfyr0YHcwaA/9Qw0+QVF+AY=;
+        b=ZpSLnGWXcPl3uvZN+lrf7MSMYutwcmcHKdBuGKFW68bIeFlXqILBBA4FFfkC1Jq751
+         mxrVmyvJD9NCIKcblSYGFLTVdAz/AMWaqDnUmx/yPtM+xBLTpBmWhVg/gRtHMcISXXvb
+         eN+dUZo/cD2a5AK53fKPXe1LykUEV/OaqX2zLuocZFM80FnI2HbqGl8zoPERSthN9lL4
+         4zU6YMHBQkvuM7sG8lZCnAYtPLPSp8OuPHVgB3TGGaY1HkUtOnj2vIIn8qez0q3AWbRC
+         aRFrJi8tiJBASuL2TALQlJ26UvTxQsXtP8X4Sspt/+dR3AJ29STcSy9Nez/zDTdDoG5B
+         iGqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmEmX4tOjqWsUL2SY6EPX7B9Kj5ji3wpYL4VLuIAwJFCXNfDK/sZqNpCpfaVMA1h/3EWSuSsCuolfTVHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXyhGPBrs5OCbrezPqc0W4MPoFJUETAMzaA/ytJxPVNj8gJXfh
+	9EKoQcyFMPx+1BmpSDBMSvu8kuVra2Lac6V9rg1uiY100NZp2VYb
+X-Gm-Gg: ASbGncvER+0k97Haf8Koh4Z4GMgg1wQl7sCgCy5+G7MsPO37DfoOvS50cScB5trbabd
+	U5kDl/QMspNcjD6YTUsdd0M75JLfdVBaJAn67JPb6C3Z41k0xa0E6RraCy8zf7BttBcb+Z5L5Xe
+	ZYUNmmbLBq2nyi8Nqwiqha6HmO8a1BTM3/WaCVeDWR2Y0OeOlekPebn1vWCZ9D84wR6R5MnzPMI
+	2Wg0Y9fBrMy4vT7e9XjR+pcCuHPRyjEpSUC3jmnLnSap2AsYVOgsVDN0bT6eRv7AaM=
+X-Google-Smtp-Source: AGHT+IEbTP24qHze6HMCEiG37n2mIahxgfgBPey4ZBn6n0RwZGHGxfQvB13R/zAZu+EEw56lYf3qnA==
+X-Received: by 2002:a17:906:9d2:b0:aa6:88a2:cfbd with SMTP id a640c23a62f3a-aa6c416fcebmr373299366b.22.1734017500193;
+        Thu, 12 Dec 2024 07:31:40 -0800 (PST)
+Received: from localhost.localdomain ([83.168.79.145])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6696acc74sm777647566b.134.2024.12.12.07.31.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 07:31:39 -0800 (PST)
+From: Karol Przybylski <karprzy7@gmail.com>
+To: andreas@kemnade.info,
+	rogerq@kernel.org,
+	karprzy7@gmail.com,
+	lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: [PATCHv2] dt-bindings: mfd: omap-usb-tll: convert to YAML
+Date: Thu, 12 Dec 2024 16:31:38 +0100
+Message-Id: <20241212153138.368086-1-karprzy7@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,45 +90,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: dsa: tag_ocelot_8021q: fix broken reception
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173401743449.2337313.7538670718873866823.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Dec 2024 15:30:34 +0000
-References: <20241211144741.1415758-1-robert.hodaszi@digi.com>
-In-Reply-To: <20241211144741.1415758-1-robert.hodaszi@digi.com>
-To: Robert Hodaszi <robert.hodaszi@digi.com>
-Cc: netdev@vger.kernel.org, vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
- alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- horms@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-Hello:
+Conversion of omap-usb-tll.txt into yaml format, inspired by discussion in [1]
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Changes after v1:
+Added Roger Quadros as maintainer
+Removed deprecated property 'ti,hwmod'
+Renamed .yaml file
 
-On Wed, 11 Dec 2024 15:47:41 +0100 you wrote:
-> The blamed commit changed the dsa_8021q_rcv() calling convention to
-> accept pre-populated source_port and switch_id arguments. If those are
-> not available, as in the case of tag_ocelot_8021q, the arguments must be
-> pre-initialized with -1.
-> 
-> Due to the bug of passing uninitialized arguments in tag_ocelot_8021q,
-> dsa_8021q_rcv() does not detect that it needs to populate the
-> source_port and switch_id, and this makes dsa_conduit_find_user() fail,
-> which leads to packet loss on reception.
-> 
-> [...]
+1 - https://lore.kernel.org/all/cd915c18-7230-4c38-a860-d2a777223147@kernel.org/
 
-Here is the summary with links:
-  - [net,v2] net: dsa: tag_ocelot_8021q: fix broken reception
-    https://git.kernel.org/netdev/net/c/36ff681d2283
+Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+---
+ .../devicetree/bindings/mfd/omap-usb-tll.txt  | 27 -----------
+ .../devicetree/bindings/mfd/ti,usbhs-tll.yaml | 46 +++++++++++++++++++
+ 2 files changed, 46 insertions(+), 27 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
 
-You are awesome, thank you!
+diff --git a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt b/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
+deleted file mode 100644
+index c58d70437..000000000
+--- a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-OMAP HS USB Host TLL (Transceiver-Less Interface)
+-
+-Required properties:
+-
+-- compatible : should be "ti,usbhs-tll"
+-- reg : should contain one register range i.e. start and length
+-- interrupts : should contain the TLL module's interrupt
+-- ti,hwmod : must contain "usb_tll_hs"
+-
+-Optional properties:
+-
+-- clocks: a list of phandles and clock-specifier pairs, one for each entry in
+-  clock-names.
+-
+-- clock-names: should include:
+-  * "usb_tll_hs_usb_ch0_clk" - USB TLL channel 0 clock
+-  * "usb_tll_hs_usb_ch1_clk" - USB TLL channel 1 clock
+-  * "usb_tll_hs_usb_ch2_clk" - USB TLL channel 2 clock
+-
+-Example:
+-
+-	usbhstll: usbhstll@4a062000 {
+-		compatible = "ti,usbhs-tll";
+-		reg = <0x4a062000 0x1000>;
+-		interrupts = <78>;
+-		ti,hwmods = "usb_tll_hs";
+-	  };
+diff --git a/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml b/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
+new file mode 100644
+index 000000000..d666d3e23
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mfd/ti,usbhs-tll.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: OMAP HS USB Host TLL (Transceiver-Less Interface)
++
++maintainers:
++  - <rogerq@kernel.org>
++
++properties:
++  compatible:
++    enum:
++      - ti,usbhs-tll
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++
++  clock-names:
++    items:
++      - const: usb_tll_hs_usb_ch0_clk
++      - const: usb_tll_hs_usb_ch1_clk
++      - const: usb_tll_hs_usb_ch2_clk
++    minItems: 2
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    usbhstll@4a062000 {
++      compatible = "ti,usbhs-tll";
++      reg = <0x4a062000 0x1000>;
++      interrupts = <78>;
++    };
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.34.1
 
 
