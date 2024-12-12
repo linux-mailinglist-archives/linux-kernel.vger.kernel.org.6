@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-442922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258759EE411
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:26:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A0B9EE414
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D040A1882E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:26:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A670162E75
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4106211273;
-	Thu, 12 Dec 2024 10:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E90210F60;
+	Thu, 12 Dec 2024 10:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aJ3SWmA4"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJdAXnxC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924A22101AC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EB12101A3;
+	Thu, 12 Dec 2024 10:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733999194; cv=none; b=pB5N/VggJOznBe/onEEN/r/jNEn+Ou1/cRXX+y1rSwF7JTNhbMdRU0Eve2uuPbxRUR1k3mlV1WZCk18DPkdt9j1fiEyU6/A/0NZmn1FzSy3nCC3m+VzMkTe8sH8TugQ3O3k8C8KPF2Jim8IKby9wqTiFj34Wti98aSTOQ8zwyUs=
+	t=1733999232; cv=none; b=XhP2nRoHSUeNndKBYIfDbq/+eBvsP9f1RQ5wQntgRVFk9zNe5rXzlWG7X4wj83nUAhYj6r6HHlyjeE6o55YiV+C2NC3MgUZjONQymjyl1bs4HDELsP5cNvvw5/LpIZcmPRR5HFWpXVpACCYTM62Wl4pmsNsNU1os0xfwNaX/z40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733999194; c=relaxed/simple;
-	bh=jVswUeBk2R+z9ZnLjLAPKeYEEMow4andpI80HQc9KSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RstGm5Wwn33FS1IL+ev2OBdnUrQEXoRJ7L8xk81v6jSSeIIX04QXb6o+0rK8F5N9XhGupGEQCMY0lvO8cTPcKwylw1GbQzSu1MIKXeRwVljNRikgz7ygijk+e54GtUguQ3Rbnj+A0YcgMBzTdGbDiWGrKI/19vtU5JnI3qw8q2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aJ3SWmA4; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa66ead88b3so75454266b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:26:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733999191; x=1734603991; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jVswUeBk2R+z9ZnLjLAPKeYEEMow4andpI80HQc9KSE=;
-        b=aJ3SWmA4KW0pFlp/GrBX1QWlBYRcizdNjbVpZAFJKMqJAiJBTiDaJz+GKBdgHj6Vf4
-         KncicSeLN7hlfaT1MLkduV6ReE67pcwtFiGl94lI6YZ4JaErQ4ChtRJyngzG9ZlrYg5o
-         k1bHb7mNiFI0yXovQbvQFCERNoo0LgdIEuqtdkeRwasrqs/IzETdeSYKIJSn+mE/rMXT
-         QgpWfMj1DHp8iuLwhZFtauMq1gLL6zMSz8kvc99kd8qzfBZ0CreupOb3epmLn6L1V1he
-         sjNY6aHjnUuYRiJMCbr1ttk5fmvV533cBpxJcOssgCth0Nr7e1RhrtCNKPoKmiWMJHrE
-         pZ6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733999191; x=1734603991;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jVswUeBk2R+z9ZnLjLAPKeYEEMow4andpI80HQc9KSE=;
-        b=l7lIpF5lMQPspwsr/aqk5ncu7ztrpQrIwAdBteiuEPnEZEFZ6BUqFwwjasJcvgYfBa
-         ADgG1zDEdZEWAImR9es2H7DAuAssCuE7NRifl7inibHUQJJbXNeTknGcg/ERyntK8G09
-         iHzg8/djVo44ljx7GIEtHoJ30kkR2W1u0ukVxgJpgmBE3UKWZyj2goeI7dr+7b0Ne057
-         2DV602s/JUcg7VxeLpJ8Fjcd2/JRwkUMgztox8FByAjEsj0Kp12xrZIi2kLgfFtqXG3f
-         KwJVHlxJ+Nggvrr50SGkXvZqu229GLQ4PqIWoWBzQh3Sd6BhnOqw0Eqo80VTPDhO8IPe
-         0ZFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtG4jBjPrB1+sgzgZJeAFQG6LVDazon2Ctu9dxnraxdVyWHSat90c3A6TVI2GnqlfnV2iuWQTcxVw9oqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJCrhMIDdCAV31qT1Kjnk3UXmx3TI/lPnIqa4C0mPnBQRya0py
-	ssN0Dsjk7LkkbDqRkgqSLUt5cnkorCfV0Obolw4ij2NCzrY6Jvpjo7AE6KDqPAaLgZnNJwT5Rvs
-	/usgnToTAJRtuTio7Sntg/c4lCkyI0F/cz5A6OA==
-X-Gm-Gg: ASbGncvHa4klq+bzHrUUFSSy3AO4mzTFqqI4cRgmiUq+aXT05SKnO5SRF9cFsq6M6zJ
-	jrhLV8mtwbThf1SSBtbJc7AxA0BVv4okIrX7D
-X-Google-Smtp-Source: AGHT+IH5yAN/gbiLL76Dk6LGA9jPui58kjRG4i8N9veQAZCoYkURqjEfO9YzuGA80yAQIDSiR81lnOHnHecPK3+61BY=
-X-Received: by 2002:a17:907:9548:b0:aa6:7737:1991 with SMTP id
- a640c23a62f3a-aa6b10f5f65mr510217466b.2.1733999190969; Thu, 12 Dec 2024
- 02:26:30 -0800 (PST)
+	s=arc-20240116; t=1733999232; c=relaxed/simple;
+	bh=O5MNq+swzioBvBLOZxeS4g6SPUmFvnMVaaoek3tzGZA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=pMJ+ipHIZPKnfsjC5RmsPexuBvyUZcnmKA8+bTOEFaxB5sbNFpgmhsFKeCTs97Wjt0xl3zpefmECdyFenfmUGVhYQLIyqQFAmhB9rdW9lB97V/h5TDwFgRWSku0CVaG2sc6EXSMFk4bVRJHO7AFA+P/aBa7Y8N8f0NFtw1rgK30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJdAXnxC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB7E9C4CECE;
+	Thu, 12 Dec 2024 10:27:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733999232;
+	bh=O5MNq+swzioBvBLOZxeS4g6SPUmFvnMVaaoek3tzGZA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=sJdAXnxCRWeXQcDr3Zb1CweOsPMgxjN6XylfVWbNkLOXd3rs8aYq3oktQz9PYcn4w
+	 xLUQ9NG8J8+q0vKm+vNJEr77bVkfPvQqs3+jw1wkYwKxYjHmg52ZnO0KiiCCP4P92Z
+	 DBSF0tN60yIijGV3U+wyn8+Uqb1ZHBCXj+hrw1GVsG9QFf5r9Em1Q0pmnaYncNajtx
+	 qAXtCYrIeJnNsXs4shvH8ghpr1PRqHqZz6ZjJOafLpEmyNe2XFWQ67ktPRFQ90qcAe
+	 dWFyR+pbtQ69F0QpelojBgT+KEHChz3njH4ZJw/MRX7eTX2zPCGi1ypatbJGmDeqq2
+	 rND1ONGwe2ZvQ==
+Date: Thu, 12 Dec 2024 04:27:10 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212075303.2538880-1-neelx@suse.com> <ac4c4ae5-0890-4f47-8a85-3c4447feaa90@wdc.com>
- <CAPjX3FcAZM4dSbnMkTpJPNJMcPDxKbEMwbg3ScaTWVg+5JqfDg@mail.gmail.com>
- <133f4cb5-516d-4e11-b03a-d2007ff667ee@wdc.com> <CAPjX3FchmM24-Afv7ueeK-Z1zBYivfj4yKXhVq6bARiGjqQOwQ@mail.gmail.com>
- <9d5b4776-e3c8-449c-bb0d-c200a1f76603@wdc.com> <CAPjX3FdU1mOkRr+JVE+S4og4NvjFerZhHC_qupFBTgjn9=s8MA@mail.gmail.com>
- <a8047d3a-ab45-42f0-8c60-f00829e40518@wdc.com>
-In-Reply-To: <a8047d3a-ab45-42f0-8c60-f00829e40518@wdc.com>
-From: Daniel Vacek <neelx@suse.com>
-Date: Thu, 12 Dec 2024 11:26:20 +0100
-Message-ID: <CAPjX3Fexb19AcchSttsmm=JCcobBBCPXxF6_qkK=_yuqtgNRRg@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: fix a race in encoded read
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Omar Sandoval <osandov@fb.com>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, 
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Project_Global_Chrome_Upstream_Group@mediatek.com, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>
+To: Crystal Guo <crystal.guo@mediatek.com>
+In-Reply-To: <20241212090029.13692-3-crystal.guo@mediatek.com>
+References: <20241212090029.13692-1-crystal.guo@mediatek.com>
+ <20241212090029.13692-3-crystal.guo@mediatek.com>
+Message-Id: <173399922996.1678560.9494303027075425033.robh@kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: memory-controllers: Add mediatek
+ common-dramc dt-bindings
 
-On Thu, Dec 12, 2024 at 11:10=E2=80=AFAM Johannes Thumshirn
-<Johannes.Thumshirn@wdc.com> wrote:
->
-> On 12.12.24 10:35, Daniel Vacek wrote:
-> > On Thu, Dec 12, 2024 at 10:14=E2=80=AFAM Johannes Thumshirn
-> > <Johannes.Thumshirn@wdc.com> wrote:
-> >> It got recently force pushed, 34725028ec5500018f1cb5bfd55c669c7bbf1346
-> >> it is now, sorry.
-> >
-> > Yeah, this looks very similar and it should fix the bug as well. In
-> > fact the fix part looks exactly the same, I just also changed the
-> > slab/stack allocation while you changed the atomic/refcount. But these
-> > are unrelated, IIUC. I actually planned to split it into two patches
-> > but David told me it's not necessary and I should send it as it is.
-> >
-> > Just nitpicking about your patch, the subject says simplify while I
-> > don't really see any simplification.
-> > Also it does not mention the UAF bug leading to crashes it fixes,
-> > missing the Fixes: and CC: stable tags.
-> >
-> > What do we do now?
->
-> I think it's up to David if he want's to send the patch for this rc or
-> not. In my test environment the part that went upstream was sufficient
-> to fix the UAF, so this was the part that actually went to Linus first.
 
-But it (I assume you are referring to `05b36b04d74a`) does not really
-fix the UAF. I'm still able to get the same crashes even with this
-commit applied. That was actually where I originally started testing.
+On Thu, 12 Dec 2024 16:59:48 +0800, Crystal Guo wrote:
+> Add devicetree binding for mediatek common-dramc driver.
+> 
+> The DRAM controller of MediaTek SoC provides an interface to
+> get the current data rate of DRAM.
+> 
+> Signed-off-by: Crystal Guo <crystal.guo@mediatek.com>
+> ---
+>  .../mediatek,common-dramc.yaml                | 129 ++++++++++++++++++
+>  1 file changed, 129 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml
+> 
 
-> @Dave can you send '34725028ec55 ("btrfs: simplify waiting for encoded
-> read endios")' in the next PR? I can update the Fixes tag.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-The commit message definitely needs to be updated mentioning that this
-actually fixes the UAF which `05b36b04d74a` does not really address.
+yamllint warnings/errors:
 
---nX
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: support-ch-cnt: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: fmeter-version: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: crystal-freq: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: shu-of: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: pll-id: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: shu-lv: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: sdmpcw: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: posdiv: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: fbksel: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: dqsopen: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: async-ca: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/mediatek,common-dramc.yaml: dq-ser-mode: missing type definition
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241212090029.13692-3-crystal.guo@mediatek.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
