@@ -1,309 +1,315 @@
-Return-Path: <linux-kernel+bounces-442614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B292C9EDF61
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:24:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F329EDF65
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:26:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80EB51630A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:24:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EAEA164880
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742441DACA7;
-	Thu, 12 Dec 2024 06:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797F51DEFE0;
+	Thu, 12 Dec 2024 06:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g26//coB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="aRMmI9/9"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4F0176AB7;
-	Thu, 12 Dec 2024 06:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3461917DE
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733984668; cv=none; b=ZOlId36FMTUkO0iUMR3XdfVKlhZZtQQreeSDn3jfrvyHfjIDIQmDtdqnMpM2TQXH7AMH3/WduWxvuMq7p9yJZgJUmPHM0XuDNywdvPNNqQ0/OTnIhpY3+VNyxM3v5jjX1IbEKLN8EnWcfYcLcXVHmql9f/WIHWVfPJxt4c/Z1AA=
+	t=1733984780; cv=none; b=FzfnSQ1+tUImPLmG2tRUlYSOYgRglMUR0D1DKBWLzDcCMGm4ae3riWR7nCZuZwI7sHNfrM5ap4rw3RMlrmxndu5NyS/kY1T7LTi1BJIZjV+GXGWhWarb/3rSCi9P84RH7POe1kJppeHFnoxgjvZbZxBlLccaGloia0MuwHXcKRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733984668; c=relaxed/simple;
-	bh=Ud4pGrCLse3V/ff/8/nhe7TvIzqUA6HiX2Bg2957cR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eGABwcKIX0XpTKrtdWEpqYlRS6Mw4aUlMM3yy+geQ24/YYL7ODWBzAfg7MMYCp5w4R2VXXc3Qnnk1KA6oTYuFcyXcfh534+khWyH0IVQmh8QGck5CuAGw4MywUfMo/Qb+9pob0Ko5XJs10nMzEnR4mH02CUXrD0rvn6tM7te4lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g26//coB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC2rWfA000492;
-	Thu, 12 Dec 2024 06:24:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+zpvmK7dAYod61iGUouuL00ruDUGzRAWRU6lPNQQMzU=; b=g26//coBd+gJ8HOg
-	EDYbO+uUlws9HqmfTf1ITj/FQw/IDbvuFMLfk/IDXGKYCtKl4HxPF/1fdJXMpv72
-	KkwoCXs8xQn3Pbvq3d453Lvq2RFoyvXWGU4GhPYosjEhk5qX9O4swffCF21gYp/K
-	9Qua7oeq0v+hXZfq2grAM70ey4W7v2qWyZ4AhDxBO1Wt7TX3vjwDr1uK/mGYiEk8
-	Fl9da/oeJhUd7uXhlGpHGzOAyQFUiAWD83qGdrlIlH3IUGEVHtt3ORbIpI6r6Fr5
-	Vvq/pKWNrJdG9jN9435nNpcHvwNFEknHEcZGjHf43eEs51Ko12gflsPfDqw96uTN
-	GzAEWQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fqes0dqk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 06:24:21 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC6OKNw004677
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 06:24:20 GMT
-Received: from [10.239.132.152] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
- 2024 22:24:15 -0800
-Message-ID: <c0aa9b4a-5161-41af-8000-6b6392a53dfd@quicinc.com>
-Date: Thu, 12 Dec 2024 14:24:12 +0800
+	s=arc-20240116; t=1733984780; c=relaxed/simple;
+	bh=Lw+ze2Co0gj+5K3wkHR1YRQPmlFOF/oD7NcnYt1tECY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lIZC1zdFhCsD2vXV4W3tMnZNte32FI9xqJeywzZffLDyHosgKWToQte1vLkrdId3vfvVhwsPan55O6T2+kbTzxCEjUCfaKHB8eZZVChB/NX8vRCmA/1HTJTQAAQ7Bk2dSgssLUh5/CqU4QTFWcLHcWGUCYuKZj4R1wcS8Vgjvms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=aRMmI9/9; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso2314551fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:26:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733984777; x=1734589577; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kuRjAdbDbTEkU+Ho9EYzXIrZiSQv0hABO5CTMWmsx+w=;
+        b=aRMmI9/9iVJwzJMubQpRjVDyVvcEcRUtM80JiNDdtcJ/04ICHReprOLVWjAZ/lUvcd
+         YCT1BR/pEiNAPifyDSiL6TAcGGZqhOaKiidslfxozIx0sAnOJMqN87VjPY3uBmkXM0Zi
+         888J6Cs6dwUzpPXn5a+UyFDcvV7ZP8pvz4jZb5m/spR787JC1PNLnlqiuh8t+8lUnIuM
+         WBkaSLa0oQM8vMb+Tbyo4mFy7Fqw7mhcIys4s96PXV4cztECieIOdyJseyyG0AiROLuS
+         qQr6uxv9gwINf2PIGuyPAaPpJ9DE25SfkwaBW6oaJmXpUqbbTzNFGGd/FUqcyyQdkjd5
+         ji8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733984777; x=1734589577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kuRjAdbDbTEkU+Ho9EYzXIrZiSQv0hABO5CTMWmsx+w=;
+        b=QAhwI5ksRjVNU8/T+o8imcvl7lKAOH0YXUcPHNHmIQqJFAbbGhUWoyCMpN7+PeHxGG
+         SukyJlSuLEGndOJSnSOIowBDGihP3018VIT1037b24X/kHogTjh07cQtd9HfKCfzpQmd
+         K8NHP8FeyFL7OltA9WaTkkcCUtmDc9xbruTY7mGVu+FUV8opsuLMFETm+PxGBo4cTK52
+         HravqlBDo/2y81UoEQMs9PYICYPwLnly07rslY7MAeTIHb9EPsODTpyCsFcDbU24d7Vc
+         5PC6c+SQfU+PROO3OEB78h/PZj+/5gTPzAHhrHWpq028P/CDlSVm/U6ZzuxVsEaZ2zwe
+         qvEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXy1FgaRwnw1/67va9OmkfSp4HCCTzkjtnW1NjbxylGg2AUfBuah6rJEUgoP2CJZ2OltM/vb+TBv20AL/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJDa5Ij1BBiQYVZQPG+/sscLWIUNTl3vehgn0y4hRnoO28upj5
+	p1MMfnCSz3NZ0rc94KpluU2CMFaKnWFs5EH8Gf/5yH5wAr1+wfFx4/YotjLTxjE=
+X-Gm-Gg: ASbGncsvuv5fMH/io6ZdZGjMrvdP+3ohOJlwV51SQ34fp24PFz4fA5Tgbg2kJ2uGw3w
+	8YZw3e0zimtW25Gyl3fFAeGP8Wig/IZAB3xq/qXbBQ49+yQS9gmD7r1M9s7cLViipZ/t8mId5uT
+	qt+dd0DdQSmx/1oiHgUoWhIkWOCoAxBAS+bFIyi8PvMLEC4URnhzqnIY1vJGzV3eRnpCflch85e
+	L/yBH84lua/5X7ZBVGlrXMdWqdLYr6K5vlS527n+65JEvSkdiS8ztlSYNxNUZfGtVZCuQc=
+X-Google-Smtp-Source: AGHT+IEDTXGBo2HWzXx2i6Hv1sGpcVA3TggdLOBM18vE43jz6irncBSC3Gba5PIz1VR7slTQ7L8ovQ==
+X-Received: by 2002:a05:651c:2220:b0:302:3de5:b039 with SMTP id 38308e7fff4ca-3024a1d4bd1mr6264891fa.8.1733984776497;
+        Wed, 11 Dec 2024 22:26:16 -0800 (PST)
+Received: from cobook.home ([91.198.101.25])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30223be9b15sm11209191fa.106.2024.12.11.22.26.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 22:26:16 -0800 (PST)
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Dege <michael.dege@renesas.com>,
+	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
+	Dennis Ostermann <dennis.ostermann@renesas.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH net] net: renesas: rswitch: rework ts tags management
+Date: Thu, 12 Dec 2024 11:25:58 +0500
+Message-Id: <20241212062558.436455-1-nikita.yoush@cogentembedded.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: Add coresight node for SM8650
-To: <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241210-sm8650-cs-dt-v2-1-cf24c6c9bddc@quicinc.com>
- <89bbf7cc-db04-4e1d-a1bb-570898eb3449@linaro.org>
-Content-Language: en-US
-From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-In-Reply-To: <89bbf7cc-db04-4e1d-a1bb-570898eb3449@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5jkb5Guca0hteEPgG89sA7XB-1OMOMzy
-X-Proofpoint-ORIG-GUID: 5jkb5Guca0hteEPgG89sA7XB-1OMOMzy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 clxscore=1011 malwarescore=0
- mlxlogscore=999 priorityscore=1501 bulkscore=0 phishscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120041
 
+The existing linked list based implementation of how ts tags are
+assigned and managed is unsafe against concurrency and corner cases:
+- element addition in tx processing can race against element removal
+  in ts queue completion,
+- element removal in ts queue completion can race against element
+  removal in device close,
+- if a large number of frames gets added to tx queue without ts queue
+  completions in between, elements with duplicate tag values can get
+  added.
 
+Use a different implementation, based on per-port used tags bitmaps and
+saved skb arrays.
 
-On 12/11/2024 6:48 PM, neil.armstrong@linaro.org wrote:
-> Hi,
-> 
-> On 10/12/2024 09:23, Yuanfang Zhang wrote:
->> Add coresight components: Funnel, ETE and ETF for SM8650.
-> 
-> Is there a way to validate those are working fine ?
-> 
-> Thanks,
-> Neil
-> 
-Yes, these can be verified on Snapdragon 8Gen3 platforms, after boot up,
-these nodes can be found under /sys/bus/coresight/devices/.
+Safety for addition in tx processing vs removal in ts completion is
+provided by:
 
-thanks,
-yuanfang
+    tag = find_first_zero_bit(...);
+    smp_mb();
+    <write rdev->ts_skb[tag]>
+    set_bit(...);
 
->>
->> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
->> ---
->> Changes in v2:
->> - Update compatible for funnel and etf.
->> - remove unnecessary property: reg-names and arm,primecell-periphid.
->> - Link to v1: https://lore.kernel.org/r/20241210-sm8650-cs-dt-v1-1-269693451584@quicinc.com
->> ---
->>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 165 +++++++++++++++++++++++++++++++++++
->>   1 file changed, 165 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> index 25e47505adcb790d09f1d2726386438487255824..76620d478e872a2b725693dc32364e2a183572b7 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> @@ -5654,6 +5654,171 @@ compute-cb@12 {
->>                   };
->>               };
->>           };
->> +
->> +        ete0 {
->> +            compatible = "arm,embedded-trace-extension";
->> +
->> +            cpu = <&cpu0>;
->> +            qcom,skip-power-up;
->> +
->> +            out-ports {
->> +                port {
->> +                    ete0_out_funnel_ete: endpoint {
->> +                        remote-endpoint = <&funnel_ete_in_ete0>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->> +        funnel_ete {
->> +            compatible = "arm,coresight-static-funnel";
->> +
->> +            in-ports {
->> +                port@0 {
->> +                    reg = <0>;
->> +
->> +                    funnel_ete_in_ete0: endpoint {
->> +                        remote-endpoint = <&ete0_out_funnel_ete>;
->> +                    };
->> +                };
->> +            };
->> +
->> +            out-ports {
->> +                port {
->> +                    funnel_ete_out_funnel_apss: endpoint {
->> +                        remote-endpoint = <&funnel_apss_in_funnel_ete>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->> +        funnel@13810000 {
->> +            compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
->> +
->> +            reg = <0x0 0x13810000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb_pclk";
->> +
->> +            in-ports {
->> +                port@0 {
->> +                    reg = <0>;
->> +
->> +                    funnel_apss_in_funnel_ete: endpoint {
->> +                        remote-endpoint = <&funnel_ete_out_funnel_apss>;
->> +                    };
->> +                };
->> +            };
->> +
->> +            out-ports {
->> +                port {
->> +                    funnel_apss_out_funnel_in1: endpoint {
->> +                        remote-endpoint = <&funnel_in1_in_funnel_apss>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->> +        funnel@10042000 {
->> +            compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
->> +
->> +            reg = <0x0 0x10042000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb_pclk";
->> +
->> +            in-ports {
->> +                port@4 {
->> +                    reg = <4>;
->> +
->> +                    funnel_in1_in_funnel_apss: endpoint {
->> +                        remote-endpoint = <&funnel_apss_out_funnel_in1>;
->> +                    };
->> +                };
->> +            };
->> +
->> +            out-ports {
->> +                port {
->> +                    funnel_in1_out_funnel_qdss: endpoint {
->> +                        remote-endpoint = <&funnel_qdss_in_funnel_in1>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->> +        funnel@10045000 {
->> +            compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
->> +
->> +            reg = <0x0 0x10045000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb_pclk";
->> +
->> +            in-ports {
->> +                #address-cells = <1>;
->> +                #size-cells = <0>;
->> +
->> +                port@1 {
->> +                    reg = <1>;
->> +
->> +                    funnel_qdss_in_funnel_in1: endpoint {
->> +                        remote-endpoint = <&funnel_in1_out_funnel_qdss>;
->> +                    };
->> +                };
->> +            };
->> +
->> +            out-ports {
->> +                port {
->> +                    funnel_qdss_out_funnel_aoss: endpoint {
->> +                        remote-endpoint = <&funnel_aoss_in_funnel_qdss>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->> +        funnel@10b04000 {
->> +            compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
->> +
->> +            reg = <0x0 0x10b04000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb_pclk";
->> +
->> +            in-ports {
->> +                port@7 {
->> +                    reg = <7>;
->> +
->> +                    funnel_aoss_in_funnel_qdss: endpoint {
->> +                        remote-endpoint = <&funnel_qdss_out_funnel_aoss>;
->> +                    };
->> +                };
->> +            };
->> +
->> +            out-ports {
->> +                port {
->> +                    funnel_aoss_out_tmc_etf: endpoint {
->> +                        remote-endpoint = <&tmc_etf_in_funnel_aoss>;
->> +                    };
->> +                };
->> +            };
->> +        };
->> +
->> +        tmc@10b05000 {
->> +            compatible = "arm,coresight-tmc", "arm,primecell";
->> +
->> +            reg = <0x0 0x10b05000 0x0 0x1000>;
->> +
->> +            clocks = <&aoss_qmp>;
->> +            clock-names = "apb_pclk";
->> +
->> +            in-ports {
->> +                port {
->> +                    tmc_etf_in_funnel_aoss: endpoint {
->> +                        remote-endpoint = <&funnel_aoss_out_tmc_etf>;
->> +                    };
->> +                };
->> +            };
->> +        };
->>       };
->>         thermal-zones {
->>
->> ---
->> base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
->> change-id: 20241209-sm8650-cs-dt-ad649dcfa5e8
->>
->> Best regards,
-> 
+  vs
+
+    <read rdev->ts_skb[tag]>
+    smp_mb();
+    clear_bit(...);
+
+Safety for removal in ts completion vs removal in device close is
+provided by using atomic read-and-clear for rdev->ts_skb[tag]:
+
+    ts_skb = xchg(&rdev->ts_skb[tag], NULL);
+    if (ts_skb)
+        <handle it>
+
+Fixes: 33f5d733b589 ("net: renesas: rswitch: Improve TX timestamp accuracy")
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+ drivers/net/ethernet/renesas/rswitch.c | 74 ++++++++++++++------------
+ drivers/net/ethernet/renesas/rswitch.h | 13 ++---
+ 2 files changed, 42 insertions(+), 45 deletions(-)
+
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index dbbbf024e7ab..9ac6e2aad18f 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -547,7 +547,6 @@ static int rswitch_gwca_ts_queue_alloc(struct rswitch_private *priv)
+ 	desc = &gq->ts_ring[gq->ring_size];
+ 	desc->desc.die_dt = DT_LINKFIX;
+ 	rswitch_desc_set_dptr(&desc->desc, gq->ring_dma);
+-	INIT_LIST_HEAD(&priv->gwca.ts_info_list);
+ 
+ 	return 0;
+ }
+@@ -1003,9 +1002,10 @@ static int rswitch_gwca_request_irqs(struct rswitch_private *priv)
+ static void rswitch_ts(struct rswitch_private *priv)
+ {
+ 	struct rswitch_gwca_queue *gq = &priv->gwca.ts_queue;
+-	struct rswitch_gwca_ts_info *ts_info, *ts_info2;
+ 	struct skb_shared_hwtstamps shhwtstamps;
+ 	struct rswitch_ts_desc *desc;
++	struct rswitch_device *rdev;
++	struct sk_buff *ts_skb;
+ 	struct timespec64 ts;
+ 	unsigned int num;
+ 	u32 tag, port;
+@@ -1015,23 +1015,28 @@ static void rswitch_ts(struct rswitch_private *priv)
+ 		dma_rmb();
+ 
+ 		port = TS_DESC_DPN(__le32_to_cpu(desc->desc.dptrl));
+-		tag = TS_DESC_TSUN(__le32_to_cpu(desc->desc.dptrl));
+-
+-		list_for_each_entry_safe(ts_info, ts_info2, &priv->gwca.ts_info_list, list) {
+-			if (!(ts_info->port == port && ts_info->tag == tag))
+-				continue;
+-
+-			memset(&shhwtstamps, 0, sizeof(shhwtstamps));
+-			ts.tv_sec = __le32_to_cpu(desc->ts_sec);
+-			ts.tv_nsec = __le32_to_cpu(desc->ts_nsec & cpu_to_le32(0x3fffffff));
+-			shhwtstamps.hwtstamp = timespec64_to_ktime(ts);
+-			skb_tstamp_tx(ts_info->skb, &shhwtstamps);
+-			dev_consume_skb_irq(ts_info->skb);
+-			list_del(&ts_info->list);
+-			kfree(ts_info);
+-			break;
+-		}
++		if (unlikely(port >= RSWITCH_NUM_PORTS))
++			goto next;
++		rdev = priv->rdev[port];
+ 
++		tag = TS_DESC_TSUN(__le32_to_cpu(desc->desc.dptrl));
++		if (unlikely(tag >= TS_TAGS_PER_PORT))
++			goto next;
++		ts_skb = xchg(&rdev->ts_skb[tag], NULL);
++		smp_mb(); /* order rdev->ts_skb[] read before bitmap update */
++		clear_bit(tag, rdev->ts_skb_used);
++
++		if (unlikely(!ts_skb))
++			goto next;
++
++		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
++		ts.tv_sec = __le32_to_cpu(desc->ts_sec);
++		ts.tv_nsec = __le32_to_cpu(desc->ts_nsec & cpu_to_le32(0x3fffffff));
++		shhwtstamps.hwtstamp = timespec64_to_ktime(ts);
++		skb_tstamp_tx(ts_skb, &shhwtstamps);
++		dev_consume_skb_irq(ts_skb);
++
++next:
+ 		gq->cur = rswitch_next_queue_index(gq, true, 1);
+ 		desc = &gq->ts_ring[gq->cur];
+ 	}
+@@ -1576,8 +1581,9 @@ static int rswitch_open(struct net_device *ndev)
+ static int rswitch_stop(struct net_device *ndev)
+ {
+ 	struct rswitch_device *rdev = netdev_priv(ndev);
+-	struct rswitch_gwca_ts_info *ts_info, *ts_info2;
++	struct sk_buff *ts_skb;
+ 	unsigned long flags;
++	unsigned int tag;
+ 
+ 	netif_tx_stop_all_queues(ndev);
+ 
+@@ -1594,12 +1600,13 @@ static int rswitch_stop(struct net_device *ndev)
+ 	if (bitmap_empty(rdev->priv->opened_ports, RSWITCH_NUM_PORTS))
+ 		iowrite32(GWCA_TS_IRQ_BIT, rdev->priv->addr + GWTSDID);
+ 
+-	list_for_each_entry_safe(ts_info, ts_info2, &rdev->priv->gwca.ts_info_list, list) {
+-		if (ts_info->port != rdev->port)
+-			continue;
+-		dev_kfree_skb_irq(ts_info->skb);
+-		list_del(&ts_info->list);
+-		kfree(ts_info);
++	for (tag = find_first_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT);
++	     tag < TS_TAGS_PER_PORT;
++	     tag = find_next_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT, tag + 1)) {
++		ts_skb = xchg(&rdev->ts_skb[tag], NULL);
++		clear_bit(tag, rdev->ts_skb_used);
++		if (ts_skb)
++			dev_kfree_skb(ts_skb);
+ 	}
+ 
+ 	return 0;
+@@ -1612,20 +1619,17 @@ static bool rswitch_ext_desc_set_info1(struct rswitch_device *rdev,
+ 	desc->info1 = cpu_to_le64(INFO1_DV(BIT(rdev->etha->index)) |
+ 				  INFO1_IPV(GWCA_IPV_NUM) | INFO1_FMT);
+ 	if (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+-		struct rswitch_gwca_ts_info *ts_info;
++		unsigned int tag;
+ 
+-		ts_info = kzalloc(sizeof(*ts_info), GFP_ATOMIC);
+-		if (!ts_info)
++		tag = find_first_zero_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT);
++		if (tag == TS_TAGS_PER_PORT)
+ 			return false;
++		smp_mb(); /* order bitmap read before rdev->ts_skb[] write */
++		rdev->ts_skb[tag] = skb_get(skb);
++		set_bit(tag, rdev->ts_skb_used);
+ 
+ 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
+-		rdev->ts_tag++;
+-		desc->info1 |= cpu_to_le64(INFO1_TSUN(rdev->ts_tag) | INFO1_TXC);
+-
+-		ts_info->skb = skb_get(skb);
+-		ts_info->port = rdev->port;
+-		ts_info->tag = rdev->ts_tag;
+-		list_add_tail(&ts_info->list, &rdev->priv->gwca.ts_info_list);
++		desc->info1 |= cpu_to_le64(INFO1_TSUN(tag) | INFO1_TXC);
+ 
+ 		skb_tx_timestamp(skb);
+ 	}
+diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
+index e020800dcc57..d8d4ed7d7f8b 100644
+--- a/drivers/net/ethernet/renesas/rswitch.h
++++ b/drivers/net/ethernet/renesas/rswitch.h
+@@ -972,14 +972,6 @@ struct rswitch_gwca_queue {
+ 	};
+ };
+ 
+-struct rswitch_gwca_ts_info {
+-	struct sk_buff *skb;
+-	struct list_head list;
+-
+-	int port;
+-	u8 tag;
+-};
+-
+ #define RSWITCH_NUM_IRQ_REGS	(RSWITCH_MAX_NUM_QUEUES / BITS_PER_TYPE(u32))
+ struct rswitch_gwca {
+ 	unsigned int index;
+@@ -989,7 +981,6 @@ struct rswitch_gwca {
+ 	struct rswitch_gwca_queue *queues;
+ 	int num_queues;
+ 	struct rswitch_gwca_queue ts_queue;
+-	struct list_head ts_info_list;
+ 	DECLARE_BITMAP(used, RSWITCH_MAX_NUM_QUEUES);
+ 	u32 tx_irq_bits[RSWITCH_NUM_IRQ_REGS];
+ 	u32 rx_irq_bits[RSWITCH_NUM_IRQ_REGS];
+@@ -997,6 +988,7 @@ struct rswitch_gwca {
+ };
+ 
+ #define NUM_QUEUES_PER_NDEV	2
++#define TS_TAGS_PER_PORT	256
+ struct rswitch_device {
+ 	struct rswitch_private *priv;
+ 	struct net_device *ndev;
+@@ -1004,7 +996,8 @@ struct rswitch_device {
+ 	void __iomem *addr;
+ 	struct rswitch_gwca_queue *tx_queue;
+ 	struct rswitch_gwca_queue *rx_queue;
+-	u8 ts_tag;
++	struct sk_buff *ts_skb[TS_TAGS_PER_PORT];
++	DECLARE_BITMAP(ts_skb_used, TS_TAGS_PER_PORT);
+ 	bool disabled;
+ 
+ 	int port;
+-- 
+2.39.5
 
 
