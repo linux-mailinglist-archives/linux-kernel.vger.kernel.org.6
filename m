@@ -1,277 +1,218 @@
-Return-Path: <linux-kernel+bounces-444058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0FC9F0026
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:28:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F328C9F0024
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:28:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94BED287523
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AECC72873E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEAF1DF998;
-	Thu, 12 Dec 2024 23:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCFD1DE899;
+	Thu, 12 Dec 2024 23:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efK8vamJ"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NI6swt1K"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683681DF277;
-	Thu, 12 Dec 2024 23:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF9C1DED67;
+	Thu, 12 Dec 2024 23:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734046050; cv=none; b=JtxURKqpuf4msPABRD4OVgHNCLBOP0XeqQYxe001/GHAkPfKsEVzjmNLUvtrWTgGz/YOgdf4d+jIMMa/b9MUBLTcGI5HCnkytbi1kUYTmeXVZ8itK1A8szDy3mJSmH7drbNZlu+0KHoKo8BQPx7xftSubGqi2QPym4rc1DrxE/E=
+	t=1734046047; cv=none; b=scVey70TjW8SmD4Y0kB34Sejxb+pySOH21qfaowjibnj0EiCzXbeTZe+YgYxoYjdvC0qCV97qdtzmQoSIb0thAGe911UdYieyFIuZzl7K4pTudyc14PFRNhrwCFdr5Q4+RZNc+CDBYEwfy8TPtTohjQNCHiR9p3il0rRe5QWJ58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734046050; c=relaxed/simple;
-	bh=mUcS+ASYoZR9ZJIlcEk8OGmgnQDvwgRTk6WQBu8286g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qr+DXer5bFEHKhYFJ9FFCBfhbl69v8yN3qZmtovvN4GtbRleO7yKn/vOGj221N061LWQluVYyK33PMLNGJada33U9fRNj/oLxH8uqw5DbjArVIS8ChqhjhHblFgFSsrlC/7WDzqaDgHF5AZJ+chKn6kwPY3c3P1m14qjBsB/Juo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=efK8vamJ; arc=none smtp.client-ip=209.85.210.169
+	s=arc-20240116; t=1734046047; c=relaxed/simple;
+	bh=siMGMWAE8Yf88NqZHpeUacjij9uJS2w2C2rhJNA64JI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d1iRXMJ5owXf8Mk5phjpBOLs0jDAxjKrHCSuZknbMvy+wnczGZXFSoq94ALZDH6DqL5NfVhv61Kdri3Vv+IyIhs8FzL/+wI1ztjzYYWTnFLHGLN1PnXKXFCaIW2oA0anq+snqsg3CAeGNUHefbkWwLhbgY05PEV2HvEivFh3cGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NI6swt1K; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-728eedfca37so1235586b3a.2;
-        Thu, 12 Dec 2024 15:27:28 -0800 (PST)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ee786b3277so764444a91.1;
+        Thu, 12 Dec 2024 15:27:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734046048; x=1734650848; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734046045; x=1734650845; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kNFLCf1qgtNxbc2CCINQbIdRIjwFbT1I23jfba115fw=;
-        b=efK8vamJiONwvIrvbGQc5dij6+9SFvNLK8iENdv4XD3Mk6BdKiXPSbFyJHvj+DkRVu
-         x9/VS+Cx+SljVgmbZxZCjYXC6hTGlhFSb+3MM3jdnquDXWFQlsPsyqrERARiSdhj3kBO
-         QkBNa16WKmDoL/73huzFntgK76SiT3hlDmoe7wJ3RYmtRAEGZvbhpfLkj/tzmVpaS1W7
-         PxjF6FqncvfVI5P/TtEjy6yIO1KoycgzJLH2f9Io7sFf+dcu3+dRITStWmmSjhD0fAvA
-         DbG8ibFOZgedlwrB3RXIRR9PYdLGCtRxpTMthiJgiPUwWDc80VMNV7Nugty9TsqVQslX
-         LLzA==
+        bh=0wIxdZL8VA2ztTsjyWP0G/HNyQ8yWpTpN0liZa/AVYk=;
+        b=NI6swt1KVK3xpX65lxtCU29K+KV3jK2c9ADUcURE0PjJ26YnDLBieuGf9UpnwNO7ga
+         dy473ADerOTOEAaygWe3a3qcTOLEzEn6B2+etkpsbLkMIGDVw6JJ9IJkEqPnnIbOAnwO
+         Rv4QrfVvezzIXuwRRtUDMLSeMvi9IP7RGeU3R5zkWbxBtd0pw6qNOnM21L4pbcAK+/ag
+         U3hjns0A6L9EquWJIPJ0maK/iAVTwZGBy7DwOgshRWkhX7N4jgl5zxlS11DPDZlavO2x
+         THRjcLZ4U05i1KKujE4LhYjjc5e1n5tKHTGeE4NacCyIbqPOY9Xm5aIyIoa04yvy8gb8
+         hvRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734046048; x=1734650848;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1734046045; x=1734650845;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kNFLCf1qgtNxbc2CCINQbIdRIjwFbT1I23jfba115fw=;
-        b=GObwi2WH2bn1Z2CvIFb/FXNkooSzWC6uNNdAkqJLauypMWq+v0dg+AdWpMZwEEBAjl
-         0zz2dXUIjC+9FIUKPILo6MszVG972khNQhbA0c/ipnJEB4mInydPgEv2jKexnnb4nZGt
-         +MMdL/bjdgCpeIKAyWNRLkYjd+rEr0rwR5qBgNAnSDSYZEbsZ2F+uQhA5IvMUpfymRvb
-         cjVuvLTYG3fwn2Ge5XcfQh1bCe8luXfzb753vEf+47l6AzWVeDJbW34y4uJK3inWZmkI
-         j/0SmsEKrJU70aN/Gykew3IDmDMYhpEGsSGvyv0z/DvWVLDhwMPzqgx4SPUYQ56Vqp+s
-         f50Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVohLP6lfjv3I7J5igpDFRzlaxXmrvis3FPAaMNaKuOeZzvcaz//jOtHPPofC0K2b/7wyFIRb+NP4M6FjKchBjVOQ==@vger.kernel.org, AJvYcCXEPPZ6DnbToqxCNskEU1p0aGs8uUwWc6RiUQAqJjl8IdDo89an3F1sferqM+NN3rgvcij7WnTq6nV6lCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwddxHI/s8J0y5QxpyRN3QRoFai6omjLZLMkJB5WytUqoU7VGea
-	1wVPja8cBX8qWf0CIcjNwEPVQo4NNnPWfMVQXLSYdgJjfXtLlc1m
-X-Gm-Gg: ASbGncuhkxgO9m9vNzpFkJn7j6CsDZp/9mXNEnBhV/4o4EZWNno6NQj6vrbiugzw5Wv
-	rjM8nKMPjddWRRHos8Gt5wmHahzbUqgxMFFTbq3k8/M2s7RISBgggFTWZ2TI8uYQHWzwxPDhi4/
-	XKv8zKpO8UTKsLzV8MiqZu5qJ3p+lMBwOEjOChbVwoBSbySLzJzaoHIiv/jWQeJFQOxhHv5nyOp
-	LhAlmyQKGxTOfBqEdJXDgAEL2tCoy7hTDKci6pBiXqbFKOJMZoLlX2Asttt7obSNAHzt27POAcO
-	OaqtmSBojJX2
-X-Google-Smtp-Source: AGHT+IG1ZJMPrKSDMv45FoBGhnsXUR2C+l0tshftfzn0OBSgzgHHqrNr7PJ8rWFbXGGaqihYb+gkdA==
-X-Received: by 2002:a05:6a21:66c7:b0:1e1:bee3:50ea with SMTP id adf61e73a8af0-1e1dfd3dab2mr584296637.11.1734046047729;
-        Thu, 12 Dec 2024 15:27:27 -0800 (PST)
-Received: from mbp.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd4e202e9asm7324674a12.72.2024.12.12.15.27.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 15:27:27 -0800 (PST)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH v13 04/10] perf record --off-cpu: Dump off-cpu samples in BPF
-Date: Thu, 12 Dec 2024 15:27:11 -0800
-Message-ID: <20241212232717.232507-5-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241212232717.232507-1-howardchu95@gmail.com>
-References: <20241212232717.232507-1-howardchu95@gmail.com>
+        bh=0wIxdZL8VA2ztTsjyWP0G/HNyQ8yWpTpN0liZa/AVYk=;
+        b=qu4PfJ5p3uyqjnTxCtQWhxs+GDa+13JiJtStpSNBAaFrdJ1k8bwrmAEslYQeoEKroE
+         JmfQlW1qR4CZ95z5Va/nQf8W/wBphPym3abbDlYsijNekIYip2m04+3XUaiDk3R35nqT
+         uE3by6sNW/ueDph+vOfnVzdeIPdfm6Lu2obz3nOtW3db3oJTQcjNucTDeA+lzgrKYS+n
+         2mSIyv34+XDMXjBAD/FGsRSUKYAxpeZQgNRuKamW9hoXQRPBV8hRvuYdX4XqHosA2n6R
+         HJLkxstu/DUol6ZpRtf+GuT6NVm+i5UjQs74JL3LgJvsMqgh5tIOE9SfzBws5Jtxx0AO
+         7Wig==
+X-Forwarded-Encrypted: i=1; AJvYcCVlz0BafFbdT34e0sd32L1y/STsqF434Qr2fTl8XFC640qWouUxjcimojZU1Shb5q0NESY=@vger.kernel.org, AJvYcCWIbNQqEuyiBvmMvC2PaxqY0h04loCKAsNrHxm3ZC8Qfawai1f6tPNgJJIIyI/e4AY774Vf8PoM@vger.kernel.org, AJvYcCWSxiz3tspKTd4s7xqS2ZY8qj6jaKSUQEaYzbGmq8wYhF357dkrsnr5VQLoWrHk1CZwU3mRCvoBP+Y8pILD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXhHeAKtCG1nOV7YUexS+M/jpPMc/ds2dJOFTevUvRlcAJnn0c
+	56ipMQV0qnEng5Qwt3TLWRM28oVBKbddhEb0tOsLrkSKz0s99bSBGMQydRxHLa+EhziVNxHtHfe
+	zQZcGC8vBRwTsA+FlepUct8RRQyLpcBfI
+X-Gm-Gg: ASbGnctfjoCKBSZ9Tq6J2Qyp6t464hFPqNLVwQ+Anat4N3rI74HWsM5s9NOdEaS0qIU
+	Fc4U4QF9tbeW5d46MItpglR7KtVinoEKnfxtJ+GviV5AqVEyvh9ikVg==
+X-Google-Smtp-Source: AGHT+IEu8iZm+rKzmRx4CSwSfmZzDyUvwahx9BhW4CNesA7XsXp+wa9U3e8LZjZ3fy8UIZSod/hPcFSzkKj03f1H7Bc=
+X-Received: by 2002:a17:90b:1647:b0:2ee:863e:9ffc with SMTP id
+ 98e67ed59e1d1-2f28fd6a55dmr751214a91.21.1734046045301; Thu, 12 Dec 2024
+ 15:27:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241213-bpf-cond-ids-v1-1-881849997219@weissschuh.net>
+In-Reply-To: <20241213-bpf-cond-ids-v1-1-881849997219@weissschuh.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 12 Dec 2024 15:27:12 -0800
+Message-ID: <CAEf4BzYTYDcf7J0jhJP3cW5489jWXdfJcw-f-8yuTHcNmQ0cbw@mail.gmail.com>
+Subject: Re: [PATCH bpf] bpf: fix configuration-dependent BTF function references
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Collect tid, period, callchain, and cgroup id and dump them when off-cpu
-time threshold is reached.
+On Thu, Dec 12, 2024 at 3:00=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
+>
+> These BTF functions are not available unconditionally,
+> only reference them when they are available.
+>
+> Avoid the following build warnings:
+>
+>   BTF     .tmp_vmlinux1.btf.o
+> btf_encoder__tag_kfunc: failed to find kfunc 'bpf_send_signal_task' in BT=
+F
+> btf_encoder__tag_kfuncs: failed to tag kfunc 'bpf_send_signal_task'
+>   NM      .tmp_vmlinux1.syms
+>   KSYMS   .tmp_vmlinux1.kallsyms.S
+>   AS      .tmp_vmlinux1.kallsyms.o
+>   LD      .tmp_vmlinux2
+>   NM      .tmp_vmlinux2.syms
+>   KSYMS   .tmp_vmlinux2.kallsyms.S
+>   AS      .tmp_vmlinux2.kallsyms.o
+>   LD      vmlinux
+>   BTFIDS  vmlinux
+> WARN: resolve_btfids: unresolved symbol prog_test_ref_kfunc
+> WARN: resolve_btfids: unresolved symbol bpf_crypto_ctx
+> WARN: resolve_btfids: unresolved symbol bpf_send_signal_task
+> WARN: resolve_btfids: unresolved symbol bpf_modify_return_test_tp
+> WARN: resolve_btfids: unresolved symbol bpf_dynptr_from_xdp
+> WARN: resolve_btfids: unresolved symbol bpf_dynptr_from_skb
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+>  kernel/bpf/helpers.c  | 4 ++++
+>  kernel/bpf/verifier.c | 8 ++++++++
+>  2 files changed, 12 insertions(+)
+>
+> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+> index 751c150f9e1cd7f56e6a2b68a7ebb4ae89a30d2d..5edf5436a7804816b7dcf1bbe=
+f2624d71a985f20 100644
+> --- a/kernel/bpf/helpers.c
+> +++ b/kernel/bpf/helpers.c
+> @@ -3089,7 +3089,9 @@ BTF_ID_FLAGS(func, bpf_task_get_cgroup1, KF_ACQUIRE=
+ | KF_RCU | KF_RET_NULL)
+>  BTF_ID_FLAGS(func, bpf_task_from_pid, KF_ACQUIRE | KF_RET_NULL)
+>  BTF_ID_FLAGS(func, bpf_task_from_vpid, KF_ACQUIRE | KF_RET_NULL)
+>  BTF_ID_FLAGS(func, bpf_throw)
+> +#ifdef CONFIG_BPF_EVENTS
+>  BTF_ID_FLAGS(func, bpf_send_signal_task, KF_TRUSTED_ARGS)
+> +#endif
+>  BTF_KFUNCS_END(generic_btf_ids)
+>
+>  static const struct btf_kfunc_id_set generic_kfunc_set =3D {
+> @@ -3135,7 +3137,9 @@ BTF_ID_FLAGS(func, bpf_dynptr_is_null)
+>  BTF_ID_FLAGS(func, bpf_dynptr_is_rdonly)
+>  BTF_ID_FLAGS(func, bpf_dynptr_size)
+>  BTF_ID_FLAGS(func, bpf_dynptr_clone)
+> +#ifdef CONFIG_NET
+>  BTF_ID_FLAGS(func, bpf_modify_return_test_tp)
+> +#endif
 
-We don't collect the off-cpu time twice (the delta), it's either in
-direct samples, or accumulated samples that are dumped at the end of
-perf.data.
+It makes little sense to have bpf_prog_test_run_tracing() and
+bpf_modify_return_test_tp() depend on CONFIG_NET... It's just
+historically where BPF_PROG_TEST_RUN functionality was implemented,
+but it seems like we need to move bpf_prog_test_run_tracing() and
+other tracing-related testing stuff into kernel/trace/bpf_trace.c or
+somewhere under kernel/bpf/ (core.c? helpers.c?)
 
-Suggested-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20241108204137.2444151-6-howardchu95@gmail.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/bpf_skel/off_cpu.bpf.c | 88 ++++++++++++++++++++++++--
- 1 file changed, 83 insertions(+), 5 deletions(-)
-
-diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-index 1cdd4d63ea92..77fdc9e81db3 100644
---- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
-+++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-@@ -19,11 +19,17 @@
- #define MAX_ENTRIES  102400
- 
- #define MAX_CPUS  4096
-+#define MAX_OFFCPU_LEN 37
-+
-+struct stack {
-+	u64 array[MAX_STACKS];
-+};
- 
- struct tstamp_data {
- 	__u32 stack_id;
- 	__u32 state;
- 	__u64 timestamp;
-+	struct stack stack;
- };
- 
- struct offcpu_key {
-@@ -41,6 +47,10 @@ struct {
- 	__uint(max_entries, MAX_ENTRIES);
- } stacks SEC(".maps");
- 
-+struct offcpu_data {
-+	u64 array[MAX_OFFCPU_LEN];
-+};
-+
- struct {
- 	__uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
- 	__uint(key_size, sizeof(__u32));
-@@ -48,6 +58,13 @@ struct {
- 	__uint(max_entries, MAX_CPUS);
- } offcpu_output SEC(".maps");
- 
-+struct {
-+	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-+	__uint(key_size, sizeof(__u32));
-+	__uint(value_size, sizeof(struct offcpu_data));
-+	__uint(max_entries, 1);
-+} offcpu_payload SEC(".maps");
-+
- struct {
- 	__uint(type, BPF_MAP_TYPE_TASK_STORAGE);
- 	__uint(map_flags, BPF_F_NO_PREALLOC);
-@@ -106,6 +123,8 @@ const volatile bool uses_cgroup_v1 = false;
- 
- int perf_subsys_id = -1;
- 
-+__u64 offcpu_thresh_ns = 500000000ull;
-+
- /*
-  * Old kernel used to call it task_struct->state and now it's '__state'.
-  * Use BPF CO-RE "ignored suffix rule" to deal with it like below:
-@@ -192,6 +211,47 @@ static inline int can_record(struct task_struct *t, int state)
- 	return 1;
- }
- 
-+static inline int copy_stack(struct stack *from, struct offcpu_data *to, int n)
-+{
-+	int len = 0;
-+
-+	for (int i = 0; i < MAX_STACKS && from->array[i]; ++i, ++len)
-+		to->array[n + 2 + i] = from->array[i];
-+
-+	return len;
-+}
-+
-+/**
-+ * off_cpu_dump - dump off-cpu samples to ring buffer
-+ * @data: payload for dumping off-cpu samples
-+ * @key: off-cpu data
-+ * @stack: stack trace of the task before being scheduled out
-+ *
-+ * If the threshold of off-cpu time is reached, acquire tid, period, callchain, and cgroup id
-+ * information of the task, and dump it as a raw sample to perf ring buffer
-+ */
-+static int off_cpu_dump(void *ctx, struct offcpu_data *data, struct offcpu_key *key,
-+			struct stack *stack, __u64 delta)
-+{
-+	int n = 0, len = 0;
-+
-+	data->array[n++] = (u64)key->tgid << 32 | key->pid;
-+	data->array[n++] = delta;
-+
-+	/* data->array[n] is callchain->nr (updated later) */
-+	data->array[n + 1] = PERF_CONTEXT_USER;
-+	data->array[n + 2] = 0;
-+	len = copy_stack(stack, data, n);
-+
-+	/* update length of callchain */
-+	data->array[n] = len + 1;
-+	n += len + 2;
-+
-+	data->array[n++] = key->cgroup_id;
-+
-+	return bpf_perf_event_output(ctx, &offcpu_output, BPF_F_CURRENT_CPU, data, n * sizeof(u64));
-+}
-+
- static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
- 			struct task_struct *next, int state)
- {
-@@ -216,6 +276,16 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
- 	pelem->state = state;
- 	pelem->stack_id = stack_id;
- 
-+	/*
-+	 * If stacks are successfully collected by bpf_get_stackid(), collect them once more
-+	 * in task_storage for direct off-cpu sample dumping
-+	 */
-+	if (stack_id > 0 && bpf_get_stack(ctx, &pelem->stack, MAX_STACKS * sizeof(u64), BPF_F_USER_STACK)) {
-+		/*
-+		 * This empty if block is used to avoid 'result unused warning' from bpf_get_stack().
-+		 * If the collection fails, continue with the logic for the next task.
-+		 */
-+	}
- next:
- 	pelem = bpf_task_storage_get(&tstamp, next, NULL, 0);
- 
-@@ -230,11 +300,19 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
- 		__u64 delta = ts - pelem->timestamp;
- 		__u64 *total;
- 
--		total = bpf_map_lookup_elem(&off_cpu, &key);
--		if (total)
--			*total += delta;
--		else
--			bpf_map_update_elem(&off_cpu, &key, &delta, BPF_ANY);
-+		if (delta >= offcpu_thresh_ns) {
-+			int zero = 0;
-+			struct offcpu_data *data = bpf_map_lookup_elem(&offcpu_payload, &zero);
-+
-+			if (data)
-+				off_cpu_dump(ctx, data, &key, &pelem->stack, delta);
-+		} else {
-+			total = bpf_map_lookup_elem(&off_cpu, &key);
-+			if (total)
-+				*total += delta;
-+			else
-+				bpf_map_update_elem(&off_cpu, &key, &delta, BPF_ANY);
-+		}
- 
- 		/* prevent to reuse the timestamp later */
- 		pelem->timestamp = 0;
--- 
-2.43.0
-
+>  BTF_ID_FLAGS(func, bpf_wq_init)
+>  BTF_ID_FLAGS(func, bpf_wq_set_callback_impl)
+>  BTF_ID_FLAGS(func, bpf_wq_start)
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 5e541339b2f6d1870561033fd55cca7144db14bc..77bbf58418fee7533bce539c8=
+e005d2342ee1a48 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -5526,7 +5526,9 @@ static bool in_rcu_cs(struct bpf_verifier_env *env)
+>
+>  /* Once GCC supports btf_type_tag the following mechanism will be replac=
+ed with tag check */
+>  BTF_SET_START(rcu_protected_types)
+> +#ifdef CONFIG_NET
+>  BTF_ID(struct, prog_test_ref_kfunc)
+> +#endif
+>  #ifdef CONFIG_CGROUPS
+>  BTF_ID(struct, cgroup)
+>  #endif
+> @@ -5534,7 +5536,9 @@ BTF_ID(struct, cgroup)
+>  BTF_ID(struct, bpf_cpumask)
+>  #endif
+>  BTF_ID(struct, task_struct)
+> +#ifdef CONFIG_CRYPTO
+>  BTF_ID(struct, bpf_crypto_ctx)
+> +#endif
+>  BTF_SET_END(rcu_protected_types)
+>
+>  static bool rcu_protected_object(const struct btf *btf, u32 btf_id)
+> @@ -11529,8 +11533,10 @@ BTF_ID(func, bpf_rdonly_cast)
+>  BTF_ID(func, bpf_rbtree_remove)
+>  BTF_ID(func, bpf_rbtree_add_impl)
+>  BTF_ID(func, bpf_rbtree_first)
+> +#ifdef CONFIG_NET
+>  BTF_ID(func, bpf_dynptr_from_skb)
+>  BTF_ID(func, bpf_dynptr_from_xdp)
+> +#endif
+>  BTF_ID(func, bpf_dynptr_slice)
+>  BTF_ID(func, bpf_dynptr_slice_rdwr)
+>  BTF_ID(func, bpf_dynptr_clone)
+> @@ -11558,8 +11564,10 @@ BTF_ID(func, bpf_rcu_read_unlock)
+>  BTF_ID(func, bpf_rbtree_remove)
+>  BTF_ID(func, bpf_rbtree_add_impl)
+>  BTF_ID(func, bpf_rbtree_first)
+> +#ifdef CONFIG_NET
+>  BTF_ID(func, bpf_dynptr_from_skb)
+>  BTF_ID(func, bpf_dynptr_from_xdp)
+> +#endif
+>  BTF_ID(func, bpf_dynptr_slice)
+>  BTF_ID(func, bpf_dynptr_slice_rdwr)
+>  BTF_ID(func, bpf_dynptr_clone)
+>
+> ---
+> base-commit: 5d287a7de3c95b78946e71d17d15ec9c87fffe7f
+> change-id: 20241212-bpf-cond-ids-9bfbc64dd77b
+>
+> Best regards,
+> --
+> Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+>
 
