@@ -1,353 +1,186 @@
-Return-Path: <linux-kernel+bounces-443984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65DE9EFEA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:45:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F083C9EFEA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFAAF16CC39
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25425188B035
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47951DB54B;
-	Thu, 12 Dec 2024 21:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7931DACA1;
+	Thu, 12 Dec 2024 21:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qRcBeUIA"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VyOJ1JjP"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2049.outbound.protection.outlook.com [40.107.93.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1275F1DA60F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734039914; cv=none; b=AcXjelRc6VqzeTH2cOG+nIlqVnFlOns1oqAM0qCyMJIF/4I6J27rVEVXk5o2wy30vxeq46LLQW54I/TMpKOgF/HTzsOmh6ZpbECR0dp7cDWBFm+HiaauKaES6YXn21IL3QhSJ57A+hr2jSPtz7ZSO+pdpcnDVWYb1Y5aKA/LcTw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734039914; c=relaxed/simple;
-	bh=+pJC1tYp5SsRp+I/N+6d6y4+PFvu3012i6C7y4ybq4M=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VJBePbpcC9sCW6fUzc4hl1yK1KHUQ43rR1WU+lMeq4ERFTEZXqNN7ktymJqYoSzXhpsFAMLmtEkju1OxVg9mMDRCAQAHmFfNzcPurApIvZQHqZdi6kAiXVHHZJOmTJxiTLtSLiRrcjzlJAx6D3rAY9bT/wk0VDptvBq3B4l/hSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qRcBeUIA; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4361fe642ddso11059525e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 13:45:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734039910; x=1734644710; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6EqGMbuCS/ZZIE29NMrOme5aBpr93tYRrvJdfmFw3cs=;
-        b=qRcBeUIAZtlPvcol7fuAjVwTuY4WKP4f36A1B6OwRTzqVd8Sp7Z312ZEDfC7QLpzGa
-         Q0+7v4BB0qix2fpUaq1Ch+HSJMHFwLpBr1WOWC7mFvJbc25uCbs3nwLRqQwvoAHjPuQR
-         lIyv55Aw67VplWprRvAc7aKDoDzmZFcNO07mca63sg1mwmCL/Gl6WJJrPdcfBV+NmRnf
-         vig1M6LN27b46GKfuZ1kLmPQz+m8AV5u8u0N7A165tG2aeXimjq16LOAJcZRahlid2/U
-         oi/CN8HuYeovWh0QCdjgU1j1dwMhbrRs8EwUijuayQC1GHBHrQ5ZtzgfmlnoiNQLK7+5
-         GV+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734039910; x=1734644710;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6EqGMbuCS/ZZIE29NMrOme5aBpr93tYRrvJdfmFw3cs=;
-        b=v2z1GSLiUYr3hm7zLkuWq/V82/BCeAdw5xJTBeKYuBEFtqHe+eucFRANz7N0uaaFtm
-         +V3S7TX0gxX21XZgeKwiuke4qkTfW+T0PpYfPg3n38e9dnmMiomf1w+uxBCBN07dDVLA
-         DmfKvZCsJFpqcIvfbAFmLXTMCWLovOTrPlEHsb9WJgbm8GnEkJAzAmpiIenu/Fl9OJ6N
-         KIvHht5TSyTB21iBm0p3NMkXT+ouUG0rUHQ8LiMiMRp70/jFKOVThgtwno6QgUnKR03n
-         wT5kqJGERsILyLnPDpgRHc5U0KR50i9MjNqQNR3Aci/ME4YIdimpU81E8ZOmYRduHpTY
-         HNGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhAoISZuAjCZHsEjFxwsfhzfJ01rcfYAIjGiwoOckasvcoeRF3EC/LLkZ2vi0+23pQONSfpRdyFvH+ATA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOAOgMg/HWeHBLnVy59mzj26/woAGsnGrm5awL1haKFoyta0b8
-	ZVc7zmuhYjy59SIJsTkN5wk3RQiSd69tbnj++hUzs28UFKhZ0X1ReU7DVicDB9Q=
-X-Gm-Gg: ASbGncsz6M6Jo5Rkz6TGYat95tcnrDa0qhiQrkcvtnSmRoPZflkLObZNUG40wDG6E36
-	UT2kJpIEx2lWjpaBQXmbXLG+M3vfUOTVHz5i+djLIIJcYmoeM6czPfDLeKFpouRC+9ni3HFLQKA
-	t6CtsqZHwMqGh65CakM/dzGpSoxnzUths3Pj3X2OIUVQqu2ddAQfgEV3a6JXr10D667Au4VLIT9
-	y2DDYZUzR7L14Ye+TvI/TLdbYermENA0Rwv+Rzkv6bi/kdeTkhTy8wIb0KK+c8DOG7/Autdccca
-	zMsR5J4Ocw0Mqc1tji2LQw2rfG7/7brSbg==
-X-Google-Smtp-Source: AGHT+IF5/+Jrvgv4s3ueVCJoCsZwKVU/EjZP6+PRD2aegZfz2rCwFND7aIZnKE6iaKTEjWY1J9n7fg==
-X-Received: by 2002:a05:600c:c11:b0:434:a684:9b1 with SMTP id 5b1f17b1804b1-4362aa1549bmr1300265e9.4.1734039910424;
-        Thu, 12 Dec 2024 13:45:10 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b98a:c6fe:3a5d:f20a? ([2a01:e0a:982:cbb0:b98a:c6fe:3a5d:f20a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436255800f6sm27926505e9.18.2024.12.12.13.45.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 13:45:10 -0800 (PST)
-Message-ID: <924bb119-178d-4778-800f-94e884acc5a3@linaro.org>
-Date: Thu, 12 Dec 2024 22:45:08 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69EB1714BF;
+	Thu, 12 Dec 2024 21:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734040006; cv=fail; b=qjxyi+UoeNavPDRS03RUxxfL9tyVbeWdZV9m1kwnI5VMhWEg0Jx79dV0rsfVhSVEEdMb2HU25GHkxrKdAUVKgQq5cPgwdkxsBd0BQXOvlawD4+7QCGuOVfJACKUSPdSi1785ALFosDLCVg3oMDl6Gzlwgmo7zQTbIqnonoZpHJU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734040006; c=relaxed/simple;
+	bh=HXUeF/JQ9lmSaks4ikD3PpCXBhwztA/FHcVV0/nnwSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bhgvjtKc68vCy91c/tyMHE+bUptHWMLAQfEjfHp3N2ILPZP9e7ivOk6aZDnAYUs1fN4XSObe/fIIOhQQV2URb5TjfnJ4Os4orjgYwTXrRHy6EAdvldt8g/QZDDKdNoWK1zPtOjpg42lHlEl9j8EuY5OLADB8g5N5cMDfeg8nZUw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=fail (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VyOJ1JjP reason="signature verification failed"; arc=fail smtp.client-ip=40.107.93.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZPIJaiDLmlG+OUme3hAnMq1uEyi39xKe8N1iqi0LRBIV/UJ/EVOz8EViBAeA3x0ph3LeK4fLfNk/jo85aFOjVLcgjFgZ9zZnsRQy/4yYWfITSSXGgXr4KiNX9uyEEXsO2nHr0CMjg2gwsJ48kekHHQun8HE8iNn3QMdTvmdJ9lXoOuhgU2kWuQxF4cOJ/uEg6NeYU/XS+JFpH+6nkCE/5zuhF9LcQqD5SO8b1dk9mKbBgqDX4K/UQVEipmtmmWOq8WajenGZ6FFQzOCyte4o0FocPqaeObbYRmXflkYnnCxaz5Fv3r9cE6LMPHGHUHWoqtl+QF0xKN+QlrGsKASY7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qb7/NjgwXjEowoRyApeb9QNEyqs0Et59nVrN5KUNJgU=;
+ b=gA9gura7BfYHiwnE31D1qQ6SULHbbQk9MxPwhNLp52whBSD055L2+dh6UM00VQB+uGG8dJvRMcjAj5YNq3iAnQ+RiUByd/Ax0xidl579cesWbl2lfiSHIIO48i5ZvZq0+ej8ocEwpUIbDVmPYPLkit9ECHUWfv4jpy35nxh604Xi3CjQsAFxt892+NsTjVPh+MMudsLG3Tx/D+nKcfr525sOSLatmgAAu0utzGzga/wYo2HtOeNCbaXpwl4QjbTq9HNMBoRB/5g2UjLKfOg982DQYo2zwR/Pvg0jRmv5jxTP+M9V5CAKdC+A8ohtd4DyErRR7kbFUsMcc/esocME0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qb7/NjgwXjEowoRyApeb9QNEyqs0Et59nVrN5KUNJgU=;
+ b=VyOJ1JjPG7n4U1jo47oIZwjpuPMrfxFl+dgnMLCcjkvC2Pfdq6sJxGxDxGnL0hQA6uBN7XwZ9kv+CPJ0JVaREK8a+/rFFZN+4Tk5HGTuP1m8A4sRyHpfzfc2i/MI402oNBMk77rJP/pGguWgbXDodOFuFRHPpCG+15f9X6BfZBo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ SJ1PR12MB6147.namprd12.prod.outlook.com (2603:10b6:a03:45a::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Thu, 12 Dec
+ 2024 21:46:41 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.8251.015; Thu, 12 Dec 2024
+ 21:46:41 +0000
+Date: Thu, 12 Dec 2024 16:46:37 -0500
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: x86@kernel.org, tony.luck@intel.com, mario.limonciello@amd.com,
+	bhelgaas@google.com, jdelvare@suse.com, linux@roeck-us.net,
+	clemens@ladisch.de, Shyam-sundar.S-k@amd.com,
+	Hans de Goede <hdegoede@redhat.com>,
+	naveenkrishna.chatradhi@amd.com, suma.hegde@amd.com,
+	LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v2.1] x86/amd_node, platform/x86/amd/hsmp: Have HSMP use
+ SMN through AMD_NODE
+Message-ID: <20241212214637.GA80677@yaz-khff2.amd.com>
+References: <20241212172711.1944927-1-yazen.ghannam@amd.com>
+ <65375593-f2e0-e03b-7e7f-ad8be58772d4@linux.intel.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <65375593-f2e0-e03b-7e7f-ad8be58772d4@linux.intel.com>
+X-ClientProxiedBy: BN9PR03CA0461.namprd03.prod.outlook.com
+ (2603:10b6:408:139::16) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 2/7] drm/msm: adreno: add plumbing to generate
- bandwidth vote table for GMU
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20241211-topic-sm8x50-gpu-bw-vote-v5-0-6112f9f785ec@linaro.org>
- <20241211-topic-sm8x50-gpu-bw-vote-v5-2-6112f9f785ec@linaro.org>
- <3aad9de3-76a5-4106-a513-4707b3e39e7a@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <3aad9de3-76a5-4106-a513-4707b3e39e7a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SJ1PR12MB6147:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28eb9d39-ea70-4cc2-8f09-08dd1af676c6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?h3aMtBsrzUQsK9NeXJxCK4Zfxm0zFRnd0dm34OtwJvZlEvdAdOoFx+AFQd?=
+ =?iso-8859-1?Q?hSu2XzS35/duHw94EBGO7aHM4Hq9PKAlmA1CfMHkQx4KMoHlBZnh+5oZXm?=
+ =?iso-8859-1?Q?RLcNRb/8OSxAZbQ1LiGQ+ggFMNiyBFGsaQKg6Alyvg7ENumdAGY02nU+hr?=
+ =?iso-8859-1?Q?EHFF2PU2pJMLLFxbmRdiYTj0NFd7rUYui2jl0xyg7orwAF4A9GJnmuCswI?=
+ =?iso-8859-1?Q?J9TVSI8vM9gG8ebZCtMY6Uxc4YVUG5/fBkA4nitJsttxtPgkBRsDzKBoTy?=
+ =?iso-8859-1?Q?8ESXPnJncyzM3uwmw2UnfRbhUk5lip4xE9TJZP26OFqvDp4ewKCTE3sGsG?=
+ =?iso-8859-1?Q?/+JNSen6QqFwB70zFt2XlC0wWZMHTdUUZV0NJ9jknpzKEElAtMr1ljGz+T?=
+ =?iso-8859-1?Q?PqrsFoHE1WBwsbmwiCAfLAyL8mfDRZapSTWV3gWYxuZUMJ/3GCRPopXuNX?=
+ =?iso-8859-1?Q?JBqW52dJOgnt+n9aqUnI4/GvmDAsbIrhGrHnSVoNWusLcCL8lUo8VK2/s6?=
+ =?iso-8859-1?Q?MC+v9OXNVscowFwTqQ0+o2ADgAE6x5Xi02XkM1ZlZCmZ6MLJX+ETaVkaWf?=
+ =?iso-8859-1?Q?E1nrAhLMHYidHbEYnFbsUIEjV8DPDtRF6jd0JJDOQDB8GyoHB4PW5VHU18?=
+ =?iso-8859-1?Q?gcL3L72gfoaFCLUQIa5BKG4PuLQskx2b9XRckA70wVLTzjZTuRiyx4wtmZ?=
+ =?iso-8859-1?Q?dTd0Y68D6ccuyGk4iGBujYUKN7pkDsPoA/uawGdZNbRPDwKkUs/8iBpYO2?=
+ =?iso-8859-1?Q?LcP5fjgqDcIcdVNN6zgzSeb5ufC28TXvx796EAJxmvxnSGA9wUQuXZ/m6w?=
+ =?iso-8859-1?Q?eEHgxJoOveez2n9CN788FH5c5wxf3uc6/5BcGJWLEuwka4wXvKl+v109Ha?=
+ =?iso-8859-1?Q?GTK4oun8kCNMxHnShxC64c7NLWd4zAQNK/TGJKB9T9DR0z/16k9Jh5Lv4J?=
+ =?iso-8859-1?Q?IUjRuL6McTSr5N80Ui9C6HOKENgLBdFSVWmbvaJ7FIRBudAQ0Repcv6D2b?=
+ =?iso-8859-1?Q?3BnWR70wcXKn0qDSY/NYMbrpDBXteWzgw5R2KnBIzs22CqhRgA5UfmwV5a?=
+ =?iso-8859-1?Q?N0j+6FJmqp1WkcNRN8FlVk6j8xgvPZh6pkfdykIEsuVer3Fru2+15aDeTH?=
+ =?iso-8859-1?Q?6mWHPV2zoHcdDUFPdLbPBph74zehlSpWIQA73hB+03QJ+DVyJ5ebwFmfcv?=
+ =?iso-8859-1?Q?a1id9ML2eHW/5BJQBOSWoQoCBu3ITwmnZuNrpbs+lFc81EZX0MbDgcqvy6?=
+ =?iso-8859-1?Q?LWoRJhkPcA60PQ+QGkj1ThvSweDFhB5iLMsc1OJcqJ4sCNLMg78ci6uVhg?=
+ =?iso-8859-1?Q?DtmQlHc9np8njYj86lEIhF31mXHGA/GGyD6fmer2PXkbaboQ6Pl5SrO+6q?=
+ =?iso-8859-1?Q?sxHaNQ1KikgfyCEPac05+OB56Q7su+3A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?QxyyCn0BaJTr/CrhFUu6KXD5QXlsyYwK8HhcR2PRIKnMUaB/wXEroknsqQ?=
+ =?iso-8859-1?Q?iFOE0Q/x7UWBG+fKR59UFlJ/oQpYtz185ui8TcDy7gC0pLQpENk06BUVha?=
+ =?iso-8859-1?Q?9uVnk6tYeoLQ2SneVIlXCnZv4bYLhPvknYJh6qWaAUSNZ/5lzIctFHGY1O?=
+ =?iso-8859-1?Q?EeYpgVyO5tMiRBrh29yN2XXxUKA20Y5WYv53fUg7Uo6dWPmI3pMBkUewOZ?=
+ =?iso-8859-1?Q?W5eeA5u1PJhZpVZ9a4iURvovGT/ETAfzKMdl6T1Bp+lpeyCClp23BpVilE?=
+ =?iso-8859-1?Q?6w4M4GtZXbsqZonwME1myjGr1h7FndMeVcrlBZSSi978RIMkbC3me1uLJa?=
+ =?iso-8859-1?Q?c3HchZvzD7Pztgrt5c+wbxV3dGvbDuRnIu4wixNjsN4gCnMk/C5cV55kmu?=
+ =?iso-8859-1?Q?OV0NrbqtCk+TojC9ACn9wyA7GetayLVaTR1DZiB03XVcwYL7BRHDX0Is7j?=
+ =?iso-8859-1?Q?j/2DBPSZpejtCUMOULrAEesKwDZAE1RvSn8cx6M1nT+LuvVKVUsdDJz0wq?=
+ =?iso-8859-1?Q?dqB59UkMCAui2liZBHwTce4RI7tAI+59cySmUHpvLV+RqoanM+PCxxM5u2?=
+ =?iso-8859-1?Q?T0AFp/PbK0pwPRMXWBDEV5ceK2zzfj5aBxOwsn/OUnqm27MfyWE+6bPo3v?=
+ =?iso-8859-1?Q?9WWRIFur0oZRYz4/PeFIUrN8J4F7Gew6wVZW5VEftBerR/KiWRhVGtcN98?=
+ =?iso-8859-1?Q?ZzqoiP4F2IHH9gyN9OQ3dzgjY2GqtMYX8R5pH2BWFm+n/11qM1l6WPG385?=
+ =?iso-8859-1?Q?Wn/EPsOmkrc2gueDINnqVSBpKSpdK6WtI5Fl9D3zil/TCZ8onza3d9l1Wi?=
+ =?iso-8859-1?Q?EdOKE9dGpwpvVmpjgkfHiisJILnMIRHQlQhkMwGHHuSLvC0Dkc19BC5ewn?=
+ =?iso-8859-1?Q?vZ9QSMKH0Y6PE8slVVvtyCKJp42ms9P3un+ff+rrzVsHbDJIdi2C3ozSk3?=
+ =?iso-8859-1?Q?MQhElh8I+kyJHmKDjMxYptBYoQODpBJXqa1mADOTKclMWpYYvkEdATTEF0?=
+ =?iso-8859-1?Q?zEHMKFnqFioHNEg19TGX85aL7pzeSRT5VZtpE+HHN6AmmBVmIT1JmbzmrM?=
+ =?iso-8859-1?Q?4VsOJwfkrZKwcmQrJ6OTDYU8AFumkfz3vCu0NH3No5RErQNCfpWi7c5Wyp?=
+ =?iso-8859-1?Q?tlaCac7W+2BmEeyQVvi8TRPd2SK2/gkvAsKvJeq26BQw6A0s6MxdB5l4iL?=
+ =?iso-8859-1?Q?nwUnbCFrQcm6rzGdIh3W4jfCVJ9yxIHExot8JBYu7gkmSkW+eDkONNlKBO?=
+ =?iso-8859-1?Q?QjDG+GwwX0i+tSDvLk9BqWw7xsNUPERuysc8zIpcWb0Z++XQye0JGZx0SG?=
+ =?iso-8859-1?Q?+kdlU153+IBdjbrHrayfAGliuM3oSOvZOj7zBpDUlGIe6x4SVnOUsERNHH?=
+ =?iso-8859-1?Q?PoAWl5AD9VhQK2IKLm/4NP7n4TsvyhV11ODVPKoX5/VCW8m0BfmUuYiHBp?=
+ =?iso-8859-1?Q?YzC3lGW9LQ4a69Z3tCHCiL+FivDragJcYntBqvnef5ZOSrovVfmOk8b24E?=
+ =?iso-8859-1?Q?EkQ2jysC/MBV4tlZX1uXP+EN9wuPqs6XxuSB8acFjA5Libe7TWqSXBlS+E?=
+ =?iso-8859-1?Q?Qq/7y/0hA/pFMYbks+IeIVce2RtZySCxxM87MsciLifCe10/QaXpz12yzD?=
+ =?iso-8859-1?Q?zW43EA4xF6HalCE+xStFGvcSzGkdboomgZ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28eb9d39-ea70-4cc2-8f09-08dd1af676c6
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 21:46:41.5256
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5QskZbxYldxAoZ2PIuUcKLcQyAXhyYxSfh7/++SW6nhrQ2dpkJHO8VF182uqNwXT21oeHjpjqZdEzpPW9SH30w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6147
 
-On 12/12/2024 20:55, Konrad Dybcio wrote:
-> On 11.12.2024 9:29 AM, Neil Armstrong wrote:
->> The Adreno GPU Management Unit (GMU) can also scale DDR Bandwidth along
->> the Frequency and Power Domain level, but by default we leave the
->> OPP core scale the interconnect ddr path.
->>
->> While scaling via the interconnect path was sufficient, newer GPUs
->> like the A750 requires specific vote paremeters and bandwidth to
->> achieve full functionality.
->>
->> In order to calculate vote values used by the GPU Management
->> Unit (GMU), we need to parse all the possible OPP Bandwidths and
->> create a vote value to be sent to the appropriate Bus Control
->> Modules (BCMs) declared in the GPU info struct.
->>
->> This vote value is called IB, while on the other side the GMU also
->> takes another vote called AB which is a 16bit quantized value
->> of the floor bandwidth against the maximum supported bandwidth.
->> The AB vote will be calculated later when setting the frequency.
->>
->> The vote array will then be used to dynamically generate the GMU
->> bw_table sent during the GMU power-up.
->>
->> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 144 ++++++++++++++++++++++++++++++++++
->>   drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  13 +++
->>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h |   1 +
->>   3 files changed, 158 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> index 14db7376c712d19446b38152e480bd5a1e0a5198..36696d372a42a27b26a018b19e73bc6d8a4a5235 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->> @@ -9,6 +9,7 @@
->>   #include <linux/pm_domain.h>
->>   #include <linux/pm_opp.h>
->>   #include <soc/qcom/cmd-db.h>
->> +#include <soc/qcom/tcs.h>
->>   #include <drm/drm_gem.h>
->>   
->>   #include "a6xx_gpu.h"
->> @@ -1287,6 +1288,101 @@ static int a6xx_gmu_memory_probe(struct a6xx_gmu *gmu)
->>   	return 0;
->>   }
->>   
->> +/**
->> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager (BCM)
->> + * @unit: divisor used to convert bytes/sec bw value to an RPMh msg
->> + * @width: multiplier used to convert bytes/sec bw value to an RPMh msg
->> + * @vcd: virtual clock domain that this bcm belongs to
->> + * @reserved: reserved field
->> + */
->> +struct bcm_db {
->> +	__le32 unit;
->> +	__le16 width;
->> +	u8 vcd;
->> +	u8 reserved;
->> +};
-> 
-> No. This is a direct copypasta of drivers/interconnect/qcom/icc-rpmh.h
-> You cannot just randomly duplicate things..
-> 
-> Move it out to a shared header in include/ (and remove the duplicate from
-> clk-rpmh.c while at it)
-> 
+On Thu, Dec 12, 2024 at 08:50:26PM +0200, Ilpo Järvinen wrote:
+> On Thu, 12 Dec 2024, Yazen Ghannam wrote:
 
-Not sure if this a good idea
+[...]
 
+> > @@ -95,7 +80,12 @@ static umode_t hsmp_is_sock_attr_visible(struct kobject *kobj,
+> >   * Static array of 8 + 1(for NULL) elements is created below
+> >   * to create sysfs groups for sockets.
+> >   * is_bin_visible function is used to show / hide the necessary groups.
+> > + *
+> > + * Validate the maximum number against MAX_AMD_NUM_NODES. If this changes,
+> > + * then the attributes and groups below must be adjusted.
+> >   */
+> > +static_assert(MAX_AMD_NUM_NODES == 8);
 > 
-> I'd also really prefer if you took
-> 
-> drivers/interconnect/qcom/bcm-voter.c : tcs_list_gen()
-> 
-> and abstracted it to operate on struct bcm_db with any additional
-> required parameters passed as arguments.. Still left some comments
-> on this version if you decide to go with it
+> Please also add the #include for it.
+>
 
-They are still very different, look closely, tcs_list_gen is designed to
-operate on BW aggregations + scsaling, it would make no sense to unify them.
+Just to confirm, you mean for static_assert()?
 
-The calculation is simple enough, I made it explicitely easy to read and
-maintain, but honestly there's nothing special.
+  #include <linux/build_bug.h>
 
-> 
->> +
->> +static int a6xx_gmu_rpmh_bw_votes_init(const struct a6xx_info *info,
->> +				       struct a6xx_gmu *gmu)
->> +{
->> +	const struct bcm_db *bcm_data[GMU_MAX_BCMS] = { 0 };
->> +	unsigned int bcm_index, bw_index, bcm_count = 0;
->> +
->> +	if (!info->bcms)
->> +		return 0;
-> 
-> You already checked that from the caller
-
-Good catch
-
-> 
->> +
->> +	/* Retrieve BCM data from cmd-db */
->> +	for (bcm_index = 0; bcm_index < GMU_MAX_BCMS; bcm_index++) {
->> +		size_t count;
->> +
->> +		/* Stop at first unconfigured bcm */
->> +		if (!info->bcms[bcm_index].name)
->> +			break;
-> 
-> Unconfigured doesn't really fit here.. Maybe just mention the list is NULL
-> -terminated
-
-Ack
-
-> 
->> +
->> +		bcm_data[bcm_index] = cmd_db_read_aux_data(
->> +						info->bcms[bcm_index].name,
->> +						&count);
->> +		if (IS_ERR(bcm_data[bcm_index]))
->> +			return PTR_ERR(bcm_data[bcm_index]);
->> +
->> +		if (!count)
->> +			return -EINVAL;
-> 
-> If this condition ever happens, it'll be impossible to track down,
-> please add an err message
-
-Hmm sure
-
-> 
->> +
->> +		++bcm_count;
-> 
-> I've heard somewhere that prefixed increments are discouraged for
-> "reasons" and my OCD would like to support that
-
-Never got this memo...
-
-> 
->> +	}
->> +
->> +	/* Generate BCM votes values for each bandwidth & BCM */
->> +	for (bw_index = 0; bw_index < gmu->nr_gpu_bws; bw_index++) {
->> +		u32 *data = gmu->gpu_ib_votes[bw_index];
->> +		u32 bw = gmu->gpu_bw_table[bw_index];
->> +
->> +		/* Calculations loosely copied from bcm_aggregate() & tcs_cmd_gen() */
->> +		for (bcm_index = 0; bcm_index < bcm_count; bcm_index++) {
->> +			bool commit = false;
->> +			u64 peak;
->> +			u32 vote;
->> +
->> +			/* Skip unconfigured BCM */
->> +			if (!bcm_data[bcm_index])
->> +				continue;
-> 
-> I don't see how this is useful here
-
-It's a leftover, will drop
-
-> 
->> +
->> +			if (bcm_index == bcm_count - 1 ||
->> +			    (bcm_data[bcm_index + 1] &&
->> +			     bcm_data[bcm_index]->vcd != bcm_data[bcm_index + 1]->vcd))
->> +				commit = true;
->> +
->> +			if (!bw) {
->> +				data[bcm_index] = BCM_TCS_CMD(commit, false, 0, 0);
->> +				continue;
->> +			}
->> +
->> +			if (info->bcms[bcm_index].fixed) {
-> 
-> You may want to take a pointer to info->bcms[bcm_index]
-
-Sure, will help
-
-> 
->> +				u32 perfmode = 0;
->> +
->> +				if (bw >= info->bcms[bcm_index].perfmode_bw)
->> +					perfmode = info->bcms[bcm_index].perfmode;
->> +
->> +				data[bcm_index] = BCM_TCS_CMD(commit, true, 0, perfmode);
->> +				continue;
->> +			}
->> +
->> +			/* Multiply the bandwidth by the width of the connection */
->> +			peak = (u64)bw * le16_to_cpu(bcm_data[bcm_index]->width);
->> +			do_div(peak, info->bcms[bcm_index].buswidth);
->> +
->> +			/* Input bandwidth value is in KBps, scale the value to BCM unit */
->> +			peak *= 1000ULL;
-> 
-> I don't think this needs to be ULL since the other argument is an u64
-> 
->> +			do_div(peak, le32_to_cpu(bcm_data[bcm_index]->unit));
->> +
->> +			vote = clamp(peak, 1, BCM_TCS_CMD_VOTE_MASK);
->> +
->> +			data[bcm_index] = BCM_TCS_CMD(commit, true, vote, vote);
-> 
-> x is the avg vote, y is the peak vote
-
-downstream sets both calculated from the exact same value and the same way...
-
-> 
-> Just noting down for my future self I guess, a6xx sets ab=0,
-> a7xx sets ab=ib like you did here
-
-Probably, I'll need to check on that, but it can be done in a second step when enabling it on a6xx
-
-> 
-> Konrad
-
+Thanks,
+Yazen
 
