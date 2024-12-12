@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-443649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7EF9EFA78
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:12:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B9B9EFA79
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:13:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87E69172875
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B73616DADE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BB5226165;
-	Thu, 12 Dec 2024 18:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD556236956;
+	Thu, 12 Dec 2024 18:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HDkly875"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NK3fQWbA"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D2E2368E9
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B730225A5E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734026738; cv=none; b=KpQFt2zbKgTt8Udxmu/KGtkp+mxMveQaIbTokNkdBTJpxoH8rDfLBTuW3hDopdih69TiyhiUIN++HYRmnmahLTa4kdr5YpPKUKAIWt3AOrDJCA6bmNnp8mvxn8duuoLKRIJvHGW7ShCHtmpOFpHIF2KBJJNSmvUsIC17LCb7WDI=
+	t=1734026740; cv=none; b=h9I/HwuM2dOXQFi09jXgwTz1EI9NkQ95MoXuaKImdAEYiKZ5f5+LM9eg5s89tfP6r311tEHwu0tb9U1mvEWWDvIjDDi21cD4pQdQM+KJDmPM1qM9urv/3IBd+xyjrr2jnVbP9mlEjfdjbKEwX7io408nk2/OdXNCQ7+4gyUxFAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734026738; c=relaxed/simple;
-	bh=Z2UHwzkM46eNyOELnlSu5KplZV6dyg6FmiiX5LeoOuQ=;
+	s=arc-20240116; t=1734026740; c=relaxed/simple;
+	bh=zZ1Nzljx/w3TaRRu2FIWD04CjYa8X5+HeWRzj5ds/lk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PMInivWQegoOMo97bI5x2Uk6sxiu5pZvIQ497fxdg0o1Y39xQ99lcPliBZ34MTWFmqaK3C2AMwKsuVxo/V48SjMzAU6SDuuM6BgA1SZEMCNEpUTsLviqhP+826lGPicq8SCRV7hmqmbmAMMK2aJ3+B2Ij05paiywhfMyvlp+ONk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HDkly875; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=IQkZN3GoVzg0Gul28OrUWT1SEfQmlvUXMCHpAq2UfkwCBdRnOgN8m3TF1LXEcorcjHQABvDIhSbApwLrlv3ewnHT0Z7da1zmOJqTOtdiH6+uJC4BL5/4PPoJcQaCoaE4528k1m7p2ZsPkUS6y0E+4y4mPiVEGDWQ5UzO5eIVWPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NK3fQWbA; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43582d49dacso8227735e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:05:37 -0800 (PST)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-385ed79291eso1146127f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:05:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734026736; x=1734631536; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734026738; x=1734631538; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YdMuO2gtmeL3RMqWaakXFL6M4DlcZZq40B5WqzcNta4=;
-        b=HDkly875IfJkYrNdjky4itPOkt4EsAS85atpFDpufJ7IoUw41Nlgl43AvWc9EnqW3/
-         4iZUQYwdEJwkF3OPs8a2OLcoNck6pekbBtbViea/KuwR/R3IBvCiLBv6O+5AK9j8MzLv
-         xtH1r7qKOOZ+dvORe4M6CUpP1lAaviWMQ/yNFGSlxtttTkp4+c08bCzVudoQ//IXgmij
-         0mvre9HNEbGsscOHdgVqtyNQma/S5jd5LRKYB6lfpNPV2Nr1s8hrr8+ca8sZEuRy9UnR
-         12wIUyPedjEWEhg4rSV5cP3ZHAV07/uwUPNhieZmDm5F7R/kVlJRt/IGZgXB3bLKUP+P
-         JfBQ==
+        bh=ybNvGVgl/hoCzKNXbffTwzQBiR9JZU3Un5nM2P0DGi4=;
+        b=NK3fQWbAbCQzqrtPAkbMPVrwtUcReSSLuKCmelLOqVrX4XYnQaztAOjwxeEE/DvP46
+         kDJSzdBeXGVwlr6daW71uB7qauZM5xDDBSYZUvI6eQkCdxvPBYGh2E0WPd0gg9FXQNbU
+         kGR2fyh8ociDGexoUIeg9TJEvPQeWf2tE5o2/VSVqe8rWSF6Wu2mR/JZgJhCHe2Ynf5F
+         cZPGQ69pc3s9onRtG4+UhrhQBZQuQSrDgRjIXqV2K4I6EpE9OcjhSxdKzoa3NBQcX69O
+         ynE5j3hek7mgA9PiuMsb7LYBJiiRS1EY+ZtzreVMfhjW7sXfISayXB4lvICOnsVBANVL
+         k9oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734026736; x=1734631536;
+        d=1e100.net; s=20230601; t=1734026738; x=1734631538;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YdMuO2gtmeL3RMqWaakXFL6M4DlcZZq40B5WqzcNta4=;
-        b=VR6aDsoihucg9tA7okcz8SDytnmgOc6UKrnnUzmKTYrO5K66ZBmsge7PmEHc7kqh8n
-         QR86A7Muc6J80+rnCDRb+DZo2x6FxJzHkavRQusSwSMXc/lfeZbXL96i6Bk9ynA+sxMV
-         +Y6NAOZZ56LImW83/iYu1KqX8HCWOc2EGyu23feBxriXoCTlK8C/uKou9e/Dk8Mu+EXQ
-         gjy64EniPr0p6cpRBS3RSbRTf0wuUk7RsazMQAuIP/GOvWE0Pk3gorXMP++yV19Lq22D
-         u4AfyFgoMUkY4283Hqd9tExVA7Bg8lK5W3B9q3slvKUAqbFlSCoFq2VRUXk1XyEVUszk
-         i8kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW47X1MB+/oYpkaB/gGLDGqdAjFsSSYTllsT+l8EZd+yGKedvGKK9HOWzMinhd7glP0EMOAFwfb3XdSHdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZAgspnSLrYdyK9S/B9n86APY3SM0jaLBspJsk8H6/Rw0ltzOE
-	O+7VkaOeJHhZ1gDEYobQE6r8BJtvqq/2SMB0wm4UZRt8jAxAFBnwjHage86cH4EskISAg4A8Tj9
-	k/aL2bsL3hw==
-X-Google-Smtp-Source: AGHT+IFhLgvU2Rm+DNubCv6JNasQpuX6sd+/DiydVh4HkRumx8mqOJN1mpnAimZm+KH9fDL3y3s/kc2a4/LuEQ==
-X-Received: from wmso20.prod.google.com ([2002:a05:600c:5114:b0:436:1abf:b8fe])
+        bh=ybNvGVgl/hoCzKNXbffTwzQBiR9JZU3Un5nM2P0DGi4=;
+        b=PoIER54v8/Dq0roWRCuz9C8YCgsN3h5McwiAZpLVWwqSPke8S3z2HmOQPm3MycflIe
+         HnfcKGlbA4J9R+60SJT8OF3eMGGZCG5PQ2j83kNvVfZ9XiZESGplprZss94V9RFS2e2c
+         +QJmaZAmqroMcDywjaL1Z+qFIU1x7NjqNasDTPHZzAaYIK04XScGRjaTkewVQsqp8xBz
+         U5O6bp94BrFBqMxeUqaJ94TeaaRwAlaoc132OJO3JrWJeCeyJd5GFeGuRBLdXn7KNIOx
+         u4g7mW01JUMbsUtm/pmnsBWwybp7+bnti85rpn9aMp+TWNg03AFmyvyFtU+MRmleBo4O
+         2LkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8hftIGwY1tZvb0Byn9MrKVcO5/1nY3AvCP+9GS4uj/69zzNMi1gPGdcw5Cbj/V43vXc9epBLZPWaP75g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziDXOh5lv1BgrrtemqbMWU7iWV2Micxbipevv6BmQhGhMjcW3K
+	wvKEQ1MS9xMYKB8VXNbm4wcv6fyUDmxB2o127+ZotNALmBRjhl3rLhrP/ejKALgKozG/oxd1YXE
+	7AdTWCj9oQw==
+X-Google-Smtp-Source: AGHT+IE0b7txsRIOyvGxW20/4w0Q8YO5iAlMJIT7VhEN6QmR2/Vq39IVy03R+zOk9tpZ9g+gCkzVceXKRYZllw==
+X-Received: from wmbg5.prod.google.com ([2002:a05:600c:a405:b0:434:fddf:5c1a])
  (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:5028:b0:435:172:5052 with SMTP id 5b1f17b1804b1-4362282768bmr38379225e9.1.1734026735825;
- Thu, 12 Dec 2024 10:05:35 -0800 (PST)
-Date: Thu, 12 Dec 2024 18:03:49 +0000
+ 2002:a05:6000:18a2:b0:385:faf5:ebc8 with SMTP id ffacd0b85a97d-38788847313mr3909644f8f.21.1734026737836;
+ Thu, 12 Dec 2024 10:05:37 -0800 (PST)
+Date: Thu, 12 Dec 2024 18:03:50 +0000
 In-Reply-To: <20241212180423.1578358-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241212180423.1578358-1-smostafa@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212180423.1578358-26-smostafa@google.com>
-Subject: [RFC PATCH v2 25/58] KVM: arm64: iommu: Add SMMUv3 driver
+Message-ID: <20241212180423.1578358-27-smostafa@google.com>
+Subject: [RFC PATCH v2 26/58] KVM: arm64: smmu-v3: Initialize registers
 From: Mostafa Saleh <smostafa@google.com>
 To: iommu@lists.linux.dev, kvmarm@lists.linux.dev, 
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -89,104 +89,190 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Jean-Philippe Brucker <jean-philippe@linaro.org>
 
-Add the skeleton for an Arm SMMUv3 driver at EL2.
+Ensure all writable registers are properly initialized. We do not touch
+registers that will not be read by the SMMU due to disabled features.
 
 Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
 Signed-off-by: Mostafa Saleh <smostafa@google.com>
 ---
- arch/arm64/kvm/hyp/nvhe/Makefile            |  2 ++
- arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c | 22 +++++++++++++++++++++
- drivers/iommu/Kconfig                       |  9 +++++++++
- include/kvm/arm_smmu_v3.h                   | 18 +++++++++++++++++
- 4 files changed, 51 insertions(+)
- create mode 100644 arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
- create mode 100644 include/kvm/arm_smmu_v3.h
+ arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c | 130 +++++++++++++++++++-
+ include/kvm/arm_smmu_v3.h                   |  11 ++
+ 2 files changed, 140 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/Makefile
-index d846962e7246..edfd8a11ac90 100644
---- a/arch/arm64/kvm/hyp/nvhe/Makefile
-+++ b/arch/arm64/kvm/hyp/nvhe/Makefile
-@@ -16,6 +16,8 @@ hyp-obj-$(CONFIG_TRACING) += clock.o events.o trace.o
- hyp-obj-$(CONFIG_MODULES) += modules.o
- hyp-obj-y += $(lib-objs)
- 
-+hyp-obj-$(CONFIG_ARM_SMMU_V3_PKVM) += iommu/arm-smmu-v3.o
-+
- $(obj)/hyp.lds: $(src)/hyp.lds.S FORCE
- 	$(call if_changed_dep,cpp_lds_S)
- 
 diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c b/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
-new file mode 100644
-index 000000000000..d2a570c9f3ec
---- /dev/null
+index d2a570c9f3ec..f7e60c188cb0 100644
+--- a/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
 +++ b/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -4,16 +4,144 @@
+  *
+  * Copyright (C) 2022 Linaro Ltd.
+  */
++#include <asm/arm-smmu-v3-common.h>
+ #include <asm/kvm_hyp.h>
+ #include <kvm/arm_smmu_v3.h>
+ #include <nvhe/iommu.h>
++#include <nvhe/mem_protect.h>
++#include <nvhe/mm.h>
++#include <nvhe/pkvm.h>
++
++#define ARM_SMMU_POLL_TIMEOUT_US	100000 /* 100ms arbitrary timeout */
+ 
+ size_t __ro_after_init kvm_hyp_arm_smmu_v3_count;
+ struct hyp_arm_smmu_v3_device *kvm_hyp_arm_smmu_v3_smmus;
+ 
++#define for_each_smmu(smmu) \
++	for ((smmu) = kvm_hyp_arm_smmu_v3_smmus; \
++	     (smmu) != &kvm_hyp_arm_smmu_v3_smmus[kvm_hyp_arm_smmu_v3_count]; \
++	     (smmu)++)
++
 +/*
-+ * pKVM hyp driver for the Arm SMMUv3
-+ *
-+ * Copyright (C) 2022 Linaro Ltd.
++ * Wait until @cond is true.
++ * Return 0 on success, or -ETIMEDOUT
 + */
-+#include <asm/kvm_hyp.h>
-+#include <kvm/arm_smmu_v3.h>
-+#include <nvhe/iommu.h>
++#define smmu_wait(_cond)					\
++({								\
++	int __i = 0;						\
++	int __ret = 0;						\
++								\
++	while (!(_cond)) {					\
++		if (++__i > ARM_SMMU_POLL_TIMEOUT_US) {		\
++			__ret = -ETIMEDOUT;			\
++			break;					\
++		}						\
++		pkvm_udelay(1);					\
++	}							\
++	__ret;							\
++})
 +
-+size_t __ro_after_init kvm_hyp_arm_smmu_v3_count;
-+struct hyp_arm_smmu_v3_device *kvm_hyp_arm_smmu_v3_smmus;
-+
-+static int smmu_init(void)
++static int smmu_write_cr0(struct hyp_arm_smmu_v3_device *smmu, u32 val)
 +{
-+	return -ENOSYS;
++	writel_relaxed(val, smmu->base + ARM_SMMU_CR0);
++	return smmu_wait(readl_relaxed(smmu->base + ARM_SMMU_CR0ACK) == val);
 +}
 +
-+/* Shared with the kernel driver in EL1 */
-+struct kvm_iommu_ops smmu_ops = {
-+	.init				= smmu_init,
-+};
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index b3aa1f5d5321..fea5d6a8b90b 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -437,6 +437,15 @@ config TEGRA241_CMDQV
- 	  CMDQ-V extension.
- endif
++/* Transfer ownership of structures from host to hyp */
++static int smmu_take_pages(u64 phys, size_t size)
++{
++	WARN_ON(!PAGE_ALIGNED(phys) || !PAGE_ALIGNED(size));
++	return __pkvm_host_donate_hyp(phys >> PAGE_SHIFT, size >> PAGE_SHIFT);
++}
++
++static void smmu_reclaim_pages(u64 phys, size_t size)
++{
++	WARN_ON(!PAGE_ALIGNED(phys) || !PAGE_ALIGNED(size));
++	WARN_ON(__pkvm_hyp_donate_host(phys >> PAGE_SHIFT, size >> PAGE_SHIFT));
++}
++
++static int smmu_init_registers(struct hyp_arm_smmu_v3_device *smmu)
++{
++	u64 val, old;
++	int ret;
++
++	if (!(readl_relaxed(smmu->base + ARM_SMMU_GBPA) & GBPA_ABORT))
++		return -EINVAL;
++
++	/* Initialize all RW registers that will be read by the SMMU */
++	ret = smmu_write_cr0(smmu, 0);
++	if (ret)
++		return ret;
++
++	val = FIELD_PREP(CR1_TABLE_SH, ARM_SMMU_SH_ISH) |
++	      FIELD_PREP(CR1_TABLE_OC, CR1_CACHE_WB) |
++	      FIELD_PREP(CR1_TABLE_IC, CR1_CACHE_WB) |
++	      FIELD_PREP(CR1_QUEUE_SH, ARM_SMMU_SH_ISH) |
++	      FIELD_PREP(CR1_QUEUE_OC, CR1_CACHE_WB) |
++	      FIELD_PREP(CR1_QUEUE_IC, CR1_CACHE_WB);
++	writel_relaxed(val, smmu->base + ARM_SMMU_CR1);
++	writel_relaxed(CR2_PTM, smmu->base + ARM_SMMU_CR2);
++	writel_relaxed(0, smmu->base + ARM_SMMU_IRQ_CTRL);
++
++	val = readl_relaxed(smmu->base + ARM_SMMU_GERROR);
++	old = readl_relaxed(smmu->base + ARM_SMMU_GERRORN);
++	/* Service Failure Mode is fatal */
++	if ((val ^ old) & GERROR_SFM_ERR)
++		return -EIO;
++	/* Clear pending errors */
++	writel_relaxed(val, smmu->base + ARM_SMMU_GERRORN);
++
++	return 0;
++}
++
++static int smmu_init_device(struct hyp_arm_smmu_v3_device *smmu)
++{
++	int ret;
++
++	if (!PAGE_ALIGNED(smmu->mmio_addr | smmu->mmio_size))
++		return -EINVAL;
++
++	ret = ___pkvm_host_donate_hyp(smmu->mmio_addr >> PAGE_SHIFT,
++				      smmu->mmio_size >> PAGE_SHIFT,
++				      /* accept_mmio */ true);
++	if (ret)
++		return ret;
++
++	smmu->base = hyp_phys_to_virt(smmu->mmio_addr);
++
++	ret = smmu_init_registers(smmu);
++	if (ret)
++		return ret;
++
++	return kvm_iommu_init_device(&smmu->iommu);
++}
++
+ static int smmu_init(void)
+ {
+-	return -ENOSYS;
++	int ret;
++	struct hyp_arm_smmu_v3_device *smmu;
++	size_t smmu_arr_size = PAGE_ALIGN(sizeof(*kvm_hyp_arm_smmu_v3_smmus) *
++					  kvm_hyp_arm_smmu_v3_count);
++	phys_addr_t smmu_arr_phys;
++
++	kvm_hyp_arm_smmu_v3_smmus = kern_hyp_va(kvm_hyp_arm_smmu_v3_smmus);
++
++	smmu_arr_phys = hyp_virt_to_phys(kvm_hyp_arm_smmu_v3_smmus);
++
++	ret = smmu_take_pages(smmu_arr_phys, smmu_arr_size);
++	if (ret)
++		return ret;
++
++	for_each_smmu(smmu) {
++		ret = smmu_init_device(smmu);
++		if (ret)
++			goto out_reclaim_smmu;
++	}
++
++	return 0;
++out_reclaim_smmu:
++	smmu_reclaim_pages(smmu_arr_phys, smmu_arr_size);
++	return ret;
+ }
  
-+config ARM_SMMU_V3_PKVM
-+	bool "ARM SMMUv3 support for protected Virtual Machines"
-+	depends on KVM && ARM64
-+	help
-+	  Enable a SMMUv3 driver in the KVM hypervisor, to protect VMs against
-+	  memory accesses from devices owned by the host.
-+
-+	  Say Y here if you intend to enable KVM in protected mode.
-+
- config S390_IOMMU
- 	def_bool y if S390 && PCI
- 	depends on S390 && PCI
+ /* Shared with the kernel driver in EL1 */
 diff --git a/include/kvm/arm_smmu_v3.h b/include/kvm/arm_smmu_v3.h
-new file mode 100644
-index 000000000000..521028b3ff71
---- /dev/null
+index 521028b3ff71..fb24bcef1624 100644
+--- a/include/kvm/arm_smmu_v3.h
 +++ b/include/kvm/arm_smmu_v3.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __KVM_ARM_SMMU_V3_H
-+#define __KVM_ARM_SMMU_V3_H
+@@ -5,8 +5,19 @@
+ #include <asm/kvm_asm.h>
+ #include <kvm/iommu.h>
+ 
++/*
++ * Parameters from the trusted host:
++ * @mmio_addr		base address of the SMMU registers
++ * @mmio_size		size of the registers resource
++ *
++ * Other members are filled and used at runtime by the SMMU driver.
++ */
+ struct hyp_arm_smmu_v3_device {
+ 	struct kvm_hyp_iommu	iommu;
++	phys_addr_t		mmio_addr;
++	size_t			mmio_size;
 +
-+#include <asm/kvm_asm.h>
-+#include <kvm/iommu.h>
-+
-+struct hyp_arm_smmu_v3_device {
-+	struct kvm_hyp_iommu	iommu;
-+};
-+
-+extern size_t kvm_nvhe_sym(kvm_hyp_arm_smmu_v3_count);
-+#define kvm_hyp_arm_smmu_v3_count kvm_nvhe_sym(kvm_hyp_arm_smmu_v3_count)
-+
-+extern struct hyp_arm_smmu_v3_device *kvm_nvhe_sym(kvm_hyp_arm_smmu_v3_smmus);
-+#define kvm_hyp_arm_smmu_v3_smmus kvm_nvhe_sym(kvm_hyp_arm_smmu_v3_smmus)
-+
-+#endif /* __KVM_ARM_SMMU_V3_H */
++	void __iomem		*base;
+ };
+ 
+ extern size_t kvm_nvhe_sym(kvm_hyp_arm_smmu_v3_count);
 -- 
 2.47.0.338.g60cca15819-goog
 
