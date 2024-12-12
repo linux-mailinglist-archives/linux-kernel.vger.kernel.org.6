@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-442914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F9D9EE3EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:16:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D6B39EE3EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:16:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B38A2825D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:16:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4C4188BD74
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE922101BA;
-	Thu, 12 Dec 2024 10:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6E2210F6E;
+	Thu, 12 Dec 2024 10:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JK/i3slw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLYfBNxJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1971545027;
-	Thu, 12 Dec 2024 10:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B5C45027;
+	Thu, 12 Dec 2024 10:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733998587; cv=none; b=SlAZZaodYK62hqHk7eSkRtloCVik/yDf4wsO5iFuI7jHjLpiuEa2B5DexEp6WFT8/zw7+5TkQs1Qm4e5KF6ySCb69ZiuivX7G64kf24Oxxbl+d3gUOcDMDNThu6RUylSv67hAWYGirr3XlvsR9XPpCCV0gtks6CDd3At0E6nD5Y=
+	t=1733998603; cv=none; b=bRSHJSWXpU30gtmGxED4mgA6JC1jVE+7BNEz6gCvIf1cXxIHzkrhZR5VP+KrmkAT0lw3RJU4Ikv0I8iJ8yONXa4ahnupTSqmiEGPhCQnBxJ4BI8PDu4CNtZP3v3+iX7yKl31ElwIXWb3C99epkOHUSOzCvqqIzMWmeNH02l+/so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733998587; c=relaxed/simple;
-	bh=qo3Rv5arEF3Bj2lIGlIG/vss34EB5qy39uBtzPHP6Js=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bfqfLDGRf1cUJmGcWpi6Puut/6REUbpcUpcCXHbCm5dEcV6zqEUPu1TGrqS3Eh9q5kSVQXteT+ArYT+y+p62zQoRPYpOUFr4MxxsdbbTfJzJiP7AFMcaO+d4w9GVTI/jl5o/oRduSmBxGugyeE/4mePwkFTpo57J/Eg21iVS+vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JK/i3slw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7gVva029034;
-	Thu, 12 Dec 2024 10:16:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YYYW2nbLGoQmKqk5fl+o+ckY9lAaIAA/oyPAHuafN1M=; b=JK/i3slw16jkUlh4
-	Wet47N+GP5osyqMP/N9hspmtl6S+7KAn9ixHmaydJ7t67RaIcyP/QoGr0S8x1wdV
-	DY0wS6oqaqEg5hYGo/XrrkEBwX4r4Gf+CtSXyOJNRSIdSmhZhn9+vqbOtPYEhmy3
-	eZiZkCTQrVH+x7JsBFKeGB99fq9IG/EKpVYbZOT5oldG+Suwt/VkRuN71kp5/cNM
-	s5z5kUGX4vmdfpYghv22dgYXkAZCC7OO3bZvNhtNsbh3dEhpuFQho8aUPSTbYbr6
-	lfWANzBZ4DzjkFX91gnZQvYHyr/CdNEMMMS/EqTz28Bg502SBgXrSSaepzT1XfmM
-	b2Ezng==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd4xthm7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 10:16:19 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BCAGIFP016708
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 10:16:18 GMT
-Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
- 2024 02:16:13 -0800
-Message-ID: <06566196-f87a-4d66-bea5-83b640651489@quicinc.com>
-Date: Thu, 12 Dec 2024 18:16:05 +0800
+	s=arc-20240116; t=1733998603; c=relaxed/simple;
+	bh=lKnDgtHDup6CgJWh4ENsKoIzhSCtFgX7+1cLUc1h4x8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BHFqRmolWU1o9EXLBAHh5qPFZIpp4ZrQ7CNvh7q4U5WgxCDhMR3WwWhOEpwgMQ/uZf3mtxfVy5pe0fOch40P3nOKZqdwoE+YZYUkTG0frFiIbokAbFXnUTazHqHxRf+qxqqrdZJDti+faV+EInhDo+GfxizbXFJ9AeJhMJoQGYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLYfBNxJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39302C4CECE;
+	Thu, 12 Dec 2024 10:16:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733998603;
+	bh=lKnDgtHDup6CgJWh4ENsKoIzhSCtFgX7+1cLUc1h4x8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VLYfBNxJZ69yN7Bdj+ifHgfe3BAtplB93aa8SbVOQDpIk9w3fspA9hHgHH5TbFNz5
+	 0H7J/7VVUK+rAepZK5RkueMpPqZ0Dp+OsbVG9haXu5wtFoLg/TjUByM4suCIiPrDYS
+	 mjC76UbF6ZM2x9/0oLLwrW+h/oMWwL8Ya26zbQdtVaNdC+dOFTvY9yDtDETcl0MNrG
+	 8Zm4EVYMWhj3M9l7xf997A/QDfyTZg6oHX68ID3vufpV0dJWoX280+9I1tjqhkHKQL
+	 +a60MbF3s6BSSWsoKikBpYx/op1AhtfX+he+VHBqIvd1c+SNxovgBkcMxPZ7XsaadP
+	 KKLK49tJ/2KHQ==
+Message-ID: <c63063b3-b2cc-43af-b026-98c992e9bbf3@kernel.org>
+Date: Thu, 12 Dec 2024 10:16:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,93 +49,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindings: net: bluetooth: qca: Expand
- firmware-name property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao
-	<quic_rjliao@quicinc.com>,
-        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_jiaymao@quicinc.com>, <quic_shuaz@quicinc.com>,
-        <quic_zijuhu@quicinc.com>, <quic_mohamull@quicinc.com>
-References: <20241210151636.2474809-1-quic_chejiang@quicinc.com>
- <20241210151636.2474809-2-quic_chejiang@quicinc.com>
- <vbwg7djb4me6i4ow2q74ltqjxvkxeulhzyq4n6ak7aifhtf36f@x66pjje2iu6u>
- <62afbaea-67b1-4572-9e78-d1dbe5fae20a@quicinc.com>
- <f818f089-0490-42da-9aee-1a7006c11978@kernel.org>
- <65fd0932-4519-44ac-ba9d-55ee97b43233@quicinc.com>
- <ecb8535a-d421-4774-88d3-e904bb08a0e4@kernel.org>
-Content-Language: en-US
-From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-In-Reply-To: <ecb8535a-d421-4774-88d3-e904bb08a0e4@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: F_uqG9jF01yQDUbVHmxyw8m919_J5m4k
-X-Proofpoint-GUID: F_uqG9jF01yQDUbVHmxyw8m919_J5m4k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 mlxlogscore=999 phishscore=0 adultscore=0
- suspectscore=0 spamscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120072
+Subject: Re: [PATCH 2/2] tools build feature: Don't set feature-libcap=1 if
+ libcap-devel isn't available
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Arnaldo Carvalho de Melo <acme@redhat.com>,
+ James Clark <james.clark@linaro.org>, Ian Rogers <irogers@google.com>
+References: <20241211224509.797827-1-acme@kernel.org>
+ <20241211224509.797827-3-acme@kernel.org>
+ <CAP-5=fWqBrw1SuY8ue2X_xOv=yStPANM9NGUBkeo+_s2O=bKTA@mail.gmail.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <CAP-5=fWqBrw1SuY8ue2X_xOv=yStPANM9NGUBkeo+_s2O=bKTA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
-
-On 12/12/2024 3:16 PM, Krzysztof Kozlowski wrote:
-> On 11/12/2024 11:16, Cheng Jiang (IOE) wrote:
->> Hi Krzysztof,
+2024-12-11 20:25 UTC-0800 ~ Ian Rogers <irogers@google.com>
+> On Wed, Dec 11, 2024 at 2:45 PM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
 >>
->> On 12/11/2024 5:48 PM, Krzysztof Kozlowski wrote:
->>> On 11/12/2024 10:39, Cheng Jiang (IOE) wrote:
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>>>> index 7bb68311c..2782d2325 100644
->>>>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>>>> @@ -101,7 +101,10 @@ properties:
->>>>>>    max-speed: true
->>>>>>  
->>>>>>    firmware-name:
->>>>>> -    description: specify the name of nvm firmware to load
->>>>>> +    description:
->>>>>> +      If one item is present, specify the name of the NVM firmware to load.
->>>>>> +      If two items are present, the first item specifies the name of the NVM,
->>>>>> +      and the second specifies the name of the rampatch firmware to load.
->>>>>
->>>>> Don't repeat constraints in free form text. Use proper constraints so
->>>>> you can validate your DTS. And then actually do validate your DTS...
->>>>>
->>>> It seems unnecessary to add this description, so I will drop this change. Is that okay?
->>>
->>> You need to list the items and describe them. See how all other bindings
->>> do it.
->>>
->> The firmware names are not fixed strings; they vary depending on the chip, board, or platform.
+>> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+>>
+>> libcap isn't tested in the tools/build/feature/test-all.c fast path
+>> feature detection process, so don't set it as available if test-all
+>> manages to build.
+>>
+>> There are other users of this feature detection mechanism, and they
+>> explicitely ask for libcap to be tested, so are not affected by this
+>> patch, for instance, with this patch in place:
+>>
+>>   $ make -C tools/bpf/bpftool/ clean
+>>   <SNIP>
+>>   make: Leaving directory '/home/acme/git/perf-tools-next/tools/bpf/bpftool'
+>>   ⬢ [acme@toolbox perf-tools-next]$ make -C tools/bpf/bpftool/
+>>   make: Entering directory '/home/acme/git/perf-tools-next/tools/bpf/bpftool'
+>>
+>>   Auto-detecting system features:
+>>   ...                         clang-bpf-co-re: [ on  ]
+>>   ...                                    llvm: [ on  ]
+>>   ...                                  libcap: [ on  ]
+>>   ...                                  libbfd: [ on  ]
+>>   ...                             libelf-zstd: [ on  ]
+>>   <SNIP>
+>>     LINK    bpftool
+>>   make: Leaving directory '/home/acme/git/perf-tools-next/tools/bpf/bpftool'
+>>   $
+>>   $ sudo rpm -e libcap-devel
+>>   $ make -C tools/bpf/bpftool/
+>>   <SNIP>
+>>   make: Entering directory '/home/acme/git/perf-tools-next/tools/bpf/bpftool'
+>>
+>>   Auto-detecting system features:
+>>   ...                         clang-bpf-co-re: [ on  ]
+>>   ...                                    llvm: [ on  ]
+>>   ...                                  libcap: [ OFF ]
+>>   ...                                  libbfd: [ on  ]
+>>   ...                             libelf-zstd: [ on  ]
+>>
+>>   $
+>>
+>> Cc: Adrian Hunter <adrian.hunter@intel.com>
+>> Cc: Ian Rogers <irogers@google.com>
+>> Cc: James Clark <james.clark@linaro.org>
+>> Cc: Jiri Olsa <jolsa@kernel.org>
+>> Cc: Kan Liang <kan.liang@linux.intel.com>
+>> Cc: Namhyung Kim <namhyung@kernel.org>
+>> Cc: Quentin Monnet <qmo@kernel.org>
+>> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 > 
-> Instead of replying immediately and pushing this back again on us, read
-> other bindings. There are nowhere "fixed strings".
-> 
-Ack. I will take care of it next time. Thank you!
-> 
-> Best regards,
-> Krzysztof
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
+
+Acked-by: Quentin Monnet <qmo@kernel.org>
+
+Thanks Arnaldo for checking the bpftool build :)
+Quentin
 
