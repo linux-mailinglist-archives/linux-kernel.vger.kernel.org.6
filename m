@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-442428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF5B9EDCA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7759EDCAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB7D2836F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:47:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5743B283762
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC04D15E8B;
-	Thu, 12 Dec 2024 00:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B02817C68;
+	Thu, 12 Dec 2024 00:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WoLnSKYN"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TfJV82nx"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BAE8460
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F138C18643
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733964453; cv=none; b=fP9YaYBFk0Px7mxS31ea/4Zek1jJH26UkvG3+wSyAFGZPKzuGc3aHVHqypAeLZzB0SczOY6RrQRsjwFu5/vu6lEzyhReJKAGa0YhwhtCP3fXvuApsytJ6lx/aqMprZSeK3Z2rGyoo3SqbwELnq+vIaYKtV+idFMAzzrHcbqAQhQ=
+	t=1733964456; cv=none; b=tD2UIqoeXOhlf+uADlKzBwcwWzi8DApZBd3kPfVE1jEkzIKEcZujMcE703XK1pYq3Sw/M23Y4iayPsDeBs+WmlJ5rObiEw6zIVeoH4dtjNd9qRMPGRk3NonXCXNi+4eyN0LVfIiYP7U0vZSM0qocePHZWqpX9GbjikiuElgZtUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733964453; c=relaxed/simple;
-	bh=u898HNuc/K7hFwQQGL+EvvHfte2KLKC60+utw98E/KE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IQXbZFYJBCIKJt1zvVsNNHEhVLbwhITM1wtagMZ1Eh1WPixeV8yoJPoewLk1xeTZNw7MpFKla/WvQYMjMiyNooI3JHOItMxuUwQHi54ozMCejoet5/RItdte/ukZEuEDvj1bf2Q+gY2fmxM4pPgH3hNHVhkbdvKNJDGmOpD7bzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WoLnSKYN; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1733964456; c=relaxed/simple;
+	bh=3R3OPMfTuyqQexC84gUaI5ofdVj4g5npIdYgx8O4VNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=B89F9NsqQdH7LLNTP4QaE1V0BaM8h96CDGPb8WQF7JDAWqoLJ8cdp5aH7gJaKg4mPoyw4b150csKrFdXDrnJama8vE0cBDPUC9oyDy6FxwpUsttDp9WtBNdzmOw43Hobe5ICzqfRPQI1EhwWcQkZYA4RWBqD0M3+RDaQMcI4KlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TfJV82nx; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-432d86a3085so229975e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:47:31 -0800 (PST)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385e0e224cbso5394f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:47:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733964450; x=1734569250; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y5l/l7iG742JLVKp0vJqekUsAPOA4worydu3RY2wX3E=;
-        b=WoLnSKYN1ihH08nxzVQBTy9+Ydi79QFSDVzdhdKAKM8uRDD510RlYBm2pBQvYBSVFp
-         fnW4qcjhA69HD2wJEf+ocBjNAqhOM1m2kJ3e2U/G5vCwCdGVv78sZZpxtM1Gn8LR5jQV
-         ldYUCmXJXShCpCicXNc+KYyVteEuLDFGv/+n7x+R8af+crPEb3uBfWm2e1rlu9WfpfEz
-         4lgwpE3FW+bXusyLoPpu7J6fXjznwFA9Hf7LuQVM1bSgYGFCll3kGzlpXJjAS6L5ah5r
-         HfkYYILUfqxBKNPVwShWPz7dtPSo89xFYm2LH+fFlm0lyueXUD6QpHMJI/21wzVMfNTI
-         qX3A==
+        d=linaro.org; s=google; t=1733964452; x=1734569252; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bxSzgj3Vq2uPgrMY9L1M3DS9SZdOaUlr7HUWtclhijg=;
+        b=TfJV82nxRpRj+irEv+/PnGsx828tWuNkyn+K+E0kP7hXuegJ26jBNa+Hpe7TeVyOc6
+         q95d2WKxkdwZQ2s/CfGF+QzHGNO+G6ud/A+jSpPhmiZQcZgs3g/Kxpyc7S/+G/vyP3oV
+         YVinfoiYG12z5vtO5cFrwUfTRR8lAmakfoZDoFqt5+HRWgmGyCa9rKz6XUfYA5PlNxta
+         D46bUCEQ6QPL2NU1CMrgRgfR2E+ze62hkpmZPpJH5HVGWlP8rHshRpI5feE568zRm5+P
+         a2f0KPGUJT0Hcx+scA2GLlr5gM3KvmctaUTRu2tjaRaD34KyboMp87DPFDSPFlxIjQPX
+         2ocw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733964450; x=1734569250;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y5l/l7iG742JLVKp0vJqekUsAPOA4worydu3RY2wX3E=;
-        b=otamnJxvjw5/ZW84EzMmGC3lmtv4wNuWuyLgoOFJ+NScoGaZ+KIsDKVjmKUP6DQvzA
-         j3fpo6hRWk6cwcxHr06KgwpXKK+2BLG2JNovXZ98roK6Oz2bC3F8q1AIIOiSjHBrrQRt
-         MZS25adMHIWxvzYX4aXxhcBoB6co1bBIwRG8Ul98SZK9L5XmosWW8bQMagrFVHpH7iTk
-         i+OY/zk3+vjOwiAT2GxWK7xP5G+m9mhaMjdsuio0fWhQdwaRXv5A2xJogLPh8Yi2i5pq
-         kxYpK7hO+Gi3xGUVqN/UW56Tudww8eRUAyK7/zv3wQH68EZNtl6S0f9Zqfx0zKBioLgB
-         MX0w==
-X-Forwarded-Encrypted: i=1; AJvYcCULIJoZhV+Ggack2ywRZWPdYIWVGeR3Gcd2IqJxJk+CUyKAPy71XNPf5IDGPr+VjnHQ/jUVrjSYOhOUS1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCpHf2rPAgb2whgMl7Xqc1nybn32VovLum9mIWj6O6fWqrJ+VK
-	C7PaQqDE4qYvqA20Dl3dMimu2RWYFA4cncTlgMgDEbkCJE5kpAE20Vkt7kSj5uU=
-X-Gm-Gg: ASbGncsy2ZiScUPzw0tgSn0qBJS+Ys4G4wPZAEs+yMHPZOCEjAwZsIV0VHVwRmPjyol
-	UyCyqUhbEhu68Or4eeoxl/D4SxNE7P26rH0akxSj1ygWVYG9mj0Vt1Ky4DlCImFAv/vKNoenoUN
-	AzwAGhTQy9E4JcAHz2YpJ5kIg7fcBTo3a+YI/e3Q5KAR8rXh6qZpu0IcQwP1BrbO8zX3PbI7Zzf
-	fhyyZDwJdWbFKMEH/qZmKeUov2hBNwconfI2oV7SUsgM+vbGkMBLIhpEl41KXYAP9SFCxmv
-X-Google-Smtp-Source: AGHT+IFaSvB80LMIRhJfPUgXzGzChRp6atkQc01wtRMPtU4/xf5ktaw4y00amu4hB9OYaIG7Ryvh3g==
-X-Received: by 2002:a05:6000:4405:b0:385:f13c:570f with SMTP id ffacd0b85a97d-3864ce5fbcemr3040782f8f.33.1733964449908;
-        Wed, 11 Dec 2024 16:47:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733964452; x=1734569252;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bxSzgj3Vq2uPgrMY9L1M3DS9SZdOaUlr7HUWtclhijg=;
+        b=gL77kGJS5czeeeE3eLzdhLkUMGy1oZ2vReplPY3rkZllNbFBCEtEBEx18Znqia2k0L
+         jpEYb4jpGA5a0ecZjEzI2xYd91+Oo+azWun5NfVVBiXcWkIZej/lLLkoedh1jLHkjNAd
+         aota0G/58zFpl2ojIxxPApPRwEPCBzLe80DeV/KfACumfRQ+XjMaK7qS3nkrQGmUK8WH
+         snlQypR945xhZUlMXurRmqnIJFk0SpkODIEF5NZdpFRKkaE8FCrK04zzNidkDxm8nuRH
+         88qt/xYXp8CRczYUqxLxoN8x7h04cWwHhiD53fpzFkZ8PrBZCx4hYh6ihfTL1JOZpS5i
+         EzXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRRMQZ+zJkfeL+zTomy7pEdlOiuiD9UHM2QDj/VI7KSGdY8GcnQFn+LtkrBZE8RLJhVXScWsPns3JSWFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuiXYcCNGuVmjlMeHEl1lcaZTmSI6xrDLWQ1sznGIb4JCiJg8O
+	arxIx9B+1gZlL4esnou6YfHQAtwWr/yA4mK5jrXwu8q/5+RaYOlAqllq2CAW+YI=
+X-Gm-Gg: ASbGnctIFLbou4wKCDsuokjm8Cfgqn4Zs0/BG7c19jfp15I2PypnAWJsRxnD2QLXlU2
+	w/Sl2blC3I0EX+aM6mp95FaR7Z6Hp96VKPvVwETZD8SKQzeupWXrmILn+g/VzeG8sJGxgFBzg2O
+	UJeXqkA02UoYgCIhR9Yx3dZ4CvequVpi6HOc0hcrkIlmehBQ1TbEOxIPNye49y/nbagxSPWGls/
+	0ERgz1gJ3eXHsVvs8mVUvbeLBuTx8B1Xdwb6vuRB2we7dCKt9t61w5L3sD4UODJfJWrQ0tf
+X-Google-Smtp-Source: AGHT+IE1OUN0yGKV1J8sFJ5lu50pkndsUsBhL3KLv+epv+i5SZeHxNPxl2b8YjdtlAtpqWnNX2i6ig==
+X-Received: by 2002:a05:6000:1562:b0:385:f220:f798 with SMTP id ffacd0b85a97d-3864ce4af31mr3619903f8f.6.1733964452283;
+        Wed, 11 Dec 2024 16:47:32 -0800 (PST)
 Received: from localhost.localdomain ([2.222.231.247])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4ef4sm2459660f8f.39.2024.12.11.16.47.27
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4ef4sm2459660f8f.39.2024.12.11.16.47.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 16:47:28 -0800 (PST)
+        Wed, 11 Dec 2024 16:47:31 -0800 (PST)
 From: Alexey Klimov <alexey.klimov@linaro.org>
 To: broonie@kernel.org,
 	konradybcio@kernel.org,
@@ -85,10 +87,12 @@ Cc: tiwai@suse.com,
 	linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 00/14] qrb4210-rb2: add wsa audio playback and capture support
-Date: Thu, 12 Dec 2024 00:47:13 +0000
-Message-ID: <20241212004727.2903846-1-alexey.klimov@linaro.org>
+Subject: [PATCH v2 01/14] ASoC: dt-bindings: qcom: Add SM6115 LPASS rxmacro and vamacro codecs
+Date: Thu, 12 Dec 2024 00:47:14 +0000
+Message-ID: <20241212004727.2903846-2-alexey.klimov@linaro.org>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241212004727.2903846-1-alexey.klimov@linaro.org>
+References: <20241212004727.2903846-1-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,86 +101,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Issues with distorted sound and unstable volume on playback were resolved
-and this patchset also includes support for onboard DMIC and thus
-capturing feature.
+Document compatibles for Qualcomm SM6115 SoC macro digital codecs
+(RX and VA).
 
-This implements the playback via the following path:
-RX1 from DSP is connected to rxmacro which communicates with wcd codec
-using soundwire. This goes into AUX input of wcd.
-wcd codec outputs analog audio into wsa8815 amplifier.
-Capturing works through vamacro using one onboard DMIC which is
-directly connected to vamacro codec.
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+---
+ .../bindings/sound/qcom,lpass-rx-macro.yaml   | 19 +++++++++++++++++++
+ .../bindings/sound/qcom,lpass-va-macro.yaml   | 17 +++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-Special thanks to Srini. Without his help and support this patchset
-wouldn't be here.
-
-Previous version:
-https://lore.kernel.org/linux-sound/20241101053154.497550-1-alexey.klimov@linaro.org/
-
-Changes since v2:
-
--- forcing single channel output for RX_1 channel is moved into drv variant;
--- added capture feature support hence some new patches and
-   updates to pins description;
--- sorted headers in wsa881x-i2c driver, removed excessive ones;
--- removed of_gpio.h as suggested by Rob;
--- removed wrong bindings and updated already existing
-   qcom,wsa881x.yaml as suggested by Krzysztof;
--- removed unused pins state description as suggested by Krzysztof;
--- reworked wsa881x-i2c driver
-   (initialisation, pm, consts, some functions, etc);
--- usage of devm_kmemdup() in wsa881x-i2c probe() as a hint from Krzysztof;
--- updated commit messages where required;
--- not using i2c gpio bit-banging for wsa881x i2c;
--- made dtbs_check and dt_binding_check happy.
-
-
-This series depends on:
- -- HDMI audio playback
-https://lore.kernel.org/linux-arm-msm/20241204140027.2198763-1-alexey.klimov@linaro.org/
--- and LPASS clock controller
-https://lore.kernel.org/linux-clk/20241212002551.2902954-1-alexey.klimov@linaro.org/
-
-
-Alexey Klimov (14):
-  ASoC: dt-bindings: qcom: Add SM6115 LPASS rxmacro and vamacro codecs
-  ASoC: codecs: va-macro: add sm6115 compatible
-  ASoC: codecs: lpass-rx-macro: add sm6115 compatible
-  arm64: dts: qcom: sm6115: add LPASS devices
-  arm64: dts: qcom: sm4250: add description of soundwire and dmic pins
-  arm64: dts: qcom: qrb4210-rb2: add wcd937x codec support
-  ASoC: codecs: wsa881x: split into common and soundwire drivers
-  dt-bindings: arm: qcom-soc: extend pattern matching to support
-    qcom,wsa881x
-  ASoC: dt-bindings: qcom,wsa881x: extend description to analog mode
-  arm64: dts: qcom: qrb4210-rb2: enable wsa881x amplifier
-  ASoC: codecs: add wsa881x-i2c amplifier codec driver
-  arm64: dts: qcom: qrb4210-rb2: add WSA audio playback support
-  arm64: dts: qcom: qrb4210-rb2: add VA capture support
-  ASoC: qcom: sm8250: force single channel via RX_1 output for qrb4210
-
- .../devicetree/bindings/arm/qcom-soc.yaml     |    3 +-
- .../bindings/sound/qcom,lpass-rx-macro.yaml   |   19 +
- .../bindings/sound/qcom,lpass-va-macro.yaml   |   17 +
- .../bindings/sound/qcom,wsa881x.yaml          |   75 +-
- arch/arm64/boot/dts/qcom/qrb4210-rb2.dts      |  126 +-
- arch/arm64/boot/dts/qcom/sm4250.dtsi          |   62 +
- arch/arm64/boot/dts/qcom/sm6115.dtsi          |  132 ++
- sound/soc/codecs/Kconfig                      |   15 +
- sound/soc/codecs/Makefile                     |    4 +
- sound/soc/codecs/lpass-rx-macro.c             |    4 +-
- sound/soc/codecs/lpass-va-macro.c             |    1 +
- sound/soc/codecs/wsa881x-common.c             |  123 ++
- sound/soc/codecs/wsa881x-common.h             |  426 ++++++
- sound/soc/codecs/wsa881x-i2c.c                | 1352 +++++++++++++++++
- sound/soc/codecs/wsa881x.c                    |  493 +-----
- sound/soc/qcom/sm8250.c                       |   28 +-
- 16 files changed, 2384 insertions(+), 496 deletions(-)
- create mode 100644 sound/soc/codecs/wsa881x-common.c
- create mode 100644 sound/soc/codecs/wsa881x-common.h
- create mode 100644 sound/soc/codecs/wsa881x-i2c.c
-
+diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml
+index 92f95eb74b19..697c5591ae7c 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,lpass-rx-macro.yaml
+@@ -14,6 +14,7 @@ properties:
+     oneOf:
+       - enum:
+           - qcom,sc7280-lpass-rx-macro
++          - qcom,sm6115-lpass-rx-macro
+           - qcom,sm8250-lpass-rx-macro
+           - qcom,sm8450-lpass-rx-macro
+           - qcom,sm8550-lpass-rx-macro
+@@ -80,6 +81,24 @@ allOf:
+                 - const: npl
+                 - const: fsgen
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,sm6115-lpass-rx-macro
++    then:
++      properties:
++        clocks:
++          minItems: 4
++          maxItems: 4
++        clock-names:
++          items:
++            - const: mclk
++            - const: npl
++            - const: dcodec
++            - const: fsgen
++
+   - if:
+       properties:
+         compatible:
+diff --git a/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml b/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml
+index f41deaa6f4df..30a44b444f39 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,lpass-va-macro.yaml
+@@ -14,6 +14,7 @@ properties:
+     oneOf:
+       - enum:
+           - qcom,sc7280-lpass-va-macro
++          - qcom,sm6115-lpass-va-macro
+           - qcom,sm8250-lpass-va-macro
+           - qcom,sm8450-lpass-va-macro
+           - qcom,sm8550-lpass-va-macro
+@@ -83,6 +84,22 @@ allOf:
+           items:
+             - const: mclk
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,sm8250-lpass-va-macro
++    then:
++      properties:
++        clocks:
++          minItems: 3
++          maxItems: 3
++        clock-names:
++          items:
++            - const: mclk
++            - const: dcodec
++            - const: npl
++
+   - if:
+       properties:
+         compatible:
 -- 
 2.45.2
 
