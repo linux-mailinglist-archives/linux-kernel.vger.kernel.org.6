@@ -1,158 +1,100 @@
-Return-Path: <linux-kernel+bounces-442665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6899EE004
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C001E9EE005
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:10:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0881883B14
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:10:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8131C188458A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A387209F44;
-	Thu, 12 Dec 2024 07:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B64209F4A;
+	Thu, 12 Dec 2024 07:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hKRfAJmn"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYZwUaC0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55504207A23
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95AB207E19;
+	Thu, 12 Dec 2024 07:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733987412; cv=none; b=cbVu6b6W/YyGNZOxIpJWG+fTQ+B9q3byc25VHrR7SuziUfivid7oYNFZ4h4mkHmiC79OMA/9/27BJJ/x7BLbtP4oKrsm/91yE86K7RioZ/8Ypo4W51h1QsESynaacbku9uW6IS0a+VL3Th5TSWDYMY5Go1EOCw1l5jqqBFgfcTY=
+	t=1733987442; cv=none; b=R0XdENUp2CGfuohW2GNMH2who6rSxxiRh0DK+ryo4OLFez1p7wewyectB7iXXtl8eaAoowW/KJwwy0RVfuQFdGuJErpJyiQ8KGvZWA5vHIm/YRWhBJWLK2GkP8aDvhr6LOR4e2bHlqHXyfg1yN2fe7iNedC7uOMzdUCvB0+xfRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733987412; c=relaxed/simple;
-	bh=ZEpkzoQHg7VjPKxwvVaVbbSYksenc7gg2QSxNhBVA2k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEZ65fLAN3GKNnI5GvEd66LqX0nmVqDdp+PtUZ8Zj21xZzM2XK1PUKt7Xf0FGOzkha4Zat2GZcyPXK3KEY59TPocL08VNQMc4pqu22YOcuE2r/WN8cnl8EYEuvVjSAzE2+17JQmZInpxJ+BN1yofDdtYtWt3xHffyC8VA12sJnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hKRfAJmn; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4675936f333so111281cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:10:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733987410; x=1734592210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MSwCXQ5wEcG34n6FNAmRCNPsG3IEf6YvAYA+YW6hhoo=;
-        b=hKRfAJmnuzffbld7CHNK7YtBNBcNE5asSoVBMUKXkrbgtUD6CORXM1lKi+pTErQ+6H
-         IbZY2bBSRyYWanN8fqKdnWCF30BsMr7SpeJL5OhulQ5gsFuGydvJARqtg8w4kEaM5W9J
-         j6KSazlP2F6RS2Z2NS4okVyYpMULzWqSSdNjrGqt9TdBayhint1T33WyTMuKXI9lpoN3
-         GwN9loq6ZZGpVnXANz7MCF4xEUuKrYHDMx7P0F/fisP+/qpNw1oOH6fYEwvWmxCfWoRV
-         9hBhZy5dWhC0FK10O+Zkd/8uakN89DgqWgmbCx+YZhTYcE/9OLxqOy1lEKh49Vi8n5Wt
-         mXdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733987410; x=1734592210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MSwCXQ5wEcG34n6FNAmRCNPsG3IEf6YvAYA+YW6hhoo=;
-        b=Jea/W6VChyX2OF5jBOebHnz2FUM1PUlbUEzsS6MrmO1T3q/4ReiJRF6CO8Nra3UjJO
-         7ouNDWJCdLcIS81gANb2KiQPSxVVfVhGPfBtf4vnasUDDAF+dcviQGm6v70I97tyMNeZ
-         5HjXIYvg9NCDyXnKI+lNw+KYeDTQM+8VKuERo3XzjgdkozsYy05i8P2hEDGMhifIVba6
-         mBI/SY/z0FC8TiaTuwqJlkFqbVTH6yzFjcGf3cy6eQfTYGGIfSukvnpnzBt91pAOExdB
-         RG4BITl6Dthy2Wm9UOs+ggApQv5MgaE59f7v+B07bQr44idclWoKj95kZShFCAHXMaRr
-         K6RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSANjHMqTwFSoGWp+Z95N1x/7iH8ewhSGUvak7ILDo9qpB9kAVIqNQbiGXOHGMRs+FPIUwo9725coOBCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCxlj6LYvUvgMrrnohBj8UZM9rhg90ya4R5gms2WQNiI76BJPu
-	0P6S1PIPYLpE5u23aRVIcAaXrBsuGb/CuTIHdFTxnEbta8Q3Tjy/iV2eJqr7L1cAvrJDfQaTROU
-	QjRBIJ0s/ygvQyeDFlWO7aoYlDBT/K4h600gLPeeSy6SZPUVeZkbtrcY=
-X-Gm-Gg: ASbGnctNJfNDVHHPz8XMKXjjlLVYTkkfR48oJLAGtJ4GmyQgcMWseyRDdocHkymmrdi
-	6ynywo0/JDGrs/WCW8z+BD3w2N/GaF50tjamRQwitGkpmRDy5NjZWuCy6jIag9Svb2q1X
-X-Google-Smtp-Source: AGHT+IEZrdSuhp9JcuQTIIQJZBkbpF0vMp40RBneVKA9c4WUVk9y6M0BTQ1rdOkrhr1FEK5rG9fO8zodIjUEBJLN8nw=
-X-Received: by 2002:a05:622a:4c12:b0:466:a22a:6590 with SMTP id
- d75a77b69052e-467981bb57emr1778861cf.9.1733987409934; Wed, 11 Dec 2024
- 23:10:09 -0800 (PST)
+	s=arc-20240116; t=1733987442; c=relaxed/simple;
+	bh=WJbcliJGy8BdGmWSV8PbRvg8r0iO4sMcBSAG1ZnG2Ss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AmEVoq4n+b+ZP8ftGdIkJjFfM+cemeei8czslv/iesCxXo4q6N64xS7NtGarlrXepBnz62ezDfCxa8KSnidy6Gf9ECBZwkJ7Uxt1A3rcimtx4vTLY5dLzZ6WcQAywo1kj/7/ZJ6rF7c0f8ePdjLaf0ZHKw50570baPWpsUdD/Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYZwUaC0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F98C4CECE;
+	Thu, 12 Dec 2024 07:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733987442;
+	bh=WJbcliJGy8BdGmWSV8PbRvg8r0iO4sMcBSAG1ZnG2Ss=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NYZwUaC0AVpu3YSaOv4TRVl+F+wejPFB9z+/Ea0Xy4PKeMFy/pT0Rz3OWzDJgJlIE
+	 7nmwk1nhrcJah9ELNBBppJEuj9I99YADFI5xTitqEuB6DDWA1SYxVy10Zz8r57cn11
+	 8kjLVK/WAJqKLRIcBTAB1zxPsBJ2k6h7/b1o5UlFYF43OsHySimzHUD59SP2ctaHTn
+	 zhMF2tLj8Zxkl9oi6UnLBVJ1rUXsY1j7rT1QIXLgevM/kMJKSsgZ52mtQXZ+PRc0o5
+	 HB7gM8p9p2bH6hg/35ZkAXTUFyMUivyceqQNVd1xweDsq5DrNVYJDVs38wQcXGX1N9
+	 gEqKUxfIwDRRA==
+Date: Wed, 11 Dec 2024 23:10:40 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+	Ian Rogers <irogers@google.com>, thomas.falcon@intel.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] libperf: evlist: Fix --cpu argument on hybrid
+ platform
+Message-ID: <Z1qMcJq4qwN3EZz2@google.com>
+References: <20241114160450.295844-1-james.clark@linaro.org>
+ <20241114160450.295844-2-james.clark@linaro.org>
+ <Z1hHc-Q-TKgagORu@x1>
+ <eb8301ec-50af-4414-89e7-5d49585bda47@linaro.org>
+ <Z1hLEQwYE3ymbrIr@x1>
+ <Z1iEDRT-44aynAR3@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202412112227.df61ebb-lkp@intel.com> <20241212040104.507310-1-00107082@163.com>
-In-Reply-To: <20241212040104.507310-1-00107082@163.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 11 Dec 2024 23:09:59 -0800
-Message-ID: <CAJuCfpGJp-U3t_SHRhuSRTu7Hjkz23oqKSNbVL79O1OQhgJndw@mail.gmail.com>
-Subject: Re: [PATCH] mm/codetag: clear tags before swap
-To: David Wang <00107082@163.com>
-Cc: kent.overstreet@linux.dev, yuzhao@google.com, oliver.sang@intel.com, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	lkp@intel.com, oe-lkp@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z1iEDRT-44aynAR3@google.com>
 
-On Wed, Dec 11, 2024 at 8:03=E2=80=AFPM David Wang <00107082@163.com> wrote=
-:
->
-> When CONFIG_MEM_ALLOC_PROFILING_DEBUG is set, kernel WARN would be
-> triggered when calling __alloc_tag_ref_set() during swap:
->
->         alloc_tag was not cleared (got tag for mm/filemap.c:1951)
->         WARNING: CPU: 0 PID: 816 at ./include/linux/alloc_tag.h...
->
-> Clear code tags before swap can fix the warning. And this patch also fix
-> a potential invalid address dereference in alloc_tag_add_check() when
-> CONFIG_MEM_ALLOC_PROFILING_DEBUG is set and ref->ct is CODETAG_EMPTY,
-> which is defined as ((void *)1).
-^^^
-Good catch!
+On Tue, Dec 10, 2024 at 10:10:21AM -0800, Namhyung Kim wrote:
+> On Tue, Dec 10, 2024 at 11:07:13AM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Tue, Dec 10, 2024 at 01:56:21PM +0000, James Clark wrote:
+> > > On 10/12/2024 1:51 pm, Arnaldo Carvalho de Melo wrote:
+> > > > James, the second patch isn't applying to perf-tools/perf-tools.
+> >  
+> > > The second one applies on
+> > > https://lore.kernel.org/linux-perf-users/20241113011956.402096-1-irogers@google.com/T/#m2a3587fb83e6ab2d970bae25982ae9d6c8d9e5cd
+> > > because that also does an evlist__remove() which gets fixed up.
+> > 
+> > Right, I have to test that series on the ARM machines I have access to,
+> > but there is a question from a tester that is waiting for a reply, I'll
+> > see if I can reproduce that problem as well.
+> > 
+> > > But the first one is ok to go in on its own.
+> >  
+> > Agreed.
+> 
+> Ok, I'll pick this one to perf-tools and leave the patch 2 go into
+> perf-tools-next.
 
->
-> Signed-off-by: David Wang <00107082@163.com>
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202412112227.df61ebb-lkp@intel.com
-> ---
->  include/linux/alloc_tag.h | 2 +-
->  lib/alloc_tag.c           | 4 ++++
->  2 files changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
-> index 7c0786bdf9af..cba024bf2db3 100644
-> --- a/include/linux/alloc_tag.h
-> +++ b/include/linux/alloc_tag.h
-> @@ -135,7 +135,7 @@ static inline struct alloc_tag_counters alloc_tag_rea=
-d(struct alloc_tag *tag)
->  #ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
->  static inline void alloc_tag_add_check(union codetag_ref *ref, struct al=
-loc_tag *tag)
->  {
-> -       WARN_ONCE(ref && ref->ct,
-> +       WARN_ONCE(ref && ref->ct && !is_codetag_empty(ref),
->                   "alloc_tag was not cleared (got tag for %s:%u)\n",
->                   ref->ct->filename, ref->ct->lineno);
->
-> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> index 35f7560a309a..cc5fda9901c2 100644
-> --- a/lib/alloc_tag.c
-> +++ b/lib/alloc_tag.c
-> @@ -209,6 +209,10 @@ void pgalloc_tag_swap(struct folio *new, struct foli=
-o *old)
->                 return;
->         }
->
-> +       /* clear tags before swap */
+Applied patch 1 to perf-tools, thanks!
 
-The above comment states what we already know from the code but does
-not explain why we do this. Better to describe the reason and not what
-we do. Something like:
+Best regards,
+Namhyung
 
-/*
- * Clear tag references to avoid debug warning when using
- *  __alloc_tag_ref_set() with non-empty reference.
- */
-
-> +       set_codetag_empty(&ref_old);
-> +       set_codetag_empty(&ref_new);
-> +
->         /* swap tags */
->         __alloc_tag_ref_set(&ref_old, tag_new);
->         update_page_tag_ref(handle_old, &ref_old);
-> --
-> 2.39.2
->
->
 
