@@ -1,156 +1,129 @@
-Return-Path: <linux-kernel+bounces-443527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5779D9EF514
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:13:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E7C9EF60D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:22:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2310F1941E14
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:01:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87DCD340148
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06D1221DA4;
-	Thu, 12 Dec 2024 16:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X10fCbuw"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5DE205501;
+	Thu, 12 Dec 2024 16:59:53 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18F122A7E4
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDF32165F0;
+	Thu, 12 Dec 2024 16:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734022555; cv=none; b=TZcHTnIGP+tWZfK3T9QMfbMXj7E6DoQvSsvg1iqZL0O4jgGXSmH8cnDDc7ElPef8eJdbvBOBnZU9Wb4Q0jFh/b/4oqhBn6baZCtRXwISaanzCLgRcEO4AMuCPpgIaBxdpr4F9lK4JGtVxERqD6CHZr8POzEVzyx3UdGe8r8yHcE=
+	t=1734022793; cv=none; b=o7DbO3EULuVU+sUeHIZmEakH/+kgu53EAiRalutdyqbb+5wTmlCJZ0dihJuhZIkaxIG4cneKql4k/qxmsOQbvpMOwkpMNcqjGL1EtAKesdaPQckWGM4M+S8fTo/IYW1bkFuQey9qkzn5hLcJVIKgpq1I030CVEo8l+FE1YDvrSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734022555; c=relaxed/simple;
-	bh=DUPLTJqY4Ur6JMhBNFg0MXDhKiTFzB845Og83/T4KD0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bvRvtigWMBTCJODqIg8ufVGhLWklCqHT8R/kXfPKaQZIGXbaad+9q3doIiDazdvtxNpOlgSWlTqQNNKMMIHRcO7Ke+ATaRlaFUwQD8tbs6ZTMQloB+bE2VgnoAkfQD4THF9hWDz4PGQaerBu7u2YAGaLY79949Wd/UxCBUenozQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X10fCbuw; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2162f968cd7so1417815ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:55:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734022553; x=1734627353; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kzlIoW7L3/4b18+N+ENiSNhzaS6ksog5gbyke7Oxry4=;
-        b=X10fCbuw7ryHxjLXOu+At/Wyi1w6kKJmWPS0L9gVLBUHEz52FxodvblIQTWkzFduDg
-         ak5fA3UD0b9q/BUH83wJG/Kov7BU9YdRWq2FXWrVWKbgj+UFkjxMs8obqS6p8KKWaldC
-         0oxMCrhijKDDvS2CUEuRXkDrATqgGXaCJMfTDC6jCfjyLp8A1nuux2bvp4TPEWJLhAxE
-         XWHcb0fTji0XIo1/vlLOwU3nBMPbvdOowY92Y2T6VbPAoUfghUpxpAY6v93QYX8SPaTA
-         PP1i+uAonkBJPhlhgNLqQyLG03p94VcT2/K8lohkvujj0gBbfKz/9vGTFXXnL6lTQuPK
-         UTlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734022553; x=1734627353;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kzlIoW7L3/4b18+N+ENiSNhzaS6ksog5gbyke7Oxry4=;
-        b=cueCcyV42LV44vjSJmlwXZqCp1MorHOVyIZBVsyqM2fStATxGA5BzY/Px/W8hvJCCx
-         VS6btDhQ8fNxIl/lD+xo9PcsRUiaRW/O6yLEzCFZ2r++gcg4lxgouaj+bO/D3wNc7haQ
-         dVCKZSUtlLEeGMVd3nKkE1w0WFogrmFA74F4zuMYe6V1xuo2N+RthgQVQM9AUL/9v0sL
-         Be8Tr4tq8nai1OgdYegjBVDWfP/Z5+oR1LuoMUyXjRmBfmjn8yOvyKt+yVQ7TFbjeE+6
-         /bUB/Zv8DzePDdPLFsZ9+tBhHyS2SIXRCgdT/JRDgTtFX2ju1oYQ2YSjobU4GuJvijb5
-         TPVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHMy9ELNdaby05xR3/fFt6HlZgF+lWG4RVFd+JO10YuhowLDNw4sVZyM87gg8AMuZuPnbU3+JBPLDkwR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmghv8vqArHXCNVYZ7/LBjOCHe0L3Sq8tOAjo9pRc61XM5IIar
-	Q6+lDqvvgaRFGV6pon8TWietI/ELddIhLI88vQ3owJYhc4ZqSMfIo2eztpfia7RlGMAuKoKcVoK
-	Nuq1bvrJnQVQMbMLepZB6OkGg3ZSidg==
-X-Gm-Gg: ASbGncvgP1JT/k5hElOt+B94huQLpqNpSD8QcQYK75oMe7zwTke84wiMQ3XUrIlnv0f
-	2tfGwyV/SBnq3ibM9mfyT2BRsBOn4SFCUOPoQzg==
-X-Google-Smtp-Source: AGHT+IF+Mlf23HjLPaz0/T9fZnjcn4ERaK3oOO0keRJwk9CUb+mw8/2C78O2JyWTd+4U016kKdzujVlhA989rq5VYMI=
-X-Received: by 2002:a17:90a:d993:b0:2ee:f64b:9aab with SMTP id
- 98e67ed59e1d1-2f128048ed8mr4161251a91.6.1734022552742; Thu, 12 Dec 2024
- 08:55:52 -0800 (PST)
+	s=arc-20240116; t=1734022793; c=relaxed/simple;
+	bh=nhnzrn97bO1y8U7MCI+hPywmftsYsXEZoi/h/wiACHU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Sj5/TC/Ktn3zehdhRCbI+JWeEbCWgT2jqz5C1lYwXv624fG/EDZvqRdzDLEi/pWDuGfIGo/KV7Zd37u5sGGP8yXjO0qL/Wc9RpcH05J0rVCFmlxwOQoT4wPIGcVvMSACLIUiO6fDPXLzUPHbgVifKdLdSFx7COK50z+1HX6Q7IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y8JXD1grnz6K99D;
+	Fri, 13 Dec 2024 00:56:28 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id DAF7F140109;
+	Fri, 13 Dec 2024 00:59:47 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 12 Dec
+ 2024 17:59:47 +0100
+Date: Thu, 12 Dec 2024 16:59:45 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Guenter Roeck <linux@roeck-us.net>
+CC: Hermes Zhang <Hermes.Zhang@axis.com>, <jdelvare@suse.com>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<kernel@axis.com>, <linux-kernel@vger.kernel.org>,
+	<linux-hwmon@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH 2/2] hwmon: Add support for D3-323-AA Pyroelectric IR
+ sensor
+Message-ID: <20241212165945.0000584b@huawei.com>
+In-Reply-To: <5b53cffd-ae7f-45e5-b265-8e700d753275@roeck-us.net>
+References: <20241212042412.702044-1-Hermes.Zhang@axis.com>
+	<20241212042412.702044-3-Hermes.Zhang@axis.com>
+	<5b53cffd-ae7f-45e5-b265-8e700d753275@roeck-us.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212014717.14286-1-jiapeng.chong@linux.alibaba.com>
-In-Reply-To: <20241212014717.14286-1-jiapeng.chong@linux.alibaba.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 12 Dec 2024 11:55:41 -0500
-Message-ID: <CADnq5_MvwHrnyr=0smZ7PqG8JqD1eXv55iK9kUi1qHtVHsE4Rw@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/amd/display: use swap() in update_phy_id_mapping()
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
-	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	airlied@gmail.com, simona@ffwll.ch, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Abaci Robot <abaci@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Applied.  Thanks!
+On Wed, 11 Dec 2024 22:17:49 -0800
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-On Wed, Dec 11, 2024 at 8:47=E2=80=AFPM Jiapeng Chong
-<jiapeng.chong@linux.alibaba.com> wrote:
->
-> Use existing swap() function rather than duplicating its implementation.
->
-> ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c:185:47-48: WARNIN=
-G opportunity for swap().
-> ./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c:125:53-54: WARNIN=
-G opportunity for swap().
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D12335
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c  | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c b/driv=
-ers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
-> index 309c7999faa6..6fdc306a4a86 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
-> @@ -120,11 +120,8 @@ static void update_phy_id_mapping(struct amdgpu_devi=
-ce *adev)
->         for (idx =3D connector_cnt; idx > 1 ; idx--) {
->                 for (idx_2 =3D 0; idx_2 < (idx - 1); idx_2++) {
->                         if (sort_connector[idx_2]->dc_link->link_enc_hw_i=
-nst >
-> -                               sort_connector[idx_2 + 1]->dc_link->link_=
-enc_hw_inst) {
-> -                               aconnector =3D sort_connector[idx_2];
-> -                               sort_connector[idx_2] =3D sort_connector[=
-idx_2 + 1];
-> -                               sort_connector[idx_2 + 1] =3D aconnector;
-> -                       }
-> +                           sort_connector[idx_2 + 1]->dc_link->link_enc_=
-hw_inst)
-> +                               swap(sort_connector[idx_2], sort_connecto=
-r[idx_2 + 1]);
->                 }
->         }
->
-> @@ -180,11 +177,8 @@ static void update_phy_id_mapping(struct amdgpu_devi=
-ce *adev)
->                                                 }
->                                         }
->
-> -                                       if (swap) {
-> -                                               aconnector =3D sort_conne=
-ctor[j];
-> -                                               sort_connector[j] =3D sor=
-t_connector[j + 1];
-> -                                               sort_connector[j + 1] =3D=
- aconnector;
-> -                                       }
-> +                                       if (swap)
-> +                                               swap(sort_connector[j], s=
-ort_connector[j + 1]);
->                                 }
->                         }
->
-> --
-> 2.32.0.3.g01195cf9f
->
+> Hi,
+> 
+> On 12/11/24 20:24, Hermes Zhang wrote:
+> > Add support for Nicera D3-323-AA Pyroelectric IR sensor. The sensor
+> > support to config the threshold/filter_type/filter_step and return the
+> > detect result in sysfs attribute.
+> > 
+> > Signed-off-by: Hermes Zhang <Hermes.Zhang@axis.com>
+> > ---
+> >  
+> ...
+> 
+> > +
+> > +static DEVICE_ATTR_WO(pir_threshold);
+> > +static DEVICE_ATTR_WO(pir_filter_step);
+> > +static DEVICE_ATTR_WO(pir_filter_type);
+> > +static DEVICE_ATTR_RO(pir_detector);
+> > +
+> > +static struct attribute *d3323aa_attrs[] = {
+> > +	&dev_attr_pir_threshold.attr,
+> > +	&dev_attr_pir_filter_step.attr,
+> > +	&dev_attr_pir_filter_type.attr,
+> > +	&dev_attr_pir_detector.attr,
+> > +	NULL,
+> > +};
+> > +
+> > +ATTRIBUTE_GROUPS(d3323aa);
+> > +  
+> 
+> I don't know what this is, but it is most definitely not a hardware
+> monitoring device. I don't see a definition of those attributes,
+> so I have no idea what they represent.
+> 
+> Maybe this is an iio device, but given the unusual attributes
+> I am not even sure about that. Jonathan, any thoughts ?
+
+New type of sensor, but sure could be in IIO. 
+
+Seems mostly a human presence sensor. Not that different from some
+types of proximity sensor and indeed that might be the path to take
+here.
+
+Taking a quick look at the driver suggests there is lots more information
+needed to understand the ABI.  At very least needs ABI docs so we can
+discuss how that is generalized. So if submitting an IIO driver
+I want to see
+Documenation/ABI/testing/sysfs-bus-iio-xxxx
+with significant detail. The datasheet provides no where near enough
+info.
+
+Jonathan
+
+
+> 
+> Guenter
+> 
+> 
+
 
