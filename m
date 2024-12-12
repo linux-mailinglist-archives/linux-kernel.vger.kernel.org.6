@@ -1,138 +1,181 @@
-Return-Path: <linux-kernel+bounces-443073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2429EE6AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:27:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A0C9EE6B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2484161B3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE1811883AF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4202063D3;
-	Thu, 12 Dec 2024 12:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574612080D8;
+	Thu, 12 Dec 2024 12:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="udV4JA3b"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A5EvStvZ"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB28A212FB8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91986207A3F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734006436; cv=none; b=S6juKOTiP47MaA4t3/3a/Zb5Rg98zwQviJGQLFE1c+BB2QTQiTB5hcUwBVBl2Ag42sm5RoVsz1UQoZYCfaYaVqZCAdi688FNEn4YKETElqJH3XpGO5eeB212OnhdViClzkUfZv/WA26FkBtdXgSXjFEXuYC3/iNjU4JeUzbP3nQ=
+	t=1734006503; cv=none; b=ueTqoomY7DPhvKaf274984zd2hb7GtjVvttp8zZeQvlBFOc3yD5B9dYIyWwMyglmL9O272T4PzBPHGN+xYIh/mNsk0lhz+gCdluxxjSakgIZI8qE7Ky8enH/BvQSeq+nPpduxz00uc7d1az8GQGybrf0tPnwvwjvYLdB2znkgBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734006436; c=relaxed/simple;
-	bh=q6ynNeOCDXVuRvdmL1PtiLEOqRo/4ZyxNQAlf4XcaRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zvc6M277ROvM4bVhqaQ8TIpxJHcA6YjEb18qGQ9gnMMyv9BtGl2DZ3wdUf2MU8pTGaYesXLGEQDcQpEPHCAM3fElH39lKeGil+xbFI4pwoQxbLkHAz4IDhjoLR0c6oy8ZXP/Nb7sJ+dkij+SHMUNjtVgJWhZXAadqXr2o8Lqmuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=udV4JA3b; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9e44654ae3so73012166b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 04:27:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734006433; x=1734611233; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpCx9eEDDQPBSqjdyYw4LOrb6jdU2YEGsy2eXplgVns=;
-        b=udV4JA3b/2swQY7TUMbI9nyU+zH6qZ9AgYLP5qweuqu6wG1n1zZccRAYWGmPrnugiL
-         MCjDHu3UicyPhaDQELZwVmz2npJgiCsju2Gi0jOuqpMkMGws/ah/Ah9t82hnRxhA5gOI
-         Y9kX7zpV2HXufOCRzaoySX43rQm4vSMHklWaNegIm8XgMAcfQta6yvXfhkChc3yf/rqw
-         n4LE9DX04TG7QAQg6pe52Ge6pzuFubqOvzWWOLZxVEx6jep08NPECtml+xuXxH5dbBlP
-         gcLFo26XT4ENhSsU9vSSQCCK5tswx6MrlC4ZAh+qq92VJOQ4rkFcSv7RZMU3B6SNJ69O
-         v30g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734006433; x=1734611233;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UpCx9eEDDQPBSqjdyYw4LOrb6jdU2YEGsy2eXplgVns=;
-        b=ohEcZT0msvSXGO8bNF79j1L1F/8ocKJBF7+MtlHDkLceFqok/n3WehvrtTReuEIhkC
-         /5KkLeKd6Qk2PzZ8Esg/Ok6az8KymQ2BSUrLfu2In0jkGWJexsBnmvNPhxi6UvkhJI4s
-         /vRXLI7SRkNFtHmezE6xr0KVHz2rsu0L3y00dU4YMDs5QnAkeoy9+IFPvhFXs7LkXvU7
-         IDIE1lfRxQWKbOBHrro35qapYrthLZ5hsYqpoNSzVr55tV5lKT+TOBK7zW2KmZQotBf6
-         kPek0NiOCdQNayhMkatZH17FcvzMSBmTfRCwQmlmY5TLVZcQ61HjkO4clJc0oRgQgslG
-         GB0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUm1YgFlO4OrQ16hqWujlBGCvEqK9iObpEbXv3MS8F1lSOFIXmlkJuxjdY9MqB1vppX/iytDdv1PdZkyqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLrgZuElEm+7sADmWxvjPrN7AyW4z04YE167c65moglOpOs0W/
-	D6Em1PYEu/8BoGSAqBy7w7L66KIKLT9i4xW8LqghvPi2LmodVZpcG5Bbj7Iebg==
-X-Gm-Gg: ASbGncsHY+Tx4X4nnJShsNamhEjagKU/6egEOrGWC7jpiK5gelnoCGDrDtG42vOXCN1
-	lch/diSmPcGeeCSGg8aUcfEZHciJNXBs91X32PLeL6HUe7nygbEAWUpcCoN2nTNH1Co+L/JRZbk
-	2BySAKligM3zmqdmFf0QxRC9zGhC3uMwjRDfH5e8OaThfA82oEJeBInvT9nbizSqO1vNKRK5nFX
-	MQ5T/O6JpJ3UnQHb4EHw1jT3ZuYmIai5Y+5h2NPThGszd/9++bV6XGddRiY6P8XUVWDN08jhomY
-	PK/a5SEuTwvxi4M=
-X-Google-Smtp-Source: AGHT+IFFYyzPYoG7tPh7WgbnFd5v9cmFfs7rDc+kSSl50Gc/6DepQiqRz3hckPhM0D2fVycpQfsYQA==
-X-Received: by 2002:a17:906:32d3:b0:aa6:967c:9aaf with SMTP id a640c23a62f3a-aa6b13da9f7mr673167866b.50.1734006433119;
-        Thu, 12 Dec 2024 04:27:13 -0800 (PST)
-Received: from google.com (61.134.90.34.bc.googleusercontent.com. [34.90.134.61])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa67c7bd55fsm657911666b.116.2024.12.12.04.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 04:27:12 -0800 (PST)
-Date: Thu, 12 Dec 2024 12:27:09 +0000
-From: Quentin Perret <qperret@google.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v3 4/6] arm64/kvm: Avoid invalid physical addresses to
- signal owner updates
-Message-ID: <Z1rWnejzN5Zk8TDU@google.com>
-References: <20241212081841.2168124-8-ardb+git@google.com>
- <20241212081841.2168124-12-ardb+git@google.com>
- <Z1rJ_dMJJzGOmjNs@google.com>
- <CAMj1kXERuRK_MdHJOY+SKR=BJ-Yi+q0FNgVayq3W_jL9zdjLVA@mail.gmail.com>
+	s=arc-20240116; t=1734006503; c=relaxed/simple;
+	bh=+0CelrxvI59suzX7cscXydX2igdqhVoKqCyo/W/yaxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=lsynAvREzBxvx5v9tuyJHVLvX4YTyTzRRcsarnYt38leF7vIo8iRlrhcfOMtiNhOoHgsC2dKARroa+FHdt2rFMAhYvlEhiWraqEDRD54dOaCs91wrLvFBjN+hawMdMZ/EV9NUylvtcDXm1KjSE3umY/OzdpWgS7b0LNZf00eVHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A5EvStvZ; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241212122813epoutp016e0a61f890ca35e090606eb65f6ce7de~QbbgF01fu0290402904epoutp01R
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:28:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241212122813epoutp016e0a61f890ca35e090606eb65f6ce7de~QbbgF01fu0290402904epoutp01R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1734006493;
+	bh=+0CelrxvI59suzX7cscXydX2igdqhVoKqCyo/W/yaxw=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=A5EvStvZLDsFWbgozlMigr9OgdQGoJQJAaJKCedet2AhbyzSw1sbI7XfcuX/fNYNY
+	 FhpAkXSFrjPqlfg5YhfhqhP9YkYT+6kJfYmUVu9kXkaTt+O2yUkn8NeoN5lmBFNpQ0
+	 S0704HGvI7zPhWlf7KbpSxsa4h7yyqzs1edl5SV8=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20241212122812epcas5p2ad013b4b83ccf617273d608da7dc8493~QbbfTejya0114101141epcas5p25;
+	Thu, 12 Dec 2024 12:28:12 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y8BZg4jGRz4x9Py; Thu, 12 Dec
+	2024 12:28:11 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B0.B0.19933.BD6DA576; Thu, 12 Dec 2024 21:28:11 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241212122810epcas5p353940d4d5450310e32192a4603e987ac~Qbbdlb8yn1235312353epcas5p3D;
+	Thu, 12 Dec 2024 12:28:10 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241212122810epsmtrp23c1128d2fcfe6da208b7ca5115d3666f~QbbdkVjzI1695316953epsmtrp2Z;
+	Thu, 12 Dec 2024 12:28:10 +0000 (GMT)
+X-AuditID: b6c32a4a-c1fda70000004ddd-d6-675ad6dbfeba
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2A.05.18729.AD6DA576; Thu, 12 Dec 2024 21:28:10 +0900 (KST)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241212122808epsmtip1d0e8a5537e1857e4847c94bf2542297c~QbbbG1oov2447224472epsmtip1C;
+	Thu, 12 Dec 2024 12:28:08 +0000 (GMT)
+Message-ID: <4d6b2af3-7afe-4da6-b96e-ed1ea60eaed4@samsung.com>
+Date: Thu, 12 Dec 2024 17:58:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXERuRK_MdHJOY+SKR=BJ-Yi+q0FNgVayq3W_jL9zdjLVA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: gadget: f_midi: Fixing wMaxPacketSize exceeded
+ issue during MIDI bind retries
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: quic_jjohnson@quicinc.com, kees@kernel.org, abdul.rahim@myyahoo.com,
+	m.grzeschik@pengutronix.de, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
+	dh10.jung@samsung.com, naushad@samsung.com, akash.m5@samsung.com,
+	rc93.raju@samsung.com, taehyun.cho@samsung.com, hongpooh.kim@samsung.com,
+	eomji.oh@samsung.com, shijie.cai@samsung.com, alim.akhtar@samsung.com,
+	stable@vger.kernel.org
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <2024121054-pregnant-verse-d8d5@gregkh>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJJsWRmVeSWpSXmKPExsWy7bCmhu7ta1HpBsv2K1lMn7aR1eLN1VWs
+	Fg/mbWOzuLNgGpPFqeULmSyaF69ns5i0ZyuLxd2HP1gs1r09z2pxedccNotFy1qZLba0XWGy
+	+HT0P6tF45a7rBarOuewWFz+vpPZYsHGR4wWkw6KOgh5bFrVyeaxf+4ado9jL46ze/T/NfCY
+	uKfOo2/LKkaPz5vkAtijsm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNT
+	bZVcfAJ03TJzgJ5QUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al
+	6+WlllgZGhgYmQIVJmRndMy/x1wwk6NiSdcm1gbGjWxdjJwcEgImErP3nmfvYuTiEBLYzShx
+	dP8UNgjnE6PEq8P9jCBVQgLfGCU+Ho+H6fjW8J8Zomgvo8T5vguMEM5bRoldd+eDdfAK2Ens
+	en0EzGYRUJVY+v0gVFxQ4uTMJywgtqiAvMT9WzPYQWxhgUyJr9O7wGpEBDQkXh69xQIylFlg
+	DbPEzS+9YMcyC4hL3Hoyn6mLkYODTcBQ4tkJG5AwJ9BFz/beY4YokZfY/nYO2HUSAi84JA7u
+	38UCcbaLxJIJV5ggbGGJV8e3sEPYUhKf3+2FBkayxJ5JX6DiGRKHVh1ihrDtJVYvOMMKspdZ
+	QFNi/S59iF18Er2/n4CdIyHAK9HRJgRRrSpxqvEy1ERpiXtLrrFC2B4Sp9q+Q4P6ApPE4/Mr
+	2CcwKsxCCpZZSL6cheSdWQibFzCyrGKUTC0ozk1PLTYtMMpLLYdHeHJ+7iZGcBrX8trB+PDB
+	B71DjEwcjIcYJTiYlUR4b9hHpgvxpiRWVqUW5ccXleakFh9iNAXGz0RmKdHkfGAmySuJNzSx
+	NDAxMzMzsTQ2M1QS533dOjdFSCA9sSQ1OzW1ILUIpo+Jg1OqgUnrLQfTzmPJEhX+fafU5z2f
+	/XqS3K59N48rXaiscNrjXP6SPfHafOZofzPlip0+HBMC/JO2/1L48DyhxKV659InydLCyy3u
+	HbNvn7m8WurNqzAxVvGsSQs6vX1194v/fBWWGbzbvGb+iUXG2f1Gy4pXlYhrvqtM692+IfNS
+	aspHQfdbepffCmdbn7P5fS1YqP6ixXaXWV3nG6ynPQ60UHAzjN1bM32NYrRXZd4R0eNOrULC
+	y26LCzueCTu3YKp3f8sR7q/WEdcO99c51lirfXbQ1XX5nSfFxuzD2pm0zmH5g7sL1N+zGfVM
+	uR/98/NWwceu+8oemZwTOPn2X85C9YpVv39wXbr/wURm0+L2e0osxRmJhlrMRcWJAA/RnEds
+	BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsWy7bCSnO6ta1HpBmeOmVhMn7aR1eLN1VWs
+	Fg/mbWOzuLNgGpPFqeULmSyaF69ns5i0ZyuLxd2HP1gs1r09z2pxedccNotFy1qZLba0XWGy
+	+HT0P6tF45a7rBarOuewWFz+vpPZYsHGR4wWkw6KOgh5bFrVyeaxf+4ado9jL46ze/T/NfCY
+	uKfOo2/LKkaPz5vkAtijuGxSUnMyy1KL9O0SuDI65t9jLpjJUbGkaxNrA+NGti5GTg4JAROJ
+	bw3/mbsYuTiEBHYzSsxctBMqIS3xelYXI4QtLLHy33N2iKLXjBK7/+9nB0nwCthJ7Hp9BKyI
+	RUBVYun3g4wQcUGJkzOfsIDYogLyEvdvzQCrFxbIlLh3aibYAhEBDYmXR2+xgAxlFljDLPFr
+	RgcjxIYLTBK7n/wA62YWEJe49WQ+UxcjBwebgKHEsxM2IGFOoLOf7b3HDFFiJtG1FeJSZqBl
+	29/OYZ7AKDQLyR2zkEyahaRlFpKWBYwsqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcx
+	gqNWS3MH4/ZVH/QOMTJxMB5ilOBgVhLhvWEfmS7Em5JYWZValB9fVJqTWnyIUZqDRUmcV/xF
+	b4qQQHpiSWp2ampBahFMlomDU6qBaWqK/r6elMi7sS9fKAd3L4pP8Jj5sC7eU8tHRuW/9ufS
+	50fTN0S1OC+6OJEnhPlIWH/+8eKtHxoPWH/4MyWY/cvUquDvm2cZsfG84RP7/SG3LlPx2/dl
+	kwJDdY9/sz5Q+VRU7+rE7oL7m3OSdrtINF8OEbZzXWnRtplb+Oe8vz2VBkaWDor31337e7BK
+	rris3HXt66u2cYoLwwT3r7RQ3O9Y/n97mLph3uSjLz7eebHCatXh+7JHmpatijOWYuTZHRTV
+	FF32Kfwl63mXrOi9X3etnCdcdN5m5k8x+a7IThnvhQteJ6X19dWbWE38EaauzTHNfe09jeiH
+	G/v2mlivtrqopPToxJTOyvlipq9rlViKMxINtZiLihMB7kF9kEkDAAA=
+X-CMS-MailID: 20241212122810epcas5p353940d4d5450310e32192a4603e987ac
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241208152338epcas5p4fde427bb4467414417083221067ac7ab
+References: <CGME20241208152338epcas5p4fde427bb4467414417083221067ac7ab@epcas5p4.samsung.com>
+	<20241208152322.1653-1-selvarasu.g@samsung.com>
+	<6b3b314e-20a3-4b3f-a3ab-bb2df21de4f5@samsung.com>
+	<2024121035-manicure-defiling-e92c@gregkh>
+	<e3f45175-a17d-4b88-b6e4-5c75e91132be@samsung.com>
+	<2024121054-pregnant-verse-d8d5@gregkh>
 
-On Thursday 12 Dec 2024 at 12:44:38 (+0100), Ard Biesheuvel wrote:
-> On Thu, 12 Dec 2024 at 12:33, Quentin Perret <qperret@google.com> wrote:
-> >
-> > On Thursday 12 Dec 2024 at 09:18:46 (+0100), Ard Biesheuvel wrote:
-> > > @@ -908,6 +892,9 @@ static bool stage2_leaf_mapping_allowed(const struct kvm_pgtable_visit_ctx *ctx,
-> > >       if (data->force_pte && ctx->level < KVM_PGTABLE_LAST_LEVEL)
-> > >               return false;
-> > >
-> > > +     if (data->annotation && ctx->level == KVM_PGTABLE_LAST_LEVEL)
-> > > +             return true;
-> > > +
-> >
-> > I don't think it's a problem, but what's the rationale for checking
-> > ctx->level here? The data->force_pte logic should already do this for us
-> > and be somewhat orthogonal to data->annotation, no?
-> >
-> 
-> So you are saying this could be
-> 
-> > > +     if (data->annotation)
-> > > +             return true;
-> 
-> right?
 
-Yep, exactly.
+On 12/10/2024 7:55 PM, Greg KH wrote:
+> On Tue, Dec 10, 2024 at 07:41:53PM +0530, Selvarasu Ganesan wrote:
+>> On 12/10/2024 3:48 PM, Greg KH wrote:
+>>> On Tue, Dec 10, 2024 at 03:23:22PM +0530, Selvarasu Ganesan wrote:
+>>>> Hello Maintainers.
+>>>>
+>>>> Gentle remainder for review.
+>>> You sent this 2 days ago, right?
+>>>
+>>> Please take the time to review other commits on the miailing list if you
+>>> wish to see your patches get reviewed faster, to help reduce the
+>>> workload of people reviewing your changes.
+>>>
+>>> Otherwise just wait for people to get to it, what is the rush here?
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>> Hi Greg,
+>>
+>>
+>> There is no rush. I understand that the review will take time and I
+>> apologize for any inconvenience caused by sending the reminder email.
+> Great, during that time, please do some patch reviews of the changes on
+> the mailing list to help us out.
+>
+> thanks,
+>
+> greg k-h
 
-> That hides the fact that we expect data->annotation to imply
-> data->force_pte, but other than that, it should work the same, yes.
+Hi Greg,
 
-Eventually we'll want to make the two orthogonal to each other (e.g. to
-annotate blocks when donating huge pages to protected guests), but
-that'll require more work so again I don't mind that check in the
-current code. We can always get rid of it when annotations on blocks
-are supported.
+Sure, I will try to contribute on reviewing other patches.
 
-Cheers,
-Quentin
+Thanks,
+Selva
+>
 
