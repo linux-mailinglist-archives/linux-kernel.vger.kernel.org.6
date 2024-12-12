@@ -1,146 +1,139 @@
-Return-Path: <linux-kernel+bounces-443507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593A29EF3DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:03:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA359EF449
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:07:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDDC11885AFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A5B17EAA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5116C225A5E;
-	Thu, 12 Dec 2024 16:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC13C231A43;
+	Thu, 12 Dec 2024 16:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="JL7oDRZ/"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LU5s7nIn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4/z3xmrm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66472F44;
-	Thu, 12 Dec 2024 16:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04F2226520
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734021703; cv=none; b=qb2ceavmwiN+bHR15WCQT8WMNJU3vB8pvCWpGSlfi8PDoyfgSgxl7kbcoJfKpFfRC7a44SkEUt2Al5f/sJHLfMeNE4y5Ic7iUm0eb3rmofEA+bmYEl56MIa/mA5kgsaTMFom3jckYVRf+9YB5Sy5tt5kSHUhlDKhQYeIRO3zMqA=
+	t=1734021706; cv=none; b=TprQ/hZUoXCRyUX/8t3ppCKnhoMfrJO2DSLxnwVhbCtPPs/AWtQnWbfN0ts1/PCrjPlG++sM0w8/p+MMRkPApticjQW/hjbkH0+Y745n7tU8iqbLdri32VhRy8+ie7geI+7QphdNkiNYGT/AjVv1vfJwrtcxd1NRr/ALDbMp8zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734021703; c=relaxed/simple;
-	bh=qxTujLFmvDRRf9nMjsxWVIb0FdvxT3pr/t7WazM7ag4=;
-	h=Subject:Date:From:To:CC:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AID5hJpNl6fcWX03aPdWEPNnWKINHxyOzmCkOYBqO1m6DSxFz3Nue+GHuqg268rPNAzzyeC/JWCJEgY7FvpWOuqiqvtm72XthlvkJQs/ZgnEIBM0BYPT1p8TidAZc6elYP4cQ+MziMQ8SzOxEn0VzSQhAQl0qCbDlDgTii5di7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=JL7oDRZ/; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1734021702; x=1765557702;
-  h=date:from:to:cc:message-id:references:mime-version:
-   in-reply-to:subject;
-  bh=9s34Z4x2hQgQrTZeexBeEc6mgPAK+N+ETguazXEwacg=;
-  b=JL7oDRZ/r4HWtWpKGHX80PAePf92/v8ROm36qkrKTp8vvAKQAaNVI2/j
-   zYukngBM7Bk8CtzU8CFVBDgCu5ZUapEJ0Iom16DQpLnmIKb0rx0kUEgNQ
-   z0OsXCWEkCi5IwTI08Jo0BjAL5tPcv5XkB4YfwDaiU1e/FtuASJJzrYKF
-   U=;
-X-IronPort-AV: E=Sophos;i="6.12,229,1728950400"; 
-   d="scan'208";a="155366538"
-Subject: Re: [PATCH v2 3/6] KVM: VMX: Handle vectoring error in
- check_emulate_instruction
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 16:41:39 +0000
-Received: from EX19MTAUEA001.ant.amazon.com [10.0.44.209:54057]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.51.155:2525] with esmtp (Farcaster)
- id 66d2dafb-b30a-4fa1-86bb-4bdc329912f2; Thu, 12 Dec 2024 16:41:39 +0000 (UTC)
-X-Farcaster-Flow-ID: 66d2dafb-b30a-4fa1-86bb-4bdc329912f2
-Received: from EX19D008UEC003.ant.amazon.com (10.252.135.194) by
- EX19MTAUEA001.ant.amazon.com (10.252.134.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Thu, 12 Dec 2024 16:41:38 +0000
-Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
- EX19D008UEC003.ant.amazon.com (10.252.135.194) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Thu, 12 Dec 2024 16:41:38 +0000
-Received: from email-imr-corp-prod-pdx-all-2c-d1311ce8.us-west-2.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.39 via Frontend Transport; Thu, 12 Dec 2024 16:41:38 +0000
-Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
-	by email-imr-corp-prod-pdx-all-2c-d1311ce8.us-west-2.amazon.com (Postfix) with ESMTP id 422264029E;
-	Thu, 12 Dec 2024 16:41:38 +0000 (UTC)
-Received: by dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (Postfix, from userid 29210185)
-	id C94286224; Thu, 12 Dec 2024 16:41:37 +0000 (UTC)
-Date: Thu, 12 Dec 2024 16:41:37 +0000
-From: Ivan Orlov <iorlov@amazon.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Ivan Orlov <ivan.orlov0322@gmail.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <pbonzini@redhat.com>,
-	<shuah@kernel.org>, <tglx@linutronix.de>, <hpa@zytor.com>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <x86@kernel.org>, <pdurrant@amazon.co.uk>,
-	<dwmw@amazon.co.uk>
-Message-ID: <20241212164137.GA71156@dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com>
-References: <20241111102749.82761-1-iorlov@amazon.com>
- <20241111102749.82761-4-iorlov@amazon.com>
- <Z1nWykQ3e4D5e2C-@google.com>
- <2b75550c-0dc7-4bcc-ac60-9ad4402c17f8@gmail.com>
- <Z1o1013dUex8w9hK@google.com>
+	s=arc-20240116; t=1734021706; c=relaxed/simple;
+	bh=vCVFSJ66Kjgi2LNxKT5NRtHkebS7PIVdYpJMSEypjuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKZdMmkHrLXbwlJ7t9iVpsqMRYANHG7SYT8YOZjqCTwhlBXOZDDCo8sfLiJqCYaoP9kRIEjpcZV4WN27G2nx4YNrZBejv81v5u04CJu0E2Rtm59S6Ob8ZeihcbxzHH0eEyllXdtCUJAtl/DerxmFfRvfpQcmXrdXB0mfg1FoxV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LU5s7nIn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4/z3xmrm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 12 Dec 2024 17:41:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1734021702;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aHHtUGU7DpOgU5PnduMLdKbW7NRwADcKVs8uErMNDqc=;
+	b=LU5s7nInVicH/WCV4gq9vSmUI/aE301rRV/a5vWAKt40r2OP4EwLqCcizbs1eRtimb7fhc
+	9dhlnQvNdb1b1DHGzJALuuq7JqKXcaTjcE59a6Xd85IgfCI0ynWSSzEaI7nK5YnCf5PQtJ
+	I9LnWxVVuAd289VN1hbHOTLGiyFlmMZe47yQWVWgstYeqy6yjYPx3QlloHgsUL//7yGluk
+	e8KRDC5ZEZQwMDdfcop8i84LxsfqUmQvKHfHT5zf8jWlBwfRFXUoL3PGtQ5VMeGxdnD5MY
+	FTc28Nb/o8g0CiPWjL2VxEDWZwn9hrxL4Id9VzEZg6ql+3pI9JJYW5fABgYJDA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1734021702;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aHHtUGU7DpOgU5PnduMLdKbW7NRwADcKVs8uErMNDqc=;
+	b=4/z3xmrmDp8zynjFr0hQwCE1rm18M6gBqma6ny9LAizZFimnbSz6Fy+iGjvwEH+UOi/d5B
+	gG64u1V02GADoGAw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v4 05/11] futex: Track the futex hash bucket.
+Message-ID: <20241212164140.esFLafG0@linutronix.de>
+References: <20241203164335.1125381-1-bigeasy@linutronix.de>
+ <20241203164335.1125381-6-bigeasy@linutronix.de>
+ <87a5d3cr6j.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z1o1013dUex8w9hK@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <87a5d3cr6j.ffs@tglx>
 
-On Wed, Dec 11, 2024 at 05:01:07PM -0800, Sean Christopherson wrote:
-> > Hm, by the way, what is the desired behaviour if EMULTYPE_ALLOW_RETRY_PF is
-> > set? Is it correct that we return an internal error if it is set during
-> > vectoring? Or KVM may try to unprotect the page and re-execute?
+On 2024-12-10 19:45:56 [+0100], Thomas Gleixner wrote:
+> > +void futex_hash_put(struct futex_hash_bucket *hb)
+> > +{
+> > +	struct futex_hash_bucket_private *hb_p;
+> > +
+> > +	if (hb->hb_slot == 0)
+> > +		return;
+> > +	hb_p = container_of(hb, struct futex_hash_bucket_private,
+> > +			    queues[hb->hb_slot - 1]);
 > 
-> Heh, it's sneaky, but EMULTYPE_ALLOW_RETRY_PF can be set if and only if
-> RET_PF_WRITE_PROTECTED is set.  Hmm, that makes me think we should do the below
-> (EMULTYPE_WRITE_PF_TO_SP was a recent addition).
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 2e713480933a..de5f6985d123 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9077,7 +9077,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
-> 
->         if ((emulation_type & EMULTYPE_ALLOW_RETRY_PF) &&
->             (WARN_ON_ONCE(is_guest_mode(vcpu)) ||
-> -            WARN_ON_ONCE(!(emulation_type & EMULTYPE_PF))))
-> +            WARN_ON_ONCE(!(emulation_type & EMULTYPE_WRITE_PF_TO_SP))))
->                 emulation_type &= ~EMULTYPE_ALLOW_RETRY_PF;
-> 
+> Duh. This off by one abuse of hb_slot is really counter intuitive. It
+> took me a while to wrap my head around it.
 
-What if we are handling a write to write-protected page, but not a write to
-the page table? We still can retry after unprotecting the page, so
-EMULTYPE_ALLOW_RETRY_PF should be enabled, right?
+The really cute part is that this -1 gets optimized away and this
+container_of becomes just hb_p = hb - "hb_slot << 6" :)
 
->         r = kvm_check_emulate_insn(vcpu, emulation_type, insn, insn_len);
-> 
-> That said, let me get back to you on this when my brain is less tired.  I'm not
-> sure emulating when an exit occurred during event delivery is _ever_ correct.
-> 
+> The structure has a 4 byte hole, so adding a private flag or such is
+> feasible without going over a cache line, unless lockdep or rt is
+> enabled, but in that case it expands into a second cache line anyway.
 
-I believe we can re-execute the instruction if exit happened during vectoring
-due to exception (and if the address is not MMIO, e.g. when it's a write to
-write-protected page, for instance when stack points to it).
+I have a whole cacheline to stash things because of futex_hash_bucket
+alignment:
+| struct futex_hash_bucket_private {
+|         rcuref_t                   users;                /*     0     4 */
+|         unsigned int               hash_mask;            /*     4     4 */
+|         struct callback_head       rcu __attribute__((__aligned__(8))); /*     8    16 */
+|         bool                       slots_invariant;      /*    24     1 */
+| 
+|         /* XXX 39 bytes hole, try to pack */
+| 
+|         /* --- cacheline 1 boundary (64 bytes) --- */
+|         struct futex_hash_bucket   queues[] __attribute__((__aligned__(64))); /*    64     0 */
+| 
+|         /* size: 64, cachelines: 1, members: 5 */
+|         /* sum members: 25, holes: 1, sum holes: 39 */
+|         /* forced alignments: 2, forced holes: 1, sum forced holes: 39 */
+| } __attribute__((__aligned__(64)));
 
-KVM unprotects the page, executes the instruction one more time and
-(probably) gets this exception once again (but the page is already
-unprotected, so vectoring succeeds without vmexit). If not
-(e.g. exception conditions are not met anymore), guest shouldn't really
-care and it can continue execution.
+The hash bucket itself on RT is:
+| struct futex_hash_bucket {
+|         atomic_t                   waiters;              /*     0     4 */
+|         unsigned int               hb_slot;              /*     4     4 */
+|         spinlock_t                 lock;                 /*     8    32 */
+|         struct plist_head          chain;                /*    40    16 */
+| 
+|         /* size: 64, cachelines: 1, members: 4 */
+|         /* padding: 8 */
+| } __attribute__((__aligned__(64)));
 
-However, I'm not sure what happens if vectoring is caused by external
-interrupt: if we unprotect the page and re-execute the instruction,
-will IRQ be delivered nonetheless, or it will be lost as irq is
-already in ISR? Do we need to re-inject it in such a case?
+so it still fits. However with lockdep enabled it acquires two
+cache lines and these additional 4 bytes don't make a change.
+On RT it doesn't make a difference because the spinlock_t is so huge.
+But for !RT struct futex_hash_bucket becomes 32 bytes so we could fit 2
+buckets into one cache line _if_ memory becomes a concern and cache
+bouncing is not an issue because it is only process wide.
 
---
-Kind regards,
-Ivan Orlov
+> > +	futex_hash_priv_put(hb_p);
+> > +}
+
+Sebastian
 
