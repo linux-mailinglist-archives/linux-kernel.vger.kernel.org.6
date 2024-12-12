@@ -1,86 +1,57 @@
-Return-Path: <linux-kernel+bounces-443857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9B99EFCD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:55:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF1E16A575
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:55:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B761A0AFB;
-	Thu, 12 Dec 2024 19:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OzlgFAK9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3AC89EFCDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:58:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BDB189BBB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734033323; cv=none; b=ATO/LEZPB99DTdwSIq4GEf9KfxJh/tuTUxVixDXuzo3SIIu0pEaIp5wbFTbVVUXXdE6HOndDs1sThdv4f8Vfg0Zqc+CJ+5LtTyMM43y+sToWAx9byrsJTTyE7EFKlnh2eTz5/A6yeyrtcJQAxtGSpEUS1Ahs/C9hEEMhRBnuw5s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734033323; c=relaxed/simple;
-	bh=4Xk0iuSuUcACy1SkPzsDgJfFobNYaYnbcTp17a02bNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TaYYjoEo64bnNP7tUrnruJDNzcAfmg2eLOQ+rNFPNa926m0NSMAyzNeb3NkNEyVvCbiGT7kMsquG/Gc26opp6lNZpAyNSHohkuuizqBLSBOmCUgDpzVnOj0n/5Q/sYMl0D6TfLVPFfqB70v6PNU7tu9/htKToaqsKXpwT1c1KIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OzlgFAK9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCGT9QC026852
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:55:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FhgiumrxiM7n/En/vNa/ikofuwRr79X7+UFWSDfUsGI=; b=OzlgFAK90iTRsPl3
-	1EIm/Bw2dZW2JEfcXYGB82FHlB0eTIlv5uEoHQ83G0Go+d5HNpcpsiIgeKMyYQt1
-	KgRicLNBO/SxKC4z6fdwgxYIE/DeBDfYVa50g1DouqhxlMQJB/NmB8+vfaAZ11As
-	mkthpASPywnF3kDeh2RMdUufizXIvSyOGGhiW4FR+m69Mq1PxWlyUU2AaU6uNxwU
-	YDWvfIEWi8PXjVD1EG13pDsqOoBN9ph0ejJWzjr0gRwK/9xNQo+DzHMWqufA1waX
-	D7jD5AQ7aRBMgn0ohboOWPILpIWgmN70JWy7f/Knk810501zQntq7weHTbEhBVnb
-	Ieuz2Q==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40m421-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:55:14 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d8f8762a69so2033566d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:55:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734033313; x=1734638113;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FhgiumrxiM7n/En/vNa/ikofuwRr79X7+UFWSDfUsGI=;
-        b=qIT1s9mBh7CJE2bTjSW0Ky9wH7kzUVgFRoKGtPvwdisupGxIZae7PHou6ZJkieYgI7
-         tmltkQ4GPUNhaNznHFhDG0ZprQS8bkQGdAcj3sYaHaYyBIfQIhhxpd+97h6YgR6D+Smh
-         vude8xXlqEMtiusPLJbj6Ro81vyatI+bEAXNs9Hq1IhcoPLjcBN/7pBfr9LGjHDhqw4m
-         Dg/mzeTU9gQPncZokp+qM9Mlwbyw0gbSIo3MYQURb2Ekg1t9e7deaq2GSzZrwj8i+at/
-         QhGtV/EtWyxLgDqnJCtfcdzKFqoheyIPDR4xS5QjYIF9lVmdpfwjH8PnAkFDWlje33/n
-         reJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIxpxRmkK4rl+Ac7IETDj83Sib62csSUBPM+SxCbAAyKogTRUpy5lvkkwgY/FHtVhPBagfraskM7krb50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM1CON/xhBF3ExDMgMufnhMOhT7obko2nPwYl0lhseve/EwgKH
-	vACK/hPQuXo+2PTLOx4CyTSgq9UxPNUGdG0rOqgCxZdCFESPJllFq0NCnoWQMzU7xPfYVYkmy0I
-	iLoQ1a+QZD5cbBT/NjRV8MBg+zd88Z6mqauYEEqWdWTU+W/rn9dT7yeeGGasOb4I=
-X-Gm-Gg: ASbGncvyivwEZmQx4+j3kBkVu1tePAvSMDPIGFMt3Jrd3/yVrQTxZDVcUsk3ylHPpaN
-	YKhfh4ImEwmFAjSqCdF1bMhC/XUkJ6eCsL9PKW4URy0Dmjhd+hLeS8oOSB3KLh0e1K6jrKu4YAL
-	2qOf5u+xzkun9hL9LvP+1AuvX5NKSgH3DyUjns7X3EOr37lAxBiMVxt1Kg9edPZrBMpzmI+54fh
-	3/ALVvdn/nfRZ5KE4tEZ0Ru2tbpeMl5z9QAgeBUZiiCg9qjOO2/TP8ifg66VnnXT/JeIWD+qk9m
-	Lg4rIpqazujfCmXY6gWDHcK5OEV432UqwYAYDg==
-X-Received: by 2002:a05:6214:2527:b0:6d8:f750:b2f1 with SMTP id 6a1803df08f44-6db0f833ae5mr8033296d6.11.1734033313176;
-        Thu, 12 Dec 2024 11:55:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGjTsRrIxl4jM8Aw3TRdwR13Fi0Jt/svjVNrvUPTFZaAFCRmzkg7Yfxtsyp/ej45ehVuNN9Xg==
-X-Received: by 2002:a05:6214:2527:b0:6d8:f750:b2f1 with SMTP id 6a1803df08f44-6db0f833ae5mr8033156d6.11.1734033312773;
-        Thu, 12 Dec 2024 11:55:12 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69448304asm550614466b.45.2024.12.12.11.55.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 11:55:12 -0800 (PST)
-Message-ID: <3aad9de3-76a5-4106-a513-4707b3e39e7a@oss.qualcomm.com>
-Date: Thu, 12 Dec 2024 20:55:09 +0100
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0815F28B589
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:58:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4031AB505;
+	Thu, 12 Dec 2024 19:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="QVDohNEt"
+Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE59193084;
+	Thu, 12 Dec 2024 19:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734033479; cv=pass; b=L3DoHImzYZ1j1GtgiYhQnF3NQ5511ayrnb7lD8QPWpLYoTLGVWgc+i78eE2Dhs8JcF02tJd3pV3j+f9rW6f9mfr4boOmXChbYvHd94HrieaA4xO7I/i6xM/spJjVrLkKEfVr5EQrVownwDdJrPJIQW6VgV8pq87rCllq4QhKDho=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734033479; c=relaxed/simple;
+	bh=n1v6zNCsRs2o2jizjOrt1bu69OqmpyMVRYYWsIc/7AI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cED3R0DdFJNEmVTgEDX4KkhiIWzTOZ1c7d7QCUu6tCk+g1lBVMK7x0wcjD3K77WyKLze0Yj558azJPpU4EsN7rtll2Y3CtqdvWxt/RlMZBJah2uKJFCN/VVZTDE9QZjoEsW5GpZSEre8raE7OBH9rsKhK53d9jyciByLXVnFfEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=QVDohNEt; arc=pass smtp.client-ip=136.143.188.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
+ARC-Seal: i=1; a=rsa-sha256; t=1734033395; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Q6mhoiQlF+X3Ga4ZbHzXRV6VVWH2dGJgGQKxrl5lkAWanRx2Le+mSx31+22MQIcXLoc8EtHoPhHrDYEM+msozrQ4RcJ1rH7twm6cqhD4rhy0TrQmxdlP/5tFq4Xm9kqVfXdE5iteCULBlNl3/1YZEFFKV3feqYfnq3cZMUkLYyo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734033395; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=K/doDuiYr3tUCbk+zjyulpISltgEnye5889UgTLaMDE=; 
+	b=ls2U7TrIakrTDRJ7HeNm343oldeSEYv+ZVbXKq0MvFSJ0oocIax92S8aXmXmlr3ZeWEkYyx8KeZ0WrdqmjAoB1fOSzWeW+IjStvsG98AwO7eWg7cpbeOUJzF3lgKl18AO02RuFWCa2HTtxEceCWHcLOBK9hYfMS9b1yb8c/qcOc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=apertussolutions.com;
+	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+	dmarc=pass header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734033395;
+	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+	h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=K/doDuiYr3tUCbk+zjyulpISltgEnye5889UgTLaMDE=;
+	b=QVDohNEtg4WAsD+rnGYfbH1QAd3geV/N+7ot1IVth65Z01IMdqkPjO/8p8ZUofZh
+	57jvnBs6vQe9xGOre8kTaX0BrQe7Yva1slxsmJ6sPDiAv57NKeUZweTzhfL+ObwhP3z
+	rT54chqC9/LSdDMrGr1dETa3zNasJLin+cRlaw1o=
+Received: by mx.zohomail.com with SMTPS id 1734033391603444.6542107983282;
+	Thu, 12 Dec 2024 11:56:31 -0800 (PST)
+Message-ID: <61a4e812-9514-41a6-a000-e6c026a4ec45@apertussolutions.com>
+Date: Thu, 12 Dec 2024 14:56:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,221 +59,231 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/7] drm/msm: adreno: add plumbing to generate
- bandwidth vote table for GMU
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20241211-topic-sm8x50-gpu-bw-vote-v5-0-6112f9f785ec@linaro.org>
- <20241211-topic-sm8x50-gpu-bw-vote-v5-2-6112f9f785ec@linaro.org>
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+To: Andy Lutomirski <luto@amacapital.net>,
+ James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Eric W. Biederman" <ebiederm@xmission.com>,
+ Eric Biggers <ebiggers@kernel.org>,
+ Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+ linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+ mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+ ardb@kernel.org, mjg59@srcf.ucam.org, peterhuewe@gmx.de, jarkko@kernel.org,
+ jgg@ziepe.ca, nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
+ davem@davemloft.net, corbet@lwn.net, dwmw2@infradead.org,
+ baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+ andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org>
+ <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx>
+ <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+ <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
+ <8a0b59a4-a5a2-42ae-bc1c-1ddc8f2aad16@apertussolutions.com>
+ <CALCETrX8caT5qvCUu24hQfxUF_wUC2XdGpS2YFP6SR++7FiM3Q@mail.gmail.com>
+ <c466ed57-35a8-41c0-9647-c70e588ad1d3@apertussolutions.com>
+ <CALCETrW9WNNGh1dEPKfQoeU+m5q6_m97d0_bzRkZsv2LxqB_ew@mail.gmail.com>
+ <ff0c8eed-8981-48c4-81d9-56b040ef1c7b@apertussolutions.com>
+ <446cf9c70184885e4cec6dd4514ae8daf7accdcb.camel@HansenPartnership.com>
+ <5d1e41d6-b467-4013-a0d0-45f9511c15c6@apertussolutions.com>
+ <CALCETrW6vMYZo-b7N9ojVSeZLVxhZjLBjnMHsULMGP6TaVYRHA@mail.gmail.com>
+ <9c80e779b6268fde33c93ed3765ff93b1d6d007b.camel@HansenPartnership.com>
+ <CALCETrX4vHnVorqWjPEOP0XLaA0uUWkKikDcCXWtbs2a7EBuiA@mail.gmail.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241211-topic-sm8x50-gpu-bw-vote-v5-2-6112f9f785ec@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: yfxcHZQhNIZK5EoHmva-uR_hyGeXYdFm
-X-Proofpoint-ORIG-GUID: yfxcHZQhNIZK5EoHmva-uR_hyGeXYdFm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120144
+In-Reply-To: <CALCETrX4vHnVorqWjPEOP0XLaA0uUWkKikDcCXWtbs2a7EBuiA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On 11.12.2024 9:29 AM, Neil Armstrong wrote:
-> The Adreno GPU Management Unit (GMU) can also scale DDR Bandwidth along
-> the Frequency and Power Domain level, but by default we leave the
-> OPP core scale the interconnect ddr path.
+Hey Luto!
+
+Let me try to address your concerns below.
+
+On 11/18/24 15:02, Andy Lutomirski wrote:
+> On Mon, Nov 18, 2024 at 11:12 AM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+>>
+>> On Mon, 2024-11-18 at 10:43 -0800, Andy Lutomirski wrote:
+>>> Linux should not use TPM2_PCR_Extend *at all*.  Instead, Linux should
+>>> exclusively use TPM2_PCR_Event.  I would expect that passing, say,
+>>> the entire kernel image to TPM2_PCR_Event would be a big mistake, so
+>>> instead Linux should hash the relevant data with a reasonable
+>>> suggestion of hashes (which includes, mandatorily, SHA-384 and *does
+>>> not* include SHA-1, and may or may not be configurable at build time
+>>> to include things like SM3), concatenate them, and pass that to
+>>> TPM2_PCR_Event.  And Linux should make the value that it passed to
+>>> TPM2_PCR_Event readily accessible to software using it, and should
+>>> also include some straightforward tooling to calculate it from a
+>>> given input so that software that wants to figure out what value to
+>>> expect in a PCR can easily do so.
+>>
+>> Just for clarity, this is about how the agile log format works.  Each
+>> event entry in the log contains a list of bank hashes and the extends
+>> occur in log event order, so replaying a log should get you to exactly
+>> the head PCR value of each bank.  If a log doesn't understand a format,
+>> like SM3, then an entry for it doesn't appear in the log and a replay
+>> says nothing about the PCR value.
 > 
-> While scaling via the interconnect path was sufficient, newer GPUs
-> like the A750 requires specific vote paremeters and bandwidth to
-> achieve full functionality.
+> I have no idea what the "agile log format" is or what all the formats
+> in existence are.  I found section 4.2.4 here:
 > 
-> In order to calculate vote values used by the GPU Management
-> Unit (GMU), we need to parse all the possible OPP Bandwidths and
-> create a vote value to be sent to the appropriate Bus Control
-> Modules (BCMs) declared in the GPU info struct.
+> https://trustedcomputinggroup.org/wp-content/uploads/TCG_IWG_CEL_v1_r0p41_pub.pdf
 > 
-> This vote value is called IB, while on the other side the GMU also
-> takes another vote called AB which is a 16bit quantized value
-> of the floor bandwidth against the maximum supported bandwidth.
-> The AB vote will be calculated later when setting the frequency.
+> It says:
 > 
-> The vote array will then be used to dynamically generate the GMU
-> bw_table sent during the GMU power-up.
+> This field contains the list of the digest values Extended. The Extend
+> method varies with TPM command, so there is
+> no uniform meaning of TPM Extend in this instance, and separate
+> descriptions are unavoidable. If using the
+> TPM2_PCR_Extend command, this field is the data sent to the TPM (i.e.,
+> not the resulting value of the PCR after the
+> TPM2_PCR_Extend command completes). If using the TPM2_PCR_Event
+> command, this field contains the digest
+> structure returned by the TPM2_PCR_Event command (that contains the
+> digest(s) submitted to each PCR bank as
+> the internal Extend operation). This field SHALL contain the
+> information from the TPML_DIGEST_VALUES used in
+> the Extend operation.
+
+
+Let me start with providing background on the two measurement policies 
+that is implemented by Intel TXT (from Intel TXT Developers Guide):
+
+  - Maximum Agility PCR Extend Policy: ACM can support algorithm agile 
+commands TPM2_PCR_Event; TPM2_HashSequenceStart; TPM2_HashUpdate; 
+TPM2_EventSequenceComplete. When this policy is selected, ACM will use 
+the commands above if not all PCR algorithms are covered by embedded set 
+of algorithms and will extend all existing PCR banks. Side effect of 
+this policy is possible performance loss.
+
+‒ Maximum Performance PCR Extend Policy: ACM can support several hash 
+algorithms via embedded SW. When this policy is selected, ACM will use 
+embedded SW to compute hashes and then will use TPM2_PCR_Extend commands 
+to extend them into PCRs. If PCRs utilizing hash algorithms not 
+supported by SW are discovered, they will be capped with “1” value. This 
+policy, when selected, will ensure maximum possible performance but has 
+side effect of possible capping of some of the PCRs.
+
+Allow me to clarify/expand on the last statement in Maximum Agility. 
+There is almost certainly a performance loss as anything larger than 
+1024 bytes, for example the Linux kernel, the ACM will bit-banging the 
+bytes to the TPM using the TPM2_Hash* functions.
+
+Before addressing the next point, I would also clarify how the D-CRTM 
+measurement taken by the CPU is done. It uses the _TPM_HASH_* functions, 
+Section 22.9 of TPM2 Commands specification, to store SHA256(SINIT ACM) 
+| EDX into all active PCR banks. For clarity, when this done, EDX holds 
+the 4-byte value of the SENTER parameters for which 0 is the only valid 
+value currently.
+
+
+> So we're logging the values with which we extend the PCRs.  Once upon
+> a time, someone decided it was okay to skip extending a PCR bank:
 > 
-> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 144 ++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  13 +++
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.h |   1 +
->  3 files changed, 158 insertions(+)
+> https://google.github.io/security-research/pocs/bios/tpm-carte-blanche/writeup.html
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> index 14db7376c712d19446b38152e480bd5a1e0a5198..36696d372a42a27b26a018b19e73bc6d8a4a5235 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> @@ -9,6 +9,7 @@
->  #include <linux/pm_domain.h>
->  #include <linux/pm_opp.h>
->  #include <soc/qcom/cmd-db.h>
-> +#include <soc/qcom/tcs.h>
->  #include <drm/drm_gem.h>
->  
->  #include "a6xx_gpu.h"
-> @@ -1287,6 +1288,101 @@ static int a6xx_gmu_memory_probe(struct a6xx_gmu *gmu)
->  	return 0;
->  }
->  
-> +/**
-> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager (BCM)
-> + * @unit: divisor used to convert bytes/sec bw value to an RPMh msg
-> + * @width: multiplier used to convert bytes/sec bw value to an RPMh msg
-> + * @vcd: virtual clock domain that this bcm belongs to
-> + * @reserved: reserved field
-> + */
-> +struct bcm_db {
-> +	__le32 unit;
-> +	__le16 width;
-> +	u8 vcd;
-> +	u8 reserved;
-> +};
-
-No. This is a direct copypasta of drivers/interconnect/qcom/icc-rpmh.h
-You cannot just randomly duplicate things..
-
-Move it out to a shared header in include/ (and remove the duplicate from
-clk-rpmh.c while at it)
+> and it was not a great idea.
 
 
-I'd also really prefer if you took
+Let's begin by why/how that attack occurs. The TPM Carte Blanche attack 
+took advantage of the fact that without BootGuard in place, the SRTM 
+measurements are done by the software/firmware, to include the 
+self-referential S-CRTM measurement. In particular, for the target 
+platform, it just so happens that it was possible to construct a 
+configuration where not a single hash would be sent to the SHA256 bank. 
+This allowed the attacker the ability to replay any set of measurements, 
+i.e. carte blanche control, into a completely empty PCR bank for which 
+the attestation service would accept quotes. The key to this attack 
+requires both, access to an empty PCR bank, and an attestation service 
+that will accept a quote with only the exploited bank present.
 
-drivers/interconnect/qcom/bcm-voter.c : tcs_list_gen()
+Let us return to my statements above, which will demonstrate why 
+TXT/DRTM completely invalidates the attack. First, as noted above, when 
+the CPU is processing the GETSEC[SENTER] instruction, it (the CPU) will 
+compute the D-CRTM as SHA256(SINIT ACM) | EDX, sending it to the TPM 
+using _TPM_HASH_* functions. The _TPM_HASH_* functions result in all PCR 
+banks to be extended with the D-CRTM value. If Maximum Performance PCR 
+Extend policy is in use, which is the default policy used by TrenchBoot, 
+any algorithm not supported by the ACM is capped by sending the value 
+"1" as the digest value for the extend. Therefore, after the TXT 
+sequence has completed and before control is given to the Linux kernel 
+by the ACM, all PCR banks will consist of either, the D-CRTM + all ACM 
+measurements, or the D-CRTM + TPM2_PCR_Extend(0x1). There will be no PCR 
+banks with empty DRTM PCRs, thus none of the banks would be usable for a 
+TPM Carte Blanche-style attack.
 
-and abstracted it to operate on struct bcm_db with any additional
-required parameters passed as arguments.. Still left some comments
-on this version if you decide to go with it
 
-> +
-> +static int a6xx_gmu_rpmh_bw_votes_init(const struct a6xx_info *info,
-> +				       struct a6xx_gmu *gmu)
-> +{
-> +	const struct bcm_db *bcm_data[GMU_MAX_BCMS] = { 0 };
-> +	unsigned int bcm_index, bw_index, bcm_count = 0;
-> +
-> +	if (!info->bcms)
-> +		return 0;
+> There seem to be six (!) currently defined hashes: SHA1, SHA256,
+> SHA384, SHA512, SM2 and SM3.  I haven't spotted anything promising not
+> to add more.  It seems to be that Linux really really ought to:
+> 
+> (a) extend all banks.  Not all banks that the maintainers like, and
+> not all banks that the maintainers knew about when having this
+> discussion.  *All* banks.  That means TPM2_PCR_Event().  (Or we refuse
+> to boot if there's a bank we don't like.)
+> 
+> (b) Make a best effort to notice if something is wrong with the TPM
+> and/or someone is MITMing us and messing with us.  That means
+> computing the hash algorithms we actually support and checking whether
+> TPM2_PCR_Event() returns the right thing.  I'm not seeing a specific
+> attack that seems likely that this prevents, but it does seem like
+> decent defense in depth, and if someone chooses to provision a machine
+> by reading its event log and then subsequently getting an attestation
+> that a future event log matches what was read, then avoiding letting
+> an attacker who temporarily controls the TPM connection from
+> corrupting the results seems wise.  And I don't see anything at all
+> that we gain by removing a check that (TPM's reported SHA1 == what we
+> calculated) in the name of "not supporting SHA1") other than a few
+> hundred bytes of object code.  (And yes, SHA1 is much more likely to
+> be supported than SM3, so it's not absurd to implement SHA1 and not
+> implement SM3.)
 
-You already checked that from the caller
 
-> +
-> +	/* Retrieve BCM data from cmd-db */
-> +	for (bcm_index = 0; bcm_index < GMU_MAX_BCMS; bcm_index++) {
-> +		size_t count;
-> +
-> +		/* Stop at first unconfigured bcm */
-> +		if (!info->bcms[bcm_index].name)
-> +			break;
+Or,
 
-Unconfigured doesn't really fit here.. Maybe just mention the list is NULL
--terminated
+(c) Upon initialization, cap the PCR banks with unsupported algorithms 
+using a well-known value.
 
-> +
-> +		bcm_data[bcm_index] = cmd_db_read_aux_data(
-> +						info->bcms[bcm_index].name,
-> +						&count);
-> +		if (IS_ERR(bcm_data[bcm_index]))
-> +			return PTR_ERR(bcm_data[bcm_index]);
-> +
-> +		if (!count)
-> +			return -EINVAL;
+A problem with (a) is that the result will be an unorthodox event, 
+PCR_EXTEND(H(H'(data))). An attestation verifier will have to be aware 
+of that this is being done, and have a way to determine which method was 
+used for each event. This creates a potentially expensive cost for any 
+existing attestation solutions to incorporate support for the unorthodox 
+event. At least for DRTM solutions, it seeks to solve a problem that TXT 
+does not experience.
 
-If this condition ever happens, it'll be impossible to track down,
-please add an err message
+For Linux Secure Launch, I would like to propose an alternative to what 
+the current logic does in the setup kernel. Specifically, Secure Launch 
+will trigger a TXT reset when an unsupported algorithm is encountered. 
+Instead, I would like to propose the adoption of (c), and have it 
+extends a well-known, fixed value for unsupported algorithms. Secure 
+Launch can leverage the fact that the TPM driver's extend function 
+already expects to be given digests for all active algorithms. 
+Therefore, it will record the well-known value, 0x01 to follow the ACM, 
+into the digest buffers of any algorithms that Secure Launch does not 
+support. This will result in the well-known value being extended each 
+time a measurement is recorded. This will not be a problem as no one 
+should be using those banks for attestation and can ignore those digests 
+in the event log.
 
-> +
-> +		++bcm_count;
+I would like to note that we made a conscious design decision early on 
+to use the PCR performance policy approach. We weighed a variety of 
+security concerns, hardware availability, and the practicality of 
+integrating the capability into our respective efforts. I do not want 
+you to feel as though we are not taking your comments seriously. Ross 
+reached out to some their contacts, and I reached out to a colleague 
+with domain experience as well. From a cursory review, no one saw an 
+issue from a crypto standpoint, beyond some algorithm recommendations. 
+As we highlighted, they did caution about the resulting unorthodox 
+measurement that would impose a burden on attestation solutions.
 
-I've heard somewhere that prefixed increments are discouraged for
-"reasons" and my OCD would like to support that
+Hopefully With the background and context presented, you would agree the 
+above is a reasonable approach. If you do have concerns, please let us know.
 
-> +	}
-> +
-> +	/* Generate BCM votes values for each bandwidth & BCM */
-> +	for (bw_index = 0; bw_index < gmu->nr_gpu_bws; bw_index++) {
-> +		u32 *data = gmu->gpu_ib_votes[bw_index];
-> +		u32 bw = gmu->gpu_bw_table[bw_index];
-> +
-> +		/* Calculations loosely copied from bcm_aggregate() & tcs_cmd_gen() */
-> +		for (bcm_index = 0; bcm_index < bcm_count; bcm_index++) {
-> +			bool commit = false;
-> +			u64 peak;
-> +			u32 vote;
-> +
-> +			/* Skip unconfigured BCM */
-> +			if (!bcm_data[bcm_index])
-> +				continue;
-
-I don't see how this is useful here
-
-> +
-> +			if (bcm_index == bcm_count - 1 ||
-> +			    (bcm_data[bcm_index + 1] &&
-> +			     bcm_data[bcm_index]->vcd != bcm_data[bcm_index + 1]->vcd))
-> +				commit = true;
-> +
-> +			if (!bw) {
-> +				data[bcm_index] = BCM_TCS_CMD(commit, false, 0, 0);
-> +				continue;
-> +			}
-> +
-> +			if (info->bcms[bcm_index].fixed) {
-
-You may want to take a pointer to info->bcms[bcm_index]
-
-> +				u32 perfmode = 0;
-> +
-> +				if (bw >= info->bcms[bcm_index].perfmode_bw)
-> +					perfmode = info->bcms[bcm_index].perfmode;
-> +
-> +				data[bcm_index] = BCM_TCS_CMD(commit, true, 0, perfmode);
-> +				continue;
-> +			}
-> +
-> +			/* Multiply the bandwidth by the width of the connection */
-> +			peak = (u64)bw * le16_to_cpu(bcm_data[bcm_index]->width);
-> +			do_div(peak, info->bcms[bcm_index].buswidth);
-> +
-> +			/* Input bandwidth value is in KBps, scale the value to BCM unit */
-> +			peak *= 1000ULL;
-
-I don't think this needs to be ULL since the other argument is an u64
-
-> +			do_div(peak, le32_to_cpu(bcm_data[bcm_index]->unit));
-> +
-> +			vote = clamp(peak, 1, BCM_TCS_CMD_VOTE_MASK);
-> +
-> +			data[bcm_index] = BCM_TCS_CMD(commit, true, vote, vote);
-
-x is the avg vote, y is the peak vote
-
-Just noting down for my future self I guess, a6xx sets ab=0,
-a7xx sets ab=ib like you did here
-
-Konrad
+V/r,
+Daniel P. Smith
 
