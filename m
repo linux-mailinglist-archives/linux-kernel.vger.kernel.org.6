@@ -1,120 +1,114 @@
-Return-Path: <linux-kernel+bounces-443571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61609EF841
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:40:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 416A89EF8B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9C07189CD46
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:33:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8EBE1679A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A64223C5C;
-	Thu, 12 Dec 2024 17:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6C2223C68;
+	Thu, 12 Dec 2024 17:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sH1e0U+K"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7700C222D4A;
-	Thu, 12 Dec 2024 17:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ilz9gdoq"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39349223C67
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734024792; cv=none; b=HiwgPMGs74CylY1CYQ/oFEmEeFl94VgAV8si2QIm6Guwz9/ikYGUlYKV0hs4UvTdxLsMZNJKfJ9ZF1XPsu6J2E6Wy+LGBTImqXJNZUvOuPNXxrT2bYNijvNONHUF/XmpccP/COS2lehWlY+kFm2JXARaJZgwcxu6iu+NPRZfuGM=
+	t=1734024842; cv=none; b=eIKHkPIuEXy4RWeX5ze38EspfqWE+Ebuu1ZzM7dDLVbwvf3uFk56yWRpfcG2043qstZ+mrI90I0K2N7HV2MriPtVn+GLF3/MlwjQDugkHLEGjw2lvNn+XL+c/ZTR6KhKNq4lWD1gFIf/+FjAC4JZx+/0I/OL0SB/nnL78pyNMWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734024792; c=relaxed/simple;
-	bh=8zifT6ewWYEFbntDyJ6Ww05c6ssCJZsNoWbJSANJZng=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aXGojjT/bJyBYZkOTjBLWQJa1LMdF4buljyYxlFslbDqIAxzNsr3pHDF7KRNDVp13Z9vJ7iGCGCxbNBrZ4VMp+VGBjmEsab+9QhYbG5Wv86v0aD3OAZBbvVvC3+YQF6+AB4+uHy2XW1Lx1ZlnEQPONG5KyHZNcnqPExd5XTYNDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sH1e0U+K; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from eahariha-devbox.5bhznamrcrmeznzvghz2s0u2eh.xx.internal.cloudapp.net (unknown [40.91.112.99])
-	by linux.microsoft.com (Postfix) with ESMTPSA id DC255204BA86;
-	Thu, 12 Dec 2024 09:33:10 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DC255204BA86
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1734024790;
-	bh=ejEwRygxca6lQ1bnnmgGz/a6d9eFvOqci4xwtvOcijY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sH1e0U+KayP+lsFRd5cH4rW4QJHnRLOWDFCTJoPjZRvL6dwQYhPEw6wLSEiQVtzIz
-	 MGjOiqbZKlHIKC/I0x+IjPT78qNmm2OrOBklKG81Gn4wy67uMgQIlzYxTIMktAVNJA
-	 yGuIpYUjNjbN3EVimHdjo9phwdZ8Nt/bD5dSfqhA=
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-To: Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Shailend Chand <shailend@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: [PATCH net-next v4 2/2] wifi: ath11k: Convert timeouts to secs_to_jiffies()
-Date: Thu, 12 Dec 2024 17:33:02 +0000
-Message-ID: <20241212-netdev-converge-secs-to-jiffies-v4-2-6dac97a6d6ab@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241212-netdev-converge-secs-to-jiffies-v4-0-6dac97a6d6ab@linux.microsoft.com>
-References: <20241212-netdev-converge-secs-to-jiffies-v4-0-6dac97a6d6ab@linux.microsoft.com>
+	s=arc-20240116; t=1734024842; c=relaxed/simple;
+	bh=FK78yyqVjHCobD9natqpTkBTroblD9K+SecNHatoZlY=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=ZCySn4zJZuSP7wyJzKgrr157KURLBv7STlrbjAH5yq4zZJTXiiuVcgJGRzxOaCnUSEZMqCOu8vSvxu7d2/7WonS8j5Z6SpRvElAsyPpQNzJB7O02YqKAJt1Kh/1B/TC7FEaHKHYqdSntoTYzPpiD4gNkbfcOOY6ZlqiO3ZThiNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ilz9gdoq; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e3c61a11a40so1152257276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:34:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734024840; x=1734629640; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=McevHFea/8/GUg9sGU8w00zhvfEuoLepq2oliEuLmsw=;
+        b=ilz9gdoq3A1MVXWIIEkngksF+B5tRUTt0eWzKLqGO20dObrXSr6FMss/6v6TdwF8Cu
+         yXitL0P6aBcIwrvKbiAnbENKMQzM7oooPEBFGcjftOAhvMj/n1whTZ2NCIeCTYHvyUBC
+         wZMgLaWUZ6CsXWaG/85Ni6OB3k+p/rx9OeFkfOQMqdhsNm7yTZVCVQIMsLUA9PFcz0l1
+         6bTNEh+9HdSfLqnxqdxlHq3ZCaBHxoNpIsjdP2O1R59aC4bgynmw+tgSv0a3RNUfX6Gh
+         CAh364cUCf3+WXerm4BbSkwHqow9HqLn22cZdD05+IpW50SgSUwfSzcr27qNa/MBmLAl
+         /j1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734024840; x=1734629640;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=McevHFea/8/GUg9sGU8w00zhvfEuoLepq2oliEuLmsw=;
+        b=Sm90EBzq37waS/t47LpQC39pvnLwULWZFK0Vwsm+3OlYJRY70QAR8xZq6isL1idXkv
+         uPWjofmVfA4W00eIiaCv6WR/QSPl9YVTeE7xkzJY+JuUZ7a9mL/e+rwNlfhMSjr6jH5x
+         dwjVT6YxyIBRRwOvKGu5P7ZD04v4Om0GjEq2Y0hOTh1XKLWrPgwsNdurg+VmheTXg8By
+         lWdiV5foNd1CDBq4E8Wreu8zh6cqPMyzpjtpwqGpxrKxf7Ij0XtQclCSsa9GsOvBKSZ8
+         jzEK+FpC0N8GjBVf2GyV8sOQAo+oZGnGZEmLYX0OTuxNKDGLkxzJOluUt2stj1ik7C3z
+         CfuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmSgjVL8fGfh70I9u/FnFyyan+Sx2A6iL5Tkt6LJeSWT8dl9lOH3RmZNIL6DHQWm47d77nOKAIjUM/tKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylMe1HBGxwpAd4W9fhifwMxM3T74gkEcEiKttl4cO4kDoBzwET
+	5HkDJyURVe/UQh3//KHGzNOPIE83Wp7ntmi7kPXUGZQv813Vg53CSxTR20P9X+SedgDRqPh2MWY
+	vZRn7MA==
+X-Google-Smtp-Source: AGHT+IHT5WTyXq30AAfRRz/fxMBvZ8YldrnuyFVNGmCaF3LmbN2PZoVphHBf/LGehk9tkdvDjxMehh2jGgr7
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:c22f:1975:e7cf:849c])
+ (user=irogers job=sendgmr) by 2002:a25:5f4b:0:b0:e39:710a:387a with SMTP id
+ 3f1490d57ef6-e41cb05bcbbmr502276.10.1734024840121; Thu, 12 Dec 2024 09:34:00
+ -0800 (PST)
+Date: Thu, 12 Dec 2024 09:33:54 -0800
+Message-Id: <20241212173354.9860-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.14.2
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
+Subject: [PATCH v2] perf test stat: Avoid hybrid assumption when virtualized
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced=0D
-secs_to_jiffies(). As the value here is a multiple of 1000, use=0D
-secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.=
-=0D
-=0D
-This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with=
-=0D
-the following Coccinelle rules:=0D
-=0D
-@@ constant C; @@=0D
-=0D
-- msecs_to_jiffies(C * 1000)=0D
-+ secs_to_jiffies(C)=0D
-=0D
-@@ constant C; @@=0D
-=0D
-- msecs_to_jiffies(C * MSEC_PER_SEC)=0D
-+ secs_to_jiffies(C)=0D
-=0D
-Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>=0D
-Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>=0D
----=0D
- drivers/net/wireless/ath/ath11k/debugfs.c | 2 +-=0D
- 1 file changed, 1 insertion(+), 1 deletion(-)=0D
-=0D
-diff --git a/drivers/net/wireless/ath/ath11k/debugfs.c b/drivers/net/wirele=
-ss/ath/ath11k/debugfs.c=0D
-index 57281a135dd7fa6b8610636f47873c8bba21053c..bf192529e3fe26a91e72105a77b=
-4c6f849b905ec 100644=0D
---- a/drivers/net/wireless/ath/ath11k/debugfs.c=0D
-+++ b/drivers/net/wireless/ath/ath11k/debugfs.c=0D
-@@ -178,7 +178,7 @@ static int ath11k_debugfs_fw_stats_request(struct ath11=
-k *ar,=0D
- 	 * received 'update stats' event, we keep a 3 seconds timeout in case,=0D
- 	 * fw_stats_done is not marked yet=0D
- 	 */=0D
--	timeout =3D jiffies + msecs_to_jiffies(3 * 1000);=0D
-+	timeout =3D jiffies + secs_to_jiffies(3);=0D
- =0D
- 	ath11k_debugfs_fw_stats_reset(ar);=0D
- =0D
-=0D
--- =0D
-2.43.0=0D
-=0D
+The cycles event will fallback to task-clock in the hybrid test when
+running virtualized. Change the test to not fail for this.
+
+Fixes: a6b8bb2addd0 ("perf test: Add a test for default perf stat command")
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/tests/shell/stat.sh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
+index 5a2ca2bcf94d..da42427bb077 100755
+--- a/tools/perf/tests/shell/stat.sh
++++ b/tools/perf/tests/shell/stat.sh
+@@ -163,7 +163,11 @@ test_hybrid() {
+   # Run default Perf stat
+   cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/|  cycles  " | wc -l)
+ 
+-  if [ "$pmus" -ne "$cycles_events" ]
++  # The expectation is that default output will have a cycles events on each
++  # hybrid PMU. In situations with no cycles PMU events, like virtualized, this
++  # can fall back to task-clock and so the end count may be 0. Fail if neither
++  # condition holds.
++  if [ "$pmus" -ne "$cycles_events" ] && [ "0" -ne "$cycles_events" ]
+   then
+     echo "hybrid test [Found $pmus PMUs but $cycles_events cycles events. Failed]"
+     err=1
+-- 
+2.47.1.613.gc27f4b7a9f-goog
+
 
