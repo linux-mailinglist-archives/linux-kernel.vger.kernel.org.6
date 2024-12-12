@@ -1,155 +1,102 @@
-Return-Path: <linux-kernel+bounces-442925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE419EE418
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:28:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0029EE41B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:29:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F271631A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69583188754E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B11210F57;
-	Thu, 12 Dec 2024 10:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF2C211467;
+	Thu, 12 Dec 2024 10:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eoNrv3kT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="H/Q2HDH0"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6E12101A3
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD292101A3
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733999286; cv=none; b=IZyCy4A/rIp/tTs7bOOxyHWEDUW0jevjJGfBfwan2+WYUuq9ZRpSkFQivTMdZDAzs9g6xtibEa0VxoMlzW+DisYf5tMLmNz2gg6sD45ImhCx/zqjvHpz8VcU0k6lLua20VQxBzoQo27sy8K6FkF6UxwN8h24QXox8cX9JNCQGxg=
+	t=1733999362; cv=none; b=a45EBPzld0q0P3gMhrFgcUEkbrkGwmgTrUmAZ4AqDjU67NwsuLtGcQlgg1SAxm+hELjX1huanMhxRToPFXkxl90cYBG+KhwW6I+4whDEWrGq9hcZsxkNgQXep/VNvw1VvXURtMvn8SFg6MRQqWAz/CkkDXuFRyijoAeJRsKj0R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733999286; c=relaxed/simple;
-	bh=C5aJ/cCEhq5/s8GG03LZ46SonuUtCC5hmJzefRQuci8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g9ejL6i3eB1QD5qU/+IxdMhl18N1wCTKwxggrID4U/EmgF+dTWIVTjrCx4bbmUnVq1H6UQ2uoD0VfAXn6Syb25R17RBbfEok9OdRsfzDb6Hrg4ejduIRkTZIejOshHEfWr8mIIgn7JsE0kyUkuMk7fbO4VHkqPPvtlMkgqEtVIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eoNrv3kT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733999283;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RVaq2qSCQwPtfs8iwrJJIk50sgodNy897IFKHraNxV0=;
-	b=eoNrv3kTdyGCALLyubC7sVES50C1ca68qHvpX/blnr1ujX8Fb+Nmd27KhJ2hMy1i5b1/eu
-	tP1a7i+yWJ1HT5vf7Kcy+5u2HbWF3yQ0qnHAja1QDdMm5RdA5MMnzvJJh+LTtrLJSmCuIW
-	yf3AEyFt7qBAm5wWfAqrBwxVSwp0Z4I=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-B0z29henPqONoWbDPcYPlg-1; Thu, 12 Dec 2024 05:28:02 -0500
-X-MC-Unique: B0z29henPqONoWbDPcYPlg-1
-X-Mimecast-MFC-AGG-ID: B0z29henPqONoWbDPcYPlg
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-436225d4389so4243555e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:28:02 -0800 (PST)
+	s=arc-20240116; t=1733999362; c=relaxed/simple;
+	bh=iHa5QT8JkD1B/JMzxQ4HqhQQvv6uKOMk6Hbk4+UNj+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uIJBZboyVi3CD6+hjiBBxagRD5yiXy6980OrsuSsfRX2PF0z47s6Z7MGu0y2G1eyGIDIBj5byMNOC+RkeG7I5d8DzYFyGLu2surLaXG88QmjGkPxxCgnkiQX4L/jPy5AV3cehltuFgag0UsyLe++IMJ7NaFHdEygL/cLV/vc4gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=H/Q2HDH0; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5401c52000fso398665e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:29:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1733999358; x=1734604158; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iHa5QT8JkD1B/JMzxQ4HqhQQvv6uKOMk6Hbk4+UNj+I=;
+        b=H/Q2HDH0HBRV2/sPhMvMxj4gsuUcP/qJGF/ao069FSpE5LbZa6RYcCYPYrMA0whE2T
+         l4f+tQIRstzzOOC9RhBDkdOVICe8xtmjBS662el58OVjeLVsn6vSJL+nPaBVVVbQeLE6
+         QIA57MHEjX8EAcQgISwtYEdc7WLCA4aL1oYWzvoyQWrob9356mb1Q8sWyy/BYZXFpD50
+         w1P90OaFIo0VaKoBGQTzYNEaO7KLfgMAMJkClvZr8oMgjRbXEo+Ozg7xZYKkZtVFdlc/
+         QWitARsK/YTmE0pS/vAXJBPZ/0bHwIxqOJt4k2eG5UlwabzbsvsgDaxUYaKtUjBzCitG
+         VsFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733999281; x=1734604081;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RVaq2qSCQwPtfs8iwrJJIk50sgodNy897IFKHraNxV0=;
-        b=McOfygHmuc1Z+QQsuCmcHgdL7NV/nDdbmVJBWWPHj4/0kSDDjJfO4gXEpkdXKljB5P
-         zRJwCWtl9NtpWP8cUTgFNYNYCEmdTgmX3f2DrpduW7Kke8lHNA/nkaTpWGRc5wcH1yoO
-         jlADAhhPwDVuAPDUpfm4cV0G+EfmgPiE7cYjJ38MlJcdV6Bh1nKs9Rm3amofV5Dv+xpg
-         3XLIXq6GbjBInIXwJreF5Xq8PRTwB4G1yPrMRSfhPj1cFO4S5wljOxOubig6rzyKeHSQ
-         fPSTBgyRZJGv1Um8VrqYSex+ovmdzbM5RMitjEnEX8Uj0VScAVjTwubJpkvlFcI8M6eT
-         oXSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUku+50rRPGDw9U0wjLXracWWdU1I/7tNA2IctRN2s9RjvyJDhsdbQwZl8JztIcFhAgHubtLE2h3j7XHPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1uVQ6arEF3rVuyBSTWTrxA0faEA66hW1++E8PmX75xtlqUEjY
-	HI+jgYC4RKMH5w6zU9GCHfLAq+DVly48sEhsXZX/6xvA9JBmgWpBAXMZFfDVZJ3on+HPuq8kqdM
-	XYUkPfiiPgPiol178RV9cOeLb5t1fTi2+ShxsjlXRplDehSVl7XYDK/NzIzhlGw==
-X-Gm-Gg: ASbGncvZbuPnHcktkMeKqRy24umqqg54WpDSkN/bj0iSSozvBmS09cDK6xjrUT9or41
-	kBxCQ5c2ulLocqbvvOouZPyB/ZHoJDEOwN2rTn+wYmFm1DVPEshpMC3fBFPTl8FZsV+DjdO4OgA
-	yLDB64gqYz8uf6wjePwWi9ZjVRMuXxUy8aA4b/5MLZxL6j8dKZsmbbE3CBwedmvdv9qdvHFJHKf
-	6Cw1lYRdFBTgHjYWrHt9euXuv/I+AU5OCnCjanE9oH4SusSuakO0EJfyg8Ip/RfRvGtoCxU3/2X
-	Bi622CkJgeF33XD2j4G5
-X-Received: by 2002:a05:600c:1f13:b0:434:92f8:54a8 with SMTP id 5b1f17b1804b1-43622e1d89fmr17568225e9.0.1733999281034;
-        Thu, 12 Dec 2024 02:28:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGJgRY5o2EC5V/rXg0TUe4GYsezYBjI8CpktJ+KXMUbQXgvlQPxsTnXuvrx2+8Cjx8dMTUWOQ==
-X-Received: by 2002:a05:600c:1f13:b0:434:92f8:54a8 with SMTP id 5b1f17b1804b1-43622e1d89fmr17568045e9.0.1733999280683;
-        Thu, 12 Dec 2024 02:28:00 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436256b7d46sm12216165e9.35.2024.12.12.02.27.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 02:28:00 -0800 (PST)
-Message-ID: <4dccaf7d-09b1-49c6-a9de-ec327eafaf13@redhat.com>
-Date: Thu, 12 Dec 2024 11:27:59 +0100
+        d=1e100.net; s=20230601; t=1733999358; x=1734604158;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iHa5QT8JkD1B/JMzxQ4HqhQQvv6uKOMk6Hbk4+UNj+I=;
+        b=YCma1Oe1axC4Nvs1ecsqz4NW7wo/eMM+z9GsmAgk0hQKtA7yIG4JVd3mW2OQYGsFVE
+         TJbJRz7RBqVKtrRtb3Mlfv41rbtx7EUD6O8XtN9QKdcEvd5o8iE3gw+wHBYv4Lf6+L/0
+         yvKhvz2onp8Xo5Tydp7HLiB8MlAD369MtlcZbOmDcxyc+j2e1PzdrlYpb5ht4tmIWvlX
+         QeNse/a1NUqGvUVtDo/OpjKpkI508Pu6JjlJ75ywvWSVI0R+KGv8meKbAHwApz6RWQZF
+         2pKPB/kL32vwqI4XcUc+w2Zwk7uSi3be6S0ssJLHs8QbQgEDHiPzyzjXThUIAsOXQv5V
+         z9lA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1lypqiP/Qm1Wd9F1+R66afHTvFLVfLGrrel6StN9pA6fcf4EZ3dycM0USzPg/3bZcUHbKcAfuOLcT970=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw15kHdBcAKYg/NpUGr6YVmO8a9WWv4IdRe9Mv6wIlZLjVjZZpG
+	Qn4N0CCINYdyWstd6og43HVCBahq+vxnWQFknVXXFY9vK1gvnF8WXXO8FbmyPIQ3c42bZ2Zg6fG
+	4TfvU1cn+dewKXiw2sSeLfl02bBP49hUTNrD/V25VhfsKuV8a
+X-Gm-Gg: ASbGncuD+MOjPKX+ccVc6dw5Vx4XxhxBjtZDCnC3Er3IN0JPVaaoIaygkUALsmHIaLV
+	tXhcQSqjOGyYh2u2bU7p288fXYsFbUJGUvMMA0g==
+X-Google-Smtp-Source: AGHT+IF5MRQjPv1qupkMKerR3TJa8F5ojOtH623jRIzHbwh2Yva4cWRDsheROKwicK7oG1R3ozY2p7TYivltOFVglY0=
+X-Received: by 2002:a05:6512:3a96:b0:540:1ea7:44db with SMTP id
+ 2adb3069b0e04-54032c2f4a0mr306284e87.4.1733999358191; Thu, 12 Dec 2024
+ 02:29:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/client: Fix drm client endless Kconfig loop
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- John Ogness <john.ogness@linutronix.de>,
- Javier Martinez Canillas <javierm@redhat.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
- bluescreen_avenger@verizon.net, Caleb Connolly <caleb.connolly@linaro.org>,
- Petr Mladek <pmladek@suse.com>, Jani Nikula <jani.nikula@linux.intel.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-References: <20241212091153.1592096-1-jfalempe@redhat.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20241212091153.1592096-1-jfalempe@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241211051019.176131-1-chensong_2000@189.cn> <CAMRc=MfpwuMh-MH1UEHKky09iAs4g9=iGFPptARXzoZrVS8hdQ@mail.gmail.com>
+ <efade71b-76ce-4dfe-949e-b231b3e411f0@189.cn>
+In-Reply-To: <efade71b-76ce-4dfe-949e-b231b3e411f0@189.cn>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 12 Dec 2024 11:29:07 +0100
+Message-ID: <CAMRc=Medmy5EqTUWuQ-4YrQamOArKOK788iAY-=Cy42Od7y_Sw@mail.gmail.com>
+Subject: Re: [PATCH v2] regulator:s5m8767: Fully convert to GPIO descriptors
+To: Song Chen <chensong_2000@189.cn>
+Cc: krzk@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, lee@kernel.org, 
+	linus.walleij@linaro.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/12/2024 10:11, Jocelyn Falempe wrote:
-> if DRM_CLIENT_SELECTION is enabled, and none of the client is, the
-> "Default DRM Client" choice is empty, and this makes Kconfig goes
-> into an infinite loop of:
-> 
->    Default DRM Client
->    choice[1-0?]: 0
->    Default DRM Client
->    choice[1-0?]: 0
->    Default DRM Client
->    choice[1-0?]: 0
->    ....
-> 
-> So only allow the choice if at least one of the client is selected.
+On Thu, Dec 12, 2024 at 6:55=E2=80=AFAM Song Chen <chensong_2000@189.cn> wr=
+ote:
+>
+> Or we can use devm_gpiod_get_array, it's pretty much equivalent effect
+> in s5m8767 even without fwnode specified.
+>
 
-I've pushed it to drm-misc-next, endless Kconfig loop is not fun for CI.
+Can you use it though? I was thinking you need the fwnode variant
+because it's the child (regulator) node of the device?
 
-Best regards,
+If you can, that would be great.
 
--- 
-
-Jocelyn
-
-> 
-> Fixes: f7b42442c4ac ("drm/log: Introduce a new boot logger to draw the kmsg on the screen")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> Tested-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/gpu/drm/clients/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/clients/Kconfig b/drivers/gpu/drm/clients/Kconfig
-> index c18decc90200..82a7d4e584dd 100644
-> --- a/drivers/gpu/drm/clients/Kconfig
-> +++ b/drivers/gpu/drm/clients/Kconfig
-> @@ -87,6 +87,7 @@ config DRM_CLIENT_LOG
->   choice
->   	prompt "Default DRM Client"
->   	depends on DRM_CLIENT_SELECTION
-> +	depends on DRM_FBDEV_EMULATION || DRM_CLIENT_LOG
->   	default DRM_CLIENT_DEFAULT_FBDEV
->   	help
->   	  Selects the default drm client.
-> 
-> base-commit: 19851fa2ba9824bede16f55234f63d9423897c3d
-
+Bart
 
