@@ -1,239 +1,89 @@
-Return-Path: <linux-kernel+bounces-443705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A235D9EFAD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:24:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 268209EFADE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A273A1625A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:24:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336EE1637EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD78221DBA;
-	Thu, 12 Dec 2024 18:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTIFBcup"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2987A22332E;
+	Thu, 12 Dec 2024 18:26:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5BB223C55;
-	Thu, 12 Dec 2024 18:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD8F20ADD9
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734027880; cv=none; b=d5xhF/dlhv1KqBMhzduXuby5Bi0svbEyMaLjumIZdTaqeC8z3rDpCHJk5je2mpIciaqKZMx2rI0jWOeQ28ktEJvDXT62bUKae6Q3a/zU0+RYS107H2P78zHGgnaUZiQ1oQQEsAk1zA0Do4w7ZBo0yvXTyH4yRGlk48LbMfdOmQ8=
+	t=1734027964; cv=none; b=H7YlBikWegMaQEOFE+zOz59+UydtBF+UN4rpTA4ZX8Fr4pQ/OcjrQVLjG9biwtvi0UYH5N75N/Sn+6eIywVRWUWQIe4yM/yHgB8aBarpXlCluNAEjpQvu82wbZTXTqLf6ku6+Lw+p9aDwtCzfZr2HN2pNoy0IJ6DcZXztLJrSPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734027880; c=relaxed/simple;
-	bh=ABmVqV7Sr6ju3vzD1TlCStS/iRAA5BYzZFgN0WSIZdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SLn6ji2IZOkj1V48sGm2n2lZ547tpunzX6gTyGyp6efQVJ4sKoqRKVYj/fOr2ZDC+Z6lILjf0rwcyaBraC/4xMZ4KA841zMRtNL0Qqkul1hxf8ahXptKK5M7mEa18r7iHiwacgKLNJW/P25y64P1ZLb3oiUYeBfmBh35JJso47I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTIFBcup; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C633AC4CED3;
-	Thu, 12 Dec 2024 18:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734027879;
-	bh=ABmVqV7Sr6ju3vzD1TlCStS/iRAA5BYzZFgN0WSIZdI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mTIFBcup6VhyOT8Fwf9cjPQuLaGRzKzQBtEOcJycY7sFCtRkIYozgQ2+c8VtygwK3
-	 eU4zObSiyquQo8QlHU8V+ZF+JS0MezqeNiY0mWoBXeA0ulreMBX7kyvloc38T8s3Io
-	 y8e5T6UXcinVj/S+IkD8O9x8PEQ8E0qErbVqHKVGrx3t3P5NHWskZ2gxVB+AhR6c3K
-	 P9s8WwHfUjRb514O5ew5G/YDLnFqrZ3ebVaYKXkFjY9XXJtA+eSoFnIs6WkBOKwpnQ
-	 P52P2Je13Ukhno7VG0chD4uWscZtg7QNNEojQCex05+GCW2L/q3bgxP3rKMo1wsNyN
-	 IARUxIsXC5Onw==
-Date: Thu, 12 Dec 2024 10:24:36 -0800
-From: Kees Cook <kees@kernel.org>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	briannorris@chromium.org, yury.norov@gmail.com,
-	gustavoars@kernel.org, nathan@kernel.org,
-	steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
-	gjoyce@ibm.com, linux-crypto@vger.kernel.org, linux@weissschuh.net
-Subject: Re: [PATCHv3] gcc: disable '-Wstrignop-overread' universally for
- gcc-13+ and FORTIFY_SOURCE
-Message-ID: <202412120953.87F2827497@keescook>
-References: <20241208161315.730138-1-nilay@linux.ibm.com>
+	s=arc-20240116; t=1734027964; c=relaxed/simple;
+	bh=XyuFjvp6r8PXeA4I0Pntfh8Y0Qo8ho8/scw5bsXH1Uc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JtkdVCa8clNcyq5XoHv5MnHowgrFaDt5yUuP3hY5QIJrhG0VRhU8Y1IvqQbHPn5FGV7KgtfLB70mq8Zg7a4Bh2OkS5/5ZvEh1/t9fX3o2LO9zlLHKWO/alYxNs5E1+uOX2tqCdOO+wfWAfjlVuNhN3NIhnggTvZ6VfnMLbURas8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a81570ea43so8181505ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:26:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734027962; x=1734632762;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sW+/lDTC0b8UZh2dxjnr8friPvPYb7EmJIjIeSxBdFA=;
+        b=eUimfFENg06Xs4gfeOf6Phkz6YcZwcCwjwtxou0//Izf4fLKDkDzQxA4MieMWjy12y
+         9lqpEkKHIwt5+bjdU8xUWedYw4p+E3GqDjrFwfr8UZWmDxCiCmyBPWN4jiW6mzctXGlf
+         ssbBpuKGthr3N1mKYgiFYa8Rak0a4hiyY0yrvtBXh/jJcCnShKq6qTGDl7/VudogXfUx
+         ZSU8fMEhx3Fv6jdPdwZ7FkH31a7DjCZNmwXGa0cZP0yOOp09dEejSEVah9rE+RZ4V/Tr
+         32xktw3XuptOKF9s0AlFr8QvWHW/A6FqD6dqy3h4WZgj5wmPdUoSg+nvbCNe+qB3XX+2
+         dytw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/FpPfFx6c7FDQRAfHEE0EJmvNhkCYSRmi8srzJXX/aTHPLm5NSq7V13r5XxHUncFvc1fSq5LYqCo3iTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+VhZb2ZYAvgYLfToNhp/X22Re3kVB+phAx93WfKJEaalXuF42
+	+QBMGtZfMWLb+fODbnjOL6813dshVWAy+czgFcbQhYMinX8yIxf0ryEb79qw14Z6DDtmCFO9Vy8
+	50VqFB/2uRS474hJQG8Ic25E6+DqdVSMl3+dRwREf6BlrRxPSX/p9en0=
+X-Google-Smtp-Source: AGHT+IExY+GpZhT4LY1EAoJc7FTkyW3lNRAXHgLAc83yB9ShBLWnBx/N0DdUllYOBN1IAvLkPGD6gu0VyXN0oTXaovqXjCyzOagt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241208161315.730138-1-nilay@linux.ibm.com>
+X-Received: by 2002:a05:6e02:160a:b0:3a7:8270:4050 with SMTP id
+ e9e14a558f8ab-3ae57c14773mr12942005ab.18.1734027962569; Thu, 12 Dec 2024
+ 10:26:02 -0800 (PST)
+Date: Thu, 12 Dec 2024 10:26:02 -0800
+In-Reply-To: <2863838.1734026244@warthog.procyon.org.uk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675b2aba.050a0220.599f4.00b8.GAE@google.com>
+Subject: Re: [syzbot] [net?] [afs?] WARNING in rxrpc_send_data
+From: syzbot <syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dhowells@redhat.com, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-afs@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Dec 08, 2024 at 09:42:28PM +0530, Nilay Shroff wrote:
-> While building the powerpc code using gcc 13.x, I came across following
-> errors generated for kernel/padata.c file:
-> 
->   CC      kernel/padata.o
-> In file included from ./include/linux/string.h:390,
->                  from ./arch/powerpc/include/asm/paca.h:16,
->                  from ./arch/powerpc/include/asm/current.h:13,
->                  from ./include/linux/thread_info.h:23,
->                  from ./include/asm-generic/preempt.h:5,
->                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
->                  from ./include/linux/preempt.h:79,
->                  from ./include/linux/spinlock.h:56,
->                  from ./include/linux/swait.h:7,
->                  from ./include/linux/completion.h:12,
->                  from kernel/padata.c:14:
-> In function ‘bitmap_copy’,
->     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
->     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
->   114 | #define __underlying_memcpy     __builtin_memcpy
->       |                                 ^
-> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
->   633 |         __underlying_##op(p, q, __fortify_size);                        \
->       |         ^~~~~~~~~~~~~
-> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
->   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
->   259 |                 memcpy(dst, src, len);
->       |                 ^~~~~~
-> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
->   713 |                                  cpumask_var_t pcpumask,
->       |                                  ~~~~~~~~~~~~~~^~~~~~~~
+Hello,
 
-We've seen this also on x86 with 320 CPUs[1] (which perhaps was already
-known since I see Thomas Weißschuh in CC already.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Building with -fdiagnostics-details we see:
+Reported-by: syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com
+Tested-by: syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com
 
-In function 'bitmap_copy',
-    inlined from 'cpumask_copy' at ../include/linux/cpumask.h:839:2,
-    inlined from '__padata_set_cpumasks' at ../kernel/padata.c:723:2:
-../include/linux/fortify-string.h:114:33: error: '__builtin_memcpy' reading between 41 and 536870904 bytes from a region of size 40 [-Werror=stringop-overread]
-  114 | #define __underlying_memcpy     __builtin_memcpy
-      |                                 ^
-../include/linux/fortify-string.h:633:9: note: in expansion of macro '__underlying_memcpy'
-  633 |         __underlying_##op(p, q, __fortify_size);                        \
-      |         ^~~~~~~~~~~~~
-../include/linux/fortify-string.h:678:26: note: in expansion of macro '__fortify_memcpy_chk'
-  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-      |                          ^~~~~~~~~~~~~~~~~~~~
-../include/linux/bitmap.h:259:17: note: in expansion of macro 'memcpy'
-  259 |                 memcpy(dst, src, len);
-      |                 ^~~~~~
-  '__padata_set_cpumasks': events 1-2
-../include/linux/fortify-string.h:613:36:
-  612 |         if (p_size_field != SIZE_MAX &&
-      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  613 |             p_size != p_size_field && p_size_field < size)
-      |             ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
-      |                                    |
-      |                                    (1) when the condition is evaluated to false
-      |                                    (2) when the condition is evaluated to true
-  '__padata_set_cpumasks': event 3
-  114 | #define __underlying_memcpy     __builtin_memcpy
-      |                                 ^
-      |                                 |
-      |                                 (3) out of array bounds here
+Tested on:
 
-What's happening is that GCC is seeing that the run-time checks of
-FORTIFY_SOURCE is checking for this condition (i.e. there is a path
-through the code where the bounds could be too large and it still calls
-memcpy) -- which is the point of this runtime check -- but that GCC has
-found a compile-time path where this can be true.
+commit:         f3674384 Merge branch 'net-smc-two-features-for-smc-r'
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git main
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a34d44580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
+dashboard link: https://syzkaller.appspot.com/bug?extid=ff11be94dfcd7a5af8da
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=169d4d44580000
 
-Built without CONFIG_WERROR, we can examine the padata.o file for the
-FORTIFY_SOURCE warning string to find the field:
-
-$ strings gcc-diag/kernel/padata.o | grep ^field
-field "dst" at include/linux/bitmap.h:259
-
-which confirms it is this, which has already been seen in the thread:
-
-static __always_inline
-void bitmap_copy(unsigned long *dst, const unsigned long *src, unsigned
-int nbits)
-{
-        unsigned int len = bitmap_size(nbits);
-
-        if (small_const_nbits(nbits))
-                *dst = *src;
-        else
-                memcpy(dst, src, len);
-}
-
-and I think what Nathan already discussed[2] is all true (i.e. that
-nr_cpu_ids is unknown -- but bounded to a smaller range than [0..UINT_MAX]
-due to the calculation in bitmap_size()). Nathan's fix silences the
-warning. We could narrow the scope to only run-time-specified nr_cpus:
-
-
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 9278a50d514f..8f1a694109e9 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -836,6 +836,8 @@ void cpumask_shift_left(struct cpumask *dstp, const struct cpumask *srcp, int n)
- static __always_inline
- void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
- {
-+	if (!__builtin_constant_p(large_cpumask_bits))
-+		BUG_ON(large_cpumask_bits > NR_CPUS);
- 	bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), large_cpumask_bits);
- }
- 
-
-Or we could avoid the BUG_ON check and simply silence the warning
-explicitly:
-
-
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 9278a50d514f..0725b26f21b8 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -836,6 +836,8 @@ void cpumask_shift_left(struct cpumask *dstp, const struct cpumask *srcp, int n)
- static __always_inline
- void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
- {
-+	if (!__builtin_constant_p(large_cpumask_bits))
-+		OPTIMIZER_HIDE_VAR(large_cpumask_bits);
- 	bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), large_cpumask_bits);
- }
- 
-Or we could unconditionally put the OPTIMIZER_HIDE_VAR() inside
-bitmap_copy() itself:
-
-
-diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
-index 262b6596eca5..5503ccabe05a 100644
---- a/include/linux/bitmap.h
-+++ b/include/linux/bitmap.h
-@@ -251,12 +251,14 @@ static __always_inline void bitmap_fill(unsigned long *dst, unsigned int nbits)
- static __always_inline
- void bitmap_copy(unsigned long *dst, const unsigned long *src, unsigned int nbits)
- {
--	unsigned int len = bitmap_size(nbits);
--
--	if (small_const_nbits(nbits))
-+	if (small_const_nbits(nbits)) {
- 		*dst = *src;
--	else
-+	} else {
-+		unsigned int len = bitmap_size(nbits);
-+
-+		OPTIMIZER_HIDE_VAR(len);
- 		memcpy(dst, src, len);
-+	}
- }
- 
- /*
-
-I prefer any of these to doing the build-system disabling of the
-warning.
-
--Kees
-
-[1] https://lore.kernel.org/all/202411021337.85E9BB06@keescook/
-[2] https://lore.kernel.org/all/20241209193558.GA1597021@ax162/
-
--- 
-Kees Cook
+Note: testing is done by a robot and is best-effort only.
 
