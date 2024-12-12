@@ -1,90 +1,56 @@
-Return-Path: <linux-kernel+bounces-443091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7889EE6FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:45:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2584A9EE701
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6B431886D30
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE401886DF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59872135D5;
-	Thu, 12 Dec 2024 12:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CaVziD81"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8915B211271
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D89D2139A7;
+	Thu, 12 Dec 2024 12:46:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A88220A5C7;
+	Thu, 12 Dec 2024 12:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734007521; cv=none; b=UbKLQVZjwftw/wCz0qJVZPKdgSuhZdDrtiSVGG6pZC83xRSdG606ybbudySoKRhjLO5/FbikwyvSl0aUuM+H03MYMvUgeBqFEsbidEoDfAGUdiaSbHlYHvLoD9taBLw6YEAMVTibLeYRh6o4uzNPUg1eTzF4q926EJRHuby9/zU=
+	t=1734007606; cv=none; b=Zz3imCRki7sSDA5c7tfvS83SYuvwvVcVeWPZkov4l4BIXUbcVoDUYlQ/gRmUOMtSCWDt522e6gg1qF1weXUrmhNM9VYPRqV4c7Cl3AoiFiiyR7F9IsateLKW5WF/cY+PKkwd/5/mcPvmPAEW5aVn11eQC5D6Krh44WbU9vevAaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734007521; c=relaxed/simple;
-	bh=a1c+csz78lwGyO+6sWEuvcLVxfOtf9ra7N4OQm7xEfY=;
+	s=arc-20240116; t=1734007606; c=relaxed/simple;
+	bh=X0e/kSh7hdWxarH+vo+YZPH7v7Frzp7GE24fnTpjC5o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eskKroeod8iKiYf9P135ugQCUNZ5g54z+pV5h6f/Xfaff9xaq3SkYMuwufn7mNgklMchz6HChcd1uvTi9m+U3fE/7ExJpPbUmxm/p1a8Xzpr2KzWdr7IZF0iGinUunMO6q+ezVsby1v3wW66qhoeoqX1HpDu9z/zjBK3SeLAOoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CaVziD81; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434e69857d9so3617875e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 04:45:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734007518; x=1734612318; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b0MIlrd8hgKTeaMZkhqf3o5F9gaR/A/34B2prwrX9Lc=;
-        b=CaVziD815998e6WExfp1njY4vMIzDEljtLeVj7vNyv939K77cnXT0tophhnVUMHZJW
-         xY53SholZrTDWgeliaSI7OGBf+PRx4gV3yy8oDX5SfALR7HmtFD4dPKjNylrtRidFd15
-         aEijEwwa1LH/q9uP7pD37azOn9/nRNRk9ps5Q7qSA6UM396z/Li7Aq9eItpbC2Cfo0v0
-         YFuU2F4Lb/l1MSwVym/h/hJdHhmxhA9FNQXe0luRy2IVcfov8IDf1WrWqG1olAzlyeKH
-         nUzqKGpOPTedbpYtVzDHCCH43wRLN6v+hq33vIS6mdSOkJQFpi5DONNwmbmDPsxvdf/z
-         9/WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734007518; x=1734612318;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b0MIlrd8hgKTeaMZkhqf3o5F9gaR/A/34B2prwrX9Lc=;
-        b=dPUW8cmOxI070XhCphrEiqHSvbMoSSD19cveVnR4CbHKiDfdhA9/iHPhvGBu1nlJRG
-         hJgtnQCJZNyKCuF3UI7maRBac9HtVm27fQXBwvnDy4ufirKp4rUrXF9vqSG2NQPA2AWO
-         r9bMDDyR4tqYpBKvm/c1CaUmC0UGVJTN0/Vc19BpL2q5hsLD/QaSCT1qwMWpsbD1ikgv
-         cdjNNYLBWk388WQlzhn6XzTJczARoiwJMrnGZGrMi2xrPPgIzj1CFPcp+ypn21YQ/mLq
-         ijLT40LrRNJ1Qikla0rLrFzCz5Snzt6bAbwajB5E0y54yahg+s6ChCX127PWVVpwaXLJ
-         iwng==
-X-Forwarded-Encrypted: i=1; AJvYcCX2qC7mmQxYbQ++kBcf3PnzK3Fo1DUAwQT3SOPi2MtnvFdC5dtytdQ7JUZPHuw5oum0ZsL1EebNNPn+4tw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxorDaGQ8wBHe1hIvE/UA2kR+CEdIg+Fth7qgVhJSAbFFUz/PSy
-	i92we2H93jQppYErHT3lB7Ng87dfH899xrscjLjLvRzt+g3IG3Yc11SjnNV7oME=
-X-Gm-Gg: ASbGncufL/Imt6607E0p9HUl9O+PoKtQfh03HCcQo0c4NWPqsaHfus19Sns3aN8DO2z
-	fMeqGwX4CoieNSDRet1aK4BmEQgrJtc4XzKKyyK4iGHoKd9vHFYUhw5d/smYLVpt5sLTSainZTt
-	q1mAed6LV1vy4GasiIlmGH4+lDlI4Kn3fIZBqYtgv728Y0UH88voGn1uBZOJ9Xr/4ph+Iq8vE4F
-	G58wnN0CnTDRjI0xThlA4Boxy3nJGim4+UAmwwZmQBgnX3bV3q9Lh3lvu6F7g==
-X-Google-Smtp-Source: AGHT+IEyNpazD7YeXxHYvPwjQS+Xs0/1F2YZVhWJvmtRAVKWT7Dsk7UichfBnzoTMoxDG9nSIZeQ6Q==
-X-Received: by 2002:a05:600c:34c6:b0:434:fe3c:c662 with SMTP id 5b1f17b1804b1-4362310c025mr22321795e9.12.1734007516330;
-        Thu, 12 Dec 2024 04:45:16 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625716e5csm15409365e9.36.2024.12.12.04.45.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 04:45:15 -0800 (PST)
-Date: Thu, 12 Dec 2024 15:45:12 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/vc4: unlock on error in
- vc4_hvs_get_fifo_frame_count()
-Message-ID: <92dfd6cd-2e10-4606-9502-3619c4b265a0@stanley.mountain>
-References: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
- <CAPY8ntD9XzrzrhX=1XojjcZmRm60KLc39HZq0bJ9cEq0J7nQ9g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i17+WzCgFXgXnSQNDuML+iaUtWpNtFyWMaXWwGW4EGoLR+aiQXCFPQowdl4mRkqpWM0bloreKP1DigdMGaVizyljyQYjoVOp+ZfTL5vEUARqZHlwPlal4ZkpwT3uC7A3JNQy3Hrvz/aVpY0a4o2C90Y8V5/EJ0LbkIywOmTgJqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3920153B;
+	Thu, 12 Dec 2024 04:47:10 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 66AD83F720;
+	Thu, 12 Dec 2024 04:46:40 -0800 (PST)
+Date: Thu, 12 Dec 2024 12:46:37 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Dhruva Gole <d-gole@ti.com>
+Cc: Vivek yadav <linux.ninja23@gmail.com>, <linux-newbie@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <daniel.lezcano@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>, <lpieralisi@kernel.org>,
+	<krzk@kernel.org>, <christian.loehle@arm.com>,
+	<quic_sibis@quicinc.com>, <cristian.marussi@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <vigneshr@ti.com>, <khilman@ti.com>,
+	<sebin.francis@ti.com>, <khilman@baylibre.com>
+Subject: Re: Fwd: ARM64: CPUIdle driver is not select any Idle state other
+ then WFI
+Message-ID: <Z1rbLdWW75KQw5cl@bogus>
+References: <CAO6a-9_aPLCx2CqecQBGbK78_=+-tT44RepPkrBjpkWSvjj4Tg@mail.gmail.com>
+ <CAO6a-98cdSvyd7jgAyGNmsC2nxmRSyr3GppxvZU9yHU1xqwz3g@mail.gmail.com>
+ <20241211055052.gbxnyqpui3t3zpw5@lcpd911>
+ <20241211121825.GA2054801@bogus>
+ <20241211143428.kaoovhiwar74dy6x@lcpd911>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,19 +59,157 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPY8ntD9XzrzrhX=1XojjcZmRm60KLc39HZq0bJ9cEq0J7nQ9g@mail.gmail.com>
+In-Reply-To: <20241211143428.kaoovhiwar74dy6x@lcpd911>
 
-On Thu, Dec 12, 2024 at 11:54:28AM +0000, Dave Stevenson wrote:
-> I don't know how others feel.
+On Wed, Dec 11, 2024 at 08:04:28PM +0530, Dhruva Gole wrote:
+> On Dec 11, 2024 at 12:18:25 +0000, Sudeep Holla wrote:
+> > On Wed, Dec 11, 2024 at 11:20:52AM +0530, Dhruva Gole wrote:
+> [...]
+> > > >
+> > > >
+> > > > Hi @all,
+> > > >
+> > > > I am working on one custom SoC. Where I add one CPUIdle state for
+> > > > ``arm,cortex-a55`` processor.
+> > >
+> > > Any further luck on this?
+> > >
+> > > I have also been working on something similar[1] but on an A53 core on
+> > > TI-K3 AM62x processor.
+> > 
+> > Does upstream DTS have support for this platform to understand it better ?
+> > Even reference to any complete DT file for the platform will help.
+> 
+> Yes, you can ref to the AM625 (CPU layout) DT here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/ti/k3-am625.dtsi
+> 
+> The board/starter kit DT is:
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/ti/k3-am625-sk.dts
+> 
+> The patches for idle state are not upstream, and only exist in this
+> patch of mine here:
+> https://github.com/DhruvaG2000/v-linux/commit/0fd088d624276a2e72b8dc6660d261ab6d194f4b
+>
 
-These days we have "warning: this statement may fall through
-[-Wimplicit-fallthrough=]" which triggers a build failure so fallthrough
-bugs are pretty rare.
+"arm,psci-suspend-param" indicate that this idle state doesn't loose the
+cpu context which means timer doesn't stop. So adding "local-timer-stop"
+sound completely wrong to me.
 
-But I only care about *your* opinion, Dave.  Everyone else can bounce.
+> [...]
+> > > See this chunk in the kernel cpuidle driver:
+> > > 	if (broadcast && tick_broadcast_enter()) {
+> > >
+> > > When I dug deeper into tick_broadcast_enter it always returns something
+> > > non zero and hence in my case it was entering the if block and tried to
+> > > find a deepest state. Then the deepest state would always return WFI and
+> > > not the idle-state I had added.
+> > >
 
-I'll send a v2 which adds the break.
+It depends. If this is the last CPU and since you have marked the state with
+"local-timer-stop" and the system doesn't have any other timers to use as
+source of broadcast, it prevents one of the CPU entering that state. So you
+could be matching all the above conditions on your platform and hence you
+are observing the above.
 
-regards,
-dan carpenter
+> > > What we found out was on our kernel we end up using
+> > >
+> > > kernel/time/tick-broadcast-hrtimer.c
+> > >
+> > > This always seems to be keeping atleast 1 CPU busy and prevents idle.
+> > > If we remove the local-timer-stop it was helping us, but we still need
+> > > to dig into the full impact of what that entails and I am still
+> > > interested in finding out how so many other users of similar idle-state
+> > > implementation are able to do so without trouble.
+> > >
+> >
+
+As mentioned about adding "local-timer-stop" for a retention state seems
+pure wrong in my opinion as it contradicts to the fact that context is
+retained.
+
+> > Interesting. So if the platform is functional removing local-timer-stop,
+> > I am bit confused. Either there is something else that is getting it out
+>
+> Yes it was interesting to us too, as to how the RCU didn't kick in and
+> system continued to function as though nothing was wrong.
+>
+
+It worked as if it was a state with context lost. So there might be some
+impact on the latency though it as the kernel assumed context lost and
+re-entered/resumed through resume entry point rather than where it called
+cpu_suspend() similar to wfi(). I mean only on the CPUs it was able to
+enter this state as one of the CPU will never enter this if there are no
+system timers to act as broadcast timer.
+
+Does you system not have Arch timers memory mapped interface enabled and
+interrupt wired to GIC(other than PPIs) ? Look at Juno R2 as example.
+
+> > from the idle state so, it should be fine and it could be just some
+> 
+> It's probably UART keypresses or some userspace processes that get
+> scheduled that bring the CPUs back out of TF-A's cpu_standby.
+
+I doubt the CPU resume from suspend is based on some userspace event.
+
+> Is it possible that EL1 interrupts can bring EL3 out of WFI? Is yes then
+> it explains the behaviour. The arch timer could also be continuing to
+> tick and bringing the CPUs out of ATF WFI.
+>
+
+Yes but that doesn't explain the behaviour. It could be just the timer
+event from the broadcast timer.
+
+> > misconfiguration.
+> > 
+> > > Arm64 recommends to use arch_timer instead of external timers. Once we
+> > > enter el3, timer interrupts to el1 is blocked and hence it's equivalent
+> > > to local-timer-stop, so it does make sense to keep this property, but
+> > > then how are others able to enter idle-states for all plugged CPUs at
+> > > the same time?
+> > >
+> > 
+> > Some systems have system timer that can take over as broadcast timer when
+> > CPUs enter deeper idle states where the local timers are stopped.
+> 
+> In CPUIdle we're not really clock gating anything so the timer does keep
+> ticking. So in this particular case it might make sense to remove the
+> local-timer-stop property from the idle-state.
+>
+
+Correct in your case it is retention state and hence local CPU timers
+keep ticking and you can safely drop that property. However if you add
+deeper idle states like CPU OFF with the power rail cut off, then you need
+some system timer to act as backup/broadcast timer so that all the CPUs
+can enter the state concurrently and wake up successfully.
+
+> However we're looking into taking this further and putting interconnect
+> and few other PLLs in bypass which could cause arch timer for eg. to
+> tick slower.
+
+I assume it will be present as another timer with the rate set appropriately.
+
+> In this case would it still make sense to omit the property? 
+
+No, you should mark it as stopped even if it is running at slower rate
+as I am not sure if the local CPU timer support can handle rate change.
+
+> We may even have some usecases planned where we may turn OFF
+> the CPU once it is in TF-A cpu_standby/ WFI. What would be the right
+> approach in such scenarios?
+>
+
+As mentioned above, this will be separate state and all CPUs can use this
+if there is another system broadcast timer.
+
+> Could you provide any examples where the local-timer-stop property is
+> being used and an alternative timer can be configured once we enter the
+> idle-state where CPU CTX maybe lost or clocks maybe bypass?
+> great if you could share some example implementation if you're aware.
+
+As I mentioned, Juno R2 is an example. It was broken on R0 with some SoC
+errata(can't recall all the details as I looked at it almost a decade ago)
+
+-- 
+Regards,
+Sudeep
 
