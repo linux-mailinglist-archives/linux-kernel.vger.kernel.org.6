@@ -1,131 +1,406 @@
-Return-Path: <linux-kernel+bounces-443333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D68A9EED91
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:48:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0EE9EED4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:45:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46270165BEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:44:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF8FD286F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D23223711;
-	Thu, 12 Dec 2024 15:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE5F2210E2;
+	Thu, 12 Dec 2024 15:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B/+IYlGn";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Eq3LaYzv"
-Received: from a7-49.smtp-out.eu-west-1.amazonses.com (a7-49.smtp-out.eu-west-1.amazonses.com [54.240.7.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qFFHj99H"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47357223324;
-	Thu, 12 Dec 2024 15:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C4A223324
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018218; cv=none; b=ANak3+dIfVJYI6rDiwiNX2QNxNNhI+6+w/Bb263Qgfo11kjHNShj/w4Z2u8dQ5xgqLUlTKFq0FA7h5Z1RSsIX8zDIcJ/5AwsIofTBX5QDyAfVYvKmTOm5FNn71hMj/nGDqdAU3Y9wXaCs/KMXuTz+CooAi9rfAPjPBOCypvuAV4=
+	t=1734018227; cv=none; b=U3SnvFz2VtA0S8BjLdANM/Xk52hjdrxw3WfNDgxoS/HXh9FkXJMXgol38hDsS0Bqqh09/aV/BFocZAKMYFnP/wGPW/XrCDlMeLga7qTs/eBDy7Q3AWpJLvBOv+NRHG8MnVxgzu6aOuZ53EU+AU4BsLJab1o6LlqvCtv73MOEz8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018218; c=relaxed/simple;
-	bh=8Fq/subTP6OO1nFEyLaHcjH8Zxi3BDFslEuxKeQeGq0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fYovOTp6SQigkKUX4hWUBj+3CUB+VEQUJlhIzvLq+wou3XCfHqEfY8UvA8HwzJzy/kqVI40MtukxD6wHLh/hev/iqADjcdfolWf9JzkjWO9Lj+p40UepBXJ2t0Ws7LbO4QtHVCxObOx7PiH6Me0PRdBZlIyNqh1LIUgtGtonxdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B/+IYlGn; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=Eq3LaYzv; arc=none smtp.client-ip=54.240.7.49
+	s=arc-20240116; t=1734018227; c=relaxed/simple;
+	bh=YHundCToiMv4xw9N0Z3X62goghCmobeJJhTwQDZ1o7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AzFcpiqVP0up7YbVcaBEiaQo6kF9Wqyr3oV33t8Duf6C0mJbbl/dagLg0XQwXzlMMwRiZ8mYHu9RoxSX8Xna1T9wRPsqQSMI3HFDRA05OLYHyky7eeEGqoRV3sLUCUxgiy9YJ1h6BWuluHBrc4PqASVxroPlmLw6qMbpK6j0OmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qFFHj99H; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=bc7lryepznv65m6r2ewkpoafjt4fiq42; d=collabora.com; t=1734018214;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=8Fq/subTP6OO1nFEyLaHcjH8Zxi3BDFslEuxKeQeGq0=;
-	b=B/+IYlGnJhURtz3JPDeBTka7Cxs3rRki0gGIaIzudp2gjGEM9QWMJsxHb02Ry4SA
-	7LfLRq/T+JQQxuIFE0ezp7dpcua0cZd8ub7LZDHP7uCmoNBvbfmS03Sh6B3D7hh5/DB
-	6tjh2c/ggnePRZgzstTrZOmoPowUaRe0XDFWbr07Pwy2w5vtEQC7cIV5ZFm6ZuAYOJB
-	vf/kzZ5MYJpha7BJKgjT+CcZABoqQieXrm3uZdYMkxT7Mf8wDv+hcV2IY7Q0iVU9nwP
-	dy79eJ/QrbawymfuLNkFlA6obl3ADM1WdWmh89UhIZj/9mG6RMDhplmnIQve/VQQFcs
-	cPFlA3LBjg==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1734018214;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=8Fq/subTP6OO1nFEyLaHcjH8Zxi3BDFslEuxKeQeGq0=;
-	b=Eq3LaYzvFoIM64DX1TWSZJ0EOfs7ITOhb8i6u1H1FTCrK0MniEqjNuaXXRCUXvck
-	U1bvve0DQ29Tjwdz+WOX/UMxMrwdOFsSIx60sGGxocqmpeDIR9JfvKqYQd3vwqoxohp
-	ny2LCm1PF/FTo48xUgevyLBq5VRc/vf4X3LQewEk=
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-To: p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Subject: [PATCH v2 2/2] media: verisilicon: Fix IMX8 native pixels format steps values
-Date: Thu, 12 Dec 2024 15:43:34 +0000
-Message-ID: <01020193bb8a2955-5c7c8665-b689-44bb-9119-b0e636e20840-000000@eu-west-1.amazonses.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241212154328.84904-1-benjamin.gaignard@collabora.com>
-References: <20241212154328.84904-1-benjamin.gaignard@collabora.com>
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734018223;
+	bh=YHundCToiMv4xw9N0Z3X62goghCmobeJJhTwQDZ1o7g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qFFHj99HuL3SR8GdvkWCK8ITCkGMSG1711vl0n8LK++lZcl5yPokRw6l+QCIOCV/T
+	 24vlTNIinF8TV7na5OJsbPLoI/uZ1lcEeLeT85Wt8ZuaDbKV5GAuRYxmFaFiOedy0G
+	 ug97EUp66U/DlQ5la5zClZEAlQj08C+k3evtw5nk3H0QwyL+lqKskO7dHGmEeIjjA7
+	 k6mRhZhpp9GlW2iztDlG5AnkikCszWsRCWhXc7iR6VRriv/yV4+nKZ2Te9O985Qbrh
+	 LK5FONZMRgaLhgxsupFbn3XaoUFHl5cI856hA+fW+SURtIC54SL0RC4PXqkwdHMejU
+	 aVg34SAT1xONw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:d3ea:1c7:41fd:3038])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BB98917E378A;
+	Thu, 12 Dec 2024 16:43:42 +0100 (CET)
+Date: Thu, 12 Dec 2024 16:43:37 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] drm/panthor: Expose size of driver internal BO's
+ over fdinfo
+Message-ID: <20241212164337.472d25cc@collabora.com>
+In-Reply-To: <20241211163436.381069-2-adrian.larumbe@collabora.com>
+References: <20241211163436.381069-1-adrian.larumbe@collabora.com>
+	<20241211163436.381069-2-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.12.12-54.240.7.49
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hantro decoder non post-processed pixels formats steps are different
-from post-processed ones.
-Fix the steps according to hardware limitation.
-Since reference frame pixels format issue has been fix, it is possible
-to use V4L2_PIX_FMT_NV15_4L4 rather V4L2_PIX_FMT_P010_4L4 for 10bits
-streams.
+On Wed, 11 Dec 2024 16:34:31 +0000
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Fluster VP9 score goes up to 207/305.
-HEVC score is still 141/147.
+> This will display the sizes of kenrel BO's bound to an open file, which a=
+re
+> otherwise not exposed to UM through a handle.
+>=20
+> The sizes recorded are as follows:
+>  - Per group: suspend buffer, protm-suspend buffer, syncobjcs
+>  - Per queue: ringbuffer, profiling slots, firmware interface
+>  - For all heaps in all heap pools across all VM's bound to an open file,
+>  record size of all heap chuks, and for each pool the gpu_context BO too.
+>=20
+> This does not record the size of FW regions, as these aren't bound to a
+> specific open file and remain active through the whole life of the driver.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c   | 12 ++++++
+>  drivers/gpu/drm/panthor/panthor_heap.c  | 26 +++++++++++++
+>  drivers/gpu/drm/panthor/panthor_heap.h  |  2 +
+>  drivers/gpu/drm/panthor/panthor_mmu.c   | 35 +++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_mmu.h   |  4 ++
+>  drivers/gpu/drm/panthor/panthor_sched.c | 52 ++++++++++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_sched.h |  4 ++
+>  7 files changed, 134 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
+hor/panthor_drv.c
+> index ac7e53f6e3f0..8e27d0429019 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1457,12 +1457,24 @@ static void panthor_gpu_show_fdinfo(struct pantho=
+r_device *ptdev,
+>  	drm_printf(p, "drm-curfreq-panthor:\t%lu Hz\n", ptdev->current_frequenc=
+y);
+>  }
+> =20
+> +static void panthor_show_internal_memory_stats(struct drm_printer *p, st=
+ruct drm_file *file)
+> +{
+> +	struct panthor_file *pfile =3D file->driver_priv;
+> +	struct drm_memory_stats status =3D {0};
+> +
+> +	panthor_group_kbo_sizes(pfile, &status);
+> +	panthor_vm_heaps_sizes(pfile, &status);
+> +
+> +	drm_print_memory_stats(p, &status, DRM_GEM_OBJECT_RESIDENT, "internal");
+> +}
+> +
+>  static void panthor_show_fdinfo(struct drm_printer *p, struct drm_file *=
+file)
+>  {
+>  	struct drm_device *dev =3D file->minor->dev;
+>  	struct panthor_device *ptdev =3D container_of(dev, struct panthor_devic=
+e, base);
+> =20
+>  	panthor_gpu_show_fdinfo(ptdev, file->driver_priv, p);
+> +	panthor_show_internal_memory_stats(p, file);
+> =20
+>  	drm_show_memory_stats(p, file);
+>  }
+> diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/pan=
+thor/panthor_heap.c
+> index 3796a9eb22af..e4464c5e93ef 100644
+> --- a/drivers/gpu/drm/panthor/panthor_heap.c
+> +++ b/drivers/gpu/drm/panthor/panthor_heap.c
+> @@ -603,3 +603,29 @@ void panthor_heap_pool_destroy(struct panthor_heap_p=
+ool *pool)
+> =20
+>  	panthor_heap_pool_put(pool);
+>  }
+> +
+> +/**
+> + * panthor_heap_pool_size() - Calculate size of all chunks across all he=
+aps in a pool
+> + * @pool: Pool whose total chunk size to calculate.
+> + *
+> + * This function adds the size of all heap chunks across all heaps in the
+> + * argument pool. It also adds the size of the gpu contexts kernel bo.
+> + * It is meant to be used by fdinfo for displaying the size of internal
+> + * driver BO's that aren't exposed to userspace through a GEM handle.
+> + *
+> + */
+> +size_t panthor_heap_pool_size(struct panthor_heap_pool *pool)
+> +{
+> +	struct panthor_heap *heap;
+> +	unsigned long i;
+> +	size_t size =3D 0;
+> +
+> +	down_write(&pool->lock);
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
----
-Version 2:
-- rebased on top of media-commiter/next
-- Add reviewed-by tags
+I think a  down_read() would be preferable, the write if for pool
+modifications, which is not the case here.
 
- drivers/media/platform/verisilicon/imx8m_vpu_hw.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> +	xa_for_each(&pool->xa, i, heap)
+> +		size +=3D heap->chunk_size * heap->chunk_count;
+> +	up_write(&pool->lock);
+> +
+> +	size +=3D pool->gpu_contexts->obj->size;
+> +
+> +	return size;
+> +}
+> diff --git a/drivers/gpu/drm/panthor/panthor_heap.h b/drivers/gpu/drm/pan=
+thor/panthor_heap.h
+> index 25a5f2bba445..e3358d4e8edb 100644
+> --- a/drivers/gpu/drm/panthor/panthor_heap.h
+> +++ b/drivers/gpu/drm/panthor/panthor_heap.h
+> @@ -27,6 +27,8 @@ struct panthor_heap_pool *
+>  panthor_heap_pool_get(struct panthor_heap_pool *pool);
+>  void panthor_heap_pool_put(struct panthor_heap_pool *pool);
+> =20
+> +size_t panthor_heap_pool_size(struct panthor_heap_pool *pool);
+> +
+>  int panthor_heap_grow(struct panthor_heap_pool *pool,
+>  		      u64 heap_gpu_va,
+>  		      u32 renderpasses_in_flight,
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/pant=
+hor/panthor_mmu.c
+> index c3f0b0225cf9..72387c95d103 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -1941,6 +1941,41 @@ struct panthor_heap_pool *panthor_vm_get_heap_pool=
+(struct panthor_vm *vm, bool c
+>  	return pool;
+>  }
+> =20
+> +/**
+> + * panthor_vm_heaps_size() - Calculate size of all heap chunks across all
+> + * heaps over all the heap pools in a VM
+> + * @pfile: File.
+> + * @status: Memory status to be updated.
+> + *
+> + * Calculate all heap chunk sizes in all heap pools bound to a VM. If th=
+e VM
+> + * is active, record the size as active as well.
+> + */
+> +void panthor_vm_heaps_sizes(struct panthor_file *pfile, struct drm_memor=
+y_stats *status)
+> +{
+> +	struct panthor_vm *vm;
+> +	unsigned long i;
+> +
+> +	if (!pfile->vms)
+> +		return;
+> +
+> +	xa_for_each(&pfile->vms->xa, i, vm) {
+> +		size_t size;
+> +
+> +		mutex_lock(&vm->heaps.lock);
+> +		if (!vm->heaps.pool) {
+> +			mutex_unlock(&vm->heaps.lock);
+> +			continue;
+> +		}
+> +		size =3D panthor_heap_pool_size(vm->heaps.pool);
+> +		mutex_unlock(&vm->heaps.lock);
+> +
+> +		status->resident +=3D size;
+> +		status->private +=3D size;
+> +		if (vm->as.id >=3D 0)
+> +			status->active +=3D size;
+> +	}
+> +}
+> +
+>  static u64 mair_to_memattr(u64 mair, bool coherent)
+>  {
+>  	u64 memattr =3D 0;
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/pant=
+hor/panthor_mmu.h
+> index 8d21e83d8aba..2aeb2522cdfa 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.h
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.h
+> @@ -5,10 +5,12 @@
+>  #ifndef __PANTHOR_MMU_H__
+>  #define __PANTHOR_MMU_H__
+> =20
+> +#include <linux/types.h>
+>  #include <linux/dma-resv.h>
+> =20
+>  struct drm_exec;
+>  struct drm_sched_job;
+> +struct drm_memory_stats;
+>  struct panthor_gem_object;
+>  struct panthor_heap_pool;
+>  struct panthor_vm;
+> @@ -37,6 +39,8 @@ int panthor_vm_flush_all(struct panthor_vm *vm);
+>  struct panthor_heap_pool *
+>  panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create);
+> =20
+> +void panthor_vm_heaps_sizes(struct panthor_file *pfile, struct drm_memor=
+y_stats *status);
+> +
+>  struct panthor_vm *panthor_vm_get(struct panthor_vm *vm);
+>  void panthor_vm_put(struct panthor_vm *vm);
+>  struct panthor_vm *panthor_vm_create(struct panthor_device *ptdev, bool =
+for_mcu,
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/pa=
+nthor/panthor_sched.c
+> index ef4bec7ff9c7..93497dadf085 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -618,7 +618,7 @@ struct panthor_group {
+>  	 */
+>  	struct panthor_kernel_bo *syncobjs;
+> =20
+> -	/** @fdinfo: Per-file total cycle and timestamp values reference. */
+> +	/** @fdinfo: Per-group total cycle and timestamp values and kernel BO s=
+izes. */
+>  	struct {
+>  		/** @data: Total sampled values for jobs in queues from this group. */
+>  		struct panthor_gpu_usage data;
+> @@ -628,6 +628,9 @@ struct panthor_group {
+>  		 * and job post-completion processing function
+>  		 */
+>  		struct mutex lock;
+> +
+> +		/** @bo_sizes: Aggregate size of private kernel BO's held by the group=
+. */
+> +		size_t kbo_sizes;
+>  	} fdinfo;
+> =20
+>  	/** @state: Group state. */
+> @@ -3365,6 +3368,29 @@ group_create_queue(struct panthor_group *group,
+>  	return ERR_PTR(ret);
+>  }
+> =20
+> +static void add_group_kbo_sizes(struct panthor_device *ptdev,
+> +				struct panthor_group *group)
+> +{
+> +	struct panthor_queue *queue;
+> +	int i;
+> +
+> +	if (drm_WARN_ON(&ptdev->base, IS_ERR_OR_NULL(group)))
+> +		return;
+> +	if (drm_WARN_ON(&ptdev->base, ptdev !=3D group->ptdev))
+> +		return;
+> +
+> +	group->fdinfo.kbo_sizes +=3D group->suspend_buf->obj->size;
+> +	group->fdinfo.kbo_sizes +=3D group->protm_suspend_buf->obj->size;
+> +	group->fdinfo.kbo_sizes +=3D group->syncobjs->obj->size;
+> +
+> +	for (i =3D 0; i < group->queue_count; i++) {
+> +		queue =3D	group->queues[i];
+> +		group->fdinfo.kbo_sizes +=3D queue->ringbuf->obj->size;
+> +		group->fdinfo.kbo_sizes +=3D queue->iface.mem->obj->size;
+> +		group->fdinfo.kbo_sizes +=3D queue->profiling.slots->obj->size;
+> +	}
 
-diff --git a/drivers/media/platform/verisilicon/imx8m_vpu_hw.c b/drivers/media/platform/verisilicon/imx8m_vpu_hw.c
-index f850d8bddef6..35799da534ed 100644
---- a/drivers/media/platform/verisilicon/imx8m_vpu_hw.c
-+++ b/drivers/media/platform/verisilicon/imx8m_vpu_hw.c
-@@ -187,23 +187,23 @@ static const struct hantro_fmt imx8m_vpu_g2_dec_fmts[] = {
- 		.frmsize = {
- 			.min_width = FMT_MIN_WIDTH,
- 			.max_width = FMT_UHD_WIDTH,
--			.step_width = TILE_MB_DIM,
-+			.step_width = 8,
- 			.min_height = FMT_MIN_HEIGHT,
- 			.max_height = FMT_UHD_HEIGHT,
--			.step_height = TILE_MB_DIM,
-+			.step_height = 32,
- 		},
- 	},
- 	{
--		.fourcc = V4L2_PIX_FMT_P010_4L4,
-+		.fourcc = V4L2_PIX_FMT_NV15_4L4,
- 		.codec_mode = HANTRO_MODE_NONE,
- 		.match_depth = true,
- 		.frmsize = {
- 			.min_width = FMT_MIN_WIDTH,
- 			.max_width = FMT_UHD_WIDTH,
--			.step_width = TILE_MB_DIM,
-+			.step_width = 8,
- 			.min_height = FMT_MIN_HEIGHT,
- 			.max_height = FMT_UHD_HEIGHT,
--			.step_height = TILE_MB_DIM,
-+			.step_height = 32,
- 		},
- 	},
- 	{
--- 
-2.43.0
+Actually, I was thinking of a function returning a size_t and which
+would be called directly from panthor_group_kbo_sizes(), but since we
+already have an fdinfo I guess that's fine calculating those at group
+creation time.
+
+> +}
+> +
+>  #define MAX_GROUPS_PER_POOL		128
+> =20
+>  int panthor_group_create(struct panthor_file *pfile,
+> @@ -3489,6 +3515,7 @@ int panthor_group_create(struct panthor_file *pfile,
+>  	}
+>  	mutex_unlock(&sched->reset.lock);
+> =20
+> +	add_group_kbo_sizes(group->ptdev, group);
+>  	mutex_init(&group->fdinfo.lock);
+> =20
+>  	return gid;
+> @@ -3606,6 +3633,29 @@ void panthor_group_pool_destroy(struct panthor_fil=
+e *pfile)
+>  	pfile->groups =3D NULL;
+>  }
+> =20
+> +/**
+> + * panthor_group_kbo_sizes() - Retrieve aggregate size of all private ke=
+rnel BO's
+> + * belonging to all the groups owned by an open Panthor file
+> + * @pfile: File.
+> + * @status: Memory status to be updated.
+> + *
+> + */
+> +void panthor_group_kbo_sizes(struct panthor_file *pfile, struct drm_memo=
+ry_stats *status)
+> +{
+> +	struct panthor_group_pool *gpool =3D pfile->groups;
+> +	struct panthor_group *group;
+> +	unsigned long i;
+> +
+> +	if (IS_ERR_OR_NULL(gpool))
+> +		return;
+> +	xa_for_each(&gpool->xa, i, group) {
+> +		status->resident +=3D group->fdinfo.kbo_sizes;
+> +		status->private +=3D group->fdinfo.kbo_sizes;
+> +		if (group->csg_id >=3D 0)
+> +			status->active +=3D group->fdinfo.kbo_sizes;
+> +	}
+> +}
+> +
+>  static void job_release(struct kref *ref)
+>  {
+>  	struct panthor_job *job =3D container_of(ref, struct panthor_job, refco=
+unt);
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/pa=
+nthor/panthor_sched.h
+> index 5ae6b4bde7c5..4dd6a7fc8fbd 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.h
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.h
+> @@ -4,11 +4,14 @@
+>  #ifndef __PANTHOR_SCHED_H__
+>  #define __PANTHOR_SCHED_H__
+> =20
+> +#include <linux/types.h>
+> +
+>  struct drm_exec;
+>  struct dma_fence;
+>  struct drm_file;
+>  struct drm_gem_object;
+>  struct drm_sched_job;
+> +struct drm_memory_stats;
+>  struct drm_panthor_group_create;
+>  struct drm_panthor_queue_create;
+>  struct drm_panthor_group_get_state;
+> @@ -36,6 +39,7 @@ void panthor_job_update_resvs(struct drm_exec *exec, st=
+ruct drm_sched_job *job);
+> =20
+>  int panthor_group_pool_create(struct panthor_file *pfile);
+>  void panthor_group_pool_destroy(struct panthor_file *pfile);
+> +void panthor_group_kbo_sizes(struct panthor_file *pfile, struct drm_memo=
+ry_stats *status);
+> =20
+>  int panthor_sched_init(struct panthor_device *ptdev);
+>  void panthor_sched_unplug(struct panthor_device *ptdev);
 
 
