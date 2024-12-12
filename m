@@ -1,223 +1,116 @@
-Return-Path: <linux-kernel+bounces-443076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC929EE6C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:32:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA159EE6C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:32:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE21A282C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:32:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180581882EC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985D9212B38;
-	Thu, 12 Dec 2024 12:32:25 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263952135BD;
+	Thu, 12 Dec 2024 12:32:27 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33046259484;
-	Thu, 12 Dec 2024 12:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFA11F0E55;
+	Thu, 12 Dec 2024 12:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734006745; cv=none; b=GVGxpiEzz3dUKUuXe7tHAfK2xxeTHffrt6rpprl7gRWZ5b7mGow4OY0vpqaKPqoKKDSGw8W742W+X5BUM/n2uFBUJXxCTSrkpOVeLdFlQfxtLE9vNLPEy0fBw1RjYHMazxI0jcJgG1Of0BOJzFkZpApHSaWI59pXrEaWGwBwKWA=
+	t=1734006746; cv=none; b=M/7nwW2CN9bNhFnp7dDhqtVN2kBCklzsLAByL50Y4W2UPnVoAJw1Zf68Kbez6+Gi2ciiGQRhPFmMYYW8Aa7h1m+IDzo8cOyP4c1kuELXbaoa3Cg4+WP2odQvAntIa199SZ+nH44861PqYARdxIvltfopwdzdMu1FEyGTED37dvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734006745; c=relaxed/simple;
-	bh=N/Cc42N0MATihxVxCc7tOZ3NIAkLZvLaJF5Azbh1yV8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hhO1TDSsj8RuRLf1hKnEOEROYobL/bWxoCmmjsz/eXcCE0X/qUZEMnn8RCvfWmVCOFe8zxNOPWrdKtdUgitCgUWivOpFpGfGsI/h2wBbe23j0oT8+eijN9yhlgGSqMoQeb+7UfgYc0INSz4/Tw2HAmX0tBmTAbOyBdD3D5y8IAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y8Bg65xjqz4f3jqY;
-	Thu, 12 Dec 2024 20:32:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 2624F1A0196;
-	Thu, 12 Dec 2024 20:32:17 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP1 (Coremail) with SMTP id cCh0CgB3ILLP11pn2HUgEQ--.44978S2;
-	Thu, 12 Dec 2024 20:32:17 +0800 (CST)
-Subject: Re: [PATCH v2] mm/page-writeback: Raise wb_thresh to prevent write
- blocking with strictlimit
-To: Jim Zhao <jimzhao.ai@gmail.com>
-Cc: jack@suse.cz, akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org
-References: <5584d4d5-73c8-2a12-f11e-6f19c216656b@huaweicloud.com>
- <20241121080531.567995-1-jimzhao.ai@gmail.com>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <4ff421cd-fffd-550c-4598-b79c633621eb@huaweicloud.com>
-Date: Thu, 12 Dec 2024 20:32:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1734006746; c=relaxed/simple;
+	bh=ZLwwr0tTdqUWrrcfKUdBCuN7WEO36OZq9JdJjbVxAnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXdz+dgbuBcUFLUyTQcMgpeGxLcPHIVIC6MhDLxMViIqcHI/YpvO+zLXAp8qiU5BV6/oEnsYj6zURxQRpuFE8O0Cb1qhDmgwHZv3T73abm1MBKmHd6LdA/HjWkMiUffmw5dzqfsVEE/SAlXhUYR5TkZ7XL4ba/X4kXP4lX2rTM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id D1748300002D5;
+	Thu, 12 Dec 2024 13:32:20 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id BB8BA3A0E76; Thu, 12 Dec 2024 13:32:20 +0100 (CET)
+Date: Thu, 12 Dec 2024 13:32:20 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Niklas Schnelle <niks@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
+ 2.5 GT/s
+Message-ID: <Z1rX1BgdsPHIHOv4@wunner.de>
+References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
+ <Z1gSZCdv3fwnRRNk@wunner.de>
+ <70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
+ <Z1lF468L8c84QJkD@wunner.de>
+ <dc6e677f-4c19-dd25-8878-8eae9154cff4@linux.intel.com>
+ <Z1qoDmF6urJDN5jh@wunner.de>
+ <97bbbdecb8c65cfa2625b47aa2585a7417ddcb81.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241121080531.567995-1-jimzhao.ai@gmail.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgB3ILLP11pn2HUgEQ--.44978S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFy5CFy3Ar4Dtr18ur1fCrg_yoW5tFy7p3
-	y7JanFyw4UA3s2yrsI9as7XrWqv340q345XFWkA34Uur9a9r15Arn5KryrAF1DXFZI9ry8
-	XFs0934xXr1qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
-	UUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97bbbdecb8c65cfa2625b47aa2585a7417ddcb81.camel@linux.ibm.com>
 
+On Thu, Dec 12, 2024 at 10:17:21AM +0100, Niklas Schnelle wrote:
+> On Thu, 2024-12-12 at 10:08 +0100, Lukas Wunner wrote:
+> > After re-reading the spec I'm convinced now
+> > that we're doing this wrong and that we should honor the Max Link Speed
+> > instead of blindly deeming all set bits in the Link Capabilities 2
+> > Register as supported speeds:
+> > 
+> > https://lore.kernel.org/r/e3386d62a766be6d0ef7138a001dabfe563cdff8.1733991971.git.lukas@wunner.de/
+> > 
+> > @Niklas, could you test if this is sufficient to avoid the issue?
+> > Or do we still need to stop instantiating the bandwidth controller
+> > if more than one speed is supported?
+> 
+> Yes, I will test this but will only get to do so tonight (UTC +2).
 
+Hey, no worries.  We're not on the run!
 
-on 11/21/2024 4:05 PM, Jim Zhao wrote:
->> on 11/19/2024 8:29 PM, Jim Zhao wrote:
->>> Thanks, Jan, I just sent patch v2, could you please review it ?
->>>
->>> And I found the debug info in the bdi stats.
->>> The BdiDirtyThresh value may be greater than DirtyThresh, and after applying this patch, the value of BdiDirtyThresh could become even larger.
->>>
->>> without patch:
->>> ---
->>> root@ubuntu:/sys/kernel/debug/bdi/8:0# cat stats
->>> BdiWriteback:                0 kB
->>> BdiReclaimable:             96 kB
->>> BdiDirtyThresh:        1346824 kB
->>> DirtyThresh:            673412 kB
->>> BackgroundThresh:       336292 kB
->>> BdiDirtied:              19872 kB
->>> BdiWritten:              19776 kB
->>> BdiWriteBandwidth:           0 kBps
->>> b_dirty:                     0
->>> b_io:                        0
->>> b_more_io:                   0
->>> b_dirty_time:                0
->>> bdi_list:                    1
->>> state:                       1
->>>
->>> with patch:
->>> ---
->>> root@ubuntu:/sys/kernel/debug/bdi/8:0# cat stats
->>> BdiWriteback:               96 kB
->>> BdiReclaimable:            192 kB
->>> BdiDirtyThresh:        3090736 kB
->>> DirtyThresh:            650716 kB
->>> BackgroundThresh:       324960 kB
->>> BdiDirtied:             472512 kB
->>> BdiWritten:             470592 kB
->>> BdiWriteBandwidth:      106268 kBps
->>> b_dirty:                     2
->>> b_io:                        0
->>> b_more_io:                   0
->>> b_dirty_time:                0
->>> bdi_list:                    1
->>> state:                       1
->>>
->>>
->>> @kemeng, is this a normal behavior or an issue ?
->> Hello, this is not a normal behavior, could you aslo send the content in
->> wb_stats and configuired bdi_min_ratio.
->> I think the improper use of bdi_min_ratio may cause the issue.
-> 
-> the min_ratio is 0
-> ---
-> root@ubuntu:/sys/class/bdi/8:0# cat min_bytes
-> 0
-> root@ubuntu:/sys/class/bdi/8:0# cat min_ratio
-> 0
-> root@ubuntu:/sys/class/bdi/8:0# cat min_ratio_fine
-> 0
-> 
-> wb_stats:
-> ---
-> 
-> root@ubuntu:/sys/kernel/debug/bdi/8:0# cat stats
-> BdiWriteback:                0 kB
-> BdiReclaimable:            480 kB
-> BdiDirtyThresh:        1664700 kB
-> DirtyThresh:            554900 kB
-> BackgroundThresh:       277108 kB
-> BdiDirtied:              82752 kB
-> BdiWritten:              82752 kB
-> BdiWriteBandwidth:      205116 kBps
-> b_dirty:                     6
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
-> root@ubuntu:/sys/kernel/debug/bdi/8:0# cat wb_stats
-...
-> 
-> WbCgIno:                  416
-> WbWriteback:                0 kB
-> WbReclaimable:            288 kB
-> WbDirtyThresh:         554836 kB
-> WbDirtied:              47616 kB
-> WbWritten:              47424 kB
-> WbWriteBandwidth:         168 kBps
-> b_dirty:                    1
-> b_io:                       0
-> b_more_io:                  0
-> b_dirty_time:               0
-> state:                      5
-> 
-...
-> WbCgIno:                 3186
-> WbWriteback:                0 kB
-> WbReclaimable:             96 kB
-> WbDirtyThresh:         554788 kB
-> WbDirtied:               1056 kB
-> WbWritten:               1152 kB
-> WbWriteBandwidth:         152 kBps
-> b_dirty:                    1
-> b_io:                       0
-> b_more_io:                  0
-> b_dirty_time:               0
-> state:                      5
-...
-> WbCgIno:                   72
-> WbWriteback:                0 kB
-> WbReclaimable:              0 kB
-> WbDirtyThresh:         554836 kB
-> WbDirtied:                 96 kB
-> WbWritten:                192 kB
-> WbWriteBandwidth:           4 kBps
-> b_dirty:                    1
-> b_io:                       0
-> b_more_io:                  0
-> b_dirty_time:               0
-> state:                      5
-Hi Jim,
-Sorry for late reply.
-The dirty thresh of these three groups is as high as dirty thresh
-of whole bdi which is unusual. In __wb_calc_thresh, we calculate
-dirty thresh of group by (numerator / denominator) * (thresh of
-whole bdi) roughly, so (numerator / denominator) of these three
-groups is 1. However, the sum of (numerator / denominator) of
-all groups is suppose to be 1.
-In fprop_fraction_percpu, we know numerator and denominator are
-retrieved from percpu_counter, I think it's because of percpu
-counter errors make this happen. Do we cat wb_stats and stats
-when writeback load is low. If so, it's likely caused by percpu
-counter errors .
+> If it's not sufficient I think we could use the modified
+> pcie_get_supported_speeds() to check if only one link speed is
+> supported, right?
 
+pcie_get_supported_speeds() is used to fill in the supported_speeds
+field in struct pci_dev.
 
-> ubuntu24.04 desktop + kernel 6.12.0
-> default cgroups, not configured manually.
-> 
-> ---
-> Thanks
-> Jim Zhao
-> 
+And that field is used in a number of places (exposure of the max link
+speed in sysfs, delay handling in pci_bridge_wait_for_secondary_bus(),
+link tuning in radeon/amdgpu drivers, etc).
 
+So we can't use pcie_get_supported_speeds() to (exclusively) influence
+the behavior of the bandwidth controller.  Instead, the solution is your
+patch for get_port_device_capability(), but future-proofed such that
+bwctrl is only instantiated if more than one link speed is supported.
+
+Thanks!
+
+Lukas
 
