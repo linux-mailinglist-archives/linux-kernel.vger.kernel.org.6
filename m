@@ -1,210 +1,270 @@
-Return-Path: <linux-kernel+bounces-442648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7428E9EDFCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:02:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7059EDFCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:02:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D401689B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:02:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52BFA28630F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED882054FB;
-	Thu, 12 Dec 2024 07:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87695204F97;
+	Thu, 12 Dec 2024 07:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="wuhCtCa5"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WolaB3IN"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819102054F2
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDF3288DA;
+	Thu, 12 Dec 2024 07:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733986932; cv=none; b=jl2P8BOQJTvVqUcQF61qV7mKJAIPqTEyNEsMTzC8+Bt+xiuxPGbhbVCXiq3q+HqfO7zJZmANjcuqgic1zAfLro7SVYKu+wR0YVyrLNs9y6E2Ig6pG7tkiSPNGqm7Qc6Z2hOMdKQfBWuwGpsqJV9mhKT3XcXx6aXbEcSA3uXDEYo=
+	t=1733986926; cv=none; b=gwVxsc9vPw2TOpjMq+CBX+Rw/0B+qf4H6YSkhm3AmUx9cPNyzLAvJN9iyZxyqmKbUg6j8fWj2Vxff/DEw/3//QwbK1D7YNcihtOCgVyP9uxqbvWsFjC+wJUww069AG4fbAv/M9Jmzp5rxN6pBVDyKmec3q7iZx5d9pNW6gDygvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733986932; c=relaxed/simple;
-	bh=oRAcg2/hExWeoK3VTcSjnjMHrzycrG0KO39nZHe9kSA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YaVqD7ZTJU4RSH2nEEhOBM9SNaM/A8M6NFoYkxIuUNYSM3vaRTzswSpQj6MoxilMHGXHaE7Gfn5no4O11GhzENpzQK6HYGCwdbs0NjD9ZD1YFNoqEXUD+bT8hH7w5tCEkVdmQ0qChFpRhMUTUgFrYAXgp5ozUStLrB4kddUtfVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=wuhCtCa5; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-728e1799d95so325026b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:02:09 -0800 (PST)
+	s=arc-20240116; t=1733986926; c=relaxed/simple;
+	bh=wbTqd8TPPjxYXP1zKGXFI2x00mOdOXssSkhfYc/0fgs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YUSSFqoNXOhEGW8r2QoLyESCF7grZfhBKqUIUETlBUTMjRYVKunUmkmLBIFxeKQUCf+yl9uZD2XRkc+zRznknowWm13bh94zs+E/l1BVdgQBv45WSDD/zNcsFK0Gx0yM9demcH8zND89HaoBG1BUG9dsaSrj5ahoXILfsnYR8OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WolaB3IN; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6eff5f99de4so3223987b3.1;
+        Wed, 11 Dec 2024 23:02:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733986929; x=1734591729; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OGZhgzI92zZ53/39Sn1Oo9uqJ+TialabZU7b4n5pT6I=;
-        b=wuhCtCa5OW6pX4mZfq4Z6ac1xOtE3gcyKXIb/VCKsnbbsTj8+y29I8Ejm97LpLxMxS
-         sASqLGf2EO4cdhQXbXpJO6YoM0c/lLGEM2gX4oSwm8H6AnpIPRZb+xvbFYve1KlssxN8
-         dJwcK04xtwkG7npVaiN6F6gtUmoxPg8c1lHZgbfr+EU7LKIim9+K0xnSSf1F6ZSVCx0Y
-         jX6wTnAZiNuQOKWzaAGQOZfLTElCTLnRKTLoqgeb7G/Hn9CObGrhci4PblSVm012f6uN
-         dj0pYCgG8bm2Obm8R1z6EDizEi8RvermjePBmfQHglIhmHNxxQ/h6XYM9f7lii68i3uV
-         +3Xw==
+        d=gmail.com; s=20230601; t=1733986924; x=1734591724; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aKrPssl5ptxpuCfiwGMsPZMTvrn0Pjz0iVG975wfYS4=;
+        b=WolaB3INgbL7Da+sXx4uDyH6IIA2r59PmatBOc2DcDuwGxP9f2mq1A7FLeEnXOEPmj
+         1EcEnUG1L3rNI43MEV2ldTTPj1mpAx7RgFygakiQtFZNBLUcNYrRxx0jK5XkASAEruKZ
+         xnwK/fHlajrHBjyI2HLZ0xGFb1P7QgvvMlurTM9nut1aT6pMuS3Tab5akEXvaRBtKuMI
+         gOXepV5crYoiQFQbH819IHfAeqtfQe1f9yY6odyCRz4V8j9lTEn2UtGu/+q33S3Ahgx4
+         mlS+ydNGEXN81AgsPVbUcs/9cEr61/pC+HD5K/8JIjib99xDpUX5OHGgfvtSx/xKXyaI
+         JHWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733986929; x=1734591729;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OGZhgzI92zZ53/39Sn1Oo9uqJ+TialabZU7b4n5pT6I=;
-        b=sQjz+UsL9k/Gl/pBXRLNTm975jIx+dljVWEwZj60+qRcK5WbZV4SeR6uYuRO8OkIlO
-         2y3ZTJFenx24yQwHbEPolYMeZHHNxvpjHJCucfkoNzO6guHrgMZqIjba+lQJvn3NNDnH
-         Cl1RDCPfN0OJC+cq0lPvwY4ZhcwGRCxQnExfxNnW3i40qlGemBzf3Yb64EyUFALc6Q0p
-         0T4fB7ETR6REYF5uPJv7e7quXHNL+PCLfBesFDOAD9cCCf5fZXW4ycwAC6csOjAlLZ5j
-         t47r+5ULHWzIqp6Dj/lZKmzDG4rQIOEps0/qHD6sOgUm5lwCHgpT4ld5ygde5b5A3Y3g
-         NLEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrA85/n8cGd38CUwqhg6dhn3Fw7l4b3p64AvFMSaUSh/wP6qPr2zYwzHHdOSO9fpTSXizkhwAcJx6D9/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmMJwAo+qxPs4uVDfto+PbhUx5iVd3uRMBpaNn0vDEDMNMzR5U
-	kboqsZdQ0D0U+mXsFKzGjhytssLpeeQXMJIiZymT9lEqJ9m34p8t7oJlfSOAOMM=
-X-Gm-Gg: ASbGncuRjtn8v8QwdpuQYFQsb8eh8IXAogifTbhlKtO7wRLytjGqUfO4CDp0+iSko+U
-	yKI5ecp41uYQ4HXcohW7SiUwS1wZR7T7MLc2sfl4UjohkkqeCN0ip8GAh5PHxofLQlXNJ0TF3WB
-	CG65/gYpUlBADr3SWJ91V96eQam3SbbcQe29YoYOuBwusQn1BQQU3+dKGh1B4GVHH4DsE9LK7uN
-	f8dpb+oewhfijAfPh9T65hJ0BVaX/dwfk50c8SSJxi8xVvaQx5sUgZ/D+NcOBgG2+IxHWcz
-X-Google-Smtp-Source: AGHT+IFVhoqBC+FHK0O0yj4L3ROsxkwQrItwr6XNYnjRPa8c45hGqnxiby8r0RoTiwqRnzYyUk6n5A==
-X-Received: by 2002:a05:6a20:d8b:b0:1e0:cc4a:caab with SMTP id adf61e73a8af0-1e1ceae20demr2907188637.19.1733986928653;
-        Wed, 11 Dec 2024 23:02:08 -0800 (PST)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd552c0a6asm5350471a12.63.2024.12.11.23.02.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 23:02:07 -0800 (PST)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Wed, 11 Dec 2024 23:01:43 -0800
-Subject: [PATCH v6] riscv: selftests: Fix warnings pointer masking test
+        d=1e100.net; s=20230601; t=1733986924; x=1734591724;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aKrPssl5ptxpuCfiwGMsPZMTvrn0Pjz0iVG975wfYS4=;
+        b=W/LSsQMTKzYPH9MUiw3dRufmcVyQ1tHDKRLolIF5A2kHiZzx/K0iV5PPRQtAHu0x3z
+         +Jutb92+JrBod3AsTT/Lr0QzvoqzgEqZkL9ECJugPWM74ZnckBNDCFHeJGRLoRJm4kOk
+         Jh7r974bMgNrl7IQ78KthsDm/B9P4IHyvS9qe1ZOPwblfndr9JCHLh/IQlXKqV0/cf0i
+         s6Z5suxa4B7Ve++5ex1GZm58dgS/eJC4hXrVCo0u3snT5cYm3aWuv8ijckv9Awra+WMP
+         w6wS0gk4/94vVm7mplzDJQFq11UlIexvVOWQdJJBLP/mo8XqmHEypnX3B8kvvw8rRzZl
+         UaHw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6VyTAW/5UuNCcOf2Hf0rsGs89Csq5thdPXxXQJWNR0HeGI1490NnSnzHsymVYUAdntKevz8/e@vger.kernel.org, AJvYcCV/Zx6W8XO6m3CiXWKKpUlyAy7RAaTBtse/6iKruF/BIjtiHvJe6iFIAFmI5pn6uQgErcTYgnqexH02@vger.kernel.org, AJvYcCV2OLZ1b2Y1c9oHx5e8Sy4zoxkLO9oNlnwEocEI7w80wlmKAOK0fLGEli34D0Qv5pNDwL64Shixfo3huCA=@vger.kernel.org, AJvYcCVvFA6CTF+dzAwXgU7rqHVLVNI2P8q/XZJSvAlfSxDq2RK+02jl5mlfPLBqqgBclZK3IWBX+mKUXPY=@vger.kernel.org, AJvYcCWBzwcJZF18YkVkLDa2gZOyaucL++/624pkLczBZ7TnhoBLvFT9Kgm/XAMSiZQVCWXsWb2TCAnnZLTG@vger.kernel.org, AJvYcCXSaUcvDk9SfaWOmB2Re8cZP0eWzz0JHIozyzLbJOEf+ceMTW2GnF8G2KArMbqjQLT/ztj85aPDgNjbJdxSHkw=@vger.kernel.org, AJvYcCXxNJUNOublxZW0+fku9cobwQGiYYEYAibCLWwsKvk0YxbvIpkZVDblF+hGb2N3CD6Ky0OjZi7b1xo6bA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz8P0hxAK0vLbWPzhJa/IVwskoVvdbxMSQZw+0sXJ34aoHWfxe
+	0XjePH6JkbfkXjH4pvaj47F/eILIiC//TFshGalPKcnG0p8DZEEEDciB5+qhQ1Tv9CawCgM8lgK
+	4b9MigUAa4lhaE1nHv31mEh8z68E=
+X-Gm-Gg: ASbGnct7hMz3F1NHjMFYCa5AyEmBzzSljNAsWBY2b4H9JHIMIOLnlECaEfu65LSnzaV
+	LtVLavGypU7s2TX2G+p4OW4BE3BHSi+qkRjDIQS7gUUiKCFcPeaXOKPFBS5mWh+aPwbh/dc0=
+X-Google-Smtp-Source: AGHT+IFhv4QyHcNAajVgFrqbIVUujoYsNm1PsFdg3x7M+LbdO2uCN7G0YuFwTVKJ2c8fgexcq19wksQCuFGSHyGv1xQ=
+X-Received: by 2002:a05:690c:6e03:b0:6ef:8122:282f with SMTP id
+ 00721157ae682-6f1a508837dmr20566937b3.24.1733986924068; Wed, 11 Dec 2024
+ 23:02:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241211-fix_warnings_pointer_masking_tests-v6-1-c7ae708fbd2f@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIAFaKWmcC/5XQQWrDMBAF0KsErasiyRrJ7qr3KMHY8igZSqQgG
- TUl+O6VswrFi3j5P8z7MHeWMRFm9nG4s4SFMsVQg3k7MHcewgk5TTUzJZSWSmju6db/DClQOOX
- +GinMmPrLkL9r0c+Y58yb1gjUvgGtOlaha8J69Rj5OtZ8pjzH9PvYLHJtd/FFcslxkNgZAw7t8
- JmoxEzBvbt4YetCUftVVVU5euFAdOCh3VCbZxVeUpuqglPtKHxntJg2VL1f1VUVzlocrQLdmg0
- VnlXzkgrrXycwximvLP7/wLIsf6r477gvAgAA
-X-Change-ID: 20241204-fix_warnings_pointer_masking_tests-3860e4f35429
-To: Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3794; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=oRAcg2/hExWeoK3VTcSjnjMHrzycrG0KO39nZHe9kSA=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3pUV8Y5ae794gckLbey7U68dcarPu/979j780O1XLx+8
- t4SMrjbUcrCIMbBICumyMJzrYG59Y5+2VHRsgkwc1iZQIYwcHEKwESYhRgZXrxw/5qz8mrnrK4F
- mpvXnHG2yeJUfc03i7U4zno+21LOUob/WSePyZ79cthSSVBt+obtc+62r8i//qdzB9Oj600LZgY
- lMgIA
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+References: <20241210104524.2466586-1-tmyu0@nuvoton.com> <20241210104524.2466586-2-tmyu0@nuvoton.com>
+ <47f720f8-90d7-4444-bfde-fb76ec2a2f0f@wanadoo.fr>
+In-Reply-To: <47f720f8-90d7-4444-bfde-fb76ec2a2f0f@wanadoo.fr>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Thu, 12 Dec 2024 15:01:53 +0800
+Message-ID: <CAOoeyxXC5zj5R1qV-WSakJmh_q8vK0oh_sjg1VZK=dvhaZdYCw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] mfd: Add core driver for Nuvoton NCT6694
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, tmyu0@nuvoton.com, lee@kernel.org, 
+	linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, 
+	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When compiling the pointer masking tests with -Wall this warning
-is present:
+Dear Christophe,
 
-pointer_masking.c: In function ‘test_tagged_addr_abi_sysctl’:
-pointer_masking.c:203:9: warning: ignoring return value of ‘pwrite’
-declared with attribute ‘warn_unused_result’ [-Wunused-result]
-  203 |         pwrite(fd, &value, 1, 0); |
-      ^~~~~~~~~~~~~~~~~~~~~~~~ pointer_masking.c:208:9: warning:
-ignoring return value of ‘pwrite’ declared with attribute
-‘warn_unused_result’ [-Wunused-result]
-  208 |         pwrite(fd, &value, 1, 0);
+Thank you for your comments,
 
-I came across this on riscv64-linux-gnu-gcc (Ubuntu
-11.4.0-1ubuntu1~22.04).
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> =E6=96=BC 2024=E5=B9=B41=
+2=E6=9C=8812=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=8812:44=E5=AF=AB=
+=E9=81=93=EF=BC=9A
+>
+> > +int nct6694_read_msg(struct nct6694 *nct6694, u8 mod, u16 offset,
+> > +                  u16 length, void *buf)
+> > +{
+> > +     struct nct6694_cmd_header *cmd_header =3D nct6694->cmd_header;
+> > +     struct nct6694_response_header *response_header =3D nct6694->resp=
+onse_header;
+> > +     struct usb_device *udev =3D nct6694->udev;
+> > +     int tx_len, rx_len, ret;
+> > +
+> > +     guard(mutex)(&nct6694->access_lock);
+>
+> Nitpick: This could be moved a few lines below, should it still comply
+> with your coding style.
+>
 
-Fix this by checking that the number of bytes written equal the expected
-number of bytes written.
+I think the lock should be placed here to prevent the cmd_header from
+being overwritten by another caller.
+Could you share your perspective on this?
 
-Fixes: 7470b5afd150 ("riscv: selftests: Add a pointer masking test")
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
----
-Changes in v6:
-- Add back ksft_test_result() (Samuel)
-- Link to v5: https://lore.kernel.org/r/20241206-fix_warnings_pointer_masking_tests-v5-1-ed566c2f27e8@rivosinc.com
+> > +
+> > +     /* Send command packet to USB device */
+> > +     cmd_header->mod =3D mod;
+> > +     cmd_header->cmd =3D offset & 0xFF;
+> > +     cmd_header->sel =3D (offset >> 8) & 0xFF;
+> > +     cmd_header->hctrl =3D NCT6694_HCTRL_GET;
+> > +     cmd_header->len =3D length;
+> > +
+> > +     ret =3D usb_bulk_msg(udev, usb_sndbulkpipe(udev, NCT6694_BULK_OUT=
+_EP),
+> > +                        cmd_header, NCT6694_CMD_PACKET_SZ, &tx_len,
+> > +                        nct6694->timeout);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     /* Receive response packet from USB device */
+> > +     ret =3D usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_=
+EP),
+> > +                        response_header, NCT6694_CMD_PACKET_SZ, &rx_le=
+n,
+> > +                        nct6694->timeout);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_=
+EP),
+> > +                        buf, NCT6694_MAX_PACKET_SZ, &rx_len, nct6694->=
+timeout);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return nct6694_response_err_handling(nct6694, response_header->st=
+s);
+> > +}
+> > +EXPORT_SYMBOL(nct6694_read_msg);
+> > +
+> > +int nct6694_write_msg(struct nct6694 *nct6694, u8 mod, u16 offset,
+> > +                   u16 length, void *buf)
+> > +{
+> > +     struct nct6694_cmd_header *cmd_header =3D nct6694->cmd_header;
+> > +     struct nct6694_response_header *response_header =3D nct6694->resp=
+onse_header;
+> > +     struct usb_device *udev =3D nct6694->udev;
+> > +     int tx_len, rx_len, ret;
+> > +
+> > +     guard(mutex)(&nct6694->access_lock);
+>
+> Nitpick: This could be moved a few lines below, should it still comply
+> with your coding style.
+>
 
-Changes in v5:
-- No longer skip second pwrite if first one fails
-- Use wrapper function instead of goto (Drew)
-- Link to v4: https://lore.kernel.org/r/20241205-fix_warnings_pointer_masking_tests-v4-1-0c77eb725486@rivosinc.com
+I think the lock should be placed here to prevent the cmd_header from
+being overwritten by another caller.
+Could you share your perspective on this?
 
-Changes in v4:
-- Skip sysctl_enabled test if first pwrite failed
-- Link to v3: https://lore.kernel.org/r/20241205-fix_warnings_pointer_masking_tests-v3-1-5c28b0f9640d@rivosinc.com
+> > +
+> > +     /* Send command packet to USB device  */
+>
+> Nitpick: double space before */
+>
 
-Changes in v3:
-- Fix sysctl enabled test case (Drew/Alex)
-- Move pwrite err condition into goto (Drew)
-- Link to v2: https://lore.kernel.org/r/20241204-fix_warnings_pointer_masking_tests-v2-1-1bf0c5095f58@rivosinc.com
+Fix it in v4.
 
-Changes in v2:
-- I had ret != 2 for testing, I changed it to be ret != 1.
-- Link to v1: https://lore.kernel.org/r/20241204-fix_warnings_pointer_masking_tests-v1-1-ea1e9665ce7a@rivosinc.com
----
- .../testing/selftests/riscv/abi/pointer_masking.c  | 28 +++++++++++++++++-----
- 1 file changed, 22 insertions(+), 6 deletions(-)
+> > +     cmd_header->mod =3D mod;
+> > +     cmd_header->cmd =3D offset & 0xFF;
+> > +     cmd_header->sel =3D (offset >> 8) & 0xFF;
+> > +     cmd_header->hctrl =3D NCT6694_HCTRL_SET;
+> > +     cmd_header->len =3D length;
+>
+> ...
+>
+> > +static struct irq_chip nct6694_irq_chip =3D {
+>
+> const?
+>
 
-diff --git a/tools/testing/selftests/riscv/abi/pointer_masking.c b/tools/testing/selftests/riscv/abi/pointer_masking.c
-index dee41b7ee3e323150d55523c8acbf3ec38857b87..059d2e87eb1f737caf44f692b239bf3e49c233b4 100644
---- a/tools/testing/selftests/riscv/abi/pointer_masking.c
-+++ b/tools/testing/selftests/riscv/abi/pointer_masking.c
-@@ -185,8 +185,20 @@ static void test_fork_exec(void)
- 	}
- }
- 
-+static bool pwrite_wrapper(int fd, void *buf, size_t count, const char *msg)
-+{
-+	int ret = pwrite(fd, buf, count, 0);
-+
-+	if (ret != count) {
-+		ksft_perror(msg);
-+		return false;
-+	}
-+	return true;
-+}
-+
- static void test_tagged_addr_abi_sysctl(void)
- {
-+	char *err_pwrite_msg = "failed to write to /proc/sys/abi/tagged_addr_disabled\n";
- 	char value;
- 	int fd;
- 
-@@ -200,14 +212,18 @@ static void test_tagged_addr_abi_sysctl(void)
- 	}
- 
- 	value = '1';
--	pwrite(fd, &value, 1, 0);
--	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == -EINVAL,
--			 "sysctl disabled\n");
-+	if (!pwrite_wrapper(fd, &value, 1, "write '1'"))
-+		ksft_test_result_fail(err_pwrite_msg);
-+	else
-+		ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == -EINVAL,
-+				 "sysctl disabled\n");
- 
- 	value = '0';
--	pwrite(fd, &value, 1, 0);
--	ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == 0,
--			 "sysctl enabled\n");
-+	if (!pwrite_wrapper(fd, &value, 1, "write '0'"))
-+		ksft_test_result_fail(err_pwrite_msg);
-+	else
-+		ksft_test_result(set_tagged_addr_ctrl(min_pmlen, true) == 0,
-+				 "sysctl enabled\n");
- 
- 	set_tagged_addr_ctrl(0, false);
- 
+Fix it in v4.
 
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241204-fix_warnings_pointer_masking_tests-3860e4f35429
--- 
-- Charlie
+> > +     .name =3D "nct6694-irq",
+> > +     .flags =3D IRQCHIP_SKIP_SET_WAKE,
+> > +     .irq_bus_lock =3D nct6694_irq_lock,
+> > +     .irq_bus_sync_unlock =3D nct6694_irq_sync_unlock,
+> > +     .irq_enable =3D nct6694_irq_enable,
+> > +     .irq_disable =3D nct6694_irq_disable,
+> > +};
+>
+> ...
+>
+> > +static int nct6694_usb_probe(struct usb_interface *iface,
+> > +                          const struct usb_device_id *id)
+> > +{
+> > +     struct usb_device *udev =3D interface_to_usbdev(iface);
+> > +     struct device *dev =3D &udev->dev;
+> > +     struct usb_host_interface *interface;
+> > +     struct usb_endpoint_descriptor *int_endpoint;
+> > +     struct nct6694 *nct6694;
+> > +     struct nct6694_cmd_header *cmd_header;
+> > +     struct nct6694_response_header *response_header;
+> > +     int pipe, maxp;
+> > +     int ret;
+> > +
+> > +     interface =3D iface->cur_altsetting;
+> > +
+> > +     int_endpoint =3D &interface->endpoint[0].desc;
+> > +     if (!usb_endpoint_is_int_in(int_endpoint))
+> > +             return -ENODEV;
+> > +
+> > +     nct6694 =3D devm_kzalloc(dev, sizeof(*nct6694), GFP_KERNEL);
+> > +     if (!nct6694)
+> > +             return -ENOMEM;
+> > +
+> > +     pipe =3D usb_rcvintpipe(udev, NCT6694_INT_IN_EP);
+> > +     maxp =3D usb_maxpacket(udev, pipe);
+> > +
+> > +     cmd_header =3D devm_kzalloc(dev, sizeof(*cmd_header),
+> > +                               GFP_KERNEL);
+> > +     if (!cmd_header)
+> > +             return -ENOMEM;
+> > +
+> > +     response_header =3D devm_kzalloc(dev, sizeof(*response_header),
+> > +                                    GFP_KERNEL);
+> > +     if (!response_header)
+> > +             return -ENOMEM;
+> > +
+> > +     nct6694->int_buffer =3D devm_kcalloc(dev, NCT6694_MAX_PACKET_SZ,
+> > +                                        sizeof(unsigned char), GFP_KER=
+NEL);
+>
+> Why for cmd_header and response_header we use a temp variable, while
+> here we update directly nct6694->int_buffer?
+>
+> It would save a few LoC do remove this temp var.
+>
 
+Fix it in v4.
+
+> > +     if (!nct6694->int_buffer)
+> > +             return -ENOMEM;
+> > +
+> > +     nct6694->int_in_urb =3D usb_alloc_urb(0, GFP_KERNEL);
+> > +     if (!nct6694->int_in_urb)
+> > +             return -ENOMEM;
+>
+> ...
+>
+
+Best regards,
+Ming
 
