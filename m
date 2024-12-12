@@ -1,196 +1,145 @@
-Return-Path: <linux-kernel+bounces-443183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7570E9EE879
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:11:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04CB49EE866
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45EE6168D22
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A408E167528
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D872153FB;
-	Thu, 12 Dec 2024 14:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="gzFoNKp/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="pJpGcjdJ"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2605A2153C4;
+	Thu, 12 Dec 2024 14:08:48 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D585B2153EF;
-	Thu, 12 Dec 2024 14:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2820E307;
+	Thu, 12 Dec 2024 14:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734012543; cv=none; b=rlfkuMZFsputnFQUFnr2YClsEZ69tZytCJ6s+veb/OYIzZ7P4xaf6A/kut7v9iYxRwBN5fIGM6J1wUqDGr/CRBuZ6ojW8ESfi+apmqIP/eLjYLBToELkhsZMVXJn29YtSHLTjef/8Tu7J0GToCMC23pI7EpzA+t1BuAaFqBrYNg=
+	t=1734012527; cv=none; b=RznuZj6ySEdC7z8rL9o5wb92+DCBlFBO4M3J1qHkqvP8yQklaQItShfwON9TF3Dnaw/xfzh3lUOjJ1x2GtM2SyxDfMYPP6pxEBs5AcHsqwSdtNrj0tYPks3lDgjmsqaL/vBrSvusKqFa72IMkt88tZYOaMsclk+ZKWfiCYZhIEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734012543; c=relaxed/simple;
-	bh=bBN5FNu9QgpvClX6IMfAS7L4hO3y3iroHF8YuPSR57g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BgSX2ltfnvDMPs73O9Fg1UT3VjNOfhBH0rpbdKD3JQY5VuNgJpwjxBLAXNxVGHexSRdf5zV2/Q6y6FyagqAU5XDsM/tZ4BmJQHmeP74pM4/D2MI5X353C3j8THlzvUhyNesNI6wS8vwvUaFTv5NZuHl1zhnG3TkyJc0YYjGBEqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=gzFoNKp/; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=pJpGcjdJ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1734012541; x=1765548541;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=5um5sWjiiZxgsQah+EqmqCRGB9RnVyyrwX3M80A2Qqs=;
-  b=gzFoNKp/FsNTIqyib4WehuuFG5QnJItC6PCTA4+Fi8PUt3g9N8Vn8JRf
-   BsqD0b+jBN7idZ1UxAHd97BO2MpvE6Pg1XCAxuO2GuwVGQOVaTBuJv3ZH
-   Y89xETEVW1IdADrrbli3WbNrbWQjMBnGUnYQujyUEyfViaZs+dXx5HIus
-   AjLIoedEIAyO1K9tWL+iY0ke5BlBGZisGf0OM0h89x7GJI67Jv+ZumgID
-   3yiHNve3ekCq9cfH/+4RYO1CLt+zMjpDmrgmLNLZSvKtq+m4P0V+ouhYj
-   8Orc+RdXVNGSs3iEI9PadJ0SHGa3La7D65XmZX3QPv9tkjhPWzO2PydSw
-   A==;
-X-CSE-ConnectionGUID: yc1ylwYdQNOshfpDhfMlng==
-X-CSE-MsgGUID: Ep3eSzf2SWuIn/Mm/X+ASQ==
-X-IronPort-AV: E=Sophos;i="6.12,228,1728943200"; 
-   d="scan'208";a="40566537"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 12 Dec 2024 15:09:00 +0100
-X-CheckPoint: {675AEE7C-1B-3E9838BF-EEE9C5D3}
-X-MAIL-CPID: 817FAB6172436064C1ED4FF72C63ADFF_1
-X-Control-Analysis: str=0001.0A682F25.675AEE7C.0089,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C860916B96B;
-	Thu, 12 Dec 2024 15:08:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1734012536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5um5sWjiiZxgsQah+EqmqCRGB9RnVyyrwX3M80A2Qqs=;
-	b=pJpGcjdJzs7J0lSqAVImwusNWhbVaufxWfLtGzS46BL4Y10aGgtKAtbbiby39DAKWjvsGZ
-	I6hocPT9V/r7TzZBe1dLguxrgwX7fKU7jdv6pWh+3yUfEPd23/r1cJjhJ/I6kG3ad46mkG
-	PjAIx8S+6HSNaXrHS899wVDKA6Xq9ZTtYfgo69GFxnqXwfm126biwLKdw+RkDwatElB4h/
-	umnbga9Mwe6bPpG0e1ffm6QaRpLmemXzeoc3NhzJbgjWDrbVCd4Xwk7ZpuYp5Dp1WlDxy1
-	tuz90imrtqFG77+nRWYwqAp4xk2p9BKqhqgdZrJ4D4dbmvzIY+6dMANQOquOLA==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux@ew.tq-group.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v2 5/5] gpio: tqmx86: add support for changing GPIO directions
-Date: Thu, 12 Dec 2024 15:08:09 +0100
-Message-ID: <d89da2f0e13fa6c8ec3f9076eed242133a1e3a63.1734001247.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1734001247.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1734001247.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1734012527; c=relaxed/simple;
+	bh=T0ptG1AmA/WjmW6m9thCBff7iLerJE3/hs1hucSpmwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dBd15HZlwN1um+XtqUhIpFXs0DYMa6IT6Aq6CCPWDQvhE/RSAkLlv/e5MvEFqs0sX9bGkFkpDZYQeSPQBQ2uuQyKUD5aSZPVBm24kM0ss27RjVO6+V2HlE8Xt4kdFge3xWn37bMDjOs8o7AFK4nOf/PxhepP3UB08uh0bmx8O+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y8Dp55xd1z4f3khf;
+	Thu, 12 Dec 2024 22:08:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 21B0D1A0568;
+	Thu, 12 Dec 2024 22:08:33 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgA3XoJf7lpn4nyVEQ--.34851S3;
+	Thu, 12 Dec 2024 22:08:32 +0800 (CST)
+Message-ID: <c1dbb5ab-8a31-487f-8eae-dfe8b13204ad@huaweicloud.com>
+Date: Thu, 12 Dec 2024 22:08:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] jbd2: flush filesystem device before updating tail
+ sequence
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com,
+ linux-ext4@vger.kernel.org
+References: <20241203014407.805916-1-yi.zhang@huaweicloud.com>
+ <20241203014407.805916-3-yi.zhang@huaweicloud.com>
+ <ca1c680f-f3f4-40b5-13af-f8ee49d99dae@huaweicloud.com>
+ <ab380b0c-9a9b-4f16-a427-7fef8a2ef212@huaweicloud.com>
+ <027261aa-9d57-861a-fd78-0acd2d7836ec@huaweicloud.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <027261aa-9d57-861a-fd78-0acd2d7836ec@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgA3XoJf7lpn4nyVEQ--.34851S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFyxuFWxKryDKw4rGr1DAwb_yoW8KFyfpF
+	y8Ca4jyFWkZF4UCF1xtF4rXFW2qrWjyFy8Wr1DurnYga1qvw1fKFW7tryYgF1qyr1fKw48
+	Xr1xJF9Fg34jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Only GPIOs 4..7 have IRQ support on the TQMx86 variants currently handled
-by the driver, but apart from that, changing directions works fine. The
-default directions are left unchanged (0..3 output, 4..7 input) to match
-the COM Express specification.
+On 2024/12/12 20:34, Kemeng Shi wrote:
+> 
+> 
+> on 12/3/2024 3:24 PM, Zhang Yi wrote:
+>> On 2024/12/3 14:53, Kemeng Shi wrote:
+>>>
+>>>
+>>> on 12/3/2024 9:44 AM, Zhang Yi wrote:
+>>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>>
+>>>> When committing transaction in jbd2_journal_commit_transaction(), the
+>>>> disk caches for the filesystem device should be flushed before updating
+>>>> the journal tail sequence. However, this step is missed if the journal
+>>>> is not located on the filesystem device. As a result, the filesystem may
+>>>> become inconsistent following a power failure or system crash. Fix it by
+>>>> ensuring that the filesystem device is flushed appropriately.
+>>>>
+>>>> Fixes: 3339578f0578 ("jbd2: cleanup journal tail after transaction commit")
+>>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>>>> ---
+>>>>  fs/jbd2/commit.c | 4 ++--
+>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+>>>> index 4305a1ac808a..f95cf272a1b5 100644
+>>>> --- a/fs/jbd2/commit.c
+>>>> +++ b/fs/jbd2/commit.c
+>>>> @@ -776,9 +776,9 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+>>>>  	/*
+>>>>  	 * If the journal is not located on the file system device,
+>>>>  	 * then we must flush the file system device before we issue
+>>>> -	 * the commit record
+>>>> +	 * the commit record and update the journal tail sequence.
+>>>>  	 */
+>>>> -	if (commit_transaction->t_need_data_flush &&
+>>>> +	if ((commit_transaction->t_need_data_flush || update_tail) &&
+>>>>  	    (journal->j_fs_dev != journal->j_dev) &&
+>>>>  	    (journal->j_flags & JBD2_BARRIER))
+>>>>  		blkdev_issue_flush(journal->j_fs_dev);
+>>>>
+>>> In journal_submit_commit_record(), we will submit commit block with REQ_PREFLUSH
+>>> which is supposed to ensure disk cache is flushed before writing commit block.
+>>> So I think the current code is fine.
+>>> Please correct me if I miss anything.
+>>>
+>>
+>> The commit I/O with REQ_PREFLUSH only flushes 'journal->j_dev', not
+>> 'journal->j_fs_dev'. We need to flush journal->j_fs_dev to ensure that all
+>> written metadata has been persisted to the filesystem disk, Until then, we
+>> cannot update the tail sequence.
+> My bad...
+> Look good to me. Feel free to add:
+> 
+> Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-A tqmx86_gpio_set() variant without locking is introduced as a new
-helper.
+It's fine, thanks for your review.
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
-
-v2: use lock guards
-
- drivers/gpio/gpio-tqmx86.c | 44 ++++++++++++++++++++++++++------------
- 1 file changed, 30 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.c
-index 4bef13cad1807..18f523a15b3c0 100644
---- a/drivers/gpio/gpio-tqmx86.c
-+++ b/drivers/gpio/gpio-tqmx86.c
-@@ -85,6 +85,14 @@ static int tqmx86_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	return !!(tqmx86_gpio_read(gpio, TQMX86_GPIOD) & BIT(offset));
- }
- 
-+static void _tqmx86_gpio_set(struct tqmx86_gpio_data *gpio, unsigned int offset,
-+			     int value)
-+	__must_hold(&gpio->spinlock)
-+{
-+	__assign_bit(offset, gpio->output, value);
-+	tqmx86_gpio_write(gpio, bitmap_get_value8(gpio->output, 0), TQMX86_GPIOD);
-+}
-+
- static void tqmx86_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 			    int value)
- {
-@@ -92,39 +100,47 @@ static void tqmx86_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 
- 	guard(raw_spinlock_irqsave)(&gpio->spinlock);
- 
--	__assign_bit(offset, gpio->output, value);
--	tqmx86_gpio_write(gpio, bitmap_get_value8(gpio->output, 0), TQMX86_GPIOD);
-+	_tqmx86_gpio_set(gpio, offset, value);
- }
- 
- static int tqmx86_gpio_direction_input(struct gpio_chip *chip,
- 				       unsigned int offset)
- {
--	/* Direction cannot be changed. Validate is an input. */
--	if (BIT(offset) & TQMX86_DIR_INPUT_MASK)
--		return 0;
--	else
--		return -EINVAL;
-+	struct tqmx86_gpio_data *gpio = gpiochip_get_data(chip);
-+
-+	guard(raw_spinlock_irqsave)(&gpio->spinlock);
-+
-+	tqmx86_gpio_clrsetbits(gpio, BIT(offset), 0, TQMX86_GPIODD);
-+
-+	return 0;
- }
- 
- static int tqmx86_gpio_direction_output(struct gpio_chip *chip,
- 					unsigned int offset,
- 					int value)
- {
--	/* Direction cannot be changed, validate is an output */
--	if (BIT(offset) & TQMX86_DIR_INPUT_MASK)
--		return -EINVAL;
-+	struct tqmx86_gpio_data *gpio = gpiochip_get_data(chip);
-+
-+	guard(raw_spinlock_irqsave)(&gpio->spinlock);
-+
-+	_tqmx86_gpio_set(gpio, offset, value);
-+	tqmx86_gpio_clrsetbits(gpio, 0, BIT(offset), TQMX86_GPIODD);
- 
--	tqmx86_gpio_set(chip, offset, value);
- 	return 0;
- }
- 
- static int tqmx86_gpio_get_direction(struct gpio_chip *chip,
- 				     unsigned int offset)
- {
--	if (TQMX86_DIR_INPUT_MASK & BIT(offset))
--		return GPIO_LINE_DIRECTION_IN;
-+	struct tqmx86_gpio_data *gpio = gpiochip_get_data(chip);
-+	u8 val;
-+
-+	val = tqmx86_gpio_read(gpio, TQMX86_GPIODD);
-+
-+	if (val & BIT(offset))
-+		return GPIO_LINE_DIRECTION_OUT;
- 
--	return GPIO_LINE_DIRECTION_OUT;
-+	return GPIO_LINE_DIRECTION_IN;
- }
- 
- static void tqmx86_gpio_irq_config(struct tqmx86_gpio_data *gpio, int hwirq)
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+Cheers,
+Yi.
 
 
