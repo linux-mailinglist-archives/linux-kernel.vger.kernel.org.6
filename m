@@ -1,85 +1,228 @@
-Return-Path: <linux-kernel+bounces-442758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D71A69EE134
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:25:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4649EE13D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:26:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3271887632
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F633162021
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426CF20DD76;
-	Thu, 12 Dec 2024 08:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FD320CCC1;
+	Thu, 12 Dec 2024 08:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJK6subi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtO68RtU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0A820D4F1;
-	Thu, 12 Dec 2024 08:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8924E20C474;
+	Thu, 12 Dec 2024 08:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991911; cv=none; b=EpBnONYJ+WiYIxOtnWPKQDkCnVb7NnDuS5GRolGRJaoQzCfju/QvculgQDF6yCP+JtB/vpGwG9cOGbrtQGIoNSl4/eNWLUYkVlw97kC0B3wOBb75P+3CUkt+FPovoowQewzzqVxXv7PLGFEvGaVNF3U1CYGZESW7KK2BLzn+OgM=
+	t=1733991958; cv=none; b=qLk5XzTbI+VkmSxmYN8MiGhjVRiyidUlOq4eHVuCaXhTpatMVBoamp3V9GrYvnTPPCHBBqdNkUxeVQeV7Vr5Q8E0QJnyl05CqJaDNBvlnU5Vr6myFyNKpYe6xrZR0Dm5+ccANf9mv/OZkEBQHv1juJ4tE2v1tLYABN0eTifIYYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991911; c=relaxed/simple;
-	bh=ugwQc1RwWiUB2k1DlePOXPHk9EZtb/h2RNYw3kRvsz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fznb+QKFtDtk3oUWmeb9Pj0ixH78fbeanLTj23mJjmCmcyx7NuF68Qa3tBFbWIWGcHfBF1KIM2wPzfDfzAwf+9mAteRpuAhwYHs6cjchBTR+Ipm9ywUmqTbl8qHjC8NaMFFxfHQFcjrgTqPJLlDrkpf8a3xUCzgKGJEmysAIDlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJK6subi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25D2C4CECE;
-	Thu, 12 Dec 2024 08:25:10 +0000 (UTC)
+	s=arc-20240116; t=1733991958; c=relaxed/simple;
+	bh=kmHs2PAJbvHFUqqZBPUSZWdZYYxszVxXn4ozKc+Bfyw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BehsTDLs4LwIIARODXLX3jpqKvFXu0/+swPy1uw8iegJKmJlJJBmFhSMvdI2mry/X5CGkw56KVOn0wri+xfo+GhrHOqHA2ZfG7gJYzKXK6PO9RYElGNeZNLPbWigKnbrYRSfej/zOJiFdFZf6ChPQ6tcSUsiNOD5mMzQXEB6CJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtO68RtU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BBB9C4CED1;
+	Thu, 12 Dec 2024 08:25:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733991911;
-	bh=ugwQc1RwWiUB2k1DlePOXPHk9EZtb/h2RNYw3kRvsz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bJK6subic4H5yc5DmT1goNA5KHVw5ury6O4813bvE2j0JvE8Vuom5vACfYmvBVLQP
-	 F7ek6FLf9b6OoD+RJo/Bj8WdeLccMoDuLyj0EESGHdilYZLBGJBEwQADnM0PNMLJ+E
-	 kHgvJjE/YK9oBKoYbYCxbmCUPbyC46Te+BA1lWLEnYcTRa7JiwuOGyaYF/KiddaFVK
-	 vqTUPGJ6H/eMwJDK0HQzgwNZW9MqGogacLB8s2b73DT14qyOqd39jQwrvAGGbDttd5
-	 rdw58Buife0wajhKDnZ3NqTtHfvHukbSP5vg4u1PCxW/Vtpllbl/sHbwoZibSnddQZ
-	 q7ZZzSABa4bdw==
-Date: Thu, 12 Dec 2024 09:25:08 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Asahi Linux <asahi@lists.linux.dev>, 
-	Linux ARM Kernel Architecture <linux-arm-kernel@lists.infradead.org>, Linux power management <linux-pm@vger.kernel.org>, 
-	Devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/7] dt-bindings: cpufreq: apple,cluster-cpufreq: Add
- A7-A11, T2 compatibles
-Message-ID: <f7whbncdt3yud3loe6xane4gwzpvyygfdju6e55gf6s2s3k75k@n7ehtngsrqxp>
-References: <20241212070344.3858-1-towinchenmi@gmail.com>
- <20241212070344.3858-2-towinchenmi@gmail.com>
+	s=k20201202; t=1733991958;
+	bh=kmHs2PAJbvHFUqqZBPUSZWdZYYxszVxXn4ozKc+Bfyw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NtO68RtUdC//tpj5mYzv1AjVb+eLFer1cKb/4eWD0Vf7zqaeLvTtF/Jmll1nzVMqM
+	 zKHXgRCVN1IT3N1wP2z78hIS2O7e0xH9W3GOS5EINUHFCyS9hymKbrFLTU46cv01Sk
+	 M9yiyeWjPryzgG6jh6xg3KFM4BQALNvmYfy/QiEfTnoUlcL/Io6JgH9qOqnGrF5jor
+	 963QroR6ds3jbcheWZR/MH8cNxn/ylHhD5vP13kG0pCtEUk615hjyKHg91x0u+LsZB
+	 9VTxy0IyAgbYotRffyXvF058/Tgw2GAokjvGj3sedoJzLvhWeaK8lGPdXPyK/Gz+KA
+	 AIVw56D36DDew==
+Received: from 82-132-221-83.dab.02.net ([82.132.221.83] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tLeWB-002zrM-85;
+	Thu, 12 Dec 2024 08:25:55 +0000
+Date: Thu, 12 Dec 2024 08:25:53 +0000
+Message-ID: <87cyhxs3xq.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: =?UTF-8?B?TWlrb8WCYWo=?= Lenczewski <miko.lenczewski@arm.com>
+Cc: ryan.roberts@arm.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	corbet@lwn.net,
+	oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [RESEND RFC PATCH v1 2/5] arm64: Add BBM Level 2 cpu feature
+In-Reply-To: <20241211160218.41404-3-miko.lenczewski@arm.com>
+References: <20241211160218.41404-1-miko.lenczewski@arm.com>
+	<20241211160218.41404-3-miko.lenczewski@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241212070344.3858-2-towinchenmi@gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 82.132.221.83
+X-SA-Exim-Rcpt-To: miko.lenczewski@arm.com, ryan.roberts@arm.com, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Dec 12, 2024 at 03:03:00PM +0800, Nick Chan wrote:
-> Add compatibles for Apple A7-A11, T2 SoCs.
-> 
-> Apple A7, A8, A8X gets the per-SoC compatible and the A7
-> "apple,s5l8960x-cluster-cpufreq" compatible.
-> 
-> Apple A9, A9X, A10, A10X, T2, A11 gets the per-SoC compatible, M1
-> "apple,t8103-cluster-cpufreq" compatible, then the
-> "apple,cluster-cpufreq" fallback compatible.
-> 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+Ah, so this is where this is hiding. I missed it in my review of patch
+#1 yesterday.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Wed, 11 Dec 2024 16:01:38 +0000,
+Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com> wrote:
+>=20
+> The Break-Before-Make cpu feature supports multiple levels (levels 0-2),
+> and this commit adds a dedicated BBML2 cpufeature to test against
+> support for.
+>=20
+> In supporting BBM level 2, we open ourselves up to potential TLB
+> Conflict Abort Exceptions during expected execution, instead of only
+> in exceptional circumstances. In the case of an abort, it is
+> implementation defined at what stage the abort is generated, and
 
-Best regards,
-Krzysztof
+*IF* stage-2 is enabled. Also, in the case of the EL2&0 translation
+regime, no stage-2 applies, so it can only be a stage-1 abort.
 
+> the minimal set of required invalidations is also implementation
+> defined. The maximal set of invalidations is to do a `tlbi vmalle1`
+> or `tlbi vmalls12e1`, depending on the stage.
+>=20
+> Such aborts should not occur on Arm hardware, and were not seen in
+> benchmarked systems, so unless performance concerns arise, implementing
+
+Which systems? Given that you have deny-listed *all* half recent ARM
+Ltd implementations, I'm a bit puzzled.
+
+> the abort handlers with the worst-case invalidations seems like an
+> alright hack.
+>=20
+> Signed-off-by: Miko=C5=82aj Lenczewski <miko.lenczewski@arm.com>
+> ---
+>  arch/arm64/include/asm/cpufeature.h | 14 ++++++++++++++
+>  arch/arm64/kernel/cpufeature.c      |  7 +++++++
+>  arch/arm64/mm/fault.c               | 27 ++++++++++++++++++++++++++-
+>  arch/arm64/tools/cpucaps            |  1 +
+>  4 files changed, 48 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm=
+/cpufeature.h
+> index 8b4e5a3cd24c..a9f2ac335392 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -866,6 +866,20 @@ static __always_inline bool system_supports_mpam_hcr=
+(void)
+>  	return alternative_has_cap_unlikely(ARM64_MPAM_HCR);
+>  }
+> =20
+> +static inline bool system_supports_bbml2(void)
+> +{
+> +	/* currently, BBM is only relied on by code touching the userspace page
+> +	 * tables, and as such we are guaranteed that caps have been finalised.
+> +	 *
+> +	 * if later we want to use BBM for kernel mappings, particularly early
+> +	 * in the kernel, this may return 0 even if BBML2 is actually supported,
+> +	 * which means unnecessary break-before-make sequences, but is still
+> +	 * correct
+
+Comment style, capitalisation, punctuation.
+
+> +	 */
+> +
+> +	return alternative_has_cap_unlikely(ARM64_HAS_BBML2);
+> +}
+> +
+>  int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
+>  bool try_emulate_mrs(struct pt_regs *regs, u32 isn);
+> =20
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeatur=
+e.c
+> index 6ce71f444ed8..7cc94bd5da24 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -2917,6 +2917,13 @@ static const struct arm64_cpu_capabilities arm64_f=
+eatures[] =3D {
+>  		.matches =3D has_cpuid_feature,
+>  		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, EVT, IMP)
+>  	},
+> +	{
+> +		.desc =3D "BBM Level 2 Support",
+> +		.capability =3D ARM64_HAS_BBML2,
+> +		.type =3D ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.matches =3D has_cpuid_feature,
+> +		ARM64_CPUID_FIELDS(ID_AA64MMFR2_EL1, BBM, 2)
+> +	},
+>  	{
+>  		.desc =3D "52-bit Virtual Addressing for KVM (LPA2)",
+>  		.capability =3D ARM64_HAS_LPA2,
+> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+> index ef63651099a9..dc119358cbc1 100644
+> --- a/arch/arm64/mm/fault.c
+> +++ b/arch/arm64/mm/fault.c
+> @@ -844,6 +844,31 @@ static int do_tag_check_fault(unsigned long far, uns=
+igned long esr,
+>  	return 0;
+>  }
+> =20
+> +static int do_conflict_abort(unsigned long far, unsigned long esr,
+> +			     struct pt_regs *regs)
+> +{
+> +	if (!system_supports_bbml2())
+> +		return do_bad(far, esr, regs);
+> +
+> +	/* if we receive a TLB conflict abort, we know that there are multiple
+> +	 * TLB entries that translate the same address range. the minimum set
+> +	 * of invalidations to clear these entries is implementation defined.
+> +	 * the maximum set is defined as either tlbi(vmalls12e1) or tlbi(alle1).
+> +	 *
+> +	 * if el2 is enabled and stage 2 translation enabled, this may be
+> +	 * raised as a stage 2 abort. if el2 is enabled but stage 2 translation
+> +	 * disabled, or if el2 is disabled, it will be raised as a stage 1
+> +	 * abort.
+> +	 *
+> +	 * local_flush_tlb_all() does a tlbi(vmalle1), which is enough to
+> +	 * handle a stage 1 abort.
+
+Same comment about comments.
+
+> +	 */
+> +
+> +	local_flush_tlb_all();
+
+The elephant in the room: if TLBs are in such a sorry state, what
+guarantees we can make it this far?
+
+I honestly don't think you can reliably handle a TLB Conflict abort in
+the same translation regime as the original fault, given that we don't
+know the scope of that fault. You are probably making an educated
+guess that it is good enough on the CPUs you know of, but I don't see
+anything in the architecture that indicates the "blast radius" of a
+TLB conflict.
+
+Which makes me think that your KVM patch is equally broken on nVHE and
+hVHE. Such fault should probably be handled while at EL2, not after
+returning to EL1.
+
+Thanks,
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
