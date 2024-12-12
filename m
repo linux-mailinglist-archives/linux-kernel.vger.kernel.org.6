@@ -1,199 +1,117 @@
-Return-Path: <linux-kernel+bounces-443305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39679EEC53
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:33:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7DD9EECC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9F41885872
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:31:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05F501886C7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E87E217F34;
-	Thu, 12 Dec 2024 15:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C15217707;
+	Thu, 12 Dec 2024 15:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwMMp2Da"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="2qJrl9YB"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A4D212F9E;
-	Thu, 12 Dec 2024 15:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3251547F0
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734017503; cv=none; b=mgSLBv6N6/XBmAgjA6iGtReDySpoEIDBAJmnBvr1wGA0BDXg8HDcPO0Za2KVArhEe1xBu6hjakNQ8nFrlIhGqHMz1kJ0JZvIJGr/B6SirrE/qZiHrTnTUsD7cqCM4mISuU208RPLeHkoQOJaf+L0R77C+8DHKtn4Ilyn3tAQ5mE=
+	t=1734017741; cv=none; b=L4P2hw4azdEzlkllzYQhX+2TCTh7XbxpASc2NlIHxnTV3MICNqm2XWVg8G0t2XErTkw8W6USgRRGmAhlTnj1j21NF5yccvAcg5bX8bVa4axWhr3v8HDEAOTYd+S6Lw8mBbuiXDpI78k1k1wAPCxIDgm4HaVkHT8sQOR600oqH6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734017503; c=relaxed/simple;
-	bh=q1dc8Dt0cKtNCTV+mFc8Aw6w784D6QIr4l89OC5gXGs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bWPIIAXe3USj7zEiKLT49zwkSQMdpjl5QTQNDJKG2bLI3MI92C7C8iWwUEJ/Vll6sHQt7yk7/sEIYB81e8U3++oaIBEiBMIC7kp8B6Snah01EzObo0BUKC0VpeLJF7ZMfh55SA+OymxmkwnXdyPQaa5N4VmmrVw9MTXIllzgomc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fwMMp2Da; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3f57582a2so3665354a12.1;
-        Thu, 12 Dec 2024 07:31:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734017500; x=1734622300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xQAH1ha0soBxIuENIBbCMfyr0YHcwaA/9Qw0+QVF+AY=;
-        b=fwMMp2DaE7/J2l4Fb41aOlu9XLuLGep+vF4J7uHpAyomhs6DSyUF07i2YygP+cbCJO
-         Sr4GLBtecOHJO0i2kCXkdOQougJ7LUzPGG5aghOWUBO51YcyN19Un4W+WtmnwiRfojtm
-         oqUdMg+AmYCH7yszj4lC1/bl+jcijdqyiSmUKCf7ZSf7U3fb+K2kAPFJhrcfJn+EKdmi
-         zqMpKxO5KIpt10nQ8faOqzy6w13wPQusUxNOu/aFWjOo0B/QACznfDem3AvTscHD4ox5
-         4P0/B84Q5qAedSgyHzIxyqYSnw+hqWkIISVnus0h/E4sLBIgnMjRyIw6GfWNoxL+GYq+
-         rkPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734017500; x=1734622300;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xQAH1ha0soBxIuENIBbCMfyr0YHcwaA/9Qw0+QVF+AY=;
-        b=ZpSLnGWXcPl3uvZN+lrf7MSMYutwcmcHKdBuGKFW68bIeFlXqILBBA4FFfkC1Jq751
-         mxrVmyvJD9NCIKcblSYGFLTVdAz/AMWaqDnUmx/yPtM+xBLTpBmWhVg/gRtHMcISXXvb
-         eN+dUZo/cD2a5AK53fKPXe1LykUEV/OaqX2zLuocZFM80FnI2HbqGl8zoPERSthN9lL4
-         4zU6YMHBQkvuM7sG8lZCnAYtPLPSp8OuPHVgB3TGGaY1HkUtOnj2vIIn8qez0q3AWbRC
-         aRFrJi8tiJBASuL2TALQlJ26UvTxQsXtP8X4Sspt/+dR3AJ29STcSy9Nez/zDTdDoG5B
-         iGqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmEmX4tOjqWsUL2SY6EPX7B9Kj5ji3wpYL4VLuIAwJFCXNfDK/sZqNpCpfaVMA1h/3EWSuSsCuolfTVHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXyhGPBrs5OCbrezPqc0W4MPoFJUETAMzaA/ytJxPVNj8gJXfh
-	9EKoQcyFMPx+1BmpSDBMSvu8kuVra2Lac6V9rg1uiY100NZp2VYb
-X-Gm-Gg: ASbGncvER+0k97Haf8Koh4Z4GMgg1wQl7sCgCy5+G7MsPO37DfoOvS50cScB5trbabd
-	U5kDl/QMspNcjD6YTUsdd0M75JLfdVBaJAn67JPb6C3Z41k0xa0E6RraCy8zf7BttBcb+Z5L5Xe
-	ZYUNmmbLBq2nyi8Nqwiqha6HmO8a1BTM3/WaCVeDWR2Y0OeOlekPebn1vWCZ9D84wR6R5MnzPMI
-	2Wg0Y9fBrMy4vT7e9XjR+pcCuHPRyjEpSUC3jmnLnSap2AsYVOgsVDN0bT6eRv7AaM=
-X-Google-Smtp-Source: AGHT+IEbTP24qHze6HMCEiG37n2mIahxgfgBPey4ZBn6n0RwZGHGxfQvB13R/zAZu+EEw56lYf3qnA==
-X-Received: by 2002:a17:906:9d2:b0:aa6:88a2:cfbd with SMTP id a640c23a62f3a-aa6c416fcebmr373299366b.22.1734017500193;
-        Thu, 12 Dec 2024 07:31:40 -0800 (PST)
-Received: from localhost.localdomain ([83.168.79.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6696acc74sm777647566b.134.2024.12.12.07.31.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 07:31:39 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: andreas@kemnade.info,
-	rogerq@kernel.org,
-	karprzy7@gmail.com,
-	lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCHv2] dt-bindings: mfd: omap-usb-tll: convert to YAML
-Date: Thu, 12 Dec 2024 16:31:38 +0100
-Message-Id: <20241212153138.368086-1-karprzy7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734017741; c=relaxed/simple;
+	bh=G46inBJsdzU4DXxbw495n+q5jxCwWIvdztbhqIyXiig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YdrbGnX4oFtYm5d51g9cj6bujiJ48xxYT4+1kVX0RgpuEt7dRFeIGmtaBQcAthvZ/bxsxByuzPxlIkNZKa0wFki9bAY4Wj8FPKRaSMaA0LsKqJd0Lx3VZziHo79YLV3f7lD/Alew6tcZ5prbJ8GXyL8JcVTnMXi9X4A1IVJsv/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=2qJrl9YB; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCAVPJv011897;
+	Thu, 12 Dec 2024 16:35:14 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	9c+ZQ2nN+RzQbM3dUetK/hYw3NM5s3P4yw/14c5dtxA=; b=2qJrl9YBhg/OBgMc
+	FJRu1WLNsTBqyRl+z0b2p6+8+B0HtXvp+PgODmFKHa6fz/KG+Ps9MrZNGiB1i1zY
+	ILVRbJvBKEqrpAUwjNpqpJjRsXt9R9Iq6AlPZZIU7aN2WnLtPeFUpjqs+1Zlv/pt
+	HVGiLceSqXXcVIeHFivCwAu2pD+iqgKV7hZFmfc5ODM9RJV3Lx+p0Cg+21Y1Xbcb
+	J9rL/GXS7LLbD39BAwg3nzdaLzHRCNl+XRunEMMRJsyPo4Q7wxz0a0kM4IbgDnyv
+	iGlfb4wPoCME2N6/bff4pEvDLxroIQC/0EAzIrRow6r/c/7u71prYrx3qZ8ADQcP
+	wtb3Gg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43e2w9ywuj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 16:35:14 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 49C7540047;
+	Thu, 12 Dec 2024 16:34:12 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 608B42839DA;
+	Thu, 12 Dec 2024 16:32:15 +0100 (CET)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 12 Dec
+ 2024 16:32:15 +0100
+Message-ID: <d8eb157e-2f35-45a4-ba3e-cb296ced0a80@foss.st.com>
+Date: Thu, 12 Dec 2024 16:32:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] firewall: remove misplaced semicolon from
+ stm32_firewall_get_firewall
+To: guanjing <guanjing@cmss.chinamobile.com>, <mcoquelin.stm32@gmail.com>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241109055049.269163-1-guanjing@cmss.chinamobile.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20241109055049.269163-1-guanjing@cmss.chinamobile.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Conversion of omap-usb-tll.txt into yaml format, inspired by discussion in [1]
+Hi
 
-Changes after v1:
-Added Roger Quadros as maintainer
-Removed deprecated property 'ti,hwmod'
-Renamed .yaml file
+On 11/9/24 06:50, guanjing wrote:
+> Remove misplaced colon in stm32_firewall_get_firewall()
+> which results in a syntax error when the code is compiled
+> without CONFIG_STM32_FIREWALL.
+> 
+> Fixes: 5c9668cfc6d7 ("firewall: introduce stm32_firewall framework")
+> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+> ---
+>   include/linux/bus/stm32_firewall_device.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/bus/stm32_firewall_device.h b/include/linux/bus/stm32_firewall_device.h
+> index 18e0a2fc3816..5178b72bc920 100644
+> --- a/include/linux/bus/stm32_firewall_device.h
+> +++ b/include/linux/bus/stm32_firewall_device.h
+> @@ -115,7 +115,7 @@ void stm32_firewall_release_access_by_id(struct stm32_firewall *firewall, u32 su
+>   #else /* CONFIG_STM32_FIREWALL */
+>   
+>   int stm32_firewall_get_firewall(struct device_node *np, struct stm32_firewall *firewall,
+> -				unsigned int nb_firewall);
+> +				unsigned int nb_firewall)
+>   {
+>   	return -ENODEV;
+>   }
 
-1 - https://lore.kernel.org/all/cd915c18-7230-4c38-a860-d2a777223147@kernel.org/
+Applied on stm32-next.
 
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
----
- .../devicetree/bindings/mfd/omap-usb-tll.txt  | 27 -----------
- .../devicetree/bindings/mfd/ti,usbhs-tll.yaml | 46 +++++++++++++++++++
- 2 files changed, 46 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
-
-diff --git a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt b/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
-deleted file mode 100644
-index c58d70437..000000000
---- a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--OMAP HS USB Host TLL (Transceiver-Less Interface)
--
--Required properties:
--
--- compatible : should be "ti,usbhs-tll"
--- reg : should contain one register range i.e. start and length
--- interrupts : should contain the TLL module's interrupt
--- ti,hwmod : must contain "usb_tll_hs"
--
--Optional properties:
--
--- clocks: a list of phandles and clock-specifier pairs, one for each entry in
--  clock-names.
--
--- clock-names: should include:
--  * "usb_tll_hs_usb_ch0_clk" - USB TLL channel 0 clock
--  * "usb_tll_hs_usb_ch1_clk" - USB TLL channel 1 clock
--  * "usb_tll_hs_usb_ch2_clk" - USB TLL channel 2 clock
--
--Example:
--
--	usbhstll: usbhstll@4a062000 {
--		compatible = "ti,usbhs-tll";
--		reg = <0x4a062000 0x1000>;
--		interrupts = <78>;
--		ti,hwmods = "usb_tll_hs";
--	  };
-diff --git a/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml b/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
-new file mode 100644
-index 000000000..d666d3e23
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/ti,usbhs-tll.yaml
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/ti,usbhs-tll.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: OMAP HS USB Host TLL (Transceiver-Less Interface)
-+
-+maintainers:
-+  - <rogerq@kernel.org>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,usbhs-tll
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: usb_tll_hs_usb_ch0_clk
-+      - const: usb_tll_hs_usb_ch1_clk
-+      - const: usb_tll_hs_usb_ch2_clk
-+    minItems: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    usbhstll@4a062000 {
-+      compatible = "ti,usbhs-tll";
-+      reg = <0x4a062000 0x1000>;
-+      interrupts = <78>;
-+    };
--- 
-2.34.1
-
+Regards
+Alex
 
