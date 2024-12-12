@@ -1,144 +1,98 @@
-Return-Path: <linux-kernel+bounces-443355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3269EEE80
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:57:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8FD9EEE05
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:53:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725C218909EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C17A2843D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EE2221D9F;
-	Thu, 12 Dec 2024 15:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="z13txCqD"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F5C21E086;
+	Thu, 12 Dec 2024 15:52:54 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BAF217F34
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925ED4F218;
+	Thu, 12 Dec 2024 15:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018681; cv=none; b=KSeacgdyUZZ/cSCNhe8kjFlki1FZVBH0SU4UViN9dEozWcjX3SfKQIDB+ZZYJyYIwaqafHEMeUXM4lzfffQ/4xtSg7KXdyT46SOQQI1unrD1QnS2SeDeS2R+VBEHOqMrCFuVvH78WPNaNa7cXuU9hTppu/fes3EstqxD9sFIWFQ=
+	t=1734018774; cv=none; b=Ki/z48qHglFZgtyoR7t3eYj72dTN0+C4qy4kMRQSuRSfyft3Dmac+uMl3rpDPA49S6sQIX+NgdxwW8ntNrWGHwMsnFI1xsvVdPI+t+bo/mzkEZNjaXZ5XKiM8lOSvRew042FQFZGFuh15bpGCMK0Xso/tfp2tI07vbDreTqaCfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018681; c=relaxed/simple;
-	bh=9J8jgbGZLhDCNXQIcS/IOQVlyOG+dfCc22YlvHx/Cmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bSBhAaCFfPaI9OWATfZyIophyFniQ0CeA30+UaIshGEdtMXU9w1FN0T1VPD02jROc3yVOEtPrOXtsJsoL7H8YELk93vm0g5H6PZ+YsSWt646hJQR6s/3iNQuBVypNBB8KX4+UtcCPZYVoXIIzOsJwwh+jvada7x15YI+TWl5fPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=z13txCqD; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-844d555491eso26896039f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:51:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734018679; x=1734623479; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uvdjuc+ov0Ox3XKRZz9jrd61LllD+9QFwqPFhdFIKF0=;
-        b=z13txCqD/dsUWtKVnp9uSCwCfn5RDFufQTCYpZftcNldL+O+JKcoeX0HswelpBcS35
-         1h2KJtyV5SqH9nV9N7WX7Cr9uh6A9iAveeOMvlj7Niuxk8CZRJDxSik3yivx4iXTMBEI
-         tsfxblcl614/znEPPyFTvUlNT1D/EOrSgN9PObq02Y0vFc3CAmnp/vUGdTerc/65hPry
-         W2Erp8kCZeenyIcKUDGbIoLCxGfErpqFKHYaYrkSj+5VBsPdU3TVdeON9JuUnR+Dq+kM
-         JbUNrYWK4hfuxEimpBTN3T54BuwYW++N7SFclhAcW+Czf5SI5uOKKs0EpJPem6CFGZ9M
-         DL1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734018679; x=1734623479;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uvdjuc+ov0Ox3XKRZz9jrd61LllD+9QFwqPFhdFIKF0=;
-        b=m5rs/208oQQIwuvcEL7FdWQT6iSb3cXitYrl6wMBYhPELx25bVZozOd+CjZNH68bfN
-         ItgfEI8FYRuY3IJOuZRdltQGGKlbNzNyJsj0X2IMP2akX11JmmB6PZWT5XvQ+PcJnn9f
-         f737hYh6isgW+fhxxxlDgMTATgO2xeQJikoZkzYOLf8QZYtn3HOxS7z7yHoEpxl69ehg
-         wZonXhkNzj+ZPc4C+vBx7YesR10t+fUNw6gUxAyeLAAmGaI9lVM/6+DOM3tURWbPADXN
-         326avcopY49m93ZJ4/aDLSINnL6jgiV41RRVM67LYaEJY2MqTczdoVy5ev5m/XMsKvCW
-         swtA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDb+VMTkfDraozwHZndkFumGrVaYLBVcHcxQFGWgvxsu4azRLDWVFJQdJqcuwdDS4ILE6+nXZn8XHXkI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4plDEtGUAlPpfc7GnQQhvcy4h8jOYAQVzgp5hpcNW+JvNP+HW
-	NyXWNilG3NdhnpxKkgkC5lpKEEZOTYX0yXP9ZkBvcJr5NpZ96Y1EXcl8Yu3j57U=
-X-Gm-Gg: ASbGncvGEbqFtvoZqUpKqYAxI8OOqg4DDGil7eglYK32I1nEqDVU1+Sd80+3L2S/w/Q
-	mErKbsoSUEAy8UE4lYpvaGpnzpyUQ4K6kShgHWoZEVD9a41QujnVw+jXPU1IKCUZQRzmI9k7Vvv
-	Ce12d4S+2mL58u8cvZ4F5JO/uttnnxMB9WCqCR9Uux9Yloz7SQmE+r+SszjNgFUa8VgOtiMPimS
-	jENidkseNrQ1Oov7QMPnk2gWHeOhEJkftVE56NnjRLVP+UkiIok
-X-Google-Smtp-Source: AGHT+IGuinfFR09bO8lUOpxQ1zSi+sA0KfqYwuqKm9s7gPVryn5wyMJJDgrJmONT7vL8CQbH+cZ8kQ==
-X-Received: by 2002:a05:6602:6d0c:b0:843:e008:95b7 with SMTP id ca18e2360f4ac-844e552b920mr79385139f.0.1734018679383;
-        Thu, 12 Dec 2024 07:51:19 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e286222d9dsm3865412173.148.2024.12.12.07.51.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 07:51:18 -0800 (PST)
-Message-ID: <e492e934-c162-430a-94b6-32d1ec29a782@kernel.dk>
-Date: Thu, 12 Dec 2024 08:51:18 -0700
+	s=arc-20240116; t=1734018774; c=relaxed/simple;
+	bh=6KvSWy/qvctLgXtiy34HcDw5CYN2RqavDCfoL9/qKKo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YZdgot+DghOKaP8K3Ktt1Q1iM9e1oI9GEENDfFwwq42nETXHiNxZdlzB7klCfC9IP0GrTxy/aSRZEn4GCEsW7KHqnYCEPqAc1YfLaAIfIwmKmZC6mFjG6aohB1GNTf/92XAyglij0qbcNf9VAkmv5SLYuJalYNvdfb4jtOdt5nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Thu, 12 Dec
+ 2024 23:52:41 +0800
+Received: from localhost.localdomain (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Thu, 12 Dec 2024 23:52:41 +0800
+From: Kevin Chen <kevin_chen@aspeedtech.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <tglx@linutronix.de>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <quic_bjorande@quicinc.com>, <geert+renesas@glider.be>,
+	<dmitry.baryshkov@linaro.org>, <konradybcio@kernel.org>,
+	<neil.armstrong@linaro.org>, <johan+linaro@kernel.org>,
+	<kevin_chen@aspeedtech.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <soc@lists.linux.dev>
+Subject: [PATCH v3 0/6] Introduce ASPEED AST27XX BMC SoC
+Date: Thu, 12 Dec 2024 23:52:29 +0800
+Message-ID: <20241212155237.848336-1-kevin_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/12] mm/filemap: make buffered writes work with
- RWF_UNCACHED
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
- linux-kernel@vger.kernel.org, willy@infradead.org, kirill@shutemov.name,
- bfoster@redhat.com
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <20241203153232.92224-13-axboe@kernel.dk>
- <20241206171740.GD7820@frogsfrogsfrogs>
- <39033717-2f6b-47ca-8288-3e9375d957cb@kernel.dk>
- <Z1gmk_X9RrG7O0Fi@infradead.org>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <Z1gmk_X9RrG7O0Fi@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 12/10/24 4:31 AM, Christoph Hellwig wrote:
-> On Fri, Dec 06, 2024 at 11:22:55AM -0700, Jens Axboe wrote:
->>> Honestly, I'm not a fan of foliop_uncached or foliop_is_uncached.
->>
->> It definitely is what I would elegantly refer to as somewhat of a
->> hack... But it's not _that_ bad imho.
-> 
-> It's pretty horrible actually.
+---
+v3:
+  - Split clk and reset driver to other commits, which are in series of
+    "Add support for AST2700 clk driver".
+  - For BMC console by UART12, add uart12 using ASPEED INTC architecture.
 
-Tell us how you really feel :-)
+aspeed,ast2700-intc.yaml
+  - Add minItems to 1 to fix the warning by "make dtbs_check W=1".
+  - Add intc1 into example.
 
->>> I think these two macros are only used for ext4 (or really, !iomap)
->>> support, right?  And that's only to avoid messing with ->write_begin?
->>
->> Indeed, ideally we'd change ->write_begin() instead. And that probably
->> should still be done, I just did not want to deal with that nightmare in
->> terms of managing the patchset. And honestly I think it'd be OK to defer
->> that part until ->write_begin() needs to be changed for other reasons,
->> it's a lot of churn just for this particular thing and dealing with the
->> magic pointer value (at least to me) is liveable.
-> 
-> ->write_begin() really should just go away, it is a horrible interface.
-> Note that in that past it actually had a flags argument, but that got
-> killed a while ago.
-> 
->>> What if you dropped ext4 support instead? :D
->>
->> Hah, yes obviously that'd be a solution, then I'd need to drop btrfs as
->> well. And I would kind of prefer not doing that ;-)
-> 
-> Btrfs doesn't need it.  In fact the code would be cleaner and do less
-> work with out, see the patch below.  And for ext4 there already is an
-> iomap conversion patch series on the list that just needs more review,
-> so skipping it here and growing the uncached support through that sounds
-> sensible.
+Kconfig.platforms
+  - Remove MACH_ASPEED_G7.
 
-I can certainly defer the ext4 series if the below sorts out btrfs, if
-that iomap conversion series is making progress. Don't have an issue
-slotting behind that.
+Kevin Chen (6):
+  dt-bindings: interrupt-controller: Refine size/interrupt-cell usage.
+  dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+  arm64: aspeed: Add support for ASPEED AST27XX BMC SoC
+  arm64: dts: aspeed: Add initial AST27XX device tree
+  arm64: dts: aspeed: Add initial AST2700 EVB device tree
+  arm64: defconfig: Add ASPEED AST2700 family support
 
-I'll check and test your btrfs tweak, thanks!
+ .../bindings/arm/aspeed/aspeed.yaml           |   6 +
+ .../aspeed,ast2700-intc.yaml                  |  60 ++++-
+ MAINTAINERS                                   |   1 +
+ arch/arm64/Kconfig.platforms                  |   6 +
+ arch/arm64/boot/dts/Makefile                  |   1 +
+ arch/arm64/boot/dts/aspeed/Makefile           |   4 +
+ arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi     | 236 ++++++++++++++++++
+ arch/arm64/boot/dts/aspeed/ast2700-evb.dts    |  57 +++++
+ arch/arm64/configs/defconfig                  |   1 +
+ 9 files changed, 359 insertions(+), 13 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
+ create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+ create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
 
 -- 
-Jens Axboe
+2.34.1
+
 
