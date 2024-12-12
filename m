@@ -1,233 +1,120 @@
-Return-Path: <linux-kernel+bounces-444078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D989F0053
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:42:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055989F005B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:47:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A35F28804D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:42:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54884188563D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4032F1DEFD0;
-	Thu, 12 Dec 2024 23:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC241DE8A8;
+	Thu, 12 Dec 2024 23:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="Cr5nd9ba";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B9K2i4pL"
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOAwAruC"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B8D1DED4C;
-	Thu, 12 Dec 2024 23:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC0E1547F5;
+	Thu, 12 Dec 2024 23:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734046912; cv=none; b=Vv9x+bb48kFreiz0UyCEDnmvvr4/naBJVq18ZBdIzfkjRGklhNLiyeSoZN7sZ3vj+0pYIcpISuVIMig+1loLYHYImdOgq+qdHtQehrEXY8GQV5qmGEimDa/Ck348v75yrUtBbOpncavoHneD+BRSy8X3xFpYC773BIVoSUky9RI=
+	t=1734047243; cv=none; b=W0HetMS/EywzyfWEorNhcz/fbYvsIlUPqKaWGiVWvYlSND+65zn/zj3hfEwHkh+iXDlhGGew4QEpCcz1+tipNNdXji1SSxOFG0ojrLoU4lCZ0TNXoPBVN+Gn+Ysh/8KdJbO+V956uZti84+G8UzRXDkQOUKsjVrQuREUvp4yYAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734046912; c=relaxed/simple;
-	bh=0EfcN+Lb8+Gr9/AGepZG/uUIlT7TVkuzGBF+4biIAfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EdAzTGHm7MP8ISu0LyRF4DWF8taUg5gvHU6JMDcDB0t9LwlxFCYfHo0Yb2ljqQdQHajVBezLhWA6YddrAOY6BQjytugdhnGYi4sBctoQ+Y5Upfu0qyAmlR7cxBwIpJxSm5AwjvFIRuV8sdAL2cId9DJnmJZl1VXNeyUJ+/w7sIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=Cr5nd9ba; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B9K2i4pL; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id F08A720049B;
-	Thu, 12 Dec 2024 18:41:48 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Thu, 12 Dec 2024 18:41:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1734046908;
-	 x=1734054108; bh=Xsk7X3/UkTfDfA4IJFdI69G+yLRSh7hTw4MpALt07mM=; b=
-	Cr5nd9ba4FXZHzEWTYi+Rh9yBQO6c+qjKDGoJX143moXaA5i2FroQBDP7LHBMFMX
-	YMV9QDVfo5memjolEePbZNIMuNL9iBI14eG/FjpdbDhO6RHoBeD3eYpV1ul0FxAT
-	LmpLGLioF1Eltk0Qub/iYej97T1LduYyG5s7yJbyoQJR4O/QwVSRcKkDWLzxHLwU
-	v/KDKDxVNeGHMjyMDDeUR4ZV9DQ5n/iSeYUwUFCy063GNpOzQNxUGc6ZtzVLjZeU
-	/WAdDj+b7r/MErkk3EUGToWb068Dlvrh3RSKME/lLepAr+gaOK3o/J/B9fqa2fr0
-	qMp6Wn3cjyVyhLfOmUzJJw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734046908; x=
-	1734054108; bh=Xsk7X3/UkTfDfA4IJFdI69G+yLRSh7hTw4MpALt07mM=; b=B
-	9K2i4pLQ/Mci3TioKT2jryuSH36oJAQAfDvmTCd183UoBbahepNQyf8N9Z0ezpoN
-	wHMFPBvbJamjN+h+ArKA4yUA2pH+xJqIkV8E75s6OYz3CqwfbmYjT5aJLt/V7Jqe
-	fu1LIKKY/Eajb+rJ22Os230DMGHHF33HCmsSXQPAP99bSdjH1dlzz9kdZ1WpC4qu
-	TCySo1UOmrBHmgmzhCBrYnc/ESzUIDElJskNh7lxAbESZy0ntrAMC0q8KrbWMJLL
-	FgUNSKZfIP/bxD8m4cBp0LcomFqeYdwlWoaGjLG/aRe659/5+VhmcAvriLq4Q4t8
-	vCXq7NvZg1I/Jfs/54wZA==
-X-ME-Sender: <xms:vHRbZ-Zou_2if7EFRsBlv6l--FrjL6AiXGmc0vgbCPXg1BKMJvREuQ>
-    <xme:vHRbZxZqCNnVKVSCmS1nJTCLzsZRG75ZGq1Hu4xkrwDDgRFvQqgvl9lgJxwlC8bOa
-    YB96QL6WwjbMNUPow>
-X-ME-Received: <xmr:vHRbZ49Hjc_drZUX76dDuaOiatygbBOlAo5TiEnWTp1KZORd-Q829FNXhWAQ525w9TLCI2KQHyOJne2U1UTGqpfenF3ttn3DOfqtYTSqNBYBCw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeeigddufecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenfghrlhcuvffnffculdefhedmnecujfgurhepfffhvfevuffkfhgg
-    tggugfgjsehtkefstddttdejnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguhesug
-    iguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepffffgeegkeejvdejgeehteekudfh
-    gfefgeevkeelhfegueeljefhleejtdekveffnecuffhomhgrihhnpehgihhthhhusgdrtg
-    homhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegu
-    gihusegugihuuhhurdighiiipdhnsggprhgtphhtthhopedvvddpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtoheprghnughrihhirdhnrghkrhihihhkohesghhmrghilhdrtgho
-    mhdprhgtphhtthhopehhrgifkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohh
-    hnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghstheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepqhhmoheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegurghnihgv
-    lhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:vHRbZwpeKYwydy07I0zy8XIwo_giI6SuJwP8hwxI3K15tQT9eU7fVg>
-    <xmx:vHRbZ5rKlXHpj4wzUWbdn5bf4VhgfBOE_jddaIapGpbXB_qKBGKQ1w>
-    <xmx:vHRbZ-Q7rMMrjmyEFzN1XEzTgKZPTB0tnlcprVbMQAknJA0MlkGeRQ>
-    <xmx:vHRbZ5rp8W4v-M0Cu0e3569qasezkBGhTuqT3x7WA4LysOnwLSkVMA>
-    <xmx:vHRbZ4ex_sqDOfLhf14PNui0a5nOLckCg_-JtrCIMKD1W3D-0WbO-zBB>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Dec 2024 18:41:45 -0500 (EST)
-Date: Thu, 12 Dec 2024 16:41:43 -0700
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: hawk@kernel.org, john.fastabend@gmail.com, ast@kernel.org, 
-	qmo@kernel.org, davem@davemloft.net, daniel@iogearbox.net, andrii@kernel.org, 
-	kuba@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
-	jolsa@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, antony@phenome.org, toke@kernel.org
-Subject: Re: [PATCH bpf-next v3 3/4] bpftool: btf: Support dumping a single
- type from file
-Message-ID: <zf62rqtgvl63sawxltmpgcnpek5bt3w5pleznby3zqb7ezhvdz@wqlwxy2f43wt>
-References: <cover.1733787798.git.dxu@dxuuu.xyz>
- <3bc17d33161961409dc77a5de29761bf2bed4980.1733787798.git.dxu@dxuuu.xyz>
- <CAEf4BzaA9_up=3npADgJv8pCVg4eVzsWevef69c3PkdyuWNXDQ@mail.gmail.com>
+	s=arc-20240116; t=1734047243; c=relaxed/simple;
+	bh=W+GyH4n6hltq6Xcckc8FpOPXVWn2UOdDDh6hMamzOJY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=UYzRR8pDJ1N9oUDNtCFXybsCbLufDtbWCRzlDYTOPFDb4D/Nwh/CzCk2CcT9h+oFyr/UQLnbR1dlfSpxk3GfErGUwqF4gGLwWEqSUs3vBGnZdzO3ZPJovACFrNznHdeHIp+vAoCu0giqzdwyfN6K3JCjvyAx+955YteKtiT8+Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OOAwAruC; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53f22fd6832so1223164e87.1;
+        Thu, 12 Dec 2024 15:47:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734047240; x=1734652040; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8eKJ8tH0Hqwf99KrK3AkhgJ+9ohNcCvPCUChB8kS0C0=;
+        b=OOAwAruCRhX6MpCToG3PH9OuXG6whV3Z4H1FjTr4wSYfYRpicRF2oo/9u6ibfNOlRU
+         wUzHb1wn/9H21yWNYPuhyt+ynAzQFXRZ+PJmmJuO5WhFc1gJ8T6kA8xeXYYRFaUeM3fn
+         Wo+/Iu/1KlreoURbnVIEjV9F+Et6ARhzg6oVHLRBKcSH6DqP2yyg7c8jxrRAsLSgJfLx
+         0eaJUig3TYlkUdXc0nvCQbTLdiGmcuoWB5VkY09vSsuqnZDgs5DwXGWKVjlcOuGgqooW
+         xf3KATA9PSIVn+ESlOYtItalvnoYtd2LqDu9VouO1JmlDFru8N/oA4dY9iKdvRqBAzub
+         MdIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734047240; x=1734652040;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8eKJ8tH0Hqwf99KrK3AkhgJ+9ohNcCvPCUChB8kS0C0=;
+        b=h2pZmaKIXz2esIEfrXkkTTT2F8yjef035KX0SWDEpkFPspUPegsapY53N+pIN/9taq
+         hb19gUYo9NvMa6gBw5ZdGLPV2SXsBtrL6p8piaidN9rZeMJqxeQocNJq2rSpCRXOIhxD
+         5MZe9qXfzZDPZculvCgwoLkhQrO4cdIBVrcmIUzZn6Fe4mJkPkIwlZ+e/3nV6IM2HULZ
+         Ynue73wYYdGYGp0dKMCbO2xFt/scjObSvfolyifVLGr0XDsPQ7gItWmYfDER7wFd7Byn
+         0lj/7K9XHB70iF2aqL0fkAq5K9vK2rNgNQVgz22/Hs1PHvnLlokYRj0ZWR+CpXTWXMFW
+         rqmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFR3gEjmN7O34Vb5QVqUYKnRL+8Igm9nd8Svgx5kJX4zsjhG2W7n/YnytDsps5xM/LnKOh/tdDbmO6@vger.kernel.org, AJvYcCX9VNhY8RSS0h4YTNr6QnDkJ8QrGepA90OQcrERkSu5aIhn+Q5gS3c/A+74unNEyPLNhxMqlfRWGeL1j21z@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQalYzmpN3+3baK/4vou9i5XW0rWjteJUfb4zNtyMWv9cePYWX
+	7USYushpDi9BNtl3eTY0mYHIsyN76W7VfPgNpcYnjU/+at9A5UamgBxuAYjDzUZDr3UJGrrspFw
+	3lxR0IPhgbg5lq9vrWWwrA9Cg6jE=
+X-Gm-Gg: ASbGncvbPVtVJgiztLoYM3K1qfvDSaGAbrqQgDXZmMdz3IsNFKwOb0Nffp1cfXpg4my
+	+FsglfBQK2wco1MTM2IY5mSUtgsNXdKUVPVn+S+3tktB+g9+67s1twDWiqRactrgIg1CktvSc
+X-Google-Smtp-Source: AGHT+IGZ+cpzOQ+i6a1wdmruBhdRzrBXTFDMebgACcdAi8rqhcpiGMCbmIj9W+yxBvw938xK7y2+5Kc4lF+I/Qcao3M=
+X-Received: by 2002:a05:6512:401b:b0:540:1f7d:8bc0 with SMTP id
+ 2adb3069b0e04-54099b6d6afmr61211e87.49.1734047239787; Thu, 12 Dec 2024
+ 15:47:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzaA9_up=3npADgJv8pCVg4eVzsWevef69c3PkdyuWNXDQ@mail.gmail.com>
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 12 Dec 2024 17:47:08 -0600
+Message-ID: <CAH2r5msa=s5=5tsTP5H1=8ruzKTaHs59xyORk0URRsWTb4Xg7w@mail.gmail.com>
+Subject: [GIT PULL] ksmbd server fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namjae Jeon <linkinjeon@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 12, 2024 at 11:09:34AM GMT, Andrii Nakryiko wrote:
-> On Mon, Dec 9, 2024 at 3:45 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
-> >
-> > Some projects, for example xdp-tools [0], prefer to check in a minimized
-> > vmlinux.h rather than the complete file which can get rather large.
-> >
-> > However, when you try to add a minimized version of a complex struct (eg
-> > struct xfrm_state), things can get quite complex if you're trying to
-> > manually untangle and deduplicate the dependencies.
-> >
-> > This commit teaches bpftool to do a minimized dump of a single type by
-> > providing an optional root_id argument.
-> >
-> > Example usage:
-> >
-> >     $ ./bpftool btf dump file ~/dev/linux/vmlinux | rg "STRUCT 'xfrm_state'"
-> >     [12643] STRUCT 'xfrm_state' size=912 vlen=58
-> >
-> >     $ ./bpftool btf dump file ~/dev/linux/vmlinux root_id 12643 format c
-> >     #ifndef __VMLINUX_H__
-> >     #define __VMLINUX_H__
-> >
-> >     [..]
-> >
-> >     struct xfrm_type_offload;
-> >
-> >     struct xfrm_sec_ctx;
-> >
-> >     struct xfrm_state {
-> >             possible_net_t xs_net;
-> >             union {
-> >                     struct hlist_node gclist;
-> >                     struct hlist_node bydst;
-> >             };
-> >             union {
-> >                     struct hlist_node dev_gclist;
-> >                     struct hlist_node bysrc;
-> >             };
-> >             struct hlist_node byspi;
-> >     [..]
-> >
-> > [0]: https://github.com/xdp-project/xdp-tools/blob/master/headers/bpf/vmlinux.h
-> >
-> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > ---
-> >  .../bpf/bpftool/Documentation/bpftool-btf.rst |  7 +++++--
-> >  tools/bpf/bpftool/btf.c                       | 21 ++++++++++++++++++-
-> >  2 files changed, 25 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/tools/bpf/bpftool/Documentation/bpftool-btf.rst b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
-> > index 245569f43035..4899b2c10777 100644
-> > --- a/tools/bpf/bpftool/Documentation/bpftool-btf.rst
-> > +++ b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
-> > @@ -24,7 +24,7 @@ BTF COMMANDS
-> >  =============
-> >
-> >  | **bpftool** **btf** { **show** | **list** } [**id** *BTF_ID*]
-> > -| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*]
-> > +| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*] [**root_id** *ROOT_ID*]
-> >  | **bpftool** **btf help**
-> >  |
-> >  | *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* }
-> > @@ -43,7 +43,7 @@ bpftool btf { show | list } [id *BTF_ID*]
-> >      that hold open file descriptors (FDs) against BTF objects. On such kernels
-> >      bpftool will automatically emit this information as well.
-> >
-> > -bpftool btf dump *BTF_SRC* [format *FORMAT*]
-> > +bpftool btf dump *BTF_SRC* [format *FORMAT*] [root_id *ROOT_ID*]
-> >      Dump BTF entries from a given *BTF_SRC*.
-> >
-> >      When **id** is specified, BTF object with that ID will be loaded and all
-> > @@ -67,6 +67,9 @@ bpftool btf dump *BTF_SRC* [format *FORMAT*]
-> >      formatting, the output is sorted by default. Use the **unsorted** option
-> >      to avoid sorting the output.
-> >
-> > +    **root_id** option can be used to filter a dump to a single type and all
-> > +    its dependent types. It cannot be used with any other types of filtering.
-> > +
-> >  bpftool btf help
-> >      Print short help message.
-> >
-> > diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
-> > index 3e995faf9efa..18b037a1414b 100644
-> > --- a/tools/bpf/bpftool/btf.c
-> > +++ b/tools/bpf/bpftool/btf.c
-> > @@ -993,6 +993,25 @@ static int do_dump(int argc, char **argv)
-> >                                 goto done;
-> >                         }
-> >                         NEXT_ARG();
-> > +               } else if (is_prefix(*argv, "root_id")) {
-> > +                       __u32 root_id;
-> > +                       char *end;
-> > +
-> > +                       if (root_type_cnt) {
-> > +                               p_err("cannot use root_id with other type filtering");
-> 
-> this is a confusing error if the user just wanted to provide two
-> root_id arguments... Also, why don't we allow multiple root_ids?
-> 
-> I'd bump root_type_ids[] to have something like 16 elements or
-> something (though we can always do dynamic realloc as well, probably),
-> and allow multiple types to be specified.
-> 
-> Thoughts?
+Please pull the following changes since commit
+fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
-That's a good point. I added this check b/c I didn't think it would
-make sense to allow `root_id` filtering in combination with map dump
-filtering (which uses same root_type_ids param):
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
 
-        map MAP [{key | value | kv | all}]
+are available in the Git repository at:
 
-But code can easily be tweaked to still block combination but allow
-multiple `root_id`s when used alone. 16 seems sufficient to me.
+  git://git.samba.org/ksmbd.git tags/v6.13-rc2-ksmbd-server-fixes
 
-Do you think it'd be more bpftool-y to require "root_id" each time or to
-just take a comma separated value?
+for you to fetch changes up to 21e46a79bbe6c4e1aa73b3ed998130f2ff07b128:
+
+  ksmbd: set ATTR_CTIME flags when setting mtime (2024-12-10 17:48:06 -0600)
+
+----------------------------------------------------------------
+Three kernel server fixes:
+- fix ctime setting in setattr
+- fix reference count on user session to avoid potential race with
+session expire
+- fix query dir issue
+----------------------------------------------------------------
+Hobin Woo (1):
+      ksmbd: retry iterate_dir in smb2_query_dir
+
+Namjae Jeon (2):
+      ksmbd: fix racy issue from session lookup and expire
+      ksmbd: set ATTR_CTIME flags when setting mtime
+
+ fs/smb/server/auth.c              |  2 ++
+ fs/smb/server/mgmt/user_session.c |  6 +++++-
+ fs/smb/server/server.c            |  4 ++--
+ fs/smb/server/smb2pdu.c           | 49
+++++++++++++++++++++++++++++---------------------
+ fs/smb/server/vfs.h               |  1 +
+ 5 files changed, 38 insertions(+), 24 deletions(-)
+
+-- 
+Thanks,
+
+Steve
 
