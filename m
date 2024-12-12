@@ -1,257 +1,125 @@
-Return-Path: <linux-kernel+bounces-443146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD7C9EE7F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:42:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F4118164F5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:42:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759BD21C166;
-	Thu, 12 Dec 2024 13:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="b9rrj/mn"
-Received: from st43p00im-ztfb10071701.me.com (st43p00im-ztfb10071701.me.com [17.58.63.173])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF7A69EE7C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:39:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF532153DD
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 13:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.63.173
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521CA281AD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:39:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06922135C3;
+	Thu, 12 Dec 2024 13:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="irg0MmUg"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5752E414
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 13:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734010855; cv=none; b=IrUNynq5fcCvdJn+Oc30bPH2L8/h1jy9oxINmStXHvhNwPwQoR+8nbHhxf9V+c55QDpAvBDm+FTN/YgQNOL+x1Z0i+/O1WIoWJRYsELcO2CuGVnwsLwAVu9lMEIdR9MYxnS7+4MVfdltfoMF5BB1oxul8W02I8csEF5U1E8+GsE=
+	t=1734010745; cv=none; b=Wc4uWe0aCcfr9qfKp8dTDrDcixKQ9f1yquWZzz8PfvUnXID8aXiusyHOrsnwjYsi3TFkraS9pxDE4axG0mK/gHiACAvFpOw0LqQiJkIsdlonMXvHdl5OZikme2gy8WYmfIUKuR2FjJUylHWSlXzt9IBbK9SOPSshmew65/0OVdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734010855; c=relaxed/simple;
-	bh=y9RQSXv1X/b7onq26soG95yWCh3wV1nPZhg2N7QA94I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U60/U9qOyg0VwBf1N1Ijl3euOXqMro8dEZFm/w0t7VJqUgJq+TnqzmnaxRsKR4LEprZfxVGvR/FO6fLV0AeEg1HhzAyABrt26dUhy3ltleYHrc0hEOAjvFnp9/9HI9FLTd4tBi9eVicOeC0YY6x90wwDgqDqGd95UV2WL4bLXAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=b9rrj/mn; arc=none smtp.client-ip=17.58.63.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1734010852;
-	bh=aNctqcORfAEPE8lIZjnrCUjfsnSedHfS6VRbqUX7SHQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:
-	 x-icloud-hme;
-	b=b9rrj/mnnDVpn3vlwG4EWqSDqJUU/97nO526TwBQD8RIUyUjuaFxzKiuHzPXJUPvz
-	 kI080SReAu1u34fJ1G+eJ5bB15vqDHXhXBYiyqRm1cwQ6775oEFhynqGOYrBR8jies
-	 hGEMpYLnMW7tw+4lRa7AYVHBGISvdxoJ7oh5cnFAZO3kJ6EHYysf6N20SWA8oRsWb+
-	 Wc7PSHCyaJnduEcSQSh/NWmS1BEvjgYcCHaaZvIQXWNcPobMr4iD4vMzdMNRRUeYaV
-	 9z5ejIh+tFStrDHbIMG2XFBIeZpGDmJqrP50KmeIECFQeZulY9vBl4kB4DxQ89oX8r
-	 V20W0afioCW0Q==
-Received: from [192.168.1.26] (st43p00im-dlb-asmtp-mailmevip.me.com [17.42.251.41])
-	by st43p00im-ztfb10071701.me.com (Postfix) with ESMTPSA id 5F4E3CC0564;
-	Thu, 12 Dec 2024 13:40:41 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 12 Dec 2024 21:38:45 +0800
-Subject: [PATCH v3 9/9] driver core: Introduce device_iter_t for device
- iterating APIs
+	s=arc-20240116; t=1734010745; c=relaxed/simple;
+	bh=pwBc6jopJG2fnr8sukSdGyV0P2m7SwiydFbswQKN2Ns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NSoD5L+MpdUsxvh9/YGWn+4s1iLH74Mz1LzD3jYIlX1DU4D2RkaTyp9B9cbObXjkjWbAfyvKZqq/29Ud/m6DncVol6O55SSwl6OiedKQUaip5uCbrrQUIhh8gd0ZDnn1fDrUC5YWJh/riMrrkUaBquQg4TKO05f1mk8JJgCRrp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=irg0MmUg; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-294ec8e1d8aso428762fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 05:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1734010741; x=1734615541; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GZFpmuGq8Hcysw1ltCrcXIg/0YmimJ8vHdWx8dLQ+nM=;
+        b=irg0MmUgCfBaIlh/KxU2r0lT0VZVcAJp/akujRYv8Q/AYVKxQJSR+jrU6gy7UXyuix
+         juFfsSEB1ntU+3REwAkOyMTXECr/e6qAURrDvGs47Rr0d79R4ru8iv4ECpjpPfJOLvbQ
+         rl/vmyfqsct4zWx2tmuaX31mQHPeiJf960+N6Xn/btAPfPWL+fMUCLvC4Tf0GtSVRPbd
+         pFq+oJxeR5MVmocTDXafvKxlTzhzQBNVbpH4ZG2F7x7kDbLcRlQpzeqfRGQ4AttAc0cR
+         b33e+mUnpqSyz6ULXpSb4RLxfdlsUQM/wdeyMP9jz3zvo2JHfaB82hQC/iyUXJzIoUOi
+         Z/sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734010741; x=1734615541;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GZFpmuGq8Hcysw1ltCrcXIg/0YmimJ8vHdWx8dLQ+nM=;
+        b=ey3dTBwfuE6n29vWqux4ovf+s4QcqeGYoj9dB0vNbZDS1QjD1h6yzj1SFLYuLfhPlQ
+         ZmcmFdY/kY3E3ZBJYIPXs29HiyyfYhGErTuWe+Mi1NNsOh9E17KZ88suL+ADecbovl9m
+         dxkfgb45/xHlC2FzrVAzRmBnTgQQYWJTZ9WDblwtAZcywNtA39pPPY319A7WVNlIVZSp
+         xknfcQ/2PoaSlFqVuVEFsyxGaGAyv9ptA0yFUx0Tf/F6Ei1uaGH4PNs9LE/d20bHhsoL
+         L7I7wkkjD04i8NPUy75iE5G1xPUu73u6K9tOlm9XdHvkiKUpbRAp2Zs1FSep8kLVAwYi
+         uRiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8WK8qTML89GWcXyke9SShZVqcuwHhNEgwwwRfgLaC1DHVEzXXGjMqMehje+LDhh5aoPeKK57VrFnb+74=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGEWg+IvUlKD/4Sz45CNwrfTUqzSY4zCXCahCIs9ovP56yy95D
+	fQLI8f7p9xzFWrVIgHSv1C9u78kJOystpC87L0u9uGhGgb5h4zesafe3A1kXsTVAHsTTzJcUTgc
+	KW9SFneTm8DGOB7xEx98ZgwITeRBQizZuOJzr1Q==
+X-Gm-Gg: ASbGnct8tML/NeGq1R77+V6YnHs2U3Vhl1Gf4jU8PMkujWrLcq00ItEff/8Zklwtt0v
+	FfAHUmMht2tvEF589vZx3aipXQBrImQprM23iAFfV
+X-Google-Smtp-Source: AGHT+IHD6Qcrh2srXPJLHbja5JHfzEhRV/ZpqJWPNHK2/yvOTs/tJi6K/af6ItiRmPRwJ5PEr5Zhb5P3EQeLDRyb/Zw=
+X-Received: by 2002:a05:6870:9a1c:b0:29e:6bcd:3ba7 with SMTP id
+ 586e51a60fabf-2a012d99e0cmr3460926fac.28.1734010741230; Thu, 12 Dec 2024
+ 05:39:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241212-class_fix-v3-9-04e20c4f0971@quicinc.com>
-References: <20241212-class_fix-v3-0-04e20c4f0971@quicinc.com>
-In-Reply-To: <20241212-class_fix-v3-0-04e20c4f0971@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Tejun Heo <tj@kernel.org>, 
- Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>, 
- Boris Burkov <boris@bur.io>, Davidlohr Bueso <dave@stgolabs.net>, 
- Jonathan Cameron <jonathan.cameron@huawei.com>, 
- Dave Jiang <dave.jiang@intel.com>, 
- Alison Schofield <alison.schofield@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Dan Williams <dan.j.williams@intel.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- cgroups@vger.kernel.org, linux-block@vger.kernel.org, 
- linux-cxl@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: dpeo6YlG0e-Juhs4ByQzAKGAmtk4fdQW
-X-Proofpoint-ORIG-GUID: dpeo6YlG0e-Juhs4ByQzAKGAmtk4fdQW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-12_09,2024-12-12_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
- malwarescore=0 bulkscore=0 clxscore=1015 phishscore=0 mlxscore=0
- adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412120098
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+References: <20241212131134.288819-1-alexghiti@rivosinc.com>
+In-Reply-To: <20241212131134.288819-1-alexghiti@rivosinc.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Thu, 12 Dec 2024 21:38:50 +0800
+Message-ID: <CAEEQ3w=siNTV4DdVj3N4tW5xBKR-WWByeSxL89_EyC0v=6YNMQ@mail.gmail.com>
+Subject: Re: [External] [PATCH] MAINTAINERS: Add myself as a riscv reviewer
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+Hi Alex,
 
-There are several for_each APIs which has parameter with type below:
-int (*fn)(struct device *dev, void *data)
-They iterate over various device lists and call @fn() for each device
-with caller provided data @*data, and they usually need to modify @*data.
 
-Give the type an dedicated typedef with advantages shown below:
-typedef int (*device_iter_t)(struct device *dev, void *data)
+On Thu, Dec 12, 2024 at 9:12=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc=
+.com> wrote:
+>
+> The goal is for me to get a kernel.org account and then send pull request=
+s
+> in order to relieve some pressure from Palmer and make our workflow
+> smoother.
+>
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 17daa9ee9384..1c7838642398 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20108,6 +20108,7 @@ RISC-V ARCHITECTURE
+>  M:     Paul Walmsley <paul.walmsley@sifive.com>
+>  M:     Palmer Dabbelt <palmer@dabbelt.com>
+>  M:     Albert Ou <aou@eecs.berkeley.edu>
+> +R:     Alexandre Ghiti <alex@ghiti.fr>
+>  L:     linux-riscv@lists.infradead.org
+>  S:     Supported
+>  Q:     https://patchwork.kernel.org/project/linux-riscv/list/
+> --
+> 2.39.2
+>
+>
 
-- Shorter API declarations and definitions
-- Prevent further for_each APIs from using bad parameter type
+Thanks for reviewing many patches before. It sounds good and I also support=
+ it.
 
-So introduce device_iter_t and apply it to various existing APIs below:
-bus_for_each_dev()
-(class|driver)_for_each_device()
-device_for_each_child(_reverse|_reverse_from)().
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/bus.c            | 2 +-
- drivers/base/class.c          | 2 +-
- drivers/base/core.c           | 6 +++---
- drivers/base/driver.c         | 2 +-
- include/linux/device.h        | 6 +++---
- include/linux/device/bus.h    | 7 +++++--
- include/linux/device/class.h  | 4 ++--
- include/linux/device/driver.h | 2 +-
- 8 files changed, 17 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 73a56f376d3a05962ce0931a2fe8b4d8839157f2..6b9e65a42cd2e12046ddabf2d8dfb209d513f7da 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -354,7 +354,7 @@ static struct device *next_device(struct klist_iter *i)
-  * count in the supplied callback.
-  */
- int bus_for_each_dev(const struct bus_type *bus, struct device *start,
--		     void *data, int (*fn)(struct device *, void *))
-+		     void *data, device_iter_t fn)
- {
- 	struct subsys_private *sp = bus_to_subsys(bus);
- 	struct klist_iter i;
-diff --git a/drivers/base/class.c b/drivers/base/class.c
-index d57f277978dc9033fba3484b4620bcf884a4029f..70ee6a7ba5a3746b5a182c6101b5c085b424d01d 100644
---- a/drivers/base/class.c
-+++ b/drivers/base/class.c
-@@ -402,7 +402,7 @@ EXPORT_SYMBOL_GPL(class_dev_iter_exit);
-  * code.  There's no locking restriction.
-  */
- int class_for_each_device(const struct class *class, const struct device *start,
--			  void *data, int (*fn)(struct device *, void *))
-+			  void *data, device_iter_t fn)
- {
- 	struct subsys_private *sp = class_to_subsys(class);
- 	struct class_dev_iter iter;
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 7be9c732bec1b060a477b362f555c3e87c8c7b91..930e43a970952b20cd1c71856bdef889698f51b4 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -3980,7 +3980,7 @@ const char *device_get_devnode(const struct device *dev,
-  * other than 0, we break out and return that value.
-  */
- int device_for_each_child(struct device *parent, void *data,
--			  int (*fn)(struct device *dev, void *data))
-+			  device_iter_t fn)
- {
- 	struct klist_iter i;
- 	struct device *child;
-@@ -4010,7 +4010,7 @@ EXPORT_SYMBOL_GPL(device_for_each_child);
-  * other than 0, we break out and return that value.
-  */
- int device_for_each_child_reverse(struct device *parent, void *data,
--				  int (*fn)(struct device *dev, void *data))
-+				  device_iter_t fn)
- {
- 	struct klist_iter i;
- 	struct device *child;
-@@ -4044,7 +4044,7 @@ EXPORT_SYMBOL_GPL(device_for_each_child_reverse);
-  */
- int device_for_each_child_reverse_from(struct device *parent,
- 				       struct device *from, void *data,
--				       int (*fn)(struct device *, void *))
-+				       device_iter_t fn)
- {
- 	struct klist_iter i;
- 	struct device *child;
-diff --git a/drivers/base/driver.c b/drivers/base/driver.c
-index 6f033a741aa7ce6138d1c61e49e72b2a3eb85e06..8ab010ddf709a2b173cfd0c18610a122e58a2f4c 100644
---- a/drivers/base/driver.c
-+++ b/drivers/base/driver.c
-@@ -115,7 +115,7 @@ EXPORT_SYMBOL_GPL(driver_set_override);
-  * Iterate over the @drv's list of devices calling @fn for each one.
-  */
- int driver_for_each_device(struct device_driver *drv, struct device *start,
--			   void *data, int (*fn)(struct device *, void *))
-+			   void *data, device_iter_t fn)
- {
- 	struct klist_iter i;
- 	struct device *dev;
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 025bac08fca7b2513acb1fbcb666be1dc64f03d1..36d1a1607712f5a6b0668ac02a6cf6b2d0651a2d 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1075,12 +1075,12 @@ void device_del(struct device *dev);
- DEFINE_FREE(device_del, struct device *, if (_T) device_del(_T))
- 
- int device_for_each_child(struct device *parent, void *data,
--			  int (*fn)(struct device *dev, void *data));
-+			  device_iter_t fn);
- int device_for_each_child_reverse(struct device *parent, void *data,
--				  int (*fn)(struct device *dev, void *data));
-+				  device_iter_t fn);
- int device_for_each_child_reverse_from(struct device *parent,
- 				       struct device *from, void *data,
--				       int (*fn)(struct device *, void *));
-+				       device_iter_t fn);
- struct device *device_find_child(struct device *parent, const void *data,
- 				 device_match_t match);
- struct device *device_find_child_by_name(struct device *parent,
-diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
-index bc3fd74bb763e6d2d862859bd2ec3f0d443f2d7a..3d3517da41a141aeadc8f219a44fd360cfd931ff 100644
---- a/include/linux/device/bus.h
-+++ b/include/linux/device/bus.h
-@@ -139,9 +139,12 @@ int device_match_acpi_dev(struct device *dev, const void *adev);
- int device_match_acpi_handle(struct device *dev, const void *handle);
- int device_match_any(struct device *dev, const void *unused);
- 
-+/* Device iterating function type for various driver core for_each APIs */
-+typedef int (*device_iter_t)(struct device *dev, void *data);
-+
- /* iterator helpers for buses */
--int bus_for_each_dev(const struct bus_type *bus, struct device *start, void *data,
--		     int (*fn)(struct device *dev, void *data));
-+int bus_for_each_dev(const struct bus_type *bus, struct device *start,
-+		     void *data, device_iter_t fn);
- struct device *bus_find_device(const struct bus_type *bus, struct device *start,
- 			       const void *data, device_match_t match);
- /**
-diff --git a/include/linux/device/class.h b/include/linux/device/class.h
-index 518c9c83d64bdf85bb5607cea6ea640884ec3460..aa67d473681612f24a4569bf82fe5f91237d5a50 100644
---- a/include/linux/device/class.h
-+++ b/include/linux/device/class.h
-@@ -92,8 +92,8 @@ void class_dev_iter_init(struct class_dev_iter *iter, const struct class *class,
- struct device *class_dev_iter_next(struct class_dev_iter *iter);
- void class_dev_iter_exit(struct class_dev_iter *iter);
- 
--int class_for_each_device(const struct class *class, const struct device *start, void *data,
--			  int (*fn)(struct device *dev, void *data));
-+int class_for_each_device(const struct class *class, const struct device *start,
-+			  void *data, device_iter_t fn);
- struct device *class_find_device(const struct class *class, const struct device *start,
- 				 const void *data, device_match_t match);
- 
-diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
-index 5c04b8e3833b995f9fd4d65b8732b3dfce2eba7e..cd8e0f0a634be9ea63ff22e89d66ada3b1a9eaf2 100644
---- a/include/linux/device/driver.h
-+++ b/include/linux/device/driver.h
-@@ -154,7 +154,7 @@ void driver_remove_file(const struct device_driver *driver,
- int driver_set_override(struct device *dev, const char **override,
- 			const char *s, size_t len);
- int __must_check driver_for_each_device(struct device_driver *drv, struct device *start,
--					void *data, int (*fn)(struct device *dev, void *));
-+					void *data, device_iter_t fn);
- struct device *driver_find_device(const struct device_driver *drv,
- 				  struct device *start, const void *data,
- 				  device_match_t match);
-
--- 
-2.34.1
-
+Thanks,
+Yunhui
 
