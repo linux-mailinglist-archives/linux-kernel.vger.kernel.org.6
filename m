@@ -1,120 +1,210 @@
-Return-Path: <linux-kernel+bounces-444015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82689EFF5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:30:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E95E1886E8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:30:34 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FFD1DE3D5;
-	Thu, 12 Dec 2024 22:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLaq9Bxk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7529EFF65
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:31:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BEE19CC0F;
-	Thu, 12 Dec 2024 22:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734042628; cv=none; b=rB1gHVFHmyFBSQigvwsSsazk2CSX09wGmF3Jgqm76CIX0IjmPXS2C/aoimxeFZp9Q2iujltNNY7dwtx2viK74dJ0C6FrkbHyUKEqag2u/z1unPGihoexrnp3D9DqgdDdfvUYNAOey5AnuIcn2Y8a1rLU68tIlNqMFoHLxnBFUnA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734042628; c=relaxed/simple;
-	bh=GfgvB7VvI35d4Y+A3lfg32jaJdQuBRvgZUCRKZU/NDA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=pwqLIb+pWjTJdvFLwHbAr6AHVl0G1KnUnS3tg2pE56knJ/VBeynE1Vz/LxxCgy2Tj23pq+Zd5IBIQrO/mUF2UFlVFnbpennW+Od0HzTazj0SPMdnZtPaWdoKiIPP2rAhycbM0b6GgNrJWo518AkGZ7DLE6x3XN65ls466QMDZPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLaq9Bxk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9691EC4CECE;
-	Thu, 12 Dec 2024 22:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734042627;
-	bh=GfgvB7VvI35d4Y+A3lfg32jaJdQuBRvgZUCRKZU/NDA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=mLaq9Bxk3T7mh86p6zkb4Ec0ewssBIdzj4uNX3smwvAeWx1QasB99CUvJGH8qvWWf
-	 6WyIdk8ECJXakyB7fSFlgipr8s2Ez2rCTtECyciq3x2iC+TATu9Sh18Coza/JnhMvL
-	 +hC56oloGoBD6RXMtWdVv78fVDT5FH4HkWqmAmqghBF3JyRv/gPtOZktF4kyAvePuB
-	 EjgQ62I7JKRwQx9N+Fs4hGpbVs2Fcu/kD2FDmN4ZFF1VHRnHbqCPQU5KuDX42fs0EW
-	 rDXHYXwWFt2dXU2W6PnT01Kexg/k26D5uoL24acpGK05eFGYGKp64Vfy158tdF3ZNd
-	 5gQfiEXMRHWjw==
-Date: Thu, 12 Dec 2024 16:30:25 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD57628756C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:31:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB3F1D959E;
+	Thu, 12 Dec 2024 22:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wNVC1mFU"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2066.outbound.protection.outlook.com [40.107.92.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE6F1DACB8;
+	Thu, 12 Dec 2024 22:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734042669; cv=fail; b=LjTZPRe90WsBGsjnldE3JyIpdOdeh2aekHgYbRw59Kz7GosW+Sjo8HudmfgVEyOyxlOTzlgoec3cZqrURjktyT509afQn06sUpUNP4sVzvPM0MJZP3ZFffwsN4FrH1NVEGeNHFpRVodzjCTmpqYeryFJccRNilnn35KAwLyyjCs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734042669; c=relaxed/simple;
+	bh=Xz4iR4W8LrDne8p/govhOt0XYNGwYFRJxOuBBSKpaE4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MVOeWhWT2QjBOmKFsm7DPL//5HzGOL2wqJtQSlMsI9GXgpVh9Klg4r7GXZXVg4VXBHPOtLsC0knqObvCfYJEwgWmmHdG3+3sAxqsJuXHxLiWOGvxidLNveK/LxUU3ObgMFoDLvzN2szQIq3eRMxkBvu3mOoMxnZtXwJyTD9DJJU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wNVC1mFU; arc=fail smtp.client-ip=40.107.92.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KdLzQlkiCUgNqm+yMIRU4IxOa99ncn+aOyogOeF02STNd1vFIU/fLSStIW5zRaZp9x6gLX2Wu8bhkLGlxq6Vxizf/Gnzll5rxbLeZWAvrNfA1N/yY2XkZtYIrzAhIebguqQCJt+7HgFkVRxPDtmjRSJhDDIf1XBGRE5Lx3n+emRH6VqCj/cvesW0NDUqP2cEZQJiqH4dEl/uXC5uGBx5/fhm61yICv6NvqwfJxNF1RxQ5oeG5wOnlHZUWQjakCln8QpKHpF2tlGlhCg239iolz0Si16WCVOcVvF7+HWo6xb9y1tsie4ux8eS0ekT11x8brtLXaP5GIq80x82Cva18g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jiN+01x8eQWxKs9PaEiH916ewfyRGLyV+JdMiiIwstg=;
+ b=rAiMHx3SqRLqf1VRUIKcZbxzYIQXaMHoZc93K935U2Wubboo+Ov0+oYAPi0M2jtobKo7GUMKmrb+U8hscT8FXRRREH/trEHt1RQfoiswwDfjFwDoCT8XB8FUXWN5vG4F0JAvG2Ib8ef8Owjw8MkLirEgSC7Y3/VZfkHF/Y9AEPxYhIWyhC2XU+PnTB9xST8LrXcduWT3Gx+dSS5BQvaP9eRWOlJA0cGGqBfPokpwfGWW0n4/0GjFiJ9dDVepN3Ej3vXPc4hj4gCPCX2EGWwtQeq2yRURWQj56fMk9+oWk2hS56bs69oAgb7LzWJl3Cj1r5RhzzR5qMHVOVLD98PQsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jiN+01x8eQWxKs9PaEiH916ewfyRGLyV+JdMiiIwstg=;
+ b=wNVC1mFUsjspgs7bZRDvZ+zq2cv2/zJkFTKtu2muc2m+rRtzJdmgmROdb1vCupsQpFSiCqynVnI/D7VfLcIR3ZJ446DE9FeNCoDgBxonvwh6ZRGzRbnXrb3Em0VGpZegUKmtQ0NF8ZsXKhbSy/yGRwON/whH7T5rgbS1dPxN7yQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SJ2PR12MB8063.namprd12.prod.outlook.com (2603:10b6:a03:4d1::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Thu, 12 Dec
+ 2024 22:31:02 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8251.008; Thu, 12 Dec 2024
+ 22:31:02 +0000
+Message-ID: <47f9ccce-1946-4586-b918-3de203b5c712@amd.com>
+Date: Thu, 12 Dec 2024 16:30:59 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] soundwire: amd: clear wake enable register for
+ power off mode
+To: vkoul@kernel.org, Mark Brown <broonie@kernel.org>
+Cc: yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
+ sanyog.r.kale@intel.com, Basavaraj.Hiregoudar@amd.com,
+ Sunil-kumar.Dommati@amd.com, venkataprasad.potturu@amd.com,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alsa-devel@alsa-project.org, Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+References: <20241203092144.4096986-1-Vijendar.Mukunda@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241203092144.4096986-1-Vijendar.Mukunda@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR03CA0007.namprd03.prod.outlook.com
+ (2603:10b6:806:2d3::16) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Maksym Holovach <nergzd@nergzd723.xyz>, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-To: Markuss Broks <markuss.broks@gmail.com>
-In-Reply-To: <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
-References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
- <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
-Message-Id: <173404262581.3370297.1817961099331187454.robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: soc: samsung: exynos-speedy: Document
- SPEEDY host controller bindings
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SJ2PR12MB8063:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c793021-cda1-4474-01c3-08dd1afca890
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cXY5VElJbHhjRnpFb21YYUtOVmdHY3BBb01uK0htb25NME4wdU96L3BBZ3VW?=
+ =?utf-8?B?c3Fic1htVEUwMDFOdlZXQWhjSVh6NWV5eFVmME5sMXNtWnB4NTM0b05uZy94?=
+ =?utf-8?B?bmtORysycEZidTFIbWNHNVI5NmRnVGlHdmRFMWhzZi8yMzhSTno2VDJaOEFC?=
+ =?utf-8?B?MTllWWErQUhTNlVkTTZBSkxEU2hDaEVKVitZL1FXajFzdDFkaXJocGZGd01n?=
+ =?utf-8?B?NFkrY2FURUxPSVVuSFdTVm9sdWpqTFg3ekltMktOL1UrWFdjRnFaL21UZ0Vo?=
+ =?utf-8?B?RTRVamtaS2VxeDhRTEh2N3gyeXZ4NDNnUUtDR2N2b2dHRW8vNzVoenlVNjdQ?=
+ =?utf-8?B?d00vcitTRmphblB1czh6UHFneVhOeUxsL3E2Q0RWa2UyNjFMQk1Ra3lMdWRL?=
+ =?utf-8?B?TXpiaXc3SC92V3pyakt4cTNBUHIzM0t0WUExOWtkc2VIa3JzRWJJR2hVZHJH?=
+ =?utf-8?B?MnNpMlIwUkp6V0R4dm5YOWJEZkdZSzhKb2REUkV1WjF3bjFjM3hMUjNWVTc0?=
+ =?utf-8?B?NHI4ZjJoc0Y1cnppQ1pxSlVLRnQvYm52c1d5Q28reDhLMnd1dmN5YkU0NG1p?=
+ =?utf-8?B?VzEycUlUK0tmVUVYbjRtZFB1Y2J6bDNvWmZEQUhrSEdiTWxNUlc3RW95SzMr?=
+ =?utf-8?B?bUFSSU1sNmNTQ2oyTmUyQmE2aThqMmdJeWJNWVUvSk5tNDBQN083dENJZ01F?=
+ =?utf-8?B?ZGg3Zm1QbmthYXkrZFVaWFZZMUhGS1pFLzJVemVkeWVYQ2Z3OE0zNUdOenl4?=
+ =?utf-8?B?ckZwcko3VnNHanhtNVlCcHBMcUNETUpPVjlSSDUwd1VRTHo2U3lHSG9IWjJl?=
+ =?utf-8?B?YldVa0FQam1IZGU3azBvalMyaTR0M1ZtVjFsVzNpL1MrdGVuUWtpNXAwcTlo?=
+ =?utf-8?B?eTlNQU9kUzRxekFTMmcyejJwdEVPN1pQWk1yQnU4T2lhN29Jb21JZUpqc3Nh?=
+ =?utf-8?B?ZExrMTQvd3RqVUM2VnNscERuQVNJTHpRT01Sb0ZoVHliZDhpN3YwdjRUdmlp?=
+ =?utf-8?B?c3lielRGY2w5dWNRQUs0ODVyc3ZORnNPQ3Q2ZTQvdGd2REx0QksyV2tiUWZu?=
+ =?utf-8?B?TVFwVlNYdUxJSzlYMm02czI3RVRkS3l2Vk1IdGdYdTNCLzQzVVRoZWFRNjgw?=
+ =?utf-8?B?eDVTQTdvTUxPc3UwZGZyTUs5M2ZSWVBVQ2ZCVVJUSnRUaDcrUGdxUnl0d2JK?=
+ =?utf-8?B?WWYvOTUvTDRlVjZ6OVNHZWJML3g4TzFsamtLVmRNRDcxeTdjWk5veE5UMkZh?=
+ =?utf-8?B?ODVybEtnSmIvbEF2eFEvdzBUSE0wdVNrbEIrNS9sTGJRdEcrWWhRTW92d1FO?=
+ =?utf-8?B?K1JvM3FHZHNXNmgxM2FjK242Z0RXZVVuNm1za25LNVJvditucjM0QitlTGtv?=
+ =?utf-8?B?RWE3N1BzNUN3RW1NY2d4bUUxNkZIbDdoU1FLbi9IY3FnVmJGSkxuYi9UMEZC?=
+ =?utf-8?B?dm9IMk9laGJpamlPWFMrbWpEVGxKRU9YalBJcTYvRUJYNUZHVFBFNC9TbHJ4?=
+ =?utf-8?B?eGxYMFIvWkZtWmxjM3ZmN1IzeW00TWlsUThMZndmZUJMQkVYdU5mbVNFU1N3?=
+ =?utf-8?B?R1Uya0k3TkhQaHF0K0R5STZNWk5UenNHVUI1U3gwWC9CakhCZjRTU25FUURT?=
+ =?utf-8?B?NjVQQXVNclVRanI0cmxzWTgyZVV1NzUyQ1AvNWtkbWo0Z202MGh6NmMzbEps?=
+ =?utf-8?B?SktSTHB3eVhncnR2QlFYZ1JUblN3dTlyazhkUGdYNnBFV0M0ak5pbDU4Q05C?=
+ =?utf-8?B?Smg5cEFMSFIrVGNFREVOZWQ5ajhXOGZhM1QyMUw2c1NmWjE5TzJpNGR2c3po?=
+ =?utf-8?Q?fEt0Z2R9LElQOZUR8UqzhQEZew+0FKWLYOKBE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dVRlU0dvQ1kzbkkwN24yVi9pTERVUUFxS3EwVWM2aWo5THB4dVEwdWNudk5j?=
+ =?utf-8?B?aHlvbnI5NnRKRFQ4V21USnpnUmt2bmFFYk1UQmhFYVZVYzFFd3FwS1ZMc1FW?=
+ =?utf-8?B?aVJ1aTNrSGlPOVptYm00OTdjVWdPZ1lBc0RYT09jY2dHY3F5Rlc1aVRWRyth?=
+ =?utf-8?B?V3kyQ3VZNElWZ0g5T3NVeHRhc0l2NEM5NElYQ3lxeTIyeE15SjcwY1FaVC90?=
+ =?utf-8?B?TGkrc3gwZzNyOWVwNVQzbWloT0JqSDljcW1FTTM1a3N4T0QvcS9vVDJTTitm?=
+ =?utf-8?B?MGpTZHllYVhSS0gvaUN0WVQrTCtEeGJvU0pJMGNIejhXVEp2V2VuTEVKaHdB?=
+ =?utf-8?B?S0RsN1Eybm83VmVaV1I2dTRGcFFiU3lyWkV1VE1HM1FwMXB6ZUxIS3RJQjJY?=
+ =?utf-8?B?SlhuMVNLQjVaYUlmMDdmdUlvajdJY2hUbFFVZS9yTlBITDdHbytjZnY0TEN3?=
+ =?utf-8?B?aFZ3ME9kcmlkc2taVjFTc0ZaS21COG13QlhJa2c4eTlvSllYUDlBNjFvSXJY?=
+ =?utf-8?B?VTNkdkg2bzdJRGZFL2x3Y1ZXdVFXK3N5aGpNREIwdTZCaXJKaDZVZk9jL3Zp?=
+ =?utf-8?B?RFV1MERHY1pLTlg1cjhCVXF5Y1ZPOTlyVW1rZEp3enNXNVNGNGlLZzA3U25V?=
+ =?utf-8?B?UWVGYWhWUlVLdXRJOXFKcnRGdTkxemRISjRmZWhpOUN5WTZHUHRjeThsRTNJ?=
+ =?utf-8?B?ajFLYVdPY3dINndLdE50cWR5blpKVEtNemtTbWRDcWNNMjc1cHVYSk9JRGNB?=
+ =?utf-8?B?aUxkOXFNWTBDUUJjaGl3YnBqcHltWEZ1N2orWE9PcFNBa1JJTGF2YWI0MXdG?=
+ =?utf-8?B?b3A2VzlPcTJVVFY2d0JuSWtxUDIvcE00NXNwdkRlc3V2aWZtWitXME14bTV5?=
+ =?utf-8?B?YjJ4dnZ5YmN6ZFhZRXROVXVBM0phbTJFcHlmSzVzakhQYlkrR0ErREdHSWJK?=
+ =?utf-8?B?TlZwaElsQm4wRDBPTzE3MDhhWVZocEVGL3l5OGg1UUk1cG1ueGlKMWlHR3VK?=
+ =?utf-8?B?VU84Z08zcU10bWpLS0lrVWpkKzY3ckgzVGpFWW52blB1cmxPMHhUYUNoM2l3?=
+ =?utf-8?B?Mk1xS29PWUMvR3JYdklMY1FMeVRxNUlYV3ozWWxyOGJhcE5UN3ZHZFNmVGFU?=
+ =?utf-8?B?TElyZ2p6ZVMvdFBwczJFWmZHbGVLaWNiYzNNRnVKTHZmZXRDNnBCTzdraHZE?=
+ =?utf-8?B?UVJISENjQjZtZFJYRGIraDdYTWNaUmx4Q2doWkswWng4Unlkdmd1U3A3TUpY?=
+ =?utf-8?B?cCtoWWFZM2xPTXVjbEZ1ODE1YzJvdThUNXozQ2M3bUlvdVoweXB3K2lydHM4?=
+ =?utf-8?B?c0tEL3VrVUR4Mm9oaTg1Z1I4TTE1eDJ6bjFWVnpTQmw2RGY3VzF0ZVIxUDFV?=
+ =?utf-8?B?ZUlXL0c1SkZQemVtRHA4STBEQ253S3prSlpUaWhUeUh2ZUpsVzF1SmlNVEx5?=
+ =?utf-8?B?eTNES1U5bkwycWRGTDR0SXBDaTRyUngyblM4T1k1ZHJHUzA3QS9vMklhNldK?=
+ =?utf-8?B?elluNzZWdkJsYkRUdElqY0RoNDZUN3lLWHExT21ZS3I4MTM2NnQzUTZNUytG?=
+ =?utf-8?B?cGlqTWhad2pGRDYvTnE3QzhZYWR6cW5NMERCbXJuZTRJRHlHUlpIS3R0VlBN?=
+ =?utf-8?B?NGtmZ3JHRWVQY2xmY2kxK0JqcjN6RmY1cmM2UWdCaVgyVW1mRDNLOXUvemwx?=
+ =?utf-8?B?MTVlWE1ZWFF4a0ErdUtvNVlVZ1VaSVFHN2Jhc3dNOFUvYmJXTVdMUVZ4Mmg0?=
+ =?utf-8?B?emVWNVFCS1cwOWVnZm1uTkpjMzhsWlptT3orMXdHOFpuNzZyZmxxVGpQQ05F?=
+ =?utf-8?B?Tm9NQWRySzNqV0gwUmhpdFJjMzIvN094ZTJFcithWDZCM1ZPWk5HVk9CUVRW?=
+ =?utf-8?B?OHNsdlRDbkN1RDN0Qm1mWjl5cDVNak1sWjY1M1FjS295Q2M0OUpZRVFPOGU4?=
+ =?utf-8?B?aDRvNFBRb1ZKNHRPUVIyZ2UxWkVOQ2xZTnhVcVh0dm92NFBMYVhxN1pyZWpN?=
+ =?utf-8?B?My9KdjcxOWdmYUUrRGdaVlJvMy9EY2QrSTdLS2hUS24rcUtmeE1NSnVKc1ZP?=
+ =?utf-8?B?eDZsdlh5TE9EZHgrMHZlRThtNmRYNGJGNGtubGZlSFdsUkplbitwa2lpTHpq?=
+ =?utf-8?Q?lUY9ltAqPkqY+Ux+i0Ca+MgmZ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c793021-cda1-4474-01c3-08dd1afca890
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 22:31:02.0363
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bS73mZ4kW3Gekb+uyFS11ao8oCcKPedt3mKRExK/7qORP1kFKzRinx4bLxjv0sp3yKpAYvgX1RA8q/sqblFMlQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8063
 
-
-On Thu, 12 Dec 2024 23:09:01 +0200, Markuss Broks wrote:
-> Add the schema for the Samsung SPEEDY serial bus host controller.
-> The bus has 4 bit wide addresses for addressing devices
-> and 8 bit wide register addressing. Each register is also 8
-> bit long, so the address can be 0-f (hexadecimal), node name
-> for child device follows the format: node_name@[0-f].
+On 12/3/2024 03:21, Vijendar Mukunda wrote:
+> As per design for power off mode, clear the wake enable register during
+> resume sequence.
 > 
-> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
-> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
-> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+> Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+
+Hi Vinod,
+
+Can you please pick up this patch?  There is other work that needs to 
+build on it that is currently blocked.  It's been on the list for nearly 
+a month [1] along with a resend [2] with no feedback.
+
+[1] 
+https://lore.kernel.org/alsa-devel/20241112185138.3235375-1-Vijendar.Mukunda@amd.com/
+[2] 
+https://lore.kernel.org/alsa-devel/20241203092144.4096986-1-Vijendar.Mukunda@amd.com/
+
+Thanks,
+
 > ---
->  .../bindings/soc/samsung/exynos-speedy.yaml        | 78 ++++++++++++++++++++++
->  1 file changed, 78 insertions(+)
+>   drivers/soundwire/amd_manager.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: ignoring, error in schema: properties: clock-names
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: properties:compatible: [{'items': [{'enum': ['samsung,exynos9810-speedy']}, {'const': 'samsung,exynos-speedy'}]}] is not of type 'object', 'boolean'
-	from schema $id: http://json-schema.org/draft-07/schema#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: properties:clock-names: [{'const': 'pclk'}] is not of type 'object', 'boolean'
-	from schema $id: http://json-schema.org/draft-07/schema#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: properties:compatible: [{'items': [{'enum': ['samsung,exynos9810-speedy']}, {'const': 'samsung,exynos-speedy'}]}] is not of type 'object', 'boolean'
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: properties:clock-names: [{'const': 'pclk'}] is not of type 'object', 'boolean'
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-Documentation/devicetree/bindings/soc/samsung/exynos-speedy.example.dtb: /example-0/speedy@141c0000: failed to match any schema with compatible: ['samsung,exynos9810-speedy', 'samsung-exynos-speedy']
-Documentation/devicetree/bindings/soc/samsung/exynos-speedy.example.dtb: /example-0/speedy@141c0000: failed to match any schema with compatible: ['samsung,exynos9810-speedy', 'samsung-exynos-speedy']
-Documentation/devicetree/bindings/soc/samsung/exynos-speedy.example.dtb: /example-0/speedy@141c0000/pmic@0: failed to match any schema with compatible: ['samsung,s2mps18-pmic']
-Documentation/devicetree/bindings/soc/samsung/exynos-speedy.example.dtb: /example-0/speedy@141c0000/regulator@1: failed to match any schema with compatible: ['samsung,s2mps18-regulator']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241212-speedy-v1-1-544ad7bcfb6a@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+> diff --git a/drivers/soundwire/amd_manager.c b/drivers/soundwire/amd_manager.c
+> index 5a4bfaef65fb..96a3aa6da711 100644
+> --- a/drivers/soundwire/amd_manager.c
+> +++ b/drivers/soundwire/amd_manager.c
+> @@ -1190,6 +1190,7 @@ static int __maybe_unused amd_resume_runtime(struct device *dev)
+>   	if (amd_manager->power_mode_mask & AMD_SDW_CLK_STOP_MODE) {
+>   		return amd_sdw_clock_stop_exit(amd_manager);
+>   	} else if (amd_manager->power_mode_mask & AMD_SDW_POWER_OFF_MODE) {
+> +		writel(0x00, amd_manager->acp_mmio + ACP_SW_WAKE_EN(amd_manager->instance));
+>   		val = readl(amd_manager->mmio + ACP_SW_CLK_RESUME_CTRL);
+>   		if (val) {
+>   			val |= AMD_SDW_CLK_RESUME_REQ;
 
 
