@@ -1,157 +1,147 @@
-Return-Path: <linux-kernel+bounces-443514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85AA9EF3ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:04:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312449EF42F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:06:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94C1416FF21
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:54:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C671892807
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBBD238E3A;
-	Thu, 12 Dec 2024 16:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571A6239BC3;
+	Thu, 12 Dec 2024 16:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiF20FG6"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lHgFMnCa"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E7A238E27;
-	Thu, 12 Dec 2024 16:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C25229692
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734021995; cv=none; b=sPIyLMt5VNful2BYcsbLfp8dprOTlsPuSoyHwMvPQx5dT29hpyjJBvGQfIizNPjCTx6wUYfwLUbF/lb1bLVtg/EC575NlKTNyeOxx8XUj+Z2hHCUDSveLcGPXn+MtapZURIXWuoaLt5fHu9raQCWntGNCv1oqlyYqocgfb3yQjo=
+	t=1734022027; cv=none; b=kX2zNDpLsWmfgvQCK2vmYDvperLon4zBM1YBUqDvz2yCYqCWq8pzG9Jv9S7admJ2XGNpVn1LrLxc6SchwS/vobGwqRmu1IxYMqdd0Fif5y5zCuD0WVjrJSgSW3BZQ0YxiLkOBJ4pFyL2Q9PEOGIVCWMaUGF7vc0FeWUvdEyGOjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734021995; c=relaxed/simple;
-	bh=10mTZ6Baz1w4vZT0DsoF5FMFN4WwL6kq6s4V2xKqoBc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I17EuTrYaGRdj8IJ5RVcx7UxbZOjLaYcKTktMzKWQwuUA4LMC4ddayRwhNkNcK0z8Kn6L7HMQQi5mnx1iamNqn2XOKh+hzJ+oBai3O5GWiLRUGtsDr1TPyX7oa7jzTeBYd5L4X/m7EJtJRuau2DsWmRFEotDgUm6gwz87DHN5kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EiF20FG6; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a8aed87a0dso2781075ab.3;
-        Thu, 12 Dec 2024 08:46:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734021993; x=1734626793; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FoQjUEiKcHT4k34GxlmM0v6sAaxxYb6I9s5NiJskeoc=;
-        b=EiF20FG6ft07gzpayrW9qvk5F6gpl/q8NrFP8ot6pQlXq/TMPaNmhdjakeu+yxjYs4
-         fgAjPxBLzx8EHfQdJY5fYkVLssejkOtviZwtM4+C6+ln6j1CTNae/EHa64bcZNx0KPRF
-         KL9M0N1sivqAi88GDSh0ObAM1FiOsDgr59UH2Fy2iWg7U8jbnkr9BDMShQ6rlJ3TbbOI
-         JRoQ6rssbyaz8E9QSyVLnv/bqmkuihU2VAm8SzVIIV4v4pnlU0IYXaG3yQyfreiKmwKb
-         tpGg176cEnhwux2XRgDxvXN3x8cRfICP+r/KUi6+/PkpDBnO+GpyjYF9VYBqqeeNKufk
-         TH8g==
+	s=arc-20240116; t=1734022027; c=relaxed/simple;
+	bh=gakp5Aj3FEv816mtcgel/jdY/v/jGPkhjk+8fdyuKqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cIy5o4LEB1sJR+bt2mqMmJSVsPN7nxdeOT4s+lib0X5QG6budfP//h5WssbFe/KHdpgheNv6nnY0Hx0Nrgl/VfgFdp4Lc3lJYx3arXVTEYv5goOTDpM8gPy2Vg83582n/y7nXiTtsVWNhC4l3trFv7ZBAgbaiU5lie3FNWTmGZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lHgFMnCa; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC8Ll1M026835
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:47:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Z4OtdDfHtUd2K5YuFPJH9FsYSx7IvdHrXF4yoTvVqjQ=; b=lHgFMnCaTEpWxUcT
+	nc+bvY+Y6RoafPPoduGjjTFdoLoXzZHh4Iy7caYmn0uGPuFZ79woF07U9ANdioi4
+	tvcTIQrcztcZCof6X6yVDA5HbAlf1sT55m8PyDBLSWHFnsJX2hAVQqS6+kOXZGck
+	ThsqK1HmdJBjgJbh4wbUTqYxIAxhmI70y6qxOahsKF89L8qAJwYaqWbBDN8pHhCs
+	E33Dm7QMfxKLwW7VccjlIalndkM7CxbNLW+vjbcjCRey0DAHcyBT5ovRG04AgnPL
+	bLbm0llXi0Vy+Nur4boAi3HnF0B6MOTwc5TWfqfg3ujAVd2+RgATNk+/BzB0+tQp
+	tJjgCA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40knbd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:47:05 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4674128bca3so1477101cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:47:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734021993; x=1734626793;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FoQjUEiKcHT4k34GxlmM0v6sAaxxYb6I9s5NiJskeoc=;
-        b=DUcizYz1xig9tcIE1+l5DCND3pkbR2lBSXuKEsCoYf6edUwG8sujkxT2Y2CYdGoQWK
-         gQ7V0Y8vcMta3zNLfN9QUWXQr3a5/M01YWpywu/ofnRAhtjkTFzT0R5SC4RVKTk7lLD9
-         USt8YL+m2u+s3g6OW2Gl/OeFhdm/yIzc1Uy7tNymoLWjO74SZp5JLBzE92xW8hC315UF
-         LVto/LseUm58iQ5CKnjeG81g49OuJjyxWUXdmgEK2H5R0fX2Ya0gZad2p9I+61gBCGkB
-         lD1WW5U4JaqF1j/PFARDaaTaRAyWn1BBk08TjD7Y2rszZdbzT3yLtJuDWuYGDK+G5iGA
-         v7yg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6bjSc4N1nMW0rTNRIxNA2xC2RmWxD6Kb0Jf2pno+5gzygK3TpXwkJL6O6Q9CJg+ccXJm6NMeSfFGW7u3V@vger.kernel.org, AJvYcCXKiKbcNBtRVs4ex+HQX5xpE+dqNsfsv05DZyqZoNk/bIDaZf5b0y5OclNgA3C7cQj7sHANvcb4TNbvrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEooYmo6dOTD8wifbKYC3d0Ch57DsvnydJAitx/apofGJj5OIl
-	0LtE3BhXgqlkv5WR5ECQKr/6ud96D8eTBwmmtUivR6M5/44DY5YT
-X-Gm-Gg: ASbGncuHcGB6bagGc9qByXtZGFWPJhCT0xWkW3TWJGnb8l1A4AqdWy42vEdfdWOTcaw
-	KeKABbcK7f09mpPYyh3MIKoWpRE0J+VcSuVI4sZdwk1X6HRq9JKw6oxCpNjnyWmUOX1C/vKxqxM
-	9CjdCOHVyi2zuSA5Vvhc+v/ndaIKD13tWqOyQO+02D5zfWhrWk5/V5hfh/hDWPo/FdC2pkyeUIn
-	v6jWyDnxY8zgSeus1LPDX3ZmztGUiGVVImDnUyMOyjnQXEI3sLezXWHc/pSCaki4Q==
-X-Google-Smtp-Source: AGHT+IEsvgNYAMP0uwm8jj3s6kfFQKRCgcMH2TkFySt9PcCsQ4XvyWG8v+6JD49yxKWn1jeK1hcwgw==
-X-Received: by 2002:a05:6e02:1547:b0:3a7:e7a9:8a78 with SMTP id e9e14a558f8ab-3ae57ef8aebmr8023145ab.17.1734021993014;
-        Thu, 12 Dec 2024 08:46:33 -0800 (PST)
-Received: from LeeDev.lee.dev ([2600:8804:1a84:2a00:be24:11ff:fe2b:2474])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a808e1e29esm44346245ab.56.2024.12.12.08.46.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 08:46:31 -0800 (PST)
-From: "Roger L. Beckermeyer III" <beckerlee3@gmail.com>
-To: dsterba@suse.cz,
-	peterz@infradead.org,
-	oleg@redhat.com,
-	mhiramat@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: beckerlee3@gmail.com,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org,
-	lkp@intel.com
-Subject: [PATCH 1/6] rbtree: add rb_find_add_cached() to rbtree.h
-Date: Thu, 12 Dec 2024 10:46:18 -0600
-Message-ID: <4768e17a808c754748ac9264b5de9e8f00f22380.1733850317.git.beckerlee3@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1733850317.git.beckerlee3@gmail.com>
-References: <cover.1733850317.git.beckerlee3@gmail.com>
+        d=1e100.net; s=20230601; t=1734022024; x=1734626824;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z4OtdDfHtUd2K5YuFPJH9FsYSx7IvdHrXF4yoTvVqjQ=;
+        b=Ov/dtXrRZT/R8uXYCH7tecXtxMKO2l8BfzKWRG0dsJT3acIRynVAnPH1W5qeOcWiA7
+         1wmp4bLCgRebdHCNdxREgiJ/bOZLPNg/iZSXsLdanzbYfB2iYQEKua0XU13iDl2x3H7N
+         d1RCqEojQkbwIaLNRU4/Gtw1PQqMTnoPtQIJ7/UTFgKLDscggZ9xodhYaSHFbhhxplLW
+         MoU2gJeN89CaW/pFAbkxkznmiQf6oN0d4Imr4Jm+iBoF/xAdyUnaHHqv7iMbK3iwnKiR
+         kDhsWVtdsHhqZ270eBC3JZcesb0JBjMUOmkD8jLkNPSZc1+zBMbwKJNbQkfRMcv/HUu2
+         kLaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwhHFIazXoIvMtqbq960t3XRSnsPwXy2P6XnQhvJqrQquw0Hmn9xXzltS3UAxzYhiqzSN/xcW7/ueW1pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysJqQ9+77P0xw58e9wNa5kws0GmW9bDMbOqNMg07D0mrw3a2HK
+	anm53Z8dFabeM6BATayb2EgPXcuPCo/AHjqwNl6/s1jY/DHXKPxIxGJiyiudpgiYSFHqOyBjW1i
+	KPl5sUcz2ovaCwCZdFukHTdCv2ausv53rfM0w8fawkP9d/1DgOeY7Wj9o5cuQPv4=
+X-Gm-Gg: ASbGncvaZiueczUPtQS+RS80cbNq0s+Inm6+noHdxMAJCXXkgh5aftzQmtMxwKWKw/N
+	C3WRnhyyPNXzI2Ep26TCqr5RYXFGNkCn7G9UlSm6KAZwwMwsQvpgt8MvwjBRNQvbWP0iykyQOKq
+	i3LBg+wAMEYBilKfXsX+BYU48HSZAsq+0YfQ2/aapkWoydMIM11pzdwETsqYE7zLFD68/ghFhir
+	7BL94tS1bozI5V2JV1l8+4e95afcICU8/ybqfL/3AqZl7BfEkras4ufdpfGTSfIRla6qhFxIk8j
+	NiPej1iztrQwzZIwi95TXVuyOxZ83axPcgHn5w==
+X-Received: by 2002:a05:622a:110a:b0:461:1fc9:61a3 with SMTP id d75a77b69052e-467a1556cdcmr6368771cf.9.1734022024021;
+        Thu, 12 Dec 2024 08:47:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGbmP4pXDhW5EBpXexeneOeQ1H0OIhDr8GB0bZnmXl6AR8XFHt2k4+lrHiAsVPutnSuge9M8A==
+X-Received: by 2002:a05:622a:110a:b0:461:1fc9:61a3 with SMTP id d75a77b69052e-467a1556cdcmr6368521cf.9.1734022023575;
+        Thu, 12 Dec 2024 08:47:03 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6ab7fe8bdsm311763466b.160.2024.12.12.08.47.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 08:47:03 -0800 (PST)
+Message-ID: <1777f0c7-7cea-43d6-a7c0-4777bfb3f1f1@oss.qualcomm.com>
+Date: Thu, 12 Dec 2024 17:47:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] arm64: dts: qcom:
+ sdm845-db845c-navigation-mezzanine: remove disabled ov7251 camera
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org,
+        Felipe Balbi <felipe.balbi@microsoft.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241211-topic-misc-dt-fixes-v3-0-010ac10529b1@linaro.org>
+ <20241211-topic-misc-dt-fixes-v3-2-010ac10529b1@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241211-topic-misc-dt-fixes-v3-2-010ac10529b1@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: VK73zCyY73a5t7FnZWj5KWsjHVKdicYd
+X-Proofpoint-ORIG-GUID: VK73zCyY73a5t7FnZWj5KWsjHVKdicYd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=969 priorityscore=1501 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120120
 
-Adds rb_find_add_cached() as a helper function for use with
-red-black trees. Used in btrfs to reduce boilerplate code.
+On 11.12.2024 9:03 AM, Neil Armstrong wrote:
+> The ov7251node has bindings check errors in the endpoint, and the
+> camera node was disabled since the beginning. Even when switching the
+> node to okay, the endpoint description to the csiphy is missing along
+> with the csiphy parameters.
+> 
+> Drop the ov7251 camera entirely until it's properly described.
+> 
+> This obviously fixes:
+> sdm845-db845c-navigation-mezzanine.dtso: camera@60: port:endpoint:data-lanes: [0, 1] is too long
+> 	from schema $id: http://devicetree.org/schemas/media/i2c/ovti,ov7251.yaml#
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
 
-Suggested-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Roger L. Beckermeyer III <beckerlee3@gmail.com>
----
- include/linux/rbtree.h | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+Since:
 
-diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
-index 7c173aa64e1e..0d4444c0cfb3 100644
---- a/include/linux/rbtree.h
-+++ b/include/linux/rbtree.h
-@@ -210,6 +210,43 @@ rb_add(struct rb_node *node, struct rb_root *tree,
- 	rb_insert_color(node, tree);
- }
- 
-+/**
-+ * rb_find_add_cached() - find equivalent @node in @tree, or add @node
-+ * @node: node to look-for / insert
-+ * @tree: tree to search / modify
-+ * @cmp: operator defining the node order
-+ *
-+ * Returns the rb_node matching @node, or NULL when no match is found and @node
-+ * is inserted.
-+ */
-+static __always_inline struct rb_node *
-+rb_find_add_cached(struct rb_node *node, struct rb_root_cached *tree,
-+	    int (*cmp)(struct rb_node *, const struct rb_node *))
-+{
-+	bool leftmost = true;
-+	struct rb_node **link = &tree->rb_root.rb_node;
-+	struct rb_node *parent = NULL;
-+	int c;
-+
-+	while (*link) {
-+		parent = *link;
-+		c = cmp(node, parent);
-+
-+		if (c < 0) {
-+			link = &parent->rb_left;
-+		} else if (c > 0) {
-+			link = &parent->rb_right;
-+			leftmost = false;
-+		} else {
-+			return parent;
-+		}
-+	}
-+
-+	rb_link_node(node, parent, link);
-+	rb_insert_color_cached(node, tree, leftmost);
-+	return NULL;
-+}
-+
- /**
-  * rb_find_add() - find equivalent @node in @tree, or add @node
-  * @node: node to look-for / insert
--- 
-2.45.2
+* nobody cared for so many years
+* there don't seem to be (m)any active users of DB845c left
+* /\, even less with this specific mezz and usecase
 
+I'm happy to see it gone
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
