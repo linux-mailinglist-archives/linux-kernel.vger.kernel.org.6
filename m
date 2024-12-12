@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-442764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36BB29EE13F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:28:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB709EE143
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:30:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48BDA162D51
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:28:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3067D2838A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA9820CCC1;
-	Thu, 12 Dec 2024 08:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE461C460A;
+	Thu, 12 Dec 2024 08:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N5/y837y"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9404558BA;
-	Thu, 12 Dec 2024 08:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VvRyHYPG"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA916259496
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733992121; cv=none; b=ndG1iaqDemNXFta4PCxfy0rZx/cIBWq1/fhloOTOudMUGqcc11ss/i8oxF9KmIpNSPZf0iuiXLwMihVBVDf3uzrLuemz/vsUCahbcbO6hRoe0z16saMwyDBpcUEkOwr1+cCm5/YBXz/6FRb4fwJ4eCt1m0AZhdvC0Wh98qSdzwU=
+	t=1733992236; cv=none; b=DxCHtGAvZMJ0+mG3921rOKkofoKJzvaT9VDwnmd53XehU8dTBjR6BLepxZfh9sVj3PnHPO3fdxqWmUfMz1FXdGX6k3ovgRClL4P8zSewraJVbEz4MCcPUE0u0Bwcmv3wlCzPMzguVNzoSK1wo0RWdKED04g+vNH8juhYq50YuhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733992121; c=relaxed/simple;
-	bh=oyi0+49mkb2V9ZQTgaTzcjk3FjXvGKxD1y6nVU4+9RY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=V7Levit66vG9PkiUzDlQvPruNLFv33SPdrxe8rGKz3awuLFjGkL5FdbWGMmMu2Za+M9fFvciki68+GQvNFQqGB3LUWsEeoOG67Kk/9YUZ0Bw7YmGd5/WyJszk4nMCEY48e7Cijay/HzN/iV91IMJiXZeByIwggs8veG18CMCLUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=N5/y837y; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5F18720ACD66;
-	Thu, 12 Dec 2024 00:28:39 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5F18720ACD66
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1733992119;
-	bh=k4I45kyxnDNzHp98bbNcFbcUeN1YhvrRo8OzgJx/BxU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=N5/y837yvlUvwy09IS0zYw5cnCSW5zzYRwKfd0y8+58FVs54Bih77jp1I0NGMHmNg
-	 v/awkANfqxR4gAHHNyCN6KmIthAoslBsmnzZeSd+RadCVdI2vWN8AV52R7eeF3sJvh
-	 owBhWCAAXc9pUfbt4UvoE6Z+Er/jPdgzBZ+XWzT4=
-From: Saurabh Sengar <ssengar@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ssengar@microsoft.com,
-	avladu@cloudbasesolutions.com
-Subject: [PATCH] tools: hv: Fix cross-compilation
-Date: Thu, 12 Dec 2024 00:28:34 -0800
-Message-Id: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1733992236; c=relaxed/simple;
+	bh=AGX6qi5HvFvx6+fzD5zIDuHGI8h0eLH015en6YAd4ZY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZCz032/OYpyFNDg0HGJXa+yTDaKSkjPmyNGvRQM3H2JsDOfc1IMsyujFjGWn2NFkEG4VGN47jRIW3FuTpWU2d4E2ai/fwKd0FQk5wsImPCX3fjwERzTJUoCt7pqRiDPsTwOFvAP9XvRIb9JlpG+1mWjp7CsL2TmaP1cQzhE8874=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VvRyHYPG; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=1SQUA
+	wjf40SnLqWEK57sKLEKKy0eFYKmxOuVnk0xUog=; b=VvRyHYPGgH+pQ9hjlLZlt
+	nnfoxeMWlfy4ke2KlON/dTYw1pEvN50OX7JiphJ4dEEnXBML55BPflS3gUBS2ILs
+	ysdeMFZUcMEUrs5WgjKWC6yO8/XL0tYhyliOSGDVxGdCsj4s653AHPyOL1vK7Z9D
+	/3WfNgdSKNa22Xw+UimdxI=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3FzrXnlpnfupOAA--.30434S4;
+	Thu, 12 Dec 2024 16:29:26 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: surenb@google.com
+Cc: akpm@linux-foundation.org,
+	kent.overstreet@linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lkp@intel.com,
+	oe-lkp@lists.linux.dev,
+	oliver.sang@intel.com,
+	yuzhao@google.com,
+	David Wang <00107082@163.com>
+Subject: [PATCH v2] mm/codetag: clear tags before swap
+Date: Thu, 12 Dec 2024 16:29:10 +0800
+Message-Id: <20241212082910.30826-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <CAJuCfpGJp-U3t_SHRhuSRTu7Hjkz23oqKSNbVL79O1OQhgJndw@mail.gmail.com>
+References: <CAJuCfpGJp-U3t_SHRhuSRTu7Hjkz23oqKSNbVL79O1OQhgJndw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3FzrXnlpnfupOAA--.30434S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Wry3Zw4rJw1xWFyxGFWruFg_yoW8ur15pr
+	47Wr1UGa95JryxCrWkK3W2vr13Xw45tw15GFWa9a95Zryayr47Gr1kWFW2qFnrZFWkAF4S
+	yrsrWrWIk3WUA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pilfO7UUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0gOzqmdalpSqGAABsE
 
-Use the native ARCH only incase it is not set, this will allow
-the cross complilation where ARCH is explicitly set. Add few
-info prints as well to know what arch and toolchain is getting
-used to build it.
+When CONFIG_MEM_ALLOC_PROFILING_DEBUG is set, kernel WARN would be
+triggered when calling __alloc_tag_ref_set() during swap:
 
-Additionally, simplify the check for ARCH so that fcopy daemon
-is build only for x86_64.
+	alloc_tag was not cleared (got tag for mm/filemap.c:1951)
+	WARNING: CPU: 0 PID: 816 at ./include/linux/alloc_tag.h...
 
-Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio driver")
-Reported-by: Adrian Vladu <avladu@cloudbasesolutions.com>
-Closes: https://lore.kernel.org/linux-hyperv/Z1Y9ZkAt9GPjQsGi@liuwe-devbox-debian-v2/
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Clear code tags before swap can fix the warning. And this patch also fix
+a potential invalid address dereference in alloc_tag_add_check() when
+CONFIG_MEM_ALLOC_PROFILING_DEBUG is set and ref->ct is CODETAG_EMPTY,
+which is defined as ((void *)1).
+
+Signed-off-by: David Wang <00107082@163.com>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202412112227.df61ebb-lkp@intel.com
+Suggested-by: Suren Baghdasaryan <surenb@google.com>
 ---
- tools/hv/Makefile | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ include/linux/alloc_tag.h | 2 +-
+ lib/alloc_tag.c           | 7 +++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/tools/hv/Makefile b/tools/hv/Makefile
-index 34ffcec264ab..d29e6be6309b 100644
---- a/tools/hv/Makefile
-+++ b/tools/hv/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for Hyper-V tools
- include ../scripts/Makefile.include
+diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+index 7c0786bdf9af..cba024bf2db3 100644
+--- a/include/linux/alloc_tag.h
++++ b/include/linux/alloc_tag.h
+@@ -135,7 +135,7 @@ static inline struct alloc_tag_counters alloc_tag_read(struct alloc_tag *tag)
+ #ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
+ static inline void alloc_tag_add_check(union codetag_ref *ref, struct alloc_tag *tag)
+ {
+-	WARN_ONCE(ref && ref->ct,
++	WARN_ONCE(ref && ref->ct && !is_codetag_empty(ref),
+ 		  "alloc_tag was not cleared (got tag for %s:%u)\n",
+ 		  ref->ct->filename, ref->ct->lineno);
  
--ARCH := $(shell uname -m 2>/dev/null)
-+ARCH ?= $(shell uname -m 2>/dev/null)
- sbindir ?= /usr/sbin
- libexecdir ?= /usr/libexec
- sharedstatedir ?= /var/lib
-@@ -20,18 +20,26 @@ override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
- override CFLAGS += -Wno-address-of-packed-member
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index 35f7560a309a..3a0413462e9f 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -209,6 +209,13 @@ void pgalloc_tag_swap(struct folio *new, struct folio *old)
+ 		return;
+ 	}
  
- ALL_TARGETS := hv_kvp_daemon hv_vss_daemon
--ifneq ($(ARCH), aarch64)
-+ifeq ($(ARCH), x86_64)
- ALL_TARGETS += hv_fcopy_uio_daemon
- endif
- ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
- 
- ALL_SCRIPTS := hv_get_dhcp_info.sh hv_get_dns_info.sh hv_set_ifconfig.sh
- 
--all: $(ALL_PROGRAMS)
-+all: info $(ALL_PROGRAMS)
- 
- export srctree OUTPUT CC LD CFLAGS
- include $(srctree)/tools/build/Makefile.include
- 
-+info:
-+	@echo "---------------------"
-+	@echo "Building for:"
-+	@echo "CC $(CC)"
-+	@echo "LD $(LD)"
-+	@echo "ARCH $(ARCH)"
-+	@echo "---------------------"
++	/*
++	 * Clear tag references to avoid debug warning when using
++	 * __alloc_tag_ref_set() with non-empty reference.
++	 */
++	set_codetag_empty(&ref_old);
++	set_codetag_empty(&ref_new);
 +
- HV_KVP_DAEMON_IN := $(OUTPUT)hv_kvp_daemon-in.o
- $(HV_KVP_DAEMON_IN): FORCE
- 	$(Q)$(MAKE) $(build)=hv_kvp_daemon
+ 	/* swap tags */
+ 	__alloc_tag_ref_set(&ref_old, tag_new);
+ 	update_page_tag_ref(handle_old, &ref_old);
 -- 
-2.43.0
+2.39.2
 
 
