@@ -1,114 +1,210 @@
-Return-Path: <linux-kernel+bounces-442464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1119EDD26
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:36:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E329EDD28
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:38:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1060E1681BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:38:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F355464B;
+	Thu, 12 Dec 2024 01:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VCFRbxkM"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E40D283412
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:36:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F8D7DA67;
-	Thu, 12 Dec 2024 01:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3QJR6qX"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2925C41C65
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B297CF16
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733967358; cv=none; b=D1kzbGfQQR1DSe4YpMzObICLCHqRl9yLYgNGvaz3jzfEWJj8PWpVDQgo6HD3I6mtDNoYJyMvPGI2h7AZMTRqnO6BqkqMKSOTSqUiS8aXRgIp0Uv9uR8bCCPBMj2JygYY10vbTL6hpBqjDHjlvHW3+goYjvpDhmVkhqtavDDR6Do=
+	t=1733967502; cv=none; b=rwSOWYUuPnSkjRAIkUhcmmHA7SyP5rWD/5IBtbxwFudp7QJypZO1Z7aCGVxkBkBqONVMMPIb+DH2S/CDlx48oa3N2CtCTzYt7RPCfaG/CktlU+eIMFr3si9319bKViJLzhVKxMYypR09SfGQQnSmd76MKHhTIWW1WXURCOe/Ztk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733967358; c=relaxed/simple;
-	bh=4I8gLbH5PN0mP0QVrcUYvhMHECsTPhYZMcXQ+WQ+Uc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PXB9DPFMt9hrI2xoISyy+HMnC6datMSkOkM630vCO5767NgQ+/uzoKPNekk4tQP6FtffmN4NO9tN9w+Jow0jsklhLt/cNAOg7m7Blfh2nKq0rVYKXKLumUiyKp03vvUTww6Ec5nzaYUrlrC20aZwTh2HOMAt9FyZdO35sxVp4lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d3QJR6qX; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa6b4cc7270so9018966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:35:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733967355; x=1734572155; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OWBYwTpQeje3+MoafQaLkq72MrcYW1QRecg5ZQdtiMY=;
-        b=d3QJR6qX7NaDtFxjD2HaVKM15ka+CL4FmycuhGVcvU193ham67OVEVHWRAvdL2fFBn
-         L4rSuM0QIPx8kSGKJFJ27wquoivXydzsaSyB62RKamesCymLF0gK6XQU1aANvA8SA84g
-         opWuJ4oJm0ucRyVOW8VikUm9noo4wqT2V25PVDKt9hDX4hfX7DZ4FMznSKDauPaPqhJj
-         vvQMW8mpB7R+5i0cvS80QfhgYOAPq7Y+fspXovMgKgWeF4m4fAgpXg0uYWh/WtRIl16D
-         Foq2n10Sylra61fI0HnKQTmFgt5v7qEcorZD/KyaWj8XiNk/K/Yc87tXLWUvb3kcKquR
-         DKEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733967355; x=1734572155;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OWBYwTpQeje3+MoafQaLkq72MrcYW1QRecg5ZQdtiMY=;
-        b=X2U4biMq4gxPmGjgePGwYL1/A0szBAC9KqbX7xdbLu96NGFTCejTBiC192xby8p59O
-         8eo3nEGimmmIQiGa0dIRUAkpgqPWzR9HWhxulFw9CDZenAff3chQg6qN8MwWgnGrFCy/
-         HAAt21wSkBQ6n/jzIgCJEgpM2iVtYgy2FjbIO08G041QFIi31lNUQLz4tP63vVKR4lag
-         L/d3uoETbcsGYB2kI7t3gBK4S8q7Y+PelpHkDFST5ZJJLy3CO3SOOMPzOL0tV5kxP3yn
-         k9DDjDE5Po2FnTpLD1pbMTHpXIbIWGxyUtCg8emZYxD3veeNajeCL/zSM9sCnEO7pM3J
-         VYHw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9G8A+utyOqdRhQ//qcfYEppx6BPVYuhe2ErJdtvHqKDfCugVHjZ2Fsf4yoVmbAIxYxGwwffuN1PcjgO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8ciuTOhJBJlUBH24SCmEumUMHGyGffKnWF66h4oEnNmFBnCWv
-	8g4CjRetHaxQ/SyDxSg/7JiqplHrooFFFkDE9Vi0xnqQhNWR2gnc7bo1QIrVYg8=
-X-Gm-Gg: ASbGncvNthJ7Umafn5vfuKM3R2MZoVBTOqK2YSgc5FzM1fDv+UCwaR7dxr0+hIDao/q
-	BHbj6g+gQBxhIitg04GtsFlGs8Ay2mZt4bwOYMom3Ep8O+38U/N/9NBstPF0gagdT1/5JAGtydl
-	HcMclE9RyNB91TFEcCz8l03sAS6mp+DEMW9fmlXxKBQZabdeeZ1uBf8o5P3QTAj0IIzXokRCNbH
-	X4ie+Gbl5SQ+NlIW8/Bxr7rmVMHK8EsKRWH/yp49+RvlG3/3TyczNC87WLkyyx47R74ZA==
-X-Google-Smtp-Source: AGHT+IHgvSzHuYw/GrNRNjwFCk9Xmc3on0B3OZiRwksob+JXvyPD2txPuKabUXJltPHhBbSxp616fA==
-X-Received: by 2002:a05:6402:360b:b0:5d0:81f5:a398 with SMTP id 4fb4d7f45d1cf-5d4330356bbmr10824470a12.1.1733967355629;
-        Wed, 11 Dec 2024 17:35:55 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69c3512f4sm398006366b.2.2024.12.11.17.35.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Dec 2024 17:35:54 -0800 (PST)
-Message-ID: <ef9a65a6-339e-4428-8487-ead242b3b2d4@linaro.org>
-Date: Thu, 12 Dec 2024 01:35:52 +0000
+	s=arc-20240116; t=1733967502; c=relaxed/simple;
+	bh=Xx2WlBa15PynuyV1qtYoACDIplVhi1qnUeEYPrRsX10=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=W07FFy4E2z5sPoneOd+6gW42qm1ofo55gD0YbbufTA3JwsaH46RdDqnPnPdIlRR6Q8bx/qyqoeiBrRzMOvbJZKiHG3aS+YTDUr8x2xKo9F6I+0nmaGAONHrvdy2F2TEctLc4afOKFAkIbAdhRnA/t/L4hrl3+Pdz28bD2PIeM2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VCFRbxkM; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733967495;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eFSCeKh2XG4V4HSsQcvawPOsbfqsyYaaE6SNHpbCJWw=;
+	b=VCFRbxkMxMnqGeN6WIi6CWEH8GGv7QFnflIuyzUiMEb7nq03ypAekfZaBBzWUPgPvoq8zi
+	EDjJrReKx+/kBH0rFA6Dg+FrHekKKnKGURsKHIAitqu2X+qhkYrCDhzr0v+L1QsCCh2Rck
+	iAzU0N0Rz0C2Ag4Rq4+bkfNlPQyrNMk=
+From: Hao Ge <hao.ge@linux.dev>
+To: surenb@google.com,
+	kent.overstreet@linux.dev,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	hao.ge@linux.dev,
+	Hao Ge <gehao@kylinos.cn>,
+	Ben Greear <greearb@candelatech.com>
+Subject: [PATCH v4] mm/alloc_tag: Fix panic when CONFIG_KASAN enabled and CONFIG_KASAN_VMALLOC not enabled
+Date: Thu, 12 Dec 2024 09:37:23 +0800
+Message-Id: <20241212013723.113408-1-hao.ge@linux.dev>
+In-Reply-To: <a945dde6-90da-2490-e900-74fd4d47286d@linux.dev>
+References: <a945dde6-90da-2490-e900-74fd4d47286d@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/16] media: qcom: camss: vfe: Move common code into vfe
- core
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
- <20241211140738.3835588-9-quic_depengs@quicinc.com>
- <79fc669d-999f-42f3-948a-ee5f3a91ddfe@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <79fc669d-999f-42f3-948a-ee5f3a91ddfe@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 12/12/2024 01:06, Vladimir Zapolskiy wrote:
-> 
-> This is a massive and a functional change
+From: Hao Ge <gehao@kylinos.cn>
 
-It shouldn't be a _functional_ change at all, just a refactoring and a 
-reduction.
+When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
+is not enabled, we may encounter a panic during system boot.
 
-I'll take a look too, see if I can spot a regression on rb3-gen1 and 
-replicate the breakage on rb5.
+Because we haven't allocated pages and created mappings
+for the shadow memory corresponding to module_tags region,
+similar to how it is done for execmem_vmalloc.
 
-@Depeng we can probably get you remote access to an RB5 if you need it.
+The difference is that our module_tags are allocated on demand,
+so similarly,we also need to allocate shadow memory regions on demand.
+However, we still need to adhere to the MODULE_ALIGN principle.
 
+Here is the log for panic:
+
+[   18.349421] BUG: unable to handle page fault for address: fffffbfff8092000
+[   18.350016] #PF: supervisor read access in kernel mode
+[   18.350459] #PF: error_code(0x0000) - not-present page
+[   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PTE 0
+[   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+[   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #3
+[   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+[   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
+[   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
+[   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
+[   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff82a7ceac
+[   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc0490000
+[   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff809201d
+[   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc0490000
+[   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000000002c
+[   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlGS:0000000000000000
+[   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 0000000000771ef0
+[   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   18.362020] PKRU: 55555554
+[   18.362261] Call Trace:
+[   18.362481]  <TASK>
+[   18.362671]  ? __die+0x23/0x70
+[   18.362964]  ? page_fault_oops+0xc2/0x160
+[   18.363318]  ? exc_page_fault+0xad/0xc0
+[   18.363680]  ? asm_exc_page_fault+0x26/0x30
+[   18.364056]  ? move_module+0x3cc/0x8a0
+[   18.364398]  ? kasan_check_range+0xba/0x1b0
+[   18.364755]  __asan_memcpy+0x3c/0x60
+[   18.365074]  move_module+0x3cc/0x8a0
+[   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
+[   18.365841]  ? early_mod_check+0x3dc/0x510
+[   18.366195]  load_module+0x72/0x1850
+[   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
+[   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
+[   18.367262]  init_module_from_file+0xd1/0x130
+[   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
+[   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
+[   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+[   18.368938]  idempotent_init_module+0x22c/0x790
+[   18.369332]  ? simple_getattr+0x6f/0x120
+[   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
+[   18.370110]  ? fdget+0x58/0x3a0
+[   18.370393]  ? security_capable+0x64/0xf0
+[   18.370745]  __x64_sys_finit_module+0xc2/0x140
+[   18.371136]  do_syscall_64+0x7d/0x160
+[   18.371459]  ? fdget_pos+0x1c8/0x4c0
+[   18.371784]  ? ksys_read+0xfd/0x1d0
+[   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
+[   18.372525]  ? do_syscall_64+0x89/0x160
+[   18.372860]  ? do_syscall_64+0x89/0x160
+[   18.373194]  ? do_syscall_64+0x89/0x160
+[   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
+[   18.373952]  ? do_syscall_64+0x89/0x160
+[   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
+[   18.374701]  ? do_syscall_64+0x89/0x160
+[   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
+[   18.375416]  ? clear_bhb_loop+0x25/0x80
+[   18.375748]  ? clear_bhb_loop+0x25/0x80
+[   18.376119]  ? clear_bhb_loop+0x25/0x80
+[   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
+Reported-by: Ben Greear <greearb@candelatech.com>
+Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@candelatech.com/
+Suggested-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
 ---
-bod
+v4: Based on Suren's suggestion for modification (to make the code simpler),
+    modify the code.
+    Update the comments in the code due to the modifications made to the code.
+    Add Suggested-by: Suren Baghdasaryan <surenb@google.com>
+
+v3: Adjusting the title because the previous one was a bit unclear.
+    Suren has pointed out that our condition for determining whether
+    to allocate shadow memory is unreasonable.We have adjusted our method
+    to use every 8 pages as an index (idx), and we will make decisions based
+    on this idx when determining whether to allocate shadow memory.
+
+v2: Add comments to facilitate understanding of the code.
+    Add align nr << PAGE_SHIFT to MODULE_ALIGN,even though kasan_alloc_module_shadow
+    already handles this internally,but to make the code more readable and user-friendly
+
+commit 233e89322cbe ("alloc_tag: fix module allocation
+tags populated area calculation") is currently in the
+mm-hotfixes-unstable branch, so this patch is
+developed based on the mm-hotfixes-unstable branch.
+---
+ lib/alloc_tag.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index f942408b53ef..c5bdfa297a35 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -407,6 +407,8 @@ static int vm_module_tags_populate(void)
+ 
+ 	if (phys_end < new_end) {
+ 		struct page **next_page = vm_module_tags->pages + vm_module_tags->nr_pages;
++		unsigned long old_shadow_end = ALIGN(phys_end, MODULE_ALIGN);
++		unsigned long new_shadow_end = ALIGN(new_end, MODULE_ALIGN);
+ 		unsigned long more_pages;
+ 		unsigned long nr;
+ 
+@@ -421,7 +423,19 @@ static int vm_module_tags_populate(void)
+ 				__free_page(next_page[i]);
+ 			return -ENOMEM;
+ 		}
++
+ 		vm_module_tags->nr_pages += nr;
++
++		/*
++		 * Kasan allocates 1 byte of shadow for every 8 bytes of data.
++		 * When kasan_alloc_module_shadow allocates shadow memory,
++		 * its unit of allocation is a page.
++		 * Therefore, here we need to align to MODULE_ALIGN.
++		 */
++		if (old_shadow_end < new_shadow_end)
++			kasan_alloc_module_shadow((void *)old_shadow_end,
++						  new_shadow_end - old_shadow_end,
++						  GFP_KERNEL);
+ 	}
+ 
+ 	/*
+-- 
+2.25.1
+
 
