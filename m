@@ -1,233 +1,216 @@
-Return-Path: <linux-kernel+bounces-442929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D98F9EE421
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:30:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B4E9EE424
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:32:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5152D1889FDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 742C6283E34
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B41C211268;
-	Thu, 12 Dec 2024 10:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A1720B1F7;
+	Thu, 12 Dec 2024 10:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PYRMNLfd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/l91I6Tm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PYRMNLfd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/l91I6Tm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="VeHCwwHH"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9563610F2;
-	Thu, 12 Dec 2024 10:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A97210F2
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733999440; cv=none; b=Awf4vMycrO5a0sKegAMlcJiDsZq15hIPEmjR9gO0x6AhzkI7oJxYpTLTnYTMtDJZGkRXL8RO4GOpbgHTUQksR5DmrkPp+m1KRdnZzwI2edIxfusACauzMIxK0dUZkj+IfDuAkAgG5uGf8pWoiUX8V/ub8mwQNIRUAOsQk6IKQnQ=
+	t=1733999528; cv=none; b=q8UbKrwxNJGwZ0g4fwATRP42qdPb9eS7YtKwGadli2KGl/QWoIxorh8Bd9DAUWMwjNUVQU+Lmqu5yVPp6aTyzUTAXZqv4JdEAFj4/6Dtj1SSVx2sOBT34zKVCdCeBhpR2H7qnps7cJrKQAPt6Mj2q+3ds+JhNj+D6om38O+sxXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733999440; c=relaxed/simple;
-	bh=JYIXVSkEKRUlowh48LuJjbTtvx4Cfw+mUDvsE1F6NVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VNNYosTEwKjnxmKyR4pt26F+xCqajqzANPX2wBIVKmcJlnNKJ5/BOgvqSRDRTvorxCD0ZvpZZ5C2xoRwXV8TCCBFQQy+9ge7SmptW0rwLTMrZbrUVXRR0xqUbdfpH13ulrt96r/bA+6n7MhrqIqgMqXzVwvJ6PH8CYnuTpBVo94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PYRMNLfd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/l91I6Tm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PYRMNLfd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/l91I6Tm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BFEFD1F445;
-	Thu, 12 Dec 2024 10:30:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733999436; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jmt8yBQ6ShXzUXwOUOUaJoeXsGES/8ZDpWR5ho4hHYo=;
-	b=PYRMNLfdKfscC0/bLPF1b8/Ame8L0UPHp8QYarL3jTj17qYgByrJvLZXQkHqtSsqtpa1H1
-	7hpfD5VNQd9rY7DoSdD+inNJijGHegOZ42rgO6+LLNRmXvDqqOI4tlPVl2hqXg9bvg19OW
-	os8mAYjrm7+wP/y2Fyq9lIxxuWE0aWU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733999436;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jmt8yBQ6ShXzUXwOUOUaJoeXsGES/8ZDpWR5ho4hHYo=;
-	b=/l91I6TmfNc31FgmeVw/t2AcMmx8UBSqNkoYgmOUz400VQ06vYQaZzy8CHzhWuFnNeIAID
-	uKz/F/UZOA7JeiBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733999436; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jmt8yBQ6ShXzUXwOUOUaJoeXsGES/8ZDpWR5ho4hHYo=;
-	b=PYRMNLfdKfscC0/bLPF1b8/Ame8L0UPHp8QYarL3jTj17qYgByrJvLZXQkHqtSsqtpa1H1
-	7hpfD5VNQd9rY7DoSdD+inNJijGHegOZ42rgO6+LLNRmXvDqqOI4tlPVl2hqXg9bvg19OW
-	os8mAYjrm7+wP/y2Fyq9lIxxuWE0aWU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733999436;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jmt8yBQ6ShXzUXwOUOUaJoeXsGES/8ZDpWR5ho4hHYo=;
-	b=/l91I6TmfNc31FgmeVw/t2AcMmx8UBSqNkoYgmOUz400VQ06vYQaZzy8CHzhWuFnNeIAID
-	uKz/F/UZOA7JeiBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AEB4D13939;
-	Thu, 12 Dec 2024 10:30:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rPW2KUy7WmdUIwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 12 Dec 2024 10:30:36 +0000
-Message-ID: <e683b73f-4bf3-47be-b08a-4fd2fe6adff5@suse.cz>
-Date: Thu, 12 Dec 2024 11:30:36 +0100
+	s=arc-20240116; t=1733999528; c=relaxed/simple;
+	bh=FCCx59r1yNwzCkjwt1Y9sExvuy53RKxiKW1o9TrdhAQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OW2uF2/wCmx18o69d41uMMaoNaCE39qH3C/8RPduGBzKqDpRfaiViP3q1DUTPpp44AB03LiyURVguvRlJb+WvkQ1t4c3jtYaBQE7azX7MNgUtpt9fBJmhxqi68AbS2tdJS7oQv4ZlqjUqpEc7tgBMeXL2BN+5Xj2kzrOpZZgbTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=VeHCwwHH; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1733999480; x=1734604280; i=spasswolf@web.de;
+	bh=taAYwCFrgXFPKkySHynJ9x4mKSx6oPeKYYwGzrs3Vj4=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=VeHCwwHH1spsqOTAOp72dP78tkjdFdzxzF1e/3U7W+H7azwpcu0epwqyp9oqbxcz
+	 DL/DImnJKKwjEcEJJuFSp9qnLRtAeaFHQ6wORVHcTt5KPDbRIlmzrU6cieTft44Am
+	 8ZPUGkDL0qlFOtWD0e/N2e1ofeahO9Ha9LSTxIFXzXmpiUgojFpDI/D28GStqetD3
+	 /Vy4KoWC0du664S2EJ9uVCGwiFia1N5Jqe9nsl8chc1qViQ8gXhN+cFdZvHjukGsf
+	 nmGmWHqdACJg0y0p4311vgIBXGEXwL+HulDc+efO09m2ahC9QaaYT2SjME5PAbRI4
+	 kfqeUrp89ce0xwJnMw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MCXVX-1tUAeZ27Gt-00Ge68; Thu, 12
+ Dec 2024 11:31:20 +0100
+Message-ID: <5325ccfa4f7a0a9925e8133612528237966c2145.camel@web.de>
+Subject: Re: commit 894d1b3db41c leads to frequent hangs when booting
+From: Bert Karwatzki <spasswolf@web.de>
+To: John Stultz <jstultz@google.com>
+Cc: Metin.Kaya@arm.com, boqun.feng@gmail.com, bsegall@google.com, 
+	daniel.lezcano@linaro.org, dave@stgolabs.net, dietmar.eggemann@arm.com, 
+	joelaf@google.com, juri.lelli@redhat.com, kernel-team@android.com, 
+	kprateek.nayak@amd.com, linux-kernel@vger.kernel.org, longman@redhat.com, 
+	mgorman@suse.de, mingo@redhat.com, paulmck@kernel.org,
+ peterz@infradead.org, 	qyousef@layalina.io, rostedt@goodmis.org,
+ tglx@linutronix.de, 	vincent.guittot@linaro.org, vschneid@redhat.com,
+ will@kernel.org, 	xuewen.yan94@gmail.com, zezeozue@google.com,
+ spasswolf@web.de
+Date: Thu, 12 Dec 2024 11:31:19 +0100
+In-Reply-To: <CANDhNCrKhwVBEjX5m46Mwrm9uixBkS8MSXKyWxkD=-8Urx7nGg@mail.gmail.com>
+References: <20241211213527.3278-1-spasswolf@web.de>
+	 <75a27bab5671c43d2be6a26ac23916b731204086.camel@web.de>
+	 <CANDhNCoNMtjKmgWbCfScK1xGqQrKTh2a0cw+VYTgiT-dw2haLQ@mail.gmail.com>
+	 <cf6c7a80e3a54e1060f89cf7bc8c741214d1665a.camel@web.de>
+	 <CANDhNCqP+zGH5jyfWHeEpALuAxbyc_+XOx5CHoRs_tw4DVjDww@mail.gmail.com>
+	 <CANDhNCrKhwVBEjX5m46Mwrm9uixBkS8MSXKyWxkD=-8Urx7nGg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1 0/5] Move kvfree_rcu() into SLAB
-Content-Language: en-US
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-References: <20241210164035.3391747-1-urezki@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241210164035.3391747-1-urezki@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.993];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com,kvack.org,linux-foundation.org];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Score: -4.30
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gxDDbxfBt1L5gBMqNr+ahG1ElhM14C2clhJFmg2d3vFwgx3TDlc
+ 1Gxr3lPVmX1JVYQtt+MJm8bjaWNvRMhMa1gv8s4szqZzgc/UY4AIvnDKbLobRV80/7dXYvf
+ 0szNlJN6R01j3afCswI0esIwxfO6lXXWC6z8sYSdN/z+1EIBnsRv46R/DPeqt0xPpDlmFas
+ 5WLpkHHxqCEsC6czYPhYg==
 X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9J3EP4LLcwo=;K1oecyHCBXevq7+ZN9ZR++7AN4Z
+ R+PzjM3UxjsbHAPn1lZxBz7WQ/y9MFP+T/gT2zXCsIA58bhOMvO2gHHiVj003ZsthaLLP9rBw
+ CjxMcStw6EjsC4D0lCXd+J6GsEjXCQnGh7zhkZjs2Uu675XTiTDUK3wIITim3uArD6P7599VC
+ plfaAS5rchR/Su9WZUsWrACLfbQ8tD2poYMargvuwx5pYt8R1nAMLniiFmowXLbtiDW6+sQ35
+ fDgN1U8apl5UT5zx521fpRJQkeIzCv9JYT9rPBq4xIGXqrMLp8VHsuYIfPRKgODfKOEq9HOuu
+ vQLK3tXMSd2Pg8ODS7b8Oot+E1I/Vkz5J2MtscUVyLYc12dQC0raO8ODlI4h1/HChvLrFf2hR
+ VLv9hXHfc0QHOKehqytWUHq96DFjkBW4Tvrj0qBfHzcrC5EIuYEc0FLtGURTAm9LeEfAWXxSr
+ iGG0V1xxjiLtUIN9Lo72aGfD8Fh/TXJOIzWNpm0KFW21e5b5DLWQ7R6Hq7jnjCMVI/KI3JcwI
+ Qjl1tHxZcuHBiHiDr1fttSLVrtpg/O7aypDclCMEQIN+Se8Cu3c4gLf1PB1MPyOdzUAs0t4cD
+ upiRSZ3wAE9xAMe0/4niH6tSLQ0FvIaWbS3Vw5c2TmTwjq6nnQT40RwhhqJ3HP9j3UQQ8+xpV
+ PcEXmMek5tY1ZfjpW+0bVUWExr4jNpQpju0N4j+50LjU0KJjsSCvIw7TojkEfysnJansRUs0j
+ gM/nQbdPgPPRPY9b9BpwefamTGiUWIVteZzzSd1eDQo7SRHtqnfsvli5lpddjFRGEpXdp0Gu8
+ XHWnFu1Bivi4pPW/RDsGe6ErgRMPq80s/AqtGdSGYdtlfaxF97v0XADuyyyYuUZJP/z5tBqnX
+ JRVcvl/bzpfUNu32WdBeymRHA94DIp8rBRKx40NQbtdfPSfskapPbnz7aEYc6CaCOD+D90wOK
+ gQbqiQUfH1RsPuEWvK8sKYX9P6ikryClHPiYoS2CJLrXFxMll9du+uCWyHxcXC+gkr50Gz5k7
+ IzIkNI0GnMW1+XhfSMAAVziVXYN5h5hEDZtdBNzLVbrk+iIudFJz0GHln8lq2TVblMZ4E8N0w
+ rdkF/cX3X0l1V9pMN1ZKANQE2HPAmT9vyZHDqW3BDimjAHgVE8sA==
 
-On 12/10/24 17:40, Uladzislau Rezki (Sony) wrote:
-> Hello!
+Am Mittwoch, dem 11.12.2024 um 23:40 -0800 schrieb John Stultz:
+> On Wed, Dec 11, 2024 at 6:41=E2=80=AFPM John Stultz <jstultz@google.com>=
+ wrote:
+> >
+> > On Wed, Dec 11, 2024 at 4:17=E2=80=AFPM Bert Karwatzki <spasswolf@web.=
+de> wrote:
+> > > Am Mittwoch, dem 11.12.2024 um 15:14 -0800 schrieb John Stultz:
+> > > > On Wed, Dec 11, 2024 at 2:46=E2=80=AFPM Bert Karwatzki <spasswolf@=
+web.de> wrote:
+> > > > >
+> > > > > Am Mittwoch, dem 11.12.2024 um 22:35 +0100 schrieb Bert Karwatzk=
+i:
+> > > > > > I have confirmed that I that linux-next-20241210 is fixed by t=
+he same revert
+> > > > > > as v6.13-rc2 (ten boots without incident is the criterion for =
+a good commit)
+> > > > > >
+> > > > > >
+> > > > > > Bert Karwatzki
+> > > > >
+> > > > > Also this bug only occurs with CONFIG_PREEMPT_RT=3Dy, I've just =
+checked v6.13-rc2
+> > > > > without the revert and the following preempt settings and got 10=
+ clean boots:
+> > > > >
+> > > >
+> > > > Hrm. That matches the case where the fix here helped:
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
+/commit/?id=3D82f9cc094975240885c93effbca7f4603f5de1bf
+> > > >
+> > > >
+> > > > I'm still working on getting a minimal delta from your config boot=
+ing
+> > > > in my environment, but in the meantime, I'd be curious if the
+> > > > following reduced revert helps?
+> > > >   https://github.com/johnstultz-work/linux-dev/commit/60c60f85670f=
+b1f4708adbe55e15ab918d96f9f0
+> > > >
+> > > > Basically just trying to clarify if the problem is moving the wake=
+up
+> > > > to the wake_q or if some other interaction (maybe with the
+> > > > preempt_disables) could be causing the issue.
+> > > > (I'm assuming you have 82f9cc094975 applied when you test with tha=
+t change)
+> > > >
+> > >
+> > > I tested linux-next-20241210 (which includes 82f9cc094975) with your=
+ patch
+> > >
+> > > diff --git a/kernel/locking/ww_mutex.h b/kernel/locking/ww_mutex.h
+> > > index 37f025a096c9..724d4c871cf6 100644
+> > > --- a/kernel/locking/ww_mutex.h
+> > > +++ b/kernel/locking/ww_mutex.h
+> > > @@ -284,7 +284,7 @@ __ww_mutex_die(struct MUTEX *lock, struct MUTEX_=
+WAITER
+> > > *waiter,
+> > >  #ifndef WW_RT
+> > >                 debug_mutex_wake_waiter(lock, waiter);
+> > >  #endif
+> > > -               wake_q_add(wake_q, waiter->task);
+> > > +               wake_up_process(waiter->task);
+> > >         }
+> > >
+> > >         return true;
+> > > @@ -332,7 +332,7 @@ static bool __ww_mutex_wound(struct MUTEX *lock,
+> > >                  * wakeup pending to re-read the wounded state.
+> > >                  */
+> > >                 if (owner !=3D current)
+> > > -                       wake_q_add(wake_q, owner);
+> > > +                       wake_up_process(owner);
+> > >
+> > >                 return true;
+> > >         }
+> > >
+> > > and this fixes the issue for me.
+> >
+> > Ok, thanks for validating that!  Hrm. Ok, I suspect I'm missing a path
+> > in rtmutex.c that calls into __schedule() before we pop up to the
+> > point where we actually wake the wake_q.
+> >
+> > I may have found one or two spots that look likely, and I believe I've
+> > also managed to reproduce your problem using the test-ww_mutex driver.
+> >
+> > So I'm working up a proper patch and will share for testing here soon.
+>
+> Ok, could you try the patch here:
+> https://github.com/johnstultz-work/linux-dev/commit/3c902b92c88122cd0349=
+37e8d40930bac254a7c5
+>
+> I've repushed to the test branch I shared earlier, so its against
+> 6.13-rc2 + fix that has landed upstream + test fix above ( + another
+> patch that makes stressing the ww_mutexes easier):
+> https://github.com/johnstultz-work/linux-dev/commits/debug/894d1b3db41c-=
+hang-bert/
+>
+> Let me know if you still have issues with this.
+> thanks
+> -john
 
-Hi and thanks!
+I cherry-picked your two patches on top of linux-next-20241210:
 
-> This series is based on v6.12 kernel.
+2029cb31eae9 (HEAD -> master) MAYBEFIX: Make sure we wake anything on the =
+wake_q
+when we release the lock->wait_lock
+b525e4779098 test-ww_mutex: Allow test to be run (and re-run) from userlan=
+d
+1b2ab8149928 (tag: next-20241210) Add linux-next specific files for 202412=
+10
 
-Could it be rebased to v6.13-rc1, which is a basis for most -next branches?
-Right now patch 5 doesn't apply on v6.13-rc1.
+This fixes the issue for me.
 
-Please also Cc all slab maintainers/reviewers.
-
-> It is an attempt to move the kvfree_rcu()
-> into MM from the kernel/rcu/ place. I split the series into a few patches so it
-> is easier to follow a migration process.
-
-I think this is not the best approach. The individual diffs are not easy to
-follow because they copy code or delete code separately, and not move it in
-a single commit. I get a much better overview when I diff the whole series
-against baseline, then git highlights pure moves and local changes nicely.
-
-Having moves recorded properly would also make it possible for "git blame
--C" to show changes that were made in the old file before the move, but with
-copy and deletion in separate commits it doesn't work.
-(but note it seems it doesn't work so great even if I squash everything to
-one patch - were the functions reodered?)
-
-And with this approach you also need the temporary changes.
-
-What I think could work better is to do:
-- preparatory changes in the existing location
-  - splitting out kvfree_rcu_init() and calling separately in start_kernel()
-  - renaming shrinkers
-  - adjusting the names passed to trace_rcu_...()
-  - maybe even adding the CONFIG_TINY_RCU guards even if redundant
-- one big move of code between files, hopefully needing no or minimal
-adjustments after the preparatory steps
-
-Makes sense?
-
-Thanks,
-Vlastimil
-
-> As a result of this series, the main functionality is located under MM.
-> 
-> Uladzislau Rezki (Sony) (5):
->   rcu/kvfree: Temporary reclaim over call_rcu()
->   mm/slab: Copy main data structures of kvfree_rcu()
->   mm/slab: Copy internal functions of kvfree_rcu()
->   mm/slab: Copy a function of kvfree_rcu() initialization
->   mm/slab: Move kvfree_rcu() into SLAB
-> 
->  include/linux/slab.h |   1 +
->  init/main.c          |   1 +
->  kernel/rcu/tree.c    | 866 ------------------------------------------
->  mm/slab_common.c     | 875 +++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 877 insertions(+), 866 deletions(-)
-> 
+Bert Karwatzki
 
 
