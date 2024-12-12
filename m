@@ -1,104 +1,85 @@
-Return-Path: <linux-kernel+bounces-443340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718B79EEDC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:50:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4439EEDCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01FDC165410
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6FB918904D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310E22236EB;
-	Thu, 12 Dec 2024 15:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA08521E086;
+	Thu, 12 Dec 2024 15:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="jFwYQYLI"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uJnWz775"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA870222D59;
-	Thu, 12 Dec 2024 15:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018304; cv=pass; b=JwJvcjOWEvbdIiHNXEAEypEy/zSBvL2q2vd6g2pd+aSvqrMZnC2D+SdDBXZuWOz14YQ+jouexaCHI06qj0I3LdLRulop4INIIXw79i3KKTSFN9nvewMtWMBA8OU7vpAjhk2hsn2nHuC4nw5sjorVeEgrLQOquick+EM1P7Y6u0c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018304; c=relaxed/simple;
-	bh=PVvOYhteQt/W34vlzLIOZu/OrN2/wktZb+MQBqw5I0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gjYqIiDfeckCsV+O6/P/Hm4svs4kTM/dfgla3DJrxyqf7JKNn2t6AwVO93PqVsyvNDgynV32xpTkQLPyIrWpcyIDOtli6VN3zauIMMOUk0jYmP9GrEfnalx4BaH83UV83FKKIVqmHhlh/hslEncTBhjJHsy21dMKiscIj21cvHk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=jFwYQYLI; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1734018279; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bEzMQTO495WOxsE00l2/3H9gHcbvt1ILP7zAa3dkOhO40kA9C4/7fXmaQfDUNe0VEmJYYGjsyyHOcH8TfFV2R4Jo/Lzi62aVsslpOY+hb9lMpKqHp1v2MfgyyebfKMoI5Yk7BnseczjJfXAjbeF3zzrF/UdC576fKRN/b+n8VWo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734018279; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QRMCv1tG0lvAEJlwsZhhip2MIboiG2RgXcTqJTaG+EA=; 
-	b=b4R4Sqi+R04TU0FF8Ff4fWQALubLC+MIPdm/3yw8xhsbdilKLboyk2Sq6CrmZSLgN1zJexg2+SMyY5wIk4tFVygzku9kQ5Zgl87aeyI2DznbLSlrW5CF+df6UCO8AkQZMc+eGuNgrgSyneBt4nV8M+nnAUqZaItOyPwzRZc2e6Q=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734018279;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=QRMCv1tG0lvAEJlwsZhhip2MIboiG2RgXcTqJTaG+EA=;
-	b=jFwYQYLI4atho5DbRERvwwWjwPHr9Qxwt1qhTSwFwaRDCrzk7rFTAmHOhIQqrz9l
-	P338+J/5FMdANB9/jj4tdSarxGbJoyBUQrojVNTSf+lqLH8x0PQuOfk82p3MsIWu0dG
-	W5sp/7P3zoi8UlYCZAkVrQpAsg3r/2imvtGplJ2c=
-Received: by mx.zohomail.com with SMTPS id 1734018277894547.7282054868983;
-	Thu, 12 Dec 2024 07:44:37 -0800 (PST)
-Message-ID: <c7af1854-cb98-41d5-946c-00fe4f4584bd@collabora.com>
-Date: Thu, 12 Dec 2024 16:44:34 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE7D14A82;
+	Thu, 12 Dec 2024 15:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734018327; cv=none; b=ZN9b2RSDuWCz2fZTybkB8lRjzB9sbUvY1l4lnUJmMnirahn+G/MO93tvfVBr4Gf5/+7463o0G0mitbmXmeZT6NBJJ0rahyzdcjJ7oW4L1tPhRaMrAIBPvnyr1YDkwjOiJsq3kYYEC2HnDRtyIxcSHJz6KhLsm90mYbqONCngTkQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734018327; c=relaxed/simple;
+	bh=kDn3tkt3VamjHt+kRoXTukwZL9aFhqsGLgcQdhBHV1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CeVZGflCHZFWH+X/kdpwb9oai6WARMR4Q8xY5ayOiF0Y+o1sHQutu2iZ8euzbJpwVmWAHXELPLVH6WHLO1GUrqH9xqlEz4IlfXb2ZMQTuAMTiFndhkFy2v7NMdqX56dr5GKu4BOtJo/c3NNUTDPQv22oI58N+FXLz+3i3TdW18g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uJnWz775; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gLVuf3vyv80xWoO2o27xzYEmbbB8WpyOLkmBiyviyXE=; b=uJnWz775hrBH4mNu2PbI84umbx
+	l/F2RNZ5jSV5KiaI2Pk7DXPT6/eYy8Tmc+NnTQHi+B3U8au3Uh2/7PHG57s2QL2qhGaEEylh1ClMy
+	4AQMfIYJfrqjGgh9CvuaJi/yQPRfuchYc11ejbDYdviGkOQTVE9QLh/G8VJZhC+8C98yzkHycG+bk
+	bGu3l0TKJXxQ5oNEfusVJfOpDBDhqQbAmyiHu2gyosA5gJOpSEA7j/JLUd9YsqqUSx8uphdHqPonn
+	oyb30XErb1KiqBaoL2v8UpLN5wbEvKmPFJyxAMSufj8U2oMNj/lfKSW7dIdstyTZ1EZP+npAARWAu
+	EV1dkJ1g==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tLlNM-00000006Xse-3Ve9;
+	Thu, 12 Dec 2024 15:45:16 +0000
+Date: Thu, 12 Dec 2024 15:45:16 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] mm: make mmap_region() internal
+Message-ID: <Z1sFDCx8m4-TPjqG@casper.infradead.org>
+References: <cover.1734017293.git.lorenzo.stoakes@oracle.com>
+ <80b7c4ba4f0a2b3084117975bd1af62a403ac881.1734017293.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] media: hantro: Replacement maintainers
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: ezequiel@vanguardiasur.com.ar, linux-media@vger.kernel.org,
- hverkuil-cisco@xs4all.nl, mchehab@kernel.org, p.zabel@pengutronix.de,
- kernel@collabora.com, linux-kernel@vger.kernel.org
-References: <20241210212518.1587395-1-nicolas.dufresne@collabora.com>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <20241210212518.1587395-1-nicolas.dufresne@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80b7c4ba4f0a2b3084117975bd1af62a403ac881.1734017293.git.lorenzo.stoakes@oracle.com>
 
+On Thu, Dec 12, 2024 at 03:36:47PM +0000, Lorenzo Stoakes wrote:
+> +++ b/mm/vma.h
+> @@ -242,9 +242,9 @@ bool vma_wants_writenotify(struct vm_area_struct *vma, pgprot_t vm_page_prot);
+>  int mm_take_all_locks(struct mm_struct *mm);
+>  void mm_drop_all_locks(struct mm_struct *mm);
+>  
+> -unsigned long __mmap_region(struct file *file, unsigned long addr,
+> -		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
+> -		struct list_head *uf);
+> +unsigned long mmap_region(struct file *file, unsigned long addr,
+> +			  unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
+> +			  struct list_head *uf);
 
-Le 10/12/2024 à 22:25, Nicolas Dufresne a écrit :
-> As per a long time request from Ezequiel who left the project around
-> 2020, replace the top maintainers with Benjamin and myself, keeping
-> Philipp who is still active in the subsystem.
->
-> Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Please don't line up the arguments with the paren.  Just leave it as two
+tabs.
 
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-
-> ---
->   MAINTAINERS | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 1e930c7a58b1..00e95d6512f7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10030,7 +10030,8 @@ F:	include/trace/events/handshake.h
->   F:	net/handshake/
->   
->   HANTRO VPU CODEC DRIVER
-> -M:	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-> +M:	Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> +M:	Benjamin Gaignard <benjamin.gaignard@collabora.com>
->   M:	Philipp Zabel <p.zabel@pengutronix.de>
->   L:	linux-media@vger.kernel.org
->   L:	linux-rockchip@lists.infradead.org
->
-> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
 
