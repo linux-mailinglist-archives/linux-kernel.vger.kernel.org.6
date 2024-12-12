@@ -1,133 +1,127 @@
-Return-Path: <linux-kernel+bounces-443697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798CE9EFACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:23:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AECB79EFAC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:22:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1792188BEB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA00F16C1B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A2B223338;
-	Thu, 12 Dec 2024 18:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6B8223C40;
+	Thu, 12 Dec 2024 18:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOuLn/Ri"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bX5S7Css"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243FF1547F5;
-	Thu, 12 Dec 2024 18:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A0A22332E;
+	Thu, 12 Dec 2024 18:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734027497; cv=none; b=eFL21q5NwULMWuI/foH66Ne7ujg2KZfTc3ZCyvkcf3p+BSxxwdWnm8vw3CVEaX0Bs+4KlP2daRUY2Aye7MIcwPlp15u//stkN2Q2Dr6lZyHN06uC5h2y4h4EPigxi+9DAzESd2+z0lpEMm7S555Moo/CVM4G5SGd8xpxRM32a08=
+	t=1734027546; cv=none; b=EzFbhhbfOgsebXS36Rjr9SIYLx2uNtgq3QIKo8PGSGPASIzenaBMaV6OVGFAfjJAr9I3jiQwExpujnVf8fhpsHoLYfEvLXygiJ6RBkRThw3iWWq4DNH52Wf22knzkgTHpGNjXL5XPOhm9D2u1mhM8xjuZEKj1DDePAJ7xiL1GnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734027497; c=relaxed/simple;
-	bh=IIpcnOmv8gXyAskv5AC++X5FTUcu1O349J09UOMhC/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TaE2gfi7ZxvgeoXG03FuhOopYHEaBLsA9Rmenu7VAM3UJ/fDvEDoClBnaSox+GCQKyR/rMTJaU25eNICQ2rfzzawkw0wPdQNtpl1qvTeiJOxmrjqheOuXuC0k+YWzYCB8anyeeSlZ+CBFUQJMg9HWfqhAajuFrgb7905RAsbec0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOuLn/Ri; arc=none smtp.client-ip=209.85.219.179
+	s=arc-20240116; t=1734027546; c=relaxed/simple;
+	bh=Ko2oS+MRlT4GT5PWtXrB9gMB+qbOgZcujdySYKtFg+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VsLOyr//ld3qf6P0Hkmg37JNxgEGwJBo06D7P4RlRl5mGPB/dZ/wSyfkwrUzPBh9cEVr+ngqAC1S7Rypx5N53/UTyg52N2WaqAcTWKFomRcn4CT4BahU9fpNGgAoAapqVcrwKPeItTx0GNUZ+3I/m83T6cwxs0IoUakyQvXUyFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bX5S7Css; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e2bd7d8aaf8so663848276.3;
-        Thu, 12 Dec 2024 10:18:15 -0800 (PST)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6d87ceb58a0so7507416d6.0;
+        Thu, 12 Dec 2024 10:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734027495; x=1734632295; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zo9PMMRdvR4TWcHlbTqdY4+03Oq9+8RRn1FRR6QdKck=;
-        b=aOuLn/RimM4Q88Rx/xkA3LczOyTF62HeTrZwZU5PwX8NGsfXhF8uzeMwZ7KWr1nIDd
-         dwSt3gpScukiVQUz8kgdJ7JbyNpFe8+HX7UiRm3MrELLaey1QnQJZoUs6+gS0pym3cMm
-         NJuerC2045kNn+Lj+uGesoHoTN2VUMHXXE8I6hUH0Wf3VEn8C+2619bfBz3o4eQHlXCf
-         8CL0SgCsdqlaXGmQTX7v6wE2wUMCxjKs8gh2+TTChzizX5/Y29f9V6ARdopK3nz+V6AZ
-         HpC7nnxIak7RbYfPtkkoUzE61kOBxoDOs+2zS4lCBWLTZVAwvWZspPfWpiS92IdkmQhT
-         jkGA==
+        d=gmail.com; s=20230601; t=1734027542; x=1734632342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ko2oS+MRlT4GT5PWtXrB9gMB+qbOgZcujdySYKtFg+w=;
+        b=bX5S7CssoTjtg5/GFEfs5Q9hSYxmV9JPEvl4LXP/6h0E0qaMUqiVJI7AT9/46wv0AA
+         hXvVolT7NGujtL9Z4U7E3aBnXth/XEyl4JpQmXO74qE7OBdlBS1pmg/kW2Ptr7Ielgbr
+         e3jfYrPk/eURF+Y7rB2siAFKhZWxZc5HOb5rF2TYtY+JOiF/2zBNPyfgPzsgz07S5y1f
+         UpUNGUe9MbWFBryvCxaQCHhWxQszSjmmX3X3hJ9ZoME3fFuBEHmpN6MEzb2JFrht+aUr
+         jz0u34hjZF5ecOgBSE15i326V+fgaTIQZbNNwLs9Svdfwsk5l5nt6Ei21JX+QPRdqm76
+         y8qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734027495; x=1734632295;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zo9PMMRdvR4TWcHlbTqdY4+03Oq9+8RRn1FRR6QdKck=;
-        b=VE8BuQd/qYDbE0todVH0HE5YfVXwY4djVKT2mQ+oJZsQbtoL/dgKLyiHiGjrjBch2W
-         ae/w+z/QjyTkW1ssJd2VsdCFVYoLxtrq8J9JJymxwfOhTyV74oxx25yMCqeXzFIKNwzx
-         CencU3OggYayiXYy5geggD7v5EjncDXITECWbxmmUNH7pJdU+VYokpAinu8h5pjfEM36
-         uP4fWTRn5Dffqw2Flz6514zxeBSOeNIpoTO5VboESC+EJ4b7hA7hbZft1AUbfHswSruC
-         OIlLiGmqlZ9Nmz8V3TC0inPAV2pX7TY2cjatNIhzmzhoGKeYkJC/A8pjXAb4dgHMpQzE
-         YcnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ7+yQPxNQx+w8MK/jNBNEYCrXVh91blTSbFsmLZ/81m4v0B/fopNFuxnpKS6Y+9BNQ+gj8H7wcTVbaB0=@vger.kernel.org, AJvYcCVHWXCff3PWo38qQBVBM6fQ5lv27x62FTX2BEbN5aS4N3e03Fj+xiXRPDBUIJnPQ78XHOQ0+ysHii22v7Iv06Ml@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEIXHpqII7YkXu7zeEXsc7TmvuKINPgStaTKHCDxC451zJzqbE
-	oISlVBB1mGcvVFvp7ocWqu0I3OLjG70xo8yHzuR5G9D8nE/WRxHN
-X-Gm-Gg: ASbGncttKlUn6dZKZUx7S4AF2RcOBzS1D1j1OetXAk3PgKO65+bA5FkU3vYgh/CHJ6s
-	WauMg0g+Z/841LFA/ioqiBf9ErdXM1Lvau4UJ46kO4lmLnSNln5flCNGhgATrkn2ZUwJk6Af/j5
-	876M8nr/QJRQcmd3Ferz6JP6UVz8Qmfa8Jv1eZWsmW5qSFfS2c8SKsRKD8K7pfNdLTsDNeCPgEi
-	RiC0wgZFUo0zdpfCXFEbCpP/3fKQQwUMo2iY8dX2/N6ZvRb6S8lJEc=
-X-Google-Smtp-Source: AGHT+IF43XnGa+0BJH8Q9ln131urn1VtN6bAa4xSBCHe/VTCeJaVJATTOpDT1RGSea2nTOBEF6F7Ww==
-X-Received: by 2002:a05:6902:1105:b0:e3a:47ba:84c4 with SMTP id 3f1490d57ef6-e41c1289ca8mr1546792276.4.1734027494884;
-        Thu, 12 Dec 2024 10:18:14 -0800 (PST)
-Received: from x13 ([157.23.249.72])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e3fbc7f9e1csm385702276.21.2024.12.12.10.18.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 10:18:14 -0800 (PST)
-Date: Thu, 12 Dec 2024 13:18:12 -0500
-From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: davidgow@google.com, npitre@baylibre.com, stern@rowland.harvard.edu,
-	u.kleine-koenig@baylibre.com, skhan@linuxfoundation.org,
-	andriy.shevchenko@linux.intel.com, rbm@suse.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] lib/math: Add int_sqrt test suite
-Message-ID: <Z1so5J9BaXYUF2fo@x13>
-References: <20241212021259.20591-1-luis.hernandez093@gmail.com>
- <20241211231816.9857d14e07251165e247eb51@linux-foundation.org>
+        d=1e100.net; s=20230601; t=1734027542; x=1734632342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ko2oS+MRlT4GT5PWtXrB9gMB+qbOgZcujdySYKtFg+w=;
+        b=E0a0bsdgC92gl9apkdhlC+ST7mfLDNdeyTk2nlvkUPwP7dWOrPo3SFMhAkWhBGwUoh
+         ixVmiS0CSYbCA6QCpPqNwOtfQK83ZiLOYtZXQlJ4oM5RsiYYumikMInq99/CntO1oM08
+         m1OuobuvYSSFXI6YLMG7+Q2WlLeqWTbcDGVTHS+fNWPq7Cn23z2DU09GFrKiRk6fxMpd
+         AHV5U9aySsecYpT8wRKHaRrDsflT2ATFlPf8N9S6lsyy/dixYvNCITUZ21XdeRpmBrL+
+         20FZrIALHSO42AzETlLt/vBg17AWHWeNtQ+yPTfb0FzS6DmEu7MHynYPOC1Kgh8anRx9
+         rF8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVVr611Jpsl3zQbtwxSLcLYUsXFzDYubhfLLaOb4MVINHOIsDkbcarRwY5P4RsJYk624DBEprqkNBum4JDK@vger.kernel.org, AJvYcCXdPR+ygBHQicQVG4SggfMqCI0p2MrGdK69weO5mmDQ14HX8bsqghyuiZtmLMwgDiAX0PG6Iiig@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuYtv9NXXz1JuX+fd92vjfSMnJXP/QT81tWWsdXS/NcKEoyZG2
+	L+y+0M8gDAJPiBaAoSHqXYi8TonqM3cc09YFmNYplqNCZbkmZxgrOMxubqYu9DObb0vqgxbQ+JC
+	weXB5H7sEzaN8k4QYe+7LyAw1A3w=
+X-Gm-Gg: ASbGncsXcObZhpoJ+ktE6IKCpRlmArIDhQQp9/rwH3w8jbMRFkYuC21XAHE2zczOikH
+	4UGkngA2JRBcK2VRa8jTyCZEKLSYYaBK0xkWpmN1ltBfxQXPoHf/Yqg==
+X-Google-Smtp-Source: AGHT+IFNoU3CLIuT8qLnj94iT37F6awSRZbDnnjbgfCpFQ8D7WtTtHoh9SG4GO68UHHvEcwk+QowvfA25aJLdANqXQU=
+X-Received: by 2002:a05:6214:2388:b0:6d8:9124:878e with SMTP id
+ 6a1803df08f44-6db0f709160mr20363076d6.4.1734027542519; Thu, 12 Dec 2024
+ 10:19:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241211231816.9857d14e07251165e247eb51@linux-foundation.org>
+References: <20241212115754.38f798b3@fangorn> <CAJD7tkY=bHv0obOpRiOg4aLMYNkbEjfOtpVSSzNJgVSwkzaNpA@mail.gmail.com>
+ <4oxovutecmn7mkbbmbk3rhqudilivf6fkedvmcbcttmcspwebl@fp6pv2a45x6n> <0d9e676686db8e2025bc0c6dc2b55d17d9f16290.camel@surriel.com>
+In-Reply-To: <0d9e676686db8e2025bc0c6dc2b55d17d9f16290.camel@surriel.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 12 Dec 2024 10:18:51 -0800
+Message-ID: <CAKEwX=P9583dX+r31AFBTkMzr9f7jrXNO8cAmYupqizkaxU=Pg@mail.gmail.com>
+Subject: Re: [PATCH v2] memcg: allow exiting tasks to write back data to swap
+To: Rik van Riel <riel@surriel.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>, 
+	Balbir Singh <balbirs@nvidia.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 11:18:16PM -0800, Andrew Morton wrote: 
-> my x86_64 allmodconfig build says
-> 
->   AR      built-in.a
->   AR      vmlinux.a
-> error: the following would cause module name conflict:
->   lib/math/tests/int_pow_kunit.ko
->   lib/math/tests/int_pow_kunit.ko
-> make[1]: *** [/usr/src/25/Makefile:1925: modules_check] Error 1
-> 
-Hi Andrew,
+On Thu, Dec 12, 2024 at 10:03=E2=80=AFAM Rik van Riel <riel@surriel.com> wr=
+ote:
+>
+> On Thu, 2024-12-12 at 09:51 -0800, Shakeel Butt wrote:
+> >
+> > The fundamental issue is that the exiting process (killed by oomd or
+> > simple exit) has to allocated memory but the cgroup is at limit and
+> > the
+> > reclaim is very very slow.
+> >
+> > I can see attacking this issue with multiple angles.
+>
+> Besides your proposed ideas, I suppose we could also limit
+> the gfp_mask of an exiting reclaimer with eg. __GFP_NORETRY,
+> but I do not know how effective that would be, since a single
+> pass through the memory reclaim code was still taking dozens
+> of seconds when I traced the "stuck" workloads.
 
-Thank you for your time and pointing out the issue. The duplicate entry
-for int_pow_kunit in lib/math/Makefile and lib/math/tests/Makefile stems
-from my attempt to align this patch with another[1] I had authored in a
-series by David Gow that moves all lib/math/ KUnit tests to lib/math/tests/.
+I know we already discussed this, but it'd be nice if we can let the
+exiting task go ahead with the page fault and bypass the memory
+limits, if the page fault is crucial for it to make forward progress.
+Not sure how feasible that is, and how to decide which page fault is
+really crucial though :)
 
-Since that series hasn’t landed yet, I’ll update this patch by reverting to the
-current mainline approach, keeping the object file assignment in lib/math/Makefile.
-This avoids assuming the approach in the David's patch series and prevents conflicts.
-Once both patches are merged, I'll create a follow-up patch to align everything properly.
+For the pathological memory.zswap.writeback disabling case in
+particular, another thing we can do here is to make these
+incompressible pages ineligible for further reclaim attempt, either by
+putting them on a non-reclaim LRU, or putting them in the zswap LRU to
+maintain total ordering of the LRUs. That way we can move on to other
+sources (slab caches for example) quicker, or fail earlier? That said,
+it remains to be seen what will happen if these incompressible pages
+are literally all that are left...?
 
-I apologize for the confusion and back-and-forth on this patch.
-In reviewing your earlier feedback from v3 of this patch[2], I now realize
-what you were referring to regarding the conflict. At the time, I failed to
-fully understand the issue.
-
-I appreciate your patience, and I’ll do my best to resolve this in a way that
-minimizes further disruption.
-
-[1] https://lore.kernel.org/all/20241202075545.3648096-2-davidgow@google.com/
-[2] https://lore.kernel.org/all/20241031173941.3487ccbfd7421d81d9b0cb97@linux-foundation.org/
-
-Best,
-
-Felipe
+I'm biased to this idea though, because they have other benefits.
+Maybe I'm just looking for excuses to revive the project ;)
 
