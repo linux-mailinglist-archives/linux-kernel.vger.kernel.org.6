@@ -1,183 +1,133 @@
-Return-Path: <linux-kernel+bounces-443929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627109EFDB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:57:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35279EFDBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:58:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5862D16491A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:57:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1AD6288C4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFBF1D9341;
-	Thu, 12 Dec 2024 20:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2CD1B1D61;
+	Thu, 12 Dec 2024 20:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="FuWLkwKM"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PSax/2ZN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39351BBBD6
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1476A174EF0
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734037023; cv=none; b=neKH3GFIrNeXnLN6dfPSDlNNf5n3Y/3HfJncH9tXYpQxEiQaX74DcG+0y1EnCdxZZlHSHZkMo4JYtt2S5q7zPXHBdGOKm6WCQHoTLgZ0hpwcLASj31v5rG3mPq+I4ug08+bxfhCZ46ZuTbVcXXtxqkTXzXYqJPC/kRZWubRKI0w=
+	t=1734037107; cv=none; b=YORgI69MKJeGU/2WyLpjgljI6dceJqL+kmz6WBIGoBvHZ4Rc0WSu9/oBG+FtJMXpyOQ7bBrxpsqshiuCEDgKYrnP/4vQM2mNt2eSq8EZLQjkvv3sGU6g3DjxKhlqO6ERSI4Cdp50z2ajvVsZVE/SYtx40r2e7qMoHDXX/zrSar8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734037023; c=relaxed/simple;
-	bh=FCqQrI1H1EUUmtYhOFAa3PCJetDrIooxo67JfXKS4QQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Su48b4HtQekngiKifUulTLexjYkLBGwuRpJoApkmpVjxSJwwuUtUzMmWyHRs9MzBBrTEiWJtn6x+1gavjLwtEKBEneVVO9pkHimNaoeJql519PBP2QO8E2VWpSrhToRVqzrSOjCQ5wnPcwQsG+yx67uwGUelk3eUQzfxp8xTwII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=FuWLkwKM; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2167141dfa1so9709445ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:57:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734037021; x=1734641821; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=avDzzP0/VkNzm+n9LZOGcxgwhkTK2s0/hK10f7P3aeQ=;
-        b=FuWLkwKMWRa8lYhhr2Vlkk6HI2Jr1W25hqxqYoX7pym8A5plCjOAtLDnmGvGM/e5j4
-         JQGoOSjWg4zIeBw6GkvoNSxf3feA2YjclyFX9GSBFULEOXM/tlgfM7GRzg/ciUyi5YpD
-         K/fja2yQp+BLAQs4Gc7gK3+5HYC0N9BvTFRA53uvibnDMCsFZ4M3zM1deuI4b5VLNMfa
-         3/j0Aq1cA2b4r4ThHNe2TeARa224t56irRj1du2O1gw9DPixiCMNC9IedJ3JId3rgWq1
-         90gN/8u/hbN05BMPp9stihix9Jp4NRmmxzjsFEEXIHpf0PqH6x35hvYHxuM2RTzXf662
-         Qihg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734037021; x=1734641821;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=avDzzP0/VkNzm+n9LZOGcxgwhkTK2s0/hK10f7P3aeQ=;
-        b=s7ozqmSVKRW6a2/N12y8RlGNeyF9FiLGJK3sM6UKMJuhBcI6bPZv0VhbMfJD20MRLM
-         il4bYiC/4cwBYMlnPWayj2J9UuwVjLiFEJkwdXCkD0XyFqACyGGza0hvBKvTOZr7ZnTA
-         mc4OmKmjYN7qANE8pMBQvc8O+d1P+xd7wmyD1J3WSckkLH+yUUM2fH6nG1lZsED05SaL
-         bZPitsM/abhlDXlFvU+m/hx58PkOtXyf5WjHGzaXADvbh8VYe71BwHL5mgBzvwklCx4E
-         J/hhcShR8m6RV4Lja0bXB34mdmRDMrJtRZ8Y47LVeirrlP381pUTKs80o4wsm5I7F8t0
-         gUrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUpOPtuzWn1kMBaySyMaNjr8P79sedXCIQIOm8Ian2JYWWcZ0MUbu7ye3yhZay0TtaDQem/SJRqMyn+ls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJqDpg2n72Gx881X1lx8IbWBsPQyCv68S6mrVq8z1gtUPEvaDK
-	TvDqZq5HnpSSC5bFZtspHdRpq+plY1ENgHJBbcCgLliyJOae34cY3rR55zMfMrs=
-X-Gm-Gg: ASbGncsX9RExlxPkHQv6iVUkbgo5PMuH/GW9R5R1yjbgocQagMDGlXjrvCXdqNg1/Rc
-	2YBXG8KPOzNxrdaewETTWDmqSKyPjPQPj40hnSiSOslEtLmXts+kz4trh5qLfFUBG0EU5zM8i/Z
-	3EbVdQsh/LWaskl8a86dZ7zUi2odedlpDVRtQlSk7Osl12jxlRH4SWrUmr83t8WslvcvD32fn/4
-	PzqM7C1jEQjV4SVds5VCGegu0reteUblea1LhzSSoG7IElWsjwtAnGqnm5nEBV4i+vpfQ==
-X-Google-Smtp-Source: AGHT+IH/wT2q7FeXEvOXyiLAeM+qgkw89AmTDwfUlGcclhBbzmkDVZQZXv4TvB7hgFblbmwcDG7kHg==
-X-Received: by 2002:a17:902:cf10:b0:216:5cc8:44e7 with SMTP id d9443c01a7336-2178c872406mr71955495ad.25.1734037021033;
-        Thu, 12 Dec 2024 12:57:01 -0800 (PST)
-Received: from atishp.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2162e53798asm94019785ad.60.2024.12.12.12.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 12:57:00 -0800 (PST)
-From: Atish Patra <atishp@rivosinc.com>
-Date: Thu, 12 Dec 2024 12:56:56 -0800
-Subject: [PATCH 3/3] RISC-V: KVM: Add new exit statstics for redirected
- traps
+	s=arc-20240116; t=1734037107; c=relaxed/simple;
+	bh=AjIx23vonbDByIV/t/bn7Eo6a76RJNPk9XgPYz0Qnls=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=UDiFctH7JpJkZ6uCzXwwfSjzFYl61wQZHRU1GHMkwU93iOgH1ICIG0LTh3nr61uGXkTIgJHkrqA9bNI9XxdMJimaDCks9olKAXtfJMFybeIEqWWMqik3SOu6U9P2Sz3RWhGXoBs0NAmoTkcWZNEWUDlFwDE5HwVovYyywn7YMGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PSax/2ZN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734037103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kRj+ZKboWMPdKrxeR9Iv35SSS+uueJYsJPtH1TUGhiA=;
+	b=PSax/2ZNlfXxpWzBOJOKVmgMaa3Ld2tR/xR1SP5mllFA/MhdTQwSZh1oZ2szSWiT9M0PYo
+	Uo+AxJ1pzNvFoztKMJsjrNnQkNbK+Q9Gc6ZQKgFjrd7OcH8jXYQrdzcGhoFOhI4iR2TGyK
+	loQeApbYwf3/3Vt51o6obGGvLtApR40=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-678-uPzYWwCeM_yTY_Y6-CZWGg-1; Thu,
+ 12 Dec 2024 15:58:20 -0500
+X-MC-Unique: uPzYWwCeM_yTY_Y6-CZWGg-1
+X-Mimecast-MFC-AGG-ID: uPzYWwCeM_yTY_Y6-CZWGg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B33531956046;
+	Thu, 12 Dec 2024 20:58:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 360411956052;
+	Thu, 12 Dec 2024 20:58:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] rxrpc: Disable IRQ, not BH, to take the lock for ->attend_link
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241212-kvm_guest_stat-v1-3-d1a6d0c862d5@rivosinc.com>
-References: <20241212-kvm_guest_stat-v1-0-d1a6d0c862d5@rivosinc.com>
-In-Reply-To: <20241212-kvm_guest_stat-v1-0-d1a6d0c862d5@rivosinc.com>
-To: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>
-Cc: kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Atish Patra <atishp@rivosinc.com>
-X-Mailer: b4 0.15-dev-13183
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2870145.1734037095.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Dec 2024 20:58:15 +0000
+Message-ID: <2870146.1734037095@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Currently, kvm doesn't delegate the few traps such as misaligned
-load/store, illegal instruction and load/store access faults because it
-is not expected to occur in the guest very frequent. Thus, kvm gets a
-chance to act upon it or collect statstics about it before redirecting
-the traps to the guest.
+    =
 
-We can collect both guest and host visible statistics during the traps.
-Enable them so that both guest and host can collect the stats about
-them if required.
+Use spin_lock_irq(), not spin_lock_bh() to take the lock when accessing th=
+e
+->attend_link() to stop a delay in the I/O thread due to an interrupt bein=
+g
+taken in the app thread whilst that holds the lock and vice versa.
 
-Signed-off-by: Atish Patra <atishp@rivosinc.com>
+Fixes: a2ea9a907260 ("rxrpc: Use irq-disabling spinlocks between app and I=
+/O thread")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: linux-afs@lists.infradead.org
+cc: netdev@vger.kernel.org
 ---
- arch/riscv/include/asm/kvm_host.h | 5 +++++
- arch/riscv/kvm/vcpu.c             | 7 ++++++-
- arch/riscv/kvm/vcpu_exit.c        | 5 +++++
- 3 files changed, 16 insertions(+), 1 deletion(-)
+ net/rxrpc/io_thread.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-index 35eab6e0f4ae..cc33e35cd628 100644
---- a/arch/riscv/include/asm/kvm_host.h
-+++ b/arch/riscv/include/asm/kvm_host.h
-@@ -87,6 +87,11 @@ struct kvm_vcpu_stat {
- 	u64 csr_exit_kernel;
- 	u64 signal_exits;
- 	u64 exits;
-+	u64 instr_illegal_exits;
-+	u64 load_misaligned_exits;
-+	u64 store_misaligned_exits;
-+	u64 load_access_exits;
-+	u64 store_access_exits;
- };
- 
- struct kvm_arch_memory_slot {
-diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-index e048dcc6e65e..60d684c76c58 100644
---- a/arch/riscv/kvm/vcpu.c
-+++ b/arch/riscv/kvm/vcpu.c
-@@ -34,7 +34,12 @@ const struct _kvm_stats_desc kvm_vcpu_stats_desc[] = {
- 	STATS_DESC_COUNTER(VCPU, csr_exit_user),
- 	STATS_DESC_COUNTER(VCPU, csr_exit_kernel),
- 	STATS_DESC_COUNTER(VCPU, signal_exits),
--	STATS_DESC_COUNTER(VCPU, exits)
-+	STATS_DESC_COUNTER(VCPU, exits),
-+	STATS_DESC_COUNTER(VCPU, instr_illegal_exits),
-+	STATS_DESC_COUNTER(VCPU, load_misaligned_exits),
-+	STATS_DESC_COUNTER(VCPU, store_misaligned_exits),
-+	STATS_DESC_COUNTER(VCPU, load_access_exits),
-+	STATS_DESC_COUNTER(VCPU, store_access_exits),
- };
- 
- const struct kvm_stats_header kvm_vcpu_stats_header = {
-diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
-index acdcd619797e..6e0c18412795 100644
---- a/arch/riscv/kvm/vcpu_exit.c
-+++ b/arch/riscv/kvm/vcpu_exit.c
-@@ -195,22 +195,27 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struct kvm_run *run,
- 	switch (trap->scause) {
- 	case EXC_INST_ILLEGAL:
- 		kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ILLEGAL_INSN);
-+		vcpu->stat.instr_illegal_exits++;
- 		ret = vcpu_redirect(vcpu, trap);
- 		break;
- 	case EXC_LOAD_MISALIGNED:
- 		kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_MISALIGNED_LOAD);
-+		vcpu->stat.load_misaligned_exits++;
- 		ret = vcpu_redirect(vcpu, trap);
- 		break;
- 	case EXC_STORE_MISALIGNED:
- 		kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_MISALIGNED_STORE);
-+		vcpu->stat.store_misaligned_exits++;
- 		ret = vcpu_redirect(vcpu, trap);
- 		break;
- 	case EXC_LOAD_ACCESS:
- 		kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ACCESS_LOAD);
-+		vcpu->stat.load_access_exits++;
- 		ret = vcpu_redirect(vcpu, trap);
- 		break;
- 	case EXC_STORE_ACCESS:
- 		kvm_riscv_vcpu_pmu_incr_fw(vcpu, SBI_PMU_FW_ACCESS_STORE);
-+		vcpu->stat.store_access_exits++;
- 		ret = vcpu_redirect(vcpu, trap);
- 		break;
- 	case EXC_INST_ACCESS:
-
--- 
-2.34.1
+diff --git a/net/rxrpc/io_thread.c b/net/rxrpc/io_thread.c
+index 2925c7fc82cf..64f8d77b8731 100644
+--- a/net/rxrpc/io_thread.c
++++ b/net/rxrpc/io_thread.c
+@@ -508,9 +508,9 @@ int rxrpc_io_thread(void *data)
+ 		while ((conn =3D list_first_entry_or_null(&conn_attend_q,
+ 							struct rxrpc_connection,
+ 							attend_link))) {
+-			spin_lock_bh(&local->lock);
++			spin_lock_irq(&local->lock);
+ 			list_del_init(&conn->attend_link);
+-			spin_unlock_bh(&local->lock);
++			spin_unlock_irq(&local->lock);
+ 			rxrpc_input_conn_event(conn, NULL);
+ 			rxrpc_put_connection(conn, rxrpc_conn_put_poke);
+ 		}
+@@ -527,9 +527,9 @@ int rxrpc_io_thread(void *data)
+ 		while ((call =3D list_first_entry_or_null(&call_attend_q,
+ 							struct rxrpc_call,
+ 							attend_link))) {
+-			spin_lock_bh(&local->lock);
++			spin_lock_irq(&local->lock);
+ 			list_del_init(&call->attend_link);
+-			spin_unlock_bh(&local->lock);
++			spin_unlock_irq(&local->lock);
+ 			trace_rxrpc_call_poked(call);
+ 			rxrpc_input_call_event(call);
+ 			rxrpc_put_call(call, rxrpc_call_put_poke);
 
 
