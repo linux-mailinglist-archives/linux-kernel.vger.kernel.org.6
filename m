@@ -1,86 +1,53 @@
-Return-Path: <linux-kernel+bounces-443749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952439EFB6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:48:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E22A16D16C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:48:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20621891A9;
-	Thu, 12 Dec 2024 18:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fLhmAXEZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F019EFB72
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:48:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4D318E047
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF1628BEE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:48:55 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696EF189B9C;
+	Thu, 12 Dec 2024 18:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="tq6orQL+"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896FC2F2F;
+	Thu, 12 Dec 2024 18:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734029282; cv=none; b=rRmmZiiApPR6BltO4w5ilTF0PnHKZ49BmjiIrC4W3YmkJDbUfofufydLwKEZzvPN2gAHDNb88NXaCEndG5vykwwSnPcbnFUdHlVGddFhHquXZhSh3vzcn/pFwO4cNKlzHTU3FFLp68d7D+ciRMn7zegQAdVQ/yN0BwbgejF3ZAo=
+	t=1734029326; cv=none; b=jf4KQhmslcUoF+urzseL/Y68rI+OAjb6IlfPDE+0U9a9D2GTMZQkpDgGigFC1Lsr68TDpXE23jNDxlW9kx7a10qpDdYrLzOSX6DYIAxE9Yx6oM1Wwg1JdZPLhnbYuA+B79FZoX/B8OyTpPh5FK5nk98YJS1bMREersdw7kKMyx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734029282; c=relaxed/simple;
-	bh=KlkSWLS0Qd/mfciP5UkDT25gBWSNSTSCByPeDrKJSD4=;
+	s=arc-20240116; t=1734029326; c=relaxed/simple;
+	bh=vFL9c+2PwzotBNq6ljdxHGHn07GU7AczLYkX2CkFbvM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t+AYK3CIpQ61YP+sVuhhLDLmEdN5LlQnAvs1untaQUybrGQ2RK5UJ6tyCR2V8nBbYmdjlh7+JRfGCMzvy9esvhZ6xeQ1rLRFr3LrRQYtx5bEU02CHLONhUBYRBsXppHopYj8bOyE1MtJ9l3AiECa9TDEi/fTP3nU6Z5L40RFrDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fLhmAXEZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCBM2lg028212
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:48:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ALq+X0uDXx9y3Xid0ehyViPpa6r2R/TSZzWUGNi/JQ8=; b=fLhmAXEZeVEMBALq
-	TkeSvcA1HtPZiNwJ/SSYzvg0kA4Bmf6IxjR7Ex7bhmZAV5CKwPB9BYjr+3KRy9tl
-	xImOFLRLH2drf2fMMkbKhkfMD0cKHldEtLRDKeRc17Gq5uEhbiRUoJ+Dn6l+0tDF
-	INEOPWvPXTipikKsHoT7oQtYYheCAI4zBYSwm82RlbZaWtqEwbIXDhmRzEJ7wMWG
-	yJEhTQ1FTFC4Yfz2O/FXuwJ6GiOEV+BLxAaPMJtL5Uapr4nQZrCWNrfIZhkK56XK
-	pQgUjE2KKmzVLsN5qcyOra5t8MUcPrBzLxD0sHRzAFznd/cdoUGHdTFtdoiFBMmJ
-	fwlW9A==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fxw4s82y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:47:59 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d8e7016630so2339306d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:47:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734029278; x=1734634078;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ALq+X0uDXx9y3Xid0ehyViPpa6r2R/TSZzWUGNi/JQ8=;
-        b=DMr/oSLnView10XOk/YPMoFIg5iOW9VJNjp4e0FuIoic/9gbMv+SVAwYbkNriCALME
-         ZzSzIzoO3mBQciOmOKFcr+JSAhJIL00Wp4RGXkFcT1f0E+VQQhUoJ3c1n2TTkqV7rDTq
-         7pe7SZoBpdyMyXOyI8jGvodh/5adZ3T6lizIy7GixX6WX05/hRCE6Vz8PBhUn3hr8hHR
-         cCUBBS/PrxHyMNMWxWEsLJN/CXjYNWgeaMVMq/ehhoJHcGuf+53wsDGqJs5XnQttjzRk
-         FKLB3dHJjeLQS6qICin7Wud11N3ey5sxlurCakn0+DPz15SX+pH4XvuSlU/k228gfqaJ
-         Kqog==
-X-Forwarded-Encrypted: i=1; AJvYcCUFOXi444FZFg+O/y+ONg9ctzrc8hupU/D+YFlb68Ot36KWgzpw708Qzq0kx/aSiCIE9OJ8/s0vyfbBmCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmDUlRPCddyKt2exAscljZ+ru2jIGP3VNreYa+ebQ+M4iDYvmQ
-	QuqnFGqATvgZ06RPsz17W3VsCuuRlTU5WPiDGlc2SqxkYu3YyYWGZsCmRnSvj9Ko0Lppq1r8ZtO
-	RtgFjYMwO3oogNQpHamblIyBWZiYCk2OI+177xnfmvHQtv2V3L+WxrD9aL5g2q5k=
-X-Gm-Gg: ASbGnctR/0GUiGsQ96hfLfugGXD6X8dd7Pe/nqLSMaMJLXcm7kCkMysdPik+4wsw2QL
-	rKnYW5QA9i35RjjZHX6wQs6OREbyoOOyIjUEIcklbA95ldfgLcCOvPjB0jyo3K8rHTyPPq2zr31
-	As+086QXXSQfiCY2Yq8zZpRteNWdX3egArmTLa1uWOezElLbTI3txN1NjUrEyBaBJjikwFKZ9Cj
-	b4SSIpnmn/aHS+n5PWZpQeuSteiffDVE5TElCZsf4l8ijwdWoN9abqeLt+2bskNMNzhYWb7Luk9
-	3er9u/tP/xs4nINC7uA0bPlTDLV+BdLlALgJCg==
-X-Received: by 2002:a05:6214:21ec:b0:6d4:216a:2768 with SMTP id 6a1803df08f44-6db0f82f0ccmr8310686d6.12.1734029278617;
-        Thu, 12 Dec 2024 10:47:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEh+G1C5zbhHrm5ABg6kM6JkUvZ5KKIo29bktjk85BGikSGESW+ovgWonPs025EJAUyydbJTA==
-X-Received: by 2002:a05:6214:21ec:b0:6d4:216a:2768 with SMTP id 6a1803df08f44-6db0f82f0ccmr8310446d6.12.1734029278313;
-        Thu, 12 Dec 2024 10:47:58 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa68e800a9csm569897166b.34.2024.12.12.10.47.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 10:47:57 -0800 (PST)
-Message-ID: <27eb49c6-c81e-4792-b49a-904cce95cdc8@oss.qualcomm.com>
-Date: Thu, 12 Dec 2024 19:47:55 +0100
+	 In-Reply-To:Content-Type; b=QV2m9QmkvvN3F9xWdw7O0A6L9SX8jqPiPjE9dvIkiSuDl0Oh7Feb/aU8O6gYb0XEVl4TAM9JqpFy89iFKbXAmagVTinuej86g27uaA/6WpP0OatvkKLHkw2RrRoo7HPEHrZE3Wf8o9f+sUyqdi8kDG4lUNOjBUqkPt2Rz/GDQaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=tq6orQL+; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4BCIm2MV1241973
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 12 Dec 2024 10:48:02 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4BCIm2MV1241973
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024111601; t=1734029285;
+	bh=LS5ebAaxhRt1oilTRh8UWqUtciFI640KhdT1USGVRBA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tq6orQL+5MP6ahCa64iKAgWb6ZPHNMgYBOwXTD0WmjfrfJvdhlNU6yVWg1Idcr0ge
+	 MqB2ILmOWMIT/7FcBD3L/GME7qvWeDoFrMbpZYHjF4dl4/BehH7zKZNnkOf8q812y5
+	 V9MNDsTSSJm0Ux5zISOWsNiPbETg2lRDRyVqPwUJ4BZldS3m8ZQhip9KvQBJv600F8
+	 S5/UGHDE4Ho/qxJbHC0fIE6ykYED71KlbBvu4kyoxn/hfFLDq2JpNX1+1KvpimdZAG
+	 cXltHPy7+To/N64SUaJGpny1uEZsXPST7kK0rOYimeMb++aTUMDeFj7DAtnCSeitzk
+	 cwYl4sFY18Tlg==
+Message-ID: <3ec986fa-2bf0-4c78-b532-343ad19436b2@zytor.com>
+Date: Thu, 12 Dec 2024 10:48:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,54 +55,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/19] arm64: dts: qcom: sm8350: Fix MPSS memory length
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Abel Vesa
- <abel.vesa@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Luca Weiss <luca.weiss@fairphone.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241209-dts-qcom-cdsp-mpss-base-address-v2-0-d85a3bd5cced@linaro.org>
- <20241209-dts-qcom-cdsp-mpss-base-address-v2-3-d85a3bd5cced@linaro.org>
+Subject: Re: [PATCH v3 17/27] KVM: x86: Mark CR4.FRED as not reserved when
+ guest can use FRED
+To: Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+        corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-18-xin@zytor.com> <Zxn0tfA+k4ppu2WL@intel.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241209-dts-qcom-cdsp-mpss-base-address-v2-3-d85a3bd5cced@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <Zxn0tfA+k4ppu2WL@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: TvNDB9MDZQllRQOWmU_UINMmSz8-idYv
-X-Proofpoint-GUID: TvNDB9MDZQllRQOWmU_UINMmSz8-idYv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1015 phishscore=0 spamscore=0 priorityscore=1501
- malwarescore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=823
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120136
 
-On 9.12.2024 12:02 PM, Krzysztof Kozlowski wrote:
-> The address space in MPSS/Modem PAS (Peripheral Authentication Service)
-> remoteproc node should point to the QDSP PUB address space
-> (QDSP6...SS_PUB) which has a length of 0x10000.  Value of 0x4040 was
-> copied from older DTS, but it grew since then.
+On 10/24/2024 12:18 AM, Chao Gao wrote:
+>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>> index 03f42b218554..bfdd10773136 100644
+>> --- a/arch/x86/kvm/vmx/vmx.c
+>> +++ b/arch/x86/kvm/vmx/vmx.c
+>> @@ -8009,6 +8009,10 @@ void vmx_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+>> 	kvm_governed_feature_check_and_set(vcpu, X86_FEATURE_LAM);
+>> 	kvm_governed_feature_check_and_set(vcpu, X86_FEATURE_FRED);
+>>
+>> +	/* Don't allow CR4.FRED=1 before all of FRED KVM support is in place. */
+>> +	if (!guest_can_use(vcpu, X86_FEATURE_FRED))
+>> +		vcpu->arch.cr4_guest_rsvd_bits |= X86_CR4_FRED;
 > 
-> This should have no functional impact on Linux users, because PAS loader
-> does not use this address space at all.
+> is this necessary? __kvm_is_valid_cr4() ensures that guests cannot set any bit
+> which isn't supported by the hardware.
 > 
-> Fixes: 177fcf0aeda2 ("arm64: dts: qcom: sm8350: Add remoteprocs")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> To account for hardware/KVM caps, I think the following changes will work. This
+> will fix all other bits besides X86_CR4_FRED.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+This seems a generic infra improvement, maybe it's better for you to
+send it as an individual patch to Sean and the KVM mailing list?
 
-Konrad
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 4a93ac1b9be9..2bec3ba8e47d 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1873,6 +1873,7 @@ struct kvm_arch_async_pf {
+>   extern u32 __read_mostly kvm_nr_uret_msrs;
+>   extern bool __read_mostly allow_smaller_maxphyaddr;
+>   extern bool __read_mostly enable_apicv;
+> +extern u64 __read_mostly cr4_reserved_bits;
+>   extern struct kvm_x86_ops kvm_x86_ops;
+>   
+>   #define kvm_x86_call(func) static_call(kvm_x86_##func)
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 2617be544480..57d82fbcfd3f 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -393,8 +393,8 @@ static void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+>   	vcpu->arch.reserved_gpa_bits = kvm_vcpu_reserved_gpa_bits_raw(vcpu);
+>   
+>   	kvm_pmu_refresh(vcpu);
+> -	vcpu->arch.cr4_guest_rsvd_bits =
+> -	    __cr4_reserved_bits(guest_cpuid_has, vcpu);
+> +	vcpu->arch.cr4_guest_rsvd_bits = cr4_reserved_bits |
+> +					 __cr4_reserved_bits(guest_cpuid_has, vcpu);
+>   
+>   	kvm_hv_set_cpuid(vcpu, kvm_cpuid_has_hyperv(vcpu->arch.cpuid_entries,
+>   						    vcpu->arch.cpuid_nent));
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 34b52b49f5e6..08b42bbd2342 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -119,7 +119,7 @@ u64 __read_mostly efer_reserved_bits = ~((u64)(EFER_SCE | EFER_LME | EFER_LMA));
+>   static u64 __read_mostly efer_reserved_bits = ~((u64)EFER_SCE);
+>   #endif
+>   
+> -static u64 __read_mostly cr4_reserved_bits = CR4_RESERVED_BITS;
+> +u64 __read_mostly cr4_reserved_bits;
+>   
+>   #define KVM_EXIT_HYPERCALL_VALID_MASK (1 << KVM_HC_MAP_GPA_RANGE)
+>   
+> @@ -1110,13 +1110,7 @@ EXPORT_SYMBOL_GPL(kvm_emulate_xsetbv);
+>   
+>   bool __kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>   {
+> -	if (cr4 & cr4_reserved_bits)
+> -		return false;
+> -
+> -	if (cr4 & vcpu->arch.cr4_guest_rsvd_bits)
+> -		return false;
+> -
+> -	return true;
+> +	return !(cr4 & vcpu->arch.cr4_guest_rsvd_bits);
+>   }
+>   EXPORT_SYMBOL_GPL(__kvm_is_valid_cr4);
+>   
+> 
+>> +
+>> 	vmx_setup_uret_msrs(vmx);
+>>
+>> 	if (cpu_has_secondary_exec_ctrls())
+>> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+>> index 992e73ee2ec5..0ed91512b757 100644
+>> --- a/arch/x86/kvm/x86.h
+>> +++ b/arch/x86/kvm/x86.h
+>> @@ -561,6 +561,8 @@ enum kvm_msr_access {
+>> 		__reserved_bits |= X86_CR4_PCIDE;       \
+>> 	if (!__cpu_has(__c, X86_FEATURE_LAM))           \
+>> 		__reserved_bits |= X86_CR4_LAM_SUP;     \
+>> +	if (!__cpu_has(__c, X86_FEATURE_FRED))          \
+>> +		__reserved_bits |= X86_CR4_FRED;        \
+>> 	__reserved_bits;                                \
+>> })
+>>
+>> -- 
+>> 2.46.2
+>>
+>>
+
 
