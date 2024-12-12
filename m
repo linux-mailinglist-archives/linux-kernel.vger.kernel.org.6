@@ -1,190 +1,324 @@
-Return-Path: <linux-kernel+bounces-442909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E529EE3D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:12:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9143C9EE3D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:12:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4143E287C10
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:12:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1072167B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F332101AF;
-	Thu, 12 Dec 2024 10:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98B12101AF;
+	Thu, 12 Dec 2024 10:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4BeYANo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hkNhPD/c"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FF91F949
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7831F949
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733998355; cv=none; b=QMqqEJt8R6sCc41kSMyLYr0i/nh/tk6O6nuEQRhl77U4qI0A/6sanWrszV6cj+D+Zoj2d8YO0mjeHYNh6mkQm47W7U5p907oXKxXYHkEC2M1HGchBdB6UP68lzu9UrDQzc/cYIyKXH1k/9QK2KfT0kx/gf3uc3QIyubAYklFOcs=
+	t=1733998366; cv=none; b=ZwEpH4RddoKG5LXQs0UPlMdIUQbhtwT2/pZotwQ25of8ARWsEiBFSwflAW1KyrvbBvK5KipjWZl3nbSUIc/GIktqf9EphnADS8StocJAXHNFwVJH1XHWVh7rhA+O0xJkco6iMv/ZCJY+N1+u60IG1sY2gMbiPCdavyIHhZQf9Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733998355; c=relaxed/simple;
-	bh=pI0CmbiNGAceIkukqgmpuyvpA4axUQGsh7I3w5JgAa0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fUyIIJMDrt8fZpc3k/wG4yJ6+GwBcOmpOmuHVr00xBEss1KO3Hin5xXNMsCAKib/4iJb63fjImH2aTEcdb0NpEeD55psSmEL0tcI9XXANLwUBSllzHVLdzmTeU4sAbp+Wabntgl8fOylJyRAclhm9KiJk5PXhwf9968Zztok75Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4BeYANo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA19C4CECE;
-	Thu, 12 Dec 2024 10:12:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733998355;
-	bh=pI0CmbiNGAceIkukqgmpuyvpA4axUQGsh7I3w5JgAa0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h4BeYANovPTKYcwkpZN7ak0uJ5p9MrVFewFPknskoPuwVIq8Vg0xaUyOkPeOcSqvZ
-	 1N+66kK65+7cfajzy6k9VtSK+0tjeejNyOHJhww+Z6UvJfHtbLfzDlM4swY5E+86Kc
-	 25PDhxPKr2r1MUymedHAOy6LCzhVBbVWUtbIZprmxOn4WPC1Mh5069dz33g0FcOX0J
-	 MvLaSjlhbPSRxae6MriZIy7GtcDbSZzeh7lreO02oSJvC4uB9M5UHarmb45xV3wxaw
-	 5C3phAiaeOYabII826uqaLooo1sCpA/AGAPi0y2MsnmGVr4F/zGMN1hPRKn2P/dL7I
-	 xAuR68oxFE7/A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tLgBM-0031y9-Ph;
-	Thu, 12 Dec 2024 10:12:33 +0000
-Date: Thu, 12 Dec 2024 10:12:32 +0000
-Message-ID: <86ldwlryzz.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: richard clark <richard.xnu.clark@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	will@kernel.org,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Question about interrupt prioriyt of ARM GICv3/4
-In-Reply-To: <CAJNi4rPDVXS3Ft3nHLXvMzHmn9d10Nz4Pxeduoe+v5HaK=CEAg@mail.gmail.com>
-References: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
-	<86cyi5tanz.wl-maz@kernel.org>
-	<CAJNi4rPDVXS3Ft3nHLXvMzHmn9d10Nz4Pxeduoe+v5HaK=CEAg@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733998366; c=relaxed/simple;
+	bh=6FMKZSv0DdjoMHaLeHBYlpCT1/M4a/wNX0bG0ju8St4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fEk+JbtyfU5k29KOu0Re1w9HDU+LMJ/dQWCnpvRt9V+naG+WZT6ykn1OU7ilrE5YRBIJPmuzKAC7OKO/LHsWWVFZm0bQF4+rR2zemTWl5Woy9j/aihqSAS90nj4S9lShIgDo/EQ+GdUP++IVm3wWtEYtfDJDkr348ZdkmTxfXZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=hkNhPD/c; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43618283dedso3769805e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:12:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1733998362; x=1734603162; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/6L/m3gKnrPsaMxDrU89bXCWhOH8qgzGCoqHbE1Yj18=;
+        b=hkNhPD/cLT0vyTAbLHekCdBkv3wQrDpKlLBO+FGm4vaW0gzyAJVo8u/sRvK6f/8gvb
+         DZX2pnz0gUiiamTbhRWa6S0jQS7Uy/UI0vVbL0+mBxWEmnyFB6pbOtGWgXl8mqSn2LQE
+         7q+r8J5Ld4URV7NPV9FZNnLRE3MvbSDZRvnYc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733998362; x=1734603162;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/6L/m3gKnrPsaMxDrU89bXCWhOH8qgzGCoqHbE1Yj18=;
+        b=ay49YEGbRxUiqKnVr+HnRrTBnJ2ZT7DAVTnyw8V8zvr73FOAbFMOcZIQQHDNqQOmV4
+         40fwZY3Ke8ZJ04yYPEcfklvGd2Gh/D27jgZxk5PIMgcPkSuuOToWNAn9N/UIdI1jN8Od
+         wj5aMMLt6ZHPhB9s9vaMaFXDQoP0wuDgN7+sXndQhIw+FK/FJs1F9ONm87KYWnKl238c
+         CRFzD0qNyAxaEDdv59g0AffDdqvuzLO9kikeyg0HzBXr86EZzs6PVYLimsilt3iU9hst
+         VJ/u9PcF6RpP27PhWgAQxUS18IzDhyzS7Hm8MutU2IpK12AwmRvC5pw/ZbGrzibZ7LEl
+         WRIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkUAAAZBJr0KrmR/pwwvVqSj/I1zIsftLZ1B5flEewCCl3aZ+IPJMHDfxecNay7ZD7fwO+GaYlolApqEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAr+7TpsEzQ3AO4NnqbiaPD0p87wZKlemdjD8ZdhfjOwgVo3gU
+	aYZMUQe3FPwseNkTVbzUMwRvzmVWfCPtWpZcaC6muV6Umg/Y+bfYj5ITiS03tGg=
+X-Gm-Gg: ASbGncuWlhrPT5q+FilMT4scUYrJVYBTUSzneUJoDmEVWOlgP81vt6LvzjMGR6X1tjD
+	3MscbAFZ3naIOaaI99uk4xyhg8R7Ipyx8bYGaVIsGmKUAKDDn6qqTpXTOG26ZvD5G6M141Nn1cH
+	sUvckDq1dd4Rr6lIVgg3Cw4QL/6zKXoHPOPdEJRtD/3J0NYj2yy1YXei+Z9clvAXCn4ls+kRpt6
+	zXP8A/YpmlUpubUB2xy+Usu5QzAdAUYekHxUpe0zSeEJoOFqsEXrTpxCqN0gkbAAqPb
+X-Google-Smtp-Source: AGHT+IEvyP9FitM66cSZMMwydxM3tJNlBph+iYVkomM+fbp/4XM+0mwafLdeLXGjgJiZl+wAHekCvA==
+X-Received: by 2002:a05:600c:3b0e:b0:435:32e:8270 with SMTP id 5b1f17b1804b1-4362282e38dmr25784385e9.14.1733998362260;
+        Thu, 12 Dec 2024 02:12:42 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559f9b5sm12200215e9.26.2024.12.12.02.12.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 02:12:41 -0800 (PST)
+Date: Thu, 12 Dec 2024 11:12:39 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Mika Kuoppala <mika.kuoppala@linux.intel.com>,
+	intel-xe@lists.freedesktop.org, lkml <linux-kernel@vger.kernel.org>,
+	Linux MM <linux-mm@kvack.org>, dri-devel@lists.freedesktop.org,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Maciej Patelczyk <maciej.patelczyk@intel.com>,
+	Jonathan Cavitt <jonathan.cavitt@intel.com>
+Subject: Re: [PATCH 14/26] drm/xe/eudebug: implement userptr_vma access
+Message-ID: <Z1q3F81k2TkUzKW7@phenom.ffwll.local>
+Mail-Followup-To: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Mika Kuoppala <mika.kuoppala@linux.intel.com>,
+	intel-xe@lists.freedesktop.org, lkml <linux-kernel@vger.kernel.org>,
+	Linux MM <linux-mm@kvack.org>, dri-devel@lists.freedesktop.org,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Maciej Patelczyk <maciej.patelczyk@intel.com>,
+	Jonathan Cavitt <jonathan.cavitt@intel.com>
+References: <20241209133318.1806472-1-mika.kuoppala@linux.intel.com>
+ <20241209133318.1806472-15-mika.kuoppala@linux.intel.com>
+ <ec42fe8b-9be0-41cc-96f4-f1869c6bb7e6@amd.com>
+ <Z1cNQTvGdAUPp4Y-@phenom.ffwll.local>
+ <3c1cc9403eb50bc8c532d180f766eb7a429e8913.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: richard.xnu.clark@gmail.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, linux@armlinux.org.uk, mark.rutland@arm.com, torvalds@linux-foundation.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3c1cc9403eb50bc8c532d180f766eb7a429e8913.camel@linux.intel.com>
+X-Operating-System: Linux phenom 6.11.6-amd64 
 
-On Thu, 12 Dec 2024 09:18:56 +0000,
-richard clark <richard.xnu.clark@gmail.com> wrote:
->=20
-> Hi M,
+On Thu, Dec 12, 2024 at 09:49:24AM +0100, Thomas Hellström wrote:
+> On Mon, 2024-12-09 at 16:31 +0100, Simona Vetter wrote:
+> > On Mon, Dec 09, 2024 at 03:03:04PM +0100, Christian König wrote:
+> > > Am 09.12.24 um 14:33 schrieb Mika Kuoppala:
+> > > > From: Andrzej Hajda <andrzej.hajda@intel.com>
+> > > > 
+> > > > Debugger needs to read/write program's vmas including
+> > > > userptr_vma.
+> > > > Since hmm_range_fault is used to pin userptr vmas, it is possible
+> > > > to map those vmas from debugger context.
+> > > 
+> > > Oh, this implementation is extremely questionable as well. Adding
+> > > the LKML
+> > > and the MM list as well.
+> > > 
+> > > First of all hmm_range_fault() does *not* pin anything!
+> > > 
+> > > In other words you don't have a page reference when the function
+> > > returns,
+> > > but rather just a sequence number you can check for modifications.
+> > 
+> > I think it's all there, holds the invalidation lock during the
+> > critical
+> > access/section, drops it when reacquiring pages, retries until it
+> > works.
+> > 
+> > I think the issue is more that everyone hand-rolls userptr. Probably
+> > time
+> > we standardize that and put it into gpuvm as an optional part, with
+> > consistent locking, naming (like not calling it _pin_pages when it's
+> > unpinnged userptr), kerneldoc and all the nice things so that we
+> > stop consistently getting confused by other driver's userptr code.
+> > 
+> > I think that was on the plan originally as an eventual step, I guess
+> > time
+> > to pump that up. Matt/Thomas, thoughts?
+> 
+> It looks like we have this planned and ongoing but there are some
+> complications and thoughts.
+> 
+> 1) A drm_gpuvm implementation would be based on vma userptrs, and would
+> be pretty straightforward based on xe's current implementation and, as
+> you say, renaming.
+> 
+> 2) Current Intel work to land this on the drm level is based on
+> drm_gpusvm (minus migration to VRAM). I'm not fully sure yet how this
+> will integrate with drm_gpuvm.
+> 
+> 3) Christian mentioned a plan to have a common userptr implementation
+> based off drm_exec. I figure that would be bo-based like the amdgpu
+> implemeentation still is. Possibly i915 would be interested in this but
+> I think any VM_BIND based driver would want to use drm_gpuvm /
+> drm_gpusvm implementation, which is also typically O(1), since userptrs
+> are considered vm-local.
+> 
+> Ideas / suggestions welcome
 
-Hi r,
+So just discussed this a bit with Joonas, and if we use access_remote_vm
+for the userptr access instead of hand-rolling then we really only need
+bare-bones data structure changes in gpuvm, and nothing more. So
 
->=20
-> On Fri, Dec 6, 2024 at 5:37=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrot=
-e:
-> >
-> > On Fri, 06 Dec 2024 08:33:11 +0000,
-> > richard clark <richard.xnu.clark@gmail.com> wrote:
-> > >
-> > > Hi,
-> > > Currently seems the GICv3/4 irqchip configures all the interrupts as
-> > > the same priority, I am thinking about to minimize the latency of the
-> > > interrupt for a particular device, e.g, the arm arch_timer in the RTL
-> > > system. The question is,
-> > > 1. Why don't we provide a /proc or /sys interface for the enduser to
-> > > set the priority of a specific interrupt(SPI/PPI)?
-> >
-> > I'm afraid this really has nothing to do with any particular interrupt
-> > architecture.
-> >
-> > Before thinking of exposing the interrupt priority to userspace, you
-> > should look at what this translates into for the kernel once you allow
-> > interrupts to be preempted by another one with a higher priority.
-> >
-> Interrupt priority doesn't necessarily mean the preemption, seems
-> you're talking about the interrupt preemption harm according to your
-> statement followed.Frankly I am just thinking higher priority will win
-> the lower ones in case massive external interrupts received in the GIC
-> level (you see I am still talking about GIC, not kernel)
+- add the mm pointer to struct drm_gpuvm
+- add a flag indicating that it's a userptr + userspace address to struct
+  drm_gpuva
+- since we already have userptr in drivers I guess there should be any
+  need to adjust the actual drm_gpuvm code to cope with these
 
-As I stated at the end of my email, the GIC only gives guarantee that
-you will ack the highest priority interrupt in finite time. Not right
-when it is made pending. Yes, it has the concept of HPPI. But that
-from the PoV of the CPU interface, not that of the distributor. Factor
-in the Stream interface, and you realise that expecting to always ack
-the highest priority pending interrupt is akin to expecting no
-reordering of packets in a network.
+Then with this you can write the access helper using access_remote_vm
+since that does the entire remote mm walking internally, and so there's
+no need to also have all the mmu notifier and locking lifted to gpuvm. But
+it does already give us some great places to put relevant kerneldocs (not
+just for debugging architecture, but userptr stuff in general), which is
+already a solid step forward.
 
-> >
-> > This means that at every point where you would normally see a
-> > local_irq_save(), spinlock_irqsave() or equivalent, you would need to
-> > explicitly specify the priority that you allow for preemption. You
-> > should then make sure that any code that can be run during an
-> > interrupt is reentrant. You need to define which data structures can
-> > be manipulated at which priority level... The list goes on.
-> >
-> irqsave just masks the interrupt from the point of cpu, I don't think
-> it will mess things up if preemption really happens (no? then what the
-> side-effect is for the nested interrupt handling in the softirq part.
-> damage the semantic of the lock primitives?)
-> >
-> > If you want a small taste of the complexity, just look at what
-> > handling NMIs (or even pseudo-NMIs in the case of GICv3) means, and
-> > generalise it to not just two, but an arbitrary range of priorities.
-> >
-> > If you want the full blown experience, look at the BSDs and their use
-> > of spl*(). I don't think anyone has any plan to get there, and the RT
-> > patches have shown that there is little need for it.
-> >
-> As supplement=EF=BC=8Cthe fiq is suggested to be used as an alternative t=
-o the
-> higher priority in the RT area...
+Plus I think it'd would also be a solid first step that we need no matter
+what for figuring out the questions/options you have above.
 
-<PulpFiction>
-FIQ's dead, baby. FIQ's dead.
-</PulpFiction>
+Thoughts?
+-Sima
 
-> >
-> > > 2. Is there any way to verify the higher priority interrupt will have
-> > > more dominant to be selected to the CPU (IOW, the priority is really
-> > > working) in case of multiple different interrupts asserted to the GIC
-> > > at the same time(some debug registers of GIC like GICD_REEMPT_CNT :-)
-> > > to record higher priority wins)?
-> >
-> > The GIC architecture makes no promise that the interrupt you
-> > acknowledge is the highest priority pending interrupt, because this is
-> > by definition a very racy process.
-> >
-> > Also, even on busy systems, you will very rarely see two interrupts
-> > targeting the same CPU being made pending at the same time, so that
-> > the interrupt delivery system would have to arbitrate between the two.
-> > That's because interrupts are vanishingly rare in the grand scheme of
-> > things.
-> >
-> 1. I am trying to stress the external interrupts to the core#0 via the
-> stress-ng tool with one of interrupt being configured as higher
-> priority to see the benchmark data, it's time consuming as you can
-> image, still is in progress(BTW, I can't see any lockup similar hang
-> in the system with a higher priority configured)
+> 
+> > -Sima
+> > 
+> > > 
+> > > > v2: pin pages vs notifier, move to vm.c (Matthew)
+> > > > v3: - iterate over system pages instead of DMA, fixes iommu
+> > > > enabled
+> > > >      - s/xe_uvma_access/xe_vm_uvma_access/ (Matt)
+> > > > 
+> > > > Signed-off-by: Andrzej Hajda <andrzej.hajda@intel.com>
+> > > > Signed-off-by: Maciej Patelczyk <maciej.patelczyk@intel.com>
+> > > > Signed-off-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+> > > > Reviewed-by: Jonathan Cavitt <jonathan.cavitt@intel.com> #v1
+> > > > ---
+> > > >   drivers/gpu/drm/xe/xe_eudebug.c |  3 ++-
+> > > >   drivers/gpu/drm/xe/xe_vm.c      | 47
+> > > > +++++++++++++++++++++++++++++++++
+> > > >   drivers/gpu/drm/xe/xe_vm.h      |  3 +++
+> > > >   3 files changed, 52 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > b/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > index 9d87df75348b..e5949e4dcad8 100644
+> > > > --- a/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > +++ b/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > @@ -3076,7 +3076,8 @@ static int xe_eudebug_vma_access(struct
+> > > > xe_vma *vma, u64 offset_in_vma,
+> > > >   		return ret;
+> > > >   	}
+> > > > -	return -EINVAL;
+> > > > +	return xe_vm_userptr_access(to_userptr_vma(vma),
+> > > > offset_in_vma,
+> > > > +				    buf, bytes, write);
+> > > >   }
+> > > >   static int xe_eudebug_vm_access(struct xe_vm *vm, u64 offset,
+> > > > diff --git a/drivers/gpu/drm/xe/xe_vm.c
+> > > > b/drivers/gpu/drm/xe/xe_vm.c
+> > > > index 0f17bc8b627b..224ff9e16941 100644
+> > > > --- a/drivers/gpu/drm/xe/xe_vm.c
+> > > > +++ b/drivers/gpu/drm/xe/xe_vm.c
+> > > > @@ -3414,3 +3414,50 @@ void xe_vm_snapshot_free(struct
+> > > > xe_vm_snapshot *snap)
+> > > >   	}
+> > > >   	kvfree(snap);
+> > > >   }
+> > > > +
+> > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64
+> > > > offset,
+> > > > +			 void *buf, u64 len, bool write)
+> > > > +{
+> > > > +	struct xe_vm *vm = xe_vma_vm(&uvma->vma);
+> > > > +	struct xe_userptr *up = &uvma->userptr;
+> > > > +	struct xe_res_cursor cur = {};
+> > > > +	int cur_len, ret = 0;
+> > > > +
+> > > > +	while (true) {
+> > > > +		down_read(&vm->userptr.notifier_lock);
+> > > > +		if (!xe_vma_userptr_check_repin(uvma))
+> > > > +			break;
+> > > > +
+> > > > +		spin_lock(&vm->userptr.invalidated_lock);
+> > > > +		list_del_init(&uvma->userptr.invalidate_link);
+> > > > +		spin_unlock(&vm->userptr.invalidated_lock);
+> > > > +
+> > > > +		up_read(&vm->userptr.notifier_lock);
+> > > > +		ret = xe_vma_userptr_pin_pages(uvma);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +	}
+> > > > +
+> > > > +	if (!up->sg) {
+> > > > +		ret = -EINVAL;
+> > > > +		goto out_unlock_notifier;
+> > > > +	}
+> > > > +
+> > > > +	for (xe_res_first_sg_system(up->sg, offset, len, &cur);
+> > > > cur.remaining;
+> > > > +	     xe_res_next(&cur, cur_len)) {
+> > > > +		void *ptr = kmap_local_page(sg_page(cur.sgl)) +
+> > > > cur.start;
+> > > 
+> > > The interface basically creates a side channel to access userptrs
+> > > in the way
+> > > an userspace application would do without actually going through
+> > > userspace.
+> > > 
+> > > That is generally not something a device driver should ever do as
+> > > far as I
+> > > can see.
+> > > 
+> > > > +
+> > > > +		cur_len = min(cur.size, cur.remaining);
+> > > > +		if (write)
+> > > > +			memcpy(ptr, buf, cur_len);
+> > > > +		else
+> > > > +			memcpy(buf, ptr, cur_len);
+> > > > +		kunmap_local(ptr);
+> > > > +		buf += cur_len;
+> > > > +	}
+> > > > +	ret = len;
+> > > > +
+> > > > +out_unlock_notifier:
+> > > > +	up_read(&vm->userptr.notifier_lock);
+> > > 
+> > > I just strongly hope that this will prevent the mapping from
+> > > changing.
+> > > 
+> > > Regards,
+> > > Christian.
+> > > 
+> > > > +	return ret;
+> > > > +}
+> > > > diff --git a/drivers/gpu/drm/xe/xe_vm.h
+> > > > b/drivers/gpu/drm/xe/xe_vm.h
+> > > > index 23adb7442881..372ad40ad67f 100644
+> > > > --- a/drivers/gpu/drm/xe/xe_vm.h
+> > > > +++ b/drivers/gpu/drm/xe/xe_vm.h
+> > > > @@ -280,3 +280,6 @@ struct xe_vm_snapshot
+> > > > *xe_vm_snapshot_capture(struct xe_vm *vm);
+> > > >   void xe_vm_snapshot_capture_delayed(struct xe_vm_snapshot
+> > > > *snap);
+> > > >   void xe_vm_snapshot_print(struct xe_vm_snapshot *snap, struct
+> > > > drm_printer *p);
+> > > >   void xe_vm_snapshot_free(struct xe_vm_snapshot *snap);
+> > > > +
+> > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64
+> > > > offset,
+> > > > +			 void *buf, u64 len, bool write);
+> > > 
+> > 
+> 
 
-If you don't have preemption, I don't think anything wrong will
-happen. But I don't expect any benefit either.
-
-> 2. This raises a very interesting question and I am also very curious
-> about is, what is the purpose for the GIC to introduce the interrupt
-> priority features, a placeholder feature reserved for the future? Ah,
-> hardware prefer to provide more functionalities than its being
-> actually used by software, any other justification except that?
-
-You realise that the HW is not exclusively designed for Linux, right?
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
