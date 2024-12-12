@@ -1,160 +1,254 @@
-Return-Path: <linux-kernel+bounces-442552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B369EDE1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:08:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2FD9EDE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:22:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 109B21888DCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A980188908D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D86153BF6;
-	Thu, 12 Dec 2024 04:08:26 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666741632DA;
+	Thu, 12 Dec 2024 04:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T+JN9e+Q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4379D257D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 04:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C85C7346D;
+	Thu, 12 Dec 2024 04:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733976505; cv=none; b=bQJKDKIwflgcN9NOjlzMC7r6838+hwT1ZE6GYeySwHo6zr+Dlw7cPF51udvcuYIyRpep9SFj7rXjOBcxj7BZnj5aVwD9NXtFgWD+1T3lfiXtb366BZvpl6xJHjDtiNnatTZHQSgkGKUQxbMj2/vdBWcLN7A9VEQGd1POTnH/WYw=
+	t=1733977329; cv=none; b=GGtNbHapX6qLa6F5mPEEb6My18a8F+S2hi8SS3jUv7oBJXg20zKVZ/r3w4tTL+xYjUjXzSNUI9aNB2OsWSLfOOYugb2lzCopK+pcePftR8eDR2qg6a5Gr9HL9VUieGDUtO4TgA7jU8SLxnCIbAelSF3d5AN+1sCD+4+jjwEf9Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733976505; c=relaxed/simple;
-	bh=BcR4GWiJnxWccrq2UrzXIdHNMFVl7E8qTgLudfNhD3g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=W4gNvkQCHDhmC9i6x8cA6gQN0kCqxY/ceAE8W3IBsgCscNpJKaHe2VBPLGf3o46BNhG7lFOIEHo7c2wdJa6gegcDcKIVpTH9SI1SCTcJ3F7zJbUykafrrsOBd5rgHZyuXXtfqIlG8A9npvvyci8zVdgMespoc5PCRbjqpj1Pljo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a9d4ea9e0cso2315055ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 20:08:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733976503; x=1734581303;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wGI38PYexk+CxlMAAtU1uWM8gvxpaJ09c2Eqyvc9vo4=;
-        b=M3MbpBWkPXxk+oJwyY5RE1h+oVDQOJlluIogI2bixjQBI8VyYkcdASCi8FMFLHEQKA
-         8kgr5JVoHOKe3H5kHnZRfbhErHvbyv4HDMqXKUpZnNzo6FBUVbGZfNlEFObGnzqMSakn
-         EtvSc8E/atIGo+VPLLLl/3UOJRb53uvMBxa/7yuqUrEGOJvfiaDkcCdlZrlzCvb0vqLD
-         85Sxzph8kAIaq56aEAcVJozk9013J/5FzI+MVO5zfpOlN1/fdoJ16NxVJnzLC9/hU9a4
-         ENjYKs8FEi6fS/NHv7RwBJEN0+71td/K/Yl+5faLK5dl7jAA+TXFzZcDx/UavQUlXfCl
-         Z4Gg==
-X-Gm-Message-State: AOJu0Yz6IwsCiWttb98G2GKMQ0SGRaW93QxeUiSWUjP0nuztpE8xaX+x
-	6isUjtV0uZwiw2OLexATj0eZKDFa/r+koyybFQWWQnCzy6UKYukLXuHr8aaer64GhoN68fxYBTq
-	GETVvaOvPU2bnd2IMZmKzUM58aYnaA14BbYNZe8DYgJamIxNWGUQbe/FBWQ==
-X-Google-Smtp-Source: AGHT+IFekEQrqOXB/6x54gG6MNBiztebBxH0Se5Uo2fLDVcxbXJeHqpXMANi0KKDeRJXdeXtL9x43ZUMgpRw/Fs/1m25nOcLPXA/
+	s=arc-20240116; t=1733977329; c=relaxed/simple;
+	bh=QStjar8bPX8KFhCIprblbF82qO5QFkrjkmCIwbuxdnc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hd0FEl/oH/cvIulcJ5A6VuAWud1vob/84tpQXIcqb8qVhWovOi9ZPOOSSWAzR3ITv5CQI5ZMdfxkwv/nxt1TdwSVRGRwuj/Y4xjwI0Q/7dFtf1wQtol/ntWGAV9w3ajtwHGqsIcF5EOXj6xl+Ks9vwhuA3qcVJJCgdat4jnlvjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T+JN9e+Q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBLQusg024170;
+	Thu, 12 Dec 2024 04:16:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=aMgfjKKszwppdDTDQKkd0U
+	mCUIaosnJ0OR30rkIOjBc=; b=T+JN9e+QpcrD5jnJXFJ4W9j2DKthVuiliz8ZgC
+	arGCWrwnElu/I/vNGrdwPqALnUPDbskCvYGtSAwgwyYdN6aIxIqueZKQDENYEAEQ
+	Zan0fLfFR2O/31xrUeLD+RMX9AuhPfY2cPaJVpWvN+kNrvTkYtKQODmn7ahXci1y
+	01WcPWKP35iF3OlrWtL4ZIK46wv/FGV4n6WrZV65/jrABZkD46+ZZRnP520w9n/+
+	Piva+Wlne4WyrVnUpmsOiTc7hNiTyPh1OdLTEgZOLEao201UVqhUDl+ByRyLypw5
+	evsBmGsuj3b+hG/4Ds23ZjQLgtmxAzR0+ULYivwGtVh63wcA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40hpsu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 04:16:59 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC4Gwoi010990
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 04:16:58 GMT
+Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 11 Dec 2024 20:16:53 -0800
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: <vkoul@kernel.org>, <corbet@lwn.net>, <thara.gopinath@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <kees@kernel.org>, <dave.jiang@intel.com>, <dmaengine@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_mdalam@quicinc.com>, <quic_utiwari@quicinc.com>
+Subject: [PATCH v5 00/12] dmaengine: qcom: bam_dma: add cmd descriptor support
+Date: Thu, 12 Dec 2024 09:46:27 +0530
+Message-ID: <20241212041639.4109039-1-quic_mdalam@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1e:b0:3a7:6c6a:e2a2 with SMTP id
- e9e14a558f8ab-3ac47d44b35mr15229295ab.9.1733976503371; Wed, 11 Dec 2024
- 20:08:23 -0800 (PST)
-Date: Wed, 11 Dec 2024 20:08:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675a61b7.050a0220.17f54a.004e.GAE@google.com>
-Subject: [syzbot] [kernel?] WARNING: locking bug in sched_mm_cid_exit_signals
-From: syzbot <syzbot+a7dddc711489766b3d23@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6rMe5kY8M5BZLK5esh9qXw--90iNK_Vb
+X-Proofpoint-ORIG-GUID: 6rMe5kY8M5BZLK5esh9qXw--90iNK_Vb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120028
 
-Hello,
+Requirements:
+  In QCE crypto driver we are accessing the crypto engine registers 
+  directly via CPU read/write. Trust Zone could possibly to perform some
+  crypto operations simultaneously, a race condition will be created and
+  this could result in undefined behavior.
 
-syzbot found the following issue on:
+  To avoid this behavior we need to use BAM HW LOCK/UNLOCK feature on BAM 
+  pipes, and this LOCK/UNLOCK will be set via sending a command descriptor,
+  where the HLOS/TZ QCE crypto driver prepares a command descriptor with a
+  dummy write operation on one of the QCE crypto engine register and pass
+  the LOCK/UNLOCK flag along with it.
 
-HEAD commit:    7503345ac5f5 Merge tag 'block-6.13-20241207' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=124e4820580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-dashboard link: https://syzkaller.appspot.com/bug?extid=a7dddc711489766b3d23
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+  This feature tested with tcrypt.ko and "libkcapi" with all the AES 
+  algorithm supported by QCE crypto engine. Tested on IPQ9574 and 
+  qcm6490.LE chipset.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+  insmod tcrypt.ko mode=101
+  insmod tcrypt.ko mode=102
+  insmod tcrypt.ko mode=155
+  insmod tcrypt.ko mode=180
+  insmod tcrypt.ko mode=181
+  insmod tcrypt.ko mode=182
+  insmod tcrypt.ko mode=185
+  insmod tcrypt.ko mode=186
+  insmod tcrypt.ko mode=212
+  insmod tcrypt.ko mode=216
+  insmod tcrypt.ko mode=403
+  insmod tcrypt.ko mode=404
+  insmod tcrypt.ko mode=500
+  insmod tcrypt.ko mode=501
+  insmod tcrypt.ko mode=502
+  insmod tcrypt.ko mode=600
+  insmod tcrypt.ko mode=601
+  insmod tcrypt.ko mode=602
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f66ad6e028a7/disk-7503345a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/822436e7e431/vmlinux-7503345a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/264599a99f7f/bzImage-7503345a.xz
+  Encryption command line:
+ ./kcapi -x 1 -e -c "cbc(aes)" -k
+ 8d7dd9b0170ce0b5f2f8e1aa768e01e91da8bfc67fd486d081b28254c99eb423 -i
+ 7fbc02ebf5b93322329df9bfccb635af -p 48981da18e4bb9ef7e2e3162d16b1910
+ * 8b19050f66582cb7f7e4b6c873819b71
+ *
+ Decryption command line:
+ * $ ./kcapi -x 1 -c "cbc(aes)" -k
+ 3023b2418ea59a841757dcf07881b3a8def1c97b659a4dad -i
+ 95aa5b68130be6fcf5cabe7d9f898a41 -q c313c6b50145b69a77b33404cb422598
+ * 836de0065f9d6f6a3dd2c53cd17e33a
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a7dddc711489766b3d23@syzkaller.appspotmail.com
+ * $ ./kcapi -x 3 -c sha256 -p 38f86d
+ * cc42f645c5aa76ac3154b023359b665375fc3ae42f025fe961fb0f65205ad70e
+ * $ ./kcapi -x 3 -c sha256 -p bbb300ac5eda9d
+ * 61f7b48577a613fbdfe0d6d90b49985e07a42c99e7a439b6efb76d5ec71b3d30
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(1)
-WARNING: CPU: 0 PID: 7950 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
-WARNING: CPU: 0 PID: 7950 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4850 [inline]
-WARNING: CPU: 0 PID: 7950 at kernel/locking/lockdep.c:232 __lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
-Modules linked in:
-CPU: 0 UID: 0 PID: 7950 Comm: syz.4.614 Not tainted 6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4850 [inline]
-RIP: 0010:__lock_acquire+0x564/0x2100 kernel/locking/lockdep.c:5176
-Code: 00 00 83 3d 91 c8 9e 0e 00 75 23 90 48 c7 c7 20 95 0a 8c 48 c7 c6 20 98 0a 8c e8 17 62 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
-RSP: 0018:ffffc90005877670 EFLAGS: 00010046
-RAX: 55799a8e77b73a00 RBX: 00000000000016d8 RCX: ffff88802d680000
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00000000000c16d8 R08: ffffffff81601c02 R09: 1ffff110170c519a
-R10: dffffc0000000000 R11: ffffed10170c519b R12: ffff88802d680ac4
-R13: 0000000000000005 R14: 1ffff11005ad0165 R15: ffff88802d680b28
-FS:  00007fa9992c46c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c337a3a CR3: 000000005ebca000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
- raw_spin_rq_lock_nested+0xb0/0x140 kernel/sched/core.c:606
- raw_spin_rq_lock kernel/sched/sched.h:1514 [inline]
- _raw_spin_rq_lock_irqsave kernel/sched/sched.h:1534 [inline]
- rq_lock_irqsave kernel/sched/sched.h:1799 [inline]
- class_rq_lock_irqsave_constructor kernel/sched/sched.h:1848 [inline]
- sched_mm_cid_exit_signals+0x17b/0x4b0 kernel/sched/core.c:10606
- exit_signals+0x357/0x5c0 kernel/signal.c:3111
- do_exit+0x6b4/0x28e0 kernel/exit.c:895
- do_group_exit+0x207/0x2c0 kernel/exit.c:1087
- get_signal+0x16b2/0x1750 kernel/signal.c:3017
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xce/0x340 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa99857fed9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa9992c40e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007fa998746168 RCX: 00007fa99857fed9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fa998746168
-RBP: 00007fa998746160 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa99874616c
-R13: 0000000000000000 R14: 00007ffc44f667e0 R15: 00007ffc44f668c8
- </TASK>
+ ./kcapi -x 12 -c "hmac(sha256)" -k
+ 0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b -i
+ 000102030405060708090a0b0c -p f0f1f2f3f4f5f6f7f8f9 -b 42
+ *
+ 3cb25f25faacd57a90434f64d0362f2a2d2d0a90cf1a5a4c5db02d56ecc4c5bf3400720
+ 8d5b887185865
 
+ Paraller test with two different EE's (Execution Environment)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ EE1 (Trust Zone)                          EE2 (HLOS)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ There is a TZ application which    "libkcapi" or "tcrypt.ko" will run in 
+ will do continuous enc/dec with     continuous loop to do enc/dec with 
+ different AES algorithm supported   different algorithm supported QCE
+ by QCE crypto engine.     	     crypto engine. 
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+1) dummy write with LOCK bit set    1) dummy write with LOCK bit set                        
+2) bam will lock all other pipes    2) bam will lock all other pipes which
+   which not belongs to current	       not belongs to current EE's, i.e tz 
+   EE's, i.e HLOS pipe and keep        pipe and keep handling current
+   handling current pipe only.         pipe only. 
+                                    3) hlos prepare data descriptor and               
+3) tz prepare data descriptor          submit to CE5
+   and submit to CE5                4) dummy write with UNLOCK bit set
+4) dummy write with UNLOCK bit      5) bam will release all the locked 
+   set                                 pipes
+5) bam will release all the locked
+   pipes                   
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+ Upon encountering a descriptor with Lock bit set, the BAM will lock all
+ other pipes not related to the current pipe group, and keep handling the 
+ current pipe only until it sees the Un-Lock set (then it will release all
+ locked pipes). The actual locking is done on the new descriptor fetching
+ for publishing, i.e. locked pipe will not fetch new descriptors even if 
+ it got event/events adding more descriptors for this pipe.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+v5:
+ * Added DMA_PREP_LOCK and DMA_PREP_UNLOCK flag support in separate patch
+ * Removed DMA_PREP_LOCK & DMA_PREP_UNLOCK flag
+ * Added FIELD_GET and GENMASK macro to extract major and minor version
 
-If you want to undo deduplication, reply with:
-#syz undup
+v4:
+  * Added feature description and test hardware
+    with test command
+  * Fixed patch version numbering
+  * Dropped dt-binding patch
+  * Dropped device tree changes
+  * Added BAM_SW_VERSION register read
+  * Handled the error path for the api dma_map_resource()
+    in probe
+  * updated the commit messages for batter redability
+  * Squash the change where qce_bam_acquire_lock() and
+    qce_bam_release_lock() api got introduce to the change where
+    the lock/unlock flag get introced
+  * changed cover letter subject heading to
+    "dmaengine: qcom: bam_dma: add cmd descriptor support"
+  * Added the very initial post for BAM lock/unlock patch link
+    as v1 to track this feature
+
+v3:
+  * https://lore.kernel.org/lkml/183d4f5e-e00a-8ef6-a589-f5704bc83d4a@quicinc.com/
+  * Addressed all the comments from v2
+  * Added the dt-binding
+  * Fix alignment issue
+  * Removed type casting from qce_write_reg_dma()
+    and qce_read_reg_dma()
+  * Removed qce_bam_txn = dma->qce_bam_txn; line from
+    qce_alloc_bam_txn() api and directly returning
+    dma->qce_bam_txn
+
+v2:
+  * https://lore.kernel.org/lkml/20231214114239.2635325-1-quic_mdalam@quicinc.com/
+  * Initial set of patches for cmd descriptor support
+  * Add client driver to use BAM lock/unlock feature
+  * Added register read/write via BAM in QCE Crypto driver
+    to use BAM lock/unlock feature
+
+v1:
+  * https://lore.kernel.org/all/1608215842-15381-1-git-send-email-mdalam@codeaurora.org/
+  * Initial support for LOCK/UNLOCK in bam_dma driver
+
+Md Sadre Alam (12):
+  dmaengine: qcom: bam_dma: Add bam_sw_version register read
+  dmaengine: add DMA_PREP_LOCK and DMA_PREP_UNLOCK flag
+  dmaengine: qcom: bam_dma: add bam_pipe_lock flag support
+  crypto: qce - Add support for crypto address read
+  crypto: qce - Add bam dma support for crypto register r/w
+  crypto: qce - Convert register r/w for skcipher via BAM/DMA
+  crypto: qce - Convert register r/w for sha via BAM/DMA
+  crypto: qce - Convert register r/w for aead via BAM/DMA
+  crypto: qce - Add LOCK and UNLOCK flag support
+  crypto: qce - Add support for lock/unlock in skcipher
+  crypto: qce - Add support for lock/unlock in sha
+  crypto: qce - Add support for lock/unlock in aead
+
+ .../driver-api/dmaengine/provider.rst         |  15 ++
+ drivers/crypto/qce/aead.c                     |   4 +
+ drivers/crypto/qce/common.c                   | 141 +++++++----
+ drivers/crypto/qce/core.c                     |  14 +-
+ drivers/crypto/qce/core.h                     |  12 +
+ drivers/crypto/qce/dma.c                      | 232 ++++++++++++++++++
+ drivers/crypto/qce/dma.h                      |  26 +-
+ drivers/crypto/qce/sha.c                      |   4 +
+ drivers/crypto/qce/skcipher.c                 |   4 +
+ drivers/dma/qcom/bam_dma.c                    |  32 ++-
+ include/linux/dmaengine.h                     |   6 +
+ 11 files changed, 445 insertions(+), 45 deletions(-)
+
+-- 
+2.34.1
+
 
