@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-443093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 791199EE709
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:48:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F549EE714
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:50:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF44283242
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:47:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87AC282612
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5FF2135DE;
-	Thu, 12 Dec 2024 12:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363BD2139A7;
+	Thu, 12 Dec 2024 12:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C1n7cW1z"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OHjBuNso"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA60A213E89
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4C92139B2
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 12:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734007664; cv=none; b=bSxG7WKeKR+tSTkfr2lGYhkm4K1UZOFjKZlzjlqU+iYP7Msu3Sozgk4z6noI3kkPE/oyssbsHhU2jIIax6C2A4k7s0JBsSncBa2Ji3aB9FOT3kYIP1/Jp1l6iHMpRbOdTkE7pzpvKFWx+vpKtHPB5WQVT05wdIu2OnU3qetcTuk=
+	t=1734007796; cv=none; b=QMhCNJIJF7E9F+t1uB8LuJ8sMSALhollqIauAYXlqjtUdCreh1lnbzxcR0lZe1M0m8QcEaM3dQGI8UHTGwtpzHsD8u6FKw5zrVbzo18kIrvvfG9QlhMYuEdB891KdxdFOOYwrNvKkEW4UwquOAK02rPu9Q2HiOYmkxMT75X0DHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734007664; c=relaxed/simple;
-	bh=1Ts9EKssjbPUaajtIUeXtbeIZ5MvymgYej7/+BBHFJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AQPBaW+nqZVGefdLxmAgekprhg/RT4hbM2A9EQemvuAcmtiLNvmZwEaxVLteQzhMstL08SujK0BIatJcMu92uE+leb3EJzTcTKTi30QNmuF2OKU8Dln9ht4aaK+Piw7PbtdwGv/ub4V6xsvMSVWTr4KO3SNqJaKZ7AIq9rR39rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C1n7cW1z; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1734007796; c=relaxed/simple;
+	bh=eBy+40J9UtKTWOrc+kbmI3JcJKbDfZWyj0/5/yur1PY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ozmaoHGgkMuaVKXl5sehk2OobenBCtHybVsowtGp9jN7PBDrtNJmr4FQz6EER4S46246xw0uEPaMucSi8WlsubBf9pSGiURwdGF4AgAeeywn7RH0lKIeLBDv1xTFHf+H/hca8KyJ0Vde32mCZZmfSVT2uR7x+I8YGgpbCC0m5AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OHjBuNso; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a2033562so3943865e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 04:47:42 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa684b6d9c7so85567766b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 04:49:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734007661; x=1734612461; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B1Aa7kk3KKfy9aAdx9Y9ApzJ11F7xml9XtZy8ZKLnk0=;
-        b=C1n7cW1z429N8uy32cjEurBOqlnHcBCUH3zEyHviNwukhyXZgm75PbGL4xwY2STQFP
-         N3dVjVLLzbohvPUZ0crQyFo2KksIANcHg/GyLJtXlizPcH1rHKzrPuPE9Ui3VaE7AB1r
-         mQvQ13yTHxQs5I6StSNoFHxEonEsBRGqcwdHVE4bRJTRpb5O/jK5X8j9SHIk5L4eyPv6
-         hV+BJnOX48NRFXD0itA2s2KKMPQSxyaHIUTsFGCXM+kyV9/GwtfBGLJj/I0znfTrQ9Gp
-         BuA4FzWRNwbP58Z0QDDt2/3phoUsikNfiuMVWi7WFOWWs/TN1xlErvkFOOUdSZ7gcZCm
-         SxJw==
+        d=linaro.org; s=google; t=1734007793; x=1734612593; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tg5VEq0yJ8noM0Og8YOsf3K6V8JDa3K56E8NocgrDRc=;
+        b=OHjBuNsoCMTJciWH7PdiMQGUbBT5loUDJoDvFI1E6SCEAHauAKz8NmEADYLc1kbna0
+         sbG/NA/4JLmwil6jFHy5c3ENGKb357CKWJjmNHFBCCNim+eTbZNG5zGYjud+Lf3iaioD
+         xEIgCYTSDp3crdqMT7n1lGsxemQeUzLnQ5UvazPiQbL7R2Ah8eyIfsolUieEfyeaoW8R
+         5uMzKCTHeb3ZEMWETsYU5KoRQM0ssL8sxmThZokeF2OjihLj7D+wrRqT8fqAH5IHzqMf
+         mR2oSPYtJgIoNLqkBhMBP3D43GO5eorvFUbHopMJ6a9x1NEPZzg3NB5men4TMnV0xHuB
+         vh+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734007661; x=1734612461;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B1Aa7kk3KKfy9aAdx9Y9ApzJ11F7xml9XtZy8ZKLnk0=;
-        b=mtFmlkmNVtS4llHbHY8aMDTTnDOLg5Ws3C7veqpWtYTROo6lLLQOKzO68LXorXJWs9
-         7ASiadqS5YNllH/iclE+ux8NGE7HNCfZy05nWzR9ar4226zhAvEznmyZ9BiMfHz1+RDG
-         8woJ5xfD9HuHwnfeLg1MOYvQLI8GW/cch+ctRqaJx7qMnI0QuHbUUN0KvyqKERxc1Q0e
-         05BJ+SO2egxi39O7B2hK3SWpr4GeewTHLaLDaeoM2evIWhQVxwcQqSK1ik82nyUuu3m1
-         lXYHHMtmuPpOdXgAIjpPa7iEhvWQke1cIf/I8hv8KY61/79Hm+Eo222pn49R8VD7A64a
-         6PsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIILK0NRWUlZdR2kFROp0AbA4gjMEHcuDFl70bOSNe6zxevilgR6U5ewuXNJP7jUmhDLSQ+5fSKgST1Bs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDx1QGYi5/mIYUTorHbEpx9ud/7goIBjWwvyVVGuQpNsXk3FfF
-	xf/jqEn/RcCKTnxucc3COTgEsZf7E3DjcDsyjJqqSnvU0uieTMrDXsjsyPe3Bj23jY1chkzLmGC
-	V
-X-Gm-Gg: ASbGncv0yr3NdSmiocXMqqUZl2s0mCJ7VUBFbUKBfZUwwU6x3VMz4l9RnQ8AC8FGvTY
-	YoYIlP0DJoi9ZuUhUik7C76A176uy0ygR42Tu8sEY+XYN/5qyX/yP1S3knNC4xvjbxZ4Sn9zGQM
-	mKeyVSzuwKz6bpdCvfC5b5mQxvNFiOozJyzHbmqyZcWK69Fbd66XaVJyYMjpzEXAImqfcP99SdN
-	tJEEO9Ucb945wiZwkzbHhvB0yHbRywVh2NnxnNqzgmDtfe8+wUmEkNiJnKhMA==
-X-Google-Smtp-Source: AGHT+IHG070ZSCDM3VoQ8IcxxgcIA8LmAYT5Wy1Ts2flXAmROuoKHKuI+kgLYIo8ua64rhinlAKIfA==
-X-Received: by 2002:a05:600c:1e0b:b0:42f:7e87:3438 with SMTP id 5b1f17b1804b1-4362256dc73mr30023385e9.0.1734007661208;
-        Thu, 12 Dec 2024 04:47:41 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625553234sm16279045e9.3.2024.12.12.04.47.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 04:47:40 -0800 (PST)
-Date: Thu, 12 Dec 2024 15:47:37 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 next] drm/vc4: unlock on error in
- vc4_hvs_get_fifo_frame_count()
-Message-ID: <b61a81b2-0101-43bd-a4f6-09cf3a016484@stanley.mountain>
+        d=1e100.net; s=20230601; t=1734007793; x=1734612593;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tg5VEq0yJ8noM0Og8YOsf3K6V8JDa3K56E8NocgrDRc=;
+        b=TcH3LpJcv/wHoyg+sRcKTcoku7S1O1qnyggljQ/8ctR7yq1xBG1F1xz4tD+ZqIINTA
+         nw6FZmzCCp74578ZiqSuak3Dpw+1UYmZbn3mP03yXzUbfNtoY/F2V1jFGZXh3NW7x4ho
+         hSPBWNqYTa6IwDDzRZZcEl0WAXvdHS/U9As8cxPaPf4W/mWK2uS6QHMCkVKiemXBSh9o
+         ZylNMFhGB2FZWaIX0waIZMZ/MZcdwz6PP1W4OPwqKPMYXGNjVkyGjsJRee50TqE1DzgT
+         ertKaRpJLpOEOBJAFED1ePtT88lYrqpQbOa/3BuH4J1fzCGR1aZyIPHdm1zHWfRBiuBr
+         Pq+w==
+X-Forwarded-Encrypted: i=1; AJvYcCV9nZQZnU3ZStFqjyV8oD4hmjdx7FoVXcxqVO9tLWWGOdeEAhNWtF7HG7TqVvz5lRpp03x3/LRKYIPrJ0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzSRnr2yiWT1Ad/NwnlKRKSGXqz3unTeJYz017EJ+2bZuNm/2Z
+	cZMs+QEQpUv6SgnkzFh+tt0AWVFx+lewMSPKl6xeYGw3jurNiImxiBCN5e8NymumYVAhNGjyxnU
+	HUwGbCmEBS0FcSeQMrOGjO9BBEw53Q+5vFnzGhA==
+X-Gm-Gg: ASbGncucQrw/DKs4ynJacyN7xj4B/1V6/y1hr9EoopSpHNgzUcmwvwlsirqXeVw9riL
+	GCmlhbswwUhfeTJJf/yIpO4COfa/hOZOtMotHCt4=
+X-Google-Smtp-Source: AGHT+IGwU3vguTJLME4CwvjxCfurx+pt+saRHptWT2f3PF1VRg0uuyI2iBZN4cjqfO6jUQFDXqhpb7d7eeduiQeZgU0=
+X-Received: by 2002:a17:907:90d5:b0:aa6:8781:9909 with SMTP id
+ a640c23a62f3a-aa6c1b1cdbbmr336950166b.29.1734007792898; Thu, 12 Dec 2024
+ 04:49:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20241205232900.GA3072557@bhelgaas> <20241209143821.m4dahsaqeydluyf3@thinkpad>
+ <20241212055920.GB4825@lst.de> <13662231.uLZWGnKmhe@rjwysocki.net>
+In-Reply-To: <13662231.uLZWGnKmhe@rjwysocki.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 12 Dec 2024 13:49:15 +0100
+Message-ID: <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by the user
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Christoph Hellwig <hch@lst.de>, 
+	Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me, 
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, andersson@kernel.org, konradybcio@kernel.org, 
+	Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The default statement is never used in real life.  However, if it were
-used for some reason then call drm_dev_exit() before returning.
+On Thu, 12 Dec 2024 at 13:21, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Thursday, December 12, 2024 6:59:20 AM CET Christoph Hellwig wrote:
+> > On Mon, Dec 09, 2024 at 08:08:21PM +0530, Manivannan Sadhasivam wrote:
+> > > >
+> > > > The istory here is the the NVMe internal power states are significantly
+> > > > better for the SSDs.  It avoid shutting down the SSD frequently, which
+> > > > creates a lot of extra erase cycles and reduces life time.  It also
+> > > > prevents the SSD from performing maintainance operations while the host
+> > > > system is idle, which is the perfect time for them.  But the idea of
+> > > > putting all periphals into D3 is gaining a lot of ground because it
+> > > > makes the platform vendors life a lot simpler at the cost of others.
+> > >
+> > > No, I disagree with the last comment. When the system goes to low power mode
+> > > (like S2R/hibernate), it *does* makes a lot of sense to put the devices into
+> > > D3Cold to save power.
+> >
+> > Yes.  That's what the pm_suspend_via_firmware call in nvme_suspend is
+> > supposed to catch.
+>
+> pm_suspend_via_firmware() is to distinguish different flavors of system
+> suspend.
 
-Fixes: 8f2fc64773be ("drm/vc4: Fix reading of frame count on GEN5 / Pi4")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: style fixes
+Right. This seems to somewhat work for ACPI types of systems, because
+ACPI is controlling the low power state for all the devices. Based on
+the requested system wide low power state, ACPI can then decide to
+call pm_set_suspend_via_firmware() or not.
 
- drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Still there is a problem with this for ACPI too.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-index b42027636c71..4811d794001f 100644
---- a/drivers/gpu/drm/vc4/vc4_hvs.c
-+++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-@@ -522,7 +522,7 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
- 		break;
- 	default:
- 		drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
--		return 0;
-+		break;
- 	}
- 
- 	drm_dev_exit(idx);
--- 
-2.45.2
+How does ACPI know whether it's actually a good idea to keep the NVMe
+storage powered in s2idle (ACPI calls pm_set_suspend_via_firmware()
+only for S2R and S2disk!?)? Especially when my laptop only supports
+s2idle and that's what I will use when I close the lid. In this way,
+the NMVe storage will certainly contribute to draining the battery,
+especially when I won't be using my laptop for a couple of days.
 
+In my opinion, we need a better approach that is both flexible and
+that dynamically adjusts based upon the use case.
+
+[...]
+
+Kind regards
+Uffe
 
