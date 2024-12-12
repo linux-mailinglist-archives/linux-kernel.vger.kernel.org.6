@@ -1,115 +1,211 @@
-Return-Path: <linux-kernel+bounces-443086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD279EE6E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:40:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB239EE6F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:42:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173C22831EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547BC2829F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EB4213251;
-	Thu, 12 Dec 2024 12:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F272139C4;
+	Thu, 12 Dec 2024 12:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YrLrmx1N"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RtCTHG9c"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEDD2080D8;
-	Thu, 12 Dec 2024 12:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BA6212F9E;
+	Thu, 12 Dec 2024 12:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734007230; cv=none; b=iVshOwETsZhu8pn/P28+FZA8YYmHBDSnhUhkVnVqwJHnn5kS7qHpebyxJFs+pB3rQnfFlS/frx9KkZcaHueGAfzX7wTAgQCE5U2gcOymM57YDvIu/BGprQv7Rts6xP+sO7fg5o2AtEdrxgW47w8q2lge+UK7r1Yk5M0YjX0KovE=
+	t=1734007307; cv=none; b=H+uRk9BPpCjvQ8mhJkmAnkmVEiQsolymkN/BAebhAV3G1fpccUfix8FvVrT9LM3CiuaQBSjnBy4VnAlFNi5e/p4OKP2+wrC7dcMHKpj50OGFG/E0a+EDaAExJn8HW+4dkt1d9l+IxHhCAgbVT4UvMekW/8ETLxBdf4l23EyfSR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734007230; c=relaxed/simple;
-	bh=r1wFQ2XEw4h3NqlPy/Ig8PdgIYeLmggghPp5vpM+aTg=;
+	s=arc-20240116; t=1734007307; c=relaxed/simple;
+	bh=jo2gukOfLEvouFNhtdX1Kl6/D7IkbXWRkgRk3E64PLw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u6aILJeHbwT5JxI+Z0VxwqS1C79Gfc+Z2gs2xv2PaFYuoUIHrpmkcM7RS/ZInwDs2WOkUegQ8+a6abN889f+5YPQGtWDhzL4N1lJ1HR1hIKxyHplaqHM2XoUXiFdt7WZCbJpekO8G77k/Aj/UXFcR/GiGwwCZKnzEL6V3QxXr7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YrLrmx1N; arc=none smtp.client-ip=209.85.216.46
+	 To:Cc:Content-Type; b=iRa8uGyxizZveQWF+8FoGjgTUxIErxcudlV7T2ajHb+N6qFHRBvSM4ZTZVm4hGGVFqHVgycC+DWFea6KwIDvaevIclyJGhbD3aE4P7/SYhlkLO8W34IEDOB5h4eryoOCysRrVUzKXMtK8ATlDeXYq0NBu+0l754xfjc67azAhbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RtCTHG9c; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ef718cb473so76879a91.1;
-        Thu, 12 Dec 2024 04:40:28 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so6136815e9.0;
+        Thu, 12 Dec 2024 04:41:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734007227; x=1734612027; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734007303; x=1734612103; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r1wFQ2XEw4h3NqlPy/Ig8PdgIYeLmggghPp5vpM+aTg=;
-        b=YrLrmx1Nl9HgF4rHw8ojYJ7uBKTZ6+UIrreGLX3+FP/601cVHoAnJ6FXwkNWgO7yuv
-         hhrk7WizxUbLR3hkV9vbj6MUKZY/gWk0SfwiUE2QaGw6aqNNZ3ltdualyQIbm2RyOFaq
-         Pzx/zSJKtj9IPrTSSrsCxs2Yr4790e2/NraElW+7UEDeiWlxxkRnq711G9Yr06DYZYrz
-         kVPb8NTA8pt6V0rnVqRT+40+sHl+c8THeRyQLA8x2c8gwPvFEmN1nUtDheaYls7mszXU
-         cw0InI17MT2DKqOnLYjwkVCgJ5fx5tC8efmTK3ZeqcWsKj7ChFuTEnF45sg1E0IfEVjF
-         roOw==
+        bh=UdqXBrFz+MhhB28jjWBHlFWKaOr9dT3/Vp6X30ps4DU=;
+        b=RtCTHG9cS3eoTTd2KCWow/hepNeQnAYwlY6lHSixeAW1b3fVztcDM5jzG301JWaHXj
+         1Df24Gq1ix5yy+ymwYF/biR7A88m9sg0hh2/tnjgzUPq7lMcXlp6/KT57yzqtTy0cL47
+         E3tM32y2IGBwiAvaOzVlGx5+mOQytM76EL8h8LUW6PpqpqW/GcPqmrCjjBtPYedkMeXA
+         S+AY9sGOYkix3e6O1MEWxJl/pBNytj5NdXUU1D/JHKmKwYnn5hLp2uzLFlKjBR2/jwz+
+         UqrGHuzW/2eMDIm7cGFH2JHGsbij7Su2lCGY7DzftJVjBGvAxPG/Y7WjpfI9CKTTFQUY
+         60Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734007227; x=1734612027;
+        d=1e100.net; s=20230601; t=1734007303; x=1734612103;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r1wFQ2XEw4h3NqlPy/Ig8PdgIYeLmggghPp5vpM+aTg=;
-        b=GU0q2ORZc+y3L0pt0DfCx8UYyIj4Nn8FbdwOhGkLEzTgVmp7yY2+WsqNNSLdK4zB2d
-         Ur5WGRSz84vV3OfgQvDvy4UkFQ84gapSh0wpDAGPsYMI2BV6k+CHvKVApod/aAqxBkXa
-         vCgDKzc1e9smkK3+0VR+0mVkbHnP6/08eXwwNRyf7G16fbg3R9ibktvYpw3Ir4A0YEFy
-         Hm/n0nGafSxuyYaomRuPPwmQwAdpEuP4HpGQ6Uu7KZ5ByJAes1bdP0W1Yzxql6EOGKMZ
-         GYJp3/K2lCT67wJJY2AzOEPa6Se/4vX3Ipe2XUDTD8zlaX/3RxAn+mEHaeIXyVG9WwkR
-         wzbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFb2PC4mIWh3GM/6ED3oMWzQiW321PKtxPlNYGUuPiaamC40HV+htXeSODs/DrfPDPI4izjHPLeO20lm69@vger.kernel.org, AJvYcCW5NKhBVpbq987xL4M9nA/KCRzlEZ3nWPq0Y9vZcl/4ptGQyVSGj7YG4z2Pul8nNh6U+iGbO8iXtC9T@vger.kernel.org, AJvYcCWshMxfdc1IcnN8grUk5dngzj1AE5ULpsJWGyBfikeBxEvDxko8LkYv+wW24MsJKyMkUEdJMDzkgWHx2e3dnbynWQz5@vger.kernel.org, AJvYcCXz/WfFquriyPulsI4/c8cOVTrKrr9m3eEh9kwkwHrkuRd3+draZSkZLlYvKqkxdMwBxfm2FTuotzvJG3mXT0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxryXLDazyHIPrVjDcv9KunsiQK/nOkKH/yRoZxU5mZta+/xpYq
-	xKgRE0YrcfVjOcagWWyo1qSxodg4s2sfHpeGmrT546/PMm5v8PX+X1F3a5mc418zVStd949rH44
-	SQBvghrrFDleRtYmIN+Esn3XJh/8=
-X-Gm-Gg: ASbGncuSbUiw5UJnWRLpYpUCypk937dyvrvZ9dgqko1IC0b9R4nQy/FAEBuBqwsOxcs
-	M5MyRudfhvTHDGe3tG5cN8I/Euw7KRNlvSwOc/g==
-X-Google-Smtp-Source: AGHT+IGFpqHYpP+ryhHdXHcJSw/i/CLG0LKsPNa9VsJsTDjRyGichTiBKLOQwEEn9jpAx0lNH3xQvXBViE9Iz/QqtPc=
-X-Received: by 2002:a17:90b:3b87:b0:2ee:f59a:94d3 with SMTP id
- 98e67ed59e1d1-2f127e2416fmr3955460a91.0.1734007227479; Thu, 12 Dec 2024
- 04:40:27 -0800 (PST)
+        bh=UdqXBrFz+MhhB28jjWBHlFWKaOr9dT3/Vp6X30ps4DU=;
+        b=pIKq8+9wDVXu3BC9M11burBtQQc7MGGMy6h4QR8mxijdlNv9HdDQnjb3R5CNvNmRdV
+         EG+jOxaxK0LMDnVhxEOw0DcLTAUFylDBTAzqOsQxVTQEYrYqdfsSXrJFwbqD5MheIX5B
+         x8zwkYhofJBwe4zZdx176ywIFQ7GkgLG8bw2lZ7AxmANw6LzuyCFROWQOpXKWqh+CmJa
+         QFW6LT3/yQ7l0Dej2A/Ls3MVWrppyUYULuWLFVaIWXKlZhn0GkWF8N3dcCDA/uIMEJZ9
+         TZGzJf2k17aEwwPXpVuGPnRactMRingc1TV/9JmBfo9cAGxd9wxDtwZDvfYRscaMobSA
+         u9Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCU+qtQ7jmvGher16t2jyNTtAQlyDOI5zueQFAlcKClOHPwPcKwIsncAnzdwqdM7pV6a3+NRM+48OZwmpA==@vger.kernel.org, AJvYcCU0uNwB6RNMnIJjdUqimBKnfLaubomdWU0KujD6x1F+oG9ZUKlw2wvSAPhxdIajLL+pt+yRxf8Ly/WRlwpbJic=@vger.kernel.org, AJvYcCUILYc95y/qpsSLSNrbJYcaNFeA4c1AXytvwQq2ZBUhv2gMEYqPgkkSSxIm3nzfjRmjUzLirY7ClPtH@vger.kernel.org, AJvYcCUbIvk8szrAvBHYDz+rz+LZN7/WQawizTw1a/SZIqJaJac0NLhonpqAym/vC1+ELDySVQ0V7ZHEL23Y@vger.kernel.org, AJvYcCVXAUFpY91WrEp4OBtYrOX6SzU1tbSRN6v6R6z2hr8xLvScBq7gvQwI5Cp4Uw1UK3LHOvDHnRlqk87adCE6@vger.kernel.org, AJvYcCWOtaf+qKj4NRzhSMFovPECSTLJ5xdnbCOJOvc7E798Hj5ULcMsl8AVIgXSE1OzU55Xwfd/8SJFdsQM9g==@vger.kernel.org, AJvYcCXduIiLrQCwkvkZ3pduUERsp4y9AO1BY0yCYgO9wVdBBzhj8M0QtaGHzOtS6t2lTM5+yHQ=@vger.kernel.org, AJvYcCXxcmfs7q/5TCS1mP3TitPfo7WoKsCfZa7HD5prGmW1QCfVLab62BFpK93tthqIdSKxq2xTmkgBt3A1KswdKxUC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjoGbINz+t7IpRJNaOBSs0NnHXtrKdtniXsv2F7OGq3iepBv0h
+	NCDkFYH0KqklngSrPmdzGOg1hZDVV5au3PjDGw2f31k+JUC+NePnj9IzAgTLw6vkOq8aHZUDOpQ
+	QpMEbrsm8qAz4Lwq5DsU26PwyXJs=
+X-Gm-Gg: ASbGncvsdT6DNV65BM/GFrSD768quk64y244O923Eij/aK0pSu8/EgBzDcBGGPpmTgr
+	HWchv8+cebnQfRFofAvdqsr/592PBKIelvA4I
+X-Google-Smtp-Source: AGHT+IFqFk9dpKGWg1iKfKEea53yF0KmGIqYqHw17PI/mHu0HdGMd6qhUvlxmt/ZCzWy1qtAEPF2qQKT7Apiv7Ssc/8=
+X-Received: by 2002:a05:6000:a0b:b0:385:f44a:a68 with SMTP id
+ ffacd0b85a97d-3878769805bmr3014357f8f.35.1734007303234; Thu, 12 Dec 2024
+ 04:41:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-tracepoint-v12-0-eec7f0f8ad22@google.com> <173395634899.1729195.7492083712432982213.git-patchwork-notify@kernel.org>
-In-Reply-To: <173395634899.1729195.7492083712432982213.git-patchwork-notify@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 12 Dec 2024 13:40:13 +0100
-Message-ID: <CANiq72mmO5SswxmdcLc0i_rY+ZVo4zY8AsmHPPBKb_Vmzk8+aw@mail.gmail.com>
-Subject: Re: [PATCH v12 0/5] Tracepoints and static branch in Rust
-To: patchwork-bot+linux-riscv@kernel.org
-Cc: Alice Ryhl <aliceryhl@google.com>, linux-riscv@lists.infradead.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	peterz@infradead.org, jpoimboe@kernel.org, jbaron@akamai.com, ardb@kernel.org, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@kernel.org, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, arnd@arndb.de, linux-arch@vger.kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, seanjc@google.com, 
-	ubizjak@gmail.com, catalin.marinas@arm.com, will@kernel.org, maz@kernel.org, 
-	oliver.upton@linux.dev, mark.rutland@arm.com, ryan.roberts@arm.com, 
-	tabba@google.com, linux-arm-kernel@lists.infradead.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	apatel@ventanamicro.com, ajones@ventanamicro.com, alexghiti@rivosinc.com, 
-	conor.dooley@microchip.com, samuel.holland@sifive.com, chenhuacai@kernel.org, 
-	kernel@xen0n.name, maobibo@loongson.cn, yangtiezhu@loongson.cn, 
-	akpm@linux-foundation.org, zhaotianrui@loongson.cn, loongarch@lists.linux.dev, 
-	cmllamas@google.com, palmer@rivosinc.com
+References: <20241209140151.231257-1-shaw.leon@gmail.com> <20241209140151.231257-4-shaw.leon@gmail.com>
+ <2b89667d-ccd6-40b7-b355-1c71e159d14f@redhat.com>
+In-Reply-To: <2b89667d-ccd6-40b7-b355-1c71e159d14f@redhat.com>
+From: Xiao Liang <shaw.leon@gmail.com>
+Date: Thu, 12 Dec 2024 20:41:06 +0800
+Message-ID: <CABAhCOTv1tDOXBEE56CL1-S_J6ADZTcvso5GHtkarzJMqOC4xQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 3/5] rtnetlink: Decouple net namespaces in rtnl_newlink_create()
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Donald Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+	Ido Schimmel <idosch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Jiri Pirko <jiri@resnulli.us>, 
+	Hangbin Liu <liuhangbin@gmail.com>, linux-rdma@vger.kernel.org, 
+	linux-can@vger.kernel.org, osmocom-net-gprs@lists.osmocom.org, 
+	bpf@vger.kernel.org, linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com, 
+	linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org, 
+	bridge@lists.linux.dev, linux-wpan@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 11:32=E2=80=AFPM <patchwork-bot+linux-riscv@kernel.=
-org> wrote:
+On Thu, Dec 12, 2024 at 5:27=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wro=
+te:
 >
-> This series was applied to riscv/linux.git (fixes)
-> by Steven Rostedt (Google) <rostedt@goodmis.org>:
+> On 12/9/24 15:01, Xiao Liang wrote:
+> > There are 4 net namespaces involved when creating links:
+> >
+> >  - source netns - where the netlink socket resides,
+> >  - target netns - where to put the device being created,
+> >  - link netns - netns associated with the device (backend),
+> >  - peer netns - netns of peer device.
+> >
+> > Currently, two nets are passed to newlink() callback - "src_net"
+> > parameter and "dev_net" (implicitly in net_device). They are set as
+> > follows, depending on netlink attributes.
+> >
+> >  +------------+-------------------+---------+---------+
+> >  | peer netns | IFLA_LINK_NETNSID | src_net | dev_net |
+> >  +------------+-------------------+---------+---------+
+> >  |            | absent            | source  | target  |
+> >  | absent     +-------------------+---------+---------+
+> >  |            | present           | link    | link    |
+> >  +------------+-------------------+---------+---------+
+> >  |            | absent            | peer    | target  |
+> >  | present    +-------------------+---------+---------+
+> >  |            | present           | peer    | link    |
+> >  +------------+-------------------+---------+---------+
+> >
+> > When IFLA_LINK_NETNSID is present, the device is created in link netns
+> > first. This has some side effects, including extra ifindex allocation,
+> > ifname validation and link notifications. There's also an extra step to
+> > move the device to target netns. These could be avoided if we create it
+> > in target netns at the beginning.
+> >
+> > On the other hand, the meaning of src_net is ambiguous. It varies
+> > depending on how parameters are passed. It is the effective link or pee=
+r
+> > netns by design, but some drivers ignore it and use dev_net instead.
+> >
+> > This patch refactors netns handling by packing newlink() parameters int=
+o
+> > a struct, and passing source, link and peer netns as is through this
+> > struct. Fallback logic is implemented in helper functions -
+> > rtnl_newlink_link_net() and rtnl_newlink_peer_net(). If is not set, pee=
+r
+> > netns falls back to link netns, and link netns falls back to source net=
+ns.
+> > rtnl_newlink_create() now creates devices in target netns directly,
+> > so dev_net is always target netns.
+> >
+> > For drivers that use dev_net as fallback of link_netns, current behavio=
+r
+> > is kept for compatibility.
+> >
+> > Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
+>
+> I must admit this patch is way too huge for me to allow any reasonable
+> review except that this has the potential of breaking a lot of things.
+>
+> I think you should be splitted to make it more palatable; i.e.
+> - a patch just add the params struct with no semantic changes.
+> - a patch making the dev_change_net_namespace() conditional on net !=3D
+> tge_net[1]
+> - many per-device patches creating directly the device in the target
+> namespace.
+> - a patch reverting [1]
+>
+> Other may have different opinions, I'd love to hear them.
 
-Hmm... This is already in mainline, and I don't see it in
-riscv/linux.git (fixes) -- I guess it was a mistake?
+Thanks. I understand your concern. Since the device is created in common
+code, how about splitting the patch this way:
 
-Cheers,
-Miguel
+ 1) make the params struct contain both current src_net and other netns:
+        struct rtnl_newlink_params {
+                struct net *net;        // renamed from current src_net
+                struct net *src_net;    // real src_net
+                struct net *link_net;
+                ...
+        };
+ 2) convert each driver to use the accurate netns,
+ 3) remove "net", which is not used now, from params struct,
+ 4) change rtnl_newlink_create() to create device in target netns
+    directly.
+
+So 1) will be a big one but has no semantic changes.
+And I will send Patch 1 in this series to the net tree instead.
+
+>
+> > diff --git a/drivers/net/amt.c b/drivers/net/amt.c
+> > index 98c6205ed19f..2f7bf50e05d2 100644
+> > --- a/drivers/net/amt.c
+> > +++ b/drivers/net/amt.c
+> > @@ -3161,14 +3161,17 @@ static int amt_validate(struct nlattr *tb[], st=
+ruct nlattr *data[],
+> >       return 0;
+> >  }
+> >
+> > -static int amt_newlink(struct net *net, struct net_device *dev,
+> > -                    struct nlattr *tb[], struct nlattr *data[],
+> > -                    struct netlink_ext_ack *extack)
+> > +static int amt_newlink(struct rtnl_newlink_params *params)
+> >  {
+> > +     struct net_device *dev =3D params->dev;
+> > +     struct nlattr **tb =3D params->tb;
+> > +     struct nlattr **data =3D params->data;
+> > +     struct netlink_ext_ack *extack =3D params->extack;
+> > +     struct net *link_net =3D rtnl_newlink_link_net(params);
+> >       struct amt_dev *amt =3D netdev_priv(dev);
+> >       int err =3D -EINVAL;
+>
+> Minor nit: here and and many other places, please respect the reverse
+> xmas tree order.
+
+Will fix this.
 
