@@ -1,112 +1,196 @@
-Return-Path: <linux-kernel+bounces-443081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F6F9EE6CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:34:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B579EE6CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:33:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 146C2282E57
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54FC4282E66
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6B1213252;
-	Thu, 12 Dec 2024 12:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BC4212B2A;
+	Thu, 12 Dec 2024 12:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="igZ2toSo"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="DwS46AdY"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A252101BA;
-	Thu, 12 Dec 2024 12:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB090259484;
+	Thu, 12 Dec 2024 12:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734006843; cv=none; b=SXrq8L+MtXfylQYMm8Gb5/vihpFMyd/nCih60BTP1K99z3KuwktKrN9IG6p62OQYeXeuWe/Dcx+KwcGxRGgB/g6p7UyvRhbkxLWzD5R6IunY8RrvyJ5cK2iG7BoOYgRdu1vYDL/SzBV0BbP9qWUI5TBMbYdA6xNRFLthidQ0tWo=
+	t=1734006823; cv=none; b=A/iem+twv3NuNOsq+Vajjo+HB5U75uLBnZk/5qHixW53tp2Br0+a+/+iWApk//tENQh2bswF+VNF4PVqqa5EnjQ24rlr99fDHkzt2c3mJH8tkGvgXL8jAyxVEkp5XWXwieBTfXQsmKNL2J6ShXj5V/sfi9Fi0ThinOsLr8g+PnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734006843; c=relaxed/simple;
-	bh=kGaZbqNAhKdJHwiFqnBtTBeZf1uPGpqNgrYMqjt4IFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUngYCQ8cIY78yjgLhdrgXgBt+AOowt8zGp7GhDKHRBPtFQVyd/8fiE3ygS4n1wLI+aBvCK0JIvheabIdWRToz3Qa2LxkFlgyzzfr43QFPbbhFQCM6Hb33zLaFLGGFwFYwdAY5qcoDFqhaSZ8TLrt4wKP1QWoYRDVLfDabAQuf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=igZ2toSo; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ys/o4lfTC5skxkRbXJEl4KNijT9jacifAZOahJOVLyk=; b=igZ2toSoIBHi82hrhv7bXUvYnO
-	kLny625B16DC4o+al9sOVAyVTzc10sASbekIysvv1k4901XLnRcpyeopmdNi3agt0X34ajJq5Yywx
-	bEikPl2O97FCG0tINf4h1CbDWUzmji3P9CfkQW5ZXL1R+lfGn2RJ4g+4yT6PSkf285eDCHlHduT61
-	Ohue/TbYDrMjJZxvkw7jG88zdkGHQMLgHc8EONzKW45bc/5zbvmbPlDyn19Ao+hJEDM3OhMLPavA6
-	M6MuQOK2+f28i50sJPYRn9C5LRttYABgFQ0mRa4vwg8wRVP41nzdSCQcHbewv6FiBnX2hVhaVPxav
-	EDwiQLvg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tLiAt-00119c-0k;
-	Thu, 12 Dec 2024 20:33:33 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 12 Dec 2024 20:33:31 +0800
-Date: Thu, 12 Dec 2024 20:33:31 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Graf <tgraf@suug.ch>,
-	Tejun Heo <tj@kernel.org>, Hao Luo <haoluo@google.com>,
-	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rhashtable: Fix potential deadlock by moving
- schedule_work outside lock
-Message-ID: <Z1rYGzEpMub4Fp6i@gondor.apana.org.au>
-References: <20241128-scx_lockdep-v1-1-2315b813b36b@debian.org>
+	s=arc-20240116; t=1734006823; c=relaxed/simple;
+	bh=bn2ky9pyJErxzLjZ9doIiWcwO49NUUAjN5n9fqmyhNI=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:Cc:To:
+	 In-Reply-To:Content-Type; b=Db6O1Sez6DHPXAp1G40sYd3cxqCvroP15p+wVb/Wjbffxj4g1BqbzU7MzbdV1oZmoFjI3waRjxtzZLLyvQbWQFoLy4PblU7ttGuwlbciSI9YFb7AE1V6P328vDJS/aSHpBYowCpKEOscVi1m3S47nLRJQifKVco2UC7wKvZPdAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=DwS46AdY; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id LiNptubjiI1FGLiNptgWq8; Thu, 12 Dec 2024 13:33:39 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1734006819;
+	bh=UoVTbaL4YNuWYLH975v+DNNPn9DDGWZVxGYR9Qdxa6s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=DwS46AdYDXC+9ZAsRLRjPUp1SCcuBxmFNKhonH5F5UWdvmPdW7vVhza+qcdT3QN4s
+	 Cs+Z5Al/+1IMjvmnJc+gr4Mb5fbRWLE7QLeYlZTsJDZxy5IQoIYnowlN0BgYhvEG1T
+	 3MO2M8I2/YbJAnnfN2J1udFQ/FTpo1z1iETzWtSyCOjnUp9RcQAoNO3UIgGdv6UsSz
+	 UetoPuHOaS9OWFM05EPhZuzdie0Rkj8GsK3d3qHr8IILz4UHsiZXYlW1z9Fu/CsogA
+	 BPlNhaljpKHp/QxwseVtkuFpdRUeUWFmaADh8ubMr9u62LkDeZrBwajpEmlxvoG0Tp
+	 9tml5snDXE3Xg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 12 Dec 2024 13:33:39 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <45f90007-3136-4b59-a3fc-6fc0147b8ad8@wanadoo.fr>
+Date: Thu, 12 Dec 2024 13:33:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241128-scx_lockdep-v1-1-2315b813b36b@debian.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] drm/bridge: ti-sn65dsi83: Add ti,lvds-vod-swing
+ optional properties
+References: <20241212121712.214639-1-andrej.picej@norik.com>
+ <20241212121712.214639-3-andrej.picej@norik.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, upstream@lists.phytec.de,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, marex@denx.de
+To: Andrej Picej <andrej.picej@norik.com>
+In-Reply-To: <20241212121712.214639-3-andrej.picej@norik.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 28, 2024 at 04:16:25AM -0800, Breno Leitao wrote:
->
-> diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-> index 6c902639728b767cc3ee42c61256d2e9618e6ce7..5a27ccd72db9a25d92d1ed2f8d519afcfc672afe 100644
-> --- a/lib/rhashtable.c
-> +++ b/lib/rhashtable.c
-> @@ -585,9 +585,6 @@ static struct bucket_table *rhashtable_insert_one(
->  	rht_assign_locked(bkt, obj);
->  
->  	atomic_inc(&ht->nelems);
-> -	if (rht_grow_above_75(ht, tbl))
-> -		schedule_work(&ht->run_work);
-> -
->  	return NULL;
->  }
->  
-> @@ -624,6 +621,9 @@ static void *rhashtable_try_insert(struct rhashtable *ht, const void *key,
->  				data = ERR_CAST(new_tbl);
->  
->  			rht_unlock(tbl, bkt, flags);
-> +			if (rht_grow_above_75(ht, tbl))
-> +				schedule_work(&ht->run_work);
+Le 12/12/2024 à 13:17, Andrej Picej a écrit :
+> Add a optional properties to change LVDS output voltage. This should not
+> be static as this depends mainly on the connected display voltage
+> requirement. We have three properties:
+> - "ti,lvds-termination-ohms", which sets near end termination,
+> - "ti,lvds-vod-swing-data-microvolt" and
+> - "ti,lvds-vod-swing-clock-microvolt" which both set LVDS differential
+> output voltage for data and clock lanes. They are defined as an array
+> with min and max values. The appropriate bitfield will be set if
+> selected constraints can be met.
+> 
+> If "ti,lvds-termination-ohms" is not defined the default of 200 Ohm near
+> end termination will be used. Selecting only one:
+> "ti,lvds-vod-swing-data-microvolt" or
+> "ti,lvds-vod-swing-clock-microvolt" can be done, but the output voltage
+> constraint for only data/clock lanes will be met. Setting both is
+> recommended.
+
+...
+
+> +static int sn65dsi83_select_lvds_vod_swing(struct device *dev,
+> +	u32 lvds_vod_swing_data[2], u32 lvds_vod_swing_clk[2], u8 lvds_term)
+> +{
+> +	int i;
 > +
+> +	for (i = 0; i <= 3; i++) {
+> +		if (lvds_vod_swing_data_table[lvds_term][i][0] >= lvds_vod_swing_data[0] &&
+> +		lvds_vod_swing_data_table[lvds_term][i][1] <= lvds_vod_swing_data[1] &&
+> +		lvds_vod_swing_clock_table[lvds_term][i][0] >= lvds_vod_swing_clk[0] &&
+> +		lvds_vod_swing_clock_table[lvds_term][i][1] <= lvds_vod_swing_clk[1])
 
-The growth check should stay with the atomic_inc.  Something like
-this should work:
+Adding a few spaces to align things would help reading.
 
-			if (PTR_ERR(data) == -ENOENT && !new_tbl) {
-				atomic_inc(&ht->nelems);
-				if (rht_grow_above_75(ht, tbl))
-					schedule_work(&ht->run_work);
-				break;
-			}
+> +			return i;
+> +	}
+> +
+> +	dev_err(dev, "failed to find appropriate LVDS_VOD_SWING configuration\n");
+> +	return -EINVAL;
+> +}
+> +
+> +static int sn65dsi83_parse_lvds_endpoint(struct sn65dsi83 *ctx, int channel)
+> +{
+> +	struct device *dev = ctx->dev;
+> +	struct device_node *endpoint;
+> +	int endpoint_reg;
+> +	/* Set so the property can be freely selected if not defined */
+> +	u32 lvds_vod_swing_data[2] = { 0, 1000000 };
+> +	u32 lvds_vod_swing_clk[2] = { 0, 1000000 };
+> +	/* Set default near end terminataion to 200 Ohm */
+> +	u32 lvds_term = 200;
+> +	int lvds_vod_swing_conf;
+> +	int ret = 0;
+> +	int ret_data;
+> +	int ret_clock;
+> +
+> +	if (channel == CHANNEL_A)
+> +		endpoint_reg = 2;
+> +	else
+> +		endpoint_reg = 3;
+> +
+> +	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, endpoint_reg, -1);
+> +
+> +	of_property_read_u32(endpoint, "ti,lvds-termination-ohms", &lvds_term);
+> +	if (lvds_term == 100)
+> +		ctx->lvds_term_conf[channel] = OHM_100;
+> +	else if (lvds_term == 200)
+> +		ctx->lvds_term_conf[channel] = OHM_200;
+> +	else
+> +		return -EINVAL;
 
-Could you please resend this via linux-crypto?
+Should it be:
+	else {
+		ret = -EINVAL;
+		goto exit;
+	}
+?
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> +
+> +	ret_data = of_property_read_u32_array(endpoint, "ti,lvds-vod-swing-data-microvolt",
+> +					lvds_vod_swing_data, ARRAY_SIZE(lvds_vod_swing_data));
+> +	if (ret_data != 0 && ret_data != -EINVAL) {
+> +		ret = ret_data;
+> +		goto exit;
+> +	}
+> +
+> +	ret_clock = of_property_read_u32_array(endpoint, "ti,lvds-vod-swing-clock-microvolt",
+> +					lvds_vod_swing_clk, ARRAY_SIZE(lvds_vod_swing_clk));
+> +	if (ret_clock != 0 && ret_clock != -EINVAL) {
+> +		ret = ret_clock;
+> +		goto exit;
+> +	}
+> +
+> +	/* Use default value if both properties are NOT defined. */
+> +	if (ret_data == -EINVAL && ret_clock == -EINVAL)
+> +		lvds_vod_swing_conf = 0x1;
+> +
+> +	/* Use lookup table if any of the two properties is defined. */
+> +	if (!ret_data || !ret_clock) {
+> +		lvds_vod_swing_conf = sn65dsi83_select_lvds_vod_swing(dev, lvds_vod_swing_data,
+> +						lvds_vod_swing_clk, ctx->lvds_term_conf[channel]);
+> +		if (lvds_vod_swing_conf < 0) {
+> +			ret = lvds_vod_swing_conf;
+> +			goto exit;
+> +		}
+> +	}
+> +
+> +	ctx->lvds_vod_swing_conf[channel] = lvds_vod_swing_conf;
+> +	ret = 0;
+> +exit:
+> +	of_node_put(endpoint);
+> +	return ret;
+> +}
+
+...
+
+CJ
 
