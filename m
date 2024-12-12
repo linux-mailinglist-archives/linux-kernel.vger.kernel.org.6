@@ -1,99 +1,113 @@
-Return-Path: <linux-kernel+bounces-442467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B1D9EDD2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF619EDD30
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:47:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F916161349
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FDA1161DFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FBF762EB;
-	Thu, 12 Dec 2024 01:46:24 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7257042A82;
+	Thu, 12 Dec 2024 01:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MraSIfeh"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026EF3C38;
-	Thu, 12 Dec 2024 01:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001B73C38
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733967984; cv=none; b=EwBBObIjWhPl8rEzDPPUqMDShwuGp1yTcxxPr/7b2FC9X8j565Nx4H28a7U7ZfV64InU+POyyP9o1CbOyz98HG5gv4wrL32bWu8kb1i+n2Qrd4dfyhGuhNmLe5vGMGZ/wGaBXjSL2KE8YsEFG+RDPfTaxk3jKx4Je//ib4wMc30=
+	t=1733968058; cv=none; b=RqtYwYDbERzDHDbccEWn4rIcPlIpM0Dfhtz+7+7tA0SQY9wUE4n/qcZnjuvTMAuXCaWMCNxKOqj8j+25nLTb3VYDlpLwV0aF3B+Tu5RtI7owPJTTpHbCCIx5ak87N/mdyBnfD/ZsGLTPiGumQY2YIRtJ3Oc0zX4Ha+tFdJ7ldnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733967984; c=relaxed/simple;
-	bh=wdwWUlRD6JAjorcxXWF9EI+cJkEk2aRX2tTel5dpuX0=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=OPaFGTbseSmmVPWFBX+C4YoLiTXIzkBzdTJKV+yIK9oGSPyZUKT3uLtdPDkFJZlntz0Kow3Fj7XqeSZfQwWpM56FTJlmdUhVPf0ZykI+mSnX7CSTurmXCOgw2FxYak3a05DTg8QtPTL1mL5/kS2bHllxzUYxQJkmfLmFxCiO9zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Y7wH44R3pz1T6wf;
-	Thu, 12 Dec 2024 09:43:44 +0800 (CST)
-Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
-	by mail.maildlp.com (Postfix) with ESMTPS id C937C1A016C;
-	Thu, 12 Dec 2024 09:46:11 +0800 (CST)
-Received: from kwepemn100017.china.huawei.com (7.202.194.122) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 12 Dec 2024 09:46:11 +0800
-Received: from [10.67.121.110] (10.67.121.110) by
- kwepemn100017.china.huawei.com (7.202.194.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 12 Dec 2024 09:46:10 +0800
-Subject: Re: [PATCH 4/5] hisi_acc_vfio_pci: bugfix the problem of uninstalling
- driver
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: <alex.williamson@redhat.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<jonathan.cameron@huawei.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>
-References: <20241206093312.57588-1-liulongfang@huawei.com>
- <20241206093312.57588-5-liulongfang@huawei.com>
- <20241209134953.GA1888283@ziepe.ca>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <ba7e1150-1e57-9762-1b87-3a85c3928064@huawei.com>
-Date: Thu, 12 Dec 2024 09:46:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1733968058; c=relaxed/simple;
+	bh=H2oOdkgf1KHP3tRs/kLe5rjuaHPg/00+31UJttts1qg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fj7oTDp0dNOa+JnvYf7rHd9XQw7VDOlCdOv/Z+ntARiaXzsJIj1Ter/SpR/vE3Go5iTnrKP4rt6Mei7i/g5ad6x3ykrUmArlr6jUJjCtj43a6rmy5Y0FKToJQtGw2v1JGChwEaxyGBpvpabMeAUNlKolW15txmUOtfEqEnB9/kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MraSIfeh; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733968048; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=Kqj9qK6jIh62y524FbW8f6U5KVgY1gRKxB0ZmR0iD0E=;
+	b=MraSIfehPygJ3PGrLe81JW317bt3RLjGjsypmIzXUIVg4jWvEZw9/TMQ6rnZTCa+vvBRUydeQ2K+mpVmjSIeHnH/ePngiDqAhYvHAgpYd1q11hONWNNf4VkR4lBl+sWQtUrRgZMTjl4YiiiKEFgr5eTgyoJsBSmZtxicPgKGa8c=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WLJtAS3_1733968038 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 12 Dec 2024 09:47:27 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: harry.wentland@amd.com
+Cc: sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] drm/amd/display: use swap() in update_phy_id_mapping()
+Date: Thu, 12 Dec 2024 09:47:17 +0800
+Message-Id: <20241212014717.14286-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241209134953.GA1888283@ziepe.ca>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemn100017.china.huawei.com (7.202.194.122)
+Content-Transfer-Encoding: 8bit
 
-On 2024/12/9 21:49, Jason Gunthorpe wrote:
-> On Fri, Dec 06, 2024 at 05:33:11PM +0800, Longfang Liu wrote:
->> In a live migration scenario. If the number of VFs at the
->> destination is greater than the source, the recovery operation
->> will fail and qemu will not be able to complete the process and
->> exit after shutting down the device FD.
->>
->> This will cause the driver to be unable to be unloaded normally due
->> to abnormal reference counting of the live migration driver caused
->> by the abnormal closing operation of fd.
->>
->> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
->> ---
->>  drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c | 1 +
->>  1 file changed, 1 insertion(+)
-> 
-> This one needs a fixes line and probably cc stable
->
+Use existing swap() function rather than duplicating its implementation.
 
-OK.
+./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c:185:47-48: WARNING opportunity for swap().
+./drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c:125:53-54: WARNING opportunity for swap().
 
-Thanks.
-Longfang
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=12335
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c  | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-> Jason
-> 
-> .
-> 
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
+index 309c7999faa6..6fdc306a4a86 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
+@@ -120,11 +120,8 @@ static void update_phy_id_mapping(struct amdgpu_device *adev)
+ 	for (idx = connector_cnt; idx > 1 ; idx--) {
+ 		for (idx_2 = 0; idx_2 < (idx - 1); idx_2++) {
+ 			if (sort_connector[idx_2]->dc_link->link_enc_hw_inst >
+-				sort_connector[idx_2 + 1]->dc_link->link_enc_hw_inst) {
+-				aconnector = sort_connector[idx_2];
+-				sort_connector[idx_2] = sort_connector[idx_2 + 1];
+-				sort_connector[idx_2 + 1] = aconnector;
+-			}
++			    sort_connector[idx_2 + 1]->dc_link->link_enc_hw_inst)
++				swap(sort_connector[idx_2], sort_connector[idx_2 + 1]);
+ 		}
+ 	}
+ 
+@@ -180,11 +177,8 @@ static void update_phy_id_mapping(struct amdgpu_device *adev)
+ 						}
+ 					}
+ 
+-					if (swap) {
+-						aconnector = sort_connector[j];
+-						sort_connector[j] = sort_connector[j + 1];
+-						sort_connector[j + 1] = aconnector;
+-					}
++					if (swap)
++						swap(sort_connector[j], sort_connector[j + 1]);
+ 				}
+ 			}
+ 
+-- 
+2.32.0.3.g01195cf9f
+
 
