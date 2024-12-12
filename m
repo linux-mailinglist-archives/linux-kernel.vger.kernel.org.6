@@ -1,203 +1,179 @@
-Return-Path: <linux-kernel+bounces-443945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91919EFDE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:08:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 984239EFDED
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE7C289EFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D89289E25
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCD81C2324;
-	Thu, 12 Dec 2024 21:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB1D1C2324;
+	Thu, 12 Dec 2024 21:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="chUhsNx1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="sI9WQo0h";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V2xBxaHc"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC8E174EF0;
-	Thu, 12 Dec 2024 21:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77DA189BAF;
+	Thu, 12 Dec 2024 21:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734037681; cv=none; b=D/GI4WHESbOc2Ejapbqg2XQC2vR47P26lKwrs9rL+I7EKvuMMl5I7TNNeESK89IVdr6w4ScMaT5ssA3RGqu0ELd+ME3r4HKzAydxjlVOkM7PDwmsaw8oUVfmYoguidesPHhrsCyPFPUk0h7hNtmhCE3a47yG3mDLG0hj/jvA00g=
+	t=1734037743; cv=none; b=WNR+VT8svyAaRTrxzdJVjYU/VkypG7tMU2+08Tz0Xqr8NjHZLLFzW24kEmd6PmrYGZlxxvfElGKS8OywBg4T8WlvZaaSq8l9C+qGd6RBsxViHwh+sOW/bIp5aBN9ucxPXUQZztnbIphvaLMxrAnodwfh5tZ/tN9XbseYa2OWf1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734037681; c=relaxed/simple;
-	bh=PBIseoIzz7QhT/pRERjDZ/l0g8VlNWxM4+wA3Tgo67g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwubHCCAnJvUlY5wWhlfBAaBVRYPSAyb3sX2iw+gCE8R5ULVsr9H5OG0NQA50b6EiYol6E0c2qHNQR/hPng3RvR8xrA1adacmjdPRhPDNnwMDECXRRHKk53SroKYMG06vFaDsUPnkUPunJ7qklg59D/Q+6AIgvz2FOowToWkJ9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=chUhsNx1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58E54C4CECE;
-	Thu, 12 Dec 2024 21:07:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734037679;
-	bh=PBIseoIzz7QhT/pRERjDZ/l0g8VlNWxM4+wA3Tgo67g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=chUhsNx1l66zDcZxhvbkFqarmrCfaQ+lpmIAvGwZ6+c23jD6RxX5KR7pcNWU/EWjv
-	 67jHbT13ZQfjHmPbwgvnsLzSnbe9X2BYhBNEPXExqe6PP0UgM7pOBngY5yYThsn3Tt
-	 6WG2IquDM3wxsZS9kY/1f6V9wevucU0P5FnMR+W5C5RX4gjErSseY1zKqlXJqMttXG
-	 utPE/pVTjtoK1GZHHLbd/sELL3uJ2m0pGoCTJtRoSUhiWG1LBzcyVJlebeTjlr1AyE
-	 cnes8Y1YtydhL4aM0Xj82mRMd5hGWJDyD3ThWV9BowCSFj7DNYPQ4idwWlQFG8QZ9D
-	 LUZ1LPPvsKHAA==
-Date: Thu, 12 Dec 2024 13:07:58 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>,
-	John Garry <john.g.garry@oracle.com>
-Subject: Re: [RFC 2/3] xfs_io: Add ext4 support to show FS_IOC_FSGETXATTR
- details
-Message-ID: <20241212210758.GN6678@frogsfrogsfrogs>
-References: <cover.1733902742.git.ojaswin@linux.ibm.com>
- <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
- <20241211181706.GB6678@frogsfrogsfrogs>
- <Z1oTOUCui9vTgNoM@dread.disaster.area>
- <20241212161919.GA6657@frogsfrogsfrogs>
- <Z1tLEQmRiZc7alBo@dread.disaster.area>
+	s=arc-20240116; t=1734037743; c=relaxed/simple;
+	bh=tq8SabrSNNl10xixFA1YpdWN/BgyhTYrgnAWPnPpstc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=icyYsr+Q7rRrvS45MVacd4yUptEoX6nqk0DGsZfaBrKuXFsEq4LL7qd1nMUQ/wZQM6PR/0E6PY+RMtCoQYP/A5JZvoEltRJUJsD1jwi1eLxAHzP60OQ/UGHmKut5k3ntliOA42VM0CNhyeIyGuukNFQNCKVHC0noMna522vSNeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=sI9WQo0h; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=V2xBxaHc; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8EE3F1383EA7;
+	Thu, 12 Dec 2024 16:09:00 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 12 Dec 2024 16:09:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1734037740;
+	 x=1734124140; bh=9IqZ6rAQRKbEW2J4TH6/7CA/VSmhrZDWQ3WoMQkxePk=; b=
+	sI9WQo0hT8RZfeLkFWtOxYBaixCFsKGWtj1oeld5wv+OdD59xfdJ/DXtsqqA5hQt
+	iqOuvNi/VCCSpWXoYZS39BY5IDFhiWrgN7uGOEI80sW1mD86lUNNrJYsuinhpIUd
+	yIhPLs4TywRs8rOz9rzJVi1JgzrdiimkQ65PkMgb0vc72c6LR+JnVMGUs4NEk77r
+	sTzT5VObzwIahbjTu14Sn072AKr3QmyqW4t6gUI+fj8oxqiYAtMZnJGpw6KFvWj9
+	/oN1Ya0/vGY1kQzpziYR1O6rbYPBKcOKtWSh2D/iBJcvpmOMOKrODid3HPvM9yZy
+	4mjyZbZRdPqpqpSkulf93g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734037740; x=
+	1734124140; bh=9IqZ6rAQRKbEW2J4TH6/7CA/VSmhrZDWQ3WoMQkxePk=; b=V
+	2xBxaHcyH7nhSIq8a4Shpv1fzPD4TS4/o7IMn+qgKdxGHqV8eH8bVojf4NDKmYId
+	wQ5mTyohsX3YXFFFXfGAVLTVSHsgcVGB32ZuEuPEcsvKgPnNjr/ytl8Rol4AdGUH
+	z4RYUE/LTQ4TSRFibOFJaAUAU9Y1y3XSO4DmEg/vuNB3umXTPRa+lqY4thL/yeSX
+	+gWisPsU3ubkDeY87y6wmDYrll/Y7H8BuqaYXv7BQKRu+NAHz633wh9LSFMjsRCc
+	Sl9zQV4xpWiKN9OVoZ2hImjbuMrL8rLGDuVpu5KmhMLyFaTOGnXlPY4RfqWnGL3Q
+	tyRAAaDN7xrgHEaKtYX0A==
+X-ME-Sender: <xms:6lBbZyw5SFn4lKEQCjXQULlKKQ3fuezYL-a0vCHYGD3K-FVjpKNC4A>
+    <xme:6lBbZ-T7owsIHjUc1TlBe8pyoFKFV3A4XgfmG_C3lywr1GwU4Q9tIxa9IUfSJ4uZZ
+    5abI64AlwCYCLWcu3w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeehgddugeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
+    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfeeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
+    gtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghp
+    thhtohepghhrrghfsegrmhgriihonhdrtghomhdprhgtphhtthhopegrthhishhhphesrg
+    htihhshhhprghtrhgrrdhorhhgpdhrtghpthhtoheprghnuhhpsegsrhgrihhnfhgruhhl
+    thdrohhrghdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhroh
+    huphdrvghupdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghp
+    thhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehmph
+    gvsegvlhhlvghrmhgrnhdrihgurdgruh
+X-ME-Proxy: <xmx:6lBbZ0VwsS4U5Dh3P7otMqmSIAVEsOO6G7LJsCShu6InWS5ECnRScA>
+    <xmx:6lBbZ4g36ua-0NY8XWqhtFeQFSxll2Gb7OcvFB5JwEkVcXBPt7efZw>
+    <xmx:6lBbZ0CZQR2tq0T2mN9rDgYjaqBp7grBCA0XYnDCiY-g_gO8TIGx1w>
+    <xmx:6lBbZ5JchKyroSqzawYqmB-bFcM24AfcbmVsrLAOC-nqaNsZvK-LMA>
+    <xmx:7FBbZ-xtl9XJ4zczjb9ueyrbQc4qE0emOqr48sDEu3vHDq2m0T8uPYzW>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 134EC2220072; Thu, 12 Dec 2024 16:08:58 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1tLEQmRiZc7alBo@dread.disaster.area>
+Date: Thu, 12 Dec 2024 22:08:37 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Arnd Bergmann" <arnd@kernel.org>, kvm@vger.kernel.org
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Naveen N Rao" <naveen@kernel.org>,
+ "Madhavan Srinivasan" <maddy@linux.ibm.com>,
+ "Alexander Graf" <graf@amazon.com>, "Crystal Wood" <crwood@redhat.com>,
+ "Anup Patel" <anup@brainfault.org>,
+ "Atish Patra" <atishp@atishpatra.org>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Vitaly Kuznetsov" <vkuznets@redhat.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Paul Durrant" <paul@xen.org>,
+ "Marc Zyngier" <maz@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
+Message-Id: <1633f30e-d885-4f31-a14d-11881e16deb9@app.fastmail.com>
+In-Reply-To: <3589ad69-13df-40f1-88c2-55d39790bbac@csgroup.eu>
+References: <20241212125516.467123-1-arnd@kernel.org>
+ <20241212125516.467123-3-arnd@kernel.org>
+ <3589ad69-13df-40f1-88c2-55d39790bbac@csgroup.eu>
+Subject: Re: [RFC 2/5] powerpc: kvm: drop 32-bit booke
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 13, 2024 at 07:44:01AM +1100, Dave Chinner wrote:
-> On Thu, Dec 12, 2024 at 08:19:19AM -0800, Darrick J. Wong wrote:
-> > On Thu, Dec 12, 2024 at 09:33:29AM +1100, Dave Chinner wrote:
-> > > On Wed, Dec 11, 2024 at 10:17:06AM -0800, Darrick J. Wong wrote:
-> > > > On Wed, Dec 11, 2024 at 01:24:03PM +0530, Ojaswin Mujoo wrote:
-> > > > > Currently with stat we only show FS_IOC_FSGETXATTR details
-> > > > > if the filesystem is XFS. With extsize support also coming
-> > > > > to ext4 make sure to show these details when -c "stat" or "statx"
-> > > > > is used.
-> > > > > 
-> > > > > No functional changes for filesystems other than ext4.
-> > > > > 
-> > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > > > > ---
-> > > > >  io/stat.c | 38 +++++++++++++++++++++-----------------
-> > > > >  1 file changed, 21 insertions(+), 17 deletions(-)
-> > > > > 
-> > > > > diff --git a/io/stat.c b/io/stat.c
-> > > > > index 326f2822e276..d06c2186cde4 100644
-> > > > > --- a/io/stat.c
-> > > > > +++ b/io/stat.c
-> > > > > @@ -97,14 +97,14 @@ print_file_info(void)
-> > > > >  		file->flags & IO_TMPFILE ? _(",tmpfile") : "");
-> > > > >  }
-> > > > >  
-> > > > > -static void
-> > > > > -print_xfs_info(int verbose)
-> > > > > +static void print_extended_info(int verbose)
-> > > > >  {
-> > > > > -	struct dioattr	dio;
-> > > > > -	struct fsxattr	fsx, fsxa;
-> > > > > +	struct dioattr dio;
-> > > > > +	struct fsxattr fsx, fsxa;
-> > > > > +	bool is_xfs_fd = platform_test_xfs_fd(file->fd);
-> > > > >  
-> > > > > -	if ((xfsctl(file->name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > > > > -	    (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
-> > > > > +	if ((ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > > > > +		(is_xfs_fd && (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa) < 0))) {
-> > > > 
-> > > > Urgh... perhaps we should call FS_IOC_FSGETXATTR and if it returns zero
-> > > > print whatever is returned, no matter what filesystem we think is
-> > > > feeding us information?
-> > > 
-> > > Yes, please. FS_IOC_FSGETXATTR has been generic functionality for
-> > > some time, we should treat it the same way for all filesystems.
-> > > 
-> > > > e.g.
-> > > > 
-> > > > 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> > > > 		if (is_xfs_fd || (errno != EOPNOTSUPP &&
-> > > > 				  errno != ENOTTY))
-> > > > 			perror("FS_IOC_GETXATTR");
-> > > 
-> > > Why do we even need "is_xfs_fd" there? XFS will never give a
-> > > EOPNOTSUPP or ENOTTY error to this or the FS_IOC_GETXATTRA ioctl...
-> > 
-> > Yeah, in hindsight I don't think it's needed for FS_IOC_FSGETXATTR, but
-> 
-> *nod*
-> 
-> > it's definitely nice for XFS_IOC_FSGETXATTRA (which is not implemented
-> > outside xfs) so that you don't get unnecessary error messages on ext4.
-> 
-> I don't think we even need it for FS_IOC_GETXATTRA - if the
-> filesystem does not support that ioctl, we don't print the fields,
-> nor do we output an error.
-> 
-> After all, this "extended info" and it's only ever been printed
-> for XFS, so we can define whatever semantics we want for foreign
-> filesystem output right now. As long as XFS always prints the same
-> info as it always has (i.e. all of it), we can do whatever we want
-> with the foreign filesystem stuff.
-> 
-> Keep in mind that we don't need platform tests for XFS files - that
-> has already been done when the file was opened and the state stored
-> in file->flags via the IO_FOREIGN flag. We already use that in the
-> stat_f() to determine whether we print the "xfs info" or not.
-> 
-> IOWs, I think all we need to do is  move where we check the
-> IO_FOREIGN flag. i.e.:
-> 
-> print_extented_info(file)
-> {
-> 	struct dioattr  dio = {};
->         struct fsxattr  fsx = {}, fsxa = {};
-> 
-> 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> 		perror("FS_IOC_GETXATTR");
-> 		exitcode = 1;
-> 		return;
-> 	}
-> 
-> 	printf(_("fsxattr.xflags = 0x%x "), fsx.fsx_xflags);
-> 	printxattr(fsx.fsx_xflags, verbose, 0, file->name, 1, 1);
-> 	printf(_("fsxattr.projid = %u\n"), fsx.fsx_projid);
-> 	printf(_("fsxattr.extsize = %u\n"), fsx.fsx_extsize);
-> 	printf(_("fsxattr.cowextsize = %u\n"), fsx.fsx_cowextsize);
-> 	printf(_("fsxattr.nextents = %u\n"), fsx.fsx_nextents);
-> 
-> 	/* Only XFS supports FS_IOC_FSGETXATTRA and XFS_IOC_DIOINFO */
-> 	if (file->flags & IO_FOREIGN)
-> 		return;
-> 
-> 	if (ioctl(file->fd, FS_IOC_FSGETXATTRA, &fsxa)) < 0) {
-> 		perror("FS_IOC_GETXATTRA");
-> 		exitcode = 1;
-> 		return;
-> 	}
-> 	if ((xfsctl(file->name, file->fd, XFS_IOC_DIOINFO, &dio)) < 0) {
-> 		perror("XFS_IOC_DIOINFO");
-> 		exitcode = 1;
-> 		return;
-> 	}
-> 
-> 	printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
-> 	printf(_("dioattr.mem = 0x%x\n"), dio.d_mem);
-> 	printf(_("dioattr.miniosz = %u\n"), dio.d_miniosz);
-> 	printf(_("dioattr.maxiosz = %u\n"), dio.d_maxiosz);
-> }
-> 
-> Thoughts?
+On Thu, Dec 12, 2024, at 19:35, Christophe Leroy wrote:
+> Le 12/12/2024 =C3=A0 13:55, Arnd Bergmann a =C3=A9crit=C2=A0:
+>> From: Arnd Bergmann <arnd@arndb.de>
 
-Seems fine to me, though I'd print the fsxa before trying to call
-DIOINFO.
+>>=20
+>> Support for 64-bit hosts remains unchanged, for both 32-bit and
+>> 64-bit guests.
+>>=20
 
---D
+>>   arch/powerpc/include/asm/kvm_book3s_32.h    |  36 --
+>>   arch/powerpc/include/asm/kvm_booke.h        |   4 -
+>>   arch/powerpc/include/asm/kvm_booke_hv_asm.h |   2 -
+>>   arch/powerpc/kvm/Kconfig                    |  22 +-
+>>   arch/powerpc/kvm/Makefile                   |  15 -
+>>   arch/powerpc/kvm/book3s_32_mmu_host.c       | 396 --------------
+>>   arch/powerpc/kvm/booke.c                    | 268 ----------
+>>   arch/powerpc/kvm/booke.h                    |   8 -
+>>   arch/powerpc/kvm/booke_emulate.c            |  44 --
+>>   arch/powerpc/kvm/booke_interrupts.S         | 535 -----------------=
+--
+>>   arch/powerpc/kvm/bookehv_interrupts.S       | 102 ----
+>>   arch/powerpc/kvm/e500.c                     | 553 -----------------=
+---
+>>   arch/powerpc/kvm/e500.h                     |  40 --
+>>   arch/powerpc/kvm/e500_emulate.c             | 100 ----
+>>   arch/powerpc/kvm/e500_mmu_host.c            |  54 --
+>>   arch/powerpc/kvm/e500mc.c                   |   5 +-
+>>   arch/powerpc/kvm/trace_booke.h              |  14 -
+>>   17 files changed, 4 insertions(+), 2194 deletions(-)
+>>   delete mode 100644 arch/powerpc/include/asm/kvm_book3s_32.h
+>>   delete mode 100644 arch/powerpc/kvm/book3s_32_mmu_host.c
+>>   delete mode 100644 arch/powerpc/kvm/booke_interrupts.S
+>>   delete mode 100644 arch/powerpc/kvm/e500.c
+>
+> Left over ?
+>
+> arch/powerpc/kernel/head_booke.h:#include <asm/kvm_asm.h>
+> arch/powerpc/kernel/head_booke.h:#include <asm/kvm_booke_hv_asm.h>
+> arch/powerpc/kernel/head_booke.h:       b=20
+> kvmppc_handler_\intno\()_\srr1
 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
+As far as I can tell, these are still needed for e5500/e6500,
+but you know more about the platform than I do.
+
+       Arnd
 
