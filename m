@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-443232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5289EE912
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:38:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D629EE91A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 266B81662EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF57188A8AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD922185A0;
-	Thu, 12 Dec 2024 14:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5DA222D63;
+	Thu, 12 Dec 2024 14:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="qdauL83u"
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="PQ8Oa/Io"
 Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069BE215F58;
-	Thu, 12 Dec 2024 14:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601B4215178;
+	Thu, 12 Dec 2024 14:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734014261; cv=none; b=nSosFdeWdkwwV9AspF61DaQ39o4vc5oxnOHIkGMh3YsQi2Py59zwv6Bpk86zLLzvtTgNGe6AVl1c2UzKy/ipNwrnqe1yAltk6S9iCbgm5HHal+EXeDFBZsUD3mB7o3PXf25JkjC38YgTgUkKBddyadu+eFJhCCDaW8qFeDQCckw=
+	t=1734014270; cv=none; b=GleV0MnLVAXHs3TJyw/pS7XJGrgBsvLGM7b2luLWL77OC8igE01xqjG8XtTLKxP6/FWb6CXjmMUABK358vRJPhpMnHBYs/fbYcx+ruUwY3L60zSOqDAUi2Mw5apt4xpc0uAMA+S56BgY4XkcrQYOTt5hIj1e2ekstrCOnkByOog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734014261; c=relaxed/simple;
-	bh=51CmuYK4kyd7aFLPPsE0COjj4HygaONkduUcouUj/eg=;
+	s=arc-20240116; t=1734014270; c=relaxed/simple;
+	bh=CSLZB67fHH1An2++1VrjAnPJMk2tj2QsQ3X7d/tuygg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uPpoLAlU2aG0IUYgsQcd1tUJ+MVVg7yo1MT0SrjCnQQVhzN3r0+PZF7fk66gl7JncJL0TfIjx9ffVKvloo3DBLaMZrTYwcmY6lz1/BzhdgGFUB3/psPyJYaXGXprv5N8yj1uYutQHk2lxiiEr6SlpUiryu69U2TdaBDsx2gjBww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=qdauL83u; arc=none smtp.client-ip=67.231.152.168
+	 MIME-Version:Content-Type; b=Mrq/HeKo3+cOaeZpYmo/6PiFR5uxne80D1cdo8uoARmx3sG3csStt84bIjl/84/GIGpTnFHnfwCzgfKxjlQSOSUVDmRRiq4F0LKiJdfMsAjBYymsX7JVS0pPH9LOUQuSAyuOIjOW47hMRYFUaek0qVc9ZntVvuI5t1AoaYZgvCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=PQ8Oa/Io; arc=none smtp.client-ip=67.231.152.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC5o3e8029256;
-	Thu, 12 Dec 2024 08:37:30 -0600
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC5o3e6029256;
+	Thu, 12 Dec 2024 08:37:28 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=yKJrJm54utzGWTgNuEQfBewpgJA0NwK8ckEgm7QI84w=; b=
-	qdauL83uAnBI6auOFHXL0QUq/x7zTR13DlOopEfsKg4CGN4PSUL0QfZMDnKL2F7P
-	ALWMfRlH/d6lN7ftSHqAGOSDT4wtjxwnaaNExfATH8xLOF0eHWc1akEkRQWbRkQg
-	Q8Gu/e4UbPm03N3wyaW7RO0p7FDOh/1zvZqcgX75tEJ9clBp42Zwpj8GBHsCjWeZ
-	zPbN8M/pynezkFt3UelUCKhJ4Y0HZeI7N/s018H9DFCOjfZqMHDItV8htD4y5YEw
-	W/6k+VPaKJzNSl7PJD+FJKZu9KyQX4inTeiQtFmniMWaHXB1RwLJf1mbvlt6BaCD
-	J0bV76SYeyk5gztjPpVGpg==
+	PODMain02222019; bh=kkD1FitS/Sa863m/S9ScTn0VpGVEThQ+Rq131XFY7WY=; b=
+	PQ8Oa/IoFgya8KKbLVSPsPyOEihnvNDp7vZaTwiRJkvvilseAR+TcPg/GcjghKNn
+	gh6TbML/6FHXNcM75yO2649OGORFx4tTB1GdWX5hC9LAFP4sexiFzJdt6irwZwEO
+	ZErB0qWf5LA0y1XN59pqhLAg4x5EEYlu6blCayng5Xq/Pqprg+B+LyGc2O/VS+GS
+	JAIX7QObN9ZByEXqQPGY/Suw8b+dRVmMXHnYQ4iOcbcCursdTXAZfL4o7rU+mJ0d
+	3moXCGmM/5p245XhXrRT1fb4zwPpWZpLPTBtlat2VPdtl+n1XyQ5ADEJLTJU9aso
+	TMJned5dMAbUNLM+Rv2yJA==
 Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43cknkexdq-5
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43cknkexdq-3
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 08:37:30 -0600 (CST)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+	Thu, 12 Dec 2024 08:37:28 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
  (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Thu, 12 Dec
  2024 14:37:25 +0000
 Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
  15.2.1544.13 via Frontend Transport; Thu, 12 Dec 2024 14:37:25 +0000
 Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 42E9182254B;
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 4650E82254C;
 	Thu, 12 Dec 2024 14:37:25 +0000 (UTC)
 From: Richard Fitzgerald <rf@opensource.cirrus.com>
 To: <broonie@kernel.org>
 CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
         <linux-sound@vger.kernel.org>
-Subject: [PATCH 10/12] firmware: cs_dsp: Add KUnit testing of bin error cases
-Date: Thu, 12 Dec 2024 14:37:23 +0000
-Message-ID: <20241212143725.1381013-11-rf@opensource.cirrus.com>
+Subject: [PATCH 11/12] firmware: cs_dsp: Add KUnit testing of wmfw error cases
+Date: Thu, 12 Dec 2024 14:37:24 +0000
+Message-ID: <20241212143725.1381013-12-rf@opensource.cirrus.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241212143725.1381013-1-rf@opensource.cirrus.com>
 References: <20241212143725.1381013-1-rf@opensource.cirrus.com>
@@ -75,39 +75,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: suoNMd-Nzw3Cc9C1HC51NwoRfVyL9sPk
-X-Proofpoint-GUID: suoNMd-Nzw3Cc9C1HC51NwoRfVyL9sPk
+X-Proofpoint-ORIG-GUID: 8-KbR8DXN9Rb_37ORnXawSDv6fPVKkF7
+X-Proofpoint-GUID: 8-KbR8DXN9Rb_37ORnXawSDv6fPVKkF7
 X-Proofpoint-Spam-Reason: safe
 
 Add tests for various types of errors and illegal values in
-bin files. This covers buffer overflows as well as general
+wmfw files. This covers buffer overflows as well as general
 unsupported field values.
+
+There are several sets of test cases to cover various different
+versions of the wmfw file format.
+
+V0 format was only used on the earlier ADSP2 devices. It does
+not have algorithm blocks.
+
+V1 format is used on all ADSP2 versions. It added algorithm
+blocks and firmware coefficient descriptor blocks. Strings
+are stored in fixed-length arrays.
+
+V2 format is used on all ADSP2 versions. It is similar to V1
+but space for strings is variable-length with either an 8-bit
+or 16-bit length field.
+
+V3 format is used on Halo Core DSPs and is mostly identical to
+the V3 format.
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
- drivers/firmware/cirrus/test/Makefile         |   1 +
- .../cirrus/test/cs_dsp_test_bin_error.c       | 600 ++++++++++++++++++
- 2 files changed, 601 insertions(+)
- create mode 100644 drivers/firmware/cirrus/test/cs_dsp_test_bin_error.c
+ drivers/firmware/cirrus/test/Makefile         |    1 +
+ .../cirrus/test/cs_dsp_test_wmfw_error.c      | 1347 +++++++++++++++++
+ 2 files changed, 1348 insertions(+)
+ create mode 100644 drivers/firmware/cirrus/test/cs_dsp_test_wmfw_error.c
 
 diff --git a/drivers/firmware/cirrus/test/Makefile b/drivers/firmware/cirrus/test/Makefile
-index 998f67df6dc6..ef3ac727f169 100644
+index ef3ac727f169..63247c6f5111 100644
 --- a/drivers/firmware/cirrus/test/Makefile
 +++ b/drivers/firmware/cirrus/test/Makefile
-@@ -10,6 +10,7 @@ cs_dsp_test_utils-objs :=	\
- 
- cs_dsp_test-objs :=	\
- 		cs_dsp_test_bin.o \
-+		cs_dsp_test_bin_error.o \
- 		cs_dsp_test_control_parse.o \
+@@ -15,6 +15,7 @@ cs_dsp_test-objs :=	\
  		cs_dsp_test_control_cache.o \
  		cs_dsp_test_control_rw.o \
-diff --git a/drivers/firmware/cirrus/test/cs_dsp_test_bin_error.c b/drivers/firmware/cirrus/test/cs_dsp_test_bin_error.c
+ 		cs_dsp_test_wmfw.o \
++		cs_dsp_test_wmfw_error.o \
+ 		cs_dsp_tests.o
+ 
+ obj-$(CONFIG_FW_CS_DSP_KUNIT_TEST_UTILS) += cs_dsp_test_utils.o
+diff --git a/drivers/firmware/cirrus/test/cs_dsp_test_wmfw_error.c b/drivers/firmware/cirrus/test/cs_dsp_test_wmfw_error.c
 new file mode 100644
-index 000000000000..5dcf62f19faf
+index 000000000000..c309843261d7
 --- /dev/null
-+++ b/drivers/firmware/cirrus/test/cs_dsp_test_bin_error.c
-@@ -0,0 +1,600 @@
++++ b/drivers/firmware/cirrus/test/cs_dsp_test_wmfw_error.c
+@@ -0,0 +1,1347 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
 +// KUnit tests for cs_dsp.
@@ -132,18 +149,16 @@ index 000000000000..5dcf62f19faf
 +KUNIT_DEFINE_ACTION_WRAPPER(_cs_dsp_remove_wrapper, cs_dsp_remove, struct cs_dsp *);
 +
 +struct cs_dsp_test_local {
-+	struct cs_dsp_mock_bin_builder *bin_builder;
 +	struct cs_dsp_mock_xm_header *xm_header;
 +	struct cs_dsp_mock_wmfw_builder *wmfw_builder;
-+	struct firmware *wmfw;
 +	int wmfw_version;
 +};
 +
-+struct cs_dsp_bin_test_param {
++struct cs_dsp_wmfw_test_param {
 +	int block_type;
 +};
 +
-+static const struct cs_dsp_mock_alg_def cs_dsp_bin_err_test_mock_algs[] = {
++static const struct cs_dsp_mock_alg_def cs_dsp_wmfw_err_test_mock_algs[] = {
 +	{
 +		.id = 0xfafa,
 +		.ver = 0x100000,
@@ -153,16 +168,30 @@ index 000000000000..5dcf62f19faf
 +	},
 +};
 +
-+/* Load a bin containing unknown blocks. They should be skipped. */
-+static void bin_load_with_unknown_blocks(struct kunit *test)
++static const struct cs_dsp_mock_coeff_def mock_coeff_template = {
++	.shortname = "Dummy Coeff",
++	.type = WMFW_CTL_TYPE_BYTES,
++	.mem_type = WMFW_ADSP2_YM,
++	.flags = WMFW_CTL_FLAG_VOLATILE,
++	.length_bytes = 4,
++};
++
++/* Load a wmfw containing unknown blocks. They should be skipped. */
++static void wmfw_load_with_unknown_blocks(struct kunit *test)
 +{
 +	struct cs_dsp_test *priv = test->priv;
 +	struct cs_dsp_test_local *local = priv->local;
-+	struct firmware *bin;
++	struct firmware *wmfw;
 +	unsigned int reg_addr;
 +	u8 *payload_data, *readback;
 +	u8 random_data[8];
 +	const unsigned int payload_size_bytes = 64;
++
++	/* Add dummy XM header payload to wmfw */
++	cs_dsp_mock_wmfw_add_data_block(local->wmfw_builder,
++					WMFW_ADSP2_XM, 0,
++					local->xm_header->blob_data,
++					local->xm_header->blob_size_bytes);
 +
 +	payload_data = kunit_kmalloc(test, payload_size_bytes, GFP_KERNEL);
 +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, payload_data);
@@ -171,34 +200,29 @@ index 000000000000..5dcf62f19faf
 +	readback = kunit_kzalloc(test, payload_size_bytes, GFP_KERNEL);
 +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, readback);
 +
-+	/* Add some unknown blocks at the start of the bin */
++	/* Add some unknown blocks at the start of the wmfw */
 +	get_random_bytes(random_data, sizeof(random_data));
-+	cs_dsp_mock_bin_add_raw_block(local->bin_builder,
-+				      cs_dsp_bin_err_test_mock_algs[0].id,
-+				      cs_dsp_bin_err_test_mock_algs[0].ver,
-+				      0xf5, 0,
-+				      random_data, sizeof(random_data));
-+	cs_dsp_mock_bin_add_raw_block(local->bin_builder,
-+				      cs_dsp_bin_err_test_mock_algs[0].id,
-+				      cs_dsp_bin_err_test_mock_algs[0].ver,
-+				      0xf500, 0,
-+				      random_data, sizeof(random_data));
-+	cs_dsp_mock_bin_add_raw_block(local->bin_builder,
-+				      cs_dsp_bin_err_test_mock_algs[0].id,
-+				      cs_dsp_bin_err_test_mock_algs[0].ver,
-+				      0xc300, 0,
-+				      random_data, sizeof(random_data));
++	cs_dsp_mock_wmfw_add_raw_block(local->wmfw_builder, 0xf5, 0,
++				       random_data, sizeof(random_data));
++	cs_dsp_mock_wmfw_add_raw_block(local->wmfw_builder, 0xc0, 0, random_data,
++				       sizeof(random_data));
++	cs_dsp_mock_wmfw_add_raw_block(local->wmfw_builder, 0x33, 0, NULL, 0);
 +
 +	/* Add a single payload to be written to DSP memory */
-+	cs_dsp_mock_bin_add_raw_block(local->bin_builder,
-+				      cs_dsp_bin_err_test_mock_algs[0].id,
-+				      cs_dsp_bin_err_test_mock_algs[0].ver,
-+				      WMFW_ADSP2_YM, 0,
-+				      payload_data, payload_size_bytes);
++	cs_dsp_mock_wmfw_add_data_block(local->wmfw_builder,
++					WMFW_ADSP2_YM, 0,
++					payload_data, payload_size_bytes);
 +
-+	bin = cs_dsp_mock_bin_get_firmware(local->bin_builder);
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
 +	KUNIT_EXPECT_EQ(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +
 +	/* Check that the payload was written to memory */
@@ -209,286 +233,888 @@ index 000000000000..5dcf62f19faf
 +	KUNIT_EXPECT_MEMEQ(test, readback, payload_data, payload_size_bytes);
 +}
 +
-+/* Load a bin that doesn't have a valid magic marker. */
-+static void bin_err_wrong_magic(struct kunit *test)
++/* Load a wmfw that doesn't have a valid magic marker. */
++static void wmfw_err_wrong_magic(struct kunit *test)
 +{
 +	struct cs_dsp_test *priv = test->priv;
 +	struct cs_dsp_test_local *local = priv->local;
-+	struct firmware *bin;
++	struct firmware *wmfw;
 +
-+	/* Sanity-check that the wmfw loads ok without the bin */
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
 +	KUNIT_EXPECT_EQ(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", NULL, NULL, "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
 +			0);
 +	cs_dsp_power_down(priv->dsp);
 +
-+	bin = cs_dsp_mock_bin_get_firmware(local->bin_builder);
-+
-+	memcpy((void *)bin->data, "WMFW", 4);
++	memcpy((void *)wmfw->data, "WMDR", 4);
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +
-+	memcpy((void *)bin->data, "xMDR", 4);
++	memcpy((void *)wmfw->data, "xMFW", 4);
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +
-+	memcpy((void *)bin->data, "WxDR", 4);
++	memcpy((void *)wmfw->data, "WxFW", 4);
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +
-+	memcpy((void *)bin->data, "WMxR", 4);
++	memcpy((void *)wmfw->data, "WMxW", 4);
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +
-+	memcpy((void *)bin->data, "WMDx", 4);
++	memcpy((void *)wmfw->data, "WMFx", 4);
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +
-+	memset((void *)bin->data, 0, 4);
++	memset((void *)wmfw->data, 0, 4);
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +}
 +
-+/* Load a bin that is too short for a valid header. */
-+static void bin_err_too_short_for_header(struct kunit *test)
++/* Load a wmfw that is too short for a valid header. */
++static void wmfw_err_too_short_for_header(struct kunit *test)
 +{
 +	struct cs_dsp_test *priv = test->priv;
 +	struct cs_dsp_test_local *local = priv->local;
-+	struct firmware *bin;
++	struct firmware *wmfw;
 +
-+	/* Sanity-check that the wmfw loads ok without the bin */
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
 +	KUNIT_EXPECT_EQ(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", NULL, NULL, "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
 +			0);
 +	cs_dsp_power_down(priv->dsp);
 +
-+	bin = cs_dsp_mock_bin_get_firmware(local->bin_builder);
 +	do {
-+		bin->size--;
++		wmfw->size--;
 +
-+		KUNIT_EXPECT_LT(test,
-+				cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+				0);
-+	} while (bin->size > 0);
++		KUNIT_EXPECT_EQ(test,
++				cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++				-EOVERFLOW);
++	} while (wmfw->size > 0);
 +}
 +
 +/* Header length field isn't a valid header length. */
-+static void bin_err_bad_header_length(struct kunit *test)
++static void wmfw_err_bad_header_length(struct kunit *test)
 +{
 +	struct cs_dsp_test *priv = test->priv;
 +	struct cs_dsp_test_local *local = priv->local;
-+	struct firmware *bin;
-+	struct wmfw_coeff_hdr *header;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
 +	unsigned int real_len, len;
 +
-+	/* Sanity-check that the wmfw loads ok without the bin */
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
 +	KUNIT_EXPECT_EQ(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", NULL, NULL, "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
 +			0);
 +	cs_dsp_power_down(priv->dsp);
 +
-+	bin = cs_dsp_mock_bin_get_firmware(local->bin_builder);
-+	header = (struct wmfw_coeff_hdr *)bin->data;
++	header = (struct wmfw_header *)wmfw->data;
 +	real_len = le32_to_cpu(header->len);
 +
 +	for (len = 0; len < real_len; len++) {
 +		header->len = cpu_to_le32(len);
-+		KUNIT_EXPECT_LT(test,
-+				cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+				0);
++		KUNIT_EXPECT_EQ(test,
++				cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++				-EOVERFLOW);
 +	}
 +
 +	for (len = real_len + 1; len < real_len + 7; len++) {
 +		header->len = cpu_to_le32(len);
-+		KUNIT_EXPECT_LT(test,
-+				cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+				0);
++		KUNIT_EXPECT_EQ(test,
++				cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++				-EOVERFLOW);
 +	}
 +
 +	header->len = cpu_to_le32(0xffffffff);
-+	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+			0);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
 +
 +	header->len = cpu_to_le32(0x80000000);
-+	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+			0);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
 +
 +	header->len = cpu_to_le32(0x7fffffff);
-+	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+			0);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
 +}
 +
 +/* Wrong core type in header. */
-+static void bin_err_bad_core_type(struct kunit *test)
++static void wmfw_err_bad_core_type(struct kunit *test)
 +{
 +	struct cs_dsp_test *priv = test->priv;
 +	struct cs_dsp_test_local *local = priv->local;
-+	struct firmware *bin;
-+	struct wmfw_coeff_hdr *header;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
 +
-+	/* Sanity-check that the wmfw loads ok without the bin */
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
 +	KUNIT_EXPECT_EQ(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", NULL, NULL, "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
 +			0);
 +	cs_dsp_power_down(priv->dsp);
 +
-+	bin = cs_dsp_mock_bin_get_firmware(local->bin_builder);
-+	header = (struct wmfw_coeff_hdr *)bin->data;
++	header = (struct wmfw_header *)wmfw->data;
 +
-+	header->core_ver = cpu_to_le32(0);
++	header->core = 0;
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +
-+	header->core_ver = cpu_to_le32(1);
++	header->core = 1;
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +
-+	header->core_ver = cpu_to_le32(priv->dsp->type + 1);
++	header->core = priv->dsp->type + 1;
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +
-+	header->core_ver = cpu_to_le32(0xff);
++	header->core = 0xff;
 +	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
 +			0);
 +}
 +
 +/* File too short to contain a full block header */
-+static void bin_too_short_for_block_header(struct kunit *test)
++static void wmfw_too_short_for_block_header(struct kunit *test)
 +{
-+	const struct cs_dsp_bin_test_param *param = test->param_value;
++	const struct cs_dsp_wmfw_test_param *param = test->param_value;
 +	struct cs_dsp_test *priv = test->priv;
 +	struct cs_dsp_test_local *local = priv->local;
-+	struct firmware *bin;
++	struct firmware *wmfw;
 +	unsigned int header_length;
++	u32 dummy_payload = 0;
 +
-+	/* Sanity-check that the wmfw loads ok without the bin */
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++	header_length = wmfw->size;
++	kunit_kfree(test, wmfw);
++
++	/* Add the block. A block must have at least 4 bytes of payload */
++	cs_dsp_mock_wmfw_add_raw_block(local->wmfw_builder, param->block_type, 0,
++				       &dummy_payload, sizeof(dummy_payload));
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++	KUNIT_ASSERT_GT(test, wmfw->size, header_length);
++
++	/* Sanity-check that the good wmfw loads ok */
 +	KUNIT_EXPECT_EQ(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", NULL, NULL, "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
 +			0);
 +	cs_dsp_power_down(priv->dsp);
 +
-+	bin = cs_dsp_mock_bin_get_firmware(local->bin_builder);
-+	header_length = bin->size;
-+	kunit_kfree(test, bin);
-+
-+	cs_dsp_mock_bin_add_raw_block(local->bin_builder,
-+				      cs_dsp_bin_err_test_mock_algs[0].id,
-+				      cs_dsp_bin_err_test_mock_algs[0].ver,
-+				      param->block_type, 0,
-+				      NULL, 0);
-+
-+	bin = cs_dsp_mock_bin_get_firmware(local->bin_builder);
-+	KUNIT_ASSERT_GT(test, bin->size, header_length);
-+
-+	for (bin->size--; bin->size > header_length; bin->size--) {
-+		KUNIT_EXPECT_LT(test,
-+				cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+				0);
++	for (wmfw->size--; wmfw->size > header_length; wmfw->size--) {
++		KUNIT_EXPECT_EQ(test,
++				cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++				-EOVERFLOW);
 +	}
 +}
 +
 +/* File too short to contain the block payload */
-+static void bin_too_short_for_block_payload(struct kunit *test)
++static void wmfw_too_short_for_block_payload(struct kunit *test)
 +{
-+	const struct cs_dsp_bin_test_param *param = test->param_value;
++	const struct cs_dsp_wmfw_test_param *param = test->param_value;
 +	struct cs_dsp_test *priv = test->priv;
 +	struct cs_dsp_test_local *local = priv->local;
-+	struct firmware *bin;
++	struct firmware *wmfw;
 +	static const u8 payload[256] = { };
 +	int i;
 +
-+	/* Sanity-check that the wmfw loads ok without the bin */
++	cs_dsp_mock_wmfw_add_raw_block(local->wmfw_builder, param->block_type, 0,
++				       payload, sizeof(payload));
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
 +	KUNIT_EXPECT_EQ(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", NULL, NULL, "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
 +			0);
 +	cs_dsp_power_down(priv->dsp);
 +
-+	cs_dsp_mock_bin_add_raw_block(local->bin_builder,
-+				      cs_dsp_bin_err_test_mock_algs[0].id,
-+				      cs_dsp_bin_err_test_mock_algs[0].ver,
-+				      param->block_type, 0,
-+				      payload, sizeof(payload));
-+
-+	bin = cs_dsp_mock_bin_get_firmware(local->bin_builder);
 +	for (i = 0; i < sizeof(payload); i++) {
-+		bin->size--;
-+		KUNIT_EXPECT_LT(test,
-+				cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+				0);
++		wmfw->size--;
++		KUNIT_EXPECT_EQ(test,
++				cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++				-EOVERFLOW);
 +	}
 +}
 +
 +/* Block payload length is a garbage value */
-+static void bin_block_payload_len_garbage(struct kunit *test)
++static void wmfw_block_payload_len_garbage(struct kunit *test)
 +{
-+	const struct cs_dsp_bin_test_param *param = test->param_value;
++	const struct cs_dsp_wmfw_test_param *param = test->param_value;
 +	struct cs_dsp_test *priv = test->priv;
 +	struct cs_dsp_test_local *local = priv->local;
-+	struct firmware *bin;
-+	struct wmfw_coeff_hdr *header;
-+	struct wmfw_coeff_item *block;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
 +	u32 payload = 0;
 +
-+	/* Sanity-check that the wmfw loads ok without the bin */
++
++	cs_dsp_mock_wmfw_add_raw_block(local->wmfw_builder, param->block_type, 0,
++				       &payload, sizeof(payload));
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
 +	KUNIT_EXPECT_EQ(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", NULL, NULL, "misc"),
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
 +			0);
 +	cs_dsp_power_down(priv->dsp);
 +
-+	cs_dsp_mock_bin_add_raw_block(local->bin_builder,
-+				      cs_dsp_bin_err_test_mock_algs[0].id,
-+				      cs_dsp_bin_err_test_mock_algs[0].ver,
-+				      param->block_type, 0,
-+				      &payload, sizeof(payload));
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
 +
-+	bin = cs_dsp_mock_bin_get_firmware(local->bin_builder);
-+	header = (struct wmfw_coeff_hdr *)bin->data;
-+	block = (struct wmfw_coeff_item *)&bin->data[le32_to_cpu(header->len)];
++	/* Sanity check that we're looking at the correct part of the wmfw */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(region->offset) >> 24, param->block_type);
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(region->len), sizeof(payload));
 +
-+	/* Sanity check that we're looking at the correct part of the bin */
-+	KUNIT_ASSERT_EQ(test, le16_to_cpu(block->type), param->block_type);
-+	KUNIT_ASSERT_EQ(test, le32_to_cpu(block->len), sizeof(payload));
++	region->len = cpu_to_le32(0x8000);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
 +
-+	block->len = cpu_to_le32(0x8000);
-+	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+			0);
++	region->len = cpu_to_le32(0xffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
 +
-+	block->len = cpu_to_le32(0xffff);
-+	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+			0);
++	region->len = cpu_to_le32(0x7fffffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
 +
-+	block->len = cpu_to_le32(0x7fffffff);
-+	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+			0);
++	region->len = cpu_to_le32(0x80000000);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
 +
-+	block->len = cpu_to_le32(0x80000000);
-+	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+			0);
-+
-+	block->len = cpu_to_le32(0xffffffff);
-+	KUNIT_EXPECT_LT(test,
-+			cs_dsp_power_up(priv->dsp, local->wmfw, "wmfw", bin, "bin", "misc"),
-+			0);
++	region->len = cpu_to_le32(0xffffffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
 +}
 +
-+static void cs_dsp_bin_err_test_exit(struct kunit *test)
++/* File too short to contain an algorithm header */
++static void wmfw_too_short_for_alg_header(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	unsigned int header_length;
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++	header_length = wmfw->size;
++	kunit_kfree(test, wmfw);
++
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      NULL, NULL);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++	KUNIT_ASSERT_GT(test, wmfw->size, header_length);
++
++	/* Sanity-check that the good wmfw loads ok */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	for (wmfw->size--; wmfw->size > header_length; wmfw->size--) {
++		KUNIT_EXPECT_EQ(test,
++				cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++				-EOVERFLOW);
++	}
++}
++
++/* V1 algorithm name does not have NUL terminator */
++static void wmfw_v1_alg_name_unterminated(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	struct wmfw_adsp_alg_data *alg_data;
++	struct cs_dsp_coeff_ctl *ctl;
++
++	/* Create alg info block with a coefficient */
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", "de");
++	cs_dsp_mock_wmfw_add_coeff_desc(local->wmfw_builder, &mock_coeff_template);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (struct wmfw_adsp_alg_data *)region->data;
++
++	/* Sanity check we're pointing at the alg header */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data->id), cs_dsp_wmfw_err_test_mock_algs[0].id);
++
++	/* Write a string to the alg name that overflows the array */
++	memset(alg_data->descr, 0, sizeof(alg_data->descr));
++	memset(alg_data->name, 'A', sizeof(alg_data->name));
++	memset(alg_data->descr, 'A', sizeof(alg_data->descr) - 1);
++
++	/*
++	 * Sanity-check that a strlen would overflow alg_data->name.
++	 * FORTIFY_STRING obstructs testing what strlen() would actually
++	 * return, so instead verify that a strnlen() returns
++	 * sizeof(alg_data->name[]), therefore it doesn't have a NUL.
++	 */
++	KUNIT_ASSERT_EQ(test, strnlen(alg_data->name, sizeof(alg_data->name)),
++			sizeof(alg_data->name));
++
++	/*
++	 * The alg name isn't stored, but cs_dsp parses the name field.
++	 * It should load the file successfully and create the control.
++	 * If FORTIFY_STRING is enabled it will detect a buffer overflow
++	 * if cs_dsp string length walks past end of alg name array.
++	 */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			0);
++	ctl = list_first_entry_or_null(&priv->dsp->ctl_list, struct cs_dsp_coeff_ctl, list);
++	KUNIT_ASSERT_NOT_NULL(test, ctl);
++	KUNIT_EXPECT_EQ(test, ctl->subname_len, 0);
++}
++
++/* V2+ algorithm name exceeds length of containing block */
++static void wmfw_v2_alg_name_exceeds_block(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	__le32 *alg_data;
++
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", NULL);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (__force __le32 *)region->data;
++
++	/*
++	 * Sanity check we're pointing at the alg header of
++	 *   [     alg_id       ][name_len]abc
++	 */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data[0]), cs_dsp_wmfw_err_test_mock_algs[0].id);
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data[1]), 3 | ('a' << 8) | ('b' << 16) | ('c' << 24));
++	KUNIT_ASSERT_EQ(test, *(u8 *)&alg_data[1], 3);
++
++	/* Set name string length longer than available space */
++	*(u8 *)&alg_data[1] = 4;
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*(u8 *)&alg_data[1] = 7;
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*(u8 *)&alg_data[1] = 0x80;
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*(u8 *)&alg_data[1] = 0xff;
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++}
++
++/* V2+ algorithm description exceeds length of containing block */
++static void wmfw_v2_alg_description_exceeds_block(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	__le32 *alg_data;
++
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", "de");
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (__force __le32 *)region->data;
++
++	/*
++	 * Sanity check we're pointing at the alg header of
++	 *   [     alg_id       ][name_len]abc[desc_len]de
++	 */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data[0]), cs_dsp_wmfw_err_test_mock_algs[0].id);
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data[2]), 2 | ('d' << 16) | ('e' << 24));
++	KUNIT_ASSERT_EQ(test, le16_to_cpu(*(__le16 *)&alg_data[2]), 2);
++
++	/* Set name string length longer than available space */
++	*(__le16 *)&alg_data[2] = cpu_to_le16(4);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*(__le16 *)&alg_data[2] = cpu_to_le16(7);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*(__le16 *)&alg_data[2] = cpu_to_le16(0x80);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*(__le16 *)&alg_data[2] = cpu_to_le16(0xff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*(__le16 *)&alg_data[2] = cpu_to_le16(0x8000);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*(__le16 *)&alg_data[2] = cpu_to_le16(0xffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++}
++
++/* V1 coefficient count exceeds length of containing block */
++static void wmfw_v1_coeff_count_exceeds_block(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	struct wmfw_adsp_alg_data *alg_data;
++
++	/* Create alg info block with a coefficient */
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", "de");
++	cs_dsp_mock_wmfw_add_coeff_desc(local->wmfw_builder, &mock_coeff_template);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (struct wmfw_adsp_alg_data *)region->data;
++
++	/* Sanity check we're pointing at the alg header */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data->id), cs_dsp_wmfw_err_test_mock_algs[0].id);
++
++	/* Add one to the coefficient count */
++	alg_data->ncoeff = cpu_to_le32(le32_to_cpu(alg_data->ncoeff) + 1);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	/* Make the coefficient count garbage */
++	alg_data->ncoeff = cpu_to_le32(0xffffffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	alg_data->ncoeff = cpu_to_le32(0x7fffffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	alg_data->ncoeff = cpu_to_le32(0x80000000);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++}
++
++/* V2+ coefficient count exceeds length of containing block */
++static void wmfw_v2_coeff_count_exceeds_block(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	__le32 *alg_data, *ncoeff;
++
++	/* Create alg info block with a coefficient */
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", "de");
++	cs_dsp_mock_wmfw_add_coeff_desc(local->wmfw_builder, &mock_coeff_template);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (__force __le32 *)region->data;
++
++	/* Sanity check we're pointing at the alg header */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data[0]), cs_dsp_wmfw_err_test_mock_algs[0].id);
++
++	ncoeff = (__force __le32 *)&alg_data[3];
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(*ncoeff), 1);
++
++	/* Add one to the coefficient count */
++	*ncoeff = cpu_to_le32(2);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	/* Make the coefficient count garbage */
++	*ncoeff = cpu_to_le32(0xffffffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*ncoeff = cpu_to_le32(0x7fffffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	*ncoeff = cpu_to_le32(0x80000000);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++}
++
++/* V2+ coefficient block size exceeds length of containing block */
++static void wmfw_v2_coeff_block_size_exceeds_block(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	__le32 *alg_data, *coeff;
++
++	/* Create alg info block with a coefficient */
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", "de");
++	cs_dsp_mock_wmfw_add_coeff_desc(local->wmfw_builder, &mock_coeff_template);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (__force __le32 *)region->data;
++
++	/* Sanity check we're pointing at the alg header */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data[0]), cs_dsp_wmfw_err_test_mock_algs[0].id);
++
++	/* Sanity check we're pointing at the coeff block */
++	coeff = (__force __le32 *)&alg_data[4];
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(coeff[0]), mock_coeff_template.mem_type << 16);
++
++	/* Add one to the block size */
++	coeff[1] = cpu_to_le32(le32_to_cpu(coeff[1]) + 1);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	/* Make the block size garbage */
++	coeff[1] = cpu_to_le32(0xffffffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	coeff[1] = cpu_to_le32(0x7fffffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	coeff[1] = cpu_to_le32(0x80000000);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++}
++
++/* V1 coeff name does not have NUL terminator */
++static void wmfw_v1_coeff_name_unterminated(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	struct wmfw_adsp_alg_data *alg_data;
++	struct wmfw_adsp_coeff_data *coeff;
++	struct cs_dsp_coeff_ctl *ctl;
++
++	/* Create alg info block with a coefficient */
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", "de");
++	cs_dsp_mock_wmfw_add_coeff_desc(local->wmfw_builder, &mock_coeff_template);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (struct wmfw_adsp_alg_data *)region->data;
++
++	/* Sanity check we're pointing at the alg header */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data->id), cs_dsp_wmfw_err_test_mock_algs[0].id);
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data->ncoeff), 1);
++
++	coeff = (void *)alg_data->data;
++
++	/* Write a string to the coeff name that overflows the array */
++	memset(coeff->descr, 0, sizeof(coeff->descr));
++	memset(coeff->name, 'A', sizeof(coeff->name));
++	memset(coeff->descr, 'A', sizeof(coeff->descr) - 1);
++
++	/*
++	 * Sanity-check that a strlen would overflow coeff->name.
++	 * FORTIFY_STRING obstructs testing what strlen() would actually
++	 * return, so instead verify that a strnlen() returns
++	 * sizeof(coeff->name[]), therefore it doesn't have a NUL.
++	 */
++	KUNIT_ASSERT_EQ(test, strnlen(coeff->name, sizeof(coeff->name)),
++			sizeof(coeff->name));
++
++	/*
++	 * V1 controls do not have names, but cs_dsp parses the name
++	 * field. It should load the file successfully and create the
++	 * control.
++	 * If FORTIFY_STRING is enabled it will detect a buffer overflow
++	 * if cs_dsp string length walks past end of coeff name array.
++	 */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			0);
++	ctl = list_first_entry_or_null(&priv->dsp->ctl_list, struct cs_dsp_coeff_ctl, list);
++	KUNIT_ASSERT_NOT_NULL(test, ctl);
++	KUNIT_EXPECT_EQ(test, ctl->subname_len, 0);
++}
++
++/* V2+ coefficient shortname exceeds length of coeff block */
++static void wmfw_v2_coeff_shortname_exceeds_block(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	__le32 *alg_data, *coeff;
++
++	/* Create alg info block with a coefficient */
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", "de");
++	cs_dsp_mock_wmfw_add_coeff_desc(local->wmfw_builder, &mock_coeff_template);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (__force __le32 *)region->data;
++
++	/* Sanity check we're pointing at the alg header */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data[0]), cs_dsp_wmfw_err_test_mock_algs[0].id);
++
++	/* Sanity check we're pointing at the coeff block */
++	coeff = (__force __le32 *)&alg_data[4];
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(coeff[0]), mock_coeff_template.mem_type << 16);
++
++	/* Add one to the shortname length */
++	coeff[2] = cpu_to_le32(le32_to_cpu(coeff[2]) + 1);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	/* Maximum shortname length */
++	coeff[2] = cpu_to_le32(255);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++}
++
++/* V2+ coefficient fullname exceeds length of coeff block */
++static void wmfw_v2_coeff_fullname_exceeds_block(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	__le32 *alg_data, *coeff, *fullname;
++	size_t shortlen;
++
++	/* Create alg info block with a coefficient */
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", "de");
++	cs_dsp_mock_wmfw_add_coeff_desc(local->wmfw_builder, &mock_coeff_template);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (__force __le32 *)region->data;
++
++	/* Sanity check we're pointing at the alg header */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data[0]), cs_dsp_wmfw_err_test_mock_algs[0].id);
++
++	/* Sanity check we're pointing at the coeff block */
++	coeff = (__force __le32 *)&alg_data[4];
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(coeff[0]), mock_coeff_template.mem_type << 16);
++
++	/* Fullname follows the shortname rounded up to a __le32 boundary */
++	shortlen = round_up(le32_to_cpu(coeff[2]) & 0xff, sizeof(__le32));
++	fullname = &coeff[2] + (shortlen / sizeof(*coeff));
++
++	/* Fullname increases in blocks of __le32 so increase past the current __le32 */
++	fullname[0] = cpu_to_le32(round_up(le32_to_cpu(fullname[0]) + 1, sizeof(__le32)));
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	/* Maximum fullname length */
++	fullname[0] = cpu_to_le32(255);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++}
++
++/* V2+ coefficient description exceeds length of coeff block */
++static void wmfw_v2_coeff_description_exceeds_block(struct kunit *test)
++{
++	struct cs_dsp_test *priv = test->priv;
++	struct cs_dsp_test_local *local = priv->local;
++	struct firmware *wmfw;
++	struct wmfw_header *header;
++	struct wmfw_region *region;
++	__le32 *alg_data, *coeff, *fullname, *description;
++	size_t namelen;
++
++	/* Create alg info block with a coefficient */
++	cs_dsp_mock_wmfw_start_alg_info_block(local->wmfw_builder,
++					      cs_dsp_wmfw_err_test_mock_algs[0].id,
++					      "abc", "de");
++	cs_dsp_mock_wmfw_add_coeff_desc(local->wmfw_builder, &mock_coeff_template);
++	cs_dsp_mock_wmfw_end_alg_info_block(local->wmfw_builder);
++
++	wmfw = cs_dsp_mock_wmfw_get_firmware(local->wmfw_builder);
++
++	/* Sanity-check that the good wmfw loads ok */
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "wmfw", NULL, NULL, "misc"),
++			0);
++	cs_dsp_power_down(priv->dsp);
++
++	header = (struct wmfw_header *)wmfw->data;
++	region = (struct wmfw_region *)&wmfw->data[le32_to_cpu(header->len)];
++	alg_data = (__force __le32 *)region->data;
++
++	/* Sanity check we're pointing at the alg header */
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(alg_data[0]), cs_dsp_wmfw_err_test_mock_algs[0].id);
++
++	/* Sanity check we're pointing at the coeff block */
++	coeff = (__force __le32 *)&alg_data[4];
++	KUNIT_ASSERT_EQ(test, le32_to_cpu(coeff[0]), mock_coeff_template.mem_type << 16);
++
++	/* Description follows the shortname and fullname rounded up to __le32 boundaries */
++	namelen = round_up(le32_to_cpu(coeff[2]) & 0xff, sizeof(__le32));
++	fullname = &coeff[2] + (namelen / sizeof(*coeff));
++	namelen = round_up(le32_to_cpu(fullname[0]) & 0xff, sizeof(__le32));
++	description = fullname + (namelen / sizeof(*fullname));
++
++	/* Description increases in blocks of __le32 so increase past the current __le32 */
++	description[0] = cpu_to_le32(round_up(le32_to_cpu(fullname[0]) + 1, sizeof(__le32)));
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++
++	/* Maximum description length */
++	fullname[0] = cpu_to_le32(0xffff);
++	KUNIT_EXPECT_EQ(test,
++			cs_dsp_power_up(priv->dsp, wmfw, "mock_wmfw", NULL, NULL, "misc"),
++			-EOVERFLOW);
++}
++
++static void cs_dsp_wmfw_err_test_exit(struct kunit *test)
 +{
 +	/*
 +	 * Testing error conditions can produce a lot of log output
@@ -497,8 +1123,8 @@ index 000000000000..5dcf62f19faf
 +	usleep_range(200, 500);
 +}
 +
-+static int cs_dsp_bin_err_test_common_init(struct kunit *test, struct cs_dsp *dsp,
-+					   int wmfw_version)
++static int cs_dsp_wmfw_err_test_common_init(struct kunit *test, struct cs_dsp *dsp,
++					    int wmfw_version)
 +{
 +	struct cs_dsp_test *priv;
 +	struct cs_dsp_test_local *local;
@@ -517,7 +1143,7 @@ index 000000000000..5dcf62f19faf
 +	priv->dsp = dsp;
 +	test->priv = priv;
 +	priv->local = local;
-+	priv->local->wmfw_version = wmfw_version;
++	local->wmfw_version = wmfw_version;
 +
 +	/* Create dummy struct device */
 +	test_dev = kunit_device_register(test, "cs_dsp_test_drv");
@@ -540,29 +1166,18 @@ index 000000000000..5dcf62f19faf
 +		return ret;
 +
 +	/*
-+	 * There must always be a XM header with at least 1 algorithm, so create
-+	 * a dummy one that tests can use and extract it to a data payload.
++	 * There must always be a XM header with at least 1 algorithm,
++	 * so create a dummy one and pre-populate XM so the wmfw doesn't
++	 * have to contain an XM blob.
 +	 */
 +	local->xm_header = cs_dsp_create_mock_xm_header(priv,
-+							cs_dsp_bin_err_test_mock_algs,
-+							ARRAY_SIZE(cs_dsp_bin_err_test_mock_algs));
++							cs_dsp_wmfw_err_test_mock_algs,
++							ARRAY_SIZE(cs_dsp_wmfw_err_test_mock_algs));
 +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, local->xm_header);
++	cs_dsp_mock_xm_header_write_to_regmap(local->xm_header);
 +
-+	local->wmfw_builder = cs_dsp_mock_wmfw_init(priv, priv->local->wmfw_version);
++	local->wmfw_builder = cs_dsp_mock_wmfw_init(priv, local->wmfw_version);
 +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, local->wmfw_builder);
-+
-+	/* Add dummy XM header payload to wmfw */
-+	cs_dsp_mock_wmfw_add_data_block(local->wmfw_builder,
-+					WMFW_ADSP2_XM, 0,
-+					local->xm_header->blob_data,
-+					local->xm_header->blob_size_bytes);
-+
-+	local->wmfw = cs_dsp_mock_wmfw_get_firmware(priv->local->wmfw_builder);
-+
-+	local->bin_builder =
-+		cs_dsp_mock_bin_init(priv, 1,
-+				     cs_dsp_mock_xm_header_get_fw_version_from_regmap(priv));
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, local->bin_builder);
 +
 +	/* Init cs_dsp */
 +	dsp->client_ops = kunit_kzalloc(test, sizeof(*dsp->client_ops), GFP_KERNEL);
@@ -587,7 +1202,7 @@ index 000000000000..5dcf62f19faf
 +	return kunit_add_action_or_reset(priv->test, _cs_dsp_remove_wrapper, dsp);
 +}
 +
-+static int cs_dsp_bin_err_test_halo_init(struct kunit *test)
++static int cs_dsp_wmfw_err_test_halo_init(struct kunit *test)
 +{
 +	struct cs_dsp *dsp;
 +
@@ -603,10 +1218,10 @@ index 000000000000..5dcf62f19faf
 +	dsp->base = cs_dsp_mock_halo_core_base;
 +	dsp->base_sysinfo = cs_dsp_mock_halo_sysinfo_base;
 +
-+	return cs_dsp_bin_err_test_common_init(test, dsp, 3);
++	return cs_dsp_wmfw_err_test_common_init(test, dsp, 3);
 +}
 +
-+static int cs_dsp_bin_err_test_adsp2_32bit_init(struct kunit *test)
++static int cs_dsp_wmfw_err_test_adsp2_32bit_init(struct kunit *test, int wmfw_ver)
 +{
 +	struct cs_dsp *dsp;
 +
@@ -622,10 +1237,25 @@ index 000000000000..5dcf62f19faf
 +	dsp->num_mems = cs_dsp_mock_count_regions(cs_dsp_mock_adsp2_32bit_dsp1_region_sizes);
 +	dsp->base = cs_dsp_mock_adsp2_32bit_sysbase;
 +
-+	return cs_dsp_bin_err_test_common_init(test, dsp, 2);
++	return cs_dsp_wmfw_err_test_common_init(test, dsp, wmfw_ver);
 +}
 +
-+static int cs_dsp_bin_err_test_adsp2_16bit_init(struct kunit *test)
++static int cs_dsp_wmfw_err_test_adsp2_32bit_wmfw0_init(struct kunit *test)
++{
++	return cs_dsp_wmfw_err_test_adsp2_32bit_init(test, 0);
++}
++
++static int cs_dsp_wmfw_err_test_adsp2_32bit_wmfw1_init(struct kunit *test)
++{
++	return cs_dsp_wmfw_err_test_adsp2_32bit_init(test, 1);
++}
++
++static int cs_dsp_wmfw_err_test_adsp2_32bit_wmfw2_init(struct kunit *test)
++{
++	return cs_dsp_wmfw_err_test_adsp2_32bit_init(test, 2);
++}
++
++static int cs_dsp_wmfw_err_test_adsp2_16bit_init(struct kunit *test, int wmfw_ver)
 +{
 +	struct cs_dsp *dsp;
 +
@@ -641,73 +1271,207 @@ index 000000000000..5dcf62f19faf
 +	dsp->num_mems = cs_dsp_mock_count_regions(cs_dsp_mock_adsp2_16bit_dsp1_region_sizes);
 +	dsp->base = cs_dsp_mock_adsp2_16bit_sysbase;
 +
-+	return cs_dsp_bin_err_test_common_init(test, dsp, 1);
++	return cs_dsp_wmfw_err_test_common_init(test, dsp, wmfw_ver);
 +}
 +
-+static struct kunit_case cs_dsp_bin_err_test_cases_halo[] = {
++static int cs_dsp_wmfw_err_test_adsp2_16bit_wmfw0_init(struct kunit *test)
++{
++	return cs_dsp_wmfw_err_test_adsp2_16bit_init(test, 0);
++}
 +
-+	{ } /* terminator */
-+};
++static int cs_dsp_wmfw_err_test_adsp2_16bit_wmfw1_init(struct kunit *test)
++{
++	return cs_dsp_wmfw_err_test_adsp2_16bit_init(test, 1);
++}
 +
-+static void cs_dsp_bin_err_block_types_desc(const struct cs_dsp_bin_test_param *param,
-+					    char *desc)
++static int cs_dsp_wmfw_err_test_adsp2_16bit_wmfw2_init(struct kunit *test)
++{
++	return cs_dsp_wmfw_err_test_adsp2_16bit_init(test, 2);
++}
++
++static void cs_dsp_wmfw_err_block_types_desc(const struct cs_dsp_wmfw_test_param *param,
++					     char *desc)
 +{
 +	snprintf(desc, KUNIT_PARAM_DESC_SIZE, "block_type:%#x", param->block_type);
 +}
 +
-+/* Some block types to test against, including illegal types */
-+static const struct cs_dsp_bin_test_param bin_test_block_types_cases[] = {
-+	{ .block_type = WMFW_INFO_TEXT << 8 },
-+	{ .block_type = WMFW_METADATA << 8 },
++static const struct cs_dsp_wmfw_test_param wmfw_valid_block_types_adsp2_cases[] = {
++	{ .block_type = WMFW_INFO_TEXT },
 +	{ .block_type = WMFW_ADSP2_PM },
-+	{ .block_type = WMFW_ADSP2_XM },
-+	{ .block_type = 0x33 },
-+	{ .block_type = 0xf500 },
-+	{ .block_type = 0xc000 },
++	{ .block_type = WMFW_ADSP2_YM },
 +};
 +
-+KUNIT_ARRAY_PARAM(bin_test_block_types,
-+		  bin_test_block_types_cases,
-+		  cs_dsp_bin_err_block_types_desc);
++KUNIT_ARRAY_PARAM(wmfw_valid_block_types_adsp2,
++		  wmfw_valid_block_types_adsp2_cases,
++		  cs_dsp_wmfw_err_block_types_desc);
 +
-+static struct kunit_case cs_dsp_bin_err_test_cases_adsp2[] = {
-+	KUNIT_CASE(bin_load_with_unknown_blocks),
-+	KUNIT_CASE(bin_err_wrong_magic),
-+	KUNIT_CASE(bin_err_too_short_for_header),
-+	KUNIT_CASE(bin_err_bad_header_length),
-+	KUNIT_CASE(bin_err_bad_core_type),
++static const struct cs_dsp_wmfw_test_param wmfw_valid_block_types_halo_cases[] = {
++	{ .block_type = WMFW_INFO_TEXT },
++	{ .block_type = WMFW_HALO_PM_PACKED },
++	{ .block_type = WMFW_ADSP2_YM },
++};
 +
-+	KUNIT_CASE_PARAM(bin_too_short_for_block_header, bin_test_block_types_gen_params),
-+	KUNIT_CASE_PARAM(bin_too_short_for_block_payload, bin_test_block_types_gen_params),
-+	KUNIT_CASE_PARAM(bin_block_payload_len_garbage, bin_test_block_types_gen_params),
++KUNIT_ARRAY_PARAM(wmfw_valid_block_types_halo,
++		  wmfw_valid_block_types_halo_cases,
++		  cs_dsp_wmfw_err_block_types_desc);
++
++static const struct cs_dsp_wmfw_test_param wmfw_invalid_block_types_cases[] = {
++	{ .block_type = 0x33 },
++	{ .block_type = 0xf5 },
++	{ .block_type = 0xc0 },
++};
++
++KUNIT_ARRAY_PARAM(wmfw_invalid_block_types,
++		  wmfw_invalid_block_types_cases,
++		  cs_dsp_wmfw_err_block_types_desc);
++
++static struct kunit_case cs_dsp_wmfw_err_test_cases_v0[] = {
++	KUNIT_CASE(wmfw_load_with_unknown_blocks),
++	KUNIT_CASE(wmfw_err_wrong_magic),
++	KUNIT_CASE(wmfw_err_too_short_for_header),
++	KUNIT_CASE(wmfw_err_bad_header_length),
++	KUNIT_CASE(wmfw_err_bad_core_type),
++
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_valid_block_types_adsp2_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_payload, wmfw_valid_block_types_adsp2_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++	KUNIT_CASE_PARAM(wmfw_block_payload_len_garbage, wmfw_valid_block_types_adsp2_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
 +
 +	{ } /* terminator */
 +};
 +
-+static struct kunit_suite cs_dsp_bin_err_test_halo = {
-+	.name = "cs_dsp_bin_err_halo",
-+	.init = cs_dsp_bin_err_test_halo_init,
-+	.exit = cs_dsp_bin_err_test_exit,
-+	.test_cases = cs_dsp_bin_err_test_cases_halo,
++static struct kunit_case cs_dsp_wmfw_err_test_cases_v1[] = {
++	KUNIT_CASE(wmfw_load_with_unknown_blocks),
++	KUNIT_CASE(wmfw_err_wrong_magic),
++	KUNIT_CASE(wmfw_err_too_short_for_header),
++	KUNIT_CASE(wmfw_err_bad_header_length),
++	KUNIT_CASE(wmfw_err_bad_core_type),
++
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_valid_block_types_adsp2_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_payload, wmfw_valid_block_types_adsp2_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++	KUNIT_CASE_PARAM(wmfw_block_payload_len_garbage, wmfw_valid_block_types_adsp2_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++
++	KUNIT_CASE(wmfw_too_short_for_alg_header),
++	KUNIT_CASE(wmfw_v1_alg_name_unterminated),
++	KUNIT_CASE(wmfw_v1_coeff_count_exceeds_block),
++	KUNIT_CASE(wmfw_v1_coeff_name_unterminated),
++
++	{ } /* terminator */
 +};
 +
-+static struct kunit_suite cs_dsp_bin_err_test_adsp2_32bit = {
-+	.name = "cs_dsp_bin_err_adsp2_32bit",
-+	.init = cs_dsp_bin_err_test_adsp2_32bit_init,
-+	.exit = cs_dsp_bin_err_test_exit,
-+	.test_cases = cs_dsp_bin_err_test_cases_adsp2,
++static struct kunit_case cs_dsp_wmfw_err_test_cases_v2[] = {
++	KUNIT_CASE(wmfw_load_with_unknown_blocks),
++	KUNIT_CASE(wmfw_err_wrong_magic),
++	KUNIT_CASE(wmfw_err_too_short_for_header),
++	KUNIT_CASE(wmfw_err_bad_header_length),
++	KUNIT_CASE(wmfw_err_bad_core_type),
++
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_valid_block_types_adsp2_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_payload, wmfw_valid_block_types_adsp2_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++	KUNIT_CASE_PARAM(wmfw_block_payload_len_garbage, wmfw_valid_block_types_adsp2_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++
++	KUNIT_CASE(wmfw_too_short_for_alg_header),
++	KUNIT_CASE(wmfw_v2_alg_name_exceeds_block),
++	KUNIT_CASE(wmfw_v2_alg_description_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_count_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_block_size_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_shortname_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_fullname_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_description_exceeds_block),
++
++	{ } /* terminator */
 +};
 +
-+static struct kunit_suite cs_dsp_bin_err_test_adsp2_16bit = {
-+	.name = "cs_dsp_bin_err_adsp2_16bit",
-+	.init = cs_dsp_bin_err_test_adsp2_16bit_init,
-+	.exit = cs_dsp_bin_err_test_exit,
-+	.test_cases = cs_dsp_bin_err_test_cases_adsp2,
++static struct kunit_case cs_dsp_wmfw_err_test_cases_v3[] = {
++	KUNIT_CASE(wmfw_load_with_unknown_blocks),
++	KUNIT_CASE(wmfw_err_wrong_magic),
++	KUNIT_CASE(wmfw_err_too_short_for_header),
++	KUNIT_CASE(wmfw_err_bad_header_length),
++	KUNIT_CASE(wmfw_err_bad_core_type),
++
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_valid_block_types_halo_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_payload, wmfw_valid_block_types_halo_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++	KUNIT_CASE_PARAM(wmfw_block_payload_len_garbage, wmfw_valid_block_types_halo_gen_params),
++	KUNIT_CASE_PARAM(wmfw_too_short_for_block_header, wmfw_invalid_block_types_gen_params),
++
++	KUNIT_CASE(wmfw_too_short_for_alg_header),
++	KUNIT_CASE(wmfw_v2_alg_name_exceeds_block),
++	KUNIT_CASE(wmfw_v2_alg_description_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_count_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_block_size_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_shortname_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_fullname_exceeds_block),
++	KUNIT_CASE(wmfw_v2_coeff_description_exceeds_block),
++
++	{ } /* terminator */
 +};
 +
-+kunit_test_suites(&cs_dsp_bin_err_test_halo,
-+		  &cs_dsp_bin_err_test_adsp2_32bit,
-+		  &cs_dsp_bin_err_test_adsp2_16bit);
++static struct kunit_suite cs_dsp_wmfw_err_test_halo = {
++	.name = "cs_dsp_wmfwV3_err_halo",
++	.init = cs_dsp_wmfw_err_test_halo_init,
++	.exit = cs_dsp_wmfw_err_test_exit,
++	.test_cases = cs_dsp_wmfw_err_test_cases_v3,
++};
++
++static struct kunit_suite cs_dsp_wmfw_err_test_adsp2_32bit_wmfw0 = {
++	.name = "cs_dsp_wmfwV0_err_adsp2_32bit",
++	.init = cs_dsp_wmfw_err_test_adsp2_32bit_wmfw0_init,
++	.exit = cs_dsp_wmfw_err_test_exit,
++	.test_cases = cs_dsp_wmfw_err_test_cases_v0,
++};
++
++static struct kunit_suite cs_dsp_wmfw_err_test_adsp2_32bit_wmfw1 = {
++	.name = "cs_dsp_wmfwV1_err_adsp2_32bit",
++	.init = cs_dsp_wmfw_err_test_adsp2_32bit_wmfw1_init,
++	.exit = cs_dsp_wmfw_err_test_exit,
++	.test_cases = cs_dsp_wmfw_err_test_cases_v1,
++};
++
++static struct kunit_suite cs_dsp_wmfw_err_test_adsp2_32bit_wmfw2 = {
++	.name = "cs_dsp_wmfwV2_err_adsp2_32bit",
++	.init = cs_dsp_wmfw_err_test_adsp2_32bit_wmfw2_init,
++	.exit = cs_dsp_wmfw_err_test_exit,
++	.test_cases = cs_dsp_wmfw_err_test_cases_v2,
++};
++
++static struct kunit_suite cs_dsp_wmfw_err_test_adsp2_16bit_wmfw0 = {
++	.name = "cs_dsp_wmfwV0_err_adsp2_16bit",
++	.init = cs_dsp_wmfw_err_test_adsp2_16bit_wmfw0_init,
++	.exit = cs_dsp_wmfw_err_test_exit,
++	.test_cases = cs_dsp_wmfw_err_test_cases_v0,
++};
++
++static struct kunit_suite cs_dsp_wmfw_err_test_adsp2_16bit_wmfw1 = {
++	.name = "cs_dsp_wmfwV1_err_adsp2_16bit",
++	.init = cs_dsp_wmfw_err_test_adsp2_16bit_wmfw1_init,
++	.exit = cs_dsp_wmfw_err_test_exit,
++	.test_cases = cs_dsp_wmfw_err_test_cases_v1,
++};
++
++static struct kunit_suite cs_dsp_wmfw_err_test_adsp2_16bit_wmfw2 = {
++	.name = "cs_dsp_wmfwV2_err_adsp2_16bit",
++	.init = cs_dsp_wmfw_err_test_adsp2_16bit_wmfw2_init,
++	.exit = cs_dsp_wmfw_err_test_exit,
++	.test_cases = cs_dsp_wmfw_err_test_cases_v2,
++};
++
++kunit_test_suites(&cs_dsp_wmfw_err_test_halo,
++		  &cs_dsp_wmfw_err_test_adsp2_32bit_wmfw0,
++		  &cs_dsp_wmfw_err_test_adsp2_32bit_wmfw1,
++		  &cs_dsp_wmfw_err_test_adsp2_32bit_wmfw2,
++		  &cs_dsp_wmfw_err_test_adsp2_16bit_wmfw0,
++		  &cs_dsp_wmfw_err_test_adsp2_16bit_wmfw1,
++		  &cs_dsp_wmfw_err_test_adsp2_16bit_wmfw2);
 -- 
 2.39.5
 
