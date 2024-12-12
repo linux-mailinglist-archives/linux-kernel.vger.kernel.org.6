@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-443120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C039EE796
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:20:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A3A9EE79B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7377188870F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C09E51887C3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01092144AD;
-	Thu, 12 Dec 2024 13:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G0+gJTno";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cuEiBk2+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G0+gJTno";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cuEiBk2+"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26DC8460;
-	Thu, 12 Dec 2024 13:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3548F2144AD;
+	Thu, 12 Dec 2024 13:24:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A0F8460;
+	Thu, 12 Dec 2024 13:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734009622; cv=none; b=LyoF6o7eNY+xJ0SejtgdVMRZU9UeIAR7cfARpMNuijQ6RNBDk2zs7snK5AgneYuSa7XGjm0BTFaq5QFKg+ZEBpmpcttbYPcjQaf60aFUtFjKwi2wxUz72/7NDgwpoutXJtxaxNfGfgfCjPHWp8vBLNHSyP9hlUuSqSzylL/jTJU=
+	t=1734009889; cv=none; b=claHMtEWlr4m8V7xMZ+vDD1NmTVLl1tJFGdufCHcfvTmAiSE9N2lNIWv5wJ34uKbvo6VcGEEji82pCcik/0yLIh3q2pStFAL+tI0zvtjDha/HahLheWSHQXWDD0CFqQVPBhSM/hevpsZkGhiNEpBHNhtV9YaQMW3QmeZ2x4YIvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734009622; c=relaxed/simple;
-	bh=RuBZZVZR/zpDr6wQTF/Q6Eb3oLViIXkKqpAw7lRRL7A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NZTlDcAlDKpHGJ5hAYWShAekNBjdOJ/wVg94Oyw0D5mz5WTXVKihZVCs43HL2ZR6t8RaFzGDgQJ+yvbp5v5jbxnalAbwlckjoTnIWv3euDSBahn73oppPAH0aQ+CpPg77A//GhoCFhl67Kksyxb/sWtKiHmW5V6dpbYUNFFXDts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G0+gJTno; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cuEiBk2+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G0+gJTno; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cuEiBk2+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from hawking.nue2.suse.org (unknown [IPv6:2a07:de40:a101:3:92b1:1cff:fe69:ddc])
-	by smtp-out1.suse.de (Postfix) with ESMTP id BB45D21101;
-	Thu, 12 Dec 2024 13:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734009616; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c/BWGvQPrZx2VHJH6gXJ70AF/i/mUx48F5PDLOR50PU=;
-	b=G0+gJTnoNUBFKzXQ4WQdL/D4JqMKS8EvUtjFsiWsyUm2pLxNLogguxPwUo2ZeXJFBmlzkz
-	fbThzBNsG1+RTFxx51a5DGee6Ph9hN35lTzzAQwhKqV2+YClrk/wODGK96uN2SeHTmDF+p
-	tNAvs4XCtfSI0A7s+4ViFDLou/bg0mA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734009616;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c/BWGvQPrZx2VHJH6gXJ70AF/i/mUx48F5PDLOR50PU=;
-	b=cuEiBk2+3CQcFyPi+Uu6D+a4mOnk4kxWb1z60nRnw4qTO0YlaBwz++/xEghS/mwF1Ji+rw
-	nwAbqgS963ggK/CQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=G0+gJTno;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=cuEiBk2+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1734009616; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c/BWGvQPrZx2VHJH6gXJ70AF/i/mUx48F5PDLOR50PU=;
-	b=G0+gJTnoNUBFKzXQ4WQdL/D4JqMKS8EvUtjFsiWsyUm2pLxNLogguxPwUo2ZeXJFBmlzkz
-	fbThzBNsG1+RTFxx51a5DGee6Ph9hN35lTzzAQwhKqV2+YClrk/wODGK96uN2SeHTmDF+p
-	tNAvs4XCtfSI0A7s+4ViFDLou/bg0mA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1734009616;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c/BWGvQPrZx2VHJH6gXJ70AF/i/mUx48F5PDLOR50PU=;
-	b=cuEiBk2+3CQcFyPi+Uu6D+a4mOnk4kxWb1z60nRnw4qTO0YlaBwz++/xEghS/mwF1Ji+rw
-	nwAbqgS963ggK/CQ==
-Received: by hawking.nue2.suse.org (Postfix, from userid 17005)
-	id 4187A4A05D9; Thu, 12 Dec 2024 14:20:16 +0100 (CET)
-From: Andreas Schwab <schwab@suse.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: kvm@vger.kernel.org,  Arnd Bergmann <arnd@arndb.de>,  Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>,  Huacai Chen
- <chenhuacai@kernel.org>,  Jiaxun Yang <jiaxun.yang@flygoat.com>,  Michael
- Ellerman <mpe@ellerman.id.au>,  Nicholas Piggin <npiggin@gmail.com>,
-  Christophe Leroy <christophe.leroy@csgroup.eu>,  Naveen N Rao
- <naveen@kernel.org>,  Madhavan Srinivasan <maddy@linux.ibm.com>,
-  Alexander Graf <graf@amazon.com>,  Crystal Wood <crwood@redhat.com>,
-  Anup Patel <anup@brainfault.org>,  Atish Patra <atishp@atishpatra.org>,
-  Paul Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt
- <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,  Sean
- Christopherson <seanjc@google.com>,  Paolo Bonzini <pbonzini@redhat.com>,
-  Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
-  Borislav Petkov <bp@alien8.de>,  Dave Hansen
- <dave.hansen@linux.intel.com>,  x86@kernel.org,  "H. Peter Anvin"
- <hpa@zytor.com>,  Vitaly Kuznetsov <vkuznets@redhat.com>,  David Woodhouse
- <dwmw2@infradead.org>,  Paul Durrant <paul@xen.org>,  Marc Zyngier
- <maz@kernel.org>,  linux-kernel@vger.kernel.org,
-  linux-mips@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,
-  kvm-riscv@lists.infradead.org,  linux-riscv@lists.infradead.org
-Subject: Re: [RFC 1/5] mips: kvm: drop support for 32-bit hosts
-In-Reply-To: <20241212125516.467123-2-arnd@kernel.org> (Arnd Bergmann's
-	message of "Thu, 12 Dec 2024 13:55:12 +0100")
-References: <20241212125516.467123-1-arnd@kernel.org>
-	<20241212125516.467123-2-arnd@kernel.org>
-Date: Thu, 12 Dec 2024 14:20:16 +0100
-Message-ID: <mvm4j39ghrj.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1734009889; c=relaxed/simple;
+	bh=AwF2HAFLChPof7herRsaFKUAK8o/hg6wRJj4JqspYgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HAM+odCWof1Ek6GH3MPJ0rdGFLVobk7yChldVijZ42V7CkrdaXeYnFp/MofmOJRYod4gbA+lnVdnfMCEsdIsmIDxE+EuOXa22Wx+8d2NQ51yJjI39TDd/luiDMukvBpEar+nGt2OCtCh5RsXSJ+Uvp7bo4bpirY+RiiKLTxyfZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2027153B;
+	Thu, 12 Dec 2024 05:25:13 -0800 (PST)
+Received: from [10.1.37.59] (e127648.arm.com [10.1.37.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2FD73F58B;
+	Thu, 12 Dec 2024 05:24:42 -0800 (PST)
+Message-ID: <79448239-86df-43ef-9a4f-717802d2c70a@arm.com>
+Date: Thu, 12 Dec 2024 13:24:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: **
-X-Spamd-Result: default: False [2.59 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	HFILTER_HOSTNAME_UNKNOWN(2.50)[];
-	RDNS_NONE(2.00)[];
-	ONCE_RECEIVED(1.20)[];
-	HFILTER_HELO_IP_A(1.00)[hawking.nue2.suse.org];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HFILTER_HELO_NORES_A_OR_MX(0.30)[hawking.nue2.suse.org];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_NO_TLS_LAST(0.10)[];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[35];
-	DIRECT_TO_MX(0.00)[Gnus/5.13 (Gnus v5.13)];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[vger.kernel.org,arndb.de,alpha.franken.de,kernel.org,flygoat.com,ellerman.id.au,gmail.com,csgroup.eu,linux.ibm.com,amazon.com,redhat.com,brainfault.org,atishpatra.org,sifive.com,dabbelt.com,eecs.berkeley.edu,google.com,linutronix.de,alien8.de,linux.intel.com,zytor.com,infradead.org,xen.org,lists.ozlabs.org,lists.infradead.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLrhtxphh58n7g1ptxk8ecsouj),from(RLajr16mudzow8bnf6sy)];
-	RCVD_COUNT_ONE(0.00)[1];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid]
-X-Spam-Score: 2.59
-X-Spamd-Bar: ++
-X-Rspamd-Queue-Id: BB45D21101
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] cpufreq: schedutil: Fix superfluous updates caused by
+ need_freq_update
+To: Sultan Alsawaf <sultan@kerneltoast.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241212015734.41241-1-sultan@kerneltoast.com>
+ <20241212015734.41241-2-sultan@kerneltoast.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20241212015734.41241-2-sultan@kerneltoast.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Dez 12 2024, Arnd Bergmann wrote:
+On 12/12/24 01:57, Sultan Alsawaf wrote:
+> From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
+> 
+> A redundant frequency update is only truly needed when there is a policy
+> limits change with a driver that specifies CPUFREQ_NEED_UPDATE_LIMITS.
+> 
+> In spite of that, drivers specifying CPUFREQ_NEED_UPDATE_LIMITS receive a
+> frequency update _all the time_, not just for a policy limits change,
+> because need_freq_update is never cleared.
+> 
+> Furthermore, ignore_dl_rate_limit()'s usage of need_freq_update also leads
+> to a redundant frequency update, regardless of whether or not the driver
+> specifies CPUFREQ_NEED_UPDATE_LIMITS, when the next chosen frequency is the
+> same as the current one.
+> 
+> Fix the superfluous updates by only honoring CPUFREQ_NEED_UPDATE_LIMITS
+> when there's a policy limits change, and clearing need_freq_update when a
+> requisite redundant update occurs.
+> 
+> This is neatly achieved by moving up the CPUFREQ_NEED_UPDATE_LIMITS test
+> and instead setting need_freq_update to false in sugov_update_next_freq().
+>
 
-> KVM support on MIPS was added in 2012 with both 32-bit and 32-bit mode
+Good catch!
+Fixes:
+600f5badb78c ("cpufreq: schedutil: Don't skip freq update when limits change")
 
-s/32-bit/64-bit/ (once)
 
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+> Signed-off-by: Sultan Alsawaf (unemployed) <sultan@kerneltoast.com>
+
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index 28c77904ea74..e51d5ce730be 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -83,7 +83,7 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>  
+>  	if (unlikely(sg_policy->limits_changed)) {
+>  		sg_policy->limits_changed = false;
+> -		sg_policy->need_freq_update = true;
+> +		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);>  		return true;
+>  	}
+>  
+> @@ -96,7 +96,7 @@ static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
+>  				   unsigned int next_freq)
+>  {
+>  	if (sg_policy->need_freq_update)
+> -		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
+> +		sg_policy->need_freq_update = false;
+>  	else if (sg_policy->next_freq == next_freq)
+>  		return false;
+
+I guess you could rewrite this into just one if like
+
+---
+
+	if (sg_policy->next_freq == next_freq && !sg_policy->need_freq_update))
+		return false;
+
+	sg_policy->need_freq_update = false
+	sg_policy->next_freq = next_freq;
+	sg_policy->last_freq_update_time = time;
 
