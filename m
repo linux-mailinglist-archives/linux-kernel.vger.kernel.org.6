@@ -1,210 +1,117 @@
-Return-Path: <linux-kernel+bounces-442632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA6E9EDF9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:54:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B27411886C9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:54:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D791B204C39;
-	Thu, 12 Dec 2024 06:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="S65DYspz"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8389EDF9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:56:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFED204F79;
-	Thu, 12 Dec 2024 06:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA002839E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:56:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1183204C29;
+	Thu, 12 Dec 2024 06:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PLqe9MYQ"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D158D3201
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733986438; cv=none; b=upUGVjBg1Rdq+vJI50Wo1leNgMx/GqzPCf+8dmwFw6pGT6cPPd4T6BzSrOBtgOXvojqxWOe5sjWWjc6YgHIWE9vhjhbH+/+m3vvqbSaGSYohw8kVtUKu9z/MGBexHQC93EW7bLfAIXhmL17zu36WGaXNKuiKc5nw6ttJI0nbCpg=
+	t=1733986594; cv=none; b=iQteAfFnPJuFOVy3rB/CVuXJfSFP3ZHef8tN7bhobZhPaJ/YUJTw5P6yhr+NdjQcQV81PS9eAppGBY5sbK5fqibxekGf5UfqfDIcQCsmQHrpzem9r5bcCgjIl79bFonZky8lzt8dnzaQkHPE2GQ2o7/sDzFpSTQdXxQPkRAkqDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733986438; c=relaxed/simple;
-	bh=TgwlJ77/RgvziKkQYGCOzJ2NsDawQEyHVPARch2KBkE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z4E4PiCMPKQemtOLnHTC1D7C6Sj3Ihr0k8I7qDiqbQOyuY1NP1eD2JqFDCQEupZWt2shGlrYWv60JemGqvaXZZnebDC+sijF98wdsJRltuOgqDvdZtu7LiFhJ+Kwe8nlTLuSbxuRoUCajdLUvwK14z5hLlYg8fj/nqW8aaGO56E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=S65DYspz; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=5uwvWVdVBwvRd8AQEyf2pjt0urpVyCGtmkA54KS4q2I=; b=S65DYspzDl0dqFsewebT1bxZ+/
-	woVQtorG+E/1SH8UPXdWRUFD2JY4rtLOb95CQPNJ/1I7cLHrZO1CURr0IPaczK0uwB2KB4Mzz5nOu
-	XM30mn8ZP4eEBM7QGMMzjcfw08t1VhIBg7JlIhp5WxrtDS4TN6zhaUUhO+EAfhMtqh/xeMU9tspVo
-	CT7FK36o6lEIw1uH8xnge+hkp791y/XPOQKgPT1AO30MP6ASQhSRxdnpJGbfCLgn4VO5T9/SLUYCl
-	QVv9WrL9WLjjDXRQPcADF1F7BsCBiFg7v5LGoKdJzE6OSvkYo00X2e6ceYrjasg53OK1vZ1GXh/A8
-	kxeDQdZg==;
-Received: from [128.185.11.26] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tLd4x-002AJe-5H; Thu, 12 Dec 2024 07:53:43 +0100
-From: Bhupesh <bhupesh@igalia.com>
-To: linux-ext4@vger.kernel.org
-Cc: bhupesh@igalia.com,
-	tytso@mit.edu,
-	kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	revest@google.com,
-	adilger.kernel@dilger.ca,
-	cascardo@igalia.com,
-	syzbot+b244bda78289b00204ed@syzkaller.appspotmail.com
-Subject: [PATCH 1/1] fs/ext4/xattr: Check for 'xattr_sem' inside 'ext4_xattr_delete_inode'
-Date: Thu, 12 Dec 2024 12:23:31 +0530
-Message-Id: <20241212065331.113465-1-bhupesh@igalia.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1733986594; c=relaxed/simple;
+	bh=B/Yhz2XiNDoxQD3tFO1V0tfLvQF27qroWQqn6kmZ3ls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqbtnPK0rG+qXFuO1UMpl4WMUlkKSFL51BOml3QZzSRkFdvqeFWT9dj1EHxQkY2u4ABaXCDmyzH8fHEC9iqigllBfzwjqXQSpohSSGCEaSavzp2f11DrKoCvWUUM+kiT4teXDmgYKlgAQUIn9GxreE5SdLmNweytppLKNFlW1dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PLqe9MYQ; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21644aca3a0so2675325ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:56:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733986592; x=1734591392; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=V7LbkwMCmLAaQYUZoVnQnJtPhNczH7UjhysTzF0HSs0=;
+        b=PLqe9MYQlvWNtm1N9D1/ntq4LBE7qz0Q1wVt/K+DCDlq8HgAXiaLDQPmA7DEjL1Dcs
+         5paBNKOc+QM5Qin6KRXcQUriCzDqts24B7dZPYk9wJDXamzUNCogEKewJB77R3GV2cAG
+         wbTC4U9oBIYgXHjjyMYTbZYJnodzRE0h/WmaY55a0t0o2cesrlTeoHZm5mqXDh/E1qzP
+         aJ+XuxpxOAAgvFsDXG8p7gRoIfTtUi7ObTMU7M8ZN/vW3gi/mDdsNYSU9Pg85x43V50w
+         0dTc66UFv39l0r3rX4dQWZekJ+vVZWIfelDIPooIiJ036V37BhN2ipzlhScILF4y3pMq
+         6ODQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733986592; x=1734591392;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V7LbkwMCmLAaQYUZoVnQnJtPhNczH7UjhysTzF0HSs0=;
+        b=KBwob+PmLMXi6/6ruGo92SunrLPKAyT+ae5xRrMzW/rLfwjAuBNsFUPDY0IUYj/dJL
+         xNRg3h0lNj64SWJGM+Jdtydtl94rkiLHItKI7+XmhpE3TyLJlL1w+mH5+329NxvLNygF
+         WQe3706EMtqlOclzpCR7Um/zRqky374yD/SwbnIN7ug14LZokAI6Jh+7QXZ8czLg5IeE
+         ALD4K30lf9HVJt3mR3LVcFB+WTnHbHXqqObXgARtHvU3hn8UJ2HChorGbEq+o9hpwDd4
+         vwatWNjpyiHBraq5rZB6Y02Pk/TVqC4WBanILaZ34HkkLOr25QlHHEBjW2l/aCmyl4yT
+         JbRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVM4sdQWp3Ib2QyLf+MyUz8OEeCIkk2vGGvkHv4U7A+Dms3h8l6kwW8g3LLEdcqa7nlYOWEtY+zbyFPGfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwZYBsUYFxNnknt5KT2h1JzyxQh97gFnlEDsOSsAFnJEc2UB6H
+	GBi6rI6ap2ePSo5mMlx7eaRRv+x0HVnqdyVxj6jeDz93aBmwrhg764wrINKxjLbTiYawiQRQfHC
+	N
+X-Gm-Gg: ASbGncuoHFNVyJcvTNWd4JiCRm5sC4Bztp5gOAVFD3cRy8gi8TNR6bXCOVtLVjWvOE0
+	1yzZStsvt8vh2xFv+CROYqgs6b6RhuWwL0j1OVZOm1/ro94c9Z2WzCQ+YHJClkujar3MKirzu5+
+	APT+x4b1rxZTcAsMYDLPrvRuWgXjyimJPOJQ6Uvu1vDLA7jgodoihSfLPgO6U7Y57SP+NsIBmnK
+	XRSzbY4u+xmJ3orVUroy3mokdpZBLGZKl+E4Rk9RyIsYMcSvW7XBasBEgc=
+X-Google-Smtp-Source: AGHT+IE5hSbu8aZNspz/v/cwW2sIJqEiSGnw7L2g9/MWfA7y3YObl11jJNPpN53pEg/ur61k7KkTqA==
+X-Received: by 2002:a17:903:2451:b0:20c:6399:d637 with SMTP id d9443c01a7336-2177869886emr109699365ad.40.1733986592142;
+        Wed, 11 Dec 2024 22:56:32 -0800 (PST)
+Received: from localhost ([122.172.83.132])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2165590a8ebsm58557555ad.271.2024.12.11.22.56.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 22:56:31 -0800 (PST)
+Date: Thu, 12 Dec 2024 12:26:29 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+	Xuewen Yan <xuewen.yan@unisoc.com>, rafael@kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	guohua.yan@unisoc.com, ke.wang@unisoc.com
+Subject: Re: [RFC PATCH] cpufreq: userspace: Add fast-switch support for
+ userspace
+Message-ID: <20241212065629.7pi3txrij5aqraik@vireshk-i7>
+References: <20241209081429.1871-1-xuewen.yan@unisoc.com>
+ <09acd46b-ec63-46ec-a239-e792c3061e52@arm.com>
+ <CAB8ipk92xYEkZ_+m+xKnn2Z0DNOkum+6cgHUhSd_gbdzjAbOXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAB8ipk92xYEkZ_+m+xKnn2Z0DNOkum+6cgHUhSd_gbdzjAbOXA@mail.gmail.com>
 
-Once we are inside the 'ext4_xattr_delete_inode' function and trying
-to delete the inode, the 'xattr_sem' should be unlocked.
+On 10-12-24, 11:27, Xuewen Yan wrote:
+> On Mon, Dec 9, 2024 at 6:36 PM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+> >
+> > On 12/9/24 08:14, Xuewen Yan wrote:
+> > > Now, the userspace governor does not support userspace,
+> > > if the driver only use the fast-switch and not add target_index(),
+> >
+> > Which driver does that? Is that actually valid?
+> > No mainline driver from what I can see.
+> >
+> 
+> Yes, indeed no mainline driver, It's on our own driver.
 
-We need trylock here to avoid false-positive warning from lockdep
-about reclaim circular dependency.
+fast_switch is optional but not target/target_index. Its incorrect to only
+implement fast_switch without target/target_index.
 
-This fixes the following KASAN reported issue:
-
-==================================================================
-BUG: KASAN: slab-use-after-free in ext4_xattr_inode_dec_ref_all+0xb8c/0xe90
-Read of size 4 at addr ffff888012c120c4 by task repro/2065
-
-CPU: 1 UID: 0 PID: 2065 Comm: repro Not tainted 6.13.0-rc2+ #11
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x1fd/0x300
- ? tcp_gro_dev_warn+0x260/0x260
- ? _printk+0xc0/0x100
- ? read_lock_is_recursive+0x10/0x10
- ? irq_work_queue+0x72/0xf0
- ? __virt_addr_valid+0x17b/0x4b0
- print_address_description+0x78/0x390
- print_report+0x107/0x1f0
- ? __virt_addr_valid+0x17b/0x4b0
- ? __virt_addr_valid+0x3ff/0x4b0
- ? __phys_addr+0xb5/0x160
- ? ext4_xattr_inode_dec_ref_all+0xb8c/0xe90
- kasan_report+0xcc/0x100
- ? ext4_xattr_inode_dec_ref_all+0xb8c/0xe90
- ext4_xattr_inode_dec_ref_all+0xb8c/0xe90
- ? ext4_xattr_delete_inode+0xd30/0xd30
- ? __ext4_journal_ensure_credits+0x5f0/0x5f0
- ? __ext4_journal_ensure_credits+0x2b/0x5f0
- ? inode_update_timestamps+0x410/0x410
- ext4_xattr_delete_inode+0xb64/0xd30
- ? ext4_truncate+0xb70/0xdc0
- ? ext4_expand_extra_isize_ea+0x1d20/0x1d20
- ? __ext4_mark_inode_dirty+0x670/0x670
- ? ext4_journal_check_start+0x16f/0x240
- ? ext4_inode_is_fast_symlink+0x2f2/0x3a0
- ext4_evict_inode+0xc8c/0xff0
- ? ext4_inode_is_fast_symlink+0x3a0/0x3a0
- ? do_raw_spin_unlock+0x53/0x8a0
- ? ext4_inode_is_fast_symlink+0x3a0/0x3a0
- evict+0x4ac/0x950
- ? proc_nr_inodes+0x310/0x310
- ? trace_ext4_drop_inode+0xa2/0x220
- ? _raw_spin_unlock+0x1a/0x30
- ? iput+0x4cb/0x7e0
- do_unlinkat+0x495/0x7c0
- ? try_break_deleg+0x120/0x120
- ? 0xffffffff81000000
- ? __check_object_size+0x15a/0x210
- ? strncpy_from_user+0x13e/0x250
- ? getname_flags+0x1dc/0x530
- __x64_sys_unlinkat+0xc8/0xf0
- do_syscall_64+0x65/0x110
- entry_SYSCALL_64_after_hwframe+0x67/0x6f
-RIP: 0033:0x434ffd
-Code: 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 8
-RSP: 002b:00007ffc50fa7b28 EFLAGS: 00000246 ORIG_RAX: 0000000000000107
-RAX: ffffffffffffffda RBX: 00007ffc50fa7e18 RCX: 0000000000434ffd
-RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000005
-RBP: 00007ffc50fa7be0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffc50fa7e08 R14: 00000000004bbf30 R15: 0000000000000001
- </TASK>
-
-The buggy address belongs to the object at ffff888012c12000
- which belongs to the cache filp of size 360
-The buggy address is located 196 bytes inside of
- freed 360-byte region [ffff888012c12000, ffff888012c12168)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x12c12
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x40(head|node=0|zone=0)
-page_type: f5(slab)
-raw: 0000000000000040 ffff888000ad7640 ffffea0000497a00 dead000000000004
-raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-head: 0000000000000040 ffff888000ad7640 ffffea0000497a00 dead000000000004
-head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-head: 0000000000000001 ffffea00004b0481 ffffffffffffffff 0000000000000000
-head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff888012c11f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888012c12000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888012c12080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                           ^
- ffff888012c12100: fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc
- ffff888012c12180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-Reported-by: syzbot+b244bda78289b00204ed@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=b244bda78289b00204ed
-Signed-off-by: Bhupesh <bhupesh@igalia.com>
----
- fs/ext4/xattr.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 7647e9f6e190..e1d29aa76165 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2926,7 +2926,20 @@ int ext4_xattr_delete_inode(handle_t *handle, struct inode *inode,
- 	struct ext4_iloc iloc = { .bh = NULL };
- 	struct ext4_xattr_entry *entry;
- 	struct inode *ea_inode;
--	int error;
-+	int error = 0;
-+
-+	/*
-+	 * We are the only ones holding inode reference. The xattr_sem should
-+	 * better be unlocked! We could as well just not acquire xattr_sem at
-+	 * all but this makes the code more futureproof. OTOH we need trylock
-+	 * here to avoid false-positive warning from lockdep about reclaim
-+	 * circular dependency.
-+	 */
-+	if (WARN_ON_ONCE(!down_write_trylock(&EXT4_I(inode)->xattr_sem)))
-+		return error;
-+
-+	if (!EXT4_I(inode)->i_file_acl)
-+		goto cleanup;
- 
- 	error = ext4_journal_ensure_credits(handle, extra_credits,
- 			ext4_free_metadata_revoke_credits(inode->i_sb, 1));
-@@ -3015,6 +3028,7 @@ int ext4_xattr_delete_inode(handle_t *handle, struct inode *inode,
- cleanup:
- 	brelse(iloc.bh);
- 	brelse(bh);
-+	up_write(&EXT4_I(inode)->xattr_sem);
- 	return error;
- }
- 
 -- 
-2.38.1
-
+viresh
 
