@@ -1,45 +1,77 @@
-Return-Path: <linux-kernel+bounces-442463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D449EDD23
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:35:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA4C8167E10
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:35:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295C413B29B;
-	Thu, 12 Dec 2024 01:35:10 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD1119EDD26
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:36:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDE9DDDC;
-	Thu, 12 Dec 2024 01:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E40D283412
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:36:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F8D7DA67;
+	Thu, 12 Dec 2024 01:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3QJR6qX"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2925C41C65
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733967309; cv=none; b=fXH5fRuhQVpVNCM90ciymOS/VY+/TRqHRdEon8wVODta8AGcuJdIIuuZZOl3wOAbmqqjr2n3TMuTcOPqxZs2W/pCH2/Y2O4sN8ZRsACcVGy8GCasq+5kxYuphkPw4GQIlUTHafctCEDD8pW8swaU+it9YZfzbFnxbQKt+XURf5w=
+	t=1733967358; cv=none; b=D1kzbGfQQR1DSe4YpMzObICLCHqRl9yLYgNGvaz3jzfEWJj8PWpVDQgo6HD3I6mtDNoYJyMvPGI2h7AZMTRqnO6BqkqMKSOTSqUiS8aXRgIp0Uv9uR8bCCPBMj2JygYY10vbTL6hpBqjDHjlvHW3+goYjvpDhmVkhqtavDDR6Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733967309; c=relaxed/simple;
-	bh=D4YFkHe+pmij//3bwf3VapR3LAwQSJt/FP2BXUevGVI=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iWI7LbiA3fPbqKbEqFlxYe6igoVx8xdBCYEOn+9j1J5IMMQ8DHNgpdTJ9lG7jR3cY2oNhvqzeXt6W/RXCEu3L4yAubnpsi5ZfqeeMCuMfIXa+r6af4Bqbf2vGNeCY/XZxZDYxMdpdFqetpFHj8kmmlMymdq1NqBzFI4xfqnaf0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Y7w320Ttwz21msJ;
-	Thu, 12 Dec 2024 09:33:18 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 94EE41A0188;
-	Thu, 12 Dec 2024 09:35:03 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 12 Dec 2024 09:35:02 +0800
-Message-ID: <c36b6423-720f-4bb0-ac7e-8e69a5c2a81b@huawei.com>
-Date: Thu, 12 Dec 2024 09:35:02 +0800
+	s=arc-20240116; t=1733967358; c=relaxed/simple;
+	bh=4I8gLbH5PN0mP0QVrcUYvhMHECsTPhYZMcXQ+WQ+Uc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PXB9DPFMt9hrI2xoISyy+HMnC6datMSkOkM630vCO5767NgQ+/uzoKPNekk4tQP6FtffmN4NO9tN9w+Jow0jsklhLt/cNAOg7m7Blfh2nKq0rVYKXKLumUiyKp03vvUTww6Ec5nzaYUrlrC20aZwTh2HOMAt9FyZdO35sxVp4lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d3QJR6qX; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa6b4cc7270so9018966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:35:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733967355; x=1734572155; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OWBYwTpQeje3+MoafQaLkq72MrcYW1QRecg5ZQdtiMY=;
+        b=d3QJR6qX7NaDtFxjD2HaVKM15ka+CL4FmycuhGVcvU193ham67OVEVHWRAvdL2fFBn
+         L4rSuM0QIPx8kSGKJFJ27wquoivXydzsaSyB62RKamesCymLF0gK6XQU1aANvA8SA84g
+         opWuJ4oJm0ucRyVOW8VikUm9noo4wqT2V25PVDKt9hDX4hfX7DZ4FMznSKDauPaPqhJj
+         vvQMW8mpB7R+5i0cvS80QfhgYOAPq7Y+fspXovMgKgWeF4m4fAgpXg0uYWh/WtRIl16D
+         Foq2n10Sylra61fI0HnKQTmFgt5v7qEcorZD/KyaWj8XiNk/K/Yc87tXLWUvb3kcKquR
+         DKEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733967355; x=1734572155;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OWBYwTpQeje3+MoafQaLkq72MrcYW1QRecg5ZQdtiMY=;
+        b=X2U4biMq4gxPmGjgePGwYL1/A0szBAC9KqbX7xdbLu96NGFTCejTBiC192xby8p59O
+         8eo3nEGimmmIQiGa0dIRUAkpgqPWzR9HWhxulFw9CDZenAff3chQg6qN8MwWgnGrFCy/
+         HAAt21wSkBQ6n/jzIgCJEgpM2iVtYgy2FjbIO08G041QFIi31lNUQLz4tP63vVKR4lag
+         L/d3uoETbcsGYB2kI7t3gBK4S8q7Y+PelpHkDFST5ZJJLy3CO3SOOMPzOL0tV5kxP3yn
+         k9DDjDE5Po2FnTpLD1pbMTHpXIbIWGxyUtCg8emZYxD3veeNajeCL/zSM9sCnEO7pM3J
+         VYHw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9G8A+utyOqdRhQ//qcfYEppx6BPVYuhe2ErJdtvHqKDfCugVHjZ2Fsf4yoVmbAIxYxGwwffuN1PcjgO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8ciuTOhJBJlUBH24SCmEumUMHGyGffKnWF66h4oEnNmFBnCWv
+	8g4CjRetHaxQ/SyDxSg/7JiqplHrooFFFkDE9Vi0xnqQhNWR2gnc7bo1QIrVYg8=
+X-Gm-Gg: ASbGncvNthJ7Umafn5vfuKM3R2MZoVBTOqK2YSgc5FzM1fDv+UCwaR7dxr0+hIDao/q
+	BHbj6g+gQBxhIitg04GtsFlGs8Ay2mZt4bwOYMom3Ep8O+38U/N/9NBstPF0gagdT1/5JAGtydl
+	HcMclE9RyNB91TFEcCz8l03sAS6mp+DEMW9fmlXxKBQZabdeeZ1uBf8o5P3QTAj0IIzXokRCNbH
+	X4ie+Gbl5SQ+NlIW8/Bxr7rmVMHK8EsKRWH/yp49+RvlG3/3TyczNC87WLkyyx47R74ZA==
+X-Google-Smtp-Source: AGHT+IHgvSzHuYw/GrNRNjwFCk9Xmc3on0B3OZiRwksob+JXvyPD2txPuKabUXJltPHhBbSxp616fA==
+X-Received: by 2002:a05:6402:360b:b0:5d0:81f5:a398 with SMTP id 4fb4d7f45d1cf-5d4330356bbmr10824470a12.1.1733967355629;
+        Wed, 11 Dec 2024 17:35:55 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69c3512f4sm398006366b.2.2024.12.11.17.35.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Dec 2024 17:35:54 -0800 (PST)
+Message-ID: <ef9a65a6-339e-4428-8487-ead242b3b2d4@linaro.org>
+Date: Thu, 12 Dec 2024 01:35:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,90 +79,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<gregkh@linuxfoundation.org>, <shenjian15@huawei.com>,
-	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<libaihan@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<hkelam@marvell.com>
-Subject: Re: [PATCH V6 net-next 1/7] net: hibmcge: Add debugfs supported in
- this module
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20241210134855.2864577-1-shaojijie@huawei.com>
- <20241210134855.2864577-2-shaojijie@huawei.com>
- <20241211060018.14f56635@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20241211060018.14f56635@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Subject: Re: [PATCH 08/16] media: qcom: camss: vfe: Move common code into vfe
+ core
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
+ <20241211140738.3835588-9-quic_depengs@quicinc.com>
+ <79fc669d-999f-42f3-948a-ee5f3a91ddfe@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <79fc669d-999f-42f3-948a-ee5f3a91ddfe@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 12/12/2024 01:06, Vladimir Zapolskiy wrote:
+> 
+> This is a massive and a functional change
 
-on 2024/12/11 22:00, Jakub Kicinski wrote:
-> On Tue, 10 Dec 2024 21:48:49 +0800 Jijie Shao wrote:
->> +		debugfs_create_devm_seqfile(dev, hbg_dbg_infos[i].name,
->> +					    root, hbg_dbg_infos[i].read);
-> Like I said last time, if you devm_ the entire folder you don't have to
-> devm_ each individual file. debugfs_remove_recursive() removes all files
-> under specified directory.
+It shouldn't be a _functional_ change at all, just a refactoring and a 
+reduction.
 
+I'll take a look too, see if I can spot a regression on rb3-gen1 and 
+replicate the breakage on rb5.
 
-Sorry, there's something wrong with the format of the last reply.
+@Depeng we can probably get you remote access to an RB5 if you need it.
 
-
-I think debugfs_create_devm_seqfile() is a better choice,
-if not use it, I might need to code like so：
-
-static const struct file_operations hbg_dbg_fops = {
-	.owner   = THIS_MODULE,
-...
-};
-
-static int hbg_dbg_file_init(struct hbg_priv *priv, u32 cmd, const char *name)
-{
-	struct hbg_dbg_pri_data *data;
-
-	data = devm_kzalloc(&priv->pdev->dev, sizeof(*data), GFP_KERNEL);
-	if (!data)
-		return -ENOMEM;
-
-	data->priv = priv;
-	data->cmd = cmd;
-	debugfs_create_file(name, HBG_DBG_FILE_MODE,
-			    priv->debugfs.root, data, &hbg_dbg_fops);
-
-	return 0;
-}
-
-int hbg_debugfs_init(struct hbg_priv *priv)
-{
-...
-	for (i = 0; i < ARRAY_SIZE(hbg_dbg_infos); i++) {
-		ret = hbg_dbg_file_init(priv, i, hbg_dbg_infos[i].name);
-...
-	}
-
-
-But use debugfs_create_devm_seqfile(), I only need:
-
-void hbg_debugfs_init(struct hbg_priv *priv)
-{
-...
-     for (i = 0; i < ARRAY_SIZE(hbg_dbg_infos); i++)
-         debugfs_create_devm_seqfile(dev, hbg_dbg_infos[i].name,
-                         root, hbg_dbg_infos[i].read);
-
-
-Actually I think debugfs_create_devm_seqfile() is actually similar to hbg_dbg_file_init().
-And in debugfs_create_devm_seqfile(), debugfs_create_file() is also called, and the code is simplified.
-
-Thanks,
-Jijie Shao
-
-
-
+---
+bod
 
