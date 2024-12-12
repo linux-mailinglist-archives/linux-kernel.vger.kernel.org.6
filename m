@@ -1,172 +1,207 @@
-Return-Path: <linux-kernel+bounces-443658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435D79EFA71
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DADC39EFA46
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:04:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041DA28D643
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95E9B28614F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AC92288C0;
-	Thu, 12 Dec 2024 18:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6D2205517;
+	Thu, 12 Dec 2024 18:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R6ba5Gr4"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eP7dmUKe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6357423A1A0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310D7222D79;
+	Thu, 12 Dec 2024 18:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734026759; cv=none; b=kyeZa5GC1FyIfUMCp6/JtuLJIyqsWDddxb19VZUoGEtmSHWD1xD9PDLLuZBUApZ5kiBb7gXhuLjMYmT/Nv+p1TRyb99j/cRY9W3ZRi2EO9OpvmCpQUtJqlH4RzZbBkfUeZYVQiJlJXUAgMV7mNy19Fj2HQ/GLsX9OLegMHIflRc=
+	t=1734026647; cv=none; b=rErh1OET22jWAbnR+i7NeWEufZYLwTBicJyDLrRIZRMY9HoAsAmNeHQnaJN+QznI9brA6huePygkwkOCGuF0THMQwe2YAJh3m8hm/c0bp30GGOTwSIWOHFC/6ypfjO18sBIA6WZXi5p883mUjHh06SJ/cBOEUKlaREnY3Ed8FkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734026759; c=relaxed/simple;
-	bh=xoLHfhtpFrxTH540A3d41QMdNpP9ylrvZba0P+No9Hs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WEjwPw7rT8DGYc6UVgogaYHBxzNgs6tSEjKtudj9YW+m7EptjYP8RV3sbfJasBoHVBqK8ntMuTtEz/ZsheweP3eLGkTDfKvF1UGSsAcLKhO2v8UuMAdizT/B8QJV+oQQiLVweBNSMu+poTo+4+fjEK+kyrcUtOLztDXkh8R3Pbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R6ba5Gr4; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43627bb20b5so4508065e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:05:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734026755; x=1734631555; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/jsol/FD7xLO/XnO3v0kMgo+OuMQmHauwbh0Fn9n2Qc=;
-        b=R6ba5Gr4IDjmdpBU6Mvb9qo0s+/aC4wfWXqSlt8ES4IKvzAQBEDcEE1TvOu4uEp9TX
-         QAZKG7wx8lIEQDw5KnvFGna9T05/dFoVrbJ/Hf958ZhuaWPX0MvZdhPetvRWHKF2xqJQ
-         jqhPvFBUuRUhjvwVoI08uY8JWRYJRe3AveGyYtlIzuonjEmPV4F26qZ5zOWlJMMnACIv
-         oh59Xpw4CDkc2HoY6tYXcJkKtwjhS0W6jhcBbbuEIR2kgJaVErxmwHUceRMNLA3siBD9
-         PPeHkYBxDWpK1MowRln0DDaOwqCmt9qPzuIwvctBe9JbMXC6+RJN2g8qTM6x9eXJFpUs
-         J5Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734026755; x=1734631555;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/jsol/FD7xLO/XnO3v0kMgo+OuMQmHauwbh0Fn9n2Qc=;
-        b=PUne/X+8NTUndWI7kvJ8E4lMp+IOGDvViUwfAayZVLlUagRmKPGamWfBCVOLKRLe8Q
-         CBwPxsQ8MCPpTygoQywHA1vkLKN0UbCFbu7bzgahILFDXUvMG+sBHNI/FF4hr/bsjn0V
-         aPZ6QlgkqKNt70+sFg8g+9eYgK87TQxg5gF0pwLJPsM9i02/QlRaXArbW8uvGlRWPi+1
-         9a0RwMfAKz3QKAePIBSBUa5Ud/cAnx6aaYvhZCMhJviJG2REkdpUeOz+NhDenDBsvpY4
-         ugVrE+teTkEhazpOwpNb3enZ/EsXnzW0ILVEf1Z4IqM7rCJgqSjYLBnLqCtAfD1F9rG9
-         HJNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUyPyc0gzFVEKtLU0aCkX7Kzeyo4gM4YNa8NZOiKkmFN3B4OinF2uPBz+IVI/pQKydcfNh4HEmxG9bNVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykEOc1jYvRsmUfEsnh04gsCmg1En3kT0jnXYHYn8UyAKSxV79q
-	2GAYolBC3DfvDl1sXAKmM/MMoV14xa3wXCVplpm2nzWqDBTtfHlZvUVOIvrbNEoET0wMCMPZe4+
-	bWptJNSZUVg==
-X-Google-Smtp-Source: AGHT+IFPvic4v0yXTXsiiS55qmyvRxNfbGXACyTICF0QYMQMm//s6fh52UUXvcsaAQ5ADTdRambhNe92sr/RSw==
-X-Received: from wmol7.prod.google.com ([2002:a05:600c:47c7:b0:434:a471:130f])
- (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:35cb:b0:434:f9ad:7238 with SMTP id 5b1f17b1804b1-4362286391fmr34351085e9.22.1734026754968;
- Thu, 12 Dec 2024 10:05:54 -0800 (PST)
-Date: Thu, 12 Dec 2024 18:03:58 +0000
-In-Reply-To: <20241212180423.1578358-1-smostafa@google.com>
+	s=arc-20240116; t=1734026647; c=relaxed/simple;
+	bh=F75IBG8N3JPrXMGX6GgOgsRBEU/kIskJWrg/4L6cN50=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Itl7gaEafocWqjHb0UPLQWrYcCoUkQ/1BPsBznIkCp9ghpfi/Jx7GGgP7g+CzVSBOgafwlLN6hPzJit3OgmtALA1hkadv7vmokcFD83K359N/eh6x9Z3TDCGaQoPBJjoOltD8HeP3AlDPYfy0V0q3HxsnZEge/cHLEFfs2cgWnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eP7dmUKe; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734026646; x=1765562646;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=F75IBG8N3JPrXMGX6GgOgsRBEU/kIskJWrg/4L6cN50=;
+  b=eP7dmUKe9aqpKiHOkzHQ03yaV7kucwiRx2EWFuGiOA9LuSnBhsJijQ7F
+   D/Ju46Q07u3hLonzb+tKjvbhI74IZGepVD1z3QFVzPA26YI3VMWLjovKM
+   BSDs1XHVLaQvXxSAiCrVpg8FkoPzpbl4pxCv+LZEKkdQeqVALZOUUayry
+   aNxjfN8c+HV989oX/sb2mrTR0+PiuKQ+LgWcZaCbtlZhBlQm0C8qvr/F5
+   qmins96xqp49sabNzKR5XKUaGenwq/jhqoi9QqSafdFDLQPr8KgxK48UW
+   +KkhWEJOvI/gXyp5ic9/PoJK1ShKUncPpPyh+KpJYLe9Pa4uMQMH0d7Ka
+   Q==;
+X-CSE-ConnectionGUID: EiWTbgjXQKSueQhWr6z3gg==
+X-CSE-MsgGUID: 9QQk8YCNTU640I5qbrstiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34509005"
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="34509005"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 10:04:05 -0800
+X-CSE-ConnectionGUID: NNaPQb/OSlmhgIdu1GqAlQ==
+X-CSE-MsgGUID: qT/iyMhKReqk+9X7aYR3pQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="101158370"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.137])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 10:04:02 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 12 Dec 2024 20:03:59 +0200 (EET)
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, Lukas Wunner <lukas@wunner.de>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v6 5/8] PCI: Store # of supported End-End TLP Prefixes
+In-Reply-To: <20241211163629.00002937@huawei.com>
+Message-ID: <349c5b75-3f6c-c119-fedb-32dd1ec61725@linux.intel.com>
+References: <20240913143632.5277-1-ilpo.jarvinen@linux.intel.com> <20240913143632.5277-6-ilpo.jarvinen@linux.intel.com> <20241211163629.00002937@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241212180423.1578358-1-smostafa@google.com>
-X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212180423.1578358-35-smostafa@google.com>
-Subject: [RFC PATCH v2 34/58] KVM: arm64: smmu-v3: Add context descriptor functions
-From: Mostafa Saleh <smostafa@google.com>
-To: iommu@lists.linux.dev, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: catalin.marinas@arm.com, will@kernel.org, maz@kernel.org, 
-	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, 
-	yuzenghui@huawei.com, robdclark@gmail.com, joro@8bytes.org, 
-	robin.murphy@arm.com, jean-philippe@linaro.org, jgg@ziepe.ca, 
-	nicolinc@nvidia.com, vdonnefort@google.com, qperret@google.com, 
-	tabba@google.com, danielmentz@google.com, tzukui@google.com, 
-	Mostafa Saleh <smostafa@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-1886133581-1734026639=:936"
 
-Add functions to allocate and access context descriptors that would
-be used in stage-1 attach.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
----
- arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c | 53 +++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+--8323328-1886133581-1734026639=:936
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c b/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
-index 5f00d5cdf5bc..d58424e45e1d 100644
---- a/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
-+++ b/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
-@@ -215,6 +215,19 @@ static int smmu_sync_ste(struct hyp_arm_smmu_v3_device *smmu, u32 sid)
- 	return smmu_send_cmd(smmu, &cmd);
- }
- 
-+__maybe_unused
-+static int smmu_sync_cd(struct hyp_arm_smmu_v3_device *smmu, u32 sid, u32 ssid)
-+{
-+	struct arm_smmu_cmdq_ent cmd = {
-+		.opcode = CMDQ_OP_CFGI_CD,
-+		.cfgi.sid	= sid,
-+		.cfgi.ssid	= ssid,
-+		.cfgi.leaf = true,
-+	};
-+
-+	return smmu_send_cmd(smmu, &cmd);
-+}
-+
- static int smmu_alloc_l2_strtab(struct hyp_arm_smmu_v3_device *smmu, u32 sid)
- {
- 	struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
-@@ -291,6 +304,46 @@ smmu_get_alloc_ste_ptr(struct hyp_arm_smmu_v3_device *smmu, u32 sid)
- 	return smmu_get_ste_ptr(smmu, sid);
- }
- 
-+__maybe_unused
-+static u64 *smmu_get_cd_ptr(u64 *cdtab, u32 ssid)
-+{
-+	/* Only linear supported for now. */
-+	return cdtab + ssid * CTXDESC_CD_DWORDS;
-+}
-+
-+__maybe_unused
-+static u64 *smmu_alloc_cd(struct hyp_arm_smmu_v3_device *smmu, u32 pasid_bits)
-+{
-+	u64 *cd_table;
-+	int flags = 0;
-+	u32 requested_order = get_order((1 << pasid_bits) *
-+					(CTXDESC_CD_DWORDS << 3));
-+
-+	/*
-+	 * We support max of 64K linear tables only, this should be enough
-+	 * for 128 pasids
-+	 */
-+	if (WARN_ON(requested_order > 4))
-+		return NULL;
-+
-+	if (!(smmu->features & ARM_SMMU_FEAT_COHERENCY))
-+		flags |= IOMMU_PAGE_NOCACHE;
-+
-+	cd_table = kvm_iommu_donate_pages(requested_order, flags);
-+	if (!cd_table)
-+		return NULL;
-+	return (u64 *)hyp_virt_to_phys(cd_table);
-+}
-+
-+__maybe_unused
-+static void smmu_free_cd(u64 *cd_table, u32 pasid_bits)
-+{
-+	u32 order = get_order((1 << pasid_bits) *
-+			      (CTXDESC_CD_DWORDS << 3));
-+
-+	kvm_iommu_reclaim_pages(cd_table, order);
-+}
-+
- static int smmu_init_registers(struct hyp_arm_smmu_v3_device *smmu)
- {
- 	u64 val, old;
--- 
-2.47.0.338.g60cca15819-goog
+On Wed, 11 Dec 2024, Jonathan Cameron wrote:
 
+> On Fri, 13 Sep 2024 17:36:29 +0300
+> Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+>=20
+> > eetlp_prefix_path in the struct pci_dev tells if End-End TLP Prefixes
+> > are supported by the path or not, the value is only calculated if
+> > CONFIG_PCI_PASID is set.
+> >=20
+> > The Max End-End TLP Prefixes field in the Device Capabilities Register
+> > 2 also tells how many (1-4) End-End TLP Prefixes are supported (PCIe r6
+> > sec 7.5.3.15). The number of supported End-End Prefixes is useful for
+> > reading correct number of DWORDs from TLP Prefix Log register in AER
+> > capability (PCIe r6 sec 7.8.4.12).
+> >=20
+> > Replace eetlp_prefix_path with eetlp_prefix_max and determine the
+> > number of supported End-End Prefixes regardless of CONFIG_PCI_PASID so
+> > that an upcoming commit generalizing TLP Prefix Log register reading
+> > does not have to read extra DWORDs for End-End Prefixes that never will
+> > be there.
+> >=20
+> > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> > ---
+> >  drivers/pci/ats.c             |  2 +-
+> >  drivers/pci/probe.c           | 14 +++++++++-----
+> >  include/linux/pci.h           |  2 +-
+> >  include/uapi/linux/pci_regs.h |  1 +
+> >  4 files changed, 12 insertions(+), 7 deletions(-)
+> >=20
+> > diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+> > index c570892b2090..e13433dcfc82 100644
+> > --- a/drivers/pci/ats.c
+> > +++ b/drivers/pci/ats.c
+> > @@ -377,7 +377,7 @@ int pci_enable_pasid(struct pci_dev *pdev, int feat=
+ures)
+> >  =09if (WARN_ON(pdev->pasid_enabled))
+> >  =09=09return -EBUSY;
+> > =20
+> > -=09if (!pdev->eetlp_prefix_path && !pdev->pasid_no_tlp)
+> > +=09if (!pdev->eetlp_prefix_max && !pdev->pasid_no_tlp)
+> >  =09=09return -EINVAL;
+> > =20
+> >  =09if (!pasid)
+> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> > index b14b9876c030..0ab70ea6840c 100644
+> > --- a/drivers/pci/probe.c
+> > +++ b/drivers/pci/probe.c
+> > @@ -2228,8 +2228,8 @@ static void pci_configure_relaxed_ordering(struct=
+ pci_dev *dev)
+> > =20
+> >  static void pci_configure_eetlp_prefix(struct pci_dev *dev)
+> >  {
+> > -#ifdef CONFIG_PCI_PASID
+> >  =09struct pci_dev *bridge;
+> > +=09unsigned int eetlp_max;
+> >  =09int pcie_type;
+> >  =09u32 cap;
+> > =20
+> > @@ -2241,15 +2241,19 @@ static void pci_configure_eetlp_prefix(struct p=
+ci_dev *dev)
+> >  =09=09return;
+> > =20
+> >  =09pcie_type =3D pci_pcie_type(dev);
+> > +
+> > +=09eetlp_max =3D FIELD_GET(PCI_EXP_DEVCAP2_EE_PREFIX_MAX, cap);
+> > +=09/* 00b means 4 */
+> > +=09eetlp_max =3D eetlp_max ?: 4;
+> > +
+> >  =09if (pcie_type =3D=3D PCI_EXP_TYPE_ROOT_PORT ||
+> >  =09    pcie_type =3D=3D PCI_EXP_TYPE_RC_END)
+> > -=09=09dev->eetlp_prefix_path =3D 1;
+> > +=09=09dev->eetlp_prefix_max =3D eetlp_max;
+> >  =09else {
+> >  =09=09bridge =3D pci_upstream_bridge(dev);
+> > -=09=09if (bridge && bridge->eetlp_prefix_path)
+> > -=09=09=09dev->eetlp_prefix_path =3D 1;
+> > +=09=09if (bridge && bridge->eetlp_prefix_max)
+>=20
+> What happens if they disagree?  That is the bridge supports 2
+> and the device 3?
+
+That's a good question.
+
+The current code obviously only checks if Prefixes are supported or not so=
+=20
+the max value doesn't matter for the existing code.
+
+I went to read spec and my reading from TLP logging point of view is that=
+=20
+the device's own maximum matters even if it might never get >2 Prefixes
+(r6.1 2.2.10.4 & 6.2.4).
+
+AFAIK, things happen on low level and there's no way to program this=20
+value. So it's not like the kernel is telling that hw must only use x=20
+Prefixes at most if that's what you were worried about.
+
+But there are more things to consider, e.g., I noticed End-End TLP Prefix=
+=20
+Blocking in DevCtl2 which might impact the existing usage too and is not
+checked by the kernel currently.
+
+My interest here lies on cleaning this up so I'm not sure if functional=20
+changes such as considering End-End TLP Prefix Blocking really matter for=
+=20
+some case or not. I can obviously easily add the code for that too if it's=
+=20
+required for this series to be acceptable but I don't have a test case for=
+=20
+it. My main goal with this TLP logging consolidation series is to get to a=
+=20
+point that extending it to support Flit mode is easier.
+
+There's also TLP Prefix Log Present which I think the reader should=20
+consider, which matters to another patch in this series and I'm going to=20
+alter the length based on that flag.
+
+--=20
+ i.
+
+--8323328-1886133581-1734026639=:936--
 
