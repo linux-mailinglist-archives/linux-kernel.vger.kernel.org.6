@@ -1,235 +1,182 @@
-Return-Path: <linux-kernel+bounces-442445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3839EDCE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:03:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5C7A1888E48
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:02:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EE51CABA;
-	Thu, 12 Dec 2024 01:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="u8eFXGu7"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2066.outbound.protection.outlook.com [40.107.96.66])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C77E9EDCE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:06:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85764A29;
-	Thu, 12 Dec 2024 01:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733965371; cv=fail; b=bhgUVKK8TKDor3j5BeEeWHJhaKNObSwELsITuFqogHAsr0ky+LI3QdWu3AZMK+fpxzSoTQHnisg7iw1zpnEeB1yCa7h/bGS6Mgueu565kjnIh7X6WbTk3wUJsD19nNmfIk0KfbwPFTPhnY7pi++vH65R2pFJwaiBSt+IMmx2bsw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733965371; c=relaxed/simple;
-	bh=/uRSvWN+ZQqG84r4XXUhwPNtzYKvTRauystimK5fWzQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EEwERx60dwSwtrbuFFkKHc3RVVSZMiFdksZV/mr8BSE2wccXSydyMCzyu571cyK7kZp7PGJtWoS58fPKVHg0XiSylqHiEFSxJcNN+Wodw5HHqEGDc8KQvgVf2X0kaMjQK5hIUoLc9IQO9MU+P/gZf8JQz5Lp+KwCMUhcUoC/s7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=u8eFXGu7; arc=fail smtp.client-ip=40.107.96.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GV6cbIvhqkeK7V9VX8VEysiiqAau2J9h2+E5TJnd9l91xcpCQUdRhv19ax3wrnPFSEEfe7aTbWMbyXKrEzAhTuSRxkWT6k99MNbM65TeJv3P95xmN2DUzoOwrJ8fdBxXUuORH4Rz7KfNqQBNYiG0Ilw1wlpGQZJ5bQZ0OHcYzoHjqYljeY9goJS5bGjvF4uuLQc49UR3vjP7Qa1r0zfqbPwWF+CdXTPKrSCaaSF5/usF637Z+4BreBB7NOTSL0hx0tIcbMmKDxMX2m0x7WzfxqKOevS+wqWcjCfeYtPDGMdWnlAT4WpwZLvUeSnChhzwan4vltz71ZHc2SPB2ileaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EMJxUHzbACKPKKWH/+gdjrWwH8FFuv8eLHe3TU57CB0=;
- b=Alf2REmA3q21m62YQEP0RcFNA1oJh4HNawRCwLwO7AIkjivKyQ9H/NMGAEYes2hi1Qm5Ooon03XyipgCnlsa0vy0DuL94h/E2UKInhrH3oS+xBg5hhqMb05n3N54TYnnxrvNjNo53OuYjHaasvfz615LUkfeQpl2YJX3JsLMLb4JGbHYy2HhCQZNk5HRL4YfbSN3LYPQHFu05UuNkUFhm2pSjfz1y4UnqQX6b7NDiiCLffdh3He9sK/HJUvUx8PkmR73SxTDmYQnjZn6Upej+2RY65AnMpM+dlB2/vem1BxteL+G+Mq3d2l4nPL58wUWR5Xo67t+KwEhKNipNn+xBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EMJxUHzbACKPKKWH/+gdjrWwH8FFuv8eLHe3TU57CB0=;
- b=u8eFXGu728dAUaOFNWtwpiL4lZwWejKG5GpYb7f6egsU/lD1+S9vZnRorXV+2IYDuizJSMgcTU86TrcXKuaiuJMLp4uwdKn5G5cWAEnxHo4lUvf/K3jorcZ1sbQX4suScNDrmbldOnLGgMabIA6oE9GhtoPyD0lCqE6p+eR5F1k=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5805.namprd12.prod.outlook.com (2603:10b6:510:1d1::13)
- by MW4PR12MB7381.namprd12.prod.outlook.com (2603:10b6:303:223::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Thu, 12 Dec
- 2024 01:02:46 +0000
-Received: from PH7PR12MB5805.namprd12.prod.outlook.com
- ([fe80::11c7:4914:62f4:f4a3]) by PH7PR12MB5805.namprd12.prod.outlook.com
- ([fe80::11c7:4914:62f4:f4a3%4]) with mapi id 15.20.8251.008; Thu, 12 Dec 2024
- 01:02:46 +0000
-Message-ID: <5b45ac9a-255c-4c74-8231-bc91c87cc0aa@amd.com>
-Date: Thu, 12 Dec 2024 06:32:34 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] resource: Fix CXL node not populated issue
-To: Bharata B Rao <bharata@amd.com>, Dan Williams <dan.j.williams@intel.com>,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Alistair Popple <apopple@nvidia.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
- ilpo.jarvinen@linux.intel.com,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Fontenot Nathan <Nathan.Fontenot@amd.com>, Wei Huang <wei.huang2@amd.com>,
- regressions@lists.linux.dev, "Huang, Ying" <ying.huang@linux.alibaba.com>
-References: <20241202111941.2636613-1-raghavendra.kt@amd.com>
- <674fd2b4942f1_3e0f629420@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <33b4b93b-5ab6-4a3b-b3b2-c9b3cbc9d929@amd.com>
- <6752acd92baf0_10a08329424@dwillia2-xfh.jf.intel.com.notmuch>
- <2b5bb8d8-6a7d-4a58-bde7-ce42d0a23f61@amd.com>
- <675918b414c17_10a0832943b@dwillia2-xfh.jf.intel.com.notmuch>
- <de22dd6e-00a3-4183-a123-15cc7c53980f@amd.com>
- <67594f90a7b87_25073294f0@dwillia2-xfh.jf.intel.com.notmuch>
- <d8d2c310-2021-431f-adbe-71ad0a17896a@amd.com>
-Content-Language: en-US
-From: Raghavendra K T <raghavendra.kt@amd.com>
-In-Reply-To: <d8d2c310-2021-431f-adbe-71ad0a17896a@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN1PEPF000067F5.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c04::36) To PH7PR12MB5805.namprd12.prod.outlook.com
- (2603:10b6:510:1d1::13)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEDAC282E4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:06:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4BF22611;
+	Thu, 12 Dec 2024 01:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X4hHxJwo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C2A4A29;
+	Thu, 12 Dec 2024 01:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733965574; cv=none; b=TH6hLP0N3xQiMwNzqMwwuUyiM/oLhutw0dKfjmnQLI3E9NgLR1PnTc3WvyJWGhEGQljRj9cHH86bO8wuzSL106kqAyhzxYBAdJSwXXSAEtfl/Y2YxSez21/THAKh0VF36O6MDK45q7f/6c6CVHzvjopMgcl0avXCcW8GneD5r24=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733965574; c=relaxed/simple;
+	bh=Yl648KHfxYWRCrRS9pqwRnJA4UQcE6R5/Ilt+h7VHJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=toadSyx9C6q23hISQSy6U25IYvmEDSM7n+PCcOBlzBNdA+DqQY4JzrAqmXWGjsquEH0JUlfLbeXIulcNmDsgzW4rW1zbpKJyY2MYocCjMlq61yTkMBfRPyZsWUWafbusQsLSi+hU+1SQDpRW2gCIGLHWc7EtPgHHRuPfxLwWxJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X4hHxJwo; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733965573; x=1765501573;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Yl648KHfxYWRCrRS9pqwRnJA4UQcE6R5/Ilt+h7VHJ0=;
+  b=X4hHxJwoST8e/Sv6HUq00cxGgfguNziA0j0ibjSN1XnOFXl9ZT/g3xnX
+   4nQKxbliUYGvfs4Gm7n+jcMDP14TXicpahBEJrAEpUXL8uRPmUGZo6+m/
+   AGpNJ8QjYjyUoMuZ+yN3xqaELAHL19n4iYFohUFHmAJAzl8NQ816gUSMV
+   McIyyr41bnBmasNKgPopJoGuR7FhYeEUO8TNRYgFW1XV8POgofYnLo6XI
+   BBbNIY9TNjabDDAwvXCMnAXvtCxAM6keainlxBzr5WNskiGcy8bWjN/Us
+   2ML5IaBt3FKNbMC+OnD93e4vtbLKT1rA+DYytYt/2veZ5FzJMH4Shggev
+   A==;
+X-CSE-ConnectionGUID: IHTq6V5lQWeaYJosxrOAog==
+X-CSE-MsgGUID: jaBqR3JNSDW3qKPexFYRsQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="33697512"
+X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
+   d="scan'208";a="33697512"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 17:06:12 -0800
+X-CSE-ConnectionGUID: BneZOs//QjCf+Tq5AcwdVA==
+X-CSE-MsgGUID: 7snD8UFhT4Ornm4unWxTRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
+   d="scan'208";a="96446682"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 11 Dec 2024 17:06:08 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLXeY-0007HB-0E;
+	Thu, 12 Dec 2024 01:06:06 +0000
+Date: Thu, 12 Dec 2024 09:05:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Herve Codina <herve.codina@bootlin.com>, Andrew Davis <afd@ti.com>,
+	Ayush Singh <ayush@beagleboard.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 7/7] of: unittest: Add tests for export symbols
+Message-ID: <202412120806.IiuXJ0WZ-lkp@intel.com>
+References: <20241209151830.95723-8-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5805:EE_|MW4PR12MB7381:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8668efa5-c40c-46fe-b7c2-08dd1a48b062
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dVRjcFFLbU4rUXQwSElmL21lQWh6YW5wN1o1UkNRcTVTcW1IbmI5cFhBemhZ?=
- =?utf-8?B?N3B0ZjZySFFvWWJJL3Z2eWVrNk4zeTYreUQxV2c0RkxyMlJMWWhYQVlWQnZQ?=
- =?utf-8?B?Nm5pRVRjNDFIV0N0cDdGSGx5UUJGVk5WR2dVSnNVU0FOWGl1S3AvN1ZxNnNJ?=
- =?utf-8?B?V3dyVk9xa1dtTHNDUVhIOVFLcExzWmRuTjg1TjRzbUFvdThjU1ppeFV5akZC?=
- =?utf-8?B?ak5IOGhHOHhDOHovU09ldEFFUFBwZVVlOXRUWi8wZVVra2JVRHR5cTh0NjQr?=
- =?utf-8?B?SS8zbGZsR0xLSW5nSlROb3ZTd1VOMThVallFbnZzREdrZTVrTzduZG1lbjdN?=
- =?utf-8?B?ejJtNis4akE2Wm52b2dLaUJ1azFQOGxUSHRJYmh3OEZacDJLWWx2cHpscDdp?=
- =?utf-8?B?M1VsNTc4NjNya1RoczJuMEh4ZzBraFlORERKMXRJS0Nkd1RCaFRXcUtGLzI2?=
- =?utf-8?B?dG5RKzZNQ1BYc01XNk9OQ1BLTzVYOWRGNHBER0ZOQkd5VU1UMWR5dHM5dEk0?=
- =?utf-8?B?Umo1dXNGYVM4M1ZJR3BXbkxqdVVmU3VSWGMxamliRWErcHlQZjdoOFV1WGVG?=
- =?utf-8?B?enVZM1JicVl1TjMxTXkvNTBBcDZuUTkzOGRKdFFySkJrRFZBQnhQU0VUak5y?=
- =?utf-8?B?M00yWE9hcDh3RnVDRk9aYU91bVR3dm5oZFUyQUliUEdKRmZsVkZnYjNsM2sv?=
- =?utf-8?B?bTdQUnViSXJhd3djbjVzTi81NGlMZkl2ak1KZUxoZzlIYnU2cXNhRDlRSWY3?=
- =?utf-8?B?bThwdlJGWktRWkJtdGdsRGtoNjh0bWpHWER4M0dCby9yYVFMbDlqSy9TeVpt?=
- =?utf-8?B?TFJRVWVhVG90d0t2SHB5d1cyTWx0MHQxdER3SERBeTZIZkRadzFxWmMyNXA2?=
- =?utf-8?B?SkFkZnpiazV6dWxaaGlZa3ZrOG9FZG1XaUgweVVFYjVlU1Bzcmg3emkzZFZT?=
- =?utf-8?B?My9GaTVoK003YUU0ZUxnV25rdGYrbzMxRmpHR3pqVElycWdIVlF4UGFBRWli?=
- =?utf-8?B?SVkwb203MDMvTDBEZG5IK3c2Zk9hdGUwS21FT3djSC9YM3RxRXY1d3diaGZL?=
- =?utf-8?B?UWhhVFpNc1RtdGFEbGxMbDB4M3hUMUN0amlmTGk3UTBTVFhvT2RkMStYYmdC?=
- =?utf-8?B?WHV4alliMXhOek9hSFhzeDRtR1JHMk5UQTVoL2dMOEVmWUpSZkhJc0x6RVd1?=
- =?utf-8?B?S3Y0cDBwekhBbGxuTnB1N0IvbU9XdXNSdlRCL0l4WTFJekZPL21YWGF1YUlv?=
- =?utf-8?B?ejdEbncrNllBdSt5SzJQcHNJRmNMNHk3UlVBU25mNG04NEhzNmNTVktDTmV0?=
- =?utf-8?B?ZFc0K09zc2FXd3A0VzU4bUdqYitqdysyWVZINzd6b0J3cENoblNoQzV1M3pW?=
- =?utf-8?B?MUp3dUE2UVpwLzhPRXN1U2o2YnUzTlV4NzhmNDZ1VEExa09udDNUMitpclB0?=
- =?utf-8?B?WWQvYlNBNE8yRUtjaW82YzdYRkVTMnIyNC9XQmdFd0ZVRXc0ZWdVd0pxVnpu?=
- =?utf-8?B?ek1XYUlBV3JuZzR6UW5UeXNMZFpncmhDNFJOb3hBeHdJQkVmUWF3ZjdOWHNj?=
- =?utf-8?B?dnhENU9vS2E5YTJIU1dydzlTc3dXOGlCU3dqckJrUjFCOE5OYzFwcGhzVDVz?=
- =?utf-8?B?OFNsQWZJTTdaNEJXRmJPZlBIVi83WFpXYWYwMmQ2cDNIMUd4blBSOHBUcHU4?=
- =?utf-8?B?bzk4Q2ZpWDZGWWt4OXF5OEF1eENhNXhaN2MxN3ZqbmJIY3hxZ09XTmFlYnlt?=
- =?utf-8?B?dUt6VlhiQldzcE1JdnNqT3VWNEZnLzc0UzVTbE11aGRicDhwZitCYnNuRW8v?=
- =?utf-8?B?UW9sdzlxUHYzZWtoUjhiQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5805.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eWpuUnVVVVJiNXVVV0s3WUdlSGt6UVBYZXdoVmM5U21ma2thd3hMVlZJb2dV?=
- =?utf-8?B?MU1vbHFlWjI5MWtUeUN5SzNMOWFQNE9malc0WjExSkM2aWp3ZFc0bTZLMTZH?=
- =?utf-8?B?V1F0Z3BsUFlScVRHK3lOZHFFaXVweEtOQU5mSFdiT3p5YWpJSDEzQ0Y2UFFi?=
- =?utf-8?B?b2xET0hENi9QaEpMMkNFRnhjeWF3QUdyeGtlYlgyREdkL0hEVytVNFpFLy94?=
- =?utf-8?B?dWFYR1Rnb0JoNk8rQ0ppaXFLQm9weVdtY2Q3UEJMRVlPZ3h2a1p1dCt0aXB6?=
- =?utf-8?B?a1F6cE0zL1J1MlhjUUN6UnE4Q2p6Z0w4TGZ3VmZMVmVCbE9VOCtMNHV6ZlVS?=
- =?utf-8?B?c2tScTNWVE1uRUVFM0VhK3RLQTlnY2F6bml4aG9BVGE0OWVoK3hqV0phdFFO?=
- =?utf-8?B?K002T1NNaERMTlZxQWxGSFQ4ZHlmSWt1bEZTOE5zTTJ4TVJkcGlMdkVSWDBH?=
- =?utf-8?B?VGdtcVorMDRUemxtMEN2RDlja0Z6MGZpVjlJM0hoeHpOZGk1TVhOK3dEdmRi?=
- =?utf-8?B?YkZuMVNDNktvTjZGSmd4Q0VsM3pUdldaMmZvTEcxSUZTK2NEUnVPV2ljWG5S?=
- =?utf-8?B?d3dxSXNyMXQwS2xKOGJxc2VmMGcxaXVMSEVXZzFvY3Y3anFJZEU2VlljVjlp?=
- =?utf-8?B?N1JYLzdCcmt2VWVXVG53ci9tR09qWkFic3RXRTZCTElqeGNCSmlWaXpkc3Bp?=
- =?utf-8?B?RWYrRTQrR2pma0cwc29oT2t3RTgzMGQyQjFjemcxVkJHTytjZzdHOSt5dzFx?=
- =?utf-8?B?VHUrOW51Nk81dVlrYlNQSFRNN3lSUGlLOUJSTU5JaXY3a2ljTmpLeXFCa25q?=
- =?utf-8?B?UE8wQlIzOVljT0M1Q1RxOWp1RUI2V1Y1UTcwN3MvdlpBQS9LV0VOZ2NpbGtZ?=
- =?utf-8?B?QmFpQStxUUoreXJEM0pCUU9DempEaStIRi9VMmJkZ3ptT3hGYjNrTGw4YWJs?=
- =?utf-8?B?VG9JM3RaT2JmZVlseVJoZkVSY3A5K29EcGdsczBNbzZRYlBKRjk2UWU5R3Iz?=
- =?utf-8?B?TVhMa1FxLytWTFV3ZDZKRXNjOVVCSFJBQjlVaE10S29yOVBER2dRVE1aMnM3?=
- =?utf-8?B?QmcrSTlSM1pidS9hR2ZEdjVxS01nZHFUUmtZYkNTUlZqTFVPM1doQjdhcUdV?=
- =?utf-8?B?NmJXcUlxMC9mNUREQkVkRUh2M3hDcnQ2Ym9FNUo0NHp5WU5YZGlMTXhINngy?=
- =?utf-8?B?ZHVNUFJZTkk1SXVzUFc2aldyNEZHSzVuNFFpWlAvQzhYRkJLODl2NDhPaFBs?=
- =?utf-8?B?TXBZSXpoYnNtWkxyMkhhV0x2RXRkeVZ0Z1FQOEZxUjQyc1hBMU1pL0poelNJ?=
- =?utf-8?B?SzdIbDI5WnBUTHRNd08vRURvM2RwZis5T1FGMEJWU3lLcVEzc0RWVXJNR05s?=
- =?utf-8?B?YkxvNktYMVNHRFJsaGNuVWowT3pmdHNRS242VjRPVUFPU29UYXdyRU1WWFFK?=
- =?utf-8?B?WW5Kd2FyeHdoSzVzek96UTl6SU5WSzBQamdOSlVicVZUMkV6Nmp1YUVKK3Z3?=
- =?utf-8?B?RjB2akJId0dBTUxkZlRKYWZmQThNYTUwdkV6WFB4RnQ0ODdzakdxNlk5dzk5?=
- =?utf-8?B?L09OamRrVHVhZ1dvNHhqNWI0ZDFDb2dkUVp0NGNaVXl6Y0RHUEVUMmcxNGto?=
- =?utf-8?B?VnNlUy9DdDRkQnJEaWM2VkVQaFRwaHlGaTJjYTJiTXJYc3J1R2IvOGVwZE9t?=
- =?utf-8?B?alp3Z3QwWk1pazFSaytZWHorRkJHbVdDVDBjN2dJMXRPMlhWODg5ZitwT2M4?=
- =?utf-8?B?dUN0ZitDa3dwSjQ0UXhxNGl4SE81WTY4ME9heC9pTHdHMG5MNnBYR052T3l4?=
- =?utf-8?B?emJDN1FPbzUrMFd6ZnRyQ3FJVmFxdUFFejdxNGVySFV0UEc3OEFGQmRNbzVm?=
- =?utf-8?B?eSsyS2JPb1JKRUdCSmxOT3ZiZExlWEdOQ1dlaVVwUVdJUytVSy9SNTR1OVUw?=
- =?utf-8?B?QkdzVWZkUXRjb1llVnE2RXZpQXVEWm54WG9RTjZ6WHhONTEvN2hBQWRKRW83?=
- =?utf-8?B?clBoQmVVVlR0Z2ZNanRndE8wdzFxRzhVK1YrMXZNRzAwakxZMG03TTBKNXdN?=
- =?utf-8?B?V1N2Zm9tQWVtNzNqVytLOWdGQ2JKTDhqM1ZNVWtra0RIODkyVUZnRzlYQlY0?=
- =?utf-8?Q?08GsyK7ZKfXBpm/MrACNYSs3+?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8668efa5-c40c-46fe-b7c2-08dd1a48b062
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5805.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 01:02:45.9474
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M4bBEvcxhidLFH3ylxKXZwpfs/LTk5KTbdGMnOjELzvnw8Lfg9GFTOZ6UHlHoj6LnIIOPq7fmDVzTb5kDT3S0A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7381
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209151830.95723-8-herve.codina@bootlin.com>
 
-On 12/11/2024 10:17 PM, Bharata B Rao wrote:
-> On 11-Dec-24 2:08 PM, Dan Williams wrote:
->> Ah, thanks for that!
->>
->> So, it turns out Ying's patch is working as advertised. It is traversing
->> past the top-level entry of the the iomem_resource topology to 
->> discover that a
->> Soft Reserved range is described by CXL. Then the expectation is that
->> the CXL subsystem parses the topology and registers a dax device.
->>
->> I missed that detail in my repro because I was not testing the HMEM
->> handoff.
->>
->> Now, the dmesg shows that the CXL subsystem gives up early on the
->> CXL devices as they do not appear to be meeting the expecations of a "CXL
->> Memory Device" as described by the "PCI Header - Class Code Register
->> (Offset 09h)" of the CXL spec.
->>
->> Specifically these messages:
->>
->>      [    4.449072] cxl_pci 0000:9f:00.0: registers not found: status 
->> mbox memdev
->>
->> I think this situation is increasingly showing that the pace of
->> non-standard quirks being deployed is higher than CXL subsystem is able
->> to keep pace.
->>
->> The immediate workaround to this problem that Linux discovered is to
->> disable the cxl_acpi driver. Can you confirm that preventing the
->> cxl_acpi driver from loading restores that missing node?
-> 
-> Yes, disabling CONFIG_CXL_ACPI gets the CXL node up with the memory. 
-> Thanks for this workaround.
-> 
+Hi Herve,
 
-Thank you Bharata for filling in.
+kernel test robot noticed the following build errors:
 
-Thank you Dan, Andy, Gregory, Ying for your input. (sorry for the delay 
-because machine was not available as pointed by Bharata).
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.13-rc2 next-20241211]
+[cannot apply to char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This helps to proceed with
+url:    https://github.com/intel-lab-lkp/linux/commits/Herve-Codina/dt-bindings-Add-support-for-export-symbols-node/20241209-232324
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241209151830.95723-8-herve.codina%40bootlin.com
+patch subject: [PATCH 7/7] of: unittest: Add tests for export symbols
+config: arc-randconfig-001-20241210 (https://download.01.org/0day-ci/archive/20241212/202412120806.IiuXJ0WZ-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241212/202412120806.IiuXJ0WZ-lkp@intel.com/reproduce)
 
-CONFIG_CXL_ACPI=n for now in my case.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412120806.IiuXJ0WZ-lkp@intel.com/
 
-- Raghu
+All errors (new ones prefixed by >>):
+
+   drivers/of/unittest.c: In function 'of_unittest':
+>> drivers/of/unittest.c:4347:9: error: implicit declaration of function 'of_unittest_overlay_export_symbols'; did you mean 'of_unittest_overlay_high_level'? [-Werror=implicit-function-declaration]
+    4347 |         of_unittest_overlay_export_symbols();
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |         of_unittest_overlay_high_level
+   cc1: some warnings being treated as errors
+
+
+vim +4347 drivers/of/unittest.c
+
+  4297	
+  4298	static int __init of_unittest(void)
+  4299	{
+  4300		struct device_node *np;
+  4301		int res;
+  4302	
+  4303		pr_info("start of unittest - you will see error messages\n");
+  4304	
+  4305		/* Taint the kernel so we know we've run tests. */
+  4306		add_taint(TAINT_TEST, LOCKDEP_STILL_OK);
+  4307	
+  4308		/* adding data for unittest */
+  4309		res = unittest_data_add();
+  4310		if (res)
+  4311			return res;
+  4312		if (!of_aliases)
+  4313			of_aliases = of_find_node_by_path("/aliases");
+  4314	
+  4315		np = of_find_node_by_path("/testcase-data/phandle-tests/consumer-a");
+  4316		if (!np) {
+  4317			pr_info("No testcase data in device tree; not running tests\n");
+  4318			return 0;
+  4319		}
+  4320		of_node_put(np);
+  4321	
+  4322		of_unittest_check_tree_linkage();
+  4323		of_unittest_check_phandles();
+  4324		of_unittest_find_node_by_name();
+  4325		of_unittest_dynamic();
+  4326		of_unittest_parse_phandle_with_args();
+  4327		of_unittest_parse_phandle_with_args_map();
+  4328		of_unittest_printf();
+  4329		of_unittest_property_string();
+  4330		of_unittest_property_copy();
+  4331		of_unittest_changeset();
+  4332		of_unittest_changeset_prop();
+  4333		of_unittest_parse_interrupts();
+  4334		of_unittest_parse_interrupts_extended();
+  4335		of_unittest_dma_get_max_cpu_address();
+  4336		of_unittest_parse_dma_ranges();
+  4337		of_unittest_pci_dma_ranges();
+  4338		of_unittest_bus_ranges();
+  4339		of_unittest_bus_3cell_ranges();
+  4340		of_unittest_reg();
+  4341		of_unittest_translate_addr();
+  4342		of_unittest_match_node();
+  4343		of_unittest_platform_populate();
+  4344		of_unittest_overlay();
+  4345		of_unittest_lifecycle();
+  4346		of_unittest_pci_node();
+> 4347		of_unittest_overlay_export_symbols();
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
