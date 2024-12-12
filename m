@@ -1,180 +1,233 @@
-Return-Path: <linux-kernel+bounces-444077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3F19F0050
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:41:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D989F0053
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:42:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8A341682F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:41:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A35F28804D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E641DED73;
-	Thu, 12 Dec 2024 23:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4032F1DEFD0;
+	Thu, 12 Dec 2024 23:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="EkVDzfsV"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="Cr5nd9ba";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B9K2i4pL"
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153DC1DED40
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B8D1DED4C;
+	Thu, 12 Dec 2024 23:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734046900; cv=none; b=mmrfnKqF9YWFsT2f7Q2NghmMq7a1QJENur80ctZFpa3ATLbi9eETyUJDrk55yg/Unu/oKAxUn8C6/JfvQmy7HSCjLuaph0tHKeFuxnd8zhbXHeL+YcRSiSkb3DqfISo8iVoQUjTfILKp/Otwif5zqj4q2niYf/E4mvImU+kWICU=
+	t=1734046912; cv=none; b=Vv9x+bb48kFreiz0UyCEDnmvvr4/naBJVq18ZBdIzfkjRGklhNLiyeSoZN7sZ3vj+0pYIcpISuVIMig+1loLYHYImdOgq+qdHtQehrEXY8GQV5qmGEimDa/Ck348v75yrUtBbOpncavoHneD+BRSy8X3xFpYC773BIVoSUky9RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734046900; c=relaxed/simple;
-	bh=My9CADm/GRFqOhg1x2jgXNn+Fzanqgm3kbZK8mNmkiM=;
+	s=arc-20240116; t=1734046912; c=relaxed/simple;
+	bh=0EfcN+Lb8+Gr9/AGepZG/uUIlT7TVkuzGBF+4biIAfQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njNgxL8T2MQ2plmBfai8jW7vD0XzomxHQJijDTV8XV4DIkuVxDpqqs2/PVoQl2YcFiRQGNyuqNEpfLu88bMS8Xj/fIC6lIdcskkvodQLnDMr7RDLAmxW8B2qn3WyehFPj9smT7SMrcVqgwPyPaY5sVGmYX7uR5l1gIJz+5Az8ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=EkVDzfsV; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7fd17f231a7so722426a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:41:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1734046897; x=1734651697; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yT+c2FUjSstL6HPJ9R0DaZw+kOX9JXOb4Qt8nKQGBGI=;
-        b=EkVDzfsV6WDWE4hKb66hxgHmcAar4i8jCBHfjaaPC/0664my/a3eva1OgjfMDqirZ9
-         ZqRCzMyg0+UBFAcO9lqV9jFi6yld1fTmikCpZVfqd299Ro44gusEr+r6N+6NHKdlK6Xl
-         EuWGvAOxcAtqxgq1MIChmgStw+egEFZBOvybLWKsr7/vpXM4Kf9ZrvgBD18GVAerTVTh
-         3nfge8c9m68fgQvpYT/+RgjKLbRE2Vd+Qq+0c7hpt0nWbAsETrprqM1Jp0sS7wfYNmdg
-         2MNKpHoFByjSpI1VmBQ/uVe6gGCfUkfAYO2wnEFFwd5exEOjA5bwtsMPaNZt96gofK3u
-         V/Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734046897; x=1734651697;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yT+c2FUjSstL6HPJ9R0DaZw+kOX9JXOb4Qt8nKQGBGI=;
-        b=QG57AkEttTHIKbRLMrtcTVi1/kG5A69RiK0EHWu83KdzYmGfLSXpLSZRVc7THteeta
-         ANhMYD22bZ3hL7Zu48+HUmxKoImZzVIgofgC3puZygXGDQV18d4HqVZhg0fSbTS8VN7x
-         rZyG0Rn0bLyoxq+WeLL4dlFUYcanrYn6ozkqzcI9aWbb8Cy/U2cUt5t1un/95M9NzB5K
-         eLuEgXc8lPjoef9JgaTSYK1DjVo3nIfcDV+x4q/BPMXnIBSLVGTNYFIJaMnxOza7GXlI
-         Q02fp8yiVFloVMqLpYD5jjiGq+D3g/2bU+tkoX3XQYbMNd1dK6Mew2IFFA1mcCY2Ojq3
-         Q24A==
-X-Forwarded-Encrypted: i=1; AJvYcCWNrvQrnuXmFVzehSYlgMfnvXPiMZ4R9ov91cZCPbYxzakY9GIe5/BhCVWzT9bw74XofiQPW+8jtvHnvoo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFRBYqbPpWVy3qiBbl2ozJWnSrxqcTqcHzKRkQ5WzFlTKc+OVV
-	wuh7NJpWN+f+bGuvqq7b/DASj1y3suzBAZXRe8GkkwPFt63CGKehB7ptPmcOHoQ=
-X-Gm-Gg: ASbGncvRiEW+10uPWBxEGng7LjaG/zV5mnukJj3T4gHxVEG/o4F7fT+oyIGRCToBY1j
-	Jqt+kOuLVJMJxqI0paB6A8v6cLb7+ojnh6vOOeT+wuX+oRXWdoHbMfaRpLP6RRcpqgpGn8LaspN
-	+uVL7JrDZiyqmZ4KUAW1PNcEUW3P8JL0whrRgino+fpMKMJsSTcmPuY+fr2tN/glfNF3Dcyl52m
-	hCgqlCl6TGnbswBlS49lLouMMZ70woRbwC9EHKWAfDrYZvJbvmyT6bP0oYoj6YS+HUEpSIHW5qH
-	5NfAAI8ZPjIsSeTTy4I=
-X-Google-Smtp-Source: AGHT+IF9Z2LJLhoOcWIAJGMctXGeDrWfWUaDk67FmLka9EWDGXix81A80hZegIuwoMxRaPPEC19tNA==
-X-Received: by 2002:a17:90b:4b0f:b0:2ee:bbd8:2b7e with SMTP id 98e67ed59e1d1-2f28fb6aba4mr1160867a91.12.1734046897253;
-        Thu, 12 Dec 2024 15:41:37 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142fc309dsm1869811a91.48.2024.12.12.15.41.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 15:41:36 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tLsoI-00000009ztE-1Uw4;
-	Fri, 13 Dec 2024 10:41:34 +1100
-Date: Fri, 13 Dec 2024 10:41:34 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: syzbot <syzbot+c39928fd177c28b5fa1f@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_map_blocks (2)
-Message-ID: <Z1t0rg5VG88QOplp@dread.disaster.area>
-References: <674f31ec.050a0220.48a03.003e.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EdAzTGHm7MP8ISu0LyRF4DWF8taUg5gvHU6JMDcDB0t9LwlxFCYfHo0Yb2ljqQdQHajVBezLhWA6YddrAOY6BQjytugdhnGYi4sBctoQ+Y5Upfu0qyAmlR7cxBwIpJxSm5AwjvFIRuV8sdAL2cId9DJnmJZl1VXNeyUJ+/w7sIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=Cr5nd9ba; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B9K2i4pL; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailflow.phl.internal (Postfix) with ESMTP id F08A720049B;
+	Thu, 12 Dec 2024 18:41:48 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Thu, 12 Dec 2024 18:41:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1734046908;
+	 x=1734054108; bh=Xsk7X3/UkTfDfA4IJFdI69G+yLRSh7hTw4MpALt07mM=; b=
+	Cr5nd9ba4FXZHzEWTYi+Rh9yBQO6c+qjKDGoJX143moXaA5i2FroQBDP7LHBMFMX
+	YMV9QDVfo5memjolEePbZNIMuNL9iBI14eG/FjpdbDhO6RHoBeD3eYpV1ul0FxAT
+	LmpLGLioF1Eltk0Qub/iYej97T1LduYyG5s7yJbyoQJR4O/QwVSRcKkDWLzxHLwU
+	v/KDKDxVNeGHMjyMDDeUR4ZV9DQ5n/iSeYUwUFCy063GNpOzQNxUGc6ZtzVLjZeU
+	/WAdDj+b7r/MErkk3EUGToWb068Dlvrh3RSKME/lLepAr+gaOK3o/J/B9fqa2fr0
+	qMp6Wn3cjyVyhLfOmUzJJw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734046908; x=
+	1734054108; bh=Xsk7X3/UkTfDfA4IJFdI69G+yLRSh7hTw4MpALt07mM=; b=B
+	9K2i4pLQ/Mci3TioKT2jryuSH36oJAQAfDvmTCd183UoBbahepNQyf8N9Z0ezpoN
+	wHMFPBvbJamjN+h+ArKA4yUA2pH+xJqIkV8E75s6OYz3CqwfbmYjT5aJLt/V7Jqe
+	fu1LIKKY/Eajb+rJ22Os230DMGHHF33HCmsSXQPAP99bSdjH1dlzz9kdZ1WpC4qu
+	TCySo1UOmrBHmgmzhCBrYnc/ESzUIDElJskNh7lxAbESZy0ntrAMC0q8KrbWMJLL
+	FgUNSKZfIP/bxD8m4cBp0LcomFqeYdwlWoaGjLG/aRe659/5+VhmcAvriLq4Q4t8
+	vCXq7NvZg1I/Jfs/54wZA==
+X-ME-Sender: <xms:vHRbZ-Zou_2if7EFRsBlv6l--FrjL6AiXGmc0vgbCPXg1BKMJvREuQ>
+    <xme:vHRbZxZqCNnVKVSCmS1nJTCLzsZRG75ZGq1Hu4xkrwDDgRFvQqgvl9lgJxwlC8bOa
+    YB96QL6WwjbMNUPow>
+X-ME-Received: <xmr:vHRbZ49Hjc_drZUX76dDuaOiatygbBOlAo5TiEnWTp1KZORd-Q829FNXhWAQ525w9TLCI2KQHyOJne2U1UTGqpfenF3ttn3DOfqtYTSqNBYBCw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeeigddufecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenfghrlhcuvffnffculdefhedmnecujfgurhepfffhvfevuffkfhgg
+    tggugfgjsehtkefstddttdejnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguhesug
+    iguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepffffgeegkeejvdejgeehteekudfh
+    gfefgeevkeelhfegueeljefhleejtdekveffnecuffhomhgrihhnpehgihhthhhusgdrtg
+    homhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegu
+    gihusegugihuuhhurdighiiipdhnsggprhgtphhtthhopedvvddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtoheprghnughrihhirdhnrghkrhihihhkohesghhmrghilhdrtgho
+    mhdprhgtphhtthhopehhrgifkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohh
+    hnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghstheskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepqhhmoheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegurghnihgv
+    lhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:vHRbZwpeKYwydy07I0zy8XIwo_giI6SuJwP8hwxI3K15tQT9eU7fVg>
+    <xmx:vHRbZ5rKlXHpj4wzUWbdn5bf4VhgfBOE_jddaIapGpbXB_qKBGKQ1w>
+    <xmx:vHRbZ-Q7rMMrjmyEFzN1XEzTgKZPTB0tnlcprVbMQAknJA0MlkGeRQ>
+    <xmx:vHRbZ5rp8W4v-M0Cu0e3569qasezkBGhTuqT3x7WA4LysOnwLSkVMA>
+    <xmx:vHRbZ4ex_sqDOfLhf14PNui0a5nOLckCg_-JtrCIMKD1W3D-0WbO-zBB>
+Feedback-ID: i6a694271:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Dec 2024 18:41:45 -0500 (EST)
+Date: Thu, 12 Dec 2024 16:41:43 -0700
+From: Daniel Xu <dxu@dxuuu.xyz>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: hawk@kernel.org, john.fastabend@gmail.com, ast@kernel.org, 
+	qmo@kernel.org, davem@davemloft.net, daniel@iogearbox.net, andrii@kernel.org, 
+	kuba@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
+	jolsa@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, antony@phenome.org, toke@kernel.org
+Subject: Re: [PATCH bpf-next v3 3/4] bpftool: btf: Support dumping a single
+ type from file
+Message-ID: <zf62rqtgvl63sawxltmpgcnpek5bt3w5pleznby3zqb7ezhvdz@wqlwxy2f43wt>
+References: <cover.1733787798.git.dxu@dxuuu.xyz>
+ <3bc17d33161961409dc77a5de29761bf2bed4980.1733787798.git.dxu@dxuuu.xyz>
+ <CAEf4BzaA9_up=3npADgJv8pCVg4eVzsWevef69c3PkdyuWNXDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <674f31ec.050a0220.48a03.003e.GAE@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzaA9_up=3npADgJv8pCVg4eVzsWevef69c3PkdyuWNXDQ@mail.gmail.com>
 
-On Tue, Dec 03, 2024 at 08:29:32AM -0800, syzbot wrote:
-> Hello,
+On Thu, Dec 12, 2024 at 11:09:34AM GMT, Andrii Nakryiko wrote:
+> On Mon, Dec 9, 2024 at 3:45 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
+> >
+> > Some projects, for example xdp-tools [0], prefer to check in a minimized
+> > vmlinux.h rather than the complete file which can get rather large.
+> >
+> > However, when you try to add a minimized version of a complex struct (eg
+> > struct xfrm_state), things can get quite complex if you're trying to
+> > manually untangle and deduplicate the dependencies.
+> >
+> > This commit teaches bpftool to do a minimized dump of a single type by
+> > providing an optional root_id argument.
+> >
+> > Example usage:
+> >
+> >     $ ./bpftool btf dump file ~/dev/linux/vmlinux | rg "STRUCT 'xfrm_state'"
+> >     [12643] STRUCT 'xfrm_state' size=912 vlen=58
+> >
+> >     $ ./bpftool btf dump file ~/dev/linux/vmlinux root_id 12643 format c
+> >     #ifndef __VMLINUX_H__
+> >     #define __VMLINUX_H__
+> >
+> >     [..]
+> >
+> >     struct xfrm_type_offload;
+> >
+> >     struct xfrm_sec_ctx;
+> >
+> >     struct xfrm_state {
+> >             possible_net_t xs_net;
+> >             union {
+> >                     struct hlist_node gclist;
+> >                     struct hlist_node bydst;
+> >             };
+> >             union {
+> >                     struct hlist_node dev_gclist;
+> >                     struct hlist_node bysrc;
+> >             };
+> >             struct hlist_node byspi;
+> >     [..]
+> >
+> > [0]: https://github.com/xdp-project/xdp-tools/blob/master/headers/bpf/vmlinux.h
+> >
+> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > ---
+> >  .../bpf/bpftool/Documentation/bpftool-btf.rst |  7 +++++--
+> >  tools/bpf/bpftool/btf.c                       | 21 ++++++++++++++++++-
+> >  2 files changed, 25 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/tools/bpf/bpftool/Documentation/bpftool-btf.rst b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> > index 245569f43035..4899b2c10777 100644
+> > --- a/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> > +++ b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> > @@ -24,7 +24,7 @@ BTF COMMANDS
+> >  =============
+> >
+> >  | **bpftool** **btf** { **show** | **list** } [**id** *BTF_ID*]
+> > -| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*]
+> > +| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*] [**root_id** *ROOT_ID*]
+> >  | **bpftool** **btf help**
+> >  |
+> >  | *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* }
+> > @@ -43,7 +43,7 @@ bpftool btf { show | list } [id *BTF_ID*]
+> >      that hold open file descriptors (FDs) against BTF objects. On such kernels
+> >      bpftool will automatically emit this information as well.
+> >
+> > -bpftool btf dump *BTF_SRC* [format *FORMAT*]
+> > +bpftool btf dump *BTF_SRC* [format *FORMAT*] [root_id *ROOT_ID*]
+> >      Dump BTF entries from a given *BTF_SRC*.
+> >
+> >      When **id** is specified, BTF object with that ID will be loaded and all
+> > @@ -67,6 +67,9 @@ bpftool btf dump *BTF_SRC* [format *FORMAT*]
+> >      formatting, the output is sorted by default. Use the **unsorted** option
+> >      to avoid sorting the output.
+> >
+> > +    **root_id** option can be used to filter a dump to a single type and all
+> > +    its dependent types. It cannot be used with any other types of filtering.
+> > +
+> >  bpftool btf help
+> >      Print short help message.
+> >
+> > diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
+> > index 3e995faf9efa..18b037a1414b 100644
+> > --- a/tools/bpf/bpftool/btf.c
+> > +++ b/tools/bpf/bpftool/btf.c
+> > @@ -993,6 +993,25 @@ static int do_dump(int argc, char **argv)
+> >                                 goto done;
+> >                         }
+> >                         NEXT_ARG();
+> > +               } else if (is_prefix(*argv, "root_id")) {
+> > +                       __u32 root_id;
+> > +                       char *end;
+> > +
+> > +                       if (root_type_cnt) {
+> > +                               p_err("cannot use root_id with other type filtering");
 > 
-> syzbot found the following issue on:
+> this is a confusing error if the user just wanted to provide two
+> root_id arguments... Also, why don't we allow multiple root_ids?
 > 
-> HEAD commit:    0e287d31b62b Merge tag 'rtc-6.13' of git://git.kernel.org/..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=179f05e8580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7903df3280dd39ea
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c39928fd177c28b5fa1f
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> I'd bump root_type_ids[] to have something like 16 elements or
+> something (though we can always do dynamic realloc as well, probably),
+> and allow multiple types to be specified.
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/555649be4570/disk-0e287d31.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/612b3b44653e/vmlinux-0e287d31.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/9cdc015d8348/bzImage-0e287d31.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+c39928fd177c28b5fa1f@syzkaller.appspotmail.com
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.12.0-syzkaller-11930-g0e287d31b62b #0 Not tainted
-> ------------------------------------------------------
-> kworker/0:4/5894 is trying to acquire lock:
-> ffff888048f4dbb0 (&ei->i_data_sem){++++}-{4:4}, at: ext4_map_blocks+0x3be/0x1990 fs/ext4/inode.c:665
-> 
-> but task is already holding lock:
-> ffff888048f4dec0 (mapping.invalidate_lock){++++}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:873 [inline]
-> ffff888048f4dec0 (mapping.invalidate_lock){++++}-{4:4}, at: page_cache_ra_unbounded+0x143/0x8c0 mm/readahead.c:226
-> 
-> which lock already depends on the new lock.
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #6 (mapping.invalidate_lock){++++}-{4:4}:
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->        down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
->        filemap_invalidate_lock_shared include/linux/fs.h:873 [inline]
->        filemap_fault+0x6e8/0x1950 mm/filemap.c:3332
->        __do_fault+0x137/0x460 mm/memory.c:4907
->        do_read_fault mm/memory.c:5322 [inline]
->        do_fault mm/memory.c:5456 [inline]
->        do_pte_missing mm/memory.c:3979 [inline]
->        handle_pte_fault+0x335a/0x68a0 mm/memory.c:5801
->        __handle_mm_fault mm/memory.c:5944 [inline]
->        handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6112
->        faultin_page mm/gup.c:1187 [inline]
->        __get_user_pages+0x1c82/0x49e0 mm/gup.c:1485
->        populate_vma_page_range+0x264/0x330 mm/gup.c:1923
->        __mm_populate+0x27a/0x460 mm/gup.c:2026
->        mm_populate include/linux/mm.h:3386 [inline]
->        __do_sys_mlockall mm/mlock.c:769 [inline]
->        __se_sys_mlockall+0x3e3/0x4d0 mm/mlock.c:745
->        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->        entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> -> #5 (&mm->mmap_lock){++++}-{4:4}:
->        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->        __might_fault+0xc6/0x120 mm/memory.c:6751
->        _inline_copy_from_user include/linux/uaccess.h:162 [inline]
->        _copy_from_user+0x2a/0xc0 lib/usercopy.c:18
->        copy_from_user include/linux/uaccess.h:212 [inline]
->        __blk_trace_setup kernel/trace/blktrace.c:626 [inline]
->        blk_trace_setup+0xd2/0x1e0 kernel/trace/blktrace.c:648
->        sg_ioctl_common drivers/scsi/sg.c:1114 [inline]
->        sg_ioctl+0xa46/0x2e80 drivers/scsi/sg.c:1156
->        vfs_ioctl fs/ioctl.c:51 [inline]
->        __do_sys_ioctl fs/ioctl.c:906 [inline]
->        __se_sys_ioctl+0xf7/0x170 fs/ioctl.c:892
->        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Thoughts?
 
-#syz dup: possible deadlock in xfs_vn_update_time
+That's a good point. I added this check b/c I didn't think it would
+make sense to allow `root_id` filtering in combination with map dump
+filtering (which uses same root_type_ids param):
 
+        map MAP [{key | value | kv | all}]
 
--- 
-Dave Chinner
-david@fromorbit.com
+But code can easily be tweaked to still block combination but allow
+multiple `root_id`s when used alone. 16 seems sufficient to me.
+
+Do you think it'd be more bpftool-y to require "root_id" each time or to
+just take a comma separated value?
 
