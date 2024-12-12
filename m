@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-443282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31399EEA7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:15:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1621516A8FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:09:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC2521660C;
-	Thu, 12 Dec 2024 15:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a1ewZy5D"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23E89EEA34
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:10:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872E521E085
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59F90282E5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:10:36 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1992165F0;
+	Thu, 12 Dec 2024 15:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ibgVMhkL"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14E1213E97
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734016154; cv=none; b=C1ipdk5Im6FXzLUJuJr+oSfg+S3TJs36SsoRl2BaQ+vLLMWNXxTMOgwaFKmgfW2sujZjB60VFeCc2it0MUSu0tcyteLVhgIyd8vh/kJfxfHL6fbXY8vyzVH2lEWfBbG6OSpQe3c8bqCLOtJRUuSdziQdvoZBkyrXUWFxN0Qt2XU=
+	t=1734016231; cv=none; b=gmDgRSNBIj6gRLXvL8uvYNp9UsZqHEHH/Ag2VMDSL1uvyMi4iUtXzgDJm9B+SqO0gbUITBTFqlHdV1lZI4v+OXCeO7HyPbSzLtYCuPfVABeqsUTvVIPcsyefVlFgVV4yRPinuSi8XdngvCUdDSPzIYxv4JLrayJ2r3Qvzz7SGeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734016154; c=relaxed/simple;
-	bh=kPKepROpxS43D+DUd0rMsLd1XyZAByT65j1DYkG+a58=;
+	s=arc-20240116; t=1734016231; c=relaxed/simple;
+	bh=PVMqYhRnm+wlo36tmUvToJZQuhqtTu5OAs/h41zHOy8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T3vbyxSVP5iHGaaSh+uGmSXSmHxcaHJHM0lfE2uFw2zFp3ZenKTdqxsxELIbxFZVe9dgAIkfgCl3j65yP36F8BMxhMIORWZ78tfWYVMUpyftODnoxe2NPwdPsQUG88X9/2zwI6zULgDvZ2jMNswTCbZJHvqxb4WlY5hwlazeBmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a1ewZy5D; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC80jVL002304
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:09:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WWoZhsKROhJsNL7oGlk/RfeOg6LjV5292KaV8g0SxpY=; b=a1ewZy5DVCJIjH9V
-	uaijHdv4TIFF71k0DvPnL+w/59CidACoz5JzfHKFHvIvzZXpquil3ziITjjLrF+e
-	xt1WsRH+ZGZmPFiVigSRozrlIo4gi9YBDr01tGkyBmqpAq8RJEX3bZ+LBUbatMZx
-	HfzkcrF/ymczqRsuCoNmcV4rKvd34lWjhNXzXY0TyoI7EJquYhV6ApRH2PJK36cg
-	P4fgMVBg+cAPfRgYz9nuno7P62PPvabaUPjiXCwGfAEFD6REjTHMhLdP13P5Mdue
-	eRDs0H+MccrAYo90jvQfLTzPAyv60ddwsBrL4x4kbqbEkaa4co7mIdtJcCuZqYuf
-	pixqbw==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eyg65w0f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:09:11 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d8a3cb9dbfso1789096d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:09:11 -0800 (PST)
+	 In-Reply-To:Content-Type; b=ZR2tYXW0KSNzkH42jDpmMTqIA0ReGgHhp7SS6/jvKypD2MkQjx+7G5mBsevtPdeBxSt5dYva/eylWBgCrswux0w/VNV59OS/cUVS+qggK2rlNZgtbD0nREaAORTdb/CpzKb+6kUHDXys34YLRZ+DeFkPY/qOOz0IRfnbRoR7Fbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ibgVMhkL; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53de3ba3d39so109552e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:10:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734016228; x=1734621028; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J4SFfVxcg8kxQKbemWXTRZwVNSWaAt8ZevWakc+qwDM=;
+        b=ibgVMhkL6Otf7ODVkhwzJ/CLnP9eR+Zuu68Kkh7XIkOviVjLNPvmq6ExbrhFjbue5K
+         zM1lrUw5Efyy0FgRDy0enc6nSPkfreLXck+Uf4Sg8QUtYP85u2aOjyPz5X6MJ+/9UV7i
+         CYTkw0j6Coru8o/Q/ND3wCef6rF/OcvxITDD5S2dtNgXSCr77ELzFrnpqNIQJGNImggm
+         lWLUfIRBFeddbvSocnd1e8UruTc72PJDxN90b2fNT7PrwBKXoWPrvFkCT7XxLo3lOnmY
+         mLZAHi8wBLLC681gdWFGzISH+pTK9xIvhWy6tvETPCou4yS8GS2oafDR87+Q4HaeSAuk
+         QH6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734016150; x=1734620950;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1734016228; x=1734621028;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WWoZhsKROhJsNL7oGlk/RfeOg6LjV5292KaV8g0SxpY=;
-        b=aLcFsnhXrl1i7v0Ef8t1v6A1ol+SIha+0rURNmmEnesexLjNoe7ep/HiQbHDN4Ufl/
-         7tbNtisTOG1neT1iCFCIZGDiUO22dYjl3gK/rM1JTAhxy7TTs4uNnxozZidQObvRBwHo
-         FJUIPG8thIQogwlbP3D+VmlWOknX5SFaP9g5YyLhEfKp+8ahX9+DjYTdioET7dJT4XtC
-         bxYxZszOrz5W2eQUn7XobbDDgKHbQ+fvELbml63qe7d/w+qlqQcR/LUGejtX6u2VrN3E
-         7yPsavY4BhbJ5ez5dkpiXLYZ72ZlMmXwkuh/gm7kkDiRnRese+5CQhTdnC9vkgApaAy/
-         yk6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXytS7gaDG34nkCOJm63z0MHMEq1Cr7VXuEmnp4lud+ATjtbFCneYt0zfybxHzyMDIaXp7SVSeoDfYP578=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuEynuwMqsQB0cwtNe/djbxFZhXbCinUEBKDhcd62CPY25yGH1
-	fzq+y3AJMbDn9nYoReJWkJ971cBtLhxY0rpPM36Xbpp5Y8yOU07ynsFfCAfAuYcR96/OLtJHZNC
-	jobHRD6J4xbkXcnsG+q8Htj/P1lb6Pen919D/sHuB0J8BCEGuLgXRX7hsgwXGkxLZNm70H4w=
-X-Gm-Gg: ASbGncum6uI0bcWsLFiLz7CmvyIQ+S0wqDfCc2VzUmvUGR1KwZIyAASrolRApMD6aCu
-	xluEoHbamJARgvZgvxYMNvws+jfuW555n4vJiOz1ySLp2oatbhxBz6oBs2qtSey3BoDItI/lqi5
-	QjA80IRYsW3i9QcjPY33uEmhDQd8CWWUX8Bjrz2txcmj2su0we5nwh39J7TtHo/zuhkCyp2hNOo
-	VRSmv/uuCQ4RhoGtqAHcOyu6xbyH9YXYjBAeTcDrWwmB8L8qO7H8NIr5sNbA2OwmRxVechcp/7a
-	59IqM9AEFcReI6Zr8r3eMv8Hkf4skSIQOYXfYA==
-X-Received: by 2002:a05:6214:3016:b0:6d8:cd76:a44d with SMTP id 6a1803df08f44-6db0f5cda60mr3223736d6.0.1734016150311;
-        Thu, 12 Dec 2024 07:09:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFObVItKkexRSdtaJh76BpL6TAUzV1mdsNNZuTKmUGMDVCaT/aEhe37aNaCPzag8mlH8Apb+g==
-X-Received: by 2002:a05:6214:3016:b0:6d8:cd76:a44d with SMTP id 6a1803df08f44-6db0f5cda60mr3223566d6.0.1734016149953;
-        Thu, 12 Dec 2024 07:09:09 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa67cd1e82bsm667249866b.53.2024.12.12.07.09.07
+        bh=J4SFfVxcg8kxQKbemWXTRZwVNSWaAt8ZevWakc+qwDM=;
+        b=XuyKrbe8E775Tkb1/MgVdwVr2s+Jp/8dE+8AD1dbvNqQfMKeFoA3jTVu1rgJ3RfocR
+         HxNrUQHCXYmPMfGrCPuvvurRXdKrBidtDRxRyQ0ZUDRgNRx6d3+oVfYVBVNM5vqV2qVG
+         IY8UuaKRWOj4R6Xrsl9jn7r0kPKvYDBkEEGyq4BSX4m+dgBLcLjJhotGkDNuGAXZYKOh
+         /7YsFhSrVyFAs28eL+reFha+E+krbQ1KC7JWVqy/6Cr/2WohUQehlBfPVh9hqLLIoiCp
+         lSBBrE3uhsFTSEo66jq8x3luxROz6LoDWWtwqDk61H2VgdUAgOoqR5jde1n/oVg8etk+
+         tjwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpxfMNLubnkeVjzv5gGMA60ttr6/UBDJZ0rahfKzTTTEBxHBizNUifvuLRHkP+gx6j66mNLCH7MWdYduE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK5+ZK5RV5eEkeMLQn3pUAopDd7smO9KZCO9G0fYINmh/c+9wg
+	RGRUtnHGFpcyO3S8KSa4f1x/HPTmIti3cqhP9YyJjEmtzkrLDvpQVKBA9y4eU+g=
+X-Gm-Gg: ASbGncv/gVAK2cJWANMwM072t/q6r+MAyDMvnZb7BoZ3xRmjhLhy5otDpg1vXnD9qlm
+	lWKqumpRvC6acNrnMgXMbeHrqkSHB0+NnuDYs7R9jf/V7l7t0ejQ2gaCJyk7/oU7juUY2cMZXqc
+	UdnIedfu8EUHuWzPV4nHR0h5D1+0h/FUZILGS6zTjR7EDNVcBU69QR6vYbefFrsCKC2MMHpTzKj
+	iwqvrziu47T4IYUN6HNf2DoTUxkC6LJKCa3hKzmj9lAuY8vqfsjDXeL8+WBRdSf3IBocb6zR8z9
+	g3HBOY2TQRcWIxI37kKSMnNVU0KPsGSjV9A=
+X-Google-Smtp-Source: AGHT+IGoT95idUMEO9RITO/ZyilZmUskXfV3dbvT0qvNs7YP/Wmf43CG98sgGDEwsXtCh7HB0MnesQ==
+X-Received: by 2002:a05:6512:3a96:b0:540:1d6c:f1b1 with SMTP id 2adb3069b0e04-54034101c2emr104792e87.2.1734016227943;
+        Thu, 12 Dec 2024 07:10:27 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e34a49561sm2002136e87.83.2024.12.12.07.10.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 07:09:08 -0800 (PST)
-Message-ID: <8a684eb4-c824-42d6-8070-9c6b3d582b77@oss.qualcomm.com>
-Date: Thu, 12 Dec 2024 16:09:07 +0100
+        Thu, 12 Dec 2024 07:10:26 -0800 (PST)
+Message-ID: <09dd1971-74f5-45df-9ecc-e5c2253f416f@linaro.org>
+Date: Thu, 12 Dec 2024 17:10:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,47 +80,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Enable external DP
- support
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
-        Johan Hovold <johan@kernel.org>
-References: <20241212-x1e80100-qcp-dp-v1-0-37cb362a0dfe@linaro.org>
- <20241212-x1e80100-qcp-dp-v1-3-37cb362a0dfe@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241212-x1e80100-qcp-dp-v1-3-37cb362a0dfe@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v8 1/3] clk: qcom: gdsc: Capture pm_genpd_add_subdomain
+ result code
+Content-Language: ru-RU
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-0-5d93cef910a4@linaro.org>
+ <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-1-5d93cef910a4@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-1-5d93cef910a4@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 7IO2seT10PFEKi-Tu7dzVcE6kgGX0je_
-X-Proofpoint-ORIG-GUID: 7IO2seT10PFEKi-Tu7dzVcE6kgGX0je_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- mlxlogscore=739 phishscore=0 suspectscore=0 mlxscore=0 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120108
 
-On 12.12.2024 2:08 PM, Stephan Gerhold wrote:
-> Now that the FSUSB42 USB switches are described, enable support for DP on
-> the three USB-C ports of the X1E80100 QCP. It supports up to 4 lanes, but
-> for now we need to limit this to 2 lanes due to limitations in the USB/DP
-> combo PHY driver. The same limitation also exists on other boards upstream.
+On 12/11/24 18:54, Bryan O'Donoghue wrote:
+> Adding a new clause to this if/else I noticed the existing usage of
+> pm_genpd_add_subdomain() wasn't capturing and returning the result code.
 > 
-> Co-developed-by: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> pm_genpd_add_subdomain() returns an int and can fail. Capture that result
+> code and throw it up the call stack if something goes wrong.
+> 
+> Fixes: 1b771839de05 ("clk: qcom: gdsc: enable optional power domain support")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
+>   drivers/clk/qcom/gdsc.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index fa5fe4c2a2ee7786c2e8858f3e41301f639e5d59..4fc6f957d0b846cc90e50ef243f23a7a27e66899 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -555,9 +555,11 @@ int gdsc_register(struct gdsc_desc *desc,
+>   		if (!scs[i])
+>   			continue;
+>   		if (scs[i]->parent)
+> -			pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
+> +			ret = pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
+>   		else if (!IS_ERR_OR_NULL(dev->pm_domain))
+> -			pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+> +			ret = pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
+> +		if (ret)
+> +			return ret;
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+This is wrong, on the error path you shall rollback the registered subdomains
+in the reverse order.
 
-Konrad
+>   	}
+>   
+>   	return of_genpd_add_provider_onecell(dev->of_node, data);
+> 
+
+--
+Best wishes,
+Vladimir
 
