@@ -1,141 +1,173 @@
-Return-Path: <linux-kernel+bounces-442887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D84E79EE37F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2BF9EE385
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B036283B08
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E422856A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBA420FAB5;
-	Thu, 12 Dec 2024 09:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B05210185;
+	Thu, 12 Dec 2024 09:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WNQef5as"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="sSOjReEO"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2086.outbound.protection.outlook.com [40.107.117.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D082204C3D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733997400; cv=none; b=UK6dxPSQChQHiEVJXUR03ufRp6mGN7/CjbulC9OvEOB/AvwhT7h8INRzM79oIdh9bgmhkKLpPC1XOHltMDFZb/PwHFZkwu/WA7y7EDc6734aJ7jfbFiLXwUE95GPjLhODj9ta/+yXuAbbHFleLABa4MkNDMLpQl55C17kjA2U+U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733997400; c=relaxed/simple;
-	bh=GKpvAGsMS43/hyHIryMhSg1ry1xLRCtSL4HX806+2IU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B3rxHmMmCXazsxziDBf2/bAVFPRtfDo0uNcJ11xh7pHAgO8MJewDuCYmihJjAAEE5Zq2Kj7RtdD/y9JvTYbjlQuAYi0Rn5qD2PLBFaUHWFwwy61pQYTo/HyWBdfOfX1BPrlSzid35si8SZetm5OFyLKtGdx9umEN2mFFE2ufQco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WNQef5as; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-728e1799d95so461290b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:56:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733997398; x=1734602198; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qLxnIzd4GcNME5sPG/fJL7Fz3DLaanT+mToVRVhPGgA=;
-        b=WNQef5aslxsi+fTLX6SBSLtjqCBO7Gcl6Mlq/FGJoX0Z/9ccE4wN9Pg3+guhXgXr+G
-         WS0vM6M+/zC5hNol7q60L1rhVVQ+3xartvnACP445beYohDqjEhcGBRf7bK8wEkOnPpH
-         bc9NAvH8AGsVgo/nkUfFSHGpdEwFAPsF2MX16UtkApIyMGLyf0+vCcjlUf/H00W+nZZQ
-         An2zlRVRpL97yE6XE4TLjXFLVJcpv0FFhc/mXjLBMjAJsRqrt2+m7zSKghFK3Qg12B8y
-         A2fay7ShfDOLcRkSFfz/Ecz01ms0EIk8cxy0sOo0W/5rCFHk6oB56+t9CiNDHHuMmh8I
-         Wi4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733997398; x=1734602198;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qLxnIzd4GcNME5sPG/fJL7Fz3DLaanT+mToVRVhPGgA=;
-        b=phST/Au3R/xUWOZ1yHcWLI4VPiakG45iNvtjvgMLghTypDDGI7EahIlZ+jdoKCqxju
-         GjEXkCpQjG7pnVBS+X8yn5t2C/eF1r0q2GMlUhfmUrIhANeJkwRaNDf6boBkjS8KMD+C
-         ltUroTInPZSYCxiLEQIh0mvjOhMyC+K+SR9jV/YdH05SneaPzOMOGmrUi0zB1vfVgTy0
-         uD6/ghXpHMBFmi8H3CF3i3Qkl5uNMWkTi4KdG1jeL2OerBA7Lc1wX0IfydqrqwSQNmL5
-         l5X3OaJo/W+4RcpVT43rJpLbfso0YnMp3myZmOizwQgO8nycaHCDEkmNG/F8Nr3ng5h2
-         X6Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1fveQ7EYW+imjedlaLiS7GoXY0SpPuH8uz9+jhRHGrN+E0Er2dlxdORL0Jm61/9b5QJLD/+4gNLfPXqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSWG6c+b5j/V6hgzS4kGw2h1lyCaJIAezEpVEs0mYvnjmbKn2H
-	ltnl/NUaGoVWwKl1WvSXj5GwQlFkmldyc0csYg3/3NGqzH4idZHnRX2SaUuAVkYV0yidvjJ6UNh
-	Y1a0z9dHh9+1LX3jHrXxbOYx86R6VHoZ/C/fDeA==
-X-Gm-Gg: ASbGncv7jegsMqfzbjmHqnJsrS1sa5dlVvccCOCu7dWHPAB/ALTw67dAa6RUcpJf7k4
-	42kYmcRLT/reIrMoOWrR9Uz8OJMtpYv73T8f2w7Sa64g4xcPodhNJeAnOMjy3JenXBpE=
-X-Google-Smtp-Source: AGHT+IGpVV7yOgN9mrdK/dpaEbiuCT191rsv8/JqgKKRVwEP7O1nhHdYADcNLCU2hU8Pl5OhGH11PhjfTR72EWDYaFs=
-X-Received: by 2002:a05:6a20:918d:b0:1e1:aab8:386a with SMTP id
- adf61e73a8af0-1e1ceae1c51mr4067839637.18.1733997398419; Thu, 12 Dec 2024
- 01:56:38 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4148120E308
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733997443; cv=fail; b=HLbNAlZ2Vv5UAa400dVxi3fuhR+AVYaO6PpaDG38+OYiK7pG5J4MTbrDbaAwf4aUkqNndwo1YHLEt/3HmH2J7a5ssIAHgozJTL7T4NK3JdXwyHo6o9K09RQGcf0EYPPpxwZ04LBzTI8R+xV+6wW6lh5UMjkZoOE8LbZanaMaoTw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733997443; c=relaxed/simple;
+	bh=2E0vdRlYWcvZ4UpObQ7ZbZCIebi9n7rRbYFeHdXt8eI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GHEC7V38TSSIr57vQUJi0Fv8gcOxh9GYFzoulndUfUvIYBUcuYgSGMT4BvMoBiDKDD9axUmHgiB9XOz3TQyEOKjebxxFesgT+fUDghhLYLIN8bvEamScJYnF4KlcWiSubKfQoYA+3QMfMvCJ3rri3zhwJ8HqQT06W+VeDQ7Z3hY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=sSOjReEO; arc=fail smtp.client-ip=40.107.117.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KArLxVd1drQeb6yQrYaHbpoFjQVa6jJfLCh4loZfipCYpZydlC3vZj58VfQvVVBYEYrvZqkaDmObc1cq71FEdnCJR5wEpo/nnJkP0LRsJ7LWjEQ3WFrHDdYoIVpE4ScJo8QzNibXoXLMn/JAZmvMqCFOfOeGKlVx4arnFL40vmVvRYsGQ56DxMcFY/y4iluHqphhHSNG+YJgASWJl063Y1PHUI2lBFFJnkMuTf8YifkNqyWnEyHOfnwnYrQLiTQahVEX9TXenO5zubduO7KgmpBHzfbkBtpz4LtQ7eskSlsSOyDbdZ3FmykRiKnlrMeRJG0Nxh2BFdIEGzde9/MJ2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y19EQsVygP9K9V9bYVBEpblh0sNEKwAAVCYLQO7LLKg=;
+ b=czJJRtX5c8ykSmMyLnqF8k4rww3uQSYAYbcYqx+pwc8TF9m4wxpKO+F3oUFQeNp7A9y5ptVbCjMyDRE26pSdiWfpB75fjf5an2Fu/KgnCQZ2HfXYcjl3+aIqgQkY/7FW+1vZNZSdYphIqtqJoFv+Gn25KYm7wGUEw9LiSkCZAwG/oFTT0JncCJ1nTnWgh44cU6wjc7mSRPebo53zoT3kilnImttQw7SY/2cVNoriF4Z1gGSUNBJJPkqQzUV2kgH81bsqhlDzMc+M83w/a1EdJBT5xLv/U/b2ojXRudQwE6dLQV4z0SFrzRFiUD90YOlr1spgmo3yLssXbx608nBN1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=oppo.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=oppo.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y19EQsVygP9K9V9bYVBEpblh0sNEKwAAVCYLQO7LLKg=;
+ b=sSOjReEOuZSIU/1Z8CBC602kFNgBAAI1vfI5jvE3rjgqwuTAn0UOH5LCi4f2hYzq/4Oio32/3s7VYUx1rzPzwXHFE0Rrput0i9+1zAFRILLTVA9FVk8FZU9YdH2V46jksYhXeIhorNxYDunFGcVVdo9gTDzooRYmA9+VysOPdDc=
+Received: from SI1PR02CA0033.apcprd02.prod.outlook.com (2603:1096:4:1f6::14)
+ by OSQPR02MB7767.apcprd02.prod.outlook.com (2603:1096:604:277::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Thu, 12 Dec
+ 2024 09:57:14 +0000
+Received: from SG2PEPF000B66D0.apcprd03.prod.outlook.com
+ (2603:1096:4:1f6:cafe::3b) by SI1PR02CA0033.outlook.office365.com
+ (2603:1096:4:1f6::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.15 via Frontend Transport; Thu,
+ 12 Dec 2024 09:57:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ SG2PEPF000B66D0.mail.protection.outlook.com (10.167.240.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8251.15 via Frontend Transport; Thu, 12 Dec 2024 09:57:14 +0000
+Received: from PH80250894.adc.com (172.16.40.118) by mailappw31.adc.com
+ (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Dec
+ 2024 17:57:13 +0800
+From: hailong <hailong.liu@oppo.com>
+To: <akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <yuzhao@google.com>,
+	<21cnbao@gmail.com>, Hailong Liu <hailong.liu@oppo.com>
+Subject: [RFC PATCH] mm/mglru: keep the root_memcg reclaim behavior the same as memcg reclaim
+Date: Thu, 12 Dec 2024 17:56:46 +0800
+Message-ID: <20241212095646.16164-1-hailong.liu@oppo.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211185552.4553-1-kprateek.nayak@amd.com> <20241211185552.4553-8-kprateek.nayak@amd.com>
-In-Reply-To: <20241211185552.4553-8-kprateek.nayak@amd.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 12 Dec 2024 10:56:27 +0100
-Message-ID: <CAKfTPtDQy=VfH3Ta8zLSACX7QV+LWaRvj_ueN=iSu5i4t8oBtQ@mail.gmail.com>
-Subject: Re: [PATCH 7/8] sched/fair: Do not compute overloaded status
- unnecessarily during lb
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	Tim Chen <tim.c.chen@linux.intel.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Meng Li <li.meng@amd.com>, Huang Rui <ray.huang@amd.com>, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw31.adc.com
+ (172.16.56.198)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66D0:EE_|OSQPR02MB7767:EE_
+X-MS-Office365-Filtering-Correlation-Id: ad1139d1-7385-4c21-052c-08dd1a935af4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0ZxG8oofBQjUTY0xRJEHsd/kSGj4JQXrRAjvscbIiRRWIZENjoZXDMrEuV1y?=
+ =?us-ascii?Q?FhG+E/oBhQcbnR/zP2IUhPyNj43QEeg7NJJeybNwRRImksAZ4/s1aVOPseRh?=
+ =?us-ascii?Q?USSmd4U9ZEQXtpV2hujk0uu1qivSiLmhOQbQlHXpAUWnmXQQHY03mHIgwWhX?=
+ =?us-ascii?Q?KiP1ScYjf6aPx9q2w2JAYpwcZVmNXdbAGdLQTe1urRhOZdRQAC80EAiiclZ7?=
+ =?us-ascii?Q?LSyi9VooKeEhtKaQA0cdhB8Kg7JrvAf6D/kHXKMAjIry66zqy93UdAmMEoWn?=
+ =?us-ascii?Q?RIXs0zyXAjbLR+09FOJVmHGuCZ6+RTg+7ll8SRtB6Ma4Jq2/4oD8qQkNxKBr?=
+ =?us-ascii?Q?uZNQiuynqNLut31piVt+SHPo2ugQtYBt9XLS2VqVrL4BQKnYGuBhISb7KuJL?=
+ =?us-ascii?Q?kJ8EmP/N1iV4mdhffYM6hfeMa9QzGXOJTdDqh+vcxS/kAv/8ifKx2Q8Cqkih?=
+ =?us-ascii?Q?jjiv+Khc7v8EuoqL/MW0Wdpw48KBxftci6L5hEJlSJ8648pcAwfo7VEdSf7j?=
+ =?us-ascii?Q?ZzbpCOYwpmj96QrrliydeAFO6ZgOjycT8gPPfy+rBRRGJEJNiSohKWLYAPwf?=
+ =?us-ascii?Q?sBwb198pAX9toPVqpxPc2GizL84LDGndxbIZuUBuwi2VLODCm0wD4HQK1q50?=
+ =?us-ascii?Q?gDYtEyQ81BKMpgBHOH6LaAaTTEMcTLSyPXB7nfVSmLFRp5vRVwlU5m37dsTc?=
+ =?us-ascii?Q?KP1Y4VW2lc4bguXhinyYTmkuu2ano+b0OfB/aQM9fU78iPJDOTcG+nfXtkLf?=
+ =?us-ascii?Q?7y6Fz2IO/cxnDxcFJYUGyU/w5+qZaU7oj1iySaFyIDsJLxl+FJqKNStl6jtl?=
+ =?us-ascii?Q?F4qw7C4MLb5Fzz/mZ9AT5Eaa1rlQ3u1MkMNn8eW66fI6PlE5d0kWQD6NjYlN?=
+ =?us-ascii?Q?T4S9RyW7WlYQfn0q8mK0dQXaclxYs/yNK5CPTA46a3ugjKj4junZVEijvF0Z?=
+ =?us-ascii?Q?ANynv9Qf9qimWjpUR5ARJfOCWrCLj7/ADNalM3bL/6wsL4aZJjhzjD1r9Lnm?=
+ =?us-ascii?Q?Pga13ho2avV7UK261D+YJjRGM84pw36KPwywOR0wBB4l/uqk0yzayGqDr/Wq?=
+ =?us-ascii?Q?OMG1CdLGOufsZkQrRujgtVesbDgfdmiiJ38Il7t62bJ029rilNwqba25IP46?=
+ =?us-ascii?Q?EilkMOtX2oL6R99QIFRmp3XZElQTwFg+63b5hDBs2Y8zzsbDkkg8C4MvLy+i?=
+ =?us-ascii?Q?JjFFtBquKp9o4IkyIrhi5GlSQ7rXtOmnBFIfq1P2xLpvsv/TKKfpi1qSobCA?=
+ =?us-ascii?Q?j4018mEZ7uHQ1+MVKSGq76aE9c8w0+B+IuLhtPodZEnGBnzo8yeCJbqqxhEp?=
+ =?us-ascii?Q?m6H8hTMtRbWl9Xy447YkZT7JqyJN2C37u/JtxH0j4MMNBQR/G3inrmREgwST?=
+ =?us-ascii?Q?L7gQlKf+TyB03TU2vpQ9U6/DKWfLhdIHkBBw4VD0UDwc8w5BzuSA7qhiXa3o?=
+ =?us-ascii?Q?Oq1hrJx2L3yJEQTlMUz+HZps3o2/acrc?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 09:57:14.3997
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad1139d1-7385-4c21-052c-08dd1a935af4
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG2PEPF000B66D0.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR02MB7767
 
-On Wed, 11 Dec 2024 at 19:58, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
->
-> Only set sg_overloaded when computing sg_lb_stats() at the highest sched
-> domain since rd->overloaded status is updated only when load balancing
-> at the highest domain. While at it, move setting of sg_overloaded below
-> idle_cpu() check since an idle CPU can never be overloaded.
->
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> ---
->  kernel/sched/fair.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index ec2a79c8d0e7..3f36805ecdca 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -10358,9 +10358,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->                 nr_running = rq->nr_running;
->                 sgs->sum_nr_running += nr_running;
->
-> -               if (nr_running > 1)
-> -                       *sg_overloaded = 1;
-> -
->                 if (cpu_overutilized(i))
->                         *sg_overutilized = 1;
->
-> @@ -10373,6 +10370,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->                         continue;
->                 }
->
-> +               /* Overload indicator is only updated at root domain */
-> +               if (!env->sd->parent && nr_running > 1)
+From: Hailong Liu <hailong.liu@oppo.com>
 
-nit: may be worth checking local variable 1st which should be cheaper
-than env->sd->parent
+commit a579086c99ed ("mm: multi-gen LRU: remove eviction fairness safeguard") said
+Note that memcg LRU only applies to global reclaim. For memcg reclaim,
+the eviction will continue, even if it is overshooting. This becomes
+unconditional due to code simplification.
 
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Howeven, if we reclaim a root memcg by sysfs (memory.reclaim), the behavior acts
+as a kswapd or direct reclaim.
 
+Fix this by remove the condition of mem_cgroup_is_root in
+root_reclaim().
+Signed-off-by: Hailong Liu <hailong.liu@oppo.com>
+---
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +                       *sg_overloaded = 1;
-> +
->  #ifdef CONFIG_NUMA_BALANCING
->                 /* Only fbq_classify_group() uses this to classify NUMA groups */
->                 if (sd_flags & SD_NUMA) {
-> --
-> 2.34.1
->
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 76378bc257e3..1f74f3ba0999 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -216,7 +216,7 @@ static bool cgroup_reclaim(struct scan_control *sc)
+  */
+ static bool root_reclaim(struct scan_control *sc)
+ {
+-	return !sc->target_mem_cgroup || mem_cgroup_is_root(sc->target_mem_cgroup);
++	return !sc->target_mem_cgroup;
+ }
+
+ /**
+--
+Actually we switch to mglru on kernel-6.1 and see different behavior on
+root_mem_cgroup reclaim. so is there any background fot this?
+
+Brs,
+Hailong.
 
