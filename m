@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-442433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2447A9EDCB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:48:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763699EDCBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:49:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC5E283642
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:48:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67FC2837FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8CE1BF37;
-	Thu, 12 Dec 2024 00:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5F214A09A;
+	Thu, 12 Dec 2024 00:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P8X5pHkK"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nCIDFUqZ"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2F7126C17
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2304D13AD11
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733964463; cv=none; b=KolyvEBTy6wNvFFX3KgiMDJPbqZCp1NDXLFpsVmodh8ZhWaORp9iipJag+ppgAE50+R7FbPZOKx//ffvjx+n8/I6z+qLx4m8G/qyjZWlIlINOlozZo44Z0rJNFuDWSPzxZ0DXxVGiK1ZL3BPX+pAjcdS3CEQ7RPknRWsvYZTL+0=
+	t=1733964466; cv=none; b=cmzwCCGqCUOKZ5DVSwV1aKSOTORfkoHR3mHbu3Cz6LX6qwTnm2byNzbk2UaykoS4U0x2BCq9d2fUvxpphit55X36LIv9n7K4gjMH8FhoeUgtVvDkwcxiYCa+npFEakCsr0crj+GVNpzKKJwju2K9/uEuLk1kYLvCBC3aHW0m1Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733964463; c=relaxed/simple;
-	bh=KYn3uuYZj7NpZtiTkHvPGGaN8yS+R6O8JQi1SN8+UfI=;
+	s=arc-20240116; t=1733964466; c=relaxed/simple;
+	bh=tyapNoEQY3XYO+jmzcvBF2+W19GTvYciSfkZQRjl4gE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pR9gOD7/60jVbDcP0xoo8wEF6T+HqneewBpdnjrGMzZ+if+OGlVCcaXE4LAwBNeZ6WkxCbynuNstAsLZO2/SuUW/LKudrzeao/S8YpeaHGUPPinM+GxcPMumatjPU8A9W8x2gIde/Ppem5T1s4i+tUZI1Hb5U7nDSODwiy9kEIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P8X5pHkK; arc=none smtp.client-ip=209.85.128.46
+	 MIME-Version; b=l1Uhuw/N5BjtmqoOsFRaAeSQz/pfPE/1zRRm7sMezUlA6hktWKNbJK8+Yg0HdfbyIyV3HULRCRxm2MAwDNn1SAzVk2jalO92gzBEUmTMH8VCig8pyjbsf+v1grJq7PbH6YfitvVvKVemlOljokELwcC1wyIpdH9HN9MG2RTzhlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nCIDFUqZ; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43622267b2eso513005e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:47:41 -0800 (PST)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-386329da1d9so7435f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 16:47:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733964460; x=1734569260; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733964462; x=1734569262; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jrR6DiKypyiSRNkIPUHsCZVzuVT+9VDdCizIFEiX0fc=;
-        b=P8X5pHkKaapQm5/0VngGGSBDrJtx8b89/suvo5A7H4wZ4/6g9xQ0Yf1EZeXJGgRJDH
-         NcjPo3nZ6Wd60bMuWsfXHVrNslfDAE7SWxL0uQoVuNnhAaDMKo3XgT/y4XtTbYiAaQTY
-         V+xb8fi8+0Qr0cb9ICn+/Nb2kzbtJ7Wkgi4WMyHQtFpCOOf4H3kRvVJqVdVtCe+Kl9dT
-         whLjValdX3GpbxOGEd5aZB3h/L56H9mImFcjzrOsaP85moHCKtk0tPQxaPem/kzEjqsz
-         j5xDRokQY4e1PFq5QsbvSEQaqydMXkK6pjplrL+EK27ZKGh04I2pbZYbTFcuAX1W4F4f
-         IK9Q==
+        bh=MeswejV8LMfcb7qwCslWXku0mWaecv3bAOXmE+9YQHo=;
+        b=nCIDFUqZC1EYfaWP4mXqjCQiKZbE2+3ycLkcLsNwfWHH3GRPtUJUkRl3xniTPgwBu0
+         er5csjwZPBrS/V00d/86Q6mHu5VB2RQtbQQq1K8WLOs6ppQ0kbgajOgpXcES+KgsIUwJ
+         D15vFpmbB+9BJhG7dhwzvzz0tVst2bZQ/utRtdqUkcrVsGlWgWZeBUmJ6q/Nv19ZOmip
+         bGPSSe+t0KScCcd3vy9fwkXBVvuwoXT69xmbKGxvpUVqEmZW4SymO2CVSxIMbhAYBx/Y
+         kDHy4/v9Hr30QgtxO9KM+34ddg4Tc2Rj+UHFGxbneNW14KNUm0hpEkJQfU94Ar7dQQZJ
+         KNbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733964460; x=1734569260;
+        d=1e100.net; s=20230601; t=1733964462; x=1734569262;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jrR6DiKypyiSRNkIPUHsCZVzuVT+9VDdCizIFEiX0fc=;
-        b=EICzvRzfz33rpnj1rv/GFyY2YXqM/atoX/Qva2PW+LovmWTyaZ+iXJua3d1T5HQLJm
-         7XwmTTkCSdWVe4GJf9MJA0MTzFAkFr/BaDN01A69UJ136aYTVrxs1Opa0vGSGSeVGSYx
-         5LheG0kcOFln2ueC/eIlxMrVLtZNCsqAvz8d/25uLwv8w/FVkEW3tWa1QVvseMZZYrQL
-         u1fB/yQgB2vx0Cb5qWifVu5Aeqbty6/jMxwgwJaC0dM4bcLSr8bQpzE/Ot7cXtKHWUOM
-         IujJr56S4n7prUA2zVnqpQku2G4JoFlQz7UjNOZcfPGEtUCjF053VWkqMPT8OBkg5B8n
-         Iwag==
-X-Forwarded-Encrypted: i=1; AJvYcCXHBNpb5QZxwi9nYwLox7HP/CZnrxXgkC8yiWil9JLOR3C1bfU46N6gXMm3UGJLkUZkknoA6ZLNjYCaK0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwHNq3hMKBcV4GEuQeuds132MMW7mPCGdNZGN4awHBqfco2Cz3
-	zWCZNcGMQr5wH2mkza8Trv0IU/J8DMBIluYy0SjLoY7t2O1ZoigcjBFQFB0rlCg=
-X-Gm-Gg: ASbGncsXVFueeRdQYwUhby0PUbiQfJB1hVR82R7O0KEew2IMdo2gohOlKkSZe02/uZ9
-	aSQ3+rlp5uSYQhjKZVvL74ogrfjuBlzeid4aH0QfJcVl+X9DcwJl/LIlJ7F4BMCDJlJpt/9VGRU
-	ykipaAarsAz8bb7eaMAaTmmfmoSA5SNzLlETcOJqMrdSCsDGCC5oxWvSc5QUJvyLiO1BoXruPzL
-	DyoX27zWCi4nfqWQwKLLAN2wIrwaj9KeHSJOR3SBXlWmBi7xFJsVJ7RIh2Gte7HL8jk6Oj8
-X-Google-Smtp-Source: AGHT+IGkBmZlNH90HFm8x5XhlTxKfUTueo4mDUUf5V2mYTwxmdvnSzy08A+89Jn4AKPGnkZs6ppvcA==
-X-Received: by 2002:a05:600c:4446:b0:434:fa73:a907 with SMTP id 5b1f17b1804b1-4361c3723acmr38051395e9.13.1733964460449;
-        Wed, 11 Dec 2024 16:47:40 -0800 (PST)
+        bh=MeswejV8LMfcb7qwCslWXku0mWaecv3bAOXmE+9YQHo=;
+        b=iKtpQBLktNmBo4cGZlf4qJP10tIpdUV2MvyrlNf9XL9g7XKAfi1y204AzsfZC3v76N
+         dFpwiIA9RCjqnqgjZK/44rneNUV0Owip3VOac1u1SZH08FKo4lwg7of1vHyL+NhAbAHM
+         csMzTJkDr626LhZLgDkShbshN4VP/MQG9dEwpOeZTWPYFE99wiKOtcpB/ECfyjQ/7E98
+         Tsxq5CTvuhiIVrz4gnCM5cBGjkwpcnSYsci70+Fw5JnZ1DtKz5zqjqavv4v478KED9TG
+         MAausuT0W4azOgZ5fp8MQWaQpDoO+XfXO3FPyzHZ7o056somoi5CCBZIXVdKX9lKo1PY
+         wC4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8Dpg6nUpHgm3XcWDeHyKHJh+dLnpto38jK++6QEk8R2DE8tCZDAzdKsPHkRkE5LoH1Brg+ZIraBbUCLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyhUwlJAYrJ6vB9+9zrc55iiWDjJWa+UkLv7NYFiPD61thxJNK
+	8crwFnxzOYz3EQS7rY2xrX94JrylqALp95Lvvgsz86IXmhI9AtVBMEmA/dVPWJo=
+X-Gm-Gg: ASbGncvpQ8/cQXaUxHW8uiSxbvsL+e+tCLqp43tsgldQRxtBlG5Jx26X1v1LKTF4qLB
+	do2AoHw3N+aKhPTZFO5ztfg++gQQ0fQaxeQIbQWvUepchlHEOR5jVnV9szbqBuw0nFBZlBvDbcZ
+	uUow10jXvwY1ep+HjwbPxfYKtsBEtsmhgqitEWmJc3bkbmcYjX6AXAx5l9jgasxjFZH+bK2o2BM
+	Zuks6Gr1EbeZJgvCZ6pdi67pzK6Lw04au21mv3TLCesJm4IFDaiBIzKebPGPpxT2g2mLzRV
+X-Google-Smtp-Source: AGHT+IHgKENLpDieQsFB14HFzmuxdYzoOXPmh+CHOUJNHXU2LbSWQXM8lcVrkY+JONlF+DyQH9GcDw==
+X-Received: by 2002:a05:6000:68e:b0:385:cf9d:2720 with SMTP id ffacd0b85a97d-3864ce55a73mr3615290f8f.23.1733964462584;
+        Wed, 11 Dec 2024 16:47:42 -0800 (PST)
 Received: from localhost.localdomain ([2.222.231.247])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4ef4sm2459660f8f.39.2024.12.11.16.47.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a4ef4sm2459660f8f.39.2024.12.11.16.47.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 16:47:39 -0800 (PST)
+        Wed, 11 Dec 2024 16:47:41 -0800 (PST)
 From: Alexey Klimov <alexey.klimov@linaro.org>
 To: broonie@kernel.org,
 	konradybcio@kernel.org,
@@ -87,9 +87,9 @@ Cc: tiwai@suse.com,
 	linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 05/14] arm64: dts: qcom: sm4250: add description of soundwire and dmic pins
-Date: Thu, 12 Dec 2024 00:47:18 +0000
-Message-ID: <20241212004727.2903846-6-alexey.klimov@linaro.org>
+Subject: [PATCH v2 06/14] arm64: dts: qcom: qrb4210-rb2: add wcd937x codec support
+Date: Thu, 12 Dec 2024 00:47:19 +0000
+Message-ID: <20241212004727.2903846-7-alexey.klimov@linaro.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241212004727.2903846-1-alexey.klimov@linaro.org>
 References: <20241212004727.2903846-1-alexey.klimov@linaro.org>
@@ -101,97 +101,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adds data and clock pins description (their active state) of
-soundwire masters and onboard DMIC.
+wcd937x codec contains soundwire RX and TX slave devices
+and can convert digital audio to analog audio and vice versa.
+The codec node also requires description of reset pin/gpio.
 
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm4250.dtsi | 62 ++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ arch/arm64/boot/dts/qcom/qrb4210-rb2.dts | 47 ++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm4250.dtsi b/arch/arm64/boot/dts/qcom/sm4250.dtsi
-index cd8c8e59976e..723391ba9aa2 100644
---- a/arch/arm64/boot/dts/qcom/sm4250.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm4250.dtsi
-@@ -37,10 +37,36 @@ &cpu7 {
- 	compatible = "qcom,kryo240";
- };
+diff --git a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+index edfb18c85da8..6217bc6e6282 100644
+--- a/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
++++ b/arch/arm64/boot/dts/qcom/qrb4210-rb2.dts
+@@ -5,6 +5,7 @@
  
-+&swr0 {
-+	pinctrl-0 = <&lpass_tx_swr_active>;
-+	pinctrl-names = "default";
-+};
-+
-+&swr1 {
-+	pinctrl-0 = <&lpass_rx_swr_active>;
-+	pinctrl-names = "default";
-+};
-+
- &lpass_tlmm {
- 	compatible = "qcom,sm4250-lpass-lpi-pinctrl";
- 	gpio-ranges = <&lpass_tlmm 0 0 27>;
+ /dts-v1/;
  
-+	lpass_dmic01_active: lpass-dmic01-active-state {
-+		clk-pins {
-+			pins = "gpio6";
-+			function = "dmic01_clk";
-+			drive-strength = <8>;
-+			output-high;
-+		};
-+
-+		data-pins {
-+			pins = "gpio7";
-+			function = "dmic01_data";
-+			drive-strength = <8>;
-+			input-enable;
-+		};
-+	};
-+
- 	lpi_i2s2_active: lpi-i2s2-active-state {
- 		sck-pins {
- 			pins = "gpio10";
-@@ -74,4 +100,40 @@ ext-mclk1-pins {
- 			output-high;
++#include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/leds/common.h>
+ #include <dt-bindings/sound/qcom,q6afe.h>
+ #include <dt-bindings/sound/qcom,q6asm.h>
+@@ -146,6 +147,25 @@ codec {
  		};
  	};
-+
-+	lpass_tx_swr_active: lpass-tx-swr-active-state {
-+		clk-pins {
-+			pins = "gpio0";
-+			function = "swr_tx_clk";
-+			drive-strength = <10>;
-+			slew-rate = <3>;
-+			bias-disable;
-+		};
-+
-+		data-pins {
-+			pins = "gpio1", "gpio2";
-+			function = "swr_tx_data";
-+			drive-strength = <10>;
-+			slew-rate = <3>;
-+			bias-bus-hold;
-+		};
+ 
++	wcd937x: codec {
++		compatible = "qcom,wcd9370-codec";
++		pinctrl-0 = <&wcd_reset_n>;
++		pinctrl-names = "default";
++		reset-gpios = <&tlmm 82 GPIO_ACTIVE_LOW>;
++		vdd-buck-supply = <&vreg_l9a_1p8>;
++		vdd-rxtx-supply = <&vreg_l9a_1p8>;
++		vdd-px-supply = <&vreg_l9a_1p8>;
++		vdd-mic-bias-supply = <&vdc_vbat_som>;
++		qcom,micbias1-microvolt = <1800000>;
++		qcom,micbias2-microvolt = <1800000>;
++		qcom,micbias3-microvolt = <1800000>;
++		qcom,micbias4-microvolt = <1800000>;
++		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
++		qcom,rx-device = <&wcd937x_rx>;
++		qcom,tx-device = <&wcd937x_tx>;
++		#sound-dai-cells = <1>;
 +	};
 +
-+	lpass_rx_swr_active: lpass-rx-swr-active-state {
-+		clk-pins {
-+			pins = "gpio3";
-+			function = "swr_rx_clk";
-+			drive-strength = <10>;
-+			slew-rate = <3>;
-+			bias-disable;
-+		};
+ 	vreg_hdmi_out_1p2: regulator-hdmi-out-1p2 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VREG_HDMI_OUT_1P2";
+@@ -599,6 +619,26 @@ &sleep_clk {
+ 	clock-frequency = <32000>;
+ };
+ 
++&swr1 {
++	status = "okay";
 +
-+		data-pins {
-+			pins = "gpio4", "gpio5";
-+			function = "swr_rx_data";
-+			drive-strength = <10>;
-+			slew-rate = <3>;
-+			bias-bus-hold;
-+		};
++	wcd937x_rx: codec@0,4 {
++		compatible = "sdw20217010a00";
++		reg = <0 4>;
++		qcom,rx-port-mapping = <1 2 3 4 5>;
++	};
++};
++
++&swr0 {
++	status = "okay";
++
++	wcd937x_tx: codec@0,3 {
++		compatible = "sdw20217010a00";
++		reg = <0 3>;
++		qcom,tx-port-mapping = <1 1 2 3>;
++	};
++};
++
+ &tlmm {
+ 	gpio-reserved-ranges = <43 2>, <49 1>, <54 1>,
+ 			       <56 3>, <61 2>, <64 1>,
+@@ -683,6 +723,13 @@ sdc2_card_det_n: sd-card-det-n-state {
+ 		drive-strength = <2>;
+ 		bias-pull-up;
+ 	};
++
++	wcd_reset_n: wcd-reset-n-state {
++		pins = "gpio82";
++		function = "gpio";
++		drive-strength = <16>;
++		output-high;
 +	};
  };
+ 
+ &uart3 {
 -- 
 2.45.2
 
