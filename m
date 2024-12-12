@@ -1,301 +1,274 @@
-Return-Path: <linux-kernel+bounces-444024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FB89EFF83
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:45:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B17F9EFF87
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F76188CE33
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C393188D73D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55321DE4F0;
-	Thu, 12 Dec 2024 22:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE511DE3BB;
+	Thu, 12 Dec 2024 22:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="W98m/OmJ"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RP5JUkJd"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02DD1AD9ED
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 22:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B641AD9ED;
+	Thu, 12 Dec 2024 22:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734043529; cv=none; b=gO0IxV08g1F6NWZCrfC75nS8gdBMi94DlcRMNeU2j5UVLoQ/IxyiJBZOZ3LmyOZQ9/N9Aa4CslGcRFeIXvMcb9BwS2+7CVglxnDoUwPoajCffA75dbCUFAwW0QYCi71Ns3q/ieXtELaFeKMHdcduztBoXF17FqBD8v/K+svV1Wo=
+	t=1734043780; cv=none; b=u0fvToBAbVMjhe61d+BtnvnzClgMchV/mxKPdI9tbZ99QjzRwL9RESlBgmre+weXmviCJXBd2gVjnVHh8fP6vatMjDNVY1dLktVeByVP9RIZWYVyxm9fnd68aGnCkwsGi9NJ4enNN3S9On0rFAihgse62Sb/zEtEDQwXNDE8I+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734043529; c=relaxed/simple;
-	bh=XpEtdsrgb4tWlq/LargblSbGeI9jhQhkhPTRrqvon8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HHin0NDQV89pEqRTv5z335fJk7mq+PyIzhF7/NX0NVEnUHrnDQUxRh/QFHSY5e7/XbPC4gq1RfATi2Am/1p8nc3MLK3EH+T4CgV5H0c7P536vKacONKXoxELbi5X+7lcukIZQbyv3k2f7isDzHUC4FBhLPAEPrC8L2Xfm95pP4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=W98m/OmJ; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa68d0b9e7bso211043366b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:45:27 -0800 (PST)
+	s=arc-20240116; t=1734043780; c=relaxed/simple;
+	bh=Ut6emYEgnTXjJVoa5mTZmTYZex+6s7aErqe0nFoqUek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XP4q66l6l0PV/eCNzQzSFb8IDM08G8ZeeXb05cyQLPRYH6h547fLkLUYp5YUrUrVri1tpJsfBuKXjriMW6xrFiKi/+XDOwUU0fm6SxI6vno5ow6ykkx0Ni+4iq5shVB4yhrFnd5Qj7VIsBGuMt1TvIZmqXat1lBC2nTgSZf7nJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RP5JUkJd; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e3fd6cd9ef7so868340276.1;
+        Thu, 12 Dec 2024 14:49:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1734043526; x=1734648326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XUsJkf4J+j/xiECkG4sE5rLGWyn8q8xGGB06NtynjQE=;
-        b=W98m/OmJUPXrjeok+jriss0vDObb0KKDK/COOVBg9Ggzm/RTpblnYppu8hHFJgX/SM
-         r2k3g2hCkXCos/bViZJn+8kiqxtPBPeWRBE+2vf3PwOAefxR0VHeGJiGLjDn2B05f2mn
-         DgmjcMYBA3M3acIzUajJga2+n7gRkkB1rwFZ1r+BSarF7+8aELX+8JqochSfAqWTmchT
-         r2WC2cMX7O4PvIouPYgKOMxnhXiTRDoMxtPi7SUwm6FZIpY1hSieD38WrP7dCfW+6Mcl
-         qPLfcT7SZcqNmVmlnrXfHX/WWcaGTH7LqgYhD7NM6rhUG0Cl+6krRQ9voehXXMj0HO7n
-         xGFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734043526; x=1734648326;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734043778; x=1734648578; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XUsJkf4J+j/xiECkG4sE5rLGWyn8q8xGGB06NtynjQE=;
-        b=lYdag+PBIjvwvuzpKgulsQ6re5eduS0IYXLCSWWr3e7tP94tXpawGWXujKDLFeH5Ly
-         fvyAv0ZlPmAFfucsTLbb8zTZUb2v+9QgIGsm+moLAFCBHkitcuHIGbn5UlUKnTmXOmo0
-         zDBm/Z0BiopcFi7g6+zCoCLGm0sIDxsw8vEaENyjahJXLBEReWrh8qUZvAOqEo7IZ1XE
-         8Vft7WNq4mW/tQuCLRV8vjwaLs/LvAEWfhmsWie+FSZ9EsDlfIBWNQRmsTK0jx+u5LN3
-         YpGTNBziqdTSaY/dJYvRoQfc2uGtJ9zTtRTClLGic3KziBZpgKAtQThHSTtrlkLjZnTQ
-         z7FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxRwxxhe0Z0mQvLYSQfZQcynRizhiiBVSGv67Er+c4zaXM79IR9PWZ7Ml7rGgWKb6fa8d7OrbbtHi4ago=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6R3NpDJMdgYuRYs3gfouAjUy7vzLQ2hWdjejRpcc/0wWCTKY7
-	EpVTbxwTUH/Xz8MNSHLG76K1UAtJSQL+59+X4KjeU7/O0j1vIH58yF8+7+JKSpc=
-X-Gm-Gg: ASbGncvJL48pCiX3FfZJHoe3hqv9BQYC+DqLHYtxegoIwDXiuOnpJaFhhZX/ExEzNfK
-	+g1qBAOCxYE0Vk1Rf7kos5W/Ub9Be2OUJS7R+wxh2IK0JBUkYoxGSTZ1ylnWjKbPOwElSd4D16Q
-	L6SU67rXJOyMuzOE89ojbodKhRYNdDZFR9r3oseZLvy2H2pzrOBa1ZUJN/P9EGsDvgFfc5l5oNi
-	Nkyx5SZy/nOZ8MTXykzQ7f0NtJwkIw0IIX3ZP6CUG9L+QVFDX4SxYR9gE7FnL0KtAKtmD9Fu7v3
-	M7ssbCavAZGHduPr4mk=
-X-Google-Smtp-Source: AGHT+IEnd+D7X8TzYQBVe2H+wexdsZa1tb6lj6B+PXBw/DjlnuLHbieso5Q07N5vS1ESwsrUnIOZ3A==
-X-Received: by 2002:a17:907:1ca3:b0:aab:7588:f411 with SMTP id a640c23a62f3a-aab779c8bcamr43821666b.25.1734043526035;
-        Thu, 12 Dec 2024 14:45:26 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:a1c0:e394:b652:4ab3? ([2001:67c:2fbc:1:a1c0:e394:b652:4ab3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260e6c67sm1164937766b.187.2024.12.12.14.45.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 14:45:25 -0800 (PST)
-Message-ID: <fa19f3a8-c273-4d2c-a10e-e9bda2375365@openvpn.net>
-Date: Thu, 12 Dec 2024 23:46:11 +0100
+        bh=sZ//GKpRnLAq0n73N40bNcMjtU3cwv4lRw3R8oUSpPc=;
+        b=RP5JUkJdIANekZuIh/zR0yDFEGk+vP9ZgmrzDtN1zQBVloIG3WOLpLOb/pyFX5DbOi
+         kKOoPnfGURJukatcC7Cp08y55xdx1TFFPUQ4AGhNweMI74OwB+KlCPhcRRr2UuFWS9Z6
+         p9YUtI0Wgv93O1s6z0gvQF0SSGA50WANHjQufKjT8lc0rC2s6VhWlYeDEm1EIduV+WQ4
+         BTlPlKDTDUv0pHLnYkfAytYHPeMmTtt3T36EOLciTEFQ7xEHaSB4eBZjlJ0vFx2HNBxs
+         kXLodWEPhWnfSzq8nrzuBUpbVHkUH0gXrSsrgzi+wlEQQDe/PKjgGF/JTZ1k4E/5Yb+o
+         mSpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734043778; x=1734648578;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sZ//GKpRnLAq0n73N40bNcMjtU3cwv4lRw3R8oUSpPc=;
+        b=teVQYNUqZLnLJzvcwUMade6T//WTcpb5LTackg5DsBqT4JgpXHmYLoTCEN81wrGg3X
+         FI5nGq25UGgeZ3LXKQKg9lwIdY9QLvA+5fUTzslgPz6yr8gfQ4Gwx/U2T/xMeWWrAJYn
+         y+Xeqr4PBXpicBrqsDZnf9KpEJKSNbh6/pZ5N2CAO23FYvZGM8pFuJv1jpMyu0N49nC3
+         d10wsOvF1MNdV8vJHs9w1S74rlmqckOrFpmhNmoLDkGTYFLOudYStwS4xl7pHJccJIQM
+         kxXAyFpuKTInMLOCrtgj3eX5QVJqg0IvySebUOgaQbrGv/WnsOBLZjyBaKmetNYrXWFK
+         PDfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUj4kSRAJ+1m8tv7MavvraJliqkGYqUbUQOHmSYRwCpeLQ3qaUqT/uF0Fgk5wMJOHczQUHa4CeubtQQWjpVtHpCAQ==@vger.kernel.org, AJvYcCVHzwYJQ7JPKECCOuYHdPi+H0IYjsohVceFvKhp8kSedLocinU0Z71xMwEYmFdsNaJVBi/nqtdKlf4hlIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6vj/Vu2oSVjvifBzNNKSqwUI8GoX1lbimf9LXl8Op3tFObucT
+	u81yXulSK6nSa9rndkPZaruGkahYCMiqJD/CcPfYrwsWJwJFye335EzJf2Ks2izPInrs3aRDcOa
+	UzrnY1CQeh0YFUHTXe1OQDbYarJU=
+X-Gm-Gg: ASbGncv8i36KqJQHCTW6w8n7odCQwmIDzVC3z0EQsXcGpiduE3dTj+XQt/f1TyGMfw8
+	Xj0SHqJuYPwnQNlfKK+YNp0twz5WkAtyDQH4u
+X-Google-Smtp-Source: AGHT+IEhTol3z/4jrBZUZIufEWXcXhc69c43GEeH7bsexV7UUfoXp5YzGsRW6jT7FGwA5nSX5Wy5i2eyXHn3yGapPiU=
+X-Received: by 2002:a05:6902:1b09:b0:e29:2560:914c with SMTP id
+ 3f1490d57ef6-e4389bcbb5bmr209029276.9.1734043777748; Thu, 12 Dec 2024
+ 14:49:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v15 06/22] ovpn: introduce the ovpn_socket object
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
- ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
- willemdebruijn.kernel@gmail.com
-References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net>
- <20241211-b4-ovpn-v15-6-314e2cad0618@openvpn.net> <Z1sNEgQLMzZua3mS@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <Z1sNEgQLMzZua3mS@hog>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241212022420.1035999-1-howardchu95@gmail.com>
+ <20241212022420.1035999-5-howardchu95@gmail.com> <Z1tPpZ7HHaF8g4PQ@google.com>
+In-Reply-To: <Z1tPpZ7HHaF8g4PQ@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Thu, 12 Dec 2024 14:49:28 -0800
+Message-ID: <CAH0uvohN0GPW_ABFUTK7Goo0WXcSRNVhjwabKkhruXM1zB8+hQ@mail.gmail.com>
+Subject: Re: [PATCH v12 04/10] perf record --off-cpu: Dump off-cpu samples in BPF
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	James Clark <james.clark@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/12/2024 17:19, Sabrina Dubroca wrote:
-> 2024-12-11, 22:15:10 +0100, Antonio Quartulli wrote:
->> +static struct ovpn_socket *ovpn_socket_get(struct socket *sock)
->> +{
->> +	struct ovpn_socket *ovpn_sock;
->> +
->> +	rcu_read_lock();
->> +	ovpn_sock = rcu_dereference_sk_user_data(sock->sk);
->> +	if (WARN_ON(!ovpn_socket_hold(ovpn_sock)))
-> 
-> Could we hit this situation when we're removing the last peer (so
-> detaching its socket) just as we're adding a new one? ovpn_socket_new
-> finds the socket already attached and goes through the EALREADY path,
-> but the refcount has already dropped to 0?
-> 
+Hello Namhyung,
 
-hm good point.
+On Thu, Dec 12, 2024 at 1:03=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello,
+>
+> On Wed, Dec 11, 2024 at 06:24:14PM -0800, Howard Chu wrote:
+> > Collect tid, period, callchain, and cgroup id and dump them when off-cp=
+u
+> > time threshold is reached.
+> >
+> > We don't collect the off-cpu time twice (the delta), it's either in
+> > direct samples, or accumulated samples that are dumped at the end of
+> > perf.data.
+> >
+> > Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Cc: Ian Rogers <irogers@google.com>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: James Clark <james.clark@linaro.org>
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Kan Liang <kan.liang@linux.intel.com>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Link: https://lore.kernel.org/r/20241108204137.2444151-6-howardchu95@gm=
+ail.com
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > ---
+> >  tools/perf/util/bpf_skel/off_cpu.bpf.c | 86 ++++++++++++++++++++++++--
+> >  1 file changed, 81 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/b=
+pf_skel/off_cpu.bpf.c
+> > index c87132e01eb3..aae63d999abb 100644
+> > --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> > +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> > @@ -19,11 +19,17 @@
+> >  #define MAX_ENTRIES  102400
+> >
+> >  #define MAX_CPUS  4096
+> > +#define MAX_OFFCPU_LEN 37
+> > +
+> > +struct stack {
+> > +     u64 array[MAX_STACKS];
+> > +};
+> >
+> >  struct tstamp_data {
+> >       __u32 stack_id;
+> >       __u32 state;
+> >       __u64 timestamp;
+> > +     struct stack stack;
+> >  };
+> >
+> >  struct offcpu_key {
+> > @@ -41,6 +47,10 @@ struct {
+> >       __uint(max_entries, MAX_ENTRIES);
+> >  } stacks SEC(".maps");
+> >
+> > +struct offcpu_data {
+> > +     u64 array[MAX_OFFCPU_LEN];
+> > +};
+> > +
+> >  struct {
+> >       __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
+> >       __uint(key_size, sizeof(__u32));
+> > @@ -48,6 +58,13 @@ struct {
+> >       __uint(max_entries, MAX_CPUS);
+> >  } offcpu_output SEC(".maps");
+> >
+> > +struct {
+> > +     __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+> > +     __uint(key_size, sizeof(__u32));
+> > +     __uint(value_size, sizeof(struct offcpu_data));
+> > +     __uint(max_entries, 1);
+> > +} offcpu_payload SEC(".maps");
+> > +
+> >  struct {
+> >       __uint(type, BPF_MAP_TYPE_TASK_STORAGE);
+> >       __uint(map_flags, BPF_F_NO_PREALLOC);
+> > @@ -194,6 +211,47 @@ static inline int can_record(struct task_struct *t=
+, int state)
+> >       return 1;
+> >  }
+> >
+> > +static inline int copy_stack(struct stack *from, struct offcpu_data *t=
+o, int n)
+> > +{
+> > +     int len =3D 0;
+> > +
+> > +     for (int i =3D 0; i < MAX_STACKS && from->array[i]; ++i, ++len)
+> > +             to->array[n + 2 + i] =3D from->array[i];
+> > +
+> > +     return len;
+> > +}
+> > +
+> > +/**
+> > + * off_cpu_dump - dump off-cpu samples to ring buffer
+> > + * @data: payload for dumping off-cpu samples
+> > + * @key: off-cpu data
+> > + * @stack: stack trace of the task before being scheduled out
+> > + *
+> > + * If the threshold of off-cpu time is reached, acquire tid, period, c=
+allchain, and cgroup id
+> > + * information of the task, and dump it as a raw sample to perf ring b=
+uffer
+> > + */
+> > +static int off_cpu_dump(void *ctx, struct offcpu_data *data, struct of=
+fcpu_key *key,
+> > +                     struct stack *stack, __u64 delta)
+> > +{
+> > +     int n =3D 0, len =3D 0;
+> > +
+> > +     data->array[n++] =3D (u64)key->tgid << 32 | key->pid;
+> > +     data->array[n++] =3D delta;
+> > +
+> > +     /* data->array[n] is callchain->nr (updated later) */
+> > +     data->array[n + 1] =3D PERF_CONTEXT_USER;
+> > +     data->array[n + 2] =3D 0;
+> > +     len =3D copy_stack(stack, data, n);
+> > +
+> > +     /* update length of callchain */
+> > +     data->array[n] =3D len + 1;
+> > +     n +=3D len + 2;
+> > +
+> > +     data->array[n++] =3D key->cgroup_id;
+> > +
+> > +     return bpf_perf_event_output(ctx, &offcpu_output, BPF_F_CURRENT_C=
+PU, data, n * sizeof(u64));
+> > +}
+> > +
+> >  static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
+> >                       struct task_struct *next, int state)
+> >  {
+> > @@ -218,6 +276,16 @@ static int off_cpu_stat(u64 *ctx, struct task_stru=
+ct *prev,
+> >       pelem->state =3D state;
+> >       pelem->stack_id =3D stack_id;
+> >
+> > +     /*
+> > +      * If stacks are successfully collected by bpf_get_stackid(), col=
+lect them once more
+> > +      * in task_storage for direct off-cpu sample dumping
+> > +      */
+> > +     if (stack_id > 0 && bpf_get_stack(ctx, &pelem->stack, MAX_STACKS =
+* sizeof(u64), BPF_F_USER_STACK)) {
+> > +             /*
+> > +              * This empty if block is used to avoid 'result unused wa=
+rning' from bpf_get_stack().
+> > +              * If the collection fails, continue with the logic for t=
+he next task.
+> > +              */
+> > +     }
+> >  next:
+> >       pelem =3D bpf_task_storage_get(&tstamp, next, NULL, 0);
+> >
+> > @@ -232,11 +300,19 @@ static int off_cpu_stat(u64 *ctx, struct task_str=
+uct *prev,
+> >               __u64 delta =3D ts - pelem->timestamp;
+> >               __u64 *total;
+> >
+> > -             total =3D bpf_map_lookup_elem(&off_cpu, &key);
+> > -             if (total)
+> > -                     *total +=3D delta;
+> > -             else
+> > -                     bpf_map_update_elem(&off_cpu, &key, &delta, BPF_A=
+NY);
+> > +             if (delta >=3D offcpu_thresh_ns) {
+>
+> It seems offcpu_thresh_ns is not defined at this moment.  You can use
+> a hard-coded value with a comment for now.
 
-> Then we'd also return NULL from ovpn_socket_new [1], which I don't
-> think is handled well by the caller (at least the netdev_dbg call at
-> the end of ovpn_nl_peer_modify, maybe other spots too).
-> 
-> (I guess it's not an issue you would see with the existing userspace
-> if it's single-threaded)
+My bad, I wonder how it builds, turns out I put the definition in the
+previous patch... (link:
+https://lore.kernel.org/linux-perf-users/20241212022420.1035999-4-howardchu=
+95@gmail.com/T/#u)
+I will move it to this patch, thanks a lot!
 
-The TCP patch 11/22 will convert the socket release routine to a 
-scheduled worker.
-
-This means we can have the following flow:
-1) userspace deletes a peer -> peer drops its reference to the ovpn_socket
-2) ovpn_socket refcnt may hit 0 -> cleanup/detach work is scheduled, but 
-not yet executed
-3) userspace adds a new peer -> attach returns -EALREADY but refcnt is 0
-
-So not so impossible, even with a single-threaded userspace software.
-
-> 
-> [...]
->> +struct ovpn_socket *ovpn_socket_new(struct socket *sock, struct ovpn_peer *peer)
->> +{
->> +	struct ovpn_socket *ovpn_sock;
->> +	int ret;
->> +
->> +	ret = ovpn_socket_attach(sock, peer);
->> +	if (ret < 0 && ret != -EALREADY)
->> +		return ERR_PTR(ret);
->> +
->> +	/* if this socket is already owned by this interface, just increase the
->> +	 * refcounter and use it as expected.
->> +	 *
->> +	 * Since UDP sockets can be used to talk to multiple remote endpoints,
->> +	 * openvpn normally instantiates only one socket and shares it among all
->> +	 * its peers. For this reason, when we find out that a socket is already
->> +	 * used for some other peer in *this* instance, we can happily increase
->> +	 * its refcounter and use it normally.
->> +	 */
->> +	if (ret == -EALREADY) {
->> +		/* caller is expected to increase the sock refcounter before
->> +		 * passing it to this function. For this reason we drop it if
->> +		 * not needed, like when this socket is already owned.
->> +		 */
->> +		ovpn_sock = ovpn_socket_get(sock);
->> +		sockfd_put(sock);
-> 
-> [1] so we would need to add
-> 
->      if (!ovpn_sock)
->          return -EAGAIN;
-
-I am not sure returning -EAGAIN is the right move at this point.
-We don't know when the scheduled worker will execute, so we don't know 
-when to try again.
-
-Maybe we should call cancel_sync_work(&ovpn_sock->work) inside 
-ovpn_socket_get()?
-So the latter will return NULL only when it is sure that the socket has 
-been detached.
-
-At that point we can skip the following return and continue along the 
-"new socket" path.
-
-What do you think?
-
-However, this makes we wonder: what happens if we have two racing 
-PEER_NEW with the same non-yet-attached UDP socket?
-
-Maybe we should lock the socket in ovpn_udp_socket_attach() when 
-checking its user-data and setting it (in order to make the test-and-set 
-atomic)?
-
-I am specifically talking about this in udp.c:
-
-345         /* make sure no pre-existing encapsulation handler exists */
-346         rcu_read_lock();
-347         old_data = rcu_dereference_sk_user_data(sock->sk);
-348         if (!old_data) {
-349                 /* socket is currently unused - we can take it */
-350                 rcu_read_unlock();
-351                 setup_udp_tunnel_sock(sock_net(sock->sk), sock, &cfg);
-352                 return 0;
-353         }
-
-We will end up returning 0 in both contexts and thus allocate two 
-ovpn_sockets instead of re-using the first one we allocated.
-
-Does it make sense?
-
-> 
->> +		return ovpn_sock;
->> +	}
->> +
-> 
-> [...]
->> +int ovpn_udp_socket_attach(struct socket *sock, struct ovpn_priv *ovpn)
->> +{
->> +	struct ovpn_socket *old_data;
->> +	int ret = 0;
->> +
->> +	/* make sure no pre-existing encapsulation handler exists */
->> +	rcu_read_lock();
->> +	old_data = rcu_dereference_sk_user_data(sock->sk);
->> +	if (!old_data) {
->> +		/* socket is currently unused - we can take it */
->> +		rcu_read_unlock();
->> +		return 0;
->> +	}
->> +
->> +	/* socket is in use. We need to understand if it's owned by this ovpn
->> +	 * instance or by something else.
->> +	 * In the former case, we can increase the refcounter and happily
->> +	 * use it, because the same UDP socket is expected to be shared among
->> +	 * different peers.
->> +	 *
->> +	 * Unlikely TCP, a single UDP socket can be used to talk to many remote
-> 
-> (since I'm commenting on this patch:)
-> 
-> s/Unlikely/Unlike/
-
-ACK
-
-> 
-> [I have some more nits/typos here and there but I worry the
-> maintainers will get "slightly" annoyed if I make you repost 22
-> patches once again :) -- if that's all I find in the next few days,
-> everyone might be happier if I stash them and we get them fixed after
-> merging?]
-
-If we have to rework this socket attaching part, it may be worth 
-throwing in those typ0 fixes too :)
-
-Thanks a lot.
-
-Regards,
-
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+Thanks,
+Howard
 
