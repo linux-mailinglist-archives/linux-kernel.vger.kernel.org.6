@@ -1,127 +1,149 @@
-Return-Path: <linux-kernel+bounces-443838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CEA49EFC8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:34:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E27188DB21
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:34:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B22185B4C;
-	Thu, 12 Dec 2024 19:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="TCh4l4Qc"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7591D9EFC8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:34:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AD722611;
-	Thu, 12 Dec 2024 19:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35CBB28AC03
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:34:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1AE18FDB9;
+	Thu, 12 Dec 2024 19:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MkBMK40j"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0349817BB34
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734032055; cv=none; b=RgMoY8dmzUoFvfhIUF5XfC/6sqZXtsWcLATOrmhlYmDPufzPTdBPU0ibUZ8wMX3VV2BkjlShf4KaQ5/YON6HS09mle/2ccz6fkfId3ATNJuIcpbhYe2owVlextXi8ZVkIugcOfaST7pQraS1/b8GsEMSJSxemhe+HqWF8XCxHqg=
+	t=1734032065; cv=none; b=Xk5tSBe9g7eUL8ZccVlJeMUkdyiALhrAnA/5tt1yDkq9oWmsgbfYA74evjgtGvN4yHS54vPAgVDUKFvv0UFJ5i8uX9/z6S65XIm+IcXC3zHJpE0/fsusQIM2419CvrNfpMojzmstIQZjUEnTQMyQXizBIZWtNq+vAbAvIQ7Mzvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734032055; c=relaxed/simple;
-	bh=hR2aHX6iduIH4HEz94GvOPpN8FCi1xvTaAhMX30cTXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qhNOgT0MoNLRk7qncl4mq2zAtFMg8u7IJrYZSQo+dDbpOcUCh5jnq2ampd/JLzb8eOmmzXTqKeyfLtRccXaVKNvAyEOmMZKbYlm3AmBmoUpPhJkzUHX6vkNudQZl7WpE6G4twPYfHyz5jMNjlFMe+KNBROtQC4rFJzObuS4XSig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=TCh4l4Qc; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6ADB510485596;
-	Thu, 12 Dec 2024 20:34:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1734032044;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jpTFBO1ExhIv3n22Yk/fm+v3aff/PUI/VG7AXOrSz6U=;
-	b=TCh4l4QcqRVziRuOy34IAXZonv66oz6MByYkOMq0/nfRzqEMNm10ZlMlJxdYBRCTyF73jB
-	cD7kIEjOTYov9k3u1lu+Fhc3iDxoExEeWyEwpWQd5gTaBmrMv1PzMBTQm1SOQI0eayi9kK
-	wsrlbWyd/ym66YZOqYTKBgpctJ/9H/X3Eb2cLsCBfW47WCgoaYIG5PHlRAXA81Z8gNUmQC
-	JQc6HwDO6KXk5NMQKED1xZJqY24r/LdrLW8SUj9/wVhOMH5hTJrs9ZSMzMtTem157njPda
-	E8ps7/Y0ndb0h82a40Tpsd18Zx1Y6vz9yn1ED8vqAqi/mRM+qvXa9qvaLWQFjw==
-Date: Thu, 12 Dec 2024 20:33:59 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 5.4 000/321] 5.4.287-rc1 review
-Message-ID: <Z1s6p2QR+PwcnNYV@duo.ucw.cz>
-References: <20241212144229.291682835@linuxfoundation.org>
+	s=arc-20240116; t=1734032065; c=relaxed/simple;
+	bh=XRQkEkF+swi0B2+vusGEbl3JYtBkHkVO+F1GD117yEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=siZnKxLpKY7Nol0HPpqFdn2HCF6hMhKYG5cPFRwWWReNqZle6NqWwcjRYylt6+1JOMsUZmEW+pa8jqy9XnDCIr0flzcJlNLGUGWeZ7ODwHBsl0bH8LGnSx9TKBcx3CE6O9+d+akkjRAeQHd+bo60WsqnQH7aoTWOBvkHBQkwCeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MkBMK40j; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-517aea3ee2aso406922e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:34:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734032063; x=1734636863; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fTEkwDAcKDq4oSRBOG6s65o3vkDC0MpLM2cxo/UzhJo=;
+        b=MkBMK40jSKqSR8MmPqoR1lz0zzkxG8F1HOSnNVsewtxrO3LujinXMjqF2C3VILuu9W
+         Q5xwg35KMMU0vF0BP5wOZwSQ/lWhNUnhx7AEC7eZ9AmAb2Gl/LbEgsxKF+7wvRhvxCSr
+         a5H1nNCc3WSxTs1ZEADO8MJj97u9FVthuwRlpld3RrV6nvICzQQILyLz/PW1RHNGsM5Z
+         HUwlxaPKnN+w6dC94F8SKTsmK51RSAwZ4xQEbA1QCEWXREvzXyWySm6o00Ub1IpwI83u
+         P0WmTS/HtHu6TviWUwQSloEJ/jFCUTD++OptkB9oEbJHfSFcJSIFbyjUeQpxbtWDKp7+
+         K7Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734032063; x=1734636863;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fTEkwDAcKDq4oSRBOG6s65o3vkDC0MpLM2cxo/UzhJo=;
+        b=xHDf7FIj+GDtOgM4gLakxahI0LIZPHGFIqQBayfwtYFHcQfykdtZR2efmEWsdovD9g
+         0hNIDyj9PccOqm63HaV12YTd6HWcShLPVrWJUD8mzjRBeIzS+cqSIQPpTHrdr7zHxriD
+         0DJ4JcfCn2IReGNdaguA0Rs/eQn96CKKPerYVM13WALCgTZtYkIt/3j9QfEd1/XeUlzh
+         jeJVV6dj1sGM8BpqMXcg5EkLZlMaXYv1z0r5GqZCGciBFUJSU5EomEq9tZGwho8LaJqF
+         PjHMopSRO8edsUeOroKTQl+yhoX9ENNB2x2fq8opMAvYB7iJkO5XPSYCnAwdLxJwDLp8
+         tyJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKInyJOr8MMrI242iURb+/K5Zi+ArWF+vw6dGm1CFNTg4INAuvQVei/3+baRrsSa6bqX/7yfB1+x332h4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBpqJ6G92ghWQv6zwEvempqXgPPl/D4DyD8VYkRy1A+SN3lQd1
+	ZpKdJl9PuR5wuFs8itxdp01diq2ApVn0UINCdnb7VRE1kN10IZ/ygcDSD1qSzrJThvcUxB9wjyf
+	7EjP7zIeT4FYK1Y3MhCOWN2iHdfzDje0J3Wpakg==
+X-Gm-Gg: ASbGnctjpIxnJCQu9hcquzLkjIq59dFofcKnmh+MrKpNK/h+rIb8ROTwl1Ootyn44gr
+	NmFFuQQaRULWHV/6aDvFRkV23kMc69rJxzuFk
+X-Google-Smtp-Source: AGHT+IEwsqoADy9CLfQZU9fDxZL8sRYBnIJOakCrDckekfKDwX9cAfY7rdncozWG2knPUrR/hQUKmLlDFG4i+7pUkgw=
+X-Received: by 2002:a05:6122:2004:b0:50a:d1e3:82f7 with SMTP id
+ 71dfb90a1353d-518ca4648bamr40974e0c.8.1734032062910; Thu, 12 Dec 2024
+ 11:34:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OytnDsTlQTgfYOum"
-Content-Disposition: inline
-In-Reply-To: <20241212144229.291682835@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20241212144306.641051666@linuxfoundation.org> <CA+G9fYuX2BsEOCZPC+2aJZ6mEh10kGY69pEQU3oo1rmK-8kTRg@mail.gmail.com>
+In-Reply-To: <CA+G9fYuX2BsEOCZPC+2aJZ6mEh10kGY69pEQU3oo1rmK-8kTRg@mail.gmail.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 13 Dec 2024 01:04:09 +0530
+Message-ID: <CA+G9fYu3SmdFKRkSDU0UV=bMs69UHx8UOeuniqTSD9haQ2yBvQ@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/466] 6.12.5-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 12 Dec 2024 at 23:35, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+>
+> On Thu, 12 Dec 2024 at 20:30, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.12.5 release.
+> > There are 466 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.5-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+>
+> The riscv builds failed on Linux stable-rc linux-6.12.y due to following build
+> warnings / errors.
+>
+> riscv:
+>   * build/gcc-13-defconfig
+>   * build/clang-19-defconfig
+>   * build/clang-nightly-defconfig
+>   * build/gcc-8-defconfig
+>
+> First seen on Linux stable-rc linux-6.12.y v6.12.4-467-g3f47dc0fd5b1,
+>   Good: v6.12.4
+>   Bad:  6.12.5-rc1
+>
+>
+> Build log:
+> -----------
+> kernel/time/timekeeping.c: In function 'timekeeping_debug_get_ns':
+> kernel/time/timekeeping.c:263:17: error: too few arguments to function
+> 'clocksource_delta'
+>   263 |         delta = clocksource_delta(now, last, mask);
+>       |                 ^~~~~~~~~~~~~~~~~
+> In file included from kernel/time/timekeeping.c:30:
+> kernel/time/timekeeping_internal.h:18:19: note: declared here
+>    18 | static inline u64 clocksource_delta(u64 now, u64 last, u64
+> mask, u64 max_delta)
+>       |                   ^~~~~~~~~~~~~~~~~
+> make[5]: *** [scripts/Makefile.build:229: kernel/time/timekeeping.o] Error 1
 
---OytnDsTlQTgfYOum
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The bisect log pointing to first bad commit,
 
-Hi!
+    clocksource: Make negative motion detection more robust
+    commit 76031d9536a076bf023bedbdb1b4317fc801dd67 upstream.
 
-> This is the start of the stable review cycle for the 5.4.287 release.
-> There are 321 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-We are getting build failures here on arm_v7:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/1=
-586057341
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/862548=
-6171
-
-drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c:173:2: error: 'DRM_GEM_CMA_DRIVER=
-_OPS' undeclared here (not in a function); did you mean 'DRM_GEM_CMA_VMAP_D=
-RIVER_OPS'?
-6367
-  173 |  DRM_GEM_CMA_DRIVER_OPS,
-6368
-      |  ^~~~~~~~~~~~~~~~~~~~~~
-6369
-      |  DRM_GEM_CMA_VMAP_DRIVER_OPS
-6370
-make[4]: *** [scripts/Makefile.build:262: drivers/gpu/drm/fsl-dcu/fsl_dcu_d=
-rm_drv.o] Error 1
-6371
-make[3]: *** [scripts/Makefile.build:497: drivers/gpu/drm/fsl-dcu] Error 2
-6372
-make[3]: *** Waiting for unfinished jobs....
-6373
-
-Best regards,
-								Pavel
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---OytnDsTlQTgfYOum
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ1s6pwAKCRAw5/Bqldv6
-8uDVAKCQMr06BQihfqDvQF5/RGSNoCMGhQCeL/PJOcUcb9x7ASANZoW2cUeJM24=
-=yl5D
------END PGP SIGNATURE-----
-
---OytnDsTlQTgfYOum--
+- Naresh
 
