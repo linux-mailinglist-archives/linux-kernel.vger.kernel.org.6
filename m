@@ -1,101 +1,109 @@
-Return-Path: <linux-kernel+bounces-443307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5477D9EEC81
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:35:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891099EEC9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:36:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FD0E1885AF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42121888E3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC861217F30;
-	Thu, 12 Dec 2024 15:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB10221D93;
+	Thu, 12 Dec 2024 15:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lfYxa6uP"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dnVUqQ+k"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435D06F2FE;
-	Thu, 12 Dec 2024 15:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE6B21765E;
+	Thu, 12 Dec 2024 15:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734017614; cv=none; b=hLZR4o3qEAtUVlZU7nMai3BCpkbFni+jHJbugRUIeKn2v26qZ1Nhl5Zw9f5poeOb3rFvX15yXC6Y+kPO7eof1CgqKPnnhBC0Ke7cZpE9OmJ1qijrIPZsgEpCvJV3uWanvyLa5+SBkCBV5W4BEeWXnL/Yng37l4qlnBFVt2f0STA=
+	t=1734017642; cv=none; b=kdD7JdIxtqYUikZbze+AzlZ33V80AcMEfH31HOgsjbTTw/uzvC/+VjO27mXMbZBU6X9akYCiklC/DBrNrpwjqTJxpXUjtvYs595OYTPXebwot9zZzZL5hGqaP2f69t8fqF57ZZpvroQqPtmbqYPd7+B9lmYMHdtdr/ZiVkMkGP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734017614; c=relaxed/simple;
-	bh=IfmbCcJeozM7VioKT9ps8qUHp2IjCZDdWUy8b58NEOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HeWNsiJXGpOs5HHPNUy9Oa74iO1lSOM3gZPCJPAsE1i5KrVR/w/pj8IcPyZ0HyC+eE+K5gXWXlx4ZVzE8DEfUxec/RIfOjVnbmg4pDEA9I9uJ7T4CABl0kte8oIS+wOLwXQK3PTz/TXJXdAz7nRrANdDmnvuvF81j4AY/IHDTZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lfYxa6uP; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 709481C0002;
-	Thu, 12 Dec 2024 15:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734017609;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sd7DkGb2x0uc7EE7hQC5+3KDtXVIG2wo02hrD1H/wLE=;
-	b=lfYxa6uPjyH58rLdku1n8kZtqHgK7gyHeYmg4VjNcAVun3knJtf+PE6H7LFGA0IB4v5jX0
-	Im8HWc/q3r1PYfnHXAg681NDwEjs3qzI3K6mmwU8stMCyD6vE7lzbbihoHhI8mymdeOOOA
-	tAZFxTeZC4q5zb3aJiU3CktO/sox8EolTn17bjOlvb62EqpD2v93EVrgRbXSY+HZn3I8Pa
-	sJdwR33YYeKbo0Iq4iGER4m3qd/YhulqN8fPjaTyo5jOvS/1ht+XlWRsZc7GCMsBFmkzex
-	hqDQQOjauuklMSkkF5NmUXn1rX8FWTpgCNzC1GdnuVVqkkEgEobcMk20c5oQVQ==
-Date: Thu, 12 Dec 2024 16:33:17 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Justin Chen <justin.chen@broadcom.com>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH net 0/2] net: Fix 2 OF device node refcount leakage
- issues
-Message-ID: <20241212163317.5e6829ec@kmaincent-XPS-13-7390>
-In-Reply-To: <20241212-drivers_fix-v1-0-a3fbb0bf6846@quicinc.com>
-References: <20241212-drivers_fix-v1-0-a3fbb0bf6846@quicinc.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734017642; c=relaxed/simple;
+	bh=CgdcSNEMwQHcY/EYa0A+XFW5GRiQ375dpydBFO30BLQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ozFUcVixEEBj0xRvtckCSTfY6QiOT9kkWbCS+n2Vf1q4xcKFkdr5JVdNndG+tAka74ymUQDBIjvBEfqz18fwB+KMb574pTyPFH6ogaabsJqdGqSPHaHLhTpmUOeAwQwWco/0dyY6aaXXEzp8Bel9fxE2RrVNhevSxFLCPuJg++c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dnVUqQ+k; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 7aaf02d6b89e11ef99858b75a2457dd9-20241212
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=zRv4gIVobaa+kTHMR3lPKYtayqlhOe1elNpsMFFmacU=;
+	b=dnVUqQ+kLxfQAOnjYGds/gxiF+hD2ELq+0l5KKLEOGMKQlPFdCZjwwqDu6JI7lSV4nh0deK+NxemD/6A0pRWXXPya0fIUNXqp2+Aa+j7OW+9tU1+lzv/Xx8y9GxVHpfWMy511R7KakKgUF9PaZxZd0iYumjJHavDlOY4/ArQhnU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:1570ec2e-91c2-4731-8543-3d8f60d910dd,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:46e90813-8f5d-4ac6-9276-7b9691c7b8d6,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 7aaf02d6b89e11ef99858b75a2457dd9-20241212
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 199065366; Thu, 12 Dec 2024 23:33:47 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 12 Dec 2024 23:33:46 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 12 Dec 2024 23:33:46 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, "Jason-JH . Lin"
+	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Nancy
+ Lin <nancy.lin@mediatek.com>, Shawn Sung <shawn.sung@mediatek.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Fei Shao
+	<fshao@chromium.org>
+Subject: [PATCH 0/2] Update MT8188 OVL compatible from MT8183 to MT8195
+Date: Thu, 12 Dec 2024 23:33:42 +0800
+Message-ID: <20241212153344.27408-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain
+X-MTK: N
 
-On Thu, 12 Dec 2024 23:06:53 +0800
-Zijun Hu <zijun_hu@icloud.com> wrote:
+This patch series updates the compatible strings for the MediaTek OVL
+in the MT8188 dts and the corresponding dt-binding.
+The changes ensure that the MT8188 OVL device is correctly identified
+and managed by the appropriate drivers.
 
-> This patch series is to fix 2 OF device node refcount leakage issues.
->=20
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
-> Zijun Hu (2):
->       net: pse-pd: tps23881: Fix device node refcount leakage in
-> tps23881_get_of_channels() net: bcmasp: Fix device node refcount leakage =
-in
-> bcmasp_probe()
+The first patch is resending the reviewed and acked patch from:
+- https://lore.kernel.org/all/5d9e6f6c-604d-4e2d-a448-fc5b8bd24a75@collabora.com/
+and rebase it to the latest linux-next-20241212.
 
-Thanks for the patch. This fix was already sent by Zhang Zekun:
-https://lore.kernel.org/netdev/20241024015909.58654-1-zhangzekun11@huawei.c=
-om/
+The second patch is updating the mt8188.dtsi according to the first patch.
 
-net maintainers would prefer to have the API changed as calling of_node_get
-before of_find_node_by_name is not intuitive.
+Hsiao Chien Sung (1):
+  dt-bindings: display: mediatek: ovl: Modify rules for MT8195/MT8188
 
-Still, don't know if we should fix it until the API is changed? =20
+Jason-JH.Lin (1):
+  dts: arm64: mediatek: mt8188: Update OVL compatible from MT8183 to
+    MT8195
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+ .../bindings/display/mediatek/mediatek,ovl.yaml           | 8 +++-----
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi                  | 2 +-
+ 2 files changed, 4 insertions(+), 6 deletions(-)
+
+-- 
+2.43.0
+
 
