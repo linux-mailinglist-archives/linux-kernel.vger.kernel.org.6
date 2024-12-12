@@ -1,180 +1,111 @@
-Return-Path: <linux-kernel+bounces-443403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD269EEF4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:14:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F251896697
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:09:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F193223E6FC;
-	Thu, 12 Dec 2024 15:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Tamm4X9R"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9509EEDC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:51:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FF123E6DA
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A66A285355
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:51:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336D9222D46;
+	Thu, 12 Dec 2024 15:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dPh69NUN"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AC32210E1
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734019118; cv=none; b=pxFS8RbDnxrDSWchWsQcuvGQCPWQIeMWsl24L7Yku1olhuSxR3ILpNXrENv0AlfjxkHsFiWpjApfg6SOg7fa3DmPTeZxlyHU4R4827X6pKCXaiHwJNYk2NHePXZ2a178zc7li5yuM+MGIcY8pJcgp+Bdo0h3ktpn2bJFOWzJ9Po=
+	t=1734018588; cv=none; b=YyaJLfS7BwVwVp0O9ltKMhRPB7k8CokFKBpt2ROLPkmnHPIlQaE5pssNZu/Tt+Zk5rcgS9hzxyLiB9Y4WfYBh60rX3Ujk0/um/iNosPQpZvhxHdxcrMNW0Z2RRU7p5CE2El8ab+Hqq7GADFsvLnssupRYPgsN/lhrCy2ggd49us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734019118; c=relaxed/simple;
-	bh=zBd7T5NIB7hPfbFNSDI7driw6ROkkz34gb/RY0wBpY8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y2tqHJMwxpa9TPzDCJAPre/46BF3t4kUEVmZmpcaQ1gICWm0QHlmI+EIhDomrPGUEcPX8KB/6VdzFbpjgBOROQdh4jHuWI7epoFwuHWg/EjpQcHpyEXcbRjCnDk3R2vbQxahidoTpE+bFupqAFL0Sw3kRBLiqC5Y0bdolAgAKgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Tamm4X9R; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1734018587;
-	bh=zBd7T5NIB7hPfbFNSDI7driw6ROkkz34gb/RY0wBpY8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Tamm4X9R/C9DxvSVzG43R5KeZIwLyhKonLyjBSrZ0uoNGQZigr3Hz/qmCB0uIruB7
-	 c9fxHG5ZISmQlLQlQhK5xkRDJw7Hk1egmRxDSjD+q5UM2eY4a6APE4+nlMQskfB55i
-	 hAa8Y6SMmmS8O08wyEFdh7OrfpEwE9UKeCDzrGOnil4IQ5TB1BLe1NMGLzpnz/fKx6
-	 kxVPLQ5+AJiTGYoDuzo9cRpiFoUZYyiKx3eASTDRtr9I/vhIJgidbOS3Wk3/dePSJf
-	 fFGy18dAjpfi6dpkp/iXpupH+tNTwl4nCpwH/s77j1r/5s0+erSPrFxuAY8HYcfIjI
-	 jWT6Pv4e1xriQ==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Y8H3H4VXczVVJ;
-	Thu, 12 Dec 2024 10:49:47 -0500 (EST)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Marco Elver <elver@google.com>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH] sched: Compact RSEQ concurrency IDs with reduced threads and affinity
-Date: Thu, 12 Dec 2024 10:49:43 -0500
-Message-Id: <20241212154943.148632-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1734018588; c=relaxed/simple;
+	bh=lN4MUxPKoJApshMw3UQg1h/DxihUEuhLvyfrSkJfkw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fl7CgLOs0THa+OP+UlnaQR719e0h1M7u8Oc/n7xZK/KFR93tKELJrr0HhxnlKwE+p75dwSXbVDAq8czHrFEPmgGHjLnmAZWHt7nt/rjQiiIWKvWHnOpk0jDuB/t0ILb/mxj6TDRB6xBPmnU+Uq0kFURSnVp6Hte6M71HG5O8KaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dPh69NUN; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-844d7f81dd1so29568039f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:49:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734018585; x=1734623385; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YVaKQZU7nloKckjwhdDnxOF9PtevW4t5K7qzUvbh2h8=;
+        b=dPh69NUNUtbwPgNSlSjEQ6oT9vxhIPPxQ7TheWzOrLONeIYA1o9eSFAGbR0kp+5n0I
+         RU0lUjesoYvEypMhwiCO5tIUWaziN3DOex/g+RziJMzo7Ja64b2C6K1FBNxJj61i5OhM
+         65z1ORmNZthIFpbVQS1mApi2JaCyz61/9HQ24ZEf5oeI3P7dsMnTFscYyALYiVOtWF0w
+         FKhabGwWIV61gHOKvlC+V8MQq2dbn3UhonjlfasEyB5cH9z/qFMppP2G5Rpc/Ht5YU2D
+         1+ua5sym96aFyPniJfMVGdjA15nupIp9TAAjdn0jh2NBbRt86gxmKKS0c3OESwdeb1D8
+         lXDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734018585; x=1734623385;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YVaKQZU7nloKckjwhdDnxOF9PtevW4t5K7qzUvbh2h8=;
+        b=GwWDqOFJ/NZ8VFGhLNGMsoVEbXZc7slIcWD6XW55YcWjMJwUlQEUiosjRiJFgz4cIo
+         wN+H+ScDBVYp1uyyzzLfCW4YMvyxDM2Z/7fY2/LP5KRGIRd1gkE6xPR7tKNX5IxjyU5I
+         sY1euDkiebJpK18Sd2gVCvISo5hLyaNxHPDBbXua2Lf8Rjf4o2bDhAhby4Y5e0xQUQct
+         IUEyMPIOE1Zh7XpkiFqd0KoOYwFr7FSfix6aXRkrUNz8+/c3lJWDw4b3Gwlh2bMfyB/3
+         4zF8hro5gPXDDD0QJsjaeTTtntkr0r/KW0PyV1gE6uQM62feWmEar6DLikrqyxZOMtck
+         Z7xw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7DMXs6v5ucSfGUJSugYFrIC6bF1qUj/k+DmHsk9ZAGJKE52J/3jX0WHxC5rCBnfNtOEBDjtAp5VD2wD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTD/FBUt8RNAKYV8XgqYUh4s9jklOvVuN5oLld8D9LGv8ajOi5
+	mCv2HD4xno48su0jfsRI9fcUN65VGWt0Igx0ztpwySKWFWpw33blXD0+mLVNBGQ=
+X-Gm-Gg: ASbGncv6CKZl3O5+tReml9oaPcOduE4wqSB52iM7SscBMsTKtw5Fx649/BtwMWZvO+v
+	AhpQim9zdieeKsfP7QcNFdGJzjFuGO3RckCwQlZUXryHEETsW5xz+gWLx4wCbEBVV7jGsN0igLH
+	qYCCMJhrADgnHpbWhIqEKVt/uwdR4oe8fgBoPX9HwhoAFJmqcCRYT+a61vpJtzXCcEX1HLUNBb5
+	QZK33/mf/+Gb5sBbsfPPfXkwSZgFQNe7KqfF7Bz0gJv1iqgbIrG
+X-Google-Smtp-Source: AGHT+IGmxw/YiyqxPRIzbjFmn/JAK77sZXtipYzHL1BIv7+IHJ3asyE+OvBsoy5xKnX8eBVpXS4m2Q==
+X-Received: by 2002:a05:6602:14cb:b0:82c:d768:aa4d with SMTP id ca18e2360f4ac-844e56595f5mr70126339f.9.1734018585556;
+        Thu, 12 Dec 2024 07:49:45 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2d57dbf74sm1247971173.54.2024.12.12.07.49.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 07:49:44 -0800 (PST)
+Message-ID: <2c009af9-a92c-464a-aeea-50c2520b4a04@kernel.dk>
+Date: Thu, 12 Dec 2024 08:49:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/12] mm/filemap: change filemap_create_folio() to take a
+ struct kiocb
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
+ kirill@shutemov.name, bfoster@redhat.com
+References: <20241203153232.92224-2-axboe@kernel.dk>
+ <20241203153232.92224-3-axboe@kernel.dk> <Z1giRw7nEebrPfpN@infradead.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Z1giRw7nEebrPfpN@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When a process reduces its number of threads or clears bits in its CPU
-affinity mask, the mm_cid allocation should eventually converge towards
-smaller values.
+On 12/10/24 4:13 AM, Christoph Hellwig wrote:
+> On Tue, Dec 03, 2024 at 08:31:37AM -0700, Jens Axboe wrote:
+>> +static int filemap_create_folio(struct kiocb *iocb,
+>> +		struct address_space *mapping, struct folio_batch *fbatch)
+> 
+> We might as well drop passing the mapping and deriving it from the iocb
+> as well.
+> 
+> Otherwise this looks fine to me.
 
-However, the change introduced by:
+Sure, I can do that cleanup at the same time.
 
-commit 7e019dcc470f "sched: Improve cache locality of RSEQ concurrency
-IDs for intermittent workloads"
-
-adds a per-mm/CPU recent_cid which is never unset unless a thread
-migrates.
-
-This is a tradeoff between:
-
-A) Preserving cache locality after a transition from many threads to few
-   threads, or after reducing the hamming weight of the allowed CPU mask.
-
-B) Making the mm_cid upper bounds wrt nr threads and allowed CPU mask
-   easy to document and understand.
-
-C) Allowing applications to eventually react to mm_cid compaction after
-   reduction of the nr threads or allowed CPU mask, making the tracking
-   of mm_cid compaction easier by shrinking it back towards 0 or not.
-
-D) Making sure applications that periodically reduce and then increase
-   again the nr threads or allowed CPU mask still benefit from good
-   cache locality with mm_cid.
-
-Introduce the following changes:
-
-* After shrinking the number of threads or reducing the number of
-  allowed CPUs, reduce the value of max_nr_cid so expansion of CID
-  allocation will preserve cache locality if the number of threads or
-  allowed CPUs increase again.
-
-* Only re-use a recent_cid if it is within the max_nr_cid upper bound,
-  else find the first available CID.
-
-Fixes: 7e019dcc470f "sched: Improve cache locality of RSEQ concurrency IDs for intermittent workloads"
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Marco Elver <elver@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
----
- include/linux/mm_types.h |  7 ++++---
- kernel/sched/sched.h     | 24 +++++++++++++++++++++---
- 2 files changed, 25 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 7361a8f3ab68..d56948a74254 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -843,10 +843,11 @@ struct mm_struct {
- 		 */
- 		unsigned int nr_cpus_allowed;
- 		/**
--		 * @max_nr_cid: Maximum number of concurrency IDs allocated.
-+		 * @max_nr_cid: Maximum number of allowed concurrency
-+		 *              IDs allocated.
- 		 *
--		 * Track the highest number of concurrency IDs allocated for the
--		 * mm.
-+		 * Track the highest number of allowed concurrency IDs
-+		 * allocated for the mm.
- 		 */
- 		atomic_t max_nr_cid;
- 		/**
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 76f5f53a645f..7df01dc796dc 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3657,10 +3657,27 @@ static inline int __mm_cid_try_get(struct task_struct *t, struct mm_struct *mm)
- {
- 	struct cpumask *cidmask = mm_cidmask(mm);
- 	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
--	int cid = __this_cpu_read(pcpu_cid->recent_cid);
-+	int cid, max_nr_cid, allowed_max_nr_cid;
- 
-+	/*
-+	 * After shrinking the number of threads or reducing the number
-+	 * of allowed cpus, reduce the value of max_nr_cid so expansion
-+	 * of cid allocation will preserve cache locality if the number
-+	 * of threads or allowed cpus increase again.
-+	 */
-+	max_nr_cid = atomic_read(&mm->max_nr_cid);
-+	while ((allowed_max_nr_cid = min_t(int, READ_ONCE(mm->nr_cpus_allowed), atomic_read(&mm->mm_users))),
-+			max_nr_cid > allowed_max_nr_cid) {
-+		/* atomic_try_cmpxchg loads previous mm->max_nr_cid into max_nr_cid. */
-+		if (atomic_try_cmpxchg(&mm->max_nr_cid, &max_nr_cid, allowed_max_nr_cid)) {
-+			max_nr_cid = allowed_max_nr_cid;
-+			break;
-+		}
-+	}
- 	/* Try to re-use recent cid. This improves cache locality. */
--	if (!mm_cid_is_unset(cid) && !cpumask_test_and_set_cpu(cid, cidmask))
-+	cid = __this_cpu_read(pcpu_cid->recent_cid);
-+	if (!mm_cid_is_unset(cid) && cid < max_nr_cid &&
-+	    !cpumask_test_and_set_cpu(cid, cidmask))
- 		return cid;
- 	/*
- 	 * Expand cid allocation if the maximum number of concurrency
-@@ -3668,8 +3685,9 @@ static inline int __mm_cid_try_get(struct task_struct *t, struct mm_struct *mm)
- 	 * and number of threads. Expanding cid allocation as much as
- 	 * possible improves cache locality.
- 	 */
--	cid = atomic_read(&mm->max_nr_cid);
-+	cid = max_nr_cid;
- 	while (cid < READ_ONCE(mm->nr_cpus_allowed) && cid < atomic_read(&mm->mm_users)) {
-+		/* atomic_try_cmpxchg loads previous mm->max_nr_cid into cid. */
- 		if (!atomic_try_cmpxchg(&mm->max_nr_cid, &cid, cid + 1))
- 			continue;
- 		if (!cpumask_test_and_set_cpu(cid, cidmask))
 -- 
-2.39.5
+Jens Axboe
 
 
