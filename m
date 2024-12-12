@@ -1,86 +1,39 @@
-Return-Path: <linux-kernel+bounces-443699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A299EFAB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:20:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E67C9EFB15
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:36:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C2A28F722
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9022283E8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5AD22540E;
-	Thu, 12 Dec 2024 18:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o0FIywXR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740E1223E64;
+	Thu, 12 Dec 2024 18:35:46 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A74918785D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D61223338;
+	Thu, 12 Dec 2024 18:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734027594; cv=none; b=TyhQHgvi9nLI6m+6IgK1xibPTK/HvkoBLGQr297QcCju84D6lm9hT1rmxTGwUnYDMtHZUbigObOgpE7BWVNqM7NbTpqn3gNOewoDzcMCGBPZlEiW2j9c1zUk0jVdzy4V5hVZnzvzZrlztfeynpR/Xy6Pw32GlS/jbu/paC7JOAc=
+	t=1734028546; cv=none; b=QnSEx6kWD5ihHwIdZ5BEh5YnOqwAXk0hUKs68fVNTBvrie60Y21oLt4kyv/33VL8e2Z9RSL2C6RktqZEqJ8SYyvjWbZsbrcAkw1kQl4tKQNX6ksaEKesB9uANIEPjw14uP0ZHqD2JfNP/UvsKZ25F6oS697JAPklax39jMn68cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734027594; c=relaxed/simple;
-	bh=BC/qpq76CEpIIrHWx2B9eZ+G4AtkyiRIqFqRdOh/W5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pZG4d93AxLJ0aWnjpkaI9G5zkp86M7nZXUi9tbKTXpAXH21IKVsDFVPxJlkSQOAcLrLj8rsHXm0Y1rJ2mSyDb+MEV0RVK3IMSA7zCZMecomBR4IbLtVin7ByVlStbOiYGttIm+E5AIL6mDoCMOoO9Mcd4O14f1Rjkq/zaC6MbcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o0FIywXR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCFka0L019198
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:19:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GKtNCOtaL89pHw3G7/FzhB1Ks2fBiwK4pFoXlWgfkeI=; b=o0FIywXR9rpDaZOk
-	gN/uFkjNFvMH/YtED0Junfo+qOBJaiHOnU+zjfx0r9K/Nm/AHg9hqGSlhE/07wZw
-	b3UiDKFahAYRr4haz68xf9H7oKTD6fWrOZWimF4vLcvgmfDfunIMGKqj1OayLAB8
-	AOSKsh1Dl0drIz8tWc2BIbri3DRleQIU5aJqHA5hQ3EeeYHuZUORjvzmKkaaJQV3
-	xdIovlDrIpmYz/69pMs9GvuQ/KfUgomznnCEZdbJBQ/wMXaOr0DqV1FO+/R4Oa19
-	EX6y/Uek4/YO4L6CDhi96GB1dno6TfP9gESfyp3k+98f8hSfeuN/d9IJzSbrziso
-	w3uEZQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ffdyufbs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:19:52 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-467a39f07f8so108541cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:19:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734027591; x=1734632391;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GKtNCOtaL89pHw3G7/FzhB1Ks2fBiwK4pFoXlWgfkeI=;
-        b=IgawPOIMzgsgIyozg8boTAgToFiP88YevV/9VjWs9VmH7+SG4UHE6buYPFU3mlXGgb
-         yttGxZHiliJRmMnfNZy/mVjcUtV6n+cPzGjbXPfxQ53IQC6fr13zWVuB9Q04u573FRV2
-         FiQ3iWd95WBiuXrGykPBcQ6Jbrp3br0y/+6MC2692r1D/iuamCmrg+X2G49EpF34S1Hn
-         0wBAlQr13Nt2FVSvN3A7mH6mhnQwIllsysmJxsAtay8HPZMKbKlt4lNZufDNOZzDQKIp
-         LfUSc7VRtqN/amOXx4BSQXJ1iVEe0Y9PsGMtEBgQGckwWy488AUdsQMAYLe1Jy1hFOZD
-         NvBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVk2Q/68HwPyvzR5O93PSnRSqXjt+8CwC5I4JW6ts4mVOhW7bLuV0ml37GoAh5kQ4gDxq6paiGI3t71ZVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuYKl+iQGXgq9VKcOw33b9JLLDnOjRudr0mOM++Kko39DxlE0l
-	OYXgS+O2Us5Mwe3SJThMe+zilbKh9PwvnuLXPrhcHC7jTmHp0wmH4lD20oQhfq+akoQWdnJyk6T
-	3c3MNwNTyMfiBRx+KaReVNxHGv9Q18qespzZeSISBqAHxjKo6tAldbCpCzsqgS6w=
-X-Gm-Gg: ASbGncuPaqX/fJO5QBJWI8wfbddrWWFypvgD6ajOS1YSO21nllLR9KtDKmzjR9xohLE
-	d1n2eLbmqAvz5ZyrfkeH/TA/5IMz0nenHkuyEjGo8OxnOf4w5Y0X4Yel5nSd0Wiv4KWcDqhCkjK
-	JlFmxcmqvFdCQX1w91wWHpjRRRYVZ10bEjcggIPFAr1Jj2lkyQ6sru0UazBf3TYEuOmltscm39e
-	k2JeQlWyH4vpsCI0kJs+sHibC6Xt/KIZ7fztkU8yUzpsQNXmX8t6uLwmq2wwfB9WFIoCQ+UlmT0
-	RBBxNQ6iuPoZx2G+ve9AAotU06BxnWrtLaAdhA==
-X-Received: by 2002:a05:622a:1a87:b0:461:4467:14bb with SMTP id d75a77b69052e-467a14cf99fmr7175591cf.2.1734027591058;
-        Thu, 12 Dec 2024 10:19:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGC6KrQasDLA2/zeHAKapqCU8kql+Ub/Gc2FmOF51LQmMz74nDoscHAYcpWpck4WHEyFhI9xg==
-X-Received: by 2002:a05:622a:1a87:b0:461:4467:14bb with SMTP id d75a77b69052e-467a14cf99fmr7175361cf.2.1734027590585;
-        Thu, 12 Dec 2024 10:19:50 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa67f26cff7sm672205966b.57.2024.12.12.10.19.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 10:19:50 -0800 (PST)
-Message-ID: <8c60e0dc-531a-47d6-9c40-ea157a24da1b@oss.qualcomm.com>
-Date: Thu, 12 Dec 2024 19:19:47 +0100
+	s=arc-20240116; t=1734028546; c=relaxed/simple;
+	bh=D1rEZ/UXPFQswkREdMZvu289mgrFj152BUDKLiScvJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YspqC2/Gl7mePYOexlR75PUcnaOLreIXFqAlEtachPp/wwjh4cDsF/A7rRpSl3PW3UUpjWADPgNtBXeZYwsD7xQ6CBtRC7uENyWPiyYQd1ZRU0xiVUtU9+eqZ55sJvr7EfNL9TtHbnWOUCa2jVAz1osThukIB6+XsBet5JBQQHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.102] (213.87.158.53) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 12 Dec
+ 2024 21:20:23 +0300
+Message-ID: <edf7216a-15f8-474b-95ec-84451192cd28@omp.ru>
+Date: Thu, 12 Dec 2024 21:20:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,67 +41,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/5] dt-bindings: arm: Add Coresight TMC Control Unit
- hardware
-To: Jie Gan <quic_jiegan@quicinc.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
- <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-References: <20241210031545.3468561-1-quic_jiegan@quicinc.com>
- <20241210031545.3468561-4-quic_jiegan@quicinc.com>
+Subject: Re: [RFC PATCH 2/3] ata: Replace deprecated PCI functions
+To: Philipp Stanner <pstanner@redhat.com>, Damien Le Moal
+	<dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Mikael Pettersson
+	<mikpelinux@gmail.com>
+CC: <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241204171033.86804-2-pstanner@redhat.com>
+ <20241204171033.86804-4-pstanner@redhat.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241210031545.3468561-4-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20241204171033.86804-4-pstanner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: p8yJF8pRsXZDXgZGyMx6a_2oKbt8mxJF
-X-Proofpoint-GUID: p8yJF8pRsXZDXgZGyMx6a_2oKbt8mxJF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0 adultscore=0
- spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412120132
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 12/12/2024 18:03:12
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 189803 [Dec 12 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.7
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 47 0.3.47
+ 57010b355d009055a5b6c34e0385c69b21a4e07f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.158.53
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 12/12/2024 18:07:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 12/12/2024 3:08:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 10.12.2024 4:15 AM, Jie Gan wrote:
-> Add binding file to specify how to define a Coresight TMC
-> Control Unit device in device tree.
+On 12/4/24 8:10 PM, Philipp Stanner wrote:
+
+> The ata subsystem uses the deprecated PCI devres functions
+> pcim_iomap_table() and pcim_request_regions().
 > 
-> It is responsible for controlling the data filter function
-> based on the source device's Trace ID for TMC ETR device.
-> The trace data with that Trace id can get into ETR's buffer
-> while other trace data gets ignored.
+> These functions internally already use their successors, notably
+> pcim_request_region(), so they are quite trivial to replace.
 > 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
-> ---
+> Replace all calls to pcim_request_regions() with ones to
+> pcim_request_region().
+> 
+> Remove all calls to pcim_iomap_table().
+> 
+> The last remaining user, libata-sff.c, is very complicated to port and
+> left for future work.
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+[...]
+
+> diff --git a/drivers/ata/pata_sil680.c b/drivers/ata/pata_sil680.c
+> index abe64b5f83cf..1f74666a0f37 100644
+> --- a/drivers/ata/pata_sil680.c
+> +++ b/drivers/ata/pata_sil680.c
+> @@ -360,15 +360,17 @@ static int sil680_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
+>  	/* Try to acquire MMIO resources and fallback to PIO if
+>  	 * that fails
+>  	 */
+> -	rc = pcim_iomap_regions(pdev, 1 << SIL680_MMIO_BAR, DRV_NAME);
+> -	if (rc)
+> +	rc = 0;
+
+   Doesn't seem necessary...
+
+> +	mmio_base = pcim_iomap_region(pdev, SIL680_MMIO_BAR, DRV_NAME);
+> +	if (IS_ERR(mmio_base)) {
+> +		rc = PTR_ERR(mmio_base);
+>  		goto use_ioports;
+> +	}
+>  
+>  	/* Allocate host and set it up */
+>  	host = ata_host_alloc_pinfo(&pdev->dev, ppi, 2);
+>  	if (!host)
+>  		return -ENOMEM;
+> -	host->iomap = pcim_iomap_table(pdev);
+>  
+>  	/* Setup DMA masks */
+>  	rc = dma_set_mask_and_coherent(&pdev->dev, ATA_DMA_MASK);
+[...]
+> diff --git a/drivers/ata/sata_sx4.c b/drivers/ata/sata_sx4.c
+> index a482741eb181..f4644ba5f095 100644
+> --- a/drivers/ata/sata_sx4.c
+> +++ b/drivers/ata/sata_sx4.c
+> @@ -1390,6 +1390,7 @@ static int pdc_sata_init_one(struct pci_dev *pdev,
+>  	struct ata_host *host;
+>  	struct pdc_host_priv *hpriv;
+>  	int i, rc;
+> +	void __iomem *io_tmp;
+
+   I'd suggest a better name, like iomem here...
+
+[...]
+> diff --git a/drivers/ata/sata_via.c b/drivers/ata/sata_via.c
+> index 57cbf2cef618..73b78834fa3f 100644
+> --- a/drivers/ata/sata_via.c
+> +++ b/drivers/ata/sata_via.c
+[...]
+> @@ -494,13 +497,17 @@ static int vt6421_prepare_host(struct pci_dev *pdev, struct ata_host **r_host)
+>  		return -ENOMEM;
+>  	}
+>  
+> -	rc = pcim_iomap_regions(pdev, 0x3f, DRV_NAME);
+> -	if (rc) {
+> -		dev_err(&pdev->dev, "failed to request/iomap PCI BARs (errno=%d)\n",
+> -			rc);
+> -		return rc;
+> +	/* Request and ioremap _all_ PCI BARs. */
+> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+> +		iomem = pcim_iomap_region(pdev, i, DRV_NAME);
+> +		if (IS_ERR(iomem)) {
+> +			rc = PTR_ERR(iomem);
+> +			dev_err(&pdev->dev, "failed to request/iomap PCI BARs (errno=%d)\n",
+> +				rc);
+
+   You have a limit of 100 columns now. :-)
 
 [...]
 
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sa8775p-ctcu
+MBR, Sergey
 
-I don't think anyone asked that question.. Is the TMCCU something unique
-to Qualcomm platforms?
-
-Konrad
 
