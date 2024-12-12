@@ -1,244 +1,432 @@
-Return-Path: <linux-kernel+bounces-443958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE579EFE1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:20:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1BFD9EFE22
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:21:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81FC628857E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:20:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71E34188951C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D17D1D6188;
-	Thu, 12 Dec 2024 21:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536C61BE251;
+	Thu, 12 Dec 2024 21:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RGLRj966"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2043.outbound.protection.outlook.com [40.107.100.43])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m+T8qv/1"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BAA1AAE28;
-	Thu, 12 Dec 2024 21:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734038451; cv=fail; b=P87HRz0u0hdn2/Oo2E9tQaa6T3xy8MBYbZTwzwL0iGQ7N685zRjJdbV4Px07peMLPh3HIXRcaXLPYPG+qlZxzG3q9F9L1+73eWiNMvrQHzJYj1iIKqiyinb/isOcmrvpBbty8eijAidL4jZb+twN2CCyflN+wz0XMPRmdhkb0Jg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734038451; c=relaxed/simple;
-	bh=vtOhtBo+CleexuDoZVi8cDi8TNodiGefPuXZS4Gp1t8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UHbofOAzPyX5JT+MTqAmsFrZ/NJfBoiMVseNNnVP+8J7/Pyn6SyyjtTElUd3Bnb3PqHmcFxp065ei9pXhLk1LzR0EoFfkjO4POGWeOIrlvpb7Zb5VqZUg8A3hf3lCE03wOMnAKq/du6DdlJ0nHuFBOBgfPb5KZfqLnaJfb9p/JM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RGLRj966; arc=fail smtp.client-ip=40.107.100.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BxPavZkhvzllZz9dvT3lQ9blHYhBHZKbWBah/Je07C7FrnGlY13o/oHDo6QKM5wgLPUmqoQcc4KYZfE7JydKChC6ojIBrxDpN1N+GRP6MCeS3lcuqktcSc6mGeuu/y52Ym22bpZwOaRK0dvlv7i6ruvDCHvA834MksVyugonhbihBZpmzIQZIKDt41j4XJAF7KtcMVeTTXRffXFFQ/WpjDuiGxoBy8a7Mi/kRBhWegEI7z3OuRCvS/FBOX+8Tn1QNPc4YZ6cixkt/foH7JpDPuZ74H5rLnhosXZptMWJzTQSvOGhLiop3S5GhcR9VHDR9+MW8qsB+J9w2Mx81P8y9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pl2WXRgOJzhrnr31UPvr7k5wWZyej5bBaYSpoSmMqVA=;
- b=pV4TFhauaGg4Q8SmpO80YHP3DSdQR1LACAXx2m6FjN/8819XLhi6pQzQoby/325y9n2FtUaSinjlMrDSxUdHx3tinQTmGjTltWNb+nTefuludB3U58+XDyWSX2zV4j9OxOZI3WVqQpQRYLs2psOiljTJMQFuCIaZT9GagnDaw1dOuf0jRtj9axNxvx95hFPUPfD9XRV3oa2m/yPIwZQbGEW+TwQGcxN6B7c5wct5gFSfS6h9w7xJUip0K4xQB0HkoVnxDywrBy0Z4RyLDGQ4Tk+ATRTYMdvdHlMoIXHYVcUN6djf9PSxD4Ts0wlkVBFgTKKjiCXTNlxlY1HInDs7Lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pl2WXRgOJzhrnr31UPvr7k5wWZyej5bBaYSpoSmMqVA=;
- b=RGLRj966b2N1mYJtuOlVU/ZrtOVow8CGt/+pzd+WbX2P5jDXmekQ/GhOnO6tjNszLfPWhQBHAlQVsaQYhGv33ikd2VqZ2V4Swg7RmyHDgHKlxGAvPW2DE6KUiZL9ob6I7Gd24L3DzWNU4IEnO/pD5w9VW25JYM9XCXcZmmb0ez7qZ/2+fycqfJYkT2dOSb1w0AJ3idc0w1ydeiGw6VGvavMBqcH7L4dO35cgpR9195NbrB6ErKqVyQl2t5uFvaDu6vuHe7kyXGmADAsESuTgAHz5p+4mb4pC8+GWd/MJzFLL/QN6LuZ+Bdu8Q84R0lW1QlDv2n+PuctJJb1vYai3Yw==
-Received: from BN9PR03CA0552.namprd03.prod.outlook.com (2603:10b6:408:138::17)
- by DS0PR12MB7509.namprd12.prod.outlook.com (2603:10b6:8:137::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Thu, 12 Dec
- 2024 21:20:45 +0000
-Received: from BN2PEPF000055E0.namprd21.prod.outlook.com
- (2603:10b6:408:138:cafe::a2) by BN9PR03CA0552.outlook.office365.com
- (2603:10b6:408:138::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.17 via Frontend Transport; Thu,
- 12 Dec 2024 21:20:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN2PEPF000055E0.mail.protection.outlook.com (10.167.245.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8272.0 via Frontend Transport; Thu, 12 Dec 2024 21:20:44 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Dec
- 2024 13:20:16 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Dec
- 2024 13:20:16 -0800
-Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 12 Dec 2024 13:20:15 -0800
-Date: Thu, 12 Dec 2024 13:20:13 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-CC: "jgg@nvidia.com" <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"corbet@lwn.net" <corbet@lwn.net>, "joro@8bytes.org" <joro@8bytes.org>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "dwmw2@infradead.org"
-	<dwmw2@infradead.org>, "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"shuah@kernel.org" <shuah@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"jean-philippe@linaro.org" <jean-philippe@linaro.org>, "mdf@kernel.org"
-	<mdf@kernel.org>, "mshavit@google.com" <mshavit@google.com>,
-	"shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
-	<smostafa@google.com>, "ddutile@redhat.com" <ddutile@redhat.com>, "Liu, Yi L"
-	<yi.l.liu@intel.com>
-Subject: Re: [PATCH v2 05/13] iommufd: Add IOMMUFD_OBJ_EVENTQ_VIRQ and
- IOMMUFD_CMD_VIRQ_ALLOC
-Message-ID: <Z1tTjaJ2dyueFjWy@Asurada-Nvidia>
-References: <cover.1733263737.git.nicolinc@nvidia.com>
- <7f5f7adc2493c7bca7edf76ca15b377c8dc0d397.1733263737.git.nicolinc@nvidia.com>
- <BN9PR11MB52767F481C7D05EB1BDFD7D48C3E2@BN9PR11MB5276.namprd11.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2D51B6D0A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734038478; cv=none; b=Zu79Z/f53gYn3DNKJuHb8vjy5I3PXfy39jhMd4+g/q1yLAY+Ah2XvU/dfJEP1CNSuaxCE7x/gCjNwyg8OvX3gPp89V5B6Y0XSh3QVjg5Oj80llUBZm8a8f6pJnKDgOooCcRJAYRbf2OwnwTaiVUhlHyfkbRBPu/BbVk40IXfucQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734038478; c=relaxed/simple;
+	bh=0xg0cSfkVdjJzmHUqdk9cFaherJKDKXpN9svkkPBA6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YDXksY4ZJk7engpcGB69/bvbtJ2kpvKZUgqnKTwFDghNZtHnumLcbzRstTkDKnpz1dpeq3f0cYDwSvFCYLutiEXrZAj72fwM1vGFfn87ya8qdag824qy8o6t2oC4E+yqPAzhOPYBNxIWhCU+y84bC8w/aktgS21VuTNLiNXNY5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=m+T8qv/1; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c0a6ae91-c925-40d6-8f95-59a9144d203b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734038462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iAYBYhFCMsz3d7tgdSG2PsRwLSDWZC6GVr2NGcmo5rw=;
+	b=m+T8qv/1a01qoK/q7hy/Dki7VS621jcPzbemiDCCJuZv03W35uNG/MFFpbJfqbcBjlUqbv
+	wXdlwKkuPZ4Ap0bx8eIN9llEEYPo8K4LrSCGCIQEsP6y3M8mfc6eOBJjmxIQUiuPV+gc3D
+	cGRRThgw5K/kNbo60c6r6TYh9npDLQ8=
+Date: Thu, 12 Dec 2024 13:20:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB52767F481C7D05EB1BDFD7D48C3E2@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055E0:EE_|DS0PR12MB7509:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee0a65a3-784c-4ef9-8dd1-08dd1af2d6f8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VB5NmS6Ic++fCCuFUUL2cwTeCjvuZBHNKTtPzFbxe4GiEtbPJKAvHU2nzTMI?=
- =?us-ascii?Q?RJzCHJ5BO7sTb8etnk69daDNjVNOL7PgY9PWUecLpyrihqepkVuAixtqToid?=
- =?us-ascii?Q?0XpzRY0BzEuJ6gW4MlxM7hok7os1vqdASUr9c2DQCwsSOYVslJknUd4zJPyV?=
- =?us-ascii?Q?p1Q4CAa9j2fYyJr6sPnHkVJ+v0YrPfiAI43b9rjgZH630kNfYaCSeTySFJrZ?=
- =?us-ascii?Q?2c2SkCbquNlMZz4lNmY8nb6C9I1Nv8UqT3VMhHimLcixSO772xCOZ8p3E5i1?=
- =?us-ascii?Q?ksZDMdy/Q4F1sqR7VSXZjFlW+T1npisDNqjeVZbe6eqSVmu5WGqZ3L4ZjzQT?=
- =?us-ascii?Q?KC0CK1m6CeQINaU2l3h75/q/pXSQ/T1CpghNRMmQFucZn9hhEdvWbsFv3vUW?=
- =?us-ascii?Q?K1PWvKYvlGvmCePOXGkXacn7o3Xx/cvF/1eVTlxXWxxk5xR5TFwb+EyTK57q?=
- =?us-ascii?Q?w7SKOKvtSp8HmfoBA26e6Z5p5EE4XXs87LrLUwNv9JOYcOq48IcNjq/P7p39?=
- =?us-ascii?Q?dL4TvOxfVCkr7biAcRfwApNuXfdUJLsaCxDX0vyBBlw4NvX1A7Iag26gQ0iI?=
- =?us-ascii?Q?R90LLJGa9XMvHFEnQ65mn3AezdojdmPGbqdiXHVv31X34d9UIMGaCVxaERtI?=
- =?us-ascii?Q?LszmB3UIAIBCCxjbt4q52nkXKBulvAcCBL+68CUBpPmv/0iB2yqo+rJep00b?=
- =?us-ascii?Q?SSJN3cR4dz+3yHg+wYY7TiuCnG035ZrXqzGtqEqjtPMapnlxrPLr2uaSXI+7?=
- =?us-ascii?Q?UfJMPj9mGUPbtffPxXn19CfVJoxrmANlKsk+rk44m54vMv48df8T0r11bgpO?=
- =?us-ascii?Q?6cRkm61b8WcwyDdTMLokU3+CBroxUWjUKbgBpHJEO39Qm0AsPjwxquSJdhBS?=
- =?us-ascii?Q?V4M6fbNhFst79PD+PhaqE1Kk58+pruVN4VJDLOlXeIwqAVOK4iBy4hpnAlYq?=
- =?us-ascii?Q?QWgVjUxd5VH36gohIoTfWJRNxRJqglYmASw7/C2kTtcglB+dqyObv+q4d056?=
- =?us-ascii?Q?JW4ZLSHfA+EQz96rg2uCGMyX/9MZDWjgMTbl6vIcYL/BSQbSBy/fFE4ifzyY?=
- =?us-ascii?Q?Lap5YVpzbPEW5xFadQNGZA4ZoPYNHIE69ZNayVvBRy8LBSuiY4wy1DGQCMe9?=
- =?us-ascii?Q?t1k5lTPYjJyeLc29KjvCNp4QH8MYfzZGaV9gDe4B+Eiqzua51A97hZZfAJR/?=
- =?us-ascii?Q?5LbndUvgdoLhVabH5O16chjohtPrD8LYzC5dWJNj9c0uivPw8m30S8LfjIsI?=
- =?us-ascii?Q?PRdLKdPW6flPffog4dKKiaox0tSZjmRF7c6tFeYHMlwk90SCnotqmJI0DceJ?=
- =?us-ascii?Q?NWwRxyIdn7yB/sapFCHwTAiLWl1HKei9nYY4sPE8H/4tACsUeWY447HU0YTh?=
- =?us-ascii?Q?tIKaRBIxxtSRkJVxIsIHEVO7H89gxtW5/xdwUg/3wxYH/slN44km1URwkdlt?=
- =?us-ascii?Q?Qb8oNpZs3YOr6/I4qG9CTeorVsUFlkFN?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 21:20:44.5468
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee0a65a3-784c-4ef9-8dd1-08dd1af2d6f8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000055E0.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7509
+Subject: Re: [PATCH v7 7/7] Add Propeller configuration for kernel build
+To: Rong Xu <xur@google.com>, Alice Ryhl <aliceryhl@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>,
+ Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>,
+ Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>,
+ Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>,
+ workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Yabin Cui <yabinc@google.com>, Krzysztof Pszeniczny
+ <kpszeniczny@google.com>, Sriraman Tallam <tmsriram@google.com>,
+ Stephane Eranian <eranian@google.com>
+Cc: x86@kernel.org, linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20241102175115.1769468-1-xur@google.com>
+ <20241102175115.1769468-8-xur@google.com>
+Content-Language: en-GB
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20241102175115.1769468-8-xur@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Dec 11, 2024 at 07:55:53AM +0000, Tian, Kevin wrote:
-> > From: Nicolin Chen <nicolinc@nvidia.com>
-> > Sent: Wednesday, December 4, 2024 6:10 AM
-> > +
-> > +/* An iommufd_virq represents a vIOMMU interrupt in an eventq_virq
-> > queue */
-> > +struct iommufd_virq {
-> > +	struct iommufd_eventq_virq *eventq_virq;
-> > +	struct list_head node;
-> > +	ssize_t irq_len;
-> > +	void *irq_data;
-> > +};
-> 
-> looks the only use of eventq_virq is in below:
-> 
-> > +
-> > +static inline int iommufd_eventq_virq_handler(struct iommufd_virq *virq)
-> > +{
-> > +	return iommufd_eventq_notify(&virq->eventq_virq->common,
-> > &virq->node);
-> > +}
-> 
-> If there is no other intended usages upon that field, it's simpler to
-> remove it and directly pass the pointer in when the handler is 
-> called. Anyway iommufd_viommu_report_irq() needs to find the
-> eventq first before calling it.
 
-OK.
 
-> > +/**
-> > + * struct iommu_virq_alloc - ioctl(IOMMU_VIRQ_ALLOC)
-> > + * @size: sizeof(struct iommu_virq_alloc)
-> > + * @flags: Must be 0
-> > + * @viommu: virtual IOMMU ID to associate the virtual IRQ with
-> > + * @type: Type of the virtual IRQ. Must be defined in enum
-> > iommu_virq_type
-> > + * @out_virq_id: The ID of the new virtual IRQ
-> > + * @out_fault_fd: The fd of the new virtual IRQ. User space must close the
-> > + *                successfully returned fd after using it
-> 
-> s/out_fault_fd/out_virq_fd/
-> 
-> > + *
-> > + * Explicitly allocate a virtual IRQ handler for a vIOMMU. A vIOMMU can
-> > have
-> > + * multiple FDs for different @type, but is confined to one FD per @type.
-> > + */
-> 
-> s/handler/interface/
-> 
-> > +
-> > +	eventq_virq->irq_wq = alloc_workqueue("viommu_irq/%d",
-> > WQ_UNBOUND, 0,
-> > +					      eventq_virq->common.obj.id);
-> > +	if (!eventq_virq->irq_wq) {
-> > +		rc = -ENOMEM;
-> > +		goto out_put_fdno;
-> > +	}
-> 
-> there is no use of this wq
 
-Oops. Looks like I forgot to clean it up.
+On 11/2/24 10:51 AM, Rong Xu wrote:
+> Add the build support for using Clang's Propeller optimizer. Like
+> AutoFDO, Propeller uses hardware sampling to gather information
+> about the frequency of execution of different code paths within a
+> binary. This information is then used to guide the compiler's
+> optimization decisions, resulting in a more efficient binary.
+>
+> The support requires a Clang compiler LLVM 19 or later, and the
+> create_llvm_prof tool
+> (https://github.com/google/autofdo/releases/tag/v0.30.1). This
+> commit is limited to x86 platforms that support PMU features
+> like LBR on Intel machines and AMD Zen3 BRS.
+>
+> Here is an example workflow for building an AutoFDO+Propeller
+> optimized kernel:
+>
+> 1) Build the kernel on the host machine, with AutoFDO and Propeller
+>     build config
+>        CONFIG_AUTOFDO_CLANG=y
+>        CONFIG_PROPELLER_CLANG=y
+>     then
+>        $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<autofdo_profile>
+>
+> “<autofdo_profile>” is the profile collected when doing a non-Propeller
+> AutoFDO build. This step builds a kernel that has the same optimization
+> level as AutoFDO, plus a metadata section that records basic block
+> information. This kernel image runs as fast as an AutoFDO optimized
+> kernel.
+>
+> 2) Install the kernel on test/production machines.
+>
+> 3) Run the load tests. The '-c' option in perf specifies the sample
+>     event period. We suggest using a suitable prime number,
+>     like 500009, for this purpose.
+>     For Intel platforms:
+>        $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count> \
+>          -o <perf_file> -- <loadtest>
+>     For AMD platforms:
+>        The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v2
+>        # To see if Zen3 support LBR:
+>        $ cat proc/cpuinfo | grep " brs"
+>        # To see if Zen4 support LBR:
+>        $ cat proc/cpuinfo | grep amd_lbr_v2
+>        # If the result is yes, then collect the profile using:
+>        $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a \
+>          -N -b -c <count> -o <perf_file> -- <loadtest>
+>
+> 4) (Optional) Download the raw perf file to the host machine.
+>
+> 5) Generate Propeller profile:
+>     $ create_llvm_prof --binary=<vmlinux> --profile=<perf_file> \
+>       --format=propeller --propeller_output_module_name \
+>       --out=<propeller_profile_prefix>_cc_profile.txt \
+>       --propeller_symorder=<propeller_profile_prefix>_ld_profile.txt
+>
+>     “create_llvm_prof” is the profile conversion tool, and a prebuilt
+>     binary for linux can be found on
+>     https://github.com/google/autofdo/releases/tag/v0.30.1 (can also build
+>     from source).
+>
+>     "<propeller_profile_prefix>" can be something like
+>     "/home/user/dir/any_string".
+>
+>     This command generates a pair of Propeller profiles:
+>     "<propeller_profile_prefix>_cc_profile.txt" and
+>     "<propeller_profile_prefix>_ld_profile.txt".
+>
+> 6) Rebuild the kernel using the AutoFDO and Propeller profile files.
+>        CONFIG_AUTOFDO_CLANG=y
+>        CONFIG_PROPELLER_CLANG=y
+>     and
+>        $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<autofdo_profile> \
+>          CLANG_PROPELLER_PROFILE_PREFIX=<propeller_profile_prefix>
+>
+> Co-developed-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Rong Xu <xur@google.com>
+> Suggested-by: Sriraman Tallam <tmsriram@google.com>
+> Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
+> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+> Suggested-by: Stephane Eranian <eranian@google.com>
+> Tested-by: Yonghong Song <yonghong.song@linux.dev>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> ---
+>   Documentation/dev-tools/index.rst     |   1 +
+>   Documentation/dev-tools/propeller.rst | 162 ++++++++++++++++++++++++++
+>   MAINTAINERS                           |   7 ++
+>   Makefile                              |   1 +
+>   arch/Kconfig                          |  19 +++
+>   arch/x86/Kconfig                      |   1 +
+>   arch/x86/kernel/vmlinux.lds.S         |   4 +
+>   include/asm-generic/vmlinux.lds.h     |   6 +-
+>   scripts/Makefile.lib                  |  10 ++
+>   scripts/Makefile.propeller            |  28 +++++
+>   tools/objtool/check.c                 |   1 +
+>   11 files changed, 237 insertions(+), 3 deletions(-)
+>   create mode 100644 Documentation/dev-tools/propeller.rst
+>   create mode 100644 scripts/Makefile.propeller
+>
+> diff --git a/Documentation/dev-tools/index.rst b/Documentation/dev-tools/index.rst
+> index 6945644f7008a..3c0ac08b27091 100644
+> --- a/Documentation/dev-tools/index.rst
+> +++ b/Documentation/dev-tools/index.rst
+> @@ -35,6 +35,7 @@ Documentation/dev-tools/testing-overview.rst
+>      checkuapi
+>      gpio-sloppy-logic-analyzer
+>      autofdo
+> +   propeller
+>   
+>   
+>   .. only::  subproject and html
+> diff --git a/Documentation/dev-tools/propeller.rst b/Documentation/dev-tools/propeller.rst
+> new file mode 100644
+> index 0000000000000..92195958e3dbc
+> --- /dev/null
+> +++ b/Documentation/dev-tools/propeller.rst
+> @@ -0,0 +1,162 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=====================================
+> +Using Propeller with the Linux kernel
+> +=====================================
+> +
+> +This enables Propeller build support for the kernel when using Clang
+> +compiler. Propeller is a profile-guided optimization (PGO) method used
+> +to optimize binary executables. Like AutoFDO, it utilizes hardware
+> +sampling to gather information about the frequency of execution of
+> +different code paths within a binary. Unlike AutoFDO, this information
+> +is then used right before linking phase to optimize (among others)
+> +block layout within and across functions.
+> +
+> +A few important notes about adopting Propeller optimization:
+> +
+> +#. Although it can be used as a standalone optimization step, it is
+> +   strongly recommended to apply Propeller on top of AutoFDO,
+> +   AutoFDO+ThinLTO or Instrument FDO. The rest of this document
+> +   assumes this paradigm.
+> +
+> +#. Propeller uses another round of profiling on top of
+> +   AutoFDO/AutoFDO+ThinLTO/iFDO. The whole build process involves
+> +   "build-afdo - train-afdo - build-propeller - train-propeller -
+> +   build-optimized".
+> +
+> +#. Propeller requires LLVM 19 release or later for Clang/Clang++
+> +   and the linker(ld.lld).
+> +
+> +#. In addition to LLVM toolchain, Propeller requires a profiling
+> +   conversion tool: https://github.com/google/autofdo with a release
+> +   after v0.30.1: https://github.com/google/autofdo/releases/tag/v0.30.1.
+> +
+> +The Propeller optimization process involves the following steps:
+> +
+> +#. Initial building: Build the AutoFDO or AutoFDO+ThinLTO binary as
+> +   you would normally do, but with a set of compile-time / link-time
+> +   flags, so that a special metadata section is created within the
+> +   kernel binary. The special section is only intend to be used by the
+> +   profiling tool, it is not part of the runtime image, nor does it
+> +   change kernel run time text sections.
+> +
+> +#. Profiling: The above kernel is then run with a representative
+> +   workload to gather execution frequency data. This data is collected
+> +   using hardware sampling, via perf. Propeller is most effective on
+> +   platforms supporting advanced PMU features like LBR on Intel
+> +   machines. This step is the same as profiling the kernel for AutoFDO
+> +   (the exact perf parameters can be different).
+> +
+> +#. Propeller profile generation: Perf output file is converted to a
+> +   pair of Propeller profiles via an offline tool.
+> +
+> +#. Optimized build: Build the AutoFDO or AutoFDO+ThinLTO optimized
+> +   binary as you would normally do, but with a compile-time /
+> +   link-time flag to pick up the Propeller compile time and link time
+> +   profiles. This build step uses 3 profiles - the AutoFDO profile,
+> +   the Propeller compile-time profile and the Propeller link-time
+> +   profile.
+> +
+> +#. Deployment: The optimized kernel binary is deployed and used
+> +   in production environments, providing improved performance
+> +   and reduced latency.
+> +
+> +Preparation
+> +===========
+> +
+> +Configure the kernel with::
+> +
+> +   CONFIG_AUTOFDO_CLANG=y
+> +   CONFIG_PROPELLER_CLANG=y
+> +
+> +Customization
+> +=============
+> +
+> +The default CONFIG_PROPELLER_CLANG setting covers kernel space objects
+> +for Propeller builds. One can, however, enable or disable Propeller build
+> +for individual files and directories by adding a line similar to the
+> +following to the respective kernel Makefile:
+> +
+> +- For enabling a single file (e.g. foo.o)::
+> +
+> +   PROPELLER_PROFILE_foo.o := y
+> +
+> +- For enabling all files in one directory::
+> +
+> +   PROPELLER_PROFILE := y
+> +
+> +- For disabling one file::
+> +
+> +   PROPELLER_PROFILE_foo.o := n
+> +
+> +- For disabling all files in one directory::
+> +
+> +   PROPELLER__PROFILE := n
+> +
+> +
+> +Workflow
+> +========
+> +
+> +Here is an example workflow for building an AutoFDO+Propeller kernel:
+> +
+> +1) Assuming an AutoFDO profile is already collected following
+> +   instructions in the AutoFDO document, build the kernel on the host
+> +   machine, with AutoFDO and Propeller build configs ::
+> +
+> +      CONFIG_AUTOFDO_CLANG=y
+> +      CONFIG_PROPELLER_CLANG=y
+> +
+> +   and ::
+> +
+> +      $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<autofdo-profile-name>
+> +
+> +2) Install the kernel on the test machine.
+> +
+> +3) Run the load tests. The '-c' option in perf specifies the sample
+> +   event period. We suggest using a suitable prime number, like 500009,
+> +   for this purpose.
+> +
+> +   - For Intel platforms::
+> +
+> +      $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count> -o <perf_file> -- <loadtest>
+> +
+> +   - For AMD platforms::
+> +
+> +      $ perf record --pfm-event RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a -N -b -c <count> -o <perf_file> -- <loadtest>
+> +
+> +   Note you can repeat the above steps to collect multiple <perf_file>s.
+> +
+> +4) (Optional) Download the raw perf file(s) to the host machine.
+> +
+> +5) Use the create_llvm_prof tool (https://github.com/google/autofdo) to
+> +   generate Propeller profile. ::
+> +
+> +      $ create_llvm_prof --binary=<vmlinux> --profile=<perf_file>
+> +                         --format=propeller --propeller_output_module_name
+> +                         --out=<propeller_profile_prefix>_cc_profile.txt
+> +                         --propeller_symorder=<propeller_profile_prefix>_ld_profile.txt
 
-> > @@ -335,6 +335,8 @@ static const struct iommufd_ioctl_op
-> > iommufd_ioctl_ops[] = {
-> >  	IOCTL_OP(IOMMU_DESTROY, iommufd_destroy, struct
-> > iommu_destroy, id),
-> >  	IOCTL_OP(IOMMU_FAULT_QUEUE_ALLOC,
-> > iommufd_eventq_iopf_alloc,
-> >  		 struct iommu_fault_alloc, out_fault_fd),
-> > +	IOCTL_OP(IOMMU_VIRQ_ALLOC, iommufd_eventq_virq_alloc,
-> > +		 struct iommu_virq_alloc, out_virq_fd),
-> 
-> sort it in alphabetical order.
+Prevously I am using perf-6.8.5-0.hs1.hsx.el9.x86_64 and it works fine.
+Now in my system, the perf is upgraded to 6.12.gadc218676eef
 
-Ack.
+[root@twshared7248.15.atn5 ~]# perf --version
+perf version 6.12.gadc218676eef
 
-Thanks
-Nic
+and create_llvm_prof does not work any more.
+
+The command to collect sampling data:
+
+# perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c 500009 -- stress --cpu 36 --io 36 --vm 36 --vm-bytes 128M --timeout 300s
+stress: info: [536354] dispatching hogs: 36 cpu, 36 io, 36 vm, 0 hdd
+stress: info: [536354] successful run completed in 300s
+[ perf record: Woken up 2210 times to write data ]
+[ perf record: Captured and wrote 562.529 MB perf.data (701971 samples) ]
+# uname -r
+6.11.1-0_fbk0_lto_rc19_612_gb572dfac1b39
+
+The kernel is a 6.11 lto kernel.
+
+I then run the following command:
+$ cat ../run.sh
+# perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c 500009 \
+#       -- stress --cpu 36 --io 36 --vm 36 --vm-bytes 128M --timeout 300s
+# good: perf-6.8.5-0.hs1.hsx.el9.x86_64
+
+# <propeller_profile_prefix>: /tmp/propeller
+./create_llvm_prof --binary=vmlinux-6.11.1-0_fbk0_lto_rc19_612_gb572dfac1b39 \
+          --profile=perf.data \
+          --format=propeller --propeller_output_module_name \
+          --out=/tmp/propeller_cc_profile.txt \
+          --propeller_symorder=/tmp/propeller_ld_profile.txt
+
+$ ./run.sh
+WARNING: Logging before InitGoogleLogging() is written to STDERR
+I20241212 13:12:18.401772 463318 llvm_propeller_binary_content.cc:376] 'vmlinux-6.11.1-0_fbk0_lto_rc19_612_gb572dfac1b39' is PIE: 0
+I20241212 13:12:18.403692 463318 llvm_propeller_binary_content.cc:380] 'vmlinux-6.11.1-0_fbk0_lto_rc19_612_gb572dfac1b39' is relocatable: 0
+I20241212 13:12:18.404873 463318 llvm_propeller_binary_content.cc:388] Build Id found in 'vmlinux-6.11.1-0_fbk0_lto_rc19_612_gb572dfac1b39': eaacd5a14abc48cf832b3ad0fa6c64635ab569a8
+I20241212 13:12:18.521499 463318 llvm_propeller_binary_content.cc:376] 'vmlinux-6.11.1-0_fbk0_lto_rc19_612_gb572dfac1b39' is PIE: 0
+I20241212 13:12:18.521530 463318 llvm_propeller_binary_content.cc:380] 'vmlinux-6.11.1-0_fbk0_lto_rc19_612_gb572dfac1b39' is relocatable: 0
+I20241212 13:12:18.521553 463318 llvm_propeller_binary_content.cc:388] Build Id found in 'vmlinux-6.11.1-0_fbk0_lto_rc19_612_gb572dfac1b39': eaacd5a14abc48cf832b3ad0fa6c64635ab569a8
+I20241212 13:12:18.521611 463318 llvm_propeller_perf_lbr_aggregator.cc:51] Parsing [1/1] perf.data ...
+[ERROR:/home/runner/work/autofdo/autofdo/third_party/perf_data_converter/src/quipper/perf_reader.cc:1386] Event size 132 after uint64_t alignment of the filename length is greater than event size 128 reported by perf for the buildid event of type 0
+W20241212 13:12:18.521708 463318 llvm_propeller_perf_lbr_aggregator.cc:55] Skipped profile [1/1] perf.data: FAILED_PRECONDITION: Failed to read perf data file: [1/1] perf.data
+W20241212 13:12:18.521718 463318 llvm_propeller_perf_lbr_aggregator.cc:67] Too few branch records in perf data.
+E20241212 13:12:18.554437 463318 create_llvm_prof.cc:238] FAILED_PRECONDITION: No perf file is parsed, cannot proceed.
+
+
+Could you help take a look why perf 12 does not work with create_llvm_prof?
+The create_llvm_prof is downloaded from https://github.com/google/autofdo/releases/tag/v0.30.1.
+
+> +
+> +   "<propeller_profile_prefix>" can be something like "/home/user/dir/any_string".
+> +
+> +   This command generates a pair of Propeller profiles:
+> +   "<propeller_profile_prefix>_cc_profile.txt" and
+> +   "<propeller_profile_prefix>_ld_profile.txt".
+> +
+> +   If there are more than 1 perf_file collected in the previous step,
+> +   you can create a temp list file "<perf_file_list>" with each line
+> +   containing one perf file name and run::
+> +
+> +      $ create_llvm_prof --binary=<vmlinux> --profile=@<perf_file_list>
+> +                         --format=propeller --propeller_output_module_name
+> +                         --out=<propeller_profile_prefix>_cc_profile.txt
+> +                         --propeller_symorder=<propeller_profile_prefix>_ld_profile.txt
+> +
+> +6) Rebuild the kernel using the AutoFDO and Propeller
+> +   profiles. ::
+> +
+> +      CONFIG_AUTOFDO_CLANG=y
+> +      CONFIG_PROPELLER_CLANG=y
+> +
+> +   and ::
+> +
+> +      $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<profile_file> CLANG_PROPELLER_PROFILE_PREFIX=<propeller_profile_prefix>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d6ea49433747a..42e3af0791e15 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18449,6 +18449,13 @@ S:	Maintained
+>   F:	include/linux/psi*
+>   F:	kernel/sched/psi.c
+>
+[...]
 
