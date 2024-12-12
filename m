@@ -1,277 +1,269 @@
-Return-Path: <linux-kernel+bounces-444035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60F39EFFD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:08:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9849D168B92
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:08:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C941DE884;
-	Thu, 12 Dec 2024 23:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Te+Qxv76"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DF79EFFDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:09:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F219F1D7E5F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4034286D9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:09:28 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3681DE4E6;
+	Thu, 12 Dec 2024 23:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c7WH40rX"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C962E1DE3AC
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734044909; cv=none; b=devDA/Gy68xueOnB1pfEFV2sStVxNRHqJrZnt5V99ek0OXnEZ+ll33FEWgpji/Kj6HTvNL9oKw6HHwv76QtTxRcSZJ8KfNJUvAvbMM33M7TY+tZ1XSDpq6Mi4ooN7+LdnEND4xr6mYQrFYapz6z89SHE+I7r0tumR/6a9EOrROI=
+	t=1734044957; cv=none; b=bPx6mRFWdTXIhYmQFQLs1K87G6tIbKhaLj/xLvuQ2Xvop+ED07+7VzIICd4yQddkwvLS1iiZluVqyeg0hqfSr/sqykIgme8ur9i2adxlqnUExnNHnqFrS47Ai4c69aNaaVih/mMPd9Vcxivc842UexuG1i8+sQjXKpMXvmebnsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734044909; c=relaxed/simple;
-	bh=KuvjViQQdky6IH1hfDMmulIkxk9EMwHjF/dBz1WxXjE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JEfy2RrovduuVrApWvIAqAXRGRFRoKTEwFqD3IS8OOqE1lTKYDu9WFAhOcB6A7deF1aSIBVB2jus3oPEewaNxx1Ppg8skQqz4fWm6z2yn1wrrnPVmiL51heAgRfvTDtLqZVHi/ytok5Cz7EUhm7+aSFCmBBgH4qdXeElGjQQzMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Te+Qxv76; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GUu5+Nbt/m586fJB9x7cqr4q4Omv/+HS7o+nOWgcHLE=; b=Te+Qxv76XOFh8GLB34TBI0e4Yw
-	5vOCFe49xdvMySUJI1QbAhDEddCZDQ4MqDhniw+aQ4ptvwZBUiSjEozigts3woSJuUUJsd3Edbt2L
-	Dk0W2RnWroxYGoS8FTu5nIs3h8JwbY7NiD/zZ4fORiQQ23Nv8gvUUyLMP9jU/m6svkKnygYD2/aWp
-	pzO4Us1BDs+VGdBLUzKP2VLQYrYNXDAZs6me/fXf10g+Wy7j048J4nA983iNFsi+B7LSEj7ixT7sF
-	9rppQxJUWlehAJJHz40G1w5xGqYV8eflDiAhO0d/uDu8hpampBJhxoK/pAtZM7+3HXJafyajWN3Sq
-	x2hhSrDg==;
-Received: from [54.240.197.238] (helo=freeip.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tLsHy-00000008igA-47Az;
-	Thu, 12 Dec 2024 23:08:11 +0000
-Message-ID: <ed7dd45f89e8f286478791137447a21d53735dbd.camel@infradead.org>
-Subject: [PATCH] x86/kexec: Disable global pages before writing to control
- page
-From: David Woodhouse <dwmw2@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>, Nathan Chancellor
- <nathan@kernel.org>
-Cc: "Ning, Hongyu" <hongyu.ning@linux.intel.com>, kexec@lists.infradead.org,
-  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,  "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Kai Huang <kai.huang@intel.com>, Nikolay
- Borisov <nik.borisov@suse.com>, linux-kernel@vger.kernel.org, Simon Horman
- <horms@kernel.org>, Dave Young <dyoung@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, jpoimboe@kernel.org, bsz@amazon.de
-Date: Thu, 12 Dec 2024 23:08:09 +0000
-In-Reply-To: <a14ff894-9268-4a62-87bd-3b2553e0bc01@intel.com>
-References: <20241205153343.3275139-1-dwmw2@infradead.org>
-	 <20241205153343.3275139-14-dwmw2@infradead.org>
-	 <20241212014418.GA532802@ax162>
-	 <10a4058d9a667ca7aef7e1862375c2da84ef53a3.camel@infradead.org>
-	 <20241212150408.GA542727@ax162>
-	 <38aaf87162d10c79b3d3ecae38df99e89ad16fce.camel@infradead.org>
-	 <20241212174243.GA2149156@ax162>
-	 <9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org>
-	 <4517cb69-3c5c-4e75-8a14-dab136b29c19@intel.com>
-	 <212CBB8E-CC94-4A56-8399-1419D8F2FA5C@infradead.org>
-	 <a14ff894-9268-4a62-87bd-3b2553e0bc01@intel.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-XjCHlqians+uM/FioCbB"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1734044957; c=relaxed/simple;
+	bh=ZtGRVjWu7hIuyLA1YVHzxJL4fJb2ycJLPtR85i4lkXY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VopIgw6mSRAz0bBnTQrHqLNCshpOEp8/I2k+XcltnBSePQmSQj94CXpiGYEomwhB15T6lX+KJ/P4tZ5VF+iO85A1h4Pk9w6eIKBSJYj+/iOvxba6jOkQ/h/bSwycAzoggYWQrdW6rX/CoB23LP4yjlgn6M9K+3gLuNj9xSSrMGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c7WH40rX; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6f0054cb797so10131187b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:09:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734044955; x=1734649755; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2mAuDdfqzmhuIxLZhpZDU5e13JDY/yUDIGNA64wKaQ=;
+        b=c7WH40rXlOqKWPVxKRtv0tNFyn0rJfpn+WAHfUQr4HAP8zJCn4HMHJIU/10qbkbdaC
+         qcBvP6EoRe/5n3/0GdlpJaD3+BIMhrPu3O54A14++1GdTGlNaY412dSnyKA/xGws8xLO
+         I58Y6WQTY2JpwifYHj7Bek/s3oa/NdAZ2K8GP/kNItvKKiL60JbGy3BThG4UjBG/tUGo
+         nGtXaqKRaGj3F/ad079J50l7acHOfmhYvhdLeJ07cUnI3LrHg6343FFuw4hI1M7LU9uW
+         ejXLs3bWaMo53VLApuUhLt+iVqOICCLbMQk0eEF2c7j2Fvp0CB8eAzM27+135bStBm2Y
+         /vnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734044955; x=1734649755;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M2mAuDdfqzmhuIxLZhpZDU5e13JDY/yUDIGNA64wKaQ=;
+        b=FwHyxNxmWq70igABrFdyjH0QwRgbUL5E3pavxI91bdDQwBhIcSHWJXpLVYNayBIdGq
+         rcR4m+Qui4cGn+pW+KB8f05kpfyAWPOm3/yk/uWi2mkRomK7diJXcRvImLhcrfuYXB2F
+         kskBhVvD0VHhIFDQrtjGRJoFh1wU5WT7RL/mk7tdqFSvRcAG1MLBi+STdkv/rBmS0gjQ
+         gDA4aRYbxjndazrEtmnuNn/4Qh80YT8bhf/S0msi6B3HPdM115BPcfcliinDmJUpD/jA
+         mqn3rSk9mEaqT+QYJrw9FFrLMEhUfp6Io206MRTCB+5iGGEswMsfUKNNucgcDpBVPPfs
+         YtNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfd8RNkuFO3q7fbGNHTvZgwV1CAkzJ9w98lEP2ocSo73PWoNSqFr/FmobMtgT9wq2X9k3VkCfWXJp3N0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAu0pQJAfe6r9+PsUbfCRzzmgeBi2kz39+SaT7/33qmrSfjECM
+	oHD4U4DVD8/RrWoeD2+dOpJjjbqAPXP7hkQ+crLnVcoQAg+8bOsjyV0KyBEDSzlB12f5Wz/6Yd3
+	bV8GxAG4cyG4nD9N1DjNh0np+lDDwdyxnUO0DoA==
+X-Gm-Gg: ASbGncttHJNuvhoWRgQwr4/ZYm0GE2dCERiDAzhqWwIN1kHnhJteAe36O4yuWnrQ4Cb
+	mqx9/VNyh5HEaiwka8FoMHOnWlV/ChPa6ITg+dA==
+X-Google-Smtp-Source: AGHT+IFKUAXxa88JQH4JGbekPkCmlZeZiyClOGnz/LKQS8V8q+s7v0QnjiNirPoM726x+yvYkFyKFBjTEjqFdm6cVIg=
+X-Received: by 2002:a05:690c:6303:b0:6ef:4a57:fc98 with SMTP id
+ 00721157ae682-6f279b018b3mr4806717b3.16.1734044954669; Thu, 12 Dec 2024
+ 15:09:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
-
-
---=-XjCHlqians+uM/FioCbB
+References: <20241212-fd-dp-audio-fixup-v3-0-0b1c65e7dba3@linaro.org>
+ <20241212-fd-dp-audio-fixup-v3-4-0b1c65e7dba3@linaro.org> <c5090fcc-d7ec-4d49-aa21-8d1aa7f6a1c7@quicinc.com>
+ <CAA8EJppOjAjFVUFSEXJMbJ4aV_MvzpeTuKDkL7P+t_Mw47YECw@mail.gmail.com> <5cb7b1b1-5596-4704-bd01-beaadf8bba51@quicinc.com>
+In-Reply-To: <5cb7b1b1-5596-4704-bd01-beaadf8bba51@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 13 Dec 2024 01:09:07 +0200
+Message-ID: <CAA8EJppyNceC+t-2MKqq1QhCj2cYb+jprc++cFEen8Cqhhbo0w@mail.gmail.com>
+Subject: Re: [PATCH v3 04/14] drm/msm/dp: pull I/O data out of msm_dp_catalog_private()
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Paloma Arellano <quic_parellan@quicinc.com>, 
+	Douglas Anderson <dianders@chromium.org>, Stephen Boyd <swboyd@chromium.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+On Thu, 12 Dec 2024 at 21:15, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>
+>
+>
+> On 12/12/2024 12:52 AM, Dmitry Baryshkov wrote:
+> > On Thu, 12 Dec 2024 at 04:59, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+> >>
+> >>
+> >>
+> >> On 12/11/2024 3:41 PM, Dmitry Baryshkov wrote:
+> >>> Having I/O regions inside a msm_dp_catalog_private() results in extra
+> >>> layers of one-line wrappers for accessing the data. Move I/O region base
+> >>> and size to the globally visible struct msm_dp_catalog.
+> >>>
+> >>> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> >>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >>> ---
+> >>>    drivers/gpu/drm/msm/dp/dp_catalog.c | 457 +++++++++++++++---------------------
+> >>>    drivers/gpu/drm/msm/dp/dp_catalog.h |  12 +
+> >>>    2 files changed, 197 insertions(+), 272 deletions(-)
+> >>>
+> >>
+> >>
+> >> Fundamentally, the whole point of catalog was that it needs to be the
+> >> only place where we want to access the registers. Thats how this really
+> >> started.
+> >>
+> >> This pre-dates my time with the DP driver but as I understand thats what
+> >> it was for.
+> >>
+> >> Basically separating out the logical abstraction vs actual register writes .
+> >>
+> >> If there are hardware sequence differences within the controller reset
+> >> OR any other register offsets which moved around, catalog should have
+> >> been able to absorb it without that spilling over to all the layers.
+> >>
+> >> So for example, if we call dp_ctrl_reset() --> ctrl->catalog->reset_ctrl()
+> >>
+> >> Then the reset_ctrl op of the catalog should manage any controller
+> >> version differences within the reset sequence.
+> >
+> > The problem is that the register-level writes are usually not the best
+> > abstraction. So, instead of designing the code around dp_catalog I'd
+> > prefer to see actual hw / programming changes first.
+> >
+>
+> So thats the issue here. If we did end up with registers and sequences
+> different for controller versions, the ctrl layer was expected to just
+> call a reset() op for example similar to the DPU example you gave. And
+> as you rightly noted, the dpu_hw_xxx files only expose the ops based on
+> version and the upper layers were supposed to just call into the ops
+> without knowing the register level details. Thats pretty much what
+> dp_ctrl tried to do here. We did not want to expose all the register
+> defines in those layers. This series is doing exactly opposite of that.
 
-The kernel switches to a new set of page tables during kexec. The global
-mappings (_PAGE_GLOBAL=3D=3D1) can remain in the TLB after this switch. Thi=
-s
-is generally not a problem because the new page tables use a different
-portion of the virtual address space than the normal kernel mappings.
+We don't have the issue up to now, even though we support DP
+controllers since SDM845 up to SM8650 and X1E80100. The SDE driver has
+v200 vs v420 catalog files for PHY programming, the rest of the
+functions are common. So, for me it looks like a preparation for the
+imaginary case that didn't come to existence up to now.
+So, yes. I want to get rid of extra useless indirection and I want to
+expose register sequences in those layers.
 
-The critical exception to that generalisation (and the only mapping
-which isn't an identity mapping) is the kexec control page itself =E2=80=94
-which was ROX in the original kernel mapping, but should be RWX in the
-new page tables. If there is a global TLB entry for that in its prior
-read-only state, it definitely needs to be flushed before attempting to
-write through that virtual mapping.
+>
+> >>
+> >> We do not use or have catalog ops today so it looks redundant as we just
+> >> call the dp_catalog APIs directly but that was really the intention.
+> >>
+> >> Another reason which was behind this split but not applicable to current
+> >> upstream driver is that the AUX is part of the PHY driver in upstream
+> >> but in downstream, that remains a part of catalog and as we know the AUX
+> >> component keeps changing with chipsets especially the settings. That was
+> >> the reason of keeping catalog separate and the only place which should
+> >> deal with registers and not the entire DP driver.
+> >>
+> >> The second point seems not applicable to this driver but first point
+> >> still is. I do admit there is re-direction like ctrl->catalog
+> >> instead of just writing it within dp_ctrl itself but the redirection was
+> >> only because ctrl layers were not really meant to deal with the register
+> >> programming. So for example, now with patch 7 of this series every
+> >> register being written to i exposed in dp_ctrl.c and likewise for other
+> >> files. That seems unnecessary. Because if we do end up with some
+> >> variants which need separate registers written, then we will now have to
+> >> end up touching every file as opposed to only touching dp_catalog.
+> >
+> > Yes. I think that it's a bonus, not a problem. We end up touching the
+> > files that are actually changed, so we see what is happening. Quite
+> > frequently register changes are paired with the functionality changes.
+> >
+>
+> Not exactly. Why should dp_ctrl really know that some register offset or
+> some block shift happened for example. It only needs to know when to
+> reset the hardware and not how. Thats the separation getting broken with
+> this.
 
-It would be possible to just avoid writing to the virtual address of the
-page and defer all writes until they can be done through the identity
-mapping. But there's no good reason to keep the old TLB entries around,
-as they can cause nothing but trouble.
+Yes. And I'm removing that separation very intentionally. If one is
+looking for AUX programming, they should be looking into dp_aux only,
+not dp_aux & dp_catalog. Likewise all audio code should be in
+dp_audio. By using dp_catalog we ended up with a very very very bad
+abstraction of msm_dp_catalog_audio_get_header() /
+msm_dp_catalog_audio_set_header() / enum
+msm_dp_catalog_audio_sdp_type. Just because reads & writes should go
+through the catalog.
+For dp_panel likewise there is no need to look into some other source
+file to follow the register sequences. It can all be contained within
+dp_panel.c, helping one to understand the code.
 
-Clear the PGE bit in %cr4 early, before storing data in the control page.
+Last, but not least. Code complexity. dp_catalog.c consists of 1340
+lines, covering different submodules. It is hard to follow it in this
+way.
 
-Fixes: 5a82223e0743 ("x86/kexec: Mark relocate_kernel page as ROX instead o=
-f RWX")
-Co-authored-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Reported-by: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219592
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-Tested-by: Nathan Chancellor <nathan@kernel.org>
----
-This supersedes the previous 'Only write through identity mapping of
-control page' patch as Dave's approach is much saner now he's actually
-figured out what's going on.
+>
+> > For example (a very simple and dumb one), when designing code around
+> > dp_catalog you ended up adding separate _p1 handlers.
+> > Doing that from the data source point of view demands adding a stream_id param.
+> >
+>
+> I have not checked your comment on that series here but if your concern
 
+This is really a bad cadence. I have provided most of the feedback
+almost a week ago.
 
- arch/x86/kernel/relocate_kernel_64.S | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+> is stream_id should not be stored in the catalog but just passed, thats
+> fine, we can change it. stream_id as a param is needed anyway because
+> the register programming layer needs to know which offset to use. This
+> series is not mitigating that fact.
 
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocat=
-e_kernel_64.S
-index 553d67845b84..cbadf0142fcb 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -90,14 +90,20 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
- 	movq	kexec_pa_table_page(%rip), %r9
- 	movq	%r9, %cr3
-=20
-+	/* Leave CR4 in %r13 to enable the right paging mode later. */
-+	movq	%cr4, %r13
-+
-+	/* Disable global pages immediately to ensure this mapping is RWX */
-+	movq	%r13, %r12
-+	andq	$~(X86_CR4_PGE), %r12
-+	movq	%r12, %cr4
-+
- 	/* Save %rsp and CRs. */
-+	movq	%r13, saved_cr4(%rip)
- 	movq    %rsp, saved_rsp(%rip)
- 	movq	%rax, saved_cr3(%rip)
- 	movq	%cr0, %rax
- 	movq	%rax, saved_cr0(%rip)
--	/* Leave CR4 in %r13 to enable the right paging mode later. */
--	movq	%cr4, %r13
--	movq	%r13, saved_cr4(%rip)
-=20
- 	/* save indirection list for jumping back */
- 	movq	%rdi, pa_backup_pages_map(%rip)
---=20
-2.47.0
+No, my concern was that you have been adding separate _p1() functions
+which are a duplicate of _p0() counterparts. When one looks at the
+dp_catalog.c it is logical: there are two different register areas, so
+there are two distinct sets of functions. If one starts looking from
+the dp_panel point of view, it's obvious that there should be a single
+msm_dp_write_stream() function which accepts stream_id and then
+multiplexes it to go to p0 or p1.
 
+>
+> > In the DPU driver we also have version-related conditionals in the HW
+> > modules rather than pushing all data access to dpu_hw_catalog.c &
+> > counterparts.
+>
+> The dpu_hw_catalog.c and the dp_catalog.c are not the right files to
+> compare with each other. dp_catalog.c should be compared with
+> dpu_hw_xxx.c and as you noted, DPU version dependencies are handled in
+> those files only and not all over the files like what this series is doing.
 
+Not really. dpu_encoder_phys_cmd_init() checks for the core_major_ver.
+Let me see if other files check for the version under the hood.
 
---=-XjCHlqians+uM/FioCbB
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+Also as you wrote, there are multiple dpu_hw_xxx.c files, each
+handling register issues on its own. We don't have a single file which
+keeps all such differences in one place.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMjEyMjMwODA5WjAvBgkqhkiG9w0BCQQxIgQginEwkcM9
-DZ6pTQKwm/gMIddwh/l1T93QLZt5zGJ8DkAwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCadcckUti+MO6pOi7VVAaZHGHShfGrImXG
-D2NSvyrKGKDnNeGyCWJG0mt7egJHvFc8FrKLgmkchI63vrbL0QApst8GjyCMy+86uvudflTvPhKI
-LLYAezHgVllbpPaR4t84cCoFemyenbiwJbGqY7lxFDAZaM1sE+zGHZfSDLIxLEkdJV97t7a+ugHY
-IK84yeqTdxQ/LpXCnoO/JzRQOVNQVyCJaxzyKY4QaVyrRnlR4e9L8TFAMErBA3u/YNtoQLq7611/
-E06RbSlD0dRndtIEIYNLjYaGGYPWZllxF06nLsnIPaEZJ1fH5XKpjuCW1j4OlBVybEKtctBumLWJ
-dOk60/2FDTStpo9GVfxIlLeNGQq7mIx7XCQKnE2ITICFs5pwwmegReV3alSm4V7q8JImPszaGwp8
-kYcYVeGisuP0dLlPl+bhkrBP7Q9B0XIuWKx9AapUCDz0K+kksZRftz8bkEvlKXKLFPypeux2l6Bq
-xhwW9h1rc21KOTnD9lKX0QeTMj5DKQNB6iUsRuPlgp+/5KgkvCmdv/ohiRG35cCR3fzTc04QPXN2
-1+nxii5OrNJg/yx42p83FC3H6+qwcO5EQJfeCFQZZvu4F2jPlxWvDkkGohTJiqJ30ffPpD4q0Drr
-uzAuRreZRNTnynAUNSD+fRvIoXOoEgmziTpXnZ5TagAAAAAAAA==
+Last, but not least, in the DPU driver there are actual differences
+between generations, which require different code paths. In the DP
+driver there are none.
 
+>
+> > I think it's better to make DP driver reflect DPU rather than keeping
+> > a separate wrapper for no particular reason (note, DPU has hardware
+> > abstractions, but on a block level, not on a register level).
+> >
+>
+> Thats the issue here. DPU hardware blocks are arranged according to the
+> sub-blocks both in the software interface document and hence the code
+> matches it file-by-file. DP registers are grouped by clock domains and
+> the file separation we have today does not match that anyway. Hence
+> grouping link registers writes or pixel clock register writes into
+> dp_ctrl is also not correct that way. Let catalog handle that separation
+> internally which it already does.
 
---=-XjCHlqians+uM/FioCbB--
+I'd say, dp_panel, dp_audio and dp_link are already pretty
+self-contained. I was hoping to look at dp_display vs dp_drm later on,
+once the HPD issue gets resolved. Only dp_ctrl is not that logical
+from my point of view.
+
+-- 
+With best wishes
+Dmitry
 
