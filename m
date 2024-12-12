@@ -1,157 +1,265 @@
-Return-Path: <linux-kernel+bounces-443872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DAF9EFCF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:07:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8DA9EFD01
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D002188E1DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:07:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AF1C16BFF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272241AB505;
-	Thu, 12 Dec 2024 20:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCCB1ABECF;
+	Thu, 12 Dec 2024 20:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1mSgtRH"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nC18HmEk"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0887418732A;
-	Thu, 12 Dec 2024 20:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F411917D6;
+	Thu, 12 Dec 2024 20:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734034043; cv=none; b=pFjxqN+yDvqlPpUe33XpkQDuD7dLDvtJ8jvozVk3ZDOcC36O13rNsCl+0tAYcGKUnUnM/Nnd3DXsX4zl2r2jmCvwNVSZIl/876LVVjUlroXC87pqiFPM/lirSI+DcyOzJ4k8/dLZxdgzvRc9uy4u6ulLWkoRvbpaFnyvco6ffko=
+	t=1734034131; cv=none; b=B82oJIzXM6AsawXMZgnQqjZ5zDjqyDjPwyyFPUtam0ygzuOBEH9bWQKaTDFttqQyF0CHFsH5vovgYj2xfMxsDgann1yJzYP4RiNl6gXVhG1CskPegGqH93aGddwjajN8fa4nYtYYTWHmxdkndH9041fWuv8gZdu54xg4a2+GSbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734034043; c=relaxed/simple;
-	bh=FlPhV1bjZ+0Rf/43QU3UkdpWC4BUI2rB/HK7YHNKILs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UJTtbchk2bth+JR7PdXVIEMH3GG5T2ZyhCCsoUo+5hBk3CL6QjXui4ghcrTnLWJxFed2x4jqM9nsS/DxPx7GFNBDLYF85zHPXd4+DtsEr/ePYyJE23lyKOgGQd89heJF3F1sM2fc4HaD46MHweCgd1xcsITaSpydFKrsJJOMPL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1mSgtRH; arc=none smtp.client-ip=209.85.160.174
+	s=arc-20240116; t=1734034131; c=relaxed/simple;
+	bh=rGlNM0MTKO9H5+NJ7e+yXuofUkMksUw402gZcNo+JtY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pkL4pkOlrrcBcg1dPfXCzyjd4bv6OZKoPSBhJmpSGEutp+GhT1aMT6vX5YurqLvoZdFpchOOq2d6af2W0+WmtR6pxMaYFBn8m27QtokgKWa9gQu8Br/zm/z2aBui7hQKUSHIk3+YfvgJJqZt+Vu4t2//cDwggPHRlBAL6Hzi79E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nC18HmEk; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-467a37a2a53so2337901cf.2;
-        Thu, 12 Dec 2024 12:07:21 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9ec267b879so85627266b.2;
+        Thu, 12 Dec 2024 12:08:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734034041; x=1734638841; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=88XXuE7Erf17aEg7l5Z2Kb5N7vsBcurNKnG7z+xy6vY=;
-        b=k1mSgtRHHjJjR/yIuMmTBA/inTMKqx6ldpM6KziPEv9R4Ox0LZqi46tVCqKxNXJp/K
-         cu2nNZqyo+HzVfCopjqLaiY6POwdIpEphB9npeyiH/cCrIdFqW7ntkQFU1HZ1Bx3KvQ7
-         0zuYxc7QaJbcQY/fmVkv0nS8iQ9bilAmOeBjYccHcwtl/i2WiW+Uyz9xONsQ4mF/C3WJ
-         EznjoWraAnPRK5btn0FHJpylDWnwOEcOkIeZqqmwtDYsMY4xlqJq8nIUn22HzPAZ5uAF
-         L/fr5OWNNjdBBRBzyo7eEH9NofEZa6bOIcNx+VgVQSwrR/qTCWG4cHI02r8Pa1ElPElI
-         6vPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734034041; x=1734638841;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734034127; x=1734638927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=88XXuE7Erf17aEg7l5Z2Kb5N7vsBcurNKnG7z+xy6vY=;
-        b=dkMSCqx6RmhTpKQcpTKHhO+3nT7WOChk8ws/9zMwJjI2MdzbHhWhWK8e3tfBTcoBgJ
-         FKnTdiSSvyrzZmwpf5tTvj08VAfK5nhLggYjka9w4AjDaya4rFsA6iSgoJkhu82LRVP0
-         3NFbFpPSKmC/OvZPqenRpHz7q3PTGHNmTtEv8LIRXXWmn4ZIjNtpVhd0c0sIWf0lZMtX
-         F8sKzZobRC3mHJAmbJIukfO1YovNosPj8UCZaNCU6jS7Q2HzpjeiGm/my/8t8sipkx2j
-         7Tgd7qvxlNz72KDJuoH8PLSaFppxFoUbB9o7q+hrtjh5KSYPJQm5asX31ptZA5HnqCP1
-         TjRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXk9Ta0n8MDtYrufTEzKNCcdZe60CwbpCahrzCItCvFiiRBVaHS9r1g2sj3jcJeysNdXmUs51/bGMFQf8=@vger.kernel.org, AJvYcCX2NuI5hx0dQuJ0X6TbRsdPzOYgqtaMq3m9LVwoXdgIQqiearOawExzty2RfhQ1hZqwBmSrqjXS@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzSoibOHp928cblXPCqLGYJbCVow5ztA0B2ZB3f3/ykU/BH/B9
-	HkP+xFrpPqqPcmjb27AhzP7TFJA0pLC4MpTmZBt0QZb7UpD6aPtF
-X-Gm-Gg: ASbGncuNHQu+Yt9danJa5Mx5ELm0iOr+BDzXmqDBNm+MqBR4fsMjk3SNEsK0oLpGDaZ
-	33ToO6AED4Y6lRyI1ecFs4/S0P29sesFj8jL8q+J8yMpT9XTv0znX+g3LjI6u6wyxi5G9b/gaER
-	K0Q5ZZFDBrU3NglSG3OnxhbcMXWFbQtkJn0dttJSqhXJOJnWkNwXlgHKf4Z+plRh3OyhlLU2/qr
-	vPzi3MshOk7vxffGR6iHyIy+FpjpI0cFnGlgNjltQGIpHR4MEZ66zufJa52IBW6zQljGnM2B/Qb
-	pNorOmFP
-X-Google-Smtp-Source: AGHT+IFYQ7yLkmdgpklsrKzHkYqAu0dPICCKRmYn+YPk9SC6WfjfOb2Z14bJWZyoKXWoCzuWIrSlgw==
-X-Received: by 2002:ac8:5804:0:b0:467:7513:3d8 with SMTP id d75a77b69052e-467a15f9c00mr23588131cf.21.1734034040873;
-        Thu, 12 Dec 2024 12:07:20 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46783eb0d91sm28541471cf.63.2024.12.12.12.07.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 12:07:20 -0800 (PST)
-Message-ID: <f370a612-d29c-4caf-8687-3cd7d1d89934@gmail.com>
-Date: Thu, 12 Dec 2024 12:07:11 -0800
+        bh=zN4Ym/UunmzCYsNSflmoKoSUjG0g5+VHwXB/fYxaNqo=;
+        b=nC18HmEkPWk2LHyQx694Tbr42oN7dFcjfH5A9N3keoz3zBUaE0/rtZORWjmLmy5EpH
+         gbq34HCneM6WwNhQLv85ughXiPO9Llki6vWL0soaIOjVUXoKI6/LaGV+dOfsfyihPMXN
+         osH911k6Xemv36oeCtZ65bC8+XT7OedAft59sXZ0/X7BRiFNVw2X1XC7T47zFsz9PYUB
+         e1921ouzKmOvJXwg5MBUrKJ82FFlyhifhPvBs8T/5fav/Bb8trkvK0QTBS+EfEx3roK/
+         JyTEHJcyu3fTDPEuCW9QLJM+OLcMeChVwPo+Jqx4nLIH86uIu745W6jQVW/webhagDaL
+         qOPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734034127; x=1734638927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zN4Ym/UunmzCYsNSflmoKoSUjG0g5+VHwXB/fYxaNqo=;
+        b=e5WmD3OM7ojmI3VHMtI6OyaCFLVJWYldZk3ejd/9SNFRFWS3f+X8FrQQUcFqRKFxsx
+         /hMgH26BqA4X4Sp2dtNuqqR/xbtAN5Wi9DKXPQNXvSG8inwhbiHwcwL2Zm3Lta7iEI/A
+         CnEgjanK+/oshm7E0SXDW5Gf3GU4yX+7N2IFpv3oCnEE9+sAIyNisfHrwlVvDJoxPeVS
+         cBMpCC+YM8N1CL4kTMOh1AwsZC69nerNw64Q0/Lek+SM03UxZXUF6JJ1PrRIebvLVqW7
+         o82scXSZ90htrZfviEVGzNmTbUafxbXkqFG5xB6C9Nrg13QYRq7asIThwDyv05PJi7Dp
+         ycwA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Tn+g09L73kYuP+hssrO7SNypLGKd3FCoxrx2zzFkaXCTjFfu8KO13s7ol7dGm0T9L+uxQ/GRTJW2HQ==@vger.kernel.org, AJvYcCU5/8FwEbJzTjeBB3vZQ3BC6SAgue9GvuMPw9gbwk6evrCmhijw0EkEZQ7VL4uhxthrfFJRolWDEr8zCejv@vger.kernel.org, AJvYcCUQZZBTk1hr+RrghbPyHjooLFQL2HElizZGgA9EBrVkKHBXzvBsXkYyLUCvv76e+xzlie4PCb3r9XeF2+Y7@vger.kernel.org, AJvYcCWw7bTyHolEVY+fzNFpPhMcqbEEoBOApAbG1OKZvM5XDtX4ZN95Tv20l/EmbzYt+2b0lxV0FIEC4xhmpQ==@vger.kernel.org, AJvYcCXPhXMM48rvHNzILyBfCz4i3FgiiQH0TQ4DcpHGUNtIeuFzCgUWqBoXn13ETBeetS3OEPz33tqXcNkL3Q==@vger.kernel.org, AJvYcCXQJNRgRicRc566dtDi7tUn9SWSNwEstVWrQC/o9etEJ47T1J8KFKWSV5QeXVqnf5au7w4dOTPtJdt1tQ==@vger.kernel.org, AJvYcCXeJPenmMR3kJFk+Z8Tl7GjWv8wGurEJwC5sKuRvrs2ao+c7M/P6B7KXf5ilav3+ghwwU/HRQw0S7Y=@vger.kernel.org, AJvYcCXjtPVDUdDeerHQSwyF8193l0ssk4ek0vPty7Lpd51smRp99PB2Ejp4JD6c4va7iGc8b2WyrJvXQmOJGg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXzoLMJ/YL62gNnItcGvhUFoBaQ0iMiUgouE/Mv7uJXRcK2efE
+	RhA6c+3LeMIEUvsRZ0RER+4NfaFkBrI1fLjYzUtql0+3QjvJtKWmq3hIQ3bt9zBUnDsxIH3hGPb
+	s0LcfNGm7NDmG8w/oapZPXZyshTg=
+X-Gm-Gg: ASbGncuvWyWSD1Zh+XCt4PDA11TJdv6BrGUKoorhizN3mEUuYfzYyyFUf1m/UY1SZWq
+	yCCgQ0jRa0wVzqYT8VFA8ICEDf93G6WvL5N2pZwkT
+X-Google-Smtp-Source: AGHT+IFBjZrg88OqeWBDO1jTyqFkrRhdvj/sM97FkFYUxtUn8pc+yCVr/hdiAj5KO+SOUnoKUqWUM88SK7LqY4tEHG8=
+X-Received: by 2002:a17:907:3e9f:b0:aa6:64be:ff2d with SMTP id
+ a640c23a62f3a-aab778c168emr3388966b.4.1734034126714; Thu, 12 Dec 2024
+ 12:08:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10 000/459] 5.10.231-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241212144253.511169641@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
-In-Reply-To: <20241212144253.511169641@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241211232754.1583023-1-kaleshsingh@google.com> <20241211232754.1583023-2-kaleshsingh@google.com>
+In-Reply-To: <20241211232754.1583023-2-kaleshsingh@google.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Thu, 12 Dec 2024 12:08:35 -0800
+Message-ID: <CAHbLzkovqMsjti1g_G4dFj2mb4hneBPtR2eGTxTZmC717455-A@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v2 01/16] mm: Introduce generic_mmap_hint()
+To: Kalesh Singh <kaleshsingh@google.com>
+Cc: akpm@linux-foundation.org, vbabka@suse.cz, yang@os.amperecomputing.com, 
+	riel@surriel.com, david@redhat.com, minchan@kernel.org, jyescas@google.com, 
+	linux@armlinux.org.uk, tsbogend@alpha.franken.de, 
+	James.Bottomley@hansenpartnership.com, ysato@users.sourceforge.jp, 
+	dalias@libc.org, glaubitz@physik.fu-berlin.de, davem@davemloft.net, 
+	andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net, 
+	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com, 
+	leitao@debian.org, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org, 
+	kernel-team@android.com, android-mm@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/12/24 06:55, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.231 release.
-> There are 459 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.231-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Wed, Dec 11, 2024 at 3:28=E2=80=AFPM Kalesh Singh <kaleshsingh@google.co=
+m> wrote:
+>
+> Consolidate the hint searches from both directions (topdown and
+> bottomup) into generic_mmap_hint().
+>
+> No functional change is introduced.
+>
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> ---
+>
+> Changes in v2:
+>   - MAP_FIXED case is also handled in arch_mmap_hint() since this is just=
+ a
+>     special case of the hint addr being "enforced", per Yang Shi.
+>   - Consolidate error handling in arch_mmap_hint().
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Reviewed-by: Yang Shi <shy828301@gmail.com>
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+>
+>  include/linux/sched/mm.h |  4 +++
+>  mm/mmap.c                | 76 ++++++++++++++++++++++++----------------
+>  2 files changed, 50 insertions(+), 30 deletions(-)
+>
+> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> index 928a626725e6..edeec19d1708 100644
+> --- a/include/linux/sched/mm.h
+> +++ b/include/linux/sched/mm.h
+> @@ -201,6 +201,10 @@ unsigned long mm_get_unmapped_area_vmflags(struct mm=
+_struct *mm,
+>                                            unsigned long flags,
+>                                            vm_flags_t vm_flags);
+>
+> +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
+> +                               unsigned long len, unsigned long pgoff,
+> +                               unsigned long flags);
+> +
+>  unsigned long
+>  generic_get_unmapped_area(struct file *filp, unsigned long addr,
+>                           unsigned long len, unsigned long pgoff,
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index df9154b15ef9..382b4eac5406 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -620,6 +620,47 @@ unsigned long vm_unmapped_area(struct vm_unmapped_ar=
+ea_info *info)
+>         return addr;
+>  }
+>
+> +/*
+> + * Look up unmapped area at the requested hint addr
+> + *
+> + * NOTE: MAP_FIXED is also handled here since it's a special case of
+> + * enforcing the hint address.
+> + *
+> + * Returns:
+> + *    ERR_VALUE: If the requested mapping is not valid
+> + *    0: If there isn't a sufficiently large hole at the hint addr.
+> + *    addr: If sufficient VA space is available at the hint address;
+> + *          or MAP_FIXED was specified.
+> + */
+> +unsigned long generic_mmap_hint(struct file *filp, unsigned long addr,
+> +                               unsigned long len, unsigned long pgoff,
+> +                               unsigned long flags)
+> +{
+> +       struct mm_struct *mm =3D current->mm;
+> +       struct vm_area_struct *vma, *prev;
+> +       const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fla=
+gs);
+> +
+> +       /* requested length too big for entire address space */
+> +       if (len > mmap_end - mmap_min_addr)
+> +               return -ENOMEM;
+> +
+> +       if (flags & MAP_FIXED)
+> +               return addr;
+> +
+> +       if (!addr)
+> +               return 0;
+> +
+> +       addr =3D PAGE_ALIGN(addr);
+> +       vma =3D find_vma_prev(mm, addr, &prev);
+> +       if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &&
+> +           (!vma || addr + len <=3D vm_start_gap(vma)) &&
+> +           (!prev || addr >=3D vm_end_gap(prev)))
+> +               return addr;
+> +
+> +       /* Fallback to VA space search */
+> +       return 0;
+> +}
+> +
+>  /* Get an address range which is currently unmapped.
+>   * For shmat() with addr=3D0.
+>   *
+> @@ -637,25 +678,13 @@ generic_get_unmapped_area(struct file *filp, unsign=
+ed long addr,
+>                           unsigned long flags, vm_flags_t vm_flags)
+>  {
+>         struct mm_struct *mm =3D current->mm;
+> -       struct vm_area_struct *vma, *prev;
+>         struct vm_unmapped_area_info info =3D {};
+>         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fla=
+gs);
+>
+> -       if (len > mmap_end - mmap_min_addr)
+> -               return -ENOMEM;
+> -
+> -       if (flags & MAP_FIXED)
+> +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
+> +       if (addr)
+>                 return addr;
+>
+> -       if (addr) {
+> -               addr =3D PAGE_ALIGN(addr);
+> -               vma =3D find_vma_prev(mm, addr, &prev);
+> -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &=
+&
+> -                   (!vma || addr + len <=3D vm_start_gap(vma)) &&
+> -                   (!prev || addr >=3D vm_end_gap(prev)))
+> -                       return addr;
+> -       }
+> -
+>         info.length =3D len;
+>         info.low_limit =3D mm->mmap_base;
+>         info.high_limit =3D mmap_end;
+> @@ -685,27 +714,14 @@ generic_get_unmapped_area_topdown(struct file *filp=
+, unsigned long addr,
+>                                   unsigned long len, unsigned long pgoff,
+>                                   unsigned long flags, vm_flags_t vm_flag=
+s)
+>  {
+> -       struct vm_area_struct *vma, *prev;
+>         struct mm_struct *mm =3D current->mm;
+>         struct vm_unmapped_area_info info =3D {};
+>         const unsigned long mmap_end =3D arch_get_mmap_end(addr, len, fla=
+gs);
+>
+> -       /* requested length too big for entire address space */
+> -       if (len > mmap_end - mmap_min_addr)
+> -               return -ENOMEM;
+> -
+> -       if (flags & MAP_FIXED)
+> -               return addr;
+> -
+>         /* requesting a specific address */
+> -       if (addr) {
+> -               addr =3D PAGE_ALIGN(addr);
+> -               vma =3D find_vma_prev(mm, addr, &prev);
+> -               if (mmap_end - len >=3D addr && addr >=3D mmap_min_addr &=
+&
+> -                               (!vma || addr + len <=3D vm_start_gap(vma=
+)) &&
+> -                               (!prev || addr >=3D vm_end_gap(prev)))
+> -                       return addr;
+> -       }
+> +       addr =3D generic_mmap_hint(filp, addr, len, pgoff, flags);
+> +       if (addr)
+> +               return addr;
+>
+>         info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
+>         info.length =3D len;
+> --
+> 2.47.0.338.g60cca15819-goog
+>
+>
 
