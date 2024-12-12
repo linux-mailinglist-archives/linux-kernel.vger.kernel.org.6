@@ -1,63 +1,67 @@
-Return-Path: <linux-kernel+bounces-443334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 117419EED92
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:48:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D68A9EED91
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:48:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F217016CFB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:44:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46270165BEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71AD223C50;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D23223711;
 	Thu, 12 Dec 2024 15:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="U1wQpTr3";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="hfVElm0g"
-Received: from a7-45.smtp-out.eu-west-1.amazonses.com (a7-45.smtp-out.eu-west-1.amazonses.com [54.240.7.45])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B/+IYlGn";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Eq3LaYzv"
+Received: from a7-49.smtp-out.eu-west-1.amazonses.com (a7-49.smtp-out.eu-west-1.amazonses.com [54.240.7.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E50223323;
-	Thu, 12 Dec 2024 15:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47357223324;
+	Thu, 12 Dec 2024 15:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018219; cv=none; b=RhAB+sBNpIs7PRjS9hbxwqTyn6M9+ukT7+dt17snTXNoxJmDk6jG6kSVildj9Ueimro/canTVkNFcaHzaZ8D+cw51oYw4dpRj8hYmdKkXLUg6s2oX6M/KZvNBWQowFtSJuaZQSOa18JZ9n1Sr9xhWOzykdKXsVTe2vvBi4nu+kE=
+	t=1734018218; cv=none; b=ANak3+dIfVJYI6rDiwiNX2QNxNNhI+6+w/Bb263Qgfo11kjHNShj/w4Z2u8dQ5xgqLUlTKFq0FA7h5Z1RSsIX8zDIcJ/5AwsIofTBX5QDyAfVYvKmTOm5FNn71hMj/nGDqdAU3Y9wXaCs/KMXuTz+CooAi9rfAPjPBOCypvuAV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018219; c=relaxed/simple;
-	bh=ltUDALF8WtRUBRtQU/ZvlBBXaB0jB77q/PnuMmcP0BA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kXYPWJohZrA41HP7QEOwVo5nIQeDaO1f1RhKSOECxNf2bdKGPQ1Bj0Fiek49qzzoeZk0HJ5sPVcSMpa/07YDwuQfcDbLvXQuRKboZTTr37LtcoI+J82Ew9iSmV2iXHVtBWlzfSbZlqfPWrkz9cO3F2Eu0zJpZ5RpkgR3CdhlSmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=U1wQpTr3; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=hfVElm0g; arc=none smtp.client-ip=54.240.7.45
+	s=arc-20240116; t=1734018218; c=relaxed/simple;
+	bh=8Fq/subTP6OO1nFEyLaHcjH8Zxi3BDFslEuxKeQeGq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fYovOTp6SQigkKUX4hWUBj+3CUB+VEQUJlhIzvLq+wou3XCfHqEfY8UvA8HwzJzy/kqVI40MtukxD6wHLh/hev/iqADjcdfolWf9JzkjWO9Lj+p40UepBXJ2t0Ws7LbO4QtHVCxObOx7PiH6Me0PRdBZlIyNqh1LIUgtGtonxdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B/+IYlGn; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=Eq3LaYzv; arc=none smtp.client-ip=54.240.7.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=bc7lryepznv65m6r2ewkpoafjt4fiq42; d=collabora.com; t=1734018213;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding;
-	bh=ltUDALF8WtRUBRtQU/ZvlBBXaB0jB77q/PnuMmcP0BA=;
-	b=U1wQpTr3k8eLSbyCBCHyrpP+wbs1XpZS9hsaqkvPRaoxq25BZr/dM6k1xQAk267h
-	RA5aOEbkc8rqk9RtQaIX+xl4oRR/h3CotlGUAvrd6J05OlHZTwauyYcdE+yjcn5hhew
-	6v2FVSJ/8hzUTRFdtt7IpFFG/5dfHZgHK11x+SyBo/p4RksDDs6W02B6shK1uB9xJ3K
-	tyfyd9N5rUU4WeK+EA+4SPx8BgFBzG5tjKntqL3LAcum9J3xETUWBWqxyDDOejpNpnU
-	bsRefvfbI/j9XGZEV68GLxyyXkrwfSssvjRaGNia40a+5TV2mTyNEdyec8jvOrlnRmP
-	sMO4u7KNAw==
+	s=bc7lryepznv65m6r2ewkpoafjt4fiq42; d=collabora.com; t=1734018214;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
+	bh=8Fq/subTP6OO1nFEyLaHcjH8Zxi3BDFslEuxKeQeGq0=;
+	b=B/+IYlGnJhURtz3JPDeBTka7Cxs3rRki0gGIaIzudp2gjGEM9QWMJsxHb02Ry4SA
+	7LfLRq/T+JQQxuIFE0ezp7dpcua0cZd8ub7LZDHP7uCmoNBvbfmS03Sh6B3D7hh5/DB
+	6tjh2c/ggnePRZgzstTrZOmoPowUaRe0XDFWbr07Pwy2w5vtEQC7cIV5ZFm6ZuAYOJB
+	vf/kzZ5MYJpha7BJKgjT+CcZABoqQieXrm3uZdYMkxT7Mf8wDv+hcV2IY7Q0iVU9nwP
+	dy79eJ/QrbawymfuLNkFlA6obl3ADM1WdWmh89UhIZj/9mG6RMDhplmnIQve/VQQFcs
+	cPFlA3LBjg==
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1734018213;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=ltUDALF8WtRUBRtQU/ZvlBBXaB0jB77q/PnuMmcP0BA=;
-	b=hfVElm0gkL4Grt7PQrESSMWpcfKYEgyVVCSfM2oBuEj4LnmE7/FKiGmRp5KC6fNY
-	hW1Sk8gIv52BHGqp5Ak2Z3dd5PdFzQ9mmnXWAfBvv7m1np5iAJRzjjQs9l5Zh1OlTvq
-	k2sYNA/KDD0SzebN6C92B88egzp1dsvD1taccRNM=
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1734018214;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=8Fq/subTP6OO1nFEyLaHcjH8Zxi3BDFslEuxKeQeGq0=;
+	b=Eq3LaYzvFoIM64DX1TWSZJ0EOfs7ITOhb8i6u1H1FTCrK0MniEqjNuaXXRCUXvck
+	U1bvve0DQ29Tjwdz+WOX/UMxMrwdOFsSIx60sGGxocqmpeDIR9JfvKqYQd3vwqoxohp
+	ny2LCm1PF/FTo48xUgevyLBq5VRc/vf4X3LQewEk=
 From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
 To: p.zabel@pengutronix.de, mchehab@kernel.org, shawnguo@kernel.org, 
 	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
 Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
 	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
 	linux-arm-kernel@lists.infradead.org, kernel@collabora.com, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH v2 0/2] media: verisilicon: fix reference padding issue
-Date: Thu, 12 Dec 2024 15:43:33 +0000
-Message-ID: <01020193bb8a24ad-99eafebb-3b0b-40c0-9b28-3a0dbc84327a-000000@eu-west-1.amazonses.com>
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Subject: [PATCH v2 2/2] media: verisilicon: Fix IMX8 native pixels format steps values
+Date: Thu, 12 Dec 2024 15:43:34 +0000
+Message-ID: <01020193bb8a2955-5c7c8665-b689-44bb-9119-b0e636e20840-000000@eu-west-1.amazonses.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241212154328.84904-1-benjamin.gaignard@collabora.com>
+References: <20241212154328.84904-1-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,35 +70,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.12.12-54.240.7.45
+X-SES-Outgoing: 2024.12.12-54.240.7.49
 
-Hantro hardware is splited into two parts: the decoder which produce
-tiled pixels formats and the post-processor which produce raster pixels
-formats.
-When post-processor is used the selected pixels format may not have the
-some padding/stride than the decoder output pixels format. This led to
-miscomputing chroma and motion vectors offsets so data are overlapping.
-This series introduce a reference pixels format that decoder use to
-compute the various needed offsets and size.
+Hantro decoder non post-processed pixels formats steps are different
+from post-processed ones.
+Fix the steps according to hardware limitation.
+Since reference frame pixels format issue has been fix, it is possible
+to use V4L2_PIX_FMT_NV15_4L4 rather V4L2_PIX_FMT_P010_4L4 for 10bits
+streams.
 
-With this series Fluster for VP9 tests is now 207/305 vs 145/305.
-HEVC test score isn't impacted by these patches (still 141/147).
+Fluster VP9 score goes up to 207/305.
+HEVC score is still 141/147.
 
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+---
 Version 2:
 - rebased on top of media-commiter/next
 - Add reviewed-by tags
 
-Benjamin Gaignard (2):
-  media: verisilicon: Store reference frames pixels format
-  media: verisilicon: Fix IMX8 native pixels format steps values
+ drivers/media/platform/verisilicon/imx8m_vpu_hw.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- drivers/media/platform/verisilicon/hantro.h   |  2 ++
- .../media/platform/verisilicon/hantro_g2.c    |  2 +-
- .../platform/verisilicon/hantro_postproc.c    | 32 +++++++------------
- .../media/platform/verisilicon/hantro_v4l2.c  | 21 ++++++++++++
- .../media/platform/verisilicon/imx8m_vpu_hw.c | 10 +++---
- 5 files changed, 40 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/media/platform/verisilicon/imx8m_vpu_hw.c b/drivers/media/platform/verisilicon/imx8m_vpu_hw.c
+index f850d8bddef6..35799da534ed 100644
+--- a/drivers/media/platform/verisilicon/imx8m_vpu_hw.c
++++ b/drivers/media/platform/verisilicon/imx8m_vpu_hw.c
+@@ -187,23 +187,23 @@ static const struct hantro_fmt imx8m_vpu_g2_dec_fmts[] = {
+ 		.frmsize = {
+ 			.min_width = FMT_MIN_WIDTH,
+ 			.max_width = FMT_UHD_WIDTH,
+-			.step_width = TILE_MB_DIM,
++			.step_width = 8,
+ 			.min_height = FMT_MIN_HEIGHT,
+ 			.max_height = FMT_UHD_HEIGHT,
+-			.step_height = TILE_MB_DIM,
++			.step_height = 32,
+ 		},
+ 	},
+ 	{
+-		.fourcc = V4L2_PIX_FMT_P010_4L4,
++		.fourcc = V4L2_PIX_FMT_NV15_4L4,
+ 		.codec_mode = HANTRO_MODE_NONE,
+ 		.match_depth = true,
+ 		.frmsize = {
+ 			.min_width = FMT_MIN_WIDTH,
+ 			.max_width = FMT_UHD_WIDTH,
+-			.step_width = TILE_MB_DIM,
++			.step_width = 8,
+ 			.min_height = FMT_MIN_HEIGHT,
+ 			.max_height = FMT_UHD_HEIGHT,
+-			.step_height = TILE_MB_DIM,
++			.step_height = 32,
+ 		},
+ 	},
+ 	{
 -- 
 2.43.0
 
