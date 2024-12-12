@@ -1,345 +1,301 @@
-Return-Path: <linux-kernel+bounces-444022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 139FE9EFF7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:42:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69FB89EFF83
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:45:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2DBB2863B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:42:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F76188CE33
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59271DE3D8;
-	Thu, 12 Dec 2024 22:41:29 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55321DE4F0;
+	Thu, 12 Dec 2024 22:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="W98m/OmJ"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E3F1DE8B3
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 22:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02DD1AD9ED
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 22:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734043288; cv=none; b=enRGc17aNpG2KjQ6R6ndORYDCd3WVV1eZ/JoI7jnw+r0vyZaOzF2OQ4sFcyDMdTakYIvMzbcYTbwJx1m9HlJJihwPDtcStzujTTVJbknKqKmgadyWJeqOpr+NVgtw8EZG6fcZ5S5XwALPSzj/UiKCsOCMq4stw+PJHL1pmPu9fQ=
+	t=1734043529; cv=none; b=gO0IxV08g1F6NWZCrfC75nS8gdBMi94DlcRMNeU2j5UVLoQ/IxyiJBZOZ3LmyOZQ9/N9Aa4CslGcRFeIXvMcb9BwS2+7CVglxnDoUwPoajCffA75dbCUFAwW0QYCi71Ns3q/ieXtELaFeKMHdcduztBoXF17FqBD8v/K+svV1Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734043288; c=relaxed/simple;
-	bh=VxOwAl5ejYrV7EUX6uc1SlmiMoAzD4jM++s4C4J2oNA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ebkb1fpr9Qr8NXAXC3Ux0MXW/tdzAYzeAwU3c/+Mfq/ykOK6DdpVldKj3dpOdnbu6aDpzxqB8uPvBQpSRgrXgu+a5xxHOZ7TwjrX4LXNGvdeqlpNkIIAgm6V5gd8n1CD/PAJxEwOsIcnok0GyrY4X1geXWEf2O2LUS0LxgpN9oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-844cfac2578so169624839f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:41:25 -0800 (PST)
+	s=arc-20240116; t=1734043529; c=relaxed/simple;
+	bh=XpEtdsrgb4tWlq/LargblSbGeI9jhQhkhPTRrqvon8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HHin0NDQV89pEqRTv5z335fJk7mq+PyIzhF7/NX0NVEnUHrnDQUxRh/QFHSY5e7/XbPC4gq1RfATi2Am/1p8nc3MLK3EH+T4CgV5H0c7P536vKacONKXoxELbi5X+7lcukIZQbyv3k2f7isDzHUC4FBhLPAEPrC8L2Xfm95pP4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=W98m/OmJ; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa68d0b9e7bso211043366b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:45:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1734043526; x=1734648326; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUsJkf4J+j/xiECkG4sE5rLGWyn8q8xGGB06NtynjQE=;
+        b=W98m/OmJUPXrjeok+jriss0vDObb0KKDK/COOVBg9Ggzm/RTpblnYppu8hHFJgX/SM
+         r2k3g2hCkXCos/bViZJn+8kiqxtPBPeWRBE+2vf3PwOAefxR0VHeGJiGLjDn2B05f2mn
+         DgmjcMYBA3M3acIzUajJga2+n7gRkkB1rwFZ1r+BSarF7+8aELX+8JqochSfAqWTmchT
+         r2WC2cMX7O4PvIouPYgKOMxnhXiTRDoMxtPi7SUwm6FZIpY1hSieD38WrP7dCfW+6Mcl
+         qPLfcT7SZcqNmVmlnrXfHX/WWcaGTH7LqgYhD7NM6rhUG0Cl+6krRQ9voehXXMj0HO7n
+         xGFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734043285; x=1734648085;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hcg5szQtBPfp5k3lbsMWqB1+Fepf/VQJrnlDW7Ak/+k=;
-        b=pENR46YuLgCz85EsDAnzA3OCNBzh119E4lOg5ahJKmllwUK1LTAqhK0RTMPiyQB6MF
-         G1oabFAsjYokdhK5cePu3MA2fMISXaFhXtIhSrvWH6u6ljXZ+OYfFT8JetoXIR7dqMoX
-         R8r+GzSeYXiwZzbysFLW1LeidK5lf4CIVGlzL74EYJTTchpz+a7FoLTyhjTY0gY2fy1/
-         MT36XcGgyw3Dknw8LHa+1eEsO0fq5uUwtNDmFY0ize4g5hvJtrFiSh6xWNieDK8S0a7A
-         BiDDnDz6Ncs9gbuCTNf+AUIM4UDriuT16EwjNnUo+0Jl+lh90UX1MWL8UuX5h3TTUDm9
-         BiGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUffCHEQjCPNUiICzQgyX8YPBHzqIIpr+7jA381STschyzLs39FXU57h7D6VLIAvkE2MmTyzIqj0L1zmac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyhQKZZuGc0pm1NFnMVwjdDRdua/HbqTYKE2p+CQbOZSNSgrQa
-	Rdc2WHbLyrPRLeknI/CZzrbLAAJdt/rS9NoPokCdX4Bh0qSL/jJT1YPaIqpQ8ZjHP6zjlvnQ0wq
-	T5NlPQhThfcFizRTeECxH3Q7VKdSQLMq4cWczws5M6KqTEKYtNZOxjOU=
-X-Google-Smtp-Source: AGHT+IG6QyG5GgMFlcL97VBo8he4OvazScbOQRNrCUlCKZEedG8RL3+wyt8FmTQvIihwmz5bitoZu950a7ZrJIBZd5LU30p++IX+
+        d=1e100.net; s=20230601; t=1734043526; x=1734648326;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XUsJkf4J+j/xiECkG4sE5rLGWyn8q8xGGB06NtynjQE=;
+        b=lYdag+PBIjvwvuzpKgulsQ6re5eduS0IYXLCSWWr3e7tP94tXpawGWXujKDLFeH5Ly
+         fvyAv0ZlPmAFfucsTLbb8zTZUb2v+9QgIGsm+moLAFCBHkitcuHIGbn5UlUKnTmXOmo0
+         zDBm/Z0BiopcFi7g6+zCoCLGm0sIDxsw8vEaENyjahJXLBEReWrh8qUZvAOqEo7IZ1XE
+         8Vft7WNq4mW/tQuCLRV8vjwaLs/LvAEWfhmsWie+FSZ9EsDlfIBWNQRmsTK0jx+u5LN3
+         YpGTNBziqdTSaY/dJYvRoQfc2uGtJ9zTtRTClLGic3KziBZpgKAtQThHSTtrlkLjZnTQ
+         z7FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxRwxxhe0Z0mQvLYSQfZQcynRizhiiBVSGv67Er+c4zaXM79IR9PWZ7Ml7rGgWKb6fa8d7OrbbtHi4ago=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6R3NpDJMdgYuRYs3gfouAjUy7vzLQ2hWdjejRpcc/0wWCTKY7
+	EpVTbxwTUH/Xz8MNSHLG76K1UAtJSQL+59+X4KjeU7/O0j1vIH58yF8+7+JKSpc=
+X-Gm-Gg: ASbGncvJL48pCiX3FfZJHoe3hqv9BQYC+DqLHYtxegoIwDXiuOnpJaFhhZX/ExEzNfK
+	+g1qBAOCxYE0Vk1Rf7kos5W/Ub9Be2OUJS7R+wxh2IK0JBUkYoxGSTZ1ylnWjKbPOwElSd4D16Q
+	L6SU67rXJOyMuzOE89ojbodKhRYNdDZFR9r3oseZLvy2H2pzrOBa1ZUJN/P9EGsDvgFfc5l5oNi
+	Nkyx5SZy/nOZ8MTXykzQ7f0NtJwkIw0IIX3ZP6CUG9L+QVFDX4SxYR9gE7FnL0KtAKtmD9Fu7v3
+	M7ssbCavAZGHduPr4mk=
+X-Google-Smtp-Source: AGHT+IEnd+D7X8TzYQBVe2H+wexdsZa1tb6lj6B+PXBw/DjlnuLHbieso5Q07N5vS1ESwsrUnIOZ3A==
+X-Received: by 2002:a17:907:1ca3:b0:aab:7588:f411 with SMTP id a640c23a62f3a-aab779c8bcamr43821666b.25.1734043526035;
+        Thu, 12 Dec 2024 14:45:26 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:a1c0:e394:b652:4ab3? ([2001:67c:2fbc:1:a1c0:e394:b652:4ab3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260e6c67sm1164937766b.187.2024.12.12.14.45.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 14:45:25 -0800 (PST)
+Message-ID: <fa19f3a8-c273-4d2c-a10e-e9bda2375365@openvpn.net>
+Date: Thu, 12 Dec 2024 23:46:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198a:b0:3a7:e7bd:9f09 with SMTP id
- e9e14a558f8ab-3aff4614766mr5087785ab.5.1734043284869; Thu, 12 Dec 2024
- 14:41:24 -0800 (PST)
-Date: Thu, 12 Dec 2024 14:41:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675b6694.050a0220.599f4.00bd.GAE@google.com>
-Subject: [syzbot] [xfs?] possible deadlock in xfs_vn_update_time
-From: syzbot <syzbot+5e01f56d1c53ac3749fb@syzkaller.appspotmail.com>
-To: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v15 06/22] ovpn: introduce the ovpn_socket object
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>,
+ willemdebruijn.kernel@gmail.com
+References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net>
+ <20241211-b4-ovpn-v15-6-314e2cad0618@openvpn.net> <Z1sNEgQLMzZua3mS@hog>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <Z1sNEgQLMzZua3mS@hog>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 12/12/2024 17:19, Sabrina Dubroca wrote:
+> 2024-12-11, 22:15:10 +0100, Antonio Quartulli wrote:
+>> +static struct ovpn_socket *ovpn_socket_get(struct socket *sock)
+>> +{
+>> +	struct ovpn_socket *ovpn_sock;
+>> +
+>> +	rcu_read_lock();
+>> +	ovpn_sock = rcu_dereference_sk_user_data(sock->sk);
+>> +	if (WARN_ON(!ovpn_socket_hold(ovpn_sock)))
+> 
+> Could we hit this situation when we're removing the last peer (so
+> detaching its socket) just as we're adding a new one? ovpn_socket_new
+> finds the socket already attached and goes through the EALREADY path,
+> but the refcount has already dropped to 0?
+> 
 
-syzbot found the following issue on:
+hm good point.
 
-HEAD commit:    62b5a46999c7 Merge tag '6.13-rc1-smb3-client-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1156c3e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c579265945b98812
-dashboard link: https://syzkaller.appspot.com/bug?extid=5e01f56d1c53ac3749fb
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> Then we'd also return NULL from ovpn_socket_new [1], which I don't
+> think is handled well by the caller (at least the netdev_dbg call at
+> the end of ovpn_nl_peer_modify, maybe other spots too).
+> 
+> (I guess it's not an issue you would see with the existing userspace
+> if it's single-threaded)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The TCP patch 11/22 will convert the socket release routine to a 
+scheduled worker.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e972efbff321/disk-62b5a469.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6b1ab872ed57/vmlinux-62b5a469.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8dbcac9b80b9/bzImage-62b5a469.xz
+This means we can have the following flow:
+1) userspace deletes a peer -> peer drops its reference to the ovpn_socket
+2) ovpn_socket refcnt may hit 0 -> cleanup/detach work is scheduled, but 
+not yet executed
+3) userspace adds a new peer -> attach returns -EALREADY but refcnt is 0
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5e01f56d1c53ac3749fb@syzkaller.appspotmail.com
+So not so impossible, even with a single-threaded userspace software.
 
-XFS (loop8): Ending clean mount
-======================================================
-WARNING: possible circular locking dependency detected
-6.13.0-rc1-syzkaller-00378-g62b5a46999c7 #0 Not tainted
-------------------------------------------------------
-syz.8.1897/11319 is trying to acquire lock:
-ffff88807ab0a610 (sb_internal#3){.+.+}-{0:0}, at: xfs_vn_update_time+0x1e9/0x5e0 fs/xfs/xfs_iops.c:1103
+> 
+> [...]
+>> +struct ovpn_socket *ovpn_socket_new(struct socket *sock, struct ovpn_peer *peer)
+>> +{
+>> +	struct ovpn_socket *ovpn_sock;
+>> +	int ret;
+>> +
+>> +	ret = ovpn_socket_attach(sock, peer);
+>> +	if (ret < 0 && ret != -EALREADY)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	/* if this socket is already owned by this interface, just increase the
+>> +	 * refcounter and use it as expected.
+>> +	 *
+>> +	 * Since UDP sockets can be used to talk to multiple remote endpoints,
+>> +	 * openvpn normally instantiates only one socket and shares it among all
+>> +	 * its peers. For this reason, when we find out that a socket is already
+>> +	 * used for some other peer in *this* instance, we can happily increase
+>> +	 * its refcounter and use it normally.
+>> +	 */
+>> +	if (ret == -EALREADY) {
+>> +		/* caller is expected to increase the sock refcounter before
+>> +		 * passing it to this function. For this reason we drop it if
+>> +		 * not needed, like when this socket is already owned.
+>> +		 */
+>> +		ovpn_sock = ovpn_socket_get(sock);
+>> +		sockfd_put(sock);
+> 
+> [1] so we would need to add
+> 
+>      if (!ovpn_sock)
+>          return -EAGAIN;
 
-but task is already holding lock:
-ffff8880347a1560 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
-ffff8880347a1560 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff+0x160/0x360 mm/util.c:578
+I am not sure returning -EAGAIN is the right move at this point.
+We don't know when the scheduled worker will execute, so we don't know 
+when to try again.
 
-which lock already depends on the new lock.
+Maybe we should call cancel_sync_work(&ovpn_sock->work) inside 
+ovpn_socket_get()?
+So the latter will return NULL only when it is sure that the socket has 
+been detached.
 
+At that point we can skip the following return and continue along the 
+"new socket" path.
 
-the existing dependency chain (in reverse order) is:
+What do you think?
 
--> #5 (&mm->mmap_lock){++++}-{4:4}:
-       __might_fault mm/memory.c:6751 [inline]
-       __might_fault+0x11b/0x190 mm/memory.c:6744
-       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
-       _copy_from_user+0x29/0xd0 lib/usercopy.c:18
-       copy_from_user include/linux/uaccess.h:212 [inline]
-       __blk_trace_setup+0xa8/0x180 kernel/trace/blktrace.c:626
-       blk_trace_ioctl+0x163/0x290 kernel/trace/blktrace.c:740
-       blkdev_ioctl+0x109/0x6d0 block/ioctl.c:682
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+However, this makes we wonder: what happens if we have two racing 
+PEER_NEW with the same non-yet-attached UDP socket?
 
--> #4 (&q->debugfs_mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
-       blk_mq_init_sched+0x42b/0x640 block/blk-mq-sched.c:473
-       elevator_init_mq+0x2cd/0x420 block/elevator.c:610
-       add_disk_fwnode+0x113/0x1300 block/genhd.c:413
-       sd_probe+0xa86/0x1000 drivers/scsi/sd.c:4024
-       call_driver_probe drivers/base/dd.c:579 [inline]
-       really_probe+0x241/0xa90 drivers/base/dd.c:658
-       __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
-       driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
-       __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
-       bus_for_each_drv+0x15a/0x1e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x1d3/0x290 drivers/base/dd.c:987
-       async_run_entry_fn+0x9f/0x530 kernel/async.c:129
-       process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
-       process_scheduled_works kernel/workqueue.c:3310 [inline]
-       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-       kthread+0x2c4/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Maybe we should lock the socket in ovpn_udp_socket_attach() when 
+checking its user-data and setting it (in order to make the test-and-set 
+atomic)?
 
--> #3 (&q->q_usage_counter(queue)#50){++++}-{0:0}:
-       blk_queue_enter+0x50f/0x640 block/blk-core.c:328
-       blk_mq_alloc_request+0x59b/0x950 block/blk-mq.c:652
-       scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
-       scsi_execute_cmd+0x1eb/0xf40 drivers/scsi/scsi_lib.c:304
-       read_capacity_16+0x213/0xe10 drivers/scsi/sd.c:2655
-       sd_read_capacity drivers/scsi/sd.c:2824 [inline]
-       sd_revalidate_disk.isra.0+0x1a06/0xa8d0 drivers/scsi/sd.c:3734
-       sd_probe+0x904/0x1000 drivers/scsi/sd.c:4010
-       call_driver_probe drivers/base/dd.c:579 [inline]
-       really_probe+0x241/0xa90 drivers/base/dd.c:658
-       __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
-       driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
-       __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
-       bus_for_each_drv+0x15a/0x1e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x1d3/0x290 drivers/base/dd.c:987
-       async_run_entry_fn+0x9f/0x530 kernel/async.c:129
-       process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
-       process_scheduled_works kernel/workqueue.c:3310 [inline]
-       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-       kthread+0x2c4/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+I am specifically talking about this in udp.c:
 
--> #2 (&q->limits_lock){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
-       queue_limits_start_update include/linux/blkdev.h:949 [inline]
-       loop_reconfigure_limits+0x407/0x8c0 drivers/block/loop.c:998
-       loop_set_block_size drivers/block/loop.c:1473 [inline]
-       lo_simple_ioctl drivers/block/loop.c:1496 [inline]
-       lo_ioctl+0x901/0x18b0 drivers/block/loop.c:1559
-       blkdev_ioctl+0x279/0x6d0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+345         /* make sure no pre-existing encapsulation handler exists */
+346         rcu_read_lock();
+347         old_data = rcu_dereference_sk_user_data(sock->sk);
+348         if (!old_data) {
+349                 /* socket is currently unused - we can take it */
+350                 rcu_read_unlock();
+351                 setup_udp_tunnel_sock(sock_net(sock->sk), sock, &cfg);
+352                 return 0;
+353         }
 
--> #1 (&q->q_usage_counter(io)#23){++++}-{0:0}:
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1fb6/0x24c0 block/blk-mq.c:3092
-       __submit_bio+0x384/0x540 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x698/0xd70 block/blk-core.c:739
-       submit_bio_noacct+0x93a/0x1e20 block/blk-core.c:868
-       xfs_buf_ioapply_map fs/xfs/xfs_buf.c:1586 [inline]
-       _xfs_buf_ioapply+0x9f6/0xd70 fs/xfs/xfs_buf.c:1674
-       __xfs_buf_submit+0x28b/0x820 fs/xfs/xfs_buf.c:1758
-       xfs_buf_submit fs/xfs/xfs_buf.c:61 [inline]
-       _xfs_buf_read fs/xfs/xfs_buf.c:809 [inline]
-       xfs_buf_read_map+0x3fa/0xb70 fs/xfs/xfs_buf.c:873
-       xfs_trans_read_buf_map+0x352/0x9a0 fs/xfs/xfs_trans_buf.c:304
-       xfs_trans_read_buf fs/xfs/xfs_trans.h:213 [inline]
-       xfs_read_agi+0x2a1/0x5c0 fs/xfs/libxfs/xfs_ialloc.c:2760
-       xfs_ialloc_read_agi+0x10c/0x510 fs/xfs/libxfs/xfs_ialloc.c:2791
-       xfs_dialloc_try_ag fs/xfs/libxfs/xfs_ialloc.c:1809 [inline]
-       xfs_dialloc+0x898/0x1820 fs/xfs/libxfs/xfs_ialloc.c:1945
-       xfs_qm_qino_alloc+0x2a7/0x7f0 fs/xfs/xfs_qm.c:996
-       xfs_qm_init_quotainos+0x5f4/0x6c0 fs/xfs/xfs_qm.c:1845
-       xfs_qm_init_quotainfo+0xf4/0xb20 fs/xfs/xfs_qm.c:824
-       xfs_qm_mount_quotas+0x9c/0x6a0 fs/xfs/xfs_qm.c:1680
-       xfs_mountfs+0x1ed1/0x2230 fs/xfs/xfs_mount.c:1030
-       xfs_fs_fill_super+0x1557/0x1f50 fs/xfs/xfs_super.c:1791
-       get_tree_bdev_flags+0x38e/0x620 fs/super.c:1636
-       vfs_get_tree+0x92/0x380 fs/super.c:1814
-       do_new_mount fs/namespace.c:3507 [inline]
-       path_mount+0x14e6/0x1f20 fs/namespace.c:3834
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount fs/namespace.c:4034 [inline]
-       __x64_sys_mount+0x294/0x320 fs/namespace.c:4034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+We will end up returning 0 in both contexts and thus allocate two 
+ovpn_sockets instead of re-using the first one we allocated.
 
--> #0 (sb_internal#3){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain kernel/locking/lockdep.c:3904 [inline]
-       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
-       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1725 [inline]
-       sb_start_intwrite include/linux/fs.h:1908 [inline]
-       xfs_trans_alloc+0x4fa/0x940 fs/xfs/xfs_trans.c:266
-       xfs_vn_update_time+0x1e9/0x5e0 fs/xfs/xfs_iops.c:1103
-       inode_update_time fs/inode.c:2124 [inline]
-       touch_atime+0x352/0x5d0 fs/inode.c:2197
-       file_accessed include/linux/fs.h:2539 [inline]
-       xfs_file_mmap+0x4ad/0x630 fs/xfs/xfs_file.c:1581
-       call_mmap include/linux/fs.h:2183 [inline]
-       mmap_file mm/internal.h:124 [inline]
-       __mmap_new_file_vma mm/vma.c:2291 [inline]
-       __mmap_new_vma mm/vma.c:2355 [inline]
-       __mmap_region+0x1789/0x2670 mm/vma.c:2456
-       mmap_region+0x270/0x320 mm/mmap.c:1347
-       do_mmap+0xc00/0xfc0 mm/mmap.c:496
-       vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
-       ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
-       __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
-       __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
-       __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Does it make sense?
 
-other info that might help us debug this:
+> 
+>> +		return ovpn_sock;
+>> +	}
+>> +
+> 
+> [...]
+>> +int ovpn_udp_socket_attach(struct socket *sock, struct ovpn_priv *ovpn)
+>> +{
+>> +	struct ovpn_socket *old_data;
+>> +	int ret = 0;
+>> +
+>> +	/* make sure no pre-existing encapsulation handler exists */
+>> +	rcu_read_lock();
+>> +	old_data = rcu_dereference_sk_user_data(sock->sk);
+>> +	if (!old_data) {
+>> +		/* socket is currently unused - we can take it */
+>> +		rcu_read_unlock();
+>> +		return 0;
+>> +	}
+>> +
+>> +	/* socket is in use. We need to understand if it's owned by this ovpn
+>> +	 * instance or by something else.
+>> +	 * In the former case, we can increase the refcounter and happily
+>> +	 * use it, because the same UDP socket is expected to be shared among
+>> +	 * different peers.
+>> +	 *
+>> +	 * Unlikely TCP, a single UDP socket can be used to talk to many remote
+> 
+> (since I'm commenting on this patch:)
+> 
+> s/Unlikely/Unlike/
 
-Chain exists of:
-  sb_internal#3 --> &q->debugfs_mutex --> &mm->mmap_lock
+ACK
 
- Possible unsafe locking scenario:
+> 
+> [I have some more nits/typos here and there but I worry the
+> maintainers will get "slightly" annoyed if I make you repost 22
+> patches once again :) -- if that's all I find in the next few days,
+> everyone might be happier if I stash them and we get them fixed after
+> merging?]
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&mm->mmap_lock);
-                               lock(&q->debugfs_mutex);
-                               lock(&mm->mmap_lock);
-  rlock(sb_internal#3);
+If we have to rework this socket attaching part, it may be worth 
+throwing in those typ0 fixes too :)
 
- *** DEADLOCK ***
+Thanks a lot.
 
-2 locks held by syz.8.1897/11319:
- #0: ffff8880347a1560 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
- #0: ffff8880347a1560 (&mm->mmap_lock){++++}-{4:4}, at: vm_mmap_pgoff+0x160/0x360 mm/util.c:578
- #1: ffff88807ab0a420 (sb_writers#23){.+.+}-{0:0}, at: file_accessed include/linux/fs.h:2539 [inline]
- #1: ffff88807ab0a420 (sb_writers#23){.+.+}-{0:0}, at: xfs_file_mmap+0x4ad/0x630 fs/xfs/xfs_file.c:1581
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 11319 Comm: syz.8.1897 Not tainted 6.13.0-rc1-syzkaller-00378-g62b5a46999c7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x419/0x5d0 kernel/locking/lockdep.c:2074
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain kernel/locking/lockdep.c:3904 [inline]
- __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1725 [inline]
- sb_start_intwrite include/linux/fs.h:1908 [inline]
- xfs_trans_alloc+0x4fa/0x940 fs/xfs/xfs_trans.c:266
- xfs_vn_update_time+0x1e9/0x5e0 fs/xfs/xfs_iops.c:1103
- inode_update_time fs/inode.c:2124 [inline]
- touch_atime+0x352/0x5d0 fs/inode.c:2197
- file_accessed include/linux/fs.h:2539 [inline]
- xfs_file_mmap+0x4ad/0x630 fs/xfs/xfs_file.c:1581
- call_mmap include/linux/fs.h:2183 [inline]
- mmap_file mm/internal.h:124 [inline]
- __mmap_new_file_vma mm/vma.c:2291 [inline]
- __mmap_new_vma mm/vma.c:2355 [inline]
- __mmap_region+0x1789/0x2670 mm/vma.c:2456
- mmap_region+0x270/0x320 mm/mmap.c:1347
- do_mmap+0xc00/0xfc0 mm/mmap.c:496
- vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
- ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
- __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
- __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
- __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7eff20f7fed9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007eff1edf6058 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00007eff21145fa0 RCX: 00007eff20f7fed9
-RDX: 0000000000000002 RSI: 0000000000b36000 RDI: 0000000020000000
-RBP: 00007eff20ff3cc8 R08: 0000000000000004 R09: 0000000000000000
-R10: 0000000000028011 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007eff21145fa0 R15: 00007ffe670abff8
- </TASK>
+Regards,
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
