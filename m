@@ -1,164 +1,251 @@
-Return-Path: <linux-kernel+bounces-443744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBFC9EFB4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:42:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D81188D995
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:42:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B10223C7A;
-	Thu, 12 Dec 2024 18:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTowqtqQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794FD9EFB5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:45:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26DF218594;
-	Thu, 12 Dec 2024 18:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340CA287D9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:45:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D0F223E69;
+	Thu, 12 Dec 2024 18:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="B5xPUbsV"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09432101A0
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734028936; cv=none; b=n68w1Fz9YgBmB7G7NNJlEukhnMTsyPzb/Acs+UdJyGW/vQHrTmkiTJ8IldOBpa9oDNAvjiW+O88lG7MZCaNB4GP3Oh2uripecHx+rIXsKaiOWQA+Iv5R3lJpv1Ec+tdgldkjovw3I7/XJKr5P1idcai+57NAkFHfyGeHjyT9PYg=
+	t=1734029096; cv=none; b=rroaGLA2soFuNAhlKdA+tiT0+69eFRNSSTdzzxkM5FJBN/IXJvIZEpYUK6Z7sya8tuZM2TGW3UEcghHgtnzPiMC44Lwkm0amuwiEA5hQd43+BSB6wCBAyx+8VRDszJ2K9CytpJW38i7311E1/9lJtzbqjF0TBMA2X3al7cTBK64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734028936; c=relaxed/simple;
-	bh=fwPnm0aiVSfzW+82MVq1yIwL2lTZ/IzUqeBNpXA7rf8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Mbbh1i6Zbw/WjVYuMWsxkYjqDAekyMSKUX8se50IDWIpJgSiWNe6osB8c3mvd2Gt3Lsca++rqIkU7BcJS7Izn8OdKeVxXroX6PBV2GZZmRgXVCLIYwPaHBIBlbZoItZO5HVjq2WSy0HStxzg5a3AMpgBuWp2Dq/KMLwIRDwvFBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTowqtqQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3074EC4CED1;
-	Thu, 12 Dec 2024 18:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734028936;
-	bh=fwPnm0aiVSfzW+82MVq1yIwL2lTZ/IzUqeBNpXA7rf8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RTowqtqQrezQCuLo6anlq5cJSCFGdgcc91vS3NN0ODBjOUD3s8aBxwK3tkdAsD42T
-	 BkdonzaW6IIdR3N6s5TBCUidpA8xssWqkLAuPaXr6YxVsk/3rmab0JsADj32NA+W6E
-	 SP1eRyfKeUqUHhl0IF4PnWXAaSANy8YL2uk8Q/F0gxo0s1eEKU8vy0s0mf0Zo52oC0
-	 hv0rfaD8OJadmcvGoyA58CFwIbC/PGpBTGcQQ8gEL8wFmRkvVJda7ZbOdBC5EoS/Uv
-	 XYw0BGTHokVNr4COJ6DSrypnGl5dx5t1ACID6suihhiJl1HBsmmX+zlD/Eue0ybjmg
-	 k9soayfgulyQg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C4A54CE0F78; Thu, 12 Dec 2024 10:42:15 -0800 (PST)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	Frederic Weisbecker <frederic@kernel.org>,
-	kernel test robot <oliver.sang@intel.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 2/2] rcu/nocb: Fix rcuog wake-up from offline softirq
-Date: Thu, 12 Dec 2024 10:42:14 -0800
-Message-Id: <20241212184214.2018411-2-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <c0daba35-f647-40cd-b556-3a04e03da93c@paulmck-laptop>
-References: <c0daba35-f647-40cd-b556-3a04e03da93c@paulmck-laptop>
+	s=arc-20240116; t=1734029096; c=relaxed/simple;
+	bh=hPHPl/hS351CdYJK4BG8VPGoJVjIsiq51nvm2RTYMIA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dtJVdfBD/8o1zYVBmfl5TFGF0+pUWEd+7wbqblBu0MvEjgwEEY5iaCcUQAEtdFSHfqkPiL9tf56munJRU8S72T5uk5aV65sh72d7/38ps80GrYgTJfLosrzAhJj1jCqcbUXNgrOGe4Ro/TcPqEJqR6u8pG4WczQ//Ju7Lnwpeps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=B5xPUbsV; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4BCIi2Ex1239431
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 12 Dec 2024 10:44:02 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4BCIi2Ex1239431
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024111601; t=1734029043;
+	bh=48xMOvkm4ZjCKU0BdaAFERFmnKwBKDUrb6DaaU3BJQk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=B5xPUbsVJveAfgV1tgsYILrPPyEBkEBigkRQXldTvpLFTy/NZOYLamEkk1som2G7A
+	 NZ0fkNAA4AJ7hZ3ZTnmEDXBOm5KUt5gukjjDtbSOltVbMBkePTsY1dGo6oPsDGLcgC
+	 9ZZMWoxj1BcWYcnvxYe2tc0i6Ef3euS9Q9lxlYbU10NcUsaqAHxcXJ9MXUx7vYx1oe
+	 05oGHG84WlJBb6bIqnFkJ1bebIWI90MWrg1zaNMZlYWVWK8NUr7/OMhyNuolVKhQn1
+	 Ou5WLY/DAZRjT0+gAwAhopMaSRYNczA+x9IUhnpnaQrYPX+skqA3x4Ftxv8bsIyjuF
+	 Hg+1jcplEGt+w==
+Message-ID: <fa3d0093-818d-4592-8415-3c2e287cc3e6@zytor.com>
+Date: Thu, 12 Dec 2024 10:44:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] x86/ia32: Leave NULL selector values 0~3 as is
+From: Xin Li <xin@zytor.com>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        andrew.cooper3@citrix.com, brgerst@gmail.com, ebiederm@xmission.com
+References: <20241126184529.1607334-1-xin@zytor.com>
+Content-Language: en-US
+Autocrypt: addr=xin@zytor.com; keydata=
+ xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
+ 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
+ Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
+ bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
+ raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
+ VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
+ wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
+ 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
+ NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
+ AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
+ tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
+ v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
+ sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
+ QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
+ wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
+ oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
+ vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
+ MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
+ g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
+ cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
+ jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
+ Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
+ m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
+ bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
+ JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
+ /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
+ OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
+ dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
+ 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
+ Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
+ PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
+ gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
+ l75w1xInsg==
+In-Reply-To: <20241126184529.1607334-1-xin@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Frederic Weisbecker <frederic@kernel.org>
+On 11/26/2024 10:45 AM, Xin Li (Intel) wrote:
+> The first GDT descriptor is reserved as 'NULL descriptor'.  As bits 0
+> and 1 of a segment selector, i.e., the RPL bits, are NOT used to index
+> GDT, selector values 0~3 all point to the NULL descriptor, thus values
+> 0, 1, 2 and 3 are all valid NULL selector values.
+> 
+> When a NULL selector value is to be loaded into a segment register,
+> reload_segments() sets its RPL bits.  Later IRET zeros ES, FS, GS, and
+> DS segment registers if any of them is found to have any nonzero NULL
+> selector value.  The two operations offset each other to actually effect
+> a nop.
+> 
+> Besides, zeroing of RPL in NULL selector values is an information leak
+> in pre-FRED systems as userspace can spot any interrupt/exception by
+> loading a nonzero NULL selector, and waiting for it to become zero.
+> But there is nothing software can do to prevent it before FRED.
+> 
+> ERETU, the only legit instruction to return to userspace from kernel
+> under FRED, by design does NOT zero any segment register to avoid this
+> problem behavior.
+> 
+> As such, leave NULL selector values 0~3 as is.
 
-After a CPU has set itself offline and before it eventually calls
-rcutree_report_cpu_dead(), there are still opportunities for callbacks
-to be enqueued, for example from an IRQ. When that happens on NOCB, the
-rcuog wake-up is deferred through an IPI to an online CPU in order not
-to call into the scheduler and risk arming the RT-bandwidth after
-hrtimers have been migrated out and disabled.
+Hi Andrew,
 
-But performing a synchronized IPI from an IRQ is buggy as reported in
-the following scenario:
+Do you have any more comments?
 
-	WARNING: CPU: 1 PID: 26 at kernel/smp.c:633 smp_call_function_single
-	Modules linked in: rcutorture torture
-	CPU: 1 UID: 0 PID: 26 Comm: migration/1 Not tainted 6.11.0-rc1-00012-g9139f93209d1 #1
-	Stopper: multi_cpu_stop+0x0/0x320 <- __stop_cpus+0xd0/0x120
-	RIP: 0010:smp_call_function_single
-	<IRQ>
-	swake_up_one_online
-	__call_rcu_nocb_wake
-	__call_rcu_common
-	? rcu_torture_one_read
-	call_timer_fn
-	__run_timers
-	run_timer_softirq
-	handle_softirqs
-	irq_exit_rcu
-	? tick_handle_periodic
-	sysvec_apic_timer_interrupt
-	</IRQ>
+Thanks!
+     Xin
 
-The periodic tick must be shutdown when the CPU is offline, just like is
-done for oneshot tick. This must be fixed but this is not enough:
-softirqs can happen on any hardirq tail and reproduce the above scenario.
-
-Fix this with introducing a special deferred rcuog wake up mode when the
-CPU is offline. This deferred wake up doesn't arm any timer and simply
-wait for rcu_report_cpu_dead() to be called in order to flush any
-pending rcuog wake up.
-
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202409231644.4c55582d-lkp@intel.com
-Fixes: 9139f93209d1 ("rcu/nocb: Fix RT throttling hrtimer armed from offline CPU")
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/tree.h      |  1 +
- kernel/rcu/tree_nocb.h | 14 ++++++++++++--
- 2 files changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index a9a811d9d7a37..7ed060edd12b1 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -290,6 +290,7 @@ struct rcu_data {
- #define RCU_NOCB_WAKE_LAZY	2
- #define RCU_NOCB_WAKE		3
- #define RCU_NOCB_WAKE_FORCE	4
-+#define RCU_NOCB_WAKE_OFFLINE   5
- 
- #define RCU_JIFFIES_TILL_FORCE_QS (1 + (HZ > 250) + (HZ > 500))
- 					/* For jiffies_till_first_fqs and */
-diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-index 0923d60c5a338..78841346e1c13 100644
---- a/kernel/rcu/tree_nocb.h
-+++ b/kernel/rcu/tree_nocb.h
-@@ -295,6 +295,8 @@ static void wake_nocb_gp_defer(struct rcu_data *rdp, int waketype,
- 	case RCU_NOCB_WAKE_FORCE:
- 		if (rdp_gp->nocb_defer_wakeup < RCU_NOCB_WAKE)
- 			mod_timer(&rdp_gp->nocb_timer, jiffies + 1);
-+		fallthrough;
-+	case RCU_NOCB_WAKE_OFFLINE:
- 		if (rdp_gp->nocb_defer_wakeup < waketype)
- 			WRITE_ONCE(rdp_gp->nocb_defer_wakeup, waketype);
- 		break;
-@@ -562,8 +564,16 @@ static void __call_rcu_nocb_wake(struct rcu_data *rdp, bool was_alldone,
- 	lazy_len = READ_ONCE(rdp->lazy_len);
- 	if (was_alldone) {
- 		rdp->qlen_last_fqs_check = len;
--		// Only lazy CBs in bypass list
--		if (lazy_len && bypass_len == lazy_len) {
-+		if (cpu_is_offline(rdp->cpu)) {
-+			/*
-+			 * Offline CPUs can't call swake_up_one_online() from IRQs. Rely
-+			 * on the final deferred wake-up rcutree_report_cpu_dead()
-+			 */
-+			rcu_nocb_unlock(rdp);
-+			wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_OFFLINE,
-+					   TPS("WakeEmptyIsDeferredOffline"));
-+		} else if (lazy_len && bypass_len == lazy_len) {
-+			// Only lazy CBs in bypass list
- 			rcu_nocb_unlock(rdp);
- 			wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_LAZY,
- 					   TPS("WakeLazy"));
--- 
-2.40.1
+> 
+> Do the same on 32-bit kernel as well.
+> 
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> ---
+> 
+> Changes since v3:
+> * Rename usrseg() to fixup_rpl() to match its intent (Andrew Cooper).
+> * A few comment improvements (Andrew Cooper).
+> 
+> Changes since v2:
+> * No, don't zero non-zero NULL selector values, essentially revert
+>    to v1 (Andrew Cooper).
+> 
+> Changes since v1:
+> * Normalize non-zero NULL selector values to 0 (Eric W. Biederman).
+> * Apply the same normalization logic in a 32bit kernel (Eric W.
+>    Biederman).
+> ---
+>   arch/x86/kernel/signal_32.c | 62 +++++++++++++++++++++++++------------
+>   1 file changed, 43 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/signal_32.c b/arch/x86/kernel/signal_32.c
+> index ef654530bf5a..1e275268d256 100644
+> --- a/arch/x86/kernel/signal_32.c
+> +++ b/arch/x86/kernel/signal_32.c
+> @@ -33,25 +33,55 @@
+>   #include <asm/smap.h>
+>   #include <asm/gsseg.h>
+>   
+> +/*
+> + * The first GDT descriptor is reserved as 'NULL descriptor'.  As bits 0
+> + * and 1 of a segment selector, i.e., the RPL bits, are NOT used to index
+> + * GDT, selector values 0~3 all point to the NULL descriptor, thus values
+> + * 0, 1, 2 and 3 are all valid NULL selector values.
+> + *
+> + * However IRET zeros ES, FS, GS, and DS segment registers if any of them
+> + * is found to have any nonzero NULL selector value, which can be used by
+> + * userspace in pre-FRED systems to spot any interrupt/exception by loading
+> + * a nonzero NULL selector and waiting for it to become zero.  Before FRED
+> + * there is nothing software can do to prevent such an information leak.
+> + *
+> + * ERETU, the only legit instruction to return to userspace from kernel
+> + * under FRED, by design does NOT zero any segment register to avoid this
+> + * problem behavior.
+> + *
+> + * As such, leave NULL selector values 0~3 as is.
+> + */
+> +static inline u16 fixup_rpl(u16 sel)
+> +{
+> +	return sel <= 3 ? sel : sel | 3;
+> +}
+> +
+>   #ifdef CONFIG_IA32_EMULATION
+>   #include <asm/unistd_32_ia32.h>
+>   
+>   static inline void reload_segments(struct sigcontext_32 *sc)
+>   {
+> -	unsigned int cur;
+> +	u16 cur;
+>   
+> +	/*
+> +	 * Reload fs and gs if they have changed in the signal
+> +	 * handler.  This does not handle long fs/gs base changes in
+> +	 * the handler, but does not clobber them at least in the
+> +	 * normal case.
+> +	 */
+>   	savesegment(gs, cur);
+> -	if ((sc->gs | 0x03) != cur)
+> -		load_gs_index(sc->gs | 0x03);
+> +	if (fixup_rpl(sc->gs) != cur)
+> +		load_gs_index(fixup_rpl(sc->gs));
+>   	savesegment(fs, cur);
+> -	if ((sc->fs | 0x03) != cur)
+> -		loadsegment(fs, sc->fs | 0x03);
+> +	if (fixup_rpl(sc->fs) != cur)
+> +		loadsegment(fs, fixup_rpl(sc->fs));
+> +
+>   	savesegment(ds, cur);
+> -	if ((sc->ds | 0x03) != cur)
+> -		loadsegment(ds, sc->ds | 0x03);
+> +	if (fixup_rpl(sc->ds) != cur)
+> +		loadsegment(ds, fixup_rpl(sc->ds));
+>   	savesegment(es, cur);
+> -	if ((sc->es | 0x03) != cur)
+> -		loadsegment(es, sc->es | 0x03);
+> +	if (fixup_rpl(sc->es) != cur)
+> +		loadsegment(es, fixup_rpl(sc->es));
+>   }
+>   
+>   #define sigset32_t			compat_sigset_t
+> @@ -105,18 +135,12 @@ static bool ia32_restore_sigcontext(struct pt_regs *regs,
+>   	regs->orig_ax = -1;
+>   
+>   #ifdef CONFIG_IA32_EMULATION
+> -	/*
+> -	 * Reload fs and gs if they have changed in the signal
+> -	 * handler.  This does not handle long fs/gs base changes in
+> -	 * the handler, but does not clobber them at least in the
+> -	 * normal case.
+> -	 */
+>   	reload_segments(&sc);
+>   #else
+> -	loadsegment(gs, sc.gs);
+> -	regs->fs = sc.fs;
+> -	regs->es = sc.es;
+> -	regs->ds = sc.ds;
+> +	loadsegment(gs, fixup_rpl(sc.gs));
+> +	regs->fs = fixup_rpl(sc.fs);
+> +	regs->es = fixup_rpl(sc.es);
+> +	regs->ds = fixup_rpl(sc.ds);
+>   #endif
+>   
+>   	return fpu__restore_sig(compat_ptr(sc.fpstate), 1);
+> 
+> base-commit: 6ff908de1eafb53f31db75d929b7566a87847d2d
 
 
