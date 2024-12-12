@@ -1,130 +1,111 @@
-Return-Path: <linux-kernel+bounces-443468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703FB9EF267
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:48:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1379EF23C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:47:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5687D172D02
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:35:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 065B417118F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B722288F8;
-	Thu, 12 Dec 2024 16:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5FA222D57;
+	Thu, 12 Dec 2024 16:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M8a8uezA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="By1oaMxr"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E90A2288CD;
-	Thu, 12 Dec 2024 16:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7929229664;
+	Thu, 12 Dec 2024 16:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734020724; cv=none; b=An1s9TrX6716RinQBroT38gkdnorw4JQXkMJgNyY6PXEmBA2xyGTSuWq7KVt+L3plLQaHhsQZbZHmEffqeUv2BySYeK9NTMPcN/eK+xNQ9aOL2Y+8pwsI7D+L9XhXp7YLxpF7CXe42YDTfBiH0nPNABERxyvfq9kyPgovaC1mNQ=
+	t=1734020730; cv=none; b=mR6XAZlHsPtGk1joavH/chUmZENmHlEjmzlBTVUoSVUHinM7kdlK2tYZh7A882l0OksvNxJxvw6LKO3EKDFGoLtd6cN5mog5LRNzLzv4Tcoa+7Fi7BTaUkuir4mUCidbmTjRkBi5FI1OTGX+ZT6JJ9BrDeS88Yail34sW0gAeJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734020724; c=relaxed/simple;
-	bh=jmircCLNqfQBhuh2VCOQbpQ4E46VLkw0Jv1d0IeEevU=;
+	s=arc-20240116; t=1734020730; c=relaxed/simple;
+	bh=L29Y6Xg7+SW3iqFIHcfJPbpMAn2Hfnu4fzZzczf9ZM0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWxOpMmaWIjXmn/1Of0Si6BWTgTiBrrPvbbVhFPdKp6l4j4nFGpFXeWB6Cw2EnAu1ohWNE9jsvJbRVZkg7Dz8Tyn920IjuozIDDY45ifQnKzDpWtWMeWzzJCB1+LDaxHti2Fg6JkQdTIpEMrnnGyGdYPt+RRPxyO66nDm+5ucNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M8a8uezA; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734020723; x=1765556723;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=jmircCLNqfQBhuh2VCOQbpQ4E46VLkw0Jv1d0IeEevU=;
-  b=M8a8uezA0QeUDBHdtGWLJYrrs96aH4C1lkKscpE7ioapkn0GwKWj99Ut
-   63obqdxGzo3V1nkYoPAMYVLPXUXCFlNQA8wFUt19ZxctniOkf3PL+tXCV
-   cOehs3xJxjIaIArw16sKEHZ3ztIxIQo35uaF0B2/d56lMiEGMi6MJDTr/
-   RX56CDwCVNBwsyLH1eUARCL564nlWOlkqU6myygmKVbp9dmKh+AJEUdjH
-   xjNwbAL3HJTo9p2d+Fw9Pyk3YissF7FGPWauTRAc5bCaLOTwvQpSnGX+r
-   VRlhUcQ3seQ/yojw4NDNmWl75mqs9p70qC5NToJKKU36HyFgoIh4u7wlI
-   w==;
-X-CSE-ConnectionGUID: f7w2L+EiTVOcDzDIJGhbaw==
-X-CSE-MsgGUID: bT7KFElVSuqdBFlF86eX+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34368149"
-X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
-   d="scan'208";a="34368149"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 08:25:22 -0800
-X-CSE-ConnectionGUID: 2x7poQK9TiiSPVbNWMCpWQ==
-X-CSE-MsgGUID: Nvb/8M3pTEaYxgnQxD2u7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
-   d="scan'208";a="96163080"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 08:25:20 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tLm04-00000006xxb-3o8b;
-	Thu, 12 Dec 2024 18:25:16 +0200
-Date: Thu, 12 Dec 2024 18:25:16 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Raag Jadav <raag.jadav@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	mika.westerberg@linux.intel.com, dmitry.torokhov@gmail.com,
-	broonie@kernel.org, pierre-louis.bossart@linux.dev,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Introduce devm_kmemdup_array() helper
-Message-ID: <Z1sObNubEnsFwzOD@smile.fi.intel.com>
-References: <20241126172240.6044-1-raag.jadav@intel.com>
- <CACRpkdZqdE8gQCre=zR2cN17oKfwBSnWuVwzQsbRO7-ENVnPNg@mail.gmail.com>
- <Z0nNnsmYIil0OZpy@smile.fi.intel.com>
- <Z1Rfuo3jq7rO0cqb@black.fi.intel.com>
- <Z1r0EPC9gumruFKU@smile.fi.intel.com>
- <2024121242-saturday-aqua-9ac6@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TiqpKsU3EWqo95hLGqK3BRAHByzPDyrYkzNzweoP7XxubZvEh3K85R7qqvzMPJyWTYjOsfLR4pXrTcpfayYNs/rjBrhu5dn1vfGw2AL9yfpn1muacsNdvFmskWukkx1aHme5cIcZ4sBzvqzu1V935EzH84ejbVfJ34VrykHY1YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=By1oaMxr; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1F31810480282;
+	Thu, 12 Dec 2024 17:25:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1734020724;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UL8uTBDRf+pjE8QTwF3S//5BvjnWuC3aSiNNrfGvX4Y=;
+	b=By1oaMxroGeFYwz6/ViZAQw5tsfbHwzYQKr5Ck1NCLWH7QEaPXHvEWijOjvSLFgdWqpayN
+	4f36R1B5OpczsY/Ub2RBBNPI/XRgPGAdoX3E5yK7uJyv4IrDlcXG2Pxyi0c09ndItfmotY
+	9Rebaz0ZB1i9dz6KgITb05hmlw61CnSBj7wp0dmgbqraOgDCFn7BbU3wSL1kXVnDRJ3Hzp
+	D6fqg+gv0foclrLQM4e1yFwpKt3nVmbhF72jwN006/2NsTzjSJQHFLekIMwXKrX6Rd8SE5
+	KWg0oIOcCT7I5tLhz6XkYpWnNpNOrLT0Kk7TCsHJBJmvrE1UWNbSWPvVV8Ve/w==
+Date: Thu, 12 Dec 2024 17:25:18 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/772] 6.1.120-rc1 review
+Message-ID: <Z1sObgOdqlwd6Mk5@duo.ucw.cz>
+References: <20241212144349.797589255@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+V1GPsq3OrjjUUg8"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024121242-saturday-aqua-9ac6@gregkh>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Thu, Dec 12, 2024 at 03:39:57PM +0100, Greg KH wrote:
-> On Thu, Dec 12, 2024 at 04:32:48PM +0200, Andy Shevchenko wrote:
-> > On Sat, Dec 07, 2024 at 04:46:18PM +0200, Raag Jadav wrote:
-> > > On Fri, Nov 29, 2024 at 04:20:14PM +0200, Andy Shevchenko wrote:
-> > > > On Fri, Nov 29, 2024 at 11:17:02AM +0100, Linus Walleij wrote:
-> > > > > On Tue, Nov 26, 2024 at 6:22 PM Raag Jadav <raag.jadav@intel.com> wrote:
-> > > > > 
-> > > > > > This series introduces a more robust and cleaner devm_kmemdup_array()
-> > > > > > helper and uses it across drivers.
-> > > > > 
-> > > > > For the series:
-> > > > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > > > > 
-> > > > > It seems like Andy will push it to me which is excellent.
-> > > > 
-> > > > Yep, that's the plan after we get all necessary ACKs.
-> > > 
-> > > Greg, anything I can do to move this forward?
-> > 
-> > Greg, is it possible to give your Ack or comment or guidance of the preferences
-> > with the first patch?
-> 
-> $ mdfrm -c ~/mail/todo/
-> 2293 messages in /home/gregkh/mail/todo/
-
-Oh my...
-
-> Please be patient.
-
-Sure!
+In-Reply-To: <20241212144349.797589255@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+--+V1GPsq3OrjjUUg8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi!
 
+> This is the start of the stable review cycle for the 6.1.120 release.
+> There are 772 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+CIP testing did not find any problems here:
+
+(openblock fails due to our targets being offline)
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--+V1GPsq3OrjjUUg8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ1sObgAKCRAw5/Bqldv6
+8ipVAJ0VY80akJJnku7+ivZ7BJfM+au6/ACeO+QQ+mSKg6ZJnT/yn4dI3XEp9+o=
+=z6Yt
+-----END PGP SIGNATURE-----
+
+--+V1GPsq3OrjjUUg8--
 
