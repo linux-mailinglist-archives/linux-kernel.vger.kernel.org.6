@@ -1,149 +1,175 @@
-Return-Path: <linux-kernel+bounces-443839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7591D9EFC8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:34:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9069EFC8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:35:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35CBB28AC03
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:34:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664BA16A7CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1AE18FDB9;
-	Thu, 12 Dec 2024 19:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5605D18BBB9;
+	Thu, 12 Dec 2024 19:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MkBMK40j"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZG0okCRc"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0349817BB34
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7AE748D;
+	Thu, 12 Dec 2024 19:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734032065; cv=none; b=Xk5tSBe9g7eUL8ZccVlJeMUkdyiALhrAnA/5tt1yDkq9oWmsgbfYA74evjgtGvN4yHS54vPAgVDUKFvv0UFJ5i8uX9/z6S65XIm+IcXC3zHJpE0/fsusQIM2419CvrNfpMojzmstIQZjUEnTQMyQXizBIZWtNq+vAbAvIQ7Mzvg=
+	t=1734032103; cv=none; b=fcWMMyqr65djECrsGNI4L5+zGU8ziCOWDA4voH56HtjVD4lT2sa+WFiErhIk6+KBa01Y9I2bqqHXwHCraW7IcOlpyF8cgojVN1tPqsa0FxiQ0jwdGsr5sdAUr3zu0eubr7Lj9OePs8yIj3aeh+xvpQeKVbZI1LTlOlqFMUsFRck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734032065; c=relaxed/simple;
-	bh=XRQkEkF+swi0B2+vusGEbl3JYtBkHkVO+F1GD117yEg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=siZnKxLpKY7Nol0HPpqFdn2HCF6hMhKYG5cPFRwWWReNqZle6NqWwcjRYylt6+1JOMsUZmEW+pa8jqy9XnDCIr0flzcJlNLGUGWeZ7ODwHBsl0bH8LGnSx9TKBcx3CE6O9+d+akkjRAeQHd+bo60WsqnQH7aoTWOBvkHBQkwCeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MkBMK40j; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-517aea3ee2aso406922e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:34:23 -0800 (PST)
+	s=arc-20240116; t=1734032103; c=relaxed/simple;
+	bh=6JdMreTDwk9D8qAAZmhrdOeS15T/F7eJ303s9Wr39t0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DMTaGylIjC2AjW3bq92psQww5jDUH3Ossy2uObEuMCwluY3dMJmrsOVpjIGH8DHy6b+1wgntwfTDs3npULP6Aoj6oqVpeUkVcMD3ESXjXG6vnCsfEIhAEkcFRXwtVJEABGcMzP/d5UcCzxylbPC2Ta63Q7w3fP9xmAhridAreZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZG0okCRc; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-72764c995e5so635216b3a.2;
+        Thu, 12 Dec 2024 11:35:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734032063; x=1734636863; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTEkwDAcKDq4oSRBOG6s65o3vkDC0MpLM2cxo/UzhJo=;
-        b=MkBMK40jSKqSR8MmPqoR1lz0zzkxG8F1HOSnNVsewtxrO3LujinXMjqF2C3VILuu9W
-         Q5xwg35KMMU0vF0BP5wOZwSQ/lWhNUnhx7AEC7eZ9AmAb2Gl/LbEgsxKF+7wvRhvxCSr
-         a5H1nNCc3WSxTs1ZEADO8MJj97u9FVthuwRlpld3RrV6nvICzQQILyLz/PW1RHNGsM5Z
-         HUwlxaPKnN+w6dC94F8SKTsmK51RSAwZ4xQEbA1QCEWXREvzXyWySm6o00Ub1IpwI83u
-         P0WmTS/HtHu6TviWUwQSloEJ/jFCUTD++OptkB9oEbJHfSFcJSIFbyjUeQpxbtWDKp7+
-         K7Bw==
+        d=gmail.com; s=20230601; t=1734032101; x=1734636901; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G0Pjt/zid57BkOmERd5gJSPlvgPaAJnd3no1gt/xlhI=;
+        b=ZG0okCRcSZQ1svJ5xmUixID1+/jdSqNVkQjvd0Ddo1jiZX+rWREiAIgR6e4wdgW4sf
+         IfR5QgiS/cIc02QBFJNYLL4a6ekMQbOIPrQHJunOZcueeQKDk94iGJmdfT+zi6wRtLuJ
+         5blvReGVbK0T60Qs9HNivCaqlJiGBI7+AQxPA1fAzmFhttLq/HzirwtyyWNMxCYk3xei
+         YPLan0XlXLu2cteb2sUZZ6o6oxbb8S3oUaA1Xe9NwKY5Q7NfUloxe4YcyBcwzS/94ZZq
+         772rUCCngBVLaUaLCm8zpWIVHumWv30LrIwwQkSSVo6k51EwN+ZT/NHzu44yMe79c53c
+         1Rpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734032063; x=1734636863;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fTEkwDAcKDq4oSRBOG6s65o3vkDC0MpLM2cxo/UzhJo=;
-        b=xHDf7FIj+GDtOgM4gLakxahI0LIZPHGFIqQBayfwtYFHcQfykdtZR2efmEWsdovD9g
-         0hNIDyj9PccOqm63HaV12YTd6HWcShLPVrWJUD8mzjRBeIzS+cqSIQPpTHrdr7zHxriD
-         0DJ4JcfCn2IReGNdaguA0Rs/eQn96CKKPerYVM13WALCgTZtYkIt/3j9QfEd1/XeUlzh
-         jeJVV6dj1sGM8BpqMXcg5EkLZlMaXYv1z0r5GqZCGciBFUJSU5EomEq9tZGwho8LaJqF
-         PjHMopSRO8edsUeOroKTQl+yhoX9ENNB2x2fq8opMAvYB7iJkO5XPSYCnAwdLxJwDLp8
-         tyJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKInyJOr8MMrI242iURb+/K5Zi+ArWF+vw6dGm1CFNTg4INAuvQVei/3+baRrsSa6bqX/7yfB1+x332h4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBpqJ6G92ghWQv6zwEvempqXgPPl/D4DyD8VYkRy1A+SN3lQd1
-	ZpKdJl9PuR5wuFs8itxdp01diq2ApVn0UINCdnb7VRE1kN10IZ/ygcDSD1qSzrJThvcUxB9wjyf
-	7EjP7zIeT4FYK1Y3MhCOWN2iHdfzDje0J3Wpakg==
-X-Gm-Gg: ASbGnctjpIxnJCQu9hcquzLkjIq59dFofcKnmh+MrKpNK/h+rIb8ROTwl1Ootyn44gr
-	NmFFuQQaRULWHV/6aDvFRkV23kMc69rJxzuFk
-X-Google-Smtp-Source: AGHT+IEwsqoADy9CLfQZU9fDxZL8sRYBnIJOakCrDckekfKDwX9cAfY7rdncozWG2knPUrR/hQUKmLlDFG4i+7pUkgw=
-X-Received: by 2002:a05:6122:2004:b0:50a:d1e3:82f7 with SMTP id
- 71dfb90a1353d-518ca4648bamr40974e0c.8.1734032062910; Thu, 12 Dec 2024
- 11:34:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734032101; x=1734636901;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G0Pjt/zid57BkOmERd5gJSPlvgPaAJnd3no1gt/xlhI=;
+        b=CONOrhFZoE6sRO8f983e6ZM5hMCzodPUZjfOpUB6QS+SgLD8vgiXPcWt51HU1aO5B8
+         xEt7zkMVpOiwvNgPCKSUrzUVCeNgDNGFmVI/OVbp4y3OcCojpNUpCMrtCihwYCocJoIY
+         x7aMa3hjY2/vrRdw3G8es6QMAgj/km1dt602zFRmO953jiUsfAkc79HfQuLlOK2shCNR
+         DihXaXVL7gR3doSz155SKG6MDGuuVDXtrv2mHIFjo5sJUFZFGthxQXBuAc20qU3lpajQ
+         zBfvW9rgA+YbXhW9viIwq+CMTtJzm3v6Nid4U0WcWPju4dyzIYtnNdR9BvMroaH1MU9r
+         0wkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLpfAxIk5+gZkOK9OJY6S/SbzUWD4ftjDLfs2CCB9e75q3mWgsghw0BuHzDaYpHSSEaSJV/sGW0BblQMv7@vger.kernel.org, AJvYcCWWph13hLulhzSmcLdWvCgGVjYo+XEgnYz2TLZeJAAV1RBHGfS/xzKeDiW4eRj5HGgUb7ptAHqwgq7uVAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4XAtpASQ+uPNmty9IeBWXEl7xf9t69QEDJqy5r5NE7YshMKY8
+	dJzH7YvaLXhoBrO9eKRQw4VALHMYRozcooiIf7tNzvs3wTO/QAYQ
+X-Gm-Gg: ASbGncsGiPS1iyLqb7/n7TwluUj64BVvA2DlnuZpZnfxW25ej9+9LKN90pqWGA8axbD
+	dBPB5TvsuP/HUGR8svFtiRxFSweJbdOfBBuXzmWHf5jQ25CHga3vEX6ozmzteCsxsWcrj13IPpq
+	HnUjxWCYdqBCt5LPhrBeX0jX5m4WqQ7h8ieJIVNFNS7wNvV4vxqUbdyccofaIrD03f2aZJ4Zx3a
+	P95Du3HiEFVpxHm0LLn8IH+zdaZqlJbyCvr/PVk1RErEo2Q1sJS9wqk
+X-Google-Smtp-Source: AGHT+IFpZrArj5dfWzcAxW8eYWwtVbo6EQUT3Kf0VPIjAmEVJrckT+MqWXA/49i23H/Oixxoz/l1Mg==
+X-Received: by 2002:a05:6a00:1a8d:b0:727:d55e:4be3 with SMTP id d2e1a72fcca58-7290698d07cmr1898537b3a.7.1734032101328;
+        Thu, 12 Dec 2024 11:35:01 -0800 (PST)
+Received: from localhost ([216.228.125.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725c7cba42fsm10906017b3a.123.2024.12.12.11.35.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 11:35:00 -0800 (PST)
+Date: Thu, 12 Dec 2024 11:34:58 -0800
+From: Yury Norov <yury.norov@gmail.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Nilay Shroff <nilay@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	briannorris@chromium.org, gustavoars@kernel.org, nathan@kernel.org,
+	steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
+	gjoyce@ibm.com, linux-crypto@vger.kernel.org, linux@weissschuh.net
+Subject: Re: [PATCHv3] gcc: disable '-Wstrignop-overread' universally for
+ gcc-13+ and FORTIFY_SOURCE
+Message-ID: <Z1s64indfQHyLJt-@yury-ThinkPad>
+References: <20241208161315.730138-1-nilay@linux.ibm.com>
+ <202412120953.87F2827497@keescook>
+ <202412121046.FD6F96C63@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212144306.641051666@linuxfoundation.org> <CA+G9fYuX2BsEOCZPC+2aJZ6mEh10kGY69pEQU3oo1rmK-8kTRg@mail.gmail.com>
-In-Reply-To: <CA+G9fYuX2BsEOCZPC+2aJZ6mEh10kGY69pEQU3oo1rmK-8kTRg@mail.gmail.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 13 Dec 2024 01:04:09 +0530
-Message-ID: <CA+G9fYu3SmdFKRkSDU0UV=bMs69UHx8UOeuniqTSD9haQ2yBvQ@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/466] 6.12.5-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202412121046.FD6F96C63@keescook>
 
-On Thu, 12 Dec 2024 at 23:35, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->
-> On Thu, 12 Dec 2024 at 20:30, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.12.5 release.
-> > There are 466 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.5-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
->
-> The riscv builds failed on Linux stable-rc linux-6.12.y due to following build
-> warnings / errors.
->
-> riscv:
->   * build/gcc-13-defconfig
->   * build/clang-19-defconfig
->   * build/clang-nightly-defconfig
->   * build/gcc-8-defconfig
->
-> First seen on Linux stable-rc linux-6.12.y v6.12.4-467-g3f47dc0fd5b1,
->   Good: v6.12.4
->   Bad:  6.12.5-rc1
->
->
-> Build log:
-> -----------
-> kernel/time/timekeeping.c: In function 'timekeeping_debug_get_ns':
-> kernel/time/timekeeping.c:263:17: error: too few arguments to function
-> 'clocksource_delta'
->   263 |         delta = clocksource_delta(now, last, mask);
->       |                 ^~~~~~~~~~~~~~~~~
-> In file included from kernel/time/timekeeping.c:30:
-> kernel/time/timekeeping_internal.h:18:19: note: declared here
->    18 | static inline u64 clocksource_delta(u64 now, u64 last, u64
-> mask, u64 max_delta)
->       |                   ^~~~~~~~~~~~~~~~~
-> make[5]: *** [scripts/Makefile.build:229: kernel/time/timekeeping.o] Error 1
+On Thu, Dec 12, 2024 at 10:47:40AM -0800, Kees Cook wrote:
+> On Thu, Dec 12, 2024 at 10:24:36AM -0800, Kees Cook wrote:
+> > Or we could unconditionally put the OPTIMIZER_HIDE_VAR() inside
+> > bitmap_copy() itself:
+> > 
+> > 
+> > diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+> > index 262b6596eca5..5503ccabe05a 100644
+> > --- a/include/linux/bitmap.h
+> > +++ b/include/linux/bitmap.h
+> > @@ -251,12 +251,14 @@ static __always_inline void bitmap_fill(unsigned long *dst, unsigned int nbits)
+> >  static __always_inline
+> >  void bitmap_copy(unsigned long *dst, const unsigned long *src, unsigned int nbits)
+> >  {
+> > -	unsigned int len = bitmap_size(nbits);
+> > -
+> > -	if (small_const_nbits(nbits))
+> > +	if (small_const_nbits(nbits)) {
+> >  		*dst = *src;
+> > -	else
+> > +	} else {
+> > +		unsigned int len = bitmap_size(nbits);
+> > +
+> > +		OPTIMIZER_HIDE_VAR(len);
+> >  		memcpy(dst, src, len);
+> > +	}
+> >  }
+> >  
+> >  /*
+> > 
+> > I prefer any of these to doing the build-system disabling of the
+> > warning.
+> 
+> Actually, this should probably be done in the FORTIFY macro instead --
+> it's what actually tripping the GCC warning since it is the code that is
+> gleefully issuing a warning and then continuing with a overflowing copy
+> anyway...
+> 
+> 
+> diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+> index 0d99bf11d260..7203acfb9f17 100644
+> --- a/include/linux/fortify-string.h
+> +++ b/include/linux/fortify-string.h
+> @@ -630,7 +630,13 @@ __FORTIFY_INLINE bool fortify_memcpy_chk(__kernel_size_t size,
+>  		  __fortify_size,					\
+>  		  "field \"" #p "\" at " FILE_LINE,			\
+>  		  __p_size_field);					\
+> -	__underlying_##op(p, q, __fortify_size);			\
+> +	if (__builtin_constant_p(__fortify_size)) {			\
+> +		__underlying_##op(p, q, __fortify_size);		\
+> +	} else {							\
+> +		size_t ___fortify_size = __fortify_size;		\
+> +		OPTIMIZER_HIDE_VAR(___fortify_size);			\
+> +		__underlying_##op(p, q, ___fortify_size);		\
+> +	}								\
+>  })
 
-The bisect log pointing to first bad commit,
+I like this more than anything else. Bitmap API is an innocent victim,
+and trashing it with unrelated warning suppressors is just bad. If GCC
+will get more aggressive, we'll end up with the kernel all trashed with
+this OPTIMIZER_HIDE_VAR() stuff.
 
-    clocksource: Make negative motion detection more robust
-    commit 76031d9536a076bf023bedbdb1b4317fc801dd67 upstream.
+I tried to formulate it when discussed __always_inline story, but now I
+think I can do it clear. Bitmaps is an example of very basic coding. It's
+not very complicated, but it's the 2nd most popular kernel API after
+spinlocks.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+People literally spent hundreds hours on every single line of core APIs.
+I think all that people expect that the most reviewed system code in
+the world will be somewhat a reference for compilers and other tools.
 
-- Naresh
+If compiler can't inline a pure wrapper with no additional
+functionality at all, or if modpost can't understand that inline
+function declared in header can't be a 'section mismatch', or 
+if CONFIG_FORTIFY complains about an overread that can never happen,
+it's not a reason to pollute bitmaps, spinlocks, atomics or whatever
+else, or even touch them. The tools should be fixed, not the code.
+
+Acked-by: Yury Norov <yury.norov@gmail.com>
 
