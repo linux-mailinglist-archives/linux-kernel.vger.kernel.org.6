@@ -1,164 +1,243 @@
-Return-Path: <linux-kernel+bounces-442538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1298F9EDDF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:34:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 697959EDDF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFAF7280F48
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:34:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F67D283605
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0F2149C7D;
-	Thu, 12 Dec 2024 03:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0BE14D719;
+	Thu, 12 Dec 2024 03:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1ktdYGP"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LxFWCAIW"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2068.outbound.protection.outlook.com [40.107.101.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19FF33FE;
-	Thu, 12 Dec 2024 03:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733974440; cv=none; b=baQDE3TnMbM6okGBMdNTwAOdUCBXC3NV6pOtZLvGmVKidfFAj6SnHB+N8N1+E5Xfr/nAO1INT7XPlqjc5t7mhr+16gFpOhvCiWJN4UTwHuVHEjQmuMrMfPAErverBrAx/zImJUM1XE1yX2JaxX6y1aY7V1TQZ6MDSQqzLGfl+qg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733974440; c=relaxed/simple;
-	bh=rmaljj3CVMsjgDpn8DnNrL7kt+LtW4QxuED6cOgCiLQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WEDEgi3VCSrplvt5+T1WaOqXfIu/K81C8XRwgyOjTnJoq5GEB5qE9i1tIp9yEJiQFHOLYaRwQUmtnw1zQEnbxr3EKr69auz7TblGTfijiGyX4nZvlbehkWbi7SXOaizLO2QN9ciSEPE/uqAK6iWGUpd1V58rlKH1w1SAqM5MSPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1ktdYGP; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-725ce7b82cbso189231b3a.0;
-        Wed, 11 Dec 2024 19:33:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733974437; x=1734579237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7pzYjRDOZjwQLGfG7tztY2fF9MD2eQ633kRSm3R85gQ=;
-        b=i1ktdYGPONA3Jq1vGh9UdkTKXqBRmkWjMyhibZQTJxo4T1MqNavrXeICbVtPfZ9Io4
-         Bti628zuRfapm3NW27yY8gm2N4ci3d7wkIGpieQWp5UUKyy6e3q66euJ5XyDX7tccSjS
-         NR73qQQAT7ARjfoeG5FEMCmQH1k8v+pL3KyTT4/Zt5HyLIUaD2aw6/L9CedJC7EfffxU
-         IlH+NY1E7zEVWfUDcIWMhOng7FtbVdcH7TvO/Roxq4GxqcAt3e3AzIkncV4XdU98H3uS
-         lrAattCErgYmiQMrkeq2NNX8HTCo0LOaMHgSqGSIVJ9B+ad71YVE7hCYB/rp97+R0y0V
-         y+Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733974437; x=1734579237;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7pzYjRDOZjwQLGfG7tztY2fF9MD2eQ633kRSm3R85gQ=;
-        b=CZ4AxT/t0Ie109516GcDoStzf0uZ/ngoT9qVmrMk30oHJIS+qRgjxLhlX/gshdGHX4
-         0SqyvwR4tNtuOQxlUW8MwiEyr6WJsGRlepUKbk+0KQ2kwEbdAC7U8oppMT52nzatz4ck
-         CB7MGBMEPPtGq+Bz/9nTQMVJw1NYfYs/RBhddM85tyFn8uvKzPRYRfaguGLIh/EE/ERO
-         KkeeZt1ABgR/9LXCDBxuBBdzWNMPR1Y4DRayX1gcke581o2UzR39Kgs2KSbc4oLqFBnV
-         xYUiCx77jq18f3FT2AWqRP6qU8l3jn+F6xqxlKwEnsdfj/bmd3ztmQoab+7BfwgT0Yol
-         7f3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrb/17VOXAmDrWWUKh/Sg2v7P2aGD4GH6Z0y4zMSi4aqx682r8OyuLViGRP7bHkZIVj5oVoydgfl8Vwx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjt/IK0x3w6pA/ZosxeRSUdfkSUA66JwjPujJwf+4hgi3vzovQ
-	TlVguN7W7eMtuZ5BNcY39tfKZjWSE4gReFxaUas8Cs8tcELy55yk6bCHUA==
-X-Gm-Gg: ASbGncs23/YgHznPqM+QcHR5d9PFy2jwvSMzZIluA/i20r1RLdRnUOeFrzm5CwmcfPZ
-	L6cslr9bUMszOkh3gG22UdFdKbZFgohuia1YPgshMMwlqtO1pCX+wwNc/ptjbJRpbHKpASKbnvV
-	tPlcQcF1+2XUbRn1VtSxumtbEIVaVBP8eOMVJOXAsXOKKN6UXANEbAyuhDuwu0W7VdhCasNz3gE
-	nYRBHitOJAwSRI587Nh+9fnxO7sBDcppA20gmeIgP0eZhjZlY60AVlZU2B0L0fKy3iKsQ==
-X-Google-Smtp-Source: AGHT+IF2HUGVgJTHXHp2yZPxjGH98+Grs5GenuoQqTTyxoTeHaymmzl37DBT8/NhlfehPqg/7Ou6EQ==
-X-Received: by 2002:a05:6a00:17a7:b0:725:df1a:27c with SMTP id d2e1a72fcca58-728faa2e5a2mr2417893b3a.14.1733974437292;
-        Wed, 11 Dec 2024 19:33:57 -0800 (PST)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-725f03a0ca4sm5879236b3a.113.2024.12.11.19.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 19:33:56 -0800 (PST)
-From: Furong Xu <0x1207@gmail.com>
-To: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	xfr@outlook.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net-next v1] net: stmmac: Drop redundant dwxgmac_tc_ops variable
-Date: Thu, 12 Dec 2024 11:33:25 +0800
-Message-Id: <20241212033325.282817-1-0x1207@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7B233FE;
+	Thu, 12 Dec 2024 03:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733974553; cv=fail; b=Ioq1YA8qzl5Yc5mXfpfoZwFpENgYdWeV6McusE3ZVOyl3OyUuMIuZ+SNJ1Vpicp4EZESsCFmiaCh3mxhUU/GlD9ghlGg731EQ+nEnWCqNbn1/L1SZ5qzQ2l35rKond3RcSR9HIyH/7sORoS8W6trxuBFAy3mMm1I8vO566P5TGc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733974553; c=relaxed/simple;
+	bh=mmYQt/yt3gVQ9ZPEdTnWMFzl8jzoRiUcmDNLjQDWqvM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Aq0Fv8H8L9hhs44O3yWSsCq+KR7hTp6nlnN/3aYOHiLjQttrqQr4+Ehm7Pb6BCEO7neYyt1PClnfI7kHKJEyckgWDRNL8kKUEJ9NbOJKa7WuYdwnHQGr0oCWRx1yBU0aATVL4YMpUHwNuqkU2OKRR1SCXwZrsTq8e1ErKY9jMA4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LxFWCAIW; arc=fail smtp.client-ip=40.107.101.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UfxALHEugRf0aIVinsxAI0LQYp+ZKpdOKR7Sp/i6njXPV1Zsr7BkvtAt78LeOIUgY6+riU0RgGJZD0yMNGbaFw9AZzyBQJizYMe2GUF6gcA7ub1G8mUOByCjwlJqTx1fkPDBMTXaQx73Rk5kVJ/6S2QXoNPZ0XZ4eUFyFneISBAwpnX9IVYOGDxwi/KBvw54lRM76+RYbmKKIRMM++1gmxQOPoxyvPXZvK5M46pt8Ksl8UBsiKVZ0Imz/jsiQu5DOVNG42AQb54wiGfGMWu7CD1NoGd4FMbEHEtUlLE/IZ8C5Z/fsIXZQmaZIu0/3/H57wTF4uVOLALOdLh3taYcNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VXHQXkXxXk43gSJb4zM7OeKUK4R4JRHW+Vfcnzfxgfk=;
+ b=XppquEe9F2Q6btaMyNsUC+zzReDxsxGCof3yIxgJ5ruAOuWEHAYofskH8Iexntvlgyr+3Ugkdq+LaVDCjB3/MF1IO5VHLOcG/72vM108cCwENYt6cFrU6/7JaYv9WLYxr+eXm4KRXHshAhvN4XK9PD0dbNtG6JhC3/hlgAjiO5miQT2/TIgNzSBWRqR/Y9oNTL2ihbRiqy9AWLi1kPnG7cmzFoFt90r1XkvDyD1hGfNPiFBO/Qth+4oN0H9WqD2TPzc9C+gnqLZyj4zOZy9t1jDe+EJryNZVnzHJv4VHhs7Hao8b1C0XFrB089I1fw+T2XWO9Fz+kQSOSYSoLRqnNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VXHQXkXxXk43gSJb4zM7OeKUK4R4JRHW+Vfcnzfxgfk=;
+ b=LxFWCAIWzBlNoabm3O3WET6Y+WRx+HCQiDXn0/AJsfoDfc4Ko2fxyvijr2s0Vyx/DySg+l+ZNwb5pXaNLAFMdN3QV/dEUesubV7B+Il/WA9UsPZuIB6JFhSNCA6mWOnIUabBFJsINkuUa28HlNcMuzgVzqFoPMLjQ+QWV2js+/A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SN7PR12MB6838.namprd12.prod.outlook.com (2603:10b6:806:266::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Thu, 12 Dec
+ 2024 03:35:48 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8251.008; Thu, 12 Dec 2024
+ 03:35:48 +0000
+Message-ID: <abe7da39-b576-4fdf-bd9f-5c51abd7180f@amd.com>
+Date: Wed, 11 Dec 2024 21:35:45 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: typec: ucsi: Fix connector status writing past
+ buffer size
+To: Lucas De Marchi <lucas.demarchi@intel.com>, linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ intel-xe@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ chaitanya.kumar.borah@intel.com, Luca Coelho <luca@coelho.fi>
+References: <20241203200010.2821132-1-lucas.demarchi@intel.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241203200010.2821132-1-lucas.demarchi@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR01CA0010.prod.exchangelabs.com (2603:10b6:805:b6::23)
+ To MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SN7PR12MB6838:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1b7ddac-8fcd-4592-1f70-08dd1a5e1168
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eGtnRFRhRXBteFZXKzRqV0RFWGE0SGFaUzNQVVlDa2Jib3ZzVTBCUnpPQXUw?=
+ =?utf-8?B?clE3cUc1TStZTzFrbXVPNnJubGFCYmtvcDhjeUtSQzdFcmEzczVQcTRRandU?=
+ =?utf-8?B?M3U3d0Fwc0dodkswUnRwQzhvZFdpdzVGcmRLcnlRQWplRUZhZjhBT2VLekxH?=
+ =?utf-8?B?R0NpOGp0M2kvSExySERqV21pYXROWGQ2MUx2VjFqS2Jmc21RMktQM09CTVlI?=
+ =?utf-8?B?djVqR2hjdzVSbzFZWUdpNDBIOVgyNGFhTGFyMVlUbnZtektIb0lxV1NMaWJ3?=
+ =?utf-8?B?MFh1dEhiVytJZGpPRW1Pc3BGZEZqOGxvOUx2Nm53MTB4TFRJQTlwVTkwYVRN?=
+ =?utf-8?B?ZzNLd0o4VmpHMDduK0lzdzFhU0dXZ2JmSUFzVktSc3MrTWxzdzZJQlNzUTBm?=
+ =?utf-8?B?NThHK1FWNm9JMVY4dnJCN2lqdU9xWEFWL3cvOGJxdW1Ub0lPUWc5YStMRHo5?=
+ =?utf-8?B?MGdIbkJDeXJNQWhjSkV3ZXlRZWUxK2JURkU3UGtwVC9yV1RLYjFiM01MS1JW?=
+ =?utf-8?B?M3FsRjdEaWFtcG5zRVZ1bkxrT3l0M3FPWUcxRGlyU2U3ejRZN0xQNkJ5dExM?=
+ =?utf-8?B?MXZpSllneWdtek9ZdEo5Wm1IekJrMlFaaEFOVEh1NHBsdXQwZ205UnZQUHlS?=
+ =?utf-8?B?WmNiWGRld1hiMTRyRmhqYlNqeTY2OE90NU1JZjFwVzhudWRabVJFWVRWQjFh?=
+ =?utf-8?B?ajdDcXZtTEVIN3RZbnhFdGlxeWFHSEhBMU50M3l4aHhnYVVVTGJMSjZXOEhl?=
+ =?utf-8?B?Z3hjWUFuejlhaFpDQmY5ZDBtN2NqSzlpTWIzQlFQN1pWeFB2QTlaOEpubXlK?=
+ =?utf-8?B?S0poeDdxZzR4QlgrZG5mZEpvUlJOZ3JKdlE4ZjlkdmpXa2V3YnBIeXVENUJJ?=
+ =?utf-8?B?ZkNSdWhMc0FLc2dYeHlYTEVEN0ZVZ3hTNWNJNmw5bTBGVGwxbWNpTnhSdDJt?=
+ =?utf-8?B?VUlidW0wSUoxUENVZWwvaXM0UW15Z2FualZDWU0xUVhnWjZHanVsQVU5bzJM?=
+ =?utf-8?B?eER6bisxSHNMQUVBZGhkK2R0TU51T3lvcUl5WjRoUzlIcTVTTmdCaHhtcTgw?=
+ =?utf-8?B?ZVRFVktHdmx2Z0lnWE1nNVdhYjFwK1pYUlhac0Y3R2t4dzZQcGpMNG93TDhh?=
+ =?utf-8?B?SG4wMXdUY01JZjd5eDJWeUlicmFDWU14Y0lhUzE5cXNjVFlaTUllQWpjdHdT?=
+ =?utf-8?B?Vy9LcGVzQWVvUUJ3TXkycFR3ZWQrdUdabWY4eGo2c0tqNlZGemNFdGpsS3pR?=
+ =?utf-8?B?TjYxY1pkNzdSN2Jaam1ZSjlxTHQvNzFja0wzR2syN1g0aFJTeW9tclNpditM?=
+ =?utf-8?B?dXM4aFZobFNBYW9aK21YdERib0x6Q0pFTncxeGF4d2wwM3VrdlhNWVAyV3Zu?=
+ =?utf-8?B?a3VLVytla3JBenJ0SmlSZXR6eDRUVUtPYVFhaVkvUHBmREdwd1Z5b2wxdzlM?=
+ =?utf-8?B?MEtZMVFMMlBuTXVOVGk5UEZmRCswWXU3dXlnTVdmR1RDUExtb3MvdzVObFVT?=
+ =?utf-8?B?QzN1ZkUrQjYxWFBheW9IdDdzcUwrMnhHU1FwWDZrbXBzMTlLUU9GZ202QmJk?=
+ =?utf-8?B?WGQ2d2RPcWpFZzlWem1wZzh5TjhtNUZyMU1hemJEVGxyWW1DQkJiTkppaEpF?=
+ =?utf-8?B?RWRqZkZPbWJhc3EzYWxWRFJ6TzN6ZGlYazV3bXhRamk4bWlCM0dyU2RqSURn?=
+ =?utf-8?B?c1BwUmt1N0RHZm51c2xIeWR5bnpEME5ERHphSWUzY0dIUmFjcVdwMEMwS1ZM?=
+ =?utf-8?B?dkdyTkoyNXcyR3p2eVZMczgwUEwyTDRtOE5ZeEJCdGwxQnZ6Z1YyWXkyd1V3?=
+ =?utf-8?Q?jYCkyop1YaM1gf1Gi+OIItQBYnmqAJCkEM840=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?THZkVHN3bzJ6SWZNSDZTWkNPOUJUM3VlelVHc1ZQa3NTYk5zS3RIT05STzQx?=
+ =?utf-8?B?SENWSTB3cmVxNTkrR0tkUlVKd3NsK0l0L21nRXZMV1lxbWFsczZZaTNDTFB5?=
+ =?utf-8?B?SzNXYnd2R0ZreDZtMEVtM2Z0M0Jaa002Q0pQMEpiaGM1c3lFQ0E3cEdDbXVU?=
+ =?utf-8?B?b2x0SldEd0Q2bXkyZUFXMHc5R0k3OFJSWE5iKzNHK1hQUnBrNDhObHJOUjJ1?=
+ =?utf-8?B?TnpvbnRuOTgxL0MvL0Y5VCtLdmNqYXVSREFiRzVGZkdVMFFNTjRLR2JRY2lz?=
+ =?utf-8?B?bkt6NjFJZVM1MW00MWpTSFpkU20zbkJncFhmcWdNZ1Z1YjVOQVVYOUdpNnBt?=
+ =?utf-8?B?SitkNFR1Y1hwTjdKeTlTakhaUjI3RWRFVUJtVXZRbWlHVGVSNTFHRWIxMFY3?=
+ =?utf-8?B?Mld1RzhOekhaNXlySTlPaVl2eS9jUkpyL09oWTdINDBoTUhNLzFOQTJsWnFo?=
+ =?utf-8?B?ZW1FU0d1ZVlBSnp1K0dGejZHRmlZSVdrNkpka0diUHR0OW5Oekh5QXF6cWw0?=
+ =?utf-8?B?aG9TcC9WUUtDalRNTWZWSGZvWHhiNnQ2U3U4MDZOMTE4bzFaUEVMOE4wQ2ZB?=
+ =?utf-8?B?bzJaZytDdTlZSzdRVEJBU3pZTHVheEFLN21Heng1T2dUTlV4c3hodWVNS29O?=
+ =?utf-8?B?UURPaWRlN0taQkYxTFN0NERNamsyUlhDRUFvNmFFVU8zakYzWUpQMnU4SDZp?=
+ =?utf-8?B?Rld1a3Q5Z3Y0MTJYTTZFcXVrWTc3TTJOWkJWbjRKbmpRcEdZNWxXSzhkSDRZ?=
+ =?utf-8?B?WmhiT25mN0JkOEM1Y0p5RDh5cmMwMm5EcEd1OFpDNndzWndTMXRtYmZWY3dJ?=
+ =?utf-8?B?aDVMYnNpMVpqZGVBUzV2WmJWbFhHM3I1emtFa1hlbjZHTGNZZUtXNzUwdkpp?=
+ =?utf-8?B?cVR0Ni9KRFVHUERNUmwvUE5tWWJIL2I0YWcxNS9WNzVxbEFKWTFPQ2VYQ1ox?=
+ =?utf-8?B?MGdXQ0pYaEltSFNhbEtzalRyYXZWdEZ0cDEwTXUxd0UycWFRZ0VuZUNhOVJ4?=
+ =?utf-8?B?YkxYYVl1MEFBYVpwMDhIVVNYaTdGa29OcVI0VFJ6dmRHb2MwZG8yV1VTbllq?=
+ =?utf-8?B?WGZRU3N5c2k2YnRRcTI5QXRGQy85d1JYR2RFbnNzNmtGc0J1bEtKcVVYVnlW?=
+ =?utf-8?B?QmpvaVgzTnN5dzVKNlZWamRsK0xFL1hJV1JNSnBDaW9ibEJteHhZOUdKWjF3?=
+ =?utf-8?B?R1JDMGZOR2NFR0l5K1AzcjBqR29Sb3UyKzlmT2llcmQ1WlpWRUlYOFlHVVg2?=
+ =?utf-8?B?c0UwaGp5MVFQMDVnTmdxRCtzNnBKc0lyVWV1dlRWOTR0eGFFMDBnOEROYlRH?=
+ =?utf-8?B?b0NIMEtiUWl4T0w4RlFFOW9tSy9DZUhnNUJFUm1OOEpjd2dZeFRUdHdrRDNS?=
+ =?utf-8?B?ZXArWW9aeVJBTXN3eFVDWFF0ejdQdzFNSC9PL0RvVU5XcUx2ZXlQRkRwUkZ6?=
+ =?utf-8?B?S3NjT3VadEN1MmJ2UEwrajEzKzhMZURaRnd2NWtIQjJ6QVdnSy93eXBjbHky?=
+ =?utf-8?B?VzVBV0NTRy9VOGdFOUhvQkZvdjlhSWZOalRLKzNYRERTZ2F3NE1QaUM5bW5s?=
+ =?utf-8?B?aFI4SkpBMzQ1ckU5RWl6dFU3NW0wZTZua3BVZEF1Sk1uZnNnYTYwVk1COEZ4?=
+ =?utf-8?B?TU9ZYXgzQW1EVFp3d2hwaHA0TWxCbVNWNXNmblBPMU13TnllUEhPQ082T256?=
+ =?utf-8?B?UGk5L1JLcFdOYUVzbzhlck9RRXRFTzAvL1NWaDk4cUpwemRLWkQycEZkYTVJ?=
+ =?utf-8?B?eVlweVpMbWpHRU1DN0NvekhsK3NNWDBtUUtDYUxZa1NVVXVPM0x3UWJ4c3d5?=
+ =?utf-8?B?RGYxblNFUlFJT2tBSS83bE9ST2xUMWlWcVJWcDc4b1VsL2laekthZzFpa2Jt?=
+ =?utf-8?B?SWg2NGZMZzZQZ1RJY3VseCtBbUhLTGZPMGRaVm00cXdLTUdlTm1UMUxGeFU1?=
+ =?utf-8?B?UTErRDJlZklINVE4VmVYcGFka3QwRWNqTmkzekhaemZ0ZUZDVWNvUWI0eUJ1?=
+ =?utf-8?B?V0dkY3JqOXRUSnA5b3Y0N0RLdlZta0FKMG9pNGNiNGtFMXFIb2VVUGZiVTVw?=
+ =?utf-8?B?OHk3V2xRTWNJY3lrb3VUakthUHZGTUp1UGVlOVAxOWJhQUN2eWFrazgxSVly?=
+ =?utf-8?Q?AwamT5/XiBnECeP78mm0D+9Fu?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1b7ddac-8fcd-4592-1f70-08dd1a5e1168
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 03:35:47.9565
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HtW03sm6n+5MGPqkFNBQb7f9H5QiaWAXSmSZXLZYbvbVPUfGCVe9g71GCQRim7M5fZYUaTcs7p8VKN8sjncw7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6838
 
-dwmac510_tc_ops and dwxgmac_tc_ops are completely identical,
-keep dwmac510_tc_ops to provide better backward compatibility.
+On 12/3/2024 14:00, Lucas De Marchi wrote:
+> Similar to commit 65c4c9447bfc ("usb: typec: ucsi: Fix a missing bits to
+> bytes conversion in ucsi_init()"), there was a missing conversion from
+> bits to bytes. Here the outcome is worse though: since the value is
+> lower than UCSI_MAX_DATA_LENGTH, instead of bailing out with an error,
+> it writes past the buffer size.
+> 
+> The error is then seen in other places like below:
+> 
+> 	Oops: general protection fault, probably for non-canonical address 0x891e812cd0ed968: 0000 [#1] PREEMPT SMP NOPTI
+> 	CPU: 3 UID: 110 PID: 906 Comm: prometheus-node Not tainted 6.13.0-rc1-xe #1
+> 	Hardware name: Intel Corporation Lunar Lake Client Platform/LNL-M LP5 RVP1, BIOS LNLMFWI1.R00.3222.D84.2410171025 10/17/2024
+> 	RIP: 0010:power_supply_get_property+0x3e/0xe0
+> 	Code: 85 c0 7e 4f 4c 8b 07 89 f3 49 89 d4 49 8b 48 20 48 85 c9 74 72 49 8b 70 18 31 d2 31 c0 eb 0b 83 c2 01 48 63 c2 48 39 c8 73 5d <3b> 1c 86 75 f0 49 8b 40 28 4c 89 e2 89 de ff d0 0f 1f 00 5b 41 5c
+> 	RSP: 0018:ffffc900017dfa50 EFLAGS: 00010246
+> 	RAX: 0000000000000000 RBX: 0000000000000011 RCX: c963b02c06092008
+> 	RDX: 0000000000000000 RSI: 0891e812cd0ed968 RDI: ffff888121dd6800
+> 	RBP: ffffc900017dfa68 R08: ffff88810a4024b8 R09: 0000000000000000
+> 	R10: 0000000000000000 R11: 0000000000000000 R12: ffffc900017dfa78
+> 	R13: ffff888121dd6800 R14: ffff888138ad2c00 R15: ffff88810c57c528
+> 	FS:  00007713a2ffd6c0(0000) GS:ffff88846f380000(0000) knlGS:0000000000000000
+> 	CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> 	CR2: 000000c0004b1000 CR3: 0000000121ce8003 CR4: 0000000000f72ef0
+> 	DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> 	DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
+> 	PKRU: 55555554
+> 	Call Trace:
+> 	 <TASK>
+> 	 ? show_regs+0x6c/0x80
+> 	 ? die_addr+0x37/0xa0
+> 	 ? exc_general_protection+0x1c1/0x440
+> 	 ? asm_exc_general_protection+0x27/0x30
+> 	 ? power_supply_get_property+0x3e/0xe0
+> 	 power_supply_hwmon_read+0x50/0xe0
+> 	 hwmon_attr_show+0x46/0x170
+> 	 dev_attr_show+0x1a/0x70
+> 	 sysfs_kf_seq_show+0xaa/0x120
+> 	 kernfs_seq_show+0x41/0x60
+> 
+> Just use the buffer size as argument to fix it.
+> 
+> Fixes: 226ff2e681d0 ("usb: typec: ucsi: Convert connector specific commands to bitmaps")
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
 
-Signed-off-by: Furong Xu <0x1207@gmail.com>
----
- drivers/net/ethernet/stmicro/stmmac/hwif.c      |  4 ++--
- drivers/net/ethernet/stmicro/stmmac/hwif.h      |  1 -
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 11 -----------
- 3 files changed, 2 insertions(+), 14 deletions(-)
+I've got a laptop that can't boot 6.13-rc1 or 6.13-rc2 without this fix too.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-index 4bd79de2e222..31bdbab9a46c 100644
---- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
-@@ -267,7 +267,7 @@ static const struct stmmac_hwif_entry {
- 		.hwtimestamp = &stmmac_ptp,
- 		.ptp = &stmmac_ptp_clock_ops,
- 		.mode = NULL,
--		.tc = &dwxgmac_tc_ops,
-+		.tc = &dwmac510_tc_ops,
- 		.mmc = &dwxgmac_mmc_ops,
- 		.est = &dwmac510_est_ops,
- 		.setup = dwxgmac2_setup,
-@@ -290,7 +290,7 @@ static const struct stmmac_hwif_entry {
- 		.hwtimestamp = &stmmac_ptp,
- 		.ptp = &stmmac_ptp_clock_ops,
- 		.mode = NULL,
--		.tc = &dwxgmac_tc_ops,
-+		.tc = &dwmac510_tc_ops,
- 		.mmc = &dwxgmac_mmc_ops,
- 		.est = &dwmac510_est_ops,
- 		.setup = dwxlgmac2_setup,
-diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
-index e428c82b7d31..2f7295b6c1c5 100644
---- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
-@@ -685,7 +685,6 @@ extern const struct stmmac_dma_ops dwmac410_dma_ops;
- extern const struct stmmac_ops dwmac510_ops;
- extern const struct stmmac_tc_ops dwmac4_tc_ops;
- extern const struct stmmac_tc_ops dwmac510_tc_ops;
--extern const struct stmmac_tc_ops dwxgmac_tc_ops;
- 
- #define GMAC_VERSION		0x00000020	/* GMAC CORE Version */
- #define GMAC4_VERSION		0x00000110	/* GMAC4+ CORE Version */
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index 6a79e6a111ed..694d6ee14381 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -1284,14 +1284,3 @@ const struct stmmac_tc_ops dwmac510_tc_ops = {
- 	.query_caps = tc_query_caps,
- 	.setup_mqprio = tc_setup_dwmac510_mqprio,
- };
--
--const struct stmmac_tc_ops dwxgmac_tc_ops = {
--	.init = tc_init,
--	.setup_cls_u32 = tc_setup_cls_u32,
--	.setup_cbs = tc_setup_cbs,
--	.setup_cls = tc_setup_cls,
--	.setup_taprio = tc_setup_taprio,
--	.setup_etf = tc_setup_etf,
--	.query_caps = tc_query_caps,
--	.setup_mqprio = tc_setup_dwmac510_mqprio,
--};
--- 
-2.34.1
+Tested-by: Mario Limonciello <mario.limonciello@amd.com>
+Closes: 
+https://lore.kernel.org/linux-pm/93978193-1273-4954-893a-f27528ed1d0e@kernel.org/
+
+> ---
+>   drivers/usb/typec/ucsi/ucsi.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> index c435c0835744a..69caae84879e9 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi.c
+> @@ -651,7 +651,8 @@ static void ucsi_unregister_altmodes(struct ucsi_connector *con, u8 recipient)
+>   static int ucsi_get_connector_status(struct ucsi_connector *con, bool conn_ack)
+>   {
+>   	u64 command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
+> -	size_t size = min(UCSI_GET_CONNECTOR_STATUS_SIZE, UCSI_MAX_DATA_LENGTH(con->ucsi));
+> +	size_t size = min(sizeof(con->status),
+> +			  UCSI_MAX_DATA_LENGTH(con->ucsi));
+>   	int ret;
+>   
+>   	ret = ucsi_send_command_common(con->ucsi, command, &con->status, size, conn_ack);
 
 
