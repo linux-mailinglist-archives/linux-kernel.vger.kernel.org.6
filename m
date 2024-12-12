@@ -1,198 +1,217 @@
-Return-Path: <linux-kernel+bounces-444073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200B89F0047
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:40:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA319F0049
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:40:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2A5287DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:40:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 658E01673C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355101DED64;
-	Thu, 12 Dec 2024 23:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D551DED71;
+	Thu, 12 Dec 2024 23:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WUE+UqX4"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2040.outbound.protection.outlook.com [40.107.237.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ZPuku1p1"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72941547F5;
-	Thu, 12 Dec 2024 23:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734046799; cv=fail; b=VaPI7JOWq+hWBtM94PNkWKk/4RoYOKw77XgvvHlfn39p68VFUqyE+afy7eBXba7glC7kAMQQ5Qfo2GWlOSF55Szhi556fp84pAvVAyAuEfLVLaqgfGhwZF3evYJ65RD7t1jApJPyY6xtY+35qe4Yo10ykViEFSnlcv5GfWqC5ks=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734046799; c=relaxed/simple;
-	bh=N/sLrKshGmWLJBK1yeDw9E1nkCnqKZWHbKRgfOdvUsc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=l3FHjQaLeYJPKg8+n+wLW+0+PPWD3HXBYIkDgE1iut1JUYV5ent2ysmcZ4BQ2RqAIRPjLYtbiAmrzvn9XpJq7yakqkCJs/uNDDRdJq3x5vb7Chdh4VzhfAOAVSqMrp0M8Qy+RP0GZnRB6QwuuBCaBav97gh7Gqi/duUvKlE15xo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WUE+UqX4; arc=fail smtp.client-ip=40.107.237.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o4xSIaHaMP5yMJiRv1yt+btWwHAhhogx/+0d2RXBLkqhzkxmTfXdvb9Zp9OZk9qEtUsas1vH8W4D8qSLb0U7xW3frv9xirwrtZkHaPumqqRX47W4HimNHRlLq194bWkxW9rhfb85xqlp9yG/MuHm3npbkGtcRF/QDEfzwYvmZkskF4gt2Ak2e9xcu0XGyNBTIDrfz/vjhVkzzaDgUEOzLSZzuC+ydx4gnjSW6r4sm9+mlVS7r+MtHZ0ApXq36GI5hWV/F7csJfi0tvatNmwLa0pw/JUbi4h8nvVGjwGPsa+ykPj5BGf/H5hlZyEbrdJ8D/Qeum7z2tFrGNKARshPiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nuCv3oWHsjcFfVq6RLHaa7B7l47QFtvwAGj3IVWrSng=;
- b=fDZhhsFv7PByuuTTcImXKQS6eOFN26aE6vHd32ZTS5lVKMBe796nX3hlbQ6I4SwICkbAflqVhj2r4Bgnat/iDS2/EIa3rwguPkzDe4T/6Czy7XmH0kyG4kRQ9KBXI5g2X7HMpImSqBvXIbi16lKy5tfMIqus8gkxqPyEK80L+KXUmOT+mKR0z6BiATXh0E/e6PyBe0N06XWg/bz1UZ54vcbsuz33lZiROiB/mxrJ286zikUGgQtyou3yzkvoRWXvFm6fL210NVIzNHER2+Z3jhqW8IcImfLBtfjTArObX1yIhZ7aG9ylq28M8E9IFQx2xzdP6tTY9NrQ2yxBWrhMeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nuCv3oWHsjcFfVq6RLHaa7B7l47QFtvwAGj3IVWrSng=;
- b=WUE+UqX4jjl7PgkbKoVKUo6KApfquhylCHw5BAW6LgUcWwePNkqFUpL9w71TRmjaYByAGwd5kL/gBnEqLoyCQruJX9teR7m8v65t0I5gZ3Zaq0M6ce/cdjWE+X711s/ppPJhxR7knDtU8y9H6o1i+1aYbNiKciTttgS+RtYglZAKNcfN1A58e0pzLzvBi8xo3cAyXr5YOUfM0xz8FHnWKbRV8isMKqPUmCVChmN70LFTTsuGF8nIQb0IujBUgcWEVWx98iq0/W62pzmfbAAXCErMLZ9SQU1ZgcJlYis+IEg1rwi5VRhdWy7YC3tDz/V0mCegIK+DcJduCp5psDb9RA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by CH3PR12MB8073.namprd12.prod.outlook.com (2603:10b6:610:126::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Thu, 12 Dec
- 2024 23:39:54 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%4]) with mapi id 15.20.8251.015; Thu, 12 Dec 2024
- 23:39:54 +0000
-Message-ID: <778ce6c8-9d77-4d85-9954-a930c5b84311@nvidia.com>
-Date: Fri, 13 Dec 2024 10:39:48 +1100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memcg: allow exiting tasks to write back data to swap
-Content-Language: en-GB
-To: Rik van Riel <riel@surriel.com>, Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
- Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosryahmed@google.com>
-References: <20241211105336.380cb545@fangorn>
- <766a28a1-c82b-46fd-b3b0-fe3b6024f462@nvidia.com>
- <1764e2fc8cff5b07aa9df1ae90a13986a3949250.camel@surriel.com>
- <1974c064-4c17-403c-a0a0-a799cbdae2f9@nvidia.com>
- <06afcaa995425c3c8b743485c6374ad92934f5de.camel@surriel.com>
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <06afcaa995425c3c8b743485c6374ad92934f5de.camel@surriel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0174.namprd11.prod.outlook.com
- (2603:10b6:806:1bb::29) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F131DE8AA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 23:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734046811; cv=none; b=Z3Oc+gLtxZG26bXvoC6KTTKhJkiWy5dcW8UaQfmcYsMGj2ZH8w76MUH1F1ZfhlUDK+wQMrkeE3XBatojqQ/+3TljuvICcHomEScL4gLYpNH4EDx+K9NN1dGnJQNDxbdlOe0IN834j/pgEbKnDuQ4AnHstlZmR76PwJXwqJRg7gM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734046811; c=relaxed/simple;
+	bh=VpM1KuXvsaXeqE4X7+jYLZq8lPUHybZbBaDZVdr2Ngs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msqO2HgXm5//QPZ45EacCaH7rWv1usLqK7tUFnjq6TJC/BmNSk6atDWpB+pBG2oo2G8WmoHJVc0sZekUHfEYEvUlH6F7at6uFAvFHB9FlTGmXoZDwLmksbzxj29nMh+/MZ9k6m4RF1FiPoO6HbkWpNdia/PmFCgXP37LbsCzlMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ZPuku1p1; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-725ef0397aeso1028601b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:40:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1734046809; x=1734651609; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ut2NdVyfqDfrSUBP+LM4gv0HVcISGPIE6hkI+7uG05U=;
+        b=ZPuku1p1WWHKprMefBfqb3sr2p5L4NFHF8AXa+wExMNP6J8PpP9/wu4xmxBLhA/ks1
+         OISJFf0eK+IrYUXgKTNSkcovOwJgFouHWqgxf4WrQIE+mC6r+oB0/kGYjAGDAIlX/RmG
+         15SYdNDfKg2ZB5K+vmhX+ygSDAxOq8pGoknWYdpu+0AndHoRvbuo3Ux6aCc/Uhk3z+gk
+         wk1MhQXwQ7nsWpmXJJWFZgHpp9NF5FAOAR41sm0Ki1tKoQAlTXy9ANqUuPI2FHXJUDTo
+         C6fkvEH3Y8lJcHe/c30wkT8xY+Gv4dawJT88SQTGEjwXc7IqaeIrrIhaTDjVs4rN1njq
+         BvVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734046809; x=1734651609;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ut2NdVyfqDfrSUBP+LM4gv0HVcISGPIE6hkI+7uG05U=;
+        b=iMkI7zLcc3nL883CJl6L2enzjDrTx5nTWZUcq/UNk1BeZaGUyn5m1auM9oR9YursNW
+         7NqSmmMDxO75EJiJieaT56Zh9A1js1mTOI5+MG9XnvfMEHNFx9+RLc2vBZJmupc4MZE7
+         5q3grg3QUwy1CtAfdF4V4Idxa0iQ3lBJCEvlZkCAw4MVPDilUfqjOEMAvi8uq/HTDn0A
+         b+wRkH5KxsSVSSQveoR6XqKnswJXcsXhmukUKwoB+y51x6ARQYzYFHLAGcbo4gD1TL1t
+         h52LgkUAC1DCEZDEWhtTQ+31Dxw1+ZQn/zb0qy2psnwMkCB/LZLVmxPMkFgOh0iPSh7v
+         MFag==
+X-Forwarded-Encrypted: i=1; AJvYcCVU8/40dxN3QzphBodAjvszg2f6JNXhHKSX6+kktRaSfrdMtvP+9essVZ0djmPRjDSUX1jWAyOW7x5yZnw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZM2lp0Ktwc6Ru5cBu8wLsn26yK0x5iEJHJCtNKfRtZnyR216V
+	LQ+ZbkzaZwj8nkIoEF37MoRlaq9mR00Kd+fa3ujMoC3XFJu40T2SENlyq9N2Aho=
+X-Gm-Gg: ASbGnct4HwDtm6fViqYjFqOXVyO+qrNf03AtMq5FUw+k2HSYjBGhSWJcamgWYqn2iwK
+	G38PHVH/vPPREk3BPraDw8WYiI85/aY33J/AmG/+LL5T0bfJD3GdJMp418GqWGvUg3gPvscUGl3
+	meBhbLlhSBxhbuVl8HtceX8nkWMwN/dZbvqiJIiZou8fMIDf4BYGHcA/ytGOfJiNSgM355Vv9UQ
+	eiItD+BSECGfSHA/zW6mb2ebikNqlxemDBoEWGdEMfx/H3Xv9tQvR9wmKSlWl1H2w438TRhGyoi
+	ZWtsaiHg8rNypdzPRj0yzsf9ykLG8g==
+X-Google-Smtp-Source: AGHT+IEluMoT3eIBWnlrxyiDFTBrfKO9gjh/OfF42m0UDrGQrytFUgm9xpmZZaXXJJA5yM88W+Xmow==
+X-Received: by 2002:a05:6a20:b598:b0:1e0:d2f5:6eca with SMTP id adf61e73a8af0-1e1dfec94admr590326637.46.1734046808840;
+        Thu, 12 Dec 2024 15:40:08 -0800 (PST)
+Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd48c5216fsm7905016a12.77.2024.12.12.15.40.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 15:40:08 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tLsmq-00000009zsG-16tl;
+	Fri, 13 Dec 2024 10:40:04 +1100
+Date: Fri, 13 Dec 2024 10:40:04 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: syzbot <syzbot+cbcad0f3b7646f8653ee@syzkaller.appspotmail.com>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	tytso@mit.edu
+Subject: Re: [syzbot] [ext4?] possible deadlock in ext4_da_get_block_prep (2)
+Message-ID: <Z1t0VJRWuW-tMhf4@dread.disaster.area>
+References: <6759e8c7.050a0220.17f54a.0042.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|CH3PR12MB8073:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7269fcb-39d6-4d20-5982-08dd1b064780
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VGhScVJWQm9ZTDRkdC9MMHZHSEU4L2xQYlBUS3VMOVNKY0JOWks2UjJJS04r?=
- =?utf-8?B?RkdJWmFQVlY2NGgzVFFHZVNzUTVZK0Y0Mm01WU16ZXNsYlYzNVZWdjU4Vndo?=
- =?utf-8?B?K0krako0NlA2M3ZCdktLWHA3MnpJMUx5N1RUQ2JnNEJUbDJxT1kzbXhEeE5m?=
- =?utf-8?B?cERDY1FEU3RIWVdMZHJTZWZTRk0xTFZncTAxZW1TOFBvZ01wajlwNTF3Q0Qw?=
- =?utf-8?B?d2p3ZUdhQnJwdmQxMVlYY3E1MlU3UkdmYnN0OUNwS1dvb1BycVQ4OGNtTmRG?=
- =?utf-8?B?eEZ5eUg5RHBjYkw4bnk1eG03RklJeE8vL2FVYUlsaHgrWlR6M3VnNFF4dmVI?=
- =?utf-8?B?bFpKQWxQU3ppclhoNDF4bUxOZFdNR1JTK05iUEdDcVpLTWc1dTBVMUh1UUZn?=
- =?utf-8?B?MERydFBESnlqbkxFbGtBelZSUVJ6Z0kwSVluOG0vaCtIM1g0SVBlTXo2amNn?=
- =?utf-8?B?SnlOVm5nWW1FaDMxY0E2RXptOXMwV2FaeHZTRFBOeUFwNEhwVUN0NndxUDA4?=
- =?utf-8?B?bWFLNUZZemNSRll2Um1xYlQxMFNWWGl3QXN1UkRoVkUva3Z4RjR5NUpBUFd5?=
- =?utf-8?B?L3diS3lPb0RUTFZpNENWWEV1V0Z6SHNXOHJiOWVEeUJ1MEphVkE0Z3piU1hM?=
- =?utf-8?B?V1NrVENJTk5scldFQmZycitDYWRLUjJmREQ4UDJ1YWtwRENDMUY5Y284TjlD?=
- =?utf-8?B?YTdvaHRzbGtMQWxlYkNmMkVLVUJJWU90bG9jaitmY1hVQ1pYR0ljbTlramFx?=
- =?utf-8?B?czVKZmw0bVRaZjJ5a2lEOHRCeWpEMFhTREpPYmZRY3VqUXJiNmROY2ZZckl6?=
- =?utf-8?B?NjNZYi9uNFUrZGlNS09JdG1PV2VuekpHQUg5bnBXRU5IUlNwVTkyYUlnYUlJ?=
- =?utf-8?B?bWxoUEt2a1ZyTFhhRUZ4MHBDeWV2NENUdk16MCtBUUlPSmNKdWFCZ1k2SGNJ?=
- =?utf-8?B?MzUwc09XZEszU2hWbEZEdzFLRjBKWXdqVGQ0SnFaTit2THNGU2gvTklhTjBi?=
- =?utf-8?B?cmdCZnczd3F3a2dBNWdvMW56WHBRSHVzVVBkU1ZZQW1nc3E5UDg1TW1xWlgw?=
- =?utf-8?B?bCtTMXhYZnlwMDRQL01LTnpQQUI3ODBseE1ReU95dVNKZlBuSGN1MXNheFZp?=
- =?utf-8?B?M2NwNTF1dEszR1NvZkZYM0hQQkU2WU5xeHliVk1hS3hkc2tscHBUWmswWXkr?=
- =?utf-8?B?L25BdU5KTUtTdEJJVG9YQ1U1aWpkYVdoYjNZQ3ZFVkN5cGtYQWtWVm13SDNi?=
- =?utf-8?B?dmRrRklTdkhUTzFXdlVjTlNJcHlnQnYrQ3M0ZDJ4eEtkYTRyRzVpTGJKdkVD?=
- =?utf-8?B?RWNLeG1vUGtLaFpHSFlUSzVZVFo4V2RxZFZxUlN5VlRkL2hadUc2UWZyUmlL?=
- =?utf-8?B?ZUZEbUQ0QnJIYTh4U0hrZG9GNzdkcW41TmNQUDV1UWtJNFBVUXVBVU1LY0x0?=
- =?utf-8?B?KzNlTlM5d2xLQnZ1NjVUTHZyU2RBRGpReXoyb0RGZVpNa0E5Vkp4UDVocjRw?=
- =?utf-8?B?QjR5enlibm5wbnVoYlhuU1puMCtzS1JiR0NobUFPdHUxRzhCTkZGY2N5UDFh?=
- =?utf-8?B?VnFpM1lhVGVZeVhLSTRnNTdpZXNkdWFaRmx6V3lJa2VYb09WdzFhYXZQeTgx?=
- =?utf-8?B?c3NhKysvcWl5TkI2YzhFcHpta1VhZDNXWWF0R3dxbzErOFNtNlN5SEhpeDlH?=
- =?utf-8?B?REJpZnZ2L29mOUMzUkZqYllHbVAvUVRHYTRIQUpJTHcrc0s3ZG5HN0tpbXZZ?=
- =?utf-8?B?REx5eGZTWURWU1J2RCt1SENOZmE1bGpWRzMxcjhhNXluTkE2elVGRGZJbkpN?=
- =?utf-8?B?bXJ6cC9BMzFYbWZNYkF5UT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q1dRUGtRYkIwRU5KS1R3M0hvUHJ6Rmx1L01TSEdOQmtoL2JsOGlRTldOU3J5?=
- =?utf-8?B?ZTRKZUpxNWlKVi9JK0x3TDBZOGNSUDF5WmhrbEI4WUFGOFdRdHA1OXFNU0dQ?=
- =?utf-8?B?SmMvZUJPa05nY2diRVRmaFNjcG9aWlpiUGNaSWg5YnlnOHRTcTdTWEd3NFIy?=
- =?utf-8?B?QzZraEtxU0lsRlNUZThwdHFZN3RFS3UxT0FFSnk1aDBDUXRCak4yUkt3bjRP?=
- =?utf-8?B?SUdjQVVxSjBEb3ZnWGJJWkNaalIyclJOa0VwVE44OFBoQVlyU2gyeHA4YSta?=
- =?utf-8?B?TllQQVVuclhxNDVQd291aWVabmFmeWFFUFVqakljaEVQQ01ZVXA3alVwRTE3?=
- =?utf-8?B?c0RHOVhwZ0swOVZuNFFoRldiT2xPc0pMMU53UUFldWJISWY3L2tXTG5iQlly?=
- =?utf-8?B?Z2lIdjJCeVBOWEJGOURFalI3ckdwb05EUGpJeDlhNFNvOG9SMjB4R3U1WjVl?=
- =?utf-8?B?QTZCcThEazh4T0hVQnc2Q2RtMlZVUmlOOFQrSTVLdnBPanZHUmJOdXo5UFNj?=
- =?utf-8?B?cGE0TE81R2J4RkRhLzVFTitHOXFjZHRnWlFFa2IyaERxbGdDcklueGxjekM3?=
- =?utf-8?B?eDBsSG85Tkw2emhydTkxT2Z5VkR6OFVQUTQ3dXo4TVlyWWNVQ05ZR0VoRzBj?=
- =?utf-8?B?Rk1YWThPdnRqdDdjbHI3cURuZkJVWXN5d3JTNGMzdUtrcDh1cDFIRkRzVmJ0?=
- =?utf-8?B?c0d1azhKUml4cFR3am1TR29sUCt0VERxTXlRY2o3UElVR005emlscWRRMXNp?=
- =?utf-8?B?SDYzUnRLdW9PMzRsRVg1dWR6d3k4TTU5eVFwYjlHSDlEb0xjbzZjd1Q5NFEw?=
- =?utf-8?B?Y2t1d3RRUDBPNUh4U2FrMktMUjdHNFhwbFJiaTVHWjYwMVRtQzdmZFhSak9l?=
- =?utf-8?B?dEE0VmF6UUl4eUE1cFZMblZ1SVBYUWR3dlUzaXVNVmJmRlhzSU1hRUxXbHBG?=
- =?utf-8?B?Szkrb2VaTlZSS0hvSnF3V05qQ205bThsdTlvSlgveS85bkxzNTlma1hwWXYw?=
- =?utf-8?B?cml3VXVlUnI3MnZFbGtLWWZOSUNVeFpnanBLblF2d0NJZmFOL1paNkR6NHRR?=
- =?utf-8?B?OFVBNWNCU09HQ09SSHUwYUVkQWdzb0ZBa0pqekNwcFcxUnlXYkJ0Tmd0aS9T?=
- =?utf-8?B?MGs0d1RwT3FTczhUUW9veExUQ291SFR3cVE5L2tTL21aSzlZR2Q3K01DNXow?=
- =?utf-8?B?clpjZUd5ckhzRERHOVZOTlF2OVdVZkF1cU4vRmY2aFV0SFpJbklBSzZUUkJp?=
- =?utf-8?B?TGNEb1B3ZUxoa3g2alpGUlBqTGpZbFRKQ1g0blluV0xpSjREU0wwVUlJTVRo?=
- =?utf-8?B?Tlh4YVM1VDk1OUVwUDdZanRmVThROU1KL3NKK0RocVoxUzlvQXRQVG8vUnBS?=
- =?utf-8?B?M0xvb3V2NDNHY2FPNWRlZ1MvanM0ZmNkNXA5bkdkaGQ4cFhndU1SR0pVa254?=
- =?utf-8?B?NndUYWZSOEd6ZzE4WlBQNzc0bk1kY05pdXU3R1dKeXNZcnlLVU8xQllwNXNl?=
- =?utf-8?B?eGdXWmNLazdRRVcyNzl4ckxOdmcvY1lMckNRdEpwcWFuejV3dkZpV1dLbDRZ?=
- =?utf-8?B?NStZdUxFZEtFQXk4V3ZqaWM1ZGRmVWg2NytVMVlBdXc3b1ZIbUtZMEFpNzBE?=
- =?utf-8?B?VzVab0xRTW9hQ0ZmSVBDYndEMGRDMTVyTjhkTFJxbFA0NzErWlJ4bnYvTWJC?=
- =?utf-8?B?ZUJ4R0JxaFJGempIajZhaTVkaGFlTVN2MHBrU0krSXk1Y0g4RGxXREdkOHh6?=
- =?utf-8?B?RE9PTFcxbVJTaW1yNjZ4cUpNajRIV1VLU3dVdUZERjVuWFJhSFFja3pqSXRp?=
- =?utf-8?B?cThXQ3ovWTlvRFdlcWFiRjlZL0dxZ0JjR2tqY1ZRVVlvWkpaK21UR0o0dDdS?=
- =?utf-8?B?TWJ1THVuMWE5S3dZc1VnVDVmdHY1eFZtSWc1OWh0M1BxV0lSWGt2OUFxUmV2?=
- =?utf-8?B?THFBbi9BeDhhTENvSTdmMW43aGVlUXhZU1pNVklGZDBMcVZhRjJsK042TzZa?=
- =?utf-8?B?cXdtSEVxc2tWaXBvais4SGVpK1FJaUJsbGN5cERHa21lU3hvYlo4Vmg1d0M1?=
- =?utf-8?B?TER3RFd4QWpwNmEreXpWRkl2czBGZ3dYSHZoL2l3ZXZ0MDhPUGk2MTV6d2pX?=
- =?utf-8?Q?fyQ4XUh/d2C3HTCFDdDW9FqsK?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7269fcb-39d6-4d20-5982-08dd1b064780
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 23:39:54.1675
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4kSBDHNEyJAb48LM78wSqNF116JBgtr9BBeqRXfZ3xkOVfV83yEu3CXqUaukSmcZupxjy7AMmCc7gQFI7kV81A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6759e8c7.050a0220.17f54a.0042.GAE@google.com>
 
-On 12/13/24 01:03, Rik van Riel wrote:
-> On Thu, 2024-12-12 at 14:25 +1100, Balbir Singh wrote:
->>
->> I was asking about this change (this patch), I know that the return
->> true will help avoid the PAGE_ACTIVATE path, but I am not sure why
->> this function will return false if CONFIG_ZSWAP is enabled (unless
->> zswap_writeback is turned off in one of the groups)
->>
-> Some workloads are fine with incurring the latency
-> from zswap, but do not want the latency of actual
-> block device backed swap.
+On Wed, Dec 11, 2024 at 11:32:23AM -0800, syzbot wrote:
+> Hello,
 > 
-> Having zswap enabled, with writeback disabled, has
-> been beneficial to a number of workloads.
+> syzbot found the following issue on:
 > 
+> HEAD commit:    b5f217084ab3 Merge tag 'bpf-fixes' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=164170f8580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
+> dashboard link: https://syzkaller.appspot.com/bug?extid=cbcad0f3b7646f8653ee
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/4000132d9d47/disk-b5f21708.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/85cadac2b6fb/vmlinux-b5f21708.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/0321667f4cf4/bzImage-b5f21708.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+cbcad0f3b7646f8653ee@syzkaller.appspotmail.com
+> 
+> loop4: detected capacity change from 0 to 2048
+> EXT4-fs (loop4): mounted filesystem 00000000-0000-0000-0000-000000000000 r/w without journal. Quota mode: none.
+> ======================================================
+> WARNING: yossible circular locking dependency detected
+> 6.13.0-rc1-syzkaller-00316-gb5f217084ab3 #0 Not tainted
+> ------------------------------------------------------
+> syz.4.1456/13188 is trying to acquire lock:
+> ffff888040d89658 (&ei->i_data_sem){++++}-{4:4}, at: ext4_da_map_blocks fs/ext4/inode.c:1799 [inline]
+> ffff888040d89658 (&ei->i_data_sem){++++}-{4:4}, at: ext4_da_get_block_prep+0x428/0x1900 fs/ext4/inode.c:1873
+> 
+> but task is already holding lock:
+> ffff888040d89498 (&ei->xattr_sem){++++}-{4:4}, at: ext4_da_convert_inline_data_to_extent fs/ext4/inline.c:846 [inline]
+> ffff888040d89498 (&ei->xattr_sem){++++}-{4:4}, at: ext4_da_write_inline_data_begin+0x2d3/0x1090 fs/ext4/inline.c:921
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #7 (&ei->xattr_sem){++++}-{4:4}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>        down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
+>        ext4_readpage_inline+0x36/0x6b0 fs/ext4/inline.c:518
+>        ext4_read_folio+0x174/0x340 fs/ext4/inode.c:3185
+>        filemap_read_folio+0x14d/0x630 mm/filemap.c:2366
+>        filemap_create_folio mm/filemap.c:2497 [inline]
+>        filemap_get_pages+0x100a/0x2540 mm/filemap.c:2555
+>        filemap_read+0x45c/0xf50 mm/filemap.c:2646
+>        __kernel_read+0x515/0x9d0 fs/read_write.c:523
+>        integrity_kernel_read+0xb0/0x100 security/integrity/iint.c:28
+>        ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
+>        ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+>        ima_calc_file_hash+0xae6/0x1b30 security/integrity/ima/ima_crypto.c:568
+>        ima_collect_measurement+0x520/0xb10 security/integrity/ima/ima_api.c:293
+>        process_measurement+0x1351/0x1fb0 security/integrity/ima/ima_main.c:372
+>        ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
+>        security_file_post_open+0xb9/0x280 security/security.c:3121
+>        do_open fs/namei.c:3830 [inline]
+>        path_openat+0x2ccd/0x3590 fs/namei.c:3987
+>        do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+>        do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+>        do_sys_open fs/open.c:1417 [inline]
+>        __do_sys_openat fs/open.c:1433 [inline]
+>        __se_sys_openat fs/open.c:1428 [inline]
+>        __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #6 (mapping.invalidate_lock){++++}-{4:4}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>        down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
+>        filemap_invalidate_lock_shared include/linux/fs.h:873 [inline]
+>        page_cache_ra_unbounded+0x143/0x8c0 mm/readahead.c:226
+>        do_async_mmap_readahead mm/filemap.c:3231 [inline]
+>        filemap_fault+0x82a/0x1950 mm/filemap.c:3330
+>        __do_fault+0x137/0x460 mm/memory.c:4907
+>        do_read_fault mm/memory.c:5322 [inline]
+>        do_fault mm/memory.c:5456 [inline]
+>        do_pte_missing mm/memory.c:3979 [inline]
+>        handle_pte_fault+0x335a/0x68a0 mm/memory.c:5801
+>        __handle_mm_fault mm/memory.c:5944 [inline]
+>        handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6112
+>        faultin_page mm/gup.c:1187 [inline]
+>        __get_user_pages+0x1c82/0x49e0 mm/gup.c:1485
+>        __get_user_pages_locked mm/gup.c:1751 [inline]
+>        get_dump_page+0x155/0x2f0 mm/gup.c:2269
+>        dump_user_range+0x14d/0x970 fs/coredump.c:943
+>        elf_core_dump+0x3e9f/0x4790 fs/binfmt_elf.c:2129
+>        do_coredump+0x229d/0x3100 fs/coredump.c:758
+>        get_signal+0x140b/0x1750 kernel/signal.c:3002
+>        arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+>        exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+>        exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+>        irqentry_exit_to_user_mode+0x7e/0x250 kernel/entry/common.c:231
+>        exc_page_fault+0x590/0x8b0 arch/x86/mm/fault.c:1542
+>        asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+> 
+> -> #5 (&mm->mmap_lock){++++}-{4:4}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>        __might_fault+0xc6/0x120 mm/memory.c:6751
+>        _inline_copy_from_user include/linux/uaccess.h:162 [inline]
+>        _copy_from_user+0x2a/0xc0 lib/usercopy.c:18
+>        copy_from_user include/linux/uaccess.h:212 [inline]
+>        __blk_trace_setup kernel/trace/blktrace.c:626 [inline]
+>        blk_trace_ioctl+0x1ad/0x9a0 kernel/trace/blktrace.c:740
+>        blkdev_ioctl+0x40c/0x6a0 block/ioctl.c:682
+>        vfs_ioctl fs/ioctl.c:51 [inline]
+>        __do_sys_ioctl fs/ioctl.c:906 [inline]
+>        __se_sys_ioctl+0xf7/0x170 fs/ioctl.c:892
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Thanks, that was the missing bit
+#syz dup: possible deadlock in xfs_vn_update_time
 
-Balbir
+-- 
+Dave Chinner
+david@fromorbit.com
 
