@@ -1,85 +1,47 @@
-Return-Path: <linux-kernel+bounces-443260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666A39EE96A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:56:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CD239EE971
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:57:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F891888256
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:56:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69CE1888B56
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B32215F48;
-	Thu, 12 Dec 2024 14:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496A8215777;
+	Thu, 12 Dec 2024 14:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DeTuY93G"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2L0oe8D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9441B215764
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9969021571D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734015402; cv=none; b=s6Ozm0cFB64Tn/qBmURN7EDOQlTWEtiWYZ1ZQVyW8MnfUDN/IgJpL4FGFDBNl27j7inidvgzj66q5/ndU8qk2guBAviDIo6TBFCnEkapkUKDvkKtVejG5aETuNleI6fUuq0mUCCJL9P5wliyUYDi5cpnG5s2OFFa0i3Vtj5qcuc=
+	t=1734015427; cv=none; b=iLKj5rYFo14yI5WFVLcO3YEuRPaomRgC1awkiV+JtjUoLptqOrvYS9EgOqBY1Lgp/fReW/32piR8geZN+vWjdZg3/QjtCHM/8KFzTMjGlw0h2v7swPpRufY0wW4pDsGySxy0nTD9y8NJFkeZX9S8IviTB5roq4iLRV91E3rl96E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734015402; c=relaxed/simple;
-	bh=AjQOAHstwlMlrDDeDDeSx0eAGZcKzvIvjK1+noRizkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r6mY66Qwt3+NR1VUGkAonofE3E4eoKJpJEip6sAEYFCQXG2U8cyRmePu6EDG7Wmj1pHV07dcko0wnlO11+K4qycmi9Yx/qkY3tVyVuOqkXFYrB+uHmKs2bb3zRYejNjmu1kn28MgbFABSUzX5uBev5ugAFNNicNnNe0RzpDp65c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DeTuY93G; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734015399;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oL7oDzf/iu+owBEyFgADY3KtJbecvvlrXRMt6TBS380=;
-	b=DeTuY93Gl+QN/i3NSufXohDh5kzQ5U46yxaBzDTGmmFpqioerQwohfCtNBrRf2YVQ/A/vf
-	qHL0U/1TkrRuAVqYAU8oYfXmndUGM9+yJUKR7Kv1C++pqgQuajeQMr44mBK3YR/gHRwuZO
-	ZEMNOE1WcmHFTmkM2nVLdSgErhzaYbk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-mdKtuBOyMCiSRa5BOcViIg-1; Thu, 12 Dec 2024 09:56:38 -0500
-X-MC-Unique: mdKtuBOyMCiSRa5BOcViIg-1
-X-Mimecast-MFC-AGG-ID: mdKtuBOyMCiSRa5BOcViIg
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43621907030so7205405e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:56:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734015397; x=1734620197;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oL7oDzf/iu+owBEyFgADY3KtJbecvvlrXRMt6TBS380=;
-        b=FNRVeWx5q7q18+H0OvSB5VvNwNAT3NI42jtg01ZAQqvfvE3k0bJsoQyP36bWTqYbp1
-         45QeYiQsMWz+uPHxNvwXtL+G5FFSkOcc3eJcAa6FPWjW5JxMCU/I/K0/2jWsIWec/azb
-         3AWXifFO/7E/OZb6f3c2FmathSsU6duc7/hM9AofKNIhx5q7vNDXaFoXI93W6kF2kXET
-         fZ9ekJD0n0ZgIlfs3WMVG1K5xzh0WEiLb7P4FplU8VhminyupxQ/pTxwWHKyXHtw6Uzm
-         NF/KOh0zc3bDFdZT3KBawKnLUxVLaGXEYH8q/zUgLvCMz42j/nnb9P6ZLee1hsIZ+qS8
-         ouCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWm8GU7q7dU3jP5AszHMto84+XLv4/aRdV4W+mePsj5uNfnYCXydDdadgAZuVSpu/+kvt+a1E2iGtymcV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjDVBap30smnc9z71RWjHgeFRZmB8TybkgRKZTlBqZiLfLpQh4
-	rixI/dGVL0WjiEdBmIJcpAihi0HrfNOwggl6BHm7fHYuu3n7h+GCjUozBqiWRv9pShmHz81AY+5
-	uRA+KrJBQAqAjsQMf1aWXk+gEetjA6Xfs4/kcHvMZlgqoR68FGz7q6qV0GrPhRQ==
-X-Gm-Gg: ASbGncsjUcxskQ0bH0hfXRqNrIL8cre4/3xm9bQrkAjs8VBTQ1jKxjhFLNh4M6kN1Au
-	CfV/r5zzWLl2ObYRCBC/gBWrGHZ6gY47inSvWtUuDtYIieeTdt+Cp5VXvQNWJWw3470BPhV2cb/
-	ZsX4+fVsjLzjwWJdGJ/T9SIRFeqGdspwgZpZ/WNczT0243ZteeKFCKpDhnVWIyi9OZa1q3NZT5y
-	yxc464HpofTKiGM6h0Qg3DKzf+66vHxIt40O/SuKN7562seNCSaYIfpUBdXEc/zLW7xCmsrdlK1
-	MRe6tRo=
-X-Received: by 2002:a05:600c:34cc:b0:434:fbe2:4f with SMTP id 5b1f17b1804b1-4361c430b5cmr63303075e9.23.1734015397044;
-        Thu, 12 Dec 2024 06:56:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH6jT4MvcNP0dxPJ6BKwDHdX4PrfqhYHXR4TAbgRNM6khL6oXpHiVnh7UfEpSYX/vLofOsSxA==
-X-Received: by 2002:a05:600c:34cc:b0:434:fbe2:4f with SMTP id 5b1f17b1804b1-4361c430b5cmr63302405e9.23.1734015396688;
-        Thu, 12 Dec 2024 06:56:36 -0800 (PST)
-Received: from [192.168.88.24] (146-241-48-67.dyn.eolo.it. [146.241.48.67])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362557c457sm19247805e9.15.2024.12.12.06.56.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 06:56:36 -0800 (PST)
-Message-ID: <8ee0cf91-c215-4015-90fc-32be6f22b7db@redhat.com>
-Date: Thu, 12 Dec 2024 15:56:32 +0100
+	s=arc-20240116; t=1734015427; c=relaxed/simple;
+	bh=uwblZSevv2D3PFiP82htjEa+bQ21czz1NNrxjWSAzwY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ajzqOiQOqGp++Kc0m5XDQlT8FOj47jNhWRdJ0mr4PyBHUzukvLpZ0npqgASkgb5gKihLc2Ciw3+DomTTAqGQyHkAKlQXR+sVBbFRx1jWyj+TQzlWtVm6PaTB+hCwAwDBWO3m4fcsa2sz37D2rkh6kkHbwDliysN+B2zTAUA4qb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2L0oe8D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF58C4CECE;
+	Thu, 12 Dec 2024 14:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734015427;
+	bh=uwblZSevv2D3PFiP82htjEa+bQ21czz1NNrxjWSAzwY=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=D2L0oe8DEjgL/j+ayC2RToRh4lBZ2ZB64HVhkG2k4UIjQI0+r/z8snRbHzriqXgsM
+	 sFssW8hpK45lsZkZTrwY8teJCkBStFhtDNrtIF4uoZCnxStZsBIxITRqehsviS1Sps
+	 /kHXZ4K7noeEzR9d8ZIKgHTYpXfN3wPSiHdzKa8DvsWAH5JkQGqramcv6uzvvxCkRM
+	 Pj8VDzKagXITZlyObKm+IuNIjuDgViR9IY3hmq1xemrjvzCLIb888fuOJ7w492XWJ8
+	 BQRWX+uc74+tM6c+ASNNkZckGgtnjaMQJQ5t6dPJ2p6KNuIlYqt+YQ1ws8Q2R5Emq8
+	 ccfr/DV1KKCCQ==
+Message-ID: <6b31083d-aaf0-43a0-bc3d-bbb5d3055a5e@kernel.org>
+Date: Thu, 12 Dec 2024 22:57:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,64 +49,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/11] net/ethernet: Use never-managed version of
- pci_intx()
-To: Philipp Stanner <pstanner@redhat.com>, amien Le Moal
- <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- Basavaraj Natikar <basavaraj.natikar@amd.com>, Jiri Kosina
- <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov
- <oakad@yahoo.com>, Sudarsana Kalluru <skalluru@marvell.com>,
- Manish Chopra <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Rasesh Mody <rmody@marvell.com>,
- GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
- Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
- Sanjay R Mehta <sanju.mehta@amd.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>,
- Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Alex Williamson <alex.williamson@redhat.com>, Juergen Gross
- <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Chen Ni <nichen@iscas.ac.cn>,
- Ricky Wu <ricky_wu@realtek.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Breno Leitao <leitao@debian.org>, Thomas Gleixner <tglx@linutronix.de>,
- Kevin Tian <kevin.tian@intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Yi Liu <yi.l.liu@intel.com>, Kunwu Chan <chentao@kylinos.cn>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- "Dr. David Alan Gilbert" <linux@treblig.org>,
- Ankit Agrawal <ankita@nvidia.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org, netdev@vger.kernel.org,
- linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org
-References: <20241209130632.132074-2-pstanner@redhat.com>
- <20241209130632.132074-5-pstanner@redhat.com>
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH V2] f2fs: The GC triggered by ioctl also needs
+ to mark the segno as victim
+To: Yongpeng Yang <yangyongpeng1@oppo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20241204033113.4133027-1-yangyongpeng1@oppo.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241209130632.132074-5-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <20241204033113.4133027-1-yangyongpeng1@oppo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/9/24 14:06, Philipp Stanner wrote:
-> pci_intx() is a hybrid function which can sometimes be managed through
-> devres. To remove this hybrid nature from pci_intx(), it is necessary to
-> port users to either an always-managed or a never-managed version.
+On 2024/12/4 11:31, Yongpeng Yang wrote:
+> In SSR mode, the segment selected for allocation might be the same as
+> the target segment of the GC triggered by ioctl, resulting in the GC
+> moving the CURSEG_I(sbi, type)->segno.
+> Thread A				Thread B or Thread A
+> - f2fs_ioc_gc_range
+>   - __f2fs_ioc_gc_range(.victim_segno=segno#N)
+>    - f2fs_gc
+>     - __get_victim
+>      - f2fs_get_victim
+>      : segno#N is valid, return segno#N as source segment of GC
+> 					- f2fs_allocate_data_block
+> 						- need_new_seg
+> 						- get_ssr_segment
+> 						- f2fs_get_victim
+> 						: get segno #N as destination segment
+> 						- change_curseg
 > 
-> broadcom/bnx2x and brocade/bna enable their PCI-Device with
-> pci_enable_device(). Thus, they need the never-managed version.
-> 
-> Replace pci_intx() with pci_intx_unmanaged().
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> Fixes: e066b83c9b40 ("f2fs: add ioctl to flush data from faster device to cold area")
+> Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
 
-Acked-by: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
 
+Thanks,
 
