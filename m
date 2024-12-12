@@ -1,202 +1,335 @@
-Return-Path: <linux-kernel+bounces-442858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872EA9EE301
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:28:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18709EE30C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:29:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE53282BAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:28:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D51BD161386
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF502210186;
-	Thu, 12 Dec 2024 09:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2902720E71D;
+	Thu, 12 Dec 2024 09:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c87EtkV6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xr7/YRXm"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2064.outbound.protection.outlook.com [40.107.92.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E891220E6F0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733995677; cv=none; b=qqqlLMrPnOtgKZYNrWMNbNeQpYN/ix19YNE/0xPRUub8/0WZhxFIpHsYor0BSEg2FQsd7Ib5Hqdcxs9zWGQw2tPgeDNNcLCNtUtggxFaDf3Ex1Z1N3MqBoAGcRWb/Wye/JJKvCWlzvi+BNujf8M6ebhvZaG/W/94/BBPRDilDIk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733995677; c=relaxed/simple;
-	bh=b9cdBCl6i8/Pg9BidsE6MaRf0sy/S53LsQhJ0yDDCcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=To8fdnsfkSbSQB5V74i7SMdt7hjeJqWCXeukneDtt+wAA5GzXIABXZ6jlyixgZNwHY265Xn2Qpr3AzlXWyXP8Te47FsHmVHg55PWtR1mXsFTCm7bcLpfYIb8+v1wQSc12iV7Y3aNCzmItIo0Q7SH6JOm/q+Y1jxeLjw8EPqcY2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c87EtkV6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733995673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YQDLEldT18Fc0IWLf1h2y9YzeGe3KbZy7EnSjmgH5Ac=;
-	b=c87EtkV6eYaUI8u387TMDiiFfhEPpYXq+7Js0ftv7XrrdVSAewFJozVdeBZipmXtche6+F
-	lxsaMfZizWIo4ZpPWuLhJAcFhK37BMzxZ8vXmyeMC+Kvs5pqFJbsmOh13vs0vZxH2kXCWi
-	M8Ns+xqwNWwAPX8HuKvFjRktYTnBV9Q=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-g1hifiBKN2e16XsK99Aw8w-1; Thu, 12 Dec 2024 04:27:52 -0500
-X-MC-Unique: g1hifiBKN2e16XsK99Aw8w-1
-X-Mimecast-MFC-AGG-ID: g1hifiBKN2e16XsK99Aw8w
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43625ceae52so1979225e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:27:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733995671; x=1734600471;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YQDLEldT18Fc0IWLf1h2y9YzeGe3KbZy7EnSjmgH5Ac=;
-        b=GpvCQ/cQC5cnXDqgZ1cJ0Aahql+Re5xQr2fOLT2jzTvgq8+SraGI8xYtebEHhjX7YJ
-         Gs3AVCiWmKK0B8RBwXKbywQeKdPuBMvl0tRKtxslpZ/VTuhaM+nhFchfMXRtZf+6vNj4
-         Fo45I5yjbJ0MzovXQ+ZCbtmjKvNZJvlQc2T9JjXdQu3WdYP7+v0Wf5UPX88B7TM0j/kv
-         pG4Pl+Q3zREV+HQ26WuwmeeIdPS/bYo6ZWwefSfNgX2ja2NNisSlLlVIgGrP1Yst8+cY
-         wsljGlMznOF/Gwz4xjlkeU7jClTIOHj9o4Kshm79qnMrlE5BHPUvesgFMAP9S54mk8sb
-         f33w==
-X-Forwarded-Encrypted: i=1; AJvYcCWLp4ldqy13fFE9p0K7N7EPW4sE1SpX+JPm7hLsfMuQAaUnqCMEuJYZjURnEwacjQHhf2vbN3B/WGAJWiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4K1zEoZ+hGgvz2cd//8TZshV/GFWsx2ErhleKA/HIfVKKpQ8X
-	QmzFrlQ9HJu2rliKdyYx6gNgE8EhRHUYJ+lSP9slfVE9H1oyCQPRN3gYvzXdvYjES3WOThdmPfr
-	DpESUI2jejzD82xgs06x6hOnbDtSRxusfMqgvZGW83q5iS/kFl3pDrFr8Qzgzqw==
-X-Gm-Gg: ASbGncvtaHlnY0O7Bi6pCJH4sRiDW/LtaHEbL2JGLQMzxBjTqUZ+aY6OH9FbSHp1bJu
-	GpUGx0jm9s0M1DAGwRVVvp7g9Dk9RxGNLq7YKV9tmPNECkkwQzTvkao3I6STJ3gyTkyfuUTin7A
-	E0lF6IVdHZMO5OF85v6zJoJdsvWGGyxByy/2q/z0/CvwruzRHkhfb5ZOmKTscxCw9ER7p+vqNNs
-	P+QimTlC74Euc2QTuIJw1ZU0moEf1CCW20Ol+hD474Lo9tw4nmTQA3JtTdsldMOz3tgBLbWKJLX
-	bKI66Lc=
-X-Received: by 2002:a05:600c:548a:b0:434:f609:1afa with SMTP id 5b1f17b1804b1-43622823a9bmr23142095e9.4.1733995671092;
-        Thu, 12 Dec 2024 01:27:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGfecq/fvmxWbZmLr9mwKSJq21xM6RVRZ1wSoCEsNQjvNePz0TX5CuMdaiXcW+mTqnLDcuA8w==
-X-Received: by 2002:a05:600c:548a:b0:434:f609:1afa with SMTP id 5b1f17b1804b1-43622823a9bmr23141765e9.4.1733995670687;
-        Thu, 12 Dec 2024 01:27:50 -0800 (PST)
-Received: from [192.168.88.24] (146-241-48-67.dyn.eolo.it. [146.241.48.67])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436256b42a3sm10746345e9.28.2024.12.12.01.27.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 01:27:50 -0800 (PST)
-Message-ID: <2b89667d-ccd6-40b7-b355-1c71e159d14f@redhat.com>
-Date: Thu, 12 Dec 2024 10:27:48 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19C420E337;
+	Thu, 12 Dec 2024 09:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733995693; cv=fail; b=HfUklZ9cNVl62PTuQmuXR+kx07Nd0swV+xRG/q0X+Qoeb8eTPjupKIMBbbm0sCzrrJLBiIjN02Ic6K3yoWYlfOraK7c6l2hsgeIyuY2vYuHA9q2seJBQtuc2P8E6x01fn2nAIBfdVXrBIliuBsqYvTBURCvi+2IW7x17vRVvf6w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733995693; c=relaxed/simple;
+	bh=exomWPUWQBxjm1lFjS/3OOSb5ki6csHfBAQDDIUq/Rw=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=olKmiRjt3aHrFBpm+PV/TE37Mr8EwuAGyqIyWItV5cEybY8Ooz51NWT9yHpdDbS1nU2MM4RjUv1VQTLEF15Bc2C+DfNvkQ37uAXVZHUnDR8pBoxgCs8nR0iFe2cgK8gneK718snbS2tnwQtUAdzu1iGoxGYnx74XyG4G+cPKX+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xr7/YRXm; arc=fail smtp.client-ip=40.107.92.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XbwT7XDy6l3osANg2hR+BCXmi1HauzAX7paT4X0xbAnT5nCPEaJ5EI64Zhaz/9KV0OTLqP9UwIFpKAA141LluPc0ts/IbUUJzKkTzNnr3QBWcO6LdWTFWvL7ujcsPHY5zBfyxzef6NXVQNytqXShMlbW0yNjXl4Xoy7iqjom9cR8JpT+HDoAN77Bu3ZmZUZ+b4B1sP7gWDINRqXTsrI1v3yu4wj4hJBNaYnvinWGMKNRYEgL8kbVkQL8tKgDqbcpL/cBQHBd2h7U/La+Cgdj8VcWGXkDZLeZuGERPhDbONYVfVnl/o1SzM8HxmyCqkvfVz5AOERbuInT1K1IqI9bqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5k5ilDy4+Pcatqayc5wEc9j5BYPGyE/EYGHV5klirxQ=;
+ b=hkXtqZpSFMkqgAc+ooLHN+Br+1xj36mztHaYQWgwrn/+J1faTMuhXFtwNudyU8Rr0o7vseP25UGPpe5Z41VXCNcBgK++/xhzhysjEsTMMug8G/2SFneHBj/jvSBd9aXSj0ezRje/G4zP2Zqeh0z7erQMCgVojxQ/tWQnsQb7Xmocq76ZGfR9N4P73HNQX6G49McaCUaqrnPcuYUkBiZyc0EgJ59CGHho4rDv0vbEhmXVoQHryOOm4wRPxovMif9xGM0zQtcpxmbfhXlDr3hvqxEwqHL6wJ5K2G5K3uILEY9aiMXu9LwhQCxCU+BElV+Z/MYZmU+z/79CBJA6sZ5QGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5k5ilDy4+Pcatqayc5wEc9j5BYPGyE/EYGHV5klirxQ=;
+ b=xr7/YRXmBO3Hb0M7n+1oGyIC1fFExDgu1iwhr1BdMG+9MyVO8mRKP2u/+nfBy4SnfB6m2LwM+ZHo7aQeVjz3yvVB1oBqRV2nh27y7OlkHfcvZcjleaSfjcRmnZ594HRDIUCKRIqEu+ikYcjoHQ37jdqjjx0rbCQdpGSoA+a/b2Q=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22)
+ by CY5PR12MB6060.namprd12.prod.outlook.com (2603:10b6:930:2f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Thu, 12 Dec
+ 2024 09:28:08 +0000
+Received: from DM6PR12MB4202.namprd12.prod.outlook.com
+ ([fe80::f943:600c:2558:af79]) by DM6PR12MB4202.namprd12.prod.outlook.com
+ ([fe80::f943:600c:2558:af79%5]) with mapi id 15.20.8230.016; Thu, 12 Dec 2024
+ 09:28:08 +0000
+Message-ID: <58b9bcce-ac76-e0d0-1a8d-a8d8c0b20b43@amd.com>
+Date: Thu, 12 Dec 2024 09:28:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v4 07/15] PCI/AER: Add CXL PCIe Port Uncorrectable Error
+ recovery in AER service driver
+Content-Language: en-US
+To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ nifan.cxl@gmail.com, ming4.li@intel.com, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
+ PradeepVineshReddy.Kodamati@amd.com
+References: <20241211234002.3728674-1-terry.bowman@amd.com>
+ <20241211234002.3728674-8-terry.bowman@amd.com>
+From: Alejandro Lucero Palau <alucerop@amd.com>
+In-Reply-To: <20241211234002.3728674-8-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PR1P264CA0146.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:346::11) To DM6PR12MB4202.namprd12.prod.outlook.com
+ (2603:10b6:5:219::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 3/5] rtnetlink: Decouple net namespaces in
- rtnl_newlink_create()
-To: Xiao Liang <shaw.leon@gmail.com>, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Kuniyuki Iwashima <kuniyu@amazon.com>,
- Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern
- <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Ido Schimmel <idosch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Jiri Pirko <jiri@resnulli.us>, Hangbin Liu <liuhangbin@gmail.com>,
- linux-rdma@vger.kernel.org, linux-can@vger.kernel.org,
- osmocom-net-gprs@lists.osmocom.org, bpf@vger.kernel.org,
- linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
- linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
- bridge@lists.linux.dev, linux-wpan@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241209140151.231257-1-shaw.leon@gmail.com>
- <20241209140151.231257-4-shaw.leon@gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241209140151.231257-4-shaw.leon@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4202:EE_|CY5PR12MB6060:EE_
+X-MS-Office365-Filtering-Correlation-Id: 76572e05-0608-4318-5030-08dd1a8f49db
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?KzFaYU1QZjI5V050cEhxc05VRjAzYTNJb0NPUGVHdiswQzl5THFFNlBBMTZX?=
+ =?utf-8?B?ZGRtcnU3Z3JaK2JzK29sRGdTOWxjZVRTT3FENm9CTEwzOVBjNWFyT1FWTzd0?=
+ =?utf-8?B?TzMyc1ZXVTlKWXZrajU2QUVaK2gwOG95L0htOThHb2FsYlYrZ0loaW1zcVZl?=
+ =?utf-8?B?aUd6VlZtNmplY1V4OEFvUlYyeTVrT2RCMzJnVFQzSGU5ckRjWE03d1FUcG1o?=
+ =?utf-8?B?YVJ0WkxqcjRVc0daK3hqditCL0RpajZNS1NIRG9pZnE2VlVsdHI5NWJyZVpq?=
+ =?utf-8?B?Q1FsT1dEaWpSa21tQlNNam4zRlgxNDMwM280YzFkV1lFd3FMeTNvT2dsMVlD?=
+ =?utf-8?B?TlFjOUxTeDFkM2JJUWFsTVlaUVVrNU1LNTFqR1VNdVd1M3FTdWl5TWZLOUtw?=
+ =?utf-8?B?UlR6Z0YzV2d6UmlKa3BOaEFOMDRRUmNJaTRLZGp2WmJVSzBlRlNjb0JNaUdn?=
+ =?utf-8?B?ZDZ2aGdMcjZ2d1puS3pNSG1WQnphaDYyYzNEb2J6WHZNSC9hY3NZV3U1RWsr?=
+ =?utf-8?B?SHdjUXZHSnRVOUdLWmcrbUlpMnFLaVBlUUxKbUZtVFpxbXdwTjA2S25UZXpO?=
+ =?utf-8?B?OUM5V2VTWUhwaFdlcUlseGZCbmREY0Y1N05Pck1wK3FndUpLQUlFaEoyWVVZ?=
+ =?utf-8?B?MG0vbHNBd0cyNDJBYk9xVWwwR2V6cFc2cHEyUXY3OHhIZXp5dldPcGtzVnc4?=
+ =?utf-8?B?MjFEdFhYdGpCZ09nM0h6SHlDaEhzSWtnRE9YOXRkdXlvNmovb3NZTHJMalZ2?=
+ =?utf-8?B?R2l1aVQ1VmFvdktuR2wyVTltRWJpeGgrdlB4N0dNRy9aOUU2NzBhSDBGajly?=
+ =?utf-8?B?UVRpTlJjTkJHN2szUStwS3JCMjA5ZTE2RzVQL3g3VUl3eWZHckdXd0t4ZnJt?=
+ =?utf-8?B?SWdKV2VaWWIvbzFMVUI0NFdqa3pNaUwxaE5WQ2NSeXFHYlZGZDdFZ0lEV201?=
+ =?utf-8?B?VWdDbFBiNmFYY1NnRHVWTVY0UVZhbDZXaFhsdzV1Vm02blBsZ1RDK09Dcm44?=
+ =?utf-8?B?V0NoTkgwdHhjL2thWHdoQzFZeE1LOG5IUFlyZElXMXMvYmZxbi8yMGFtNjRM?=
+ =?utf-8?B?ZERkanE4K2RsakdCYnBSUlVzUEh0MzkrUHNIRTUwcXJIclR5YVFtK044ODFx?=
+ =?utf-8?B?bW5CSGpTUWJJenZpOE5zbEYrNlhCMkM1ZGJuWmd1NFdyaC9EQ1ZDc3VCTWJL?=
+ =?utf-8?B?QTd2NkdLRjMybmlmT2ZwcE44SmJkOGZyN3B3RGZBc2gvNTVtTzVsNmpFS1NJ?=
+ =?utf-8?B?V01EYnEzY1V2aGM1UHFzc3dMa2FYcy9ld1VER3JXMmE5N0J1OUsySkFlaXlI?=
+ =?utf-8?B?ei9Ld0NNU09McVEwN3JoUDZOQWNPZFNMYXEwQXhDbEcwNnAzQTB1bnhyb2Z5?=
+ =?utf-8?B?alBOY0NYZ294a1doVVlZUmlBTmM3SGJDQXpUQjR1UEo4WVJVaEJKd1l5OXp4?=
+ =?utf-8?B?ZE5jdjJzYjkxbEVJcHZBTUl6SGZpSFN1M09qNy9SaWNhdklkWXFLQ0dVOFJz?=
+ =?utf-8?B?L25LUVVOZEg5OVBIb0o5OHV2UzZKSGtNVmg0Z3NZbmkrWEVoZ0xlYisrUzV2?=
+ =?utf-8?B?bDBpQlFaMWlWTVFPVkN3TU9Db2hUNVB6NWdPQVlNTzRlZTZidG95aGJDQ2RF?=
+ =?utf-8?B?RE1rR3lsN0oya2N0ZGFZcmt2Y29vY2NuQ3IrdG9JcDY5T2o0WWQ3N1N6dWlo?=
+ =?utf-8?B?QTgxYk1uTmkydGFGdGVZMHRrOXVWRkRBVGVuclNzVWozYnd6d29qZUVEUkU3?=
+ =?utf-8?B?a0VzaU9SQURtblRjUVZYTjZPMkt2aGVjUG9kc3RkbkU0VHZ4WmpGUDdVYUR4?=
+ =?utf-8?B?eTNGaEtjRStpc3U4blk1M203djJ5a29WZDhrWGxsejY5RmdNcjJSenBBSUo0?=
+ =?utf-8?B?bHQ1eUViazM2ZmdTdFBSS2VPc1VWZC91ZkVtUFQ1a21JZ0E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4202.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dXBhak54aThGWnZCOTBnYmJUelZBZ1h3cXh5OHl0RmMvQkV1aHpsT1V4NmV0?=
+ =?utf-8?B?eWRUMkVoL1ZqS090L1hoUTY4cEREb0REMEVTUEhvWkNZV0FYeFp3Y1RNaERE?=
+ =?utf-8?B?bkxpd29jZEZjU3BaV2tsa0c5anE0RC9xQW8rbkdlM3VIaWhJUG5rWEJpL3RJ?=
+ =?utf-8?B?VHNKQjhETlhDTXhuR0tVdGpyU09YQkNPc3cyRzROVHkvQTF5cDZlRmJmSm5O?=
+ =?utf-8?B?MVNFaTVReloxVmQrODl2eUJZaysveVhGdEVQQ1hLMUcxMGhVTHRnU2NvV2NP?=
+ =?utf-8?B?RWVDSHZZN0pzR1NOeE11aGd6SHZ3VGZ5STVnSmo5UlNnK3VaQS94cVVZN3ND?=
+ =?utf-8?B?UkY3ZEVGam9UNkc4dGV5dVU2WU56bUR1eGlGSmlGRitaMy9FamlWU3hIRFEz?=
+ =?utf-8?B?QUFwUjF6REpnVmJ3RzFrU2xYT0k0d2lIQm1kYzdoMU5CSENTL3ovTllvOFpN?=
+ =?utf-8?B?NzRtd0d0WTRadkU5cC93Nmo5Y2xYN3o3NDNRSWJBUlFDRkxQM012MDc5K3Fr?=
+ =?utf-8?B?L3phYytXNHc2cTh3WHAyL1ZCMVYxNHhvRGRwMzEzMFhqT096aHRHTXprVSty?=
+ =?utf-8?B?RDFnTFVseVczR2drTzhwNmRsSXorY3hvYUlIUFYwRWQreUExcW1JLzFkNEdS?=
+ =?utf-8?B?TW5OVHFaUDhQWXhjUjlJNndGbXJtcEp2UC8yNnNHOVY5ZDE1RThOenRPblFE?=
+ =?utf-8?B?Yi9BMFUzRE5GZVl3V0d1Vy9FMXJQRGxqUjdvQTdmV1hiQTJXM3RNeHFEb294?=
+ =?utf-8?B?VVpneVoyOXdnZ3FucDFoaThMWnlac1llTkpneWxZdk00UkROK2ZuWUN4ZWhp?=
+ =?utf-8?B?QzZjWnNCTzVnbjNZN0lya2N1SzYvOEJTa2IrVmVETVZmYXQvdVg0UDNuMTAw?=
+ =?utf-8?B?WEFFTEZaNEFEelM5V3p5cjE2SytuYVZ4bWIyREhtaXdlZ2s0dllxMmVaZnBS?=
+ =?utf-8?B?R1lwL1ZoT2hQQzN3b3FpaGdSSHF5Y2Vxa0tTNXlwcmF1c3NORzBnT2o1T1gz?=
+ =?utf-8?B?dmxlYkJtR0huYjlGOVo5c2V1NFVTTGx0MVlvRDdLcmlTOTRlZVdza1F0WWFW?=
+ =?utf-8?B?TnJpM2JyS3haRHF2L2h3dFRFVURYbnVRWmMvMGJqRzRVdUFXbWVtMFJzOTR3?=
+ =?utf-8?B?ek1JRkRDNURUTTBYenI5bmlaTitubHF0aG1EcVFMcDJhTWJzVXd0WjV2TUxT?=
+ =?utf-8?B?R0xEc2JNcUtKcWMyTnRzME5KdkZUUnB2N3RLOGZPTDQrcnVHSHlZdXg3QlAr?=
+ =?utf-8?B?dUZyZ21KMXNiZWtCL2FSWXhraTgybXVpT1Z5REh2b0pDc2E3UzVZMis4YldO?=
+ =?utf-8?B?S1hDYjdDM2tweGtubnJDSHJQQTE3eTUybFpVSU1aL0laelpBeXlYY0Fzdi82?=
+ =?utf-8?B?SlUwYnF6eG8yeUZXVHZqeFhHQjZpSkp4R21IQnVvTitiRmErbEdLQ3JEa0VM?=
+ =?utf-8?B?KzFtK0FQRUhMNkJLc1pFUFlKNmxtUGx2bXJHRXdueUlkcmtkTGFNYjdnVFlI?=
+ =?utf-8?B?dllzMVFMZXVFVHFDam00ZDd1WXk5bk0wc29jZGdQbUJvbDBjKytlRExXR1p4?=
+ =?utf-8?B?VUJkckhLRnYzb0pMalFLQ0REMVdzNDB0WnF5enVRa3FNL1VGMmRzcEgrOHBi?=
+ =?utf-8?B?REw5YjlnNDBTQ1UybHpLblZwbEhKajMvazBGL2JrSmhXQmNiYUdIc0FKZWxB?=
+ =?utf-8?B?WUpJa2lXQS96REZKa3lxQXhGbWdnYUtESnUzWG9WMVVqSmUwdDFjMjVvTmVW?=
+ =?utf-8?B?R01admFlUTlocFc2TEdReEVTcHlrOUZOcWIrTTdaQUg2eGVPTUlCYTBUVnI4?=
+ =?utf-8?B?VlpqREZ5TkN3MHhjblNOZDFDUktFTzY3R2d2UG9WNTluTW1EbjNyWkxCL1J4?=
+ =?utf-8?B?VVdCWUQ4V3hKKzJmanN5MVJIVXExS0w0VExxTlBQVk9TamlJOEh2ZUlZMTdF?=
+ =?utf-8?B?b0x2elRjK3JHK1JENSt1V3JoY2p2Q01xWGtPRm1xTCsrblRzeXE5c2FUSlZn?=
+ =?utf-8?B?Skd3bWlucjJVdzQwaHdsSTZySDRlRUZiODY0aEl1c0pMNUNnaDJCenhaQk9z?=
+ =?utf-8?B?RjdHWnZ6c0lnbk9DWTVxQ0RwMDJGOHlpWlFWb2tSWkdHa1lrY1lOSG1LTGxP?=
+ =?utf-8?Q?iKW1KOImrU9mAQE72Rm1j/fui?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76572e05-0608-4318-5030-08dd1a8f49db
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4202.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 09:28:08.0584
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8qaMVssjQiIQNhssR+fkK3IUOCLCPBywU6Au0aV0T+qeq7oEiiXoeRutxOLSoy772iY5ppMOyvq4r/ggsN1L4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6060
 
-On 12/9/24 15:01, Xiao Liang wrote:
-> There are 4 net namespaces involved when creating links:
-> 
->  - source netns - where the netlink socket resides,
->  - target netns - where to put the device being created,
->  - link netns - netns associated with the device (backend),
->  - peer netns - netns of peer device.
-> 
-> Currently, two nets are passed to newlink() callback - "src_net"
-> parameter and "dev_net" (implicitly in net_device). They are set as
-> follows, depending on netlink attributes.
-> 
->  +------------+-------------------+---------+---------+
->  | peer netns | IFLA_LINK_NETNSID | src_net | dev_net |
->  +------------+-------------------+---------+---------+
->  |            | absent            | source  | target  |
->  | absent     +-------------------+---------+---------+
->  |            | present           | link    | link    |
->  +------------+-------------------+---------+---------+
->  |            | absent            | peer    | target  |
->  | present    +-------------------+---------+---------+
->  |            | present           | peer    | link    |
->  +------------+-------------------+---------+---------+
-> 
-> When IFLA_LINK_NETNSID is present, the device is created in link netns
-> first. This has some side effects, including extra ifindex allocation,
-> ifname validation and link notifications. There's also an extra step to
-> move the device to target netns. These could be avoided if we create it
-> in target netns at the beginning.
-> 
-> On the other hand, the meaning of src_net is ambiguous. It varies
-> depending on how parameters are passed. It is the effective link or peer
-> netns by design, but some drivers ignore it and use dev_net instead.
-> 
-> This patch refactors netns handling by packing newlink() parameters into
-> a struct, and passing source, link and peer netns as is through this
-> struct. Fallback logic is implemented in helper functions -
-> rtnl_newlink_link_net() and rtnl_newlink_peer_net(). If is not set, peer
-> netns falls back to link netns, and link netns falls back to source netns.
-> rtnl_newlink_create() now creates devices in target netns directly,
-> so dev_net is always target netns.
-> 
-> For drivers that use dev_net as fallback of link_netns, current behavior
-> is kept for compatibility.
-> 
-> Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
 
-I must admit this patch is way too huge for me to allow any reasonable
-review except that this has the potential of breaking a lot of things.
+On 12/11/24 23:39, Terry Bowman wrote:
+> Existing recovery procedure for PCIe Uncorrectable Errors (UCE) does not
+> apply to CXL devices. Recovery can not be used for CXL devices because of
+> potential corruption on what can be system memory. Also, current PCIe UCE
+> recovery, in the case of a Root Port (RP) or Downstream Switch Port (DSP),
+> does not begin at the RP/DSP but begins at the first downstream device.
+> This will miss handling CXL Protocol Errors in a CXL RP or DSP. A separate
+> CXL recovery is needed because of the different handling requirements
+>
+> Add a new function, cxl_do_recovery() using the following.
+>
+> Add cxl_walk_bridge() to iterate the detected error's sub-topology.
+> cxl_walk_bridge() is similar to pci_walk_bridge() but the CXL flavor
+> will begin iteration at the RP or DSP rather than beginning at the
+> first downstream device.
+>
+> Add cxl_report_error_detected() as an analog to report_error_detected().
+> It will call pci_driver::cxl_err_handlers for each iterated downstream
+> device. The pci_driver::cxl_err_handler's UCE handler returns a boolean
+> indicating if there was a UCE error detected during handling.
+>
+> cxl_do_recovery() uses the status from cxl_report_error_detected() to
+> determine how to proceed. Non-fatal CXL UCE errors will be treated as
+> fatal. If a UCE was present during handling then cxl_do_recovery()
+> will kernel panic.
+>
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> ---
+>   drivers/pci/pci.h      |  3 +++
+>   drivers/pci/pcie/aer.c |  4 ++++
+>   drivers/pci/pcie/err.c | 54 ++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 61 insertions(+)
+>
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 14d00ce45bfa..5a67e41919d8 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -658,6 +658,9 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>   		pci_channel_state_t state,
+>   		pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev));
+>   
+> +/* CXL error reporting and handling */
+> +void cxl_do_recovery(struct pci_dev *dev);
+> +
+>   bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
+>   int pcie_retrain_link(struct pci_dev *pdev, bool use_lt);
+>   
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index c1eb939c1cca..861521872318 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1024,6 +1024,8 @@ static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
+>   			err_handler->error_detected(dev, pci_channel_io_normal);
+>   		else if (info->severity == AER_FATAL)
+>   			err_handler->error_detected(dev, pci_channel_io_frozen);
+> +
+> +		cxl_do_recovery(dev);
+>   	}
+>   out:
+>   	device_unlock(&dev->dev);
+> @@ -1048,6 +1050,8 @@ static void cxl_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>   			pdrv->cxl_err_handler->cor_error_detected(dev);
+>   
+>   		pcie_clear_device_status(dev);
+> +	} else {
+> +		cxl_do_recovery(dev);
+>   	}
+>   }
+>   
+> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+> index 31090770fffc..6f7cf5e0087f 100644
+> --- a/drivers/pci/pcie/err.c
+> +++ b/drivers/pci/pcie/err.c
+> @@ -276,3 +276,57 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+>   
+>   	return status;
+>   }
+> +
+> +static void cxl_walk_bridge(struct pci_dev *bridge,
+> +			    int (*cb)(struct pci_dev *, void *),
+> +			    void *userdata)
+> +{
+> +	bool *status = userdata;
+> +
+> +	cb(bridge, status);
+> +	if (bridge->subordinate && !*status)
 
-I think you should be splitted to make it more palatable; i.e.
-- a patch just add the params struct with no semantic changes.
-- a patch making the dev_change_net_namespace() conditional on net !=
-tge_net[1]
-- many per-device patches creating directly the device in the target
-namespace.
-- a patch reverting [1]
 
-Other may have different opinions, I'd love to hear them.
+I would prefer to use not a pointer for status as you are not changing 
+what it points to here, so first a cast then using just !status in the 
+conditional.
 
-> diff --git a/drivers/net/amt.c b/drivers/net/amt.c
-> index 98c6205ed19f..2f7bf50e05d2 100644
-> --- a/drivers/net/amt.c
-> +++ b/drivers/net/amt.c
-> @@ -3161,14 +3161,17 @@ static int amt_validate(struct nlattr *tb[], struct nlattr *data[],
->  	return 0;
->  }
->  
-> -static int amt_newlink(struct net *net, struct net_device *dev,
-> -		       struct nlattr *tb[], struct nlattr *data[],
-> -		       struct netlink_ext_ack *extack)
-> +static int amt_newlink(struct rtnl_newlink_params *params)
->  {
-> +	struct net_device *dev = params->dev;
-> +	struct nlattr **tb = params->tb;
-> +	struct nlattr **data = params->data;
-> +	struct netlink_ext_ack *extack = params->extack;
-> +	struct net *link_net = rtnl_newlink_link_net(params);
->  	struct amt_dev *amt = netdev_priv(dev);
->  	int err = -EINVAL;
 
-Minor nit: here and and many other places, please respect the reverse
-xmas tree order.
+> +		pci_walk_bus(bridge->subordinate, cb, status);
+> +}
+> +
+> +static int cxl_report_error_detected(struct pci_dev *dev, void *data)
+> +{
+> +	struct pci_driver *pdrv = dev->driver;
+> +	bool *status = data;
+> +
+> +	device_lock(&dev->dev);
+> +	if (pdrv && pdrv->cxl_err_handler &&
+> +	    pdrv->cxl_err_handler->error_detected) {
+> +		const struct cxl_error_handlers *cxl_err_handler =
+> +			pdrv->cxl_err_handler;
+> +		*status |= cxl_err_handler->error_detected(dev);
 
-Thanks,
 
-Paolo
+This implies status should not be a bool pointer as different bits can 
+be set by the returning value, but as the code seems to only care about 
+any bit implying an error and therefore error detected, I guess that is 
+fine. However, the next function calling this one is using an int ...
 
+
+Confusing to me. I would expect here not an OR but returning just when a 
+first error is detected, handling the lock properly, with the walk 
+function behind the scenes breaking the walk if the return is anything 
+other than zero.
+
+
+> +	}
+> +	device_unlock(&dev->dev);
+> +	return *status;
+> +}
+> +
+> +void cxl_do_recovery(struct pci_dev *dev)
+> +{
+> +	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+> +	int type = pci_pcie_type(dev);
+> +	struct pci_dev *bridge;
+> +	int status;
+> +
+> +	if (type == PCI_EXP_TYPE_ROOT_PORT ||
+> +	    type == PCI_EXP_TYPE_DOWNSTREAM ||
+> +	    type == PCI_EXP_TYPE_UPSTREAM ||
+> +	    type == PCI_EXP_TYPE_ENDPOINT)
+> +		bridge = dev;
+> +	else
+> +		bridge = pci_upstream_bridge(dev);
+> +
+> +	cxl_walk_bridge(bridge, cxl_report_error_detected, &status);
+> +	if (status)
+> +		panic("CXL cachemem error.");
+> +
+> +	if (host->native_aer || pcie_ports_native) {
+> +		pcie_clear_device_status(dev);
+> +		pci_aer_clear_nonfatal_status(dev);
+> +	}
+> +
+> +	pci_info(bridge, "CXL uncorrectable error.\n");
+> +}
 
