@@ -1,244 +1,168 @@
-Return-Path: <linux-kernel+bounces-443938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E94B9EFDCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:03:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F259EFDCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:04:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DFF28266D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:03:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A948216197E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB57E1B2191;
-	Thu, 12 Dec 2024 21:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC091BC9F4;
+	Thu, 12 Dec 2024 21:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9RjlnDm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z/G3DwgQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429F613FD72;
-	Thu, 12 Dec 2024 21:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED411922E4
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734037415; cv=none; b=akcoiFrLQaTZuIsdfBBqEudiSg1iJmMOJ40/issl3j2edh79qLo3r0s3g0qw2v4rBiV9PSWs6KlzcL+2iJClqATZJpeaUW29oLjAQiX7a3XUalhqF81iQVF5VkbEwzeNozZBmie38f21UcTOCXOSkFSjrNLRx+zZYYYZlaq31D8=
+	t=1734037472; cv=none; b=DYWMcp/2zJ9wfBvqYQPQ6GF1i9RPa1he41L2ehZi285t37XglHFHEePVxwn6rXq+4tG8k5K+YAjXdt3TTDrEFFwU9+OrdmDIq+MEp5r7u5rDqw37ltqJoWT+NHnv1QriFxWU/CzmR40LCy1gQTDVUkX6ScHu5G1yj+iB02uWXkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734037415; c=relaxed/simple;
-	bh=RncyA5wIcNFTU3uBJEU/wdJvFZiGq9Ga1iSEqfbdaJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gAR9TcQOfuIY3SudIIozLU0nUhqDB2MLokV+eIQoMxloR8ibzpDmp0Ft/WoUFPtnd9BPpgeqAe0YnTSNmvEjQzgzSdTYvjPmj/z/PxIGOcLQ11JMcaCttQPQwhuSvMfZliauaP3DXjrZoOKvvj4tTLa1zCLGPZavBWj2grLO4ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9RjlnDm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D23C4CECE;
-	Thu, 12 Dec 2024 21:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734037414;
-	bh=RncyA5wIcNFTU3uBJEU/wdJvFZiGq9Ga1iSEqfbdaJc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p9RjlnDmYma+jBnGTweFkRAPRLNZC0LLAVLfIoY1mOSn6t3Nx3bZM/U5OGTkcEI6l
-	 cmdbVO7TBg6Y2F2qSXezQDVbmv9fLRughpK/ppNqdOBJWq9Qzpn3ZqzMnkLEXOGEOj
-	 t6ENxpqV3t0y3ixcZSh+Nyxenc2Jw/Nz3Orl2m5CvoSPOnaT1ipBdO2b3H2JrW60r3
-	 LzX5vqNhEtzMCY7POt/TxEnsambWx3UsLYZQvI1457FD2AtLetjJJPGZ4qlYGdnj7d
-	 BHau5WL1XwMEOR0tNrEs1TU4Z1yn/VpUme3Cn1pUMqFaE+leCKJmOPoaAiVryYKmg/
-	 P6BQPn0xgeVCg==
-Date: Thu, 12 Dec 2024 13:03:33 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v12 04/10] perf record --off-cpu: Dump off-cpu samples in
- BPF
-Message-ID: <Z1tPpZ7HHaF8g4PQ@google.com>
-References: <20241212022420.1035999-1-howardchu95@gmail.com>
- <20241212022420.1035999-5-howardchu95@gmail.com>
+	s=arc-20240116; t=1734037472; c=relaxed/simple;
+	bh=aJpqbvI4STgzb2cQr1nzOQxdJ7I4Sxmsit523/V0kCw=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=WX9c5sjf64FWa0JJ4NBfnMTgueoeo0Mi9uZx5bYwKU9RvfId7Tb/ap2qdaKtWON1C4BckFXQXo4l6grrQg475JcMUPZbCWz3YGxks8uztAlKtUfEe931Q9frXSbx2/HOBf/aEZtNMrEP/1zxWQzcinG3VNMr8KjOXHun0p/0UJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z/G3DwgQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734037470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UJ061P1Dr12VwDcDgqIvm5UI7xtypEyUk8M1AhY3aQo=;
+	b=Z/G3DwgQ0n3gzmDruCWPiiFZ1RymucBeKOTuHyfcXlaxI1gftKFCeCOd7KV25/MBE5CFm2
+	f0JbpEyJF0ihZ7zRT1bK+gPEMZ8sSuf6fNlf7C6ZRfZFW3xWG4RSgoFX9hLup36K+ufVC/
+	NgRKotfWNV9bUn0LogCALhQILx0gP7E=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-213-czDF83xzOtO6XfRDMqo_9Q-1; Thu,
+ 12 Dec 2024 16:04:26 -0500
+X-MC-Unique: czDF83xzOtO6XfRDMqo_9Q-1
+X-Mimecast-MFC-AGG-ID: czDF83xzOtO6XfRDMqo_9Q
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5DD1419560A5;
+	Thu, 12 Dec 2024 21:04:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 663B91956052;
+	Thu, 12 Dec 2024 21:04:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] rxrpc: Fix ability to add more data to a call once MSG_MORE deasserted 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241212022420.1035999-5-howardchu95@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2870479.1734037462.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Dec 2024 21:04:22 +0000
+Message-ID: <2870480.1734037462@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello,
+When userspace is adding data to an RPC call for transmission, it must pas=
+s
+MSG_MORE to sendmsg() if it intends to add more data in future calls to
+sendmsg().  Calling sendmsg() without MSG_MORE being asserted closes the
+transmission phase of the call (assuming sendmsg() adds all the data
+presented) and further attempts to add more data should be rejected.
 
-On Wed, Dec 11, 2024 at 06:24:14PM -0800, Howard Chu wrote:
-> Collect tid, period, callchain, and cgroup id and dump them when off-cpu
-> time threshold is reached.
-> 
-> We don't collect the off-cpu time twice (the delta), it's either in
-> direct samples, or accumulated samples that are dumped at the end of
-> perf.data.
-> 
-> Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: James Clark <james.clark@linaro.org>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Link: https://lore.kernel.org/r/20241108204137.2444151-6-howardchu95@gmail.com
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/util/bpf_skel/off_cpu.bpf.c | 86 ++++++++++++++++++++++++--
->  1 file changed, 81 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> index c87132e01eb3..aae63d999abb 100644
-> --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> @@ -19,11 +19,17 @@
->  #define MAX_ENTRIES  102400
->  
->  #define MAX_CPUS  4096
-> +#define MAX_OFFCPU_LEN 37
-> +
-> +struct stack {
-> +	u64 array[MAX_STACKS];
-> +};
->  
->  struct tstamp_data {
->  	__u32 stack_id;
->  	__u32 state;
->  	__u64 timestamp;
-> +	struct stack stack;
->  };
->  
->  struct offcpu_key {
-> @@ -41,6 +47,10 @@ struct {
->  	__uint(max_entries, MAX_ENTRIES);
->  } stacks SEC(".maps");
->  
-> +struct offcpu_data {
-> +	u64 array[MAX_OFFCPU_LEN];
-> +};
-> +
->  struct {
->  	__uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
->  	__uint(key_size, sizeof(__u32));
-> @@ -48,6 +58,13 @@ struct {
->  	__uint(max_entries, MAX_CPUS);
->  } offcpu_output SEC(".maps");
->  
-> +struct {
-> +	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-> +	__uint(key_size, sizeof(__u32));
-> +	__uint(value_size, sizeof(struct offcpu_data));
-> +	__uint(max_entries, 1);
-> +} offcpu_payload SEC(".maps");
-> +
->  struct {
->  	__uint(type, BPF_MAP_TYPE_TASK_STORAGE);
->  	__uint(map_flags, BPF_F_NO_PREALLOC);
-> @@ -194,6 +211,47 @@ static inline int can_record(struct task_struct *t, int state)
->  	return 1;
->  }
->  
-> +static inline int copy_stack(struct stack *from, struct offcpu_data *to, int n)
-> +{
-> +	int len = 0;
-> +
-> +	for (int i = 0; i < MAX_STACKS && from->array[i]; ++i, ++len)
-> +		to->array[n + 2 + i] = from->array[i];
-> +
-> +	return len;
-> +}
-> +
-> +/**
-> + * off_cpu_dump - dump off-cpu samples to ring buffer
-> + * @data: payload for dumping off-cpu samples
-> + * @key: off-cpu data
-> + * @stack: stack trace of the task before being scheduled out
-> + *
-> + * If the threshold of off-cpu time is reached, acquire tid, period, callchain, and cgroup id
-> + * information of the task, and dump it as a raw sample to perf ring buffer
-> + */
-> +static int off_cpu_dump(void *ctx, struct offcpu_data *data, struct offcpu_key *key,
-> +			struct stack *stack, __u64 delta)
-> +{
-> +	int n = 0, len = 0;
-> +
-> +	data->array[n++] = (u64)key->tgid << 32 | key->pid;
-> +	data->array[n++] = delta;
-> +
-> +	/* data->array[n] is callchain->nr (updated later) */
-> +	data->array[n + 1] = PERF_CONTEXT_USER;
-> +	data->array[n + 2] = 0;
-> +	len = copy_stack(stack, data, n);
-> +
-> +	/* update length of callchain */
-> +	data->array[n] = len + 1;
-> +	n += len + 2;
-> +
-> +	data->array[n++] = key->cgroup_id;
-> +
-> +	return bpf_perf_event_output(ctx, &offcpu_output, BPF_F_CURRENT_CPU, data, n * sizeof(u64));
-> +}
-> +
->  static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
->  			struct task_struct *next, int state)
->  {
-> @@ -218,6 +276,16 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
->  	pelem->state = state;
->  	pelem->stack_id = stack_id;
->  
-> +	/*
-> +	 * If stacks are successfully collected by bpf_get_stackid(), collect them once more
-> +	 * in task_storage for direct off-cpu sample dumping
-> +	 */
-> +	if (stack_id > 0 && bpf_get_stack(ctx, &pelem->stack, MAX_STACKS * sizeof(u64), BPF_F_USER_STACK)) {
-> +		/*
-> +		 * This empty if block is used to avoid 'result unused warning' from bpf_get_stack().
-> +		 * If the collection fails, continue with the logic for the next task.
-> +		 */
-> +	}
->  next:
->  	pelem = bpf_task_storage_get(&tstamp, next, NULL, 0);
->  
-> @@ -232,11 +300,19 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
->  		__u64 delta = ts - pelem->timestamp;
->  		__u64 *total;
->  
-> -		total = bpf_map_lookup_elem(&off_cpu, &key);
-> -		if (total)
-> -			*total += delta;
-> -		else
-> -			bpf_map_update_elem(&off_cpu, &key, &delta, BPF_ANY);
-> +		if (delta >= offcpu_thresh_ns) {
+However, this is no longer the case.  The change of call state that was
+previously the guard got bumped over to the I/O thread, which leaves a
+window for a repeat sendmsg() to insert more data.  This previously went
+unnoticed, but the more recent patch that changed the structures behind th=
+e
+Tx queue added a warning:
 
-It seems offcpu_thresh_ns is not defined at this moment.  You can use
-a hard-coded value with a comment for now.
+        WARNING: CPU: 3 PID: 6639 at net/rxrpc/sendmsg.c:296 rxrpc_send_da=
+ta+0x3f2/0x860
 
-Thanks,
-Namhyung
+and rejected the additional data, returning error EPROTO.
 
+Fix this by adding a guard flag to the call, setting the flag when we queu=
+e
+the final packet and then rejecting further attempts to add data with
+EPROTO.
 
-> +			int zero = 0;
-> +			struct offcpu_data *data = bpf_map_lookup_elem(&offcpu_payload, &zero);
-> +
-> +			if (data)
-> +				off_cpu_dump(ctx, data, &key, &pelem->stack, delta);
-> +		} else {
-> +			total = bpf_map_lookup_elem(&off_cpu, &key);
-> +			if (total)
-> +				*total += delta;
-> +			else
-> +				bpf_map_update_elem(&off_cpu, &key, &delta, BPF_ANY);
-> +		}
->  
->  		/* prevent to reuse the timestamp later */
->  		pelem->timestamp = 0;
-> -- 
-> 2.43.0
-> 
+Fixes: 2d689424b618 ("rxrpc: Move call state changes from sendmsg to I/O t=
+hread")
+Reported-by: syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/r/6757fb68.050a0220.2477f.005f.GAE@google.=
+com/
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: syzbot+ff11be94dfcd7a5af8da@syzkaller.appspotmail.com
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: linux-afs@lists.infradead.org
+cc: netdev@vger.kernel.org
+---
+ net/rxrpc/ar-internal.h |    1 +
+ net/rxrpc/sendmsg.c     |    8 ++++++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index 0c0a3c89dba3..718193df9d2e 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -571,6 +571,7 @@ enum rxrpc_call_flag {
+ 	RXRPC_CALL_RX_LAST,		/* Received the last packet (at rxtx_top) */
+ 	RXRPC_CALL_TX_LAST,		/* Last packet in Tx buffer (at rxtx_top) */
+ 	RXRPC_CALL_TX_ALL_ACKED,	/* Last packet has been hard-acked */
++	RXRPC_CALL_TX_NO_MORE,		/* No more data to transmit (MSG_MORE deasserted=
+) */
+ 	RXRPC_CALL_SEND_PING,		/* A ping will need to be sent */
+ 	RXRPC_CALL_RETRANS_TIMEOUT,	/* Retransmission due to timeout occurred */
+ 	RXRPC_CALL_BEGAN_RX_TIMER,	/* We began the expect_rx_by timer */
+diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
+index c4c8b718cafa..0e8da909d4f2 100644
+--- a/net/rxrpc/sendmsg.c
++++ b/net/rxrpc/sendmsg.c
+@@ -266,6 +266,7 @@ static void rxrpc_queue_packet(struct rxrpc_sock *rx, =
+struct rxrpc_call *call,
+ 	/* Order send_top after the queue->next pointer and txb content. */
+ 	smp_store_release(&call->send_top, seq);
+ 	if (last) {
++		set_bit(RXRPC_CALL_TX_NO_MORE, &call->flags);
+ 		rxrpc_notify_end_tx(rx, call, notify_end_tx);
+ 		call->send_queue =3D NULL;
+ 	}
+@@ -329,6 +330,13 @@ static int rxrpc_send_data(struct rxrpc_sock *rx,
+ 	bool more =3D msg->msg_flags & MSG_MORE;
+ 	int ret, copied =3D 0;
+ =
+
++	if (test_bit(RXRPC_CALL_TX_NO_MORE, &call->flags)) {
++		trace_rxrpc_abort(call->debug_id, rxrpc_sendmsg_late_send,
++				  call->cid, call->call_id, call->rx_consumed,
++				  0, -EPROTO);
++		return -EPROTO;
++	}
++
+ 	timeo =3D sock_sndtimeo(sk, msg->msg_flags & MSG_DONTWAIT);
+ =
+
+ 	ret =3D rxrpc_wait_to_be_connected(call, &timeo);
+
 
