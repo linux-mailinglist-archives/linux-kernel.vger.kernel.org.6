@@ -1,78 +1,144 @@
-Return-Path: <linux-kernel+bounces-442521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41A99EDDB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:37:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CBC9EDDB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 03:38:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9645282995
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:37:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25AB8167D30
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C0B1465AD;
-	Thu, 12 Dec 2024 02:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9464613D52B;
+	Thu, 12 Dec 2024 02:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNni2L3k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s8LgGqd6"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACF518643;
-	Thu, 12 Dec 2024 02:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417CF18643
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733971022; cv=none; b=KDhGIJVSgvjwkUJP7GAjQ01PSgF/G6t9EVnmijBqWIjkZJY4y9A18pkW8LpjIh7LQr79LQnCEpBF9DM6xfSH88tVpuJovaWMYRGt+pw84jHUrVSNJqyV5JpV+S/u6M9wDw1UWSfN0y9qjuV0allHwHvMphKyMJ9Nja15dSHzWes=
+	t=1733971078; cv=none; b=SQ17CseRE7q7clSr61FtrgmtbtciJKIfczqYB4mtDWbEpBrzIYpC/HoXI9Imh4tWW/0Mh5ZY/bkCdYV06Uskq0BeV5xHTcARoTrn3jF/8W5yolrkjkMb05SXtE1bbfEhyKMFmk6OLO31704FPnxOh0Vu4hQg6syFeGhXxyHg54w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733971022; c=relaxed/simple;
-	bh=DRclRfHEitaK10C0WBuLlWgcfYHfKPNDcjpntNVUWCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a6O2nPjnf2CMTn+bEWAoOq9M+z6/zqacsqfuluFMe/tSSHIjajo9COIqNVfGIqAl24umH/UXbK7QpMID8oYaGBNz7pIRDS4WK4rEC+0AgTOwYoidAXPQOCsHNbWG2GGGAI4Sf5VwL+6uQKQeoO6uFBmICU1wYQeQq4j2k1QeF5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNni2L3k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68498C4CED2;
-	Thu, 12 Dec 2024 02:37:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733971021;
-	bh=DRclRfHEitaK10C0WBuLlWgcfYHfKPNDcjpntNVUWCQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SNni2L3kqNkeHb4Q2KanH+1K7uRMb2m3dNsaK363SMWE5GU768G4IR2FKnmi2kjQg
-	 KCU6T08m/vjKoLp8SxKK1VKGmjP8tAjDJRezPR4zPqKBUSk7KQaA4Y0hVjH2aCiGY2
-	 wVm+HSlUZ9hRPLfwZnTjs93u1uEStIh90k8icclt4axuU9nfwlnI1EO5cedpZ9QJUi
-	 JzD82c39pmujhoVE+A7JG8oR+XgtAx3gelhcYY/L9q8WKfZ+u0l29Qw02Fvn+DRC79
-	 CIke2ZQGvTRpbxV3+a3idJYktB2CTHYHuY/z6zALXRLg7GEtKzfeOOmTTDOV2dCdQr
-	 F2TBh0J+xcVTw==
-Date: Wed, 11 Dec 2024 18:37:00 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Bernard Metzler <bmt@zurich.ibm.com>, linux-rdma@vger.kernel.org,
- leon@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, zyjzyj2000@gmail.com,
- syzbot+4b87489410b4efd181bf@syzkaller.appspotmail.com
-Subject: Re: [PATCH] RDMA/siw: Remove direct link to net_device
-Message-ID: <20241211183700.1dff156f@kernel.org>
-In-Reply-To: <20241211160055.GM1888283@ziepe.ca>
-References: <20241210130351.406603-1-bmt@zurich.ibm.com>
-	<20241210145627.GH1888283@ziepe.ca>
-	<20241210175237.3342a9eb@kernel.org>
-	<20241211160055.GM1888283@ziepe.ca>
+	s=arc-20240116; t=1733971078; c=relaxed/simple;
+	bh=1AZPPgRe61X5ZkGWKvDQSUsc3CrY6tBTcXaM/Y7y4tM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gxpL3E/xV5/F8EnaGnCXGNWVQTlXpd4Q6z+HVwVWLCdVpS7+EcdoMpLW2JFhy5DX4inNauT5CBWaVqtq526U91M8Jjn6VpG3Eb35uQiXZUUFi23aT58t805qWGKGvvmkpz3miUZn5y8IcFUoQ6TMGHsH+MkitrAdwzUJXx69fYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s8LgGqd6; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1733971067; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=gu/xoflJF8PWAuUvKcFMh6/9TuZuICRr9lznBaUcGYg=;
+	b=s8LgGqd68M7kr/SApux2Z/kenl4qKHSkWaC4u5tHInpNkHmjE0vI1t2m0BUDQASugB5m7GQckHBL6OB0il98V6qk1JR6HmQM8Sj8scVsQIoYRSuue1yA6qKAVfDZF7k8KXUMq58lwMYODuNF7yOR/PTEdqHCo/tlf6Xlakj4xLo=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WLJyHuE_1733971058 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 12 Dec 2024 10:37:46 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH] erofs: micro-optimize superblock checksum
+Date: Thu, 12 Dec 2024 10:37:37 +0800
+Message-ID: <20241212023737.1138989-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Dec 2024 12:00:55 -0400 Jason Gunthorpe wrote:
-> > > ifindex is only stable so long as you are holding a reference on the
-> > > netdev..  
-> > 
-> > Does not compute. Can you elaborate what you mean, Jason?  
-> 
-> I mean you can't replace a netdev pointer with an ifindex, you can't
-> reliably get back to the same netdev from ifindex alone.
+Just verify the remaining unknown on-disk data instead of allocating a
+temporary buffer for the whole superblock and zeroing out the checksum
+field since .magic(EROFS_SUPER_MAGIC_V1) is verified and .checksum(0)
+is fixed.
 
-With the right use of locking and the netdev notifier the ifindex
-is as good as a pointer. I just wanted to point out that taking 
-a reference makes no difference here.
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/erofs/erofs_fs.h |  3 ++-
+ fs/erofs/super.c    | 31 ++++++++++++-------------------
+ 2 files changed, 14 insertions(+), 20 deletions(-)
+
+diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
+index c8f2ae845bd2..199395ed1c1f 100644
+--- a/fs/erofs/erofs_fs.h
++++ b/fs/erofs/erofs_fs.h
+@@ -9,6 +9,7 @@
+ #ifndef __EROFS_FS_H
+ #define __EROFS_FS_H
+ 
++/* to allow for x86 boot sectors and other oddities. */
+ #define EROFS_SUPER_OFFSET      1024
+ 
+ #define EROFS_FEATURE_COMPAT_SB_CHKSUM          0x00000001
+@@ -54,7 +55,7 @@ struct erofs_deviceslot {
+ /* erofs on-disk super block (currently 128 bytes) */
+ struct erofs_super_block {
+ 	__le32 magic;           /* file system magic number */
+-	__le32 checksum;        /* crc32c(super_block) */
++	__le32 checksum;        /* crc32c to avoid unexpected on-disk overlap */
+ 	__le32 feature_compat;
+ 	__u8 blkszbits;         /* filesystem block size in bit shift */
+ 	__u8 sb_extslots;	/* superblock size = 128 + sb_extslots * 16 */
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 9166054370aa..6cc0c5ea5ff5 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -6,6 +6,7 @@
+  */
+ #include <linux/statfs.h>
+ #include <linux/seq_file.h>
++#include <linux/crc32.h>
+ #include <linux/crc32c.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
+@@ -39,29 +40,21 @@ void _erofs_printk(struct super_block *sb, const char *fmt, ...)
+ 
+ static int erofs_superblock_csum_verify(struct super_block *sb, void *sbdata)
+ {
+-	size_t len = 1 << EROFS_SB(sb)->blkszbits;
+-	struct erofs_super_block *dsb;
+-	u32 expected_crc, crc;
++	struct erofs_super_block *dsb = sbdata + EROFS_SUPER_OFFSET;
++	u32 len = 1 << EROFS_SB(sb)->blkszbits, crc;
+ 
+ 	if (len > EROFS_SUPER_OFFSET)
+ 		len -= EROFS_SUPER_OFFSET;
++	len -= offsetof(struct erofs_super_block, checksum) +
++			sizeof(dsb->checksum);
+ 
+-	dsb = kmemdup(sbdata + EROFS_SUPER_OFFSET, len, GFP_KERNEL);
+-	if (!dsb)
+-		return -ENOMEM;
+-
+-	expected_crc = le32_to_cpu(dsb->checksum);
+-	dsb->checksum = 0;
+-	/* to allow for x86 boot sectors and other oddities. */
+-	crc = crc32c(~0, dsb, len);
+-	kfree(dsb);
+-
+-	if (crc != expected_crc) {
+-		erofs_err(sb, "invalid checksum 0x%08x, 0x%08x expected",
+-			  crc, expected_crc);
+-		return -EBADMSG;
+-	}
+-	return 0;
++	/* skip .magic(pre-verified) and .checksum(0) fields */
++	crc = crc32c(0x5045B54A, (&dsb->checksum) + 1, len);
++	if (crc == le32_to_cpu(dsb->checksum))
++		return 0;
++	erofs_err(sb, "invalid checksum 0x%08x, 0x%08x expected",
++		  crc, le32_to_cpu(dsb->checksum));
++	return -EBADMSG;
+ }
+ 
+ static void erofs_inode_init_once(void *ptr)
+-- 
+2.43.5
+
 
