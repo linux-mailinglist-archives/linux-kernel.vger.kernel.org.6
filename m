@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-443230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBE59EE90D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:38:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DAB99EE910
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:38:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D7DA285050
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:38:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC6A6285BA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4966216E35;
-	Thu, 12 Dec 2024 14:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178EB2210C2;
+	Thu, 12 Dec 2024 14:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="AeTzwyoS"
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="TErARGeN"
 Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108AC2153E4;
-	Thu, 12 Dec 2024 14:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81E6217664;
+	Thu, 12 Dec 2024 14:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734014258; cv=none; b=Cd7ZZJMnKeLApMqT5BHN4wSPSu5z8hNbksZCNbHZUsdh9WhQeuFqESpHet6TsGG69NgjMqTV1bI8lP4i3UmtGGU/B9DW8SVQdM9ijJ7WM+XYpXEZ5EoQGIiIr0PgPHnxfeKpUPs4dgxyvK/53Ffob5Jw64s5Bedlxjk4S4SH08c=
+	t=1734014263; cv=none; b=KJpuCjLHzON2uSEVvkCELh9UZVUnz5VL55evwGEPb7VP/y37ayrEHa7eOp12+KIOxVwCDbOCie0rj1UYd8z3r1hIoaQJTZIiWeAZ4l+vf/Y8zlpfcRVSw/q0BiBXEvm6jMJ7M937N1YSNGDoYZDlbS+I5bEkDk0wX9u+ckFDAD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734014258; c=relaxed/simple;
-	bh=0WuKxAehQyNmJpSZXLJURMlwybulK1zaTEwVeVWx2dE=;
+	s=arc-20240116; t=1734014263; c=relaxed/simple;
+	bh=T6Tr58YkBLMHZd+Qp+IpDFYXQaWqynULxQzwyNuaiVo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sdcyJD4F87YgryXpegVUFeDBwuYe0j2KiFNS+cm75jAISohP9QShWek7K8DwfrlOiF+lMqXdpBXAqTL35eetgHCndBFB8+OTpOsThlOfYOMpvJkPso4cLIVgiB6PjooKov8hxsHr673zT4MaFnD0R7Gz/x5gLrf2/0LQaJqDRW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=AeTzwyoS; arc=none smtp.client-ip=67.231.152.168
+	 MIME-Version:Content-Type; b=ZoUngxYharQ0i/LLhxnMbukdylI5MIaZsa+VidqYDSza3X8IBGIM0RzeRJN8ualTVF0ysBzHxsFYlgVW3M/Vog3ZaQ7jnvDUTlBq26F3XDXXhAlI6iiqp5a09f7NmKrMcb2gwTHJ0gqatvkYYyYierQngxmaNchqigWId+V0qRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=TErARGeN; arc=none smtp.client-ip=67.231.152.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC5o3e4029256;
-	Thu, 12 Dec 2024 08:37:27 -0600
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC5LAln019383;
+	Thu, 12 Dec 2024 08:37:28 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=MtNPjL+CVjS1kLiDDHYlrzU3AuFbQ44PQ8e7Kn9DKls=; b=
-	AeTzwyoSddZJEheN4V+T1K/XFJRgujqpVJsfjzmaH/9jDdA3t3VEaj5wzG7L650/
-	9gMMviDAfLGzcrDZoQeVXU5vlzhxSgTwYqyaq3Mooi6DXH7l6uV10ODf7b1Ym/8c
-	CcwDpqOR9JXlc9mriD6m+k40Z0z1k3YJyIOm2htBxc3CgByXygTKb8bzMRXgDrEq
-	JdF0sYWj8c+e92Y7h2n9mRCuL4HDcXYZ9OFxZiYA0sIlBiLMzxw72186RyHKu08W
-	5LPtgyU3K/EE4fUOVh0bnugjgCBqUOCa1228r09Tnu4jvnU11U47KzQHQ3X9E9zp
-	TraV9JK4RDfPL1FDV7AQfw==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43cknkexdq-1
+	PODMain02222019; bh=WD4tZ85ywwXoDBDUz5vKYEe0TWKPU9Yy5f+BjXLdZas=; b=
+	TErARGeNbqHQnn/tv5HCwYw1lcT1YUQ8ff7Erv4YFjMYdTy3D1iNcJB76zY+TNbd
+	pYZ6dVEtXORwgeH0SZDYRbdrA2paf0UlqZ44gMJce+za20wpdSQssOdWhbQQyZOf
+	yrmV4TJo9dp0A8YDHdv9IqWPIDYyjkDbVhxrPS/QOFKLOGyBUBi68rJCBPfoQ7sK
+	2fgeq8nBrsSYfwVkvQBMIN+hTSJFt5YbtrjKYcsg7NshVhiMlAHFihW+oPNaMexp
+	un4bqqBNpswZFkjSdphNHmQTtgSfifu2DmLC5EyQlrGDohoJ67RlDwQiIJXBxJBv
+	PBYfGX8dFVAr8TLmTpP6HA==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 43cknkexdp-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 08:37:26 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 12 Dec 2024 08:37:27 -0600 (CST)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.13; Thu, 12 Dec
  2024 14:37:25 +0000
 Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
  anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
  15.2.1544.13 via Frontend Transport; Thu, 12 Dec 2024 14:37:25 +0000
 Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 1C41A822542;
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 2015F822543;
 	Thu, 12 Dec 2024 14:37:25 +0000 (UTC)
 From: Richard Fitzgerald <rf@opensource.cirrus.com>
 To: <broonie@kernel.org>
 CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
         <linux-sound@vger.kernel.org>
-Subject: [PATCH 01/12] firmware: cs_dsp: Add mock regmap for KUnit testing
-Date: Thu, 12 Dec 2024 14:37:14 +0000
-Message-ID: <20241212143725.1381013-2-rf@opensource.cirrus.com>
+Subject: [PATCH 02/12] firmware: cs_dsp: Add mock DSP memory map for KUnit testing
+Date: Thu, 12 Dec 2024 14:37:15 +0000
+Message-ID: <20241212143725.1381013-3-rf@opensource.cirrus.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241212143725.1381013-1-rf@opensource.cirrus.com>
 References: <20241212143725.1381013-1-rf@opensource.cirrus.com>
@@ -75,110 +75,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 6OK4_qHvUsUUgMIYw2-xeeIRFRDVgLtz
-X-Proofpoint-GUID: 6OK4_qHvUsUUgMIYw2-xeeIRFRDVgLtz
+X-Proofpoint-ORIG-GUID: KU0sFJFbjdo3Iiu1uV6_pHwjJHZT-Gaa
+X-Proofpoint-GUID: KU0sFJFbjdo3Iiu1uV6_pHwjJHZT-Gaa
 X-Proofpoint-Spam-Reason: safe
 
-Add a mock regmap implementation to act as a simulated DSP for KUnit
-testing. This is built as a utility module so that it could be used by
-clients of cs_dsp to create a mock "DSP" for their own testing.
+Add helper functions to implement an emulation of the DSP memory map.
 
-cs_dsp interacts with the DSP only through registers. Most of the
-register space of the DSP is RAM. ADSP cores have a small set of control
-registers. HALO Core DSPs have a much larger set of control registers but
-only a small subset are used.
+There are three main groups of functionality:
 
-Most writes are "blind" in the sense that cs_dsp does not expect to
-receive any sort of response from the DSP. So there isn't any need to
-emulate a "DSP", only a set of registers that can be written and read
-back.
-
-The idea of the mock regmap is to use the cache to accumulate writes
-which can then be tested against the values that are expected to be in
-the registers.
-
-Stray writes can be detected by dropping the cache entries for all
-addresses that should have been written and then issuing a regcache_sync().
-If this causes bus writes it means there were writes to unexpected
-registers.
+1. Define a mock cs_dsp_region table.
+2. Calculate the addresses of memory and algorithms from the firmware
+   header in XM.
+3. Build a mock XM header in emulated XM.
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
- MAINTAINERS                                   |   4 +-
- drivers/firmware/cirrus/Kconfig               |   6 +
- drivers/firmware/cirrus/Makefile              |   2 +
- drivers/firmware/cirrus/test/Makefile         |   8 +
- .../firmware/cirrus/test/cs_dsp_mock_regmap.c | 367 ++++++++++++++++++
- .../firmware/cirrus/test/cs_dsp_mock_utils.c  |  13 +
- .../linux/firmware/cirrus/cs_dsp_test_utils.h |  46 +++
- 7 files changed, 444 insertions(+), 2 deletions(-)
- create mode 100644 drivers/firmware/cirrus/test/Makefile
- create mode 100644 drivers/firmware/cirrus/test/cs_dsp_mock_regmap.c
- create mode 100644 drivers/firmware/cirrus/test/cs_dsp_mock_utils.c
- create mode 100644 include/linux/firmware/cirrus/cs_dsp_test_utils.h
+ drivers/firmware/cirrus/test/Makefile         |   1 +
+ .../cirrus/test/cs_dsp_mock_mem_maps.c        | 751 ++++++++++++++++++
+ .../linux/firmware/cirrus/cs_dsp_test_utils.h |  63 ++
+ 3 files changed, 815 insertions(+)
+ create mode 100644 drivers/firmware/cirrus/test/cs_dsp_mock_mem_maps.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 17daa9ee9384..91bcdf21e7ba 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5501,8 +5501,8 @@ L:	patches@opensource.cirrus.com
- S:	Supported
- W:	https://github.com/CirrusLogic/linux-drivers/wiki
- T:	git https://github.com/CirrusLogic/linux-drivers.git
--F:	drivers/firmware/cirrus/*
--F:	include/linux/firmware/cirrus/*
-+F:	drivers/firmware/cirrus/
-+F:	include/linux/firmware/cirrus/
- 
- CIRRUS LOGIC EP93XX ETHERNET DRIVER
- M:	Hartley Sweeten <hsweeten@visionengravers.com>
-diff --git a/drivers/firmware/cirrus/Kconfig b/drivers/firmware/cirrus/Kconfig
-index 3ccbe14e4b0c..35de3e490d98 100644
---- a/drivers/firmware/cirrus/Kconfig
-+++ b/drivers/firmware/cirrus/Kconfig
-@@ -3,3 +3,9 @@
- config FW_CS_DSP
- 	tristate
- 	default n
-+
-+config FW_CS_DSP_KUNIT_TEST_UTILS
-+	tristate
-+	depends on KUNIT
-+	select REGMAP
-+	select FW_CS_DSP
-diff --git a/drivers/firmware/cirrus/Makefile b/drivers/firmware/cirrus/Makefile
-index b91318ca0ff4..b32dfa869491 100644
---- a/drivers/firmware/cirrus/Makefile
-+++ b/drivers/firmware/cirrus/Makefile
-@@ -1,3 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- #
- obj-$(CONFIG_FW_CS_DSP)		+= cs_dsp.o
-+
-+obj-y				+= test/
 diff --git a/drivers/firmware/cirrus/test/Makefile b/drivers/firmware/cirrus/test/Makefile
-new file mode 100644
-index 000000000000..373d8844c085
---- /dev/null
+index 373d8844c085..8d4f2eb7e5aa 100644
+--- a/drivers/firmware/cirrus/test/Makefile
 +++ b/drivers/firmware/cirrus/test/Makefile
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+
-+cs_dsp_test_utils-objs :=	\
-+		cs_dsp_mock_regmap.o \
-+		cs_dsp_mock_utils.o
-+
-+obj-$(CONFIG_FW_CS_DSP_KUNIT_TEST_UTILS) += cs_dsp_test_utils.o
-diff --git a/drivers/firmware/cirrus/test/cs_dsp_mock_regmap.c b/drivers/firmware/cirrus/test/cs_dsp_mock_regmap.c
+@@ -2,6 +2,7 @@
+ #
+ 
+ cs_dsp_test_utils-objs :=	\
++		cs_dsp_mock_mem_maps.o \
+ 		cs_dsp_mock_regmap.o \
+ 		cs_dsp_mock_utils.o
+ 
+diff --git a/drivers/firmware/cirrus/test/cs_dsp_mock_mem_maps.c b/drivers/firmware/cirrus/test/cs_dsp_mock_mem_maps.c
 new file mode 100644
-index 000000000000..fb8e4a5d189a
+index 000000000000..ae5d57bdcc2f
 --- /dev/null
-+++ b/drivers/firmware/cirrus/test/cs_dsp_mock_regmap.c
-@@ -0,0 +1,367 @@
++++ b/drivers/firmware/cirrus/test/cs_dsp_mock_mem_maps.c
+@@ -0,0 +1,751 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
-+// Mock regmap for cs_dsp KUnit tests.
++// Mock DSP memory maps for cs_dsp KUnit tests.
 +//
 +// Copyright (C) 2024 Cirrus Logic, Inc. and
 +//                    Cirrus Logic International Semiconductor Ltd.
@@ -187,433 +125,825 @@ index 000000000000..fb8e4a5d189a
 +#include <linux/firmware/cirrus/cs_dsp.h>
 +#include <linux/firmware/cirrus/cs_dsp_test_utils.h>
 +#include <linux/firmware/cirrus/wmfw.h>
-+#include <linux/regmap.h>
++#include <linux/math.h>
 +
-+static int cs_dsp_mock_regmap_read(void *context, const void *reg_buf,
-+				   const size_t reg_size, void *val_buf,
-+				   size_t val_size)
++const struct cs_dsp_region cs_dsp_mock_halo_dsp1_regions[] = {
++	{ .type = WMFW_HALO_PM_PACKED,	.base = 0x3800000 },
++	{ .type = WMFW_HALO_XM_PACKED,	.base = 0x2000000 },
++	{ .type = WMFW_HALO_YM_PACKED,	.base = 0x2C00000 },
++	{ .type = WMFW_ADSP2_XM,	.base = 0x2800000 },
++	{ .type = WMFW_ADSP2_YM,	.base = 0x3400000 },
++};
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_halo_dsp1_regions, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/*  List of sizes in bytes, for each entry above */
++const unsigned int cs_dsp_mock_halo_dsp1_region_sizes[] = {
++	0x5000,		/* PM_PACKED */
++	0x6000,		/* XM_PACKED */
++	0x47F4,		/* YM_PACKED */
++	0x8000,		/* XM_UNPACKED_24 */
++	0x5FF8,		/* YM_UNPACKED_24 */
++
++	0		/* terminator */
++};
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_halo_dsp1_region_sizes, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++const struct cs_dsp_region cs_dsp_mock_adsp2_32bit_dsp1_regions[] = {
++	{ .type = WMFW_ADSP2_PM, .base = 0x080000 },
++	{ .type = WMFW_ADSP2_XM, .base = 0x0a0000 },
++	{ .type = WMFW_ADSP2_YM, .base = 0x0c0000 },
++	{ .type = WMFW_ADSP2_ZM, .base = 0x0e0000 },
++};
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_adsp2_32bit_dsp1_regions, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/* List of sizes in bytes, for each entry above */
++const unsigned int cs_dsp_mock_adsp2_32bit_dsp1_region_sizes[] = {
++	0x9000,	/* PM */
++	0xa000,	/* ZM */
++	0x2000,	/* XM */
++	0x2000,	/* YM */
++
++	0	/* terminator */
++};
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_adsp2_32bit_dsp1_region_sizes, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++const struct cs_dsp_region cs_dsp_mock_adsp2_16bit_dsp1_regions[] = {
++	{ .type = WMFW_ADSP2_PM, .base = 0x100000 },
++	{ .type = WMFW_ADSP2_ZM, .base = 0x180000 },
++	{ .type = WMFW_ADSP2_XM, .base = 0x190000 },
++	{ .type = WMFW_ADSP2_YM, .base = 0x1a8000 },
++};
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_adsp2_16bit_dsp1_regions, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/* List of sizes in bytes, for each entry above */
++const unsigned int cs_dsp_mock_adsp2_16bit_dsp1_region_sizes[] = {
++	0x6000,	/* PM */
++	0x800,	/* ZM */
++	0x800,	/* XM */
++	0x800,	/* YM */
++
++	0	/* terminator */
++};
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_adsp2_16bit_dsp1_region_sizes, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++int cs_dsp_mock_count_regions(const unsigned int *region_sizes)
 +{
-+	struct cs_dsp_test *priv = context;
++	int i;
 +
-+	/* Should never get here because the regmap is cache-only */
-+	KUNIT_FAIL(priv->test, "Unexpected bus read @%#x", *(u32 *)reg_buf);
++	for (i = 0; region_sizes[i]; ++i)
++		;
 +
-+	return -EIO;
++	return i;
 +}
-+
-+static int cs_dsp_mock_regmap_gather_write(void *context,
-+					   const void *reg_buf, size_t reg_size,
-+					   const void *val_buf, size_t val_size)
-+{
-+	struct cs_dsp_test *priv = context;
-+
-+	priv->saw_bus_write = true;
-+
-+	/* Should never get here because the regmap is cache-only */
-+	KUNIT_FAIL(priv->test, "Unexpected bus gather_write @%#x", *(u32 *)reg_buf);
-+
-+	return -EIO;
-+}
-+
-+static int cs_dsp_mock_regmap_write(void *context, const void *val_buf, size_t val_size)
-+{
-+	struct cs_dsp_test *priv = context;
-+
-+	priv->saw_bus_write = true;
-+
-+	/* Should never get here because the regmap is cache-only */
-+	KUNIT_FAIL(priv->test, "Unexpected bus write @%#x", *(u32 *)val_buf);
-+
-+	return -EIO;
-+}
-+
-+static const struct regmap_bus cs_dsp_mock_regmap_bus = {
-+	.read = cs_dsp_mock_regmap_read,
-+	.write = cs_dsp_mock_regmap_write,
-+	.gather_write = cs_dsp_mock_regmap_gather_write,
-+	.reg_format_endian_default = REGMAP_ENDIAN_LITTLE,
-+	.val_format_endian_default = REGMAP_ENDIAN_LITTLE,
-+};
-+
-+static const struct reg_default adsp2_32bit_register_defaults[] = {
-+	{ 0xffe00, 0x0000 }, /* CONTROL */
-+	{ 0xffe02, 0x0000 }, /* CLOCKING */
-+	{ 0xffe04, 0x0001 }, /* STATUS1: RAM_RDY=1 */
-+	{ 0xffe30, 0x0000 }, /* WDMW_CONFIG_1 */
-+	{ 0xffe32, 0x0000 }, /* WDMA_CONFIG_2 */
-+	{ 0xffe34, 0x0000 }, /* RDMA_CONFIG_1 */
-+	{ 0xffe40, 0x0000 }, /* SCRATCH_0_1 */
-+	{ 0xffe42, 0x0000 }, /* SCRATCH_2_3 */
-+};
-+
-+static const struct regmap_range adsp2_32bit_registers[] = {
-+	regmap_reg_range(0x80000, 0x88ffe), /* PM */
-+	regmap_reg_range(0xa0000, 0xa9ffe), /* XM */
-+	regmap_reg_range(0xc0000, 0xc1ffe), /* YM */
-+	regmap_reg_range(0xe0000, 0xe1ffe), /* ZM */
-+	regmap_reg_range(0xffe00, 0xffe7c), /* CORE CTRL */
-+};
-+
-+const unsigned int cs_dsp_mock_adsp2_32bit_sysbase = 0xffe00;
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_adsp2_32bit_sysbase, "FW_CS_DSP_KUNIT_TEST_UTILS");
-+
-+static const struct regmap_access_table adsp2_32bit_rw = {
-+	.yes_ranges = adsp2_32bit_registers,
-+	.n_yes_ranges = ARRAY_SIZE(adsp2_32bit_registers),
-+};
-+
-+static const struct regmap_config cs_dsp_mock_regmap_adsp2_32bit = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 2,
-+	.reg_format_endian = REGMAP_ENDIAN_LITTLE,
-+	.val_format_endian = REGMAP_ENDIAN_BIG,
-+	.wr_table = &adsp2_32bit_rw,
-+	.rd_table = &adsp2_32bit_rw,
-+	.max_register = 0xffe7c,
-+	.reg_defaults = adsp2_32bit_register_defaults,
-+	.num_reg_defaults = ARRAY_SIZE(adsp2_32bit_register_defaults),
-+	.cache_type = REGCACHE_MAPLE,
-+};
-+
-+static const struct reg_default adsp2_16bit_register_defaults[] = {
-+	{ 0x1100, 0x0000 }, /* CONTROL */
-+	{ 0x1101, 0x0000 }, /* CLOCKING */
-+	{ 0x1104, 0x0001 }, /* STATUS1: RAM_RDY=1 */
-+	{ 0x1130, 0x0000 }, /* WDMW_CONFIG_1 */
-+	{ 0x1131, 0x0000 }, /* WDMA_CONFIG_2 */
-+	{ 0x1134, 0x0000 }, /* RDMA_CONFIG_1 */
-+	{ 0x1140, 0x0000 }, /* SCRATCH_0 */
-+	{ 0x1141, 0x0000 }, /* SCRATCH_1 */
-+	{ 0x1142, 0x0000 }, /* SCRATCH_2 */
-+	{ 0x1143, 0x0000 }, /* SCRATCH_3 */
-+};
-+
-+static const struct regmap_range adsp2_16bit_registers[] = {
-+	regmap_reg_range(0x001100, 0x001143), /* CORE CTRL */
-+	regmap_reg_range(0x100000, 0x105fff), /* PM */
-+	regmap_reg_range(0x180000, 0x1807ff), /* ZM */
-+	regmap_reg_range(0x190000, 0x1947ff), /* XM */
-+	regmap_reg_range(0x1a8000, 0x1a97ff), /* YM */
-+};
-+
-+const unsigned int cs_dsp_mock_adsp2_16bit_sysbase = 0x001100;
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_adsp2_16bit_sysbase, "FW_CS_DSP_KUNIT_TEST_UTILS");
-+
-+static const struct regmap_access_table adsp2_16bit_rw = {
-+	.yes_ranges = adsp2_16bit_registers,
-+	.n_yes_ranges = ARRAY_SIZE(adsp2_16bit_registers),
-+};
-+
-+static const struct regmap_config cs_dsp_mock_regmap_adsp2_16bit = {
-+	.reg_bits = 32,
-+	.val_bits = 16,
-+	.reg_stride = 1,
-+	.reg_format_endian = REGMAP_ENDIAN_LITTLE,
-+	.val_format_endian = REGMAP_ENDIAN_BIG,
-+	.wr_table = &adsp2_16bit_rw,
-+	.rd_table = &adsp2_16bit_rw,
-+	.max_register = 0x1a97ff,
-+	.reg_defaults = adsp2_16bit_register_defaults,
-+	.num_reg_defaults = ARRAY_SIZE(adsp2_16bit_register_defaults),
-+	.cache_type = REGCACHE_MAPLE,
-+};
-+
-+static const struct reg_default halo_register_defaults[] = {
-+	/* CORE */
-+	{ 0x2b80010, 0 },	/* HALO_CORE_SOFT_RESET */
-+	{ 0x2b805c0, 0 },	/* HALO_SCRATCH1 */
-+	{ 0x2b805c8, 0 },	/* HALO_SCRATCH2 */
-+	{ 0x2b805d0, 0 },	/* HALO_SCRATCH3 */
-+	{ 0x2b805c8, 0 },	/* HALO_SCRATCH4 */
-+	{ 0x2bc1000, 0 },	/* HALO_CCM_CORE_CONTROL */
-+	{ 0x2bc7000, 0 },	/* HALO_WDT_CONTROL */
-+
-+	/* SYSINFO */
-+	{ 0x25e2040, 0 },	/* HALO_AHBM_WINDOW_DEBUG_0 */
-+	{ 0x25e2044, 0 },	/* HALO_AHBM_WINDOW_DEBUG_1 */
-+};
-+
-+static const struct regmap_range halo_readable_registers[] = {
-+	regmap_reg_range(0x2000000, 0x2005fff), /* XM_PACKED */
-+	regmap_reg_range(0x25e0000, 0x25e004f), /* SYSINFO */
-+	regmap_reg_range(0x25e2000, 0x25e2047), /* SYSINFO */
-+	regmap_reg_range(0x2800000, 0x2807fff), /* XM */
-+	regmap_reg_range(0x2b80000, 0x2bc700b), /* CORE CTRL */
-+	regmap_reg_range(0x2c00000, 0x2c047f3), /* YM_PACKED */
-+	regmap_reg_range(0x3400000, 0x3405ff7), /* YM */
-+	regmap_reg_range(0x3800000, 0x3804fff), /* PM_PACKED */
-+};
-+
-+static const struct regmap_range halo_writeable_registers[] = {
-+	regmap_reg_range(0x2000000, 0x2005fff), /* XM_PACKED */
-+	regmap_reg_range(0x2800000, 0x2807fff), /* XM */
-+	regmap_reg_range(0x2b80000, 0x2bc700b), /* CORE CTRL */
-+	regmap_reg_range(0x2c00000, 0x2c047f3), /* YM_PACKED */
-+	regmap_reg_range(0x3400000, 0x3405ff7), /* YM */
-+	regmap_reg_range(0x3800000, 0x3804fff), /* PM_PACKED */
-+};
-+
-+const unsigned int cs_dsp_mock_halo_core_base = 0x2b80000;
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_halo_core_base, "FW_CS_DSP_KUNIT_TEST_UTILS");
-+
-+const unsigned int cs_dsp_mock_halo_sysinfo_base = 0x25e0000;
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_halo_sysinfo_base, "FW_CS_DSP_KUNIT_TEST_UTILS");
-+
-+static const struct regmap_access_table halo_readable = {
-+	.yes_ranges = halo_readable_registers,
-+	.n_yes_ranges = ARRAY_SIZE(halo_readable_registers),
-+};
-+
-+static const struct regmap_access_table halo_writeable = {
-+	.yes_ranges = halo_writeable_registers,
-+	.n_yes_ranges = ARRAY_SIZE(halo_writeable_registers),
-+};
-+
-+static const struct regmap_config cs_dsp_mock_regmap_halo = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.reg_format_endian = REGMAP_ENDIAN_LITTLE,
-+	.val_format_endian = REGMAP_ENDIAN_BIG,
-+	.wr_table = &halo_writeable,
-+	.rd_table = &halo_readable,
-+	.max_register = 0x3804ffc,
-+	.reg_defaults = halo_register_defaults,
-+	.num_reg_defaults = ARRAY_SIZE(halo_register_defaults),
-+	.cache_type = REGCACHE_MAPLE,
-+};
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_count_regions, "FW_CS_DSP_KUNIT_TEST_UTILS");
 +
 +/**
-+ * cs_dsp_mock_regmap_drop_range() - drop a range of registers from the cache.
++ * cs_dsp_mock_size_of_region() - Return size of given memory region.
 + *
-+ * @priv:	Pointer to struct cs_dsp_test object.
-+ * @first_reg:	Address of first register to drop.
-+ * @last_reg:	Address of last register to drop.
++ * @dsp:	Pointer to struct cs_dsp.
++ * @mem_type:	Memory region type.
++ *
++ * Return: Size of region in bytes.
 + */
-+void cs_dsp_mock_regmap_drop_range(struct cs_dsp_test *priv,
-+				   unsigned int first_reg, unsigned int last_reg)
++unsigned int cs_dsp_mock_size_of_region(const struct cs_dsp *dsp, int mem_type)
 +{
-+	regcache_drop_region(priv->dsp->regmap, first_reg, last_reg);
-+}
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_regmap_drop_range, "FW_CS_DSP_KUNIT_TEST_UTILS");
++	const unsigned int *sizes;
++	int i;
 +
-+/**
-+ * cs_dsp_mock_regmap_drop_regs() - drop a number of registers from the cache.
-+ *
-+ * @priv:	Pointer to struct cs_dsp_test object.
-+ * @first_reg:	Address of first register to drop.
-+ * @num_regs:	Number of registers to drop.
-+ */
-+void cs_dsp_mock_regmap_drop_regs(struct cs_dsp_test *priv,
-+				  unsigned int first_reg, size_t num_regs)
-+{
-+	int stride = regmap_get_reg_stride(priv->dsp->regmap);
-+	unsigned int last = first_reg + (stride * (num_regs - 1));
++	if (dsp->mem == cs_dsp_mock_halo_dsp1_regions)
++		sizes = cs_dsp_mock_halo_dsp1_region_sizes;
++	else if (dsp->mem == cs_dsp_mock_adsp2_32bit_dsp1_regions)
++		sizes = cs_dsp_mock_adsp2_32bit_dsp1_region_sizes;
++	else if (dsp->mem == cs_dsp_mock_adsp2_16bit_dsp1_regions)
++		sizes = cs_dsp_mock_adsp2_16bit_dsp1_region_sizes;
++	else
++		return 0;
 +
-+	cs_dsp_mock_regmap_drop_range(priv, first_reg, last);
-+}
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_regmap_drop_regs, "FW_CS_DSP_KUNIT_TEST_UTILS");
-+
-+/**
-+ * cs_dsp_mock_regmap_drop_bytes() - drop a number of bytes from the cache.
-+ *
-+ * @priv:	Pointer to struct cs_dsp_test object.
-+ * @first_reg:	Address of first register to drop.
-+ * @num_bytes:	Number of bytes to drop from the cache. Will be rounded
-+ *		down to a whole number of registers. Trailing bytes that
-+ *		are not a multiple of the register size will not be dropped.
-+ *		(This is intended to help detect math errors in test code.)
-+ */
-+void cs_dsp_mock_regmap_drop_bytes(struct cs_dsp_test *priv,
-+				   unsigned int first_reg, size_t num_bytes)
-+{
-+	size_t num_regs = num_bytes / regmap_get_val_bytes(priv->dsp->regmap);
-+
-+	cs_dsp_mock_regmap_drop_regs(priv, first_reg, num_regs);
-+}
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_regmap_drop_bytes, "FW_CS_DSP_KUNIT_TEST_UTILS");
-+
-+/**
-+ * cs_dsp_mock_regmap_drop_system_regs() - Drop DSP system registers from the cache.
-+ *
-+ * @priv:	Pointer to struct cs_dsp_test object.
-+ *
-+ * Drops all DSP system registers from the regmap cache.
-+ */
-+void cs_dsp_mock_regmap_drop_system_regs(struct cs_dsp_test *priv)
-+{
-+	switch (priv->dsp->type) {
-+	case WMFW_ADSP2:
-+		if (priv->dsp->base) {
-+			regcache_drop_region(priv->dsp->regmap,
-+					     priv->dsp->base,
-+					     priv->dsp->base + 0x7c);
-+		}
-+		return;
-+	case WMFW_HALO:
-+		if (priv->dsp->base) {
-+			regcache_drop_region(priv->dsp->regmap,
-+					     priv->dsp->base,
-+					     priv->dsp->base + 0x47000);
-+		}
-+
-+		/* sysinfo registers are read-only so don't drop them */
-+		return;
-+	default:
-+		return;
++	for (i = 0; i < dsp->num_mems; ++i) {
++		if (dsp->mem[i].type == mem_type)
++			return sizes[i];
 +	}
-+}
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_regmap_drop_system_regs, "FW_CS_DSP_KUNIT_TEST_UTILS");
-+
-+/**
-+ * cs_dsp_mock_regmap_is_dirty() - Test for dirty registers in the cache.
-+ *
-+ * @priv:		Pointer to struct cs_dsp_test object.
-+ * @drop_system_regs:	If true the DSP system regs will be dropped from
-+ *			the cache before checking for dirty.
-+ *
-+ * All registers that are expected to be written must have been dropped
-+ * from the cache (DSP system registers can be dropped by passing
-+ * drop_system_regs == true). If any unexpected registers were written
-+ * there will still be dirty entries in the cache and a cache sync will
-+ * cause a write.
-+ *
-+ * Returns: true if there were dirty entries, false if not.
-+ */
-+bool cs_dsp_mock_regmap_is_dirty(struct cs_dsp_test *priv, bool drop_system_regs)
-+{
-+	if (drop_system_regs)
-+		cs_dsp_mock_regmap_drop_system_regs(priv);
-+
-+	priv->saw_bus_write = false;
-+	regcache_cache_only(priv->dsp->regmap, false);
-+	regcache_sync(priv->dsp->regmap);
-+	regcache_cache_only(priv->dsp->regmap, true);
-+
-+	return priv->saw_bus_write;
-+}
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_regmap_is_dirty, "FW_CS_DSP_KUNIT_TEST_UTILS");
-+
-+/**
-+ * cs_dsp_mock_regmap_init() - Initialize a mock regmap.
-+ *
-+ * @priv:	Pointer to struct cs_dsp_test object. This must have a
-+ *		valid pointer to a struct cs_dsp in which the type and
-+ *		rev fields are set to the type of DSP to be simulated.
-+ *
-+ * On success the priv->dsp->regmap will point to the created
-+ * regmap instance.
-+ *
-+ * Return: zero on success, else negative error code.
-+ */
-+int cs_dsp_mock_regmap_init(struct cs_dsp_test *priv)
-+{
-+	const struct regmap_config *config;
-+	int ret;
-+
-+	switch (priv->dsp->type) {
-+	case WMFW_HALO:
-+		config = &cs_dsp_mock_regmap_halo;
-+		break;
-+	case WMFW_ADSP2:
-+		if (priv->dsp->rev == 0)
-+			config = &cs_dsp_mock_regmap_adsp2_16bit;
-+		else
-+			config = &cs_dsp_mock_regmap_adsp2_32bit;
-+		break;
-+	default:
-+		config = NULL;
-+		break;
-+	}
-+
-+	priv->dsp->regmap = devm_regmap_init(priv->dsp->dev,
-+					     &cs_dsp_mock_regmap_bus,
-+					     priv,
-+					     config);
-+	if (IS_ERR(priv->dsp->regmap)) {
-+		ret = PTR_ERR(priv->dsp->regmap);
-+		kunit_err(priv->test, "Failed to allocate register map: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Put regmap in cache-only so it accumulates the writes done by cs_dsp */
-+	regcache_cache_only(priv->dsp->regmap, true);
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_regmap_init, "FW_CS_DSP_KUNIT_TEST_UTILS");
-diff --git a/drivers/firmware/cirrus/test/cs_dsp_mock_utils.c b/drivers/firmware/cirrus/test/cs_dsp_mock_utils.c
-new file mode 100644
-index 000000000000..cbd0bf72b7de
---- /dev/null
-+++ b/drivers/firmware/cirrus/test/cs_dsp_mock_utils.c
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// Utility module for cs_dsp KUnit testing.
-+//
-+// Copyright (C) 2024 Cirrus Logic, Inc. and
-+//                    Cirrus Logic International Semiconductor Ltd.
-+
-+#include <linux/module.h>
-+
-+MODULE_DESCRIPTION("Utilities for Cirrus Logic DSP driver testing");
-+MODULE_AUTHOR("Richard Fitzgerald <rf@opensource.cirrus.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("FW_CS_DSP");
-diff --git a/include/linux/firmware/cirrus/cs_dsp_test_utils.h b/include/linux/firmware/cirrus/cs_dsp_test_utils.h
-new file mode 100644
-index 000000000000..ac6b03f4c084
---- /dev/null
-+++ b/include/linux/firmware/cirrus/cs_dsp_test_utils.h
-@@ -0,0 +1,46 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Support utilities for cs_dsp testing.
-+ *
-+ * Copyright (C) 2024 Cirrus Logic, Inc. and
-+ *                    Cirrus Logic International Semiconductor Ltd.
-+ */
-+
-+#include <linux/regmap.h>
-+#include <linux/firmware/cirrus/wmfw.h>
-+
-+struct kunit;
-+struct cs_dsp_test;
-+struct cs_dsp_test_local;
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_size_of_region, "FW_CS_DSP_KUNIT_TEST_UTILS");
 +
 +/**
-+ * struct cs_dsp_test - base class for test utilities
++ * cs_dsp_mock_base_addr_for_mem() - Base register address for memory region.
 + *
-+ * @test:	Pointer to struct kunit instance.
-+ * @dsp:	Pointer to struct cs_dsp instance.
-+ * @local:	Private data for each test suite.
++ * @priv:	Pointer to struct cs_dsp_test.
++ * @mem_type:	Memory region type.
++ *
++ * Return: Base register address of region.
 + */
-+struct cs_dsp_test {
-+	struct kunit *test;
-+	struct cs_dsp *dsp;
++unsigned int cs_dsp_mock_base_addr_for_mem(struct cs_dsp_test *priv, int mem_type)
++{
++	int num_mems = priv->dsp->num_mems;
++	const struct cs_dsp_region *region = priv->dsp->mem;
++	int i;
 +
-+	struct cs_dsp_test_local *local;
++	for (i = 0; i < num_mems; ++i) {
++		if (region[i].type == mem_type)
++			return region[i].base;
++	}
 +
-+	/* Following members are private */
-+	bool saw_bus_write;
++	KUNIT_FAIL(priv->test, "Unexpected region %d\n", mem_type);
++
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_base_addr_for_mem, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_reg_addr_inc_per_unpacked_word() - Unpacked register address increment per DSP word.
++ *
++ * @priv:	Pointer to struct cs_dsp_test.
++ *
++ * Return: Amount by which register address increments to move to the next
++ *	   DSP word in unpacked XM/YM/ZM.
++ */
++unsigned int cs_dsp_mock_reg_addr_inc_per_unpacked_word(struct cs_dsp_test *priv)
++{
++	switch (priv->dsp->type) {
++	case WMFW_ADSP2:
++		return 2; /* two 16-bit register indexes per XM/YM/ZM word */
++	case WMFW_HALO:
++		return 4; /* one byte-addressed 32-bit register per XM/YM/ZM word */
++	default:
++		KUNIT_FAIL(priv->test, "Unexpected DSP type\n");
++		return -1;
++	}
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_reg_addr_inc_per_unpacked_word, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_reg_block_length_bytes() - Number of bytes in an access block.
++ *
++ * @priv:	Pointer to struct cs_dsp_test.
++ * @mem_type:	Memory region type.
++ *
++ * Return: Total number of bytes in a group of registers forming the
++ * smallest bus access size (including any padding bits). For unpacked
++ * memory this is the number of registers containing one DSP word.
++ * For packed memory this is the number of registers in one packed
++ * access block.
++ */
++unsigned int cs_dsp_mock_reg_block_length_bytes(struct cs_dsp_test *priv, int mem_type)
++{
++	switch (priv->dsp->type) {
++	case WMFW_ADSP2:
++		switch (mem_type) {
++		case WMFW_ADSP2_PM:
++			return 3 * regmap_get_val_bytes(priv->dsp->regmap);
++		case WMFW_ADSP2_XM:
++		case WMFW_ADSP2_YM:
++		case WMFW_ADSP2_ZM:
++			return sizeof(u32);
++		default:
++			break;
++		}
++		break;
++	case WMFW_HALO:
++		switch (mem_type) {
++		case WMFW_ADSP2_XM:
++		case WMFW_ADSP2_YM:
++			return sizeof(u32);
++		case WMFW_HALO_PM_PACKED:
++			return 5 * sizeof(u32);
++		case WMFW_HALO_XM_PACKED:
++		case WMFW_HALO_YM_PACKED:
++			return 3 * sizeof(u32);
++		default:
++			break;
++		}
++		break;
++	default:
++		KUNIT_FAIL(priv->test, "Unexpected DSP type\n");
++		return 0;
++	}
++
++	KUNIT_FAIL(priv->test, "Unexpected mem type\n");
++
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_reg_block_length_bytes, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_reg_block_length_registers() - Number of registers in an access block.
++ *
++ * @priv:	Pointer to struct cs_dsp_test.
++ * @mem_type:	Memory region type.
++ *
++ * Return: Total number of register forming the smallest bus access size.
++ * For unpacked memory this is the number of registers containing one
++ * DSP word. For packed memory this is the number of registers in one
++ * packed access block.
++ */
++unsigned int cs_dsp_mock_reg_block_length_registers(struct cs_dsp_test *priv, int mem_type)
++{
++	return cs_dsp_mock_reg_block_length_bytes(priv, mem_type) /
++	       regmap_get_val_bytes(priv->dsp->regmap);
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_reg_block_length_registers, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_reg_block_length_dsp_words() - Number of dsp_words in an access block.
++ *
++ * @priv:	Pointer to struct cs_dsp_test.
++ * @mem_type:	Memory region type.
++ *
++ * Return: Total number of DSP words in a group of registers forming the
++ * smallest bus access size.
++ */
++unsigned int cs_dsp_mock_reg_block_length_dsp_words(struct cs_dsp_test *priv, int mem_type)
++{
++	switch (priv->dsp->type) {
++	case WMFW_ADSP2:
++		switch (mem_type) {
++		case WMFW_ADSP2_PM:
++			return regmap_get_val_bytes(priv->dsp->regmap) / 2;
++		case WMFW_ADSP2_XM:
++		case WMFW_ADSP2_YM:
++		case WMFW_ADSP2_ZM:
++			return 1;
++		default:
++			break;
++		}
++		break;
++	case WMFW_HALO:
++		switch (mem_type) {
++		case WMFW_ADSP2_XM:
++		case WMFW_ADSP2_YM:
++			return 1;
++		case WMFW_HALO_PM_PACKED:
++		case WMFW_HALO_XM_PACKED:
++		case WMFW_HALO_YM_PACKED:
++			return 4;
++		default:
++			break;
++		}
++		break;
++	default:
++		KUNIT_FAIL(priv->test, "Unexpected DSP type\n");
++		return 0;
++	}
++
++	KUNIT_FAIL(priv->test, "Unexpected mem type\n");
++
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_reg_block_length_dsp_words, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_has_zm() - DSP has ZM
++ *
++ * @priv:	Pointer to struct cs_dsp_test.
++ *
++ * Return: True if DSP has ZM.
++ */
++bool cs_dsp_mock_has_zm(struct cs_dsp_test *priv)
++{
++	switch (priv->dsp->type) {
++	case WMFW_ADSP2:
++		return true;
++	default:
++		return false;
++	}
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_has_zm, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_packed_to_unpacked_mem_type() - Unpacked region that is
++ * the same memory as a packed region.
++ *
++ * @packed_mem_type:	Type of packed memory region.
++ *
++ * Return: unpacked type that is the same memory as packed_mem_type.
++ */
++int cs_dsp_mock_packed_to_unpacked_mem_type(int packed_mem_type)
++{
++	switch (packed_mem_type) {
++	case WMFW_HALO_XM_PACKED:
++		return WMFW_ADSP2_XM;
++	case WMFW_HALO_YM_PACKED:
++		return WMFW_ADSP2_YM;
++	default:
++		return -1;
++	}
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_packed_to_unpacked_mem_type, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_num_dsp_words_to_num_packed_regs() - Number of DSP words
++ * to number of packed registers.
++ *
++ * @num_dsp_words:	Number of DSP words.
++ *
++ * Convert number of DSP words to number of packed registers rounded
++ * down to the nearest register.
++ *
++ * Return: Number of packed registers.
++ */
++unsigned int cs_dsp_mock_num_dsp_words_to_num_packed_regs(unsigned int num_dsp_words)
++{
++	/* There are 3 registers for every 4 packed words */
++	return (num_dsp_words * 3) / 4;
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_num_dsp_words_to_num_packed_regs, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++static const struct wmfw_halo_id_hdr cs_dsp_mock_halo_xm_hdr = {
++	.fw = {
++		.core_id = cpu_to_be32(WMFW_HALO << 16),
++		.block_rev = cpu_to_be32(3 << 16),
++		.vendor_id = cpu_to_be32(0x2),
++		.id = cpu_to_be32(0xabcdef),
++		.ver = cpu_to_be32(0x090101),
++	},
++
++	/*
++	 * Leave enough space for this header and 40 algorithm descriptors.
++	 * base and size are counted in DSP words.
++	 */
++	.xm_base = cpu_to_be32(((sizeof(struct wmfw_halo_id_hdr) +
++				(40 * sizeof(struct wmfw_halo_alg_hdr)))
++				/ 4) * 3),
++	.xm_size = cpu_to_be32(0x20),
++
++	/* Allocate a dummy word of YM */
++	.ym_base = cpu_to_be32(0),
++	.ym_size = cpu_to_be32(1),
++
++	.n_algs = 0,
 +};
 +
-+extern const unsigned int cs_dsp_mock_adsp2_32bit_sysbase;
-+extern const unsigned int cs_dsp_mock_adsp2_16bit_sysbase;
-+extern const unsigned int cs_dsp_mock_halo_core_base;
-+extern const unsigned int cs_dsp_mock_halo_sysinfo_base;
++static const struct wmfw_adsp2_id_hdr cs_dsp_mock_adsp2_xm_hdr = {
++	.fw = {
++		.core_id = cpu_to_be32(WMFW_ADSP2 << 16),
++		.core_rev = cpu_to_be32(2 << 16),
++		.id = cpu_to_be32(0xabcdef),
++		.ver = cpu_to_be32(0x090101),
++	},
 +
-+int cs_dsp_mock_regmap_init(struct cs_dsp_test *priv);
-+void cs_dsp_mock_regmap_drop_range(struct cs_dsp_test *priv,
-+				   unsigned int first_reg, unsigned int last_reg);
-+void cs_dsp_mock_regmap_drop_regs(struct cs_dsp_test *priv,
-+				  unsigned int first_reg, size_t num_regs);
-+void cs_dsp_mock_regmap_drop_bytes(struct cs_dsp_test *priv,
-+				   unsigned int first_reg, size_t num_bytes);
-+void cs_dsp_mock_regmap_drop_system_regs(struct cs_dsp_test *priv);
-+bool cs_dsp_mock_regmap_is_dirty(struct cs_dsp_test *priv, bool drop_system_regs);
++	/*
++	 * Leave enough space for this header and 40 algorithm descriptors.
++	 * base and size are counted in DSP words.
++	 */
++	.xm = cpu_to_be32(((sizeof(struct wmfw_adsp2_id_hdr) +
++				(40 * sizeof(struct wmfw_adsp2_alg_hdr)))
++				/ 4) * 3),
++
++	.ym = cpu_to_be32(0),
++	.zm = cpu_to_be32(0),
++
++	.n_algs = 0,
++};
++
++/**
++ * cs_dsp_mock_xm_header_get_alg_base_in_words() - Algorithm base offset in DSP words.
++ *
++ * @priv:	Pointer to struct cs_dsp_test.
++ * @alg_id:	Algorithm ID.
++ * @mem_type:	Memory region type.
++ *
++ * Lookup an algorithm in the XM header and return the base offset in
++ * DSP words of the algorithm data in the requested memory region.
++ *
++ * Return: Offset in DSP words.
++ */
++unsigned int cs_dsp_mock_xm_header_get_alg_base_in_words(struct cs_dsp_test *priv,
++							 unsigned int alg_id,
++							 int mem_type)
++{
++	unsigned int xm = cs_dsp_mock_base_addr_for_mem(priv, WMFW_ADSP2_XM);
++	union {
++		struct wmfw_adsp2_alg_hdr adsp2;
++		struct wmfw_halo_alg_hdr halo;
++	} alg;
++	unsigned int alg_hdr_addr;
++	unsigned int val, xm_base = 0, ym_base = 0, zm_base = 0;
++	int ret;
++
++	switch (priv->dsp->type) {
++	case WMFW_ADSP2:
++		alg_hdr_addr = xm + (sizeof(struct wmfw_adsp2_id_hdr) / 2);
++		for (;; alg_hdr_addr += sizeof(alg.adsp2) / 2) {
++			ret = regmap_read(priv->dsp->regmap, alg_hdr_addr, &val);
++			KUNIT_ASSERT_GE(priv->test, ret, 0);
++			KUNIT_ASSERT_NE(priv->test, val, 0xbedead);
++			ret = regmap_raw_read(priv->dsp->regmap, alg_hdr_addr,
++					      &alg.adsp2, sizeof(alg.adsp2));
++			KUNIT_ASSERT_GE(priv->test, ret, 0);
++			if (be32_to_cpu(alg.adsp2.alg.id) == alg_id) {
++				xm_base = be32_to_cpu(alg.adsp2.xm);
++				ym_base = be32_to_cpu(alg.adsp2.ym);
++				zm_base = be32_to_cpu(alg.adsp2.zm);
++				break;
++			}
++		}
++		break;
++	case WMFW_HALO:
++		alg_hdr_addr = xm + sizeof(struct wmfw_halo_id_hdr);
++		for (;; alg_hdr_addr += sizeof(alg.halo)) {
++			ret = regmap_read(priv->dsp->regmap, alg_hdr_addr, &val);
++			KUNIT_ASSERT_GE(priv->test, ret, 0);
++			KUNIT_ASSERT_NE(priv->test, val, 0xbedead);
++			ret = regmap_raw_read(priv->dsp->regmap, alg_hdr_addr,
++					      &alg.halo, sizeof(alg.halo));
++			KUNIT_ASSERT_GE(priv->test, ret, 0);
++			if (be32_to_cpu(alg.halo.alg.id) == alg_id) {
++				xm_base = be32_to_cpu(alg.halo.xm_base);
++				ym_base = be32_to_cpu(alg.halo.ym_base);
++				break;
++			}
++		}
++		break;
++	default:
++		KUNIT_FAIL(priv->test, "Unexpected DSP type %d\n", priv->dsp->type);
++		return 0;
++	}
++
++	switch (mem_type) {
++	case WMFW_ADSP2_XM:
++	case WMFW_HALO_XM_PACKED:
++		return xm_base;
++	case WMFW_ADSP2_YM:
++	case WMFW_HALO_YM_PACKED:
++		return ym_base;
++	case WMFW_ADSP2_ZM:
++		return zm_base;
++	default:
++		KUNIT_FAIL(priv->test, "Bad mem_type\n");
++		return 0;
++	}
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_xm_header_get_alg_base_in_words, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_xm_header_get_fw_version_from_regmap() - Firmware version.
++ *
++ * @priv:	Pointer to struct cs_dsp_test.
++ *
++ * Return: Firmware version word value.
++ */
++unsigned int cs_dsp_mock_xm_header_get_fw_version_from_regmap(struct cs_dsp_test *priv)
++{
++	unsigned int xm = cs_dsp_mock_base_addr_for_mem(priv, WMFW_ADSP2_XM);
++	union {
++		struct wmfw_id_hdr adsp2;
++		struct wmfw_v3_id_hdr halo;
++	} hdr;
++
++	switch (priv->dsp->type) {
++	case WMFW_ADSP2:
++		regmap_raw_read(priv->dsp->regmap, xm, &hdr.adsp2, sizeof(hdr.adsp2));
++		return be32_to_cpu(hdr.adsp2.ver);
++	case WMFW_HALO:
++		regmap_raw_read(priv->dsp->regmap, xm, &hdr.halo, sizeof(hdr.halo));
++		return be32_to_cpu(hdr.halo.ver);
++	default:
++		KUNIT_FAIL(priv->test, NULL);
++		return 0;
++	}
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_xm_header_get_fw_version_from_regmap,
++		     "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_xm_header_get_fw_version() - Firmware version.
++ *
++ * @header:	Pointer to struct cs_dsp_mock_xm_header.
++ *
++ * Return: Firmware version word value.
++ */
++unsigned int cs_dsp_mock_xm_header_get_fw_version(struct cs_dsp_mock_xm_header *header)
++{
++	const struct wmfw_id_hdr *adsp2_hdr;
++	const struct wmfw_v3_id_hdr *halo_hdr;
++
++	switch (header->test_priv->dsp->type) {
++	case WMFW_ADSP2:
++		adsp2_hdr = header->blob_data;
++		return be32_to_cpu(adsp2_hdr->ver);
++	case WMFW_HALO:
++		halo_hdr = header->blob_data;
++		return be32_to_cpu(halo_hdr->ver);
++	default:
++		KUNIT_FAIL(header->test_priv->test, NULL);
++		return 0;
++	}
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_xm_header_get_fw_version, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_mock_xm_header_drop_from_regmap_cache() - Drop XM header from regmap cache.
++ *
++ * @priv:	Pointer to struct cs_dsp_test.
++ */
++void cs_dsp_mock_xm_header_drop_from_regmap_cache(struct cs_dsp_test *priv)
++{
++	unsigned int xm = cs_dsp_mock_base_addr_for_mem(priv, WMFW_ADSP2_XM);
++	unsigned int bytes;
++	u32 num_algs;
++
++	switch (priv->dsp->type) {
++	case WMFW_ADSP2:
++		/*
++		 * Could be one 32-bit register or two 16-bit registers.
++		 * A raw read will read the requested number of bytes.
++		 */
++		regmap_raw_read(priv->dsp->regmap,
++				xm + (offsetof(struct wmfw_adsp2_id_hdr, n_algs) / 2),
++				&num_algs, sizeof(num_algs));
++		num_algs = be32_to_cpu(num_algs);
++		bytes = sizeof(struct wmfw_adsp2_id_hdr) +
++			(num_algs * sizeof(struct wmfw_adsp2_alg_hdr)) +
++			4 /* terminator word */;
++
++		regcache_drop_region(priv->dsp->regmap, xm, xm + (bytes / 2) - 1);
++		break;
++	case WMFW_HALO:
++		regmap_read(priv->dsp->regmap,
++			    xm + offsetof(struct wmfw_halo_id_hdr, n_algs),
++			    &num_algs);
++		bytes = sizeof(struct wmfw_halo_id_hdr) +
++			(num_algs * sizeof(struct wmfw_halo_alg_hdr)) +
++			4 /* terminator word */;
++
++		regcache_drop_region(priv->dsp->regmap, xm, xm + bytes - 4);
++		break;
++	default:
++		break;
++	}
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_xm_header_drop_from_regmap_cache, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++static void cs_dsp_mock_xm_header_add_adsp2_algs(struct cs_dsp_mock_xm_header *builder,
++						 const struct cs_dsp_mock_alg_def *algs,
++						 size_t num_algs)
++{
++	struct wmfw_adsp2_id_hdr *hdr = builder->blob_data;
++	unsigned int next_free_xm_word, next_free_ym_word, next_free_zm_word;
++
++	next_free_xm_word = be32_to_cpu(hdr->xm);
++	next_free_ym_word = be32_to_cpu(hdr->ym);
++	next_free_zm_word = be32_to_cpu(hdr->zm);
++
++	/* Set num_algs in XM header. */
++	hdr->n_algs = cpu_to_be32(num_algs);
++
++	/* Create algorithm descriptor list */
++	struct wmfw_adsp2_alg_hdr *alg_info =
++			(struct wmfw_adsp2_alg_hdr *)(&hdr[1]);
++
++	for (; num_algs > 0; num_algs--, algs++, alg_info++) {
++		unsigned int alg_xm_last, alg_ym_last, alg_zm_last;
++
++		alg_info->alg.id = cpu_to_be32(algs->id);
++		alg_info->alg.ver = cpu_to_be32(algs->ver);
++		alg_info->xm = cpu_to_be32(algs->xm_base_words);
++		alg_info->ym = cpu_to_be32(algs->ym_base_words);
++		alg_info->zm = cpu_to_be32(algs->zm_base_words);
++
++		/* Check if we need to auto-allocate base addresses */
++		if (!alg_info->xm && algs->xm_size_words)
++			alg_info->xm = cpu_to_be32(next_free_xm_word);
++
++		if (!alg_info->ym && algs->ym_size_words)
++			alg_info->ym = cpu_to_be32(next_free_ym_word);
++
++		if (!alg_info->zm && algs->zm_size_words)
++			alg_info->zm = cpu_to_be32(next_free_zm_word);
++
++		alg_xm_last = be32_to_cpu(alg_info->xm) + algs->xm_size_words - 1;
++		if (alg_xm_last > next_free_xm_word)
++			next_free_xm_word = alg_xm_last;
++
++		alg_ym_last = be32_to_cpu(alg_info->ym) + algs->ym_size_words - 1;
++		if (alg_ym_last > next_free_ym_word)
++			next_free_ym_word = alg_ym_last;
++
++		alg_zm_last = be32_to_cpu(alg_info->zm) + algs->zm_size_words - 1;
++		if (alg_zm_last > next_free_zm_word)
++			next_free_zm_word = alg_zm_last;
++	}
++
++	/* Write list terminator */
++	*(__be32 *)(alg_info) = cpu_to_be32(0xbedead);
++}
++
++static void cs_dsp_mock_xm_header_add_halo_algs(struct cs_dsp_mock_xm_header *builder,
++						const struct cs_dsp_mock_alg_def *algs,
++						size_t num_algs)
++{
++	struct wmfw_halo_id_hdr *hdr = builder->blob_data;
++	unsigned int next_free_xm_word, next_free_ym_word;
++
++	/* Assume we're starting with bare header */
++	next_free_xm_word = be32_to_cpu(hdr->xm_base) + be32_to_cpu(hdr->xm_size) - 1;
++	next_free_ym_word = be32_to_cpu(hdr->ym_base) + be32_to_cpu(hdr->ym_size) - 1;
++
++	/* Set num_algs in XM header */
++	hdr->n_algs = cpu_to_be32(num_algs);
++
++	/* Create algorithm descriptor list */
++	struct wmfw_halo_alg_hdr *alg_info =
++			(struct wmfw_halo_alg_hdr *)(&hdr[1]);
++
++	for (; num_algs > 0; num_algs--, algs++, alg_info++) {
++		unsigned int alg_xm_last, alg_ym_last;
++
++		alg_info->alg.id = cpu_to_be32(algs->id);
++		alg_info->alg.ver = cpu_to_be32(algs->ver);
++		alg_info->xm_base = cpu_to_be32(algs->xm_base_words);
++		alg_info->xm_size = cpu_to_be32(algs->xm_size_words);
++		alg_info->ym_base = cpu_to_be32(algs->ym_base_words);
++		alg_info->ym_size = cpu_to_be32(algs->ym_size_words);
++
++		/* Check if we need to auto-allocate base addresses */
++		if (!alg_info->xm_base && alg_info->xm_size)
++			alg_info->xm_base = cpu_to_be32(next_free_xm_word);
++
++		if (!alg_info->ym_base && alg_info->ym_size)
++			alg_info->ym_base = cpu_to_be32(next_free_ym_word);
++
++		alg_xm_last = be32_to_cpu(alg_info->xm_base) + be32_to_cpu(alg_info->xm_size) - 1;
++		if (alg_xm_last > next_free_xm_word)
++			next_free_xm_word = alg_xm_last;
++
++		alg_ym_last = be32_to_cpu(alg_info->ym_base) + be32_to_cpu(alg_info->ym_size) - 1;
++		if (alg_ym_last > next_free_ym_word)
++			next_free_ym_word = alg_ym_last;
++	}
++
++	/* Write list terminator */
++	*(__be32 *)(alg_info) = cpu_to_be32(0xbedead);
++}
++
++/**
++ * cs_dsp_mock_xm_header_write_to_regmap() - Write XM header to regmap.
++ *
++ * @header:	Pointer to struct cs_dsp_mock_xm_header.
++ *
++ * The data in header is written to the XM addresses in the regmap.
++ *
++ * Return: 0 on success, else negative error code.
++ */
++int cs_dsp_mock_xm_header_write_to_regmap(struct cs_dsp_mock_xm_header *header)
++{
++	struct cs_dsp_test *priv = header->test_priv;
++	unsigned int reg_addr = cs_dsp_mock_base_addr_for_mem(priv, WMFW_ADSP2_XM);
++
++	/*
++	 * One 32-bit word corresponds to one 32-bit unpacked XM word so the
++	 * blob can be written directly to the regmap.
++	 */
++	return regmap_raw_write(priv->dsp->regmap, reg_addr,
++				header->blob_data, header->blob_size_bytes);
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_mock_xm_header_write_to_regmap, "FW_CS_DSP_KUNIT_TEST_UTILS");
++
++/**
++ * cs_dsp_create_mock_xm_header() - Create a dummy XM header.
++ *
++ * @priv:	Pointer to struct cs_dsp_test.
++ * @algs:	Pointer to array of struct cs_dsp_mock_alg_def listing the
++ *		dummy algorithm entries to include in the XM header.
++ * @num_algs:	Number of entries in the algs array.
++ *
++ * Return: Pointer to created struct cs_dsp_mock_xm_header.
++ */
++struct cs_dsp_mock_xm_header *cs_dsp_create_mock_xm_header(struct cs_dsp_test *priv,
++							   const struct cs_dsp_mock_alg_def *algs,
++							   size_t num_algs)
++{
++	struct cs_dsp_mock_xm_header *builder;
++	size_t total_bytes_required;
++	const void *header;
++	size_t header_size_bytes;
++
++	builder = kunit_kzalloc(priv->test, sizeof(*builder), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(priv->test, builder);
++	builder->test_priv = priv;
++
++	switch (priv->dsp->type) {
++	case WMFW_ADSP2:
++		header = &cs_dsp_mock_adsp2_xm_hdr;
++		header_size_bytes = sizeof(cs_dsp_mock_adsp2_xm_hdr);
++		total_bytes_required = header_size_bytes +
++				       (num_algs * sizeof(struct wmfw_adsp2_alg_hdr))
++				       + 4; /* terminator word */
++		break;
++	case WMFW_HALO:
++		header = &cs_dsp_mock_halo_xm_hdr,
++		header_size_bytes = sizeof(cs_dsp_mock_halo_xm_hdr);
++		total_bytes_required = header_size_bytes +
++				       (num_algs * sizeof(struct wmfw_halo_alg_hdr))
++				       + 4; /* terminator word */
++		break;
++	default:
++		KUNIT_FAIL(priv->test, "%s unexpected DSP type %d\n",
++			   __func__, priv->dsp->type);
++		return NULL;
++	}
++
++	builder->blob_data = kunit_kzalloc(priv->test, total_bytes_required, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(priv->test, builder->blob_data);
++	builder->blob_size_bytes = total_bytes_required;
++
++	memcpy(builder->blob_data, header, header_size_bytes);
++
++	switch (priv->dsp->type) {
++	case WMFW_ADSP2:
++		cs_dsp_mock_xm_header_add_adsp2_algs(builder, algs, num_algs);
++		break;
++	case WMFW_HALO:
++		cs_dsp_mock_xm_header_add_halo_algs(builder, algs, num_algs);
++		break;
++	default:
++		break;
++	}
++
++	return builder;
++}
++EXPORT_SYMBOL_NS_GPL(cs_dsp_create_mock_xm_header, "FW_CS_DSP_KUNIT_TEST_UTILS");
+diff --git a/include/linux/firmware/cirrus/cs_dsp_test_utils.h b/include/linux/firmware/cirrus/cs_dsp_test_utils.h
+index ac6b03f4c084..899ae94198aa 100644
+--- a/include/linux/firmware/cirrus/cs_dsp_test_utils.h
++++ b/include/linux/firmware/cirrus/cs_dsp_test_utils.h
+@@ -30,11 +30,74 @@ struct cs_dsp_test {
+ 	bool saw_bus_write;
+ };
+ 
++/**
++ * struct cs_dsp_mock_alg_def - Info for creating a mock algorithm entry.
++ *
++ * @id		  Algorithm ID.
++ * @ver;	  Algorithm version.
++ * @xm_base_words XM base address in DSP words.
++ * @xm_size_words XM size in DSP words.
++ * @ym_base_words YM base address in DSP words.
++ * @ym_size_words YM size in DSP words.
++ * @zm_base_words ZM base address in DSP words.
++ * @zm_size_words ZM size in DSP words.
++ */
++struct cs_dsp_mock_alg_def {
++	unsigned int id;
++	unsigned int ver;
++	unsigned int xm_base_words;
++	unsigned int xm_size_words;
++	unsigned int ym_base_words;
++	unsigned int ym_size_words;
++	unsigned int zm_base_words;
++	unsigned int zm_size_words;
++};
++
++/**
++ * struct cs_dsp_mock_xm_header - XM header builder
++ *
++ * @test_priv:	     Pointer to the struct cs_dsp_test.
++ * @blob_data:	     Pointer to the created blob data.
++ * @blob_size_bytes: Size of the data at blob_data.
++ */
++struct cs_dsp_mock_xm_header {
++	struct cs_dsp_test *test_priv;
++	void *blob_data;
++	size_t blob_size_bytes;
++};
++
+ extern const unsigned int cs_dsp_mock_adsp2_32bit_sysbase;
+ extern const unsigned int cs_dsp_mock_adsp2_16bit_sysbase;
+ extern const unsigned int cs_dsp_mock_halo_core_base;
+ extern const unsigned int cs_dsp_mock_halo_sysinfo_base;
+ 
++extern const struct cs_dsp_region cs_dsp_mock_halo_dsp1_regions[];
++extern const unsigned int cs_dsp_mock_halo_dsp1_region_sizes[];
++extern const struct cs_dsp_region cs_dsp_mock_adsp2_32bit_dsp1_regions[];
++extern const unsigned int cs_dsp_mock_adsp2_32bit_dsp1_region_sizes[];
++extern const struct cs_dsp_region cs_dsp_mock_adsp2_16bit_dsp1_regions[];
++extern const unsigned int cs_dsp_mock_adsp2_16bit_dsp1_region_sizes[];
++int cs_dsp_mock_count_regions(const unsigned int *region_sizes);
++unsigned int cs_dsp_mock_size_of_region(const struct cs_dsp *dsp, int mem_type);
++unsigned int cs_dsp_mock_base_addr_for_mem(struct cs_dsp_test *priv, int mem_type);
++unsigned int cs_dsp_mock_reg_addr_inc_per_unpacked_word(struct cs_dsp_test *priv);
++unsigned int cs_dsp_mock_reg_block_length_bytes(struct cs_dsp_test *priv, int mem_type);
++unsigned int cs_dsp_mock_reg_block_length_registers(struct cs_dsp_test *priv, int mem_type);
++unsigned int cs_dsp_mock_reg_block_length_dsp_words(struct cs_dsp_test *priv, int mem_type);
++bool cs_dsp_mock_has_zm(struct cs_dsp_test *priv);
++int cs_dsp_mock_packed_to_unpacked_mem_type(int packed_mem_type);
++unsigned int cs_dsp_mock_num_dsp_words_to_num_packed_regs(unsigned int num_dsp_words);
++unsigned int cs_dsp_mock_xm_header_get_alg_base_in_words(struct cs_dsp_test *priv,
++							 unsigned int alg_id,
++							 int mem_type);
++unsigned int cs_dsp_mock_xm_header_get_fw_version_from_regmap(struct cs_dsp_test *priv);
++unsigned int cs_dsp_mock_xm_header_get_fw_version(struct cs_dsp_mock_xm_header *header);
++void cs_dsp_mock_xm_header_drop_from_regmap_cache(struct cs_dsp_test *priv);
++int cs_dsp_mock_xm_header_write_to_regmap(struct cs_dsp_mock_xm_header *header);
++struct cs_dsp_mock_xm_header *cs_dsp_create_mock_xm_header(struct cs_dsp_test *priv,
++							   const struct cs_dsp_mock_alg_def *algs,
++							   size_t num_algs);
++
+ int cs_dsp_mock_regmap_init(struct cs_dsp_test *priv);
+ void cs_dsp_mock_regmap_drop_range(struct cs_dsp_test *priv,
+ 				   unsigned int first_reg, unsigned int last_reg);
 -- 
 2.39.5
 
