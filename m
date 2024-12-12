@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-443676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E8A9EFAA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:18:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BCA9EFA8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:15:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B69F2188350E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13A8D287CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DC722913F;
-	Thu, 12 Dec 2024 18:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C69242A90;
+	Thu, 12 Dec 2024 18:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sWRYoT6I"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M38ojX1H"
 Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC46B240395
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C2F241F48
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734026795; cv=none; b=gy5LjPDuYzBwBUDRuncpLLMLKBjDs7+q9B6AXaMOh3OLQvBOGZhxwjzEQQcj12l21qPqEKkXal9CMwUJFDItErl6jezd9qIP6ztGfGKtUeo3qfDfTxUg/enxR/OKtbvIcWDsfrx0aOYjIw+hNZZzCoFKx81pnvHGRf9Rg9mAxh4=
+	t=1734026797; cv=none; b=o4s6NcGJoJsFNS3tdhBXV28hSkFX27kU7x3kyvLONp3FNucDrkxg/0FzrAcpqvm9Rsg3gCMg1miFc2mDi9eb8Eo2rr05X5dcdR74bqKmHoM2cQDHzYMzsZkZGet2B6kWrybVlfK8fWwQ83Gwl1OipUyyS+9WTbWdg47daowfhWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734026795; c=relaxed/simple;
-	bh=qoHNVUntp7L8V1KYygYeM3r4gqUxbVbBZQoQ48yo1Fk=;
+	s=arc-20240116; t=1734026797; c=relaxed/simple;
+	bh=7/D79MYPdDU2T6iY5awYcWs+bBtc+h6wuBQGuuIFMIo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YhPaXbJSWIuH/MIEPL1hdraLEDxT9fNlyg9S92Yd+hr800Pv5Hnz82/OaHBHu3/jHx7DYAz2W3zQInBvdOwLf7+JaH8CaSk0kVTbYtkAP2gAOVyGtERZ8mXB2lkg6Em2Hux9n0DE/enjfcGq/u4SnauCdPgbGfBQGVdXmTbBWac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sWRYoT6I; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=KYWHUL7PeZvnoWS6RqAlz5bJzpu/zh4N7b7z+KK4eUQSaFYSZryo0Tw9WvqIYo5X8MVxtomE2jX3+f9xCL+ERpVh2o6xekopmfEiR8Zzdl2dCq6StN+LjlUic1ExhGxChtjQeK6tVi9/VTuQ4cAjFHyI1Z4hAeKe6EF//DPyrNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M38ojX1H; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-434fb9646efso8355995e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:06:33 -0800 (PST)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4361ac8b25fso5743945e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:06:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734026792; x=1734631592; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734026794; x=1734631594; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2LdunWCve+BzW7qxRXgQ2DWd6pqP346bXuKFqoUe0/0=;
-        b=sWRYoT6I5F1mDr5fBWF6UvctjiEhYzRaP5TYy0V7LgJdao43qFsg1en1HadBceYpl0
-         IsJsjLQn5oCdqo1JT0cdmpFDJCsXhccsoBcTFG24dpTuSHR26f5P6FAGXo5zVbrEbyNZ
-         kbzw6DMdnWI6G0us3ZMaQwsBO5NfYkMjw7u5MWXC/md8X8SdaK6rrCaVuRcNtH5tnHEd
-         6v887jQEZLKFwXJZ8uaJcPo1aLr8IPONUjxG/Yz3UmI3e+xQjvn9ctYIWOhiebW/LBUN
-         OGKy2Oz1sebS9xKtCZr68Pnf6gBYR7rEHSyuslHCatgS07/ObAgpBOv81BSu1rA9pRyd
-         phrw==
+        bh=NKQvLMAR4pXvIl9rjZ9gjgm+IMNIvYiup7Xyty4Kn6A=;
+        b=M38ojX1H9Vb6t3Kf1VhmbaUwwQmnghCvX+EdUAkVuhCwibpTXUwsKSjDwfr+rOjHE9
+         5PdRpPMcarF869og5YlFF7BxhuTp5b3t8eYspCsZdsmzBbVhleAvNBpy1NfjdUCXKK4F
+         teWxGj/nrj6h7pqJqbSjzQk4MYGNPD06qWLcPBPmgu6hT69gCAX1c39B43sIuhIMc5jk
+         wYfOBQ8+NXpN200d4KJA4JqQ8eL6glh9cjv5lxYW9p7Qp8q+tNv8ct38EAkidPYjkKh+
+         n/i3AC5EwmM8eeQ4BPhiQ+KY2Ox2+ixKLlC1s9cW19NkX+wo0x8KNXkShsR6vWQP1yYB
+         Tk7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734026792; x=1734631592;
+        d=1e100.net; s=20230601; t=1734026794; x=1734631594;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2LdunWCve+BzW7qxRXgQ2DWd6pqP346bXuKFqoUe0/0=;
-        b=fNN0DUWKj8iKgI4GROsDX7Jj4WFjORxYA/sD3hz2L4/0Fok+OYLpBAWD8FgFdAN2go
-         nO3M+zm0hOcVzxl9WpAiVAjxcZr9FRXaa4D9UsPXh5nY8MUL6nmG6ZPURj9nbTdJXskT
-         PULqA2KjZTDiSHAC50FwaWCcj0pVFYL6DwgJAWUvzGsk2Kukmp9QK7Sru10MzhPb4fFH
-         YHUN7HRocHhV/LoiSYWuCjd96AfTDzEpk6188i11mQUWa8N1ndURKyPwJ1DNVyH8WoGi
-         2zN6QSZLF+oQG4o9PfthzytS2Jav9AavSxSOWp8lUTB+MZh7FCduqKH3Q7AHVXGalhfo
-         7W9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVhoHwhK9Ars2m9SwWUgrexLoaEeAwda8nRBUFJFN++roRC7LqphuJHEdkUhLHwcQgVGZ4G8nXgpCOpnCY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRUGJlKXTvuI5pvFakAD9Pw1pFUxnXrHBckkM7jWajkooOWazx
-	MPICpyuCr3LGP+qXcHi9pwZHJdiStG714Jbl1vSF6yLhTeeKwFuZXsxKb0UDXDwjv9plEiESx73
-	hVFKLAem+Hw==
-X-Google-Smtp-Source: AGHT+IERWZ4NnM7KQcPGdQG43bKrQYNR/UyZnwsqD34WfJRCP7KI0E4FIciOvn+bi06f/klghzOUEL4MFalBog==
-X-Received: from wmqd1.prod.google.com ([2002:a05:600c:34c1:b0:434:fe2b:fea7])
+        bh=NKQvLMAR4pXvIl9rjZ9gjgm+IMNIvYiup7Xyty4Kn6A=;
+        b=e5QJv8xPNxl6NNGdSgPMRD40HbNxUMEatzT3DNT3stTUbhSuxy0Pun1lkdRP/To1bx
+         dCAw4pz/Iy8RuVebQHFaxyh7aFNC0R2h2TZ7q1NpDyFlRPVU8Uh8fx2Sx910YMiOROk7
+         i9PyidcRcCXcewoB8fgrsdeSfX4odur9BUov4qYWUblqWoYwACHZImcrlrIj51gdsUdo
+         GksoEukiCTYs+gZsQPNlql+PlsCfvyArkpNoHbA28uWmVIsia68Yq5msT7A7lUshnxYt
+         M3oWFHM9wVEAFWKid+gxy2hMJwDqhLUjjij2tBdBaNRnno2WDrb9G3cCB3KLaisib7Hf
+         ltlA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1wSd7Q9a1NFJuveSLruqB7H00blhOBlsIKR7EuzXWiIDv0AwEq+oTO7yf/yyw+uz49du2gne37Zbr+z0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjZolBVOMGYcALoZVoaybS2UJ0JKbnotI72bVM4y+II5e7u9hd
+	TwNGO4nxNlEV/B0D06IBdEsfLYJAb5e2mQpUqObqJSxwpaiETARDuiOUIvtUM45LNU8IqslN1Ib
+	I/keTHIxvpQ==
+X-Google-Smtp-Source: AGHT+IFkHgsqAYvLOBec6cgNAQkg3vmQRCOKbFIfkLxDpGopMY/6t1JJbqk9n+vF2FSRrh/Pk6B9mVEKRUOq9Q==
+X-Received: from wmbjl5.prod.google.com ([2002:a05:600c:6a85:b0:434:f119:f1a])
  (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:5101:b0:434:ffb2:f9df with SMTP id 5b1f17b1804b1-4361c3a6550mr73450045e9.17.1734026792347;
- Thu, 12 Dec 2024 10:06:32 -0800 (PST)
-Date: Thu, 12 Dec 2024 18:04:16 +0000
+ 2002:a05:600c:3583:b0:434:f871:1b9d with SMTP id 5b1f17b1804b1-4362287091cmr39041375e9.33.1734026794478;
+ Thu, 12 Dec 2024 10:06:34 -0800 (PST)
+Date: Thu, 12 Dec 2024 18:04:17 +0000
 In-Reply-To: <20241212180423.1578358-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241212180423.1578358-1-smostafa@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212180423.1578358-53-smostafa@google.com>
-Subject: [RFC PATCH v2 52/58] iommu/arm-smmu-v3-kvm: Add IRQs for the driver
+Message-ID: <20241212180423.1578358-54-smostafa@google.com>
+Subject: [RFC PATCH v2 53/58] iommu/arm-smmu-v3-kvm: Probe power domains
 From: Mostafa Saleh <smostafa@google.com>
 To: iommu@lists.linux.dev, kvmarm@lists.linux.dev, 
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -87,215 +87,135 @@ Cc: catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
 	Mostafa Saleh <smostafa@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Handle IRQs from the KVM kernel driver, it should be safe to do it
-from the kernel as this a debug feature.
+From: Jean-Philippe Brucker <jean-philippe@linaro.org>
 
-Only GERROR and EVTQ irqs are handled.
-Unlike the kernel driver, we don't do much here (no rest in SMMU or
-interaction of cmdq) but just printing.
+Try to use SCMI if possible, otherwise rely on HVC to the hypervisor
+to notify about power changes, this is ONLY safe if the SMMU resets
+to blocking DMA.
 
 Signed-off-by: Mostafa Saleh <smostafa@google.com>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
 ---
- arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c   |   3 +-
- .../iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c   | 138 ++++++++++++++++++
- 2 files changed, 139 insertions(+), 2 deletions(-)
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c   | 78 +++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
-diff --git a/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c b/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
-index 2a99873d980f..60f0760f49eb 100644
---- a/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
-+++ b/arch/arm64/kvm/hyp/nvhe/iommu/arm-smmu-v3.c
-@@ -365,7 +365,6 @@ static int smmu_init_registers(struct hyp_arm_smmu_v3_device *smmu)
- 	      FIELD_PREP(CR1_QUEUE_IC, CR1_CACHE_WB);
- 	writel_relaxed(val, smmu->base + ARM_SMMU_CR1);
- 	writel_relaxed(CR2_PTM, smmu->base + ARM_SMMU_CR2);
--	writel_relaxed(0, smmu->base + ARM_SMMU_IRQ_CTRL);
- 
- 	val = readl_relaxed(smmu->base + ARM_SMMU_GERROR);
- 	old = readl_relaxed(smmu->base + ARM_SMMU_GERRORN);
-@@ -540,7 +539,7 @@ static int smmu_reset_device(struct hyp_arm_smmu_v3_device *smmu)
- 		goto err_disable_cmdq;
- 
- 	/* Enable translation */
--	return smmu_write_cr0(smmu, CR0_SMMUEN | CR0_CMDQEN | CR0_ATSCHK);
-+	return smmu_write_cr0(smmu, CR0_SMMUEN | CR0_CMDQEN | CR0_ATSCHK | CR0_EVTQEN);
- 
- err_disable_cmdq:
- 	return smmu_write_cr0(smmu, 0);
 diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c
-index cbcd8a75d562..674ce2b02a4b 100644
+index 674ce2b02a4b..deeed994a131 100644
 --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c
 +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c
-@@ -496,11 +496,107 @@ static bool kvm_arm_smmu_validate_features(struct arm_smmu_device *smmu)
- 	return true;
- }
+@@ -8,6 +8,7 @@
+ #include <asm/kvm_mmu.h>
  
-+static irqreturn_t kvm_arm_smmu_evt_handler(int irq, void *dev)
-+{
-+	int i;
-+	struct arm_smmu_device *smmu = dev;
-+	struct arm_smmu_queue *q = &smmu->evtq.q;
-+	struct arm_smmu_ll_queue *llq = &q->llq;
-+	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
-+				      DEFAULT_RATELIMIT_BURST);
-+	u64 evt[EVTQ_ENT_DWORDS];
-+
-+	do {
-+		while (!queue_remove_raw(q, evt)) {
-+			u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
-+
-+			if (!__ratelimit(&rs))
-+				continue;
-+
-+			dev_info(smmu->dev, "event 0x%02x received:\n", id);
-+			for (i = 0; i < ARRAY_SIZE(evt); ++i)
-+				dev_info(smmu->dev, "\t0x%016llx\n",
-+					 (unsigned long long)evt[i]);
-+
-+			cond_resched();
-+		}
-+
-+		/*
-+		 * Not much we can do on overflow, so scream and pretend we're
-+		 * trying harder.
-+		 */
-+		if (queue_sync_prod_in(q) == -EOVERFLOW)
-+			dev_err(smmu->dev, "EVTQ overflow detected -- events lost\n");
-+	} while (!queue_empty(llq));
-+
-+	/* Sync our overflow flag, as we believe we're up to speed */
-+	queue_sync_cons_ovf(q);
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t kvm_arm_smmu_gerror_handler(int irq, void *dev)
-+{
-+	u32 gerror, gerrorn, active;
-+	struct arm_smmu_device *smmu = dev;
-+
-+	gerror = readl_relaxed(smmu->base + ARM_SMMU_GERROR);
-+	gerrorn = readl_relaxed(smmu->base + ARM_SMMU_GERRORN);
-+
-+	active = gerror ^ gerrorn;
-+	if (!(active & GERROR_ERR_MASK))
-+		return IRQ_NONE; /* No errors pending */
-+
-+	dev_warn(smmu->dev,
-+		 "unexpected global error reported (0x%08x), this could be serious\n",
-+		 active);
-+
-+	/* There is no API to reconfigure the device at the moment.*/
-+	if (active & GERROR_SFM_ERR)
-+		dev_err(smmu->dev, "device has entered Service Failure Mode!\n");
-+
-+	if (active & GERROR_MSI_GERROR_ABT_ERR)
-+		dev_warn(smmu->dev, "GERROR MSI write aborted\n");
-+
-+	if (active & GERROR_MSI_PRIQ_ABT_ERR)
-+		dev_warn(smmu->dev, "PRIQ MSI write aborted\n");
-+
-+	if (active & GERROR_MSI_EVTQ_ABT_ERR)
-+		dev_warn(smmu->dev, "EVTQ MSI write aborted\n");
-+
-+	if (active & GERROR_MSI_CMDQ_ABT_ERR)
-+		dev_warn(smmu->dev, "CMDQ MSI write aborted\n");
-+
-+	if (active & GERROR_PRIQ_ABT_ERR)
-+		dev_err(smmu->dev, "PRIQ write aborted -- events may have been lost\n");
-+
-+	if (active & GERROR_EVTQ_ABT_ERR)
-+		dev_err(smmu->dev, "EVTQ write aborted -- events may have been lost\n");
-+
-+	if (active & GERROR_CMDQ_ERR) {
-+		dev_err(smmu->dev, "CMDQ ERR -- Hypervisor cmdq corrupted?\n");
-+		BUG();
-+	}
-+
-+	writel(gerror, smmu->base + ARM_SMMU_GERRORN);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t kvm_arm_smmu_pri_handler(int irq, void *dev)
-+{
-+	struct arm_smmu_device *smmu = dev;
-+
-+	dev_err(smmu->dev, "PRI not supported in KVM driver!\n");
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int kvm_arm_smmu_device_reset(struct host_arm_smmu_device *host_smmu)
- {
- 	int ret;
- 	u32 reg;
- 	struct arm_smmu_device *smmu = &host_smmu->smmu;
-+	u32 irqen_flags = IRQ_CTRL_EVTQ_IRQEN | IRQ_CTRL_GERROR_IRQEN;
+ #include <linux/arm-smccc.h>
++#include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
  
- 	reg = readl_relaxed(smmu->base + ARM_SMMU_CR0);
- 	if (reg & CR0_SMMUEN)
-@@ -522,6 +618,39 @@ static int kvm_arm_smmu_device_reset(struct host_arm_smmu_device *host_smmu)
- 	/* Command queue */
- 	writeq_relaxed(smmu->cmdq.q.q_base, smmu->base + ARM_SMMU_CMDQ_BASE);
+@@ -21,6 +22,7 @@ struct host_arm_smmu_device {
+ 	struct arm_smmu_device		smmu;
+ 	pkvm_handle_t			id;
+ 	u32				boot_gbpa;
++	struct kvm_power_domain		power_domain;
+ };
  
-+	/* Event queue */
-+	writeq_relaxed(smmu->evtq.q.q_base, smmu->base + ARM_SMMU_EVTQ_BASE);
-+	writel_relaxed(smmu->evtq.q.llq.prod, smmu->base + SZ_64K + ARM_SMMU_EVTQ_PROD);
-+	writel_relaxed(smmu->evtq.q.llq.cons, smmu->base + SZ_64K + ARM_SMMU_EVTQ_CONS);
-+
-+	/* Disable IRQs first */
-+	ret = arm_smmu_write_reg_sync(smmu, 0, ARM_SMMU_IRQ_CTRL,
-+				      ARM_SMMU_IRQ_CTRLACK);
-+	if (ret) {
-+		dev_err(smmu->dev, "failed to disable irqs\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * We don't support combined irqs for now, no specific reason, they are uncommon
-+	 * so we just try to avoid bloating the code.
-+	 */
-+	if (smmu->combined_irq)
-+		dev_err(smmu->dev, "Combined irqs not supported by this driver\n");
-+	else
-+		arm_smmu_setup_unique_irqs(smmu, kvm_arm_smmu_evt_handler,
-+					   kvm_arm_smmu_gerror_handler,
-+					   kvm_arm_smmu_pri_handler);
-+
-+	if (smmu->features & ARM_SMMU_FEAT_PRI)
-+		irqen_flags |= IRQ_CTRL_PRIQ_IRQEN;
-+
-+	/* Enable interrupt generation on the SMMU */
-+	ret = arm_smmu_write_reg_sync(smmu, irqen_flags,
-+				      ARM_SMMU_IRQ_CTRL, ARM_SMMU_IRQ_CTRLACK);
-+	if (ret)
-+		dev_warn(smmu->dev, "failed to enable irqs\n");
-+
+ #define smmu_to_host(_smmu) \
+@@ -654,6 +656,77 @@ static int kvm_arm_smmu_device_reset(struct host_arm_smmu_device *host_smmu)
  	return 0;
  }
  
-@@ -565,6 +694,8 @@ static int kvm_arm_smmu_probe(struct platform_device *pdev)
- 	if (IS_ERR(smmu->base))
- 		return PTR_ERR(smmu->base);
- 
-+	arm_smmu_probe_irq(pdev, smmu);
++static int kvm_arm_probe_scmi_pd(struct device_node *scmi_node,
++				 struct kvm_power_domain *pd)
++{
++	int ret;
++	struct resource res;
++	struct of_phandle_args args;
 +
- 	ret = arm_smmu_device_hw_probe(smmu);
- 	if (ret)
- 		return ret;
-@@ -583,6 +714,13 @@ static int kvm_arm_smmu_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	/* evtq */
-+	ret = arm_smmu_init_one_queue(smmu, &smmu->evtq.q, smmu->base + SZ_64K,
-+				      ARM_SMMU_EVTQ_PROD, ARM_SMMU_EVTQ_CONS,
-+				      EVTQ_ENT_DWORDS, "evtq");
++	pd->type = KVM_POWER_DOMAIN_ARM_SCMI;
++
++	ret = of_parse_phandle_with_args(scmi_node, "shmem", NULL, 0, &args);
 +	if (ret)
 +		return ret;
 +
- 	ret = arm_smmu_init_strtab(smmu);
++	ret = of_address_to_resource(args.np, 0, &res);
++	if (ret)
++		goto out_put_nodes;
++
++	ret = of_property_read_u32(scmi_node, "arm,smc-id",
++				   &pd->arm_scmi.smc_id);
++	if (ret)
++		goto out_put_nodes;
++
++	/*
++	 * The shared buffer is unmapped from the host while a request is in
++	 * flight, so it has to be on its own page.
++	 */
++	if (!IS_ALIGNED(res.start, SZ_64K) || resource_size(&res) < SZ_64K) {
++		ret = -EINVAL;
++		goto out_put_nodes;
++	}
++
++	pd->arm_scmi.shmem_base = res.start;
++	pd->arm_scmi.shmem_size = resource_size(&res);
++
++out_put_nodes:
++	of_node_put(args.np);
++	return ret;
++}
++
++/* TODO: Move this. None of it is specific to SMMU */
++static int kvm_arm_probe_power_domain(struct device *dev,
++				      struct kvm_power_domain *pd)
++{
++	int ret;
++	struct device_node *parent;
++	struct of_phandle_args args;
++
++	if (!of_get_property(dev->of_node, "power-domains", NULL))
++		return 0;
++
++	ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
++					 "#power-domain-cells", 0, &args);
++	if (ret)
++		return ret;
++
++	parent = of_get_parent(args.np);
++	if (parent && of_device_is_compatible(parent, "arm,scmi-smc") &&
++	    args.args_count > 0) {
++		pd->arm_scmi.domain_id = args.args[0];
++		ret = kvm_arm_probe_scmi_pd(parent, pd);
++	} else {
++		dev_warn(dev, "Unknown PM method for %pOF, using HVC\n",
++			 args.np);
++		pd->type = KVM_POWER_DOMAIN_HOST_HVC;
++		pd->device_id = kvm_arm_smmu_cur;
++	}
++	of_node_put(parent);
++	of_node_put(args.np);
++	return ret;
++}
++
+ static int kvm_arm_smmu_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+@@ -681,6 +754,10 @@ static int kvm_arm_smmu_probe(struct platform_device *pdev)
  	if (ret)
  		return ret;
+ 
++	ret = kvm_arm_probe_power_domain(dev, &host_smmu->power_domain);
++	if (ret)
++		return ret;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	size = resource_size(res);
+ 	if (size < SZ_128K) {
+@@ -738,6 +815,7 @@ static int kvm_arm_smmu_probe(struct platform_device *pdev)
+ 	hyp_smmu->mmio_addr = ioaddr;
+ 	hyp_smmu->mmio_size = size;
+ 	hyp_smmu->features = smmu->features;
++	hyp_smmu->iommu.power_domain = host_smmu->power_domain;
+ 	kvm_arm_smmu_cur++;
+ 
+ 	return arm_smmu_register_iommu(smmu, &kvm_arm_smmu_ops, ioaddr);
 -- 
 2.47.0.338.g60cca15819-goog
 
