@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-443054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4D79EE659
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:09:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B509EE65C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66FFB16086A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:09:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8B0160F15
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AEA212B0F;
-	Thu, 12 Dec 2024 12:09:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DD7259495;
-	Thu, 12 Dec 2024 12:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01294212B19;
+	Thu, 12 Dec 2024 12:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gqJ0dtRL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46156211A1E;
+	Thu, 12 Dec 2024 12:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734005384; cv=none; b=eIOYeW6bE/ky/EDdYtwVJ6hB1TePifMG3Ig4gxjgppWQhxKA0tRJtnjQMiw9fJUUhCnN/MWfCj4AnKTTI+08YqR3DGltcnNKkjR2cg+VLe+U1SV7bL5dOTbUOhT3l+pQqkIN6ECRS3dbsAjSZI/1sXn6L8As09+pLf+aBOX3ue4=
+	t=1734005394; cv=none; b=O1t2BUeV7nnF0Wg1G9IJ/Cb1Bg8iLXO4WEiCYgxZUumIZ9r+qoldVoiuXgmC3l1GjUt/nhdsWMJD5hHtGAZsnUQADDTYwhbEQsD4LqtG/BZY2dnHLtm2GMump+jfUJI+0UzyjngUYnDDKoYmL9bw2KT/3LSVf/C57HsVhJLm9KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734005384; c=relaxed/simple;
-	bh=XF4noY+86Jp0DsYD/q3KZwDyyRyJQ4sWwBl4yWo4NwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6Mm8jLh0Hz3qYiccbcnwvEKpt6xi6i5s04qpvf0InaN8MGSooojjTyfI6j7M4LxpOihquNWebx1mWgkHzWJDgZlOewhW97kHMR1UQntmo5iO4e3HnXkshMuVYanQabT6o11UQtDbIJxEtaw921u5ziYA0pGFC4DBfVkOfbU7XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EEA9153B;
-	Thu, 12 Dec 2024 04:10:08 -0800 (PST)
-Received: from [10.1.37.59] (e127648.arm.com [10.1.37.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A01EC3F720;
-	Thu, 12 Dec 2024 04:09:38 -0800 (PST)
-Message-ID: <097bee29-64b5-444d-a3ae-81c2dcc35ae7@arm.com>
-Date: Thu, 12 Dec 2024 12:09:36 +0000
+	s=arc-20240116; t=1734005394; c=relaxed/simple;
+	bh=U59/QLEl7hYdBEpB1dXTAZwPI8WQJUNGqd3XEIbuTu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1bonTp7Ei/OYt60aw3RJW7kK/3HgZzxCOqFG5ff12u2hStLdWDuHx9BfVkU4zeN6uDIDyongS/3s6ugrk4OcQBR/her44ZT8NsdlB69pgkCxy2L8G06wTWP7nX44IFZ5Qu1V+XWTZxnzNxIrc6eoPjwFq4cbQ/QBmsAoE0VaPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gqJ0dtRL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D8BC4CED0;
+	Thu, 12 Dec 2024 12:09:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1734005392;
+	bh=U59/QLEl7hYdBEpB1dXTAZwPI8WQJUNGqd3XEIbuTu8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gqJ0dtRL1hbkI6dj8gHqlznbjIRPsWmebAsIa29f66JCocZyEdkI97cvA8SAEp0wi
+	 wTKisIHb9AelfijHOjQchtxpHCEaGBnYLRVxAOyT9zLSM1urllO9EdpMyVLtMVBg9T
+	 +WqhCeq7q8opvqM5o9p40U02+f8xWe8v6H74uU1c=
+Date: Thu, 12 Dec 2024 13:09:49 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: jianqi.ren.cn@windriver.com
+Cc: pc@manguebit.com, stable@vger.kernel.org, sfrench@samba.org, pc@cjr.nz,
+	lsahlber@redhat.com, sprasad@microsoft.com, tom@talpey.com,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	samba-technical@lists.samba.org
+Subject: Re: [PATCH 6.1.y] smb: client: fix potential UAF in
+ cifs_dump_full_key()
+Message-ID: <2024121236-jaywalker-outweigh-1c81@gregkh>
+References: <20241209085813.823573-1-jianqi.ren.cn@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] PM: EM: Move sched domains rebuild function from
- schedutil to EM
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Pierre Gondois <pierre.gondois@arm.com>
-References: <4977135.31r3eYUQgx@rjwysocki.net>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <4977135.31r3eYUQgx@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209085813.823573-1-jianqi.ren.cn@windriver.com>
 
-On 12/12/24 12:01, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, Dec 09, 2024 at 04:58:13PM +0800, jianqi.ren.cn@windriver.com wrote:
+> From: Paulo Alcantara <pc@manguebit.com>
 > 
-> Function sugov_eas_rebuild_sd() defined in the schedutil cpufreq governor
-> implements generic functionality that may be useful in other places.  In
-> particular, there is a plan to use it in the intel_pstate driver in the
-> future.
+> [ Upstream commit 58acd1f497162e7d282077f816faa519487be045 ]
 > 
-> For this reason, move it from schedutil to the energy model code and
-> rename it to em_rebuild_sched_domains().
+> Skip sessions that are being teared down (status == SES_EXITING) to
+> avoid UAF.
 > 
-> This also helps to get rid of some #ifdeffery in schedutil which is a
-> plus.
-> 
-> No intentional functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+> Signed-off-by: Steve French <stfrench@microsoft.com>
+> Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+> ---
+>  fs/smb/client/ioctl.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-As already mentioned during the RFC, fine with me FWIW.
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+You sent this twice, both different, so I have no idea what to do at all
+:(
+
+
 
