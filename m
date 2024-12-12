@@ -1,165 +1,436 @@
-Return-Path: <linux-kernel+bounces-442912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796AC9EE3DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:13:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C80F9EE3E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49877168326
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:13:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAD221889033
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DF82101B7;
-	Thu, 12 Dec 2024 10:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CC6210F62;
+	Thu, 12 Dec 2024 10:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wetterwald-eu.20230601.gappssmtp.com header.i=@wetterwald-eu.20230601.gappssmtp.com header.b="R1/ETQcZ"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GcST6+yh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1021F949
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79F52101A3
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733998424; cv=none; b=B2aIooF3AKnQOWt1nRTCcodXMpdVtKCVCEdJMvcmJRPsikoHEvqh28ExTH8KUI+YdVV2Op8WFahNzfWs2F4gyn/zwZ1rZ6eFj6WyCsY3+FACbTws57p4fYUImeIjAa0M/i+HJAngvplpYnmPMvjw0ZJltrb/CnVKnqMSWLnBQ3Y=
+	t=1733998488; cv=none; b=R8qwcE7rW6gqhYpTX3sSdNnX/qSwi5P8EUAmrXAPmtv6qpBxNup5z/qjLIQj94mg308oXzfGaeYkDxrWh5Jtss/ajCRKN1qjVAO5RodFM9JYiWrnQv8W1aGrWWhcGiww21jm2zUOrFpYHPcme+hGezSht6Zo+argzF4teBdWqsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733998424; c=relaxed/simple;
-	bh=vjl7udsYZj5OR0YkaT5BnoL0taUATJBU3cEYKFx+4Qs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=AETF3WSZLsAKhalxjVsxJMXrxk5r5XjS7/EjGQO4ByklpMIm/cQBD0XzK7O+2FOavbTHPo3IkKTg+Ml9f/o8sWKuLXZ3UZKlKbD3oxQ8SvKrTQEBahP/Whw0VYgixWT0+X3SjGgmBeXqljBi2kVA7dRU05kq/XAXeLIsy2PaUPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wetterwald.eu; spf=pass smtp.mailfrom=wetterwald.eu; dkim=pass (2048-bit key) header.d=wetterwald-eu.20230601.gappssmtp.com header.i=@wetterwald-eu.20230601.gappssmtp.com header.b=R1/ETQcZ; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wetterwald.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wetterwald.eu
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5401b7f7141so365661e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:13:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wetterwald-eu.20230601.gappssmtp.com; s=20230601; t=1733998419; x=1734603219; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EI22DQzZVDVnTxt6RUW2tG/G1/4buJh4utbAY1WkjKk=;
-        b=R1/ETQcZbyNaT1jKipWPxf5q7K5RFNblywKBwILI7dFsRsHFhV8MUqqoH0kBcyhYfv
-         lRYz/Tf4H2iF6WHxfP34ib0h5tGryT3vu27QoWVgjPeWcCi2jgwCWv+tdwkn4zHNb/xu
-         lDdVbDcPFH4Q4bPnXcBVsnZNOQJEg7770xMsYIxmE8+PRs5QRYrrpL1Ow4Y1GuWRflPY
-         5VsmCL66PTf1fQMb01n7Xd0YIucvDKtcoGAS8jAY4bwv5+HWdBZyxEOdpWqg5LVj4ohy
-         EhQezTaQLDpHWpwPWi+njIO6HdvHaTNda2Mb0SmoXeVL8k6t7EiMrsM4Q3HtGj+F/CaF
-         9lJA==
+	s=arc-20240116; t=1733998488; c=relaxed/simple;
+	bh=dPJlrC0+Jhk9NiwSQ8LbuqnxqAKOsUMEP0RwwnRfpPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qlkax6oabxzSEkxNAoJf3rAmGjItOWYbUWHUFNcTMbhcFYWc8gaGMwykcRSLwnnSFpqLyxzZjP5PjFbcaJcztuGs/4dE94LxvOrt/Adp9jccRIeyYOWZ9JgewnJbP4g78QyCmlwfQhzdQ3/UOSDipFp0SZLEVanNzL7mAB+GpU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GcST6+yh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733998485;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DpHSyOxtQohKmJgFBeyw/J2jZHV20wshmDowPduh11Y=;
+	b=GcST6+yhH8l4bDf6PST3Ntm7GaIGdSp/9yHkb/XiMO85cMWBtZ/0cZ/Y183Whj4cyUsb8C
+	W33vSv239oAVA9+HMYwdrYV10mI9MX+Fpx8/vfS+Wo/b7m0gu0XpUwFpMBD7WSKbR+YMRW
+	/50kfzrL0s3vbglKZW38RAJZm567MwI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-256-qoLtwjZnPwOCLtPqOq9Dfw-1; Thu, 12 Dec 2024 05:14:43 -0500
+X-MC-Unique: qoLtwjZnPwOCLtPqOq9Dfw-1
+X-Mimecast-MFC-AGG-ID: qoLtwjZnPwOCLtPqOq9Dfw
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4361efc9d1fso3847105e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 02:14:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733998419; x=1734603219;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EI22DQzZVDVnTxt6RUW2tG/G1/4buJh4utbAY1WkjKk=;
-        b=G5rJR7tbz2jYAjiERPr5Ec4fhgTnpDuMQ4n9s2u4D/Hjvmmhsi2iep/Dg3riglXZF9
-         XZk7vttgxSzUKTKg8RqAEh4vBgo8FaQTpqqUNvCcqtkSLg5v1KZ2X9JlWU7HqDxAHIHP
-         6SItpADScY6BPyl6V8K0S116iH7in9/ynqvuiccOhcalED4vOxbN+jYmFBQlFpFSuCWO
-         AvbdlvFUanSjNYt2Ff9nHWlrFFag8xHb7svtuYNR53GpZusSCIv6hLjAbS68zbqh0/Gz
-         n+xFIFerrbjx4Q/ACtdfFrN8JwOfxccsejvRjgY2Mcr7QeKQRp64tiRpQTWZM5K/JIKq
-         rDtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQo42kOeXZ+yID4gCRMyRjtHfUr6VpXZe4U1mBjzjFpr6mf5/AiEdTV6jiCO3qAArF4dstg91/iXP8Slg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEAJvKQunDqJgbUXlGm1Uwopnm4xTe8pM4zWqwttO4+gvdBLqm
-	DGkoQ7Cs/TmMSmoCd0IbIjth/jgIzJ5eCXnsUV3nz1rIa7xRL179bltOf0dxBCNJIUhms81qIyh
-	hIyYgdDJbwC62Y+5KmIcpVg2WGNVqYfSRzLENeJ5uXV3ghtvgg64=
-X-Gm-Gg: ASbGnctE4SDU+uyfs10mciTdhFGWTAWxIP2UGwh9+bndkgygJvlry1yoH29ANNQlUkJ
-	8oOkTCsCoY2HTzniJx6LISHuNzwKXE4sdSEAl6H+sf60xD0OyRyCJcJ9O9oIMSLUBBjPFkg==
-X-Google-Smtp-Source: AGHT+IE3hiuuk4G/KOtpfY7TlYPOOY0d5gVRWjcYEGOWpovgfyQ6kA/hV98D39NWqWy30GJxW18y+khOQn1iZgitaHc=
-X-Received: by 2002:a05:6512:1089:b0:540:2160:1f80 with SMTP id
- 2adb3069b0e04-54032d49048mr218103e87.40.1733998418616; Thu, 12 Dec 2024
- 02:13:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733998482; x=1734603282;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DpHSyOxtQohKmJgFBeyw/J2jZHV20wshmDowPduh11Y=;
+        b=ZktgI4Am9TzWJQDbL1c4mU1dQEoTyqSC8q4K2sZAiZZVHsSSA3RXwmagpNF2cxn/vQ
+         8mT9alT/ZM7MvAwGxa7lcxxRMBPPL08mdXBgXwf5sDlZ37FXYJcmwU1XWnT8wO16n37T
+         xzjHN5O0waLPkqZkKU3aqwFSLh9CjhEuY+LnDOVwRlIHeOeAZqklZPm1kQgsmxtLiX4s
+         0DGRVxhqa9H01MHfb3NoTCJImikI2oJstbR5CeWYIPYQHtionfCT9bmeSbDqLabp7cbM
+         +/idJ7Kq1/srHdH4xjfO8cP0I5k7BE6Fh82zz00ULeQ9XnQugvQw2E4DDDUlQLgUO8xP
+         Jkkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcPqG1pTJ4WNH/8Hz+MDSn2DbBMFoS79s8xhwaYZpCGUnG/QkBXPzj250LwSAL+glMM8KJ2J4y17aKzOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbswcYqN3TSj4FomfO8qzzwxiq0I37Htj3ZX74FVxPPglOI4qb
+	xFu0+7KACPfaxkTLI+oJQux/ZGFl92exg6kCVlO/Df/Swu/hGS65pbla/oMQ/hG1r6StH+M+1fA
+	O7LAyA/aLiebRzgu/7vcDU0Plw7KLvw72mv14NyJWCmTrF5o2EZwGe3FMUi9s6Q==
+X-Gm-Gg: ASbGncvFfuETjlUeCWEa0KbTwwjOKGlj3Zsc7GR5s7jA+bDfzF0iAF+F4zuGJpCim7p
+	4LFYpNv34sq5W64qZsuMbykzEv2OEFil5Dno82kBh9bGOUMgcoOaY3ik2pWZFY7PVygFP9hDnni
+	3lmbreiD8UpmdV6Hkc7UGHdJkFd3+fV2r+hsANWl5wrt2BC6Y1+oW/lnVvOGRz60IAywezmI8+T
+	3gGQY66JTmCe3wugm5Ux2HDqFS6RLR3Pr1S8f1fbjn60nj7xyfmPWRAEvhnRJwn7QNBxCvUV06m
+	LPSFDfU=
+X-Received: by 2002:a05:600c:3b9b:b0:434:f739:7ce2 with SMTP id 5b1f17b1804b1-4361c35d6c4mr46710565e9.8.1733998482045;
+        Thu, 12 Dec 2024 02:14:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHEsX3O0Hfg1jRugC8f5c/WQkf6oIWVvo0UAEqsvB2EY/Z8iH8jEcRdeah9+o2qIVO0rli0UQ==
+X-Received: by 2002:a05:600c:3b9b:b0:434:f739:7ce2 with SMTP id 5b1f17b1804b1-4361c35d6c4mr46710325e9.8.1733998481640;
+        Thu, 12 Dec 2024 02:14:41 -0800 (PST)
+Received: from [192.168.88.24] (146-241-48-67.dyn.eolo.it. [146.241.48.67])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436256b42c8sm11897405e9.29.2024.12.12.02.14.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 02:14:41 -0800 (PST)
+Message-ID: <bcb32d21-b3c8-4d37-842a-1acdcd78a995@redhat.com>
+Date: Thu, 12 Dec 2024 11:14:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Martin Wetterwald <martin@wetterwald.eu>
-Date: Thu, 12 Dec 2024 11:13:27 +0100
-Message-ID: <CAFERDQ2hLHek+0ViVqbqgOD+4xwC2ZwK1KhgGdLP_zGnonEs4w@mail.gmail.com>
-Subject: Raspberry Pi 3B: Failed to create device link with soc:firmware:gpio
-To: f.fainelli@gmail.com, saravanak@google.com, stefan.wahren@i2se.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 2/5] net: phy: microchip_rds_ptp : Add rds ptp
+ library for Microchip phys
+To: Divya Koppera <divya.koppera@microchip.com>, andrew@lunn.ch,
+ arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, richardcochran@gmail.com,
+ vadim.fedorenko@linux.dev
+References: <20241209151742.9128-1-divya.koppera@microchip.com>
+ <20241209151742.9128-3-divya.koppera@microchip.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241209151742.9128-3-divya.koppera@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Saravana and Florian,
+On 12/9/24 16:17, Divya Koppera wrote:
+> diff --git a/drivers/net/phy/microchip_rds_ptp.c b/drivers/net/phy/microchip_rds_ptp.c
+> new file mode 100644
+> index 000000000000..d1c91c0f5e03
+> --- /dev/null
+> +++ b/drivers/net/phy/microchip_rds_ptp.c
+> @@ -0,0 +1,1009 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2024 Microchip Technology
+> +
+> +#include "microchip_rds_ptp.h"
+> +
+> +static int mchp_rds_ptp_flush_fifo(struct mchp_rds_ptp_clock *clock,
+> +				   enum mchp_rds_ptp_fifo_dir dir)
 
-Back in 2023, you discussed about an issue concerning the Raspberry Pi 4, that
-you fixed in commit 1a5ecc73b2bfeffe036212d4a6bfacee053ab0a1:
-https://lore.kernel.org/lkml/03b70a8a-0591-f28b-a567-9d2f736f17e5@gmail.com/
-https://lore.kernel.org/all/20230302023509.319903-1-saravanak@google.com/
+If you pass as 2nd argument the relevant fifo to flush compute 'dir'
+from such value and call skb_queue_purge(), you can avoid a bit of
+duplicate code.
 
-Today, I notice I see the same issue, but it's with the Raspberry Pi 3B (V1.2).
-I'm using the upstream kernel 6.12.3, with the upstream DTB.
+> +{
+> +	struct phy_device *phydev = clock->phydev;
+> +	int rc;
+> +
+> +	for (int i = 0; i < MCHP_RDS_PTP_FIFO_SIZE; ++i) {
+> +		rc = phy_read_mmd(phydev, PTP_MMD(clock),
+> +				  dir == MCHP_RDS_PTP_EGRESS_FIFO ?
+> +				  MCHP_RDS_PTP_TX_MSG_HDR2(BASE_PORT(clock)) :
+> +				  MCHP_RDS_PTP_RX_MSG_HDR2(BASE_PORT(clock)));
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+> +	return phy_read_mmd(phydev, PTP_MMD(clock),
+> +			    MCHP_RDS_PTP_INT_STS(BASE_PORT(clock)));
+> +}
+> +
+> +static int mchp_rds_ptp_config_intr(struct mchp_rds_ptp_clock *clock,
+> +				    bool enable)
+> +{
+> +	struct phy_device *phydev = clock->phydev;
+> +
+> +	/* Enable  or disable ptp interrupts */
+> +	return phy_write_mmd(phydev, PTP_MMD(clock),
+> +			     MCHP_RDS_PTP_INT_EN(BASE_PORT(clock)),
+> +			     enable ? MCHP_RDS_PTP_INT_ALL_MSK : 0);
+> +}
+> +
+> +static void mchp_rds_ptp_txtstamp(struct mii_timestamper *mii_ts,
+> +				  struct sk_buff *skb, int type)
+> +{
+> +	struct mchp_rds_ptp_clock *clock = container_of(mii_ts,
+> +						      struct mchp_rds_ptp_clock,
+> +						      mii_ts);
+> +
+> +	switch (clock->hwts_tx_type) {
+> +	case HWTSTAMP_TX_ONESTEP_SYNC:
+> +		if (ptp_msg_is_sync(skb, type)) {
+> +			kfree_skb(skb);
+> +			return;
+> +		}
+> +		fallthrough;
+> +	case HWTSTAMP_TX_ON:
+> +		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
+> +		skb_queue_tail(&clock->tx_queue, skb);
+> +		break;
+> +	case HWTSTAMP_TX_OFF:
+> +	default:
+> +		kfree_skb(skb);
+> +		break;
+> +	}
+> +}
+> +
+> +static bool mchp_rds_ptp_get_sig_rx(struct sk_buff *skb, u16 *sig)
+> +{
+> +	struct ptp_header *ptp_header;
+> +	int type;
+> +
+> +	skb_push(skb, ETH_HLEN);
+> +	type = ptp_classify_raw(skb);
+> +	if (type == PTP_CLASS_NONE)
+> +		return false;
+> +
+> +	ptp_header = ptp_parse_header(skb, type);
+> +	if (!ptp_header)
+> +		return false;
+> +
+> +	skb_pull_inline(skb, ETH_HLEN);
+> +
+> +	*sig = (__force u16)(ntohs(ptp_header->sequence_id));
+> +
+> +	return true;
+> +}
+> +
+> +static bool mchp_rds_ptp_match_skb(struct mchp_rds_ptp_clock *clock,
+> +				   struct mchp_rds_ptp_rx_ts *rx_ts)
+> +{
+> +	struct skb_shared_hwtstamps *shhwtstamps;
+> +	struct sk_buff *skb, *skb_tmp;
+> +	unsigned long flags;
+> +	bool rc = false;
+> +	u16 skb_sig;
+> +
+> +	spin_lock_irqsave(&clock->rx_queue.lock, flags);
+> +	skb_queue_walk_safe(&clock->rx_queue, skb, skb_tmp) {
+> +		if (!mchp_rds_ptp_get_sig_rx(skb, &skb_sig))
+> +			continue;
+> +
+> +		if (skb_sig != rx_ts->seq_id)
+> +			continue;
+> +
+> +		__skb_unlink(skb, &clock->rx_queue);
+> +
+> +		rc = true;
+> +		break;
+> +	}
+> +	spin_unlock_irqrestore(&clock->rx_queue.lock, flags);
+> +
+> +	if (rc) {
+> +		shhwtstamps = skb_hwtstamps(skb);
+> +		shhwtstamps->hwtstamp = ktime_set(rx_ts->seconds, rx_ts->nsec);
+> +		netif_rx(skb);
+> +	}
+> +
+> +	return rc;
+> +}
+> +
+> +static void mchp_rds_ptp_match_rx_ts(struct mchp_rds_ptp_clock *clock,
+> +				     struct mchp_rds_ptp_rx_ts *rx_ts)
+> +{
+> +	unsigned long flags;
+> +
+> +	/* If we failed to match the skb add it to the queue for when
+> +	 * the frame will come
+> +	 */
+> +	if (!mchp_rds_ptp_match_skb(clock, rx_ts)) {
+> +		spin_lock_irqsave(&clock->rx_ts_lock, flags);
+> +		list_add(&rx_ts->list, &clock->rx_ts_list);
+> +		spin_unlock_irqrestore(&clock->rx_ts_lock, flags);
+> +	} else {
+> +		kfree(rx_ts);
+> +	}
+> +}
+> +
+> +static void mchp_rds_ptp_match_rx_skb(struct mchp_rds_ptp_clock *clock,
+> +				      struct sk_buff *skb)
+> +{
+> +	struct mchp_rds_ptp_rx_ts *rx_ts, *tmp, *rx_ts_var = NULL;
+> +	struct skb_shared_hwtstamps *shhwtstamps;
+> +	unsigned long flags;
+> +	u16 skb_sig;
+> +
+> +	if (!mchp_rds_ptp_get_sig_rx(skb, &skb_sig))
+> +		return;
+> +
+> +	/* Iterate over all RX timestamps and match it with the received skbs */
+> +	spin_lock_irqsave(&clock->rx_ts_lock, flags);
+> +	list_for_each_entry_safe(rx_ts, tmp, &clock->rx_ts_list, list) {
+> +		/* Check if we found the signature we were looking for. */
+> +		if (skb_sig != rx_ts->seq_id)
+> +			continue;
+> +
+> +		shhwtstamps = skb_hwtstamps(skb);
+> +		shhwtstamps->hwtstamp = ktime_set(rx_ts->seconds, rx_ts->nsec);
+> +		netif_rx(skb);
+> +
+> +		rx_ts_var = rx_ts;
+> +
+> +		break;
+> +	}
+> +	spin_unlock_irqrestore(&clock->rx_ts_lock, flags);
+> +
+> +	if (rx_ts_var) {
+> +		list_del(&rx_ts_var->list);
+> +		kfree(rx_ts_var);
+> +	} else {
+> +		skb_queue_tail(&clock->rx_queue, skb);
+> +	}
+> +}
+> +
+> +static bool mchp_rds_ptp_rxtstamp(struct mii_timestamper *mii_ts,
+> +				  struct sk_buff *skb, int type)
+> +{
+> +	struct mchp_rds_ptp_clock *clock = container_of(mii_ts,
+> +						      struct mchp_rds_ptp_clock,
+> +						      mii_ts);
+> +
+> +	if (clock->rx_filter == HWTSTAMP_FILTER_NONE ||
+> +	    type == PTP_CLASS_NONE)
+> +		return false;
+> +
+> +	if ((type & clock->version) == 0 || (type & clock->layer) == 0)
+> +		return false;
+> +
+> +	/* Here if match occurs skb is sent to application, If not skb is added
+> +	 * to queue and sending skb to application will get handled when
+> +	 * interrupt occurs i.e., it get handles in interrupt handler. By
+> +	 * any means skb will reach the application so we should not return
+> +	 * false here if skb doesn't matches.
+> +	 */
+> +	mchp_rds_ptp_match_rx_skb(clock, skb);
+> +
+> +	return true;
+> +}
+> +
+> +static int mchp_rds_ptp_hwtstamp(struct mii_timestamper *mii_ts,
+> +				 struct kernel_hwtstamp_config *config,
+> +				 struct netlink_ext_ack *extack)
+> +{
+> +	struct mchp_rds_ptp_clock *clock =
+> +				container_of(mii_ts, struct mchp_rds_ptp_clock,
+> +					     mii_ts);
+> +	struct phy_device *phydev = clock->phydev;
+> +	struct mchp_rds_ptp_rx_ts *rx_ts, *tmp;
+> +	int txcfg = 0, rxcfg = 0;
+> +	unsigned long flags;
+> +	int rc;
+> +
+> +	clock->hwts_tx_type = config->tx_type;
+> +	clock->rx_filter = config->rx_filter;
+> +
+> +	switch (config->rx_filter) {
+> +	case HWTSTAMP_FILTER_NONE:
+> +		clock->layer = 0;
+> +		clock->version = 0;
+> +		break;
+> +	case HWTSTAMP_FILTER_PTP_V2_L4_EVENT:
+> +	case HWTSTAMP_FILTER_PTP_V2_L4_SYNC:
+> +	case HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ:
+> +		clock->layer = PTP_CLASS_L4;
+> +		clock->version = PTP_CLASS_V2;
+> +		break;
+> +	case HWTSTAMP_FILTER_PTP_V2_L2_EVENT:
+> +	case HWTSTAMP_FILTER_PTP_V2_L2_SYNC:
+> +	case HWTSTAMP_FILTER_PTP_V2_L2_DELAY_REQ:
+> +		clock->layer = PTP_CLASS_L2;
+> +		clock->version = PTP_CLASS_V2;
+> +		break;
+> +	case HWTSTAMP_FILTER_PTP_V2_EVENT:
+> +	case HWTSTAMP_FILTER_PTP_V2_SYNC:
+> +	case HWTSTAMP_FILTER_PTP_V2_DELAY_REQ:
+> +		clock->layer = PTP_CLASS_L4 | PTP_CLASS_L2;
+> +		clock->version = PTP_CLASS_V2;
+> +		break;
+> +	default:
+> +		return -ERANGE;
+> +	}
+> +
+> +	/* Setup parsing of the frames and enable the timestamping for ptp
+> +	 * frames
+> +	 */
+> +	if (clock->layer & PTP_CLASS_L2) {
+> +		rxcfg = MCHP_RDS_PTP_PARSE_CONFIG_LAYER2_EN;
+> +		txcfg = MCHP_RDS_PTP_PARSE_CONFIG_LAYER2_EN;
+> +	}
+> +	if (clock->layer & PTP_CLASS_L4) {
+> +		rxcfg |= MCHP_RDS_PTP_PARSE_CONFIG_IPV4_EN |
+> +			 MCHP_RDS_PTP_PARSE_CONFIG_IPV6_EN;
+> +		txcfg |= MCHP_RDS_PTP_PARSE_CONFIG_IPV4_EN |
+> +			 MCHP_RDS_PTP_PARSE_CONFIG_IPV6_EN;
+> +	}
+> +	rc = phy_write_mmd(phydev, PTP_MMD(clock),
+> +			   MCHP_RDS_PTP_RX_PARSE_CONFIG(BASE_PORT(clock)),
+> +			   rxcfg);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	rc = phy_write_mmd(phydev, PTP_MMD(clock),
+> +			   MCHP_RDS_PTP_TX_PARSE_CONFIG(BASE_PORT(clock)),
+> +			   txcfg);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	rc = phy_write_mmd(phydev, PTP_MMD(clock),
+> +			   MCHP_RDS_PTP_RX_TIMESTAMP_EN(BASE_PORT(clock)),
+> +			   MCHP_RDS_PTP_TIMESTAMP_EN_ALL);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	rc = phy_write_mmd(phydev, PTP_MMD(clock),
+> +			   MCHP_RDS_PTP_TX_TIMESTAMP_EN(BASE_PORT(clock)),
+> +			   MCHP_RDS_PTP_TIMESTAMP_EN_ALL);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	if (clock->hwts_tx_type == HWTSTAMP_TX_ONESTEP_SYNC)
+> +		/* Enable / disable of the TX timestamp in the SYNC frames */
+> +		rc = phy_modify_mmd(phydev, PTP_MMD(clock),
+> +				    MCHP_RDS_PTP_TX_MOD(BASE_PORT(clock)),
+> +				    MCHP_RDS_PTP_TX_MOD_PTP_SYNC_TS_INSERT,
+> +				    MCHP_RDS_PTP_TX_MOD_PTP_SYNC_TS_INSERT);
+> +	else
+> +		rc = phy_modify_mmd(phydev, PTP_MMD(clock),
+> +				    MCHP_RDS_PTP_TX_MOD(BASE_PORT(clock)),
+> +				    MCHP_RDS_PTP_TX_MOD_PTP_SYNC_TS_INSERT,
+> +				(u16)~MCHP_RDS_PTP_TX_MOD_PTP_SYNC_TS_INSERT);
+> +
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	/* Now enable the timestamping interrupts */
+> +	rc = mchp_rds_ptp_config_intr(clock,
+> +				      config->rx_filter !=
+> +				      HWTSTAMP_FILTER_NONE);
+> +	if (rc < 0)
+> +		return rc;
 
-You can find my kernel miniconfig (basis being allnoconfig) here:
-https://gist.github.com/mwetterw/299bb1317fccf9e68125cb0f5da7384c
+At this point the H/W can trigger ptp interruts and
+mchp_rds_ptp_handle_interrupt() right?
 
-During boot, I see following messages:
-> Bluetooth: HCI UART driver ver 2.3
-> Bluetooth: HCI UART protocol H4 registered
-> Bluetooth: HCI UART protocol Broadcom registered
-> bcm2835-mbox 3f00b880.mailbox: mailbox enabled
-> 3f201000.serial: ttyAMA0 at MMIO 0x3f201000 (irq = 99, base_baud = 0) is a PL011 rev2
-> raspberrypi-firmware soc:firmware: Attached to firmware from 2024-09-13T16:00:14
-> uart-pl011 3f201000.serial: Failed to create device link (0x180) with soc:firmware:gpio
-
-Here is an extract of the relevant FDT nodes.
-Because my setup involves first the proprietary GPU firmware, then the U-Boot
-bootloader before finally launching the kernel, I used following command in
-order to make sure I see the same FDT as Linux:
-
-> ssh rpi 'cat /sys/firmware/fdt' | fdtdump -
-
-> firmware {
->     compatible = "raspberrypi,bcm2835-firmware", "simple-mfd";
->     mboxes = <0x0000001b>;
->     phandle = <0x0000001c>;
->     clocks {
->         compatible = "raspberrypi,firmware-clocks";
->         #clock-cells = <0x00000001>;
->         phandle = <0x00000015>;
->     };
->     gpio {
->         compatible = "raspberrypi,firmware-gpio";
->         gpio-controller;
->         #gpio-cells = <0x00000002>;
->         gpio-line-names = "BT_ON", "WL_ON", "STATUS_LED", "LAN_RUN", "HDMI_HPD_N", "CAM_GPIO0", "CAM_GPIO1", "PWR_LOW_N";
->         status = "okay";
->         phandle = <0x0000000a>;
->     };
-> };
-
-> serial@7e201000 {
->     compatible = "arm,pl011", "arm,primecell";
->     reg = <0x7e201000 0x00000200>;
->     interrupts = <0x00000002 0x00000019>;
->     clocks = <0x00000007 0x00000013 0x00000007 0x00000014>;
->     clock-names = "uartclk", "apb_pclk";
->     arm,primecell-periphid = <0x00241011>;
->     status = "okay";
->     pinctrl-names = "default";
->     pinctrl-0 = <0x00000008 0x00000009>;
->     phandle = <0x00000048>;
->     bluetooth {
->         compatible = "brcm,bcm43438-bt";
->         max-speed = <0x001e8480>;
->         shutdown-gpios = <0x0000000a 0x00000000 0x00000000>;
->         phandle = <0x00000049>;
->     };
-> };
-
-If I understand correctly, the serial dev bus, together with
-CONFIG_BT_HCI_UART, CONFIG_BT_HCI_UART_BCM, and if associated to the correct
-DTB nodes describing the bluetooth chip, should allow the kernel to handle the
-serial Bluetooth HCI himself, without the userspace needing to launch user
-space tools like hciattach or btattach?
-
-Is the log
-
-> uart-pl011 3f201000.serial: Failed to create device link (0x180) with soc:firmware:gpio
-
-a hint to the reason why the kernel doesn't automatically handle my Bluetooth
-HCI over serial?
-
-How to solve this log error, and how to let the kernel handle the HCI himself?
-Am I missing kernel configuration flags?
+> +
+> +	/* In case of multiple starts and stops, these needs to be cleared */
+> +	spin_lock_irqsave(&clock->rx_ts_lock, flags);
+> +	list_for_each_entry_safe(rx_ts, tmp, &clock->rx_ts_list, list) {
+> +		list_del(&rx_ts->list);
+> +		kfree(rx_ts);
+> +	}
+> +	spin_unlock_irqrestore(&clock->rx_ts_lock, flags);
+> +	skb_queue_purge(&clock->rx_queue);
+> +	skb_queue_purge(&clock->tx_queue);
+> +
+> +	rc = mchp_rds_ptp_flush_fifo(clock, MCHP_RDS_PTP_INGRESS_FIFO);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	rc = mchp_rds_ptp_flush_fifo(clock, MCHP_RDS_PTP_EGRESS_FIFO);
+Should the above moved bedore enabling the irqs?
 
 Thanks!
-Martin
+
+Paolo
+
 
