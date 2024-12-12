@@ -1,335 +1,394 @@
-Return-Path: <linux-kernel+bounces-442859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18709EE30C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:29:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D51BD161386
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:28:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2902720E71D;
-	Thu, 12 Dec 2024 09:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xr7/YRXm"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2064.outbound.protection.outlook.com [40.107.92.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052469EE308
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:28:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19C420E337;
-	Thu, 12 Dec 2024 09:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733995693; cv=fail; b=HfUklZ9cNVl62PTuQmuXR+kx07Nd0swV+xRG/q0X+Qoeb8eTPjupKIMBbbm0sCzrrJLBiIjN02Ic6K3yoWYlfOraK7c6l2hsgeIyuY2vYuHA9q2seJBQtuc2P8E6x01fn2nAIBfdVXrBIliuBsqYvTBURCvi+2IW7x17vRVvf6w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FDD6284A1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:28:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B62920FA8A;
+	Thu, 12 Dec 2024 09:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nsd6DM5u"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE5B20E6E7
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733995693; cv=none; b=rWFhlqelwCqkTqMdqonJXPN5UgfGTP6tROPEo1Jd0ljdDlsO2xQ4Cdx2FwGft8DwidIv8CGUDVokZ9H83AWeNq3J6m/ltym4/8FjTRrykaW7efBEPPP1O3UROsKvoDwYWo/ew+YcxjZsMd2Eoe9XyWbw7sLxGLKLrV7jlkay040=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733995693; c=relaxed/simple;
-	bh=exomWPUWQBxjm1lFjS/3OOSb5ki6csHfBAQDDIUq/Rw=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=olKmiRjt3aHrFBpm+PV/TE37Mr8EwuAGyqIyWItV5cEybY8Ooz51NWT9yHpdDbS1nU2MM4RjUv1VQTLEF15Bc2C+DfNvkQ37uAXVZHUnDR8pBoxgCs8nR0iFe2cgK8gneK718snbS2tnwQtUAdzu1iGoxGYnx74XyG4G+cPKX+0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xr7/YRXm; arc=fail smtp.client-ip=40.107.92.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XbwT7XDy6l3osANg2hR+BCXmi1HauzAX7paT4X0xbAnT5nCPEaJ5EI64Zhaz/9KV0OTLqP9UwIFpKAA141LluPc0ts/IbUUJzKkTzNnr3QBWcO6LdWTFWvL7ujcsPHY5zBfyxzef6NXVQNytqXShMlbW0yNjXl4Xoy7iqjom9cR8JpT+HDoAN77Bu3ZmZUZ+b4B1sP7gWDINRqXTsrI1v3yu4wj4hJBNaYnvinWGMKNRYEgL8kbVkQL8tKgDqbcpL/cBQHBd2h7U/La+Cgdj8VcWGXkDZLeZuGERPhDbONYVfVnl/o1SzM8HxmyCqkvfVz5AOERbuInT1K1IqI9bqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5k5ilDy4+Pcatqayc5wEc9j5BYPGyE/EYGHV5klirxQ=;
- b=hkXtqZpSFMkqgAc+ooLHN+Br+1xj36mztHaYQWgwrn/+J1faTMuhXFtwNudyU8Rr0o7vseP25UGPpe5Z41VXCNcBgK++/xhzhysjEsTMMug8G/2SFneHBj/jvSBd9aXSj0ezRje/G4zP2Zqeh0z7erQMCgVojxQ/tWQnsQb7Xmocq76ZGfR9N4P73HNQX6G49McaCUaqrnPcuYUkBiZyc0EgJ59CGHho4rDv0vbEhmXVoQHryOOm4wRPxovMif9xGM0zQtcpxmbfhXlDr3hvqxEwqHL6wJ5K2G5K3uILEY9aiMXu9LwhQCxCU+BElV+Z/MYZmU+z/79CBJA6sZ5QGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5k5ilDy4+Pcatqayc5wEc9j5BYPGyE/EYGHV5klirxQ=;
- b=xr7/YRXmBO3Hb0M7n+1oGyIC1fFExDgu1iwhr1BdMG+9MyVO8mRKP2u/+nfBy4SnfB6m2LwM+ZHo7aQeVjz3yvVB1oBqRV2nh27y7OlkHfcvZcjleaSfjcRmnZ594HRDIUCKRIqEu+ikYcjoHQ37jdqjjx0rbCQdpGSoA+a/b2Q=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22)
- by CY5PR12MB6060.namprd12.prod.outlook.com (2603:10b6:930:2f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Thu, 12 Dec
- 2024 09:28:08 +0000
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79]) by DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79%5]) with mapi id 15.20.8230.016; Thu, 12 Dec 2024
- 09:28:08 +0000
-Message-ID: <58b9bcce-ac76-e0d0-1a8d-a8d8c0b20b43@amd.com>
-Date: Thu, 12 Dec 2024 09:28:00 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v4 07/15] PCI/AER: Add CXL PCIe Port Uncorrectable Error
- recovery in AER service driver
-Content-Language: en-US
-To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- nifan.cxl@gmail.com, ming4.li@intel.com, dave@stgolabs.net,
- jonathan.cameron@huawei.com, dave.jiang@intel.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
- rrichter@amd.com, nathan.fontenot@amd.com,
- Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
- PradeepVineshReddy.Kodamati@amd.com
-References: <20241211234002.3728674-1-terry.bowman@amd.com>
- <20241211234002.3728674-8-terry.bowman@amd.com>
-From: Alejandro Lucero Palau <alucerop@amd.com>
-In-Reply-To: <20241211234002.3728674-8-terry.bowman@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PR1P264CA0146.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:346::11) To DM6PR12MB4202.namprd12.prod.outlook.com
- (2603:10b6:5:219::22)
+	bh=mp03OIGGPZFR1Gz/EBo3vbpDiNdcTrTIBh3sBHqqg74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ia6PBhE6qLkcqC7vE5Q+wM9akrVd4oFED4BKeYiUR64ieUiTZFmijaEl9VDVrVsawFassaZzwy4FbEG9A6He/AY9H1AcloSo6xCynR7/ZTC8GFT2w0fV2zXnS7mTgzgHRRNVXJPxQTAZgxiEHzKLgUCx5BZ1gCkUGAtt4eAdmqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nsd6DM5u; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5401bd6cdb7so410898e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:28:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733995689; x=1734600489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v5iP5AU3SA0S+hiA5JyXG9Ea3JabKZiFBzzi/FEYEOg=;
+        b=nsd6DM5usY+p7wA1gYIGg9gREv0qG5VIQbS1HhGUgisFhFcV0ZXGtZ0kwRp+OjFulM
+         AwTW8c14mH0ysDGkQi1WIxFuyGEWWNLLeQgUE1FSGaSKpqsEuoGQeaT4SpWK9Paln1Y6
+         mDxCBx8ijmdWLSSXgpqP6XnQQ1xpD1HHqYJosBQzxoJfx3iN8ZnaRAYEAMjD2AULoii1
+         dg/GTQUxAupy2n3R96RgYE76aiTGe9zZjfnXn42pQxlL+GUVp26tsC1mmC+pjKLIzuMn
+         UCSJqwSthxJ3XCGNyQf955HdGdTZpaD3dAvnZGVXaUNrKmEtu5D+t1l3sYtGSKkUF3Qq
+         FbZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733995689; x=1734600489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v5iP5AU3SA0S+hiA5JyXG9Ea3JabKZiFBzzi/FEYEOg=;
+        b=ZG6mBA9/51Ih293Cxj+ccISjo2HcYt+IWVyv/+gYMyaWxDQApRsh40y0qrhu1BmXBq
+         vmAtfaAidjnq7WX4aCU3T7fCRkrUFwi4jecrWgq/M4yf0srQivsUXQA8G6Qt/4X00zbd
+         L5sMmR6uGBHpyxVqxHt9nEeROIjPSS/JgeFlpgIOS8bUbxxZOvp/mdZwFv6G2uWl9w4y
+         x0bUQqPnl2epHCUw8N/JgywQ7XYI2Bbs3liPy4lVfGsJDPmfD3YTGlMUk5om94Zc0tfN
+         2p0sXLuUemt4mn49tePtZ6lxv4cIYU0MetxQVEDq5r18KrhlniVz8oCfyF8RcC9q285G
+         6lwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPm0f12Xq7GVmiLzXoNqAs3oDl4IbMkpEbKmzWNsiHTWivqOAvGdYh72brGQNtmvcErS0JsvwqU1zJ8XU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3VXnIKiRnitJb23lvqL7kpZtJQz/SfmuSYOIVAU7nSThHAmj7
+	vnj1/9ClLRFHQeAHFhRtoFoCxqegsGaImD78s5bGmZp/8EAxVNOl6h4D2219rDI=
+X-Gm-Gg: ASbGncv85/54DgTb803z1Ds/F4LGeI3N4bA/KzRx6no/zXQqtqubVICVRHRMwV1VzKs
+	+5nIUS4zaOWjuq8e/OeE5ti+0eRZWVkso5uzUPyinhOTs+pYLsLYhJWzepwyLHKilTnb8ieC5iH
+	SMlCLMwugDky55i+YAoy+O5kwuMBqsPSSB9LIyKsFgvKSqVCHVpAffdPJ1GNuhrmaI9S5F9/0jq
+	hWRpWxRWbhCli265EHeaj8F2ilV2S4yY+O7f1dsiq5WogcqP3HCptA5XeOrElG6ekyLwKaxKt0q
+	MbgyBt5zNL3RKa6k2iVYFjQGhs3BCOwjrSPX
+X-Google-Smtp-Source: AGHT+IE/c4vmh6Af7M2ezdVQBUbGSoAXhcgHS6YHWy6ChO5TB4L/GFRn3bRfqOKlrST4WI+JDw4ang==
+X-Received: by 2002:a05:6512:3984:b0:540:21d6:d679 with SMTP id 2adb3069b0e04-54032c3b44bmr214346e87.31.1733995689018;
+        Thu, 12 Dec 2024 01:28:09 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401a3bc85asm1518271e87.206.2024.12.12.01.28.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 01:28:07 -0800 (PST)
+Date: Thu, 12 Dec 2024 11:28:05 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Andrej Picej <andrej.picej@norik.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com, 
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, marex@denx.de, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, upstream@lists.phytec.de
+Subject: Re: [PATCH v5 2/3] drm/bridge: ti-sn65dsi83: Add ti,lvds-vod-swing
+ optional properties
+Message-ID: <roxosjotsh65dkecrwhhtlhkhqseezkj7ydk532shc27irzmd3@xry3ggjdq4uo>
+References: <20241210091901.83028-1-andrej.picej@norik.com>
+ <20241210091901.83028-3-andrej.picej@norik.com>
+ <irpmhq7vxjra6vhmdh7p63ajj57n3h2c4br3ija2jmwtoewist@zyxfmx6k5m4e>
+ <aa2de99d-21f4-4843-83b7-5d2db78be86f@norik.com>
+ <qhmsobin3fsmoc7ic2jtancowfscoauyroruxdpwhmqwlogtkz@6by3s2ruwzwp>
+ <519cc025-0782-4f96-a169-1fe87b280173@norik.com>
+ <rputm4gnjj6nb66ix7dqbxr2janltia6rlb6zunhf7x3mgooxw@o3lblnyp5cci>
+ <ad8843d6-e5a3-437a-af4d-f2248b247a65@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4202:EE_|CY5PR12MB6060:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76572e05-0608-4318-5030-08dd1a8f49db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?KzFaYU1QZjI5V050cEhxc05VRjAzYTNJb0NPUGVHdiswQzl5THFFNlBBMTZX?=
- =?utf-8?B?ZGRtcnU3Z3JaK2JzK29sRGdTOWxjZVRTT3FENm9CTEwzOVBjNWFyT1FWTzd0?=
- =?utf-8?B?TzMyc1ZXVTlKWXZrajU2QUVaK2gwOG95L0htOThHb2FsYlYrZ0loaW1zcVZl?=
- =?utf-8?B?aUd6VlZtNmplY1V4OEFvUlYyeTVrT2RCMzJnVFQzSGU5ckRjWE03d1FUcG1o?=
- =?utf-8?B?YVJ0WkxqcjRVc0daK3hqditCL0RpajZNS1NIRG9pZnE2VlVsdHI5NWJyZVpq?=
- =?utf-8?B?Q1FsT1dEaWpSa21tQlNNam4zRlgxNDMwM280YzFkV1lFd3FMeTNvT2dsMVlD?=
- =?utf-8?B?TlFjOUxTeDFkM2JJUWFsTVlaUVVrNU1LNTFqR1VNdVd1M3FTdWl5TWZLOUtw?=
- =?utf-8?B?UlR6Z0YzV2d6UmlKa3BOaEFOMDRRUmNJaTRLZGp2WmJVSzBlRlNjb0JNaUdn?=
- =?utf-8?B?ZDZ2aGdMcjZ2d1puS3pNSG1WQnphaDYyYzNEb2J6WHZNSC9hY3NZV3U1RWsr?=
- =?utf-8?B?SHdjUXZHSnRVOUdLWmcrbUlpMnFLaVBlUUxKbUZtVFpxbXdwTjA2S25UZXpO?=
- =?utf-8?B?OUM5V2VTWUhwaFdlcUlseGZCbmREY0Y1N05Pck1wK3FndUpLQUlFaEoyWVVZ?=
- =?utf-8?B?MG0vbHNBd0cyNDJBYk9xVWwwR2V6cFc2cHEyUXY3OHhIZXp5dldPcGtzVnc4?=
- =?utf-8?B?MjFEdFhYdGpCZ09nM0h6SHlDaEhzSWtnRE9YOXRkdXlvNmovb3NZTHJMalZ2?=
- =?utf-8?B?R2l1aVQ1VmFvdktuR2wyVTltRWJpeGgrdlB4N0dNRy9aOUU2NzBhSDBGajly?=
- =?utf-8?B?UVRpTlJjTkJHN2szUStwS3JCMjA5ZTE2RzVQL3g3VUl3eWZHckdXd0t4ZnJt?=
- =?utf-8?B?SWdKV2VaWWIvbzFMVUI0NFdqa3pNaUwxaE5WQ2NSeXFHYlZGZDdFZ0lEV201?=
- =?utf-8?B?VWdDbFBiNmFYY1NnRHVWTVY0UVZhbDZXaFhsdzV1Vm02blBsZ1RDK09Dcm44?=
- =?utf-8?B?V0NoTkgwdHhjL2thWHdoQzFZeE1LOG5IUFlyZElXMXMvYmZxbi8yMGFtNjRM?=
- =?utf-8?B?ZERkanE4K2RsakdCYnBSUlVzUEh0MzkrUHNIRTUwcXJIclR5YVFtK044ODFx?=
- =?utf-8?B?bW5CSGpTUWJJenZpOE5zbEYrNlhCMkM1ZGJuWmd1NFdyaC9EQ1ZDc3VCTWJL?=
- =?utf-8?B?QTd2NkdLRjMybmlmT2ZwcE44SmJkOGZyN3B3RGZBc2gvNTVtTzVsNmpFS1NJ?=
- =?utf-8?B?V01EYnEzY1V2aGM1UHFzc3dMa2FYcy9ld1VER3JXMmE5N0J1OUsySkFlaXlI?=
- =?utf-8?B?ei9Ld0NNU09McVEwN3JoUDZOQWNPZFNMYXEwQXhDbEcwNnAzQTB1bnhyb2Z5?=
- =?utf-8?B?alBOY0NYZ294a1doVVlZUmlBTmM3SGJDQXpUQjR1UEo4WVJVaEJKd1l5OXp4?=
- =?utf-8?B?ZE5jdjJzYjkxbEVJcHZBTUl6SGZpSFN1M09qNy9SaWNhdklkWXFLQ0dVOFJz?=
- =?utf-8?B?L25LUVVOZEg5OVBIb0o5OHV2UzZKSGtNVmg0Z3NZbmkrWEVoZ0xlYisrUzV2?=
- =?utf-8?B?bDBpQlFaMWlWTVFPVkN3TU9Db2hUNVB6NWdPQVlNTzRlZTZidG95aGJDQ2RF?=
- =?utf-8?B?RE1rR3lsN0oya2N0ZGFZcmt2Y29vY2NuQ3IrdG9JcDY5T2o0WWQ3N1N6dWlo?=
- =?utf-8?B?QTgxYk1uTmkydGFGdGVZMHRrOXVWRkRBVGVuclNzVWozYnd6d29qZUVEUkU3?=
- =?utf-8?B?a0VzaU9SQURtblRjUVZYTjZPMkt2aGVjUG9kc3RkbkU0VHZ4WmpGUDdVYUR4?=
- =?utf-8?B?eTNGaEtjRStpc3U4blk1M203djJ5a29WZDhrWGxsejY5RmdNcjJSenBBSUo0?=
- =?utf-8?B?bHQ1eUViazM2ZmdTdFBSS2VPc1VWZC91ZkVtUFQ1a21JZ0E9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4202.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dXBhak54aThGWnZCOTBnYmJUelZBZ1h3cXh5OHl0RmMvQkV1aHpsT1V4NmV0?=
- =?utf-8?B?eWRUMkVoL1ZqS090L1hoUTY4cEREb0REMEVTUEhvWkNZV0FYeFp3Y1RNaERE?=
- =?utf-8?B?bkxpd29jZEZjU3BaV2tsa0c5anE0RC9xQW8rbkdlM3VIaWhJUG5rWEJpL3RJ?=
- =?utf-8?B?VHNKQjhETlhDTXhuR0tVdGpyU09YQkNPc3cyRzROVHkvQTF5cDZlRmJmSm5O?=
- =?utf-8?B?MVNFaTVReloxVmQrODl2eUJZaysveVhGdEVQQ1hLMUcxMGhVTHRnU2NvV2NP?=
- =?utf-8?B?RWVDSHZZN0pzR1NOeE11aGd6SHZ3VGZ5STVnSmo5UlNnK3VaQS94cVVZN3ND?=
- =?utf-8?B?UkY3ZEVGam9UNkc4dGV5dVU2WU56bUR1eGlGSmlGRitaMy9FamlWU3hIRFEz?=
- =?utf-8?B?QUFwUjF6REpnVmJ3RzFrU2xYT0k0d2lIQm1kYzdoMU5CSENTL3ovTllvOFpN?=
- =?utf-8?B?NzRtd0d0WTRadkU5cC93Nmo5Y2xYN3o3NDNRSWJBUlFDRkxQM012MDc5K3Fr?=
- =?utf-8?B?L3phYytXNHc2cTh3WHAyL1ZCMVYxNHhvRGRwMzEzMFhqT096aHRHTXprVSty?=
- =?utf-8?B?RDFnTFVseVczR2drTzhwNmRsSXorY3hvYUlIUFYwRWQreUExcW1JLzFkNEdS?=
- =?utf-8?B?TW5OVHFaUDhQWXhjUjlJNndGbXJtcEp2UC8yNnNHOVY5ZDE1RThOenRPblFE?=
- =?utf-8?B?Yi9BMFUzRE5GZVl3V0d1Vy9FMXJQRGxqUjdvQTdmV1hiQTJXM3RNeHFEb294?=
- =?utf-8?B?VVpneVoyOXdnZ3FucDFoaThMWnlac1llTkpneWxZdk00UkROK2ZuWUN4ZWhp?=
- =?utf-8?B?QzZjWnNCTzVnbjNZN0lya2N1SzYvOEJTa2IrVmVETVZmYXQvdVg0UDNuMTAw?=
- =?utf-8?B?WEFFTEZaNEFEelM5V3p5cjE2SytuYVZ4bWIyREhtaXdlZ2s0dllxMmVaZnBS?=
- =?utf-8?B?R1lwL1ZoT2hQQzN3b3FpaGdSSHF5Y2Vxa0tTNXlwcmF1c3NORzBnT2o1T1gz?=
- =?utf-8?B?dmxlYkJtR0huYjlGOVo5c2V1NFVTTGx0MVlvRDdLcmlTOTRlZVdza1F0WWFW?=
- =?utf-8?B?TnJpM2JyS3haRHF2L2h3dFRFVURYbnVRWmMvMGJqRzRVdUFXbWVtMFJzOTR3?=
- =?utf-8?B?ek1JRkRDNURUTTBYenI5bmlaTitubHF0aG1EcVFMcDJhTWJzVXd0WjV2TUxT?=
- =?utf-8?B?R0xEc2JNcUtKcWMyTnRzME5KdkZUUnB2N3RLOGZPTDQrcnVHSHlZdXg3QlAr?=
- =?utf-8?B?dUZyZ21KMXNiZWtCL2FSWXhraTgybXVpT1Z5REh2b0pDc2E3UzVZMis4YldO?=
- =?utf-8?B?S1hDYjdDM2tweGtubnJDSHJQQTE3eTUybFpVSU1aL0laelpBeXlYY0Fzdi82?=
- =?utf-8?B?SlUwYnF6eG8yeUZXVHZqeFhHQjZpSkp4R21IQnVvTitiRmErbEdLQ3JEa0VM?=
- =?utf-8?B?KzFtK0FQRUhMNkJLc1pFUFlKNmxtUGx2bXJHRXdueUlkcmtkTGFNYjdnVFlI?=
- =?utf-8?B?dllzMVFMZXVFVHFDam00ZDd1WXk5bk0wc29jZGdQbUJvbDBjKytlRExXR1p4?=
- =?utf-8?B?VUJkckhLRnYzb0pMalFLQ0REMVdzNDB0WnF5enVRa3FNL1VGMmRzcEgrOHBi?=
- =?utf-8?B?REw5YjlnNDBTQ1UybHpLblZwbEhKajMvazBGL2JrSmhXQmNiYUdIc0FKZWxB?=
- =?utf-8?B?WUpJa2lXQS96REZKa3lxQXhGbWdnYUtESnUzWG9WMVVqSmUwdDFjMjVvTmVW?=
- =?utf-8?B?R01admFlUTlocFc2TEdReEVTcHlrOUZOcWIrTTdaQUg2eGVPTUlCYTBUVnI4?=
- =?utf-8?B?VlpqREZ5TkN3MHhjblNOZDFDUktFTzY3R2d2UG9WNTluTW1EbjNyWkxCL1J4?=
- =?utf-8?B?VVdCWUQ4V3hKKzJmanN5MVJIVXExS0w0VExxTlBQVk9TamlJOEh2ZUlZMTdF?=
- =?utf-8?B?b0x2elRjK3JHK1JENSt1V3JoY2p2Q01xWGtPRm1xTCsrblRzeXE5c2FUSlZn?=
- =?utf-8?B?Skd3bWlucjJVdzQwaHdsSTZySDRlRUZiODY0aEl1c0pMNUNnaDJCenhaQk9z?=
- =?utf-8?B?RjdHWnZ6c0lnbk9DWTVxQ0RwMDJGOHlpWlFWb2tSWkdHa1lrY1lOSG1LTGxP?=
- =?utf-8?Q?iKW1KOImrU9mAQE72Rm1j/fui?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76572e05-0608-4318-5030-08dd1a8f49db
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4202.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 09:28:08.0584
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8qaMVssjQiIQNhssR+fkK3IUOCLCPBywU6Au0aV0T+qeq7oEiiXoeRutxOLSoy772iY5ppMOyvq4r/ggsN1L4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6060
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad8843d6-e5a3-437a-af4d-f2248b247a65@norik.com>
 
+On Thu, Dec 12, 2024 at 09:08:03AM +0100, Andrej Picej wrote:
+> 
+> 
+> On 12. 12. 24 00:04, Dmitry Baryshkov wrote:
+> > On Wed, Dec 11, 2024 at 08:57:17AM +0100, Andrej Picej wrote:
+> > > 
+> > > 
+> > > On 10. 12. 24 14:59, Dmitry Baryshkov wrote:
+> > > > On Tue, Dec 10, 2024 at 02:41:01PM +0100, Andrej Picej wrote:
+> > > > > 
+> > > > > 
+> > > > > On 10. 12. 24 12:43, Dmitry Baryshkov wrote:
+> > > > > > On Tue, Dec 10, 2024 at 10:19:00AM +0100, Andrej Picej wrote:
+> > > > > > > Add a optional properties to change LVDS output voltage. This should not
+> > > > > > > be static as this depends mainly on the connected display voltage
+> > > > > > > requirement. We have three properties:
+> > > > > > > - "ti,lvds-termination-ohms", which sets near end termination,
+> > > > > > > - "ti,lvds-vod-swing-data-microvolt" and
+> > > > > > > - "ti,lvds-vod-swing-clock-microvolt" which both set LVDS differential
+> > > > > > > output voltage for data and clock lanes. They are defined as an array
+> > > > > > > with min and max values. The appropriate bitfield will be set if
+> > > > > > > selected constraints can be met.
+> > > > > > > 
+> > > > > > > If "ti,lvds-termination-ohms" is not defined the default of 200 Ohm near
+> > > > > > > end termination will be used. Selecting only one:
+> > > > > > > "ti,lvds-vod-swing-data-microvolt" or
+> > > > > > > "ti,lvds-vod-swing-clock-microvolt" can be done, but the output voltage
+> > > > > > > constraint for only data/clock lanes will be met. Setting both is
+> > > > > > > recommended.
+> > > > > > > 
+> > > > > > > Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+> > > > > > > ---
+> > > > > > > Changes in v5:
+> > > > > > > - specify default values in sn65dsi83_parse_lvds_endpoint,
+> > > > > > > - move sn65dsi83_parse_lvds_endpoint for channel B up, outside if,
+> > > > > > > Changes in v4:
+> > > > > > > - fix typo in commit message bitfiled -> bitfield
+> > > > > > > - use arrays (lvds_vod_swing_conf and lvds_term_conf) in private data, instead
+> > > > > > > of separate variables for channel A/B
+> > > > > > > - add more checks on return value of "of_property_read_u32_array"
+> > > > > > > Changes in v3:
+> > > > > > > - use microvolts for default array values 1000 mV -> 1000000 uV.
+> > > > > > > Changes in v2:
+> > > > > > > - use datasheet tables to get the proper configuration
+> > > > > > > - since major change was done change the authorship to myself
+> > > > > > > ---
+> > > > > > >     drivers/gpu/drm/bridge/ti-sn65dsi83.c | 142 +++++++++++++++++++++++++-
+> > > > > > >     1 file changed, 139 insertions(+), 3 deletions(-)
+> > > > > > > 
+> > > > > > > diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > > > > > index 57a7ed13f996..f9578b38da28 100644
+> > > > > > > --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > > > > > +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > > > > > @@ -132,6 +132,16 @@
+> > > > > > >     #define  REG_IRQ_STAT_CHA_SOT_BIT_ERR		BIT(2)
+> > > > > > >     #define  REG_IRQ_STAT_CHA_PLL_UNLOCK		BIT(0)
+> > > > > > > +enum sn65dsi83_channel {
+> > > > > > > +	CHANNEL_A,
+> > > > > > > +	CHANNEL_B
+> > > > > > > +};
+> > > > > > > +
+> > > > > > > +enum sn65dsi83_lvds_term {
+> > > > > > > +	OHM_100,
+> > > > > > > +	OHM_200
+> > > > > > > +};
+> > > > > > > +
+> > > > > > >     enum sn65dsi83_model {
+> > > > > > >     	MODEL_SN65DSI83,
+> > > > > > >     	MODEL_SN65DSI84,
+> > > > > > > @@ -147,6 +157,8 @@ struct sn65dsi83 {
+> > > > > > >     	struct regulator		*vcc;
+> > > > > > >     	bool				lvds_dual_link;
+> > > > > > >     	bool				lvds_dual_link_even_odd_swap;
+> > > > > > > +	int				lvds_vod_swing_conf[2];
+> > > > > > > +	int				lvds_term_conf[2];
+> > > > > > >     };
+> > > > > > >     static const struct regmap_range sn65dsi83_readable_ranges[] = {
+> > > > > > > @@ -237,6 +249,36 @@ static const struct regmap_config sn65dsi83_regmap_config = {
+> > > > > > >     	.max_register = REG_IRQ_STAT,
+> > > > > > >     };
+> > > > > > > +static const int lvds_vod_swing_data_table[2][4][2] = {
+> > > > > > > +	{	/* 100 Ohm */
+> > > > > > > +		{ 180000, 313000 },
+> > > > > > > +		{ 215000, 372000 },
+> > > > > > > +		{ 250000, 430000 },
+> > > > > > > +		{ 290000, 488000 },
+> > > > > > > +	},
+> > > > > > > +	{	/* 200 Ohm */
+> > > > > > > +		{ 150000, 261000 },
+> > > > > > > +		{ 200000, 346000 },
+> > > > > > > +		{ 250000, 428000 },
+> > > > > > > +		{ 300000, 511000 },
+> > > > > > > +	},
+> > > > > > > +};
+> > > > > > > +
+> > > > > > > +static const int lvds_vod_swing_clock_table[2][4][2] = {
+> > > > > > > +	{	/* 100 Ohm */
+> > > > > > > +		{ 140000, 244000 },
+> > > > > > > +		{ 168000, 290000 },
+> > > > > > > +		{ 195000, 335000 },
+> > > > > > > +		{ 226000, 381000 },
+> > > > > > > +	},
+> > > > > > > +	{	/* 200 Ohm */
+> > > > > > > +		{ 117000, 204000 },
+> > > > > > > +		{ 156000, 270000 },
+> > > > > > > +		{ 195000, 334000 },
+> > > > > > > +		{ 234000, 399000 },
+> > > > > > > +	},
+> > > > > > > +};
+> > > > > > > +
+> > > > > > >     static struct sn65dsi83 *bridge_to_sn65dsi83(struct drm_bridge *bridge)
+> > > > > > >     {
+> > > > > > >     	return container_of(bridge, struct sn65dsi83, bridge);
+> > > > > > > @@ -435,12 +477,16 @@ static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
+> > > > > > >     		val |= REG_LVDS_FMT_LVDS_LINK_CFG;
+> > > > > > >     	regmap_write(ctx->regmap, REG_LVDS_FMT, val);
+> > > > > > > -	regmap_write(ctx->regmap, REG_LVDS_VCOM, 0x05);
+> > > > > > > +	regmap_write(ctx->regmap, REG_LVDS_VCOM,
+> > > > > > > +			REG_LVDS_VCOM_CHA_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_A]) |
+> > > > > > > +			REG_LVDS_VCOM_CHB_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_B]));
+> > > > > > >     	regmap_write(ctx->regmap, REG_LVDS_LANE,
+> > > > > > >     		     (ctx->lvds_dual_link_even_odd_swap ?
+> > > > > > >     		      REG_LVDS_LANE_EVEN_ODD_SWAP : 0) |
+> > > > > > > -		     REG_LVDS_LANE_CHA_LVDS_TERM |
+> > > > > > > -		     REG_LVDS_LANE_CHB_LVDS_TERM);
+> > > > > > > +		     (ctx->lvds_term_conf[CHANNEL_A] ?
+> > > > > > > +			  REG_LVDS_LANE_CHA_LVDS_TERM : 0) |
+> > > > > > > +		     (ctx->lvds_term_conf[CHANNEL_B] ?
+> > > > > > > +			  REG_LVDS_LANE_CHB_LVDS_TERM : 0));
+> > > > > > >     	regmap_write(ctx->regmap, REG_LVDS_CM, 0x00);
+> > > > > > >     	le16val = cpu_to_le16(mode->hdisplay);
+> > > > > > > @@ -576,10 +622,100 @@ static const struct drm_bridge_funcs sn65dsi83_funcs = {
+> > > > > > >     	.atomic_get_input_bus_fmts = sn65dsi83_atomic_get_input_bus_fmts,
+> > > > > > >     };
+> > > > > > > +static int sn65dsi83_select_lvds_vod_swing(struct device *dev,
+> > > > > > > +	u32 lvds_vod_swing_data[2], u32 lvds_vod_swing_clk[2], u8 lvds_term)
+> > > > > > > +{
+> > > > > > > +	int i;
+> > > > > > > +
+> > > > > > > +	for (i = 0; i <= 3; i++) {
+> > > > > > > +		if (lvds_vod_swing_data_table[lvds_term][i][0] >= lvds_vod_swing_data[0] &&
+> > > > > > > +		lvds_vod_swing_data_table[lvds_term][i][1] <= lvds_vod_swing_data[1] &&
+> > > > > > > +		lvds_vod_swing_clock_table[lvds_term][i][0] >= lvds_vod_swing_clk[0] &&
+> > > > > > > +		lvds_vod_swing_clock_table[lvds_term][i][1] <= lvds_vod_swing_clk[1])
+> > > > > > > +			return i;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	dev_err(dev, "failed to find appropriate LVDS_VOD_SWING configuration\n");
+> > > > > > > +	return -EINVAL;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +static int sn65dsi83_parse_lvds_endpoint(struct sn65dsi83 *ctx, int channel)
+> > > > > > > +{
+> > > > > > > +	struct device *dev = ctx->dev;
+> > > > > > > +	struct device_node *endpoint;
+> > > > > > > +	int endpoint_reg;
+> > > > > > > +	/* Set so the property can be freely selected if not defined */
+> > > > > > > +	u32 lvds_vod_swing_data[2] = { 0, 1000000 };
+> > > > > > > +	u32 lvds_vod_swing_clk[2] = { 0, 1000000 };
+> > > > > > > +	u32 lvds_term;
+> > > > > > > +	u8 lvds_term_conf = 0x1;
+> > > > > > > +	int lvds_vod_swing_conf = 0x1;
+> > > > > > 
+> > > > > > Magic values
+> > > > > 
+> > > > > Can you please elaborate.
+> > > > > 
+> > > > > I can use:
+> > > > > u8 lvds_term_conf = OHM_200;
+> > > > > 
+> > > > > What about lvds_vod_swing_conf? Should I create additional define for it?
+> > > > > But this doesn't solve a hidden meaning? Maybe additional comment above?
+> > > > > Would like to avoid using voltages for it, since then we are reverse
+> > > > > engineering the table in datasheet to match the default reg value.
+> > > > 
+> > > > I think the following example solves both problems:
+> > > > 
+> > > > lvds_term = 200;
+> > > > of_property_read_u32(..., &lvds_term);
+> > > > 
+> > > > if (lvds_term == 100)
+> > > > 	ctx->lvds_term_conf[channel] = OHM_100;
+> > > > else if (lvds_term == 200)
+> > > > 	ctx->lvds_term_conf[channel] = OHM_200;
+> > > > else
+> > > > 	return -EINVAL;
+> > > > 
+> > > > The same approach can be applied to lvds_vod_swing_conf, resulting in
+> > > > removal of magic values.
+> > > 
+> > > Sorry, but I think it is not that easy when it comes to the
+> > > lvds_vod_swing_conf. We should assign default value if
+> > > "ti,lvds-vod-swing-data-microvolt" and "ti,lvds-vod-swing-clock-microvolt"
+> > > are not defined. Default value of the lvds_vod_swing_conf is 0x1, but this
+> > > doesn't have any straight forward meaning like OHM_200 for example.
+> > > 
+> > > What we can do in that case is that we copy the values from defined
+> > > datasheet tables to the "lvds_vod_swing_data[2]" and "lvds_vod_swing_clk[2]"
+> > > arrays and then run the
+> > > sn65dsi83_select_lvds_vod_swing with it, which will return the default value
+> > > (0x1).
+> > > 
+> > > /* If both properties are not defined assign default limits */
+> > > if (ret_data && ret_clock) {
+> > > 	memcpy(lvds_vod_swing_data,
+> > > 	     lvds_vod_swing_data_table[ctx->lvds_term_conf[channel]][1],
+> > > 	     sizeof(lvds_vod_swing_data));
+> > > 	memcpy(lvds_vod_swing_clk,
+> > > 	    lvds_vod_swing_clock_table[ctx->lvds_term_conf[channel]][1],
+> > > 	    sizeof(lvds_vod_swing_clk));
+> > > }
+> > > lvds_vod_swing_conf = sn65dsi83_select_lvds_vod_swing(dev,
+> > > 	lvds_vod_swing_data, lvds_vod_swing_clk,
+> > > 	ctx->lvds_term_conf[channel]);
+> > > if (lvds_vod_swing_conf < 0) {
+> > > 	ret = lvds_vod_swing_conf;
+> > > 	goto exit;
+> > > }
+> > > 
+> > > ctx->lvds_vod_swing_conf[channel] = lvds_vod_swing_conf;
+> > > 
+> > > I'm not sure if using this approach gets rid of the problem with magic
+> > > values.
+> > > Or maybe I'm not seeing the obvious solution so please bear with me.
+> > 
+> > Yes, the defaults (0..1000000) should be fixed to result in the same
+> > value (0x01) as if the property wasn't specified at all
+> 
+> The defaults (0..1000000) is selected because in case if only one property
+> is defined in dts (ti,lvds-vod-swing-data-microvolt or
+> ti,lvds-vod-swing-clock-microvolt) the other array values don't effect the
+> decision which "lvds_vod_swing_conf" is selected. That's why we initialized
+> the array to be out off bounds of the datasheet tables, all values in the
+> table match the not defined property, so lvds_vod_swing_conf is selected
+> purely on the basis of the defined property.
 
-On 12/11/24 23:39, Terry Bowman wrote:
-> Existing recovery procedure for PCIe Uncorrectable Errors (UCE) does not
-> apply to CXL devices. Recovery can not be used for CXL devices because of
-> potential corruption on what can be system memory. Also, current PCIe UCE
-> recovery, in the case of a Root Port (RP) or Downstream Switch Port (DSP),
-> does not begin at the RP/DSP but begins at the first downstream device.
-> This will miss handling CXL Protocol Errors in a CXL RP or DSP. A separate
-> CXL recovery is needed because of the different handling requirements
->
-> Add a new function, cxl_do_recovery() using the following.
->
-> Add cxl_walk_bridge() to iterate the detected error's sub-topology.
-> cxl_walk_bridge() is similar to pci_walk_bridge() but the CXL flavor
-> will begin iteration at the RP or DSP rather than beginning at the
-> first downstream device.
->
-> Add cxl_report_error_detected() as an analog to report_error_detected().
-> It will call pci_driver::cxl_err_handlers for each iterated downstream
-> device. The pci_driver::cxl_err_handler's UCE handler returns a boolean
-> indicating if there was a UCE error detected during handling.
->
-> cxl_do_recovery() uses the status from cxl_report_error_detected() to
-> determine how to proceed. Non-fatal CXL UCE errors will be treated as
-> fatal. If a UCE was present during handling then cxl_do_recovery()
-> will kernel panic.
->
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> ---
->   drivers/pci/pci.h      |  3 +++
->   drivers/pci/pcie/aer.c |  4 ++++
->   drivers/pci/pcie/err.c | 54 ++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 61 insertions(+)
->
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 14d00ce45bfa..5a67e41919d8 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -658,6 +658,9 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->   		pci_channel_state_t state,
->   		pci_ers_result_t (*reset_subordinates)(struct pci_dev *pdev));
->   
-> +/* CXL error reporting and handling */
-> +void cxl_do_recovery(struct pci_dev *dev);
-> +
->   bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
->   int pcie_retrain_link(struct pci_dev *pdev, bool use_lt);
->   
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index c1eb939c1cca..861521872318 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1024,6 +1024,8 @@ static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
->   			err_handler->error_detected(dev, pci_channel_io_normal);
->   		else if (info->severity == AER_FATAL)
->   			err_handler->error_detected(dev, pci_channel_io_frozen);
-> +
-> +		cxl_do_recovery(dev);
->   	}
->   out:
->   	device_unlock(&dev->dev);
-> @@ -1048,6 +1050,8 @@ static void cxl_handle_error(struct pci_dev *dev, struct aer_err_info *info)
->   			pdrv->cxl_err_handler->cor_error_detected(dev);
->   
->   		pcie_clear_device_status(dev);
-> +	} else {
-> +		cxl_do_recovery(dev);
->   	}
->   }
->   
-> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> index 31090770fffc..6f7cf5e0087f 100644
-> --- a/drivers/pci/pcie/err.c
-> +++ b/drivers/pci/pcie/err.c
-> @@ -276,3 +276,57 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->   
->   	return status;
->   }
-> +
-> +static void cxl_walk_bridge(struct pci_dev *bridge,
-> +			    int (*cb)(struct pci_dev *, void *),
-> +			    void *userdata)
-> +{
-> +	bool *status = userdata;
-> +
-> +	cb(bridge, status);
-> +	if (bridge->subordinate && !*status)
+I see, thanks for the explanation.
 
+> 
+> Example:
+> DTS
+> ti,lvds-vod-swing-data-microvolt = <250000 428000>;
+> //ti,lvds-vod-swing-clock-microvolt NOT DEFINED;
+> 
+> After parsing the devicetree we will get:
+> lvds_vod_swing_data = [ 250000, 428000 ]
+> lvds_vod_swing_clk = [ 0, 1000000 ]
+> 
+> In sn65dsi83_select_lvds_vod_swing lvds_vod_swing_clk[] values don't effect
+> the decision making since
+> 
+> lvds_vod_swing_clock_table[lvds_term][i][0] >= lvds_vod_swing_clk[0] &&
+> lvds_vod_swing_clock_table[lvds_term][i][1] <= lvds_vod_swing_clk[1]
+> 
+> is always true.
+> 
+> > 
+> > I think the following should work:
+> > 
+> > 	/* artifical values to select the defaults in both cases */
+> > 	u32 lvds_vod_swing_data[2] = { 190000, 330000 };
+> > 	u32 lvds_vod_swing_clk[2] = { 150000, 250000 };
+> 
+> This sets the default to 0x0. It should be:
+> u32 lvds_vod_swing_data[2] = { 200000, 372000 };
+> u32 lvds_vod_swing_clk[2] = { 156000, 290000 };
+> This selects the default 0x1 in both cases, if termination is 100 or 200
+> Ohms.
+> 
+> Nevertheless I think I got your point. But I would still like to give the
+> user the freedom to only specify one property if maybe connected panel only
+> has limits on data lanes/clock lane.
+> So maybe set the arrays lvds_vod_swing_data/clk to [0, 1000000] if
+> of_property_read_u32_array returns -EINVAL (property does not exist).
+> What do you say?
 
-I would prefer to use not a pointer for status as you are not changing 
-what it points to here, so first a cast then using just !status in the 
-conditional.
+After your explanation, I think it might be better to explicitly set the
+value to 0x1, but not at the top of the function, but next to a check
+that both properties are (not) set.
 
+> 
+> > 
+> > Yes, they are artificial, as stated in the comment. Yes, I think it's
+> > better than special-casing in the property handling.
+> > 
 
-> +		pci_walk_bus(bridge->subordinate, cb, status);
-> +}
-> +
-> +static int cxl_report_error_detected(struct pci_dev *dev, void *data)
-> +{
-> +	struct pci_driver *pdrv = dev->driver;
-> +	bool *status = data;
-> +
-> +	device_lock(&dev->dev);
-> +	if (pdrv && pdrv->cxl_err_handler &&
-> +	    pdrv->cxl_err_handler->error_detected) {
-> +		const struct cxl_error_handlers *cxl_err_handler =
-> +			pdrv->cxl_err_handler;
-> +		*status |= cxl_err_handler->error_detected(dev);
-
-
-This implies status should not be a bool pointer as different bits can 
-be set by the returning value, but as the code seems to only care about 
-any bit implying an error and therefore error detected, I guess that is 
-fine. However, the next function calling this one is using an int ...
-
-
-Confusing to me. I would expect here not an OR but returning just when a 
-first error is detected, handling the lock properly, with the walk 
-function behind the scenes breaking the walk if the return is anything 
-other than zero.
-
-
-> +	}
-> +	device_unlock(&dev->dev);
-> +	return *status;
-> +}
-> +
-> +void cxl_do_recovery(struct pci_dev *dev)
-> +{
-> +	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
-> +	int type = pci_pcie_type(dev);
-> +	struct pci_dev *bridge;
-> +	int status;
-> +
-> +	if (type == PCI_EXP_TYPE_ROOT_PORT ||
-> +	    type == PCI_EXP_TYPE_DOWNSTREAM ||
-> +	    type == PCI_EXP_TYPE_UPSTREAM ||
-> +	    type == PCI_EXP_TYPE_ENDPOINT)
-> +		bridge = dev;
-> +	else
-> +		bridge = pci_upstream_bridge(dev);
-> +
-> +	cxl_walk_bridge(bridge, cxl_report_error_detected, &status);
-> +	if (status)
-> +		panic("CXL cachemem error.");
-> +
-> +	if (host->native_aer || pcie_ports_native) {
-> +		pcie_clear_device_status(dev);
-> +		pci_aer_clear_nonfatal_status(dev);
-> +	}
-> +
-> +	pci_info(bridge, "CXL uncorrectable error.\n");
-> +}
+-- 
+With best wishes
+Dmitry
 
