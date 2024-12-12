@@ -1,116 +1,159 @@
-Return-Path: <linux-kernel+bounces-443535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB699EF57C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:17:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6529EF53D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:15:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A0B189E250
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE485177235
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D978D222D73;
-	Thu, 12 Dec 2024 17:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izDHSMfe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E41021576E;
-	Thu, 12 Dec 2024 17:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39122253E3;
+	Thu, 12 Dec 2024 17:04:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D5E2144A2;
+	Thu, 12 Dec 2024 17:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734023105; cv=none; b=ZvWrPSS+MMxC8L1QG9WTXIknOJ4OQhiLqoFNR4VV3pBnz0ixk8+Q5NHwDDbUnLHMUgIzDf1TiXjeNrDIQqSflkXupFFLt24F+HmaTsBySg8lw7JmUQldLwENkcbVH169oZgc1v7cPRGH2uCsKvxdQBHbRkBoabS0qPPer95ehY4=
+	t=1734023052; cv=none; b=J95h/UFgBx83ZGif16qsX8bv6LuhpbWEU3eBd+6fkBI7eTu00rF+HxE340t385MyyFsF4OOXAVUFhnAhD5j8mx7zvJzBJeh+yTyIFHjXkYj95K+VUmaawiM++Pf1iiw1280qF38UTHm6fSMEFLecLeLYYFUF8aYLPhjo/alIzcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734023105; c=relaxed/simple;
-	bh=tGubaQrA7Kc8sj47oQPz3QlNRojgFSU2Q3YW9KxNBmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qA2hMAo55eYAHu+mMgF2ISeVt1o+2FTp65njttZyatocisWWLy+qkKT8PRoPxDN2DK3T7LQorkIJ7cxF5k8sp3qNW4jUkcZeJCJ4kkY8jFq7YC7USKPiVT7W5RfcwIDGWjBYnWN1t2VnDSW5/Km2RZl1655bNL2zlHPjF0UKkXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izDHSMfe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9133C4CED4;
-	Thu, 12 Dec 2024 17:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734023104;
-	bh=tGubaQrA7Kc8sj47oQPz3QlNRojgFSU2Q3YW9KxNBmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=izDHSMfe2MxIbPL4oXaHX39VrN31l0P1vZkpFC8ZFAalbM+Oiq2FZ1J/cwE7LD7XV
-	 fNyHyCux54lGynGvoU9mRL7381+0EB2mjBEw4cM7eRE6pMNymtN/NJkH+Jcx0Am242
-	 tpxzoiLbhkxNZQ26wxa3GUPWQK0cPzlQ+E8jWepBkYOHNBoCwNZqjiCuTU6srWTNHO
-	 HMLA1VU8TYxMn0sCJF7ls1ecF2eAQhtKMnX0D0C0nT0iTdf4Di1OnIsgBmHtTVqdbT
-	 IghhDuTBEDhKCFtlR/j7cuj6PPxYs9aJICGBp6+SUufo7IFXVWWCVrt148LmrfJswU
-	 2hFonbjb6mjNA==
-Date: Thu, 12 Dec 2024 17:04:00 +0000
-From: Simon Horman <horms@kernel.org>
-To: Gianfranco Trad <gianf.trad@gmail.com>
-Cc: manishc@marvell.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH] qed: fix uninit pointer read in
- qed_mcp_nvm_info_populate()
-Message-ID: <20241212170400.GC73795@kernel.org>
-References: <20241211134041.65860-2-gianf.trad@gmail.com>
+	s=arc-20240116; t=1734023052; c=relaxed/simple;
+	bh=qEEzfqsh2vdv8z94+nPCE2Myefm6po3pERQ9A6NZWZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bayp2ETzDyJrExyUU0JSFGvrhqb5xrsgqrqmJjTYOQdc2cOgYmflOSxKh7ZXO7/+IvvWtNQqAMSvEhRn+92b3dbRnK8dqDHLZgdVEVDtswa0m4ka4AHimbEbkhggwvv/4ZrUoSVfppS6fJXXKt3Z+jx2zskxWQG9o4S/hBsWotw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6CD641762;
+	Thu, 12 Dec 2024 09:04:37 -0800 (PST)
+Received: from [10.1.37.59] (e127648.arm.com [10.1.37.59])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4D643F58B;
+	Thu, 12 Dec 2024 09:04:06 -0800 (PST)
+Message-ID: <ea90a77e-91fa-423d-9f11-9345db6d1482@arm.com>
+Date: Thu, 12 Dec 2024 17:04:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241211134041.65860-2-gianf.trad@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v021 8/9] cpufreq: intel_pstate: Introduce hybrid
+ domains
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>
+References: <5861970.DvuYhMxLoT@rjwysocki.net>
+ <2030654.usQuhbGJ8B@rjwysocki.net>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <2030654.usQuhbGJ8B@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 11, 2024 at 02:40:42PM +0100, Gianfranco Trad wrote:
-> Coverity reports an uninit pointer read in qed_mcp_nvm_info_populate().
-> If qed_mcp_bist_nvm_get_num_images() returns -EOPNOTSUPP, this leads to
-> jump to label out with nvm_info.image_att being uninit while assigning it
-> to p_hwfn->nvm_info.image_att.
-> Add check on rc against -EOPNOTSUPP to avoid such uninit pointer read.
+On 11/29/24 16:21, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Closes: https://scan5.scan.coverity.com/#/project-view/63204/10063?selectedIssue=1636666
-> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+> Hybrid platforms contain different types of CPUs.  They may differ
+> by micro-architecture, by cache topology, by manufacturing process, by
+> the interconnect access design etc.  Of course, this means that power-
+> performance curves for CPUs of different types are generally different.
+> 
+> Because of these differences, CPUs of different types need to be handled
+> differently in certain situations and so it is convenient to operate
+> groups of CPUs that each contain CPUs of the same type.  In intel_pstate,
+> each of them will be represented by a struct hybrid_domain object and
+> referred to as a hybrid domain.
+> 
+> A key problem is how to identify the type of a CPUs so as to know which
+> hybrid domain it belongs to.  In principle, there are a few ways to do
+> it, but none of them is perfectly reliable.
+> 
+> From the computational perspective, an important factor is how many
+> instructions (on average) can be executed by the given CPU when it is
+> running at a specific frequency, often referred to as the IPC
+> (instructions per cycle) ratio of the given CPU to the least-capable
+> CPU in the system.  In intel_pstate this ratio is represented by the
+> performance-to-frequency scaling factor which needs to be used to get
+> a frequency in kHz for a given HWP performance level of the given CPU.
+> Since HWP performance levels are in the same units for all CPUs in a
+> hybrid system, the smaller the scaling factor, the larger the IPC ratio
+> for the given CPU.
+> 
+> Of course, the performance-to-frequency scaling factor must be the
+> same for all CPUs of the same type.  While it may be the same for CPUs
+> of different types, there is only one case in which that actually
+> happens (Meteor Lake platforms with two types of E-cores) and it is not
+> expected to happen again in the future.  Moreover, when it happens,
+> there is no straightforward way to distinguish CPUs of different types
+> with the same scaling factor in general.
+> 
+> For this reason, the scaling factor is as good as it gets for CPU
+> type identification and so it is used for building hybrid domains in
+> intel_pstate.
+> 
+> On hybrid systems, every CPU is added to a hybrid domain at the
+> initialization time.  If a hybrid domain with a matching scaling
+> factor is already present at that point, the CPU will be added to it.
+> Otherwise, a new hybrid domain will be created and the CPU will be
+> put into it.  The domain's scaling factor will then be set to the
+> one of the new CPU.
+
+Just two irrelevant typos below, although for the unfamiliar maybe an
+example debug message output from any Arrow Lake would make this more
+concrete?
+
+> 
+> So far, the new code doesn't do much beyond printing debud messages,
+
+s/debud/debug
+
+> but subsequently the EAS support for intel_pstate will be based on it.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
-> Note:
-> - Fixes: tag should be "7a0ea70da56e net/qed: allow old cards not supporting "num_images" to work" ?
->   
->  drivers/net/ethernet/qlogic/qed/qed_mcp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/cpufreq/intel_pstate.c |   57 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 57 insertions(+)
 > 
-> diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.c b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-> index b45efc272fdb..127943b39f61 100644
-> --- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-> +++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-> @@ -3387,7 +3387,7 @@ int qed_mcp_nvm_info_populate(struct qed_hwfn *p_hwfn)
->  	}
->  out:
->  	/* Update hwfn's nvm_info */
-> -	if (nvm_info.num_images) {
-> +	if (nvm_info.num_images && rc != -EOPNOTSUPP) {
->  		p_hwfn->nvm_info.num_images = nvm_info.num_images;
->  		kfree(p_hwfn->nvm_info.image_att);
->  		p_hwfn->nvm_info.image_att = nvm_info.image_att;
+> Index: linux-pm/drivers/cpufreq/intel_pstate.c
+> ===================================================================
+> --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
+> +++ linux-pm/drivers/cpufreq/intel_pstate.c
+> @@ -943,6 +943,62 @@ static struct cpudata *hybrid_max_perf_c
+>   */
+>  static DEFINE_MUTEX(hybrid_capacity_lock);
+>  
+> +#ifdef CONFIG_ENERGY_MODEL
+> +/*
+> + * A hybrid domain is a collection of CPUs with the same perf-to-frequency
+> + * scaling factor.
+> + */
+> +struct hybrid_domain {
+> +	struct hybrid_domain *next;
+> +	cpumask_t cpumask;
+> +	int scaling;
+> +};
+> +
+> +static struct hybrid_domain *hybrid_domains;
+> +
+> +static void hybrid_add_to_domain(struct cpudata *cpudata)
+> +{
+> +	int scaling = cpudata->pstate.scaling;
+> +	int cpu = cpudata->cpu;
+> +	struct hybrid_domain *hd;
+> +
+> +	/* Do this only on hubrid platforms. */
 
-Are you sure that nvm_info.num_images can be non-zero if rc == -EOPNOTSUPP?
-
-The cited commit state:
-
-    Commit 43645ce03e00 ("qed: Populate nvm image attribute shadow.")
-    added support for populating flash image attributes, notably
-    "num_images". However, some cards were not able to return this
-    information. In such cases, the driver would return EINVAL, causing the
-    driver to exit.
-
-    Add check to return EOPNOTSUPP instead of EINVAL when the card is not
-    able to return these information. The caller function already handles
-    EOPNOTSUPP without error.
-
-So I would expect that nvm_info.num_images is 0.
-
-If not, perhaps an alternate fix is to make that so, either by setting
-it in qed_mcp_bist_nvm_get_num_images, or where the return value of
-qed_mcp_bist_nvm_get_num_images is checked (just before the goto out).
-
-And, in any case I think some testing is in order.
+s/hubrid/hybrid
 
 
