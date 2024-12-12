@@ -1,125 +1,224 @@
-Return-Path: <linux-kernel+bounces-443041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150759EE629
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:04:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088EC18897D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:03:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBC52135AC;
-	Thu, 12 Dec 2024 12:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P1Cs5YXy"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A3299EE622
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:03:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CBC210F5E;
-	Thu, 12 Dec 2024 12:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71B0288512
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:03:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84497213E9A;
+	Thu, 12 Dec 2024 12:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="oTQ0inJu"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB32C2135DE;
+	Thu, 12 Dec 2024 12:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734004870; cv=none; b=PB25Ex1mVoqxvjz9+d0OngBAaKRNkT0l2r9mTFQ5Jm3UDXdICAnUrfofL/jVcwldtFzv8h4rtnlBgNCSPmU0AFZ/yiGOsavd2ughDEmmIwa4Dhv7UdTUzgVp0gX0FkWy6SsCqdhiQgPmMy4TbiNqkVZ4ZRv7J0LTmaKpUMt7yT4=
+	t=1734004875; cv=none; b=c3M3w4u98jyizM2ncW3W2mVrEXK7RLuHohKZcMvWvTBZ+K7HDQ/ZLb55S43g8VRoPW4UgWVNtYHt4TnWIrszh7/JVRCWf/VRwVgaPtk9zs2uvnReAolcmXOelsV8kXlrp0bw+yhkowz5hSKbU8b2WP9rGG6E45cchH7+URmDrbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734004870; c=relaxed/simple;
-	bh=1UnvRowKTHMn0oCFKjnBckfeB2U2PCWdb7BTU8jkPGQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qEobwYrIOE25TY/P201Xv6kUpgNFHIknM++vzZp3m5HRUVkf64Qqcj8QmBrCi8ykTMEDspiYG45V3yQKJOZKd4HP6vVe10PzmDObPW+MD9XSE5JqzT2zTdhTRwkr3hOPKeDK7kpJ0itlVrYna+fStoHoNHkgtwuw5Kt3XEsVays=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P1Cs5YXy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC6mqMG029640;
-	Thu, 12 Dec 2024 12:01:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=gjR9Jw
-	FSftBz03xxwTbHkYSDXnrIBd72MCfq9Q9fRlE=; b=P1Cs5YXy8UF1A4Jj7ZYtow
-	pS0AJZwEuilgz5gND42ipL4zahIWeoV4mO2WYbCqJZFYqnBgygIxwn0G53ji9GMs
-	P8T0tE1xO2Eh5/d8vQ9xK+0BYfTWZFgIbn6WvpkoKuk0srC5ZVSyn/tpBqQOgWlk
-	agsWlobtCK0JS2WUfafRBVNuhQgX5OMO6insBd6Cm7HqL89ujEgwCkKnk9ekbxe0
-	ZQW4spMOuauVHGhtlArv8PNKsUvZ/SYeJwmnFfZyKHAldhnf0qgltVNN6zk/XqJK
-	JecNAza19iKJdIvsI51a80OUDgCdvph9YVXslig+mBlrwNBT1vjEEca18qjhH3DA
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsjtr0g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 12:01:06 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC8wcgx007793;
-	Thu, 12 Dec 2024 12:01:06 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43ft11sp6d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 12:01:06 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BCC15go26280638
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Dec 2024 12:01:05 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2374A58055;
-	Thu, 12 Dec 2024 12:01:05 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A6C1158059;
-	Thu, 12 Dec 2024 12:01:02 +0000 (GMT)
-Received: from [9.152.224.200] (unknown [9.152.224.200])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 12 Dec 2024 12:01:02 +0000 (GMT)
-Message-ID: <c99b7bc1-25a6-4075-8d8c-38ce8c32351f@linux.vnet.ibm.com>
-Date: Thu, 12 Dec 2024 13:01:01 +0100
+	s=arc-20240116; t=1734004875; c=relaxed/simple;
+	bh=dkBozgEhWhJDJ/kLU6yjkHZ1LcjDuX0+NbLxBHsMdl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FMBmMB8caRITDX6bjLyKWe28zFswFbrvRWjdlYu0Jy9gNR8Y22tNRa2k8sOx4v48bg5vdjEILBTLojmFT/T99zoQr33pbbEBygoCFoljGh+yQbQNwURxBntlEMuBj344nMYNLGFq5lLFznGVT0QI/eT74FQFYqF2o9iRNatCwOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=oTQ0inJu; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 727f3259d2d0f307; Thu, 12 Dec 2024 13:01:04 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 27B6F7F5D79;
+	Thu, 12 Dec 2024 13:01:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1734004864;
+	bh=dkBozgEhWhJDJ/kLU6yjkHZ1LcjDuX0+NbLxBHsMdl8=;
+	h=From:Subject:Date;
+	b=oTQ0inJuUhY1rXnO85svM8tOFU+sAMrLgiDr2ylPPk7YCHBphlhdCFHryDDcyEaMQ
+	 r4ODc3kf835Z8IWeHEdUTAsEuel4EXSpJuI5jpyTFFT6yZ8xZS050EZ5SlChxKU3zY
+	 snQ/eryHSMmkmmJVgkBlpRynNKXzphNpG0I4R9SOiyWAc8zU58CTcQBPbx7DohtdjR
+	 yTlGOcLwvn14TmDu74Y3TTsQD2Ett2+VUghBoFg4eEwzP8KODfzDE5J4KN1fRicAFs
+	 CogdkjBxL6SUC3FlHPXax9wh87dlGfN1NtHOU+eID0i2aJ7nFROebZhV2uofmZln9K
+	 8EZHPoyxlsRIQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject:
+ [PATCH v1] PM: EM: Move sched domains rebuild function from schedutil to EM
+Date: Thu, 12 Dec 2024 13:01:02 +0100
+Message-ID: <4977135.31r3eYUQgx@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] s390/crypto/cpacf: Constify 'struct bin_attribute'
-Content-Language: en-GB
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Niklas Schnelle
- <schnelle@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Holger Dengler <dengler@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241211-sysfs-const-bin_attr-s390-v1-0-be01f66bfcf7@weissschuh.net>
- <20241211-sysfs-const-bin_attr-s390-v1-1-be01f66bfcf7@weissschuh.net>
-From: Finn Callies <fcallies@linux.vnet.ibm.com>
-In-Reply-To: <20241211-sysfs-const-bin_attr-s390-v1-1-be01f66bfcf7@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mMHCSTRghwdb3srlLi0x430gvhXPJ50Q
-X-Proofpoint-ORIG-GUID: mMHCSTRghwdb3srlLi0x430gvhXPJ50Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=808
- mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412120086
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrkeehgdefgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepledprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnugh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=9 Fuz1=9 Fuz2=9
 
-On 11/12/2024 18:54, Thomas Weißschuh wrote:
-> The sysfs core now allows instances of 'struct bin_attribute' to be
-> moved into read-only memory. Make use of that to protect them against
-> accidental or malicious modifications.
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
->   arch/s390/kernel/cpacf.c | 36 ++++++++++++++++++------------------
->   1 file changed, 18 insertions(+), 18 deletions(-)
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-[ snip ]
+Function sugov_eas_rebuild_sd() defined in the schedutil cpufreq governor
+implements generic functionality that may be useful in other places.  In
+particular, there is a plan to use it in the intel_pstate driver in the
+future.
 
-Tested-by: Finn Callies <fcallies@linux.ibm.com>
+For this reason, move it from schedutil to the energy model code and
+rename it to em_rebuild_sched_domains().
+
+This also helps to get rid of some #ifdeffery in schedutil which is a
+plus.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+The previous RFC version of this patch is here:
+
+https://lore.kernel.org/linux-pm/2229205.irdbgypaU6@rjwysocki.net/
+
+Changes since the RFC:
+
+ * The new function is called em_rebuild_sched_domains() now.
+ * Update the subject and changelog.
+ * Reword the comment in sugov_policy_alloc().
+
+---
+ drivers/cpufreq/cpufreq.c        |    2 +-
+ include/linux/energy_model.h     |    2 ++
+ kernel/power/energy_model.c      |   17 +++++++++++++++++
+ kernel/sched/cpufreq_schedutil.c |   33 ++++++---------------------------
+ 4 files changed, 26 insertions(+), 28 deletions(-)
+
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1538,7 +1538,7 @@
+ 
+ 		/*
+ 		 * Register with the energy model before
+-		 * sugov_eas_rebuild_sd() is called, which will result
++		 * em_rebuild_sched_domains() is called, which will result
+ 		 * in rebuilding of the sched domains, which should only be done
+ 		 * once the energy model is properly initialized for the policy
+ 		 * first.
+--- a/include/linux/energy_model.h
++++ b/include/linux/energy_model.h
+@@ -179,6 +179,7 @@
+ int em_dev_update_chip_binning(struct device *dev);
+ int em_update_performance_limits(struct em_perf_domain *pd,
+ 		unsigned long freq_min_khz, unsigned long freq_max_khz);
++void em_rebuild_sched_domains(void);
+ 
+ /**
+  * em_pd_get_efficient_state() - Get an efficient performance state from the EM
+@@ -404,6 +405,7 @@
+ {
+ 	return -EINVAL;
+ }
++static inline void em_rebuild_sched_domains(void) {}
+ #endif
+ 
+ #endif
+--- a/kernel/power/energy_model.c
++++ b/kernel/power/energy_model.c
+@@ -908,3 +908,20 @@
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(em_update_performance_limits);
++
++static void rebuild_sd_workfn(struct work_struct *work)
++{
++	rebuild_sched_domains_energy();
++}
++
++void em_rebuild_sched_domains(void)
++{
++	static DECLARE_WORK(rebuild_sd_work, rebuild_sd_workfn);
++
++	/*
++	 * When called from the cpufreq_register_driver() path, the
++	 * cpu_hotplug_lock is already held, so use a work item to
++	 * avoid nested locking in rebuild_sched_domains().
++	 */
++	schedule_work(&rebuild_sd_work);
++}
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -604,31 +604,6 @@
+ 
+ /********************** cpufreq governor interface *********************/
+ 
+-#ifdef CONFIG_ENERGY_MODEL
+-static void rebuild_sd_workfn(struct work_struct *work)
+-{
+-	rebuild_sched_domains_energy();
+-}
+-
+-static DECLARE_WORK(rebuild_sd_work, rebuild_sd_workfn);
+-
+-/*
+- * EAS shouldn't be attempted without sugov, so rebuild the sched_domains
+- * on governor changes to make sure the scheduler knows about it.
+- */
+-static void sugov_eas_rebuild_sd(void)
+-{
+-	/*
+-	 * When called from the cpufreq_register_driver() path, the
+-	 * cpu_hotplug_lock is already held, so use a work item to
+-	 * avoid nested locking in rebuild_sched_domains().
+-	 */
+-	schedule_work(&rebuild_sd_work);
+-}
+-#else
+-static inline void sugov_eas_rebuild_sd(void) { };
+-#endif
+-
+ struct cpufreq_governor schedutil_gov;
+ 
+ static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
+@@ -784,7 +759,11 @@
+ 		goto fail;
+ 
+ out:
+-	sugov_eas_rebuild_sd();
++	/*
++	 * Schedutil is the preferred governor for EAS, so rebuild sched domains
++	 * on governor changes to make sure the scheduler knows about them.
++	 */
++	em_rebuild_sched_domains();
+ 	mutex_unlock(&global_tunables_lock);
+ 	return 0;
+ 
+@@ -826,7 +805,7 @@
+ 	sugov_policy_free(sg_policy);
+ 	cpufreq_disable_fast_switch(policy);
+ 
+-	sugov_eas_rebuild_sd();
++	em_rebuild_sched_domains();
+ }
+ 
+ static int sugov_start(struct cpufreq_policy *policy)
+
+
+
 
