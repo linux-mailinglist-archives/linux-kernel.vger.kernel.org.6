@@ -1,127 +1,436 @@
-Return-Path: <linux-kernel+bounces-442884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4691A9EE371
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:51:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22BE9EE374
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:51:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A15251646B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:51:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBE220E712;
+	Thu, 12 Dec 2024 09:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vv5+Eues"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800A7283265
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:51:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E169F20FAB5;
-	Thu, 12 Dec 2024 09:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z495krWB"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD04820E327;
-	Thu, 12 Dec 2024 09:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597EF13CF9C
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733997063; cv=none; b=CNhoNC48RQp6m68aqxd5XDSTmy2y1h5sOsSywdqNVaVPKYwC2rxKB9yOXT5udPDRLQqwG7Nl8L6EHsX2aPloUOk4Nfj9z6B7iVsivoUvVAokeZzNQKv0nVc8+kzivsacv5AAmNm2tfj6bH2tYehsdaJ5u3PLRy4lgskqKieO0Q4=
+	t=1733997090; cv=none; b=TzvwrbLkPKdGYr2McGYKU1BLDfA4CpzkkDTT7FvNyaXg30JnQ6BOTJZPisfhRRF+4OLwJElQdgKIhuGca1K6CdIGULczbGaup9Dp6whJZzGCfs24+k8U5CHFABOz3GHqMyHI2pKduDanyeA7wtg7asdI9DHrV2cpRkpDkr8F6P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733997063; c=relaxed/simple;
-	bh=tgwWCWfWL4TY8dfN9EN10EcWy058zgq9DmNzaaLKFnY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ndN4VeqPCqTfyuc14fEbn98lB2gZwzn8yKrgPNZCpacHJ0QpF6TmKqEq9q++oZ7eCd3FDWDuvc6cHwUcg46SbY/sUsgssbKpmHNhSYvKBeAvDMYTMEZ8uwt1O4CisBxPfRCJcRNQo9E4Yyvtip1aQBM+w8hlsR2fsoltJqafB20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z495krWB; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa689a37dd4so67479166b.3;
-        Thu, 12 Dec 2024 01:51:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733997059; x=1734601859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Lqlqa+yVzadnVCts+R28x1v55t3TnviPyK2Uw1lPbw=;
-        b=Z495krWBuo/HGyO5DRhkQOhVcofiQGIt44KjSQIIIGHHtlZGd2FM2xOJrnDl4BBZFD
-         GxGd3TsoedP+KT6JWwDi3huS8MpTGcGYHgleh+u5SEkZh8tU08cuE08/8aaRlwl6vAQb
-         LU5oKYkBFAJI4ThVYp0VEm0WJAAtXyKZ/iPrON1BtFJ/yH7H+yBtWrHPdfdrFMdiF2MA
-         IisjSpLhsJbuamMIG8K35zuOrQAufsD377RvdjhUUNQji5f8ZepD7Y8RSVD0XEUmD2SW
-         JDBDmm23OONE8npFBjhsXYHThCITGWUS3O2wiNrFQDB4/Qw+YT01wyy/6JRYVaBg9Cet
-         tjuw==
+	s=arc-20240116; t=1733997090; c=relaxed/simple;
+	bh=9Q4aeImRaRkIMOQNW+C4UpdgE4A5WQVIVSzvejiIlOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xtefgy4QLKnz6PIsPbHbckqPXxEN+ADw0wAEEU5J/cTBxM8MQ1F0su38mo4aW8Sn2fm8IBbTpl+8qi+JXk+LxowYQRrX1pEgkLJDaI6dlZwdSGUrFOWS6v3d/YymAP14+fvGzGjazPF6iWGGH72xjJ1FsCfgjnlX+dIPUes1bkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vv5+Eues; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733997087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1VOiqarubudKxipZ4sbCOrLtgNp7o+zRkyFk6UjJefg=;
+	b=Vv5+EuesQ7ivQBJaRiFSiSUUCeaWteW7kTOJlHj6kRu/w/SH5q8HszEO8wd3HROaxtuEin
+	iyRcP8T/Zn6d8PhN2WAZ/h1n+FJWplPtyFpQ2Q3ArGVN3ahV68ygI96wpe2/ZoPnkr5Rzp
+	y8PqtfIg6HCOXVb7m252k7XhHbuKJ3o=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-342-yzyMY57tODi3lJjBJzS_ug-1; Thu, 12 Dec 2024 04:51:25 -0500
+X-MC-Unique: yzyMY57tODi3lJjBJzS_ug-1
+X-Mimecast-MFC-AGG-ID: yzyMY57tODi3lJjBJzS_ug
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385d6ee042eso282352f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:51:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733997059; x=1734601859;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Lqlqa+yVzadnVCts+R28x1v55t3TnviPyK2Uw1lPbw=;
-        b=EdN5vjSr/VB4A4VAFGqeb9HTb8RLSudpIo/5lx86PPo+0K1qCy+yfWI+eI6qwyf5QS
-         4XMGE0Ign09LxNOvPWm0arLFk8f7NHE9AgoOMNbXCYIh19tcp5Xjd4aZzW/AlHUJRUn+
-         wJMoqCZV6/OBf3t3H2aI+ppjoyI4sWrWl6ZM84h5QFkjVSGpP9Eq2HADlIDUH/Pt0Jmt
-         X8ECp6oKWFtF9c666LI3laRr2khqDvncBMW8FMCRGS4nBu4jAVGYOaU3bn9y7RdSi779
-         fyKjBcmJ9unrfEsKoGFjDOxEiK3MFLleI3Go3r4uStNFK6B5MoRXAl1pUNcEFygj3CcR
-         jPsw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4dFBMzU1kj2LJIylLpq8Xz28LMcVvAEJrZ8L1oW6D7/sWGwwiQ4n7pso0nLFefCw/ySSUQbII@vger.kernel.org, AJvYcCWR3xsmEGg1RYLWR6yyI5sjQ6OGDBH/lq3UxyEe7t/nEzK9gFvK20X6XWbD5ZHZjRnvo89zOFKm6Jv/hYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfKF/Mi6OMvCc27NevXJ9v7sdAeH6CtE7/WhYPBYXeUehGFxfn
-	ewsX1Kb7nemmEg4iaALTmUQYEKm55/b/4wCDMd+s4xDoL6N4jEoo
-X-Gm-Gg: ASbGncvvPTCYAztFqll5X4WYE7jOgC8nsjIQgQb+RCLmDhVYgy8V5/rGotSTTxDRh36
-	VPUE0OH2UMuJ6mlSYH+G85Qx/BXJDhlkl2M31Emi2mZVTMzTGlHr6h9PFOiN0IRQ+j5kTi3hA+1
-	g7CBX8sFnF6uZnJBXrzXfSQwx6BVMDqyqlYkoKsPjJPRCgSZPAg59bowAPbl8Ek38j55RKnC+lS
-	GcZp0sXDK1jYfe8MFuYskixiOLhwC6t4DW5J1F6ANyYe0KwDcfO2Z3ywRSrQDfWnBg=
-X-Google-Smtp-Source: AGHT+IHIXf2ITezkzRXYqhyRdc3NGo7nV9HtTD9QcXe0iHTpQ2fk4AxkW5PqBr9zOQsKQHtffVHoOg==
-X-Received: by 2002:a17:906:18b1:b0:aa6:8676:3b3d with SMTP id a640c23a62f3a-aa6b11df74bmr563324966b.29.1733997059330;
-        Thu, 12 Dec 2024 01:50:59 -0800 (PST)
-Received: from localhost.localdomain ([83.168.79.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6701b08c2sm714818766b.124.2024.12.12.01.50.58
+        d=1e100.net; s=20230601; t=1733997084; x=1734601884;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1VOiqarubudKxipZ4sbCOrLtgNp7o+zRkyFk6UjJefg=;
+        b=ij0qh92PA2krOWROaCKWbuePkEtsZlCipHdbrQvSqeuYvAWG1mQWl5xbgcSaS+G755
+         4cFEVSui81B4hcwaHvYqqhXCwCWYXmagvjpQq08hZomows2IoX8801I518kilmqCyosd
+         0FnACK87HkbXw0rQvHMG5Kj1hdSoPa4YTp6oaXYr/0kXpg1XRFJ6XhMigwBdNvgrIRuQ
+         cHvSoqzpESloQoTwrm4Wip3E/Wn/WPA+kA6vRJx9e7fhSN2AKrifTn6Hw+9Tj9SIqQM1
+         1rEmJsl/tpMLlwDYE6vDSQB/+oOJ/w19R4B1QvRuM85706i+M3e7yfgFu7JsLtTn0Oax
+         ykpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMR96TikpyXvNSbyR47etT2xTg2IsaljhMRMauFWzRFmQcuw7jJXVpmN0Ax2tE1qoXNN/8tKcGks9VFFk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYrc3nif0QijsQ+kegpI15yFnLeuB+fn3QdoYP9HEidFT/9GHU
+	6spUeI0jILftKSaTBzdIDePM98VdeBBvvmDB2sAx1mnxA6nKrOCne5Wsre6N4+w5THDzw9xEEhs
+	J2kad1fSm+HpIKGgM95DY0PZqzDzBXz9Jqo2BbF5oq0DRSMJBLz/ZG6cnNAk1VQ==
+X-Gm-Gg: ASbGncsZOItBAgbIMuURqVSyHqn1+8iFIE8kPLELsTwS8BUYAMo7Hjj3QFK9E9JO+G8
+	apwAp3bZpVd8uysaax3HTE+uPlfpcp4FzI854Y7fjkE4ilzKd1QAVumqBEjOixDoe/jrpqGlPHm
+	GC/X3odDo4GVccu0f0TUuv7eFG7wx+mfizU8Jcmr0f+mDDH4orDvM95zmMtYxs9zW826sqzjTHN
+	2rEgOi4aA8ogITgLTs9EQFYhGZPyc6MO/nDjB9JsEyX2PdBQz+ni+UVMblgNO4BcFCLBNwGxpkc
+	PtTnGIuvwDVMdL/QvuYbx1rQj+jR1uuc
+X-Received: by 2002:a05:6000:710:b0:382:3c7b:9ae with SMTP id ffacd0b85a97d-3878768e6abmr2310584f8f.16.1733997084480;
+        Thu, 12 Dec 2024 01:51:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGJfWlCNsUJo9EYCvkaq2u2Qir+SrZQpE5Q3wXv1k6TrB8FxTiQMvWpSTTGv1jF4wat+Iv6oA==
+X-Received: by 2002:a05:6000:710:b0:382:3c7b:9ae with SMTP id ffacd0b85a97d-3878768e6abmr2310548f8f.16.1733997083800;
+        Thu, 12 Dec 2024 01:51:23 -0800 (PST)
+Received: from sgarzare-redhat (host-87-12-185-21.business.telecomitalia.it. [87.12.185.21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362557c608sm11422145e9.16.2024.12.12.01.51.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 01:50:58 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: karprzy7@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	tomi.valkeinen@ideasonboard.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	michal.simek@amd.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCHv2] drm: zynqmp_dp: Fix integer overflow in zynqmp_dp_rate_get()
-Date: Thu, 12 Dec 2024 10:50:57 +0100
-Message-Id: <20241212095057.1015146-1-karprzy7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 12 Dec 2024 01:51:23 -0800 (PST)
+Date: Thu, 12 Dec 2024 10:51:18 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Claudio Carvalho <cclaudio@linux.ibm.com>, Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-coco@lists.linux.dev, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Peter Huewe <peterhuewe@gmx.de>, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org, x86@kernel.org, 
+	Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Dov Murik <dovmurik@linux.ibm.com>, 
+	Oliver Steffen <osteffen@redhat.com>
+Subject: Re: [PATCH 1/3] tpm: add generic platform device
+Message-ID: <zzi3fvbo2rnb2d76soseuekwaqe22ifnrhhjplqhvw6x26lbb4@nmcqylrenzyj>
+References: <20241210143423.101774-1-sgarzare@redhat.com>
+ <20241210143423.101774-2-sgarzare@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241210143423.101774-2-sgarzare@redhat.com>
 
-This patch fixes a potential integer overflow in the zynqmp_dp_rate_get()
+On Tue, Dec 10, 2024 at 03:34:21PM +0100, Stefano Garzarella wrote:
+>From: James Bottomley <James.Bottomley@HansenPartnership.com>
+>
+>This is primarily designed to support an enlightened driver for the
+>AMD svsm based vTPM, but it could be used by any platform which
+>communicates with a TPM device.  The platform must fill in struct
+>tpm_platform_ops as the platform_data and set the device name to "tpm"
+>to have the binding by name work correctly.  The sole sendrcv
+>function is designed to do a single buffer request/response conforming
+>to the MSSIM protocol.  For the svsm vTPM case, this protocol is
+>transmitted directly to the SVSM, but it could be massaged for other
+>function type platform interfaces.
+>
+>Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+>Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
+>[SG] changed references/links to TCG TPM repo
+>Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>---
+> include/linux/tpm_platform.h    |  90 ++++++++++++++++++++
+> drivers/char/tpm/tpm_platform.c | 141 ++++++++++++++++++++++++++++++++
+> drivers/char/tpm/Kconfig        |   7 ++
+> drivers/char/tpm/Makefile       |   1 +
+> 4 files changed, 239 insertions(+)
+> create mode 100644 include/linux/tpm_platform.h
+> create mode 100644 drivers/char/tpm/tpm_platform.c
+>
+>diff --git a/include/linux/tpm_platform.h b/include/linux/tpm_platform.h
+>new file mode 100644
+>index 000000000000..95c17a75d59d
+>--- /dev/null
+>+++ b/include/linux/tpm_platform.h
+>@@ -0,0 +1,90 @@
+>+/* SPDX-License-Identifier: GPL-2.0-only */
+>+/*
+>+ * Copyright (C) 2023 James.Bottomley@HansenPartnership.com
+>+ *
+>+ * Interface specification for platforms wishing to activate the
+>+ * platform tpm device.  The device must be a platform device created
+>+ * with the name "tpm" and it must populate platform_data with struct
+>+ * tpm_platform_ops
+>+ */
+>+
+>+/*
+>+ * The current MSSIM TPM commands we support.  The complete list is
+>+ * in the TcpTpmProtocol header:
+>+ *
+>+ * https://github.com/TrustedComputingGroup/TPM/blob/main/TPMCmd/Simulator/include/TpmTcpProtocol.h
+>+ */
+>+
+>+#define TPM_SEND_COMMAND		8
+>+#define TPM_SIGNAL_CANCEL_ON		9
+>+#define TPM_SIGNAL_CANCEL_OFF		10
+>+/*
+>+ * Any platform specific commands should be placed here and should start
+>+ * at 0x8000 to avoid clashes with the MSSIM protocol.  They should follow
+>+ * the same self describing buffer format below
+>+ */
+>+
+>+#define TPM_PLATFORM_MAX_BUFFER		4096 /* max req/resp buffer size */
+>+
+>+/**
+>+ * struct tpm_platform_ops - the share platform operations
+>+ *
+>+ * @sendrcv:	Send a TPM command using the MSSIM protocol.
+>+ *
+>+ * The MSSIM protocol is designed for a network, so the buffers are
+>+ * self describing.  The minimum buffer size is sizeof(u32).  Every
+>+ * MSSIM command defines its own transport buffer and the command is
+>+ * sent in the first u32 array.  The only modification we make is that
+>+ * the MSSIM uses network order and we use the endianness of the
+>+ * architecture.  The response to every command (in the same buffer)
+>+ * is a u32 size preceded array.  Most of the MSSIM commands simply
+>+ * return zero here because they have no defined response.
+>+ *
+>+ * The only command with a defined request/response size is TPM_SEND_COMMAND
+>+ * The definition is in the structures below
+>+ */
+>+struct tpm_platform_ops {
+>+	int (*sendrcv)(u8 *buffer);
+>+};
+>+
+>+/**
+>+ * struct tpm_send_cmd_req - Structure for a TPM_SEND_COMMAND
+>+ *
+>+ * @cmd:	The command (must be TPM_SEND_COMMAND)
+>+ * @locality:	The locality
+>+ * @inbuf_size:	The size of the input buffer following
+>+ * @inbuf:	A buffer of size inbuf_size
+>+ *
+>+ * Note that MSSIM expects @inbuf_size to be equal to the size of the
+>+ * specific TPM command, otherwise an TPM_RC_COMMAND_SIZE error is
+>+ * returned.
+>+ */
+>+struct tpm_send_cmd_req {
+>+	u32	cmd;
+>+	u8	locality;
+>+	u32	inbuf_size;
+>+	u8	inbuf[];
+>+} __packed;
+>+
+>+/**
+>+ * struct tpm_req - generic request header for single word command
+>+ *
+>+ * @cmd:	The command to send
+>+ */
+>+struct tpm_req {
+>+	u32	cmd;
+>+} __packed;
+>+
+>+/**
+>+ * struct tpm_resp - generic response header
+>+ *
+>+ * @size:	The response size (zero if nothing follows)
+>+ *
+>+ * Note: most MSSIM commands simply return zero here with no indication
+>+ * of success or failure.
+>+ */
+>+
+>+struct tpm_resp {
+>+	s32	size;
+>+} __packed;
+>+
+>diff --git a/drivers/char/tpm/tpm_platform.c b/drivers/char/tpm/tpm_platform.c
+>new file mode 100644
+>index 000000000000..b53d74344d61
+>--- /dev/null
+>+++ b/drivers/char/tpm/tpm_platform.c
+>@@ -0,0 +1,141 @@
+>+// SPDX-License-Identifier: GPL-2.0-only
+>+/*
+>+ * Platform based TPM emulator
+>+ *
+>+ * Copyright (C) 2023 James.Bottomley@HansenPartnership.com
+>+ *
+>+ * Designed to handle a simple function request/response single buffer
+>+ * TPM or vTPM rooted in the platform.  This device driver uses the
+>+ * MSSIM protocol from the official TCG reference implementation
+>+ *
+>+ * https://github.com/TrustedComputingGroup/TPM
+>+ *
+>+ * to communicate between the driver and the platform.  This is rich
+>+ * enough to allow platform operations like cancellation The platform
+>+ * should not act on platform commands like power on/off and reset
+>+ * which can disrupt the TPM guarantees.
+>+ *
+>+ * This driver is designed to be single threaded (one call in to the
+>+ * platform TPM at any one time).  The threading guarantees are
+>+ * provided by the chip mutex.
+>+ */
+>+
+>+#include <linux/module.h>
+>+#include <linux/kernel.h>
+>+#include <linux/platform_device.h>
+>+#include <linux/tpm_platform.h>
+>+
+>+#include "tpm.h"
+>+
+>+static struct tpm_platform_ops *pops;
+>+
+>+static u8 *buffer;
+>+/*
+>+ * FIXME: before implementing locality we need to agree what it means
+>+ * to the platform
+>+ */
+>+static u8 locality;
+>+
+>+static int tpm_platform_send(struct tpm_chip *chip, u8 *buf, size_t len)
+>+{
+>+	int ret;
+>+	struct tpm_send_cmd_req *req = (struct tpm_send_cmd_req *)buffer;
+>+
+>+	if (len > TPM_PLATFORM_MAX_BUFFER - sizeof(*req))
+>+		return -EINVAL;
+>+	req->cmd = TPM_SEND_COMMAND;
+>+	req->locality = locality;
+>+	req->inbuf_size = len;
+>+	memcpy(req->inbuf, buf, len);
+>+
+>+	ret = pops->sendrcv(buffer);
+>+	if (ret)
+>+		return ret;
+>+
+>+	return 0;
+>+}
+>+
+>+static int tpm_platform_recv(struct tpm_chip *chip, u8 *buf, size_t len)
+>+{
+>+	struct tpm_resp *resp = (struct tpm_resp *)buffer;
+>+
+>+	if (resp->size < 0)
+>+		return resp->size;
 
-The issue comes up when the expression
-drm_dp_bw_code_to_link_rate(dp->test.bw_code) * 10000 is evaluated using 32-bit
-Now the constant is a compatible 64-bit type.
+While reviewing Oliver's work for the driver in edk2[1], I noticed that
+there wasn't this check and asked to add it, but talking to him and
+looking in the code/spec, we realized that it's strange that
+tpm_resp.size field is signed.
 
-Resolves coverity issues: CID 1636340 and CID 1635811
+ From SVSM spec it looks like it can't be negative:
 
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
-Fixes: 28edaacb821c6 ("drm: zynqmp_dp: Add debugfs interface for compliance testing")
----
- drivers/gpu/drm/xlnx/zynqmp_dp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+     Table 17: TPM_SEND_COMMAND Response Structure
 
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-index 25c5dc61e..56a261a40 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-@@ -2190,7 +2190,7 @@ static int zynqmp_dp_rate_get(void *data, u64 *val)
- 	struct zynqmp_dp *dp = data;
- 
- 	mutex_lock(&dp->lock);
--	*val = drm_dp_bw_code_to_link_rate(dp->test.bw_code) * 10000;
-+	*val = drm_dp_bw_code_to_link_rate(dp->test.bw_code) * 10000ULL;
- 	mutex_unlock(&dp->lock);
- 	return 0;
- }
--- 
-2.34.1
+     Byte     Size        Meaning
+     Offset   (Bytes)
+     0x000    4           Response size (in bytes)
+     0x004    Variable    Variable Response
+
+And also Coconut SVSM remap it to the `responseSize` of the TCG TPM
+implementation which is unsigned:
+
+     LIB_EXPORT void _plat__RunCommand(
+         uint32_t        requestSize,   // IN: command buffer size
+         unsigned char*  request,       // IN: command buffer
+         uint32_t*       responseSize,  // IN/OUT: response buffer size
+         unsigned char** response       // IN/OUT: response buffer
+     )
+
+@James, @Claudio, @Tom, should we use u32 for tpm_resp.size?
+
+Thanks,
+Stefano
+
+[1] https://github.com/tianocore/edk2/pull/6527#discussion_r1880204144
+
+>+
+>+	if (len < resp->size)
+>+		return -E2BIG;
+>+
+>+	if (resp->size > TPM_PLATFORM_MAX_BUFFER - sizeof(*resp))
+>+		return -EINVAL;  // Invalid response from the platform TPM
+>+
+>+	memcpy(buf, buffer + sizeof(*resp), resp->size);
+>+
+>+	return resp->size;
+>+}
+>+
+>+static struct tpm_class_ops tpm_chip_ops = {
+>+	.flags = TPM_OPS_AUTO_STARTUP,
+>+	.send = tpm_platform_send,
+>+	.recv = tpm_platform_recv,
+>+};
+>+
+>+static struct platform_driver tpm_platform_driver = {
+>+	.driver = {
+>+		.name = "tpm",
+>+	},
+>+};
+>+
+>+static int __init tpm_platform_probe(struct platform_device *pdev)
+>+{
+>+	struct device *dev = &pdev->dev;
+>+	struct tpm_chip *chip;
+>+	int err;
+>+
+>+	if (!dev->platform_data)
+>+		return -ENODEV;
+>+
+>+	/*
+>+	 * in theory platform matching should mean this is always
+>+	 * true, but just in case anyone tries force binding
+>+	 */
+>+	if (strcmp(pdev->name, tpm_platform_driver.driver.name) != 0)
+>+		return -ENODEV;
+>+
+>+	if (!buffer)
+>+		buffer = kmalloc(TPM_PLATFORM_MAX_BUFFER, GFP_KERNEL);
+>+
+>+	if (!buffer)
+>+		return -ENOMEM;
+>+
+>+	pops = dev->platform_data;
+>+
+>+	chip = tpmm_chip_alloc(dev, &tpm_chip_ops);
+>+	if (IS_ERR(chip))
+>+		return PTR_ERR(chip);
+>+
+>+	/*
+>+	 * Setting TPM_CHIP_FLAG_IRQ guarantees that ->recv will be
+>+	 * called straight after ->send and means we don't need to
+>+	 * implement any other chip ops.
+>+	 */
+>+	chip->flags |= TPM_CHIP_FLAG_IRQ;
+>+	err = tpm2_probe(chip);
+>+	if (err)
+>+		return err;
+>+
+>+	err = tpm_chip_register(chip);
+>+	if (err)
+>+		return err;
+>+
+>+	dev_info(dev, "TPM %s platform device\n",
+>+		 (chip->flags & TPM_CHIP_FLAG_TPM2) ? "2.0" : "1.2");
+>+
+>+	return 0;
+>+}
+>+
+>+module_platform_driver_probe(tpm_platform_driver, tpm_platform_probe);
+>+
+>+MODULE_AUTHOR("James Bottomley <James.Bottomley@HansenPartnership.com>");
+>+MODULE_LICENSE("GPL");
+>+MODULE_DESCRIPTION("Platform TPM Driver");
+>+MODULE_ALIAS("platform:tpm");
+>diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+>index 0fc9a510e059..b162f59305ef 100644
+>--- a/drivers/char/tpm/Kconfig
+>+++ b/drivers/char/tpm/Kconfig
+>@@ -225,5 +225,12 @@ config TCG_FTPM_TEE
+> 	help
+> 	  This driver proxies for firmware TPM running in TEE.
+>
+>+config TCG_PLATFORM
+>+	tristate "Platform TPM Device"
+>+	help
+>+	  This driver requires a platform implementation to provide the
+>+	  TPM function.  It will not bind if the implementation is not
+>+	  present.
+>+
+> source "drivers/char/tpm/st33zp24/Kconfig"
+> endif # TCG_TPM
+>diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+>index 9bb142c75243..4b2c04e23bd3 100644
+>--- a/drivers/char/tpm/Makefile
+>+++ b/drivers/char/tpm/Makefile
+>@@ -44,3 +44,4 @@ obj-$(CONFIG_TCG_XEN) += xen-tpmfront.o
+> obj-$(CONFIG_TCG_CRB) += tpm_crb.o
+> obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
+> obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
+>+obj-$(CONFIG_TCG_PLATFORM) += tpm_platform.o
+>-- 
+>2.47.1
+>
 
 
