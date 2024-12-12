@@ -1,86 +1,77 @@
-Return-Path: <linux-kernel+bounces-443349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14AEA9EEE25
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:54:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D8C9EEE2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868E0188285E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:49:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3666A16DC41
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561E5222D78;
-	Thu, 12 Dec 2024 15:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDD3223E69;
+	Thu, 12 Dec 2024 15:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PSf2LJFP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GYekcX5M"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39643222D52
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186742210CD
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018476; cv=none; b=D3sv8HBIt602Qw5ogG9EavxJVhXpJwtVR2ppvL+FvAozF7aneZQz5BQyZJs2rxPxXDWt104wfhBTp/yI6AaczH146gUlRZl6t5mJ0FXB0lBbM6D8Z91vJBnxp2VbhP9tmJzdyFKdoy5/FMr0LNUu+z6dMqadkrTUBecHMHFDR0M=
+	t=1734018510; cv=none; b=GdYZLhHhglskAJ9o9uXbkPaJ2ji0B2W0bK4SfvTRv2o6W1jn6ZHiZjYrbtuoB3q0uGCBvFKY7qEMffVJb4gaPm1yZJWNgnwdMpLUy+cSSM5jcCZ2YGy6XUcGa9s+KLS9lFmq7f2OmmvsmiAm3Prau30DvCVrZN9F+b1YSvuLnmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018476; c=relaxed/simple;
-	bh=JRUrY4w4rGls/uJtVfSS19+b5gWlwP+rEoxccPnxBto=;
+	s=arc-20240116; t=1734018510; c=relaxed/simple;
+	bh=TMFV4DzKyPPAfoOQ6tLwtGLtOGvpKCjN8AV48PlDsoY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IpYfEiPgCMonHKlBdEpMzlWdV2q9EnHNtf0TJPd4fWC1DHqjplOirF3DQBf4I+i+0qydsQ7AV6wbGi7wAtyu2VtBOCObS/2k2oLJm0xWNfCA2ij6DnlbuJM5XxloD01d1OibLjPvs7o0gP27uY9BaZbnBjbNpmyEnEbXGJ250WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PSf2LJFP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7juMd003235
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:47:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8eLOXkCeC0DlQZVU51a+KZOt4UMu9djdUd60zKv59H8=; b=PSf2LJFPyGwGPl91
-	Yn+u/JqMOWQDfjTj0tW1z1xXBA0Y7dPxpR+t9SKZu7MI14w3rI1WohqnImIZ1sAV
-	ul3Iziqstscrkd30PH6Ob/1cvX8wSi8503vDlHlz2h4K+cIOerGkqXH0+HXAaCK1
-	vlkEJ2IXkz3xYBJFKb71SSFxTOs1sGQN08a1mmZYn9IzT8lpy6VrI2E1/m0gDUBM
-	xZAYZxl2RTESRj9ndv7zbozC9E4Kpjz3BZfZb27aIUp84MJr/CNApWYYVzyjbcpl
-	Nk9viNrip8qmNYi7ZlxMPPink6Xs7d8b8kc7WBd61ud9c4DXAYSnGgNM31Xah4ST
-	2pdkeQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f0r9wx9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:47:53 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4679d6f9587so1404011cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:47:53 -0800 (PST)
+	 In-Reply-To:Content-Type; b=JdXSPwE+Rst+byWMrydUq1pd1vtWZfcoqBVKJduG9xbwkCCDKwVOw0RGBe2+pTNH5rRZwHJXqODz2vHsLOkeKkTWFJ2jzq5dDZrs87XBT0Xd5J1JeNWVLk50rqR4fxKO96DX0WBUwfB1OFGQQWaqbUyY05RdkwDHyah6TnBQ+q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GYekcX5M; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a8180205f3so7351035ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:48:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734018507; x=1734623307; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PvBx/w2DhSklV4ojnPJsBMakpCIKbBPJ0+ZbaVI4zHA=;
+        b=GYekcX5MlMuaMNE3LLOO4GQGxJZRFf+TcETm5lJ4cgJ1VNKm5Rs+WEwKI9ProMZjy9
+         cy1o5Cm6AOQo29DKT7BrU/7ayQlJuk5TPmNLoWWq9ekxn2s8Nu8HE3+t2WFVLk/O8MgE
+         9ez7VN02ATqrCwMHdwUA1rWXeIluVJeBd6ChFoqYbWBvwWh0vEP06z8KspKvD8Dszea1
+         pmtBaKerDl+gahaonybh1cw1zcjHywPaSV+v8FynkbLqV1FcH7a8YG6QaL3NkOZYvxkw
+         wP0FBl5FC6dHpNdSbJlE8Eb8Aih5ARwNXiqxgEm+P521b3mOBx/sZGOsVLpj3f8CpdjQ
+         qhwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734018473; x=1734623273;
+        d=1e100.net; s=20230601; t=1734018507; x=1734623307;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8eLOXkCeC0DlQZVU51a+KZOt4UMu9djdUd60zKv59H8=;
-        b=ayhfSy7dh1FVf37TYtfTipFlo1uBCwflVANAS7LpOGIwQdl2Rg/vpNvvdgY7bwAjV1
-         M7lyNgIqCd/rAUHR+eKm1wNszA/+FXNbf4V7wt0mqPw5UZ6pYhu8KSbmQ89CDEAD9dTP
-         zM4882DL1wN9u+DOAAwaLi2bddTCSVzu+C2kaPCnxW8UKrAjO0jBzoDrPrMGEZh6B0or
-         s4khrN5p0eoU4Mksq1xLYyfCcqEOEfG8zrbH6VzvmwUu1Hb5VS+sC2kbNjSHFNiJNk0C
-         5Jf/X4i4TAePrqr8TFw/72I7396XurSwZywllXIC35swGk9PY+/WNvm99HUHYMglDTk4
-         1xQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBO6x2as4wxx5dzsJKnjTFY74kb3Lx/5Vb4kzHeAJi7UJjyEff8Baek+kCfdt644/YqUOVh7ply0k9/bI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwovhEhhG9eNHURL4Ql6XMbHa3cyycHeY0NZTl8ftCXVrY0N+Q8
-	20B7g0CWW3/lzJBdYOJFfBe001oDONFEIeKaobxVT8YnHS99CHmALOmt8RAj4XeBRca5IH80RyD
-	1GaPqQzoMesMNLSD+LjWYQZWxMF3w1BCp5W0xwxRc/DtFL1I4ZiYICaRvfsQFkvk=
-X-Gm-Gg: ASbGnctNo4cDpnlLlfgCZvSQhTQQdgvmdweonW3fy2o/+0Sxy/nvAKrm1Iql1gXSaS3
-	wp6a4wVen/tMDIhyj7j4hcDseWzw+epZipkOlIr/YdG9ZkVCNgPhzUpMS6Llr1GnNFmXjfvLHiJ
-	b61Ch1gBZpzYmblxon8sKhPU4N/oZluKo0iYKZgPKT2WJVl84qx+K11DBQ26mSxPK/NFlsN3YNn
-	RCZNOBBvHinJd3jWhLheXoLcUIgfawNuI9zBBi7A5pmJxh5kqtigZGuEYd1Yvjo8gX41WZJ+/y/
-	DXS6Im2O6FS/g/KwjkkTrCJC5qdHE/fJ6JXlvw==
-X-Received: by 2002:a05:622a:a:b0:464:9faf:664b with SMTP id d75a77b69052e-467a14cfd41mr3889151cf.2.1734018473232;
-        Thu, 12 Dec 2024 07:47:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFXwZ9ATJawzq2/gDuuZrX3rouLOdXBu6sOMLvS2WbAH7jQqNN/imbNCFi/63dfoNHWb1jKmg==
-X-Received: by 2002:a05:622a:a:b0:464:9faf:664b with SMTP id d75a77b69052e-467a14cfd41mr3888991cf.2.1734018472938;
-        Thu, 12 Dec 2024 07:47:52 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d149a25cdcsm10493167a12.9.2024.12.12.07.47.50
+        bh=PvBx/w2DhSklV4ojnPJsBMakpCIKbBPJ0+ZbaVI4zHA=;
+        b=EDqB4ZzdWk/VlOCPBURVW8VdX0JgtznPsnpsUyfQhNvFDgOSIpsHfHvBBIJokF0jA2
+         oz2ZmRcjctwbdkevUdgjIDqMXG7y1zMt4ifCVtJx8LXp50YI3htPu2ge0zeNaVWG1qye
+         dSM8e1eFgX42TRpVv1C5xmW32T73cD2aQwBx2KcKqTVet+K5tXd//Z9rRpcLhBpBlbXD
+         gdtks3Pi2cmWYiKS9Yp+5obgoY2DUSRuIJLlfUslV8OkWyyHrM7+guEcw8+e86zYYWSI
+         hrLNUuv9owPL4pY53PwduPpZWLA/NXhqLX8UTVc6ax7c/UvWoHfrYuWrscc3GWAEOnu8
+         Ooeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnP3+4c/0U9oZrv8DDh3QB2HSBdiJc95LR0xEhE9Auiz1pedsFRsSSE9Q4AKwrV4Iqb83aw3Cg2TMxuT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFAPg2w5/R9V9F1yf4vQ4L/+MPlGEUDUW/3pjczoCq2b3OCQd4
+	pQPbzo4bSRJBLr+ouyjD9LM23PC81xsZvEYSUvNZwim2Qq16DzZTtV/2XMxnrTU=
+X-Gm-Gg: ASbGncsCtSo7Z7iTn/TGu59XVEHizWoZJcROBesXgJAISKaIh2E7lIpQCNSHd2gX50G
+	FqHkR6SWhB1T1D3h1SF1+hOnjUe8atrBiwJyZIcHrQx0U/gn4QKc19gSau2koccgDCvk04hBS18
+	CuXNnc8PqXVKgfUhZ6YVlwCkJjR5yf3/oRe6ja3Mb9fL9FnPfe1nOCGj75K/XgJsieQ4WiaUI9S
+	jSxBWq1QfdPCKjp7CvNXNGt4/qtsglYNx9k36tWH2wwQqA3L7gW
+X-Google-Smtp-Source: AGHT+IHAQGTQIEr3hJAJZPVw8dHIc1jCD+zOwFKHo7t0IBPz9msmAmKUzqJ4fHZUe037ZAO0zcn+QA==
+X-Received: by 2002:a05:6e02:214d:b0:3a7:cce2:d349 with SMTP id e9e14a558f8ab-3ae70e32b20mr5044935ab.8.1734018507220;
+        Thu, 12 Dec 2024 07:48:27 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a808e1e0d6sm44607975ab.63.2024.12.12.07.48.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 07:47:52 -0800 (PST)
-Message-ID: <bac71d27-c96a-45f1-b3ed-85f917ec81b9@oss.qualcomm.com>
-Date: Thu, 12 Dec 2024 16:47:50 +0100
+        Thu, 12 Dec 2024 07:48:26 -0800 (PST)
+Message-ID: <04e11417-cf68-4014-a7f7-e51392352e9d@kernel.dk>
+Date: Thu, 12 Dec 2024 08:48:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,65 +79,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] arm64: dts: qcom: x1e*: Fix USB QMP PHY supplies
-To: Johan Hovold <johan@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Xilin Wu <wuxilin123@gmail.com>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241210-x1e80100-usb-qmp-supply-fix-v1-0-0adda5d30bbd@linaro.org>
- <Z1g_nFhYXrBxHtrb@hovoldconsulting.com> <86ttbbsm69.wl-maz@kernel.org>
- <Z1hgW-_pqqCpIwH0@hovoldconsulting.com>
+Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
+To: Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
+ <djwong@kernel.org>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+ linux-kernel@vger.kernel.org, willy@infradead.org, kirill@shutemov.name,
+ bfoster@redhat.com
+References: <20241203153232.92224-2-axboe@kernel.dk>
+ <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
+ <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
+ <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
+ <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
+ <20241204055241.GA7820@frogsfrogsfrogs> <Z1gh0lCqkCoUKHtC@infradead.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <Z1hgW-_pqqCpIwH0@hovoldconsulting.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Z1gh0lCqkCoUKHtC@infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: lgagD3zquq_LQF7pPX1Ml5MddErd93wQ
-X-Proofpoint-GUID: lgagD3zquq_LQF7pPX1Ml5MddErd93wQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 phishscore=0 spamscore=0 clxscore=1015 mlxlogscore=971
- malwarescore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120114
 
-On 10.12.2024 4:38 PM, Johan Hovold wrote:
-> On Tue, Dec 10, 2024 at 01:27:26PM +0000, Marc Zyngier wrote:
->> On Tue, 10 Dec 2024 13:18:20 +0000,
->> Johan Hovold <johan@kernel.org> wrote:
->>>
->>> On Tue, Dec 10, 2024 at 10:07:31AM +0100, Stephan Gerhold wrote:
->>>> On the X1E80100 CRD, &vreg_l3e_1p2 only powers &usb_mp_qmpphy0/1
->>>> (i.e. USBSS_3 and USBSS_4). The QMP PHYs for USB_0, USB_1 and USB_2
->>>> are actually powered by &vreg_l2j_1p2.
->>>>
->>>> Since most X1E device trees just mirror the power supplies from the
->>>> x1e80100-crd device tree, this series fixes up all the X1E boards with
->>>> the same change.
->>>
->>> Nice find! I've confirmed that this matches both the CRD and T14s
->>> schematics.
+On 12/10/24 4:11 AM, Christoph Hellwig wrote:
+> On Tue, Dec 03, 2024 at 09:52:41PM -0800, Darrick J. Wong wrote:
+>> <shrug> RWF_DONTCACHE, to match {I,DCACHE}_DONTCACHE ? ;)
 >>
->> Can someone with access to the schematics confirm that the devkit
->> indeed has the same supplies?
+>> They sound pretty similar ("load this so I can do something with it,
+>> evict it immediately if possible") though I wouldn't rely on people
+>> outside the kernel being familiar with the existing dontcaches.
 > 
-> Sibi, can you confirm our assumption that these definitions were copied
-> from the CRD devicetree and need to be fixed like this also for the
-> devkit?
+> FYI, another word for dontcache.  uncached just has too many conotations
+> in the kernel context.
 
-I can confirm the fix applies to devkit too.
+Sure, we can go with DONTCACHE instead. Only thing I don't like about
+that is that you can use uncached as a verb and adjective, eg talking
+about uncached IO. Talking about dontcached IO sounds pretty weird.
 
-Konrad
+As I've said previously in this and other threads, I don't feel too
+strongly about the in-kernel naming, I care more about the exposed
+name. And uncached does seem to be the most descriptive and most
+easily understandable by users.
+
+-- 
+Jens Axboe
+
 
