@@ -1,92 +1,81 @@
-Return-Path: <linux-kernel+bounces-443617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 646A19EFA3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:03:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E089EFA56
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:06:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 256F228987E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:03:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B6D51705CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41650226523;
-	Thu, 12 Dec 2024 18:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fx1O2n/D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89A3223C5A;
+	Thu, 12 Dec 2024 18:03:44 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D71B223C4A;
-	Thu, 12 Dec 2024 18:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81177222D79;
+	Thu, 12 Dec 2024 18:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734026548; cv=none; b=AQrNfjpFvBfcNc91IFZS1XsOJNJ99egukVn4gntvc16ataBlwqUlLMd5bjXqxbD4o1lU7yWksVPWL4ydAjW3p7s3tuD1lSvlRRICg+cC3J53V+0RAdqKE7Dboxd7j21RsGKDD8rELb0mklaEozN8aaAuGALM3lNTkRN4kIGw+60=
+	t=1734026624; cv=none; b=fqHvPKodeUkBlHbFS+RVtaYZ4kEQ548CXnmaBmj+K7zsUrkKTKOuONNsxRCvc6C2ad4+w7jmR9EWYfDXUecIMs7a5FH+z/TjZWxw7csWKeGFDB5eKEm7BkdEHrmgn0PTeowd+CWGPWfp6Cct7iMU+Wy0otI94gqzbObUnvWjS+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734026548; c=relaxed/simple;
-	bh=Uif3QDEnAOMvC10YitD6AAmrgRJA9UGiXLhFAz+1Htg=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=LofbiArTY8kwMDs9bSaV+wrC+Kf9Ltu6ZV9Un2uakcvSrLPXLlS4b7RGPDNWgKuWwva0K2z3JompiBJUwz40HaYGrigp3T90jcW+h+IxprG/k72uuH5LslvEd2yXxBGevW6FrfLCkqnZWkceU9Z2vuAUjh1oq8pd0g0Au8DhOdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fx1O2n/D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8045CC4CECE;
-	Thu, 12 Dec 2024 18:02:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734026548;
-	bh=Uif3QDEnAOMvC10YitD6AAmrgRJA9UGiXLhFAz+1Htg=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=fx1O2n/DcINXOsnBc+UeGAC4EfyZhAPPUDGff8CMIN6TeUCtuFotKOSx5VLiE9pal
-	 lnezVDE7Rl6HkS8GF1cQmZMxkIkYq4mDB1VbvH4nXdr0YzIZ5NA4BKqAtb31NVwBkN
-	 YBfmIZkYhQNKSq231emHjp1ac0zJ/suDjtTvo1i7KACF6Gx4oIqrSUAGoSB5Ld+0d0
-	 Rhv4iC/AZ0p0Yo88skJ9TGOvwIfLD+PsiDen6inzwESUGgdWSv5LVE9m093ojBbgag
-	 U/ABFVgrGB+oVWtjl3UwEepJVCDfvl44jZ6muTSdybr16Z7NLZY+xCGbqTYnqz0+sA
-	 8CJ+En12Wt/Qw==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1734026624; c=relaxed/simple;
+	bh=jPQdNH3PBHctwjBybj16jQiseDbWuguppjje7WiHw6I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Uz8TgkIm2PfjdJSgzaMkV31Km771pQAARSk/dPPaAx6FEQy6IVpesTtQ3lwvywmd+gHkw39OacnRp2ZBi/Ql5oQH2eGRubS8UXdPEzu/NrbeaKXQJ4voUY0PCvEAeVbZtmb587XKDMI325NTILFq6Z78VHygZ1+BRB/ZRGKUqLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from fangorn.home.surriel.com ([10.0.13.7])
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tLnWI-000000007pC-3OQo;
+	Thu, 12 Dec 2024 13:02:38 -0500
+Message-ID: <0d9e676686db8e2025bc0c6dc2b55d17d9f16290.camel@surriel.com>
+Subject: Re: [PATCH v2] memcg: allow exiting tasks to write back data to swap
+From: Rik van Riel <riel@surriel.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed
+ <yosryahmed@google.com>
+Cc: Balbir Singh <balbirs@nvidia.com>, Johannes Weiner <hannes@cmpxchg.org>,
+  Michal Hocko <mhocko@kernel.org>, Roman Gushchin
+ <roman.gushchin@linux.dev>, Muchun Song	 <muchun.song@linux.dev>, Andrew
+ Morton <akpm@linux-foundation.org>, 	cgroups@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, 	kernel-team@meta.com,
+ Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 12 Dec 2024 13:02:38 -0500
+In-Reply-To: <4oxovutecmn7mkbbmbk3rhqudilivf6fkedvmcbcttmcspwebl@fp6pv2a45x6n>
+References: <20241212115754.38f798b3@fangorn>
+	 <CAJD7tkY=bHv0obOpRiOg4aLMYNkbEjfOtpVSSzNJgVSwkzaNpA@mail.gmail.com>
+	 <4oxovutecmn7mkbbmbk3rhqudilivf6fkedvmcbcttmcspwebl@fp6pv2a45x6n>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: qtnfmac: fix spelling error in core.h
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20241209062425.4139-1-liujing@cmss.chinamobile.com>
-References: <20241209062425.4139-1-liujing@cmss.chinamobile.com>
-To: Liu Jing <liujing@cmss.chinamobile.com>
-Cc: imitsyanko@quantenna.com, geomatsi@gmail.com, johannes.berg@intel.com,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- Liu Jing <liujing@cmss.chinamobile.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <173402654446.853073.13797999061536602834.kvalo@kernel.org>
-Date: Thu, 12 Dec 2024 18:02:26 +0000 (UTC)
+Sender: riel@surriel.com
 
-Liu Jing <liujing@cmss.chinamobile.com> wrote:
+On Thu, 2024-12-12 at 09:51 -0800, Shakeel Butt wrote:
+>=20
+> The fundamental issue is that the exiting process (killed by oomd or
+> simple exit) has to allocated memory but the cgroup is at limit and
+> the
+> reclaim is very very slow.
+>=20
+> I can see attacking this issue with multiple angles.
 
-> Fix specific spelling error in core.h.
-> 
-> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
-> 
-> diff --git a/drivers/net/wireless/quantenna/qtnfmac/core.h b/drivers/net/wireless/quantenna/qtnfmac/core.h
-> index b375a4751580..a377d85c2451 100644
-> --- a/drivers/net/wireless/quantenna/qtnfmac/core.h
-> +++ b/drivers/net/wireless/quantenna/qtnfmac/core.h
-> @@ -102,7 +102,7 @@ struct qtnf_wmac {
->  	struct qtnf_mac_info macinfo;
->  	struct qtnf_vif iflist[QTNF_MAX_INTF];
->  	struct cfg80211_scan_request *scan_req;
-> -	struct mutex mac_lock;	/* lock during wmac speicific ops */
-> +	struct mutex mac_lock;	/* lock during wmac specific ops */
->  	struct delayed_work scan_timeout;
->  	struct ieee80211_regdomain *rd;
->  	struct platform_device *pdev;
+Besides your proposed ideas, I suppose we could also limit
+the gfp_mask of an exiting reclaimer with eg. __GFP_NORETRY,
+but I do not know how effective that would be, since a single
+pass through the memory reclaim code was still taking dozens
+of seconds when I traced the "stuck" workloads.
 
-Patch applied to wireless-next.git, thanks.
-
-73e456b402fa wifi: qtnfmac: fix spelling error in core.h
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20241209062425.4139-1-liujing@cmss.chinamobile.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+--=20
+All Rights Reversed.
 
