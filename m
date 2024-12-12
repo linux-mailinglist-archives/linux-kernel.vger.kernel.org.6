@@ -1,116 +1,87 @@
-Return-Path: <linux-kernel+bounces-443810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDAA9EFC0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:08:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985229EFC0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:09:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04D816D850
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:09:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5413A18C910;
+	Thu, 12 Dec 2024 19:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTP20oPE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED3628D094
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:08:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7697D18BC36;
-	Thu, 12 Dec 2024 19:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SanTGc+g"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4194B189F39;
-	Thu, 12 Dec 2024 19:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFF6168497;
+	Thu, 12 Dec 2024 19:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734030506; cv=none; b=UCgRry95GrfTwciPKIs78eEiPYDT4oV/l0mjNu7Pwo4TnV95M/iA+yDUy7K9wlz4EkGG8WFIYzIBAoIadv5fb2EvnSFdiEhrPRL3N4HdWZWL5X7Ni/dCCzIxTX6O6m4GoIByS7Sb6VW0L0UN9KzbwobSsCQUSVmo2qBH6I7o+vU=
+	t=1734030546; cv=none; b=VP4LlyyHsXps+bQZmcCB+Li420qKvo8fhYm1dxqAxmvfCwdOp75dTLZBP8gxo/6KCmgpkAU9zapXm/tJT4/v0N8XCVAVAjpKOvnByZEZzIHWhVZTJraDtiXb9VMi/2/hkwBI+A44zRcwBAnne0vuGgcPC7582zLLKcjOCK9LhSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734030506; c=relaxed/simple;
-	bh=SSbtbjf4N+myf4rI1mNd/z9Tj+QVRdniq1d3DjCN/DA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N4y5+qFJs1NrZF0FtOoitmOUkSr3JWjraVbl3VRY8JTF+hXo93w6iATtVkby6GgZhVrlrbHk8JDIkIjNL7Sp2lWPBdAguqNi2o68u4O3n9MjalbaykGcFhsXSiLGGxkng5Z/eJ1vbFdQA9daxnKX13tq1w/sTs1JIFBR7jA4fZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SanTGc+g; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54026562221so987924e87.1;
-        Thu, 12 Dec 2024 11:08:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734030503; x=1734635303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OGQYHU92ndPrpYv/6POn9PHDMPJeDwarv6TQ5xlWAUc=;
-        b=SanTGc+gpGZG87CH9L67mMY0Hf6aK0Wc7cGSJsehx6xyrhCV9sX0Am2vTNTR509xMU
-         KsMWGzd/e9P5y1k9Y2SmfIH1lxU2B87cNW48/gaYHG1OZjZ1bGgz+nqX5DV4m90JxNTK
-         S7tVoVeBxH6+GXsutaZ5wTy4oxjAgj8dmVdrio+XbfaHDZK3xEKwYgsYkT+HpTTUbuyS
-         BhjzU5YqDqtuLloDAkLVPVq0rGWySxy81ArmblngZ7oBvyoBK4I6wVwSsLrGShOgo0uL
-         NXu9UBtvh8zgJMrmkMms8tdGbE4YmM97CxgQ1L1qcUDsGs7yLLmp7+IoFSUn1HSwYqgG
-         XWNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734030503; x=1734635303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OGQYHU92ndPrpYv/6POn9PHDMPJeDwarv6TQ5xlWAUc=;
-        b=aqMn6l7sOfnxsAkcoOw8GQIaHm7annmYeyqnt20duemuR/T0q525l8JESWkxGreMtK
-         zo4NxMbHY1FlVK16QCW7CQRzD9hL5r32F7orxPE++FziAWHZXKUaBj/RmhI/uS0eBAlr
-         N/qgT9IRKABQNg8r1einjRxAHKHLaB87LuNKpGGoq8o4PioQ4CHbqUSTuVzW9VhF/9sU
-         bgunTtLTSJwfThwn1mbZDfUmnzGktejb1wzfndMRtMoCfJ3MEbhYlIRJ+O84pFkNQXY5
-         +0If7YWqylpIxdiAmmRqb4YCVmCV9LBcpCYodeSelRnMz1/Jn3FyicOOKgze/HFnoxSG
-         UrBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVazzWVbLRO2l1pPZ8V0j6VgERUmTVyr0HsWmxgsD0lKTkVlhJ/Sn78+ZMUsUoc6nwg31CAn5Dso8r+rJw=@vger.kernel.org, AJvYcCXDM8GQyLLPEu+9InzTP+yuy6KVQiARzwwjT5tFchEdDTZEhN26cPE/dGaI21dmvdQ6WgTh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZmT/KlkfYO4KXlaOJcFp25Xqm/zYxpuul/YuESUGiGKe7sKsX
-	pl+93Rs4DgKAaJO0dicX1/oxzRYveNt4nSEFpEZuobkkLRAu5TO3
-X-Gm-Gg: ASbGncsjhmesE5MKhk4TujkQZxgVNJjyzIGeRD6NyZGii83TWW5FL6pp8lplhfjUNZp
-	RhzkKdqsjgB/FffxaYtHG2Oj0qcBEbNhPwIzAXeJvyS8Sgdvw5x/hXTnTtAeCMUSMmAK9ePey0G
-	LH9BdLTDefXqae5ZWRSwqyW/HFggPSlCZ87g0TI9KFnQ6mMtDJtpZvDIaM5MQurzu1ZJAK2pCh2
-	WF3QHakhactA9hvj5aJIrU=
-X-Google-Smtp-Source: AGHT+IE3zgljXGWu86jNCVPuPy5ygINSrvsgKsVFQBNJzggmWYL0gkJwGiHiS08fe2ObOOBvnhF0HQ==
-X-Received: by 2002:a05:6512:220b:b0:540:1c33:ac83 with SMTP id 2adb3069b0e04-540340b6ca4mr533017e87.0.1734030503185;
-        Thu, 12 Dec 2024 11:08:23 -0800 (PST)
-Received: from pc636 ([2001:9b1:d5a0:a500::800])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53f67be1128sm1735397e87.85.2024.12.12.11.08.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 11:08:22 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 12 Dec 2024 20:08:20 +0100
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v2 0/5] Move kvfree_rcu() into SLAB (v2)
-Message-ID: <Z1s0pPsGMehOLHWU@pc636>
-References: <20241212180208.274813-1-urezki@gmail.com>
- <4f739c61-24c0-3790-8114-988f02c7caea@gentwo.org>
+	s=arc-20240116; t=1734030546; c=relaxed/simple;
+	bh=kRkVdoPHmcLpmA6X1tdcmAtJibqiAxWNVxaTgGQBGlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TKjhp9C68vPg0QYTvEd6gKzf/MB6lND6AJoAFtedxjYfhgHbZ4bZvDTpoTKzIf7yn7ZeJ+gEA1jK9pLZPAH/oQb6YLAU+cUD4opL6yzP0r1/HYRFdswz1dVYiWdOmYMyXEt04i4IS1jSCIihN7xuL+xrnwQDPkgv/cFmPqHnPns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTP20oPE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0217FC4CECE;
+	Thu, 12 Dec 2024 19:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734030546;
+	bh=kRkVdoPHmcLpmA6X1tdcmAtJibqiAxWNVxaTgGQBGlg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NTP20oPER8R1i0DhwDm0oUe9K27SlCk/i6CVDHlbIwJ/pGN9msukabZQPcxHhyUfI
+	 CMKFZq9Uvxq1OR9z/18Y0rFbBLCTKlXOioOElJy8UCPn/0zZA5EPw/295G6zQsUEPc
+	 PCpq6T264vWXRaxl4l2dhei7Z1RcaHL9LEgWgLfs4bBgf5LsUsFGnkV6m7c/J34gNN
+	 1B0xynQr4V15DhPOd5wt2sxIV3y8fxWURjQJH5XiBB5H7WYmLBgNH9taTl6qs0Q+iN
+	 52loKX+X31pAy0of/uBkRjy57V+3DSuJvNn1obCCf5Wo6XPDvn1hJiHVek2QYQOTk0
+	 VNO6FPrv98/oQ==
+Date: Thu, 12 Dec 2024 16:09:03 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, peterz@infradead.org,
+	mingo@redhat.com, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] perf tests: Fix an incorrect type in
+ append_script()
+Message-ID: <Z1s0z6VdIIHRDcku@x1>
+References: <20241115091527.128923-1-jiapeng.chong@linux.alibaba.com>
+ <CAP-5=fXPe9277agFqyEQsOG8h_wM5zFh3Sz+NFpsacU+A5MOuA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4f739c61-24c0-3790-8114-988f02c7caea@gentwo.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXPe9277agFqyEQsOG8h_wM5zFh3Sz+NFpsacU+A5MOuA@mail.gmail.com>
 
-On Thu, Dec 12, 2024 at 10:30:28AM -0800, Christoph Lameter (Ampere) wrote:
-> On Thu, 12 Dec 2024, Uladzislau Rezki (Sony) wrote:
+On Fri, Nov 15, 2024 at 10:57:59AM -0800, Ian Rogers wrote:
+> On Fri, Nov 15, 2024 at 1:15 AM Jiapeng Chong
+> <jiapeng.chong@linux.alibaba.com> wrote:
+> >
+> > The return value from the call to readlink() is ssize_t. However, the
+> > return value is being assigned to an size_t variable 'len', so making
+> > 'len' an ssize_t.
+> >
+> > ./tools/perf/tests/tests-scripts.c:182:5-8: WARNING: Unsigned expression compared with zero: len < 0.
+> >
+> > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11909
+> > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 > 
-> > This is v2. It is based on the Linux 6.13-rc2. The first version is
-> > here:
-> 
-> I do not see any use of internal slab interfaces by this code. It seems to
-> be using rcu internals though. So it would best be placed with the rcu
-> code.
->
-I think, later on there will be integration. This is a step forward to place
-it under mm where it should be.
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
---
-Uladzislau Rezki
+Thanks, applied to perf-tools-next,
+
+- Arnaldo
 
