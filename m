@@ -1,172 +1,130 @@
-Return-Path: <linux-kernel+bounces-443552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD779EF6B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C71079EF6FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:30:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 885A1188E8E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:15:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A875189CDCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6351B222D78;
-	Thu, 12 Dec 2024 17:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B4121576E;
+	Thu, 12 Dec 2024 17:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2VAQ1OAw"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BG8+QpCp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B21D222D59
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6958E211493
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734023694; cv=none; b=QzhfbF3/bXAbpHLoj8KrdAWfWqaxZBFxtl1hSddYStbcT6yGC0GKqO6sFj2O1oO02JGijr/KLO214aykwlw+UEjAkLm6T50gSSfTT+nnEVipXYkJNMR36+gHBhPco3m520dPDpWCjtWZdAa86CL85IwQwVIMumGZ+20S1SvQj2Y=
+	t=1734023859; cv=none; b=XfJY32cMKrBbQ3onZbNedrYxma7l70eSmE/LQiAX53LgJ6OoJnbqeY70Bc0RHOT9CGWSgXbR+uvbgzAzs5cJluT5lQ1iVr5iazfwwE7bnrnFdzDmJhnET9wX2/vpJPnQ8WC2lLZGPpnJBW2R5JS7R06EAgAbLEe0Fs8EBPHG0aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734023694; c=relaxed/simple;
-	bh=3VhHoxhtsIYlY9delcNaANiN7hnym9vuOfGY5s9r26Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2HYhnK27ILaGU8cSwvjhbM6E0oRS7pwwbHjRIJyUZXXYCRhHPUjzLl/8mXnfKaBpg9BCIll4Sd3VLWOiZat9q5BkyB2VWKk/K0/4RuWhB2X+hhLuET9EENW4lmuD0Zbfbm+XauKpVQ5BJ10cv84IKVMmdsQP72h8Zjyv6YSqLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2VAQ1OAw; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-467896541e1so273251cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:14:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734023692; x=1734628492; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wUN1FGW9s6aYaX1rahb83q8l6+aJSntI9ZnzO5TRvUw=;
-        b=2VAQ1OAw1bc3MBS17U0f/2tZvXsavPeWgpMiube6+fGHeX1/hPeuttKMvmZ2Tmk5tC
-         KBCVUWzIPEQFZzZVBjOtrx51baDoAUHwzLf1dSVWMQKhFftQFdLYcHm5COIz9obkdQbB
-         xaaUweIYtTtO+BgVJqxu8T9JuYmEP9mAdfmlN87IQP6FI8Wtjba/MUjGJ1ddMLRcQX3J
-         nNOKHbdv5AS5RQfy6nKJoyidtJQ4KvKv3n7S747jMUFgXYykpPN77B8Ky7sIsium2ZFe
-         XhqO1Al/PlnOoVCnTUx2s0d5dyNGxWyCTjERDFbSxeRQvjeDXLbV+ywNbzkiylwI5lLg
-         SFLg==
+	s=arc-20240116; t=1734023859; c=relaxed/simple;
+	bh=y3MazrmsoNv51pshbat6GYWNQd4U99dkLcGpYfeI3i4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cvHPzKU/VgtRt1bRkGnFmmKpKCg0MDnRKfUGWJH+zhnUhl0Zl9FwIM/xuh8U0BRIQPEsKmHxzhiKCqAPXaNQmQf3wzKQI/Y5Xbp3NfHRrQ8lADG0/EbY8OD1wHxYdmWQ/26XgdJDcoY3pPoutprMbtdbWYM5/GFuj7qrfpgGAV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BG8+QpCp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC8D7m0026866
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:17:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	00ew4buxa109w+E1jmiDpwlb8UwdJqPlcJafnF2RHzI=; b=BG8+QpCpLeud7pxD
+	9hrQ8mpiI5WlNQ8o1HpeROwURI19l6Ea1MFcNWWvLSIg8tQldOJntCG6y3k79QjX
+	gdBveYmwGfEvVcqz7/vMD8lqIxm7u9ZqS7UgyJaBLkugpQbut9TPS92bnVYI4bbr
+	aVJte7gma0n7VX2UGJ8ZnXqIjB3c8DvXoTAcy4g7f2wXahB40Vhf/qiQWDW1SjMY
+	iCbx379JPGeNT+st2kbckB+bE+In7qvs0xOXvIa0ThrBfIEdhbUCYDyhL8i/Ks8w
+	NMCuTHOTevClwhQE5+mqIIrT46SPhKyeN2JZwXFX6h06Phn5HyLFvs2ZrXgymyOR
+	uMvJUQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40kr83-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:17:36 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7b6d50cd3aaso1834885a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:17:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734023692; x=1734628492;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wUN1FGW9s6aYaX1rahb83q8l6+aJSntI9ZnzO5TRvUw=;
-        b=t0OzPBEcQQzbzLekhKDDW1aVfVF5OkNxDk6aCPwWSO0GNFVU/3QsUfabjwTfvYqy87
-         xxZCWtw1lQAc4yD4pVYq4SwLsKGkvyeQbwzWXETK2iT5uLe0BHMrJ9eQJk7zUvjfz1mC
-         DhjXeagnQxcl6jkbuKMGT/WozzsRFAXrT7VEt8J2Jo3uwT8GBb1ryyJ72V/+PlqEZTl/
-         A49N8WB9czdXQcSketCnr9w3CHQRZKpbmNSwBNxm0bTc513MbMjReSbXfAwMSBKGMIbZ
-         hAjuGPHUxYnWf3HbsrlCN/3FGbb4MnyjCClvIFPNm05nsD7xKGI/3QABT4f8T0sz9HGR
-         FZhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlOJifTZleehGHI8zl2augK9eInQ8Bu6bTyXK3AqiacU52lOq4aoLNXwLAJ7Pv2v3o/VF+o138bm/clRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVqroxEg+WNUrxc3vlwi0EVfeKPYtV9yv9wEuNi+V5FTan49mF
-	j6EM/PLartegIzhh68SOdrT/tNbx3JXBBQkbGRNpOuXYE5f+mBUw8kco/izzwQ==
-X-Gm-Gg: ASbGncsLeAtLPuAhedup3MIXyfJ4s3So7oRfPfdiiBtRq+RfALYL6m0tDcrZ6+rkYsM
-	aCnBCxDb8DaZcLtmdegiiGCGQdTBN0mbiOw36a3CFOv0Q2IcA/sx1VrWNYW8r31Yn9Eb1l+DWgv
-	TZLMyamVFs3pdCJNdwT1J4OyL18XiHG8UFpdWY3cBgOmcorI20mNiuimnuhkeyvllqqoB3f6Ppk
-	J8DL8Rh8hcSgNVEbroDN8SnGsl5uBgvO505r2th/eWtaFwrtZguT8IJ+XlsJQgu7EhDXlt2dJHL
-	HbHW1XbXtX2e15ST3A==
-X-Google-Smtp-Source: AGHT+IGgjH6GqV4jXXmphoAA+pxi/+QUQrcufFJsbeUtuxETjKPMe94758G2fCviij2ZNFYfuwddKA==
-X-Received: by 2002:a05:622a:5197:b0:466:8356:8b71 with SMTP id d75a77b69052e-467a10186aemr1322081cf.19.1734023691781;
-        Thu, 12 Dec 2024 09:14:51 -0800 (PST)
-Received: from google.com (129.177.85.34.bc.googleusercontent.com. [34.85.177.129])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d90299bccesm55849206d6.60.2024.12.12.09.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 09:14:51 -0800 (PST)
-Date: Thu, 12 Dec 2024 12:14:44 -0500
-From: Brian Geffon <bgeffon@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, jack@suse.cz,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	cmllamas@google.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
-	jing.xia@unisoc.com, xuewen.yan94@gmail.com,
-	viro@zeniv.linux.org.uk, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	stable@vger.kernel.org, lizeb@google.com
-Subject: Re: [RFC PATCH] epoll: Add synchronous wakeup support for
- ep_poll_callback
-Message-ID: <Z1saBPCh_oVzbPQy@google.com>
-References: <20240426080548.8203-1-xuewen.yan@unisoc.com>
- <20241016-kurieren-intellektuell-50bd02f377e4@brauner>
- <ZxAOgj9RWm4NTl9d@google.com>
+        d=1e100.net; s=20230601; t=1734023855; x=1734628655;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=00ew4buxa109w+E1jmiDpwlb8UwdJqPlcJafnF2RHzI=;
+        b=jq+r1Vf/jvWkoZ9toXs/enBJSOIiDCmnJ4AoU5yaqe4/Npp87aN5e8PA0fNt0Fb0om
+         2wgXP2wP6dunuojOWMOPXy9xO9vo8SxmXKJCOCMI4UFuEvlU75/iFNhJAWweMG9K42+g
+         kBb8ClLJZV2u2CK5Ux4nbQpoebVi86x0pa4ILDxZQDp3ntozB+Cfq8qa0fng295fDi5z
+         s+QQzR5PJFpX2MhfgsQSRj860ImGmA4KZ78Vxe/xtiToHTLactLrC/gZXwcpcyqJtnAa
+         LYp9gtpwl0Os0mztMG+TypjmfmZHURoUMZXq+cHsfDau1csQBJAaAyYY6uQzaOJSujqH
+         hlvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwR9fHWFipXA5pgMVxRhyu7m4kdAfRZ1b5izmjL1fkQarVPM/hV0eaFxZHpjBSdRBezDQoHFpeiF1RB4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEslF+LzNZJgkp7vxLtJH5ApXryNfzujsh6vnlDZNNw/sx9+PO
+	XsZHMpzEvOZs/m3hJLD6AmvTFgDbcXvrDcmo7Bsvd0voeEj/vKW/8guvAhS/sYmevQkwIMd2DtI
+	DCfU3kU7YDpfeXz5ZOaBWD8W5hTvvvkn5vACx7K55NjEDmbPPLYvJvAAPN6du9RQ=
+X-Gm-Gg: ASbGncuniAsOjcaQG980ZUPfcGRYSC7h0H9duNWaxuqvXmM9A2tm6tZRsKx4n5V5sJ/
+	oYUjZOG6lh8Hj4+ixveJq1Syg4WiSGBc3cIt125nxfl9qyD1D2bhW+5nhTCECYU1KeIJcixELcz
+	NYClJcmuHt2myBp5zk9+DkjmUywl2zWxRiSzdLH4Ala5yCb09ysRdIarCPszuybomfp2z8nezFB
+	n4gOO9McmbHDyJ9eC+RUtXcmYY8KrDNue+Jj4c3TwEa6l4MZ8JA5y2m/kZ+rYbb20N7jkkS8Rh+
+	Gf5A09RXQ3U+tTQnNTSjZjpFDSLvezZ4/BfsSw==
+X-Received: by 2002:a05:620a:454c:b0:7b6:e6a4:9668 with SMTP id af79cd13be357-7b6f89c172dmr54712485a.14.1734023855239;
+        Thu, 12 Dec 2024 09:17:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHAUNA8AhhwDMLvTFvKGygWG0d+9M/OXk0CuQAdC7E9rAGjae73oDQl/bxGXM/hJDZHi1S76A==
+X-Received: by 2002:a05:620a:454c:b0:7b6:e6a4:9668 with SMTP id af79cd13be357-7b6f89c172dmr54709485a.14.1734023854773;
+        Thu, 12 Dec 2024 09:17:34 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3db53b828sm8039038a12.74.2024.12.12.09.17.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 09:17:34 -0800 (PST)
+Message-ID: <97736082-97a1-4a77-ad53-09d01089c302@oss.qualcomm.com>
+Date: Thu, 12 Dec 2024 18:17:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxAOgj9RWm4NTl9d@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/14] arm64: dts: qcom: qrb4210-rb2: add wcd937x codec
+ support
+To: Alexey Klimov <alexey.klimov@linaro.org>, broonie@kernel.org,
+        konradybcio@kernel.org, konrad.dybcio@oss.qualcomm.com,
+        andersson@kernel.org, srinivas.kandagatla@linaro.org
+Cc: tiwai@suse.com, lgirdwood@gmail.com, perex@perex.cz, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, dmitry.baryshkov@linaro.org,
+        linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241212004727.2903846-1-alexey.klimov@linaro.org>
+ <20241212004727.2903846-7-alexey.klimov@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241212004727.2903846-7-alexey.klimov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 0eNfLgK9JCd8TpgtLN1KJuE61rAbJBSo
+X-Proofpoint-ORIG-GUID: 0eNfLgK9JCd8TpgtLN1KJuE61rAbJBSo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=790 priorityscore=1501 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120124
 
-On Wed, Oct 16, 2024 at 03:05:38PM -0400, Brian Geffon wrote:
-> On Wed, Oct 16, 2024 at 03:10:34PM +0200, Christian Brauner wrote:
-> > On Fri, 26 Apr 2024 16:05:48 +0800, Xuewen Yan wrote:
-> > > Now, the epoll only use wake_up() interface to wake up task.
-> > > However, sometimes, there are epoll users which want to use
-> > > the synchronous wakeup flag to hint the scheduler, such as
-> > > Android binder driver.
-> > > So add a wake_up_sync() define, and use the wake_up_sync()
-> > > when the sync is true in ep_poll_callback().
-> > > 
-> > > [...]
-> > 
-> > Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> > Patches in the vfs.misc branch should appear in linux-next soon.
-> > 
-> > Please report any outstanding bugs that were missed during review in a
-> > new review to the original patch series allowing us to drop it.
-> > 
-> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> > patch has now been applied. If possible patch trailers will be updated.
-> > 
-> > Note that commit hashes shown below are subject to change due to rebase,
-> > trailer updates or similar. If in doubt, please check the listed branch.
-> > 
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs.misc
+On 12.12.2024 1:47 AM, Alexey Klimov wrote:
+> wcd937x codec contains soundwire RX and TX slave devices
+> and can convert digital audio to analog audio and vice versa.
+> The codec node also requires description of reset pin/gpio.
 > 
-> This is a bug that's been present for all of time, so I think we should:
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2") 
-> Cc: stable@vger.kernel.org
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
 
-This is in as 900bbaae ("epoll: Add synchronous wakeup support for
-ep_poll_callback"). How do maintainers feel about:
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-
-> 
-> I sent a patch which adds a benchmark for nonblocking pipes using epoll:
-> https://lore.kernel.org/lkml/20241016190009.866615-1-bgeffon@google.com/
-> 
-> Using this new benchmark I get the following results without this fix
-> and with this fix:
-> 
-> $ tools/perf/perf bench sched pipe -n
-> # Running 'sched/pipe' benchmark:
-> # Executed 1000000 pipe operations between two processes
-> 
->      Total time: 12.194 [sec]
-> 
->       12.194376 usecs/op
->           82005 ops/sec
-> 
-> 
-> $ tools/perf/perf bench sched pipe -n
-> # Running 'sched/pipe' benchmark:
-> # Executed 1000000 pipe operations between two processes
-> 
->      Total time: 9.229 [sec]
-> 
->        9.229738 usecs/op
->          108345 ops/sec
-> 
-> > 
-> > [1/1] epoll: Add synchronous wakeup support for ep_poll_callback
-> >       https://git.kernel.org/vfs/vfs/c/2ce0e17660a7
-
-Thanks,
-Brian
-
+Konrad
 
