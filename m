@@ -1,108 +1,93 @@
-Return-Path: <linux-kernel+bounces-443595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4629EF8EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:46:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F1DB9EF900
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:47:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D9A428EBDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:46:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FDEB28B98B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E48F223E69;
-	Thu, 12 Dec 2024 17:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nulGjpnD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983E521660B;
+	Thu, 12 Dec 2024 17:45:08 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98752226553;
-	Thu, 12 Dec 2024 17:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C1222A7EB
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734025449; cv=none; b=NCI6Xmrtn6APUr77YuCsu8XP7IAj1iu8w4a28ByFtdfI0LWlraVtrFpOkSiEhmRQJ8bwzNqdipsmhh+Kf+7ag+O5GrCeMwTN7vLjfffv83aDgaT0RSLCo/SkixBlupN/1Haz6TE3WwrGm95fQ3Gm2qJ+dsk2e2TioWiWbqX2kPE=
+	t=1734025508; cv=none; b=id/Z5IwjYiuisJWa1+Bd/eIZqzfPy2vGxljCIc7bZUcWqf8soQsgXChNyun9DJjju9jdsq2dELpqWc+cQXBcIrFAyjrsD9hQY6IOgHzGVGLHF46X0W6BSQdce5Fqf0K0dN1cnkiz9SzNYXsHoDHhQAb5Ijf4HHrH7boSOUJ6vZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734025449; c=relaxed/simple;
-	bh=cFMOz22sOiQyouMW+74HETQ+kS9MQ985jtqNxbPZeNM=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=JfikDtmMSqiaPI2ijcItyu2e3PJ9rKebBzcpTS3ELtLVhNHJdjFeULvplUuzCgolDymUBfnkWh1z1mPDk+Uowd5Q2x3i4gHHzx1Zo9Yr2/05NU8P432RVQ+92XSf8h9UEQ3X8wmTV2OU9pKBzcSWkzdAoauCwpVKlGs7TxA/kYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nulGjpnD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FB30C4CED0;
-	Thu, 12 Dec 2024 17:44:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734025449;
-	bh=cFMOz22sOiQyouMW+74HETQ+kS9MQ985jtqNxbPZeNM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=nulGjpnDUff/djHrFoAol9oxQzm1LdBsrf6iD/cz4tYWMex8KaiJaaXiyrNrJwILM
-	 fHkZBOri0g4XxumvHqw0BiH+6ww8sNWA0TsS3WGjukujlbzgXOpljU/GrDjxBugLK/
-	 njdhGmI50lwXHKbssAX2B/988r+dlQyAGyCBPuDjRIVi4rOM1517lCwQm93CyBNw0B
-	 nwOD4WYgMMqZsn9835qYvTn/2sMcfgC9NgQVP9x5o5iCVU88HJlM1NdbCv9wU7IR2F
-	 CIauAx/Ug37XNGhujoCSVNmAzJHxXbTxX66OxABgiUxGIdKIGIwTCBanBB19C//I/F
-	 Pvig786WmFfrg==
-Date: Thu, 12 Dec 2024 11:44:07 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1734025508; c=relaxed/simple;
+	bh=x1ebds0A4ITC/sm+Dhq6yB36jb9JvMNqJd8QRz/f0UA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AqOu1nxOOCeqdln5swQQggkatZs/TkLCBoKq9bD0iI1R+pAhHZud9Tle/ElKZR4hhWZ6DqbNyFU9eBHEcrYEwwkHBcME6GE1MlI4CYAc6slCVzSV5WfVFCNiNA6m71QJLCeeoaDnV78+zQ6lYzdDHqtseAMSwWPzVtdLaj8aTgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83e5dd390bfso176378139f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:45:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734025506; x=1734630306;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c9t3S6ZRkXGObRSWAZmUeXYAxsnGMHk+WsD4ydDf2ek=;
+        b=paYMDCgXMV4ARPcBniw1OHmReqNDndwzdZg7L/PgN6z8z1LwWIZtcUyXwOidGmyixi
+         rbpZPG0fu+eBo5bWclGdIKFH46ZxO9SdFKn9N7vBAOso5Z3FQr/ukL+r7/O4gngnVUdq
+         33PXY228165FUVpsRFnYq9m77EevVUsm80AjtI3U4jAxa1XIzZJXctSBZoD7H8Y6ZZY+
+         IW3mQHOu35UAZNnlNYlCVYHzrpyjfj8o9vFb7zEzaKiz7nDVWFUNNnQeFZXQ5IrdnO9f
+         VNE1/Kakeox4xJEVSv0H0jolVOMzrMlz6CrzFeq/0bduzrfiLmJq1ffkgD7pnYs9vdAN
+         8x8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXAcnzFyYfzZoPccS2697JieNyHpzPl61VRHjNj4r+bqDilNRxkE7HPyFbdH5sepuci2cZKtOCAv+CUkNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb+/kvhWK/gIVYaRdRHhJOhUqnztjQlXOZWbThLv2xr5tE62Ei
+	SSQTykGw2UGoiYVXoIjFu6RxBg61GIoG7sTdflxz0PiaxtEuoO89H+6LWV763YOKvOZxqRZA/x3
+	zgyrZ/NqSYOOtXEAtbFtutmTs8BYrYMG+xXxhRB7+W7TOnYj/kEyd/8w=
+X-Google-Smtp-Source: AGHT+IFyhqpCEOPaBtPLeyRhCBLjPnw/q0ZWAxsE8A0uMBNj8BNOxBHZWHwKTp3EUDpHiFfCRczfjGZ7TqiHyu2YzErDFUsi3/e3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-iio@vger.kernel.org, Imran Shaik <quic_imrashai@quicinc.com>, 
- Amit Kucheria <amitk@kernel.org>, quic_kamalw@quicinc.com, 
- Thara Gopinath <thara.gopinath@gmail.com>, linux-arm-msm@vger.kernel.org, 
- Jonathan Cameron <jic23@kernel.org>, devicetree@vger.kernel.org, 
- Konrad Dybcio <konradybcio@kernel.org>, linux-pm@vger.kernel.org, 
- Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Jagadeesh Kona <quic_jkona@quicinc.com>, 
- Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
- quic_jprakash@quicinc.com, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Lukasz Luba <lukasz.luba@arm.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lee Jones <lee@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-In-Reply-To: <20241212-mbg-v2-support-v2-2-3249a4339b6e@quicinc.com>
-References: <20241212-mbg-v2-support-v2-0-3249a4339b6e@quicinc.com>
- <20241212-mbg-v2-support-v2-2-3249a4339b6e@quicinc.com>
-Message-Id: <173402544564.2846212.8371517817699165963.robh@kernel.org>
-Subject: Re: [PATCH RFC v2 2/5] dt-bindings: mfd: qcom,spmi-pmic: Add MBG
- thermal monitor ref
+X-Received: by 2002:a05:6e02:152c:b0:3a7:e786:afb4 with SMTP id
+ e9e14a558f8ab-3ae6f50f3eamr11184075ab.2.1734025505568; Thu, 12 Dec 2024
+ 09:45:05 -0800 (PST)
+Date: Thu, 12 Dec 2024 09:45:05 -0800
+In-Reply-To: <674f4e43.050a0220.17bd51.004e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675b2121.050a0220.599f4.00b6.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] general protection fault in exfat_get_dentry_cached
+From: syzbot <syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com>
+To: Yuezhang.Mo@sony.com, daniel.palmer@sony.com, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, 
+	wataru.aoyama@sony.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot has bisected this issue to:
 
-On Thu, 12 Dec 2024 21:41:21 +0530, Satya Priya Kakitapalli wrote:
-> Add reference to the newly added MBG thermal monitor bindings.
-> 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+commit 8a3f5711ad74db9881b289a6e34d7f3b700df720
+Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Date:   Thu Sep 12 08:57:06 2024 +0000
 
-My bot found errors running 'make dt_binding_check' on your patch:
+    exfat: reduce FAT chain traversal
 
-yamllint warnings/errors:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17851be8580000
+start commit:   f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14451be8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10451be8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df9504e360281ee5
+dashboard link: https://syzkaller.appspot.com/bug?extid=8f8fe64a30c50b289a18
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10bfbb30580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124e7544580000
 
-dtschema/dtc warnings/errors:
+Reported-by: syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
+Fixes: 8a3f5711ad74 ("exfat: reduce FAT chain traversal")
 
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241212-mbg-v2-support-v2-2-3249a4339b6e@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
