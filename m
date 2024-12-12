@@ -1,1025 +1,287 @@
-Return-Path: <linux-kernel+bounces-443544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFB19EF5F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:21:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 025139EF699
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:27:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFD9189EDCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:10:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4FF189D8B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A619F22C37C;
-	Thu, 12 Dec 2024 17:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CEA229692;
+	Thu, 12 Dec 2024 17:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YhmXutG6"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiA8ViTt"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6F822A818;
-	Thu, 12 Dec 2024 17:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B64225A21;
+	Thu, 12 Dec 2024 17:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734023241; cv=none; b=ShZxOkrivi0tI5X9MVwlJpWx1SMY7gTnN5aPoIvr9FoYhM9aHXT7xdlIGDONcDvZcZ79mZICMVo4P2VLo9Qpe+xfDFRHHmJXEa2MjUNfw+gVOk2wwIZiJh8woz2w0PrHKFHFYG+163Ez9ANB8J9r52YnbnW6Iset5WE1SJZFns4=
+	t=1734023232; cv=none; b=jzRdvx0CZ+zxgFcNWmtFqFTXADY6fz38VopiB8L9HJeBExYL323D6Q+rQQ2/anvzQu92F+uKXEparKLXz1tLR9vJAg91QkUwi+j94zx3dJHzPKHW46SqHH45stSbTfajnedXtfxo4IMIx0ekmTl/LQdTiaIBhHiJPG7PI+l3ATU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734023241; c=relaxed/simple;
-	bh=CHXVKSKn/IxZh2vLp+93+KcyG4ae6bo445pbuVEhkqk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p57tWbgFHUkuHAdUaOXjpzpZnlIydg/c1hdbbHVfldj0xKdx4wKQX9cdiU70rbe04v+tf66iH0B93FxAasRB9Ql2sZZ2Jek0jCGCciEkGMeoRzWyhzWAP5ppIH08+nec9R6xXLdXprO9S68EGpL0NTHoRmEER+xkdmGbqoOH5QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YhmXutG6; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C75660007;
-	Thu, 12 Dec 2024 17:07:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734023236;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CaEsv/+oDczqLcPluKLa1EVkmGnGBNKb0UN9mIdjfII=;
-	b=YhmXutG6FYI6/X2UfD6kgVjkOiCxaYhCF7+LrBOfnQYmvGLniWmAtlnkApsVFKswNek+jn
-	bfh7MuX5iH+F0LK1MyDdSFlyyhaaMhqRn24um/UDEGTsR64AbIilLPNcXC1npOPwwKdG4u
-	INzNHGDJ+s6m9nExppeyTaUsoIBipiEw4HXmu19s43ITZV6Jj4izNOSxZqR//uWIkSyh2l
-	bkfUfzZ8a2+KtvJ1NR5IycL63jUJOUlUsojz+WmbbR9gjPacoXZLyy76woDw5fv3G2ddJB
-	lVnqWLzhT5Bu52EqPtD7nkiNQUhxCBh4SPa/SJV5FJkfK+eqQ0LcEsGj79xPOg==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Thu, 12 Dec 2024 18:06:45 +0100
-Subject: [PATCH net-next v21 5/5] net: ethtool: Add support for tsconfig
- command to get/set hwtstamp config
+	s=arc-20240116; t=1734023232; c=relaxed/simple;
+	bh=0vHE1w5O4zkSsS7UAGj/6U5b2nhWxF+ZfRvjGWZpNWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X91ZyC74PVosN47UQhJ1mYC1hhq1HwEGwdkZ2IxtoSueNDKmOYIaAbdVAen1GtXY35Jd0lQiGdeJR7YMy4eD55SjkyQPzP3Qsmgt1fUIeBjRaFhG6ELq2nrYIoAxrNcYqF2AR3MwgxoAtxpbc9iT3Lhiu7KGjCKBpEuByoRYO2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NiA8ViTt; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d932b5081eso7707656d6.1;
+        Thu, 12 Dec 2024 09:07:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734023230; x=1734628030; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ydWT1UsTHYhWkkUUpo46STYyAYlSEKPTYHT7UawS7ks=;
+        b=NiA8ViTtOFsTFYeLKtVUM42RzV85SRpPEvmGsry0DX35KyepEjqGwx1PQLBd2V1B49
+         SyBkY99WoNpYeymC/VgIYmyt2nPKIGxB2Vi+dVP8ibr7UCMjJ5X3TMYn6NihbvWUreHc
+         LyR9Jq0QWdZnN3oQo+7gOYQfItoB2iOZPJ4dw1PfqwtpzWbaRLER12EpZIMhT0V1So0c
+         OBt5tWn/lOFCuJbkVkvIy+Db8Bv3lFg6HiSA3+WYy02t0p8pm3HSQgyT48dtKuMw3vms
+         gfAeqqPHDQohsTgUHyKPJ/JR4u6HChvCW+1TnqzYeopztaG1YihIGVpWnQcTu/I8/LuE
+         ZPcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734023230; x=1734628030;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ydWT1UsTHYhWkkUUpo46STYyAYlSEKPTYHT7UawS7ks=;
+        b=IQvnJ43pfmEZxeU2PurFB5hGIXgfstn3d6V/Fe3U7SayV9qUQKAnFwUs0Gd4QJw6pU
+         uVZOytlShQSG1FNjrNcEQA+7i4k8pvy1jZ1h3G/rRsVljT4wWxV2t83srskWpWcH4I1b
+         JkWikbd0IRfJ5XPAUZ0AhttKeMVsgWYRSrrkzA43VVlmDrTO6LL2TfHwSqk3Zt0+1G0d
+         R5+Me3QbCQoemxyEoFVF7nhy+ELQLUMpNfvyv2lDdLS2v0xU9A3P3sEUnuM7zI0bW61G
+         sVbAwmtopifKsmwPSzIoI6dY1jgsiITPB8YVayC+5/vL426EaXhN3vSV4Cp7uF8CbTKm
+         HAGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8/qEwKMrdYNi8SzcWfnuRddW8bfsvcjpgKHwUJhUM/qMAi/tI/9R3MHkp2QSwvGmcrw7UoOUZH0WD2VEkSg==@vger.kernel.org, AJvYcCUAnTklY9mI+bRHC7d9l4Aef9q3OLF+h7FRpIel+K1Wfz09gzEhN+XkY8MDLFQd/ki/pJQX@vger.kernel.org, AJvYcCUDi5t3GNVwqxGaPs4WVPcSx2dikwQ/cM6NTRPV+gwk5YC6U/wR8NHI+8lWXnOf99e0H4dTMzBEniidn4Ac@vger.kernel.org, AJvYcCXSkn9PYKMz/IP0G5lnIo9kugjASgOFoZWbtvNHQcrkIhcTaNIGwi69Z3x25SwDKLOvVXpe/KChrTbY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7qLJVOgFajfbkuE+S9iMiQo5qksYo7mH+SLUGtISHymCPH4XH
+	rkKCC8iVlKIwOmbizTXJvOMmJi9qM8io8Xzf9mw9X+P9c9WZMswE
+X-Gm-Gg: ASbGnctUHpIkl/yg36hRPmQH8diKBThiPMo8gtoIIElkeOgQguso4cGQz8WdZ4U7p0E
+	i2Lcx8ywhAyHzyr2gMxDnQAyhklXtjb9EOIXKLnFz2K3PX/343XiBWcLrOaL1doVyCY6SVmpAnd
+	Ulnb+7djfaa0jpXQUM/thxc4sUVigMXmZymXk9HbX8MTVZ+2gMw5ihZnv9FO6IUukWDmFGl0o0y
+	j8h4O0bGWcFs1vtQveYoFO4rohHElhmh6+aroJKi8qTAv6X9Oj1eXBqsgve1zL5n86tywc5nSkf
+	aUiDTX+WRADuDO3pev5uHOUtFlb72xdvAXv6bKTe4VJiYy4=
+X-Google-Smtp-Source: AGHT+IE/GItMMPblFQfoWOS9p3WGWxqt+Dw6vxc/7QhfYnPKM6o9vZDfD5bjzG4xiPoNE/l5NgGouw==
+X-Received: by 2002:ad4:5aea:0:b0:6d8:8289:26ac with SMTP id 6a1803df08f44-6db0f860595mr18963176d6.45.1734023229749;
+        Thu, 12 Dec 2024 09:07:09 -0800 (PST)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da696993sm83743806d6.34.2024.12.12.09.07.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 09:07:08 -0800 (PST)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6D25F1200066;
+	Thu, 12 Dec 2024 12:07:08 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Thu, 12 Dec 2024 12:07:08 -0500
+X-ME-Sender: <xms:PBhbZ3cQLAN_Jwg2nfFOrMDCfGaWRrRFbXQYziRhDf3g7DcjsoxX0A>
+    <xme:PBhbZ9MIOJjMK5Ci1Rx0U8drurfX5Z8vfCJ5hl7jTwxUEoI9Ax-i4QvrOS5GldGIS
+    FDYFAU9Gp3sTL-SeA>
+X-ME-Received: <xmr:PBhbZwisrTsmLp3KgtNCrMDg-4rt-GJSjviToXQq0H1yhXeXsULCxvGmzI4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeehgdelhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeegkeegtedtleffkeeftdevleeuieduveejgeei
+    kedvgeekudefteefieeivdeuleenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvpdhnsggprhgtphhtthhopeehjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    eprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprhhushhtqdhf
+    ohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgtuh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhgthh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehllhhvmheslhhishhtshdr
+    lhhinhhugidruggvvhdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhinhhugidrug
+    gvvhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegr
+    lhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:PBhbZ4_bxD1EdvvG1pcQ0R28qVCKk5b1Ij5sJnCIkw0wthcCOTXQcw>
+    <xmx:PBhbZzu6K9CAjXTJEmCre--Q3suO2c4QNTjNGWbz_PoA_d_m3CkCqQ>
+    <xmx:PBhbZ3HpOUUjR6jpHda2k5BsqDusYqLfOENcb4YvFpvKyqqICyKNQA>
+    <xmx:PBhbZ6N8LSYi4w1v6G2BzN1MBMLjz8Ug032w7mdTrpEt5IG0elKaqA>
+    <xmx:PBhbZ0NQTWjbv0n97eX1zsur6i2Rspp3fpybEeEVwF91xUUBuqTz31Wa>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Dec 2024 12:07:06 -0500 (EST)
+Date: Thu, 12 Dec 2024 09:07:00 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, lkmm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com,
+ Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,	Albert Ou <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org
+Subject: Re: [RFC v2 02/13] rust: sync: Add basic atomic operation mapping
+ framework
+Message-ID: <Z1sYNOYJPzQmJXn6@boqun-archlinux>
+References: <20241101060237.1185533-1-boqun.feng@gmail.com>
+ <20241101060237.1185533-3-boqun.feng@gmail.com>
+ <CAH5fLghYjcb-mpR_rr2aC_W8rRb6g8jCFxgky7iEqVgmpHjf=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241212-feature_ptp_netnext-v21-5-2c282a941518@bootlin.com>
-References: <20241212-feature_ptp_netnext-v21-0-2c282a941518@bootlin.com>
-In-Reply-To: <20241212-feature_ptp_netnext-v21-0-2c282a941518@bootlin.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Radu Pirea <radu-nicolae.pirea@oss.nxp.com>, 
- Jay Vosburgh <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
- Simon Horman <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
- donald.hunter@gmail.com, danieller@nvidia.com, ecree.xilinx@gmail.com, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Rahul Rameshbabu <rrameshbabu@nvidia.com>, 
- Willem de Bruijn <willemb@google.com>, 
- Shannon Nelson <shannon.nelson@amd.com>, 
- Alexandra Winter <wintera@linux.ibm.com>, 
- Kory Maincent <kory.maincent@bootlin.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLghYjcb-mpR_rr2aC_W8rRb6g8jCFxgky7iEqVgmpHjf=Q@mail.gmail.com>
 
-Introduce support for ETHTOOL_MSG_TSCONFIG_GET/SET ethtool netlink socket
-to read and configure hwtstamp configuration of a PHC provider. Note that
-simultaneous hwtstamp isn't supported; configuring a new one disables the
-previous setting.
+On Thu, Dec 12, 2024 at 11:51:23AM +0100, Alice Ryhl wrote:
+> On Fri, Nov 1, 2024 at 7:03 AM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > Preparation for generic atomic implementation. To unify the
+> > ipmlementation of a generic method over `i32` and `i64`, the C side
+> > atomic methods need to be grouped so that in a generic method, they can
+> > be referred as <type>::<method>, otherwise their parameters and return
+> > value are different between `i32` and `i64`, which would require using
+> > `transmute()` to unify the type into a `T`.
+> >
+> > Introduce `AtomicIpml` to represent a basic type in Rust that has the
+> > direct mapping to an atomic implementation from C. This trait is sealed,
+> > and currently only `i32` and `i64` ipml this.
+> 
+> There seems to be quite a few instances of "impl" spelled as "ipml" here.
+> 
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
-Jacob I removed your Reviewed-by as there is few changes on this patch.
+Will fix!
 
-Changes in v16:
-- Add a new patch to separate tsinfo into a new tsconfig command to get
-  and set the hwtstamp config.
+> > Further, different methods are put into different `*Ops` trait groups,
+> > and this is for the future when smaller types like `i8`/`i16` are
+> > supported but only with a limited set of API (e.g. only set(), load(),
+> > xchg() and cmpxchg(), no add() or sub() etc).
+> >
+> > While the atomic mod is introduced, documentation is also added for
+> > memory models and data races.
+> >
+> > Also bump my role to the maintainer of ATOMIC INFRASTRUCTURE to reflect
+> > my responsiblity on the Rust atomic mod.
+> >
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> >  MAINTAINERS                    |   4 +-
+> >  rust/kernel/sync.rs            |   1 +
+> >  rust/kernel/sync/atomic.rs     |  19 ++++
+> >  rust/kernel/sync/atomic/ops.rs | 199 +++++++++++++++++++++++++++++++++
+> >  4 files changed, 222 insertions(+), 1 deletion(-)
+> >  create mode 100644 rust/kernel/sync/atomic.rs
+> >  create mode 100644 rust/kernel/sync/atomic/ops.rs
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index b77f4495dcf4..e09471027a63 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -3635,7 +3635,7 @@ F:        drivers/input/touchscreen/atmel_mxt_ts.c
+> >  ATOMIC INFRASTRUCTURE
+> >  M:     Will Deacon <will@kernel.org>
+> >  M:     Peter Zijlstra <peterz@infradead.org>
+> > -R:     Boqun Feng <boqun.feng@gmail.com>
+> > +M:     Boqun Feng <boqun.feng@gmail.com>
+> >  R:     Mark Rutland <mark.rutland@arm.com>
+> >  L:     linux-kernel@vger.kernel.org
+> >  S:     Maintained
+> > @@ -3644,6 +3644,8 @@ F:        arch/*/include/asm/atomic*.h
+> >  F:     include/*/atomic*.h
+> >  F:     include/linux/refcount.h
+> >  F:     scripts/atomic/
+> > +F:     rust/kernel/sync/atomic.rs
+> > +F:     rust/kernel/sync/atomic/
+> 
+> This is why mod.rs files are superior :)
+> 
 
-Changes in v17:
-- Fix a doc misalignment.
+;-) Not going to do anything right now, but let me think about this.
 
-Changes in v18:
-- Few changes in the set command
-- Add a set-reply ethtool socket
-- Add missing tsconfig netlink the documentation
+> > @@ -0,0 +1,19 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Atomic primitives.
+> > +//!
+> > +//! These primitives have the same semantics as their C counterparts: and the precise definitions of
+> > +//! semantics can be found at [`LKMM`]. Note that Linux Kernel Memory (Consistency) Model is the
+> > +//! only model for Rust code in kernel, and Rust's own atomics should be avoided.
+> > +//!
+> > +//! # Data races
+> > +//!
+> > +//! [`LKMM`] atomics have different rules regarding data races:
+> > +//!
+> > +//! - A normal read doesn't data-race with an atomic read.
+> 
+> This was fixed:
+> https://github.com/rust-lang/rust/pull/128778
+> 
 
-Changes in v20:
-- Design of hwtstamp provider change.
-- Remove netlink notification as set_reply is doing the same job.
+Yeah, I was aware of that effort, and good to know it's finally merged.
+Thanks!
 
-Changes in v21:
-- NIT change to use ts_hwtst_prov_policy instead of NLA_NESTED.
----
- Documentation/netlink/specs/ethtool.yaml       |  56 ++++
- Documentation/networking/ethtool-netlink.rst   |  75 +++++
- Documentation/networking/timestamping.rst      |  38 ++-
- include/uapi/linux/ethtool_netlink_generated.h |  16 +
- net/ethtool/Makefile                           |   2 +-
- net/ethtool/common.c                           |  27 +-
- net/ethtool/common.h                           |   2 +-
- net/ethtool/netlink.c                          |  18 +
- net/ethtool/netlink.h                          |   3 +
- net/ethtool/tsconfig.c                         | 444 +++++++++++++++++++++++++
- 10 files changed, 655 insertions(+), 26 deletions(-)
+This will be in 1.83, right? If so, we will still need the above until
+we bump up the minimal rustc version to 1.83 or beyond. I will handle
+this properly with the minimal rustc 1.83 (i.e. if this goes in first,
+will send a follow up patch). I will also mention in the above that this
+has been changed in 1.83.
 
-diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-index 4082816e5f3d..60f85fbf4156 100644
---- a/Documentation/netlink/specs/ethtool.yaml
-+++ b/Documentation/netlink/specs/ethtool.yaml
-@@ -1489,6 +1489,33 @@ attribute-sets:
-       -
-         name: downstream-sfp-name
-         type: string
-+  -
-+    name: tsconfig
-+    attr-cnt-name: __ethtool-a-tsconfig-cnt
-+    attributes:
-+      -
-+        name: unspec
-+        type: unused
-+        value: 0
-+      -
-+        name: header
-+        type: nest
-+        nested-attributes: header
-+      -
-+        name: hwtstamp-provider
-+        type: nest
-+        nested-attributes: ts-hwtstamp-provider
-+      -
-+        name: tx-types
-+        type: nest
-+        nested-attributes: bitset
-+      -
-+        name: rx-filters
-+        type: nest
-+        nested-attributes: bitset
-+      -
-+        name: hwtstamp-flags
-+        type: u32
- 
- operations:
-   enum-model: directional
-@@ -2314,3 +2341,32 @@ operations:
-       name: phy-ntf
-       doc: Notification for change in PHY devices.
-       notify: phy-get
-+    -
-+      name: tsconfig-get
-+      doc: Get hwtstamp config.
-+
-+      attribute-set: tsconfig
-+
-+      do: &tsconfig-get-op
-+        request:
-+          attributes:
-+            - header
-+        reply:
-+          attributes: &tsconfig
-+            - header
-+            - hwtstamp-provider
-+            - tx-types
-+            - rx-filters
-+            - hwtstamp-flags
-+      dump: *tsconfig-get-op
-+    -
-+      name: tsconfig-set
-+      doc: Set hwtstamp config.
-+
-+      attribute-set: tsconfig
-+
-+      do:
-+        request:
-+          attributes: *tsconfig
-+        reply:
-+          attributes: *tsconfig
-diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
-index c585e2f0ddfa..a7ba6368a4d5 100644
---- a/Documentation/networking/ethtool-netlink.rst
-+++ b/Documentation/networking/ethtool-netlink.rst
-@@ -237,6 +237,8 @@ Userspace to kernel:
-   ``ETHTOOL_MSG_MM_SET``                set MAC merge layer parameters
-   ``ETHTOOL_MSG_MODULE_FW_FLASH_ACT``   flash transceiver module firmware
-   ``ETHTOOL_MSG_PHY_GET``               get Ethernet PHY information
-+  ``ETHTOOL_MSG_TSCONFIG_GET``          get hw timestamping configuration
-+  ``ETHTOOL_MSG_TSCONFIG_SET``          set hw timestamping configuration
-   ===================================== =================================
- 
- Kernel to userspace:
-@@ -286,6 +288,8 @@ Kernel to userspace:
-   ``ETHTOOL_MSG_MODULE_FW_FLASH_NTF``      transceiver module flash updates
-   ``ETHTOOL_MSG_PHY_GET_REPLY``            Ethernet PHY information
-   ``ETHTOOL_MSG_PHY_NTF``                  Ethernet PHY information change
-+  ``ETHTOOL_MSG_TSCONFIG_GET_REPLY``       hw timestamping configuration
-+  ``ETHTOOL_MSG_TSCONFIG_SET_REPLY``       new hw timestamping configuration
-   ======================================== =================================
- 
- ``GET`` requests are sent by userspace applications to retrieve device
-@@ -2244,6 +2248,75 @@ Kernel response contents:
- When ``ETHTOOL_A_PHY_UPSTREAM_TYPE`` is PHY_UPSTREAM_PHY, the PHY's parent is
- another PHY.
- 
-+TSCONFIG_GET
-+============
-+
-+Retrieves the information about the current hardware timestamping source and
-+configuration.
-+
-+It is similar to the deprecated ``SIOCGHWTSTAMP`` ioctl request.
-+
-+Request contents:
-+
-+  ====================================  ======  ==========================
-+  ``ETHTOOL_A_TSCONFIG_HEADER``         nested  request header
-+  ====================================  ======  ==========================
-+
-+Kernel response contents:
-+
-+  ======================================== ======  ============================
-+  ``ETHTOOL_A_TSCONFIG_HEADER``            nested  request header
-+  ``ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER`` nested  PTP hw clock provider
-+  ``ETHTOOL_A_TSCONFIG_TX_TYPES``          bitset  hwtstamp Tx type
-+  ``ETHTOOL_A_TSCONFIG_RX_FILTERS``        bitset  hwtstamp Rx filter
-+  ``ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS``	   u32     hwtstamp flags
-+  ======================================== ======  ============================
-+
-+When set the ``ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER`` attribute identifies the
-+source of the hw timestamping provider. It is composed by
-+``ETHTOOL_A_TS_HWTSTAMP_PROVIDER_INDEX`` attribute which describe the index of
-+the PTP device and ``ETHTOOL_A_TS_HWTSTAMP_PROVIDER_QUALIFIER`` which describe
-+the qualifier of the timestamp.
-+
-+When set the ``ETHTOOL_A_TSCONFIG_TX_TYPES``, ``ETHTOOL_A_TSCONFIG_RX_FILTERS``
-+and the ``ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS`` attributes identify the Tx
-+type, the Rx filter and the flags configured for the current hw timestamping
-+provider. The attributes are propagated to the driver through the following
-+structure:
-+
-+.. kernel-doc:: include/linux/net_tstamp.h
-+    :identifiers: kernel_hwtstamp_config
-+
-+TSCONFIG_SET
-+============
-+
-+Set the information about the current hardware timestamping source and
-+configuration.
-+
-+It is similar to the deprecated ``SIOCSHWTSTAMP`` ioctl request.
-+
-+Request contents:
-+
-+  ======================================== ======  ============================
-+  ``ETHTOOL_A_TSCONFIG_HEADER``            nested  request header
-+  ``ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER`` nested  PTP hw clock provider
-+  ``ETHTOOL_A_TSCONFIG_TX_TYPES``          bitset  hwtstamp Tx type
-+  ``ETHTOOL_A_TSCONFIG_RX_FILTERS``        bitset  hwtstamp Rx filter
-+  ``ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS``	   u32     hwtstamp flags
-+  ======================================== ======  ============================
-+
-+Kernel response contents:
-+
-+  ======================================== ======  ============================
-+  ``ETHTOOL_A_TSCONFIG_HEADER``            nested  request header
-+  ``ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER`` nested  PTP hw clock provider
-+  ``ETHTOOL_A_TSCONFIG_TX_TYPES``          bitset  hwtstamp Tx type
-+  ``ETHTOOL_A_TSCONFIG_RX_FILTERS``        bitset  hwtstamp Rx filter
-+  ``ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS``	   u32     hwtstamp flags
-+  ======================================== ======  ============================
-+
-+For a description of each attribute, see ``TSCONFIG_GET``.
-+
- Request translation
- ===================
- 
-@@ -2352,4 +2425,6 @@ are netlink only.
-   n/a                                 ``ETHTOOL_MSG_MM_SET``
-   n/a                                 ``ETHTOOL_MSG_MODULE_FW_FLASH_ACT``
-   n/a                                 ``ETHTOOL_MSG_PHY_GET``
-+  ``SIOCGHWTSTAMP``                   ``ETHTOOL_MSG_TSCONFIG_GET``
-+  ``SIOCSHWTSTAMP``                   ``ETHTOOL_MSG_TSCONFIG_SET``
-   =================================== =====================================
-diff --git a/Documentation/networking/timestamping.rst b/Documentation/networking/timestamping.rst
-index b37bfbfc7d79..61ef9da10e28 100644
---- a/Documentation/networking/timestamping.rst
-+++ b/Documentation/networking/timestamping.rst
-@@ -525,8 +525,8 @@ implicitly defined. ts[0] holds a software timestamp if set, ts[1]
- is again deprecated and ts[2] holds a hardware timestamp if set.
- 
- 
--3. Hardware Timestamping configuration: SIOCSHWTSTAMP and SIOCGHWTSTAMP
--=======================================================================
-+3. Hardware Timestamping configuration: ETHTOOL_MSG_TSCONFIG_SET/GET
-+====================================================================
- 
- Hardware time stamping must also be initialized for each device driver
- that is expected to do hardware time stamping. The parameter is defined in
-@@ -539,12 +539,14 @@ include/uapi/linux/net_tstamp.h as::
- 	};
- 
- Desired behavior is passed into the kernel and to a specific device by
--calling ioctl(SIOCSHWTSTAMP) with a pointer to a struct ifreq whose
--ifr_data points to a struct hwtstamp_config. The tx_type and
--rx_filter are hints to the driver what it is expected to do. If
--the requested fine-grained filtering for incoming packets is not
--supported, the driver may time stamp more than just the requested types
--of packets.
-+calling the tsconfig netlink socket ``ETHTOOL_MSG_TSCONFIG_SET``.
-+The ``ETHTOOL_A_TSCONFIG_TX_TYPES``, ``ETHTOOL_A_TSCONFIG_RX_FILTERS`` and
-+``ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS`` netlink attributes are then used to set
-+the struct hwtstamp_config accordingly.
-+
-+The ``ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER`` netlink nested attribute is used
-+to select the source of the hardware time stamping. It is composed of an index
-+for the device source and a qualifier for the type of time stamping.
- 
- Drivers are free to use a more permissive configuration than the requested
- configuration. It is expected that drivers should only implement directly the
-@@ -563,9 +565,16 @@ Only a processes with admin rights may change the configuration. User
- space is responsible to ensure that multiple processes don't interfere
- with each other and that the settings are reset.
- 
--Any process can read the actual configuration by passing this
--structure to ioctl(SIOCGHWTSTAMP) in the same way.  However, this has
--not been implemented in all drivers.
-+Any process can read the actual configuration by requesting tsconfig netlink
-+socket ``ETHTOOL_MSG_TSCONFIG_GET``.
-+
-+The legacy configuration is the use of the ioctl(SIOCSHWTSTAMP) with a pointer
-+to a struct ifreq whose ifr_data points to a struct hwtstamp_config.
-+The tx_type and rx_filter are hints to the driver what it is expected to do.
-+If the requested fine-grained filtering for incoming packets is not
-+supported, the driver may time stamp more than just the requested types
-+of packets. ioctl(SIOCGHWTSTAMP) is used in the same way as the
-+ioctl(SIOCSHWTSTAMP). However, this has not been implemented in all drivers.
- 
- ::
- 
-@@ -610,9 +619,10 @@ not been implemented in all drivers.
- --------------------------------------------------------
- 
- A driver which supports hardware time stamping must support the
--SIOCSHWTSTAMP ioctl and update the supplied struct hwtstamp_config with
--the actual values as described in the section on SIOCSHWTSTAMP.  It
--should also support SIOCGHWTSTAMP.
-+ndo_hwtstamp_set NDO or the legacy SIOCSHWTSTAMP ioctl and update the
-+supplied struct hwtstamp_config with the actual values as described in
-+the section on SIOCSHWTSTAMP. It should also support ndo_hwtstamp_get or
-+the legacy SIOCGHWTSTAMP.
- 
- Time stamps for received packets must be stored in the skb. To get a pointer
- to the shared time stamp structure of the skb call skb_hwtstamps(). Then
-diff --git a/include/uapi/linux/ethtool_netlink_generated.h b/include/uapi/linux/ethtool_netlink_generated.h
-index df289dde0f61..43993a2d68e5 100644
---- a/include/uapi/linux/ethtool_netlink_generated.h
-+++ b/include/uapi/linux/ethtool_netlink_generated.h
-@@ -694,6 +694,18 @@ enum {
- 	ETHTOOL_A_PHY_MAX = (__ETHTOOL_A_PHY_CNT - 1)
- };
- 
-+enum {
-+	ETHTOOL_A_TSCONFIG_UNSPEC,
-+	ETHTOOL_A_TSCONFIG_HEADER,
-+	ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER,
-+	ETHTOOL_A_TSCONFIG_TX_TYPES,
-+	ETHTOOL_A_TSCONFIG_RX_FILTERS,
-+	ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS,
-+
-+	__ETHTOOL_A_TSCONFIG_CNT,
-+	ETHTOOL_A_TSCONFIG_MAX = (__ETHTOOL_A_TSCONFIG_CNT - 1)
-+};
-+
- enum {
- 	ETHTOOL_MSG_USER_NONE = 0,
- 	ETHTOOL_MSG_STRSET_GET = 1,
-@@ -741,6 +753,8 @@ enum {
- 	ETHTOOL_MSG_MM_SET,
- 	ETHTOOL_MSG_MODULE_FW_FLASH_ACT,
- 	ETHTOOL_MSG_PHY_GET,
-+	ETHTOOL_MSG_TSCONFIG_GET,
-+	ETHTOOL_MSG_TSCONFIG_SET,
- 
- 	__ETHTOOL_MSG_USER_CNT,
- 	ETHTOOL_MSG_USER_MAX = (__ETHTOOL_MSG_USER_CNT - 1)
-@@ -794,6 +808,8 @@ enum {
- 	ETHTOOL_MSG_MODULE_FW_FLASH_NTF,
- 	ETHTOOL_MSG_PHY_GET_REPLY,
- 	ETHTOOL_MSG_PHY_NTF,
-+	ETHTOOL_MSG_TSCONFIG_GET_REPLY,
-+	ETHTOOL_MSG_TSCONFIG_SET_REPLY,
- 
- 	__ETHTOOL_MSG_KERNEL_CNT,
- 	ETHTOOL_MSG_KERNEL_MAX = (__ETHTOOL_MSG_KERNEL_CNT - 1)
-diff --git a/net/ethtool/Makefile b/net/ethtool/Makefile
-index 9b540644ba31..a1490c4afe6b 100644
---- a/net/ethtool/Makefile
-+++ b/net/ethtool/Makefile
-@@ -9,4 +9,4 @@ ethtool_nl-y	:= netlink.o bitset.o strset.o linkinfo.o linkmodes.o rss.o \
- 		   channels.o coalesce.o pause.o eee.o tsinfo.o cabletest.o \
- 		   tunnels.o fec.o eeprom.o stats.o phc_vclocks.o mm.o \
- 		   module.o cmis_fw_update.o cmis_cdb.o pse-pd.o plca.o mm.o \
--		   phy.o
-+		   phy.o tsconfig.o
-diff --git a/net/ethtool/common.c b/net/ethtool/common.c
-index 666db40bcfda..02f941f667dd 100644
---- a/net/ethtool/common.c
-+++ b/net/ethtool/common.c
-@@ -797,7 +797,7 @@ int ethtool_net_get_ts_info_by_phc(struct net_device *dev,
- 	return -ENODEV;
- }
- 
--int
-+struct phy_device *
- ethtool_phy_get_ts_info_by_phc(struct net_device *dev,
- 			       struct kernel_ethtool_ts_info *info,
- 			       struct hwtstamp_provider_desc *hwprov_desc)
-@@ -806,7 +806,7 @@ ethtool_phy_get_ts_info_by_phc(struct net_device *dev,
- 
- 	/* Only precise qualifier is supported in phydev */
- 	if (hwprov_desc->qualifier != HWTSTAMP_PROVIDER_QUALIFIER_PRECISE)
--		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
- 
- 	/* Look in the phy topology */
- 	if (dev->link_topo) {
-@@ -820,12 +820,12 @@ ethtool_phy_get_ts_info_by_phc(struct net_device *dev,
- 			ethtool_init_tsinfo(info);
- 			err = phy_ts_info(pdn->phy, info);
- 			if (err)
--				return err;
-+				return ERR_PTR(err);
- 
- 			if (info->phc_index == hwprov_desc->index)
--				return 0;
-+				return pdn->phy;
- 		}
--		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
- 	}
- 
- 	/* Look on the dev->phydev */
-@@ -833,13 +833,13 @@ ethtool_phy_get_ts_info_by_phc(struct net_device *dev,
- 		ethtool_init_tsinfo(info);
- 		err = phy_ts_info(dev->phydev, info);
- 		if (err)
--			return err;
-+			return ERR_PTR(err);
- 
- 		if (info->phc_index == hwprov_desc->index)
--			return 0;
-+			return dev->phydev;
- 	}
- 
--	return -ENODEV;
-+	return ERR_PTR(-ENODEV);
- }
- 
- int ethtool_get_ts_info_by_phc(struct net_device *dev,
-@@ -849,8 +849,15 @@ int ethtool_get_ts_info_by_phc(struct net_device *dev,
- 	int err;
- 
- 	err = ethtool_net_get_ts_info_by_phc(dev, info, hwprov_desc);
--	if (err == -ENODEV)
--		err = ethtool_phy_get_ts_info_by_phc(dev, info, hwprov_desc);
-+	if (err == -ENODEV) {
-+		struct phy_device *phy;
-+
-+		phy = ethtool_phy_get_ts_info_by_phc(dev, info, hwprov_desc);
-+		if (IS_ERR(phy))
-+			err = PTR_ERR(phy);
-+		else
-+			err = 0;
-+	}
- 
- 	info->so_timestamping |= SOF_TIMESTAMPING_RX_SOFTWARE |
- 				 SOF_TIMESTAMPING_SOFTWARE;
-diff --git a/net/ethtool/common.h b/net/ethtool/common.h
-index f5119204c8ff..850eadde4bfc 100644
---- a/net/ethtool/common.h
-+++ b/net/ethtool/common.h
-@@ -56,7 +56,7 @@ int ethtool_get_ts_info_by_phc(struct net_device *dev,
- int ethtool_net_get_ts_info_by_phc(struct net_device *dev,
- 				   struct kernel_ethtool_ts_info *info,
- 				   struct hwtstamp_provider_desc *hwprov_desc);
--int
-+struct phy_device *
- ethtool_phy_get_ts_info_by_phc(struct net_device *dev,
- 			       struct kernel_ethtool_ts_info *info,
- 			       struct hwtstamp_provider_desc *hwprov_desc);
-diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-index 6ae1d91f36e7..849c98e637c6 100644
---- a/net/ethtool/netlink.c
-+++ b/net/ethtool/netlink.c
-@@ -394,6 +394,8 @@ ethnl_default_requests[__ETHTOOL_MSG_USER_CNT] = {
- 	[ETHTOOL_MSG_PLCA_GET_STATUS]	= &ethnl_plca_status_request_ops,
- 	[ETHTOOL_MSG_MM_GET]		= &ethnl_mm_request_ops,
- 	[ETHTOOL_MSG_MM_SET]		= &ethnl_mm_request_ops,
-+	[ETHTOOL_MSG_TSCONFIG_GET]	= &ethnl_tsconfig_request_ops,
-+	[ETHTOOL_MSG_TSCONFIG_SET]	= &ethnl_tsconfig_request_ops,
- };
- 
- static struct ethnl_dump_ctx *ethnl_dump_context(struct netlink_callback *cb)
-@@ -1243,6 +1245,22 @@ static const struct genl_ops ethtool_genl_ops[] = {
- 		.policy = ethnl_phy_get_policy,
- 		.maxattr = ARRAY_SIZE(ethnl_phy_get_policy) - 1,
- 	},
-+	{
-+		.cmd	= ETHTOOL_MSG_TSCONFIG_GET,
-+		.doit	= ethnl_default_doit,
-+		.start	= ethnl_default_start,
-+		.dumpit	= ethnl_default_dumpit,
-+		.done	= ethnl_default_done,
-+		.policy = ethnl_tsconfig_get_policy,
-+		.maxattr = ARRAY_SIZE(ethnl_tsconfig_get_policy) - 1,
-+	},
-+	{
-+		.cmd	= ETHTOOL_MSG_TSCONFIG_SET,
-+		.flags	= GENL_UNS_ADMIN_PERM,
-+		.doit	= ethnl_default_set_doit,
-+		.policy = ethnl_tsconfig_set_policy,
-+		.maxattr = ARRAY_SIZE(ethnl_tsconfig_set_policy) - 1,
-+	},
- };
- 
- static const struct genl_multicast_group ethtool_nl_mcgrps[] = {
-diff --git a/net/ethtool/netlink.h b/net/ethtool/netlink.h
-index 960cda13e4fc..0a09298fff92 100644
---- a/net/ethtool/netlink.h
-+++ b/net/ethtool/netlink.h
-@@ -435,6 +435,7 @@ extern const struct ethnl_request_ops ethnl_plca_cfg_request_ops;
- extern const struct ethnl_request_ops ethnl_plca_status_request_ops;
- extern const struct ethnl_request_ops ethnl_mm_request_ops;
- extern const struct ethnl_request_ops ethnl_phy_request_ops;
-+extern const struct ethnl_request_ops ethnl_tsconfig_request_ops;
- 
- extern const struct nla_policy ethnl_header_policy[ETHTOOL_A_HEADER_FLAGS + 1];
- extern const struct nla_policy ethnl_header_policy_stats[ETHTOOL_A_HEADER_FLAGS + 1];
-@@ -485,6 +486,8 @@ extern const struct nla_policy ethnl_mm_get_policy[ETHTOOL_A_MM_HEADER + 1];
- extern const struct nla_policy ethnl_mm_set_policy[ETHTOOL_A_MM_MAX + 1];
- extern const struct nla_policy ethnl_module_fw_flash_act_policy[ETHTOOL_A_MODULE_FW_FLASH_PASSWORD + 1];
- extern const struct nla_policy ethnl_phy_get_policy[ETHTOOL_A_PHY_HEADER + 1];
-+extern const struct nla_policy ethnl_tsconfig_get_policy[ETHTOOL_A_TSCONFIG_HEADER + 1];
-+extern const struct nla_policy ethnl_tsconfig_set_policy[ETHTOOL_A_TSCONFIG_MAX + 1];
- 
- int ethnl_set_features(struct sk_buff *skb, struct genl_info *info);
- int ethnl_act_cable_test(struct sk_buff *skb, struct genl_info *info);
-diff --git a/net/ethtool/tsconfig.c b/net/ethtool/tsconfig.c
-new file mode 100644
-index 000000000000..9188e088fb2f
---- /dev/null
-+++ b/net/ethtool/tsconfig.c
-@@ -0,0 +1,444 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/net_tstamp.h>
-+#include <linux/ptp_clock_kernel.h>
-+
-+#include "netlink.h"
-+#include "common.h"
-+#include "bitset.h"
-+#include "../core/dev.h"
-+#include "ts.h"
-+
-+struct tsconfig_req_info {
-+	struct ethnl_req_info base;
-+};
-+
-+struct tsconfig_reply_data {
-+	struct ethnl_reply_data		base;
-+	struct hwtstamp_provider_desc	hwprov_desc;
-+	struct {
-+		u32 tx_type;
-+		u32 rx_filter;
-+		u32 flags;
-+	} hwtst_config;
-+};
-+
-+#define TSCONFIG_REPDATA(__reply_base) \
-+	container_of(__reply_base, struct tsconfig_reply_data, base)
-+
-+const struct nla_policy ethnl_tsconfig_get_policy[ETHTOOL_A_TSCONFIG_HEADER + 1] = {
-+	[ETHTOOL_A_TSCONFIG_HEADER]		=
-+		NLA_POLICY_NESTED(ethnl_header_policy),
-+};
-+
-+static int tsconfig_prepare_data(const struct ethnl_req_info *req_base,
-+				 struct ethnl_reply_data *reply_base,
-+				 const struct genl_info *info)
-+{
-+	struct tsconfig_reply_data *data = TSCONFIG_REPDATA(reply_base);
-+	struct hwtstamp_provider *hwprov = NULL;
-+	struct net_device *dev = reply_base->dev;
-+	struct kernel_hwtstamp_config cfg = {};
-+	int ret;
-+
-+	if (!dev->netdev_ops->ndo_hwtstamp_get)
-+		return -EOPNOTSUPP;
-+
-+	ret = ethnl_ops_begin(dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = dev_get_hwtstamp_phylib(dev, &cfg);
-+	if (ret)
-+		goto out;
-+
-+	data->hwtst_config.tx_type = BIT(cfg.tx_type);
-+	data->hwtst_config.rx_filter = BIT(cfg.rx_filter);
-+	data->hwtst_config.flags = BIT(cfg.flags);
-+
-+	data->hwprov_desc.index = -1;
-+	hwprov = rtnl_dereference(dev->hwprov);
-+	if (hwprov) {
-+		data->hwprov_desc.index = hwprov->desc.index;
-+		data->hwprov_desc.qualifier = hwprov->desc.qualifier;
-+	} else {
-+		struct kernel_ethtool_ts_info ts_info = {};
-+
-+		ts_info.phc_index = -1;
-+		ret = __ethtool_get_ts_info(dev, &ts_info);
-+		if (ret)
-+			goto out;
-+
-+		if (ts_info.phc_index == -1)
-+			return -ENODEV;
-+
-+		data->hwprov_desc.index = ts_info.phc_index;
-+		data->hwprov_desc.qualifier = ts_info.phc_qualifier;
-+	}
-+
-+out:
-+	ethnl_ops_complete(dev);
-+	return ret;
-+}
-+
-+static int tsconfig_reply_size(const struct ethnl_req_info *req_base,
-+			       const struct ethnl_reply_data *reply_base)
-+{
-+	const struct tsconfig_reply_data *data = TSCONFIG_REPDATA(reply_base);
-+	bool compact = req_base->flags & ETHTOOL_FLAG_COMPACT_BITSETS;
-+	int len = 0;
-+	int ret;
-+
-+	BUILD_BUG_ON(__HWTSTAMP_TX_CNT > 32);
-+	BUILD_BUG_ON(__HWTSTAMP_FILTER_CNT > 32);
-+
-+	if (data->hwtst_config.flags)
-+		/* _TSCONFIG_HWTSTAMP_FLAGS */
-+		len += nla_total_size(sizeof(u32));
-+
-+	if (data->hwtst_config.tx_type) {
-+		ret = ethnl_bitset32_size(&data->hwtst_config.tx_type,
-+					  NULL, __HWTSTAMP_TX_CNT,
-+					  ts_tx_type_names, compact);
-+		if (ret < 0)
-+			return ret;
-+		len += ret;	/* _TSCONFIG_TX_TYPES */
-+	}
-+	if (data->hwtst_config.rx_filter) {
-+		ret = ethnl_bitset32_size(&data->hwtst_config.rx_filter,
-+					  NULL, __HWTSTAMP_FILTER_CNT,
-+					  ts_rx_filter_names, compact);
-+		if (ret < 0)
-+			return ret;
-+		len += ret;	/* _TSCONFIG_RX_FILTERS */
-+	}
-+
-+	if (data->hwprov_desc.index >= 0)
-+		/* _TSCONFIG_HWTSTAMP_PROVIDER */
-+		len += nla_total_size(0) +
-+		       2 * nla_total_size(sizeof(u32));
-+
-+	return len;
-+}
-+
-+static int tsconfig_fill_reply(struct sk_buff *skb,
-+			       const struct ethnl_req_info *req_base,
-+			       const struct ethnl_reply_data *reply_base)
-+{
-+	const struct tsconfig_reply_data *data = TSCONFIG_REPDATA(reply_base);
-+	bool compact = req_base->flags & ETHTOOL_FLAG_COMPACT_BITSETS;
-+	int ret;
-+
-+	if (data->hwtst_config.flags) {
-+		ret = nla_put_u32(skb, ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS,
-+				  data->hwtst_config.flags);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (data->hwtst_config.tx_type) {
-+		ret = ethnl_put_bitset32(skb, ETHTOOL_A_TSCONFIG_TX_TYPES,
-+					 &data->hwtst_config.tx_type, NULL,
-+					 __HWTSTAMP_TX_CNT,
-+					 ts_tx_type_names, compact);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (data->hwtst_config.rx_filter) {
-+		ret = ethnl_put_bitset32(skb, ETHTOOL_A_TSCONFIG_RX_FILTERS,
-+					 &data->hwtst_config.rx_filter,
-+					 NULL, __HWTSTAMP_FILTER_CNT,
-+					 ts_rx_filter_names, compact);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (data->hwprov_desc.index >= 0) {
-+		struct nlattr *nest;
-+
-+		nest = nla_nest_start(skb, ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER);
-+		if (!nest)
-+			return -EMSGSIZE;
-+
-+		if (nla_put_u32(skb, ETHTOOL_A_TS_HWTSTAMP_PROVIDER_INDEX,
-+				data->hwprov_desc.index) ||
-+		    nla_put_u32(skb,
-+				ETHTOOL_A_TS_HWTSTAMP_PROVIDER_QUALIFIER,
-+				data->hwprov_desc.qualifier)) {
-+			nla_nest_cancel(skb, nest);
-+			return -EMSGSIZE;
-+		}
-+
-+		nla_nest_end(skb, nest);
-+	}
-+	return 0;
-+}
-+
-+/* TSCONFIG_SET */
-+const struct nla_policy ethnl_tsconfig_set_policy[ETHTOOL_A_TSCONFIG_MAX + 1] = {
-+	[ETHTOOL_A_TSCONFIG_HEADER] = NLA_POLICY_NESTED(ethnl_header_policy),
-+	[ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER] =
-+		NLA_POLICY_NESTED(ethnl_ts_hwtst_prov_policy),
-+	[ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS] = { .type = NLA_U32 },
-+	[ETHTOOL_A_TSCONFIG_RX_FILTERS] = { .type = NLA_NESTED },
-+	[ETHTOOL_A_TSCONFIG_TX_TYPES] = { .type = NLA_NESTED },
-+};
-+
-+static int tsconfig_send_reply(struct net_device *dev, struct genl_info *info)
-+{
-+	struct tsconfig_reply_data *reply_data;
-+	struct tsconfig_req_info *req_info;
-+	struct sk_buff *rskb;
-+	void *reply_payload;
-+	int reply_len = 0;
-+	int ret;
-+
-+	req_info = kzalloc(sizeof(*req_info), GFP_KERNEL);
-+	if (!req_info)
-+		return -ENOMEM;
-+	reply_data = kmalloc(sizeof(*reply_data), GFP_KERNEL);
-+	if (!reply_data) {
-+		kfree(req_info);
-+		return -ENOMEM;
-+	}
-+
-+	ASSERT_RTNL();
-+	reply_data->base.dev = dev;
-+	ret = tsconfig_prepare_data(&req_info->base, &reply_data->base, info);
-+	if (ret < 0)
-+		goto err_cleanup;
-+
-+	ret = tsconfig_reply_size(&req_info->base, &reply_data->base);
-+	if (ret < 0)
-+		goto err_cleanup;
-+
-+	reply_len = ret + ethnl_reply_header_size();
-+	rskb = ethnl_reply_init(reply_len, dev, ETHTOOL_MSG_TSCONFIG_SET_REPLY,
-+				ETHTOOL_A_TSCONFIG_HEADER, info, &reply_payload);
-+	if (!rskb)
-+		goto err_cleanup;
-+
-+	ret = tsconfig_fill_reply(rskb, &req_info->base, &reply_data->base);
-+	if (ret < 0)
-+		goto err_cleanup;
-+
-+	genlmsg_end(rskb, reply_payload);
-+	ret = genlmsg_reply(rskb, info);
-+
-+err_cleanup:
-+	kfree(reply_data);
-+	kfree(req_info);
-+	return ret;
-+}
-+
-+static int ethnl_set_tsconfig_validate(struct ethnl_req_info *req_base,
-+				       struct genl_info *info)
-+{
-+	const struct net_device_ops *ops = req_base->dev->netdev_ops;
-+
-+	if (!ops->ndo_hwtstamp_set || !ops->ndo_hwtstamp_get)
-+		return -EOPNOTSUPP;
-+
-+	return 1;
-+}
-+
-+static struct hwtstamp_provider *
-+tsconfig_set_hwprov_from_desc(struct net_device *dev,
-+			      struct genl_info *info,
-+			      struct hwtstamp_provider_desc *hwprov_desc)
-+{
-+	struct kernel_ethtool_ts_info ts_info;
-+	struct hwtstamp_provider *hwprov;
-+	struct nlattr **tb = info->attrs;
-+	struct phy_device *phy = NULL;
-+	enum hwtstamp_source source;
-+	int ret;
-+
-+	ret = ethtool_net_get_ts_info_by_phc(dev, &ts_info, hwprov_desc);
-+	if (!ret) {
-+		/* Found */
-+		source = HWTSTAMP_SOURCE_NETDEV;
-+	} else {
-+		phy = ethtool_phy_get_ts_info_by_phc(dev, &ts_info, hwprov_desc);
-+		if (IS_ERR(phy)) {
-+			if (PTR_ERR(phy) == -ENODEV)
-+				NL_SET_ERR_MSG_ATTR(info->extack,
-+						    tb[ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER],
-+						    "phc not in this net device topology");
-+			return ERR_CAST(phy);
-+		}
-+
-+		source = HWTSTAMP_SOURCE_PHYLIB;
-+	}
-+
-+	hwprov = kzalloc(sizeof(*hwprov), GFP_KERNEL);
-+	if (!hwprov)
-+		return ERR_PTR(-ENOMEM);
-+
-+	hwprov->desc.index = hwprov_desc->index;
-+	hwprov->desc.qualifier = hwprov_desc->qualifier;
-+	hwprov->source = source;
-+	hwprov->phydev = phy;
-+
-+	return hwprov;
-+}
-+
-+static int ethnl_set_tsconfig(struct ethnl_req_info *req_base,
-+			      struct genl_info *info)
-+{
-+	struct kernel_hwtstamp_config hwtst_config = {0};
-+	bool hwprov_mod = false, config_mod = false;
-+	struct hwtstamp_provider *hwprov = NULL;
-+	struct net_device *dev = req_base->dev;
-+	struct nlattr **tb = info->attrs;
-+	int ret;
-+
-+	BUILD_BUG_ON(__HWTSTAMP_TX_CNT >= 32);
-+	BUILD_BUG_ON(__HWTSTAMP_FILTER_CNT >= 32);
-+
-+	if (!netif_device_present(dev))
-+		return -ENODEV;
-+
-+	if (tb[ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER]) {
-+		struct hwtstamp_provider_desc __hwprov_desc = {.index = -1};
-+		struct hwtstamp_provider *__hwprov;
-+
-+		__hwprov = rtnl_dereference(dev->hwprov);
-+		if (__hwprov) {
-+			__hwprov_desc.index = __hwprov->desc.index;
-+			__hwprov_desc.qualifier = __hwprov->desc.qualifier;
-+		}
-+
-+		ret = ts_parse_hwtst_provider(tb[ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER],
-+					      &__hwprov_desc, info->extack,
-+					      &hwprov_mod);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (hwprov_mod) {
-+			hwprov = tsconfig_set_hwprov_from_desc(dev, info,
-+							       &__hwprov_desc);
-+			if (IS_ERR(hwprov))
-+				return PTR_ERR(hwprov);
-+		}
-+	}
-+
-+	/* Get current hwtstamp config if we are not changing the
-+	 * hwtstamp source. It will be zeroed in the other case.
-+	 */
-+	if (!hwprov_mod) {
-+		ret = dev_get_hwtstamp_phylib(dev, &hwtst_config);
-+		if (ret < 0 && ret != -EOPNOTSUPP)
-+			goto err_free_hwprov;
-+	}
-+
-+	/* Get the hwtstamp config from netlink */
-+	if (tb[ETHTOOL_A_TSCONFIG_TX_TYPES]) {
-+		u32 req_tx_type;
-+
-+		req_tx_type = BIT(hwtst_config.tx_type);
-+		ret = ethnl_update_bitset32(&req_tx_type,
-+					    __HWTSTAMP_TX_CNT,
-+					    tb[ETHTOOL_A_TSCONFIG_TX_TYPES],
-+					    ts_tx_type_names, info->extack,
-+					    &config_mod);
-+		if (ret < 0)
-+			goto err_free_hwprov;
-+
-+		/* Select only one tx type at a time */
-+		if (ffs(req_tx_type) != fls(req_tx_type)) {
-+			ret = -EINVAL;
-+			goto err_free_hwprov;
-+		}
-+
-+		hwtst_config.tx_type = ffs(req_tx_type) - 1;
-+	}
-+
-+	if (tb[ETHTOOL_A_TSCONFIG_RX_FILTERS]) {
-+		u32 req_rx_filter;
-+
-+		req_rx_filter = BIT(hwtst_config.rx_filter);
-+		ret = ethnl_update_bitset32(&req_rx_filter,
-+					    __HWTSTAMP_FILTER_CNT,
-+					    tb[ETHTOOL_A_TSCONFIG_RX_FILTERS],
-+					    ts_rx_filter_names, info->extack,
-+					    &config_mod);
-+		if (ret < 0)
-+			goto err_free_hwprov;
-+
-+		/* Select only one rx filter at a time */
-+		if (ffs(req_rx_filter) != fls(req_rx_filter)) {
-+			ret = -EINVAL;
-+			goto err_free_hwprov;
-+		}
-+
-+		hwtst_config.rx_filter = ffs(req_rx_filter) - 1;
-+	}
-+
-+	if (tb[ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS]) {
-+		ethnl_update_u32(&hwtst_config.flags,
-+				 tb[ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS],
-+				 &config_mod);
-+	}
-+
-+	ret = net_hwtstamp_validate(&hwtst_config);
-+	if (ret)
-+		goto err_free_hwprov;
-+
-+	if (hwprov_mod) {
-+		struct kernel_hwtstamp_config zero_config = {0};
-+		struct hwtstamp_provider *__hwprov;
-+
-+		/* Disable current time stamping if we try to enable
-+		 * another one
-+		 */
-+		ret = dev_set_hwtstamp_phylib(dev, &zero_config, info->extack);
-+		if (ret < 0)
-+			goto err_free_hwprov;
-+
-+		/* Change the selected hwtstamp source */
-+		__hwprov = rcu_replace_pointer_rtnl(dev->hwprov, hwprov);
-+		if (__hwprov)
-+			kfree_rcu(__hwprov, rcu_head);
-+	}
-+
-+	if (config_mod) {
-+		ret = dev_set_hwtstamp_phylib(dev, &hwtst_config,
-+					      info->extack);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (hwprov_mod || config_mod) {
-+		ret = tsconfig_send_reply(dev, info);
-+		if (ret && ret != -EOPNOTSUPP) {
-+			NL_SET_ERR_MSG(info->extack,
-+				       "error while reading the new configuration set");
-+			return ret;
-+		}
-+	}
-+
-+	/* tsconfig has no notification */
-+	return 0;
-+
-+err_free_hwprov:
-+	kfree(hwprov);
-+
-+	return ret;
-+}
-+
-+const struct ethnl_request_ops ethnl_tsconfig_request_ops = {
-+	.request_cmd		= ETHTOOL_MSG_TSCONFIG_GET,
-+	.reply_cmd		= ETHTOOL_MSG_TSCONFIG_GET_REPLY,
-+	.hdr_attr		= ETHTOOL_A_TSCONFIG_HEADER,
-+	.req_info_size		= sizeof(struct tsconfig_req_info),
-+	.reply_data_size	= sizeof(struct tsconfig_reply_data),
-+
-+	.prepare_data		= tsconfig_prepare_data,
-+	.reply_size		= tsconfig_reply_size,
-+	.fill_reply		= tsconfig_fill_reply,
-+
-+	.set_validate		= ethnl_set_tsconfig_validate,
-+	.set			= ethnl_set_tsconfig,
-+};
+This also reminds that I should add that LKMM allows mixed-size atomic
+accesses (as non data race), I will add that in the version.
 
--- 
-2.34.1
+> > +mod private {
+> > +    /// Sealed trait marker to disable customized impls on atomic implementation traits.
+> > +    pub trait Sealed {}
+> > +}
+> 
+> Just make the trait unsafe?
+> 
 
+And make the safety requirement of `AtomicImpl` something like:
+
+    The type must have the implementation for atomic operations.
+
+? Hmm.. I don't think that's a good safety requirement TBH. Actually the
+reason that we need to restrict `AtomicImpl` types is more of an
+iplementation issue (the implementation need to be done if we want to
+support i8 or i16) rather than safety issue. So a sealed trait is proper
+here. Does this make sense? Or am I missing something?
+
+Regards,
+Boqun
+
+> Alice
 
