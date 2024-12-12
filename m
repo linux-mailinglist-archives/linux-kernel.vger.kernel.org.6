@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-443634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156E39EFA67
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:09:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B459EFA5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:07:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 980A116AE6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:07:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 073D42856E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC8F22B8D7;
-	Thu, 12 Dec 2024 18:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E3122A81E;
+	Thu, 12 Dec 2024 18:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p+rDWRvP"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sqMMd6uP"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A710F22A7F2
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA9D22A818
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734026710; cv=none; b=oxarDh0AeZOkco5KP3813c17g4kvZ78XZvoiPvh+1y9A80XH0e8D0YqBHLzdwoIfKYfr9yHgNVal/z8S9aQFjcjYtJZFOEKM0tD4IOu8wnprrDd2hzkKvaV9TVGWJ/+ylMJmEsPIDaboyBH/RdWEEA7rk8nixdPUorbdgyzrBv4=
+	t=1734026712; cv=none; b=pCg9hzcUGgYnHM5JGM3sgJa2DpKEcpP3Ig44jXQiIPgG5P7ZuqDTS7DjcbJLaXnvvi1B5Hd0Uv6HPw3Tz5/oE/+ECrnto5ii481f5fQEjmqarK6YjTma16fPoHakzPI/RQCHJoM3yAYXMd01MLjR13BBSArrB7Xq0yKyitHuz4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734026710; c=relaxed/simple;
-	bh=RigQSl3gYtHUND7WnM8WqyROz8rALOea7rQDuWDs2Ew=;
+	s=arc-20240116; t=1734026712; c=relaxed/simple;
+	bh=l4FsE44zdt2XfWMQvkqayVSDSJzVGOEltPA16a4uDmA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=p6Nw53whTgtjjExyg6He/+4A5eLIO4OszPlkRnstdB0kyLVPGSWDd2TzoLTtmxjOfaT5M/zVZwwjCSYjRGeSL9nmpCQwbjg2YqnR+8XNSPdDzQqptAyXEQ+/QUIZI5i5EdgrZICoJmSCaB/z4LO3MWljHUQgjf7c3zbYoLzcgfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p+rDWRvP; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=FaVww11mezpi/a30oj6rZLJFV9BG3Mg/Rew5pmDLideWwsB65Yt82aTZSz/dq7PeHZSDSDiB8cXZCrRy47uJnXl9unlilMO2Mr9llXSz1Gk9IMvElacevK/HeFg9OJIce0pgY4QePAM10nXDfv75I4tiz7HlYe+GVXxBHxmFixQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sqMMd6uP; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-385dfa9b758so420948f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:05:08 -0800 (PST)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4361ac607b6so7279515e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:05:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734026707; x=1734631507; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734026709; x=1734631509; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvcwClhLv6xGoczW4PJAIpjHHqg4M8M55H3dQR9JizI=;
-        b=p+rDWRvP+7mIkCbZPb0pxRDZmMvaLCog6YgVrbAYSLM/JZYLnxTObB1sNqzmQuWF9p
-         rkysIlbi827PhXmVyay9veN+j+K4CTy5xL2d7xGQfEfkVG7msDPT4LMEQ3O800hAXXcJ
-         qP4Lii86ZaHyQfU5YgASjhjYKdb8MzpMJ9Kf5aP3rdsZODr7dwXuDJ9EWZ2IH91uujRq
-         5bX6mwxpi+DBepsH4SX7ssFFpPw4J83eCCmV5OUyenT9LE3862Nm9HQzCkZOeVKiUubE
-         YEdyzggijTJMFw0418BfMMycX7PntX4Q9ZEvBDRtb01ERWB/LuGisea+gQc6EArKRLyS
-         0obQ==
+        bh=iXIRvpZuiwLtOV93NpSTxaaQKTg5ZvL9FYLJBzJb620=;
+        b=sqMMd6uPIGHfndXrV4mBho6n6Fc45UMYK10bm+GgMvPlveqOP9C2PGIUPgq+0O9gmD
+         eOSgxKso7O4tSG/XSlDoBxzu/zuDR9B6r60mymLXoAjCN8b6NjSi8BL47cTbJlW91Jnb
+         tVVMjqLgMq7i/Msif2j+YkHBdhJUmwNTTrXjHph//MULNnueMAporhFD7QzzW8TIEoDB
+         OOGhdBtBIyWedI3AiGGlSYyXgO48lpkkxZHBTofbts3HjuUWiTVGb1ndon3thQv+ovp+
+         8VskS7rAB7GO64s8RlRpGJpoc2jCG8LxeAY9KQHDD2AcMWVYzf6Bq+KQd8tswHdAVbaU
+         rK0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734026707; x=1734631507;
+        d=1e100.net; s=20230601; t=1734026709; x=1734631509;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvcwClhLv6xGoczW4PJAIpjHHqg4M8M55H3dQR9JizI=;
-        b=w/PiMl/myqslcYpfRvIyzY3BXFfO2jtsebS1QJzakF0pq68yZjMvPwB56RY9OnlEzY
-         RYfHIoBpcWBzfcrWrZ8Zn81YIriU8AlPlgn9Z1KYYDR1O50WuvOgHBHi0jPehAN5TPOB
-         3ZNNbgxVC5dQNRcMiEtJkC765To5W4qZczSuuMWSLzx+OCLFCOi1P1DSyvgAz00+N4Kz
-         +6jtB/343B8dk6ruFrudo4CgNa0zbPHudD6LvTC6Bu9fyt+eHd4RBOdBB8YZFn3xJVDU
-         Jp9PoBnOvSFo+9TY/5dPI1cX64Yln6Ts1KRjJTrQGLJHOOVKRrlROXLUNbm+HueB9PvE
-         nvhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlO9qiEW2BvzwuTuXzB2AirDgnnfpBM2BCAgd7WK6qtRfux+dcfKBNzFNIlp7Ft1pADrQqgPuO0SkYDqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3LOlpbTyaycHrfqZn20iGraT/w7vRhtGN+kJA5poUmldZNxan
-	F5HppO99bFCA4fmj01ItgVcEvSokpv/PeGZSbPnNjkpEsIPAdO0PzzaJE6AuZmr7m67jQ75GiE0
-	fG+QIZV0poQ==
-X-Google-Smtp-Source: AGHT+IE10scUEuEcCRD+5w6H2L6RFmN8j1xObFtBxLC8p2WLtJlxovv9B58XfdIQzXv891vozkqFrRDj+yh8bw==
-X-Received: from wrvj17.prod.google.com ([2002:a05:6000:1bd1:b0:386:3835:9fda])
+        bh=iXIRvpZuiwLtOV93NpSTxaaQKTg5ZvL9FYLJBzJb620=;
+        b=qfS0YU/036S0xlvDTCjz8GtMXZtK53SN1aaUVusaO2H2uG//xvBwS1nFyf7jQ6dsf+
+         QTNXbwMR3CkukjeEOUnoJ+Wv8qNgIjvjSp6cIxfsa6ogyHghDKd8ZXKuPmRAdHrJ6Cdi
+         OBXbSyQ3tADBT99cNMB1fZ/CuypnEm5opvAO2wfj7JRpaGJ+BxgjKsa1/u1EWNCA5DI5
+         OUxf/SnGKEp+lhF3SffAbReBmM7bbtKSvtjcwzztlwhANnaE9fME8wdCnP68pY+zq4vN
+         kbwhrd4vssgV7ABQ5xrmEsLEHSwUnfBO6BIvYXdakvDIEhzL9c0YzdEc4TbROiMY0lPh
+         foAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxPnaHhdFkfGeviDYt0UF8FXPNnrrE2eG9DrhRwtHdZ4goZEvKOIyO71O7UPq307NkxiIX2wkNNLfV8qU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyco6lnApShVUPy2ECbknXbzbQmdnsDzl/eGtQogi8VQxpokVPO
+	A8qeTgmN/HY005lT/wFLOJOM6l/yvrjOqI7MzcmztFfv5piGQulcNFxP2ZV8zsFskHs1LXuIAZJ
+	PVVcVhBPtGg==
+X-Google-Smtp-Source: AGHT+IHgnk/pCZh1WlJnWXuUNSz2FFTV3sydknebPh6K+YIgIP/qVa3msTdRnMT5NLGcQQqFklKUxKoqwGRQMg==
+X-Received: from wmdp19.prod.google.com ([2002:a05:600c:5d3:b0:434:f271:522e])
  (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:280d:b0:385:ec89:2f07 with SMTP id ffacd0b85a97d-3864cea56c5mr4112209f8f.32.1734026707185;
- Thu, 12 Dec 2024 10:05:07 -0800 (PST)
-Date: Thu, 12 Dec 2024 18:03:35 +0000
+ 2002:a05:600c:46c6:b0:434:a746:9c82 with SMTP id 5b1f17b1804b1-43622823ab1mr38109965e9.5.1734026709204;
+ Thu, 12 Dec 2024 10:05:09 -0800 (PST)
+Date: Thu, 12 Dec 2024 18:03:36 +0000
 In-Reply-To: <20241212180423.1578358-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241212180423.1578358-1-smostafa@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212180423.1578358-12-smostafa@google.com>
-Subject: [RFC PATCH v2 11/58] KVM: arm64: pkvm: Add pkvm_udelay()
+Message-ID: <20241212180423.1578358-13-smostafa@google.com>
+Subject: [RFC PATCH v2 12/58] KVM: arm64: Add __pkvm_{use, unuse}_dma()
 From: Mostafa Saleh <smostafa@google.com>
 To: iommu@lists.linux.dev, kvmarm@lists.linux.dev, 
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -87,108 +87,169 @@ Cc: catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
 	Mostafa Saleh <smostafa@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+When a page is mapped in an IOMMU page table for DMA, it must
+not be donated to a guest or the hypervisor we ensure this with:
+- Host can only map pages that are OWNED
+- Any page that is mapped is refcounted
+- Donation/Sharing is prevented from refcount check in
+  host_request_owned_transition()
+- No MMIO transtion is allowed beyond IOMMU MMIO which
+  happens during de-privilege.
+In case in the future shared pages are allowed to be mapped,
+similar checks are needed in host_request_unshare() and
+host_ack_unshare()
 
-Add a simple delay loop for drivers.
-
-This could use more work. It should be possible to insert a wfe and save
-power, but I haven't studied whether it is safe to do so with the host
-in control of the event stream. The SMMU driver will use wfe anyway for
-frequent waits (provided the implementation can send command queue
-events).
+Add 2 functions that would be called before each IOMMU map
+and after each successful IOMMU unmap.
 
 Signed-off-by: Mostafa Saleh <smostafa@google.com>
-Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
 ---
- arch/arm64/kvm/hyp/include/nvhe/pkvm.h |  3 ++
- arch/arm64/kvm/hyp/nvhe/setup.c        |  4 +++
- arch/arm64/kvm/hyp/nvhe/timer-sr.c     | 42 ++++++++++++++++++++++++++
- 3 files changed, 49 insertions(+)
+ arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |  2 +
+ arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 97 +++++++++++++++++++
+ 2 files changed, 99 insertions(+)
 
-diff --git a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-index 3b515ce4c433..8a5554615e40 100644
---- a/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-+++ b/arch/arm64/kvm/hyp/include/nvhe/pkvm.h
-@@ -143,4 +143,7 @@ int pkvm_load_pvmfw_pages(struct pkvm_hyp_vm *vm, u64 ipa, phys_addr_t phys,
- 			  u64 size);
- void pkvm_poison_pvmfw_pages(void);
+diff --git a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+index 67466b4941b4..d75e64e59596 100644
+--- a/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
++++ b/arch/arm64/kvm/hyp/include/nvhe/mem_protect.h
+@@ -92,6 +92,8 @@ int __pkvm_remove_ioguard_page(struct pkvm_hyp_vcpu *hyp_vcpu, u64 ipa);
+ bool __pkvm_check_ioguard_page(struct pkvm_hyp_vcpu *hyp_vcpu);
+ int __pkvm_guest_relinquish_to_host(struct pkvm_hyp_vcpu *vcpu,
+ 				    u64 ipa, u64 *ppa);
++int __pkvm_host_use_dma(u64 phys_addr, size_t size);
++int __pkvm_host_unuse_dma(u64 phys_addr, size_t size);
  
-+int pkvm_timer_init(void);
-+void pkvm_udelay(unsigned long usecs);
-+
- #endif /* __ARM64_KVM_NVHE_PKVM_H__ */
-diff --git a/arch/arm64/kvm/hyp/nvhe/setup.c b/arch/arm64/kvm/hyp/nvhe/setup.c
-index 46dd68161979..9d09f5f471b9 100644
---- a/arch/arm64/kvm/hyp/nvhe/setup.c
-+++ b/arch/arm64/kvm/hyp/nvhe/setup.c
-@@ -356,6 +356,10 @@ void __noreturn __pkvm_init_finalise(void)
- 	if (ret)
- 		goto out;
- 
-+	ret = pkvm_timer_init();
-+	if (ret)
-+		goto out;
-+
- 	ret = fix_host_ownership();
- 	if (ret)
- 		goto out;
-diff --git a/arch/arm64/kvm/hyp/nvhe/timer-sr.c b/arch/arm64/kvm/hyp/nvhe/timer-sr.c
-index 3aaab20ae5b4..732beb5fe24b 100644
---- a/arch/arm64/kvm/hyp/nvhe/timer-sr.c
-+++ b/arch/arm64/kvm/hyp/nvhe/timer-sr.c
-@@ -11,6 +11,10 @@
- #include <asm/kvm_hyp.h>
- #include <asm/kvm_mmu.h>
- 
-+#include <nvhe/pkvm.h>
-+
-+static u32 timer_freq;
-+
- void __kvm_timer_set_cntvoff(u64 cntvoff)
- {
- 	write_sysreg(cntvoff, cntvoff_el2);
-@@ -60,3 +64,41 @@ void __timer_enable_traps(struct kvm_vcpu *vcpu)
- 
- 	sysreg_clear_set(cnthctl_el2, clr, set);
+ bool addr_is_memory(phys_addr_t phys);
+ int host_stage2_idmap_locked(phys_addr_t addr, u64 size, enum kvm_pgtable_prot prot);
+diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+index d14f4d63eb8b..0840af20c366 100644
+--- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
++++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+@@ -513,6 +513,20 @@ bool addr_is_memory(phys_addr_t phys)
+ 	return !!find_mem_range(phys, &range);
  }
-+
-+static u64 pkvm_ticks_get(void)
+ 
++static bool is_range_refcounted(phys_addr_t addr, u64 nr_pages)
 +{
-+	return __arch_counter_get_cntvct();
++	struct hyp_page *p;
++	int i;
++
++	for (i = 0 ; i < nr_pages ; ++i) {
++		p = hyp_phys_to_page(addr + i * PAGE_SIZE);
++		if (hyp_refcount_get(p->refcount))
++			return true;
++	}
++
++	return false;
 +}
 +
-+#define SEC_TO_US 1000000
+ static bool addr_is_allowed_memory(phys_addr_t phys)
+ {
+ 	struct memblock_region *reg;
+@@ -927,6 +941,9 @@ static int host_request_owned_transition(u64 *completer_addr,
+ 	u64 size = tx->nr_pages * PAGE_SIZE;
+ 	u64 addr = tx->initiator.addr;
+ 
++	if (range_is_memory(addr, addr + size) && is_range_refcounted(addr, tx->nr_pages))
++		return -EINVAL;
 +
-+int pkvm_timer_init(void)
+ 	*completer_addr = tx->initiator.host.completer_addr;
+ 	return __host_check_page_state_range(addr, size, PKVM_PAGE_OWNED);
+ }
+@@ -938,6 +955,7 @@ static int host_request_unshare(u64 *completer_addr,
+ 	u64 addr = tx->initiator.addr;
+ 
+ 	*completer_addr = tx->initiator.host.completer_addr;
++
+ 	return __host_check_page_state_range(addr, size, PKVM_PAGE_SHARED_OWNED);
+ }
+ 
+@@ -2047,6 +2065,85 @@ int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages)
+ 	return ret;
+ }
+ 
++static void __pkvm_host_use_dma_page(phys_addr_t phys_addr)
 +{
-+	timer_freq = read_sysreg(cntfrq_el0);
++	struct hyp_page *p = hyp_phys_to_page(phys_addr);
++
++	hyp_page_ref_inc(p);
++}
++
++static void __pkvm_host_unuse_dma_page(phys_addr_t phys_addr)
++{
++	struct hyp_page *p = hyp_phys_to_page(phys_addr);
++
++	hyp_page_ref_dec(p);
++}
++
++/*
++ * __pkvm_host_use_dma - Mark host memory as used for DMA
++ * @phys_addr:	physical address of the DMA region
++ * @size:	size of the DMA region
++ * When a page is mapped in an IOMMU page table for DMA, it must
++ * not be donated to a guest or the hypervisor we ensure this with:
++ * - Host can only map pages that are OWNED
++ * - Any page that is mapped is refcounted
++ * - Donation/Sharing is prevented from refcount check in
++ *   host_request_owned_transition()
++ * - No MMIO transtion is allowed beyond IOMMU MMIO which
++ *   happens during de-privilege.
++ * In case in the future shared pages are allowed to be mapped,
++ * similar checks are needed in host_request_unshare() and
++ * host_ack_unshare()
++ */
++int __pkvm_host_use_dma(phys_addr_t phys_addr, size_t size)
++{
++	int i;
++	int ret = 0;
++	size_t nr_pages = size >> PAGE_SHIFT;
++
++	if (WARN_ON(!PAGE_ALIGNED(phys_addr | size)))
++		return -EINVAL;
++
++	host_lock_component();
++	ret = __host_check_page_state_range(phys_addr, size, PKVM_PAGE_OWNED);
++	if (ret)
++		goto out_ret;
++
++	if (!range_is_memory(phys_addr, phys_addr + size))
++		goto out_ret;
++
++	for (i = 0; i < nr_pages; i++)
++		__pkvm_host_use_dma_page(phys_addr + i * PAGE_SIZE);
++
++out_ret:
++	host_unlock_component();
++	return ret;
++}
++
++int __pkvm_host_unuse_dma(phys_addr_t phys_addr, size_t size)
++{
++	int i;
++	size_t nr_pages = size >> PAGE_SHIFT;
++
++	if (WARN_ON(!PAGE_ALIGNED(phys_addr | size)))
++		return -EINVAL;
++
++	host_lock_component();
++	if (!range_is_memory(phys_addr, phys_addr + size))
++		goto out_ret;
 +	/*
-+	 * TODO: The highest privileged level is supposed to initialize this
-+	 * register. But on some systems (which?), this information is only
-+	 * contained in the device-tree, so we'll need to find it out some other
-+	 * way.
++	 * We end up here after the caller successfully unmapped the page from
++	 * the IOMMU table. Which means that a ref is held, the page is shared
++	 * in the host s2, there can be no failure.
 +	 */
-+	if (!timer_freq || timer_freq < SEC_TO_US)
-+		return -ENODEV;
++	for (i = 0; i < nr_pages; i++)
++		__pkvm_host_unuse_dma_page(phys_addr + i * PAGE_SIZE);
++
++out_ret:
++	host_unlock_component();
 +	return 0;
 +}
 +
-+#define pkvm_time_us_to_ticks(us) ((u64)(us) * timer_freq / SEC_TO_US)
-+
-+void pkvm_udelay(unsigned long usecs)
-+{
-+	u64 ticks = pkvm_time_us_to_ticks(usecs);
-+	u64 start = pkvm_ticks_get();
-+
-+	while (true) {
-+		u64 cur = pkvm_ticks_get();
-+
-+		if ((cur - start) >= ticks || cur < start)
-+			break;
-+		/* TODO wfe */
-+		cpu_relax();
-+	}
-+}
+ int __pkvm_host_share_guest(u64 pfn, u64 gfn, struct pkvm_hyp_vcpu *vcpu,
+ 			    enum kvm_pgtable_prot prot)
+ {
 -- 
 2.47.0.338.g60cca15819-goog
 
