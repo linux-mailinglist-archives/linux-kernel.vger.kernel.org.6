@@ -1,183 +1,94 @@
-Return-Path: <linux-kernel+bounces-442753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F129EE129
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:22:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA6C616312B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:22:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9CE20C03D;
-	Thu, 12 Dec 2024 08:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qycEh1uQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0839EE12A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:22:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE51558BA;
-	Thu, 12 Dec 2024 08:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CAAF2834D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:22:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3901A20CCF6;
+	Thu, 12 Dec 2024 08:22:37 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F47620C491
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991753; cv=none; b=smFCozxF9yROq6sLu+f0mnBmueTFlYTSK8Fli1y9NdFlv1Nvy+wJALk3z4Uv5pEU1Qv0dVwW8IBlBXV5QDvmWlBEkQ1PXh+taRmYum7WBr7Ozs7o4N8PiSP3So8d+yzxCXrHUMFDnt+tT0fUpp/Ly7+HdOu8Aa+4y5FqNaXFZkc=
+	t=1733991756; cv=none; b=tO6Ay99goDiWdZfWpr4y30p+7gG+R0vlDAjw7uhRpj9mRDtx8p6Zr8Sg0G8R3Pa78Y4PGQYxUb6wa8XWN5vUS0cCwpsQRUvMjKP/3eOyTxq9bOsDHH13ZCD3Wpd07bkC5GcobwkndqXh/JD83ALk8DUEW1T0j4xU3fLgXkEGInw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991753; c=relaxed/simple;
-	bh=++lvcFwyWhMB1PFDWOngLLSKdXo8A3B5L3C6ilN7LtU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pVaZy62vCfyPnAOeB3+XbrOnbBT44JDVGlPq+pk769VEpuRM+hOlZf6YjzFBwMx7ztaaswD6wrCtAJnXqrarlYIOvxp03Ag+QXU2zKaFAxQ65ICGAjb5vshHTrXVDlM1AzWutz1SWWWN6vGqVLMQ4b7q/FgsfF1//FHMhqCPNk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qycEh1uQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 269C0C4CECE;
-	Thu, 12 Dec 2024 08:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733991753;
-	bh=++lvcFwyWhMB1PFDWOngLLSKdXo8A3B5L3C6ilN7LtU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=qycEh1uQ4AhvtaFefvByoIK2ha/fYJhsNX0qCd6MDW/ZbkhzUHi27p+FVCA4i7pd0
-	 ssKCcj3S863/Tez0mMZ/o3rPx4JDO6ssT1XMEkbWENcD6BlBT/rRe98H9xVUjfeBWQ
-	 KaIRBL97+QOM76iIB9LBhHuSIIcYSDheCYCLbuqtwqa+zV0uz4Vw8Xgj9qIGmvDF6j
-	 WDUbaeJcFy8VnzoeQOyyBQxlDmSH0/1NB89esoKLja59YVoo6w1sBNJqTtCcYtpx0P
-	 Xn14LSOp62tMA+snF4HEEFAAJ5OW+5WeAxxUKOWhD5vC+zWhhb6DakgmoN7tuckb6S
-	 AVI0Mh2lWgOiA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>
-Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,
-  =?utf-8?Q?Ma=C3=ADra?= Canal <mcanal@igalia.com>,  "Asahi Lina"
- <lina@asahilina.net>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 2/2] rust: xarray: Add an abstraction for XArray
-In-Reply-To: <CAJ-ks9=oyLSkqAsAkO5VSM9js2G2AFvvrA-qHRKNYnsZyUx=mA@mail.gmail.com>
- (Tamir
-	Duberstein's message of "Wed, 11 Dec 2024 10:41:05 -0500")
-References: <20241203-rust-xarray-bindings-v11-0-58a95d137ec2@gmail.com>
-	<20241203-rust-xarray-bindings-v11-2-58a95d137ec2@gmail.com>
-	<CAH5fLgjPir8LfzfouBd3PYBvfCkWgQEw+im-=Vo7z8kBmFLtrw@mail.gmail.com>
-	<dGt7iLkZMZ5kn-_LRirlwzFd9IS8guo5pt05gJotd_eQ21vyK0hA064W0VCA75N51sHgTlRUiSEEv_p-ANe-LA==@protonmail.internalid>
-	<CAJ-ks9=oyLSkqAsAkO5VSM9js2G2AFvvrA-qHRKNYnsZyUx=mA@mail.gmail.com>
-Date: Thu, 12 Dec 2024 09:22:21 +0100
-Message-ID: <87jzc5e2f6.fsf@kernel.org>
+	s=arc-20240116; t=1733991756; c=relaxed/simple;
+	bh=PhGq18nzYMSBTDMTbNGpAYmympEoHWQY2Dag48ZP8uQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fsmchT7HjFoh0DiqO96wVhEyGXiNdrY3CYDZrWRsFioLIe1VV3D6eXFkupm1/gh1lBEfhaHxEPtJgGWV8T+DCP+/G60ZzX2Vm7iHIMmmiesF9iZSKXM6/m20wwVSTOQ+12SxGcWK52bv9Nv6vRLHBVHM4TrKlw7TK6JUpYTCs8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-844dfe8dad5so36645139f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:22:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733991754; x=1734596554;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WtOOIcnxJ+Mj13bnw/HJxyJB2w9A8masx1lR466c5Xs=;
+        b=CIvtTD95yW5WCY9voJXwYll4s3pJF0d3wB0fr5qAacGHzsYXT6O8MVGMeYM+ntc6oq
+         piYJrDqbOBkEcFOID44vGw53MJ1GVYuNlBHkftNMfNH1wgXNcs37Y9Qy3+eBFfm6fKPO
+         QcHOlchDfsrnuiB5NV7hoBgIV5cfDqQ4SJQoReRrLgrOmY++RdAloL/K1OnrvR2R8m+N
+         LSLd4WMzT+2Y5D8IxcsZt6ZeWt2ltET+gxQvR7xttxMQujmBS1E9s9lPOPobDp+kuoG9
+         /qiZ8QDf6AUohlX5IaLCk8AQhZC0RfFQ0wpBOz+WZxhPKZ+1uGUVPBvbi+uuY9em3W9b
+         ycrg==
+X-Gm-Message-State: AOJu0YwuVhPoyzYwqD+eDOqKGUhBE/mLb5LVujcgj0BVsAibmeNTdIAp
+	0DJvmwfRe4Upx0/nK5f0Y/jVk88+baClbx5SJem//Om4Z5elXusXRzT8F4dybZzgzCNoV2CsF4H
+	GGYSSBH4FqcKOBnP2sFhPBGSHCMeU/taIg9xE/yyZ2qWnspVPtkOfAJk=
+X-Google-Smtp-Source: AGHT+IGiQUFV4e9gisUlJuPAldAzzWKk//yAe5fw7mjhJIvEzmdpEf5x8+1ZQa8CFxfXrCc3wXEPURwwNpB6EjjU3aZLLA7AWXc+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1aa4:b0:3a9:e2f3:8dc4 with SMTP id
+ e9e14a558f8ab-3ac4c8715ccmr27623005ab.20.1733991754494; Thu, 12 Dec 2024
+ 00:22:34 -0800 (PST)
+Date: Thu, 12 Dec 2024 00:22:34 -0800
+In-Reply-To: <0000000000001db56d06076f6861@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675a9d4a.050a0220.17f54a.007f.GAE@google.com>
+Subject: Re: [syzbot] Re: KMSAN: uninit-value in hfsplus_rename_cat()
+From: syzbot <syzbot+93f4402297a457fc6895@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-"Tamir Duberstein" <tamird@gmail.com> writes:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> On Wed, Dec 11, 2024 at 10:04=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
-> wrote:
->>
->> > +    fn iter(&self) -> impl Iterator<Item =3D core::ptr::NonNull<T::Po=
-intedTo>> + '_ {
->> > +        // TODO: Remove when https://lore.kernel.org/all/202409132130=
-41.395655-5-gary@garyguo.net/ is applied.
->> > +        const MAX: core::ffi::c_ulong =3D core::ffi::c_ulong::MAX;
->>
->> I think you can use kernel::ffi::c_ulong already. Enough things were
->> merged in 6.13 for that to work. If you import kernel::ffi::c_ulong at
->> the top of this file, then you can just do c_ulong::MAX in the
->> function calls below.
->
-> This isn't about using kernel::ffi::c_ulong; it's about using
-> usize::MAX. I'll clarify the comment and change this to use
-> kernel::ffi::c_ulong for now.
->
->> > +        let mut index =3D 0;
->> > +
->> > +        // SAFETY: `self.xa` is always valid by the type invariant.
->> > +        iter::once(unsafe {
->> > +            bindings::xa_find(self.xa.get(), &mut index, MAX, binding=
-s::XA_PRESENT)
->> > +        })
->> > +        .chain(iter::from_fn(move || {
->> > +            // SAFETY: `self.xa` is always valid by the type invarian=
-t.
->> > +            Some(unsafe {
->> > +                bindings::xa_find_after(self.xa.get(), &mut index, MA=
-X, bindings::XA_PRESENT)
->> > +            })
->> > +        }))
->> > +        .map_while(|ptr| core::ptr::NonNull::new(ptr.cast()))
->>
->> You use core::ptr::NonNull in many places. Consider importing it.
->
-> Will do.
->
->> > +    /// Stores an entry in the array.
->> > +    ///
->> > +    /// May drop the lock if needed to allocate memory, and then reac=
-quire it afterwards.
->> > +    ///
->> > +    /// On success, returns the entry which was previously at the giv=
-en index.
->> > +    ///
->> > +    /// On failure, returns the entry which was attempted to be store=
-d.
->> > +    pub fn store(
->> > +        &mut self,
->> > +        index: usize,
->> > +        value: T,
->> > +        gfp: alloc::Flags,
->> > +    ) -> Result<Option<T>, (T, Error)> {
->>
->> We can see in your examples that this return type is inconvenient.
->> Perhaps it would be better to make a new error type containing a T and
->> an Error, and implement From so that the question mark can convert
->> directly to Error (throwing away the T).
->
-> Will do.
->
->> > +// SAFETY: It is safe to send `XArray<T>` to another thread when the =
-underlying `T` is `Send`
->> > +// because XArray is thread-safe and all mutation operations are sync=
-hronized.
->> > +unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
->> > +
->> > +// SAFETY: It is safe to send `&XArray<T>` to another thread when the=
- underlying `T` is `Sync`
->> > +// because it effectively means sharing `&T` (which is safe because `=
-T` is `Sync`); additionally, it
->> > +// needs `T` to be `Send` because any thread that has a `&XArray<T>` =
-may lock it and get a
->> > +// `Guard<T>` on that thread, so the thread may ultimately access `T`=
- using a mutable reference, for
->> > +// example, using `get_mut` or `remove`.
->> > +unsafe impl<T: ForeignOwnable + Send + Sync> Sync for XArray<T> {}
->>
->> I don't think Sync is needed due to the spinlock.
->
-> Agreed. How's this phrasing for the comment?
->
-> // SAFETY: It is safe to send `&XArray<T>` to another thread when the
-> underlying `T` is `Send`
-> // because any thread that has a `&XArray<T>` may lock it and get a
-> `Guard<T>` on that thread, so
-> // the thread may ultimately access `T` using a mutable borrow, for
-> example, using `get_mut` or
-> // `remove`. It is not necessary for `T` to be `Sync` because access
-> to immutable borrows of `T` is
-> // also synchronized through `Guard<T>`.
+***
 
-I don't think we need the last paragraph. How about this:
+Subject: Re: KMSAN: uninit-value in hfsplus_rename_cat()
+Author: dmantipov@yandex.ru
 
-SAFETY: It is safe to send `&XArray<T>` to another thread when the
-underlying `T` is `Send` because operations on the `XArray` are
-synchronized internally, and all access to `T` owned by the `XArray` is
-exclusive under the internal `XArray` lock.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 231825b2e1ff6ba799c5eaf396d3ab2354e37c6b
 
-
-Best regards,
-Andreas Hindborg
-
-
-
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 948b8aaee33e..9352efbbf736 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -360,6 +360,12 @@ static int hfsplus_reconfigure(struct fs_context *fc)
+ 			pr_warn("filesystem is marked journaled, leaving read-only.\n");
+ 			sb->s_flags |= SB_RDONLY;
+ 			fc->sb_flags |= SB_RDONLY;
++		} else {
++			pr_err("remount from read-ony to read-write "
++			       "is not supported, leaving read-only.\n");
++			sb->s_flags |= SB_RDONLY;
++			fc->sb_flags |= SB_RDONLY;
++			return -ENOSYS;
+ 		}
+ 	}
+ 	return 0;
 
