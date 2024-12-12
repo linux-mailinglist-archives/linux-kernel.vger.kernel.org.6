@@ -1,243 +1,201 @@
-Return-Path: <linux-kernel+bounces-443186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38759EE889
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:13:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB6D9EE88B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:13:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19C61888F01
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:12:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906E6163A37
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC36213E9F;
-	Thu, 12 Dec 2024 14:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFC421506B;
+	Thu, 12 Dec 2024 14:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G4EoXK4z"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H9V+ue8+"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D782147FE;
-	Thu, 12 Dec 2024 14:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9A2139C9
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734012769; cv=none; b=mQzFCplhzjirDS4OWA7b7AVrNOb8fhiNt7f0vWZ5Z7JJR+O+lIwK8tJ61/7QrXccKuAGndBSaElFBVz6Ip2W00PCJ++nrIIYPvcYid7Fyp/uWaDV/eioscI6sHgsGedDY/gK/675sCpEr7tp6oOuT0Ew4R9P28fDbCZoJdkd/eA=
+	t=1734012788; cv=none; b=J0yu/GI3/Q/vnt7JdlWB3990dGV93dmgff9DSfmuPEIvt56MXGh3CLghpICtPMGuWLaMMYM/1GI34oAo1aC0D9VgIb6qTJI3xUIsnP71BIldk1fkCLMjloZlYxCC8iC6RYXi67lPJn1uO37pqoyq1aT1HPtF5r0dV0LjaIUlSUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734012769; c=relaxed/simple;
-	bh=oZvwUxmIt9Jb89+cOwAu5t9V0/+kjzARYOr+wFyil0E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ITjUngZoF8Vw551Pwk81g/mqWCcgZFNQfiN9MR+enuPn71k3+SeOTmvPa7HiPJEoyiyDrgpJif7N+CMZNnr5woJKdxa0+SgKU1w43Z6E5JBpaxp5pZGhy0kCNAfK7Zoy/5NfWtw/fu5a7rqAVnrvnC2FTWzzhqcPcQNtdqztt7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G4EoXK4z; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC60jos000945;
-	Thu, 12 Dec 2024 14:12:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=+pWSyD
-	a1SC+4rapagG9/qybDkMk3cUimnwFclPP/tiE=; b=G4EoXK4zm9hm6Ax9uq9VkR
-	znNgZEuh8HpdZJWqtBZdQUhkfY1MiYj/OZyvfZnHReXmC40a+1igS+t6x+o+2dYp
-	jYJOIzgcriW3Ho0mtVKHIhN2c98xtc3893vImv5Tbdwo41aCuwt16naTNJMzLdUP
-	bl1ihv5+saya2CSH8hIG0/Dy79XfU2mqkyWUFfokQqKq7VA7kdkxqiAgzLIU1l5W
-	nLKoTHW9/D++ODr5q+jI57sqWY2M/036U7ZsFGNYx2K/Yq1lIpPqj8bm2gbWsvrz
-	Xgd1fpG+MkNHN/RAo9+yYuTqBPhPHcWfl8RWBiDxEL8GBf0uak+6r1eTnFAWK4Dg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ft6d2fsk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 14:12:24 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BCECNQc002412;
-	Thu, 12 Dec 2024 14:12:23 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ft6d2fsf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 14:12:23 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCBmULt017364;
-	Thu, 12 Dec 2024 14:12:22 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d20fqa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 14:12:22 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BCECLNm51511924
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Dec 2024 14:12:22 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D5B2558053;
-	Thu, 12 Dec 2024 14:12:21 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3C07B58043;
-	Thu, 12 Dec 2024 14:12:18 +0000 (GMT)
-Received: from [9.152.212.155] (unknown [9.152.212.155])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 12 Dec 2024 14:12:18 +0000 (GMT)
-Message-ID: <f13b7b0c668c7e3df2842ee1e66ca4645421b055.camel@linux.ibm.com>
-Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
- 2.5 GT/s
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Niklas Schnelle	 <niks@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Rob Herring <robh@kernel.org>, Krzysztof
- Wilczy??ski	 <kw@linux.com>,
-        "Maciej W . Rozycki" <macro@orcam.me.uk>,
-        Jonathan Cameron	 <Jonathan.Cameron@huawei.com>,
-        Alexandru Gagniuc
- <mr.nuke.me@gmail.com>,
-        Krishna chaitanya chundru	
- <quic_krichai@quicinc.com>,
-        Srinivas Pandruvada	
- <srinivas.pandruvada@linux.intel.com>,
-        "Rafael J . Wysocki"
- <rafael@kernel.org>, linux-pm@vger.kernel.org,
-        Smita Koralahalli	
- <Smita.KoralahalliChannabasappa@amd.com>,
-        LKML
- <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano
- <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>, Zhang Rui
- <rui.zhang@intel.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Mika Westerberg	
- <mika.westerberg@linux.intel.com>
-Date: Thu, 12 Dec 2024 15:12:17 +0100
-In-Reply-To: <Z1rX1BgdsPHIHOv4@wunner.de>
-References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
-	 <Z1gSZCdv3fwnRRNk@wunner.de>
-	 <70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
-	 <Z1lF468L8c84QJkD@wunner.de>
-	 <dc6e677f-4c19-dd25-8878-8eae9154cff4@linux.intel.com>
-	 <Z1qoDmF6urJDN5jh@wunner.de>
-	 <97bbbdecb8c65cfa2625b47aa2585a7417ddcb81.camel@linux.ibm.com>
-	 <Z1rX1BgdsPHIHOv4@wunner.de>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	s=arc-20240116; t=1734012788; c=relaxed/simple;
+	bh=eYfNQdH+Yb3pRxEGGvcQhmT4dHeOB6ybMgg4S3Jm3wA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HKVPXTVth3ihRHQ5TGsSQssLkSx81D889X8VEZ9+gHv9/Pam6PWi2AkCbcRl5o/6kiy+1uF5i5ZtMsGKY3RQveAzIx3UGjEUDNdlkonB/EJVmaGNYqFW9h8QXDcZ/rIEdZXrFFo9EIOG6KtOrbwPAI1Chcl4UlIyMI+JiOPDNZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H9V+ue8+; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4361b0ec57aso6221315e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:13:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734012785; x=1734617585; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q7qRsWZzS9ykzXPHauoxFElRIiyOYyTyVH1ndFyLa8s=;
+        b=H9V+ue8+oAgjT1tqeX0CtQ1ptl5MXfdzX7u7dT3EHE2/FEwODpSCkIbOvcEM9o+o5Q
+         UFIrnfMJQzF/cXtTlw4Sh+nFg4Ix8bKi2BeDuILV3Hvc7R6TvnzvtHEZjf6kX5KPnMuA
+         hFNQltGAAtEIhljLILuW5jTsEtdYhkxbjsd05NuONWix2dhrnR67QGuasCMJtwN7tDZz
+         CzdK22RoEQG+nwL6fKv2pBXNmcre7cCGRGv2f4JTU0MJAklfMkECx2Z6irtHc5s+BhO8
+         +N0Az7hI51xailuzGbV2qNH5v+iD+owThVo4mXUcfCqxIw2MBF8g2n801kqONpkaxgdt
+         PwdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734012785; x=1734617585;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=q7qRsWZzS9ykzXPHauoxFElRIiyOYyTyVH1ndFyLa8s=;
+        b=jyNejtOZYAbJats26hckPrrdL/iNPGo2cXv2VOYkL/W13yIve78QfZAFmTiyKebXHP
+         nyDClkClNTiWgzaDhfn/Q47T+a8eduHegcNNTUrXrClEsKBEPGQf9RHFLEMrfR/eQxgf
+         lsB5RcpBm4E9jtNAG9Sx5q38KoJLRX2O4hSbTC2Y/pXucaGbF8NOAamej9RqOzFt6bZK
+         HxcMpG7Epz2ke6ubdYsfF5rFJ4Y3pOHD7yPUZjbpwvY3Yhu906n2HzD259FQneU4S1vR
+         t87tRBLWyBTG+xpjok0wtn+cePV2AtAG5g0305yZnRJJubJ3Ky7qNC8Qyxz9lGK6UhWV
+         J9lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQZm1dRM9uv3trixxhLn4gQ3zdWaZokuIPiclmXrTwves5VIptbLfFtLXnXiMqFE9BSqB5RBowBG/bW/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM80ughtBpBUiUsq8yXrcBgWRHhH7zInnO2SFr6Tk+HheZeooJ
+	PiqwaCE1ympCV4lswrUGZ/YSNFyzJsuzEPL/GfxfVjt27VgcQDn7Ilclge0dMRw=
+X-Gm-Gg: ASbGncsS+C9TWp2R6i58yq/bPHZ/Aiql7SWJVy5R6qfolfNfIGJ/QmwburDA/Jf+r5W
+	LBmbwgTGPv5T8lHRKYM1MZwfdNem0kecNz0tqo8BWuTU46YBhx/u/ScSzVwemsd4hjW2e7NB6kb
+	GidkEVBEOjX0MSKqRC32AsP7bxD+/V4HeZHClKk4ue/sHfQHdPcbYmQlSCf0vvkDe084Ri411Rx
+	jrX4DOOgdCd+0E6hHca5lSGwbc6xu4pZWOGmYyhO2v7U7xZXO8Hh/jfx2/k7WAKNOSZRotpBJgU
+	YZASTbtJDwF/aIdaECgfCJhXn5qP93/pjQ==
+X-Google-Smtp-Source: AGHT+IGhQrOjvvXzkn0WE/eSGEISLy0pVMmCQQP/NDmPFcdSy+Meb+0+oWca7K3MusqrZ2wHNWNndQ==
+X-Received: by 2002:a05:600c:35cb:b0:434:f9ad:7238 with SMTP id 5b1f17b1804b1-4362286391fmr26925065e9.22.1734012785437;
+        Thu, 12 Dec 2024 06:13:05 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:b98a:c6fe:3a5d:f20a? ([2a01:e0a:982:cbb0:b98a:c6fe:3a5d:f20a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436256b7c62sm17840475e9.34.2024.12.12.06.13.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 06:13:04 -0800 (PST)
+Message-ID: <00847cb8-2ead-4d2c-8b30-a9f8d8ceeb76@linaro.org>
+Date: Thu, 12 Dec 2024 15:13:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: FwrEK2dmnrQAaJ_bi0sXIZPtagrsOtA-
-X-Proofpoint-ORIG-GUID: O3Py7kVZg1nVcHAyfIRyRWSrCY4v9tED
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 spamscore=0 mlxlogscore=916 mlxscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120097
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 2/3] scsi: ufs: qcom: Allow passing platform specific OF
+ data
+To: manivannan.sadhasivam@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>,
+ Nitin Rawat <quic_nitirawa@quicinc.com>
+References: <20241211-ufs-qcom-suspend-fix-v1-0-83ebbde76b1c@linaro.org>
+ <20241211-ufs-qcom-suspend-fix-v1-2-83ebbde76b1c@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241211-ufs-qcom-suspend-fix-v1-2-83ebbde76b1c@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2024-12-12 at 13:32 +0100, Lukas Wunner wrote:
-> On Thu, Dec 12, 2024 at 10:17:21AM +0100, Niklas Schnelle wrote:
-> > On Thu, 2024-12-12 at 10:08 +0100, Lukas Wunner wrote:
-> > > After re-reading the spec I'm convinced now
-> > > that we're doing this wrong and that we should honor the Max Link Spe=
-ed
-> > > instead of blindly deeming all set bits in the Link Capabilities 2
-> > > Register as supported speeds:
-> > >=20
-> > > https://lore.kernel.org/r/e3386d62a766be6d0ef7138a001dabfe563cdff8.17=
-33991971.git.lukas@wunner.de/
-> > >=20
-> > > @Niklas, could you test if this is sufficient to avoid the issue?
-> > > Or do we still need to stop instantiating the bandwidth controller
-> > > if more than one speed is supported?
-> >=20
-> > Yes, I will test this but will only get to do so tonight (UTC +2).
->=20
-> Hey, no worries.  We're not on the run!
->=20
-> > If it's not sufficient I think we could use the modified
-> > pcie_get_supported_speeds() to check if only one link speed is
-> > supported, right?
->=20
-> pcie_get_supported_speeds() is used to fill in the supported_speeds
-> field in struct pci_dev.
->=20
-> And that field is used in a number of places (exposure of the max link
-> speed in sysfs, delay handling in pci_bridge_wait_for_secondary_bus(),
-> link tuning in radeon/amdgpu drivers, etc).
->=20
-> So we can't use pcie_get_supported_speeds() to (exclusively) influence
-> the behavior of the bandwidth controller.  Instead, the solution is your
-> patch for get_port_device_capability(), but future-proofed such that
-> bwctrl is only instantiated if more than one link speed is supported.
->=20
-> Thanks!
->=20
-> Lukas
+On 11/12/2024 18:40, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> In order to allow platform specific flags and configurations, introduce
+> the platform specific OF data and move the existing quirk
+> UFSHCD_QUIRK_BROKEN_LSDBS_CAP for SM8550 and SM8650 SoCs.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>   drivers/ufs/host/ufs-qcom.c | 13 +++++++++----
+>   drivers/ufs/host/ufs-qcom.h |  4 ++++
+>   2 files changed, 13 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 32b0c74437de..35ae8c8fc301 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -871,6 +871,7 @@ static u32 ufs_qcom_get_ufs_hci_version(struct ufs_hba *hba)
+>    */
+>   static void ufs_qcom_advertise_quirks(struct ufs_hba *hba)
+>   {
+> +	const struct ufs_qcom_drvdata *drvdata = of_device_get_match_data(hba->dev);
+>   	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>   
+>   	if (host->hw_ver.major == 0x2)
+> @@ -879,9 +880,8 @@ static void ufs_qcom_advertise_quirks(struct ufs_hba *hba)
+>   	if (host->hw_ver.major > 0x3)
+>   		hba->quirks |= UFSHCD_QUIRK_REINIT_AFTER_MAX_GEAR_SWITCH;
+>   
+> -	if (of_device_is_compatible(hba->dev->of_node, "qcom,sm8550-ufshc") ||
+> -	    of_device_is_compatible(hba->dev->of_node, "qcom,sm8650-ufshc"))
+> -		hba->quirks |= UFSHCD_QUIRK_BROKEN_LSDBS_CAP;
+> +	if (drvdata && drvdata->quirks)
+> +		hba->quirks |= drvdata->quirks;
+>   }
+>   
+>   static void ufs_qcom_set_phy_gear(struct ufs_qcom_host *host)
+> @@ -1864,9 +1864,14 @@ static void ufs_qcom_remove(struct platform_device *pdev)
+>   	platform_device_msi_free_irqs_all(hba->dev);
+>   }
+>   
+> +static const struct ufs_qcom_drvdata ufs_qcom_sm8550_drvdata = {
+> +	.quirks = UFSHCD_QUIRK_BROKEN_LSDBS_CAP,
+> +};
+> +
+>   static const struct of_device_id ufs_qcom_of_match[] __maybe_unused = {
+>   	{ .compatible = "qcom,ufshc" },
+> -	{ .compatible = "qcom,sm8550-ufshc" },
+> +	{ .compatible = "qcom,sm8550-ufshc", .data = &ufs_qcom_sm8550_drvdata },
+> +	{ .compatible = "qcom,sm8650-ufshc", .data = &ufs_qcom_sm8550_drvdata },
+>   	{},
+>   };
+>   MODULE_DEVICE_TABLE(of, ufs_qcom_of_match);
+> diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
+> index b9de170983c9..e85cc6fc072e 100644
+> --- a/drivers/ufs/host/ufs-qcom.h
+> +++ b/drivers/ufs/host/ufs-qcom.h
+> @@ -217,6 +217,10 @@ struct ufs_qcom_host {
+>   	bool esi_enabled;
+>   };
+>   
+> +struct ufs_qcom_drvdata {
+> +	unsigned int quirks;
+> +};
+> +
+>   static inline u32
+>   ufs_qcom_get_debug_reg_offset(struct ufs_qcom_host *host, u32 reg)
+>   {
+> 
 
-Yeah right, I was imprecise, should have said that we can use the use
-the updated pcie_get_supported_speeds() via the now correct dev-
->supported_speeds. But first let's see if it alone already fixes
-things.
-
-Thanks,
-Niklas
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
