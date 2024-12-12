@@ -1,96 +1,60 @@
-Return-Path: <linux-kernel+bounces-442657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D4F9EDFE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:06:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B37A9EDFCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:03:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B631656BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:03:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76884204F88;
+	Thu, 12 Dec 2024 07:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hUEHjHSR"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEF78284BA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:06:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDCE2063CC;
-	Thu, 12 Dec 2024 07:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amtl6X+q"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D6820626E;
-	Thu, 12 Dec 2024 07:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AD6204C27
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733987106; cv=none; b=sYUlVMX7aCZUqSv8hO2yyeQg3y6ixou4Nm8/s2sCfLtccoJ2MmYLm0V6sXGw32W93KynSU8VR7geQvIKX++Cz+bn5MGnqPTWPO2x5feTOaVyRt9+cYNamlHq/Zz3z8GJ/vhuiE1GidbjAAV7icXLjjV2NZoM7yQxbI5WF0UgfJw=
+	t=1733987021; cv=none; b=MKPCVKvBt3/mKQC51qxi9qocy51SWufr6402Ee2YIepO/9hVIUlgTLnQkNWWthhGNDhkcV6BgMe70N49lTboWj9+swl+ZPlPQmeTS7jCa8x28UGkhREIfoIwo9oN62hAcBaRNPRGBL9/GyLn7rF6m89SmXFb4IU3wKJ1TR1UlnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733987106; c=relaxed/simple;
-	bh=HOAKg6b0eEPy/zF2EuAgJ4CV33fx/jUkVtp0FziM0gI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JlSum3fW+H6L5zY9mtMpRC38AeBcpurgHXj+YckUB+5EBiKpXQz5hj7h8jJnRkvZOhLsG5GwuRPT6dORkZrDAFlVaDL98ZuOte8nRPInLT9UUyoJUS28LKwK12MYLrY0lv9Vl4PqR4+v/pY24bY9z2mZDkPtGncL4Vbjin8lN68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amtl6X+q; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7242f559a9fso325581b3a.1;
-        Wed, 11 Dec 2024 23:05:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733987103; x=1734591903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R6P537stxvMQqeF6f3roncNxbUVv366ZADaeaxeRSNY=;
-        b=amtl6X+ql2p4T7/GpY+OodH2R0Bz4/VzQnJTiy8rQY3r7wv9aqA0etxs62CgllPQlg
-         VQvxuYtF1DkLOOjhX3ZsvyB6X/vlLCFJb3rgyVazIGruY3WLAWdIe1VRs6EAgqiyQYRs
-         AXFuRhWnkSKfmZj5YiPWQ9glKj3huvo40aPn5DL/WpMOTIBllgZ/5wvKciWXaS+hIUdQ
-         n8I35XsybY2153Gw0XPW/reLM/fCv896dBbRQMrvOi3jYSNeeSL1eNoI+72c2C/nZRmn
-         7fU/m4BtZR/e1Xb7sN5PB4WDBlEvuxW8RDAZDplLjxM3XnsYwcWL/XL/d6tggfnemfTW
-         LF7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733987103; x=1734591903;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R6P537stxvMQqeF6f3roncNxbUVv366ZADaeaxeRSNY=;
-        b=hZ7RpED9QJOrytKjNjfQlnfDJR2lWXpFfqd/jEUQ0aMol48sNNuEXgyai7euNSl0iz
-         mBSIjz/c2lM6XdewmlaHn+5753kIuUU1vudRVJJfm7y5yAOBWkB7F3g/xynEGc8anyNS
-         QOvq84AFMc110oEJ0Th0kjEDW3O+vtqUoC1MHB7/bzjunC7c16J9yVcGNKakOEspV6JT
-         ADdzy0rkd/OBSQH0wbwl6K/pP805/Ft3cYLZGmkCnRA05BuxHinm1VeFbEvdRjrc15ty
-         c/RpZ2yh3mlyQG/pbGo4GPZNm3B4KykBbi+FHfMH79IgiqbZL2jW5Q3E2SAU5dFLljTW
-         r1Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCU/+/IkAYjE5dZu8aqS8WNw3UOUlpvPV3ljnS5SAWunMFq3I/897G8FXW7RsZgHU3h84sYRSOW1ai8G@vger.kernel.org, AJvYcCUweeHxo+2jsR0lgUjR1guNHj3LUcTQBoIeL/sn9UF+A2Zi1YL7za7rEEN6FjF7H/cBwU+AakA65Hs=@vger.kernel.org, AJvYcCWwKq+1Kaw4Au7vaM7oyVa5Vdj19AfuqEvPpSjU95+39Bw9BdcowTHbU19PqhgCGBt1qhNyoECoL1y6jr45@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWMgTKRKs0ddufnpgK/+uMVP7BYawoFiT6es9S1b7c7Ko5uJCA
-	JIXaul1Ok7FRMC/JwXDxJt7bSJloKfIXdHUQMw1L3SeSdg9hOtJc
-X-Gm-Gg: ASbGnctS8LmCGahpqL3l5WiazNThiA4LdNGoWoqo6xp+/CByfY+Mp0Zf2RCvZyKeNpJ
-	W77rchJWNUOvSC0IfuSScc05qHUb+tlo/JpPr+HCvn3P1LQLaH4bRV/V1Sz8C1FIljOvFSZlBzu
-	3/weHxgrBEEzFokUmvWXg4bQ6G3v+fljcTuLp9mvVqy1x0qLsZhoug1+9Zt4p62glYKrZRAanjT
-	wy8IQYx87wEaIIJ4hvGH7phH87IRx3Us1vrKibn9dhdMRjPYB/iX8aG3soiBFkn5ODpcpLB
-X-Google-Smtp-Source: AGHT+IGrdOYxBGn8CzjzAjnMQjSdYYWqQKbTysuxC6esT4QB5BXv4xEumBLxne4E9WmA5a4aAN8WoA==
-X-Received: by 2002:a05:6a00:1803:b0:725:eb85:f7ef with SMTP id d2e1a72fcca58-728faa62ae1mr3631124b3a.14.1733987102674;
-        Wed, 11 Dec 2024 23:05:02 -0800 (PST)
-Received: from localhost.localdomain ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-725ee10f928sm6519386b3a.32.2024.12.11.23.04.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 23:05:02 -0800 (PST)
-From: Nick Chan <towinchenmi@gmail.com>
-To: Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Asahi Linux <asahi@lists.linux.dev>,
-	Linux ARM Kernel Architecture <linux-arm-kernel@lists.infradead.org>,
-	Linux power management <linux-pm@vger.kernel.org>,
-	Devicetree <devicetree@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Cc: Nick Chan <towinchenmi@gmail.com>
-Subject: [PATCH v2 7/7] cpufreq: apple-soc: Add Apple A7-A8X SoC cpufreq support
-Date: Thu, 12 Dec 2024 15:03:06 +0800
-Message-ID: <20241212070344.3858-8-towinchenmi@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241212070344.3858-1-towinchenmi@gmail.com>
-References: <20241212070344.3858-1-towinchenmi@gmail.com>
+	s=arc-20240116; t=1733987021; c=relaxed/simple;
+	bh=IcSR9BM0PYY7KnrqiPqtQAaFMsLPBG3RBz2myftfi8E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bRDAyiN631dsSKf3yQRrumFdSh6/asizQGa/L2qfgabd4NALC6As3eI9rY41cVymMxUxQ0hwRqCA0v5m2kC+ACOHGO096HevHD/duzFZA2jtjorZYA50GUZ90ys9P8ObRaGlAtUPYCHbQHWPff16QPdChD9C3HD1kx2cq7Px3eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hUEHjHSR; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733987015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gfYLalP7euMhPI6owhTXQEY+KzU7yaosgbD/IFOYEM8=;
+	b=hUEHjHSRKBTZ92x4zJd24WsP5+k03MHMkgyJh4N+euZOXIP+wpzyo7UzfqSfg16L6WAbGm
+	nm3KxKl2hHmpjL0l7lASCmibIX0LEjSYwhpazzOQ4f/P/RCHUktOduYYMlPZUHe9A+D6y1
+	C3RzPSnaxF8GBrn5XbwO7ZQQ033+2Ng=
+From: Hao Ge <hao.ge@linux.dev>
+To: surenb@google.com,
+	kent.overstreet@linux.dev,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	hao.ge@linux.dev,
+	Hao Ge <gehao@kylinos.cn>,
+	Ben Greear <greearb@candelatech.com>
+Subject: [PATCH v5] mm/alloc_tag: Fix panic when CONFIG_KASAN enabled and CONFIG_KASAN_VMALLOC not enabled
+Date: Thu, 12 Dec 2024 15:03:20 +0800
+Message-Id: <20241212070320.133419-1-hao.ge@linux.dev>
+In-Reply-To: <CAJuCfpFoFGmFwVdmKbv7DKxyxLMMacKwsW=Nzn77vsT3GrYUbA@mail.gmail.com>
+References: <CAJuCfpFoFGmFwVdmKbv7DKxyxLMMacKwsW=Nzn77vsT3GrYUbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,78 +62,153 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-These SoCs only use 3 bits for p-states, and have a different
-APPLE_DVFS_CMD_PS1 mask value.
+From: Hao Ge <gehao@kylinos.cn>
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+When CONFIG_KASAN is enabled but CONFIG_KASAN_VMALLOC
+is not enabled, we may encounter a panic during system boot.
+
+Because we haven't allocated pages and created mappings
+for the shadow memory corresponding to module_tags region,
+similar to how it is done for execmem_vmalloc.
+
+The memory for module allocation tags is allocated on demand,
+therefore we need to allocate shadow memory on demand as well in
+MODULE_ALIGN blocks.
+
+Here is the log for panic:
+
+[   18.349421] BUG: unable to handle page fault for address: fffffbfff8092000
+[   18.350016] #PF: supervisor read access in kernel mode
+[   18.350459] #PF: error_code(0x0000) - not-present page
+[   18.350904] PGD 20fe52067 P4D 219dc8067 PUD 219dc4067 PMD 102495067 PTE 0
+[   18.351484] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+[   18.351961] CPU: 5 UID: 0 PID: 1 Comm: systemd Not tainted 6.13.0-rc1+ #3
+[   18.352533] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+[   18.353494] RIP: 0010:kasan_check_range+0xba/0x1b0
+[   18.353931] Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 dd 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 c2 0f 84 c1 00 00 00 <48> 83 38 00 74 ed 48 8d 50 08 eb 0d 48 83 c0 01 48 39 d0 0f 84 90
+[   18.355484] RSP: 0018:ff11000101877958 EFLAGS: 00010206
+[   18.355937] RAX: fffffbfff8092000 RBX: fffffbfff809201e RCX: ffffffff82a7ceac
+[   18.356542] RDX: fffffbfff8092018 RSI: 00000000000000f0 RDI: ffffffffc0490000
+[   18.357153] RBP: fffffbfff8092000 R08: 0000000000000001 R09: fffffbfff809201d
+[   18.357756] R10: ffffffffc04900ef R11: 0000000000000003 R12: ffffffffc0490000
+[   18.358365] R13: ff11000101877b48 R14: ffffffffc0490000 R15: 000000000000002c
+[   18.358968] FS:  00007f9bd13c5940(0000) GS:ff110001eb480000(0000) knlGS:0000000000000000
+[   18.359648] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   18.360178] CR2: fffffbfff8092000 CR3: 0000000109214004 CR4: 0000000000771ef0
+[   18.360790] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   18.361404] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   18.362020] PKRU: 55555554
+[   18.362261] Call Trace:
+[   18.362481]  <TASK>
+[   18.362671]  ? __die+0x23/0x70
+[   18.362964]  ? page_fault_oops+0xc2/0x160
+[   18.363318]  ? exc_page_fault+0xad/0xc0
+[   18.363680]  ? asm_exc_page_fault+0x26/0x30
+[   18.364056]  ? move_module+0x3cc/0x8a0
+[   18.364398]  ? kasan_check_range+0xba/0x1b0
+[   18.364755]  __asan_memcpy+0x3c/0x60
+[   18.365074]  move_module+0x3cc/0x8a0
+[   18.365386]  layout_and_allocate.constprop.0+0x3d5/0x720
+[   18.365841]  ? early_mod_check+0x3dc/0x510
+[   18.366195]  load_module+0x72/0x1850
+[   18.366509]  ? __pfx_kernel_read_file+0x10/0x10
+[   18.366918]  ? vm_mmap_pgoff+0x21c/0x2d0
+[   18.367262]  init_module_from_file+0xd1/0x130
+[   18.367638]  ? __pfx_init_module_from_file+0x10/0x10
+[   18.368073]  ? __pfx__raw_spin_lock+0x10/0x10
+[   18.368456]  ? __pfx_cred_has_capability.isra.0+0x10/0x10
+[   18.368938]  idempotent_init_module+0x22c/0x790
+[   18.369332]  ? simple_getattr+0x6f/0x120
+[   18.369676]  ? __pfx_idempotent_init_module+0x10/0x10
+[   18.370110]  ? fdget+0x58/0x3a0
+[   18.370393]  ? security_capable+0x64/0xf0
+[   18.370745]  __x64_sys_finit_module+0xc2/0x140
+[   18.371136]  do_syscall_64+0x7d/0x160
+[   18.371459]  ? fdget_pos+0x1c8/0x4c0
+[   18.371784]  ? ksys_read+0xfd/0x1d0
+[   18.372106]  ? syscall_exit_to_user_mode+0x10/0x1f0
+[   18.372525]  ? do_syscall_64+0x89/0x160
+[   18.372860]  ? do_syscall_64+0x89/0x160
+[   18.373194]  ? do_syscall_64+0x89/0x160
+[   18.373527]  ? syscall_exit_to_user_mode+0x10/0x1f0
+[   18.373952]  ? do_syscall_64+0x89/0x160
+[   18.374283]  ? syscall_exit_to_user_mode+0x10/0x1f0
+[   18.374701]  ? do_syscall_64+0x89/0x160
+[   18.375037]  ? do_user_addr_fault+0x4a8/0xa40
+[   18.375416]  ? clear_bhb_loop+0x25/0x80
+[   18.375748]  ? clear_bhb_loop+0x25/0x80
+[   18.376119]  ? clear_bhb_loop+0x25/0x80
+[   18.376450]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated area calculation")
+Reported-by: Ben Greear <greearb@candelatech.com>
+Closes: https://lore.kernel.org/all/1ba0cc57-e2ed-caa2-1241-aa5615bee01f@candelatech.com/
+Suggested-by: Suren Baghdasaryan <surenb@google.com>
+Acked-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
 ---
- drivers/cpufreq/apple-soc-cpufreq.c | 30 +++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+v5: Modify the commit message based on Suren's suggestions
+    Add Acked-by: Suren Baghdasaryan <surenb@google.com>
 
-diff --git a/drivers/cpufreq/apple-soc-cpufreq.c b/drivers/cpufreq/apple-soc-cpufreq.c
-index c9f31a3653e2..c3a6dd8ae22a 100644
---- a/drivers/cpufreq/apple-soc-cpufreq.c
-+++ b/drivers/cpufreq/apple-soc-cpufreq.c
-@@ -22,12 +22,14 @@
- #include <linux/pm_opp.h>
- #include <linux/slab.h>
+v4: Based on Suren's suggestion for modification (to make the code simpler),
+    modify the code.
+    Update the comments in the code due to the modifications made to the code.
+    Add Suggested-by: Suren Baghdasaryan <surenb@google.com>
+
+v3: Adjusting the title because the previous one was a bit unclear.
+    Suren has pointed out that our condition for determining whether
+    to allocate shadow memory is unreasonable.We have adjusted our method
+    to use every 8 pages as an index (idx), and we will make decisions based
+    on this idx when determining whether to allocate shadow memory.
+
+v2: Add comments to facilitate understanding of the code.
+    Add align nr << PAGE_SHIFT to MODULE_ALIGN,even though kasan_alloc_module_shadow
+    already handles this internally,but to make the code more readable and user-friendly
+
+commit 233e89322cbe ("alloc_tag: fix module allocation
+tags populated area calculation") is currently in the
+mm-hotfixes-unstable branch, so this patch is
+developed based on the mm-hotfixes-unstable branch.
+---
+ lib/alloc_tag.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index f942408b53ef..c5bdfa297a35 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -407,6 +407,8 @@ static int vm_module_tags_populate(void)
  
--#define APPLE_DVFS_CMD			0x20
--#define APPLE_DVFS_CMD_BUSY		BIT(31)
--#define APPLE_DVFS_CMD_SET		BIT(25)
--#define APPLE_DVFS_CMD_PS2		GENMASK(15, 12)
--#define APPLE_DVFS_CMD_PS1		GENMASK(4, 0)
--#define APPLE_DVFS_CMD_PS1_SHIFT	0
-+#define APPLE_DVFS_CMD				0x20
-+#define APPLE_DVFS_CMD_BUSY			BIT(31)
-+#define APPLE_DVFS_CMD_SET			BIT(25)
-+#define APPLE_DVFS_CMD_PS1_S5L8960X		GENMASK(24, 22)
-+#define APPLE_DVFS_CMD_PS1_S5L8960X_SHIFT	22
-+#define APPLE_DVFS_CMD_PS2			GENMASK(15, 12)
-+#define APPLE_DVFS_CMD_PS1			GENMASK(4, 0)
-+#define APPLE_DVFS_CMD_PS1_SHIFT		0
+ 	if (phys_end < new_end) {
+ 		struct page **next_page = vm_module_tags->pages + vm_module_tags->nr_pages;
++		unsigned long old_shadow_end = ALIGN(phys_end, MODULE_ALIGN);
++		unsigned long new_shadow_end = ALIGN(new_end, MODULE_ALIGN);
+ 		unsigned long more_pages;
+ 		unsigned long nr;
  
- /* Same timebase as CPU counter (24MHz) */
- #define APPLE_DVFS_LAST_CHG_TIME	0x38
-@@ -36,6 +38,9 @@
-  * Apple ran out of bits and had to shift this in T8112...
-  */
- #define APPLE_DVFS_STATUS			0x50
-+#define APPLE_DVFS_STATUS_CUR_PS_S5L8960X	GENMASK(5, 3)
-+#define APPLE_DVFS_STATUS_CUR_PS_SHIFT_S5L8960X	3
-+#define APPLE_DVFS_STATUS_TGT_PS_S5L8960X	GENMASK(2, 0)
- #define APPLE_DVFS_STATUS_CUR_PS_T8103		GENMASK(7, 4)
- #define APPLE_DVFS_STATUS_CUR_PS_SHIFT_T8103	4
- #define APPLE_DVFS_STATUS_TGT_PS_T8103		GENMASK(3, 0)
-@@ -72,6 +77,15 @@ struct apple_cpu_priv {
- 
- static struct cpufreq_driver apple_soc_cpufreq_driver;
- 
-+static const struct apple_soc_cpufreq_info soc_s5l8960x_info = {
-+	.has_ps2 = false,
-+	.max_pstate = 7,
-+	.cur_pstate_mask = APPLE_DVFS_STATUS_CUR_PS_S5L8960X,
-+	.cur_pstate_shift = APPLE_DVFS_STATUS_CUR_PS_SHIFT_S5L8960X,
-+	.ps1_mask = APPLE_DVFS_CMD_PS1_S5L8960X,
-+	.ps1_shift = APPLE_DVFS_CMD_PS1_S5L8960X_SHIFT,
-+};
+@@ -421,7 +423,19 @@ static int vm_module_tags_populate(void)
+ 				__free_page(next_page[i]);
+ 			return -ENOMEM;
+ 		}
 +
- static const struct apple_soc_cpufreq_info soc_t8103_info = {
- 	.has_ps2 = true,
- 	.max_pstate = 15,
-@@ -99,6 +113,10 @@ static const struct apple_soc_cpufreq_info soc_default_info = {
- };
+ 		vm_module_tags->nr_pages += nr;
++
++		/*
++		 * Kasan allocates 1 byte of shadow for every 8 bytes of data.
++		 * When kasan_alloc_module_shadow allocates shadow memory,
++		 * its unit of allocation is a page.
++		 * Therefore, here we need to align to MODULE_ALIGN.
++		 */
++		if (old_shadow_end < new_shadow_end)
++			kasan_alloc_module_shadow((void *)old_shadow_end,
++						  new_shadow_end - old_shadow_end,
++						  GFP_KERNEL);
+ 	}
  
- static const struct of_device_id apple_soc_cpufreq_of_match[] __maybe_unused = {
-+	{
-+		.compatible = "apple,s5l8960x-cluster-cpufreq",
-+		.data = &soc_s5l8960x_info,
-+	},
- 	{
- 		.compatible = "apple,t8103-cluster-cpufreq",
- 		.data = &soc_t8103_info,
+ 	/*
 -- 
-2.47.1
+2.25.1
 
 
