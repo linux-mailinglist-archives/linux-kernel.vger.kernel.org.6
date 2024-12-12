@@ -1,315 +1,104 @@
-Return-Path: <linux-kernel+bounces-442615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F329EDF65
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:26:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6F59EDF69
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:26:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EAEA164880
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024081889979
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 06:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797F51DEFE0;
-	Thu, 12 Dec 2024 06:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978721E2308;
+	Thu, 12 Dec 2024 06:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="aRMmI9/9"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlAcmTPb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3461917DE
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C776C176AB7;
+	Thu, 12 Dec 2024 06:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733984780; cv=none; b=FzfnSQ1+tUImPLmG2tRUlYSOYgRglMUR0D1DKBWLzDcCMGm4ae3riWR7nCZuZwI7sHNfrM5ap4rw3RMlrmxndu5NyS/kY1T7LTi1BJIZjV+GXGWhWarb/3rSCi9P84RH7POe1kJppeHFnoxgjvZbZxBlLccaGloia0MuwHXcKRg=
+	t=1733984803; cv=none; b=Jxt9/09hRAhun8clXQw+Q0as8ZYtfVsVGdmEWdQ82dIGY9XAJWMZ2iAHW0BWGnEbTadAPVjO+mDz48fY/pmHtKILsZCVOg1hkZr2RuIQlw35HU7lJmGgekL+uw48abf6FrRw00kpoApb57UQR1aeVsZFQEjQJsv8+cE5V/kTISs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733984780; c=relaxed/simple;
-	bh=Lw+ze2Co0gj+5K3wkHR1YRQPmlFOF/oD7NcnYt1tECY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lIZC1zdFhCsD2vXV4W3tMnZNte32FI9xqJeywzZffLDyHosgKWToQte1vLkrdId3vfvVhwsPan55O6T2+kbTzxCEjUCfaKHB8eZZVChB/NX8vRCmA/1HTJTQAAQ7Bk2dSgssLUh5/CqU4QTFWcLHcWGUCYuKZj4R1wcS8Vgjvms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=aRMmI9/9; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso2314551fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 22:26:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733984777; x=1734589577; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kuRjAdbDbTEkU+Ho9EYzXIrZiSQv0hABO5CTMWmsx+w=;
-        b=aRMmI9/9iVJwzJMubQpRjVDyVvcEcRUtM80JiNDdtcJ/04ICHReprOLVWjAZ/lUvcd
-         YCT1BR/pEiNAPifyDSiL6TAcGGZqhOaKiidslfxozIx0sAnOJMqN87VjPY3uBmkXM0Zi
-         888J6Cs6dwUzpPXn5a+UyFDcvV7ZP8pvz4jZb5m/spR787JC1PNLnlqiuh8t+8lUnIuM
-         WBkaSLa0oQM8vMb+Tbyo4mFy7Fqw7mhcIys4s96PXV4cztECieIOdyJseyyG0AiROLuS
-         qQr6uxv9gwINf2PIGuyPAaPpJ9DE25SfkwaBW6oaJmXpUqbbTzNFGGd/FUqcyyQdkjd5
-         ji8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733984777; x=1734589577;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kuRjAdbDbTEkU+Ho9EYzXIrZiSQv0hABO5CTMWmsx+w=;
-        b=QAhwI5ksRjVNU8/T+o8imcvl7lKAOH0YXUcPHNHmIQqJFAbbGhUWoyCMpN7+PeHxGG
-         SukyJlSuLEGndOJSnSOIowBDGihP3018VIT1037b24X/kHogTjh07cQtd9HfKCfzpQmd
-         K8NHP8FeyFL7OltA9WaTkkcCUtmDc9xbruTY7mGVu+FUV8opsuLMFETm+PxGBo4cTK52
-         HravqlBDo/2y81UoEQMs9PYICYPwLnly07rslY7MAeTIHb9EPsODTpyCsFcDbU24d7Vc
-         5PC6c+SQfU+PROO3OEB78h/PZj+/5gTPzAHhrHWpq028P/CDlSVm/U6ZzuxVsEaZ2zwe
-         qvEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXy1FgaRwnw1/67va9OmkfSp4HCCTzkjtnW1NjbxylGg2AUfBuah6rJEUgoP2CJZ2OltM/vb+TBv20AL/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJDa5Ij1BBiQYVZQPG+/sscLWIUNTl3vehgn0y4hRnoO28upj5
-	p1MMfnCSz3NZ0rc94KpluU2CMFaKnWFs5EH8Gf/5yH5wAr1+wfFx4/YotjLTxjE=
-X-Gm-Gg: ASbGncsvuv5fMH/io6ZdZGjMrvdP+3ohOJlwV51SQ34fp24PFz4fA5Tgbg2kJ2uGw3w
-	8YZw3e0zimtW25Gyl3fFAeGP8Wig/IZAB3xq/qXbBQ49+yQS9gmD7r1M9s7cLViipZ/t8mId5uT
-	qt+dd0DdQSmx/1oiHgUoWhIkWOCoAxBAS+bFIyi8PvMLEC4URnhzqnIY1vJGzV3eRnpCflch85e
-	L/yBH84lua/5X7ZBVGlrXMdWqdLYr6K5vlS527n+65JEvSkdiS8ztlSYNxNUZfGtVZCuQc=
-X-Google-Smtp-Source: AGHT+IEDTXGBo2HWzXx2i6Hv1sGpcVA3TggdLOBM18vE43jz6irncBSC3Gba5PIz1VR7slTQ7L8ovQ==
-X-Received: by 2002:a05:651c:2220:b0:302:3de5:b039 with SMTP id 38308e7fff4ca-3024a1d4bd1mr6264891fa.8.1733984776497;
-        Wed, 11 Dec 2024 22:26:16 -0800 (PST)
-Received: from cobook.home ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30223be9b15sm11209191fa.106.2024.12.11.22.26.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 22:26:16 -0800 (PST)
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH net] net: renesas: rswitch: rework ts tags management
-Date: Thu, 12 Dec 2024 11:25:58 +0500
-Message-Id: <20241212062558.436455-1-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1733984803; c=relaxed/simple;
+	bh=XQruZGOTyrJdtqFjcbVHpYEPxwAHpb9GbuWvKvlq7/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lDLFU37ArrmNyZ70UdwLKhSZdExUcUVpFSX+wsnZcNasy1+z2NiJiU9HLuQa+vIzSBzvGQ1mMyw+GVPyFJZ/czF3TpEYPwMOfcBU0nWuSpwOApP1Y4kYwTS/nKxFdACQ+D0MXKlUxsqU5jV5PdfHStXlT9KVX1V8fHgJ7LClaHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlAcmTPb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46748C4CECE;
+	Thu, 12 Dec 2024 06:26:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733984802;
+	bh=XQruZGOTyrJdtqFjcbVHpYEPxwAHpb9GbuWvKvlq7/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nlAcmTPb8nK8E78bQx3waDJV3UQui5hnqgyO5NNL96V8DfL+BuUAIp4bAwte1kx2E
+	 dl+EhoSguJK1ia+UlgNYqR0EdbsNlizneib7Q/xLZoNPgDCSjdoYd4U2LdZiJ/5Hfj
+	 jt5FWhfUpkLA1gBlFG/6AaGj2KW0VndCcd+NI+WOzIaztgRER7LN5jo5O8LmAol9jF
+	 /rFZkh/7pO0sFbcnMtj0YHesrX+uew8Atw8jDghm+WL+dow2IYn7RhvvqhKEqhh5AK
+	 kaLoTht+hlnjjk7JNNAexi6crkqWz+ABungcUo0ZZTuZUfGItnQBzB5QwG6d3iCF3+
+	 RQijc0MYNt/eQ==
+Date: Wed, 11 Dec 2024 22:26:41 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org,
+	kirill@shutemov.name, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	bfoster@redhat.com
+Subject: Re: [PATCH 14/17] iomap: make buffered writes work with RWF_UNCACHED
+Message-ID: <20241212062641.GD6678@frogsfrogsfrogs>
+References: <20241114152743.2381672-2-axboe@kernel.dk>
+ <20241114152743.2381672-16-axboe@kernel.dk>
+ <Z1p5my4wynAW_Vc3@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1p5my4wynAW_Vc3@infradead.org>
 
-The existing linked list based implementation of how ts tags are
-assigned and managed is unsafe against concurrency and corner cases:
-- element addition in tx processing can race against element removal
-  in ts queue completion,
-- element removal in ts queue completion can race against element
-  removal in device close,
-- if a large number of frames gets added to tx queue without ts queue
-  completions in between, elements with duplicate tag values can get
-  added.
+On Wed, Dec 11, 2024 at 09:50:19PM -0800, Christoph Hellwig wrote:
+> On Thu, Nov 14, 2024 at 08:25:18AM -0700, Jens Axboe wrote:
+> > +	if (iocb->ki_flags & IOCB_UNCACHED)
+> > +		iter.flags |= IOMAP_UNCACHED;
+> >  
+> > -	while ((ret = iomap_iter(&iter, ops)) > 0)
+> > +	while ((ret = iomap_iter(&iter, ops)) > 0) {
+> > +		if (iocb->ki_flags & IOCB_UNCACHED)
+> > +			iter.iomap.flags |= IOMAP_F_UNCACHED;
+> 
+> iomap.flags and the IOMAP_F_* namespace is used to communicate flags
+> from the file system to the iomap core, so this looks wrong.
 
-Use a different implementation, based on per-port used tags bitmaps and
-saved skb arrays.
+Not entirely true -- IOMAP_F_SIZE_CHANGED is used to communicate state
+from iomap to gfs2, and IOMAP_F_STALE is set/checked only by the iomap
+core.  iomap.h even says as much.
 
-Safety for addition in tx processing vs removal in ts completion is
-provided by:
+Though given that there's a 4-byte gap in struct iomap between flags and
+the bdev pointer (at least on 64-bit) maybe we should make a separate
+field for these iomap state bits?
 
-    tag = find_first_zero_bit(...);
-    smp_mb();
-    <write rdev->ts_skb[tag]>
-    set_bit(...);
+> >  	size_t poff = offset_in_folio(folio, pos);
+> >  	int error;
+> >  
+> > +	if (folio_test_uncached(folio))
+> > +		wpc->iomap.flags |= IOMAP_F_UNCACHED;
+> 
+> I guess this is what actually makes it work.  Note that with the iomap
+> zoned series I posted yesteday things change a bit here in that the flags
+> in the wpc are decouple from the iomap flags, and this would now become
+> a wpc only flag as it isn't really a fs to iomap cummunication, but
+> based on iomap / page cache state.
 
-  vs
+Hrmmm I'll go take a second look at that patch in the morning in case a
+better idea comes along.
 
-    <read rdev->ts_skb[tag]>
-    smp_mb();
-    clear_bit(...);
-
-Safety for removal in ts completion vs removal in device close is
-provided by using atomic read-and-clear for rdev->ts_skb[tag]:
-
-    ts_skb = xchg(&rdev->ts_skb[tag], NULL);
-    if (ts_skb)
-        <handle it>
-
-Fixes: 33f5d733b589 ("net: renesas: rswitch: Improve TX timestamp accuracy")
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/net/ethernet/renesas/rswitch.c | 74 ++++++++++++++------------
- drivers/net/ethernet/renesas/rswitch.h | 13 ++---
- 2 files changed, 42 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index dbbbf024e7ab..9ac6e2aad18f 100644
---- a/drivers/net/ethernet/renesas/rswitch.c
-+++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -547,7 +547,6 @@ static int rswitch_gwca_ts_queue_alloc(struct rswitch_private *priv)
- 	desc = &gq->ts_ring[gq->ring_size];
- 	desc->desc.die_dt = DT_LINKFIX;
- 	rswitch_desc_set_dptr(&desc->desc, gq->ring_dma);
--	INIT_LIST_HEAD(&priv->gwca.ts_info_list);
- 
- 	return 0;
- }
-@@ -1003,9 +1002,10 @@ static int rswitch_gwca_request_irqs(struct rswitch_private *priv)
- static void rswitch_ts(struct rswitch_private *priv)
- {
- 	struct rswitch_gwca_queue *gq = &priv->gwca.ts_queue;
--	struct rswitch_gwca_ts_info *ts_info, *ts_info2;
- 	struct skb_shared_hwtstamps shhwtstamps;
- 	struct rswitch_ts_desc *desc;
-+	struct rswitch_device *rdev;
-+	struct sk_buff *ts_skb;
- 	struct timespec64 ts;
- 	unsigned int num;
- 	u32 tag, port;
-@@ -1015,23 +1015,28 @@ static void rswitch_ts(struct rswitch_private *priv)
- 		dma_rmb();
- 
- 		port = TS_DESC_DPN(__le32_to_cpu(desc->desc.dptrl));
--		tag = TS_DESC_TSUN(__le32_to_cpu(desc->desc.dptrl));
--
--		list_for_each_entry_safe(ts_info, ts_info2, &priv->gwca.ts_info_list, list) {
--			if (!(ts_info->port == port && ts_info->tag == tag))
--				continue;
--
--			memset(&shhwtstamps, 0, sizeof(shhwtstamps));
--			ts.tv_sec = __le32_to_cpu(desc->ts_sec);
--			ts.tv_nsec = __le32_to_cpu(desc->ts_nsec & cpu_to_le32(0x3fffffff));
--			shhwtstamps.hwtstamp = timespec64_to_ktime(ts);
--			skb_tstamp_tx(ts_info->skb, &shhwtstamps);
--			dev_consume_skb_irq(ts_info->skb);
--			list_del(&ts_info->list);
--			kfree(ts_info);
--			break;
--		}
-+		if (unlikely(port >= RSWITCH_NUM_PORTS))
-+			goto next;
-+		rdev = priv->rdev[port];
- 
-+		tag = TS_DESC_TSUN(__le32_to_cpu(desc->desc.dptrl));
-+		if (unlikely(tag >= TS_TAGS_PER_PORT))
-+			goto next;
-+		ts_skb = xchg(&rdev->ts_skb[tag], NULL);
-+		smp_mb(); /* order rdev->ts_skb[] read before bitmap update */
-+		clear_bit(tag, rdev->ts_skb_used);
-+
-+		if (unlikely(!ts_skb))
-+			goto next;
-+
-+		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
-+		ts.tv_sec = __le32_to_cpu(desc->ts_sec);
-+		ts.tv_nsec = __le32_to_cpu(desc->ts_nsec & cpu_to_le32(0x3fffffff));
-+		shhwtstamps.hwtstamp = timespec64_to_ktime(ts);
-+		skb_tstamp_tx(ts_skb, &shhwtstamps);
-+		dev_consume_skb_irq(ts_skb);
-+
-+next:
- 		gq->cur = rswitch_next_queue_index(gq, true, 1);
- 		desc = &gq->ts_ring[gq->cur];
- 	}
-@@ -1576,8 +1581,9 @@ static int rswitch_open(struct net_device *ndev)
- static int rswitch_stop(struct net_device *ndev)
- {
- 	struct rswitch_device *rdev = netdev_priv(ndev);
--	struct rswitch_gwca_ts_info *ts_info, *ts_info2;
-+	struct sk_buff *ts_skb;
- 	unsigned long flags;
-+	unsigned int tag;
- 
- 	netif_tx_stop_all_queues(ndev);
- 
-@@ -1594,12 +1600,13 @@ static int rswitch_stop(struct net_device *ndev)
- 	if (bitmap_empty(rdev->priv->opened_ports, RSWITCH_NUM_PORTS))
- 		iowrite32(GWCA_TS_IRQ_BIT, rdev->priv->addr + GWTSDID);
- 
--	list_for_each_entry_safe(ts_info, ts_info2, &rdev->priv->gwca.ts_info_list, list) {
--		if (ts_info->port != rdev->port)
--			continue;
--		dev_kfree_skb_irq(ts_info->skb);
--		list_del(&ts_info->list);
--		kfree(ts_info);
-+	for (tag = find_first_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT);
-+	     tag < TS_TAGS_PER_PORT;
-+	     tag = find_next_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT, tag + 1)) {
-+		ts_skb = xchg(&rdev->ts_skb[tag], NULL);
-+		clear_bit(tag, rdev->ts_skb_used);
-+		if (ts_skb)
-+			dev_kfree_skb(ts_skb);
- 	}
- 
- 	return 0;
-@@ -1612,20 +1619,17 @@ static bool rswitch_ext_desc_set_info1(struct rswitch_device *rdev,
- 	desc->info1 = cpu_to_le64(INFO1_DV(BIT(rdev->etha->index)) |
- 				  INFO1_IPV(GWCA_IPV_NUM) | INFO1_FMT);
- 	if (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
--		struct rswitch_gwca_ts_info *ts_info;
-+		unsigned int tag;
- 
--		ts_info = kzalloc(sizeof(*ts_info), GFP_ATOMIC);
--		if (!ts_info)
-+		tag = find_first_zero_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT);
-+		if (tag == TS_TAGS_PER_PORT)
- 			return false;
-+		smp_mb(); /* order bitmap read before rdev->ts_skb[] write */
-+		rdev->ts_skb[tag] = skb_get(skb);
-+		set_bit(tag, rdev->ts_skb_used);
- 
- 		skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
--		rdev->ts_tag++;
--		desc->info1 |= cpu_to_le64(INFO1_TSUN(rdev->ts_tag) | INFO1_TXC);
--
--		ts_info->skb = skb_get(skb);
--		ts_info->port = rdev->port;
--		ts_info->tag = rdev->ts_tag;
--		list_add_tail(&ts_info->list, &rdev->priv->gwca.ts_info_list);
-+		desc->info1 |= cpu_to_le64(INFO1_TSUN(tag) | INFO1_TXC);
- 
- 		skb_tx_timestamp(skb);
- 	}
-diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index e020800dcc57..d8d4ed7d7f8b 100644
---- a/drivers/net/ethernet/renesas/rswitch.h
-+++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -972,14 +972,6 @@ struct rswitch_gwca_queue {
- 	};
- };
- 
--struct rswitch_gwca_ts_info {
--	struct sk_buff *skb;
--	struct list_head list;
--
--	int port;
--	u8 tag;
--};
--
- #define RSWITCH_NUM_IRQ_REGS	(RSWITCH_MAX_NUM_QUEUES / BITS_PER_TYPE(u32))
- struct rswitch_gwca {
- 	unsigned int index;
-@@ -989,7 +981,6 @@ struct rswitch_gwca {
- 	struct rswitch_gwca_queue *queues;
- 	int num_queues;
- 	struct rswitch_gwca_queue ts_queue;
--	struct list_head ts_info_list;
- 	DECLARE_BITMAP(used, RSWITCH_MAX_NUM_QUEUES);
- 	u32 tx_irq_bits[RSWITCH_NUM_IRQ_REGS];
- 	u32 rx_irq_bits[RSWITCH_NUM_IRQ_REGS];
-@@ -997,6 +988,7 @@ struct rswitch_gwca {
- };
- 
- #define NUM_QUEUES_PER_NDEV	2
-+#define TS_TAGS_PER_PORT	256
- struct rswitch_device {
- 	struct rswitch_private *priv;
- 	struct net_device *ndev;
-@@ -1004,7 +996,8 @@ struct rswitch_device {
- 	void __iomem *addr;
- 	struct rswitch_gwca_queue *tx_queue;
- 	struct rswitch_gwca_queue *rx_queue;
--	u8 ts_tag;
-+	struct sk_buff *ts_skb[TS_TAGS_PER_PORT];
-+	DECLARE_BITMAP(ts_skb_used, TS_TAGS_PER_PORT);
- 	bool disabled;
- 
- 	int port;
--- 
-2.39.5
-
+--D
 
