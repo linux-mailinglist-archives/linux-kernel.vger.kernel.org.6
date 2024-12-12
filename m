@@ -1,106 +1,134 @@
-Return-Path: <linux-kernel+bounces-443824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B0B9EFC34
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:17:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A2A9EFC3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:20:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C80A91890AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:20:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B71418CBFB;
+	Thu, 12 Dec 2024 19:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="F+hrtu0O"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6962F28B452
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:17:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B5E198E9B;
-	Thu, 12 Dec 2024 19:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="a+W4c9Pv"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE2C748D;
-	Thu, 12 Dec 2024 19:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8089A748D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734031032; cv=none; b=isevlyHgy3fGU+6mGzh54k4AoL8Nwc492MuRvECB5eOnbQSBc8lDLie03aCFq47vhbmIFu5xExPIY+P0XrPHdIqCCgRdkzV4ngmr722I7EtjCt94ETEmq7Vk4zlV4fqjF2E/Fs7t3KtIH91kSb3zGnvdErcs1YWpAzof0+SzIeU=
+	t=1734031227; cv=none; b=A+NDN79ukNJcr3w2TEJaihec1JquwuEP43m0duXCqbXMXPH+mYM1TrBLkvhRPpBEyJ31G8sHxmuviY4P5t7RSIJ4U92aRJ2/VR58WoYSaLgmJUz705hEX6B4h5uvbo+vbziAARR6n7y/A0q+LXDyPIwOAlf3skrOJuJ9uV0Vwdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734031032; c=relaxed/simple;
-	bh=ZQrysuhtj7gpvR7Pg9m6pT1D/47GKCLmTFKi/n9zrzc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TtkhgJjb13/NQk35BRyunER21SeAb1Ah3S7WZ9Vn9uyl1Axh0y2O3WzOE4Vc1CtztoyV+tb2d+ffhrT/b2/kMDYp5nz/sXg9CNq6VLRw2s/lLWCE7J5rNszWa/uef308q9Zg/yI827ThmlmoFmRlc3uhyc97MaYnjz89b42odag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=a+W4c9Pv; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.128.151] (unknown [20.236.11.29])
-	by linux.microsoft.com (Postfix) with ESMTPSA id B7A3E20ACD6C;
-	Thu, 12 Dec 2024 11:17:09 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B7A3E20ACD6C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1734031030;
-	bh=tO2gvxoUGoZO1jpkcXEEyI2BAiP9UdBxuffy1wivgCM=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=a+W4c9Pv7QXVBqUn/Dy5ZEtgWRtcp5iLyLtlaTxvajdzfdUHse8gYb8ykAe8H/IxC
-	 6SQWYqz8ZlN3qvmR7jfWHpg3fRjdlIPpVZohDMslKXAXMNEPHPq5HyMO+PdQqgrdXY
-	 kLXLLXolY9Ni3pJJFZUKmKVRUb3VzyOmPWeYekU4=
-Message-ID: <cc1d5e08-92e0-46d8-badb-2a61482200cf@linux.microsoft.com>
-Date: Thu, 12 Dec 2024 11:17:10 -0800
+	s=arc-20240116; t=1734031227; c=relaxed/simple;
+	bh=uc86oVChm+Do1PXZ1m9cMXm6xdLTbQF1JLf2LbGMFE8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DRC353DQrU4k2jqDxkILcfpKoEANQMMeB+7Uynyf+a0tln0xWHuvY/XPMFlpwZsehUivoPTkjDr/3vMKAe7SBaGT6KdwMCDXFKldS+x7PsrL04EpQtAgi23v1SXa7qyGOq9gJ0ojAXRHNUODGxWhAvhykH7f4Qr8XNroTbOJrSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=F+hrtu0O; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ThDleRXc8ca+wLmuV0H//xGtHzIz1jauUjmXogggRF4=; b=F+hrtu0O8hFchKWLt6bVBRE/MH
+	Yi71z+Z20Da584RzdvE+QIxGBhw7Uxw7tOio3kWsqSaYV0YUwTSuj8tbtdQAe+PhanOsjjbh7IHif
+	CP6Bm4JalavO6NjF9eFH1Y4bxvPKafq6ybgU0PD2g2MBB+YlQmoCgxkW5VuGi7oHK+Zhly27D4+Ql
+	UucG4IM5P3FnSkfw6d82Ya5lPgvRjKNd21M2aTsPh4yfKWIDrddfoAYCVvsobzL9+YSVx1X2QDxJI
+	ynGRa2gortA2HxySB4M8UhFnnx4hVYYUWmENyN/yY9PVKSRWb8uh7LwIhvxyU14bVBYdy8MxJZ62y
+	hyRfy3jA==;
+Received: from [179.193.1.214] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tLojI-002MsO-I3; Thu, 12 Dec 2024 20:20:08 +0100
+From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH v11 0/2] drm/atomic: Ease async flip restrictions
+Date: Thu, 12 Dec 2024 16:19:32 -0300
+Message-Id: <20241212-tonyk-async_flip-v11-0-14379434be70@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Jeroen de Borst <jeroendb@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- eahariha@linux.microsoft.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
- ath11k@lists.infradead.org
-Subject: Re: [PATCH net-next v4 2/2] wifi: ath11k: Convert timeouts to
- secs_to_jiffies()
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-References: <20241212-netdev-converge-secs-to-jiffies-v4-0-6dac97a6d6ab@linux.microsoft.com>
- <20241212-netdev-converge-secs-to-jiffies-v4-2-6dac97a6d6ab@linux.microsoft.com>
- <27cc63e7-1a63-4ba5-8c7a-12a78ad6d9fa@oss.qualcomm.com>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <27cc63e7-1a63-4ba5-8c7a-12a78ad6d9fa@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEQ3W2cC/3WOsQ6CMBRFf4V0tqavVClOGhdHBzdjTFtaeBGBU
+ EIkhH8XWNRExndvzrmvJ97WaD3ZBT2pbYsey2I8AFYBMZkqUksxGQPCGRfAGKdNWXQPqnxXmLv
+ LsaKSS+NsbFxoFBmxqrYOX7PzSs6Hy/FEbmOcoW/KupuX2ngul51tTBkVm1CDlnEU6WSPqcpRr
+ U35nDZmEhgskFsJEoR12mn7TU5/tMA+4xz+KYBNDg3OMSFFZPiPYxiGN+0g6us3AQAA
+X-Change-ID: 20241002-tonyk-async_flip-828cfe9cf3ca
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Xinhui Pan <Xinhui.Pan@amd.com>, dmitry.baryshkov@linaro.org, 
+ Simon Ser <contact@emersion.fr>, joshua@froggi.es, 
+ Xaver Hugl <xaver.hugl@gmail.com>, Daniel Stone <daniel@fooishbar.org>, 
+ ville.syrjala@linux.intel.com
+Cc: kernel-dev@igalia.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+ Christopher Snowhill <chris@kode54.net>
+X-Mailer: b4 0.14.2
 
-On 12/12/2024 9:51 AM, Jeff Johnson wrote:
-> On 12/12/2024 9:33 AM, Easwar Hariharan wrote:
->> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
->>
->> secs_to_jiffies(). As the value here is a multiple of 1000, use
->>
->> secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
->>
->>
->>
-> 
-> something is wrong with your patch since it introduces a blank line after each
-> line.
->
+Hi,
 
-This is some sort of weird interaction between b4 and git send-email. I
-used git send-email to send the patches after writing them out with b4
-send so as to edit "net-next" into the subject line. It's good to know
-to not mix the tools in the future.
+The goal of this work is to find a nice way to allow amdgpu to perform
+async page flips in the overlay plane as well, not only on the primary
+one. Currently, when using the atomic uAPI, this is the only type of
+plane allowed to do async flips, and every driver accepts it.
 
-I can resend from the branch with git send-email directly to avoid this
-if preferred.
+This patchset re-uses the per-plane function atomic_async_check() to
+this purpose, so drivers can allow different plane types. There's a
+`bool flip` parameter so the atomic_async_check() can do different
+decisions if it's a complete page flip or a plane update.
 
-> Also if you want the ath11k patch to be taken separately, it goes through the
-> ath tree, not the net tree.
-> 
-> /jeff
-> 
+igt test: https://lore.kernel.org/igt-dev/20241211031820.115844-1-andrealmeid@igalia.com/
 
-I don't have a preference on being taken separately, whatever approach
-works best is good with me.
+Changelog
+ v11:
+  - Fix changelog
+  - Add R-b and T-b tags
 
-Thanks,
-Easwar
+ v10: https://lore.kernel.org/all/20241211-tonyk-async_flip-v10-0-6b1ff04847c2@igalia.com/
+ - Add a 'flip' flag to indicate where the atomic_async_check() is being called from.
+
+ v9: https://lore.kernel.org/all/20241101-tonyk-async_flip-v9-0-681814efbfbe@igalia.com/
+ - Rebased on top of 6.12-rc1 (drm/drm-next)
+
+ v8: https://lore.kernel.org/lkml/20240806135300.114469-1-andrealmeid@igalia.com/
+ - Complete rewrite
+
+---
+André Almeida (2):
+      drm/atomic: Let drivers decide which planes to async flip
+      drm/amdgpu: Enable async flip on overlay planes
+
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c    | 11 ++++---
+ drivers/gpu/drm/drm_atomic_helper.c                |  2 +-
+ drivers/gpu/drm/drm_atomic_uapi.c                  | 37 ++++++++++++++++------
+ drivers/gpu/drm/loongson/lsdc_plane.c              |  3 +-
+ drivers/gpu/drm/mediatek/mtk_plane.c               |  2 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c         |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c        |  2 +-
+ drivers/gpu/drm/tegra/dc.c                         |  3 +-
+ drivers/gpu/drm/vc4/vc4_plane.c                    |  2 +-
+ include/drm/drm_modeset_helper_vtables.h           |  7 +++-
+ 10 files changed, 49 insertions(+), 22 deletions(-)
+---
+base-commit: c40c32cf71b90d85386fcc066c19feb23eb42804
+change-id: 20241002-tonyk-async_flip-828cfe9cf3ca
+
+Best regards,
+-- 
+André Almeida <andrealmeid@igalia.com>
+
 
