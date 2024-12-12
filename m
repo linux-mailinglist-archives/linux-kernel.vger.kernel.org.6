@@ -1,235 +1,141 @@
-Return-Path: <linux-kernel+bounces-442888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0284C9EE383
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:57:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A83C188964B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:57:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5B92101A0;
-	Thu, 12 Dec 2024 09:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V+b7AyzM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84E79EE37F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:56:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4F5204C3D;
-	Thu, 12 Dec 2024 09:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B036283B08
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:56:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBA420FAB5;
+	Thu, 12 Dec 2024 09:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WNQef5as"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D082204C3D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733997427; cv=none; b=GmA8MWMXGQdEyk75MuCvByv4UuFzPygxaQlEK6bJFkuo9f19o8GhOJyZp99ZUJAhSZMEBcOyEA8M5ROz4pveqmJQuS5vHX5YZqYr0FFgvPJ2i1twO8Bj33otytdKMt6vCodA5Fx9u+qWAPxrGfxfuEhoxqRa26Wfi+puTY8HpYo=
+	t=1733997400; cv=none; b=UK6dxPSQChQHiEVJXUR03ufRp6mGN7/CjbulC9OvEOB/AvwhT7h8INRzM79oIdh9bgmhkKLpPC1XOHltMDFZb/PwHFZkwu/WA7y7EDc6734aJ7jfbFiLXwUE95GPjLhODj9ta/+yXuAbbHFleLABa4MkNDMLpQl55C17kjA2U+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733997427; c=relaxed/simple;
-	bh=nppU8uMDTN+7Tp4+rDmbcKivr8wiymzwB3BPU5fBWtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMTNooAngV138nLaeYN7n6NS0e3dHjfRgUlWmPNs4sjGcILhw/hBNrS0O1MF5qlLunhM94J8D6kejmK1w8AB4gA90oaSL0KtkgOebm8lheqVyAyKIhxLzQT5OvhIjl3tVEi5xXUv1pFLF6Ic86lQE5i9H3ZkuouE0Aad4Fz/ij8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V+b7AyzM; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733997426; x=1765533426;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nppU8uMDTN+7Tp4+rDmbcKivr8wiymzwB3BPU5fBWtA=;
-  b=V+b7AyzM9s4vgRikwKpAw4h5852+lkc7bsorT3B6syUUDGPa6aFSOmAB
-   dw3hGUXDN9oqElxlBnhCSOxkRBDt/eWqpQIrVkdZLOzPo4kNdURULP/bK
-   Y/Bybyy2gHbqvBfCR15b16fMVvsC/MhHJzDewhHMqu7E224uKhUAmKsCT
-   h4/icnLvzaZXprgzPcxVYCgOw6HShCBNh5W+YzN9KQAIbtUz9Wq9EKDo/
-   s9H277fexGsziVsHUZDrbQ1DKWyw9vQabSmH+gQMaG+Bi2CDFdpuWN+B/
-   WlJsGrdQXjfWHhvfR0QEkRYUjsorRKrWeB98/b1qtyVOkUCy+KSSirDvC
-   A==;
-X-CSE-ConnectionGUID: vmdsgPWGT4io1WzA0cf6ag==
-X-CSE-MsgGUID: 4AshdFvtRUGbC6PzVH1d+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34133618"
-X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
-   d="scan'208";a="34133618"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 01:57:06 -0800
-X-CSE-ConnectionGUID: 43UYJOO/SG2GYPoQsceDyw==
-X-CSE-MsgGUID: Hvwmu08KTpu2+6lxDwrGWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="96979763"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 01:57:03 -0800
-Date: Thu, 12 Dec 2024 10:54:02 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Lorenz Brun <lorenz@brun.one>
-Cc: Igor Russkikh <irusskikh@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Manuel Ullmann <labre@posteo.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: atlantic: keep rings across suspend/resume
-Message-ID: <Z1qyuioi7N1WYEW4@mev-dev.igk.intel.com>
-References: <20241212023946.3979643-1-lorenz@brun.one>
+	s=arc-20240116; t=1733997400; c=relaxed/simple;
+	bh=GKpvAGsMS43/hyHIryMhSg1ry1xLRCtSL4HX806+2IU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B3rxHmMmCXazsxziDBf2/bAVFPRtfDo0uNcJ11xh7pHAgO8MJewDuCYmihJjAAEE5Zq2Kj7RtdD/y9JvTYbjlQuAYi0Rn5qD2PLBFaUHWFwwy61pQYTo/HyWBdfOfX1BPrlSzid35si8SZetm5OFyLKtGdx9umEN2mFFE2ufQco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WNQef5as; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-728e1799d95so461290b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:56:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733997398; x=1734602198; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qLxnIzd4GcNME5sPG/fJL7Fz3DLaanT+mToVRVhPGgA=;
+        b=WNQef5aslxsi+fTLX6SBSLtjqCBO7Gcl6Mlq/FGJoX0Z/9ccE4wN9Pg3+guhXgXr+G
+         WS0vM6M+/zC5hNol7q60L1rhVVQ+3xartvnACP445beYohDqjEhcGBRf7bK8wEkOnPpH
+         bc9NAvH8AGsVgo/nkUfFSHGpdEwFAPsF2MX16UtkApIyMGLyf0+vCcjlUf/H00W+nZZQ
+         An2zlRVRpL97yE6XE4TLjXFLVJcpv0FFhc/mXjLBMjAJsRqrt2+m7zSKghFK3Qg12B8y
+         A2fay7ShfDOLcRkSFfz/Ecz01ms0EIk8cxy0sOo0W/5rCFHk6oB56+t9CiNDHHuMmh8I
+         Wi4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733997398; x=1734602198;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qLxnIzd4GcNME5sPG/fJL7Fz3DLaanT+mToVRVhPGgA=;
+        b=phST/Au3R/xUWOZ1yHcWLI4VPiakG45iNvtjvgMLghTypDDGI7EahIlZ+jdoKCqxju
+         GjEXkCpQjG7pnVBS+X8yn5t2C/eF1r0q2GMlUhfmUrIhANeJkwRaNDf6boBkjS8KMD+C
+         ltUroTInPZSYCxiLEQIh0mvjOhMyC+K+SR9jV/YdH05SneaPzOMOGmrUi0zB1vfVgTy0
+         uD6/ghXpHMBFmi8H3CF3i3Qkl5uNMWkTi4KdG1jeL2OerBA7Lc1wX0IfydqrqwSQNmL5
+         l5X3OaJo/W+4RcpVT43rJpLbfso0YnMp3myZmOizwQgO8nycaHCDEkmNG/F8Nr3ng5h2
+         X6Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1fveQ7EYW+imjedlaLiS7GoXY0SpPuH8uz9+jhRHGrN+E0Er2dlxdORL0Jm61/9b5QJLD/+4gNLfPXqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSWG6c+b5j/V6hgzS4kGw2h1lyCaJIAezEpVEs0mYvnjmbKn2H
+	ltnl/NUaGoVWwKl1WvSXj5GwQlFkmldyc0csYg3/3NGqzH4idZHnRX2SaUuAVkYV0yidvjJ6UNh
+	Y1a0z9dHh9+1LX3jHrXxbOYx86R6VHoZ/C/fDeA==
+X-Gm-Gg: ASbGncv7jegsMqfzbjmHqnJsrS1sa5dlVvccCOCu7dWHPAB/ALTw67dAa6RUcpJf7k4
+	42kYmcRLT/reIrMoOWrR9Uz8OJMtpYv73T8f2w7Sa64g4xcPodhNJeAnOMjy3JenXBpE=
+X-Google-Smtp-Source: AGHT+IGpVV7yOgN9mrdK/dpaEbiuCT191rsv8/JqgKKRVwEP7O1nhHdYADcNLCU2hU8Pl5OhGH11PhjfTR72EWDYaFs=
+X-Received: by 2002:a05:6a20:918d:b0:1e1:aab8:386a with SMTP id
+ adf61e73a8af0-1e1ceae1c51mr4067839637.18.1733997398419; Thu, 12 Dec 2024
+ 01:56:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212023946.3979643-1-lorenz@brun.one>
+References: <20241211185552.4553-1-kprateek.nayak@amd.com> <20241211185552.4553-8-kprateek.nayak@amd.com>
+In-Reply-To: <20241211185552.4553-8-kprateek.nayak@amd.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 12 Dec 2024 10:56:27 +0100
+Message-ID: <CAKfTPtDQy=VfH3Ta8zLSACX7QV+LWaRvj_ueN=iSu5i4t8oBtQ@mail.gmail.com>
+Subject: Re: [PATCH 7/8] sched/fair: Do not compute overloaded status
+ unnecessarily during lb
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Tim Chen <tim.c.chen@linux.intel.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Meng Li <li.meng@amd.com>, Huang Rui <ray.huang@amd.com>, 
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 12, 2024 at 03:39:24AM +0100, Lorenz Brun wrote:
-> The rings are order-6 allocations which tend to fail on suspend due to
-> fragmentation. As memory is kept during suspend/resume, we don't need to
-> reallocate them.
-> 
-> This does not touch the PTP rings which, if enabled, still reallocate.
-> Fixing these is harder as the whole structure is reinitialized.
-> 
-> Fixes: cbe6c3a8f8f4 ("net: atlantic: invert deep par in pm functions, preventing null derefs")
-> Signed-off-by: Lorenz Brun <lorenz@brun.one>
+On Wed, 11 Dec 2024 at 19:58, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
+>
+> Only set sg_overloaded when computing sg_lb_stats() at the highest sched
+> domain since rd->overloaded status is updated only when load balancing
+> at the highest domain. While at it, move setting of sg_overloaded below
+> idle_cpu() check since an idle CPU can never be overloaded.
+>
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 > ---
->  drivers/net/ethernet/aquantia/atlantic/aq_main.c     |  4 ++--
->  drivers/net/ethernet/aquantia/atlantic/aq_nic.c      |  7 ++++---
->  drivers/net/ethernet/aquantia/atlantic/aq_nic.h      |  2 +-
->  drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c |  4 ++--
->  drivers/net/ethernet/aquantia/atlantic/aq_vec.c      | 10 ++++++++++
->  5 files changed, 19 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_main.c b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-> index c1d1673c5749..cd3709ba7229 100644
-> --- a/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-> +++ b/drivers/net/ethernet/aquantia/atlantic/aq_main.c
-> @@ -84,7 +84,7 @@ int aq_ndev_open(struct net_device *ndev)
->  
->  err_exit:
->  	if (err < 0)
-> -		aq_nic_deinit(aq_nic, true);
-> +		aq_nic_deinit(aq_nic, true, false);
-Only my suggestion:
-Instead of passing another boolean to the function you can have:
-aq_nic_deinit(...)
-{
-	always without free
-}
+>  kernel/sched/fair.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index ec2a79c8d0e7..3f36805ecdca 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -10358,9 +10358,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>                 nr_running = rq->nr_running;
+>                 sgs->sum_nr_running += nr_running;
+>
+> -               if (nr_running > 1)
+> -                       *sg_overloaded = 1;
+> -
+>                 if (cpu_overutilized(i))
+>                         *sg_overutilized = 1;
+>
+> @@ -10373,6 +10370,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>                         continue;
+>                 }
+>
+> +               /* Overload indicator is only updated at root domain */
+> +               if (!env->sd->parent && nr_running > 1)
 
-aq_nic_deinit_and_free(...)
-{
-	aq_nic_deinit(...);
-	free
-}
+nit: may be worth checking local variable 1st which should be cheaper
+than env->sd->parent
 
-It may be easier to read.
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
 
->  
->  	return err;
->  }
-> @@ -95,7 +95,7 @@ int aq_ndev_close(struct net_device *ndev)
->  	int err = 0;
->  
->  	err = aq_nic_stop(aq_nic);
-> -	aq_nic_deinit(aq_nic, true);
-> +	aq_nic_deinit(aq_nic, true, false);
->  
->  	return err;
->  }
-> diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-> index fe0e3e2a8117..a6324ae88acf 100644
-> --- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-> +++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-> @@ -1422,7 +1422,7 @@ void aq_nic_set_power(struct aq_nic_s *self)
->  		}
->  }
->  
-> -void aq_nic_deinit(struct aq_nic_s *self, bool link_down)
-Will be nice to have a kernel-doc.
 
-> +void aq_nic_deinit(struct aq_nic_s *self, bool link_down, bool keep_rings)
->  {
->  	struct aq_vec_s *aq_vec = NULL;
->  	unsigned int i = 0U;
-> @@ -1433,7 +1433,8 @@ void aq_nic_deinit(struct aq_nic_s *self, bool link_down)
->  	for (i = 0U; i < self->aq_vecs; i++) {
->  		aq_vec = self->aq_vec[i];
->  		aq_vec_deinit(aq_vec);
-> -		aq_vec_ring_free(aq_vec);
-> +		if (!keep_rings)
-> +			aq_vec_ring_free(aq_vec);
->  	}
->  
->  	aq_ptp_unregister(self);
-> @@ -1499,7 +1500,7 @@ void aq_nic_shutdown(struct aq_nic_s *self)
->  		if (err < 0)
->  			goto err_exit;
->  	}
-> -	aq_nic_deinit(self, !self->aq_hw->aq_nic_cfg->wol);
-> +	aq_nic_deinit(self, !self->aq_hw->aq_nic_cfg->wol, false);
->  	aq_nic_set_power(self);
->  
->  err_exit:
-> diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.h b/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
-> index ad33f8586532..f0543a5cc087 100644
-> --- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
-> +++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
-> @@ -189,7 +189,7 @@ int aq_nic_get_regs(struct aq_nic_s *self, struct ethtool_regs *regs, void *p);
->  int aq_nic_get_regs_count(struct aq_nic_s *self);
->  u64 *aq_nic_get_stats(struct aq_nic_s *self, u64 *data);
->  int aq_nic_stop(struct aq_nic_s *self);
-> -void aq_nic_deinit(struct aq_nic_s *self, bool link_down);
-> +void aq_nic_deinit(struct aq_nic_s *self, bool link_down, bool keep_rings);
->  void aq_nic_set_power(struct aq_nic_s *self);
->  void aq_nic_free_hot_resources(struct aq_nic_s *self);
->  void aq_nic_free_vectors(struct aq_nic_s *self);
-> diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
-> index 43c71f6b314f..1015eab5ee50 100644
-> --- a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
-> +++ b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
-> @@ -390,7 +390,7 @@ static int aq_suspend_common(struct device *dev)
->  	if (netif_running(nic->ndev))
->  		aq_nic_stop(nic);
->  
-> -	aq_nic_deinit(nic, !nic->aq_hw->aq_nic_cfg->wol);
-> +	aq_nic_deinit(nic, !nic->aq_hw->aq_nic_cfg->wol, true);
->  	aq_nic_set_power(nic);
->  
->  	rtnl_unlock();
-> @@ -426,7 +426,7 @@ static int atl_resume_common(struct device *dev)
->  
->  err_exit:
->  	if (ret < 0)
-> -		aq_nic_deinit(nic, true);
-> +		aq_nic_deinit(nic, true, false);
->  
->  	rtnl_unlock();
->  
-> diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
-> index 9769ab4f9bef..3b51d6ee0812 100644
-> --- a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
-> +++ b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
-> @@ -132,6 +132,16 @@ int aq_vec_ring_alloc(struct aq_vec_s *self, struct aq_nic_s *aq_nic,
->  	unsigned int i = 0U;
->  	int err = 0;
->  
-> +	if (self && self->tx_rings == aq_nic_cfg->tcs && self->rx_rings == aq_nic_cfg->tcs) {
-> +		/* Correct rings already allocated, nothing to do here */
-> +		return 0;
-Is the same number of Tx/Rx always enough to say that the vector is the
-same? It has more additinal data in the structure.
-
-> +	} else if (self && (self->tx_rings > 0 || self->rx_rings > 0)) {
-> +		/* Allocated rings are different, free rings and reallocate */
-> +		pr_notice("%s: cannot reuse rings, have %d, need %d, reallocating", __func__,
-> +			  self->tx_rings, aq_nic_cfg->tcs);
-> +		aq_vec_ring_free(self);
-> +	}
+> +                       *sg_overloaded = 1;
 > +
->  	for (i = 0; i < aq_nic_cfg->tcs; ++i) {
->  		const unsigned int idx_ring = AQ_NIC_CFG_TCVEC2RING(aq_nic_cfg,
->  								    i, idx);
-
-Thanks,
-Michal
-> -- 
-> 2.44.1
+>  #ifdef CONFIG_NUMA_BALANCING
+>                 /* Only fbq_classify_group() uses this to classify NUMA groups */
+>                 if (sd_flags & SD_NUMA) {
+> --
+> 2.34.1
+>
 
