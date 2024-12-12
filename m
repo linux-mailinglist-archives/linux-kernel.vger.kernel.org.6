@@ -1,214 +1,117 @@
-Return-Path: <linux-kernel+bounces-442461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E084B9EDD20
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:35:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0687A9EDD1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:34:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86314283227
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:35:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5116C28322A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AAD7DA6F;
-	Thu, 12 Dec 2024 01:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="MEAyikBU"
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F38F61FD7;
-	Thu, 12 Dec 2024 01:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733967286; cv=pass; b=O4QPqoomx3ALJbucKc+AU5798wjgbeKpRilUcUtaUMeu8K32rgNz2dOPgISUvIMlvudQueSHi7K1KQ+BGln6+ZAWKREd9fnwBtZlCLdxC2KjMlEBQ0L5GvfIzqrfFIhCNhPHbpyuN1kj28qVLr+bzcoJviUI8dIhJCaRAG9Z+aY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733967286; c=relaxed/simple;
-	bh=KLxWFaaDF+cDRTd2G/MCadupPbA8MQ8L6qx4g0pnmIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UwEBkj0wEGOEYV4LwAwEwbzYrNYNHHzYhCoP+b7h5uVWeg1ap8BetY5fY5pJIIIgRu6nnpgi5Y/cRuOkwxj0tnYynQZcMrLSA+OwRxwYmCrZ/XUvHEH85x6JvbAnU60DgHc4lAgJQ3k/Q789LiCufZl3mNqOv6dMBmgj/QTIbHU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=MEAyikBU; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733967266; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UwECDe0BrqCMGT3Tsai/M2obybX9neUccM5d6IX/mqsBDdAzcF1SXkzuQ+9/KrMXP3ytszI4r1SFDSLpQ/JxYLogIZZ+vuPu27aIhCL2sQqHBxob4ePqOkkKvkf8beoX2r88LSaofKbxTYuF18WnKBLZmZ9uoS3ND+Iz1Cgz7Ec=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733967266; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=/zAzYfeI6PSkHjCt6+l45ujLT/1wh28c6GqI9MqVE9k=; 
-	b=BlkFqwwT7jwd5+TujYRdRNdprdxUambKwdFfw0GEnr5FOieUiys04byfcjnOJvwa6M/RL9HJUQNhckDGbSw/n/+WjHz6W2lS6nZDUkB55whqqisBOST2VVwwnYRQHuPn3fa2KNgKMSwF2YCPSftxbdezokI72MKMWmkkGw/RhoA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733967266;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To:Cc;
-	bh=/zAzYfeI6PSkHjCt6+l45ujLT/1wh28c6GqI9MqVE9k=;
-	b=MEAyikBUN4KtkedwY0CPGt7vD/FSkp1WOv0MZpvGlKbudHnY2nWuJAOsiz4Tm9dK
-	2U50zlGUt/S3720RNT/bKEAW6zUFagdC8eGqmti3BSre2T/lJTAqWtoy2JsmkgupL4C
-	TTuV4SVTgJpR8xDMkO4kvJbqbeJknV6iRoxFoDTo=
-Received: by mx.zohomail.com with SMTPS id 1733967264986906.6878328457522;
-	Wed, 11 Dec 2024 17:34:24 -0800 (PST)
-Message-ID: <ef7d45cc-d5ed-4a76-a9af-52c2a423ead0@zohomail.com>
-Date: Thu, 12 Dec 2024 09:34:19 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B08081ADA;
+	Thu, 12 Dec 2024 01:34:34 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D69C57CBE
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733967273; cv=none; b=IndBl4A28N75hQRkW7S3NKv5Alq2QuNP6w8C9a3RhmNrwYfAtrNWNz8Mu1YBlLCHVnFHuPwzPuyf6IcyOtzyw/xmj6nL5nu2dYSigYgzNwfrWP1Y/fVkqXmUWfI+6hHzVOS8P0CtmdlOTLIbNThVTGU60iMDoYctAFogSHidDm4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733967273; c=relaxed/simple;
+	bh=HKMGL1rl+Cnji1XVOHgCwdmVL0KJzhUvbGKxYFcBkwQ=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=LAyzMeNu1xVv2z3JvWTn4oHOny0yIntdqDXuAf/VQEmss792Tk8CickX+/XbG5hdqSYriZM/DpESeEfGYmcoCcKCE0Tjl2Sy87yVWtu0PO5mkegBGxqiQ6q33gTKylp3+376U4dV7J2TVzSqPnFRH+0YEgdoII88VQfqdE6n80U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxMK+jPVpnrehVAA--.11962S3;
+	Thu, 12 Dec 2024 09:34:27 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCxbUegPVpnyx2AAA--.8551S3;
+	Thu, 12 Dec 2024 09:34:24 +0800 (CST)
+Subject: Re: [PATCH v5 03/10] objtool: Handle PC relative relocation type
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+References: <20241207015915.1159-1-yangtiezhu@loongson.cn>
+ <20241207015915.1159-4-yangtiezhu@loongson.cn>
+ <20241209203544.axetpzva7vg3hsc5@jpoimboe>
+ <9d14c8fa-d61d-bd12-efd7-5a17f4f8cb35@loongson.cn>
+ <20241212003526.2kutif7m2svtbp6l@jpoimboe>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <91b079a1-4f0f-8017-cdae-f6e2729d72a3@loongson.cn>
+Date: Thu, 12 Dec 2024 09:34:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/15] PCI/AER: Modify AER driver logging to report CXL
- or PCIe bus error type
-To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- nifan.cxl@gmail.com, ming4.li@intel.com, dave@stgolabs.net,
- jonathan.cameron@huawei.com, dave.jiang@intel.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
- rrichter@amd.com, nathan.fontenot@amd.com,
- Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
- PradeepVineshReddy.Kodamati@amd.com
-References: <20241211234002.3728674-1-terry.bowman@amd.com>
- <20241211234002.3728674-5-terry.bowman@amd.com>
-From: Li Ming <ming.li@zohomail.com>
-In-Reply-To: <20241211234002.3728674-5-terry.bowman@amd.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20241212003526.2kutif7m2svtbp6l@jpoimboe>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Feedback-ID: rr08011227c741f4742d9ef0e0fb386338000004c7fb93fd456f8aefcef903ee1aff76f5bed377f8d51fab79:zu080112277a838a0372edc9d97d63627a000051e7e3d61a484978f27332cd6960e73c6fc115bf4911b8a48e:rf0801122b8692146451b7c785712ddf500000a048d575bfeca5188fcb442fe9f6b3587662d52a3a49287768cf49f9c2:ZohoMail
-X-ZohoMailClient: External
+X-CM-TRANSID:qMiowMCxbUegPVpnyx2AAA--.8551S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Kw17WryUWFWUJF17tr1DurX_yoW8XF43pF
+	WqgrZrtFs8Jas2gwsFqw4vqFyru3ykJas8Gr90kr1xAw15Xw1rKaykK3y5Ka4UGr10yw1I
+	va1Igw1UGF4DJ3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
+	AwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
+	Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
+	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
+	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
+	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
+	6r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jepB-UUUUU=
 
-On 12/12/2024 7:39 AM, Terry Bowman wrote:
-> The AER driver and aer_event tracing currently log 'PCIe Bus Type'
-> for all errors.
+On 12/12/2024 08:35 AM, Josh Poimboeuf wrote:
+> On Wed, Dec 11, 2024 at 11:16:33AM +0800, Tiezhu Yang wrote:
+>> When compiling on LoongArch, there are some PC relative relocation types
+>> for rodata, it needs to calculate the symbol offset with "S + A - PC" in
+>> this case according to the spec of "ELF for the LoongArch Architecture",
+>> the "PC" is the index of each jump table which is equal with the value
+>> of reloc_offset(reloc) - reloc_offset(table).
+>>
+>> I will add the above description to the commit message to make it clear.
 >
-> Update the driver and aer_event tracing to log 'CXL Bus Type' for CXL
-> device errors.
+> I understand how PC-relative addressing works.
 >
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Fan Ni <fan.ni@samsung.com>
-> ---
->  drivers/pci/pcie/aer.c  | 14 ++++++++------
->  include/ras/ras_event.h |  9 ++++++---
->  2 files changed, 14 insertions(+), 9 deletions(-)
+> The oddity here is that "PC" is the jump table's base address rather
+> than the entry address.
+
+If there is only one jump table in the rodata, the "PC" is the entry
+address which is equal with the value of reloc_offset(reloc), at this
+time, reloc_offset(table) is 0.
+
+If there are many jump tables in the rodata, the "PC" is the offset
+of the jump table's base address which is equal with the value of 
+reloc_offset(reloc) - reloc_offset(table).
+
+> That has nothing to do with the ELF spec or
+> even how R_LARCH_32_PCREL is implemented.  Rather it seems to be a quirk
+> related to how loongarch jump table code expects the entries to be.
 >
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index fe6edf26279e..53e9a11f6c0f 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -699,13 +699,14 @@ static void __aer_print_error(struct pci_dev *dev,
->  
->  void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->  {
-> +	const char *bus_type = pcie_is_cxl(dev) ? "CXL"  : "PCIe";
->  	int layer, agent;
->  	int id = pci_dev_id(dev);
->  	const char *level;
->  
->  	if (!info->status) {
-> -		pci_err(dev, "PCIe Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
-> -			aer_error_severity_string[info->severity]);
-> +		pci_err(dev, "%s Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
-> +			bus_type, aer_error_severity_string[info->severity]);
->  		goto out;
->  	}
->  
-> @@ -714,8 +715,8 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->  
->  	level = (info->severity == AER_CORRECTABLE) ? KERN_WARNING : KERN_ERR;
->  
-> -	pci_printk(level, dev, "PCIe Bus Error: severity=%s, type=%s, (%s)\n",
-> -		   aer_error_severity_string[info->severity],
-> +	pci_printk(level, dev, "%s Bus Error: severity=%s, type=%s, (%s)\n",
-> +		   bus_type, aer_error_severity_string[info->severity],
->  		   aer_error_layer[layer], aer_agent_string[agent]);
->  
->  	pci_printk(level, dev, "  device [%04x:%04x] error status/mask=%08x/%08x\n",
-> @@ -730,7 +731,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->  	if (info->id && info->error_dev_num > 1 && info->id == id)
->  		pci_err(dev, "  Error of this Agent is reported first\n");
->  
-> -	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
-> +	trace_aer_event(dev_name(&dev->dev), bus_type, (info->status & ~info->mask),
->  			info->severity, info->tlp_header_valid, &info->tlp);
->  }
->  
-> @@ -764,6 +765,7 @@ EXPORT_SYMBOL_GPL(cper_severity_to_aer);
->  void pci_print_aer(struct pci_dev *dev, int aer_severity,
->  		   struct aer_capability_regs *aer)
->  {
-> +	const char *bus_type = pcie_is_cxl(dev) ? "CXL"  : "PCIe";
->  	int layer, agent, tlp_header_valid = 0;
->  	u32 status, mask;
->  	struct aer_err_info info;
-> @@ -798,7 +800,7 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
->  	if (tlp_header_valid)
->  		__print_tlp_header(dev, &aer->header_log);
->  
-> -	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
-> +	trace_aer_event(dev_name(&dev->dev), bus_type, (status & ~mask),
->  			aer_severity, tlp_header_valid, &aer->header_log);
->  }
->  EXPORT_SYMBOL_NS_GPL(pci_print_aer, CXL);
-> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-> index e5f7ee0864e7..1bf8e7050ba8 100644
-> --- a/include/ras/ras_event.h
-> +++ b/include/ras/ras_event.h
-> @@ -297,15 +297,17 @@ TRACE_EVENT(non_standard_event,
->  
->  TRACE_EVENT(aer_event,
->  	TP_PROTO(const char *dev_name,
-> +		 const char *bus_type,
->  		 const u32 status,
->  		 const u8 severity,
->  		 const u8 tlp_header_valid,
->  		 struct pcie_tlp_log *tlp),
->  
-> -	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
-> +	TP_ARGS(dev_name, bus_type, status, severity, tlp_header_valid, tlp),
->  
->  	TP_STRUCT__entry(
->  		__string(	dev_name,	dev_name	)
-> +		__string(	bus_type,	bus_type	)
->  		__field(	u32,		status		)
->  		__field(	u8,		severity	)
->  		__field(	u8, 		tlp_header_valid)
-> @@ -314,6 +316,7 @@ TRACE_EVENT(aer_event,
->  
->  	TP_fast_assign(
->  		__assign_str(dev_name);
-> +		__assign_str(bus_type);
->  		__entry->status		= status;
->  		__entry->severity	= severity;
->  		__entry->tlp_header_valid = tlp_header_valid;
-> @@ -325,8 +328,8 @@ TRACE_EVENT(aer_event,
->  		}
->  	),
->  
-> -	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
-> -		__get_str(dev_name),
-> +	TP_printk("%s %s Bus Error: severity=%s, %s, TLP Header=%s\n",
-> +		__get_str(dev_name), __get_str(bus_type),
->  		__entry->severity == AER_CORRECTABLE ? "Corrected" :
->  			__entry->severity == AER_FATAL ?
->  			"Fatal" : "Uncorrected, non-fatal",
+> So the arch_adjust_offset() name seems wrong, as this is specific to
+> the jump table implementation, rather than relocs in general.
+>
+> Instead call it arch_jump_table_sym_offset()?
 
-Hi Terry,
+OK, will modify it and add the above description to the commit message
+to make it clear.
 
-
-Patch #3 is using flexbus dvsec to identify CXL RP/USP/DSP. But per CXL r3.1 section 9.12.3 "Enumerating CXL RPs and DSPs", there may be a flexbus dvsec if CXL RP/DSP is in disconnect state or connecting to a PCIe device.
-
-If a PCIe device connects to a CXL RP/DSP, and the CXL RP/DSP reports an error, the error log will be also "CXL Bus Type", is it expected? My understanding is that the CXL RP/DSP is working on PCIe mode.
-
-If not, I think that setting "pci_dev->is_cxl" during cxl port enumeration and CXL device probing is another option.
-
-
-Thanks
-
-Ming
+Thanks,
+Tiezhu
 
 
