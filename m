@@ -1,196 +1,295 @@
-Return-Path: <linux-kernel+bounces-442927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52C89EE41E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:30:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFAD69EE41F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:30:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20F1A1640F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BBB41889133
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3394210190;
-	Thu, 12 Dec 2024 10:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F65210190;
+	Thu, 12 Dec 2024 10:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcs51MSK"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="immnlbY6"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A41B211268;
-	Thu, 12 Dec 2024 10:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CE3211485
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733999416; cv=none; b=syrAi6KkA0ZRkaRIUIvPTjPG2rAHzPcYlTXFVUeF6595Pw9HhSQYEwy3hGiy8ctaz87NuXuRwetVe2i7Tk/vLQ50xsPuzCbIs6HpxhRodRS9yG5Tcv1YT3NXtgVWPSjBpFU9mkydHmRV7as2Iekn9mlvowrZ5nkcd54gXRqIu04=
+	t=1733999424; cv=none; b=hoMwERPxvA6CLL7qj3txVQNejOQRIqiq5xszIwIIBHWpsgwkUICxbvK01Q0MthrN/V1fxvxp67vPzdDwWHBlfUFuV2d4VuTZoV/TnkzRky4Evt7rWeblMvbF17oAtp8nb8kGkxtTy9XhmonKlUhHqKvUqLatyO+UYkkPDFg2mRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733999416; c=relaxed/simple;
-	bh=Ouz85y7VJUQ/6A4vqNYaJ0A1bE03s9sF2ed0Hl/NBhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RhxayaX2EqyEhIYZZGUczSnQPzp7PZ5ZIGS2kEs5YSNmldiqftetdtYRLytXzaXj4bMuClQodYWiE0ExNu1U85HDxfQIqkTlIou6tpc/aje0eT4lO3t7ZYARUvlA2DrD2waHIUBx5BsDOT4+YEIXMxPaWQ1OVlTA7dPBngrl1X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcs51MSK; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43618283dedso3933875e9.3;
-        Thu, 12 Dec 2024 02:30:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733999412; x=1734604212; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/bg1k7318njybk9wkbNIQBx/yMTbq3YWKaT1a6X4wNM=;
-        b=kcs51MSKIYNsPPu2rQ7jsMAO+xS8aH8YgryZZ6BFAreyfnzwSXzlFU4ByJKUChlrzi
-         XLhqCF9+u8a1Xj6bPXvzJkFWF0THUnc6mMLjvCfMb1J4DKLD8xrqd0R+LT76WXe2XDeL
-         1uGGNnXHx6UBP1/3dg4pjIAS3fb2d0HFYqSQ24FQsI7+9BFr9ATonL6W6DfcRuQT6fmm
-         qRDAOtflevHi5qh4gZfwgbrWIrqrmkF3B0j771gCTY36sQEF27wM2M18VmA/kjXYQf9N
-         wagy6Qi8Kmz6tE1+5t1wkhU/cAS9n0WBGVH847IOZMplZqyJ8Y9ECgor+O65mLM64DpQ
-         EeaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733999412; x=1734604212;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/bg1k7318njybk9wkbNIQBx/yMTbq3YWKaT1a6X4wNM=;
-        b=MVMU8ZTQf3CpewYgZzW5UJAn0gNurg+TePFOcHJmRWL/vYX1Dlv+FgVdHKK+X06GEI
-         2ULhG2aIxdsrFpM13JDEj4NA0dlUX0RWe9qz8y1MrPHpbAjXMD2g/TIpguLbz0HMeqKZ
-         5Tek2RR8XGbdlZwNh2O33O/k823Y94WFLgPggK7uvxZF+HFZxLuMYZphFHGehtkfGgJ1
-         xOJjH8Q1tf9ZfwLmwAK1kCIUF0A5d8PjXtx4q45ll9048gpSgHsW8yQI1oe5rOFNp3Es
-         46vneezqGj0N6pYFiKsTdEsY3gGIXUhXsxuI4F6bvaRrJy7kpM8Y39F1XxPlXfg3W6v6
-         p0rA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWQ7c83LHKYsFAiDZnPDW9A7iHtDh/tqKzBYLiArOUbtpcGM/4fN5ex2UiAkuFQIs9oEzBIasbBsQVTCe5@vger.kernel.org, AJvYcCVxTKIMBBwZkAsZIlTn/x5vrEu7nD3dzZkOafgGwqL/ewPvKtTsfZJWusaCPQkpYbDa2lFoavYV5cI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI0XLN75mByt6Oid681nuy58eodROioewLlBGNV2++kb5cFcGR
-	8NY7nHSUL2SLVoMARciWoB0oIZAmrh6o5Fm8D/+kP1Ao4ZADiYxu
-X-Gm-Gg: ASbGncvMU5u3fUzIMeF+mjejCyL7LaZGLtgFwW8tDP/UT2c+/SpiRsniU3LBZDhgmzx
-	MVfwC+s2aXG1KMX0wVvmZnxVWT3uwAQ5GFpuz80z1q7mAa47Fu0hTQrxW0+0wB++Am0wv3bcqKS
-	q2Gg8smeJb/P8vdXq2tUV0+yPrkC0PP/zUqB8JFqBL5m3Mf63adKWG9MIpVBRJ2wzxbjZJ2bAgu
-	36g0Wcd4uhtHrvqzOz+3QganGjMGBcL3/Cd+V96tlMuWB3nOPVz41obIWmkILWf43KkTLUfivdM
-	yFlb3t7m008SGW4qx8Lweo4m/6cHbXrSO7p9apLcw3rcmbZVsA==
-X-Google-Smtp-Source: AGHT+IEcWEgMPQkMvNLXcAO412zDfJYROlpv6v4QcXzBxDdKts3WRT/cTmsIt9VGSf0kgFFpJofa9g==
-X-Received: by 2002:a5d:47a1:0:b0:385:fac7:89b9 with SMTP id ffacd0b85a97d-387877c8fedmr1938481f8f.59.1733999412253;
-        Thu, 12 Dec 2024 02:30:12 -0800 (PST)
-Received: from ?IPV6:2001:16a2:c8d4:e00:19:eba3:f7f0:1457? ([2001:16a2:c8d4:e00:19:eba3:f7f0:1457])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878248f533sm3684526f8f.3.2024.12.12.02.30.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 02:30:11 -0800 (PST)
-Message-ID: <9d602b3f-878f-4f92-aade-f7fd7c1a626a@gmail.com>
-Date: Thu, 12 Dec 2024 13:30:09 +0300
+	s=arc-20240116; t=1733999424; c=relaxed/simple;
+	bh=72mK5YZuf/pa2S7na61zkID7Ctc5PfzzpxCoHZZQgVM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UBP6TKrAbYVvdLdg1bT52wekEe3qgppIIUvs7gsVTFKhRNOPlqn0F0lEj1hnXnq93iiG/9HzVzUJDjYerGxe1uwSzHax1UV2pRYuPSAOGXHWfR3H0tguSgwjqXN9vQJAQPdrWMaTPeWSBKv2cRs22skH9/2yI0ZwQJnKDr79Hog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=immnlbY6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HN9Y7ELJ2Ns4Rm5BYxgEavxb6TgAru9gwwq/IhU09h4=; b=immnlbY6PP7BCotFnp8b2tmvuA
+	lLehE8Y3gUbsqkhcyTtyZkviulXSRY4kN1crEU5lrx536fL6VAjYxIURq8bt/dUF/gfJ7IVJmUGUt
+	GkTIRE/rHcAVvnr54a/gNC/33m87+pSFTAJQ9SxVVUlS91C+EwxTLcr6Ph8Xp0DRhJefDQnx4m6Jn
+	Dt7sqbTf76IMGbqzAxkMDc41xatxTYnVp0AGDOshxsru/qJTW65oS/1Ec+89kzLlvIL8WkYAFoPP1
+	3NPo93iKNFL3Wt8hp7FUJWJ9p4p1rjvGbjmymaqCZsc0sRcVh5WVakvuibTPTvfWMBdWKnWGYiIJe
+	GfNtARbw==;
+Received: from 54-240-197-238.amazon.com ([54.240.197.238] helo=freeip.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tLgSR-000000050lo-2cnO;
+	Thu, 12 Dec 2024 10:30:11 +0000
+Message-ID: <10a4058d9a667ca7aef7e1862375c2da84ef53a3.camel@infradead.org>
+Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
+ instead of RWX
+From: David Woodhouse <dwmw2@infradead.org>
+To: Nathan Chancellor <nathan@kernel.org>, "Ning, Hongyu"
+	 <hongyu.ning@linux.intel.com>
+Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>,  "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>, Dave Young
+ <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org, bsz@amazon.de
+Date: Thu, 12 Dec 2024 10:30:10 +0000
+In-Reply-To: <20241212014418.GA532802@ax162>
+References: <20241205153343.3275139-1-dwmw2@infradead.org>
+	 <20241205153343.3275139-14-dwmw2@infradead.org>
+	 <20241212014418.GA532802@ax162>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-U3V50r4KUyX/UkUvsdhO"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] mm: Introduce a pageflag for partially mapped
- folios
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org
-Cc: hannes@cmpxchg.org, riel@surriel.com, shakeel.butt@linux.dev,
- roman.gushchin@linux.dev, yuzhao@google.com, npache@redhat.com,
- baohua@kernel.org, ryan.roberts@arm.com, rppt@kernel.org,
- willy@infradead.org, cerasuolodomenico@gmail.com, ryncsn@gmail.com,
- corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
-References: <20240830100438.3623486-1-usamaarif642@gmail.com>
- <20240830100438.3623486-5-usamaarif642@gmail.com>
- <e53b04ad-1827-43a2-a1ab-864c7efecf6e@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <e53b04ad-1827-43a2-a1ab-864c7efecf6e@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
 
+--=-U3V50r4KUyX/UkUvsdhO
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/12/2024 18:03, David Hildenbrand wrote:
-> On 30.08.24 12:03, Usama Arif wrote:
->> Currently folio->_deferred_list is used to keep track of
->> partially_mapped folios that are going to be split under memory
->> pressure. In the next patch, all THPs that are faulted in and collapsed
->> by khugepaged are also going to be tracked using _deferred_list.
->>
->> This patch introduces a pageflag to be able to distinguish between
->> partially mapped folios and others in the deferred_list at split time in
->> deferred_split_scan. Its needed as __folio_remove_rmap decrements
->> _mapcount, _large_mapcount and _entire_mapcount, hence it won't be
->> possible to distinguish between partially mapped folios and others in
->> deferred_split_scan.
->>
->> Eventhough it introduces an extra flag to track if the folio is
->> partially mapped, there is no functional change intended with this
->> patch and the flag is not useful in this patch itself, it will
->> become useful in the next patch when _deferred_list has non partially
->> mapped folios.
->>
->> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->> ---
->>   include/linux/huge_mm.h    |  4 ++--
->>   include/linux/page-flags.h | 13 +++++++++++-
->>   mm/huge_memory.c           | 41 ++++++++++++++++++++++++++++----------
->>   mm/memcontrol.c            |  3 ++-
->>   mm/migrate.c               |  3 ++-
->>   mm/page_alloc.c            |  5 +++--
->>   mm/rmap.c                  |  5 +++--
->>   mm/vmscan.c                |  3 ++-
->>   8 files changed, 56 insertions(+), 21 deletions(-)
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index 4da102b74a8c..0b0539f4ee1a 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -333,7 +333,7 @@ static inline int split_huge_page(struct page *page)
->>   {
->>       return split_huge_page_to_list_to_order(page, NULL, 0);
->>   }
->> -void deferred_split_folio(struct folio *folio);
->> +void deferred_split_folio(struct folio *folio, bool partially_mapped);
->>     void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->>           unsigned long address, bool freeze, struct folio *folio);
->> @@ -502,7 +502,7 @@ static inline int split_huge_page(struct page *page)
->>   {
->>       return 0;
->>   }
->> -static inline void deferred_split_folio(struct folio *folio) {}
->> +static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
->>   #define split_huge_pmd(__vma, __pmd, __address)    \
->>       do { } while (0)
->>   diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
->> index 2175ebceb41c..1b3a76710487 100644
->> --- a/include/linux/page-flags.h
->> +++ b/include/linux/page-flags.h
->> @@ -186,6 +186,7 @@ enum pageflags {
->>       /* At least one page in this folio has the hwpoison flag set */
->>       PG_has_hwpoisoned = PG_active,
->>       PG_large_rmappable = PG_workingset, /* anon or file-backed */
->> +    PG_partially_mapped = PG_reclaim, /* was identified to be partially mapped */
->>   };
->>     #define PAGEFLAGS_MASK        ((1UL << NR_PAGEFLAGS) - 1)
->> @@ -859,8 +860,18 @@ static inline void ClearPageCompound(struct page *page)
->>       ClearPageHead(page);
->>   }
->>   FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
->> +FOLIO_TEST_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
->> +/*
->> + * PG_partially_mapped is protected by deferred_split split_queue_lock,
->> + * so its safe to use non-atomic set/clear.
-> 
-> Just stumbled over that. In my understanding, this assumption is wrong.
-> 
-> I don't think anything prevents other PF_ANY (PG_anon_exclusive, PG_PG_hwpoison) / PF_SECOND (PF_has_hwpoisoned) flags from getting modified concurrently I'm afraid.
-> 
-Hi David,
+On Wed, 2024-12-11 at 18:44 -0700, Nathan Chancellor wrote:
+> Hi David,
+>=20
+> On Thu, Dec 05, 2024 at 03:05:19PM +0000, David Woodhouse wrote:
+> > From: David Woodhouse <dwmw@amazon.co.uk>
+> >=20
+> > All writes to the page now happen before it gets marked as executable
+> > (or after it's already switched to the identmap page tables where it's
+> > OK to be RWX).
+> >=20
+> > Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> > ---
+> > =C2=A0 arch/x86/kernel/machine_kexec_64.c | 3 ++-
+> > =C2=A0 1 file changed, 2 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machi=
+ne_kexec_64.c
+> > index c9fd60f8f806..9232ad1562c8 100644
+> > --- a/arch/x86/kernel/machine_kexec_64.c
+> > +++ b/arch/x86/kernel/machine_kexec_64.c
+> > @@ -323,7 +323,7 @@ int machine_kexec_prepare(struct kimage *image)
+> > =C2=A0=20
+> > =C2=A0=C2=A0	__memcpy(control_page, __relocate_kernel_start, reloc_end =
+- reloc_start);
+> > =C2=A0=20
+> > -	set_memory_x((unsigned long)control_page, 1);
+> > +	set_memory_rox((unsigned long)control_page, 1);
+> > =C2=A0=20
+> > =C2=A0=C2=A0	return 0;
+> > =C2=A0 }
+> > @@ -333,6 +333,7 @@ void machine_kexec_cleanup(struct kimage *image)
+> > =C2=A0=C2=A0	void *control_page =3D page_address(image->control_code_pa=
+ge);
+> > =C2=A0=20
+> > =C2=A0=C2=A0	set_memory_nx((unsigned long)control_page, 1);
+> > +	set_memory_rw((unsigned long)control_page, 1);
+> > =C2=A0=20
+> > =C2=A0=C2=A0	free_transition_pgtable(image);
+> > =C2=A0 }
+> > --=20
+> > 2.47.0
+> >=20
+>=20
+> I just bisected a change in behavior that I see in to this change in
+> -next as commit 5a82223e0743 ("x86/kexec: Mark relocate_kernel page as
+> ROX instead of RWX"). I usually kexec my machines by running:
+>=20
+> =C2=A0 # kexec --load /boot/vmlinuz-linux --initrd /boot/initramfs-linux.=
+img --reuse-cmdline
+>=20
+> =C2=A0 # systemctl kexec
+>=20
+> to cleanly shutdown userspace then kexec into the new kernel after
+> installing it via the package manager. After this change, I get sent to
+> systemd-boot after running 'systemctl kexec', which selects the default
+> entry, my distribution kernel.
+>=20
+> I just see:
+>=20
+> =C2=A0 [=C2=A0 OK=C2=A0 ] Reached target Reboot via kexec.
+> =C2=A0 BdsDxe: loading Boot0007 "Linux Boot Manager" from HD(1,GPT,4B5AFD=
+80-5EC7-47FC-83EA-7EC88ACB15A7,0x800,0x200000)/\EFI\systemd\systemd-bootx64=
+.efi
+> =C2=A0 BdsDxe: starting Boot0007 "Linux Boot Manager" from HD(1,GPT,4B5AF=
+D80-5EC7-47FC-83EA-7EC88ACB15A7,0x800,0x200000)/\EFI\systemd\systemd-bootx6=
+4.efi
+>=20
+> then the systemd-boot menu in QEMU when reproducing this there.
+>=20
+> Is this expected? If not, I am happy to provide any information or test
+> patches as necessary.
 
-Just to clear my understanding, what you are suggesting could happen in __folio_set/clear_partially_mapped is:
-1) __folio_set/clear_partially_mapped reads the 2nd page flags (x) where one of the other 2nd page flags is lets say not set.
-2) One of the other 2nd page flags are set atomically.
-3) __folio_set/clear_partially_mapped writes x + changes to partially_mapped. However, the change in step 2 to one of the other 2nd page flag is lost.
+No, definitely not expected. Thanks for the report. I'll see if I can
+reproduce it; please could you share your kernel .config?
 
-Is that correct? But that would mean we shouldn't have any page flags (first or second page) as non atomic? although it would depend if they are being
-changed at the same time point. If you encountered a particular instance of PG_anon_exclusive or PF_has_hwpoisoned being changed at the same point as
-__folio_set/clear_partially_mapped, could you point to it?
+Please could you also confirm that it still occurs if you don't use
+systemctl; for speed of testing I have mostly been booting my test
+kernel with no actual root file system; just an initrd which does
+'kexec -f' immediately.
 
-I am happy to send a fix to change all set/clear_partially_mapped to atomic, but just want to understand this better.
+Since you are running in QEMU, if you can reproduce with this patch to
+QEMU itself which should dump the CPU state on a triple-fault, it would
+be very useful please:
 
-Thanks!
-Usama
+--- a/accel/kvm/kvm-all.c
++++ b/accel/kvm/kvm-all.c
+@@ -3133,6 +3133,7 @@ int kvm_cpu_exec(CPUState *cpu)
+             ret =3D EXCP_INTERRUPT;
+             break;
+         case KVM_EXIT_SHUTDOWN:
++            cpu_dump_state(cpu, stderr, CPU_DUMP_CODE);
+             qemu_system_reset_request(SHUTDOWN_CAUSE_GUEST_RESET);
+             ret =3D EXCP_INTERRUPT;
+             break;
 
+If you get output from that, please also send the output of 'objdump -S
+arch/x86/kernel/relocate_kernel_64.o' to help interpret it.
+
+Thanks.
+
+--=-U3V50r4KUyX/UkUvsdhO
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMjEyMTAzMDEwWjAvBgkqhkiG9w0BCQQxIgQgdzgdBGtQ
+4FNZ3fhyG/7GlGtYCC9Gm82QsGw946h0k3wwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCpDHiZ9XHsriZYfQ1SO9PqOfipTZmXIG/A
+HVhs/q2MVnORoc80D+UbpXBgapT38Klz84wju8ZsBX72o5v/LiDUwq1/i4YW7bSiYeajxgAolsoi
+kAYHYvIOub05v+z8wms6FIGiLnpqXY9GMRcPOeZ955ZH7ERrLRheAifF5uTuNntgk81AGc1xYcWD
+bIZWSEXtghxgkUDSP+hcAmmYNB0DA+H+0TqrSQtNUFa29DOWPUYPVWboS3M1PaghoxWn6sDHPYtu
+2JNZj/+QIm61roZV9uLylsZbDaO/Ux4tVaMWMDryKDU863H6mbH1QkgfdC2Mez2G+wVQp1huNrsk
+7KqFXVGQGYarLrKZdssyOWk9FUngazRsJS6daWhPJS1G/hNhggGENX/l+8RM1HkgU/spE0tq6CEg
+Sgry2RZH7WEizbBrvaM7jKE9bIptpnRYdV8luFazIWuFDzRWjRqcFXMtO1/AnvQX0ikVgt7v7cEK
+onpmYm0yqA+Q4YjGgSJmsBi4CG0DxMn5qqpPzz2K2P5BYYqzwhVVOT1hXrtxAMqQFWVXQU4cCg3g
+oxSetJh6uuHBoBkSQUlWZWPKy0xZZHNJSfJI6SkTr3z4/uR9seV18QEMQgK9KDikOftG0tgkZeqg
+p4hfUzw53wRLzRvKpECyUjdvrLNWDMxt5lH+X+ix2QAAAAAAAA==
+
+
+--=-U3V50r4KUyX/UkUvsdhO--
 
