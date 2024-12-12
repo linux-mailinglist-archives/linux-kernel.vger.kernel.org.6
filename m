@@ -1,208 +1,160 @@
-Return-Path: <linux-kernel+bounces-443532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3BBB9EF40C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:05:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B6E9EF428
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66949287F05
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D0D2912A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888C922370C;
-	Thu, 12 Dec 2024 17:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86284225A5E;
+	Thu, 12 Dec 2024 17:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMefTAdC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CNomjwdY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B817A2153DD;
-	Thu, 12 Dec 2024 17:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554E8176AA1
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734022978; cv=none; b=ZOIrse7/GYRVH9EzzuUJzPCcM9wQeGyhYOWOUS87Pd/nGz1ZW/sVK6eXdKP4JZz5ySh/JBnf0QESVidL6Li/Hm6DvAV2rkVHESRslh8SORZErBcSTUVBqz7imRX7PZb+LbuVjNP1Th/BsCrAxvV/Cl62eUcWzHiD2c3VwQsu4ms=
+	t=1734023054; cv=none; b=joI8YYyGnZW+6/inier9kX2Y05UGKqtpO32Y1kS7w+NFgxiUztHjMRWZMv3uml3ndnsThrALHkVwDcwP8EsgIUYfAqHD5tLLrmXQGFSMujBQ9rGrOxJ3KG/JRW0u/4AGFiN9Acws2/TiZOcUQTAfSeqNbX7ZSkZmKgEHY7gRQ44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734022978; c=relaxed/simple;
-	bh=watSS0fbqpZzsEyFSLcvfFuZ8P0NH+THumoSLSiJVpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=smD3hFrHN7PBotwTGBvJtvBDd3LeXURz+TL9d04TwzsNx0/jLvuRVQosuGcAWXSfbUcCI4+TBbjJV4CkgKaX9D3aO/c+L+slQq/c1ojhxfSfdUZWNZ4DSpfulS/+rUUXTl887MlLga5ar3FMHyYfr86dqVdzy7W+J00MOQClj3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMefTAdC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67389C4CED3;
-	Thu, 12 Dec 2024 17:02:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734022978;
-	bh=watSS0fbqpZzsEyFSLcvfFuZ8P0NH+THumoSLSiJVpE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=oMefTAdC1o9FrilMO7zCuxGHjtpkebrdNsL5j3ShSTqRYIAiUgsWAsMFVpiG/Osul
-	 VUgXAUOa2P5X4mN/rdHDKXmLf2DFnMHqFv4ZMIkycfy4l19NtL5+u4ZZE9appWl63B
-	 x0dBOWkYQiFOQ9hnbHT14EVKoGAPJX/Ifwn3HftsEUWSucluT3yUKmCsZodFosKDrZ
-	 NNmTurhUDX8NEiKj/wSXCfYHfKYQh6KDiHiHP/66lQpTRohXeGhpOfYoMYHlWOrc3p
-	 0Rmz4xt5DDIpGgXMgUe5Bmj8BKjsIsTj8Y6UkizdX0WatmxDFBOZkMVNJDFrg30a8M
-	 fLtxOy6CXWH5g==
-Date: Thu, 12 Dec 2024 11:02:56 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Gur Stavi <gur.stavi@huawei.com>
-Cc: gongfan <gongfan1@huawei.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Cai Huoqing <cai.huoqing@linux.dev>, Xin Guo <guoxin09@huawei.com>,
-	Shen Chenyang <shenchenyang1@hisilicon.com>,
-	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
-	Shi Jing <shijing34@huawei.com>,
-	Meny Yossefi <meny.yossefi@huawei.com>
-Subject: Re: [RFC net-next v02 1/3] net: hinic3: module initialization and
- tx/rx logic
-Message-ID: <20241212170256.GA3347301@bhelgaas>
+	s=arc-20240116; t=1734023054; c=relaxed/simple;
+	bh=rBjwzO53CbAB9t5GEYSOjc+7gazVend8nDzOa2WOHHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iqe4gAVuhQapRenbU0BtPWBNbeE/82I0ABzhCXeu+/Ukl257URZB3a9ljkg5Tu+KS2IpZvatprfkgVOl1VmOYBFl1r/5dDz5bXwruSVjj74cwZahmMLoB+YkSpNiJFQN+I0tgQHEWeVLLusOK7b7PVAMuLyO8oucQ6nGMJUXvR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CNomjwdY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCGT97p026852
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:04:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fNew4i/yxHEuenMoncvUi+FNwXBhAQ4xpLpoY8gs/d0=; b=CNomjwdYP/mLl0vy
+	SxQHxGb2CceC7C1jcS9jfXNg08Sk1xrxhj4KqbjntBJ97uxztDiJnPkoXL2Dk0Gz
+	CUjSAz02PXqbEcaHiHdSxir4BWu96neFQhYkiB9F+Z++INm8VgYUt1O49Jz7GTYL
+	AhXbhOBudN2rLZrCPE6oxkZjIJ26eQVYxXxabqeSbQLT+D98Gp3eEStO3xM4NXF0
+	ULT6WRCm2Z5AXm/A0DtD3XpY9b9ujOSZJjXE1O9mlrAsc2EVahBSCf3ILniX2u8t
+	2oL4oDt3MFLrQ5mGBG6CZgHBhBg2iNR1YxMkSr6tKp5ijJ6i/IQlP3IO5CHhnYXf
+	cJumEQ==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40kptd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:04:11 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4679af4d6b7so1808881cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:04:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734023050; x=1734627850;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fNew4i/yxHEuenMoncvUi+FNwXBhAQ4xpLpoY8gs/d0=;
+        b=qpAqS+RPgBD11kcX1WXeeOcD2bMP91gJTTqe/60CJw3B+pjh8Y0bFA5wf/ouF+EjWh
+         ZHZ6pTb87/LTKFnGSee9FBjpTwNUHxrkzx5o8a+hqzb09WjUOx/UpfgAjI9GEMxQQRdn
+         mWxFSzzJFFPn2+fo0nYplXo8kEUANv1ue/79bWnpdPPvJrAzHll8hzbEUxotDcImQ11p
+         Mx3pIgy/X5mowncjJfiqWuzlkHKDzEnCfuM4sZlS0CjlYM/hVeLhSzgQwiJO4OK3Fya7
+         53f5NOqQnHEU9uVuGWig5T+EeksHDRF410NecJBR/Jznd08znN2Zh77omH1SaBqtZuPb
+         AG0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwQOnIFcSorpcc9SospjeGEMaMo8ZiV8zusp5gOyi8iCDGIJU7u2xcyi1IcRigCjLvtWe1/Bu/e2foB/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHAwXtBx6jg6bz72/5YAIu+9JA7sJ4NQ6F977cZDPz0mlV/dDs
+	vPPmvkjfxT2o7TxwVkoyOg3Aor506Dzmmxz8CIOGcV44l0pL8vkKlPkGrGmwgxxEFzDVpg3daJI
+	lSK1VuWtyl/WWsy8jzJvL9LhZpR06+yfisAFTO3IDcXV6Ci70ff7FqeG9ZFvugCYb0GubGeM=
+X-Gm-Gg: ASbGncsV7uT9JGXc5tmZTFX7Qq4fytkvW+JwtHK8rGhHB1tO0i9YdW7h8sGF56+maXQ
+	ZKTUWFgqjIpdr2A7QbIDqBJCII/LxtIZFY5w/qtbrdl9ty5OQhUNjYGDUue8IbL6BJbmmxyvLcp
+	7u6IDnn3bvPPgkef+Tc21wGu8pz0p+kUTleeZ/BWn5MY0bREomYa/VpQNYn590OsnHEGcrQavtk
+	7gNhtYt+s6ITD1PCwC+r5Ftkvlb2HqHK8bycpCcPt6/v/4wHTkI1FcsL/FB+gyTv/+Hqt95zQ6p
+	jm4ZQ739GfmqzrcggdnDnxTwMx3Rh5f5SEeDnw==
+X-Received: by 2002:ac8:5748:0:b0:466:88ba:2026 with SMTP id d75a77b69052e-467a16def05mr6096981cf.14.1734023049809;
+        Thu, 12 Dec 2024 09:04:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH8vgfWWK+oQ5exWPFkUHGzlUOH1BmQ8/OxS0NIBoRvTTZC3B/uHCd1ekuzkScTL2816D1C4Q==
+X-Received: by 2002:ac8:5748:0:b0:466:88ba:2026 with SMTP id d75a77b69052e-467a16def05mr6096841cf.14.1734023049283;
+        Thu, 12 Dec 2024 09:04:09 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6810027c6sm662648366b.104.2024.12.12.09.04.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 09:04:08 -0800 (PST)
+Message-ID: <d41df236-48b1-40fb-a19b-5d7024884186@oss.qualcomm.com>
+Date: Thu, 12 Dec 2024 18:04:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d62ca11c809ac646c2fd8613fd48729061c22b3.1733990727.git.gur.stavi@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: qcom: Add coresight node for SM8650
+To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241210-sm8650-cs-dt-v2-1-cf24c6c9bddc@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241210-sm8650-cs-dt-v2-1-cf24c6c9bddc@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: DwI7l5Olcp8HCPCndtOmXC7c434J7ugA
+X-Proofpoint-ORIG-GUID: DwI7l5Olcp8HCPCndtOmXC7c434J7ugA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120122
 
-On Thu, Dec 12, 2024 at 02:04:15PM +0200, Gur Stavi wrote:
-> From: gongfan <gongfan1@huawei.com>
+On 10.12.2024 9:23 AM, Yuanfang Zhang wrote:
+> Add coresight components: Funnel, ETE and ETF for SM8650.
 > 
-> This is [1/3] part of hinic3 Ethernet driver initial submission.
-> With this patch hinic3 is a valid kernel module but non-functional driver.
-
-> +++ b/Documentation/networking/device_drivers/ethernet/huawei/hinic3.rst
-> @@ -0,0 +1,136 @@
-> +.. SPDX-License-Identifier: GPL-2.0
+> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> ---
+> Changes in v2:
+> - Update compatible for funnel and etf.
+> - remove unnecessary property: reg-names and arm,primecell-periphid.
+> - Link to v1: https://lore.kernel.org/r/20241210-sm8650-cs-dt-v1-1-269693451584@quicinc.com
+> ---
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 165 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 165 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> index 25e47505adcb790d09f1d2726386438487255824..76620d478e872a2b725693dc32364e2a183572b7 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> @@ -5654,6 +5654,171 @@ compute-cb@12 {
+>  				};
+>  			};
+>  		};
 > +
-> +=====================================================================
-> +Linux kernel driver for Huawei Ethernet Device Driver (hinic3) family
-> +=====================================================================
+> +		ete0 {
+> +			compatible = "arm,embedded-trace-extension";
 > +
-> +Overview
-> +========
+> +			cpu = <&cpu0>;
+> +			qcom,skip-power-up;
 > +
-> +The hinic3 is a network interface card(NIC) for Data Center. It supports
-
-Add space before "(".
-
-> +Prime Physical Function (PPF) is responsible for the management of the
-> +whole NIC card. For example, clock synchronization between the NIC and
-> +the host.
-> +Any PF may serve as a PPF. The PPF is selected dynamically.
-
-Add blank line between paragraphs or reflow into a single paragraph.
-
-Is the PPF selected dynamically by the driver?  By firmware on the
-NIC?
-
-> +hinic3_pci_id_tbl.h       Supported device IDs.
-> +hinic3_hw_intf.h          Interface between HW and driver.
-> +hinic3_queue_common.[ch]  Common structures and methods for NIC queues.
-> +hinic3_common.[ch]        Encapsulation of memory operations in Linux.
-> +hinic3_csr.h              Register definitions in the BAR.
-> +hinic3_hwif.[ch]          Interface for BAR.
-> +hinic3_eqs.[ch]           Interface for AEQs and CEQs.
-> +hinic3_mbox.[ch]          Interface for mailbox.
-> +hinic3_mgmt.[ch]          Management interface based on mailbox and AEQ.
-> +hinic3_wq.[ch]            Work queue data structures and interface.
-> +hinic3_cmdq.[ch]          Command queue is used to post command to HW.
-> +hinic3_hwdev.[ch]         HW structures and methods abstractions.
-> +hinic3_lld.[ch]           Auxiliary driver adaptation layer.
-> +hinic3_hw_comm.[ch]       Interface for common HW operations.
-> +hinic3_mgmt_interface.h   Interface between firmware and driver.
-> +hinic3_hw_cfg.[ch]        Interface for HW configuration.
-> +hinic3_irq.c              Interrupt request
-> +hinic3_netdev_ops.c       Operations registered to Linux kernel stack.
-> +hinic3_nic_dev.h          NIC structures and methods abstractions.
-> +hinic3_main.c             Main Linux kernel driver.
-> +hinic3_nic_cfg.[ch]       NIC service configuration.
-> +hinic3_nic_io.[ch]        Management plane interface for TX and RX.
-> +hinic3_rss.[ch]           Interface for Receive Side Scaling (RSS).
-> +hinic3_rx.[ch]            Interface for transmit.
-> +hinic3_tx.[ch]            Interface for receive.
-> +hinic3_ethtool.c          Interface for ethtool operations (ops).
-> +hinic3_filter.c           Interface for mac address.
-
-Could drop "." at end (or use it consistently).
-
-s/mac/MAC/
-
-> +2 mailbox related events.
+> +			out-ports {
+> +				port {
+> +					ete0_out_funnel_ete: endpoint {
+> +						remote-endpoint = <&funnel_ete_in_ete0>;
+> +					};
+> +				};
+> +			};
+> +		};
 > +
-> +MailBox
+> +		funnel_ete {
 
-s/MailBox/Mailbox/ since that's how you use it elsewhere.
+Node names must not contain underscores, use '-' instead
 
-> +-------
-> +
-> +Mailbox is a communication mechanism between the hinic3 driver and the HW.
+Also, nodes without a reg property/unit address don't belong under /soc
 
-> +The implementation of CEQ is the same as AEQ. It receives completion events
-> +form HW over a fixed size descriptor of 32 bits. Every device can have up
-> +to 32 CEQs. Every CEQ has a dedicated IRQ. CEQ only receives solicited
-> +events that are responses to requests from the driver. CEQ can receive
-> +multiple types of events, but in practice the hinic3 driver ignores all
-> +events except for HINIC3_CMDQ that represents completion of previously
-> +posted commands on a cmdq.
-
-s/form HW/from HW/
-
-> +Work queues are logical arrays of fixed size WQEs. The array may be spread
-> +over multiple non-contiguous pages using indirection table.
-
-Add blank line or wrap into single paragraph.
-
-> +Work queues are used by I/O queues and command queues.
-
-> +Every function, PF or VF, has a unique ordinal identification within the device.
-> +Many commands to management (mbox or cmdq) contain this ID so HW can apply the
-> +command effect to the right function.
-
-Add blank line or wrap into single paragraph.
-
-> +PF is allowed to post management commands to a subordinate VF by specifying the
-> +VFs ID. A VF must provide its own ID. Anti-spoofing in the HW will cause
-> +command from a VF to fail if it contains the wrong ID.
-
-> +config HINIC3
-> +	tristate "Huawei Intelligent Network Interface Card 3rd"
-> +	# Fields of HW and management structures are little endian and will not
-> +	# be explicitly converted
-
-I guess this comment is here to explain the !CPU_BIG_ENDIAN below?
-That's quite an unusual dependency.
-
-> +	depends on 64BIT && !CPU_BIG_ENDIAN
-
-> +++ b/drivers/net/ethernet/huawei/hinic3/Makefile
-> @@ -0,0 +1,21 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved.
-> +
-> +obj-$(CONFIG_HINIC3) += hinic3.o
-> +
-> +hinic3-objs := hinic3_hwdev.o \
-> +	       hinic3_lld.o \
-> +	       hinic3_common.o \
-> +	       hinic3_hwif.o \
-> +	       hinic3_hw_cfg.o \
-> +	       hinic3_queue_common.o \
-> +	       hinic3_mbox.o \
-> +	       hinic3_hw_comm.o \
-> +	       hinic3_wq.o \
-> +	       hinic3_nic_io.o \
-> +	       hinic3_nic_cfg.o \
-> +	       hinic3_tx.o \
-> +	       hinic3_rx.o \
-> +	       hinic3_netdev_ops.o \
-> +	       hinic3_rss.o \
-> +	       hinic3_main.o
-> \ No newline at end of file
-
-Add newline.
+Konrad
 
