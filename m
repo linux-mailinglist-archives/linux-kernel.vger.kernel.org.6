@@ -1,95 +1,146 @@
-Return-Path: <linux-kernel+bounces-443504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C52E9EF291
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:50:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593A29EF3DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:03:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63C7286B63
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDDC11885AFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D68422E9FF;
-	Thu, 12 Dec 2024 16:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5116C225A5E;
+	Thu, 12 Dec 2024 16:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXXEPQym"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="JL7oDRZ/"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84833223E8D;
-	Thu, 12 Dec 2024 16:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66472F44;
+	Thu, 12 Dec 2024 16:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734021614; cv=none; b=EMhozsxg7Hos1ChwOESbD6lj1Ur+QWulL7Dm365+7RZ/zu8Zy0zet3SBk5COm5NykU0MhvQS+x54Jkq08myycl7L0eo0ILqWXnVthm/4ceo/11K+28UCCWgaCX93ypdak+TCZ37V3GlhXMVibo8hRGUftdCbUnkW1gPVfICaXeg=
+	t=1734021703; cv=none; b=qb2ceavmwiN+bHR15WCQT8WMNJU3vB8pvCWpGSlfi8PDoyfgSgxl7kbcoJfKpFfRC7a44SkEUt2Al5f/sJHLfMeNE4y5Ic7iUm0eb3rmofEA+bmYEl56MIa/mA5kgsaTMFom3jckYVRf+9YB5Sy5tt5kSHUhlDKhQYeIRO3zMqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734021614; c=relaxed/simple;
-	bh=syLKL8tRQqbY8Yn2GNqk1vlT2Nctq2v4N0rngNhTimU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=jQcXh8oXIQ0n7VhGEeAZ2eS5xTtlW/oWFs9fkBcvM9RCK8oztpCFkNtX0qbPXVN8SVY6QbhpmeQbg/wgMH5/4mXZLPsqQ/gIoo9IlG3BAwzKKXsV+IIY1ghU+iuRBgx+FbV8QdQVSUk5zlQkAPaAx80seK9dEAh9GzVhRAByGhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXXEPQym; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B65C4CECE;
-	Thu, 12 Dec 2024 16:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734021614;
-	bh=syLKL8tRQqbY8Yn2GNqk1vlT2Nctq2v4N0rngNhTimU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NXXEPQym9+64+R5mH0pSAO9MOdiXsTnSpiTTRffdTZL9mIUpjTfg4x/pnohRfjK8o
-	 Tuu/qhSLVJDg4xRVkqEfVg/s+gZxQ1F0EwW02cbp5K60/xc2ImMEjswotV5jHKu8X9
-	 k6KxVrUOltqWNM1ZCXqd+25V1186NxCcwNFaBgygv2aD4byZ7CKQNnHZLf97tXlP+2
-	 b9cbee2kShKit7Ydz6YnD1gyx3lUd3dQnX6Od7TMBnvgGqMI4hCCs36PVUZSNXF1mw
-	 dk64+wsABCrulQlWLqwAB19OMe0glE1zu7XfZ3nofVbBXuGaTahyWwlKocXg1oIr8I
-	 L4AlcRyhZRwfg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 94202380A959;
-	Thu, 12 Dec 2024 16:40:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1734021703; c=relaxed/simple;
+	bh=qxTujLFmvDRRf9nMjsxWVIb0FdvxT3pr/t7WazM7ag4=;
+	h=Subject:Date:From:To:CC:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AID5hJpNl6fcWX03aPdWEPNnWKINHxyOzmCkOYBqO1m6DSxFz3Nue+GHuqg268rPNAzzyeC/JWCJEgY7FvpWOuqiqvtm72XthlvkJQs/ZgnEIBM0BYPT1p8TidAZc6elYP4cQ+MziMQ8SzOxEn0VzSQhAQl0qCbDlDgTii5di7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=JL7oDRZ/; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1734021702; x=1765557702;
+  h=date:from:to:cc:message-id:references:mime-version:
+   in-reply-to:subject;
+  bh=9s34Z4x2hQgQrTZeexBeEc6mgPAK+N+ETguazXEwacg=;
+  b=JL7oDRZ/r4HWtWpKGHX80PAePf92/v8ROm36qkrKTp8vvAKQAaNVI2/j
+   zYukngBM7Bk8CtzU8CFVBDgCu5ZUapEJ0Iom16DQpLnmIKb0rx0kUEgNQ
+   z0OsXCWEkCi5IwTI08Jo0BjAL5tPcv5XkB4YfwDaiU1e/FtuASJJzrYKF
+   U=;
+X-IronPort-AV: E=Sophos;i="6.12,229,1728950400"; 
+   d="scan'208";a="155366538"
+Subject: Re: [PATCH v2 3/6] KVM: VMX: Handle vectoring error in
+ check_emulate_instruction
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 16:41:39 +0000
+Received: from EX19MTAUEA001.ant.amazon.com [10.0.44.209:54057]
+ by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.51.155:2525] with esmtp (Farcaster)
+ id 66d2dafb-b30a-4fa1-86bb-4bdc329912f2; Thu, 12 Dec 2024 16:41:39 +0000 (UTC)
+X-Farcaster-Flow-ID: 66d2dafb-b30a-4fa1-86bb-4bdc329912f2
+Received: from EX19D008UEC003.ant.amazon.com (10.252.135.194) by
+ EX19MTAUEA001.ant.amazon.com (10.252.134.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Thu, 12 Dec 2024 16:41:38 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D008UEC003.ant.amazon.com (10.252.135.194) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
+ Thu, 12 Dec 2024 16:41:38 +0000
+Received: from email-imr-corp-prod-pdx-all-2c-d1311ce8.us-west-2.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.39 via Frontend Transport; Thu, 12 Dec 2024 16:41:38 +0000
+Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
+	by email-imr-corp-prod-pdx-all-2c-d1311ce8.us-west-2.amazon.com (Postfix) with ESMTP id 422264029E;
+	Thu, 12 Dec 2024 16:41:38 +0000 (UTC)
+Received: by dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (Postfix, from userid 29210185)
+	id C94286224; Thu, 12 Dec 2024 16:41:37 +0000 (UTC)
+Date: Thu, 12 Dec 2024 16:41:37 +0000
+From: Ivan Orlov <iorlov@amazon.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Ivan Orlov <ivan.orlov0322@gmail.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <pbonzini@redhat.com>,
+	<shuah@kernel.org>, <tglx@linutronix.de>, <hpa@zytor.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <x86@kernel.org>, <pdurrant@amazon.co.uk>,
+	<dwmw@amazon.co.uk>
+Message-ID: <20241212164137.GA71156@dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com>
+References: <20241111102749.82761-1-iorlov@amazon.com>
+ <20241111102749.82761-4-iorlov@amazon.com>
+ <Z1nWykQ3e4D5e2C-@google.com>
+ <2b75550c-0dc7-4bcc-ac60-9ad4402c17f8@gmail.com>
+ <Z1o1013dUex8w9hK@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v2] bpftool: Probe for ISA v4 instruction set
- extension
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173402163052.2361877.6606920596911707447.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Dec 2024 16:40:30 +0000
-References: <20241209145439.336362-1-simone.magnani@isovalent.com>
-In-Reply-To: <20241209145439.336362-1-simone.magnani@isovalent.com>
-To: Simone Magnani <simone.magnani@isovalent.com>
-Cc: bpf@vger.kernel.org, qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, nathan@kernel.org,
- ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Z1o1013dUex8w9hK@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
-
-On Mon,  9 Dec 2024 15:54:39 +0100 you wrote:
-> This patch introduces a new probe to check whether the kernel supports
-> instruction set extensions v4. The v4 extension comprises several new
-> instructions: BPF_{SDIV,SMOD} (signed div and mod), BPF_{LD,LDX,ST,STX,MOV}
-> (sign-extended load/store/move), 32-bit BPF_JA (unconditional jump),
-> target-independent BPF_ALU64 BSWAP (byte-swapping 16/32/64). These have
-> been introduced in the following commits respectively:
+On Wed, Dec 11, 2024 at 05:01:07PM -0800, Sean Christopherson wrote:
+> > Hm, by the way, what is the desired behaviour if EMULTYPE_ALLOW_RETRY_PF is
+> > set? Is it correct that we return an internal error if it is set during
+> > vectoring? Or KVM may try to unprotect the page and re-execute?
 > 
-> [...]
+> Heh, it's sneaky, but EMULTYPE_ALLOW_RETRY_PF can be set if and only if
+> RET_PF_WRITE_PROTECTED is set.  Hmm, that makes me think we should do the below
+> (EMULTYPE_WRITE_PF_TO_SP was a recent addition).
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 2e713480933a..de5f6985d123 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -9077,7 +9077,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> 
+>         if ((emulation_type & EMULTYPE_ALLOW_RETRY_PF) &&
+>             (WARN_ON_ONCE(is_guest_mode(vcpu)) ||
+> -            WARN_ON_ONCE(!(emulation_type & EMULTYPE_PF))))
+> +            WARN_ON_ONCE(!(emulation_type & EMULTYPE_WRITE_PF_TO_SP))))
+>                 emulation_type &= ~EMULTYPE_ALLOW_RETRY_PF;
+> 
 
-Here is the summary with links:
-  - [bpf-next,v2] bpftool: Probe for ISA v4 instruction set extension
-    https://git.kernel.org/bpf/bpf-next/c/b9fee10a52c0
+What if we are handling a write to write-protected page, but not a write to
+the page table? We still can retry after unprotecting the page, so
+EMULTYPE_ALLOW_RETRY_PF should be enabled, right?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+>         r = kvm_check_emulate_insn(vcpu, emulation_type, insn, insn_len);
+> 
+> That said, let me get back to you on this when my brain is less tired.  I'm not
+> sure emulating when an exit occurred during event delivery is _ever_ correct.
+> 
 
+I believe we can re-execute the instruction if exit happened during vectoring
+due to exception (and if the address is not MMIO, e.g. when it's a write to
+write-protected page, for instance when stack points to it).
 
+KVM unprotects the page, executes the instruction one more time and
+(probably) gets this exception once again (but the page is already
+unprotected, so vectoring succeeds without vmexit). If not
+(e.g. exception conditions are not met anymore), guest shouldn't really
+care and it can continue execution.
+
+However, I'm not sure what happens if vectoring is caused by external
+interrupt: if we unprotect the page and re-execute the instruction,
+will IRQ be delivered nonetheless, or it will be lost as irq is
+already in ISR? Do we need to re-inject it in such a case?
+
+--
+Kind regards,
+Ivan Orlov
 
