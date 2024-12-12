@@ -1,354 +1,247 @@
-Return-Path: <linux-kernel+bounces-443774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F739EFB95
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:53:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DED9EFB99
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:54:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C50C16B490
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:53:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63F9188E005
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3E818C035;
-	Thu, 12 Dec 2024 18:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1579A192B9A;
+	Thu, 12 Dec 2024 18:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c/2eDDCN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MF691WmE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA1017BB24;
-	Thu, 12 Dec 2024 18:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A2018FC90
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734029438; cv=none; b=F+/yqHI4rt/00CROuKOgQ4xLSA37SstOBFrw+K0xUfcZSXl7fzyK2tqN/i/DA1hjN0xWogW/uOhUMXq5zgf5jSck5/soLh4ebdzKrv83KD1ZQMWMPUEnQTHpYoHgknQ68QSy0SM1YAV8lTj8zAfMnA79Uz1EZXopfWFQsWuwPeI=
+	t=1734029451; cv=none; b=DAtETVGk+4ufGCJVTLhw3lQ24+6LgQLo2tZo++LL7W3UfI2WshKBRqxMYaPSI2UHch2X/TumEEbVB0YOODrnY13D9NG2AQn7w7Ai3mbO2mbhQQ9qUE6nv1Iy9Yub1fkeLgZBwLSTV8yeeILn+akWrr5vcFGvcaWiHm0LPFhVrdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734029438; c=relaxed/simple;
-	bh=p9bA66pZOpKTZ3BG47197HY61HOlTBJKFfSf6XIO0NY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=tSO232bUTLAQVBgUunvupdsHiLmenuYXlHtSenkaR7NQMbLTONaPUfrnLL3CDUaYZyeengqsrms1eJC+u0SGhwA+G92vhURS0pnZhVBL3VIZ/f9VnRdnU34Za58V0RRNagqsEBE1v3AxWSm7lGbrBOiyHo27t6wPSWd/FyLhTYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c/2eDDCN; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1734029451; c=relaxed/simple;
+	bh=cFj+AbwVjTfQ/jk/JTbmC7Z5oxEtbIi4pvziQCs8DjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DWs5mbkrCMUx5ZEkdnL5jrt7ng67s6NOGwBc1D/A9P6QYjCdfdL4SYwUEtSWh/yya5gvWUizP99FTfAikDyidHrCyskovJ3ifQHlb+uHy1WH1cEinusotKCipD/isjf3w96Pt9MiU0lO9VrEuvIpyPu2I7/QiLksRk7YGuWloAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MF691WmE; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734029437; x=1765565437;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=p9bA66pZOpKTZ3BG47197HY61HOlTBJKFfSf6XIO0NY=;
-  b=c/2eDDCN1Y0Uw8G3zTNmQ1eRrhdTS74Ay6TQoU666arCYx/6w935fDPR
-   uppwVI4+Li8lmqsDIm8U8dX4Ph+Ri8PaCeEoPczAVIUrSqsJxjtZ9S14O
-   2M/4HQ6CM9J/nqfOBwPyHPUkuKSzs5Dpu7sonH/8+CAq3GcZWkvAbsgCV
-   vlHX0nDkAQ1D5gyXSLeOaO+timbMCtzQfQkqJehzlPTW11iVqQG0M4qgT
-   45uK+vvCy9M7yHlJc0rCWcvzwfH72yYScxI4CKkhwetjDvjhY+L9CZU03
-   tD9xLomuemK4wXvL1++DKuUCtT6WrXnmIhskBNfUSpFuPqioByxRD33a3
+  t=1734029449; x=1765565449;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=cFj+AbwVjTfQ/jk/JTbmC7Z5oxEtbIi4pvziQCs8DjM=;
+  b=MF691WmEWHaXK5td4Qfl5x7ENsYuw1kgAGSersbjS1OKpAZQxHOfTeBP
+   8gQ4pflcTnkrHFcSLLfKWrP9ncmSs9Hnwh95NIVlXiNpagjlMwxx71nhT
+   wwkPjSpuj3VtLEuNMJqvBYRXRCmw3UpVDxQLA8DgSA8iPgmu7SKGtvfrB
+   jihUL/vxlCukjRxhLkmF8T+XcNFW+5ZuucU6C8BIphQ+2d9KL5JItbsRL
+   l8tcyQPNkRl0b7BkxiOE7SP1M3UqBavz/56EHjsbqL+n0rSWQxGwqNiyR
+   1mpTR0ARxvcYx0qC4MOc0Cm6u6zzSmMi+LKMFYfoOv8GOBDLEZv3T83MP
    w==;
-X-CSE-ConnectionGUID: gl1ivLK0TJCFAqRotgHUkw==
-X-CSE-MsgGUID: 2MHTZd/sSg2FI2deUpxlVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="44939421"
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="44939421"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 10:50:36 -0800
-X-CSE-ConnectionGUID: Pil/ZD2PR4yGZRBu7izqAA==
-X-CSE-MsgGUID: +gIHjsm1RDWJolss8VKBoQ==
+X-CSE-ConnectionGUID: BZZGlMO2QUWTJ8EVDl52jQ==
+X-CSE-MsgGUID: +KVEdsCiSvOp4OQXyb9Zvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="59864057"
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="59864057"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 10:50:47 -0800
+X-CSE-ConnectionGUID: q5Rua8y7TzqxOvwLx1xbTA==
+X-CSE-MsgGUID: 3iSYiNLzQ76iBejITVcGbA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="133689637"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.137])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 10:50:30 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 12 Dec 2024 20:50:26 +0200 (EET)
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-cc: x86@kernel.org, tony.luck@intel.com, mario.limonciello@amd.com, 
-    bhelgaas@google.com, jdelvare@suse.com, linux@roeck-us.net, 
-    clemens@ladisch.de, Shyam-sundar.S-k@amd.com, 
-    Hans de Goede <hdegoede@redhat.com>, naveenkrishna.chatradhi@amd.com, 
-    suma.hegde@amd.com, LKML <linux-kernel@vger.kernel.org>, 
-    linux-edac@vger.kernel.org, linux-pci@vger.kernel.org, 
-    linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2.1] x86/amd_node, platform/x86/amd/hsmp: Have HSMP use
- SMN through AMD_NODE
-In-Reply-To: <20241212172711.1944927-1-yazen.ghannam@amd.com>
-Message-ID: <65375593-f2e0-e03b-7e7f-ad8be58772d4@linux.intel.com>
-References:  <20241212172711.1944927-1-yazen.ghannam@amd.com>
+X-IronPort-AV: E=Sophos;i="6.12,229,1728975600"; 
+   d="scan'208";a="101343296"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 12 Dec 2024 10:50:46 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLoGp-000BDm-2N;
+	Thu, 12 Dec 2024 18:50:43 +0000
+Date: Fri, 13 Dec 2024 02:50:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: kernel/sched/syscalls.c:1196:1: sparse: sparse: Using plain integer
+ as NULL pointer
+Message-ID: <202412130222.TC0e3CgN-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 12 Dec 2024, Yazen Ghannam wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   231825b2e1ff6ba799c5eaf396d3ab2354e37c6b
+commit: 04746ed80bcf3130951ed4d5c1bc5b0bcabdde22 sched/syscalls: Split out kernel/sched/syscalls.c from kernel/sched/core.c
+date:   7 months ago
+config: s390-randconfig-r132-20241212 (https://download.01.org/0day-ci/archive/20241213/202412130222.TC0e3CgN-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241213/202412130222.TC0e3CgN-lkp@intel.com/reproduce)
 
-> The HSMP interface is just an SMN interface with different offsets.
-> 
-> Define an HSMP wrapper in the SMN code and have the HSMP platform driver
-> use that rather than a local solution.
-> 
-> Also, remove the "root" member from AMD_NB, since there are no more
-> users of it.
-> 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
-> 
-> Notes:
->     Link:
->     https://lore.kernel.org/20241206161210.163701-15-yazen.ghannam@amd.com
->     
->     v2->v2.1:
->     * Include static_assert() and comment for sysfs attributes.
->     
->     v1->v2:
->     * Rebase on recent HSMP rework.
-> 
->  arch/x86/include/asm/amd_nb.h         |  1 -
->  arch/x86/include/asm/amd_node.h       |  3 +++
->  arch/x86/kernel/amd_nb.c              |  1 -
->  arch/x86/kernel/amd_node.c            |  9 +++++++
->  drivers/platform/x86/amd/hsmp/Kconfig |  2 +-
->  drivers/platform/x86/amd/hsmp/acpi.c  |  7 +++---
->  drivers/platform/x86/amd/hsmp/hsmp.c  |  1 -
->  drivers/platform/x86/amd/hsmp/hsmp.h  |  3 ---
->  drivers/platform/x86/amd/hsmp/plat.c  | 35 +++++++++------------------
->  9 files changed, 28 insertions(+), 34 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/amd_nb.h b/arch/x86/include/asm/amd_nb.h
-> index 4c4efb93045e..adfa0854cf2d 100644
-> --- a/arch/x86/include/asm/amd_nb.h
-> +++ b/arch/x86/include/asm/amd_nb.h
-> @@ -27,7 +27,6 @@ struct amd_l3_cache {
->  };
->  
->  struct amd_northbridge {
-> -	struct pci_dev *root;
->  	struct pci_dev *misc;
->  	struct pci_dev *link;
->  	struct amd_l3_cache l3_cache;
-> diff --git a/arch/x86/include/asm/amd_node.h b/arch/x86/include/asm/amd_node.h
-> index 113ad3e8ee40..5fe9c6537434 100644
-> --- a/arch/x86/include/asm/amd_node.h
-> +++ b/arch/x86/include/asm/amd_node.h
-> @@ -33,4 +33,7 @@ static inline u16 amd_num_nodes(void)
->  int __must_check amd_smn_read(u16 node, u32 address, u32 *value);
->  int __must_check amd_smn_write(u16 node, u32 address, u32 value);
->  
-> +/* Should only be used by the HSMP driver. */
-> +int __must_check amd_smn_hsmp_rdwr(u16 node, u32 address, u32 *value, bool write);
-> +
->  #endif /*_ASM_X86_AMD_NODE_H_*/
-> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-> index 2729e99806ec..3a20312062af 100644
-> --- a/arch/x86/kernel/amd_nb.c
-> +++ b/arch/x86/kernel/amd_nb.c
-> @@ -73,7 +73,6 @@ static int amd_cache_northbridges(void)
->  	amd_northbridges.nb = nb;
->  
->  	for (i = 0; i < amd_northbridges.num; i++) {
-> -		node_to_amd_nb(i)->root = amd_node_get_root(i);
->  		node_to_amd_nb(i)->misc = amd_node_get_func(i, 3);
->  		node_to_amd_nb(i)->link = amd_node_get_func(i, 4);
->  	}
-> diff --git a/arch/x86/kernel/amd_node.c b/arch/x86/kernel/amd_node.c
-> index d2ec7fd555c5..65045f223c10 100644
-> --- a/arch/x86/kernel/amd_node.c
-> +++ b/arch/x86/kernel/amd_node.c
-> @@ -97,6 +97,9 @@ static DEFINE_MUTEX(smn_mutex);
->  #define SMN_INDEX_OFFSET	0x60
->  #define SMN_DATA_OFFSET		0x64
->  
-> +#define HSMP_INDEX_OFFSET	0xc4
-> +#define HSMP_DATA_OFFSET	0xc8
-> +
->  /*
->   * SMN accesses may fail in ways that are difficult to detect here in the called
->   * functions amd_smn_read() and amd_smn_write(). Therefore, callers must do
-> @@ -179,6 +182,12 @@ int __must_check amd_smn_write(u16 node, u32 address, u32 value)
->  }
->  EXPORT_SYMBOL_GPL(amd_smn_write);
->  
-> +int __must_check amd_smn_hsmp_rdwr(u16 node, u32 address, u32 *value, bool write)
-> +{
-> +	return __amd_smn_rw(HSMP_INDEX_OFFSET, HSMP_DATA_OFFSET, node, address, value, write);
-> +}
-> +EXPORT_SYMBOL_GPL(amd_smn_hsmp_rdwr);
-> +
->  static int amd_cache_roots(void)
->  {
->  	u16 node, num_nodes = amd_num_nodes();
-> diff --git a/drivers/platform/x86/amd/hsmp/Kconfig b/drivers/platform/x86/amd/hsmp/Kconfig
-> index 7d10d4462a45..d6f7a62d55b5 100644
-> --- a/drivers/platform/x86/amd/hsmp/Kconfig
-> +++ b/drivers/platform/x86/amd/hsmp/Kconfig
-> @@ -7,7 +7,7 @@ config AMD_HSMP
->  	tristate
->  
->  menu "AMD HSMP Driver"
-> -	depends on AMD_NB || COMPILE_TEST
-> +	depends on AMD_NODE || COMPILE_TEST
->  
->  config AMD_HSMP_ACPI
->  	tristate "AMD HSMP ACPI device driver"
-> diff --git a/drivers/platform/x86/amd/hsmp/acpi.c b/drivers/platform/x86/amd/hsmp/acpi.c
-> index e981d45e1c12..28565ca78afd 100644
-> --- a/drivers/platform/x86/amd/hsmp/acpi.c
-> +++ b/drivers/platform/x86/amd/hsmp/acpi.c
-> @@ -10,7 +10,6 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
->  #include <asm/amd_hsmp.h>
-> -#include <asm/amd_nb.h>
->  
->  #include <linux/acpi.h>
->  #include <linux/device.h>
-> @@ -24,6 +23,8 @@
->  
->  #include <uapi/asm-generic/errno-base.h>
->  
-> +#include <asm/amd_node.h>
-> +
->  #include "hsmp.h"
->  
->  #define DRIVER_NAME		"amd_hsmp"
-> @@ -321,8 +322,8 @@ static int hsmp_acpi_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	if (!hsmp_pdev->is_probed) {
-> -		hsmp_pdev->num_sockets = amd_nb_num();
-> -		if (hsmp_pdev->num_sockets == 0 || hsmp_pdev->num_sockets > MAX_AMD_SOCKETS)
-> +		hsmp_pdev->num_sockets = amd_num_nodes();
-> +		if (hsmp_pdev->num_sockets == 0 || hsmp_pdev->num_sockets > MAX_AMD_NUM_NODES)
->  			return -ENODEV;
->  
->  		hsmp_pdev->sock = devm_kcalloc(&pdev->dev, hsmp_pdev->num_sockets,
-> diff --git a/drivers/platform/x86/amd/hsmp/hsmp.c b/drivers/platform/x86/amd/hsmp/hsmp.c
-> index 227b4ad4a51a..e04c613ad5d6 100644
-> --- a/drivers/platform/x86/amd/hsmp/hsmp.c
-> +++ b/drivers/platform/x86/amd/hsmp/hsmp.c
-> @@ -8,7 +8,6 @@
->   */
->  
->  #include <asm/amd_hsmp.h>
-> -#include <asm/amd_nb.h>
->  
->  #include <linux/acpi.h>
->  #include <linux/delay.h>
-> diff --git a/drivers/platform/x86/amd/hsmp/hsmp.h b/drivers/platform/x86/amd/hsmp/hsmp.h
-> index e852f0a947e4..af8b21f821d6 100644
-> --- a/drivers/platform/x86/amd/hsmp/hsmp.h
-> +++ b/drivers/platform/x86/amd/hsmp/hsmp.h
-> @@ -21,8 +21,6 @@
->  
->  #define HSMP_ATTR_GRP_NAME_SIZE	10
->  
-> -#define MAX_AMD_SOCKETS 8
-> -
->  #define HSMP_CDEV_NAME		"hsmp_cdev"
->  #define HSMP_DEVNODE_NAME	"hsmp"
->  
-> @@ -41,7 +39,6 @@ struct hsmp_socket {
->  	void __iomem *virt_base_addr;
->  	struct semaphore hsmp_sem;
->  	char name[HSMP_ATTR_GRP_NAME_SIZE];
-> -	struct pci_dev *root;
->  	struct device *dev;
->  	u16 sock_ind;
->  	int (*amd_hsmp_rdwr)(struct hsmp_socket *sock, u32 off, u32 *val, bool rw);
-> diff --git a/drivers/platform/x86/amd/hsmp/plat.c b/drivers/platform/x86/amd/hsmp/plat.c
-> index a61f815c9f80..32921092b0c8 100644
-> --- a/drivers/platform/x86/amd/hsmp/plat.c
-> +++ b/drivers/platform/x86/amd/hsmp/plat.c
-> @@ -10,7 +10,6 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  
->  #include <asm/amd_hsmp.h>
-> -#include <asm/amd_nb.h>
->  
->  #include <linux/device.h>
->  #include <linux/module.h>
-> @@ -18,6 +17,8 @@
->  #include <linux/platform_device.h>
->  #include <linux/sysfs.h>
->  
-> +#include <asm/amd_node.h>
-> +
->  #include "hsmp.h"
->  
->  #define DRIVER_NAME		"amd_hsmp"
-> @@ -34,28 +35,12 @@
->  #define SMN_HSMP_MSG_RESP	0x0010980
->  #define SMN_HSMP_MSG_DATA	0x00109E0
->  
-> -#define HSMP_INDEX_REG		0xc4
-> -#define HSMP_DATA_REG		0xc8
-> -
->  static struct hsmp_plat_device *hsmp_pdev;
->  
->  static int amd_hsmp_pci_rdwr(struct hsmp_socket *sock, u32 offset,
->  			     u32 *value, bool write)
->  {
-> -	int ret;
-> -
-> -	if (!sock->root)
-> -		return -ENODEV;
-> -
-> -	ret = pci_write_config_dword(sock->root, HSMP_INDEX_REG,
-> -				     sock->mbinfo.base_addr + offset);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = (write ? pci_write_config_dword(sock->root, HSMP_DATA_REG, *value)
-> -		     : pci_read_config_dword(sock->root, HSMP_DATA_REG, value));
-> -
-> -	return ret;
-> +	return amd_smn_hsmp_rdwr(sock->sock_ind, sock->mbinfo.base_addr + offset, value, write);
->  }
->  
->  static ssize_t hsmp_metric_tbl_plat_read(struct file *filp, struct kobject *kobj,
-> @@ -95,7 +80,12 @@ static umode_t hsmp_is_sock_attr_visible(struct kobject *kobj,
->   * Static array of 8 + 1(for NULL) elements is created below
->   * to create sysfs groups for sockets.
->   * is_bin_visible function is used to show / hide the necessary groups.
-> + *
-> + * Validate the maximum number against MAX_AMD_NUM_NODES. If this changes,
-> + * then the attributes and groups below must be adjusted.
->   */
-> +static_assert(MAX_AMD_NUM_NODES == 8);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412130222.TC0e3CgN-lkp@intel.com/
 
-Please also add the #include for it.
+sparse warnings: (new ones prefixed by >>)
+   kernel/sched/rt.c:1682:67: sparse:     expected struct task_struct *tsk
+   kernel/sched/rt.c:1682:67: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/rt.c:2044:40: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *task @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/rt.c:2044:40: sparse:     expected struct task_struct *task
+   kernel/sched/rt.c:2044:40: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/rt.c:2067:13: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/rt.c:2067:13: sparse:    struct task_struct *
+   kernel/sched/rt.c:2067:13: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/rt.c:2417:54: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *tsk @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/rt.c:2417:54: sparse:     expected struct task_struct *tsk
+   kernel/sched/rt.c:2417:54: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/rt.c:2419:40: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *p @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/rt.c:2419:40: sparse:     expected struct task_struct *p
+   kernel/sched/rt.c:2419:40: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/rt.c:2419:61: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *p @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/rt.c:2419:61: sparse:     expected struct task_struct *p
+   kernel/sched/rt.c:2419:61: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/build_policy.c: note: in included file:
+   kernel/sched/deadline.c:2401:23: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *p @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/deadline.c:2401:23: sparse:     expected struct task_struct *p
+   kernel/sched/deadline.c:2401:23: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/deadline.c:2411:13: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/deadline.c:2411:13: sparse:    struct task_struct *
+   kernel/sched/deadline.c:2411:13: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/deadline.c:2519:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/deadline.c:2519:25: sparse:    struct task_struct *
+   kernel/sched/deadline.c:2519:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/deadline.c:2026:42: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct sched_dl_entity const *b @@     got struct sched_dl_entity [noderef] __rcu * @@
+   kernel/sched/deadline.c:2026:42: sparse:     expected struct sched_dl_entity const *b
+   kernel/sched/deadline.c:2026:42: sparse:     got struct sched_dl_entity [noderef] __rcu *
+   kernel/sched/deadline.c:2037:38: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *tsk @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/deadline.c:2037:38: sparse:     expected struct task_struct *tsk
+   kernel/sched/deadline.c:2037:38: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/deadline.c:1220:23: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *p @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/deadline.c:1220:23: sparse:     expected struct task_struct *p
+   kernel/sched/deadline.c:1220:23: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/deadline.c:1444:38: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct task_struct *curr @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/deadline.c:1444:38: sparse:     expected struct task_struct *curr
+   kernel/sched/deadline.c:1444:38: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/deadline.c:2262:9: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct sched_domain *[assigned] sd @@     got struct sched_domain [noderef] __rcu *parent @@
+   kernel/sched/deadline.c:2262:9: sparse:     expected struct sched_domain *[assigned] sd
+   kernel/sched/deadline.c:2262:9: sparse:     got struct sched_domain [noderef] __rcu *parent
+   kernel/sched/deadline.c:1911:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct task_struct *curr @@     got struct task_struct [noderef] __rcu * @@
+   kernel/sched/deadline.c:1911:14: sparse:     expected struct task_struct *curr
+   kernel/sched/deadline.c:1911:14: sparse:     got struct task_struct [noderef] __rcu *
+   kernel/sched/deadline.c:1987:43: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct task_struct *p @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/deadline.c:1987:43: sparse:     expected struct task_struct *p
+   kernel/sched/deadline.c:1987:43: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/deadline.c:2566:38: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *tsk @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/deadline.c:2566:38: sparse:     expected struct task_struct *tsk
+   kernel/sched/deadline.c:2566:38: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/deadline.c:2568:23: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *p @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/deadline.c:2568:23: sparse:     expected struct task_struct *p
+   kernel/sched/deadline.c:2568:23: sparse:     got struct task_struct [noderef] __rcu *curr
+   kernel/sched/deadline.c:2570:44: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct sched_dl_entity const *b @@     got struct sched_dl_entity [noderef] __rcu * @@
+   kernel/sched/deadline.c:2570:44: sparse:     expected struct sched_dl_entity const *b
+   kernel/sched/deadline.c:2570:44: sparse:     got struct sched_dl_entity [noderef] __rcu *
+   kernel/sched/deadline.c:2745:22: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/deadline.c:2745:22: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/deadline.c:2745:22: sparse:    struct task_struct *
+   kernel/sched/deadline.c:2794:32: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *p @@     got struct task_struct [noderef] __rcu *curr @@
+   kernel/sched/build_policy.c: note: in included file:
+   kernel/sched/syscalls.c:206:22: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/syscalls.c:206:22: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/syscalls.c:206:22: sparse:    struct task_struct *
+   kernel/sched/build_policy.c: note: in included file:
+   kernel/sched/sched.h:2156:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct *
+   kernel/sched/sched.h:2156:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct *
+   kernel/sched/sched.h:2156:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct *
+   kernel/sched/sched.h:2156:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct *
+   kernel/sched/sched.h:2156:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct *
+   kernel/sched/sched.h:2156:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct *
+   kernel/sched/sched.h:2156:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct *
+   kernel/sched/sched.h:2156:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct *
+   kernel/sched/sched.h:2328:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2328:9: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2328:9: sparse:    struct task_struct *
+   kernel/sched/sched.h:2156:25: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2156:25: sparse:    struct task_struct *
+   kernel/sched/sched.h:2328:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/sched.h:2328:9: sparse:    struct task_struct [noderef] __rcu *
+   kernel/sched/sched.h:2328:9: sparse:    struct task_struct *
+   kernel/sched/build_policy.c: note: in included file:
+>> kernel/sched/syscalls.c:1196:1: sparse: sparse: Using plain integer as NULL pointer
+>> kernel/sched/syscalls.c:1196:1: sparse: sparse: Using plain integer as NULL pointer
+   kernel/sched/syscalls.c:1386:1: sparse: sparse: Using plain integer as NULL pointer
+   kernel/sched/syscalls.c:1386:1: sparse: sparse: Using plain integer as NULL pointer
+   kernel/sched/syscalls.c:1402:6: sparse: sparse: context imbalance in 'sched_getaffinity' - wrong count at exit
+   kernel/sched/syscalls.c:1431:1: sparse: sparse: Using plain integer as NULL pointer
+   kernel/sched/syscalls.c:1431:1: sparse: sparse: Using plain integer as NULL pointer
+   kernel/sched/syscalls.c:1676:1: sparse: sparse: Using plain integer as NULL pointer
+   kernel/sched/syscalls.c:1676:1: sparse: sparse: Using plain integer as NULL pointer
+   kernel/sched/syscalls.c:1689:1: sparse: sparse: Using plain integer as NULL pointer
+   kernel/sched/syscalls.c:1689:1: sparse: sparse: Using plain integer as NULL pointer
+   kernel/sched/build_policy.c: note: in included file:
+   kernel/sched/rt.c:1707:15: sparse: sparse: dereference of noderef expression
+
+vim +1196 kernel/sched/syscalls.c
+
+  1188	
+  1189	/**
+  1190	 * sys_sched_getattr - similar to sched_getparam, but with sched_attr
+  1191	 * @pid: the pid in question.
+  1192	 * @uattr: structure containing the extended parameters.
+  1193	 * @usize: sizeof(attr) for fwd/bwd comp.
+  1194	 * @flags: for future extension.
+  1195	 */
+> 1196	SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
+  1197			unsigned int, usize, unsigned int, flags)
+  1198	{
+  1199		struct sched_attr kattr = { };
+  1200		struct task_struct *p;
+  1201		int retval;
+  1202	
+  1203		if (!uattr || pid < 0 || usize > PAGE_SIZE ||
+  1204		    usize < SCHED_ATTR_SIZE_VER0 || flags)
+  1205			return -EINVAL;
+  1206	
+  1207		scoped_guard (rcu) {
+  1208			p = find_process_by_pid(pid);
+  1209			if (!p)
+  1210				return -ESRCH;
+  1211	
+  1212			retval = security_task_getscheduler(p);
+  1213			if (retval)
+  1214				return retval;
+  1215	
+  1216			kattr.sched_policy = p->policy;
+  1217			if (p->sched_reset_on_fork)
+  1218				kattr.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
+  1219			get_params(p, &kattr);
+  1220			kattr.sched_flags &= SCHED_FLAG_ALL;
+  1221	
 
 -- 
- i.
-
->  #define HSMP_BIN_ATTR(index, _list)					\
->  static struct bin_attribute attr##index = {				\
->  	.attr = { .name = HSMP_METRICS_TABLE_NAME, .mode = 0444},	\
-> @@ -159,10 +149,7 @@ static int init_platform_device(struct device *dev)
->  	int ret, i;
->  
->  	for (i = 0; i < hsmp_pdev->num_sockets; i++) {
-> -		if (!node_to_amd_nb(i))
-> -			return -ENODEV;
->  		sock = &hsmp_pdev->sock[i];
-> -		sock->root			= node_to_amd_nb(i)->root;
->  		sock->sock_ind			= i;
->  		sock->dev			= dev;
->  		sock->mbinfo.base_addr		= SMN_HSMP_BASE;
-> @@ -305,11 +292,11 @@ static int __init hsmp_plt_init(void)
->  		return -ENOMEM;
->  
->  	/*
-> -	 * amd_nb_num() returns number of SMN/DF interfaces present in the system
-> +	 * amd_num_nodes() returns number of SMN/DF interfaces present in the system
->  	 * if we have N SMN/DF interfaces that ideally means N sockets
->  	 */
-> -	hsmp_pdev->num_sockets = amd_nb_num();
-> -	if (hsmp_pdev->num_sockets == 0 || hsmp_pdev->num_sockets > MAX_AMD_SOCKETS)
-> +	hsmp_pdev->num_sockets = amd_num_nodes();
-> +	if (hsmp_pdev->num_sockets == 0 || hsmp_pdev->num_sockets > MAX_AMD_NUM_NODES)
->  		return ret;
->  
->  	ret = platform_driver_register(&amd_hsmp_driver);
-> 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
