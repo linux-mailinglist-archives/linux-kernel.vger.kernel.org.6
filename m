@@ -1,428 +1,290 @@
-Return-Path: <linux-kernel+bounces-442404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716529EDC52
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:54:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABEE69EDC5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FBCD2835FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Dec 2024 23:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3E9283285
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 00:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FC01F866C;
-	Wed, 11 Dec 2024 23:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED8729A9;
+	Thu, 12 Dec 2024 00:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="rBxY97+2"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FIrjW113"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2056.outbound.protection.outlook.com [40.107.102.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB1F1F37AC
-	for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 23:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733961243; cv=none; b=uIqblbpcBh0CWKngFV+raRxr2OCfGOM6h9o3FBkCZj8sSq0SyVpGeqAKo1pIIKkKN8ob3tuars3DsFCtLpZsHi8IUxRvPq0f23S7ff2+h0NbG1Yp7F8EsDmN1g05QYgaMbe+QX5tRVo+RWl8iQwBQkXGAvpd96fvGMvW1dJ2kIw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733961243; c=relaxed/simple;
-	bh=/b64pgqyFjn+0zdYe/fZWQ7lPUA2K5N4MlLwvF597s0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lJP/+cNDOIFL8qGo3GxvL35TXeRNqMYCCXZc7fUahd2+igT+syMuc0pIzygMoIPv1yaVKfPC4oxp9+vvnEvzqsvDIbTh1AVTFSvlOSMgOiD/PFsJCaPSCAlVov8oj8rjyxKyoqHUId2xvJqlNLV5TrfpWqDrie9nQG9JkzraatM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=rBxY97+2; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A1EA82C0504;
-	Thu, 12 Dec 2024 12:53:51 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1733961231;
-	bh=uFYPmlLq5/1jZhh75uLVt+XpKoL3iixWFn64Iqkf8sk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rBxY97+2xBLyQqft6CivvLQZcCnMsTS3lUG7jFHuVZ6PWSVNIgNFqUEArhjzLpHKT
-	 nQp0sJ0xT60yY9ZKZY812DwnUf1j+z9SrofxcPmhyFzMhqHLPnjuVsgMgsPh0RDAei
-	 y+2I5cvxIw0Mm09ujNG1r2b0Mdp1ZAGTP7hmv48kGGIZ8oyasbiwddGUMQfXGgDzRo
-	 HgU8Clez9usPwQjEYB2I5dnsdOdVJuikrwgdNbQXx1yYtL1/ahfq9qgAIdz+2gJ+NE
-	 IX9aq55V/ypgieq2g/xOCZj0SBUvJULsL+BuabqdlbgbrNLdI9kWuysE25R9EbS39e
-	 QgaZExZ/AAN6g==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B675a260f0004>; Thu, 12 Dec 2024 12:53:51 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 2CD2913EE9C;
-	Thu, 12 Dec 2024 12:53:51 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 2B9702807DF; Thu, 12 Dec 2024 12:53:51 +1300 (NZDT)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	tsbogend@alpha.franken.de,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	markus.stockhausen@gmx.de
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 4/4] net: mdio: Add RTL9300 MDIO driver
-Date: Thu, 12 Dec 2024 12:53:42 +1300
-Message-ID: <20241211235342.1573926-5-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241211235342.1573926-1-chris.packham@alliedtelesis.co.nz>
-References: <20241211235342.1573926-1-chris.packham@alliedtelesis.co.nz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A94163;
+	Thu, 12 Dec 2024 00:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733961784; cv=fail; b=mMvmH/mEqH75pRUWc61kMwuWTiBBBKkXk/WBdDE/tOmwo9mBu5Ue/bS/83tbBt7sogPNkqDuJ0k8VBFNiLScOqJi0mUNrimH+OB544T5CC60qFfRgHDBzNnz4ParAu7DIb41u/2dtAbNz0C3tHsJEjvpAcI/N+l1aodxikuZF2I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733961784; c=relaxed/simple;
+	bh=1WDB77vS4Yht+b1dZUsQ0hbFWL97Wr+fgEcn1xnONHE=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=T+Vn3A4zpYxdC5B+HvA2/s5fD4O3tG2mIRO3z6ZcCB5OVTD3QSIiNnz7BIgst5cnxguO+urNajBd67uJ4Yb/Gv4pgc70eXFg2eqMgM1+4TXxHO6MS0+0a2pSl8hENvYkAvTxRIQ5NMi45NOu5xR6cEwdByazFaog6qjICj2urFM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FIrjW113; arc=fail smtp.client-ip=40.107.102.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ogb1LnloPWnny+HYBLePuoF6o7bRTPTfW//NpERrx3VwgxpmDmv04nT38dOguil+thujoV+J5YgnwR6T9wzlJXA6hALVesPxaSxGLHUeGhwkdSu27iXyqZZvhkEvNvaMKgiLZ93UjoNL4N34Y2MUybml+CmhktTxQQgo6Y4Nw3wor03++/ZCL0pm7xQ7txGzQqwkdO2ACrEjAJ8ZoFEMcRLV58vtJZHmRCpUL9UrKS4m+6mKGs6xm/uhVdTZDmxQwvVJWcgUtn4dVQjwd1XCrty2TD4Cfsj+9E+PkTpzg6fTvXoIWCAuzLf8wU4zDk/qK3HmzkdSkY/VLhuGqDmS6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v/fngk/On138GHJUiZF/t3nd31IjJc9yuMaTkIibYzU=;
+ b=ECMawII+ZuUAz3Fg5wuH8DgV87Z3KFNs5U9zNHO4ExJLoAbW4I2FclQjo+dSWGFy1YYx0CVGV5np8/AKxMh+XtmAdOU1z/yGdes13aLm2aElEsq+8gyWN5P0daHou8dChSMnA7LLDGqdzZ4YfwTcqnU0U+7GbFdlnLfAoXtcM/+bdY9ptaVVxoi8LRyWSqMZWYYUHc8HnpukgsZZ326iYiB0SgxZAGXBDNY9SuWvun6XMvdc2ob/aM3DCMBd0BgD11r4Md3petDHe2/SWL5YdDyUMIcx3meuaqeelDonVxtWDP1DqssWeD4VkFaIhVZIDczS/B0iXLlQJeT4nuVeRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v/fngk/On138GHJUiZF/t3nd31IjJc9yuMaTkIibYzU=;
+ b=FIrjW113qWDazd+LBeAPn8qXeavfXDT44EcMyJEMp9sSHbgWK0BzsX+VHQLQv3hFonjfEtgRrFe9MGy7lZhM+COMl/+f2XezQqjXVXFAtOUg4gu1hkr769L47qH173GBijXRqdCrO6Vap9HfddG9mfGfNSAEeloC0/iF/9OQS7Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
+ by DM4PR12MB6616.namprd12.prod.outlook.com (2603:10b6:8:8e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Thu, 12 Dec
+ 2024 00:02:59 +0000
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::c170:6906:9ef3:ecef]) by BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::c170:6906:9ef3:ecef%7]) with mapi id 15.20.8230.016; Thu, 12 Dec 2024
+ 00:02:58 +0000
+Message-ID: <423b28cd-436b-45ff-a82c-ee3112b425d7@amd.com>
+Date: Wed, 11 Dec 2024 18:02:54 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
+From: "Kalra, Ashish" <ashish.kalra@amd.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, Peter Gonda <pgonda@google.com>,
+ pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, herbert@gondor.apana.org.au,
+ x86@kernel.org, john.allen@amd.com, davem@davemloft.net,
+ michael.roth@amd.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+References: <d3e78d92-29f0-4f56-a1fe-f8131cbc2555@amd.com>
+ <d3de477d-c9bc-40b9-b7db-d155e492981a@amd.com> <Zz9mIBdNpJUFpkXv@google.com>
+ <cb62940c-b2f7-0f3e-1710-61b92cc375e5@amd.com> <Zz9w67Ajxb-KQFZZ@google.com>
+ <7ea2b3e8-56b7-418f-8551-b905bf10fecb@amd.com> <Z1N7ELGfR6eTuO6D@google.com>
+ <5b77d19d-3f34-46d7-b307-738643504cd5@amd.com> <Z1eZmXmC9oZ5RyPc@google.com>
+ <0a468f32-c586-4cfc-a606-89ab5c3e77c2@amd.com> <Z1jHZDevvjWFQo5A@google.com>
+ <8dedde10-4dbb-47ce-ad7e-fa9e587303d8@amd.com>
+ <e27a4198-ee94-4ca1-9973-1f6164ed4e64@amd.com>
+Content-Language: en-US
+In-Reply-To: <e27a4198-ee94-4ca1-9973-1f6164ed4e64@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN4PR0501CA0120.namprd05.prod.outlook.com
+ (2603:10b6:803:42::37) To BL3PR12MB9049.namprd12.prod.outlook.com
+ (2603:10b6:208:3b8::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=675a260f a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=RZcAm9yDv7YA:10 a=cUr0DCv8HDOHa6VSQHkA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|DM4PR12MB6616:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ffcb6d9-61f7-4889-d09e-08dd1a40564f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U255bXZ5RXRsRVdCY2NKV3kzVldXa0t0dTlOa3BxREdmZVlpSEN4VlYzcEhL?=
+ =?utf-8?B?R0ExOFBIWko2Vi9aTWdZdmhMYXRaMWMxMnBQSUFTN05xNHFJTkF5QjZ2Ni80?=
+ =?utf-8?B?aWQwT1RUemZaaWp2UkplZW9SYTZ0c3ZRQXhZcjRwZlFxNWM1ZTBDOGJ0RHUz?=
+ =?utf-8?B?Vll3Q0xlS00yM08wd1NybFRFQ2VMWGVzYkEyWnpCdHVUU1o2KzVzOUVCMTdz?=
+ =?utf-8?B?QmZobGxPRCtoZCtXalk2Z01CWDNNME5JdWphODNmRjB0bCthZExLcGxIUlla?=
+ =?utf-8?B?SHFhSEdGTnAyOGZvcmhGMGdCbXBCZS9CaXhjSTZHN0ZLS2U0V0g5aGgxK2RF?=
+ =?utf-8?B?TUl1cCtYY0pmNVpRY2JnNXJHRlFwaUNhRDdkYXVlUkN6cGlZeHpIem0vWmdH?=
+ =?utf-8?B?ZitZRVBVZExpQUZVL1ZiUisydGVUR0d2SU9Fa0pBamJrUlVvWWxtRnhDQ0s0?=
+ =?utf-8?B?QlROeUdvZm5FU3RjcDlFc3VKcnA5OEN1UTJraUdFWHlweiswUExWSzFOUGFa?=
+ =?utf-8?B?NllwTG5FUy8rM0x3c3R4OUhUbXM2TXNJV1d5dEdLRCtaazg4MXA5bk1yakdN?=
+ =?utf-8?B?VTYyWERmK0ZMRjlwQWJEU0J3U3o4NVU0UmRVNlh1QkxpYlBSeG56eXcxcUJF?=
+ =?utf-8?B?VCs1NG1SWFhnOVZQN0hrc3FBYjFTeHhhRlRqYnNraXFibTRnVkVaRjJIc3pQ?=
+ =?utf-8?B?dEhxemd2L2ZjT2p5a3ZieUM2cENWOGo5TCt6YjhxUVcrMmI5bVgySndlT2Vs?=
+ =?utf-8?B?b3J0b2MyelBZclNFQWZ1N1pHZFFKUUlTdW1sM1ZuRFNCNmZ0N3RRc1o0cGc3?=
+ =?utf-8?B?aHNPMTFISG1JUFlMTjlJQkxkTWtYREVaaXNvbzAvNzhzV09mblJOVWxLZkxP?=
+ =?utf-8?B?TmUxVUZmRXBKOWNmc25SZHp4N0hlTUNLdFQ5ZklTbkdRQllTaDZGaWlSL3JY?=
+ =?utf-8?B?R2FsL0wzbXlnMFNOMHdXbGNpTlBDdGdmM20wOC8vUnZHbWJPRHhzY2Z0ZUFv?=
+ =?utf-8?B?dFJvcFlVRGNlUllmNThmVnFKckQxYzJFNWpoSWIxNThpWUdOOXQzQ05UR0Rm?=
+ =?utf-8?B?anM2a052eWo3bTA1ZUlodUtoZmlFWllxNTE2L2puYWcyWjllV2dwSWZjQ1By?=
+ =?utf-8?B?NUE5S3pGc1lDUW5kNUczQnhzdGtIN21uYWczMVZndEpzTEJFL2FOYVhQM3N2?=
+ =?utf-8?B?ZUZqcG9rOWVIandpTG9Pb0NhRGl0Q2xRclYvZERzZUFFUjVFbDd1WUQ5bXJR?=
+ =?utf-8?B?L0hNVVNYcnJFRkxWODU4MEFOanhqMC9QdjhxSngvMjVUZ3BlYkVzVzhsd242?=
+ =?utf-8?B?VTcxWDR5a29vZ1FBdDhLYjRYZUMzWFdQTHMvbzJJWWFkMitNckpxWHpGUUFW?=
+ =?utf-8?B?NG9sVSswQkw2c25TakVTSlRyUStDUmxnckpoemdkNVhKSm92a2p2elNzN0I5?=
+ =?utf-8?B?eVlPVmYxQi9SbjZNWUdTRTFqOVAvTUE5dlVQV3BQNCsvS3k5L0pHK25ndlFB?=
+ =?utf-8?B?TGxSUUlyQ3Eyckc2VnNsVjd6NjkyWEs3TjQ0MFVYUkJOdDFLeGl6RHV2UGl4?=
+ =?utf-8?B?Q0QyODh0STdDSnVsYjYwMXlZMi9OM3NpZ1pZVmlQUFFCTS9US2tGOGR0OGdR?=
+ =?utf-8?B?R1J1SVAxT1BCcm8zTUkrYkdva3YwSVdSQ1pWeWl6eGwzVXNKZjlKOGUxY1B6?=
+ =?utf-8?B?S1VlRXc0U1g3bnFGWXBtb1doV1gxcTMwd2dmd0IxNFNXSXhsMG5RV0R4Z2Zl?=
+ =?utf-8?B?Ty9WWVVseVA1V2RlRisvZmF1a1I2aVhnYjVWUlFJYi9ZSTZBMGtQQ0hxVHcx?=
+ =?utf-8?B?UGlGK1AzUEI3aGVzMmFMQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SnZkcnRIbWw3MVRUVWZNeXpNUFBYM3E0M2hQRlRIKy9pMHNiOXpmREVyUVg3?=
+ =?utf-8?B?S2hLMEdvTmpuck5sWmJOQTlYRUkzdVpvNDV3TGtnTUpXSnFDRk9hNFMxcXA5?=
+ =?utf-8?B?dzVLM0I4My9tcGVrOGd5STkxT1drbVhaRzV3c1VObFdNMHJ4UjNsSDludlRD?=
+ =?utf-8?B?ZllnVWhwdkJOZlQ2cnU1Z1EycUlkYi9hd1BLSzAwOEhpVWdxUmFOZnVIOVE1?=
+ =?utf-8?B?anpJNzlzQW9rRDRzU2lTZ3lHM0dndy96NkZWR1I2ajRkNnA2cFVWNDFoVmls?=
+ =?utf-8?B?bHRQQmtVaDg4TERrT0h1OHdSQ0VjS2N5ZGg4SkMrMjdHV3I4clptcXhadlhk?=
+ =?utf-8?B?Q3M1RTdCREZmdjlrS2ZNQXBKeGdJVTFjVWxvSmhobFhmZnU4L0Q3RHovR0NQ?=
+ =?utf-8?B?OHY3cU9SZ245anZaVzVDSnVuV2hldko4UjJTNTNrZWlyazBvNTN3M1diMVF1?=
+ =?utf-8?B?dEhZdVFuOTNicHJLZlNpMllnak9Hay9TQzV3ejNQNHJYMzBkZTFBRXhDcTVD?=
+ =?utf-8?B?OEE4Njh2U1lib0srQ1B0b093dDJQMEFOWUdFTG42Qzh1WUp3N1NEQ01GY3ZV?=
+ =?utf-8?B?T0x2enhkZFNGWkpqai9xQWR4V2ZsTVQxazVLeGVzMFYrUmdKWHE4THdHZ1NT?=
+ =?utf-8?B?RmJFUWNWY1dKeXkvaS9oZzdLUXlRTWR2SmJLc3dyN3NoYjNFS1hXcUtjclRI?=
+ =?utf-8?B?YjZvUEwrNUk5OVVDMEZ1YlRIb2d2NDVOMFoxQkJrditTNE9iNW9YbXRRMmZV?=
+ =?utf-8?B?R0dzek9XZ1JHVjR5RlJPNURGVHZJQzNqN1pDQVd5WEtiVHBOSWMzRGh4YWRN?=
+ =?utf-8?B?UGFqUGZOYm5yNnI2bVN5YjV4Q0xtU3FNVWlPUGZsTTB0TytmNFFqTzZxQnVC?=
+ =?utf-8?B?N2R0dy9Bc09hRGJjNFB0WFRpNGpZNTFTak9IS1Rad1AzVmZCRFdKQTFzUFE2?=
+ =?utf-8?B?VE8xbDUxTEVkczY4Tk5hVmovQUxZU1Q5UFF6d2hjaWJmT1l3bWZiTHJmSEhh?=
+ =?utf-8?B?a1FqeVpmRXlPR1E2bTY1KzNVbWdBVW1IOGF5U0VJMWJDU2NmSngwMWFGc0Zm?=
+ =?utf-8?B?VTFvaGkzYzh6bm1jQjAvM3Z4ZHRuTUFNQzF3Q3MvM1JDaWJkYnBwdzVGREFX?=
+ =?utf-8?B?R2JSS3dwMG1HVXcxbCsrTkRwMlRjdm9taEZhVGMwSnJmbXc5ZlVhWHpqOVFu?=
+ =?utf-8?B?NXpLREthbjdxb29GTGJIYW9Mb0dFV3dzSW83cVZxN09zajdQUzJwWEYrUDlh?=
+ =?utf-8?B?azVHZk5OV3BTTW8yVk1LODZTSEEwVC8zQ0NFa1VLUVoyMlcrZDYvME5IelFZ?=
+ =?utf-8?B?RWlacG1oQ3dLQld1bldiUVVmazR4WndUL1JxQTdBOEM3bGdGenl2K0ZleldP?=
+ =?utf-8?B?OTByZDgwdlBBZS9mYXJDU3UyTmlvczJQalJIdlJlT1Q2Mm9USGh2elphaXNJ?=
+ =?utf-8?B?SHloOXpKSGZwUDlqRmNUR0lKVGw3OFBPRVE2Q1dtRGZSV2t4R0MrNzFnZW1X?=
+ =?utf-8?B?MEp5a3BRZ0VBMkZad3dpOWJnenhwZW1yTWt4ZFdnemtqMUgzVTVhM1Q3U3FD?=
+ =?utf-8?B?YnR6SHpWY2hSZVAwVThzNnVJcXJpUzNtbHBSekVFUy9UUTl6RytjTUlJd2VR?=
+ =?utf-8?B?WWZLTUdmQnlsMHJPbGY5dDBHUWowR3VGMjhCUlVIZk9kYkUyYU93RkRwUk1D?=
+ =?utf-8?B?dnpMa3dKYlgzRHE2TjVseDlWYlc5a3o4bXNZc0E5ZFovZUJoL3dBQTFTMVlM?=
+ =?utf-8?B?QlAzcWVrMjNkYWFGUzR4TjI4enk1TlVFb0NPRXhTVHdJRURIaHdvUSt2Mktu?=
+ =?utf-8?B?ME9jd1FLcjNzMzk0WCtDT0kwRy9sWXpQa3FLcjRtVVltVHBDN250RlhsRE8y?=
+ =?utf-8?B?TUI3R1AxUVE0dFk4ZjRYdS9EdSswcWEwazl2WU4wRWI4MzN1SmFWbzA5OS9p?=
+ =?utf-8?B?Qmd0c2tVcldnczBpaEVEdDJDQklFYk5YUjVpVitLTVRWVXFpczhRaEZJWlhh?=
+ =?utf-8?B?cFFkdGF3TzRvZURKbEhBRGllcmhnbWZFK1ZLTGh4TGVORmhhSlBrcFBDby96?=
+ =?utf-8?B?RmQyR0VmZzcrVWVCNGpzSzVwbUVYcFlDNEEyeE0vNlBNQlFNZHRiRmY2K1lF?=
+ =?utf-8?Q?aotmqKNPgUElS9MR5hz82GXOG?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ffcb6d9-61f7-4889-d09e-08dd1a40564f
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 00:02:58.6299
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AHaZXDacmwPs+bvPpUTnIks5PiucSEXbh8tYLkCgG7LTBEYlLHck8uhCyJzUsIBkXG4VIMc1CktcOvzit+8pRQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6616
 
-Add a driver for the MDIO controller on the RTL9300 family of Ethernet
-switches with integrated SoC. There are 4 physical SMI interfaces on the
-RTL9300 but access is done using the switch ports so a single MDIO bus
-is presented to the rest of the system.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- drivers/net/mdio/Kconfig            |   7 +
- drivers/net/mdio/Makefile           |   1 +
- drivers/net/mdio/mdio-realtek-rtl.c | 264 ++++++++++++++++++++++++++++
- 3 files changed, 272 insertions(+)
- create mode 100644 drivers/net/mdio/mdio-realtek-rtl.c
 
-diff --git a/drivers/net/mdio/Kconfig b/drivers/net/mdio/Kconfig
-index 4a7a303be2f7..0c6240c4a7e9 100644
---- a/drivers/net/mdio/Kconfig
-+++ b/drivers/net/mdio/Kconfig
-@@ -185,6 +185,13 @@ config MDIO_IPQ8064
- 	  This driver supports the MDIO interface found in the network
- 	  interface units of the IPQ8064 SoC
-=20
-+config MDIO_REALTEK_RTL
-+	tristate "Realtek RTL9300 MDIO interface support"
-+	depends on MACH_REALTEK_RTL || COMPILE_TEST
-+	help
-+	  This driver supports the MDIO interface found in the Realtek
-+	  RTL9300 family of Ethernet switches with integrated SoC.
-+
- config MDIO_REGMAP
- 	tristate
- 	help
-diff --git a/drivers/net/mdio/Makefile b/drivers/net/mdio/Makefile
-index 1015f0db4531..2cd8b491f301 100644
---- a/drivers/net/mdio/Makefile
-+++ b/drivers/net/mdio/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_MDIO_MOXART)		+=3D mdio-moxart.o
- obj-$(CONFIG_MDIO_MSCC_MIIM)		+=3D mdio-mscc-miim.o
- obj-$(CONFIG_MDIO_MVUSB)		+=3D mdio-mvusb.o
- obj-$(CONFIG_MDIO_OCTEON)		+=3D mdio-octeon.o
-+obj-$(CONFIG_MDIO_REALTEK_RTL)		+=3D mdio-realtek-rtl.o
- obj-$(CONFIG_MDIO_REGMAP)		+=3D mdio-regmap.o
- obj-$(CONFIG_MDIO_SUN4I)		+=3D mdio-sun4i.o
- obj-$(CONFIG_MDIO_THUNDER)		+=3D mdio-thunder.o
-diff --git a/drivers/net/mdio/mdio-realtek-rtl.c b/drivers/net/mdio/mdio-=
-realtek-rtl.c
-new file mode 100644
-index 000000000000..27d1bc02e1e0
---- /dev/null
-+++ b/drivers/net/mdio/mdio-realtek-rtl.c
-@@ -0,0 +1,264 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * MDIO controller for RTL9300 switches with integrated SoC.
-+ *
-+ * The MDIO communication is abstracted by the switch. At the software l=
-evel
-+ * communication uses the switch port to address the PHY with the actual=
- MDIO
-+ * bus and address having been setup via the realtek,smi-address propert=
-y.
-+ */
-+
-+#include <linux/mdio.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/of_mdio.h>
-+#include <linux/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+
-+#define SMI_GLB_CTRL			0x000
-+#define   GLB_CTRL_INTF_SEL(intf)	BIT(16 + (intf))
-+#define SMI_PORT0_15_POLLING_SEL	0x008
-+#define SMI_ACCESS_PHY_CTRL_0		0x170
-+#define SMI_ACCESS_PHY_CTRL_1		0x174
-+#define   PHY_CTRL_RWOP			BIT(2)
-+#define   PHY_CTRL_TYPE			BIT(1)
-+#define   PHY_CTRL_CMD			BIT(0)
-+#define   PHY_CTRL_FAIL			BIT(25)
-+#define SMI_ACCESS_PHY_CTRL_2		0x178
-+#define SMI_ACCESS_PHY_CTRL_3		0x17c
-+#define SMI_PORT0_5_ADDR_CTRL		0x180
-+
-+#define MAX_PORTS       32
-+#define MAX_SMI_BUSSES  4
-+
-+struct realtek_mdio_priv {
-+	struct regmap *regmap;
-+	u8 smi_bus[MAX_PORTS];
-+	u8 smi_addr[MAX_PORTS];
-+	bool smi_bus_isc45[MAX_SMI_BUSSES];
-+	u32 reg_base;
-+};
-+
-+static int realtek_mdio_wait_ready(struct realtek_mdio_priv *priv)
-+{
-+	u32 val;
-+
-+	return regmap_read_poll_timeout(priv->regmap, priv->reg_base + SMI_ACCE=
-SS_PHY_CTRL_1,
-+					val, !(val & PHY_CTRL_CMD), 10, 500);
-+}
-+
-+static int realtek_mdio_read_c45(struct mii_bus *bus, int phy_id, int de=
-v_addr, int regnum)
-+{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	u32 val;
-+	int err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL=
-_2, phy_id << 16);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL=
-_3,
-+			   dev_addr << 16 | (regnum & 0xffff));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL=
-_1,
-+			   PHY_CTRL_TYPE | PHY_CTRL_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	/* get_phy_c45_ids() will stop the mdio bus scan if we return an error
-+	 * here. So even though the SMI controller indicates an error for an
-+	 * absent device don't proagate it here.
-+	 */
-+	//if (val & BIT(25)) {
-+	//	err =3D -ENODEV;
-+	//	return err;
-+	//}
-+
-+	err =3D regmap_read(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL_=
-2, &val);
-+	if (err)
-+		return err;
-+
-+	return val & 0xffff;
-+}
-+
-+static int realtek_mdio_write_c45(struct mii_bus *bus, int phy_id, int d=
-ev_addr,
-+				  int regnum, u16 value)
-+{
-+	struct realtek_mdio_priv *priv =3D bus->priv;
-+	u32 val;
-+	int err;
-+
-+	err =3D realtek_mdio_wait_ready(priv);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL=
-_0, BIT(phy_id));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL=
-_2, value << 16);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL=
-_3,
-+			   dev_addr << 16 | (regnum & 0xffff));
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL=
-_1,
-+			   PHY_CTRL_RWOP | PHY_CTRL_TYPE | PHY_CTRL_CMD);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_read_poll_timeout(priv->regmap, priv->reg_base + SMI_ACC=
-ESS_PHY_CTRL_1,
-+				       val, !(val & PHY_CTRL_CMD), 10, 100);
-+	if (err)
-+		return err;
-+
-+	if (val & PHY_CTRL_FAIL) {
-+		err =3D -ENXIO;
-+		return err;
-+	}
-+
-+	return err;
-+}
-+
-+static int realtek_mdiobus_init(struct realtek_mdio_priv *priv)
-+{
-+	u32 port_addr[5] =3D { };
-+	u32 poll_sel[2] =3D { 0, 0 };
-+	u32 glb_ctrl_mask =3D 0, glb_ctrl_val =3D 0;
-+	int i, err;
-+
-+	for (i =3D 0; i < MAX_PORTS; i++) {
-+		int pos;
-+
-+		if (priv->smi_bus[i] > 3)
-+			continue;
-+
-+		pos =3D (i % 6) * 5;
-+		port_addr[i / 6] |=3D  priv->smi_addr[i] << pos;
-+
-+		pos =3D (i % 16) * 2;
-+		poll_sel[i / 16] |=3D priv->smi_bus[i] << pos;
-+	}
-+
-+	for (i =3D 0; i < MAX_SMI_BUSSES; i++) {
-+		if (priv->smi_bus_isc45[i]) {
-+			glb_ctrl_mask |=3D GLB_CTRL_INTF_SEL(i);
-+			glb_ctrl_val |=3D GLB_CTRL_INTF_SEL(i);
-+		}
-+	}
-+
-+	err =3D regmap_bulk_write(priv->regmap, priv->reg_base + SMI_PORT0_5_AD=
-DR_CTRL,
-+				port_addr, 5);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_bulk_write(priv->regmap, priv->reg_base + SMI_PORT0_15_P=
-OLLING_SEL,
-+				poll_sel, 2);
-+	if (err)
-+		return err;
-+
-+	err =3D regmap_update_bits(priv->regmap, priv->reg_base + SMI_GLB_CTRL,
-+				 glb_ctrl_mask, glb_ctrl_val);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+static int realtek_mdiobus_probe(struct platform_device *pdev)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct realtek_mdio_priv *priv;
-+	struct fwnode_handle *child;
-+	struct mii_bus *bus;
-+	int err;
-+
-+	bus =3D devm_mdiobus_alloc_size(dev, sizeof(*priv));
-+	if (!bus)
-+		return -ENOMEM;
-+
-+	bus->name =3D "Reaktek Switch MDIO Bus";
-+	bus->read_c45 =3D realtek_mdio_read_c45;
-+	bus->write_c45 =3D  realtek_mdio_write_c45;
-+	bus->parent =3D dev;
-+	priv =3D bus->priv;
-+
-+	priv->regmap =3D syscon_node_to_regmap(dev->parent->of_node);
-+	if (IS_ERR(priv->regmap))
-+		return PTR_ERR(priv->regmap);
-+
-+	err =3D device_property_read_u32(dev, "reg", &priv->reg_base);
-+	if (err)
-+		return err;
-+
-+	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", dev_name(dev));
-+
-+	device_for_each_child_node(dev, child) {
-+		u32 pn, smi_addr[2];
-+
-+		err =3D fwnode_property_read_u32(child, "reg", &pn);
-+		if (err)
-+			return err;
-+
-+		if (pn > MAX_PORTS)
-+			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
-+
-+		err =3D fwnode_property_read_u32_array(child, "realtek,smi-address", s=
-mi_addr, 2);
-+		if (err) {
-+			smi_addr[0] =3D 0;
-+			smi_addr[1] =3D pn;
-+		}
-+
-+		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
-+			priv->smi_bus_isc45[smi_addr[0]] =3D true;
-+
-+		priv->smi_bus[pn] =3D smi_addr[0];
-+		priv->smi_addr[pn] =3D smi_addr[1];
-+	}
-+
-+	err =3D realtek_mdiobus_init(priv);
-+	if (err)
-+		return dev_err_probe(dev, err, "failed to initialise MDIO bus controll=
-er\n");
-+
-+	err =3D devm_of_mdiobus_register(dev, bus, dev->of_node);
-+	if (err)
-+		return dev_err_probe(dev, err, "cannot register MDIO bus\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id realtek_mdio_ids[] =3D {
-+	{ .compatible =3D "realtek,rtl9301-mdio" },
-+	{ .compatible =3D "realtek,rtl9302b-mdio" },
-+	{ .compatible =3D "realtek,rtl9302c-mdio" },
-+	{ .compatible =3D "realtek,rtl9303-mdio" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, realtek_mdio_ids);
-+
-+static struct platform_driver rtl9300_mdio_driver =3D {
-+	.probe =3D realtek_mdiobus_probe,
-+	.driver =3D {
-+		.name =3D "mdio-rtl9300",
-+		.of_match_table =3D realtek_mdio_ids,
-+	},
-+};
-+
-+module_platform_driver(rtl9300_mdio_driver);
-+
-+MODULE_DESCRIPTION("RTL9300 MDIO driver");
-+MODULE_LICENSE("GPL");
---=20
-2.47.1
+On 12/10/2024 7:01 PM, Kalra, Ashish wrote:
+> 
+> 
+> On 12/10/2024 6:48 PM, Kalra, Ashish wrote:
+>>
+>>
+>> On 12/10/2024 4:57 PM, Sean Christopherson wrote:
+>>> On Tue, Dec 10, 2024, Ashish Kalra wrote:
+>>>> On 12/9/2024 7:30 PM, Sean Christopherson wrote:
+>>>>> Why can't we simply separate SNP initialization from SEV+ initialization?
+>>>>
+>>>> Yes we can do that, by default KVM module load time will only do SNP initialization,
+>>>> and then we will do SEV initialization if a SEV VM is being launched.
+>>>>
+>>>> This will remove the probe parameter from init_args above, but will need to add another
+>>>> parameter like VM type to specify if SNP or SEV initialization is to be performed with
+>>>> the sev_platform_init() call.
+>>>
+>>> Any reason not to simply use separate APIs?  E.g. sev_snp_platform_init() and
+>>> sev_platform_init()?
+>>
+>> One reason is the need to do SEV SHUTDOWN before SNP_SHUTDOWN if any SEV VMs are active
+>> and this is taken care with the single API interface sev_platform_shutdown(), so that's 
+>> why considering using a consistent API interface for both INIT and SHUTDOWN ...
+>> - sev_platform_init()
+>> - sev_platform_shutdown()
+> 
+> Which also assists in using the same internal interface __sev_firmware_shutdown()
+> to be called both with sev_platform_shutdown() and the SNP panic notifier to shutdown
+> both SEV and SNP (in that order). 
+> 
+> Thanks,
+> Ashish
+> 
+>>
+>> We can use separate APIs, but then we probably need the same for shutdown too and KVM
+>> will need to keep track of any active SEV VMs and ensure to call sev_platform_shutdown()
+>> before sev_snp_platform_shutdown() (as part of sev_hardware_unsetup()).
+>>
+
+Worked on separating SEV and SNP initialization and got it working, but it needs 
+additional fix in qemu to remove the check for SEV-ES being already initialized (i.e, SEV
+INIT being already done) as below to ensure that SEV INIT is done on demand when
+SEV/SEV-ES guests are being launched: 
+
+diff --git a/target/i386/sev.c b/target/i386/sev.c
+index a0d271f898..bb541f9d41 100644
+--- a/target/i386/sev.c
++++ b/target/i386/sev.c
+@@ -1503,15 +1503,6 @@ static int sev_common_kvm_init(ConfidentialGuestSupport *cgs, Error **errp)
+         }
+     }
+
+-    if (sev_es_enabled() && !sev_snp_enabled()) {
+-        if (!(status.flags & SEV_STATUS_FLAGS_CONFIG_ES)) {
+-            error_setg(errp, "%s: guest policy requires SEV-ES, but "
+-                         "host SEV-ES support unavailable",
+-                         __func__);
+-            return -1;
+-        }
+-    }
+-
+     trace_kvm_sev_init();
+     switch (x86_klass->kvm_type(X86_CONFIDENTIAL_GUEST(sev_common))) {
+     case KVM_X86_DEFAULT_VM:
+>>
+>>>
+>>> And if the cc_platform_has(CC_ATTR_HOST_SEV_SNP) check is moved inside of
+>>> sev_snp_platform_init() (probably needs to be there anyways), then the KVM code
+>>> is quite simple and will undergo minimal churn.
+>>>
+>>> E.g.
+>>>
+>>> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+>>> index 5e4581ed0ef1..7e75bc55d017 100644
+>>> --- a/arch/x86/kvm/svm/sev.c
+>>> +++ b/arch/x86/kvm/svm/sev.c
+>>> @@ -404,7 +404,6 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
+>>>                             unsigned long vm_type)
+>>>  {
+>>>         struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+>>> -       struct sev_platform_init_args init_args = {0};
+>>>         bool es_active = vm_type != KVM_X86_SEV_VM;
+>>>         u64 valid_vmsa_features = es_active ? sev_supported_vmsa_features : 0;
+>>>         int ret;
+>>> @@ -444,8 +443,7 @@ static int __sev_guest_init(struct kvm *kvm, struct kvm_sev_cmd *argp,
+>>>         if (ret)
+>>>                 goto e_no_asid;
+>>>  
+>>> -       init_args.probe = false;
+>>> -       ret = sev_platform_init(&init_args);
+>>> +       ret = sev_platform_init();
+>>>         if (ret)
+>>>                 goto e_free;
+>>>  
+>>> @@ -3053,7 +3051,7 @@ void __init sev_hardware_setup(void)
+>>>         sev_es_asid_count = min_sev_asid - 1;
+>>>         WARN_ON_ONCE(misc_cg_set_capacity(MISC_CG_RES_SEV_ES, sev_es_asid_count));
+>>>         sev_es_supported = true;
+>>> -       sev_snp_supported = sev_snp_enabled && cc_platform_has(CC_ATTR_HOST_SEV_SNP);
+>>> +       sev_snp_supported = sev_snp_enabled && !sev_snp_platform_init();
+>>>  
+>>>  out:
+>>>         if (boot_cpu_has(X86_FEATURE_SEV))
+>>
+> 
 
 
