@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-442734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9AD9EE0EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:11:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C9C9EE0EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2C316484A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C26618855B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEECF20B81C;
-	Thu, 12 Dec 2024 08:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A430120C009;
+	Thu, 12 Dec 2024 08:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BYuGrqh+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X403YC3n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EDC1FECD6;
-	Thu, 12 Dec 2024 08:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98C41FECD6;
+	Thu, 12 Dec 2024 08:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991091; cv=none; b=rQRaOc5r3an+/2BW0l3qlMvaTRJ49bAPLeqyN99R9l5gTRCusl9OsSmOatiGpSvFjDCvCg5PPaV4n7l8VCD7CvqrWndBL1W0qv4Q7T+pG39u8w9FKExI5vRxLYQkdlaQx1L961D5D48QtT8sU3cs0jWBgeM28AsqWsrjZEoj5eQ=
+	t=1733991211; cv=none; b=pZh5Pl6xc3bAcSHF+n72za6sOIsgJtl1AlGXCtEu/cNQNRk5tGV/GiE1R4+oxIpl3Z4yK31/+avBbKaV5KlDx+UwV45tZhMSrvevcWWinSxVOIMLq4gzCV8Fg0/0dDhcbuo0//9zPkG/bqyGvDkTREypdUlGW4uWzlaokXP7Qok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991091; c=relaxed/simple;
-	bh=aeQtjkwpV2j59R4fd0CzGkLXDmXpVmYnKfv+AhRGHt8=;
+	s=arc-20240116; t=1733991211; c=relaxed/simple;
+	bh=yFRZ+IH3VruDCKluh2Mfy3YvjHuvC7u/oBOqXdHG/UQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OFb4p6SdQdsn1RbGctv34y4agaLTJW20LP3Wc5UgcbfVC/sLk2AS6iCfJkb+wNdBMLQzaHeywzqfpHE4c+DuveUWGuCkyxMyKCULZY+bA2kodYGUkjaQr5rw8aYroBDfnB+ZCaQiaPn4O7GhnGjnK8w9Vploe3sfNK2lONpIRHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BYuGrqh+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4313CC4CECE;
-	Thu, 12 Dec 2024 08:11:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0EZ0B2z+G374Ruu9F8LDjESLLDnyYBTC8GYoo0fSX1DuUcH9PWR8rCCwnwSeQ2bx+D4u8qr4nWv1TrUU4WdtqAIe50s3wR6qnmVVpnhXwtmjKnvNEwpOp6nEATdlL6+Bap6BsZ7PNshx9eSsPToK+4sbFkBkFBJBzB4QoM30k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X403YC3n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0DBBC4CECE;
+	Thu, 12 Dec 2024 08:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733991090;
-	bh=aeQtjkwpV2j59R4fd0CzGkLXDmXpVmYnKfv+AhRGHt8=;
+	s=k20201202; t=1733991210;
+	bh=yFRZ+IH3VruDCKluh2Mfy3YvjHuvC7u/oBOqXdHG/UQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BYuGrqh+Au0n6c/9nQJtVydb7ZvrLTofLdxYrx7MrHypQV6rFolvuZBO9zyw/l2jV
-	 sgznjo999E15acEghUxTCSd69oswcB6d1zzbS1In6X27za9fnR/yVhJlHuNbQAA1PN
-	 nYmOZ64cre1EAB5++p4sKFKSdoNaJj3DVKRnYPYZ2KAaOTv7/yLrmDRgY1y8qYvIME
-	 zm2Y+qDkJOtM+/PQmPZB71Cg1/5ekWdDFz7AI0Mx4xq8Yovawfov4I0cpXiM6sugEx
-	 PkJH8+2r+6PSEWR0R1r6KXrogGLNwU5pvirUmQ6jZLNnglAhKUQUVHkxk+CI9EKblZ
-	 Kaid+0jC4JaNQ==
-Date: Thu, 12 Dec 2024 09:11:27 +0100
+	b=X403YC3nzX85sUU0gMsuEEhNCgIEXOUpGQE5pbSXbWlnTW9NCHbM8Q3f9cGjpt+hA
+	 6Y0s/H8FcFTkbkCLs3YHflvhtK8mzxgctedejqkte9rAG9l195yutRCvrB07H/1szj
+	 MzwgVw8v+V34GvVlDRYINKQRhxlICRxQ/LPaCE19SlwBah4IFu/Dvp3ceFu4tVsTYk
+	 IsyjI5WujSg7PLnlEPJVoZDu33oE6xjyVdqhXbFdKzpb8PS4LZmhktymYDJPtgF/3a
+	 DFSFEWTPpsPCAH2wrAFpSFXRgFSjQeTuVIUunj7PaQ4qY1R/9VNZPoRkx0yWHb67Fc
+	 X86sGlmel0fiA==
+Date: Thu, 12 Dec 2024 09:13:27 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	eraretuya@gmail.com
-Subject: Re: [PATCH v6 4/7] dt-bindings: iio: accel: adxl345: make interrupts
- not a required property
-Message-ID: <iqdm3x6fhyosqkm4mdknf6ee2idizq3p2nt7rjqgtuzxr75iaj@tcdl2e6l5g2s>
-References: <20241211230648.205806-1-l.rubusch@gmail.com>
- <20241211230648.205806-5-l.rubusch@gmail.com>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
+	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, 
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: leds: backlight: apple,dwi-bl: Add
+ Apple DWI backlight
+Message-ID: <6fazyksxkcbhugivwgozuyjdig37vnshbwtdmzjcbrqywgszvd@sm27uhqgsma4>
+References: <20241211113512.19009-1-towinchenmi@gmail.com>
+ <20241211113512.19009-2-towinchenmi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,25 +63,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241211230648.205806-5-l.rubusch@gmail.com>
+In-Reply-To: <20241211113512.19009-2-towinchenmi@gmail.com>
 
-On Wed, Dec 11, 2024 at 11:06:45PM +0000, Lothar Rubusch wrote:
-> Remove interrupts from the list of required properties. The ADXL345
-> provides two interrupt lines. Anyway, the interrupts are an option, to
-> be used for additional event features. The driver can measure without
-> interrupts. Hence, interrupts should never have been required for the
-> ADXL345. Thus having interrupts required can be considered to be a
-> mistake.
+On Wed, Dec 11, 2024 at 07:34:37PM +0800, Nick Chan wrote:
+> Add backlight controllers attached via Apple DWI 2-wire interface.
+> 
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> ---
+>  .../bindings/leds/backlight/apple,dwi-bl.yaml | 57 +++++++++++++++++++
+>  1 file changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml
 
-Partially this explains my question on previous patch, so consider
-reordering them.
-
-And with combined knowledge, your driver now depends on interrupt names
-to setup interrupts. "interrupts" property alone is not sufficient, so
-you should encode it in the binding and explain in rationale why this is
-required (it is a change in ABI).
-
-https://elixir.bootlin.com/linux/v6.8-rc3/source/Documentation/devicetree/bindings/example-schema.yaml#L193
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
