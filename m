@@ -1,53 +1,86 @@
-Return-Path: <linux-kernel+bounces-443745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794FD9EFB5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:45:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DDF9EFB61
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340CA287D9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC6028BD35
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D0F223E69;
-	Thu, 12 Dec 2024 18:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9D118872A;
+	Thu, 12 Dec 2024 18:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="B5xPUbsV"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Dbbnbrog"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09432101A0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE7E16FF4E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734029096; cv=none; b=rroaGLA2soFuNAhlKdA+tiT0+69eFRNSSTdzzxkM5FJBN/IXJvIZEpYUK6Z7sya8tuZM2TGW3UEcghHgtnzPiMC44Lwkm0amuwiEA5hQd43+BSB6wCBAyx+8VRDszJ2K9CytpJW38i7311E1/9lJtzbqjF0TBMA2X3al7cTBK64=
+	t=1734029224; cv=none; b=qlsFMJAFWqDmNPITwuIn7ObgGhe+jj7XZqIdneeAo5ExHrz3EmE+TVAmScpJ9RdshePFi2ZR4nJfLxdhw+n3X1l0lqEQgXM+3nQf/yGECbJTeZ+6y3fXWQm9N1WHqTszug9tV8QFfQ9Saorz2IyQUd2gdLgPfRfF0oadES5QmSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734029096; c=relaxed/simple;
-	bh=hPHPl/hS351CdYJK4BG8VPGoJVjIsiq51nvm2RTYMIA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dtJVdfBD/8o1zYVBmfl5TFGF0+pUWEd+7wbqblBu0MvEjgwEEY5iaCcUQAEtdFSHfqkPiL9tf56munJRU8S72T5uk5aV65sh72d7/38ps80GrYgTJfLosrzAhJj1jCqcbUXNgrOGe4Ro/TcPqEJqR6u8pG4WczQ//Ju7Lnwpeps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=B5xPUbsV; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4BCIi2Ex1239431
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 12 Dec 2024 10:44:02 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4BCIi2Ex1239431
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024111601; t=1734029043;
-	bh=48xMOvkm4ZjCKU0BdaAFERFmnKwBKDUrb6DaaU3BJQk=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=B5xPUbsVJveAfgV1tgsYILrPPyEBkEBigkRQXldTvpLFTy/NZOYLamEkk1som2G7A
-	 NZ0fkNAA4AJ7hZ3ZTnmEDXBOm5KUt5gukjjDtbSOltVbMBkePTsY1dGo6oPsDGLcgC
-	 9ZZMWoxj1BcWYcnvxYe2tc0i6Ef3euS9Q9lxlYbU10NcUsaqAHxcXJ9MXUx7vYx1oe
-	 05oGHG84WlJBb6bIqnFkJ1bebIWI90MWrg1zaNMZlYWVWK8NUr7/OMhyNuolVKhQn1
-	 Ou5WLY/DAZRjT0+gAwAhopMaSRYNczA+x9IUhnpnaQrYPX+skqA3x4Ftxv8bsIyjuF
-	 Hg+1jcplEGt+w==
-Message-ID: <fa3d0093-818d-4592-8415-3c2e287cc3e6@zytor.com>
-Date: Thu, 12 Dec 2024 10:44:01 -0800
+	s=arc-20240116; t=1734029224; c=relaxed/simple;
+	bh=SOYf3SfjKiZ95SWaRy9LWaJhoXXb98txie33gEZoVzE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tz3XGKJSCTj+SO6zTTVL+Pakd1GXut2XjMEkkpzf4504mrEYPtlY2Adj1w1lzv0r/xQ/XVTaWTb1bgAt8oELU4BjkhREQFsMGJ0b5ae/ZycFiTfzylWgM8SzqXIFks8CcNztEnMuUNv9zRHqPxG7KovM6A23jrSi1xy6abuP98E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Dbbnbrog; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCGNIx4029994
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:46:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PmOQqrjMzqeBGq34PKXHlYCtCJdL+dzG6VReuDNyzL8=; b=DbbnbrogjPRbR5Y/
+	U0XsqR6SXEAfFTeGJBKsNC0CHLjyf7O+GFWG5GTuaMhV5gfJ3pTkVTEXQma2IdAt
+	swe2QCKr9EtD1PnfW20FtPQidKQBtQmSRRKbIwG6IN2/dYJXARDhGc1Z1QaIl0rd
+	uWQHghK1GXp2dyJXg07P77v2XCb8jjThsxc1b7hSqaCF+QtXquS7JKHcdGVa4W84
+	AT2KHNVk65qyuiXwdyvQHoLfF1THBtzwOtzlJRKoVFnwHGgv3F4ty5FLSW2MwhhS
+	65aUJslk/pYPdUiveFlwzcwBooMDwjjA4BlSt+jTQsZUlWH4y7wa+WQ0N20+4fSK
+	bMWvvw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw4cb9p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:46:55 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4675a6e05d7so1769261cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:46:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734029215; x=1734634015;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PmOQqrjMzqeBGq34PKXHlYCtCJdL+dzG6VReuDNyzL8=;
+        b=avOdsWrjbfIFCVNbYu8oGvi027+HStxpI7tUxUFFrExVuvsBB/8kpqeWVhGMbaWXpq
+         jB9hkhpWavgfPfC8w6XAcmsloAhp7uf7wf80qK4koUJWQ3O9DhaDyTno6D+P4cQmWIXV
+         gAc5EbrnxmpR5ImvL3hnVfZFyTkFq1Ca3wt4+4u7Tl+Bl/ChmGKLIS5eD/y/oZXsSFAt
+         ZiGoewl/R98ttVqHCVbBDwli0FRC/rre0q1PlYAzKGOCGT+G608T9DJbePgq47CoiR5Z
+         kekKKj6bWvqbJ6TMvJufqUUnzkiU1tHh1LEBVnTcTwHq22O5QPp+zZYqBhZvM2jlkOxv
+         zZDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjckMUShSUL0WVFvd4EAjV79+gtPY0H4oDOJOWc/bJbCZcQch5qzzF7m6X/KxVPMZJV7oFtQ0ZTlE5Hwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5EhbM5C7G0MF2KNXCQl+hvioeiKdvOg+3AeA6WHNKWpFZpXdQ
+	iWeBZm/1+eIE+KO+kvzPZd271fu2F8yl7qyCxAQ2PoWd+ETefSTBRITXKfSauzfOzy8Z3Dm2CCu
+	hFh2C4woYOOUM/cAWV/imWZWmTByP/CdtrI44MoyflQnHXQ34hsfEOff6ccSPtqI=
+X-Gm-Gg: ASbGncsHgii4aDSgrQ8nVJQ25G3sHJZMdt2JDgd2J5AdNsb8Pq9dBbh+Nqhvf0nbEoo
+	ZgKz95Pq8cTZLNKiposgapvrcyWx5U69Xu+JlXytq6hGMp5erFUNhulfv5SrvsIZ+Fo2wKZjYCG
+	VvA8Td+724uAjtpBAFz6WixDuc63CW8rbvY7j8OVXJznFWOb+6yAkT8CFYWvTtc+Q+OllHUN80D
+	1rZJmxpZxqajo5cIHygmV8SaXKcuxJJYJqevNwujW54Uh01g9uzEx67oj+LwgP5V66JI9ifoKbC
+	yWv3oibwYeiDZfZiA5emzOFM7LKCfQKl4bnF2g==
+X-Received: by 2002:a05:622a:1a87:b0:461:4467:14bb with SMTP id d75a77b69052e-467a14cf99fmr7724391cf.2.1734029213595;
+        Thu, 12 Dec 2024 10:46:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGdpfmTx2mHf6sXsAQz5sQIHlNuntc35VI2+MYkILXa1EgItZeGr7YDJrQd/P66nUPjXjjjCA==
+X-Received: by 2002:a05:622a:1a87:b0:461:4467:14bb with SMTP id d75a77b69052e-467a14cf99fmr7723591cf.2.1734029211712;
+        Thu, 12 Dec 2024 10:46:51 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3eb7722acsm7157269a12.3.2024.12.12.10.46.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 10:46:50 -0800 (PST)
+Message-ID: <8b2519dd-3338-4770-9f9e-d99de5648fcd@oss.qualcomm.com>
+Date: Thu, 12 Dec 2024 19:46:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,197 +88,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] x86/ia32: Leave NULL selector values 0~3 as is
-From: Xin Li <xin@zytor.com>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        andrew.cooper3@citrix.com, brgerst@gmail.com, ebiederm@xmission.com
-References: <20241126184529.1607334-1-xin@zytor.com>
+Subject: Re: [PATCH v2 01/19] arm64: dts: qcom: sm8350: Fix ADSP memory base
+ and length
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Abel Vesa
+ <abel.vesa@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Luca Weiss <luca.weiss@fairphone.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241209-dts-qcom-cdsp-mpss-base-address-v2-0-d85a3bd5cced@linaro.org>
+ <20241209-dts-qcom-cdsp-mpss-base-address-v2-1-d85a3bd5cced@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20241126184529.1607334-1-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241209-dts-qcom-cdsp-mpss-base-address-v2-1-d85a3bd5cced@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: y0BJtx0t7NGPOId_9oEJwwa5FC4KdCXq
+X-Proofpoint-GUID: y0BJtx0t7NGPOId_9oEJwwa5FC4KdCXq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=874
+ clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120136
 
-On 11/26/2024 10:45 AM, Xin Li (Intel) wrote:
-> The first GDT descriptor is reserved as 'NULL descriptor'.  As bits 0
-> and 1 of a segment selector, i.e., the RPL bits, are NOT used to index
-> GDT, selector values 0~3 all point to the NULL descriptor, thus values
-> 0, 1, 2 and 3 are all valid NULL selector values.
+On 9.12.2024 12:02 PM, Krzysztof Kozlowski wrote:
+> The address space in ADSP PAS (Peripheral Authentication Service)
+> remoteproc node should point to the QDSP PUB address space
+> (QDSP6...SS_PUB): 0x0300_0000 with length of 0x10000.  0x1730_0000,
+> value used so far, was copied from downstream DTS, is in the middle of
+> unused space and downstream DTS describes the PIL loader, which is a bit
+> different interface.
 > 
-> When a NULL selector value is to be loaded into a segment register,
-> reload_segments() sets its RPL bits.  Later IRET zeros ES, FS, GS, and
-> DS segment registers if any of them is found to have any nonzero NULL
-> selector value.  The two operations offset each other to actually effect
-> a nop.
+> Assume existing value (thus downstream DTS) is not really describing the
+> intended ADSP PAS region.
 > 
-> Besides, zeroing of RPL in NULL selector values is an information leak
-> in pre-FRED systems as userspace can spot any interrupt/exception by
-> loading a nonzero NULL selector, and waiting for it to become zero.
-> But there is nothing software can do to prevent it before FRED.
+> Correct the base address and length, which also moves the node to
+> different place to keep things sorted by unit address.  The diff looks
+> big, but only the unit address and "reg" property were changed.  This
+> should have no functional impact on Linux users, because PAS loader does
+> not use this address space at all.
 > 
-> ERETU, the only legit instruction to return to userspace from kernel
-> under FRED, by design does NOT zero any segment register to avoid this
-> problem behavior.
-> 
-> As such, leave NULL selector values 0~3 as is.
-
-Hi Andrew,
-
-Do you have any more comments?
-
-Thanks!
-     Xin
-
-> 
-> Do the same on 32-bit kernel as well.
-> 
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> Fixes: 177fcf0aeda2 ("arm64: dts: qcom: sm8350: Add remoteprocs")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> 
-> Changes since v3:
-> * Rename usrseg() to fixup_rpl() to match its intent (Andrew Cooper).
-> * A few comment improvements (Andrew Cooper).
-> 
-> Changes since v2:
-> * No, don't zero non-zero NULL selector values, essentially revert
->    to v1 (Andrew Cooper).
-> 
-> Changes since v1:
-> * Normalize non-zero NULL selector values to 0 (Eric W. Biederman).
-> * Apply the same normalization logic in a 32bit kernel (Eric W.
->    Biederman).
-> ---
->   arch/x86/kernel/signal_32.c | 62 +++++++++++++++++++++++++------------
->   1 file changed, 43 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/signal_32.c b/arch/x86/kernel/signal_32.c
-> index ef654530bf5a..1e275268d256 100644
-> --- a/arch/x86/kernel/signal_32.c
-> +++ b/arch/x86/kernel/signal_32.c
-> @@ -33,25 +33,55 @@
->   #include <asm/smap.h>
->   #include <asm/gsseg.h>
->   
-> +/*
-> + * The first GDT descriptor is reserved as 'NULL descriptor'.  As bits 0
-> + * and 1 of a segment selector, i.e., the RPL bits, are NOT used to index
-> + * GDT, selector values 0~3 all point to the NULL descriptor, thus values
-> + * 0, 1, 2 and 3 are all valid NULL selector values.
-> + *
-> + * However IRET zeros ES, FS, GS, and DS segment registers if any of them
-> + * is found to have any nonzero NULL selector value, which can be used by
-> + * userspace in pre-FRED systems to spot any interrupt/exception by loading
-> + * a nonzero NULL selector and waiting for it to become zero.  Before FRED
-> + * there is nothing software can do to prevent such an information leak.
-> + *
-> + * ERETU, the only legit instruction to return to userspace from kernel
-> + * under FRED, by design does NOT zero any segment register to avoid this
-> + * problem behavior.
-> + *
-> + * As such, leave NULL selector values 0~3 as is.
-> + */
-> +static inline u16 fixup_rpl(u16 sel)
-> +{
-> +	return sel <= 3 ? sel : sel | 3;
-> +}
-> +
->   #ifdef CONFIG_IA32_EMULATION
->   #include <asm/unistd_32_ia32.h>
->   
->   static inline void reload_segments(struct sigcontext_32 *sc)
->   {
-> -	unsigned int cur;
-> +	u16 cur;
->   
-> +	/*
-> +	 * Reload fs and gs if they have changed in the signal
-> +	 * handler.  This does not handle long fs/gs base changes in
-> +	 * the handler, but does not clobber them at least in the
-> +	 * normal case.
-> +	 */
->   	savesegment(gs, cur);
-> -	if ((sc->gs | 0x03) != cur)
-> -		load_gs_index(sc->gs | 0x03);
-> +	if (fixup_rpl(sc->gs) != cur)
-> +		load_gs_index(fixup_rpl(sc->gs));
->   	savesegment(fs, cur);
-> -	if ((sc->fs | 0x03) != cur)
-> -		loadsegment(fs, sc->fs | 0x03);
-> +	if (fixup_rpl(sc->fs) != cur)
-> +		loadsegment(fs, fixup_rpl(sc->fs));
-> +
->   	savesegment(ds, cur);
-> -	if ((sc->ds | 0x03) != cur)
-> -		loadsegment(ds, sc->ds | 0x03);
-> +	if (fixup_rpl(sc->ds) != cur)
-> +		loadsegment(ds, fixup_rpl(sc->ds));
->   	savesegment(es, cur);
-> -	if ((sc->es | 0x03) != cur)
-> -		loadsegment(es, sc->es | 0x03);
-> +	if (fixup_rpl(sc->es) != cur)
-> +		loadsegment(es, fixup_rpl(sc->es));
->   }
->   
->   #define sigset32_t			compat_sigset_t
-> @@ -105,18 +135,12 @@ static bool ia32_restore_sigcontext(struct pt_regs *regs,
->   	regs->orig_ax = -1;
->   
->   #ifdef CONFIG_IA32_EMULATION
-> -	/*
-> -	 * Reload fs and gs if they have changed in the signal
-> -	 * handler.  This does not handle long fs/gs base changes in
-> -	 * the handler, but does not clobber them at least in the
-> -	 * normal case.
-> -	 */
->   	reload_segments(&sc);
->   #else
-> -	loadsegment(gs, sc.gs);
-> -	regs->fs = sc.fs;
-> -	regs->es = sc.es;
-> -	regs->ds = sc.ds;
-> +	loadsegment(gs, fixup_rpl(sc.gs));
-> +	regs->fs = fixup_rpl(sc.fs);
-> +	regs->es = fixup_rpl(sc.es);
-> +	regs->ds = fixup_rpl(sc.ds);
->   #endif
->   
->   	return fpu__restore_sig(compat_ptr(sc.fpstate), 1);
-> 
-> base-commit: 6ff908de1eafb53f31db75d929b7566a87847d2d
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
 
