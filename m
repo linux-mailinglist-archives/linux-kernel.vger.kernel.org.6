@@ -1,192 +1,104 @@
-Return-Path: <linux-kernel+bounces-443965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0099EFE4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:32:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B66D9EFE51
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:32:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC20D168C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAAA91887191
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A695F1CD205;
-	Thu, 12 Dec 2024 21:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB7F1D63F9;
+	Thu, 12 Dec 2024 21:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="izWb+jLI"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DdcKcQ7c"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FEF38DDB;
-	Thu, 12 Dec 2024 21:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734039101; cv=fail; b=qrTd7VZcONW/sDOyWJ0Dx/lfZ+MKNgoTuWFsFAmWLeFWcBPPtpXGJp1G6uYYsfMMB4UpGjXpDakioam1KPgG8gxD4nlpRm9SdhUEnVVlqkCvJLiQtQpAfomhpulsI9Q+OCouhQI6ZIVzxUJfJSanNa1orOmrR0caCsbBOqowp5k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734039101; c=relaxed/simple;
-	bh=V5MJZjtj/ITaEx3cQlQsJM5FXC4V/mZQTr8hqiBnDyI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ec3d0nZkw47wFKakj4TurwswWNrrY4dRXDpBCh3s/GnNvRHU7xuGCuLlK5AFLjZjK1iYeYz3kyWLgYUet/wz4YKBypFKJDz8C9ujlTIo2zihiXWUi21EW7TifiWlpO08X+xcVz6E90ae6FJwNHZtKDI8KX22VV+MS6DohIqCi2Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=izWb+jLI; arc=fail smtp.client-ip=40.107.244.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pGBwozStpmmTocW31+0u793ICh0kWcjUh6CRIx5QcTitPZm6etxwafWDAN72hR52JBrJR4Hwl4VlvxkV5WHJvUZcAfVxOnqnzLfluf//VTv44/Ogyoy3Ez9FaWqQBDx3/MaOY2tbJvOJmleLJmnS4f1rP6Jw6C7kIMw1Bh31KGQWS/3QSjfw1lYi6DPgILsagSPkUtmyIpV3wEyOk/+txF7uZsS47Ux46iH7XVSEa/PZUXNo369/QdsUfa+735iOFYbwmpBSC7jNVPL/WQXYpih/Akw1kjNsE5EZfQ3y4l/Z15dp1FzY/Nk+vhudoqaVI/+WtAFKBvmk77lQLhccxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CThhBif+vhRz92wc+pKxEEiw0oCAM4vT63BYscwCdK8=;
- b=vNYxA1XeU+8o4AHWzymaWVi8+UxfwqKDhXl2d5ol7ZdCDYDtzAd8E+Z2UODzeINfT6i1tnC/O/O8AfM0bnvU0nURpPA9qxc4BKPEmGURm5ERvr5Inv5MrdSvjneeaR/A5i0zmFBCPyQxYEq2RQDCOcI+SNtwO6RBqa7zkIgK2Ps91Bc9I7jmS750XpGGWalOayJ/oTdHiGOOyS8yiwGRDCbEgZWI5qugiB1aTssXDTce0JOjfbDzDv9dLAUY19x29E53RiEWf1G9xddMMUjTOsIBa703g0UqgUqAdoRCO6W60TJYhReWxHvri+6IRfDWXiivvRlACBxh+d5LcVsAqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CThhBif+vhRz92wc+pKxEEiw0oCAM4vT63BYscwCdK8=;
- b=izWb+jLIib1ccBNeZ4u6DAjnmyx4tsjGMxKuVniZK2ScHw0Au8+uXMXt/ftbWkvxPtv9rV0kMa/j8dsMdcb3h3uU6375L5EmHZmtDTyueH6wjQWZvJ36eJssxLPw+kkb1RLYwrSaWwtJ2+xQHgUMpqMyDoyDpAS4R04dYUO9kCBaiUKSfRLnLKYgdgsjhFBUCd26B9Ui9XzxZS+2F8zwnp5vYwO6fodA8O68VIj7MKIiTqTxQX1+u2Cg1H4n6cGdZpE5ealqmdvUhA7G33pTp7gozIYPW+nSiw4ZT6UNJ53YZluWoP8mO8OTf1rbjuPjjdji4Ru2eiXzZwjGvZ/LSw==
-Received: from DM6PR03CA0018.namprd03.prod.outlook.com (2603:10b6:5:40::31) by
- SA3PR12MB7806.namprd12.prod.outlook.com (2603:10b6:806:31d::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Thu, 12 Dec
- 2024 21:31:36 +0000
-Received: from DS2PEPF00003444.namprd04.prod.outlook.com
- (2603:10b6:5:40:cafe::b5) by DM6PR03CA0018.outlook.office365.com
- (2603:10b6:5:40::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8158.18 via Frontend Transport; Thu,
- 12 Dec 2024 21:31:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS2PEPF00003444.mail.protection.outlook.com (10.167.17.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8251.15 via Frontend Transport; Thu, 12 Dec 2024 21:31:35 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Dec
- 2024 13:31:18 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Dec
- 2024 13:31:17 -0800
-Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 12 Dec 2024 13:31:15 -0800
-Date: Thu, 12 Dec 2024 13:31:14 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-CC: "jgg@nvidia.com" <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"corbet@lwn.net" <corbet@lwn.net>, "joro@8bytes.org" <joro@8bytes.org>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "dwmw2@infradead.org"
-	<dwmw2@infradead.org>, "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"shuah@kernel.org" <shuah@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"jean-philippe@linaro.org" <jean-philippe@linaro.org>, "mdf@kernel.org"
-	<mdf@kernel.org>, "mshavit@google.com" <mshavit@google.com>,
-	"shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
-	<smostafa@google.com>, "ddutile@redhat.com" <ddutile@redhat.com>, "Liu, Yi L"
-	<yi.l.liu@intel.com>
-Subject: Re: [PATCH v2 12/13] iommu/arm-smmu-v3: Introduce struct
- arm_smmu_vmaster
-Message-ID: <Z1tWIuiEFJyfSGEq@Asurada-Nvidia>
-References: <cover.1733263737.git.nicolinc@nvidia.com>
- <6270c905fc8537ffc51f6f2ab2db0601c9f08a8d.1733263737.git.nicolinc@nvidia.com>
- <BN9PR11MB527669503B30B7C67907DE398C3E2@BN9PR11MB5276.namprd11.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D171AAE28
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734039171; cv=none; b=u2niJ1nSV4L9W/XtlDqS5ULP9rCWyX/t/TgC0b0NMYhYslsX2Sg00xe6f1UUUZeBe95rh9Aq7Od139iJggkVeQFIqMMMGkmr0ZOSLWDMM655kx2sEayxvQ2hxn7UsyROd8MWzRQR5h9h/0WKw0S8Gs3NAF455SYRgtlsSOKd9IM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734039171; c=relaxed/simple;
+	bh=JmfQNUZ2LCwMnUkxKUZMmgL4OCDGyj92NHxNeKZuec0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=oQufK8vZSRc7g+GZ+2gswuI756RE+KJMMLl00aGk7aR1vIOqQ/4ZtVtME3QSbME27q32HUyHuXnD3795mDhA2rd2sV9gstgh5CPyOEMALvn23tDB3NcweP481ea3nSoyBCi01wcN1/SzMVcDn8UEo/XZZfB/rc299F0jy/vsntU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DdcKcQ7c; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=JmfQNUZ2LCwMnUkxKUZMmgL4OCDGyj92NHxNeKZuec0=; b=DdcKcQ7cuNHF2354+sU3PRjUsg
+	ATEX7o9UqzN3p3yW2GfQllE5gCmfCMatRHNfSW55LlsOUN+Ys8O18dRBpBfUNQWYonuDHnwDmP52c
+	QNbJ13HwBMMfpg4jFWcqJuBvfCI/iXlQXXz88OThbuy+8wsk/0f6Sew+oo1ud0BG49hXbfNLiZnau
+	PQ2gFmHQiNgkgC0PjGSogcw8QvKAyUN3YOLoJU6GxQNoRzj0Fl4JEhJpmBZ1s3ie0QO7dS+tp+C8V
+	zFTaTGxBmqjZyT0cHb29MudNw4hGzAC5d1ymWgskKDzS+0IA4aem5orF9eAQ8qnmi7TBFo0UyiDJL
+	T7UWNeAg==;
+Received: from [2001:8b0:10b:5:fc92:5b26:d347:4188] (helo=[IPv6:::1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tLqnL-000000048D0-3ttP;
+	Thu, 12 Dec 2024 21:32:30 +0000
+Date: Thu, 12 Dec 2024 21:32:27 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: Dave Hansen <dave.hansen@intel.com>, Nathan Chancellor <nathan@kernel.org>
+CC: "Ning, Hongyu" <hongyu.ning@linux.intel.com>, kexec@lists.infradead.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org, bsz@amazon.de
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/kexec=3A_Only_write_thr?=
+ =?US-ASCII?Q?ough_identity_mapping_of_control_page?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <4517cb69-3c5c-4e75-8a14-dab136b29c19@intel.com>
+References: <20241205153343.3275139-1-dwmw2@infradead.org> <20241205153343.3275139-14-dwmw2@infradead.org> <20241212014418.GA532802@ax162> <10a4058d9a667ca7aef7e1862375c2da84ef53a3.camel@infradead.org> <20241212150408.GA542727@ax162> <38aaf87162d10c79b3d3ecae38df99e89ad16fce.camel@infradead.org> <20241212174243.GA2149156@ax162> <9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org> <4517cb69-3c5c-4e75-8a14-dab136b29c19@intel.com>
+Message-ID: <212CBB8E-CC94-4A56-8399-1419D8F2FA5C@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB527669503B30B7C67907DE398C3E2@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003444:EE_|SA3PR12MB7806:EE_
-X-MS-Office365-Filtering-Correlation-Id: 144af03c-41d0-47c7-2147-08dd1af45b38
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rUndh2F9YMH6bIFQv1UA4jJf5gPMPsdbqKoh9/fzgA9XjhNaGVaAlVNZx3cG?=
- =?us-ascii?Q?BbEnNqvShjtiRcWdzfcwruLbOd+h/Q6VOS0xLkLuO36FgZKg4yYdl+c4uw8d?=
- =?us-ascii?Q?iTPSzU/YonpgIwN2kYyH6IVZYL0qbO3j0t0LAA/KjUXF2WQ4GqWhai9gATOE?=
- =?us-ascii?Q?96PhIvLy1gK/SoZnSkFR1zYM27bq7OGA/NL15lx6Eyl0xV2MkzJsjzILxDtl?=
- =?us-ascii?Q?TpefCi7QybGHfv7FlYI9gk6QnjXZrb2NfAj7VNA1d+rT+vs90Eb6sxbe3VwN?=
- =?us-ascii?Q?4Il9IAGlF4Zffye9KVstZ39QVQd/Wj2xcP+rsc/uL6N8Js2bX49ZYlIuIR/R?=
- =?us-ascii?Q?kzMGNwzKDx2cf/Al9BBg+VQEPNIU3X+Z7lV0beFDuCVuko9r5jNcb2EXN8x9?=
- =?us-ascii?Q?UZB4EbAfO+I3Tq3rRchs/ug6MZQWBpryTvYnjJq6JWQgfu8Z4ntz1uXlW0xP?=
- =?us-ascii?Q?ZY4rHDcitQPyfSCrF5IArknsDe84FsomSApUEYHrNlDF6GavX7sB2G4LJ2n3?=
- =?us-ascii?Q?moVrxS0Ubl48QLRkf2G2QSNq29X85Dt1oiWyXKOEBlhQ83Bzh2mo969I4gY2?=
- =?us-ascii?Q?HF/s9dbssv/gXANPkJ0mEkcPkUUyBge5fnjwykO0QeIaWMyaKj+4Lel7L+OG?=
- =?us-ascii?Q?Qf45+sOy6pJ2dECBmSYl/5Y4oJ/6d5W1uoBkTtoriWf1Xgih1cVopWdIgd2g?=
- =?us-ascii?Q?UCk09J31gAfhY95dH7uBrx1IyoipuaIia9HPw+R33wKX5omioP6cnE0IVgLP?=
- =?us-ascii?Q?O0Gms6fQtG5lFSBu4ufZuZ6nEH1JRfvjQgLk/wu72i1yRelXuO2w8Xb04D90?=
- =?us-ascii?Q?iB/87JsKMtEGGWeCceNZ4ZepsmyY+O0aiFTMbHgUdAuRnfVQ9WN6OvGK4lHb?=
- =?us-ascii?Q?Zehs10tv635eNAc1fjJx6CiX2WCSmZYWBEVPMfpD4PrbXD7HUSDLST05+vNM?=
- =?us-ascii?Q?k901RfpABtTqN1eXAyPPEN8ma9CSOmBgqSTceyd4zuk3LO+JaKB73yylW7FK?=
- =?us-ascii?Q?ptQ/m+Sg/CnkcQ64eqYfFzeMc+zcN8mv7DBQP28vHhyPEKE4n6anZeI4rHzX?=
- =?us-ascii?Q?HZBIr92KoObOyVxij/lHJZzYub2i+ptTDo6FyEu75dP/adwXW+i/z2l/eLhu?=
- =?us-ascii?Q?+pT63ccnga1eL0PROeYvU0DR/XXc3xNTIXQTYp5p0di092Dl3hlBreb0JYSI?=
- =?us-ascii?Q?Lv/seC5c6pRQJPIczyKPFlDdU0+4eQKmXcx8M7t/z9FGjmexT5Ba0Lnlaxmx?=
- =?us-ascii?Q?DTo7sOw/NNd2zJTaBT2Q30YJsA5SUDhz40W1+CqdQJwL9V9U9SGZIwf282dU?=
- =?us-ascii?Q?r/Qp4nXr/pOyN3MKi7AOtmJvirc8Cj+31DzgDTAbaKPE03QA9udNSttsebJf?=
- =?us-ascii?Q?QZ9YxiPQ8aduNAySp/Jq1z0Me91vn6JEQqoUSJsfYQR0USV9vMNScjzlyCmG?=
- =?us-ascii?Q?kQjwF3+d6vz9RhFYVqIZFGkMbW5hCeOD?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2024 21:31:35.9819
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 144af03c-41d0-47c7-2147-08dd1af45b38
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003444.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7806
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Dec 11, 2024 at 08:15:35AM +0000, Tian, Kevin wrote:
-> > From: Nicolin Chen <nicolinc@nvidia.com>
-> > Sent: Wednesday, December 4, 2024 6:10 AM
-> > 
-> > Use it to store all vSMMU-related data. The vsid (Virtual Stream ID) will
-> > be the first use case. Then, add a rw_semaphore to protect it.
-> > 
-> > Also add a pair of arm_smmu_attach_prepare/commit_vmaster helpers and
-> > put
-> > them in the existing arm_smmu_attach_prepare/commit(). Note that identity
-> > and blocked ops don't call arm_smmu_attach_prepare/commit(), thus
-> > simply
-> > call the new helpers at the top.
-> 
-> Probably a dumb question. viommu is tied to a nested parent domain
-> which cannot be identity or blocked. Why do we need to change them
-> too?
+On 12 December 2024 21:18:10 GMT, Dave Hansen <dave=2Ehansen@intel=2Ecom> w=
+rote:
+>On 12/12/24 12:11, David Woodhouse wrote:
+>> From: David Woodhouse <dwmw@amazon=2Eco=2Euk>
+>>=20
+>> The virtual mapping of the control page may have been _PAGE_GLOBAL and
+>> thus its PTE might not have been flushed on the %cr3 switch and it migh=
+t
+>> effectively still be read-only=2E Move the writes to it down into the
+>> identity_mapped() function where the same %rip-relative addressing will
+>> get the new mapping=2E
+>>=20
+>> The stack is fine, as that's using the identity mapped address anyway=
+=2E
+>
+>Shouldn't we also ensure that Global entries don't bite anyone else?
+>Something like the completely untested attached patch?
+Doesn't hurt, but this is an identity mapping so absolutely everything oth=
+er than this one page is going to be in the low (positive) part of the cano=
+nical address space, so won't have had global pages in the first place will=
+ they?
 
-For identity/blocked domains, prepare() would return 0 without
-allocating a vmaster pointer, so later on commit() would update
-master->vmaster with a NULL, i.e. it's a cleanup routine when
-switching from a paging/dma domain to an identity/blocked one.
+Probably a kind thing to do for whatever we're passing control to though :=
+)
 
-I will update the commit message to make this clear.
-
-Thanks
-Nic
+I'll round it up into the tree and send it out with the next batch of debu=
+g support=2E Care to give me a SoB for it? You can s/CR0_PGE/CR4_PGE/ too i=
+f you like but I can do that myself as well=2E
 
