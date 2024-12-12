@@ -1,172 +1,196 @@
-Return-Path: <linux-kernel+bounces-443717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675CF9EFB02
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:33:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346ED9EFB09
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:34:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70BDE1693DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:33:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D45621884190
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D23222D7D;
-	Thu, 12 Dec 2024 18:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6268223338;
+	Thu, 12 Dec 2024 18:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L+aVZGCh"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIvDhbLJ"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA0C2210C2
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7710A21660B;
+	Thu, 12 Dec 2024 18:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734028401; cv=none; b=nouQHj8NNifOaD4UwkCf2loAHjmCbDpz8qznS3t0IJM2xoaPceCT8+hlhJotvIxnLl1+1w9d/5w0Fb6d/GLNRNYewVSIf8Xp4/EIfc1ilxxF2zyqTe3ck6CHwV1wk2LY+XmzSt2WoeBmAmrufmjAJi+njlKJihVwrtm1fQZqck0=
+	t=1734028438; cv=none; b=u5e6imOV3SC87kfkMv/F9g39qXPntSptGo/yWAChnGH4XBBMFWGSj66xn9skOJOl2l/cgQGu+YtGS3S/duhnsq8CNHNsXy1lEju/4TV9+B2lqB5BSlOOFf/PyVTn0NKieYd+ejJrYQTPP6N7kcDnJQ+AmmIkl57YyGCLTcPFlmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734028401; c=relaxed/simple;
-	bh=S8pyGemZgDyFrB3LbBylLdpP1liWYPzQ6w+PiYfxTUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ao5nisC2iTkyr0KcumIY0Q6T4QbVMLFVd5y+XQ5ujYY0E5TuL2XayyzSBFGOg9QXWwnUbHWCeD+tcSs5G1i2MZx98Y7NmDp7G6moCqZvcn/niE12ELyd3HmtiaVyuzpWiGIPMmfeI8KbmX4eiKnFAAPGvO6zKzL/ZA8QywbijBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L+aVZGCh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCG9WcS030098
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:33:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7P0lT5CU0pXRpSIELwaVuf56/lpIFAAE4uyri3Arzm0=; b=L+aVZGCh2stHV2W5
-	kCKcATDhp6Ty1c0xLKj1DE0gq/wHEIxuFLwc1RShbIkg2Ht4GhxQ9oJaU9cUAejY
-	d3d7iwj7HP6rF/k/dw3lM9V8l2zjB9YtTWvtcmhH3/cciOvnqu1f1jciuPD5o5/+
-	H2RSroSdJfH2KSGr8l2ZQnWkf8eHGCRKRfXyfkfrDYv0NsRh8vjUMIbkmHskpB0Y
-	692uc1sqjjSAypk48xkBviIPJCEcy50zjH0qKzpN8m8cMUgQ3Kmy611093taRyuh
-	LSzauJ32RR5WQJ2EI0/cnXAjDVvnrO1Y/NeWyNQKy+dTUmNhoDITrBuGaq4RFfnz
-	xhx6xw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw4ca95-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 18:33:19 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-467975f1b53so2381251cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 10:33:19 -0800 (PST)
+	s=arc-20240116; t=1734028438; c=relaxed/simple;
+	bh=tZsu8TiuLR0S0KrbV0gJ11FoB48CVZZWePFjnRlLhIs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UqRQywU8+gyQwTsaRwj/URDSSrQ0J7fqThsd1rj7MXxwuyNyGYghNUfbXtcQUcyCvLQRCRreS8LDSZEYq1i3aB4ppWSQocIM/Nao6dX3z69Kl0ZBc4j2eadeuD27i86zG7z5bAzQn27nM2XAYXSkF4gmh9NFE7sxMgbnqHlPWN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIvDhbLJ; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b6f8524f23so55800785a.2;
+        Thu, 12 Dec 2024 10:33:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734028435; x=1734633235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZqbWz5w80/Ao2+q+hylk/EZt96xoYzXRfCQenTqI3gE=;
+        b=YIvDhbLJTZSOmwqPVFp+0cCUWmLYyQaJ24rd1MkCOPyYO6Kbvnq0ISR4ntcKA2qfxe
+         4xTC2XYVyAxLX6hwF5IkWGEO5qHYOsf2ljCn9LouHQ3JH58fSYyMiU02JlFIvT4aHu1L
+         bAE/pWP8C492opvRB+7VkZuuZ52/sdoClgjGt5lvRyvAlkIqeKooOevr4EaPSKicdVkU
+         pGO5ZI3bShB7BEoASU+Kh3OvhRicsvoetl3HtQNnWKSadmMdyWWf88Z9Xb9NlU8zv4iX
+         sPoCoyCbnTJZLcL9RKPh/X7JB9N5dlt90HcV44z05WjGXfxL9gTj2qegamHSgaMX9t1h
+         JINA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734028398; x=1734633198;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7P0lT5CU0pXRpSIELwaVuf56/lpIFAAE4uyri3Arzm0=;
-        b=fVa7Bv9dNbqIguMzhZyuHMaHcOwKr/+PahutUuCCK8ZvULzdd3NPE7Yhf30TzoTj7P
-         ZD/q3JLc87YEiIavBKNyILJ2MIpqzkNptpxHp3Fbn3zd6Fcut848Zyejv6KY4cBSZiUm
-         pjiC1JDc7uBGgWcnMW4j4VUj017lc0M9aWUfNTrdPbK/ygrfKLqTPVxnnCDpxvJkqOZy
-         MfnDEhyBZjrsZ7fP71PvMNZpaZaX7MofkDXFvYjyZ6WF1h1rCjzt51/noH0BdBrv8SdG
-         EouIJtOkJBJyITyD9B8r5X0rfRJmKVvR1N7TffGONL3/XJgfrOGQxtwGrPWUSDK1aylH
-         6tLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVew49fBkpCRElb/E70dgYWYa01KkIg7sHsZ4rkGRoEtFmUJ/qRlR15bBZ5AyvB2hJvQgHuEzjljMTZkc8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQEnXK8IfKui15RtrzkHMHYoMi7F6dWRlluCL23FYF+sdR0YXb
-	BBoEnZOHDMGMW9Jks8YoimqZZeP7fwxESoTL8fjVHIi5rPwFQ/G+FXkbthThcguHv2TffuxSfF5
-	CQJxexfJpSc/iagiuYdZrsgjICSpfTwUqiJHdpGacgsUOuSxM2TN/8T6J9hi4DWE=
-X-Gm-Gg: ASbGnctnGlGe2Qc9IvqoNDcJdpc4TC+AdlVC2UiCQP4FY8pZKYriM/NksOoekGKDfKW
-	fYn/A8ImsisvoCLiTeWLBXEfpcL6ddkXwattp4bX9kYYKAnHKtcjoJF3p+K5JR50HYEkdWLXZeI
-	8YGyd0nzvBUEuCDgnpywBsuUXhoisMMLGjsTrv1IZ/oyimgYilnbsMEed1NGOGrIT+UjpxCxiUT
-	ZX2ScOXchubrUMq5l7VOlLyVcTskMWrfM/+U2OG0PulcNmJsLCwuTnxbdHMZzzkPLrAR9IEbmf7
-	6tz+++PCY9LoYIeKjzB/oicQE0cebHmfztVxrQ==
-X-Received: by 2002:a05:622a:c9:b0:467:5fd2:9963 with SMTP id d75a77b69052e-467a157c299mr7693051cf.6.1734028398523;
-        Thu, 12 Dec 2024 10:33:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG+5d8r2euOhZpYPGkl75/hl53j9+GKYqvLkelPut+0NmoKj8nha2RmqO1ELxeypwqRDcftCA==
-X-Received: by 2002:a05:622a:c9:b0:467:5fd2:9963 with SMTP id d75a77b69052e-467a157c299mr7692831cf.6.1734028398169;
-        Thu, 12 Dec 2024 10:33:18 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa671f1482asm744364966b.107.2024.12.12.10.33.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 10:33:17 -0800 (PST)
-Message-ID: <0776a26e-56cd-4838-9b52-210ae9a1f281@oss.qualcomm.com>
-Date: Thu, 12 Dec 2024 19:33:14 +0100
+        d=1e100.net; s=20230601; t=1734028435; x=1734633235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZqbWz5w80/Ao2+q+hylk/EZt96xoYzXRfCQenTqI3gE=;
+        b=kHxR9zWqbDre3DylVKsCL/RYcWbHkwmYwm/OrS8c/mpVgEEpKxY+IkbvD1+Od9Qt6r
+         Z2YVWaY3Zqy+v8IsLloRhRINJL9VU6TJris402gZKD6xRcHV9KsoTtL9HlWURuP6Dni9
+         yLDmNaybZuwS3Xam6RnaHQXGTBWKm4m0sN/WgTaQ0mT5AwHHHhEcbdJQSU4JK5mJ+n2W
+         XsjoSluP7iMHCYWtPit+UlzbXNY87rlG0zdZNR5ees9tf8+NDFrCNpzSIv632i6slem5
+         9ogGF6KBsNXkGEvs458zmaIQSBq50QZ2buUWCTXL2YraUxvb14dbrOk3EC4TizW3E2m/
+         4tIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVD6BpkMNztMwuWUW3o9/lBWRlkLB4Gk4uJsGbnSHw+j36/58MnaR+N9spT1eo96vqtiQnpecJz@vger.kernel.org, AJvYcCWGmmhgsO+FCCXG5wkuOoi1hJOOvlEjeoWefp45AahHC2v/SbL6OQl2KLrImu0J8xrG1B6lKgPeN9MIOtY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTAui903q3k9ZHnsMHB4GyhUzajRqSnFjfjKj6m/tdkPHtqtDa
+	2YJcUCzNJHWNr2NNAPm3ryFat1tCi2ggGQTuLDcOXn3uCpHRvMxg
+X-Gm-Gg: ASbGncuu5oOuojFWFhGOEtfz+PDyUkEXrAonEoVGKZ0oa+J5/MJwkvukfAeln1lj/sT
+	BLPQmtkYmaM2c0JfT+ph/2GBRmvI4KhiEXH4vN9N1jgNuVU4/F+zsjZlFS9DXLnZMoStSv/vpGR
+	SyhzIkfCMObAh9eDdy7IDePhPNoIJ2lCWpY3hGlmJUp8EvOWMVou8vyzWGrIb+Z0nivSKqy1qw9
+	Pd01FTiKVEk54PAIyYfDtdjo5fPaCPe9yS2mG5QKOJ9Ay0Yt+LPRw==
+X-Google-Smtp-Source: AGHT+IHW4lqyDD/WZ9MZc2ZAevw778ZC2oWLKzpYfIVQPXRhxGqN/JXNrTHqvV6y9ff/9LhoNEnlKQ==
+X-Received: by 2002:a05:620a:40c8:b0:7b6:f110:43d5 with SMTP id af79cd13be357-7b6f893016amr223205185a.18.1734028435127;
+        Thu, 12 Dec 2024 10:33:55 -0800 (PST)
+Received: from localhost ([2a03:2880:20ff:c::])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6eed3d22dsm157188685a.31.2024.12.12.10.33.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 10:33:54 -0800 (PST)
+From: Usama Arif <usamaarif642@gmail.com>
+To: david@redhat.com,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: hannes@cmpxchg.org,
+	riel@surriel.com,
+	shakeel.butt@linux.dev,
+	roman.gushchin@linux.dev,
+	yuzhao@google.com,
+	npache@redhat.com,
+	baohua@kernel.org,
+	ryan.roberts@arm.com,
+	rppt@kernel.org,
+	willy@infradead.org,
+	cerasuolodomenico@gmail.com,
+	ryncsn@gmail.com,
+	corbet@lwn.net,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] mm: convert partially_mapped set/clear operations to be atomic
+Date: Thu, 12 Dec 2024 18:33:51 +0000
+Message-ID: <20241212183351.1345389-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] arm64: dts: qcom: Update IPQ9574 xo_board_clk to
- use fixed factor clock
-To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
-        quic_suruchia@quicinc.com, quic_pavir@quicinc.com,
-        quic_linchen@quicinc.com, quic_leiwei@quicinc.com,
-        bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-References: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
- <20241107-qcom_ipq_cmnpll-v6-5-a5cfe09de485@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241107-qcom_ipq_cmnpll-v6-5-a5cfe09de485@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: dplJ9zbiv8xIA81v_A1yYEP0tXAdKA9u
-X-Proofpoint-GUID: dplJ9zbiv8xIA81v_A1yYEP0tXAdKA9u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120134
+Content-Transfer-Encoding: 8bit
 
-On 7.11.2024 10:50 AM, Luo Jie wrote:
-> xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output clock
-> 48 MHZ (also being the reference clock of CMN PLL) divided 2 by analog
-> block routing channel.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 7 ++++++-
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 3 ++-
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> index 78f6a2e053d5..9a8692377176 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-> @@ -174,8 +174,13 @@ &ref_48mhz_clk {
->  	clock-mult = <1>;
->  };
->  
-> +/*
-> + * The frequency of xo_board_clk is fixed to 24 MHZ, which is routed
-> + * from WiFi output clock 48 MHZ divided by 2.
-> + */
->  &xo_board_clk {
-> -	clock-frequency = <24000000>;
-> +	clock-div = <2>;
-> +	clock-mult = <1>;
->  };
->  
->  &xo_clk {
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> index 8246a00a3e3e..25aed33e9358 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> @@ -32,7 +32,8 @@ sleep_clk: sleep-clk {
->  		};
->  
->  		xo_board_clk: xo-board-clk {
-> -			compatible = "fixed-clock";
-> +			compatible = "fixed-factor-clock";
-> +			clocks = <&ref_48mhz_clk>;
+Other page flags in the 2nd page, like PG_hwpoison and
+PG_anon_exclusive can get modified concurrently.
+Changes to other page flags might be lost if they are
+happening at the same time as non-atomic partially_mapped
+operations. Hence, make partially_mapped operations atomic.
 
-This must be squashed with the previous patch, you can't introduce
-code and replace it immediately afterwards.
+Fixes: 8422acdc97ed ("mm: introduce a pageflag for partially mapped folios")
+Cc: stable@vger.kernel.org
+Reported-by: David Hildenbrand <david@redhat.com>
+Link: https://lore.kernel.org/all/e53b04ad-1827-43a2-a1ab-864c7efecf6e@redhat.com/
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+---
+v1 -> v2:
+- Collected acks
+- Added cc for stable@vger.kernel.org and link of initial report
+  (Johannes)
+---
+ include/linux/page-flags.h | 12 ++----------
+ mm/huge_memory.c           |  8 ++++----
+ 2 files changed, 6 insertions(+), 14 deletions(-)
 
-Konrad
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index cf46ac720802..691506bdf2c5 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -862,18 +862,10 @@ static inline void ClearPageCompound(struct page *page)
+ 	ClearPageHead(page);
+ }
+ FOLIO_FLAG(large_rmappable, FOLIO_SECOND_PAGE)
+-FOLIO_TEST_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+-/*
+- * PG_partially_mapped is protected by deferred_split split_queue_lock,
+- * so its safe to use non-atomic set/clear.
+- */
+-__FOLIO_SET_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+-__FOLIO_CLEAR_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
++FOLIO_FLAG(partially_mapped, FOLIO_SECOND_PAGE)
+ #else
+ FOLIO_FLAG_FALSE(large_rmappable)
+-FOLIO_TEST_FLAG_FALSE(partially_mapped)
+-__FOLIO_SET_FLAG_NOOP(partially_mapped)
+-__FOLIO_CLEAR_FLAG_NOOP(partially_mapped)
++FOLIO_FLAG_FALSE(partially_mapped)
+ #endif
+ 
+ #define PG_head_mask ((1UL << PG_head))
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2da5520bfe24..120cd2cdc614 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3583,7 +3583,7 @@ int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+ 		    !list_empty(&folio->_deferred_list)) {
+ 			ds_queue->split_queue_len--;
+ 			if (folio_test_partially_mapped(folio)) {
+-				__folio_clear_partially_mapped(folio);
++				folio_clear_partially_mapped(folio);
+ 				mod_mthp_stat(folio_order(folio),
+ 					      MTHP_STAT_NR_ANON_PARTIALLY_MAPPED, -1);
+ 			}
+@@ -3695,7 +3695,7 @@ bool __folio_unqueue_deferred_split(struct folio *folio)
+ 	if (!list_empty(&folio->_deferred_list)) {
+ 		ds_queue->split_queue_len--;
+ 		if (folio_test_partially_mapped(folio)) {
+-			__folio_clear_partially_mapped(folio);
++			folio_clear_partially_mapped(folio);
+ 			mod_mthp_stat(folio_order(folio),
+ 				      MTHP_STAT_NR_ANON_PARTIALLY_MAPPED, -1);
+ 		}
+@@ -3739,7 +3739,7 @@ void deferred_split_folio(struct folio *folio, bool partially_mapped)
+ 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+ 	if (partially_mapped) {
+ 		if (!folio_test_partially_mapped(folio)) {
+-			__folio_set_partially_mapped(folio);
++			folio_set_partially_mapped(folio);
+ 			if (folio_test_pmd_mappable(folio))
+ 				count_vm_event(THP_DEFERRED_SPLIT_PAGE);
+ 			count_mthp_stat(folio_order(folio), MTHP_STAT_SPLIT_DEFERRED);
+@@ -3832,7 +3832,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+ 		} else {
+ 			/* We lost race with folio_put() */
+ 			if (folio_test_partially_mapped(folio)) {
+-				__folio_clear_partially_mapped(folio);
++				folio_clear_partially_mapped(folio);
+ 				mod_mthp_stat(folio_order(folio),
+ 					      MTHP_STAT_NR_ANON_PARTIALLY_MAPPED, -1);
+ 			}
+-- 
+2.43.5
+
 
