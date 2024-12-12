@@ -1,327 +1,214 @@
-Return-Path: <linux-kernel+bounces-442458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF559EDD1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:34:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E084B9EDD20
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:35:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F587283209
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:34:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86314283227
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726C0558BC;
-	Thu, 12 Dec 2024 01:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AAD7DA6F;
+	Thu, 12 Dec 2024 01:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Oz3QWW5"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="MEAyikBU"
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1CDC2E0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733967269; cv=none; b=EpTq8UXmAGdFEIga+sdarbg7h1cbrK9CSbUIBfxw8PGB+H3ClzlpokJSts+gUk5vwvYfd+1DA0/IX+K5ZdeoqpZvcT7Ai7JO5npX/TCChPGMlm6ZZlDPUzSzleff/naZHVupCgSd5IOeCCtDlpTJTYrX9z3CJ3/6EthUCGTGnMU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733967269; c=relaxed/simple;
-	bh=OMKBR+ci1c7k1v5DnvnICnYO66Tlnm0duZoKFcrCoy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SoKhFy/X1Bi+WnnQns4/Yl/gyKyMpqJS3kppvq51U52TJPTvgJQKSsAzKm+slQr2qLGE9sP3jpecW9G7m8DrYvFqE1wMJMZuowDv+2RnVNwmWCPZKJyYEQtmZTskmNW+WFkqHGuc+OuqJZQzxDVIhgojGsIl1qMoYLvBgwn44kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Oz3QWW5; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a814c54742so37605ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Dec 2024 17:34:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733967266; x=1734572066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hoSeGE7KRT0J5hZUjyFKX6WyMjOqBpUk3jQgJgPHXEg=;
-        b=1Oz3QWW57BlUiI9iQIiSSqTM/C7RM/NCVdiDFWBLcOGLK3i4rj1TPZm+KtDSvbV2J5
-         kasE7zdlfS2ZCE/wT8/f0lLV2UgBZvv5YJU1jzYi6DPCN12I9dzLUNPXZZk+dneL1vxZ
-         dZiXfzMATTuerMudOUhX10WK0Z85FKn+G811ts232EDFHkc6LErZ+vj2bqCddWW2cVmF
-         GXNsC7i+0QShDzdsAuEmkFG5KJn+zBqrVFf0vf8MxXCD956JyvmFnc561J9s8pmpxNdJ
-         a2Tt5+dEF5ZR56Fa+//k48FjOXhAblyCD6TLlOBR1anW2gAw+GSYnbNSn3Ls7a7NQquS
-         Xmpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733967266; x=1734572066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hoSeGE7KRT0J5hZUjyFKX6WyMjOqBpUk3jQgJgPHXEg=;
-        b=ej5vM1PRvBMlb/u+4pR/Pu1awQsA3FThSssNXENOkShZYowu0ewMNNSCFyFhtlXAir
-         k4W1yjV1NzbcfhPsbL9HlpHvwM1IZeRqbK2eqvs+7XV5/FjJK/edqrC4F0SdjIMNlOXQ
-         LWbGj3e4ANvBaoNdj5OdpRwNI3TaVD3Y4lx7y9sX10OekF4MKdY1lGvuA0Bgnu6WPc1C
-         ONw853bs+fGkiSa5vcYGve70WRU63ujfO4De3gpN6Y4Bar/hmCcCMo6Ij75Rt6LFkCsd
-         U5jVXgKtR9LX6RRCP31DS5vy4r+IzDzNh0DXm6rYmSonOY99Fj7vozFJG2WCW3X5XE+D
-         m3IA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKKB1u1YNFiYyDmvix3j6OPyIYVPzDR6QP+6z5brQssCQWBVmTFDyhYbCaEUpRHP6cfNgVvHeex1GB9pg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCIsCXqqTYd8TmddnJNIZ6m2qKe0BpT5PQaKkrz0BNFzJuVpcA
-	tQUge7119sJ+9pooZRAzCO6SyFWh2otAyC6YT4q/s/4JSkrUpwhKDGTbgyCJLL99yS8tr601u1w
-	uW3Sx0Cy3PU3AwMo0Moj10KXTxJqwkOqeSFnP
-X-Gm-Gg: ASbGncu6CBE5haT6R+87+CUrykJvBGD3gjQeUCFC5gEob4xeK3e82UTwFcMt907IP+t
-	WpfcFGvP5yJ8aDtHUAQTyeKDgKEJFzdT4Ig9pbV0=
-X-Google-Smtp-Source: AGHT+IFcrIO8GEmPDpFRPD6n3RHIMPeTVCZptIg1afWB7cXTxt/55viwG7unrcjtahU828hRhibNtv1s3HHCMR9DR2c=
-X-Received: by 2002:a05:6e02:3b44:b0:3a7:d8f7:7c2c with SMTP id
- e9e14a558f8ab-3ac8874eb67mr1442905ab.12.1733967266312; Wed, 11 Dec 2024
- 17:34:26 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F38F61FD7;
+	Thu, 12 Dec 2024 01:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733967286; cv=pass; b=O4QPqoomx3ALJbucKc+AU5798wjgbeKpRilUcUtaUMeu8K32rgNz2dOPgISUvIMlvudQueSHi7K1KQ+BGln6+ZAWKREd9fnwBtZlCLdxC2KjMlEBQ0L5GvfIzqrfFIhCNhPHbpyuN1kj28qVLr+bzcoJviUI8dIhJCaRAG9Z+aY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733967286; c=relaxed/simple;
+	bh=KLxWFaaDF+cDRTd2G/MCadupPbA8MQ8L6qx4g0pnmIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UwEBkj0wEGOEYV4LwAwEwbzYrNYNHHzYhCoP+b7h5uVWeg1ap8BetY5fY5pJIIIgRu6nnpgi5Y/cRuOkwxj0tnYynQZcMrLSA+OwRxwYmCrZ/XUvHEH85x6JvbAnU60DgHc4lAgJQ3k/Q789LiCufZl3mNqOv6dMBmgj/QTIbHU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=MEAyikBU; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733967266; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UwECDe0BrqCMGT3Tsai/M2obybX9neUccM5d6IX/mqsBDdAzcF1SXkzuQ+9/KrMXP3ytszI4r1SFDSLpQ/JxYLogIZZ+vuPu27aIhCL2sQqHBxob4ePqOkkKvkf8beoX2r88LSaofKbxTYuF18WnKBLZmZ9uoS3ND+Iz1Cgz7Ec=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733967266; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=/zAzYfeI6PSkHjCt6+l45ujLT/1wh28c6GqI9MqVE9k=; 
+	b=BlkFqwwT7jwd5+TujYRdRNdprdxUambKwdFfw0GEnr5FOieUiys04byfcjnOJvwa6M/RL9HJUQNhckDGbSw/n/+WjHz6W2lS6nZDUkB55whqqisBOST2VVwwnYRQHuPn3fa2KNgKMSwF2YCPSftxbdezokI72MKMWmkkGw/RhoA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733967266;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To:Cc;
+	bh=/zAzYfeI6PSkHjCt6+l45ujLT/1wh28c6GqI9MqVE9k=;
+	b=MEAyikBUN4KtkedwY0CPGt7vD/FSkp1WOv0MZpvGlKbudHnY2nWuJAOsiz4Tm9dK
+	2U50zlGUt/S3720RNT/bKEAW6zUFagdC8eGqmti3BSre2T/lJTAqWtoy2JsmkgupL4C
+	TTuV4SVTgJpR8xDMkO4kvJbqbeJknV6iRoxFoDTo=
+Received: by mx.zohomail.com with SMTPS id 1733967264986906.6878328457522;
+	Wed, 11 Dec 2024 17:34:24 -0800 (PST)
+Message-ID: <ef7d45cc-d5ed-4a76-a9af-52c2a423ead0@zohomail.com>
+Date: Thu, 12 Dec 2024 09:34:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211222110.2430610-1-namhyung@kernel.org> <Z1oXs1xjCG1Ee27p@x1>
-In-Reply-To: <Z1oXs1xjCG1Ee27p@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 11 Dec 2024 17:34:15 -0800
-Message-ID: <CAP-5=fXYke_n7TDe+mB-webNH7vCvea7ZVPqfqygw7bTNd8G3g@mail.gmail.com>
-Subject: Re: [RFC/PATCH] perf trace: Add --syscall-period option
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Howard Chu <howardchu95@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/15] PCI/AER: Modify AER driver logging to report CXL
+ or PCIe bus error type
+To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ nifan.cxl@gmail.com, ming4.li@intel.com, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de,
+ PradeepVineshReddy.Kodamati@amd.com
+References: <20241211234002.3728674-1-terry.bowman@amd.com>
+ <20241211234002.3728674-5-terry.bowman@amd.com>
+From: Li Ming <ming.li@zohomail.com>
+In-Reply-To: <20241211234002.3728674-5-terry.bowman@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr08011227c741f4742d9ef0e0fb386338000004c7fb93fd456f8aefcef903ee1aff76f5bed377f8d51fab79:zu080112277a838a0372edc9d97d63627a000051e7e3d61a484978f27332cd6960e73c6fc115bf4911b8a48e:rf0801122b8692146451b7c785712ddf500000a048d575bfeca5188fcb442fe9f6b3587662d52a3a49287768cf49f9c2:ZohoMail
+X-ZohoMailClient: External
 
-On Wed, Dec 11, 2024 at 2:52=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+On 12/12/2024 7:39 AM, Terry Bowman wrote:
+> The AER driver and aer_event tracing currently log 'PCIe Bus Type'
+> for all errors.
 >
-> On Wed, Dec 11, 2024 at 02:21:10PM -0800, Namhyung Kim wrote:
-> > This option is to implement the event sampling for system calls.
-> > The period is given in msec as it shows the time in msec.
-> >
-> >   # perf trace -C 0 --syscall-period 100 sleep 1
-> >            ? (         ): fleetspeakd/1828559  ... [continued]: futex()=
-)                                            =3D -1 ETIMEDOUT (Connection t=
-imed out)
-> >        0.050 (100.247 ms): gnome-shell/572531 recvmsg(fd: 10<socket:[33=
-55761]>, msg: 0x7ffef8b39d20)                =3D 40
-> >      100.357 (100.149 ms): pipewire-pulse/572245 read(fd: 5<anon_inode:=
-[eventfd]>, buf: 0x7ffc0b9dc8f0, count: 8)      =3D 8
-> >      200.553 (100.268 ms): NetworkManager/3424 epoll_wait(epfd: 19<anon=
-_inode:[eventpoll]>, events: 0x5607b85bb880, maxevents: 6) =3D 0
-> >      300.876 (         ): mon/4932 poll(ufds: 0x7fa392784df0, nfds: 1, =
-timeout_msecs: 100)            ...
-> >      400.901 ( 0.025 ms): TaskCon~ller #/620145 futex(uaddr: 0x7f3fc596=
-fa00, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
-> >      300.876 (100.123 ms): mon/4932  ... [continued]: poll())          =
-                                   =3D 0 (Timeout)
-> >      500.901 ( 0.012 ms): evdefer/2/2335122 futex(uaddr: 0x5640baac5198=
-, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
-> >      602.701 ( 0.017 ms): Compositor/1992200 futex(uaddr: 0x7f1a51dfdd4=
-0, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
-> >      705.589 ( 0.017 ms): JS Watchdog/947933 futex(uaddr: 0x7f4cac1d424=
-0, op: WAKE|PRIVATE_FLAG, val: 1)           =3D 0
-> >      812.667 ( 0.027 ms): fix/1985151 futex(uaddr: 0xc0008f7148, op: WA=
-KE|PRIVATE_FLAG, val: 1)             =3D 1
-> >      912.807 ( 0.017 ms): Xorg/572315 setitimer(value: 0x7ffc375d6ba0) =
-                                     =3D 0
-> >
-> > The timestamp is kept in a per-cpu array and the allowed task is saved
-> > in a hash map.
+> Update the driver and aer_event tracing to log 'CXL Bus Type' for CXL
+> device errors.
 >
-> Interesting concept, and one that is done just on the BPF part, so I
-> think we should at least warn a user that is running this on a build
-> without BPF skels.
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Fan Ni <fan.ni@samsung.com>
+> ---
+>  drivers/pci/pcie/aer.c  | 14 ++++++++------
+>  include/ras/ras_event.h |  9 ++++++---
+>  2 files changed, 14 insertions(+), 9 deletions(-)
 >
-> Will try it tomorrow,
->
-> - Arnaldo
->
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/Documentation/perf-trace.txt       |  6 ++
-> >  tools/perf/builtin-trace.c                    |  5 ++
-> >  .../bpf_skel/augmented_raw_syscalls.bpf.c     | 67 ++++++++++++++++++-
-> >  3 files changed, 76 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Docum=
-entation/perf-trace.txt
-> > index 6e0cc50bbc13fc7f..9f338a8c5357a67e 100644
-> > --- a/tools/perf/Documentation/perf-trace.txt
-> > +++ b/tools/perf/Documentation/perf-trace.txt
-> > @@ -241,6 +241,12 @@ the thread executes on the designated CPUs. Defaul=
-t is to monitor all CPUs.
-> >       printing using the existing 'perf trace' syscall arg beautifiers =
-to map integer
-> >       arguments to strings (pid to comm, syscall id to syscall name, et=
-c).
-> >
-> > +--syscall-period::
-> > +     Trace a system call in the given period (in msec).  This implemen=
-ts
-> > +     sampling for syscalls in order to reduce the monitoring overhead.
-> > +     For example, setting the sysall period to 100 (msec) means it wil=
-l
-> > +     sample a syscall and next one after 100 msec.
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index fe6edf26279e..53e9a11f6c0f 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -699,13 +699,14 @@ static void __aer_print_error(struct pci_dev *dev,
+>  
+>  void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>  {
+> +	const char *bus_type = pcie_is_cxl(dev) ? "CXL"  : "PCIe";
+>  	int layer, agent;
+>  	int id = pci_dev_id(dev);
+>  	const char *level;
+>  
+>  	if (!info->status) {
+> -		pci_err(dev, "PCIe Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
+> -			aer_error_severity_string[info->severity]);
+> +		pci_err(dev, "%s Bus Error: severity=%s, type=Inaccessible, (Unregistered Agent ID)\n",
+> +			bus_type, aer_error_severity_string[info->severity]);
+>  		goto out;
+>  	}
+>  
+> @@ -714,8 +715,8 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>  
+>  	level = (info->severity == AER_CORRECTABLE) ? KERN_WARNING : KERN_ERR;
+>  
+> -	pci_printk(level, dev, "PCIe Bus Error: severity=%s, type=%s, (%s)\n",
+> -		   aer_error_severity_string[info->severity],
+> +	pci_printk(level, dev, "%s Bus Error: severity=%s, type=%s, (%s)\n",
+> +		   bus_type, aer_error_severity_string[info->severity],
+>  		   aer_error_layer[layer], aer_agent_string[agent]);
+>  
+>  	pci_printk(level, dev, "  device [%04x:%04x] error status/mask=%08x/%08x\n",
+> @@ -730,7 +731,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>  	if (info->id && info->error_dev_num > 1 && info->id == id)
+>  		pci_err(dev, "  Error of this Agent is reported first\n");
+>  
+> -	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
+> +	trace_aer_event(dev_name(&dev->dev), bus_type, (info->status & ~info->mask),
+>  			info->severity, info->tlp_header_valid, &info->tlp);
+>  }
+>  
+> @@ -764,6 +765,7 @@ EXPORT_SYMBOL_GPL(cper_severity_to_aer);
+>  void pci_print_aer(struct pci_dev *dev, int aer_severity,
+>  		   struct aer_capability_regs *aer)
+>  {
+> +	const char *bus_type = pcie_is_cxl(dev) ? "CXL"  : "PCIe";
+>  	int layer, agent, tlp_header_valid = 0;
+>  	u32 status, mask;
+>  	struct aer_err_info info;
+> @@ -798,7 +800,7 @@ void pci_print_aer(struct pci_dev *dev, int aer_severity,
+>  	if (tlp_header_valid)
+>  		__print_tlp_header(dev, &aer->header_log);
+>  
+> -	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
+> +	trace_aer_event(dev_name(&dev->dev), bus_type, (status & ~mask),
+>  			aer_severity, tlp_header_valid, &aer->header_log);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(pci_print_aer, CXL);
+> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+> index e5f7ee0864e7..1bf8e7050ba8 100644
+> --- a/include/ras/ras_event.h
+> +++ b/include/ras/ras_event.h
+> @@ -297,15 +297,17 @@ TRACE_EVENT(non_standard_event,
+>  
+>  TRACE_EVENT(aer_event,
+>  	TP_PROTO(const char *dev_name,
+> +		 const char *bus_type,
+>  		 const u32 status,
+>  		 const u8 severity,
+>  		 const u8 tlp_header_valid,
+>  		 struct pcie_tlp_log *tlp),
+>  
+> -	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
+> +	TP_ARGS(dev_name, bus_type, status, severity, tlp_header_valid, tlp),
+>  
+>  	TP_STRUCT__entry(
+>  		__string(	dev_name,	dev_name	)
+> +		__string(	bus_type,	bus_type	)
+>  		__field(	u32,		status		)
+>  		__field(	u8,		severity	)
+>  		__field(	u8, 		tlp_header_valid)
+> @@ -314,6 +316,7 @@ TRACE_EVENT(aer_event,
+>  
+>  	TP_fast_assign(
+>  		__assign_str(dev_name);
+> +		__assign_str(bus_type);
+>  		__entry->status		= status;
+>  		__entry->severity	= severity;
+>  		__entry->tlp_header_valid = tlp_header_valid;
+> @@ -325,8 +328,8 @@ TRACE_EVENT(aer_event,
+>  		}
+>  	),
+>  
+> -	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
+> -		__get_str(dev_name),
+> +	TP_printk("%s %s Bus Error: severity=%s, %s, TLP Header=%s\n",
+> +		__get_str(dev_name), __get_str(bus_type),
+>  		__entry->severity == AER_CORRECTABLE ? "Corrected" :
+>  			__entry->severity == AER_FATAL ?
+>  			"Fatal" : "Uncorrected, non-fatal",
 
-Is this similar to the -D/--delay option to perf-record? Perhaps share the =
-name?
+Hi Terry,
 
-> > +
-> >
-> >  PAGEFAULTS
-> >  ----------
-> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> > index 3c46de1a8d79bfe6..789eb0ffd5f90b61 100644
-> > --- a/tools/perf/builtin-trace.c
-> > +++ b/tools/perf/builtin-trace.c
-> > @@ -185,6 +185,7 @@ struct trace {
-> >       } stats;
-> >       unsigned int            max_stack;
-> >       unsigned int            min_stack;
-> > +     unsigned long           sample_period_ms;
-> >       int                     raw_augmented_syscalls_args_size;
-> >       bool                    raw_augmented_syscalls;
-> >       bool                    fd_path_disabled;
-> > @@ -5219,6 +5220,7 @@ int cmd_trace(int argc, const char **argv)
-> >                    "start"),
-> >       OPT_BOOLEAN(0, "force-btf", &trace.force_btf, "Prefer btf_dump ge=
-neral pretty printer"
-> >                      "to customized ones"),
-> > +     OPT_ULONG(0, "syscall-period", &trace.sample_period_ms, "syscall =
-sampling period in ms"),
-> >       OPTS_EVSWITCH(&trace.evswitch),
-> >       OPT_END()
-> >       };
-> > @@ -5326,6 +5328,9 @@ int cmd_trace(int argc, const char **argv)
-> >                               bpf_program__set_autoattach(prog, /*autoa=
-ttach=3D*/false);
-> >               }
-> >
-> > +             if (trace.sample_period_ms)
-> > +                     trace.skel->rodata->sample_period =3D trace.sampl=
-e_period_ms * NSEC_PER_MSEC;
-> > +
-> >               err =3D augmented_raw_syscalls_bpf__load(trace.skel);
-> >
-> >               if (err < 0) {
-> > diff --git a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c b/to=
-ols/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > index 4a62ed593e84edf8..12272620dcd73700 100644
-> > --- a/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > +++ b/tools/perf/util/bpf_skel/augmented_raw_syscalls.bpf.c
-> > @@ -113,6 +113,22 @@ struct pids_filtered {
-> >       __uint(max_entries, 64);
-> >  } pids_filtered SEC(".maps");
-> >
-> > +struct sample_timestamp {
-> > +     __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-> > +     __type(key, int);
-> > +     __type(value, __u64);
-> > +     __uint(max_entries, 1);
-> > +} sample_timestamp SEC(".maps");
-> > +
-> > +struct sample_filtered {
-> > +     __uint(type, BPF_MAP_TYPE_HASH);
-> > +     __type(key, pid_t);
-> > +     __type(value, bool);
-> > +     __uint(max_entries, MAX_CPUS);
-> > +} sample_filtered SEC(".maps");
-> > +
-> > +const volatile __u64 sample_period;
 
-nit: sample_period -> sample_period_ns
+Patch #3 is using flexbus dvsec to identify CXL RP/USP/DSP. But per CXL r3.1 section 9.12.3 "Enumerating CXL RPs and DSPs", there may be a flexbus dvsec if CXL RP/DSP is in disconnect state or connecting to a PCIe device.
 
-Thanks,
-Ian
+If a PCIe device connects to a CXL RP/DSP, and the CXL RP/DSP reports an error, the error log will be also "CXL Bus Type", is it expected? My understanding is that the CXL RP/DSP is working on PCIe mode.
 
-> > +
-> >  struct augmented_args_payload {
-> >       struct syscall_enter_args args;
-> >       struct augmented_arg arg, arg2; // We have to reserve space for t=
-wo arguments (rename, etc)
-> > @@ -428,6 +444,44 @@ static bool pid_filter__has(struct pids_filtered *=
-pids, pid_t pid)
-> >       return bpf_map_lookup_elem(pids, &pid) !=3D NULL;
-> >  }
-> >
-> > +static bool sample_filter__allow_enter(__u64 timestamp, pid_t pid)
-> > +{
-> > +     int idx =3D 0;
-> > +     __u64 *prev_ts;
-> > +     bool ok =3D true;
-> > +
-> > +     /* default behavior */
-> > +     if (sample_period =3D=3D 0)
-> > +             return true;
-> > +
-> > +     prev_ts =3D bpf_map_lookup_elem(&sample_timestamp, &idx);
-> > +
-> > +     if (prev_ts) {
-> > +             if ((*prev_ts + sample_period) > timestamp)
-> > +                     return false;
-> > +             *prev_ts =3D timestamp;
-> > +     } else {
-> > +             bpf_map_update_elem(&sample_timestamp, &idx, &timestamp, =
-BPF_ANY);
-> > +     }
-> > +
-> > +     bpf_map_update_elem(&sample_filtered, &pid, &ok, BPF_ANY);
-> > +
-> > +     return true;
-> > +}
-> > +
-> > +static bool sample_filter__allow_exit(pid_t pid)
-> > +{
-> > +     /* default behavior */
-> > +     if (sample_period =3D=3D 0)
-> > +             return true;
-> > +
-> > +     if (!bpf_map_lookup_elem(&sample_filtered, &pid))
-> > +             return false;
-> > +
-> > +     bpf_map_delete_elem(&sample_filtered, &pid);
-> > +     return true;
-> > +}
-> > +
-> >  static int augment_sys_enter(void *ctx, struct syscall_enter_args *arg=
-s)
-> >  {
-> >       bool augmented, do_output =3D false;
-> > @@ -526,7 +580,9 @@ static int augment_sys_enter(void *ctx, struct sysc=
-all_enter_args *args)
-> >  SEC("tp/raw_syscalls/sys_enter")
-> >  int sys_enter(struct syscall_enter_args *args)
-> >  {
-> > +     pid_t pid =3D getpid();
-> >       struct augmented_args_payload *augmented_args;
-> > +
-> >       /*
-> >        * We start len, the amount of data that will be in the perf ring
-> >        * buffer, if this is not filtered out by one of pid_filter__has(=
-),
-> > @@ -537,7 +593,10 @@ int sys_enter(struct syscall_enter_args *args)
-> >        * initial, non-augmented raw_syscalls:sys_enter payload.
-> >        */
-> >
-> > -     if (pid_filter__has(&pids_filtered, getpid()))
-> > +     if (pid_filter__has(&pids_filtered, pid))
-> > +             return 0;
-> > +
-> > +     if (!sample_filter__allow_enter(bpf_ktime_get_ns(), pid))
-> >               return 0;
-> >
-> >       augmented_args =3D augmented_args_payload();
-> > @@ -561,9 +620,13 @@ int sys_enter(struct syscall_enter_args *args)
-> >  SEC("tp/raw_syscalls/sys_exit")
-> >  int sys_exit(struct syscall_exit_args *args)
-> >  {
-> > +     pid_t pid =3D getpid();
-> >       struct syscall_exit_args exit_args;
-> >
-> > -     if (pid_filter__has(&pids_filtered, getpid()))
-> > +     if (pid_filter__has(&pids_filtered, pid))
-> > +             return 0;
-> > +
-> > +     if (!sample_filter__allow_exit(pid))
-> >               return 0;
-> >
-> >       bpf_probe_read_kernel(&exit_args, sizeof(exit_args), args);
-> > --
-> > 2.47.0.338.g60cca15819-goog
+If not, I think that setting "pci_dev->is_cxl" during cxl port enumeration and CXL device probing is another option.
+
+
+Thanks
+
+Ming
+
 
