@@ -1,174 +1,156 @@
-Return-Path: <linux-kernel+bounces-442674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5BB9EE023
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:19:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A96E9EE028
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500591882E28
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDFFD1883529
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C711EC4E7;
-	Thu, 12 Dec 2024 07:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB57E20ADF1;
+	Thu, 12 Dec 2024 07:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hdALD5FM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Bwwh2XFZ"
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JY66ghJ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BBD1662E7;
-	Thu, 12 Dec 2024 07:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3C9259485;
+	Thu, 12 Dec 2024 07:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733987961; cv=none; b=Gl65j/F7cSf5yT2vNff5yX7cEFH4DXAcRO+U06DGGnV1YadTpg533vnmVgrR+6lslJL8Np/wC8xHcxxvK82DbOxcabzUds9rBRcBtiqiQU6VfWD2B1S1wDz3KsehVEf97VzCZfoWrCfbqoGoFS5aNWX6cY/NcUXOYpVpla++AF0=
+	t=1733988011; cv=none; b=K7Ps61RxdB27G0tIYVeJ9sNfw2ctMBcn+9gG7bgP8AlvYcFT1ZEaHbwh6NC+kCxU3xsedjM8pdCwGK3q+v1hjEBcAXSoLBU0JhTyz9rJQ30+3kBFc8D06sc2o6ehNmP2d0XNs8+A5DnVmCLQFv93sPSFWyYOr1oSdZusyfdurRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733987961; c=relaxed/simple;
-	bh=zzxdqFZXUIErIeYCetkNsQbDEpK+q8+9ZMOXDbqAD6M=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=s60qVeD9Z30FTzJODrXzZITAkRiytKBPHyQOhJXEiYyFTokM6cvWENSroxPyzaWh81JBceShR0/F+7YFeGV3fp11X7cB4h1Pkd1GhWu7jkSTpKSaOy+4U3Z3Z8as/KsmNQSCTNYy2Zf7b145Tc3z3QoUZaMwoO7yx94UF/zfUww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hdALD5FM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Bwwh2XFZ; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailflow.phl.internal (Postfix) with ESMTP id 15DF22007AD;
-	Thu, 12 Dec 2024 02:19:18 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 12 Dec 2024 02:19:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1733987958;
-	 x=1733995158; bh=580mfzyUQsCTc5a85zB6dfYbdmbbQ2+HZxzSZ4pchqY=; b=
-	hdALD5FMM8IuOjz1EOfJc29TdsqLC8ZKj/opabdDMYCcZT5KQtgW+/K7JjfS/OJw
-	smKsoR7H0DyyUURopGSXEOd+wG3pgu8xB4WQny/uIEg1hhl3twk5dZX5Lj8pmJxp
-	p7tYXarenTfFkhPoAhF8PsrbGhSYelJAnN0E1/rLMB87za8C8/HdqHnDr5myc+wN
-	w9b9G4gH3VeFsnNxnK+eh48VUS1Si71Vdq2Ik3SewH/20AuO2O5f4SBKGrQysrRH
-	l68WGngchjTYH0bLSrRgxjKpgwJEsxjkdiiY8XhJtqWAsB3yqPBGPHQ8U4hQzz0g
-	3A8xK/SlmdSnUhXauR0iaQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733987958; x=
-	1733995158; bh=580mfzyUQsCTc5a85zB6dfYbdmbbQ2+HZxzSZ4pchqY=; b=B
-	wwh2XFZYYInlW3z4d300clygu1iBnBttkr59Q8lY4PyZqcW+738Om2V68//bjNhA
-	u0GpL4spYVPUud71bX06A5WpdyI3bnsKky+F+O+S7/Yhyzg6a8rz53+lsV0G0feO
-	rq7cRdc2HXAM8wsJrY8iVIVMNZWb99EZxnV9j6+CRPwRZrnqpMUzj9l5AeRnYZJP
-	8kL7T69G2h4Gii8eeh6R8umM80bSfUbnS+XFp8XLyzhCNUdQV6ILPdY7a/REjWeG
-	tMQx3qCT396hMh+0vOkElXmRZeEvgXaB//pXahdCfwQLKf3ASV1zKOUDl+m02BJs
-	q81Qsoga6p906/4egCn1g==
-X-ME-Sender: <xms:dY5aZ0ruKPiw_rq_ZPTClPIcVdIlYo9D7xIT_pwScA2M-d2_9EqwZA>
-    <xme:dY5aZ6oNso_QKFwl5NzH2HQfxY48sPPYq3TJWd-mOen3FjuQztuH-7mgfuoAj_Uob
-    j6JqFqR_HKGgCp7gs0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeeggddviecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpeeggfejudejvdeijeeglefgtdfhudffieetfedugefh
-    ffekjeefhedtjeefjeetfeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhn
-    uggsrdguvgdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopegrhhhilhgvrhestghouggvfigvrghvvghrshdrtghomhdprhgtphhtthhopeii
-    fhhighhurhgrsegtohguvgifvggrvhgvrhhsrdgtohhmpdhrtghpthhtohepsghoqhhunh
-    drfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvggrlhhmvghiuges
-    ihhgrghlihgrrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurd
-    horhhgpdhrtghpthhtoheprhguuhhnlhgrphesihhnfhhrrgguvggrugdrohhrghdprhgt
-    phhtthhopehlkhhpsehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhuthhosehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:dY5aZ5PlLiOOKQY_MJx7_pASTm30i0mlaZNB0PVOenQzeUXnz5k2Gg>
-    <xmx:dY5aZ749oX995tsM5Htk9jed6A5SeXp6yd6lrVBZromytQjnQgrRQg>
-    <xmx:dY5aZz7CiyDFcw9vamWV8GM_QpSHQKjKwCXdYJF44q5yjeq280EzCQ>
-    <xmx:dY5aZ7gEFMKl-V99fUr8kbmjrmEjiFMCDsHxnZSZihL6JLN4hVTeMA>
-    <xmx:do5aZ8OE8NZO_w5SKeWNm1ZPPUHrGNcBHD5VRYvUk9gEmpD1Iy4D4ZcW>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 48B8A2220072; Thu, 12 Dec 2024 02:19:17 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733988011; c=relaxed/simple;
+	bh=6Ri8IP/B/7EsHxKZjeJyUIP+NcIoxWnyAQZWysjxBVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IRXEiBr1IbN5nFPZnlk90zQ2fLqbFDfjMdt5jJF9DdQKP+syqiGLKierNE0EvxCRyE073+B17R27maX0fxhjFjPogChcF7eDWAiBwe+b2z/8MCu0M45/pF+ltiSAa4ehSiaofz7b87GK+jcb563Ghs3OOPTYKIllJ7UACNm2WYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JY66ghJ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B31CAC4CECE;
+	Thu, 12 Dec 2024 07:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733988010;
+	bh=6Ri8IP/B/7EsHxKZjeJyUIP+NcIoxWnyAQZWysjxBVU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JY66ghJ74hd/i2e7ZI/W3+6ojvRb8zUSchDan/ecwDjIjGYQCmUgf5K1kiLzvguZ0
+	 gfZ5NuxEbDOQrj3S85YQQbNoU778IWoEHuNNhex3tWRlgJfXdVOo9f/4629VWfsAlC
+	 ap9m8pcPvg1wUBVKSiJycPqbhCf5TzLd3Y1heYxSgFKuoM4TT2wDxNpWQy2IuaNQbp
+	 RTYekfoADtEIpDtZ5Oy+egjPIM8ex9UWTWNo9tkIxM3rLxBzQX2GmocTFy8sb4Kntf
+	 6EHqdk6AYXz2FwD7CJO4noDSO2DyY58M8jZyotcI+fNcXmrZYccgvSLEV247unSW5K
+	 Q+Z/y4JxIQ4Dg==
+Message-ID: <8cf7e03a-7994-4dd5-b496-e00b4827ee22@kernel.org>
+Date: Thu, 12 Dec 2024 08:20:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 12 Dec 2024 08:18:50 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "kernel test robot" <lkp@intel.com>,
- "Elizabeth Figura" <zfigura@codeweavers.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <skhan@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-api@vger.kernel.org, wine-devel@winehq.org,
- =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- "Wolfram Sang" <wsa-dev@sang-engineering.com>,
- "Arkadiusz Hiler" <ahiler@codeweavers.com>,
- "Peter Zijlstra" <peterz@infradead.org>, "Andy Lutomirski" <luto@kernel.org>,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- "Randy Dunlap" <rdunlap@infradead.org>, "Ingo Molnar" <mingo@redhat.com>,
- "Will Deacon" <will@kernel.org>, "Waiman Long" <longman@redhat.com>,
- "Boqun Feng" <boqun.feng@gmail.com>
-Message-Id: <21811752-06d3-44cd-b3e6-f8124676df87@app.fastmail.com>
-In-Reply-To: <202412121219.EQhUbN0S-lkp@intel.com>
-References: <20241209185904.507350-29-zfigura@codeweavers.com>
- <202412121219.EQhUbN0S-lkp@intel.com>
-Subject: Re: [PATCH v6 28/28] ntsync: No longer depend on BROKEN.
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] dt-bindings: mailbox: mediatek: Add MT8196 support
+ for gce-mailbox
+To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "simona@ffwll.ch" <simona@ffwll.ch>, "mchehab@kernel.org"
+ <mchehab@kernel.org>, =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?=
+ <Nancy.Lin@mediatek.com>, =?UTF-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?=
+ <Moudy.Ho@mediatek.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ =?UTF-8?B?WGF2aWVyIENoYW5nICjlvLXnjbvmlocp?= <Xavier.Chang@mediatek.com>,
+ "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+References: <20241211032256.28494-1-jason-jh.lin@mediatek.com>
+ <20241211032256.28494-3-jason-jh.lin@mediatek.com>
+ <yhfxpflyumevs66sdwgiiyuablpfxfxw3e7ybrxju7ssicmnu5@truuiuvxlq6e>
+ <64326843358d450c9172f3dea1c85e7422e20430.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <64326843358d450c9172f3dea1c85e7422e20430.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 12, 2024, at 05:52, kernel test robot wrote:
-> Hi Elizabeth,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on cdd30ebb1b9f36159d66f088b61aee264e649d7a]
->
-> url:    
-> https://github.com/intel-lab-lkp/linux/commits/Elizabeth-Figura/ntsync-Introduce-NTSYNC_IOC_WAIT_ANY/20241210-031155
-> base:   cdd30ebb1b9f36159d66f088b61aee264e649d7a
+On 12/12/2024 04:41, Jason-JH Lin (林睿祥) wrote:
+> Hi Krzysztof,
+> 
+> Thanks for the reviews.
+> 
+> On Wed, 2024-12-11 at 10:39 +0100, Krzysztof Kozlowski wrote:
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>
+>>
+>> On Wed, Dec 11, 2024 at 11:22:50AM +0800, Jason-JH.Lin wrote:
+>>> Add compatible name and iommus property for MT8196.
+>>>
+>>> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+>>> ---
+>>>  .../devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml     | 4
+>>> ++++
+>>>  1 file changed, 4 insertions(+)
+>>
+>> Headers are never separate from the bindings patch...
+> 
+> Do you mean I need to merge [PATCH 1/8] and [PATCH 2/8] into 1 patch?
+I asked this last time.
 
-> All errors (new ones prefixed by >>):
->
->    In file included from include/linux/spinlock.h:60,
->                     from include/linux/wait.h:9,
->                     from include/linux/wait_bit.h:8,
->                     from include/linux/fs.h:6,
->                     from drivers/misc/ntsync.c:11:
->    In function 'check_copy_size',
->        inlined from 'copy_from_user' at include/linux/uaccess.h:207:7,
->        inlined from 'setup_wait' at drivers/misc/ntsync.c:903:6:
->>> include/linux/thread_info.h:259:25: error: call to '__bad_copy_to' declared with attribute error: copy destination size is too small
->      259 |                         __bad_copy_to();
->          |                         ^~~~~~~~~~~~~~~
-
-I looked up the function from the github URL above and found
-
-	int fds[NTSYNC_MAX_WAIT_COUNT + 1];
-	const __u32 count = args->count;
-	struct ntsync_q *q;
-	__u32 total_count;
-	__u32 i, j;
-
-	if (args->pad || (args->flags & ~NTSYNC_WAIT_REALTIME))
-		return -EINVAL;
-
-	if (args->count > NTSYNC_MAX_WAIT_COUNT)
-		return -EINVAL;
-
-	total_count = count;
-	if (args->alert)
-		total_count++;
-
-	if (copy_from_user(fds, u64_to_user_ptr(args->objs),
-			   array_size(count, sizeof(*fds))))
-		return -EFAULT;
-
-which looks correct to me, as it has appropriate
-range checking on args->count, but I can see how
-the warning may be a result of checking 'args->count'
-instead of 'count'.
-
-      Arnd
+Best regards,
+Krzysztof
 
