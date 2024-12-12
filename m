@@ -1,426 +1,148 @@
-Return-Path: <linux-kernel+bounces-442749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBB49EE11F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:20:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F909EE126
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:21:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56AAA1681B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:20:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3DB1888898
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6AB20E70E;
-	Thu, 12 Dec 2024 08:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D779B20B7F6;
+	Thu, 12 Dec 2024 08:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="thHjO3mL"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="chU9ngdz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96DC20E6EB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8284020C018;
+	Thu, 12 Dec 2024 08:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991552; cv=none; b=ej+MVMgmopD/+fmcUJl/GCEA/2VJpM/ugcYmuymekGTLWXGLn/JgqVc3mbsMIe+LAcqmBzJ7ecYuyOSeOsbgFq2rfvve6a50wmITOuJlxJPIXDdRVHUaNVyJRYj/PNt6AN9ivtB3Vyi1j63jLk0lM2/VAgjk//LXP4juALvTfJs=
+	t=1733991654; cv=none; b=o0Qa0segcW5Y11pPaB7eFo1fPnKYcDSh8nzToAiIcbJkddpfEMi10JQwniq3lWRCdJxJ36Sej+lfqutoSKR5qqlLryemSW1HU1qsugdu+L2LUWvlFk7r6k4FDfT1F8tPy2Myg7HhwFmXUChteYNnZho81HbfS3UYGhV9S8F8ykI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991552; c=relaxed/simple;
-	bh=okRULxDuHGSDnznZcOa4AdFG2atM1VJKTbEoycO1mQE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JpmDXqCRTZI8ivtsf0GnfukrDpvrf7EpWBGsdik862ftEv6ULw8yaKJjMz/BuM80M98/5oUsrbha0ejidSojc6w4GzIH9J1ejpMIV/YtDT/wyawMuvkxCr5Wmh50cvbTxnrpySZ4nW46OlH06s9yInMoBSsHX8GgE1O2+uiPc04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=thHjO3mL; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4359206e1e4so2912405e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:19:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733991549; x=1734596349; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ey45ut0cYqhlv0rHJjDTgjPj+B5/bG+PQfUrVzCrXlU=;
-        b=thHjO3mLq59rapyhK4SKhBe9XC18UW6faR6Fw1OyudBIx0OOP6fblnq8NzUfqsKJrW
-         7u9Awpz7XbYWL5ra9FcaCudzCkXYUHVaHh9rQK1a8ZTMNS7cvrdZ9MpGiIygeksNtdIS
-         v8z4TBqWd65MTfYBtcRRa7zWyCMQLHmhLmNQFdO2eCeMM7rQ1lDnNQRAIsU7vP9yIcoD
-         EhhSJEPpWHxMfMtq/Tg4B2XCUVUlfAXDAd/sezY4ioj3PkKOazCznv3j1qV88lGxnr81
-         KWy1UG48aDaln69XPvqkWD+GOYOr8TW/uQ5y9XRR+R/jv7J+02sTJnyAfu7MPJWGW39+
-         Xccw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733991549; x=1734596349;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ey45ut0cYqhlv0rHJjDTgjPj+B5/bG+PQfUrVzCrXlU=;
-        b=NgBegGx9iSRsxiogJPbB18ieyVUFEbKoyFN5NurTMWaud30Q77Bs/oyvHRhc4JJWXo
-         bOBY7bKW/W/gjOABJQmZVnS28DD7l9dK0zDbc3Dtx4g55IgIkDe5p5SAwNmu/r/rIV/1
-         EWL5i5R1MPkYn1Rx4ewob9Jyor682LZ+zDV5iD6/efjaGP54ApxlHSY78y0SiC++7FhS
-         CQZkHYaP0MoF9NkrtAOBs44EeU132o231raL3X5NNjhj0BVas6Bjc1I6FdSHSZSzjNux
-         7t2Sq3OuQV99b4J4b90xQUPhKMdHIXSKujQhzCQZGweu3QufTmJm5WAqLPfPJnUm1WyQ
-         KOBw==
-X-Gm-Message-State: AOJu0YzFaJ5/aG6PbPNkY3wECCysgAVv9QolMqgk/kfhwZV3SwvosKzH
-	aHdlXuEUPF/qvNy3a6HrO0/2/zWJn3KTUaqigWHmek5XDV7nZnCcseWMV8w8kUfmDBRSMg==
-X-Google-Smtp-Source: AGHT+IFcDPi/tJJwAsl19d48itWuAeTtp0GYsuRI58iTvVH0YxvBQoA7Eq57mdP63vpaZu5145ucgqLD
-X-Received: from wmik9.prod.google.com ([2002:a7b:c409:0:b0:435:21e:7bec])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:35c9:b0:434:a734:d279
- with SMTP id 5b1f17b1804b1-4361c3c6fbfmr55375515e9.16.1733991549429; Thu, 12
- Dec 2024 00:19:09 -0800 (PST)
-Date: Thu, 12 Dec 2024 09:18:48 +0100
-In-Reply-To: <20241212081841.2168124-8-ardb+git@google.com>
+	s=arc-20240116; t=1733991654; c=relaxed/simple;
+	bh=5hbva0ra1WgEeS0msvoBjcB4tt/jwYhd3Q1X0RsoUmU=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=U3/IDsJhW1ouMBL+KMiMof2mabGCM6OtF2FoOSR8XMhAND03495OQrrMjNj9d9guEMdGV5y7AgHK6Vb9KA3wVZTtEdpXAXwcu7B2tnux32sDaJbOJCTGC/fznkvidAYXnBg9lx9j2vKbWzSQVcarc8zOvSW7cNSuMRzuqB9eBZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=chU9ngdz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7dTOn027247;
+	Thu, 12 Dec 2024 08:19:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=RY2XHyRT98M51wFIDOeTWd
+	YXbB3NyzBkPbM/GJSC4qg=; b=chU9ngdznHSysrQnX0NI72Fjpk8++3izbGFgA6
+	BdPN9TVMtSFgXqwKNVQFowVUvIIonU1kqXgonABabe3AQccpQbmf3p+HHC3MA3Xm
+	G2ZAk6OpSJIsxQaiprIn0h2CiFpTkqK4UU3PLnAzxUVTa5mXYIZipnwRUAGLNBdA
+	7mAruym5eeHbi+tcVvqxHpzdVq+8JMyByj+z+uaZlhRvffAjyqWdgkAgqXuarMtE
+	If6R/KOAV9O+6gJKRH8/bjZAZIrn9mOgVkw8tWS+UOAFgHuIwPRsLmNmvosw51H5
+	nleHF7mCxzU6rn15zBeEq09b5kBHwskSTwIipVRV4WYMC3bw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43etn8wfxp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 08:19:19 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC8JItT007947
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 08:19:18 GMT
+Received: from [10.239.28.138] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
+ 2024 00:19:15 -0800
+Message-ID: <1524e971-8433-1e2d-b39e-65bad0d6c6ce@quicinc.com>
+Date: Thu, 12 Dec 2024 16:19:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241212081841.2168124-8-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11772; i=ardb@kernel.org;
- h=from:subject; bh=5i2/jnuksoamN8To8RDijcFECekYd7sFcR9Y5NN+knE=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIT1qTpaiim1ZUHnYtpPcJ1cbnzrNnHa2Q5ixr5TlhGWD8
- uYVl106SlkYxDgYZMUUWQRm/3238/REqVrnWbIwc1iZQIYwcHEKwEQq0hj+FzotbA6ceUY+nrGD
- 00ziSm6ve9Th6l3fN9Yy7J+aad3wkOGvoKfJC5XUS049d+8fqROcdqun5HrjogyHl8sLZTTaVVJ 5AQ==
-X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212081841.2168124-14-ardb+git@google.com>
-Subject: [PATCH v3 6/6] arm64/mm: Drop configurable 48-bit physical address
- space limit
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Kees Cook <keescook@chromium.org>, 
-	Quentin Perret <qperret@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Content-Language: en-US
+To: <jingoohan1@gmail.com>, <manivannan.sadhasivam@linaro.org>,
+        <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_cang@quicinc.com>, <mrana@quicinc.com>,
+        yuqiang
+	<quic_qianyu@quicinc.com>, <quic_wenbyao@quicinc.com>
+From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
+Subject: [PATCH] PCI: dwc: Set PORT_LOGIC_LINK_WIDTH to one lane
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: yk5AQikQeuvfqi_BdniJ95yqvb4M4z1G
+X-Proofpoint-GUID: yk5AQikQeuvfqi_BdniJ95yqvb4M4z1G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 spamscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 phishscore=0 mlxscore=0
+ mlxlogscore=870 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412120056
 
-From: Ard Biesheuvel <ardb@kernel.org>
+PORT_LOGIC_LINK_WIDTH field of the PCIE_LINK_WIDTH_SPEED_CONTROL register
+indicates the number of lanes to check for exit from Electrical Idle in
+Polling.Active and L2.Idle. It is used to limit the effective link width to
+ignore broken or unused lanes that detect a receiver to prevent one or more
+bad Receivers or Transmitters from holding up a valid Link from being
+configured.
 
-Currently, the maximum supported physical address space can be
-configured as either 48 bits or 52 bits. The only remaining difference
-between these in practice is that the former omits the masking and
-shifting required to construct TTBR and PTE values, which carry bits #48
-and higher disjoint from the rest of the physical address.
+In a PCIe link that support muiltiple lanes, setting PORT_LOGIC_LINK_WIDTH
+to 1 will not affect the link width that is actually intended to be used.
+But setting it to a value other than 1 will lead to link training fail if
+one or more lanes are broken.
 
-The overhead of performing these additional calculations is negligible,
-and so there is little reason to retain support for two different
-configurations, and we can simply support whatever the hardware
-supports.
+Hence, always set PORT_LOGIC_LINK_WIDTH to 1 no matter how many lanes the
+port actually supports to make linking up more robust. Link can still be
+established with one lane at least if other lanes are broken.
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
 ---
- arch/arm64/Kconfig                     | 31 +-------------------
- arch/arm64/include/asm/assembler.h     | 13 ++------
- arch/arm64/include/asm/cpufeature.h    |  3 +-
- arch/arm64/include/asm/kvm_pgtable.h   |  3 +-
- arch/arm64/include/asm/pgtable-hwdef.h |  6 +---
- arch/arm64/include/asm/pgtable-prot.h  |  4 +--
- arch/arm64/include/asm/pgtable.h       | 11 +------
- arch/arm64/include/asm/sysreg.h        |  6 ----
- arch/arm64/mm/pgd.c                    |  9 +++---
- arch/arm64/mm/proc.S                   |  2 --
- scripts/gdb/linux/constants.py.in      |  1 -
- tools/arch/arm64/include/asm/sysreg.h  |  6 ----
- 12 files changed, 14 insertions(+), 81 deletions(-)
+  drivers/pci/controller/dwc/pcie-designware.c | 5 +----
+  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index c1ca21adddc1..7ebd0ba32a32 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1416,38 +1416,9 @@ config ARM64_VA_BITS
- 	default 48 if ARM64_VA_BITS_48
- 	default 52 if ARM64_VA_BITS_52
- 
--choice
--	prompt "Physical address space size"
--	default ARM64_PA_BITS_48
--	help
--	  Choose the maximum physical address range that the kernel will
--	  support.
--
--config ARM64_PA_BITS_48
--	bool "48-bit"
--	depends on ARM64_64K_PAGES || !ARM64_VA_BITS_52
--
--config ARM64_PA_BITS_52
--	bool "52-bit"
--	depends on ARM64_64K_PAGES || ARM64_VA_BITS_52
--	help
--	  Enable support for a 52-bit physical address space, introduced as
--	  part of the ARMv8.2-LPA extension.
--
--	  With this enabled, the kernel will also continue to work on CPUs that
--	  do not support ARMv8.2-LPA, but with some added memory overhead (and
--	  minor performance overhead).
--
--endchoice
--
--config ARM64_PA_BITS
--	int
--	default 48 if ARM64_PA_BITS_48
--	default 52 if ARM64_PA_BITS_52
--
- config ARM64_LPA2
- 	def_bool y
--	depends on ARM64_PA_BITS_52 && !ARM64_64K_PAGES
-+	depends on !ARM64_64K_PAGES
- 
- choice
- 	prompt "Endianness"
-diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-index ad63457a05c5..01a1e3c16283 100644
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -342,14 +342,13 @@ alternative_cb_end
- 	mrs	\tmp0, ID_AA64MMFR0_EL1
- 	// Narrow PARange to fit the PS field in TCR_ELx
- 	ubfx	\tmp0, \tmp0, #ID_AA64MMFR0_EL1_PARANGE_SHIFT, #3
--	mov	\tmp1, #ID_AA64MMFR0_EL1_PARANGE_MAX
- #ifdef CONFIG_ARM64_LPA2
- alternative_if_not ARM64_HAS_VA52
- 	mov	\tmp1, #ID_AA64MMFR0_EL1_PARANGE_48
--alternative_else_nop_endif
--#endif
- 	cmp	\tmp0, \tmp1
- 	csel	\tmp0, \tmp1, \tmp0, hi
-+alternative_else_nop_endif
-+#endif
- 	bfi	\tcr, \tmp0, \pos, #3
- 	.endm
- 
-@@ -599,21 +598,13 @@ alternative_endif
-  * 	ttbr:	returns the TTBR value
-  */
- 	.macro	phys_to_ttbr, ttbr, phys
--#ifdef CONFIG_ARM64_PA_BITS_52
- 	orr	\ttbr, \phys, \phys, lsr #46
- 	and	\ttbr, \ttbr, #TTBR_BADDR_MASK_52
--#else
--	mov	\ttbr, \phys
--#endif
- 	.endm
- 
- 	.macro	phys_to_pte, pte, phys
--#ifdef CONFIG_ARM64_PA_BITS_52
- 	orr	\pte, \phys, \phys, lsr #PTE_ADDR_HIGH_SHIFT
- 	and	\pte, \pte, #PHYS_TO_PTE_ADDR_MASK
--#else
--	mov	\pte, \phys
--#endif
- 	.endm
- 
- /*
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index b64e49bd9d10..ed327358e734 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -885,9 +885,8 @@ static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
- 	 * However, by the "D10.1.4 Principles of the ID scheme
- 	 * for fields in ID registers", ARM DDI 0487C.a, any new
- 	 * value is guaranteed to be higher than what we know already.
--	 * As a safe limit, we return the limit supported by the kernel.
- 	 */
--	default: return CONFIG_ARM64_PA_BITS;
-+	default: return 52;
- 	}
- }
- 
-diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
-index aab04097b505..525aef178cb4 100644
---- a/arch/arm64/include/asm/kvm_pgtable.h
-+++ b/arch/arm64/include/asm/kvm_pgtable.h
-@@ -30,8 +30,7 @@
- 
- static inline u64 kvm_get_parange_max(void)
- {
--	if (kvm_lpa2_is_enabled() ||
--	   (IS_ENABLED(CONFIG_ARM64_PA_BITS_52) && PAGE_SHIFT == 16))
-+	if (kvm_lpa2_is_enabled() || PAGE_SHIFT == 16)
- 		return ID_AA64MMFR0_EL1_PARANGE_52;
- 	else
- 		return ID_AA64MMFR0_EL1_PARANGE_48;
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index a9136cc551cc..9b34180042b2 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -176,7 +176,6 @@
- #define PTE_SWBITS_MASK		_AT(pteval_t, (BIT(63) | GENMASK(58, 55)))
- 
- #define PTE_ADDR_LOW		(((_AT(pteval_t, 1) << (50 - PAGE_SHIFT)) - 1) << PAGE_SHIFT)
--#ifdef CONFIG_ARM64_PA_BITS_52
- #ifdef CONFIG_ARM64_64K_PAGES
- #define PTE_ADDR_HIGH		(_AT(pteval_t, 0xf) << 12)
- #define PTE_ADDR_HIGH_SHIFT	36
-@@ -186,7 +185,6 @@
- #define PTE_ADDR_HIGH_SHIFT	42
- #define PHYS_TO_PTE_ADDR_MASK	GENMASK_ULL(49, 8)
- #endif
--#endif
- 
- /*
-  * AttrIndx[2:0] encoding (mapping attributes defined in the MAIR* registers).
-@@ -327,12 +325,10 @@
- /*
-  * TTBR.
-  */
--#ifdef CONFIG_ARM64_PA_BITS_52
- /*
-- * TTBR_ELx[1] is RES0 in this configuration.
-+ * TTBR_ELx[1] is RES0 when using 52-bit physical addressing
-  */
- #define TTBR_BADDR_MASK_52	GENMASK_ULL(47, 2)
--#endif
- 
- #ifdef CONFIG_ARM64_VA_BITS_52
- /* Must be at least 64-byte aligned to prevent corruption of the TTBR */
-diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
-index a95f1f77bb39..b73acf25341f 100644
---- a/arch/arm64/include/asm/pgtable-prot.h
-+++ b/arch/arm64/include/asm/pgtable-prot.h
-@@ -81,7 +81,7 @@ extern unsigned long prot_ns_shared;
- #define lpa2_is_enabled()	false
- #define PTE_MAYBE_SHARED	PTE_SHARED
- #define PMD_MAYBE_SHARED	PMD_SECT_S
--#define PHYS_MASK_SHIFT		(CONFIG_ARM64_PA_BITS)
-+#define PHYS_MASK_SHIFT		(52)
- #else
- static inline bool __pure lpa2_is_enabled(void)
- {
-@@ -90,7 +90,7 @@ static inline bool __pure lpa2_is_enabled(void)
- 
- #define PTE_MAYBE_SHARED	(lpa2_is_enabled() ? 0 : PTE_SHARED)
- #define PMD_MAYBE_SHARED	(lpa2_is_enabled() ? 0 : PMD_SECT_S)
--#define PHYS_MASK_SHIFT		(lpa2_is_enabled() ? CONFIG_ARM64_PA_BITS : 48)
-+#define PHYS_MASK_SHIFT		(lpa2_is_enabled() ? 52 : 48)
- #endif
- 
- /*
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 6986345b537a..ec8124d66b9c 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -69,10 +69,9 @@ extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)];
- 	pr_err("%s:%d: bad pte %016llx.\n", __FILE__, __LINE__, pte_val(e))
- 
- /*
-- * Macros to convert between a physical address and its placement in a
-+ * Helpers to convert between a physical address and its placement in a
-  * page table entry, taking care of 52-bit addresses.
-  */
--#ifdef CONFIG_ARM64_PA_BITS_52
- static inline phys_addr_t __pte_to_phys(pte_t pte)
- {
- 	pte_val(pte) &= ~PTE_MAYBE_SHARED;
-@@ -83,10 +82,6 @@ static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
- {
- 	return (phys | (phys >> PTE_ADDR_HIGH_SHIFT)) & PHYS_TO_PTE_ADDR_MASK;
- }
--#else
--#define __pte_to_phys(pte)	(pte_val(pte) & PTE_ADDR_LOW)
--#define __phys_to_pte_val(phys)	(phys)
--#endif
- 
- #define pte_pfn(pte)		(__pte_to_phys(pte) >> PAGE_SHIFT)
- #define pfn_pte(pfn,prot)	\
-@@ -1495,11 +1490,7 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
- 	update_mmu_cache_range(NULL, vma, addr, ptep, 1)
- #define update_mmu_cache_pmd(vma, address, pmd) do { } while (0)
- 
--#ifdef CONFIG_ARM64_PA_BITS_52
- #define phys_to_ttbr(addr)	(((addr) | ((addr) >> 46)) & TTBR_BADDR_MASK_52)
--#else
--#define phys_to_ttbr(addr)	(addr)
--#endif
- 
- /*
-  * On arm64 without hardware Access Flag, copying from user will fail because
-diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-index b8303a83c0bf..f902893ec903 100644
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -916,12 +916,6 @@
- #define ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_LPA2		0x3
- #define ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_MAX		0x7
- 
--#ifdef CONFIG_ARM64_PA_BITS_52
--#define ID_AA64MMFR0_EL1_PARANGE_MAX	ID_AA64MMFR0_EL1_PARANGE_52
--#else
--#define ID_AA64MMFR0_EL1_PARANGE_MAX	ID_AA64MMFR0_EL1_PARANGE_48
--#endif
--
- #if defined(CONFIG_ARM64_4K_PAGES)
- #define ID_AA64MMFR0_EL1_TGRAN_SHIFT		ID_AA64MMFR0_EL1_TGRAN4_SHIFT
- #define ID_AA64MMFR0_EL1_TGRAN_LPA2		ID_AA64MMFR0_EL1_TGRAN4_52_BIT
-diff --git a/arch/arm64/mm/pgd.c b/arch/arm64/mm/pgd.c
-index 0c501cabc238..8722ab6d4b1c 100644
---- a/arch/arm64/mm/pgd.c
-+++ b/arch/arm64/mm/pgd.c
-@@ -48,20 +48,21 @@ void pgd_free(struct mm_struct *mm, pgd_t *pgd)
- 
- void __init pgtable_cache_init(void)
- {
-+	unsigned int pgd_size = PGD_SIZE;
-+
- 	if (pgdir_is_page_size())
- 		return;
- 
--#ifdef CONFIG_ARM64_PA_BITS_52
- 	/*
- 	 * With 52-bit physical addresses, the architecture requires the
- 	 * top-level table to be aligned to at least 64 bytes.
- 	 */
--	BUILD_BUG_ON(PGD_SIZE < 64);
--#endif
-+	if (PHYS_MASK_SHIFT >= 52)
-+		pgd_size = max(pgd_size, 64);
- 
- 	/*
- 	 * Naturally aligned pgds required by the architecture.
- 	 */
--	pgd_cache = kmem_cache_create("pgd_cache", PGD_SIZE, PGD_SIZE,
-+	pgd_cache = kmem_cache_create("pgd_cache", pgd_size, pgd_size,
- 				      SLAB_PANIC, NULL);
- }
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index b8edc5765441..51ed0e9d0a0d 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -197,10 +197,8 @@ SYM_FUNC_ALIAS(__pi_idmap_cpu_replace_ttbr1, idmap_cpu_replace_ttbr1)
- 
- 	.macro	pte_to_phys, phys, pte
- 	and	\phys, \pte, #PTE_ADDR_LOW
--#ifdef CONFIG_ARM64_PA_BITS_52
- 	and	\pte, \pte, #PTE_ADDR_HIGH
- 	orr	\phys, \phys, \pte, lsl #PTE_ADDR_HIGH_SHIFT
--#endif
- 	.endm
- 
- 	.macro	kpti_mk_tbl_ng, type, num_entries
-diff --git a/scripts/gdb/linux/constants.py.in b/scripts/gdb/linux/constants.py.in
-index fd6bd69c5096..05034c0b8fd7 100644
---- a/scripts/gdb/linux/constants.py.in
-+++ b/scripts/gdb/linux/constants.py.in
-@@ -141,7 +141,6 @@ LX_CONFIG(CONFIG_ARM64_4K_PAGES)
- LX_CONFIG(CONFIG_ARM64_16K_PAGES)
- LX_CONFIG(CONFIG_ARM64_64K_PAGES)
- if IS_BUILTIN(CONFIG_ARM64):
--    LX_VALUE(CONFIG_ARM64_PA_BITS)
-     LX_VALUE(CONFIG_ARM64_VA_BITS)
-     LX_VALUE(CONFIG_PAGE_SHIFT)
-     LX_VALUE(CONFIG_ARCH_FORCE_MAX_ORDER)
-diff --git a/tools/arch/arm64/include/asm/sysreg.h b/tools/arch/arm64/include/asm/sysreg.h
-index cd8420e8c3ad..daeecb1a5366 100644
---- a/tools/arch/arm64/include/asm/sysreg.h
-+++ b/tools/arch/arm64/include/asm/sysreg.h
-@@ -574,12 +574,6 @@
- #define ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_MIN		0x2
- #define ID_AA64MMFR0_EL1_TGRAN_2_SUPPORTED_MAX		0x7
- 
--#ifdef CONFIG_ARM64_PA_BITS_52
--#define ID_AA64MMFR0_EL1_PARANGE_MAX	ID_AA64MMFR0_EL1_PARANGE_52
--#else
--#define ID_AA64MMFR0_EL1_PARANGE_MAX	ID_AA64MMFR0_EL1_PARANGE_48
--#endif
--
- #if defined(CONFIG_ARM64_4K_PAGES)
- #define ID_AA64MMFR0_EL1_TGRAN_SHIFT		ID_AA64MMFR0_EL1_TGRAN4_SHIFT
- #define ID_AA64MMFR0_EL1_TGRAN_SUPPORTED_MIN	ID_AA64MMFR0_EL1_TGRAN4_SUPPORTED_MIN
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c 
+b/drivers/pci/controller/dwc/pcie-designware.c
+index 6d6cbc8b5b2c..d40afe74ddd1 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -752,22 +752,19 @@ static void dw_pcie_link_set_max_link_width(struct 
+dw_pcie *pci, u32 num_lanes)
+      /* Set link width speed control register */
+      lwsc = dw_pcie_readl_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL);
+      lwsc &= ~PORT_LOGIC_LINK_WIDTH_MASK;
++    lwsc |= PORT_LOGIC_LINK_WIDTH_1_LANES;
+      switch (num_lanes) {
+      case 1:
+          plc |= PORT_LINK_MODE_1_LANES;
+-        lwsc |= PORT_LOGIC_LINK_WIDTH_1_LANES;
+          break;
+      case 2:
+          plc |= PORT_LINK_MODE_2_LANES;
+-        lwsc |= PORT_LOGIC_LINK_WIDTH_2_LANES;
+          break;
+      case 4:
+          plc |= PORT_LINK_MODE_4_LANES;
+-        lwsc |= PORT_LOGIC_LINK_WIDTH_4_LANES;
+          break;
+      case 8:
+          plc |= PORT_LINK_MODE_8_LANES;
+-        lwsc |= PORT_LOGIC_LINK_WIDTH_8_LANES;
+          break;
+      default:
+          dev_err(pci->dev, "num-lanes %u: invalid value\n", num_lanes);
 -- 
-2.47.1.613.gc27f4b7a9f-goog
+2.34.1
+
 
 
