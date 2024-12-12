@@ -1,158 +1,157 @@
-Return-Path: <linux-kernel+bounces-442964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E829A9EE4AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:03:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA36F9EE4B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:05:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D901884C97
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2C861885C86
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE231F236D;
-	Thu, 12 Dec 2024 11:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9DD21146F;
+	Thu, 12 Dec 2024 11:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FxnbYZwf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q/CwncCs"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5CC21147B
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF3B1EC4D2
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734001429; cv=none; b=pAXWtpLoAnjAXpH/pnlTr3j+3x6cLTxJigGHcQNUwssr+x2tiHNEVWO1J39kjodCuz2Pn3IhXxs1spTZ9VYZ5BNDsigsJNQHcM4KkgCjg8t/hRpfypUGGLF71fFuIF09h2AsTmnM1lt61danZyG0nuehQDsBD8pUCON2HbIEc6M=
+	t=1734001528; cv=none; b=izv+JM9Bhwr2amXNAK3ErO1t9mQ6wy1GsWH/QxJRHl0ckRRUZWqnhPlpu8wP17DuVLLq0PFvwxu1QuHLfpWuWFPnc/MYPj89lcn3Vmjww3UaForCQbPfHCniMoMfZLvEHoA+RxRPG4InkfrlR7NXpQIpa/envmS2etneYocj+g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734001429; c=relaxed/simple;
-	bh=uNi8VYRXqzAJqytMdPO7sC7zCEtCZuyAocnf6y+XjqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NcEJFVRxmLGNcbb5iY58C8HCIshzAg6S9oPADbiC2n76m7E7HLYsjtC6lZah/2bIy2ltsn28asV4YRn8DpZgIbaP0R7Qtowv8NeQK6nEMFLWCJ0XcMAegMCjtMK6kFydPmewULej4A8EHJX1o2HgBJbKsEF9ol17Xqb6aOjkGoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FxnbYZwf; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734001428; x=1765537428;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=uNi8VYRXqzAJqytMdPO7sC7zCEtCZuyAocnf6y+XjqA=;
-  b=FxnbYZwf7BkjA/CyfTSnIUqM/L254TkKzN1v/q+ZOqn7V6vKjJUlX2CN
-   RpCzsYcSu0ye7YA/qE8neNNqhtVciY6+Ed23RycZooIU4xRt8sT9ZXUGU
-   G0hJ969Tc8J8knx+KXtMbiwnZFMwL9sDaGzFATH3z5jYbt6VNUm2KJ0b8
-   1RHhvIbJCv+Zecq3d+Ns0unoCg7dkucbsE1wp6sOpAxR1D0k0LLV//oiq
-   zZ9TlBc08PHB/6i67LP9iTqrEYrUn5LUrrVrkYh/cFGdTBEfVytUttJXm
-   X/nD/GC9BW4H/Il9OpmpbU+oDPEHl1J4xDKZmTsMUM/IpvdfT5vZc7xgx
-   w==;
-X-CSE-ConnectionGUID: 9V9TvfMmRP6urb09UhuVrw==
-X-CSE-MsgGUID: Z+FCUpkyQFO0JixWMKMOhw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="34458086"
-X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
-   d="scan'208";a="34458086"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 03:03:47 -0800
-X-CSE-ConnectionGUID: NWGq9Z7sTYin7wp2CN7IXw==
-X-CSE-MsgGUID: y2xHsOHGSpOGHi0F7iDMIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119444564"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 12 Dec 2024 03:03:45 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tLgys-0007kp-1S;
-	Thu, 12 Dec 2024 11:03:42 +0000
-Date: Thu, 12 Dec 2024 19:02:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Alexander Potapenko <glider@google.com>
-Subject: mm/kmsan/hooks.c:269:14: sparse: sparse: cast removes address space
- '__user' of expression
-Message-ID: <202412121809.uLILCZRI-lkp@intel.com>
+	s=arc-20240116; t=1734001528; c=relaxed/simple;
+	bh=Ipdeix/XefLKAtjdiRa++0aOFcP2WCZUy1NH8/f5pJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WY9no/85lyLc1sjC31JeAPA9AU0A5WeaIvWcHjhlvL06aadunUQJc6tkwV9zeHjD2LcrPGagTLxO33flD2G2ArbyfLvLlS/pqP896H75CWED0gwZAufVWjJXKxAlDq6u0yy8MMbWSDEBUVcAYiuzxOqA+WgOJ1Vap3M7HbeTxVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q/CwncCs; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2166651f752so4490305ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 03:05:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734001526; x=1734606326; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sTybfhgDRB596CpCi4fjqRRbuOW0bslqmx+ej9n187g=;
+        b=Q/CwncCs5Di9Aq0KbtXjuR6VLm6eGlOgD3AWqF9J5KT7cyfhAR/GzCvGIQnDJeNpju
+         C40whXwL3FaYSeorwd2TW8IDvacsBen69K6nLyqf2aVeVMh9mY4DMy74ZH2ExMzYjyR/
+         3L6TIr0x4VXtVZy1QSOXsdakDFTvjN7h8tM74VZ7MfO6bZtZ/cSMS4cJyRvwFHnWKJeD
+         lg5SEL7gCWyksm8ZHHUftI3VzsuSsl6kGGOYgxG7veX8zhY9oXz67GKzDqHuahSGm4Kd
+         jZbUOEJGDCoMTE//0kYMJwopROVB2hbpLKFf8GmG08C95dZA0xvbwmX7p2J3u4PpkU4d
+         gBnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734001526; x=1734606326;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sTybfhgDRB596CpCi4fjqRRbuOW0bslqmx+ej9n187g=;
+        b=utmukMdRu2nh/PGD32yXZ5GLQ36YZ0+Q5s/r3azHdILmjbEFxHi+mv/MPtzh5DIfeG
+         q2RghN8Zv5zo9iRtvtbuR7V5F9qlaUT+sE5M57ne1KBN6+RLsJZqnCeM+hVIQOKX7quW
+         3DK9SG2KXH2J6M6M30kgD4R8RzJzTWkeYHhGvdHXGKi8FzUs3hv39FTiIzsJIvwwm3+e
+         Hz11HK1DrCFqoMH/SXZ+CX5bsyX7lvshiEJliF+5RI6ctmfEz/nv9WdpepK5P3yKCt3U
+         otRpQskBH1G6nsaBbUd8EIdygdgWKCvVHp/WjNyu0sPT6EYZV0Rz2rpYDeXVTKjTEP/0
+         1piQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPcnFpFfKlN4iYOiuspGOoRlo/kGmmVnWSe/+K9j0bx9s/xGeZToNsTgUT3z3OG2G5pt/cchhYRwvMIqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvZOQSpUfHFKRm9g8cmAZWB8E0XDSPl5zPYKp2fVf5oFs6s6se
+	vw5Mn18+8jPLWAjnTigJOTzB263fXcdkBbxFwyZRSxrAWI/NP+gKJoutRMmNE86yS63JxuGD7Ik
+	ttkGvOHaoffU8lWhBtXz6mchn34FDrA4uxLxJ5w==
+X-Gm-Gg: ASbGncs+XEbYrmTWO4v9WxILd9xmXiEy4RtR6oCoobPHjFojdbSy2h5eJ/SSo+LRQG2
+	tDhBGZywsaNGE7wHsWlADDZVGSyzuKIXI8ihe0w07leLGPsjgkRG56URIgiuNzXVjMNE=
+X-Google-Smtp-Source: AGHT+IF93J/ZpITDjD/uAMAA/0HJM3y3IrsdaUyK7n+BQQT4RokGeZlVoLMbB3+Ztund+6jpVgI0Zp9Ol/qddh5hKgQ=
+X-Received: by 2002:a17:903:41c3:b0:216:668d:690c with SMTP id
+ d9443c01a7336-2178ae80af2mr53927895ad.28.1734001526163; Thu, 12 Dec 2024
+ 03:05:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241211185552.4553-1-kprateek.nayak@amd.com> <20241211185552.4553-7-kprateek.nayak@amd.com>
+In-Reply-To: <20241211185552.4553-7-kprateek.nayak@amd.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 12 Dec 2024 12:05:15 +0100
+Message-ID: <CAKfTPtAd-0e4B6qh3e5VeK0N1Q+zsXkV5WdCunV6x9yzY7Y_Ow@mail.gmail.com>
+Subject: Re: [PATCH 6/8] sched/fair: Do not compute NUMA Balancing stats
+ unnecessarily during lb
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Tim Chen <tim.c.chen@linux.intel.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Meng Li <li.meng@amd.com>, Huang Rui <ray.huang@amd.com>, 
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   231825b2e1ff6ba799c5eaf396d3ab2354e37c6b
-commit: 3a8f6f3b469b4075919a3613e182f9a70df92d46 kmsan: enable on s390
-date:   5 months ago
-config: s390-randconfig-r121-20241212 (https://download.01.org/0day-ci/archive/20241212/202412121809.uLILCZRI-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 2dc22615fd46ab2566d0f26d5ba234ab12dc4bf8)
-reproduce: (https://download.01.org/0day-ci/archive/20241212/202412121809.uLILCZRI-lkp@intel.com/reproduce)
+On Wed, 11 Dec 2024 at 19:58, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
+>
+> Aggregate nr_numa_running and nr_preferred_running when load balancing
+> at NUMA domains only. While at it, also move the aggregation below the
+> idle_cpu() check since an idle CPU cannot have any preferred tasks.
+>
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+>  kernel/sched/fair.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 2c4ebfc82917..ec2a79c8d0e7 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -10340,7 +10340,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>                                       bool *sg_overloaded,
+>                                       bool *sg_overutilized)
+>  {
+> -       int i, nr_running, local_group;
+> +       int i, nr_running, local_group, sd_flags = env->sd->flags;
+>
+>         memset(sgs, 0, sizeof(*sgs));
+>
+> @@ -10364,10 +10364,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>                 if (cpu_overutilized(i))
+>                         *sg_overutilized = 1;
+>
+> -#ifdef CONFIG_NUMA_BALANCING
+> -               sgs->nr_numa_running += rq->nr_numa_running;
+> -               sgs->nr_preferred_running += rq->nr_preferred_running;
+> -#endif
+>                 /*
+>                  * No need to call idle_cpu() if nr_running is not 0
+>                  */
+> @@ -10377,10 +10373,17 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>                         continue;
+>                 }
+>
+> +#ifdef CONFIG_NUMA_BALANCING
+> +               /* Only fbq_classify_group() uses this to classify NUMA groups */
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412121809.uLILCZRI-lkp@intel.com/
+and fbq_classify_rq() which is also used by non-NUMA groups. AFAICT
+It doesn't change anything at the end because group type is "all" for
+non numa groups but we need some explanations why It's ok to skip numa
+stats and default behavior will remain unchanged
 
-sparse warnings: (new ones prefixed by >>)
->> mm/kmsan/hooks.c:269:14: sparse: sparse: cast removes address space '__user' of expression
-   mm/kmsan/hooks.c:271:75: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void const *user_addr @@     got void [noderef] __user *to @@
-   mm/kmsan/hooks.c:271:75: sparse:     expected void const *user_addr
-   mm/kmsan/hooks.c:271:75: sparse:     got void [noderef] __user *to
-   mm/kmsan/hooks.c:280:50: sparse: sparse: cast removes address space '__user' of expression
-   mm/kmsan/hooks.c:306:59: sparse: sparse: Using plain integer as NULL pointer
-   mm/kmsan/hooks.c:319:79: sparse: sparse: Using plain integer as NULL pointer
-   mm/kmsan/hooks.c:325:79: sparse: sparse: Using plain integer as NULL pointer
-   mm/kmsan/hooks.c:421:78: sparse: sparse: Using plain integer as NULL pointer
-
-vim +/__user +269 mm/kmsan/hooks.c
-
-b073d7f8aee4ebf Alexander Potapenko 2022-09-15  247  
-75cf0290271bf6d Alexander Potapenko 2022-09-15  248  void kmsan_copy_to_user(void __user *to, const void *from, size_t to_copy,
-75cf0290271bf6d Alexander Potapenko 2022-09-15  249  			size_t left)
-75cf0290271bf6d Alexander Potapenko 2022-09-15  250  {
-75cf0290271bf6d Alexander Potapenko 2022-09-15  251  	unsigned long ua_flags;
-75cf0290271bf6d Alexander Potapenko 2022-09-15  252  
-75cf0290271bf6d Alexander Potapenko 2022-09-15  253  	if (!kmsan_enabled || kmsan_in_runtime())
-75cf0290271bf6d Alexander Potapenko 2022-09-15  254  		return;
-75cf0290271bf6d Alexander Potapenko 2022-09-15  255  	/*
-75cf0290271bf6d Alexander Potapenko 2022-09-15  256  	 * At this point we've copied the memory already. It's hard to check it
-75cf0290271bf6d Alexander Potapenko 2022-09-15  257  	 * before copying, as the size of actually copied buffer is unknown.
-75cf0290271bf6d Alexander Potapenko 2022-09-15  258  	 */
-75cf0290271bf6d Alexander Potapenko 2022-09-15  259  
-75cf0290271bf6d Alexander Potapenko 2022-09-15  260  	/* copy_to_user() may copy zero bytes. No need to check. */
-75cf0290271bf6d Alexander Potapenko 2022-09-15  261  	if (!to_copy)
-75cf0290271bf6d Alexander Potapenko 2022-09-15  262  		return;
-75cf0290271bf6d Alexander Potapenko 2022-09-15  263  	/* Or maybe copy_to_user() failed to copy anything. */
-75cf0290271bf6d Alexander Potapenko 2022-09-15  264  	if (to_copy <= left)
-75cf0290271bf6d Alexander Potapenko 2022-09-15  265  		return;
-75cf0290271bf6d Alexander Potapenko 2022-09-15  266  
-75cf0290271bf6d Alexander Potapenko 2022-09-15  267  	ua_flags = user_access_save();
-f926e9326f3a79f Ilya Leoshkevich    2024-06-21  268  	if (!IS_ENABLED(CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE) ||
-f926e9326f3a79f Ilya Leoshkevich    2024-06-21 @269  	    (u64)to < TASK_SIZE) {
-75cf0290271bf6d Alexander Potapenko 2022-09-15  270  		/* This is a user memory access, check it. */
-75cf0290271bf6d Alexander Potapenko 2022-09-15  271  		kmsan_internal_check_memory((void *)from, to_copy - left, to,
-75cf0290271bf6d Alexander Potapenko 2022-09-15  272  					    REASON_COPY_TO_USER);
-75cf0290271bf6d Alexander Potapenko 2022-09-15  273  	} else {
-75cf0290271bf6d Alexander Potapenko 2022-09-15  274  		/* Otherwise this is a kernel memory access. This happens when a
-75cf0290271bf6d Alexander Potapenko 2022-09-15  275  		 * compat syscall passes an argument allocated on the kernel
-75cf0290271bf6d Alexander Potapenko 2022-09-15  276  		 * stack to a real syscall.
-75cf0290271bf6d Alexander Potapenko 2022-09-15  277  		 * Don't check anything, just copy the shadow of the copied
-75cf0290271bf6d Alexander Potapenko 2022-09-15  278  		 * bytes.
-75cf0290271bf6d Alexander Potapenko 2022-09-15  279  		 */
-75cf0290271bf6d Alexander Potapenko 2022-09-15  280  		kmsan_internal_memmove_metadata((void *)to, (void *)from,
-75cf0290271bf6d Alexander Potapenko 2022-09-15  281  						to_copy - left);
-75cf0290271bf6d Alexander Potapenko 2022-09-15  282  	}
-75cf0290271bf6d Alexander Potapenko 2022-09-15  283  	user_access_restore(ua_flags);
-75cf0290271bf6d Alexander Potapenko 2022-09-15  284  }
-75cf0290271bf6d Alexander Potapenko 2022-09-15  285  EXPORT_SYMBOL(kmsan_copy_to_user);
-75cf0290271bf6d Alexander Potapenko 2022-09-15  286  
-
-:::::: The code at line 269 was first introduced by commit
-:::::: f926e9326f3a79f7e01ac790e2361f44d8ca8320 kmsan: fix kmsan_copy_to_user() on arches with overlapping address spaces
-
-:::::: TO: Ilya Leoshkevich <iii@linux.ibm.com>
-:::::: CC: Andrew Morton <akpm@linux-foundation.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +               if (sd_flags & SD_NUMA) {
+> +                       sgs->nr_numa_running += rq->nr_numa_running;
+> +                       sgs->nr_preferred_running += rq->nr_preferred_running;
+> +               }
+> +#endif
+>                 if (local_group)
+>                         continue;
+>
+> -               if (env->sd->flags & SD_ASYM_CPUCAPACITY) {
+> +               if (sd_flags & SD_ASYM_CPUCAPACITY) {
+>                         /* Check for a misfit task on the cpu */
+>                         if (sgs->group_misfit_task_load < rq->misfit_task_load) {
+>                                 sgs->group_misfit_task_load = rq->misfit_task_load;
+> --
+> 2.34.1
+>
 
