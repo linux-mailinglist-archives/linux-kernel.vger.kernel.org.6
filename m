@@ -1,131 +1,155 @@
-Return-Path: <linux-kernel+bounces-443269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9079EE9C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:05:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F2AF168F30
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:04:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C122A222D45;
-	Thu, 12 Dec 2024 15:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ma0bQ1ZO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6C99EE9BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:04:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EC02210E8;
-	Thu, 12 Dec 2024 15:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3B8E280A8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:04:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A808217656;
+	Thu, 12 Dec 2024 15:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r/MG7nvO"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5122E216E3B;
+	Thu, 12 Dec 2024 15:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734015795; cv=none; b=pTandrObinb+BJku9DIB7CsrZAjk5pxsJNjGm1GU5/aWqJFxQE80hl6w2mKPnekss5BkJYrr9LUX3IWcnDYd0/quKrzFodzK57fJRO4tvP642aiOdPDTcBzAcCDEaDOrivnbcs7RT0OPCOczzouEeStsvSdrIjmz0wPaGQrOyfI=
+	t=1734015806; cv=none; b=gdd8WcpZioWI/xDEU4I5pWDGgoPkQc8kcnZ5/WpYfDNzsevCTDjDptYK0Y8MYOsFTRtRQpI1LRmf551AcvH7Wf10LOnPpYcPBkycRz916fR217/foNTQ6cbnIUF1fdRyfnJ7e36wKG1iG2IKsoBt+W0UYUXhD2b1O6FrcW75WQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734015795; c=relaxed/simple;
-	bh=/PeGRqRFynm+jdz+IzuH3g5meFjWDE80+ziUXDeEDNA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YoK51p0h6z15O51dULwmrH/VM1TxL0yS9JsuBWTnoNCE7fYUTK1FRWVHpPWGZDtKpD76vxi1BWNxYNd9N0TgtthqP0EP41/LcQQ2+2fVBfREYSaJmp8e7fhOm6PEVrvMdDR8oIt6Y02m8lRL+RE8pU2NjzIS+D5LP059ixlJ+NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ma0bQ1ZO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7oLVo002411;
-	Thu, 12 Dec 2024 15:03:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rlN1lGzUAwSQi/4asiMCnXvAR8eN6Qe35fSnB1yc1vQ=; b=Ma0bQ1ZOmRqSq6xD
-	KR4jNLDGGffx+kBVHmJNJJpZTmjpvY0YAdGKc6H/o4HZKRpRX52AGYF88a5wo+wH
-	hShXHEbO3eUd+biIDgX+io20Uq0p3DHm3+lbB6dnQNIdo8RVRMw0CWwLNqGqFT8O
-	9++ljAF802rfA3PUXlusYIbe4Q+IHGDYYlRa0ykWgliaBwyTk8JF/mD+YLA2tb8N
-	jHqt3tRSih5yeIxul9dXpxMvs0LxLu32weXDF9y2ayaugi/aWrX1abB4SRtzWP7p
-	zNpsHi88O8BWW/oWvwYH/5yXHt+WZkzVdE2wejLreYWVhOYBdry1iOLyiyDJwPoF
-	9v1kkg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eyg65vdn-1
+	s=arc-20240116; t=1734015806; c=relaxed/simple;
+	bh=gL2akLtYlAt8MZafJL6RY7IcgOt+9heDw+QwznQ33OY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BQddc8jNMQoW4A8WhHmKusSV6iXUW5axM+W/4/M3ItB8vRx9tVVInMpOgrMpI6VILN1Up5D9phcTG1LJeGen5s6wYHMQZkDq7gVNeG2vFdKD0+ilwYWpXT+8QvfmPzAE0mMFm2wmxrznZZrdV3qqK+thZ4HQhAIeyul5ho4jqw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r/MG7nvO; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCEx9Rc000648;
+	Thu, 12 Dec 2024 15:03:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=5KBxrQ
+	sQNxKrZaAQZznW2uf3kpOeca1+VRigPr1qED8=; b=r/MG7nvOcsqTYSeBFitSYj
+	D1ncey0pji9m2zuZ49JGVrcVO44XFDANoa7sgqYAev+J6DNI2HU4DnNfZrXR5jUO
+	fNzBoM4lA9O2jd6WobaBF7mbutxprjTZDEPcBQglELE+9hktxiUKQL1A1pY3A1r+
+	KqpJaoHadLX+pskBGc1QAhPjzT7MGu0/LlSTzKKrkyDOZrxu26ZJmp0SLKR7Uhpd
+	VkJ47JpFk4TWOQAwmBI/SP5R8LdZxBKl5W0z9XIqMN+Zo5JyDtDB93yiT5cLxl7v
+	yGrKRCQmEYX6e3B66NAoGmD3+PApdnL1HFHPRxmGNrprIGx21iEks7NlmjYZwNqQ
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ft6d2sxb-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 15:03:08 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BCF37pY019211
+	Thu, 12 Dec 2024 15:03:23 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCEIn5M018595;
+	Thu, 12 Dec 2024 15:03:22 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d26krybt-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 15:03:07 GMT
-Received: from bt-iot-sh01-lnx.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 12 Dec 2024 07:03:02 -0800
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao <quic_rjliao@quicinc.com>
-CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_chejiang@quicinc.com>, <quic_jiaymao@quicinc.com>,
-        <quic_shuaz@quicinc.com>, <quic_zijuhu@quicinc.com>,
-        <quic_mohamull@quicinc.com>
-Subject: [PATCH v5 4/4] arm64: dts: qcom: sa8775p-ride: Add firmware-name in BT node
-Date: Thu, 12 Dec 2024 23:02:32 +0800
-Message-ID: <20241212150232.3823088-5-quic_chejiang@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241212150232.3823088-1-quic_chejiang@quicinc.com>
-References: <20241212150232.3823088-1-quic_chejiang@quicinc.com>
+	Thu, 12 Dec 2024 15:03:22 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BCF3Iu352494768
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Dec 2024 15:03:18 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CB2B220043;
+	Thu, 12 Dec 2024 15:03:18 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1D66720040;
+	Thu, 12 Dec 2024 15:03:18 +0000 (GMT)
+Received: from [9.179.9.164] (unknown [9.179.9.164])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 12 Dec 2024 15:03:18 +0000 (GMT)
+Message-ID: <2295c2a4-7d7f-4932-99df-fa9d4b6186ae@linux.ibm.com>
+Date: Thu, 12 Dec 2024 16:03:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] s390/pkey: Constify 'struct bin_attribute'
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Niklas Schnelle
+ <schnelle@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241211-sysfs-const-bin_attr-s390-v1-0-be01f66bfcf7@weissschuh.net>
+ <20241211-sysfs-const-bin_attr-s390-v1-5-be01f66bfcf7@weissschuh.net>
+Content-Language: de-DE
+From: Holger Dengler <dengler@linux.ibm.com>
+In-Reply-To: <20241211-sysfs-const-bin_attr-s390-v1-5-be01f66bfcf7@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gIfoWB2T0E8dmst87k0Kp_BqLSgRKDvy
-X-Proofpoint-ORIG-GUID: gIfoWB2T0E8dmst87k0Kp_BqLSgRKDvy
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: mZQSjWXdccMDUIAlc1JPJUI28tgiVnsS
+X-Proofpoint-ORIG-GUID: mZQSjWXdccMDUIAlc1JPJUI28tgiVnsS
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 mlxscore=0 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 phishscore=0 lowpriorityscore=0
+ bulkscore=0 spamscore=0 mlxlogscore=971 mlxscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2411120000 definitions=main-2412120108
 
-The sa8775p-ride platform uses the QCA6698 Bluetooth chip. While the
-QCA6698 shares the same IP core as the WCN6855, it has different RF
-components and RAM sizes, requiring new firmware files. Use the
-firmware-name property to specify the NVM and rampatch firmware to load.
+On 11/12/2024 18:54, Thomas Weißschuh wrote:
+> The sysfs core now allows instances of 'struct bin_attribute' to be
+> moved into read-only memory. Make use of that to protect them against
+> accidental or malicious modifications.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 
-Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for your contribution.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 3fc62e123..e7fe53d95 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -857,6 +857,7 @@ &uart17 {
- 
- 	bluetooth {
- 		compatible = "qcom,wcn6855-bt";
-+		firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
- 
- 		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
- 		vddaon-supply = <&vreg_pmu_aon_0p59>;
+Tested-by: Holger Dengler <dengler@linux.ibm.com>
+Reviewed-by: Holger Dengler <dengler@linux.ibm.com>
+
+> ---
+>  drivers/s390/crypto/pkey_sysfs.c | 128 +++++++++++++++++++--------------------
+>  1 file changed, 64 insertions(+), 64 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/pkey_sysfs.c b/drivers/s390/crypto/pkey_sysfs.c
+> index a4eb45803f5e6d6b17dec709e6068448973399f6..57edc97bafd29483eedc405d47eabe3d7f6c28fc 100644
+> --- a/drivers/s390/crypto/pkey_sysfs.c
+> +++ b/drivers/s390/crypto/pkey_sysfs.c
+[...]
+> @@ -295,9 +295,9 @@ static struct bin_attribute *protkey_attrs[] = {
+>  	NULL
+>  };
+>  
+> -static struct attribute_group protkey_attr_group = {
+> -	.name	   = "protkey",
+> -	.bin_attrs = protkey_attrs,
+> +static const struct attribute_group protkey_attr_group = {
+> +	.name	       = "protkey",
+> +	.bin_attrs_new = protkey_attrs,
+
+This is more a comment to 906c508afdca (\"sysfs: attribute_group: allow registration of const bin_attribute\") than to this patch:
+Why have you named the pointer `bin_attrs_new` and not something meaningful e.g. `bin_attrs_const`? I know, it is already in the kernel, but I would highly recommend to rename the pointer in another patch.
+
+[...]
+
 -- 
-2.25.1
+Mit freundlichen Grüßen / Kind regards
+Holger Dengler
+--
+IBM Systems, Linux on IBM Z Development
+dengler@linux.ibm.com
 
 
