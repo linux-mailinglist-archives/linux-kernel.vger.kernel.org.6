@@ -1,195 +1,496 @@
-Return-Path: <linux-kernel+bounces-443512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1289EF427
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:06:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A7B9EF432
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:06:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 387A31897DF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:54:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7027B287C74
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA29623695E;
-	Thu, 12 Dec 2024 16:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1449E22915F;
+	Thu, 12 Dec 2024 16:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VagGSOPS"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="eq7CyMIH"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8910B23695A;
-	Thu, 12 Dec 2024 16:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734021964; cv=none; b=SxOwduQe7U3gTiijInju0PjntYkEh5ins9lwX8E852wvlTZyuTHXCMHV71xyGNpYJeZt5dnxl4rBHYAGKOj4etzV8FvajFiX2tASx9dmuQrE7srAMrGcWXATWxfgBlyCdVBbL3lfAPItqsVj/vbtVsEDbhYdBrDarVPhK+ipAl8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734021964; c=relaxed/simple;
-	bh=HlADCKvaOAXcxb8w0ypEdR1v7JeaSkex81KKxMkz1MA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tNZAT/SSOac4f9iPpHjccn0dFl3EC0K+HH5cvTp5+dHbWgFDNP6PVTLpGM/RfwJNLCYji7SWGqn6fgOGQJhZUxC7yPZEy9S2v0jrEv9YCag6hPvkyh4+FCRe4sfrw8xVYKa95mbk0Gpdl1W/yPBXbLcopqWT9M+8rXUBuqWPbTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VagGSOPS; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ef6c56032eso543054a91.2;
-        Thu, 12 Dec 2024 08:46:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734021962; x=1734626762; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+SQ7TaX7WZ+52UKYXtXpaGJPN7h5YcD1VfWnOtMP8Zo=;
-        b=VagGSOPS8W0MauAQHeeIh0ItFbQ1QPSNnKlrKICRJsh+AH8JCVvITLibAWMXkOpu2B
-         xatY99+NMYKskANsoCNFCJsFrnuhxG7hSToze26GGDZI7z0JV0lGBPBX9lhPhd3kg9qZ
-         YnFz0GXbaakrg7XPsQ9f2eR0SNvQDalEJUZ45+3YCO8uJbMrJoXIKNBi/+YdSTunTf8b
-         iD30dXzg4Ec+sE6NrsSu7Nbxdogm5zSiZHXaT5Osz8B0rygwyHsED1HN0roylu137ECN
-         4+nVpG0CrUXwOqZdxmLCKEftTrp7p2wsKYShInFKWaG4KOVJ6qeJ9RXiCK9uAbffXT/m
-         T2mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734021962; x=1734626762;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+SQ7TaX7WZ+52UKYXtXpaGJPN7h5YcD1VfWnOtMP8Zo=;
-        b=uRI/PokoHkvWqGLZt0syElNlLPC+zinv9Mzj6pkDb/9zTAk/tEMfn0vsdHm1ARPZIm
-         i0EZEy7R3VsofxRTxfsgP9xbJfZRstWiVa5OYhjY5izpURaylLuZ2qCdAlUXmvkpX9CT
-         k6Uo0gl8mM8x8h585Wrl1M3ULabCh9aCtSTQPunyJOIrnYVyh2n8CLGgoPgPWB+T9w7h
-         ymRPsRugpeckMHg27bER0LIJSTTLKf/WpMn5ifI11s9Nv0DmMXrs7HOwtUFE71vhSrm3
-         Xd5aA5+BRz0xR0/ZCv/NM6J/OKrQDcm0r1XmmSkrlD5QxJX1fB0H4/b9hPrBxDq4TfyQ
-         +h6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVisIC+Ur58chMLFtz2IGYlxDLefZAIuSC19ph0CIud7OhtuqjqupkHUjoLXr8yk3yMoySg75xEKXCvsMRg@vger.kernel.org, AJvYcCWdbNzSlitDq9V4h9E+tlfcM7OdqiIydxoyhyUyUkg/lpiIh0mwjDBigvw0TxeEbrMsist9nvMPPZ0xKJFF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSULPNXUf4k5vgEDhKAiq6FOeJ4NqkdRe27MeLkh3PvbZsQjJN
-	5jPd9zefRW6Ka2BCC+XTDM4kyl38JTUh6SSl4bT3DaqRnHfxkzmnrZHQNQ==
-X-Gm-Gg: ASbGncuclxMDhrV3ufAlbU42OPqPlDqFHRSn40Aj3yhTtyZWHVixCPROXq5uPkXCjvh
-	VpkT+vxw/AsXf/6TZaXB6snA8rwJGNhdq/tUpALokluJrsjIsWELXEOaLbT3trbO7G7B5TS7baT
-	3H6wsVPyzfk+V5ODdPFFVLs3aM5anmfT78wL58jEuZpt5sQBsvyYAHTJEYRWKEH1veTwmQhiT8q
-	Mbed34hC8KR/Z/w5DsNnjFAg+aOPcWdN1nq7jHk0yEek/V+nx76Z+Sgp9VQ/EEVT8Hr1eQ0iGUR
-	QJGVaQ+bmrCmCnCTPOJIfTGkKcz1c/E=
-X-Google-Smtp-Source: AGHT+IHun+rE/vu4gLOWafc+nPtZg39cy9jheqPZvW3TNo8G/wyamWMCBu8H6NUTUxBjpYJXQtvXFQ==
-X-Received: by 2002:a17:90b:4c43:b0:2ee:d7d3:3019 with SMTP id 98e67ed59e1d1-2f1392940e9mr8435801a91.12.1734021961529;
-        Thu, 12 Dec 2024 08:46:01 -0800 (PST)
-Received: from carrot.. (i114-186-166-114.s41.a014.ap.plala.or.jp. [114.186.166.114])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142de78d7sm1488917a91.31.2024.12.12.08.45.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 08:46:00 -0800 (PST)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] nilfs2: fix buffer head leaks in calls to truncate_inode_pages()
-Date: Fri, 13 Dec 2024 01:43:28 +0900
-Message-ID: <20241212164556.21338-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC049229145
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734021836; cv=pass; b=E7naP55sI+YT16mwTnvlE9oookpqkFQ3/pOq6a+rOsSb25ps5hDYhVfsHZtM85VqwndcRh91FN6dWRrfS0W5nun5vDnB5h0Sn/KFBB1mEqkNByTsTGAMWSYGTU1m7CGDqAa950DqYu0EdqVT5nE413gMDFPiCJuIY/Xxs1AUGHU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734021836; c=relaxed/simple;
+	bh=fTzmcAHSxeKkbfFCGPdgxWhhizXjPR8o7gyETNd1v5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HpcQo7sYhpA6gjyvHzp++xiE9iF3ynCWSqefjQB8Qfp3N3LKtvUaili7CRm/4liy9a1pMN+wdKWUK/U8NzP9l8C//18X0p4Nrd3SYh6sNDINw51zeWWwffDE4VdNwQ6yDj4+GQS2q9jdvyf30B0KM2OFqasXLQtqyn3NORkQYjY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=eq7CyMIH; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1734021817; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Eg1TAiHA9XbZsme+uZY5ml6iDY9ReqL+1uG2J3hjRWhX+nkkhXjncuR/TlGO2ZAjglexPbMovNDDtwyUkcMMKvDSIyevuUNnT6Cr3AM6B+EceD+/dv4x38136Js4o2ukImxQ+4FL8kgcGOkj9PKlGTLRAz4PeCeAkRUIhvP9OnU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734021817; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=OqGAa1pJnfeBRX6NwK1b4xo98HmIlAac7hOYyRw8teg=; 
+	b=nwbsX5pK5OMEjoyV86vSukne/sAuaLNeLzFNzsE0zErRL1C5xBvdLdFVuwgta2gV7o+6+LoyFxFzqlnEe8Eer0VCTQSy84fiaw6mHxov2mg6RTBSspWb/2iv4vhgGyBB+TyiGVXjJ1GkzbTqYcVl9mNp7H4u1kuHkADqQ2BrBdg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734021817;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=OqGAa1pJnfeBRX6NwK1b4xo98HmIlAac7hOYyRw8teg=;
+	b=eq7CyMIHalewnCBMVrDeFoewU93SM6J61l/JXFGtc42e2wn54KqYodBw3C2eSlz5
+	L9UQxRXoY3pzdU47HkEyRFb8ku94N3oqorlZITwAjqAFONscOhaEkObxk7EgPTuOg4w
+	2iE8EokQrrOsZQf+wg/pR7oE2fVHYCubzKgJUyVo=
+Received: by mx.zohomail.com with SMTPS id 1734021814471104.20975911253777;
+	Thu, 12 Dec 2024 08:43:34 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id 71F6210604B1; Thu, 12 Dec 2024 17:43:30 +0100 (CET)
+Date: Thu, 12 Dec 2024 17:43:30 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Andy Yan <andyshrk@163.com>
+Cc: heiko@sntech.de, kever.yang@rock-chips.com, 
+	dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH] drm/rockchip: Fix Copyright description
+Message-ID: <6btdoubtb7y6xrfjkry7axad5khphnwcwtbpar7cu4p4dcp6e2@3rha7k6q2xuc>
+References: <20241212124344.3121514-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dw6ruy5jdxx73vxw"
+Content-Disposition: inline
+In-Reply-To: <20241212124344.3121514-1-andyshrk@163.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/233.870.20
+X-ZohoMailClient: External
 
-When block_invalidatepage was converted to block_invalidate_folio,
-the fallback to block_invalidatepage in folio_invalidate() if the
-address_space_operations method invalidatepage (currently
-invalidate_folio) was not set, was removed.
 
-Unfortunately, some pseudo-inodes in nilfs2 use empty_aops set by
-inode_init_always_gfp() as is, or explicitly set it to
-address_space_operations.  Therefore, with this change,
-block_invalidatepage() is no longer called from folio_invalidate(), and
-as a result, the buffer_head structures attached to these pages/folios
-are no longer freed via try_to_free_buffers().
+--dw6ruy5jdxx73vxw
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm/rockchip: Fix Copyright description
+MIME-Version: 1.0
 
-Thus, these buffer heads are now leaked by truncate_inode_pages(), which
-cleans up the page cache from inode evict(), etc.
+Hi,
 
-Three types of caches use empty_aops: gc inode caches and the DAT shadow
-inode used by GC, and b-tree node caches.  Of these, b-tree node caches
-explicitly call invalidate_mapping_pages() during cleanup, which involves
-calling try_to_free_buffers(), so the leak was not visible during normal
-operation but worsened when GC was performed.
+On Thu, Dec 12, 2024 at 08:43:44PM +0800, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
+>=20
+> The company name has update to Rockchip Electronics Co., Ltd.
+> since 2021.
+> And change Co.Ltd to Co., Ltd. to fix mail server warning:
+> DBL_SPAM(6.50)[co.ltd:url];
+>=20
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> ---
 
-Fix this issue by using address_space_operations with invalidate_folio
-set to block_invalidate_folio instead of empty_aops, which will ensure
-the same behavior as before.
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Fixes: 7ba13abbd31e ("fs: Turn block_invalidatepage into block_invalidate_folio")
-Cc: stable@vger.kernel.org # v5.18+
----
-Hi Andrew, please apply this as a bug fix.
+-- Sebastian
 
-This fixes buffer head memory leaks (seen by slabinfo and runtime
-function call checks) that gets worse during GC.
+>=20
+>  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 2 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-core.c          | 2 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.c           | 2 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.h           | 2 +-
+>  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c | 2 +-
+>  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c     | 2 +-
+>  drivers/gpu/drm/rockchip/inno_hdmi.c            | 2 +-
+>  drivers/gpu/drm/rockchip/inno_hdmi.h            | 2 +-
+>  drivers/gpu/drm/rockchip/rk3066_hdmi.c          | 2 +-
+>  drivers/gpu/drm/rockchip/rk3066_hdmi.h          | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c     | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.h     | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_fb.c      | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_fb.h      | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_gem.c     | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_gem.h     | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c     | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.h     | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.h    | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_lvds.c        | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_lvds.h        | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_rgb.c         | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_rgb.h         | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_vop2_reg.c    | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_vop_reg.c     | 2 +-
+>  drivers/gpu/drm/rockchip/rockchip_vop_reg.h     | 2 +-
+>  26 files changed, 26 insertions(+), 26 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gp=
+u/drm/rockchip/analogix_dp-rockchip.c
+> index 546d13f19f9b..02876eb66e94 100644
+> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> @@ -2,7 +2,7 @@
+>  /*
+>   * Rockchip SoC DP (Display Port) interface driver.
+>   *
+> - * Copyright (C) Fuzhou Rockchip Electronics Co., Ltd.
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author: Andy Yan <andy.yan@rock-chips.com>
+>   *         Yakir Yang <ykk@rock-chips.com>
+>   *         Jeff Chen <jeff.chen@rock-chips.com>
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/roc=
+kchip/cdn-dp-core.c
+> index ff9d95e2c4d4..4b28121ffa42 100644
+> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author: Chris Zhong <zyw@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rock=
+chip/cdn-dp-reg.c
+> index 33fb4d05c506..924fb1d3ece2 100644
+> --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author: Chris Zhong <zyw@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/rock=
+chip/cdn-dp-reg.h
+> index c7780ae3272a..13ed8cbdbafa 100644
+> --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author: Chris Zhong <zyw@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gp=
+u/drm/rockchip/dw-mipi-dsi-rockchip.c
+> index 1b64b6e39cc8..3398160ad75e 100644
+> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0+
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:
+>   *      Chris Zhong <zyw@rock-chips.com>
+>   *      Nickey Yang <nickey.yang@rock-chips.com>
+> diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/dr=
+m/rockchip/dw_hdmi-rockchip.c
+> index 42bda4ffbbbd..e7a6669c46b0 100644
+> --- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-or-later
+>  /*
+> - * Copyright (c) 2014, Fuzhou Rockchip Electronics Co., Ltd
+> + * Copyright (c) 2014, Rockchip Electronics Co., Ltd.
+>   */
+> =20
+>  #include <linux/clk.h>
+> diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.c b/drivers/gpu/drm/rockc=
+hip/inno_hdmi.c
+> index b58e2a29294b..898d90155057 100644
+> --- a/drivers/gpu/drm/rockchip/inno_hdmi.c
+> +++ b/drivers/gpu/drm/rockchip/inno_hdmi.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   *    Zheng Yang <zhengyang@rock-chips.com>
+>   *    Yakir Yang <ykk@rock-chips.com>
+>   */
+> diff --git a/drivers/gpu/drm/rockchip/inno_hdmi.h b/drivers/gpu/drm/rockc=
+hip/inno_hdmi.h
+> index a7edf3559e60..8b7ef3fac485 100644
+> --- a/drivers/gpu/drm/rockchip/inno_hdmi.h
+> +++ b/drivers/gpu/drm/rockchip/inno_hdmi.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   *    Zheng Yang <zhengyang@rock-chips.com>
+>   *    Yakir Yang <ykk@rock-chips.com>
+>   */
+> diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/roc=
+kchip/rk3066_hdmi.c
+> index b0fc8ace2e41..403336397214 100644
+> --- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+> +++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   *    Zheng Yang <zhengyang@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.h b/drivers/gpu/drm/roc=
+kchip/rk3066_hdmi.h
+> index 39a31c62a428..c3598ba7428c 100644
+> --- a/drivers/gpu/drm/rockchip/rk3066_hdmi.h
+> +++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   *    Zheng Yang <zhengyang@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/dr=
+m/rockchip/rockchip_drm_drv.c
+> index 3e9f590c734e..bf1d4c5599fa 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   *
+>   * based on exynos_drm_drv.c
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/dr=
+m/rockchip/rockchip_drm_drv.h
+> index 24b4ce5ceaf1..8bcce08a34d9 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   *
+>   * based on exynos_drm_drv.h
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm=
+/rockchip/rockchip_drm_fb.c
+> index cfe8b793d344..dcc1f07632c3 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.h b/drivers/gpu/drm=
+/rockchip/rockchip_drm_fb.h
+> index bae4e079dfb1..5179026b12d6 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/dr=
+m/rockchip/rockchip_drm_gem.c
+> index 93ed841f5dce..6330b883efc3 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.h b/drivers/gpu/dr=
+m/rockchip/rockchip_drm_gem.h
+> index 72f59ac6d258..cdeae36b91a1 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/dr=
+m/rockchip/rockchip_drm_vop.c
+> index 69900138295b..57747f1cff26 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h b/drivers/gpu/dr=
+m/rockchip/rockchip_drm_vop.h
+> index 0cf512cc1614..f04c9731ae7b 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/d=
+rm/rockchip/rockchip_drm_vop2.h
+> index 2995988ef559..ca3f1613d51c 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/r=
+ockchip/rockchip_lvds.c
+> index aba733736ff7..385cf6881504 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:
+>   *      Mark Yao <mark.yao@rock-chips.com>
+>   *      Sandy Huang <hjc@rock-chips.com>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.h b/drivers/gpu/drm/r=
+ockchip/rockchip_lvds.h
+> index 4ce967d23813..ca83d7b6bea7 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:
+>   *      Sandy Huang <hjc@rock-chips.com>
+>   *      Mark Yao <mark.yao@rock-chips.com>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.c b/drivers/gpu/drm/ro=
+ckchip/rockchip_rgb.c
+> index dbfbde24698e..811020665120 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_rgb.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:
+>   *      Sandy Huang <hjc@rock-chips.com>
+>   */
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_rgb.h b/drivers/gpu/drm/ro=
+ckchip/rockchip_rgb.h
+> index 1bd4e20e91eb..116f958b894d 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_rgb.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_rgb.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:
+>   *      Sandy Huang <hjc@rock-chips.com>
+>   */
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/d=
+rm/rockchip/rockchip_vop2_reg.c
+> index 4ee56ad7b811..cbabec73685b 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author: Andy Yan <andy.yan@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/dr=
+m/rockchip/rockchip_vop_reg.c
+> index 8998967f0c00..4e2099d86517 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   */
+> =20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.h b/drivers/gpu/dr=
+m/rockchip/rockchip_vop_reg.h
+> index fbf1bcc68625..addf8ca085f6 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: GPL-2.0-only */
+>  /*
+> - * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Copyright (C) Rockchip Electronics Co., Ltd.
+>   * Author:Mark Yao <mark.yao@rock-chips.com>
+>   */
+> =20
+> --=20
+> 2.34.1
+>=20
 
-Thanks,
-Ryusuke Konishi
+--dw6ruy5jdxx73vxw
+Content-Type: application/pgp-signature; name="signature.asc"
 
- fs/nilfs2/btnode.c  | 1 +
- fs/nilfs2/gcinode.c | 2 +-
- fs/nilfs2/inode.c   | 5 +++++
- fs/nilfs2/nilfs.h   | 1 +
- 4 files changed, 8 insertions(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
-index 501ad7be5174..54a3fa0cf67e 100644
---- a/fs/nilfs2/btnode.c
-+++ b/fs/nilfs2/btnode.c
-@@ -35,6 +35,7 @@ void nilfs_init_btnc_inode(struct inode *btnc_inode)
- 	ii->i_flags = 0;
- 	memset(&ii->i_bmap_data, 0, sizeof(struct nilfs_bmap));
- 	mapping_set_gfp_mask(btnc_inode->i_mapping, GFP_NOFS);
-+	btnc_inode->i_mapping->a_ops = &nilfs_buffer_cache_aops;
- }
- 
- void nilfs_btnode_cache_clear(struct address_space *btnc)
-diff --git a/fs/nilfs2/gcinode.c b/fs/nilfs2/gcinode.c
-index ace22253fed0..2dbb15767df1 100644
---- a/fs/nilfs2/gcinode.c
-+++ b/fs/nilfs2/gcinode.c
-@@ -163,7 +163,7 @@ int nilfs_init_gcinode(struct inode *inode)
- 
- 	inode->i_mode = S_IFREG;
- 	mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
--	inode->i_mapping->a_ops = &empty_aops;
-+	inode->i_mapping->a_ops = &nilfs_buffer_cache_aops;
- 
- 	ii->i_flags = 0;
- 	nilfs_bmap_init_gc(ii->i_bmap);
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index b7d4105f37bf..23f3a75edd50 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -276,6 +276,10 @@ const struct address_space_operations nilfs_aops = {
- 	.is_partially_uptodate  = block_is_partially_uptodate,
- };
- 
-+const struct address_space_operations nilfs_buffer_cache_aops = {
-+	.invalidate_folio	= block_invalidate_folio,
-+};
-+
- static int nilfs_insert_inode_locked(struct inode *inode,
- 				     struct nilfs_root *root,
- 				     unsigned long ino)
-@@ -681,6 +685,7 @@ struct inode *nilfs_iget_for_shadow(struct inode *inode)
- 	NILFS_I(s_inode)->i_flags = 0;
- 	memset(NILFS_I(s_inode)->i_bmap, 0, sizeof(struct nilfs_bmap));
- 	mapping_set_gfp_mask(s_inode->i_mapping, GFP_NOFS);
-+	s_inode->i_mapping->a_ops = &nilfs_buffer_cache_aops;
- 
- 	err = nilfs_attach_btree_node_cache(s_inode);
- 	if (unlikely(err)) {
-diff --git a/fs/nilfs2/nilfs.h b/fs/nilfs2/nilfs.h
-index 45d03826eaf1..dff241c53fc5 100644
---- a/fs/nilfs2/nilfs.h
-+++ b/fs/nilfs2/nilfs.h
-@@ -401,6 +401,7 @@ extern const struct file_operations nilfs_dir_operations;
- extern const struct inode_operations nilfs_file_inode_operations;
- extern const struct file_operations nilfs_file_operations;
- extern const struct address_space_operations nilfs_aops;
-+extern const struct address_space_operations nilfs_buffer_cache_aops;
- extern const struct inode_operations nilfs_dir_inode_operations;
- extern const struct inode_operations nilfs_special_inode_operations;
- extern const struct inode_operations nilfs_symlink_inode_operations;
--- 
-2.43.0
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdbEqcACgkQ2O7X88g7
++ppMPQ/9G7xzXPLqAASevfZS5iTaIb1ist82+qkRrwkMdQWcrfl2wl3q0mW3g6fs
+QUeAbCZHg2tSFw7qpXLGK84qcTE8kxCF5Wu26CrVzhYf0TPi+EKzS4W7XGAroMce
+J4ztxf7idCVTNfsPQX2bOTS0h6J3e3zc7M4PnWvVxtwvNH20SO7M3zgV42h01jRJ
+LSoznilT1z/jTRcSCQS1HWZGc3ZMpHhnnhHT1LjeM2evK7DgY7hgmvPtgDaldvb4
+slnVT5NxlBbE6Y+7mbx9skqCNkyH3AUMZTqGVRMmuNHAKq7fFdQVw4w1Xb5i9Pk1
+HpqQHL+G58PUdp2NOnwG7cFbmmAW+R3gibXQdnruZVWtcsGG2Te7RQT423Nm2pXy
+rhUEOfEkicvnn0CQPPJXWZwZNFC07u6IbcJmBFiJQepWQD/qvUVe3EtUJxRRPWsP
+GaAsTxulDbfUK04TY8gS2hQ0jOBbmf0oCahzVu9m0lQxgUCGQfyWnagnn+0fiErd
+2/OhJWq5W1/eCs2MHcm4/7JZE/Jf6WHfy+fP+z41hmARdRuRI4/eEtNoexIWj3EG
+HOx2R8Y2pvHrPeRh3Kdzhkdt7tfrFrjVSbtiVaiRqitGNWA4fDKtu0np4cpqkFeI
+SWn3TZ7aGIssANZ9wJGgLnbBfnwE6ikhNL3k5/glIDKaMMsIqU4=
+=T+ps
+-----END PGP SIGNATURE-----
 
+--dw6ruy5jdxx73vxw--
 
