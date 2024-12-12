@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-443292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0499EEA92
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:16:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824A69EEB1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:21:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE28C2817D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:16:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E3FC1889F39
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D4B222D77;
-	Thu, 12 Dec 2024 15:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9B221E0BC;
+	Thu, 12 Dec 2024 15:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zx5FUQW9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TY18sCg5"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203D8223320;
-	Thu, 12 Dec 2024 15:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B0C2153FC
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734016512; cv=none; b=I741naL3+eVLgjG/C9SUT5qgzVmLnLtt19A4OWgIsE6L8Y7scuasZm42nMn6lQNQcx6fdS9W/It8KtYGZXJH0NOcDkN6Wqy4eu3mEyHXgiezetJXavLm6AJR8JypwoQVq8VxKpOGhtzlzz9CucESdfoV1OTXWu6zbENacY2K1II=
+	t=1734016568; cv=none; b=AtGbMqmTugLKdxtFNWYQ98s/RG8DvoamJwfOWPqno5Qp8E7G9iil7h+P9MjynarELcVBHYdUWcHXshpChxIpXIHvtcovL8xzzyhWhF9QNoDvaH7Vdk7Ji4fHAFCyJUqV7DTZ/9zSgoXDB0npCgZLKmj1eoIxhh7qPzjOmOpisZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734016512; c=relaxed/simple;
-	bh=wK+dKx82jdZNRqd29CAZp7tHY/U+Z9wuy00y16TfeJA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JaahrrMl1sOVzdH34MlqE3n7hhPUiVVsx1+PuMAy1A0YZNa76FWH+RIux14i4rQBpUjeK/U42fwxY0J8zviTYyKa0ZJSDFpFAR2CTvmXGvGomYgZq16+ucFhNMzcFEkXIfgFN7Vr9NuzAjHzIegT9aVMajB1SzQEgsA9COzitXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zx5FUQW9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC7rc4C030319;
-	Thu, 12 Dec 2024 15:14:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tUXgWyScrWX0CjSpAeL6PdfMl6SSVDmGfBdz7pYIY88=; b=Zx5FUQW9WfSArpQZ
-	s1hD522jHoIHsDV63nWCDW5C2IchEKrRBOHL48vfvYXWJJEzrLAwXHqEH1Dbkkw/
-	JnDPdJdzS81IkT9fLPhNbxyTzAXkvmMyRHmj5xGsX7fKM6rvp5nL172L3bnCylB2
-	VC829KBt93tCjLG0xjhsrHp9WB3nGrk4t507gptFBbspvAFQd6VniMM0LZDvKZ9m
-	qhmgkEh2ZpG8c6XiGj7/enXHY0I43ssGlR8bxZfba5CYtP0ZKAwFAS0Bycf2jYCc
-	i8Uz67NN0dNW1mCzqkXN8lNLPlcC+DM5r0k00TVyLOL76pEuu97zbLxTE7mh053B
-	E/OaTg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw4bspc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 15:14:53 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BCFEqRu010953
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 15:14:52 GMT
-Received: from hu-bibekkum-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 12 Dec 2024 07:14:47 -0800
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
-        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
-        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>
-CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <quic_bibekkum@quicinc.com>
-Subject: [PATCH v18 5/5] iommu/arm-smmu: add ACTLR data and support for qcom_smmu_500
-Date: Thu, 12 Dec 2024 20:44:02 +0530
-Message-ID: <20241212151402.159102-6-quic_bibekkum@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241212151402.159102-1-quic_bibekkum@quicinc.com>
-References: <20241212151402.159102-1-quic_bibekkum@quicinc.com>
+	s=arc-20240116; t=1734016568; c=relaxed/simple;
+	bh=3SSjvybpl5rXfxOCPSTDFXi+iCXVPfOvQm7DvwDpSaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=myuZaoxu75pZ7zaHpNpVeqbV1UEt+yLqLcmgow42R7kp6RtyRKGl5rREwNbQPOFOXn9vOQM/dgqiw2VchT7vGGW2lQKxvm/iyCEcqRLzd9c+e8+PRBAhjZVQhOc7XxbepGWEgoyyV1X1XCcDgDBaOOe3f8OI/Fk+nJOg6UjrFt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TY18sCg5; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-844d5444b3dso24386739f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:16:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734016565; x=1734621365; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Z0OZ8O6Ca4r+P7Py7Stsig8qKTNV0WtAJSlUeJrA8/c=;
+        b=TY18sCg54u6e+78pFkAnhW8O83T2cwdmbf/Sh2U/Kn88bf+IkKbdJSDiiq6l2qlpc2
+         5CVtxz/VW3Qxv3ifAxQ4LlHvGteSpQDyH7bN/aAbfrx/SpZsDrYTK8O5mddNwaD/8wWb
+         PVThGyz4OzquOFMI2BYXFw6UtvbXY666mdQl9u+zQMVtoYETHB9szNi9AIr6KnGfQSAx
+         4WxakxcqZPfpuIlERDceNcgYulsTeu++FWkXka9GFZa+bhYzp/LgbSS29QFZ3cy1syFp
+         oBaSgjiOjEASbWBwZXuig+hzIwuNJgRTIzO2nq9XThlDO27BBh9+AoERs1dcKoW4hYRN
+         x8Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734016565; x=1734621365;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z0OZ8O6Ca4r+P7Py7Stsig8qKTNV0WtAJSlUeJrA8/c=;
+        b=BmoyejNe9ECf9V5dSCOThih9vlM5l7SzBJC7fJE4ohoT9oXpdWM/sDovjlBu9dJ6UI
+         daLgmFuL+pamJULbIM83FeBkiB0w57Of3g6qJOgxBq9y30+6kmIR1URTxlb50WLO82M4
+         yQ6v8dWb4Z0/uOnpJal8WSSPwuprNYNr087Nnac/QCEVzJliKlqWckGgobV7ShXm+cEs
+         TRcjyxIPOVnWp9+vqGC52MRyrj2ucVpOFggLmLOMydz9xpJpzDRSs0r1e+xsBto65ET3
+         1dSSBMf8Or/j87y48DU8HKYU9bLLDN1SbhexVBFfeEaGpUs8o+AhEyFT0dwwvC6mq+Qc
+         2VHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdldgipSbwmbquZCTUDwuREAgnv/vRAaGnLcLsOX5uDmhDy7DhVxMr4TDhQdptw5ISgT2DJts5GpxHLL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX7g9zJTuKyP7Yz5Sjy6eiGG44my40raLCYtQqRsKYQ24hh00Z
+	MQT0uv/+/i1ldlWD1XYP/NlxiaQVQ11wTd4vBCZ2mG+q+BliRm6tYu53kHSAEDU=
+X-Gm-Gg: ASbGncs8IVs5G83rYRnFsiVDeFUhOyhy+vcUH/AsM6S54woPDjwfUqnU/S5GxrrVobd
+	IhE1Qo1HC6N4i6W3S7Oz/bSrYPVZTfoJCjqi0LlXK4fpx4MEpCNe+fw1IuEY/tQczrY7U8Ola1V
+	rKiGsBGGSl3wCHsMWnaGYBlFDBHfA5d0jdmLv9qnN48BXttMHpvJEhLIxSTgw9RBVusFWHEn/Ci
+	qFLqnx3ZXZZH143CCfsM6nWEjfPplVA0m/4+z4olkPTvZHN96eZ
+X-Google-Smtp-Source: AGHT+IH6ENBokNRefW67PEWn2Ayn4uC+Tx99zWyruB6kU13IoCqTYr/RWiG2rLlrSIA+Pd1bn/rmkg==
+X-Received: by 2002:a5e:cb41:0:b0:844:2ef3:a95a with SMTP id ca18e2360f4ac-844e5b6e500mr51080439f.7.1734016565359;
+        Thu, 12 Dec 2024 07:16:05 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2c56975c0sm1940230173.20.2024.12.12.07.16.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 07:16:04 -0800 (PST)
+Message-ID: <9176cbee-17d9-4811-a90c-d001ba9a6fea@kernel.dk>
+Date: Thu, 12 Dec 2024 08:16:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: EOhqR5Fbx1SrIQbID5AqGidXvK3G4sXQ
-X-Proofpoint-GUID: EOhqR5Fbx1SrIQbID5AqGidXvK3G4sXQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120110
+User-Agent: Mozilla Thunderbird
+Subject: Re: [io-uring] use-after-free in io_cqring_wait
+To: Pavel Begunkov <asml.silence@gmail.com>, chase xd
+ <sl1589472800@gmail.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CADZouDQ7TcKn8gz8_efnyAEp1JvU1ktRk8PWz-tO0FXUoh8VGQ@mail.gmail.com>
+ <54192dd9-d4e6-49ba-82b4-01710d9f7925@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <54192dd9-d4e6-49ba-82b4-01710d9f7925@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add ACTLR data table for qcom_smmu_500 including
-corresponding data entry and set prefetch value by
-way of a list of compatible strings.
+On 12/12/24 4:21 AM, Pavel Begunkov wrote:
+> On 12/12/24 10:08, chase xd wrote:
+>> Syzkaller hit 'KASAN: use-after-free Read in io_cqring_wait' bug.
+>>
+>> ==================================================================
+>> BUG: KASAN: use-after-free in io_cqring_wait+0x16bc/0x1780
+>> io_uring/io_uring.c:2630
+>> Read of size 4 at addr ffff88807d128008 by task syz-executor994/8389
+> 
+> So kernel reads CQ head/tail and get a UAF. The ring was allocated
+> while resizing rings and was also deleted while resizing rings, but
+> those could be different resize attempts.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+I suspect this report would be fixed by just doing:
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-index c6614be01d77..40f3a5a9f605 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-@@ -16,8 +16,40 @@
+return READ_ONCE(ctx->rings->cq.head) == READ_ONCE(ctx->rings->cq.tail) ? ret   : 0;
 
- #define QCOM_DUMMY_VAL	-1
+as ->rings can have changed since we entered the function. But that obviously
+won't fully sort this out, let me ponder it for a bit...
 
-+/*
-+ * SMMU-500 TRM defines BIT(0) as CMTLB (Enable context caching in the
-+ * macro TLB) and BIT(1) as CPRE (Enable context caching in the prefetch
-+ * buffer). The remaining bits are implementation defined and vary across
-+ * SoCs.
-+ */
-+
-+#define CPRE			(1 << 1)
-+#define CMTLB			(1 << 0)
-+#define PREFETCH_SHIFT		8
-+#define PREFETCH_DEFAULT	0
-+#define PREFETCH_SHALLOW	(1 << PREFETCH_SHIFT)
-+#define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
-+#define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
- #define GFX_ACTLR_PRR          (1 << 5)
+> Jens, considering the lack of locking on the normal waiting path,
+> while swapping rings what prevents waiters from seeing an old ring?
+> I'd assume that's the problem at hand.
 
-+static const struct of_device_id qcom_smmu_actlr_client_of_match[] = {
-+	{ .compatible = "qcom,adreno",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,adreno-gmu",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,adreno-smmu",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,fastrpc",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,sc7280-mdss",
-+			.data = (const void *) (PREFETCH_SHALLOW | CPRE | CMTLB) },
-+	{ .compatible = "qcom,sc7280-venus",
-+			.data = (const void *) (PREFETCH_SHALLOW | CPRE | CMTLB) },
-+	{ .compatible = "qcom,sm8550-mdss",
-+			.data = (const void *) (PREFETCH_DEFAULT | CMTLB) },
-+	{ }
-+};
-+
- static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
- {
- 	return container_of(smmu, struct qcom_smmu, smmu);
-@@ -635,6 +667,7 @@ static const struct qcom_smmu_match_data qcom_smmu_500_impl0_data = {
- 	.impl = &qcom_smmu_500_impl,
- 	.adreno_impl = &qcom_adreno_smmu_500_impl,
- 	.cfg = &qcom_smmu_impl0_cfg,
-+	.client_match = qcom_smmu_actlr_client_of_match,
- };
+Yep exactly.
 
- /*
---
-2.34.1
+-- 
+Jens Axboe
 
 
