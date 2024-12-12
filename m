@@ -1,285 +1,259 @@
-Return-Path: <linux-kernel+bounces-444026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A16C9EFF8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:53:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5934D9EFF9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 23:54:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537AB2853A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59A2916873C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBD01DE3DF;
-	Thu, 12 Dec 2024 22:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BBC1DE4F3;
+	Thu, 12 Dec 2024 22:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dF1+a7fJ"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uxr0xRNb"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF0F1AD9ED;
-	Thu, 12 Dec 2024 22:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A1E1AD9ED;
+	Thu, 12 Dec 2024 22:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734044001; cv=none; b=dAgoWwo/FRImVvyQvT1e/qVlIMhnMJs8p7MM+l3PiGbFzamgoOc0Gkn1yiDnjEuvorRQEx4wSdaxlEUvbb+zrd+FILGEDQvK9SzKwiDfIzmzXs1jA2PUdbISWEnB5tR9wbXfNINRN3kU1L3LNqlpK1YeNPfe84iabHpff4jO1zw=
+	t=1734044090; cv=none; b=peWoHX+8gNubp+vXQuSk8R0Ssq3qUBBMC7ES5RFlDsY+2XS1OhwWang81xvHpIH/HQmdk3HUy2nPviqU3M86Ds6F6laPQUznKs7i3anTx9CkZejNokNAi0dND2O2HXCxVlZwFbd1SinonFEbKGAnNEVqn0hUk+qDdAaGHhcF8R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734044001; c=relaxed/simple;
-	bh=/YNTLwDiiXmeMAln4zXCrcFNd27GGOqZjsf7WAO6E8U=;
+	s=arc-20240116; t=1734044090; c=relaxed/simple;
+	bh=0kU0jCir+mX6QNkTTrGeBLeQYe6BkWEG4iPtzpl8Pg0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J2mOwvGq9vV2uqRe0avueWelxVZf3VTzBYYbNDXhM1RGergQTCFiD9JvB3dTdeqMkIFEev5SklR23ThHj9gOu2ClD15fWFeIr5tvj8N/UXGAVNeltXw4ZMDnbTfhuzc6UajRBTFAL91uSxod9hFPAHUFta/7CTIGwQELKWFteW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dF1+a7fJ; arc=none smtp.client-ip=209.85.219.171
+	 To:Cc:Content-Type; b=lwqBS1gSGZnGtY4ZJsbyJocFCa122dDxnrwThdjP2lhf5A4Rx5hIDcsIAuBMMx0V9zFXGRx0xTGUckGAebymN1Y6Iv4UvY+7Mt4ndfzqwH0LlX1hN5ITPSx04xa14k9aknGMarQc1IyWeNsng5ebGWOs1mdumlFtOZ53fcD86w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uxr0xRNb; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e3982e9278bso804915276.2;
-        Thu, 12 Dec 2024 14:53:19 -0800 (PST)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ef748105deso821821a91.1;
+        Thu, 12 Dec 2024 14:54:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734043998; x=1734648798; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1734044088; x=1734648888; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4rly/V8Cyqmjec5b0yb/5rS2Z14G/Kz8mvctLiguoqQ=;
-        b=dF1+a7fJXjx1Li1pPDxqx1FBMM2rEa8kZnkGzsZDFCCYRzZPAfUDRmKd1fdzfbdOT9
-         3el1wIoiWR7yyy49SooiUkx6OD6BI9O/dDyCRxiuAOiOfII/cGuq1jnD/+Y+KzLR0CvU
-         elEMsdn2CJXBLgc7sBTM0DonKEtRy6UBuy0AsqEnzK8DMfvj9ZpZDgCU5/ISmU+1c+n6
-         1M2dQBcpdA7xfJUgj1PoZGalb5MU4qsf6e8bSXRZp+UsfqbjCiAKTWQAnBl5Qv/z0Fww
-         SfsROtTAITu/HZvi9tXiUGcm8t9GF4FJ7egr0GipnTfyYx3w8TEdzezCWvoNGwHeqwcv
-         KBvg==
+        bh=cu3bsJq/+UKlAtZnBLQa/cSRZsPRbGmPSv5xNPM7oBg=;
+        b=Uxr0xRNbc0UaJkkfsFY98wN7YwvVDwvZowsbXaVlpwChBF1Gd+QOzOerJkQ0w9sjl+
+         KwlZIIwU4OKp2gz5CdGYCBJ8AWV/k647Ekj2GUUvdaaaBr4P8XMMRc7Jf5nB/GH1f+ky
+         JL0E+w6gzKEWCTeGmUEAcCpDSWWSSKqnruaFLmwVSqYxKX7EoYSQrN7W5Iqcpo69iA4n
+         jVOb6yZptnqZPnPkUktSJAU07az8cCCnzQ/Bs2tIt0+9xaWkAh+BD4G1yOR8pmp7+bfD
+         DkJzfddvLOR+gZUfLaZDoyEmeobj0Ox25qP46DYG5ZuOQLxzh2szYYBD+viEszp1kB3p
+         ZxSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734043998; x=1734648798;
+        d=1e100.net; s=20230601; t=1734044088; x=1734648888;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4rly/V8Cyqmjec5b0yb/5rS2Z14G/Kz8mvctLiguoqQ=;
-        b=kK11wQ+OpqW4i1Zf3eD9HHVI/G9dzcHwNG4oY7FYHxcNUlmF+EpwcmFpB7Pm3javbr
-         Gnahpq7mR1uKS8+9U4onv6promvJl5L6F1Glq2sKWw+9zvdPKd+9AYoIwcTFwJJC1G9K
-         ujv04zPxyKDXl5z7V6w+OfOroUAuIS1M7M3omurKpu2tigc/ff6QJVfw/0ZD2N9ixLv6
-         xnlA3zQmd84GjzOfGYo7d8gD85bxx44gCIIEn/hPvcKAQMDIbUp9630tmsfGZzuiBuqc
-         Rv4YJVuajHS7LXN3w1D/WQUm4zThynq9MmcJXR9649Hh+qAx6SYrXM9Ogp3pwbmn/Nwo
-         HY0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUr21lVMRG/jkbgLq+V4kDvp67eZPQeiTtN0Hu2crDD68idEfzp4ymZICH0By3E2U50kjw481QYQFzQHZk=@vger.kernel.org, AJvYcCVgSMftlcq4mc27dCY3WI7pWL4wp6bxAa1jCd5mC0Jg+5ogwfZxd9q/yTwqgwqgH/uDFeZJpUVORDumrZPqvMLUdQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpdP8PNGWm8ERIKbXQbtbVD/ikB6YGhjYhqAb6XyUfsTgpZsDC
-	BBQ13IsHhYXJ8wp+Z2vdQtcDMGHjpbigPdPPPkydvFPQv0Og5kuUvYSx0pxEv3Lckl+jqvpXJys
-	L9a/AAxgOdGrqlSMbX6nNgYJ6EL8=
-X-Gm-Gg: ASbGnctvDXgywCizByhcs5NhlovP2oK54tEaqyflUFfELgmCX0IT1wZSvA5SbT6W0Ym
-	LCZDEJXzX8Vw2tWpNZbfqpvoGIu7C4hJVaAOf
-X-Google-Smtp-Source: AGHT+IFNO2xOMsLdOa03cqqdhbyK8n24WxIIij+1AF2VZRC146RZ+a29GIoqquww0CLNZF0BXI3v+BKcSiu728jmRF0=
-X-Received: by 2002:a05:6902:1612:b0:e3c:8c27:a93 with SMTP id
- 3f1490d57ef6-e43492f5941mr390121276.1.1734043998348; Thu, 12 Dec 2024
- 14:53:18 -0800 (PST)
+        bh=cu3bsJq/+UKlAtZnBLQa/cSRZsPRbGmPSv5xNPM7oBg=;
+        b=Vbw+Wi8TswFXLVq5oBjO/CddFpB/sc3d3dnEeubTSRF4qv7gKtxaXNAkADSw9BLF/z
+         qEKhFlSNL8gvaLf7wml4gx+LlUlM/UbJQDsyqOCCmP0OhUUDn1NIgE54bFCDcwnewE3G
+         wjxTttOPgoqBXce4vQF5zzFVXm5JszPpxPL37EkJXl8TZQzDq8e0Ljqp98Cuvqe9ZuvT
+         fCaH2Gq6o/ivRE6AgkSBnnhQZzQJelV0/UcRIia1DC0HVxK6doUVlFZDGYaHekeoWUr4
+         tw4aTAlR8DKdQIOHWzqkldN7DdFN1WvGwBVIKm5wkdIPz16xhRjVG3uqe2qCfuW17hDK
+         IbsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsZKe/Igp+yfMj2pArzjmrP4MA8sysseTg2ieOhqyQH+/e30uZLVcHyjUUQwwutC0EKsX0M9/gIqapAN4t@vger.kernel.org, AJvYcCWt+7vkFGNvAMoBxTp8WK4HPVL5ttWi87swPDNnOmtqAlwxK1PNMLS48K4LfTwDq+KNBM4=@vger.kernel.org, AJvYcCWvrhYkxsjBKK3OnFs5Rmo4UJB9w7ympGhRS76zsDyjvUjzZed+k6KYZzb16Pq/QThPmrX/1dTkXzYu3I9o@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKIew1qdWkUDkp38W32y7c26pR5rHaIe2EZIAX23iQBsP68z0w
+	fkWH86NnYat4jWlPo+l/Mmj2jHnR0WYRm+DHBbmI5+IOll0Al5uvH4l0FgVfh3cgo8xXMdCSpmV
+	AXsnhvBL9cZ0uIR9HshyqBxTV6og=
+X-Gm-Gg: ASbGncsNwH45BlJORHrk31YKsYgRDKZ7d7MFbEArl8lySVNoE5toac96y2sfrjGxbkF
+	o6RqnxHUZUbw1BuIH7+iECTPHVlODGyvd9LQKrRybRlpzY0Sfvc5NfQ==
+X-Google-Smtp-Source: AGHT+IGMb7Wvy4MjNYmnltmynjKEniH11G2YbQUjYVL2QooFsF00VNLx1ayawENFY+lQ/kOZo8/ZVqC+EYOTVUT2ybQ=
+X-Received: by 2002:a17:90b:2dc7:b0:2ee:b26c:10a3 with SMTP id
+ 98e67ed59e1d1-2f2901b81b3mr608339a91.36.1734044088186; Thu, 12 Dec 2024
+ 14:54:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212022420.1035999-1-howardchu95@gmail.com>
- <20241212022420.1035999-5-howardchu95@gmail.com> <Z1tPpZ7HHaF8g4PQ@google.com>
- <CAH0uvohN0GPW_ABFUTK7Goo0WXcSRNVhjwabKkhruXM1zB8+hQ@mail.gmail.com>
-In-Reply-To: <CAH0uvohN0GPW_ABFUTK7Goo0WXcSRNVhjwabKkhruXM1zB8+hQ@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Thu, 12 Dec 2024 14:53:09 -0800
-Message-ID: <CAH0uvogSNKigyw1JD3D7yZeftsc0Ygs6KoTfGUhyFTBBHhz6fw@mail.gmail.com>
-Subject: Re: [PATCH v12 04/10] perf record --off-cpu: Dump off-cpu samples in BPF
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	James Clark <james.clark@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <20241211-pahole-reproducible-v1-1-22feae19bad9@weissschuh.net>
+ <REDzg-0aL2-Qw7QvYCKTfsLGh6E6Iq8dgWJPo5a94ym2x5DiUkwdHA-naUtaDO7HJgvOr6zd201E5P_WAquOyOFIiUij6Bi183EyxPusDuo=@pm.me>
+ <3b834807-9f20-4f04-b788-f45dfac5cb1f@t-8ch.de> <CAEf4BzZSB2nzhYag_LKACXXJLwqLLfddXMV9_JRGYi+Y48rC-w@mail.gmail.com>
+ <acf36eab-f906-42f7-9299-1473c0451dd1@t-8ch.de>
+In-Reply-To: <acf36eab-f906-42f7-9299-1473c0451dd1@t-8ch.de>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 12 Dec 2024 14:54:36 -0800
+Message-ID: <CAEf4Bzaa+X4K3_NApFYHxWP1P7stnAvZH4to65D1600fie6H3w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] kbuild, bpf: Enable reproducible BTF generation
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Ihor Solodrai <ihor.solodrai@pm.me>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Kui-Feng Lee <kuifeng@fb.com>, 
+	Alan Maguire <alan.maguire@oracle.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, bpf@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Also, apologies on the wrong version number of "Changes in v12:" in
-v12 series' cover letter.
+On Thu, Dec 12, 2024 at 1:07=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
+>
+> Hi Andrii,
+>
+> On 2024-12-12 11:23:03-0800, Andrii Nakryiko wrote:
+> > On Tue, Dec 10, 2024 at 10:24=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@w=
+eissschuh.net> wrote:
+> > > On 2024-12-11 00:17:02+0000, Ihor Solodrai wrote:
+> > > > On Tuesday, December 10th, 2024 at 3:23 PM, Thomas Wei=C3=9Fschuh <=
+linux@weissschuh.net> wrote:
+> > > >
+> > > > >
+> > > > >
+> > > > > Pahole v1.27 added a new BTF generation feature to support
+> > > > > reproducibility in the face of multithreading.
+> > > > > Enable it if supported and reproducible builds are requested.
+> > > > >
+> > > > > As unknown --btf_features are ignored, avoid the test for the pah=
+ole
+> > > > > version to keep the line readable.
+> > > > >
+> > > > > Fixes: b4f72786429c ("scripts/pahole-flags.sh: Parse DWARF and ge=
+nerate BTF with multithreading.")
+> > > > > Fixes: 72d091846de9 ("kbuild: avoid too many execution of scripts=
+/pahole-flags.sh")
+> > > > > Link: https://lore.kernel.org/lkml/4154d202-5c72-493e-bf3f-bce882=
+a296c6@gentoo.org/
+> > > > > Link: https://lore.kernel.org/lkml/20240322-pahole-reprodicible-v=
+1-1-3eaafb1842da@weissschuh.net/
+> > > > > Signed-off-by: Thomas Wei=C3=9Fschuh linux@weissschuh.net
+> > > > >
+> > > > > ---
+> > > > > scripts/Makefile.btf | 1 +
+> > > > > 1 file changed, 1 insertion(+)
+> > > > >
+> > > > > diff --git a/scripts/Makefile.btf b/scripts/Makefile.btf
+> > > > > index c3cbeb13de503555adcf00029a0b328e74381f13..da23265bc8b3cf43c=
+0a1c89fbc4f53815a290e13 100644
+> > > > > --- a/scripts/Makefile.btf
+> > > > > +++ b/scripts/Makefile.btf
+> > > > > @@ -22,6 +22,7 @@ else
+> > > > >
+> > > > > # Switch to using --btf_features for v1.26 and later.
+> > > > > pahole-flags-$(call test-ge, $(pahole-ver), 126) =3D -j$(JOBS) --=
+btf_features=3Dencode_force,var,float,enum64,decl_tag,type_tag,optimized_fu=
+nc,consistent_func,decl_tag_kfuncs
+> > > > > +pahole-flags-$(if $(KBUILD_BUILD_TIMESTAMP),y) +=3D --btf_featur=
+es=3Dreproducible_build
+> > > >
+> > > > Hi Thomas,
+> > > >
+> > > > There are a couple of issues with reproducible_build flag which I
+> > > > think are worth mentioning here. I don't know all the reasons behin=
+d
+> > > > adding this now, and it's optional too, so feel free to discard my
+> > > > comments.
+> > > >
+> > > > Currently with this flag, the BTF output is deterministic for a giv=
+en
+> > > > order of DWARF compilation units. So the BTF will be the same for t=
+he
+> > > > same vmlinux binary. However, if the vmlinux is rebuilt due to an
+> > > > incremental change in a source code, my understanding is that there=
+ is
+> > > > no guarantee that DWARF CUs will be in the same order in the binary=
+.
+> > >
+> > > The goal behind reproducible builds is to produce bit-by-bit idential
+> > > binaries. If the CUs are in a different order then that requirement
+> > > would have been broken there already.
+> >
+> > I'm curious, how do we guarantee that we get bit-by-bit identical
+> > DWARF? Do we enforce the order of linking of .o files into the final
+> > vmlinux? Is this described anywhere?
+>
+> The CU order has to be fixed, otherwise the non-debugging parts of the
+> binary would not be reproducible either.
+> For docs is Documentation/kbuild/reproducible-builds.rst, the linked
+> reproducible-builds.org project has much more information.
+>
+> Also besides reproducible builds, lots of kernel components rely
+> (accidentally or intentionally) on a stable initialization order, which
+> is also defined by linking order.
+>
+> From Documentation/kbuild/makefiles.rst:
+>
+>         Link order is significant, because certain functions
+>         (module_init() / __initcall) will be called during boot in the
+>         order they appear. So keep in mind that changing the link
+>         order may e.g. change the order in which your SCSI
+>         controllers are detected, and thus your disks are renumbered.
+>
+> > > For an incremental build a full relink with *all* CUs is done, not on=
+ly
+> > > the changed once, so the order should always be the same.
+> >
+> > The concern here is whether linker guarantees that CUs' DWARF data
+> > will be appended in exactly the same order in such case?
+>
+> Otherwise it wouldn't be reproducible in general.
+> The pahole developers specifically implemented
+> --btf_features=3Dreproducible_build for use in the kernel; after I sent
+> a precursor patch to this one (also linked in the patch):
+>
+> https://lore.kernel.org/lkml/20240322-pahole-reprodicible-v1-1-3eaafb1842=
+da@weissschuh.net/
+>
+> In general the kernel already supports reproducible builds.
 
-Thanks,
-Howard
+Great, thanks for all the info!
 
-On Thu, Dec 12, 2024 at 2:49=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
-wrote:
+I do agree with Ihor that KBUILD_BUILD_TIMESTAMP is a non-obvious and
+surprising way to enable this behavior, but if that's what's used for
+other aspects of kernel build I guess it's fine by me.
+
+Ihor's work on making BTF generation more deterministic w.r.t. CU
+order would automatically benefit --btf_features=3Dreproducible_build in
+the end and might make it unnecessary, but there is no need to block
+on a completion of that work.
+
 >
-> Hello Namhyung,
+> For my personal kernel builds only two incompatibilities/rough edges rema=
+in:
 >
-> On Thu, Dec 12, 2024 at 1:03=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
-> wrote:
-> >
-> > Hello,
-> >
-> > On Wed, Dec 11, 2024 at 06:24:14PM -0800, Howard Chu wrote:
-> > > Collect tid, period, callchain, and cgroup id and dump them when off-=
-cpu
-> > > time threshold is reached.
-> > >
-> > > We don't collect the off-cpu time twice (the delta), it's either in
-> > > direct samples, or accumulated samples that are dumped at the end of
-> > > perf.data.
-> > >
-> > > Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> > > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > > Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > > Cc: Ian Rogers <irogers@google.com>
-> > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > Cc: James Clark <james.clark@linaro.org>
-> > > Cc: Jiri Olsa <jolsa@kernel.org>
-> > > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Link: https://lore.kernel.org/r/20241108204137.2444151-6-howardchu95@=
-gmail.com
-> > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > ---
-> > >  tools/perf/util/bpf_skel/off_cpu.bpf.c | 86 ++++++++++++++++++++++++=
---
-> > >  1 file changed, 81 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util=
-/bpf_skel/off_cpu.bpf.c
-> > > index c87132e01eb3..aae63d999abb 100644
-> > > --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> > > +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> > > @@ -19,11 +19,17 @@
-> > >  #define MAX_ENTRIES  102400
-> > >
-> > >  #define MAX_CPUS  4096
-> > > +#define MAX_OFFCPU_LEN 37
-> > > +
-> > > +struct stack {
-> > > +     u64 array[MAX_STACKS];
-> > > +};
-> > >
-> > >  struct tstamp_data {
-> > >       __u32 stack_id;
-> > >       __u32 state;
-> > >       __u64 timestamp;
-> > > +     struct stack stack;
-> > >  };
-> > >
-> > >  struct offcpu_key {
-> > > @@ -41,6 +47,10 @@ struct {
-> > >       __uint(max_entries, MAX_ENTRIES);
-> > >  } stacks SEC(".maps");
-> > >
-> > > +struct offcpu_data {
-> > > +     u64 array[MAX_OFFCPU_LEN];
-> > > +};
-> > > +
-> > >  struct {
-> > >       __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
-> > >       __uint(key_size, sizeof(__u32));
-> > > @@ -48,6 +58,13 @@ struct {
-> > >       __uint(max_entries, MAX_CPUS);
-> > >  } offcpu_output SEC(".maps");
-> > >
-> > > +struct {
-> > > +     __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-> > > +     __uint(key_size, sizeof(__u32));
-> > > +     __uint(value_size, sizeof(struct offcpu_data));
-> > > +     __uint(max_entries, 1);
-> > > +} offcpu_payload SEC(".maps");
-> > > +
-> > >  struct {
-> > >       __uint(type, BPF_MAP_TYPE_TASK_STORAGE);
-> > >       __uint(map_flags, BPF_F_NO_PREALLOC);
-> > > @@ -194,6 +211,47 @@ static inline int can_record(struct task_struct =
-*t, int state)
-> > >       return 1;
-> > >  }
-> > >
-> > > +static inline int copy_stack(struct stack *from, struct offcpu_data =
-*to, int n)
-> > > +{
-> > > +     int len =3D 0;
-> > > +
-> > > +     for (int i =3D 0; i < MAX_STACKS && from->array[i]; ++i, ++len)
-> > > +             to->array[n + 2 + i] =3D from->array[i];
-> > > +
-> > > +     return len;
-> > > +}
-> > > +
-> > > +/**
-> > > + * off_cpu_dump - dump off-cpu samples to ring buffer
-> > > + * @data: payload for dumping off-cpu samples
-> > > + * @key: off-cpu data
-> > > + * @stack: stack trace of the task before being scheduled out
-> > > + *
-> > > + * If the threshold of off-cpu time is reached, acquire tid, period,=
- callchain, and cgroup id
-> > > + * information of the task, and dump it as a raw sample to perf ring=
- buffer
-> > > + */
-> > > +static int off_cpu_dump(void *ctx, struct offcpu_data *data, struct =
-offcpu_key *key,
-> > > +                     struct stack *stack, __u64 delta)
-> > > +{
-> > > +     int n =3D 0, len =3D 0;
-> > > +
-> > > +     data->array[n++] =3D (u64)key->tgid << 32 | key->pid;
-> > > +     data->array[n++] =3D delta;
-> > > +
-> > > +     /* data->array[n] is callchain->nr (updated later) */
-> > > +     data->array[n + 1] =3D PERF_CONTEXT_USER;
-> > > +     data->array[n + 2] =3D 0;
-> > > +     len =3D copy_stack(stack, data, n);
-> > > +
-> > > +     /* update length of callchain */
-> > > +     data->array[n] =3D len + 1;
-> > > +     n +=3D len + 2;
-> > > +
-> > > +     data->array[n++] =3D key->cgroup_id;
-> > > +
-> > > +     return bpf_perf_event_output(ctx, &offcpu_output, BPF_F_CURRENT=
-_CPU, data, n * sizeof(u64));
-> > > +}
-> > > +
-> > >  static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
-> > >                       struct task_struct *next, int state)
-> > >  {
-> > > @@ -218,6 +276,16 @@ static int off_cpu_stat(u64 *ctx, struct task_st=
-ruct *prev,
-> > >       pelem->state =3D state;
-> > >       pelem->stack_id =3D stack_id;
-> > >
-> > > +     /*
-> > > +      * If stacks are successfully collected by bpf_get_stackid(), c=
-ollect them once more
-> > > +      * in task_storage for direct off-cpu sample dumping
-> > > +      */
-> > > +     if (stack_id > 0 && bpf_get_stack(ctx, &pelem->stack, MAX_STACK=
-S * sizeof(u64), BPF_F_USER_STACK)) {
-> > > +             /*
-> > > +              * This empty if block is used to avoid 'result unused =
-warning' from bpf_get_stack().
-> > > +              * If the collection fails, continue with the logic for=
- the next task.
-> > > +              */
-> > > +     }
-> > >  next:
-> > >       pelem =3D bpf_task_storage_get(&tstamp, next, NULL, 0);
-> > >
-> > > @@ -232,11 +300,19 @@ static int off_cpu_stat(u64 *ctx, struct task_s=
-truct *prev,
-> > >               __u64 delta =3D ts - pelem->timestamp;
-> > >               __u64 *total;
-> > >
-> > > -             total =3D bpf_map_lookup_elem(&off_cpu, &key);
-> > > -             if (total)
-> > > -                     *total +=3D delta;
-> > > -             else
-> > > -                     bpf_map_update_elem(&off_cpu, &key, &delta, BPF=
-_ANY);
-> > > +             if (delta >=3D offcpu_thresh_ns) {
-> >
-> > It seems offcpu_thresh_ns is not defined at this moment.  You can use
-> > a hard-coded value with a comment for now.
+> * (parallel) BTF generation, which is fixed with this patch
+> * CONFIG_MODULE_SIG with non-precreated keys (which I am working on)
 >
-> My bad, I wonder how it builds, turns out I put the definition in the
-> previous patch... (link:
-> https://lore.kernel.org/linux-perf-users/20241212022420.1035999-4-howardc=
-hu95@gmail.com/T/#u)
-> I will move it to this patch, thanks a lot!
->
-> Thanks,
-> Howard
+> > > > At the same time, reproducible_build slows down BTF generation by
+> > > > 30-50%, maybe more depending on the kernel config.
+> > >
+> > > If a user explicitly requests reproducibility then they should get it=
+,
+> > > even if it is slower.
+> > >
+> > > > Hopefully these problems will be solved in upcoming pahole releases=
+.
+> > >
+> > > I don't see it as big problem. This is used for release builds, not
+> > > during development.
+> > >
+> > > > Question: why KBUILD_BUILD_TIMESTAMP flag? Isn't it more appropriat=
+e
+> > > > to use a separate flag for this particular feature?
+> > >
+> > > Adding an additional variable would need to be documented and would
+> > > makes the feature harder to use. KBUILD_BUILD_TIMESTAMP already needs=
+ to
+> > > be set by the user if they are building for reproducibility.
+> > >
+> > > > > ifneq ($(KBUILD_EXTMOD),)
+> > > > > module-pahole-flags-$(call test-ge, $(pahole-ver), 126) +=3D --bt=
+f_features=3Ddistilled_base
+> > > > >
+> > > > > ---
+> > > > > base-commit: 7cb1b466315004af98f6ba6c2546bb713ca3c237
+> > > > > change-id: 20241124-pahole-reproducible-2b879ac8bdab
+> > > > >
+> > > > > Best regards,
+> > > > > --
+> > > > > Thomas Wei=C3=9Fschuh linux@weissschuh.net
 
