@@ -1,203 +1,124 @@
-Return-Path: <linux-kernel+bounces-443111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80DC39EE763
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:07:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6CA9EE76C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:09:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5AB16617C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:06:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D5C2828C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98A02144BD;
-	Thu, 12 Dec 2024 13:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EB72147E9;
+	Thu, 12 Dec 2024 13:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZktGluM3"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kM3M//hA"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720F21EEE6;
-	Thu, 12 Dec 2024 13:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344FF1EC4C1
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 13:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734008803; cv=none; b=BegvWGSBuKYl9AfaZ2nJyWuCpEArFrwjeD6VU0UN8NrAKWF+nlLg1iL8E5RH+adKmfXZMotW9+NkKqKYqpr3r+Ux8syFaksKq64tVeyph+WdHWIr+qBh+hZ2Lfy0f+tA6Rgr/yF8AvQJufces29J1PZY22+gIlrvEX8WTYhVbgk=
+	t=1734008928; cv=none; b=jMT6m/0rw4y5g6jxnSAiyEXTjJ8Dt6BH0zBjJgW4H9d6zU8neyUADal5UDUQ/ojooD1ksUNtDJycFdkFuFTeONfhRBp8Aj8+F5xzkePKjfb9RLyi8dnP5ENLVqNUcq8Nvf7eKR6IEaRizAbU3dZsIt2jddVatsoTPgioHqG1RI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734008803; c=relaxed/simple;
-	bh=QtnJQVvfbhujzCBbhdoVTuAqzhIPgOKP0r086zlDy7E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r/Apqum03kGBI+CNFfZGWhkzLEQmxNYF0KuZVnuHx+YcgGwq44qEy3hC4R8j2eZWka8LGPclmJEdvFq+Yxb5Ev8Ce4IuTWQVkb9VRVgHAnNwW6KwKrBeph5RV6HU0GLD3rvLXGaXzcQ4hCIKniWZDSqm2vZItpfc6t0c4l4j7r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZktGluM3; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4361fe642ddso5928795e9.2;
-        Thu, 12 Dec 2024 05:06:41 -0800 (PST)
+	s=arc-20240116; t=1734008928; c=relaxed/simple;
+	bh=UFD28TkJljZHWIG/COEi/QEH0/KPejNH2q0f4aHxkrs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BrBKOd5eWNoPQwqw8Azt6IeRzGQ/4GVOZJ1v/MwYnDScmKoHoP8c8XnGiqS0eQtZxu7/kRH5NK0jbzRJH8Z4jSViC395DLXZ7aX4HnaTQ2M0eyFSrEsYjuNRrZBm4hbxW733Gqikll3sNGrB6SOCiwgHIuO7oj6mtNzYS48ZqVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kM3M//hA; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa66ead88b3so104452766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 05:08:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734008800; x=1734613600; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HqYxTqAiECe9wyyAXaPuVyEXlxRKQjZazVAEQa5Qpbg=;
-        b=ZktGluM3dlR/NF+iXXPLFABaWgcjKCjnNLgrvwDNFhu8xp1OFZ5GHABrDQ1Yv/nH8b
-         ZFXbXUYcE7TfhLWarn4g6UQBwoOfQM6mD23j1LXBSTY3/EzSP355LtykvKZV/wGip79k
-         TwehLk2kIdBMiw3GEOoD4ks6CaoxyvsNl5qtpvYDKf4++YhlJwbcFibtA18/DLzUqKcz
-         oc+ZHNejW+ROMyxslfKFhLGSJf1lDQyNIYjhy1+bpgd2Qs1cNaVCbG8P6SRQTTfSur80
-         5S6/kJ4Mt9DAa3Sk5fDa/LqseIyKcI4vJAWboLA5o74/7Br09Gv1LAawbXz5Bh7i7Yit
-         nI2g==
+        d=linaro.org; s=google; t=1734008924; x=1734613724; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MSth3/irkWCqbGYvPdAI4UFQ10GoXyRIpHT4W2xQ1t8=;
+        b=kM3M//hAZlm2x44xX8xrpQ+oJ55csQ/ML6ZrH4Gaph9xYBLgKRUH1Tv5PGnotU5tSZ
+         bmTPu+mPwo8GId6PoVD5LQXE8B9oZxzFvshwpawfWNLOlzBk4A2x0T2QZ3EMhpfgk0FN
+         jV3PpsW+HuXcGX1gvsctpJb7v9YLIbyCJrGMty2TQJEa5lWwohtPt27AGH2azq/rR3wW
+         46+SI4dG+ehsP20oWIhFU5hR9QG5mBi9BNl6532VtfM5nyy/BVi7wdPobKwd56ydbTV9
+         bAtOXy5dPB3i8xp9nwAoiy87FtnzyOa+6kt+Wz+sXDyHKg0/oSJxDO9+yhAw5zf5NK7+
+         JSbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734008800; x=1734613600;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HqYxTqAiECe9wyyAXaPuVyEXlxRKQjZazVAEQa5Qpbg=;
-        b=DkuoP9tmR4LAp4upucPVi/gANCEW/N9EYXgvaJN+Sa1kGSLtvaM5b3DnSHUGvw+JOh
-         hT3F/y6l6CpiSg9fJJZkUlcbfV/Go4aNCe8wnzO8RnRIyG98sbVK2AdqDYnEmJ7G7Kxb
-         RTejDUH10bjxmJUtrIo3Kk+nlKBRcZJ3vn8VqRnurZcfJHRcjbXn4uCWg85hpwB9ao0g
-         u+vpyNsGYdAggSUKN0sG5gr86i9nqPuXwBWI5g046ZP+hmjY6ZXYrvpJCxtPsHS3Tv6x
-         fRyg4MkAOSxLeiolhik3mCz7az/GLV8fxoBFBZcM5IEHSW3SJmhxqYEyYREfS2AUEKfj
-         1/qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0co2m8kQ87soIcfJKzwNxclsUvo2uyTa37dRPsdaKIFLLr0DEj64pZZ+gAc01qnWFRz27o7rS/Uow@vger.kernel.org, AJvYcCU85PbXeNqOaEBYeGeklIoQ/U3dkw5DVFdTjeOatDS59ghUfie5tO8s4KMbic5xOQ0UTKE=@vger.kernel.org, AJvYcCV5coQ0VWJ42/b1iKHA+SrdRhnkIEv5bG7KP6gkK/EJ7W378Mch/w9K27iMt/BVMLgtKo0BXE6zQBidag==@vger.kernel.org, AJvYcCVFOaHkDV658AHNOOnh3KwwhLhnS9Nm/im/vz2w8QDYDUOmcNToQsMaTwTq/6TwXmkiMMpcsI4pH0q3y5Ts@vger.kernel.org, AJvYcCWb6PWROPDhghXhjuSkH505RNcJFBdDDQLGHnluyGj+Ur1uevI44UmWgh1KolYyezPIl2R/LcfcQxEsAp38j+M=@vger.kernel.org, AJvYcCWhRiDf8Bq+lD7dudbo59mwdKqtcx94TlsWgGz6lhXcmZk2dSU4x8qMWxs/hKuv9WyurK8oiV/JZVRT@vger.kernel.org, AJvYcCWulte37j3DZ41CT1brK37eLXzTMB9e9T5M4DIB1RhdjL52u7C+vipG82iTHvtB+sHVSCY1Mm9J7aKYUw==@vger.kernel.org, AJvYcCXzv9fWxhYf2YBUwR5tw+p4GN9J+gL1fLQBMWskLubscEUPubjsrhqhTk17Xzz8TfmJ1cvCoJX502wAs4b4p9Lc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9oKm1OleroqTcHb1AE+VsCqnDLoCfA6AuoOVrTYbtLJU/QaLg
-	OVsyi3XZId07Fq/1ER1JRz0kCELEY8wQoQ2e3HEyx4+x1cNisdQSaTEp3S0OiNZNOCL+43bx+FW
-	DP+Y9HkwYB2wADHhiSkSL5GI0MyI=
-X-Gm-Gg: ASbGncu5/2LogKtPmifCLgyTBTx8/o5yaXHqveru4ofL6zY9BrBwuliTgRbCM8j48zr
-	w+cT/AzuxNrmCty1TiyoRa8ry15UvK1DiV7Kk
-X-Google-Smtp-Source: AGHT+IEgToBDxS7Y2rJTQaW+KRxkcbBuEM1S3SQpzBBgB7EfM9NZPQ+SlbrHysoSI6mEreAZ9kYV8K51n0HSyiFVXHg=
-X-Received: by 2002:a05:600c:3acf:b0:434:f8a0:9dd8 with SMTP id
- 5b1f17b1804b1-4361c345006mr53002405e9.1.1734008799513; Thu, 12 Dec 2024
- 05:06:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734008924; x=1734613724;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MSth3/irkWCqbGYvPdAI4UFQ10GoXyRIpHT4W2xQ1t8=;
+        b=b7My4bJDgyB/i7Z52/2ydz/j33S+K5qWK28kVcWO6x+D/TolHmAItgpEv6jIHWSXJU
+         K/xz6LhJtsyfirXeNe8+nLSRJVlTSYfBI4qi5Yk2a4DVUfw8wroTCKRaYbYb34TyQwkc
+         /ZYBt7gupLLpyuK8lX5mZi60CWCM9vr6Gm5TrVlN2WjEnwTZ8UtNR3BhOy4Y0oxhvAuc
+         d/6IUiuAiyhsxhAQjBCuZkFEPPgsGfgEfcvRzHX8z40gNjPBTIdXIpeozU1m97tR6a2q
+         nkZax9cxAm9vnBO4/V3VI18VHu7xBe+iDFHdnxvtsAuS4ppiDDCAHP9D4PQAKb36Bkmo
+         8t8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUNxAl4oSEQBenMCXapdodpSzoByUX9WhgnARCQDy2cSonknkpJbwSGMxUtx4UoqsEur1G/KrpbZWVJieE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn/CmRg7RHEnfde3icT/Wpb78Zzrq3/fJv0fWvrtTqLmRvZQSP
+	8Fch+86zvRDEhc4vd2G5hSpdCE9UcQKEDzGAHiJNvjWPLC6U6BVMbOcGt0uWh5c=
+X-Gm-Gg: ASbGncvG24E0jS3XMFk5gjdzkBMIg8GMu1Y8W3dG4mjXCTbRYzAKKfemVBxYQ7FZU3X
+	BhTgl+o84CxLxspmF20fQrVJxjD8pEcGTmwpBCp4cRKFd/kwzG/oDPB4B1VLk6l4Eg9UH2P1pkP
+	G57WisfkaqCPfdmbVVQc8l9PmepVzjcN5Hn7Sa44PaQF7KqYtTcRb7lbMgs4LvB+MYApswcNboL
+	2aP+iuYXNRA8H2X8ZDBtHw3bfBJz4HQhazguQdR18ZxhTjRCUlpxhKnO3BHwMOWD1kkzQ==
+X-Google-Smtp-Source: AGHT+IH5HnspAa4JrCnVw3hwDOXAnn4yvcS0nZlULcM6v3q4z8daLlH1OPoEy+LFJrd9QTFOsOaImg==
+X-Received: by 2002:a17:907:3a57:b0:aa6:6331:936c with SMTP id a640c23a62f3a-aa6b13f8d18mr561440466b.59.1734008924498;
+        Thu, 12 Dec 2024 05:08:44 -0800 (PST)
+Received: from [127.0.0.2] ([2a02:2454:ff21:ef40:3c0e:7a2d:e7e3:9cf8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6845ab4absm605843366b.73.2024.12.12.05.08.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 05:08:44 -0800 (PST)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: [PATCH 0/3] Add FSUSB42 USB switch and external DP for Qualcomm
+ X1E80100 QCP
+Date: Thu, 12 Dec 2024 14:08:22 +0100
+Message-Id: <20241212-x1e80100-qcp-dp-v1-0-37cb362a0dfe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209140151.231257-1-shaw.leon@gmail.com> <20241209140151.231257-6-shaw.leon@gmail.com>
- <4a2fe99a-772d-4df1-a8ef-14338682b69e@redhat.com>
-In-Reply-To: <4a2fe99a-772d-4df1-a8ef-14338682b69e@redhat.com>
-From: Xiao Liang <shaw.leon@gmail.com>
-Date: Thu, 12 Dec 2024 21:06:01 +0800
-Message-ID: <CABAhCOQnMGm8y5bVj_fg5veJqim1PEEa02oZHqFt7ZPEQMpFzw@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 5/5] selftests: net: Add two test cases for
- link netns
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Donald Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Ido Schimmel <idosch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Jiri Pirko <jiri@resnulli.us>, 
-	Hangbin Liu <liuhangbin@gmail.com>, linux-rdma@vger.kernel.org, 
-	linux-can@vger.kernel.org, osmocom-net-gprs@lists.osmocom.org, 
-	bpf@vger.kernel.org, linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com, 
-	linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org, 
-	bridge@lists.linux.dev, linux-wpan@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEbgWmcC/x2MQQqAIBAAvyJ7TnAlQ/pKdChday9mCiFIf0+Cu
+ cxhpkGhzFRgFg0yPVz4il1wEODOLR4k2XcHrfSIGlFWJKtQKXm7JH3HGY1k7OT2AL1KmQLX/7i
+ s7/sBgh0rN2EAAAA=
+X-Change-ID: 20241211-x1e80100-qcp-dp-dc521e586cbf
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+ Johan Hovold <johan@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Thu, Dec 12, 2024 at 5:40=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wro=
-te:
->
-> On 12/9/24 15:01, Xiao Liang wrote:
-> >  - Add test for creating link in another netns when a link of the same
-> >    name and ifindex exists in current netns.
-> >  - Add test for link netns atomicity - create link directly in target
-> >    netns, and no notifications should be generated in current netns.
-> >
-> > Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
-> > ---
-> >  tools/testing/selftests/net/Makefile        |  1 +
-> >  tools/testing/selftests/net/netns-name.sh   | 10 ++++++
-> >  tools/testing/selftests/net/netns_atomic.py | 39 +++++++++++++++++++++
-> >  3 files changed, 50 insertions(+)
-> >  create mode 100755 tools/testing/selftests/net/netns_atomic.py
-> >
-> > diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selft=
-ests/net/Makefile
-> > index cb2fc601de66..f9f7a765d645 100644
-> > --- a/tools/testing/selftests/net/Makefile
-> > +++ b/tools/testing/selftests/net/Makefile
-> > @@ -34,6 +34,7 @@ TEST_PROGS +=3D gre_gso.sh
-> >  TEST_PROGS +=3D cmsg_so_mark.sh
-> >  TEST_PROGS +=3D cmsg_time.sh cmsg_ipv6.sh
-> >  TEST_PROGS +=3D netns-name.sh
-> > +TEST_PROGS +=3D netns_atomic.py
-> >  TEST_PROGS +=3D nl_netdev.py
-> >  TEST_PROGS +=3D srv6_end_dt46_l3vpn_test.sh
-> >  TEST_PROGS +=3D srv6_end_dt4_l3vpn_test.sh
-> > diff --git a/tools/testing/selftests/net/netns-name.sh b/tools/testing/=
-selftests/net/netns-name.sh
-> > index 6974474c26f3..0be1905d1f2f 100755
-> > --- a/tools/testing/selftests/net/netns-name.sh
-> > +++ b/tools/testing/selftests/net/netns-name.sh
-> > @@ -78,6 +78,16 @@ ip -netns $NS link show dev $ALT_NAME 2> /dev/null &=
-&
-> >      fail "Can still find alt-name after move"
-> >  ip -netns $test_ns link del $DEV || fail
-> >
-> > +#
-> > +# Test no conflict of the same name/ifindex in different netns
-> > +#
-> > +ip -netns $NS link add name $DEV index 100 type dummy || fail
-> > +ip -netns $NS link add netns $test_ns name $DEV index 100 type dummy |=
-|
-> > +    fail "Can create in netns without moving"
-> > +ip -netns $test_ns link show dev $DEV >> /dev/null || fail "Device not=
- found"
-> > +ip -netns $NS link del $DEV || fail
-> > +ip -netns $test_ns link del $DEV || fail
-> > +
-> >  echo -ne "$(basename $0) \t\t\t\t"
-> >  if [ $RET_CODE -eq 0 ]; then
-> >      echo "[  OK  ]"
-> > diff --git a/tools/testing/selftests/net/netns_atomic.py b/tools/testin=
-g/selftests/net/netns_atomic.py
-> > new file mode 100755
-> > index 000000000000..d350a3fc0a91
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/net/netns_atomic.py
-> > @@ -0,0 +1,39 @@
-> > +#!/usr/bin/env python3
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +import time
-> > +
-> > +from lib.py import ksft_run, ksft_exit, ksft_true
-> > +from lib.py import ip
-> > +from lib.py import NetNS, NetNSEnter
-> > +from lib.py import RtnlFamily
-> > +
-> > +
-> > +def test_event(ns1, ns2) -> None:
-> > +    with NetNSEnter(str(ns1)):
-> > +        rtnl =3D RtnlFamily()
-> > +
-> > +    rtnl.ntf_subscribe("rtnlgrp-link")
-> > +
-> > +    ip(f"netns set {ns1} 0", ns=3Dstr(ns2))
-> > +
-> > +    ip(f"link add netns {ns2} link-netnsid 0 dummy1 type dummy")
-> > +    ip(f"link add netns {ns2} dummy2 type dummy", ns=3Dstr(ns1))
-> > +
-> > +    ip("link del dummy1", ns=3Dstr(ns2))
-> > +    ip("link del dummy2", ns=3Dstr(ns2))
-> > +
-> > +    time.sleep(1)
-> > +    rtnl.check_ntf()
-> > +    ksft_true(rtnl.async_msg_queue.empty(),
-> > +              "Received unexpected link notification")
->
-> I think we need a much larger coverage here, possibly testing all the
-> update drivers and more 'netns', 'link-netnsid', 'peer netns'
-> permutations for the devices that allow them.
+The Qualcomm X1E80100 QCP has FSUSB42 USB switches on each of the USB-C
+ports that handle orientation switching for the SBU lines. This is needed
+to enable DisplayPort support for external displays.
 
-OK, I will add more cases. But I'm afraid I don't know how to build
-valid parameters for all of them, and some seem to require hardware.
+Add the onnn,fsusb42 compatible to the existing gpio-sbu-mux binding and
+then describe all the necessary components in the x1e80100-qcp device tree
+to make external DP work correctly.
 
->
-> Thanks,
->
-> Paolo
->
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+Stephan Gerhold (3):
+      dt-bindings: usb: gpio-sbu-mux: Add an entry for FSUSB42
+      arm64: dts: qcom: x1e80100-qcp: Add FSUSB42 USB switches
+      arm64: dts: qcom: x1e80100-qcp: Enable external DP support
+
+ .../devicetree/bindings/usb/gpio-sbu-mux.yaml      |   1 +
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts          | 178 +++++++++++++++++++++
+ 2 files changed, 179 insertions(+)
+---
+base-commit: 3e42dc9229c5950e84b1ed705f94ed75ed208228
+change-id: 20241211-x1e80100-qcp-dp-dc521e586cbf
+
+Best regards,
+-- 
+Stephan Gerhold <stephan.gerhold@linaro.org>
+
 
