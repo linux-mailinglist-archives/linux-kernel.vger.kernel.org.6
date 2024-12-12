@@ -1,166 +1,115 @@
-Return-Path: <linux-kernel+bounces-442808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A419EE23F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:08:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CAA9EE247
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:10:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3A9D1678CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:10:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D96720E305;
+	Thu, 12 Dec 2024 09:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="TIp9xgJG"
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70ED28291F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:08:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E6920E31F;
-	Thu, 12 Dec 2024 09:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UY9zbmE1"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE271D8E10
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C42413E40F;
+	Thu, 12 Dec 2024 09:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733994499; cv=none; b=gs7v0346EvZt9cwwUEV7kZIPeqOTTgnnYB2JPgEYoOgpXfVs/ookKf16vp78DP54uSvqoDExr89G39JvKYyGXPE5kDeEsvWzuB1MzDYXLTiuDrvVnSNaN7zTmPU7akFmwz7UnnsaQfWyP5FkDE1ZWoXq2A0KF1FcAeNT44L6uGQ=
+	t=1733994598; cv=none; b=caDLtUK9rPEiy/xRMvZVPRuoZRXMiz4aIzUhl9Zs47XyysuwX6Sr1RCJjzW4hI8AEu49yhEzvuI/PvyEf8/LmmMCygefbxzx/CS+y0TVEYdz7iiuFmaUSQ3xl4mhL6qSYqFDYPgXv8EamRlXXEatMKuvBDWKMcGXbMchaCa2wLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733994499; c=relaxed/simple;
-	bh=7mkNhNohCRInUoNEgtBbSXisKCJhOCIqilr1bctY9qQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D2jl0vo9R9TYK9vxuqrymWwJ80QdC8ZoWy9+JQRP3wBUwKS66ntJVKOKd8mlNlkM0jzC8ttxfbrvwgZsIZmoFPKkJd754V/2B+6sOx1mFJ7JPU+g5mNXnMHUZg+P5q5MMml3OPCWsnFxXQl405I/Jmvd4Cz9ac1sCBYXCaW6EpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UY9zbmE1; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so67546066b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:08:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733994496; x=1734599296; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qy+XHWudhy1v5FQx+HPpD7u/EehmML+tWjPRArge5Pk=;
-        b=UY9zbmE1ruDn0cJyFk3s5No7MYdK40/t7SxvnC0MbCorrBZCJk2K+oWpMH3G1NxKS0
-         cX6BGCqyM8v0c4ssk88tKeAHa8QzRZBCYEuxT36YQDNH7duWdGbIxV9JHm+nKWbNqnoR
-         w/MMliVYdcnIRiKeMEOp52K2zSSpyPvLjYBohIcRjDskjaAOArp7UrAQEcmJ1yUrwGEB
-         VeMk1viVs/9XQ+0h4Yc8byYxMoW4BDm5f/XDtkuiwahXxn4oUZBuTniVYArtQUIt+ngw
-         V2nsceY40jsbupLgK0co4IncKIpSQkN3zl/S+ZojF5d81o4NboWsEbMwdihwIuEzSRhX
-         ogPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733994496; x=1734599296;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qy+XHWudhy1v5FQx+HPpD7u/EehmML+tWjPRArge5Pk=;
-        b=f/Ih34nPc4Cn7Jh7lEZll9VS7RpWab9F/cd15r8XlEtclohk+d0/uJ16S75l9Hlafp
-         OQcO6oRruXrNgaX1KKE+L/H2dcBo+TKfo2B0KC2V0/pfl1GvuGEeUz9+80Zz1N9VS70B
-         YZdYyt/4opZ4vfpdyTAs6IlYBnmz8ffgtoGnHN/Nj4MwoqesW8s5+tF/VsEUFOKfkX/I
-         +69FQfO2GMCiC5rYhdyQHVfhLtwNouP4Nssa/ryRriIJUy4sz2WWzmQm7g4OAQAestjl
-         NTLAWq/TpXNPbCsYxaRIqHrBUpkEK6df7UGEc3WMHXZijOaY+qMdbXsAXPIWJQFBYpiY
-         4qQw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6d740qtd+PL4RRBs/lVzsLtprIKdR9LXILds/tOWMZZk65uQD45/SBsRxzsM5ed9mJpQ4gqmk0L8phr0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv8fHK4BgG1MfQtdKTTraLURFAF9c2jF1TGYwvWQCGJz1Jmgvz
-	5sQsY01YHMkIt1AmYdQQoZB8CO03sfEOBJl8Pd0rF5wUHYvL1eeqdQXqtOTUfpw54vJNualo1O1
-	GQuc3CyfZRHKgDymzfzwdvYvXfuuCilAjL9uR9Q==
-X-Gm-Gg: ASbGncubvMO731BiCItcFRbMstVIG/oQ/pQXyfiAw8Hlp+eGVslh/pxolmygF4u7zov
-	vqr9ZVI/Cv8gumpJl97ttGJWAET3xmHvyNLM/
-X-Google-Smtp-Source: AGHT+IHEeJ3cn9fsQUrmcRwGKGFNz+w9xyhYxVnY2x3y6VbhboijLIDasxIc1jaQaLdp8+eNSrWDe+me41Cfc3kAJW0=
-X-Received: by 2002:a17:906:2929:b0:aa6:8096:204d with SMTP id
- a640c23a62f3a-aa6b1141caamr537934766b.3.1733994496399; Thu, 12 Dec 2024
- 01:08:16 -0800 (PST)
+	s=arc-20240116; t=1733994598; c=relaxed/simple;
+	bh=25cnFJ36lnTfx1vldu3/7BTYkYLtPPVJprGmfJ++pAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sRx0Srw2KCOGtslyyWcb3MyU6RuMRA2wPzucvwqAD3fDaWGiWa9LAU4I7nUpvSbGfccoeG9J+fP9zc4oy7pe31dvFElBZ6HN9lplZ19dnA2U0aNkRak4WiCRW9w5he/pVs1QbNZjgiK+zYI65T19InTW8icxtN5icegkH449p50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=TIp9xgJG; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1733994535;
+	bh=N9G5TKRnk2yNU1t1lquTfvemiMjKCmOKWgxWjv7lYUM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=TIp9xgJGbM8UkRzAoDC9jYJKNidAFbgu1KzTS3l8HUg+3iKAckDE5k5C+xaoJEmCS
+	 t4+fCMtVqxZd/c8t2imP/68/fy+MskOV0WRcKs2sSQhjsv/b1CblCMHBCEjhIDppMO
+	 79ur9EGbzGWozQpcvPstFkSPIMV9/X3MJqv4LXME=
+X-QQ-mid: bizesmtp77t1733994503tx62ddb3
+X-QQ-Originating-IP: kxQeeN7DEj3DS2AJKN11Dkwglrakg6FxyTRrC5ccxe0=
+Received: from avenger-aosc-laptop.localdomain ( [223.104.122.68])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 12 Dec 2024 17:08:20 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10610029049463473772
+From: WangYuli <wangyuli@uniontech.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	benjamin.tissoires@enac.fr,
+	chatty@enac.fr,
+	jkosina@suse.cz,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com
+Cc: WangYuli <wangyuli@uniontech.com>
+Subject: [RESEND. PATCH] HID: multitouch: Remove useless comment
+Date: Thu, 12 Dec 2024 17:08:08 +0800
+Message-ID: <AC49086C675C6E0F+20241212090808.18988-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212075303.2538880-1-neelx@suse.com> <ac4c4ae5-0890-4f47-8a85-3c4447feaa90@wdc.com>
- <CAPjX3FcAZM4dSbnMkTpJPNJMcPDxKbEMwbg3ScaTWVg+5JqfDg@mail.gmail.com> <133f4cb5-516d-4e11-b03a-d2007ff667ee@wdc.com>
-In-Reply-To: <133f4cb5-516d-4e11-b03a-d2007ff667ee@wdc.com>
-From: Daniel Vacek <neelx@suse.com>
-Date: Thu, 12 Dec 2024 10:08:05 +0100
-Message-ID: <CAPjX3FchmM24-Afv7ueeK-Z1zBYivfj4yKXhVq6bARiGjqQOwQ@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: fix a race in encoded read
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Omar Sandoval <osandov@fb.com>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, 
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MxDmZisZxeG6BBbCMT3XaaywJBY24bi/cVoYgX1cOS8ynQhL1eCWyQDJ
+	sGAsTmxXN4uI9mPwfknzKpDZgoJTJmlBQ0qDSgJmk3YJwwhEi5Nfh6Lz0dMEElEdxggiXMk
+	Hhb27VrHri6/fONEw0gwhxm3DjNMv0Cyk3BCJToPzQvg+PGLfrKI0zi8N1FpGsMLrjjnfXP
+	OGgAQ8qlxT2BzYOEp00cfS91gDyZ6/ZRMmaeVOWYtX5U3WZ3AbvKw59dTSv/Ehs27XK11Ui
+	mFX9U/Yr1cyVNJyMyrdpJlkjXM2Iof5FzxN6QV9BuLHNheYVKrtdgdDm2bZxLLpoP0T0hgx
+	m8vitv3V4wBgh18mnSrUk8lzrPMbf1PvhxHqHH7pIRP0huBg4dAfWdaomEyduJJbiMxdXWo
+	0RqYLEbSGoV6xqdhQVrUmjkQozbuPPs9fehCSpCXrMJO1Js1ES7DvQ+Ar631U+lpmcvfa4C
+	V7wmgoP1P87kbAfU7TaoDZhNdaC3U2Anmgza7QF5a+dma0V84tqE/+5lpFCAFWXJPD0/1lg
+	o8gzNa2hLJ2uT2PGcKWMW1mmDqwFubG3xcvZ+PKbToDsC+QPwb4pV56IFSeYnbPlqvlKeaT
+	M3emlVcI3kGRAYK7Btz6TDQDvRJb0vOVdq1lRmEQ32RPlFmijDFC0KBVCI1M/CFvCxKcqrg
+	ygdUlXWXYz2Jb2dNY56I01DSwFzqhAzVc4NNKx4srM0qGn/3MIuycmRvGOKBAas4WYc+YkB
+	s+e51Nc97ltqcYoAeQbSbYs+2AuxUEGTZ2Wc5yJgX3vSVna4uYOylehJcPG0Ld0uO2K1ZAU
+	mQMGcjQkNQzPllPOD3KTZGZOoMxEemrSGRGzpgeC2NI6qHweGVZPHWT0M15A3fGDKnU2dfr
+	y5uQwRuETJBGon+lAUMurd6A5fYDgSIsPvT6sWk15Dlj96H7t0mv30zW0p12110Aphhr7y5
+	Ng7Axa1yihCLaxH5aoqA59UU06JZ9j9QCC3o9UPYrRMC6p024087y3x03uC2OsNvk0+Ctqg
+	kz4jtXOrCixQM9mtQx1CkuHF5pHsiBOJ/S7gBzZk6hWAUhBjJd8odWloukxJk=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Thu, Dec 12, 2024 at 10:02=E2=80=AFAM Johannes Thumshirn
-<Johannes.Thumshirn@wdc.com> wrote:
->
-> On 12.12.24 09:53, Daniel Vacek wrote:
-> > On Thu, Dec 12, 2024 at 9:35=E2=80=AFAM Johannes Thumshirn
-> > <Johannes.Thumshirn@wdc.com> wrote:
-> >>
-> >> On 12.12.24 09:09, Daniel Vacek wrote:
-> >>> Hi Johannes,
-> >>>
-> >>> On Thu, Dec 12, 2024 at 9:00=E2=80=AFAM Johannes Thumshirn
-> >>> <Johannes.Thumshirn@wdc.com> wrote:
-> >>>>
-> >>>> On 12.12.24 08:54, Daniel Vacek wrote:
-> >>>>> While testing the encoded read feature the following crash was obse=
-rved
-> >>>>> and it can be reliably reproduced:
-> >>>>>
-> >>>>
-> >>>>
-> >>>> Hi Daniel,
-> >>>>
-> >>>> This suspiciously looks like '05b36b04d74a ("btrfs: fix use-after-fr=
-ee
-> >>>> in btrfs_encoded_read_endio()")'. Do you have this patch applied to =
-your
-> >>>> kernel? IIRC it went upstream with 6.13-rc2.
-> >>>
-> >>> Yes, I do. This one is on top of it. The crash happens with
-> >>> `05b36b04d74a` applied. All the crashes were reproduced with
-> >>> `feffde684ac2`.
-> >>>
-> >>> Honestly, `05b36b04d74a` looks a bit suspicious to me as it really
-> >>> does not look to deal correctly with the issue to me. I was a bit
-> >>> surprised/puzzled.
-> >>
-> >> Can you elaborate why?
-> >
-> > As it only touches one of those four atomic_dec_... lines. In theory
-> > the issue can happen also on the two async places, IIUC. It's only a
-> > matter of race probability.
-> >
-> >>> Anyways, I could reproduce the crash in a matter of half an hour. Wit=
-h
-> >>> this fix the torture is surviving for 22 hours atm.
-> >>
-> >> Do you also have '3ff867828e93 ("btrfs: simplify waiting for encoded
-> >> read endios")'? Looking at the diff it doesn't seems so.
-> >
-> > I cannot find that one. Am I missing something? Which repo are you usin=
-g?
->
-> The for-next branch for btrfs [1], which is what ppl developing against
-> btrfs should use. Can you please re-test with it and if needed re-base
-> your patch on top of it?
->
-> [1] https://github.com/btrfs/linux for-next
+There's an empty comment at the beginning of hid-multitoch.c.
+Just discard it.
 
-I did check here and I don't really see the commit.
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/hid/hid-multitouch.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-$ git remote -v
-origin    https://github.com/btrfs/linux.git (fetch)
-origin    https://github.com/btrfs/linux.git (push)
-$ git fetch
-$ git show 3ff867828e93 --
-fatal: bad revision '3ff867828e93'
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 785743036647..5985ea843194 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -20,9 +20,6 @@
+  *  Copyright (c) 2010      Canonical, Ltd.
+  */
+ 
+-/*
+- */
+-
+ /*
+  * This driver is regularly tested thanks to the test suite in hid-tools[1].
+  * Please run these regression tests before patching this module so that
+-- 
+2.47.1
 
-Note, I was testing v6.13-rc1. This is a fix not a feature development.
-
---nX
-
-> Thanks,
->         Johannes
 
