@@ -1,161 +1,159 @@
-Return-Path: <linux-kernel+bounces-443753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBF89EFB78
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:49:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC019EFB80
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:50:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758F616D761
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:49:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB0DC188F03E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DD9191F85;
-	Thu, 12 Dec 2024 18:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCC319F131;
+	Thu, 12 Dec 2024 18:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a/mQNjZO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRIqd7xP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54935188938;
-	Thu, 12 Dec 2024 18:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CFB188736;
+	Thu, 12 Dec 2024 18:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734029329; cv=none; b=TP5BIGCaa33lr5rVTQuSUbxwZ9PReU3ovotFY5bZDluRY27i+2/m1wTADjcm4wPrEV0q+KlvQdA+hHvEDlmnwgxi8CrEgv54UbQ4ta7uVcx6fkU603/uuz0IOdLG17eCMOFCDUP0Fa68NZUvhqSmJmr/vgwvGHQSogQnQqEDqtM=
+	t=1734029400; cv=none; b=fgeRv1YaS2XctRTDLVCQMCmVA0t0taj8IR5EtJLxyK0lx6L6R9fkCUjKIuiKQEeJtoXxOOjgdK/WGRBnTHwLuhvIeAJ+liCiE4rAI/E87PZlz2QqWNW2rhFevcFeRqh9y9ewiGQD+j+5vdsCVYFlituK6owV5XJGpxHDteAI+IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734029329; c=relaxed/simple;
-	bh=2wHg5ech62f6kNP58dWuNm42eu3h+FcT06MHSXTV5lM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XyLkWp0FpxfdM67wCeha459cl0dRC8f8uec8DcdlMkud8c5y63tBr+1KBrWwhO9Ez1j3r4SGBypxwb8GZSZuzImD4FEFWaXrJrPp4NmVz4j0/5QY4KtVfvWHbSsACLowphzJtl1LTFw2WUjVqGyhR44yDfOnrs8siiYxe19LD5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a/mQNjZO; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734029328; x=1765565328;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=2wHg5ech62f6kNP58dWuNm42eu3h+FcT06MHSXTV5lM=;
-  b=a/mQNjZOYJ9jdT92L9536/mxPidqXHeWVKyjHHrlouvBCwCaS9UCzerz
-   YPobKd/savImAwKyJrdBgYRNaFIPrPmGJ4TIpGpNyf0kc0Bp2emDrHyf2
-   TURALc8HOJDrcaA9UofcXuC3Zwqh+t6klA9wjRBCqZavONDSLxQEHyFQA
-   rHhSgPSxmVFmywpOxPifcnNN0rYRFjg7CtRm4ufu6mA4U08pszJXXECv6
-   ifCmvXzDpZenUk5c8eUw7jkEQCa7k7ca8P4qfYg80xMNzyD5INVGtcx7B
-   pW+5wWBp4k48meIcAP+rpadbkeB35g6qK/SlkaKYRV0FI/FCKa7KlXFmA
-   g==;
-X-CSE-ConnectionGUID: FIyNuhhuS6CteEJqvJQPTQ==
-X-CSE-MsgGUID: R/RckaJsR6aGtJxy2XpvHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45474145"
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="45474145"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 10:48:47 -0800
-X-CSE-ConnectionGUID: pVSicdywTUa2jTMaz/PNGQ==
-X-CSE-MsgGUID: cfYrER84RBK5Aqf03CS7jg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="127318593"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.137])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 10:48:42 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 12 Dec 2024 20:48:38 +0200 (EET)
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-    Oliver O'Halloran <oohall@gmail.com>, Lukas Wunner <lukas@wunner.de>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v6 6/8] PCI: Add TLP Prefix reading into
- pcie_read_tlp_log()
-In-Reply-To: <e4f907ad-ab87-ac42-7428-93e16f070f74@linux.intel.com>
-Message-ID: <827acda7-26d8-f4f5-2251-befb932ebb8b@linux.intel.com>
-References: <20240913143632.5277-1-ilpo.jarvinen@linux.intel.com> <20240913143632.5277-7-ilpo.jarvinen@linux.intel.com> <20241211164904.00007a02@huawei.com> <e4f907ad-ab87-ac42-7428-93e16f070f74@linux.intel.com>
+	s=arc-20240116; t=1734029400; c=relaxed/simple;
+	bh=2EcSl9m94OfpZsmwac22XD3a277QHniUKqccAA9fc2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MMmHKiRkLSh9e1KU7ngk+fQk3hQ4fm6y2ePpuyqEHv3WSCk1DC4Ja29Ql73H3fiMrfNOr7qdTD1oIkRcxRhRwx6sG6atl0Sym5CXqs9Jj2wA09+tCKr4qUC5cRCH82e7JlaC8osZSoVriYp1bRHAEpedPwbSXftBwUXXzf5fXK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRIqd7xP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1355AC4CECE;
+	Thu, 12 Dec 2024 18:50:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734029400;
+	bh=2EcSl9m94OfpZsmwac22XD3a277QHniUKqccAA9fc2Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TRIqd7xPlDiqk4b+b04e1aqcjMt0cL8HWnvefJV0qEq7/jLRX0KXkIyFuBSztAhTv
+	 IVIiC0yrcWXpLVo4VWImdquk1GxDRAOzMBFSurpNUndU1AxYLNqQtmLFzWpkJ95cFh
+	 0YMPq9eWfFNcxS/fkKwvht4M9CUOBg2PuHUhvnVBrnV61m1DnxqVGaBPAoBYPFR9ld
+	 pRZjlUFWqfJuLjT1WeKbdtvUofYZWiwSvxVMqTkCqdAt93znixikVBSZNX59tEaT0g
+	 jDBx56MShjnDw+RPNwkbyw0Wov7wkPLMGDIAlNouOuwlNhmaeZ4Sv1kW2Lagu8mMMk
+	 BJpDUNQbjEntQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id B4213CE0F53; Thu, 12 Dec 2024 10:49:59 -0800 (PST)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH rcu 01/18] torture: Add dowarn argument to torture_sched_setaffinity()
+Date: Thu, 12 Dec 2024 10:49:40 -0800
+Message-Id: <20241212184957.2127441-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <62e4d9a4-18ad-49b3-9656-23e17b78033f@paulmck-laptop>
+References: <62e4d9a4-18ad-49b3-9656-23e17b78033f@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1583029406-1734029318=:936"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Current use cases of torture_sched_setaffinity() are well served by its
+unconditional warning on error.  However, an upcoming use case for a
+preemption kthread needs to avoid warnings that might otherwise arise
+when that kthread attempted to bind itself to a CPU on its way offline.
+This commit therefore adds a dowarn argument that, when false, suppresses
+the warning.
 
---8323328-1583029406-1734029318=:936
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ include/linux/torture.h      | 2 +-
+ kernel/locking/locktorture.c | 6 +++---
+ kernel/rcu/rcutorture.c      | 2 +-
+ kernel/rcu/update.c          | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-On Thu, 12 Dec 2024, Ilpo J=E4rvinen wrote:
+diff --git a/include/linux/torture.h b/include/linux/torture.h
+index c2e979f82f8d0..0134e7221cae6 100644
+--- a/include/linux/torture.h
++++ b/include/linux/torture.h
+@@ -130,7 +130,7 @@ void _torture_stop_kthread(char *m, struct task_struct **tp);
+ #endif
+ 
+ #if IS_ENABLED(CONFIG_RCU_TORTURE_TEST) || IS_MODULE(CONFIG_RCU_TORTURE_TEST) || IS_ENABLED(CONFIG_LOCK_TORTURE_TEST) || IS_MODULE(CONFIG_LOCK_TORTURE_TEST)
+-long torture_sched_setaffinity(pid_t pid, const struct cpumask *in_mask);
++long torture_sched_setaffinity(pid_t pid, const struct cpumask *in_mask, bool dowarn);
+ #endif
+ 
+ #endif /* __LINUX_TORTURE_H */
+diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+index de95ec07e4771..cc33470f4de97 100644
+--- a/kernel/locking/locktorture.c
++++ b/kernel/locking/locktorture.c
+@@ -106,7 +106,7 @@ static const struct kernel_param_ops lt_bind_ops = {
+ module_param_cb(bind_readers, &lt_bind_ops, &bind_readers, 0644);
+ module_param_cb(bind_writers, &lt_bind_ops, &bind_writers, 0644);
+ 
+-long torture_sched_setaffinity(pid_t pid, const struct cpumask *in_mask);
++long torture_sched_setaffinity(pid_t pid, const struct cpumask *in_mask, bool dowarn);
+ 
+ static struct task_struct *stats_task;
+ static struct task_struct **writer_tasks;
+@@ -1358,7 +1358,7 @@ static int __init lock_torture_init(void)
+ 		if (torture_init_error(firsterr))
+ 			goto unwind;
+ 		if (cpumask_nonempty(bind_writers))
+-			torture_sched_setaffinity(writer_tasks[i]->pid, bind_writers);
++			torture_sched_setaffinity(writer_tasks[i]->pid, bind_writers, true);
+ 
+ 	create_reader:
+ 		if (cxt.cur_ops->readlock == NULL || (j >= cxt.nrealreaders_stress))
+@@ -1369,7 +1369,7 @@ static int __init lock_torture_init(void)
+ 		if (torture_init_error(firsterr))
+ 			goto unwind;
+ 		if (cpumask_nonempty(bind_readers))
+-			torture_sched_setaffinity(reader_tasks[j]->pid, bind_readers);
++			torture_sched_setaffinity(reader_tasks[j]->pid, bind_readers, true);
+ 	}
+ 	if (stat_interval > 0) {
+ 		firsterr = torture_create_kthread(lock_torture_stats, NULL,
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 612d276903352..908506b68c412 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -857,7 +857,7 @@ static void synchronize_rcu_trivial(void)
+ 	int cpu;
+ 
+ 	for_each_online_cpu(cpu) {
+-		torture_sched_setaffinity(current->pid, cpumask_of(cpu));
++		torture_sched_setaffinity(current->pid, cpumask_of(cpu), true);
+ 		WARN_ON_ONCE(raw_smp_processor_id() != cpu);
+ 	}
+ }
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index f8436969e0c89..c912b594ba987 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -527,12 +527,12 @@ EXPORT_SYMBOL_GPL(do_trace_rcu_torture_read);
+ 
+ #if IS_ENABLED(CONFIG_RCU_TORTURE_TEST) || IS_MODULE(CONFIG_RCU_TORTURE_TEST) || IS_ENABLED(CONFIG_LOCK_TORTURE_TEST) || IS_MODULE(CONFIG_LOCK_TORTURE_TEST)
+ /* Get rcutorture access to sched_setaffinity(). */
+-long torture_sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
++long torture_sched_setaffinity(pid_t pid, const struct cpumask *in_mask, bool dowarn)
+ {
+ 	int ret;
+ 
+ 	ret = sched_setaffinity(pid, in_mask);
+-	WARN_ONCE(ret, "%s: sched_setaffinity(%d) returned %d\n", __func__, pid, ret);
++	WARN_ONCE(dowarn && ret, "%s: sched_setaffinity(%d) returned %d\n", __func__, pid, ret);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(torture_sched_setaffinity);
+-- 
+2.40.1
 
-> On Wed, 11 Dec 2024, Jonathan Cameron wrote:
->=20
-> > On Fri, 13 Sep 2024 17:36:30 +0300
-> > Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
-> >=20
-> > > pcie_read_tlp_log() handles only 4 Header Log DWORDs but TLP Prefix L=
-og
-> > > (PCIe r6.1 secs 7.8.4.12 & 7.9.14.13) may also be present.
-> > >=20
-> > > Generalize pcie_read_tlp_log() and struct pcie_tlp_log to handle also
-> > > TLP Prefix Log. The relevant registers are formatted identically in A=
-ER
-> > > and DPC Capability, but has these variations:
-> > >=20
-> > > a) The offsets of TLP Prefix Log registers vary.
-> > > b) DPC RP PIO TLP Prefix Log register can be < 4 DWORDs.
-> > >=20
-> > > Therefore callers must pass the offset of the TLP Prefix Log register
-> > > and the entire length to pcie_read_tlp_log() to be able to read the
-> > > correct number of TLP Prefix DWORDs from the correct offset.
-> > >=20
-> > > Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> >=20
-> > Trivial comments below
-> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> >=20
-> > Would have been nice if they'd just made the formats have the
-> > same sized holes etc!
->=20
-> That's not even the worst problem.
->=20
-> They managed to copy-paste most of the stuff into DPC (copy-paste is=20
-> really obvious because the text still refers to AER in a DPC section :-))=
-=20
-> but forgot to add a few capability fields into the DPC capability, most=
-=20
-> importantly, the bit that indicates whether TLP was logged in Flit mode
-> or not And now we get to keep the pieces how to interpret the Log=20
-> Registers (relates to the follow up series). :-(
->=20
-> > > diff --git a/drivers/pci/pcie/tlp.c b/drivers/pci/pcie/tlp.c
-> > > index 65ac7b5d8a87..def9dd7b73e8 100644
-> > > --- a/drivers/pci/pcie/tlp.c
-> > > +++ b/drivers/pci/pcie/tlp.c
-> > > @@ -11,26 +11,65 @@
-> >=20
-> > >  /**
-> > >   * pcie_read_tlp_log - read TLP Header Log
-> > Maybe update this to read TLP Header and Prefix Logs
-> > >   * @dev: PCIe device
-> > >   * @where: PCI Config offset of TLP Header Log
-> > > + * @where2: PCI Config offset of TLP Prefix Log
-> >=20
-> > Is it worth giving it a more specific name than where2?
-> > Possibly renaming where as well!
->=20
-> Sure, why not.
-
-Hi again,
-
-After doing this rename, I rebased the Flit mode series on top of it and
-realized there's one small problem with naming where2. It will be=20
-overloaded between TLP Prefix Log (Non-Flit mode) and extended TLP Header=
-=20
-Log (DW5+) (Flit mode) so I'm not sure if there's really going to be a=20
-good name for it.
-
---=20
- i.
-
---8323328-1583029406-1734029318=:936--
 
