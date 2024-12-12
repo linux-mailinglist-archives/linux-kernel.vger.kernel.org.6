@@ -1,223 +1,207 @@
-Return-Path: <linux-kernel+bounces-443368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D589EEEE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:04:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCDAA9EEEEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 248751890F6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:57:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01B216CEC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FA92185A0;
-	Thu, 12 Dec 2024 15:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28509223E63;
+	Thu, 12 Dec 2024 15:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GhBa2UBz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="jdG5GLlq"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD1514A82
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C225223C49;
+	Thu, 12 Dec 2024 15:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018998; cv=none; b=Gi66LcSotUwWNQh0SCwfvQmwM/xyBtHXgkSjPGd9mUgmvKOFNI7Djsip1z+IS51boTux20HafojlZGiDgPBwrm7ZoXG30lYVioaLlm3C/manXyYBQvN8rvDjZuNVsJNO10hR+AUnquqqPYECo2r8zSyszbK50RI1ZHWHw+SYsSE=
+	t=1734019008; cv=none; b=Uyxir5MpmNAgP0lqQ7omCmrNUx0zz2bprd/xIx5II8CE1iVcxyGNAjDsHssOXKfwJm/1W453LKvT9FsmXSEJsWEwidmzYZVD7rgXhG14GH6leBTclJ4aDlwvrenhF35H1ETFw/IC0fjorEbtnh5+FaaqjfE1vKwp2KKH78vgwXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018998; c=relaxed/simple;
-	bh=3C4Yt5oeNRaxZqqS6cTEgAB9qT5fjNpBMGuaoHcL2gk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BAkwYuCQVeH1X9FD2ZpPhU5b2hpVoAaQoRPNH97eXdjLrFlocaoSEcQIzlvWXIJ19uHowU0Br9HRTVaQ+b1nYZAr+1LXAPDepnJUwElcMJhqUS/6p3Y431E4U8SrmAqYyjzEhLagTfSDmf2+KHHFwJ0SBZx7O6osQBuTvH+WYWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GhBa2UBz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC9kZeG030094
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:56:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	n3nqq3ds2PAwM46hFlxa1nrVPoI1aem45H25wLz0YZc=; b=GhBa2UBzDWDC9qNH
-	PyDoEL6SJBJmonT+danyYZyzmWIv2g9+Oo/nj1/YYmW+uI7BYqeFfTRuWP7DFLNu
-	1EeUurdeptMgCP4rArd/ZC9NK1R3thQS2F7WMjA/H4bYAw2641wGvHo8cydmoozp
-	nVd/x4kOVwncwO+7CMBvy01BGo41AegqEcvXR4eYTusFPCxILVOaHW1IkEVdsJOi
-	lTyYV63/7AWiovZ1aKIuD5AxSIOwyYPklN24lKrjuBmx8ZG4j79g6vwbaXW1Imox
-	jHv17FXzLoE+0bSt3YcyH9GiENQmlsZRsXdPWXsbXl/BSztn82I0IcZs+Nxm7h+2
-	QrcEDw==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fwgeh0x9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:56:35 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b667e652c4so4661785a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 07:56:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734018994; x=1734623794;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n3nqq3ds2PAwM46hFlxa1nrVPoI1aem45H25wLz0YZc=;
-        b=Kb9DW1BlT0ZqKeBu2LbwrMgmlFYdmrLJCGLKH9EARSiMa5D3haKof5x4QeFWQf8vIS
-         veDXmU01QMy8YJt9PTLrsUogzfzhBQ3cxEp5RM2S/TYmnPhTBwx6aCjtK7yrfiJ8zTbN
-         2Gol/F6Qqu4a/uExAAuEd/lPtyf4I9PAga34qUVNLBCPeug0ifVSHQCWQkZUBXew4XnU
-         V6x00bZn4YbNKOVy2RGklVlVEXDo+dn56yHH9sQ1jQuI8EWTGWrdZLEBd1cp5bN+Dkzy
-         th3K8t1L/TRjAwFbaH/k+lcyTXE97sN1pAPDUrTbJlimA7w640KUSel1/y/l3ys1GkAB
-         Rg2g==
-X-Forwarded-Encrypted: i=1; AJvYcCV2wZ1WG9h0UArLU1EvTtso7+3hnEHqwSpijayT7A7/CMvw9gj3KDjn5Z+YcBbUHrfUd9mZSFcxy3FGOQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB+A58UewrPyvpLqST5C8rzbsg8Z1tNO1bv4PXhAqhq8Gc5LGN
-	clTfBP4fIIJTBlNr5pmu21fS66eADjJHr4dy4LmaGOjIud91LVDfUQwsiwyu3ypiMpoECEMwBUn
-	jV5LlFMzpNERvVKvEt8sbxeSVUMnjwyTewlsZQeaUyNAKAyk+eaARrWJKgqprYpo=
-X-Gm-Gg: ASbGncs5tMNBUTXWwtfH+qfG1gvyBL9KmeHEpyomZVDGvf/NGtbFWFgBLbDz96KEATG
-	cEvgEMX+enAY1FSi3KJTiCYNLd53IQfxX7glJfFYC+JeD48kFnlbqdeKkCXN+MDMXI+nRz9hGEp
-	ZztZmxwOpw1rE4NdpSMZdJZbDq7X7yzpw1eOI9kMg11BdOFZWsqwRh3y6zWSVhSaHS2W9qZSJGu
-	swVGnqq5dShzg8n5KWGUkFgVwlpfYclSiH+H226T+wMsKfLhQlYB3qArI1kQwIRzFNfnQXrU4a9
-	/Kg24W+wc4hjh8G4r6RLYvIuv9Nvy02BQOs76A==
-X-Received: by 2002:a05:622a:199a:b0:467:5462:4a18 with SMTP id d75a77b69052e-467a13dbb86mr5797601cf.0.1734018994480;
-        Thu, 12 Dec 2024 07:56:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHrTTXRfbuepculS9NtXEOABh5da5aY3tMlxBBBwXa+/U6qTkKw/SXlHeil5FX0OuqtidmsCw==
-X-Received: by 2002:a05:622a:199a:b0:467:5462:4a18 with SMTP id d75a77b69052e-467a13dbb86mr5797071cf.0.1734018993424;
-        Thu, 12 Dec 2024 07:56:33 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa683f9a8fbsm626885266b.37.2024.12.12.07.56.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 07:56:32 -0800 (PST)
-Message-ID: <8ad1db59-9326-461a-ba8e-52891922eb3b@oss.qualcomm.com>
-Date: Thu, 12 Dec 2024 16:56:30 +0100
+	s=arc-20240116; t=1734019008; c=relaxed/simple;
+	bh=viU2z5ww8SGpckEb5uDkQ/hhkagL4yv7HyEWdggMAYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1F/n7xolBNarlbGEPCBEEZKVVwTqltGNO25cWAsV3x136NCpiztZR2hwDVkoYhtaG4jSoH6iKDw3wU2CmnJRO9upazRUz92HCGVG+jZfsu8sF8LeZiOQlhpVzICeoW+RInYzR17VU8ZQCTa4GJaTqHMbXLq5oFVH6TDIkyN9VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=jdG5GLlq; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=YFoc339tueLvMa87D9wphRrOL+Jf750+sCI4ejb2O2w=; b=jdG5GLlqv715NSU8j27fuWpLHW
+	kigi2RfcQvZ4u/uRVVfbY51jyao9dxnDsZj9o9m6Q7FDMQlxGaAuov2VQ+Ocx9QRKFXWyJU2h0Jej
+	MXEE7SoYtYUY4ehVa2o34aNo9sO7xCL7YMAeaigzSwQMYQIx4YGR32l0BQ4ltouwiDZlcsZ0dxk6d
+	XTOH0AOfcJZWkIqFIBTdo48ENeghKuw2m2euy1a4hdbD9b1YIC/knJzidbDcqDVQMMt/8g7yLY8MO
+	wWvDOyTCsXwV3EWJ4nVKXrVkxeRsPv9uIK94Kqe+VrVNwseCgg5sEMuc2XnSulQxO3GT/EEuaiLSE
+	w/dXEV9Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46612)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tLlYP-0005Rx-0u;
+	Thu, 12 Dec 2024 15:56:41 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tLlYM-0005RO-0B;
+	Thu, 12 Dec 2024 15:56:38 +0000
+Date: Thu, 12 Dec 2024 15:56:37 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next] net: dsa: sja1105: let phylink help with
+ the replay of link callbacks
+Message-ID: <Z1sHtZXuOvJe3Ruu@shell.armlinux.org.uk>
+References: <20241003140754.1229076-1-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/7] Add support to load QUP SE firmware from
-To: neil.armstrong@linaro.org, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>,
-        Viken Dadhaniya
- <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
-        andersson@kernel.org, konradybcio@kernel.org, johan+linaro@kernel.org,
-        dianders@chromium.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: =quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
- <9d5e5b8b-aeaf-4ec8-b34a-8edeaec20037@oss.qualcomm.com>
- <42b1c187-e924-4690-8338-4c694f3e16d9@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <42b1c187-e924-4690-8338-4c694f3e16d9@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: Zwp4u8ki6hqMKzT483TTXRmOZjRrhPEo
-X-Proofpoint-ORIG-GUID: Zwp4u8ki6hqMKzT483TTXRmOZjRrhPEo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 clxscore=1015
- impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120115
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003140754.1229076-1-vladimir.oltean@nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 9.12.2024 3:45 PM, neil.armstrong@linaro.org wrote:
-> On 05/12/2024 16:59, Konrad Dybcio wrote:
->> On 4.12.2024 4:03 PM, Viken Dadhaniya wrote:
->>> In Qualcomm SoCs, firmware loading for Serial Engines (SE) in the QUP
->>> hardware has traditionally been managed by TrustZone (TZ). This setup
->>> handled Serial Engines(SE) assignments and access control permissions,
->>> ensuring a high level of security but limiting flexibility and
->>> accessibility.
->>>   This limitation poses a significant challenge for developers who need more
->>> flexibility to enable any protocol on any of the SEs within the QUP
->>> hardware.
->>>   To address this, we are introducing a change that opens the firmware
->>> loading mechanism to the Linux environment. This enhancement increases
->>> flexibility and allows for more streamlined and efficient management. We
->>> can now handle SE assignments and access control permissions directly
->>> within Linux, eliminating the dependency on TZ.
->>>   We propose an alternative method for firmware loading and SE
->>> ownership/transfer mode configuration based on device tree configuration.
->>> This method does not rely on other execution environments, making it
->>> accessible to all developers.
->>>   For SEs used prior to the kernel, their firmware will be loaded by the
->>> respective image drivers (e.g., Debug UART, Secure or trusted SE).
->>> Additionally, the GSI firmware, which is common to all SEs per QUPV3 core,
->>> will not be loaded by Linux driver but TZ only. At the kernel level, only
->>> the SE protocol driver should load the respective protocol firmware.
->>
->> I think this is a great opportunity to rethink the SE node in general.
->>
->> Currently, for each supported protocol, we create a new node that
->> differs in (possibly) interconnects and pinctrl states. These are really
->> defined per-SE however and we can programmatically determine which ones
->> are relevant.
->>
->> With the growing number of protocols supported, we would have to add
->> 20+ nodes in some cases for each one of them. I think a good one would
->> look like:
->>
->> geni_se10: serial-engine@abcdef {
->>     compatible = "qcom,geni-se";
->>
->>     reg
->>     clocks
->>     power-domains
->>     interconnects
->>     ...
->>
->>     status
->>
->>     geni_se10_i2c: i2c {
->>         // i2c-controller.yaml
->>     };
->>
->>     geni_se10_spi: spi {
->>         // spi-controller.yaml
->>     };
->>
->>     ...
->> }
->>
->> Or maybe even get rid of the subnodes and restrict that to a single
->> se-protocol = <SE_PROTOCOL_xyz> property, if the bindings folks agree.
->>
->> We could extend the DMA APIs to dynamically determine the protocol
->> ID and get rid of hardcoding it.
->>
->> And then we could spawn an instance of the spi, i2c, etc. driver from
->> the GENI SE driver.
-> 
-> How/where would you add the peripheral subnodes ? A Serial Engine can only be a
-> single type on a board, but I agree we could have a "generic" serial engine node
-> that would be differenciated in the board DT with the protocol, and use the bindings
-> yaml checked to properly check the subnodes/properties depending on the protocol
-> property.
-> 
-> But we would still need all the serial nodes in the SoC DT.
+On Thu, Oct 03, 2024 at 05:07:53PM +0300, Vladimir Oltean wrote:
+> sja1105_static_config_reload() changes major settings in the switch and
+> it requires a reset. A use case is to change things like Qdiscs (but see
+> sja1105_reset_reasons[] for full list) while PTP synchronization is
+> running, and the servo loop must not exit the locked state (s2).
+> Therefore, stopping and restarting the phylink instances of all ports is
+> not desirable, because that also stops the phylib state machine, and
+> retriggers a seconds-long auto-negotiation process that breaks PTP.
 
-Correct, but NUM_PROTOCOLS times less. NUM_PROTOCOLS is 3 upstream as
-of right now, but it's much higher in general (which will trickle
-upstream one day or another).
+However:
 
-> 
-> This may make the software support harder, meaning we would either need to
-> have the same compatible probed in sequence from the i2c/spi/uart driver until
-> one matches the protocol, or have the qup driver spawn an auxiliary device.
+> ptp4l[54.552]: master offset          5 s2 freq    -931 path delay       764
+> ptp4l[55.551]: master offset         22 s2 freq    -913 path delay       764
+> ptp4l[56.551]: master offset         13 s2 freq    -915 path delay       765
+> ptp4l[57.552]: master offset          5 s2 freq    -919 path delay       765
+> ptp4l[58.553]: master offset         13 s2 freq    -910 path delay       765
+> ptp4l[59.553]: master offset         13 s2 freq    -906 path delay       765
+> ptp4l[60.553]: master offset          6 s2 freq    -909 path delay       765
+> ptp4l[61.553]: master offset          6 s2 freq    -907 path delay       765
+> ptp4l[62.553]: master offset          6 s2 freq    -906 path delay       765
+> ptp4l[63.553]: master offset         14 s2 freq    -896 path delay       765
+> $ ip link set br0 type bridge vlan_filtering 1
+> [   63.983283] sja1105 spi2.0 sw0p0: Link is Down
+> [   63.991913] sja1105 spi2.0: Link is Down
+> [   64.009784] sja1105 spi2.0: Reset switch and programmed static config. Reason: VLAN filtering
+> [   64.020217] sja1105 spi2.0 sw0p0: Link is Up - 1Gbps/Full - flow control off
+> [   64.030683] sja1105 spi2.0: Link is Up - 1Gbps/Full - flow control off
+> ptp4l[64.554]: master offset       7397 s2 freq   +6491 path delay       765
+> ptp4l[65.554]: master offset         38 s2 freq   +1352 path delay       765
+> ptp4l[66.554]: master offset      -2225 s2 freq    -900 path delay       764
+> ptp4l[67.555]: master offset      -2226 s2 freq   -1569 path delay       765
+> ptp4l[68.555]: master offset      -1553 s2 freq   -1563 path delay       765
+> ptp4l[69.555]: master offset       -865 s2 freq   -1341 path delay       765
+> ptp4l[70.555]: master offset       -401 s2 freq   -1137 path delay       765
+> ptp4l[71.556]: master offset       -145 s2 freq   -1001 path delay       765
 
-No, just read back the protocol id from hardware (if the SE is running), or
-from some DT property (if we need to load the FW ourselves).
+doesn't this change in offset and frequency indicate that the PTP clock
+was still disrupted, and needed to be re-synchronised? If it was
+unaffected, then I would have expected the offset and frequency to
+remain similar to before the reset happened.
 
-Then, based on that, we can call
+Nevertheless...
 
-platform_device_register_data(dev, "geni_i2c", ...) 
+> @@ -1551,7 +1552,8 @@ static void phylink_resolve(struct work_struct *w)
+>  	}
+>  
+>  	if (mac_config) {
+> -		if (link_state.interface != pl->link_config.interface) {
+> +		if (link_state.interface != pl->link_config.interface ||
+> +		    pl->force_major_config) {
+>  			/* The interface has changed, force the link down and
+>  			 * then reconfigure.
+>  			 */
+> @@ -1561,6 +1563,7 @@ static void phylink_resolve(struct work_struct *w)
+>  			}
+>  			phylink_major_config(pl, false, &link_state);
+>  			pl->link_config.interface = link_state.interface;
+> +			pl->force_major_config = false;
+>  		}
+>  	}
 
-(or similar)
+This will delay the major config until the link comes up, as mac_config
+only gets set true for fixed-link and PHY when the link is up. For
+inband mode, things get less certain, because mac_config will only be
+true if there is a PHY present and the PHY link was up. Otherwise,
+inband leaves mac_config false, and thus if force_major_config was
+true, that would persist indefinitely.
 
-> Honestly, not sure it would be much simpler...
+> +/**
+> + * phylink_replay_link_begin() - begin replay of link callbacks for driver
+> + *				 which loses state
+> + * @pl: a pointer to a &struct phylink returned from phylink_create()
+> + *
+> + * Helper for MAC drivers which may perform a destructive reset at runtime.
+> + * Both the own driver's mac_link_down() method is called, as well as the
+> + * pcs_link_down() method of the split PCS (if any).
+> + *
+> + * This is similar to phylink_stop(), except it does not alter the state of
+> + * the phylib PHY (it is assumed that it is not affected by the MAC destructive
+> + * reset).
+> + */
+> +void phylink_replay_link_begin(struct phylink *pl)
+> +{
+> +	ASSERT_RTNL();
+> +
+> +	phylink_run_resolve_and_disable(pl, PHYLINK_DISABLE_STOPPED);
 
-Not sure if I'm happy to maintain NUM_QUPs * NUM_SEs * NUM_PROTOCOLS DT nodes,
-per each platform separately..
+I would prefer this used a different disable flag, so that...
 
-Konrad
+> +}
+> +EXPORT_SYMBOL_GPL(phylink_replay_link_begin);
+> +
+> +/**
+> + * phylink_replay_link_end() - end replay of link callbacks for driver
+> + *			       which lost state
+> + * @pl: a pointer to a &struct phylink returned from phylink_create()
+> + *
+> + * Helper for MAC drivers which may perform a destructive reset at runtime.
+> + * Both the own driver's mac_config() and mac_link_up() methods, as well as the
+> + * pcs_config() and pcs_link_up() method of the split PCS (if any), are called.
+> + *
+> + * This is similar to phylink_start(), except it does not alter the state of
+> + * the phylib PHY.
+> + *
+> + * One must call this method only within the same rtnl_lock() critical section
+> + * as a previous phylink_replay_link_start().
+> + */
+> +void phylink_replay_link_end(struct phylink *pl)
+> +{
+> +	ASSERT_RTNL();
+> +
+> +	pl->force_major_config = true;
+> +	phylink_enable_and_run_resolve(pl, PHYLINK_DISABLE_STOPPED);
+
+this can check that phylink_replay_link_begin() was previously called
+to catch programming errors. There shouldn't be any conflict with
+phylink_start()/phylink_stop() since the RTNL is held, but I think
+its still worth checking that phylink_replay_link_begin() was
+indeed called previously.
+
+Other than those points, I think for sja1105 this is a better approach,
+and as it's lightweight in phylink, I don't think having this will add
+much maintenance burden, so I'm happy with the approach.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
