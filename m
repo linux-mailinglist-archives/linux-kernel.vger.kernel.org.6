@@ -1,134 +1,250 @@
-Return-Path: <linux-kernel+bounces-442732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610D99EE0E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:09:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88119EE0E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23CFB18895AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3BEB168B16
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC05520CCE7;
-	Thu, 12 Dec 2024 08:09:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4BB20C004
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4A320B7E6;
+	Thu, 12 Dec 2024 08:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SNlNKtzi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tPEtKOvV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="28i2Gvu3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BocMPKWP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02F120B7EA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733990963; cv=none; b=HsQLHlAK+/IjfazntnSgTqNzblTy8gRudTUAvnM8TiZpRMLykZ56qCBqu8lcR87SgpDy7UVv/O4aRWbNrpulQmprU/Vtu6XHOtFFMNrhd91QZK6EMns/7f91YOzVnXFYzZXeVwpGMxAe4c4FQwXXe83SURBEnDhuHpn28fcVGWA=
+	t=1733990970; cv=none; b=kOEgZawqR7LxwHm0jacv30USnePP4pWhRuDg/li/aQ3vIz2xwJnuOwDR/is3E8A5VG9dgzxdWKMK829D9xHFfGM4wzobdRMTVc5Dcv60ROx1cFV6b+mXEIMNTRqG/LKfdPx+y9KtxOMT4I7SXe37GUBOPTk8YohiR8k4Wpykfe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733990963; c=relaxed/simple;
-	bh=+mMtbs8cmKrUlUmSEk+yek9cpP8G0N2EYmh4zIg2Yv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C7MNNFG6nb2/MLZCqnNa0fZs1mXvB2x0l13GHrIdtFryITac2UYdnjdRXEWhQhlo0tRHuZwAqWYVaf7g9FvJ9it4Ql48wXTdQCbGbJLI6m6/mDg+gW1oQXbD+cFZUaoWfXrUYS9/+JifMqZkxzIShJlplww8hPNeyBSg9wZYTMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA8771758;
-	Thu, 12 Dec 2024 00:09:41 -0800 (PST)
-Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C0E23F5A1;
-	Thu, 12 Dec 2024 00:09:12 -0800 (PST)
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	bp@alien8.de,
-	dan.j.williams@intel.com,
-	dave.hansen@linux.intel.com,
-	david@redhat.com,
-	jane.chu@oracle.com,
-	osalvador@suse.de,
-	tglx@linutronix.de
-Subject: [PATCH v2 2/2] x86/mm: Remove unnecessary include in set_memory.h
-Date: Thu, 12 Dec 2024 08:09:04 +0000
-Message-ID: <20241212080904.2089632-3-kevin.brodsky@arm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241212080904.2089632-1-kevin.brodsky@arm.com>
-References: <20241212080904.2089632-1-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1733990970; c=relaxed/simple;
+	bh=xZZLTsPX8WrlmydO0wZSZjbSiiPKvOPs0GgC+En9wwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AgWHIBDVlXj7MTQY/XQcDoRrjDtUPeTZmSrym03N6YEHlXQ0ds/4qfocMyB/YMJ7U+L0PW6nnhlsrXeotjJrvBzDh2Oa/jIZxP12sPTqlXlnYFNZi1P3IavUhphcs39X9VVmL2JCf1Qr8PvlwMhyGMcSTOPCJ7RSG0QaWcllldY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SNlNKtzi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tPEtKOvV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=28i2Gvu3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BocMPKWP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 125FF1F6E6;
+	Thu, 12 Dec 2024 08:09:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733990965; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7AJvRSTmRRscys3LOfJ82c+7pL7bTjjxmrmQRVhQxag=;
+	b=SNlNKtziCzqGzIy3F5P1yuaQhIcZu57FkHvSXqPWx52+MWFiibKoEDEi7iPi+jGbXgcqIQ
+	UUXbsTAdZpmeaZmIzynQORFa4ABQQITZDSBMg5u7TSjkjAr9NdmFJXqqO8knhivkSjL59g
+	gpQJo/jMkt1VnV/mvjmCyghkjIGX1KI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733990965;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7AJvRSTmRRscys3LOfJ82c+7pL7bTjjxmrmQRVhQxag=;
+	b=tPEtKOvV3rhKaOtPQl5LN796VVVWlY0pif7ualHj4Nc0JcWGmtksYTAjgSbqI52aMs0kMo
+	0PIkVyjevuZL6pDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=28i2Gvu3;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=BocMPKWP
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733990964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7AJvRSTmRRscys3LOfJ82c+7pL7bTjjxmrmQRVhQxag=;
+	b=28i2Gvu3K+VOo/53u2uAqNc8VzBhMn4xzHbHOyI3Jt6zHmzMOiAKJrbUOuG7g0Sq/w02tm
+	Kp+2HcAFOrYDZHnfnPQRKnYi1iYxIHKGlkjs3CMVhx+tXtTHIVnpFOesOvzC1VRJIWCcP9
+	tv4uxgCIG3uQ0PoUvF3/TaKsZo4dSrw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733990964;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7AJvRSTmRRscys3LOfJ82c+7pL7bTjjxmrmQRVhQxag=;
+	b=BocMPKWPUtAh0xM8k1Tzj+Yo4zlry9YCtwb3wfV8n8xB6PFg9r4Ix1otIt5fVEnI8srt+l
+	x28U+opYoPEGoWCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F011313508;
+	Thu, 12 Dec 2024 08:09:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AuwEOjOaWmeKdAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 12 Dec 2024 08:09:23 +0000
+Message-ID: <31245905-9704-4ab3-931f-4c4aa6c05ac4@suse.cz>
+Date: Thu, 12 Dec 2024 09:09:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: update MEMORY MAPPING section
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn
+ <jannh@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ David Hildenbrand <david@redhat.com>
+References: <20241211105315.21756-1-lorenzo.stoakes@oracle.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20241211105315.21756-1-lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 125FF1F6E6
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Commit 03b122da74b2 ("x86/sgx: Hook arch_memory_failure() into
-mainline code") included <linux/mm.h> in asm/set_memory.h to provide
-some helper. However commit b3fdf9398a16 ("x86/mce: relocate
-set{clear}_mce_nospec() functions") moved the inline definitions
-someplace else, and now set_memory.h just declares a bunch of
-functions.
+On 12/11/24 11:53, Lorenzo Stoakes wrote:
+> Update the MEMORY MAPPING section to contain VMA logic as it makes no
+> sense to have these two sections separate.
+> 
+> Additionally, add files which permit changes to the attributes and/or
+> ranges spanned by memory mappings, in essence anything which might alter
+> the output of /proc/$pid/[s]maps.
+> 
+> This is necessarily fuzzy, as there is not quite as good separation of
+> concerns as we would ideally like in the kernel. However each of these
+> files interacts with the VMA and memory mapping logic in such a way as to
+> be inseparatable from it, and it is important that they are maintained in
+> conjunction with it.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-No need for the whole linux/mm.h for declaring functions; just
-remove that include. This helps avoid circular dependency headaches
-(e.g. if linux/mm.h ends up including <linux/set_memory.h>).
+Yeah having MEMORY MAPPING and VMA separate but with same people wasn't
+necessary. MEMORY MAPPING is IMHO the correct superset and the newly added
+files there make sense to me.
 
-This change requires a couple of include fixups not to break the
-build:
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-* asm/smp.h: including <asm/thread_info.h> directly relies on
-  <linux/thread_info.h> having already been included, because the
-  former needs the BAD_STACK/NOT_STACK constants defined in the
-  latter. This is no longer the case when asm/smp.h is included from
-  some driver file - just include <linux/thread_info.h> to stay out
-  of trouble.
-
-* sev-guest.c relies on <asm/set_memory.h> including <linux/mm.h>,
-  so we just need to make that include explicit.
-
-Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
----
- arch/x86/include/asm/set_memory.h       | 1 -
- arch/x86/include/asm/smp.h              | 2 +-
- drivers/virt/coco/sev-guest/sev-guest.c | 1 +
- 3 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index 6586d533fe3a..8d9f1c9aaa4c 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -2,7 +2,6 @@
- #ifndef _ASM_X86_SET_MEMORY_H
- #define _ASM_X86_SET_MEMORY_H
- 
--#include <linux/mm.h>
- #include <asm/page.h>
- #include <asm-generic/set_memory.h>
- 
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index ca073f40698f..2ca1da5f16d9 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -3,10 +3,10 @@
- #define _ASM_X86_SMP_H
- #ifndef __ASSEMBLY__
- #include <linux/cpumask.h>
-+#include <linux/thread_info.h>
- 
- #include <asm/cpumask.h>
- #include <asm/current.h>
--#include <asm/thread_info.h>
- 
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
- DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
-diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
-index b699771be029..e134bee818fa 100644
---- a/drivers/virt/coco/sev-guest/sev-guest.c
-+++ b/drivers/virt/coco/sev-guest/sev-guest.c
-@@ -23,6 +23,7 @@
- #include <linux/cleanup.h>
- #include <linux/uuid.h>
- #include <linux/configfs.h>
-+#include <linux/mm.h>
- #include <uapi/linux/sev-guest.h>
- #include <uapi/linux/psp-sev.h>
- 
--- 
-2.47.0
+> ---
+>  MAINTAINERS | 23 ++++++++---------------
+>  1 file changed, 8 insertions(+), 15 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 68d825a4c69c..fb91389addd7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15071,7 +15071,15 @@ L:	linux-mm@kvack.org
+>  S:	Maintained
+>  W:	http://www.linux-mm.org
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> +F:	mm/mlock.c
+>  F:	mm/mmap.c
+> +F:	mm/mprotect.c
+> +F:	mm/mremap.c
+> +F:	mm/mseal.c
+> +F:	mm/vma.c
+> +F:	mm/vma.h
+> +F:	mm/vma_internal.h
+> +F:	tools/testing/vma/
+>  
+>  MEMORY TECHNOLOGY DEVICES (MTD)
+>  M:	Miquel Raynal <miquel.raynal@bootlin.com>
+> @@ -25019,21 +25027,6 @@ F:	include/uapi/linux/vsockmon.h
+>  F:	net/vmw_vsock/
+>  F:	tools/testing/vsock/
+>  
+> -VMA
+> -M:	Andrew Morton <akpm@linux-foundation.org>
+> -M:	Liam R. Howlett <Liam.Howlett@oracle.com>
+> -M:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> -R:	Vlastimil Babka <vbabka@suse.cz>
+> -R:	Jann Horn <jannh@google.com>
+> -L:	linux-mm@kvack.org
+> -S:	Maintained
+> -W:	https://www.linux-mm.org
+> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> -F:	mm/vma.c
+> -F:	mm/vma.h
+> -F:	mm/vma_internal.h
+> -F:	tools/testing/vma/
+> -
+>  VMALLOC
+>  M:	Andrew Morton <akpm@linux-foundation.org>
+>  R:	Uladzislau Rezki <urezki@gmail.com>
 
 
