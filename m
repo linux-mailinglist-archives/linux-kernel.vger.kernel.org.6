@@ -1,97 +1,157 @@
-Return-Path: <linux-kernel+bounces-442820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E5359EE269
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:14:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 202D69EE253
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B16E1688A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:14:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1538D167D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7AC20E33F;
-	Thu, 12 Dec 2024 09:14:31 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4090720E706;
+	Thu, 12 Dec 2024 09:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cEo5Vq8s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9993220E00A;
-	Thu, 12 Dec 2024 09:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D705620DD62;
+	Thu, 12 Dec 2024 09:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733994871; cv=none; b=plmgh+rBpsWOngIRNIJIddYgbU53OU8AK/daxLkY4AQU+U6ST5110fh/PJcxbusjGvxuhUKRMGpuAzWXOGuo+nGDey1qtWzyZXaQwEK0ov9gQ5X3zYI+xkP+/zdvbZcneZ/eBqaq90uj+5NlGwMvaYaqfSyCj4GpE8o3Pf73Q2Y=
+	t=1733994716; cv=none; b=h6mt52o1XcjARfwcqycQoLRD2GiXmVpRRonwRGJuascJU0pmnop9124aZic8X4ffFfwfTifJIcGoEAIff5fFCI0obmHRnClGr63qCKuhjUnrHCd8OLTG0SEr2QbM4Sy8SdJOwIhrDhSuhb63VlxhZDJjuGISBbIbOsjtGrfNXP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733994871; c=relaxed/simple;
-	bh=Ni5+y7mYS2eNtxGPryySzIT+0eLJilUawatrYEIdxZ4=;
+	s=arc-20240116; t=1733994716; c=relaxed/simple;
+	bh=kzBsT3F4zajJH9Dt3PQh+yS4Aot+6eJwHXS8DSaNzEE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sVN5/ORsWLCj62njuX0F3zXHScYs7UROhMfVPVBbY96VaoBsl4rRTAf6kICrhmp8UGRz/VnGUE13iEqTglqdfdrvHUEZopsZIuZoyJ7RIXR1Kh2MsiOObTIwgxu2DVNHge0UbTxg20rTI8tghHVp2ofFVyBLnFzT8qKminArdeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id C79BA3000A463;
-	Thu, 12 Dec 2024 10:08:30 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id AF9083CFE40; Thu, 12 Dec 2024 10:08:30 +0100 (CET)
-Date: Thu, 12 Dec 2024 10:08:30 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Niklas Schnelle <niks@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Wilczy??ski <kw@linux.com>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
- 2.5 GT/s
-Message-ID: <Z1qoDmF6urJDN5jh@wunner.de>
-References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
- <Z1gSZCdv3fwnRRNk@wunner.de>
- <70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
- <Z1lF468L8c84QJkD@wunner.de>
- <dc6e677f-4c19-dd25-8878-8eae9154cff4@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tvBlOE1JkGbsaEQv21ognTi6cA2IGIVfUbJkbi0PgtChHj+Z78K1x4fGUWPtn0r/JWAYO/5V9h3BFpzyLQ2c+4C8tNEh7fZXGPoHPEs1G8SRSRzwQjN2A5SmiF2RxONgvKwCl25cpZpuyRlEkzSTqlrZAXvpZ0yEWGFnK3Dzxu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cEo5Vq8s; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733994715; x=1765530715;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kzBsT3F4zajJH9Dt3PQh+yS4Aot+6eJwHXS8DSaNzEE=;
+  b=cEo5Vq8sylL9lgEURRREfwa7XufcPhQ/iuHF/PvuhqCJNIjp6DBEqWBx
+   0TUj1/c7I/sEYkb0OS6z8cL1PiCmlrddmO8SMGXnQA5o8rm76ZZ/N8cbq
+   PW2okKTYROU6YADoo4mEfh5rAeSIK7KXVlmehK2PIUy8l98UGEvpnYE5W
+   VxcyYTSv/2J/49jvpbplszUiHVeYxHpPUAcxz1GKapYbNUBKOuH8VYqNK
+   U35oDtOvvk51j2xehHsdJiOpUa9dOJNL5XVmYuBt2ZDr4Nbz45ewJFvsh
+   aQUtkemX0de6NOCQpDr5q2cU1smW4iYR2SfG0EFQxRf7HqiINPpHihyHA
+   Q==;
+X-CSE-ConnectionGUID: fkedDgpvRlO/JlancfuGaw==
+X-CSE-MsgGUID: ht0e2ozUQMKgrKbS7AeaCA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="21994116"
+X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
+   d="scan'208";a="21994116"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 01:11:54 -0800
+X-CSE-ConnectionGUID: uq2AS8WyRZyEF+62XFXmDg==
+X-CSE-MsgGUID: tvTJ04EgSRmLHfZCdFa8dQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
+   d="scan'208";a="96256863"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 01:11:51 -0800
+Date: Thu, 12 Dec 2024 10:08:49 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com
+Subject: Re: [PATCH net-next v1] net: stmmac: Drop redundant dwxgmac_tc_ops
+ variable
+Message-ID: <Z1qoITwRF9QLkZq/@mev-dev.igk.intel.com>
+References: <20241212033325.282817-1-0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dc6e677f-4c19-dd25-8878-8eae9154cff4@linux.intel.com>
+In-Reply-To: <20241212033325.282817-1-0x1207@gmail.com>
 
-On Wed, Dec 11, 2024 at 03:07:38PM +0200, Ilpo Järvinen wrote:
-> I recall taking note of this inconsistency in some lspci dumps I've from 
-> Mika (but forgot it until now). So I'm afraid it might be more widespread 
-> than just TR.
+On Thu, Dec 12, 2024 at 11:33:25AM +0800, Furong Xu wrote:
+> dwmac510_tc_ops and dwxgmac_tc_ops are completely identical,
+> keep dwmac510_tc_ops to provide better backward compatibility.
+> 
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/hwif.c      |  4 ++--
+>  drivers/net/ethernet/stmicro/stmmac/hwif.h      |  1 -
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 11 -----------
+>  3 files changed, 2 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> index 4bd79de2e222..31bdbab9a46c 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> @@ -267,7 +267,7 @@ static const struct stmmac_hwif_entry {
+>  		.hwtimestamp = &stmmac_ptp,
+>  		.ptp = &stmmac_ptp_clock_ops,
+>  		.mode = NULL,
+> -		.tc = &dwxgmac_tc_ops,
+> +		.tc = &dwmac510_tc_ops,
+>  		.mmc = &dwxgmac_mmc_ops,
+>  		.est = &dwmac510_est_ops,
+>  		.setup = dwxgmac2_setup,
+> @@ -290,7 +290,7 @@ static const struct stmmac_hwif_entry {
+>  		.hwtimestamp = &stmmac_ptp,
+>  		.ptp = &stmmac_ptp_clock_ops,
+>  		.mode = NULL,
+> -		.tc = &dwxgmac_tc_ops,
+> +		.tc = &dwmac510_tc_ops,
+>  		.mmc = &dwxgmac_mmc_ops,
+>  		.est = &dwmac510_est_ops,
+>  		.setup = dwxlgmac2_setup,
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> index e428c82b7d31..2f7295b6c1c5 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> @@ -685,7 +685,6 @@ extern const struct stmmac_dma_ops dwmac410_dma_ops;
+>  extern const struct stmmac_ops dwmac510_ops;
+>  extern const struct stmmac_tc_ops dwmac4_tc_ops;
+>  extern const struct stmmac_tc_ops dwmac510_tc_ops;
+> -extern const struct stmmac_tc_ops dwxgmac_tc_ops;
+>  
+>  #define GMAC_VERSION		0x00000020	/* GMAC CORE Version */
+>  #define GMAC4_VERSION		0x00000110	/* GMAC4+ CORE Version */
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> index 6a79e6a111ed..694d6ee14381 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> @@ -1284,14 +1284,3 @@ const struct stmmac_tc_ops dwmac510_tc_ops = {
+>  	.query_caps = tc_query_caps,
+>  	.setup_mqprio = tc_setup_dwmac510_mqprio,
+>  };
+> -
+> -const struct stmmac_tc_ops dwxgmac_tc_ops = {
+> -	.init = tc_init,
+> -	.setup_cls_u32 = tc_setup_cls_u32,
+> -	.setup_cbs = tc_setup_cbs,
+> -	.setup_cls = tc_setup_cls,
+> -	.setup_taprio = tc_setup_taprio,
+> -	.setup_etf = tc_setup_etf,
+> -	.query_caps = tc_query_caps,
+> -	.setup_mqprio = tc_setup_dwmac510_mqprio,
+> -};
 
-Oh you did?  Interesting.  After re-reading the spec I'm convinced now
-that we're doing this wrong and that we should honor the Max Link Speed
-instead of blindly deeming all set bits in the Link Capabilities 2
-Register as supported speeds:
+LGTM
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-https://lore.kernel.org/r/e3386d62a766be6d0ef7138a001dabfe563cdff8.1733991971.git.lukas@wunner.de/
-
-@Niklas, could you test if this is sufficient to avoid the issue?
-Or do we still need to stop instantiating the bandwidth controller
-if more than one speed is supported?
-
-Thanks!
-
-Lukas
+Thanks
+> -- 
+> 2.34.1
 
