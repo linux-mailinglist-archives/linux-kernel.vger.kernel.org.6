@@ -1,97 +1,116 @@
-Return-Path: <linux-kernel+bounces-443426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88019EF083
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:28:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 139429EF004
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:23:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19B516B02D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:18:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 479351888F4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA7F231A4A;
-	Thu, 12 Dec 2024 16:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B37231A27;
+	Thu, 12 Dec 2024 16:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EbM6v0Qy"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TLW5LTOp"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF36223E61;
-	Thu, 12 Dec 2024 16:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F12309BA;
+	Thu, 12 Dec 2024 16:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734019555; cv=none; b=e3yFP+atYz17ByxpeeVCxZKO05ZKs26vDLbwHWa3YbdrzI8IJkVbMDHzuMpLEI4CZMM216qBHFLcnGJnU32+CHu4IczXX/NdBNwVmgBZdKjhOQ+8A1aSZMSvKXIYt1QtKVRKuj8jxSX23wA8n5E46sTcDEZmvCI5NKJnATkZloc=
+	t=1734019541; cv=none; b=OqUSLDLT/yRvD3TugdZ4g7Fknxpbx7LJo9bKFVXP8bWRfUQXoBY1vZL36XsGREnvOKmpVM/wqLhfroD1fxY0DbMhtodCT0TDB+DN9bzSSF8Aqlsi0hxMdI1/7UB0rIU2G3yIhV2A0cOIJiZ7HVmzYTdy1SPlFztnUhaytG/M4Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734019555; c=relaxed/simple;
-	bh=1thxMyObyFIfuoA6BeWJHGda6gjxV1E3JNYjUL+Psis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m6OWC+YlDS6DOMIw6ub9XMmgg3iemTfioiO5Qsdu1QSB6CkXs+6jpU8BQybi+rzMl3iNXb+NSbFEpv6m8/Knlw4+L01njlYMnYQoVsa71VNHRYuBoIRTKEi6WvMLak05beifVQxFxju65ydXgjutlRXRrgW7hpRScTUk0ALORD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EbM6v0Qy; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30036310158so6180821fa.0;
-        Thu, 12 Dec 2024 08:05:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734019551; x=1734624351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1thxMyObyFIfuoA6BeWJHGda6gjxV1E3JNYjUL+Psis=;
-        b=EbM6v0QyQUN9H1ndc84M/LxqukIG3zQ9p5lSTERzL6ugRUYxb2uMH0oMuDgfrbGcUx
-         G4CIGFeZGc1pE+V9JXOKWcVQwXa57Z1TJ3oxPMZNdTraeJbYAguLi6q3XDYUjZfnqYoE
-         ouQUTium5h4l4WDgAyNs9z4aiXoVhmVRRa1xClvh9vKnc3q148rS/BXOATEl+3mHJ9fo
-         u3tv+D+kRufS3n8dwvWvIe2k6+K3PVBCu3E4lUtXXyVVqqqELgt+C+6jScXnwDgfdTmi
-         lS8zJwX+7JR1tR6s8xbiW1esnLM6AT173wLCWVJz/6f7Trp85NTn6Wha+3pwQllMvNgC
-         zqWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734019551; x=1734624351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1thxMyObyFIfuoA6BeWJHGda6gjxV1E3JNYjUL+Psis=;
-        b=VSoznTRMsKuBNqi3ktoQwK3QSsnMUGacUT/uqTuYBdGfr+lDnIRDzK1uzUt0P9R4IK
-         LvYtNvENVacvo7E3cUEnWpGJA0W7hl1WaQSsONyEiVsS09ERNP1v08ILdlynTY82AFg4
-         MqkSSNCp9Ft9gozBNhjAf8SqOvOsCz2JBKSjeNxRKOanir1MS4beXopLYDw90YV7F3+5
-         f/9LkgWVorUVgwkvmVBiaoe8t/cVoQti2kGAsAQs/LgQWWCplmg0laB2OiPT68h6Loco
-         eZoomHtxM0wO2Ck+XrdcT1AO644xq11orO5E13Ihsm6JNC3XF1qZoMkQ9jmHgItrJVJL
-         OLcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnDAh2ACe27SYphz/48CGtREcD5DFXQ7gPXdlGgojF+9ISGVUWPu0ZnkBDW2Tmon83Zno7/unqDbQG8Go=@vger.kernel.org, AJvYcCXIk0k9semtnCjbkQaaikGiuGYpq3jyk0y+kdwB0yg3zyvtjqpMWsdvDdex/blPqjVznbGBLWRmhfT+wtSgRoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuEsg6LJJgCIdDc886DqTrYrqJ2fUa8HCg4tYGyrtMoozhLWl+
-	VaRAatGQqDdjfcr1LksTHbNfS5d3QXgRfpPvA/xvfGvGg9QTw12QqshN15SGSkspSErHzf/qCH9
-	wQ8vpqn2ptyCmPwHYez7dlZKNw2I=
-X-Gm-Gg: ASbGncuZcdm6KBJifLUNDRiAnz72UwKPYcaUjGBNFtzHFPID0uy673jcoX4qy6PdHwg
-	ezql4VF+F0zlBuQLRBdGgnVk8TFs73K1SP7bgnz7DcDVbvp9bse1lFQ==
-X-Google-Smtp-Source: AGHT+IFE+6Rc5RJc5XJHUWw6nvGAlQm3hnhguaQKwSThJU1hjnm5dxe+wawq7AtB56EJJQ9yA1Wir1mnVO9DVrRYBeM=
-X-Received: by 2002:a2e:a7ca:0:b0:2ff:c349:8d08 with SMTP id
- 38308e7fff4ca-30251d08635mr2952721fa.8.1734019551077; Thu, 12 Dec 2024
- 08:05:51 -0800 (PST)
+	s=arc-20240116; t=1734019541; c=relaxed/simple;
+	bh=J1scdp67Yf0dN731s+TeIiFUh/val29sz3XZEjfTzxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=umfPNqSsXEu46oNQmTRzNWFz+bqWuxApw9yTpCpWbwZLKkx4PNnul9YKNNGfU/e7hzg4djSkkzE1tv4CmDz5Q8fZtv+V6oNyByOU5Jc1V5z6DFLk/Mu2E9i+RedmztKiPXOhdLsK/2W13GM6KLxA0dj1iGv0L1OyPO3Q3amG6wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TLW5LTOp; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734019537;
+	bh=J1scdp67Yf0dN731s+TeIiFUh/val29sz3XZEjfTzxU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TLW5LTOpDIKHws5iJ9xFtxE1SpY4vug6sm8YNGS9UMeD/RRqKXzTAAtKX20365AJh
+	 kILazhLvIPfBGbHfUhkqqWlYRkMyX87RVJY6maxF5yVxSg0qzxMMnqywXWBqdGdtMM
+	 L1wKaWDqLDWhCzJ9zS7wvrLU48dloqzWKKFjqumNdiNkF1nvBEAK4BjAoWtvXB2HuY
+	 SZFeZAfjqFp8elCWJTxyvNMYMd89BIcZRkkrYwl3mSC6m1xXhK3QhA2nMHECjSTJev
+	 TFgFupVDtvA6s9cAe6sZ0iFiJ3oo0P3EaGbrhYcgCqrzramOKQHrjReMSuwLpg09Ah
+	 Cqt0DYXeNJ9AA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C079417E37A4;
+	Thu, 12 Dec 2024 17:05:36 +0100 (CET)
+Message-ID: <6710abd1-128d-48ff-84a1-880053fd9e84@collabora.com>
+Date: Thu, 12 Dec 2024 17:05:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105-b4-dylib-host-macos-v6-1-4e66515e6630@gmail.com> <CAJ-ks9nbwwtpO6TX3zM2Embag_7RQMfA0iBhtS5TS44wx1iOQQ@mail.gmail.com>
-In-Reply-To: <CAJ-ks9nbwwtpO6TX3zM2Embag_7RQMfA0iBhtS5TS44wx1iOQQ@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 12 Dec 2024 11:05:15 -0500
-Message-ID: <CAJ-ks9mu8igfXUNhitctB4Vp0WsqPwsoe3Wmai4DCjmBKv3FOQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v6] rust: use host dylib naming convention
-To: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dts: arm64: mediatek: mt8188: Update OVL compatible
+ from MT8183 to MT8195
+To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
+ Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ Fei Shao <fshao@chromium.org>
+References: <20241212153344.27408-1-jason-jh.lin@mediatek.com>
+ <20241212153344.27408-3-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241212153344.27408-3-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Ping! I'd really appreciate a review.
+Il 12/12/24 16:33, Jason-JH.Lin ha scritto:
+> The OVL hardware capabilities have changed starting from MT8195,
+> making the MT8183 compatible no longer applicable.
+> Therefore, it is necessary to update the OVL compatible from MT8183 to
+> MT8195.
+> 
+> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
 
-+Ma=C3=ADra, you mentioned you were considering using this to build on macO=
-S.
+Jason, just so you know - I have patches here adding DSC and merge components of
+VDO0, other than all MDP3 components.
+
+Those are almost ready to send, I only need to finish some testing before ;-)
+
+For this one, anyway:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8188.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8188.dtsi b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+> index faccc7f16259..23ec3ff6cad9 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8188.dtsi
+> @@ -2488,7 +2488,7 @@ jpeg_decoder: jpeg-decoder@1a040000 {
+>   		};
+>   
+>   		ovl0: ovl@1c000000 {
+> -			compatible = "mediatek,mt8188-disp-ovl", "mediatek,mt8183-disp-ovl";
+> +			compatible = "mediatek,mt8188-disp-ovl", "mediatek,mt8195-disp-ovl";
+>   			reg = <0 0x1c000000 0 0x1000>;
+>   			clocks = <&vdosys0 CLK_VDO0_DISP_OVL0>;
+>   			interrupts = <GIC_SPI 636 IRQ_TYPE_LEVEL_HIGH 0>;
+
+
 
