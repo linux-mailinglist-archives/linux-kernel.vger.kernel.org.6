@@ -1,64 +1,61 @@
-Return-Path: <linux-kernel+bounces-443524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960649EF566
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:16:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A45D9EF50A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1789B189E7C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:59:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D6F179ADC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E23C231A2D;
-	Thu, 12 Dec 2024 16:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huV5/2n1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B93222D66;
-	Thu, 12 Dec 2024 16:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01032336B6;
+	Thu, 12 Dec 2024 16:54:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F675231A42;
+	Thu, 12 Dec 2024 16:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734022316; cv=none; b=BR3gzYK8QHBQUyFKPkL61wzc1ehUam8ft7+LDa3UYwdg5FtN4E/wcxwCjOlwKxdMGX9ErED5R0+pW/5rL6FMETm8DgKPeZj4WHRYksEzWiWzOZ80VBoSh6RkMYNAhkVohpChWpFEl/DH/gLdFxTaP735OiuE6ielmYKbz+q43CM=
+	t=1734022492; cv=none; b=Y4WJs7O3ZLuvdllBSsqJvq8/bLvKKaeIyemUnPUpASlr7U26RjOVVIpHEB66apIBqnYoqKrSYqaoNXstQSRRs140vhmt+Z7Qm1PydDhtfyjGKcldZKVbWG8q6DhYRRHRxcJPAHIWlU8C26YrYiOQFW4DUVpEOf4PAz18hKYz7Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734022316; c=relaxed/simple;
-	bh=woLv4+bBa3B3N1pK5meg8QxoAoisLOlR0KcLNcIPoSs=;
+	s=arc-20240116; t=1734022492; c=relaxed/simple;
+	bh=yiWv2LJR/WooY+cewsBGG/BFAypWaPMtuTHxogaMDkE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tMnJS8d1S3fX14hMUBfPXSBuzOBfqMvZE/zvSrwCSNuS7ywFFFri5+i6XeWuxYwJDwC13PAGY5qCFwjL4yWIQIBh2/3cGCUpwbXWzfLFymQX72OpisXMNalToDAqz4mbjzr2d9iZ2OrJw+Y2/LSNfzMTY7vj5HDRGY9Q0G9g4TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huV5/2n1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6653C4CECE;
-	Thu, 12 Dec 2024 16:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734022316;
-	bh=woLv4+bBa3B3N1pK5meg8QxoAoisLOlR0KcLNcIPoSs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=huV5/2n1xrfwVgXexkLe+nnYsmZZAKGoF61GTT8T8BrsBIj5Jzgw0pNwxwd89+ivr
-	 d6x4ybi/TFdwd4SzBnO0aoxHfu/ZJzKsKAAbVLSwB4ITtRxredF9T5/kxBv2XsrjB0
-	 KdqzlOPkPYKf7RBB98XGMACnoJ2kBz481YmlgmugEyeoCgjmtusJEBwTjyj2qnFvdK
-	 LLZjalCDCFvn8AtcYQRAAMQnl0R/b3y3ewHSnkZAmNzHgg+ztth9m+sXeCiBR0xzWW
-	 4MeRVGu+JhxY2bGGEU0feqxokU9rHxv6y8L7LJLWLnnOjXANvcQsjM06/QhWu+wDr4
-	 R8Zf9TKd5WvWg==
-Date: Thu, 12 Dec 2024 10:51:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] rust: platform: add Io support
-Message-ID: <20241212165154.GA2473511-robh@kernel.org>
-References: <20241211-topic-panthor-rs-platform_io_support-v3-1-08ba707e5e3b@collabora.com>
- <Z1nbsNyOBvFTL1-6@pollux.localdomain>
- <A3F6B6C6-33B3-4522-8240-15421F240D3A@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jokihKjwXhhlQGavdh1SNSha48T1Czj6IMzD7EdzN45IQosKUtbt6ZZDkU6ZAvCu2tdOZePtxHKAe4P0trbg9biNJEll+a/+OrUoCZRKnpfSMRruucAXSc5LYGatrELh1VwIpGHKZwuI3BsPJLu7jla0WQDEtRpIoZQqjMo9cIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D6A11762;
+	Thu, 12 Dec 2024 08:55:16 -0800 (PST)
+Received: from e124191.cambridge.arm.com (e124191.cambridge.arm.com [10.1.197.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 793573F58B;
+	Thu, 12 Dec 2024 08:54:45 -0800 (PST)
+Date: Thu, 12 Dec 2024 16:54:40 +0000
+From: Joey Gouly <joey.gouly@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: Re: [PATCH v6 32/43] arm64: rme: Enable PMU support with a realm
+ guest
+Message-ID: <20241212165440.GA1479329@e124191.cambridge.arm.com>
+References: <20241212155610.76522-1-steven.price@arm.com>
+ <20241212155610.76522-33-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,145 +64,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <A3F6B6C6-33B3-4522-8240-15421F240D3A@collabora.com>
+In-Reply-To: <20241212155610.76522-33-steven.price@arm.com>
 
-On Wed, Dec 11, 2024 at 06:00:31PM -0300, Daniel Almeida wrote:
-> Hi Danilo,
+On Thu, Dec 12, 2024 at 03:55:57PM +0000, Steven Price wrote:
+> Use the PMU registers from the RmiRecExit structure to identify when an
+> overflow interrupt is due and inject it into the guest. Also hook up the
+> configuration option for enabling the PMU within the guest.
 > 
-> > On 11 Dec 2024, at 15:36, Danilo Krummrich <dakr@kernel.org> wrote:
-> > 
-> > On Wed, Dec 11, 2024 at 02:51:56PM -0300, Daniel Almeida wrote:
-> >> Add support for iomem regions by providing a struct IoMem abstraction
-> >> for the platform bus. This will request a memory region and remap it
-> >> into a kernel virtual address using ioremap(). The underlying reads and
-> >> writes are performed by struct Io, which can be derived from the IoRaw
-> >> embedded in platform::IoMem.
-> >> 
-> >> This is the equivalent of pci::Bar for the platform bus.
-> >> 
-> >> Memory-mapped I/O devices are common, and this patch offers a way to
-> >> program them in Rust, usually by reading and writing to their
-> >> memory-mapped register set.
-> >> 
-> >> Both sized and unsized versions are exposed. Sized allocations use
-> >> `ioremap_resource_sized` and specify their size at compile time. Reading
-> >> and writing to IoMem is infallible in this case and no extra runtime
-> >> checks are performed. Unsized allocations have to check the offset
-> >> against the regions's max length at runtime and so return Result.
-> >> 
-> >> Lastly, like pci::Bar, platform::IoMem uses the Devres abstraction to
-> >> revoke access to the region if the device is unbound or the underlying
-> >> resource goes out of scope.
-> >> 
-> >> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-> >> ---
-> >> The PCI/Platform abstractions are in-flight and can be found at:
-> >> 
-> >> https://lore.kernel.org/rust-for-linux/20241210224947.23804-1-dakr@kernel.org/
-> >> ---
-> >> Changes in v3:
-> >> - Rebased on top of v5 for the PCI/Platform abstractions
-> >> - platform_get_resource is now called only once when calling ioremap
-> >> - Introduced a platform::Resource type, which is bound to the lifetime of the
-> >>  platform Device 
-> >> - Allow retrieving resources from the platform device either by index or
-> >>  name
-> >> - Make request_mem_region() optional
-> >> - Use resource.name() in request_mem_region
-> >> - Reword the example to remove an unaligned, out-of-bounds offset
-> >> - Update the safety requirements of platform::IoMem
-> >> 
-> >> Changes in v2:
-> >> - reworked the commit message
-> >> - added missing request_mem_region call (Thanks Alice, Danilo)
-> >> - IoMem::new() now takes the platform::Device, the resource number and
-> >>  the name, instead of an address and a size (thanks, Danilo)
-> >> - Added a new example for both sized and unsized versions of IoMem.
-> >> - Compiled the examples using kunit.py (thanks for the tip, Alice!)
-> >> - Removed instances of `foo as _`. All `as` casts now spell out the actual
-> >>  type.
-> >> - Now compiling with CLIPPY=1 (I realized I had forgotten, sorry)
-> >> - Rebased on top of rust-next to check for any warnings given the new
-> >>  unsafe lints.
-> >> ---
-> >> rust/bindings/bindings_helper.h |   1 +
-> >> rust/helpers/io.c               |  17 ++++
-> >> rust/kernel/platform.rs         | 209 +++++++++++++++++++++++++++++++++++++++-
-> >> 3 files changed, 226 insertions(+), 1 deletion(-)
-
-[...]
-
-> >> +    unsafe fn new(resource: &Resource<'_>, exclusive: bool) -> Result<Self> {
-> >> +        let size = resource.size();
-> >> +        if size == 0 {
-> >> +            return Err(ENOMEM);
-> >> +        }
-> >> +
-> >> +        let res_start = resource.start();
-> >> +
-> >> +        // SAFETY:
-> >> +        // - `res_start` and `size` are read from a presumably valid `struct resource`.
-> >> +        // - `size` is known not to be zero at this point.
-> >> +        // - `resource.name()` returns a valid C string.
-> >> +        let mem_region =
-> >> +            unsafe { bindings::request_mem_region(res_start, size, resource.name().as_char_ptr()) };
-> > 
-> > This should only be called if exclusive == true, right?
+> When entering a realm guest with a PMU interrupt pending, it is
+> necessary to disable the physical interrupt. Otherwise when the RMM
+> restores the PMU state the physical interrupt will trigger causing an
+> immediate exit back to the host. The guest is expected to acknowledge
+> the interrupt causing a host exit (to update the GIC state) which gives
+> the opportunity to re-enable the physical interrupt before the next PMU
+> event.
 > 
-> Yes (oops)
+> Number of PMU counters is configured by the VMM by writing to PMCR.N.
 > 
-> > 
-> > Btw. what's the use-case for non-exclusive access? Shouldn't we rather support
-> > partial exclusive mappings?
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v2:
+>  * Add a macro kvm_pmu_get_irq_level() to avoid compile issues when PMU
+>    support is disabled.
+> ---
+>  arch/arm64/kvm/arm.c      | 11 +++++++++++
+>  arch/arm64/kvm/guest.c    |  7 +++++++
+>  arch/arm64/kvm/pmu-emul.c |  3 +++
+>  arch/arm64/kvm/rme.c      |  8 ++++++++
+>  arch/arm64/kvm/sys_regs.c |  2 +-
+>  include/kvm/arm_pmu.h     |  4 ++++
+>  6 files changed, 34 insertions(+), 1 deletion(-)
 > 
-> Rob pointed out that lots of drivers do not call `request_mem_region` in his review for v2, which
-> Is why I added support for non-exclusive access.
-> 
-> What do you mean by `partial exclusive mappings` ?
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 6f7f96ab781d..ae3596a25272 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/vmalloc.h>
+>  #include <linux/fs.h>
+>  #include <linux/mman.h>
+> +#include <linux/perf/arm_pmu.h>
+>  #include <linux/sched.h>
+>  #include <linux/kvm.h>
+>  #include <linux/kvm_irqfd.h>
+> @@ -1209,6 +1210,8 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
+>  	run->exit_reason = KVM_EXIT_UNKNOWN;
+>  	run->flags = 0;
+>  	while (ret > 0) {
+> +		bool pmu_stopped = false;
+> +
+>  		/*
+>  		 * Check conditions before entering the guest
+>  		 */
+> @@ -1240,6 +1243,11 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
+>  
+>  		kvm_pmu_flush_hwstate(vcpu);
+>  
+> +		if (vcpu_is_rec(vcpu) && kvm_pmu_get_irq_level(vcpu)) {
+> +			pmu_stopped = true;
+> +			arm_pmu_set_phys_irq(false);
+> +		}
+> +
+>  		local_irq_disable();
+>  
+>  		kvm_vgic_flush_hwstate(vcpu);
+> @@ -1342,6 +1350,9 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
+>  
+>  		preempt_enable();
+>  
+> +		if (pmu_stopped)
+> +			arm_pmu_set_phys_irq(true);
+> +
+>  		/*
+>  		 * The ARMv8 architecture doesn't give the hypervisor
+>  		 * a mechanism to prevent a guest from dropping to AArch32 EL0
+> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+> index 920e0fd73698..b4e3839f6076 100644
+> --- a/arch/arm64/kvm/guest.c
+> +++ b/arch/arm64/kvm/guest.c
+> @@ -804,6 +804,8 @@ int kvm_arm_get_reg(struct kvm_vcpu *vcpu, const struct kvm_one_reg *reg)
+>  	return kvm_arm_sys_reg_get_reg(vcpu, reg);
+>  }
+>  
+> +#define KVM_REG_ARM_PMCR_EL0		ARM64_SYS_REG(3, 3, 9, 12, 0)
 
-I dug into the history of this some and I may be misremembering where 
-the problem is exactly. The issue for DT is we can't call 
-platform_device_add() because it calls insert_resource() and that may 
-fail. Now I'm not sure if the drivers in overlapping case have to avoid 
-calling request_mem_region(). I think so...
+There's already SYS_PMCR_EL0 defined, so it seems this is not needed?
 
-Here's some relevant commits:
+> +
+>  /*
+>   * The RMI ABI only enables setting some GPRs and PC. The selection of GPRs
+>   * that are available depends on the Realm state and the reason for the last
+> @@ -818,6 +820,11 @@ static bool validate_realm_set_reg(struct kvm_vcpu *vcpu,
+>  		u64 off = core_reg_offset_from_id(reg->id);
+>  
+>  		return kvm_realm_validate_core_reg(off);
+> +	} else {
+> +		switch (reg->id) {
+> +		case KVM_REG_ARM_PMCR_EL0:
+> +			return true;
+> +		}
+>  	}
+>  
+>  	return false;
+> diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
+> index 456102bc0b55..5628b573ca41 100644
+> --- a/arch/arm64/kvm/pmu-emul.c
+> +++ b/arch/arm64/kvm/pmu-emul.c
+> @@ -397,6 +397,9 @@ static bool kvm_pmu_overflow_status(struct kvm_vcpu *vcpu)
+>  {
+>  	u64 reg = __vcpu_sys_reg(vcpu, PMOVSSET_EL0);
+>  
+> +	if (vcpu_is_rec(vcpu))
+> +		return vcpu->arch.rec.run->exit.pmu_ovf_status;
+> +
+>  	reg &= __vcpu_sys_reg(vcpu, PMINTENSET_EL1);
+>  
+>  	/*
+> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+> index 27a479feb907..e562e77c1f94 100644
+> --- a/arch/arm64/kvm/rme.c
+> +++ b/arch/arm64/kvm/rme.c
+> @@ -303,6 +303,11 @@ static int realm_create_rd(struct kvm *kvm)
+>  	params->rtt_base = kvm->arch.mmu.pgd_phys;
+>  	params->vmid = realm->vmid;
+>  
+> +	if (kvm->arch.arm_pmu) {
+> +		params->pmu_num_ctrs = kvm->arch.pmcr_n;
+> +		params->flags |= RMI_REALM_PARAM_FLAG_PMU;
+> +	}
+> +
+>  	params_phys = virt_to_phys(params);
+>  
+>  	if (rmi_realm_create(rd_phys, params_phys)) {
+> @@ -1370,6 +1375,9 @@ int kvm_create_rec(struct kvm_vcpu *vcpu)
+>  	if (!vcpu_has_feature(vcpu, KVM_ARM_VCPU_PSCI_0_2))
+>  		return -EINVAL;
+>  
+> +	if (vcpu->kvm->arch.arm_pmu && !kvm_vcpu_has_pmu(vcpu))
+> +		return -EINVAL;
+> +
+>  	BUILD_BUG_ON(sizeof(*params) > PAGE_SIZE);
+>  	BUILD_BUG_ON(sizeof(*rec->run) > PAGE_SIZE);
+>  
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 83c6b4a07ef5..a4713609e230 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -1324,7 +1324,7 @@ static int set_pmcr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
+>  	 * implements. Ignore this error to maintain compatibility
+>  	 * with the existing KVM behavior.
+>  	 */
+> -	if (!kvm_vm_has_ran_once(kvm) &&
+> +	if (!kvm_vm_has_ran_once(kvm) && !kvm_realm_is_created(kvm) &&
+>  	    new_n <= kvm_arm_pmu_get_max_counters(kvm))
+>  		kvm->arch.pmcr_n = new_n;
+>  
+> diff --git a/include/kvm/arm_pmu.h b/include/kvm/arm_pmu.h
+> index e61dd7dd2286..30625a6fd143 100644
+> --- a/include/kvm/arm_pmu.h
+> +++ b/include/kvm/arm_pmu.h
+> @@ -77,6 +77,8 @@ void kvm_vcpu_pmu_restore_guest(struct kvm_vcpu *vcpu);
+>  void kvm_vcpu_pmu_restore_host(struct kvm_vcpu *vcpu);
+>  void kvm_vcpu_pmu_resync_el0(void);
+>  
+> +#define kvm_pmu_get_irq_level(vcpu) ((vcpu)->arch.pmu.irq_level)
+> +
+>  #define kvm_vcpu_has_pmu(vcpu)					\
+>  	(vcpu_has_feature(vcpu, KVM_ARM_VCPU_PMU_V3))
+>  
+> @@ -164,6 +166,8 @@ static inline u64 kvm_pmu_get_pmceid(struct kvm_vcpu *vcpu, bool pmceid1)
+>  	return 0;
+>  }
+>  
+> +#define kvm_pmu_get_irq_level(vcpu) (false)
+> +
+>  #define kvm_vcpu_has_pmu(vcpu)		({ false; })
+>  static inline void kvm_pmu_update_vcpu_events(struct kvm_vcpu *vcpu) {}
+>  static inline void kvm_vcpu_pmu_restore_guest(struct kvm_vcpu *vcpu) {}
 
-8171d5f7bf26 Revert "of/platform: Use platform_device interface"
-b6d2233f2916 of/platform: Use platform_device interface
-02bbde7849e6 Revert "of: use platform_device_add"
-aac73f34542b of: use platform_device_add
-
-There was another attempt to address this here[1], but I don't think 
-anything ever landed. 
-
-Grant mentioned mpc5200 ethernet and mdio as one example overlapping. 
-Indeed it does:
-
-                ethernet@3000 {
-                        compatible = "fsl,mpc5200-fec";
-                        reg = <0x3000 0x400>;
-                        local-mac-address = [ 00 00 00 00 00 00 ];
-                        interrupts = <2 5 0>;
-                        phy-handle = <&phy0>;
-                };
-
-                mdio@3000 {
-                        #address-cells = <1>;
-                        #size-cells = <0>;
-                        compatible = "fsl,mpc5200-mdio";
-                        reg = <0x3000 0x400>;   // fec range, since we need to setup fec interrupts
-                        interrupts = <2 5 0>;   // these are for "mii command finished", not link changes & co.
-
-                        phy0: ethernet-phy@0 {
-                                reg = <0>;
-                        };
-                };
-
-The FEC driver does request_mem_region(), but the MDIO driver does not.
-
-Rob
-
-[1] https://lore.kernel.org/all/20150607140138.026C4C412C8@trevor.secretlab.ca/
-
+Thanks,
+Joey
 
