@@ -1,117 +1,114 @@
-Return-Path: <linux-kernel+bounces-442821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2D99EE273
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:16:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C48D49EE277
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:17:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153E5282A73
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:16:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E20916799B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E21120E014;
-	Thu, 12 Dec 2024 09:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1199C20CCD7;
+	Thu, 12 Dec 2024 09:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jK/FkF2N"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EQyVflvW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D997B2594BA
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA0F2594BA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733994971; cv=none; b=oowZyhAo7xNwUxY0K06mcqshFDGjO6KBLVC2Cd1ZH+E6p0lb7iVqF0V3n+jgpv3gMTbZxicw3sGMxUjWbxKpud8FBpXZZZsNAhKvxiSrucIWLhbbQMUzVIF0ndSfvKs3OtUP/jKdfH6nqjnvWka8mXz1VLIrgsJ5RYDIkMAlxKA=
+	t=1733995041; cv=none; b=Me4P2oovaNv98pnDtmzhI5FXDciFXmvGrPeT89BRaEBUwcruzkf5zJ9DaPHTXYkaJLu8xK4sIHYed2AdxVBl4OcjCTaHFoWjmqIExCCf31G8Gv3LUlo/J4/gSPrniRIi6XVGAMEVpKkjYuEUER9pAXHGbUQEtMpT4Tqe35NHZS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733994971; c=relaxed/simple;
-	bh=dHeloRYBZqsQ8YzyY7XBOB5omPuvszkfJNuWwK6lNHY=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=V1nKW6s2oJkWqLLTh5HWvyMXBlGuej4FLRyciP+7m6aT2THD7dG2qpmG2sTlfMOrGcTZJ3tuF36Ac0SAAmYHfbya6bbcgD7GbTiVftBnKcMP3/uEWJnHNLGCwbSMncBN+q4YLcYliFmAPN3vCFBfPZ3mZFaVEXLBg+cWNg6JfNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jK/FkF2N; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733994970; x=1765530970;
-  h=mime-version:content-transfer-encoding:in-reply-to:
-   references:subject:from:cc:to:date:message-id;
-  bh=dHeloRYBZqsQ8YzyY7XBOB5omPuvszkfJNuWwK6lNHY=;
-  b=jK/FkF2NZxZ/V1eKM9LvlVbloUgFxFVw6YHUjP1yW+TFqR1ukY9IkNbR
-   mG7DHArxeqX8MzNlLAnuIBWJQxkdo7SP88XTh0cFggoLA0EOaOymJXtnX
-   Oo99fvcYrFifla87Qx7cPcVQp0PZlh2WCXlAdmOrFvMfwh14FqMGYuheQ
-   l6CQtBO+3LvHTCkB+zwPy8cIIrBdtFq6AmdWIEX83UHt6gmLGZnVKlZlp
-   +MFO7LJ0VuEPtzXoWWg75sg25tDsM3Ki5pTr6Cv5APz8iNPS6XD1va5OJ
-   m6zW3DFGuhUOzEZU2uTIQwMk7uEFEZ5jg8hPSaMTECxI4DQXqsZALl+/D
-   g==;
-X-CSE-ConnectionGUID: R1h12SjoTbCc1eDn68GHNg==
-X-CSE-MsgGUID: fAoKRdeMS76OloLOf9Vxtw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="45012966"
-X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
-   d="scan'208";a="45012966"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 01:16:09 -0800
-X-CSE-ConnectionGUID: m2CkNjQTSoK0df2r8N+k6Q==
-X-CSE-MsgGUID: 04tjzyQ5Tq++r5Fz+HHSxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,228,1728975600"; 
-   d="scan'208";a="95928861"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.28])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 01:16:05 -0800
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733995041; c=relaxed/simple;
+	bh=e8l1yWPU99QRyDuN6n1s4Egi+cUG/nyLM2X02bK7IsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYss+qITQSfBN+rSfEGfVMx/6OBjbo8MBjEvWKKA7StolF4RGwqWUxAga6E2l933JFBDO+pn8sM/aWUAx+6yqR49qSewmEjRJ9uyeZ4FEHTyI5uyDRd+pd2nZ+Xex3CVxpp8AyOqtD8Bv+v9Ra9Gs5CsyLnBm+S9BuZIY8B1058=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EQyVflvW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=A0WmZNoF0u1ExgoBDb+GgZ/WiCy/wB2t58LSVxa1zA0=; b=EQyVflvW8FY98DQWF5km0uBtir
+	DhdxBwbdAH5I5fWwIPwgKgZabxaF/UOusdQbXSJZ3p/Tay3OzYN6aIO+T1jWzTuyy/n4b9tUO0wub
+	1kHWEFtX8Yes7nDW644xX+gxhkBBaub2GbSWjCki4LSCaaaGLBmpv6EXt2CZ7Ulnlz62wihVlRBOY
+	/jmLzZF6aAGECIcu4uzznSanjK5uk1m4+DDRHDA7lZ5WzR/g/Kwka2L9HK6ocodTWjGWovJF0FEN4
+	YDLLAgVEHOWwlv6F5Gp1/SzCi4fCIQGSBXCJI8ITt4tWx+s9rlwLi4EcMCRXAiuqaGtdOpXdOwkOy
+	+XqPAPmA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tLfJc-00000004dYY-2ggu;
+	Thu, 12 Dec 2024 09:17:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A4F873003FF; Thu, 12 Dec 2024 10:16:59 +0100 (CET)
+Date: Thu, 12 Dec 2024 10:16:59 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+	mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
+	hughd@google.com, minchan@google.com, jannh@google.com,
+	shakeel.butt@linux.dev, souravpanda@google.com,
+	pasha.tatashin@soleen.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
+Message-ID: <20241212091659.GU21636@noisy.programming.kicks-ass.net>
+References: <20241111205506.3404479-1-surenb@google.com>
+ <20241111205506.3404479-4-surenb@google.com>
+ <ZzLgZTH9v5io1Elx@casper.infradead.org>
+ <CAJuCfpHpGSpix8+mB76Virb+HAMrOqB3wG8E4EXPrRCnBoBGeA@mail.gmail.com>
+ <20241210223850.GA2484@noisy.programming.kicks-ass.net>
+ <CAJuCfpETJZVFYwf+P=6FnY_6n8E7fQsKH6HrOV1Q_q9cFizEKw@mail.gmail.com>
+ <20241211082541.GQ21636@noisy.programming.kicks-ass.net>
+ <CAJuCfpEMYhAmOPwjGO+j1t+069MJZxUs1O1co-zJ4+vEeXCtng@mail.gmail.com>
+ <CAJuCfpGOOcRAJ46sbPRoCUNuuhi2fnkM97F=CfZ1=_N5ZFUcLw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Z1fDsvIKB4j_-Tv_@infradead.org>
-References: <20241209133318.1806472-1-mika.kuoppala@linux.intel.com> <20241209133318.1806472-2-mika.kuoppala@linux.intel.com> <Z1fDsvIKB4j_-Tv_@infradead.org>
-Subject: Re: [PATCH 01/26] ptrace: export ptrace_may_access
-From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, christian.koenig@amd.com, Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>, Lucas De Marchi <lucas.demarchi@intel.com>, Matthew Brost <matthew.brost@intel.com>, Andi Shyti <andi.shyti@intel.com>, Maciej Patelczyk <maciej.patelczyk@linux.intel.com>, Dominik Grzegorzek <dominik.grzegorzek@intel.com>, Jonathan Cavitt <jonathan.cavitt@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>
-To: Christoph Hellwig <hch@infradead.org>, Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Date: Thu, 12 Dec 2024 11:16:02 +0200
-Message-ID: <173399496234.20348.12425394481969055234@jlahtine-mobl.ger.corp.intel.com>
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpGOOcRAJ46sbPRoCUNuuhi2fnkM97F=CfZ1=_N5ZFUcLw@mail.gmail.com>
 
-Quoting Christoph Hellwig (2024-12-10 06:29:38)
-> On Mon, Dec 09, 2024 at 03:32:52PM +0200, Mika Kuoppala wrote:
-> > xe driver would like to allow fine grained access control
-> > for GDB debugger using ptrace. Without this export, the only
-> > option would be to check for CAP_SYS_ADMIN.
-> >=20
-> > The check intended for an ioctl to attach a GPU debugger
-> > is similar to the ptrace use case: allow a calling process
-> > to manipulate a target process if it has the necessary
-> > capabilities or the same permissions, as described in
-> > Documentation/process/adding-syscalls.rst.
-> >=20
-> > Export ptrace_may_access function to allow GPU debugger to
-> > have identical access control for debugger(s)
-> > as a CPU debugger.
->=20
-> This seems to mis an actual user or you forgot to Cc linux-kernel on it.
+On Wed, Dec 11, 2024 at 07:01:16PM -0800, Suren Baghdasaryan wrote:
 
-Right, that is a miss on our side. For the time being, the whole series
-can be found in lore archive:
+> > > > I think your proposal should work. Let me try to code it and see if
+> > > > something breaks.
+> 
+> Ok, I tried it out and things are a bit more complex:
+> 1. We should allow write-locking a detached VMA, IOW vma_start_write()
+> can be called when vm_refcnt is 0. 
 
-https://lore.kernel.org/dri-devel/20241209133318.1806472-1-mika.kuoppala@li=
-nux.intel.com/
+This sounds dodgy, refcnt being zero basically means the object is dead
+and you shouldn't be touching it no more. Where does this happen and
+why?
 
-The user is introduced in patch: [PATCH 03/26] drm/xe/eudebug: Introduce di=
-scovery for resources [1]
+Notably, it being 0 means it is no longer in the mas tree and can't be
+found anymore.
 
-Essentially, we want to check if PID1 has permission to ptrace PID2, before=
- we grant the
-permission for PID1 to debug the GPU address space/memory of PID2.
+> 2. Adding 0x80000000 saturates refcnt, so I have to use a lower bit
+> 0x40000000 to denote writers.
 
-Mika, please do Cc the relevant other patches of the series to LKML for nex=
-t iteration.
+I'm confused, what? We're talking about atomic_t, right?
 
-Regards, Joonas
+> 3. Currently vma_mark_attached() can be called on an already attached
+> VMA. With vma->detached being a separate attribute that works fine but
+> when we combine it with the vm_lock things break (extra attach would
+> leak into lock count). I'll see if I can catch all the cases when we
+> do this and clean them up (not call vma_mark_attached() when not
+> necessary).
 
-[1] https://lore.kernel.org/dri-devel/20241209133318.1806472-1-mika.kuoppal=
-a@linux.intel.com/T/#md3d005faaaac1ba01451b139a634e5545c2a266f
+Right, I hadn't looked at that thing in detail, that sounds like it
+needs a wee cleanup like you suggest.
 
