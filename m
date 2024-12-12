@@ -1,133 +1,196 @@
-Return-Path: <linux-kernel+bounces-443969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F169EFE5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:35:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABD59EFE5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 22:35:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F09E8188DBBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:35:55 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0381D7E21;
+	Thu, 12 Dec 2024 21:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hhhrsyp1"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C8328A4E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 21:35:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30A21D89FA;
-	Thu, 12 Dec 2024 21:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E6nsrmso"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590701CEAAC;
-	Thu, 12 Dec 2024 21:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6151CEAAC
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734039337; cv=none; b=U7UufisBECdSALF4fPzIhczZaVJ1SMwMn8WeSTGEXivZAEELKPxG9D1Ol3JpN/S5jstNaySeeRGrmanaPX+OctnKRTtY/PN5lF3R/5Njz9ZcezyaRIIzf2K9taWKObBD0CUL/Pw8uffYUqgt6rOF7+rYuyn4R7ku4wvotLiocO0=
+	t=1734039346; cv=none; b=KW2ocBLgvesxaQevCiQD0Hoe/mkfJ4hInMNi0g1ySNp9VbjmguAa9sLQIpGRBrtS/zsq71G/cqtAgMFS5bKU3zLVZxFUKComAK1Q5S5xPYHup8OAuuZv0X9NqQdTQb/yHLafTfRB8FTgYZJ9Q3vvA3U6DFxeQJkrQ7E9joFZBYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734039337; c=relaxed/simple;
-	bh=KJeEqh9P+D5wKwY133jjVp/f7MLpthcGlZboaBFR+VU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R+Go+6lWCU9WEeBtLS1RlXpJOV1x7OPN1F39AhefJY/28QxOROvkRxXjAr1607evUnP9GJH6t7XoAknS45ws5eKldrv4IvdIIDJNiOUpAQM0nbq0g4AX7FOtVvQsqWK8x8QZQd9XDjVWIX0FgCv++iJZZYvJcXYvn1P1nZn2iyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E6nsrmso; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53e384e3481so944719e87.2;
-        Thu, 12 Dec 2024 13:35:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734039333; x=1734644133; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xnXmfYEr9PT7Is83CX8z0wrAPwuQ/xSME7IAcOpGTK8=;
-        b=E6nsrmsopZdizVghZ8DyrtZxVc5Edbp/5huZuFyXpgzRbZC5Y66m4eZKWv+4ljZRVc
-         v3ce7JrCVOc8dUf7Gu82WIFwA5gC+nAj0Q/jE0UfOV1kzrYEBX8e2nThBVIQGDc6RCSv
-         W7w7i0g6ErL4hvnnzo3MjkPSn8Mnh6MWi/rJfsN1HQLx3LsDxuj33cgudl1Oh6LEEWk+
-         Hz4QDTyww+IvO80wNO6AtoMLL2gMn2jtdTj8T+fYOE/3Sx+uZcLSqqz4JizPK8wh4PAl
-         s+0oaifoEb8jrQXcNJKTwQFVdpW63p1L7LW9S7Pyskt5Y7D80s4KbwyM3NS6jhsdqfyr
-         9DFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734039333; x=1734644133;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xnXmfYEr9PT7Is83CX8z0wrAPwuQ/xSME7IAcOpGTK8=;
-        b=k3HPYLhu87H0jrXoUKj4lq66uysq9spM3yEsQlO6oI8q5FRzePDu7oKRWM36ZDmY8V
-         HeWvchupGgfRrqvbbw3rfMzs/+MJM8/XDtZ8aU20St2FM4lv+cNAXJHD0X+MK2tXIrfJ
-         zvnsVI31PeapVmntnM6K2yxr9D6oVXovAGz4pdu7iaoJGoj7DqkMTVLPRa09HSgQ37Ak
-         q60H2DFefabcluSn/64Xhu0wXBjBCc1bluYe/gy5VlcyO+ZG804Tk5OKpf+LFI+adfKO
-         anjQ5jbQSDt2lZwAzUPCfkoK+2ofyvXSEmGlA/HCm5NV1/22uhmiQxv1Iifj/9q9G8Rn
-         41NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVHTbqlFCIoEAhkYdmXMTW7MlK6TNFFLcDo3oN9Q//7nIDeyLxaNG8yRNPpaRJ8QuzQEKu0FJxrWWI+Drp@vger.kernel.org, AJvYcCWCw3ruoqsLZs2M8hk+nn+RIuaA0Pl0Gi18b1MlM8ZyAhdSAHk/T98EHjYfSAmDrrzhO2Zf7n9d+LM=@vger.kernel.org, AJvYcCWpJ9tSVQuJw3e4S6AmxCEl/zCdJHG9xmqUHy52x5C143eqqXNUx95DqmDjfUXPRPYTeffyWnLou5k/aC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxljCZEtlm9QMerAJav+r4Fu3zcGwDotm9veQ2dcZIDZLFhdHvV
-	g11uPykN583N0BGoIYH9qH3M3ouMcI+rsMMIgXp6UUl2ivUXkXVYMBjSOEzVdtVGQKuXm8U2sGO
-	+UJI4TY/8gfeHH6vhN44jLqcIYdc=
-X-Gm-Gg: ASbGnctdxAVqqzzSBrjo8a/rXJIVDJ57DEIiL2ey+QtPX3XzPD9zrjbwNdn4fmG4y3w
-	CRoJOS6ThKJt1h+tq2WcEgKNgG7Yw7TTYb4SS+NxsU3PGBWVLU8aUaEdEDU+gEM+3aVlSIZV6
-X-Google-Smtp-Source: AGHT+IFqXLVOS6tetzuIiVC1SeKpDz1DktGwGndsy0tvCJCIuFH/K0ZN4npwCq78ugCyZ4wrTGVLSvr3HOZXiLYW++E=
-X-Received: by 2002:a05:6512:39d0:b0:540:1e5e:3876 with SMTP id
- 2adb3069b0e04-54034134873mr713024e87.52.1734039333186; Thu, 12 Dec 2024
- 13:35:33 -0800 (PST)
+	s=arc-20240116; t=1734039346; c=relaxed/simple;
+	bh=hzCiwrHqJ21y8kwUGY8vexTsLsKijmMYrnTSg0AQTl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=so79PGOoAtn9w4PvLfXegL98kR9yWkAQHTOR1qPQP/sKQXBAlPCunNBT1BA4AHDdWtveETkQZAAgRtYkWIRQGeb2utpron7n2w3lsaoWody2E7sXlLRsyxCTocc3b6MwQAICslUFvQzRXu/XvkMw2mQJr4mPIOqhJVYou9vYaYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hhhrsyp1; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 12 Dec 2024 13:35:26 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734039332;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C9LCAsrG2v3sr11vxtTgPaYAQ3cbRB7r/yjBqH3E80c=;
+	b=Hhhrsyp1EVV0VY+VzT9YVcEva2u9oBERN0zCU87WwGAMHnBk0CPrBSw31IHWdSLofPO6h+
+	EDzXg4V/9M20/KmJxWSVw9pJxHxU3s+m0esGx3CBJbNZn+PRM3sNShj4z4BAvrOwV0jBJ0
+	Lh4LTjgodia5R0d+aF8f/Z2uYb5jW9w=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Rik van Riel <riel@surriel.com>, 
+	Balbir Singh <balbirs@nvidia.com>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, Nhat Pham <nphamcs@gmail.com>
+Subject: Re: [PATCH v2] memcg: allow exiting tasks to write back data to swap
+Message-ID: <pr5llphyxbbvv3fgn63crohd7y3vsxdif2emst2ac2p3qvkeg6@ny7d43mgmp3k>
+References: <20241212115754.38f798b3@fangorn>
+ <CAJD7tkY=bHv0obOpRiOg4aLMYNkbEjfOtpVSSzNJgVSwkzaNpA@mail.gmail.com>
+ <20241212183012.GB1026@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241207193441.15767-1-yesanishhere@gmail.com> <Z1ggwXLAu+/Y817c@opensource.cirrus.com>
-In-Reply-To: <Z1ggwXLAu+/Y817c@opensource.cirrus.com>
-From: anish kumar <yesanishhere@gmail.com>
-Date: Thu, 12 Dec 2024 13:35:22 -0800
-Message-ID: <CABCoZhA1g4McaLtsQqZv=Y1UrEg4kmyMVjdJJTfDow0ho-WdCA@mail.gmail.com>
-Subject: Re: [PATCH V5] Docs/sound: Update codec-to-codec documentation
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
-	corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241212183012.GB1026@cmpxchg.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Dec 10, 2024 at 3:06=E2=80=AFAM Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
->
-> On Sat, Dec 07, 2024 at 11:34:41AM -0800, anish kumar wrote:
-> > +Boot-up logs will display message similar to:
-> > +
-> > +.. code-block:: text
-> > +
-> > +   ASoC: registered pcm #0 codec2codec(Playback Codec)
-> > +
-> > +To trigger this DAI link, a control interface is established by the
-> > +DAPM core during internal DAI creation. This interface links to
-> > +the ``snd_soc_dai_link_event`` function, which is invoked when a
-> > +path connects in the DAPM core. A mixer must be created to trigger
-> > +the connection, prompting the DAPM core to evaluate path
-> > +connections and call the ``snd_soc_dai_link_event`` callback with
-> > +SND_SOC_DAPM_*_PMU and SND_SOC_DAPM_*_PMD events.
-> > +
->
-> I am still not really following this, what are we trying to
-> convey in this paragraph?
->
-> What do we mean by a "control interface" here, is that referring
-> to the kcontrol that is created to select the rate in the case
-> of multiple rates? Or is it simply refering to the fact we call
-> snd_soc_dapm_new_control_unlocked? But really that function is
-> adding widgets, as I noted in my last email.
+On Thu, Dec 12, 2024 at 01:30:12PM -0500, Johannes Weiner wrote:
+> On Thu, Dec 12, 2024 at 09:06:25AM -0800, Yosry Ahmed wrote:
+> > On Thu, Dec 12, 2024 at 8:58 AM Rik van Riel <riel@surriel.com> wrote:
+> > >
+> > > A task already in exit can get stuck trying to allocate pages, if its
+> > > cgroup is at the memory.max limit, the cgroup is using zswap, but
+> > > zswap writeback is enabled, and the remaining memory in the cgroup is
+> > > not compressible.
+> > >
+> > > This seems like an unlikely confluence of events, but it can happen
+> > > quite easily if a cgroup is OOM killed due to exceeding its memory.max
+> > > limit, and all the tasks in the cgroup are trying to exit simultaneously.
+> > >
+> > > When this happens, it can sometimes take hours for tasks to exit,
+> > > as they are all trying to squeeze things into zswap to bring the group's
+> > > memory consumption below memory.max.
+> > >
+> > > Allowing these exiting programs to push some memory from their own
+> > > cgroup into swap allows them to quickly bring the cgroup's memory
+> > > consumption below memory.max, and exit in seconds rather than hours.
+> > >
+> > > Signed-off-by: Rik van Riel <riel@surriel.com>
+> > 
+> > Thanks for sending a v2.
+> > 
+> > I still think maybe this needs to be fixed on the memcg side, at least
+> > by not making exiting tasks try really hard to reclaim memory to the
+> > point where this becomes a problem. IIUC there could be other reasons
+> > why reclaim may take too long, but maybe not as pathological as this
+> > case to be fair. I will let the memcg maintainers chime in for this.
+> > 
+> > If there's a fundamental reason why this cannot be fixed on the memcg
+> > side, I don't object to this change.
+> > 
+> > Nhat, any objections on your end? I think your fleet workloads were
+> > the first users of this interface. Does this break their expectations?
+> 
+> Yes, I don't think we can do this, unfortunately :( There can be a
+> variety of reasons for why a user might want to prohibit disk swap for
+> a certain cgroup, and we can't assume it's okay to make exceptions.
+> 
+> There might also not *be* any disk swap to overflow into after Nhat's
+> virtual swap patches. Presumably zram would still have the issue too.
 
-I mean snd_soc_dapm_new_control_unlocked gets called to
-create the widget which gets triggered as part of DAPM path
-enablement.
+Very good points.
 
->
-> Also what do we mean by a "A mixer must be created", I am not
-> aware of any requirement for a mixer? The DAI link needs to be on
-> a valid DAPM path, but I don't see any requirements other than
-> that.
+> 
+> So I'm also inclined to think this needs a reclaim/memcg-side fix. We
+> have a somewhat tumultous history of policy in that space:
+> 
+> commit 7775face207922ea62a4e96b9cd45abfdc7b9840
+> Author: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date:   Tue Mar 5 15:46:47 2019 -0800
+> 
+>     memcg: killed threads should not invoke memcg OOM killer
+> 
+> allowed dying tasks to simply force all charges and move on. This
+> turned out to be too aggressive; there were instances of exiting,
+> uncontained memcg tasks causing global OOMs. This lead to that:
+> 
+> commit a4ebf1b6ca1e011289677239a2a361fde4a88076
+> Author: Vasily Averin <vasily.averin@linux.dev>
+> Date:   Fri Nov 5 13:38:09 2021 -0700
+> 
+>     memcg: prohibit unconditional exceeding the limit of dying tasks
+> 
+> which reverted the bypass rather thoroughly. Now NO dying tasks, *not
+> even OOM victims*, can force charges. I am not sure this is correct,
+> either:
+> 
+> If we return -ENOMEM to an OOM victim in a fault, the fault handler
+> will re-trigger OOM, which will find the existing OOM victim and do
+> nothing, then restart the fault. This is a memory deadlock. The page
+> allocator gives OOM victims access to reserves for that reason.
+> 
+> Actually, it looks even worse. For some reason we're not triggering
+> OOM from dying tasks:
+> 
+>         ret = task_is_dying() || out_of_memory(&oc);
+> 
+> Even though dying tasks are in no way privileged or allowed to exit
+> expediently. Why shouldn't they trigger the OOM killer like anybody
+> else trying to allocate memory?
 
-In my case, I was implementing a mixer widget that users could
-trigger to enable the entire DAPM path. However, I believe it's
-sufficient to simply state that there should be a mechanism to
-trigger the codec-to-codec widget, enabling the full DAPM path.
->
-> Thanks,
-> Charles
+This is a very good point and actually out_of_memory() will mark the
+dying process as oom victim and put it in the oom reaper's list which
+should help further in such situation.
+
+> 
+> As it stands, it seems we have dying tasks getting trapped in an
+> endless fault->reclaim cycle; with no access to the OOM killer and no
+> access to reserves. Presumably this is what's going on here?
+> 
+> I think we want something like this:
+
+The following patch looks good to me. Let's test this out (hopefully Rik
+will be able to find a live impacted machine) and move forward with this
+fix.
+
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 53db98d2c4a1..be6b6e72bde5 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1596,11 +1596,7 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	if (mem_cgroup_margin(memcg) >= (1 << order))
+>  		goto unlock;
+>  
+> -	/*
+> -	 * A few threads which were not waiting at mutex_lock_killable() can
+> -	 * fail to bail out. Therefore, check again after holding oom_lock.
+> -	 */
+> -	ret = task_is_dying() || out_of_memory(&oc);
+> +	ret = out_of_memory(&oc);
+>  
+>  unlock:
+>  	mutex_unlock(&oom_lock);
+> @@ -2198,6 +2194,9 @@ int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  	if (unlikely(current->flags & PF_MEMALLOC))
+>  		goto force;
+>  
+> +	if (unlikely(tsk_is_oom_victim(current)))
+> +		goto force;
+> +
+>  	if (unlikely(task_in_memcg_oom(current)))
+>  		goto nomem;
+>  
 
