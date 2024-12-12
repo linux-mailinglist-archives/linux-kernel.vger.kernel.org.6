@@ -1,97 +1,98 @@
-Return-Path: <linux-kernel+bounces-443802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D136E9EFBF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:00:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046F19EFBFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:00:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896CA28A57A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:00:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169D5188987C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD186189BBB;
-	Thu, 12 Dec 2024 19:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0C718CBFB;
+	Thu, 12 Dec 2024 19:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STHmr6wC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eE1MtNIq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D6315C140
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD961186607;
+	Thu, 12 Dec 2024 19:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734030025; cv=none; b=LHs2zakV+LKJDm8oc/tMIWLxOMe2bn42U3MmqxTDCEF86dNpnk5gPmST0jqOMxFNHBKrQVyj8Fzc8ozloD/sknyZcfDj36uHWW73ztpDrASyR/D1gO++1XUDmQxOM1Ij6Os0us27qQCrZkGjZWRDnJWXRRhkc6JvW80CFypsNAg=
+	t=1734030033; cv=none; b=u7iHx9S22LLBVXmttdla//vnCIE/L3ZMpWBOGkvYdhiq8T+iQbiiIl/RNpn9z/+AXCWLxT/uu6ZyM08frZQ94Cv7+zE95/+YEhpWCi0OEExgBsqTN98V/J6YlLGfCfAgXMTOy2oNgaediZNc+M0cE0329GLm81yBj5glfEiUE2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734030025; c=relaxed/simple;
-	bh=v2zzQLtKwkeasc7lV/u2/xA/7TmArdlOG9GEBR8/ltk=;
+	s=arc-20240116; t=1734030033; c=relaxed/simple;
+	bh=nI3HeDyiaBOWdnA+gdK1JW4Xj2fk3KgJbK4ZlB//e7A=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AL9iJBeP2NIGcmPBUC9q/9wQajzLCsInmQtFHmTzJ+kLKqhklGtTb0j+wm4OVvlXnBo8d4Fe6GPllSxFdfCxOqj77/26SZUult/qYz8hQwSQXO93eejYi6IKvQqXndyD/UwZA5gyOja+CH9oRzltBnEk+S7JXaM+Ot/tSz2gNl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STHmr6wC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB60AC4CED3;
-	Thu, 12 Dec 2024 19:00:24 +0000 (UTC)
+	 Content-Disposition:In-Reply-To; b=JUfsTk0kIOCyVYO7MCEDHgE7S6qDeKrl6yd72i/YPhoeKXKVMlujn3jWBHnc3qhmaHx/VsO1jGbYkKTKcugo+Ba0A58y9LEnZsKR/HrfPyIq46VW06ue88dUre+jPt5po02+50Y9sRk3QJYxZ4hVWmUX8oe1a2Bjm1fHns6k4Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eE1MtNIq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3898CC4CED0;
+	Thu, 12 Dec 2024 19:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734030024;
-	bh=v2zzQLtKwkeasc7lV/u2/xA/7TmArdlOG9GEBR8/ltk=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=STHmr6wCmiHvNKwBTFM34G18qvy+vzvXr6SsowxdqIwdnMRmpX6r4V9kOaJXw91+V
-	 jSLfA2Lsgw7RUD+wq6gu5w5tOGqqe/UKiFP/e+hSVsfpcJSQZLcHGFR1drwJV2vkMk
-	 FAoBR3j7trT6t7VpnjgSQbFbmvSWfCNsP5B/LbrAaa9FAczMnxwEKX7NDiKlGLJXhg
-	 Y8ie0u9qJgEWYvqOtZTeld4fktGuttBj4+RzVAzfYNDpg/GbQjm5Ceoam096nfYK5/
-	 ApIUnwZjKfDpy2gL8L+Auf/sehwyxciUDgbzluTqgSXORmil+L+RNQyRnzOyaNFDFL
-	 dqoX0TUOjnF0w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 4C533CE0808; Thu, 12 Dec 2024 11:00:24 -0800 (PST)
-Date: Thu, 12 Dec 2024 11:00:24 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: quic_mojha@quicinc.com, vschneid@redhat.com, neeraj.upadhyay@kernel.org,
-	frederic@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: [PATCH stop-machine] Fix rcu_momentary_eqs() call in multi_cpu_stop()
-Message-ID: <689a793b-6931-42e1-afbe-d920e1b39228@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=k20201202; t=1734030033;
+	bh=nI3HeDyiaBOWdnA+gdK1JW4Xj2fk3KgJbK4ZlB//e7A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eE1MtNIqt2FyWrnRA1VUOPfVzI11qZXATbOno4b0zzdn3PqjV8lGZj/isgBerEZpl
+	 4hrZST77HqvuRczo6Ur5dk5ayDOmkna/fYiHfIVCmn1C1kcXOh8hSVY4IUv6d7wORR
+	 TvfGdiNaW2YvSuu7LUGpbMuQ8+stmlnBAUW3uPkC96kUnnBzQrf8j88wlX2Y3AXiSX
+	 yBVbvmFIXivzQ2Ghj+St6RojXVbwcGBL3g2pjgM3kV331zLiAwnNBMUlUEp+y7P2/k
+	 LDRJLNawZnexaiFK4dsDUwIOWqET85+3yvw9wH0IWL2WtLcTlxt+bGJvVPM6obTUAX
+	 YVHjvpmOmf18A==
+Date: Thu, 12 Dec 2024 13:00:32 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Cc: rick.wertenbroek@heig-vd.ch, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: endpoint: Replace magic number "6" by
+ PCI_STD_NUM_BARS
+Message-ID: <20241212190032.GA3356901@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241212162547.225880-1-rick.wertenbroek@gmail.com>
 
-The multi_cpu_stop() contains a loop that can initially be executed with
-interrupts enabled (in the MULTI_STOP_NONE and MULTI_STOP_PREPARE states).
-Interrupts are guaranteed to be once the MULTI_STOP_DISABLE_IRQ state
-is reached.  Unfortunately, the rcu_momentary_eqs() function that is
-currently invoked on each pass through this loop requires that interrupts
-be disabled.
+On Thu, Dec 12, 2024 at 05:25:47PM +0100, Rick Wertenbroek wrote:
+> Replace the constant "6" by PCI_STD_NUM_BARS, as defined in
+> include/uapi/linux/pci_regs.h:
+> 
+> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
 
-This commit therefore moves this call to rcu_momentary_eqs() to the body
-of the "else if (curstate > MULTI_STOP_PREPARE)" portion of the loop, thus
-guaranteeing that interrupts will be disabled on each call, as required.
+Applied to pci/endpoint for v6.14, thanks!
 
-Kudos to 朱恺乾 (Kaiqian) for noting that this had not made it to mainline.
-
-[ paulmck: Update from rcu_momentary_dyntick_idle() to rcu_momentary_eqs(). ]
-
-Link: https://lore.kernel.org/all/1712649736-27058-1-git-send-email-quic_mojha@quicinc.com/
-
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index da821ce258ea7..8896d844d738f 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -250,8 +250,8 @@ static int multi_cpu_stop(void *data)
- 			 * be detected and reported on their side.
- 			 */
- 			touch_nmi_watchdog();
-+			rcu_momentary_eqs();
- 		}
--		rcu_momentary_eqs();
- 	} while (curstate != MULTI_STOP_EXIT);
- 
- 	local_irq_restore(flags);
+> ---
+>  include/linux/pci-epf.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+> index 18a3aeb62ae4..ee6156bcbbd0 100644
+> --- a/include/linux/pci-epf.h
+> +++ b/include/linux/pci-epf.h
+> @@ -157,7 +157,7 @@ struct pci_epf {
+>  	struct device		dev;
+>  	const char		*name;
+>  	struct pci_epf_header	*header;
+> -	struct pci_epf_bar	bar[6];
+> +	struct pci_epf_bar	bar[PCI_STD_NUM_BARS];
+>  	u8			msi_interrupts;
+>  	u16			msix_interrupts;
+>  	u8			func_no;
+> @@ -174,7 +174,7 @@ struct pci_epf {
+>  	/* Below members are to attach secondary EPC to an endpoint function */
+>  	struct pci_epc		*sec_epc;
+>  	struct list_head	sec_epc_list;
+> -	struct pci_epf_bar	sec_epc_bar[6];
+> +	struct pci_epf_bar	sec_epc_bar[PCI_STD_NUM_BARS];
+>  	u8			sec_epc_func_no;
+>  	struct config_group	*group;
+>  	unsigned int		is_bound;
+> -- 
+> 2.25.1
+> 
 
