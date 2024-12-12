@@ -1,270 +1,132 @@
-Return-Path: <linux-kernel+bounces-442647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7059EDFCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:02:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6239EDFD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:04:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52BFA28630F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6972A281B8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87695204F97;
-	Thu, 12 Dec 2024 07:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1914D204F83;
+	Thu, 12 Dec 2024 07:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WolaB3IN"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gK4wPw2D"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDF3288DA;
-	Thu, 12 Dec 2024 07:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DFF1632D9;
+	Thu, 12 Dec 2024 07:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733986926; cv=none; b=gwVxsc9vPw2TOpjMq+CBX+Rw/0B+qf4H6YSkhm3AmUx9cPNyzLAvJN9iyZxyqmKbUg6j8fWj2Vxff/DEw/3//QwbK1D7YNcihtOCgVyP9uxqbvWsFjC+wJUww069AG4fbAv/M9Jmzp5rxN6pBVDyKmec3q7iZx5d9pNW6gDygvI=
+	t=1733987081; cv=none; b=cfOQuPisugi+GOZEVR0AB5CtQ1zVzj6hQ8BES8+nLRpoE9Tle9fhdKKU08tqfapdkSONF9d9Th7zeYDz3nkuTg3Zw8SehSsvj73V0nBp184LqbQelcR5CWFRj8zk6UPiTfj5lNG3V3v31md3260j2Vk0HUNBP4zBUsbMlPRQbbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733986926; c=relaxed/simple;
-	bh=wbTqd8TPPjxYXP1zKGXFI2x00mOdOXssSkhfYc/0fgs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YUSSFqoNXOhEGW8r2QoLyESCF7grZfhBKqUIUETlBUTMjRYVKunUmkmLBIFxeKQUCf+yl9uZD2XRkc+zRznknowWm13bh94zs+E/l1BVdgQBv45WSDD/zNcsFK0Gx0yM9demcH8zND89HaoBG1BUG9dsaSrj5ahoXILfsnYR8OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WolaB3IN; arc=none smtp.client-ip=209.85.128.176
+	s=arc-20240116; t=1733987081; c=relaxed/simple;
+	bh=2clUMBF+zfM0MT3b4JiMSxRP50eR+oc99K9vxRX3gc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gKWRQ+jYNKWqumI1YfGglBw4xZgUtFC02WqwFLCsUGpgIs6C97Qiwt/sc78+JieVRuxEhzqrhIY14K7NrCD8feeA4FqBT0wT7tQeG7llAZCUt+0GPME+OeHcOs8ar18tpcnW7FUZaTdB+c17XnRXbgbe5ajswdbF+mvHxYfaw0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gK4wPw2D; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6eff5f99de4so3223987b3.1;
-        Wed, 11 Dec 2024 23:02:04 -0800 (PST)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-728e81257bfso220132b3a.2;
+        Wed, 11 Dec 2024 23:04:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733986924; x=1734591724; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aKrPssl5ptxpuCfiwGMsPZMTvrn0Pjz0iVG975wfYS4=;
-        b=WolaB3INgbL7Da+sXx4uDyH6IIA2r59PmatBOc2DcDuwGxP9f2mq1A7FLeEnXOEPmj
-         1EcEnUG1L3rNI43MEV2ldTTPj1mpAx7RgFygakiQtFZNBLUcNYrRxx0jK5XkASAEruKZ
-         xnwK/fHlajrHBjyI2HLZ0xGFb1P7QgvvMlurTM9nut1aT6pMuS3Tab5akEXvaRBtKuMI
-         gOXepV5crYoiQFQbH819IHfAeqtfQe1f9yY6odyCRz4V8j9lTEn2UtGu/+q33S3Ahgx4
-         mlS+ydNGEXN81AgsPVbUcs/9cEr61/pC+HD5K/8JIjib99xDpUX5OHGgfvtSx/xKXyaI
-         JHWQ==
+        d=gmail.com; s=20230601; t=1733987079; x=1734591879; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SIv08M5NuYFMrbLnuplDgqYvTP/RY0BpL7xzh6gruXQ=;
+        b=gK4wPw2DFDiJQy4ZyQryEGZ/8tuvEf5a+/kCyTjjH5XmVYXOZXEThq2reW7JMdHRbs
+         dSGlgnwaXOIPjJs8x/Mfjsn0iKVrpHpMnayuDBfjr/uBtMvFy2BnD/0wTEVWGguUhiTL
+         GKBtFYnHKOPPxjsHPfXNd4sq9v4bzNh5TY4SSCyU9/rGtbUHZ6TdVzpSSfUBuRDOXmqn
+         Nn1jQE4aONWTlfde5CX8yePooTNiIIDGsTA8TnvaEably+yK6JM8jp8qUu1kYNSwQavZ
+         4TqQpgs27nRl4xZS92me1WNRkgh5pUEQMBN5CBZUEgcLvuOSYW4p8mF/6e92bzoBNdwT
+         C+wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733986924; x=1734591724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aKrPssl5ptxpuCfiwGMsPZMTvrn0Pjz0iVG975wfYS4=;
-        b=W/LSsQMTKzYPH9MUiw3dRufmcVyQ1tHDKRLolIF5A2kHiZzx/K0iV5PPRQtAHu0x3z
-         +Jutb92+JrBod3AsTT/Lr0QzvoqzgEqZkL9ECJugPWM74ZnckBNDCFHeJGRLoRJm4kOk
-         Jh7r974bMgNrl7IQ78KthsDm/B9P4IHyvS9qe1ZOPwblfndr9JCHLh/IQlXKqV0/cf0i
-         s6Z5suxa4B7Ve++5ex1GZm58dgS/eJC4hXrVCo0u3snT5cYm3aWuv8ijckv9Awra+WMP
-         w6wS0gk4/94vVm7mplzDJQFq11UlIexvVOWQdJJBLP/mo8XqmHEypnX3B8kvvw8rRzZl
-         UaHw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6VyTAW/5UuNCcOf2Hf0rsGs89Csq5thdPXxXQJWNR0HeGI1490NnSnzHsymVYUAdntKevz8/e@vger.kernel.org, AJvYcCV/Zx6W8XO6m3CiXWKKpUlyAy7RAaTBtse/6iKruF/BIjtiHvJe6iFIAFmI5pn6uQgErcTYgnqexH02@vger.kernel.org, AJvYcCV2OLZ1b2Y1c9oHx5e8Sy4zoxkLO9oNlnwEocEI7w80wlmKAOK0fLGEli34D0Qv5pNDwL64Shixfo3huCA=@vger.kernel.org, AJvYcCVvFA6CTF+dzAwXgU7rqHVLVNI2P8q/XZJSvAlfSxDq2RK+02jl5mlfPLBqqgBclZK3IWBX+mKUXPY=@vger.kernel.org, AJvYcCWBzwcJZF18YkVkLDa2gZOyaucL++/624pkLczBZ7TnhoBLvFT9Kgm/XAMSiZQVCWXsWb2TCAnnZLTG@vger.kernel.org, AJvYcCXSaUcvDk9SfaWOmB2Re8cZP0eWzz0JHIozyzLbJOEf+ceMTW2GnF8G2KArMbqjQLT/ztj85aPDgNjbJdxSHkw=@vger.kernel.org, AJvYcCXxNJUNOublxZW0+fku9cobwQGiYYEYAibCLWwsKvk0YxbvIpkZVDblF+hGb2N3CD6Ky0OjZi7b1xo6bA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz8P0hxAK0vLbWPzhJa/IVwskoVvdbxMSQZw+0sXJ34aoHWfxe
-	0XjePH6JkbfkXjH4pvaj47F/eILIiC//TFshGalPKcnG0p8DZEEEDciB5+qhQ1Tv9CawCgM8lgK
-	4b9MigUAa4lhaE1nHv31mEh8z68E=
-X-Gm-Gg: ASbGnct7hMz3F1NHjMFYCa5AyEmBzzSljNAsWBY2b4H9JHIMIOLnlECaEfu65LSnzaV
-	LtVLavGypU7s2TX2G+p4OW4BE3BHSi+qkRjDIQS7gUUiKCFcPeaXOKPFBS5mWh+aPwbh/dc0=
-X-Google-Smtp-Source: AGHT+IFhv4QyHcNAajVgFrqbIVUujoYsNm1PsFdg3x7M+LbdO2uCN7G0YuFwTVKJ2c8fgexcq19wksQCuFGSHyGv1xQ=
-X-Received: by 2002:a05:690c:6e03:b0:6ef:8122:282f with SMTP id
- 00721157ae682-6f1a508837dmr20566937b3.24.1733986924068; Wed, 11 Dec 2024
- 23:02:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733987079; x=1734591879;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SIv08M5NuYFMrbLnuplDgqYvTP/RY0BpL7xzh6gruXQ=;
+        b=ZFnyL+v4TCPFp+74HWRZbVMMiZbodR94BrJRhoxV5JzWMELUA/CA0QLW8DcQpiOJbi
+         xxS+WuQDVRiGkM/cAO4iVIH/mhuBQBzzvXq9insft///ursW4/hNwrE6qMxcCg134Xzh
+         0wEid6Vn2ItzjDHfdn3cVe6R47fWujhqlBSKGtUyBopYfKZZ+zrEA/3PahAxFkYMFeL2
+         Ao2ywud3NtVtem4zlu3/ZSfhJSk44IARqVnIyPlCTnv549agLMyQwmw3qCTH0Wc1WWfn
+         whQKqb2r9KxhJl3DXcvzEO0YfGwGOCC7tWXFGfMpOW+W6V527uTmQ+9T4G/5vrnaCq5u
+         lzww==
+X-Forwarded-Encrypted: i=1; AJvYcCVlpCyHSyncuSKpqe41GgXihiSfPvgzR5Eec7mChW66nMpiAJJxG0C4FxtBzegNPxiwaMVMuA07i7Q=@vger.kernel.org, AJvYcCX0h3n7R8+0sJDm5yiN0Vts9IqU2tp21cJ2kBAaNPWtCSi0l9NBqBI0HjAQ/GRm0fu6ow9Lw5zJGPv2QbPB@vger.kernel.org, AJvYcCXDXSpByIB+y+kZ7xWaggdB5HLfmOqEaJ/2XBrSzAU/88GhyvWO4kz/MaC4F3HNpmMOWRVz9pP9l3AL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNVT4TNwdYn5YbZW0aYWwjvyhLe0mLQ33jxmZtkIgcm5PWDWD6
+	UfJxhqRRd74Ln+cj9y/D15l7hsDiHvIiCXyjx0UxWexKTHvoH1r8Xke4UUM7
+X-Gm-Gg: ASbGnctyLPElWGwAp2N/XkhaTbdxvggeibXIGU+P9ppPR2Z+hmIuPb11J8JAsyHQVTl
+	yLNadJMqYS9G9Ia6aTs2RWp5TUKkkGSCk4c9sBrjTo9IXNMty5SiUbuA2VVwkjZslegy01lead0
+	NaKCCy78lv+iaPCxIDDLqkEJ5127wXrSH9K87Ntt/Ld9+6Ld8j+G6rs6+WmawbM6dRdeyOvJ5sf
+	CK80xfbDMVPMNov51w+QPy+ss8vQDQqIphVb4CS1itNS30TGeiblRAlpclGYL1yRWtUt7bs
+X-Google-Smtp-Source: AGHT+IE2taDr2+F/QNnwkBgUaYbLlW++dErTzZng9ixbTcmDK5lHBmPiyyr/YT2Yg8/ifsjbQynqqA==
+X-Received: by 2002:a05:6a20:7347:b0:1e0:d32f:24e2 with SMTP id adf61e73a8af0-1e1cebdfe8bmr3622509637.38.1733987079385;
+        Wed, 11 Dec 2024 23:04:39 -0800 (PST)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-725ee10f928sm6519386b3a.32.2024.12.11.23.04.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 23:04:38 -0800 (PST)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Asahi Linux <asahi@lists.linux.dev>,
+	Linux ARM Kernel Architecture <linux-arm-kernel@lists.infradead.org>,
+	Linux power management <linux-pm@vger.kernel.org>,
+	Devicetree <devicetree@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Cc: Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH v2 0/7] Apple A7-A11, T2 SoC cpufreq support
+Date: Thu, 12 Dec 2024 15:02:59 +0800
+Message-ID: <20241212070344.3858-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241210104524.2466586-1-tmyu0@nuvoton.com> <20241210104524.2466586-2-tmyu0@nuvoton.com>
- <47f720f8-90d7-4444-bfde-fb76ec2a2f0f@wanadoo.fr>
-In-Reply-To: <47f720f8-90d7-4444-bfde-fb76ec2a2f0f@wanadoo.fr>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Thu, 12 Dec 2024 15:01:53 +0800
-Message-ID: <CAOoeyxXC5zj5R1qV-WSakJmh_q8vK0oh_sjg1VZK=dvhaZdYCw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/7] mfd: Add core driver for Nuvoton NCT6694
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, tmyu0@nuvoton.com, lee@kernel.org, 
-	linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, 
-	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Dear Christophe,
+This series add driver support for cpufreq Apple A7-A11, T2 SoCs.
+Device Tree nodes will be included in another series.
 
-Thank you for your comments,
+Changes since v1:
+- transition_latency is in ns, APPLE_DVFS_TRANSITION_TIMEOUT in us.
+Multiply APPLE_DVFS_TRANSITION_TIMEOUT by 1000 before setting it as
+transition_latency.
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> =E6=96=BC 2024=E5=B9=B41=
-2=E6=9C=8812=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=8812:44=E5=AF=AB=
-=E9=81=93=EF=BC=9A
->
-> > +int nct6694_read_msg(struct nct6694 *nct6694, u8 mod, u16 offset,
-> > +                  u16 length, void *buf)
-> > +{
-> > +     struct nct6694_cmd_header *cmd_header =3D nct6694->cmd_header;
-> > +     struct nct6694_response_header *response_header =3D nct6694->resp=
-onse_header;
-> > +     struct usb_device *udev =3D nct6694->udev;
-> > +     int tx_len, rx_len, ret;
-> > +
-> > +     guard(mutex)(&nct6694->access_lock);
->
-> Nitpick: This could be moved a few lines below, should it still comply
-> with your coding style.
->
+v1: https://lore.kernel.org/asahi/20241211112244.18393-1-towinchenmi@gmail.com/T
 
-I think the lock should be placed here to prevent the cmd_header from
-being overwritten by another caller.
-Could you share your perspective on this?
+Nick Chan
+---
+Hector Martin (1):
+  cpufreq: apple-soc: Drop setting the PS2 field on M2+
 
-> > +
-> > +     /* Send command packet to USB device */
-> > +     cmd_header->mod =3D mod;
-> > +     cmd_header->cmd =3D offset & 0xFF;
-> > +     cmd_header->sel =3D (offset >> 8) & 0xFF;
-> > +     cmd_header->hctrl =3D NCT6694_HCTRL_GET;
-> > +     cmd_header->len =3D length;
-> > +
-> > +     ret =3D usb_bulk_msg(udev, usb_sndbulkpipe(udev, NCT6694_BULK_OUT=
-_EP),
-> > +                        cmd_header, NCT6694_CMD_PACKET_SZ, &tx_len,
-> > +                        nct6694->timeout);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     /* Receive response packet from USB device */
-> > +     ret =3D usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_=
-EP),
-> > +                        response_header, NCT6694_CMD_PACKET_SZ, &rx_le=
-n,
-> > +                        nct6694->timeout);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     ret =3D usb_bulk_msg(udev, usb_rcvbulkpipe(udev, NCT6694_BULK_IN_=
-EP),
-> > +                        buf, NCT6694_MAX_PACKET_SZ, &rx_len, nct6694->=
-timeout);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     return nct6694_response_err_handling(nct6694, response_header->st=
-s);
-> > +}
-> > +EXPORT_SYMBOL(nct6694_read_msg);
-> > +
-> > +int nct6694_write_msg(struct nct6694 *nct6694, u8 mod, u16 offset,
-> > +                   u16 length, void *buf)
-> > +{
-> > +     struct nct6694_cmd_header *cmd_header =3D nct6694->cmd_header;
-> > +     struct nct6694_response_header *response_header =3D nct6694->resp=
-onse_header;
-> > +     struct usb_device *udev =3D nct6694->udev;
-> > +     int tx_len, rx_len, ret;
-> > +
-> > +     guard(mutex)(&nct6694->access_lock);
->
-> Nitpick: This could be moved a few lines below, should it still comply
-> with your coding style.
->
+Nick Chan (6):
+  dt-bindings: cpufreq: apple,cluster-cpufreq: Add A7-A11, T2
+    compatibles
+  cpufreq: apple-soc: Allow per-SoC configuration of APPLE_DVFS_CMD_PS1
+  cpufreq: apple-soc: Use 32-bit read for status register
+  cpufreq: apple-soc: Increase cluster switch timeout to 400us
+  cpufreq: apple-soc: Set fallback transition latency to
+    APPLE_DVFS_TRANSITION_TIMEOUT
+  cpufreq: apple-soc: Add Apple A7-A8X SoC cpufreq support
 
-I think the lock should be placed here to prevent the cmd_header from
-being overwritten by another caller.
-Could you share your perspective on this?
+ .../cpufreq/apple,cluster-cpufreq.yaml        | 10 +++-
+ drivers/cpufreq/apple-soc-cpufreq.c           | 56 +++++++++++++++----
+ 2 files changed, 54 insertions(+), 12 deletions(-)
 
-> > +
-> > +     /* Send command packet to USB device  */
->
-> Nitpick: double space before */
->
 
-Fix it in v4.
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+-- 
+2.47.1
 
-> > +     cmd_header->mod =3D mod;
-> > +     cmd_header->cmd =3D offset & 0xFF;
-> > +     cmd_header->sel =3D (offset >> 8) & 0xFF;
-> > +     cmd_header->hctrl =3D NCT6694_HCTRL_SET;
-> > +     cmd_header->len =3D length;
->
-> ...
->
-> > +static struct irq_chip nct6694_irq_chip =3D {
->
-> const?
->
-
-Fix it in v4.
-
-> > +     .name =3D "nct6694-irq",
-> > +     .flags =3D IRQCHIP_SKIP_SET_WAKE,
-> > +     .irq_bus_lock =3D nct6694_irq_lock,
-> > +     .irq_bus_sync_unlock =3D nct6694_irq_sync_unlock,
-> > +     .irq_enable =3D nct6694_irq_enable,
-> > +     .irq_disable =3D nct6694_irq_disable,
-> > +};
->
-> ...
->
-> > +static int nct6694_usb_probe(struct usb_interface *iface,
-> > +                          const struct usb_device_id *id)
-> > +{
-> > +     struct usb_device *udev =3D interface_to_usbdev(iface);
-> > +     struct device *dev =3D &udev->dev;
-> > +     struct usb_host_interface *interface;
-> > +     struct usb_endpoint_descriptor *int_endpoint;
-> > +     struct nct6694 *nct6694;
-> > +     struct nct6694_cmd_header *cmd_header;
-> > +     struct nct6694_response_header *response_header;
-> > +     int pipe, maxp;
-> > +     int ret;
-> > +
-> > +     interface =3D iface->cur_altsetting;
-> > +
-> > +     int_endpoint =3D &interface->endpoint[0].desc;
-> > +     if (!usb_endpoint_is_int_in(int_endpoint))
-> > +             return -ENODEV;
-> > +
-> > +     nct6694 =3D devm_kzalloc(dev, sizeof(*nct6694), GFP_KERNEL);
-> > +     if (!nct6694)
-> > +             return -ENOMEM;
-> > +
-> > +     pipe =3D usb_rcvintpipe(udev, NCT6694_INT_IN_EP);
-> > +     maxp =3D usb_maxpacket(udev, pipe);
-> > +
-> > +     cmd_header =3D devm_kzalloc(dev, sizeof(*cmd_header),
-> > +                               GFP_KERNEL);
-> > +     if (!cmd_header)
-> > +             return -ENOMEM;
-> > +
-> > +     response_header =3D devm_kzalloc(dev, sizeof(*response_header),
-> > +                                    GFP_KERNEL);
-> > +     if (!response_header)
-> > +             return -ENOMEM;
-> > +
-> > +     nct6694->int_buffer =3D devm_kcalloc(dev, NCT6694_MAX_PACKET_SZ,
-> > +                                        sizeof(unsigned char), GFP_KER=
-NEL);
->
-> Why for cmd_header and response_header we use a temp variable, while
-> here we update directly nct6694->int_buffer?
->
-> It would save a few LoC do remove this temp var.
->
-
-Fix it in v4.
-
-> > +     if (!nct6694->int_buffer)
-> > +             return -ENOMEM;
-> > +
-> > +     nct6694->int_in_urb =3D usb_alloc_urb(0, GFP_KERNEL);
-> > +     if (!nct6694->int_in_urb)
-> > +             return -ENOMEM;
->
-> ...
->
-
-Best regards,
-Ming
 
