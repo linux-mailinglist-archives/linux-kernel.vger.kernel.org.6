@@ -1,226 +1,180 @@
-Return-Path: <linux-kernel+bounces-443353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2719EEE5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:56:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD269EEF4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:14:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E101881332
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:51:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F251896697
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 16:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E00222D7C;
-	Thu, 12 Dec 2024 15:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F193223E6FC;
+	Thu, 12 Dec 2024 15:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyXGlV9V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Tamm4X9R"
+Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E418A222D4A;
-	Thu, 12 Dec 2024 15:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FF123E6DA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 15:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734018598; cv=none; b=DYjZunlQkXokCqmlKo8VEhEeHKpGCRBm8CrRIjp/Yb+Wn1kWnugOjvnWCZb67yVLGEA4a14EIE6Ky+fb8z7R5Gn7RZrwF9U0jTG3v5rD1UHkzJ3ZomNZXCdg2bBhnUjNn7lokiI8CcubRuU7NNxH/4iNjMixkyhamgIbIa8ezCE=
+	t=1734019118; cv=none; b=pxFS8RbDnxrDSWchWsQcuvGQCPWQIeMWsl24L7Yku1olhuSxR3ILpNXrENv0AlfjxkHsFiWpjApfg6SOg7fa3DmPTeZxlyHU4R4827X6pKCXaiHwJNYk2NHePXZ2a178zc7li5yuM+MGIcY8pJcgp+Bdo0h3ktpn2bJFOWzJ9Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734018598; c=relaxed/simple;
-	bh=htv+UPiuxFH5l75rnUXHTUNj6KGcw1im7Z97ayXbG/U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aAXUYsI122ofeCXq316pbLq44HlKo7uw/KhsXM9Qy9IaCvc/84QWglAPAH4anoC62fyP+pE9D7B8IJcOqirwGZoUEfMGs97x+qHkAEPLG0P+5ldUXpNzyB1FvGT4G1rf42law5KMQteDAOCrhSW/rFl3FiLyE/crTd2h80PJc18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyXGlV9V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF53CC4CEDF;
-	Thu, 12 Dec 2024 15:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734018597;
-	bh=htv+UPiuxFH5l75rnUXHTUNj6KGcw1im7Z97ayXbG/U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DyXGlV9Vn8wlOexZkTcy223Q18awPcPgYx5ZzmT4EBKM240MJ/+ituocvDsDxMNBp
-	 4xwfHWhaTpgEMJWMxDHEcTVce0P/w6RUd3B20NV8zNXxNPI+UYgiF/tendoxqNTTJM
-	 d9vflwHPch2Ug/8zBkQ3pJWHpV3v0L5P6GN7SSQ/ccI3sUNE4KmoixrwHbprxx7E1h
-	 maG+2IFhxSmsETe/1oe2+XXNRv1x3ZpF//WrkVlI03W3hPM8Km12ozcUEGsM/Ca/Ii
-	 WYE0hVGDtIrwhQfzw18GWGXrqsV9kxVBfxhDDp7zblqor9AOaKctOBLggtH5C4ajNE
-	 POKdAH+snE/+g==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffa49f623cso7733291fa.1;
-        Thu, 12 Dec 2024 07:49:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU/efqqzOwvhOYON+vLJwiu3Li7iD7OiGvZfCMcEx+PO8xKl9j2GDZbGKzk/ibY5AHcLhSCAwV4Rb0tB9P6MGQ=@vger.kernel.org, AJvYcCUVKiG1t8yHqDTwCMMAqtqCQoUa1AAcMJ/Lojzddm97cq0b4GiE4tlW6jy+7vk0wk+tQFI3bh1HH7G0KuU=@vger.kernel.org, AJvYcCWCQB+Vdokd1Wihk0XCdcqAYszIAamKuen/3E5BZoTs5pdIEEHqIq3CwlVCmth3EW5uyxC5Sul+b/sjmfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymk1Ws0bs715/sfi80Iq70gV/Eq6awfwKG1QkQNxuS6wfeMDQq
-	AqLA5PjmfsuXo6CJOR7y5pLODrTGivBe9BNNaWRuf49zU/DreduJ1TOA47IZDGz6AFldSfn/lcL
-	4p88qBNfhYfc+e71ffkOzGynSuqo=
-X-Google-Smtp-Source: AGHT+IHmrKLcaLYW/lzhCLoUQyw/UlgK8Yt9mn+tMxhedsH8J/pZYJ7bPWpqt83lK+884t/Y0Jonc8vuqh39q6arPdE=
-X-Received: by 2002:a2e:2c15:0:b0:2fa:d2c3:a7e8 with SMTP id
- 38308e7fff4ca-30251e0f3f8mr2145091fa.13.1734018596433; Thu, 12 Dec 2024
- 07:49:56 -0800 (PST)
+	s=arc-20240116; t=1734019118; c=relaxed/simple;
+	bh=zBd7T5NIB7hPfbFNSDI7driw6ROkkz34gb/RY0wBpY8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y2tqHJMwxpa9TPzDCJAPre/46BF3t4kUEVmZmpcaQ1gICWm0QHlmI+EIhDomrPGUEcPX8KB/6VdzFbpjgBOROQdh4jHuWI7epoFwuHWg/EjpQcHpyEXcbRjCnDk3R2vbQxahidoTpE+bFupqAFL0Sw3kRBLiqC5Y0bdolAgAKgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Tamm4X9R; arc=none smtp.client-ip=158.69.130.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1734018587;
+	bh=zBd7T5NIB7hPfbFNSDI7driw6ROkkz34gb/RY0wBpY8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Tamm4X9R/C9DxvSVzG43R5KeZIwLyhKonLyjBSrZ0uoNGQZigr3Hz/qmCB0uIruB7
+	 c9fxHG5ZISmQlLQlQhK5xkRDJw7Hk1egmRxDSjD+q5UM2eY4a6APE4+nlMQskfB55i
+	 hAa8Y6SMmmS8O08wyEFdh7OrfpEwE9UKeCDzrGOnil4IQ5TB1BLe1NMGLzpnz/fKx6
+	 kxVPLQ5+AJiTGYoDuzo9cRpiFoUZYyiKx3eASTDRtr9I/vhIJgidbOS3Wk3/dePSJf
+	 fFGy18dAjpfi6dpkp/iXpupH+tNTwl4nCpwH/s77j1r/5s0+erSPrFxuAY8HYcfIjI
+	 jWT6Pv4e1xriQ==
+Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Y8H3H4VXczVVJ;
+	Thu, 12 Dec 2024 10:49:47 -0500 (EST)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marco Elver <elver@google.com>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] sched: Compact RSEQ concurrency IDs with reduced threads and affinity
+Date: Thu, 12 Dec 2024 10:49:43 -0500
+Message-Id: <20241212154943.148632-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241110013649.34903-1-masahiroy@kernel.org> <20241110013649.34903-6-masahiroy@kernel.org>
- <bdd5ff13-ec66-4ab6-985a-1fe433e85f91@nvidia.com> <CAK7LNATgL=vOr37+XfF7du+_ak5yKgXYyNNNTEQdVvy5J2MMyA@mail.gmail.com>
- <b20db4db-afb4-4f58-bc01-ae1250abc8b0@nvidia.com> <CAK7LNATzdVrvmqm2wYHojVhNEiBNTaz6+4xgGBJwFixDvL=TMA@mail.gmail.com>
- <eb21a546-a19c-40df-b821-bbba80f19a3d@nvidia.com>
-In-Reply-To: <eb21a546-a19c-40df-b821-bbba80f19a3d@nvidia.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 13 Dec 2024 00:49:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASzvkKgC+1-O+X2wchR6=Zc2raOc4Sb5YPMp_-AbhcpBg@mail.gmail.com>
-Message-ID: <CAK7LNASzvkKgC+1-O+X2wchR6=Zc2raOc4Sb5YPMp_-AbhcpBg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
- module directory with M=
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, cocci@inria.fr, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 12, 2024 at 3:00=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 12/12/2024 02:08, Masahiro Yamada wrote:
-> > On Wed, Dec 11, 2024 at 9:21=E2=80=AFPM Jon Hunter <jonathanh@nvidia.co=
-m> wrote:
-> >>
-> >>
-> >> On 11/12/2024 02:39, Masahiro Yamada wrote:
-> >>> On Wed, Dec 11, 2024 at 12:34=E2=80=AFAM Jon Hunter <jonathanh@nvidia=
-.com> wrote:
-> >>>>
-> >>>> Hi Masahiro,
-> >>>>
-> >>>> On 10/11/2024 01:34, Masahiro Yamada wrote:
-> >>>>> Currently, Kbuild always operates in the output directory of the ke=
-rnel,
-> >>>>> even when building external modules. This increases the risk of ext=
-ernal
-> >>>>> module Makefiles attempting to write to the kernel directory.
-> >>>>>
-> >>>>> This commit switches the working directory to the external module
-> >>>>> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix fro=
-m
-> >>>>> some build artifacts.
-> >>>>>
-> >>>>> The command for building external modules maintains backward
-> >>>>> compatibility, but Makefiles that rely on working in the kernel
-> >>>>> directory may break. In such cases, $(objtree) and $(srctree) shoul=
-d
-> >>>>> be used to refer to the output and source directories of the kernel=
-.
-> >>>>>
-> >>>>> The appearance of the build log will change as follows:
-> >>>>>
-> >>>>> [Before]
-> >>>>>
-> >>>>>      $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
-> >>>>>      make: Entering directory '/path/to/my/linux'
-> >>>>>        CC [M]  /path/to/my/externel/module/helloworld.o
-> >>>>>        MODPOST /path/to/my/externel/module/Module.symvers
-> >>>>>        CC [M]  /path/to/my/externel/module/helloworld.mod.o
-> >>>>>        CC [M]  /path/to/my/externel/module/.module-common.o
-> >>>>>        LD [M]  /path/to/my/externel/module/helloworld.ko
-> >>>>>      make: Leaving directory '/path/to/my/linux'
-> >>>>>
-> >>>>> [After]
-> >>>>>
-> >>>>>      $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
-> >>>>>      make: Entering directory '/path/to/my/linux'
-> >>>>>      make[1]: Entering directory '/path/to/my/externel/module'
-> >>>>>        CC [M]  helloworld.o
-> >>>>>        MODPOST Module.symvers
-> >>>>>        CC [M]  helloworld.mod.o
-> >>>>>        CC [M]  .module-common.o
-> >>>>>        LD [M]  helloworld.ko
-> >>>>>      make[1]: Leaving directory '/path/to/my/externel/module'
-> >>>>>      make: Leaving directory '/path/to/my/linux'
-> >>>>>
-> >>>>> Printing "Entering directory" twice is cumbersome. This will be
-> >>>>> addressed later.
-> >>>>>
-> >>>>> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> >>>>
-> >>>>
-> >>>> Since this change I have been observing the following build error wh=
-en
-> >>>> building an external module ...
-> >>>>
-> >>>>     MODPOST Module.symvers
-> >>>> ERROR: modpost: drivers/gpu/host1x/host1x: 'host1x_device_init' expo=
-rted
-> >>>>        twice. Previous export was in drivers/gpu/host1x/host1x.ko
-> >>>> ERROR: modpost: drivers/gpu/host1x/host1x: 'host1x_device_exit' expo=
-rted
-> >>>>        twice. Previous export was in drivers/gpu/host1x/host1x.ko
-> >>>>
-> >>>> Now host1x is an upstream driver, but I have a local copy that using=
- to
-> >>>> stage development changes (and avoid polluting the upstream driver).
-> >>>> Plus I can swap between which version I am using on a live system.
-> >>>>
-> >>>> What I noticed is that previously the Modules.symvers for the extern=
-al
-> >>>> module had the full path of the external module for the name. Howeve=
-r,
-> >>>> now the name is just the relative path and in this case
-> >>>> 'drivers/gpu/host1x/host1x'. Hence, this clashes with the in-kernel
-> >>>> driver and we get the 'exported twice' error.
-> >>>>
-> >>>> I have been looking to see if there is a way to fix this because it =
-has
-> >>>> been a useful feature to override an upstream driver with a locally
-> >>>> modified version.
-> >>>
-> >>>
-> >>> I do not know how to reproduce it.
-> >>>
-> >>>     if (s && (!external_module || s->module->is_vmlinux || s->module =
-=3D=3D mod)) {
-> >>>
-> >>> is not checking the module path at all.
-> >>> I do not understand why it was affected.
-> >>
-> >>
-> >> So this is not explicitly checking the path, but comparing the content=
-s
-> >> of the Module.symvers before and after this change for the external
-> >> module I see ...
-> >>
-> >> $ grep -r host1x_device_init Module.symvers
-> >> 0x00000000      host1x_device_init      /absolute/path/to/drivers/gpu/=
-host1x/host1x        EXPORT_SYMBOL
-> >>
-> >> And now I see ...
-> >>
-> >> $ grep -r host1x_device_init Module.symvers
-> >> 0x00000000      host1x_device_init      drivers/gpu/host1x/host1x  EXP=
-ORT_SYMBOL
-> >>
-> >> So the problem is that now there is no longer an absolute path in the
-> >> external modules Module.symvers and so conflicts with the kernel's.
-> >>
-> >> Does that make sense?
-> >
-> >
-> > As I said, I do not know how to reproduce it.
-> >
-> > Please provide the steps to reproduce it.
->
-> Got it! The steps would be ...
->
-> 1. Create an external module by copying using an existing upstream
->     driver (such as host1x).
-> 2. Create a new external module that uses the external module from step
->     1 and uses KBUILD_EXTRA_SYMBOLS to reference the Module.symvers for
->     the driver in step 1.
->
-> Thanks!
-> Jon
+When a process reduces its number of threads or clears bits in its CPU
+affinity mask, the mm_cid allocation should eventually converge towards
+smaller values.
 
+However, the change introduced by:
 
-OK, now I understand, and posted a patch.
-Thanks.
+commit 7e019dcc470f "sched: Improve cache locality of RSEQ concurrency
+IDs for intermittent workloads"
 
---=20
-Best Regards
-Masahiro Yamada
+adds a per-mm/CPU recent_cid which is never unset unless a thread
+migrates.
+
+This is a tradeoff between:
+
+A) Preserving cache locality after a transition from many threads to few
+   threads, or after reducing the hamming weight of the allowed CPU mask.
+
+B) Making the mm_cid upper bounds wrt nr threads and allowed CPU mask
+   easy to document and understand.
+
+C) Allowing applications to eventually react to mm_cid compaction after
+   reduction of the nr threads or allowed CPU mask, making the tracking
+   of mm_cid compaction easier by shrinking it back towards 0 or not.
+
+D) Making sure applications that periodically reduce and then increase
+   again the nr threads or allowed CPU mask still benefit from good
+   cache locality with mm_cid.
+
+Introduce the following changes:
+
+* After shrinking the number of threads or reducing the number of
+  allowed CPUs, reduce the value of max_nr_cid so expansion of CID
+  allocation will preserve cache locality if the number of threads or
+  allowed CPUs increase again.
+
+* Only re-use a recent_cid if it is within the max_nr_cid upper bound,
+  else find the first available CID.
+
+Fixes: 7e019dcc470f "sched: Improve cache locality of RSEQ concurrency IDs for intermittent workloads"
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Marco Elver <elver@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+---
+ include/linux/mm_types.h |  7 ++++---
+ kernel/sched/sched.h     | 24 +++++++++++++++++++++---
+ 2 files changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 7361a8f3ab68..d56948a74254 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -843,10 +843,11 @@ struct mm_struct {
+ 		 */
+ 		unsigned int nr_cpus_allowed;
+ 		/**
+-		 * @max_nr_cid: Maximum number of concurrency IDs allocated.
++		 * @max_nr_cid: Maximum number of allowed concurrency
++		 *              IDs allocated.
+ 		 *
+-		 * Track the highest number of concurrency IDs allocated for the
+-		 * mm.
++		 * Track the highest number of allowed concurrency IDs
++		 * allocated for the mm.
+ 		 */
+ 		atomic_t max_nr_cid;
+ 		/**
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 76f5f53a645f..7df01dc796dc 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3657,10 +3657,27 @@ static inline int __mm_cid_try_get(struct task_struct *t, struct mm_struct *mm)
+ {
+ 	struct cpumask *cidmask = mm_cidmask(mm);
+ 	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
+-	int cid = __this_cpu_read(pcpu_cid->recent_cid);
++	int cid, max_nr_cid, allowed_max_nr_cid;
+ 
++	/*
++	 * After shrinking the number of threads or reducing the number
++	 * of allowed cpus, reduce the value of max_nr_cid so expansion
++	 * of cid allocation will preserve cache locality if the number
++	 * of threads or allowed cpus increase again.
++	 */
++	max_nr_cid = atomic_read(&mm->max_nr_cid);
++	while ((allowed_max_nr_cid = min_t(int, READ_ONCE(mm->nr_cpus_allowed), atomic_read(&mm->mm_users))),
++			max_nr_cid > allowed_max_nr_cid) {
++		/* atomic_try_cmpxchg loads previous mm->max_nr_cid into max_nr_cid. */
++		if (atomic_try_cmpxchg(&mm->max_nr_cid, &max_nr_cid, allowed_max_nr_cid)) {
++			max_nr_cid = allowed_max_nr_cid;
++			break;
++		}
++	}
+ 	/* Try to re-use recent cid. This improves cache locality. */
+-	if (!mm_cid_is_unset(cid) && !cpumask_test_and_set_cpu(cid, cidmask))
++	cid = __this_cpu_read(pcpu_cid->recent_cid);
++	if (!mm_cid_is_unset(cid) && cid < max_nr_cid &&
++	    !cpumask_test_and_set_cpu(cid, cidmask))
+ 		return cid;
+ 	/*
+ 	 * Expand cid allocation if the maximum number of concurrency
+@@ -3668,8 +3685,9 @@ static inline int __mm_cid_try_get(struct task_struct *t, struct mm_struct *mm)
+ 	 * and number of threads. Expanding cid allocation as much as
+ 	 * possible improves cache locality.
+ 	 */
+-	cid = atomic_read(&mm->max_nr_cid);
++	cid = max_nr_cid;
+ 	while (cid < READ_ONCE(mm->nr_cpus_allowed) && cid < atomic_read(&mm->mm_users)) {
++		/* atomic_try_cmpxchg loads previous mm->max_nr_cid into cid. */
+ 		if (!atomic_try_cmpxchg(&mm->max_nr_cid, &cid, cid + 1))
+ 			continue;
+ 		if (!cpumask_test_and_set_cpu(cid, cidmask))
+-- 
+2.39.5
+
 
