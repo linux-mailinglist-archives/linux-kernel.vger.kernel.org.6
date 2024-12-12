@@ -1,139 +1,90 @@
-Return-Path: <linux-kernel+bounces-442451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1610C9EDCFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:14:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5E20188A2A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:14:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4072254F95;
-	Thu, 12 Dec 2024 01:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Te5yZNJb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0B19EDD03
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 02:20:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B99D22611;
-	Thu, 12 Dec 2024 01:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64030283548
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 01:20:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0974154F95;
+	Thu, 12 Dec 2024 01:20:26 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B2432C85
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733966074; cv=none; b=uZ9VQvuvvyfWmmL59CDv42aGKDqYEYvTsjDi6UCxJBTQL7FNZvi3Z+TlSi1n+J+A4f/Nz+EJxbErNjh6SBFArv8JyX/skcYe5AUhroyL7DnENpiXIkxkCXhFKn7yDry8PLvaexWuNrkYB247EQlTqpdxMcDmsuoRlHs3/gTRCls=
+	t=1733966425; cv=none; b=UpwseiK1UfhofhZb4HRaLaHcLq/TaLzZxONOtnsLk5cnFRqXTbcOOcreRnh1+Q0+e16WiBoen0scw33/pW1UxcaaPgJjSM+AAPP+W1GuDmM2tshM1RitKOXtnZS0gVILcIaDvgOC9KMEHNb8k642d2Woodv1wr7oqkXLuO6qn+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733966074; c=relaxed/simple;
-	bh=FiNuu/nR/FU7UPx+3TTSxCuhQObqCgFrpQEzW7nWIrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=u9Fz0KSnN5iYh0/MxWccAiSx/D7AG08DJjSaS/cgEh5/apOQAa0fCW0jopd4wprrokEnZGwmAhmhWHEeScBPOutzJRXORPVoDAmeiqH9Rd7mFu+vnFZc9l4nTxXZr1ysHpCDVtonLJmzEYxP7DZ08VxFMKSUjP1YGLJ/ah305nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Te5yZNJb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BBHD3II029041;
-	Thu, 12 Dec 2024 01:14:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	B38WI0vfY0zD3FJhLNd3QacpcrSPNoEjI/skK01muIA=; b=Te5yZNJbiKhMm6hn
-	DrUQme/+ACDhWiLKKSB6zWTZkqLGgVUmuDNz89ldc9ObMYnEghBjRVpbHEyFTQU5
-	VEEzhBKpOHgxGt3XW5aoWXbM7/CVVzbQiRdhsBBNdgaO/Jm5XzQlU2lNcSMwRBz7
-	/5cWetE88jZsMRDXTEIFbBTxk7xB5Y238+RZoc9/oVFi6D3zYW/DhzHYcKSRm/EH
-	GQxZR9xqPCvEN09dASN9RluvrAW0MIO0tG6dMYKfvITgT7vyDHo7ToBBrh/if+O4
-	ZJ+hHz4PjGGnQb7/No4ErY6T6k2Q/jK36zFNfAqoJjhVXVu5v/R5UouyOhLHpDzp
-	yO0L7g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd4xsb57-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 01:14:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC1ENr2007646
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 01:14:23 GMT
-Received: from [10.110.5.240] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Dec
- 2024 17:14:19 -0800
-Message-ID: <01f84965-8a11-4d6d-99a6-b0e37240d4cb@quicinc.com>
-Date: Wed, 11 Dec 2024 17:14:18 -0800
+	s=arc-20240116; t=1733966425; c=relaxed/simple;
+	bh=Ci7EZQO9kHYiX5WxBfEiOLQLfrqjq9Y5QgAw+/BRYKA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QwhXhuh391BNnB/E5RB686pCQEiaCqcdxtCvHBvm3qGdPBBxOii+J3v4LUZ1VAFwLEOhYKd1261YIR8X06MZpsxQXQPvqID27/CvAbf/niXkY3X8Zza9y9JeHxjL5lM/fvc3sY7iwXznGh6fQmVtPVaO4l5p8ZOQkJZ3pUTv6pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1675a3a4b958-dc27b;
+	Thu, 12 Dec 2024 09:20:12 +0800 (CST)
+X-RM-TRANSID:2ee1675a3a4b958-dc27b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.102])
+	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee2675a3a4b1fa-50747;
+	Thu, 12 Dec 2024 09:20:11 +0800 (CST)
+X-RM-TRANSID:2ee2675a3a4b1fa-50747
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: tglx@linutronix.de
+Cc: mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH] mm/x86: Redefine pgd_clear
+Date: Thu, 12 Dec 2024 09:20:09 +0800
+Message-Id: <20241212012009.2147-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/14] drm/msm/dp: set safe_to_exit_level before
- printing it
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Paloma Arellano <quic_parellan@quicinc.com>
-CC: Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd
-	<swboyd@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>
-References: <20241212-fd-dp-audio-fixup-v3-0-0b1c65e7dba3@linaro.org>
- <20241212-fd-dp-audio-fixup-v3-1-0b1c65e7dba3@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241212-fd-dp-audio-fixup-v3-1-0b1c65e7dba3@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jqHhR6o3tTfRBFY69Ad0z80eE7fIQs-3
-X-Proofpoint-GUID: jqHhR6o3tTfRBFY69Ad0z80eE7fIQs-3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 mlxlogscore=999 phishscore=0 adultscore=0
- suspectscore=0 spamscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120006
+Content-Transfer-Encoding: 8bit
+
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+
+Do not use the 'void' type in conditional expression.
+
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+---
+ arch/x86/include/asm/pgtable.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 593f10aabd45..c149e47122b8 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -74,7 +74,10 @@ extern pmdval_t early_pmd_flags;
+ 
+ #ifndef __PAGETABLE_P4D_FOLDED
+ #define set_pgd(pgdp, pgd)		native_set_pgd(pgdp, pgd)
+-#define pgd_clear(pgd)			(pgtable_l5_enabled() ? native_pgd_clear(pgd) : 0)
++#define pgd_clear(pgd) do {						\
++	if (pgtable_l5_enabled())					\
++		native_pgd_clear(pgd);			\
++} while (0)
+ #endif
+ 
+ #ifndef set_p4d
+-- 
+2.33.0
 
 
 
-On 12/11/2024 3:41 PM, Dmitry Baryshkov wrote:
-> Rather than printing random garbage from stack and pretending that it is
-> the default safe_to_exit_level, set the variable beforehand.
-> 
-> Fixes: d13e36d7d222 ("drm/msm/dp: add audio support for Display Port on MSM")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202411081748.0PPL9MIj-lkp@intel.com/
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/dp/dp_audio.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_audio.c b/drivers/gpu/drm/msm/dp/dp_audio.c
-> index 74e01a5dd4195d5e0e04250663886f1116f25711..5cbb11986460d1e4ed1890bdf66d0913e013083c 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_audio.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_audio.c
-> @@ -329,10 +329,10 @@ static void msm_dp_audio_safe_to_exit_level(struct msm_dp_audio_private *audio)
->   		safe_to_exit_level = 5;
->   		break;
->   	default:
-> +		safe_to_exit_level = 14;
->   		drm_dbg_dp(audio->drm_dev,
->   				"setting the default safe_to_exit_level = %u\n",
->   				safe_to_exit_level);
-> -		safe_to_exit_level = 14;
->   		break;
->   	}
->   
-> 
-
-This was already picked up in -fixes, so no need to include
 
