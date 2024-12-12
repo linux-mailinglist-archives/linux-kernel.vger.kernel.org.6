@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-442575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC0B9EDE7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:30:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730089EDE86
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 151A5167F54
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:30:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C57168652
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E24A17BB34;
-	Thu, 12 Dec 2024 04:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6993C170A37;
+	Thu, 12 Dec 2024 04:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mH88PfDO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0xuEAuP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F17A170A1B;
-	Thu, 12 Dec 2024 04:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47A316F84F;
+	Thu, 12 Dec 2024 04:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733977816; cv=none; b=qLvQplXxqQBHQ8LEYHdxQy2FKfb4pPZfqymavBwdberhqK2uYgc0LeK4ItkQdDGCJngD/K+BzcM3qgGaelgEwYSeuGDH+BNMxVUyrzj7iXR+SuAzC+Cz4DgkvWawJsMi2TjsnZIZw7l+KkY0mlG+XllIC5ohaQvMcmwUdjkQ8aM=
+	t=1733977831; cv=none; b=EIU1Oh+9WGhUqHHN3pChtT2F7WPkl2w8+zO7U4tH/EgF4NrCXWMxSkUJWGroyyKMYOteuzSEPQ5D+xl3eNzMNvtF5Xouo+yQIB2dvsTuI+/3x9Zy5r/8bj72Stse7HqXttPE+/0dheBjQMnpfwiugg7rKtltdfzP1E/u6hj5sOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733977816; c=relaxed/simple;
-	bh=w0GaN2svvAl//6VXkTZuXQXE+ogd0LPmILmAZXFMlxM=;
+	s=arc-20240116; t=1733977831; c=relaxed/simple;
+	bh=gpxYI5EkYQXrsi3Oz/XM6sd//CKsf6du/9t20rriTt4=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MX9Frq4E403K6mDlF4Yblj8IW7xhrmaIw4o/uFUBvuWQTJVAV7elK5XcqcR4Vg2PougBXsUq34a5oTtDzVNHFe+uHOMoMDyCYoX5qGOI4WLLCPhNXfPtSwxQEONfwJV7J3eiVA1Twc5Bx9p0NFGr06hP0fhamQ4tysG+4sG/om0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mH88PfDO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5071C4CED0;
-	Thu, 12 Dec 2024 04:30:15 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=d471m0LmXYftRAjer2rsFLCYqCd1GMezHRj1u4MohfwoniMuWt+3zYnE/fZseHGOwEi+Ge8F0WXzZ4j7CtL85ORjDRmjXC0fBkhZA0AagEWSPM/w7UITt0Ihg8J6Ck0edsVCNgE+o7Q0B2gyKTcYA8sn6rn0lrT/fi3SSvrzFTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0xuEAuP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C4A6C4CECE;
+	Thu, 12 Dec 2024 04:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733977815;
-	bh=w0GaN2svvAl//6VXkTZuXQXE+ogd0LPmILmAZXFMlxM=;
+	s=k20201202; t=1733977831;
+	bh=gpxYI5EkYQXrsi3Oz/XM6sd//CKsf6du/9t20rriTt4=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=mH88PfDOqyp6h2xinfzwPU3ZRwO4xhmM+/l/vWYDoyz1dDjpjFXLCW14d7to7h0Ho
-	 Ki9MLSz8zFsey+48X9CWlm2hFhBtyGt3Q8qNyyHoK68a1vgvgPJXWKM08dgKKFGjPY
-	 eU9rpzeFXLbu20YZlrTcslXpgPJSI0pvkx4QrJUyn6/GuCbHAb70LXYQIcpEWDkDKY
-	 K+RggOwr2hO8fgEnwx10FtZVUsDzIGTkHU1c4xI2n5OJcO35oSqxh+ziN1UH5gbtTH
-	 ctafaFDlYsiinQPQgs808dQTvEghkfnMaj7UYaxOayOr+z0uL/zAstMXXX+mYUGPkM
-	 8IPaRv1MNt99A==
+	b=V0xuEAuPqekBwt4zZ1Xo+9aUJ5+uSPQluZG23g64qlK+NbJqhxUX4H5iWor9Y/y4U
+	 +/dGcByDlZeCddi3eac0UJX4Bmp+dmIUGsBJFqedox3BwPmKNgDYOjH5ZyLyntIOBK
+	 OfuVnMfWsxDR3yXORHp13mbeYJ7jfd0bCOQXHpGrfb2cEp34BnHcAEbI35gLfBqNUZ
+	 L8R3R4KiQ0wxaetev6VFydaRTEWYASpFoPuqPAe10ZQKDVlLeCU7O8zTJuO7weVw6l
+	 kY0a9JghPSEwXf1Uh4Hz3F9fyeuWJ6YXHLXz5Jq2/iAk1KsNFf0+ZW5zWqHejc/7W/
+	 lcPEMZh8QWEpQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 345F3380A959;
-	Thu, 12 Dec 2024 04:30:33 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EC774380A959;
+	Thu, 12 Dec 2024 04:30:48 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/2] MANA: Fix few memory leaks in mana_gd_setup_irqs
+Subject: Re: [PATCH net-next] isdn: Remove unused get_Bprotocol4id()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173397783199.1847197.16469133820148942308.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Dec 2024 04:30:31 +0000
-References: <20241209175751.287738-1-mlevitsk@redhat.com>
-In-Reply-To: <20241209175751.287738-1-mlevitsk@redhat.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, kuba@kernel.org, haiyangz@microsoft.com,
- schakrabarti@linux.microsoft.com, linux-hyperv@vger.kernel.org,
- decui@microsoft.com, pabeni@redhat.com, linux-kernel@vger.kernel.org,
- kotaranov@microsoft.com, leon@kernel.org, kys@microsoft.com,
- wei.liu@kernel.org, andrew+netdev@lunn.ch, shradhagupta@linux.microsoft.com,
- davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
- longli@microsoft.com, yury.norov@gmail.com
+ <173397784776.1847197.7905130187502801190.git-patchwork-notify@kernel.org>
+Date: Thu, 12 Dec 2024 04:30:47 +0000
+References: <20241211005802.258279-1-linux@treblig.org>
+In-Reply-To: <20241211005802.258279-1-linux@treblig.org>
+To: Dr. David Alan Gilbert <linux@treblig.org>
+Cc: isdn@linux-pingi.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon,  9 Dec 2024 12:57:49 -0500 you wrote:
-> Fix 2 minor memory leaks in the mana driver,
-> introduced by commit
+On Wed, 11 Dec 2024 00:58:02 +0000 you wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
+> get_Bprotocol4id() was added in 2008 in
+> commit 1b2b03f8e514 ("Add mISDN core files")
+> but hasn't been used.
 > 
-> Best regards,
-> 	Maxim Levitsky
+> Remove it.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,1/2] net: mana: Fix memory leak in mana_gd_setup_irqs
-    https://git.kernel.org/netdev/net/c/bb1e3eb57d2c
-  - [v2,2/2] net: mana: Fix irq_contexts memory leak in mana_gd_setup_irqs
-    https://git.kernel.org/netdev/net/c/9a5beb6ca630
+  - [net-next] isdn: Remove unused get_Bprotocol4id()
+    https://git.kernel.org/netdev/net-next/c/ae7837bb3d9d
 
 You are awesome, thank you!
 -- 
