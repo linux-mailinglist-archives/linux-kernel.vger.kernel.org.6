@@ -1,85 +1,62 @@
-Return-Path: <linux-kernel+bounces-442872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C3289EE344
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:41:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11799EE34E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:42:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA8B161F84
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:41:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAB416453E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EF421018D;
-	Thu, 12 Dec 2024 09:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35205210F57;
+	Thu, 12 Dec 2024 09:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UwlDR4wP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ImlmS5sT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC85F20E715
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C30E2101A2;
+	Thu, 12 Dec 2024 09:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733996461; cv=none; b=O6Y6eh+pFvHRQm4TZ1J906AxoVK3ObSj2BbU0TaKA2K3d2wP1BBKM8z+USWQeHKuy/p6pNsuuHhHXfEZ+DEbwzHSe62YbdjFUYOWXZ5FfWuDgan0Nja+cg3meoWtRHUnCdo4dlOEl9ZXe/8R7NplQdf48qLvXZWLKQoyzPYeoxc=
+	t=1733996514; cv=none; b=NGsP5zU9ldBJzkES6ikxygvR7giAGyf0I/G3bUrjYgPNsw0z+THs17bTDsse9THHmH6TZqNHPd2E76BqIvX3DWi5UJStaaZAvseXAdFO9xFQScTNtflyaV7KkQdassc9e9LUVbuCSS12dbJmprSzSHUwU23g2CxZ2Wr9Nduhcsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733996461; c=relaxed/simple;
-	bh=vS3YMZ8TTS+sy79u9btJFf1HSWBg0QXdTjZNCNiaehM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=USha68i2/5r//EKLgUJ/xP1B3PRMP/FSZA/eRJJ6/W9XKN6N36sxyf33mRn7KmQNtMSfewIh9NHfrnOIPPM7vVip/XPMrVUlLvEz6QoWqFZ7Omt7Jt/dWRMqOITPwdRLOAeZ29h9JRrd8h9MYThFxBWz+rihGBzjpTN2qP1zgM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UwlDR4wP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733996458;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vO5x2q/Sa0e5fTHlXfwREEvSvA3RWPrUa1t93Ro/NiA=;
-	b=UwlDR4wPRD6Eb4DFKgZ9fdxy8jAxr4kXYjZjFN/zmkEFJ9w3k/zX/cLiYvBzK/alfpc/Hb
-	rAbdn+t+LjOQXYLJspmbchLoDiRJY7zo3f8HOOTgiYiOc542STFiuYx+glNIYF+rQeeWW0
-	vV7y+ITjtmpKvXxrKp2DyZ68bPmzkM0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-342-aI6KCvExNcKhoZQ1A0Y1Tw-1; Thu, 12 Dec 2024 04:40:57 -0500
-X-MC-Unique: aI6KCvExNcKhoZQ1A0Y1Tw-1
-X-Mimecast-MFC-AGG-ID: aI6KCvExNcKhoZQ1A0Y1Tw
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38639b4f19cso261727f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:40:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733996456; x=1734601256;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vO5x2q/Sa0e5fTHlXfwREEvSvA3RWPrUa1t93Ro/NiA=;
-        b=UyiM6pcGds0+JIbdBFlDaJSJmQ8s4ic2o7aD6g+fHfp7zL8hEec4sbr+RvFf3ABUZ5
-         7k8GnzjnYECFUT6VaN09OOm7imDBTVoAc8RgxE6FFAiBCfDN3ymAzW3FihutGJUQ/71d
-         feNcP6MSo4lfwHTmDm6iD2RJLODLGiBQPdQQuZqqC9+AZZyS68a8vXRIwMWORJr79RZu
-         Y3+VtZCckQMMikFfHZwu3BCStXE8WoHC/My3GN298vQhrGlp+M7z9d/WYvfVq4TruZ12
-         JKVw/c1Um10ZNdHTucJ6kODDZw9yy4NybXMe1MWoP8M0TBEqdaYUAZ5XUGmZNvCwOonR
-         YMdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnCRL9irmYD+qs/qf7l4OUzOLIgcbBEZW1SX0mEufdjGWJ+c3UTxUNWsdrlkYuDq/fyJpLYQoDeXzqjrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytIZJYrpD69n6HW6IHW7hpnhDR5UZvxBI9ldsUM3PKcwtNBuFt
-	+v1Qj4EophtIaYvyyxbEXXQ8onPrzl59uVaIRWDnF69wMwi0HoNNzzdtpeGzK0lNV57C318Ba+9
-	O8QlQZEpYNUMq0R0wnhBu9DaGj/d8QYCgU+4J3ItrRQ8EYY8yREAICrSebMblpA==
-X-Gm-Gg: ASbGnctbVTFa8AQxH2at1imSNbGdi7jxT29qHaG4tDQOKxySpKpf8MSHYSCtQh3DlEI
-	guiDoQgNReE35UZ7ItjiuAynHTAh1+7ct2LZiRfttVPt+CETYpxoa3sFX6tFH8aMO7+b4z7oAoR
-	EsO6LlZOS3ttruNUbXmUWwYKb/BVqoWoYcVGeSREubD3NxTfQ/PN2cHXU3r5mpFfluM5Qding77
-	VeAVExefB0OjcQsKw6b+AzwAamhNV54BuRTIyXAK+jr/TmZFYt4jaai4lUwqt0hhCuVn4r367xP
-	/86ibxw=
-X-Received: by 2002:a05:6000:1fa9:b0:385:f23a:2fec with SMTP id ffacd0b85a97d-3864ce88e29mr6040209f8f.11.1733996455836;
-        Thu, 12 Dec 2024 01:40:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFPT0KYgGEFCZGrqybSALsE3Qqj+pmWswO0HlvX3IBSNS8HmdA5fJvJjIK2Fq1iEV0Tr46sRQ==
-X-Received: by 2002:a05:6000:1fa9:b0:385:f23a:2fec with SMTP id ffacd0b85a97d-3864ce88e29mr6040187f8f.11.1733996455462;
-        Thu, 12 Dec 2024 01:40:55 -0800 (PST)
-Received: from [192.168.88.24] (146-241-48-67.dyn.eolo.it. [146.241.48.67])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362557c462sm11164015e9.14.2024.12.12.01.40.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 01:40:55 -0800 (PST)
-Message-ID: <4a2fe99a-772d-4df1-a8ef-14338682b69e@redhat.com>
-Date: Thu, 12 Dec 2024 10:40:53 +0100
+	s=arc-20240116; t=1733996514; c=relaxed/simple;
+	bh=P4x70ZGm++1hRMsj6Htrcow4CvLTL9GRHvSCtADYFY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rr7ROCz7fev9MmszAkfvffV+OxfBzg2XxLnZ5DcLfAVZHbcLEKPwlelEQ0FvHZNO9iMghIAC/0eXjoc/J78Tw23dh+9zUxZZ41Buputjlaym7S4wOqrTfCEMlxVQ6UgLw66GpRcOBd38Air0buI7NCB59U8KRB6FNVSwnx/ohd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ImlmS5sT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC81FsI003601;
+	Thu, 12 Dec 2024 09:41:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IAJYMGceS7Gj1MhSVuVPvmJIGMepzo4iLHRILK3EzNk=; b=ImlmS5sT66eRLmgF
+	+4TiAl3ceZLX45j3wsPSbc40Iy8aDL5BlIbFmz9G+OiBeQpsTZFi+hQIUZBm9aeP
+	v+bE0/9NWfNTeIJh5DHUJLGxy6/xGMmMbEaNWwdYN1T2ytMVGBBEjXohA0pOCWev
+	SLZQqZaF1Mks6FbjO5MauFc/X1ofdyDgErHo9lGgSngVLBkGI+PXwMiwq4cN7o1A
+	M8aW243qM3zIY+fXe/YegdNWI5uDXQHwbgTGcHvu9Rzy1Ut457/9PpREhNqSvHf+
+	lE7vBTShsVdhLh0OF23Ei/M+93FAZoebCGHyb6zNApkhy/yqdDQA37Vnbd7EzInz
+	L1owMg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ee3nfyta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 09:41:47 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BC9flIC006313
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Dec 2024 09:41:47 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
+ 2024 01:41:41 -0800
+Message-ID: <8f2aa73c-f9d3-4523-8595-c35d5ca6f4f7@quicinc.com>
+Date: Thu, 12 Dec 2024 17:41:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,119 +64,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5 5/5] selftests: net: Add two test cases for
- link netns
-To: Xiao Liang <shaw.leon@gmail.com>, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Kuniyuki Iwashima <kuniyu@amazon.com>,
- Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern
- <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Ido Schimmel <idosch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Jiri Pirko <jiri@resnulli.us>, Hangbin Liu <liuhangbin@gmail.com>,
- linux-rdma@vger.kernel.org, linux-can@vger.kernel.org,
- osmocom-net-gprs@lists.osmocom.org, bpf@vger.kernel.org,
- linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
- linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
- bridge@lists.linux.dev, linux-wpan@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241209140151.231257-1-shaw.leon@gmail.com>
- <20241209140151.231257-6-shaw.leon@gmail.com>
+Subject: Re: [PATCH 09/16] media: qcom: camss: Add callback API for RUP update
+ and buf done
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
+ <20241211140738.3835588-10-quic_depengs@quicinc.com>
+ <1ac23fa1-fc35-45fb-9338-d5f304c869ba@linaro.org>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241209140151.231257-6-shaw.leon@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <1ac23fa1-fc35-45fb-9338-d5f304c869ba@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: v6MpkaUc7-_dadEUCvG1mu0SIyanfY62
+X-Proofpoint-ORIG-GUID: v6MpkaUc7-_dadEUCvG1mu0SIyanfY62
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ mlxlogscore=939 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412120068
 
-On 12/9/24 15:01, Xiao Liang wrote:
->  - Add test for creating link in another netns when a link of the same
->    name and ifindex exists in current netns.
->  - Add test for link netns atomicity - create link directly in target
->    netns, and no notifications should be generated in current netns.
-> 
-> Signed-off-by: Xiao Liang <shaw.leon@gmail.com>
-> ---
->  tools/testing/selftests/net/Makefile        |  1 +
->  tools/testing/selftests/net/netns-name.sh   | 10 ++++++
->  tools/testing/selftests/net/netns_atomic.py | 39 +++++++++++++++++++++
->  3 files changed, 50 insertions(+)
->  create mode 100755 tools/testing/selftests/net/netns_atomic.py
-> 
-> diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-> index cb2fc601de66..f9f7a765d645 100644
-> --- a/tools/testing/selftests/net/Makefile
-> +++ b/tools/testing/selftests/net/Makefile
-> @@ -34,6 +34,7 @@ TEST_PROGS += gre_gso.sh
->  TEST_PROGS += cmsg_so_mark.sh
->  TEST_PROGS += cmsg_time.sh cmsg_ipv6.sh
->  TEST_PROGS += netns-name.sh
-> +TEST_PROGS += netns_atomic.py
->  TEST_PROGS += nl_netdev.py
->  TEST_PROGS += srv6_end_dt46_l3vpn_test.sh
->  TEST_PROGS += srv6_end_dt4_l3vpn_test.sh
-> diff --git a/tools/testing/selftests/net/netns-name.sh b/tools/testing/selftests/net/netns-name.sh
-> index 6974474c26f3..0be1905d1f2f 100755
-> --- a/tools/testing/selftests/net/netns-name.sh
-> +++ b/tools/testing/selftests/net/netns-name.sh
-> @@ -78,6 +78,16 @@ ip -netns $NS link show dev $ALT_NAME 2> /dev/null &&
->      fail "Can still find alt-name after move"
->  ip -netns $test_ns link del $DEV || fail
->  
-> +#
-> +# Test no conflict of the same name/ifindex in different netns
-> +#
-> +ip -netns $NS link add name $DEV index 100 type dummy || fail
-> +ip -netns $NS link add netns $test_ns name $DEV index 100 type dummy ||
-> +    fail "Can create in netns without moving"
-> +ip -netns $test_ns link show dev $DEV >> /dev/null || fail "Device not found"
-> +ip -netns $NS link del $DEV || fail
-> +ip -netns $test_ns link del $DEV || fail
-> +
->  echo -ne "$(basename $0) \t\t\t\t"
->  if [ $RET_CODE -eq 0 ]; then
->      echo "[  OK  ]"
-> diff --git a/tools/testing/selftests/net/netns_atomic.py b/tools/testing/selftests/net/netns_atomic.py
-> new file mode 100755
-> index 000000000000..d350a3fc0a91
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/netns_atomic.py
-> @@ -0,0 +1,39 @@
-> +#!/usr/bin/env python3
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +import time
-> +
-> +from lib.py import ksft_run, ksft_exit, ksft_true
-> +from lib.py import ip
-> +from lib.py import NetNS, NetNSEnter
-> +from lib.py import RtnlFamily
-> +
-> +
-> +def test_event(ns1, ns2) -> None:
-> +    with NetNSEnter(str(ns1)):
-> +        rtnl = RtnlFamily()
-> +
-> +    rtnl.ntf_subscribe("rtnlgrp-link")
-> +
-> +    ip(f"netns set {ns1} 0", ns=str(ns2))
-> +
-> +    ip(f"link add netns {ns2} link-netnsid 0 dummy1 type dummy")
-> +    ip(f"link add netns {ns2} dummy2 type dummy", ns=str(ns1))
-> +
-> +    ip("link del dummy1", ns=str(ns2))
-> +    ip("link del dummy2", ns=str(ns2))
-> +
-> +    time.sleep(1)
-> +    rtnl.check_ntf()
-> +    ksft_true(rtnl.async_msg_queue.empty(),
-> +              "Received unexpected link notification")
+Hi Vladimir,
 
-I think we need a much larger coverage here, possibly testing all the
-update drivers and more 'netns', 'link-netnsid', 'peer netns'
-permutations for the devices that allow them.
+On 12/12/2024 9:09 AM, Vladimir Zapolskiy wrote:
+> Hi Depeng and Bryan.
+> 
+> On 12/11/24 16:07, Depeng Shao wrote:
+>> The RUP registers and buf done irq are moved from the IFE to CSID 
+>> register
+>> block on recent CAMSS implementations. Add callbacks structure to wrapper
+>> the location change with minimum logic disruption.
+>>
+>> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> It's unexpected to see two your Signed-off-by: tags, either one is invalid
+> or the authorship of the change shall be changed appropriately.
+> 
+
+Thanks for pointing out this, I will update it based on Bryan's suggestion.
 
 Thanks,
-
-Paolo
+Depeng
 
 
