@@ -1,290 +1,170 @@
-Return-Path: <linux-kernel+bounces-443191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2629EE89A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:17:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 644EB9EE89B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:18:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09BD8164B74
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:17:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81899282E53
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF922144D2;
-	Thu, 12 Dec 2024 14:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565E52144A8;
+	Thu, 12 Dec 2024 14:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pn5MJsc1"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2YIbAKHi"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA876F307;
-	Thu, 12 Dec 2024 14:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09029213E92
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734013068; cv=none; b=IdgUzA//pB0j8wJNQf5MZzjcLMMYZAPsK/ch1RS6irj6lEgBmNwlTOdCtqIeGth7IROVEBdwYqrz53navrRZ5g7Ez0WILtBFAsLuHIJ2bL3rhCh+OYD+rsTZ1W9q0NqbJWXZbB0lAPPKNZHhsj7ckMaHIZL9s2NzSwP7Ml/kcFQ=
+	t=1734013079; cv=none; b=qF+LdMiU1l767/vqI7ksciQBO1QE58ha8LIdpk2ecMefjirUCZR3+BeSkJgUWtUin7hcGNJwQmvNRs7XamTDoZeydkYHFhIoVD/ZgkU6yU3Td9VNa3MVTu9G50um5xxpqYUUeWfp/brujp6nu9DSRjdlZzL/+iHvXIsDqy7n7MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734013068; c=relaxed/simple;
-	bh=lHbUfU4y2+BO7NIG5WB1RkII/mx8O/LypVpdrP4hAAE=;
+	s=arc-20240116; t=1734013079; c=relaxed/simple;
+	bh=dScFLmD9AVTq3grxDRRLA/tKV3AESoh6N2/4sCF37L8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LbH3gB/7DVqQDwJtJpWXnazFJ1bkN/1Ju/EalYxdA6ktkzLHfZGul+9BhYdduq58/5UggEejGtasxp7kq0vw6F8x+JBaMbU4jkzJovAccrcwCfjQK+iJ/dv3b383kP6qUcsfLMqIjKN218vfvBHPJNRpbTEpHJSDh2SVN9QO0Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pn5MJsc1; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-725c86bbae7so585281b3a.3;
-        Thu, 12 Dec 2024 06:17:46 -0800 (PST)
+	 To:Cc:Content-Type; b=FYc75NIO+VKbrALIM3HNQAO+yVI+NnZf8zyIGgRgE2JEcbxpft1A1s1ZLkQvg/8zjZxY5N5eimy6TP9gpCEKn/6zn2cT7IqgxLakYkwSKPs3NiNEiTYf5//GxqQSlJysQDUPrxZnxt/2t7oN1HpYB9Mm9agPEl2zo+TEdWwylQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2YIbAKHi; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-467896541e1so219481cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:17:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734013066; x=1734617866; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734013077; x=1734617877; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AGYw9nfrzbfYZOMxEgmfG5qBFYVP1Htt50/1ibbl19E=;
-        b=Pn5MJsc1avRVW4ZRcsAwFXQpqg1VCmNwzKImlqZ5CTnbmAWIFogyfOdiRZ7H/sH261
-         u/5jMaVvuyaVC3Gsl8kbArLvBqa2OM0snHqJmJkwKdIFVwHcpAbD7xIi/tgR/PeB12BP
-         63JQgp1EA4t/K/qiye6IFjI/dzlHm6zohzlzwAhg7PNYAqho7tPXJDlREdlXbGc2qeVB
-         Eh34+lAjm6PmC/QRYlloNGWswxdYHtPxo1CB9sHsJ0A7qAg9MnMn3riKcDeiBMgEIeDn
-         OW/35c1xQ0kYM8NRsm2PHNSQKQZFzMBvBvhvdTt/bOUIwf5clBvGol7jb3OCva8cayAY
-         EU/A==
+        bh=n8ajthcpMpapR/N161Mc5i8pJmZRr2mxkpMj7Lx+W90=;
+        b=2YIbAKHiDX4HN2JjlyB37d0yJx5ArBleovvqJnbtJilmNTQFgCSvxwbfYsSkdgShEO
+         sQLLtrVgeTV2xAaVRvatAZ1zgAlZ/x7vl3T36g5UZt5e2zWvkAIOOV8PH6AGq3+lkVsB
+         rjLgTMQOrNHSBz1UEgCkij0ivjp4D8QejI1OIYHHGFq46cfKHuEa0uN2icHxXFsp8/ck
+         rleeV+V2595RU9AYrvD7XaBO91NY2VzedzdRvP4RRxDaYLsLnX0ca1aSYrUACNbumyTg
+         mj4bPfUK+pUQM31sS3DY5K/+0COFHtsGVXbLKV9Xj36QQQEurR1YqeBzlQzEQjgH6TCJ
+         kDtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734013066; x=1734617866;
+        d=1e100.net; s=20230601; t=1734013077; x=1734617877;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AGYw9nfrzbfYZOMxEgmfG5qBFYVP1Htt50/1ibbl19E=;
-        b=G3vQHafgZDQSZtqGoHMWKE2pdEKOclIjDXTLEyxDeYNqWpIoc/6adSGQSmrYXRTZKb
-         HwCoyQMdFgb1MtGS28J69q+IKJSYGAlubS07FaLte4loL+V/Y9Bl1QV7qYE4duFiWBmn
-         II4xFZ0Ti+WZ02Lw2i89z6e6ZdleDv4oSlavleMpTiGXF07cZprW/1ebUO9ufQRhwtmU
-         1Ho9ulAH1mQWWKUCkWqoWB66wgZ6ixstgwX8Y7bSBPSNbRpdOmRWNfcP0wNrb05rMZ8G
-         Hg8ccII0qEPrGxtVddwx5pXIxcBw8SyDVaGMgXIrzEdDBD36YumfOR27UP0ThczFPQg+
-         T4BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdwWJpNmFMLNldO9TV+eGyLa4//megPu6onbk1WCcnDLGGa9ZIOeVfWsA6/yyI3gqbuBbUyoPVJMevXq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR7qM/wZN0Ye0blbDLnl6lyyIK9BZbgFS+Mc8HfzoKSDWysvyL
-	WKCictPFRoTlqbtiVmmQyI511RPwe5fog57SRnvnopkx0gAMt4anDISRNR0T/+hcsaeE+FXtvnp
-	51SX7+V3Sxir1cL/ebOweVCbvyKk=
-X-Gm-Gg: ASbGncuWA8h7sWDu0PN04KAsw8X6hpDDBoXdgujuUDObO1pEoSQ28XR9YmwLy2K6sEJ
-	z1GugWrqfNwfYYqFbIGjy44xALX6v9Q0Www5B+w==
-X-Google-Smtp-Source: AGHT+IG+KmHvYjgguramsPJOIZSFiKOXBRZKJaxnCkRz98fzxQ+EazTvZj+Eqt8FYfVvDbOgdJC6ZIC2xAkxkmZqcCw=
-X-Received: by 2002:a05:6a00:3396:b0:725:b201:2353 with SMTP id
- d2e1a72fcca58-729069c8fbbmr636207b3a.13.1734013065898; Thu, 12 Dec 2024
- 06:17:45 -0800 (PST)
+        bh=n8ajthcpMpapR/N161Mc5i8pJmZRr2mxkpMj7Lx+W90=;
+        b=fzx3IIeg92jSTh20coLyw9XqbIN82kqcWE2fMViB7pinjiYDfmkg6h5nJiC/f/dCmt
+         TCx86/YofDe1O7j4Cm5wGqwg9LR1KJ1eThzpSM06JsuIo4OLvbrahTGbE8er0QwwHh40
+         lyOeUhNzI8UD+hJ81Fl3HzEM41ckKtokydoWABHIy+Osce4OvEiwBBiCyfOvcfe6F+/g
+         NGvFgvB/kicx8Vc3aSIjRSRnwgFff7rhVjzQZrspFojr87NkOdlt79jFRzT/3OBZMrtu
+         5AOt73EKUjDlm6CIIDfF2/TBaWqyH9Y9zkw+YskxtiHoIRr7cPCgG/EyQy1j61DPl4Rs
+         cn+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ7v+Di1WZtFF2h/NEdKlOPSQmQ3CKwYNoXzHID5Tl1Fg4cD0dtLih6ec4ENAZ5qPX7u46aMma3sDaDX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9NVym+x//UephoFjPohcH0Z1y7w9KngNS/61zHOXbg3trMJuE
+	R4U8XRwWSMZbU+6+rbaUvBVA4E9zJtlys7JmOWLV6v3G6KMzwgwyGdEOIzNgB4yMFWl6j62PWMp
+	/uEQOlilJbTu45sg6nDMjZLLdm8v1o6r3nQ5N
+X-Gm-Gg: ASbGnctuLvWBR0R33CGo1Iu/GXocjbKUlhmfCwcoY5swJM7LdOEnn8rRvtlDcuBoded
+	CtamxQyO1MQHrP8NN2lOoy4mgt/VXNxobD1UQg0n0O9rTX4+f6s2FBS2YCbk72+YTJOnN
+X-Google-Smtp-Source: AGHT+IEeu8zH/VnJryYj8++kCkoXsuJ3rlVdOfU959FqW2gNhYySMGPbFs/mLT5AeOlhVMLkO548p4WwPtmHykH53aY=
+X-Received: by 2002:a05:622a:428e:b0:467:8070:1573 with SMTP id
+ d75a77b69052e-467a103d0b1mr598111cf.20.1734013076622; Thu, 12 Dec 2024
+ 06:17:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240405161042.260113-1-cgoettsche@seltendoof.de> <20241023152719.24118-1-cgoettsche@seltendoof.de>
-In-Reply-To: <20241023152719.24118-1-cgoettsche@seltendoof.de>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 12 Dec 2024 09:17:34 -0500
-Message-ID: <CAEjxPJ4TXAEkOePLN48NaUYjCziJQcPOWkKDD-0Dek6t4U0rww@mail.gmail.com>
-Subject: Re: [PATCH v2] selinux: add support for xperms in conditional policies
-To: cgzones@googlemail.com
-Cc: selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
-	=?UTF-8?Q?Bram_Bonn=C3=A9?= <brambonne@google.com>, 
-	Jacob Satterfield <jsatterfield.linux@gmail.com>, Eric Suen <ericsu@linux.microsoft.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
-	Canfeng Guo <guocanfeng@uniontech.com>, GUO Zihua <guozihua@huawei.com>, 
-	linux-kernel@vger.kernel.org
+References: <20241111205506.3404479-1-surenb@google.com> <20241111205506.3404479-4-surenb@google.com>
+ <ZzLgZTH9v5io1Elx@casper.infradead.org> <CAJuCfpHpGSpix8+mB76Virb+HAMrOqB3wG8E4EXPrRCnBoBGeA@mail.gmail.com>
+ <20241210223850.GA2484@noisy.programming.kicks-ass.net> <CAJuCfpETJZVFYwf+P=6FnY_6n8E7fQsKH6HrOV1Q_q9cFizEKw@mail.gmail.com>
+ <20241211082541.GQ21636@noisy.programming.kicks-ass.net> <CAJuCfpEMYhAmOPwjGO+j1t+069MJZxUs1O1co-zJ4+vEeXCtng@mail.gmail.com>
+ <CAJuCfpGOOcRAJ46sbPRoCUNuuhi2fnkM97F=CfZ1=_N5ZFUcLw@mail.gmail.com> <20241212091659.GU21636@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241212091659.GU21636@noisy.programming.kicks-ass.net>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 12 Dec 2024 06:17:44 -0800
+Message-ID: <CAJuCfpHKFZ2Q1R1Knh-LFLUYcTX6CJuEsqNM5AwxRyDUAzdcVw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
+	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com, 
+	pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 11:27=E2=80=AFAM Christian G=C3=B6ttsche
-<cgoettsche@seltendoof.de> wrote:
+On Thu, Dec 12, 2024 at 1:17=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
 >
-> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> On Wed, Dec 11, 2024 at 07:01:16PM -0800, Suren Baghdasaryan wrote:
 >
-> Add support for extended permission rules in conditional policies.
-> Currently the kernel accepts such rules already, but evaluating a
-> security decision will hit a BUG() in
-> services_compute_xperms_decision().  Thus reject extended permission
-> rules in conditional policies for current policy versions.
+> > > > > I think your proposal should work. Let me try to code it and see =
+if
+> > > > > something breaks.
+> >
+> > Ok, I tried it out and things are a bit more complex:
+> > 1. We should allow write-locking a detached VMA, IOW vma_start_write()
+> > can be called when vm_refcnt is 0.
 >
-> Add a new policy version for this feature.
+> This sounds dodgy, refcnt being zero basically means the object is dead
+> and you shouldn't be touching it no more. Where does this happen and
+> why?
 >
-> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> Notably, it being 0 means it is no longer in the mas tree and can't be
+> found anymore.
 
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Tested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+It happens when a newly created vma that was not yet attached
+(vma->vm_refcnt =3D 0) is write-locked before being added into the vma
+tree. For example:
+mmap()
+  mmap_write_lock()
+  vma =3D vm_area_alloc() // vma->vm_refcnt =3D 0 (detached)
+  //vma attributes are initialized
+  vma_start_write() // write 0x8000 0001 into vma->vm_refcnt
+  mas_store_gfp()
+  vma_mark_attached()
+  mmap_write_lock() // vma_end_write_all()
 
-> ---
-> v2:
->   rebased onto the netlink xperm patch
-> ---
->  security/selinux/include/security.h |  3 ++-
->  security/selinux/ss/avtab.c         | 11 +++++++++--
->  security/selinux/ss/avtab.h         |  2 +-
->  security/selinux/ss/conditional.c   |  2 +-
->  security/selinux/ss/policydb.c      |  5 +++++
->  security/selinux/ss/services.c      | 12 ++++++++----
->  6 files changed, 26 insertions(+), 9 deletions(-)
+In this scenario, we write-lock the VMA before adding it into the tree
+to prevent readers (pagefaults) from using it until we drop the
+mmap_write_lock(). In your proposal, the first thing vma_start_write()
+does is add(0x8000'0001) and that will trigger a warning.
+For now instead of add(0x8000'0001) I can play this game to avoid the warni=
+ng:
+
+if (refcount_inc_not_zero(&vma->vm_refcnt))
+    refcount_add(0x80000000, &vma->vm_refcnt);
+else
+    refcount_set(&vma->vm_refcnt, 0x80000001);
+
+this refcount_set() works because vma with vm_refcnt=3D=3D0 could not be
+found by readers. I'm not sure this will still work when we add
+TYPESAFE_BY_RCU and introduce vma reuse possibility.
+
 >
-> diff --git a/security/selinux/include/security.h b/security/selinux/inclu=
-de/security.h
-> index c7f2731abd03..10949df22fa4 100644
-> --- a/security/selinux/include/security.h
-> +++ b/security/selinux/include/security.h
-> @@ -46,10 +46,11 @@
->  #define POLICYDB_VERSION_INFINIBAND         31
->  #define POLICYDB_VERSION_GLBLUB                     32
->  #define POLICYDB_VERSION_COMP_FTRANS        33 /* compressed filename tr=
-ansitions */
-> +#define POLICYDB_VERSION_COND_XPERMS        34 /* extended permissions i=
-n conditional policies */
+> > 2. Adding 0x80000000 saturates refcnt, so I have to use a lower bit
+> > 0x40000000 to denote writers.
 >
->  /* Range of policy versions we understand*/
->  #define POLICYDB_VERSION_MIN POLICYDB_VERSION_BASE
-> -#define POLICYDB_VERSION_MAX POLICYDB_VERSION_COMP_FTRANS
-> +#define POLICYDB_VERSION_MAX POLICYDB_VERSION_COND_XPERMS
+> I'm confused, what? We're talking about atomic_t, right?
+
+I thought you suggested using refcount_t. According to
+https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/refcount.h#=
+L22
+valid values would be [0..0x7fff_ffff] and 0x80000000 is outside of
+that range. What am I missing?
+
 >
->  /* Mask for just the mount related flags */
->  #define SE_MNTMASK 0x0f
-> diff --git a/security/selinux/ss/avtab.c b/security/selinux/ss/avtab.c
-> index 8e400dd736b7..83add633f92a 100644
-> --- a/security/selinux/ss/avtab.c
-> +++ b/security/selinux/ss/avtab.c
-> @@ -339,7 +339,7 @@ static const uint16_t spec_order[] =3D {
->  int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
->                     int (*insertf)(struct avtab *a, const struct avtab_ke=
-y *k,
->                                    const struct avtab_datum *d, void *p),
-> -                   void *p)
-> +                   void *p, bool conditional)
->  {
->         __le16 buf16[4];
->         u16 enabled;
-> @@ -457,6 +457,13 @@ int avtab_read_item(struct avtab *a, void *fp, struc=
-t policydb *pol,
->                        "was specified\n",
->                        vers);
->                 return -EINVAL;
-> +       } else if ((vers < POLICYDB_VERSION_COND_XPERMS) &&
-> +                  (key.specified & AVTAB_XPERMS) && conditional) {
-> +               pr_err("SELinux:  avtab:  policy version %u does not "
-> +                      "support extended permissions rules in conditional=
- "
-> +                      "policies and one was specified\n",
-> +                      vers);
-> +               return -EINVAL;
->         } else if (key.specified & AVTAB_XPERMS) {
->                 memset(&xperms, 0, sizeof(struct avtab_extended_perms));
->                 rc =3D next_entry(&xperms.specified, fp, sizeof(u8));
-> @@ -523,7 +530,7 @@ int avtab_read(struct avtab *a, void *fp, struct poli=
-cydb *pol)
->                 goto bad;
+> > 3. Currently vma_mark_attached() can be called on an already attached
+> > VMA. With vma->detached being a separate attribute that works fine but
+> > when we combine it with the vm_lock things break (extra attach would
+> > leak into lock count). I'll see if I can catch all the cases when we
+> > do this and clean them up (not call vma_mark_attached() when not
+> > necessary).
 >
->         for (i =3D 0; i < nel; i++) {
-> -               rc =3D avtab_read_item(a, fp, pol, avtab_insertf, NULL);
-> +               rc =3D avtab_read_item(a, fp, pol, avtab_insertf, NULL, f=
-alse);
->                 if (rc) {
->                         if (rc =3D=3D -ENOMEM)
->                                 pr_err("SELinux: avtab: out of memory\n")=
-;
-> diff --git a/security/selinux/ss/avtab.h b/security/selinux/ss/avtab.h
-> index f4407185401c..a7cbb80a11eb 100644
-> --- a/security/selinux/ss/avtab.h
-> +++ b/security/selinux/ss/avtab.h
-> @@ -108,7 +108,7 @@ struct policydb;
->  int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
->                     int (*insert)(struct avtab *a, const struct avtab_key=
- *k,
->                                   const struct avtab_datum *d, void *p),
-> -                   void *p);
-> +                   void *p, bool conditional);
->
->  int avtab_read(struct avtab *a, void *fp, struct policydb *pol);
->  int avtab_write_item(struct policydb *p, const struct avtab_node *cur,
-> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/cond=
-itional.c
-> index 64ba95e40a6f..c9a3060f08a4 100644
-> --- a/security/selinux/ss/conditional.c
-> +++ b/security/selinux/ss/conditional.c
-> @@ -349,7 +349,7 @@ static int cond_read_av_list(struct policydb *p, void=
- *fp,
->         for (i =3D 0; i < len; i++) {
->                 data.dst =3D &list->nodes[i];
->                 rc =3D avtab_read_item(&p->te_cond_avtab, fp, p, cond_ins=
-ertf,
-> -                                    &data);
-> +                                    &data, true);
->                 if (rc) {
->                         kfree(list->nodes);
->                         list->nodes =3D NULL;
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policyd=
-b.c
-> index 383f3ae82a73..3ba5506a3fff 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -155,6 +155,11 @@ static const struct policydb_compat_info policydb_co=
-mpat[] =3D {
->                 .sym_num =3D SYM_NUM,
->                 .ocon_num =3D OCON_NUM,
->         },
-> +       {
-> +               .version =3D POLICYDB_VERSION_COND_XPERMS,
-> +               .sym_num =3D SYM_NUM,
-> +               .ocon_num =3D OCON_NUM,
-> +       },
->  };
->
->  static const struct policydb_compat_info *
-> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/service=
-s.c
-> index 9652aec400cb..66d2472d3874 100644
-> --- a/security/selinux/ss/services.c
-> +++ b/security/selinux/ss/services.c
-> @@ -946,7 +946,7 @@ static void avd_init(struct selinux_policy *policy, s=
-truct av_decision *avd)
->  }
->
->  static void update_xperms_extended_data(u8 specified,
-> -                                       struct extended_perms_data *from,
-> +                                       const struct extended_perms_data =
-*from,
->                                         struct extended_perms_data *xp_da=
-ta)
->  {
->         unsigned int i;
-> @@ -967,6 +967,8 @@ static void update_xperms_extended_data(u8 specified,
->  void services_compute_xperms_decision(struct extended_perms_decision *xp=
-ermd,
->                                         struct avtab_node *node)
->  {
-> +       u16 specified;
-> +
->         switch (node->datum.u.xperms->specified) {
->         case AVTAB_XPERMS_IOCTLFUNCTION:
->         case AVTAB_XPERMS_NLMSG:
-> @@ -982,17 +984,19 @@ void services_compute_xperms_decision(struct extend=
-ed_perms_decision *xpermd,
->                 BUG();
->         }
->
-> -       if (node->key.specified =3D=3D AVTAB_XPERMS_ALLOWED) {
-> +       specified =3D node->key.specified & ~(AVTAB_ENABLED | AVTAB_ENABL=
-ED_OLD);
-> +
-> +       if (specified =3D=3D AVTAB_XPERMS_ALLOWED) {
->                 xpermd->used |=3D XPERMS_ALLOWED;
->                 update_xperms_extended_data(node->datum.u.xperms->specifi=
-ed,
->                                             &node->datum.u.xperms->perms,
->                                             xpermd->allowed);
-> -       } else if (node->key.specified =3D=3D AVTAB_XPERMS_AUDITALLOW) {
-> +       } else if (specified =3D=3D AVTAB_XPERMS_AUDITALLOW) {
->                 xpermd->used |=3D XPERMS_AUDITALLOW;
->                 update_xperms_extended_data(node->datum.u.xperms->specifi=
-ed,
->                                             &node->datum.u.xperms->perms,
->                                             xpermd->auditallow);
-> -       } else if (node->key.specified =3D=3D AVTAB_XPERMS_DONTAUDIT) {
-> +       } else if (specified =3D=3D AVTAB_XPERMS_DONTAUDIT) {
->                 xpermd->used |=3D XPERMS_DONTAUDIT;
->                 update_xperms_extended_data(node->datum.u.xperms->specifi=
-ed,
->                                             &node->datum.u.xperms->perms,
-> --
-> 2.45.2
->
+> Right, I hadn't looked at that thing in detail, that sounds like it
+> needs a wee cleanup like you suggest.
+
+Yes, I'll embark on that today. Will see how much of a problem that is.
 
