@@ -1,243 +1,333 @@
-Return-Path: <linux-kernel+bounces-442971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8799EE4CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:09:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA139EE4CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9366F18870A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:09:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B17C1886C31
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A96C2116F8;
-	Thu, 12 Dec 2024 11:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4442E2116FC;
+	Thu, 12 Dec 2024 11:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VRjobKog"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="OQj3Cuyf";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="OQj3Cuyf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEBD211A0B
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8742116F8
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734001761; cv=none; b=QrsrVtnFYTkSrTOL6gzjF8lFrRlMwEGxHZGcIZ/ekl4PNegTRLscaRSbImiWaS/52LC9KJGvsCeRGl/5tCGyqjh1ScKUzXY+wNiIxnuff27zFK9BD4tCXSU29Pbj2KKvZriczTWh2u9kQZCD1It2xXWHgaDvJCBb/bE595tUi3I=
+	t=1734001788; cv=none; b=Due/vaNXoIaC69aaDlJJdpjxdtMb/Od7F4YkY95i0tGcQumQOcGNqxt2qwkLQHwiHjWbcsmuBoEk8NX6jGGRU3mjc/D163xeEiWB6pS80KmAKJ/ZNgd7Zp6j4b+XKB5is4hYzlc6d7CzAXWfKeQGSA54RSKiwJdFMkyQPymZPtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734001761; c=relaxed/simple;
-	bh=NVCzg2aQMKAJiIzGPvWwj8kbPMgicpJ+TDwewG2vM1M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PLD7rfmehEQmBm+iDtMWHRdBqBoohMq6J55FOnAJzay4fjAYyr4kIA/h+i4mEFaQu8uWmuyPbDR06ybuwKhWObCi2KuLu82y1CMNECDkkza5m7J81XwwbJnIFZHHGIEV0BAEVHpavThIHCNTe6XFiHS2hQxGkStZ5LE+Tb7MnyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VRjobKog; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734001758;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1734001788; c=relaxed/simple;
+	bh=fNZopUEUX3FjPq3t2iAMdKTc1ZjqXNiFVd7H4qojjy8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BpTeveNw08gPtO2Abo8Pc/Z/i1RAg4wEYwaonzqvDU3MU4DpZcL5HPAPBrhS3mT76o7io6ghDQyFRkP+QmTUHS7lqIXkPWzwZA0bITG4vWqRXzVUV1x+xvlqwJjy71w98bknM7YYP1YkHsysEhn08sDV3V6yN3v37pyqgDSP5Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=OQj3Cuyf; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=OQj3Cuyf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 48C612111F;
+	Thu, 12 Dec 2024 11:09:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1734001784; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NVCzg2aQMKAJiIzGPvWwj8kbPMgicpJ+TDwewG2vM1M=;
-	b=VRjobKogR895b0yjaQ7aA0YM8CY/AMDmLK+nPS7h5oRxjdfKaPLac2KLRLC7SWxgoGpicD
-	EsTAOPJUPWjqx/hUZd9OxUelaw0rTQlf4VJ184wpNiTLUZNiyfW+e8CvtS3XjV2L2zwn75
-	fR/5tuHTcUFQ+PlLs0nxO5Cqh2gm6sg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-RStWhyYfOhiUQO-qf0EM1A-1; Thu, 12 Dec 2024 06:09:17 -0500
-X-MC-Unique: RStWhyYfOhiUQO-qf0EM1A-1
-X-Mimecast-MFC-AGG-ID: RStWhyYfOhiUQO-qf0EM1A
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43623bf2a83so4409215e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 03:09:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734001756; x=1734606556;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NVCzg2aQMKAJiIzGPvWwj8kbPMgicpJ+TDwewG2vM1M=;
-        b=Rpelq6sT3J9u8vJJD6IsLVMW72d9h+C4hvPQGAxC6khpLnm2Z8Fy3x2WSadvhYAIFk
-         6bXIqgxiQHtsUdJBHamEwjJ216UcF5jlViVktls6o+EaicCbB+ZntB8cUJ+i9RlGd7qf
-         Nu/o2HV2Hp9VNjK4yCuzCGv8RHcEVxYmRygMZaOBXvfsdYyZc5WpkjCnPav3GRFy1Zff
-         NSNiMPsKTfpUIQH9oDnud/fgoGB7G5ko3+5o9fsrY0/pCXp5+zNPV0/ffxkrHGURg1TI
-         D8WynvJ/YQrFOOjlHgY6KHEiR7UKOcYQKOdhh0UNufhIS7kZxTgX1/JdwSpUnztMuPis
-         DD+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVM+ypH5mhSltr5BBUAaKK6ETfbwUDPg0/O+dxgoWshVRU4MxLlNb/FV+YXqZkU3AyhBtSBEBaBoc8liEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3VQvCfd57jlFRHOUB1NwdvboJzz7GeuSdVnbNVdvj0QZCLrrT
-	gOWrsF0CCfuhBThpUua0iF7317NtNZWTS2OKH8pNyu0tdxzhp3ErR9WEBsONUFezMrD/PMq+fox
-	3rDz59KjXvRctH2KAwMHozN+HtJsJjlakyUeYU5TedqlOLVae+2LYZCrDfQg8Bw==
-X-Gm-Gg: ASbGnctNnIO17YycLGPlT/G89b1ThR00OkqOtKbKbCb1AmMjAuPwZEupun9mkDE7xKS
-	BoUxnFGlQdbb7UBCWU2RdoP+F6cAMNwZqBcWV67mE8wGaQRfq1QfKh6daQFKo7Yy7cN4Tzi88Vt
-	jI2Se5Sp+fPR/POjUbh+ZOqKb5AMUQP1d0v9YVgUgovugxjLrHXhsNLJFFVlbObp6nAxsiI7J1r
-	nmH+H4uW2lRUF5eVpZedrgZmLL6bXzSBEggDX6FyuvUJ83Ann2yw8kw6IT+RoXhPs6yf2y39yke
-	0SMEujc=
-X-Received: by 2002:a05:600c:3b18:b0:434:fd77:5436 with SMTP id 5b1f17b1804b1-4361c38d24fmr55270095e9.15.1734001756125;
-        Thu, 12 Dec 2024 03:09:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH8ap1IbGcgEu+lVxAQWA0eS/jI89kYifdBDCdLvLY0jc5l1y7TOiHLyavz5avNPpBRcPwp9Q==
-X-Received: by 2002:a05:600c:3b18:b0:434:fd77:5436 with SMTP id 5b1f17b1804b1-4361c38d24fmr55269825e9.15.1734001755714;
-        Thu, 12 Dec 2024 03:09:15 -0800 (PST)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625706595sm13537165e9.33.2024.12.12.03.09.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 03:09:14 -0800 (PST)
-Message-ID: <7e9082361b5b98f1824301c92cde929725db0db6.camel@redhat.com>
-Subject: Re: [PATCH] sched: Move task_mm_cid_work to mm delayed work
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Cc: Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot	
- <vincent.guittot@linaro.org>, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra	 <peterz@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>, Mel Gorman	 <mgorman@suse.de>
-Date: Thu, 12 Dec 2024 12:09:11 +0100
-In-Reply-To: <eee21fae-dc64-40bf-90ac-c7228ae7ef48@efficios.com>
-References: <20241205083110.180134-2-gmonaco@redhat.com>
-			 <4c067b75e06aadd34eff5b60fc7c59967aa30809.camel@redhat.com>
-			 <5ba975e2-06b9-4b98-bece-d601b19a06db@efficios.com>
-			 <ead55d690448cbf23677bcc1b4c1a5c129240c90.camel@redhat.com>
-			 <445b4203-940d-4817-bd45-9da757f22450@efficios.com>
-			 <481a7b7716cf4eb2d592b08558d297d343d9aa25.camel@redhat.com>
-			 <cbc0a3c5-2ae5-439e-ae5d-7fb68ea49aec@efficios.com>
-			 <1f4a8928-8450-48e2-bf40-e75967240d79@efficios.com>
-			 <7c4d0c6800a4bd7a5cf4928e28d59fb469c944b9.camel@redhat.com>
-			 <eee21fae-dc64-40bf-90ac-c7228ae7ef48@efficios.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	bh=fNZopUEUX3FjPq3t2iAMdKTc1ZjqXNiFVd7H4qojjy8=;
+	b=OQj3CuyfQJJpx09wy+3ULckJ4ZE7a5AzvuW7dFOCC0Ci7bfpXjSBMvpi0P+vUvVdl/rz6w
+	v4IXwH4z6bSBGV0ai7paAkkhfB3cH6Vt654huuIv8ANMEHUhGV+NHC2oQSSyWeX1gv26MM
+	dJkKSewNlko3slVFO+P9hRz1SLGPgSA=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1734001784; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fNZopUEUX3FjPq3t2iAMdKTc1ZjqXNiFVd7H4qojjy8=;
+	b=OQj3CuyfQJJpx09wy+3ULckJ4ZE7a5AzvuW7dFOCC0Ci7bfpXjSBMvpi0P+vUvVdl/rz6w
+	v4IXwH4z6bSBGV0ai7paAkkhfB3cH6Vt654huuIv8ANMEHUhGV+NHC2oQSSyWeX1gv26MM
+	dJkKSewNlko3slVFO+P9hRz1SLGPgSA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A31D13508;
+	Thu, 12 Dec 2024 11:09:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UqyLAHjEWmfRLwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Thu, 12 Dec 2024 11:09:44 +0000
+Message-ID: <8fb77778-b821-4e38-a835-54883ba14e4b@suse.com>
+Date: Thu, 12 Dec 2024 12:09:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/xen/mmu: Increase MAX_CONTIG_ORDER
+To: Jan Beulich <jbeulich@suse.com>,
+ Thierry Escande <thierry.escande@vates.tech>
+Cc: sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20241204171346.458105-1-thierry.escande@vates.tech>
+ <ccb28ccc-531c-4ead-9a27-76cc430f8c35@suse.com>
+ <cc61bdce-47af-45ea-8ace-173adef9ae41@vates.tech>
+ <cbc389e4-3b69-4681-ad66-6102b0ed0cae@suse.com>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <cbc389e4-3b69-4681-ad66-6102b0ed0cae@suse.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------FF0xBmAe6C9bSA00BHSlST3a"
+X-Spam-Score: -5.19
+X-Spamd-Result: default: False [-5.19 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-0.99)[-0.990];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_BASE64_TEXT(0.10)[];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,imap1.dmz-prg2.suse.org:helo];
+	HAS_ATTACHMENT(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------FF0xBmAe6C9bSA00BHSlST3a
+Content-Type: multipart/mixed; boundary="------------Po2XpOKQR0YFOAIlDgThNkfr";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Jan Beulich <jbeulich@suse.com>,
+ Thierry Escande <thierry.escande@vates.tech>
+Cc: sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Message-ID: <8fb77778-b821-4e38-a835-54883ba14e4b@suse.com>
+Subject: Re: [PATCH] x86/xen/mmu: Increase MAX_CONTIG_ORDER
+References: <20241204171346.458105-1-thierry.escande@vates.tech>
+ <ccb28ccc-531c-4ead-9a27-76cc430f8c35@suse.com>
+ <cc61bdce-47af-45ea-8ace-173adef9ae41@vates.tech>
+ <cbc389e4-3b69-4681-ad66-6102b0ed0cae@suse.com>
+In-Reply-To: <cbc389e4-3b69-4681-ad66-6102b0ed0cae@suse.com>
+Autocrypt-Gossip: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJ3BBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AAIQkQoDSui/t3IH4WIQQ+pJkfkcoLMCa4X6CgNK6L+3cgfgn7AJ9DmMd0SMJE
+ ePbc7/m22D2v04iu7ACffXTdZQhNl557tJuDXZSBxDmW/tLOwU0EWTecRBAIAIK5OMKMU5R2
+ Lk2bbjgX7vyQuCFFyKf9rC/4itNwhYWFSlKzVj3WJBDsoi2KvPm7AI+XB6NIkNAkshL5C0kd
+ pcNd5Xo0jRR5/WE/bT7LyrJ0OJWS/qUit5eNNvsO+SxGAk28KRa1ieVLeZi9D03NL0+HIAtZ
+ tecfqwgl3Y72UpLUyt+r7LQhcI/XR5IUUaD4C/chB4Vq2QkDKO7Q8+2HJOrFIjiVli4lU+Sf
+ OBp64m//Y1xys++Z4ODoKh7tkh5DxiO3QBHG7bHK0CSQsJ6XUvPVYubAuy1XfSDzSeSBl//C
+ v78Fclb+gi9GWidSTG/4hsEzd1fY5XwCZG/XJJY9M/sAAwUH/09Ar9W2U1Qm+DwZeP2ii3Ou
+ 14Z9VlVVPhcEmR/AFykL9dw/OV2O/7cdi52+l00reUu6Nd4Dl8s4f5n8b1YFzmkVVIyhwjvU
+ jxtPyUgDOt6DRa+RaDlXZZmxQyWcMv2anAgYWGVszeB8Myzsw8y7xhBEVV1S+1KloCzw4V8Z
+ DSJrcsZlyMDoiTb7FyqxwQnM0f6qHxWbmOOnbzJmBqpNpFuDcz/4xNsymJylm6oXiucHQBAP
+ Xb/cE1YNHpuaH4SRhIxwQilCYEznWowQphNAbJtEKOmcocY7EbSt8VjXTzmYENkIfkrHRyXQ
+ dUm5AoL51XZljkCqNwrADGkTvkwsWSvCSQQYEQIACQUCWTecRAIbDAAKCRCgNK6L+3cgfuef
+ AJ9wlZQNQUp0KwEf8Tl37RmcxCL4bQCcC5alCSMzUBJ5DBIcR4BY+CyQFAs=
 
-On Wed, 2024-12-11 at 12:07 -0500, Mathieu Desnoyers wrote:
-> > Here's where I'm in doubt, is a compact map more desirable than
-> > reusing
-> > the same mm_cids for cache locality?
->=20
-> This is a tradeoff between:
->=20
-> A) Preserving cache locality after a transition from many threads to
-> few
-> =C2=A0=C2=A0=C2=A0 threads, or after reducing the hamming weight of the a=
-llowed cpu
-> mask.
->=20
-> B) Making the mm_cid guarantees wrt nr threads and allowed cpu mask
-> easy
-> =C2=A0=C2=A0=C2=A0 to document and understand.
->=20
-> C) Allowing applications to eventually react to mm_cid compaction
-> after
-> =C2=A0=C2=A0=C2=A0 reduction of the nr threads or allowed cpu mask, makin=
-g the
-> tracking
-> =C2=A0=C2=A0=C2=A0 of mm_cid compaction easier by shrinking it back towar=
-ds 0 or
-> not.
->=20
-> D) Making sure applications that periodically reduce and then
-> increase
-> =C2=A0=C2=A0=C2=A0 again the nr threads or allowed cpu mask still benefit=
- from good
-> =C2=A0=C2=A0=C2=A0 cache locality with mm_cid.
->=20
->=20
-> > If not, should we perhaps ignore the recent_cid if it's larger than
-> > the
-> > map weight?
-> > It seems the only way the recent_cid is unset is with migrations,
-> > but
-> > I'm not sure if forcing one would make the test vain as the cid
-> > could
-> > be dropped outside of task_mm_cid_work.
-> >=20
-> > What do you think?
->=20
-> Can you try this patch ? (compile-tested only)
->=20
-> commit 500649e03c5c28443f431829732c580750657326
-> Author: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Date:=C2=A0=C2=A0 Wed Dec 11 11:53:01 2024 -0500
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0 sched: shrink mm_cid allocation with nr thread/a=
-ffinity
->=20
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 76f5f53a645f..b92e79770a93 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -3657,10 +3657,24 @@ static inline int __mm_cid_try_get(struct
-> task_struct *t, struct mm_struct *mm)
-> =C2=A0 {
-> =C2=A0=C2=A0 struct cpumask *cidmask =3D mm_cidmask(mm);
-> =C2=A0=C2=A0 struct mm_cid __percpu *pcpu_cid =3D mm->pcpu_cid;
-> - int cid =3D __this_cpu_read(pcpu_cid->recent_cid);
-> + int cid, max_nr_cid, allowed_max_nr_cid;
-> =C2=A0=20
-> + /*
-> + * After shrinking the number of threads or reducing the number
-> + * of allowed cpus, reduce the value of max_nr_cid so expansion
-> + * of cid allocation will preserve cache locality if the number
-> + * of threads or allowed cpus increase again.
-> + */
-> + max_nr_cid =3D atomic_read(&mm->max_nr_cid);
-> + while ((allowed_max_nr_cid =3D min_t(int, READ_ONCE(mm-
-> >nr_cpus_allowed), atomic_read(&mm->mm_users))),
-> + max_nr_cid > allowed_max_nr_cid) {
-> + if (atomic_try_cmpxchg(&mm->max_nr_cid, &max_nr_cid,
-> allowed_max_nr_cid))
-> + break;
-> + }
-> =C2=A0=C2=A0 /* Try to re-use recent cid. This improves cache locality. *=
-/
-> - if (!mm_cid_is_unset(cid) && !cpumask_test_and_set_cpu(cid,
-> cidmask))
-> + cid =3D __this_cpu_read(pcpu_cid->recent_cid);
-> + if (!mm_cid_is_unset(cid) && cid < max_nr_cid &&
-> + =C2=A0=C2=A0=C2=A0 !cpumask_test_and_set_cpu(cid, cidmask))
-> =C2=A0=C2=A0 return cid;
-> =C2=A0=C2=A0 /*
-> =C2=A0=C2=A0 * Expand cid allocation if the maximum number of concurrency
-> @@ -3668,12 +3682,11 @@ static inline int __mm_cid_try_get(struct
-> task_struct *t, struct mm_struct *mm)
-> =C2=A0=C2=A0 * and number of threads. Expanding cid allocation as much as
-> =C2=A0=C2=A0 * possible improves cache locality.
-> =C2=A0=C2=A0 */
-> - cid =3D atomic_read(&mm->max_nr_cid);
-> - while (cid < READ_ONCE(mm->nr_cpus_allowed) && cid <
-> atomic_read(&mm->mm_users)) {
-> - if (!atomic_try_cmpxchg(&mm->max_nr_cid, &cid, cid + 1))
-> + while (max_nr_cid < allowed_max_nr_cid) {
-> + if (!atomic_try_cmpxchg(&mm->max_nr_cid, &max_nr_cid, max_nr_cid +
-> 1))
-> =C2=A0=C2=A0 continue;
-> - if (!cpumask_test_and_set_cpu(cid, cidmask))
-> - return cid;
-> + if (!cpumask_test_and_set_cpu(max_nr_cid, cidmask))
-> + return max_nr_cid;
-> =C2=A0=C2=A0 }
-> =C2=A0=C2=A0 /*
-> =C2=A0=C2=A0 * Find the first available concurrency id.
+--------------Po2XpOKQR0YFOAIlDgThNkfr
+Content-Type: multipart/mixed; boundary="------------csyXRdVOfJV0c6HJdb4aU0L0"
 
-Thanks for the patch, it seems much more robust than my simple
-condition on the weight. It passes the test (both versions) we
-previously discussed and doesn't seem to interfere with the general
-rseq functionality as checked by the other selftests.
-I'm not sure if I should run more tests on this one.
-I will come up with a V2 shortly and attach some performance
-evaluations.
+--------------csyXRdVOfJV0c6HJdb4aU0L0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Do you want to keep your patch separate or do I submit it together with
-V2?
+T24gMTIuMTIuMjQgMTE6MjIsIEphbiBCZXVsaWNoIHdyb3RlOg0KPiBPbiAxMS4xMi4yMDI0
+IDE5OjIwLCBUaGllcnJ5IEVzY2FuZGUgd3JvdGU6DQo+PiBIaSBKYW4sDQo+Pg0KPj4gT24g
+MDkvMTIvMjAyNCAxMTowNCwgSmFuIEJldWxpY2ggd3JvdGU6DQo+Pj4gT24gMDQuMTIuMjAy
+NCAxODoxNCwgVGhpZXJyeSBFc2NhbmRlIHdyb3RlOg0KPj4+PiBXaXRoIGNoYW5nZSA5ZjQw
+ZWM4NGE3OTcgKHhlbi9zd2lvdGxiOiBhZGQgYWxpZ25tZW50IGNoZWNrIGZvciBkbWENCj4+
+Pj4gYnVmZmVycyksIHRoZSBkcml2ZXIgbXB0M3NhcyBmYWlscyB0byBsb2FkIGJlY2F1c2Ug
+aXQgY2Fubm90IGFsbG9jYXRlDQo+Pj4+IGl0cyBETUEgcG9vbCBmb3IgYW4gYWxsb2NhdGlv
+biBzaXplIG9mIH4yLDMgTUJ5dGVzLiBUaGlzIGlzIGJlY2F1c2UgdGhlDQo+Pj4+IGFsaWdu
+ZW1lbnQgY2hlY2sgYWRkZWQgYnkgOWY0MGVjODRhNzk3IGZhaWxzIGFuZA0KPj4+PiB4ZW5f
+c3dpb3RsYl9hbGxvY19jb2hlcmVudCgpIGVuZHMgdXAgY2FsbGluZw0KPj4+PiB4ZW5fY3Jl
+YXRlX2NvbnRpZ3VvdXNfcmVnaW9uKCkgd2l0aCBhIHNpemUgb3JkZXIgb2YgMTAgd2hpY2gg
+aXMgdG9vIGhpZ2gNCj4+Pj4gZm9yIHRoZSBjdXJyZW50IG1heCB2YWx1ZS4NCj4+Pj4NCj4+
+Pj4gVGhpcyBwYXRjaCBpbmNyZWFzZXMgdGhlIE1BWF9DT05USUdfT1JERVIgZnJvbSA5IHRv
+IDEwICg0TUIpIHRvIGFsbG93DQo+Pj4+IHN1Y2ggYWxsb2NhdGlvbnMuDQo+Pj4+DQo+Pj4+
+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgRXNjYW5kZSA8dGhpZXJyeS5lc2NhbmRlQHZhdGVz
+LnRlY2g+DQo+Pj4+IC0tLQ0KPj4+PiAgIGFyY2gveDg2L3hlbi9tbXVfcHYuYyB8IDIgKy0N
+Cj4+Pj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkN
+Cj4+Pj4NCj4+Pj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L3hlbi9tbXVfcHYuYyBiL2FyY2gv
+eDg2L3hlbi9tbXVfcHYuYw0KPj4+PiBpbmRleCA1NWE0OTk2ZDBjMDQuLjdmMTEwNzQwZTFh
+MiAxMDA2NDQNCj4+Pj4gLS0tIGEvYXJjaC94ODYveGVuL21tdV9wdi5jDQo+Pj4+ICsrKyBi
+L2FyY2gveDg2L3hlbi9tbXVfcHYuYw0KPj4+PiBAQCAtMjIwMCw3ICsyMjAwLDcgQEAgdm9p
+ZCBfX2luaXQgeGVuX2luaXRfbW11X29wcyh2b2lkKQ0KPj4+PiAgIH0NCj4+Pj4gICANCj4+
+Pj4gICAvKiBQcm90ZWN0ZWQgYnkgeGVuX3Jlc2VydmF0aW9uX2xvY2suICovDQo+Pj4+IC0j
+ZGVmaW5lIE1BWF9DT05USUdfT1JERVIgOSAvKiAyTUIgKi8NCj4+Pj4gKyNkZWZpbmUgTUFY
+X0NPTlRJR19PUkRFUiAxMCAvKiA0TUIgKi8NCj4+Pj4gICBzdGF0aWMgdW5zaWduZWQgbG9u
+ZyBkaXNjb250aWdfZnJhbWVzWzE8PE1BWF9DT05USUdfT1JERVJdOw0KPj4+DQo+Pj4gV2hp
+bGUgbGFja2luZyByZXNwZWN0aXZlIGNvbW1lbnRhcnksIGJ1bXBpbmcgdGhpcyB2YWx1ZSBp
+bW8gYWxzbyBuZWVkcyB0bw0KPj4+IHRha2UgaW50byBhY2NvdW50IFhlbiBpdHNlbGYsIGF0
+IGxlYXN0IGNvbW1pdC1tZXNzYWdlLXdpc2UuIFRoZSBidW1waW5nIGlzDQo+Pj4gZmluZSBm
+b3IgRG9tMCBpbiBhbnkgZXZlbnQuIEl0IGlzIGFsc28gZmluZSBmb3IgRG9tVS1zIHdpdGgg
+dGhlIGRlZmF1bHRzDQo+Pj4gYnVpbHQgaW50byB0aGUgaHlwZXJ2aXNvciAob3JkZXJzIDEy
+IGFuZCAxMCByZXNwZWN0aXZlbHkgZm9yIHg4NiBhbmQgQXJtKSwNCj4+PiB5ZXQgZXNwZWNp
+YWxseSBmb3IgQXJtIChhbmQgaW4gdGhlIGZ1dHVyZSBQUEMgYW5kIFJJU0MtVikgYW55IGZ1
+cnRoZXINCj4+PiBidW1waW5nIHdvdWxkIGJlIGxlc3Mgc3RyYWlnaHRmb3J3YXJkLg0KPj4N
+Cj4+IFRoYW5rcyBmb3IgcG9pbnRpbmcgdGhpcyBvdXQuIE9uIHRoZSBYZW4gc2lkZSwgQ09O
+RklHX0NUTERPTV9NQVhfT1JERVINCj4+IGFuZCBDT05GSUdfSFdET01fTUFYX09SREVSIHNl
+ZW0gYmlnIGVub3VnaCBvbiBhbGwgYXJjaGl0ZWN0dXJlcy4gQnV0IEkNCj4+IHNlZSBDT05G
+SUdfRE9NVV9NQVhfT1JERVIgc2V0IHRvIDkgKGFsc28gYWxsIGFyY2hzKS4gV29uJ3QgdGhh
+dCBiZSBhDQo+PiBwcm9ibGVtIGZvciBkcml2ZXJzIHRyeWluZyB0byBhbGxvY2F0ZSBtb3Jl
+IHRoYW4gdGhhdCBmcm9tIGEgZG9tVSA/DQo+IA0KPiBBIGRyaXZlciBhc3N1bWVzIGEgKHBo
+eXNpY2FsKSBkZXZpY2UgdG8gYmUgaW4gdGhlIERvbVUsIGF0IHdoaWNoIHBvaW50IGl0DQo+
+IGlzIENPTkZJR19QVERPTV9NQVhfT1JERVIgd2hpY2ggYXBwbGllcyAoUFQgc3RhbmRpbmcg
+Zm9yIHBhc3MtdGhyb3VnaCkuDQo+IA0KPj4+IEhvd2V2ZXIgLSBkb2VzIHRoZSBkcml2ZXIg
+cmVhbGx5IG5lZWQgdGhpcyBiaWcgYSBjb250aWd1b3VzIGNodW5rPyBJdA0KPj4+IHdvdWxk
+IHNlZW0gZmFyIG1vcmUgZGVzaXJhYmxlIHRvIG1lIHRvIGJyZWFrIHRoYXQgdXAgc29tZSwg
+aWYgcG9zc2libGUuDQo+Pg0KPj4gU2luY2UgdGhpcyB3b3JrcyBvbiBiYXJlIG1ldGFsIEkn
+bSBhZnJhaWQgdGhlIGRyaXZlciBtYWludGFpbmVyIChtcHQNCj4+IGZ1c2lvbiBkcml2ZXIp
+IHdpbGwganVzdCB0ZWxsIG1lIHRvIGZpeCBYZW4uDQo+IA0KPiBXZWxsLiBUaGUgYmlnZ2Vy
+IHN1Y2ggYWxsb2NhdGlvbnMsIHRoZSBsYXJnZXIgdGhlIHJpc2sgdGhhdCBvbiBzeXN0ZW1z
+DQo+IHRoYXQgaGF2ZSBiZWVuIHVwIGZvciBhIHdoaWxlIHN1Y2ggYWxsb2NhdGlvbnMgY2Fu
+J3QgYmUgZnVsZmlsbGVkIGFueW1vcmUNCj4gZXZlbiBpbiB0aGUgYmFyZSBtZXRhbCBjYXNl
+Lg0KDQpZZXMuIEkgZG9uJ3QgdGhpbmsgd2Ugc2hvdWxkIGp1c3Qgd29yayBhcm91bmQgdGhp
+cyBpc3N1ZSB3aXRob3V0IGhhdmluZw0KZXZlbiB0cmllZCB0byBnZXQgdGhlIGRyaXZlciBm
+aXhlZC4gSW4gY2FzZSB0aGV5IHJlZnVzZSB0byBjaGFuZ2UgaXQsIHdlDQpjYW4gc3RpbGwg
+aW5jcmVhc2UgTUFYX0NPTlRJR19PUkRFUi4NCg0KDQpKdWVyZ2VuDQo=
+--------------csyXRdVOfJV0c6HJdb4aU0L0
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Gabriele
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------csyXRdVOfJV0c6HJdb4aU0L0--
+
+--------------Po2XpOKQR0YFOAIlDgThNkfr--
+
+--------------FF0xBmAe6C9bSA00BHSlST3a
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmdaxHcFAwAAAAAACgkQsN6d1ii/Ey/Q
+ZggAh7DLKM49C60+ARA2YJ6AK6b0WPJPuL4Xq2TumiiCZjD6Sh3YaXwHNOv7qj/0u4LxGqBGPdn3
+EoGm0rgy+XJvn6XJ3flx+EFC0wgY+O3KiCmLq0GaVq+RE+HIea6hL0A0fLDJG8OoLRUQPwzHDoO1
+g7trRSuCBXclz9QiKUHfp8FIKca/juwwnSsymjhQD6ho9gdEp8MCT3N8P3vZAaB2wxae1l3EliL5
+PdaAh0+j2VNJs+heMAQGKcz1Zt9yRYRLiu4elzUvquAYgB1RMiklVbeEFcpYGsjUxWjFFcgBpv1W
+bSKw9EGQTO+G4DfPFoU/0h5M7G8TPGg3iIv9qYdOvA==
+=wllM
+-----END PGP SIGNATURE-----
+
+--------------FF0xBmAe6C9bSA00BHSlST3a--
 
