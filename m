@@ -1,121 +1,132 @@
-Return-Path: <linux-kernel+bounces-443013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2185C9EE5A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:54:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 866F916749C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:54:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2485E2144B2;
-	Thu, 12 Dec 2024 11:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PMGeGE/W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6887D9EE603
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:01:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72072139C6
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA653285E17
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:01:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B002147FE;
+	Thu, 12 Dec 2024 11:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ZNOtM1KG"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7832288E5
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 11:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734004344; cv=none; b=niEQix4Qh2udncDNvRx0y5jUt7AbVsx5YEg8Zq2pM8oIQOutAbRhCYweo/hggF2IoZsljcYjNanNraowpZ6kP6Gwuvd9LBiiHgEKz9piRMGEHZakFZ/2x20pZh6d+m29feQICp0uF1dxvPVmUGpEMDpqBrgDeG7uGKFSoCPhJgk=
+	t=1734004490; cv=none; b=ufp9lH9qWHm0qM2O21vO7HNBuXbpT4+IN3ekg/Fms3rdL6osedG3yZX6WypEK/MqJbjQlbaZT/bSZBWEiQI2vqo9iUVNtqsUnWbhTaCPoyncJEmYv+mRxq30KGWwf+LFPSEgKvRzr+tc8sXbFwA0SDXnQ5PHLpjN6/J1f8EQjfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734004344; c=relaxed/simple;
-	bh=03RLHQIxmlqsUGfZhGuFm/JltRi9jnj0chF1CLFHW4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EHHNWIZmicyLyH1QqKvd2V1nz8NRz4ILu1cFijhs0dm7p8RRBobAZqQEniiY8STe2OOOos7vQ9YfKMZzFEj485VJmnFq8H9oFr447TpuwobwdX63/znmPiGHyqGHv54W8yBT+JuGPoITCKMWnRmx4eXeveZsdmIU4qa8mSqvem4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PMGeGE/W; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734004341;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=exOqWP2BDOKiBjUw7UxafSDVojWNBvZ5jScU+cvyEpQ=;
-	b=PMGeGE/WGMFVtJDzxUodVoz+Pf6yX6YU3PCC7jLntqnGJzRmXn5s1I0wVtIqJbKA87JGyc
-	zOp7UIDqUKhhay5sVljVH/Bt+BzRJAWCzduXvACJ9T7ce2fTE/xP99vvGAWDep9TZt+Dar
-	WloBXjAgeQkE062jWmuG6U1l7DmFdT8=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-542-cCnzfMANPHq5Oq9vCdq10g-1; Thu, 12 Dec 2024 06:52:18 -0500
-X-MC-Unique: cCnzfMANPHq5Oq9vCdq10g-1
-X-Mimecast-MFC-AGG-ID: cCnzfMANPHq5Oq9vCdq10g
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385df115300so255166f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 03:52:18 -0800 (PST)
+	s=arc-20240116; t=1734004490; c=relaxed/simple;
+	bh=1XJH+j4IJIIke0IBSeywdnhf4g+AbrpLY8ypOEZSdxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZIY7I+YtCsnpHp6LK01uMHs0ZIHzKZVWzoDbU+KwyOHHnhoWF18qwOivPbC9m1BlCHGF6R2YnWAvKqD9i9nj1Vk42EwhmiG63bQGwybcOKx22QsTKZ1WrA+WZuzpLwvi8a3zSmmOPwDGv2bZVLHm3HVVlalCTmw0w4/7hlqqDnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ZNOtM1KG; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e396c98af22so320333276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 03:54:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1734004486; x=1734609286; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QO/kWUsb4uL9LlTqLCCAldTNWq3Gj6otKLX1s/PNWac=;
+        b=ZNOtM1KGpBHNIPErn/tHjPmkZsfFRyDJ7xvTzo65/X6rGUk1zqk9Th9/DMLZNCrNZ2
+         LNoXXqcy/kgMgsSxE8MDRlGr2IiwQwcggjaMKeOPg5lQiNQYLtYe/uOIxAp6v7q+rlZB
+         +9e3oHtghPq7OFgsofw7XH8cFUpsBv7EjmKWLIK9MAGu1E68EoalPfRrsIp2afADs0eD
+         rcUtd0q2n+AtUIel0OBKmm76Bb3bZSIwURFkXIVNcbkaCK13qJvZEGPC/pdLgX73cCQf
+         11PvPfwmCsqzvdu8fkE4R7lXckYgsjTBZdKMU7ONh7D3tO6vWbkaKHuJchous+uLbar5
+         +VpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734004337; x=1734609137;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=exOqWP2BDOKiBjUw7UxafSDVojWNBvZ5jScU+cvyEpQ=;
-        b=cSS5dFmv36CISBR1GeRUCySLdFyOhdENWdv+/U+p7fgKikSFQG4l3bHGTqTxDPnZZJ
-         pEe+DQH1ooPn4I9JtQ5S0VZrEyy2qlN8W2LkITknL3vTjUuUK6BpefcOJzz8i7QcVbA/
-         hvx/qmpPnjZ6VGYSjezjYA7aaTQ3DQRsqd6WhWNyiCwbgDgslGZnTT46FHtksmGiW98x
-         JPD8lnWnNXCWzx+CMP4akYDC4jz8qu2/C3SmblqvIa/SM8VvsroO+AUf37ZgSpQbvjyF
-         lb7S5/rJOWxxuWKaGm0atQQgZSY23Xj4ufp8ZDmuyjgtSX7gHVciXl3sKlg/R7CqaSG2
-         udnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVG5hlTQd5wEduTqFqcAIiOCTtj3SMCcLn/YXniGOWobUFndRTg2UbgUivmVL1EV/986uLfRMNtF7u3Rw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQqluy+cA0XRJbQzeOiaG6WK5PIS/PQdh3RAsc5PyDOYljX2oI
-	0c1ACkFtIXbHIyBGjpuYLWLdBzH2QrOF4sVTRkprJNGhTkzVti/f36bqS41Bcg/6W+NR6gnkctl
-	Z5Mr0D6Tw6w9NgQ8lijpw/WWMeaNsT3IvllViK7XkyEGm1zt9dw/hSef59XJzfA==
-X-Gm-Gg: ASbGnctgYG87emttXwQBLsyHytnAlT9wXY13IF7hN4g/72OyWe4svocVwfa0okPjdbj
-	1GFiZ/NDp79WNrTP1URmg51ww3R25St74oEh36bdLAyAXcrRv5JEEXl2T1NAqkmeGx84Fp2CjVt
-	wPIMUmZ8x63ThhOWL3jssRb4n2NCr8xrpNgbdj0b8Vb09AyZ8i0a+124T14OfUGFKBzRmEgqJwJ
-	6thAI8Fbxr2mLkd0Infey9DwH3nivniQaqBBfkyVS2JJkSqW4WgdGVE/+nuRyYU6Q/EhbaTx/Nv
-	HrZIZTmp+TLi0qxo/vegBD7k1guvM01zXWaiY/WdhCY=
-X-Received: by 2002:a05:6000:4819:b0:385:e13c:5406 with SMTP id ffacd0b85a97d-3878768e893mr2859489f8f.21.1734004337359;
-        Thu, 12 Dec 2024 03:52:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG3N8A0Ggwd5o/UsJAbeJrpIatw0dxmVjtUtM1F9p6Q9Qhx0chkYeFNKJKkp3A9C3hhq3niCQ==
-X-Received: by 2002:a05:6000:4819:b0:385:e13c:5406 with SMTP id ffacd0b85a97d-3878768e893mr2859479f8f.21.1734004337064;
-        Thu, 12 Dec 2024 03:52:17 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-197-226.as13285.net. [80.47.197.226])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878251dbbfsm3774727f8f.97.2024.12.12.03.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 03:52:16 -0800 (PST)
-Date: Thu, 12 Dec 2024 11:52:15 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Frederic Weisbecker <fweisbecker@suse.com>
-Subject: Re: [PATCH] Documentation: sched/RT: Update paragraphs about RT
- bandwidth control
-Message-ID: <Z1rOb9D29H8ZCNqd@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241211170052.2449581-1-mkoutny@suse.com>
+        d=1e100.net; s=20230601; t=1734004486; x=1734609286;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QO/kWUsb4uL9LlTqLCCAldTNWq3Gj6otKLX1s/PNWac=;
+        b=VLpYaWqjWClras+Z+EAB0vqRZ2ljMrdXIsBi6RF4tp4xJfF5ohJ2HeJTueicJgLz0I
+         8omYHqeQ1hqrQhUedrswUA3IMGSj6XlU/fwN4/kdbff/qS9QHxqEo+YFrTiF8cQKPG/C
+         hhyHJ4IrERmSGzfYufakrGOyLrbOuk6IxwCshP09bwybRSe+lfIsl0Vobv0RIyb0suLv
+         4rSeTK8g/5xwe2gD/dk2TRGvVlyReUusZ+6Lv9qrZrLq7k/R3RuPRdU+EPZ6w3mcB+JU
+         PHrFzIgQkF6tcO2aWgcbYHyKWq+rAei+/9N/9n0vLvPkMX5UJ/Ssp65FrAvtNki0cRZn
+         mQWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIGb8WV8/v8GP+a2Im1YVj2lmooRumoIEU2ZhFf5Dppolw+PzwYVfXPVBHy/LMB+5LBd0qlTDAGYi3WHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyykkJ37UJtF1kc6C+FjKGPu4aTr4UuWfXeMc1Wa5ECMtnvD5d3
+	vV2zTYaqf/XhJLeuF+VX6XPofGB/sKVsE2eXpzCNvMt1mo8et4it7JS/6VQTxb0u+IThFpKhqD/
+	J8C109Ql/o7WkOviUesYoExuMiNW3G35ZNPTfiQ==
+X-Gm-Gg: ASbGncv+Uss/0NVhQ1EyJuDrWZX4VU3yYX8ZNGs4Sawmm8wvY/a+ULT67yORP9sGo9a
+	ArR014FwTInPuLBJYCgmnGbEYIcZ8G7GO6D4ZfQ==
+X-Google-Smtp-Source: AGHT+IEZF99x3Z73R94L+ljBCygUUX+Knk3vSPh2S8Sa4SUHrFwCAM7NZhFFUD6/0ncFI/p+axz2uwCX+vrS2ZOL06w=
+X-Received: by 2002:a05:6902:2701:b0:e38:87bf:8e65 with SMTP id
+ 3f1490d57ef6-e41b8dd9f38mr127426276.0.1734004486531; Thu, 12 Dec 2024
+ 03:54:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241211170052.2449581-1-mkoutny@suse.com>
+References: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
+In-Reply-To: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Thu, 12 Dec 2024 11:54:28 +0000
+Message-ID: <CAPY8ntD9XzrzrhX=1XojjcZmRm60KLc39HZq0bJ9cEq0J7nQ9g@mail.gmail.com>
+Subject: Re: [PATCH next] drm/vc4: unlock on error in vc4_hvs_get_fifo_frame_count()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hi Dan
 
-On 11/12/24 18:00, Michal Koutný wrote:
-> This has slightly changed with the introduction of fair_server.
-> Update the most relevant parts.
-> 
-> Link: https://lore.kernel.org/r/Z0c8S8i3qt7SEU14@jlelli-thinkpadt14gen4.remote.csb/
-> Signed-off-by: Michal Koutný <mkoutny@suse.com>
+Thanks for the patch.
 
-Looks good to me.
+On Thu, 12 Dec 2024 at 11:31, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> Presumably the default path is never used.  However, if it were used for
+> some reason then call drm_dev_exit() before returning.
 
-Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
+Correct - the default path would mean something badly wrong.
+Without it though, if you add an extra enum value it throws a compiler
+warning of an unhandled case.
 
-Best,
-Juri
+> Fixes: 8f2fc64773be ("drm/vc4: Fix reading of frame count on GEN5 / Pi4")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+> index b42027636c71..4f524ec126e7 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+> @@ -522,7 +522,7 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
+>                 break;
+>         default:
+>                 drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
+> -               return 0;
+> +               field = 0;
 
+field is initialised to 0 anyway to handle the cases where fifo is out of range.
+
+Personally I'd like to see a break in there to ensure we don't
+accidentally end up with a fall-through situation if another case got
+added at the end. I don't know how others feel.
+
+  Dave
+
+>         }
+>
+>         drm_dev_exit(idx);
+> --
+> 2.45.2
+>
 
