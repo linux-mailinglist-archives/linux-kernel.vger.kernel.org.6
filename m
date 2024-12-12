@@ -1,199 +1,142 @@
-Return-Path: <linux-kernel+bounces-442678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7689EE032
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:23:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122C19EE03A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6361663B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:23:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D21141885B83
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 07:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F5020B1EA;
-	Thu, 12 Dec 2024 07:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCB820B1EA;
+	Thu, 12 Dec 2024 07:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8qXUcZ3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gPI2P2U2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F7945027;
-	Thu, 12 Dec 2024 07:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D08F20ADF3;
+	Thu, 12 Dec 2024 07:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733988209; cv=none; b=aobJFw0owFZt6vMUhfrBnclsVISWVCvnvuRk5gHPCIu5X/6VU9HqV56+/JVcmUfGZ2dcIIK5LZ3b7OksZExIkTg09RzXIJ55yKP1EftCFl02svOS/GDK80OxT4FAQum9G+Aqfe57ZQ2Pl4v+xgH0eu0Vi7z/lh3TZac/soCjskk=
+	t=1733988459; cv=none; b=h6faeUmWIYRWdUsUInLtU0DQy9PimgbS9NFrIu2szLiUBcALAuw8tuPNV9NkOq25EEnceZ/e4wD5UHd0i7dcsmeEbpVN5hgLPcRMz3ZHQVm0BRT6wBgsAihFhGZXZkgPI5r0ZxS8+XLJlwt5AYWJWnwc5Rm6RoIHV9hsFxL2VJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733988209; c=relaxed/simple;
-	bh=JZk+vkzVVHoIxLeiYJCOuR339GJF+lQkjwNZYJNxM88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JLCUEtEnIvl8jsQzgVW7ryP6gs1ptotJnWWsuE+v3xRL0WWoY1McnS3ksiWf0CRnjRFXzQI/CDKbYh8vof/C/20ryh6VylGoDVohZToXsXdyyWojpEj/aGOW0XfvmLPI15LMAByRvGFPaDQayP+2OjHVU8+b4bgfE319neLwP20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8qXUcZ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B573C4CECE;
-	Thu, 12 Dec 2024 07:23:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733988209;
-	bh=JZk+vkzVVHoIxLeiYJCOuR339GJF+lQkjwNZYJNxM88=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K8qXUcZ3Z5yASYBvKbj7xTYYiXDIFjtIJKpALdYOYbHXSpNbnyoZizBtINLHgilDw
-	 Fd2NNAlV5V/Y62/PFS0x8N21tafJT1e9ZToploNZ2zyJG6BVkWKQwtrG5uPQPMIWTS
-	 z0Y0fBd+CClMHxNaLh6wIAxAsa+wu9QZpnm7WS9yR0JRb4TgBFwtjI9CCgf/eBecA/
-	 G44o010ZzG4jilRvLuNEXSZKVW6oF/pQ30qlXfY9TKS1+Qghse/AdXOo0Vr9RBAfxQ
-	 zdWu6tVmNS7ExsDXELMtIoIq4VrGTJ8brHMJzXXVD6VPlWH9LRZNxvsvey5ppi5edz
-	 tIkLVsZvsr7Mg==
-Message-ID: <44c97ee6-ba32-452c-8b83-ad39139fd310@kernel.org>
-Date: Thu, 12 Dec 2024 08:23:21 +0100
+	s=arc-20240116; t=1733988459; c=relaxed/simple;
+	bh=71Thxi+2QZl9+TBoyxQvwBW6qPedKeqqc/D5nTlfe9A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K8XL+Nr75henYlv9AqeIqZORJuAxcB7q4O4x14uPCiPCsQIwPEVMyUs5q+g+ErGpFZvunpCH+dhAp0dCcddxZ9s65xLC2qPKxjwzNjmNJ5sP1SSMo+GrrY8vi3YSVCGb6/mAOXO5uJIpI8gvVP1eX4ii/1dH4ZkHY1Np3qyPNMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gPI2P2U2; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733988458; x=1765524458;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=71Thxi+2QZl9+TBoyxQvwBW6qPedKeqqc/D5nTlfe9A=;
+  b=gPI2P2U2Ss0ZA5daixOxUtSd93DE26H/m36BR2I6xT2FCMXNcKoT+ELn
+   pkfNyOf2eM+xjsfikG9NFxrEKyVopMLmTLdaDxHHBseNgePZjGUZ4d4ie
+   ODLDWRzfEzYZvEpwQYR8EUN685o/NsxF05rnSlhKosq0T5GfV5V+RpnQk
+   MYfJQrtlvnnkJaaug+JW0ZFa4hvITTwOv0Qmt2bIv36yy1k9UINChx0Ig
+   NwpaUjiZo7Smwh8sRckpe9jILh4eF+vh0rnbHSbclJQrBqJsVtZf9zZPV
+   bcerPjE1o1jKXujuGdORKwa/3FHo41BODL3Fqv3CgIWLEQfOympGcdivK
+   w==;
+X-CSE-ConnectionGUID: D8KRv9X6Q5uzOCsrmWabow==
+X-CSE-MsgGUID: RVACqo0GRB+c8nch9mK1TA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="38080512"
+X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
+   d="scan'208";a="38080512"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 23:27:37 -0800
+X-CSE-ConnectionGUID: kChr0LB9Tcm+4Q12brRszQ==
+X-CSE-MsgGUID: ZnkQx/6mQL6t4eBkcnKYbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
+   d="scan'208";a="96032624"
+Received: from spr-s2600bt.bj.intel.com ([10.240.192.127])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 23:27:35 -0800
+From: Zhenzhong Duan <zhenzhong.duan@intel.com>
+To: linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Cc: dwmw2@infradead.org,
+	baolu.lu@linux.intel.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	chao.p.peng@intel.com,
+	zhenzhong.duan@intel.com,
+	stable@vger.kernel.org
+Subject: [PATCH] iommu/vt-d: Fix kernel NULL pointer dereference in cache_tag_flush_range_np()
+Date: Thu, 12 Dec 2024 15:24:19 +0800
+Message-Id: <20241212072419.480967-1-zhenzhong.duan@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 06/10] ASoC: dt-bindings: add wsa881x-i2c binding for
- analog mode
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: broonie@kernel.org, konradybcio@kernel.org,
- konrad.dybcio@oss.qualcomm.com, andersson@kernel.org,
- srinivas.kandagatla@linaro.org, tiwai@suse.com, lgirdwood@gmail.com,
- perex@perex.cz, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- dmitry.baryshkov@linaro.org, linux-sound@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241101053154.497550-1-alexey.klimov@linaro.org>
- <20241101053154.497550-7-alexey.klimov@linaro.org>
- <woeeh7cosv47z4ckqbomfc3rqqxfolyfycgcz32do2yadg7xdj@geqank3dp55t>
- <D695QHHBLGUF.7HOOI1E8RMTS@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <D695QHHBLGUF.7HOOI1E8RMTS@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/12/2024 21:35, Alexey Klimov wrote:
-> On Fri Nov 1, 2024 at 7:57 AM GMT, Krzysztof Kozlowski wrote:
->> On Fri, Nov 01, 2024 at 05:31:50AM +0000, Alexey Klimov wrote:
->>> Add binding document for WSA881X family of smart speaker amplifiers
->>> that set to work in analog mode only and configurable via i2c only.
->>> Such devices are found in Qualcomm QRB4210 RB2 boards with
->>> SM4250/SM6115 SoCs.
->>>
->>> Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>> ---
->>>  .../bindings/sound/qcom,wsa881x-i2c.yaml      | 103 ++++++++++++++++++
->>>  1 file changed, 103 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/sound/qcom,wsa881x-i2c.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/sound/qcom,wsa881x-i2c.yaml b/Documentation/devicetree/bindings/sound/qcom,wsa881x-i2c.yaml
->>> new file mode 100644
->>> index 000000000000..51b040b134d2
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/sound/qcom,wsa881x-i2c.yaml
->>
->> Filename must match compatible.
->>
->>> @@ -0,0 +1,103 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/sound/qcom,wsa881x-i2c.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Qualcomm WSA8810/WSA8815 Class-D Smart Speaker Amplifier in Analog mode
->>> +
->>> +maintainers:
->>> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>> +  - Alexey Klimov <alexey.klimov@linaro.org>
->>> +
->>> +description: |
->>> +  WSA8810 is a class-D smart speaker amplifier and WSA8815
->>> +  is a high-output power class-D smart speaker amplifier.
->>> +  Their primary operating mode uses a SoundWire digital audio
->>> +  interface however the amplifier also supports analog mode and it
->>> +  can be controlled via I2C. This binding is for I2C interface.
->>> +
->>> +allOf:
->>> +  - $ref: dai-common.yaml#
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: qcom,qrb4210-wsa881x-i2c-codec
->>
->> qrb4210 is a name of a board, not codec. i2c is redundant, codec as
->> well. 'x' is not allowed.
-> 
-> qcom,qrb4210-wsa881x-i2c-codec came from qcom-soc.yaml with the advice
-> that it should be qcom,SoC-IP.
+When setup mapping on an paging domain before the domain is attached to any
+device, a NULL pointer dereference triggers as below:
 
-I am sorry, but qcom,soc.yaml is about SoC. Is this a SoC? It is the
-first time I see WSA integrated into the SoC.
+ BUG: kernel NULL pointer dereference, address: 0000000000000200
+ #PF: supervisor read access in kernel mode
+ #PF: error_code(0x0000) - not-present page
+ RIP: 0010:cache_tag_flush_range_np+0x114/0x1f0
+ ...
+ Call Trace:
+  <TASK>
+  ? __die+0x20/0x70
+  ? page_fault_oops+0x80/0x150
+  ? do_user_addr_fault+0x5f/0x670
+  ? pfn_to_dma_pte+0xca/0x280
+  ? exc_page_fault+0x78/0x170
+  ? asm_exc_page_fault+0x22/0x30
+  ? cache_tag_flush_range_np+0x114/0x1f0
+  intel_iommu_iotlb_sync_map+0x16/0x20
+  iommu_map+0x59/0xd0
+  batch_to_domain+0x154/0x1e0
+  iopt_area_fill_domains+0x106/0x300
+  iopt_map_pages+0x1bc/0x290
+  iopt_map_user_pages+0xe8/0x1e0
+  ? xas_load+0x9/0xb0
+  iommufd_ioas_map+0xc9/0x1c0
+  iommufd_fops_ioctl+0xff/0x1b0
+  __x64_sys_ioctl+0x87/0xc0
+  do_syscall_64+0x50/0x110
+  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-> 
-> Anyway I am working on updating the qcom,wsa881x.yaml as you pointed out
-> in another email.
-> 
->> This is qcom,wsa8810 and qcom,wsa8815 compatible with it.
->>
-> 
-> [..]
-> 
->>> +
->>> +      wsa881x@e {
->>
->> Node names should be generic. See also an explanation and list of
->> examples (not exhaustive) in DT specification:
->> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> The best I can come up with is "amplifier", or it should be at least "codec'.
+qi_batch structure is allocated when domain is attached to a device for the
+first time, when a mapping is setup before that, qi_batch is referenced to
+do batched flush and trigger above issue.
 
-amplifier, speakers, you can check how this is called in 10 existing DTS
-files or their bindings for WSA speakers.
+Fix it by checking qi_batch pointer and bypass batched flushing if no
+device is attached.
 
+Cc: stable@vger.kernel.org
+Fixes: 705c1cdf1e73 ("iommu/vt-d: Introduce batched cache invalidation")
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@intel.com>
+---
+ drivers/iommu/intel/cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/iommu/intel/cache.c b/drivers/iommu/intel/cache.c
+index e5b89f728ad3..bb9dae9a7fba 100644
+--- a/drivers/iommu/intel/cache.c
++++ b/drivers/iommu/intel/cache.c
+@@ -264,7 +264,7 @@ static unsigned long calculate_psi_aligned_address(unsigned long start,
+ 
+ static void qi_batch_flush_descs(struct intel_iommu *iommu, struct qi_batch *batch)
+ {
+-	if (!iommu || !batch->index)
++	if (!iommu || !batch || !batch->index)
+ 		return;
+ 
+ 	qi_submit_sync(iommu, batch->descs, batch->index, 0);
+-- 
+2.34.1
+
 
