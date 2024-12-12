@@ -1,172 +1,123 @@
-Return-Path: <linux-kernel+bounces-443217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8CE9EE8F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:34:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81D29EE8EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 15:34:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D88D1881A97
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344212835B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 14:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695D96F2FE;
-	Thu, 12 Dec 2024 14:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0DF2153E4;
+	Thu, 12 Dec 2024 14:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YEEbvcPk"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBE78837;
-	Thu, 12 Dec 2024 14:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="qJFFmuYS"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A3C21423F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 14:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734014009; cv=none; b=Lqgv/lH5+JOcYZw7IlihfVi2KU2nXzDIDmv27iX+qAzPVk0MhgmeyM+9oAszDqF5ekA4Q72xBWju72+HrLSHcT4r9AFTrK1OrqHqqG5xso/t/9Wz8be9Bv0xng2vvpVWxQmqEc1I9HhaVbYcAGmfQBHnc2SZJU2z6pHHTwn9egc=
+	t=1734014034; cv=none; b=bNkors40lARORpPo6O+5lbp+PFroyCRSC6cNhjU2gWmU62pTEearo1AWuqFyEJzcKFXzBxtJtF6XxUlBxYdzq8wdBEcZTMTCBErR1iQpXZmgzGM27zavZJ5KuX9BYjYrax1M6ad8zRlG90LG+DDPWzSODLQb8TgR6ZrDmV7l1wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734014009; c=relaxed/simple;
-	bh=he+FlGJoGlXURd+r/6jPzv/OztoDTwsegVcDpvMQmzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rOPYYsNYqGECtiHQHZnxtRnBrR/hT9fpxUA/uLxnv4X8mEBA9MaMtnC67YYTEl4syecejPTGPsscOwpmR7JpI+2GzcBRuzZg98W6zwfUjiPxuv0T1NI7sOpHixhiIDkXYkDot6Tr08bYwBbWsbeYRat8fXEUUygv8RMmzRpOOEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YEEbvcPk; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id A32072078B7C; Thu, 12 Dec 2024 06:33:27 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A32072078B7C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1734014007;
-	bh=vsfThCoXms3guF8hl0PESHBVjwnuCelGtCnevaW3lo8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YEEbvcPke7JIubSH+PgXLd/LjBekrQtEF+n9UR9y6jG1NWE2Odsk/oJNh6O7InArx
-	 jIIyLd6tszzR30/lQTxiGLTSIjsYZZhmnYh3LVYP0EUmsBt5UsCG7rKNYu0g4uDdjD
-	 cJ+Xk5QVobZE6nsEK18lTUEk9jOhkpdiuBM1cp6w=
-Date: Thu, 12 Dec 2024 06:33:27 -0800
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"Srivatsa S. Bhat" <srivatsa@csail.mit.edu>, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	jikos@kernel.org, bentiss@kernel.org, linux-hyperv@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ernis@microsoft.com, rafael@kernel.org, pavel@ucw.cz,
-	lenb@kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/3] Revert "Input: hyperv-keyboard - register as a
- wakeup source"
-Message-ID: <20241212143327.GA21051@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1726176470-13133-1-git-send-email-ernis@linux.microsoft.com>
- <1726176470-13133-3-git-send-email-ernis@linux.microsoft.com>
- <ZvIx85NmYB/HzKtI@csail.mit.edu>
- <Zv-j0qtWXsDz4Hah@google.com>
- <20241017134438.GA14386@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <20241108104741.GA14651@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <20241209171623.GA29631@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1734014034; c=relaxed/simple;
+	bh=TUSHR09MWIWScyPuNYIlwYC+tS8CQ8KKfqKuUWMBs0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DNekCC+XxWSUPpg8de4YVpmgYigMgE+Q2ID4SF7z96tUFXKqQeteVigxadIO6NQyGOUGOggUFYeA32Il2Ep0b+Q/SRXEBSs49GOoip7I02XSBedSZJYi+7eaqdkYapN1GAlCBQPpk1PjZhZo4dVo44ClMKC3PlIGfynI57HPFe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=qJFFmuYS; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e39f43344c5so479492276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 06:33:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1734014031; x=1734618831; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oixWL2nrZMsUYl4DXg/df5eSVmWCM6y/4WgYjFxHm8U=;
+        b=qJFFmuYSXeeh1wE0JiaGEgc4QEzLmn1PWUEPJYBk4c7w2awheWT9GAuLR5aZcXuYGV
+         f+E83pOww8bVa/ZSDbi2YbZRcdJPRO0826TLa2wtVbJf28P4y2JtPztEoo8VNv3O4Tmt
+         T78Xo/UTMSfWnuQdYHMp64P2hkEU5tYlxJdEq9ydhemb+QjNPRyp1TvQHpY1G3LX1fn3
+         +hrio+aQRzyPFt3kKb5a+cf88R3/IJ7VCYetGWLkf38OfsFhlAi5AoLYSxtiwLOBp0Rw
+         6CMWafrpN2+YwJxyM87xYhC5trA4V+PNm4uzbJ/xWkQjZuTMbMhVDUYdddFtSV+YSRx/
+         3z2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734014031; x=1734618831;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oixWL2nrZMsUYl4DXg/df5eSVmWCM6y/4WgYjFxHm8U=;
+        b=UyK7vQhSIJZpZ2T82hrNnj9B6lGt8Qx05RSPET9GqjVt/LG7DZehBVg5KiCRyx7bKl
+         tQ7wPd5nOGzq9Kc6aK1lJw771rmUHvz2Q74XR/qPfQNmJ+LaMDfR6Lf3mrWQxALUvxGK
+         Xy7dcGNxVLgS9EvWWZGkvswpbAiNIp7vtLgOiT1GzqtkpFX95YPYvksMKiqkeUrBlKKS
+         vOu8BjeFrro/By37A0krbGi0aitLwCDNjmPC1WVMAuI6IoYYr8HdyKTT42Ws9eC/q0bF
+         yAxVZvHZVZs1PVi98SNeWEm55VfTks4mc2Zsd+u/pJCtMQ+4f6a/fZH3h/0v6x4yB8lT
+         Y8lA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/712ZhRZd8Y1pWlMkjkcDgl6mrdWefvSnEMtXP8UFn5l+MBoM3rPVyZNMRJL7N4tBpHJ3SDtokowD/04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfBd5nx2wUjep7Nah3f/UpIPRgfp2EsudD1xZip+qQmrOXMQej
+	FhWGg5Y6kq7vPKO4Ga7L+XEIVXo8OxeNqz4ATXPcmxQQXno+0NDhtRpu20uuo+IGyapfU1XG8xk
+	uGHqcerO34vgTlyYS1eycW31pcw0QECJ78T8ltQ==
+X-Gm-Gg: ASbGncvw5tkyDoJnYCLsuDzFJOkHhotLPUc+ibqNHEEhMAMi3MutivkORrZ7vOP23GP
+	8nTXDZL/WFv0XxoF9wpCriFjnCTIE8wMNiVAKMg==
+X-Google-Smtp-Source: AGHT+IGDLkQcBMnIFEczxKe7BF1CvAuA2ofNG6CIH7QxnJ28sfgBPj/eIhdCC4W8Y62+oAcJWg9iNMMiz9hdeyHHgTE=
+X-Received: by 2002:a05:6902:72f:b0:e39:86a0:aeba with SMTP id
+ 3f1490d57ef6-e41c7b58a86mr526641276.34.1734014031430; Thu, 12 Dec 2024
+ 06:33:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209171623.GA29631@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <b61a81b2-0101-43bd-a4f6-09cf3a016484@stanley.mountain>
+In-Reply-To: <b61a81b2-0101-43bd-a4f6-09cf3a016484@stanley.mountain>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Thu, 12 Dec 2024 14:33:33 +0000
+Message-ID: <CAPY8ntBkQ9PrNx51g+W6TPTLhFjQrTC1vitbV6TVCwq8GUOLwA@mail.gmail.com>
+Subject: Re: [PATCH v2 next] drm/vc4: unlock on error in vc4_hvs_get_fifo_frame_count()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Dec 09, 2024 at 09:16:23AM -0800, Saurabh Singh Sengar wrote:
-> On Fri, Nov 08, 2024 at 02:47:41AM -0800, Erni Sri Satya Vennela wrote:
-> > On Thu, Oct 17, 2024 at 06:44:38AM -0700, Erni Sri Satya Vennela wrote:
-> > > On Fri, Oct 04, 2024 at 01:14:10AM -0700, Dmitry Torokhov wrote:
-> > > > On Tue, Sep 24, 2024 at 03:28:51AM +0000, Srivatsa S. Bhat wrote:
-> > > > > [+linux-pm, Rafael, Len, Pavel]
-> > > > > 
-> > > > > On Thu, Sep 12, 2024 at 02:27:49PM -0700, Erni Sri Satya Vennela wrote:
-> > > > > > This reverts commit 62238f3aadc9bc56da70100e19ec61b9f8d72a5f.
-> > > > > > 
-> > > > > > Remove keyboard as wakeup source since Suspend-to-Idle feature
-> > > > > > is disabled.
-> > > > > > 
-> > > > > > Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-> > > > > > ---
-> > > > > >  drivers/input/serio/hyperv-keyboard.c | 12 ------------
-> > > > > >  1 file changed, 12 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/input/serio/hyperv-keyboard.c b/drivers/input/serio/hyperv-keyboard.c
-> > > > > > index 31d9dacd2fd1..b42c546636bf 100644
-> > > > > > --- a/drivers/input/serio/hyperv-keyboard.c
-> > > > > > +++ b/drivers/input/serio/hyperv-keyboard.c
-> > > > > > @@ -162,15 +162,6 @@ static void hv_kbd_on_receive(struct hv_device *hv_dev,
-> > > > > >  			serio_interrupt(kbd_dev->hv_serio, scan_code, 0);
-> > > > > >  		}
-> > > > > >  		spin_unlock_irqrestore(&kbd_dev->lock, flags);
-> > > > > > -
-> > > > > > -		/*
-> > > > > > -		 * Only trigger a wakeup on key down, otherwise
-> > > > > > -		 * "echo freeze > /sys/power/state" can't really enter the
-> > > > > > -		 * state because the Enter-UP can trigger a wakeup at once.
-> > > > > > -		 */
-> > > > > > -		if (!(info & IS_BREAK))
-> > > > > > -			pm_wakeup_hard_event(&hv_dev->device);
-> > > > > > -
-> > > > > >  		break;
-> > > > > >  
-> > > > > >  	default:
-> > > > > > @@ -356,9 +347,6 @@ static int hv_kbd_probe(struct hv_device *hv_dev,
-> > > > > >  		goto err_close_vmbus;
-> > > > > >  
-> > > > > >  	serio_register_port(kbd_dev->hv_serio);
-> > > > > > -
-> > > > > > -	device_init_wakeup(&hv_dev->device, true);
-> > > > 
-> > > > If you do not want the keyboard to be a wakeup source by default maybe
-> > > > change this to:
-> > > > 
-> > > > 	device_set_wakeup_capable(&hv_dev->device, true);
-> > > > 
-> > > > and leave the rest of the driver alone?
-> > > > 
-> > > > Same for the HID change.
-> > > > 
-> > > > Thanks.
-> > > >
-> > > device_set_wakeup_capable() sets the @dev's power.can_wakeup flag and
-> > > adds wakeup-related attributes in sysfs.
-> > > 
-> > > Could you please help me understand why explicitly calling this function 
-> > > can be helpful in our use case?
-> > > 
-> > > > -- 
-> > > > Dmitry
-> > Just following up on this patch. Could you please help me understand the
-> > reason for the change?
-> 
-> 
-> Vennela,
-> 
-> There is a difference between "wakeup source registration" and "wakeup capable".
-> For this there are two flags defined in power management framework:
->  1. power.wakeup
->  2. power.can_wakeup
->  
-> More details on these flags can be read here: 
-> https://www.kernel.org/doc/html/v6.12/driver-api/pm/devices.html
-> 
-> 'device_init_wakeup(dev, true)' sets both; ie it registers the device as a wakeup
-> source and marks it as wakeup capable too.
-> 
-> In our case, the device is "wakeup capable" but we do not want to
-> "register it as a wakeup source". 'device_set_wakeup_capable(dev, true)' is more
-> appropriate because this marks the device as wakeup capable but doesn't register
-> it as a wakeup source knowingly.
-> 
-> I understand that Dimitry suggests not to revert the entire patch but to replace
-> 'device_init_wakeup' with 'device_set_wakeup_capable', to mark the device as
-> capable of wakeup but knowingly skipping the registering part.
-> 
-> Requesting Dimitry to correct me if there is any misinterpretation.
-> 
-> While fixing this in next version, please fix the kernel bot warings as well
-> reported for 1/3 patch of this series.
-> 
-> - Saurabh
-Thanks for the clarification Saurabh.
-I'll be incorporating these changes in the next verison of the patch.
+On Thu, 12 Dec 2024 at 12:47, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> The default statement is never used in real life.  However, if it were
+> used for some reason then call drm_dev_exit() before returning.
+>
+> Fixes: 8f2fc64773be ("drm/vc4: Fix reading of frame count on GEN5 / Pi4")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-- Vennela
+Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+
+Thanks for the update.
+  Dave
+
+> ---
+> v2: style fixes
+>
+>  drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+> index b42027636c71..4811d794001f 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+> @@ -522,7 +522,7 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
+>                 break;
+>         default:
+>                 drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
+> -               return 0;
+> +               break;
+>         }
+>
+>         drm_dev_exit(idx);
+> --
+> 2.45.2
+>
 
