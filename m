@@ -1,220 +1,86 @@
-Return-Path: <linux-kernel+bounces-442771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2CD9EE15F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:35:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9202C9EE15D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:35:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C2BA162E16
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:35:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49819283D06
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D19620CCC0;
-	Thu, 12 Dec 2024 08:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OmFykiwE"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC5720DD6B;
+	Thu, 12 Dec 2024 08:35:06 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A979420E028
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777E0181334;
+	Thu, 12 Dec 2024 08:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733992509; cv=none; b=LL59ElTCQeAo4EvWdWUd6Obpu0jAziYmOCdfiIQ7bLzljZhmRSqiWtG0qfeTYLgsfQbwHVQH0QTOJ6PQxSoRWaPCg1e87vlzw2LUx0jeMslhLUHqQ+VxalbX4G86ma92A0q4UwsL0WXfNgo1eKy7prKTHBc/+FAnq/iyd9HHDHU=
+	t=1733992506; cv=none; b=e3bBSZgcRlzsaiT3O+c6dSd0KVTkHIZh17ZrXBy1pFkGzz3HGRRPoPqNyHndxsKW8LVAA49U4AZrWVlOXHiFYS6PgXMnvj7eRblMrvYZnJu8Api33hHHfLA/5Fkz0oe2OsrWIUJ8qqaNdZB+Hen6NB0WzCJqhhA665782nebdhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733992509; c=relaxed/simple;
-	bh=+QYQvIoAwA/03emDflI9RZkFrv6j8VhTC0DAInPMlgQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cbEloij6BrC/85si+0JnasYsdps7XsCoOe2VHyQ3oQ3Bx2x/T1GVf/43Rn5SFTtJ7hHG3Z0RSdIGLFhJX+fIIVvAzbaWezcJBM/tjclk+l+vifV3fiRyB6f1ZARSx8cNuUEq1M5IIHCzwiPs2YUGuBba0nqUz81KC1oaCizQfgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OmFykiwE; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-725dbdf380aso301721b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:35:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733992507; x=1734597307; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T6/vSaKZY5pwG8kUY2GoEQ9MVjh6P3T7KUtdgv4p5mc=;
-        b=OmFykiwEu+rZDg6eXHPS97yzu5DqxPOqKybRz9sDY1L15oxACbehoyGuZBEwpBpzHa
-         Xsc+SwXK5YISXpaOuOwOE7YOCVd/sNVC3FbK2/y/EUGpH+dmYbsFThVT1KZm4vM0y3HU
-         +QY/FtPqfujUWNdP2OjV3u0yMUybMhUEXNKvq/sPo65YIMo6sZs59LHAuh7Yu71u2jQV
-         UqyeXQ57o/gTUyCYIRHo1X/4QRivgUc82j7L5vDmRvWQMSvlF9ZBgvCK0XrEXD2ZGsvC
-         t2nvUHwOoyQZOE7iQ2KxNQSo/YXRJkMv92FY9GKzwwCigA80B33lAwSf65FRlbR0qwPf
-         88kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733992507; x=1734597307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T6/vSaKZY5pwG8kUY2GoEQ9MVjh6P3T7KUtdgv4p5mc=;
-        b=EmQMcdjmbUha9ZsMHCwdrqPicx1coT7/+esw+B9OQ0gWajm4ouXrVTN6Ghb3iBk5nx
-         pGoEqrhcJGzC42OHuqChqj7aj7JBtMfuMjiR0alkDDk02uoTrbztf6Jc0qxoTQOFyush
-         GZgYE7hmBDtyAeaSAojifBJXKZMr7HGgQoZaw1oDn66WftdIHqKt1EK44Jo6YmTTrBa3
-         z0YI7w2ezzxxJF5WaQGiqVdD8peuOxz4Hon10l/XYWkQWSqTHKBuonas+G86+ljkxYAp
-         0Xwm4dRRZrYTOc2gfvy0n3vOW6Z7pHHk0i42BPO5VB5akXRUORytRvDX6dWrHSBhvZ3Q
-         FXdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUrnDXedSIVINfyzCx921SmVtroL8Pc+om9uOUaWnOXX76CPE4z2V2IeEAsQT8mTeg9I9s74HZ/WWLcrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv40OIlYLHT/hph0n7Lb44hytP2MjwIZMC0pD9AH4YRU7Mrx/7
-	f0MfeqNIpnNefCk0a7X79Iu0+gNClOzfYgqj7M/nsXDSdG3hiA7AF+qWa0SxWr9K61ruaQLI7Mv
-	2+gw7e2srk8a/Y1jPFpTphZ3xAvHDBCU+SLC9og==
-X-Gm-Gg: ASbGnctOGvLRWMKEa9lGjwNfa9lpcQupoSNy7dYOezY0Tel+1oaVoT6BeX7lRXBEnwB
-	apzsnp20+Zl7hccmsMr6gXG4McIQLyN/IKmVlmqv3AhWqRgh29c1Tk5w/IObaQ2py3QI=
-X-Google-Smtp-Source: AGHT+IGIP1QyEXC52z6coVr8oeuwx35jICI5SfYsscchRGRr2f8qVzHqI5hZN/zB3bkzJpDD0e8BRBfaFPrva3fh7xo=
-X-Received: by 2002:a05:6a00:10c7:b0:725:e957:1dd1 with SMTP id
- d2e1a72fcca58-728faaac98amr3279648b3a.17.1733992507041; Thu, 12 Dec 2024
- 00:35:07 -0800 (PST)
+	s=arc-20240116; t=1733992506; c=relaxed/simple;
+	bh=rrBYBkbHZcn5I1aF3U8lL3NmmSK4aCBmuavcvGmQk1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y2wEGGQBSNYY54z64MEUblfnnLxnI6rARNViD04pk+x4xzmwlDJ2SYc67TdikV3Rsok+QjR4EKjGPDOhJI80Yn26QU3bBWoS9zjIuDcfZ1T3isEBDbh1rg+nnhLl8FD0eQzWPbeTi51j2AQPjW84gRznfp7MfcHo4p/zRz96qwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id AE9AF68D12; Thu, 12 Dec 2024 09:34:59 +0100 (CET)
+Date: Thu, 12 Dec 2024 09:34:59 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v4 05/18] dma-mapping: Add check if IOVA can be used
+Message-ID: <20241212083459.GB9376@lst.de>
+References: <cover.1733398913.git.leon@kernel.org> <b23a1e29f00f31f31641479c90f2471aee27fac5.1733398913.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5861970.DvuYhMxLoT@rjwysocki.net> <2989520.e9J7NaK4W3@rjwysocki.net>
- <4d601707-8269-4c2b-86d2-62951ea0353c@arm.com> <CAJZ5v0jvOYACAn-of=e7zirfzQ5gT+CTPM2w29T-jPzk7Z+SOg@mail.gmail.com>
- <CAKfTPtAdo7OADEFuMeg1PpO=rk=bXmiw1Avj7frsoNWZuceewA@mail.gmail.com>
- <CAJZ5v0h5yt5z=dHLJjQhQQChsnr+krcxzBdb6VXj9W4gMY_PSA@mail.gmail.com>
- <CAKfTPtBJsDPGeRdqk0Ag8dPFxYn0r0ow_xb4s+=Y=QzLWiX9uQ@mail.gmail.com> <CAJZ5v0j-o=03hWrSkk2nx9uWctKaRSJmRNXY6d=e0b46_+fNzA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0j-o=03hWrSkk2nx9uWctKaRSJmRNXY6d=e0b46_+fNzA@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 12 Dec 2024 09:34:55 +0100
-Message-ID: <CAKfTPtDXCxOovMNeJ5UuCqMa42PRtFPgTahxy+F--Qojkh7OXg@mail.gmail.com>
-Subject: Re: [RFC][PATCH v021 4/9] sched/topology: Adjust cpufreq checks for EAS
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Christian Loehle <christian.loehle@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b23a1e29f00f31f31641479c90f2471aee27fac5.1733398913.git.leon@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, 11 Dec 2024 at 18:55, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Dec 11, 2024 at 6:08=E2=80=AFPM Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
-> >
-> > On Wed, 11 Dec 2024 at 17:38, Rafael J. Wysocki <rafael@kernel.org> wro=
-te:
-> > >
-> > > On Wed, Dec 11, 2024 at 2:25=E2=80=AFPM Vincent Guittot
-> > > <vincent.guittot@linaro.org> wrote:
-> > > >
-> > > > On Wed, 11 Dec 2024 at 12:29, Rafael J. Wysocki <rafael@kernel.org>=
- wrote:
-> > > > >
-> > > > > On Wed, Dec 11, 2024 at 11:33=E2=80=AFAM Christian Loehle
-> > > > > <christian.loehle@arm.com> wrote:
-> > > > > >
-> > > > > > On 11/29/24 16:00, Rafael J. Wysocki wrote:
-> > > > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > > >
-> > > > > > > Make it possible to use EAS with cpufreq drivers that impleme=
-nt the
-> > > > > > > :setpolicy() callback instead of using generic cpufreq govern=
-ors.
-> > > > > > >
-> > > > > > > This is going to be necessary for using EAS with intel_pstate=
- in its
-> > > > > > > default configuration.
-> > > > > > >
-> > > > > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > > > ---
-> > > > > > >
-> > > > > > > This is the minimum of what's needed, but I'd really prefer t=
-o move
-> > > > > > > the cpufreq vs EAS checks into cpufreq because messing around=
- cpufreq
-> > > > > > > internals in topology.c feels like a butcher shop kind of exe=
-rcise.
-> > > > > >
-> > > > > > Makes sense, something like cpufreq_eas_capable().
-> > > > > >
-> > > > > > >
-> > > > > > > Besides, as I said before, I remain unconvinced about the use=
-fulness
-> > > > > > > of these checks at all.  Yes, one is supposed to get the best=
- results
-> > > > > > > from EAS when running schedutil, but what if they just want t=
-o try
-> > > > > > > something else with EAS?  What if they can get better results=
- with
-> > > > > > > that other thing, surprisingly enough?
-> > > > > >
-> > > > > > How do you imagine this to work then?
-> > > > > > I assume we don't make any 'resulting-OPP-guesses' like
-> > > > > > sugov_effective_cpu_perf() for any of the setpolicy governors.
-> > > > > > Neither for dbs and I guess userspace.
-> > > > > > What about standard powersave and performance?
-> > > > > > Do we just have a cpufreq callback to ask which OPP to use for
-> > > > > > the energy calculation? Assume lowest/highest?
-> > > > > > (I don't think there is hardware where lowest/highest makes a
-> > > > > > difference, so maybe not bothering with the complexity could
-> > > > > > be an option, too.)
-> > > > >
-> > > > > In the "setpolicy" case there is no way to reliably predict the O=
-PP
-> > > > > that is going to be used, so why bother?
-> > > > >
-> > > > > In the other cases, and if the OPPs are actually known, EAS may s=
-till
-> > > > > make assumptions regarding which of them will be used that will m=
-atch
-> > > > > the schedutil selection rules, but if the cpufreq governor happen=
-s to
-> > > > > choose a different OPP, this is not the end of the world.
-> > > >
-> > > > Should we add a new cpufreq governor fops to return the guest estim=
-ate
-> > > > of the compute capacity selection ? something like
-> > > > cpufreq_effective_cpu_perf(cpu, actual, min, max)
-> > > > EAS needs to estimate what would be the next OPP; schedutil uses
-> > > > sugov_effective_cpu_perf() and other governor could provide their o=
-wn
-> > >
-> > > Generally, yes.  And documented for that matter.
-> > >
-> > > But it doesn't really tell you the OPP, but the performance level tha=
-t
-> > > is going to be set for the given list of arguments IIUC.  An energy
-> >
-> > Yes, the governor return what performance level it will select and asl
-> > to the cpufreq driver so EAS can directly map it to an OPP and a cost
-> >
-> > > model is needed to find an OPP for the given perf level.  Or generall=
-y
-> > > the cost of it for that matter.
-> > >
-> > > > > Yes, you could have been more energy-efficient had you chosen to =
-use
-> > > > > schedutil, but you chose otherwise and that's what you get.
-> > > >
-> > > > Calling sugov_effective_cpu_perf() for another governor than schedu=
-til
-> > > > doesn't make sense.
-> > >
-> > > It will work for intel_pstate in the "setpolicy" mode to a reasonable
-> > > approximation AFAICS.
-> > >
-> > > > and do we handle the case when
-> > > > CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is not selected
-> > >
-> > > I don't think it's necessary to handle it.
-> >
-> > I don't think that CI and others will be happy to possibly get an
-> > undeclared function. Or you put a dependency of other governors with
-> > CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
->
-> Do you mean CONFIG_CPU_FREQ_GOV_SCHEDUTIL?  Because
-> CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is only about whether or not schedutil
-> is the default governor.
+On Thu, Dec 05, 2024 at 03:21:04PM +0200, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> This patch adds a check if IOVA can be used for the specific
+> transaction.
+> 
+> In the new API a DMA mapping transaction is identified by a
+> struct dma_iova_state, which holds some recomputed information
+> for the transaction which does not change for each page being
+> mapped.
 
-Yes, I mean CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+While the content of the patch here looks fine, the super fine
+grained patch split look really odd and makes sensible review
+hard.  Was this a request on one of the earlier versions?
 
->
-> I think that it is fine to require CONFIG_CPU_FREQ_GOV_SCHEDUTIL for EAS.
 
