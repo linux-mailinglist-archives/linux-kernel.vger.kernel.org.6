@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-443563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E8C9EF7A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:36:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BA69EF925
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 18:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2B617421F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D01261893CC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 17:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3336C13CA93;
-	Thu, 12 Dec 2024 17:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BCF222D45;
+	Thu, 12 Dec 2024 17:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F2a6Nhiv"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o9q5WaEG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808BE216E3B;
-	Thu, 12 Dec 2024 17:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD1D6F2FE;
+	Thu, 12 Dec 2024 17:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734024154; cv=none; b=YkxjnCFpsl8RNGlZVnQ42hadfdpBG8OozLpWZQGHIaR5ovOw3u/4cNxlFtU65UNo4eHcdetpwNflcWhIvY+MgSceJXqZYj/0WlXk/gBx+LmiWSvbjtXApbL38kR/N5q9LYpVjspJFspMyJMZWW5MHvSjcjH+62eDY4u4DrTYgCU=
+	t=1734025363; cv=none; b=PWKMjwBb11J4MrNvQXMiIeBWExFEi7b6JOtTrswKzLFngfH8dqCbaLxK8n8lylv8+btmQZR6roP5q/LRzDLfQDwHSyAoaS1v61D6Q7Omz7VuRaM7dFX++r3uomHEQKVop3fvNBNCMDS1G+sICb9iI8592pDZiBrUZRm8kuwSOBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734024154; c=relaxed/simple;
-	bh=nTmx4Tf57aWog6neNo4oFaLcLRI4nOLvd9nkx52e//I=;
+	s=arc-20240116; t=1734025363; c=relaxed/simple;
+	bh=2yrqFAHmR5ADfFhpjc73IVMjazkT07/zF0cVb67vR1U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JH57OeqCMZGy+VjrrZzdG1y/QHlIZeFGDhs6p+OTsY5qL2wxk5AZeqelosESVjvryfyGVIRIE8epSUvzo/de61In/q6n4zniNO7/41DxJsVogJ2jPvDsq8fOIMnKeNs+HInr/z9zYRkuCu5G9Zw7CM4AqOAv2j/4DGK0x5mZB00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F2a6Nhiv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7295C4CED4;
-	Thu, 12 Dec 2024 17:22:33 +0000 (UTC)
+	 MIME-Version; b=Ehh7ZeXdKogBvbDn9+0JsGRtS0RXpIoamk9Vn6CTugI22jkJUPDBDRX71ySRJBmxPtBR22HCfgTQmUwdyzDDfWcCNKtN3ynnJEH3dRr69UNuXswvs6k8yLQ8CHY6hKRnWamwIWN1yjUmg97x99RXS2jkzvw19qhNNUchTTrfq44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o9q5WaEG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54012C4CED3;
+	Thu, 12 Dec 2024 17:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734024154;
-	bh=nTmx4Tf57aWog6neNo4oFaLcLRI4nOLvd9nkx52e//I=;
+	s=korg; t=1734025363;
+	bh=2yrqFAHmR5ADfFhpjc73IVMjazkT07/zF0cVb67vR1U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F2a6NhivskaeKneJncKTHKJXBNqL8sL4WPrPgaxsRefb8WYFi51+v8qEtwi7afog/
-	 PZV7h/Fgj0vXyAPJf9H+PO8bihy8yRaJqUf+1+l4Ahyrzb0yZ7k/ark3hlBg7rIN6Z
-	 Dac65NJ03gD+oIyk6A+z4SmfYIekvn0EKXEpWQes=
+	b=o9q5WaEG+ochLOt7FiHShHUjrBRVlJSNnOsje3ODHcMTQKvl5a1rbL0VatbJAnFAZ
+	 oPEnGcxYgen6LVDoln5/GpVjvOpxHf/r1TKmmV6byW5KIqp7eIPucjOuAM/GfWv0+9
+	 OeCQywokGgN7rza/bkUWLG4aDH/EJNsCdMu5ZkHM=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org,
 	Greg Ungerer <gerg@linux-m68k.org>,
@@ -48,12 +48,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Antonio Quartulli <antonio@mandelbit.com>,
 	Greg Ungerer <gerg@kernel.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.10 203/459] m68k: coldfire/device.c: only build FEC when HW macros are defined
-Date: Thu, 12 Dec 2024 15:59:01 +0100
-Message-ID: <20241212144301.587080996@linuxfoundation.org>
+Subject: [PATCH 5.4 115/321] m68k: coldfire/device.c: only build FEC when HW macros are defined
+Date: Thu, 12 Dec 2024 16:00:33 +0100
+Message-ID: <20241212144234.525717733@linuxfoundation.org>
 X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241212144253.511169641@linuxfoundation.org>
-References: <20241212144253.511169641@linuxfoundation.org>
+In-Reply-To: <20241212144229.291682835@linuxfoundation.org>
+References: <20241212144229.291682835@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.10-stable review patch.  If anyone has any objections, please let me know.
+5.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -95,10 +95,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
-index a055616942a1e..d73d90452b123 100644
+index b4103b6bfdeb6..6b676965495fa 100644
 --- a/arch/m68k/coldfire/device.c
 +++ b/arch/m68k/coldfire/device.c
-@@ -93,7 +93,7 @@ static struct platform_device mcf_uart = {
+@@ -92,7 +92,7 @@ static struct platform_device mcf_uart = {
  	.dev.platform_data	= mcf_uart_platform_data,
  };
  
@@ -107,7 +107,7 @@ index a055616942a1e..d73d90452b123 100644
  
  #ifdef CONFIG_M5441x
  #define FEC_NAME	"enet-fec"
-@@ -145,6 +145,7 @@ static struct platform_device mcf_fec0 = {
+@@ -144,6 +144,7 @@ static struct platform_device mcf_fec0 = {
  		.platform_data		= FEC_PDATA,
  	}
  };
@@ -115,7 +115,7 @@ index a055616942a1e..d73d90452b123 100644
  
  #ifdef MCFFEC_BASE1
  static struct resource mcf_fec1_resources[] = {
-@@ -182,7 +183,6 @@ static struct platform_device mcf_fec1 = {
+@@ -181,7 +182,6 @@ static struct platform_device mcf_fec1 = {
  	}
  };
  #endif /* MCFFEC_BASE1 */
@@ -123,7 +123,7 @@ index a055616942a1e..d73d90452b123 100644
  
  #if IS_ENABLED(CONFIG_SPI_COLDFIRE_QSPI)
  /*
-@@ -583,12 +583,12 @@ static struct platform_device mcf_esdhc = {
+@@ -556,12 +556,12 @@ static struct platform_device mcf_edma = {
  
  static struct platform_device *mcf_devices[] __initdata = {
  	&mcf_uart,
