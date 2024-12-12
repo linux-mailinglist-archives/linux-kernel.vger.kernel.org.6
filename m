@@ -1,82 +1,121 @@
-Return-Path: <linux-kernel+bounces-442735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C9C9EE0EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:13:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030BF9EE0FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:16:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C26618855B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:13:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3A8164155
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A430120C009;
-	Thu, 12 Dec 2024 08:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F12120C020;
+	Thu, 12 Dec 2024 08:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X403YC3n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AypvzCJ3"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98C41FECD6;
-	Thu, 12 Dec 2024 08:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5EE20ADFD
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991211; cv=none; b=pZh5Pl6xc3bAcSHF+n72za6sOIsgJtl1AlGXCtEu/cNQNRk5tGV/GiE1R4+oxIpl3Z4yK31/+avBbKaV5KlDx+UwV45tZhMSrvevcWWinSxVOIMLq4gzCV8Fg0/0dDhcbuo0//9zPkG/bqyGvDkTREypdUlGW4uWzlaokXP7Qok=
+	t=1733991405; cv=none; b=rPWwT+f6rTiXvqwh97DcE1V5TIwcogAIRmIrBFlY5BfL85OC8RpELYJecTJvX5hPXhFwErUdT1W26TpuXO8GD3DlNrsTDue7W+Idgf9qBQNCX1ekWC7Wd/gZPtrt+NoNItFsycoqTURZiC4dARsR/TKhB+zXZLGEV3OLvICqH8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991211; c=relaxed/simple;
-	bh=yFRZ+IH3VruDCKluh2Mfy3YvjHuvC7u/oBOqXdHG/UQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0EZ0B2z+G374Ruu9F8LDjESLLDnyYBTC8GYoo0fSX1DuUcH9PWR8rCCwnwSeQ2bx+D4u8qr4nWv1TrUU4WdtqAIe50s3wR6qnmVVpnhXwtmjKnvNEwpOp6nEATdlL6+Bap6BsZ7PNshx9eSsPToK+4sbFkBkFBJBzB4QoM30k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X403YC3n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0DBBC4CECE;
-	Thu, 12 Dec 2024 08:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733991210;
-	bh=yFRZ+IH3VruDCKluh2Mfy3YvjHuvC7u/oBOqXdHG/UQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X403YC3nzX85sUU0gMsuEEhNCgIEXOUpGQE5pbSXbWlnTW9NCHbM8Q3f9cGjpt+hA
-	 6Y0s/H8FcFTkbkCLs3YHflvhtK8mzxgctedejqkte9rAG9l195yutRCvrB07H/1szj
-	 MzwgVw8v+V34GvVlDRYINKQRhxlICRxQ/LPaCE19SlwBah4IFu/Dvp3ceFu4tVsTYk
-	 IsyjI5WujSg7PLnlEPJVoZDu33oE6xjyVdqhXbFdKzpb8PS4LZmhktymYDJPtgF/3a
-	 DFSFEWTPpsPCAH2wrAFpSFXRgFSjQeTuVIUunj7PaQ4qY1R/9VNZPoRkx0yWHb67Fc
-	 X86sGlmel0fiA==
-Date: Thu, 12 Dec 2024 09:13:27 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
-	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: leds: backlight: apple,dwi-bl: Add
- Apple DWI backlight
-Message-ID: <6fazyksxkcbhugivwgozuyjdig37vnshbwtdmzjcbrqywgszvd@sm27uhqgsma4>
-References: <20241211113512.19009-1-towinchenmi@gmail.com>
- <20241211113512.19009-2-towinchenmi@gmail.com>
+	s=arc-20240116; t=1733991405; c=relaxed/simple;
+	bh=x1lZfxP8tVKva+5GYnCJibgYIIJQqmt5dFmZgOgGKf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dbPO16mtOWJLiztdqmFbp6LfKVBZETROYwzEtc/5SoQJ9sV9HfX0h3W84KEICvM7heD4qphEOUeLfoIi95bGdqOv8Rb6c+27CNnFl4L71rJuu/nTrIsEAqzKIVl3b8QSivJjTyvL/w4iUuI2w6F1nCqp7bh4sMmZEDQnEGa/NCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AypvzCJ3; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa6aee68a57so44528666b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:16:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733991402; x=1734596202; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x1lZfxP8tVKva+5GYnCJibgYIIJQqmt5dFmZgOgGKf8=;
+        b=AypvzCJ3Zi8ws7Z6xGvUcydNnVsPGERSoi3LdbhFv98P0xOnxQxWyUQGHQ43MIOQkD
+         4aDgujIHP6ppxfEQf4vXVVlTk1PPqoT1PmQ/IAbEExxrRoAgDkcI7HNagXtvTxtxkY9/
+         sn6KLVAQ56vnP5FbopJDr8PFNP6utWRozPfjTAZPuI3WZIofwybehOCc8qySnhZyPUS2
+         VBBB6mjqo6WU7XLnZsJVWXBZdHiAzwWgMF3/z8hdMOr0C7zlWsC0dJ2cz9d6Avw9KqiG
+         X2YY8VVzIAXiKzAr7EfL3ZxN5Uv9REJXw4PYi83xEMb+ryx7BWha75EcB/ASerDZ64JS
+         aN3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733991402; x=1734596202;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x1lZfxP8tVKva+5GYnCJibgYIIJQqmt5dFmZgOgGKf8=;
+        b=iMhNvVVtnTiHoYAdBOI883dvVjs5dv1Aqyt/jF9DbJkA2bgaij96FD8J6IXsLVkndy
+         Xdnoap9lXgBqq4PQZUBlWmmyiElFqNhb39njw/2zz/VX93cscwfr79pEaBdML5qFwo9E
+         aU73QMA2u+Nah/tQPRet2TsloTR+4E6Ybud5l8eS2JAtbtNjyw3KRk1PwT3gV/I7arWI
+         zLcoTF/Dyau0ysiYPbD9AWZ1SPG6yeueANLO3xxpNjKGz9e75Mg4NAd2UKh1NGecSovV
+         /ylnwDgFslTVowvBg1pHKNv+cvWmgeUoTnJ13pLjnUVgGlSLy+xqktPO4WB7pNUO8z1k
+         VMoA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5X7FJ0b9M4m+Ojc8stTt9Sj1+0ox3o7pQmury5SSsABKx+Vzvkb1ZF91DTB7uyoWW49R1Ui3JEl3bQ1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsQMPyFCQI1a7kQHI215E1HcQ9KA91TDtCE+0CavD8WYXHYWb+
+	s4uL2CRx30huxxqPAzy/PDkKOvX9iSaGUjg8elMVzV6mGChtadgUq6bbrlvRArcqcx9B8nl09XO
+	pqBB572IrJi9Kgsd9gTfvcBySRVr6TS7PbqCupA==
+X-Gm-Gg: ASbGnctq7OitJoHjAMDT9MispYQNFYy4tupNpQVt0PdLNB0Fk8VlzOsnQvKrTlNSUS8
+	zfMfsKlkdI6LQJjL6YVldmRNP24S+atp9dkQB
+X-Google-Smtp-Source: AGHT+IHq2LiaTDAdQG1IRxOtsTssjhx6LklAJX9kMaulofgK7RHDp0nhYM9dwMoslUBNdUIH+VK7eMST4iIte9mhc84=
+X-Received: by 2002:a17:906:3083:b0:aa6:8a1b:8b78 with SMTP id
+ a640c23a62f3a-aa6c1ad9e4fmr273362366b.6.1733991401684; Thu, 12 Dec 2024
+ 00:16:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241211113512.19009-2-towinchenmi@gmail.com>
+References: <20241212075303.2538880-1-neelx@suse.com> <ac4c4ae5-0890-4f47-8a85-3c4447feaa90@wdc.com>
+In-Reply-To: <ac4c4ae5-0890-4f47-8a85-3c4447feaa90@wdc.com>
+From: Daniel Vacek <neelx@suse.com>
+Date: Thu, 12 Dec 2024 09:16:31 +0100
+Message-ID: <CAPjX3FcS55T_qToJqSrHJ3NhMtWFU86wE-qk1Khpf++MvPqzyA@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: fix a race in encoded read
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Omar Sandoval <osandov@fb.com>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, 
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 07:34:37PM +0800, Nick Chan wrote:
-> Add backlight controllers attached via Apple DWI 2-wire interface.
-> 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
->  .../bindings/leds/backlight/apple,dwi-bl.yaml | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml
+Hi Johannes,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Thu, Dec 12, 2024 at 9:00=E2=80=AFAM Johannes Thumshirn
+<Johannes.Thumshirn@wdc.com> wrote:
+>
+> On 12.12.24 08:54, Daniel Vacek wrote:
+> > While testing the encoded read feature the following crash was observed
+> > and it can be reliably reproduced:
+> >
+>
+>
+> Hi Daniel,
+>
+> This suspiciously looks like '05b36b04d74a ("btrfs: fix use-after-free
+> in btrfs_encoded_read_endio()")'. Do you have this patch applied to your
+> kernel? IIRC it went upstream with 6.13-rc2.
 
-Best regards,
-Krzysztof
+Yes, I do. This one is on top of it. The crash happens with
+`05b36b04d74a` applied. All the crashes were reproduced with
+build of `feffde684ac2`.
 
+Honestly, `05b36b04d74a` looks a bit suspicious to me as it really
+does not look to deal correctly with the issue to me. I was a bit
+surprised/puzzled.
+
+Anyways, I could reproduce the crash in a matter of half an hour. With
+this fix the torture is surviving for 22 hours atm.
+
+--nX
 
