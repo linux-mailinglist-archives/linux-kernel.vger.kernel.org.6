@@ -1,138 +1,152 @@
-Return-Path: <linux-kernel+bounces-443063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46DB39EE67E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:18:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A5B9EE681
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 13:18:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 988E628246A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:18:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A86D31886327
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B669A213248;
-	Thu, 12 Dec 2024 12:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAD9212D8E;
+	Thu, 12 Dec 2024 12:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="azRAkan7"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7A4Fsn8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91ABD213229;
-	Thu, 12 Dec 2024 12:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8842C212B32;
+	Thu, 12 Dec 2024 12:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734005873; cv=none; b=GOEcGYURrTf968X/GB+GBIY4V6LKfWzCeUE4Ni7yNO2EB0P6BuOeB5F09ECSnFYhv/RS7KS1YUj59n8673cux1Vn306uki+9Ow8sRRZkKUjo+ghnjidlyPjpNFI3ZIMQRR/ul7dyurF39m4gUbsyL1DHoHE7JwNfd5giIaNpads=
+	t=1734005909; cv=none; b=nkfJSCCrIAXiBKkrrDiqO3e+fyVbgdy8LdjN06IPRLXbIkMKlWeSfGzpcAucdbYyfyGuntBrL3B3AaLI+r20glXBKh78ZhE4VQxEJHn58qF5DqBoaMVHs8994Jxp9TvjW7nBGrgh2bj/I78tqxCYKLkKeDOfmKfZZjnqlPt9Imw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734005873; c=relaxed/simple;
-	bh=3t/oI8e6qvP+2CFqLpHfBpUxSQsNUpoXBSee8yKchgU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Bigs3Bg/vnx7l/aPmf3SnNuAH1g4jtwFKqZNgRtObuEic7cPFjlvKBVmvH90OWmWTpW+X0kJYeZ0XYUJLlpLIFhpSo9n9TDYzO0Tvze7534Y94EsdbnVZYOdLxr6+R68IdQRsefkA7cJE4lahpAEZhyIe52fm/YkjP/9Jjnp/sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=azRAkan7; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ijlL4rSz2njW9qWg3HQkc4dUeY9AmC6JyexQwini2AM=; b=azRAkan7zAyw0EQ59/AFiYSOsU
-	a409kADRtbfHxpRKHelkZjTHLxA2s5+l0SV9RW6Gw7uxcFGv4sBcS+zag7qD7EOrUvi1kO9LEnztF
-	xMBbC76vy99itpaPXTeG+kaevAPh9lkd6Z2hmll6Rj4OAo7y4ZI/dc0QUV3r8JX9UpRvsrgCeL/17
-	bqya4g/1xhQTFUpBBjEF7aCikgLy5UI2cuH41ZQGXbiSyziu5AASj+kaxM+cGsm/EYFZmI1xuQw28
-	A1nVM7Q4oMmyJSTV2OMzsyOyW+zuPvcAbPRInyryRGMq6rZHjJfdW/S5VAAnpPbMz2pSQGM8lQEKZ
-	/QDFYYHw==;
-Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:38802 helo=and-HP-Z4..)
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <andrej.picej@norik.com>)
-	id 1tLi8b-00A8t4-31;
-	Thu, 12 Dec 2024 13:17:49 +0100
-From: Andrej Picej <andrej.picej@norik.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	marex@denx.de
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	upstream@lists.phytec.de
-Subject: [PATCH v6 3/3] arm64: dts: imx8mm-phyboard-polis-peb-av-10: Set lvds-vod-swing
-Date: Thu, 12 Dec 2024 13:17:12 +0100
-Message-Id: <20241212121712.214639-4-andrej.picej@norik.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241212121712.214639-1-andrej.picej@norik.com>
-References: <20241212121712.214639-1-andrej.picej@norik.com>
+	s=arc-20240116; t=1734005909; c=relaxed/simple;
+	bh=7ezu9sBdly/qvSx8Y2gocL3CuNmOZUVxyKqVH0A1Srg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PLs945fynPmEl8LoCTjc3QNwpY8jmODZ1h+xNqAB7dwtuPmnDSfDWMeoGE5PE8bsCZMxTBlZtAjjnmMMwsmYXxtm6sQ5naMoRqHfwOQL1WaOrpozDcaoxI1OgpyQf803OwoYVvfxallL8vA4+2Lb6HrG7JLHvrtaq2AVZRlxW10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7A4Fsn8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0254DC4CECE;
+	Thu, 12 Dec 2024 12:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734005909;
+	bh=7ezu9sBdly/qvSx8Y2gocL3CuNmOZUVxyKqVH0A1Srg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d7A4Fsn8q6y4IdoSpi8r4ysXhSUUtIfXvE6vRln7WjAPkRRgIcB5TRtX2eMC3VdwG
+	 o77kuIpuom23aW8RnSXOOHkFLzX6VIXMeLN/AaiHkSRCXtJ149Lp4A+LmlT81m4Vkc
+	 bzpO/DWpEBFosJzi3IbzMOnMlkeMiXB2domj4ofYgesvqNfeCoDxMksCPHZCgdY+Ov
+	 j7S2ZapDOhlmyYjNcAEHwRn0fxeOc8HNqWrG4N1FmSDVROfSLF6IFVnBc9e21Hkv6j
+	 fhMgOmYKQNnkhg4EVR1RILu1twFLm8mP2dCVvAwJHp/dDbDDn7AfnO3ude35aCZEc3
+	 SzuETjae1aPyw==
+Message-ID: <4e1eb8d2-c725-4572-8419-3027cac10c92@kernel.org>
+Date: Thu, 12 Dec 2024 14:18:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/5] usb: cdns3-ti: run HW init at resume() if HW was
+ reset
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mathias Nyman <mathias.nyman@intel.com>
+Cc: =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241210-s2r-cdns-v6-0-28a17f9715a2@bootlin.com>
+ <20241210-s2r-cdns-v6-2-28a17f9715a2@bootlin.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241210-s2r-cdns-v6-2-28a17f9715a2@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
-X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 
-Set custom differential output voltage for LVDS, to fulfill requirements
-of the connected display. LVDS differential voltage for data-lanes and
-clock output has to be between 200 mV and 600 mV.
-Driver sets 200 Ohm near-end termination by default.
 
-Signed-off-by: Andrej Picej <andrej.picej@norik.com>
----
-Changes in v6:
-- no change
-Changes in v5:
-- no change
-Changes in v4:
-- no change
-Changes in v3:
-- no change
-Changes in v2:
-- use new properties from previous patches
----
- .../boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso     | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso b/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso
-index a9de42cf14be..8bf9cc553bea 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso
-@@ -186,6 +186,8 @@ port@2 {
- 			reg = <2>;
- 			bridge_out: endpoint {
- 				remote-endpoint = <&panel_in>;
-+				ti,lvds-vod-swing-clock-microvolt = <200000 600000>;
-+				ti,lvds-vod-swing-data-microvolt = <200000 600000>;
- 			};
- 		};
- 	};
+On 10/12/2024 19:13, Théo Lebrun wrote:
+> At runtime_resume(), read the W1 (Wrapper Register 1) register to detect
+> if an hardware reset occurred. If it did, run the hardware init sequence.
+> 
+> This callback will be called at system-wide resume. Previously, if a
+> reset occurred during suspend, we would crash. The wrapper config had
+> not been written, leading to invalid register accesses inside cdns3.
+> 
+
+Did I understand right that the Controller reset can happen only at
+system suspend and never at runtime suspend?
+
+If so do you really need the runtime suspend/resume hooks?
+you should have different system suspend/resume hooks than runtime suspend/resume
+hooks and deal with the re-initialization in system resume hook.
+
+
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  drivers/usb/cdns3/cdns3-ti.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/usb/cdns3/cdns3-ti.c b/drivers/usb/cdns3/cdns3-ti.c
+> index d704eb39820ad08a8774be7f00aa473c3ff267c0..d35be7db7616ef5e5bed7dbd53b78a094809f7cc 100644
+> --- a/drivers/usb/cdns3/cdns3-ti.c
+> +++ b/drivers/usb/cdns3/cdns3-ti.c
+> @@ -188,6 +188,12 @@ static int cdns_ti_probe(struct platform_device *pdev)
+>  	data->vbus_divider = device_property_read_bool(dev, "ti,vbus-divider");
+>  	data->usb2_only = device_property_read_bool(dev, "ti,usb2-only");
+>  
+> +	/*
+> +	 * The call below to pm_runtime_get_sync() MIGHT reset hardware, if it
+> +	 * detects it as uninitialised. We want to enforce a reset at probe,
+> +	 * and so do it manually here. This means the first runtime_resume()
+> +	 * will be a no-op.
+> +	 */
+
+Separate system sleep hooks will also prevent this kind of behavior.
+
+>  	cdns_ti_reset_and_init_hw(data);
+>  
+>  	pm_runtime_enable(dev);
+> @@ -232,6 +238,24 @@ static void cdns_ti_remove(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, NULL);
+>  }
+>  
+> +static int cdns_ti_runtime_resume(struct device *dev)
+> +{
+> +	const u32 mask = USBSS_W1_PWRUP_RST | USBSS_W1_MODESTRAP_SEL;
+> +	struct cdns_ti *data = dev_get_drvdata(dev);
+> +	u32 w1;
+> +
+> +	w1 = cdns_ti_readl(data, USBSS_W1);
+> +	if ((w1 & mask) != mask)
+> +		cdns_ti_reset_and_init_hw(data);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops cdns_ti_pm_ops = {
+> +	RUNTIME_PM_OPS(NULL, cdns_ti_runtime_resume, NULL)
+> +	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+> +};
+> +
+>  static const struct of_device_id cdns_ti_of_match[] = {
+>  	{ .compatible = "ti,j721e-usb", },
+>  	{ .compatible = "ti,am64-usb", },
+> @@ -245,6 +269,7 @@ static struct platform_driver cdns_ti_driver = {
+>  	.driver		= {
+>  		.name	= "cdns3-ti",
+>  		.of_match_table	= cdns_ti_of_match,
+> +		.pm     = pm_ptr(&cdns_ti_pm_ops),
+>  	},
+>  };
+>  
+> 
+
 -- 
-2.34.1
+cheers,
+-roger
 
 
