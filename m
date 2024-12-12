@@ -1,309 +1,166 @@
-Return-Path: <linux-kernel+bounces-442811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2F19EE24A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:10:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A991883B40
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:10:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68C420E31C;
-	Thu, 12 Dec 2024 09:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Bm2MQOWk"
-Received: from mail-m15579.qiye.163.com (mail-m15579.qiye.163.com [101.71.155.79])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A419EE23F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 10:08:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D9913E40F;
-	Thu, 12 Dec 2024 09:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.79
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70ED28291F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:08:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E6920E31F;
+	Thu, 12 Dec 2024 09:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UY9zbmE1"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE271D8E10
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 09:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733994649; cv=none; b=c8Kj/U/zDyh/Vo7nWnYAmnrADtBfPAZsqAWDaJaJDRqMACFCSL/Hry8OPXo3pAOyCEUMRpUZWu5/qyGHzK99siD+BTEqFOzNInP88wsHDUouqE9Ak/aBDrtc9II1tm4GCEypaYbK63S4xmbNyu/UtFKJCAH+1DmZlP6nsrKHjGw=
+	t=1733994499; cv=none; b=gs7v0346EvZt9cwwUEV7kZIPeqOTTgnnYB2JPgEYoOgpXfVs/ookKf16vp78DP54uSvqoDExr89G39JvKYyGXPE5kDeEsvWzuB1MzDYXLTiuDrvVnSNaN7zTmPU7akFmwz7UnnsaQfWyP5FkDE1ZWoXq2A0KF1FcAeNT44L6uGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733994649; c=relaxed/simple;
-	bh=jwYrXDddRG3PR4qyYG5gwWlBh42QqTd8zTyJJlniWlY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BZgNrnpoydXEoM/szrOVcG7DkRiPMbgsbJXWsfehaPx9tsNcR9dJ6ptw4fP2aZNxbZkyj5cTEmVxpkNT6lvRy9BWfHjqqt9EttgTWUp/NxFP9Kcm6oKYFlj+LRhaV4KGeN8gsx1AOlYx8SGc3n0Nf8Ek8dF3PRmNFZn7JRZU2eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Bm2MQOWk; arc=none smtp.client-ip=101.71.155.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 587970be;
-	Thu, 12 Dec 2024 16:55:19 +0800 (GMT+08:00)
-Message-ID: <f6fd6efe-73bb-4aa2-a075-9a03c39951df@rock-chips.com>
-Date: Thu, 12 Dec 2024 16:55:19 +0800
+	s=arc-20240116; t=1733994499; c=relaxed/simple;
+	bh=7mkNhNohCRInUoNEgtBbSXisKCJhOCIqilr1bctY9qQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D2jl0vo9R9TYK9vxuqrymWwJ80QdC8ZoWy9+JQRP3wBUwKS66ntJVKOKd8mlNlkM0jzC8ttxfbrvwgZsIZmoFPKkJd754V/2B+6sOx1mFJ7JPU+g5mNXnMHUZg+P5q5MMml3OPCWsnFxXQl405I/Jmvd4Cz9ac1sCBYXCaW6EpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UY9zbmE1; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so67546066b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 01:08:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733994496; x=1734599296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qy+XHWudhy1v5FQx+HPpD7u/EehmML+tWjPRArge5Pk=;
+        b=UY9zbmE1ruDn0cJyFk3s5No7MYdK40/t7SxvnC0MbCorrBZCJk2K+oWpMH3G1NxKS0
+         cX6BGCqyM8v0c4ssk88tKeAHa8QzRZBCYEuxT36YQDNH7duWdGbIxV9JHm+nKWbNqnoR
+         w/MMliVYdcnIRiKeMEOp52K2zSSpyPvLjYBohIcRjDskjaAOArp7UrAQEcmJ1yUrwGEB
+         VeMk1viVs/9XQ+0h4Yc8byYxMoW4BDm5f/XDtkuiwahXxn4oUZBuTniVYArtQUIt+ngw
+         V2nsceY40jsbupLgK0co4IncKIpSQkN3zl/S+ZojF5d81o4NboWsEbMwdihwIuEzSRhX
+         ogPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733994496; x=1734599296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qy+XHWudhy1v5FQx+HPpD7u/EehmML+tWjPRArge5Pk=;
+        b=f/Ih34nPc4Cn7Jh7lEZll9VS7RpWab9F/cd15r8XlEtclohk+d0/uJ16S75l9Hlafp
+         OQcO6oRruXrNgaX1KKE+L/H2dcBo+TKfo2B0KC2V0/pfl1GvuGEeUz9+80Zz1N9VS70B
+         YZdYyt/4opZ4vfpdyTAs6IlYBnmz8ffgtoGnHN/Nj4MwoqesW8s5+tF/VsEUFOKfkX/I
+         +69FQfO2GMCiC5rYhdyQHVfhLtwNouP4Nssa/ryRriIJUy4sz2WWzmQm7g4OAQAestjl
+         NTLAWq/TpXNPbCsYxaRIqHrBUpkEK6df7UGEc3WMHXZijOaY+qMdbXsAXPIWJQFBYpiY
+         4qQw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6d740qtd+PL4RRBs/lVzsLtprIKdR9LXILds/tOWMZZk65uQD45/SBsRxzsM5ed9mJpQ4gqmk0L8phr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv8fHK4BgG1MfQtdKTTraLURFAF9c2jF1TGYwvWQCGJz1Jmgvz
+	5sQsY01YHMkIt1AmYdQQoZB8CO03sfEOBJl8Pd0rF5wUHYvL1eeqdQXqtOTUfpw54vJNualo1O1
+	GQuc3CyfZRHKgDymzfzwdvYvXfuuCilAjL9uR9Q==
+X-Gm-Gg: ASbGncubvMO731BiCItcFRbMstVIG/oQ/pQXyfiAw8Hlp+eGVslh/pxolmygF4u7zov
+	vqr9ZVI/Cv8gumpJl97ttGJWAET3xmHvyNLM/
+X-Google-Smtp-Source: AGHT+IHEeJ3cn9fsQUrmcRwGKGFNz+w9xyhYxVnY2x3y6VbhboijLIDasxIc1jaQaLdp8+eNSrWDe+me41Cfc3kAJW0=
+X-Received: by 2002:a17:906:2929:b0:aa6:8096:204d with SMTP id
+ a640c23a62f3a-aa6b1141caamr537934766b.3.1733994496399; Thu, 12 Dec 2024
+ 01:08:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 06/10] drm/bridge: analogix_dp: Add support for phy
- configuration.
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: heiko@sntech.de, robh@kernel.org, conor+dt@kernel.org,
- algea.cao@rock-chips.com, rfoss@kernel.org, devicetree@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- sebastian.reichel@collabora.com, dri-devel@lists.freedesktop.org,
- hjc@rock-chips.com, kever.yang@rock-chips.com,
- linux-rockchip@lists.infradead.org, vkoul@kernel.org,
- andy.yan@rock-chips.com, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, l.stach@pengutronix.de
-References: <20241127075157.856029-1-damon.ding@rock-chips.com>
- <20241127075157.856029-7-damon.ding@rock-chips.com>
- <twhosvpoyafo472gqsblpvxmuewe2lkqufxabp2q7o636uinfm@unzyfv2pchqn>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <twhosvpoyafo472gqsblpvxmuewe2lkqufxabp2q7o636uinfm@unzyfv2pchqn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk1DT1YYHk1DQkkaHUtOGUpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a93ba14685803a3kunm587970be
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MzI6Qjo4FTIPOjQOCTcYCB0h
-	DS8wCT9VSlVKTEhIQkJITElKQ09MVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFMTE1JNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=Bm2MQOWkXjx8Pf9F3W4LsD7hTW78m7eB7oq2XDcJbwtsVGle3yaMemLVAEN+zVoWZx1sSiKi07Y1Rcxs8X+7lH/hi9FsqJO5eqOVWzogYs3zRK3doeb9Kv0vTMPvpyP88zoti2YuAe7NHqy+LN/uRRr11+USss2pTU7MU1cFiqk=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=FoVNNZh4L/GMNtlxTr6ggp+PnIEfUziJ14W8Sk9sycA=;
-	h=date:mime-version:subject:message-id:from;
+References: <20241212075303.2538880-1-neelx@suse.com> <ac4c4ae5-0890-4f47-8a85-3c4447feaa90@wdc.com>
+ <CAPjX3FcAZM4dSbnMkTpJPNJMcPDxKbEMwbg3ScaTWVg+5JqfDg@mail.gmail.com> <133f4cb5-516d-4e11-b03a-d2007ff667ee@wdc.com>
+In-Reply-To: <133f4cb5-516d-4e11-b03a-d2007ff667ee@wdc.com>
+From: Daniel Vacek <neelx@suse.com>
+Date: Thu, 12 Dec 2024 10:08:05 +0100
+Message-ID: <CAPjX3FchmM24-Afv7ueeK-Z1zBYivfj4yKXhVq6bARiGjqQOwQ@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: fix a race in encoded read
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Omar Sandoval <osandov@fb.com>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, 
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-rt-devel@lists.linux.dev" <linux-rt-devel@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+On Thu, Dec 12, 2024 at 10:02=E2=80=AFAM Johannes Thumshirn
+<Johannes.Thumshirn@wdc.com> wrote:
+>
+> On 12.12.24 09:53, Daniel Vacek wrote:
+> > On Thu, Dec 12, 2024 at 9:35=E2=80=AFAM Johannes Thumshirn
+> > <Johannes.Thumshirn@wdc.com> wrote:
+> >>
+> >> On 12.12.24 09:09, Daniel Vacek wrote:
+> >>> Hi Johannes,
+> >>>
+> >>> On Thu, Dec 12, 2024 at 9:00=E2=80=AFAM Johannes Thumshirn
+> >>> <Johannes.Thumshirn@wdc.com> wrote:
+> >>>>
+> >>>> On 12.12.24 08:54, Daniel Vacek wrote:
+> >>>>> While testing the encoded read feature the following crash was obse=
+rved
+> >>>>> and it can be reliably reproduced:
+> >>>>>
+> >>>>
+> >>>>
+> >>>> Hi Daniel,
+> >>>>
+> >>>> This suspiciously looks like '05b36b04d74a ("btrfs: fix use-after-fr=
+ee
+> >>>> in btrfs_encoded_read_endio()")'. Do you have this patch applied to =
+your
+> >>>> kernel? IIRC it went upstream with 6.13-rc2.
+> >>>
+> >>> Yes, I do. This one is on top of it. The crash happens with
+> >>> `05b36b04d74a` applied. All the crashes were reproduced with
+> >>> `feffde684ac2`.
+> >>>
+> >>> Honestly, `05b36b04d74a` looks a bit suspicious to me as it really
+> >>> does not look to deal correctly with the issue to me. I was a bit
+> >>> surprised/puzzled.
+> >>
+> >> Can you elaborate why?
+> >
+> > As it only touches one of those four atomic_dec_... lines. In theory
+> > the issue can happen also on the two async places, IIUC. It's only a
+> > matter of race probability.
+> >
+> >>> Anyways, I could reproduce the crash in a matter of half an hour. Wit=
+h
+> >>> this fix the torture is surviving for 22 hours atm.
+> >>
+> >> Do you also have '3ff867828e93 ("btrfs: simplify waiting for encoded
+> >> read endios")'? Looking at the diff it doesn't seems so.
+> >
+> > I cannot find that one. Am I missing something? Which repo are you usin=
+g?
+>
+> The for-next branch for btrfs [1], which is what ppl developing against
+> btrfs should use. Can you please re-test with it and if needed re-base
+> your patch on top of it?
+>
+> [1] https://github.com/btrfs/linux for-next
 
-On 2024/11/30 16:53, Dmitry Baryshkov wrote:
-> On Wed, Nov 27, 2024 at 03:51:53PM +0800, Damon Ding wrote:
->> Add support to configurate link rate, lane count, voltage swing and
->> pre-emphasis with phy_configure(). It is helpful in application scenarios
->> where analogix controller is mixed with the phy of other vendors.
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->> ---
->>   .../drm/bridge/analogix/analogix_dp_core.c    |  4 +-
->>   .../drm/bridge/analogix/analogix_dp_core.h    |  2 +
->>   .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 90 +++++++++++++++++++
->>   3 files changed, 94 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> index 6f10d88a34c5..7624ed13cdbf 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->> @@ -1672,7 +1672,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_probe);
->>   
->>   int analogix_dp_suspend(struct analogix_dp_device *dp)
->>   {
->> -	phy_power_off(dp->phy);
->> +	analogix_dp_phy_power_off(dp);
-> 
-> Why?
-> 
->>   
->>   	if (dp->plat_data->power_off)
->>   		dp->plat_data->power_off(dp->plat_data);
->> @@ -1696,7 +1696,7 @@ int analogix_dp_resume(struct analogix_dp_device *dp)
->>   	if (dp->plat_data->power_on)
->>   		dp->plat_data->power_on(dp->plat_data);
->>   
->> -	phy_power_on(dp->phy);
->> +	analogix_dp_phy_power_on(dp);
-> 
-> Why?
-> 
+I did check here and I don't really see the commit.
 
-These changes for phy_power_on()/phy_power_off() may be unnecessary. I 
-will just put the phy_set_mode() before phy_power_on() in next version.
+$ git remote -v
+origin    https://github.com/btrfs/linux.git (fetch)
+origin    https://github.com/btrfs/linux.git (push)
+$ git fetch
+$ git show 3ff867828e93 --
+fatal: bad revision '3ff867828e93'
 
->>   
->>   	analogix_dp_init_dp(dp);
->>   
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->> index 774d11574b09..a76079d61768 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
->> @@ -232,5 +232,7 @@ int analogix_dp_send_psr_spd(struct analogix_dp_device *dp,
->>   			     struct dp_sdp *vsc, bool blocking);
->>   ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
->>   			     struct drm_dp_aux_msg *msg);
->> +void analogix_dp_phy_power_on(struct analogix_dp_device *dp);
->> +void analogix_dp_phy_power_off(struct analogix_dp_device *dp);
->>   
->>   #endif /* _ANALOGIX_DP_CORE_H */
->> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->> index 3afc73c858c4..809bb0c72d18 100644
->> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
->> @@ -11,6 +11,7 @@
->>   #include <linux/gpio/consumer.h>
->>   #include <linux/io.h>
->>   #include <linux/iopoll.h>
->> +#include <linux/phy/phy.h>
->>   
->>   #include <drm/bridge/analogix_dp.h>
->>   
->> @@ -513,10 +514,27 @@ void analogix_dp_enable_sw_function(struct analogix_dp_device *dp)
->>   void analogix_dp_set_link_bandwidth(struct analogix_dp_device *dp, u32 bwtype)
->>   {
->>   	u32 reg;
->> +	int ret;
->>   
->>   	reg = bwtype;
->>   	if ((bwtype == DP_LINK_BW_2_7) || (bwtype == DP_LINK_BW_1_62))
->>   		writel(reg, dp->reg_base + ANALOGIX_DP_LINK_BW_SET);
->> +
->> +	if (dp->phy) {
->> +		union phy_configure_opts phy_cfg = {0};
->> +
->> +		phy_cfg.dp.lanes = dp->link_train.lane_count;
-> 
-> You can drop this, .set_lanes is false.
-> 
->> +		phy_cfg.dp.link_rate =
->> +			drm_dp_bw_code_to_link_rate(dp->link_train.link_rate) / 100;
->> +		phy_cfg.dp.set_lanes = false;
->> +		phy_cfg.dp.set_rate = true;
->> +		phy_cfg.dp.set_voltages = false;
-> 
-> You don't need to set those to false, it's cleared by = {0};
-> 
->> +		ret = phy_configure(dp->phy, &phy_cfg);
->> +		if (ret && ret != -EOPNOTSUPP) {
->> +			dev_err(dp->dev, "%s: phy_configure() failed: %d\n", __func__, ret);
->> +			return;
->> +		}
->> +	}
->>   }
->>   
->>   void analogix_dp_get_link_bandwidth(struct analogix_dp_device *dp, u32 *bwtype)
->> @@ -530,9 +548,24 @@ void analogix_dp_get_link_bandwidth(struct analogix_dp_device *dp, u32 *bwtype)
->>   void analogix_dp_set_lane_count(struct analogix_dp_device *dp, u32 count)
->>   {
->>   	u32 reg;
->> +	int ret;
->>   
->>   	reg = count;
->>   	writel(reg, dp->reg_base + ANALOGIX_DP_LANE_COUNT_SET);
->> +
->> +	if (dp->phy) {
->> +		union phy_configure_opts phy_cfg = {0};
->> +
->> +		phy_cfg.dp.lanes = dp->link_train.lane_count;
->> +		phy_cfg.dp.set_lanes = true;
->> +		phy_cfg.dp.set_rate = false;
->> +		phy_cfg.dp.set_voltages = false;
-> 
-> Likewise
-> 
->> +		ret = phy_configure(dp->phy, &phy_cfg);
->> +		if (ret && ret != -EOPNOTSUPP) {
->> +			dev_err(dp->dev, "%s: phy_configure() failed: %d\n", __func__, ret);
->> +			return;
->> +		}
->> +	}
->>   }
->>   
->>   void analogix_dp_get_lane_count(struct analogix_dp_device *dp, u32 *count)
->> @@ -546,10 +579,39 @@ void analogix_dp_get_lane_count(struct analogix_dp_device *dp, u32 *count)
->>   void analogix_dp_set_lane_link_training(struct analogix_dp_device *dp)
->>   {
->>   	u8 lane;
->> +	int ret;
->>   
->>   	for (lane = 0; lane < dp->link_train.lane_count; lane++)
->>   		writel(dp->link_train.training_lane[lane],
->>   		       dp->reg_base + ANALOGIX_DP_LN0_LINK_TRAINING_CTL + 4 * lane);
->> +
->> +	if (dp->phy) {
->> +		union phy_configure_opts phy_cfg = {0};
->> +
->> +		for (lane = 0; lane < dp->link_train.lane_count; lane++) {
->> +			u8 training_lane = dp->link_train.training_lane[lane];
->> +			u8 vs, pe;
->> +
->> +			vs = (training_lane & DP_TRAIN_VOLTAGE_SWING_MASK) >>
->> +			     DP_TRAIN_VOLTAGE_SWING_SHIFT;
->> +			pe = (training_lane & DP_TRAIN_PRE_EMPHASIS_MASK) >>
->> +			     DP_TRAIN_PRE_EMPHASIS_SHIFT;
->> +			phy_cfg.dp.voltage[lane] = vs;
->> +			phy_cfg.dp.pre[lane] = pe;
->> +		}
->> +
->> +		phy_cfg.dp.lanes = dp->link_train.lane_count;
->> +		phy_cfg.dp.link_rate =
->> +			drm_dp_bw_code_to_link_rate(dp->link_train.link_rate) / 100;
-> 
-> You can drop these two.
+Note, I was testing v6.13-rc1. This is a fix not a feature development.
 
-Indeed, all the needless assignments for phy_configure() will be deleted 
-in next version.
+--nX
 
-> 
->> +		phy_cfg.dp.set_lanes = false;
->> +		phy_cfg.dp.set_rate = false;
->> +		phy_cfg.dp.set_voltages = true;
->> +		ret = phy_configure(dp->phy, &phy_cfg);
->> +		if (ret && ret != -EOPNOTSUPP) {
->> +			dev_err(dp->dev, "%s: phy_configure() failed: %d\n", __func__, ret);
->> +			return;
->> +		}
->> +	}
->>   }
->>   
->>   u32 analogix_dp_get_lane_link_training(struct analogix_dp_device *dp, u8 lane)
->> @@ -1053,3 +1115,31 @@ ssize_t analogix_dp_transfer(struct analogix_dp_device *dp,
->>   
->>   	return -EREMOTEIO;
->>   }
->> +
->> +void analogix_dp_phy_power_on(struct analogix_dp_device *dp)
->> +{
->> +	int ret;
->> +
->> +	ret = phy_set_mode(dp->phy, PHY_MODE_DP);
->> +	if (ret) {
->> +		dev_err(dp->dev, "%s: phy_set_mode() failed: %d\n", __func__, ret);
->> +		return;
->> +	}
->> +
->> +	ret = phy_power_on(dp->phy);
->> +	if (ret) {
->> +		dev_err(dp->dev, "%s: phy_power_on() failed: %d\n", __func__, ret);
-> 
-> There is already a dev_err() call in phy_power_on().
-> 
->> +		return;
->> +	}
->> +}
->> +
->> +void analogix_dp_phy_power_off(struct analogix_dp_device *dp)
->> +{
->> +	int ret;
->> +
->> +	ret = phy_power_off(dp->phy);
->> +	if (ret) {
->> +		dev_err(dp->dev, "%s: phy_power_off() failed: %d\n", __func__, ret);
-> 
-> There is already a dev_err() call in phy_power_off().
-> 
->> +		return;
->> +	}
->> +}
->> -- 
->> 2.34.1
->>
->>
->> _______________________________________________
->> Linux-rockchip mailing list
->> Linux-rockchip@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-> 
-
-Best regards,
-Damon
-
+> Thanks,
+>         Johannes
 
