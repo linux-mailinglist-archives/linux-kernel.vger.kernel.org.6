@@ -1,113 +1,78 @@
-Return-Path: <linux-kernel+bounces-443845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-443846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55CD89EFC9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:39:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056789EFC9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 20:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D3B3169989
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:39:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5181885DEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 19:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B89F19D074;
-	Thu, 12 Dec 2024 19:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D23A188713;
+	Thu, 12 Dec 2024 19:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CH1hSBan"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJ+J+wbi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7427E183CD9;
-	Thu, 12 Dec 2024 19:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C6425948B;
+	Thu, 12 Dec 2024 19:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734032358; cv=none; b=GVERikrTfpsCAy23Ch3GBJbUD4JKoD74o4xTnPypuZXwaqwDH1guqYh4xeciD4YLj2daDEDUyiM5Aq1ggzQYTDEgtuqT066APzKV0tZD39vWAFuQicxQUTBQWRI+KuENACijNG12PtEfbA9pl2n4Fh5gv+xdMcJWz8jjtyJSUz0=
+	t=1734032384; cv=none; b=jBoPwrBslJOiI1UVNtkwBn96IzIRkax2Ypdg99q2Hdp0JHQQ9qNy27326tI7efp6bNMHdaiBKc1TzvRLeNjkdJImLaHLRM0gYz6+wbMaWpsigBcx/+GvlX61DxuvvpXMAEHTFGIxLm+X89EYQBSEjV+JGOgu3UsqmVfoJbSRibM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734032358; c=relaxed/simple;
-	bh=Kz3lTnnPV47L/qHM5RGdDtOdAl3uMd0bW/EbShUkRYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RgNtoipkaI7xbEMXry2FjXYiK+F+b1FQ6HZkfo8DT1T0XAmYOzgAabx3eV6WGH1JOgChTK6QNh+me7ZGwdHUsdRNwWZGEySIMDZ6kIzeonc0TRLN8dItURzwfLXyt6wNbLlRv9j1tiOeKTXtLmAW6TbiiHkyrrGNlCOplNz+mE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CH1hSBan; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so753239a12.1;
-        Thu, 12 Dec 2024 11:39:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734032357; x=1734637157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SXUTpPssHcay1QdWG1rkSODw/xMx016p0D9tmsgF2Zo=;
-        b=CH1hSBanYRGfs2Veje3rKGMWfWrazmN0NzvTBQbHDd/u0pk5NRBMXXHCBhDKj60E1a
-         vp5mDRPcY52pAP+ZG+MqPlSzKwbcGzOCvwdrnS+XJMg+4quPQuqN7BAbRZNZoLy7F0pA
-         pPET9rryCGCtcI8oxnbRK+oCEr/MxwnCPzXgR9pbLemeDEnSxSByL8BWocHd7H++htxP
-         Bw0knmPJBNjbm2eXJCHQR6TwhwhynMm4kSqjE/fI5TgrIbwpe3U/BqIlB5UV5yFT+KpE
-         af8ytuvu1sUHPAiuMCIrQaTynJrjnGJA5LSggwcF5AYV2hs/HU11k//8MMLulbmNvt4X
-         AtcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734032357; x=1734637157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SXUTpPssHcay1QdWG1rkSODw/xMx016p0D9tmsgF2Zo=;
-        b=ctLcURXsKCs3nYJJR64loPmeOmGm+P/t9Vhz2bbEViu+EsYSCPh36gLz0j7hM8g9sl
-         +Ri360y2OwGmqLtHq3IcwQ+uYiju7S7v4KgkXjWurKWz2lqv2/OmlC3kZt91Cd1pdw7Q
-         d8AuX1EPW4zk82e9hHBybNhrTE+VwoUKwZ2UD8ESr1d/TpTjpjRg67hN9W2T2lVAUgRT
-         s+rzg7PW6r2zkXLAsxwOGw8pyx73WBwCAL1r4WwcMYSXaw+nNBSJkT8d9Pdv1orK7T6T
-         wTY1prb8bNSUFiA7nKsTqCAQOPaenFgmUEPqeUt02OvO7XIEfSvlKmKBDGZuTqofo/K+
-         +czw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZVZ03WxiP9u2OluZGaeF4pVIGMfhdgIGfsvKjVZ8mWGR8vNg+KfQhdgC9GE1j9Cf4qvvv2zf1OGSaT3k38A==@vger.kernel.org, AJvYcCUxq6zKYYOj26u+M03R7MOd6bxTpRXnJe82TPiZEk/qwKgsF2MnjeaYnRF1Qz40OMYCMPYMXd6ACaIv3yqmGFV1PaacImvL@vger.kernel.org, AJvYcCVcPgibmXpb1RzBYF2zQptI2NpTETlG9FbBM/PWOLEUoKQuSy+I45Zb8Q/9EqfPrtvbL6Vsf3GdF4QlI+rO@vger.kernel.org, AJvYcCXhMbTWf/evcLvIdYMZHuxX05s/Hkn2CYrmoJ2qnasRDvXV19CbwwdIzLU599yrJjMIWp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV4zddmxTLWvvJYlqx7eEMEVpGHL2OKOGvdqDqTGkvXzlHMck3
-	UvjOHpADLD3N3jxXndXQFrhkVhDvBwORT8/WuWdFZUH2uUAjF4Dik4gi/W58pkgpJE0kCeqXnIM
-	Oem7kGLE364EoAd1gxtW6dTfM45E=
-X-Gm-Gg: ASbGncvbqwqruBOG1s183q7yewKPaSPxZPXb46BPgfdW/ZrADBj0kAbq/PSboCfC7ug
-	APtUAcWggbvEV+ZEFzqQ0L/50P2GgIWGYLSwSGyEDBMwwjDbMgThcVA==
-X-Google-Smtp-Source: AGHT+IEuE6sRVYHDo79XRdWminxIlKw78Xt6GJKIrhH1SKjsZYwk9bCf6Z2d8KVqCCTtTxsUwPflkjjForcaRWkBvtk=
-X-Received: by 2002:a17:90a:de98:b0:2ee:b4d4:69 with SMTP id
- 98e67ed59e1d1-2f128048ef7mr12274134a91.35.1734032356691; Thu, 12 Dec 2024
- 11:39:16 -0800 (PST)
+	s=arc-20240116; t=1734032384; c=relaxed/simple;
+	bh=JWYS5ALhAgqzXpQkGTU0FCGHTTihxg12b6d6jkH2b0s=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=TTXvRjfKZp4yDf0AMbKbK1zAcJ22wonWulmst6PFAhQUeFcrpbY/yMVb2RPtwfL3FfCfeC/tHAT1StDzvhiPeg5KRDJmnv4MDhDoS1TB+n//F41V95Zhvjnze3HHa1gVBio5bWO0ECV2QhYeiSbg9TxRuO3kIAwPuOLLxDJQgx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJ+J+wbi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B42B5C4CECE;
+	Thu, 12 Dec 2024 19:39:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734032383;
+	bh=JWYS5ALhAgqzXpQkGTU0FCGHTTihxg12b6d6jkH2b0s=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=VJ+J+wbiE3uNwwfTTOVh0KKoK+5h0LO2tw9jTGotTsjLBfN8VHzjx++hJljsyVpjh
+	 OjSeo54Mq+Uk28Pog4bJNZShTMhtPZnFvXtm+N0bg3WILVTUPgg0Rp37w2E/xmQxWw
+	 nj7qQss/4M4tpXd8MYOBE55u8LMJepGzLz1Ko0GS80OaIedxTRjkl9/t1Q5Q9jQlSm
+	 C1YV8fgPpFqT5Gz0NwQPcrVEj+VE4KJd+rQHoWAb1t8Dy3aeMswfGge9vMo9v/MxE4
+	 Lfi/zDkwXM3tQ76/upDtcANHJYl3JniazwSSEpL7xJzTpQMj7mdAeF/O8+QN6+TjWq
+	 cI9ktgfJMQJfA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34212380A959;
+	Thu, 12 Dec 2024 19:40:01 +0000 (UTC)
+Subject: Re: [GIT PULL] Networking for v6.13-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241212161437.3823483-1-kuba@kernel.org>
+References: <20241212161437.3823483-1-kuba@kernel.org>
+X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241212161437.3823483-1-kuba@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.13-rc3
+X-PR-Tracked-Commit-Id: ad913dfd8bfacdf1d2232fe9f49ccb025885ef22
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 150b567e0d572342ef08bace7ee7aff80fd75327
+Message-Id: <173403239975.2418467.15225825908653589423.pr-tracker-bot@kernel.org>
+Date: Thu, 12 Dec 2024 19:39:59 +0000
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241210220627.2800362-1-song@kernel.org> <20241211131804.GA1912640@mit.edu>
-In-Reply-To: <20241211131804.GA1912640@mit.edu>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 12 Dec 2024 11:39:04 -0800
-Message-ID: <CAEf4BzakJcZr-Kt+09PF-2jQRAHtzaw+YLibof5z=wvfqddq-Q@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 0/6] Enable writing xattr from BPF programs
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, liamwisehart@meta.com, shankaran@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 11, 2024 at 5:18=E2=80=AFAM Theodore Ts'o <tytso@mit.edu> wrote=
-:
->
-> On Tue, Dec 10, 2024 at 02:06:21PM -0800, Song Liu wrote:
-> > Add support to set and remove xattr from BPF program. Also add
-> > security.bpf. xattr name prefix.
->
-> If the system allows for the execution of unprivileged BPF programs
-> (e.g., ones where a random user can load their own BPF programs), will
-> they have hte ability to set and remove security.bpf.* xattrs?  If the
-> answer is yes, should this be disallowed?
+The pull request you sent on Thu, 12 Dec 2024 08:14:37 -0800:
 
-It's not 100% clear from Song's reply, but the answer is "no". You
-can't use this from unprivileged BPF programs (BPF LSM is privileged
-and requires root, effectively).
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.13-rc3
 
->
-> I note that one of the use cases seems to be BPF-based LSM's, so we
-> may want to have something even more restrictive since otherwise any
-> BPF program could potentially have the same power as the LSM?
->
->                                             - Ted
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/150b567e0d572342ef08bace7ee7aff80fd75327
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
