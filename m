@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-442745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32B39EE116
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:19:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA95A9EE11D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 09:20:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F5F282EA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 354151887F9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 08:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B2320E028;
-	Thu, 12 Dec 2024 08:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED8220E30D;
+	Thu, 12 Dec 2024 08:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mxnuOOwE"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lbefnI6I"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78AD20CCD5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E997C20DD6F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 08:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733991544; cv=none; b=ODan8sTC351g81IF8nwZGnkLJ/iy3WfpUJHnmaOOe8P02/415iscfZh/A93PjuFZppP7dtK8ZQVIzqaW91mEa70bRW/epkMnhg0TmmqeXfzaDoH2a4X6h+kJNVgi/CBRwwBoL8AGYIM7gGDBqqY1pKWLQNyJRmlaV+MUV8S7OGY=
+	t=1733991546; cv=none; b=aB9XTW543DGBfGjhmaqLYqoAPDzUpyf4mmE31K35YB0FKq7LNjMB7cd2QOcGkac0WahdShIIr434dEOtsuo+RWWx7QB+an6Eas6o6PndbPSNOO0snMo8IrlSjvjnw0LFbI/viDeXaq9Chik+AU9VCEvBtAaZJqb83jtqSlzWllg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733991544; c=relaxed/simple;
-	bh=IIRiZC5XZyzMgI3gPKX+55Yr6deZmolnCGPQJASUFJg=;
+	s=arc-20240116; t=1733991546; c=relaxed/simple;
+	bh=TSAWPK/Xq8CQnN3cWTPKZFMUEVsxlNikLmVeEldXfz8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cBxF1bGjSV+CC0ryXRXJZUs/N+/Bt2CoaTbhxqIQ5Pq+WQWftuS7EGSArH8ac69PYea3MNFYxais2TUfrLqQwM95Y5kEJkTODbUeVZ9eOFd+TG9siF5CKl7IUqPXu3M7npGEufpEZtvhmW8/TvZYbCIs2SCJ5e6h/JG9ZPb00eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mxnuOOwE; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=TmL01KB5X3UEIGY3RzwC775OWm09z6znbjSSss0Mlt8vd7ulsnAPsFqKgsJgaHIP0fVolqsXi4D40u8orHkJdC6LrPVBONlN5cOVOSrJNfvSyRmeG+ZZ823eKhTDaEYKAvGSgiSJrU3F10TmoFXq6LfgIlcyh+vi2wmRjvaMbrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lbefnI6I; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4361ac607b6so2607295e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:19:02 -0800 (PST)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4361ecebc5bso1817695e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 00:19:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733991541; x=1734596341; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733991543; x=1734596343; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hytoeGuBGhQsTErvMf3yZxZWvdEkxkHmgM5PMFEUtg=;
-        b=mxnuOOwEP9Bh0VXpEgZx7tNwfouXe39x1/hcv6TtBwWxJIW9F6bfJQtdalSq59INQE
-         8mtkooSzjMU6PYUiqXbufdFic9vqJ7ji/7KQr/jySlktwT9y/yoxDlslXgSooEfs2BTs
-         uWdXBhbdKVC02RVF3dMEuRpFMa559SVksxECodVEyZJmVGXQBBMLWjNJ3BydQ4EgVWR0
-         CK5nigosTf2cVbCwx+CwYmMYl1J1Fo68nvSk3UO8QCwoGPPwOBcZaP7Bw1b2hv2wx9tZ
-         cfnLrsbKiQA/AA7MjPcRvyLm5zkKooepYGK1mx6tmuvD+ME02pgo5WvkEJTAn9piT9r6
-         Hh9Q==
+        bh=JMOjAKt7SYh21CnU2/gurhD18i4qBMjjU7YQtDJALn4=;
+        b=lbefnI6IaqyjIRmR2IiY8AW60URYyrnaDQ/yy6fskoJQ3eSLX8IU+gr5/kp1op6fla
+         AX6ubo3XcHfXuyPxRNVo7bm0mWuf/rAeM5uVR0kC3V9vhLTUKjyWpDWm6RhCV8XepZco
+         1SCG9PlyYkY59erQYd52/15GX0PHg3T82A0HjmswDtV4+Qtrh1Dc7xsPcLWXKBotTE4Z
+         1x0LQcCdUsoa577cJYfhkFEsyrR61xvHusTVmDoPYCX3YdSAeMhDiuOiS+SJKR4E1f3p
+         2vqbZwOjU/etVUEnls7A9X8S9i69KNYgHdasyHkTX74nc9FLq6CgH4xEYmJdN4+kI566
+         OygQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733991541; x=1734596341;
+        d=1e100.net; s=20230601; t=1733991543; x=1734596343;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hytoeGuBGhQsTErvMf3yZxZWvdEkxkHmgM5PMFEUtg=;
-        b=qVm9+BR4c8SmUSJeKfv6dq3fH4TN7n8ZQR+f8CF2IMnRbeFQOO7Y3wEamSB231dPNK
-         nkU3AoD9baZMX84yKLMwezb/XPsCrty/mLBf5KGGab0Kr0KGCwBKGOKyaZ1fA+u0Ld2Q
-         wV1XkN+FyJZ519aRGDQej6IU8iwxIfnhte2ClOQTbKoHxoKbA8YcGsWIg/AMmJsDbTdI
-         +mF44N6cPM+jiYCMdqgyxaKmMQZARHdXkSKjl7EHLMaWskQWVXgjuurQfP3p8Tm165/o
-         Q640oRHzuY8w1Fu9fzk3hasVO8I5HleKbzqaWGq/6Uui1cOfySidu05zml4doCmhYPPN
-         Zw7g==
-X-Gm-Message-State: AOJu0Yyo2zM6Q/N9QFX9uR4kLmgjX0q8ZV2eWm5r8YpxLX6KJH0s7hbw
-	JjCecwplKHj2bbCKaiy1dzk+6rk0+/GyzXhvKeKxAiQIGl0KzEHRLvR2qlq0FRqegnTRow==
-X-Google-Smtp-Source: AGHT+IEGYsYtFhuo1M+mXxwr1oPLrb4FHzvmxqJpmKzmSM6VR7FR039Eo4mTnt9ojOSbZqHRyAKca3wz
+        bh=JMOjAKt7SYh21CnU2/gurhD18i4qBMjjU7YQtDJALn4=;
+        b=h1gTBQa+VClH6tDIMgsXb4mc5mFtMleADBeQ2+PVOsQ5MIyEUBYW5z1fcLl3uYihyp
+         UbS2FRRPFd6eQk7EldMOKmGhd95azaA/pDsI78Cnlz66q81OANG+LsCqfTyTN2xz1VZJ
+         s9/dduw2JonQqSTSGrjDL8fGLdrkv5yb4FQUa9XYDTyl4PWf/UgupUU8xp2phjDRXaOM
+         wBW2D8ksCUa/lhHPcN7ju+YLTUmOI0Yt+swJ64CFVyleiRhTGj53z+9DM+aLGdFS9tsZ
+         A1UYbf2NfXujQq9ph72y9ytq7upTZbfNLDlIfmnXoihN17AchtG5wzcHltIhDhcmDXr6
+         Jl3A==
+X-Gm-Message-State: AOJu0YwSZt1WrwfMsKcMmTkUqV30T0JJHWBYCuAZFPuPOD7Vk7E8ufNq
+	ZmfRdfCbwywJi913ZOsjew85+ZaCC4aoFFBZd4R2oagDU5YVjLbALOVEDElQ22RRdLLW3g==
+X-Google-Smtp-Source: AGHT+IGEPZXeZNx8gT7l0K6n8hjylpD9slamcamh+DZ/t1Et8nSF8q/2TqsFY0uo9/d5Ix+2xT283bTa
 X-Received: from wmee4.prod.google.com ([2002:a05:600c:2184:b0:434:f2eb:aa72])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:190c:b0:434:fe62:28c1
- with SMTP id 5b1f17b1804b1-43622842fe4mr19916235e9.18.1733991541383; Thu, 12
- Dec 2024 00:19:01 -0800 (PST)
-Date: Thu, 12 Dec 2024 09:18:44 +0100
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3109:b0:434:fafe:edb
+ with SMTP id 5b1f17b1804b1-4361c3e22e7mr42421225e9.24.1733991543459; Thu, 12
+ Dec 2024 00:19:03 -0800 (PST)
+Date: Thu, 12 Dec 2024 09:18:45 +0100
 In-Reply-To: <20241212081841.2168124-8-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,14 +71,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241212081841.2168124-8-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4458; i=ardb@kernel.org;
- h=from:subject; bh=sxVQfPUsQxyoLylOvN26XLQadF9/wxwUb33vSk2ahfI=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIT1qTur1D0H+U+c0Oh3k/7fY2m9Tvtv6JrPF/g+Z/q4oz
- 2tbGnKoo5SFQYyDQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEykxIXhf/BxLV/To+f/h2of
- CzpiU5aroGt51O/cxPIvmscNVMwOP2Bk+F9k6SMTXssv+fCnKHMSz4GvK3OWVls23FAM+LvUb8o KBgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2178; i=ardb@kernel.org;
+ h=from:subject; bh=rw9Vhm4jDehzLkAS6zRdIPR2y59w9k4f1UOcpcAZYnI=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIT1qTlrdArlJHb3+TBsqGsoKNB8W9Z027b7oFacqcWXDr
+ YrT6/52lLIwiHEwyIopsgjM/vtu5+mJUrXOs2Rh5rAygQxh4OIUgIlUzmX4zX4/6nDo9FP3mzZI
+ uV3zzz+6pfK36PIlc2r+ntb2zQqVPsDwv3pBaqX9/pkC57imvot+L9+VGLnZ8Mu2ZI60JsUWb20 5ZgA=
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241212081841.2168124-10-ardb+git@google.com>
-Subject: [PATCH v3 2/6] arm64/mm: Override PARange for !LPA2 and use it consistently
+Message-ID: <20241212081841.2168124-11-ardb+git@google.com>
+Subject: [PATCH v3 3/6] arm64/kvm: Configure HYP TCR.PS/DS based on host stage1
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
@@ -90,114 +90,59 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-When FEAT_LPA{,2} are not implemented, the ID_AA64MMFR0_EL1.PARange and
-TCR.IPS values corresponding with 52-bit physical addressing are
-reserved.
+When the host stage1 is configured for LPA2, the value currently being
+programmed into TCR_EL2.T0SZ may be invalid unless LPA2 is configured
+at HYP as well.  This means kvm_lpa2_is_enabled() is not the right
+condition to test when setting TCR_EL2.DS, as it will return false if
+LPA2 is only available for stage 1 but not for stage 2.
 
-Setting the TCR.IPS field to 0b110 (52-bit physical addressing) has side
-effects, such as how the TTBRn_ELx.BADDR fields are interpreted, and so
-it is important that disabling FEAT_LPA2 (by overriding the
-ID_AA64MMFR0.TGran fields) also presents a PARange field consistent with
-that.
+Similary, programming TCR_EL2.PS based on a limited IPA range due to
+lack of stage2 LPA2 support could potentially result in problems.
 
-So limit the field to 48 bits unless LPA2 is enabled, and update
-existing references to use the override consistently.
+So use lpa2_is_enabled() instead, and set the PS field according to the
+host's IPS, which is capped at 48 bits if LPA2 support is absent or
+disabled. Whether or not we can make meaningful use of such a
+configuration is a different question.
 
-Fixes: 352b0395b505 ("arm64: Enable 52-bit virtual addressing for 4k and 16k granule configs")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/arm64/include/asm/assembler.h    | 5 +++++
- arch/arm64/kernel/cpufeature.c        | 2 +-
- arch/arm64/kernel/pi/idreg-override.c | 9 +++++++++
- arch/arm64/kernel/pi/map_kernel.c     | 6 ++++++
- arch/arm64/mm/init.c                  | 7 ++++++-
- 5 files changed, 27 insertions(+), 2 deletions(-)
+ arch/arm64/kvm/arm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-index 3d8d534a7a77..ad63457a05c5 100644
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -343,6 +343,11 @@ alternative_cb_end
- 	// Narrow PARange to fit the PS field in TCR_ELx
- 	ubfx	\tmp0, \tmp0, #ID_AA64MMFR0_EL1_PARANGE_SHIFT, #3
- 	mov	\tmp1, #ID_AA64MMFR0_EL1_PARANGE_MAX
-+#ifdef CONFIG_ARM64_LPA2
-+alternative_if_not ARM64_HAS_VA52
-+	mov	\tmp1, #ID_AA64MMFR0_EL1_PARANGE_48
-+alternative_else_nop_endif
-+#endif
- 	cmp	\tmp0, \tmp1
- 	csel	\tmp0, \tmp1, \tmp0, hi
- 	bfi	\tcr, \tmp0, \pos, #3
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 6ce71f444ed8..f8cb8a6ab98a 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -3478,7 +3478,7 @@ static void verify_hyp_capabilities(void)
- 		return;
- 
- 	safe_mmfr1 = read_sanitised_ftr_reg(SYS_ID_AA64MMFR1_EL1);
--	mmfr0 = read_cpuid(ID_AA64MMFR0_EL1);
-+	mmfr0 = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1);
- 	mmfr1 = read_cpuid(ID_AA64MMFR1_EL1);
- 
- 	/* Verify VMID bits */
-diff --git a/arch/arm64/kernel/pi/idreg-override.c b/arch/arm64/kernel/pi/idreg-override.c
-index 22159251eb3a..c6b185b885f7 100644
---- a/arch/arm64/kernel/pi/idreg-override.c
-+++ b/arch/arm64/kernel/pi/idreg-override.c
-@@ -83,6 +83,15 @@ static bool __init mmfr2_varange_filter(u64 val)
- 		id_aa64mmfr0_override.val |=
- 			(ID_AA64MMFR0_EL1_TGRAN_LPA2 - 1) << ID_AA64MMFR0_EL1_TGRAN_SHIFT;
- 		id_aa64mmfr0_override.mask |= 0xfU << ID_AA64MMFR0_EL1_TGRAN_SHIFT;
-+
-+		/*
-+		 * Override PARange to 48 bits - the override will just be
-+		 * ignored if the actual PARange is smaller, but this is
-+		 * unlikely to be the case for LPA2 capable silicon.
-+		 */
-+		id_aa64mmfr0_override.val |=
-+			ID_AA64MMFR0_EL1_PARANGE_48 << ID_AA64MMFR0_EL1_PARANGE_SHIFT;
-+		id_aa64mmfr0_override.mask |= 0xfU << ID_AA64MMFR0_EL1_PARANGE_SHIFT;
- 	}
- #endif
- 	return true;
-diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
-index f374a3e5a5fe..e57b043f324b 100644
---- a/arch/arm64/kernel/pi/map_kernel.c
-+++ b/arch/arm64/kernel/pi/map_kernel.c
-@@ -136,6 +136,12 @@ static void noinline __section(".idmap.text") set_ttbr0_for_lpa2(u64 ttbr)
+diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+index a102c3aebdbc..7b2735ad32e9 100644
+--- a/arch/arm64/kvm/arm.c
++++ b/arch/arm64/kvm/arm.c
+@@ -1990,8 +1990,7 @@ static int kvm_init_vector_slots(void)
+ static void __init cpu_prepare_hyp_mode(int cpu, u32 hyp_va_bits)
  {
- 	u64 sctlr = read_sysreg(sctlr_el1);
- 	u64 tcr = read_sysreg(tcr_el1) | TCR_DS;
-+	u64 mmfr0 = read_sysreg(id_aa64mmfr0_el1);
-+	u64 parange = cpuid_feature_extract_unsigned_field(mmfr0,
-+							   ID_AA64MMFR0_EL1_PARANGE_SHIFT);
-+
-+	tcr &= ~TCR_IPS_MASK;
-+	tcr |= parange << TCR_IPS_SHIFT;
+ 	struct kvm_nvhe_init_params *params = per_cpu_ptr_nvhe_sym(kvm_init_params, cpu);
+-	u64 mmfr0 = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1);
+-	unsigned long tcr;
++	unsigned long tcr, ips;
  
- 	asm("	msr	sctlr_el1, %0		;"
- 	    "	isb				;"
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index d21f67d67cf5..2b2289d55eaa 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -280,7 +280,12 @@ void __init arm64_memblock_init(void)
+ 	/*
+ 	 * Calculate the raw per-cpu offset without a translation from the
+@@ -2005,6 +2004,7 @@ static void __init cpu_prepare_hyp_mode(int cpu, u32 hyp_va_bits)
+ 	params->mair_el2 = read_sysreg(mair_el1);
  
- 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
- 		extern u16 memstart_offset_seed;
--		u64 mmfr0 = read_cpuid(ID_AA64MMFR0_EL1);
-+
-+		/*
-+		 * Use the sanitised version of id_aa64mmfr0_el1 so that linear
-+		 * map randomization can be enabled by shrinking the IPA space.
-+		 */
-+		u64 mmfr0 = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1);
- 		int parange = cpuid_feature_extract_unsigned_field(
- 					mmfr0, ID_AA64MMFR0_EL1_PARANGE_SHIFT);
- 		s64 range = linear_region_size -
+ 	tcr = read_sysreg(tcr_el1);
++	ips = FIELD_GET(TCR_IPS_MASK, tcr);
+ 	if (cpus_have_final_cap(ARM64_KVM_HVHE)) {
+ 		tcr |= TCR_EPD1_MASK;
+ 	} else {
+@@ -2014,8 +2014,8 @@ static void __init cpu_prepare_hyp_mode(int cpu, u32 hyp_va_bits)
+ 	tcr &= ~TCR_T0SZ_MASK;
+ 	tcr |= TCR_T0SZ(hyp_va_bits);
+ 	tcr &= ~TCR_EL2_PS_MASK;
+-	tcr |= FIELD_PREP(TCR_EL2_PS_MASK, kvm_get_parange(mmfr0));
+-	if (kvm_lpa2_is_enabled())
++	tcr |= FIELD_PREP(TCR_EL2_PS_MASK, ips);
++	if (lpa2_is_enabled())
+ 		tcr |= TCR_EL2_DS;
+ 	params->tcr_el2 = tcr;
+ 
 -- 
 2.47.1.613.gc27f4b7a9f-goog
 
