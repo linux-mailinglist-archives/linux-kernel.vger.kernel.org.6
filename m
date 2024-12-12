@@ -1,79 +1,69 @@
-Return-Path: <linux-kernel+bounces-442582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 186099EDEA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:53:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290D89EDEA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 05:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6AE1668B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:53:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8736F1889206
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 04:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5F11714BF;
-	Thu, 12 Dec 2024 04:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ADF166308;
+	Thu, 12 Dec 2024 04:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T3KiGUwl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LPslGBSn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A631465AD;
-	Thu, 12 Dec 2024 04:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD20158D80
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 04:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733979193; cv=none; b=QDdaOv2yXTiqhjQZyQIID/8nc7R2ka4/6MF776LgDBcMKdkXa0+qDGk+tpQVGCbixkHHrThn4zCbXhLi1obPA0YU26I6DjtjsogJcKkQWOlMPr6d2Ovw8RJWUVVdRQDfdJOSdfzaU167dvKOpfLHM8EVFlyLn87uanAvBrmdazU=
+	t=1733979423; cv=none; b=ANVLHUKf8F7qfYHSwHE8wXeUhCjHQLB7UMtgDtn9yOVZltWZw3eart9d5e9r/Z8bdotVPpc39rN5cCOB7OX/LDFIGx50tpK6y07nTbFloVNovMVP0WH92ZkWkIBAAEU2VZtBcueUDiviqOqG3dHTUxjVGW1gMZjeiWxErRcw4dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733979193; c=relaxed/simple;
-	bh=zjOKo7X1WIM6wbB1lJ8RKKq+iVqK9Xjvj89egCgASEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CHnKW2KE0EVTQC8PHjxi4TRwic4GByulwzvP5DKJUeBxAytjgLdeFi7dp1NxELlhCNg9n7o62qkwsYysTLO5a9YE2oRf+TXEtqPVEl1YyjxCWXSsllWpFe8/1MOpH9YT4L/aW8Rmb8EuGXspf0JOir1UW2ze9kXN/6ZODuKw64M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T3KiGUwl; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1733979423; c=relaxed/simple;
+	bh=UVWP856ZrRPRUpQkwy7I6ig3vPnnzTZzGOulz3raD6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=iZSp53rdGqh4bu1ws9s06+eVOwylbEdScUH1FZcEigcWRYZM+nue4vzVQP6zbVMFJ1p1DnCT0pOg3nNXvdqF2VJ/UI7p+yW5lyByPJ3lZvbTzcVGkhAHyPhWMSHZ2GzFgCrxM/jcIcdMlDVt6PFXrkCzFM3Mc8F7KTcvwgsY0lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LPslGBSn; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733979192; x=1765515192;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zjOKo7X1WIM6wbB1lJ8RKKq+iVqK9Xjvj89egCgASEk=;
-  b=T3KiGUwljQ28JBsY80Vfg2btqMySP+idLAj3sd80YRgbcAsEX66gAZgE
-   idvAc4FccTTRP6tGIa8MzWwInD34Fp+RKgfaXKTZB01IDUDNiszuZQN73
-   JM1l5cdCnVJcQdnJTjZrCNbKIyZQB45hwDI775YChS5bXk4a4I8qOzLkU
-   yzdHJh9WYsbtbpNI9Gu1HXqCYgwKNq59zEumGcvl7V3nGNZoaEkmedAld
-   KcG7IzCKULFh5LQoPLq0653lLm1UnMz9Fl2twcvNN3xT4lWaLK8cPBNKa
-   P8poX7aJ+4dJHRamTAYtO+XdmK6NpKyYB4yBKk77aC+yUV3MHEHS1UhNS
-   Q==;
-X-CSE-ConnectionGUID: EMlXCVfFRkiCNbKGmosqSg==
-X-CSE-MsgGUID: 7QOkU95OTKyePa9XnNr+qw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="45765792"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="45765792"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 20:53:11 -0800
-X-CSE-ConnectionGUID: +rugh9WjSH+JrBIWnRnsdA==
-X-CSE-MsgGUID: BF3cQvgFS2qxjoUB8kTOPw==
+  t=1733979421; x=1765515421;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=UVWP856ZrRPRUpQkwy7I6ig3vPnnzTZzGOulz3raD6s=;
+  b=LPslGBSnrDSNiHxtqCBoJpyWNlifIWnTA6nZm/eMFOZioisL44jywYg+
+   8ZVFWtmEDPFnhjN+XOAjpZPDOoMNX7udc5qaCbworGYMbceJQpm7ePFVK
+   ynWVC1HUVjGWeeLrkHsWIOK01yeN7ga0xo3XGOuWspU9LmVAauss04dak
+   UT7Mnn9glsyexFgV/W+zHKZPr5O31Iw14QXo0I2llrR2WvVLghaorBVBj
+   NQkkmEKFlIPMc4W99cj4EYVxts5OlYRRwICHKv8PmQhrb0H9M+CaIafx1
+   L3EnaUzx67154NccjdElvzLqgYCGj4bIbdzvL4mrNvm16PPD1uyx3VIjE
+   A==;
+X-CSE-ConnectionGUID: QoZRfYpOQ0iD7HjUGpxsjw==
+X-CSE-MsgGUID: YtxAhWupRPq3w71BEqcwqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11283"; a="33712037"
+X-IronPort-AV: E=Sophos;i="6.12,227,1728975600"; 
+   d="scan'208";a="33712037"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 20:57:01 -0800
+X-CSE-ConnectionGUID: Rj9mlIbbQ0OH2ch4cfNyHg==
+X-CSE-MsgGUID: 9jMMS0w3QHCCqpB4Awei6Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="95947179"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 11 Dec 2024 20:53:09 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tLbCD-0007Rx-2e;
-	Thu, 12 Dec 2024 04:53:05 +0000
-Date: Thu, 12 Dec 2024 12:53:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: ot907280 <ot_cathy.xu@mediatek.com>, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, sean.wang@kernel.org,
-	linus.walleij@linaro.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Guodong Liu <guodong.liu@mediatek.corp-partner.google.com>,
-	ot907280 <ot_cathy.xu@mediatek.com>
-Subject: Re: [PATCH] pinctrl: mediatek: Add support for MT8196
-Message-ID: <202412121226.WW9Airfh-lkp@intel.com>
-References: <20241211055454.17120-3-ot_cathy.xu@mediatek.com>
+   d="scan'208";a="101055783"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.161.23])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 20:56:39 -0800
+Date: Thu, 12 Dec 2024 12:56:09 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: willy@infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	syzkaller-bugs@googlegroups.com, yi1.lai@intel.com
+Subject: There is WARNING in __alloc_frozen_pages_noprof in v6.13-rc2
+Message-ID: <Z1ps6e3/2vT7QrYo@ly-workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,38 +72,170 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241211055454.17120-3-ot_cathy.xu@mediatek.com>
 
-Hi ot907280,
+Hi Matthew Wilcox,
 
-kernel test robot noticed the following build errors:
+Greetings!
 
-[auto build test ERROR on linusw-pinctrl/devel]
-[also build test ERROR on linusw-pinctrl/for-next linus/master v6.13-rc2 next-20241211]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I used Syzkaller and found that there is WARNING in __alloc_frozen_pages_noprof in linux v6.13-rc2.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/ot907280/pinctrl-mediatek-Add-support-for-MT8196/20241211-140107
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20241211055454.17120-3-ot_cathy.xu%40mediatek.com
-patch subject: [PATCH] pinctrl: mediatek: Add support for MT8196
-config: arm64-randconfig-002-20241212 (https://download.01.org/0day-ci/archive/20241212/202412121226.WW9Airfh-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241212/202412121226.WW9Airfh-lkp@intel.com/reproduce)
+After bisection and the first bad commit is:
+"
+9181a585d2d1 mm/page_alloc: add __alloc_frozen_pages()
+"
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412121226.WW9Airfh-lkp@intel.com/
+The WARNING related to __alloc_frozen_pages_noprof and v9fs was also reported in https://syzkaller.appspot.com/bug?extid=03fb58296859d8dbab4d. I hope following trace can be insightful to you.
 
-All errors (new ones prefixed by >>):
+All detailed into can be found at:
+https://github.com/laifryiee/syzkaller_logs/tree/main/241211_183256___alloc_frozen_pages_noprof
+Syzkaller repro code:
+https://github.com/laifryiee/syzkaller_logs/tree/main/241211_183256___alloc_frozen_pages_noprof/repro.c
+Syzkaller repro syscall steps:
+https://github.com/laifryiee/syzkaller_logs/tree/main/241211_183256___alloc_frozen_pages_noprof/repro.prog
+Syzkaller report:
+https://github.com/laifryiee/syzkaller_logs/tree/main/241211_183256___alloc_frozen_pages_noprof/repro.report
+Kconfig(make olddefconfig):
+https://github.com/laifryiee/syzkaller_logs/tree/main/241211_183256___alloc_frozen_pages_noprof/kconfig_origin
+Bisect info:
+https://github.com/laifryiee/syzkaller_logs/tree/main/241211_183256___alloc_frozen_pages_noprof/bisect_info.log
+bzImage:
+https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/main/241211_183256___alloc_frozen_pages_noprof/bzImage_d1486dca38afd08ca279ae94eb3a397f10737824
+Issue dmesg:
+https://github.com/laifryiee/syzkaller_logs/blob/main/241211_183256___alloc_frozen_pages_noprof/d1486dca38afd08ca279ae94eb3a397f10737824_dmesg.log
 
->> ld.lld: error: undefined symbol: mtk_paris_pinctrl_pm_ops
-   >>> referenced by pinctrl-mt8196.c
-   >>>               drivers/pinctrl/mediatek/pinctrl-mt8196.o:(mt8196_pinctrl_driver) in archive vmlinux.a
+"
+[  189.747738] ------------[ cut here ]------------
+         Stopping Security Auditing Service...
+[  189.751119] WARNING: CPU: 0 PID: 238 at mm/page_alloc.c:4771 __alloc_frozen_pages_noprof+0x576/0x6f0
+[  189.753512] Modules linked in:
+[  189.754083] CPU: 0 UID: 0 PID: 238 Comm: auditd Not tainted 6.13.0-rc2-next-20241209-d1486dca38af #1
+[  189.756130] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/014
+[  189.759592] RIP: 0010:__alloc_frozen_pages_noprof+0x576/0x6f0
+[  189.761360] Code: e8 af af ec ff e9 f7 fc ff ff 83 fe 0a 0f 86 7b fb ff ff 45 31 ff 80 3d 89 49 de 05 00 0f 85 f6 fd ff ff0
+[  189.765443] RSP: 0018:ffff888012c1f658 EFLAGS: 00010246
+[  189.766578] RAX: 0000000000000000 RBX: 1ffff11002583ed1 RCX: 0000000000000000
+[  189.768810] RDX: 0000000000000000 RSI: 0000000000000014 RDI: 0000000000000000
+[  189.771063] RBP: ffff888012c1f750 R08: 0000000000000000 R09: fffffbfff0f975c4
+[  189.772519] R10: ffff888012c1f878 R11: 0000000000000001 R12: 0000000000040cc0
+[  189.774822] R13: 0000000000000014 R14: ffff888012c1f728 R15: 0000000000000000
+[  189.776145] FS:  00007fc6bb494880(0000) GS:ffff88806c400000(0000) knlGS:0000000000000000
+[  189.778771] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  189.780188] CR2: 00007fc6bb270a30 CR3: 0000000016aba002 CR4: 0000000000770ef0
+[  189.781624] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  189.783966] DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
+[  189.785798] PKRU: 55555554
+[  189.786490] Call Trace:
+[  189.787195]  <TASK>
+[  189.787635]  ? show_regs+0x6d/0x80
+[  189.788322]  ? __warn+0xf3/0x390
+[  189.788888]  ? report_bug+0x25e/0x4b0
+[  189.790113]  ? __alloc_frozen_pages_noprof+0x576/0x6f0
+[  189.791759]  ? report_bug+0x2cb/0x4b0
+[  189.792877]  ? print_usage_bug.part.0+0x5a0/0x610
+[  189.794491]  ? __alloc_frozen_pages_noprof+0x576/0x6f0
+[  189.796095]  ? __alloc_frozen_pages_noprof+0x577/0x6f0
+[  189.797685]  ? handle_bug+0xf1/0x190
+[  189.798919]  ? exc_invalid_op+0x3c/0x80
+[  189.800138]  ? asm_exc_invalid_op+0x1f/0x30
+[  189.801470]  ? __alloc_frozen_pages_noprof+0x576/0x6f0
+[  189.802686]  ? __pfx___alloc_frozen_pages_noprof+0x10/0x10
+[  189.804058]  ? __pfx___lock_acquire+0x10/0x10
+[  189.804811]  __alloc_pages_noprof+0x16/0x80
+[  189.805508]  ___kmalloc_large_node+0x96/0x150
+[  189.806514]  __kmalloc_large_node_noprof+0x23/0x100
+[  189.808223]  __kmalloc_noprof+0x3f3/0x560
+[  189.809494]  ? audit_receive_msg+0xa72/0x2a90
+[  189.810924]  ? ns_capable+0xec/0x130
+[  189.812066]  audit_receive_msg+0xa72/0x2a90
+[  189.813332]  ? audit_receive_msg+0xa72/0x2a90
+[  189.814436]  ? __pfx_audit_receive_msg+0x10/0x10
+[  189.815399]  ? __pfx___lock_acquire+0x10/0x10
+[  189.816661]  ? __pfx___mutex_lock+0x10/0x10
+[  189.817887]  ? __this_cpu_preempt_check+0x21/0x30
+[  189.818987]  ? lock_release+0x441/0x870
+[  189.820225]  audit_receive+0x282/0x450
+[  189.821109]  ? __pfx_audit_receive+0x10/0x10
+[  189.821842]  ? netlink_deliver_tap+0x1b9/0xca0
+[  189.822626]  ? __kasan_check_write+0x18/0x20
+[  189.823761]  netlink_unicast+0x5a3/0x870
+[  189.824983]  ? __pfx_netlink_unicast+0x10/0x10
+[  189.826359]  ? __sanitizer_cov_trace_cmp8+0x1c/0x30
+[  189.827886]  ? __check_object_size+0x43/0x8e0
+[  189.829290]  netlink_sendmsg+0x956/0xe80
+[  189.830525]  ? __pfx_netlink_sendmsg+0x10/0x10
+[  189.831367]  ? _copy_from_user+0x77/0xa0
+[  189.832159]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
+[  189.833811]  __sys_sendto+0x563/0x5c0
+[  189.835087]  ? __pfx___sys_sendto+0x10/0x10
+[  189.836408]  ? lock_acquire+0x80/0xb0
+[  189.837121]  ? __seccomp_filter+0x5f3/0x1160
+[  189.837875]  ? __pfx___seccomp_filter+0x10/0x10
+[  189.838646]  ? __x64_sys_rt_sigaction+0x215/0x370
+[  189.839541]  __x64_sys_sendto+0xe9/0x1b0
+[  189.840419]  ? syscall_trace_enter+0x9f/0x280
+[  189.841791]  x64_sys_call+0x1df1/0x2140
+[  189.843072]  do_syscall_64+0x6d/0x140
+[  189.844244]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  189.845806] RIP: 0033:0x7fc6bb34faf6
+[  189.847030] Code: c1 f4 ff 44 8b 4c 24 2c 4c 8b 44 24 20 41 89 c4 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 248
+[  189.851934] RSP: 002b:00007fffdf8dd480 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+[  189.853337] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fc6bb34faf6
+[  189.855569] RDX: 0000000000000010 RSI: 00007fffdf8dd4f0 RDI: 0000000000000003
+[  189.856912] RBP: 0000000000000010 R08: 00007fffdf8dd4dc R09: 000000000000000c
+[  189.859108] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
+[  189.860685] R13: 00007fffdf8dd4f0 R14: 00007fffdf8dd4dc R15: 00000000000003f2
+[  189.862615]  </TASK>
+[  189.863375] irq event stamp: 49885
+[  189.864295] hardirqs last  enabled at (49893): [<ffffffff8165f305>] __up_console_sem+0x95/0xb0
+[  189.866318] hardirqs last disabled at (49900): [<ffffffff8165f2ea>] __up_console_sem+0x7a/0xb0
+[  189.868457] softirqs last  enabled at (49914): [<ffffffff8148974e>] __irq_exit_rcu+0x10e/0x170
+[  189.869882] softirqs last disabled at (49909): [<ffffffff8148974e>] __irq_exit_rcu+0x10e/0x170
+[  189.871298] ---[ end trace 0000000000000000 ]---
+"
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Yi Lai
+
+---
+
+If you don't need the following environment to reproduce the problem or if you
+already have one reproduced environment, please ignore the following information.
+
+How to reproduce:
+git clone https://gitlab.com/xupengfe/repro_vm_env.git
+cd repro_vm_env
+tar -xvf repro_vm_env.tar.gz
+cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
+  // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
+  // You could change the bzImage_xxx as you want
+  // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
+You could use below command to log in, there is no password for root.
+ssh -p 10023 root@localhost
+
+After login vm(virtual machine) successfully, you could transfer reproduced
+binary to the vm by below way, and reproduce the problem in vm:
+gcc -pthread -o repro repro.c
+scp -P 10023 repro root@localhost:/root/
+
+Get the bzImage for target kernel:
+Please use target kconfig and copy it to kernel_src/.config
+make olddefconfig
+make -jx bzImage           //x should equal or less than cpu num your pc has
+
+Fill the bzImage file into above start3.sh to load the target kernel in vm.
+
+
+Tips:
+If you already have qemu-system-x86_64, please ignore below info.
+If you want to install qemu v7.1.0 version:
+git clone https://github.com/qemu/qemu.git
+cd qemu
+git checkout -f v7.1.0
+mkdir build
+cd build
+yum install -y ninja-build.x86_64
+yum -y install libslirp-devel.x86_64
+../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
+make
+make install 
 
