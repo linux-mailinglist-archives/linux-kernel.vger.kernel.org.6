@@ -1,62 +1,77 @@
-Return-Path: <linux-kernel+bounces-442983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-442984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C989EE503
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:29:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31D59EE505
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 12:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5474D1669B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:29:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F0518871BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Dec 2024 11:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9D0211A15;
-	Thu, 12 Dec 2024 11:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3DF21171E;
+	Thu, 12 Dec 2024 11:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QF3g4eE4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XY5q5ZLl"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBC22116E9;
-	Thu, 12 Dec 2024 11:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C5F211707;
+	Thu, 12 Dec 2024 11:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734002939; cv=none; b=lxWlCreThb7weBS1TokNfKPDYrVy7bEsrBYVzeH9l8V9Z3XTQoSDKxwLFqoeDKDN8+uaiTAK9PsnDzbodu2d5+O9hXLvBxsvTijtpeQQ9uHjpmb7uZRIiARxg1aKqTZ49I3wNgzL36icxwQE1QVyHojKcMP1JvMxC1aE2HwEIcg=
+	t=1734002962; cv=none; b=RJ6BiO1TXkWpJ2X9TtQr2k3H0roEcamAuLRKZJrMdf9fMrfbzio47KUqAY/ukR9k3LpbxcLMwl5AetntveZTmtummhwEl1+HDsI6CiA0bEOl5Jn++L+Z03d6IzWy2Iq2UPGowxVKRIQ8zWj8ORL7+8EiBfzsDQnguBihMnHEITU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734002939; c=relaxed/simple;
-	bh=yhq6O4mw/yJJVwmmryyToDfyv61vPk6+vzW2ZdYZBO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Sb6oSBCAqai2O8k5teLRTn6TU22LIxQX1pQBpmTEbct7qbMAWdUoLIu7rZa75prO939dvO1YEDRNfipGxFHUqv28Mq/DNoEtMMCxnvri4bAf1wbh265jFOlvLvj0ikPSlbkwuIhcm7V9aET6/XaTggh6Hvewv3Mhsjh0Y3JOZdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QF3g4eE4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BC6UuaK014934;
-	Thu, 12 Dec 2024 11:28:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vJ/oCRS1WSbcEtsqKeQoAy+f/C7wpaMmsI/7HnP+YDk=; b=QF3g4eE43W2vsAqL
-	X/LVnqnxW3v5UB4c7D+x2fAmAqdsarLgADp/SeWkplJxbGktYzr9hfjK3+9xbJXu
-	hz6NNH3x19jAk42k8PFqRV9Afemla0SuxgQtuG9TNGkrGJLg2a1JrUQ/RbDFR9Fv
-	2eV18yn+MyQOF7et2zjSpUYlv4wAcGNRB72W9fkpb9kX1U3p1ZOqWrRYh5Af3FdM
-	FTHJTJmwGV5TuKRrZS64awZcGIYybkdfg+fl/E1Ujzu8jnbjNzLchIVLUHXVs0zn
-	e/YyPaIVF+JVyOLr2gfLHIhBeyWZo8YHFkz3O0q4rz/NQ0maCabm2Kq9L7IwhNru
-	0b7BQg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f7dpkyjh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 11:28:53 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BCBSqTX023823
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 11:28:52 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
- 2024 03:28:46 -0800
-Message-ID: <28b1c828-f338-4d57-bcb7-b0a8652c82fb@quicinc.com>
-Date: Thu, 12 Dec 2024 19:28:38 +0800
+	s=arc-20240116; t=1734002962; c=relaxed/simple;
+	bh=700lfuz2Kata6V6/0ly9UbNGRZKHY5NoAzOVFNTxBY0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=OZv+vaPCivsdp9CoWDCeBDR0JF9e0MxmPNMoYv3IfFrbOSr0PbYs5XDReum05dvDjJczUFcGJsq/3WYVmrtsQnai+WwDjbPGUM4xCPRjICNfTV7KeV1N4bF5QGWFZidAGtJITZ13a4oxdEtDp5MSHPFqLAzK6LoJasxK0CaenL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XY5q5ZLl; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso73116766b.1;
+        Thu, 12 Dec 2024 03:29:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734002959; x=1734607759; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CNFc/twScpRJarCe0d/1m4PY3eXbJrI15huGien/OIo=;
+        b=XY5q5ZLloT/OmjrqUXjbEMyJYJNmEOFIJxwWhmbVk+yYzvVerkQ58zOGnOZHacStID
+         kB4Niye+sknlnbhOeRbXhedetrSm+9J3Z1pu7ckSKQ4cIbbzu/hLqgFSDJV8DrdzSMmz
+         8CiFvVC8381yHUSzZyqi7+AAUPp7qHAYq1bVsfh+uLlJ3DCCK6z8xFrEKdNj2sI8wyxK
+         zws8XVJhzvdevdlcv0tmfKB/BDysvGjSQgv7apeRPI5Nqa3cuuF9pRg6zzskl5KXfSH3
+         JF/UAlrL9xS3CuTy7OfKoxZd7sK8sKD30KLJ2JzofGuLi1BwgZDA0U05KO7D1a2ZiNF8
+         NaJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734002959; x=1734607759;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CNFc/twScpRJarCe0d/1m4PY3eXbJrI15huGien/OIo=;
+        b=VqyDJ37K19nw3hoVdUYCiW3AW22s6aan7REK4qGzUNG9616l8wYqcTWPtfU3zJP6/n
+         qWo+RNvdJVvejfAojfVFy+GP7NBCEToHrhgWMeK+49HUIIN2yXT/9WNd6oA+HWLcF/lg
+         7VX0cy3eF0FeshyG1K+ZHyz9YhiN82sDhINTPFlCcRPLAL1XeMdN1+GI8dRRHvw1zbGk
+         zoDB89bWN0+uetV5EEaBRzxYdpT3oGzJfp6Vo3Iu6G4zv0eMNdhxs7LtRt8lFV2pNLZj
+         YknlrTiMDmgZM7n5nv8jl0YP4Cb6GwSYBkMSDJeFSSTbi50iz0x0+FssxA1FHDK2G/0O
+         DhDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8mrjrxAaPQEsvBS/YnvVRzJoKwQig2GRjb7S0EhG6QUcEHUn8Ha/8uIbpqhD8zkBLOsuaCncHCTFCQy/+@vger.kernel.org, AJvYcCWWSpKaGa5Y2xI4ULqSt9wyWeUI2TiwAo583KRudO0qMYDg6tUitT5ax6L0PYBKLKmdc++RX3D8uw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpxg0mXBFjxRMKMqJcGLqlQp5uAYok1qyKU6WLy3B/doBcYdIX
+	FJ1/m3aBACP8+it/CzZ2ThsgC8/8ltQ7lULoYCIQNJAWKSNSDa0r
+X-Gm-Gg: ASbGncvsjtJGKnNzQG52Mqrjk5cewGERxGnnv7OwmDsXySAP8Q8wD8xBVgwhnfGOr7S
+	KfJ4iw5hYfjIqHfWXopqV5kJ8FAIBx8BkppnNNyNQ7mkgm6B6bNYt5Gm5M0HZuiWLNtWaFiN2df
+	nJcLgFONutbfnXBjLW8+hPkiEy1H2ivrkm7qD8tvADLn9uuy/PQ4FB8P+08du9bqgGzVxOZvgct
+	LGaPeMBpx/AdMkq16lE03I3guoit5Xl6xPKbcvM+aCyycyLZzCt1DPbSblg0yOeLXA=
+X-Google-Smtp-Source: AGHT+IEHUcPQRcDT9i0//UKDwYDXJAjDBxA4AwbXvWkKrF0tFKivjb+tcOsZ2ZLKTdsIRabjbfFaGQ==
+X-Received: by 2002:a17:906:18a9:b0:aa6:7d95:f70b with SMTP id a640c23a62f3a-aa6c1b23c65mr362890466b.36.1734002959041;
+        Thu, 12 Dec 2024 03:29:19 -0800 (PST)
+Received: from [192.168.42.68] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6996487aesm470292866b.12.2024.12.12.03.29.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 03:29:18 -0800 (PST)
+Message-ID: <b5a0393e-dda8-442c-be8b-84f828ddcc51@gmail.com>
+Date: Thu, 12 Dec 2024 11:30:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,67 +79,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/16] media: qcom: camss: Add CSID 780 support
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <vladimir.zapolskiy@linaro.org>
-CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Yongsheng Li
-	<quic_yon@quicinc.com>
-References: <20241211140738.3835588-1-quic_depengs@quicinc.com>
- <20241211140738.3835588-16-quic_depengs@quicinc.com>
- <138cc2e5-6b31-49d9-b70e-400a3f3c3bfa@linaro.org>
+Subject: Re: [io-uring] use-after-free in io_cqring_wait
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: chase xd <sl1589472800@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CADZouDQ7TcKn8gz8_efnyAEp1JvU1ktRk8PWz-tO0FXUoh8VGQ@mail.gmail.com>
+ <54192dd9-d4e6-49ba-82b4-01710d9f7925@gmail.com>
 Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <138cc2e5-6b31-49d9-b70e-400a3f3c3bfa@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kPmoqBZNk8vi7t5C7Q5vo-Li43eiobm0
-X-Proofpoint-ORIG-GUID: kPmoqBZNk8vi7t5C7Q5vo-Li43eiobm0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1015
- mlxlogscore=999 mlxscore=0 adultscore=0 bulkscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412120081
+In-Reply-To: <54192dd9-d4e6-49ba-82b4-01710d9f7925@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Bryan,
-
-On 12/12/2024 5:57 AM, Bryan O'Donoghue wrote:
-> On 11/12/2024 14:07, Depeng Shao wrote:
->> +static int csid_configure_testgen_pattern(struct csid_device *csid, 
->> s32 val)
->> +{
->> +    return 0;
->> +}
+On 12/12/24 11:21, Pavel Begunkov wrote:
+> On 12/12/24 10:08, chase xd wrote:
+>> Syzkaller hit 'KASAN: use-after-free Read in io_cqring_wait' bug.
+>>
+>> ==================================================================
+>> BUG: KASAN: use-after-free in io_cqring_wait+0x16bc/0x1780
+>> io_uring/io_uring.c:2630
+>> Read of size 4 at addr ffff88807d128008 by task syz-executor994/8389
 > 
-> Could we avoid this empty callback by checking csid->ctrl in csid.c ?
+> So kernel reads CQ head/tail and get a UAF. The ring was allocated
+> while resizing rings and was also deleted while resizing rings, but
+> those could be different resize attempts.
 > 
-> If so, please make that change.
-> 
-> If not, it's fine.
-> 
-> For either case.
-> 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Jens, considering the lack of locking on the normal waiting path,
+> while swapping rings what prevents waiters from seeing an old ring?
+> I'd assume that's the problem at hand.
 
-Vladimir suggested to add a dummy "return 0" function [1] for the 
-unsupported interface. So, I added this empty callback, will keep the 
-empty callback if no other concern. Thanks.
+Were users asking for both CQ and SQ? Might be worth to consider
+leaving only SQ resizing as CQ for !DEFER_TASKRUN is inherently
+harder to sync w/o additional overhead.
 
-[1] 
-https://lore.kernel.org/all/b1e1ff88-5bba-4424-bc85-38caa85b831f@linaro.org/
+-- 
+Pavel Begunkov
 
-
-Thanks,
-Depeng
 
