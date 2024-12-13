@@ -1,98 +1,78 @@
-Return-Path: <linux-kernel+bounces-444275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893699F03EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:56:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CB89F03F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7A1188AA40
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:56:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE5116A0AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0744317B50B;
-	Fri, 13 Dec 2024 04:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FFA187355;
+	Fri, 13 Dec 2024 05:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WlGjC441"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oz9REbFz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01D363D;
-	Fri, 13 Dec 2024 04:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C44F17BEC5;
+	Fri, 13 Dec 2024 05:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734065787; cv=none; b=taqlJ1q3wZxqdA3TW4vT9wSS7hnvdDpHzbSDBq2ykKR4lkLqF98H+L9CjGge7n450d0ZqtCRTc+lNQDXrCzxoewJIfcsM0aO0bnpxpepL7xEVNzEUgXKH1eyhWh+L2Bm4PAuaNrS4m0E5s//uC6g+uzAPj4KOu20vDjMHFvHxdE=
+	t=1734066020; cv=none; b=NHJe8394XBd3iRgmRVfltpUKHnoTy9pCkuoa4jwhqsO1EE2Jx+XLsnpID+jIkH1IlYnulViwUnTMaOUD9kEbPbciG0h+x+mO8Z87Oi2BymQg3pcW3+CtVB//3fcBT4m7pPs+2NDI7xifxwSxIRdWwCyDGhJfRhNlEASKgFCB6vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734065787; c=relaxed/simple;
-	bh=mMQPJMXSaR2uFYdcKBtjZvDpAAUlCOHNHqUtaQLhW3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hzGHxPEur7zB52bwjS8cktR3XUeeqYmcU38Crt+Mkc/0g+aQCCFYRD+Q43yeN8M1lRBMb9g+Tn0Fb6OZIdGdORd4ahfxUFm0+zY+sNfLOLhIzt2Yt3XfzxMFGbYMaqNEFmF35z0zKuAV1RbF6QQM5pSLoYCymnUS8wbOwMNtfqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WlGjC441; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1734065776;
-	bh=ddTcMS5AVphVhaRtXcstV+ts3TnhAu39kgGCHJAiAMQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WlGjC441evtuX1n6wkdSsnXUi13cK99XuaIDDA7srD4QkMgraRYQcaleTvhy8rF1U
-	 pPgja/1VRC9O7DcXawaJ4/aNG26jBsn2wknXIfwSzqdNWWJuVNZdza8xbo3qyyBZX8
-	 NDUCqRzSj2Xh2bkAQR86Y1uEPiukZmCBy0LL2Ye2GabYOThcBmlrhvLb0JCnTdhpv7
-	 70BlSNx57tg4VTlDJMx6Tbf6sly6lNlJJzOMpGFyfyDXMRimlBVjJrydFGrFcx2xik
-	 Ev5LkBmvBSAbaax0o+hjQRgv8whfbsv8wAJEeWvyoFdlObhNNPbpMufniwBX/IYLZz
-	 KG3xTyfDzsFvA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y8cVm69ypz4wvd;
-	Fri, 13 Dec 2024 15:56:16 +1100 (AEDT)
-Date: Fri, 13 Dec 2024 15:56:20 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vineet Gupta <vgupta@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the arc-current
- tree
-Message-ID: <20241213155620.5966dbfb@canb.auug.org.au>
+	s=arc-20240116; t=1734066020; c=relaxed/simple;
+	bh=Vpj+1Y82AGnSF5x+dqxYoeY+jVqHXwLu4p1+s/IWQPo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=evdCVMSYtyxLdzLjdYe4biZLojBmAqeCXPop/JGN2FqVZDzA6DvyzyFKEngZyz1Nf+N5YuJN7sYV4TL5lDtAA7PdRMI2EmfKsCyzZnW/OHW0wplixMeJdm4j0Zl8V5t0mIHakAsIdQ8xjSIwFieJEktKgUUCAYQvBMwVxpmUCyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oz9REbFz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94447C4CED1;
+	Fri, 13 Dec 2024 05:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734066019;
+	bh=Vpj+1Y82AGnSF5x+dqxYoeY+jVqHXwLu4p1+s/IWQPo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=Oz9REbFziq/dZqfx+kWMhK0UzBQk+9WCOcb5oahbmRWJXSLvbRik83d45+gbmeyu5
+	 4cvD145oK6dyEEIJ5JTaMABRL7PK9AshIBvECvhOanSaPouBkLcgDSaFceLX2nyzT7
+	 xadEE1hYD+HyQrYP29SG1ztzVyVaFlP2/35efjhWAV/uDccr7b1x8W7fk6rW1ukK7u
+	 Y5w6iIpK1hvYk7reKCJkHirvxua/EW9PZNc6h59pCAlc9zhdXGm296IYwusfLUS/Pp
+	 GjwRFmcq8nqYyji2IPYGmfGkDjrUUkdUqLaRKqAikPpdkrpnEbeAmwfDUhPLH8UyHU
+	 hLyp4Nkl4PPSQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id F118F380A959;
+	Fri, 13 Dec 2024 05:00:36 +0000 (UTC)
+Subject: Re: [GIT PULL] perf-tools fixes for v6.13
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241212215702.70608-1-namhyung@kernel.org>
+References: <20241212215702.70608-1-namhyung@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241212215702.70608-1-namhyung@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.13-2024-12-12
+X-PR-Tracked-Commit-Id: 434fffa926b10706f2bde2db22979d68463302fc
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 01abac26dccd77eddffec6b032e51f501714dee3
+Message-Id: <173406603546.2542567.1045027924565076517.pr-tracker-bot@kernel.org>
+Date: Fri, 13 Dec 2024 05:00:35 +0000
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/jseZPoI0wl4H..GIX+58Fx3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/jseZPoI0wl4H..GIX+58Fx3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The pull request you sent on Thu, 12 Dec 2024 13:57:02 -0800:
 
-Hi all,
+> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.13-2024-12-12
 
-Commit
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/01abac26dccd77eddffec6b032e51f501714dee3
 
-  0d535742b039 ("ARC: build: Try to guess GCC variant of cross compiler")
+Thank you!
 
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/jseZPoI0wl4H..GIX+58Fx3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdbvnQACgkQAVBC80lX
-0GyS+wf/dP5RmvBoFYJPPchUAkgT89p+u/QzrWU3kz6qDC1Pic+fNZ5gut3y3rRj
-W8pj46EpyYbD1XrStTOp/vg6KC/pCDxGQV3NkwqhzYagjVKfamS0PdfD3s9mL9YD
-xGSOe4wiO9NSS/GP17CkP8nH7QD/58k7h/RrS+5DSRijVK+QMxxtuSKdDFuZGAeL
-2Z6NG4l/RufN+da3Jcd9Mf2lO6wymAKJkvPcdJ351SX4QqlAL8ik29J1nBpNCVmU
-ovQz/0X9PvrkkzuB/fwYwIren6xNugaSEK3rmlzPlKGcOEBudG32dZOQioJL4Z5s
-uQBFCWi/ZZAmgLYaqU0SM3Ao0G8wKw==
-=dh0z
------END PGP SIGNATURE-----
-
---Sig_/jseZPoI0wl4H..GIX+58Fx3--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
