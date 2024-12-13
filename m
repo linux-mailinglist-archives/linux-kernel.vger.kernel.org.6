@@ -1,356 +1,89 @@
-Return-Path: <linux-kernel+bounces-444580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDEB9F0909
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:05:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079BF9F090C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:05:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50A71880440
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFADD1679A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943A41B4C35;
-	Fri, 13 Dec 2024 10:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6021B415A;
+	Fri, 13 Dec 2024 10:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hJTs6O4j";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HFX4e7Ea"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hughsie.com header.i=@hughsie.com header.b="C1PSvcAg"
+Received: from mail-4018.proton.ch (mail-4018.proton.ch [185.70.40.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF641ADFE0;
-	Fri, 13 Dec 2024 10:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9903A1B6D1C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734084327; cv=none; b=aiz4HI21n9GbAO0NGoNPcAvvkE21VYS/ALIwkLERtkRkwL9OBPaG2nhdRfx6SRKxRS//L6eF5gLaNFUdplfYy3Tyl5J9btHC8ci3R65Uo4/njljTO3r1XXhWtM33CXzU0rZC09EPkywW+IkHxZBS+X0KgOjXpvqJuE7aX2J7qjI=
+	t=1734084334; cv=none; b=tmWoF5W9OxfgGcrHqOuBhhd0zZpzRUuV/d2XGkfS+wsPjoDfqU4SacjqPCMg5QstN0MxMJe0aS2nptQLnY5RRUBs0CIP307osFt0n2y8LwelCEzDVZMIJdbPSIvxGwYw3M5FyUfP3OTQGQnoBDO3k8ENPWFZT0xwEtfN+9BUREI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734084327; c=relaxed/simple;
-	bh=ymXE3faXnL7YCxEthqO0Uf01/bWpkO4Ji/yQFGICK9s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=HWwJc5TwUXjKqXP8daOX4vaD04nkeS0hD2mgW2ezU/GyCbc5XBfPD+D8tAajwci1rrCTVo1TkzLJwMLu9f7C/cc9Pu9TD/A0nD3OLPwKEqg6HNOatuWXkKoljk9zdVU/R2jP2lhbNfgNoVnqaNyDJ60loG52ppiTqf/i7R9Q1C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hJTs6O4j; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HFX4e7Ea; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id A70611140205;
-	Fri, 13 Dec 2024 05:05:23 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 13 Dec 2024 05:05:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1734084323;
-	 x=1734170723; bh=VWc63gruN2VUu9vw6nxAr+LDqu/9hdgDSp/fkHJQsu0=; b=
-	hJTs6O4jMcoFF/jTBxZ7Mf7S/NmWHzb5koQQF3Eb9WHSulTbMHw3W1eQss/MOaPM
-	PhMpOfHpxgSXCZkv4FpoCEzNcuSCcBFTgK2z/lhvONGZxYnXKXMIIXxP48+b/q/u
-	bMdKiePQow5lOLD1dHC1Bsb0/tJwEH6+pY+p3sdN1UsVbpOMqKShUznrd5gLsv2n
-	Aft6Xh3E+OMO0jhvM0FxUnhpYbUarMPslkIVTU2RgvaPORk0tvJXA5pW9QJNdzGG
-	gtz3cIFYO21NG16Tnot8Rtw2dKP0rxpaTf01RiQ6R65Dv9wgHzszSq4u9rgMNMWu
-	nLrEtC/gqHPsF6DQD2zk0g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734084323; x=
-	1734170723; bh=VWc63gruN2VUu9vw6nxAr+LDqu/9hdgDSp/fkHJQsu0=; b=H
-	FX4e7EatIGXIPghYMHzYYg7oVO2wsOaTJo1rjY53TZscHX0GF9TY7zVQb8KWkOvo
-	tz/31eZURkCgrhyqB32m987s/gB70HA/fEVgcXYMGRr8tKT6SzmaMiEPSvjNHLXv
-	LWV99xe4Ra2lcAZ2+2QKeB5r1KZLue3yobmAdsjs6bHSKwQfGzgyMZofsuZmCJtF
-	Td7sesOd5b0haOW0lbrT7SeMe7QXu7OtMD8gsoteIYHzSIbDNyB4bmwi4+UM8J+d
-	1WdY7/ETmWyiowfoV1mPxErwQb6kfenaWjEyBRaWY/t1JUs/a3LXlBmuHGmYMHEx
-	lPYDh0E0C7ttTpQL2bFFA==
-X-ME-Sender: <xms:4gZcZzsLTRRWMEamSKkFp_1NlWwkUjBdgN3X_VTvc3F_QDrtxV41RA>
-    <xme:4gZcZ0fmPqmn0tr0vhZKg6uja8tNMgqMp5_CRf9djITMlWa_S_ep-JSj-rouiSMGJ
-    7z55GT9inc2F6F9ld8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeejgdduudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhuedugeeuudehkeetfeefteduhfduffdthfekuddt
-    jefgvdffvddvlefgteffkeenucffohhmrghinhephhgvrggupggsohhokhefshgpfedvrd
-    hssgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegr
-    rhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefgedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepthhssgho
-    ghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopehgrhgrfhesrg
-    hmrgiiohhnrdgtohhmpdhrtghpthhtoheprghtihhshhhpsegrthhishhhphgrthhrrgdr
-    ohhrghdprhgtphhtthhopegrnhhuphessghrrghinhhfrghulhhtrdhorhhgpdhrtghpth
-    htoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdprhgtphht
-    thhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvg
-    gtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepmhhpvgesvghllhgvrhhmrghn
-    rdhiugdrrghu
-X-ME-Proxy: <xmx:4gZcZ2wugGXNW3b8ogHmYVCNVAvimp1PAnCa-ge6w-DjDnEUp1pTRA>
-    <xmx:4gZcZyM4vBnanwQZNU24VzO3XsVwvNmc1HL9DSsu_fhvLDFnbNrk3g>
-    <xmx:4gZcZz8dG2Zf7lkSaXunSCPhcbAUWWoXv6eKul3X9obR0pGPiMoSzg>
-    <xmx:4gZcZyWqzO64bf-xsf1w0v_lumo_G23RUW4d0v_eRuSTJIxcEvroIw>
-    <xmx:4wZcZ2fgbwJdA_4G_XdVMUnA2fWGukOTnpsKbWMRMWhgqhsDauIV94ix>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 297C02220072; Fri, 13 Dec 2024 05:05:22 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1734084334; c=relaxed/simple;
+	bh=tH827m4h4XLHI6oAAXVZE+nLImUPaQ79hjHCS2ChNZg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ke39rNbV70DINIRQcUF4ZEfXp+3VEdZr5Kk6bZBPABnPeECjNJEhdAysKKU1l8lXgv9jI1935RB7iICXbkHa9y8a3uL3gHO75Vwit5a65LcPsrULgppN/ZS5khQIINyif5FMG6cdoCFQmuQE0AWhypJwy/uGXuou0T9O71oI2QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hughsie.com; spf=pass smtp.mailfrom=hughsie.com; dkim=pass (2048-bit key) header.d=hughsie.com header.i=@hughsie.com header.b=C1PSvcAg; arc=none smtp.client-ip=185.70.40.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hughsie.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hughsie.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hughsie.com;
+	s=protonmail2; t=1734084324; x=1734343524;
+	bh=tH827m4h4XLHI6oAAXVZE+nLImUPaQ79hjHCS2ChNZg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=C1PSvcAgJ+w3YeZgnXpRL+A4V4qpOa2UBMFNfzgNUSx/Kj+Qwz/yyCo3tebwd/S0t
+	 C9G8FQc1Po3HfUlQ6JluyGfSBKYXihKNA8loSBYvny8e9Fi21MPvlF6dIGZQnfDGGv
+	 4qbgCyXUybIKHg7gMzeaprKvKF4KfWPmqeKnDvKym6wRuEZCjtcfQQHxxSZ/0VbY1N
+	 wNpsaxx/o8Ps1OHtaEgtcXFu8rAfo3j5IioBdp1XdufXFIV/Dq/7yswj4hi6vnnE4j
+	 jhpccPYZzOWlaTEp7nyruz+JSj/Lai15h+v5srYVpAPZ3PnRZUUNpbZ8uT88XSk+1W
+	 Dc+RN8Ur9+Fjw==
+Date: Fri, 13 Dec 2024 10:05:19 +0000
+To: Mario Limonciello <mario.limonciello@amd.com>
+From: Richard Hughes <richard@hughsie.com>
+Cc: Werner Sembach <wse@tuxedocomputers.com>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Richard Hughes <hughsient@gmail.com>, ggo@tuxedocomputers.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: Avoid putting some root ports into D3 on some Ryzen chips
+Message-ID: <vVLu9MdNWVCG96sN3xqjkmMVQpr_1iu61hX0w0q5dSQtFBi9ERc3b6hSoCjobPSTNgkIp3PBheheyUlayhMeQjShsx62zNqxWnPsrHt-xaM=@hughsie.com>
+In-Reply-To: <20cfa4ed-d25d-4881-81b9-9f1698efe9ff@amd.com>
+References: <20241209193614.535940-1-wse@tuxedocomputers.com> <215cd12e-6327-4aa6-ac93-eac2388e7dab@amd.com> <23c6140b-946e-4c63-bba4-a7be77211948@tuxedocomputers.com> <823c393d-49f6-402b-ae8b-38ff44aeabc4@amd.com> <2b38ea7b-d50e-4070-80b6-65a66d460152@tuxedocomputers.com> <e0ee3415-4670-4c0c-897a-d5f70e0f65eb@amd.com> <6a809349-016a-42bf-b139-544aeec543aa@tuxedocomputers.com> <20cfa4ed-d25d-4881-81b9-9f1698efe9ff@amd.com>
+Feedback-ID: 110239754:user:proton
+X-Pm-Message-ID: 8c998f637c16f699820e7fb8c69c173bc45aab2a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 13 Dec 2024 11:04:08 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Arnd Bergmann" <arnd@kernel.org>, kvm@vger.kernel.org
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Naveen N Rao" <naveen@kernel.org>,
- "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Alexander Graf" <graf@amazon.com>, "Crystal Wood" <crwood@redhat.com>,
- "Anup Patel" <anup@brainfault.org>,
- "Atish Patra" <atishp@atishpatra.org>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>,
- "Albert Ou" <aou@eecs.berkeley.edu>,
- "Sean Christopherson" <seanjc@google.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Vitaly Kuznetsov" <vkuznets@redhat.com>,
- "David Woodhouse" <dwmw2@infradead.org>, "Paul Durrant" <paul@xen.org>,
- "Marc Zyngier" <maz@kernel.org>, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
-Message-Id: <3380464f-5db4-487d-936f-1b5503905793@app.fastmail.com>
-In-Reply-To: <2809dcce-3405-430e-b43d-d75f35bdb7d5@csgroup.eu>
-References: <20241212125516.467123-1-arnd@kernel.org>
- <20241212125516.467123-4-arnd@kernel.org>
- <2809dcce-3405-430e-b43d-d75f35bdb7d5@csgroup.eu>
-Subject: Re: [RFC 3/5] powerpc: kvm: drop 32-bit book3s
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 12, 2024, at 19:34, Christophe Leroy wrote:
-> Le 12/12/2024 =C3=A0 13:55, Arnd Bergmann a =C3=A9crit=C2=A0:
->
-> $ git grep KVM_BOOK3S_32_HANDLER
-> arch/powerpc/include/asm/processor.h:#ifdef CONFIG_KVM_BOOK3S_32_HANDL=
-ER
-> arch/powerpc/include/asm/processor.h:#endif /*=20
-> CONFIG_KVM_BOOK3S_32_HANDLER */
-> arch/powerpc/kernel/asm-offsets.c:#ifdef CONFIG_KVM_BOOK3S_32_HANDLER
+On Thursday, 12 December 2024 at 19:01, Mario Limonciello <mario.limonciell=
+o@amd.com> wrote:
+> > > > > Sadly fwupd/LVFS does not support executing arbitrary efi binarie=
+s/
+> > > > > nsh scripts which still is the main form ODMs provide bios update=
+s.
 
-Fixed now.
+Of course fwupd can't do this; it would be a huge security hole as the nsh =
+script isn't signed.
 
-> What about the following in asm-offsets.c, should it still test=20
-> CONFIG_PPC_BOOK3S_64 ? Is CONFIG_KVM_BOOK3S_PR_POSSIBLE still possible=20
-> on something else ?
->
-> #if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_KVM_BOOK3S_PR_POSS=
-IBLE)
-> 	OFFSET(VCPU_SHAREDBE, kvm_vcpu, arch.shared_big_endian);
-> #endif
->
-> Shouldn't CONFIG_KVM and/or CONFIG_VIRTUALISATION be restricted to=20
-> CONFIG_PPC64 now ?
+> It sounds like some bugs in the implementation of the capsule handler
+> for this system.
 
-Agreed, fixed and found one more in that file.
+I've seen this with AmiFlash + BIOS.ROM, but never from a capsule. I'm pret=
+ty sure Aptio builder is more than capable of constructing a capsule file w=
+ith the correct DMI data.
 
-> What about:
->
-> arch/powerpc/kernel/head_book3s_32.S:#include <asm/kvm_book3s_asm.h>
-> arch/powerpc/kernel/head_book3s_32.S:#include "../kvm/book3s_rmhandler=
-s.S"
+> It's not an Insyde problem. I use Insyde capsules regularly myself from
+> fwupd. I also know several other OEMs that ship capsules to LVFS that
+> use Insyde.
 
-Removed.
+100% agreed; Insyde firmware makes up more than 20% of the updates on the L=
+VFS now.
 
-> There is still arch/powerpc/kvm/book3s_32_mmu.c
-
-This one is used for 32-bit guests and needs to stay I think.
-
-See below for the changes I've now folded into this patch.
-
-     Arnd
-
-diff --git a/arch/powerpc/include/asm/kvm_book3s.h b/arch/powerpc/includ=
-e/asm/kvm_book3s.h
-index 71532e0e65a6..7e13e48dbc6b 100644
---- a/arch/powerpc/include/asm/kvm_book3s.h
-+++ b/arch/powerpc/include/asm/kvm_book3s.h
-@@ -377,7 +377,9 @@ static inline struct kvmppc_vcpu_book3s *to_book3s(s=
-truct kvm_vcpu *vcpu)
-=20
- /* Also add subarch specific defines */
-=20
-+#ifdef CONFIG_KVM_BOOK3S_64_HANDLER
- #include <asm/kvm_book3s_64.h>
-+#endif
-=20
- static inline void kvmppc_set_gpr(struct kvm_vcpu *vcpu, int num, ulong=
- val)
- {
-diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/=
-asm/kvm_host.h
-index 6e1108f8fce6..56b01a135fcb 100644
---- a/arch/powerpc/include/asm/kvm_host.h
-+++ b/arch/powerpc/include/asm/kvm_host.h
-@@ -793,7 +793,7 @@ struct kvm_vcpu_arch {
- 	struct machine_check_event mce_evt; /* Valid if trap =3D=3D 0x200 */
-=20
- 	struct kvm_vcpu_arch_shared *shared;
--#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_KVM_BOOK3S_PR_POSSI=
-BLE)
-+#ifdef CONFIG_KVM_BOOK3S_PR_POSSIBLE
- 	bool shared_big_endian;
- #endif
- 	unsigned long magic_page_pa; /* phys addr to map the magic page to */
-diff --git a/arch/powerpc/include/asm/kvm_ppc.h b/arch/powerpc/include/a=
-sm/kvm_ppc.h
-index ca3829d47ab7..001cd00d18f0 100644
---- a/arch/powerpc/include/asm/kvm_ppc.h
-+++ b/arch/powerpc/include/asm/kvm_ppc.h
-@@ -951,7 +951,7 @@ static inline void kvmppc_mmu_flush_icache(kvm_pfn_t=
- pfn)
-  */
- static inline bool kvmppc_shared_big_endian(struct kvm_vcpu *vcpu)
- {
--#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_KVM_BOOK3S_PR_POSSI=
-BLE)
-+#if defined(CONFIG_KVM_BOOK3S_PR_POSSIBLE)
- 	/* Only Book3S_64 PR supports bi-endian for now */
- 	return vcpu->arch.shared_big_endian;
- #elif defined(CONFIG_PPC_BOOK3S_64) && defined(__LITTLE_ENDIAN__)
-diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include=
-/asm/processor.h
-index 6b94de17201c..d77092554788 100644
---- a/arch/powerpc/include/asm/processor.h
-+++ b/arch/powerpc/include/asm/processor.h
-@@ -223,9 +223,6 @@ struct thread_struct {
- 	struct thread_vr_state ckvr_state; /* Checkpointed VR state */
- 	unsigned long	ckvrsave; /* Checkpointed VRSAVE */
- #endif /* CONFIG_PPC_TRANSACTIONAL_MEM */
--#ifdef CONFIG_KVM_BOOK3S_32_HANDLER
--	void*		kvm_shadow_vcpu; /* KVM internal data */
--#endif /* CONFIG_KVM_BOOK3S_32_HANDLER */
- #if defined(CONFIG_KVM) && defined(CONFIG_BOOKE)
- 	struct kvm_vcpu	*kvm_vcpu;
- #endif
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm=
--offsets.c
-index 7a390bd4f4af..c4186061694c 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -147,9 +147,6 @@ int main(void)
- 	OFFSET(THREAD_USED_SPE, thread_struct, used_spe);
- #endif /* CONFIG_SPE */
- #endif /* CONFIG_PPC64 */
--#ifdef CONFIG_KVM_BOOK3S_32_HANDLER
--	OFFSET(THREAD_KVM_SVCPU, thread_struct, kvm_shadow_vcpu);
--#endif
- #if defined(CONFIG_KVM) && defined(CONFIG_BOOKE)
- 	OFFSET(THREAD_KVM_VCPU, thread_struct, kvm_vcpu);
- #endif
-@@ -401,7 +398,7 @@ int main(void)
- 	OFFSET(VCPU_SHARED, kvm_vcpu, arch.shared);
- 	OFFSET(VCPU_SHARED_MSR, kvm_vcpu_arch_shared, msr);
- 	OFFSET(VCPU_SHADOW_MSR, kvm_vcpu, arch.shadow_msr);
--#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_KVM_BOOK3S_PR_POSSI=
-BLE)
-+#ifdef CONFIG_KVM_BOOK3S_PR_POSSIBLE
- 	OFFSET(VCPU_SHAREDBE, kvm_vcpu, arch.shared_big_endian);
- #endif
-=20
-@@ -511,19 +508,13 @@ int main(void)
- 	OFFSET(VCPU_TAR_TM, kvm_vcpu, arch.tar_tm);
- #endif
-=20
--#ifdef CONFIG_PPC_BOOK3S_64
- #ifdef CONFIG_KVM_BOOK3S_PR_POSSIBLE
- 	OFFSET(PACA_SVCPU, paca_struct, shadow_vcpu);
- # define SVCPU_FIELD(x, f)	DEFINE(x, offsetof(struct paca_struct, shado=
-w_vcpu.f))
- #else
- # define SVCPU_FIELD(x, f)
- #endif
--# define HSTATE_FIELD(x, f)	DEFINE(x, offsetof(struct paca_struct, kvm_=
-hstate.f))
--#else	/* 32-bit */
--# define SVCPU_FIELD(x, f)	DEFINE(x, offsetof(struct kvmppc_book3s_shad=
-ow_vcpu, f))
--# define HSTATE_FIELD(x, f)	DEFINE(x, offsetof(struct kvmppc_book3s_sha=
-dow_vcpu, hstate.f))
--#endif
--
-+#define HSTATE_FIELD(x, f)	DEFINE(x, offsetof(struct paca_struct, kvm_h=
-state.f))
- 	SVCPU_FIELD(SVCPU_CR, cr);
- 	SVCPU_FIELD(SVCPU_XER, xer);
- 	SVCPU_FIELD(SVCPU_CTR, ctr);
-@@ -547,14 +538,9 @@ int main(void)
- 	SVCPU_FIELD(SVCPU_FAULT_DAR, fault_dar);
- 	SVCPU_FIELD(SVCPU_LAST_INST, last_inst);
- 	SVCPU_FIELD(SVCPU_SHADOW_SRR1, shadow_srr1);
--#ifdef CONFIG_PPC_BOOK3S_32
--	SVCPU_FIELD(SVCPU_SR, sr);
--#endif
--#ifdef CONFIG_PPC64
- 	SVCPU_FIELD(SVCPU_SLB, slb);
- 	SVCPU_FIELD(SVCPU_SLB_MAX, slb_max);
- 	SVCPU_FIELD(SVCPU_SHADOW_FSCR, shadow_fscr);
--#endif
-=20
- 	HSTATE_FIELD(HSTATE_HOST_R1, host_r1);
- 	HSTATE_FIELD(HSTATE_HOST_R2, host_r2);
-@@ -601,12 +587,9 @@ int main(void)
- 	OFFSET(KVM_SPLIT_NAPPED, kvm_split_mode, napped);
- #endif /* CONFIG_KVM_BOOK3S_HV_POSSIBLE */
-=20
--#ifdef CONFIG_PPC_BOOK3S_64
- 	HSTATE_FIELD(HSTATE_CFAR, cfar);
- 	HSTATE_FIELD(HSTATE_PPR, ppr);
- 	HSTATE_FIELD(HSTATE_HOST_FSCR, host_fscr);
--#endif /* CONFIG_PPC_BOOK3S_64 */
--
- #else /* CONFIG_PPC_BOOK3S */
- 	OFFSET(VCPU_CR, kvm_vcpu, arch.regs.ccr);
- 	OFFSET(VCPU_XER, kvm_vcpu, arch.regs.xer);
-diff --git a/arch/powerpc/kernel/head_32.h b/arch/powerpc/kernel/head_32=
-.h
-index 9cba7dbf58dd..24e89dadc74d 100644
---- a/arch/powerpc/kernel/head_32.h
-+++ b/arch/powerpc/kernel/head_32.h
-@@ -172,7 +172,6 @@ _ASM_NOKPROBE_SYMBOL(\name\()_virt)
- #define	START_EXCEPTION(n, label)		\
- 	__HEAD;					\
- 	. =3D n;					\
--	DO_KVM n;				\
- label:
-=20
- #else
-diff --git a/arch/powerpc/kernel/head_book3s_32.S b/arch/powerpc/kernel/=
-head_book3s_32.S
-index cb2bca76be53..505d0009ddc9 100644
---- a/arch/powerpc/kernel/head_book3s_32.S
-+++ b/arch/powerpc/kernel/head_book3s_32.S
-@@ -30,7 +30,6 @@
- #include <asm/asm-offsets.h>
- #include <asm/ptrace.h>
- #include <asm/bug.h>
--#include <asm/kvm_book3s_asm.h>
- #include <asm/feature-fixups.h>
- #include <asm/interrupt.h>
-=20
-@@ -861,10 +860,6 @@ END_MMU_FTR_SECTION_IFCLR(MMU_FTR_HPTE_TABLE)
- 	rfi
- #endif /* CONFIG_SMP */
-=20
--#ifdef CONFIG_KVM_BOOK3S_HANDLER
--#include "../kvm/book3s_rmhandlers.S"
--#endif
--
- /*
-  * Load stuff into the MMU.  Intended to be called with
-  * IR=3D0 and DR=3D0.
+Richard.
 
