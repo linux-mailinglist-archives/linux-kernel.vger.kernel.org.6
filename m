@@ -1,226 +1,140 @@
-Return-Path: <linux-kernel+bounces-444295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275739F0443
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:43:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33FDF1698FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:43:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45CA18A6DF;
-	Fri, 13 Dec 2024 05:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="EeZQZDH7"
-Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E7A9F044D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:46:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9568E33EC;
-	Fri, 13 Dec 2024 05:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734068593; cv=fail; b=hvz3CmOUp/FhSsw6AE2M5y5jib9w4Iayjnl6bYA7qpx92RP7q7wi0nvZzDQdSq0UeYQ3Mcqx8LKuVhxpF5dhacVXgGVo76ROD7Xn2LdKgWtH4szsWXxYfhg6LHFnUf3Uv6Z+V+/79V/miwOHfY79MdNts0l36HHAzgCWjOsLx88=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734068593; c=relaxed/simple;
-	bh=LqMk+XuHKFxl82GLTtZ3iepOi2Cz0ZXQ7QL7Ibw6m1I=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=otU3vqfXFLQNMbIBMIA7SRmUxRhspJ5SgMGrJAOPOs0TxN6UZJyJ+ypxdu30lWfXEYxu55b0BpoacsvEXVpprTCORTSZ6GFoi1zSuGSAc0/LpA4GlWAdngUVLWvY43tVLK0Iyowbqd22SBv8EPFVt9rGMxHuYrj6B7CyWnO3EDI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=EeZQZDH7; arc=fail smtp.client-ip=185.183.30.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209320.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD0FSqT002876;
-	Fri, 13 Dec 2024 05:42:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=
-	content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=S1; bh=u4qriRg7SNa1zg4HU3qTVz1paTWEc9T
-	+SYhYhx1jXrM=; b=EeZQZDH7Z+LNBdaK1mxgM6+Yr3ADrTf8kdQTfaUK4yT7YWk
-	4GebWO60f27sQQV8GMF+ZvDhs5wFSt3MzEFxhj/k+59ZJTEIhOnfuJMBzv2voMhI
-	wsqwZuo/xENVBbI5spLtu/xFxmBmLp9xlqh0pDGTGofgtS1BbyNxAxMjTcQmBRS6
-	9OkAd7eJ2tHsNIjcMoDAmelNq+RSNcR/w1YuQCovUd6srsWiDQ+/nPb94NfyAz3U
-	hBCOomdjGuAt2xBmapjMkBLSe0iH2EoRTs9F6c0F/vAEFryD4RvFet+iiEnsRMot
-	RQU4EhjO8FiTro1dKAEaboHMQtSs29fjIQazSQw==
-Received: from hk3pr03cu002.outbound.protection.outlook.com (mail-eastasiaazlp17011031.outbound.protection.outlook.com [40.93.128.31])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 43cc8hw7yj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 05:42:48 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BRkcYTsx1W2u8ioJAwWBQ0R5N7HArbIGlXpxVPFQ7h0jPyIag/ZkQhOV709G6o9fCA4i+NdXxlE4zBmTfOqAplB7J37jCD+CLw6nt//oiDEb4Ik+EUUiQirxQZqAvd4h/k3zajP+qFsC9gVONeSV8Nq1YIAsewgxOnpfz966Z3opXTHCFPKMf5U9+t1PNT0rxOMdbVNeWJ4HivOlYHi3omkuhIfySMidoe+iEbywYA+dvd1QGgcMqPxeBbvxTXZ4LTfxUYZbsoGw2E8eXBp/2eicYkuVz0YdIA5L8mz/ZU1sMXYIx16WJkm1KPm8Jn0Da6nlhkAyLbnqCg84rcQZ2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u4qriRg7SNa1zg4HU3qTVz1paTWEc9T+SYhYhx1jXrM=;
- b=ZN8eTN5bY5SKKxBXJ1QfC/HqKmvGe2mNzwylkNClmYfa5WnIas+SohLa5Gk5j4AmFZpX0gitG0sqHq0WJjtu/498LsiMn09g0up10k2K8FmFcglB2MNk8LIbiTz5kCN/KMZfU9D268zJRs+GvOsx89MUNPo7jtZ17NWkQYnOtMlCJzFGZpX00tmFTmJjUvtbq8Qhyq0P/h5/cPJyzldn6j/K2BdV2temsAtVzf16LrENfPJjTfk7wgGRLBWppWZAChnGatf8aWVWXqIa4yz/LGTvuSkux/8NmPloplPGd08R3+xJXiN85Cg4xhkk7BKAeQNKmnKMUnSHjzDDrON8jA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
- by KL1PR0401MB6332.apcprd04.prod.outlook.com (2603:1096:820:be::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Fri, 13 Dec
- 2024 05:42:32 +0000
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06]) by PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::409e:64d3:cee0:7b06%4]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
- 05:42:32 +0000
-From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To: syzbot <syzbot+205c2644abdff9d3f9fc@syzkaller.appspotmail.com>,
-        "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [exfat?] INFO: task hung in exfat_sync_fs
-Thread-Topic: [syzbot] [exfat?] INFO: task hung in exfat_sync_fs
-Thread-Index: AQHbTAolB2dOUZDQuEWUFNUD0l+44bLh8H2igAAHUgCAAbNnew==
-Date: Fri, 13 Dec 2024 05:42:32 +0000
-Message-ID:
- <PUZPR04MB631683FE95D7335DAC257CCB81382@PUZPR04MB6316.apcprd04.prod.outlook.com>
-References:
- <PUZPR04MB6316AD522079C7FEB8E44540813F2@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <675a5bc6.050a0220.1ac542.0015.GAE@google.com>
-In-Reply-To: <675a5bc6.050a0220.1ac542.0015.GAE@google.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|KL1PR0401MB6332:EE_
-x-ms-office365-filtering-correlation-id: 305a2bd1-3a99-4398-f6f8-08dd1b38f080
-x-proofpoint-id: d8690225-876f-412f-87c6-a7cb45557a4c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|1800799024|10070799003|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?EBQLyVp/Q3VjTiCYiLm7J6i9gH+JJKv4fq01OEKoNePx3qzifUgwvNTXST?=
- =?iso-8859-1?Q?Oio4pYsd4WS36QFtyS7e8bIAMEO+IlYYNaPRmflZjP9QZ+aKHrrQsbZcTO?=
- =?iso-8859-1?Q?FGU2GqmBkdnCvxh8gQuODsiBFuZJ03TXshVeZqjViv7u+7p2UYCX55wtWk?=
- =?iso-8859-1?Q?lQgTIYDhH/pfraHkjoenR689f4/bB/aFaW5smCoxHoEHcTLDFJ7nzxJ/s7?=
- =?iso-8859-1?Q?n+HPFM8f8a1NtN2qwqHFoKpPcuoNSu20td0hjZsGTgoA2igJUN1n8CgO1G?=
- =?iso-8859-1?Q?SivP4zHHncFVTMs3ZdSbp9v2He3p0GcZnjzH8jYj/4aNlqXkrxZyZX1ZBs?=
- =?iso-8859-1?Q?qMlJZmGpEJrIIAoTHL6OznqB1/cZpC7qq1fb44HDDrBnviWdWThMLWN0+u?=
- =?iso-8859-1?Q?O6MBADHDDM4w+3w8V3Vec0FR4Lt6oQvuqvzdFRd3JVWAdhb95H79F9nG9f?=
- =?iso-8859-1?Q?/a9cwaMLLTTFm30eDUj3whLD8JS4z4/sAChwSX3glUl/GMK8v7sfPInjcS?=
- =?iso-8859-1?Q?P5V1QBcKYIfAXWd36sMME2ZAKsDbdbZQi6nYBPBLIgKs902qni/fBDTMg8?=
- =?iso-8859-1?Q?l0Y17H3YR57i8wD/xlQ5nZp9vbTDGnOKsd+vfY89cPi7iQijEvwrqU7A2r?=
- =?iso-8859-1?Q?Ft58+l/8iGE4fvkIgoJvtobin6B8iDGbNdyMZ5sqajRRyG+WKZO5mbys+w?=
- =?iso-8859-1?Q?aR2ePrqs8PBB5Qrj18bM/W0SZgUZLVVCznU/mGdudm91nvZQKnqwkM15fw?=
- =?iso-8859-1?Q?KKs7nKq/ykQ65p3LoAJr4xsO/IF8zyZSTc6rv4+R4KT6HoMMXmdohD9izD?=
- =?iso-8859-1?Q?Nry79jW21xcoO067mX1TNIryMrxc1wv9s7iD41GgoPIkkeGOoKzmoOeDXi?=
- =?iso-8859-1?Q?okZIMPuE1UwKCAFmeFp/YfGrTuCf6RwbAsTS3K/nm0JTULYX/L1IOiS108?=
- =?iso-8859-1?Q?nsLNGJtvA4yhPCpYEKtj4x/575HmKKzh5WpjPE6msjwC9N3I6aIi+7KcA/?=
- =?iso-8859-1?Q?rU7LEvTfPNtF6dSEyKZn3SeMzxvkcaIRxFHBxZG7gkq5B/D3e5t8pztq7K?=
- =?iso-8859-1?Q?8w0GOz14g9cCqawIV9VuLcp/fJhCN8+AECvQveW8E+xyYD1trXzu3Rn/gL?=
- =?iso-8859-1?Q?0jNywwbZPjVHe+ZRqlur8sh3vN5//6hfLQIL0UwN8ke90epHOCoK+uXETV?=
- =?iso-8859-1?Q?qBTi5WFHgT2XUQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(10070799003)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?Pc2pYB4rWD0PAcIr+85mErSQ+ijX7ZAjWiU4c67dgylfc8+G0SC3DTakEN?=
- =?iso-8859-1?Q?lHGsKF+/s9md4EV0Ew5+ivh9mliTbwptCcIVMMJDIfPjU42yN1rhneMydr?=
- =?iso-8859-1?Q?5EYPfFMCoc9QOi99ojPU6CwWXBtfKqMasZlRmYITY4aZeXDQha38JtzP8f?=
- =?iso-8859-1?Q?qfTbbP8L8GZmeKWgm642Redb69s92A9vz42FNB8s4mTscaNvHTa0c/kfXg?=
- =?iso-8859-1?Q?hL1esO9ROH+Q9KKtbMRfhDZXWgbJSpo1AESm7vdxsXwfC2uOLXi73NYFT+?=
- =?iso-8859-1?Q?mh0iF4/JDEdabd5nfBCNvKM9h4ooOwQ91vxUK7Cl3J/D644ypJhlqkQgEi?=
- =?iso-8859-1?Q?Q4tjPJRs/caIRsIGsCuKIXpKZqAmQK6AagaP5rEWhqYKYE7Z9YUJ5KmO0w?=
- =?iso-8859-1?Q?joMPr/mI24tpeUBVq2m3HdqLREyarDS7ks9LFQULkL7N/6P8xIaAgPMCH5?=
- =?iso-8859-1?Q?4/warYFHr0i9eYSnyZaExWPGI+NIpUvTcjuBpUylCEtnFdLd3lHyuhXPbj?=
- =?iso-8859-1?Q?qxS68w/NOHHrBp4/cbpWts+RUVbxQUSFWbtRQosbsYlLtITHQoaceYHR3U?=
- =?iso-8859-1?Q?QY9A3lWoBZ+6A4H99vUmmNzxrYEWCbCgYtnpoKisxUrw50FPl8KyB/S4nX?=
- =?iso-8859-1?Q?7j8lw9DCHXHWJHsxYPH+Uyd51uEjr8rwU3Eb7VUOUycuH/oX4ZqRAxR8Ox?=
- =?iso-8859-1?Q?xddE8YK0fOJh3A50BK9vErKZwasoBnYda1i2dYUs81ev80CFnejJAkC6O1?=
- =?iso-8859-1?Q?ZYFRNYX4h9m040MaBCtE3x5TcheeUQU/FCy0TfqYX/se91tEAUX6FANuJK?=
- =?iso-8859-1?Q?r1WTVORswB20c5VSgVkB9sx0AGHdZFo2Rblm8vdrNi6az8Jtfo6ZgAxadh?=
- =?iso-8859-1?Q?3Gv7vyf3jryZ6NbGY9QdP249RuAw8NbanHbDokCG7QeP7hazOCPb6HVMaO?=
- =?iso-8859-1?Q?g7vIgZm/Ki2BOtQEArEmUTdfDXOsl9iNREwMrUtDTDKDJeLpGaUgumHnkI?=
- =?iso-8859-1?Q?uJ+RUFVtyTY5U7A/HCjVUbwnbpX9oRftIt1bRuDrqNWEftel2t2qFsrb0s?=
- =?iso-8859-1?Q?TJBPjy7qtc0cwf/80jvdSeTmcjz5gD/dm5TCWB5f1B+awavVfdPMYksrrv?=
- =?iso-8859-1?Q?u5XXOp2rYPNbUJYwORZ+4+QKi19Tdr2c7x02249xlJ+jBIwR6vbrWT+5np?=
- =?iso-8859-1?Q?/R4AdaiBtW6tvkknAIpTK3ql78XuWV/y49XKtdMrbHQyatDs/gFmvY8JZx?=
- =?iso-8859-1?Q?KULBCGj5MnRcgrWLYWTkpmrPBlJpLAUixaqOnBkDhel8BZ9hi3f1VJW5FR?=
- =?iso-8859-1?Q?eNCy66SpDN/JJU1fTsJ34mGRj0wDHv1hAV/Bh7/3EeHl8DF3+sUiiSdLVK?=
- =?iso-8859-1?Q?hAXZxCOSYFm7M/eGeqitZ9dkSeMGlRBl88Xv2l9R4J3avFht1FLR8GtCrW?=
- =?iso-8859-1?Q?U7mhjdzIQMI+iXU9e68WLbw+vu7NyW8wXF2s6neQHqdBZS62+FWIshVCu9?=
- =?iso-8859-1?Q?SusdCQMKuRgZuya9cllfkW8pup2NoO8e8CRmzvObENsPB6vYBC/JaAExBH?=
- =?iso-8859-1?Q?l6eSDOFXS3FnWMlGXZqmTXVaEIqcdVGpNIa8kdDcw4DUPjYjWSBKUv5LBC?=
- =?iso-8859-1?Q?TC78QzBN9lVJGZ9OEzprB32vMLAT3ut0MREQkHUgD2c84qZsT8BxSH34St?=
- =?iso-8859-1?Q?aXy93mSPi2fqZ1F/XzI=3D?=
-Content-Type: multipart/mixed;
-	boundary="_002_PUZPR04MB631683FE95D7335DAC257CCB81382PUZPR04MB6316apcp_"
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41A35283F9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:46:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948A018B460;
+	Fri, 13 Dec 2024 05:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1HfTxq0"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F076F30F;
+	Fri, 13 Dec 2024 05:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734068806; cv=none; b=j2cpSkHHfqqBpPFwZ24UEzEXJadGfdT86bE8b4SMuAtRay5k+/55kLDQPFnXGKkDCylfcM45OFTlBLPFk/HUTvhZ0isTxW/XNvFR/3GBpDxHEfDa/jdqq8hKbzE4kgX7OQZyZn7NBZi+hG728XUB/qIQa4jrWZwQeRgdWvEX+n4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734068806; c=relaxed/simple;
+	bh=OVgnmW0ca8umO0SwlloJBit9jW9fr1tJz+XCXh2DFpE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hXqWAcNABztAicFdVGnxFeqkUkKHBEy6UjOLKoKbj+YPiWQ/vwSc/ptgKLb+rjpsSaP+UJ+O/oN5Q5JgHzm/mwW8YOI9HT/SyKx4yI2JHbJxOdwi0WusjKamPaOUJ890lOTRD156IVqghlPScPAPwCVceCGzD/Xu9Se5+cnCivE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1HfTxq0; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2166360285dso13105605ad.1;
+        Thu, 12 Dec 2024 21:46:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734068804; x=1734673604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9nDBDHl8OkOEbonP7/O/xeWGAuqOftf+4IMvf+gS1cw=;
+        b=B1HfTxq0+rQmmgtwHYUt/XOzBHFvqABhw1opYXP3S318Z83/WUjXiKRyx/MC2WgKUe
+         Ht8NqVHSyAmFQXpx95NZeLd6wWZPGNMLz4S3e/TpwHXfzB1WsLydFGVhxRD/3Box1vxL
+         J6YBbQn5c7ogbLJYN9yV28uLzTg9r9vtJiyeY965CWy7GUnfCyq2j6XqZVC9GqwLOJ90
+         2iESoWNys7Hx3V2+ZVray82kYb9OXakt5JZDDNFNxJGxxgbF8tU6zrt8UO1o7i5IRcL+
+         Q+EWmA9nWafD1RNMS3ZCtY3D9lgwGX214QeDbT/dAxk0TftOJril+VsnU++goFlTkzLu
+         K5Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734068804; x=1734673604;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9nDBDHl8OkOEbonP7/O/xeWGAuqOftf+4IMvf+gS1cw=;
+        b=aRYSeY5NYqTL4xr7JddyKx2QiAJXddBuCkUwrVrjR053Xh2xkbwP0EiNRWuaquI6aI
+         +u97ZIUJ7mzG8OZFrYRRVIXCxKBZpPvbvexgWkdxl13yq6O0JhwQzN+hQEiMfiZnm+hM
+         lhNjjX37hBv9DwZPCGPzIPNg1F63w++hqEFEkD9BuRwl416GVSeVe6wc3hfeWk+jqzRH
+         3Iokl9OBp/tCCCZzwQdVJbPW7tWQdZKSCehdjxCMwmhGtC2TX/6Aa9CPVJUDc0i61LVb
+         Wv2/Qul8Brzls13G5HTiN6EInOIP4gfJvffAw+Dp3CT7gW5IfTJ7tBbmbMLiuxzCwmof
+         P6CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbpbHy1dzPZAT5SqBnnrTDrw/8sA4S597u3tfU6Nqkr6SsjzDqUs7bhuS210dRtKxxJloDGMCGIjSQFpcJzMQ=@vger.kernel.org, AJvYcCWb6wxWccetYJ4mGdA2QpB6HsAHoBJrAQAZ4TVWjFFOz3bMO5KpyDBueKjymlbHRRTPbc5ydZZkhRSMa8c/N8rIydSz2c8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8rk9pFWnQk92mPELiSzIFil09YMhktJe4DfN1mQLOfoLBxmhh
+	2K54jG2rvXkk4eobyRcz2W7E0IjhwAeSkJ0pigl8OPiEsSRWZsKt
+X-Gm-Gg: ASbGncvsGOrkMyn31TtCLZJScpER3MgtA0MR+JfFJ+rDhZeRYSRqtBFJNU3p8zQ+bEJ
+	vpd2szD/0irCMzbj5tGmpwTZNsBBLgdhxJQPO84cYgUJylHBjTZR8YVW9XvU06vYbzSOHW+2HsH
+	zKvY+PRLEodxdG75q+btzVAC/88uNCVzHjDEJtoFtm36nbD/oqHYN+SAeZydEE3RLnpwRHWrtrU
+	IKFjmaJCeHVHMbLqpttt18oXd6mlrWh1jNL7PddKZu6p5nuP4A+ZvCv8DYZ6+UZGRYJ4BYnXFZ2
+	keFT9b0=
+X-Google-Smtp-Source: AGHT+IHVKByQs8aQw9nFW65MyCdke95tovLrIe/teYLFc9u83Eik6guIs9oKZyvf6Ts5Rmy4R5h3SA==
+X-Received: by 2002:a17:902:ccd2:b0:216:26f1:530b with SMTP id d9443c01a7336-21892a70579mr20915305ad.51.1734068803702;
+        Thu, 12 Dec 2024 21:46:43 -0800 (PST)
+Received: from localhost.localdomain ([180.159.118.224])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216483dd292sm82564985ad.226.2024.12.12.21.46.38
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 12 Dec 2024 21:46:43 -0800 (PST)
+From: Yafang Shao <laoar.shao@gmail.com>
+To: torvalds@linux-foundation.org,
+	akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	x86@kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-wireless@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	ocfs2-devel@lists.linux.dev,
+	Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH 0/7] vsprintf: Add %pTN to print Task Name 
+Date: Fri, 13 Dec 2024 13:46:03 +0800
+Message-Id: <20241213054610.55843-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	2MapkTmDKOcFfHsZcgTSEf6NIHwm5yZieIdKHgHd0B5RALPaPQtKdS8cjy/0B1UHZYW1CFIYUGGjPeal8x1RD+CcSPPJzrwNTb/YBPpm0miud+Od+1eluwKwg9nesOUn5OmDIoDgMtt8tRndYAhxTQpcWSZ0+OPSijWaRNTJpu6/rZKzga/H9VNGwj/LOIbafnUZ5m2wsp+HrpErYmIrs+TnacfctuYiRuhiznYpDBu7hgq/Yj39md4OlW4nzszTzzBfxwFpMOwi9rcB+fqnNohDqaorZdEwK0inG91+QLBMoF5w8sZLyROMRVH3lWtzVMyb5yltKpOEMknOgt9KqhuMnuFn2y0JpqTun9XGfeRyNf0xwAqOqmzONe6yKT3WSCOF4x6x0I7m/xPRHnB5ZpOmVDd/EQiSz9fsYR6rR+vvFIift++Y2R1iKUQZw6P72z/rA2bn+eJ9MGIXsMIwwTnwZDFXpZEfxebqIMkQ7P39nu4Xtv1WRRcbrSNg7Ajz4QOsbWu1X5oOB+o8AWohw+IaSAcPi+h3Jatp7eLdCPcgrYB9i7eREpxyguUkqFsIfotXmnYXVP9mA07sd83tPQvT8wRcw0QsS81ZlwtnANwwhd2iGibCo0qpf07/PWKY
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 305a2bd1-3a99-4398-f6f8-08dd1b38f080
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2024 05:42:32.3126
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 48CvBAHBfDTXhsNmCVLvDzxMw/MmzKHGzGm1o7qF1KzSpQSWqDCgDQwb/R7+s5rmJVNnLipJNmhZJbi08ZRzpw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0401MB6332
-X-Proofpoint-ORIG-GUID: GRRtpyivpmr7j1zuhacJb0xquYSVT_y_
-X-Proofpoint-GUID: GRRtpyivpmr7j1zuhacJb0xquYSVT_y_
-X-Sony-Outbound-GUID: GRRtpyivpmr7j1zuhacJb0xquYSVT_y_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-13_01,2024-12-12_03,2024-11-22_01
+Content-Transfer-Encoding: 8bit
 
---_002_PUZPR04MB631683FE95D7335DAC257CCB81382PUZPR04MB6316apcp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Since task->comm is guaranteed to be NUL-terminated, it can be printed
+directly. This patch introduces a new vsnprintf format specifier, %pTN, to
+print a task's name. In this specifier, p represents the task pointer, T
+stands for "Task," and N denotes "Name." With this abstraction, users no
+longer need to manually retrieve the task name for printing purposes.
 
-#syz test=0A=
-=0A=
+In this patchset, all instances of get_task_comm() used for printing the
+task name have been replaced with the new %pTN specifier. The raw uses of
+'xyz->comm' for printouts will be addressed in a subsequent patch.
 
---_002_PUZPR04MB631683FE95D7335DAC257CCB81382PUZPR04MB6316apcp_
-Content-Type: text/x-patch;
-	name="v1-0001-exfat-fix-the-infinite-loop-in-exfat_readdir.patch"
-Content-Description:
- v1-0001-exfat-fix-the-infinite-loop-in-exfat_readdir.patch
-Content-Disposition: attachment;
-	filename="v1-0001-exfat-fix-the-infinite-loop-in-exfat_readdir.patch";
-	size=1355; creation-date="Fri, 13 Dec 2024 05:41:59 GMT";
-	modification-date="Fri, 13 Dec 2024 05:41:59 GMT"
-Content-Transfer-Encoding: base64
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/bpf/CAHk-=wgqrwFXK-CO8-V4fwUh5ymnUZ=wJnFyufV1dM9rC1t3Lg@mail.gmail.com 
 
-RnJvbSAyYmE5NmU2ZTQ5MjNmMGFkMGQxYmJjYzA3N2U4ODdkNWQ3MDMxYmMwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBZdWV6aGFuZyBNbyA8WXVlemhhbmcuTW9Ac29ueS5jb20+CkRh
-dGU6IEZyaSwgMTMgRGVjIDIwMjQgMTM6MDg6MzcgKzA4MDAKU3ViamVjdDogW1BBVENIIHYxXSBl
-eGZhdDogZml4IHRoZSBpbmZpbml0ZSBsb29wIGluIGV4ZmF0X3JlYWRkaXIoKQoKSWYgYSBjbHVz
-dGVyIGlzIGxpbmtlZCB0byBpdHNlbGYgaW4gdGhlIGNsdXN0ZXIgY2hhaW4sIGFuZCB0aGVyZQpp
-cyBhbiB1bnVzZWQgZGlyZWN0b3J5IGVudHJ5IGluIHRoZSBjbHVzdGVyLCAnZGVudHJ5JyB3aWxs
-IG5vdCBiZQppbmNyZW1lbnRlZCwgY2F1c2luZyBjb25kaXRpb24gJ2RlbnRyeSA8IG1heF9kZW50
-cmllcycgdW5hYmxlIHRvCnByZXZlbnQgYW4gaW5maW5pdGUgbG9vcC4KClRoZSBpbmZpbml0ZSBs
-b29wIGluIGV4ZmF0X3JlYWRkaXIoKSBjYXVzZXMgc19sb2NrIG5vdCB0byBiZSByZWxlYXNlZCwK
-VGhpcyBpbmZpbml0ZSBsb29wIGNhdXNlcyBzX2xvY2sgbm90IHRvIGJlIHJlbGVhc2VkLCBhbmQg
-b3RoZXIgdGFza3MKd2lsbCBoYW5nLCBzdWNoIGFzIGV4ZmF0X3N5bmNfZnMoKS4KClNpZ25lZC1v
-ZmYtYnk6IFl1ZXpoYW5nIE1vIDxZdWV6aGFuZy5Nb0Bzb255LmNvbT4KLS0tCiBmcy9leGZhdC9k
-aXIuYyB8IDMgKystCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9u
-KC0pCgpkaWZmIC0tZ2l0IGEvZnMvZXhmYXQvZGlyLmMgYi9mcy9leGZhdC9kaXIuYwppbmRleCBm
-ZTBhOWI4YTBjZDAuLjMxMDNiOTMyYjY3NCAxMDA2NDQKLS0tIGEvZnMvZXhmYXQvZGlyLmMKKysr
-IGIvZnMvZXhmYXQvZGlyLmMKQEAgLTEyMiw3ICsxMjIsNyBAQCBzdGF0aWMgaW50IGV4ZmF0X3Jl
-YWRkaXIoc3RydWN0IGlub2RlICppbm9kZSwgbG9mZl90ICpjcG9zLCBzdHJ1Y3QgZXhmYXRfZGly
-X2VudAogCQkJdHlwZSA9IGV4ZmF0X2dldF9lbnRyeV90eXBlKGVwKTsKIAkJCWlmICh0eXBlID09
-IFRZUEVfVU5VU0VEKSB7CiAJCQkJYnJlbHNlKGJoKTsKLQkJCQlicmVhazsKKwkJCQlnb3RvIG91
-dDsKIAkJCX0KIAogCQkJaWYgKHR5cGUgIT0gVFlQRV9GSUxFICYmIHR5cGUgIT0gVFlQRV9ESVIp
-IHsKQEAgLTE3MCw2ICsxNzAsNyBAQCBzdGF0aWMgaW50IGV4ZmF0X3JlYWRkaXIoc3RydWN0IGlu
-b2RlICppbm9kZSwgbG9mZl90ICpjcG9zLCBzdHJ1Y3QgZXhmYXRfZGlyX2VudAogCQl9CiAJfQog
-CitvdXQ6CiAJZGlyX2VudHJ5LT5uYW1lYnVmLmxmblswXSA9ICdcMCc7CiAJKmNwb3MgPSBFWEZB
-VF9ERU5fVE9fQihkZW50cnkpOwogCXJldHVybiAwOwotLSAKMi40My4wCgo=
+Yafang Shao (7):
+  vsprintf: Add %pTN to print task name
+  kernel: Replace get_task_comm() with %pTN
+  arch: Replace get_task_comm() with %pTN
+  net: Replace get_task_comm() with %pTN
+  security: Replace get_task_comm() with %pTN
+  drivers: Repace get_task_comm() with %pTN
+  fs: Use %pTN to print task name
 
---_002_PUZPR04MB631683FE95D7335DAC257CCB81382PUZPR04MB6316apcp_--
+ arch/arc/kernel/unaligned.c                    |  9 ++++-----
+ arch/x86/kernel/vm86_32.c                      |  5 ++---
+ drivers/accel/habanalabs/common/context.c      |  5 ++---
+ .../accel/habanalabs/common/habanalabs_ioctl.c | 15 +++++----------
+ .../drm/i915/display/intel_display_driver.c    | 10 ++++------
+ drivers/gpu/drm/nouveau/nouveau_chan.c         |  4 +---
+ drivers/gpu/drm/nouveau/nouveau_drm.c          |  7 +++----
+ drivers/tty/tty_io.c                           |  5 ++---
+ fs/ocfs2/cluster/netdebug.c                    |  5 ++---
+ kernel/capability.c                            | 12 ++++--------
+ kernel/futex/waitwake.c                        |  5 ++---
+ lib/vsprintf.c                                 | 18 ++++++++++++++++++
+ net/wireless/wext-core.c                       |  6 ++----
+ scripts/checkpatch.pl                          |  6 ++++--
+ security/yama/yama_lsm.c                       |  6 ++----
+ 15 files changed, 57 insertions(+), 61 deletions(-)
+
+-- 
+2.43.5
+
 
