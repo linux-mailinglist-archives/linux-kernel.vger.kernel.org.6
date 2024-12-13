@@ -1,79 +1,122 @@
-Return-Path: <linux-kernel+bounces-444799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639D89F0CAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:48:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA539F0CAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247F91886C37
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:48:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DDB816128C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530EE1DF736;
-	Fri, 13 Dec 2024 12:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399AA1DF97A;
+	Fri, 13 Dec 2024 12:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d92VN0eo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gREh2xjm"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE03423C9;
-	Fri, 13 Dec 2024 12:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2541A0AF7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734094105; cv=none; b=R2IDnZk6S1fxvnBpT9EGgRAzJz/D2isYhQF5/V2VkuOeL/V1iqVVA+RARgr/JJ3bk2Bd9zZWoHArwrcXD3pQivtxHIcCp9oNhY1IvBdqX2zhXt6pl3n2NuVxwE2qCbx9jcXNEHTe5tJ/+dwqKo/2MqJKN3EdkkadMnJFQJ7O4kA=
+	t=1734094120; cv=none; b=QwzZr/2Tm84SW4F3GSD9GRkedBKqxRigP2GF5gHqpiVYEW8Sx/lUfXayM1LiMhyEQbebagMgNuUWvbt9QOPfM0MqZYAsNiXr0KA2y0qPkGxoRU7GQ7j/Tp5USws+gbSF/dambVP/H0lTqXeJ2Vhk0UEMirho77XdBfYU62EerGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734094105; c=relaxed/simple;
-	bh=JUoyttvnJF0jPvh4eHNSgzi9/O2FGvHE1DyVE1UE/MA=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=jUvcYdAdOD0/9HRP9mJjzwbtPD7AA0o+ZfpUdVglKm0MvxXNHoqM4iQW0LCOkPnZSUg94D/DfcgmnOyyMZMAXu+qV2t2N9M4SbkkenSccpYvwgOPf76u/VNyGvQGUbmAYJ0Wc3PkcymVmbf//ppMS5nL+sWyWK95e1NLrya62CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d92VN0eo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 493E0C4CED0;
-	Fri, 13 Dec 2024 12:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734094105;
-	bh=JUoyttvnJF0jPvh4eHNSgzi9/O2FGvHE1DyVE1UE/MA=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=d92VN0eogs364wuHcXEzwFkte8e516ds0VeN5PMyBvmDXV77g2Tp0dj3xKA+Pzd3D
-	 gqqVX6VplPAIfh4wgORcFamUnLNlV+YVQqeUIPsoQWcNYPuQJ76J0wuqNcRrNg9liF
-	 n5pGH7KNCpMiCNHYYc/0PS2dGH0jmLP2cbsJ4izD7sin5e57Lku1vMkA6tMV/pFGaQ
-	 DEZvpT5wmcADBix2zeLANlqyk9C6+KrNFEegV65sVKK7lxkJFpjRVWT92Vuhqyu9i7
-	 qgz/bYytZgmoeyigaw3eX2Ovrj8r9BpUbJTQ9J7Y0zT3DktHBBwYBgrXsU5Avn1yhY
-	 Px3hWpM8pF9xw==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1734094120; c=relaxed/simple;
+	bh=lethxNSS8EAyNyjFkm2pBuuwojYh8oVRmh80d1A3DX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eSw5wMr08szbxXKrG2QRdC8c9+lxHmpjC1VVcRnz+sGWNf3s8mFDy8AwO1YQpzI9ooY4117gZy0UArLbw7hxj+t7Mcz3+IY3pERJu8Ed5QB6UJl3jL9/TT5fOnwbHRG3fX7+d3TiWGCpLgJbeq9/stK1gNyMIXchMCEWeOaHMHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gREh2xjm; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385f06d0c8eso852960f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:48:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734094117; x=1734698917; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lethxNSS8EAyNyjFkm2pBuuwojYh8oVRmh80d1A3DX0=;
+        b=gREh2xjmlLP11JXhJd1CdpbKXTdqiprPxIgFKDxfB1Hvp3ui+rmMUNn+cb7zV5HdWI
+         sf6t8JwVqNzSIg4whDQWTrab7z8eqG5XUilKLs5lPovbByYt9QwOMQOsoqgTVlnWrkAS
+         cemNtM+j5lvMlcli4gdBmoDlnv/7p7U4hEoh8SVoDBoM8u9VRF+THcxhycFKGOafuAj2
+         N141xH3ekUw65YRy/oYUr7bQldWoGYAw9Basz8noRN8d+ckf46PRhd0PGM7ptk5pIrFx
+         MltX3LPIGHUqunprn5DFzRhXXN3O3zPjsLdfIXMru6JiS6IbL+MgCxxajiVzDdiLn915
+         dZ6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734094117; x=1734698917;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lethxNSS8EAyNyjFkm2pBuuwojYh8oVRmh80d1A3DX0=;
+        b=UEHwwSPaTY9I9DnN4VVGkWkSqnD/QaallhiDRbnn4LNHR7A8tMiaz5VtGQlG7RpeBP
+         2TgiDq3X0FJzZOxXO7Jpv5iaX/DrUEuHpspxZwaRLp4SqIwIDW06EMcrftpn5Dogq5VM
+         2n8V5FpphQxXVebB25VUlkz8g3/2XYQXFqSLt+TYQYggtkmGoHrehLAVd95RivRCxL/e
+         g2LtHhn7tUWZ4RBnNJ4lVDzJYF5mhnATxZ/7DGpq2YG774Nt3Wuf6ajxC7mCaPMUQXJJ
+         s/ImqRQpI6yIvEwfdBnlMdCaZu3ayCkZByq58a++0u2watf/fhVUGnj6FNVjQMUmE48C
+         lRJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUn/SpWQRN9CxH94RGneF6bjwJTo7O5VTqmxoStHruwZ+8sKTKh1uZ+H2Ydp8I8ZBzXr1Td783pg9o89M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuRvkAg6paswZxyST24p9xb5qRCswpsKgfhTyANdo4ypUMW5OT
+	R/CYtfnqw19wkjgEvaiAUZErCuBqQLa7eI9xzRm+RaMLJUpMvuH56208If8K20zeXa+XEMiHl2l
+	rC+i0eg3v80QbTQhm83lmVuOci3AV2NHBac3j
+X-Gm-Gg: ASbGncuyEG3yHR83d/2ze0b+ZgCFrgB7IEaZaXUTdc/6T3B4OjqwZXoGAoxfLIYeqE7
+	Ef55NwTP+PhtUmXVtpMchOugaT6Af6yraMTVzVSI=
+X-Google-Smtp-Source: AGHT+IH0dpfDtOwGlnb2C6mIuU/5tSY4s4rjRlEZpLi8EzftkJqd7mRISCvo5vQa2rNmSwXyxe3wzmOuHV6dQFuozXc=
+X-Received: by 2002:a5d:6da2:0:b0:386:2ebe:7aeb with SMTP id
+ ffacd0b85a97d-3888e0b887dmr2002637f8f.44.1734094117119; Fri, 13 Dec 2024
+ 04:48:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] MAINTAINERS: wifi: ath: add Jeff Johnson as maintainer
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20241212-ath-maintainer-v1-1-7ea5e86780a8@kernel.org>
-References: <20241212-ath-maintainer-v1-1-7ea5e86780a8@kernel.org>
-To: Jeff Johnson <jjohnson@kernel.org>
-Cc: Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <173409410234.1031231.17080692203646648392.kvalo@kernel.org>
-Date: Fri, 13 Dec 2024 12:48:24 +0000 (UTC)
+References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
+ <4Dsa69UGULRGsMbRbwOJNp_puyfsSSFt1QTcYU9AL4azd8vbfEFFtc7YNSsGegc40AfCZqVqZETfxg4TggUlSw==@protonmail.internalid>
+ <2024121324-overdue-giggly-bdb8@gregkh> <87frmrepo5.fsf@kernel.org>
+In-Reply-To: <87frmrepo5.fsf@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 13 Dec 2024 13:48:25 +0100
+Message-ID: <CAH5fLgh+iOefU3vG=e8aAFhcKh0W=6M0odUt3s_wfDKW+rGNOg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] rust: extend `module!` macro with integer
+ parameter support
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Trevor Gross <tmgross@umich.edu>, 
+	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Jeff Johnson <jjohnson@kernel.org> wrote:
+On Fri, Dec 13, 2024 at 1:24=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> "Greg KH" <gregkh@linuxfoundation.org> writes:
+>
+> > On Fri, Dec 13, 2024 at 12:30:45PM +0100, Andreas Hindborg wrote:
+> >> This series extends the `module!` macro with support module parameters=
+.
+> >
+> > Eeek, why?
+> >
+> > Module parameters are from the 1990's, back when we had no idea what we
+> > were doing and thought that a simple "one variable for a driver that
+> > controls multiple devices" was somehow a valid solution :)
+> >
+> > Please only really add module parameters if you can prove that you
+> > actually need a module parameter.
+>
+> I really need module parameters to make rust null block feature
+> compatible with C null block.
 
-> The "ATHEROS ATH GENERIC UTILITIES" entry shares the same git tree as
-> the ATH10K, ATH11K, and ATH12K entries which I already maintain, so
-> add me to that entry as well.
-> 
-> Signed-off-by: Jeff Johnson <jjohnson@kernel.org>
+Instead of providing module parameters to Rust code, you could
+implement that part of Rust nullblk in C. That way, you discourage
+future Rust drivers from using module parameters without making it
+impossible to have them in Rust nullblk.
 
-Patch applied to wireless.git, thanks.
-
-b83accfec081 MAINTAINERS: wifi: ath: add Jeff Johnson as maintainer
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20241212-ath-maintainer-v1-1-7ea5e86780a8@kernel.org/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Alice
 
