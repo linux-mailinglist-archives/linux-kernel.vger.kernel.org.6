@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-444452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9831C9F0713
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:01:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E68B9F0712
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:00:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2364E16AA1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:01:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D6F16A449
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B096519CC2D;
-	Fri, 13 Dec 2024 09:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9F41AC8AE;
+	Fri, 13 Dec 2024 09:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MY74L7O6"
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tu3CVgZ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE56185B78
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498CA185B78;
+	Fri, 13 Dec 2024 09:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734080449; cv=none; b=asqnK+Zn5amid8J7tX56rq3PyTxlXBIXf4nHO67lwcfnPnAw6jSxqWOHlR6uuaIfv6MqRdmxfitl75l/yKFh+KxAOE+deOQHIgYz9u0NwTmDwl3HiPb4cHIcsEBz5aUyE5HnajiAOqg7H2o4PvvSvBD3NVpYC9l7p/7Ldlxyf5I=
+	t=1734080442; cv=none; b=LsHZR/MHiQNzDXlaDqtxQyDW5baC6UZVJp/xHXbnpijsPsCFDX8QvldiIZlCjtFLhmHSP4aFHKIA/q0s+BqZ25WpMzKjh1G9qK6Yd9jeni3pcooYSZnLOapy5zZCY1PQRqtCIQV5GpKkRN4Co4tsGuXDSRCCAdnCGgeLtL034iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734080449; c=relaxed/simple;
-	bh=UQ+8aHJUcjMQiO57HSnFD5XExWuUx07RfA4t96YqoqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ANNq6z1+QthjzXB0s8Cc1YcxW6fhm8FvOuExQAxCI/HaxcFPzCCKQWiTpIUi2BCN5Fz3DxWoTNkd8OFMA81sS+rArPQsuXq7wuoh7rYGWaVb8ZUtNWphxMs0cYDmHbNQQMY1hj+0DvdFHZVZc2jcXN8US4pvGy2bIJ4udXZWwGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MY74L7O6; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4afd56903b7so357149137.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:00:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734080446; x=1734685246; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7S8rKd6xTzHInUsx0i7mn+ATlyAHGgIqNuk8MtwP4HM=;
-        b=MY74L7O6jQ5QEXZ+cf8O2vQbJ9WA+Gmi0IjAARZk817hPYrfP+nC2kXD5VPCIGMCqo
-         9VLxqOfLx2/RD5HCXoMPzGlJvJbj7g8WjBbjNfhi+dLWtP58Z9+O7S4VMUakiMLZB3SA
-         /zxLEWcUdywbODwTXNstJ1OKiDPPDItVGuQQhYKryDSmgBKQa5OwQ87w107sNxvwYBCZ
-         zP6OYlZzDByJvEBsuq5yTeoA+aS8lM7rqcAYfxPdVVOTYgNgJTO4Q2IAjbQwexdN19eZ
-         PzOg/gI/X2QwEOyQ4lZ5+PNsx5UCE6PwY0WBqCY7H64yW6yuwiYJZgZVUJCR282RK9lw
-         FNVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734080446; x=1734685246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7S8rKd6xTzHInUsx0i7mn+ATlyAHGgIqNuk8MtwP4HM=;
-        b=sG7Gr+Z5z/GUYjpyRVvg3A04kVCRE3pD47lKMzVqN//xM3g7nkVA7ijHyTlRXsBY4q
-         lhN14WmqGijGiFOkt1hkWsd+5WJjy3aJgd/QTa3xixSSS9X+vzzIzTRHWQG6y9GvrDEG
-         1Qscm37/wHtsVCaKWyUJ826IDSI26wxAd0AlNWmNzaidfbf/Gi44Xr5H3J20oQ4UzcHe
-         EK63qP9uEUSYNvaLopwG8ECHoO5qXGVfzweiNdRnTM9gB3Ds+sFAbffJowdx17jVIlwp
-         mjq6hI0E/qSk0sVr9DIZK/WbekH835MPrDDmqZ3JutfTZuTBDlR9xcuSXlRtD8T+F891
-         GO+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXV/7zYB5Z68L5IWTCd7jwpZIyzBdHWFTJGFRWYLjL9n2qmqFwU2/0UHICiL07XzCiuvhbVtwCWwWbSC0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc+3nRZcBDEONYxSVYCecjaitCgL55omzUILzmoOVIPjWVwKrJ
-	1tfBcZAUxvNXkj9jfeyU4zZzmlW7Pi8YXvczdEeV03STIJkyzk2Ivskc6+Cr+5Xy4QIw4inoQrC
-	t4Oulyxs4POVOEP0LtvX9xgvd1tZz9A7x5XwM
-X-Gm-Gg: ASbGncsuwCMTRoFdHDMp5/I6wDtqQcExfgbRi99sPyV6wDOdmQdAUiyQfS/eTpmvc7o
-	fEQWOPQNv99vQGBnvcvDQ+NCIqnwFsb4MgAZIWJu/+dtZ+lGAiyJxIqs3jO+YpTxLsydgJFU=
-X-Google-Smtp-Source: AGHT+IGvIL7GeKBjvBibiHP25Ku4VYCRKfZwOfk2g/lgbZa8LVfQVHPh0FwCpC8H5G2Ipv/oimRJCI9zQnuFNGZDzH0=
-X-Received: by 2002:a05:6102:8099:b0:4af:5f65:4fd3 with SMTP id
- ada2fe7eead31-4b25d96b9e9mr1882465137.6.1734080446319; Fri, 13 Dec 2024
- 01:00:46 -0800 (PST)
+	s=arc-20240116; t=1734080442; c=relaxed/simple;
+	bh=UZNnvkExZ7zuNWaU7B62b6NVp5W1UDxqMDFQPWrdMNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cZTjuowjZU362wbcoCpMowSnmdZq5FnZTf0cWY9R3ilqHmjyxAXuHrC1RKjCgHcX0J+HyJnASSPzeIk16er0JPkh+KXzyQDGEw+c+hTkToSi11gvIMEiS9LQ+H+SIUgXaC9Ww/Ib71Az0Gw4CAdvHTQ3UPxwwjZbFbRVZM/xnAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tu3CVgZ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1483BC4CED0;
+	Fri, 13 Dec 2024 09:00:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734080442;
+	bh=UZNnvkExZ7zuNWaU7B62b6NVp5W1UDxqMDFQPWrdMNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tu3CVgZ7Evx65zdlJIl6G5/MMh2qarRbd3z04tzbrsCpbGdLQa1u6fA03CqtffY5W
+	 M7DHizrDUsVE+I5SWcKYFXNU8WreOHFHHlhme/EPcRvxgKyXwfc6qJEQi7rUQ6yUg5
+	 qKsU7sxtmvLZwl4ok5Usp55BQjpilrE3ScCVzRJapMqWTBX5nOBW9JV6Wedic77X97
+	 Recwh/XqSqLhnvDKEKHWLCjrrKPyXn/r+wI7Ci3zEv2UUcQ1c+GX1kQKoq5t5K674l
+	 cOvtmFpm3hYZVoO2RE65Z5Q57F39i+K5G9iTTZHqFacYKFOgCJgWsW1XjDT8vhbK+J
+	 cvmFlVsNO8LgQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tM1XR-000000000mJ-2S3o;
+	Fri, 13 Dec 2024 10:00:46 +0100
+Date: Fri, 13 Dec 2024 10:00:45 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, stable@vger.kernel.org,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v2] usb: typec: ucsi: Set orientation as none when
+ connector is unplugged
+Message-ID: <Z1v3ve3M3s8cmGhA@hovoldconsulting.com>
+References: <20241212-usb-typec-ucsi-glink-add-orientation-none-v2-1-db5a50498a77@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211105315.21756-1-lorenzo.stoakes@oracle.com>
- <CABi2SkXTSi8HKTyE1WoL3qqOTk4KDnF1-RkSOX+ne=cEFJL4qg@mail.gmail.com>
- <a2c43cfe-5c99-481a-b599-fca8b4fe1e38@lucifer.local> <CAOUHufYCF0i_aJZPceMXfcTZUcZsCY9fBuMr=25q1bROWx5nsg@mail.gmail.com>
- <e3a61eb1-2224-4700-8df2-28a93e2aa1a6@suse.cz>
-In-Reply-To: <e3a61eb1-2224-4700-8df2-28a93e2aa1a6@suse.cz>
-From: Yu Zhao <yuzhao@google.com>
-Date: Fri, 13 Dec 2024 02:00:09 -0700
-Message-ID: <CAOUHufYSQFNS16YBe1W=ZpxzT0r5yKLj-56az+fpioGf2BqWsA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: update MEMORY MAPPING section
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jeff Xu <jeffxu@chromium.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Jann Horn <jannh@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241212-usb-typec-ucsi-glink-add-orientation-none-v2-1-db5a50498a77@linaro.org>
 
-On Fri, Dec 13, 2024 at 1:25=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 12/13/24 06:50, Yu Zhao wrote:
-> > On Wed, Dec 11, 2024 at 11:57=E2=80=AFAM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> >>
-> >> > I'd like to be added as a reviewer on mm/mseal.c.  Is there any way =
-to
-> >> > indicate this from this file ?
->
-> I don't think the format and tooling supports adding a reviewer for a sin=
-gle
-> file out of a subsystem. mm/mseal.c would have to be an own subsystem, or
-> Jeff would be indicated as a reviewer for whole memory mapping.
->
-> >> This is something we can consider in the future, sure.
-> >
-> > What'd be the downsides of having an additional reviewer?
->
-> General answer to general question: being R: means 1. getting email for
-> patches touching the files (if people use tooling properly, sigh). This c=
-an
-> be also achieved on the receiver wised by e.g. the lei tool.
-> 2. being perceived as an authority for people sending patches, some of th=
-em
-> not being familiar with the subsystem and the people working on it.
+On Thu, Dec 12, 2024 at 07:37:43PM +0200, Abel Vesa wrote:
+> The current implementation of the ucsi glink client connector_status()
+> callback is only relying on the state of the gpio. This means that even
+> when the cable is unplugged, the orientation propagated to the switches
+> along the graph is "orientation normal", instead of "orientation none",
+> which would be the correct one in this case.
+> 
+> One of the Qualcomm DP-USB PHY combo drivers, which needs to be aware of
+> the orientation change, is relying on the "orientation none" to skip
+> the reinitialization of the entire PHY. Since the ucsi glink client
+> advertises "orientation normal" even when the cable is unplugged, the
+> mentioned PHY is taken down and reinitialized when in fact it should be
+> left as-is. This triggers a crash within the displayport controller driver
+> in turn, which brings the whole system down on some Qualcomm platforms.
+> Propagating "orientation none" from the ucsi glink client on the
+> connector_status() callback hides the problem of the mentioned PHY driver
+> away for now. But the "orientation none" is nonetheless the correct one
+> to be used in this case.
+> 
+> So propagate the "orientation none" instead when the connector status
+> flags says cable is disconnected.
+> 
+> Fixes: 76716fd5bf09 ("usb: typec: ucsi: glink: move GPIO reading into connector_status callback")
+> Cc: stable@vger.kernel.org # 6.10
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> Changes in v2:
+> - Re-worded the commit message to explain a bit more what is happening.
+> - Added Fixes tag and CC'ed stable.
+> - Dropped the RFC prefix.
+> - Used the new UCSI_CONSTAT macro which did not exist when v1 was sent.
+> - Link to v1: https://lore.kernel.org/r/20241017-usb-typec-ucsi-glink-add-orientation-none-v1-1-0fdc7e49a7e7@linaro.org
 
-I think you are saying 1 & 2 above (the meaning of being R) can lead
-to the following?
+Thanks for the update.
 
-> This is
-> why it could be counter productive to be given out to just anyone who ask=
-s.
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-I understand the words, but I still don't see the logical connection.
-Also, Jeff is not "anyone", and I'm not sure why he can't be
-"perceived as an authority" on mseal.
-
-Anyway, I would encourage more technical contributions rather than
-"administrative" barriers.
+Johan
 
