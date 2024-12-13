@@ -1,83 +1,169 @@
-Return-Path: <linux-kernel+bounces-444682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC199F0AEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:26:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140A89F0B66
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:37:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 699A2280A46
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DA9188388D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16131DE8B9;
-	Fri, 13 Dec 2024 11:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVXYSFgH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29451DFE36;
+	Fri, 13 Dec 2024 11:35:32 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B201DE4E5;
-	Fri, 13 Dec 2024 11:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6AE1DE899;
+	Fri, 13 Dec 2024 11:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734089206; cv=none; b=Ejy9MukmhI2derRk9M1Hy+EhO4LdowmKYbxQ6pgfKavJoaZ3mHA1PMqW9QbcKhGCqHO1/l1/0Xjd7dkfxmexM1Q1x1r7mDGVroH88MsEAUDsPSSZPe6No2YcFOD933NTzq14yOr76wxDyF5S4Rqhd01TJU9hp+4TePF7LkMOX0E=
+	t=1734089732; cv=none; b=FOldc7ORvXSsrLJ9n2QzKVbrOhhd0jpS3zSFx2qx79WBMtVsxR6qUX7/dClJxIpuFbNDrhcUuBMtoycQppL57t7e0AI5vpo6c1RiKpRjzwKWhddxc2VxaMrAOUO9OA44S3R4NyrYzvwnWPCMQfsndYIS5BGr0q4OUkQM73/PSDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734089206; c=relaxed/simple;
-	bh=2ZWKisQ+EEB8m0h3GAkTv+JQi+wBMeB7ciblXjMimiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mF93TkWuYux2W87w+kwlw4QuLBj8EMTJPggXlyvMwJU0djyggAbh2BazyKuhSc/O5EsLIP7NLcLqIQZAbBZfWmUKeZX9NvQ/AB5etD1vZZHsnnbwfRAXCyJfq6yvZt0a6iK8cCy86+lGAYNtaFB4CXmvgXhSdekSpESC32i5PAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVXYSFgH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB8C9C4CED7;
-	Fri, 13 Dec 2024 11:26:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734089205;
-	bh=2ZWKisQ+EEB8m0h3GAkTv+JQi+wBMeB7ciblXjMimiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bVXYSFgHoO6t7rLpP6A6u2dYAlhDxrMCikGN5orngiMgrhHut+o1EJ0jmXdrHDWtx
-	 lSagyW6vbzbaNRgJJZWQBmUFq79CM9u9W3E5BLzZ5nJgpEH0Pjmh82YLpoEfhh31JB
-	 C+gVhj6N9isYQxuUOC6RgtykYIggJSIjVKBpQX+Hgbxy8eRXVv70ZwqGFBExs1ofYz
-	 uQEKJplvDt9jDpJPvTZg/zO22TtOzeKil0eG5H2Rv3OlUSuubeP3685iVFPDYmfV+T
-	 oHnDGf0T6EeV7UWJ9Dc+pOlS9YQxKkyFLiguQvREPUbhll/Jw2ie0GacqZilNRPSH6
-	 JxqYDEXoUg/Mw==
-Date: Fri, 13 Dec 2024 11:26:41 +0000
-From: Simon Horman <horms@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net-next] ethernet: Make OA_TC6 config symbol invisible
-Message-ID: <20241213112641.GM2110@kernel.org>
-References: <3b600550745af10ab7d7c3526353931c1d39f641.1733994552.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1734089732; c=relaxed/simple;
+	bh=sQUCe9J8BdQtIT92lnvd4wAHr/Zh7afIUFCoH8PFptw=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=U10yTwTpGxA5LPcVZpHJl+qfyf3jh23MkpLeJEu4qDbTedK7yxVKOH9O5mOvXuxj2y2qgck5elTLPb1jRsP0Zwho8nrzSv5dATZllwJeAKmHJjM+DqGNfryRZ5VOsW9df/sM4HLy7LALTNVU3/EczHK8yZdKpDbuXJT5pTh8XqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxde.zte.com.cn (unknown [10.35.20.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Y8nB82zcMz1DDT;
+	Fri, 13 Dec 2024 19:27:28 +0800 (CST)
+Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mxde.zte.com.cn (FangMail) with ESMTPS id 4Y8nB30nMdzBRHKP;
+	Fri, 13 Dec 2024 19:27:23 +0800 (CST)
+Received: from mxct.zte.com.cn (unknown [192.168.251.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Y8n9t1DG0z5B1KQ;
+	Fri, 13 Dec 2024 19:27:14 +0800 (CST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Y8n9d6Whmz50FXL;
+	Fri, 13 Dec 2024 19:27:01 +0800 (CST)
+Received: from njb2app06.zte.com.cn ([10.55.23.119])
+	by mse-fl1.zte.com.cn with SMTP id 4BDBQvZo004681;
+	Fri, 13 Dec 2024 19:26:57 +0800 (+08)
+	(envelope-from jiang.kun2@zte.com.cn)
+Received: from mapi (njb2app05[null])
+	by mapi (Zmail) with MAPI id mid204;
+	Fri, 13 Dec 2024 19:27:00 +0800 (CST)
+Date: Fri, 13 Dec 2024 19:27:00 +0800 (CST)
+X-Zmail-TransId: 2afd675c1a04ffffffffc14-1f4ed
+X-Mailer: Zmail v1.0
+Message-ID: <20241213192700771XKZ8H30OtHSeziGqRVMs0@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b600550745af10ab7d7c3526353931c1d39f641.1733994552.git.geert+renesas@glider.be>
+Mime-Version: 1.0
+From: <jiang.kun2@zte.com.cn>
+To: <bsingharora@gmail.com>, <akpm@linux-foundation.org>, <david@redhat.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-doc@vger.kernel.org>, <wang.yong12@zte.com.cn>,
+        <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
+        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
+        <zhang.yunkai@zte.com.cn>, <ye.xingchen@zte.com.cn>,
+        <xu.xin16@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHRdIGRlbGF5YWNjdDogdXBkYXRlIGRvY3MgYW5kIGZpeCBzb21lIHNwZWxsaW5nIGVycm9ycw==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 4BDBQvZo004681
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 675C1A1F.000/4Y8nB82zcMz1DDT
 
-On Thu, Dec 12, 2024 at 10:11:43AM +0100, Geert Uytterhoeven wrote:
-> Commit aa58bec064ab1622 ("net: ethernet: oa_tc6: implement register
-> write operation") introduced a library that implements the OPEN Alliance
-> TC6 10BASE-T1x MAC-PHY Serial Interface protocol for supporting
-> 10BASE-T1x MAC-PHYs.
-> 
-> There is no need to ask the user about enabling this library, as all
-> drivers that use it select the OA_TC6 symbol.  Hence make the symbol
-> invisible, unless when compile-testing.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Target at net-next instead on net, as suggested by Simon,
->   - Replace Fixes-tag by description, as suggested by Simon.
+From: Yaxin Wang <wang.yaxin@zte.com.cn>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Update delay-accounting.rst to include the 'delay max' in the output
+of getdelays, and fix some spelling errors before.
 
+Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
+Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
+---
+Some fixes according to:
+https://lore.kernel.org/all/20241203170816.3fe81941fe1866ca1672eba8@linux-foundation.org/
+1.fix some spelling errors
+2.update Documentation/accounting/delay-accounting.rst
+
+ Documentation/accounting/delay-accounting.rst | 42 +++++++++----------
+ kernel/delayacct.c                            |  2 +-
+ 2 files changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/Documentation/accounting/delay-accounting.rst b/Documentation/accounting/delay-accounting.rst
+index f61c01fc376e..8a0277428ccf 100644
+--- a/Documentation/accounting/delay-accounting.rst
++++ b/Documentation/accounting/delay-accounting.rst
+@@ -100,29 +100,29 @@ Get delays, since system boot, for pid 10::
+ 	# ./getdelays -d -p 10
+ 	(output similar to next case)
+
+-Get sum of delays, since system boot, for all pids with tgid 5::
++Get sum and peak of delays, since system boot, for all pids with tgid 242::
+
+-	# ./getdelays -d -t 5
++	bash-4.4# ./getdelays -d -t 242
+ 	print delayacct stats ON
+-	TGID	5
+-
+-
+-	CPU             count     real total  virtual total    delay total  delay average
+-	                    8        7000000        6872122        3382277          0.423ms
+-	IO              count    delay total  delay average
+-                   0              0          0.000ms
+-	SWAP            count    delay total  delay average
+-                       0              0          0.000ms
+-	RECLAIM         count    delay total  delay average
+-                   0              0          0.000ms
+-	THRASHING       count    delay total  delay average
+-                       0              0          0.000ms
+-	COMPACT         count    delay total  delay average
+-                       0              0          0.000ms
+-	WPCOPY          count    delay total  delay average
+-                       0              0          0.000ms
+-	IRQ             count    delay total  delay average
+-                       0              0          0.000ms
++	TGID    242
++
++
++	CPU         count     real total  virtual total    delay total  delay average      delay max
++	              239      296000000      307724885        1127792          0.005ms     0.238382ms
++	IO          count    delay total  delay average      delay max
++	                0              0          0.000ms     0.000000ms
++	SWAP        count    delay total  delay average      delay max
++	                0              0          0.000ms     0.000000ms
++	RECLAIM     count    delay total  delay average      delay max
++	                0              0          0.000ms     0.000000ms
++	THRASHING   count    delay total  delay average      delay max
++	                0              0          0.000ms     0.000000ms
++	COMPACT     count    delay total  delay average      delay max
++	                0              0          0.000ms     0.000000ms
++	WPCOPY      count    delay total  delay average      delay max
++	              230       19100476          0.083ms     0.383822ms
++	IRQ         count    delay total  delay average      delay max
++	                0              0          0.000ms     0.000000ms
+
+ Get IO accounting for pid 1, it works only with -p::
+
+diff --git a/kernel/delayacct.c b/kernel/delayacct.c
+index d64ad2a48b4f..23212a0c88e4 100644
+--- a/kernel/delayacct.c
++++ b/kernel/delayacct.c
+@@ -93,7 +93,7 @@ void __delayacct_tsk_init(struct task_struct *tsk)
+
+ /*
+  * Finish delay accounting for a statistic using its timestamps (@start),
+- * accumalator (@total) and @count
++ * accumulator (@total) and @count
+  */
+ static void delayacct_end(raw_spinlock_t *lock, u64 *start, u64 *total, u32 *count, u64 *max)
+ {
+-- 
+2.25.1
 
