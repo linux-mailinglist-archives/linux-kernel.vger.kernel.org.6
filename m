@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-444373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748DD9F05D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:54:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BFE9F05D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:56:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86ABB16A2BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:54:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE733283F62
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27C519CC21;
-	Fri, 13 Dec 2024 07:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845F719CD08;
+	Fri, 13 Dec 2024 07:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4SJm+f3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwBYMH9n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405C21F95E;
-	Fri, 13 Dec 2024 07:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6C9192D9D;
+	Fri, 13 Dec 2024 07:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734076459; cv=none; b=eySZRT97kCIYRra7zvMXvMCqTcK6jkzzONVRlAhUEgaN96picHK/UzVvlBoa1rHcysQvN0I0tBx4FR57wx6TTxfeHUop2yJztlgyy7YGv3VXiwvHOGwwj2MhiJ6O7OxB+et639xT2lksRrqu6o1lLxPtVVDzuFdsaNfBZwZQrsY=
+	t=1734076574; cv=none; b=IjZTwIvwkcZv5FH80qcams5m7VB7OY7GnmgCg29pnJ4xNuvBquJ9DYmuQ02Qw7ZON9xvmn7a1a01nt+bL1vVuHsCn5LI3HZiYBm5W3AqkEbOV7qMJGgnWzqk1uW5l0NS3mwK0ibPDRfnH+WuTYj88r4EesRvI3mop0d70uLMkZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734076459; c=relaxed/simple;
-	bh=6kJQZwMumhwRYNcj/Z3DSEK4rvPl4raB4PSzTVGqE/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h9J70t0W6epZwm9cLe3/VvrYgck4huBlLUSMI1cOJaKabNZzfIHFJJiV0krTEyVhJonFV9k0QgvMtpNkysa8diKWqrgSQtnt537GiHxzizxOh5Phiqms2CyiPhz7yifEK2CkjskW8axgwW2tlQlhkAsVRw7VGKmg3h4Xv3cxN4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4SJm+f3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1546C4CED6;
-	Fri, 13 Dec 2024 07:54:14 +0000 (UTC)
+	s=arc-20240116; t=1734076574; c=relaxed/simple;
+	bh=hOvik/xLMeZGVKLpPOX0ZfkoCRuOe0+n3RqrbLlA+sM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=p+JL7nBVxYhAT+0l190CLIrlsi7VS8ot7gILfg59Fvskj6tGj9/CTT5fBiqK0P3ScE3PCqqCcpHmoAZ8NYGN+E0rfD5aXwq3OkU6AQMSfhptroKvKHmRlR0Eiu0jpVt+fU3Lz+EbeDWdH4a+O84I+QVndCmEBqSTyi+0RUK00XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwBYMH9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CFADC4CED0;
+	Fri, 13 Dec 2024 07:56:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734076458;
-	bh=6kJQZwMumhwRYNcj/Z3DSEK4rvPl4raB4PSzTVGqE/k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U4SJm+f36j1aUjDnpyBWvEhYhIk4Djn+o72TDoiQTIIyBt6Vop/n+dzdoVhdAVYfX
-	 Fub2Mqg2wKbtJ32LxUl+dkV/VMxjIRaDX5nJFQsQWk9ovgW8KJ1VFE9OTN6R/CvkHe
-	 UVCFWHYaLy9kR73uP7MNONA3ve8p5cs/mF0DKM+WL2kY8WDCASkTr4Bo2Gz+YDJ8HE
-	 kN4M9EyZOdDiKRPZRDp3sXkT29O2H6NnrhNYeEb3ZNlwgvCI4SzwsnN7WUREuPEigG
-	 dw/xO/VXuCyRKx7pevkkH9jroYthbVmHouLqRJSLzfkSZa5OIgpWD2blblmqEsObia
-	 9Yx8deZJaquGQ==
-Message-ID: <5770256d-0227-423d-9b6e-4db834284552@kernel.org>
-Date: Fri, 13 Dec 2024 08:54:12 +0100
+	s=k20201202; t=1734076573;
+	bh=hOvik/xLMeZGVKLpPOX0ZfkoCRuOe0+n3RqrbLlA+sM=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=BwBYMH9n8F+NgtQxz92WnA4jRMRy6UvJdJCb2pxuk9jzGczJ3gBvPWlCtcRyNRzOm
+	 kuHNCDNyfTd+b0dPlkge+opZNo3Z0pczZiDL6SzIetkWEJ3fdnse5j5HQsJvUPHLvS
+	 Pk6atADnpjJdZKVc8kUS+SDbPIiGiSmlLxr4mzyHL0reIr0dLIuP20W7tny+LgvWEN
+	 9u0OGwEXPUG696eLeHUDyTI1e7wg5M6osqvv1xK5LO6Msta4YNkJKnxwTz7N/8qFua
+	 InYsnetroicK78/C86PsEMr8kFGP1BY986ueYikbaMVBZYQGXX3oleV1o8XQIXW699
+	 Wzq24lDa9KRBQ==
+Message-ID: <7aaeacd1-ecff-49ad-828c-1dcb22d11f05@kernel.org>
+Date: Fri, 13 Dec 2024 08:56:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: Add support for secondary USB
- node on QCS615
-To: Song Xue <quic_songxue@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com,
- Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-References: <20241211-add_usb_host_mode_for_qcs615-v2-0-2c4abdf67635@quicinc.com>
- <20241211-add_usb_host_mode_for_qcs615-v2-1-2c4abdf67635@quicinc.com>
+Subject: Re: [PATCH v3 1/6] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, tglx@linutronix.de, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, olof@lixom.net, quic_bjorande@quicinc.com,
+ geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
+ konradybcio@kernel.org, neil.armstrong@linaro.org, johan+linaro@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ soc@lists.linux.dev
+References: <20241212155237.848336-1-kevin_chen@aspeedtech.com>
+ <20241212155237.848336-2-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,28 +106,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241211-add_usb_host_mode_for_qcs615-v2-1-2c4abdf67635@quicinc.com>
+In-Reply-To: <20241212155237.848336-2-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/12/2024 09:26, Song Xue wrote:
-> From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> 
-> Add support for secondary USB controller and its high-speed phy
-> on QCS615.
-> 
-> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> Co-developed-by: Song Xue <quic_songxue@quicinc.com>
-> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
-
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-
+On 12/12/2024 16:52, Kevin Chen wrote:
+> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+> ---
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
 
 Best regards,
 Krzysztof
