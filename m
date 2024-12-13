@@ -1,107 +1,131 @@
-Return-Path: <linux-kernel+bounces-445485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03FD9F16E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:58:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADCF99F16E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C090F1613A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDBF9160FFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB71D1922E0;
-	Fri, 13 Dec 2024 19:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840161953A1;
+	Fri, 13 Dec 2024 19:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TaHdHK6B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DN1ghPuZ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136861917FF;
-	Fri, 13 Dec 2024 19:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188C219343E;
+	Fri, 13 Dec 2024 19:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734119725; cv=none; b=J2qWkZ1XrLrd/sowlTGWuEXl+3pQzkqtZenO32UXBWNRI3TvR7D2VHKHj9qkCvEqxIPYmIOwdEawqHq7LgNPWFiV75acWzClE+hrs9nkUk6kH2RKJf+vO8xKYUpHeQvTnNwW72WdLDSbVyXd5K5LVx8wYifoLlVLcw/70DQPcDE=
+	t=1734119751; cv=none; b=EQAWGpiJsPfqbFr8gMVmhL/irWT0RwjgMjwAbUosUGKss35VPT0AbqvI8bDOVpGo95RffNYXanqmE9z2VEvLiH5cpJzig0qzC89gbwpg5fpe0exf5ecdu7o4oD2bpLnpXgxEtkPYwDwHt4vzsfeHBzOhriLg5cszAjA4kySqJ1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734119725; c=relaxed/simple;
-	bh=O1BrkSmk15lfmBVgBcoXh74LUiTwTfwBVZuenj4XM74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U3XAGAwUCJCccnG1YzlMHNKqpqYKdI9yB3um8z3tYAFMLX3gVwfLpQOO4jcdl74wM7X6fLOIV0YJ9IUB1v6EDYJwxKiyPCJEwoOl2RyiyH7NPi693DVOkXyKTOiPD3/xu2EejgF4DOr4ieKX9D5cH2hdkYniSaAsBl3McgK4erw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TaHdHK6B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00C9CC4CED0;
-	Fri, 13 Dec 2024 19:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734119724;
-	bh=O1BrkSmk15lfmBVgBcoXh74LUiTwTfwBVZuenj4XM74=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TaHdHK6B1DCufyEl2iAShSF/v/+Cyp43l+adxbybOUhwGP2w8GIEyB7hftWtvKql6
-	 Ej7FF3WagXVQ/jU6aM5FTlQUbcxB31DdevD6Cx2LOgaKOMAhmEZdvE3eOB47COLWPM
-	 K5LcQnafS5kxGIyQJspmn0DjCDc2fTlx+T7E6WC0En07f7w8662QJ3vldTbZnVMrTB
-	 a7JKyYhH4weUN+63W3n627gcIDF2iQLhBOvuYe6PSPxBbTME8w+eAjvitOnDuH4pfL
-	 0pbVa0+V+BiQHDl+JxHawyovAewiEsJ9LDjyblKeQNAHiQm6medkNE/TtMu4M++JcG
-	 LiYLPC/vfI0JQ==
-Date: Fri, 13 Dec 2024 16:55:21 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	eranian@google.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	santosh.shukla@amd.com, ananth.narayan@amd.com,
-	sandipan.das@amd.com
-Subject: Re: [PATCH v3 09/10] perf test: Introduce DEFINE_SUITE_EXCLUSIVE()
-Message-ID: <Z1yRKdo3JpQ9KPe-@x1>
-References: <20241210093449.1662-1-ravi.bangoria@amd.com>
- <20241210093449.1662-10-ravi.bangoria@amd.com>
+	s=arc-20240116; t=1734119751; c=relaxed/simple;
+	bh=+KRdWhBI/XFCe/JTS96b+IvaX1dOBdGzJmDIw06LNtA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=C4ZFu6MmSkLPdN/d1y3P52TKGw0yynROY6ml/uiG8UIlegqejq43Ws61AZs5s6fT0nFN4wviap7cl9zCZT1ZVXf+XeV0UwDrALkc/8adq7TcPd9gE57EeLK5kjnRg/FrkK9ZZ83buoBCixjQrQfMeCtFvCEHGXETJ3U7LFh9/Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DN1ghPuZ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734119748;
+	bh=+KRdWhBI/XFCe/JTS96b+IvaX1dOBdGzJmDIw06LNtA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=DN1ghPuZK4AcoV3ThZi9i7ek07FwipuSR9QNBXGCzem37BYSh/Xp6RYnKQd/BTRlg
+	 FQV1sxoJ5bO9cgE+tugtjc4FT1+pR4iMvVbkCQFCXL3AQG8tdZ58rJ9c5aCywmHqkN
+	 TrpdRrpcIS+Xz8FCnkh9ve6QBcS0mMdjv4m+oya0l/0lFxuHu+09HIYIixQuZ17+VT
+	 +s2TPOAHavNTCNjE0VDVqqk+Sss/RvhbfpmUL0bv44koA9VTDY3BVxNNgzKeOeGfyH
+	 QLni82PoV/1cOTFxm47GB+kDbTJoEVTHZcxHj6/XbuJT4hphkzLcwl6Evou++zo7IB
+	 aspVGp8tB0MJQ==
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::7a9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E093117E37F5;
+	Fri, 13 Dec 2024 20:55:45 +0100 (CET)
+Message-ID: <c7630341600fa157265459f5fac49ec74c013ca7.camel@collabora.com>
+Subject: Re: [PATCH v1 5/5] media: chips-media: wave5: Fix timeout while
+ testing 10bit hevc fluster
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
+	hverkuil-cisco@xs4all.nl, sebastian.fricke@collabora.com, 
+	bob.beckett@collabora.com, dafna.hirschfeld@collabora.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
+	nas.chung@chipsnmedia.com
+Date: Fri, 13 Dec 2024 14:55:44 -0500
+In-Reply-To: <20241209053654.52-6-jackson.lee@chipsnmedia.com>
+References: <20241209053654.52-1-jackson.lee@chipsnmedia.com>
+	 <20241209053654.52-6-jackson.lee@chipsnmedia.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210093449.1662-10-ravi.bangoria@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Dec 10, 2024 at 09:34:48AM +0000, Ravi Bangoria wrote:
-> A variant of DEFINE_SUITE() but sets ->exclusive bit for the test so the
-> test will be executed sequentially.
-
-Cherry picking this one as I need it for some other work.
-
-Ian Rogers pointed me while reviewing.
-
-- Arnaldo
- 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> ---
->  tools/perf/tests/tests.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+Le lundi 09 décembre 2024 à 14:36 +0900, Jackson.lee a écrit :
+> 521C Wave5 variant does not support 10 bit. When 10 bit support for 515
+> variant was added, the code which returns an error was removed. While
+> testing 10bit hevc fluster on the 521C hw, timeout happened.
 > 
-> diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-> index cb58b43aa063..8aea344536b8 100644
-> --- a/tools/perf/tests/tests.h
-> +++ b/tools/perf/tests/tests.h
-> @@ -81,6 +81,16 @@ struct test_suite {
->  		.test_cases = tests__##_name,		\
->  	}
->  
-> +#define DEFINE_SUITE_EXCLUSIVE(description, _name)	\
-> +	struct test_case tests__##_name[] = {           \
-> +		TEST_CASE_EXCLUSIVE(description, _name),\
-> +		{	.name = NULL, }			\
-> +	};						\
-> +	struct test_suite suite__##_name = {		\
-> +		.desc = description,			\
-> +		.test_cases = tests__##_name,		\
-> +	}
+> Fixes: 143e7ab4d9a0 ("media: chips-media: wave5: support decoding HEVC Main10 profile")
+> 
+> Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
+> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+> ---
+>  .../platform/chips-media/wave5/wave5-vpu-dec.c     | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> index ce3fc47dc9d8..28462e01ca27 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> @@ -1406,10 +1406,24 @@ static int wave5_vpu_dec_start_streaming(struct vb2_queue *q, unsigned int count
+>  		if (ret)
+>  			goto free_bitstream_vbuf;
+>  	} else if (q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+> +		struct dec_initial_info *initial_info =
+> +			&inst->codec_info->dec_info.initial_info;
 > +
->  /* Tests */
->  DECLARE_SUITE(vmlinux_matches_kallsyms);
->  DECLARE_SUITE(openat_syscall_event);
-> -- 
-> 2.43.0
+>  		if (inst->state == VPU_INST_STATE_STOP)
+>  			ret = switch_state(inst, VPU_INST_STATE_INIT_SEQ);
+>  		if (ret)
+>  			goto return_buffers;
+> +
+> +		if (inst->state == VPU_INST_STATE_INIT_SEQ &&
+> +		    inst->dev->product_code == WAVE521C_CODE) {
+> +			if (initial_info->luma_bitdepth != 8) {
+> +				dev_info(inst->dev->dev, "%s: no support for %d bit depth",
+> +					 __func__, initial_info->luma_bitdepth);
+> +				ret = -EINVAL;
+> +				goto return_buffers;
+> +			}
+> +		}
+
+Let's take that fix for now, but consider filling some capabilities flag in the
+long term so as more variant get enable we don't endup with tones of
+produce_code == branch all over the place. Also, please send that one with 1/5
+and 2/5 seperatly (perhaps 4/5 too if applicable).
+
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+p.s. its better to split the obvious fixes that are guarantied to go quickly
+from very complex changes. Specially that these are important bug fix, where the
+other change is for performance improvement. This makes the maintenance of your
+driver a lot more responsive to major issues.
+
+> +
+>  	}
+>  	pm_runtime_mark_last_busy(inst->dev->dev);
+>  	pm_runtime_put_autosuspend(inst->dev->dev);
+
 
