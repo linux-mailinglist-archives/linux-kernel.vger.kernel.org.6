@@ -1,153 +1,244 @@
-Return-Path: <linux-kernel+bounces-445057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121509F1087
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:13:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BCDE9F107E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:12:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF971884CF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B9941686FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982F01E22E2;
-	Fri, 13 Dec 2024 15:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EF91E231A;
+	Fri, 13 Dec 2024 15:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgg8RGr8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WJFtKA1K"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07AA1E1020;
-	Fri, 13 Dec 2024 15:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E961E102E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734102626; cv=none; b=MZHlCr9Uv3RgiVVIgYKFCE/+H6Ha71D4jsxqF6ropoilH3sPqWtlgLnyK035mBaB0YHJv79cu0cFQYYk9q0TyopWf2ai+lxBYUVfjSG63K4ulo22Pm/PoTK/O06NKT+ZBT2/KehSQsJ60SSumINDEm1ahWz0giscIXtYI1NpGg4=
+	t=1734102637; cv=none; b=jZ1ZlMRjswBGxkzGa4jnYmwoI09NLVXTpM7hS5qDvYr9UAQnvFc5rmAL+0iF3wio1wBDb5qbpAPlHkdezIc1EFwhvVNfLqq7KvkTLlvOzuRPJVAqmDQENPuPPqs1/qrTJg3ZrRZXBFqVvNKeQ4B4O2Rg5A64xgyTsG7soqmxnxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734102626; c=relaxed/simple;
-	bh=7rGYYKks2MEAi+q8RZqhrYRZGipLH9Pjib1jzgb/fXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VQxwzZhC4s0Qm1Jvts0aYTMZR9OcKYC+/5m+/fSXEDLRn/YUjV/dmNB1LQ/gBbmQTk+DOaMmdVVWO+RoSlWwkdpM89dhra6CQzsyCWV9191WkIwuhjnddihRANCOiJmewgI0A9rlhFYKEmuQ9O0cQjNUF+TuOFq62JQ/HLhus1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgg8RGr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4B1CC4CEDE;
-	Fri, 13 Dec 2024 15:10:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734102625;
-	bh=7rGYYKks2MEAi+q8RZqhrYRZGipLH9Pjib1jzgb/fXk=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=mgg8RGr8gIjtj61OhTetZkA1d0aGvS4JT7KCZpCYNQDG2jzCy+Ml1Clx3hHlA9Y4G
-	 QCJloxPBQB4s7QSs3XFhkziBrVo5Ffrdgd6pFJ+yJ2zNSgfLXufwVxtcUwL77xoJCj
-	 deverJ7wwOzwL2dHfFG5PVjhNVFLRfCJwH8Edt5TUeJale+JlHUMxgBKvHaflnwH6k
-	 udpURyFhiZyNwh7lWWc9KXK6nTGPVX+q57g72weRLCs/k10h61sdyiKASYwmlv4Y9h
-	 bcNjNa9fZwDzjCZ+oFPobiKbhbplIHAhxhmoaGlNJ1ooQ+NqPjjYZZWazuubNdohWi
-	 wkp3WKBCh+bGQ==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso20763951fa.0;
-        Fri, 13 Dec 2024 07:10:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWzl3UxXsC+EmNlsKu9M7mAszZsOXF4oM224dIGw481/H/iYMqWKx05xokoBPtrkX6gjdoDjlj0@vger.kernel.org, AJvYcCXjzOW1AwLdceHW5A/0rP9WYQvjmzk7nc68H0KQ2es2cA/kQzr9qcxPdA4ihRaBQ5fRYS6mz/MD8qr/3rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNGx/frohKNuEDukx+qsTEDZyI26R/OY3u6GzWIFRL9i/+lRrN
-	hyZNhDck6v8q7Zb5b8nF4+LHF4f1BjMXdYstLsHO0IRFrRy2rgZh8i+e6tYQ58w7YGcmh9zfmMZ
-	D5CQP9/YbTW3GzLcqxKIg9i3Tofc=
-X-Google-Smtp-Source: AGHT+IGDFvr2zsjfqD8NaCsTVvFuyZlBxurx6y5trjl6JqR98HwSzgFaX+Zrs452OMiQuLpq6Zp9nyogMDd0TgQVXRI=
-X-Received: by 2002:a05:651c:1994:b0:300:3a15:8f19 with SMTP id
- 38308e7fff4ca-30254611fafmr13669331fa.32.1734102623974; Fri, 13 Dec 2024
- 07:10:23 -0800 (PST)
+	s=arc-20240116; t=1734102637; c=relaxed/simple;
+	bh=xSgxkdchTJyFCqqvoi9ov9RsXW8Hs0dq0bbwd76PbfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f48HEJliEhqvOVbh/h56OXLh2znO/BNlwWSDIwGvfVZtkXZXTOzC9earvIAIyo3iRkaYYGvZPFJPzTXoxtRlmr39ndpkwOYlwqVuj57/yCLRiVb4UmWNawDc2xJpm96qxTXZwEcuqDlvJL7yfsyRa2oDrvt6p1AFZ53MqyqY72c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WJFtKA1K; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734102634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6BEyRorFLWfoHHa/oesuugW/TqvR2Li1O4P72mmMm/o=;
+	b=WJFtKA1KOrQC3EjWl+Azfdb5uTP8/5x0EnVoFMGOy4UKYHpClszH2qm32hCDaJfQaQMLZd
+	E2bgT0uOHOK3Tg8a++/ajIwFUysQ3MvTGCGdhE3JfwTJUixyOstWWOhIiVrFwCPooZdTcS
+	StIy1cRpAXJbT0H5oSAyj8t/iJa51T0=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-190-o48Jw5ZMMs-r4AfHn1RlIA-1; Fri, 13 Dec 2024 10:10:32 -0500
+X-MC-Unique: o48Jw5ZMMs-r4AfHn1RlIA-1
+X-Mimecast-MFC-AGG-ID: o48Jw5ZMMs-r4AfHn1RlIA
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4678b42cbfeso38238761cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:10:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734102632; x=1734707432;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6BEyRorFLWfoHHa/oesuugW/TqvR2Li1O4P72mmMm/o=;
+        b=WskfKHw2NjoJ/ZCMKAoVmkO0qU5mWLgmwXpgZ+cy/RF8lAJkSDFeabZspMqAzoTqI6
+         FUOXHfOd2kNb5r+Tv/28S7S534GIoCPno/6Ig8fE9IYQ+5xavOReq0bcYK6aPcsBUy2y
+         kOA2vS/wVUcMCOnKvri9vgQbab/XQwbazCLjHMQ92s8rRAcRlzFscRRv+2MgxiwSYj/g
+         jRAC6MfjnJTjWafM8qW3lcXNW3rodGTohYEVJelI2Ueh8Xib7Ot6drf/35mpnyhQ99Pc
+         0xrnTfJZr2R6ULGBmn7YIIsAqT0/EhS5SMloEhnDLSqKDHyQsMjByRmboD3f7Egt9Xd1
+         ZFMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXwaRWjY0BaTd5iuouOtnIPNoYk0YSoidvwbS8AG6vG8eMgr1+m07T9DaGCRnCUhE2kpPnlB6DVx0qa68=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3qa06s0AwrjbWCsvnrrwC7PnFjwlobjPU/cQGWT8nTMj6Q4Ut
+	Tsjw6VSkbaIsZjcdPyfGiyav3/npO1Vw26TdmFNWo/FA1XTO5mb22cljctaZfjrxzOAv6HlvpOV
+	kAOeXpsOblTAzF3FoYtus2F6/wh6IhoOl9bbMvrj2ylK1xzU9Zn2lv3zQ5QcdbA==
+X-Gm-Gg: ASbGncth7kwY612vJ9VHglu2VUAdlWKJlpo1YLQb3TM32AfttSbWiu6Mk4lEM9RCvpw
+	GA+MmuA+xjvIuuKkMsRSVjz20IEKs1o55PyIFTLCPOPufy5VviPmR78q90xq+qTyUez1d5Cj0fS
+	GYsGqi/cph1w7f7NNx8EJe6jtmFNkWBh8x2v9xEzWwHLO2j2SWfuymU+NCyHmNvyFdafpkzmlK6
+	Xhkqj/HMZY5XagY7LKVN0Y54H/UBNURpmAYnDn72o3OA16eXn+97lY9MK4YVDJ8mJ3Xdy0m7OqQ
+	kVLFj+wiKRYa6tZkezzMD+mrIVcTGYIC
+X-Received: by 2002:ac8:580d:0:b0:460:9ac7:8fcd with SMTP id d75a77b69052e-467a57187fdmr52846201cf.1.1734102632390;
+        Fri, 13 Dec 2024 07:10:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGAC+FS+51MMmMCXEiGRCIxWdIv4Ie7rXV1jDHWY/BSX2ZUme69goy8f4oh8q1WbfMuFRI6jw==
+X-Received: by 2002:ac8:580d:0:b0:460:9ac7:8fcd with SMTP id d75a77b69052e-467a57187fdmr52845841cf.1.1734102631983;
+        Fri, 13 Dec 2024 07:10:31 -0800 (PST)
+Received: from sgarzare-redhat (host-87-12-185-21.business.telecomitalia.it. [87.12.185.21])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46776526082sm42161231cf.14.2024.12.13.07.10.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 07:10:31 -0800 (PST)
+Date: Fri, 13 Dec 2024 16:10:25 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Alvaro Karsz <alvaro.karsz@solid-run.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] vdpa: solidrun: Replace deprecated PCI functions
+Message-ID: <vr7gh5y7ooomyj6hazju7khcuyvw5qs2xjsybj33ztcim3vtc4@gdbozbxlcsi3>
+References: <20241211104704.208354-2-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213141037.3995049-1-maz@kernel.org>
-In-Reply-To: <20241213141037.3995049-1-maz@kernel.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 13 Dec 2024 23:10:11 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67vgoZr_1T579SrwG9UvNs0eRfT37Qk_g2k7Z-mRfEXNg@mail.gmail.com>
-Message-ID: <CAGb2v67vgoZr_1T579SrwG9UvNs0eRfT37Qk_g2k7Z-mRfEXNg@mail.gmail.com>
-Subject: Re: [PATCH] irqchip/gic-v3: Work around insecure GIC integrations
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Mark Kettenis <mark.kettenis@xs4all.nl>, Chen-Yu Tsai <wenst@chromium.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241211104704.208354-2-pstanner@redhat.com>
 
-On Fri, Dec 13, 2024 at 10:34=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrot=
-e:
+On Wed, Dec 11, 2024 at 11:47:05AM +0100, Philipp Stanner wrote:
+>The PCI functions
 >
-> It appears that the relatively popular RK3399 SoC has been put together
-> using a large amount of illicit substances, as experiments reveal
-> that its integration of GIC500 exposes the *secure* programming
-> interface to non-secure.
+>	pcim_iomap_regions()
+>	pcim_iounmap_regions()
+>	pcim_iomap_table()
 >
-> This has some pretty bad effects on the way priorities are handled,
-> and results in a dead machine if booting with pseudo-NMI enabled
-> (irqchip.gicv3_pseudo_nmi=3D1) if the kernel contains 18fdb6348c480
-> ("arm64: irqchip/gic-v3: Select priorities at boot time"), which
-> relies on the priorities being programmed using the NS view.
+>have been deprecated by the PCI subsystem.
 >
-> Let's restore some sanity by going one step further and disable
-> security altogether in this case. This is not any worse, and
-> puts us in a mode where priorities actually make some sense.
+>Replace these functions with their successors pcim_iomap_region() and
+>pcim_iounmap_region().
 >
-> Huge thanks to Mark Kettenis who initially identified this issue
-> on OpenBSD, and to Chen-Yu Tsai who reported the problem in
-> Linux.
+>Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+>---
+>Changes in v3:
+>  - Move __iomem *io declaration into the loop. (Stefano)
 >
-> Fixes: 18fdb6348c480 ("arm64: irqchip/gic-v3: Select priorities at boot t=
-ime")
-> Reported-by: Mark Kettenis <mark.kettenis@xs4all.nl>
-> Reported-by: Chen-Yu Tsai <wenst@chromium.org>
+>Changes in v2:
+>  - Fix build warning because of dead variable.
+>  - Make "bars_found" a boolean, since only true or false are relevant.
+>---
+> drivers/vdpa/solidrun/snet_main.c | 56 ++++++++++++++-----------------
+> 1 file changed, 26 insertions(+), 30 deletions(-)
+>
+>diff --git a/drivers/vdpa/solidrun/snet_main.c b/drivers/vdpa/solidrun/snet_main.c
+>index c8b74980dbd1..643e335f00f1 100644
+>--- a/drivers/vdpa/solidrun/snet_main.c
+>+++ b/drivers/vdpa/solidrun/snet_main.c
+>@@ -556,59 +556,58 @@ static const struct vdpa_config_ops snet_config_ops = {
+> static int psnet_open_pf_bar(struct pci_dev *pdev, struct psnet *psnet)
+> {
+> 	char *name;
+>-	int ret, i, mask = 0;
+>+	unsigned short i;
+>+	bool bars_found = false;
+>+
+>+	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-bars", pci_name(pdev));
+>+	if (!name)
+>+		return -ENOMEM;
+>+
+> 	/* We don't know which BAR will be used to communicate..
+> 	 * We will map every bar with len > 0.
+> 	 *
+> 	 * Later, we will discover the BAR and unmap all other BARs.
+> 	 */
+> 	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+>-		if (pci_resource_len(pdev, i))
+>-			mask |= (1 << i);
+>+		void __iomem *io;
+>+
+>+		if (pci_resource_len(pdev, i) == 0)
+>+			continue;
+>+
+>+		io = pcim_iomap_region(pdev, i, name);
+>+		if (IS_ERR(io)) {
+>+			SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
+>+			return PTR_ERR(io);
+>+		}
+>+
+>+		psnet->bars[i] = io;
+>+		bars_found = true;
+> 	}
+>
+> 	/* No BAR can be used.. */
+>-	if (!mask) {
+>+	if (!bars_found) {
+> 		SNET_ERR(pdev, "Failed to find a PCI BAR\n");
+> 		return -ENODEV;
+> 	}
+>
+>-	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "psnet[%s]-bars", pci_name(pdev));
+>-	if (!name)
+>-		return -ENOMEM;
+>-
+>-	ret = pcim_iomap_regions(pdev, mask, name);
+>-	if (ret) {
+>-		SNET_ERR(pdev, "Failed to request and map PCI BARs\n");
+>-		return ret;
+>-	}
+>-
+>-	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+>-		if (mask & (1 << i))
+>-			psnet->bars[i] = pcim_iomap_table(pdev)[i];
+>-	}
+>-
+> 	return 0;
+> }
+>
+> static int snet_open_vf_bar(struct pci_dev *pdev, struct snet *snet)
+> {
+> 	char *name;
+>-	int ret;
+>
+> 	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "snet[%s]-bars", pci_name(pdev));
+> 	if (!name)
+> 		return -ENOMEM;
+>
+> 	/* Request and map BAR */
+>-	ret = pcim_iomap_regions(pdev, BIT(snet->psnet->cfg.vf_bar), name);
+>-	if (ret) {
+>+	snet->bar = pcim_iomap_region(pdev, snet->psnet->cfg.vf_bar, name);
 
-Should be
+Could we also use a temporary variable here as we did in 
+psnet_open_pf_bar()?
 
-Reported-by: Chen-Yu Tsai <wens@csie.org>
+It seems to me that no one uses `!snet->bar` for now to check whether 
+they are configured or not, but maybe better to prevent, WDYT?
 
-(I know it's confusing, I even mix up inboxes at work.)
+Thanks,
+Stefano
 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Cc: stable@vger.kernel.org
-
-Tested-by: Chen-Yu Tsai <wens@csie.org>
-
-My RK3399 boots normally with pseudo NMI enabled with this patch now.
-Also tried NMI backtraces through sysrq, though I'm not sure that
-always goes through the pseudo NMI path?
-
-> ---
->  drivers/irqchip/irq-gic-v3.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
+>+	if (IS_ERR(snet->bar)) {
+> 		SNET_ERR(pdev, "Failed to request and map PCI BAR for a VF\n");
+>-		return ret;
+>+		return PTR_ERR(snet->bar);
+> 	}
 >
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index 34db379d066a5..79d8cc80693c3 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -161,7 +161,22 @@ static bool cpus_have_group0 __ro_after_init;
+>-	snet->bar = pcim_iomap_table(pdev)[snet->psnet->cfg.vf_bar];
+>-
+> 	return 0;
+> }
 >
->  static void __init gic_prio_init(void)
->  {
-> -       cpus_have_security_disabled =3D gic_dist_security_disabled();
-> +       bool ds;
-> +
-> +       ds =3D gic_dist_security_disabled();
-> +       if (!ds) {
-> +               u32 val;
-> +
-> +               val =3D readl_relaxed(gic_data.dist_base + GICD_CTLR);
-> +               val |=3D GICD_CTLR_DS;
-> +               writel_relaxed(val, gic_data.dist_base + GICD_CTLR);
-> +
-> +               ds =3D gic_dist_security_disabled();
-> +               if (ds)
-> +                       pr_warn("Broken GIC integration, security disable=
-d");
-> +       }
-> +
-> +       cpus_have_security_disabled =3D ds;
->         cpus_have_group0 =3D gic_has_group0();
+>@@ -656,15 +655,12 @@ static int psnet_detect_bar(struct psnet *psnet, u32 off)
 >
->         /*
-> --
-> 2.39.2
+> static void psnet_unmap_unused_bars(struct pci_dev *pdev, struct psnet *psnet)
+> {
+>-	int i, mask = 0;
+>+	unsigned short i;
 >
+> 	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+> 		if (psnet->bars[i] && i != psnet->barno)
+>-			mask |= (1 << i);
+>+			pcim_iounmap_region(pdev, i);
+> 	}
+>-
+>-	if (mask)
+>-		pcim_iounmap_regions(pdev, mask);
+> }
 >
+> /* Read SNET config from PCI BAR */
+>-- 
+>2.47.1
+>
+
 
