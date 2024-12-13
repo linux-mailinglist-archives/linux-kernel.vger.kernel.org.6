@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-444420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFFC9F067B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:36:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B5D9F067E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:37:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D76921677BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:37:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA3B1AB52F;
+	Fri, 13 Dec 2024 08:37:12 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1371284253
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:36:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08E41AB52D;
-	Fri, 13 Dec 2024 08:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYb+pMXl"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54C81A8F89;
-	Fri, 13 Dec 2024 08:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A291A8F76;
+	Fri, 13 Dec 2024 08:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734079009; cv=none; b=FGUbjPnzW5ldWdy14/9IGpauBUVoM5mj8J48JkayjFf2xmWUCtm8o/o1CvoET43sz/3qUnYf/CR3GYLYlO1KFU5MhRPnIAOUBUriIIPa1rZyuSv89iKHP1fAMEUhIzFxrgH3aGpSUkxCYO949Y34N8YmGQ1esePHpn7vG2f7wec=
+	t=1734079032; cv=none; b=lWU8mWmXeOK9NtTF9PrcMNixALxQxdCW0cacW8W98dGKRd2UILNafRQHAeVpR4HFXa3fWdl7e/4s0ziG9fGzadc2iHl7VLGYhSxWJ9vQcJhQh/yVpxoIL7nhuEso/BbAmKW6PW8gHpXhAitTloSWx7naME/NssvmKWs49ObD/Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734079009; c=relaxed/simple;
-	bh=JKyRigM/AhzU/31X9Efi+u7E+mLq71Us/+kxx01u0P4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iDXDvedxQXMWD7AqlMy4vDlDe0tuYqFsqKgBeVfzqJGskp1k7cytqhIqNLrPfBPfutxfedyfw46HK2rvWztUEUyZ4l/3ab0akGiVc8ITVfKouEQGfJAVeCogQ5+BHLkX7llt03UNQPp8fujQ0p6W6mvOqXCuKgSHr/ms33Z9H8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYb+pMXl; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6d932b5081eso13962806d6.1;
-        Fri, 13 Dec 2024 00:36:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734079007; x=1734683807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KRt1MXIvY7wy4Sl3wPWxh5TWbRsTuTxrC9cGCSyNao0=;
-        b=HYb+pMXl4M0TO+weMu9d66JzvQcGQy+Pj9lH04i6waO+RvK/BOFkh40PZ07NFc38yt
-         /5P2wVkrdhNDidVvCsN92cCmyyQ7/Yx/zzYy/x1pzdzCX1zWVWGNNosf5TMyYTadXklT
-         ExTQcuA7/g0E0/oHAgO03zMCofQxI9zkxZy/zpYN5525PD6cLjpUIPcxwgTfGtc940rO
-         rUxFNqtmyNEorbLFsQwRclMUGThaTBF5eX6eHzyqp0xiAZCLvFudWfWGQNpRD6c6YRN7
-         LIKWKYm4VUHImpeo42djJBsK9WwEE5Clsk3ZEyFf5HGs8IQHJzS/s+h6sKP1vrGJCW8x
-         Liog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734079007; x=1734683807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KRt1MXIvY7wy4Sl3wPWxh5TWbRsTuTxrC9cGCSyNao0=;
-        b=DiIYo8Epymq10u5zNQdvXdW1AOz1JqJLt9o3wnp6iCTPGg5FbBL4/SQ40OE1jorIFH
-         IoZ0Pei3cnlQf+uy+DWQmQOPP79TSEd25jIGIE/tPL3Vf9mEQJ+GlI1pTPGQAjq37OxM
-         IZR0kO9WAgfKVtHRgh3h+rXPRbmr8iQhMOOsMIqwxl6Qq1kQ0CiOOkF71QWdSF8mRK+g
-         UkMqOQKrvvRA1f5VG3xxOOQHXA3F6XCD5Dwf370eOTKjOGNnFWDlCKqPmlzxuEuX/Ny4
-         3mcRbDosW6PBtU68Q1JNU+e4bjW7Egwanx4qXQqGF867JU6ZCQ/RFBJvj2Guor/WX6GM
-         /s7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVb1R0r0pNOCso940VWMjo76v0TYR3jh+hKT0JYZY30r+ScPSbiuBI6IyZTvGDNhtTXFXvDHjPflJtvX1eFGDQ=@vger.kernel.org, AJvYcCXAW+He7NruG2Iln4C+Y1qdXAWusuk9aSwFHtFR4uT4CGY2Va/3E4cPZOT9PTwz1NIZZsKnJRzlhpI4mBQ=@vger.kernel.org, AJvYcCXSo8BFK51oYt8ASz5o5qWqzvZ85BNyUUJ49d8pOP5+MCjpZXWspa+P+1q4u83+cnzRLIYUFbrwA1YAGy3cbpRsKwh+DFQh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzakZRUBTi803dEv8duuUu8m5pC4W8OlTtoaQ3ocCXK3xdEpHOu
-	ae1uL1MePCr8x9u4P91a5LhRyyv9sTAbNfPjkCTLjw3gYA+y1ePHYpXcRpEq1PrGzw1c+5CNQH+
-	oIhMNDer8jcwm/piQztuxn5y1bjo=
-X-Gm-Gg: ASbGncufYEyfV7bjyHYFt7wAqyIjYRGF4MCWHkCDr2Xs65irhv2ufEvN1nIYtx+0dDP
-	UvTIaUwQrJcUGQET78Ra+qCxbqnZfOAAB/wnQBv4=
-X-Google-Smtp-Source: AGHT+IEt1cOWo4VsTmw/6EdhS/KZ00UrsyLMhWiucugMYEeldbYzELrBj4wzlhuYfpJWzQ/nKiHjbqdqIiCiPqivAYk=
-X-Received: by 2002:a05:6214:301e:b0:6cb:ee08:c1e8 with SMTP id
- 6a1803df08f44-6dc8ca869aamr25025096d6.23.1734079006748; Fri, 13 Dec 2024
- 00:36:46 -0800 (PST)
+	s=arc-20240116; t=1734079032; c=relaxed/simple;
+	bh=qzqJnt4UH+d1eHyynyyv8N54391sMrNELpuncmbi1Z4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i7Kmz4rWoqX6XyRzqhHbhiNOo+WtpdZu9366tQ9MwJ4ZvdJIo/JasZ5D7mdvFdNudFvAb/82c9yE1lnQCsWX2i6Wfr4vhB/jtKw2VMP+Z1Ubx9JdfDVs+K3fP1ytaMdIewpgdsLSLZ72bovR3FLOz+Xa8l4Q9NDbSJi+fnEK2S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 823DB2800C988;
+	Fri, 13 Dec 2024 09:37:00 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 638B03A4BC0; Fri, 13 Dec 2024 09:37:00 +0100 (CET)
+Date: Fri, 13 Dec 2024 09:37:00 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Niklas Schnelle <niks@kernel.org>
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
+ 2.5 GT/s
+Message-ID: <Z1vyLNW20RuVaZe5@wunner.de>
+References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
+ <Z1gSZCdv3fwnRRNk@wunner.de>
+ <70829798889c6d779ca0f6cd3260a765780d1369.camel@kernel.org>
+ <Z1lF468L8c84QJkD@wunner.de>
+ <dc6e677f-4c19-dd25-8878-8eae9154cff4@linux.intel.com>
+ <Z1qoDmF6urJDN5jh@wunner.de>
+ <97bbbdecb8c65cfa2625b47aa2585a7417ddcb81.camel@linux.ibm.com>
+ <Z1rX1BgdsPHIHOv4@wunner.de>
+ <1dcc3ca74c3fbb3b4a1adcafb648dfd2501310f1.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213054610.55843-1-laoar.shao@gmail.com> <20241213054610.55843-2-laoar.shao@gmail.com>
- <Z1vq2-V7vB5KhBR9@pathway.suse.cz>
-In-Reply-To: <Z1vq2-V7vB5KhBR9@pathway.suse.cz>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Fri, 13 Dec 2024 16:36:10 +0800
-Message-ID: <CALOAHbAD-USZYry6dToxDTM-OO1+Rz0g6XQkCjhzhWDt7g4MGw@mail.gmail.com>
-Subject: Re: [PATCH 1/7] vsprintf: Add %pTN to print task name
-To: Petr Mladek <pmladek@suse.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, x86@kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-wireless@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	ocfs2-devel@lists.linux.dev, Steven Rostedt <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1dcc3ca74c3fbb3b4a1adcafb648dfd2501310f1.camel@kernel.org>
 
-On Fri, Dec 13, 2024 at 4:05=E2=80=AFPM Petr Mladek <pmladek@suse.com> wrot=
-e:
->
-> On Fri 2024-12-13 13:46:04, Yafang Shao wrote:
-> > Since the task->comm is guaranteed to be NUL-ternimated, we can print i=
-t
-> > directly. Add a new vsnprintf format specifier "%pTN" to print task com=
-m,
-> > where 'p' represents the task Pointer, 'T' stands for Task, and 'N' den=
-ots
-> > Name. With this abstraction, the user no longer needs to care about
-> > retrieving task name.
->
-> What is the advantage, please?
+On Thu, Dec 12, 2024 at 09:40:04PM +0100, Niklas Schnelle wrote:
+> On Thu, 2024-12-12 at 13:32 +0100, Lukas Wunner wrote:
+> > pcie_get_supported_speeds() is used to fill in the supported_speeds
+> > field in struct pci_dev.
+> > 
+> > And that field is used in a number of places (exposure of the max link
+> > speed in sysfs, delay handling in pci_bridge_wait_for_secondary_bus(),
+> > link tuning in radeon/amdgpu drivers, etc).
+> 
+> Side question. If this is used in radeon/amdgpu could detecting the
+> thunderbolt port's max link speed as 2.5 GT/s cause issues for external
+> GPUs?
 
-The advantage is that it provides the flexibility to modify the comm
-representation to meet future requirements. For instance, we could
-rename it to "task_name" and increase its size.
+I don't think so:
 
->
-> Honestly, I believe that the meaning of
->
->         printk("%s\n", task->comm);
->
-> is much more clear than using a cryptic %pXYZ modifier:
->
->         printk("%pTN\n", task);
->
->
-> The %pXYZ modifiers makes sense only when the formatting of the printed
-> information needs some processing. But this is a plain string.
+An attached Thunderbolt gadget (e.g. eGPU) is visible to the OS as a
+PCIe switch.  A portion of the Switch Downstream Ports is used to
+attach Endpoints (e.g. GPU) and the remainder is used for tunneling,
+i.e. to extend the hierarchy further if multiple Thunderbolt devices
+are daisy-chained.
 
-That makes sense to me.
+My expectation is that the Max Link Speed is 8 GT/s on those Downstream
+Ports leading to Endpoints and 2.5 GT/s on those Downstream Ports used
+for tunneling (to conform with the USB4/Thunderbolt spec).  In other words,
+the Supported Link Speeds is the same on all of them, but Max Link Speed
+is reduced to 2.5 GT/s on so-called PCIe Adapters (in USB4/Thunderbolt
+terminology).
 
-> IMHO, it is not worth it. In fact, I believe that it is a
-> counter productive.
+The PCIe Adapters encapsulate PCIe TLPs into Thunderbolt packets and
+send them over the Thunderbolt fabric, and similarly decapsulate TLPs
+received from the fabric.
 
-Linus, what are your thoughts?
+There are some illustrations available here which explain the distinction
+between the two types of Downstream Ports:
 
+https://developer.apple.com/library/archive/documentation/HardwareDrivers/Conceptual/ThunderboltDevGuide/Basics/Basics.html
 
---
-Regards
-Yafang
+I'm hoping Mika or Ilpo can verify the above information.  I have
+lspci dumps here of MeteorLake-P and BarlowRidge host controllers,
+but without any attached USB4/Thunderbolt gadgets.
+
+Thanks,
+
+Lukas
 
