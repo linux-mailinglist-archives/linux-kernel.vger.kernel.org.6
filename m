@@ -1,132 +1,99 @@
-Return-Path: <linux-kernel+bounces-445757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D469F1B33
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:10:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490019F1B34
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 01:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842E8188358F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:09:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66564165ADB
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450CE1F2C40;
-	Fri, 13 Dec 2024 23:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8731F37BE;
+	Fri, 13 Dec 2024 23:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PFR9NtIE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kfhldL39"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F13A1F2C48
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841E01F3D4A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734134283; cv=none; b=Y7IwbS6fGIUflRDIDybt2vbONEs2rf80X2EPqMCSaXs1ph9toLAbOlfwjVL5s1vMMsNYv/mnzyxI2sucsl9ldg8ZBgAU8CmQB0pHsIkeSc2tqu+EuIZxY9SMtzKKM3e+q6DRQ5zzaIXUE1tm6ltcJKwAvXdcQS85CAKQF5anfwY=
+	t=1734134305; cv=none; b=YvIDc3oiJ7ozt5kb8dljYsBEMEbXgXk3NQHRjXYdUlTIHjsxTxL7tqMvjShdwZVN/9AelO3O9vBj4bTYMoKEh4Fz+OkzHnScovCkWgzowVxiJhQRtZNAfXv+ETTeTaSVsXgULkc1IRBrtavCgXPek7ZzXV0bQj/lTQeErFrsgL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734134283; c=relaxed/simple;
-	bh=pDRIr3V4Ke+1ZHSEkU0Oe5jdjCVIe9x38Ah/rOfZMZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nzsEfQBPT6kBmPtdE4SN9sckM2w3hBz9fFbGlhPOFUgCcOxG9A40zw1SkFN2YY34aP3aiZtSmNst4UfGP/tJv0wSYeB3jVpdnM+Q05JFENxtlY3FKOqtHwPS7xAQdY6IcR6/3wmFehUjmb5YHv5NyamtWaeMjtAiMSlKrFrtQ8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PFR9NtIE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDJARD8022842
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:58:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EgJEpjhUpjinZzXlipmWXNty3sU1HuvMHZaSJG8B6Fw=; b=PFR9NtIEoxfANhHk
-	tfYO6r/pVLkvkT73l8ANCIrlgBFzY2R/A21ZXmsP/LXk4rF5Bo3qnJXwkL1kthpf
-	DOlUQ9WWquEHIfdFJMwnCjTWOqOgfhRSXT7ZS/bd6HDxOB1KXlHo2E7fzSqqcpTk
-	TerEjNrU865ISQ63rPxAdSRPLwyLOSHxZcVtQAb7y1yRvFr+LEv7lW0boFMUDt7t
-	GivRtqnRRo7GfEGj+ytpfYlC+dorZGC8XFZw43PBC5mT10GsL4G4l2it5c5x2pf9
-	UH6rLSv3y8Iz6H87tih0UwfGSJEr4oy28iC3w8yW02oLh7AydJFhs+fdOejTPO6D
-	ITq0pw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43g4wnbw88-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:58:01 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4679af4d6b7so4180051cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:58:01 -0800 (PST)
+	s=arc-20240116; t=1734134305; c=relaxed/simple;
+	bh=OGq5+hgs9dJ1yb7kwu/w29GCqzBZmKeO5Y+Ru+siBvE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=CpBgW3AC8u1oR4iBPYqKrLRIuI3Rc2BT4GgEwKGMHM44vwbKrl8p3b8gb9/noIdqSV4TvxnEg2x22ldA3RdIjKpXTl2Bab+jCqNFjemWkE3HAkKfycaeZiiwDUn3dib4AXyZ+jJzPTa+/RJ6Eu0/VDHumP3p3gbHphwNiLgJ7N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kfhldL39; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ef8c7ef51dso1897845a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:58:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734134304; x=1734739104; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pUgYlM58E1ID1zBsFizknmN76M0X0I58a2gj7PTiNA8=;
+        b=kfhldL39TBzg9mfNZ38MUKouWW9n3KF8rCW8KQmRe1H0hGO3EhPDeZXjXTlhoquyrR
+         1CLApWPe8V31MNazpfb28xvW+4gfohLNIfOLrlVr482N2e/jfUbauX7klRetYEEht73L
+         gsZnytOQRypwAUUOoDHoiJ6qgRHFavAGtEBu9Bc1zrQ2Myg55pMRCiyhcLxQPAJeDyDI
+         3vCh5/hwZ6bZ7Oh/3S4u20eKFDUlPzDMTQCmD0b3FBFrEgDrJmh5liv6r9qb7o0mFqH5
+         2xqUzIYFRK0unNWhPBqWsHEzecJ3EWI/lM2KQXPhNUyt6doxo6BZKmXkvUDO0cCRq4Lg
+         eyBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734134280; x=1734739080;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1734134304; x=1734739104;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EgJEpjhUpjinZzXlipmWXNty3sU1HuvMHZaSJG8B6Fw=;
-        b=E5d2Fn6QMxTv/rYPPdAv06F/55wmMWw/LWuyj36TA/c07HSSyZ7wuu1oNFHasPP009
-         PopTD7vzVS61RCXb53lTVBFEjmwApW7vDE13fFe2Kz2c7pa3mLKoSjiJLIanUFWVTm3r
-         fiok7bWefp7t2D+4UndsdRHuOF/8gCu198Z8ZwuzUqJe1rgOPfesoD6rYwYJmC+5oBBO
-         OxM8UIE8jEAzu6y70wWb7DTTrqJ1QiYooc9vALIOtZwCaLjT2zh7nXFB7c7r42WSz0sP
-         ERbuokQBcylXYiW+zkPfUxYXTRSub7dzuhxPg2Mjb9axyudJ+aA2TC1hR1OAwFwhYvRn
-         0+jA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0a/5U7t/00+SOJ4qJFOP1xAY80C7/yDKbHLj50yx2qGyY36aw9Kyvf4EG9slabiDMjm8LjRXMahiayMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXa6rNWgRrCouPzDNB0pLH4RZo/sLxXqvUYJuQaAezeT8X8D1j
-	T6ogUPCePEX1kenGid7OxPpZoLp4isQiBMxIoo06IPUclUd30Qig4s5O6pRaKKTm0tnQqsAawWr
-	5yZkvNU9B76kOjrSjYgs5mrlC6N0dChz/Yst8eZ+BOgs6KgfDIXuLWN4LXP965Ps=
-X-Gm-Gg: ASbGncvtxTqU9ZOMM7/sRRzKzG1g5mTXPoYE6hF0fMJhYDs/dzqNaA+3IR3SiqhYHyg
-	JQ9z2Nw0j7YVAZPgz5YSvUL3WcHMt/yRZCfZe5plNNSRjl08VirKrqf6KmHQe3hjELumNqs9EGu
-	GhRqNksWRs2cBMVnZnTq4xCIfjwiV4bSOlwEvoz+zgQBaXx9U4RBGD42KBJe/STRncwlHaojdhP
-	gM3jrbxJ/U9tAoYxUE7t/7oMI3kgUpHAfAeQGieQToorYCKUfYzgQAidtMHtStzl2/qxpgFs8J2
-	l99oYCSybd+5QPXPQOpr/deux42kerGDCFA=
-X-Received: by 2002:a05:622a:48f:b0:467:95c2:d8a3 with SMTP id d75a77b69052e-467a575541bmr33495461cf.6.1734134279943;
-        Fri, 13 Dec 2024 15:57:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFcInsrM80zY2XXRjWCmn/lWTNWUgTvmx+vLeVynOrPi+3UZMdf494lm9kqjgSOZLAPl8XB7w==
-X-Received: by 2002:a05:622a:48f:b0:467:95c2:d8a3 with SMTP id d75a77b69052e-467a575541bmr33495301cf.6.1734134279626;
-        Fri, 13 Dec 2024 15:57:59 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab96005f17sm26656566b.17.2024.12.13.15.57.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 15:57:58 -0800 (PST)
-Message-ID: <abda0d4c-9094-43ee-a6f3-7eb4659d734f@oss.qualcomm.com>
-Date: Sat, 14 Dec 2024 00:57:55 +0100
+        bh=pUgYlM58E1ID1zBsFizknmN76M0X0I58a2gj7PTiNA8=;
+        b=YV27HyrjlvdGtS1+oHHMwnmYLsm0wkMPb4gB0pjk7RV4p9zHp4k4kGXwPjy990CxC4
+         0RA6BsoUFfdsATaxBju5V4sjs9DlYCdqf+QdxRV+mUqof/1XDQWxZziwAbz4AZBF+2eC
+         jgOZf5adogq3irnL8XHsvAvqZ40J0I9ojrQp4l6LmWRbSIsFwI0y+ZfnRGhbxLYCdYKp
+         2tiYAW6VxEVv+Zm4Z30gQ7IPwo+GNXjHdOuo5ZHRe6M1VaYoZWrllowekfyJL4ytFKCT
+         KlUfYxA0TA6CMWTGQLLLXHIpV1V1PijEe8vUIR2RANG7yNdWjUSf9af4S4PJu5EJxGBy
+         bZZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqi54uY9Ke5jEoq7o2i1DyRtQOVaWJskxd0jMMS7DTXwclUzuH1KfXyjq5+kDULYfKV6hc+TByglN+328=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK9D7CIbSVzBtEjM7EZJu+HAQ+XhlhhOnz3PLFQRP8pQP0UXDc
+	dlMhFbHmJM+WVDGhulC02xD2mFgjuDVsvENdlhk0p84kSnFiauDao+JIQ+Sd1hK/Sdy7HhheawM
+	eBQ==
+X-Google-Smtp-Source: AGHT+IEx2eqGQFBGQTUi/pn7XgE3bLWI9EM+6VGiZXjWJeNOX1FQChOgohoyAT6tKICqO9oQPQKyJbJfX0k=
+X-Received: from pjyd4.prod.google.com ([2002:a17:90a:dfc4:b0:2ef:973a:3caf])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c02:b0:2ee:7e53:bfae
+ with SMTP id 98e67ed59e1d1-2f29166c324mr6176343a91.10.1734134303859; Fri, 13
+ Dec 2024 15:58:23 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 13 Dec 2024 15:58:21 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 13/14] arm64: dts: qcom: sdm845-starqltechn: add
- graphics support
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-        cros-qcom-dts-watchers@chromium.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20241209-starqltechn_integration_upstream-v8-0-ec604481d691@gmail.com>
- <20241209-starqltechn_integration_upstream-v8-13-ec604481d691@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241209-starqltechn_integration_upstream-v8-13-ec604481d691@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: grB8b5KOWRSrBx2JAoMxptfBnnWFmwNd
-X-Proofpoint-GUID: grB8b5KOWRSrBx2JAoMxptfBnnWFmwNd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 mlxlogscore=825 spamscore=0
- mlxscore=0 clxscore=1015 adultscore=0 phishscore=0 suspectscore=0
- bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412130171
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
+Message-ID: <20241213235821.2270353-1-seanjc@google.com>
+Subject: [ANNOUNCE] PUCK Agenda - 2024.12.17 *** On Tuesday the 17th!!! ***
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9.12.2024 1:09 PM, Dzmitry Sankouski wrote:
-> Add support for gpu and panel.
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
+*** LOOK HERE ***
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Due to holiday schedules, next week's PUCK will be on Tuesday the 17th (regular
+time), not on Wednesday.
 
-Konrad
+There is no scheduled topic (which is code for "SNP, TDX, and guest_memfd").
+
+Time:     6am PDT
+Video:    https://meet.google.com/vdb-aeqo-knk
+Phone:    https://tel.meet/vdb-aeqo-knk?pin=3003112178656
+
+Calendar: https://calendar.google.com/calendar/u/0?cid=Y182MWE1YjFmNjQ0NzM5YmY1YmVkN2U1ZWE1ZmMzNjY5Y2UzMmEyNTQ0YzVkYjFjN2M4OTE3MDJjYTUwOTBjN2Q1QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20
+Drive:    https://drive.google.com/drive/folders/1aTqCrvTsQI9T4qLhhLs_l986SngGlhPH?resourcekey=0-FDy0ykM3RerZedI8R-zj4A&usp=drive_link
+
+Future Schedule:
+Dec 17th - No topic
+Dec 25th - Canceled
+Jan 1sth - Canceled
 
