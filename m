@@ -1,123 +1,87 @@
-Return-Path: <linux-kernel+bounces-445373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17049F1534
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:47:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD775188D047
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:47:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015F71E570E;
-	Fri, 13 Dec 2024 18:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVdhsT39"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE2E9F154B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:53:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5E51547CA;
-	Fri, 13 Dec 2024 18:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6762849D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:53:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129B11EC4D4;
+	Fri, 13 Dec 2024 18:52:16 +0000 (UTC)
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEAD1EBFEB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734115623; cv=none; b=dNKVHBqqeENdOoREsak+sFXlE3XuHQL8KfHUo2R0aDgWAMReGQdkeAY+PA/AiLSnFbWCngaGfdJrqFYVNmI+vXMJjj6GJfaxkO5vRWy08kV8pIr+S5Y9OTVLKkiYp+ZnQP89Csr7wVVeHNFA7iJ0vjTx/XY5dlep6UjLKvuEhHE=
+	t=1734115935; cv=none; b=oX4XQ45+CnIJlrzKt/UTQAWH5FGjpTYTMyPxP9XkO8G7+WEVCpNYnbPe7nNCfkZYodLWvF4hHNAunT7NAqwmgkBQOTGWw3BTymG48cD6UjNdTlQeLoiiowbntQbsYdvOTcdClUDpARUNl0lPyEYzbA9BkXxSHPCvRDTOYFVgECo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734115623; c=relaxed/simple;
-	bh=OuLMV0zQ/jHtlcGfTN3vBPecDjzPfA1i/m3/mOtyIuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Huf9PpQRQ06C3+8erw5xp4abNvocfz9OxXRt0KEDF0939AKGTLgW4esPQtOY2+5n15lXffMoic7t0GLsY3EAatIzveuQ3IOhGNxLphBoiikIs/vv2JJPfhzyNs4tY9LHJJjFEmgY3NsEEc0WuGVehn/2sBmP0MBygtoAcyRu5lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVdhsT39; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9D1FC4CED0;
-	Fri, 13 Dec 2024 18:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734115622;
-	bh=OuLMV0zQ/jHtlcGfTN3vBPecDjzPfA1i/m3/mOtyIuo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ZVdhsT39/TZC+Zh4x0dWRAtjVN6TbVoxYEejZerqchVETr+7d7qoVXYLXmbOjEtP3
-	 dPnCRKFfOLbF9TpbJfWsJGWoqRWrba5+1vfD5+fa8JukRYd31n80BMgqAqFdXCGIi3
-	 M06Wd9s08IBdyDOtZF1awvl9H+kUubHpUIpDKl8t2QPu7GmwyCMRwASu4b6WJ74CXz
-	 f/rZfHlHajIcS7433HAHhxQNp70nEo4zSTkXoieDHD0iaht99mvBnDiHz8i1oIu/+c
-	 JqqBG3Li6td9Olizp+JUEB6AzLdAN2ytemdzukv9kjDNSFopHm7ASHKkR5S9ow/Rns
-	 S5DLHQ6fvhHiQ==
-Date: Fri, 13 Dec 2024 12:47:00 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v2] PCI : Fix pcie_flag_reg in set_pcie_port_type
-Message-ID: <20241213184700.GA3423791@bhelgaas>
+	s=arc-20240116; t=1734115935; c=relaxed/simple;
+	bh=23Gjf9konJzi/Ip48N8QGnIMi5oXcbsgX6/s7AOn8pg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ofWZ1Bb48E+vSwVGY8VXYG/xRS4vOz+xJoZYsofTg6p7k/JwVhTSDJXpYC6iT/17nZZLRIjf551v6o10lhK4KUSbdcdOmmuURQwwLLXtS9sbrVhwHCi8yDIcJlNRe7Om3i4xz3ws60YNBu1nvuFN5LuslVRVGgevePVelIzbxyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.214.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-216717543b7so31342485ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:52:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734115933; x=1734720733;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z5TW7o4tu1FIGXp5hRq/0957PxrI+bJYgBBARrfFwa4=;
+        b=o3jesZcW0qYbUqmT6BCJANitvq1uxJWQV+Y3M7GGKwC9DWrudCpPCNArUroDpKj2nQ
+         7zU8LsdJfnM6SA42Z4dhlsKoQ7QUhkT6jPL4F/NjhRJQho06dpr31bmVAAkprePzTuIg
+         YDC8zAc/LHeSM2WouwjRJHAglRyi0SNOZctAA/p+lSrouSR6R+wWu5JeRAQiVGCdIPd9
+         WgJwrQeTUrmJYs59/lSToy39djPKHpvy0BFzQu6d3s8e92qi93FU1R6Sk93UK+roRgbD
+         Wxbmj/2dAIWUw7oa++5/RXBZOdl72He2oEB1iCIMUmm95rUZRMj+KkDCQHAI32JqmvGQ
+         lcCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxRawnDGI/r9exEdH2Z1dVxQ78S5R0etbf87ofuKeiXEIJIzqA67ojQZx38zP5fTnc6J+qT68sqdL5jXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/PO7OE4ylObgzxE0Erbv6cahqBxpKjo2B1FXmjiu/0mZLCvTn
+	b6ZcKSl/8pnYefTfw63s5yxgBDGT3wtJ6uFEsOpxfIxXdq3b11/m0scCmKKvu/kuE+/7RKOm/TV
+	cdTudYOkOlkgAX/jT0AFMP0pxEWj3IFTxAx9aRQdcMpGBOE2sbhpw+Mc=
+X-Google-Smtp-Source: AGHT+IEdNDXjvyhHCcwjAoMxwBtaxR4ax4S2ngtkkPoSjsyW6CqCCGH1b4iGOdSKRP17T+vKfeoiKNNOa3orJTIb9LLDfVQxJf4L
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213070241.3334854-1-gthiagarajan@marvell.com>
+X-Received: by 2002:a05:6e02:1561:b0:3a7:820c:180a with SMTP id
+ e9e14a558f8ab-3aff243f6a5mr33809635ab.19.1734115622707; Fri, 13 Dec 2024
+ 10:47:02 -0800 (PST)
+Date: Fri, 13 Dec 2024 10:47:02 -0800
+In-Reply-To: <20241213141350.x4gSe%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675c8126.050a0220.37aaf.00b4.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] general protection fault in exfat_get_dentry_cached
+From: syzbot <syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-[+cc Mika, Andy]
+Hello,
 
-On Fri, Dec 13, 2024 at 12:32:41PM +0530, Gowthami Thiagarajan wrote:
-> When an invalid PCIe topology is detected, the set_pcie_port_type function 
-> does not set the port type correctly. This issue can occur in 
-> configurations such as:
-> 
-> 	Root Port ---> Downstream Port ---> Root Port
-> 
-> In such cases, the topology is identified as invalid and due to the
-> incorrect port type setting, the extended configuration space of the
-> child device becomes inaccessible.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-From reading the code, it looks like the underlying problem is
-components that advertise the wrong PCIe Device/Port Type.
+Reported-by: syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
+Tested-by: syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
 
-set_pcie_port_type() already detects that incorrect Port Type and
-tries to correct it, but it puts the corrected type in bits [3:0]
-instead of [7:4] where it belongs.
+Tested on:
 
-This looks like a bug from ca78410403dd ("PCI: Get rid of
-dev->has_secondary_link flag").  If so, we should add a Fixes: tag for
-that and possibly a stable tag.
+commit:         f932fb9b Merge tag 'v6.13-rc2-ksmbd-server-fixes' of g..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=130324f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df9504e360281ee5
+dashboard link: https://syzkaller.appspot.com/bug?extid=8f8fe64a30c50b289a18
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11475be8580000
 
-This looks like a clear bug.  What system tripped over this?  It's
-useful to have bread crumbs like that in case we see other issues
-caused by hardware/firmware defects like this.
-
-> Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-> ---
-> v1->v2:
-> 	Updated commit description
-> 
->  drivers/pci/probe.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 4f68414c3086..263ec21451d9 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1596,7 +1596,7 @@ void set_pcie_port_type(struct pci_dev *pdev)
->  		if (pcie_downstream_port(parent)) {
->  			pci_info(pdev, "claims to be downstream port but is acting as upstream port, correcting type\n");
->  			pdev->pcie_flags_reg &= ~PCI_EXP_FLAGS_TYPE;
-> -			pdev->pcie_flags_reg |= PCI_EXP_TYPE_UPSTREAM;
-> +			pdev->pcie_flags_reg |= PCI_EXP_TYPE_UPSTREAM << 4;
->  		}
->  	} else if (type == PCI_EXP_TYPE_UPSTREAM) {
->  		/*
-> @@ -1607,7 +1607,7 @@ void set_pcie_port_type(struct pci_dev *pdev)
->  		if (pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
->  			pci_info(pdev, "claims to be upstream port but is acting as downstream port, correcting type\n");
->  			pdev->pcie_flags_reg &= ~PCI_EXP_FLAGS_TYPE;
-> -			pdev->pcie_flags_reg |= PCI_EXP_TYPE_DOWNSTREAM;
-> +			pdev->pcie_flags_reg |= PCI_EXP_TYPE_DOWNSTREAM << 4;
->  		}
->  	}
->  }
-> -- 
-> 2.25.1
-> 
+Note: testing is done by a robot and is best-effort only.
 
