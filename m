@@ -1,269 +1,240 @@
-Return-Path: <linux-kernel+bounces-444137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A13569F0172
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:02:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478B39F0188
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:05:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BBAE16B105
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED986282882
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B7217BA6;
-	Fri, 13 Dec 2024 01:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A9317BA6;
+	Fri, 13 Dec 2024 01:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MapgZhGX"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tyLYcYYB"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01BE4A06;
-	Fri, 13 Dec 2024 01:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7912B3FB0E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734051726; cv=none; b=Q4vpFKHh6LtgETKxk+RJoo4xB64FG8CI9h3UYh58v/iJlHmTN9WS+4LAKVc3B1rK4ssSe8NuTUxnWErhtOPYhXhPJwRiN3TeWoP2D+iCN+duvA+PDY2VoZlxWGYsCTQ0qLi+q/HhmRzgPujivjj8Y8Ci2k4UnrsrBnThMWgVdTw=
+	t=1734051932; cv=none; b=lO/KjSuUqDlOEh7FXoY2tJdYXMt9dC6cEyTTIjFhk5306B5P+uyQxQjfL5ilfgNO7W8i8pAadBJxK0wwOF9t5JIFFKvcggrDfIJETW8EdWigbsl+ed+7Avksb1L8RUsvdWy7fhTRW7+Rgh6kQLsIjW3UzcBge5l4wPEAfxFGt5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734051726; c=relaxed/simple;
-	bh=Kym6VrYxHrsEryNYEUHq15JGnm+oHt/W/iIQnRQvpSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CTbXft9nhqGWY6YxFNl3XerSZ7JdnBafB09oWbXhNr2sCyy+Xe1dN0/ALsGnmvoI4cG7roKAPR2HDCrV79emD+gpRbCthhB23QStuuZk/fqYZ7c7rg+cdv8WKB8EFA725esa+HPLQr5cn6q/8T/2oFtL0FO/KFWDBtNDTmLyv9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MapgZhGX; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fc93152edcso1040612a12.0;
-        Thu, 12 Dec 2024 17:02:04 -0800 (PST)
+	s=arc-20240116; t=1734051932; c=relaxed/simple;
+	bh=ScM5/9Ay7Vkz7tAjQ2Z6vwqow41NuqfSG2EgI0jzjJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y13j49tnGfNftGIFmOlUP02CP8KSeFPGOE+fZm857of8oj3bsgeYIeMIMMHHL6H0vsZq6k6CVcb1RYdvIyrBqUTUXsXxg9av3T21kMyH/yLIQeBCuIgvEK7W4bnRVVUFNn4P1/OJ0bjl7B4QgZoMFqVuC/44fhOoX5DGPEatPkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tyLYcYYB; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ff976ab0edso9340081fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:05:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734051724; x=1734656524; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tRPjkEFYECNCam+aAk3MjBT2kOPT+USpYazr/q3Cmlk=;
-        b=MapgZhGXpsIjtxE7pI45DeZxiMxpZCc957eRZKxaKO7scDobIWPw3/sBG+REbLb5fe
-         z0c/kjU6XPW1x10fF28vuw3hWLpU4luExZVEgTSpOVEfTGL0LKSPFb0RVypeUepp/lXY
-         nvj5hUqYzdTWMK7BV4nkyqLUjx1ye86QI4Y6hBvqAOBcd1Keb5xHEeQ4zmt7oaAblEeg
-         CqCF/hK7M34M9dWdlEZPIAlpr6vyIVTyRAMzjGk8Z+0h8IDKJ+uoTTLJiq8aYThbAWL8
-         8WMWCQb+jAI7yHI3u5dR6Wu6MsKUoF4qxmHU+jNHUtdnC/FMTGADvLC/Wn9DGly6PDdg
-         WjFg==
+        d=linaro.org; s=google; t=1734051929; x=1734656729; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O84U3RWKov9iL5zvKm0AQk1apvgpcPjBJGZeGo9vHKY=;
+        b=tyLYcYYByBoQVedEovDK1nso3msSmxwLouKdJYKZYjrTQ9f+hzYOylKq8lZqL+mvuU
+         y4zrtuKe2btGcephY8f0/Y+iC8CqQl7opTGHbi6xBFcp33UvRBGRa6gaM01O54IGc4NT
+         pmBhkR4sPNxtZVo1ZGz3QsF0q76ILSj9xg9ezeOCgD3V2juclCOzNRF3St7Pp9k34rH5
+         BlbF/nvx2ohEjChP/ROMcx0Jk/I75IORvai12C4fDf3rzPPVTygnvTSyngqSq2EeVszJ
+         lG9ZXiFmx3lwRcjKu+5lEb5hrhZPd0qUcL/H+KcvK39PeI4b7/OVbZ+qsoqBezYbZjRy
+         GIMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734051724; x=1734656524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tRPjkEFYECNCam+aAk3MjBT2kOPT+USpYazr/q3Cmlk=;
-        b=u+v2JYwIk54nVn1gjkepyIseN1kZ8qdhk/c83sQcuYd4pOvpMqeRHAXAEz3K5QNvw+
-         PPQbmA3faeN8q8uLpl7ONRjJ/ZUwRKsJjPRZKT/XqeqdPy7GC6M8cWRJhLB3r2/wJOmy
-         qVx3VDHm/0obCQ+OXqE78hsgpnYLnQ8mdE0jYueDl5NgT2K/o0CYuo8d+jBTts3wcxdQ
-         OpWX+a4arJf+4KWnVaxNpSFhEtjBpUON2pwY8iFV57CnljBrnCmUdKOp2g9/2frGTFk/
-         NbpQfAleZdNVLC2oqH0vCBkT0XcFY9VLsTlKg6oFOjCJgwt4fOU13mMNvCIDCxJlWPB+
-         8JXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtdiiCA8h/SkZhSiwHSj4QJEDgIA3m5Keiw8ABEb1bhrqfFlUoC5sDui6bp8IrjDOTCho=@vger.kernel.org, AJvYcCXXyAObnAkK9iRCLM3yUYV/ErwWYjcdEGhQyjUPFaHmQX8VoC0tLjzrBvyKNSVuI9Lf2GMLkqh4kNKOLi9s@vger.kernel.org, AJvYcCXjMMVRATE0oPH7zpkCUW7coh6qRK94QJUX0DbVT9y7vfGM0fvUWllQ30o8WAgMFhtilWYOMtgLeTeGILmXQIC/LBzg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRmrSAL2EGuVoMd5wMJ6LSMq+XaWQjqm+6O/R0+oPdGbBFLBui
-	yj4a6pyfByEWtrxmnNGyllUe2VhzQQvsoblGWhtIV3dr0R5ZVdfh0I01/u5U8fGAgxrr+WY7wln
-	GiLjF8OrE/1+eqOrODfWemGMC9VM=
-X-Gm-Gg: ASbGnctIthxZzf1hG2zXun5o15z9rnnuLLrp5BfwfQoQQ3MUEEFWSOt0ldL/66KI21w
-	8nzb4XjcKQjcJKLl8unqR5I+ai/CHBxoHOqj4zyS1PaplEkZhcs0FXg==
-X-Google-Smtp-Source: AGHT+IH95GED+20NT/CsLYu+Njap3yr1GP2+NSdRYG1CdE2HycgDJDRSAz7eRwBRpVO9Cc0Hrq+CWLwksAMxDL7GHJo=
-X-Received: by 2002:a17:90b:17c3:b0:2ee:9661:eafb with SMTP id
- 98e67ed59e1d1-2f2919ba2dfmr857330a91.12.1734051723977; Thu, 12 Dec 2024
- 17:02:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734051929; x=1734656729;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O84U3RWKov9iL5zvKm0AQk1apvgpcPjBJGZeGo9vHKY=;
+        b=af9X1/m92S6rp+lfs/fcuSp9k7LH1Dxjdbr/PW3an90S1KcQm63SXJFmmM/CtHXSqm
+         6l39NQ7Qw61ZBlP+bIEvIrdac7VwDqWoJzPUXoje++IQDgnZrJG8OcNkfIS+X0RPZPYQ
+         w/uCDN6VglDIJaYyrav/MDdXKChhk424wBVd/68g+5lfN9HVUn3lGGIeELLQxC4eZ29t
+         YLIGF5mLaydRRE2W4mgzRTEPHb/Vfb8y9RLp9FvY0T9Z75N+wVXf+QJwHxoeGdCs8s+t
+         G87Fd8KNxuzeoVL/dJk0/T92UZ8BK7kKXoaCyjfk2DpdTYe4fEg4STBHUteu1Xqb6JSj
+         ynQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSm0Mc9igmWWuc6oQX4ClJQbRbN128ZxoB32qChLa4oCVdJP+vCoISD/zEinUZnFMdXcwDRRYMwfRL+VY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBMiobGpIRXwvrNJaNVdJo4bL46KahG8p/tUPqDwf6AeMfIddV
+	/JHBb42KiZJoX8ERV6HMamqhpBXxXJH9pMky8IJBTXf1n7t67BfG0H1tJDbjlrw=
+X-Gm-Gg: ASbGncvndseXNXKM0txfcAWPVKPpxOvmFdVzLQRyFmnC7jMebIqqibNZkubrT3A/MeQ
+	vUefxO9uqv7X0fqD40ANrK1NRcqUJigwEPGsOsLqROUyDJaJV+UEzR8kOvECg3QD/9qdoKj99PD
+	xGSlM3WSdmfkHwrCUu4sgIxTY2pwlIOFhKjEq7DCUaVrUg7LBhoGinO8dhKXWH2k0HUNmG+Cv4Z
+	44N+xouP84ech10u0F+5l7ILeT330nGi6DcTkyxq0ImKdKYEBZzMcmSjvZD8XZL4fSC6u3Ojkxm
+	2BEUox2NBMcvY4CcAg7KT00h0so6AWBu4jT9
+X-Google-Smtp-Source: AGHT+IElifT8QoUNzxHAVYbqMQx4DiVI2tllM0h7CLeS8lFzZ7Esr23V8mawY8s6S56t+ueici+FJQ==
+X-Received: by 2002:a05:6512:3d0f:b0:540:22bd:e25c with SMTP id 2adb3069b0e04-54099b729f6mr127691e87.50.1734051928607;
+        Thu, 12 Dec 2024 17:05:28 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5402bfd8d20sm632306e87.26.2024.12.12.17.05.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 17:05:27 -0800 (PST)
+Date: Fri, 13 Dec 2024 03:05:24 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, quic_abhinavk@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dpu: Filter modes based on adjusted mode clock
+Message-ID: <onavg2s7uamgwh34ozhbt56c74ktj5chp3jnn4bw5m22y5sdjr@fktyn5yt4gmw>
+References: <20241212-filter-mode-clock-v1-1-f4441988d6aa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211133403.208920-1-jolsa@kernel.org> <20241211133403.208920-6-jolsa@kernel.org>
-In-Reply-To: <20241211133403.208920-6-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 12 Dec 2024 17:01:52 -0800
-Message-ID: <CAEf4BzZEPdGxjHjPGr-4qKFju+roOiAVrMhTuviozmcP1-qojw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 05/13] uprobes: Add mapping for optimized uprobe trampolines
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
-	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241212-filter-mode-clock-v1-1-f4441988d6aa@quicinc.com>
 
-On Wed, Dec 11, 2024 at 5:35=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> Adding support to add special mapping for for user space trampoline
-
-typo: for for
-
-> with following functions:
->
->   uprobe_trampoline_get - find or add related uprobe_trampoline
->   uprobe_trampoline_put - remove ref or destroy uprobe_trampoline
->
-> The user space trampoline is exported as architecture specific user space
-> special mapping, which is provided by arch_uprobe_trampoline_mapping
-> function.
->
-> The uprobe trampoline needs to be callable/reachable from the probe addre=
-ss,
-> so while searching for available address we use arch_uprobe_is_callable
-> function to decide if the uprobe trampoline is callable from the probe ad=
-dress.
->
-> All uprobe_trampoline objects are stored in uprobes_state object and
-> are cleaned up when the process mm_struct goes down.
->
-> Locking is provided by callers in following changes.
->
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+On Thu, Dec 12, 2024 at 11:11:54AM -0800, Jessica Zhang wrote:
+> Filter out modes that have a clock rate greater than the max core clock
+> rate when adjusted for the perf clock factor
+> 
+> This is especially important for chipsets such as QCS615 that have lower
+> limits for the MDP max core clock.
+> 
+> Since the core CRTC clock is at least the mode clock (adjusted for the
+> perf clock factor) [1], the modes supported by the driver should be less
+> than the max core clock rate.
+> 
+> [1] https://elixir.bootlin.com/linux/v6.12.4/source/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c#L83
+> 
+> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 > ---
->  include/linux/uprobes.h |  12 +++++
->  kernel/events/uprobes.c | 114 ++++++++++++++++++++++++++++++++++++++++
->  kernel/fork.c           |   1 +
->  3 files changed, 127 insertions(+)
->
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c | 29 +++++++++++++++++++--------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h |  3 +++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      | 12 +++++++++++
+>  3 files changed, 36 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
+> index 6f0a37f954fe8797a4e3a34e7876a93d5e477642..0afd7c81981c722a1a9176062250c418255fe6d0 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
+> @@ -31,6 +31,26 @@ enum dpu_perf_mode {
+>  	DPU_PERF_MODE_MAX
+>  };
+>  
+> +/**
+> + * dpu_core_perf_adjusted_crtc_clk - Adjust given crtc clock rate according to
 
-Ran out of time for today, will continue tomorrow for the rest of
-patches. Some comments below.
+Nit: CRTC (here and further)
 
-The numbers are really encouraging, though!
+> + *   the perf clock factor.
+> + * @crtc_clk_rate - Unadjusted crtc clock rate
+> + * @perf_cfg: performance configuration
+> + */
+> +u64 dpu_core_perf_adjusted_crtc_clk(u64 crtc_clk_rate,
+> +				    const struct dpu_perf_cfg *perf_cfg)
 
-> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> index 8843b7f99ed0..c4ee755ca2a1 100644
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -16,6 +16,7 @@
->  #include <linux/types.h>
->  #include <linux/wait.h>
->  #include <linux/timer.h>
-> +#include <linux/mutex.h>
->
->  struct uprobe;
->  struct vm_area_struct;
-> @@ -172,6 +173,13 @@ struct xol_area;
->
->  struct uprobes_state {
->         struct xol_area         *xol_area;
-> +       struct hlist_head       tramp_head;
-> +};
+It's not just the CRTC clocks
+
+> +{
+> +	u32 clk_factor;
 > +
+> +	clk_factor = perf_cfg->clk_inefficiency_factor;
+> +	if (clk_factor) {
+> +		crtc_clk_rate *= clk_factor;
+> +		do_div(crtc_clk_rate, 100);
+> +	}
+> +
+> +	return crtc_clk_rate;
+> +}
+> +
+>  /**
+>   * _dpu_core_perf_calc_bw() - to calculate BW per crtc
+>   * @perf_cfg: performance configuration
+> @@ -76,7 +96,6 @@ static u64 _dpu_core_perf_calc_clk(const struct dpu_perf_cfg *perf_cfg,
+>  	struct dpu_plane_state *pstate;
+>  	struct drm_display_mode *mode;
+>  	u64 crtc_clk;
 
-should we make uprobe_state be linked by a pointer from mm_struct
-instead of increasing mm for each added field? right now it's
-embedded, I don't think it's problematic to allocate it on demand and
-keep it until mm_struct is freed
+While you are at it, could you please also add a patch, replacing height
+* vidth * vrefresh with mode->clock * 1000? The former one has limited
+precision.
 
-> +struct uprobe_trampoline {
-> +       struct hlist_node       node;
-> +       unsigned long           vaddr;
-> +       atomic64_t              ref;
->  };
->
->  extern void __init uprobes_init(void);
-> @@ -220,6 +228,10 @@ extern int arch_uprobe_verify_opcode(struct arch_upr=
-obe *auprobe, struct page *p
->                                      unsigned long vaddr, uprobe_opcode_t=
- *new_opcode,
->                                      int nbytes);
->  extern bool arch_uprobe_is_register(uprobe_opcode_t *insn, int nbytes);
-> +extern struct uprobe_trampoline *uprobe_trampoline_get(unsigned long vad=
-dr);
-> +extern void uprobe_trampoline_put(struct uprobe_trampoline *area);
-> +extern bool arch_uprobe_is_callable(unsigned long vtramp, unsigned long =
-vaddr);
-> +extern const struct vm_special_mapping *arch_uprobe_trampoline_mapping(v=
-oid);
->  #else /* !CONFIG_UPROBES */
->  struct uprobes_state {
->  };
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 8068f91de9e3..f57918c624da 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -615,6 +615,118 @@ set_orig_insn(struct arch_uprobe *auprobe, struct m=
-m_struct *mm, unsigned long v
->                         (uprobe_opcode_t *)&auprobe->insn, UPROBE_SWBP_IN=
-SN_SIZE);
+> -	u32 clk_factor;
+>  
+>  	mode = &state->adjusted_mode;
+>  
+> @@ -90,13 +109,7 @@ static u64 _dpu_core_perf_calc_clk(const struct dpu_perf_cfg *perf_cfg,
+>  		crtc_clk = max(pstate->plane_clk, crtc_clk);
+>  	}
+
+This function calculates crtc_clk as max(plane_clk, crtc_clk). Shouldn't
+we also reject the atomic_state if for any of the planes the corrected
+clock is lower than max_core_clk_rate
+
+>  
+> -	clk_factor = perf_cfg->clk_inefficiency_factor;
+> -	if (clk_factor) {
+> -		crtc_clk *= clk_factor;
+> -		do_div(crtc_clk, 100);
+> -	}
+> -
+> -	return crtc_clk;
+> +	return dpu_core_perf_adjusted_crtc_clk(crtc_clk, perf_cfg);
 >  }
->
-> +bool __weak arch_uprobe_is_callable(unsigned long vtramp, unsigned long =
-vaddr)
+>  
+>  static struct dpu_kms *_dpu_crtc_get_kms(struct drm_crtc *crtc)
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
+> index 451bf8021114d9d4a2dfdbb81ed4150fc559c681..c3bcd567cdfb66647c83682d1feedd69e33f0680 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
+> @@ -54,6 +54,9 @@ struct dpu_core_perf {
+>  	u64 fix_core_ab_vote;
+>  };
+>  
+> +u64 dpu_core_perf_adjusted_crtc_clk(u64 clk_rate,
+> +				    const struct dpu_perf_cfg *perf_cfg);
+> +
+>  int dpu_core_perf_crtc_check(struct drm_crtc *crtc,
+>  		struct drm_crtc_state *state);
+>  
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> index ad3462476a143ec01a3b8817a2c85b0f50435a9e..cd7b84ab57a7526948c2beb7c5cefdddcbe4f6d9 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> @@ -1257,6 +1257,7 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
+>  						const struct drm_display_mode *mode)
+>  {
+>  	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
+> +	u64 adjusted_mode_clk;
+>  
+>  	/* if there is no 3d_mux block we cannot merge LMs so we cannot
+>  	 * split the large layer into 2 LMs, filter out such modes
+> @@ -1264,6 +1265,17 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
+>  	if (!dpu_kms->catalog->caps->has_3d_merge &&
+>  	    mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
+>  		return MODE_BAD_HVALUE;
+> +
+> +	adjusted_mode_clk = dpu_core_perf_adjusted_crtc_clk(mode->clock,
+> +							    dpu_kms->perf.perf_cfg);
+> +
+> +	/*
+> +	 * The given mode, adjusted for the perf clock factor, should not exceed
+> +	 * the max core clock rate
+> +	 */
+> +	if (adjusted_mode_clk > dpu_kms->perf.max_core_clk_rate / 1000)
+> +		return MODE_CLOCK_HIGH;
+> +
+>  	/*
+>  	 * max crtc width is equal to the max mixer width * 2 and max height is 4K
+>  	 */
+> 
+> ---
+> base-commit: 423c1c96d6b2d3bb35072e33a5fdd8db6d2c0a74
+> change-id: 20241212-filter-mode-clock-8cb2e769f05b
+> 
+> Best regards,
+> -- 
+> Jessica Zhang <quic_jesszhan@quicinc.com>
+> 
 
-bikeshedding some more, I still find "is_callable" confusing. How
-about "is_reachable_by_call"? slightly verbose, but probably more
-meaningful?
-
-> +{
-> +       return false;
-> +}
-> +
-> +const struct vm_special_mapping * __weak arch_uprobe_trampoline_mapping(=
-void)
-> +{
-> +       return NULL;
-> +}
-> +
-> +static unsigned long find_nearest_page(unsigned long vaddr)
-> +{
-> +       struct mm_struct *mm =3D current->mm;
-> +       struct vm_area_struct *vma, *prev;
-> +       VMA_ITERATOR(vmi, mm, 0);
-> +
-> +       prev =3D vma_next(&vmi);
-
-minor: we are missing an opportunity to add something between
-[PAGE_SIZE, <first_vma_start>). Probably fine, but why not?
-
-> +       vma =3D vma_next(&vmi);
-> +       while (vma) {
-> +               if (vma->vm_start - prev->vm_end  >=3D PAGE_SIZE) {
-> +                       if (arch_uprobe_is_callable(prev->vm_end, vaddr))
-> +                               return prev->vm_end;
-> +                       if (arch_uprobe_is_callable(vma->vm_start - PAGE_=
-SIZE, vaddr))
-> +                               return vma->vm_start - PAGE_SIZE;
-> +               }
-> +
-> +               prev =3D vma;
-> +               vma =3D vma_next(&vmi);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-
-[...]
-
-> +struct uprobe_trampoline *uprobe_trampoline_get(unsigned long vaddr)
-> +{
-> +       struct uprobes_state *state =3D &current->mm->uprobes_state;
-> +       struct uprobe_trampoline *tramp =3D NULL;
-> +
-> +       hlist_for_each_entry(tramp, &state->tramp_head, node) {
-> +               if (arch_uprobe_is_callable(tramp->vaddr, vaddr)) {
-> +                       atomic64_inc(&tramp->ref);
-> +                       return tramp;
-> +               }
-> +       }
-> +
-> +       tramp =3D create_uprobe_trampoline(vaddr);
-> +       if (!tramp)
-> +               return NULL;
-> +
-> +       hlist_add_head(&tramp->node, &state->tramp_head);
-> +       return tramp;
-> +}
-> +
-> +static void destroy_uprobe_trampoline(struct uprobe_trampoline *tramp)
-> +{
-> +       hlist_del(&tramp->node);
-> +       kfree(tramp);
-
-hmm... shouldn't this be RCU-delayed (RCU Tasks Trace for uprobes),
-otherwise we might have some CPU executing code in that trampoline,
-no?
-
-> +}
-> +
-
-[...]
+-- 
+With best wishes
+Dmitry
 
