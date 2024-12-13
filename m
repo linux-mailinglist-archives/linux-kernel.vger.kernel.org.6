@@ -1,127 +1,107 @@
-Return-Path: <linux-kernel+bounces-444771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDD99F0C4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:33:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E0F9F0C50
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:33:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26FEF18895F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:33:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9561698E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E044A1DF99C;
-	Fri, 13 Dec 2024 12:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFD91DF970;
+	Fri, 13 Dec 2024 12:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdmoHYi6"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OXczbFWj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBBD1DF752;
-	Fri, 13 Dec 2024 12:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94041DF263;
+	Fri, 13 Dec 2024 12:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734093160; cv=none; b=NdZ+2QZgF8ODKnpy8B+O17DnFeAYkEMEuvm/DeFhh6mdnwjM0EvzT3ODI/ai4iNzWx4d75Iw2doosegn3N5PUYiA0Cy20bYZjlRwee26atUFiww3vGXn+8CRsy5ixyKfX8ko77CslUamt6aYCQBBxrKrAwIqQuduoR01sFYusEI=
+	t=1734093223; cv=none; b=EeHG/v33eBiPKPzNPYMng+RDXkiznEojqKJG3B8c4RBT/Rhc6S1cQ992h7wVq45uUL9mdGLZvm427X++Hk9H87q95p1Kb0NnkK2yofxwawRRsvQosa0oEGUdvMEiCjrhryCFobsy4GkGhEEOulO6JDd7u7omemKKgySNtbT/eYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734093160; c=relaxed/simple;
-	bh=fsTrHAiO83eVNFyOeYdHYXhiTz7hRv6LJ42aHUnEANY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rdecXivZAUfklImfV2HnRZVc69c8zUAXXdREZpbAUmwhuzas2HW+tWQYXfjiF3fxfCRry182lza2i6tMT3m2fS0P0ZPb+IbB8JYswNTQ3OBu1ojqzbHtE/YDFxhlPqJzUMftdHxNJyTOaHQh/GWNw98TPiY0rZEteD9svTsHsdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdmoHYi6; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-29e5c0c46c3so826986fac.3;
-        Fri, 13 Dec 2024 04:32:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734093158; x=1734697958; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rTGR/DL1qtr5aYS8f+9xO5Ih5JqqbBsRuf62d1H81s4=;
-        b=hdmoHYi6OVXlngwUzdFKeCXuiufm8dpy5PMAJY18X9laiG98wWwJoomsBxvN50UIZ3
-         xXn2mUOHIOw/C5qItGC0g/Y0PUCChPOo3Zd+FevyDoXAFtr4KvgVjLg43ZvelpELheGP
-         SVYTtkiAFyxx75tbs67D89LS1ZQIv/fXIn50Y1yPLbm79sFl9n/H61bA1Xh6ejaU5oUb
-         +V9HzV5tv85ov4kyiTcYram6zddI2Sr3142aOKwwDfZOcYawxDcvu7HD7vyLstjEPRob
-         J2e9O7KK1Mf3j4pof9WwJnXpKZObtZKIHdI/i7/mknNns8i+5OJUK+cpU8My7BDoC4DW
-         P/7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734093158; x=1734697958;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rTGR/DL1qtr5aYS8f+9xO5Ih5JqqbBsRuf62d1H81s4=;
-        b=lUcnXGOVnsG9i3KeyMDcN11p1I062dN1b75Tt4xw5l6J01vJvy7ewQW87nna9xHI9k
-         jTpkH+W6zR4ASuMUtJXHdyme/3GjGYAYYTK5DENvxLKhi5RGyHnfZVzayXf4UPceTffV
-         VLrWCXfjmc6T+xVvkuQHTLTafjAdW/LCvHI6z9YPY5rwFUT/9w3e01C+GuaV+D+pQOkQ
-         r6vs/5zWomryawUuRjxbwLjYARIoNSI+Sviji5bS9ZRBNaUQ/GKz0oSTOgXnRNys7ZBK
-         A4oiFrfztOifrn+01T8DcTAT/r5IQpZHzjd6xroDF0skmv1WB5OQStYRqoC3S4UpkW0g
-         KraQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWa1z7Ea88OzX/39ftsSsdBH0yC6LlummHeHD8oCoUcEVnKi2okHjB3rfAdJZgQh6JDCDmtKaqBjIlWSZ0UXMsx@vger.kernel.org, AJvYcCWr1rWOEMSwIpPh1vg4Th6slQxEuCO1WWNV2qSxzeG5re4UR0ACjQxnJMIHtojjRA5PUhQ8Fpu/EmwYFP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp5oGVbyTW5PN8Zk8Qyvp9fN2IVLD8AsVweVaFZOYIhddqqOIs
-	AF1eo95HF+V7CTI2n8WzJ684TCHXXbb8gfJGi9LLZpvfyHD1Sy9RAiPZvCWIldiXLZoBTNWgVq/
-	rquM1QDve/BJCB/6lzBBokjvOB9U=
-X-Gm-Gg: ASbGncsTwo/kD/1br55dpGgXoqhR5lsyy4rwTP5+UnCyFihwR86Iw0hihudU5CCRyqg
-	+kaa3pyh3zmI6rNqvxEgOqK2yrZEYgyhnivVowYQddqwPwC9NScsQZ6m3+QY5loz2AXkn
-X-Google-Smtp-Source: AGHT+IFwYIoqLqjl/TuiKrRORnQy/+BxiiyOPxgy7qaRAjIZ95kOqJVGZ9Xdoa3iSz19TX5MxdU4f0HIyBZv8+4dRN0=
-X-Received: by 2002:a05:6870:82a4:b0:29e:3c90:148b with SMTP id
- 586e51a60fabf-2a3ac8a8d08mr1470450fac.26.1734093157864; Fri, 13 Dec 2024
- 04:32:37 -0800 (PST)
+	s=arc-20240116; t=1734093223; c=relaxed/simple;
+	bh=rAk3hly/a41J/LN5k9ck0LTmi7LASXJDC2AInbW23io=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GwdE/5IIzarBFoP6cY6DkjqPlq2+je0PfwfjIUNHaKbsvYdssC4nsGITClZ8SkPBEHC9+Re/0qlZ2Nq2jPDZb1a5W41UXwQ/pMo2fSnS1PkqvFmMOs0a9IXWqSpPohO1pj2NkfLwiDT5+KPSP+ZuDulwkokqLYxSPPeZnSLOqDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OXczbFWj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B46C4CED4;
+	Fri, 13 Dec 2024 12:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1734093221;
+	bh=rAk3hly/a41J/LN5k9ck0LTmi7LASXJDC2AInbW23io=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OXczbFWjD5QZpWETZv6EhqMmw+FBRwP6/UNlIDMnXl5QdpSRYs+1zQaGTEBK7unFA
+	 GtGpQrIWnUNb8YmfWCFBfAE/JO1abNo2RN/6CtWmfFUg4+GZ1p3N30VQXabtAXnbUF
+	 bpS/jfiDnRfJ2R7OS1LYEpKDDpIBYbydLlkyQwSU=
+Date: Fri, 13 Dec 2024 13:33:38 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/772] 6.1.120-rc1 review
+Message-ID: <2024121342-fastball-batting-c80b@gregkh>
+References: <20241212144349.797589255@linuxfoundation.org>
+ <c356563b-4137-403f-9f0f-29e9b38512ce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net> <20241211-b4-ovpn-v15-3-314e2cad0618@openvpn.net>
-In-Reply-To: <20241211-b4-ovpn-v15-3-314e2cad0618@openvpn.net>
-From: Donald Hunter <donald.hunter@gmail.com>
-Date: Fri, 13 Dec 2024 12:32:26 +0000
-Message-ID: <CAD4GDZyXK6rBH_ccHkYrA4h71bDkKxVy_B5o-bj0ezzdHTJKxQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 03/22] ovpn: add basic interface
- creation/destruction/management routines
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	sd@queasysnail.net, ryazanov.s.a@gmail.com, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c356563b-4137-403f-9f0f-29e9b38512ce@gmail.com>
 
-On Wed, 11 Dec 2024 at 21:32, Antonio Quartulli <antonio@openvpn.net> wrote:
->
->  static int ovpn_newlink(struct net *src_net, struct net_device *dev,
->                         struct nlattr *tb[], struct nlattr *data[],
->                         struct netlink_ext_ack *extack)
->  {
-> -       return -EOPNOTSUPP;
-> +       struct ovpn_priv *ovpn = netdev_priv(dev);
-> +       enum ovpn_mode mode = OVPN_MODE_P2P;
-> +
-> +       if (data && data[IFLA_OVPN_MODE]) {
-> +               mode = nla_get_u8(data[IFLA_OVPN_MODE]);
-> +               netdev_dbg(dev, "setting device mode: %u\n", mode);
-> +       }
-> +
-> +       ovpn->dev = dev;
-> +       ovpn->mode = mode;
-> +
-> +       /* turn carrier explicitly off after registration, this way state is
-> +        * clearly defined
-> +        */
-> +       netif_carrier_off(dev);
-> +
-> +       return register_netdevice(dev);
->  }
->
->  static struct rtnl_link_ops ovpn_link_ops = {
->         .kind = "ovpn",
->         .netns_refund = false,
-> +       .priv_size = sizeof(struct ovpn_priv),
-> +       .setup = ovpn_setup,
-> +       .policy = ovpn_policy,
-> +       .maxtype = IFLA_OVPN_MAX,
->         .newlink = ovpn_newlink,
->         .dellink = unregister_netdevice_queue,
->  };
+On Thu, Dec 12, 2024 at 01:38:31PM -0800, Florian Fainelli wrote:
+> On 12/12/24 06:49, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.1.120 release.
+> > There are 772 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.120-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on
+> BMIPS_GENERIC:
+> 
+> Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> 
+> There is a new warning though:
+> 
+> scripts/mod/modpost.c:969:44: warning: excess elements in array initializer
+>   969 |         .good_tosec = {ALL_TEXT_SECTIONS , NULL},
+>       |                                            ^~~~
+> scripts/mod/modpost.c:969:44: note: (near initialization for
+> ‘sectioncheck[10].good_tosec’)
+>   HOSTLD  scripts/mod/modpost
 
-You need to implement .fill_info to add IFLA_OVPN_MODE into get / dump ops.
+I thought I saw that but kind of ignored it, but in looking at it
+further, it's not good at all.  Let me go fix this up, for some reason
+we have "too many" entries in this list and so we could flow over the
+end of the buffer here...
+
+thanks,
+
+greg k-h
 
