@@ -1,112 +1,90 @@
-Return-Path: <linux-kernel+bounces-444952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1EC9F0F01
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:20:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE039F0EC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E0BA287B73
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:20:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD425280F1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A291E102E;
-	Fri, 13 Dec 2024 14:20:01 +0000 (UTC)
-Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E53A1E0DD1;
+	Fri, 13 Dec 2024 14:13:57 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135771DF975;
-	Fri, 13 Dec 2024 14:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE3E1E00B4
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734099600; cv=none; b=skV4KSl4JImC6G7fPuJHNRqwWFwYU3j1Vi0TkthaB7+fJltzYTjiCOdoV7JrLXmjGLU/1tRpcKqKfmGPF8GXWh1x7jjeC7zCWAlZaD56D50asbmHwAIGADaFoUiGsE0Ycj/mg7139VynDrJ74xZm6n+QGlp3v+VA1R9VkRuxNAs=
+	t=1734099236; cv=none; b=Cq4wKFqGIHDc1yIg1w0zeRcRp/VU4SoaGfzITpW7LHWc4efl+RFu8+2Er49OW23l3bgLUf7CJKfMTnRAap2512YJ9eafEGPCiZNEC2/HYQfOfO2Tab1mcDTARAhQgBY2LnwTbL2ZhCaSRSFHFNoXPQWkWJOGMUwmgdUH3rVLau0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734099600; c=relaxed/simple;
-	bh=8HWdDCZDmZQ7lFfWptEaYOgH0655564X8XMhKRhZp5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p1TQFhDUkY+x+NECVHwIPWjGYL9OxC2lx/RDAJKZEcsWC7GI00r7fs73CVKcO2N8a1x7kdeIiwqNQiU3VjmHK1J6fz2HCPVTraS2Itpyo+13hjjWwCK0KZdsD5ltYL3VtpuC9KqLU6/cB6vF/let5gtX43CfEg3T0hnvncVbgu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se; spf=none smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lankhorst.se
-Message-ID: <789d78c1-d16a-4cb3-b4ad-ba5f0ddcacaf@lankhorst.se>
-Date: Fri, 13 Dec 2024 15:13:23 +0100
+	s=arc-20240116; t=1734099236; c=relaxed/simple;
+	bh=T2E8kohs2Sz27sLWiniK+Ilnm09+ctyImHyisgZ5Jtg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=o6yUFrKbF9MyHjcmpYHmJoKCEYm2OwKrXVQMW5h5hsNxiNRbDox3cX7UUNHzZslfRTHJV/ctSgQtAH4WXsq+gAUGCTDTNIJf2RkxW8rZq8TNmcZASdeBg25Gl/B9qbSjjM+r3Xqsu0me0DHmPYANm9OgKr+nJ4blWAwg253r2iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7d60252cbso15226235ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:13:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734099234; x=1734704034;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9BXFWa2EJBuQIqwTiEzMlP+cVuPNirgB/zhCHNyvSiw=;
+        b=XsQ1soVqB4RN8XrK7ROOdywIYSjnpkklQB6k17+6+kyHvNqM+u4SFBiTlWn1Ng4vms
+         C2obCzRCUBL0ayRRttvSNtUzqFm4WkBffG2mWtKGXZcw1qgpYZDBXMfquaUarHC1jRJ8
+         yat+vjm5l6W08RS8zhT6nfOeOiiSNRilrze+iKp4mLZydMegoqs+1zcurR1MUhEYVfGw
+         FiAAhDVYa9zAbkk+wRfG3rgOgALQPa+C9YLVAPE+br4e0y9PYQmJxx3/Tk+QkURhGGUq
+         QwAFWQp0PplRTsYSJBHnAxYzWA4aF1d0W2W+qc2RC+1yTZMs13P2siZT/tvg28qO1Iz/
+         H9RQ==
+X-Gm-Message-State: AOJu0YyDclnJcTSU37w0MV73MA/6l9qB4/qq2LVKG2i35uGVGEI4off5
+	Dou3ORm2TwPfSYPka4MP1hgpqFI0plfjyDzqcNvJOK9Fd1TiO5Ds2U2tb2s7LHKLj8UWiRPdFSM
+	C+pmlDX/B6JfhgOICCS79tuqhMsoQ/wQaVAyAoW+Xys+PloEc1sP+v8U=
+X-Google-Smtp-Source: AGHT+IEKfInS4KGswTyXrtGacL+7IwudC/91LSYqov7sVrZeTK0uhEcnzkMrX2+7szwB72UGvDfXng+8hWcLpmJ3sQ0/Wheme1lj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
- cgroup.
-To: Maxime Ripard <mripard@kernel.org>, Friedrich Vock <friedrich.vock@gmx.de>
-Cc: linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
- linux-mm@kvack.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-References: <20241204134410.1161769-1-dev@lankhorst.se>
- <29a71119-04de-4c76-a98a-d0fcb906390f@gmx.de>
- <20241213-sceptical-maize-gazelle-fadc34@houat>
-Content-Language: en-US
-From: Maarten Lankhorst <dev@lankhorst.se>
-In-Reply-To: <20241213-sceptical-maize-gazelle-fadc34@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:32c4:b0:3a7:e069:95e0 with SMTP id
+ e9e14a558f8ab-3b02a13bd4amr27716765ab.1.1734099232846; Fri, 13 Dec 2024
+ 06:13:52 -0800 (PST)
+Date: Fri, 13 Dec 2024 06:13:52 -0800
+In-Reply-To: <674f4e43.050a0220.17bd51.004e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675c4120.050a0220.17d782.0012.GAE@google.com>
+Subject: Re: [syzbot] Re: general protection fault in exfat_get_dentry_cached()
+From: syzbot <syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hey,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Den 2024-12-13 kl. 14:07, skrev Maxime Ripard:
-> On Sun, Dec 08, 2024 at 01:15:34PM +0100, Friedrich Vock wrote:
->> Hi,
->>
->> On 04.12.24 14:44, Maarten Lankhorst wrote:
->>
->>> Because it only deals with memory regions, the UAPI has been updated
->>> to use dmem.min/low/max/current, and to make the API cleaner, the
->>> names are changed too.
->>>
->>> dmem.current could contain a line like:
->>> "drm/0000:03:00.0/vram0 1073741824"
->>>
->>> But I think using "drm/card0/vram0" instead of PCIID would perhaps
->>> be good too. I'm open to changing it to that based on feedback.
->>
->> Agree, allowing userspace to reference DRM devices via "cardN" syntax
->> sounds good.
->>
->> What about other subsystems potentially using dmem cgroups?
->> I'm not familiar with the media subsystem, but I imagine we might be
->> dealing with things like USB devices there? Is something like a
->> "deviceN" possible there as well, or would device IDs look completely
->> different?
-I'd just take what makes sense for each driver. dev_name() would be a 
-good approximation.
+***
 
-I agree that cardN is not stable.
+Subject: Re: general protection fault in exfat_get_dentry_cached()
+Author: dmantipov@yandex.ru
 
-> > I have some patches to enable the cgroup in GEM-based drivers, media
-> ones and dma-buf heaps. The dma-buf heaps are simple enough since the
-> heaps names are supposed to be stable.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git f932fb9b40749d1c9a539d89bb3e288c077aafe5
 
-I've used your patch as a base enable cgroup in drivers that use the 
-VRAM manager. I didn't want to enable it for all of GEM, because it 
-would conflict with drivers using TTM. Some more discussion is needed first.
-
-For DMA-BUF heaps, I think it's fine and there is a lot less need of 
-discussion. I just felt it should be sent separately from the initial 
-enablement.
-
-> I don't think using card0 vs card1 (or v4l0 vs v4l1 for example) will
-> work because I don't think we have any sort of guarantee that these
-> names will always point to the same devices across reboots or updates.
-> 
-> If the module is loaded later than it used to for example, we could very
-> well end up in a situation where card0 and card1 are swapped, while the
-> constraints apply to the previous situation.
-I agree, just put it out there for discussion. I don't think the 
-benefits weigh up against the downsides :-)
-
-Cheers,
-~Maarten
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 97d2774760fe..73dbc5cdf388 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -331,7 +331,7 @@ static int exfat_find_empty_entry(struct inode *inode,
+ 	while ((dentry = exfat_search_empty_slot(sb, &hint_femp, p_dir,
+ 					num_entries, es)) < 0) {
+ 		if (dentry == -EIO)
+-			break;
++			return -EIO;
+ 
+ 		if (exfat_check_max_dentries(inode))
+ 			return -ENOSPC;
 
