@@ -1,135 +1,215 @@
-Return-Path: <linux-kernel+bounces-444919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F2C9F0E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:10:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C5F9F0EBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB58B188E4E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:10:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE541887918
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054E51E0DD1;
-	Fri, 13 Dec 2024 14:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45631E1C07;
+	Fri, 13 Dec 2024 14:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="dqYJrG9Z"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10291E3760;
-	Fri, 13 Dec 2024 14:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="EqVja4p+"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8F01E1A2B;
+	Fri, 13 Dec 2024 14:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734098911; cv=none; b=GD31cNfdT/yNNq5qecQ+gZTZhEMkLp6PmMxssFFzouHoTjeRuFwrBWM2nsvMZGhA21C0bRo//YqPPvRfOnDMWpPi2o2g13AcIrbQFOAl/xbPM3P+0TgJraEixleBtNdcfjX5ASx+YwBE76s9vsri/YkL1vAlXdB01Ynv79/6YW4=
+	t=1734098944; cv=none; b=uKA+FH1RcG2f6fez85aTN4ODkwF4GC7Tc+oZVl0Ix9JXhi0D/1KiA4RLQbr97NmxiF67xBWF1vnwhoXIOFhB2BY2UK1CR4e+TwO/qpcxnJ8HAAyEmFrmrMPa29Od+Y12vtkgcmC+toXYCGfKalBZzztSQbSKrb//gXWPzd/pN2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734098911; c=relaxed/simple;
-	bh=YZWxxksRW0XFn6jn9rLNtKvpcDilJtfFiOmnCZsj6aw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sP+XNWozExTJDg90WQrhBXC7EOAj9YoGk+cWpa70udwYHkC1zqT1q7+GolfG6ImHE2nJh6kANWIghthQM30Hg+YrYffIfVi/6QeNJsgSRN5Kw0onHT+YgafO4kispjuS+1WXzh3l5CLlrSdhnJW59j3tbhmhhpbfrNTPggqjcCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=dqYJrG9Z; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id DF2DE12002E;
-	Fri, 13 Dec 2024 17:08:27 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru DF2DE12002E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1734098907;
-	bh=fAcgV1r7oNNX9AxRnU+3mnq4q6Fxo7+EuYkriNujJnA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=dqYJrG9Zl2WrpsK5HbDS5INEvWbfF/Uvw8Ew20C1eJ0D9RqFhB+B9QtzgvbP9CWtA
-	 ST/XN1HAa7RT0nVy2iY/UvqfcZXGbO6aCYwolLTvTbohQctGqhkO4dmrf6AZcM3RWO
-	 ErEDcSsSc7GQi/fRvO0bh6QvNgfVNarUH6Sr/GB7RNjKjuV+XSo/5qV8QzctdowWGO
-	 C5BJAk9+Vlo8TcyqNzr6eFjHCGw/Ox2nm8oAC4PacrTFtHqJJgK2KD9zo64s+7hrcM
-	 bhtbMVUUS/YK/kzqZTuPB4cq/05br87O1M/gziP3k4iuJ1Cx+lZ+F3amF/w12a/7dW
-	 SLuceTIaxyqJw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 13 Dec 2024 17:08:27 +0300 (MSK)
-From: Alexey Romanov <avromanov@salutedevices.com>
-To: <neil.armstrong@linaro.org>, <clabbe@baylibre.com>,
-	<herbert@gondor.apana.org.au>, <davem@davemloft.net>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <khilman@baylibre.com>, <jbrunet@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <vadim.fedorenko@linux.dev>
-CC: <linux-crypto@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <kernel@salutedevices.com>, "Alexey
- Romanov" <avromanov@salutedevices.com>
-Subject: [PATCH v11 14/22] crypto: amlogic - Add support for AXG-series
-Date: Fri, 13 Dec 2024 17:07:47 +0300
-Message-ID: <20241213140755.1298323-15-avromanov@salutedevices.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241213140755.1298323-1-avromanov@salutedevices.com>
-References: <20241213140755.1298323-1-avromanov@salutedevices.com>
+	s=arc-20240116; t=1734098944; c=relaxed/simple;
+	bh=CD1WOtRLzuVMHhngLdy/bz/qra6W87BJvO+WW4EKqOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ftKwS+eHZkYFLn//hXh2uMTzbewSKkT+7tsYace83pOsGNq8gQ2J5ZBecBE8gxly/jDoVBLIPO2GLQcQFYz2qgUxFu+OUG0FjhFYB9Qjv5XD9RZ8b1Aa6/hfivTB7Z2pZuay3GEIj7uDXKMLLE9tdjl4zR4XKCBzrYdPZJYq59s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=EqVja4p+; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=Stc+DbZ8vt98n/5CtpcpiMrgDGti6EGxF31caTQlCvg=;
+	b=EqVja4p+6RaogHoVMPZ4mTngDjaFaUt9ln+pg5l5Tv0iLKYhfnLEItVLd/9PqD
+	kapp1C88lGJQeHoQa8FEdsWXwHkfXJYQNjannr5Xoq8WG3oZI74kH81fGOvvAHFb
+	beMXgjsv2Cl/npx+Wgr8cAHzfRoSDaIrLclnfk+5vDA70=
+Received: from iZj6c3ewsy61ybpk7hrb16Z (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3f+60P1xn40hMAQ--.32891S2;
+	Fri, 13 Dec 2024 22:07:50 +0800 (CST)
+Date: Fri, 13 Dec 2024 22:07:48 +0800
+From: Jiayuan Chen <mrpre@163.com>
+To: John Fastabend <john.fastabend@gmail.com>
+Cc: bpf@vger.kernel.org, martin.lau@linux.dev, ast@kernel.org, 
+	edumazet@google.com, jakub@cloudflare.com, davem@davemloft.net, dsahern@kernel.org, 
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org, song@kernel.org, 
+	andrii@kernel.org, mhal@rbox.co, yonghong.song@linux.dev, daniel@iogearbox.net, 
+	xiyou.wangcong@gmail.com, horms@kernel.org
+Subject: Re: [PATCH bpf v2 1/2] bpf: fix wrong copied_seq calculation
+Message-ID: <xtsolkbkdecvlbqx4zjtvd74c45lg5kqx2ojgdvovxrjgaghij@ld4wjwi7imvy>
+References: <20241209152740.281125-1-mrpre@163.com>
+ <20241209152740.281125-2-mrpre@163.com>
+ <6758f4ce604d5_4e1720871@john.notmuch>
+ <f2pur5raimm5y3phmtwubf6yf3sniphwgql4c4k7md25lxcehm@3qwyp4zibnrd>
+ <675b8f8f65e28_ff0720890@john.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189823 [Dec 13 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: avromanov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 47 0.3.47 57010b355d009055a5b6c34e0385c69b21a4e07f, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/12/13 12:33:00 #26873825
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <675b8f8f65e28_ff0720890@john.notmuch>
+X-CM-TRANSID:_____wD3f+60P1xn40hMAQ--.32891S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWFWrWry7KF1Utr43tFWxCrg_yoWrXr43pa
+	97Aay7KwnrJrW0v34Iv397WF1Sg348KF43Jr1rWa43Cr98Wrn3tryfKF4a9F45Krs5uF4U
+	Zw4UtFsruwsxuFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U-dbbUUUUU=
+X-CM-SenderInfo: xpus2vi6rwjhhfrp/xtbBDwS0p2dcNYbidAAAsG
 
-Tested via tcrypt module and with custom tests.
+On Thu, Dec 12, 2024 at 05:36:15PM -0800, John Fastabend wrote:
+[...]
+> > > I think easier is to do similar logic to read_sock and track
+> > > offset and len? Did I miss something.
+> > 
+> > Thanks to John Fastabend.
+> > 
+> > Let me explain it.
+> > Now I only replace the read_sock handler when using strparser.
+> > 
+> > My previous implementation added the replacement of read_sock in
+> > sk_psock_start_strp() to more explicitly require replacement when using
+> > strparser, for instance:
+> > '''skmsg.c
+> > void sk_psock_start_strp(struct sock *sk, struct sk_psock *psock)
+> > {
+> >     ...
+> >     sk->sk_data_ready = sk_psock_strp_data_ready;
+> >     /* Replacement */
+> >     sk->sk_socket->ops->read_sock = tcp_bpf_read_sock;
+> > }
+> > '''
+> > 
+> > As you can see that it only works for strparser.
+> > (The current implementation of replacement in tcp_bpf_update_proto()
+> > achieves the same effect just not as obviously.)
+> > 
+> > So the current implementation of recv_actor() can only be strp_recv(),
+> > with the call stack as follows:
+> > '''
+> > sk_psock_strp_data_ready
+> >   -> strp_data_ready
+> >     -> strp_read_sock
+> >       -> strp_recv
+> > '''
+> > 
+> > The implementation of strp_recv() will consume all input skb. Even if it
+> > reads part of the data, it will clone it, then place it into its own
+> > queue, expecting the caller to release the skb. I didn't find any
+> > logic like tcp_try_coalesce() (fix me if i miss something).
+> 
+> 
+> So here is what I believe the flow is,
+> 
+> sk_psock_strp_data_ready
+>   -> str_data_ready
+>      -> strp_read_sock
+>         -> sock->ops->read_sock(.., strp_recv)
+> 
+> 
+> We both have the same idea up to here. But then the proposed data_ready()
+> call
+> 
+> +	while ((skb = skb_peek(&sk->sk_receive_queue)) != NULL) {
+> +		u8 tcp_flags;
+> +		int used;
+> +
+> +		WARN_ON_ONCE(!skb_set_owner_sk_safe(skb, sk));
+> +		tcp_flags = TCP_SKB_CB(skb)->tcp_flags;
+> +		used = recv_actor(desc, skb, 0, skb->len);
+> 
+> The recv_actor here is strp_recv() all good so far. But, because
+> that skb is still on the sk_receive_queue() the TCP stack may
+> at the same time do
+> 
+>  tcp_data_queue
+>   -> tcp_queue_rcv
+>      -> tail = skb_peek_tail(&sk->sk_receive_queue);
+>         tcp_try_coalesce(sk, tail, skb, fragstolen)
+>          -> skb_try_coalesce()
+>             ... skb->len += len
+> 
+> So among other things you will have changed the skb->len and added some
+> data to it. If this happens while you are running the recv actor we will
+> eat the data by calling tcp_eat_recv_skb(). Any data added from the
+> try_coalesce will just be dropped and never handled? The clone() from
+> the strparser side doesn't help you the tcp_eat_recv_skb call will
+> unlik the skb from the sk_receive_queue.
+> 
+> I don't think you have any way to protect this at the moment.
 
-Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
----
- drivers/crypto/amlogic/amlogic-gxl-core.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Thanks John Fastabend.
 
-diff --git a/drivers/crypto/amlogic/amlogic-gxl-core.c b/drivers/crypto/amlogic/amlogic-gxl-core.c
-index 6529ae24b75f..9452f05d2f10 100644
---- a/drivers/crypto/amlogic/amlogic-gxl-core.c
-+++ b/drivers/crypto/amlogic/amlogic-gxl-core.c
-@@ -290,6 +290,14 @@ static const struct meson_pdata meson_g12a_pdata = {
- 	.support_192bit_key = false,
- };
- 
-+static const struct meson_pdata meson_axg_pdata = {
-+	.descs_reg = 0x0,
-+	.status_reg = 0x8,
-+	.setup_desc_cnt = 3,
-+	.hasher_supported = true,
-+	.support_192bit_key = true,
-+};
-+
- static const struct of_device_id meson_crypto_of_match_table[] = {
- 	{
- 		.compatible = "amlogic,gxl-crypto",
-@@ -299,6 +307,10 @@ static const struct of_device_id meson_crypto_of_match_table[] = {
- 		.compatible = "amlogic,g12a-crypto",
- 		.data = &meson_g12a_pdata,
- 	},
-+	{
-+		.compatible = "amlogic,axg-crypto",
-+		.data = &meson_axg_pdata,
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, meson_crypto_of_match_table);
--- 
-2.34.1
+It seems sk was always locked whenever data_ready called.
+
+'''
+bh_lock_sock_nested(sk)
+tcp_v4_do_rcv(sk)
+   |
+   |-> tcp_rcv_established
+   	|-> tcp_queue_rcv 
+   		|-> tcp_try_coalesce
+   |
+   |-> tcp_rcv_state_process
+   	|-> tcp_queue_rcv
+   		|-> tcp_try_coalesce
+   |
+   |-> sk->sk_data_ready()
+
+bh_unlock_sock(sk)
+'''
+
+other data_ready path:
+'''
+lock_sk(sk)
+sk->sk_data_ready()
+release_sock(sk)
+'''
+
+I can not find any concurrency there. 
+> > 
+> > The record of the 'offset' is stored within its own context(strparser/_strp_msg).
+> > With all skbs and offset saved in strp context, the caller does not need to
+> > maintain it.
+> > 
+> > I have also added various logic tests for this situation in the test
+> > case, and it works correctly. 
+> > > > +		/* strparser clone and consume all input skb
+> > > > +		 * even in waiting head or body status
+> > > > +		 */
+> > > > +		tcp_eat_recv_skb(sk, skb);
+> > > > +		if (used <= 0) {
+> > > > +			if (!copied)
+> > > > +				copied = used;
+> > > > +			break;
+> > > > +		}
+> > > > +		copied += used;
+> > > > +		if (!desc->count)
+> > > > +			break;
+> > > > +		if (tcp_flags & TCPHDR_FIN)
+> > > > +			break;
+> > > > +	}
+> > > > +	return copied;
+> > > > +}
+> > > > +
+> > > >  enum {
+> > > >  	TCP_BPF_IPV4,
+> > > >  	TCP_BPF_IPV6,
+> > > > @@ -595,6 +636,10 @@ enum {
+> > 
+> > 
+> 
+> 
 
 
