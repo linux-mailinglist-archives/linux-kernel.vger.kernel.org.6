@@ -1,250 +1,127 @@
-Return-Path: <linux-kernel+bounces-444394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80959F0616
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:12:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87959F061D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:12:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC95168534
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD572813DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83821ACDE8;
-	Fri, 13 Dec 2024 08:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7F41A38E3;
+	Fri, 13 Dec 2024 08:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="25CRHmzk"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ecu6C6tH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5472F1ABEC6
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C6E19E982;
+	Fri, 13 Dec 2024 08:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734077459; cv=none; b=l1kcYK1/XKaFpR3eTHKpBC4pxj0J5OImQJB13WKczc5N4ie+pzxvzSvMsLE/vFDaLojIvBbPKbFS8LQBtOVA5oe9DYoBgHoyjlSeUdQtMfq0oTWKch3T06ShPGHrPSq8GaK/iqcKKRfYfbCCGDNoyBGBhiwgxM/sAkp7kXJ0AOU=
+	t=1734077538; cv=none; b=JC7FaLYGfl7KEgOrVhq9rusSSHFz8psiBGVgzgnr4ekHmXsReXPwnWFwiXKtG4/Cw//1gMsCWsOvhXBevXgBKiIz0KW3YvGhcU74yrl3XRbnKzaSeOGF49ogscCF65cBeNbQqWUuNifPwKrR1qW5qz0UDt683aRPOmmMaGGwpbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734077459; c=relaxed/simple;
-	bh=muBuT3/fw4rFJrq5xFQ+Ra6MjOtPX4OZHijECqYG8dQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eFm2W191oDG8uu4FYroWXOIl1e1eHNKj1i6Omu6kM4z4bidK2wyuA37HQ7UzlzfKbpuCDRn6HLOyWp3DKjCIacmeoA2ebBNHTSfpfgyAkHL4yN4ZLk32aKYzVOnkJpynSRptjD78OKcoSq/FoEyee/1HZfLD+Ac6NM+R2LLywHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=25CRHmzk; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-725e2413114so1285451b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:10:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734077457; x=1734682257; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PrQ0AlLgEYLxlOCFUZxHBj34RLTPvztlmnit/cu7UGM=;
-        b=25CRHmzk7yLY0N38jE5zROx4cARvOQ7LvdnVauXbmDR6j87VbNg2ZYa5T+OeXGvhp5
-         4VCRE7q9S3l3Zt0trx2wr6ln48mqklTcWBWHgOrVPvlHm4DZPOa+REmN50cdxXMJigYR
-         T7Mk4rPoPjzpliMXE5+T9hNYAh+YcabyBamuBJCMJ7Tfr7LbBEmKddfSlj6KFV4Wg3o6
-         f0YTZjBY9a56g3FQzuxyesiO3Wi+JLFyAdM2mZ0EB51D+s1fsWnyKtJb8EgVhY+0MYKf
-         rIELucBYct8wURa1m87jbUgj1/lihDNuaoNjcFm/aoRzxwQMKTywXzITcj7snxYOaQeq
-         0jHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734077457; x=1734682257;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PrQ0AlLgEYLxlOCFUZxHBj34RLTPvztlmnit/cu7UGM=;
-        b=Gx03KNsVoAeIZlUbYiyoHhrHwoB/o1K975hVprfrcNacUUUZvbNsFCJwDDSIeBCtV+
-         AlO+pNO8o4IWrIi2SE6SD/t7GsJNi4YO3IDOrL914B+DCZG2JUikMaKUyd/oux/cjWCC
-         r7ijOppT+pGl479lPwr1hWrzvjs9wCTz/ngXOq+NCERbDabKRxLs/j8gpVmQK+62Z5tp
-         rk7ntH1pugMwZqV8yaN8bCLm5E1bE8QtvfHwdlZAr69EJh5E/IaXfQlyRyqt7Tj3RQLL
-         tl5azD3lYH6sWxvLpJEjjX+Mb9fvQbfLbTII7AEIai/pBTumQYqWEK304QplkpnYQXfa
-         DskA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpELrzUlLOybUBrirwgVhVypvNTjtPC93YpRUWL/9gFwHkCQ4BNvsQuXTLiNva6WuEO/2LyfRmnK3e2Ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnRPiEqQixtwGgT93rRG/aeUzmnNRlb9VK7G9Nr8/ZTKFJENif
-	l84R+z1gDb+aVS3DOEX9rp6VWM0XQI8c4VF/WKg5Yyxu3vbc+ixFTLzXcupjcDv0YgudVDzXEbw
-	2asLM+UO4EQ==
-X-Google-Smtp-Source: AGHT+IE20r9i7LSXHxGlRRrGX5jraUibLl/FufsitEHqK5okZqnX9FSquFIcCA+5Lr9N/9ktxgLKuC+kX5f3rA==
-X-Received: from pfbhj4.prod.google.com ([2002:a05:6a00:8704:b0:728:c6d8:5683])
- (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:c99a:b0:1e1:cd09:e08d with SMTP id adf61e73a8af0-1e1dfd3533bmr3125607637.11.1734077456782;
- Fri, 13 Dec 2024 00:10:56 -0800 (PST)
-Date: Fri, 13 Dec 2024 16:10:32 +0800
-In-Reply-To: <20241213081035.2069066-1-davidgow@google.com>
+	s=arc-20240116; t=1734077538; c=relaxed/simple;
+	bh=NYJMAbPSuP69SJgTfmwj0roJOpkRyTlpZYYcXkAVxO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UkbrcqWf+bo3o+JZTVu8Yqaui0t2iDnDS0XzpYJ6kXjec4Cwk3iSL2HgNZG66f3DwJ8T4Y9eQnXxsZ1AMhD/FOj3eJ8Ymt0bILsbzD4zmFFBPwptxkj8BHB62rgq2iWSX5Ofy866zk77eiYNKNpgkxD+57KmoonF2QXzohoi5bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ecu6C6tH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BD9C4CED0;
+	Fri, 13 Dec 2024 08:12:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734077537;
+	bh=NYJMAbPSuP69SJgTfmwj0roJOpkRyTlpZYYcXkAVxO0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ecu6C6tHTabNyKH+zor1cj6eBmvgMSi1CML5BMJ6jPvUVN6Oq9QZ0Uoe+leMm5Dt3
+	 KHOK6RnPwNSs+Vdw3ITKgbUeH/ytqsb08zJ/lxd4h+jN2+9js2agyz13JfvhzD2K8f
+	 1DDoD+zPm55hbmnqeCBIlF+wC+9B7Co+A1FsBtRRhPeiel1UeQvEzAruPTk/Ng/+ZY
+	 TwBoFE39m8589IXvXmabDTeVwjSzoPo0O401O8ayRdGLI12tValMxO3czuU40GwdXs
+	 NMJmCtfoEUSSpcAOPVnLFJReZYu+s75dfbh06v0doMfjxpkKMR1aGazl3XKtdjTBF/
+	 rnWvUxD7/5U4Q==
+Message-ID: <fc8b83dc-067a-4d9a-8f8b-31e3f8f4bd91@kernel.org>
+Date: Fri, 13 Dec 2024 09:12:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241213081035.2069066-1-davidgow@google.com>
-X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Message-ID: <20241213081035.2069066-4-davidgow@google.com>
-Subject: [PATCH v5 3/3] rust: kunit: allow to know if we are in a test
-From: David Gow <davidgow@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, 
-	"=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?=" <jose.exposito89@gmail.com>, Rae Moar <rmoar@google.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Matt Gilbride <mattgilbride@google.com>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, kunit-dev@googlegroups.com, 
-	linux-kselftest@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] arm64: dts: qcom: Add coresight node for SM8650
+To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241210-sm8650-cs-dt-v1-1-6640ebe0c6cf@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241210-sm8650-cs-dt-v1-1-6640ebe0c6cf@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+On 10/12/2024 07:51, Yuanfang Zhang wrote:
+> Add coresight components: Funnel, ETE and ETF for SM8650.
+> 
+> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 187 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 187 insertions(+)
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
 
-In some cases, we need to call test-only code from outside the test
-case, for example, to mock a function or a module.
+Please read carefully DTS coding style and follow it in your DTS
+submissions.
 
-In order to check whether we are in a test or not, we need to test if
-`CONFIG_KUNIT` is set.
-Unfortunately, we cannot rely only on this condition because:
-- a test could be running in another thread,
-- some distros compile KUnit in production kernels, so checking at runtime
-  that `current->kunit_test !=3D NULL` is required.
-
-Forturately, KUnit provides an optimised check in
-`kunit_get_current_test()`, which checks CONFIG_KUNIT, a global static
-key, and then the current thread's running KUnit test.
-
-Add a safe wrapper function around this to know whether or not we are in
-a KUnit test and examples showing how to mock a function and a module.
-
-Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-Co-developed-by: David Gow <davidgow@google.com>
-Signed-off-by: David Gow <davidgow@google.com>
----
-Changes since v4:
-https://lore.kernel.org/linux-kselftest/20241101064505.3820737-4-davidgow@g=
-oogle.com/
-- Rebased against 6.13-rc1
-- Fix some missing safety comments, and remove some unneeded 'unsafe'
-  blocks. (Thanks Boqun)
-
-Changes since v3:
-https://lore.kernel.org/linux-kselftest/20241030045719.3085147-8-davidgow@g=
-oogle.com/
-- The example test has been updated to no longer use assert_eq!() with
-  a constant bool argument (fixes a clippy warning).
-
-No changes since v2:
-https://lore.kernel.org/linux-kselftest/20241029092422.2884505-4-davidgow@g=
-oogle.com/
-
-Changes since v1:
-https://lore.kernel.org/lkml/20230720-rustbind-v1-3-c80db349e3b5@google.com=
-/
-- Rebased on top of rust-next.
-- Use the `kunit_get_current_test()` C function, which wasn't previously
-  available, instead of rolling our own.
-- (Thanks also to Boqun for suggesting a nicer way of implementing this,
-  which I tried, but the `kunit_get_current_test()` version obsoleted.)
-
----
- rust/kernel/kunit.rs | 75 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
-
-diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-index a92f12da77d5..2196e35e5d75 100644
---- a/rust/kernel/kunit.rs
-+++ b/rust/kernel/kunit.rs
-@@ -285,11 +285,86 @@ macro_rules! kunit_unsafe_test_suite {
-     };
- }
-=20
-+/// In some cases, you need to call test-only code from outside the test c=
-ase, for example, to
-+/// create a function mock. This function can be invoked to know whether w=
-e are currently running a
-+/// KUnit test or not.
-+///
-+/// # Examples
-+///
-+/// This example shows how a function can be mocked to return a well-known=
- value while testing:
-+///
-+/// ```
-+/// # use kernel::kunit::in_kunit_test;
-+/// #
-+/// fn fn_mock_example(n: i32) -> i32 {
-+///     if in_kunit_test() {
-+///         100
-+///     } else {
-+///         n + 1
-+///     }
-+/// }
-+///
-+/// let mock_res =3D fn_mock_example(5);
-+/// assert_eq!(mock_res, 100);
-+/// ```
-+///
-+/// Sometimes, you don't control the code that needs to be mocked. This ex=
-ample shows how the
-+/// `bindings` module can be mocked:
-+///
-+/// ```
-+/// // Import our mock naming it as the real module.
-+/// #[cfg(CONFIG_KUNIT)]
-+/// use bindings_mock_example as bindings;
-+///
-+/// // This module mocks `bindings`.
-+/// mod bindings_mock_example {
-+///     use kernel::kunit::in_kunit_test;
-+///     use kernel::bindings::u64_;
-+///
-+///     // Make the other binding functions available.
-+///     pub(crate) use kernel::bindings::*;
-+///
-+///     /// Mock `ktime_get_boot_fast_ns` to return a well-known value whe=
-n running a KUnit test.
-+///     pub(crate) fn ktime_get_boot_fast_ns() -> u64_ {
-+///         if in_kunit_test() {
-+///             1234
-+///         } else {
-+///             // SAFETY: ktime_get_boot_fast_ns() is safe to call, and j=
-ust returns a u64.
-+///             // Additionally, this is never actually called in this exa=
-mple, as we're in a test
-+///             // and it's mocked out.
-+///             unsafe { kernel::bindings::ktime_get_boot_fast_ns() }
-+///         }
-+///     }
-+/// }
-+///
-+/// // This is the function we want to test. Since `bindings` has been moc=
-ked, we can use its
-+/// // functions seamlessly.
-+/// fn get_boot_ns() -> u64 {
-+///     bindings::ktime_get_boot_fast_ns()
-+/// }
-+///
-+/// let time =3D get_boot_ns();
-+/// assert_eq!(time, 1234);
-+/// ```
-+pub fn in_kunit_test() -> bool {
-+    // SAFETY: kunit_get_current_test() is always safe to call from C (it =
-has fallbacks for
-+    // when KUnit is not enabled), and we're only comparing the result to =
-NULL.
-+    unsafe { !bindings::kunit_get_current_test().is_null() }
-+}
-+
- #[kunit_tests(rust_kernel_kunit)]
- mod tests {
-+    use super::*;
-+
-     #[test]
-     fn rust_test_kunit_example_test() {
-         #![expect(clippy::eq_op)]
-         assert_eq!(1 + 1, 2);
-     }
-+
-+    #[test]
-+    fn rust_test_kunit_in_kunit_test() {
-+        let in_kunit =3D in_kunit_test();
-+        assert!(in_kunit);
-+    }
- }
---=20
-2.47.1.613.gc27f4b7a9f-goog
-
+Best regards,
+Krzysztof
 
