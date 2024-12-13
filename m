@@ -1,145 +1,120 @@
-Return-Path: <linux-kernel+bounces-444985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982319F0F83
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:50:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AAC9F0F92
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9B0A165609
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8F3188339E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229ED1E1C26;
-	Fri, 13 Dec 2024 14:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9233C1E22E6;
+	Fri, 13 Dec 2024 14:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kDvcqnxz"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lmnu+yRo"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BD71E0B7F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADC71DF759;
+	Fri, 13 Dec 2024 14:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101401; cv=none; b=MdZQ0qcbgWOwn06ke7cbmpZ+T5Ale/3B9n2qal/HmOdM+4P4jFyKiRc7NxhIXv+Yxey6BikmdQ0oupO8vDmRk/b437Spgq21Z+R17LD4PHDo6vlyP4tlWYG2b/fLTx6mQINl/IwtvNmFd2lkMF5oIAh8FipGnCVL8FIgVFnMzqU=
+	t=1734101460; cv=none; b=OIMsswN79coWFPjUIT49XJWLoc+m8NYm77OZiLkhutT22La5OzEv91Y3bp9xktSstR+e4JAOiJ0ZhcrSoiCgPjTw/kKpPOOSruvTq9ZguPNdJz2iUV2ekOrjy1qQG+DM+X9JxDibUXeZXXnO0dj0LGnFIuOMy4MvWbhrtF1mN7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101401; c=relaxed/simple;
-	bh=5bPp8E+MpuFVxKboQhNt6/M7Z4iZDMHxwXj86tG/o2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ulAr3PwJAfCUGqTG66pP59dEbq5n0pmyaqNVDKVOE14yzE32JlinwxoLD4CkyJ/ToLIFl3kwC+MxTqLGFONe1917umNTyzX7b+RHBoPs2M4bmWHU8oP4+WLN1FPXANqzEn8BUiZuhTIYv8o41PHwvrMpy6up9ORAb+FsYDQeqPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kDvcqnxz; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-844dac0a8f4so136818839f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:49:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734101398; x=1734706198; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gOWXs7WdzCpqTexnYKxKuVH/hJEpRnVT9ooHNt2C+JE=;
-        b=kDvcqnxzdkJsgsK8mKEIz+2trfYuorJuxsVF+3028F4/MKSzbw2ojj6RAbix4nuapO
-         5mZtXLK8gAxBC2nI5DwA4Rx/g8SmX6lGZrgA/GcbeYoR11kJcwJczS7SBF8xJzqPvKlG
-         YTwXI4+1leAlZoMYwXxh6ijsE43lXKxkdBUe/v9eGEaDYQgxHMHQmI+/arTnLZE6g0R3
-         M4SicChY3FDGIQ1y2pGOQXc59AUPEy96JQcLiM2JZDY8RuiRT5vVHhhQ2wcuuvqG/h8p
-         SAxL/ofquxNyIQezn8fsMuwbYn1nQVPhkJ+zbPpLyeiRdH4khSDfe2RBNyvjRQ/QB/1h
-         rkgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101398; x=1734706198;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gOWXs7WdzCpqTexnYKxKuVH/hJEpRnVT9ooHNt2C+JE=;
-        b=q4JqyWlV4BwTyUTTaXTGIs5GFG1Afy6UCkAMjpLbsUdCudUo4taRR6+qnX7hgMFTNp
-         tDCZLf9kSQ+T67KnJkiSwppWC2VLrqt8vnOBDgSLcONxWYi/t18138WrNceJXfnci0Z7
-         GG8FsxXE/ZItXTFcHmummYq2vYIQz8ASdVcP7XJNEkI/rl9wFYE1ejlRo2Rl/ShR6aof
-         UBjlKbVzudffmjzlM13EzqPUNpX/V+ls72cZ+Ks7985OI/PCiHIKLzynB66XsoUfhoNP
-         RzufcqXCYxLUg5Jur4zpyyGgeflHqeyKMh54Msf74I1mBQQUz7ZVLvMCvoauJPkFnNA6
-         yKmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKAOK9EaBMMxad20giHgyaU+BNDfO9NlKZgx019TmnHApVA8EkWxwQXP7rVTs/VoluWEnvNmvlf9KlReg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxovtgZYznmRA3fOq/smiNAJQksQHHBQsJfUV/ShElJye9T1X1E
-	PM7U7gSSjbNSSbQRet+DcBwdj1iG3g7g31PZVcciK3BWWHB1nKselpIm85w4I7s=
-X-Gm-Gg: ASbGncumr4RREz/VKsjOTRzarAb5bTvQyjR4ep2SOc6lBVMMqFhbVw6n12LO5MdnNgG
-	fXEWVnKwnvD45dhb0LtZDQ3l4g30yCjxQ+In7xs25CpozvzIWKm+J04eU9Rj8YunRKpmdfJWuSi
-	RLSJqzbL+ktsKbRuMsr8mA+U/AJwsBst4laI5aCIUSVeTKei65Ed491EbRqaQI3PPk6r13txs6I
-	uHaPEWBqUpWxr2yXMMntdhdMzbWzKebfu3qlPgQTzWyLVsI7r3a
-X-Google-Smtp-Source: AGHT+IGsjDcO7D5hn5oYhsVNjMXWk3wpIBqgOl1uenYRJsHT0MAGmNQD50mPAs2+sstojpGB6TLDNA==
-X-Received: by 2002:a05:6602:15ca:b0:841:a9d3:3b39 with SMTP id ca18e2360f4ac-844e87ed998mr438455939f.5.1734101398302;
-        Fri, 13 Dec 2024 06:49:58 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2ca9c3f89sm2154129173.0.2024.12.13.06.49.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 06:49:57 -0800 (PST)
-Message-ID: <3c85accb-69cd-46c2-bfb5-1074cedfeccd@kernel.dk>
-Date: Fri, 13 Dec 2024 07:49:56 -0700
+	s=arc-20240116; t=1734101460; c=relaxed/simple;
+	bh=zBaQeLiVC53oDeKPILC2AVTpps1Judn7JLM3ItjLFYM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=MTUy5u4D1SXmYNj3CczlHTcwa+tmbgP6c2AgScJvziX4H/DU+HH4Mm4qZxcMETN0wxc+NjsknQ82+wWCAShbi88vcXGbUY/pZNAE0omfZFjNQ1Q1bDZYHrh/Rf8DHnKBXT8EOsJw66bw/jMGyVmZivJjnd7W0ZwK4wZ1rBBJJhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lmnu+yRo; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDEIvXY022054;
+	Fri, 13 Dec 2024 14:50:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=ILQcBliS53PGmeAwS/K4h6GeyD7y4AIHXFgUd+DVO
+	pk=; b=lmnu+yRoKp1ILXdG+ZED3QUW8z2UZ/CW6E2uItRcfSkkTylF2uTj5bDbY
+	ylRPbJP3fjnq1KAOLhrH1dKV2UOCVVxY85sGmKPhtjFTCrGJ+lywlgay8cbnwkw8
+	ET8I2vtTeig1sbl6QDdrKlPc5mxpYRQIyN0ZhRLCI+EhNk0yocnBY4H2PaKTKFrF
+	l+MQme+BhkQNCrbRJGsy38UoIXRiuriDOwH46WebwS+8jCF3UxvNv1pS0TWDX+0j
+	I9vvLdYNkDbSeQ2gXfJVFePWJzRhCa6zx3IGsyzL1Ah0Sx8heKOlRgGtG6lBdbuN
+	F5ib0iPGgkODfkSc9sCqHJ1HRaVww==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43g9yhkm56-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 14:50:42 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDBx6KV007781;
+	Fri, 13 Dec 2024 14:50:41 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43ft11ysf6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 14:50:41 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BDEoeQ051839256
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Dec 2024 14:50:40 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 226F65805F;
+	Fri, 13 Dec 2024 14:50:40 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5CCD858062;
+	Fri, 13 Dec 2024 14:50:39 +0000 (GMT)
+Received: from gfwa153.aus.stglabs.ibm.com (unknown [9.3.84.127])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 13 Dec 2024 14:50:39 +0000 (GMT)
+From: Ninad Palsule <ninad@linux.ibm.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+        andrew@codeconstruct.com.au, devicetree@vger.kernel.org,
+        eajames@linux.ibm.com, ninad@linux.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/8] DTS updates for system1 BMC
+Date: Fri, 13 Dec 2024 08:50:26 -0600
+Message-ID: <20241213145037.3784931-1-ninad@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
-To: Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
- Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
- <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- clm@meta.com, linux-kernel@vger.kernel.org, kirill@shutemov.name,
- bfoster@redhat.com
-References: <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
- <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
- <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
- <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
- <20241204055241.GA7820@frogsfrogsfrogs> <Z1gh0lCqkCoUKHtC@infradead.org>
- <04e11417-cf68-4014-a7f7-e51392352e9d@kernel.dk>
- <2f79ff03-48ee-54bf-b928-e9519b3edfc7@gentwo.org>
- <383d3adc-e939-44b2-9110-4db9b4477401@kernel.dk>
- <Z1s7AGxZKhK1V4qv@casper.infradead.org> <20241213050410.GA7054@cmpxchg.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241213050410.GA7054@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: XOW9082fpxCc7H1F3PAnWkbIU9wTLjzF
+X-Proofpoint-ORIG-GUID: XOW9082fpxCc7H1F3PAnWkbIU9wTLjzF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 suspectscore=0
+ malwarescore=0 impostorscore=0 mlxscore=0 bulkscore=0 mlxlogscore=387
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130103
 
-On 12/12/24 10:04 PM, Johannes Weiner wrote:
-> On Thu, Dec 12, 2024 at 07:35:28PM +0000, Matthew Wilcox wrote:
->> On Thu, Dec 12, 2024 at 12:14:23PM -0700, Jens Axboe wrote:
->>> Like I mentioned earlier, the fact that it's cached for the duration of
->>> the operation is more of an implementation detail that developers need
->>> not worry about. What's important is that it's not cached AFTER. I still
->>> feel UNCACHED is the best description, but I'll change it to DONTCACHE
->>> for the next version just to avoid the overlap with other in-kernel
->>> uses.
->>
->> Regardless of the user API name, I like PG_streaming for the folio
->> flag name.
-> 
-> If we're throwing names in the ring, I'm partial to PG_dropbehind.
-> 
-> It's a term I think has been used to describe this type of behavior
-> before; it juxtaposes nicely with readahead; it plainly names the
-> action of what will happen to the page after the current IO operation
-> against it has completed (i.e. pairs up with PG_reclaim).
+Hello
 
-True, I do think that's a good name for the folio flag. streaming isn't
-bad, but it's not fully descriptive as the IO may not be streaming at
-all, depending on the use case. I do remember when we used dropbehind
-naming in the vm, probably 20 some years ago?
+Please review the patch set. It has various device tree changes for
+system1 BMC after hardware testing.
 
-If there are no objections to this, I'll change the folio flag to
-dropbehind. Also looks nicer with the bit operations on the folio, when
-you have:
+NINAD PALSULE (7):
+  ARM: dts: aspeed: system1: Add IPMB device
+  ARM: dts: aspeed: system1: Add GPIO line name
+  ARM: dts: aspeed: system1: Add RGMII support
+  ARM: dts: aspeed: system1: Reduce sgpio speed
+  ARM: dts: aspeed: system1: Update LED gpio name
+  ARM: dts: aspeed: system1: Remove VRs max8952
+  ARM: dts: aspeed: system1: Mark GPIO line high/low
 
-if (flags & RWF_DONTCACHE)
-	folio_set_dropbehind(folio);
+Ninad Palsule (1):
+  ARM: dts: aspeed: system1: Disable gpio pull down
 
-rather than:
-
-if (flags & RWF_DONTCACHE)
-	folio_set_streaming(folio);
-
-and so forth, as the former just intuitively makes sense.
+ .../dts/aspeed/aspeed-bmc-ibm-system1.dts     | 178 ++++++++++++------
+ 1 file changed, 119 insertions(+), 59 deletions(-)
 
 -- 
-Jens Axboe
+2.43.0
+
 
