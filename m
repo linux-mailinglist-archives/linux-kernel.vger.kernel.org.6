@@ -1,188 +1,452 @@
-Return-Path: <linux-kernel+bounces-444976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C0F9F0F71
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:45:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7889F0F7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:48:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16C871882195
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE659283595
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0131E1A35;
-	Fri, 13 Dec 2024 14:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12CE1E25EB;
+	Fri, 13 Dec 2024 14:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lXV2bbiZ"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="BbRQF4o+"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4731DEFC1
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101126; cv=none; b=abduFGSR5WV/GTs45BTuKqpI1D1NzV3J35f88X4wdclXMKtWHZIdaKf6tk6QiRt1Z+5gF9Lczd4pmGtEfD5ycv7OGRRgAFeKZYxp1A3XH862lWSDxjDFx6UX0Ir2wLBaH/okheQKvCCZgqLOBaJqT9fxCkECBCVVhouoaov2I5A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101126; c=relaxed/simple;
-	bh=wsjq53tN9X3E2vd6ChcRBXvCUBErMqkOdMcwSBo+Qa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gI5ZpgKEqLW6hM83MM0q4ki1ybHPMMi6QYp1vgfJgCQRGmRjlIf8CBZz/byBVCnL3PpJDLMyybBH03kbtpyzQzgeUXRGJ7kQ9UlTapzuK4iCS4hooGLUR28kQ02FfeOKXYkYu/nP1iLf4vRPpUmuLPzvQy28Iat7iuwP6BpLB0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lXV2bbiZ; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4678c9310afso213561cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:45:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734101124; x=1734705924; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=S0WatgwCXgaiexp3EUWavIB0qKEFBmaEgS2C+Zdx+jU=;
-        b=lXV2bbiZ+P//ul3TheZ9vwgQ9CqFZA6G6XEpvTfo/223BTwnzWv/IxSc5ZwHfutyyQ
-         s6rxYsoHA/tAhxldYpujt1sRVLr9QjA8EkNB7dKv9Qczs99IzCCU3PAiC88Gb60BegSc
-         a2AiAteYQ9tShT7fHqQyEBXclqaYrazL+qiUnXJ+Gno77I6G7w3/NpeddAoF/Fq14lI6
-         zJa37dwURA7FLMDIGHTPIjYahOx72kqGbxnOWPsJpwN9Qez/mypabyVgwqbJzVma0EAW
-         e5LKAUgdLfuJg+Ka7BLX9GrKydA2gyoYUxHP+UUrt11YtWOB8W3Wr52CpomPHjSblquu
-         nAPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101124; x=1734705924;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S0WatgwCXgaiexp3EUWavIB0qKEFBmaEgS2C+Zdx+jU=;
-        b=pHWfgW5YmGmTDJULoctCWDNICprsgc3sNic4H/QmA/MvkifN/qD+wtPF6xe4zs06u5
-         +6647uiIjuj/y0/ERMowzbSTJ0WMOH/OY9O9GsLhjuhDJM6I528aBMoV9tmjIH5OiPGi
-         LXtfekOY8NY3551+CpdFimrDqwiRQymaN2KdFVgdh+M5NG7HvPYR3ct/xjRBjSYpy/o6
-         ZgTCufKUe7gBsNjj3CX3OaLLdOw0nWj+QfgECgKhV83j/ktMX0/aN2VKNktrxUWyhMcV
-         ibQk9Dz6o7YbmpIXlYOgPtkmlQPuY4Ur6417F0kphmJ5QGhk0MlRASkG9e2wKFcvcC/6
-         ja3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXP/DxnlbTCB5xkfOZhi0fr0fkJO8CAWkevd5bRC3GcgiqGqBlretZG81clHArEJ0sDHZiCg6UOn5hpaEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzsk7yzSpfFF3eChUlqErDKrsdN5BSJaSj34m8h7wBmjRP3SCf2
-	khF27e51qEFEyrneTiluth+MRgCxZPx5xphMXttF3iFP0kLn0TVzQqrlzZAyxdnsarO+Z0uurhH
-	uf17ICtFZCxcFMpsf9W2UtmOS0Ew29pweUe4q
-X-Gm-Gg: ASbGncvtWgM2Wc2neDTiFDFxmbp3bV1c6HpYY5zkVXkeUNDblE75s+W6kZeG9E4SUra
-	pZIXMnFmnSUmrblnCuX2oNHXh343/BfUfNxKMr/s0vDHfE6aJg0eOqhXn3c6YuL3BAGhq
-X-Google-Smtp-Source: AGHT+IEulUNhWHEGdVnNmWeLRkX9kVqow/MtXl0sKlndp32zeoeYmhYBDZQU3OnF3mEh0MhlawQpXGzdXkpWw1k/Cvc=
-X-Received: by 2002:a05:622a:4d43:b0:466:8618:90df with SMTP id
- d75a77b69052e-467a40f3bf2mr4195931cf.2.1734101124142; Fri, 13 Dec 2024
- 06:45:24 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023631E2009;
+	Fri, 13 Dec 2024 14:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734101269; cv=pass; b=nKLV/VXUCz/6Nk4qkP5cfhYOxbwPYKB7vIhLRVBwqRFGOI1jhABaGEYW9NeGIM3dmkrbLDHQ8KnRMhoqksspSL6LemKQF6N6m/qkazxpmV/AkDT4nLCijbfpr7ZRqb9vB1zh8aBVflkwlUe3jNkaarh+Z+bdPVmr3DgphfR+TGU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734101269; c=relaxed/simple;
+	bh=oFRP6W2ayKGhSQ1buQYlZLPuoOLoO7M9Ul0OWDwvCv4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=KSfy/LhMo7n46duSyV98eafSFfpCFTCKNiB4RRrQ2o3GqrpGQpsUjm3e33LJ+m5ixhcpzcgmD9CrhDN86JfQmMop9xHo8j9AkscFeSOkpp6uVZQGOMWMrQQf4Wykqm/8mo6ve2GBd0QmLcWbhaLt9mSt024jjnj1uGX2fCYTgbI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=BbRQF4o+; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1734101241; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=l3MLVkB6SANiM+0e319HV03xJJ0ywRCX/Lewejehlc5WBu4p/99Ld9XmxZ6NOmgyPQ9QyB/VBKZ/QnZ3HLA0Iog/n0wevZ3rkyuu/lTMvAZ8Evqh7vI01OuwUlzF7gpN7xUFl7f3PrK8zwa0YvpL1VulfSrBVx8x/H4aJFg2Y3E=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734101241; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6qVqFJs/to4ewOC7jHzNGVatUt9cqwzXAUAXNA7kl3o=; 
+	b=IZWa0aJRUhf5+6P+skeVzwOMB4lCHn2lNcZUhEGZMydq2ZoblYihOEl6adPrGkiiUCfU6KQpEJnnt4gpA8x01litTJGSb6yWHwMcvjuV2Sg88WXtbjJYpF3amrIclTJht5cpjTbu1JiSnG5NqOXmh8SxSdYUKhvgzcvy/l6J0Zw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734101241;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=6qVqFJs/to4ewOC7jHzNGVatUt9cqwzXAUAXNA7kl3o=;
+	b=BbRQF4o+JrfT5uP/bod4QrNLalMJmjE8WmBSWBlqHt1i/hQpLVN7WROrJItoNkcb
+	tj/2BmXltUqDcW1VVkTy7t43ayVT+6STBrEofcrFWMFY2tJuYO0nKSsUV1fxm5gwuDQ
+	Hx461Iz4FIIYOGcaq2LFN/CWghHPTZM/cCpJj+Z4=
+Received: by mx.zohomail.com with SMTPS id 1734101239398238.18140512738648;
+	Fri, 13 Dec 2024 06:47:19 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
- <20240712-asi-rfc-24-v1-1-144b319a40d8@google.com> <20241025113455.GMZxuCX2Tzu8ulwN3o@fat_crate.local>
- <CA+i-1C3SZ4FEPJyvbrDfE-0nQtB_8L_H_i67dQb5yQ2t8KJF9Q@mail.gmail.com>
- <ab8ef5ef-f51c-4940-9094-28fbaa926d37@google.com> <878qu6205g.ffs@tglx>
- <d0a38982-b811-4429-8b89-81e5da3aaf72@google.com> <87cyjevgx4.ffs@tglx>
-In-Reply-To: <87cyjevgx4.ffs@tglx>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Fri, 13 Dec 2024 15:45:13 +0100
-X-Gm-Features: AbW1kvYeFSt9oq4jpITmiWkujPAqQ3h82SGc6hTAa_TaGY28cvqrpIH9-qf3xtU
-Message-ID: <CA+i-1C1z35M8wA_4AwMq7--c1OgjNoLGTkn4+Td5gKg7QQAzWw@mail.gmail.com>
-Subject: Re: [PATCH 01/26] mm: asi: Make some utility functions noinstr compatible
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Junaid Shahid <junaids@google.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Alexandre Chartre <alexandre.chartre@oracle.com>, Liran Alon <liran.alon@oracle.com>, 
-	Jan Setje-Eilers <jan.setjeeilers@oracle.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>, 
-	Lorenzo Stoakes <lstoakes@gmail.com>, David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Michal Hocko <mhocko@kernel.org>, Khalid Aziz <khalid.aziz@oracle.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Valentin Schneider <vschneid@redhat.com>, Paul Turner <pjt@google.com>, Reiji Watanabe <reijiw@google.com>, 
-	Ofir Weisse <oweisse@google.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Patrick Bellasi <derkling@google.com>, KP Singh <kpsingh@google.com>, 
-	Alexandra Sandulescu <aesa@google.com>, Matteo Rizzo <matteorizzo@google.com>, Jann Horn <jannh@google.com>, 
-	x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	kvm@vger.kernel.org, linux-toolchains@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v7 2/2] rust: add dma coherent allocator abstraction.
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAH5fLgjO-GbB85dDdxLSSWY74cUn8-Lt-yaRGkUVxb-E8YaO2Q@mail.gmail.com>
+Date: Fri, 13 Dec 2024 11:47:03 -0300
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ rust-for-linux@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>,
+ Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ airlied@redhat.com,
+ "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0F719804-2AD3-4C4E-A98C-2862295990BA@collabora.com>
+References: <20241210221603.3174929-1-abdiel.janulgue@gmail.com>
+ <20241210221603.3174929-3-abdiel.janulgue@gmail.com>
+ <CAH5fLgjO-GbB85dDdxLSSWY74cUn8-Lt-yaRGkUVxb-E8YaO2Q@mail.gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-ZohoMailClient: External
 
-On Fri, 1 Nov 2024 at 21:27, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Thu, Oct 31 2024 at 18:44, Junaid Shahid wrote:
-> What actually works by some definition of "works" is:
->
->        static __always_inline void __foo(void) { }
->
->        static inline void foo(void)
->        {
->                 __(foo);
->        }
->
->        static inline noinstr void foo_noinstr(void)
->        {
->                 __(foo);
->        }
->
-> The problem is that both GCC and clang optimize foo[_noinstr]() away and
-> then follow the __always_inline directive of __foo() even if I make
-> __foo() insanely large and have a gazillion of different functions
-> marked noinline invoking foo() or foo_noinstr(), unless I add -fno-inline
-> to the command line.
 
-In this experiment did you modify the definition of noinstr to remove
-noinline? Otherwise I always get out-of-line calls (as you'd expect
-from the noinline).
 
-> Which means it's not much different from just having '__always_inline
-> foo()' without the wrappers....
->
-> Compilers clearly lack a --do-what-I-mean command line option.
->
-> Now if I'm truly nasty then both compilers do what I mean even without a
-> magic command line option:
->
->        static __always_inline void __foo(void) { }
->
->        static __maybe_unused void foo(void)
->        {
->                 __(foo);
->        }
->
->        static __maybe_unused noinstr void foo_noinstr(void)
->        {
->                 __(foo);
->        }
+> On 13 Dec 2024, at 11:27, Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> On Tue, Dec 10, 2024 at 11:16=E2=80=AFPM Abdiel Janulgue
+> <abdiel.janulgue@gmail.com> wrote:
+>>=20
+>> Add a simple dma coherent allocator rust abstraction. Based on
+>> Andreas Hindborg's dma abstractions from the rnvme driver, which
+>> was also based on earlier work by Wedson Almeida Filho.
+>>=20
+>> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+>> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+>> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+>> ---
+>> rust/bindings/bindings_helper.h |   1 +
+>> rust/kernel/dma.rs              | 223 =
+++++++++++++++++++++++++++++++++
+>> rust/kernel/lib.rs              |   1 +
+>> 3 files changed, 225 insertions(+)
+>> create mode 100644 rust/kernel/dma.rs
+>>=20
+>> diff --git a/rust/bindings/bindings_helper.h =
+b/rust/bindings/bindings_helper.h
+>> index 5c4dfe22f41a..49bf713b9bb6 100644
+>> --- a/rust/bindings/bindings_helper.h
+>> +++ b/rust/bindings/bindings_helper.h
+>> @@ -11,6 +11,7 @@
+>> #include <linux/blk_types.h>
+>> #include <linux/blkdev.h>
+>> #include <linux/cred.h>
+>> +#include <linux/dma-mapping.h>
+>> #include <linux/errname.h>
+>> #include <linux/ethtool.h>
+>> #include <linux/file.h>
+>> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+>> new file mode 100644
+>> index 000000000000..29ae744d6f2b
+>> --- /dev/null
+>> +++ b/rust/kernel/dma.rs
+>> @@ -0,0 +1,223 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +//! Direct memory access (DMA).
+>> +//!
+>> +//! C header: =
+[`include/linux/dma-mapping.h`](srctree/include/linux/dma-mapping.h)
+>> +
+>> +use crate::{
+>> +    bindings,
+>> +    build_assert,
+>> +    device::Device,
+>> +    error::code::*,
+>> +    error::Result,
+>> +    types::ARef,
+>> +    transmute::{AsBytes, FromBytes},
+>> +};
+>> +
+>> +/// Possible attributes associated with a DMA mapping.
+>> +///
+>> +/// They can be combined with the operators `|`, `&`, and `!`.
+>> +///
+>> +/// Values can be used from the [`attrs`] module.
+>> +#[derive(Clone, Copy, PartialEq)]
+>> +pub struct Attribs(u32);
+>> +
+>> +impl Attribs {
+>> +    /// Get the raw representation of this attribute.
+>> +    pub(crate) fn as_raw(self) -> u64 {
+>> +        self.0.into()
+>> +    }
+>> +
+>> +    /// Check whether `flags` is contained in `self`.
+>> +    pub fn contains(self, flags: Attribs) -> bool {
+>> +        (self & flags) =3D=3D flags
+>> +    }
+>> +}
+>> +
+>> +impl core::ops::BitOr for Attribs {
+>> +    type Output =3D Self;
+>> +    fn bitor(self, rhs: Self) -> Self::Output {
+>> +        Self(self.0 | rhs.0)
+>> +    }
+>> +}
+>> +
+>> +impl core::ops::BitAnd for Attribs {
+>> +    type Output =3D Self;
+>> +    fn bitand(self, rhs: Self) -> Self::Output {
+>> +        Self(self.0 & rhs.0)
+>> +    }
+>> +}
+>> +
+>> +impl core::ops::Not for Attribs {
+>> +    type Output =3D Self;
+>> +    fn not(self) -> Self::Output {
+>> +        Self(!self.0)
+>> +    }
+>> +}
+>> +
+>> +/// DMA mapping attrributes.
+>> +pub mod attrs {
+>> +    use super::Attribs;
+>> +
+>> +    /// Specifies that reads and writes to the mapping may be weakly =
+ordered, that is that reads
+>> +    /// and writes may pass each other.
+>> +    pub const DMA_ATTR_WEAK_ORDERING: Attribs =3D =
+Attribs(bindings::DMA_ATTR_WEAK_ORDERING);
+>> +
+>> +    /// Specifies that writes to the mapping may be buffered to =
+improve performance.
+>> +    pub const DMA_ATTR_WRITE_COMBINE: Attribs =3D =
+Attribs(bindings::DMA_ATTR_WRITE_COMBINE);
+>> +
+>> +    /// Lets the platform to avoid creating a kernel virtual mapping =
+for the allocated buffer.
+>> +    pub const DMA_ATTR_NO_KERNEL_MAPPING: Attribs =3D =
+Attribs(bindings::DMA_ATTR_NO_KERNEL_MAPPING);
+>> +
+>> +    /// Allows platform code to skip synchronization of the CPU =
+cache for the given buffer assuming
+>> +    /// that it has been already transferred to 'device' domain.
+>> +    pub const DMA_ATTR_SKIP_CPU_SYNC: Attribs =3D =
+Attribs(bindings::DMA_ATTR_SKIP_CPU_SYNC);
+>> +
+>> +    /// Forces contiguous allocation of the buffer in physical =
+memory.
+>> +    pub const DMA_ATTR_FORCE_CONTIGUOUS: Attribs =3D =
+Attribs(bindings::DMA_ATTR_FORCE_CONTIGUOUS);
+>> +
+>> +    /// This is a hint to the DMA-mapping subsystem that it's =
+probably not worth the time to try
+>> +    /// to allocate memory to in a way that gives better TLB =
+efficiency.
+>> +    pub const DMA_ATTR_ALLOC_SINGLE_PAGES: Attribs =3D =
+Attribs(bindings::DMA_ATTR_ALLOC_SINGLE_PAGES);
+>> +
+>> +    /// This tells the DMA-mapping subsystem to suppress allocation =
+failure reports (similarly to
+>> +    /// __GFP_NOWARN).
+>> +    pub const DMA_ATTR_NO_WARN: Attribs =3D =
+Attribs(bindings::DMA_ATTR_NO_WARN);
+>> +
+>> +    /// Used to indicate that the buffer is fully accessible at an =
+elevated privilege level (and
+>> +    /// ideally inaccessible or at least read-only at =
+lesser-privileged levels).
+>> +    pub const DMA_ATTR_PRIVILEGED: Attribs =3D =
+Attribs(bindings::DMA_ATTR_PRIVILEGED);
+>> +}
+>> +
+>> +/// An abstraction of the `dma_alloc_coherent` API.
+>> +///
+>> +/// This is an abstraction around the `dma_alloc_coherent` API which =
+is used to allocate and map
+>> +/// large consistent DMA regions.
+>> +///
+>> +/// A [`CoherentAllocation`] instance contains a pointer to the =
+allocated region (in the
+>> +/// processor's virtual address space) and the device address which =
+can be given to the device
+>> +/// as the DMA address base of the region. The region is released =
+once [`CoherentAllocation`]
+>> +/// is dropped.
+>> +///
+>> +/// # Invariants
+>> +///
+>> +/// For the lifetime of an instance of [`CoherentAllocation`], the =
+cpu address is a valid pointer
+>> +/// to an allocated region of consistent memory and we hold a =
+reference to the device.
+>> +pub struct CoherentAllocation<T: AsBytes + FromBytes> {
+>> +    dev: ARef<Device>,
+>> +    dma_handle: bindings::dma_addr_t,
+>> +    count: usize,
+>> +    cpu_addr: *mut T,
+>> +    dma_attrs: Attribs,
+>> +}
+>> +
+>> +impl<T: AsBytes + FromBytes> CoherentAllocation<T> {
+>> +    /// Allocates a region of `size_of::<T> * count` of consistent =
+memory.
+>> +    ///
+>> +    /// # Examples
+>> +    ///
+>> +    /// ```
+>> +    /// use kernel::device::Device;
+>> +    /// use kernel::dma::{attrs::*, CoherentAllocation};
+>> +    ///
+>> +    /// # fn test(dev: &Device) -> Result {
+>> +    /// let c: CoherentAllocation<u64> =3D =
+CoherentAllocation::alloc_attrs(dev, 4, GFP_KERNEL,
+>> +    ///                                                              =
+    DMA_ATTR_NO_WARN)?;
+>> +    /// # Ok::<(), Error>(()) }
+>> +    /// ```
+>> +    pub fn alloc_attrs(
+>> +        dev: &Device,
+>> +        count: usize,
+>> +        gfp_flags: kernel::alloc::Flags,
+>> +        dma_attrs: Attribs,
+>> +    ) -> Result<CoherentAllocation<T>> {
+>> +        build_assert!(core::mem::size_of::<T>() > 0,
+>> +                      "It doesn't make sense for the allocated type =
+to be a ZST");
+>> +
+>> +        let size =3D =
+count.checked_mul(core::mem::size_of::<T>()).ok_or(EOVERFLOW)?;
+>> +        let mut dma_handle =3D 0;
+>> +        // SAFETY: device pointer is guaranteed as valid by =
+invariant on `Device`.
+>> +        // We ensure that we catch the failure on this function and =
+throw an ENOMEM
+>> +        let ret =3D unsafe {
+>> +            bindings::dma_alloc_attrs(
+>> +                dev.as_raw(),
+>> +                size,
+>> +                &mut dma_handle, gfp_flags.as_raw(),
+>> +                dma_attrs.as_raw(),
+>> +            )
+>> +        };
+>> +        if ret.is_null() {
+>> +            return Err(ENOMEM)
+>> +        }
+>> +        // INVARIANT: We just successfully allocated a coherent =
+region which is accessible for
+>> +        // `count` elements, hence the cpu address is valid. We also =
+hold a refcounted reference
+>> +        // to the device.
+>> +        Ok(Self {
+>> +            dev: dev.into(),
+>> +            dma_handle,
+>> +            count,
+>> +            cpu_addr: ret as *mut T,
+>> +            dma_attrs,
+>> +        })
+>> +    }
+>> +
+>> +    /// Performs the same functionality as `alloc_attrs`, except the =
+`dma_attrs` is 0 by default.
+>> +    pub fn alloc_coherent(dev: &Device,
+>> +                          count: usize,
+>> +                          gfp_flags: kernel::alloc::Flags) -> =
+Result<CoherentAllocation<T>> {
+>> +        CoherentAllocation::alloc_attrs(dev, count, gfp_flags, =
+Attribs(0))
+>> +    }
+>=20
+> Please run rustfmt.
+>=20
+>> +    /// Returns the base address to the allocated region and the dma =
+handle. The caller takes
+>> +    /// ownership of the returned resources.
+>> +    pub fn into_parts(self) -> (usize, bindings::dma_addr_t) {
+>> +        let ret =3D (self.cpu_addr as _, self.dma_handle);
+>> +        core::mem::forget(self);
+>> +        ret
+>> +    }
+>=20
+> Not only does this skip the destructor of `dma_free_attrs`. It also
+> skips the destructor of fields including the `dev` field. Did you
+> intend to leave the refcount on `struct device` without decrementing
+> it?
+>=20
+>> +    /// Returns the base address to the allocated region in the =
+CPU's virtual address space.
+>> +    pub fn start_ptr(&self) -> *const T {
+>> +        self.cpu_addr as _
+>=20
+> This conversion happens without needing a cast.
+>=20
+>> +    }
+>> +
+>> +    /// Returns the base address to the allocated region in the =
+CPU's virtual address space as
+>> +    /// a mutable pointer.
+>> +    pub fn start_ptr_mut(&mut self) -> *mut T {
+>> +        self.cpu_addr
+>> +    }
+>> +
+>> +    /// Returns a DMA handle which may given to the device as the =
+DMA address base of
+>> +    /// the region.
+>> +    pub fn dma_handle(&self) -> bindings::dma_addr_t {
+>> +        self.dma_handle
+>> +    }
+>> +
+>> +    /// Returns the CPU-addressable region as a slice.
+>> +    pub fn cpu_buf(&self) -> &[T]
+>> +    {
+>> +        // SAFETY: The pointer is valid due to type invariant on =
+`CoherentAllocation` and
+>> +        // is valid for reads for `self.count * size_of::<T>` bytes.
+>> +        unsafe { core::slice::from_raw_parts(self.cpu_addr, =
+self.count) }
+>=20
+> Immutable slices require that the data does not change while the
+> reference is live. Is that the case? If so, your safety comment should
+> explain that.
+>=20
+>> +    }
+>> +
+>> +    /// Performs the same functionality as `cpu_buf`, except that a =
+mutable slice is returned.
+>> +    pub fn cpu_buf_mut(&mut self) -> &mut [T]
+>> +    {
+>> +        // SAFETY: The pointer is valid due to type invariant on =
+`CoherentAllocation` and
+>> +        // is valid for reads for `self.count * size_of::<T>` bytes.
+>> +        unsafe { core::slice::from_raw_parts_mut(self.cpu_addr, =
+self.count) }
+>=20
+> Mutable slices require that the data is not written to *or read* by
+> anybody else while the reference is live. Is that the case? If so,
+> your safety comment should explain that.
+>=20
 
-I don't see any difference with __maybe_unused: if the noinline is
-there it's never inlined, otherwise with the wrapper technique it's
-always inlined regardless of __maybe_unused:
+The buffer will probably be shared between the CPU and some hardware =
+device, since this is the
+point of the dma mapping API.
 
-static __always_inline void __big(void)
-{
-        asm volatile(
-                "nop; nop; nop; nop; nop; nop; nop; nop; nop;"
-                // and so on
-                "nop; nop; nop; nop; nop; nop; nop; nop; nop;"
-        );
+It=E2=80=99s up to the caller to ensure that no hardware operations that =
+involve the buffer are currently taking
+place while the slices above are alive.
+
+I think that adding that as a safety requirement to `cpu_buf` and =
+`cpu_buf_mut` will be sufficient.
+
+>> +    }
+>> +}
+>> +
+>> +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
+>> +    fn drop(&mut self) {
+>> +        let size =3D self.count * core::mem::size_of::<T>();
+>> +        // SAFETY: the device, cpu address, and the dma handle is =
+valid due to the
+>> +        // type invariants on `CoherentAllocation`.
+>> +        unsafe { bindings::dma_free_attrs(self.dev.as_raw(), size,
+>> +                                          self.cpu_addr as _,
+>> +                                          self.dma_handle,
+>> +                                          self.dma_attrs.as_raw(),) =
 }
+>> +    }
+>> +}
+>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+>> index e1065a7551a3..6e90ebf5a130 100644
+>> --- a/rust/kernel/lib.rs
+>> +++ b/rust/kernel/lib.rs
+>> @@ -35,6 +35,7 @@
+>> mod build_assert;
+>> pub mod cred;
+>> pub mod device;
+>> +pub mod dma;
+>> pub mod error;
+>> #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
+>> pub mod firmware;
+>> =E2=80=94
+>> 2.43.0
 
-static inline __section(".noinstr.text") void big_noinstr(void)
-{
-        __big();
-}
-
-When I call big_noinstr() from a noinstr function I see:
-
-Dump of assembler code for function asi_exit:
-   0xffffffff811e0080 <+0>:     endbr64
-   0xffffffff811e0084 <+4>:     nop
-   0xffffffff811e0085 <+5>:     nop
-...and so on
-
-I'm using GCC 14.2.0.
-
-(I thought maybe this was because I used asm volatile nops to embiggen
-the function but I see the same thing with a big stream of volatile C
-statements).
-
-I think we might have no choice but to always use
-__always_inline/noinline for code that's called from both sections -
-seems there's no way to tell the compiler "I don't care if you inline
-it, but it we can't cross a section boundary". Am I missing anything?
+=E2=80=94 Daniel=
 
