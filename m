@@ -1,241 +1,84 @@
-Return-Path: <linux-kernel+bounces-445067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30DE89F10AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:17:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0634B9F10B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:18:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E9DB1620BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:17:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166661881D69
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E13A1E1C3F;
-	Fri, 13 Dec 2024 15:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D578C1E25EB;
+	Fri, 13 Dec 2024 15:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyPk+qYP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ld2KUNRI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5351DFE08;
-	Fri, 13 Dec 2024 15:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9831B412E;
+	Fri, 13 Dec 2024 15:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734103062; cv=none; b=RoK6+3rXXHxX+JGg7nuYISxLmHFmczxCq9wLZkOnVnCkVSg+U9eAgDeyfhFP/rYMpcHOeD/8/W8PuJ3fJFtUvUA8eyGa4dHSa28oYZB85BFNQUaW05KyPLMHu6SeU+/7Pt91BFSpOAm9Ly+GTyhgQlcTodohBS+//yjbjkEYdQU=
+	t=1734103071; cv=none; b=DQTPw3H19vSvzLJuiTeWNkcR8XJV/WwOvBeWqiFcQAWkG31fylef38J9LVclyoQcy54NJzOlNIKSlfx6Dng3B9dBOSCiONSFDx6bzsGBpA1fce96pgWy96C5E1IyztfqwT8EpVPQQ4XlAonv3DdxZHdF8UeLEsC4LUGDenLoswo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734103062; c=relaxed/simple;
-	bh=NiDfmXtW+uz6UI4KoebVo4W4iFF81SHUU7f57O7/WlI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G3G4Vu1AReyfKgsyJxsu/tbZGrEEnmfgO8u/7fMdvh9DSu3sRRVjtt4SnrGOX0+dwvbu2Wprf9yYKPHoWqajvPn1ORj9my3JtD3eQQu9LE4FeA7Y74S+XEGAXMZwxinxgXYsYaUkwrzCx0UwDY0kXyKGLO5BCEyucmlR6VKn3bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyPk+qYP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5340FC4CED0;
-	Fri, 13 Dec 2024 15:17:38 +0000 (UTC)
+	s=arc-20240116; t=1734103071; c=relaxed/simple;
+	bh=lWRVH5EyN+9dlmjB6nLEBNufjesGoRfBbuBRyqyNPNA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MYb+oVIWRIpszBiHhZFyBa2hDbY9QLFgDCzApa/OR5to5Z6/pLSWim6X+XfJ3G3h3yLAymsziYm5Yvo9bwHqdw3mLgBHRLq0z9+tQQPF2oZkYOCATD0fNvTJ5Auk6BSqgcoT5SbQIiQts63PifpXUpOtTvme26Ex8RUE2kgXPeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ld2KUNRI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75ACAC4CED0;
+	Fri, 13 Dec 2024 15:17:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734103062;
-	bh=NiDfmXtW+uz6UI4KoebVo4W4iFF81SHUU7f57O7/WlI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CyPk+qYPhrrRkKRa8SO1JC2T0u/u4WMi3valxYwWnbohsJJGc67pRQvnRAkPEVudV
-	 pHzsNRpbUmpLXyp5uPBOPMk84vf97JaR7sZ0RWcXjU2Nn388hzqVE3qrqrGGBQs56t
-	 LGAtaWgdBltGsAPDrMh9QO5Nv9gH/ENWQIj4cK4yQ0v8gKVw/iaqEh7MbdgVPHNZ7Q
-	 /Q8sbY5PVubIk080Ba2+pyv0l83Uf9+RnI0qdCtv6/pVzB6eGxd/tbtT1ByitPqjiE
-	 VmVd0Ymqqxw4A/MNCiQr8d1OzGYeEym7PsSNG4WC7NCcXqwJ/rnZESHHTykVnWn8SA
-	 BIRIBr5GgBTlA==
-Message-ID: <7fa902e5-0916-4bc9-b1e0-2729903d3de0@kernel.org>
-Date: Fri, 13 Dec 2024 15:17:36 +0000
+	s=k20201202; t=1734103070;
+	bh=lWRVH5EyN+9dlmjB6nLEBNufjesGoRfBbuBRyqyNPNA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ld2KUNRIPLC8meS9tClIC43uUlzuXHAAAUOqyTjultGJ652rd0MbV2OUeLrCXdGqE
+	 5/TR1+coiTnQKInJpeVSGpZatH8JaajeDRmJJHU/UtQQcnfJ62uVG6i9uazQOSWbaG
+	 n2mY0PdVdzrsrdp+MM2twRM0edN++nJJ+kWQYoz/ugfrBC3IvBfqKzFDfXHMCSt6Tb
+	 kyFNcSgslXNh2p+t0rKxcZJ4L/1Al0+qRovz3Vxte9asVMro1MrzHEhgk7f1iM3Ls6
+	 21Bvg3nw+HzQtxdoKZNDIiUbNJhwk+zxWZN7MGgLNYI9JvFYadAIxcAGZi8JVK2oQB
+	 JzM8vmIOJH9iw==
+From: cem@kernel.org
+To: linux-doc@vger.kernel.org
+Cc: cem@kernel.org,
+	corbet@lwn.net,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: Fix simple typo on filesystems/porting.rst
+Date: Fri, 13 Dec 2024 16:17:40 +0100
+Message-ID: <20241213151743.23435-1-cem@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v4 3/4] bpftool: btf: Support dumping a specific
- types from file
-To: Daniel Xu <dxu@dxuuu.xyz>, hawk@kernel.org, kuba@kernel.org,
- andrii@kernel.org, john.fastabend@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, davem@davemloft.net
-Cc: martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- andrii.nakryiko@gmail.com, antony@phenome.org, toke@kernel.org
-References: <cover.1734052995.git.dxu@dxuuu.xyz>
- <5ec7617fd9c28ff721947aceb80937dc10fca770.1734052995.git.dxu@dxuuu.xyz>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <5ec7617fd9c28ff721947aceb80937dc10fca770.1734052995.git.dxu@dxuuu.xyz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-2024-12-12 18:24 UTC-0700 ~ Daniel Xu <dxu@dxuuu.xyz>
-> Some projects, for example xdp-tools [0], prefer to check in a minimized
-> vmlinux.h rather than the complete file which can get rather large.
-> 
-> However, when you try to add a minimized version of a complex struct (eg
-> struct xfrm_state), things can get quite complex if you're trying to
-> manually untangle and deduplicate the dependencies.
-> 
-> This commit teaches bpftool to do a minimized dump of a specific types by
-> providing a optional root_id argument(s).
-> 
-> Example usage:
-> 
->     $ ./bpftool btf dump file ~/dev/linux/vmlinux | rg "STRUCT 'xfrm_state'"
->     [12643] STRUCT 'xfrm_state' size=912 vlen=58
-> 
->     $ ./bpftool btf dump file ~/dev/linux/vmlinux root_id 12643 format c
->     #ifndef __VMLINUX_H__
->     #define __VMLINUX_H__
-> 
->     [..]
-> 
->     struct xfrm_type_offload;
-> 
->     struct xfrm_sec_ctx;
-> 
->     struct xfrm_state {
->             possible_net_t xs_net;
->             union {
->                     struct hlist_node gclist;
->                     struct hlist_node bydst;
->             };
->             union {
->                     struct hlist_node dev_gclist;
->                     struct hlist_node bysrc;
->             };
->             struct hlist_node byspi;
->     [..]
-> 
-> [0]: https://github.com/xdp-project/xdp-tools/blob/master/headers/bpf/vmlinux.h
-> 
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> ---
->  .../bpf/bpftool/Documentation/bpftool-btf.rst |  8 +++-
->  tools/bpf/bpftool/btf.c                       | 39 ++++++++++++++++++-
->  2 files changed, 43 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/bpf/bpftool/Documentation/bpftool-btf.rst b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
-> index 245569f43035..dbe6d6d94e4c 100644
-> --- a/tools/bpf/bpftool/Documentation/bpftool-btf.rst
-> +++ b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
-> @@ -24,7 +24,7 @@ BTF COMMANDS
->  =============
->  
->  | **bpftool** **btf** { **show** | **list** } [**id** *BTF_ID*]
-> -| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*]
-> +| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*] [**root_id** *ROOT_ID*]
->  | **bpftool** **btf help**
->  |
->  | *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* }
-> @@ -43,7 +43,7 @@ bpftool btf { show | list } [id *BTF_ID*]
->      that hold open file descriptors (FDs) against BTF objects. On such kernels
->      bpftool will automatically emit this information as well.
->  
-> -bpftool btf dump *BTF_SRC* [format *FORMAT*]
-> +bpftool btf dump *BTF_SRC* [format *FORMAT*] [root_id *ROOT_ID*]
->      Dump BTF entries from a given *BTF_SRC*.
->  
->      When **id** is specified, BTF object with that ID will be loaded and all
-> @@ -67,6 +67,10 @@ bpftool btf dump *BTF_SRC* [format *FORMAT*]
->      formatting, the output is sorted by default. Use the **unsorted** option
->      to avoid sorting the output.
->  
-> +    **root_id** option can be used to filter a dump to a single type and all
-> +    its dependent types. It cannot be used with any other types of filtering.
-> +    It can be passed multiple times to dump multiple types.
-> +
->  bpftool btf help
->      Print short help message.
->  
-> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
-> index 3e995faf9efa..2636655ac180 100644
-> --- a/tools/bpf/bpftool/btf.c
-> +++ b/tools/bpf/bpftool/btf.c
-> @@ -27,6 +27,8 @@
->  #define KFUNC_DECL_TAG		"bpf_kfunc"
->  #define FASTCALL_DECL_TAG	"bpf_fastcall"
->  
-> +#define MAX_ROOT_IDS		16
-> +
->  static const char * const btf_kind_str[NR_BTF_KINDS] = {
->  	[BTF_KIND_UNKN]		= "UNKNOWN",
->  	[BTF_KIND_INT]		= "INT",
-> @@ -880,7 +882,8 @@ static int do_dump(int argc, char **argv)
->  {
->  	bool dump_c = false, sort_dump_c = true;
->  	struct btf *btf = NULL, *base = NULL;
-> -	__u32 root_type_ids[2];
-> +	__u32 root_type_ids[MAX_ROOT_IDS];
-> +	bool have_id_filtering;
->  	int root_type_cnt = 0;
->  	__u32 btf_id = -1;
->  	const char *src;
-> @@ -974,6 +977,8 @@ static int do_dump(int argc, char **argv)
->  		goto done;
->  	}
->  
-> +	have_id_filtering = !!root_type_cnt;
-> +
->  	while (argc) {
->  		if (is_prefix(*argv, "format")) {
->  			NEXT_ARG();
-> @@ -993,6 +998,36 @@ static int do_dump(int argc, char **argv)
->  				goto done;
->  			}
->  			NEXT_ARG();
-> +		} else if (is_prefix(*argv, "root_id")) {
-> +			__u32 root_id;
-> +			char *end;
-> +
-> +			if (have_id_filtering) {
-> +				p_err("cannot use root_id with other type filtering");
-> +				err = -EINVAL;
-> +				goto done;
-> +			} else if (root_type_cnt == MAX_ROOT_IDS) {
-> +				p_err("only %d root_id are supported", MAX_ROOT_IDS);
+From: Carlos Maiolino <cmaiolino@redhat.com>
 
+Just spotted this while reading the doc.
 
-I doubt users will often reach this limit, but if they do, the message
-can be confusing, because MAX_ROOT_IDS also accounts for root_type_ids[]
-cells used when we pass map arguments ("key" or "value" or "kv"), so you
-could pass 15 "root_id" on the command line and get a message telling
-only 16 are supported.
+Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+---
+ Documentation/filesystems/porting.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maybe add a counter to tell how many were defined from the rest of the
-command line, and adjust the value in the error message?
-
-
-> +				err = -E2BIG;
-> +				goto done;
-> +			}
-> +
-> +			NEXT_ARG();
-> +			root_id = strtoul(*argv, &end, 0);
-> +			if (*end) {
-> +				err = -1;
-> +				p_err("can't parse %s as root ID", *argv);
-> +				goto done;
-> +			}
-> +			for (i = 0; i < root_type_cnt; i++) {
-> +				if (root_type_ids[i] == root_id) {
-> +					err = -EINVAL;
-> +					p_err("duplicate root_id %d supplied", root_id);
-> +					goto done;
-> +				}
-> +			}
-> +			root_type_ids[root_type_cnt++] = root_id;
-> +			NEXT_ARG();
->  		} else if (is_prefix(*argv, "unsorted")) {
->  			sort_dump_c = false;
->  			NEXT_ARG();
-> @@ -1403,7 +1438,7 @@ static int do_help(int argc, char **argv)
->  
->  	fprintf(stderr,
->  		"Usage: %1$s %2$s { show | list } [id BTF_ID]\n"
-> -		"       %1$s %2$s dump BTF_SRC [format FORMAT]\n"
-> +		"       %1$s %2$s dump BTF_SRC [format FORMAT] [root_id ROOT_ID]\n"
->  		"       %1$s %2$s help\n"
->  		"\n"
->  		"       BTF_SRC := { id BTF_ID | prog PROG | map MAP [{key | value | kv | all}] | file FILE }\n"
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index 92bffcc6747a..2d08fd4a2280 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -313,7 +313,7 @@ done.
+ 
+ **mandatory**
+ 
+-block truncatation on error exit from ->write_begin, and ->direct_IO
++block truncation on error exit from ->write_begin, and ->direct_IO
+ moved from generic methods (block_write_begin, cont_write_begin,
+ nobh_write_begin, blockdev_direct_IO*) to callers.  Take a look at
+ ext2_write_failed and callers for an example.
+-- 
+2.47.1
 
 
