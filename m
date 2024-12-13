@@ -1,134 +1,171 @@
-Return-Path: <linux-kernel+bounces-444621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D64B9F09B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:38:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D89B89F09BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21322822E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:38:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C522839C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED76E1C1F29;
-	Fri, 13 Dec 2024 10:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C811C07EB;
+	Fri, 13 Dec 2024 10:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f9+Ywsbq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="svmWQJ3j";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YuknyNOf"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACF81B652B;
-	Fri, 13 Dec 2024 10:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35E01BB6B8;
+	Fri, 13 Dec 2024 10:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734086284; cv=none; b=cYmuGmEfVoGJQMr3IRB/QUCtLTrF0MKsXYPBnGgkh63Ow3i3kP4pOEIMjOnn3cY23IehjKD5x/YutDuVJ5xJSFbfGHhlw8Za4Uji3WUsaYKhWgu2tccLMKw4ROa5hVZJAdhNu6uuXQbR1YcJDIpey+/f/Xm8hxc4a3eVb0zjBxQ=
+	t=1734086367; cv=none; b=Q9eTdT7COK7EglaTZSOGejI2Sqj4wJZkhf2q050GWGj4USbjvjv1doN3CSGJujHQAXzvvtzQ8BvSZ4z+j6fdf/hsfjWV4Icjrkwz9XRhAH0SyZj3O9BpsWkcrAxSwsQ+ZGYKiXOs4GJDOSB0VQrFyS1ldSCUT16TFUDdCtP6Jhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734086284; c=relaxed/simple;
-	bh=Vst3UEO/AkyKcTH51fm7zrlBtMdQx/Y5nU6IaFXGFFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aw94XqpO8tG1ND2ZKN7R5b/n5kDMKq3Yio6XUy7KD3+Xxu6XjQH0p6zBVhftadIn/IN/DWo4j55wtgQyOpiQQ2oHMlcDITn2PyPnvnDNZKrSeY3j55zx7yWFttJRwJKwP9NE7LDeyFsY84PzJpSXr5xUB+JzMPxq60bR5GPKIyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f9+Ywsbq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCNBCaX028083;
-	Fri, 13 Dec 2024 10:38:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eCo10zrBab9VoOWQEyUUBgEHlj+2qNvHmPzat5FHSbc=; b=f9+Ywsbqfnkx3hU8
-	NV/4YXCaSWV0slP5Y3z/2t1m6fYWQGQq39WFLYViZtMYol22CrarLYefKeq5j17O
-	hQTlD0t+HqOUOPkfCbQ7oU18katNcPwZxaMRmpR9wBZLSfpXjMr93h41LyB4fLIR
-	KSxEFErD+0rTRtkvnhLNyjeUhpw2v6HlZoWa9O2snybmHZt3RgPbJvnQH39A1i4m
-	LPuyTTAMfkw3ePBuIGmofc+Vs5litQgVhebIwlQMLnrsKvIvAcN9GvPjKsMQWvyy
-	6Tzmj3/1aKbgfcqyPmCgtqE1fB1sqeJ+XOzIyScVf3ssgliYB5VLtE2aoiS6oIAB
-	cItChA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fxw4uavu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 10:38:00 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDAc0Bf011243
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 10:38:00 GMT
-Received: from [10.239.133.118] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
- 2024 02:37:54 -0800
-Message-ID: <69a01461-0468-44f3-9555-944f9b951c91@quicinc.com>
-Date: Fri, 13 Dec 2024 18:37:51 +0800
+	s=arc-20240116; t=1734086367; c=relaxed/simple;
+	bh=5vPztbLErzreqdxj+hb/w2bNCy20P+PmpA7UICbvqVM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=InMx8oHfCTMkREjC6gavh7EzHsjNdUqWTUaq0RLayCWBwqR3bGLk8PQMo+H95MNXFhPRs/Rq3oJNuGPlu+dnGgkThadWzYXEAHusXuQHE3AOKY8BnhcM95Re/XCD1ED1yBUsgchbzA7aLL6wSX+A8EY/XcWYHVxP1Tkbj17pbmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=svmWQJ3j; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YuknyNOf; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 22A071140122;
+	Fri, 13 Dec 2024 05:39:23 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 13 Dec 2024 05:39:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1734086362;
+	 x=1734172762; bh=Wpmvv7rOIASgAsPA9YY0CjRAOWqGE5dKTI6oeaAjQsA=; b=
+	svmWQJ3jUDwyTjtvXgDTfNmPiFm/sT6IfG+8CWL+e1E0AInZhl8p5UKax+wMo35f
+	myLPtmB+5yYfSbfyj/qCO006nYOR+kuinLYz6+aoskK3zRfSb85JV0l3V96uAnET
+	pUL5M8Qr0xxtZp9+220BHt5P+bvvJjUXpvVzk0kyMdohGdFBKcYoj1yFTAghWPC1
+	ESCWm4oC8k7SSnHv/cpM350JLvJEcywzFGM4V3iJTjoFf46WHGRY9e29q7MHCYXX
+	f2+l7EHyVfT5KDk9XUHcLA9TdOR+02PGMrSoAqoLlANb3hfm6iQIuIvl1tWOebbn
+	OAVZtM7/kB57Am1sK824eA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734086362; x=
+	1734172762; bh=Wpmvv7rOIASgAsPA9YY0CjRAOWqGE5dKTI6oeaAjQsA=; b=Y
+	uknyNOfW5x3i4eadPgo0/13SZlOVNBORH13Qea0h68nPo6kac9sVqMg0ipDBnEK+
+	MFQITm+eCAlqVHbKJPcqrHEmpfLdUo7pQdjyvwFcpooo7Rvdg+oyJtD9fMZcCin4
+	8q1nD8oBrdb4/gMQ/VXQONjCpAv9VJ9bbuyA74xt/rLuyEFP5MzOTsJukoPFb6+u
+	wn9PcMaCe5SPCviK6l721qmzQvUGBRMTzD5EWRHZtKNpC87Cgdc2426/OXc2dC77
+	3k+RgWkuaG6uj1CG5T4sWtSseDZQxYpf3m575iLl7aUHqNlvl3YyKkUHXTu5dFIK
+	NjexF9Xq3oNico1L01Eig==
+X-ME-Sender: <xms:2Q5cZ4IbLlfncl3aMEXOK6HmHI6nOUC12FcfLP7-OJjTC4cLykmlVg>
+    <xme:2Q5cZ4KeJuscIBl3EXG99ecoSIJTTJYgTogDH5OBBqKxEEtFsgFJyxH5T-Jr7NyC4
+    vJxk7jfSfY_Bnb9JO0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeejgddukecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeej
+    vdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefgedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtg
+    hpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphht
+    thhopehgrhgrfhesrghmrgiiohhnrdgtohhmpdhrtghpthhtoheprghtihhshhhpsegrth
+    hishhhphgrthhrrgdrohhrghdprhgtphhtthhopegrnhhuphessghrrghinhhfrghulhht
+    rdhorhhgpdhrtghpthhtoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouh
+    hprdgvuhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphht
+    thhopegrohhusegvvggtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepmhhpvg
+    esvghllhgvrhhmrghnrdhiugdrrghu
+X-ME-Proxy: <xmx:2Q5cZ4uhEqVwIWmlKABp7YxiWheuNKHklS06rgYgOG5WSbWzSRIdpQ>
+    <xmx:2Q5cZ1YWGcG-BZPfYCyspFMyqrkAxbBQc5OhRUdLbZAkQnYR1BMsCw>
+    <xmx:2Q5cZ_aKSykWyn1pThE9bHU1SqW6iK2dJnoNTxOIw5XrXs1C4jtuDQ>
+    <xmx:2Q5cZxDLsWPmWnp45hCYSbYnVQtJ8mnJdnHhHdy6giGcNrT_ZE5f6Q>
+    <xmx:2g5cZ3p36DdJF2lZIuxBVJ6f0_C5j-FvB7wonKJ7qVVUxqJ-OQlXJnSV>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A9A6A2220072; Fri, 13 Dec 2024 05:39:21 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: Add support for secondary USB
- node on QCS615
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Krishna Kurapati
-	<krishna.kurapati@oss.qualcomm.com>
-References: <20241211-add_usb_host_mode_for_qcs615-v2-0-2c4abdf67635@quicinc.com>
- <20241211-add_usb_host_mode_for_qcs615-v2-1-2c4abdf67635@quicinc.com>
- <5770256d-0227-423d-9b6e-4db834284552@kernel.org>
-Content-Language: en-US
-From: Song Xue <quic_songxue@quicinc.com>
-In-Reply-To: <5770256d-0227-423d-9b6e-4db834284552@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6KzPi_zGwo41QdxRlwNl8Ysi6j_6djRC
-X-Proofpoint-GUID: 6KzPi_zGwo41QdxRlwNl8Ysi6j_6djRC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 clxscore=1011 phishscore=0 spamscore=0 priorityscore=1501
- malwarescore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=749
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130073
+Date: Fri, 13 Dec 2024 11:39:00 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Arnd Bergmann" <arnd@kernel.org>, kvm@vger.kernel.org
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Naveen N Rao" <naveen@kernel.org>,
+ "Madhavan Srinivasan" <maddy@linux.ibm.com>,
+ "Alexander Graf" <graf@amazon.com>, "Crystal Wood" <crwood@redhat.com>,
+ "Anup Patel" <anup@brainfault.org>,
+ "Atish Patra" <atishp@atishpatra.org>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Vitaly Kuznetsov" <vkuznets@redhat.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Paul Durrant" <paul@xen.org>,
+ "Marc Zyngier" <maz@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
+Message-Id: <e5b03a9f-332f-4a13-84c6-6b739cd5aa25@app.fastmail.com>
+In-Reply-To: <3a2fadc3-f594-492f-805a-148043436995@csgroup.eu>
+References: <20241212125516.467123-1-arnd@kernel.org>
+ <20241212125516.467123-4-arnd@kernel.org>
+ <2809dcce-3405-430e-b43d-d75f35bdb7d5@csgroup.eu>
+ <3380464f-5db4-487d-936f-1b5503905793@app.fastmail.com>
+ <3a2fadc3-f594-492f-805a-148043436995@csgroup.eu>
+Subject: Re: [RFC 3/5] powerpc: kvm: drop 32-bit book3s
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 12/13/2024 3:54 PM, Krzysztof Kozlowski wrote:
-> On 11/12/2024 09:26, Song Xue wrote:
->> From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->>
->> Add support for secondary USB controller and its high-speed phy
->> on QCS615.
->>
->> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->> Co-developed-by: Song Xue <quic_songxue@quicinc.com>
->> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
-> 
-> 
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching. For bindings, the preferred subjects are
-> explained here:
-> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-> 
+On Fri, Dec 13, 2024, at 11:27, Christophe Leroy wrote:
+> Le 13/12/2024 =C3=A0 11:04, Arnd Bergmann a =C3=A9crit=C2=A0:
+>> diff --git a/arch/powerpc/kernel/head_32.h b/arch/powerpc/kernel/head=
+_32.h
+>> index 9cba7dbf58dd..24e89dadc74d 100644
+>> --- a/arch/powerpc/kernel/head_32.h
+>> +++ b/arch/powerpc/kernel/head_32.h
+>> @@ -172,7 +172,6 @@ _ASM_NOKPROBE_SYMBOL(\name\()_virt)
+>>   #define	START_EXCEPTION(n, label)		\
+>>   	__HEAD;					\
+>>   	. =3D n;					\
+>> -	DO_KVM n;				\
+>>   label:
+>>  =20
+>>   #else
 >
-Let me fix in next version.
+> Then the complete macro should go away because both versions are now=20
+> identical:
+>
+> -#ifdef CONFIG_PPC_BOOK3S
+> -#define	START_EXCEPTION(n, label)		\
+> -	__HEAD;					\
+> -	. =3D n;					\
+> -label:
+> -
+> -#else
+>   #define	START_EXCEPTION(n, label)		\
+>   	__HEAD;					\
+>   	. =3D n;					\
+>   label:
+>
 
-Thanks
-Song >
-> Best regards,
-> Krzysztof
+Thanks, I've folded that change into my patch now.
 
-
-
+      Arnd
 
