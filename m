@@ -1,78 +1,61 @@
-Return-Path: <linux-kernel+bounces-444559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 455479F08C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F779F08B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62068168F12
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:57:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE93168F8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5D21DFE00;
-	Fri, 13 Dec 2024 09:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C0F1DF741;
+	Fri, 13 Dec 2024 09:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mL5Qbrip"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2C51BC9F0;
-	Fri, 13 Dec 2024 09:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lFu4s1La"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6621DF258
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734083652; cv=none; b=Hoou/58piGCiIR9VTNhy5gRd/9eyCbQXoZhka+w2LSybm+NI8qhxhzGKCftP3ze06Z969NC5udhSfGb3mRu/ux58ig0cMhk6NlkEG7Kdge0daMZTMb9kOZLODEwaHx3z+SQBx8sTiHJ/Sf1n3JGPniusGpMRxUJmQPpr5whZvEM=
+	t=1734083635; cv=none; b=R7EdviVGuwmLWLueMwap/XDh1od4/In46pEM1/Pm3Tche5P4TkfWIN4gpR75arBMHrKbM2nt/GILxwjeOT0JSzRsXejrGey72FmJm2W2/OO5cLYs9/iql5hIuLRpCljmwVamA+HQOGjlvG167bnCCJjfKKTDuaad42eeR3P8Dlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734083652; c=relaxed/simple;
-	bh=aKG4i07kiCddb1xwUz+PztNo/8/oFF8l0nSWciEoALo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=upV6DaB6YyDWn8Chk3SAyak2e1jEQOaxchhONzmorYCj2L1dJSz8tg8hoLklLiX6fhcSxYfX8PxBHb6FawQeCS3TL6Hb6Q/iAmDcRruMtTPcA1mgorjzl/0mgmi4kmSFx34Q3LCeYUc9Ss53ae52VD8k+h0k26EBcWlomfq3/ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mL5Qbrip; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD8I4Gl026835;
-	Fri, 13 Dec 2024 09:54:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wAmn3DosKvgeBaH3Y7+6qa9IT0ctg4ChW3co3TKAT8g=; b=mL5Qbripm92EDfjL
-	ncuTzuYNvozuo43KLxlEaAvbTV8dmiqGGs3vddXdJW7A5cOh0W1yCYKxgUukTZMJ
-	1omKTgRk5G/yY++XquvDadbWdcRa6WkwOn4BIN/Y4twSw+wk3WcA+vle1rCpQwmp
-	vZErGEMFBeWTxYwP5xtyvdn7+Y5ZRP6O/7FWa7GJA7RYXf0sQFW3wLOA/FbpsgSX
-	G7pNNT9asRPA3RYTWQOTxuphy1bjs23NzNnabuuB8wjZvEWIr+vZ+mhZA15egh3B
-	J9qTlkx/3BVRpjJBOh59sp9794gVqfoIaCWLx6tC/uRF8dzJtAH+wKh5spMUwJMJ
-	Qw9QAA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40nvqu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 09:54:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD9s6vl024380
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 09:54:06 GMT
-Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 13 Dec 2024 01:54:02 -0800
-From: Prashanth K <quic_prashk@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krishna Kurapati
-	<krishna.kurapati@oss.qualcomm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <cros-qcom-dts-watchers@chromium.org>,
-        Prashanth K <quic_prashk@quicinc.com>
-Subject: [PATCH v2 19/19] arm64: dts: qcom: Disable USB U1/U2 entry for SC8180X
-Date: Fri, 13 Dec 2024 15:22:37 +0530
-Message-ID: <20241213095237.1409174-20-quic_prashk@quicinc.com>
+	s=arc-20240116; t=1734083635; c=relaxed/simple;
+	bh=RDbpqS+5p5jc2vCJhV1pqr0/MR5QesXG0JXc5E364WM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=StBiVHA2KPJIcJ8jaBZ7F2zsGXnKmlHiBjpBwbOZUFCtLIOMfvQ7IBLpvhuUmDywUdkOa0G+MEFJHUK0UiUx4RYJ8qQ7YXbi2xfGzdyS9BimZdj71CF6onNfeEoXYAeT2DpqncCdvk0ZHk4WFQEUGwPDiDJvcCtxqmFpb42amkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lFu4s1La; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=fYQCG
+	T5BhK2YiHwv+9QN3ezva5CB4PtsRASZ1Lx+Iqk=; b=lFu4s1La8W3lLt6IgofRk
+	GaQrQU33XzyqumBq+FTdeGDDZRs2ZT3MFS3cyzm/UHJ6cOwd3MXkiqMou0qSqKog
+	EvT7aOvk8TnlEi518Pdf/AZ7VBnkiZvIfda47fmYpYwWP4xPkumd9JTgPAyCxifu
+	pRcP9D9p+2aQxX8I/IaYl4=
+Received: from hello.company.local (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgDXvxn5A1xnmCCqBA--.30634S2;
+	Fri, 13 Dec 2024 17:52:58 +0800 (CST)
+From: Liang Jie <buaajxlj@163.com>
+To: tj@kernel.org
+Cc: void@manifault.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-kernel@vger.kernel.org,
+	fanggeng@lixiang.com,
+	yangchen11@lixiang.com,
+	Liang Jie <liangjie@lixiang.com>
+Subject: [PATCH] sched_ext: Use sizeof_field for key_len in dsq_hash_params
+Date: Fri, 13 Dec 2024 17:52:54 +0800
+Message-Id: <20241213095254.1577635-1-buaajxlj@163.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241213095237.1409174-1-quic_prashk@quicinc.com>
-References: <20241213095237.1409174-1-quic_prashk@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,83 +63,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MeGZY4hikj39LEubDm0k-bFSeZyWq8fx
-X-Proofpoint-ORIG-GUID: MeGZY4hikj39LEubDm0k-bFSeZyWq8fx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 mlxlogscore=462 priorityscore=1501 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130067
+X-CM-TRANSID:PygvCgDXvxn5A1xnmCCqBA--.30634S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtr15XFyUCF4DuF1rGF45ZFb_yoWDWFX_Zw
+	4FyrnFk3WDJr92qa15GF4fJr97t34ft3Z5uw4kGFWDX34kJr4qvwn5GFZ3J34DZrZ7KFyU
+	ArnagF15Aw15WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUb1lkDUUUUU==
+X-CM-SenderInfo: pexdtyx0omqiywtou0bp/1tbiNh20IGdb-kdn4gAAs-
 
-Disable U1 and U2 power-saving states to improve stability of USB.
-These low-power link states, designed to reduce power consumption
-during idle periods, can cause issues in latency-sensitive or high
-throughput use cases. Over the years, some of the issues seen are
-as follows:
+From: Liang Jie <liangjie@lixiang.com>
 
-1. In device mode of operation, when UVC is active, enabling U1/U2
-is sometimes causing packets drops due to delay in entry/exit of
-intermittent these low power states. These packet drops are often
-reflected as missed isochronous transfers, as the controller wasn't
-able to send packet in that microframe interval and hence glitches
-are seen on the final transmitted video output.
+Update the `dsq_hash_params` initialization to use `sizeof_field`
+for the `key_len` field instead of a hardcoded value.
 
-2. On QCS6490-Rb3Gen2 Vision kit, ADB connection is heavily unstable
-when U1/U2 is enabled. Often when link enters U2, there is a re-
-enumeration seen and device is unusable for many use cases.
+This improves code readability and ensures the key length dynamically
+matches the size of the `id` field in the `scx_dispatch_q` structure.
 
-3. On QCS8300/QCS9100, it is observed that when Link enters U2, when
-the cable is disconnected and reconnected to host PC in HS, there
-is no link status change interrupt seen and the plug-in in HS doesn't
-show up a bus reset and enumeration failure happens.
-
-Disabling these intermittent power states enhances device stability
-without affecting power usage.
-
-Signed-off-by: Prashanth K <quic_prashk@quicinc.com>
+Signed-off-by: Liang Jie <liangjie@lixiang.com>
 ---
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/sched/ext.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index 745a7d0b8381..28693a3bfc7f 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -2762,6 +2762,8 @@ usb_mp_dwc3: usb@a400000 {
- 				iommus = <&apps_smmu 0x60 0>;
- 				snps,dis_u2_susphy_quirk;
- 				snps,dis_enblslpm_quirk;
-+				snps,dis-u1-entry-quirk;
-+				snps,dis-u2-entry-quirk;
- 				phys = <&usb_mp_hsphy0>,
- 				       <&usb_mp_qmpphy0>,
- 				       <&usb_mp_hsphy1>,
-@@ -2825,6 +2827,8 @@ usb_prim_dwc3: usb@a600000 {
- 				iommus = <&apps_smmu 0x140 0>;
- 				snps,dis_u2_susphy_quirk;
- 				snps,dis_enblslpm_quirk;
-+				snps,dis-u1-entry-quirk;
-+				snps,dis-u2-entry-quirk;
- 				phys = <&usb_prim_hsphy>, <&usb_prim_qmpphy QMP_USB43DP_USB3_PHY>;
- 				phy-names = "usb2-phy", "usb3-phy";
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 7fff1d045477..4bd964fc7bbb 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -960,7 +960,7 @@ static DEFINE_PER_CPU(struct task_struct *, direct_dispatch_task);
+ static struct scx_dispatch_q **global_dsqs;
  
-@@ -2902,6 +2906,8 @@ usb_sec_dwc3: usb@a800000 {
- 				iommus = <&apps_smmu 0x160 0>;
- 				snps,dis_u2_susphy_quirk;
- 				snps,dis_enblslpm_quirk;
-+				snps,dis-u1-entry-quirk;
-+				snps,dis-u2-entry-quirk;
- 				phys = <&usb_sec_hsphy>, <&usb_sec_qmpphy QMP_USB43DP_USB3_PHY>;
- 				phy-names = "usb2-phy", "usb3-phy";
- 
+ static const struct rhashtable_params dsq_hash_params = {
+-	.key_len		= 8,
++	.key_len		= sizeof_field(struct scx_dispatch_q, id),
+ 	.key_offset		= offsetof(struct scx_dispatch_q, id),
+ 	.head_offset		= offsetof(struct scx_dispatch_q, hash_node),
+ };
 -- 
 2.25.1
 
