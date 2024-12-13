@@ -1,100 +1,126 @@
-Return-Path: <linux-kernel+bounces-445558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53559F17B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:01:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8712E9F17B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B3A47A0FE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:01:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFF207A13C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E94C1922DE;
-	Fri, 13 Dec 2024 21:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803D21922C6;
+	Fri, 13 Dec 2024 21:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqzXrWNV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NgxAEgT1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4hLGhKG4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668F718E02A;
-	Fri, 13 Dec 2024 21:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA7918660F;
+	Fri, 13 Dec 2024 21:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734123686; cv=none; b=gbPv8Y0c26O0safF7NYng3NMIQpZfvzp0FDmX2A/fZQEv1Nv3dRSerxmNBCPdOKe0tPlCI+5eATYDDGUxke6A7V6YhaJ7wUtzsGxBfAY3oQGMdN55kOhzY+5M/RJosWn27zM3F2pByTPlK7PkP6bpkz3mFRSF9B3foRIdAs4HpQ=
+	t=1734123759; cv=none; b=SD0OyECZY9cWh5VUuzkufyNdz6Eqyc90BgqE9f3nFhu912j/5fNSSCAUKqCTBsI7OlKW3bMzbV3TkqafUEXkjTmh4Lmbl9njE0bWOwJI7Fmsp+YRBtzm/gCicCVXs9GT4cIdGDIXNvZcw/fX4fpBIEn6eYlqxK5rYNLyFP+d6RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734123686; c=relaxed/simple;
-	bh=oKMygOFYsexp3cwkco1B1/KvI29u9MdaTXnvDS9O8bI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aBBfOZ7BB3tZB0IqK+t5w1lUqWoAwWNkQL+7Oxz+vviy3vf3kfRtOH0/R5PBWs6Ntl+HIgi6Fje9ABWDxFBw3UHkHEsh5BWtyMEPAGebmzbKkZg0Pfum8V2uwolh1f3f7uZLhTFOPWlp+4mA1mg6oWPjmupIVkpLUUdhiuryvHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqzXrWNV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0710C4CED6;
-	Fri, 13 Dec 2024 21:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734123686;
-	bh=oKMygOFYsexp3cwkco1B1/KvI29u9MdaTXnvDS9O8bI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=XqzXrWNVWC4bvj0vI6ephyicK0TiUAvgeLAKW1hUHimpRDoQqztK/9nqoR5Tm3VEg
-	 Z+z0JWatI1xXFph5YZoFxllcJ6iARVz4+Qi+RGxXqGW56QMxyhXtPvj4cITEQeIXXO
-	 gGKrlulLeg3e8D12ZoTqwfA+LoshIqNWWEfLkyzzVki4tryRu9WDB3fta4QuyVQSqJ
-	 A/ttI79WqPkRKqV0XA8TVhj6vbnG9Kn2diselpNTSk6RBPRm0LBsWgvTggKESZAQUx
-	 20TQrUxOjFr8HIZyKCmRaKU5Mj8xRKWz1Bb96K7WZfbZaGiMRZINHxo2CcNZMrhGaE
-	 XP+BarC6/JnPg==
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3ebb1652729so194969b6e.3;
-        Fri, 13 Dec 2024 13:01:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXcwdRboeUIwHktFYc64Aq/+nIi7OmcGFrPDro6Gd3UuXk1rC1prIjWPZt1TW8sr4+exoTKlRJw9pDC8j4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGl8y0TwrnEkd5qrL91MiuH6DAWw+MVCo9E+/EqhHLv/2uf+AM
-	Lo5WAX3yKD98PtPNunOhFVwQw5PRUAVhWBasp7dIVxF/7LMBynokHR1Vq8wYE/ZAfVK0fWLItVX
-	dpTJT28ArumArQRz+BEwbdKbi9kk=
-X-Google-Smtp-Source: AGHT+IFB925/Rt8uMrm9uakaCSdGA7UoukSaGpKHjbgnLeev+m10FoaZ5SM9qx+7M3yGAisCWdrZwNm9nAO9EzE0nGE=
-X-Received: by 2002:a05:6808:4445:b0:3eb:922f:9031 with SMTP id
- 5614622812f47-3eba69a174bmr2402054b6e.40.1734123685280; Fri, 13 Dec 2024
- 13:01:25 -0800 (PST)
+	s=arc-20240116; t=1734123759; c=relaxed/simple;
+	bh=X+RsphI2CiMXOjKOKzsc0ExDzLmWa0lbFxkwtfnL6vY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=riUc807Cy27M6KrTx6/XYLyWmgVs//cOkFYb2Z+dQSjMB+wfCvT2NlRr6x2IQ2ONW9dC+6ert4TsyT7taFnv/FZAcszJ/NSDfrwEGVJ6JhLUuspj9gwNsZmq2U7NanuMwfZ2eLsic9WumrU5vONaM1qwM6mncPy95bm+hGSv8ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NgxAEgT1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4hLGhKG4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 13 Dec 2024 21:02:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1734123756;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MB2XsqUY/gqA4cgQXCB6LaONxZS6IZlzO75dyKUUP0I=;
+	b=NgxAEgT1gxCD/wq10ymAEkVWW2HVH4kORpboN3vBle7qxSdTrEvndS0S2U41ZEzSrZ2DQo
+	4qcmv6qH4by55hxUPXpCpv67IbJlpWWjOGZ1UcMx61FYpCwpTWtuvqpx4jUFmF//Z3hq3u
+	DDPNlHxz2poZc1RPcWSdPbPwIDnKRbNhDkpOUlNK/wSQpxA/mq43WXhrtgJcVbcGScXbu/
+	8YIN1eUSU6a0l6dlw7ZF6ybOSMJFpNR/kU4TG+i2vCTpifse5fE2Qi3O6r8hYALCLTbI0W
+	5JtXlUSEp3qUtfO5U3cfkLsWk3tCUXnXMBGMGrnwaohNY5XZ+LO19K1XsuzHVg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1734123756;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MB2XsqUY/gqA4cgQXCB6LaONxZS6IZlzO75dyKUUP0I=;
+	b=4hLGhKG4/CII+GBZ1LvDAW4E9ErEkYIub9R4AyTMQaqTXoezWL98DxbEHS0UaWLShJjamb
+	vlEqA/sw8y3ejYDg==
+From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cache] x86/resctrl: Document the new "mba_MBps_event" file
+Cc: Tony Luck <tony.luck@intel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Reinette Chatre <reinette.chatre@intel.com>, Babu Moger <babu.moger@amd.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241206163148.83828-9-tony.luck@intel.com>
+References: <20241206163148.83828-9-tony.luck@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 13 Dec 2024 22:01:14 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g-ZThRsRm53qm=JvYdGsXxtMq1NkDrR5qd65qN8kjw_g@mail.gmail.com>
-Message-ID: <CAJZ5v0g-ZThRsRm53qm=JvYdGsXxtMq1NkDrR5qd65qN8kjw_g@mail.gmail.com>
-Subject: [GIT PULL] Power management documentation fix for v6.13-rc3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <173412375476.412.15475997368864513954.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+The following commit has been merged into the x86/cache branch of tip:
 
-Please pull from the tag
+Commit-ID:     faf6ef673787956ec4d33ac8bf56f8ea929abf37
+Gitweb:        https://git.kernel.org/tip/faf6ef673787956ec4d33ac8bf56f8ea929abf37
+Author:        Tony Luck <tony.luck@intel.com>
+AuthorDate:    Fri, 06 Dec 2024 08:31:48 -08:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Thu, 12 Dec 2024 11:27:43 +01:00
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.13-rc3
+x86/resctrl: Document the new "mba_MBps_event" file
 
-with top-most commit ccb84dc8f4a02e7d30ffd388522996546b4d00e1
+Add a section to document a new read/write file that shows/sets the memory
+bandwidth event used to control bandwidth used by each CTRL_MON group.
 
- Documentation: PM: Clarify pm_runtime_resume_and_get() return value
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Tested-by: Babu Moger <babu.moger@amd.com>
+Link: https://lore.kernel.org/r/20241206163148.83828-9-tony.luck@intel.com
+---
+ Documentation/arch/x86/resctrl.rst | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-on top of commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-
- Linux 6.13-rc2
-
-to receive a power management documentation fix for 6.13-rc3.
-
-This fesix a runtime PM documentation mistake that may mislead someone
-into making a coding mistake (Paul Barker).
-
-Thanks!
-
-
----------------
-
-Paul Barker (1):
-      Documentation: PM: Clarify pm_runtime_resume_and_get() return value
-
----------------
-
- Documentation/power/runtime_pm.rst | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/resctrl.rst
+index a824aff..6768fc1 100644
+--- a/Documentation/arch/x86/resctrl.rst
++++ b/Documentation/arch/x86/resctrl.rst
+@@ -384,6 +384,16 @@ When monitoring is enabled all MON groups will also contain:
+ 	Available only with debug option. The identifier used by hardware
+ 	for the monitor group. On x86 this is the RMID.
+ 
++When the "mba_MBps" mount option is used all CTRL_MON groups will also contain:
++
++"mba_MBps_event":
++	Reading this file shows which memory bandwidth event is used
++	as input to the software feedback loop that keeps memory bandwidth
++	below the value specified in the schemata file. Writing the
++	name of one of the supported memory bandwidth events found in
++	/sys/fs/resctrl/info/L3_MON/mon_features changes the input
++	event.
++
+ Resource allocation rules
+ -------------------------
+ 
 
