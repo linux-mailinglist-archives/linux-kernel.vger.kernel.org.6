@@ -1,93 +1,67 @@
-Return-Path: <linux-kernel+bounces-444634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4449F0A00
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:47:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6695A9F0A07
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:49:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF108188A414
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22EC1286A97
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C671B6CF6;
-	Fri, 13 Dec 2024 10:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6F71C3BEA;
+	Fri, 13 Dec 2024 10:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tpAmN5Yd"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pkXjcVTv"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B71C1B4F21
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1687A1C07F1;
+	Fri, 13 Dec 2024 10:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734086810; cv=none; b=C0IOKvf2iLrhdeQt3aabwjMWAItFs3tyklI8UX4syhn20Tt/vafa9uS5/7k3MBrhXBF/c13oPNjod3NXi1lBk3Z+6WNMUs4HSi7frce6FyzMdD/qokxdkYaB0Gi/cIPmt+48bbh2GFaUoUlKuaBVVqDoqQuhDLq+4guJwOmyX3Q=
+	t=1734086957; cv=none; b=I2xZGqSqlc+rwNRdnSiZTWlivNSGEeHOgPCqHtVIM7TdAAPEY694W8DOabVtxvkc1WYzvMsiXKKZ6664NshH7dToVacase4bDLGl89kKX99shp/B/+DXixlcgvLBgzqwF/bZ7mudNUd2Yn+3Puyv3hmA7yttaNbBS/p2GTI5+9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734086810; c=relaxed/simple;
-	bh=u2Xn+KNbVqlfmrJ9RWE96EfrPr7hc1AnPuSXpEX4IVY=;
+	s=arc-20240116; t=1734086957; c=relaxed/simple;
+	bh=QTpFgbC0lMRIURIjL9XtOH2tvQzwa5Th2hdbKEH5i+o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PBTdv2giB5tPqEQ46XvX1+tK+THL+IBaYiXabbbk5QB1tap58SaN6+MqG+xY7Xkci8f4xoZyLePEl4zfhCpOy595GX29WrxSMpISREBYybpDYesq+nVD3+n/0Q5/abI4iXFUq42CgLyfRfOmj/JSqeoCJ/+cXJl93/FdKNfFMgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tpAmN5Yd; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5401be44b58so1673206e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 02:46:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734086806; x=1734691606; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+riqgFIVH/DYP7alTtDkk3IJ4T8e5i4UAZc0dBAEl5E=;
-        b=tpAmN5Yd4V5mOGAPnOp9YvxERb5taUpiVKfBHiJvrz71yG877diOPYkvF+IPEdb/m9
-         3csxdp1Kq4P/E/IDARtGlplXI66eoVjQ4fRs7YZ+ck7x4H90RlF46gmAIZdtCFyK/ZmZ
-         jom+liDICBQjoTNUzQkGvIwA6OjSJOEcwOrI3LaRPK1gecgPiJleCG6eKwjWCu9/EcPf
-         +p+cPZwHHhl5FO5HmmWLHcmbdQAGwreNm+idSEeKbfbXDliDEVJHmStVmndHLn+6fXuL
-         zaDMxVBk+oXblREQOfZZxbJwZvieuSREHSi1iMCoiQf8qjfaWQ33G2cgoa6t0OoRcuIe
-         muVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734086806; x=1734691606;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+riqgFIVH/DYP7alTtDkk3IJ4T8e5i4UAZc0dBAEl5E=;
-        b=HirJ3kScsZPQmr4RSTb66cVL4FvBVN/zGjQMZaIQwG5vIFH5eR4ZUPf4Qesn3vmVm9
-         IPgJ08L6mb2kv71VtwSR4Zuk7+H8FMEqO3AeXmUFbNmehAowErLDhQGYcuyc2qjueMCi
-         0g7poG+HVgaqC8i5yThUOEKpXbWBUmi+uyLcUI9MlYwM0jb+oKFHnjhLFPkm58kaexwc
-         dM0NGSTLJzGdmeP8M4jvPVGg73SsY6h0SmCbARaIEI+SH4P2/rbZj2tqSXmT/dGsHnoZ
-         MBBGFJ4jnVCZHsXGZTiUrHzscslQuj7Zh34HMW1i2LHP9WcA7c8+e32XYIc4NBIpE9El
-         iGIA==
-X-Forwarded-Encrypted: i=1; AJvYcCX38pg3EYt7Hv7W4MYRA47JL1+UwMhDjFAWbtNiEhTPVO2J5vU6zv13HaSWeHsqQR0HHldC5WbV17dGdAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz3B4R15Qf6jTpnFkTcbrjXKUDTV43uIp8vK+RMnFatfeZCkOl
-	c2mMqt2y8PF1jOXzzsJvcoYF+wMkmTiyxhwwsudrzItsEhTRA7Ac7MtR4LqX7Y8=
-X-Gm-Gg: ASbGncvg2UA/TkeZ1MmOujbxr9TgrCp/HQz+1Y0qGqwWPANPhxuyZd8RBuMNxFZwEH5
-	MpUdlH/ZaLAjBP9rhw0B7q+A811vcDfFjnRu5E3HgWKDUS112G+iS22Np4oMkcGjoX17IaDJs8u
-	MZtJ9TkhIo4wfyjHAwAxUx5EESvgWvxeI9ESlKKRhj9gkQ7/m3Ru5aJIinrFuHVVZScZ8AKu+mV
-	2Tnt6yHCP6MxXl4hXDFWgAvffuVkcmxAQ9PONEEZinVfw8xNQ0lRRLVA1k1jSUeze8c6BD7pseh
-	3zbqMLUNKMu/UTIFZq2aFq3crct1XLS7+WYu
-X-Google-Smtp-Source: AGHT+IEm2vjvZgyAC46ioS4Iv92mUkMOa1/KLmQj2/Q0eiaT5naaA+czP9WRIBuvwOukMwZlXd0o4w==
-X-Received: by 2002:a05:6512:3189:b0:540:2fe6:6a3a with SMTP id 2adb3069b0e04-54099b72e3emr649543e87.57.1734086806386;
-        Fri, 13 Dec 2024 02:46:46 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e369298bbsm2226481e87.13.2024.12.13.02.46.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 02:46:45 -0800 (PST)
-Date: Fri, 13 Dec 2024 12:46:42 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Xin Ji <xji@analogixsemi.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Bernie Liang <bliang@analogixsemi.com>, Qilin Wen <qwen@analogixsemi.com>, 
-	"treapking@google.com" <treapking@google.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] drm/bridge:anx7625: Update HDCP status at
- atomic_enable()
-Message-ID: <4q2jncpnmeu7ytuyuv5pjzurh3ai5663jmu2we6cebuad2r3r5@tfb6hf6unioc>
-References: <20241212055110.1862487-1-xji@analogixsemi.com>
- <vkrl7om7hepboovp2uivcnernia3ygqwrj3y3kkjydeclwvrk5@7tkdc4etkcjs>
- <BY5PR04MB673977C1DB1E774CB261C119C7382@BY5PR04MB6739.namprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ode+ozF9ZbIpW4LLweRXS7GJ9fbNHkv6CU1lAYde95s5MnhYFklISs2nZ3wN/Rwsixug3yDAGkvuptENQf5QxK9s1zqf4SAIHZQp07U5OngF6EetmbUJZV6vrZmViz71QVOpdpQ62FieKytiZO/IMU6VBp3aCMosiRwQlvLDKmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pkXjcVTv; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qZcE4VAYVRjDeKcX4tFrH5Xyw4YkZtRwarxUiu6KUq4=; b=pkXjcVTvP/7ANwQatvK8RlIVl/
+	oFSvU2a3RFPulTSVQ9iIHehLzT7Qro25M+T1dZy93nKKaya8Q76owmkLDRtVddz0xaMkjNBPJC5n7
+	8DvqC1L1PmlbH+HM4uUGpF4AjIvIPMjMdESDwWqCZTn08zjVPAjbEU2W8kG68GphUpxwj9dqwneM0
+	cW5GrBonciLnbZCoaPxEKfLnpQYVMVi2vCPD34cmogBkqy3ff34yXRfxdzfFr/PyaQ3/R9pulMqfP
+	7htpykfrRHqmHuS7tWoIGFqrENgVeCCSeiP2PqzqcazaGbONl3k7SqxOI17RVHfeZEsInvK8SbW4a
+	8qe8zpsQ==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tM3EK-00000004Frn-1ewh;
+	Fri, 13 Dec 2024 10:49:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AC02830049D; Fri, 13 Dec 2024 11:49:07 +0100 (CET)
+Date: Fri, 13 Dec 2024 11:49:07 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 08/13] uprobes/x86: Add support to optimize
+ uprobes
+Message-ID: <20241213104907.GA35539@noisy.programming.kicks-ass.net>
+References: <20241211133403.208920-1-jolsa@kernel.org>
+ <20241211133403.208920-9-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,198 +70,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BY5PR04MB673977C1DB1E774CB261C119C7382@BY5PR04MB6739.namprd04.prod.outlook.com>
+In-Reply-To: <20241211133403.208920-9-jolsa@kernel.org>
 
-On Fri, Dec 13, 2024 at 10:06:36AM +0000, Xin Ji wrote:
-> Hi Dmitry, thanks for the review, I made some changes which change ENABLE to DESIRE
-> in .atomic_disable(), I'll upstream it after testing. Thanks!
+On Wed, Dec 11, 2024 at 02:33:57PM +0100, Jiri Olsa wrote:
+> diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> index cdea97f8cd39..b2420eeee23a 100644
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
 
-- Please don't top-post.
+> @@ -1306,3 +1339,132 @@ bool arch_uretprobe_is_alive(struct return_instance *ret, enum rp_check ctx,
+>  	else
+>  		return regs->sp <= ret->stack;
+>  }
+> +
+> +int arch_uprobe_verify_opcode(struct arch_uprobe *auprobe, struct page *page,
+> +			      unsigned long vaddr, uprobe_opcode_t *new_opcode,
+> +			      int nbytes)
+> +{
+> +	uprobe_opcode_t old_opcode[5];
+> +	bool is_call, is_swbp, is_nop5;
+> +
+> +	if (!test_bit(ARCH_UPROBE_FLAG_CAN_OPTIMIZE, &auprobe->flags))
+> +		return uprobe_verify_opcode(page, vaddr, new_opcode);
+> +
+> +	/*
+> +	 * The ARCH_UPROBE_FLAG_CAN_OPTIMIZE flag guarantees the following
+> +	 * 5 bytes read won't cross the page boundary.
+> +	 */
+> +	uprobe_copy_from_page(page, vaddr, (uprobe_opcode_t *) &old_opcode, 5);
+> +	is_call = is_call_insn((uprobe_opcode_t *) &old_opcode);
+> +	is_swbp = is_swbp_insn((uprobe_opcode_t *) &old_opcode);
+> +	is_nop5 = is_nop5_insn((uprobe_opcode_t *) &old_opcode);
+> +
+> +	/*
+> +	 * We allow following trasitions for optimized uprobes:
+> +	 *
+> +	 *   nop5 -> swbp -> call
+> +	 *   ||      |       |
+> +	 *   |'--<---'       |
+> +	 *   '---<-----------'
+> +	 *
+> +	 * We return 1 to ack the write, 0 to do nothing, -1 to fail write.
+> +	 *
+> +	 * If the current opcode (old_opcode) has already desired value,
+> +	 * we do nothing, because we are racing with another thread doing
+> +	 * the update.
+> +	 */
+> +	switch (nbytes) {
+> +	case 5:
+> +		if (is_call_insn(new_opcode)) {
+> +			if (is_swbp)
+> +				return 1;
+> +			if (is_call && !memcmp(new_opcode, &old_opcode, 5))
+> +				return 0;
+> +		} else {
+> +			if (is_call || is_swbp)
+> +				return 1;
+> +			if (is_nop5)
+> +				return 0;
+> +		}
+> +		break;
+> +	case 1:
+> +		if (is_swbp_insn(new_opcode)) {
+> +			if (is_nop5)
+> +				return 1;
+> +			if (is_swbp || is_call)
+> +				return 0;
+> +		} else {
+> +			if (is_swbp || is_call)
+> +				return 1;
+> +			if (is_nop5)
+> +				return 0;
+> +		}
+> +	}
+> +	return -1;
+> +}
+> +
+> +bool arch_uprobe_is_register(uprobe_opcode_t *insn, int nbytes)
+> +{
+> +	return nbytes == 5 ? is_call_insn(insn) : is_swbp_insn(insn);
+> +}
+> +
+> +static void __arch_uprobe_optimize(struct arch_uprobe *auprobe, struct mm_struct *mm,
+> +				   unsigned long vaddr)
+> +{
+> +	struct uprobe_trampoline *tramp;
+> +	char call[5];
+> +
+> +	tramp = uprobe_trampoline_get(vaddr);
+> +	if (!tramp)
+> +		goto fail;
+> +
+> +	relative_call(call, (void *) vaddr, (void *) tramp->vaddr);
+> +	if (uprobe_write_opcode(auprobe, mm, vaddr, call, 5))
+> +		goto fail;
+> +
+> +	set_bit(ARCH_UPROBE_FLAG_OPTIMIZED, &auprobe->flags);
+> +	return;
+> +
+> +fail:
+> +	/* Once we fail we never try again. */
+> +	clear_bit(ARCH_UPROBE_FLAG_CAN_OPTIMIZE, &auprobe->flags);
+> +	uprobe_trampoline_put(tramp);
+> +}
+> +
+> +static bool should_optimize(struct arch_uprobe *auprobe)
+> +{
+> +	if (!test_bit(ARCH_UPROBE_FLAG_CAN_OPTIMIZE, &auprobe->flags))
+> +		return false;
+> +	if (test_bit(ARCH_UPROBE_FLAG_OPTIMIZED, &auprobe->flags))
+> +		return false;
+> +	return true;
+> +}
+> +
+> +void arch_uprobe_optimize(struct arch_uprobe *auprobe, unsigned long vaddr)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +
+> +	if (!should_optimize(auprobe))
+> +		return;
+> +
+> +	mmap_write_lock(mm);
+> +	if (should_optimize(auprobe))
+> +		__arch_uprobe_optimize(auprobe, mm, vaddr);
+> +	mmap_write_unlock(mm);
+> +}
+> +
+> +int set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr)
+> +{
+> +	uprobe_opcode_t *insn = (uprobe_opcode_t *) auprobe->insn;
+> +
+> +	if (test_bit(ARCH_UPROBE_FLAG_OPTIMIZED, &auprobe->flags))
+> +		return uprobe_write_opcode(auprobe, mm, vaddr, insn, 5);
+> +
+> +	return uprobe_write_opcode(auprobe, mm, vaddr, insn, UPROBE_SWBP_INSN_SIZE);
+> +}
+> +
+> +bool arch_uprobe_is_callable(unsigned long vtramp, unsigned long vaddr)
+> +{
+> +	long delta = (long)(vaddr + 5 - vtramp);
+> +	return delta >= INT_MIN && delta <= INT_MAX;
+> +}
 
-- You still didn't explain, why do you want to do this change of HDCP
-  status. Could you please provide an explanation before sending the
-  next iteration?
-
-> 
-> > -----Original Message-----
-> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Sent: Thursday, December 12, 2024 5:18 PM
-> > To: Xin Ji <xji@analogixsemi.com>
-> > Cc: Andrzej Hajda <andrzej.hajda@intel.com>; Neil Armstrong
-> > <neil.armstrong@linaro.org>; Robert Foss <rfoss@kernel.org>; Laurent Pinchart
-> > <Laurent.pinchart@ideasonboard.com>; Jonas Karlman <jonas@kwiboo.se>;
-> > Jernej Skrabec <jernej.skrabec@gmail.com>; Maarten Lankhorst
-> > <maarten.lankhorst@linux.intel.com>; Maxime Ripard <mripard@kernel.org>;
-> > Thomas Zimmermann <tzimmermann@suse.de>; David Airlie
-> > <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Bernie Liang
-> > <bliang@analogixsemi.com>; Qilin Wen <qwen@analogixsemi.com>;
-> > treapking@google.com; dri-devel@lists.freedesktop.org; linux-
-> > kernel@vger.kernel.org
-> > Subject: Re: [PATCH v3] drm/bridge:anx7625: Update HDCP status at
-> > atomic_enable()
-> > 
-> > CAUTION: This email originated from outside of the organization. Please do not
-> > click links or open attachments unless you recognize the sender, and know the
-> > content is safe.
-> > 
-> > 
-> > On Thu, Dec 12, 2024 at 01:51:10PM +0800, Xin Ji wrote:
-> > > When user enabled HDCP feature, userspace will set HDCP content to
-> > > DRM_MODE_CONTENT_PROTECTION_DESIRED. Next, anx7625 will update
-> > HDCP
-> > > content to DRM_MODE_CONTENT_PROTECTION_ENABLED if down stream
-> > support
-> > > HDCP feature.
-> > >
-> > > However once HDCP content turn to
-> > DRM_MODE_CONTENT_PROTECTION_ENABLED
-> > > userspace will not update the HDCP content to
-> > > DRM_MODE_CONTENT_PROTECTION_UNDESIRED until monitor disconnect.
-> > 
-> > It seems you've ingored a part of the previous review comment. It's the
-> > userspace who triggers the ENABLED -> UNDESIRED transition, not the kernel
-> > side. The change to move HDCP handling to atomic_enable() looks fine, the
-> > change to disable HDCP is not (unless I misunderstand something).
-> > 
-> > >
-> > > So, anx7625 driver move hdcp content value checking from bridge
-> > > interface .atomic_check() to .atomic_enable(), then update hdcp
-> > > content according from currently HDCP status. And also disabled HDCP
-> > > in bridge interface .atomic_disable().
-> > >
-> > > Signed-off-by: Xin Ji <xji@analogixsemi.com>
-> > > ---
-> > >  drivers/gpu/drm/bridge/analogix/anx7625.c | 74
-> > > ++++++++++++++---------
-> > >  1 file changed, 46 insertions(+), 28 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c
-> > > b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> > > index a2675b121fe4..f96ce5665e8d 100644
-> > > --- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-> > > +++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-> > > @@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_data
-> > *ctx)
-> > >                                TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
-> > > }
-> > >
-> > > +static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data
-> > > +*ctx) {
-> > > +     struct device *dev = ctx->dev;
-> > > +
-> > > +     if (!ctx->connector)
-> > > +             return;
-> > > +
-> > > +     anx7625_hdcp_disable(ctx);
-> > > +
-> > > +     ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> > > +     drm_hdcp_update_content_protection(ctx->connector,
-> > > +                                        ctx->hdcp_cp);
-> > > +
-> > > +     dev_dbg(dev, "update CP to UNDESIRE\n"); }
-> > > +
-> > >  static int anx7625_hdcp_enable(struct anx7625_data *ctx)  {
-> > >       u8 bcap;
-> > > @@ -2149,34 +2165,6 @@ static int anx7625_connector_atomic_check(struct
-> > anx7625_data *ctx,
-> > >       if (cp == ctx->hdcp_cp)
-> > >               return 0;
-> > >
-> > > -     if (cp == DRM_MODE_CONTENT_PROTECTION_DESIRED) {
-> > > -             if (ctx->dp_en) {
-> > > -                     dev_dbg(dev, "enable HDCP\n");
-> > > -                     anx7625_hdcp_enable(ctx);
-> > > -
-> > > -                     queue_delayed_work(ctx->hdcp_workqueue,
-> > > -                                        &ctx->hdcp_work,
-> > > -                                        msecs_to_jiffies(2000));
-> > > -             }
-> > > -     }
-> > > -
-> > > -     if (cp == DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
-> > > -             if (ctx->hdcp_cp != DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> > > -                     dev_err(dev, "current CP is not ENABLED\n");
-> > > -                     return -EINVAL;
-> > > -             }
-> > > -             anx7625_hdcp_disable(ctx);
-> > > -             ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-> > > -             drm_hdcp_update_content_protection(ctx->connector,
-> > > -                                                ctx->hdcp_cp);
-> > > -             dev_dbg(dev, "update CP to UNDESIRE\n");
-> > > -     }
-> > > -
-> > > -     if (cp == DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> > > -             dev_err(dev, "Userspace illegal set to PROTECTION ENABLE\n");
-> > > -             return -EINVAL;
-> > > -     }
-> > > -
-> > >       return 0;
-> > >  }
-> > >
-> > > @@ -2425,6 +2413,8 @@ static void anx7625_bridge_atomic_enable(struct
-> > drm_bridge *bridge,
-> > >       struct anx7625_data *ctx = bridge_to_anx7625(bridge);
-> > >       struct device *dev = ctx->dev;
-> > >       struct drm_connector *connector;
-> > > +     struct drm_connector_state *conn_state;
-> > > +     int cp;
-> > >
-> > >       dev_dbg(dev, "drm atomic enable\n");
-> > >
-> > > @@ -2439,6 +2429,32 @@ static void anx7625_bridge_atomic_enable(struct
-> > drm_bridge *bridge,
-> > >       _anx7625_hpd_polling(ctx, 5000 * 100);
-> > >
-> > >       anx7625_dp_start(ctx);
-> > > +
-> > > +     conn_state =
-> > > + drm_atomic_get_new_connector_state(state->base.state, connector);
-> > > +
-> > > +     if (WARN_ON(!conn_state))
-> > > +             return;
-> > > +
-> > > +     cp = conn_state->content_protection;
-> > > +     if (cp == DRM_MODE_CONTENT_PROTECTION_DESIRED) {
-> > > +             if (ctx->dp_en) {
-> > > +                     dev_dbg(dev, "enable HDCP\n");
-> > > +                     anx7625_hdcp_enable(ctx);
-> > > +
-> > > +                     queue_delayed_work(ctx->hdcp_workqueue,
-> > > +                                        &ctx->hdcp_work,
-> > > +                                        msecs_to_jiffies(2000));
-> > > +             }
-> > > +     }
-> > > +
-> > > +     if (cp == DRM_MODE_CONTENT_PROTECTION_UNDESIRED) {
-> > > +             if (ctx->hdcp_cp != DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-> > > +                     dev_err(dev, "current CP is not ENABLED\n");
-> > > +                     return;
-> > > +             }
-> > > +
-> > > +             anx7625_hdcp_disable_and_update_cp(ctx);
-> > > +     }
-> > >  }
-> > >
-> > >  static void anx7625_bridge_atomic_disable(struct drm_bridge *bridge,
-> > > @@ -2449,6 +2465,8 @@ static void anx7625_bridge_atomic_disable(struct
-> > > drm_bridge *bridge,
-> > >
-> > >       dev_dbg(dev, "drm atomic disable\n");
-> > >
-> > > +     anx7625_hdcp_disable_and_update_cp(ctx);
-> > > +
-> > >       ctx->connector = NULL;
-> > >       anx7625_dp_stop(ctx);
-> > >
-> > > --
-> > > 2.25.1
-> > >
-> > 
-> > --
-> > With best wishes
-> > Dmitry
-
--- 
-With best wishes
-Dmitry
+All this code is useless on 32bit, right?
 
