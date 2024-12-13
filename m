@@ -1,131 +1,145 @@
-Return-Path: <linux-kernel+bounces-445337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D53B9F14C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:11:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E324C9F14CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:18:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D01A163E0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:11:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 161C67A0291
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B5B1E3DEF;
-	Fri, 13 Dec 2024 18:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46C21E5711;
+	Fri, 13 Dec 2024 18:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VHQcDoDp"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12652E62B;
-	Fri, 13 Dec 2024 18:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="IV92xMl3"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADFE188A3B
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734113501; cv=none; b=cYaldazaSkIHmmcmJNDYpnsw55nbGBelcidK4xDCBhAKW42lQAWskaVRFpkfnBoDZY9qnzJe6FhJWdJ8Hv7CnQ1u2zKS0EA65faRaGq/h8JsXcWR/umoXRLguP9ombzLwnJnYhztKfUFW3Lr+BUOTOyIKUAw89sW/mbGJNiP0aU=
+	t=1734113924; cv=none; b=BP070e2fd252huifP9qqQimKoRFA/wljyAbwzhHrCw+fkBesFxKYGSaklPfBwUiyOy8FRh6DfFCbsrHp8XCe9T1BiZUNeq9Aikaob0FNuBv56ITqthG+F9TlhLnRPFAyk2suZuYbLwwHOyFsaY+EHEPW7uzhW/YLRsQhf0GcvWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734113501; c=relaxed/simple;
-	bh=ZnHhb2vByqDgBiP8p4vw6rgdi7yMriFaj7EduSNQjiE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m3vSz/zV2ZpWMfAmwAucvMTeAmTPq0m34YIijmpMfuqFbNYaGemdti7Y+EM+KYyHIytLvmZFoKhiTOCPZXtf+QK2v36rIZCqIpq5Qn3m/ebcjpqCbW3jW/ISoPYLadpYmhk8ZOQcV1e4yfQK3ySShZ/76Plcnlm5zuGLtylmfhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VHQcDoDp; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 2139020BCAD0;
-	Fri, 13 Dec 2024 10:11:39 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2139020BCAD0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1734113499;
-	bh=cPPK1bn0vhXxwwcxKvq6ENI1pEVUPomPB6DAj4X/JKc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VHQcDoDpHSKAAUEAuDHBAso76ItH8kTKPXkw6rvP5tTZulAwVZRQ+U3IKxyNIBuZM
-	 iWuyRfgefvLtIEZ17Qi51ucnd+AOxJj3NmWyUqFdJN2tHOQWzrcvbxt1xxeAJfHt0Z
-	 xfqMuPzEenEeAVlNhVHM094kXIjFQErMD3UUutqk=
-Message-ID: <08380797-4dea-4dc3-9312-7e4c69090cdc@linux.microsoft.com>
-Date: Fri, 13 Dec 2024 10:11:38 -0800
+	s=arc-20240116; t=1734113924; c=relaxed/simple;
+	bh=QoJ9wIT0tNSk422O5280znHoGwGjmCOoIxPRadNja2U=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ht9za2YfCcte/amqqOopkhcMn3DRElArOibkanrql2LHlH7pZXNE8wbOHGjTPduOoWeAd9U+z/+J8fm1H1D+/6zt6QGdJQGad210gRRqzZc1zZtrA0ad1WP5AqOdgA/R1V+sT0rVvWQEK9jIJgLnwRnDEty8Wg0ok4GXHolBXc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=IV92xMl3; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ef6edddf70so212017a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:18:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1734113921; x=1734718721; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QoJ9wIT0tNSk422O5280znHoGwGjmCOoIxPRadNja2U=;
+        b=IV92xMl30p6RGUGPAEGCNC0rxriN/rhL6rJVTX60i+BsYigQhqS0MXGcFHBfCeEu9l
+         ULzYs53eL3oaGSDhGy0le6Sb19+5uBht1GNG3GNnKOW6aBQyNhFh8EsD8jkIh4Ghoo3H
+         fHNEvEX2o3aBmrtahWQznGiulLijqkxRY+QQ+ZA8Z7FJoYxxI5duR7CcDKcvJNYxQVWO
+         H5e7fl0VtzqMCJTgru959840/QfOYCdBu8YZgDslUmEi59zpeXgO1CVjmj2ihuDUW7RI
+         dO9Q2gjN0PjqkHHzQjpeBoDO9lRvqncyNkdYAYKcv352fVw3O9dgRxwc+R30ADt+XsUa
+         WUvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734113921; x=1734718721;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QoJ9wIT0tNSk422O5280znHoGwGjmCOoIxPRadNja2U=;
+        b=sH/5N345MlMPkIXZ+yjqzdFw80qLP4te87X0HbDInbOflqN1FLA/tbcPzHGE0UusUX
+         ukgvsURS9IEaIlgasVJBYv6V4iViEvyMES9eSl4SxJasfxJ/BvWId0LLAm/WWgRyS1YB
+         MCq7WRFQZTy6IY+9UjURRKpHICJvrVI/2n25OBeoneS/DjgpVgEALwkdXxkzMC3/vGH6
+         4E6uaWR/7vhRh2ywGOY73HshNOCPExSo48tdwlann+QLiHU/1fyGiou53xYIM5YvLt1J
+         Ei5I8CSP2HCbhgP8rBvEo8Pr18aXSDvueZMcxn75SVmNEmgwmDYHiEurm3LbPrbY2dVQ
+         uynw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdWSCFwyQ97g1NpuUZDE5Xe51cyM3wbS+wKWf6+pfez+372sRj/IO6YTllhlpmxOlVWDff9DuLzjtmBmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy69mR4JPD7TNCiTXMe4+bkNGtcQ2PGdM4OQejpjgBN+IEwMQ9a
+	HVTmsz0M2ln4Xgi+UBTQdi1g6y+bCJUzdXO1UoPNI2iE24tleKmRNTeJADjxxRL3ErWf6uUdXrk
+	YkPUoGUvToe4Dp/jb5DlkOopDYOp/kqeMHylLoQ==
+X-Gm-Gg: ASbGncuUJ7OC+THwcw7YygrJDpjpH9zlE5sRlnR5kJgLX7cae3OSNlzS6yith1XZngo
+	VAGpNf6qEb9PQWgJyygDon/vd8zHZ5I6WbPeL6A==
+X-Google-Smtp-Source: AGHT+IEDENRWkWaHA4dEUSjEVRyRrWfcUmiuJJNTHexoh5D/osvBWi3qb63Ace4xyAH0nPQH+O2iUSMAqU1y5jREJYY=
+X-Received: by 2002:a17:90b:4d08:b0:2ee:f64b:9aab with SMTP id
+ 98e67ed59e1d1-2f2901a8b82mr1988210a91.6.1734113921292; Fri, 13 Dec 2024
+ 10:18:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools: hv: Fix cross-compilation
-To: Saurabh Sengar <ssengar@linux.microsoft.com>, kys@microsoft.com,
- haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ssengar@microsoft.com, avladu@cloudbasesolutions.com
-References: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Caleb Sander <csander@purestorage.com>
+Date: Fri, 13 Dec 2024 10:18:30 -0800
+Message-ID: <CADUfDZpUFmBCJPX+u3GYeyFUbQ3RgqevvCpL=ZE48E4_p_BpPA@mail.gmail.com>
+Subject: cpu_rmap maps CPUs to wrong interrupts after reprogramming affinities
+To: David Miller <davem@davemloft.net>, Tom Herbert <therbert@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Eli Cohen <elic@nvidia.com>, 
+	Ben Hutchings <ben@decadent.org.uk>, Jakub Kicinski <kuba@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks, LGTM!
+Hi netdev,
+While testing ARFS, we found set_rps_cpu() was calling
+ndo_rx_flow_steer() with an RX queue that was not affinitized to the
+desired CPU. The issue occurred only after modifying interrupt
+affinities. It looks to be a bug in cpu_rmap, where cpu_rmap_update()
+can leave CPUs mapped to interrupts which are no longer the most
+closely affinitized to them.
 
-Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+Here is the simplest scenario:
+1. A network device has 2 IRQs, 1 and 2. Initially only CPU A is
+available to process the network device. So both IRQs 1 and 2 are
+affinitized to CPU A.
+rx_cpu_rmap maps CPU A to IRQ 2 (assuming the affinity of IRQ 2 was
+set after IRQ 1)
+2. CPU B becomes available to process the network device. So IRQ 2's
+affinity is changed from CPU A to CPU B.
+cpu_rmap_update() is called for IRQ 2 with its new affinity (CPU B).
+It maps CPU B to IRQ 2. CPU A remains mapped to IRQ 2, though with a
+higher distance.
+rx_cpu_rmap now maps both CPUs A and B to IRQ 2. Any traffic meant to
+be steered to CPU A will end up being processed in IRQ 2 on CPU B
+instead, even though there is still an IRQ (1) affinitized to CPU A.
 
-On 12/12/2024 12:28 AM, Saurabh Sengar wrote:
-> Use the native ARCH only incase it is not set, this will allow
-> the cross complilation where ARCH is explicitly set. Add few
-> info prints as well to know what arch and toolchain is getting
-> used to build it.
-> 
-> Additionally, simplify the check for ARCH so that fcopy daemon
-> is build only for x86_64.
-> 
-> Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio driver")
-> Reported-by: Adrian Vladu <avladu@cloudbasesolutions.com>
-> Closes: https://lore.kernel.org/linux-hyperv/Z1Y9ZkAt9GPjQsGi@liuwe-devbox-debian-v2/
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> ---
->   tools/hv/Makefile | 14 +++++++++++---
->   1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/hv/Makefile b/tools/hv/Makefile
-> index 34ffcec264ab..d29e6be6309b 100644
-> --- a/tools/hv/Makefile
-> +++ b/tools/hv/Makefile
-> @@ -2,7 +2,7 @@
->   # Makefile for Hyper-V tools
->   include ../scripts/Makefile.include
->   
-> -ARCH := $(shell uname -m 2>/dev/null)
-> +ARCH ?= $(shell uname -m 2>/dev/null)
->   sbindir ?= /usr/sbin
->   libexecdir ?= /usr/libexec
->   sharedstatedir ?= /var/lib
-> @@ -20,18 +20,26 @@ override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
->   override CFLAGS += -Wno-address-of-packed-member
->   
->   ALL_TARGETS := hv_kvp_daemon hv_vss_daemon
-> -ifneq ($(ARCH), aarch64)
-> +ifeq ($(ARCH), x86_64)
->   ALL_TARGETS += hv_fcopy_uio_daemon
->   endif
->   ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
->   
->   ALL_SCRIPTS := hv_get_dhcp_info.sh hv_get_dns_info.sh hv_set_ifconfig.sh
->   
-> -all: $(ALL_PROGRAMS)
-> +all: info $(ALL_PROGRAMS)
->   
->   export srctree OUTPUT CC LD CFLAGS
->   include $(srctree)/tools/build/Makefile.include
->   
-> +info:
-> +	@echo "---------------------"
-> +	@echo "Building for:"
-> +	@echo "CC $(CC)"
-> +	@echo "LD $(LD)"
-> +	@echo "ARCH $(ARCH)"
-> +	@echo "---------------------"
-> +
->   HV_KVP_DAEMON_IN := $(OUTPUT)hv_kvp_daemon-in.o
->   $(HV_KVP_DAEMON_IN): FORCE
->   	$(Q)$(MAKE) $(build)=hv_kvp_daemon
+If IRQ 1 had been affinitized to CPU A and IRQ 2 to CPU B initially,
+the cpu_rmap would have correctly mapped CPU A to IRQ 1 and CPU B to
+IRQ 2. So the state of the cpu_rmap depends on the history of the IRQ
+affinities, not just the current IRQ affinities.
 
--- 
-Thank you,
-Roman
+This behavior was surprising to me, but perhaps it's working as
+intended. It seems to be a limitation of struct cpu_rmap: it stores
+only one IRQ with the lowest "distance" for each CPU, even if there
+are other IRQs of equivalent or higher distance. When an IRQ's
+affinity changes, each CPU currently affinitized to it has its
+distance invalidated, but its new closest IRQ is selected based on
+other CPUs' closest IRQs, ignoring existing IRQs that may be
+affinitized to that CPU.
 
+I can see a few possible ways to address this:
+- Store the current affinity masks for all the IRQs in struct cpu_rmap
+so the next closest IRQ can be computed when a CPU's closest IRQ is
+invalidated. This would significantly increase the size of struct
+cpu_rmap.
+- Store all candidate IRQs and their distances for each CPU in struct
+cpu_rmap so the next closest IRQ can be computed when a CPU's closest
+IRQ is invalidated. Again, this would significantly increase the size
+of struct cpu_rmap.
+- Re-fetch the affinity masks of all the IRQs from the irq layer
+whenever one IRQ's affinity changes so the next closest IRQ can be
+computed for each invalidated CPU. This would avoid using any
+additional memory, but would add a lot of calls into the irq layer.
+- Work around the cpu_rmap behavior by having userspace always write
+to all IRQs' affinity masks when changing the affinity of any one.
+This is probably the simplest solution, but I worry that other
+userspace applications would hit the same unexpected behavior.
+
+Let me know whether you see this behavior as a bug in cpu_rmap or
+something that userspace should work around. If you do think it's a
+cpu_rmap bug, how would you like to fix it?
+
+Thanks,
+Caleb
 
