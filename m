@@ -1,94 +1,42 @@
-Return-Path: <linux-kernel+bounces-444525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B439F084B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:43:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD469F0852
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68922188BCF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:43:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 483F11691F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F7E1B392E;
-	Fri, 13 Dec 2024 09:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="18mkgl6u";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SUyj1gyX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="18mkgl6u";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SUyj1gyX"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878D61B4126;
+	Fri, 13 Dec 2024 09:46:31 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244C919CD08
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED6A1B3935;
+	Fri, 13 Dec 2024 09:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734083023; cv=none; b=BBa2iAMb0lOVSdGOokrWwDYffjiamz9vGm2o560C4hNlG1+5+nlZ0fqcTjAZ4FjB5JOXZtfLLeX5AHeHfrD/ne/qXCGMVA40n4+T6t3NHG0T5mvKh3XBolRB/pqVLfg2np/pTMmHqgv29NueGH/gtZl46PsJ+xMmX2FrO0fZkSA=
+	t=1734083191; cv=none; b=OwLOj2ECqRJccoDfmqlCMifJv34BHcTPueSGbpifRx3GhqftFHpjBQNdtXRBGIe4FYe5GH5X96ohtVF+Du9ExNOR4s4uhgAEhBum70k7ZOlHDcwr3NvV+V9FOHcf/uNhTVpcQWvOCQxxdubUAcGaMLRBqc67QATVGkBuQBZUvzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734083023; c=relaxed/simple;
-	bh=AQd3S+xs51usu71lDWzUudlYhLL15wQuF9tlyw6JVXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pgFOfm6eGT7T+AvmaV0a2igeuwPUvwg9i9skbECKztSCdn6pmV3MoRSrufy3wLoR0omroyQ3GMez3PSGCL526z+tSWEUc9esR9fli3PWLjqJwGbcx+32eGACR9a69GRcFyX5xw764xAlGQImTXI8u3FHNvAxemZsc7pP03HtdT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=18mkgl6u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SUyj1gyX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=18mkgl6u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SUyj1gyX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1734083191; c=relaxed/simple;
+	bh=wUVyz9N3T451oLgSRpBPO06ATHWuDcj6hBAKKbCk6mY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=okj+g3b+0NDhqpPVVDu7dFc1EWAMQBAb0HzAkMG2ZkkpuUeOfBR07hnguXu0t0l27hKAqJChfwuZw8oGL+rxES2NHlXrleqvgSjxAcaYV5TjwozuZqn+KFAiDMDOIsVM1g+CA0Fw30bONb0Py+A4jFvaFf4aTttD89sSOVJZC7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af5e3.dynamic.kabel-deutschland.de [95.90.245.227])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 542901FB8D;
-	Fri, 13 Dec 2024 09:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734083019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bpDr+K3HzmOak4rOgFWlt2XmV8ZYdARLjwaNOge1TCA=;
-	b=18mkgl6uuhMgQetrtf2zg40FwXNW/DLfuNClW7xH5BddFar3UScjT2fWjLupq5ifp/Jr7W
-	ySwnl1571FD08VaUlqvwKvICa1GU5kT5NBv42pMzSvqAM4eJMzfrJaoOaz4IcpjXnSf/hA
-	ShaWiGzODgt2yP0Z/mo9IuGuVYwgqpc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734083019;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bpDr+K3HzmOak4rOgFWlt2XmV8ZYdARLjwaNOge1TCA=;
-	b=SUyj1gyXx/fGyrlPsWU0QmgSDPBvp0ycX06tNQTispy/4KRnlhYwx1ovY9o2LKZoa/WGsN
-	cnI53iXXxOtVmXAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734083019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bpDr+K3HzmOak4rOgFWlt2XmV8ZYdARLjwaNOge1TCA=;
-	b=18mkgl6uuhMgQetrtf2zg40FwXNW/DLfuNClW7xH5BddFar3UScjT2fWjLupq5ifp/Jr7W
-	ySwnl1571FD08VaUlqvwKvICa1GU5kT5NBv42pMzSvqAM4eJMzfrJaoOaz4IcpjXnSf/hA
-	ShaWiGzODgt2yP0Z/mo9IuGuVYwgqpc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734083019;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bpDr+K3HzmOak4rOgFWlt2XmV8ZYdARLjwaNOge1TCA=;
-	b=SUyj1gyXx/fGyrlPsWU0QmgSDPBvp0ycX06tNQTispy/4KRnlhYwx1ovY9o2LKZoa/WGsN
-	cnI53iXXxOtVmXAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C01413AEC;
-	Fri, 13 Dec 2024 09:43:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rp79CcsBXGdsOgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 13 Dec 2024 09:43:39 +0000
-Message-ID: <7f047f18-077b-40a3-bcfc-56944fd79530@suse.cz>
-Date: Fri, 13 Dec 2024 10:43:34 +0100
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 622D761E646F9;
+	Fri, 13 Dec 2024 10:46:01 +0100 (CET)
+Message-ID: <6bbe0989-babd-4a99-85ad-fdeea47deb09@molgen.mpg.de>
+Date: Fri, 13 Dec 2024 10:46:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,109 +44,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] slab fixes for 6.13-rc3
+Subject: Re: [PATCH] Bluetooth: btmtk: add quirk to support
+ HCI_QUIRK_SIMULTANEOUS_DISCOVERY
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Von Dentz <luiz.dentz@gmail.com>, Hao Qin <hao.qin@mediatek.com>,
+ Aaron Hou <aaron.hou@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
+ linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-mediatek <linux-mediatek@lists.infradead.org>
+References: <20241213094118.23647-1-chris.lu@mediatek.com>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Shakeel Butt <shakeelb@google.com>
-References: <e68da20c-9f5d-493e-a436-cd9aa95a5441@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <e68da20c-9f5d-493e-a436-cd9aa95a5441@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,linux.com,linux-foundation.org,kvack.org,vger.kernel.org,linux.dev,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20241213094118.23647-1-chris.lu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Meh, wrong subject again. Glad the xmas holidays start tomorrow.
+Dear Chris,
 
-On 12/13/24 10:42, Vlastimil Babka wrote:
-> Hi Linus,
-> 
-> please pull the latest slab fixes from:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.13-rc3
-> 
-> Thanks,
-> Vlastimil
-> 
-> ======================================
-> 
-> - Fix for memcg unreclaimable slab stats drift when post-charging large
->   kmalloc allocations (Shakeel Butt).
-> 
-> ----------------------------------------------------------------
-> Shakeel Butt (1):
->       memcg: slub: fix SUnreclaim for post charged objects
-> 
->  mm/slub.c | 21 ++++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
 
+Thank you for your patch.
+
+
+Am 13.12.24 um 10:41 schrieb Chris Lu:
+> Add quirk to support HCI_QUIRK_SIMULTANEOUS_DISCOVERY feature for MT79xx
+> series chipset.
+
+It’d be great if you elaborated. What is the problem. Why is a quirk 
+needed? Is a firmware update going to fix it?
+
+> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+> ---
+>   drivers/bluetooth/btmtk.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+> index 8a3f7c3fcfec..562d6ecf0b71 100644
+> --- a/drivers/bluetooth/btmtk.c
+> +++ b/drivers/bluetooth/btmtk.c
+> @@ -1367,6 +1367,9 @@ int btmtk_usb_setup(struct hci_dev *hdev)
+>   			return err;
+>   		}
+>   
+> +		/* Apply common HCI quirks for MediaTek chipset */
+> +		set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
+> +
+
+The commit message only talks about MT79xx series chipset. The comment 
+talks about all MediaTek chipsets.
+
+>   		hci_set_msft_opcode(hdev, 0xFD30);
+>   		hci_set_aosp_capable(hdev);
+
+
+Kind regards,
+
+Paul
 
