@@ -1,346 +1,245 @@
-Return-Path: <linux-kernel+bounces-444497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D6879F07D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:26:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B2C9F07DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:27:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2A8167DC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:26:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAE0C1880531
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D1B1B21B7;
-	Fri, 13 Dec 2024 09:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BF81B0F36;
+	Fri, 13 Dec 2024 09:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="PgKYW9tR"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgjM0ylb"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AD11B0F04;
-	Fri, 13 Dec 2024 09:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734081950; cv=pass; b=Xw8FjeTXKkQxs4gT5X7I2tGBo/DIWpD+P7nCn5ej/T0u6WTS/4EG/2v991zfSAP31hjjABNWap44/SOiQCkr8NAJX19j7QbKOzToEUJbxpxx9FnjDBiMQbb4+As+5EcTNjH/8r9mD3K8jcxXLG0oAtohbdq5vizi1BNeF3VaVzk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734081950; c=relaxed/simple;
-	bh=wpZWKto3YUjaWLEDbKUz1Yi+7s3Zag5arrGJ3uJk7Aw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aFqoYJF0/DGJDxUU84IbexFTcUDLBD03oRaXm2CpeYHiHMeEHFjtQHZ0ly8/MbW5MjOrt7Gcou3pyUaPuEUImxBBiDMt8d6SCsRWedwuGUSSmsAxpKh4vph31ggVL1Ouy/sYAvFcC5JGGBHtjtkORs8tk1uB1kEEerMH6bjg+X4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=PgKYW9tR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1734081928; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HjqkwyGBy8oFpiH2OzBbdgLIjA6J/qJ+Z1tRCrZTgBlKf9fweZBx+lpCzz+ouQURY0eWWu3JaL90KEe68uYm8CwyzJyyYvgiRzMJSSiGzjrUeH9RuI9IACgRKCs1U0UmuBr+3sU0Jj8PTZGoVciWjUboCCD0noHSV8/XVzFpT/s=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734081928; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=YnSfpiMRcV4J4vXvcSY+ixR1XW0AUmLlpepzk/A6xy0=; 
-	b=SOrr3tKcIvCFh9e4zcoVhw49t0Y8eTXDC+HrYHiwjEH9Dik1C0BBD9zyXfn4vkXrjTskZEbTOW0AI5I/jUYqfLaencplbOlarQlRO+FnO10fBrMsRTbdljr7Il1bijhnf9dohQTWZZMuZYpdKdxpo0uHT8Wp/aj6U8o2FuDuMw0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
-	dmarc=pass header.from=<laura.nao@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734081928;
-	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
-	bh=YnSfpiMRcV4J4vXvcSY+ixR1XW0AUmLlpepzk/A6xy0=;
-	b=PgKYW9tRgcP27jptrUtgW/N7L044UtUVDMmc9SmjC8RI7T+kb16sYU6NEcbRVAVM
-	7+N1lrMDCFr213kX5FwRldujDhgDiMum4wERmccIHfx+o37ewO/JQm46bDnsM28/peK
-	xV4jhmgljik4IjgBh3dLnmfxJ9scQuTlZDUfUEu8=
-Received: by mx.zohomail.com with SMTPS id 1734081926159795.2400700570497;
-	Fri, 13 Dec 2024 01:25:26 -0800 (PST)
-From: Laura Nao <laura.nao@collabora.com>
-To: stephen.s.brennan@oracle.com
-Cc: alan.maguire@oracle.com,
-	bpf@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	kernel@collabora.com,
-	laura.nao@collabora.com,
-	linux-kernel@vger.kernel.org,
-	olsajiri@gmail.com,
-	regressions@lists.linux.dev
-Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on
-Date: Fri, 13 Dec 2024 10:26:03 +0100
-Message-Id: <20241213092603.13399-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <87zfl0mv0g.fsf@oracle.com>
-References: <87zfl0mv0g.fsf@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A4C1AF0CE
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734082030; cv=none; b=Dnrpy0P3334V/vfYZqeiMua12sb6fE08klW0QB/i734T1JMqlNpRdlPTeslOEorhy1BJtrFB+J07NBbBSFjHKCX3JzrnzVMlQOj7uS0FshzGOHjKhvJGoLvVJPRyOqpwAXenNBe5eqkORXSVXm/1HjWZOpQ4Q/baiScoH3sIOm0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734082030; c=relaxed/simple;
+	bh=7wsHpbPrm3JuP3pkMUblDPT6fGtmNSvAU46M95067SQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iM2sFFwHUdvFgc6NTfIceiL72KKqoisW985Qqw695KYI4nVjgXulRifmChCsDX52MohdERrZjcnfi1CQeSdeTfjcE2Bdf3nOGnOC08uXbYnYlTM65WW67Wtgsh7q2LQnEiwesU2orB3GmjLa2APWZhhfSz8zfRzmYwAFgIaw8UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgjM0ylb; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-725ee6f56b4so1344861b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:27:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734082028; x=1734686828; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hTzQyXIHcaxEEVwjd+PpJ1XyNFyqZzECKyZ+9DQUQzo=;
+        b=FgjM0ylb7SBd6ZKcHmFYFmm+EiciM5xxtRUjG5Aom5+fNAElOu1yhGQ3jc2+oOub6e
+         zCc2fr+IL92vGGj2r4MgpWG/9+k6J+HyyqnXW68LFcSG2TUw1pNj8BOe5EY0ciKnSl5r
+         l1mhuMTn77fzrvvtCgfSyXKTtVCgVMwGpD01QXt7fc/FfacrsMyzXkNfSNCsFqtfEnke
+         Cqh99EckH6HgMeMzxMRMqsrDi8ayz20HXbQf6u3IatYnToAa8NBSNX1wat6STzw47Mz7
+         s7IoB8/u9OkxskU39v/cmvLKmM6uKiKKp7ymX9ZuADstZdihtyF3YP++oTuddXPnuf9s
+         7x6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734082028; x=1734686828;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hTzQyXIHcaxEEVwjd+PpJ1XyNFyqZzECKyZ+9DQUQzo=;
+        b=OMd6QrmC4WqdvCKG926+l8v8Zq4uOIq53Tw69LV5tG5U4NDZR51CxD3A5fkk3cfISa
+         0map8AuArgqp+Fu/E90+vtvesLdfmNEnJzP6FAkvJ0b00MRaBc+4/yp7j8ociPkR1Th8
+         wHkH18c4TlqJiJ1HGXmXzlPlXKrzSyZq5flTuT9TBg7O4LlLInKsPJ4zci0s5+7FYqbH
+         5e6LB9F5OUr79zeK31vw7XsHFX/os6/hfNyXdWx07CmN8E6upSsZ6P1g5UeOzC2O/Bj0
+         lXrRJK09xlQ3VQdtGx6XFNI7XxKbh/4qFmWYiTXNoQ5FY+KOUIz/jGTPj0nc44of9MWB
+         N9yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9qf6m2+2oQ9sdRttfSkqMTLW5prEyZ18kwjbn+hStE23EuWbxovqqtPp2jZBcgGhcGtF/KvmJi1TayAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyjX0jSKJ5hplOC0U6Xriz/RTjXKYF4wauHmt0Sy72GOtsS+4u
+	VM2hTK7XgUAb8vjy8SLIxzW13mHLmTHtTO59b7t41wtHUgPZVXAL
+X-Gm-Gg: ASbGnctGicosu2X1YovLRPJZko6sAxWVUYZAr7r5PQykJpH7C4DmSMapfU/cNBH5Pw2
+	k1yr9qujU+X3v1vkfU1jgnv/npYB/26I2SYNtw3NwofOIFIbUsgvxgbDIfLAa3BjdoRAfuBjvp3
+	hjtLU9d7oI/ERcqcXeFg339S5bgOxIqEP7bnEiFPNO+ICgwurmME3rAonJBGMiHL2rZ0FUJvEIT
+	ckJL8488LpQA5X1wlKGhY3IfV3NXFPZ7mQ0PkKxSdlRkKEQ2QciDFYdb2N+6qI5MAydhkGyBC/R
+	TBmNiZg=
+X-Google-Smtp-Source: AGHT+IEotA2MyBaR6GaoJwJuWdf/DB/mrRTTIJotvOvCF3vwProtl1t9f2/mF88td+J4waI8v5QJVg==
+X-Received: by 2002:a05:6a00:430f:b0:728:8c17:127d with SMTP id d2e1a72fcca58-7290c12ef7amr3243500b3a.8.1734082028273;
+        Fri, 13 Dec 2024 01:27:08 -0800 (PST)
+Received: from MBC02GN1V4Q05P ([117.143.114.250])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725c7cba42fsm11948546b3a.123.2024.12.13.01.27.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 01:27:07 -0800 (PST)
+Date: Fri, 13 Dec 2024 17:27:02 +0800
+From: Richard Clark <richard.xnu.clark@gmail.com>
+To: Mark Kettenis <mark.kettenis@xs4all.nl>
+Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, will@kernel.org,
+	linux@armlinux.org.uk, mark.rutland@arm.com,
+	torvalds@linux-foundation.org
+Subject: Re: Question about interrupt prioriyt of ARM GICv3/4
+Message-ID: <Z1v9GKkghPjpnvp6@MBC02GN1V4Q05P>
+References: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
+ <86cyi5tanz.wl-maz@kernel.org>
+ <CAJNi4rPDVXS3Ft3nHLXvMzHmn9d10Nz4Pxeduoe+v5HaK=CEAg@mail.gmail.com>
+ <86ldwlryzz.wl-maz@kernel.org>
+ <871pydxde2.fsf@bloch.sibelius.xs4all.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <871pydxde2.fsf@bloch.sibelius.xs4all.nl>
 
-On 12/12/24 22:49, Stephen Brennan wrote:
-> Jiri Olsa <olsajiri@gmail.com> writes:
->> On Wed, Dec 11, 2024 at 10:10:24PM +0100, Jiri Olsa wrote:
->>> On Tue, Dec 10, 2024 at 02:55:01PM +0100, Laura Nao wrote:
->>>> Hi Jiri,
->>>>
->>>> Thanks for the feedback!
->>>>
->>>> On 12/6/24 13:35, Jiri Olsa wrote:
->>>>> On Fri, Nov 15, 2024 at 06:17:12PM +0100, Laura Nao wrote:
->>>>>> On 11/13/24 10:37, Laura Nao wrote:
->>>>>>>
->>>>>>> Currently, KernelCI only retains the bzImage, not the vmlinux
->>>>>>> binary. The
->>>>>>> bzImage can be downloaded from the same link mentioned above by
->>>>>>> selecting
->>>>>>> 'kernel' from the dropdown menu (modules can also be downloaded
->>>>>>> the
->>>>>>> same
->>>>>>> way). I’ll try to replicate the build on my end and share the
->>>>>>> vmlinux
->>>>>>> with DWARF data stripped for convenience.
->>>>>>>
->>>>>>
->>>>>> I managed to reproduce the issue locally and I've uploaded the
->>>>>> vmlinux[1]
->>>>>> (stripped of DWARF data) and vmlinux.raw[2] files, as well as one
->>>>>> of
->>>>>> the
->>>>>> modules[3] and its btf data[4] extracted with:
->>>>>>
->>>>>> bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko >
->>>>>> cros_kbd_led_backlight.ko.raw
->>>>>>
->>>>>> Looking again at the logs[5], I've noticed the following is
->>>>>> reported:
->>>>>>
->>>>>> [    0.415885] BPF: 	 type_id=115803 offset=177920 size=1152
->>>>>> [    0.416029] BPF:
->>>>>> [    0.416083] BPF: Invalid offset
->>>>>> [    0.416165] BPF:
->>>>>>
->>>>>> There are two different definitions of rcu_data in
->>>>>> '.data..percpu',
->>>>>> one
->>>>>> is a struct and the other is an integer:
->>>>>>
->>>>>> type_id=115801 offset=177920 size=1152 (VAR 'rcu_data')
->>>>>> type_id=115803 offset=177920 size=1152 (VAR 'rcu_data')
->>>>>>
->>>>>> [115801] VAR 'rcu_data' type_id=115572, linkage=static
->>>>>> [115803] VAR 'rcu_data' type_id=1, linkage=static
->>>>>>
->>>>>> [115572] STRUCT 'rcu_data' size=1152 vlen=69
->>>>>> [1] INT 'long unsigned int' size=8 bits_offset=0 nr_bits=64
->>>>>> encoding=(none)
->>>>>>
->>>>>> I assume that's not expected, correct?
->>>>>
->>>>> yes, that seems wrong.. but I can't reproduce with your config
->>>>> together with pahole 1.24 .. could you try with latest one?
->>>>
->>>> I just tested next-20241210 with the latest pahole version (1.28
->>>> from
->>>> the master branch[1]), and the issue does not occur with this
->>>> version
->>>> (I can see only one instance of rcu_data in the BTF data, as
->>>> expected).
->>>>
->>>> I can confirm that the same kernel revision still exhibits the
->>>> issue
->>>> with pahole 1.24.
->>>>
->>>> If helpful, I can also test versions between 1.24 and 1.28 to
->>>> identify
->>>> which ones work.
->>>
->>> I managed to reproduce finally with gcc-12, but had to use pahole
->>> 1.25,
->>> 1.24 failed with unknown attribute
->>>
->>> 	[95096] VAR 'rcu_data' type_id=94868, linkage=static
->>> 	[95098] VAR 'rcu_data' type_id=4, linkage=static
->>> 	type_id=95096 offset=177088 size=1152 (VAR 'rcu_data')
->>> 	type_id=95098 offset=177088 size=1152 (VAR 'rcu_data')
->>
->> so for me the difference seems to be using gcc-12 and this commit in
->> linux tree:
->>    dabddd687c9e percpu: cast percpu pointer in PERCPU_PTR() via
->>    unsigned long
->>
->> which adds extra __pcpu_ptr variable into dwarf, and it has the same
->> address as the per cpu variable and that confuses pahole
->>
->> it ends up with adding per cpu variable twice.. one with real type
->> (type_id=94868) and the other with unsigned long type (type_id=4)
->>
->> however this got fixed in pahole 1.28 commit:
->>    47dcb534e253 btf_encoder: Stop indexing symbols for VARs
->>
->> which filters out __pcpu_ptr variable completely, adding Stephen to
->> the loop
+Hi Mark,
+
+On Thu, Dec 12, 2024 at 02:02:45PM +0100, Mark Kettenis wrote:
+> > Date: Thu, 12 Dec 2024 10:12:32 +0000
+> > From: Marc Zyngier <maz@kernel.org>
 > 
-> Thanks for sharing this. Your analysis is spot-on, but I can fill in
-> the
-> details a bit. I just grabbed 6.13-rc2 and built it with gcc 11 and
-> pahole 1.27, and observed the same issue:
+> Hi Marc, Richard,
 > 
->    $ bpftool btf dump file vmlinux | grep "VAR 'rcu_data"
->    [4045] VAR 'rcu_data' type_id=3962, linkage=static
->    [4047] VAR 'rcu_data' type_id=1, linkage=static
->            type_id=4045 offset=196608 size=520 (VAR 'rcu_data')
->            type_id=4047 offset=196608 size=520 (VAR 'rcu_data')
+> > On Thu, 12 Dec 2024 09:18:56 +0000,
+> > richard clark <richard.xnu.clark@gmail.com> wrote:
+> > > 
+> > > Hi M,
+> > 
+> > Hi r,
+> > 
+> > > 
+> > > On Fri, Dec 6, 2024 at 5:37 PM Marc Zyngier <maz@kernel.org> wrote:
+> > > >
+> > > > On Fri, 06 Dec 2024 08:33:11 +0000,
+> > > > richard clark <richard.xnu.clark@gmail.com> wrote:
+> > > > >
+> > > > > Hi,
+> > > > > Currently seems the GICv3/4 irqchip configures all the interrupts as
+> > > > > the same priority, I am thinking about to minimize the latency of the
+> > > > > interrupt for a particular device, e.g, the arm arch_timer in the RTL
+> > > > > system. The question is,
+> > > > > 1. Why don't we provide a /proc or /sys interface for the enduser to
+> > > > > set the priority of a specific interrupt(SPI/PPI)?
+> > > >
+> > > > I'm afraid this really has nothing to do with any particular interrupt
+> > > > architecture.
+> > > >
+> > > > Before thinking of exposing the interrupt priority to userspace, you
+> > > > should look at what this translates into for the kernel once you allow
+> > > > interrupts to be preempted by another one with a higher priority.
+> > > >
+> > > Interrupt priority doesn't necessarily mean the preemption, seems
+> > > you're talking about the interrupt preemption harm according to your
+> > > statement followed.Frankly I am just thinking higher priority will win
+> > > the lower ones in case massive external interrupts received in the GIC
+> > > level (you see I am still talking about GIC, not kernel)
+> > 
+> > As I stated at the end of my email, the GIC only gives guarantee that
+> > you will ack the highest priority interrupt in finite time. Not right
+> > when it is made pending. Yes, it has the concept of HPPI. But that
+> > from the PoV of the CPU interface, not that of the distributor. Factor
+> > in the Stream interface, and you realise that expecting to always ack
+> > the highest priority pending interrupt is akin to expecting no
+> > reordering of packets in a network.
+> > 
+> > > >
+> > > > This means that at every point where you would normally see a
+> > > > local_irq_save(), spinlock_irqsave() or equivalent, you would need to
+> > > > explicitly specify the priority that you allow for preemption. You
+> > > > should then make sure that any code that can be run during an
+> > > > interrupt is reentrant. You need to define which data structures can
+> > > > be manipulated at which priority level... The list goes on.
+> > > >
+> > > irqsave just masks the interrupt from the point of cpu, I don't think
+> > > it will mess things up if preemption really happens (no? then what the
+> > > side-effect is for the nested interrupt handling in the softirq part.
+> > > damage the semantic of the lock primitives?)
+> > > >
+> > > > If you want a small taste of the complexity, just look at what
+> > > > handling NMIs (or even pseudo-NMIs in the case of GICv3) means, and
+> > > > generalise it to not just two, but an arbitrary range of priorities.
+> > > >
+> > > > If you want the full blown experience, look at the BSDs and their use
+> > > > of spl*(). I don't think anyone has any plan to get there, and the RT
+> > > > patches have shown that there is little need for it.
+> > > >
+> > > As supplement，the fiq is suggested to be used as an alternative to the
+> > > higher priority in the RT area...
+> > 
+> > <PulpFiction>
+> > FIQ's dead, baby. FIQ's dead.
+> > </PulpFiction>
 > 
-> In pahole 1.27, the (simplified) process for generating variables for
-> BTF is:
-> 
-> 1. Look through the ELF symbol table, and find all symbols whose
-> addresses are within the percpu section, and add them to a list.
-> 
-> 2. Look through the DWARF: for each tag of type DW_TAG_variable,
-> determine if the variable is "global". If so, and if the address
-> matches
-> one of the symbols found in Step 1, continue.
-> 
-> 3. Except for one special case, pahole doesn't check whether the DWARF
-> variable's name matches the symbol name. It simply emits a variable
-> using the name of the symbol from Step 1, and the type information
-> from
-> Step 2.
-> 
-> The result of this process, in this case, is:
-> 
-> 1. kernel/rcu/tree.c contains a declaration of "rcu_data". This
-> results
-> in an ELF symbol in vmlinux of the same name. Great!
-> 
->    $ eu-readelf -s vmlinux | grep '\brcu_data\b'
->    12319: 0000000000030000    520 OBJECT  LOCAL  DEFAULT       21
->    rcu_data
-> 
-> 
-> 2. A DWARF entry is emitted for "rcu_data" which has a matching
-> location
-> (DW_AT_location has value DW_OP_addr 0x30000, matching the ELF
-> symbol).
-> So far so good - pahole emits a BTF variable with the expected type.
-> 
->    $ llvm-dwarfdump --name=rcu_data
->    ...
->    0x01af03f1: DW_TAG_variable
->                  DW_AT_name        ("rcu_data")
->                  DW_AT_decl_file
->                  ("/home/stepbren/repos/linux-upstream/kernel/rcu/tree.c")
->                  DW_AT_decl_line   (80)
->                  DW_AT_decl_column (8)
->                  DW_AT_type        (0x01aefb38 "rcu_data")
->                  DW_AT_alignment   (0x40)
->                  DW_AT_location    (DW_OP_addr 0x30000)
-> 
-> 3. In kernel/rcu/tree.c, we also have the following declaration at
-> line
-> 5227 which uses per_cpu_ptr() on &rcu_data:
-> 
-> 5222 void rcutree_migrate_callbacks(int cpu)
-> 5223 {
-> 5224 	unsigned long flags;
-> 5225 	struct rcu_data *my_rdp;
-> 5226 	struct rcu_node *my_rnp;
-> 5227 	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
->                                 ^^^^^^^^^^^
-> 
-> With the new changes in dabddd687c9e ("percpu: cast percpu pointer in
-> PERCPU_PTR() via unsigned long"), this expands to a lexical block
-> which
-> contains a variable named "__pcpu_ptr", of type unsigned long. The
-> compiler emits the following DW_TAG_variable in the DWARF:
-> 
-> 0x01b05d20:         DW_TAG_variable
->                        DW_AT_name        ("__pcpu_ptr")
->                        DW_AT_decl_file
->                        ("/home/stepbren/repos/linux-upstream/kernel/rcu/tree.c")
->                        DW_AT_decl_line   (5227)
->                        DW_AT_decl_column (25)
->                        DW_AT_type        (0x01adb52e "long unsigned
->                        int")
->                        DW_AT_location    (DW_OP_addr 0x30000,
->                        DW_OP_stack_value)
-> 
-> Since the DW_AT_location has a DW_OP_addr - pahole understands this to
-> mean that the variable is located in global memory, and thus has
-> VSCOPE_GLOBAL. But of course, the actual "scope" of this variable is
-> not
-> global, it is limited to the lexical block, which is completely hidden
-> away by the macro. But pahole 1.27 does not consider this, and since
-> the
-> address matches the "rcu_data" symbol, it emits a variable of type
-> "long
-> unsigned int" under the name "rcu_data" -- despite the fact that the
-> DWARF info has a name of "__pcpu_ptr".
-> 
-> The changes I made in 1.28 address this (unintentionally) by:
-> 
-> 1. Requiring global variables be both "in the global scope" (i.e. in
-> the
-> CU-level, rather than any function or other lexical block.
-> 2. Requiring global variables have global memory (some of them could
-> be
-> register variables, despite having global scope -- e.g.
-> current_stack_pointer).
-> 3. No longer using the ELF symbol table, and instead using the DWARF
-> names for variables.
-> 
-> With #1, we would filter this variable. And with #3, even if the
-> variable were not filtered, we would output (a bunch of) variables
-> with
-> the correct __pcpu_ptr variable name, which is unhelpful but at least
-> helps us understand where these things come from.
-> 
-> Rebuilding with GCC 14, we can see that the "__pcpu_ptr" variable no
-> longer has a DW_AT_location:
-> 
-> 0x01afa82f:         DW_TAG_variable
->                        DW_AT_name        ("__pcpu_ptr")
->                        DW_AT_decl_file
->                        ("/home/stepbren/repos/linux-upstream/kernel/rcu/tree.c")
->                        DW_AT_decl_line   (5227)
->                        DW_AT_decl_column (25)
->                        DW_AT_type        (0x01ad0267 "long unsigned
->                        int")
-> 
-> This is the reason that pahole 1.27 now recognizes it as
-> VSCOPE_OPTIMIZED. Without a memory location pahole can't do anything
-> to
-> match it against the "rcu_data" variable so nothing is emitted, and we
-> don't get the issue.
-> 
-> I'm not sure if this adds at all to the discussion, since the overall
-> answer is the same, an upgrade of pahole and/or gcc. (Pahole would be
-> recommended; GCC just changed the generated DWARF and I could imagine
-> other situations popping up elsewhere).
+> Hah, tell that to Apple! ;).
 >
-
-Thank you for the help with debugging and for the detailed explanation!  
-                                                                         
-We'll proceed with updating pahole to v1.28 in the KernelCI build        
-environment.                                                             
-                                                                         
-Best,                                                                    
-                                                                         
-Laura                                                                    
-                                                                         
-#regzbot resolve: fixed by changes in pahole 1.28
- 
+Suppose you're kiding, seems neither Apple employee nor working on its HW :)
 > 
-> Thanks,
-> Stephen
+> > > > > 2. Is there any way to verify the higher priority interrupt will have
+> > > > > more dominant to be selected to the CPU (IOW, the priority is really
+> > > > > working) in case of multiple different interrupts asserted to the GIC
+> > > > > at the same time(some debug registers of GIC like GICD_REEMPT_CNT :-)
+> > > > > to record higher priority wins)?
+> > > >
+> > > > The GIC architecture makes no promise that the interrupt you
+> > > > acknowledge is the highest priority pending interrupt, because this is
+> > > > by definition a very racy process.
+> > > >
+> > > > Also, even on busy systems, you will very rarely see two interrupts
+> > > > targeting the same CPU being made pending at the same time, so that
+> > > > the interrupt delivery system would have to arbitrate between the two.
+> > > > That's because interrupts are vanishingly rare in the grand scheme of
+> > > > things.
+> > > >
+> > > 1. I am trying to stress the external interrupts to the core#0 via the
+> > > stress-ng tool with one of interrupt being configured as higher
+> > > priority to see the benchmark data, it's time consuming as you can
+> > > image, still is in progress(BTW, I can't see any lockup similar hang
+> > > in the system with a higher priority configured)
+> > 
+> > If you don't have preemption, I don't think anything wrong will
+> > happen. But I don't expect any benefit either.
 > 
->> with gcc-14 the __pcpu_ptr variable has VSCOPE_OPTIMIZED scope, so it
->> won't
->> get into btf even without above pahole fix
->>
->> I suggest gcc/pahole upgrade ;-)
->>
->> thanks,
->> jirka
+> Based on my experience with OpenBSD, I'm not even sure there is much
+> benefit even if you have preemtion.
+>
+is OpenBSD has this priority feature supported? or do you have some related perf
+data on BSP...
+> 
+> And regarding anything wrong happening: there is an interesting bug in
+> the RK3399 GIC integration where it gets the priorities wrong:
+> 
+> https://github.com/openbsd/src/blob/feb3ea439d8f49b3c0e33f54c34631a611b98e21/sys/arch/arm64/dev/agintc.c#L395
+> 
+> (that comment is my interpretation of what's happening; I might be
+> misinterpreting what's really going on)
+> 
+> As far as I can tell the Linux code doesn't handle that quirk.
+> Probably it doesn't matter because Linux only uses the priority
+> mechanisms to implement pseudo-NMI functionality and/or doesn't do
+> preemption of interrupts.
+>
+seems the BSP has the priority support but encounter the bug/quirk, correct me if I am wrong. Frankly I have no
+time to read the code of your link
 
+	r.
+
+> 
+> > > 2. This raises a very interesting question and I am also very curious
+> > > about is, what is the purpose for the GIC to introduce the interrupt
+> > > priority features, a placeholder feature reserved for the future? Ah,
+> > > hardware prefer to provide more functionalities than its being
+> > > actually used by software, any other justification except that?
+> > 
+> > You realise that the HW is not exclusively designed for Linux, right?
+> > 
+> > 	M.
+> > 
+> > -- 
+> > Without deviation from the norm, progress is not possible.
+> > 
+> > 
 
