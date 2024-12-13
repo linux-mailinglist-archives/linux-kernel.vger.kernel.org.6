@@ -1,166 +1,117 @@
-Return-Path: <linux-kernel+bounces-445408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D64B9F15E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:33:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF9216A9AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:33:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883FB1EBFFB;
-	Fri, 13 Dec 2024 19:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b="uI8Jhstn"
-Received: from mx0b-00206402.pphosted.com (mx0b-00206402.pphosted.com [148.163.152.16])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A808B9F15E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:32:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB051E8826;
-	Fri, 13 Dec 2024 19:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.16
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B68283838
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:32:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9741EBFFD;
+	Fri, 13 Dec 2024 19:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8YosRjS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3831E8839;
+	Fri, 13 Dec 2024 19:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734118380; cv=none; b=ClHdVB41D5aQRtbg2bRZsWzhcvMwQwLlflawSnAfvKCo7Vdz+rG3YHnIT60hyyXkzHw0zk5lmVAKLYe4miTwXvItFxh9t9Mvdd3x56z2czfvOQp/rIRmE/F4ZCUFgKENAJGv9DL8nHs0z38wUmbZUr4FCmBY7EcaC4aK/b8mQqQ=
+	t=1734118361; cv=none; b=ZeR2di/y3RtkwEcG+eDxkYSPu1C7+tvPc/MhPUDhg7jCxHP9jLVPUww9KsaZDy0h8GHofVCHI+Rl/eU8dEcPyhnNlwl+OYJ1zLSbjFbeocCvsRxNOfAWep/hgzK6fGZNcpXjGr9DpUga3GEULjIK+CsmG1PPdyt4dUm+w+yRQZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734118380; c=relaxed/simple;
-	bh=tPoDDdKr7gE1BldzHLPMcwm+vKnfJGCLwyb1r5quvMs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HGlosFbWiqJNV6537xhAL0yWgOkd15wM6DBqGJ8ofZRVwde3Zt+rM4U82bOWTyLD6V7SJxK7YPRMhPX4xKXS/wQ6DjgWV6NRWZYJvsiIZLfegQ7u+KYH7WJQ6QB/5CFIULt/rdpEar3QOCn52ryU+FShGXdT+DG+YPpWLRNedMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com; spf=pass smtp.mailfrom=crowdstrike.com; dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b=uI8Jhstn; arc=none smtp.client-ip=148.163.152.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crowdstrike.com
-Received: from pps.filterd (m0354655.ppops.net [127.0.0.1])
-	by mx0b-00206402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDJ1keI032102;
-	Fri, 13 Dec 2024 19:31:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crowdstrike.com;
-	 h=cc:content-id:content-transfer-encoding:content-type:date
-	:from:in-reply-to:message-id:mime-version:references:subject:to;
-	 s=default; bh=tPoDDdKr7gE1BldzHLPMcwm+vKnfJGCLwyb1r5quvMs=; b=u
-	I8JhstnPB00WefGtmHgPsqDI0fGArtSLljcKNaqbHCFXYfnqJ1PFbK/niLBCe95q
-	HnRcyTLSZbxWAcGKcvDx+HG+YNpVJxjCs3UJCgMPkpQTaGNGjaXTGaPNvjXM16a7
-	Q31fMlvUzOnJ6VFUmpooiFW5Ekjs+WKtTvZYszJvUlb1g2oBcq/RclhfKv2U7Q3c
-	wZm2wudNzHojQt90PJYv7nj8Uq2VPY9hCvZEEvLiXWn4TOEf1HfZyYE3zomqXKCD
-	rPUQyOoTkC6R9X63XyGL+EnpADAWEPDl8AqCA8HOv34aigK1isSnBnFus9L/KBxa
-	IhIYUDKAD1xMz4KsSYvqg==
-Received: from mail.crowdstrike.com (dragosx.crowdstrike.com [208.42.231.60] (may be forged))
-	by mx0b-00206402.pphosted.com (PPS) with ESMTPS id 43gtqk81xr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 19:31:16 +0000 (GMT)
-Received: from 04WPEXCH005.crowdstrike.sys (10.100.11.69) by
- 04wpexch15.crowdstrike.sys (10.100.11.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 13 Dec 2024 19:31:14 +0000
-Received: from 04WPEXCH006.crowdstrike.sys (10.100.11.70) by
- 04WPEXCH005.crowdstrike.sys (10.100.11.69) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 13 Dec 2024 19:31:13 +0000
-Received: from 04WPEXCH006.crowdstrike.sys ([fe80::f686:3950:aa30:445a]) by
- 04WPEXCH006.crowdstrike.sys ([fe80::f686:3950:aa30:445a%11]) with mapi id
- 15.02.1544.009; Fri, 13 Dec 2024 19:31:13 +0000
-From: Martin Kelly <martin.kelly@crowdstrike.com>
-To: "masahiroy@kernel.org" <masahiroy@kernel.org>,
-        "ojeda@kernel.org"
-	<ojeda@kernel.org>,
-        "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
-        "pasha.tatashin@soleen.com" <pasha.tatashin@soleen.com>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>,
-        "james.clark@arm.com" <james.clark@arm.com>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "nicolas@fjasle.eu"
-	<nicolas@fjasle.eu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
-        "nathan@kernel.org" <nathan@kernel.org>,
-        "npiggin@gmail.com"
-	<npiggin@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "surenb@google.com" <surenb@google.com>,
-        "zhengyejian@huaweicloud.com" <zhengyejian@huaweicloud.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "naveen.n.rao@linux.ibm.com"
-	<naveen.n.rao@linux.ibm.com>,
-        "kent.overstreet@linux.dev"
-	<kent.overstreet@linux.dev>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "yeweihua4@huawei.com" <yeweihua4@huawei.com>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>
-CC: Amit Dang <amit.dang@crowdstrike.com>,
-        "linux-modules@vger.kernel.org"
-	<linux-modules@vger.kernel.org>,
-        "linux-kbuild@vger.kernel.org"
-	<linux-kbuild@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-Subject: Re: Re: [PATCH v2 0/5] kallsyms: Emit symbol for holes in text and
- fix weak function issue
-Thread-Topic: Re: [PATCH v2 0/5] kallsyms: Emit symbol for holes in text and
- fix weak function issue
-Thread-Index: AQHbTZWS+4Gf5OP880OTR/pO30cltA==
-Date: Fri, 13 Dec 2024 19:31:13 +0000
-Message-ID: <30ee9989044dad1a7083a85316d77b35f838e622.camel@crowdstrike.com>
-References: <20240723063258.2240610-1-zhengyejian@huaweicloud.com>
-	 <44353f4cd4d1cc7170d006031819550b37039dd2.camel@crowdstrike.com>
-	 <364aaf7c-cdc4-4e57-bb4c-f62e57c23279@csgroup.eu>
-	 <d25741d8a6f88d5a6c219fb53e8aa0bcc1fea982.camel@crowdstrike.com>
-	 <1f11e3c4-e8fd-d4ac-23cd-0ab2de9c1799@huaweicloud.com>
-In-Reply-To: <1f11e3c4-e8fd-d4ac-23cd-0ab2de9c1799@huaweicloud.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-disclaimer: USA
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DCF0AA386CCD2A498936894F8CF5CF09@crowdstrike.sys>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1734118361; c=relaxed/simple;
+	bh=Ud2wCa8TSYVfpnac2gkRPt80w1+N1OzZr1JJXuVpSps=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=N8YBeG2GDc/oCBvinnKLvHHh6KgqGezjEdNOOAU6HyToAUgZeKlRHEJwztDrOw2+OEKrsT5jG5YetFuSG3e+0zlTpoldgwYyIh5B7AQPvds+BK1bejEEG5KIaHgCUeuB5ejdTWr049AMXLWA9KHUVJhJoik5KkA9C0n09SvmiiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8YosRjS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B406C4CED0;
+	Fri, 13 Dec 2024 19:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734118361;
+	bh=Ud2wCa8TSYVfpnac2gkRPt80w1+N1OzZr1JJXuVpSps=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=I8YosRjSmtSF1NqjJRGjx4HiqAwMLfQOv+bXjq9C6lacXhXPo3fthoCo9UzsvSIYZ
+	 EUMx18t5oPjh7WM2f3wJy/xZ0H5DUdgetoxmnf21bbQcKtF9PaX5rXfzZqS99vaCnr
+	 E03AJBu6jgi8riXWr5HgEWWuQzmBy9WnDvNSSk0tNysFc5rln3K4rXJfrvf2UyOKhs
+	 YM/rHDaW9gcuRNms4Lq7qIb25Vp6QX9JLELEGpxlzu5E1Okr74Qh7aoAdL24/5XaJX
+	 X8z5gfEm+iHfXVsYJCaY/Do985TU4U4c6LH4JNwhotI9Q48vTa7VPr3GTcRL2a/n4V
+	 Kg3HLlDq3ZwDw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 266E6E7717F;
+	Fri, 13 Dec 2024 19:32:41 +0000 (UTC)
+From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Subject: [PATCH v2 0/2] power: supply: gpio-charger: add support for
+ default charge current limit
+Date: Fri, 13 Dec 2024 20:32:32 +0100
+Message-Id: <20241213-default-charge-current-limit-v2-0-45886fce905c@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Authority-Analysis: v=2.4 cv=K9PYHzWI c=1 sm=1 tr=0 ts=675c8b84 cx=c_pps a=1d8vc5iZWYKGYgMGCdbIRA==:117 a=1d8vc5iZWYKGYgMGCdbIRA==:17 a=xqWC_Br6kY4A:10 a=EjBHVkixTFsA:10 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=VwQbUJbxAAAA:8 a=IycRoiFrBpt9NGDnbAcA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: HhB3chrMN4blfYrmAfJ7pHz4lEANNyfd
-X-Proofpoint-GUID: HhB3chrMN4blfYrmAfJ7pHz4lEANNyfd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- bulkscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
- spamscore=0 suspectscore=0 mlxlogscore=925 clxscore=1011 malwarescore=0
- classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130139
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANCLXGcC/32Nyw6CMBBFf8XM2jGdBsG68j8MiwKDTMLDTAvRE
+ P7dSly7PPck564QWIUDXA8rKC8SZBoT2OMB6s6PD0ZpEoM1NiNrHDbc+rmPmKwmW8+qPEbsZZC
+ IufNcuOxscvKQEk/lVl57/l4m7iTESd/720Lf9Rcm+h9eCA0WF3KVNzmz9bdeuOpY9VRPA5Tbt
+ n0AJHglm8sAAAA=
+X-Change-ID: 20241209-default-charge-current-limit-69ae7945061a
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734118360; l=1474;
+ i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
+ bh=Ud2wCa8TSYVfpnac2gkRPt80w1+N1OzZr1JJXuVpSps=;
+ b=zf9bjiGiLdqbtu5VANIqnr1BgtHuGTzqBJeXJABZGOjH1vn14TO6pLAItRzl13cm+iFqeMyXN
+ pARni1WA2NiB/AmeCBXVFbGouit8cuSLzBriVeHs7EiBsgiuvyzmPeT
+X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
+ pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
+X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
+ with auth_id=290
+X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Reply-To: dimitri.fedrau@liebherr.com
 
-T24gVGh1LCAyMDI0LTEyLTEyIGF0IDE3OjUyICswODAwLCBaaGVuZyBZZWppYW4gd3JvdGU6DQo+
-IE9uIDIwMjQvMTIvMTEgMDQ6NDksIE1hcnRpbiBLZWxseSB3cm90ZToNCj4gPiANCj4gPiANCj4g
-PiBaaGVuZywgZG8geW91IHBsYW4gdG8gc2VuZCBhIHYzPyBJJ2QgYmUgaGFwcHkgdG8gaGVscCBv
-dXQgd2l0aCB0aGlzDQo+ID4gcGF0Y2ggc2VyaWVzIGlmIHlvdSdkIGxpa2UsIGFzIEknbSBob3Bp
-bmcgdG8gZ2V0IHRoaXMgaXNzdWUNCj4gPiByZXNvbHZlZA0KPiA+ICh0aG91Z2ggSSBhbSBub3Qg
-YW4gZnRyYWNlIGV4cGVydCkuDQo+IA0KPiBTb3JyeSB0byByZWx5IHNvIGxhdGUuIFRoYW5rcyBm
-b3IgeW91ciBmZWVkYmFjayENCj4gDQo+IFN0ZXZlIHJlY2VudGx5IHN0YXJ0ZWQgYSBkaXNjdXNz
-aW9uIG9mIHRoZSBpc3N1ZSBpbjoNCj4gDQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8y
-MDI0MTAxNTEwMDExMS4zN2FkZmIyOEBnYW5kYWxmLmxvY2FsLmhvbWUvDQo+IGJ1dCB0aGVyZSdz
-IG5vIGNvbmNsdXNpb24uDQo+IMKgIA0KPiBJIGNhbiByZWJhc2UgdGhpcyBwYXRjaCBzZXJpZXMg
-YW5kIHNlbmQgYSBuZXcgdmVyc2lvbiBmaXJzdCwgYW5kDQo+IEknbSBhbHNvIGhvcGluZyB0byBn
-ZXQgbW9yZSBmZWVkYmFja3MgYW5kIGhlbHAgdG8gcmVzb2x2ZSB0aGUgaXNzdWUuDQo+IA0KDQpI
-aSBaaGVuZywNCg0KSSBtYXkgaGF2ZSBtaXN1bmRlcnN0b29kLCBidXQgYmFzZWQgb24gdGhlIGZp
-bmFsIG1lc3NhZ2UgZnJvbSBTdGV2ZW4sIEkNCmdvdCB0aGUgc2Vuc2UgdGhhdCB0aGUgaWRlYSBs
-aXN0ZWQgaW4gdGhhdCB0aHJlYWQgZGlkbid0IHdvcmsgb3V0IGFuZA0Kd2Ugc2hvdWxkIHByb2Nl
-ZWQgd2l0aCB5b3VyIGN1cnJlbnQgYXBwcm9hY2guDQoNClBsZWFzZSBjb25zaWRlciBtZSBhbiBp
-bnRlcmVzdGVkIHBhcnR5IGZvciB0aGlzIHBhdGNoIHNlcmllcywgYW5kIGxldA0KbWUga25vdyBp
-ZiB0aGVyZSdzIGFueXRoaW5nIEkgY2FuIGRvIHRvIGhlbHAgc3BlZWQgaXQgYWxvbmcgKGNvLQ0K
-ZGV2ZWxvcCwgdGVzdCwgYW55dGhpbmcgZWxzZSkuIEFuZCBvZiBjb3Vyc2UsIHRoYW5rcyB2ZXJ5
-IG11Y2ggZm9yIHlvdXINCndvcmsgdGh1cyBmYXIhDQo=
+With DT properties charge-current-limit-gpios and
+charge-current-limit-mapping one can define charge current limits in uA
+using up to 32 GPIOs. At the moment the driver defaults to smallest charge
+current limitation for safety reasons. When disabling charging is
+supported, which should be common, the driver defaults to non charging on
+probe. By having a default, charging can be enabled on probe for such
+devices.
+
+Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+---
+Changes in v2:
+- renamed DT property charge-current-limit-default to
+  charge-current-limit-default-microamp
+- Added dependency on charge-current-limit-mapping
+- Added intention and use case to commit descriptions
+- Added charge-current-limit-default-microamp in bindings example
+- Link to v1: https://lore.kernel.org/r/20241211-default-charge-current-limit-v1-0-7819ba06ee2a@liebherr.com
+
+---
+Dimitri Fedrau (2):
+      dt-bindings: power: supply: gpio-charger: add support for default charge current limit
+      power: supply: gpio-charger: add support for default charge current limit
+
+ .../devicetree/bindings/power/supply/gpio-charger.yaml      |  6 ++++++
+ drivers/power/supply/gpio-charger.c                         | 13 +++++++++++++
+ 2 files changed, 19 insertions(+)
+---
+base-commit: 57cb041f61d4abcf8dfa41259df27d081ab4cb6a
+change-id: 20241209-default-charge-current-limit-69ae7945061a
+
+Best regards,
+-- 
+Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+
+
 
