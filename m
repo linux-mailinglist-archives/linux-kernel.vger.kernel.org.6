@@ -1,162 +1,103 @@
-Return-Path: <linux-kernel+bounces-444401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0469F062D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:17:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC489F062C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89937285907
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:17:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E2AB285487
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C80B192D9D;
-	Fri, 13 Dec 2024 08:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bl49EiLE"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE72A192D9D;
+	Fri, 13 Dec 2024 08:17:16 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20A47DA8C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1987DA8C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734077841; cv=none; b=qfcKL07GnFtBD7QFTRFnztr6kF+G0rMSP72SdgyEOCydW6igo4xWVh5aV4+fiwtlsy6lG5qgJnF4wxLAY40VSDCKfNEjERhUMfudmP9dZ4oHuNXnzJ/lwveXtz6mlx+8oqbjF199x/kzqbKF08xB29ediBIL7KqORdBJEkHOugM=
+	t=1734077836; cv=none; b=G/sNiRgGkCQ1MIzI0yq+HwudR1SL+1YjCSjUejUkL+58L1npxW8IvgCbRi97HTjKcfRz5QlmIkPb9yhYxGa4u6NOHQbMUbi8XpqhgRsEwRGyvNFSFH72w0+nR9ICCC9eFEQWjxR2mCG7eFywZEqyP7YmRk9nwm/Kk2gfNPMyshY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734077841; c=relaxed/simple;
-	bh=vFtiKg5oInJfRfvjoGCgWCYLLTho2gqfTWCjTVwo/1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iXI6xESPR18HgaIA9CmnEzYsZIAmK6IO2XyZDQKbubdPUDv11SierYt+VB4K8wE2wjP8pSBU1KJa+tNJ65/sg+wPEeoPXJvrxr3uvlx7gTUdMguI/fxdOTAJfxjBCIWTT8qzzY8T6fqdq6Gnms/KJbJ8I2Ihj4VRz+FyGXmT1Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bl49EiLE; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-728ec840a8aso1707970b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:17:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734077839; x=1734682639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+aW5Mr9qE0qfjhgTO9mJhgzzfKvLM/ZWs/peRYXQh9c=;
-        b=bl49EiLEvhD5tpYgasgXyvGP5A0BoiZ6ZYipuHNSrmf/qi9o1CB+Dg+5IXBwtIQGme
-         RNuxF0GLO5saZGQnwxjNNmZRZHt7UpWbfQ1KKGrvMd1TuP24fwh6ICkPH8Chpt6WxZkO
-         CO6CmosmGL5kHiKpTmkfPpG+Q1sZd/+ypgS3zR0myZLe4YCMAGDhKLEd2E+vEsUA+9X4
-         ZXqjcnIW3gR6HreX1SDuAVYreQmxDcb5DedlRvl/88p8piD3ifsAJiMHR2nANdFXKTAZ
-         B8hfc6Qiug4iWTJThNIPbDZtEu0PatlUQQ/H7MQTB+kb0DFe+0Trf3SQdaJrGtbCURvw
-         j/pQ==
+	s=arc-20240116; t=1734077836; c=relaxed/simple;
+	bh=EAcphqu+2hN5IwBjI29BS1qb7a7RnbLQ8JKXwbaGLiw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bsrJZZZ1ZjQwtuPH/fSt6Ptpk5jJ/eecdNRvdJLwwUCHFct4vyPH38rqyioA34l30g8ZqG74sdroFEAS4IPTmuULM7Y4ma1Ir8mjy43G0+bx6D++YzE81rPG7IJ2qAx8Jq0cDJ1FXEaqgVrdv4ny9PpMvpFnJcYQe4H/FndN2uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-844dac0a906so144418339f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:17:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734077839; x=1734682639;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+aW5Mr9qE0qfjhgTO9mJhgzzfKvLM/ZWs/peRYXQh9c=;
-        b=kcPKZU9ddjvTDFPXhDymkLre69TYwsQ3yhU2fP6/AgrOve435Abnun8wm5wNY9jQXb
-         tJzMKw4QPDE6BWhJlUYwzet9V8u3MlQjpao4pOrbPdrVgD3MBjmpLLZ7tAFr7HkwZUw6
-         +tcXQ+P1sG095NYD3aphn6Jo7KUKC7HpLkdknt6eq8Hwr2OydPYDbLJ8L5r6LSl7dKlu
-         e92Ilwhi9/+TdiN8N3FS/Gu3i8THDnYZY6tBRX9QMlgc6X0vTcXN7ceVtV7TW9WWsMFZ
-         LD+RCeMpGQXFb2OsRPUXUfnnEOpFAKpN6T61fBU8sKpg4Kug/6l6bzIKENpx34o6oS0j
-         W+lw==
-X-Gm-Message-State: AOJu0YwHbQy837Ki0vUbgkZnAUBfhMcTHreaRkU5RO/X5kWDLhFIo35e
-	boEgqjDbpj3OnvXp9H87n891uC0axvAx3g4l1cnhgmDuokvYYO9ElqbqTEOPpDc=
-X-Gm-Gg: ASbGncvP0wClb4jS+MexP4echFd6lcn4IIogA9X/kDLhSdOKMn5lHBk+rSGLj7HzuX/
-	pevVQuXFZiNUsed8Jee27JBkpCVQ/W2AGiBrUuDOvdsn5JJzp1SKrgavFjfk+DettUlewmyEKJv
-	NjbJWQM824t/obuSKX+gghnIE66+rIiIqitznq8/otXq3uVhFck/pHzLfxN63TV9/QJSh1CMfiE
-	UAxmrsgHpNj2471/PcSKwzs5m0xJWrTZbWIRlAJlnMBsADwHJjBm7L/
-X-Google-Smtp-Source: AGHT+IH8cuOL6gMPiRHYoBhv4wc/6qGhYbStcloPbWzZYYMeqZLoWaVKg5i2liQS8cUlDs9g0QtsQg==
-X-Received: by 2002:a05:6a00:2341:b0:728:e1e3:3d88 with SMTP id d2e1a72fcca58-7290c15d7bfmr2514688b3a.7.1734077838960;
-        Fri, 13 Dec 2024 00:17:18 -0800 (PST)
-Received: from localhost.localdomain ([192.169.96.197])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd4ec342b2sm7860660a12.70.2024.12.13.00.17.16
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 13 Dec 2024 00:17:18 -0800 (PST)
-From: zhouzihan30 <15645113830zzh@gmail.com>
-X-Google-Original-From: zhouzihan30 <zhouzihan30@jd.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	zhouzihan30 <zhouzihan30@jd.com>,
-	yaowenchao1 <yaowenchao@jd.com>
-Subject: [PATCH V1] mm: fix bug in some memory information update
-Date: Fri, 13 Dec 2024 16:16:19 +0800
-Message-Id: <20241213081618.53458-1-zhouzihan30@jd.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+        d=1e100.net; s=20230601; t=1734077834; x=1734682634;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J15Gq7q+dYou+UJgEXbgzSgJ5VrfU+OS+eAKYU7XP5E=;
+        b=niKCrHEimzoCMW3sDcAMYQ5VlUbRgr7G9excOhC18a00/+LacjQLJ1iDxYoI6mZv7e
+         12GhiCuPih1ZLsxlppdSKDZ/v1ru2AGjsyfbM8bpyE6Z+8HZ1iRxzaFIi/qf5Dug4ufb
+         6/BJWAD+NCh31uuylw4gv08vmOsgSPGX9UHAXlWm7qmhpejyqhawUbA+zCdz2+uaM0Bd
+         G1Zznw8k2ST/fNIO+FFbaiJTlS0V8XgZZ3qki/0mG5Z7RSRy9+0AysX87PuKwnKd1dza
+         8wJorGWxBgNP/6JwonDnMzf+5maVGNgEyI1fxnN1gc/4XlGzpNk8EgN7GCnv+KZO1+2P
+         zazw==
+X-Gm-Message-State: AOJu0YybC2uYsYRC58+LPTIOBX6Q4tPq17kgHNwckABI1kXnQROFo4D0
+	1imiqyfvJIPknO3xe+m0akPWEOrBawZ5VKxzi525iWHQViLhLrYrpDyvKQBqx8qLdOS+o1B7x3z
+	21tVLrWYXMMn24y2gRsB1IKIA3a/cZdZT3Rrr4Ag3MJXeqxroRjMg2ts=
+X-Google-Smtp-Source: AGHT+IErTFUMIwk6c7W5sQ5SXn5Z4fzIsD/Py5ZOy9AbAcUDtA2LCNErVHh1iQOkCtvSFTp7xK12G/TJszJ6asJ8pyJ2GxhVlFF5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2408:b0:3a7:c5a6:9822 with SMTP id
+ e9e14a558f8ab-3aff8c9255emr20495645ab.24.1734077834008; Fri, 13 Dec 2024
+ 00:17:14 -0800 (PST)
+Date: Fri, 13 Dec 2024 00:17:13 -0800
+In-Reply-To: <674f4e43.050a0220.17bd51.004e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675bed89.050a0220.cd16f.0042.GAE@google.com>
+Subject: Re: [syzbot] Re: general protection fault in exfat_get_dentry_cached()
+From: syzbot <syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-In the kernel, the zone's lowmem_reserve and _watermark, and the global
-variable 'totalreserve_pages' depend on the value of managed_pages,
-but after running adjust_managed_page_count, these values didn't updated,
-which caused some problems.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-For example, in a system with six 1GB large pages, we found that the value
-of protection in zoneinfo (zone->lowmem_reserve), is not right.
-Its value seems calculated from the initial managed_pages,
-but after the managed_pages changed, was not updated. Only after reading
- the file /proc/sys/vm/lowmem_reserve_ratio, updates happen.
+***
 
-read file /proc/sys/vm/lowmem_reserve_ratio:
+Subject: Re: general protection fault in exfat_get_dentry_cached()
+Author: dmantipov@yandex.ru
 
-lowmem_reserve_ratio_sysctl_handler
-----setup_per_zone_lowmem_reserve
---------calculate_totalreserve_pages
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git f932fb9b40749d1c9a539d89bb3e288c077aafe5
 
-protection changed after reading file:
-
-[root@test ~]# cat /proc/zoneinfo | grep protection
-        protection: (0, 2719, 57360, 0)
-        protection: (0, 0, 54640, 0)
-        protection: (0, 0, 0, 0)
-        protection: (0, 0, 0, 0)
-[root@test ~]# cat /proc/sys/vm/lowmem_reserve_ratio
-256     256     32      0
-[root@test ~]# cat /proc/zoneinfo | grep protection
-        protection: (0, 2735, 63524, 0)
-        protection: (0, 0, 60788, 0)
-        protection: (0, 0, 0, 0)
-        protection: (0, 0, 0, 0)
-
-lowmem_reserve increased also makes the totalreserve_pages increased,
-which causes a decrease in available memory. The one above is just a
- test machine, and the increase is not significant. On our online machine,
-the reserved memory will increase by several GB due to reading this file.
-It is clearly unreasonable to cause a sharp drop in available memory just
- by reading a file.
-
-In this patch, we update reserve memory when update managed_pages, The
-size of reserved memory becomes stable. But it seems that the _watermark
- should also be updated along with the managed_pages. We have not done
- it because we are unsure if it is reasonable to set the watermark through
- the initial managed_pages. If it is not reasonable, we will propose
- new patch.
-
-Signed-off-by: zhouzihan30 <zhouzihan30@jd.com>
-Signed-off-by: yaowenchao1 <yaowenchao@jd.com>
----
- mm/page_alloc.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index b6958333054d..b23e128afbcd 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5826,10 +5826,13 @@ __meminit void zone_pcp_init(struct zone *zone)
- 			 zone->present_pages, zone_batchsize(zone));
- }
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 97d2774760fe..c356bde623bf 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -329,10 +329,7 @@ static int exfat_find_empty_entry(struct inode *inode,
+ 			EXFAT_B_TO_CLU(i_size_read(inode), sbi), ei->flags);
  
-+static void setup_per_zone_lowmem_reserve(void);
+ 	while ((dentry = exfat_search_empty_slot(sb, &hint_femp, p_dir,
+-					num_entries, es)) < 0) {
+-		if (dentry == -EIO)
+-			break;
+-
++					num_entries, es)) == -ENOSPC) {
+ 		if (exfat_check_max_dentries(inode))
+ 			return -ENOSPC;
+ 
+@@ -395,6 +392,9 @@ static int exfat_find_empty_entry(struct inode *inode,
+ 		inode->i_blocks += sbi->cluster_size >> 9;
+ 	}
+ 
++	if (dentry < 0)
++		return dentry;
 +
- void adjust_managed_page_count(struct page *page, long count)
- {
- 	atomic_long_add(count, &page_zone(page)->managed_pages);
- 	totalram_pages_add(count);
-+	setup_per_zone_lowmem_reserve();
- }
- EXPORT_SYMBOL(adjust_managed_page_count);
+ 	p_dir->dir = exfat_sector_to_cluster(sbi, es->bh[0]->b_blocknr);
+ 	p_dir->size -= dentry / sbi->dentries_per_clu;
  
--- 
-2.33.0
-
 
