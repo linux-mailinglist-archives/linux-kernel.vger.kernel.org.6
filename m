@@ -1,93 +1,98 @@
-Return-Path: <linux-kernel+bounces-445088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F349F1117
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:36:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE0819F111C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:37:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6992528292A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:36:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0562825DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A0F1E2613;
-	Fri, 13 Dec 2024 15:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979181E32A0;
+	Fri, 13 Dec 2024 15:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="fVz9MSNL"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pzsSEdO4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CEC4A21;
-	Fri, 13 Dec 2024 15:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E451E4A21;
+	Fri, 13 Dec 2024 15:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734104189; cv=none; b=E4cCFRzppcwXOhvb12AingSrteoAXtPY3DOjwoDq4V5oGZhkhYljeYJyZQnXqYeKPQNnxs4lhvC6toANYba8GZq362iueAD47sw1c/lXe1C41WRX9iwYcFKoVwR+6NeEzMPU69TjbA1W4RDKcaeevXhjHwWfm+LSX4rWEdGUEv4=
+	t=1734104222; cv=none; b=PqQzSpaexbMHmlvEZe7sRUPclc8EmES5MuUd/nDUkRcAGRWj7M6WNlBUpC84zxady6o0h73eNLCjetxJhGc7RsK6gLF7WVF8cBRTlENMGbG/1ZJ3so76aStRqj8iV7yXHAVnntXxfhnC9/788srVQdiH9fIZOcBWy6w6dpPO+Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734104189; c=relaxed/simple;
-	bh=oIOzX+vOpJyjLojOEEi4ugtWdFqi5Lz8ejWHCUPxgwo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NL/KaveX+BU3BaEPP0lAFufgRR3kHRw4DtPP9/KpaQ9HXlpNZ4c5PmQuSJ103o8+a+exRBE5LtlfdySyZNFsO7ICP3YFB8UntnAHaB6yXOWReDbuR0BX71GC81r0fLJCmYivbaqEfy6Rhmq5bHS1FK6CdKuG4CsjTaUsXrHFH8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=fVz9MSNL; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 15838403FA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1734104187; bh=kHjmEaxa2GbA3waLlFNsQZGKLNcayQZROKZU83HD2Nw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=fVz9MSNL9c4AbMLYyfIbiX/9ZEX0wpG65UG62kGp+u+UKAocTe0H8BxuuVFf1U6R6
-	 lpxy75f4WGMUr5avjivgzZ0qFW1st6HEdG/9XJojflATTNZe5nC6lxWfcGTSxRQVVE
-	 oCa9gDhe6Yi+IQZWQ/VN2wRv1BzW6sWSqS0qedjdA0dkZR4XmGSgS2kAlnyUK95t3j
-	 F1Vg3+Jh4CiIc7K/FIz6IZox9VRNiSZ+YF9dpYU8TvjZS02EhUEwrWxS+sYRFDdDLu
-	 0pNYDMiLdpuEpFAynvftdSmoKwFoBlqeIuurgWtYAT+DQD10OlK3s/yHM9ZKrFA3ty
-	 EV3GkUguHvqKQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 15838403FA;
-	Fri, 13 Dec 2024 15:36:27 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: cem@kernel.org, linux-doc@vger.kernel.org
-Cc: cem@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: Fix simple typo on filesystems/porting.rst
-In-Reply-To: <20241213151743.23435-1-cem@kernel.org>
-References: <20241213151743.23435-1-cem@kernel.org>
-Date: Fri, 13 Dec 2024 08:36:26 -0700
-Message-ID: <87ldwjy4qt.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1734104222; c=relaxed/simple;
+	bh=zuOWWh5qv6t1f/uJZ+YIZcO/cV+0rcYrZVUeoVCfhyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fr+CyVIv7V+2h5yPU67N2Q4aNkEvFtITHE2gaNMuH97NZPBXT4oUA5f6sLEkq/CurqBsB1OxDK1VvgSPqezBEl8LUVvZlzeDXckFbkD6uO6lF1akNS3vRiS5ruMMwbxtAnLngBD7zRI0vqpbSJE+2alooOKQ7k00Nhx+VAVCQCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pzsSEdO4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E681C4CED0;
+	Fri, 13 Dec 2024 15:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734104221;
+	bh=zuOWWh5qv6t1f/uJZ+YIZcO/cV+0rcYrZVUeoVCfhyI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pzsSEdO4wr8gJbrNk+lW4Vt/2p5627nR8l2AymZguG/zRIumYDs/Z6u2+7GFWK0JN
+	 gVPMM0Nzb88wNYk3LsGOabn8M1rc7357f2LDuYGYMlhO09Kp4OM23F/VJqFnEE68kL
+	 +j881an1toYoKsB6Nbr1QuGPgUvec1FazwOTp4ynO0QLEFCNg24o/FhyD4/isvEKJA
+	 vgH6hGbf0B+8Y7TzrrpuAz3Ali30iZm6cEJv3HIGeC/kC2xirLXjky4NDUATglGTRT
+	 bTMXIjfX9THhKSUH6c6biUUC2nGoVCByrDfSkdzHNpT5A0yowLC7wSgrYhGcdko51G
+	 DaCdl7WRR3LBA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tM7j0-000000000mm-1NxM;
+	Fri, 13 Dec 2024 16:37:06 +0100
+Date: Fri, 13 Dec 2024 16:37:06 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Luca Weiss <luca.weiss@fairphone.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v3 14/23] arm64: dts: qcom: x1e80100: Fix CDSP memory
+ length
+Message-ID: <Z1xUosh7GwOZUAWJ@hovoldconsulting.com>
+References: <20241213-dts-qcom-cdsp-mpss-base-address-v3-0-2e0036fccd8d@linaro.org>
+ <20241213-dts-qcom-cdsp-mpss-base-address-v3-14-2e0036fccd8d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213-dts-qcom-cdsp-mpss-base-address-v3-14-2e0036fccd8d@linaro.org>
 
-cem@kernel.org writes:
+On Fri, Dec 13, 2024 at 03:54:03PM +0100, Krzysztof Kozlowski wrote:
+> The address space in CDSP PAS (Peripheral Authentication Service)
+> remoteproc node should point to the QDSP PUB address space
+> (QDSP6...SS_PUB) which has a length of 0x10000.  Value of 0x1400000 was
+> copied from older DTS, but it does not look accurate at all.
+> 
+> This should have no functional impact on Linux users, because PAS loader
+> does not use this address space at all.
+> 
+> Fixes: 5f2a9cd4b104 ("arm64: dts: qcom: x1e80100: Add ADSP/CDSP remoteproc nodes")
+> Cc: stable@vger.kernel.org
 
-> From: Carlos Maiolino <cmaiolino@redhat.com>
->
-> Just spotted this while reading the doc.
->
-> Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
-> ---
->  Documentation/filesystems/porting.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-> index 92bffcc6747a..2d08fd4a2280 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -313,7 +313,7 @@ done.
->  
->  **mandatory**
->  
-> -block truncatation on error exit from ->write_begin, and ->direct_IO
-> +block truncation on error exit from ->write_begin, and ->direct_IO
->  moved from generic methods (block_write_begin, cont_write_begin,
+I don't think any of these need to be backported.
 
-I dunno ... "truncatation" has kind of a nice sound to it ... :)
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Applied, thanks.
+Looks good otherwise:
 
-jon
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
 
