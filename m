@@ -1,94 +1,212 @@
-Return-Path: <linux-kernel+bounces-445507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD689F1710
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:06:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248F99F1715
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:06:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB7F161698
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:06:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7712188937A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27ECE19149F;
-	Fri, 13 Dec 2024 19:58:46 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2E31922ED;
+	Fri, 13 Dec 2024 19:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amplVAJi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80C518FC92;
-	Fri, 13 Dec 2024 19:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD9A18FC65;
+	Fri, 13 Dec 2024 19:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734119925; cv=none; b=nxG7w8SfmZrBNiUhkGZjkQMNcCMxnquxp9Q6qgZM/lxk59Zu7lVCs8RjQo/C3SldSrzJnXkXtNIPRVhiXP0MmxlLpmKGOFTykrsdbxBlyQu19+e9TIwgbPk/wOvcBhmqBVpXi3F1whwmnGV6otrjRiUXIcPcPb2VeY/SMigNqMs=
+	t=1734119957; cv=none; b=mVklPVAsg4V0vv5yQDeAaHeVIkJROMywK+2tfBJtqdzKL3W4+xggLKX3JT1SbBhxNuJ3noBY16zEcCAz7QqGbxlkIt9ctrXypA1Ajqzxqha+xvAtRMYkmWXKXI9jacAXTFeDDhvv6H0EADIzeRZHZXYZRh8/+rU7P6JV3xJ8Scs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734119925; c=relaxed/simple;
-	bh=yXz/ZArx/CIwOD9NJ+qcdUlQuOZ6GiFR00uSRHphH3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qhJ6afCjlWYvqkxwASU8yt9tEdKXa+y3BO5cvhpEFUbigQzUCl59riFgI47PhDk4hU1KTmwc8nafMzYFnRtiexlkNRRVV4YhVI7japxi6VgjaL3lJhS1NlA1e1aZgb4Z6W/6yjX4d+POAuNa4DVVv/g1i4P1XoqDTTzmTlsHX+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [IPV6:2605:59c8:31de:bf00:37c2:fe62:c21b:ab46] (unknown [IPv6:2605:59c8:31de:bf00:37c2:fe62:c21b:ab46])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 457CAB4B2F92;
-	Fri, 13 Dec 2024 20:58:31 +0100 (CET)
-Message-ID: <e4e19875-c02c-4673-814b-86090223b55d@freeshell.de>
-Date: Fri, 13 Dec 2024 11:58:29 -0800
+	s=arc-20240116; t=1734119957; c=relaxed/simple;
+	bh=VIi/j6GUtGfCv8VCvRaxNh+DXnQvQw/j1YDTFZRluuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNuDndxbBp8n+V3FEAYE0rFsdZ6pY1AZJBIFlzvg1qjE5ArHOIq60GUXpaG35CNIKd7CwaEgRaVjbWSAFcrGW8nYRdnJCnYr66GuNNeiczd2L2OmAjbUSeaNLsmUOYXOuz1CkfI4UsdFC2KwElOcwdvwfVUEPyfE1fo2lJ2elCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amplVAJi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C18D4C4CED4;
+	Fri, 13 Dec 2024 19:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734119957;
+	bh=VIi/j6GUtGfCv8VCvRaxNh+DXnQvQw/j1YDTFZRluuQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=amplVAJidGsl6ZQn8iikswx5HJHFLjw9zu2Kt49AU/IVO9rFj2y6atykobSmRx0Xu
+	 8cIy1bmiftOigTonulLTKByCfvOKlpXIyZr/Mnqszc7UqT2k9VneP6pnjbobGjafll
+	 gd4Cj1WWR+JUqaBiOZGuvC89/D7psJCN5H9fpkNv4ZqsfqBEoxAkZDfzV/s7BAIIdU
+	 x6Ea6lUM56XxQhbPn1ndEPdfRPYBPqqbgnQiJzpb0VmgPZEwcfNV47B9KYrWhwFRMz
+	 jBrBoqcKJ1NH5+3F+pIghjEvBMmV/EITZ4vmKu304X0OCFuUy+dmPAdVFchvQGUtqV
+	 QMMbOoW5GTzYA==
+Date: Fri, 13 Dec 2024 19:59:11 +0000
+From: Simon Horman <horms@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	tsbogend@alpha.franken.de, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, markus.stockhausen@gmx.de,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-mips@vger.kernel.org
+Subject: Re: [PATCH 4/4] net: mdio: Add RTL9300 MDIO driver
+Message-ID: <20241213195911.GF561418@kernel.org>
+References: <20241211235342.1573926-1-chris.packham@alliedtelesis.co.nz>
+ <20241211235342.1573926-5-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: dts: starfive: Fix a typo in StarFive JH7110 pin
- function definitions
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Hal Feng <hal.feng@starfivetech.com>,
- Jianlong Huang <jianlong.huang@starfivetech.com>,
- Conor Dooley <conor.dooley@microchip.com>, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241210042002.165297-1-e@freeshell.de>
- <oacmcw5yvdlsmvqbt4dbdmsx6rvd6x43qv2ejmypw57jgraqu7@txhhsxdg2agq>
-Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <oacmcw5yvdlsmvqbt4dbdmsx6rvd6x43qv2ejmypw57jgraqu7@txhhsxdg2agq>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211235342.1573926-5-chris.packham@alliedtelesis.co.nz>
 
-Hi Krzysztof,
-
-On 12/13/24 01:37, Krzysztof Kozlowski wrote:
-> On Mon, Dec 09, 2024 at 08:19:56PM -0800, E Shattow wrote:
->> Fix a typo in StarFive JH7110 pin function definitions for GPOUT_SYS_SDIO1_DATA4
->>
->> Fixes: e22f09e598d12 ("riscv: dts: starfive: Add StarFive JH7110 pin function definitions")
->> Signed-off-by: E Shattow <e@freeshell.de>
->> Acked-by: Hal Feng <hal.feng@starfivetech.com>
->> ---
+On Thu, Dec 12, 2024 at 12:53:42PM +1300, Chris Packham wrote:
+> Add a driver for the MDIO controller on the RTL9300 family of Ethernet
+> switches with integrated SoC. There are 4 physical SMI interfaces on the
+> RTL9300 but access is done using the switch ports so a single MDIO bus
+> is presented to the rest of the system.
 > 
-> Why are you sending the same multiple times? Where is the changelog and
-> proper patch versioning?
-> 
-> Best regards,
-> Krzysztof
-> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-I did respond to Hal's comment that the patch is missing a commit title 
-description and that I would re-send. How instead should the message be 
-formatted so the patch commit title description is changed but the patch 
-is not the same being sent multiple times?  And now, again, based on 
-your comment that this is not a typo I will again change the commit 
-description but I don't know how to do that without sending again as a 
-duplicate.
+...
 
-Thank you for the review and for your patience with me when I am 
-learning how to participate.
+> diff --git a/drivers/net/mdio/mdio-realtek-rtl.c b/drivers/net/mdio/mdio-realtek-rtl.c
 
--E
+...
 
+> +static int realtek_mdiobus_init(struct realtek_mdio_priv *priv)
+> +{
+> +	u32 port_addr[5] = { };
+> +	u32 poll_sel[2] = { 0, 0 };
+> +	u32 glb_ctrl_mask = 0, glb_ctrl_val = 0;
+> +	int i, err;
+> +
+> +	for (i = 0; i < MAX_PORTS; i++) {
+> +		int pos;
+> +
+> +		if (priv->smi_bus[i] > 3)
+> +			continue;
+> +
+> +		pos = (i % 6) * 5;
+> +		port_addr[i / 6] |=  priv->smi_addr[i] << pos;
+
+Hi Chris,
+
+The maximum index of port_addr accessed above is
+(MAX_PORTS - 1) / 6 = (32 - 1) / 6 = 5.
+But port_addr only has five elements (maximum index of 4).
+So this will overflow.
+
+Flagged by Smatch.
+
+> +
+> +		pos = (i % 16) * 2;
+> +		poll_sel[i / 16] |= priv->smi_bus[i] << pos;
+> +	}
+> +
+> +	for (i = 0; i < MAX_SMI_BUSSES; i++) {
+> +		if (priv->smi_bus_isc45[i]) {
+> +			glb_ctrl_mask |= GLB_CTRL_INTF_SEL(i);
+> +			glb_ctrl_val |= GLB_CTRL_INTF_SEL(i);
+> +		}
+> +	}
+> +
+> +	err = regmap_bulk_write(priv->regmap, priv->reg_base + SMI_PORT0_5_ADDR_CTRL,
+> +				port_addr, 5);
+> +	if (err)
+> +		return err;
+> +
+> +	err = regmap_bulk_write(priv->regmap, priv->reg_base + SMI_PORT0_15_POLLING_SEL,
+> +				poll_sel, 2);
+> +	if (err)
+> +		return err;
+> +
+> +	err = regmap_update_bits(priv->regmap, priv->reg_base + SMI_GLB_CTRL,
+> +				 glb_ctrl_mask, glb_ctrl_val);
+> +	if (err)
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +static int realtek_mdiobus_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct realtek_mdio_priv *priv;
+> +	struct fwnode_handle *child;
+> +	struct mii_bus *bus;
+> +	int err;
+> +
+> +	bus = devm_mdiobus_alloc_size(dev, sizeof(*priv));
+> +	if (!bus)
+> +		return -ENOMEM;
+> +
+> +	bus->name = "Reaktek Switch MDIO Bus";
+> +	bus->read_c45 = realtek_mdio_read_c45;
+> +	bus->write_c45 =  realtek_mdio_write_c45;
+> +	bus->parent = dev;
+> +	priv = bus->priv;
+> +
+> +	priv->regmap = syscon_node_to_regmap(dev->parent->of_node);
+> +	if (IS_ERR(priv->regmap))
+> +		return PTR_ERR(priv->regmap);
+> +
+> +	err = device_property_read_u32(dev, "reg", &priv->reg_base);
+> +	if (err)
+> +		return err;
+> +
+> +	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", dev_name(dev));
+> +
+> +	device_for_each_child_node(dev, child) {
+> +		u32 pn, smi_addr[2];
+> +
+> +		err = fwnode_property_read_u32(child, "reg", &pn);
+> +		if (err)
+> +			return err;
+> +
+> +		if (pn > MAX_PORTS)
+> +			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
+> +
+> +		err = fwnode_property_read_u32_array(child, "realtek,smi-address", smi_addr, 2);
+> +		if (err) {
+> +			smi_addr[0] = 0;
+> +			smi_addr[1] = pn;
+> +		}
+> +
+> +		if (fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45"))
+> +			priv->smi_bus_isc45[smi_addr[0]] = true;
+> +
+> +		priv->smi_bus[pn] = smi_addr[0];
+> +		priv->smi_addr[pn] = smi_addr[1];
+
+The condition about 15 lines above ensures that the maximum value of pn
+is MAX_PORTS. But if this is the case then the above will overflow
+both smi_bus and smi_addr as they each have MAX_PORTS elements
+(maximum index of MAX_PORTS - 1).
+
+I suspect the condition above should be updated to:
+
+	if (pn >= MAX_PORTS)
+		return ...
+
+Also flagged by Smatch.
+
+> +	}
+> +
+> +	err = realtek_mdiobus_init(priv);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "failed to initialise MDIO bus controller\n");
+> +
+> +	err = devm_of_mdiobus_register(dev, bus, dev->of_node);
+> +	if (err)
+> +		return dev_err_probe(dev, err, "cannot register MDIO bus\n");
+> +
+> +	return 0;
+> +}
+
+...
 
