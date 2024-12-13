@@ -1,144 +1,85 @@
-Return-Path: <linux-kernel+bounces-444786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15169F0C83
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:38:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434159F0C9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4C9188DD6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:38:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53C4216A1BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABE91DFDAF;
-	Fri, 13 Dec 2024 12:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="mNEvKuCb"
-Received: from mr85p00im-zteg06021501.me.com (mr85p00im-zteg06021501.me.com [17.58.23.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE351DFDB5;
+	Fri, 13 Dec 2024 12:42:24 +0000 (UTC)
+Received: from mail78-58.sinamail.sina.com.cn (mail78-58.sinamail.sina.com.cn [219.142.78.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5B51DFE08
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5911DFD87
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734093452; cv=none; b=hJAY2gZamlLsB2c6g4r2O47BluHBCViQMPSx9ZAJJaBnz98CUes7FZ7Yk7LvnsC6OZZxV6AaWq2nrnonX2rk1pjikP8wO8mbVNvt5AV4NWX5OJbtNJdT8lveKoKwpY8kG/HphQSpeuo35xXGBxcEywdC6hlLLBvpyC3UFkdycv8=
+	t=1734093744; cv=none; b=YIB0vKIahD/hz8NpSj91ZxUu1sGBvzixGabw52HZafxowRWSZHn/KF+alQwEDYSo4cpotu1ju09RTOw3QIzHUVGwWnKbtkuVtoeFhLhUzpGujGlz1Z+NIXzQN8L4QBS+IlsH9r1K74OJ2Z+ZyJZjX5FD6r5jICJ8ms48lEe2x2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734093452; c=relaxed/simple;
-	bh=UUkb6UWJy9dVmADx2/5U9/7j7WbVpZs33vJD+XTdxDM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oog2g52vTU8SfWyY6O8D5gDPZcnVzJ1/fcz3d9xH9LjuE0RIYlo5d8tdQZMCHaaV/yN3Kz/mgXL64GjRRcD8axE8YYkACXCtLu+NlNB8tck6juQb8F4Uk0znX4j5GH7ZtZcLx7HdFeNVmnwzC1FZXuYOHoOvhf0aYObSnP8ETMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=mNEvKuCb; arc=none smtp.client-ip=17.58.23.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1734093450;
-	bh=KAEa84k4ae1AAp04syMst+ARnTqenvGiw7Oz9H59tBM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:
-	 x-icloud-hme;
-	b=mNEvKuCb1lQjOrLHo4R10tK+X/Bvk8loRodTLH4mazxIenpdxQi04qSd8hkUJLEVa
-	 5KBBTZjpEPdk6xaUKC1uUx9eqyhrVgHeMAuTy23XI8scdRObpivBgxkVWGPuCvkF2L
-	 qR4PKSf7MTeXCtqXRJB23RHCR5iVESNfNTac56tJidYAo9gbgA7JWClrpMSaJUoeag
-	 RZ5BDCmYFz0S0bkvNOa66wj3Sb/P0qJcO3A7AmAinU9SIIqpBkMI5YGLzw8/RNnX1e
-	 +njW2ftb0EkdNDfAZL7TPBsxI8Zmcb3ooFqgJdTurrMBzKxpbajZgZmuqx3Fqq/pMw
-	 6r2O3B0xiZxgQ==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-zteg06021501.me.com (Postfix) with ESMTPSA id DB3FF2793FB6;
-	Fri, 13 Dec 2024 12:37:21 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Fri, 13 Dec 2024 20:36:42 +0800
-Subject: [PATCH v6 2/6] phy: core: Fix that API
- devm_of_phy_provider_unregister() fails to unregister the phy provider
+	s=arc-20240116; t=1734093744; c=relaxed/simple;
+	bh=WkuTvNKXZEGln+4PdhWfUwmeQ0+ppMC15Dp1iqzsY08=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=vA8+O3AKOvwooIWt+hHGG1OXO2lbc1IbUo6c3JD27AMbI6MM/MbhLdo62BCfPur8xl8Q/ApO4AhDMDIhIDtoJRG/bfIVjv1gDVD5+IOPEplhuj2fwGXzApAO71fOjlfYnDSI326cdHfBpTxO4NrXm8xKQkNyhBT18JY0Fgw0hGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.50.125])
+	by sina.com (10.185.250.24) with ESMTP
+	id 675C2A6000004E21; Fri, 13 Dec 2024 20:36:52 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 64236310748386
+X-SMAIL-UIID: B9AB6D57269D4CAFAE352980AC829871-20241213-203652-1
+From: Hillf Danton <hdanton@sina.com>
+To: Brian Vazquez <brianvv@google.com>,
+	Marco Leogrande <leogrande@google.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [iwl-next PATCH v3 2/3] idpf: convert workqueues to unbound
+Date: Fri, 13 Dec 2024 20:36:43 +0800
+Message-Id: <20241213123643.1898-1-hdanton@sina.com>
+In-Reply-To: <20241212233333.3743239-3-brianvv@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241213-phy_core_fix-v6-2-40ae28f5015a@quicinc.com>
-References: <20241213-phy_core_fix-v6-0-40ae28f5015a@quicinc.com>
-In-Reply-To: <20241213-phy_core_fix-v6-0-40ae28f5015a@quicinc.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Lee Jones <lee@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
- Johan Hovold <johan@kernel.org>, Zijun Hu <zijun_hu@icloud.com>, 
- stable@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
- Johan Hovold <johan+linaro@kernel.org>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: v_a_AiZBMIwjWVGHSWCDMAyn0MPuwZIh
-X-Proofpoint-GUID: v_a_AiZBMIwjWVGHSWCDMAyn0MPuwZIh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-13_05,2024-12-12_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=999 adultscore=0 mlxscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412130089
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Thu, 12 Dec 2024 23:33:32 +0000 Brian Vazquez <brianvv@google.com>
+> When a workqueue is created with `WQ_UNBOUND`, its work items are
+> served by special worker-pools, whose host workers are not bound to
+> any specific CPU. In the default configuration (i.e. when
+> `queue_delayed_work` and friends do not specify which CPU to run the
+> work item on), `WQ_UNBOUND` allows the work item to be executed on any
+> CPU in the same node of the CPU it was enqueued on. While this
+> solution potentially sacrifices locality, it avoids contention with
+> other processes that might dominate the CPU time of the processor the
+> work item was scheduled on.
+> 
+> This is not just a theoretical problem: in a particular scenario
 
-For devm_of_phy_provider_unregister(), its comment says it needs to invoke
-of_phy_provider_unregister() to unregister the phy provider, but it will
-not actually invoke the function since devres_destroy() does not call
-devm_phy_provider_release(), and the missing of_phy_provider_unregister()
-call will cause:
+The cpu hog due to (the user space) misconfig exists regardless it is
+bound workqueue or not, in addition to the fact that linux kernel is
+never the blue pill to kill all pains, so extra support for unbound wq
+is needed.
 
-- The phy provider fails to be unregistered.
-- Leak both memory and the OF node refcount.
-
-Fortunately, the faulty API has not been used by current kernel tree.
-Fix by using devres_release() instead of devres_destroy() within the API.
-
-Fixes: ff764963479a ("drivers: phy: add generic PHY framework")
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
-Why to fix the API here instead of directly deleting it?
-
-1) it is simpler, just one line change.
-2) it may be used in future.
-3) ensure this restored API right if need to restore it in future
-   after deleting.
-
-Anyone may remove such APIs separately later if he/she cares.
----
- drivers/phy/phy-core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index f190d7126613ad253b4820b9e4167dda8623439d..de07e1616b34d12056024558124f3ea2469c0323 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -1259,12 +1259,12 @@ EXPORT_SYMBOL_GPL(of_phy_provider_unregister);
-  * of_phy_provider_unregister to unregister the phy provider.
-  */
- void devm_of_phy_provider_unregister(struct device *dev,
--	struct phy_provider *phy_provider)
-+				     struct phy_provider *phy_provider)
- {
- 	int r;
- 
--	r = devres_destroy(dev, devm_phy_provider_release, devm_phy_match,
--		phy_provider);
-+	r = devres_release(dev, devm_phy_provider_release, devm_phy_match,
-+			   phy_provider);
- 	dev_WARN_ONCE(dev, r, "couldn't find PHY provider device resource\n");
- }
- EXPORT_SYMBOL_GPL(devm_of_phy_provider_unregister);
-
--- 
-2.34.1
-
+> misconfigured process was hogging most of the time from CPU0, leaving
+> less than 0.5% of its CPU time to the kworker. The IDPF workqueues
+> that were using the kworker on CPU0 suffered large completion delays
+> as a result, causing performance degradation, timeouts and eventual
+> system crash.
 
