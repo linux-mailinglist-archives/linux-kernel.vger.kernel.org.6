@@ -1,190 +1,153 @@
-Return-Path: <linux-kernel+bounces-445056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB8E9F1085
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:13:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121509F1087
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:13:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B54188375B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF971884CF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97051E1C1B;
-	Fri, 13 Dec 2024 15:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982F01E22E2;
+	Fri, 13 Dec 2024 15:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZH2HMLXh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgg8RGr8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFB91E105B;
-	Fri, 13 Dec 2024 15:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07AA1E1020;
+	Fri, 13 Dec 2024 15:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734102612; cv=none; b=MhWrV1E6Q/wV+18yC0LZn0xveY6zLpRyr9lRG8MQBuPRK5vrJbJV6FDpOVqLQ5FpOZ46AWbsFJNyHNOEy5q9JZyqP3LSaBW7RKjGnf5h+okOOm2K8HvF56dfjctSqh+vaAZ+Q5AgowxTmCfOHNkBUiTopNk5AUABA3uT+8K3WL0=
+	t=1734102626; cv=none; b=MZHlCr9Uv3RgiVVIgYKFCE/+H6Ha71D4jsxqF6ropoilH3sPqWtlgLnyK035mBaB0YHJv79cu0cFQYYk9q0TyopWf2ai+lxBYUVfjSG63K4ulo22Pm/PoTK/O06NKT+ZBT2/KehSQsJ60SSumINDEm1ahWz0giscIXtYI1NpGg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734102612; c=relaxed/simple;
-	bh=pu7CV/W001EZcdH5bxBKbdu6/xFC5CpjJ1xPFnY9AB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b8GcIBaSR2EjlXZ4nUuhuRzcS6CwxYenmWEyc0hFv7H3p1+bzI2Wo8Xr2HsAr8qMkH6Jr76l+6FsnHmaJO6SOnAdYvUeD5abWj835l65t2wh3rxvcpQYRaHtLOZlg8uHnwCaYQfXOF9ErOfeBhSTThkntLZMoH3Ukpx58u8dwa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZH2HMLXh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B49C4CED2;
-	Fri, 13 Dec 2024 15:10:09 +0000 (UTC)
+	s=arc-20240116; t=1734102626; c=relaxed/simple;
+	bh=7rGYYKks2MEAi+q8RZqhrYRZGipLH9Pjib1jzgb/fXk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VQxwzZhC4s0Qm1Jvts0aYTMZR9OcKYC+/5m+/fSXEDLRn/YUjV/dmNB1LQ/gBbmQTk+DOaMmdVVWO+RoSlWwkdpM89dhra6CQzsyCWV9191WkIwuhjnddihRANCOiJmewgI0A9rlhFYKEmuQ9O0cQjNUF+TuOFq62JQ/HLhus1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgg8RGr8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4B1CC4CEDE;
+	Fri, 13 Dec 2024 15:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734102611;
-	bh=pu7CV/W001EZcdH5bxBKbdu6/xFC5CpjJ1xPFnY9AB4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZH2HMLXhf+HaXkVd4g7VWSnt05dxkfUUn6CE7dA1EwwNwzB+7o1duGdBiPY2HHRM7
-	 CBGaC4Nl03QUmtvpXohss4cpoqmS2Vc0RO7+jxY5qetSMDg40U7ni1Flrn8kNJ8Ilo
-	 VxVXjlKmgNODyDYW2e1pYikP0Wu7I7UmfHcjXO6BvC5sx8ZSNncjzl+74W8uFHZI30
-	 kiIappyHpwF9T0dw8QRDra2c8fA9YmotkxmoZf5Y7ZpoqmGSokhNsWFaMF2P9TDHq2
-	 7sMMp2nE8ahRWbLF80Z+wS9zwoLKu/WfoNGLRJnfEJoEqxOHzG/Xa8UkuxwloU7PE1
-	 j8wVejcH2qC1g==
-Message-ID: <ca3f43f8-f96a-4d2b-9273-a4d936fab6a6@kernel.org>
-Date: Fri, 13 Dec 2024 16:10:07 +0100
+	s=k20201202; t=1734102625;
+	bh=7rGYYKks2MEAi+q8RZqhrYRZGipLH9Pjib1jzgb/fXk=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=mgg8RGr8gIjtj61OhTetZkA1d0aGvS4JT7KCZpCYNQDG2jzCy+Ml1Clx3hHlA9Y4G
+	 QCJloxPBQB4s7QSs3XFhkziBrVo5Ffrdgd6pFJ+yJ2zNSgfLXufwVxtcUwL77xoJCj
+	 deverJ7wwOzwL2dHfFG5PVjhNVFLRfCJwH8Edt5TUeJale+JlHUMxgBKvHaflnwH6k
+	 udpURyFhiZyNwh7lWWc9KXK6nTGPVX+q57g72weRLCs/k10h61sdyiKASYwmlv4Y9h
+	 bcNjNa9fZwDzjCZ+oFPobiKbhbplIHAhxhmoaGlNJ1ooQ+NqPjjYZZWazuubNdohWi
+	 wkp3WKBCh+bGQ==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso20763951fa.0;
+        Fri, 13 Dec 2024 07:10:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWzl3UxXsC+EmNlsKu9M7mAszZsOXF4oM224dIGw481/H/iYMqWKx05xokoBPtrkX6gjdoDjlj0@vger.kernel.org, AJvYcCXjzOW1AwLdceHW5A/0rP9WYQvjmzk7nc68H0KQ2es2cA/kQzr9qcxPdA4ihRaBQ5fRYS6mz/MD8qr/3rg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNGx/frohKNuEDukx+qsTEDZyI26R/OY3u6GzWIFRL9i/+lRrN
+	hyZNhDck6v8q7Zb5b8nF4+LHF4f1BjMXdYstLsHO0IRFrRy2rgZh8i+e6tYQ58w7YGcmh9zfmMZ
+	D5CQP9/YbTW3GzLcqxKIg9i3Tofc=
+X-Google-Smtp-Source: AGHT+IGDFvr2zsjfqD8NaCsTVvFuyZlBxurx6y5trjl6JqR98HwSzgFaX+Zrs452OMiQuLpq6Zp9nyogMDd0TgQVXRI=
+X-Received: by 2002:a05:651c:1994:b0:300:3a15:8f19 with SMTP id
+ 38308e7fff4ca-30254611fafmr13669331fa.32.1734102623974; Fri, 13 Dec 2024
+ 07:10:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] [Draft] dt-bindings: arm: rockchip: Add Firefly
- ITX-3588J board
-To: Shimrra Shai <shimrrashai@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <c1b662d8-6470-49f2-a904-139a33061885@kernel.org>
- <20241213150225.3538-1-shimrrashai@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241213150225.3538-1-shimrrashai@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241213141037.3995049-1-maz@kernel.org>
+In-Reply-To: <20241213141037.3995049-1-maz@kernel.org>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Fri, 13 Dec 2024 23:10:11 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67vgoZr_1T579SrwG9UvNs0eRfT37Qk_g2k7Z-mRfEXNg@mail.gmail.com>
+Message-ID: <CAGb2v67vgoZr_1T579SrwG9UvNs0eRfT37Qk_g2k7Z-mRfEXNg@mail.gmail.com>
+Subject: Re: [PATCH] irqchip/gic-v3: Work around insecure GIC integrations
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Mark Kettenis <mark.kettenis@xs4all.nl>, Chen-Yu Tsai <wenst@chromium.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/12/2024 16:02, Shimrra Shai wrote:
-> On 2024-12-13, Krzysztof Kozlowski wrote:
-> 
->> Explain why this is draft, what does it even mean. Do you expect any
->> review or not?
-> 
-> Correct. As I pointed out, not 100% of things work.
-> 
->> Please run scripts/checkpatch.pl and fix reported warnings. Then please
->> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
->> Some warnings can be ignored, especially from --strict run, but the code
->> here looks like it needs a fix. Feel free to get in touch if the warning
->> is not clear.
-> 
-> I did this, but I do not see any warnings beyond
-> 
-> "Prefer a maximum 75 chars per line (possible unwrapped commit
-> description?)"
-> 
-> for the 0th patch, which does not seem to be from the description and
-> 
-> "Missing commit description - Add an appropriate one"
-> 
-> for the others, and
-> 
-> "added, moved or deleted file(s), does MAINTAINERS need updating?"
-> 
-> on the 1st.
-> 
-> There don't seem to be any substantial errors indicated with the code
-> itself. What issues did you find, as you said it "looks like it needs a
+On Fri, Dec 13, 2024 at 10:34=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrot=
+e:
+>
+> It appears that the relatively popular RK3399 SoC has been put together
+> using a large amount of illicit substances, as experiments reveal
+> that its integration of GIC500 exposes the *secure* programming
+> interface to non-secure.
+>
+> This has some pretty bad effects on the way priorities are handled,
+> and results in a dead machine if booting with pseudo-NMI enabled
+> (irqchip.gicv3_pseudo_nmi=3D1) if the kernel contains 18fdb6348c480
+> ("arm64: irqchip/gic-v3: Select priorities at boot time"), which
+> relies on the priorities being programmed using the NS view.
+>
+> Let's restore some sanity by going one step further and disable
+> security altogether in this case. This is not any worse, and
+> puts us in a mode where priorities actually make some sense.
+>
+> Huge thanks to Mark Kettenis who initially identified this issue
+> on OpenBSD, and to Chen-Yu Tsai who reported the problem in
+> Linux.
+>
+> Fixes: 18fdb6348c480 ("arm64: irqchip/gic-v3: Select priorities at boot t=
+ime")
+> Reported-by: Mark Kettenis <mark.kettenis@xs4all.nl>
+> Reported-by: Chen-Yu Tsai <wenst@chromium.org>
 
-""Missing commit description - Add an appropriate one"" is a substantial
-one - clearly we cannot take empty commits.
+Should be
 
-> fix"? Nonetheless I wasn't planning on this one being a final submit
-> anyway, since as I said it was a draft because there were things not
-> working yet. But if there are other problems with it, I need to know what
-> they are esp. given as I said those tools have not indicated more problems
-> than those and they seem to do more with not adding further info to the
-> emails than the code itself, yet you say the actual code needs a fix.
-> 
->> Please use scripts/get_maintainers.pl to get a list of necessary people
->> and lists to CC. It might happen, that command when run on an older
->> kernel, gives you outdated entries. Therefore please be sure you base
->> your patches on recent Linux kernel.
-> 
-> Thanks for all this part. When you say this though:
-> 
->> You missed at least devicetree list (maybe more), so this won't be
->> tested by automated tooling. Performing review on untested code might be
->> a waste of time.
-> 
-> what do you mean by "device tree list"? I was not aware of this part of
+Reported-by: Chen-Yu Tsai <wens@csie.org>
 
-I mean exactly what is written. Use the tools and the tools will do the job.
+(I know it's confusing, I even mix up inboxes at work.)
 
-> the kernel source code. I modeled this submission off of others I've seen
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Cc: stable@vger.kernel.org
 
-This does not work like this. Use the tools, not other people's
-incorrect CC list.
+Tested-by: Chen-Yu Tsai <wens@csie.org>
 
-> here and I have only seen them submit the .dts, Makefile entry, and .yaml
-> entry in rockchip.yaml. I have not seen a "device tree list" different from
-> those. E.g. for this submission for the Orange Pi 5,
-> 
-> https://lore.kernel.org/linux-rockchip/20241111045408.1922-1-honyuenkwun@gmail.com/
-> 
-> those are the only items touched that I can see unless I missed something
+My RK3399 boots normally with pseudo NMI enabled with this patch now.
+Also tried NMI backtraces through sysrq, though I'm not sure that
+always goes through the pseudo NMI path?
 
-Cc list is entirely different... Did you really read my message? I state
-you Cc wrong addresses and you claim that above link has the same as
-yours, which is obviously not correct. So two things - my earlier
-message and above link - are kind of proofs. What else do you need?
-
-I gave you instruction which tools to use, so I do not understand why do
-you insist on not using them.
-
-
-
-Best regards,
-Krzysztof
+> ---
+>  drivers/irqchip/irq-gic-v3.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 34db379d066a5..79d8cc80693c3 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -161,7 +161,22 @@ static bool cpus_have_group0 __ro_after_init;
+>
+>  static void __init gic_prio_init(void)
+>  {
+> -       cpus_have_security_disabled =3D gic_dist_security_disabled();
+> +       bool ds;
+> +
+> +       ds =3D gic_dist_security_disabled();
+> +       if (!ds) {
+> +               u32 val;
+> +
+> +               val =3D readl_relaxed(gic_data.dist_base + GICD_CTLR);
+> +               val |=3D GICD_CTLR_DS;
+> +               writel_relaxed(val, gic_data.dist_base + GICD_CTLR);
+> +
+> +               ds =3D gic_dist_security_disabled();
+> +               if (ds)
+> +                       pr_warn("Broken GIC integration, security disable=
+d");
+> +       }
+> +
+> +       cpus_have_security_disabled =3D ds;
+>         cpus_have_group0 =3D gic_has_group0();
+>
+>         /*
+> --
+> 2.39.2
+>
+>
 
