@@ -1,86 +1,148 @@
-Return-Path: <linux-kernel+bounces-445103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3ADD9F114A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:47:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B82D9F114D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:48:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E56B164341
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:47:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 025241883BC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10651E379C;
-	Fri, 13 Dec 2024 15:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCE71E32B9;
+	Fri, 13 Dec 2024 15:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qW05oXrP"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhfbDoOI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1D32F24;
-	Fri, 13 Dec 2024 15:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4B215383D;
+	Fri, 13 Dec 2024 15:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734104856; cv=none; b=CfJf+x/UKPRdpgmbgwAsob+rwlAyichR+/NQyuVABlxHYR1zL8pQ9gru/7+vG1N22/1kdRbPAgZYtZObfpK2Dz1yeFciXVSsBASdG20Lx5qR6QsYiqlmHkOoyMGdXpBcLyjX0Gtu4An5WFRwTGNONIiBWHpUmroydvErtcez5jM=
+	t=1734104931; cv=none; b=nri2Z7d+sBnSU3FSChvy39E8jyhLGi01fRaXYT/UWW8uPPl9XJXrWJXNrpld5cuOwWgkQMgTayjfz68djqICiJxM2mXurQ3Zi66fp9B8x/0MG5zPcd2wESHQquYUs69hL7I3a8pBqq0iWt645ZwacYJTHQbe3bHFYJ+8Ggcq7qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734104856; c=relaxed/simple;
-	bh=6AU0Zu+j6lv5AWqSiZZfR6LsWkv1Sx+N4RSy8n0eNJo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NqBgzQnJTrCsLIpu3n0/wvcV0RxPGPfC+ewk8TZtuzAJr/sYVTRAPRuxBSW/3Hnfo00erbPmVd+79AsHxVPa3Y3PkVgl2bWI0/XPP+T+dsbEQmptH4Vc7wlm4S9SFpDks6KsqdhOd40bu6zP1O2XJGGI3CU1v+Gx0gObZoD3kmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qW05oXrP; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E7FDF403FA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1734104854; bh=ROXOtd9jlx1s9lnUPcYMykHOvSU6CO3Ce2o1MCZInzU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=qW05oXrPfr4MHyggksWiC5+0x6hSTh7F4hh+wnhCasjJHT7uX1zoy8vGMKlHO6rwX
-	 ZSiv+7hASz//0wsmuVfYNRMxUv3noTROUNoa2WN3QBN0OkTS7xuO0XYnuqqLSuVOzc
-	 KByqKt48wXhBVUfA+i3GH2So/v2OQTwhH3qWLCpMAMQ4MOrYy168tE01dic+dxhn00
-	 ZTYmNQ1+X1JszxC9Je2FqN5jSzzAs7Mw7zcnpIUWglZpNwgDSfFicky9BuX4J3FCwn
-	 3S7Fn3ZyIchxnM4glVi6t3gzu4c95KEFEM6xBFEiP2oMDfkQn//7HvwqF1bAqkKw+y
-	 lazFcxCLKAJPg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id E7FDF403FA;
-	Fri, 13 Dec 2024 15:47:33 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bingwu Zhang <xtex@envs.net>, Miklos Szeredi <miklos@szeredi.hu>,
- "Darrick J. Wong" <djwong@kernel.org>
-Cc: Bingwu Zhang <xtex@aosc.io>, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
- ~xtex/staging@lists.sr.ht
-Subject: Re: [PATCH] Documentation: filesystems: fix two misspells
-In-Reply-To: <20241208035447.162465-2-xtex@envs.net>
-References: <20241208035447.162465-2-xtex@envs.net>
-Date: Fri, 13 Dec 2024 08:47:33 -0700
-Message-ID: <87zfkzwpnu.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1734104931; c=relaxed/simple;
+	bh=25i8EZcrX5qs0YdzRRCBIcKVUXh7ElyhWyKn7kQgg3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DxZ7TaoZRSiACB4G9aOKU3PXKCGlqECU4s7SV1ZczA3yeFTk2HVmT9ACCBIpj6qgT4Kjr1UhhVv7HnvxPnbOiolTA04iJLk2d8ctYkZ9Kxl0K9egXI46LSSTsR7OuU+2pez1X9p1iJT7uNgRg6dD1kusVQNZcWFbkWgE1FsT4lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhfbDoOI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BB43C4CED0;
+	Fri, 13 Dec 2024 15:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734104931;
+	bh=25i8EZcrX5qs0YdzRRCBIcKVUXh7ElyhWyKn7kQgg3g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZhfbDoOIU4ZoJhX/zmDWHnMotJNG0HlvVTDXjJiDqY8f0PEDi7peUG5yeRDw4t6/5
+	 upQFtmBsGkR64WkI19lDp5xNXDs3S0JMMEuyM1PsBPcpGBB4eRPrcyJtlZd/tEBYEO
+	 yXzskWOeTfUrbzyi8Ypxnb+0CpTLn0p0cgPdF2htwapuUOA32CrF6WTDd9Bs3wbUqM
+	 X1XAB7eNI32RV/2M/0OR7SlGYfUMQ+KoyatDWnMXd8481zrAZuC3Q0uRZq24RwJnmi
+	 WVfJ8HqGulHVP9zJRnCSS9OSVYpiQjuz3SGuLOy6ZVlgKcgQacR40npTzJWN6KrQVV
+	 1T75vxmx0IQxw==
+Message-ID: <45b55b4b-25e4-4e8b-8c95-8c3129e72227@kernel.org>
+Date: Fri, 13 Dec 2024 16:48:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/8] ARM: dts: aspeed: system1: Add IPMB device
+To: Ninad Palsule <ninad@linux.ibm.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+ devicetree@vger.kernel.org, eajames@linux.ibm.com,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Cc: NINAD PALSULE <ninadpalsule@us.ibm.com>
+References: <20241213145037.3784931-1-ninad@linux.ibm.com>
+ <20241213145037.3784931-2-ninad@linux.ibm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241213145037.3784931-2-ninad@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Bingwu Zhang <xtex@envs.net> writes:
-
-> From: Bingwu Zhang <xtex@aosc.io>
->
-> This fixes two small misspells in the filesystems documentation.
->
-> Signed-off-by: Bingwu Zhang <xtex@aosc.io>
+On 13/12/2024 15:50, Ninad Palsule wrote:
+> From: NINAD PALSULE <ninadpalsule@us.ibm.com>
+> 
+> Add IPMB device sitting behind PCH module
+> 
+> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
 > ---
-> I found these typos when learning about OverlayFS recently.
-> ---
->  Documentation/filesystems/iomap/operations.rst | 2 +-
->  Documentation/filesystems/overlayfs.rst        | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+> index 8f77bc9e860c..51a116d7041a 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+> @@ -763,6 +763,16 @@ i2c3mux0chn7: i2c@7 {
+>  
+>  &i2c4 {
+>  	status = "okay";
+> +	multi-master;
+> +	bus-frequency = <1000000>;
+> +
+> +	//Set bmc' slave address;
 
-Applied, thanks.  Welcome to the kernel community!
+Is this relevant/useful comment? Why is it even here?
 
-jon
+> +	bmc_slave@10 {
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+Also: use DTS coding style (there are no underscores in node names) and
+use preferred naming scheme (see general kernel coding style / naming).
+
+
+
+Best regards,
+Krzysztof
 
