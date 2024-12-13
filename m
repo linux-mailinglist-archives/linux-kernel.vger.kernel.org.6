@@ -1,189 +1,104 @@
-Return-Path: <linux-kernel+bounces-445285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5AE9F13DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:38:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D43919F140F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:41:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7967228226A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 437B3188A665
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856B51E5708;
-	Fri, 13 Dec 2024 17:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A78C17B505;
+	Fri, 13 Dec 2024 17:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="EOB/VNal"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="BEur1q54"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D904517B505;
-	Fri, 13 Dec 2024 17:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFFC1E5701
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734111503; cv=none; b=EBJ/qSgGy0ZYCpaainMt8DANWI027DVaZsKDyaJGffNU3QuYJOT3zrHlRIpKZKv527aQU/SWL1s3movyfRv7FJ2IvcvtZytpP7JbB6XWvk2JbAUF9BZ6lvYOiyIjBq0nelwBFwJFa04R628FERyTD5CNS1XYROzkJxAWlYLeNUA=
+	t=1734111664; cv=none; b=OEprxpMRoYC8HfSAJiYGMqjhPt6pCy+pIF0rw7hLsglVtMvzrOCOvLLCqJT+fBtrxytcQ5RgYWflS3Un6uOGG62jj1hX8xVP1iPmSHGvPQtnCIBv9bqYtYMIQd1tm+GGVvh1/l8c+jnJAEpvxFWgHGD1FyJ1It7JLDToU7Gt8EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734111503; c=relaxed/simple;
-	bh=mPbgWOcMGYlFCPvbpDL+TlJdKHPaIYsXuCeD6gLUKgw=;
-	h=Subject:Date:From:To:CC:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bj93e6qwknfHQ43sEZdyqq92JNB00p5vEXovkhVecGIKZwxtYVsLvVNNgGCTX0xj8ZKHZsxvlc2j8FJ6r0XGzAH73fjRSz+7/ub6azpuhOotlabBlaecOtClJr+OwrJKH24NeiO+mQBuG1Fh1ZfSadQBt4fxk8Q0tVlYkhVuPt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=EOB/VNal; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1734111664; c=relaxed/simple;
+	bh=mS5remZZ47Xsdl54gElc1+pdGXZZqNxO4fVKAY0Gq88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bWxerrysRIOadyf7lS/k+Z+MDGov0r0kg0OKLvVv3soAVK1pRuPTPtqeMHV2z8Yfo4jSNLaOjxaF8h+gu9PCLBoprZrtMZXO7+x8l8up/K6MY3rrEtAjDbTICPmH0Vrdv7FZlLKc6fBCjouMAWoF7SNCjr1nkPTM1O9OCKua38Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=BEur1q54; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a7d7c1b190so7061485ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:41:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1734111503; x=1765647503;
-  h=date:from:to:cc:message-id:references:mime-version:
-   in-reply-to:subject;
-  bh=9REjgkF9b+T7p8wApCqWiWDX78cu++CuxonPuil9yEk=;
-  b=EOB/VNal83o+FkZBCxzJdDMS7iwcxTllNG784hLD2iXdmuxJeUamZaQO
-   MTj6S8A+AOxqGbQhQHtLLLDkt8Pe//3QQgWNLtuGXPv3jTEZsTyYO/8b8
-   ZCycFnePzSG1aKTVVKNLJAttaEwYJd4bp3mCvlCepFGcK4PuHSqAyRg9M
-   I=;
-X-IronPort-AV: E=Sophos;i="6.12,231,1728950400"; 
-   d="scan'208";a="455875939"
-Subject: Re: [PATCH v2 3/6] KVM: VMX: Handle vectoring error in
- check_emulate_instruction
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 17:38:20 +0000
-Received: from EX19MTAUEC001.ant.amazon.com [10.0.44.209:63734]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.24.38:2525] with esmtp (Farcaster)
- id efb3ffaa-b66f-42a9-8f38-cda355b95b6d; Fri, 13 Dec 2024 17:38:18 +0000 (UTC)
-X-Farcaster-Flow-ID: efb3ffaa-b66f-42a9-8f38-cda355b95b6d
-Received: from EX19D008UEA004.ant.amazon.com (10.252.134.191) by
- EX19MTAUEC001.ant.amazon.com (10.252.135.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Fri, 13 Dec 2024 17:38:17 +0000
-Received: from EX19MTAUEB002.ant.amazon.com (10.252.135.47) by
- EX19D008UEA004.ant.amazon.com (10.252.134.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Fri, 13 Dec 2024 17:38:17 +0000
-Received: from email-imr-corp-prod-pdx-all-2c-c4413280.us-west-2.amazon.com
- (10.43.8.2) by mail-relay.amazon.com (10.252.135.97) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.39 via Frontend Transport; Fri, 13 Dec 2024 17:38:17 +0000
-Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
-	by email-imr-corp-prod-pdx-all-2c-c4413280.us-west-2.amazon.com (Postfix) with ESMTP id C22B8A0005;
-	Fri, 13 Dec 2024 17:38:16 +0000 (UTC)
-Received: by dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (Postfix, from userid 29210185)
-	id 570D64E3D; Fri, 13 Dec 2024 17:38:16 +0000 (UTC)
-Date: Fri, 13 Dec 2024 17:38:16 +0000
-From: Ivan Orlov <iorlov@amazon.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Ivan Orlov <ivan.orlov0322@gmail.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <pbonzini@redhat.com>,
-	<shuah@kernel.org>, <tglx@linutronix.de>, <hpa@zytor.com>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <x86@kernel.org>, <pdurrant@amazon.co.uk>,
-	<dwmw@amazon.co.uk>
-Message-ID: <20241213173816.GA7768@dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com>
-References: <20241111102749.82761-1-iorlov@amazon.com>
- <20241111102749.82761-4-iorlov@amazon.com>
- <Z1nWykQ3e4D5e2C-@google.com>
- <2b75550c-0dc7-4bcc-ac60-9ad4402c17f8@gmail.com>
- <Z1o1013dUex8w9hK@google.com>
- <20241212164137.GA71156@dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com>
- <Z1s8rWBrDhQaUHuw@google.com>
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734111660; x=1734716460; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nfoQCPAYwIf25kFxsXANckD/Z6DcaeKiLRaR2xCd30Y=;
+        b=BEur1q54cUU1UPEgVdNz0FHe+UksJRVqsNn29mxIhZJTd1fbJEJrI0c3ClE2rcXtiA
+         I70vB3dy3VbqERlwM1a6ugpvXpAYXjsJyG31weJxWUYfO3ilZbCGUAJxZetxgLnNTZO4
+         HkSpHV+/E8wmbZWaGRvQxtNUsmFwltSbBVfTvD4qSOLPh2aCUJNsk8Gime/DDwAN+iAQ
+         8Hgir955iAmkIwjWcGdUQdhM8gmOihC4XoaMbQh+xbTsYoyxR+1dt2ywuRlVb0hArgcb
+         bS1/WyGj/eATTFN7d+kB9q4dix0k+MmakIuHqqXYUBxT5Yqs+2NdDrjOqczL4OMX9u0I
+         BiiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734111660; x=1734716460;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nfoQCPAYwIf25kFxsXANckD/Z6DcaeKiLRaR2xCd30Y=;
+        b=Ii49AO+7RyonRoNyNKKCQzyeBAGLZSbvbZX7Uqcj9/40rTgAVrAzegipN3gZCDSyQW
+         nqWUxnZKkG5iDwGbyYuUNnIcgxGbppGg0svqvPTXsYb3f2gpyzu1Evnil8N1OfcYW/dK
+         YKarkiVJCXyUWz7bbQOD9KVqZVKvg+MHmTmB1T3eYhYvSG5AwMo+iYFfeysvH6YGN5lg
+         7lxGT7o+wZgplvdt8eSqjsGo0xBu9nkf1E3cT7N/gU7YhFbXq4WERYKdBG2kuWj7T9rO
+         nYDz7doYTQuhA4nriCfi2RaRQfNYkjv4D+tTfjavWieN4pGI40K5RfnQVygg1/2hShHl
+         7zpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmil9/awmzz0Lg4eZCC7J+fulmTnP8iVjTgM7qIJ59Jkyc35wSXj9+ASToFXFYP6FK8uI5kjWYfOQgL4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFSWhdp58bVS9VTLFIwrXGA22oGSDzbRun2u32E11oBmYhr+Tb
+	1Y+LLwrgAS/jcSgcFQYydL80c8KfZW2cYf30bOANLG7Eq8zZWp5Gl5FITKEke3w=
+X-Gm-Gg: ASbGncuyjIdzur99PumbK1X3MxCGyjg4bSDRe+rLle78+Zwg/KMYt0viQ4AwwaLFrm9
+	ienk230u6BFI/XsIW1OJ1yIDqSjkyUTU0CHPFHn6IKFQg80ZDCA0UB0zvzaaKwOBGF/8Bb0qOmF
+	+LV5reC25j2BGBxZ7kmR/6lmvBprp7VjtD4NiPdMTNXsyRKXScSep1ER0AaqY5N8Z/R55PVSS1Z
+	dgMf53Xvs4DyEdU4Y/hv95RRdHBxsSHDsCuGGDP/XmxJiDGF98T
+X-Google-Smtp-Source: AGHT+IFMakr8bU6f3YZSO/+eHvp/KKhselD2XlkHsnfbAosDkYcEJnpYHg/228UJMmGvVKljs/oVHg==
+X-Received: by 2002:a05:6e02:12e8:b0:3a7:e592:55ee with SMTP id e9e14a558f8ab-3aff8b9d0admr46064905ab.20.1734111660696;
+        Fri, 13 Dec 2024 09:41:00 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3b2425c4b3dsm262605ab.0.2024.12.13.09.40.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 09:40:59 -0800 (PST)
+Message-ID: <ca3b85d6-ddbf-48b9-bdf5-7962ef3b46ed@kernel.dk>
+Date: Fri, 13 Dec 2024 10:40:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z1s8rWBrDhQaUHuw@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: WARNING in get_pat_info
+To: chase xd <sl1589472800@gmail.com>, Pavel Begunkov
+ <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <CADZouDQpNvEd7ntUgOAQpU18PErENx2NsMMm05SXXODik6Vmtw@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CADZouDQpNvEd7ntUgOAQpU18PErENx2NsMMm05SXXODik6Vmtw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 11:42:37AM -0800, Sean Christopherson wrote:
-> Gah, I got my enums mixed up.  I conflated RET_PF_WRITE_PROTECTED with
-> EMULTYPE_WRITE_PF_TO_SP.  Ignore the above.
-> 
-> FWIW, KVM _can't_ unprotect and retry in the EMULTYPE_WRITE_PF_TO_SP case.  From
-> kvm_unprotect_and_retry_on_failure():
-> 
+On 12/13/24 10:35 AM, chase xd wrote:
+> Hi, when I tested io-uring on lts 5.15 I found this bug, do you think
+> this is a bug from io-uring or mm subsystem?
 
-Ah alright, I guess I get it now :) So, EMULTYPE_ALLOW_RETRY_PF is set
-whenever there is a PF when accessing write-protected page, and
-EMULTYPE_WRITE_PF_TO_SP is set when this access touches SPTE used to
-translate the write itself. If both are set, we can't unprotect and
-retry, and the latter can be set only if the former is set.
+See this discussion:
 
-> Unprotect and re-execute is fine, what I'm worried about is *successfully*
-> emulating the instruction.  E.g.
-> 
->   1. CPU executes instruction X and hits a #GP.
->   2. While vectoring the #GP, a shadow #PF is taken.
->   3. On VM-Exit, KVM re-injects the #GP (see __vmx_complete_interrupts()).
->   4. KVM emulates because of the write-protected page.
->   5. KVM "successfully" emulates and also detects the #GP
->   6. KVM synthesizes a #GP, and because the vCPU already has injected #GP,
->      incorrectly escalates to a #DF.
-> 
-> The above is a bit contrived, but I think it could happen if the guest reused a
-> page that _was_ a page table, for a vCPU's kernel stack.
-> 
+https://lore.kernel.org/io-uring/f02a96a2-9f3a-4bed-90a5-b3309eb91d94@intel.com/
 
-Does it work like that only for contributory exceptions / page faults?
-In case if it's not #GP but (for instance) #UD, (as far as I understand)
-KVM will queue only one of them without causing #DF so it's gonna be
-valid?
+-- 
+Jens Axboe
 
-> > However, I'm not sure what happens if vectoring is caused by external
-> > interrupt: if we unprotect the page and re-execute the instruction,
-> > will IRQ be delivered nonetheless, or it will be lost as irq is
-> > already in ISR? Do we need to re-inject it in such a case?
-> 
-> In all cases, the event that was being vectored is re-injected.  Restarting from
-> scratch would be a bug.  E.g. if the cause of initial exception was "fixed", say
-> because the initial exception was #BP, and the guest finished patching out the INT3,
-> then restarting would execute the _new_ instruction, and the INT3 would be lost.
-> 
-
-Cool, that is what I was concerned about, glad that it is already
-implemented :)
-
-> 
-> As far as unprotect+retry being viable, I think we're on the same page.  What I'm
-> getting at is that I think KVM should never allow emulating on #PF when the #PF
-> occurred while vectoring.  E.g. this:
-> 
->   static inline bool kvm_can_emulate_event_vectoring(int emul_type)
->   {
->         return !(emul_type & EMULTYPE_PF);
->   }
-> 
-
-Yeah, I agree. I'll post a V3 with suggested fixes (after running all of the
-selftests to be sure that it doesn't break anything).
-
-> and then I believe this?  Where this diff can be a separate prep patch (though I'm
-> pretty sure it's technically pointless without the vectoring angle, because shadow
-> #PF can't coincide with any of the failure paths for kvm_check_emulate_insn()).
-> 
-
-Looks good. If you don't mind, I could add this patch to the series with `Suggested-by`
-tag since it's neccessary to allow unprotect+retry in case of shadow #PF during
-vectoring.
-
---
-Kind regards,
-Ivan Orlov
-
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 07c6f1d5323d..63361b2da450 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9107,6 +9107,10 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->                 if (r == X86EMUL_RETRY_INSTR || r == X86EMUL_PROPAGATE_FAULT)
->                         return 1;
-> 
-> +               if (kvm_unprotect_and_retry_on_failure(vcpu, cr2_or_gpa,
-> +                                                      emulation_type))
-> +                       return 1;
-> +
->                 if (r == X86EMUL_UNHANDLEABLE_VECTORING_IO) {
->                         kvm_prepare_event_vectoring_exit(vcpu, cr2_or_gpa);
->                         return 0;
-> 
 
