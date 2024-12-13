@@ -1,112 +1,122 @@
-Return-Path: <linux-kernel+bounces-444145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2908F9F01EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:18:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A989F01F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:19:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0200B18874E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFFB516B486
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4CD17C60;
-	Fri, 13 Dec 2024 01:18:14 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0F318027;
+	Fri, 13 Dec 2024 01:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="D4z+SeKC"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5521510F7;
-	Fri, 13 Dec 2024 01:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F49C28F4;
+	Fri, 13 Dec 2024 01:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734052693; cv=none; b=bZrLPM4TM0NFHzNO6rRPdCsHiKXcz/wKELjOBYjdhYF3SVoGgu4LY0o0WhbYouyWayJmSMiVYQCUMemsbF9Uomh9HxZ7DyAGYUmM5xXyKFukfSe2T3dfqy8LYRqZgTE39EHglfo/dlF78ZlRxiy+b2xEVqZvzPVdge9LLViPpKQ=
+	t=1734052739; cv=none; b=LpT5r2fB9bHHJ/5QeoRZCSgKZ/TPop3jYAow7bFuNeqv/JzStfOzfulSsmBmVUDtkuoCUQ0y4Hr4/mgmRSea7pHKLv/URXEcWYdf1nKsjzpI2Xx+3hbVs7m/xBdaNO1dyPIR8w4baZ0RCnkitM5Xq1/4YU2vpE8vbPI9E2qFgnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734052693; c=relaxed/simple;
-	bh=gTE1N93sFqKn2I3sZ6f2P2R4bz+rKmvD57/AzoSgZoY=;
+	s=arc-20240116; t=1734052739; c=relaxed/simple;
+	bh=JVK5FMSjTCy5oRqZLMw+jAYr1ftFHTaBjudtWgLX1FM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KrIRazL2PMwtAdzWsbh0BS9aytrsust2JQjSNwh9AZLtRMvq1Z4qAjRQ14VO1zQ4C7ARFje5I6jaNQp9E8oGe3IJcWvXa4uZTMsXz8b2860RnjZFqjuDHa6+Ge4hFmpFsRB8/cm3x+djueHM+LQjUGKmklVoNj2oki8jt47LLtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y8Wfh4PJ4z4f3jq4;
-	Fri, 13 Dec 2024 09:17:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id E62C01A058E;
-	Fri, 13 Dec 2024 09:18:02 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP1 (Coremail) with SMTP id cCh0CgBXTK5Ji1tnIfpREQ--.28484S2;
-	Fri, 13 Dec 2024 09:18:02 +0800 (CST)
-Message-ID: <24568f8a-f31d-4349-8641-b4c1450ce93c@huaweicloud.com>
-Date: Fri, 13 Dec 2024 09:18:01 +0800
+	 In-Reply-To:Content-Type; b=nV7v38qf0nycnMtyX0l+1rmnfSYJn6lHoor5i8BryZENcXgCZQS+yjZaWElDrk4I+KYS564fFDUA/Ddsc1JsocB83jJt9dzmtxlF27HqOSxezZh/7WRt8k91wXoBysnnTwaH2sZsiQ66uX4VcnxILtQADQn+FM7GD82WSVddr18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=D4z+SeKC; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-432d86a3085so8402125e9.2;
+        Thu, 12 Dec 2024 17:18:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1734052736; x=1734657536; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i7VRpAcuLb7JLTjhyIVTFHhqJQdgp/x8OBWtVl0xAi8=;
+        b=D4z+SeKCrWZea/91Vun80tOwRFmNq0TEl0lDct3C4qOjvAS0VAXNBkjl2m6Tmnryww
+         uicwmn2PXumFvbVsaEfshD7G0zebxpIt8m2Rv83B30s6fzjGfvEBTqziLa1uBdbgHrEo
+         QKyK6DsDVFDG/9Im9r+8+s1+D3d+NPdiv3Ef2xxR3hZgspkC0c/Gvdls7qzMbYByO8+D
+         KFkJhabG7J9R7gWSntC54by3uZOdKC/r1u8SSA1reUkqNoZe7GZ6pEpnNnmuhuVoqkUR
+         ksecdSaHO2wApcTar3zf4hDB5lbvzpjVMyb+53nJTtqSJP1fzo+MlqyreNoZi9Cx8SeT
+         qCJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734052736; x=1734657536;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i7VRpAcuLb7JLTjhyIVTFHhqJQdgp/x8OBWtVl0xAi8=;
+        b=fKJoem8IIp8cATblP5VBlQJInfS0PWhJ+j621J+ZQSD4tf80hoWeTr9SwnuQkhJb5O
+         Nv3jVe3Fzi65mHq75xO8kVuo2QqvUZ59sqkqiofYRJUyUId+pBTguW6CxrVhfY/UioIc
+         r/KiqWqptEVoX+ApwE7hDgUIqTs9IbHUEHaj7H8OCH6J9EcWcKv7GztIfVUXeV6QY6I8
+         MdQ4ldlcagkOaxE5LkIZcm6PKl77Xdrt98HRqbvneMnQWlOpcrIlf9U78vS83araLisp
+         nEVsVAwMlEHaqxiWMWKb7vWRaAdrirAle+jsuKkcA0M9oD4eKiVdPgXTXPa/5pApmE7P
+         eMCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUM6klrwAMPbu/80xwhLWNYqNZHpSVSGkzHX9lfp/eP7bkaaLFycGv+4K7Wkirdg2IWKEXXNJOmr+0YLcc=@vger.kernel.org, AJvYcCXDUCcDx0VKpoeA9HqqnHy9DLIdNmRXaZ+zh3jvTb5zRP7MIqi2xa6GaCXNTOpy1VqUgr8XhyRK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiJ4fiKP6h8pz824Najb7Pi5tYUF710aUSIhN2q1zewjRVwnnL
+	ODZ2779kpKHI4+1bPiAOGqPYmRVfaWFdjRinuBjXfPPdZYRQs2g=
+X-Gm-Gg: ASbGnct38KpeSnAI7QrfF8TBkKNr2Y+qaecU5aqUaKChtamSF1mxsBUckU/2zHm02Mo
+	OGiU+IbDsDD5OZWmF6WKnFSNOXfxzDXqCsmhQy4y84gfQ2w58tzC7ErdiFDlK1xtfifpK9cahXw
+	z0TEBTGTxymEV2WwlzJCbEOKm0H8WiyRI6n3JPIRGb8e9tfFKVjB86CrD2Z7ApDntkpPbO6TmL9
+	XsZDfxGZfhQ2NWqO6mfzvVGkNJ30yFeCOlujviDmOf7wiuvq4FrHKm2kTa8y4OJG6Zm8XIaxPbS
+	z3aTlg2fNTa/wX7X+J8hYCfdiZPnygoQ
+X-Google-Smtp-Source: AGHT+IENeznE6CJTR2fLBNOy6RH6tHtIphE3osuf7i44j/5yafZFKJ3qKvbBIkmyV2dxqEdNJUT1Cg==
+X-Received: by 2002:a05:6000:184f:b0:385:ef97:78c with SMTP id ffacd0b85a97d-38880abfce5mr369370f8f.6.1734052735590;
+        Thu, 12 Dec 2024 17:18:55 -0800 (PST)
+Received: from [192.168.1.3] (p5b057a27.dip0.t-ipconnect.de. [91.5.122.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514e54sm5580671f8f.85.2024.12.12.17.18.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 17:18:53 -0800 (PST)
+Message-ID: <399251c5-7e6c-4e9b-9203-a417074cd04e@googlemail.com>
+Date: Fri, 13 Dec 2024 02:18:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] freezer, sched: report the frozen task stat as 'D'
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, peterz@infradead.org,
- Valentin Schneider <vschneid@redhat.com>, mingo@redhat.com,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- linux-kernel@vger.kernel.org, wangweiyang2@huawei.com,
- cgroups@vger.kernel.org
-References: <20241111135431.1813729-1-chenridong@huaweicloud.com>
- <xhsmhv7wrb3sc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <4f78d752-52ab-493d-8bf5-f12dc4f554c8@huaweicloud.com>
- <ZzYo19k9ZvkC7V-1@slm.duckdns.org>
- <2f755161-ec7e-4785-b0ca-ea68c01785a2@huaweicloud.com>
- <ZzajsLHrXXtYk04l@slm.duckdns.org>
- <3b03520e-775d-416a-91b1-1d78f3e91b1d@huaweicloud.com>
- <c56b2347-7475-4190-85a5-a38954ae9c08@huaweicloud.com>
- <j5kjjy5ibp2yw4zhaxc7jm5bw65we4oifhawlljvtjzdox5ck2@kdgpgawwr7kf>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <j5kjjy5ibp2yw4zhaxc7jm5bw65we4oifhawlljvtjzdox5ck2@kdgpgawwr7kf>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 000/466] 6.12.5-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241212144306.641051666@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20241212144306.641051666@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBXTK5Ji1tnIfpREQ--.28484S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUtVW8ZwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+
+Am 12.12.2024 um 15:52 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.5 release.
+> There are 466 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
+
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
 
+Beste Grüße,
+Peter Schneider
 
-On 2024/12/12 0:02, Michal Koutný wrote:
-> Hi.
-> 
-> On Wed, Dec 04, 2024 at 09:52:15AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
->> Does anyone have any opinions?
-> 
-> When an 'R' task is frozen (v1) and it's shown as (unchanged) 'R' it's
-> acceptable.
-> When an 'S' task is equally frozen and its apparent state switches to
-> 'R', I agree it's confusing.
-> 
-> Showing 'D' state in any case of a frozen task (like before that rework)
-> makes sense too. Please add Fixes: if you need to restore this behavior.
-> 
-> HTH,
-> Michal
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-Thank you, Michal. I will update.
-
-Thanks,
-Ridong
-
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
