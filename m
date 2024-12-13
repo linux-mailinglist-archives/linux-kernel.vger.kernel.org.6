@@ -1,312 +1,228 @@
-Return-Path: <linux-kernel+bounces-444283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 183DB9F0411
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:16:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04E7E9F0415
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:17:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 254D116A114
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:16:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CF28283DA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5732E18859A;
-	Fri, 13 Dec 2024 05:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387F61885A1;
+	Fri, 13 Dec 2024 05:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkhxM+gA"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S/0nabj/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FE2187555;
-	Fri, 13 Dec 2024 05:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734066999; cv=none; b=ZkRoKoTEByeUjvFBpdkvv5a+sOWBheZWN8bXmjWIDUTC3os/l+WqL/qJ4Ok+wK1h4noZkr1cK6Rj0m9H9hPFlasohzpMLZQ9h58oAvoW5D/MduIqdDkUWBsTGf/ukfzl3ctGsBRhvUBKTnLCCmgt+opvxuW1Basy6NQZqRc4Xug=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734066999; c=relaxed/simple;
-	bh=1rsc7fW/DcL37vNJsBlJAPYnU57zvw2XgJMTITFpGz0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WuiDA0wyYCfdJSwUL0yjAoLrlb16ADrp2FkxhAz3LCh8i4mKIJoG/4PafufwNWqlrVgdVl0ajQtsEWQMSOwNIjM2W1+JfiYj9GtwLnU4mrXtH7btmEggfm/lLepePBoDg0nIadctmA5ziKpQFcbMuP9yDy423O/PpYbG0voTphk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkhxM+gA; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-725eff44ba5so99873b3a.2;
-        Thu, 12 Dec 2024 21:16:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734066997; x=1734671797; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H86v53hVC/MSheWi92plk7akkZTe1OQ4u5ChEyoup1E=;
-        b=DkhxM+gAbSZPNCIRxEOPn4tYjvOSJuZhQmoLqAEnU0MsQhoW9meYG++n+Ltov6QliM
-         gqAmEZUrjYpBK7OsY17yeo14DvWjAi341m+QBx8Pqye3/lgO+mj0l5xPNSFBXgZKrJsX
-         hEwXUIbH7fdUYQzlaqH+7Zso9v27ukPTkrGrRm/U+p8sLUMOCi+Bh0nPGSZR/NUG88YC
-         /SO3B9hpMYunCP+du2kSTDntUzzPGIQB47xjMFX3FREOFHLXorOpJLsUTjUHEXnyWvdM
-         8NDGi4Can1/rysm8dAj2PkQwFal+Q6AkUFw5OE+2AMBeqoVMdRg8DASXZY5+sbik4eNN
-         2A0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734066997; x=1734671797;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H86v53hVC/MSheWi92plk7akkZTe1OQ4u5ChEyoup1E=;
-        b=Cje/q5CzFSq9h1dqVC8x6mMOR+8M+Vlxh8skFTO8cr6q9pLoa1/TI3eWRUf8BlPU1Z
-         HA7Ic1/+3WdpE8rHQon0CTo/6IpdsrIa8xoOHTZ9xBDsn4MKIcXDoVJwBOHE+Tm+3FSi
-         GT47zjY0ACH9Ie7VkAst513Kchjx3EhyOlHJmO2sMgBh4nBdshgIr02WiwrPwjilmHUU
-         NN803r6Mf/Efmenxg2YTwrgpqtWFeN1KFdroQFtNCrckXNenrewOBQ45dzoQjjG91wcU
-         IyuUa07UxBOoSHZ19k0X7Shi/AcjvynpsPUDyCkRps/8AEEZhaU4Xxavxh7S9zvQmlvV
-         eHWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSVhmTYEhXjENSQBgeMbQszwZvIUbW0B0d9BBUSC2tsr0NUk6BdKuTjXQnFvkrR3+QLKgCrpeShFOG@vger.kernel.org, AJvYcCWnYJVyupASGCCrL0dS0eB9lVqY+tq+p8hJcepXaj7oKd8NbQKd0Gfd+7Bv5ZyG8zbzXZqrRAtc7cU4@vger.kernel.org, AJvYcCXaBnObo5YHUiH63JIxEh/F+WjnPDLDUUQ2BIjQvVxlGRQDFaSYx0ziUgQlrxxGC7XzxPUNKcWHVCRdMjoP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqznQBAwXs7LniAUajYPOo2GZtHMXkE/xpeoon45pLmnsgKBuy
-	SyrayJtDfMTqLGdFNQjRBASEDbp/fNCmpr9oXUOkhwAOH3Us9w/Y
-X-Gm-Gg: ASbGncuZDvSBcnElwX56uCR+r5YS1b99EqvwXZyhbUk0935JL2sKf/eoBOBp4RcZTrG
-	I9m+GoIozriLf+sF7udmc9wdEeZIXGcb+1K5NBpayYh9KTfbCMoF2YCMRr637n3o/RnP8BK2hQs
-	RphcWfRzX9zI2WphlLzXwqC7JYKWhYxGE+rGhquFSAIgpSmlr6Pq9THvDC+qko/qjUK36mBzeJ3
-	jLZEnfbknlOuBnixgA/Xu18NuiJz+Ms5kblUby1rMctJkK6MRlaUvsP1DoEXPe8ak3d+A1dflSH
-	y7MBlrdd0A==
-X-Google-Smtp-Source: AGHT+IEbiRXrfJYyiA8RFucB09CjaqfhTKCHdvMMODzj+3i/Tzn/2xdpcIPwvQWXg+SGjDM5seiq9w==
-X-Received: by 2002:a05:6a00:3e29:b0:725:1257:bbc with SMTP id d2e1a72fcca58-7290c2a2693mr743260b3a.7.1734066996901;
-        Thu, 12 Dec 2024 21:16:36 -0800 (PST)
-Received: from localhost.localdomain (p67.ucndns.in. [103.187.249.67])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-725eeed027csm7982326b3a.131.2024.12.12.21.16.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 21:16:36 -0800 (PST)
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-To: 
-Cc: Kanak Shilledar <kanakshilledar@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Carvalho Chehab <mchehab@kernel.org>,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: usb: dwc3-st: convert to dt schema
-Date: Fri, 13 Dec 2024 10:45:55 +0530
-Message-Id: <20241213051559.6066-1-kanakshilledar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E10A187858;
+	Fri, 13 Dec 2024 05:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734067055; cv=fail; b=WbJcZo1wF6DCS7RjfVbQsdynTLEl/GzhDJTYaO8V3gkCD4Ef6Kiv0M0QahrW+fsmxsL4lRq9HhYdiwle/9ZfM94jKGl00RcBg+EtHrlbUOJuimxMbWWSgNQiLz6hc4QRfFubggXoo50ZmMuRfmNpfWoB2LSBYp0CbtKyVd/Pv3w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734067055; c=relaxed/simple;
+	bh=y6Ww21c1K5bfUAISaqRWf/Ui54WMu16lPDYqNMyu9/8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tCZf1B1yJsCGRyQFs2NlkAmjdNU5sQePw+8mWqheov1yqSA06Dfm+F0o8D/K7nKloqGvaux4TbXrHIP2gCYY1dVhBN9vf791XrFTNMhFGJnc/tggx2BEEz2+/30/PcDICKuN/JM/lBTZKTue3XjFQrmHyD3dnAa1OzhSySbAHMg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S/0nabj/; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734067053; x=1765603053;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=y6Ww21c1K5bfUAISaqRWf/Ui54WMu16lPDYqNMyu9/8=;
+  b=S/0nabj/cSFNy3krbwERyTmXvz76cM4Kvzqgvpz9wYc5WDOkuvJtYI5t
+   Z3H45cEkTZcxXEB5sA45kBgO4JpoabqQbTtWUZH6Sp8icF6oEpu5G34CL
+   gVyMeRffWFx25x4Ys9xK+iBDtfl6yduOQCP34NRXAOsweMnQ5Qm/1JBZb
+   ia8uD4h+8AtgqJAOoAJRQn7T6o2kMeiX1xU4Q7zmKI0MHOB3KGi2k8Txu
+   cQP/Yq61iwm/0uWXjeo74okCRAmO78v9ZXezRryKu4E40xUjH859sAig8
+   4ikY8rELmm4xHW1L1U+Uvxa3EIEHHiCA3zSuHUcX+2+uqxdTK3m2tu71X
+   w==;
+X-CSE-ConnectionGUID: y35R+q+JRdiln2fkbuMKew==
+X-CSE-MsgGUID: HdIR/nizQEul06XKHO2hfg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34652791"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="34652791"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 21:17:29 -0800
+X-CSE-ConnectionGUID: LNMeLFbaSQiuV6fs8pbSkA==
+X-CSE-MsgGUID: iC+X0nP8RSSyI2ccpkpejg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="96513108"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Dec 2024 21:17:30 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 12 Dec 2024 21:17:29 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 12 Dec 2024 21:17:29 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.43) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 12 Dec 2024 21:17:29 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X/XzfAwa2zK00c4LLrtYcG6gmpxTcL6wKTbcFwu5eLhMV7uZiorx+XNtbHkRnQT4rVG4lEgGBjeykm3Dr3/RTAbB9cazmBWwvtPWc13jkp2LWz+gUVocTDz6peRRF3Yx5+x/W+60Fy3DG3g1u3+WcQBCt59iN56/FDT9U/SEOIY6gYX9RkuM2/4mkSmfcthCtZKKhiCrTbkPZ+01c5mkRL2HQACD3OJo9/RNgnDhxwiFOq/36e1WpRRwTUCLu5B9skfeszdh5H2E0tzL35ctCB/J5WkA8eqPw6+jPbeni3NbxYKWH/OKQ9Upln+4ROZ9axvYabzxF/htb/F8gs/a7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y6Ww21c1K5bfUAISaqRWf/Ui54WMu16lPDYqNMyu9/8=;
+ b=MgDNWEX+u6B+WR/85zLtqbcWF3ZdLk8cJ4S9LPnTRZv4ptSrr+HS7qfBjDD6IvkjJLbCzHbVimqJTqFtAvZWDUQPLYyoVq4dDCjPZGEGfQXL/3HQv2RsPZIVxuM+wQJ3l+pjv7lSfno8kKRkKSSQ0xU1vX1tA4qvJy64O1NLOmtagTK6q/vo7Uc295/S6DVqF4U1xy3euZauknIgrraIrvKlxzi24J1woPXVsX6YOxd9Dz+dlTxdYruAAI8yL2ZSe/8Is0e8g4FnJsPnDZGlAIWGq4DtaO4itZsG2fK6uYV5l8499SdqKwhgslADOCgnSsrzufnZiBxpKhtlbKNHnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
+ by DS0PR11MB6471.namprd11.prod.outlook.com (2603:10b6:8:c1::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Fri, 13 Dec
+ 2024 05:17:25 +0000
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d%4]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
+ 05:17:25 +0000
+From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+To: "Meyer, Kyle" <kyle.meyer@hpe.com>, "Luck, Tony" <tony.luck@intel.com>,
+	"bp@alien8.de" <bp@alien8.de>, "james.morse@arm.com" <james.morse@arm.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "rric@kernel.org"
+	<rric@kernel.org>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "Meyer, Kyle" <kyle.meyer@hpe.com>
+Subject: RE: [PATCH v2] EDAC/{i10nm,skx,skx_common}: Support UV systems
+Thread-Topic: [PATCH v2] EDAC/{i10nm,skx,skx_common}: Support UV systems
+Thread-Index: AQHbTP4SPp05KOIWHUmYuQQpsuHEorLjoacA
+Date: Fri, 13 Dec 2024 05:17:25 +0000
+Message-ID: <CY8PR11MB71348EA08231D40941DE43D189382@CY8PR11MB7134.namprd11.prod.outlook.com>
+References: <20241213012549.43099-1-kyle.meyer@hpe.com>
+In-Reply-To: <20241213012549.43099-1-kyle.meyer@hpe.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|DS0PR11MB6471:EE_
+x-ms-office365-filtering-correlation-id: f166d4bb-a4c5-4c07-4431-08dd1b356e8e
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|921020|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Bof9R41/kwn3Scuoea7T5sOEGOhhgS0lUCa9yjWPyI5ZSj9WNuEBy10xM1I6?=
+ =?us-ascii?Q?eGLl7chg9+wT49WpII/nVXUQg2GxIuCZtoDCGQiJ/qA9+kyhrpiEDFRMWrZl?=
+ =?us-ascii?Q?3DJWYyRVClg4cLDe2qTS89juYXZDvqn1tPA3A/YIHkHfkWSXhIvwOKyH/DJ5?=
+ =?us-ascii?Q?IyfHFVJ1dfvBKOMCrIFxKKX2Rv+qrTTvJ5WW1iPi228vAxyV7BdVAxrkMnkn?=
+ =?us-ascii?Q?XeVEPInwF9glNNhHj0q80kYMkeZiKqaEb0s4OV8e3wFsd7tC0Vh3ikNIgqOy?=
+ =?us-ascii?Q?lQnylWqL76wvzMMwGUyeffsCuLfeUIY/RtzQANrHLpE0LfwFCYg97jWcDUmr?=
+ =?us-ascii?Q?Su9imjSuaoSp75P7tL9MyMTq0N8s8cGh1j2hSD5M41Y2DPt2m+C1/CuUA3hr?=
+ =?us-ascii?Q?BOL8q+Djbv+The2RYupcT2MJNfvpA4ayl2Zbmfwrl+PvW7N9z8hdwYnFxlVn?=
+ =?us-ascii?Q?3W1XIarsJwTcJswfLLfLFIIsPuKBVGrqWWfB6FR5U/MJ1RJ69LXShpzptV/d?=
+ =?us-ascii?Q?xOG+xDhDpPcCl3LcPJDWZzYdN+JBxOabYVzYVNJP7F9JBVKDif4if6+M1Bgr?=
+ =?us-ascii?Q?fiFjskTkgGmEcd/hFG1ssgOPjVu6a9Z6f0pfIs6q/LB1G/cwrFoNNl9/MICE?=
+ =?us-ascii?Q?nTluyPj07/q4wJ7wAQqwLFyTzbS3IY2l0yUqCAmdgO1CTQ3RR1pjLuMCVa7M?=
+ =?us-ascii?Q?S1X+gJjU1qa5MTQ2DLDhKf08BvcP4aD2oxCSQeQtC0ETQLGQdGVW7LwqpGSe?=
+ =?us-ascii?Q?bONkpsb/ASey5puvLeAx71uW0DNdLRkFgDgcjeMFXKtefW6RzWRjswm7Y9ub?=
+ =?us-ascii?Q?4BJrqLPWk1z6f3pmZbtcV2ZEg1vYT7/c0/kGzwZmY8wNfZ6YxxINLX6y/dhs?=
+ =?us-ascii?Q?3baU4vSrK/A1BLzTDA0nFUzbyaAchOOc/pOp0gS4FMUqjHcri86VqZgXTKRr?=
+ =?us-ascii?Q?JSvwRxJSiCnq/FpK1B/lpfPVz1PziV8JvvyWGJR/6cWg/7fYjkXuL+dsWkZL?=
+ =?us-ascii?Q?Y1Hi55IGM2rUHmIhyfRKR0R8HU7DwC+HI8Ueo3cDKlVpK/3rYSiOm7XboGwR?=
+ =?us-ascii?Q?MzB5pT7yhf+NXU4EugSXHgJRD1eggghLOaKQEtxYAqXjWDYb3zoDDjl6pf7B?=
+ =?us-ascii?Q?UR7vI6r+RA9niVFXBhmwCarn7CqxPTCpXvENqHAXF1eho227aUWOQY2RgEe7?=
+ =?us-ascii?Q?5cYXwFVb5Ys6rxVT/SYEzXUnXFQKeriTHp+7rSRy9ZBL7BBpq4yqSYU54Zk5?=
+ =?us-ascii?Q?2FfYFPID0AtY8IXt0OIkYlIwc/zYJfmtaRCxYvniAPDjNVoS+ImmYMgEEBOr?=
+ =?us-ascii?Q?ZY7Sbcut72UiKNwrSort9d55feZ7Bc3cxQLaCWd77OeSnZb1SpxUfQTQ7x26?=
+ =?us-ascii?Q?J0YmjTX69yK7tgq4coKJAG+DMWSd5mGavv1rUarf0ZSxsE3H8/o37PQTqnhp?=
+ =?us-ascii?Q?lsHU3nVvVyI=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?CoEZpkLv7/mwPeZe+TTAGXurPJjAiqw0UI/DxthU7cZYj2MEgxQXggI5w5w1?=
+ =?us-ascii?Q?DMQuf0KGwjsTPYl+/UrqFnjxAB3bmwzurbqTh/q5SFkaanGuptd55I71730T?=
+ =?us-ascii?Q?x/5HNQSrPMnZdSrFmvz1KlYp9u+EmBmkVDl8chzU3wifyWmX6xwyZp1DVylz?=
+ =?us-ascii?Q?9kkOH0myXWX8cnHzXSi3tttcEGz4KIXGb3JKDtPHmaycFA4dNuLCo88fctMH?=
+ =?us-ascii?Q?O7soeCoRvFkvskYnkIKj4FRjBGdob4AaOuu8xk9bo4Bg8sFko4Al1Bk1B3UJ?=
+ =?us-ascii?Q?UNjPj/XbeUpuiTNTqzSIlZ4WSRZ7H+tX/uBXXEQYAunJGFT4iRAZozkb+diN?=
+ =?us-ascii?Q?RJwjTBpf82rohadTaic+esIaJqSPJNYggtD7gbQNQJs0b5dUqwUVce7IrF/K?=
+ =?us-ascii?Q?DR/qGKhstbn/DZ/EYeRvpTJmz5WXoNjRC9NdtJSpoum7NFsFMmjm18udRe8i?=
+ =?us-ascii?Q?cryCdYxXqgqf8rEuzJ7x53bLdT4+SkFwfUt3dHvKmx2kvUYOGxcVRNuFPZ+w?=
+ =?us-ascii?Q?jeg8gC0jUNHcDByrbECsCVvaM3R9bjMdo9NkvHNjfPa/lBqF7nvnTkFSevK9?=
+ =?us-ascii?Q?WhDPt+QqmDlkZq+hhfK5dPHrBb1u0qvVRbG/lSdLyBJFjVhLnceiMpxETjmn?=
+ =?us-ascii?Q?+wlA1tTPTba2wamVJ3r5Qty1OihHzb7v9iBvKdk6MOqii3DKuZJjROE32GuB?=
+ =?us-ascii?Q?9sAM8BtsJZfGakFCbrjWNVA0XQ4MZF63MsrSU3x1GZvw34C2zgMlVPsAakrL?=
+ =?us-ascii?Q?CU0ycHurO80KfsPQKi0h1cUScecgcNyIV7amkkzt0KS57QABdV63OHAE8gop?=
+ =?us-ascii?Q?6qHjSVyz9firLoRhLP/9qed4FqHnUQhzv/dbxP77WsW+Stmfot0s0EcUr5Ib?=
+ =?us-ascii?Q?Ijxkcz94VE0JArtLjFSfGfrui5yXWHOugv6ky4MAdk4zdfbPxgftymGOe7Mw?=
+ =?us-ascii?Q?9vJqfl2PjV9NqKEQ7pypjJpwbd8tRJWnRHth9QNmziCSXz22NKVKMsnT7F1P?=
+ =?us-ascii?Q?4ftOqExiHgJ9pleYdbH60PH0tvNk1mVex0yyVzLunHQGqIUVggHztVIXtuB+?=
+ =?us-ascii?Q?FGr0Bh7jqojl3PhR0uQYN9HyAAsCffOr1+uI87GNQvJfSGXVp/FawXTyVDwb?=
+ =?us-ascii?Q?S5dma2EYc17d+08opD49QeufhZkJK+AVeWtwkP2fx9TVKTu4RslyJIyWe/yh?=
+ =?us-ascii?Q?523lq2GmplRYP8PUmOoxO5NIg2Xwii6dp0yOs9HL54uxgQWbg6VPgtgKg3i+?=
+ =?us-ascii?Q?jMRyzgYbBMFBpdAfKjUfLXegMYa0xNlzrIKNT6OfJLqBGFRhRZfnlKxLek//?=
+ =?us-ascii?Q?Dno1puvtIqyva7wJtsYKJqEG8GdvxiLCE6HAZeYvPqqcEVhu6RajJRJ5GdAR?=
+ =?us-ascii?Q?gEaoWFcKpraIr9PH9MrECSoxFLtHt768AJyc+x4iXYE7FCYNM4ov0MOqyAm7?=
+ =?us-ascii?Q?HtYS3gnOz/mZjUgcf711PWA3TnKrMO5ONyecc/Ny/ELwDFCg0llvykolUcRF?=
+ =?us-ascii?Q?Em3jJSEaxR46Kq7wAehkrdgL+cOw26e765FWu4gu7obYqSGGF4ZMTHoLEYIf?=
+ =?us-ascii?Q?ES/s8BNlqHrRPY/CWtWP7ItKTIBwO4L48++aKKjG?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f166d4bb-a4c5-4c07-4431-08dd1b356e8e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2024 05:17:25.7928
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jCJRFsVQOMQ0M4yYuSJw4LyEQVqe7zXx+LlKSeIjLsMHExHwYQp+e7u+MdzDiVnIdFe+rz9qY53SYga/BfWYWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6471
+X-OriginatorOrg: intel.com
 
-Convert ST DWC3 glue logic bindings to DT schema. Added missing includes
-in example, modified the example to be similar to the actual .dts file
-and removed st,syscon from the required property, added st,syscfg
-property.
+> From: Kyle Meyer <kyle.meyer@hpe.com>
+> Sent: Friday, December 13, 2024 9:26 AM
+> To: Luck, Tony <tony.luck@intel.com>; bp@alien8.de;
+> james.morse@arm.com; mchehab@kernel.org; rric@kernel.org; Zhuo, Qiuxu
+> <qiuxu.zhuo@intel.com>; linux-edac@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Cc: Meyer, Kyle <kyle.meyer@hpe.com>
+> Subject: [PATCH v2] EDAC/{i10nm,skx,skx_common}: Support UV systems
+>=20
+> The 3-bit source IDs in PCI configuration space registers, used to map de=
+vices
+> to sockets, are limited to 8 unique IDs, and each ID is local to a UPI/QP=
+I
+> domain.
+>=20
+> Source IDs cannot be used to map devices to sockets on UV systems because
+> they can exceed 8 sockets and have multiple UPI/QPI domains with identica=
+l,
+> repeating source IDs.
+>=20
+> Use NUMA information to get package IDs instead of source IDs on UV
+> systems, and use package/source IDs to name IMC information structures.
+>=20
+> Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
 
-Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
----
- .../devicetree/bindings/usb/dwc3-st.txt       |  66 ----------
- .../bindings/usb/st,stih407-dwc3.yaml         | 123 ++++++++++++++++++
- 2 files changed, 123 insertions(+), 66 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/usb/dwc3-st.txt
- create mode 100644 Documentation/devicetree/bindings/usb/st,stih407-dwc3.yaml
+Thanks for this patch. LGTM.=20
+I tested it on a non-UV system and didn't observe any regressions.
 
-diff --git a/Documentation/devicetree/bindings/usb/dwc3-st.txt b/Documentation/devicetree/bindings/usb/dwc3-st.txt
-deleted file mode 100644
-index 4aa368447b1e..000000000000
---- a/Documentation/devicetree/bindings/usb/dwc3-st.txt
-+++ /dev/null
-@@ -1,66 +0,0 @@
--ST DWC3 glue logic
--
--This file documents the parameters for the dwc3-st driver.
--This driver controls the glue logic used to configure the dwc3 core on
--STiH407 based platforms.
--
--Required properties:
-- - compatible	: must be "st,stih407-dwc3"
-- - reg		: glue logic base address and USB syscfg ctrl register offset
-- - reg-names	: should be "reg-glue" and "syscfg-reg"
-- - st,syscon	: should be phandle to system configuration node which
--		  encompasses the glue registers
-- - resets	: list of phandle and reset specifier pairs. There should be two entries, one
--		  for the powerdown and softreset lines of the usb3 IP
-- - reset-names	: list of reset signal names. Names should be "powerdown" and "softreset"
--See: Documentation/devicetree/bindings/reset/st,stih407-powerdown.yaml
--See: Documentation/devicetree/bindings/reset/reset.txt
--
-- - #address-cells, #size-cells : should be '1' if the device has sub-nodes
--   with 'reg' property
--
-- - pinctl-names	: A pinctrl state named "default" must be defined
--See: Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
--
-- - pinctrl-0	: Pin control group
--See: Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
--
-- - ranges	: allows valid 1:1 translation between child's address space and
--		  parent's address space
--
--Sub-nodes:
--The dwc3 core should be added as subnode to ST DWC3 glue as shown in the
--example below. The DT binding details of dwc3 can be found in:
--Documentation/devicetree/bindings/usb/snps,dwc3.yaml
--
--NB: The dr_mode property described in [1] is NOT optional for this driver, as the default value
--is "otg", which isn't supported by this SoC. Valid dr_mode values for dwc3-st are either "host"
--or "device".
--
--[1] Documentation/devicetree/bindings/usb/usb-drd.yaml
--
--Example:
--
--st_dwc3: dwc3@8f94000 {
--	compatible	= "st,stih407-dwc3";
--	reg		= <0x08f94000 0x1000>, <0x110 0x4>;
--	reg-names	= "reg-glue", "syscfg-reg";
--	st,syscfg	= <&syscfg_core>;
--	resets		= <&powerdown STIH407_USB3_POWERDOWN>,
--			  <&softreset STIH407_MIPHY2_SOFTRESET>;
--	reset-names	= "powerdown", "softreset";
--	#address-cells	= <1>;
--	#size-cells	= <1>;
--	pinctrl-names	= "default";
--	pinctrl-0	= <&pinctrl_usb3>;
--	ranges;
--
--	dwc3: dwc3@9900000 {
--		compatible	= "snps,dwc3";
--		reg		= <0x09900000 0x100000>;
--		interrupts	= <GIC_SPI 155 IRQ_TYPE_NONE>;
--		dr_mode		= "host";
--		phy-names	= "usb2-phy", "usb3-phy";
--		phys		= <&usb2_picophy2>, <&phy_port2 PHY_TYPE_USB3>;
--	};
--};
-diff --git a/Documentation/devicetree/bindings/usb/st,stih407-dwc3.yaml b/Documentation/devicetree/bindings/usb/st,stih407-dwc3.yaml
-new file mode 100644
-index 000000000000..709cdb17f28d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/st,stih407-dwc3.yaml
-@@ -0,0 +1,123 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/st,stih407-dwc3.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ST DWC3 glue logic
-+
-+description:
-+  This binding describes the parameters for the dwc3-st driver,
-+  which controls the glue logic used to configure the DWC3 core on
-+  STiH407-based platforms.
-+
-+maintainers:
-+  - Mauro Carvalho Chehab <mchehab@kernel.org>
-+
-+properties:
-+  compatible:
-+    const: st,stih407-dwc3
-+
-+  reg:
-+    # minItems: 2
-+    items:
-+      - description: Glue logic base address.
-+      - description: USB syscfg ctrl register offset.
-+
-+  reg-names:
-+    # minItems: 2
-+    items:
-+      - const: reg-glue
-+      - const: syscfg-reg
-+
-+  st,syscon:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Phandle to system configuration node which.
-+
-+  resets:
-+    maxItems: 2
-+
-+  reset-names:
-+    items:
-+      - const: powerdown
-+      - const: softreset
-+
-+  st,syscfg:
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 1
-+
-+  pinctrl-names:
-+    items:
-+      - const: default
-+
-+  pinctrl-0:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      Pin control group
-+      See: Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-+
-+  ranges:
-+    description: Valid 1:1 translation between child's and parent's address space.
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - resets
-+  - reset-names
-+  - pinctrl-names
-+  - pinctrl-0
-+  - ranges
-+
-+additionalProperties: false
-+
-+patternProperties:
-+  "^usb@[0-9a-f]+$":
-+    type: object
-+    description: DWC3 core sub-node
-+    $ref: snps,dwc3.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      dr_mode:
-+        enum:
-+          - host
-+          - device
-+        description: |
-+          Specifies the operating mode. The default value "otg" is not
-+          supported by this SoC. Valid values are "host" or "device".
-+          See: Documentation/devicetree/bindings/usb/usb-drd.yaml
-+
-+examples:
-+  - |
-+    #include <dt-bindings/phy/phy.h>
-+    #include <dt-bindings/reset/stih407-resets.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    st_dwc3: dwc3@8f94000 {
-+        compatible	= "st,stih407-dwc3";
-+        reg		= <0x08f94000 0x1000>, <0x110 0x4>;
-+        reg-names	= "reg-glue", "syscfg-reg";
-+        st,syscfg	= <&syscfg_core>;
-+        resets		= <&powerdown STIH407_USB3_POWERDOWN>,
-+              <&softreset STIH407_MIPHY2_SOFTRESET>;
-+        reset-names	= "powerdown", "softreset";
-+        #address-cells	= <1>;
-+        #size-cells	= <1>;
-+        pinctrl-names	= "default";
-+        pinctrl-0	= <&pinctrl_usb3>;
-+        ranges;
-+
-+        dwc3: usb@9900000 {
-+            compatible	= "snps,dwc3";
-+            reg		= <0x09900000 0x100000>;
-+            interrupts	= <GIC_SPI 155 IRQ_TYPE_NONE>;
-+            dr_mode		= "host";
-+            phy-names	= "usb2-phy", "usb3-phy";
-+            phys		= <&usb2_picophy2>, <&phy_port2 PHY_TYPE_USB3>;
-+        };
-+    };
--- 
-2.34.1
+Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+
+Thanks!
+-Qiuxu
+
+
 
 
