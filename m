@@ -1,234 +1,133 @@
-Return-Path: <linux-kernel+bounces-444537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404E49F0884
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:52:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545399F087C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:51:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499C716314A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:52:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D34C188AEA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B551B413D;
-	Fri, 13 Dec 2024 09:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345681B85CA;
+	Fri, 13 Dec 2024 09:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SiS1nwZj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ZMbuDTuA"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B411AB52F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CCA1B415F;
+	Fri, 13 Dec 2024 09:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734083544; cv=none; b=sauEYF45YWh3bv6+MWUbVylBYWkG2AHs4ZFz63DrkaTEAjwnZymmwQW/3+NlN1GsjkJinu6nQGnK2vNOWQ3kz18BPZYyT9xitNNL1lfKOf/J8pPO9xSykEaWFLcwFnveX190d39gGFoiQs2rJfbqGcod4k23Y5Q24UQ0Ck8BtGc=
+	t=1734083457; cv=none; b=aJZsAcGp6WoNvvRy9GQPUE9P9sIrpuKGzZgLpm0sSUcW7O3vrt6XFc/R7UX9PvCWvzgTqoHkkl4Brpyk8U4C/Zwi541dsBF4dkx34LpHsAMtY1fEtStTmM3sDy9Kt6UjH1FVnFs9Ao82v6WCPkJ9yt71ey1czNcZ5F5fiy5CUj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734083544; c=relaxed/simple;
-	bh=xwlk6T0nmyV++vOWX/z4H8mtusZ/0NhrBUoKvYKhCZM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aQpoG1ttYluC5DGMjgqUfWncV7l5dOvtZKYgl6aLqD1f5sc1qStCaZsMavMi7zPREXr90rN6PtH5du8b/JpDVR2uOyaYSuwFk0xLkZSahXQXq7umOtdpw1CgrGGCmIwwLfkRgG0c5/idnbakQ4l+y54HMNebs5a+Mn3cvvhojFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SiS1nwZj; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734083543; x=1765619543;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=xwlk6T0nmyV++vOWX/z4H8mtusZ/0NhrBUoKvYKhCZM=;
-  b=SiS1nwZj3cYMW2Sllzp6H1xXll+E4lbTveq+bSraneH4XkMzS2JmurhW
-   NVnO0M1sCne+SWNjpOQrpcAWlp0ydP3XtwJkYQ+2IFdBmDugAZwuaSMlB
-   eLxiqon2rb8yjUVXfmIbbDa7aJjRQeZCbApslfvMHGcgmh0EllUkIaK3m
-   /Pw959G7zRk49o5vxiKDssnTDAGi61CTzVnD0SOrmDp7H1iKnUEbw6QNv
-   KtZo4UESxFq7wFy4RRl06V5JcSnsR8prgcQSMs0jhJpiZ/tc7aKWi0jXg
-   yUAOWgo4O3YhRGkVTnovdEtToQRL09EGfR27DCW7vsKYC0bKSGxrS2DvM
-   Q==;
-X-CSE-ConnectionGUID: b56/TcvySBiRQFwVEBjN/Q==
-X-CSE-MsgGUID: RzcgfbOLT1imQ89TdJ2Aew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="38208347"
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="38208347"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 01:52:23 -0800
-X-CSE-ConnectionGUID: RbaQtVoiRRCjzNuo9wo9dw==
-X-CSE-MsgGUID: xampagART3u7nhSiZyDG4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="96394961"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 01:52:19 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: ebiederm@xmission.com
-Cc: kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-coco@lists.linux.dev,
-	x86@kernel.org,
-	rick.p.edgecombe@intel.com,
-	kirill.shutemov@linux.intel.com,
-	bhe@redhat.com,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v2 0/1] Accept unaccepted kexec segments' destination addresses
-Date: Fri, 13 Dec 2024 17:49:30 +0800
-Message-ID: <20241213094930.748-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1734083457; c=relaxed/simple;
+	bh=BFrI8vDN+QjnKEZoqwu40aL8E/41x0o1YJqK+z2dmGE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EhYpmEvy8VRs0p+wQ43i63ekS7gDA0zOaV+OLSXw0IV4lxq80eh/K0RoQASBW9QerUI16n9p7IUY6T8eyo+d2UJeb7EXMOOeIUxtcZXuVLgEjR9v533OyWwgVLnbUy4P7ccqOX8Qmg4ObFXDo5SnvHPYdcobK+292PL7vp6dkwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ZMbuDTuA; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: bbd0587ab93711ef99858b75a2457dd9-20241213
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=u96Mek6muR+FMOL8ghgPTboq8EkCtrWjhvHihSR4wYY=;
+	b=ZMbuDTuA9w7eNzmBLN8CJRDgIZIpaYXoGzY+iZDBKP/hez7C4CP387eCFZsHqMuKnqrmRDrX5/Jt3uha5f0TLumzhwUVcUu/SPvreSqOJyK+Cnc6p6KMvKROyZtWetkv20lNc0AQezpKBi+Co5f6TMjJcuBZmphgYD7fl2ViH1M=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:ae6d1f06-f379-4928-8e98-067d65359ae4,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:117a1513-8f5d-4ac6-9276-7b9691c7b8d6,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: bbd0587ab93711ef99858b75a2457dd9-20241213
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 350017580; Fri, 13 Dec 2024 17:50:49 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 13 Dec 2024 17:50:46 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 13 Dec 2024 17:50:46 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, "Jason-JH . Lin"
+	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, "Nancy
+ Lin" <nancy.lin@mediatek.com>, Shawn Sung <shawn.sung@mediatek.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Fei Shao
+	<fshao@chromium.org>, Pin-yen Lin <treapking@chromium.org>
+Subject: [PATCH v2 0/3] Update MT8188 OVL compatible from MT8183 to MT8195
+Date: Fri, 13 Dec 2024 17:50:41 +0800
+Message-ID: <20241213095044.23757-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--1.276900-8.000000
+X-TMASE-MatchedRID: M8Ani9L88+RuS4qoWRE6OhWCVBr+Ay98gdNXa4lpKNtw8MSVsP4X8s0z
+	jHUi+uXRjwQarLbSitQRs1kezRVUMsLk3xw1Sf9eXP5rFAucBUFyETzgIO4sapI7pKjpAaDKwHb
+	kJ3CI10bQkGj4hVOCcd52diAVzqN2zrfv4DmGmcWeAiCmPx4NwBnUJ0Ek6yhjxEHRux+uk8ifEz
+	J5hPndGc7OdGs895LlmarI0Rv6SjtqthQRKRKNU0eKDMJf9cV5pk3nTRYPeUGeymZ/d+Z3Ne84j
+	zGCUoKRVHB2Mz7feH2a2La8y2eZTnmVKZusLp922v9OjYWA2uMMswg45VMfPadst5iAforfVlxr
+	1FJij9s=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--1.276900-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 56412E99850523C5DA6B3BCC1E5FD357930DC2222C597F04EC455D971BE8E4272000:8
+X-MTK: N
 
-Hi Eric,
+This patch series updates the compatible strings for the MediaTek OVL
+in the MT8188 dts and the corresponding dt-binding.
+The changes ensure that the MT8188 OVL device is correctly identified
+and managed by the appropriate drivers.
 
-This is a repost of the patch "kexec_core: Accept unaccepted kexec
-destination addresses" [1], rebased to v6.13-rc2.
+The 1st patch is resending the reviewed and acked patch from:
+- https://lore.kernel.org/all/5d9e6f6c-604d-4e2d-a448-fc5b8bd24a75@collabora.com/
+and rebase it to the latest linux-next-20241212.
 
-The code implementation remains unchanged, but the patch message now
-includes more background and explanations to address previous concerns from
-you and Baoquan.
+The 2nd and the 3rd patches are updating the mt8188.dtsi and mt8195.dtsi
+according to the 1st patch.
 
-Additionally, below is a more detailed explanation of unaccepted memory in
-TDX. Please let me know if it is still not clear enough.
+---
 
+Change in v2:
+1. Add missing mt8195 compatible in the beginning of compatible property.
+2. Add fix patch to mt8195.
 
-== UnAccepted memory in TDX ==
+---
 
-Intel TDX (Trusted Domain Extension) provides a hardware-based trusted
-execution environment for TDs (hardware-isolated VMs). The host OS is not
-trusted. Although it allocates physical pages for TDs, it does not and
-cannot know the content of TD's pages.
+Hsiao Chien Sung (1):
+  dt-bindings: display: mediatek: ovl: Modify rules for MT8195/MT8188
 
-TD's memory is added via two methods by invoking different instructions in
-the host:
-1. For TD's initial private memory, such as for firmware HOBs:
-   - This type of memory is added without requiring the TD's acceptance.
-   - The TD will perform attestation of the page GPA and content later.
+Jason-JH.Lin (2):
+  dts: arm64: mediatek: mt8188: Update OVL compatible from MT8183 to
+    MT8195
+  dts: arm64: mediatek: mt8195: Remove MT8183 compatible for OVL
 
-2. For TD's runtime private memory:
-   - After the host adds memory, it is pending for the TD's acceptance.
-
-Memory added by method 1 is not relevant to the unaccepted memory we will
-discuss.
-
-For memory added by method 2, the TD's acceptance can occur before or after
-the TD's memory access:
-(a) Access first:
-    - TD accesses a private GPA,
-    - Host OS allocates physical memory,
-    - Host OS requests hardware to map the physical page to the GPA,
-    - TD accepts the GPA.
-
-(b) Accept first:
-    - TD accepts a private GPA,
-    - Host OS allocates physical memory,
-    - Host OS requests hardware to map the physical page to the GPA,
-    - TD accesses the GPA.
-
-For "(a) Access first", it is regarded as unsafe for a Linux guest and is
-therefore not chosen.
-For "(b) Accept first", the TD's "accept" operation includes the following
-steps:
-- Trigger a VM-exit
-- The host OS allocates a physical page and requests hardware to map the
-  physical page to the GPA.
-- Initialize the physical page with content set to 0.
-- Encrypt the memory 
-
-
-To enable the "Accept first" approach, an "unaccepted memory" mechanism is
-used, which requires cooperation from the virtual firmware and the Linux
-guest.
-
-1. The host OS adds initial private memory that does not require TD's
-   acceptance. The host OS composes EFI_HOB_RESOURCE_DESCRIPTORs and loads
-   the virtual firmware first. Guest RAM, excluding that for initial
-   memory, is reported as UNACCEPTED in the descriptor.
-
-2. The virtual firmware parses the descriptors and accepts the UNACCEPTED
-   memory below 4G. It then excludes the below-4G range from the UNACCEPTED
-   range.
-
-3. The virtual firmware loads the Linux guest image (the address to load is
-   below 4G).
-
-4. The Linux guest requests the UNACCEPTED bitmap from the virtual
-   firmware:
-   - Locate EFI_UNACCEPTED_MEMORY entries from the memory map returned by
-     the efi_get_memory_map boot service.
-   - Request via EFI boot service to allocate an unaccepted_table in memory
-     of type EFI_ACPI_RECLAIM_MEMORY (E820_TYPE_ACPI) to hold the
-     unaccepted bitmap.
-   - Install the unaccepted_table as an EFI configuration table via the
-     boot service.
-   - Initialize the unaccepted bitmap according to the
-     EFI_UNACCEPTED_MEMORY entries.
-
-5. The Linux guest decompresses the kernel image. It accepts the target GPA
-   for decompression first in case it is not accepted by the virtual
-   firmware.
-
-6. The Linux guest calls memblock_free_all() to put all memory into the
-   freelists for the buddy allocator. memblock_free_all() further calls
-   down to __free_pages_core() to handle memory in 4M (order 10) units.
-
-  - In eager mode, the Linux guest accepts all memory and appends it to the
-    freelists.
-  - In lazy mode, the Linux guest checks if the entire 4M memory has been
-    accepted by querying the unaccepted bitmap.
-    a) If all memory is accepted, it adds the 4M memory to the freelists.
-    b) If any memory is unaccepted (even if the range contains accepted
-       pages), the Linux guest does not add the 4M memory to the freelists.
-       Instead, it queues the first page in the 4M range onto the list
-       zone->unaccepted_pages and sets the first page with the Unaccepted
-       flag.
-
-7. When there is not enough free memory, cond_accept_memory() in the Linux
-   guest calls try_to_accept_memory_one() to dequeue a page from the list
-   zone->unaccepted_pages, clear its Unaccepted flag, accept the entire 4M
-   memory range represented by the page, and add the 4M memory to the
-   freelists.
-
-
-== Conclusion ==
-- The zone->unaccepted_pages is a mechanism to conditionally make accepted
-  private memory available to the page allocators.
-- The unaccepted bitmap resides in the firmware's reserved memory and
-  persists across guest OSs. It records exactly which pages have not been
-  accepted.
-- Memory ranges represented by zone->unaccepted_pages may contain accepted
-  pages.
-
-
-For kexec in TDs,
-- If the segments' destination addresses are within the range managed by
-  the buddy allocator, the pages must have been in an accepted state.
-  Calling accept_memory() will check the unaccepted bitmap and do nothing.
-- If the segments' destination addresses are not yet managed by the buddy
-  allocator, the pages may or may not have been accepted.
-  Calling accept_memory() will perform the "accept" operation if they are
-  not accepted.
-
-For the kexec's second guest kernel, it obtains the unaccepted bitmap by
-locating the unaccepted_table in the EFI configuration tables. So, pages
-unset in the unaccepted bitmap are not accepted repeatedly.
-
-
-The unaccepted table/bitmap is only useful for TDs. For a Linux host, it
-will detect that the physical firmware does not support the memory
-acceptance protocol, and accept_memory() will simply bail out.
-
-Thanks
-Yan
-
-[1] https://lore.kernel.org/all/20241021034553.18824-1-yan.y.zhao@intel.com
-
-Yan Zhao (1):
-  kexec_core: Accept unaccepted kexec segments' destination addresses
-
- kernel/kexec_core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../bindings/display/mediatek/mediatek,ovl.yaml          | 9 ++++-----
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi                 | 2 +-
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi                 | 2 +-
+ 3 files changed, 6 insertions(+), 7 deletions(-)
 
 -- 
-2.43.2
+2.43.0
 
 
