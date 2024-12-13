@@ -1,131 +1,95 @@
-Return-Path: <linux-kernel+bounces-444964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE909F0F24
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:33:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E949C9F0F4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:35:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A8B1884E82
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:33:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086C0164870
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD051E1A28;
-	Fri, 13 Dec 2024 14:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AA21E1A35;
+	Fri, 13 Dec 2024 14:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+lOT2Nm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZ1hhwwf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9D753BE;
-	Fri, 13 Dec 2024 14:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BB31E1A08
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734100376; cv=none; b=bSjjrFkVoMjdZyOSPhatKYw3hUl46qzY5T+eSSe/caRGcNWplhFH0Z3R2drlSRRjZLLQEkhkdPkhgE+VaFIENRRSZ46lEGI2Wx7VdWpvIz+cA7Zz9WikJNw6HyjBgV6OuwKK6ydCBy3WUmWTuJgEz4M4FLAEO6m964OZwsLwwQE=
+	t=1734100484; cv=none; b=RpEs2jdN00SenTSrZ+XtczJ6kozHPqcRASl+jw57QkIvSCD/87NSFbdsjpYRiCAD1AGPXnxkQ85eL7XKg0QJsq9eiHrbfVNhNOYw7c+Wel2pvHH4+4rseBXl8ZI2eFsu9iYufEYlfWnSxIq/8qGtj/oyNvIzEEwEQUIJTIpHu58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734100376; c=relaxed/simple;
-	bh=6gReg7bXvDaJZX6JtQhfj3fyqZlzdp97Cwwgw1fObd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rj2JhMehdzAEX+DijHsYPHWP2OkP/8CI1VcnsQVDXvdOEXPTKLjoCVjOEkCoWtvnLxSwE4wZalcO318zmVs7lrMJbucYIuElCnbzWJ4PgqCIVOl8BDtnEd2NfyMQlpkZtXKSpJPNjlhxIqrT/EQfxnzTDN5pGh7QFkCm8hB2s6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+lOT2Nm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66D4C4CED0;
-	Fri, 13 Dec 2024 14:32:52 +0000 (UTC)
+	s=arc-20240116; t=1734100484; c=relaxed/simple;
+	bh=WmozSn24zm/qMbPlMDouk38wksQoEG3qEiOEDvjbk3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLQEcYNx6CwBbYK016MuvwaISaqId7QRRdEY4fhC0jqyjLNRfypNVaSZpTzcfseOiJjvKaHT8VgSy/0RCC2MvoQ+5IPbpWqgEftdloF1+LGJYVvX5N01qUpeYkC+E87lYms3JiLBbzZcodZOOjfyBR2puu6Xt3MMnKN/N+S4ano=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZ1hhwwf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 973C0C4CED6;
+	Fri, 13 Dec 2024 14:34:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734100376;
-	bh=6gReg7bXvDaJZX6JtQhfj3fyqZlzdp97Cwwgw1fObd8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P+lOT2NmY8IcBWowRWCMK0Q7OloRIWqVE4GUw33UCrqPO6dpdDq81EMSInA+xQCSI
-	 hIZk/RTq/aung1PL19cW5UQdDmLH8ft6/uH9oA0c0s0/BXKzIbm7vbQ+dJJFXfqAqE
-	 VIZ9nbM9jkTq6T9/M9l83ekLfZEFyroDw8Zv+c2GeRG4oCW3VJHG3Zu6hE2WFnefAN
-	 i0juSF9+xOGUUS41cYQ2YOmfEAKwgjhDhBA5MEpoTI2IIPFSHmKNj9mzXD8v9if5AL
-	 bXl41+gtH2eGTdL0/64gs1DOGl8mZt1PIwkeSRTEhX4wz9F7+xP4hWB/ivQpOYoDYy
-	 HvF63ppqO+rqw==
-Message-ID: <c27b7edc-b64f-44e3-b847-513dc593cb46@kernel.org>
-Date: Fri, 13 Dec 2024 15:32:50 +0100
+	s=k20201202; t=1734100483;
+	bh=WmozSn24zm/qMbPlMDouk38wksQoEG3qEiOEDvjbk3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oZ1hhwwfsyrP7+f8z6dU5nfKq0B5HaDlxmkTLe+jHmrypG4eZt2UJU83IUaSqk4kz
+	 cU1+/5JqGkCG+0SQMyRvB+uzu0n4wQyVn2DkOVIywNgv3hs+np8BloWQIBP9iZ1Bfx
+	 chUhpQSHh17Oz3XY6mkZ4w6q7yku7qI+EMfpVsT6NGaevsHd1NF8Ro8ocKZueAn8ed
+	 h1h+J8GodqZr1wdJZYlOJOQrXSB2S6T/59B4/IYxj/ULR4tLLN9SZGLokgykQd8axZ
+	 JIMIxwzUwNxHfoSAKmTel3MvxC3h1XkOJqu9mXmeZw6iPh0tdfevtLM77ARr79qzxg
+	 v+4lOnbC6NBWg==
+Date: Fri, 13 Dec 2024 15:34:41 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
+	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
+	Daniel Bristot de Oliveira <bristot@kernel.org>
+Subject: Re: [PATCH v3 6/7] osnoise: provide quiescent states
+Message-ID: <Z1xGAYQbn4yKy3MC@localhost.localdomain>
+References: <20241213040658.2282640-1-ankur.a.arora@oracle.com>
+ <20241213040658.2282640-7-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: power: supply: gpio-charger: add support
- for default charge current limit
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241211-default-charge-current-limit-v1-0-7819ba06ee2a@liebherr.com>
- <20241211-default-charge-current-limit-v1-1-7819ba06ee2a@liebherr.com>
- <4lef2r5lblj5waulkc56xbfa4xnlxbrk7rawdjgmkatgfnlj3z@vmtcvza6wcna>
- <20241213141926.GA3920@debian>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241213141926.GA3920@debian>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241213040658.2282640-7-ankur.a.arora@oracle.com>
 
-On 13/12/2024 15:19, Dimitri Fedrau wrote:
+Le Thu, Dec 12, 2024 at 08:06:57PM -0800, Ankur Arora a écrit :
+> To reduce RCU noise for nohz_full configurations, osnoise depends
+> on cond_resched() providing quiescent states for PREEMPT_RCU=n
+> configurations. For PREEMPT_RCU=y configurations -- where
+> cond_resched() is a stub -- we do this by directly calling
+> rcu_momentary_eqs().
 > 
->> But what I don't get is why GPIO chager needs it, since this is
->> non-configurable for GPIO charger.
->>
-> With properties charge-current-limit-gpios and charge-current-limit-mapping
-> one can define charge current limits in uA using up to 32 GPIOs. At the
-> moment the driver defaults to smallest current limitation for safety
-> reasons. When disabling charging should be possible as in the example,
-> the charger defaults to non-charging. By having a default the charge
-> current limit can be setup on probe and charging is enabled.
+> With (PREEMPT_LAZY=y, PREEMPT_DYNAMIC=n), however, we have a
+> configuration with (PREEMPTION=y, PREEMPT_RCU=n) where neither
+> of the above can help.
+> 
+> Handle that by providing an explicit quiescent state here for all
+> configurations.
+> 
+> As mentioned above this is not needed for non-stubbed cond_resched(),
+> but, providing a quiescent state here just pulls in one that a future
+> cond_resched() would provide, so doesn't cause any extra work for
+> this configuration.
+> 
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Daniel Bristot de Oliveira <bristot@kernel.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+> Acked-by: Daniel Bristot de Oliveira <bristot@kernel.org>
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 
-OK, the commit msg should explain the intention and real use case you
-are solving here. Plus you miss the dependency - this property depends
-on charge-current-limit-mapping.
-
-Best regards,
-Krzysztof
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
