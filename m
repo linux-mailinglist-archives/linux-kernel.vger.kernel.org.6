@@ -1,217 +1,114 @@
-Return-Path: <linux-kernel+bounces-445435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A9E09F1663
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:40:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401A69F15FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:35:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 462E3286770
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:40:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0378B7A1584
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6541F7548;
-	Fri, 13 Dec 2024 19:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0861EF088;
+	Fri, 13 Dec 2024 19:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="n2fF+qx8"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gXynTGLQ"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6D21F6699;
-	Fri, 13 Dec 2024 19:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DE118027;
+	Fri, 13 Dec 2024 19:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734118556; cv=none; b=dnVduFEqnZ3Z4Yyf7YGWWiZfCMB7rvxN3I2WSSsXgLGif2mBkx5gRKWEUogdDzcvmSiJFy9MIg0VDYc4UpGKLl0MrHXKljtc8NNQCVviS6nJA9KTBG71im4Vfxm/UKrItLlSGemGkW9horx6T2cpUCcut1a8O4/7bockWmRH8XU=
+	t=1734118516; cv=none; b=V7B4MA+c07IqiNDEGXmWk/pATv53k6W2upuqKkVH6+iOCXfaHMlu7d9Cah0PC5/cph91nXrzm/lfBm8mEibzHhnRWSmn3UKfqD5x7piavQWKXh+AlKVt5vdOeJv2er5QIO+AQ56v/zZxFfxzGz/RelhXwdr48Q4C/iM2o47pL1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734118556; c=relaxed/simple;
-	bh=n7yww3p8EqREsKud2mKk4o8VfwSG0c63bsf+LJz27JY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=abHzdyHrb3AJmDzUd1mSgSdtlkXjPDQdxxRAiKPMw1MhafBDVGLX/ix30kKSjsxomNtg1wg2wt20140ATRUOvOMrPHQWkbthel/wyisZNmHBDPd516o4qv29bGY91kCRF23siOippMcu/HUEwir5n2jaXw0wL4qP4qMNnkj3ETg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=n2fF+qx8; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
+	s=arc-20240116; t=1734118516; c=relaxed/simple;
+	bh=di1JRxgla85+qVuKC7qR3d6Rx2bf65mfYztSCcJI+FU=;
+	h=In-Reply-To:References:From:To:Cc:Subject:MIME-Version:
+	 Content-Disposition:Content-Type:Message-Id:Date; b=KMWl1VPEUn5rjN2xL/f1V0CCMXPntCP3RhdwkdihfOq5BdUUY70BMz8u/JtYysZxJzBxNIyi3HtC+j5StubSAB5FSO82uR3Y4UCUOhLFPDXZxuwJHpISdm+37gl34/yQyaKc9ZSPx5JJx6z5cXwoqav610BXF+IwtacgHegiKQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=gXynTGLQ; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=V73zxW3PdeX99bTlrhARp88DE1v+0t6dkPrPdn+wL3c=; b=n2fF+qx841lEC1aBqK1OMIU3aD
-	FSGl3yc0eA3QWvZPlhcmqdPvH/GU64acYyc6/WICZ3dbVtjfbHLln77EBEVu/4MkSNyazbg58ZNu3
-	BpzDuLKJvhz6Bnzef6Y1Ov79rId2cUkZL1b6blKa5ooXD9zqnnaNYtaQGciVe1V/caY8GIJssmc2l
-	JFZek89zVZGRoln+UxWTWENxTVnR2+FFCLSnuJ2px/0FXxx+37Vk72RopAhK4y5Ytfd38If7nQPWf
-	jLcQ4sfnH20X1NnKsK22+L9WbjS7iiZjQ9+ZAjbcNDh2rzo/tryDBg9yr1B+A0T/yxcBvFVDAnjTi
-	eNg1j5Tg==;
-Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.mn.codeweavers.com)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
+	In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GnGNXV9fY/OFbdFo3uaZITHwcc9v08Tzd5HOpCpKxEs=; b=gXynTGLQlPgMUDTLLkWjpq8Ph/
+	qR4YyX4amMJGOqU7fQTxDkycDxFyDm1QcTrsGhYa0bfi9sl1r3bMwM+/nA5N1bkTfr3rQjfJxz/mY
+	nolrEDppVWX45eTjXRTsM3gDNrTwRiBGHBsNRK8Ox6KFU3pSv511WhQ3PMj+cReLkHyKJ6SArutqn
+	Mo3OyxJiCa7QRozYfJvqVKz5/LqqZvxIm1Iiu6j1wCW7OfgpEZuZWTFiaGJVzzqs39t0nySMMJBna
+	EhZBJaXTn7SK4AhZDkvIJ6yE6AoS9XMcgiFOCL6WuU/XLKucwuNuXPIVQA3oyXDdbzYwuUCc6dijC
+	VMv2DMhA==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:32860 helo=rmk-PC.armlinux.org.uk)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1tMBS2-00ASsZ-2B;
-	Fri, 13 Dec 2024 13:35:51 -0600
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	wine-devel@winehq.org,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Arkadiusz Hiler <ahiler@codeweavers.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Elizabeth Figura <zfigura@codeweavers.com>
-Subject: [PATCH v7 19/30] selftests: ntsync: Add some tests for NTSYNC_IOC_WAIT_ALL.
-Date: Fri, 13 Dec 2024 13:35:00 -0600
-Message-ID: <20241213193511.457338-20-zfigura@codeweavers.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241213193511.457338-1-zfigura@codeweavers.com>
-References: <20241213193511.457338-1-zfigura@codeweavers.com>
+	(envelope-from <rmk@armlinux.org.uk>)
+	id 1tMBRI-0007Db-0x;
+	Fri, 13 Dec 2024 19:35:04 +0000
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
+	id 1tMBRF-006vae-WC; Fri, 13 Dec 2024 19:35:02 +0000
+In-Reply-To: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
+References: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	 Jose Abreu <joabreu@synopsys.com>,
+	 Andrew Lunn <andrew+netdev@lunn.ch>,
+	 davem@davemloft.net,
+	 Eric Dumazet <edumazet@google.com>,
+	 Jakub Kicinski <kuba@kernel.org>,
+	 Paolo Abeni <pabeni@redhat.com>,
+	 Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	 Alexis =?UTF-8?B?TG90aG9yw6k=?= <alexis.lothore@bootlin.com>,
+	 Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	 netdev@vger.kernel.org,
+	 linux-stm32@st-md-mailman.stormreply.com,
+	 linux-arm-kernel@lists.infradead.org,
+	 linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 3/5] net: pcs: mtk-lynxi: fill in PCS
+ supported_interfaces
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1tMBRF-006vae-WC@rmk-PC.armlinux.org.uk>
+Sender: Russell King <rmk@armlinux.org.uk>
+Date: Fri, 13 Dec 2024 19:35:01 +0000
 
-Test basic synchronous functionality of NTSYNC_IOC_WAIT_ALL, and when objects
-are considered simultaneously signaled.
+Fill in the new PCS supported_interfaces member with the interfaces
+that the Mediatek LynxI supports.
 
-Signed-off-by: Elizabeth Figura <zfigura@codeweavers.com>
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 ---
- .../testing/selftests/drivers/ntsync/ntsync.c | 93 ++++++++++++++++++-
- 1 file changed, 91 insertions(+), 2 deletions(-)
+ drivers/net/pcs/pcs-mtk-lynxi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/testing/selftests/drivers/ntsync/ntsync.c b/tools/testing/selftests/drivers/ntsync/ntsync.c
-index 9781a74253ee..aba11eaf9a7c 100644
---- a/tools/testing/selftests/drivers/ntsync/ntsync.c
-+++ b/tools/testing/selftests/drivers/ntsync/ntsync.c
-@@ -73,7 +73,8 @@ static int unlock_mutex(int mutex, __u32 owner, __u32 *count)
- 	return ret;
- }
+diff --git a/drivers/net/pcs/pcs-mtk-lynxi.c b/drivers/net/pcs/pcs-mtk-lynxi.c
+index 7de804535229..1377fb78eaa1 100644
+--- a/drivers/net/pcs/pcs-mtk-lynxi.c
++++ b/drivers/net/pcs/pcs-mtk-lynxi.c
+@@ -306,6 +306,11 @@ struct phylink_pcs *mtk_pcs_lynxi_create(struct device *dev,
+ 	mpcs->pcs.poll = true;
+ 	mpcs->interface = PHY_INTERFACE_MODE_NA;
  
--static int wait_any(int fd, __u32 count, const int *objs, __u32 owner, __u32 *index)
-+static int wait_objs(int fd, unsigned long request, __u32 count,
-+		     const int *objs, __u32 owner, __u32 *index)
- {
- 	struct ntsync_wait_args args = {0};
- 	struct timespec timeout;
-@@ -86,11 +87,21 @@ static int wait_any(int fd, __u32 count, const int *objs, __u32 owner, __u32 *in
- 	args.objs = (uintptr_t)objs;
- 	args.owner = owner;
- 	args.index = 0xdeadbeef;
--	ret = ioctl(fd, NTSYNC_IOC_WAIT_ANY, &args);
-+	ret = ioctl(fd, request, &args);
- 	*index = args.index;
- 	return ret;
++	__set_bit(PHY_INTERFACE_MODE_SGMII, mpcs->pcs.supported_interfaces);
++	__set_bit(PHY_INTERFACE_MODE_QSGMII, mpcs->pcs.supported_interfaces);
++	__set_bit(PHY_INTERFACE_MODE_1000BASEX, mpcs->pcs.supported_interfaces);
++	__set_bit(PHY_INTERFACE_MODE_2500BASEX, mpcs->pcs.supported_interfaces);
++
+ 	return &mpcs->pcs;
  }
- 
-+static int wait_any(int fd, __u32 count, const int *objs, __u32 owner, __u32 *index)
-+{
-+	return wait_objs(fd, NTSYNC_IOC_WAIT_ANY, count, objs, owner, index);
-+}
-+
-+static int wait_all(int fd, __u32 count, const int *objs, __u32 owner, __u32 *index)
-+{
-+	return wait_objs(fd, NTSYNC_IOC_WAIT_ALL, count, objs, owner, index);
-+}
-+
- TEST(semaphore_state)
- {
- 	struct ntsync_sem_args sem_args;
-@@ -443,4 +454,82 @@ TEST(test_wait_any)
- 	close(fd);
- }
- 
-+TEST(test_wait_all)
-+{
-+	struct ntsync_mutex_args mutex_args = {0};
-+	struct ntsync_sem_args sem_args = {0};
-+	__u32 owner, index, count;
-+	int objs[2], fd, ret;
-+
-+	fd = open("/dev/ntsync", O_CLOEXEC | O_RDONLY);
-+	ASSERT_LE(0, fd);
-+
-+	sem_args.count = 2;
-+	sem_args.max = 3;
-+	objs[0] = ioctl(fd, NTSYNC_IOC_CREATE_SEM, &sem_args);
-+	EXPECT_LE(0, objs[0]);
-+
-+	mutex_args.owner = 0;
-+	mutex_args.count = 0;
-+	objs[1] = ioctl(fd, NTSYNC_IOC_CREATE_MUTEX, &mutex_args);
-+	EXPECT_LE(0, objs[1]);
-+
-+	ret = wait_all(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, index);
-+	check_sem_state(objs[0], 1, 3);
-+	check_mutex_state(objs[1], 1, 123);
-+
-+	ret = wait_all(fd, 2, objs, 456, &index);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(ETIMEDOUT, errno);
-+	check_sem_state(objs[0], 1, 3);
-+	check_mutex_state(objs[1], 1, 123);
-+
-+	ret = wait_all(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, index);
-+	check_sem_state(objs[0], 0, 3);
-+	check_mutex_state(objs[1], 2, 123);
-+
-+	ret = wait_all(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(ETIMEDOUT, errno);
-+	check_sem_state(objs[0], 0, 3);
-+	check_mutex_state(objs[1], 2, 123);
-+
-+	count = 3;
-+	ret = release_sem(objs[0], &count);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, count);
-+
-+	ret = wait_all(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, index);
-+	check_sem_state(objs[0], 2, 3);
-+	check_mutex_state(objs[1], 3, 123);
-+
-+	owner = 123;
-+	ret = ioctl(objs[1], NTSYNC_IOC_MUTEX_KILL, &owner);
-+	EXPECT_EQ(0, ret);
-+
-+	ret = wait_all(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(EOWNERDEAD, errno);
-+	check_sem_state(objs[0], 1, 3);
-+	check_mutex_state(objs[1], 1, 123);
-+
-+	close(objs[1]);
-+
-+	/* test waiting on the same object twice */
-+	objs[1] = objs[0];
-+	ret = wait_all(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(EINVAL, errno);
-+
-+	close(objs[0]);
-+
-+	close(fd);
-+}
-+
- TEST_HARNESS_MAIN
+ EXPORT_SYMBOL(mtk_pcs_lynxi_create);
 -- 
-2.45.2
+2.30.2
 
 
