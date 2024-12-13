@@ -1,267 +1,154 @@
-Return-Path: <linux-kernel+bounces-445038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F449F1037
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:05:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8ADA9F1035
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:05:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12D7F16BD0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:03:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B538D16B55E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2546A1E2009;
-	Fri, 13 Dec 2024 15:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791621DFE08;
+	Fri, 13 Dec 2024 15:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PI+wXOka"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5GoCgJg"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68C91DFD9A
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F1D1DFD9A;
+	Fri, 13 Dec 2024 15:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734102182; cv=none; b=qGhtnM3ONneigzTm2m0yWsQnPTEbVY6JPP86WJRY9slGM8uKqhUdYqTnknXsuY6rlZzHsBLpw+E9/Dm67vw4aDG4tnAIfCJcM/ewnrzH0zD3vmXBdfZ1IpI0ShYo3+jfd1/kH5l9Hyu+XSZZlgGZ+YZ3zIfAi9D6CfpIcQYFSX0=
+	t=1734102167; cv=none; b=hK/2lFbeHY2PnI1MgZJ+9MdTwffpEc9JDoXryi6lqCqq5JF27VebPrLlz1xcxW7dtPpXWfPPue88yWbaB566Ee8yrBxM+2UKzixOYZC+O1+djgwKSiAt0JjPwwG2sV1ijF09Hb+FhdhjZQ1j9jg3llaFi1tV0dNTvC5Gsqyfxyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734102182; c=relaxed/simple;
-	bh=yTXkG9xsORyjLBEoc5qhvGM9iruX9VHdVXkMcbsWiTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OPXPaDlcx0D4nRv+GlCjMz0qBpnUgf8aiBnyulUQzHezkNcK7uEvtWBE4+yvd5NC72TjnUBG+VI4hFfjjkt/lPKs99whD5GCy0Miy223IWDkGFN8PKuVBxAps5MyNdDVVgln/Os4OFW9H9hhry9lc8fK30Z87oWASoQteaMQbw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PI+wXOka; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDEIt7M015193;
-	Fri, 13 Dec 2024 15:02:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7JRJ2A
-	J6cj+ZwQl0vIZEIumux8D4wSZd5RQvS2sDKtw=; b=PI+wXOka5fTqls4H+7nLsn
-	TIl1WKIeU517xclOaSb8rNWBDaAq6n+VMwrdF925BaAhUYDswVMrKXDdG2cByIT+
-	7Qx6zN6HKbBP1iVJVeUDTYsmQKOGNQa7KJU1rpqsyMUZjUncSx9Yjo+awpYQb8iG
-	XjIx7Pd4NJ8bdErDPFAQuYczHuhbixYM7LDvGPAQhTwg+SLh91wjMz+suGia619x
-	PX4V2wwTvWRjFBxrtYPwrXX7qs/98w8YCz1itguxKA837dKW5iViYhSP9iE7n3dx
-	oz8hhxbcioXmllvX3qkO6nWh519g/33UejqRV1/5lOWtPUpvne8DTPgILDqsj43A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gddmay38-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 15:02:31 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BDExsPP014500;
-	Fri, 13 Dec 2024 15:02:30 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gddmay32-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 15:02:30 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDCcdgC016930;
-	Fri, 13 Dec 2024 15:02:29 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12ypkkh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 15:02:29 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BDF2RnS22217136
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 15:02:27 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 11BCA2004B;
-	Fri, 13 Dec 2024 15:02:27 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 421FF20040;
-	Fri, 13 Dec 2024 15:02:22 +0000 (GMT)
-Received: from [9.124.213.1] (unknown [9.124.213.1])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 13 Dec 2024 15:02:22 +0000 (GMT)
-Message-ID: <de1c97e0-9dd7-4e7f-b6f8-ce3f856c96f3@linux.ibm.com>
-Date: Fri, 13 Dec 2024 20:32:21 +0530
+	s=arc-20240116; t=1734102167; c=relaxed/simple;
+	bh=c4RK0KdshLVnlcNk7ar6uYyJybsvc5HvNX/IW4sbOg4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P24hR6p05O7hq7m19/YvPymqWG0cRA9KRCFLI72y9dJsau1TV28HERySdXG+7U1pAnL4wj4Ucwb0QRTvuwe9iYe8A51MaCAHnrJScQdI45Rp25gxwAD332xUwy5pB4v9W+4Xm1FU3aoYzp5dM1W+dOH0WR9wVohr1vtrGEqT7B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5GoCgJg; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a8aed87a0dso6302305ab.3;
+        Fri, 13 Dec 2024 07:02:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734102165; x=1734706965; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4XVYtKwTonTRAAEz/VpBAxqfQVzXNgnMIhjLVHKGIec=;
+        b=T5GoCgJggZwunJF+juSxvAmVqGUjdKbP+Xu2qQeuiyx0TMRs5jvH+2qQsfJIlB0mgz
+         G5QkF2HC8xvcc4xCdXao6fCUesVNhcf0o8Rc/8XTdh4+RqORl2ooDTt1xCMexYhFekyd
+         udCmXT+y+JjlgcTio6CCCq5TXdIJP4UCL34iwRe0rhmBbIvt2FigJXHC+fOYZef+hfYm
+         uaRNHShDP+8N4IyVY6Zk2RHLMsZQGkDYeumEc/nPOT50C8ofWeSAFZbLJq+FzgnlmqIU
+         k2/CkjnLNCsFbKVJ01ss/zATE0XJyKI/gMC7l86DsCZsT+2WJqind7O+0EhI3T79AJlS
+         66DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734102165; x=1734706965;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4XVYtKwTonTRAAEz/VpBAxqfQVzXNgnMIhjLVHKGIec=;
+        b=woMBbpSDkQMvcwX6e7+rhoANsJD5WJI/m2wY9bYgxEa35CbWUjlbjcc1IQWkPgLlWG
+         iN9XqYaWM+KIEGbBM4EOLd8MyC4ZwjYqf/KraxZvGdRNaI4L7xZZ44Rm+zi+acFHQQgG
+         bUDSp+HYcVR1pXrPdg8ZjKX8xXF3MZYI6BvBW/cUi9/cPy/IWaTF5LeWnqThuK0HcWLQ
+         0spkDQen7uEvXyhVktuAD9JKxnGrOOOXgW5wYTkwfCHy0X8JAP30Fdpk5PUUspWWZvKG
+         NWoDEqpDolMAtkYiH2xYsrl3eOUaA6UhG2TbXe9U51N6H5awfX1w0upqPyUTdD+p0l1K
+         Wmuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWu7qI4r3cRSyaTLuHHXrhIuH+rSsAAdMBP4SmDhpU5UG5a6I6xaGYsb8qZLDfLhYuHjXpueew/ZQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6xuuRmYkp8xx/U/oGNmI3mnS0ngCAuLcUoTuWKOCHOjFNpc1y
+	dngl5PWGnmE+L5cuKxe1B0UgCQViaMY2r/AetflMjrV8vBlKDw1daTqg5g==
+X-Gm-Gg: ASbGncvhGCBoBlPoa1oZX9Xk95bUnxPrBtRbThCNrzrdMATj9ypSpnbola/5gynNrdq
+	nai72Q9YBmmWvolPi/4eOD4y+Mp2E3c9O2tbfHOX+oswgFBbSWfXXyHsDi7pHKUiikMm3x2cpTH
+	mNjCdEhVj8nD5UhhbI1Lc605HTUey9Y7Fm+y/v5Ullk86BpVenTZXnRnWM/OtJeZLsZQVTWdI7k
+	n1DN9AxFn6BhuTVJeDbqoyKkX2nFuDNfBxjEZZ8M70h9mJ1fU98VZCbXn8XExtSgifeFSpT6aKJ
+	vPpqG9zsyueLzEyjm+KXqGSvIWM=
+X-Google-Smtp-Source: AGHT+IH8IbuI7F6ky2rFAaRDM1zteBgZSha56oCzRrTXKDMqenUD4Nu189RS6ql+CVybbNzCPg37RA==
+X-Received: by 2002:a92:c26a:0:b0:3a7:635e:d365 with SMTP id e9e14a558f8ab-3aff69dc06amr34304945ab.6.1734102165197;
+        Fri, 13 Dec 2024 07:02:45 -0800 (PST)
+Received: from localhost.localdomain (65-128-205-244.mpls.qwest.net. [65.128.205.244])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3ab2189b6c4sm12220525ab.26.2024.12.13.07.02.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 07:02:43 -0800 (PST)
+From: Shimrra Shai <shimrrashai@gmail.com>
+To: krzk@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	shimrrashai@gmail.com
+Subject: Re: Re: [PATCH v1 2/2] [Draft] dt-bindings: arm: rockchip: Add Firefly ITX-3588J board
+Date: Fri, 13 Dec 2024 09:02:25 -0600
+Message-ID: <20241213150225.3538-1-shimrrashai@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <c1b662d8-6470-49f2-a904-139a33061885@kernel.org>
+References: <c1b662d8-6470-49f2-a904-139a33061885@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 8/8] sched/fair: Uncache asym_prefer_cpu and find it
- during update_sd_lb_stats()
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Mario Limonciello <mario.limonciello@amd.com>,
-        Meng Li <li.meng@amd.com>, Huang Rui <ray.huang@amd.com>,
-        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241211185552.4553-1-kprateek.nayak@amd.com>
- <20241211185552.4553-9-kprateek.nayak@amd.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20241211185552.4553-9-kprateek.nayak@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: uqAz7kyaEwOAwE8QbJjZr5QSs_htFafM
-X-Proofpoint-GUID: TpWDiPfjuScJS2E29md0kEoCEpWeiLll
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 malwarescore=0
- phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1011
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130106
+Content-Transfer-Encoding: 8bit
 
+On 2024-12-13, Krzysztof Kozlowski wrote:
 
+> Explain why this is draft, what does it even mean. Do you expect any
+> review or not?
 
-On 12/12/24 00:25, K Prateek Nayak wrote:
-> On AMD processors supporting dynamic preferred core ranking, the
-> asym_prefer_cpu cached in sched_group can change dynamically. Since
-> asym_prefer_cpu is cached when the sched domain hierarchy is built,
-> updating the cached value across the system would require rebuilding
-> the sched domain which is prohibitively expensive.
-> 
-> All the asym_prefer_cpu comparisons in the load balancing path are only
-> carried out post the sched group stats have been updated after iterating
-> all the CPUs in the group. Uncache the asym_prefer_cpu and compute it
-> while sched group statistics are being updated as a part of sg_lb_stats.
-> 
-> Fixes: f3a052391822 ("cpufreq: amd-pstate: Enable amd-pstate preferred core support")
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> ---
->   kernel/sched/fair.c     | 21 +++++++++++++++++++--
->   kernel/sched/sched.h    |  1 -
->   kernel/sched/topology.c | 15 +--------------
->   3 files changed, 20 insertions(+), 17 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 3f36805ecdca..166b8e831064 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -9911,6 +9911,8 @@ struct sg_lb_stats {
->   	unsigned int sum_nr_running;		/* Nr of all tasks running in the group */
->   	unsigned int sum_h_nr_running;		/* Nr of CFS tasks running in the group */
->   	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
-> +	unsigned int asym_prefer_cpu;		/* CPU with highest asym priority */
-> +	int highest_asym_prio;			/* Asym priority of asym_prefer_cpu */
+Correct. As I pointed out, not 100% of things work.
 
-Its better to move this after group_asym_packing field, so all related 
-fields are together.
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
 
->   	unsigned int group_weight;
->   	enum group_type group_type;
->   	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
-> @@ -10243,7 +10245,7 @@ sched_group_asym(struct lb_env *env, struct sg_lb_stats *sgs, struct sched_group
->   	    (sgs->group_weight - sgs->idle_cpus != 1))
->   		return false;
->   
-> -	return sched_asym(env->sd, env->dst_cpu, group->asym_prefer_cpu);
-> +	return sched_asym(env->sd, env->dst_cpu, sgs->asym_prefer_cpu);
->   }
->   
->   /* One group has more than one SMT CPU while the other group does not */
-> @@ -10324,6 +10326,17 @@ sched_reduced_capacity(struct rq *rq, struct sched_domain *sd)
->   	return check_cpu_capacity(rq, sd);
->   }
->   
-> +static inline void
-> +update_sg_pick_asym_prefer(struct sg_lb_stats *sgs, int cpu)
-> +{
-> +	int asym_prio = arch_asym_cpu_priority(cpu);
-> +
-> +	if (asym_prio > sgs->highest_asym_prio) {
-> +		sgs->asym_prefer_cpu = cpu;
-> +		sgs->highest_asym_prio = asym_prio;
-> +	}
-> +}
-> +
->   /**
->    * update_sg_lb_stats - Update sched_group's statistics for load balancing.
->    * @env: The load balancing environment.
-> @@ -10345,6 +10358,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->   	memset(sgs, 0, sizeof(*sgs));
->   
->   	local_group = group == sds->local;
-> +	sgs->highest_asym_prio = INT_MIN;
->   
->   	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
->   		struct rq *rq = cpu_rq(i);
-> @@ -10358,6 +10372,9 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->   		nr_running = rq->nr_running;
->   		sgs->sum_nr_running += nr_running;
->   
-> +		if (sd_flags & SD_ASYM_PACKING)
-> +			update_sg_pick_asym_prefer(sgs, i);
-> +
->   		if (cpu_overutilized(i))
->   			*sg_overutilized = 1;
->   
-> @@ -10479,7 +10496,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
->   
->   	case group_asym_packing:
->   		/* Prefer to move from lowest priority CPU's work */
-> -		return sched_asym_prefer(sds->busiest->asym_prefer_cpu, sg->asym_prefer_cpu);
-> +		return sched_asym_prefer(busiest->asym_prefer_cpu, sgs->asym_prefer_cpu);
->   
->   	case group_misfit_task:
->   		/*
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index aef716c41edb..a3f0d326bd11 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2047,7 +2047,6 @@ struct sched_group {
->   	unsigned int		group_weight;
->   	unsigned int		cores;
->   	struct sched_group_capacity *sgc;
-> -	int			asym_prefer_cpu;	/* CPU of highest priority in group */
->   	int			flags;
->   
->   	/*
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 9c405f0e7b26..20aa087710f0 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -1302,7 +1302,7 @@ static void init_sched_groups_capacity(int cpu, struct sched_domain *sd)
->   	WARN_ON(!sg);
->   
->   	do {
-> -		int cpu, cores = 0, max_cpu = -1;
-> +		int cpu, cores = 0;
->   
->   		sg->group_weight = cpumask_weight(sched_group_span(sg));
->   
-> @@ -1314,19 +1314,6 @@ static void init_sched_groups_capacity(int cpu, struct sched_domain *sd)
->   #endif
->   		}
->   		sg->cores = cores;
-> -
-> -		if (!(sd->flags & SD_ASYM_PACKING))
-> -			goto next;
-> -
-> -		for_each_cpu(cpu, sched_group_span(sg)) {
-> -			if (max_cpu < 0)
-> -				max_cpu = cpu;
-> -			else if (sched_asym_prefer(cpu, max_cpu))
-> -				max_cpu = cpu;
-> -		}
-> -		sg->asym_prefer_cpu = max_cpu;
-> -
-> -next:
->   		sg = sg->next;
->   	} while (sg != sd->groups);
->   
+I did this, but I do not see any warnings beyond
 
-Tried minimal testing of ASYM_PACKING behavior on Power10 Shared VM. It 
-is working as expected with the patch as well. (functionality wise, 
-performance isn't tested)
+"Prefer a maximum 75 chars per line (possible unwrapped commit
+description?)"
+
+for the 0th patch, which does not seem to be from the description and
+
+"Missing commit description - Add an appropriate one"
+
+for the others, and
+
+"added, moved or deleted file(s), does MAINTAINERS need updating?"
+
+on the 1st.
+
+There don't seem to be any substantial errors indicated with the code
+itself. What issues did you find, as you said it "looks like it needs a
+fix"? Nonetheless I wasn't planning on this one being a final submit
+anyway, since as I said it was a draft because there were things not
+working yet. But if there are other problems with it, I need to know what
+they are esp. given as I said those tools have not indicated more problems
+than those and they seem to do more with not adding further info to the
+emails than the code itself, yet you say the actual code needs a fix.
+
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older
+> kernel, gives you outdated entries. Therefore please be sure you base
+> your patches on recent Linux kernel.
+
+Thanks for all this part. When you say this though:
+
+> You missed at least devicetree list (maybe more), so this won't be
+> tested by automated tooling. Performing review on untested code might be
+> a waste of time.
+
+what do you mean by "device tree list"? I was not aware of this part of
+the kernel source code. I modeled this submission off of others I've seen
+here and I have only seen them submit the .dts, Makefile entry, and .yaml
+entry in rockchip.yaml. I have not seen a "device tree list" different from
+those. E.g. for this submission for the Orange Pi 5,
+
+https://lore.kernel.org/linux-rockchip/20241111045408.1922-1-honyuenkwun@gmail.com/
+
+those are the only items touched that I can see unless I missed something
+really subtle.
+
+   Shimrra Shai
 
