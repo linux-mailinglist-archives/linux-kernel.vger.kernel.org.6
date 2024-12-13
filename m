@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-444440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EF59F06E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 090499F06EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1300188B44C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:50:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE8E7188B28E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602A71B4148;
-	Fri, 13 Dec 2024 08:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3E51AE850;
+	Fri, 13 Dec 2024 08:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/sSkSqe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdOxvaL6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43FD1A8F71;
-	Fri, 13 Dec 2024 08:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE056BFCA;
+	Fri, 13 Dec 2024 08:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734079755; cv=none; b=et0Q5gRJfAaYyKRFKOH4URzgKkzk9ZulB1niHM0GMwLXAlEcGjFaGkr8HMILwTy3z6M7F/t/psrplasdafJwnk7L9uIf306tGl0O/id8SpLv2ATkv1VftBs/XAOiMS8/H6Wsyd4v/al3+eYWH7MEqtzwjpr6wf/uHnNhbjFCzXM=
+	t=1734079791; cv=none; b=egCkeDE2ApBlRd04rsCI+mF3JOVYnysCmv92ZKMZUHq5fvJLhpYnSTBoUKgOjg8ZWg+G5NYHgft1IMwNB7+SjhzRFICaX9AoQuha5ueKz635+sBVwWaWeal0XxxvMzIRxK5GWQvGyB/d3HkLcYSUprVVoHIxo5VUNUzAJAD4Bo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734079755; c=relaxed/simple;
-	bh=3HHbI/8U1x533ln7X0lZpqT9A6MISkLGuUXtILr5Tms=;
+	s=arc-20240116; t=1734079791; c=relaxed/simple;
+	bh=uGYv9JPSUdHkzvZVqTt7TTbPWsYRVOVyjafBD22J8K8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O71Z+Y+NzV8WVPjpJoGsmmFgF+acb3OAMP9BVc2UmYuIxLBnRVAj2Y1raJZJspqI/+wzM4y8MKTy5jdk4ji3jt3XrXMUzeYCpbNQQwuOY9lzdFyCKI6vMx8EJd4dQW/W+w3AkS6YFRhzUoUf+kXvwcfZ0hn9gWcwN8WY1/PGBr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/sSkSqe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53308C4CED0;
-	Fri, 13 Dec 2024 08:49:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XjGLDTMVi0i47MsPHc9d8KVqBOsLq9vTkE3NEYo4X+fhhPq3ex1ZLIl+Ppi0beCURG2prbl5YEAhiJe8pulu38j/HZX9wBHFGGLE5ZlYH0g8Xziyz8Q+5NQmJMXwtwMCp/pzC5eqMr+N+T40fM3vnqUQFmF9xH74kfnXOjMDRIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GdOxvaL6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E91F5C4CED0;
+	Fri, 13 Dec 2024 08:49:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734079755;
-	bh=3HHbI/8U1x533ln7X0lZpqT9A6MISkLGuUXtILr5Tms=;
+	s=k20201202; t=1734079790;
+	bh=uGYv9JPSUdHkzvZVqTt7TTbPWsYRVOVyjafBD22J8K8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I/sSkSqe+OXO6gWM3BUfiYvAzjo/GeuhRK7BdMByEa6zsmrBzs/47cymXE+8GDKSB
-	 FiuPjsBeaAtB1jl1R2g2e1wJB3QbcdEHCEXdQHi8Ze2CIR3ufyurTM19UdXi8nLFtn
-	 NB9HbLwlm/d8yL4cIMMDc6vazidX8I3H0E2lTGTrwCjFKEiaarIw+nQsm+aW+qJg9f
-	 Bx4uOQcKM5UgHdrPVLcGvuuk61SMIF8MFlg2ZX5GrkY+lU94CfJwrwOQ3Oadwr83G2
-	 pc1VPxctrVF7sgItrnEHzM/aa9QI4wfh/wqLVPBEJvrKsO0zGrohPQJDXa4z9/z4Yw
-	 easA8zgAFkfoA==
-Date: Fri, 13 Dec 2024 09:49:11 +0100
+	b=GdOxvaL6j+dBERdwG6abxICQnVQqFiGX4KzgeOvoL3ExFNVXwKF+uufP4mNTNYWrv
+	 DkSEG+vFdZzI3Fn0P4YZ3QK00xtIC5TXBxZ302I2i+OMjIBo/qLXbMX/a4wDO089hp
+	 zK8I4eQJ/s2fNPLGHKx8m4agrMFYqJLwoOOxfuHx2WM7YKRSKnSOGc874tFf4no6vf
+	 /wFxAK0gQn3wCOO06KsHgr2lgwbXhbYSoeSWmuVKYKfVZ0YBHkX+1QwJrPWgvv61PV
+	 ETmPEbRbjN+nSIXSLAQaLxlE3fumWTcGyROlcY7MvJEjPA8Ql2/6niUuH2RB0X7WoS
+	 +IQAhKl2o8Pug==
+Date: Fri, 13 Dec 2024 09:49:47 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	eraretuya@gmail.com
-Subject: Re: [PATCH v6 4/7] dt-bindings: iio: accel: adxl345: make interrupts
- not a required property
-Message-ID: <vndl6ovfuebbyck36li5xzhaatkbl7hbm3mdelz2j6s4ckrs54@da3npmwzgnw3>
-References: <20241211230648.205806-1-l.rubusch@gmail.com>
- <20241211230648.205806-5-l.rubusch@gmail.com>
- <iqdm3x6fhyosqkm4mdknf6ee2idizq3p2nt7rjqgtuzxr75iaj@tcdl2e6l5g2s>
- <CAFXKEHatgV9gYVCvcxmjce9qcHtVLhvQuuSuC7rxtqFa5XLtMg@mail.gmail.com>
+To: Cheng Jiang <quic_chejiang@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, quic_jiaymao@quicinc.com, quic_shuaz@quicinc.com, 
+	quic_zijuhu@quicinc.com, quic_mohamull@quicinc.com
+Subject: Re: [PATCH v5 1/4] dt-bindings: net: bluetooth: qca: Expand
+ firmware-name property
+Message-ID: <cyupscw22xvovh647dsaukiro5d5oiv5i573awanjkoqdczhb6@spdtixeqtysf>
+References: <20241212150232.3823088-1-quic_chejiang@quicinc.com>
+ <20241212150232.3823088-2-quic_chejiang@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,54 +64,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAFXKEHatgV9gYVCvcxmjce9qcHtVLhvQuuSuC7rxtqFa5XLtMg@mail.gmail.com>
+In-Reply-To: <20241212150232.3823088-2-quic_chejiang@quicinc.com>
 
-On Fri, Dec 13, 2024 at 09:06:39AM +0100, Lothar Rubusch wrote:
-> On Thu, Dec 12, 2024 at 9:11=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.=
-org> wrote:
-> >
-> > On Wed, Dec 11, 2024 at 11:06:45PM +0000, Lothar Rubusch wrote:
-> > > Remove interrupts from the list of required properties. The ADXL345
-> > > provides two interrupt lines. Anyway, the interrupts are an option, to
-> > > be used for additional event features. The driver can measure without
-> > > interrupts. Hence, interrupts should never have been required for the
-> > > ADXL345. Thus having interrupts required can be considered to be a
-> > > mistake.
-> >
-> > Partially this explains my question on previous patch, so consider
-> > reordering them.
-> >
->=20
-> I understand.
->=20
-> > And with combined knowledge, your driver now depends on interrupt names
-> > to setup interrupts. "interrupts" property alone is not sufficient, so
-> > you should encode it in the binding and explain in rationale why this is
-> > required (it is a change in ABI).
-> >
-> > https://elixir.bootlin.com/linux/v6.8-rc3/source/Documentation/devicetr=
-ee/bindings/example-schema.yaml#L193
-> >
->=20
-> The accelerometer does not need interrupts connected/configured for
-> basic functionality. Interrupt declaration allows for additional
-> features. Then there are two possible interrupt lines, only one is
-> connected. Thus, either only one INT out of two, or none needs to be
-> configured in the DT depending on the hardware setup. This also needs
-> to be configured then in the sensor, which INT line to use for
-> signalling. Thus we need the information if INT1 or INT2 was setup, if
-> any.
+On Thu, Dec 12, 2024 at 11:02:29PM +0800, Cheng Jiang wrote:
+> Expand the firmware-name property to specify the names of NVM and
+> rampatch firmware to load. This update will support loading specific
+> firmware (nvm and rampatch) for certain chips, like the QCA6698
+> Bluetooth chip, which shares the same IP core as the WCN6855 but has
+> different RF components and RAM sizes, requiring new firmware files.
+> 
+> We might use different connectivity boards on the same platform. For
+> example, QCA6698-based boards can support either a two-antenna or
+> three-antenna solution, both of which work on the sa8775p-ride platform.
+> Due to differences in connectivity boards and variations in RF
+> performance from different foundries, different NVM configurations are
+> used based on the board ID.
+> 
+> So In firmware-name, if the NVM file has an extension, the NVM file will
+> be used. Otherwise, the system will first try the .bNN (board ID) file,
+> and if that fails, it will fall back to the .bin file.
+> 
+> Possible configurations:
+> firmware-name = "QCA6698/hpnv21.bin", "QCA6698/hpbtfw21.tlv";
+> firmware-name = "QCA6698/hpnv21", "QCA6698/hpbtfw21.tlv";
+> firmware-name = "QCA6698/hpnv21.bin";
+> 
+> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> ---
+>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml           | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
-I meant, explain in the commit msg.
-
->=20
-> Hence, configuring an "interrupts" property only makes sense, if also
-> a "interrupt-names" is configured, and vice versa. None of them are
-> required for basic accelerometer functionality.
-
-I know, I already stated this. But almost every question should have its
-answer in the commit msg.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
