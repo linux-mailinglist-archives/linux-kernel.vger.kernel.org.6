@@ -1,115 +1,192 @@
-Return-Path: <linux-kernel+bounces-444451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E68B9F0712
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:00:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 807709F071F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1D6F16A449
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:00:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C22188B42A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9F41AC8AE;
-	Fri, 13 Dec 2024 09:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38871ACDF0;
+	Fri, 13 Dec 2024 09:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tu3CVgZ7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dK9y/1Fd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="y9jkp9U1"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498CA185B78;
-	Fri, 13 Dec 2024 09:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CBB187849;
+	Fri, 13 Dec 2024 09:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734080442; cv=none; b=LsHZR/MHiQNzDXlaDqtxQyDW5baC6UZVJp/xHXbnpijsPsCFDX8QvldiIZlCjtFLhmHSP4aFHKIA/q0s+BqZ25WpMzKjh1G9qK6Yd9jeni3pcooYSZnLOapy5zZCY1PQRqtCIQV5GpKkRN4Co4tsGuXDSRCCAdnCGgeLtL034iA=
+	t=1734080516; cv=none; b=sK3zQ7yDLb9LcOUHnQosmZOop29/Mfw5B9D2sk0fcWXu3dS4SDU4rE1sj0lwy3VOKTBk7C628ZGUV0pM0NSP58pZh8ybp/N1epL6fco9Vcwi+1n5JLSvrDPqU9isiqSacWTpor3rYf4Np88RaADuqMMy+cyNFoMDv+/hH7i8yyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734080442; c=relaxed/simple;
-	bh=UZNnvkExZ7zuNWaU7B62b6NVp5W1UDxqMDFQPWrdMNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZTjuowjZU362wbcoCpMowSnmdZq5FnZTf0cWY9R3ilqHmjyxAXuHrC1RKjCgHcX0J+HyJnASSPzeIk16er0JPkh+KXzyQDGEw+c+hTkToSi11gvIMEiS9LQ+H+SIUgXaC9Ww/Ib71Az0Gw4CAdvHTQ3UPxwwjZbFbRVZM/xnAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tu3CVgZ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1483BC4CED0;
-	Fri, 13 Dec 2024 09:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734080442;
-	bh=UZNnvkExZ7zuNWaU7B62b6NVp5W1UDxqMDFQPWrdMNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tu3CVgZ7Evx65zdlJIl6G5/MMh2qarRbd3z04tzbrsCpbGdLQa1u6fA03CqtffY5W
-	 M7DHizrDUsVE+I5SWcKYFXNU8WreOHFHHlhme/EPcRvxgKyXwfc6qJEQi7rUQ6yUg5
-	 qKsU7sxtmvLZwl4ok5Usp55BQjpilrE3ScCVzRJapMqWTBX5nOBW9JV6Wedic77X97
-	 Recwh/XqSqLhnvDKEKHWLCjrrKPyXn/r+wI7Ci3zEv2UUcQ1c+GX1kQKoq5t5K674l
-	 cOvtmFpm3hYZVoO2RE65Z5Q57F39i+K5G9iTTZHqFacYKFOgCJgWsW1XjDT8vhbK+J
-	 cvmFlVsNO8LgQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tM1XR-000000000mJ-2S3o;
-	Fri, 13 Dec 2024 10:00:46 +0100
-Date: Fri, 13 Dec 2024 10:00:45 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, stable@vger.kernel.org,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v2] usb: typec: ucsi: Set orientation as none when
- connector is unplugged
-Message-ID: <Z1v3ve3M3s8cmGhA@hovoldconsulting.com>
-References: <20241212-usb-typec-ucsi-glink-add-orientation-none-v2-1-db5a50498a77@linaro.org>
+	s=arc-20240116; t=1734080516; c=relaxed/simple;
+	bh=r/al+a+9ScfLtJlEpNiMaX4gdXx28SXRER11FdeTANc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=IRojEWRqKmoJ2wy9Bdxqir+gRyU8LXGAl0N5/pTZBnA1guPk8zW7W2SOXuXJDwXtIPb2rJINsI3PNpxGQrL3kJM0TFRDiLXN3TJYbQcJqtdmZrAT/wSgL555RbWZUxTNVu3RPOCNEQsSNR5Nc9oQkaYeaSmXoNdmPlQqtYeRS9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dK9y/1Fd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=y9jkp9U1; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 6EFA31140122;
+	Fri, 13 Dec 2024 04:01:52 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 13 Dec 2024 04:01:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1734080512;
+	 x=1734166912; bh=KcDskYQHGeNJcKXr8vywUEry2qDL5/kORB9rm8d5fFw=; b=
+	dK9y/1FdaKVIktwmmYapHHaxHxKc0BP7khWZUu3r7h1f0sQlQa4dZFPSsaSQt+Iu
+	B59X/dAUbnp20AR2b786YF8D04YF58T1uzpW4lVTmgKyAEab9Odf3JWSG6PLCL2r
+	cIBOAzkixOIZmoUsK62qOojH4jNcAbztjeKbDhOgibIe3Pv/NGMWaHo/551gaUP3
+	sYnTI2POMGTHtEOcGVgbt5DO2eYOveMqn918pRMgcp7dbwcqpo9bBJLGMfiMBzQu
+	ZgX08C35wFu1QYADEBx+IIquX5cS6Xc25HusMbbwZaSKCdWGJy+GQnHJfrJeMFRA
+	ys2/b38Gqv72zFx/0driDw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734080512; x=
+	1734166912; bh=KcDskYQHGeNJcKXr8vywUEry2qDL5/kORB9rm8d5fFw=; b=y
+	9jkp9U1MIwaisuqjg7nK41SoLvyk0NQkR82Usqh9Dw4HGzL7mRtCj1li+xZ9MUoS
+	T+iUdxLdpng7pksc/57Tbo2FGZLssQXYXp88cbvtg++tjPJvLhOu9qqwRxe+ZtPw
+	4VZcyTgnCWf6+CvTWGxl4WBTXuAHInOohNNk9cigaf/oW9YowizNTnLuvvEYhlw8
+	p/NNVd1Mz9oC0oDs7Mqxs4UJ9bMb1r0tT0IE+Z3nMIUpN6/PeX23PxN5DKw6xsXe
+	agDUIFGvMUWekQaR3CN8811GJyJW4h1kgALJ95ARgDCRa1aYbbE2asyLTMDV4til
+	4uK1t6tSG4opJ6lzQwIvg==
+X-ME-Sender: <xms:_vdbZ0qTnQBR86V-26V7PwhiMt6EEOYyMJdQegNWyfIcMUul5BQDMg>
+    <xme:_vdbZ6pOmhGV-0SqTm9SVZhXl3Esg36401-Xn-9c04EyxA_rLCt4YIUf7_WGeZQPr
+    h7mA5Z75gO13wD9K68>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeeigdduvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
+    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfeeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
+    gtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghp
+    thhtohepghhrrghfsegrmhgriihonhdrtghomhdprhgtphhtthhopegrthhishhhphesrg
+    htihhshhhprghtrhgrrdhorhhgpdhrtghpthhtoheprghnuhhpsegsrhgrihhnfhgruhhl
+    thdrohhrghdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhroh
+    huphdrvghupdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghp
+    thhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehmph
+    gvsegvlhhlvghrmhgrnhdrihgurdgruh
+X-ME-Proxy: <xmx:_vdbZ5OSeAlRqL3zOYYLR1X80rYHtqF6jBXE73wHfeMrnsspuNFT7Q>
+    <xmx:_vdbZ77mbTrJNcWXjBhg21C-rqRNfaAmqyeKfarmU1qDt_y02i9PgA>
+    <xmx:_vdbZz63hVVtxzP8SiiuBk7PK7jRHjcw-DvalTx04b58_fplYVXqag>
+    <xmx:_vdbZ7hVn74LynEuieqMVfKOF46Ga4XVKlg6Bvd6Bg6xYi1WPJklbQ>
+    <xmx:APhbZ4YwaWQ6QTbli2kpKoPosiJj5J8RDuON2m1n3uQoKbesPqFgt2Ao>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CD88F2220072; Fri, 13 Dec 2024 04:01:50 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212-usb-typec-ucsi-glink-add-orientation-none-v2-1-db5a50498a77@linaro.org>
+Date: Fri, 13 Dec 2024 10:01:30 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "A. Wilcox" <AWilcox@wilcox-tech.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>
+Cc: "Arnd Bergmann" <arnd@kernel.org>, kvm@vger.kernel.org,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Naveen N Rao" <naveen@kernel.org>,
+ "Madhavan Srinivasan" <maddy@linux.ibm.com>,
+ "Alexander Graf" <graf@amazon.com>, "Crystal Wood" <crwood@redhat.com>,
+ "Anup Patel" <anup@brainfault.org>,
+ "Atish Patra" <atishp@atishpatra.org>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Vitaly Kuznetsov" <vkuznets@redhat.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Paul Durrant" <paul@xen.org>,
+ "Marc Zyngier" <maz@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
+Message-Id: <1c8ce6c9-6693-4cfb-8e40-3a641734daff@app.fastmail.com>
+In-Reply-To: <CE1F96B2-7213-4352-B80F-6E669F5EED97@Wilcox-Tech.com>
+References: <20241212125516.467123-1-arnd@kernel.org>
+ <35E5C2A3-94AC-446B-A0A1-84B043DBC890@Wilcox-Tech.com>
+ <6e971322-8b21-4d73-922c-a6032c6fe9bd@app.fastmail.com>
+ <79b9abfe-cfb8-4ef0-8a4b-7b87787e6549@redhat.com>
+ <CE1F96B2-7213-4352-B80F-6E669F5EED97@Wilcox-Tech.com>
+Subject: Re: [RFC 0/5] KVM: drop 32-bit host support on all architectures
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 12, 2024 at 07:37:43PM +0200, Abel Vesa wrote:
-> The current implementation of the ucsi glink client connector_status()
-> callback is only relying on the state of the gpio. This means that even
-> when the cable is unplugged, the orientation propagated to the switches
-> along the graph is "orientation normal", instead of "orientation none",
-> which would be the correct one in this case.
-> 
-> One of the Qualcomm DP-USB PHY combo drivers, which needs to be aware of
-> the orientation change, is relying on the "orientation none" to skip
-> the reinitialization of the entire PHY. Since the ucsi glink client
-> advertises "orientation normal" even when the cable is unplugged, the
-> mentioned PHY is taken down and reinitialized when in fact it should be
-> left as-is. This triggers a crash within the displayport controller driver
-> in turn, which brings the whole system down on some Qualcomm platforms.
-> Propagating "orientation none" from the ucsi glink client on the
-> connector_status() callback hides the problem of the mentioned PHY driver
-> away for now. But the "orientation none" is nonetheless the correct one
-> to be used in this case.
-> 
-> So propagate the "orientation none" instead when the connector status
-> flags says cable is disconnected.
-> 
-> Fixes: 76716fd5bf09 ("usb: typec: ucsi: glink: move GPIO reading into connector_status callback")
-> Cc: stable@vger.kernel.org # 6.10
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-> Changes in v2:
-> - Re-worded the commit message to explain a bit more what is happening.
-> - Added Fixes tag and CC'ed stable.
-> - Dropped the RFC prefix.
-> - Used the new UCSI_CONSTAT macro which did not exist when v1 was sent.
-> - Link to v1: https://lore.kernel.org/r/20241017-usb-typec-ucsi-glink-add-orientation-none-v1-1-0fdc7e49a7e7@linaro.org
+On Fri, Dec 13, 2024, at 09:42, A. Wilcox wrote:
+>
+> As for Power: I will admit I haven=E2=80=99t tested lately, but well i=
+nto
+> the 5 series (5.4, at least), you couldn=E2=80=99t boot a ppc32 Linux =
+kernel
+> on any 64-bit capable hardware.  It would throw what I believe was an
+> alignment error while quiescing OpenFirmware and toss you back to an
+> =E2=80=98ok >=E2=80=99 prompt.  Unfortunately I can=E2=80=99t find any=
+ of the bug reports
+> or ML threads from the time - it was a known bug in the 2.6 days - but
+> the answer was always =E2=80=9Cwhy are you booting a ppc32 kernel on t=
+hat
+> hardware anyway?  It=E2=80=99s a ppc64 machine!=E2=80=9D  Is this a ca=
+se where
+> that would be accepted as a legitimate bug now?  It would be lovely
+> to use my largely-SMT 3.0 GHz Power9 box for more of my kernel testing
+> (where possible) instead of relying on a 933 MHz single-thread G4.
 
-Thanks for the update.
+I'm fairly sure we don't allow booting 32-bit kernels on
+the 64-bit IBM CPUs (g5, cell, POWER), but as Christophe
+mentioned earlier, you can apparently run a 32-bit e500
+kernel 64-bit QorIQ.
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
+What I was thinking of is purely inside of qemu/kvm. I have
+not tried this myself, but I saw that there is code to handle
+this case in the kernel, at least for PR mode:
 
-Johan
+static void kvmppc_set_pvr_pr(struct kvm_vcpu *vcpu, u32 pvr)
+{
+        u32 host_pvr;
+
+        vcpu->arch.hflags &=3D ~BOOK3S_HFLAG_SLB;
+        vcpu->arch.pvr =3D pvr;
+        if ((pvr >=3D 0x330000) && (pvr < 0x70330000)) {
+                kvmppc_mmu_book3s_64_init(vcpu);
+                if (!to_book3s(vcpu)->hior_explicit)
+                        to_book3s(vcpu)->hior =3D 0xfff00000;
+                to_book3s(vcpu)->msr_mask =3D 0xffffffffffffffffULL;
+                vcpu->arch.cpu_type =3D KVM_CPU_3S_64;
+        } else
+        {
+                kvmppc_mmu_book3s_32_init(vcpu);
+                if (!to_book3s(vcpu)->hior_explicit)
+                        to_book3s(vcpu)->hior =3D 0;
+                to_book3s(vcpu)->msr_mask =3D 0xffffffffULL;
+                vcpu->arch.cpu_type =3D KVM_CPU_3S_32;
+        }
+...
+
+So I assumed this would work the same way as on x86 and arm,
+where you can use the 32-bit machine emulation from qemu but
+still enable KVM mode.
+
+      Arnd
 
