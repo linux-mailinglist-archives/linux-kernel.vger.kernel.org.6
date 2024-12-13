@@ -1,199 +1,139 @@
-Return-Path: <linux-kernel+bounces-444753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C2419F0C0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:16:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D499F0C18
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:19:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086EB284E0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:16:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DBDC1889EBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AF01DF739;
-	Fri, 13 Dec 2024 12:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52821DFD87;
+	Fri, 13 Dec 2024 12:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ni0HVaNs"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZI/cWOQS"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74611DF746;
-	Fri, 13 Dec 2024 12:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831F11DF256
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734092174; cv=none; b=GktsVNZuBS8WpNUwaYtsfEz3/ZnrspdEtuz9eTXdaawVb93Sensx+5VA4fmxDtWW6tADfmThkx2+LebxrvZSCkn3zKF0BTou4YznuCxrIVNqDcrvPU00s/aN2kI614bdYLmhiWTG0/VnARlvBCBPAhAVELZp+Td6KvGr9JExxjk=
+	t=1734092356; cv=none; b=awo9jo1cjYFfM4zHzyOKmMQxnZVLk/LgaxUnKKm8jNy+rR9QmtW6++vOVVXz6FshlFCkCQ1oIsF22j5LVcR3+Sd5tq7CnLRSs0imoE/pGCgSJcqbeVfCOqBi0nTzUyifiH3R9iXS/h5vAitWVaUkOMrTUEa6fAW1Kmt1toL8ITQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734092174; c=relaxed/simple;
-	bh=/xIPSZ/ZziO1VRaqjEyqpq0lSR/bhSq3vfO1oqrKSAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JrEGCUVT0Wn2Ax6gYSoH9uVvxZfkov0zaFM0RE0fOicTtjNitkwYa6ag5//iHSHK7YyhRmpUF4RY/8JA27FjtIGewzlN5nU5eQ1af9qsfoefduHjotrjFw2fPWcSMGG7548b/ULea/HvKOGNYj7yJ2dtoAXJ6XC5qiq/WKKSIsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ni0HVaNs; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30229d5b1caso15401951fa.2;
-        Fri, 13 Dec 2024 04:16:12 -0800 (PST)
+	s=arc-20240116; t=1734092356; c=relaxed/simple;
+	bh=+agX/hxnK7PsbXVWPwKhiB1V054xuEENK8nIoWK3fi0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I/mNVk2yJexUwx2ST3nPpbUXbcwqef8Q21Q43J1jygyOw4VKncJJXaEQ+CV6PcQGj7fL4juNMpGyy9rfhdqGBp9b+7Ksb4E9dCcg41t8lbiGjzvVuS6wpXnjPVBU9i3R4W3lUlm60j+E4nyg/dnWH3wsanIzLz3CFDDKyuDEaiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZI/cWOQS; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d437235769so2876626a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:19:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734092171; x=1734696971; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WEzviB/INGBNIIppsw7fK4odS8Wp1IEwVFWkXeaDax4=;
-        b=Ni0HVaNsZxWH12uEuD/88YxOPFXCqYIUlmKPRDmLz6K+p1XI4sOhJvZRpuRVA/wf94
-         IMgkTwhi7TpRGesHCAdQGucx5Zj3gjV74hlllgSvevURG0f7h/AWHSFw1bXkjGNDPApM
-         cbTe/D3Uj6zu9e2DmmN+HIIoyqAvvqOgyfKa8Be0iplMoVq68sMhyD7ZoZJP3BKLQqbC
-         1xKrR0diEAIBvVjORdtYQw/hMOuZQcw1ZFSgMFsueAD3PBTupHA+BfBm45gTgtJAG5rO
-         itfxH/5IAkpcGqQpCKFuHPMHmSVX8mkoUms3b0Iqaapl5fbYd4zc8sFdgGTMEIezUVfH
-         UwoA==
+        d=google.com; s=20230601; t=1734092353; x=1734697153; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rswNLiWFuDKiW42rbnE3/FFvogIGFwro7QX3xwapVa8=;
+        b=ZI/cWOQSTK7j4jTHtoeuwX9Lb+TTFgPctFxAljDqcqJJdejmoMXhJrrdZHRmEGK9x+
+         F4dQZxd3p2sLGblz6ghca40YOLqTyK3h15sJaOQ6ii0zZMQm4c4ShqymyH6RH4ri6eKl
+         kOZNPGAfnRFZEXJjuxUzKr1E90D9Ki0qaMTiDYN1nqfq9Fjjlxd2ddSaUbiyYsU0z10C
+         Ij8a/AvyprryOGojNbPzulITQGxaUUOii5FEoUSsHoHFPsCvH8h6QVHj92tu+TZYS9Yw
+         0epvuWXhOpJIpzQttx/C8mnurNpx2oGBUH2JrpIkYcBaAoHvu3aLbmbtRdL0Le4aQBBo
+         lG9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734092171; x=1734696971;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WEzviB/INGBNIIppsw7fK4odS8Wp1IEwVFWkXeaDax4=;
-        b=I85BgNiSJKWz/DiY4nqgIiLqqcwMGe5etnag8D8QMtoHZaJ3cLKFp5y0FiEjWf5LiU
-         8MLCV5SrfakIiE4UYzB43bm5HE4acYKVlanLRA/V6qGGIv7PEL4T9lmTgmyVB5OrClLb
-         qSJVabyKdxvbKja4MIcNAJlf12Xlax35WSjnT75K1wGHRt67lPEIwrXkZ7FIqs6Qiwkr
-         B+LwrgwMZ/b/UuxUWbIiZLlgKLgYatYH9jjicUo7cyy+5lIqODH7nJX5brFd7pQuGrmC
-         1AcrfBhxQrfvvzqAbyGL0ldgMgkyT9kRP879HksCTxXxOMlRbwzvK2cowufxiEKE/Vsa
-         3/9A==
-X-Forwarded-Encrypted: i=1; AJvYcCW7pKHFgInRCC+3LJF4HmsZd38bAPh4T2muuJIrlopKprcKKag1fWEl2coy/o+p9Z6UeYT24y/PtFvINr8=@vger.kernel.org, AJvYcCWnZis08F7nu3cPRoDj5Cos+nUFxzOH9LgCzW/DTzaYkMu9Baetn7LlyKdSePVtSncsELX4R5q1BkRvMg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+FbLl6JOneqKIrBDbHrL8dLcmt5iiBNRHivAkE+looC3qmQt2
-	9ygCnvAvBe1ymCX/pX9iM7DgtnLvUSzSsI+2ykT0sloafLw2vZX1
-X-Gm-Gg: ASbGncvOQerjux6octZkRZKZNIqNNCIPFlcGM8LM0IgzEV5Y2afRfBDcN4NxLQhfRZU
-	ReMrxYrl4TyRZaYG8PLlLy5fcUsJU1FPkWyqmsJXVuBcapPy09ga/ilBpKwnom4wNFzoAfc7Hso
-	otFcIh9jS+9DOZ+8FthYDYC44vdbAs25+DmoZf+pUtX3AmI+9ENG35F+AOjBVLm/ZZYh0/xMuvG
-	2VifNcEB+RPJs8I7q2n0dyHk3146PuJdwlVGLnbzWHGz5HLmdMghdrYhywEvDPFWyXj9Q==
-X-Google-Smtp-Source: AGHT+IG9wmR1HdLUIscxgI933hBHpEJdVTgSh7mkcbgYu9IHF6Bn9g6wfE9etzLi1BXmv851ierEKA==
-X-Received: by 2002:a05:6512:1114:b0:53e:391c:e983 with SMTP id 2adb3069b0e04-5408ad81d0cmr729141e87.3.1734092170743;
-        Fri, 13 Dec 2024 04:16:10 -0800 (PST)
-Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54020269fdasm1518740e87.182.2024.12.13.04.16.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 04:16:09 -0800 (PST)
-Message-ID: <a21531a7-13ae-45f5-a60d-dd80b3ef9834@gmail.com>
-Date: Fri, 13 Dec 2024 14:16:08 +0200
+        d=1e100.net; s=20230601; t=1734092353; x=1734697153;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rswNLiWFuDKiW42rbnE3/FFvogIGFwro7QX3xwapVa8=;
+        b=vAyGbZ5w5ec4q1b0cy/z2TIvGjV8PXi2OYeax5tL3d9uYMA40Ors3Pps0eXd48qrRN
+         ypHGFzUTO7kvvcB/NO4ZgJxMcJ2gj2Ha2ypj27hYkI9ZJExKl6c8xt/SK5FjVjaUdsfy
+         zt3l8KKNCz6TEXSajH+xxdK2aB47UamwP9iYL2fP7/OVMrdigLcsnE8e2s/9McOz1zHk
+         X+rTOJeA4TAwt940Khmx5nKPjRzHSPnPqs+H9FSRh1ku5yuvjDgGiPGs1DvZzRF6dR8C
+         YRCJPvG0rfHY5DfZfglpd9uupFOj4pMwzxhLsGMEk1JsL9Y1mhSdZ3+TgbOqx/31Rw9X
+         RJAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVenBxQtCE0gzYvs3NUMB/w2g6iZb9ge5Qwcbkpk2n9M6dFD3Sqz7CMv/+cyHwFdz0oI6j0Cz/ZLoqhgF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu/XwGgQColbiFRk1koDn/QV8ibqaLh/jg074LemQEJyNRiIPY
+	/FC/J1BO6rw6RUOM+qnIkoE7IBMGhrqTNCgfG2cA1lBTlGE7sI28iiVtG51UQzTy3RFmOMyzY1p
+	KgFHbIfQ4xa8mfJmevwu6RxlJLh0b3DVcY7b6
+X-Gm-Gg: ASbGnctz7KvY+sfVVGuI+7EJMgZwQEogLNzAREgjtneo6bhy6QU4IQY0cc4ZLbqK5A4
+	gS0et9FPCKtcuV0t9x4/gkLbawkU6hCC0ny4z+Q==
+X-Google-Smtp-Source: AGHT+IGRpkdDBASQbA4W9W4t1BgK2dSzLTzvJG9Vc9UhANfCeYe2U4Z/qo2tMOoP0ps7OytKBednRAPV6i81BAZBwaE=
+X-Received: by 2002:a05:6402:2790:b0:5d0:b51c:8478 with SMTP id
+ 4fb4d7f45d1cf-5d63c3158c3mr1721305a12.12.1734092352701; Fri, 13 Dec 2024
+ 04:19:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] gpio: omap: save two lines by using
- devm_clk_get_prepared()
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Linus Walleij <linus.walleij@linaro.org>,
- Grygorii Strashko <grygorii.strashko@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Tony Lindgren <tony@atomide.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20241203164143.29852-1-brgl@bgdev.pl>
- <20241203164143.29852-2-brgl@bgdev.pl>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20241203164143.29852-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <675b61aa.050a0220.599f4.00bb.GAE@google.com> <675c1dc6.050a0220.17d782.000c.GAE@google.com>
+In-Reply-To: <675c1dc6.050a0220.17d782.000c.GAE@google.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 13 Dec 2024 13:19:01 +0100
+Message-ID: <CANn89i+Zm_0a5jqtsL5m-S4=E06mdQXA8RLaFEF75Y6umFWxpQ@mail.gmail.com>
+Subject: Re: [syzbot] [tipc?] kernel BUG in __pskb_pull_tail
+To: syzbot <syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com>
+Cc: alsa-devel@alsa-project.org, asml.silence@gmail.com, axboe@kernel.dk, 
+	clm@fb.com, davem@davemloft.net, dennis.dalessandro@cornelisnetworks.com, 
+	dsterba@suse.com, eric.dumazet@gmail.com, horms@kernel.org, 
+	io-uring@vger.kernel.org, jasowang@redhat.com, jdamato@fastly.com, 
+	jgg@ziepe.ca, jmaloy@redhat.com, josef@toxicpanda.com, kuba@kernel.org, 
+	kvm@vger.kernel.org, leon@kernel.org, linux-block@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, miklos@szeredi.hu, 
+	mst@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	pbonzini@redhat.com, perex@perex.cz, stable@vger.kernel.org, 
+	stefanha@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tipc-discussion@lists.sourceforge.net, tiwai@suse.com, 
+	viro@zeniv.linux.org.uk, virtualization@lists.linux-foundation.org, 
+	ying.xue@windriver.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi deeeee Ho peeps!
+On Fri, Dec 13, 2024 at 12:43=E2=80=AFPM syzbot
+<syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this issue to:
+>
+> commit de4f5fed3f231a8ff4790bf52975f847b95b85ea
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Wed Mar 29 14:52:15 2023 +0000
+>
+>     iov_iter: add iter_iovec() helper
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1742473058=
+0000
+> start commit:   96b6fcc0ee41 Merge branch 'net-dsa-cleanup-eee-part-1'
+> git tree:       net-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D14c2473058=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D10c2473058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1362a5aee630f=
+f34
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D4f66250f6663c0c=
+1d67e
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D166944f8580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1287ecdf98000=
+0
+>
+> Reported-by: syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com
+> Fixes: de4f5fed3f23 ("iov_iter: add iter_iovec() helper")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
 
-On 03/12/2024 18:41, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> We can drop the else branch if we get the clock already prepared using
-> the relevant helper.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
+Great, thanks syzbot.
 
-Booting a beaglebone black with the linux-next from Today fails 
-(next-20241213). Enabling earlycon + debug yields below splat to be 
-printed to the console:
+Patch is under review :
 
-[    2.628019] ------------[ cut here ]------------
-[    2.632793] WARNING: CPU: 0 PID: 34 at drivers/clk/clk.c:1254 
-clk_core_enable+0xb4/0x1b0
-[    2.641156] Enabling unprepared l4-wkup-clkctrl:0008:18
-[    2.646530] Modules linked in:
-[    2.649688] CPU: 0 UID: 0 PID: 34 Comm: kworker/u4:3 Not tainted 
-6.13.0-rc2-next-20241213-00002-gf2d4b29c8330 #15
-[    2.660256] Hardware name: Generic AM33XX (Flattened Device Tree)
-[    2.666531] Workqueue: events_unbound deferred_probe_work_func
-[    2.672553] Call trace:
-[    2.672570]  unwind_backtrace from show_stack+0x10/0x14
-[    2.680578]  show_stack from dump_stack_lvl+0x50/0x64
-[  7 2.685788]  dump_stack_lvl from __warn+0xc0/0x130
-[    2.690734]  __warn from warn_slowpath_fmt+0x80/0x1a0
-[    2.695944]  warn_slowpath_fmt from clk_core_enable+0xb4/0x1b0
-[    2.701963]  clk_core_enable from clk_core_enable_lock+0x18/0x2c
-[    2.708159]  clk_core_enable_lock from 
-sysc_enable_opt_clocks.part.9+0x28/0x84
-[    2.715611]  sysc_enable_opt_clocks.part.9 from 
-sysc_enable_module+0x254/0x2dc
-[    2.723052]  sysc_enable_module from sysc_runtime_resume+0x17c/0x1c0
-[    2.729599]  sysc_runtime_resume from __rpm_callback+0x4c/0x130
-[    2.735709]  __rpm_callback from rpm_callback+0x50/0x54
-[    2.741096]  rpm_callback from rpm_resume+0x614/0x660
-[    2.746304]  rpm_resume from __pm_runtime_resume+0x4c/0x64
-[    2.751960]  __pm_runtime_resume from __device_attach+0xd0/0x188
-[    2.758155]  __device_attach from bus_probe_device+0x88/0x8c
-or_thread from kthread+0x188/0x24c
-[    2.789476]  kthread from ret_from_fork+0x14/0x20
-[    2.794327] Exception stack(0xe0091fb0 to 0xe0091ff8)
-[    2.799528] 1fa0:                                     00000000 
-00000000 00000000 00000000
-[    2.807947] 1fc0: 00000000 00000000 00000000 00000000 00000000 
-00000000 00000000 00000000
-[    2.816365] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    2.823173] ---[ end trace 0000000000000000 ]---
-[    2.828070] ti-sysc 44e07000.target-module: Optional clocks failed 
-for enable: -108
-[    2.835998] ------------[ cut here ]------------
-
-reverting
-b7bbaff8c1bc ("gpio: omap: save two lines by using devm_clk_get_prepared()")
-
-fixes the boot for me.
-
-
->   drivers/gpio/gpio-omap.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> index 54c4bfdccf568..57d299d5d0b16 100644
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1449,13 +1449,11 @@ static int omap_gpio_probe(struct platform_device *pdev)
->   	}
->   
->   	if (bank->dbck_flag) {
-> -		bank->dbck = devm_clk_get(dev, "dbclk");
-> +		bank->dbck = devm_clk_get_prepared(dev, "dbclk");
->   		if (IS_ERR(bank->dbck)) {
->   			dev_err(dev,
->   				"Could not get gpio dbck. Disable debounce\n");
->   			bank->dbck_flag = false;
-> -		} else {
-> -			clk_prepare(bank->dbck);
->   		}
->   	}
->   
-
-I can only spot a minor functional change. The code prior this commit 
-does not check the result of clk_prepare(), and does neither set 
-bank->dbck_flag = false; nor call clk_put();
-
-Other than that, timing is likely to be changed. Not sure what is the 
-thing here.
-
-Yours,
-	-- Matti
-
-
-
-
+https://patchwork.kernel.org/project/netdevbpf/patch/20241212222247.724674-=
+1-edumazet@google.com/
 
