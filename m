@@ -1,545 +1,186 @@
-Return-Path: <linux-kernel+bounces-444304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F429F046E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:50:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F098B9F046F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:51:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B29A9284067
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:50:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B82B188A2F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D76D18B460;
-	Fri, 13 Dec 2024 05:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471DB18A6BC;
+	Fri, 13 Dec 2024 05:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="O7Tg08v6"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="06dRKd61"
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBB76F30F;
-	Fri, 13 Dec 2024 05:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786311898ED
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734069035; cv=none; b=jtkvSViWysGYdSfkBdTjej2GOM6yIASmDx9czTMyR5HLy1niAYf80mFfBw7RQXEeLAZB6BUe2ImDlTuU/JHEomZ2W0uo3kiLShm/LyjwU4RA9h8E5bYxd7tAiQHXzL/yx2FHkC9xNAs9TG88EV7llnFwID0k+BK+hhucgaRV2cY=
+	t=1734069064; cv=none; b=KsMlwCzq6+WT2bMi7R5sO70qtqO5wJUx0gjRYRFJ2Ib0VgKy48O9OApVNzl2dhT1+Xqz5gbME07/2889hRLFJ/t4W6H474iH3Moh/epLmKpamsVhwdZG+5T4EFnQkvV4XNPfaM0QYtNnUT/IM+zv/EUVKFi5n/rjYUL6cWkBBz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734069035; c=relaxed/simple;
-	bh=O4KrlOx3HzcQEiZ/gOmH1ddt4SN72O4uEn/PzNS3ujU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NDXStQxArUGRzu6aDQKkoxtrNX8OLRFgZPlxj/we149LP9nT7QfDyb7ChhKfTOCWGqk/Q4IGVQKqeonGlnbN1CIA2h3p6WmxeupBGdgKj53XtYBBAxtZyZ//+k+E4t5ch+W460atzNABbUYjY/FXwwW4deFU11whZHUb0RUjm0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=O7Tg08v6; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCMGnKg004865;
-	Thu, 12 Dec 2024 21:50:09 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=N3+q6mTrPCMLeXIQ9N86FugnU
-	cIPctJtn1/nORRgCwQ=; b=O7Tg08v6E0UZh095WEobbBLY+JGmGmeL/Jdx3usYg
-	HFBCQtvZze8Dnp4FIoHARw50MwIJrSJLhCyQ13dkPeaLHwZuZvcznZ9q8uchh2Hk
-	segNtdvOpZg5mLuOPcS76gqHM8vXjoFy2mTDE4rWaw8CmcPqHSpi8tW7HTw3yoV7
-	cCLAEzRdY968lNACIjQN4CZrN+kGgCcnQIVBUjFfu/ztHhKIU5a6gTRpQzjirek7
-	2yBeqs7bb7DV1+qLUP169gehHRzn1hMkMxWlFF0Pka1TCFgQZzrvkS51GDLyZxK+
-	cO8XBVJec7gsYNstS1Ev1kXMK2VHrylijUxOZVD/uazug==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 43g8fxrrgu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Dec 2024 21:50:08 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 12 Dec 2024 21:50:07 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 12 Dec 2024 21:50:07 -0800
-Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
-	by maili.marvell.com (Postfix) with SMTP id B73973F7078;
-	Thu, 12 Dec 2024 21:50:02 -0800 (PST)
-Date: Fri, 13 Dec 2024 11:20:01 +0530
-From: Linu Cherian <lcherian@marvell.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-CC: <mike.leach@linaro.org>, <james.clark@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <corbet@lwn.net>, <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
-        <gcherian@marvell.com>, Anil Kumar Reddy <areddy3@marvell.com>,
-        "Tanmay
- Jagdale" <tanmay@marvell.com>
-Subject: Re: [PATCH v12 5/8] coresight: tmc: Add support for reading crash
- data
-Message-ID: <20241213055001.GA1224111@hyd1403.caveonetworks.com>
-References: <20241129084714.3057080-1-lcherian@marvell.com>
- <20241129084714.3057080-6-lcherian@marvell.com>
- <b56cbd79-61a4-49c3-82ce-12ca55a40991@arm.com>
+	s=arc-20240116; t=1734069064; c=relaxed/simple;
+	bh=NvRLWK6YOIB//i1B4SP8ooailN6fU4KENN/hvb0JU10=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HMIBvJfrzaM/odTbNWY+1EzULoUdGYVi1OEdZM3KVmwhMrO0huPYKy37EITVT6R8Pl3cyMu+ScKLkyS3aJgj1cSK21Mae/NeKUkluh6lToxjhkiG7VJiSm+VCGH/+ToJgyHc9wcIVQGW4WihLYhNTUGQYBhmls57JVvTWrgV2L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=06dRKd61; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4b24bc0cc65so762338137.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:51:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734069059; x=1734673859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u1pi4Bm8p0bfLXi2mAJqGR7jkl/IYPNq3XoUf1+4fLE=;
+        b=06dRKd613sp5yttl1nSXw8Q4DlGT7p1rj+mOaKTR5+ku+GhtdE4rdL98uzmJ8oeKcT
+         p59BztYEp5h+0dDEMDDpFCOJxcugrMjWUyTESOvvtEAbHImq/kaI6uUfbzIg4bpqAG/4
+         +t5+jLq2YbX+gK6r3kQ4oDS6C2gfTm4rlLkq8um8Zl3evGlM5y4wxPH3RtBpT//WKKbJ
+         pWyC1G8OY7wq3BpqdAt0XnJn7ENTUcTndx3n89djRe65Vod7IExQYAPmMwtrw2mOV+/W
+         9sbU/VuP+9UrW5SJlTN/X2pZnOvc8KCnznX0p8zf4UfLjDiO/vDWm/oOoEMCMxps+IgL
+         p1kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734069059; x=1734673859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u1pi4Bm8p0bfLXi2mAJqGR7jkl/IYPNq3XoUf1+4fLE=;
+        b=qEaxWxe8HCRtuIhSAeS+rJFNecazqffP4HLXq+Qa2iXEd09VQXw8mlG8fe7CPrppaJ
+         Vc86Wkkt3eohiG+Y9kXvj56frQLc7Uo2BIsa/uxLupKiyum5wFfmAsdEdpLDMKnc4V43
+         U4KKdFwZlQXuXvdHqeXX+MeTPIP58bw55t5AI9h2gn7t8i9ctC/NhMTu5Z/f9h7kJXFw
+         mgD4CPySl818i0js7+aXzP4vG8KOCSzg7cueiaUE5B/VRhXpMRb4Lah8yFNHoszQVc8V
+         MTQEBSO+dYbRKVtOTyE139CgbwwzUcY48Zk8RB3HpWe8LnXRu8VGXXG44XQA7Q1bVOy4
+         XmDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUX+IP+As4PiHa2seN3NcWP4k47gSUVuOYK/mM7RTQiqmR6cPZswoqHBWQNLTSZot1BXHHjgv9DQ5U9lVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNM6gyJ89CLaBfsI+kdxqMSGrPwc6iYMMqTMmIlTiQysPO8+Pl
+	qAl03pdLwnrS7qtAy3+7u3PR9CFABta596o6p2NpIK4eZbEJpjObg2vFdV/WNIBbY/yPzKfOphu
+	+knUdeJd/HYXcPhyTwSD50Zvo8VV8/wAVqKGf
+X-Gm-Gg: ASbGncsCmhj3F/LsGHScTo/xRmJZQ/72YkTrag+hdS1Gj9D9IDjV+3sOLClvbvFQPCp
+	FPjrdhqcP8KVc95hNKRS5yDR0thnp9da3gFFCxXkUTQKyDn1ufUyRry0Ea5nFx9r7RPHIVYA=
+X-Google-Smtp-Source: AGHT+IEu2Oib6VYKcn5uKqwxJs9eWc+HYKWzUG6wFe6xGaxUShvZ1zFkkTXthYtahXmlPHiAA/ESdqg1GZCRDZphRqA=
+X-Received: by 2002:a05:6102:3e27:b0:4b0:2d7c:43ca with SMTP id
+ ada2fe7eead31-4b25ddc752dmr1543399137.18.1734069058939; Thu, 12 Dec 2024
+ 21:50:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <b56cbd79-61a4-49c3-82ce-12ca55a40991@arm.com>
-X-Proofpoint-ORIG-GUID: rlC0BNxQiyCImuEzcen0I3K3nw0kH4Ro
-X-Proofpoint-GUID: rlC0BNxQiyCImuEzcen0I3K3nw0kH4Ro
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
- definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
+References: <20241211105315.21756-1-lorenzo.stoakes@oracle.com>
+ <CABi2SkXTSi8HKTyE1WoL3qqOTk4KDnF1-RkSOX+ne=cEFJL4qg@mail.gmail.com> <a2c43cfe-5c99-481a-b599-fca8b4fe1e38@lucifer.local>
+In-Reply-To: <a2c43cfe-5c99-481a-b599-fca8b4fe1e38@lucifer.local>
+From: Yu Zhao <yuzhao@google.com>
+Date: Thu, 12 Dec 2024 22:50:19 -0700
+Message-ID: <CAOUHufYCF0i_aJZPceMXfcTZUcZsCY9fBuMr=25q1bROWx5nsg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: update MEMORY MAPPING section
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Jeff Xu <jeffxu@chromium.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Suzuki,
+On Wed, Dec 11, 2024 at 11:57=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Wed, Dec 11, 2024 at 10:36:42AM -0800, Jeff Xu wrote:
+> > On Wed, Dec 11, 2024 at 2:53=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > Update the MEMORY MAPPING section to contain VMA logic as it makes no
+> > > sense to have these two sections separate.
+> > >
+> > > Additionally, add files which permit changes to the attributes and/or
+> > > ranges spanned by memory mappings, in essence anything which might al=
+ter
+> > > the output of /proc/$pid/[s]maps.
+> > >
+> > > This is necessarily fuzzy, as there is not quite as good separation o=
+f
+> > > concerns as we would ideally like in the kernel. However each of thes=
+e
+> > > files interacts with the VMA and memory mapping logic in such a way a=
+s to
+> > > be inseparatable from it, and it is important that they are maintaine=
+d in
+> > > conjunction with it.
+> > >
+> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > ---
+> > >  MAINTAINERS | 23 ++++++++---------------
+> > >  1 file changed, 8 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 68d825a4c69c..fb91389addd7 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -15071,7 +15071,15 @@ L:     linux-mm@kvack.org
+> > >  S:     Maintained
+> > >  W:     http://www.linux-mm.org
+> > >  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> > > +F:     mm/mlock.c
+> > >  F:     mm/mmap.c
+> > > +F:     mm/mprotect.c
+> > > +F:     mm/mremap.c
+> > > +F:     mm/mseal.c
+> > > +F:     mm/vma.c
+> > > +F:     mm/vma.h
+> > > +F:     mm/vma_internal.h
+> > > +F:     tools/testing/vma/
+> > >
+> > Will  madvise be here too ?
+>
+> No. We had a long discussion about this on another version of this patch =
+:)
+> it's blurry lines but it, in the end, is too much related to things other
+> than VMA logic.
+>
+> We probably need better separation of stuff, but that's another thing...
+>
+> > I'd like to be added as a reviewer on mm/mseal.c.  Is there any way to
+> > indicate this from this file ?
+>
+> This is something we can consider in the future, sure.
 
-On 2024-12-05 at 22:31:51, Suzuki K Poulose (suzuki.poulose@arm.com) wrote:
-> Hi Linu,
-> 
-> On 29/11/2024 08:47, Linu Cherian wrote:
-> > * Add support for reading crashdata using special device files.
-> >    The special device files /dev/crash_tmc_xxx would be available
-> >    for read file operation only when the crash data is valid.
-> > 
-> > * User can read the crash data as below
-> > 
-> >    For example, for reading crash data from tmc_etf sink
-> > 
-> >    #dd if=/dev/crash_tmc_etfXX of=~/cstrace.bin
-> > 
-> 
-> Unfortunately there is still a bug that I picked up, see below for the
-> barrier_packet insertion.
-> 
-> > Signed-off-by: Anil Kumar Reddy <areddy3@marvell.com>
-> > Signed-off-by: Tanmay Jagdale <tanmay@marvell.com>
-> > Signed-off-by: Linu Cherian <lcherian@marvell.com>
-> > ---
-> >   .../hwtracing/coresight/coresight-tmc-core.c  | 231 +++++++++++++++++-
-> >   .../hwtracing/coresight/coresight-tmc-etr.c   |  19 +-
-> >   drivers/hwtracing/coresight/coresight-tmc.h   |  13 +-
-> >   3 files changed, 260 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > index 1e3938ec12cb..5f3789314c4d 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-> > @@ -105,6 +105,151 @@ u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata)
-> >   	return mask;
-> >   }
-> > +bool is_tmc_crashdata_valid(struct tmc_drvdata *drvdata)
-> > +{
-> > +	struct tmc_crash_metadata *mdata;
-> > +
-> > +	if (!tmc_has_reserved_buffer(drvdata) ||
-> > +	    !tmc_has_crash_mdata_buffer(drvdata))
-> > +		return false;
-> > +
-> > +	mdata = drvdata->crash_mdata.vaddr;
-> > +
-> > +	/* Check version match */
-> > +	if (mdata->version != CS_CRASHDATA_VERSION)
-> > +		return false;
-> > +
-> > +	/* Check for valid metadata */
-> > +	if (!mdata->valid) {
-> > +		dev_dbg(&drvdata->csdev->dev,
-> > +			"Data invalid in tmc crash metadata\n");
-> > +		return false;
-> > +	}
-> > +
-> > +	/*
-> > +	 * Buffer address given by metadata for retrieval of trace data
-> > +	 * from previous boot is expected to be same as the reserved
-> > +	 * trace buffer memory region provided through DTS
-> > +	 */
-> > +	if (drvdata->resrv_buf.paddr != mdata->trace_paddr) {
-> > +		dev_dbg(&drvdata->csdev->dev,
-> > +			"Trace buffer address of previous boot invalid\n");
-> > +		return false;
-> > +	}
-> > +
-> > +	/* Check data integrity of metadata */
-> > +	if (mdata->crc32_mdata != find_crash_metadata_crc(mdata)) {
-> > +		dev_dbg(&drvdata->csdev->dev,
-> > +			"CRC mismatch in tmc crash metadata\n");
-> > +		return false;
-> > +	}
-> > +	/* Check data integrity of tracedata */
-> > +	if (mdata->crc32_tdata != find_crash_tracedata_crc(drvdata, mdata)) {
-> > +		dev_dbg(&drvdata->csdev->dev,
-> > +			"CRC mismatch in tmc crash tracedata\n");
-> > +		return false;
-> > +	}
-> > +
-> > +	return true;
-> > +}
-> > +
-> > +int tmc_read_prepare_crashdata(struct tmc_drvdata *drvdata)
-> > +{
-> > +	int ret = 0;
-> > +	u32 status, size;
-> > +	u64 rrp, rwp, dba;
-> > +	unsigned long flags;
-> > +	struct tmc_resrv_buf *rbuf;
-> > +	struct tmc_crash_metadata *mdata;
-> > +
-> > +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> > +
-> > +	if (drvdata->reading) {
-> > +		ret = -EBUSY;
-> > +		goto out;
-> > +	}
-> > +
-> > +	if (!is_tmc_crashdata_valid(drvdata)) {
-> > +		ret = -ENXIO;
-> > +		goto out;
-> > +	}
-> > +
-> > +	mdata = drvdata->crash_mdata.vaddr;
-> > +	rbuf = &drvdata->resrv_buf;
-> > +
-> > +	rrp = mdata->tmc_rrp;
-> > +	rwp = mdata->tmc_rwp;
-> > +	dba = mdata->tmc_dba;
-> > +	status = mdata->tmc_sts;
-> > +	size = mdata->tmc_ram_size << 2;
-> > +
-> > +	/* Sync the buffer pointers */
-> > +	rbuf->offset = rrp - dba;
-> > +	if (status & TMC_STS_FULL)
-> > +		rbuf->len = size;
-> > +	else
-> > +		rbuf->len = rwp - rrp;
-> > +
-> 
-> I believe all of the above can be done one time probe and don't need to
-> be repeated every time we do a read_prepare() ?
+What'd be the downsides of having an additional reviewer? Especially
+the one who wrote the code...
 
-Ack. Will do that change.
+> However at this time you have had really significant issues in engaging
+> with the community on a regular basis
 
-> 
-> 
-> > +	/* Additional sanity checks for validating metadata */
-> > +	if ((rbuf->offset > size) ||
-> > +	    (rbuf->len > size)) {
-> > +		dev_dbg(&drvdata->csdev->dev,
-> > +			"Offset and length invalid in tmc crash metadata\n");
-> > +		return -EINVAL;
-> > +	}
-> 
-> Ideally this should also be done once and "don't expose" crash_tmc
-> device if the above is invalid in metada.
+I'm not aware that this can disqualify anyone from being a reviewer of
+a specific file.
 
+> so I think the community is unlikely
+> to be open to this until you have improved in this area.
 
-Will remove the invocation of this function during tmc_crashdata_read
-and move it to tmc_probe .
+I do not know Jeff personally, but I think the community should make
+anyone who wants to contribute feel welcome.
 
-+       if (is_tmc_crashdata_valid(drvdata) &&
-+           !tmc_prepare_crashdata(drvdata))
-+               register_crash_dev_interface(drvdata, desc.name);
-        return ret;
- }
+> You will, of course, remain cc'd on any mseal changes regardless, so
+> functionally nothing will differ.
+>
+> And equally, this change doesn't alter my or Liam's role, we will apply t=
+he
+> same review regardless.
+>
+> The purpose of this change is, as the message says, to ensure the integri=
+ty
+> and maintainership of logic relating to memory mapping, and mseal is real=
+ly
+> entirely a VMA operation so has to be included as a result.
+>
+> So it is administrative in nature, ultimately.
 
-
-> 
-> 
-> > +
-> > +	if (status & 0x1)
-> 
-> minor nit: s/0x1/TMC_STS_FULL ?
-
-Ack.
-
-> 
-> > +		coresight_insert_barrier_packet(drvdata->buf);
-> 
-> And this looks completely out of nowhere and corrupting the drvdata->buf ?
-> drvdata->buf is for active sessions, which we haven't set here ?
-
-Thanks for pointing this out. Somehow missed this.
-
-> 
-> 
-> > +
-> > +	drvdata->reading = true;
-> 
-> Also, we agreed to not overload "drvdata->reading" ?
-
-> 
-> See
-> https://lkml.kernel.org/r/20241017114054.GC896339@hyd1403.caveonetworks.com
-> 
-> We are allowed to the ETR (which drvdata->reading prevents from btw) while
-> crash data is being read. You could instead move it to
-> drvdata->resrv_buf->reading ?
-
-Ack.
-
-> 
-> 
-> 
-> Suzuki
-> 
-> 
-> > +out:
-> > +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-> > +	return ret;
-> > +}
-> > +
-> > +int tmc_read_unprepare_crashdata(struct tmc_drvdata *drvdata)
-> > +{
-> > +	unsigned long flags;
-> > +	struct tmc_resrv_buf *rbuf;
-> > +
-> > +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> > +
-> > +	rbuf = &drvdata->resrv_buf;
-> > +	/* Reset valid length */
-> > +	rbuf->len = 0;
-> > +
-> > +	drvdata->reading = false;
-> > +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static inline ssize_t tmc_get_resvbuf_trace(struct tmc_drvdata *drvdata,
-> > +					  loff_t pos, size_t len, char **bufpp)
-> > +{
-> > +	s64 offset;
-> > +	ssize_t actual = len;
-> > +	struct tmc_resrv_buf *rbuf = &drvdata->resrv_buf;
-> > +
-> > +	if (pos + actual > rbuf->len)
-> > +		actual = rbuf->len - pos;
-> > +	if (actual <= 0)
-> > +		return 0;
-> > +
-> > +	/* Compute the offset from which we read the data */
-> > +	offset = rbuf->offset + pos;
-> > +	if (offset >= rbuf->size)
-> > +		offset -= rbuf->size;
-> > +
-> > +	/* Adjust the length to limit this transaction to end of buffer */
-> > +	actual = (actual < (rbuf->size - offset)) ?
-> > +		actual : rbuf->size - offset;
-> > +
-> > +	*bufpp = (char *)rbuf->vaddr + offset;
-> > +
-> > +	return actual;
-> > +}
-> > +
-> >   static int tmc_read_prepare(struct tmc_drvdata *drvdata)
-> >   {
-> >   	int ret = 0;
-> > @@ -223,6 +368,69 @@ static const struct file_operations tmc_fops = {
-> >   	.release	= tmc_release,
-> >   };
-> > +static int tmc_crashdata_open(struct inode *inode, struct file *file)
-> > +{
-> > +	int ret;
-> > +	struct tmc_drvdata *drvdata = container_of(file->private_data,
-> > +						   struct tmc_drvdata,
-> > +						   crashdev);
-> > +
-> > +	ret = tmc_read_prepare_crashdata(drvdata);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	nonseekable_open(inode, file);
-> > +
-> > +	dev_dbg(&drvdata->csdev->dev, "%s: successfully opened\n", __func__);
-> > +	return 0;
-> > +}
-> > +
-> > +static ssize_t tmc_crashdata_read(struct file *file, char __user *data,
-> > +				  size_t len, loff_t *ppos)
-> > +{
-> > +	char *bufp;
-> > +	ssize_t actual;
-> > +	struct tmc_drvdata *drvdata = container_of(file->private_data,
-> > +						   struct tmc_drvdata,
-> > +						   crashdev);
-> > +
-> > +	actual = tmc_get_resvbuf_trace(drvdata, *ppos, len, &bufp);
-> > +	if (actual <= 0)
-> > +		return 0;
-> > +
-> > +	if (copy_to_user(data, bufp, actual)) {
-> > +		dev_dbg(&drvdata->csdev->dev,
-> > +			"%s: copy_to_user failed\n", __func__);
-> > +		return -EFAULT;
-> > +	}
-> > +
-> > +	*ppos += actual;
-> > +	dev_dbg(&drvdata->csdev->dev, "%zu bytes copied\n", actual);
-> > +
-> > +	return actual;
-> > +
-> > +}
-> > +
-> > +static int tmc_crashdata_release(struct inode *inode, struct file *file)
-> > +{
-> > +	int ret = 0;
-> > +	struct tmc_drvdata *drvdata = container_of(file->private_data,
-> > +						   struct tmc_drvdata,
-> > +						   crashdev);
-> > +
-> > +	ret = tmc_read_unprepare_crashdata(drvdata);
-> > +
-> > +	dev_dbg(&drvdata->csdev->dev, "%s: released\n", __func__);
-> > +	return ret;
-> > +}
-> > +
-> > +static const struct file_operations tmc_crashdata_fops = {
-> > +	.owner		= THIS_MODULE,
-> > +	.open		= tmc_crashdata_open,
-> > +	.read		= tmc_crashdata_read,
-> > +	.release	= tmc_crashdata_release,
-> > +};
-> > +
-> >   static enum tmc_mem_intf_width tmc_get_memwidth(u32 devid)
-> >   {
-> >   	enum tmc_mem_intf_width memwidth;
-> > @@ -532,6 +740,20 @@ static u32 tmc_etr_get_max_burst_size(struct device *dev)
-> >   	return burst_size;
-> >   }
-> > +static void register_crash_dev_interface(struct tmc_drvdata *drvdata,
-> > +					 const char *name)
-> > +{
-> > +	drvdata->crashdev.name =
-> > +		devm_kasprintf(&drvdata->csdev->dev, GFP_KERNEL, "%s_%s", "crash", name);
-> > +	drvdata->crashdev.minor = MISC_DYNAMIC_MINOR;
-> > +	drvdata->crashdev.fops = &tmc_crashdata_fops;
-> > +	if (misc_register(&drvdata->crashdev)) {
-> > +		dev_dbg(&drvdata->csdev->dev,
-> > +			"Failed to setup user interface for crashdata\n");
-> > +		drvdata->crashdev.fops = NULL;
-> > +	}
-> > +}
-> > +
-> >   static int __tmc_probe(struct device *dev, struct resource *res)
-> >   {
-> >   	int ret = 0;
-> > @@ -632,8 +854,13 @@ static int __tmc_probe(struct device *dev, struct resource *res)
-> >   	drvdata->miscdev.minor = MISC_DYNAMIC_MINOR;
-> >   	drvdata->miscdev.fops = &tmc_fops;
-> >   	ret = misc_register(&drvdata->miscdev);
-> > -	if (ret)
-> > +	if (ret) {
-> >   		coresight_unregister(drvdata->csdev);
-> > +		goto out;
-> > +	}
-> > +
-> > +	if (is_tmc_crashdata_valid(drvdata))
-> > +		register_crash_dev_interface(drvdata, desc.name);
-> >   out:
-> >   	return ret;
-> >   }
-> > @@ -687,6 +914,8 @@ static void __tmc_remove(struct device *dev)
-> >   	 * handler to this device is closed.
-> >   	 */
-> >   	misc_deregister(&drvdata->miscdev);
-> > +	if (drvdata->crashdev.fops)
-> > +		misc_deregister(&drvdata->crashdev);
-> >   	coresight_unregister(drvdata->csdev);
-> >   }
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> > index fb944a68a11c..18752f58dfa6 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> > @@ -2012,6 +2012,23 @@ static ssize_t buf_mode_preferred_show(struct device *dev,
-> >   	return sysfs_emit(buf, "%s\n", buf_modes_str[drvdata->etr_mode]);
-> >   }
-> > +static int buf_mode_set_resrv(struct tmc_drvdata *drvdata)
-> > +{
-> > +	unsigned long flags;
-> > +	int err = 0;
-> > +
-> > +	/* Ensure there are no active crashdata read sessions */
-> > +	spin_lock_irqsave(&drvdata->spinlock, flags);
-> > +	if (!drvdata->reading) {
-> > +		tmc_crashdata_set_invalid(drvdata);
-> > +		drvdata->etr_mode = ETR_MODE_RESRV;
-> > +
-> > +	} else
-> > +		err = -1;
-> > +	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-> > +	return err;
-> > +}
-> > +
-> >   static ssize_t buf_mode_preferred_store(struct device *dev,
-> >   					  struct device_attribute *attr,
-> >   					  const char *buf, size_t size)
-> > @@ -2027,7 +2044,7 @@ static ssize_t buf_mode_preferred_store(struct device *dev,
-> >   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_CATU]) && buf_hw.has_catu)
-> >   		drvdata->etr_mode = ETR_MODE_CATU;
-> >   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_RESRV]) && buf_hw.has_resrv)
-> > -		drvdata->etr_mode = ETR_MODE_RESRV;
-> > +		return buf_mode_set_resrv(drvdata) ? -EBUSY : size;
-> >   	else if (sysfs_streq(buf, buf_modes_str[ETR_MODE_AUTO]))
-> >   		drvdata->etr_mode = ETR_MODE_AUTO;
-> >   	else
-> > diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-> > index d76e83fc840b..2ece44e09911 100644
-> > --- a/drivers/hwtracing/coresight/coresight-tmc.h
-> > +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-> > @@ -195,11 +195,15 @@ struct etr_buf {
-> >    * @paddr	: Start address of reserved memory region.
-> >    * @vaddr	: Corresponding CPU virtual address.
-> >    * @size	: Size of reserved memory region.
-> > + * @offset	: Offset of the trace data in the buffer for consumption.
-> > + * @len	: Available trace data @buf (may round up to the beginning).
-> >    */
-> >   struct tmc_resrv_buf {
-> >   	phys_addr_t     paddr;
-> >   	void		*vaddr;
-> >   	size_t		size;
-> > +	unsigned long	offset;
-> > +	s64		len;
-> >   };
-> >   /**
-> > @@ -208,6 +212,8 @@ struct tmc_resrv_buf {
-> >    * @base:	memory mapped base address for this component.
-> >    * @csdev:	component vitals needed by the framework.
-> >    * @miscdev:	specifics to handle "/dev/xyz.tmc" entry.
-> > + * @crashdev:	specifics to handle "/dev/crash_tmc_xyz" entry for reading
-> > + *		crash tracedata.
-> >    * @spinlock:	only one at a time pls.
-> >    * @pid:	Process ID of the process that owns the session that is using
-> >    *		this component. For example this would be the pid of the Perf
-> > @@ -227,7 +233,7 @@ struct tmc_resrv_buf {
-> >    * @idr_mutex:	Access serialisation for idr.
-> >    * @sysfs_buf:	SYSFS buffer for ETR.
-> >    * @perf_buf:	PERF buffer for ETR.
-> > - * @resrv_buf:	Used by ETR as hardware trace buffer and for trace data
-> > + * @resrv_buf:  Used by ETR as hardware trace buffer and for trace data
-> >    *		retention (after crash) only when ETR_MODE_RESRV buffer
-> >    *		mode is enabled. Used by ETF for trace data retention
-> >    *		(after crash) by default.
-> > @@ -239,6 +245,7 @@ struct tmc_drvdata {
-> >   	void __iomem		*base;
-> >   	struct coresight_device	*csdev;
-> >   	struct miscdevice	miscdev;
-> > +	struct miscdevice	crashdev;
-> >   	spinlock_t		spinlock;
-> >   	pid_t			pid;
-> >   	bool			reading;
-> > @@ -309,6 +316,8 @@ void tmc_flush_and_stop(struct tmc_drvdata *drvdata);
-> >   void tmc_enable_hw(struct tmc_drvdata *drvdata);
-> >   void tmc_disable_hw(struct tmc_drvdata *drvdata);
-> >   u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata);
-> > +int tmc_read_prepare_crashdata(struct tmc_drvdata *drvdata);
-> > +int tmc_read_unprepare_crashdata(struct tmc_drvdata *drvdata);
-> >   /* ETB/ETF functions */
-> >   int tmc_read_prepare_etb(struct tmc_drvdata *drvdata);
-> > @@ -371,6 +380,8 @@ void tmc_sg_table_sync_data_range(struct tmc_sg_table *table,
-> >   				  u64 offset, u64 size);
-> >   ssize_t tmc_sg_table_get_data(struct tmc_sg_table *sg_table,
-> >   			      u64 offset, size_t len, char **bufpp);
-> > +
-> > +bool is_tmc_crashdata_valid(struct tmc_drvdata *drvdata);
-> >   static inline unsigned long
-> >   tmc_sg_table_buf_size(struct tmc_sg_table *sg_table)
-> >   {
-> 
-> 
+Sorry -- I couldn't make out what you are trying to say here. So I'd
+like to ask bluntly: is there any previous disagreement between you
+and Jeff to make you reject his request? If so, I think we'd need a
+3rd party (probably Andrew) to review his request. If not, I'd urge
+you to use his help.
 
