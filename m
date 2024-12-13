@@ -1,157 +1,153 @@
-Return-Path: <linux-kernel+bounces-445308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3282C9F147A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ECF59F1481
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:59:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14D716A864
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:58:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E7416AF01
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722711E6311;
-	Fri, 13 Dec 2024 17:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554061EBFE8;
+	Fri, 13 Dec 2024 17:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hDO3EZ1i"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SoQHTe4M"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6363418873F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED001E7678;
+	Fri, 13 Dec 2024 17:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734112707; cv=none; b=iXiG96mTVGlsxt6POuHBensfZfprYJpSoP6sCcHhSApBQS43YkIyyoZSLZeLudLISL7QK3X3BbaifXiDHQDdP8fsj77pXh0qkv40efv5LgxXfaTpIFfV2xBzav9vk9buC5vfVgaCAJL/bRnLKD84Cf1ABNN6dHVIHqgnyDQpt4w=
+	t=1734112718; cv=none; b=QmuTZVDEIILEDGdO68SCiaJhEj+YNsoyICTSrBQkQrYVO0d1oOTo8vpzsOmHGFcdRk3b3Kc9GLADuc07Z0CBF2PocVTcPO4B7vVO2MTvbCua9gBGKdQQqQVlTd/NFG6BVfIlyns6DoeIHfZ9lVtzPr/f2a2VLk+P86/UT6mn9kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734112707; c=relaxed/simple;
-	bh=fJMJGGIs8XwoUh5eaP+N5nnUuULzD6iUDWJ2PhMddOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hzGS1lbbCDSG+7DIWPRLoDea0oVsqNSWKCxCgHFs1/xAY7X7oIOFXkVU1oJ43hF8DhlsyC28CX2WxyJJ0eHEw/jPb8gqzjomz0gZ/nCX+F1Pg43xilD8C8t4cbEA88dcP54mwyNbNiWk2V9EehSLqb5cyuZEA49DAcTG2Tfg/ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hDO3EZ1i; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3001f1232e5so1096941fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:58:25 -0800 (PST)
+	s=arc-20240116; t=1734112718; c=relaxed/simple;
+	bh=owd0zn1P5YfeNkYMC+oUSuFlHqUQWKes+FGyKpfhQiY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t4Qssf6R612kieiu71c4CQgkbDSrjK6WuEBZoKO9Fp53gZX/7X3x8Dd8zAgW9Y5beb+QsJfzI6e0+IauhuXS505EQ5ldCPUKtwyCh4y0G2oE4VpCpk0a4G17/hvZMHyNNWKmHR9uMwLV1t5xyttcLvHf1h5QrqvmgagUUtFWY98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SoQHTe4M; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385df53e559so1623667f8f.3;
+        Fri, 13 Dec 2024 09:58:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734112703; x=1734717503; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JP0v5TL7oePTh21UGaiJDFEPSqS7AXPH+Qkz4Rr1cGc=;
-        b=hDO3EZ1itKK9oaB3oPBrr9zLVwgndKkZM0/2bJ88i4MrEF7X7resYq/hcL7BmZgNR6
-         6I69X6Jbz9qS4q02+/Lg6cvwDQ3YjNxF0/7/lvRFOluYZGdDk2gztKLLV6BKsb9C9nV3
-         ZQ1arKYQb59uTdSsvKuKHbbTvYnzjqSgQsmPLj4qwaHx/czcgXT83C0VM2aAfph/agvi
-         oLIeP3YsscSWTv+5R/kO8GxM3bvXoXCMeC2FVQukHlUUk5F58J6E6z31rSmLpz0AiCBh
-         jC6LgSon7AbuiooBkK2rgWocIdTe/s6V+d8OuY7DUn8jBJqbS8EmGBapcQs22/vMjWvm
-         9xiA==
+        d=gmail.com; s=20230601; t=1734112715; x=1734717515; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vaLlRj3ObamRETdZi3/ztjW/T2zRB+N3Lr9QOtAkYD0=;
+        b=SoQHTe4MyI3oCh1N9dJDjCGa7nLyAvbc2ypJYLT0Jnpz17dpe7lZxRETaahj6v/EQN
+         aLH7NuwyhYpFhngBcK/ZlI0le1kXyyfC+GOKELWP5WbLMaoAzn1kCUUbuDQ3t7DaJw0H
+         kzZa6aYrc8cOExic4ftrdpSOd3vObS7Xj95LInVfbsEuNCVspKogAvvemvXfhKQmpzJZ
+         U+mc45Z+1KcvgDncl4xFa8A1YdSoSFQcXS9VZxHdAUrSEEPCQyI8gJSb5YHyNCwnqNpm
+         vCJzIWdCmGUpKW/5Q0e7FMg2/5SJ7TwqkwMQBo+ubIsGJiuIWcJal1zUIR8l6kitcQ9T
+         YTaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734112703; x=1734717503;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JP0v5TL7oePTh21UGaiJDFEPSqS7AXPH+Qkz4Rr1cGc=;
-        b=oJVxGHDn+SfA+ZjaCX4m/0LnX3v1FYDs4F1I2MzgVByJ32kjkNDF7YFx1DxljFei7I
-         u4aRvZK3MXfGPSiWXKM+kcLkDYQU23a2G8Qd5szs7mXLo4bc9zAetIiqQ92B2xorNuoL
-         r3ZIss/xobLGcebhZIyL6w0SnvOS+ERVyWh9eFC/pVRllpiEKO8U+KvfJrYXMQCuME7K
-         QFbP4ZhBRCYVOqGDaay0uIj2cDZrcn8C+WefQRqhdWfkW/NKqJ2M9v3J7ZYPJ66IPjcd
-         1aem85wpJMpaxSHOMF58z6IiDIvejbnHd7uzspNTPo+88c+le+Y9gdoIXLWB07GrF/F2
-         sc0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJIyGRw3/JG7vaL9+rOfTM5XVo7dUiVOklK9qi+aPM2WZk34t2IzXTFbvwb7ECOaP8dNRnWTaaUioSScw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqHchZfpbknWcdgXot8Gxh75CVZIJqEpSMTGEzlAuFBxjCL5zJ
-	8vcVwSrVjmG/TvYegS7DFbBmq1qmxk9nBptC8aJpkz/QnI5CIfZvvJIFd21NAIQ=
-X-Gm-Gg: ASbGnctykcuHun6EDI0jeRrlo7mzewFiiscsvwaIv+S8E2m3BD2V95kbknw4TOXPtFo
-	vSqU5OuOdYjSbpaC9M4Qx14RNJJ/fGkewmTmzi0/FgtRzqzgvJnZ22/lcOrusBaJlW+0ONHKA0n
-	9AWAZpUOVj/t/IHNST9ot2nVAuKgr2YgXLPHgAKIYuaYRBjUgmSObBqu98DlB05g0rK/g1rL2uL
-	3rxczhOVSBLimV9ihUn8oM3v/ELiUI3FRk6QkOfCJlnUJqsnCFuBHakNJK2STlbD1zbk3vPik48
-	jVnSIf+A0pFOE4rz999iLadzJbBVPW2TNRI=
-X-Google-Smtp-Source: AGHT+IHrAfr6s54EMZzdZibt61xiXAEyvwCU0wxpSg2sJKxDaCspoqErH2abtAvmUlYyFr7yIzet5w==
-X-Received: by 2002:a05:651c:b20:b0:302:4113:2023 with SMTP id 38308e7fff4ca-3025451db77mr4619631fa.3.1734112703518;
-        Fri, 13 Dec 2024 09:58:23 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-302245cf66csm15409481fa.25.2024.12.13.09.58.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 09:58:22 -0800 (PST)
-Message-ID: <8308a825-2f33-4ec6-bfd2-9d3ed31c4a56@linaro.org>
-Date: Fri, 13 Dec 2024 19:58:20 +0200
+        d=1e100.net; s=20230601; t=1734112715; x=1734717515;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vaLlRj3ObamRETdZi3/ztjW/T2zRB+N3Lr9QOtAkYD0=;
+        b=gtRH2MLsRGVoWO80autOCuO9N4cMcWsCRWa1FUT54dtWZ2dCxygIM4raKV1F3q0q2Q
+         Hz+3hhXvzQV8HC47Ag+BAwiT4pFBhhYDv3lDquIWo8uf2KsFv3171lcJad7vOQciEp42
+         +xyoZ4XrB0bC8GGcra0+ZTWyhREz30PtlQbg/QPVclqO99G5gEi9d070wHpTyhnhEtQS
+         OtcMkZCqkg+Ivwe+AbfdzAZrJFkBSr8oGrCR+/cMMrfXBO+pHljAHgITKC6QGc0d7WeU
+         A20hfUEBkXdUz71aU3pYKzKTMzidZ2KhKM3Y/PUKcYpu+RixC2htE0zaix3x8o4Be3cu
+         sFNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnQh8P4ImyrW5ytmKdOHdCm1TB0lbFMmCghnjNOhjSShfwYeyF79Kr9AdaSX4+f0l1+p1MnQ2GiyU=@vger.kernel.org, AJvYcCVdTx7cdcw2C+JFtJPhnNTF6tM7yJTgMmF4BUuf+DNJbqlJaeyyi+AP8y0V8P1kmgOqqmhIhUffmN0Vfkls@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0A6uPZna2cLGbHZOwBN7l9POjTN0ZyCZDEigGyfcxAapNrnUJ
+	h4Yn2U76ewY50shxo5TVSGq89q1LjQm/MoHp8Yyx1Mc0jUsD2Zf275rn9g==
+X-Gm-Gg: ASbGncvRmxG9l+8yciHLNVnQQVXhHPlX5UiH9UbmspmYkgop7ETtHxGrXuCUqgtzA98
+	F3ANt6z67MVF1BlXqmtFxHofo+11I9VVs6M4gXE5VIgh6OqOnjv5YbflnQgfEvg18FHvsJdDcZV
+	5KXToAXzvhc57Weyza/7bWXhnwT0uTXSYwM4/5Jsn3ioOdfLWTYet6Wcp4lMNT8EUd4yd0YYjIw
+	nuioBMC4Egk7uMywFR92iIG8ZUUC80L2ek4ZhlollAVHAGYmVLRqEzO7ubi3ikcRWrecKAXhQes
+	mFUXk/i3Iw==
+X-Google-Smtp-Source: AGHT+IGM2iCVKSaOg2DupxSNUtFLUFBnepSblvZs1s4dgrr1Uu7AOUZYvAO9rnQwyUgNWxIvzWbb1w==
+X-Received: by 2002:a05:6000:188f:b0:386:3e87:2cd6 with SMTP id ffacd0b85a97d-3888e0f4779mr2647388f8f.38.1734112715063;
+        Fri, 13 Dec 2024 09:58:35 -0800 (PST)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:4eec:e99c:89a6:d7a6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c804d573sm119088f8f.64.2024.12.13.09.58.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 09:58:34 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Chris Brandt <chris.brandt@renesas.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/9] i2c: riic: Use local `dev` pointer in `dev_err_probe()`
+Date: Fri, 13 Dec 2024 17:58:21 +0000
+Message-ID: <20241213175828.909987-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241213175828.909987-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: qcom: camss: Restrict endpoint bus-type to
- D-PHY
-Content-Language: ru-RU
-To: Luca Weiss <luca.weiss@fairphone.com>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Barnabas Czeman <barnabas.czeman@mainlining.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
- Caleb Connolly <caleb.connolly@linaro.org>, David Heidelberg <david@ixit.cz>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
- <20241209-camss-dphy-v1-2-5f1b6f25ed92@fairphone.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241209-camss-dphy-v1-2-5f1b6f25ed92@fairphone.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Luca.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 12/9/24 14:01, Luca Weiss wrote:
-> Currently the Qualcomm CAMSS driver only supports D-PHY while the
-> hardware on most SoCs also supports C-PHY. Until this support is added,
-> check for D-PHY to make it somewhat explicit that C-PHY won't work.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->   drivers/media/platform/qcom/camss/camss.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-> index 9fb31f4c18adee886cd0bcf84438a8f27635e07f..b99af35074cdf6fa794a0d2f0d54ecf12ac354d9 100644
-> --- a/drivers/media/platform/qcom/camss/camss.c
-> +++ b/drivers/media/platform/qcom/camss/camss.c
-> @@ -1855,6 +1855,15 @@ static int camss_of_parse_endpoint_node(struct device *dev,
->   	if (ret)
->   		return ret;
->   
-> +	/*
-> +	 * Most SoCs support both D-PHY and C-PHY standards, but currently only
-> +	 * D-PHY is supported in the driver.
-> +	 */
-> +	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
-> +		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
-> +		return -EINVAL;
-> +	}
-> +
->   	csd->interface.csiphy_id = vep.base.port;
->   
->   	mipi_csi2 = &vep.bus.mipi_csi2;
+Update the `riic_init_hw()` function to use the local `dev` pointer in
+calls to `dev_err_probe()`. Previously, `riic_init_hw()` used
+`riic->adapter.dev` in error reporting. Since this function is invoked
+during the probe phase, the I2C adapter is not yet initialized, leading to
+`(null) ...` being printed in error messages. This patch fixes the issue by
+consistently using the local `dev` pointer, which points to
+`riic->adapter.dev.parent`.
 
-My cautious worries were futile, the change works as expected and
-the regression testing on RB5 is passed:
+Additionally, replace `dev_err()` with `dev_err_probe()` throughout
+`riic_init_hw()` for consistency.
 
-===== begin parsing endpoint /soc@0/camss@ac6a000/ports/port@2/endpoint
-fwnode video bus type not specified (0), mbus type not specified (0)
-lane 0 position 0
-lane 1 position 1
-lane 2 position 2
-lane 3 position 3
-clock lane position 7
-no lane polarities defined, assuming not inverted
-assuming media bus type MIPI CSI-2 D-PHY (5)
-===== end parsing endpoint /soc@0/camss@ac6a000/ports/port@2/endpoint
+Fixes: d982d66514192 ("i2c: riic: remove clock and frequency restrictions")
+Fixes: 71dacb2565ed (i2c: riic: Simplify unsupported bus speed handling")
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/i2c/busses/i2c-riic.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-Tested-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index 7ab32aeead4b..d01bb52d86ed 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -320,7 +320,7 @@ static int riic_init_hw(struct riic_dev *riic)
+ 				      : I2C_MAX_FAST_MODE_FREQ;
+ 
+ 	if (t->bus_freq_hz > max_freq)
+-		return dev_err_probe(&riic->adapter.dev, -EINVAL,
++		return dev_err_probe(dev, -EINVAL,
+ 				     "unsupported bus speed %uHz (%u max)\n",
+ 				     t->bus_freq_hz, max_freq);
+ 
+@@ -356,11 +356,9 @@ static int riic_init_hw(struct riic_dev *riic)
+ 		rate /= 2;
+ 	}
+ 
+-	if (brl > (0x1F + 3)) {
+-		dev_err(&riic->adapter.dev, "invalid speed (%lu). Too slow.\n",
+-			(unsigned long)t->bus_freq_hz);
+-		return -EINVAL;
+-	}
++	if (brl > (0x1F + 3))
++		return dev_err_probe(dev, -EINVAL, "invalid speed (%lu). Too slow.\n",
++				     (unsigned long)t->bus_freq_hz);
+ 
+ 	brh = total_ticks - brl;
+ 
+-- 
+2.43.0
 
---
-Best wishes,
-Vladimir
 
