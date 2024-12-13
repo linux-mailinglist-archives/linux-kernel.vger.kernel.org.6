@@ -1,137 +1,131 @@
-Return-Path: <linux-kernel+bounces-444363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6648F9F05A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:41:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588E1169C40
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:41:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79C61991CD;
-	Fri, 13 Dec 2024 07:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Swb949eS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9C39F05A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:44:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D65188CC9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AA87283F20
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:44:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC6B199FBA;
+	Fri, 13 Dec 2024 07:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ohI0IvaJ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F097196D8F;
+	Fri, 13 Dec 2024 07:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734075693; cv=none; b=pxYg0ImRw3sSj0aG15w1noou2eq4MBoCWL8pHhWZc+AERtxBhrpY/kodJ0A1Af/xrysoL6crSiv7XbeJm8STbj8Yn9++0WQNj5RdIiw58nKM0S3HSOF42nwQTP3BjPb8bV+QPz7NnrNU9XOa1imxVN693Gn6bbzNPvDsxKDKYtw=
+	t=1734075834; cv=none; b=Wj+hz//hnQcJwJEzWS6wHNaXlMwBZ2ijxtqOdO3U2UXCjSI/I9iq2buSrhnZTDFwPFeKMI9DcsQkZqAow3nOioMabRJCNR6k4Wz/t/GakAcuWARqWVy6rbIQGxyZPGRG0zXGfWh9iyeoyReotOTQ8dKoo9toz2gf0aryuDLBcmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734075693; c=relaxed/simple;
-	bh=qe/DRkZqurcuEiMRLcjhf4qFchIOWtU4Kj0uAbt85Uk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WouT0RuSC6tJHHNCFyFO7Ta7moxtnROxJKSSkVzXQeaS0ZwJD+2y4brCzYkjtBpla0e4x5jsNXoVx2w7fPjYQXxmgdhce84vrVeF1/xoKUrk98hI+dRuWvJa5mEirHsfPwORba6Q4bs4qX7UUSndrOl45STeLA5BSP+myo8Ljp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Swb949eS; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734075691; x=1765611691;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=qe/DRkZqurcuEiMRLcjhf4qFchIOWtU4Kj0uAbt85Uk=;
-  b=Swb949eSiW0W1c9+usHHQhni+o09HkClap801iUCRUO0JWp/Zg2//r0/
-   gHYjUtDHgqj2iV4nMNoAyRCKYKUrA/m1diTaUc67I1WZkJgmP0fYIWpru
-   QHZzCvDirazer3ZAh2p8susf1R2AGHeGnS5lsr//fb28ArlETgNx+RqVy
-   +WM4W2RNCPx/yAfqTGjCbqz8F+cf6cI+Ti5I0KKTm2z/TWGa4R0JW4SgT
-   h49Tlo/5vfbYXUb8Si9hMsLJ46rvGBrqY8yomKFJLx9NV1F1tqybn3hxz
-   v3kBmmlg36QErL00ct+kJozNh/j+L/I8r31A+2WGWy+NewTA5eVp2/eOe
-   w==;
-X-CSE-ConnectionGUID: M9g5ZQyCTbChfw7tt2ilLA==
-X-CSE-MsgGUID: Kg9X+YovQiGwBUk2G5Tb/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="59916754"
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="59916754"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 23:41:30 -0800
-X-CSE-ConnectionGUID: KwcmarQeTGKFseYtnaVssQ==
-X-CSE-MsgGUID: cfzBmJPnRUO8J/8tfieSog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="101489393"
-Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.124.244.96]) ([10.124.244.96])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 23:41:26 -0800
-Message-ID: <44ddaae9-fde0-4bd9-8662-ee88141ff0a3@linux.intel.com>
-Date: Fri, 13 Dec 2024 15:41:23 +0800
+	s=arc-20240116; t=1734075834; c=relaxed/simple;
+	bh=lHwtD1iPNGzdJwYjIGoo8w0zLrhQgGX7/hX9tiBWhM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MN1T8uBOT+bxrs/M5qQOuRarwyp34nn+hObMu9afr5LhmvxdVHSVk4MtcFgoSE6yT/avli5HnQdRyOtIpTjMWkt15ntnc1HuhyLBsa3c1qf0oCYvOe8yxAxkHeGIHiASZMKj3QI3wLoJOSsR0qrxMDgH+WkCoG3fl0C8uLQbEUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ohI0IvaJ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1734075826;
+	bh=lHwtD1iPNGzdJwYjIGoo8w0zLrhQgGX7/hX9tiBWhM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ohI0IvaJ5l9TNKXFl3u2YGdIyF/Va5/dQjCulUrI7V490GJY9EOjo9j7wMsjITTC7
+	 pc3iTWYawwbQ9UmwE2rFrXjOFGwmG6JEWGIGIV+E172fpwZa2XnJ2KxDF3NkpU/50o
+	 uOeiloPI/w2dHQjKKp4tLqJokisytzKAKFS6T77w=
+Date: Fri, 13 Dec 2024 08:43:46 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH 2/4] platform/x86: wmi-bmof: Switch to
+ sysfs_bin_attr_simple_read()
+Message-ID: <d1580513-6297-46b5-b4e0-c2063496b2ed@t-8ch.de>
+References: <20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net>
+ <20241205-sysfs-const-bin_attr-simple-v1-2-4a4e4ced71e3@weissschuh.net>
+ <2fbf5d9d-8cfe-4ce4-a268-ec84c261d1bd@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
- instead of RWX
-From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
-To: David Woodhouse <dwmw2@infradead.org>, kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
- linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
- Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- jpoimboe@kernel.org, bsz@amazon.de
-References: <20241205153343.3275139-1-dwmw2@infradead.org>
- <20241205153343.3275139-14-dwmw2@infradead.org>
- <5bb26488-f5fb-4186-92c3-de6a07631f91@linux.intel.com>
- <b4104c271b461dc1958ffac299d6741746a0728a.camel@infradead.org>
- <56fdfffc-9a5e-4f9e-ae5b-57dd27d647cc@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <56fdfffc-9a5e-4f9e-ae5b-57dd27d647cc@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2fbf5d9d-8cfe-4ce4-a268-ec84c261d1bd@gmx.de>
 
+Hi Armin,
 
+On 2024-12-13 01:21:37+0100, Armin Wolf wrote:
+> Am 05.12.24 um 18:35 schrieb Thomas Weißschuh:
+> 
+> > The generic function from the sysfs core can replace the custom one.
+> 
+> Sorry for taking quite a bit to respond, i totally overlooked this patch.
+> 
+> This patch is superseded by a patch of mine: https://lore.kernel.org/platform-driver-x86/20241206215650.2977-1-W_Armin@gmx.de/
+> 
+> This reworks the binary attribute handling inside the driver to use the new .bin_size() callback. This allows the
+> driver to have a static binary attribute which does not need a memory allocation.
+> 
+> Because i think we cannot use sysfs_bin_attr_simple_read() anymore. So maybe you can just drop this patch?
 
-On 2024/12/13 14:45, Ning, Hongyu wrote:
-> 
-> 
-> On 2024/12/12 18:13, David Woodhouse wrote:
->> On Thu, 2024-12-12 at 11:03 +0800, Ning, Hongyu wrote:
->>>
->>> Hi David,
->>>
->>> I've hit some kdump/kexec regression issue for guest kernel in KVM/QEMU
->>> based VM and reported in https://bugzilla.kernel.org/show_bug.cgi? 
->>> id=219592.
->>>
->>> based on further git bisect, it seems to be related with this commit,
->>> would you help to take a look?
->>
->> Thanks for the report; I'll take a look. Please could you share your
->> kernel .config?
->>
-> 
-> kernel config updated in the bugzilla https://bugzilla.kernel.org/ 
-> show_bug.cgi?id=219592
-> 
->> Also, you say that this is in QEMU running on an IA64 host. Is that
->> true, or did you mean x86_64 host? Are you using OVMF or SeaBIOS as the
->> QEMU firmware?
->>
-> 
-> You're right, it's x86_64 host, I miss-selected it in bugzilla.
-> I'm using OVMF as the QEMU firmware.
-> 
->> In the short term, I think that just reverting the 'offending' commit
->> should be OK. I'd *prefer* not to leave the page RWX for the whole time
->> period that the image is loaded, but that's how it's been on i386 for
->> ever anyway.
-> 
-> And your latest patch https://lore.kernel.org/ 
-> kexec/9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org/ 
-> could fix this issue now.
+Works for me, thanks!
 
-my local email app went wrong, didn't receive latest patch in email thread.
+Thomas
 
-later version patch 
-https://lore.kernel.org/kexec/ed7dd45f89e8f286478791137447a21d53735dbd.camel@infradead.org/ 
-could fix this issue too.
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> >   drivers/platform/x86/wmi-bmof.c | 12 ++----------
+> >   1 file changed, 2 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-bmof.c
+> > index df6f0ae6e6c7904f97c125297a21166f56d0b1f0..e6c217d70086a2896dc70cf8ac1c27dafb501a95 100644
+> > --- a/drivers/platform/x86/wmi-bmof.c
+> > +++ b/drivers/platform/x86/wmi-bmof.c
+> > @@ -25,15 +25,6 @@ struct bmof_priv {
+> >   	struct bin_attribute bmof_bin_attr;
+> >   };
+> > 
+> > -static ssize_t read_bmof(struct file *filp, struct kobject *kobj, struct bin_attribute *attr,
+> > -			 char *buf, loff_t off, size_t count)
+> > -{
+> > -	struct bmof_priv *priv = container_of(attr, struct bmof_priv, bmof_bin_attr);
+> > -
+> > -	return memory_read_from_buffer(buf, count, &off, priv->bmofdata->buffer.pointer,
+> > -				       priv->bmofdata->buffer.length);
+> > -}
+> > -
+> >   static int wmi_bmof_probe(struct wmi_device *wdev, const void *context)
+> >   {
+> >   	struct bmof_priv *priv;
+> > @@ -60,7 +51,8 @@ static int wmi_bmof_probe(struct wmi_device *wdev, const void *context)
+> >   	sysfs_bin_attr_init(&priv->bmof_bin_attr);
+> >   	priv->bmof_bin_attr.attr.name = "bmof";
+> >   	priv->bmof_bin_attr.attr.mode = 0400;
+> > -	priv->bmof_bin_attr.read = read_bmof;
+> > +	priv->bmof_bin_attr.read_new = sysfs_bin_attr_simple_read;
+> > +	priv->bmof_bin_attr.private = priv->bmofdata->buffer.pointer;
+> >   	priv->bmof_bin_attr.size = priv->bmofdata->buffer.length;
+> > 
+> >   	ret = device_create_bin_file(&wdev->dev, &priv->bmof_bin_attr);
+> > 
 
