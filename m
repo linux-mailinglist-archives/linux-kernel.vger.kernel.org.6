@@ -1,105 +1,132 @@
-Return-Path: <linux-kernel+bounces-444380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88E49F05E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:00:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309A39F05E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:02:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2ABB165685
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:01:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC3619A297;
+	Fri, 13 Dec 2024 08:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5PdWI9A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4CB284064
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:00:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF98619DFB4;
-	Fri, 13 Dec 2024 08:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VgkXP/nL"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D947A192D70
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE887187355;
+	Fri, 13 Dec 2024 08:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734076829; cv=none; b=HKQRJiPrS3YQ9LpwgiVn33f9tlrsi8IjBvTIIeNTtHP2MsD/RqL7cCPKlwMZX4UG+7mQaYZk504JcXoO0ZVpUOPZUERMm3qvJfsZWvhxbQ4ttKMIdEKTrx4HudQE7W/mojqRvYBRTXiAM2cSb4BcIpEiRx5zsLKK1lDhPmFNNqM=
+	t=1734076915; cv=none; b=CPBnsLGfn52KQKllEpJJT1Ai5m4e5yBlfrn9q9YcgPEW9vXEkDpKe2bt94cTgYKzhRZ50hwtNYugehfr6+GYkDUG+3wvdl2BaVHXQO3VrVTrFdeeoICAYHqr9JfwjGRPWLxm2H6cWYQ8IUsvtYBpwjMQ2dkAT3oTipSwhFq9+7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734076829; c=relaxed/simple;
-	bh=De+XKUlxdDAtzt4S9WN2Ib9SR9euZ6C9SeLMwL3zAMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OThvXSifL5ek8J6W5b9Xs9uT+L+uip4nuwxQ9VWsEGzb3owYxGVQiQm2pHOp2vjyPJj2tipZc0/rek/7v1zhbGZS6sXrO2ps7jRoQVzJSqW9LLpCA+q3Am6xbU69dxxahP7AITCjDkVvoHLJtIBBVlz5XeJ0manA4tRTbPfGkhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VgkXP/nL; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ef6af22ea8so1270988a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:00:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734076825; x=1734681625; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+VcW/gT5gahGNm/Yx5OtnhIWsW1Q4wxzsxZW8CFyCo=;
-        b=VgkXP/nLdEA6wgw/NvGoRuAJeAEpUjcdfMp4a5fRrfAWYR0JrMRaJ9G+KXZXZT8vjy
-         sP4/8vt8amw5LQJ69+aa53IVMzVACCrL5lwVr5Ie0BYtYfcd0QDn2JdxMyrBQQjRnv8I
-         lHccFaybScCGD3AIhDw8Vd8mqx2R4z7ZNOgtg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734076825; x=1734681625;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d+VcW/gT5gahGNm/Yx5OtnhIWsW1Q4wxzsxZW8CFyCo=;
-        b=m9xSFmrIp8s9MicG/HeqVEdkEMH0H/wFSdLBoKnjBOiyejyJHRVL+VR5hsJP3jvy1J
-         fuYSQh4R76rzrmwwAnMabUZC4xiEbsKFfINXTAS2cIn3RaXKrEUWpxvXnh90/4qWw3vk
-         b7TPmFZZoMjBVJgkzvr2MtV/bPARkPzKRWWCNQw4kFXeIIN/s8yvohfDDRaZmlgAyof3
-         W6FfqAL9W3AKXVZHPGb/lszd4Uor/mh+U89SDEM/Y+w4zleADQLTQNBvvi00cRWbHdxC
-         savAx5j7UJ2+qa++/hBmZdaYZbMSFVvq5IefyU+2TzRXJgxwO+sCKi4Upw9Oymiajqcs
-         uAAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTrwg9wjcTXUGuPv2D30cvKE09QRSox9tpP6XWMy5AJ++s+EstZLanex5H64jVoc/xcpI0IXAYOsOl3JY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6Y61A6fI6qlblE1fDQXpaegnvhenMXOHYu4L4qI8uKEooXYxc
-	ehQk0R+b0K4lLzxVpRqgpWhevqMvJj1l0uBgH42YeAU6ZClxgiJf2W9m5KrG+Q==
-X-Gm-Gg: ASbGncvYZ+8YEVJ50h7YMLXolwczhWmSGiFMXgAWGZ/Vlvk+kKZsOcBX+7/KKVrNjrD
-	Y7511s7AICiercRfc+lYZu5oaPgt9MxOJseFlI5NyTpu7lPWxVioUhPgPGNDW3hmQtFsqWnFwc5
-	2i/0q14JL9PH85lRBxOIcsCKQY1jFlhv1Fi1RbKRKa6o5trpZx2F842Uic1rO/98JwES3H1ZPWL
-	9TQLEHhbtEms0ZTP01kBIGvlDBmlsGHvB1MHmEk8o7wuxhE+gAHD4Br0xRS
-X-Google-Smtp-Source: AGHT+IGAG3di1prCf2zZpmnUtKcuvJ11czBwkHzRleM6YVn0pT7NTaRRJDPHKzAHCHVn3u7r0aeXMQ==
-X-Received: by 2002:a17:90b:38c5:b0:2ea:8aac:6aa9 with SMTP id 98e67ed59e1d1-2f28fd77f87mr2308613a91.21.1734076825081;
-        Fri, 13 Dec 2024 00:00:25 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:2d7e:d20a:98ca:2039])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f12cd09293sm2245435a91.1.2024.12.13.00.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 00:00:24 -0800 (PST)
-Date: Fri, 13 Dec 2024 17:00:20 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-Cc: minchan@kernel.org, senozhatsky@chromium.org, axboe@kernel.dk, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: Clarification on last_comp_len logic in zram_write_page
-Message-ID: <zod7krcdvew5ntmcpbpgzpan2yph6jz7tfao2xowh7c2wmbckm@vc3bsf4fsoyf>
-References: <Z1vf/ladGMjeGpfi@HOME-PC>
+	s=arc-20240116; t=1734076915; c=relaxed/simple;
+	bh=7LD54dmJDjftl31NJJcExHt1aZa+FMSTWfGvjuK1GAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=c4yu60gqbycKjtZQvy2Q3uGJHx8LUH/Q0Byp7ld/TBA602jgln1CpUOaEepSRzbGd009f6d4bgEuq5PL7O8imI7I501CakprqQ0Zz2PTABNp1BqDQQqsTHEeKMFDMYQ0VZkeVXTCPfrfRtKIiMguV+lvVDNPCzzEXtN3xsqHSJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5PdWI9A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F060C4CED1;
+	Fri, 13 Dec 2024 08:01:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734076915;
+	bh=7LD54dmJDjftl31NJJcExHt1aZa+FMSTWfGvjuK1GAA=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=M5PdWI9Ap51gOdghnXpW7Yj0LlUwGokHmPMqLNKuUoItSerMXxIGBc0H1YbuWOCVz
+	 sE45bhf0/u5jw4eOyNxzv9GhfTIGNmDOkR1Sv4fHrGbXyB2Bi1qeSBbldwiB4vfHhN
+	 IUf2qVnycb7ESTFjYv5hoO4xfkjszM2wpnecBLsaCJPYu1YLl4rhPaU3LdqNxoaoHD
+	 VYih3RLAfp6VhPjoTewg7U8/YyM5C01zrcNrIr/LwX8+sbUtUpgKB0WyHfHWe0fKjw
+	 zEwcTsEv4p5xbhvK6SCt/hPm+E0LuwJzHB/VfAXVQDVP8+swEadlHzFTncv2KqIIS5
+	 FWZrIi7lIRxmQ==
+Message-ID: <dbfe7c42-cc9b-4471-93ed-846260db42e6@kernel.org>
+Date: Fri, 13 Dec 2024 09:01:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1vf/ladGMjeGpfi@HOME-PC>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/6] arm64: dts: aspeed: Add initial AST27XX device
+ tree
+To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, tglx@linutronix.de, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, olof@lixom.net, quic_bjorande@quicinc.com,
+ geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
+ konradybcio@kernel.org, neil.armstrong@linaro.org, johan+linaro@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ soc@lists.linux.dev
+References: <20241212155237.848336-1-kevin_chen@aspeedtech.com>
+ <20241212155237.848336-7-kevin_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241212155237.848336-7-kevin_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On (24/12/13 12:49), Dheeraj Reddy Jonnalagadda wrote:
-> I am writing to seek clarification regarding the use of last_comp_len
-> variable in zram_write_page function. Specifically, Coverity has flagged 
-> the issue (CID 1602439) in zram/zram_drv.c
+On 12/12/2024 16:52, Kevin Chen wrote:
+> Add aspeed-g7.dtsi to be AST27XX device tree.
 > 
-> Currently, last_comp_len is initialized to 0 but never updated within the
-> function. This renders the conditional block shown below as dead code.
-> 
-> 	if (last_comp_len && (last_comp_len != comp_len)) {
->     		zs_free(zram->mem_pool, handle);
->     		handle = -ENOMEM;
-> 	}
+> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
 
-That's a "known issue" [1], I deleted one extra line during rebase.
-However, I expect last_comp_len patch do get withdrawn soon [2].
+Where are all the bindings? Why are you silent about this? The patchset
+adding new SoC DTS, when separate, is supposed to explain where we can
+find the bindings.
 
-[1] https://lore.kernel.org/linux-kernel/20241211100638.GA2228457@google.com
-[2] https://lore.kernel.org/mm-commits/3awo2svbnsv2mvozhaqspwztgxhifphj7ffpmykc35py6wp6ol@xlt2q5qgv6c3
+> ---
+>  arch/arm64/boot/dts/Makefile              |   1 +
+>  arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi | 236 ++++++++++++++++++++++
+>  2 files changed, 237 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.
+
+
+Best regards,
+Krzysztof
 
