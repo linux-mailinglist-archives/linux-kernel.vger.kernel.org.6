@@ -1,105 +1,117 @@
-Return-Path: <linux-kernel+bounces-444512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C964E9F080D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:38:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF1E188B1AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:38:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABD31B21B5;
-	Fri, 13 Dec 2024 09:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="PaUn84Hx"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16029F080A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:38:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D14A1B0F20
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72C5C282692
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:38:12 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D89C1B3935;
+	Fri, 13 Dec 2024 09:38:06 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696841B3922;
+	Fri, 13 Dec 2024 09:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734082685; cv=none; b=OxR/nE8JgOooxHbE+O4fuMqkB8ks3QDuBUyv9lmQmcaLQUYAcAGkezFIhotOA0H2tvkWh5ZcJugce0Xp7Izp1Rtxpal7WPlrcXS2UdIeZSll+okPDFlOkwLl0JvHNLdMR/9cPRraY3wfVLLmLVAiiKwVnchfdxfLcP/JBlAmnq0=
+	t=1734082685; cv=none; b=lNLmBDNS6EdTMJRaBc4LhNR+zE6lwaJnDhoFeUE05GE4W99KMBIJOUqu+2wEVDMeHl9V83AvT4fC8Cnk9D2PlftYG4oks22NdIdnhzwlzFUman2mc4I+LjYL7pvxerxwv/m0G+uk4yFVVOe6ftlWosjtGnkWmL/es8bs9f+fL5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734082685; c=relaxed/simple;
-	bh=oQpzYtOejXAwIFbpnjsdqVXPeMH8rc28IecS7Aq9/50=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jqg1PCplrD64STU+46R1l4w1iLPB2xCyJoigf0GR+WVx67erT9rvD0uaYnoOzQfIzUpUYDpOqZOk6LYolMXG/M6Hxxs6XquUsqiXYDMbdllK4SDNccNpvDo3zA2AGf00I2FV1ixKaebOTiaB5DiOs3yHmhNaDm2dQWrRjm2tjM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=PaUn84Hx; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1734082682; x=1734341882;
-	bh=oQpzYtOejXAwIFbpnjsdqVXPeMH8rc28IecS7Aq9/50=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=PaUn84Hxaqn47iGdI9O9vUWWLYCo3qHbJYGnyPgieIkfFAzOVaIocQjRaa+90DCnD
-	 BjsWN9KIO+yUGx0PWfABY+ydOZCQLiAf5Kz6Euy0IzMbUbK0TaEHVhofPo2DdVkaEA
-	 n+6SVrnSVtobLgJ1prtno3uoG+yoVjIyHf1gj20s9CG26xsoYdCJdb+B/53tMzcf8f
-	 UcSMWD7IYxl3UwnPw/77DY5kGsV84ckHkbZWOcQXgsTdt8j/zg1CtTxr2dlBTTiCgV
-	 5HQWfy0PX71LSSTlDd+LVq3kt9R6T04Gpg5lrAcGQDdronusNvxYg5L8kjGjnfWD2T
-	 B7FXx5F26b3bA==
-Date: Fri, 13 Dec 2024 09:37:55 +0000
-To: Arnd Bergmann <arnd@kernel.org>
-From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: Dave Penkler <dpenkler@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, Nathan Chancellor <nathan@kernel.org>, "Everest K.C." <everestkc@everestkc.com.np>, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: gpib: add module author and description fields
-Message-ID: <MGy6QhNfv7Nkp5Z1jG8CBnrfIL7idxS2qFncLvVaWUaIETm6hpWlQ5le4wpmw5RtMZx7utyDvuAGg2aks7E9seY_umnTkGSdkzYL5oVBxhM=@protonmail.com>
-In-Reply-To: <20241213083119.2607901-1-arnd@kernel.org>
-References: <20241213083119.2607901-1-arnd@kernel.org>
-Feedback-ID: 117888567:user:proton
-X-Pm-Message-ID: 0c7a6274337e56c3497552b65fca9db309cf2ba4
+	bh=HITZSZpjru9RSOjYBpX/AlEUY8rBdvdHz3Y6Yqg8P0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q0AlnDHMSEKUc4xxgrisMAGe/exnB/RAO5FZDMouBRIqqyuty3pnbJLsBqZRPfK/QWmbGA/vEcBQgkVfINcoUYBzv/1mDVHYLW3wFfao/KhcmOzujuraqfC+QEc0DPnkGEo3un3dSQTYweJbKAqMnGRW/Oq6jlgem3h/HdHsmi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y8klV1K3Zz1JFDP;
+	Fri, 13 Dec 2024 17:37:42 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6B6CA140123;
+	Fri, 13 Dec 2024 17:37:59 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 13 Dec 2024 17:37:58 +0800
+Message-ID: <92d90a3b-40e5-b47a-e570-ca63e4e58126@hisilicon.com>
+Date: Fri, 13 Dec 2024 17:37:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH for-next] RDMA/hns: Support mmapping reset state to
+ userspace
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <leon@kernel.org>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <tangchengchang@huawei.com>
+References: <20241014130731.1650279-1-huangjunxian6@hisilicon.com>
+ <20241209190125.GA2367762@nvidia.com>
+ <f046d3f8-a1c8-0174-8db9-24467c038557@hisilicon.com>
+ <20241210134827.GG2347147@nvidia.com>
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <20241210134827.GG2347147@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-On Friday, December 13th, 2024 at 09:31, Arnd Bergmann <arnd@kernel.org> wr=
-ote:
 
->=20
->=20
-> From: Arnd Bergmann arnd@arndb.de
->=20
->=20
-> The FMH driver is still missing both, so take them from the comment
-> at the start of the file.
->=20
-> Fixes: 8e4841a0888c ("staging: gpib: Add Frank Mori Hess FPGA PCI GPIB dr=
-iver")
-> Signed-off-by: Arnd Bergmann arnd@arndb.de
->=20
-> ---
-> drivers/staging/gpib/fmh_gpib/fmh_gpib.c | 2 ++
-> 1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c b/drivers/staging/g=
-pib/fmh_gpib/fmh_gpib.c
-> index 2ed286fa5d6e..0662b20a45e7 100644
-> --- a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-> +++ b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-> @@ -24,6 +24,8 @@
-> #include <linux/slab.h>
->=20
->=20
-> MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("GPIB Driver for fmh_gpib_core");
-> +MODULE_AUTHOR("Frank Mori Hess fmh6jj@gmail.com");
->=20
->=20
-> static irqreturn_t fmh_gpib_interrupt(int irq, void *arg);
-> static int fmh_gpib_attach_holdoff_all(gpib_board_t *board, const gpib_bo=
-ard_config_t *config);
-> --
-> 2.39.5
 
-Reviewed-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@proton=
-mail.com>
+On 2024/12/10 21:48, Jason Gunthorpe wrote:
+> On Tue, Dec 10, 2024 at 02:24:16PM +0800, Junxian Huang wrote:
+>>
+>>
+>> On 2024/12/10 3:01, Jason Gunthorpe wrote:
+>>> On Mon, Oct 14, 2024 at 09:07:31PM +0800, Junxian Huang wrote:
+>>>> From: Chengchang Tang <tangchengchang@huawei.com>
+>>>>
+>>>> Mmap reset state to notify userspace about HW reset. The mmaped flag
+>>>> hw_ready will be initiated to a non-zero value. When HW is reset,
+>>>> the mmap page will be zapped and userspace will get a zero value of
+>>>> hw_ready.
+>>>
+>>> This needs alot more explanation about *why* does userspace need this
+>>> information and why is hns unique here.
+>>>
+>>
+>> Our HW cannot flush WQEs by itself unless the driver posts a modify-qp-to-err
+>> mailbox. But when the HW is reset, it'll stop handling mailbox too, so the HW
+>> becomes unable to produce any more CQEs for the existing WQEs. This will break
+>> some users' expectation that they should be able to poll CQEs as many as the
+>> number of the posted WQEs in any cases.
+> 
+> But your reset flow partially disassociates the device, when the
+> userspace goes back to sleep, or rearms the CQ, it should get a hard
+> fail and do a full cleanup without relying on flushing.
+> 
+
+Not sure if I got your point, when you said "the userspace goes back to sleep",
+did you mean the ibv_get_async_event() api? Are you suggesting that userspace
+should call ibv_get_async_event() to monitor async events, and when it gets a
+fatal event, it should stop polling CQs and clean up everything instead of
+still waiting for the remaining CQEs?
+
+Thanks,
+Junxian
+
+>> We try to notify the reset state to userspace so that we can generate software
+>> WCs for the existing WQEs in userspace instead of HW in reset state, which is
+>> what this rdma-core PR does:
+> 
+> That doesn't sound right at all. Device disassociation is a hard fail,
+> we don't try to elegantly do things like generate completions. The
+> device is dead, the queues are gone.
+> 
+> Jason
+> 
 
