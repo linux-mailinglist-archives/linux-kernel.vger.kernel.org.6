@@ -1,228 +1,98 @@
-Return-Path: <linux-kernel+bounces-445226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C3A9F130C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:56:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C793B188D0B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:55:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155EA1E47A8;
-	Fri, 13 Dec 2024 16:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZcXezQd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0129F130B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:56:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450C51E04B8;
-	Fri, 13 Dec 2024 16:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E461C284687
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:56:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E2D1E3DEC;
+	Fri, 13 Dec 2024 16:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7U/RxCy"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED731684AE;
+	Fri, 13 Dec 2024 16:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734108939; cv=none; b=mA83uJl3Z5oauanHpAn2gXuYzGbyWGZ/TeDSkwoUOKBn73PV/pZ5dkRpzjCW9zjaI6tHboFDr8vYPQCZgusIDgMbqCv01GdXVZUjfjqWNI3/yXjuTnEahCr/NJiyejcwBSGJwPXirYmskIOHThmRx+vgthGkVGjOWM3Gt3INIEA=
+	t=1734108977; cv=none; b=mrJ24GYFmstTi18CYCfbacqjNGCKoVm0Y5tqRpep2OWDTv0DJFyDTeDdnRDe3Q2kEh9gWCj95rkY1wtipnSqzEZAoERfn0wnxxYfqEBS7+77B7f3KYKL2wSABrPW6A7tPbr+48NeVwgTyywOWomeEGrAA1n86ACub8fzgoGIEHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734108939; c=relaxed/simple;
-	bh=PQGhwc4vbNPbMifKWeYjrbYNYXGkSHCLTSvZwdJRZMg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iq08JIx1HvHnb/QsCv6kiIYrMWgR92iD8/Z+wo6LQkX9YKHCVm/JWCKcUIydbcBrEcwPuOrTmLvIQY1I9wTr5yX4d8RNsYdn5FlHjWDPHi6VkFOqkdI6Keek7nRgtKmQOCWkHzevtpjp4/iG1Th5qGaF8tKEbskC5FcmRsUi5tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZcXezQd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742B5C4CED0;
-	Fri, 13 Dec 2024 16:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734108938;
-	bh=PQGhwc4vbNPbMifKWeYjrbYNYXGkSHCLTSvZwdJRZMg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EZcXezQdzcQs/GjsGrupMAy2AWg01kuukouuOagAI2OTPl7wAvLye7G5vTenGVdMU
-	 mtKTOPTGPJR7/IscecJ3FWRGkMtXifJYwUKHP+CObtoHsA7qsCqt0UtQPA1W8rJ2cR
-	 xzHVaNySzoEYdNYXmO9E2op0fVrmQsZ/GBePqnCAIu47cpbAM8diqLg1LSv1CMeaIq
-	 2nAX/EhWLTX0V3es2cSLZ19vQOIwIKOKd9w2m+wBkjN5WAzXn7VateBSYoMFsN1lSE
-	 ECYbuZWKMu+IKBfdqEe2hFlsAf9aIoJESY+wWGEEjtHFU0Tn8VDUSx7SiK/x50YaN2
-	 P8+DG4058CArA==
-Message-ID: <0a8b9448-7e1c-4a30-8011-1505e2133263@kernel.org>
-Date: Fri, 13 Dec 2024 16:55:34 +0000
+	s=arc-20240116; t=1734108977; c=relaxed/simple;
+	bh=QDu92WMRvCNzYowrSM2zgW9TeimKB2kSvwDc/TXJfuU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oAdx86BR4BHUZZKpHlRS/riHZtyuQ+cR2kPmdVbsq9elB/xXcXHiGmrEilY0M9JlKQ+bGWfBqpXumAJ+ev2Pwjz4cirrRw2/emFbyzOgTQdUcy2Zl6NtufS61mqm6qYAts59ONbfbWFanI1WNTC1nYPQmVa2D2kbgvqTPRidsKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7U/RxCy; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso22071861fa.0;
+        Fri, 13 Dec 2024 08:56:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734108974; x=1734713774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QDu92WMRvCNzYowrSM2zgW9TeimKB2kSvwDc/TXJfuU=;
+        b=D7U/RxCyW7ehvDndWaoyuZSdiCDCppmGVYbzwWgIrAbOR0t21g2gdnj3spliKj4phu
+         bhKClgn7gcbsrruDidaDhWT2H3uUC4PX+U3r2zx+j4dTfm+CzOw3EdkRp+HBQqSZ2UHR
+         LmIxK9t2hmC5OXYQloVJkiYX8KPFOuUDb24bauHyaVcn37zGtAP7DPlZXODC0PVmeGTL
+         n5iUorNuMsBAWPKQGS6R2dMwiZ/k9KrK8ZKMdDsPLJV9PDBY9MXaK3kRRtvH8f+1aHF3
+         i2VTNcRnKgSKzkDzcxPjP1Xrx/JH+styq6OUfuC3i4BoL8wLQZ1lG0Q/7mLJGTqGgJEk
+         gcfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734108974; x=1734713774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QDu92WMRvCNzYowrSM2zgW9TeimKB2kSvwDc/TXJfuU=;
+        b=VnXeqA63DqCqrCTWa4J6oX0SNsY8C4qdm51hR0QKIo7OAySBqtWhOeWl06115KsoG2
+         V8fLv6SEV8b62tP7tAXAtnwbS29Lk+qt/jKxZ4P8U99/cnvT3+kgKspMi83b+3ERrpsm
+         sIpkROhIPltWSzna1kRieXs/tdvT1jTjTeUOjPKQLIvSQcosnTDFG/VlSTrg6oMj699y
+         hmZvPaU3FPb757n84h+HneR+5Q6C75OieVhwOq3CC7XV4s8gEfmejt6vI5LLEQeVDQOm
+         VUbzJmcYw7lzwe8zY/S31vNlmY7l+w+VYrwpsK29rw/BtD2hPFLKPnfdV8J7r6y6zVz2
+         W8uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaNkRTmDXZD46kkcp5d6akXVvAYGENDfji7nB8iwDjZJLnU8QOrLaFKBmtMY9jXFI7IfzJwa1Y3WbypMlCgtw=@vger.kernel.org, AJvYcCW8e/MDZh55sR2MtUH0Wva3+lYYJWlpQ/xIYZTe9526lqNVT3nDsiORgtFKo5LoAs8WjaYrtCFPxohrVn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDe9QXck5xP6EyzNGLuHgb0dAOmnZ4wWmRcDiqB2NusLRzTUlX
+	TZ3osc9ewY+mF/AIMXZjAYGudE8dn1jmnIG+64LUQllFYfoDbgeCpsEb5FaIR9/phlCExibbZr6
+	rr8MmsC7i2iT1LYbApnZue00J4Yk=
+X-Gm-Gg: ASbGncvI3XGkwRE5LfElntIomBRn56BCuDXUeYq+GGh8Zy5zy4eIWZ4fSk948qNiJr1
+	4uhYJmpOZEv+WRpYO5f2R7ORrBYVrj1OLeLyfvi27vpAIpZ1WFHI6
+X-Google-Smtp-Source: AGHT+IEHmJc/LcMgwBVMSGVt9nxNDthWvphEJeIY5rd9j70w7ZM/3ixy5jYbC9YcXY1vwynX2vPejCVNCS0i9k+g2Rk=
+X-Received: by 2002:a05:651c:b27:b0:302:3e14:34c5 with SMTP id
+ 38308e7fff4ca-30254611194mr13627461fa.28.1734108973901; Fri, 13 Dec 2024
+ 08:56:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v4 3/4] bpftool: btf: Support dumping a specific
- types from file
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: hawk@kernel.org, kuba@kernel.org, andrii@kernel.org,
- john.fastabend@gmail.com, ast@kernel.org, daniel@iogearbox.net,
- davem@davemloft.net, martin.lau@linux.dev, eddyz87@gmail.com,
- song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- andrii.nakryiko@gmail.com, antony@phenome.org, toke@kernel.org
-References: <cover.1734052995.git.dxu@dxuuu.xyz>
- <5ec7617fd9c28ff721947aceb80937dc10fca770.1734052995.git.dxu@dxuuu.xyz>
- <7fa902e5-0916-4bc9-b1e0-2729903d3de0@kernel.org>
- <fojqbtlpjh3jrpzzctgllxtnyncbtbzw6q7qfrezrigpc2qqek@6m7cppwvgwb5>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <fojqbtlpjh3jrpzzctgllxtnyncbtbzw6q7qfrezrigpc2qqek@6m7cppwvgwb5>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241212-rust-xarray-bindings-v12-0-59ab9b1f4d2e@gmail.com>
+In-Reply-To: <20241212-rust-xarray-bindings-v12-0-59ab9b1f4d2e@gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 13 Dec 2024 11:55:37 -0500
+Message-ID: <CAJ-ks9=GSJYSqTvbzwq9MPUPohFM+b_96pVOw4jRC6b=NTxYcA@mail.gmail.com>
+Subject: Re: [PATCH v12 0/2] rust: xarray: Add a minimal abstraction for XArray
+To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
+Cc: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-2024-12-13 09:45 UTC-0700 ~ Daniel Xu <dxu@dxuuu.xyz>
-> Hi Quentin,
-> 
-> On Fri, Dec 13, 2024 at 03:17:36PM GMT, Quentin Monnet wrote:
->> 2024-12-12 18:24 UTC-0700 ~ Daniel Xu <dxu@dxuuu.xyz>
->>> Some projects, for example xdp-tools [0], prefer to check in a minimized
->>> vmlinux.h rather than the complete file which can get rather large.
->>>
->>> However, when you try to add a minimized version of a complex struct (eg
->>> struct xfrm_state), things can get quite complex if you're trying to
->>> manually untangle and deduplicate the dependencies.
->>>
->>> This commit teaches bpftool to do a minimized dump of a specific types by
->>> providing a optional root_id argument(s).
->>>
->>> Example usage:
->>>
->>>     $ ./bpftool btf dump file ~/dev/linux/vmlinux | rg "STRUCT 'xfrm_state'"
->>>     [12643] STRUCT 'xfrm_state' size=912 vlen=58
->>>
->>>     $ ./bpftool btf dump file ~/dev/linux/vmlinux root_id 12643 format c
->>>     #ifndef __VMLINUX_H__
->>>     #define __VMLINUX_H__
->>>
->>>     [..]
->>>
->>>     struct xfrm_type_offload;
->>>
->>>     struct xfrm_sec_ctx;
->>>
->>>     struct xfrm_state {
->>>             possible_net_t xs_net;
->>>             union {
->>>                     struct hlist_node gclist;
->>>                     struct hlist_node bydst;
->>>             };
->>>             union {
->>>                     struct hlist_node dev_gclist;
->>>                     struct hlist_node bysrc;
->>>             };
->>>             struct hlist_node byspi;
->>>     [..]
->>>
->>> [0]: https://github.com/xdp-project/xdp-tools/blob/master/headers/bpf/vmlinux.h
->>>
->>> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
->>> ---
->>>  .../bpf/bpftool/Documentation/bpftool-btf.rst |  8 +++-
->>>  tools/bpf/bpftool/btf.c                       | 39 ++++++++++++++++++-
->>>  2 files changed, 43 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/tools/bpf/bpftool/Documentation/bpftool-btf.rst b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
->>> index 245569f43035..dbe6d6d94e4c 100644
->>> --- a/tools/bpf/bpftool/Documentation/bpftool-btf.rst
->>> +++ b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
->>> @@ -24,7 +24,7 @@ BTF COMMANDS
->>>  =============
->>>  
->>>  | **bpftool** **btf** { **show** | **list** } [**id** *BTF_ID*]
->>> -| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*]
->>> +| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*] [**root_id** *ROOT_ID*]
->>>  | **bpftool** **btf help**
->>>  |
->>>  | *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* }
->>> @@ -43,7 +43,7 @@ bpftool btf { show | list } [id *BTF_ID*]
->>>      that hold open file descriptors (FDs) against BTF objects. On such kernels
->>>      bpftool will automatically emit this information as well.
->>>  
->>> -bpftool btf dump *BTF_SRC* [format *FORMAT*]
->>> +bpftool btf dump *BTF_SRC* [format *FORMAT*] [root_id *ROOT_ID*]
->>>      Dump BTF entries from a given *BTF_SRC*.
->>>  
->>>      When **id** is specified, BTF object with that ID will be loaded and all
->>> @@ -67,6 +67,10 @@ bpftool btf dump *BTF_SRC* [format *FORMAT*]
->>>      formatting, the output is sorted by default. Use the **unsorted** option
->>>      to avoid sorting the output.
->>>  
->>> +    **root_id** option can be used to filter a dump to a single type and all
->>> +    its dependent types. It cannot be used with any other types of filtering.
->>> +    It can be passed multiple times to dump multiple types.
->>> +
->>>  bpftool btf help
->>>      Print short help message.
->>>  
->>> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
->>> index 3e995faf9efa..2636655ac180 100644
->>> --- a/tools/bpf/bpftool/btf.c
->>> +++ b/tools/bpf/bpftool/btf.c
->>> @@ -27,6 +27,8 @@
->>>  #define KFUNC_DECL_TAG		"bpf_kfunc"
->>>  #define FASTCALL_DECL_TAG	"bpf_fastcall"
->>>  
->>> +#define MAX_ROOT_IDS		16
->>> +
->>>  static const char * const btf_kind_str[NR_BTF_KINDS] = {
->>>  	[BTF_KIND_UNKN]		= "UNKNOWN",
->>>  	[BTF_KIND_INT]		= "INT",
->>> @@ -880,7 +882,8 @@ static int do_dump(int argc, char **argv)
->>>  {
->>>  	bool dump_c = false, sort_dump_c = true;
->>>  	struct btf *btf = NULL, *base = NULL;
->>> -	__u32 root_type_ids[2];
->>> +	__u32 root_type_ids[MAX_ROOT_IDS];
->>> +	bool have_id_filtering;
->>>  	int root_type_cnt = 0;
->>>  	__u32 btf_id = -1;
->>>  	const char *src;
->>> @@ -974,6 +977,8 @@ static int do_dump(int argc, char **argv)
->>>  		goto done;
->>>  	}
->>>  
->>> +	have_id_filtering = !!root_type_cnt;
->>> +
->>>  	while (argc) {
->>>  		if (is_prefix(*argv, "format")) {
->>>  			NEXT_ARG();
->>> @@ -993,6 +998,36 @@ static int do_dump(int argc, char **argv)
->>>  				goto done;
->>>  			}
->>>  			NEXT_ARG();
->>> +		} else if (is_prefix(*argv, "root_id")) {
->>> +			__u32 root_id;
->>> +			char *end;
->>> +
->>> +			if (have_id_filtering) {
->>> +				p_err("cannot use root_id with other type filtering");
->>> +				err = -EINVAL;
->>> +				goto done;
->>> +			} else if (root_type_cnt == MAX_ROOT_IDS) {
->>> +				p_err("only %d root_id are supported", MAX_ROOT_IDS);
->>
->>
->> I doubt users will often reach this limit, but if they do, the message
->> can be confusing, because MAX_ROOT_IDS also accounts for root_type_ids[]
->> cells used when we pass map arguments ("key" or "value" or "kv"), so you
->> could pass 15 "root_id" on the command line and get a message telling
->> only 16 are supported.
->>
->> Maybe add a counter to tell how many were defined from the rest of the
->> command line, and adjust the value in the error message?
-> 
-> The above `if (have_id_filtering)` check prevents mixing key/value/kv
-> map args with root_id. That ought to prevent overcounting, right?
+On Thu, Dec 12, 2024 at 3:31=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> teststs
 
-Ah, you're right, you even mentioned it in the docs, sorry. All good on
-that side, then.
-
-Regarding the restriction, would you mind making the mention from the
-man page a bit more explicit, please? Something along:
-
-    [...] It cannot be used with any other types of filtering, such as
-    the "key", "value", or "kv" arguments when dumping BTF for a map.
-    **root_id** can be passed multiple times...
-
-Thanks,
-Quentin
+Oops, please ignore this fragment. Having a bit of trouble with b4.
 
