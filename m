@@ -1,245 +1,205 @@
-Return-Path: <linux-kernel+bounces-444498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B2C9F07DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:27:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4675D9F07E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAE0C1880531
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D693A1884A9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BF81B0F36;
-	Fri, 13 Dec 2024 09:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A621B21A2;
+	Fri, 13 Dec 2024 09:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgjM0ylb"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RkB5/xp3"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A4C1AF0CE
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CFA1B2182
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734082030; cv=none; b=Dnrpy0P3334V/vfYZqeiMua12sb6fE08klW0QB/i734T1JMqlNpRdlPTeslOEorhy1BJtrFB+J07NBbBSFjHKCX3JzrnzVMlQOj7uS0FshzGOHjKhvJGoLvVJPRyOqpwAXenNBe5eqkORXSVXm/1HjWZOpQ4Q/baiScoH3sIOm0=
+	t=1734082111; cv=none; b=KodhnG04PRbC6Lfq1vx9dpUCYZwtcuHROf/yUlTNW6HSF/HXJZBcxlqgMU7yzHfRd4qdUJsPNCkEm/B0sLyeOh6vmMES73H3uY4yfjuV0Zb8Gj+lzD8yROeCGi06EA7aaIHwIetjvmbVcqZ5I0waHoIPmxAEWucwFMHjc8ya18k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734082030; c=relaxed/simple;
-	bh=7wsHpbPrm3JuP3pkMUblDPT6fGtmNSvAU46M95067SQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iM2sFFwHUdvFgc6NTfIceiL72KKqoisW985Qqw695KYI4nVjgXulRifmChCsDX52MohdERrZjcnfi1CQeSdeTfjcE2Bdf3nOGnOC08uXbYnYlTM65WW67Wtgsh7q2LQnEiwesU2orB3GmjLa2APWZhhfSz8zfRzmYwAFgIaw8UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgjM0ylb; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-725ee6f56b4so1344861b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:27:08 -0800 (PST)
+	s=arc-20240116; t=1734082111; c=relaxed/simple;
+	bh=S5Kt1KYzffNNep8PknLvFZbki51uDNxEjSjQZ1urTeg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rvYx/RO9ZF1TF6XTWyzDsddGdijP7PLUm0aUXN0oG78RjqDTux9tiXnQipPXRRKIX9gSiDCDNFrFHLI8bYwhkt6H4gG4Gtn9aFGHmdDEZ03HLsrrT78UTmADLXMivgsHKOBEQHwqtVFXfpdQGbE2/3clB4NwViofGQ+CrA+8/aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RkB5/xp3; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43622354a3eso10579435e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:28:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734082028; x=1734686828; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hTzQyXIHcaxEEVwjd+PpJ1XyNFyqZzECKyZ+9DQUQzo=;
-        b=FgjM0ylb7SBd6ZKcHmFYFmm+EiciM5xxtRUjG5Aom5+fNAElOu1yhGQ3jc2+oOub6e
-         zCc2fr+IL92vGGj2r4MgpWG/9+k6J+HyyqnXW68LFcSG2TUw1pNj8BOe5EY0ciKnSl5r
-         l1mhuMTn77fzrvvtCgfSyXKTtVCgVMwGpD01QXt7fc/FfacrsMyzXkNfSNCsFqtfEnke
-         Cqh99EckH6HgMeMzxMRMqsrDi8ayz20HXbQf6u3IatYnToAa8NBSNX1wat6STzw47Mz7
-         s7IoB8/u9OkxskU39v/cmvLKmM6uKiKKp7ymX9ZuADstZdihtyF3YP++oTuddXPnuf9s
-         7x6Q==
+        d=linaro.org; s=google; t=1734082107; x=1734686907; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yozBsa21RGVFgq006ZI3ZLQ/IbNIf9bvgbwa5F/+dlc=;
+        b=RkB5/xp3KQGEzEbLwc7FuNoVKftE1ANuxybEoO4VPSXFhGdhBAbk6pe0C1sCSdpqiH
+         bD3VpGtSI4JqY4DDacQH1EWufpRSWThmJpciX/vBW3LXLAwL01+fkjo/sXCUVwY9Ehxp
+         LJKb1Ze2SgYPvoZKZc/PEFdw2ifM52B+Yy35yoweQcsQ+Oyhn32aXpLMO5xVAyaVyNCt
+         7By/542JuZnHKnVlP18+5f+n+lPfRxKV8Ex/KDcz1o+rQJcstSI3ac3e+2dNzDD2Aug6
+         nWvzrQi8I73upikq50gQPLFPKINehu/O5fOJaWB9GQpIIVCw9f93cGgbPK1kd5pqW7Nj
+         m51Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734082028; x=1734686828;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hTzQyXIHcaxEEVwjd+PpJ1XyNFyqZzECKyZ+9DQUQzo=;
-        b=OMd6QrmC4WqdvCKG926+l8v8Zq4uOIq53Tw69LV5tG5U4NDZR51CxD3A5fkk3cfISa
-         0map8AuArgqp+Fu/E90+vtvesLdfmNEnJzP6FAkvJ0b00MRaBc+4/yp7j8ociPkR1Th8
-         wHkH18c4TlqJiJ1HGXmXzlPlXKrzSyZq5flTuT9TBg7O4LlLInKsPJ4zci0s5+7FYqbH
-         5e6LB9F5OUr79zeK31vw7XsHFX/os6/hfNyXdWx07CmN8E6upSsZ6P1g5UeOzC2O/Bj0
-         lXrRJK09xlQ3VQdtGx6XFNI7XxKbh/4qFmWYiTXNoQ5FY+KOUIz/jGTPj0nc44of9MWB
-         N9yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9qf6m2+2oQ9sdRttfSkqMTLW5prEyZ18kwjbn+hStE23EuWbxovqqtPp2jZBcgGhcGtF/KvmJi1TayAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyjX0jSKJ5hplOC0U6Xriz/RTjXKYF4wauHmt0Sy72GOtsS+4u
-	VM2hTK7XgUAb8vjy8SLIxzW13mHLmTHtTO59b7t41wtHUgPZVXAL
-X-Gm-Gg: ASbGnctGicosu2X1YovLRPJZko6sAxWVUYZAr7r5PQykJpH7C4DmSMapfU/cNBH5Pw2
-	k1yr9qujU+X3v1vkfU1jgnv/npYB/26I2SYNtw3NwofOIFIbUsgvxgbDIfLAa3BjdoRAfuBjvp3
-	hjtLU9d7oI/ERcqcXeFg339S5bgOxIqEP7bnEiFPNO+ICgwurmME3rAonJBGMiHL2rZ0FUJvEIT
-	ckJL8488LpQA5X1wlKGhY3IfV3NXFPZ7mQ0PkKxSdlRkKEQ2QciDFYdb2N+6qI5MAydhkGyBC/R
-	TBmNiZg=
-X-Google-Smtp-Source: AGHT+IEotA2MyBaR6GaoJwJuWdf/DB/mrRTTIJotvOvCF3vwProtl1t9f2/mF88td+J4waI8v5QJVg==
-X-Received: by 2002:a05:6a00:430f:b0:728:8c17:127d with SMTP id d2e1a72fcca58-7290c12ef7amr3243500b3a.8.1734082028273;
-        Fri, 13 Dec 2024 01:27:08 -0800 (PST)
-Received: from MBC02GN1V4Q05P ([117.143.114.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725c7cba42fsm11948546b3a.123.2024.12.13.01.27.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 01:27:07 -0800 (PST)
-Date: Fri, 13 Dec 2024 17:27:02 +0800
-From: Richard Clark <richard.xnu.clark@gmail.com>
-To: Mark Kettenis <mark.kettenis@xs4all.nl>
-Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, will@kernel.org,
-	linux@armlinux.org.uk, mark.rutland@arm.com,
-	torvalds@linux-foundation.org
-Subject: Re: Question about interrupt prioriyt of ARM GICv3/4
-Message-ID: <Z1v9GKkghPjpnvp6@MBC02GN1V4Q05P>
-References: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
- <86cyi5tanz.wl-maz@kernel.org>
- <CAJNi4rPDVXS3Ft3nHLXvMzHmn9d10Nz4Pxeduoe+v5HaK=CEAg@mail.gmail.com>
- <86ldwlryzz.wl-maz@kernel.org>
- <871pydxde2.fsf@bloch.sibelius.xs4all.nl>
+        d=1e100.net; s=20230601; t=1734082107; x=1734686907;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yozBsa21RGVFgq006ZI3ZLQ/IbNIf9bvgbwa5F/+dlc=;
+        b=sQfKSFhy2FcP5xjcbHOKuI3jsmawFwnh2k+aUryZrrp+vwYVuCPtvyo121UxpAJ+HG
+         3OQ19QmSL4R44IJbbG2IIfLpw2u2rKrWofeY1EyV6CjKTIiA7Uv2C43XP56jtWpScVMQ
+         G9g8nEP6odXKnUzbtvlVg3r+GnznijSFnVN5CIG3isFUcKjL8U+2aJHL2PSWM03pj/V3
+         JvYrrurHfUozrGranjjVJG4DtCwgp56NBtY8HCbI8lX+v45eVoGKThw72erXzu2P1xYJ
+         13YObLZJsIYdj+/2E7XAaPQgC48jYtVubtNWnYWAxugoXqNBWmfwKQ4cq1aenD62wctd
+         eIag==
+X-Forwarded-Encrypted: i=1; AJvYcCWoUL/C7cJwt93fCdr42QTfOlWsD8l9bH4UwwuaeDh/WQXDO/ENiiymtENJ1Pzjp8234lfOEXr0iKAz7Wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSlXC0xs2vXNEW3Z0ibJOgsxMp15l+xLTeRI4OSJsE3PPpu9LI
+	G5zwGcRN2gZxNXVppvfohH+eM9IP4pUr+zqgnX5LwclC/Cpfh1hK4MpV6eCCdm0=
+X-Gm-Gg: ASbGnctCyPmvD2ugyfLT4IdxK//7yTCzj8/XSecO/oxwkWICk2GNf8kp1M0vo5yzOGX
+	zOi1VXCLv90hwiyxJKediQufWSd3aEDqyOCJfeKF01JElBR5WjwlAG9wSA1qu461x1j1P58xNJZ
+	AY/iQrRfG1zNk50HpPJPjqMfwpcEvlyJ9snhkdj2PzdhLUoMHlEjPl4NCF0zECeg9Cy+Qpr5Qu0
+	zhsYHvtnGnjg6zlGvdp9dckcxmDQteh/Nw3GvJd1XW+X/FUpzdNgHaBSW22C6SJ0ZOohJC3N0Kq
+	vb8xcBDAS7XVNLrV1bXrUU7iExkSbckT+g==
+X-Google-Smtp-Source: AGHT+IHffbVyS3M5lg5YQDgo1g0//z6wj61DdR0u4BcqNisLOiriEv/4ltw0nNOUOkZ1jqI/2dg4Rg==
+X-Received: by 2002:a05:600c:4e0b:b0:431:5aea:95f with SMTP id 5b1f17b1804b1-4362aa593b9mr15131545e9.16.1734082106477;
+        Fri, 13 Dec 2024 01:28:26 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:4795:2d16:2587:ed70? ([2a01:e0a:982:cbb0:4795:2d16:2587:ed70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436256b7c62sm42968005e9.34.2024.12.13.01.28.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 01:28:26 -0800 (PST)
+Message-ID: <26c44a01-383a-4b1b-aba1-12d3e98ede1c@linaro.org>
+Date: Fri, 13 Dec 2024 10:28:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <871pydxde2.fsf@bloch.sibelius.xs4all.nl>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 2/2] drm/panel: simple: Add Tianma TM070JDHG34-00 panel
+ support
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241210-tianma_tm070jdhg34-v1-0-9fb7fe6b6cf0@bootlin.com>
+ <20241210-tianma_tm070jdhg34-v1-2-9fb7fe6b6cf0@bootlin.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241210-tianma_tm070jdhg34-v1-2-9fb7fe6b6cf0@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Mark,
+On 10/12/2024 18:28, Luca Ceresoli wrote:
+> Add Tianma TM070JDHG34-00 7.0" 1280x800 LVDS RGB TFT LCD panel.
+> 
+> Panel info and datasheet: https://fortec.us/products/tm070jdhg34-00/
+> 
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>   drivers/gpu/drm/panel/panel-simple.c | 42 ++++++++++++++++++++++++++++++++++++
+>   1 file changed, 42 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index 1562f122724137dec37eb11443eafc896ef2f2e8..b3c931a4e46a2568b3678d664f11b189873fa1e2 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -4286,6 +4286,45 @@ static const struct panel_desc tianma_tm070jvhg33 = {
+>   	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
+>   };
+>   
+> +/*
+> + * The datasheet computes total blanking as back porch + front porch, not
+> + * including sync pulse width. This is for both H and V. To make the total
+> + * blanking and period correct, subtract the pulse width from the front
+> + * porch.
+> + *
+> + * This works well for the Min and Typ values, but for Max values the sync
+> + * pulse width is higher than back porch + front porch, so work around that
+> + * by reducing the Max sync length value to 1 and then treating the Max
+> + * porches as in the Min and Typ cases.
+> + *
+> + * Exact datasheet values are added as a comment where they differ from the
+> + * ones implemented for the above reason.
+> + */
+> +static const struct display_timing tianma_tm070jdhg34_00_timing = {
+> +	.pixelclock = { 68400000, 71900000, 78100000 },
+> +	.hactive = { 1280, 1280, 1280 },
+> +	.hfront_porch = { 130, 138, 158 }, /* 131, 139, 159 */
+> +	.hback_porch = { 5, 5, 5 },
+> +	.hsync_len = { 1, 1, 1 }, /* 1, 1, 256 */
+> +	.vactive = { 800, 800, 800 },
+> +	.vfront_porch = { 2, 39, 98 }, /* 3, 40, 99 */
+> +	.vback_porch = { 2, 2, 2 },
+> +	.vsync_len = { 1, 1, 1 }, /* 1, 1, 128 */
+> +	.flags = DISPLAY_FLAGS_DE_HIGH,
+> +};
+> +
+> +static const struct panel_desc tianma_tm070jdhg34_00 = {
+> +	.timings = &tianma_tm070jdhg34_00_timing,
+> +	.num_timings = 1,
+> +	.bpc = 8,
+> +	.size = {
+> +		.width = 150, /* 149.76 */
+> +		.height = 94, /* 93.60 */
+> +	},
+> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
+> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+> +};
+> +
+>   static const struct display_timing tianma_tm070rvhg71_timing = {
+>   	.pixelclock = { 27700000, 29200000, 39600000 },
+>   	.hactive = { 800, 800, 800 },
+> @@ -5028,6 +5067,9 @@ static const struct of_device_id platform_of_match[] = {
+>   	}, {
+>   		.compatible = "tianma,tm070jdhg30",
+>   		.data = &tianma_tm070jdhg30,
+> +	}, {
+> +		.compatible = "tianma,tm070jdhg34-00",
+> +		.data = &tianma_tm070jdhg34_00,
+>   	}, {
+>   		.compatible = "tianma,tm070jvhg33",
+>   		.data = &tianma_tm070jvhg33,
+> 
 
-On Thu, Dec 12, 2024 at 02:02:45PM +0100, Mark Kettenis wrote:
-> > Date: Thu, 12 Dec 2024 10:12:32 +0000
-> > From: Marc Zyngier <maz@kernel.org>
-> 
-> Hi Marc, Richard,
-> 
-> > On Thu, 12 Dec 2024 09:18:56 +0000,
-> > richard clark <richard.xnu.clark@gmail.com> wrote:
-> > > 
-> > > Hi M,
-> > 
-> > Hi r,
-> > 
-> > > 
-> > > On Fri, Dec 6, 2024 at 5:37 PM Marc Zyngier <maz@kernel.org> wrote:
-> > > >
-> > > > On Fri, 06 Dec 2024 08:33:11 +0000,
-> > > > richard clark <richard.xnu.clark@gmail.com> wrote:
-> > > > >
-> > > > > Hi,
-> > > > > Currently seems the GICv3/4 irqchip configures all the interrupts as
-> > > > > the same priority, I am thinking about to minimize the latency of the
-> > > > > interrupt for a particular device, e.g, the arm arch_timer in the RTL
-> > > > > system. The question is,
-> > > > > 1. Why don't we provide a /proc or /sys interface for the enduser to
-> > > > > set the priority of a specific interrupt(SPI/PPI)?
-> > > >
-> > > > I'm afraid this really has nothing to do with any particular interrupt
-> > > > architecture.
-> > > >
-> > > > Before thinking of exposing the interrupt priority to userspace, you
-> > > > should look at what this translates into for the kernel once you allow
-> > > > interrupts to be preempted by another one with a higher priority.
-> > > >
-> > > Interrupt priority doesn't necessarily mean the preemption, seems
-> > > you're talking about the interrupt preemption harm according to your
-> > > statement followed.Frankly I am just thinking higher priority will win
-> > > the lower ones in case massive external interrupts received in the GIC
-> > > level (you see I am still talking about GIC, not kernel)
-> > 
-> > As I stated at the end of my email, the GIC only gives guarantee that
-> > you will ack the highest priority interrupt in finite time. Not right
-> > when it is made pending. Yes, it has the concept of HPPI. But that
-> > from the PoV of the CPU interface, not that of the distributor. Factor
-> > in the Stream interface, and you realise that expecting to always ack
-> > the highest priority pending interrupt is akin to expecting no
-> > reordering of packets in a network.
-> > 
-> > > >
-> > > > This means that at every point where you would normally see a
-> > > > local_irq_save(), spinlock_irqsave() or equivalent, you would need to
-> > > > explicitly specify the priority that you allow for preemption. You
-> > > > should then make sure that any code that can be run during an
-> > > > interrupt is reentrant. You need to define which data structures can
-> > > > be manipulated at which priority level... The list goes on.
-> > > >
-> > > irqsave just masks the interrupt from the point of cpu, I don't think
-> > > it will mess things up if preemption really happens (no? then what the
-> > > side-effect is for the nested interrupt handling in the softirq part.
-> > > damage the semantic of the lock primitives?)
-> > > >
-> > > > If you want a small taste of the complexity, just look at what
-> > > > handling NMIs (or even pseudo-NMIs in the case of GICv3) means, and
-> > > > generalise it to not just two, but an arbitrary range of priorities.
-> > > >
-> > > > If you want the full blown experience, look at the BSDs and their use
-> > > > of spl*(). I don't think anyone has any plan to get there, and the RT
-> > > > patches have shown that there is little need for it.
-> > > >
-> > > As supplement，the fiq is suggested to be used as an alternative to the
-> > > higher priority in the RT area...
-> > 
-> > <PulpFiction>
-> > FIQ's dead, baby. FIQ's dead.
-> > </PulpFiction>
-> 
-> Hah, tell that to Apple! ;).
->
-Suppose you're kiding, seems neither Apple employee nor working on its HW :)
-> 
-> > > > > 2. Is there any way to verify the higher priority interrupt will have
-> > > > > more dominant to be selected to the CPU (IOW, the priority is really
-> > > > > working) in case of multiple different interrupts asserted to the GIC
-> > > > > at the same time(some debug registers of GIC like GICD_REEMPT_CNT :-)
-> > > > > to record higher priority wins)?
-> > > >
-> > > > The GIC architecture makes no promise that the interrupt you
-> > > > acknowledge is the highest priority pending interrupt, because this is
-> > > > by definition a very racy process.
-> > > >
-> > > > Also, even on busy systems, you will very rarely see two interrupts
-> > > > targeting the same CPU being made pending at the same time, so that
-> > > > the interrupt delivery system would have to arbitrate between the two.
-> > > > That's because interrupts are vanishingly rare in the grand scheme of
-> > > > things.
-> > > >
-> > > 1. I am trying to stress the external interrupts to the core#0 via the
-> > > stress-ng tool with one of interrupt being configured as higher
-> > > priority to see the benchmark data, it's time consuming as you can
-> > > image, still is in progress(BTW, I can't see any lockup similar hang
-> > > in the system with a higher priority configured)
-> > 
-> > If you don't have preemption, I don't think anything wrong will
-> > happen. But I don't expect any benefit either.
-> 
-> Based on my experience with OpenBSD, I'm not even sure there is much
-> benefit even if you have preemtion.
->
-is OpenBSD has this priority feature supported? or do you have some related perf
-data on BSP...
-> 
-> And regarding anything wrong happening: there is an interesting bug in
-> the RK3399 GIC integration where it gets the priorities wrong:
-> 
-> https://github.com/openbsd/src/blob/feb3ea439d8f49b3c0e33f54c34631a611b98e21/sys/arch/arm64/dev/agintc.c#L395
-> 
-> (that comment is my interpretation of what's happening; I might be
-> misinterpreting what's really going on)
-> 
-> As far as I can tell the Linux code doesn't handle that quirk.
-> Probably it doesn't matter because Linux only uses the priority
-> mechanisms to implement pseudo-NMI functionality and/or doesn't do
-> preemption of interrupts.
->
-seems the BSP has the priority support but encounter the bug/quirk, correct me if I am wrong. Frankly I have no
-time to read the code of your link
-
-	r.
-
-> 
-> > > 2. This raises a very interesting question and I am also very curious
-> > > about is, what is the purpose for the GIC to introduce the interrupt
-> > > priority features, a placeholder feature reserved for the future? Ah,
-> > > hardware prefer to provide more functionalities than its being
-> > > actually used by software, any other justification except that?
-> > 
-> > You realise that the HW is not exclusively designed for Linux, right?
-> > 
-> > 	M.
-> > 
-> > -- 
-> > Without deviation from the norm, progress is not possible.
-> > 
-> > 
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
