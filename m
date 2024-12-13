@@ -1,95 +1,107 @@
-Return-Path: <linux-kernel+bounces-444966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E949C9F0F4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:35:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409B69F0F51
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:35:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086C0164870
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4131883E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AA21E1A35;
-	Fri, 13 Dec 2024 14:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5B21E1A28;
+	Fri, 13 Dec 2024 14:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZ1hhwwf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8Arj+08"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BB31E1A08
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8654E53BE;
+	Fri, 13 Dec 2024 14:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734100484; cv=none; b=RpEs2jdN00SenTSrZ+XtczJ6kozHPqcRASl+jw57QkIvSCD/87NSFbdsjpYRiCAD1AGPXnxkQ85eL7XKg0QJsq9eiHrbfVNhNOYw7c+Wel2pvHH4+4rseBXl8ZI2eFsu9iYufEYlfWnSxIq/8qGtj/oyNvIzEEwEQUIJTIpHu58=
+	t=1734100530; cv=none; b=GWk+HqUDKaQ4CIYgxy/rfUb/Lx2qu+xWO1ckYj42u/ohNPhuj9a0w5WqirSLE2MGy4c/yDiBR0CrmTy5AW2Mc9tj24w02iTJ6aVYrQyswc9Im7X4o3DtwHCEfTo/UFXb3C5d5pzGyD8wESwPBlU5+sxLgcQJWyYw8a7NXglAt2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734100484; c=relaxed/simple;
-	bh=WmozSn24zm/qMbPlMDouk38wksQoEG3qEiOEDvjbk3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CLQEcYNx6CwBbYK016MuvwaISaqId7QRRdEY4fhC0jqyjLNRfypNVaSZpTzcfseOiJjvKaHT8VgSy/0RCC2MvoQ+5IPbpWqgEftdloF1+LGJYVvX5N01qUpeYkC+E87lYms3JiLBbzZcodZOOjfyBR2puu6Xt3MMnKN/N+S4ano=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZ1hhwwf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 973C0C4CED6;
-	Fri, 13 Dec 2024 14:34:43 +0000 (UTC)
+	s=arc-20240116; t=1734100530; c=relaxed/simple;
+	bh=rNJFAtYA5eksohwxJIjGyRtuHzibdqKAMtZF33hOZnE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R36zrMNL3d0sg/YGRZV5q+IaOSYgq2f0KP4okbGk1Ukh9Cj6m51biJavhp9h3ggjBLMODZAwKMkvCU6i3x/Tm3praGB4HFsqCYpeOe63aMCFs0BLq+hWv45MjORY6gZjLpiZBESEZQPZdtttRRvMziNO0ag3M5o/FVvsEpmMN0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8Arj+08; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09088C4CEDF;
+	Fri, 13 Dec 2024 14:35:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734100483;
-	bh=WmozSn24zm/qMbPlMDouk38wksQoEG3qEiOEDvjbk3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oZ1hhwwfsyrP7+f8z6dU5nfKq0B5HaDlxmkTLe+jHmrypG4eZt2UJU83IUaSqk4kz
-	 cU1+/5JqGkCG+0SQMyRvB+uzu0n4wQyVn2DkOVIywNgv3hs+np8BloWQIBP9iZ1Bfx
-	 chUhpQSHh17Oz3XY6mkZ4w6q7yku7qI+EMfpVsT6NGaevsHd1NF8Ro8ocKZueAn8ed
-	 h1h+J8GodqZr1wdJZYlOJOQrXSB2S6T/59B4/IYxj/ULR4tLLN9SZGLokgykQd8axZ
-	 JIMIxwzUwNxHfoSAKmTel3MvxC3h1XkOJqu9mXmeZw6iPh0tdfevtLM77ARr79qzxg
-	 v+4lOnbC6NBWg==
-Date: Fri, 13 Dec 2024 15:34:41 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	Daniel Bristot de Oliveira <bristot@kernel.org>
-Subject: Re: [PATCH v3 6/7] osnoise: provide quiescent states
-Message-ID: <Z1xGAYQbn4yKy3MC@localhost.localdomain>
-References: <20241213040658.2282640-1-ankur.a.arora@oracle.com>
- <20241213040658.2282640-7-ankur.a.arora@oracle.com>
+	s=k20201202; t=1734100530;
+	bh=rNJFAtYA5eksohwxJIjGyRtuHzibdqKAMtZF33hOZnE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=N8Arj+080Q8Bvt4gcIRleZGalv0b18WNi6SIWaofAWCs9cgsmHcbUbn3UlcUzQGBj
+	 18bHWSs/NC0i1jAOZCLRKflqQzoWJrZKjGlE+waELgKUVDTtTRsF5iOEQa/oQtFZKA
+	 8d7XVzgdmvBcX1VmhK4bTdLSjP2lU2OFDspzKDjEv4GdPdwHldaMBbQUkyAvetRCXj
+	 pwRhvy9OcqPHvPYg9MIw5wjqE2r3cYqxT7Z9ozr5u4ZxLimRQhf7X2VMj//2deOnZe
+	 ij9tcOqijr0jR5dr3qmaQrHnc4Wy0ceg7Mh2qlDQOhD+oXb9GmaGsou8blRg9MmUEc
+	 isX/ijNh2jctw==
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3eba347aa6fso756968b6e.3;
+        Fri, 13 Dec 2024 06:35:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWW/dCcsTSEzyzh83nNaXNNAwblI0BnA8V5mnX4y6XOIO3TjA7r0tIeAOuyEwaErBehvGDpXkt+0foP@vger.kernel.org, AJvYcCWa/sxtqNyqFrZy+omRbHyMRrNZBXFVfrRuFg811DTd5ce6hm/CaeWpEbPdo22s6zLFOSB6I0vPoSM=@vger.kernel.org, AJvYcCXnEqpwf+YOK/X1jHxj9dx7EgtiqJojWHatN7Zer7EssS1yHfgMw4jYxeGcM/ZBZeZfnA5xhNadAahHU2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSwPXWoufPGx5II2V+EYOP6HTDPMj0JKb/Fjh+HBOe9DxhsqUP
+	6GJQDiFH5BQQnDtIr9BNzDQJSEUW9pRi7SQ0xfHdJFQlg9ob7HPBtlU4pz7e8f5je+0wpwffLll
+	V6dG86VXpRrMB0kIbQP19Z2IINss=
+X-Google-Smtp-Source: AGHT+IFfOFfVyFc4e2ZBGKXJgwfpRMnnYPRRl89VhFh3RmkUkQjqu6RTHIO8ptQLeagYlw8Qi6Fx0hYaADxx5ZLz+kA=
+X-Received: by 2002:a05:6808:13c6:b0:3eb:60e9:eae1 with SMTP id
+ 5614622812f47-3eba6948a1amr1662834b6e.29.1734100529125; Fri, 13 Dec 2024
+ 06:35:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241213040658.2282640-7-ankur.a.arora@oracle.com>
+References: <20241205232900.GA3072557@bhelgaas> <20241209143821.m4dahsaqeydluyf3@thinkpad>
+ <20241212055920.GB4825@lst.de> <13662231.uLZWGnKmhe@rjwysocki.net>
+ <CAPDyKFrxEjHFB6B2r7JbryYY6=E4CxX_xTmLDqO6+26E+ULz6A@mail.gmail.com> <20241212151354.GA7708@lst.de>
+In-Reply-To: <20241212151354.GA7708@lst.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 13 Dec 2024 15:35:15 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
+Message-ID: <CAJZ5v0gUpDw_NjTDtHGCUnKK0C+x0nrW6mP0tHQoXsgwR2RH8g@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by the user
+To: Christoph Hellwig <hch@lst.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org, 
+	axboe@kernel.dk, sagi@grimberg.me, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, andersson@kernel.org, 
+	konradybcio@kernel.org, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Thu, Dec 12, 2024 at 08:06:57PM -0800, Ankur Arora a écrit :
-> To reduce RCU noise for nohz_full configurations, osnoise depends
-> on cond_resched() providing quiescent states for PREEMPT_RCU=n
-> configurations. For PREEMPT_RCU=y configurations -- where
-> cond_resched() is a stub -- we do this by directly calling
-> rcu_momentary_eqs().
-> 
-> With (PREEMPT_LAZY=y, PREEMPT_DYNAMIC=n), however, we have a
-> configuration with (PREEMPTION=y, PREEMPT_RCU=n) where neither
-> of the above can help.
-> 
-> Handle that by providing an explicit quiescent state here for all
-> configurations.
-> 
-> As mentioned above this is not needed for non-stubbed cond_resched(),
-> but, providing a quiescent state here just pulls in one that a future
-> cond_resched() would provide, so doesn't cause any extra work for
-> this configuration.
-> 
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Daniel Bristot de Oliveira <bristot@kernel.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Acked-by: Daniel Bristot de Oliveira <bristot@kernel.org>
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+On Thu, Dec 12, 2024 at 4:14=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> On Thu, Dec 12, 2024 at 01:49:15PM +0100, Ulf Hansson wrote:
+> > Right. This seems to somewhat work for ACPI types of systems, because
+> > ACPI is controlling the low power state for all the devices. Based on
+> > the requested system wide low power state, ACPI can then decide to
+> > call pm_set_suspend_via_firmware() or not.
+> >
+> > Still there is a problem with this for ACPI too.
+> >
+> > How does ACPI know whether it's actually a good idea to keep the NVMe
+> > storage powered in s2idle (ACPI calls pm_set_suspend_via_firmware()
+> > only for S2R and S2disk!?)? Especially when my laptop only supports
+> > s2idle and that's what I will use when I close the lid. In this way,
+> > the NMVe storage will certainly contribute to draining the battery,
+> > especially when I won't be using my laptop for a couple of days.
+> >
+> > In my opinion, we need a better approach that is both flexible and
+> > that dynamically adjusts based upon the use case.
+>
+> Agreed.  I'd be happy to work with the PM maintainers to do this,
+> but I don't really know enough about the PM core to drive it
+> (as the reply from Rafael to my mail makes pretty clear :))
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+I'm here to help.
+
+Let me know what exactly you want to achieve and we'll see how to make it w=
+ork.
 
