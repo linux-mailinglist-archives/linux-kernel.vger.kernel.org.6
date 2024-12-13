@@ -1,127 +1,142 @@
-Return-Path: <linux-kernel+bounces-444386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D19EE9F05FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:06:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C766E9F0601
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:07:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93312283A9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:06:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE8018837F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BF319F101;
-	Fri, 13 Dec 2024 08:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3F919E98B;
+	Fri, 13 Dec 2024 08:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JLi1Ub40"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5k1o8q8"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8CA192D70
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD961192D70;
+	Fri, 13 Dec 2024 08:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734077154; cv=none; b=UcJwihyK/IYg/2244bjr/GKrewVEcRm0WBOusudfpwS4PwJx098KAlDCA4VBZXkUBPZhY3fvVKPyNG6blsdtNtnkiW6z5c8O6ZRybScVT6dfBXq92r1YU9pyWGGD7f600W0MN2kE3rEg7iP79nhnsip591YotNOpRc9pLy92Vr4=
+	t=1734077239; cv=none; b=c8DnfnTAwadU3ToFj3WjxwoknksLcXdpV0l5FvSWBoiuw7uuTkr20y8ZKEHf+CLpBJ1mLarb9ZYegMq62Jk5vfWv28blyqn8nTwMxwGYopewCywXAgZQ0h665YpLMk+bq10v36U64AFmA1OJ4rmh8U8wTSHZshuPcYQ+AXUZCHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734077154; c=relaxed/simple;
-	bh=Gm1aSfPWn+6Iv90/f+5lwr4JIOMPpgZfZJbELp9SPys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Om3A/1mqn5N191UUsHFJLpAGJkBtRmNm24cPCZlCQo9afFRqRUJaR/ti2TQ1iJIopGuX7Ly+cJtvGlKOo/eshAzf5e0AnWy7K2QJYt3zDgu46mF9JX+glM0x0wfjPwiqJmqwsxknPnE+Z4K5FTmLN1GjJCeseyKwAP/G+pMib4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JLi1Ub40; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso191754766b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:05:51 -0800 (PST)
+	s=arc-20240116; t=1734077239; c=relaxed/simple;
+	bh=lMngbI0/z97n+hdCLmt0jLziyBdQJ7fRHaH2DkZPF0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BHhJn+5lhCmFWN/wbqP1uq65WL0PJ3OEx2kpBLTGbkhkkQqulos9r6iFCnm5/NOym18tHFzJPWru2ZWyEut033UHC7vaJPhK1S/KrwsqQoDTwPtYUZFopn1aVYYhXNf0XhzUd+UOJ0w8hORXS0DilIgthMLNSV6qh47ixNdOI8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V5k1o8q8; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e3c88163a00so187153276.2;
+        Fri, 13 Dec 2024 00:07:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1734077150; x=1734681950; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lgwYE8AkKohlShjZLrwteb4c+nimfkWQZUupQYO5W68=;
-        b=JLi1Ub40QBv66ZjD7LttDdNXIL9STIwTkkza6loCqucui2uM3j9xdISG+PuR+Ks4Dw
-         VFQm2ZqQDTqOMUf26R5D4jr4ELtV//qcPMOupX3H2QD38yq3LwEL9JRUY7kMvdi+chwg
-         rpmhxVyEShwyfM3PHOB4uYy5OfJv/z9SljmG8PLFEd8Wd3OFrq+11rPlhaf0jphRYp5/
-         KOE0Hj0vqdVtvPWVcyy8IVbXrKSUUV82lvIM/0O+038nVI/fPRGrHuitVOgj5Aq24nS1
-         vuOheIixL6exmB/lKTzdTtIB/c0Ru20ZK2SveaNytzw3QMb5lGXpaP4PCI8XKb2vb7VL
-         n1QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734077150; x=1734681950;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734077236; x=1734682036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lgwYE8AkKohlShjZLrwteb4c+nimfkWQZUupQYO5W68=;
-        b=PSNBdjFrPBxTIZ7/LqG/KaP8LtOJqABOW2hYPYGghwZZJudKkYVy5FCcFJAtMVCbhF
-         /J51MDdsfR4YFnRorZIQSdn+TmCyfWAQjvd01sPmCxxrapO/qvdXnLONMabNhAGtMPKD
-         NOy7pp81hNSGQG9jbmt0xUT2vzfLlAgK8rjMgH4EFIXF6d52wx5og9Blf4f4op3zNZsL
-         7prAEeCRy8NwAk4sVNg5bftz+5Kh0MNRC3keM2sFu1En2cqUJ5FW3pQGAzt+vNHIntxO
-         jmASdxcH5Z+Q+33Ec4d6U76xEKl+e1MzKnZzK5ffAaIpUUQFi1vbBRCA/E3Gt5R4mhI7
-         GRqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCivfVlkf9AxsErlWcr7IWubmA0F0JrW47oGxie9Lww5Oop8gulJDoTmyKYYOxx5vYW0DlKj+8kTg0zRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO+FjLTVJ6RRyyJnhsd7zqH7VklrKgvKOjJSiM1YSv8eWnGqAR
-	uDRJpFiCA8WSRCbJFMRNI6O/eXGuaDS+vQyppMltudF9jRCSg5NgLkX5u2HARZs=
-X-Gm-Gg: ASbGncvDEKJvGAbz3JNat0FOiRHYlkFfsPzAyX7lBVMACDUNCPx47WVSRe9WCf5xBGW
-	BTwe5b5scAa+1DxGEy3hY6tWy+WnIkT1UV7qe4t1FNNPMI+KBhtUYxxGl/YGQq4gyGbghKqHsuA
-	qtJ4poEgMvped1UaOoVxzu0r3vcbRCsopi/cf6lSTOHrC2ONPvRINLDzo2eCU89Z/3fB60PuOGz
-	llarKHiKs/zCndMHJ4CJ4selDZ+/bAoURepN7cX7NPNkMOpkLPF92KXfA==
-X-Google-Smtp-Source: AGHT+IEBU3KaEVduDDJFmDiYKp43p4o//mXEFM4u7vCzKG7h47JoeDZ5E1DdrcH3VOsdWE+nfKrYuQ==
-X-Received: by 2002:a05:6402:4584:b0:5d0:ea4f:972f with SMTP id 4fb4d7f45d1cf-5d63c318beemr3590523a12.8.1734077150211;
-        Fri, 13 Dec 2024 00:05:50 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ef026a41sm7507030a12.15.2024.12.13.00.05.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 00:05:49 -0800 (PST)
-Date: Fri, 13 Dec 2024 09:05:47 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	x86@kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-wireless@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, ocfs2-devel@lists.linux.dev,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH 1/7] vsprintf: Add %pTN to print task name
-Message-ID: <Z1vq2-V7vB5KhBR9@pathway.suse.cz>
-References: <20241213054610.55843-1-laoar.shao@gmail.com>
- <20241213054610.55843-2-laoar.shao@gmail.com>
+        bh=lMngbI0/z97n+hdCLmt0jLziyBdQJ7fRHaH2DkZPF0g=;
+        b=V5k1o8q8dacPx/N9ECUsAyofa0FMACOsD0vyBaYJ16OBxc2sGYylcynnDRit3TIIO/
+         nnwyDoTq+SMzmaeU9WdLKmOPBIak6YLHZ2AklgdJlvVocs1NMro0EKwyiSjHnQCjEbD0
+         qpPDVdzxQLB9IqqVmFizXO7cxDnLHizAOKlF/GH6rDEKFjEpQC7+WxE7Zs/JqQTZsX2r
+         RPsLsPywGyycEGyDvA6ntGhptvJAcF0Gh0oqihrFz+lohZLb2YsrdrpH3nVXqq0NQIJ7
+         kC1n4VTD/Kd8l8SLvTjZXUaFaaV8O3ehBnyN+MS/ALKF6IuN2+c0gl8vQQNeWVLvXMJS
+         krpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734077236; x=1734682036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lMngbI0/z97n+hdCLmt0jLziyBdQJ7fRHaH2DkZPF0g=;
+        b=spdmGsZhvrthQTa95a1o+chJirztIhHZKicFIL1S5qZGJGEPjyjtFhZ/x7r67G5Iq8
+         K5QqUPQciUlG41dbtJ3bnRcEgDicUSa3hXc2HyH/BNF5nbB68ynZhYqX5j8ZMbo50N3r
+         ASK4Dk/blgxDxGWLTqkFsy9TjJZ2k/u8CHXQWYmxKFNcNnghxNXNLCf/u1YjwPPxQm1X
+         l/LYvuuKfEtkFbeGYBMtH3c0xYculhGFnjc3styXe1sNhq4rmQ86tHoa4fZiwcp84wl+
+         u0d6edcGSWJ/kSZla2G3DMNcKlJt+W7sBbGqRY8frsrF/gKmJmd8XXqkEGZsZ+xlLip1
+         tuAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrv95YwZiAzfKxYj4uve81Fd3hgaa9KL+kml6gx5BbVC1xX0t6OFgGjMfjYfPNDHf/mmonVHxtJyp//gLn@vger.kernel.org, AJvYcCW95XXeqv/erBrfP34bwvtZfLNzA3Quq9vaDo4K1IzRJ6lfXM/8SbiINy023+FC5NM32JVEzpmSR0Zn@vger.kernel.org, AJvYcCWOab9Y+eMMjfuFvPRHqEo0m6nf8WdeaQYiPormdRPyLd9WS+p9JFqtNFrVAmdXM3ycV4ghyqFC/ndE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww4j3vsf2e0kPcMj7ezxA9/pJbkMzItUI6FVY2tOsej+CJylQj
+	VnX7aEV45ojHHveRAp3ruHJLGFYnEwZ0pzP0mtGR+dYba/X7z1sW/99DvS5LZl2LzZX1fV8GnQ4
+	oVAH4+WzNCPkUpu32rPkceLDbUMs=
+X-Gm-Gg: ASbGncvvUfh24vBWLaJ2cPQ8qgvwN/cr8YG1LKXXg/Rvf4UJCr7vv4o+EIV+H5Vos/y
+	ICd97v6rXaVsdK4ElsE3ONx1ZhyXc9mk2xnfwyQ==
+X-Google-Smtp-Source: AGHT+IHln3GREML7DSIIx+2UAC2Ue9EF+yfWddVt3c1PyKWO74it203O7aM9MJ+fsu7FSNHL/nCpazUmIlfqwgNQqDE=
+X-Received: by 2002:a05:690c:3588:b0:6ea:8a23:7679 with SMTP id
+ 00721157ae682-6f279ac3723mr7759957b3.1.1734077235665; Fri, 13 Dec 2024
+ 00:07:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213054610.55843-2-laoar.shao@gmail.com>
+References: <20241211230648.205806-1-l.rubusch@gmail.com> <20241211230648.205806-5-l.rubusch@gmail.com>
+ <iqdm3x6fhyosqkm4mdknf6ee2idizq3p2nt7rjqgtuzxr75iaj@tcdl2e6l5g2s>
+In-Reply-To: <iqdm3x6fhyosqkm4mdknf6ee2idizq3p2nt7rjqgtuzxr75iaj@tcdl2e6l5g2s>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Fri, 13 Dec 2024 09:06:39 +0100
+Message-ID: <CAFXKEHatgV9gYVCvcxmjce9qcHtVLhvQuuSuC7rxtqFa5XLtMg@mail.gmail.com>
+Subject: Re: [PATCH v6 4/7] dt-bindings: iio: accel: adxl345: make interrupts
+ not a required property
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 2024-12-13 13:46:04, Yafang Shao wrote:
-> Since the task->comm is guaranteed to be NUL-ternimated, we can print it
-> directly. Add a new vsnprintf format specifier "%pTN" to print task comm,
-> where 'p' represents the task Pointer, 'T' stands for Task, and 'N' denots
-> Name. With this abstraction, the user no longer needs to care about
-> retrieving task name.
+On Thu, Dec 12, 2024 at 9:11=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On Wed, Dec 11, 2024 at 11:06:45PM +0000, Lothar Rubusch wrote:
+> > Remove interrupts from the list of required properties. The ADXL345
+> > provides two interrupt lines. Anyway, the interrupts are an option, to
+> > be used for additional event features. The driver can measure without
+> > interrupts. Hence, interrupts should never have been required for the
+> > ADXL345. Thus having interrupts required can be considered to be a
+> > mistake.
+>
+> Partially this explains my question on previous patch, so consider
+> reordering them.
+>
 
-What is the advantage, please?
+I understand.
 
-Honestly, I believe that the meaning of
+> And with combined knowledge, your driver now depends on interrupt names
+> to setup interrupts. "interrupts" property alone is not sufficient, so
+> you should encode it in the binding and explain in rationale why this is
+> required (it is a change in ABI).
+>
+> https://elixir.bootlin.com/linux/v6.8-rc3/source/Documentation/devicetree=
+/bindings/example-schema.yaml#L193
+>
 
-	printk("%s\n", task->comm);
+The accelerometer does not need interrupts connected/configured for
+basic functionality. Interrupt declaration allows for additional
+features. Then there are two possible interrupt lines, only one is
+connected. Thus, either only one INT out of two, or none needs to be
+configured in the DT depending on the hardware setup. This also needs
+to be configured then in the sensor, which INT line to use for
+signalling. Thus we need the information if INT1 or INT2 was setup, if
+any.
 
-is much more clear than using a cryptic %pXYZ modifier:
+Hence, configuring an "interrupts" property only makes sense, if also
+a "interrupt-names" is configured, and vice versa. None of them are
+required for basic accelerometer functionality.
 
-	printk("%pTN\n", task);
+Thank you so much for providing me the link to the annotated
+example-schema. I'll try then to set vice versa dependency of
+interrupts and interrupt-names and hope.. I'm sure you'll let me know
+right away if I'm doing something wrong.
 
+Seriously, thanks the link is really helpful!
+Best,
+L
 
-The %pXYZ modifiers makes sense only when the formatting of the printed
-information needs some processing. But this is a plain string.
-IMHO, it is not worth it. In fact, I believe that it is a
-counter productive.
-
-Best Regards,
-Petr
+> Best regards,
+> Krzysztof
+>
 
