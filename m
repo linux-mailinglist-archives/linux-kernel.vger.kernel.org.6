@@ -1,88 +1,142 @@
-Return-Path: <linux-kernel+bounces-444696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15C69F0B32
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:33:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA8E99F0B3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:34:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82BCE1648B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:33:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76C9A283482
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481771E009C;
-	Fri, 13 Dec 2024 11:32:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20021DFE14;
+	Fri, 13 Dec 2024 11:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="khzazzgB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5935B1DFE34
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873DC1DF73E;
+	Fri, 13 Dec 2024 11:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734089525; cv=none; b=EQgeE0ReDgypHleJQv68GTwV/FFFwlsuEHEGoGuhSwWlY7yF7V2OloKN6FBZ/94o+okFSCLTQIVM+9eOdjUbZN+nD06ya2yN1YAqGxmqyshSyDif5zIalXOI++6UL1aRyjIql4pryCOBg1J1wxicp6twv/fGgBoOQUXvTuvPcX4=
+	t=1734089604; cv=none; b=h1sxRl3O8CjiHTL5kdGiCagSdm1Nlf40zKAhVSk1XxdHcCMeVDeaJcE2fCxkRiuO7dRnhiLPW4q0R3cBy9pwDX7cpINw0ma49mvaeI3MfSSW4335/zLPRZPbP4E3gqaCmGEeqsDwgwIKB0xuAvOlT2mK3bCdCVez0qTcz0M+37E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734089525; c=relaxed/simple;
-	bh=UlBVfnHOQhfhrIWtRxL9FPBVQZ+b17FLVteFuw/B0Ps=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fZDwtZTJGm1zjQyL0HTrPddY05AU68HbKO0bVTUhS9r75VMInHO07G3PGUvBke4BA0bkCXOOdScp8DqW6uQa2qYE+VWBZuAfuIPdxKBpo/nITaSlPiS7+bFp8H2lTP2PZ1+Opbnvy0AMBzFBuLmbyOuBwGD0lOnh+JV/HF5zUhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-844eac513efso33369539f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:32:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734089523; x=1734694323;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1M2whBLftejeF8a4BvJbIP3P805WYUeDyMbF+6ThAtI=;
-        b=jKb26bU/ENJMBCdZ4xUQiv1khJbTEByg29fJ1sgMEbQeR09iJph9D4IokP6/gYxVqO
-         PIyFgG0VdmygkSVcuXYjQ6reeo9MXdeEAw9UlCMX3n0z3tZbWsS1hHeFq1dKnClEKt8w
-         cn8soH1G2rgorWHNzHnm9dtSPQhR/LzPl5yb8DjmcdO4EH55Zhfv64SvbHHik2Y7kbY1
-         AAvD9YCGLY0wk3Y7iaGJmOwkjjKuCKqVLX+dNF/pn9Nba7ZzUPACdDy1CD8Lthu2JD/i
-         8HJmSD/cQk5kKQ5HwjYIGIOQ8zUUuK+uaREtA3CJrai6coJ7jEgfDXuLZpNSINryYypz
-         QRUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUB9Zsn7hbkQatAmcvXQLBYNwFFm5pevYD2sA+DNEcflSVmFbO2Bl1KFiThAYvKeHpMI2cTHlkJxe2GQg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6tPyxW4USr0lZlYiEQMHJ829/acVT6cYolWZWlUOGmgIkAB1x
-	GCzOy/oNSHsCwTj/T80fsdO7iGCINFjSazTo8dnBAgKn+kblBT0qOseBoYk4sohemRp8yO9jBVR
-	Y3Gv6zAKET/F9retUCn1GqwUdMfBy4Vj3CSzzix077Bk4QyjklSpp57c=
-X-Google-Smtp-Source: AGHT+IEYoFmE5BG/wfAUTVJPiY3bCDLJp+xLZp3wvELFeqcyEwd04wyuEZ2kj80Af1Rp8o7zEHFjkup2wcKjZzVTmiBq85HgOKCU
+	s=arc-20240116; t=1734089604; c=relaxed/simple;
+	bh=MLMEOAeqD8IEUkGSEWY7TkOiucHmzMnYso5eUsbRofA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ys/uxJQHPS4n3LH0zMdBuSe4glcPl3CfOpeY+6Kl+yxZB0RZ83LBkRbkKcmxWV/kNjAa6yZ2NybBpo/q1LYckdUE/WAlKnZbvTYukRx3DdveMhmszG612sYtvksYp+wqwO/RS0tyfVr4v88bkxUkLBv+0Knur6lNeYVFwFCWcUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=khzazzgB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDBThRr001370;
+	Fri, 13 Dec 2024 11:33:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BIgbwr4YWRO5BTx9mcS9BRDtQqI3IxHVQ2bwLnBizJU=; b=khzazzgBeT6/lgTn
+	ZivKMMSC6/GGRf0PhcxMAQUXiw8jApy/VWBZtXQx97/RsRRgqDZi5ygcH7OL0NS5
+	Jc8QrM2W3FvDK5c7kof9Sav80QMMvO6u/E5Ia1t4jo27XHgYA5xD6rmVKfvrMdGu
+	e3EvYkpUyhl+6IYbDLrY/peLenzREXvWujwVROK2XEd/6SEUNkTL5cNmwbaYg5LZ
+	DxGzLNMaaGmA2f8HdwijKyhdHQVIvUVz1rzvF9EYaovQiV7UIcJ5505Ec6S3Aic1
+	fpyFKiOEutDb4U/WbnTP+2E6YdbSwc95vMe/mMXJT47Hpw75LEQZYivv4Zyitzdj
+	21y3FQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gm3s00d0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 11:33:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDBX6W8018120
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 11:33:06 GMT
+Received: from [10.204.101.130] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
+ 2024 03:33:00 -0800
+Message-ID: <db8f433c-1a2e-4a46-8b46-3a8e09c080bd@quicinc.com>
+Date: Fri, 13 Dec 2024 17:02:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c9:b0:3a7:86ab:be6d with SMTP id
- e9e14a558f8ab-3affac565d0mr24554265ab.16.1734089523536; Fri, 13 Dec 2024
- 03:32:03 -0800 (PST)
-Date: Fri, 13 Dec 2024 03:32:03 -0800
-In-Reply-To: <20241213110305.1839-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675c1b33.050a0220.17d782.000b.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] WARNING in enqueue_dl_entity
-From: syzbot <syzbot+00a022dc9979d67df050@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2 01/26] dt-bindings: qcom,pdc: document QCS615
+ Power Domain Controller
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Lijuan Gao <quic_lijuang@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20241213-qcs615-gpu-dt-v2-0-64751d9c3748@quicinc.com>
+ <20241213-qcs615-gpu-dt-v2-1-64751d9c3748@quicinc.com>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <20241213-qcs615-gpu-dt-v2-1-64751d9c3748@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: pWkbnSZTquiH9fP4kc8J36NSkjJOD3z0
+X-Proofpoint-GUID: pWkbnSZTquiH9fP4kc8J36NSkjJOD3z0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130080
 
-Hello,
+On 12/13/2024 4:54 PM, Akhil P Oommen wrote:
+> From: Lijuan Gao <quic_lijuang@quicinc.com>
+> 
+> Add a compatible for the Power Domain Controller on QCS615 platform.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> index b1ea08a41bb0c369985c5f2d5b4c4644367a88dd..ac7ccd98944157d2b914b04753ed7e4ab08c5187 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+> @@ -26,6 +26,7 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> +          - qcom,qcs615-pdc
+>            - qcom,qdu1000-pdc
+>            - qcom,sa8255p-pdc
+>            - qcom,sa8775p-pdc
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Please ignore this mail.
 
-Reported-by: syzbot+00a022dc9979d67df050@syzkaller.appspotmail.com
-Tested-by: syzbot+00a022dc9979d67df050@syzkaller.appspotmail.com
+-Akhil.
 
-Tested on:
-
-commit:         f932fb9b Merge tag 'v6.13-rc2-ksmbd-server-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a12d44580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a42226445f75136a
-dashboard link: https://syzkaller.appspot.com/bug?extid=00a022dc9979d67df050
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1567c4f8580000
-
-Note: testing is done by a robot and is best-effort only.
 
