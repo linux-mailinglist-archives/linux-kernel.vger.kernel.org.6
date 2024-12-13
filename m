@@ -1,197 +1,220 @@
-Return-Path: <linux-kernel+bounces-445506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154159F170E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:05:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1BF9F172D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B661606C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:05:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045111885480
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7363A1F03D2;
-	Fri, 13 Dec 2024 19:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761BD1F37DB;
+	Fri, 13 Dec 2024 20:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="efheYyA0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e85JrnZX"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD881F758E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 19:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F3518FDBE;
+	Fri, 13 Dec 2024 20:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734119865; cv=none; b=IwhvufF8qxOnVDH6TGO5lVo38epNGeahRnGJKKcrSLFHUZKdCbooI/6B1bJB7gKUQVlgBFE/FkMaSr6ByREgYGrjvrIM8xiCUS5RkcrP9ZYkCxIS6KOprSAqPveBZAvYcEU90WWrAVp8AQ5QuMduVvgy0ovB9yG5oxCygaHz6nw=
+	t=1734120205; cv=none; b=u4Bo0il20dOh0yuzhF8AhplfqhcxyuS49nhSHhHPGtAYctdTwr+T/RG1fHMA2B0AdkhEszVCTrZaBXVitYZShrrJRRiosoSxZAfOvgA4/DiV78HYv1WpKIwCdwGzTZ+bz70aGMAq66tlteuA2FWjxbNNPeBtqi7qFvMVWbfQeAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734119865; c=relaxed/simple;
-	bh=7FV91zj3iAwh7l0LvpU4SVIBXF4+EOaMZMQhC9b3k9o=;
+	s=arc-20240116; t=1734120205; c=relaxed/simple;
+	bh=tjV5osgjbyI+MX10wauZ2+arKLioidveGO3lL2YGsbQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kl2vDbzbBB4kVNrXPaXCPFeuKT5owh1nXzi5/+fW3JTh7AYAksq/kjiHLmuLE8wJfVPPlyUGp8B0koL/F2IcETbMGw8tvAYtAtqo3hFD7ZLnEeehWJkoTvEUb3k7BIEnTxG1YKNMFm8le/u1gMIdwUVZi9t83QnE3S74qyUU/yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=efheYyA0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734119863;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6AdfFYYPbrCfemeQilBocin4u1dKdrIY8L1F+QT3Jro=;
-	b=efheYyA0JTHOiPk2TLMY4AKdhXDitbE23A1iozNYOPZ/rdgyF81FQsQbf2gZQdSPxUOip7
-	AwGvImX077pJkmHAeWYldeRpDPrdSV8X2vZyS9blemPEBNOZ0684Vs2LHJho8M7yuhC7i7
-	/ffiT5CytQsd8i6iimBFRuAlGMvxql4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-164-DDzxqgmpNhm7NAXI6mVRIw-1; Fri,
- 13 Dec 2024 14:57:38 -0500
-X-MC-Unique: DDzxqgmpNhm7NAXI6mVRIw-1
-X-Mimecast-MFC-AGG-ID: DDzxqgmpNhm7NAXI6mVRIw
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5EA1619560A3;
-	Fri, 13 Dec 2024 19:57:36 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4EFB81956086;
-	Fri, 13 Dec 2024 19:57:35 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: yan.y.zhao@intel.com,
-	isaku.yamahata@intel.com,
-	binbin.wu@linux.intel.com,
-	rick.p.edgecombe@intel.com,
-	Sean Christopherson <seanjc@google.com>
-Subject: [PATCH 18/18] KVM: x86/mmu: Prevent aliased memslot GFNs
-Date: Fri, 13 Dec 2024 14:57:11 -0500
-Message-ID: <20241213195711.316050-19-pbonzini@redhat.com>
-In-Reply-To: <20241213195711.316050-1-pbonzini@redhat.com>
-References: <20241213195711.316050-1-pbonzini@redhat.com>
+	 MIME-Version; b=NpAgT08uUrzlZ06WpL/AK7VtAcjhI7r4a/PoA2fbPjW63qdIpLn8YjWtSdcpoEnB83rh8TmnG1ABYwn0IYJex4RXOF/26+MRtTtDhoLMLFez1G7b9ParsrePsUBUb7yYTQHXu7f5SkHDnR/O479nkryqemQyvUhfKN4qA+YEP30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e85JrnZX; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5f33ad7d6faso21850eaf.0;
+        Fri, 13 Dec 2024 12:03:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734120203; x=1734725003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSxjdSUDfHmzmkE1Ayo7U0AvrT2yhA3Ltr1QPBiYLK0=;
+        b=e85JrnZX/buEwMthJ5/wgm4nPO9bPD0h4Gyw9F+h/6oY3PSJ0zwCZIeeRZJonsky/m
+         tqJz4HbklvTB6VZyZT3wod6292Me2UOf6n9uCn6oWHAkK3mL6vSSuIF+yYj2iW2jfOgm
+         Ta0YyrLhJAehQ8mMdxSLtgoo9Y4NnlXVOLDqqzyf2klvgjCKLiu5OW622dYVP2hc4F8O
+         N3vpxAaVRQ30adfT6MYoA/qjTKwEsXe+Fx/HLAvbOJyRzVD7D/GK4LZC4BNQAxeq3uJs
+         cL8AJ1OyaJC4CDLS/013Mykqib4tF2myILmgqSMBFC5G4gJ+Ny7L3P2NQtZ4xb9TV4/U
+         1gsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734120203; x=1734725003;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TSxjdSUDfHmzmkE1Ayo7U0AvrT2yhA3Ltr1QPBiYLK0=;
+        b=XIxX46dvSbZ+FG1v6x5p0hWoJtRv+Og8Mc+xfg/M4hdzcj15jOjDgQ45TUFWgRCMZq
+         ZT4X7Pnk52hrHBjwOPhzni7hi60oOpLoHDz3iVo623QuHXR27+yMiSdMWkyLTQw3PoGG
+         DAPXWdhTR2AAKQgk802ouOWEe0yy3jG6yQRiFHYZj4wKcWU433euouvFEFPAPPRIjlGm
+         x0R0l5ZOKP8BkVT5NuNlshEfa4wXMwC9bBTn1UOJXmbq6W1aTbyddR019iboQocWOLsr
+         KjjtWy7m4b8RttKHA1M2PZHJB/rVIc/xT2khqPcCmkqthdhKs25UklQzBpwJuaa2zQUF
+         pEEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1RgFHo2231IJiFxZu3Uvl63BizX2Pl3NNsqCwnqZzLATJN/8dv7QIsh6+AvHqSsNXD0rr0CiUoYEh@vger.kernel.org, AJvYcCVFfXd3ojdRGN9Ru6k5bCCjdfckGHMIfIlrtaA6o88tU+TCpT8gpE37MkVeqUYvWYb0hyf9nEmyH6Jf5BQT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjC2TLwO8a3+pjjdbC9NF3Kt8RSU2Tbj+E3hEfx09YqIcaFhgV
+	bm22Dib+DA4h2x/E155mvWBgluHszpJcSkUQgpOAQEKkggEu2mshCMEqvSUg
+X-Gm-Gg: ASbGnctPCRrRJsDgzJPXSxZVRoxWlfJCUMOPnxXYpQ3n8Ghkbi3wbloCvhQ8H+TWt9p
+	77lRunr0vyjYwk0zvia2Qdp0kttkbgBsKDdd141vc8xBSgr3Jclae5pJa9rx5PU/flSh5YQEFMn
+	yjYwnI6OK3pU44yA3kwyR9TD9EJ3zJ51zjJQK8m70gHX3xmnOgxyjbnnqOj00Y/+juMsvGM8Yk8
+	2CL/Cfu0rGSkp9WgJfXoiukSkLEP5Swg5r3O5f+i85ndIB8W+Q4XvDywzM4L0A2DNAAt7T//FF/
+	ycAmcIxC+sQXrGfF
+X-Google-Smtp-Source: AGHT+IHS/4vG0XdSp0prcXAlpEvsdSuF07y6AmAofYdTggMqlAhkijuk0JcmF7UBkvKs9T+bdO/kMg==
+X-Received: by 2002:a05:6902:a87:b0:e38:1b17:8980 with SMTP id 3f1490d57ef6-e43492f57famr3483416276.4.1734119878971;
+        Fri, 13 Dec 2024 11:57:58 -0800 (PST)
+Received: from localhost (fwdproxy-nha-003.fbsv.net. [2a03:2880:25ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e47024dc3f2sm57344276.5.2024.12.13.11.57.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 11:57:58 -0800 (PST)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: hyeonggon.yoo@sk.com
+Cc: "gourry@gourry.net" <gourry@gourry.net>,
+	kernel_team@skhynix.com,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	=?UTF-8?B?6rmA7ZmN6recKEtJTSBIT05HR1lVKSBTeXN0ZW0gU1c=?= <honggyu.kim@sk.com>,
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+	=?UTF-8?B?6rmA65296riwKEtJTSBSQUtJRSkgU3lzdGVtIFNX?= <rakie.kim@sk.com>,
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"horen.chuang@linux.dev" <horen.chuang@linux.dev>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"kernel-team@meta.com" <kernel-team@meta.com>
+Subject: Re: [External Mail] [RFC PATCH] mm/mempolicy: Weighted interleave auto-tuning
+Date: Fri, 13 Dec 2024 11:57:31 -0800
+Message-ID: <20241213195754.2676135-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <4ddfa283-eb64-4032-880b-c19b07e407e1@sk.com>
+References: <4ddfa283-eb64-4032-880b-c19b07e407e1@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Rick Edgecombe <rick.p.edgecombe@intel.com>
+On Fri, 13 Dec 2024 15:19:20 +0900 Hyeonggon Yoo <hyeonggon.yoo@sk.com> wrote:
 
-Add a few sanity checks to prevent memslot GFNs from ever having alias bits
-set.
+> On 2024-12-11 06:54 AM, Joshua Hahn wrote:
+> > This patch introduces an auto-configuration for the interleave weights
+> > that aims to balance the two goals of setting node weights to be
+> > proportional to their bandwidths and keeping the weight values low.
+> > This balance is controlled by a value max_node_weight, which defines the
+> > maximum weight a single node can take.
+> 
+> Hi Joshua,
+> 
+> I am wondering how this is going to work for host memory + CXL memory 
+> interleaving. I guess by "the ACPI table" you mean the ACPI HMAT or CXL 
+> CDAT, both of which does not provide the bandwidth of host memory.
+> If this feature does not consider the bandwidth of host memory, manual 
+> configuration will be inevitable anyway.
 
-Like other Coco technologies, TDX has the concept of private and shared
-memory. For TDX the private and shared mappings are managed on separate
-EPT roots. The private half is managed indirectly though calls into a
-protected runtime environment called the TDX module, where the shared half
-is managed within KVM in normal page tables.
+Hi Hyeonggon,
 
-For TDX, the shared half will be mapped in the higher alias, with a "shared
-bit" set in the GPA. However, KVM will still manage it with the same
-memslots as the private half. This means memslot looks ups and zapping
-operations will be provided with a GFN without the shared bit set.
+Thank you for reviewing my patch! As Gregory showed in his reply,
+I think it would be possible to get host bandwidth information
+using the ACPI HMAT.
 
-If these memslot GFNs ever had the bit that selects between the two aliases
-it could lead to unexpected behavior in the complicated code that directs
-faulting or zapping operations between the roots that map the two aliases.
+[-----8<-----]
 
-As a safety measure, prevent memslots from being set at a GFN range that
-contains the alias bit.
+> > +What:		/sys/kernel/mm/mempolicy/weighted_interleave/max_node_weight
+> > +Date:		December 2024
+> > +Contact:	Linux memory management mailing list <linux-mm@kvack.org>
+> > +Description:	Weight limiting / scaling interface
+> > +
+> > +		The maximum interleave weight for a memory node. When it is
+> > +		updated, any previous changes to interleave weights (i.e. via
+> > +		the nodeN sysfs interfaces) are ignored, and new weights are
+> > +		calculated using ACPI-reported bandwidths and scaled.
+> > +
+> 
+> At first this paragraph sounded like "previously stored weights are 
+> discarded after setting max_node_weight", but I think you mean
+> "User can override the default values, but defaults values are 
+> calculated regardless of the values set by the user". Right?
 
-Also, check in the kvm_faultin_pfn() for the fault path. This later check
-does less today, as the alias bits are specifically stripped from the GFN
-being checked, however future code could possibly call in to the fault
-handler in a way that skips this stripping. Since kvm_faultin_pfn() now
-has many references to vcpu->kvm, extract it to local variable.
+In the implementation, the first way you interpreted is the correct
+description. That is, if a user manually changes a ndoe weight,
+then updates the max_node_weight, the previous manual change will
+be overwritten by the newly scaled values.
 
-Link: https://lore.kernel.org/kvm/ZpbKqG_ZhCWxl-Fc@google.com/
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Message-ID: <20240718211230.1492011-19-rick.p.edgecombe@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/mmu.h     |  5 +++++
- arch/x86/kvm/mmu/mmu.c | 10 +++++++---
- arch/x86/kvm/x86.c     |  3 +++
- 3 files changed, 15 insertions(+), 3 deletions(-)
+Does this behavior make sense? Perhaps it makes sense to ignore
+user-changed values when doing the re-scaling if a user decides to
+change the max_node_weight value themselves. 
 
-diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-index d1775a38ffd3..878061d0063e 100644
---- a/arch/x86/kvm/mmu.h
-+++ b/arch/x86/kvm/mmu.h
-@@ -313,4 +313,9 @@ static inline bool kvm_is_addr_direct(struct kvm *kvm, gpa_t gpa)
+Regardless of what implementation makes sense, I can re-write the
+description so that there is no ambiguity when it comes to the
+expected behavior of the code. Thank you for pointing this out!
+
+> [...snip...]
+> 
+> > +int mempolicy_set_node_perf(unsigned int node, struct access_coordinate *coords)
+> > +{
+> > +	unsigned long *old_bw, *new_bw;
+> > +	unsigned long bw_val;
+> > +	u8 *old_iw, *new_iw;
+> > +
+> > +	/*
+> > +	 * Bandwidths above this limit causes rounding errors when reducing
+> > +	 * weights. This value is ~16 exabytes, which is unreasonable anyways.
+> > +	 */
+> > +	bw_val = min(coords->read_bandwidth, coords->write_bandwidth);
+> > +	if (bw_val > (U64_MAX / 10))
+> > +		return -EINVAL;
+> > +
+> > +	new_bw = kcalloc(nr_node_ids, sizeof(unsigned long), GFP_KERNEL);
+> > +	if (!new_bw)
+> > +		return -ENOMEM;
+> > +
+> > +	new_iw = kzalloc(nr_node_ids, GFP_KERNEL);
+> 
+> I think kcalloc(nr_node_ids, sizeof(u8), GFP_KERNEL); will be more readable.
+
+I see, thank you for your input. I will make this change in a v2.
+
+> > @@ -2012,11 +2105,12 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
+> >   
+> >   	rcu_read_lock();
+> >   	table = rcu_dereference(iw_table);
+> > +	defaults = rcu_dereference(iw_table);
+> 
+> Probably you intended rcu_dereference(default_iw_table)?
+
+Yes -- thank you for the catch. I will also make this change.
+
+> >   static struct iw_node_attr **node_attrs;
+> > +static struct kobj_attribute *max_nw_attr;
+> 
+> Where is max_nw_attr initialized?
+
+Oh thank you for this catch! You are correct, max_nw_attr is never
+initalized. Actually, there is a typo in which I never use
+max_nw_attr, I accidentally rename a different sysfs interface
+to act as the intended max_nw_attr. I will make this change as well
+and post a v2. 
  
- 	return !gpa_direct_bits || (gpa & gpa_direct_bits);
- }
-+
-+static inline bool kvm_is_gfn_alias(struct kvm *kvm, gfn_t gfn)
-+{
-+	return gfn & kvm_gfn_direct_bits(kvm);
-+}
- #endif
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index c948d344b3fb..81feccee3866 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4403,8 +4403,12 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
- 			       struct kvm_page_fault *fault, unsigned int access)
- {
- 	struct kvm_memory_slot *slot = fault->slot;
-+	struct kvm *kvm = vcpu->kvm;
- 	int ret;
- 
-+	if (KVM_BUG_ON(kvm_is_gfn_alias(kvm, fault->gfn), kvm))
-+		return -EFAULT;
-+
- 	/*
- 	 * Note that the mmu_invalidate_seq also serves to detect a concurrent
- 	 * change in attributes.  is_page_fault_stale() will detect an
-@@ -4418,7 +4422,7 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
- 	 * Now that we have a snapshot of mmu_invalidate_seq we can check for a
- 	 * private vs. shared mismatch.
- 	 */
--	if (fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
-+	if (fault->is_private != kvm_mem_is_private(kvm, fault->gfn)) {
- 		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
- 		return -EFAULT;
- 	}
-@@ -4480,7 +4484,7 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
- 	 * *guaranteed* to need to retry, i.e. waiting until mmu_lock is held
- 	 * to detect retry guarantees the worst case latency for the vCPU.
- 	 */
--	if (mmu_invalidate_retry_gfn_unsafe(vcpu->kvm, fault->mmu_seq, fault->gfn))
-+	if (mmu_invalidate_retry_gfn_unsafe(kvm, fault->mmu_seq, fault->gfn))
- 		return RET_PF_RETRY;
- 
- 	ret = __kvm_mmu_faultin_pfn(vcpu, fault);
-@@ -4500,7 +4504,7 @@ static int kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
- 	 * overall cost of failing to detect the invalidation until after
- 	 * mmu_lock is acquired.
- 	 */
--	if (mmu_invalidate_retry_gfn_unsafe(vcpu->kvm, fault->mmu_seq, fault->gfn)) {
-+	if (mmu_invalidate_retry_gfn_unsafe(kvm, fault->mmu_seq, fault->gfn)) {
- 		kvm_mmu_finish_page_fault(vcpu, fault, RET_PF_RETRY);
- 		return RET_PF_RETRY;
- 	}
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index daf59233bef4..d81242288cf8 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -13010,6 +13010,9 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
- 		if ((new->base_gfn + new->npages - 1) > kvm_mmu_max_gfn())
- 			return -EINVAL;
- 
-+		if (kvm_is_gfn_alias(kvm, new->base_gfn + new->npages - 1))
-+			return -EINVAL;
-+
- 		return kvm_alloc_memslot_metadata(kvm, new);
- 	}
- 
--- 
-2.43.5
+> Best,
+> Hyeonggon
 
+Thank you for your input, I will make the changes that you mentioned
+regardnig readability & typos. I hope to hear from you regarding the
+thoughts on the behavior of re-scaling all node weights when users
+update max_node_weight, and whether that should overwrite manually
+set node weights.
+
+Have a great day!
+Joshua
 
