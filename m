@@ -1,86 +1,106 @@
-Return-Path: <linux-kernel+bounces-444144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABAAE9F01D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:16:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C339F01FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:20:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C6FC2879AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:16:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013BD188CC93
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79281F94C;
-	Fri, 13 Dec 2024 01:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D3A1A296;
+	Fri, 13 Dec 2024 01:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="CaKP9zze"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="beu8l2nA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B17C17BA1
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C05210F7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734052590; cv=none; b=phiDpEKNSX92ImMmsW3GBiSp5qVU7bL2ZjWpZOcMrbvYIc9o6q9BcXztjktVxtCW/xx/1kQAz9BmB1c8PmQm0iAr+H8JCSLy/ATFnpEUXYh2MDiLdzh8H5L1va6F9oeN+AKQIkc3r6nWgpFwqwWZa4P1BeR/RrxsQjzApf2p0pE=
+	t=1734052770; cv=none; b=GGPtV0TsCSkeJHtwDJp3dlaNmThNKk5fjjeo+JKZa6DQWdh8gHHo1iY20NUc1cVWslcUEcVRBbGCwx1kPQ00fpjEV+gFoVROoWlWoTOxPL0LY099G3xKGxVySyvcli+dkWvyA94tOvFYbBlT61Spo+nJiAI+kc6G9Hl51872Y6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734052590; c=relaxed/simple;
-	bh=u7mAhfQK3/9tnkSmNAfLRnpr/pNk8d5aZ93+Q+019dw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y/FevnkRBV209hQZcywwgIPVpWV61Cp+HcnxzGkRpOdGH+2mzL20I+umnIbvpujsf16T/Xb90kHuWRXTwH1SkCRCIkKSbDVVq7OF/G9TqgPuIzi7WlenS9/iLo/KqZNl3e0WHbsD8bfHXtdk3KhdK4ePWSh/3TvW7BZCewfkyZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=CaKP9zze; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zt0iBnn2EnEmd+EGTwbF1Elj1ZFiGOgKhBTmJtK5+Bw=; b=CaKP9zzeqzINQCS6ln2bkysGPy
-	fMdjJu7j1rCs9jPZLzMlfXWKI5Kr7Epleg3DhpH2KwlVdQRrlGslBcXRONHHpkpnf/bn8ZHrjBW4s
-	ivs8AvzJMFHEDPGY1yUQ9WEUxz0ALRLZNbOP3q/h8SQETp5Sr8HyBy44eqTPZHSZHBbnNr3vybc0k
-	8S1kPNt7Mf3Ajfh0wUl7fhsDk8t44mrY4iXAebmUgLLEto2EYjMAKbIYWI3P5Rw5rXOjSS2swjysX
-	JIHgLVtKbNVMlx4E7yPZ/HIzx6W8K/ITqCGpg8mUNoOb7cmFbHjLGq64RH4ui6XydyKDOpXJ5+GFn
-	vSwfUAnw==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tLuHp-002TCH-7i; Fri, 13 Dec 2024 02:16:09 +0100
-Message-ID: <bf8a3eb3-ae11-4441-9207-d7241939d359@igalia.com>
-Date: Fri, 13 Dec 2024 10:16:02 +0900
+	s=arc-20240116; t=1734052770; c=relaxed/simple;
+	bh=mTvQPKWRQb48JVB/USELHqMNjVP/pf3KTfaBUoBFXDQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a6mAqHE23bipAlQniy5O3ZytkuyfafBOJrW1Dul5XMo9rpSs88m73tCtWLbqoNDzKsfB/PaVTPorB0lasbnedtTgHBUpLYxB6NQw2CZckbYrAtdFruGUt7MHqvHWF/NlZolLme200MCevEXc71v+pDBjSExMPAozxt4hwzVG6Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=beu8l2nA; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734052768; x=1765588768;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mTvQPKWRQb48JVB/USELHqMNjVP/pf3KTfaBUoBFXDQ=;
+  b=beu8l2nACiwClrQMs9vQw13QcdC0iK8jPWHY2xENl/sF9cemjh6Ckrmr
+   YC/npYaSBWxO1DRLqLcHpYvU2rnwC/y2bIPrVAxrvrjtrmpmTx+Le0OC2
+   EpktlRoD2pNDuY+emm5pLz691Y5TKIrosewQLmszZXy5M4MY49U+Y4IKl
+   zFQYE3yd48ZB/0lFA/UaOF7drE3H15us2AYzTmsoHaKNUoSDzEBdF48/4
+   S8ABe2ongyiP3EUhdy2tYmrRRgqJCz8xrWYlIN9k/0xKF64H4tiVJLbdM
+   U09oBXi9JDknSGSyP0yGC2s2TjBei4X6KiOKgJoyClWNveGgY08FfsaL6
+   A==;
+X-CSE-ConnectionGUID: EWhRixgQQou53ZagrVgrrA==
+X-CSE-MsgGUID: SUdntcgKQdSRnKsrhMy51w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45510006"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="45510006"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 17:19:28 -0800
+X-CSE-ConnectionGUID: qj52bvHSTcGZQAmfR6PEtw==
+X-CSE-MsgGUID: /P110jxPQhW90MwwXKlujg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="96835604"
+Received: from allen-sbox.sh.intel.com ([10.239.159.30])
+  by orviesa007.jf.intel.com with ESMTP; 12 Dec 2024 17:19:26 -0800
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Yi Liu <yi.l.liu@intel.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] [PULL REQUEST] iommu/vt-d: Fixes for v6.13-rc
+Date: Fri, 13 Dec 2024 09:17:49 +0800
+Message-ID: <20241213011752.1177061-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] sched_ext: Implement scx_rq_clock_update/stale()
-To: Tejun Heo <tj@kernel.org>, Changwoo Min <multics69@gmail.com>
-Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
- kernel-dev@igalia.com, linux-kernel@vger.kernel.org
-References: <20241209061531.257531-1-changwoo@igalia.com>
- <20241209061531.257531-3-changwoo@igalia.com>
- <Z1lCnEr25fOB8RWI@slm.duckdns.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <Z1lCnEr25fOB8RWI@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Joerg,
 
-On 24. 12. 11. 16:43, Tejun Heo wrote:
-> On Mon, Dec 09, 2024 at 03:15:27PM +0900, Changwoo Min wrote:
-> ...
->> +static inline void scx_rq_clock_stale(struct rq *rq)
-> 
-> Would scx_rq_clock_expire() or scx_rq_clock_invalidate() be a better name?
-> Also, I'd roll this patch into the next one.
+The following fixes have been queued for v6.13-rc:
 
-Thank you for the suggestion. I will change it to
-scx_rq_clock_invalidate() in the next version.
+ - Remove cache tags before disabling ATS
+ - Avoid draining PRQ in sva mm release path
+ - Fix qi_batch NULL pointer with nested parent domain
 
-Regards,
-Changwoo Min
+They have been reviewed and tested. Please can you consider them for
+v6.13-rc?
+
+Best regards,
+baolu
+
+Lu Baolu (2):
+  iommu/vt-d: Remove cache tags before disabling ATS
+  iommu/vt-d: Avoid draining PRQ in sva mm release path
+
+Yi Liu (1):
+  iommu/vt-d: Fix qi_batch NULL pointer with nested parent domain
+
+ drivers/iommu/intel/cache.c | 34 +++++++++++++++++++++++++++-------
+ drivers/iommu/intel/iommu.c |  4 +++-
+ drivers/iommu/intel/pasid.c |  3 ++-
+ 3 files changed, 32 insertions(+), 9 deletions(-)
+
+-- 
+2.43.0
+
 
