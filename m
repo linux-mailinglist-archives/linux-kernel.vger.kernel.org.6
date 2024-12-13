@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-444969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9687C9F0F57
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:38:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 299CE9F0F5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:39:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C532833FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3CC188497F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EE01E1023;
-	Fri, 13 Dec 2024 14:38:17 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2DD1E1C01;
+	Fri, 13 Dec 2024 14:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Te9L7yZS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196BE53BE
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EA31E0DD9;
+	Fri, 13 Dec 2024 14:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734100696; cv=none; b=GSD/KqquyirpCKCxndePoWhZpu3aLA3Kzn8sDUHeYdNfeFMM6y3k5yPaedXTJvNa/dI9GwuOX4Z59tK3RFk3MA+FIPqoQjvZpkal+5WJHo4Hqy8XsIQTQ4BetsNDZTGsDTfQvNA8e9i9oS2RpHTcTO/Rfxv/HZOmMd4zFdbwhso=
+	t=1734100735; cv=none; b=VWCaLpY02jlJfcQhiXlAlCxt/ZkVx+pDihOiZ8ndL+8AW0rMw0lOy3sjxVXT0yd8yBHNHvSWURu3YjTswefzAAVfQU7H1Shde1+HUMU9SH1nAAOZfrCc2ifpAWtQDFMdZwdxO8sbsDv+3kX2BSRSl8C9BVX01tHMkBG5W7mojG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734100696; c=relaxed/simple;
-	bh=dbqAQKo7bYctmTlwta11eLI/7iZ5CcH1vp60Z5LYawQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YrKUMAeUb2fNzMK5XpmOKE5LZ9z2nQFusY4dvET4hmFH+EBTfqeDQ0bFHtirKPOL9QkCK3geCPsxYUmoZ4fq2HwdVF0xlMw8MKvuSusTA7EPiJc5jrAzY3TdN4B6L/Lx8nnvYvEvlSDqWkC6wpEwEqBNUqXa8K6M4JmlfNX5B5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tM6nj-0004mK-GS; Fri, 13 Dec 2024 15:37:55 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tM6nh-003DSw-19;
-	Fri, 13 Dec 2024 15:37:54 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tM6ni-00ES0u-04;
-	Fri, 13 Dec 2024 15:37:54 +0100
-Date: Fri, 13 Dec 2024 15:37:54 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v1 07/11] net: usb: lan78xx: Use ETIMEDOUT
- instead of ETIME in lan78xx_stop_hw
-Message-ID: <Z1xGwllbEtrVO5-O@pengutronix.de>
-References: <20241209130751.703182-1-o.rempel@pengutronix.de>
- <20241209130751.703182-8-o.rempel@pengutronix.de>
- <b7fa7a73-a1f1-4eeb-a97d-2ad25af0f0f5@lunn.ch>
+	s=arc-20240116; t=1734100735; c=relaxed/simple;
+	bh=JyFF+T3NiQ3bpjkGsyF5HGaVVrJauE8H4Qo736pmrxg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iFb2SH7lG/QMEgQNPEG3eFgHKrCfgm392icjD7Aqt5R9hlcFd6zl+U/BK5zet6oIKpXrR6viOt78MQeXbo6Oz/baFQMaCikqNE6+dLYcLuKvSdLIbqCWmAb8u7y58pv5eYx15dzMu1znd/BNniT8LHvVbbw43tvKeNzWy85qgqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Te9L7yZS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D2FC4CED0;
+	Fri, 13 Dec 2024 14:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734100734;
+	bh=JyFF+T3NiQ3bpjkGsyF5HGaVVrJauE8H4Qo736pmrxg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Te9L7yZS3fi5BAzVTCw/TKpltm3viGPM6Y6wVHP6IqR2cyiJGIWGogHdIEvgwA0Li
+	 W0d1LKfN0NS2tC4kjFaScJ00ATWk1kOby4Xd0psUf9jI3NKG2ey/piW1YW+zYD3Q15
+	 ufq17JWPYrDvyg0QusV//bVFykMyIxLd+hfD/toLAXsh7KQwTrS/VRRp+TshYJmH4/
+	 Fu+6A0oS5UqzmaJ7TiKVzHwkf66wmuRjYyne30s03GqiGqwdcOFmd8a8t+Ja4ZiZmQ
+	 UZ4FUcVtNHnnyeYc5JKcTJ1EZc6jTSLwH9bc5lJw+k3Y+AvjUssz7fFbrYcRXfSME0
+	 tZENXJYFW9hgA==
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3ea55a2a38bso962580b6e.1;
+        Fri, 13 Dec 2024 06:38:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUpGG7clk2S/wFZSpXfBbrp2SyorEaxiN9vdJRXJf40I/Gb1V0BkOPm8SFD2emndpP3elXX92UXWxHm@vger.kernel.org, AJvYcCUs2VxvSYdLgRF4cXqHZyL+70tdbHqUdOFmJBWEhBoOjkHlRV5lWzaSxYDDh/MQNSBHA+hZ4FRtCXehEaG0ftGc@vger.kernel.org, AJvYcCXp/X+FWdS7OTE5xObgIID8rA0S8URKZJjToiRv1rxg+WCjMj6brnQr8Ij4vykHl0cWzRsovaAxZZzejWuM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD4TnMi62+I1Sj3HOe2UYzBQmIqIR1GTm+AKvFtgBM9NQcbQ4J
+	//ekp+y7V8ux8saOF+hklfEyv/Q7YdSskR51uy1DQ2fvaFeGBlEDGPPov5LLQVTcfdvyZ+qeK9Z
+	JfpFhdZbo/Gdq8h+ilxK57lVnnwQ=
+X-Google-Smtp-Source: AGHT+IFyre0J9CImHbllUvwTGmrPYHXBt6ubdpS8LuYzsYwFeublEs32ivntjIy366aB7ladKYrxX9oaqIsEjn/3JZg=
+X-Received: by 2002:a05:6808:16a2:b0:3ea:44ae:a65 with SMTP id
+ 5614622812f47-3eba67fe978mr1810634b6e.5.1734100734047; Fri, 13 Dec 2024
+ 06:38:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b7fa7a73-a1f1-4eeb-a97d-2ad25af0f0f5@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241212003201.2098123-1-briannorris@chromium.org> <20241212003201.2098123-2-briannorris@chromium.org>
+In-Reply-To: <20241212003201.2098123-2-briannorris@chromium.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 13 Dec 2024 15:38:40 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0id5MxNniN7xndMWKU4mvegNZ2V-sGRC6cJ3jHCu0puCQ@mail.gmail.com>
+Message-ID: <CAJZ5v0id5MxNniN7xndMWKU4mvegNZ2V-sGRC6cJ3jHCu0puCQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] drivers: base: Don't match devices with NULL of_node/fwnode/etc
+To: Brian Norris <briannorris@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com, 
+	Maxime Ripard <mripard@kernel.org>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	linux-kselftest@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 03:08:18AM +0100, Andrew Lunn wrote:
-> On Mon, Dec 09, 2024 at 02:07:47PM +0100, Oleksij Rempel wrote:
-> > Update `lan78xx_stop_hw` to return `-ETIMEDOUT` instead of `-ETIME` when
-> > a timeout occurs. While `-ETIME` indicates a general timer expiration,
-> > `-ETIMEDOUT` is more commonly used for signaling operation timeouts and
-> > provides better consistency with standard error handling in the driver.
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> >  drivers/net/usb/lan78xx.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-> > index 2966f7e63617..c66e404f51ac 100644
-> > --- a/drivers/net/usb/lan78xx.c
-> > +++ b/drivers/net/usb/lan78xx.c
-> > @@ -844,9 +844,7 @@ static int lan78xx_stop_hw(struct lan78xx_net *dev, u32 reg, u32 hw_enabled,
-> >  		} while (!stopped && !time_after(jiffies, timeout));
-> >  	}
-> >  
-> > -	ret = stopped ? 0 : -ETIME;
-> > -
-> > -	return ret;
-> > +	return stopped ? 0 : -ETIMEDOUT;
-> 
-> I've not looked at the call stack, but tx_complete() and rx_complete()
-> specifically looks for ETIME. Do they need to change as well?
+On Thu, Dec 12, 2024 at 1:32=E2=80=AFAM Brian Norris <briannorris@chromium.=
+org> wrote:
+>
+> of_find_device_by_node(), bus_find_device_by_of_node(),
+> bus_find_device_by_fwnode(), ..., all produce arbitrary results when
+> provided with a NULL of_node, fwnode, ACPI handle, etc. This is
+> counterintuitive, and the source of a few bugs, such as the one fixed by
+> commit 5c8418cf4025 ("PCI/pwrctrl: Unregister platform device only if
+> one actually exists").
+>
+> It's hard to imagine a good reason that these device_match_*() APIs
+> should return 'true' for a NULL argument. Augment these to return 0
+> (false).
+>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-No, the tx_complete() and rx_complete() will get error values in to the
-urb->status from the USB stack. In this case it is a different ETIME.
+For the ACPI part
 
-I'll update commit message.
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> ---
+>
+> Changes in v2:
+>  * Add Rob's Reviewed-by
+>
+>  drivers/base/core.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 94865c9d8adc..2b7b13fc36d7 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -5246,13 +5246,13 @@ EXPORT_SYMBOL_GPL(device_match_name);
+>
+>  int device_match_of_node(struct device *dev, const void *np)
+>  {
+> -       return dev->of_node =3D=3D np;
+> +       return np && dev->of_node =3D=3D np;
+>  }
+>  EXPORT_SYMBOL_GPL(device_match_of_node);
+>
+>  int device_match_fwnode(struct device *dev, const void *fwnode)
+>  {
+> -       return dev_fwnode(dev) =3D=3D fwnode;
+> +       return fwnode && dev_fwnode(dev) =3D=3D fwnode;
+>  }
+>  EXPORT_SYMBOL_GPL(device_match_fwnode);
+>
+> @@ -5264,13 +5264,13 @@ EXPORT_SYMBOL_GPL(device_match_devt);
+>
+>  int device_match_acpi_dev(struct device *dev, const void *adev)
+>  {
+> -       return ACPI_COMPANION(dev) =3D=3D adev;
+> +       return adev && ACPI_COMPANION(dev) =3D=3D adev;
+>  }
+>  EXPORT_SYMBOL(device_match_acpi_dev);
+>
+>  int device_match_acpi_handle(struct device *dev, const void *handle)
+>  {
+> -       return ACPI_HANDLE(dev) =3D=3D handle;
+> +       return handle && ACPI_HANDLE(dev) =3D=3D handle;
+>  }
+>  EXPORT_SYMBOL(device_match_acpi_handle);
+>
+> --
+> 2.47.0.338.g60cca15819-goog
+>
 
