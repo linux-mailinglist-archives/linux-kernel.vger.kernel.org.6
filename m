@@ -1,219 +1,142 @@
-Return-Path: <linux-kernel+bounces-444821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F169F0D02
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:09:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241179F0D06
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DD631883913
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 422D916649E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1E01DFE2C;
-	Fri, 13 Dec 2024 13:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DD01DFE33;
+	Fri, 13 Dec 2024 13:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PxfcN9+z"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iT9SLK/q"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F4519AA58
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E2A19AA58
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734095335; cv=none; b=GHiV3oNUejOPkZXVBftqHxFe5o0k4nLjinBWo9+aLC5yGkYJ9jC1d7XFfATW8eiNSxCXXXcaX0U7LVAozdG+SZ3WsqmUAoVvsBl7WeSSGe2HuD14jXj+uV4to3vOKQ5L4P9+Xx2rLp3SK9zRJm+ZQKVPdx3SWnXpF79guzsKvoI=
+	t=1734095344; cv=none; b=m6p1c3grpMxe9U+ojhLOLKWiyKxle+MEBtwG2hpVrMuzclpLm5go2VxXuAhwELc90OAaVEAod3aBIOeUPGCi66pxLmMumTf4N+gZhchej0GKRYEu8M9lpMIsjVod1QdMGTsomrqg2z37Vd9g4Q+rAyzuQkvABV3MT0kkd6YcyDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734095335; c=relaxed/simple;
-	bh=ah1Z9PtZPjnWAKM1uwclbbVKEEJ5c5oMCqfRl+M+Roc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NIZcVBSpqdXcDiAkDixH8xOiL/BDC4hMSexTSoJmpiB9pei/75T1nVByRxULmCa4kwqFqHc8ypPY1LbcUaDP8imXTNS28zqYKXy1dDnv1a+/R8DJicrbOn5yyrJHOESj1Vu4604SFZKdXLnTsar5/KkNUFuUuOEDcqfNPnNAomc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PxfcN9+z; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD81cwb022183
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:08:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t+NlxZSUAzQpw/DPspRPS0yu5G8WCJu2cZhtajXHw5A=; b=PxfcN9+zbMYNg/5Y
-	BYM0jLlVc/lfMy7ObXEe0jcFYlzYmHD51IPGj0UP3TYdyCBJf6J2iZVTsItua+cG
-	WNlMDmfi+PaZfHvo/FOKvsiDqBkQtCYUju6kWIW2H79SCcKXlNPyMi0syqfahQeY
-	4eMYiA9otzB6bTZwmDZb5AYQps3ET56SBvBpttCcFaGg04fwCi4brRaISy8HIiD8
-	P+gECVXp1q/xB+EH9tIpmycOdBMXhfQ3rhSRmkS2zw1IeyRuNlnqk0XprPG/IC5B
-	z8GtJFUUmzypD8SLN4F0Ew5Z0Ia5IYkSeXVfrMe6Ur9jp++ZpgpZ/1cG+/BzQPXK
-	JJsIVQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gh270vn7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:08:52 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6d8f77bf546so4438716d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:08:52 -0800 (PST)
+	s=arc-20240116; t=1734095344; c=relaxed/simple;
+	bh=rqaTtvm5IEyKWS5ONUaBUZiybgpVMBEkcAqj9ZEe5vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+k4y4RYQtMiE99+fy5Vi+wcsSOW4DPiSSLANJQunvZDqYUA8uxjqwDQHvZ8RByHsPkPua54pyFLE3JKzrU/NXzE98zhvs3HC3FIkvzE0uKKo/AeggbFx5KwLPjKN9dAglO5YJKRcP6SmfKnyIvJrcZb+MRHt3qraIsT6pXzDno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iT9SLK/q; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38789e5b6a7so886817f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:09:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734095341; x=1734700141; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ti6eEstcDMekLF5cg8h/xv4zkeUEnh0EvJjkx52ON2A=;
+        b=iT9SLK/q2Of32nA57EUWVN2MGOAoCkHnEimt82wzFakEMtzrzae/nDDZ8JTX0CZ2iG
+         kK+BHNERV32qfs/P8Cbu6j86n+CNByf62QnpSo2V6t68EuLU8sKGMluDPMbC5JEso+/v
+         xnfThKtdusUtuXKoM1Wh0DL+/T1geITh2mgRW0WVRrLobHcgdyOlSboIHa2E7q77A1kv
+         1RvItskZOryf4tL9Th5LK90j89N09w0dQelHYpwdZflGQ2E3xKe6fkLbrrGoRHeYaRtD
+         hpzS6/Vmu/bnkhWcZgyKTgBIsRMYR2dmDMsDHZIBIQgZ8ssdwC6eqG1joK/mYj+gyH/+
+         Ek/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734095332; x=1734700132;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t+NlxZSUAzQpw/DPspRPS0yu5G8WCJu2cZhtajXHw5A=;
-        b=EldYuqhX7B/EKPch6eP1YCKoGS0TiqA2Z25L6QHe61b+FxEuQQYorRzAT4bgC+Y02q
-         wet1oLK7uJiXIRm1Tj49JXJcNWs3d6/YSfRYvcRg6abxwcXtf7Lq0oSCqsbMer+3MZjt
-         IXiSOnPEdCBEvl2u+yWDfkCUe0Vuqj65GJDBdWJhqhdg9l1wkj8PlNxn2uTmzu+3XtCe
-         1pzR7WbYRabXOM/YGLwoQ9QNAgkzEsSYr4ck9qAnXfUKbwo36BYiViBfhzvEUazeppaC
-         y7k4r2P4t4drZAnwgSJ9QlBzGWOnvQPVZihsUqu6EFE1HHxB7rJfHMCPQ46lFjuXIIM6
-         670A==
-X-Forwarded-Encrypted: i=1; AJvYcCUvsuBYBr9VSvrGDQJXfKz2/fn0UEEmrc+AddrpJfp7SeZ0xrEujo2gJhwU21k7FxnKYy1G4+6ESQ+M6mo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuIEym3HzLJTSl6eRKru6+M9GNHk89K7p0MLb+70x8jfTrtHlZ
-	SsmwdfUieeFe0r+AQUxmmrwcRQ8PLUNqYK9udnsNjhpwaPPyWpbq/zd5TlAfB6YQPjG1TJ58eCT
-	808ThH1I4vpG1lQOw/cIOuz1UoCRU8oVDrTnedQV8EbdCZy79ATgiQ2h/HVLjY6k=
-X-Gm-Gg: ASbGnct5AObK18cR4lqTnRcemqGYQ2/7xm+S+FHg6XmaYqciKghr4oG734XUtr2Kbs0
-	5/gpEhB49j/CF/SRtcQuhBgbhPAAxC9eb0RGWpMkKi1VauHyPiwfIOufp4eLyacGtB/zcYFJVDx
-	TJGRsZa9/ZIjZgma5sVUAZrlMeFrRlgEq9YRwZ+HtgP/g0FMcRSm66A3ngbafOG/G3ssrdV7CTr
-	5YcwPeVIqyaeO/SJTp76XNHZC2WRm19LK6wrnTPY4qpuQRqBao5E62m/s1o/MydVmNywVsNKyDB
-	HGl7mMzzKKnhm1S2YEPMeJTpckiNtIHJvvhW
-X-Received: by 2002:a05:620a:2482:b0:7b6:e9c0:9c3b with SMTP id af79cd13be357-7b6fbf08162mr129332285a.8.1734095331971;
-        Fri, 13 Dec 2024 05:08:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGFLzgc0KWUHtMB4AX6NRhGSzdp+8nXQHv2f9Rwn0/0hSQQwbzZVKV9uAlixhsyWs44W2qiZw==
-X-Received: by 2002:a05:620a:2482:b0:7b6:e9c0:9c3b with SMTP id af79cd13be357-7b6fbf08162mr129329885a.8.1734095331458;
-        Fri, 13 Dec 2024 05:08:51 -0800 (PST)
-Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6ab44e881sm419566066b.26.2024.12.13.05.08.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 05:08:51 -0800 (PST)
-Message-ID: <04e489be-231a-43b8-a701-1173ea744bae@oss.qualcomm.com>
-Date: Fri, 13 Dec 2024 14:08:48 +0100
+        d=1e100.net; s=20230601; t=1734095341; x=1734700141;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ti6eEstcDMekLF5cg8h/xv4zkeUEnh0EvJjkx52ON2A=;
+        b=XcNMzp3zhYYwdEW4zjIBoLBKjTbdwn1no22AfzneEr0sZfjamweh4+9Ibsy4DERLFL
+         LL1LX+WKDpJoHEtLbAInvw9YZfQEdS9q+HiiVaTlZ3KOuhAXc9cUDNStKulCwsIg43dg
+         VN96X9cUKEAYzy4eYXm3oQIWj+cRjO8B8tc10LIk7urtzl0Iw5N/PEVPcZBMz8UgwWhS
+         5F9KIgVcqddQz5o97VAjWGRnOgmb1VMpV5v29hwWmCKkLXQBXzotwasS1I0T3gRcA/zQ
+         szn/Fjt3qK9LOdcOsq19egFLUqNREb2gA667XRvkwd+lhgrrfrMQbgRuKN8bGu8HDCvi
+         1JwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwRe2sFtgN4HKi3tWGK2aGXM9OmsijGj27VFZYg0zpiICJPqbgTcaVHA0qa6UzlO/aiZp0EqK8wNYRwV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc1f6jLD8xUGpNskAG8U/lbIkVm0SKTcB07F1ExqnKbLDcPQrp
+	H2q/rBSAZuxokQn8xlUawd26S1g12Gdv9UNcEZ/a1zQ1dX5/EAQW
+X-Gm-Gg: ASbGnctcK3nnALy5fA5HiVxPebltJS0lb42ft9oxtlcInGW5x0upBHl3LCTuIwZT9HC
+	dA+bjxaUewMndRPDiEua6XIwh6C4IlqAnimGAPLK2nihOA/2y8oayCImVt1gGNHRZHVNXrg/KKq
+	Bg0oyspBv/rgCUvpTyzjuf76Ju/5D0w6VJg8ifsuIv0v3Tv9P0xoPiuuwU5gZVDqSsPAZSCszqt
+	6IPSmj+ge1gYcGnx2oqmgb+2ApAlzV5NM2M2DXfRVUCu2g2GWStgm0FAZEiOFzw/X4BZ87f
+X-Google-Smtp-Source: AGHT+IGwFfs8iXyzrUmAhIxlrYsb8xItJ9t24BgPCHxAf5Rmj6592z/EvjXbYKnSSg7OPilEoegBwQ==
+X-Received: by 2002:a05:6000:4025:b0:385:f1f2:13f1 with SMTP id ffacd0b85a97d-3888dcd4796mr1824519f8f.22.1734095341001;
+        Fri, 13 Dec 2024 05:09:01 -0800 (PST)
+Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514ec8sm7196646f8f.75.2024.12.13.05.08.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 05:09:00 -0800 (PST)
+Date: Fri, 13 Dec 2024 14:08:58 +0100
+From: Dave Penkler <dpenkler@gmail.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Rohit Chavan <roheetchavan@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Prarit Bhargava <prarit@redhat.com>, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] staging: gpib: fix address space mixup
+Message-ID: <Z1wx6pzVdh0y9w4d@egonzo>
+References: <20241213064959.1045243-1-arnd@kernel.org>
+ <20241213064959.1045243-3-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: Add USB multiport
- fingerprint readery
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Johan Hovold <johan@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@linaro.org>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org
-References: <20241118-x1e80100-crd-fp-v1-0-ec6b553a2e53@linaro.org>
- <20241118-x1e80100-crd-fp-v1-1-ec6b553a2e53@linaro.org>
- <Z07bgH5vVk44zuEH@hovoldconsulting.com> <Z07r3Upr50vLluyn@linaro.org>
- <41106fd7-5348-4d21-9ae7-8466f5634b4c@oss.qualcomm.com>
- <Z08sMkbLF0b1DZTp@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <Z08sMkbLF0b1DZTp@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: Lpont4eLmYJ9r4U8Aeh3Zvz7HPrySVCe
-X-Proofpoint-GUID: Lpont4eLmYJ9r4U8Aeh3Zvz7HPrySVCe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 mlxlogscore=999 impostorscore=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130092
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213064959.1045243-3-arnd@kernel.org>
 
-On 3.12.2024 5:05 PM, Stephan Gerhold wrote:
-> On Tue, Dec 03, 2024 at 09:07:22PM +0530, Krishna Kurapati wrote:
->> On 12/3/2024 5:00 PM, Stephan Gerhold wrote:
->>> On Tue, Dec 03, 2024 at 11:20:48AM +0100, Johan Hovold wrote:
->>>> [ +CC: Krishna, Thinh and the USB list ]
->>>>
->>>> On Mon, Nov 18, 2024 at 11:34:29AM +0100, Stephan Gerhold wrote:
->>>>> The X1E80100 CRD has a Goodix fingerprint reader connected to the USB
->>>>> multiport controller on eUSB6. All other ports (including USB super-speed
->>>>> pins) are unused.
->>>>>
->>>>> Set it up in the device tree together with the NXP PTN3222 repeater.
->>>>>
->>>>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
->>>>> ---
->>>>>   arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 48 +++++++++++++++++++++++++++++++
->>>>>   1 file changed, 48 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
->>>>> index 39f9d9cdc10d..44942931c18f 100644
->>>>> --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
->>>>> +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
->>>>> @@ -735,6 +735,26 @@ keyboard@3a {
->>>>> [...]
->>>>> @@ -1260,3 +1288,23 @@ &usb_1_ss2_dwc3_hs {
->>>>>   &usb_1_ss2_qmpphy_out {
->>>>>   	remote-endpoint = <&pmic_glink_ss2_ss_in>;
->>>>>   };
->>>>> +
->>>>> +&usb_mp {
->>>>> +	status = "okay";
->>>>> +};
->>>>> +
->>>>> +&usb_mp_dwc3 {
->>>>> +	/* Limit to USB 2.0 and single port */
->>>>> +	maximum-speed = "high-speed";
->>>>> +	phys = <&usb_mp_hsphy1>;
->>>>> +	phy-names = "usb2-1";
->>>>> +};
->>>>
->>>> The dwc3 driver determines (and acts on) the number of ports based on
->>>> the port interrupts in DT and controller capabilities.
->>>>
->>>> I'm not sure we can (should) just drop the other HS PHY and the SS PHYs
->>>> that would still be there in the SoC (possibly initialised by the boot
->>>> firmware).
->>>>
->>>> I had a local patch to enable the multiport controller (for the suspend
->>>> work) and I realise that you'd currently need to specify a repeater also
->>>> for the HS PHY which does not have one, but that should be possible to
->>>> fix somehow.
->>>>
->>>
->>> I think there are two separate questions here:
->>>
->>>   1. Should we (or do we even need to) enable unused PHYs?
->>>   2. Do we need to power off unused PHYs left enabled by the firmware?
->>>
->>> For (1), I'm not not sure if there is a technical reason that requires
->>> us to. And given that PHYs typically consume quite a bit of power, I'm
->>> not sure if we should. Perhaps it's not worth spending effort on this
->>> minor optimization now, but then the device tree would ideally still
->>> tell us which PHYs are actually used (for future optimizations).
->>>
->>> For (2), yes, we probably need to. But my impression so far is that this
->>> might be a larger problem that we need to handle on the SoC level. I
->>> have seen some firmware versions that blindly power up all USB
->>> controllers, even completely unused ones. Ideally we would power down
->>> unused components during startup and then leave them off.
->>>
->>
->> This question might be a dumb one, if so please ignore it.
->>
->> But if we skip adding unused phys in DTS node, the core driver wouldn't have
->> access to all phys and we wouldn't be able to get references to unused ones
->> (un-mentioned ones in DTS). So how can we power them off from core driver if
->> we don't have reference to them ?
->>
+On Fri, Dec 13, 2024 at 07:49:51AM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> The question is not dumb at all, it's a very valid one. :-)
+> Throughout the gpib drivers, a 'void *' struct member is used in place
+> of either port numbers or __iomem pointers, which leads to lots of extra
+> type casts, sparse warnings and less portable code.
 > 
-> Perhaps it's easier if we keep them all listed on the USB controllers
-> and have something else to mark them as unused. The downside of that
-> option is that we might not be able to have a complete description of
-> the PHY with all resources. For example on the CRD there is no eUSB
-> repeater we could model for the first USB port (usb2-0), but it's needed
-> to enable the qcom,x1e80100-snps-eusb2-phy.
-
-So we have the choice between a silent failure or a loud non-failure wrt
-acquiring the repeater.. not sure which one is better
-
-Konrad 
+> Split the struct member in two separate ones with the correct types,
+> so each driver can pick which one to use.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  .../gpib/agilent_82350b/agilent_82350b.c      |  4 +-
+>  drivers/staging/gpib/cb7210/cb7210.c          | 12 ++---
+>  drivers/staging/gpib/cb7210/cb7210.h          |  4 +-
+>  drivers/staging/gpib/cec/cec_gpib.c           |  4 +-
+>  drivers/staging/gpib/common/gpib_os.c         |  2 +-
+>  drivers/staging/gpib/eastwood/fluke_gpib.c    | 12 ++---
+>  drivers/staging/gpib/eastwood/fluke_gpib.h    |  4 +-
+>  drivers/staging/gpib/fmh_gpib/fmh_gpib.c      | 25 +++++-----
+>  drivers/staging/gpib/fmh_gpib/fmh_gpib.h      |  4 +-
+>  drivers/staging/gpib/hp_82335/hp82335.c       | 21 +++++----
+>  drivers/staging/gpib/hp_82341/hp_82341.c      | 16 +++----
+>  drivers/staging/gpib/include/gpib_types.h     |  3 +-
+>  drivers/staging/gpib/include/nec7210.h        |  5 +-
+>  drivers/staging/gpib/include/tms9914.h        |  5 +-
+>  drivers/staging/gpib/ines/ines.h              |  4 +-
+>  drivers/staging/gpib/ines/ines_gpib.c         | 22 ++++-----
+>  .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        |  2 +-
+>  drivers/staging/gpib/nec7210/nec7210.c        | 16 +++----
+>  drivers/staging/gpib/pc2/pc2_gpib.c           | 16 +++----
+>  drivers/staging/gpib/tms9914/tms9914.c        |  8 ++--
+>  drivers/staging/gpib/tnt4882/mite.h           |  4 +-
+>  drivers/staging/gpib/tnt4882/tnt4882_gpib.c   | 46 +++++++++----------
+>  22 files changed, 123 insertions(+), 116 deletions(-)
+> 
+[ skip ]
+Hi Arnd,
+Thank you so much for these valuable patches.
+I have successfully tested them on the agilent and ni pci boards
+on an amd x86_64 system.
+This exercises the agilent_82350b, tms9914 and tnt4882 modules.
+Your patches have also fixed the i386 build issue as far as I can tell.
+Link: https://lore.kernel.org/all/f10e976e-7a04-4454-b38d-39cd18f142da@roeck-us.net/
+cheers,
+-Dave
 
