@@ -1,199 +1,255 @@
-Return-Path: <linux-kernel+bounces-445589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861B49F17FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:21:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7869F1800
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB77A188F8C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF0E1885418
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E3A1EE02F;
-	Fri, 13 Dec 2024 21:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7301922FC;
+	Fri, 13 Dec 2024 21:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnWnPVKe"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USXLKP5b"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32A71EBA07;
-	Fri, 13 Dec 2024 21:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA181DA5F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 21:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734124770; cv=none; b=KCZojISsW94RRsamIF8uu2OjqRQKR5xU/vpVW8mz7Y205LW7yjsz1GkqTUgY8Ihy1eaeKE/+5aIb3B/6YyYnWX0kIXD3AROHu8nrLRlpsd6/x0UKjqhkNgKz4giGUf/WetDkgftK5Qt2gsjB2G2BDJY3JRXbCfUomjRqqtmwk+8=
+	t=1734125039; cv=none; b=JBNlmvGoHnkTOoX36CkrE7tpwnspq+czpm6nTnjvCls59VcPYBOTUJqdOM/+JmCjpCAC5zXCuS6rdIFsKm6aOhWuuDWjpO9yvYCOGbazqvIxzRqpnPcCPk5Shz2BS/uOBa+MP2xyawmrpbU5STvlMNwP96gTHLok49VjTeBF4ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734124770; c=relaxed/simple;
-	bh=s/2Sud8tbTn3DV/gVz7omCuTc6DCCbix5hAZkUvCcyc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CVSxaKfqVV8kwgwsTK5xSE5Qw0j2m574rwS96z084Av/jBQegesnPEs4Ab7ZixNyjFXs1RU/zdah1gDaQUpz56q9Jx9mon1xakUEUzfXpEptBw38ylcdfotir/UHGZyxprbatpGW2oo7Z4/56sd1s0f0qpoqfC7w2qYZAXFuFyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnWnPVKe; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1734125039; c=relaxed/simple;
+	bh=88HMWtLRn5GlgVLxCNG0kn0VbpG0bCsCZqPlKWhubTM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=diDZ/YkIACSV29mtLKxNUZmTe3ZVVDQE1r5kUULlW0elH3DxuRMj1EEQn9wMnZ7NyOi0Yt2Gq3vmYsNOajF1gdUH1oTJJUYhqMAwQbqj4jAyaEsOXl2YELI7uYdl5GqV9xSl2ZTsbIg2X217iIHwaNa8pblT2uNc4dRwHbRd+IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=USXLKP5b; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385e0d47720so179831f8f.0;
-        Fri, 13 Dec 2024 13:19:28 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa662795ca3so632068966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:23:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734124766; x=1734729566; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CYq2MT/kLJ5VNDS2ggKYbL2pEgZu56efpig6dGEeYSQ=;
-        b=cnWnPVKenN4x0F9G004Cl+8yfBqHmRHy0QBm8nD0/dIxDujYahbLPf8VU3MLy9ulfc
-         dbTqE0xVX8vVwri9ygA2YbLy+tBlBhzDc+hG6uoXjqLwPF/wMPTA5rcmsu8gvCttizpn
-         mMBrFBFr2U4OR+iBUyNf7rOGMF6ELrs+X8qAdcs3VMZF9iajuyuelhGJZjGHIw6gOx4W
-         cwxz4pV5lhSc1YgBlYky8h1mkGp+ArEDAk86yBl8eE8DMS53vAsEiHtghn1Kxo4+4+bz
-         NkTXJiBOqFnBbak8ruwpplDRsymHpOwQcPXjCtCk0sQsbRavLNW3zEm7EZXh9CFOT6bX
-         ukuw==
+        d=gmail.com; s=20230601; t=1734125036; x=1734729836; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ko6SqQy8zgaq8WuJxgzJuB+CGxF6XuhiRKK6wt4rr1M=;
+        b=USXLKP5bNZddsLAEsJQtKe8IgGU/q0nWMjJ2YOYIU6kVz+PzqCsCafmJ3wR1M+ZD4z
+         dYjczdSCu1EshJexS2/JyDUpFJChQHdj3KZOvCfFPvVIMJr4gy4Lb8foXp8J1l/B477d
+         +Qr6ciW0hCJHuz337Xcf8bLalR3SFH3JKnMvxBcZFL6wqFCr6NreKeB/HnmQw9BaS4FZ
+         bCW1ONmVSPJ25hC8QS5UHRX0ZGttOzlRt3HGEbHVjQJp7YIxkzOAnRnU4Y0el7Z0QZ0J
+         fSpP02gs/V6PO/ZFYj8FWsp0ZwMhYjQwhFfr/vb08SpZANXZRSmlNGgh3vgi09keojjg
+         CvpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734124766; x=1734729566;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CYq2MT/kLJ5VNDS2ggKYbL2pEgZu56efpig6dGEeYSQ=;
-        b=T0mZiC0uoy/1ARYWAfn+E0mHyg2Zc60xF9rH319xHep4ZQPR2X2I1nXJaayEw8VV7o
-         E7Ree467KxEbgXv/J0WggSLLDfJTiYjnT/educMR0UUxc4SMUYArM7dULE2hHJ06odxC
-         snHprRBYncEwMgyTx8ka/L/rmxvkIWk/cmXMU8sp2UZlrhFw0h0cBkU306IH03xczjZh
-         g+jX2sGBELN/5l7PnaWqqcWJ9fCtYUvwLRL+ydB4cOnk4ytcJI0ybc8U0eeg2l2efEIe
-         rlJJZuYKCb3/20Yl9shZjGfz8m3Qrime4yvq00QlhfgqAErK/PvP4Zpj1n+Xv2Sjz/3l
-         rrMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUm6e526eA3+4aVuL4oOV41+JgapfCEztv2tRW2Qrbs3YeC8SoxUYtzKLqhnu2aCON3IWZWdkBjNtE=@vger.kernel.org, AJvYcCVLT2d9QzrS41EuG/v76D2N59arA+1flOTCxb9zqfYznCb6/SO0XkCQ87orZ42iG7xBy//1ctkKnE0rwKk2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIjG6M9QdDVuT5MpustR+PpkiAP1dw2S75VxdEF8bwpv+jUiz2
-	M4/ibT3ByjKcSBphgB86aLvN7XcpVCM/8+coXaIlHbCEUf1H1qiJ
-X-Gm-Gg: ASbGncus7LgDg1nPjRT5ZQVC84IlV1SRiM/WSA6yf/ZxbCKN4bc2UZaMT5A4DYAa0y6
-	fyVuY0uoBkfD1pNkkLm2FzC4MfvVYxTVdTxMzyMpudkctjDJLVBNdtg+RCbRidQG0E0Vy8wUx9F
-	9Sseqzj4Z8/YJnKTP1ch+/id15qARNof75k1AiKbwxjVvkWEU1wgwDpoZXzDbJoVgL7KwMixvBi
-	xyvpTwLSiQ0yNo4FDqZ8S++vg6g+Fjd2rSYKbwdFF2aHG5qNT17dODIsyO7CreImFGMF+OUlXWJ
-	PsEIR2mB2n41dL8GZ5KMWaxUieovBMuNMGQ=
-X-Google-Smtp-Source: AGHT+IEXNihsN8XxqgC7drI8y5j/V5W3EJ0WOgSZSqHoe+pvSP11CUBMZGS7mFc5Zqk+njfPyD0HaA==
-X-Received: by 2002:a05:6000:154e:b0:385:decf:becf with SMTP id ffacd0b85a97d-3888e0b8793mr1084569f8f.11.1734124766520;
-        Fri, 13 Dec 2024 13:19:26 -0800 (PST)
-Received: from d9dabf0abd47.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801acfdsm552484f8f.57.2024.12.13.13.19.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 13:19:26 -0800 (PST)
-From: Lothar Rubusch <l.rubusch@gmail.com>
-To: lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	jic23@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	eraretuya@gmail.com,
-	l.rubusch@gmail.com
-Subject: [PATCH v7 7/7] iio: accel: adxl345: complete the list of defines
-Date: Fri, 13 Dec 2024 21:19:09 +0000
-Message-Id: <20241213211909.40896-8-l.rubusch@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241213211909.40896-1-l.rubusch@gmail.com>
-References: <20241213211909.40896-1-l.rubusch@gmail.com>
+        d=1e100.net; s=20230601; t=1734125036; x=1734729836;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ko6SqQy8zgaq8WuJxgzJuB+CGxF6XuhiRKK6wt4rr1M=;
+        b=TCDbGKU1KrZP0OrymHhlPzzOhGMasDOSt7//LM67Z7eetu4R2c13rQQSnkFkMBcJQF
+         SsQI3De4NAfDltp6C2Lvl4m8ahRNIHYsAM0pX3hLlXDR6EoysMNeiTni7ixcBqBPIp1h
+         +ikS5F+acqb0eOpWzeWVNtN+9uT+wfVXIl8E7n6F1m9RaX5s44CZOoNuV4ojPRSncStx
+         By0k64szSY4QFqpTU/jVC5NkaC4TbROnxZg+n7QQv2cU3yGSYClFjq9qlHclCx9sDNzm
+         qOVBZaZ+wGF4yewH7kRK6+vVD5RmKewhcUQ0iIj5N2FJpumCua2KSx3EToEaf37tYDwS
+         Xg6g==
+X-Gm-Message-State: AOJu0YyFWugcc9iZQ+5T7GyXLJpmxY0NLbR0yzPGYAmrxWJXTl2sgNj0
+	ejsn1XSK7P+TES9gR5MYIy6WMMtI+ykYr1VMmpv3qh+2QIkqHdM1ASBnkJQ4eLhIExsq/pRUU5P
+	veApEkleuyxc+x20hK0UFfrWoGs4=
+X-Gm-Gg: ASbGncswJnH8xU4ciQ7FOdfSrLpTKWsob7nHE+8sEdcrFlBjRq+T/rbY8jwir/7mnNp
+	uyZEyj+AeLfqw/KbaDhe3VV5E7HWe9HROBcka
+X-Google-Smtp-Source: AGHT+IEPGkmoimuWCVe3G3imQ1LRZj/yAkACmoMdE4SG4c9rfT1r1umXXrh0Fonid474ByBp4kNOXWLF7rpPDcrV1Ns=
+X-Received: by 2002:a17:907:7709:b0:aa6:79c0:d8ce with SMTP id
+ a640c23a62f3a-aab7b0e8a85mr342981666b.1.1734125035505; Fri, 13 Dec 2024
+ 13:23:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Dave Airlie <airlied@gmail.com>
+Date: Sat, 14 Dec 2024 07:23:44 +1000
+Message-ID: <CAPM=9tyHzxubr_sRuNSoPdJB4uL=E1cFzUzNxY1dPrOW=y-NdQ@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.13-rc3
+To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Having interrupts events and FIFO available allows to evaluate the
-sensor events. Cover the list of interrupt based sensor events. Keep
-them in the header file for readability.
+Hi Linus,
 
-Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
----
- drivers/iio/accel/adxl345.h | 57 +++++++++++++++++++++++++++++++++----
- 1 file changed, 51 insertions(+), 6 deletions(-)
+This is the weekly fixes pull for drm. Just has i915, xe and amdgpu
+changes in it, the misc tree didn't get a PR to me this week (cc'ed),
+so next week might have a larger set of changes, otherwise nothing too
+major in here.
 
-diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
-index bf9e86cff..df3977bda 100644
---- a/drivers/iio/accel/adxl345.h
-+++ b/drivers/iio/accel/adxl345.h
-@@ -9,10 +9,35 @@
- #define _ADXL345_H_
- 
- #define ADXL345_REG_DEVID		0x00
-+#define ADXL345_REG_THRESH_TAP		0x1D
- #define ADXL345_REG_OFSX		0x1E
- #define ADXL345_REG_OFSY		0x1F
- #define ADXL345_REG_OFSZ		0x20
- #define ADXL345_REG_OFS_AXIS(index)	(ADXL345_REG_OFSX + (index))
-+
-+/* Tap duration */
-+#define ADXL345_REG_DUR		0x21
-+/* Tap latency */
-+#define ADXL345_REG_LATENT		0x22
-+/* Tap window */
-+#define ADXL345_REG_WINDOW		0x23
-+/* Activity threshold */
-+#define ADXL345_REG_THRESH_ACT		0x24
-+/* Inactivity threshold */
-+#define ADXL345_REG_THRESH_INACT	0x25
-+/* Inactivity time */
-+#define ADXL345_REG_TIME_INACT		0x26
-+/* Axis enable control for activity and inactivity detection */
-+#define ADXL345_REG_ACT_INACT_CTRL	0x27
-+/* Free-fall threshold */
-+#define ADXL345_REG_THRESH_FF		0x28
-+/* Free-fall time */
-+#define ADXL345_REG_TIME_FF		0x29
-+/* Axis control for single tap or double tap */
-+#define ADXL345_REG_TAP_AXIS		0x2A
-+/* Source of single tap or double tap */
-+#define ADXL345_REG_ACT_TAP_STATUS	0x2B
-+/* Data rate and power mode control */
- #define ADXL345_REG_BW_RATE		0x2C
- #define ADXL345_REG_POWER_CTL		0x2D
- #define ADXL345_REG_INT_ENABLE		0x2E
-@@ -34,20 +59,40 @@
- #define ADXL345_FIFO_CTL_MODE(x)	FIELD_PREP(GENMASK(7, 6), x)
- 
- #define ADXL345_INT_DATA_READY		BIT(7)
-+#define ADXL345_INT_SINGLE_TAP		BIT(6)
-+#define ADXL345_INT_DOUBLE_TAP		BIT(5)
-+#define ADXL345_INT_ACTIVITY		BIT(4)
-+#define ADXL345_INT_INACTIVITY		BIT(3)
-+#define ADXL345_INT_FREE_FALL		BIT(2)
- #define ADXL345_INT_WATERMARK		BIT(1)
- #define ADXL345_INT_OVERRUN		BIT(0)
-+
-+#define ADXL345_S_TAP_MSK	ADXL345_INT_SINGLE_TAP
-+#define ADXL345_D_TAP_MSK	ADXL345_INT_DOUBLE_TAP
-+
-+/*
-+ * BW_RATE bits - Bandwidth and output data rate. The default value is
-+ * 0x0A, which translates to a 100 Hz output data rate
-+ */
- #define ADXL345_BW_RATE			GENMASK(3, 0)
-+#define ADXL345_BW_LOW_POWER		BIT(4)
- #define ADXL345_BASE_RATE_NANO_HZ	97656250LL
- 
- #define ADXL345_POWER_CTL_STANDBY	0x00
-+#define ADXL345_POWER_CTL_WAKEUP	GENMASK(1, 0)
-+#define ADXL345_POWER_CTL_SLEEP	BIT(2)
- #define ADXL345_POWER_CTL_MEASURE	BIT(3)
-+#define ADXL345_POWER_CTL_AUTO_SLEEP	BIT(4)
-+#define ADXL345_POWER_CTL_LINK		BIT(5)
- 
--#define ADXL345_DATA_FORMAT_RANGE	GENMASK(1, 0)	/* Set the g range */
--#define ADXL345_DATA_FORMAT_JUSTIFY	BIT(2)	/* Left-justified (MSB) mode */
--#define ADXL345_DATA_FORMAT_FULL_RES	BIT(3)	/* Up to 13-bits resolution */
--#define ADXL345_DATA_FORMAT_SPI_3WIRE	BIT(6)	/* 3-wire SPI mode */
--#define ADXL345_DATA_FORMAT_SELF_TEST	BIT(7)	/* Enable a self test */
--
-+/* Set the g range */
-+#define ADXL345_DATA_FORMAT_RANGE	GENMASK(1, 0)
-+/* Data is left justified */
-+#define ADXL345_DATA_FORMAT_JUSTIFY	BIT(2)
-+/* Up to 13-bits resolution */
-+#define ADXL345_DATA_FORMAT_FULL_RES	BIT(3)
-+#define ADXL345_DATA_FORMAT_SPI_3WIRE	BIT(6)
-+#define ADXL345_DATA_FORMAT_SELF_TEST	BIT(7)
- #define ADXL345_DATA_FORMAT_2G		0
- #define ADXL345_DATA_FORMAT_4G		1
- #define ADXL345_DATA_FORMAT_8G		2
--- 
-2.39.5
+Regards,
+Dave.
 
+
+drm-fixes-2024-12-14:
+drm fixes for 6.13-rc3
+
+i915:
+- Don't use indexed register writes needlessly [dsb]
+- Stop using non-posted DSB writes for legacy LUT [color]
+- Fix NULL pointer dereference in capture_engine
+- Fix memory leak by correcting cache object name in error handler
+
+xe:
+- Fix a KUNIT test error message (Mirsad Todorovac)
+- Fix an invalidation fence PM ref leak (Daniele)
+- Fix a register pool UAF (Lucas)
+
+amdgpu:
+- ISP hw init fix
+- SR-IOV fixes
+- Fix contiguous VRAM mapping for UVD on older GPUs
+- Fix some regressions due to drm scheduler changes
+- Workload profile fixes
+- Cleaner shader fix
+
+amdkfd:
+- Fix DMA map direction for migration
+- Fix a potential null pointer dereference
+- Cacheline size fixes
+- Runtime PM fix
+The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4=
+:
+
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-12-14
+
+for you to fetch changes up to d172ea67dbeec5c90f72752c91d202d5718e3754:
+
+  Merge tag 'amd-drm-fixes-6.13-2024-12-11' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes (2024-12-13
+09:43:20 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.13-rc3
+
+i915:
+- Don't use indexed register writes needlessly [dsb]
+- Stop using non-posted DSB writes for legacy LUT [color]
+- Fix NULL pointer dereference in capture_engine
+- Fix memory leak by correcting cache object name in error handler
+
+xe:
+- Fix a KUNIT test error message (Mirsad Todorovac)
+- Fix an invalidation fence PM ref leak (Daniele)
+- Fix a register pool UAF (Lucas)
+
+amdgpu:
+- ISP hw init fix
+- SR-IOV fixes
+- Fix contiguous VRAM mapping for UVD on older GPUs
+- Fix some regressions due to drm scheduler changes
+- Workload profile fixes
+- Cleaner shader fix
+
+amdkfd:
+- Fix DMA map direction for migration
+- Fix a potential null pointer dereference
+- Cacheline size fixes
+- Runtime PM fix
+
+----------------------------------------------------------------
+Andrew Martin (1):
+      drm/amdkfd: Dereference null return value
+
+Christian K=C3=B6nig (2):
+      drm/amdgpu: fix UVD contiguous CS mapping problem
+      drm/amdgpu: fix when the cleaner shader is emitted
+
+Daniele Ceraolo Spurio (1):
+      drm/xe: Call invalidation_fence_fini for PT inval fences in error sta=
+te
+
+Dave Airlie (3):
+      Merge tag 'drm-intel-fixes-2024-12-11' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
+      Merge tag 'drm-xe-fixes-2024-12-12' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+      Merge tag 'amd-drm-fixes-6.13-2024-12-11' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+
+David (Ming Qiang) Wu (1):
+      amdgpu/uvd: get ring reference from rq scheduler
+
+Eugene Kobyak (1):
+      drm/i915: Fix NULL pointer dereference in capture_engine
+
+Harish Kasiviswanathan (2):
+      drm/amdkfd: hard-code cacheline size for gfx11
+      drm/amdkfd: hard-code MALL cacheline size for gfx11, gfx12
+
+Jesse.zhang@amd.com (1):
+      drm/amdkfd: pause autosuspend when creating pdd
+
+Jiasheng Jiang (1):
+      drm/i915: Fix memory leak by correcting cache object name in error ha=
+ndler
+
+Kenneth Feng (1):
+      drm/amd/pm: Set SMU v13.0.7 default workload type
+
+Lijo Lazar (1):
+      drm/amd/pm: Initialize power profile mode
+
+Lucas De Marchi (1):
+      drm/xe/reg_sr: Remove register pool
+
+Mirsad Todorovac (1):
+      drm/xe: fix the ERR_PTR() returned on failure to allocate tiny pt
+
+Pratap Nirujogi (2):
+      Revert "drm/amdgpu: Fix ISP hw init issue"
+      drm/amdgpu: Fix ISP HW init issue
+
+Prike Liang (1):
+      drm/amdkfd: Correct the migration DMA map direction
+
+Victor Zhao (1):
+      drm/amdgpu: use sjt mec fw on gfx943 for sriov
+
+Ville Syrj=C3=A4l=C3=A4 (2):
+      drm/i915/dsb: Don't use indexed register writes needlessly
+      drm/i915/color: Stop using non-posted DSB writes for legacy LUT
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             | 17 +++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c            |  2 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c             | 13 ++--
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c            | 10 ++-
+ drivers/gpu/drm/amd/amdgpu/uvd_v7_0.c              |  2 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_crat.c              | 24 ++++++-
+ .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.c  | 15 ++++
+ drivers/gpu/drm/amd/amdkfd/kfd_migrate.c           |  4 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_process.c           | 23 +-----
+ .../gpu/drm/amd/amdkfd/kfd_process_queue_manager.c | 12 ++--
+ drivers/gpu/drm/amd/include/kgd_pp_interface.h     |  1 +
+ drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c          | 24 +++++--
+ .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c   |  1 +
+ drivers/gpu/drm/i915/display/intel_color.c         | 81 ++++++++++++++----=
+----
+ drivers/gpu/drm/i915/display/intel_dsb.c           | 19 ++++-
+ drivers/gpu/drm/i915/display/intel_dsb.h           |  2 +
+ drivers/gpu/drm/i915/i915_gpu_error.c              | 18 ++++-
+ drivers/gpu/drm/i915/i915_scheduler.c              |  2 +-
+ drivers/gpu/drm/xe/tests/xe_migrate.c              |  4 +-
+ drivers/gpu/drm/xe/xe_gt_tlb_invalidation.c        |  8 +++
+ drivers/gpu/drm/xe/xe_gt_tlb_invalidation.h        |  1 +
+ drivers/gpu/drm/xe/xe_pt.c                         |  3 +-
+ drivers/gpu/drm/xe/xe_reg_sr.c                     | 31 ++-------
+ drivers/gpu/drm/xe/xe_reg_sr_types.h               |  6 --
+ 25 files changed, 200 insertions(+), 125 deletions(-)
 
