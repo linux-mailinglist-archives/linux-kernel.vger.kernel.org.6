@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-445570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F129F17C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:05:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 948509F17CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F8AD16C10B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2B1E16C2EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E90B194A6C;
-	Fri, 13 Dec 2024 21:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73798199FBA;
+	Fri, 13 Dec 2024 21:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yQu0MsXu"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ywx6XmXO"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1D7194AC7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 21:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD811198836
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 21:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734123878; cv=none; b=pb5ugkUdjPqFZFy5x38wUThk7OfXbmIiKni4lNP9ApM5JdOc9sCUcjftEemjWumYCR+0xsjwfCBDw+MLNoJegaeHy9Ry+03T1gaqwcwl4+FXeS0G6/9rEfaePMDbnxFL1d8mQPy+JT3SHN3dgrJEJVIbfC31tYPPFUOZEPFQ5iY=
+	t=1734123881; cv=none; b=DNkBQg3mgV8H7KvDZFST0ymNqXMQsHbagbJVYqZ3ohNOS6k1ze7xe7t6n+dSyCtWFNKK0dw3VNUVNSwB9K5Ha3PXgvG7V+pNYLgwrPtJ3tMnVKivVMaP+Eglg0VbldI7j+h350UAgyEqf2xSstkhA8ssySuQu44oNfK5m0abY8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734123878; c=relaxed/simple;
-	bh=4pKzkTV7w7BbOGxOqcD1NuW63SK6U/7k+L92iQDdz8k=;
+	s=arc-20240116; t=1734123881; c=relaxed/simple;
+	bh=2AeeJI7hTLZBkAiyK/DWI/sFdQ+nhO6KpS8lk3LdjMw=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=A/vpYoMeQuXE3r24ic7eTqIBmV8C0F3hNFaCX+L9v9XLN82OMmeC5tC3UXLNLMCPQfQlhsyiMFePM8Cd3TYXtX4UTlB+WQQgJyZd5EGyeUCe5p0JhvWg7yX2xyCnnhEbXQkhe2P+ZYdapkcOESxyem1fmo07uJdD+VMyCIVROII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yQu0MsXu; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=ZG1WKkRAzdXZTnvnNSNQnatTofh5ULLNAcRiyax/4qhyFwuQLWElyubpPdMKjwY9Fwql9ce4VxqNuDtq0hiTIyvYQCCT16PiXJDPzadiuj5omxROUCkQWLJhst49HV0HCMiKuPb/o6RPduw58pbkwaYOT1gzDMXwEH9h5Xdr8FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ywx6XmXO; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e38d8aaeb4aso3133940276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:04:37 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e38dbc5d05bso3365824276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:04:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734123876; x=1734728676; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1734123879; x=1734728679; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vioVLOwmrwPBoDuHBo/JSaFU3XJwmvCOkzBZLpYE96Q=;
-        b=yQu0MsXuMk7sRRsTYFtqEO+sATyce382HPFl86s837Dq2rvhpaBSqjExIiEIzo2Efh
-         2OpJP65Z0u963yd3ZSTCLgUT0s5iOek26u7EhFwDJ9JgnzYRtvk3Lg+vREDKwcGUvkkM
-         DN1UGnl7rHA06II6CbxFy4t+o4D60RBmcLZpUTBM539E/+3V3kq54B633bBjSReG+P4p
-         uXMmicUgmCdaKQJ7mIRyLiQSWjSl8LrRBoa3qs2Xizz13iFUKojDx+5bFvrEVESVegMy
-         xicltQjMLPAGQYY+wXXhSEthWwwhYYit2fpUQr1mspA0dNjQJvNOJjWecOjJaNXpoLMA
-         lbTA==
+        bh=BO6MitYTG3PPlOm9eDgi+DN2s8ThN2cAWOELNwnMFAI=;
+        b=Ywx6XmXOlGyb2ROuRL5cX+rWOMyxHMIt+9ORbsIOOAzXmhzkC7ppw0YX/mh3jIELFn
+         uIw7zWokZk0e81aaAIs0ttHziMaN77lMvDAxstfFMKD6fkCz896sg8Lw09T2L0PD2pnn
+         XsqVM+J0D/KLFpKBz8hcym1D0bXI/pJwDIHFvY3kImtyQU8RbtnE5E2jMf2t6TOMYBw3
+         kXjZCmCTfx2Cp7xUQh0Gz39SWphyD92GJmw1fq5+ET+JIOJnZat5NSfQkeE688/3aTDM
+         A2CnxGjmBQhBXeBGCGsHw9bmiCIv5DUZpXUSmYt3Auy5gOFVGCr8uALtQEZB8VdZUdo2
+         EY/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734123876; x=1734728676;
+        d=1e100.net; s=20230601; t=1734123879; x=1734728679;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vioVLOwmrwPBoDuHBo/JSaFU3XJwmvCOkzBZLpYE96Q=;
-        b=vqszeWcsJgLRl2maDV6kyOxCafURm00vM2g6nH+lUhqWiIPhn9sZvNWl4voql09AIu
-         LtsDTB/k/o3Fj6D49SYL9a/GcviZTXYZZV/wMi5hVDCHMwkPbg5L9VXgwtGFx8IICfte
-         2v310tkLGrE2blK/XEIX1ale6SyBbwJ0Qd7SQHQrqEwRKLo6IYrn9QwF3nZq3kMUn/gC
-         0x9OSAiCHsBU6+9o9+OW3gnXGQPIYwElMT4GsuEp7dG4qSSJmTV+qSjbHXnfVQ/Bp9PK
-         gdzSoeEPFvAhi7IZuHKDgVYrVarxO0t/NwXReCYnVsy3PFWzeOCJupAbrdm+2p0OPW56
-         0Psw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4YJVwtRsj1k/HCaqrMrRYHKm+8YDwkdneLBd91J6jYul9ka1yIF7rOqy9uxUaq+QL5sDivWXpEzZmqa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8FpP9Nsg9uI4VrvSccJ55A4jH/GElWYHg/YRZjVms+OskiPYs
-	TjqX6Vugs+IoM3nVTypbESY24S7eNQp+ti29Jr9seQ5g6x/W2xthl0tQjz3NW/arX47h7WMqMfF
-	lDduipA==
-X-Google-Smtp-Source: AGHT+IFJoR+VUIap2R8w7wBB5lIJC6iiEWzTJTmaxzdCenTqSqXLAehauJytbWIoze/wqOYJJA/lOzwErMku
+        bh=BO6MitYTG3PPlOm9eDgi+DN2s8ThN2cAWOELNwnMFAI=;
+        b=DfdlIkrE3/IzU2qZmpyRj09Kb342tS9vcG5eyI62+N5W1gcCDU9lO7CE6brQ//iN3+
+         hracKIsGGD3/gqT46tZtwXeoJVO60yjSl7NmtAjNBaIDL7NK1Z9ym6wt4+mfXs3WboSf
+         phzOv2lKdECir/V/Km6jt9qJYWjxIIXfVc1xV4hS8JfqY5pyJzwKjy46SC9XckNSVx6E
+         0BQe6Qe6k2Y4dnRlKWUlDD/8nIpx/iHlfzejWx9dpVYZNiwV4J0kPtU3oWWQcTeb/MKu
+         ZHJBQNPGcLjm5p/wMglf2qcpvQciXAvjhf0s/fA33qJ6qSm2ELLjH0t4GQFDi7G56653
+         1dww==
+X-Forwarded-Encrypted: i=1; AJvYcCVTWzy84FwQs7Y2cf5cqRNU94EOrNr+3kymWViECYgal5tsPgQK57yA4G9QQkgRx3+F+dXFsbURtM0Iajg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGVRqzzjKeLl/sKf4sBySbi7rQ2SBq/EsRuukTCzV2fW0LdpSW
+	F6N60YA1uOwVmez0DFCq+H4mRvfPQhfpxIvXU4LMjd1tf+wEKZxAwrecD0WuOtl0pkahDtPo28o
+	mQ/5SSQ==
+X-Google-Smtp-Source: AGHT+IG14QG/FvZm1o/zP6GcRY5++gc+EhOPsoB8hincRJ7FgCV5ULq+tkuBgEV+o3KlfVnsbI/svufofT6h
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:9a50:5183:644a:3472])
- (user=irogers job=sendgmr) by 2002:a25:a34a:0:b0:e39:8650:5cff with SMTP id
- 3f1490d57ef6-e434a06de27mr1841276.4.1734123876288; Fri, 13 Dec 2024 13:04:36
+ (user=irogers job=sendgmr) by 2002:a25:aab4:0:b0:e39:fc33:e15e with SMTP id
+ 3f1490d57ef6-e434f94c734mr1534276.8.1734123878723; Fri, 13 Dec 2024 13:04:38
  -0800 (PST)
-Date: Fri, 13 Dec 2024 13:04:19 -0800
+Date: Fri, 13 Dec 2024 13:04:20 -0800
 In-Reply-To: <20241213210425.526512-1-irogers@google.com>
-Message-Id: <20241213210425.526512-3-irogers@google.com>
+Message-Id: <20241213210425.526512-4-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241213210425.526512-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
-Subject: [PATCH v1 2/8] perf test trace_btf_enum: Skip if permissions are insufficient
+Subject: [PATCH v1 3/8] tools headers: Update offsetof and container_of
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -89,44 +89,48 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Modify test behavior to skip if BPF calls fail with "Operation not
-permitted".
+Update to match kernel definitions in `include/linux/stddef.h` and
+`include/linux/container_of.h`.
 
-Fixes: d66763fed30f ("perf test trace_btf_enum: Add regression test for the BTF augmentation of enums in 'perf trace'")
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/shell/trace_btf_enum.sh | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ tools/include/linux/kernel.h | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/tests/shell/trace_btf_enum.sh b/tools/perf/tests/shell/trace_btf_enum.sh
-index 5a3b8a5a9b5c..737da3113966 100755
---- a/tools/perf/tests/shell/trace_btf_enum.sh
-+++ b/tools/perf/tests/shell/trace_btf_enum.sh
-@@ -23,6 +23,14 @@ check_vmlinux() {
-   fi
- }
+diff --git a/tools/include/linux/kernel.h b/tools/include/linux/kernel.h
+index 07cfad817d53..10f74f021d55 100644
+--- a/tools/include/linux/kernel.h
++++ b/tools/include/linux/kernel.h
+@@ -21,9 +21,8 @@
+ #define PERF_ALIGN(x, a)	__PERF_ALIGN_MASK(x, (typeof(x))(a)-1)
+ #define __PERF_ALIGN_MASK(x, mask)	(((x)+(mask))&~(mask))
  
-+check_permissions() {
-+  if perf trace -e $syscall $TESTPROG 2>&1 | grep -q "Operation not permitted"
-+  then
-+    echo "trace+enum test [Skipped permissions]"
-+    err=2
-+  fi
-+}
-+
- trace_landlock() {
-   echo "Tracing syscall ${syscall}"
+-#ifndef offsetof
+-#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+-#endif
++#undef offsetof
++#define offsetof(TYPE, MEMBER)	__builtin_offsetof(TYPE, MEMBER)
  
-@@ -50,6 +58,9 @@ trace_non_syscall() {
- }
+ #ifndef container_of
+ /**
+@@ -32,10 +31,14 @@
+  * @type:	the type of the container struct this is embedded in.
+  * @member:	the name of the member within the struct.
+  *
++ * WARNING: any const qualifier of @ptr is lost.
+  */
+-#define container_of(ptr, type, member) ({			\
+-	const typeof(((type *)0)->member) * __mptr = (ptr);	\
+-	(type *)((char *)__mptr - offsetof(type, member)); })
++#define container_of(ptr, type, member) ({				\
++	void *__mptr = (void *)(ptr);					\
++	static_assert(__same_type(*(ptr), ((type *)0)->member) ||	\
++		      __same_type(*(ptr), void),			\
++		      "pointer type mismatch in container_of()");	\
++	((type *)(__mptr - offsetof(type, member))); })
+ #endif
  
- check_vmlinux
-+if [ $err = 0 ]; then
-+  check_permissions
-+fi
- 
- if [ $err = 0 ]; then
-   trace_landlock
+ #ifndef max
 -- 
 2.47.1.613.gc27f4b7a9f-goog
 
