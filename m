@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-444657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0EF9F0A62
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:06:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70CF89F0A67
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:07:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1BC0283E67
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:06:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97BF31686ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F541CC8A7;
-	Fri, 13 Dec 2024 11:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDD71CEEA8;
+	Fri, 13 Dec 2024 11:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0DrOFzW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iRHa9rO0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782261C07FC;
-	Fri, 13 Dec 2024 11:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485981B3926;
+	Fri, 13 Dec 2024 11:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734087991; cv=none; b=dHMjf0ZbONk8BsxP90lNsHbHLRtPN1W8gKY5UtSzpaQEx5f4xYNupt9lIBW3+1p9a/b/BMkHNIIS2lYOUBlEYro4vafi8z54gL4B+Y0WSgA4WKH4DwG1uf3vzt8CQply3bbw0L2Q0SI2wSEdKo121EST0vpK0JcMkcrqVjeD8j4=
+	t=1734088059; cv=none; b=X8VkyMVQzn2ihE0F0nSpFqOxrDS9AvDam8nVv9Ef4fvo4gttP/UFgK+PLAZzrtntElfPLS5c63I2bVfqUy6EHqMrcV3YLu9gvmRzyQiECv0hpeTItnwfN3bQfIqxW7AhWeWob3nFFese9RItZPzud5D4dA7t+0SG/t8ZHlrrDpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734087991; c=relaxed/simple;
-	bh=gfNtJViyjv6IWzkrbJzLL6JeNTj+0uEA9pj0kqDGYdk=;
+	s=arc-20240116; t=1734088059; c=relaxed/simple;
+	bh=f2dhwa/zhLfGfFkrjgkQK/xv7xPijgvBZCJgPe/XvRo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aw6KcfqFgwXvLR3jMgIm5Cu9976XeKaH9mSdsn4MW2ps3WfpCekVIFV/4FkzqwgoI9/tUyPAjSfHCAaD5OwWTbiDKA5Q54CzcTVQo6Guqee3tTAgUmb9Kmnvtf4QTBe5GXquYfJrhUm1T6wyaIrXRxScrrUIWXqrE5C/tPpWXM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0DrOFzW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36C13C4CED4;
-	Fri, 13 Dec 2024 11:06:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=m37ycDjkOEZvlHGnoIBYuuJOYzcMnbKqznCjEF3u8XPWGOQRaqmniE7VCugxbOb56M/NXlX32e9qgasiQ7uKtemJDKa2s9RKcDewu8SXZyXpKWjdDsm50yJHYaEGS0mBcK/mck4iuPqmrVkXs4slytLt4UZo01PnP46tAPWbKq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iRHa9rO0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC343C4CED0;
+	Fri, 13 Dec 2024 11:07:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734087991;
-	bh=gfNtJViyjv6IWzkrbJzLL6JeNTj+0uEA9pj0kqDGYdk=;
+	s=k20201202; t=1734088058;
+	bh=f2dhwa/zhLfGfFkrjgkQK/xv7xPijgvBZCJgPe/XvRo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H0DrOFzW1lzj5avOj3VsULdBxX1szCjke3bk3l9X3tPOptnSVhjtOm1yY4EupAmsX
-	 732bY1I7KbmuE4efk+iMzdltyGMsPt6WRbS2PR+pb4kdRdIddXCa9ddMs7BEZx4vml
-	 /csW5g/BXKgPSFmYYPqWMAQS98jBF97G8IWZXmHAsKfogWmV5LxuFJ9TMpX9kmrGKR
-	 Blc1FLw0CbYC2kZBfiiwqr9pqP6jQ22bZgJQtUR5XA3J3ZccDu0wgqsFQFE86bFUj9
-	 Qo0CYSf52VCQrFNeTiCQu6Ddxv0pq1zketrHigUbnvxbAfyJSLSRnfvoQD3294p/gg
-	 dBBesW0QHBHmg==
-Date: Fri, 13 Dec 2024 12:06:27 +0100
+	b=iRHa9rO0mkkUbNYs3RbVPSuit6FzZdaZo4civREOLoJoa5rzrqqo7gW2F/ovJvtx0
+	 SCT5UJ9rNsKd+/9pfKUI/59T1opJAWea83URkWG1rHEipXAbv7CQFgFBYXvnSF2Tn3
+	 oWyWGBeVHAJQn6aTHODUKm3mh8DCQxtoJ/NxYS5wSMu5LscBFi4XNyumimZYr5B21f
+	 Bynh8WwDuF91/hNllppXWMD2dPRkUZVOq2Cf85CZF92juYWXvlHeNlnmqXNMc6C55u
+	 HJGEPdM7+nLaA5Mwz2LSsqYbML/tHuaxeW5bkEoYHXiCcvsEJBDXjBY7zSdih7Z5Py
+	 42y7pJWdzJRAg==
+Date: Fri, 13 Dec 2024 12:07:35 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Hermes Zhang <Hermes.Zhang@axis.com>
-Cc: jdelvare@suse.com, linux@roeck-us.net, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, kernel@axis.com, 
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Add D3-323-AA
-Message-ID: <wy7nyg3cztixe5y5rg4kbsbbly32h547hwumwwvrfme4fdgsj5@znfpypleebrb>
-References: <20241212042412.702044-1-Hermes.Zhang@axis.com>
- <20241212042412.702044-2-Hermes.Zhang@axis.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+	Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: usb: gpio-sbu-mux: Add an entry for
+ FSUSB42
+Message-ID: <kq6qjrynlbqgz2ltdap67lsbehmzuudjhbhyjymy26wlffol6o@kggtwtbujilf>
+References: <20241212-x1e80100-qcp-dp-v1-0-37cb362a0dfe@linaro.org>
+ <20241212-x1e80100-qcp-dp-v1-1-37cb362a0dfe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,113 +62,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241212042412.702044-2-Hermes.Zhang@axis.com>
+In-Reply-To: <20241212-x1e80100-qcp-dp-v1-1-37cb362a0dfe@linaro.org>
 
-On Thu, Dec 12, 2024 at 12:24:09PM +0800, Hermes Zhang wrote:
-> Add Devicetree binding documentation for Nicera D3-323-AA Pyroelectric
-> IR sensor.
+On Thu, Dec 12, 2024 at 02:08:23PM +0100, Stephan Gerhold wrote:
+> Add a compatible entry for the onsemi FSUSB42 USB switch, which can be used
+> for switching orientation of the SBU lines in USB Type-C applications.
 > 
-> Signed-off-by: Hermes Zhang <Hermes.Zhang@axis.com>
+> Drivers work as-is with the existing fallback compatible.
+> 
+> Link to datasheet: https://www.onsemi.com/pdf/datasheet/fsusb42-d.pdf
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 > ---
->  .../bindings/hwmon/nicera,d3-323-aa.yaml      | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/nicera,d3-323-aa.yaml
+>  Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/hwmon/nicera,d3-323-aa.yaml b/Documentation/devicetree/bindings/hwmon/nicera,d3-323-aa.yaml
-> new file mode 100644
-> index 000000000000..31690e630b5f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/nicera,d3-323-aa.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/hwmon/nicera,d3-323-aa.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nicera D3-323-AA Pyroelectric IR sensor
-> +
-> +maintainers:
-> +  - Hermes Zhang <Hermes.Zhang@axis.com>
-> +
-> +description: |
-> +  Nicera D3-323-AA Pyroelectric IR sensor
-> +
-> +  datasheet:
-> +    https://www.nicera.co.jp/wordpress/wp-content/uploads/2022/01/D3-323-AA_e.pdf
-> +
-> +properties:
-> +  compatible:
-> +    const: nicera,d3-323-aa
+> diff --git a/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml b/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
+> index 8a5f837eff94b27bbd55bfe45f8d1156e3d183eb..e588514fab2d8c9d0d3717865fe2e733664fc28b 100644
+> --- a/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
+> +++ b/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
+> @@ -20,6 +20,7 @@ properties:
+>      items:
+>        - enum:
+>            - nxp,cbdtu02043
+> +          - onnn,fsusb42
+>            - onnn,fsusb43l10x
 
-Undocumented vendor prefix.
-
-It does not look like you tested the bindings, at least after quick
-look. Please run 'make dt_binding_check' (see
-Documentation/devicetree/bindings/writing-schema.rst for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
-
-It does not look like you tested the DTS against bindings. Please run
-'make dtbs_check W=1' (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
-
-> +
-> +  reset-gpios:
-> +    description: The GPIO pin connected to the reset pin on the sensor
-> +    maxItems: 1
-> +
-> +  clk-gpios:
-> +    description: The GPIO pin connected to the clk pin on the sensor
-
-What is a clk pin? Usually clock pins are clocks, not GPIOs. This needs
-explanation
-
-
-> +    maxItems: 1
-> +
-> +  si-gpios:
-> +    description: The GPIO pin connected to the si pin on the sensor
-
-In all description please drop redundant pieces. It cannot be anything
-else than GPIO pin and cannot be connected to something else than the
-sensor.
-
-So basically the only useful information you wrote above - after
-dropping obvious and redundant pieces - is "si".
-
-Write something useful, what is "si"? This applies also to "clk".
-reset-gpios can be without description, because it is obvious - cannot
-be anything else than reset pin. OTOH, you could say if pin is active
-low or high.
-
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reset-gpios
-> +  - clk-gpios
-> +  - si-gpios
-> +
-
-Just one blank line.
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    sensor {
-> +        compatible = "nicera,d3-323-aa";
-> +        reset-gpios = <&gpio4 12 0>;
-
-Include the header and use standard defines for GPIO flags.
+Is it different from onnn,fsusb43l10x?
 
 Best regards,
 Krzysztof
