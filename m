@@ -1,222 +1,102 @@
-Return-Path: <linux-kernel+bounces-445150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B51B9F1205
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:25:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACCC9F1208
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:26:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB56328151E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 063B9188C9F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE981E3DD7;
-	Fri, 13 Dec 2024 16:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9746D1E47D9;
+	Fri, 13 Dec 2024 16:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gXeXRSbk"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAHV/BsJ"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D218B1E0B75
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592DD1E47BD;
+	Fri, 13 Dec 2024 16:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734107118; cv=none; b=usmWgUjcPC1y9sT43ihxJZXjDvsDzREvUD9fgWvA39MENDnbd+Zac1lKrLdo7EDyIq6wBWdi8a/4MXoAX0PuGItdooUaOgBeNDuxWzse+tobu/xtZF9xCmTn6K/+xBk6HPg8YIbcYMaLKO22mb42X5iTyyjXuY5zRssuI7YnZdU=
+	t=1734107124; cv=none; b=WCDyT/0U1nQ0ZfaBctwjfaiyJXPOnubGqGDA7riJt9vS8iBePXuMAc+JWa239+RfuNVOc8qCNPQ2w1X6BKbAupKyecvwAQwTlcxHtvta1Ybn/JjoLL2syglXG+aXfnaaO2wmHgBneAYvF+dtH4c6pOxR6uBsQ5pEI74kClyP94Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734107118; c=relaxed/simple;
-	bh=bDjkS3RDqhwYRFVzlNvwMie4dPIqpYOro2gNb2FIpSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6rztaiMK36F8NNdywwDlRvDwEfFK1M2gfbOnP08DdONdjh/yM4V6L5BPY7Fm8SdcYcXc76dTVTho2NXqu8uvT+x52MX+Fkk/oI5WJ4UAHi7JyqyJfkr8T91GQ2vSrrXVNCTE2Do5QUeqvDaWEx7AeEA/ziKAYfr1NQeLNHC/pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gXeXRSbk reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C82AD40E021C;
-	Fri, 13 Dec 2024 16:25:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 6eXq1q5xaKRH; Fri, 13 Dec 2024 16:25:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1734107100; bh=ZoDsQO4cyfeT8yDah74VHVU469XgFdH46Pk4xGycjQk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gXeXRSbkdUoxD3Gv9B6PFcdX+GWQ5u48Cn7WA3rOdTGsecPwS9kHsLszWvZRrPpVQ
-	 +MVnvsDalGzMeK+ANcUtaisoeexUcbJddx6zTPD8yWzqAoDOGcl0WrjC/sP4/8u1dU
-	 P+4CBbEAF6xdUDi3IKbL1+lLUX5U98LDDk5PS9eCdKzRZQf7c1TpHkGw+QbYTmRhc6
-	 t7m4Vt+zd+cdopyPXVcphUqvfzwMu+xJ7uZeNG7h1pYoyla51sXIvGAJYqmBbm7POE
-	 rLVnn8LkNC5i5HDHtVdL9bye8y4y+L5b43XP/HUtPFrNZiktVZ4Ol8YcCM0ktS2pS7
-	 ECE794m2fLXdjVNwa5wCZqGuYfvclf7lBUz3cekIYNQmQSDqK4bs5Qj5PmUHXQ7bRn
-	 qGUnBTBPbfHvTuYsoi5weexFdeYiO1wxlnA0SUhV485N6xkoeSdBkC7/V+w1CN3z5C
-	 ADcrkzX8YiShSfH9evfwT+fs5Uwf8s2Ufhf4zKD7kwk4KK44+SoaK1IFGBQy6OvFLt
-	 LSIwqSExYz02P1cq1+32dtKpYq2vY9/iyiM3aJnjmnldgiAD1KMMhnf23jLxdtvsH2
-	 FmsQLaprVu+V706JmGMmk0iL7h0mQP8aUOUAbfeDge/50hzugKy7CKrMi5P0a7q7jn
-	 /DtjzLQX3/8yVYoIAHYg/+bs=
-Received: from zn.tnic (p200300eA971F9372329C23ffFEa6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9372:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 259B740E01F9;
-	Fri, 13 Dec 2024 16:24:51 +0000 (UTC)
-Date: Fri, 13 Dec 2024 17:24:43 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-	kan.liang@linux.intel.com, mingo@kernel.org, peterz@infradead.org,
-	tony.luck@intel.com, pawan.kumar.gupta@linux.intel.com
-Subject: Re: [PATCH 2/5] x86/cpu: Expose only stepping min/max interface
-Message-ID: <20241213162443.GGZ1xfyw_EZBrn1i4B@fat_crate.local>
-References: <20241206193829.89E12D0B@davehans-spike.ostc.intel.com>
- <20241206193832.DCF208DC@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1734107124; c=relaxed/simple;
+	bh=utTGiUY2KFTz5GWPj+z9ni89H11QDVeYdPSg/6nfzkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LW6FrztdUOqucfgsNF2MDhnwcYawYGrM88RvVntK7Rv4xwD+7iaZMQrNvzY4ZXffE2n3RLpGglU3Q5y77htQo6pZZUOrlwQeFaTfNbTSHiK6MXNQr0OczmGbwr0nbZATM2HXsHPOQcjt7fja4FJpD+a37yzgAsZbLBqBDin0iKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAHV/BsJ; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffa49f623cso21291201fa.1;
+        Fri, 13 Dec 2024 08:25:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734107120; x=1734711920; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=utTGiUY2KFTz5GWPj+z9ni89H11QDVeYdPSg/6nfzkQ=;
+        b=FAHV/BsJFtXfbXqzL5rWlmTV1qhFNyEDZBxugyMbKKMOjvvE0O0sCXyACoZ8yNh4oL
+         OKVzRw68bnEDODiz2baEHi4kVfqBP1CjoaAB6gxiupFvYSS0DuXAHfscHvI4J8f+DyPT
+         Rgo28Jh+PlU4i/vdw5cbHSd21cKvngub+dxyXzoMysQs8QrK6oaIWOh6AlgfRaxng7v8
+         e2oLw7PaWOBgR21TBHUn7k3XU7oRYiwnTZPjd2w8Lbc+goIuptPNWEZEb9kjrzANNlF5
+         Uzu3dCIoDBWCsBGnjPB5HooOqyTgKbwgnpl1qGsAmJmzmF5Au1Vj0A4QgPJuOyMCNaH2
+         K9Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734107120; x=1734711920;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=utTGiUY2KFTz5GWPj+z9ni89H11QDVeYdPSg/6nfzkQ=;
+        b=BZBgIMPbHmFLAUafu46sgkAyI31Z8QRXfrh/astjL1L4YS7lEJ8AqKrHBrbjvaOL8I
+         N1Zg92fRlJaWQEizLU2qhcPA0LHuPl7D1IZIjjQ/xFGbf2IrcOOLUBhxk3ze5Iw/ru5A
+         KyKguUIqktKNGvMk5q1g+/1tCCQgU9uyCtHPudq+CZiDOuKK10CmGdD4g0EbmShlVYq+
+         IG1ZE6dUBiBM77PZmodMAn4+An7Bk5o4qtykVzWFiC8zuuczKRVKf2BAWqaS/JQBYx5m
+         enKfOdnRzf/VWaypss3xPaDNhzrPsSobz7+EAPocqj6fwz2cha+8XFOunx5MIpGXXbf2
+         bj9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVN+ikmeFAuGuzrcCHoWQYlIvNddZUbu6jtsZQsNqRUtJ/rtyaN4fvbJCtwT1AsvcDv1Pne68v7JfBOmiP0hAk=@vger.kernel.org, AJvYcCVWM8z87SqPceZhgFW63MiZqhF1i4o9CifjytaGRm5itTOGlmKvhZ3O9s7jOL5W4sTy1i6x4SUFCJnZYVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAlLw/f04phoBN6f/O6tpN+1P1nNePRphmM8oL4/KSlT9UAYcm
+	GgwVYPu7hdwht7MBuftMNlxoSjMhJwKv386oTeARDtU52wHnhE6IJpdyMo0tR/vi9R5toPn+EfL
+	2j5E+yagLMDDLa3Nk6Xl60ngMsNA=
+X-Gm-Gg: ASbGnctePXgkuwM21ucmIqcnJUvh2gkjzdyOLjyysd/qR74ByQ6fdR/OVNDbSFJ9dun
+	EzeEdfcyjBfuF/QUbNDFiDEIaUpx7h6UKtepYpvR+iX31NwkDs3lhSw==
+X-Google-Smtp-Source: AGHT+IG6+Z/vc7PfFQuJAFc69iMoTu2hkHUqC+2mW132HdtWerzfD+W5ZppSHbn0aM8OBx1kcQpyrVtjci4763bp12k=
+X-Received: by 2002:a05:651c:1546:b0:300:7f87:a65 with SMTP id
+ 38308e7fff4ca-302544cc311mr12540091fa.35.1734107120081; Fri, 13 Dec 2024
+ 08:25:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241206193832.DCF208DC@davehans-spike.ostc.intel.com>
+References: <20241212-rust-xarray-bindings-v12-0-59ab9b1f4d2e@gmail.com>
+ <20241212-rust-xarray-bindings-v12-2-59ab9b1f4d2e@gmail.com> <CAH5fLggwK0LXAsBnP3FtFHCnEzzBNNZfsCy3iJ6w=nT07CHgVg@mail.gmail.com>
+In-Reply-To: <CAH5fLggwK0LXAsBnP3FtFHCnEzzBNNZfsCy3iJ6w=nT07CHgVg@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 13 Dec 2024 11:24:44 -0500
+Message-ID: <CAJ-ks9mTEcRg6=ZiYFX3ebHSYgMwTv692ufUdTCoA1vX5E1nNg@mail.gmail.com>
+Subject: Re: [PATCH v12 2/2] rust: xarray: Add an abstraction for XArray
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 06, 2024 at 11:38:32AM -0800, Dave Hansen wrote:
->=20
-> From: Dave Hansen <dave.hansen@linux.intel.com>
->=20
-> The x86_match_cpu() infrastructure can match CPU steppings. Since
-> there are only 16 possible steppings, the matching infrastructure goes
-> all out and stores the stepping match as a bitmap. That means it can
-> match any possible steppings in a single list entry. Fun.
->=20
-> But it exposes this bitmap to each of the X86_MATCH_*() helpers when
-> none of them really need a bitmap. It makes up for this by exporting a
-> helper (X86_STEPPINGS()) which converts a contiguous stepping range
-> into the bitmap which every single user leverages.
->=20
-> Instead of a bitmap, have the main helper for this sort of thing
-> (X86_MATCH_VFM_STEPPING()) just take a stepping range. This ends up
-> actually being even more compact than before.
+On Fri, Dec 13, 2024 at 8:40=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> This coding style is pretty far in the functional programming camp
+> compared to the rest of Rust code in the kernel. I tend to stick with
+> a more imperative style to be more familiar to C folks.
 
-Yap, better.
-
-> Leave the helper in place (renamed to __X86_STEPPINGS()) to make it
-> more clear what is going on instead of just having a random GENMASK()
-> in the middle of an already complicated macro.
->=20
-> One oddity that I hit was this macro:
->=20
-> #define VULNBL_INTEL_STEPPINGS(vfm, max_stepping, issues)              =
-   \
->        X86_MATCH_VFM_STEPPINGS(vfm, X86_STEPPING_MIN, max_stepping, iss=
-ues)
->=20
-> It *could* have been converted over to take a min/max stepping value
-> for each entry. But that would have been a bit too verbose and would
-> prevent the one oddball in the list (INTEL_COMETLAKE_L stepping 0)
-> from sticking out.
->=20
-> Instead, just have it take a *maximum* stepping and imply that the matc=
-h
-> is from 0=3D>max_stepping. This is functional for all the cases now and
-> also retains the nice property of having INTEL_COMETLAKE_L stepping 0
-> stick out like a sore thumb.
->=20
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Suggested-by: Ingo Molnar <mingo@kernel.org>
-> ---
->=20
->  b/arch/x86/include/asm/cpu_device_id.h |   15 +++---
->  b/arch/x86/kernel/apic/apic.c          |   18 +++----
->  b/arch/x86/kernel/cpu/common.c         |   78 ++++++++++++++++--------=
----------
->  b/drivers/edac/i10nm_base.c            |   20 ++++----
->  b/drivers/edac/skx_base.c              |    2=20
->  b/include/linux/mod_devicetable.h      |    2=20
->  6 files changed, 69 insertions(+), 66 deletions(-)
-
-You missed a spot:
-
-drivers/edac/i10nm_base.c:951:90: error: macro "X86_MATCH_VFM_STEPPINGS" =
-requires 4 arguments, but only 3 given
-  951 |         X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_DARKMONT_X,  X86_STEPP=
-INGS(0x0, 0xf), &gnr_cfg),
-      |                                                                  =
-                        ^
-In file included from drivers/edac/i10nm_base.c:10:
-./arch/x86/include/asm/cpu_device_id.h:221: note: macro "X86_MATCH_VFM_ST=
-EPPINGS" defined here
-  221 | #define X86_MATCH_VFM_STEPPINGS(vfm, min_step, max_step, data)  \
-      |=20
-drivers/edac/i10nm_base.c:951:9: error: =E2=80=98X86_MATCH_VFM_STEPPINGS=E2=
-=80=99 undeclared here (not in a function)
-  951 |         X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_DARKMONT_X,  X86_STEPP=
-INGS(0x0, 0xf), &gnr_cfg),
-      |         ^~~~~~~~~~~~~~~~~~~~~~~
-make[4]: *** [scripts/Makefile.build:194: drivers/edac/i10nm_base.o] Erro=
-r 1
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [scripts/Makefile.build:440: drivers/edac] Error 2
-make[2]: *** [scripts/Makefile.build:440: drivers] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1989: .] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-
-> diff -puN drivers/edac/i10nm_base.c~zap-X86_STEPPINGS drivers/edac/i10n=
-m_base.c
-> --- a/drivers/edac/i10nm_base.c~zap-X86_STEPPINGS	2024-12-06 11:33:16.1=
-87148838 -0800
-> +++ b/drivers/edac/i10nm_base.c	2024-12-06 11:33:16.191148995 -0800
-> @@ -938,16 +938,16 @@ static struct res_config gnr_cfg =3D {
->  };
-> =20
->  static const struct x86_cpu_id i10nm_cpuids[] =3D {
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_TREMONT_D,	X86_STEPPINGS(0x0, 0x3)=
-, &i10nm_cfg0),
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_TREMONT_D,	X86_STEPPINGS(0x4, 0xf)=
-, &i10nm_cfg1),
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_ICELAKE_X,	X86_STEPPINGS(0x0, 0x3), &i1=
-0nm_cfg0),
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_ICELAKE_X,	X86_STEPPINGS(0x4, 0xf), &i1=
-0nm_cfg1),
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_ICELAKE_D,	X86_STEPPINGS(0x0, 0xf), &i1=
-0nm_cfg1),
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_SAPPHIRERAPIDS_X,	X86_STEPPINGS(0x0, 0x=
-f), &spr_cfg),
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_EMERALDRAPIDS_X,	X86_STEPPINGS(0x0, 0xf=
-), &spr_cfg),
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_GRANITERAPIDS_X,	X86_STEPPINGS(0x0, 0xf=
-), &gnr_cfg),
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_CRESTMONT_X,	X86_STEPPINGS(0x0, 0x=
-f), &gnr_cfg),
-> -	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_CRESTMONT,	X86_STEPPINGS(0x0, 0xf)=
-, &gnr_cfg),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_TREMONT_D,	0x0, 0x3, &i10nm_cfg0),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_TREMONT_D,	0x4, 0xf, &i10nm_cfg1),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_ICELAKE_X,	0x0, 0x3, &i10nm_cfg0),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_ICELAKE_X,	0x4, 0xf, &i10nm_cfg1),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_ICELAKE_D,	0x0, 0xf, &i10nm_cfg1),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_SAPPHIRERAPIDS_X,	0x0, 0xf, &spr_cfg),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_EMERALDRAPIDS_X,	0x0, 0xf, &spr_cfg),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_GRANITERAPIDS_X,	0x0, 0xf, &gnr_cfg),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_CRESTMONT_X,	0x0, 0xf, &gnr_cfg),
-> +	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_CRESTMONT,	0x0, 0xf, &gnr_cfg),
-
-Aren't those supposed to be:
-
-	X86_MATCH_VFM_STEPPINGS(INTEL_ATOM_CRESTMONT,	X86_STEPPING_MIN, X86_STEP=
-PING_MAX, &gnr_cfg),
-
-And while we're adding new defines, can we shorten them too?
-
-	X86_MATCH_VFM_STP(INTEL_ATOM_CRESTMONT,	X86_STP_MIN, X86_STP_MAX, &gnr_c=
-fg),
-
-all that "STEPPING" is screaming at me! :-P
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+That's a fair assessment, but it's a subjective area -- Andreas was
+fond of the approach (in a preview review).
 
