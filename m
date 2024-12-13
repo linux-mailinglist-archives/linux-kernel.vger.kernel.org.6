@@ -1,141 +1,112 @@
-Return-Path: <linux-kernel+bounces-445403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84489F15BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:22:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F7977A102E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:22:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2525C1E8839;
-	Fri, 13 Dec 2024 19:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="uG2jIy/F"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C8B9F15CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:29:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DB817E8F7;
-	Fri, 13 Dec 2024 19:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E47D282DBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:29:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37B71E4908;
+	Fri, 13 Dec 2024 19:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZqosECr"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9F31684AC;
+	Fri, 13 Dec 2024 19:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734117720; cv=none; b=KbMNiUXpIQqHnhGgeXzYb5Lp3ZJVYFnZQFPVYjgSQlR7TxU8XYepGDJRe0IuZHo8U2JXD+Q2QS5yEI9Qw0Iw2RNJRJWsGnH12MSGSpaJTPZtpj5Hc+wykLfUz2w1wb+esHeCApEqAZhB8Kpb1D3O+6nS094LiKDSxKNCC0udnCM=
+	t=1734118146; cv=none; b=qNVq2mbYdzA63YqcX/vjzcg92cEcQsHJYAT4mX661wkrvUIZE2a4j4tAgtUm6h0I+DdiF23V9FJ4Jgl0HUML+W8cOi6yJZxNI/huMogd8SUX6Ghc/9y+cb0r1K42mJLW1SXi48A9Ssj3ZEz1Bxw3Nk+jh+GQ7K55YSenTNsqIa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734117720; c=relaxed/simple;
-	bh=rN7GGJajpeFdP/bs+YUi/+ybh91t28PjIpnoq2jS+1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IlcjtpkQWhn4UO6IvqeCkWyJCHaf0dR9GN8RD/b7sBEZHvyTay/XUfwJJve/e+e/Euw5tu+AH6bbmt5Rc2hlnzeVTwX3Xi2t9GizXgVc/FHjqtWlLL1PwjaU/h8cTMukh8T8VB7T/lpbuqS9wVVYsvkoY8Q7oAS9zbhhuU9VL6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=uG2jIy/F; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YqNLrqv94sPI27T0I4ULQ9Lnh8jweJTywCoEGauSK/w=; b=uG2jIy/FH0VmQoAg0RISmoKUnb
-	gbHYMYIaaU3K+zaGbslKBLBbZueOEWX2kWQZOzyOVGVE4oYIhjlg0lss+bo2erNZzLyQJnMb6cYlU
-	dAJyEGOw6t7MezbbvaCuFzoCMOdiYnJ7fWULj4y9tTxJ+eAJvz0+PA71PZFAd4vwODCVxsg5hMzrC
-	Y8IvLpiMUKUvyvgMeOGmNXDTQax96k8ly0At59PXwRX2yU3tnRdH5Xz8NGAxK9PeVrNqokpmX3sXX
-	StjLJAe8nIPmJC4K4vpgba7N1hxqzudgZWqV3gw1RowjXLich0fgJldBuyaKYAqXPNARUiapWk6k4
-	ljWeS0cA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39892)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tMBEO-0007C4-1H;
-	Fri, 13 Dec 2024 19:21:44 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tMBEI-0006Xk-2p;
-	Fri, 13 Dec 2024 19:21:38 +0000
-Date: Fri, 13 Dec 2024 19:21:38 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: stmmac: dwmac-socfpga: Set interface
- modes from Lynx PCS as supported
-Message-ID: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
-References: <20241213090526.71516-1-maxime.chevallier@bootlin.com>
- <20241213090526.71516-3-maxime.chevallier@bootlin.com>
- <Z1wnFXlgEU84VX8F@shell.armlinux.org.uk>
- <20241213182904.55eb2504@fedora.home>
+	s=arc-20240116; t=1734118146; c=relaxed/simple;
+	bh=C2sO2rvjSCbLIJIBa0W0gv105kvuevPoESRNPZ3IZLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P0YNCQAhZ7GOPT2dj/FFaUpSnJYXHr/tGSmbr77dFTHz89muYQG66rUXSQbqqG+4UWBAQ8keMQhLvGXruo1khJQBDuISpp5cYNkrC8WGBE4jPsq5o/+Z7M9VRstGJEyFW+8lsgk8y5G4nmA1fveqCcMv7YKh5zT7T3AzxtLo+no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZqosECr; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4361dc6322fso14230645e9.3;
+        Fri, 13 Dec 2024 11:29:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734118143; x=1734722943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aSAXPH3RM74MZOniHRzTnUh9xPj/wxsLjDKePkwJhVY=;
+        b=AZqosECrl4DgimgMv71OTBOeSljaUZd76O2x91I+c1jA45JbFC056N8EMLcNXVbShP
+         yGsGm71Bvn+0/no2EpzlQxJAMUetswUzicLnepduoAeXn4FvERTeMPlj8lIwp413gGXJ
+         BqSUBS/2EM6da61sRvGsSG8IEY3H5c+lzM2+/b8930C1LsiRFRaxSc7dT8BgE5BwyBpt
+         plm2LquxsXn+BA2PHEAAroHIwJ1+ooB26DIyJyGOjmhLr/oEYlHcF5SuvF+/ZUR/FAao
+         rJ5U/Z5JNzTKTDU3wColBy0ipkQ/2ukOyUlbgqmP+DLbaKiBztBI9z4U+Is/fmDwehKV
+         X8Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734118143; x=1734722943;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aSAXPH3RM74MZOniHRzTnUh9xPj/wxsLjDKePkwJhVY=;
+        b=R1kAnYPhHxn6B8bKTWAYbxRorPvXCy2ezBZapGOR7M9ZW1jDGPN66GJyXqkETVw0ao
+         tzclTef1lONZi7Pt7kZL2SpWLvmRYB58KJgEhA3QKox00ohLjAOb02YXe4SvMwAmonrm
+         NcSyQQeG27WxniL8JJ7X2h1JBxrwJkN0yO3H6TtD/iJi6644sRoanx5iMz7D5DTpepeB
+         1whiWI6cTuCZTX6aUYoCftAO5nS/6W87Tw01kmvakpbuPQ7aOOKDPfRUmoHqJSHtwJNr
+         WqCcewXlhFWp1E3HntKv+2xWOv5FdiaQg6GzMGgLXFHxlu1wxVB0AMpKbNzD7jGnRXoI
+         +uCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnr1XMJVINX3wHYIGCxfdJG9spZqLR8zOo4RNIClIx7CST93drHrf4NEFVz0Gp1L3E7DGSPjl53n8VjltTHQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3frKfdyTWJf2FUmPT1lBznFs0vYNMnEAmYsDhZ/S75HB+9vrQ
+	Oi723GI6S9d1iMnt+9b1fWLQDm8fnWgJAB0EANd/2dor7mbIGXyS
+X-Gm-Gg: ASbGncs5mVABZhcuObSXWGt4VdK7Lm4ABkVVvQIx80c5bqqha5LD9G+YS3TbLot/uKd
+	SlbL1TnnHngJwVNajKIIkggSFh8LPjkyAVkZ99090w8raM4MpB0ZHDzmKncgEysHuayfyKt0PsF
+	vO7LhhHzQEdEdTRCNogCNHnV8Uy7sjFSNIV1NL+DiiZZ9wkdT8WWaEqPa9sLqF28beDCeLzQ/+m
+	WUWBlKElwcpbw1o5nmy50BqZDymNgZfVGiXsrHPYBBTIxj6RCnsoxn9BtpbAoPEbHcy
+X-Google-Smtp-Source: AGHT+IFaHLDtoWS4WCM/yFAzUenZ4loXODVsbcvLaD+FL29Hes34Tx0tfk2DcH8naOnPEY5McRgCUQ==
+X-Received: by 2002:a05:6000:4619:b0:385:e0ea:d4ef with SMTP id ffacd0b85a97d-3888e0c0661mr2546475f8f.58.1734118142703;
+        Fri, 13 Dec 2024 11:29:02 -0800 (PST)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:761b:d1fd:bb77:d276])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c806055bsm310989f8f.92.2024.12.13.11.29.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 11:29:02 -0800 (PST)
+From: Lad Prabhakar <prabhakar.csengg@gmail.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-watchdog@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>
+Subject: [PATCH] watchdog: sp805_wdt: Drop documentation of non-existent `status` member
+Date: Fri, 13 Dec 2024 19:28:58 +0000
+Message-ID: <20241213192858.916377-1-prabhakar.csengg@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213182904.55eb2504@fedora.home>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 13, 2024 at 06:29:04PM +0100, Maxime Chevallier wrote:
-> Hi Russell,
-> 
-> On Fri, 13 Dec 2024 12:22:45 +0000
-> "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
-> 
-> > On Fri, Dec 13, 2024 at 10:05:25AM +0100, Maxime Chevallier wrote:
-> > > On Socfpga, the dwmac controller uses a variation of the Lynx PCS to get
-> > > additional support for SGMII and 1000BaseX. The switch between these
-> > > modes may occur at runtime (e.g. when the interface is wired to an SFP
-> > > cage). In such case, phylink will validate the newly selected interface
-> > > between the MAC and SFP based on the internal "supported_interfaces"
-> > > field.
-> > > 
-> > > For now in stmmac, this field is populated based on :
-> > >  - The interface specified in firmware (DT)
-> > >  - The interfaces supported by XPCS, when XPCS is in use.
-> > > 
-> > > In our case, the PCS in Lynx and not XPCS.
-> > > 
-> > > This commit makes so that the .pcs_init() implementation of
-> > > dwmac-socfpga populates the supported_interface when the Lynx PCS was
-> > > successfully initialized.  
-> > 
-> > I think it would also be worth adding this to Lynx, so phylink also
-> > gets to know (via its validation) which PHY interface modes the PCS
-> > can support.
-> > 
-> > However, maybe at this point we need to introduce an interface bitmap
-> > into struct phylink_pcs so that these kinds of checks can be done in
-> > phylink itself when it has the PCS, and it would also mean that stmmac
-> > could do something like:
-> > 
-> > 	struct phylink_pcs *pcs;
-> > 
-> > 	if (priv->hw->xpcs)
-> > 		pcs = xpcs_to_phylink_pcs(priv->hw->xpcs);
-> > 	else
-> > 		pcs = priv->hw->phylink_pcs;
-> > 
-> > 	if (pcs)
-> > 		phy_interface_or(priv->phylink_config.supported_interfaces,
-> > 				 priv->phylink_config.supported_interfaces,
-> > 				 pcs->supported_interfaces);
-> > 
-> > and not have to worry about this from individual PCS or platform code.
-> 
-> I like the idea, I will give it a go and send a series for that if
-> that's ok :)
+Remove the documentation for the `status` field in the `sp805_wdt`
+structure, as the field does not exist.
 
-I've actually already created that series!
+Signed-off-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+---
+ drivers/watchdog/sp805_wdt.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+index 109e2e37e8f0..7a1c7b42f9ef 100644
+--- a/drivers/watchdog/sp805_wdt.c
++++ b/drivers/watchdog/sp805_wdt.c
+@@ -62,7 +62,6 @@
+  * @clk: (optional) clock structure of wdt
+  * @rate: (optional) clock rate when provided via properties
+  * @adev: amba device structure of wdt
+- * @status: current status of wdt
+  * @load_val: load value to be set for current timeout
+  */
+ struct sp805_wdt {
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.43.0
+
 
