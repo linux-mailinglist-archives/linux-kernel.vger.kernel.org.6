@@ -1,144 +1,136 @@
-Return-Path: <linux-kernel+bounces-445390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C020D9F1569
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:02:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FD59F1571
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:07:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D2617A1695
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:02:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E04168396
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BA31EB9E2;
-	Fri, 13 Dec 2024 19:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24D51E8826;
+	Fri, 13 Dec 2024 19:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="plfdKrd5"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WV7FMU39"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6026D13EFE3;
-	Fri, 13 Dec 2024 19:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4E813EFE3;
+	Fri, 13 Dec 2024 19:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734116535; cv=none; b=S7wVyLwpA4oohe42FHGoMG3X72ipyfyXm9UuRekk0G21UDxoqMxgwi+Y8X3bgeC77GEyZ/0evUC6spJuuboLIzQdeD9VA9pb1d+lInR21w1ZD8Ceg1j02jZJaKpSRrSm6MS2utJpr9jxGfLnPz7nx+ubahaLtW0/lRDNYbmrTow=
+	t=1734116870; cv=none; b=I9qEeoEC7KB1EY3udTW9BzA6Th79mz/utWnCr2HipGizr+E+rGmvoAeEanuLbTCxrs1nBebRK3SLXiCCUlx7PV//ruM+AoEbA+sQwEYOSgAGcnewkedcahmu1khnQZS9Q8ey1ls1R8Y3q3xsu9QwOIS8jy87zFiOPIcrKXdH21Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734116535; c=relaxed/simple;
-	bh=lLhbmt5vXh5RoFcmVposeOIz63KPHh6DSFcAlP00RBY=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=DfvcsoHeKLV5TY6TIms9ZhVVOGs/lXhN73ajcTp5kCfz/uNWVyNE8Fl22pZ6KiTH0/1Z2fBXPkIkMLobBd4HvpJXnBuTuH/FNBd6sMZ/B+wL2TAjIBggLvNvbu3Lx+2TWwV8I8LLOTDGCFNwvQ/r0FN+YFjs56Aq/R3ZBgDiypc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=plfdKrd5; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id MAvLtTguSjBR6MAvLtk7X6; Fri, 13 Dec 2024 20:02:06 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1734116526;
-	bh=ta5vayNAQT1oijBjzQ9yIRe6BsxfdXYh4XTwMVpwURI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=plfdKrd5v5EFz6BgXrzGP47+tZ7bUz6SkRfCI67s5XdiAH9+5Chh3rW5d21wCMYQJ
-	 N7wD2VLGmmDqZ7VkVIs4WQxVupupG/UOERTZJ8Z5iG8G7VTEO0uSbN1OO8x5g2rONJ
-	 SgcfAv+d00uHKX0xZOIMbWIo7FBhraOjZOxFAXwR+b3Id3CnQetXxngrFK5WmPngwe
-	 6pHb0X7/G4CtHNMSs/55Z4qGu/8IPe3SaBESwpLwyhRiFQQPBqhuux22jZ3YwFoy7x
-	 gB5q6MecbU3IDgvkpGl5+iPPzXVxJNx1CQeWfSzNUMQCrE3dKhYsf9DgCT0jREZ94u
-	 L8NuUC84TZUVg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 13 Dec 2024 20:02:06 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <f7f8f087-f3bb-4dbc-b95d-6a6edd6bf64c@wanadoo.fr>
-Date: Fri, 13 Dec 2024 20:02:02 +0100
+	s=arc-20240116; t=1734116870; c=relaxed/simple;
+	bh=SfHguEVcIQTKifl290r/0Vnvpki1yGvo4gm+hpVAr6k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LrJ7vaRR2/5GTvO+GiqiojI5SoyQio80k9F56yf3EynuLsMhF3T0xD9eTgXpGqc8SlWyRRtymDftMPk3GOiLW0yjdkhOqwEI/le7y2TTqj5HsYsj8wGnqWtINFrUlopwxi6+vzuvd7yXtAxFa6/x8s3ANLUhMU1m5FPoCjONLf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WV7FMU39; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80EF8C4CED0;
+	Fri, 13 Dec 2024 19:07:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734116869;
+	bh=SfHguEVcIQTKifl290r/0Vnvpki1yGvo4gm+hpVAr6k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WV7FMU39Hx6pv31RtaQMDkeXD5hD1RY0vbT/za/ecb65R326Zl1GTLsyjiu1MyBKP
+	 da4PdaO6+3G+30TRCkYZ7JRs8E7rxRkh6V0FgK70ta1/+NlVb0XkBMSRWF51Ck5q1U
+	 HI9ridjSMOCxp7lvzRrZNzx8siIA9Ix7bFCbfFuPZA7yV/Pn9t7Bc1nEhol78hNw4S
+	 pK5D66L51VwLeqrXLENv0mJkXkQ20Ok9UCg94eRKm7agrA6J3GMuCP+JZ/hw0VjN6A
+	 HLa2GHDk8DLjkHNEz30dNLQcodUURhE/CVvPoLrGIBUKn+4aDi13AKzFZayI5WGE/0
+	 HGBoKesyxBrSg==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.12 000/466] 6.12.5-rc1 review
+Date: Fri, 13 Dec 2024 11:07:45 -0800
+Message-Id: <20241213190745.53095-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241212144306.641051666@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/7] thermal/drivers/tsens: Add TSENS enable and
- calibration support for V2
-References: <20241125050728.3699241-1-quic_mmanikan@quicinc.com>
- <20241125050728.3699241-4-quic_mmanikan@quicinc.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com,
- srinivas.kandagatla@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, amitk@kernel.org, thara.gopinath@gmail.com,
- rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
- lukasz.luba@arm.com, andersson@kernel.org, konradybcio@kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-In-Reply-To: <20241125050728.3699241-4-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 25/11/2024 à 06:07, Manikanta Mylavarapu a écrit :
-> From: Praveenkumar I <quic_ipkumar-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org>
+Hello,
+
+On Thu, 12 Dec 2024 15:52:49 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+
+> This is the start of the stable review cycle for the 6.12.5 release.
+> There are 466 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> SoCs without RPM need to enable sensors and calibrate them from the kernel.
-> The IPQ5332 and IPQ5424 use the tsens v2.3.3 IP and do not have RPM.
-> Therefore, add a new calibration function for V2, as the tsens.c calib
-> function only supports V1. Also add new feature_config, ops and data for
-> IPQ5332, IPQ5424.
-> 
-> Although the TSENS IP supports 16 sensors, not all are used. The hw_id
-> is used to enable the relevant sensors.
+> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> Anything received after that time might be too late.
 
-...
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
 
-> diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
-> index 0cb7301eca6e..836155fa9ab2 100644
-> --- a/drivers/thermal/qcom/tsens-v2.c
-> +++ b/drivers/thermal/qcom/tsens-v2.c
-> @@ -4,13 +4,32 @@
->    * Copyright (c) 2018, Linaro Limited
->    */
->   
-> +#include <linux/bitfield.h>
->   #include <linux/bitops.h>
->   #include <linux/regmap.h>
-> +#include <linux/nvmem-consumer.h>
+Tested-by: SeongJae Park <sj@kernel.org>
 
-If moved one line above, alphabetical order would be kept.
+[1] https://github.com/damonitor/damon-tests/tree/next/corr
+[2] 602e3159e817 ("Linux 6.12.5-rc2")
 
->   #include "tsens.h"
->   
->   /* ----- SROT ------ */
->   #define SROT_HW_VER_OFF	0x0000
+Thanks,
+SJ
 
-...
+[...]
 
-> +static const struct tsens_ops ops_ipq5332 = {
-> +	.init		= init_tsens_v2_no_rpm,
-> +	.get_temp	= get_temp_tsens_valid,
-> +	.calibrate	= tsens_v2_calibration,
-> +};
-> +
-> +struct tsens_plat_data data_ipq5332 = {
+---
 
-This could easily be made as const.
-
-> +	.num_sensors	= 5,
-> +	.ops		= &ops_ipq5332,
-> +	.hw_ids		= (unsigned int []){11, 12, 13, 14, 15},
-> +	.feat		= &ipq5332_feat,
-> +	.fields		= tsens_v2_regfields,
-> +};
-> +
-> +struct tsens_plat_data data_ipq5424 = {
-
-This could easily be made as const.
-
-> +	.num_sensors	= 7,
-> +	.ops		= &ops_ipq5332,
-> +	.hw_ids		= (unsigned int []){9, 10, 11, 12, 13, 14, 15},
-> +	.feat		= &ipq5332_feat,
-> +	.fields		= tsens_v2_regfields,
-> +};
-
-...
-
-CJ
+ok 9 selftests: damon: damos_tried_regions.py
+ok 10 selftests: damon: damon_nr_regions.py
+ok 11 selftests: damon: reclaim.sh
+ok 12 selftests: damon: lru_sort.sh
+ok 13 selftests: damon: debugfs_empty_targets.sh
+ok 14 selftests: damon: debugfs_huge_count_read_write.sh
+ok 15 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 16 selftests: damon: debugfs_rm_non_contexts.sh
+ok 17 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
+ok 18 selftests: damon: debugfs_target_ids_pid_leak.sh
+ok 19 selftests: damon: sysfs_update_removed_scheme_dir.sh
+ok 20 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh # SKIP
+ok 12 selftests: damon-tests: build_m68k.sh # SKIP
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
