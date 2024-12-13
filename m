@@ -1,156 +1,280 @@
-Return-Path: <linux-kernel+bounces-444736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A7E9F0BD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:03:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C5E9F0BDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:05:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF6E282DBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:03:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 679501687BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766651DF277;
-	Fri, 13 Dec 2024 12:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EAC1DE3D5;
+	Fri, 13 Dec 2024 12:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z7or+9SF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BfXrGtX1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29082F43;
-	Fri, 13 Dec 2024 12:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734091416; cv=none; b=tNDUMXv9JDpMkE9gUUyo1NMyT4bH9wBUAJPD/aYDK9gfE5iHGl6xYjhfrQgpJmmkMKbCSSM6fBtLJV8EmVY0z1bw8zq5ZogviIbx0fEfCVqBgunQSmK+w5GNiCqs33ZrFadUiDtLNVgMsFOeuQ8kz1ij57fSrpfMW/f8CkU4Gvk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734091416; c=relaxed/simple;
-	bh=VPZDE1tgAW6IVz8bUTCuSCddzOXCEvfQpDQW8nTJwek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnlpR4LjUrpXEiIwEkqIwq/3Hfn5jXdgjFcEbu6B+kHM1X7eBAgH/1ok14/mstsgz/c5ePdGGvCIcWoPRiqNxyrv1Uo/l895VCVf5ns8UDz9a8heLhFcV+0fy3STj0xfmmn/G2Bu18OfyniHFzS+96QbspAnUo3O4goh5F6Cs1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z7or+9SF; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312181DE2B2;
+	Fri, 13 Dec 2024 12:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734091497; cv=fail; b=c2u8OKVQeJUbc8VceXExIGKG4wPvq3ksxR3Il18PObkVMJ3nMm5qDxR9qVZ6BQCopWVuMEnDCir3E+fsGjQB7cctNrKmrAvSQOMa2Ls5Fulfp2rz5Y5fZ9nswVSPcB8RpvRnadrTswpe0f8iGmbwdwr1hTLtIL3PHC+em8ob9lo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734091497; c=relaxed/simple;
+	bh=IJj2A0TpahfSDjQbTxH0M41Gz9q3uEE5ittvsXt6JEc=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=V0b6gohDfCHFD5FS8al1tLG7DkC1Adjk0Ss2CN/aPoew9BvTo/B1tMfbi+ho5RLpljmePrArVcMTD+8xvxa7I00TZXY0Nop2oAaP8w7ScqcLPGpdAYZxDx5CK8AuhvbQcS6QQKu8Y5L0cYSaVkojANO22lld+UYgpmUISn/spwI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BfXrGtX1; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734091415; x=1765627415;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VPZDE1tgAW6IVz8bUTCuSCddzOXCEvfQpDQW8nTJwek=;
-  b=Z7or+9SFxzXQPWj3jFifhKFpzlgj2uuDcn3xmNMsAvo0t0Rk+rZNsCkb
-   XpPRFXXpAozdS4ZfSjRqdcBUK3f+gcgwahlwIGQjZD0Ig2z/LAw+miuh3
-   JsqAQUF0sRgmDVtsHCTEXqClTPFHVekURNDpJgRET7u3UtWpvAxgvHo+M
-   RteoSTVn1SKNJ7nZcgEIMjeCOylNo1L2OVCx9sBL+VYe5L7mar28OGlW1
-   SJ5Nl8dYP3pMxa2Bi1E2er57YthIHtnT+LXQn2qYR3unEIgM+QVy32Ma+
-   uQ8VKe0cyY2o/2b5Gw6u5Ha683zI+otGAmPjO4D+PQ66jHCoFtV0TZVU7
-   w==;
-X-CSE-ConnectionGUID: 6InHQJTLRuutgZ3BzPnagw==
-X-CSE-MsgGUID: JaGZ9XQcR8eLCNyJn3ebYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="33841247"
+  t=1734091495; x=1765627495;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=IJj2A0TpahfSDjQbTxH0M41Gz9q3uEE5ittvsXt6JEc=;
+  b=BfXrGtX1H5/KlgPpTAWH7QQyTwqRDOan5V4fk7pXAQ7aCyRVIJbeKsuO
+   Ik/LvkHY1odN9duxnVXQfHj0/rg3cInHHu00q8xWDte2Mt9TA6s9FnHKD
+   xw7GYo6si7oj7K0s4rHGQPjrMGamTd9X41y39+FKA1tT+fUuSckSyvDiM
+   K5T4y1TFSJ3jr/uM0c6LvV0X8OsVkY/eDIWK4nZDpr/dKzqBJ1kxfu+y7
+   clPEaILrcu/NFvkvba6KEZAOBHW+dJKxNdXYR/zxT3/V270+xj7KQKvaC
+   xqIWC5zVYva4IkKYyb0PrUtZLWbheMVK0QIHX4HecjN81oHmHVDzEmNSP
+   g==;
+X-CSE-ConnectionGUID: 8Q6/02nPRxiiROfUF8f8YA==
+X-CSE-MsgGUID: 6d9g30/XTJysD+INCdSI0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="33870013"
 X-IronPort-AV: E=Sophos;i="6.12,231,1728975600"; 
-   d="scan'208";a="33841247"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 04:03:33 -0800
-X-CSE-ConnectionGUID: DLfubhzLTCa6B+kD96UcHw==
-X-CSE-MsgGUID: qq2JYVQESz6EeEenepO6Iw==
+   d="scan'208";a="33870013"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 04:04:54 -0800
+X-CSE-ConnectionGUID: 8KYD8N5JSqaN2cjS85YV0A==
+X-CSE-MsgGUID: YNFEv/HgStKG8uAY6twq1A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,231,1728975600"; 
-   d="scan'208";a="96419492"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 13 Dec 2024 04:03:31 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id B93D22E3; Fri, 13 Dec 2024 14:03:29 +0200 (EET)
-Date: Fri, 13 Dec 2024 14:03:29 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
-	andreas.noever@gmail.com, linux-usb@vger.kernel.org,
-	mmikowski@kfocus.org, linux-kernel@vger.kernel.org,
-	Gil Fine <gil.fine@linux.intel.com>
-Subject: Re: USB-C DisplayPort display failing to stay active with Intel
- Barlow Ridge USB4 controller, power-management related issue?
-Message-ID: <20241213120329.GA2788819@black.fi.intel.com>
-References: <20241105141627.5e5199b3@kf-ir16>
- <20241106060635.GJ275077@black.fi.intel.com>
- <20241106110134.1871a7f6@kf-ir16>
- <20241107094543.GL275077@black.fi.intel.com>
- <20241111082223.GP275077@black.fi.intel.com>
- <20241112164447.4d81dc3a@kfocus.org>
- <20241114115136.GB3187799@black.fi.intel.com>
- <20241114104125.00a02eb1@kf-ir16>
- <20241115132022.GC3187799@black.fi.intel.com>
- <20241212161257.4110bdff@kf-ir16>
+   d="scan'208";a="96937658"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Dec 2024 04:04:54 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 13 Dec 2024 04:04:53 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Fri, 13 Dec 2024 04:04:53 -0800
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.48) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 13 Dec 2024 04:04:53 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aqA/XYJxU+ioXDXkeDc/FFV81XTMaVJVfph8OAl2nUxOxGfX9uuusuifhhOdCg64JJDekKovRI4uJXQAvBt3KHs+jeLX3CLCR30upKzCxCoiQv8DPovyeZVK5fMx0+brWXY8Pv5xnuUw++cuwBhzojGjO+u2DZpXNXzrUcitdUt6PZ87FnI3Rn/s1BPcQwSv4w/+RVWlrS3FggepMG4wTqtH3PXRvyOh9t5iQxzf7Fu3OlDlKktSUMTGnB5IXEjs9E1uhgTk7hm1DA5UrEwNNHnRRPiAh6HFtasIFTjw3jLnDP6xt1GJQ6UmODPTW9rUVJMsf7Pj12eslsHe2fzunQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OqCDbEADje7fO21Qa02fh5oNDuq7n3wLt2xjV7uGqj4=;
+ b=OgTo5MCPyE6juL5vSeDOym7iAKy7yQMfJa5XT7C9wAywdiS/y9/C97jI2YEa6ZAYMkh6yFdG2O9RdAl+ngJjH3EArHfx9ytjvch02LwmuLJZpGPKmRRFCNwZQmjINLFhSuPwAMeFhSpTQ3QVRbd0WqxRGETONCW42M+IqvOvDNqxEV2rBYFM6br8zU4DaeMnSPtjxmB2OBe/EzgyzroN+9YzmSLqaCfhXoBUDQ6gR40JuzYIsGtWaEU0TXPZ1YELu85DKJB89TaptQufxrH7H7kljoDtvqODdL4blWls/KZgw23r8r3rlTT2cCTVke7WVS31qGwgE39rh2+1hxizNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com (2603:10b6:208:318::12)
+ by IA0PR11MB8335.namprd11.prod.outlook.com (2603:10b6:208:493::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Fri, 13 Dec
+ 2024 12:04:11 +0000
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc]) by BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc%5]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
+ 12:04:11 +0000
+Message-ID: <bc9fe988-76f5-4106-b063-96941b5fc7fe@intel.com>
+Date: Fri, 13 Dec 2024 13:04:04 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1] net: stmmac: Drop redundant dwxgmac_tc_ops
+ variable
+To: Furong Xu <0x1207@gmail.com>, <netdev@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+	<joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, <xfr@outlook.com>
+References: <20241212033325.282817-1-0x1207@gmail.com>
+Content-Language: pl
+From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Organization: Intel
+In-Reply-To: <20241212033325.282817-1-0x1207@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR09CA0127.eurprd09.prod.outlook.com
+ (2603:10a6:803:12c::11) To BL1PR11MB5399.namprd11.prod.outlook.com
+ (2603:10b6:208:318::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241212161257.4110bdff@kf-ir16>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5399:EE_|IA0PR11MB8335:EE_
+X-MS-Office365-Filtering-Correlation-Id: f28af127-e8be-4ded-89ff-08dd1b6e4124
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MStjd2ZHYkFHelhLMnEyS0FYazlyTlJ4MGtWcmhoQ2FIZVNodXR2eVZFcUdo?=
+ =?utf-8?B?Vm1xd05KVjNFZkRLQklROW9helVqRmdjMUQvNHpNVVptTjloSHRYOUlTL3Mv?=
+ =?utf-8?B?UkRYYmdPeVhxbzlzQmVwNDdWKzFGWkJZaC9Ga0ZBUFhTVlE5WEMrRFllRE1Z?=
+ =?utf-8?B?SFBESHEyTjFIdS9CQkxPZEh5UzRrWThydkdOY09WNnFFTGJCQW1idUsrcUYy?=
+ =?utf-8?B?L3NselR5cndhUG8zVW1uKzByOUcwNHU2MkNHeFgrM21vQ3BZT0R1bFRhemR4?=
+ =?utf-8?B?UHNFZ1ZPNmdGcE95bytDK2l6ZzVSWnlXbHFwYlgreGE3WkMzaUhZK0R0Zjlm?=
+ =?utf-8?B?Z3YxbktzRGN5TlQ5cVQ0Um94QTZ4WFlyUS85KzlEZjRMdVpNTU1hZUFhUDU0?=
+ =?utf-8?B?aVI1MkJUM3cwZTFFTmN4K3BUSUNwZTVpcUlXMFZpaWFWSis5Mnluekt6Y2VC?=
+ =?utf-8?B?aVRSUUNnaFFWcjV0Qy9ieTZjZEhiaTlLRk9EeUlIbVc2a0dveEpRZ2JzT29v?=
+ =?utf-8?B?RGk4bWhlRDFLNkk3S0lSMk42UUx3dndjWjNlRjlOZ2Ira0J3MSthekJwNUR2?=
+ =?utf-8?B?WTg3QWMxaGFkZm1lZWhncUdVMlMwUSt3ZkUwTnFpYzEvSGF4bm1mVHJHY2RH?=
+ =?utf-8?B?Yy9qR3hKdE4yQWlsNmNhaWdPbllNRENSRWZZWVUvK3N2THZUZ1FkTEZUcE9n?=
+ =?utf-8?B?UXZPV05qOG1KN0greG9YZnNnZlluVkVmd2NjcUFqWldySlhZK3RGWjZPd1J2?=
+ =?utf-8?B?RnpPZ1VyT2ZrM0hJZzR1eWphYmh4RTNYV0tRQjhNWk5PTXNqOGRyKzU5NEV0?=
+ =?utf-8?B?ZCthcWcrbkNpUFM3ZXBCaE9aTjFhTmFmTXk1anZqSjhDMmtCRm04d1E5amZj?=
+ =?utf-8?B?a0dqV2ZRM1dqaGRadUtnUDlQTXRtOFlRQmRZR05DUjd1ZFU1dEplQVBLOVZa?=
+ =?utf-8?B?RDVwT0ZTZHpqOE4xM0JTdWk3RjBBbUdIeURGV0ZUYUVqNzc2Qm1JK3cxZFk0?=
+ =?utf-8?B?Rm9GYlU2V1doT2ZZOG55THBmRFlkSXFBaXFGTTBGd1hteGl0UVJ4ZDE4c0Rz?=
+ =?utf-8?B?WVl4Qjc1K2JKU0ljWHF6Z1JLRzU2eEU4QUJRcVRRakVyNmJ5QldDSndxcDZJ?=
+ =?utf-8?B?VzR4M20wU0hzejBGQXN0VnlHZkpSZWxyS1cyNFlOdnVFTkUrMy8zK0NSVFls?=
+ =?utf-8?B?L0ZNM1MrWXlmQ1VqUlA1Y1JYZ2NEQkhNYmtsb0o1ZThwWDlES0ZlNXJHNjVS?=
+ =?utf-8?B?V2F4MTZLS1VZaEpkTXBRZEtHUWpXUERWUU5wanZaeWZpS2tyMGpxSFM2NWFJ?=
+ =?utf-8?B?ZzdOUlNsRThjVmVzMEQySWxPT2NkZ0hNSkNXajk5Ky95Zk1VeXR2a3MwMFAz?=
+ =?utf-8?B?c1JBNjByb2Q3Nms3R09FWlBET255eERabjZBcE9WMnVzMU5GSjd0SDFMeDBJ?=
+ =?utf-8?B?U2lHWC9YcVg0Z2FacHNURUVtcm43YzNGSkdiQmNzVFdxaW5GM3B1dEQyZkFz?=
+ =?utf-8?B?YXlUcExjckZNa2dITnFrb3VNMEYvYndUSHNKMjh0UjgwaTBrZmZMKy9ZemFX?=
+ =?utf-8?B?Y3VKSVh2bDIvSHZDaFdOb01KTUNWWS9sUlJNcGk2VWMvNEZvNndVUDJSRExF?=
+ =?utf-8?B?eXB4MFRGK0F5VUloY2xhRnNoWkRFeVhEcUZ1VHVtWlRpdzN4OUNVTGxDa1Jt?=
+ =?utf-8?B?bEFjNXZtZEZJeDlVWUFkVWNreHB6R0IxZzZUU0dJQkl6Zkp3cU1SUEZoR3Jx?=
+ =?utf-8?B?b0huL21ZMVVUNW5nUG9tUE40Q0NmZTFtdEN6SGpydXhacHFtcDV4YXVWdEJ4?=
+ =?utf-8?B?eFl3OTlXNi9mU2xKazB6QXowUnJ6dGZRQzBnRWs5T1FLaytpRDR6NkhPd1kr?=
+ =?utf-8?Q?YxEx1Ae704tcd?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dlB1ZXhveU1UTVg4Z1U0NG1MeWkyaW83TVYxekdxN1JUQ3NJdzRUNmVrODlq?=
+ =?utf-8?B?bXhhaXMvZU5JUWxGQjZaSmRkZzIxbWR5RDV0T0Fpc2pjNE1jTEUrZ3pHMnJp?=
+ =?utf-8?B?STN6Rm1iRENSL2ZqSnpiUmN6OHlvQ2ZVYko4VzJBYUE0UVJzQlZWOFIrTHZm?=
+ =?utf-8?B?ZjhhQ0pNeFEzM0pXRjRoWFNOOWwzOXhXTUxjcjZLUU9EMG1uMjBDcEo1cTdN?=
+ =?utf-8?B?T00yVDNyWDR4dVZxTCt4MlVFbFFHQzNJZmdpb2hOWnJ6YklFdG5taHZXZVRt?=
+ =?utf-8?B?dmdUQksrM1YzUy9jaHVPMUxTWG9VazdYZ3QxWkYvbzVzb1FGTVVvZlE0Zkdx?=
+ =?utf-8?B?RzJPalRaVlRYOVRMQ21UdUtGY1dzbEJHZUpUUktsaWRqYUJyYnlBK1BCT3Ft?=
+ =?utf-8?B?SUxSSG9HWTRrSkUzTW85dGg3bHNmd2psdFpyN2o3YnlXYUNLQjhUbDk5eWcv?=
+ =?utf-8?B?bCt0eTAxQzBhSDF0bVYyWEx0NnJjbkMwWGRBQk04bWdYTU5xcnVlN0pZSzd2?=
+ =?utf-8?B?WmFxUTQrOUVsK3ltUitidUdZS1lyOTlxMzRMbCtJd0dwOE9USldWMzhPVThZ?=
+ =?utf-8?B?dlIzZ0l5dmJ3bDJuZlRvUnBYVFVCV0xNcEh5TkwvV1ArdEFhRy9EZFFEekoy?=
+ =?utf-8?B?aWhUYzFnd1FoV09WczVhWmN1ZlNuM08wOTBvNE8zOHVNZEQ4UnByNUhwanln?=
+ =?utf-8?B?L0I5d1FUdlRRS09QdXRSTnd5OEVveGIzdlc3WlhVWmo2c1FBdExGbzBraVlU?=
+ =?utf-8?B?RXpVbGdOaDdtYS9sdTZMQ3lSckswaFg4b1ZiL1poa0ZId01mUDI2QXhxaXVI?=
+ =?utf-8?B?N0M5VzdFbnBXU2V4d1d1WFYvSnJUNGJEOUkvWmNqRzdrb0VDR0hCZTNua0lT?=
+ =?utf-8?B?TDJqTUp2anlBTXhRd0JjT1piaEpnL0lOZFhPREJSZy82NHN4dk5obVZRREd3?=
+ =?utf-8?B?eS9VRUs5emZ1TUMyNDZNTkxxZ0ZTd3dNejFmMWVNaEJ0NjMzWjAvZHVianFu?=
+ =?utf-8?B?blBZMXVlakluZnFieVhFdGZGakdJaTF4SFV2bVlxVFVRcWpyZDcvKzlRNDlZ?=
+ =?utf-8?B?R0lwRDFkWDRvTStCWUdUa3o2MUlVZmtScktkVnhHS1h1dHFycWJOaGhwcWY5?=
+ =?utf-8?B?OEtMdXNVcDRqdzB1WGNUOWpjdGpoanpGVGZ5SGtSMjhGOVdWR0x1ZHFubmo3?=
+ =?utf-8?B?b3BCenBCUWdVSE5UOUk4bXczR0VzUmVtSk0xVWxhMzh2UTZsZHpFakQyQmla?=
+ =?utf-8?B?dm44cEk5cWJlSHJ6aVFLTHVmZkFoKzgrWjJzeW1zYnNjMWtXaEVjNHR3ZTky?=
+ =?utf-8?B?S0hTTEE0dWdzSFZVcm9sY2FncUxKYnQ3eGtPS2NPVHFtZ05EK3NtdS8xVTNI?=
+ =?utf-8?B?SUxEM3hKVzhSdTNmKytuaFZ1bklJalRzbnZRQTgyWFhHbmdOcUJFUC9Xdy9X?=
+ =?utf-8?B?VlpoTzhjV250RFdBYnE3MHpzMnNveHNEMkI2dTRmdm5SRmpOMkZFUlB5UVFi?=
+ =?utf-8?B?Unh5NkFzc2VRem50SmVRbk5yOEdweUdxOGZZOU5YbmIweEh1ejR1RStpbUVa?=
+ =?utf-8?B?U2ZrSE9PRlFlQmllRENzNm1YWjRYeTduTElvaVZsRFpRK3c5ZmVHcDlMM0Nh?=
+ =?utf-8?B?cnB0aXk2K1V2TFdDQUZhUzNxUHFaN29KMElpN2N1dVJpbk5vNHQzUk5oQmR3?=
+ =?utf-8?B?YktzT1I5dUg4a04zUnhPTG1kcU9YZi9SVVBIbWxqUVg4ZkhWL3F6QXRTdUM1?=
+ =?utf-8?B?THNYQVE2aWIwWXpMNXZVTVg3M2pSQWhHSzBtTTNuRkMxalVNblk2WkpZVSth?=
+ =?utf-8?B?bTVtQm96bjZwajRYaVRtdk9jRVFJZ21lTE14MjlKWGxQTHhKSEpwd2Z1K1VN?=
+ =?utf-8?B?WU1WdzhCZUsvNlJYWWV5QnMwSDBtUHo1eTNFcTZ2ZGM4dG1McGJ6OHpiVUxw?=
+ =?utf-8?B?KzZZbjlJMy9pN2tLL2tnNWxLYk1oSzN4aUNFTTVaZDlQOEdRYi8rRm1OeXpJ?=
+ =?utf-8?B?ZG1PZUkxUW0vdDNkQlFxcFF3SkMraC9PTTc3bjVGUlpIcm5VbGlzY1JxK081?=
+ =?utf-8?B?bXh2S1AzL1JaQmRWcWxoekFQeitKNDIvT1g5NExwSGJJWmpTZU5ZSFI2dmVy?=
+ =?utf-8?B?S0I5YnA5eWU1MWtHQ05GM1JnRTVhbUVSOXZkL0F1cnNQMFVocUVtL2RYN2Ew?=
+ =?utf-8?B?Umc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f28af127-e8be-4ded-89ff-08dd1b6e4124
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5399.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 12:04:11.2157
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lVk5z81BhhlQI2gL1zVnxHEuejCaKnawAVCsvlQuY+GAxcss3myHqaVXDaMnMDVdONKkrnhgeko2GxnP8860PgVHBiZSigqajC/POS0kITA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8335
+X-OriginatorOrg: intel.com
 
-Hi Aaron,
 
-On Thu, Dec 12, 2024 at 04:12:57PM -0600, Aaron Rainbolt wrote:
-> On Fri, 15 Nov 2024 15:20:22 +0200
-> Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
-> 
-> > Hi,
-> > 
-> > On Thu, Nov 14, 2024 at 10:41:25AM -0600, Aaron Rainbolt wrote:
-> > > This is production hardware (specifically Clevo's X370SNW1-G and
-> > > X370SNV1-G laptops), available for purchase from Sager, XOTICPC,
-> > > Schenker, likely many other resellers, and our own website
-> > > at https://kfocus.org/spec/spec-m2.html (with a tool that allows users
-> > > to work around the bug). The firmware is baked into the hardware
-> > > provided to us by our ODM, and for the sake of stability we do not
-> > > modify any firmware on the machines with the exception of applying
-> > > BIOS updates provided to us directly by the ODM. They appear to get
-> > > their firmware directly from Clevo.  
-> > 
-> > Okay thanks.
-> > 
-> > > We have requested an updated BIOS from the ODM. If one is
-> > > available, we will upgrade and run the tests again.  
-> > 
-> > Yes, I hope you can get the firmwares. The one you have now is not
-> > "production quality" firmare so you should not really have that there
-> > in the first place and Clevo should definitely provide you an
-> > upgrade. Note this is separate from the BIOS. But your BIOS has issue
-> > too regarding the USB4 power contract that is required by Microsoft
-> > so I would expect that you should get that one upgraded too.
-> > 
-> > The patch I shared earlier should deal with all the other cases except
-> > that weird one where we do not seem to get unplugs (and the resource
-> > is available) which is not how the firmware is expected to work. I was
-> > planning to submit it upstream after some more validation on our end,
-> > probably afer v6.13-rc1 is released. I'll CC you.
-> > 
-> > If/when you get the new firmare I would definitely appreciate if your
-> > folks could give it a try.
-> 
-> Hi Mika:
-> 
-> Just to catch you up: 
-> We find the most recent patch from this thread to be a good improvement.
-> 
-> We tested it on our hardware with USB-C attached displays. In
-> particular, it allows us to enable displays that do not time out while
-> using with Thunderbolt. Without the patch, enabling the Thunderbolt
-> kernel module would disable all attached USB-C displays in 15 seconds.
-> 
-> The patch does not resolve the hot plugging issue on our hardware, but
-> we have a work-around for that (lspci -k or reloading the thunderbolt
-> module). We have not been able to acquire new firmware yet, so this is
-> likely the issue.
-> 
-> The test results are attached if you are interested.
 
-Thanks for testing!
+On 12/12/2024 4:33 AM, Furong Xu wrote:
+> dwmac510_tc_ops and dwxgmac_tc_ops are completely identical,
+> keep dwmac510_tc_ops to provide better backward compatibility.
+> 
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> ---
+>   drivers/net/ethernet/stmicro/stmmac/hwif.c      |  4 ++--
+>   drivers/net/ethernet/stmicro/stmmac/hwif.h      |  1 -
+>   drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 11 -----------
+>   3 files changed, 2 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> index 4bd79de2e222..31bdbab9a46c 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> @@ -267,7 +267,7 @@ static const struct stmmac_hwif_entry {
+>   		.hwtimestamp = &stmmac_ptp,
+>   		.ptp = &stmmac_ptp_clock_ops,
+>   		.mode = NULL,
+> -		.tc = &dwxgmac_tc_ops,
+> +		.tc = &dwmac510_tc_ops,
+>   		.mmc = &dwxgmac_mmc_ops,
+>   		.est = &dwmac510_est_ops,
+>   		.setup = dwxgmac2_setup,
+> @@ -290,7 +290,7 @@ static const struct stmmac_hwif_entry {
+>   		.hwtimestamp = &stmmac_ptp,
+>   		.ptp = &stmmac_ptp_clock_ops,
+>   		.mode = NULL,
+> -		.tc = &dwxgmac_tc_ops,
+> +		.tc = &dwmac510_tc_ops,
+>   		.mmc = &dwxgmac_mmc_ops,
+>   		.est = &dwmac510_est_ops,
+>   		.setup = dwxlgmac2_setup,
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> index e428c82b7d31..2f7295b6c1c5 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
+> @@ -685,7 +685,6 @@ extern const struct stmmac_dma_ops dwmac410_dma_ops;
+>   extern const struct stmmac_ops dwmac510_ops;
+>   extern const struct stmmac_tc_ops dwmac4_tc_ops;
+>   extern const struct stmmac_tc_ops dwmac510_tc_ops;
+> -extern const struct stmmac_tc_ops dwxgmac_tc_ops;
+>   
+>   #define GMAC_VERSION		0x00000020	/* GMAC CORE Version */
+>   #define GMAC4_VERSION		0x00000110	/* GMAC4+ CORE Version */
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> index 6a79e6a111ed..694d6ee14381 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> @@ -1284,14 +1284,3 @@ const struct stmmac_tc_ops dwmac510_tc_ops = {
+>   	.query_caps = tc_query_caps,
+>   	.setup_mqprio = tc_setup_dwmac510_mqprio,
+>   };
+> -
+> -const struct stmmac_tc_ops dwxgmac_tc_ops = {
+> -	.init = tc_init,
+> -	.setup_cls_u32 = tc_setup_cls_u32,
+> -	.setup_cbs = tc_setup_cbs,
+> -	.setup_cls = tc_setup_cls,
+> -	.setup_taprio = tc_setup_taprio,
+> -	.setup_etf = tc_setup_etf,
+> -	.query_caps = tc_query_caps,
+> -	.setup_mqprio = tc_setup_dwmac510_mqprio,
+> -};
 
-You probably noticed, I sent out a formal patch here:
+Reviewed-by: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
 
-https://lore.kernel.org/linux-usb/20241211103529.2302706-1-mika.westerberg@linux.intel.com/
-
-You are Cc'd. I wonder if I can add your Tested-by tag to it?
 
