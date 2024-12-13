@@ -1,115 +1,155 @@
-Return-Path: <linux-kernel+bounces-445253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCFD19F135C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:12:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E229F135F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:12:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 056ED188D3B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43E5C16B0D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF361E3DC6;
-	Fri, 13 Dec 2024 17:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07F21E47D4;
+	Fri, 13 Dec 2024 17:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gl4kJNG6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHsPkfiD"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECA717C21E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEB11E32CD;
+	Fri, 13 Dec 2024 17:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734109922; cv=none; b=MoRqh3OCQDPzEvwabwJhy35s8absrwa2adzbgvCVQwac3ZGc2Jyf/9WCDHpwzhaQ7dYuNVunQJg3+oDpQIFikl8qhdM9UqSQZWOjQHYnSZAf8jaf30W50Zff9GEJT98E7yOZ2LAsvZm6NjJgyExYJ5Rqx/7vslFofs1HXQbBNIc=
+	t=1734109930; cv=none; b=lEf67Bx22RWVk6S322w3bNuhWhoovOPvMBXGaoogkHN+5BRLvf4K+QyGN27mp9slhA5KqL3waIyReUMqfqRXtBeAOwJxVs+MrjlKHAVYkXqNoMvXBhT0vwZmNYIqIZR9Ei0X37nsIEon8CkAZ0iB2I0iMvSx6W93DD358fafQnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734109922; c=relaxed/simple;
-	bh=/PXErJk/KUHfhXCq5uYSvMqv7qurNkRYTQ9NOnYkkjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qtZyERYF4v/vg7sNt4VipCPoPwQI4UjkEL81MlgX4F3KH3hzXBWtbAnODZH4PSACw5my+XjbhPPbPHl9yTOjE9VQIj5sU135rS2HtrkxtJXVFFF9ZRQtp61ZpwjCIV4wUshRzsYNCM97vZVNvgKWkNl2YMSBxMOHSe4xnWXhjhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gl4kJNG6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDBhkZY017829;
-	Fri, 13 Dec 2024 17:11:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fvN/e/rxh5xYieWw/LvfRYvBj0k8SmcWrGqG4VRTU9U=; b=Gl4kJNG6H/132uS8
-	cCYiykj8CaTLnIAy11K+5E6FCKTOBhVxL71at6AEe0/8vmTuw6dHtybQnlBbwBut
-	98o5dR7us5H6StIriUBzy68j1enPIp+XyOw69+FtUDXsopOp+l5ooi0O3McAfskz
-	PSwjzHby1Nw4saVjNVN++kU59KFgI7lWROsYVF37e1oIBdjWEYkJVCKAv77n1G7u
-	I8KmYuwak85uyZzcMsFxHI7DChARowk3D65SmyE8yskgjm1A75vb9YkSwMu0CSHF
-	c6oU/hEUIgFMwFl9W2QmXDuPgZBAYDlNjhA8H5Y7sCS9FWd+AxFsmyzSS8Gb0RN6
-	qEPvOw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gmac0ufk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 17:11:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDHBsLV013836
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 17:11:54 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
- 2024 09:11:53 -0800
-Message-ID: <ead454cb-230c-cef7-6403-7b798920ffb5@quicinc.com>
-Date: Fri, 13 Dec 2024 10:11:52 -0700
+	s=arc-20240116; t=1734109930; c=relaxed/simple;
+	bh=CHbe1zLgcnP1mR9tPoz57MNsLOaPtRXtLWYQ5MpI0b8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sommXURkVkRUU43kwfjclRNdetmBbtJim9ESlXyKZpAkJ0oG+i2a7qklu+zA5JokyyInr9mmZcXLW8PHfi5uen1LVpUI9s+kmIowKVJ2ygbgI77vOeNUUr9p1fKI06/wHByDQtu/1hwB/pvw97vmDs88NTAawmmdt1PYi6TjlSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHsPkfiD; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-382610c7116so976684f8f.0;
+        Fri, 13 Dec 2024 09:12:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734109927; x=1734714727; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cosCweGLIq6uw1npapxshH9Q6LNZZ3gk39ygK5yk0BE=;
+        b=eHsPkfiDuyx7RPZcq0k5AOxkqBA2vxGmR09VnQfOGEywSePnbAoG8uL1sBle6ZjN9N
+         isaWCYfWIpJ2FjWi7KOHB44bI04y28aiv0qdttNmDyxc2sb2I7GzSXgWT+ZDoGY85vaU
+         hx20XllDJhmCb9LfB8MyrUKT4Y1l4MzJK0ZvBsbWbtWbOPzH5c1xrrfVHkbE11pFF5Rw
+         ZemVa4c/zZReOCxqhDEMYDT06LwWInmbuU7jIbSTSylmbsWN/IVKSD+0odn67D2kJgl1
+         6aC4EML03N46/l6JH2D6r6tenc562ZqMD5hAu9ceiS0Io8yyeTGyuX6oqLxmjfepVnpg
+         TzCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734109927; x=1734714727;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cosCweGLIq6uw1npapxshH9Q6LNZZ3gk39ygK5yk0BE=;
+        b=CiU6jbQxOnCatHFki8f0sD613+75QlHtfZ7hmZd7KNjbWr2wQvesQ+GOoHWEx7NAuA
+         MgsUMRyBJ5Tqzuh0jRpBPELH8InfB9PXWxUic2js8PWqf9CCAFZRHAilURM05G0Zezrg
+         5j6BaSn9OPIVcnAUrQ2rMIcBcAj/a4yxoEFlbLCGY8LPvzQ399726vfTiaXkfinpHgSA
+         6MXOkT0yfuKUWEDFs6gQLHqZM2m6lPTUJJG/oo8w3Yz7wK7qpx2dyvv9VWkDjsgZXI5M
+         K5pHr3Ctgd/yyPT9VIDceNmgfoA5bip7HMw7Av9bxSKUfF3UhUSeHNZAcsK++ldWTiVu
+         IF8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUozpJd1n6SfaXiCi/uSk3xTffm400IYPpzkUbT/vD/1/TSYPsORj4RoxbFJFe3oEjSnAyIST5ksU/oCYb3Yynd3g==@vger.kernel.org, AJvYcCXjz5sfdGeJpALq22QhAkf9O8aaz+MmPNsemMTuCEOuM9pYgJ/p9PWE5tNg6HrrZQ/23aAOp0UlHePdYMCITsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc2ztFbpPLjvv8GPE6njaPnCRL/WMfnNP++IQfl4H7Hr5OXlFd
+	rNY2M4D1Jlux8/2vWPztUeOoxA+S+BPkZBuFIUSCczeQCh1KQcJK
+X-Gm-Gg: ASbGncsrv0D2qreM8ODIdqZYdJVdKRznVL2zNy/r2/aJs/DrPAwRjN0KxBWccCRkRz/
+	mXskD2lTkbQoERiSPaYyu8xZAgB1ECeF4alrJZtaTvEu0zKMl1TcmS06/Xg/MnjrfrL/JH2QiyP
+	b8TRt1rwkffQP6uNd8n4NAxBsQ5IAN8Eti5lUnT/izC3SO10eJei244SU5ZZofCrcrmtJM/e5zS
+	1zIh8iOE+NVMHu4ATR6KTgtP7lQWZ7E0pa/sLrBAmJ3cBHXEtqcqkRre7yy17FlrPWssCtaA0P2
+	ld0ViX/AnQ==
+X-Google-Smtp-Source: AGHT+IHGfwaqXzCxa7Lf0mWp+aEiNVr/jNbfnXNOrEMLInrQnPWme3JxrJhozowbSBBn+qS6iR5MRg==
+X-Received: by 2002:a05:6000:795:b0:385:e5d8:3ef1 with SMTP id ffacd0b85a97d-3888e0b8f92mr2922944f8f.44.1734109926499;
+        Fri, 13 Dec 2024 09:12:06 -0800 (PST)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:4eec:e99c:89a6:d7a6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8060905sm3803f8f.99.2024.12.13.09.12.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 09:12:05 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-watchdog@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] watchdog: rzv2h_wdt: Use local `dev` pointer in probe
+Date: Fri, 13 Dec 2024 17:11:57 +0000
+Message-ID: <20241213171157.898934-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] accel/amdxdna: Add include interrupt.h to
- amdxdna_mailbox.c
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <mike@fireburn.co.uk>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>,
-        <mario.limonciello@amd.com>
-References: <20241213163856.1472207-1-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20241213163856.1472207-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: IAAzL1kRDq6q-merRRFiEgTzHPDDyKCM
-X-Proofpoint-GUID: IAAzL1kRDq6q-merRRFiEgTzHPDDyKCM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- phishscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
- suspectscore=0 spamscore=0 adultscore=0 mlxlogscore=963 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130121
+Content-Transfer-Encoding: 8bit
 
-On 12/13/2024 9:38 AM, Lizhi Hou wrote:
-> From: Mike Lothian <mike@fireburn.co.uk>
-> 
-> For amdxdna_mailbox.c, linux/interrupt.h is indirectly included by
-> trace/events/amdxdna.h. So if TRACING is disabled, driver compiling will
-> fail.
-> 
-> Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
-> Reported-by: Mike Lothian <mike@fireburn.co.uk>
-> Closes: https://lore.kernel.org/dri-devel/CAHbf0-E+Z2O7rW-x+-EKNQ-nLbf=_ohaNzXxE7WD2cj9kFJERQ@mail.gmail.com/
-> Signed-off-by: Mike Lothian <mike@fireburn.co.uk>
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Applied to drm-misc-next
+Update the `rzv2h_wdt_probe()` function to consistently use the local
+`dev` pointer, which is already extracted from `&pdev->dev`.
 
--Jeff
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/watchdog/rzv2h_wdt.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
+index 1d1b17312747..8defd0241213 100644
+--- a/drivers/watchdog/rzv2h_wdt.c
++++ b/drivers/watchdog/rzv2h_wdt.c
+@@ -217,24 +217,24 @@ static int rzv2h_wdt_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
+-	priv->pclk = devm_clk_get_prepared(&pdev->dev, "pclk");
++	priv->pclk = devm_clk_get_prepared(dev, "pclk");
+ 	if (IS_ERR(priv->pclk))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(priv->pclk), "no pclk");
++		return dev_err_probe(dev, PTR_ERR(priv->pclk), "no pclk");
+ 
+-	priv->oscclk = devm_clk_get_prepared(&pdev->dev, "oscclk");
++	priv->oscclk = devm_clk_get_prepared(dev, "oscclk");
+ 	if (IS_ERR(priv->oscclk))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(priv->oscclk), "no oscclk");
++		return dev_err_probe(dev, PTR_ERR(priv->oscclk), "no oscclk");
+ 
+-	priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
++	priv->rstc = devm_reset_control_get_exclusive(dev, NULL);
+ 	if (IS_ERR(priv->rstc))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(priv->rstc),
++		return dev_err_probe(dev, PTR_ERR(priv->rstc),
+ 				     "failed to get cpg reset");
+ 
+ 	priv->wdev.max_hw_heartbeat_ms = (MILLI * MAX_TIMEOUT_CYCLES * CLOCK_DIV_BY_256) /
+ 					 clk_get_rate(priv->oscclk);
+ 	dev_dbg(dev, "max hw timeout of %dms\n", priv->wdev.max_hw_heartbeat_ms);
+ 
+-	ret = devm_pm_runtime_enable(&pdev->dev);
++	ret = devm_pm_runtime_enable(dev);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -251,7 +251,7 @@ static int rzv2h_wdt_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		dev_warn(dev, "Specified timeout invalid, using default");
+ 
+-	return devm_watchdog_register_device(&pdev->dev, &priv->wdev);
++	return devm_watchdog_register_device(dev, &priv->wdev);
+ }
+ 
+ static const struct of_device_id rzv2h_wdt_ids[] = {
+-- 
+2.43.0
 
 
