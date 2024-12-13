@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-444642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E459F0A20
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:53:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601139F0A21
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0CD3188C7A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F570169E2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DFD1C3C0D;
-	Fri, 13 Dec 2024 10:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB34C1C3BF7;
+	Fri, 13 Dec 2024 10:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PD/CAqwn"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LsRap7bg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2C91C3BE5
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A161C3BEB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734087210; cv=none; b=hfbUUpJxqQdpvtsNkHIvWdANfaSTCD3DStCLbo8/xiwR1cyE2sG2NerMCue+n6DM2bewJtC+sNZN2kcsqbEwT1Kfp2eKfeGjj8j28slqjgXjeMNVDGKgMu3mVTBR2EnyhfEpkYtFG/cPG0zBLn8AjA8YuMuc6cmGvwaiKVZN9sk=
+	t=1734087241; cv=none; b=L4GV8Vl3adUgPmMLhd4Jq36FnxxB7nESYwNHLBdTZlFFWXYpGTeTKttjHbhL4+OP/cncQ9kY1OUi7hOa6s/9L8clxzhWVOd+33aqgO0d8Hgmq4Ur/jSJcnt4bEDDwnN9qC1c6ZRiuMgICLSO9BrKoipRT6LpXfKoV925/USeh7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734087210; c=relaxed/simple;
-	bh=3RAKuwhJziTT1DeTTJ7GjajGteL0tlZLFZr1flfX9JA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tm4QFeyhi34Kjug4NZxFIpMqf4/87pU+AnlJdZvlZGliMEEhDLTdehvbgORDsYVvz6QWnFYnm/EbF6VsXfTMjoPcIUtvYze0XgXxhhVRRs2PajAy85sgI2RR8DCXf5JtgulqdtMWB5+t7/sXiNy3M2gfLDN0/kGai3DeSkSRZLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PD/CAqwn; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so16930765e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 02:53:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734087206; x=1734692006; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yf+WwbETet8e5i96HNJic3txU9PUcKXniPQhzUEgHIM=;
-        b=PD/CAqwnbBTuE35UU3gxafLQUnWrC78c/PqVCbUCqKsLP0KnsaynT2isKpQsodQSKo
-         cJaPQNURKR6sJOuQzw9Cvxp2f6u4jeOBD3+1Q0OhuzwtKXrynT9B0iVwzE59Xcsa6hyX
-         yEZ3UVwrlQWF1yYtZdfgq1DRGt2/MPwx+V/ioQk1gXSPvKUJRO/naFRT+xgKwRS6UiWU
-         LsmUJ902fb5gpylI7rWqb2yTJXOkLIdtkyWFEM8USFihMbQ3G7ehL8vp4skOtGPLqdVz
-         d3RZ9yRsTizgNOexj9ZnvWoujSl/Vte6zym1jPbyQkpRdVKMBRLFnJR87j559TkDQm77
-         gv1A==
+	s=arc-20240116; t=1734087241; c=relaxed/simple;
+	bh=okqpacIbcOlbR8x92errleYPqAKmSIoPXXz7pzDyyqI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=etblaX05esxryPciLprhdsuSXROltkUlDsZS3vefTua1vGT86+3iFEDjTC4Wa/Be3c/YV0M4isKd1NJP2KdDUplXzRyqPTuqoZ29YpS2RLDArtPIvTjn2y19udhj81nnYM6Jd4WRkgZoVM8MpDDi7RKxv39cekysEFSOgNR8/Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LsRap7bg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734087238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tZP36RlbgyjCPid9qIB9xpaONyqLFu9PuB4d/BcSVyY=;
+	b=LsRap7bgoSHcgHTV4oLkKdWtl2Ym8iIwWt5OOyJOBnobwgAMey7ZYnyy4am7/9W6nI1ucV
+	55wsvAENP7WLm7W/IXpeedhuu6RsTWjZ0vLpFo71ZVrZ9WYCBkUaCdN+cJcRsLSJZxfpiT
+	RwQBpK3pp0hK3TJ/fxV+/bvXYim3ajI=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-25-uQUNuLloPxGG3j-MVtH8xw-1; Fri, 13 Dec 2024 05:53:57 -0500
+X-MC-Unique: uQUNuLloPxGG3j-MVtH8xw-1
+X-Mimecast-MFC-AGG-ID: uQUNuLloPxGG3j-MVtH8xw
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa6a1595fdaso37766366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 02:53:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734087206; x=1734692006;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yf+WwbETet8e5i96HNJic3txU9PUcKXniPQhzUEgHIM=;
-        b=P7ujJPFz/nKSRrfxhn+8sIfOw2elC619Kpg1sxDl29i0Qqvpl8ewJqPcEwCWzebCci
-         MZ1zvZWKt2voXVGMg6VT2Qpp1TAy3uTGZLiAZSUD11UY057rFpjbVngVqlyp7Ia3YeKT
-         /XdtoEQHwwP9rlmEgrbVjSS6ZmNCRy6v0xuxPiGioG9+wf8bJPQazSsJ7pOLfZhlv7NE
-         QkwxrozbowzY3t/W6Pc09/LU6i3AFrB/44oYqA+NmeTIfGyKTi0RmLQYmB4sPPDkqcJN
-         Kc68fE/YawWOw89k2nHkypiOl5bjzud17HZhKOp2orex3tI8Xe/tLJD4TBmJG0SbBTWV
-         qqsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjr4ouSN35p6FZ4cpz6KWt9EjanYB+8U0wod9aSmmRp19z3G3fYUuRSrbEmxoQQaNMrS3RmSf8YpdIOXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykCs+m9l9WzThEzqow3iamFPg02OD9o5c9Is+cavRwCWX58jCH
-	SNe2yYFQnkDA84kSZhH2kEV1rhBQGhafIjjwEhG/cj6L6dp3gHja
-X-Gm-Gg: ASbGnctEwOAk+I4ROj4PWKhilANi6u31sGOXjIYat5EHcPZ8FrqiZCwd2DF4vAcWUBP
-	x4Orrkvmc60Ger7HTKtgruWUyeUzYt3F+SjkOAU9jaHqkx9SJKI//2OQHbcPbkTLRbERBN29W9v
-	fW8u1B4P2lkg7tNFdct8PFJHTqtCw95DNs0Pp1BJgMZiTCn7hvTaYO1Yb19cAUFAoUoD84E04ZZ
-	bjJWq4rMosPoLghUrl1Ua+v0hP1dAFwJPIPyh2On5W+uA6H6CqQnLMv9ptJnozJ8gcGI/x6
-X-Google-Smtp-Source: AGHT+IF7wpcLBiHevBCqFWuwzVTAWqMl+5sNE/JupCPWSPoBAsIudx1Jcm4rfZoivatzYHnZakf6UQ==
-X-Received: by 2002:a05:600c:4e01:b0:434:a202:7a0d with SMTP id 5b1f17b1804b1-4362aa94055mr12963585e9.22.1734087206038;
-        Fri, 13 Dec 2024 02:53:26 -0800 (PST)
-Received: from egonzo (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625706588sm46607105e9.29.2024.12.13.02.53.24
+        d=1e100.net; s=20230601; t=1734087236; x=1734692036;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZP36RlbgyjCPid9qIB9xpaONyqLFu9PuB4d/BcSVyY=;
+        b=qczxjK8WZEEvkcrr9eLFp2unogtM7XO0fTx5r+3fcIEpf60l6Vqp/Fny/+yoe1oi3P
+         CzPwxZU3E41MgzvP8kwq/oJBwQ4repI/QRrMvfX7AxgdUeqDrN/UDbfR7dp0ITBgoZoG
+         5Nt54wymTYnFygYjiHe+V6/ZvbzbUkouljRJla+Sc+npPQEcQfLRYGDXyIIHcibbx/dL
+         trbbPGjByQFn4/XtAZK5fOvRgAnifKY26DsV3D948RZhla4EaHe3ySbSJMBnRniSIbLF
+         kgIzAMr4nlkZcaZPKlAhVsVWERNu0lM8OhQQfGSbwRaT7mf0bM9B8Gx1KQW8Lek1cWP1
+         eceQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWS4UoCfs9Rd3Ok6pweZjT028dDaFPJCiHC1Kg40cLhSgWFPAd3xZQ2si012wrCLjlajnb9yHbKv10C/AE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHhsSHrEPO/EY2muRTdQwWemChSpTOsivKE3oGOZr8i4EVbNdW
+	2mJbwxqX+nip4ZvbwlzKAQWyxj+iHMY2SGTacaVWcwQyy3cGMw53Wv8+G25Q33Q0kJSeFSwf1R/
+	yiDLfL+gCVYuIYX8w4HlGd/tP90BMvM2n2VrGbng9Dms1el0SD+KTScWd7qTAqA==
+X-Gm-Gg: ASbGncuXFJrEmB9rBhkdVcXhV98REcgYB1mrYvhm/ePZoJ6xz5uozpdhBNCyxrpFYug
+	NNERCyo8WHseJPnPdP5T+xbYhymUgLo4tPNdlvwLmy1M8o3dqVPgrQPJeILEGtIQh4VcHgbQya8
+	JgqB6tKKauqCf5fifyVNT8ixWF1U5BAYcNeUJaatlBuASlyWWCoNzn+Ko8oS3ONLy8D+hejR0YK
+	D9DITz9YrffdP1ijRNXP1LHaVOUoeQbIbQpOOxz7hLiQf/emxw=
+X-Received: by 2002:a17:907:7853:b0:aa6:762e:8c20 with SMTP id a640c23a62f3a-aab77e96883mr225245266b.43.1734087236007;
+        Fri, 13 Dec 2024 02:53:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHpmtuh+bOXDCMGt5rVmLOBisZQNKYOnKYDf15tmo1bduSNwY/0Lm8b87Kpa+9sghGVqcOKLg==
+X-Received: by 2002:a17:907:7853:b0:aa6:762e:8c20 with SMTP id a640c23a62f3a-aab77e96883mr225242366b.43.1734087235662;
+        Fri, 13 Dec 2024 02:53:55 -0800 (PST)
+Received: from fedora (g2.ign.cz. [91.219.240.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69f639f59sm513076066b.193.2024.12.13.02.53.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 02:53:25 -0800 (PST)
-Date: Fri, 13 Dec 2024 11:53:23 +0100
-From: Dave Penkler <dpenkler@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org,
-	geert@linux-m68k.org, arnd@kernel.org
-Subject: Re: [PATCH v6] staging: gpib: Fix i386 build issue
-Message-ID: <Z1wSIzBOZu4gUJhv@egonzo>
-References: <20241211164452.27464-1-dpenkler@gmail.com>
- <670d63a3-6b20-41a3-a4db-96b407b80202@roeck-us.net>
+        Fri, 13 Dec 2024 02:53:55 -0800 (PST)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Jarkko
+ Sakkinen <jarkko@kernel.org>
+Cc: kvm@vger.kernel.org, linux-sgx@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Maxim Levitsky <mlevitsk@redhat.com>, Hou
+ Wenlong <houwenlong.hwl@antgroup.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang
+ <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
+Subject: Re: [PATCH v3 01/57] KVM: x86: Use feature_bit() to clear
+ CONSTANT_TSC when emulating CPUID
+In-Reply-To: <20241128013424.4096668-2-seanjc@google.com>
+References: <20241128013424.4096668-1-seanjc@google.com>
+ <20241128013424.4096668-2-seanjc@google.com>
+Date: Fri, 13 Dec 2024 11:53:54 +0100
+Message-ID: <87ed2bsvjx.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <670d63a3-6b20-41a3-a4db-96b407b80202@roeck-us.net>
+Content-Type: text/plain
 
-On Wed, Dec 11, 2024 at 11:42:36AM -0800, Guenter Roeck wrote:
-> On 12/11/24 08:44, Dave Penkler wrote:
-> > These drivers cast resource_type_t to void * causing the build to fail.
-> > 
-> > With a 32 bit build and PHYS_ADDR_T_64BIT enabled the resource_size_t
-> > type is a 64bit unsigned int which cannot be cast to a 32 bit pointer.
-> > 
-> > Disable these drivers if not 64BIT and PHYS_ADDR_T_64BIT are configured.
-> > 
-> > Link: https://lore.kernel.org/linux-staging/2c6c7e9d-ca10-47a9-82a7-a2e26b1f51ef@roeck-us.net/
-> > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > Closes: https://lore.kernel.org/all/f10e976e-7a04-4454-b38d-39cd18f142da@roeck-us.net/
-> > Fixes: e9dc69956d4d ("staging: gpib: Add Computer Boards GPIB driver")
-> > Fixes: e1339245eba3 ("staging: gpib: Add Computer Equipment Corporation GPIB driver")
-> > Fixes: bb1bd92fa0f2 ("staging: gpib: Add ines GPIB driver")
-> > Fixes: 0cd5b05551e0 ("staging: gpib: Add TNT4882 chip based GPIB driver")
-> > Signed-off-by: Dave Penkler <dpenkler@gmail.com>
-> 
-> Tested-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> Guenter
-> 
-Hi Guenter,
-These nice patches from Arnd fix the i386 build issue without having applied 
-my v6 patch:
-Link: https://lore.kernel.org/linux-staging/20241213064959.1045243-1-arnd@kernel.org/
+Sean Christopherson <seanjc@google.com> writes:
 
-I tested only 
-make ARCH=i386 allmodconfig
-make ARCH=i386 M=drivers/staging/gpib
+> When clearing CONSTANT_TSC during CPUID emulation due to a Hyper-V quirk,
+> use feature_bit() instead of SF() to ensure the bit is actually cleared.
+> SF() evaluates to zero if the _host_ doesn't support the feature.  I.e.
+> KVM could keep the bit set if userspace advertised CONSTANT_TSC despite
+> it not being supported in hardware.
 
--Dave
+FWIW, I would strongly discourage such setups, all sorts of weird hangs
+will likely be observed with Windows guests if TSC rate actually
+changes.
+
+>
+> Note, translating from a scattered feature to a the hardware version is
+> done by __feature_translate(), not SF().  The sole purpose of SF() is to
+> check kernel support for the scattered feature, *before* translation.
+>
+> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/cpuid.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 097bdc022d0f..776f24408fa3 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -1630,7 +1630,7 @@ bool kvm_cpuid(struct kvm_vcpu *vcpu, u32 *eax, u32 *ebx,
+>  				*ebx &= ~(F(RTM) | F(HLE));
+>  		} else if (function == 0x80000007) {
+>  			if (kvm_hv_invtsc_suppressed(vcpu))
+> -				*edx &= ~SF(CONSTANT_TSC);
+> +				*edx &= ~feature_bit(CONSTANT_TSC);
+>  		}
+>  	} else {
+>  		*eax = *ebx = *ecx = *edx = 0;
+
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+
+-- 
+Vitaly
+
 
