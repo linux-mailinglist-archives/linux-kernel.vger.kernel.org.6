@@ -1,164 +1,98 @@
-Return-Path: <linux-kernel+bounces-445460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE43F9F16AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:47:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9096D9F16B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:47:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9028928651D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:47:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E01518802B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930001F4E39;
-	Fri, 13 Dec 2024 19:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB2018756A;
+	Fri, 13 Dec 2024 19:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="Yy6RW/j4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uE/ld55m"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0UV6EKHn"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E941F470F;
-	Fri, 13 Dec 2024 19:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1383383;
+	Fri, 13 Dec 2024 19:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734119075; cv=none; b=k/Fo3z3Fu0w59rXYjmEiehVz8cP77RB85AnWfZYQiXjUEeuT4bXJ2/QyM7jjEPCfYp81Odcb5mEZ/hirtxr4JXt3vvLo+B6AhiFz9i86+B1CFoodHEC78sPa4KAJ4T+sTFVFk9kEjWeheOXARHWj5NaBX8BTYVOYZjZgOuL3fjw=
+	t=1734119138; cv=none; b=ATDo58JdcwI+9/3v0EPeB2cZdJyo8G4a6qLlhneKws+CfqstSnlu+0sjbPDAVsQyXAa4qQthwfAOztzdMHcJdBqqM51Z6/1XAbasuP+AmhTuZQhGsbqZ5dMN2VZo8QBiLjH361rL0y8f6nZx8wYKVRBCb11dXql1u0Qo1Y2dk38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734119075; c=relaxed/simple;
-	bh=4yPh3o5msytngK0b2M7uPcwE2itl/ZpxnSyMzy56frI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z6NtYaXVQQPHLr61iT69uQBUT1VsnFlVCkNmxb/XV6q2Kpf019+pqzbv3fUIzMITqXkqaDumn7vlmyqPQxJhbmSFi9wLEN28X2ymIXKoFGNo/E2lk1FH60Z1lEMUn+vWoxVt/OtQDk8kDSL0tmxlBFBDCQiGhaUik0bXNdIULTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=Yy6RW/j4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uE/ld55m; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 21B221383EA2;
-	Fri, 13 Dec 2024 14:44:33 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Fri, 13 Dec 2024 14:44:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1734119073; x=
-	1734205473; bh=Hqyz5RNb3bsM+MDynbvfut+TaE71hr9iEdgs6WRLNZg=; b=Y
-	y6RW/j4DzmIVsOhUtNyY4kwRgU2nowV3hrmkcOcCyskn5owUGwY9k++uthZVAX5k
-	7K+LTdhMNPDTILtv0+p0TPimK9/kf4Yh4KVXK2RJdynO3Ep0RoAdqyg7LzaRPGsO
-	yp1b2PIuKexsZimhSkPpfykkEN23YuAXfqbjhiDsINUZL1jzfgTGXnAQB31KB0BN
-	l8D2lX73YkYkLZWflZEnit3PqSpEn5UWcHzLQOaPzRKReVjbgDNmqBCQJpeBReCL
-	wITxuHD/czdEwlb2yA1U/iFU2HeLnXNivudQTdF79+V+k7+LfRgWZO7SC5oGiFHE
-	aUL7SVWyYh56U7XpLlwtQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1734119073; x=1734205473; bh=H
-	qyz5RNb3bsM+MDynbvfut+TaE71hr9iEdgs6WRLNZg=; b=uE/ld55mV5AApECKd
-	GD9Kq4A3t64CFfCyFZfplrEd+OkxqpNjLnQiATYpMFJwn/vPCZGHSunJAp92Nc8V
-	J5PTiYrrV/fSKVwbTu2/rzDh2TbLT81cIascAgiWfjwMforTiebRgTiu2j9Uxzod
-	hlRFqNGtIp6KlyV0zXkHLXNuIRyTFlVhEeohqPfT8eDBjXXbFrz1MJCbgW7CmB2k
-	P57nRwKHlF/+UnoT3aTJtaMKsFJRIJSE7We7b+TtZxz4kVqZe5vnL5c3ifkpBW9S
-	Hgp2Z/AHz2iZKQB70cu9iR3PuMzCkaMV6EZwoxhA2pkNo5vytQhEX5SfgipW66Cb
-	c5qeg==
-X-ME-Sender: <xms:oI5cZ1IxIeM-cN_Vg5MamFRsMAvAEEU6NSg6jFTU4IStukH6cFqUUw>
-    <xme:oI5cZxLI_2LTe5Vpg0ZuledKWIM-UmvX0Yw-JuX_ZdwjAtroFQ4xQ-27RkvoGVE9J
-    jqp5zrOS9mCrWMVHQ>
-X-ME-Received: <xmr:oI5cZ9uzoPjla25aydrmgB_xCvZ6IL0D1DpgAfg5IOG--iwXYxUkzSnkXbdeWUy6A64uycDjLEKhquPBKL6OF6Z-yEWKi6BBKlIA3DsMyRVuf1LBHILP>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeejgdduvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlje
-    dtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeff
-    rghnihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnh
-    epgfefgfegjefhudeikedvueetffelieefuedvhfehjeeljeejkefgffeghfdttdetnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesug
-    iguhhuuhdrgiihiidpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhope
-    hqmhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmh
-    grrhhtihhnrdhlrghusehlihhnuhigrdguvghvpdhrtghpthhtohepvgguugihiiekjees
-    ghhmrghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvhdprhgtphhtthho
-    pehjohhhnhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:oI5cZ2bCyjrkJ8-HGNOEZszi-yplizMugX983rDuGe1jDq1kjkRwmw>
-    <xmx:oI5cZ8YtSBlgRX4SPshDFH0A0Mg1CWdYq4JYYSuan1xd-We8k9IMhA>
-    <xmx:oI5cZ6D9SQTLf0EkLhXr_dNG0ywFs-8RHJfo_3RAms-D0UaSxnzmyQ>
-    <xmx:oI5cZ6ZOfE9G0NGor4cytPLyrc175kR0hgDqg07ITp-CRkTpysaDPw>
-    <xmx:oY5cZ5RNbT8es2vYhjdxoIn9V6URR2F320_r4tlZvHgmswfsjdk4weVT>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 13 Dec 2024 14:44:30 -0500 (EST)
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: daniel@iogearbox.net,
-	qmo@kernel.org,
-	andrii@kernel.org,
-	ast@kernel.org
-Cc: martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	andrii.nakryiko@gmail.com,
-	antony@phenome.org,
-	toke@kernel.org
-Subject: [PATCH bpf-next v5 4/4] bpftool: bash: Add bash completion for root_id argument
-Date: Fri, 13 Dec 2024 12:44:12 -0700
-Message-ID: <37016c786620761e621a88240e36f6cb27a8f628.1734119028.git.dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1734119028.git.dxu@dxuuu.xyz>
-References: <cover.1734119028.git.dxu@dxuuu.xyz>
+	s=arc-20240116; t=1734119138; c=relaxed/simple;
+	bh=/NGVVzayzEEZuxZAoyNwRjkMZVsgtmClsk+jQ6Ass9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zi/54WYQie9UptyDT0VRlQKJvVolv2qSvu8LyYGthykbjSZ3eKz9mkCFBk590TBP5YjS/y5duHNHHB957khoHmaWpkmTgTWGzzsY7t7tGbpsshbXM8ii0rrNPEvZKaZ+FPk+SwT2h3sGOveNYK23hdw5Hd8kel+L5wYeM/1Vw1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0UV6EKHn; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2OKWWGal3o7LbTV2TO3uDGVhmx9PqnQujifRZi9s2So=; b=0UV6EKHnRYzDrMqVxlBYCouvTp
+	FlYRRMm0syDARUJNEYq7CGX0KQCnszoZMQCtZ93d0oGy7OGL2t/a7f+uCcGXMRSfRGqILVSZRp2yJ
+	cWNVXNCKl3yRizT26AuIaDtOmNIuUjKOLkGpJB87Vc0gO+15C9lxkb0sDboR+eAg2sjyfghav+OBi
+	9O3VJBM9xERg6lUmPOIBWUvYpf6SgbEowi/FuHczwpBcWEEPUXjY0yHyONW6nCIUqc4K/ivQe9sOJ
+	cou9JA3e/M2lKQPihGgaFbz8YFBZrKZvOjP0bvdNRmTl2G/bM/NVXXWWlWqY98O558A8vs+K1u+fx
+	RVOYHXiA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34272)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tMBbE-0007Fd-2S;
+	Fri, 13 Dec 2024 19:45:20 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tMBbC-0006Yr-0S;
+	Fri, 13 Dec 2024 19:45:18 +0000
+Date: Fri, 13 Dec 2024 19:45:17 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	jacob.e.keller@intel.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, robert.marko@sartura.hr
+Subject: Re: [PATCH net-next v4 5/9] net: sparx5: only return PCS for modes
+ that require it
+Message-ID: <Z1yOzaL-gwXIE94O@shell.armlinux.org.uk>
+References: <20241213-sparx5-lan969x-switch-driver-4-v4-0-d1a72c9c4714@microchip.com>
+ <20241213-sparx5-lan969x-switch-driver-4-v4-5-d1a72c9c4714@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213-sparx5-lan969x-switch-driver-4-v4-5-d1a72c9c4714@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-This commit updates the bash completion script with the new root_id
-argument.
+On Fri, Dec 13, 2024 at 02:41:04PM +0100, Daniel Machon wrote:
+> The RGMII ports have no PCS to configure. Make sure we only return the
+> PCS for port modes that require it.
+> 
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
 
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
----
- tools/bpf/bpftool/bash-completion/bpftool | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
-index 0c541498c301..1ce409a6cbd9 100644
---- a/tools/bpf/bpftool/bash-completion/bpftool
-+++ b/tools/bpf/bpftool/bash-completion/bpftool
-@@ -930,19 +930,24 @@ _bpftool()
-                         format)
-                             COMPREPLY=( $( compgen -W "c raw" -- "$cur" ) )
-                             ;;
-+                        root_id)
-+                            return 0;
-+                            ;;
-                         c)
--                            COMPREPLY=( $( compgen -W "unsorted" -- "$cur" ) )
-+                            COMPREPLY=( $( compgen -W "unsorted root_id" -- "$cur" ) )
-                             ;;
-                         *)
-                             # emit extra options
-                             case ${words[3]} in
-                                 id|file)
-+                                    COMPREPLY=( $( compgen -W "root_id" -- "$cur" ) )
-                                     _bpftool_once_attr 'format'
-                                     ;;
-                                 map|prog)
-                                     if [[ ${words[3]} == "map" ]] && [[ $cword == 6 ]]; then
-                                         COMPREPLY+=( $( compgen -W "key value kv all" -- "$cur" ) )
-                                     fi
-+                                    COMPREPLY=( $( compgen -W "root_id" -- "$cur" ) )
-                                     _bpftool_once_attr 'format'
-                                     ;;
-                                 *)
+Thanks!
+
 -- 
-2.46.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
