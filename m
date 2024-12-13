@@ -1,259 +1,234 @@
-Return-Path: <linux-kernel+bounces-444274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 260819F03E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:49:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479989F03F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F57D169616
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85656188A9DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ACE157E9F;
-	Fri, 13 Dec 2024 04:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462161632FA;
+	Fri, 13 Dec 2024 04:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Oj2sxyEw"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hs1qe8z3"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7730663D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22D1157E9F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734065347; cv=none; b=gScMDC08XhOR6JqvU4l3V4gUMMqud9Nv3KjPlr46vzaOHXmfSGZIrXJ/oM09S6wQXA/PwCbRDHznySKAWL6yqXiE21pmlgCbLOzr/QjH0o9ty/JJbiN+70Y5M8sj2sSnnH/+UygODeZaxIVHEYA4cj00fa1WSBHDauVnSkyXS+c=
+	t=1734065803; cv=none; b=e86VMaKByNl3cVPwvgWKk3N+NfjAhxRDsPCx8Hirg8AEFS0rhVchBFAZpzfGjWjPfYtWwjKxYavoaiyKd96NFYecFU3SwbVHxrBz9u7zUcWIBnFSeRWB6q2F/+HaqUfc2cyztkJrPHp/jEbumP1ku6vBp270H35CssrF34oNuLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734065347; c=relaxed/simple;
-	bh=wWvlg86nnvYdmWi19+e+JOean4rcHoBiU0RbujYIRv8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lM/ipLKkdT0Kjuu/j8/Mj0VXI0ElLSjFMhNWzhs16rCToBLae/9/5N3zEcgqRUlvci3EW9aTNzdioHn8ZD+qzbW2LMC/1iitSq6zNIaS25tgpemJHqEfmmLsEVXhMhlpJlWcJkI6bWIfAtbBz/6VXyCwCW/lKIVgF012AzRD7jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Oj2sxyEw; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4675936f333so82401cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:49:05 -0800 (PST)
+	s=arc-20240116; t=1734065803; c=relaxed/simple;
+	bh=+zgJeiahRYhOewDI4lhi7m6DU4J3ga4hUeXcPfIztsc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FVyILbqA+EnHk2chfnrA7cjXV1XpmTZf6bBbmCWiyCYtERCnzl4x3Lq3gR84gpF+NP+68CYBfJvDVo2O/5UglCnAm60zUxHlTgJoEf2hAjOLs3qtmBz5BnNoUfkML8dSXBgaWeM7t1p2kRoK4lx/pIAhn8n2k5t6+lQt9eySqOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hs1qe8z3; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-725dbdf380aso1210460b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:56:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734065344; x=1734670144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SyKXtJmevA9J1gjLkDCWf2rvJGPBPi1c5QO3oGVTNNs=;
-        b=Oj2sxyEwuwWj9aX/+1c6GEPSik1JaDt+ugH6IWLO8Cgu+iDx+5FXq9ajR7hPe71/ZQ
-         zmYjdpS/gek1m8AS5QInPmajuochqSWVFVlUbIGL99qMqAHN2fr9UgWH/a2LC+DewZFr
-         i29/9rILFQ0jnLZmgIVmpFWMBfZKNo9eCco30tl9Q2VRI9+jGbE7ZlVQ8OTmVOpHWp1M
-         J98f6Rz8tg+EmKiaVzYuuufjHAwbONiXqnveW1QG6VOojczoexTPmPMZmsbTPN+alz7P
-         ZHnovHHkudCH+iSHbTOc2RJTeLbH5ThmIhx2V2rYkycKUdZ2017PJaq7nmbzHPIn7mTw
-         s3mw==
+        d=chromium.org; s=google; t=1734065801; x=1734670601; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I9SAvhC/1O9xhOgEJgltjPIiKB+jL/KUsbTgQGFrTOI=;
+        b=hs1qe8z3ZlRtkmjx97uA855iKhUo3r0qCPuO+s5xECf2+DnsY9dlV9lxtYFZVMJqRC
+         Tfid4ukT8EBAcs2517M9Nds/Dykv4DDDuOQaZEJzUhzki5UP0lzGhVTHHFZ7SHBvOlIr
+         9Twyv70di2cLQijXLZsQ0sRcsQ6iVhRJek0Dw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734065344; x=1734670144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SyKXtJmevA9J1gjLkDCWf2rvJGPBPi1c5QO3oGVTNNs=;
-        b=eIQ2Qw6DEj+Ia80yJViBbdyV9l3hnBgqi4MVlpb5X9+dWLSgUqjMgM/3PTNB3Dp1xu
-         Jh7L8NgDK8czAoV0H3TNAFYatUBk8c5ho0xBgo6LOt2yTFEIi675T1NtrJSI1h33tVdJ
-         2+KWK2JCAauAEZdwRmCWU9Q3G3tYQV3gvgp/fmd7NAC9bHECVdReGaWsU5g2DbQYqE59
-         zgZstrQNR2sAOyDCSZPLUfl7RHoOjidLGcIErOLfqZ4Wbo68q1pm68OPQ3E0fF8SxIFT
-         RUf8IlWUQGPCW2eQ2ZoKSZOni4JFC9COg6o2WfDHY6d3+8nR9yFndi7zpF+yBNOZ9OEi
-         QqEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwb+X+FOZH8BWN+RYBVtHvqgb7bBMdxJni+/suqMYyK68yP3A/dXhD6EfaNMWHRxiI7sGIpu2HgRMBrRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPv/Clk9XO+9Y7Yg83QdusB8Afma2iS7IWXhjTasRU1O+c6VOE
-	HSOBDKxOooZcNxuu6IsgmosL6xpx7Rq7a914ScTvJ19MCeNWwCWWed+ALhEArMVMLTfmjztKQ7A
-	fii4Tw64WdO0OO4CXZxgmG8CjFgFa7PwO+FDM
-X-Gm-Gg: ASbGnctWBtr+K19wswHtpUs4PDZwVKDWj5VRqURIDInX7k4F4ONe0ZZVmkCsFYCI3T1
-	ds8dLP0x8/MU6kRVnaOln0NBvdZM+4GldYAcR1g==
-X-Google-Smtp-Source: AGHT+IFVRVj5b+YtZOxsCPfKPMEuiih8mLUGJyZ2MQP37hYAM9kY+0XKaSq6UxN3JVSNRWmfOQDKcyU5UdXVO+YzM/8=
-X-Received: by 2002:a05:622a:1e92:b0:466:975f:b219 with SMTP id
- d75a77b69052e-467a424b2e1mr2331841cf.8.1734065344059; Thu, 12 Dec 2024
- 20:49:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734065801; x=1734670601;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I9SAvhC/1O9xhOgEJgltjPIiKB+jL/KUsbTgQGFrTOI=;
+        b=vjdOkvxqv5FUpP8tYPVR9cn71CEupJ/OwORYzQYnHFD3SX33dxGD7SVlTCta6eGb2H
+         XoiRqA06kmKbZPLb6aETs9sLKLftShyTqqWHIzFNO195rtNoi8bedH0Jx8shPlQbYU2N
+         Pyj84cVQkpB5sROBy7f/wggOt2HNzrL4lK1x8+1RB1XOorlrVoF0JSDrSc8Hb1votz5W
+         K+XWJippGBDbMuglw6UPt5GG+w6128FYh+b+VPilsJ/jQ2zwWFKHEPS3nKoZSlzU1TQJ
+         XvkBatjteYhgj+T3nHYkD5AyLSrQ7XV+VGd2Gy32PeEBZ1Kqan1hUs56HAzhE9psAv1u
+         lkcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmCDaw7FrJu9dsrw/P04FEvEQuPd+x3lQGr3tdkOLFZCBf/iG7tfdzsNy/km6A0/jtllx9rQY1+SAIN/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWV5quMmmDXqw6SaF0BzZT5VP5wzxJ800YK6aNz97bURM0Z11Y
+	52KI3IOjjeA3Lfv58GDrYo+JhtZQQBBZvpTj42eSnc0fQA0Xc6wtJqoSTysdkg==
+X-Gm-Gg: ASbGnctxOFS0qjV8R1V4bl9hTj6COgHvvCx84TiBp+nvsKgpNVp5wVSytiya28rSiJr
+	adFn2KuKj8rpyaZYLyasK0G4Bby77wTZTIG1rtR8zgkc2dNwHcQXV5HpqItDj6yCMDBI6JFEb5E
+	whvq1n74rCYb8JNKnM11tUEFjGjG0AZKeOd1huWgFXGARwn4fNoByGKbsUvF+YYKUYfZ/JaLTZp
+	L2bJj7NDRdLUgEszO/S9ug2J6tQgCPF0MQ6uXez/6wULQEAT2cdzhApUOViGw4NU1kdJFZfa/8P
+	Oz+t2qw2M3gnHKYQCfMRQEyo7gT0GcLJsBBt56xQI0Eh1jE=
+X-Google-Smtp-Source: AGHT+IGVfeYguG/ILnnKexOgC8Dj9851hNf9D996FbgoQLKq1WGOOUB6A+Iz+5HK65u7tKV9Fecjzg==
+X-Received: by 2002:a05:6a00:3d10:b0:71e:1722:d019 with SMTP id d2e1a72fcca58-7290c272caemr1997795b3a.22.1734065801174;
+        Thu, 12 Dec 2024 20:56:41 -0800 (PST)
+Received: from yuanhsinte.c.googlers.com (176.220.194.35.bc.googleusercontent.com. [35.194.220.176])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e73f1e41sm9070244b3a.61.2024.12.12.20.56.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 20:56:40 -0800 (PST)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Fri, 13 Dec 2024 04:56:11 +0000
+Subject: [PATCH v3] arm64: dts: mediatek: mt8183: Switch to Elan
+ touchscreen driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111205506.3404479-1-surenb@google.com> <20241111205506.3404479-4-surenb@google.com>
- <ZzLgZTH9v5io1Elx@casper.infradead.org> <CAJuCfpHpGSpix8+mB76Virb+HAMrOqB3wG8E4EXPrRCnBoBGeA@mail.gmail.com>
- <20241210223850.GA2484@noisy.programming.kicks-ass.net> <CAJuCfpETJZVFYwf+P=6FnY_6n8E7fQsKH6HrOV1Q_q9cFizEKw@mail.gmail.com>
- <20241211082541.GQ21636@noisy.programming.kicks-ass.net> <CAJuCfpEMYhAmOPwjGO+j1t+069MJZxUs1O1co-zJ4+vEeXCtng@mail.gmail.com>
- <CAJuCfpGOOcRAJ46sbPRoCUNuuhi2fnkM97F=CfZ1=_N5ZFUcLw@mail.gmail.com>
- <20241212091659.GU21636@noisy.programming.kicks-ass.net> <CAJuCfpHKFZ2Q1R1Knh-LFLUYcTX6CJuEsqNM5AwxRyDUAzdcVw@mail.gmail.com>
- <CAJuCfpGKEthmc2JkbOcfEJqsM_cBcm0cAvv0VFe-acMi169fcQ@mail.gmail.com>
-In-Reply-To: <CAJuCfpGKEthmc2JkbOcfEJqsM_cBcm0cAvv0VFe-acMi169fcQ@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 12 Dec 2024 20:48:52 -0800
-Message-ID: <CAJuCfpGJcrCkzOtaZDH98_oQK01+HNxHzzsf7SS95cXVRyXUPg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
-	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
-	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com, 
-	pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241213-post-reset-v3-1-ec30df9b9381@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAGu+W2cC/3WMQQ6CMBAAv0J6tqbbWkBP/sN4KHSFPUDJFhsN4
+ e8WjkaPM8nMIiIyYRSXYhGMiSKFMYM5FKLt3dihJJ9ZaKVPoKCWU4izZIw4S9eWZaOMhRKMyMH
+ E+KDXPrvdM/cU58Dv/Z1gsz83CaSS1jnfVNYqZapr23MY6DkcA3diOyX9v9a51rW35uyrM0L9V
+ a/r+gGvT5NC5QAAAA==
+X-Change-ID: 20241018-post-reset-ac66b0351613
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, 
+ Hsin-Yi Wang <hsinyi@chromium.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Hans de Goede <hdegoede@redhat.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-7be4f
 
-On Thu, Dec 12, 2024 at 6:19=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Thu, Dec 12, 2024 at 6:17=E2=80=AFAM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> >
-> > On Thu, Dec 12, 2024 at 1:17=E2=80=AFAM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
-> > >
-> > > On Wed, Dec 11, 2024 at 07:01:16PM -0800, Suren Baghdasaryan wrote:
-> > >
-> > > > > > > I think your proposal should work. Let me try to code it and =
-see if
-> > > > > > > something breaks.
-> > > >
-> > > > Ok, I tried it out and things are a bit more complex:
-> > > > 1. We should allow write-locking a detached VMA, IOW vma_start_writ=
-e()
-> > > > can be called when vm_refcnt is 0.
-> > >
-> > > This sounds dodgy, refcnt being zero basically means the object is de=
-ad
-> > > and you shouldn't be touching it no more. Where does this happen and
-> > > why?
-> > >
-> > > Notably, it being 0 means it is no longer in the mas tree and can't b=
-e
-> > > found anymore.
-> >
-> > It happens when a newly created vma that was not yet attached
-> > (vma->vm_refcnt =3D 0) is write-locked before being added into the vma
-> > tree. For example:
-> > mmap()
-> >   mmap_write_lock()
-> >   vma =3D vm_area_alloc() // vma->vm_refcnt =3D 0 (detached)
-> >   //vma attributes are initialized
-> >   vma_start_write() // write 0x8000 0001 into vma->vm_refcnt
-> >   mas_store_gfp()
-> >   vma_mark_attached()
-> >   mmap_write_lock() // vma_end_write_all()
->
-> s/mmap_write_lock()/mmap_write_unlock()
-> >
-> > In this scenario, we write-lock the VMA before adding it into the tree
-> > to prevent readers (pagefaults) from using it until we drop the
-> > mmap_write_lock(). In your proposal, the first thing vma_start_write()
-> > does is add(0x8000'0001) and that will trigger a warning.
-> > For now instead of add(0x8000'0001) I can play this game to avoid the w=
-arning:
-> >
-> > if (refcount_inc_not_zero(&vma->vm_refcnt))
-> >     refcount_add(0x80000000, &vma->vm_refcnt);
-> > else
-> >     refcount_set(&vma->vm_refcnt, 0x80000001);
-> >
-> > this refcount_set() works because vma with vm_refcnt=3D=3D0 could not b=
-e
-> > found by readers. I'm not sure this will still work when we add
-> > TYPESAFE_BY_RCU and introduce vma reuse possibility.
-> >
-> > >
-> > > > 2. Adding 0x80000000 saturates refcnt, so I have to use a lower bit
-> > > > 0x40000000 to denote writers.
-> > >
-> > > I'm confused, what? We're talking about atomic_t, right?
-> >
-> > I thought you suggested using refcount_t. According to
-> > https://elixir.bootlin.com/linux/v6.13-rc2/source/include/linux/refcoun=
-t.h#L22
-> > valid values would be [0..0x7fff_ffff] and 0x80000000 is outside of
-> > that range. What am I missing?
-> >
-> > >
-> > > > 3. Currently vma_mark_attached() can be called on an already attach=
-ed
-> > > > VMA. With vma->detached being a separate attribute that works fine =
-but
-> > > > when we combine it with the vm_lock things break (extra attach woul=
-d
-> > > > leak into lock count). I'll see if I can catch all the cases when w=
-e
-> > > > do this and clean them up (not call vma_mark_attached() when not
-> > > > necessary).
-> > >
-> > > Right, I hadn't looked at that thing in detail, that sounds like it
-> > > needs a wee cleanup like you suggest.
-> >
-> > Yes, I'll embark on that today. Will see how much of a problem that is.
+After commit 2be404486c05 ("HID: i2c-hid-of: Add reset GPIO support to
+i2c-hid-of"), the i2c-hid-of driver used by some mt8183 devices resets
+the touchscreen without having enough post-reset delay. This makes those
+touchscreen fail to get probed.
 
-Ok, I think I was able to implement this in a way that ignores
-duplicate attach/detach calls. One issue that I hit and don't know a
-good way to fix is a circular dependency in the header files once I
-try adding rcuwait into mm_struct. Once I include rcuwait.h into
-mm_types.h leads to the following cycle:
+Switch to Elan touchscreen driver, which has enough post-reset delay.
 
-In file included from ./arch/x86/include/asm/uaccess.h:12,
-                 from ./include/linux/uaccess.h:12,
-                 from ./include/linux/sched/task.h:13,
-                 from ./include/linux/sched/signal.h:9,
-                 from ./include/linux/rcuwait.h:6,
-                 from ./include/linux/mm_types.h:22,
+Fixes: 2be404486c05 ("HID: i2c-hid-of: Add reset GPIO support to i2c-hid-of")
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+---
+After commit 2be404486c05 ("HID: i2c-hid-of: Add reset GPIO support to
+i2c-hid-of"), i2c-hid-of driver resets the touchscreen without having
+proper post-reset delay on OF platform.  From the commit message of that
+commit, not to decribe poset-reset delay in device tree is intended.
+Instead, describing the delay in platform data and changing to use
+specialized driver is more preferable solution.
+---
+Changes in v3:
+- Remove patches related to the race condition of pinctrl since they are
+  not needed anymore.
+- Link to v2: https://lore.kernel.org/r/20241018-post-reset-v2-0-28d539d79e18@chromium.org
 
-./arch/x86/include/asm/uaccess.h includes mm_types.h. But in fact
-there is a shorter cycle:
+Changes in v2:
+- Add second source touchscreen patches since they should based on the
+  first patch of this series.
+- Link to v1: https://lore.kernel.org/r/20241018-post-reset-v1-0-5aadb7550037@chromium.org
+---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts       | 9 +++------
+ .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts | 8 ++------
+ .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts | 8 ++------
+ .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts | 8 ++------
+ 4 files changed, 9 insertions(+), 24 deletions(-)
 
-rcuwait.h needs signal.h since it uses uses inlined signal_pending_state()
-signal.h needs mm_types.h since it uses vm_fault_t
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
+index 65860b33c01fe832f3a4b2e21d24ea6b4f0cba2b..b226dfee22669d596e5b45a7cc02133ee4aaa828 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
+@@ -14,16 +14,13 @@ / {
+ };
+ 
+ &touchscreen {
+-	status = "okay";
++	compatible = "elan,ekth6a12nay";
+ 
+-	compatible = "hid-over-i2c";
+-	reg = <0x10>;
+-	interrupts-extended = <&pio 155 IRQ_TYPE_LEVEL_LOW>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&touchscreen_pins>;
+ 
+-	post-power-on-delay-ms = <10>;
+-	hid-descr-addr = <0x0001>;
++	vcc33-supply = <&pp3300_alw>;
++	vccio-supply = <&pp1800_alw>;
+ };
+ 
+ &qca_wifi {
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts
+index 72852b7600383972d98d9b0edd40b6e99e34a85b..863f3e403de8577da41b17b144cdb17c578b2027 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts
+@@ -27,16 +27,12 @@ &cros_ec_pwm {
+ };
+ 
+ &touchscreen {
+-	status = "okay";
++	compatible = "elan,ekth6a12nay";
+ 
+-	compatible = "hid-over-i2c";
+-	reg = <0x10>;
+-	interrupts-extended = <&pio 155 IRQ_TYPE_LEVEL_LOW>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&touchscreen_pins>;
+ 
+-	post-power-on-delay-ms = <10>;
+-	hid-descr-addr = <0x0001>;
++	vcc33-supply = <&pp3300_alw>;
+ };
+ 
+ &qca_wifi {
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts
+index 757d0afd14fb064fc1de4608e65eb1a561c4dfa6..e0a583ce4a0bb18095a77d23ab8409bb80898979 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts
+@@ -14,16 +14,12 @@ / {
+ };
+ 
+ &touchscreen {
+-	status = "okay";
++	compatible = "elan,ekth6a12nay";
+ 
+-	compatible = "hid-over-i2c";
+-	reg = <0x10>;
+-	interrupts-extended = <&pio 155 IRQ_TYPE_LEVEL_LOW>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&touchscreen_pins>;
+ 
+-	post-power-on-delay-ms = <10>;
+-	hid-descr-addr = <0x0001>;
++	vcc33-supply = <&pp3300_alw>;
+ };
+ 
+ 
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts
+index 6641b087e7c5f3a957e43ac985137dfd84ac7878..7874c9a20e124c65ace3f90e2ec5bcaf59b69c40 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts
+@@ -14,16 +14,12 @@ / {
+ };
+ 
+ &touchscreen {
+-	status = "okay";
++	compatible = "elan,ekth6a12nay";
+ 
+-	compatible = "hid-over-i2c";
+-	reg = <0x10>;
+-	interrupts-extended = <&pio 155 IRQ_TYPE_LEVEL_LOW>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&touchscreen_pins>;
+ 
+-	post-power-on-delay-ms = <10>;
+-	hid-descr-addr = <0x0001>;
++	vcc33-supply = <&pp3300_alw>;
+ };
+ 
+ 
 
-The way I worked around it for now is by removing signal.h include
-from rcuwait.h and wrapping signal_pending_state() into a non-inlined
-function so I can forward-declare it. That requires adding
-linux/sched/signal.h or linux/sched/task.h into many other places:
+---
+base-commit: eefa7a9c069908412f8f5d15833901d1b46ae1b2
+change-id: 20241018-post-reset-ac66b0351613
 
- arch/x86/coco/sev/core.c                                     | 1 +
- arch/x86/kernel/fpu/xstate.c                                 | 1 +
- block/blk-lib.c                                              | 1 +
- block/ioctl.c                                                | 1 +
- drivers/accel/qaic/qaic_control.c                            | 1 +
- drivers/base/firmware_loader/main.c                          | 1 +
- drivers/block/ublk_drv.c                                     | 1 +
- drivers/crypto/ccp/sev-dev.c                                 | 1 +
- drivers/dma-buf/heaps/cma_heap.c                             | 1 +
- drivers/dma-buf/heaps/system_heap.c                          | 1 +
- drivers/gpio/gpio-sloppy-logic-analyzer.c                    | 1 +
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c                        | 1 +
- drivers/iommu/iommufd/ioas.c                                 | 1 +
- drivers/iommu/iommufd/pages.c                                | 1 +
- .../staging/vc04_services/interface/vchiq_arm/vchiq_dev.c    | 1 +
- drivers/tty/n_tty.c                                          | 1 +
- fs/bcachefs/fs-io-buffered.c                                 | 1 +
- fs/bcachefs/journal_reclaim.c                                | 1 +
- fs/bcachefs/thread_with_file.c                               | 1 +
- fs/bcachefs/util.c                                           | 1 +
- fs/btrfs/defrag.h                                            | 1 +
- fs/btrfs/fiemap.c                                            | 2 ++
- fs/btrfs/free-space-cache.h                                  | 1 +
- fs/btrfs/reflink.c                                           | 1 +
- fs/exfat/balloc.c                                            | 1 +
- fs/gfs2/ops_fstype.c                                         | 1 +
- fs/kernel_read_file.c                                        | 1 +
- fs/netfs/buffered_write.c                                    | 1 +
- fs/zonefs/file.c                                             | 1 +
- include/linux/fs.h                                           | 2 +-
- include/linux/rcuwait.h                                      | 4 ++--
- io_uring/io_uring.h                                          | 1 +
- kernel/dma/map_benchmark.c                                   | 1 +
- kernel/futex/core.c                                          | 1 +
- kernel/futex/pi.c                                            | 1 +
- kernel/rcu/update.c                                          | 5 +++++
- kernel/task_work.c                                           | 1 +
- lib/kunit/user_alloc.c                                       | 1 +
- mm/damon/vaddr.c                                             | 1 +
- mm/memcontrol-v1.c                                           | 1 +
- mm/shrinker_debug.c                                          | 1 +
- net/dns_resolver/dns_key.c                                   | 1 +
- 42 files changed, 48 insertions(+), 3 deletions(-)
+Best regards,
+-- 
+Hsin-Te Yuan <yuanhsinte@chromium.org>
 
-I'm not sure if this is the best way to deal with this circular
-dependency. Any other ideas?
 
