@@ -1,173 +1,244 @@
-Return-Path: <linux-kernel+bounces-445528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C7A9F1755
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:21:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4929F175F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:29:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4468E188A4D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:21:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1A816668B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA083191F62;
-	Fri, 13 Dec 2024 20:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574EF1925A6;
+	Fri, 13 Dec 2024 20:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jS+ilNGd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtgjQxZH"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52B418F2FB;
-	Fri, 13 Dec 2024 20:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38A918C002;
+	Fri, 13 Dec 2024 20:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734121271; cv=none; b=G8L6zWNSS4KEPdoc+8dlxfBFtttb8vlWG6JeRPs1YoWZGC1KgAaWlS0PFrPQ7Hyfqemng2WCngV8MaYzKeoHyALZimy8Ioogva0qSIb/eD+MlSV7qVOS3C1/+GMt0eXgK5Rt9zHiEUYXrPlrCmngDxaXqFsqhBZDtU3DrI4NTBg=
+	t=1734121731; cv=none; b=pOALEcRHXVTSWeilK+6B2ukiJ/YXUfm46G3eW7zZUSeZkFjoeavz/GgmDnoE+yCzPdB5zYqdaHsepS5IZ0WnBoBwqaFCD82ieOCYS500vsV4MwSi5t0Aav/wcUI4YTrhI9+OvbY5Al/0f+pjKPR/jdLlJ9gjURlCodQzkqQ5ugA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734121271; c=relaxed/simple;
-	bh=E3bOxijDc+kqtfBtyblaqVT6S3rrhM7udJksoxIrnYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IMawrbcCFolUvYBICjbT9LtwkZSRpJykOitxWM6HRBUDmYtW/HeD5PoAeJzT/8owRADgZyc6vOwxsGNdWPiZKzUFwRUNrtPiF/UAO1pPBwTlLkJoRz2Y9BoQl0FbxOaNpZOKr+J0mBL196cGh6/bYzjtTFYSQ7nw4lqNBGnZeQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jS+ilNGd; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734121269; x=1765657269;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=E3bOxijDc+kqtfBtyblaqVT6S3rrhM7udJksoxIrnYc=;
-  b=jS+ilNGdUfq+0AFck7JTRQb678vlErKSUp3+vpJuKt1pA7Y9Krovv8Zc
-   pZtZgkRCPlnE1Q7WQ10p9L6KOPnVlYdMmnD5NRSZIJaJ+dnVLGj60BQrU
-   9ul4DeQ8Bp7G8uI5bTA7n6JaOBHfXprlVLcDijH4VTIEzaxT1girfUFTj
-   Vd7M8EbhVwNBLwIZ6Bg21IoyXFeVz2kB+oN7/u5q+SvVDFrHhDs4rtdZr
-   v1dnCxaReRhanbhJKzWnKyo6qJCjqHns8VCsXfn2VNkP9v3qvoqI5Xoqg
-   pgAz0CFlD30bT1aHQmXn9GjzmluvA4LLJipKH3YeW1YcuA/p5KFuMStQw
-   w==;
-X-CSE-ConnectionGUID: 25TYSjPeQIS6w25xqfxO3w==
-X-CSE-MsgGUID: s0CkCpkWRsyxY7TtUUtKiA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="34723734"
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="34723734"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 12:21:09 -0800
-X-CSE-ConnectionGUID: fi9u+KgfRCKZfVixy+NTzQ==
-X-CSE-MsgGUID: wwcO/nNzRlel1ew0TLPPSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="96852210"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 12:21:08 -0800
-Received: from [10.246.136.4] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.4])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 76A8420B5713;
-	Fri, 13 Dec 2024 12:21:07 -0800 (PST)
-Message-ID: <219e5f79-d2c2-45df-9298-142597ebb404@linux.intel.com>
-Date: Fri, 13 Dec 2024 15:21:06 -0500
+	s=arc-20240116; t=1734121731; c=relaxed/simple;
+	bh=5bn8oXNQA2053l7zQok4dmxpsp3aILhYx8v20d7OHts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmnY5jyWKrhPsbc/tErS6mlCVHIjjzosb7zP6IGLZa7Btb2ECqwmyUsqnlH7hdkV9U4Rieh6IGUt0qYylsMlAJONPtBvd69rECF+ZA+8wf10KE9ZuUk7Q3+QnvCbRUVTdWHWLrP8nzF9fr9SS/7mUOM8UWedXEK2QcmHAXSIkaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtgjQxZH; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-467a1ee7ff2so14562101cf.0;
+        Fri, 13 Dec 2024 12:28:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734121729; x=1734726529; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oy+g6CCR8H9z+qQ9IKAP5iLictR2vzTnBiPMNSCfde4=;
+        b=MtgjQxZHzxg9rWflg3Btj+Un26/j+wxaShGxKMA7AiG23Peeq+oH4hxuramJZsnvoC
+         kLVF9DHop9wkujR+xKdFMFbtIjadaeBRJLbLm3dUHuQWhtn0QZyJvtTNJ7vUQACv63dj
+         03vAsbfqfAf7u4j2wqsk61LuVp+tG/OPJb9XRDLPMZ9rBVI9VFP+fNBVbSIcUYQsjhIX
+         C2yle+ui5YPn6p/sodBxnLzkR9xvgKY4b+FASQ6H6xwr9p8axFS35incwBFNUm/6TvBW
+         SWrik3/XFHqMy1Cl9NL38dVu9ElABFKAi1cd7DSEDj9e8oug/D+7ONOY84gTX04DpFv7
+         pXLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734121729; x=1734726529;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oy+g6CCR8H9z+qQ9IKAP5iLictR2vzTnBiPMNSCfde4=;
+        b=tbkWlBF1XJw7kDQbLbqFwuDcFrx/sua6dcetkjZW5kWkHlzmg+3v16zRdFAmfP63js
+         keDzaVrrKnNo+O4ykJXTh3mG/Z4kbG8HxjcT/djO642O3oYUqgxTqoGpr4c2AjdZ4fQw
+         OcXvhU9Gzc377BlMGE10jE2bb1ikLLS9X/zw0jTTHNe9jgm2G3M7I/BVyNBc04wtkCpz
+         XhPhy46gJhyK1E2I3TvVqvNZNFuhbWUNpE5D9uxtwiCGL7dyLFO+NI8pjIYMzXEXPNze
+         dl8DONnvh0Hn1MmhpJxF8UHIqOy/4+2tC0nMFIlrASkCBDodsTLEsnypJJWaH9Kxe2kz
+         6JeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqLBRDLPhffOFojkuxzmTEeR1TnxxpMBCadcnJLAQ7DgP/D2wb9V8nbTKyyOCr9fhyYt++@vger.kernel.org, AJvYcCUvG+zzN5sqW2zAHOb70GMJjqHul6mUBwBlhvUK+OAkbSMQUi2CU56IxoFKxZqkIaCGD9qGByJiBxAYBbO1@vger.kernel.org, AJvYcCVRUZwv7XH4bS69CpC0iC/Agf/J6wTrpm0xE7W2ra5yh72oSbax/np9LZVqZ5Lfcj7DL75H4C5k7+nboBeQCg==@vger.kernel.org, AJvYcCXTDrGsXZMVjWs1Q/FDf+p8m453qmMSp3gsxIxaECX7aovOayf9FNkhbA0qZev4R0eJPPCXHzG1N8qt@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOZuRfXijkG6n7oIywXvaLpmbnNiUmAFi/+AQoRPP0iOyebgdk
+	2gjWk+b8REPdEBmju4OD7Wlgsz2x4w2ZCuvWO8mwA0DU458LyL55
+X-Gm-Gg: ASbGncvvBpY81RTzGOxI6/q4KbnBOUjJ06n//BytL461/8rn0TqUQxgJMB3pMmu829V
+	F/0cOA0kybb1+lNfKtSbXTEVl+UjcHX/iuz2WsRWbBH94d94fl3+j0ueuf0Cpwe9Wm6y7qSBOJg
+	XTLj3+gQAMjKicixg5T6ueJSqPKyPMK2sTscpknVJ7HsuaQTwbEHLY7fkOv38QUiqE3e7Cv3aLj
+	ayXBkecq/68vD44XBVa+u1L0FPVmDlUWylByhWPJby9nqo9y45X7fdDpkDTKsOGqiyMgsaLDh98
+	Fn7RdY8VM8U3IvKh8uXes8+iWLrdHjNZNmncNZc9pIdbRV4=
+X-Google-Smtp-Source: AGHT+IE+typyqa+c+sehJ31gByo0JHXafJZohfOiskIhz13g3nXxbmg6ccM58eE7yA0wkS9fbfPtVQ==
+X-Received: by 2002:a05:622a:11d5:b0:467:6508:2385 with SMTP id d75a77b69052e-467a5829f17mr76237551cf.34.1734121728767;
+        Fri, 13 Dec 2024 12:28:48 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467b2cc278dsm1297491cf.48.2024.12.13.12.28.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 12:28:48 -0800 (PST)
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfauth.phl.internal (Postfix) with ESMTP id B8C611200066;
+	Fri, 13 Dec 2024 15:28:47 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Fri, 13 Dec 2024 15:28:47 -0500
+X-ME-Sender: <xms:_5hcZ52D0Txfq3afYHx_FbgTtmEk_XFYGdsCxZrFemGViQYgimNBIw>
+    <xme:_5hcZwE0JuQpAx-sNtF1T4lNVXCTxpu8QQK39LNMwvRar7kPxKYKGILxZCLuwVeiw
+    JqiJqyI3iHFHYZ3VA>
+X-ME-Received: <xmr:_5hcZ55iST0Ld5UtgJO19PFmYPPES1IEZQ5fvzsB0A8k-EhTnaQH_VgICyoU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeejgddufeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpefftdeihfeigedtvdeuueffieetvedtgeejuefh
+    hffgudfgfeeggfeftdeigeehvdenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvpdhnsggprhgtphhtthhopeehjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    eprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheprhhushhtqdhf
+    ohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgtuh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
+    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhgthh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehllhhvmheslhhishhtshdr
+    lhhinhhugidruggvvhdprhgtphhtthhopehlkhhmmheslhhishhtshdrlhhinhhugidrug
+    gvvhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegr
+    lhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:_5hcZ21dZDlSFPHhJ-hR_xqZ1E0rep-r4WrXiwUQyM1nizooQS9AnA>
+    <xmx:_5hcZ8F5a37Iksgu8azbe4LtJh86oPlDtiIZrtuMnU4PwfLQHgkdaA>
+    <xmx:_5hcZ3_Z-H-jUwynNjV6TS1Q48CIKGofI_-xcmhDLwS-hAy2MJ1wxA>
+    <xmx:_5hcZ5lGDiaKlmxar7Ng2QGY3xkyj4bsqNu3LdLxBbywFujFVq5mLg>
+    <xmx:_5hcZwFSPtMAKsGOW-8Vmvi_oCQ7KHZB-ZN7yeYoB03uVjiO-lIrMZ-I>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 13 Dec 2024 15:28:45 -0500 (EST)
+Date: Fri, 13 Dec 2024 12:28:45 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, lkmm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com,
+ Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,	Albert Ou <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org
+Subject: Re: [RFC v2 02/13] rust: sync: Add basic atomic operation mapping
+ framework
+Message-ID: <Z1yY_Yr0B6KpWLmJ@tardis.local>
+References: <20241101060237.1185533-1-boqun.feng@gmail.com>
+ <20241101060237.1185533-3-boqun.feng@gmail.com>
+ <CAH5fLghYjcb-mpR_rr2aC_W8rRb6g8jCFxgky7iEqVgmpHjf=Q@mail.gmail.com>
+ <Z1sYNOYJPzQmJXn6@boqun-archlinux>
+ <CAH5fLgidmY7FtKLKR-Yxb6U-mQvsyatGRToqSHHRACfTdiAtUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf script: Fix output type for dynamically allocated
- core PMU's
-To: Thomas Falcon <thomas.falcon@intel.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com
-Cc: ravi.bangoria@amd.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241213201109.630658-1-thomas.falcon@intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20241213201109.630658-1-thomas.falcon@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH5fLgidmY7FtKLKR-Yxb6U-mQvsyatGRToqSHHRACfTdiAtUA@mail.gmail.com>
 
+On Fri, Dec 13, 2024 at 03:37:13PM +0100, Alice Ryhl wrote:
+[...]
+> > > > @@ -0,0 +1,19 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +
+> > > > +//! Atomic primitives.
+> > > > +//!
+> > > > +//! These primitives have the same semantics as their C counterparts: and the precise definitions of
+> > > > +//! semantics can be found at [`LKMM`]. Note that Linux Kernel Memory (Consistency) Model is the
+> > > > +//! only model for Rust code in kernel, and Rust's own atomics should be avoided.
+> > > > +//!
+> > > > +//! # Data races
+> > > > +//!
+> > > > +//! [`LKMM`] atomics have different rules regarding data races:
+> > > > +//!
+> > > > +//! - A normal read doesn't data-race with an atomic read.
+> > >
+> > > This was fixed:
+> > > https://github.com/rust-lang/rust/pull/128778
+> > >
+> >
+> > Yeah, I was aware of that effort, and good to know it's finally merged.
+> > Thanks!
+> >
+> > This will be in 1.83, right? If so, we will still need the above until
+> > we bump up the minimal rustc version to 1.83 or beyond. I will handle
+> > this properly with the minimal rustc 1.83 (i.e. if this goes in first,
+> > will send a follow up patch). I will also mention in the above that this
+> > has been changed in 1.83.
+> >
+> > This also reminds that I should add that LKMM allows mixed-size atomic
+> > accesses (as non data race), I will add that in the version.
+> 
+> This is just documentation. I don't think you need to do any special
 
+The PR also contained miri changes, so the same code will be reported
+differently by miri. That was what I was thinking of. However, now think
+about it, we are not going to use Rust atomics, so this difference
+shouldn't affect us. Therefore I agree, I will drop this.
 
-On 2024-12-13 3:11 p.m., Thomas Falcon wrote:
-> perf script output may show different fields on different core PMU's
-> that exist on heterogeneous platforms. For example,
+> MSRV handling.
 > 
-> perf record -e "{cpu_core/mem-loads-aux/,cpu_core/event=0xcd,\
-> umask=0x01,ldlat=3,name=MEM_UOPS_RETIRED.LOAD_LATENCY/}:upp"\
-> -c10000 -W -d -a -- sleep 1
+> > > > +mod private {
+> > > > +    /// Sealed trait marker to disable customized impls on atomic implementation traits.
+> > > > +    pub trait Sealed {}
+> > > > +}
+> > >
+> > > Just make the trait unsafe?
+> > >
+> >
+> > And make the safety requirement of `AtomicImpl` something like:
+> >
+> >     The type must have the implementation for atomic operations.
+> >
+> > ? Hmm.. I don't think that's a good safety requirement TBH. Actually the
+> > reason that we need to restrict `AtomicImpl` types is more of an
+> > iplementation issue (the implementation need to be done if we want to
+> > support i8 or i16) rather than safety issue. So a sealed trait is proper
+> > here. Does this make sense? Or am I missing something?
 > 
-> perf script:
+> Where is the AtomicImpl trait used?
 > 
-> chromium-browse   46572 [002] 544966.882384:      10000 	cpu_core/MEM_UOPS_RETIRED.LOAD_LATENCY/: 7ffdf1391b0c     10268100142 \
->  |OP LOAD|LVL L1 hit|SNP None|TLB L1 or L2 hit|LCK No|BLK    N/A    5   7    0   7fad7c47425d [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
-> 
-> perf record -e cpu_atom/event=0xd0,umask=0x05,ldlat=3,\
-> name=MEM_UOPS_RETIRED.LOAD_LATENCY/upp -c10000 -W -d -a -- sleep 1
-> 
-> perf script:
-> 
-> gnome-control-c  534224 [023] 544951.816227:      10000 cpu_atom/MEM_UOPS_RETIRED.LOAD_LATENCY/:   7f0aaaa0aae0  [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
-> 
-> Some fields, such as data_src, are not included by default.
-> 
-> The cause is that while one PMU may be assigned a type such as
-> PERF_TYPE_RAW, other core PMU's are dynamically allocated at boot time.
-> If this value does not match an existing PERF_TYPE_X value,
-> output_type(perf_event_attr.type) will return OUTPUT_TYPE_OTHER.
-> 
-> Instead search for a core PMU with a matching perf_event_attr type
-> and, if one is found, return PERF_TYPE_RAW to match output of other
-> core PMU's.
-> 
-> Suggested-by: Kan Liang <kan.liang@intel.com>
-> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
-> ---
-> v2: restrict pmu lookup to platforms with more than one core pmu
-> ---
->  tools/perf/builtin-script.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index 9e47905f75a6..459794c737ce 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -384,6 +384,18 @@ static int evsel_script__fprintf(struct evsel_script *es, FILE *fp)
->  		       st.st_size / 1024.0 / 1024.0, es->filename, es->samples);
->  }
->  
-> +static bool output_type_many_core_pmus(unsigned int type)
-> +{
-> +	struct perf_pmu *pmu;
-> +
-> +	if (perf_pmus__num_core_pmus() > 1) {
-> +		pmu = perf_pmus__find_by_type(type);
-> +		if (pmu && pmu->is_core)> +			return true;
 
-I think it should be good enough to search the core_pmus.
-	list_for_each_entry(pmu, &core_pmus, list) {
-		if (pmu->type == type)
-			return true;
-	}
+It's used when `impl`ing an `AllowAtomic` type, `AllowAtomic` has an
+associate type named `Repr` which must be an `AtomicImpl`, i.e. each
+type that has atomic operation support must select the underlying
+implementation types (currently we only have i32 and i64 from C side
+APIs). Using a sealed trait is appropriate in this case, because unless
+you are adding atomic support for different sizes of data, you shouldn't
+impl `AtomicImpl`.
 
-Thanks,
-Kan
-> +	}
-> +	return false;
-> +}
-> +
->  static inline int output_type(unsigned int type)
->  {
->  	switch (type) {
-> @@ -394,6 +406,9 @@ static inline int output_type(unsigned int type)
->  			return type;
->  	}
->  
-> +	if (output_type_many_core_pmus(type))
-> +		return PERF_TYPE_RAW;
-> +
->  	return OUTPUT_TYPE_OTHER;
->  }
->  
+Regards,
+Boqun
 
+> Alice
 
