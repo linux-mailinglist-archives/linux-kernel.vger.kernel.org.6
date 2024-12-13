@@ -1,141 +1,118 @@
-Return-Path: <linux-kernel+bounces-445526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433F59F174D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:14:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994D99F1754
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:19:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 635631613F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:14:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC6F164127
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E6219007F;
-	Fri, 13 Dec 2024 20:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hnh+Iyph"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C8619146E;
+	Fri, 13 Dec 2024 20:19:40 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F102818FDBD
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 20:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F148018F2FB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 20:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734120841; cv=none; b=Sw5Xjk6n+n3PNS5Hy+wRN8Kr1jg/hnm1E4DmKQSssc0WW1IoR8TTuikZq/eLHsrKGV8xcASrGbqiPuKDFaWl8Nule0d551hj0i5F35OUWiELPaAfPIy5zkOVb4gkIf7+8SH1+9GMm1qjz96Wd8yPXWMxDJ4IO8CXcgo8mFmrYSs=
+	t=1734121180; cv=none; b=i7XDRzycT7XvyshCoLQA/gYPUBmDuEwCAV6rSQfbrqO9dzMAIJO39IzNUP+xEWNF191KCxE+7ZzdatAr6BJ8JILXlqSUu0gzAbzOYe6180tsJ8ZHnSYhl9/t6LcQmJfHvZNsluqrHfBe2iWY63OW5y0KiLywKLym2i4JpHoyFkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734120841; c=relaxed/simple;
-	bh=f2jyOe+lg8F1rPmqbu6chfwX4anYDD0i5ra/as4BSA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FOD3RjXISbJf3VujfN1K2QVRVNeXqX35spKe7yABpMyQcaf+LkyR7cuMlWurRI2r0SVu4du/FEQWxU/82B6BBJwsM8Q2hqgWjQyJDEVWXNSVQPXnW1tgKq/EC3IkyY8SHpU8szfc9/td2ibpoYRbiJwZTOxVZsbpAPuuyAqZIX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hnh+Iyph; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7fc93152edcso1775736a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:13:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734120838; x=1734725638; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EA2vp+0Q4hjfylA+aN4ZK1qWmF0cLRB2spMI6XM8wUI=;
-        b=hnh+IyphpXPI/UfAnVsow7vFiYny3cbbkGxQnLbht3pRATm31pL7PJCbHV2kIajQ1B
-         mLLNxjG/AihUqqAabp/naZqykHbM25RTv4WtWXQK1aj6J0T3B0y9o4TtAprV5rxnX3vC
-         n7vXlVW71bAaK+UKh7dpjPJjR+FcAaIhID6XA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734120838; x=1734725638;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EA2vp+0Q4hjfylA+aN4ZK1qWmF0cLRB2spMI6XM8wUI=;
-        b=EhAukY5AmKmyGSg751VqmXNnXjA03YLsnKD37ZFNZ39bMeHEBUrl57BLIZYCeOEDNN
-         gQSKVsUjkUqHHSxiVOWgrpxL+OFb+lL5ND0ecW5ox+Iq/OyialUZG5RX/cEimhRCgVFx
-         PUHz5QGTxWYJQKgopGfasQjzQoehiXopili7F9Gg0GQjfRmk3GXQKSlyieaq5Y80QP25
-         6K9xGXKoN8jBHjJ+JXjRYU2duq/y7tpOv/hc9z7LrshQWistgdN1MPhwZFvWcZCeWXcs
-         mqEs5/hlapkUCPZqISIUMt3O2yjMhN79FxdxnFFxbOL53GMbKL0AUNJmJ67fl3nFSIlW
-         wa8w==
-X-Forwarded-Encrypted: i=1; AJvYcCV2ff5XgRHZ/A1jF0eUIVK/4mmKsX9lzxsDlbeMYMXocMRAA5OJe+MzgWalNeHIex6LfkFtaxB+ieSihO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwptP4h2YdDd1/vTKeOyfV+A5HY6OpJh/Nmby8qGHPpU8lOFGJ5
-	52d6zg/p1S4lyQ8mPAfylEFm+/vjQymfcU5vpB1Y9ekCMaI/7Xjze+CzpCBBug==
-X-Gm-Gg: ASbGncuUbaG4r8XCKPLLCOSzQgbqIi5n9KzdQuhUSAO3TdbZF2Kp5y4oxjnsZJDKJA5
-	ON2ue9ih6FgE5mWTQzolaJhKOwsNsywiKRxL5e0CHcmv0EwF+R2Apew+T5Ng5PLuRoiebHXuJuy
-	GOKUZLDXvAltC6PXQNygI+VKon3ynZDQI6v8Yeo26PlAJCGhNcCV6Ft8fKa0t2ZhCfgXxZ3ETXr
-	KGNidGDNEPx8ZrYhW8ITSNzEhnph0T1+It56Y9lmm2G+V+anS/iRYL/XAMb0as6PtxW1Iknc1ZN
-	qebjR1f0NvQJyYB/tw==
-X-Google-Smtp-Source: AGHT+IE2v3SR/KU8sT1pXTDInylE09uN/fwe8e1DJVZHqAxSyKPgCbB080FVuQIdjxru6cGbzDWahg==
-X-Received: by 2002:a17:90b:1c03:b0:2ee:9229:e4bd with SMTP id 98e67ed59e1d1-2f29153af6bmr5376411a91.2.1734120838389;
-        Fri, 13 Dec 2024 12:13:58 -0800 (PST)
-Received: from localhost ([2a00:79e0:2e14:7:356a:489a:83c:f7d9])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2f2a1e9c561sm177437a91.14.2024.12.13.12.13.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 12:13:58 -0800 (PST)
-Date: Fri, 13 Dec 2024 12:13:56 -0800
-From: Brian Norris <briannorris@chromium.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kunit-dev@googlegroups.com, David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 3/3] drivers: base: test: Add ...find_device_by...(...
- NULL) tests
-Message-ID: <Z1yVhPJjxKhsc7VE@google.com>
-References: <20241212003201.2098123-1-briannorris@chromium.org>
- <20241212003201.2098123-4-briannorris@chromium.org>
- <20241213-athletic-strong-bumblebee-bfabf1@houat>
+	s=arc-20240116; t=1734121180; c=relaxed/simple;
+	bh=w0a5QAnr+DawvGVOT19kGK8AYML+YC9VmvysdHeuvX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zd4X7eg+7jktLrqc2NEnKAvCXcAYVAkC5rFEiq0g4VKmVKXpA2medS7sPCXHM2Q33svtSnwdAd+btmuorgFdH941v9M3/CsSB5CSEo0OT6Opb8WFQV2lnPfZxumBZ4d7MXQX6kITYECaq+CmHLE12HEJBGLCqsp4phdLu8kXoRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9983CC4CED0;
+	Fri, 13 Dec 2024 20:19:38 +0000 (UTC)
+Date: Fri, 13 Dec 2024 15:20:04 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Michal Simek <monstr@monstr.eu>, linux-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Subject: Re: [for-linus][PATCH 3/3] ftrace/microblaze: Do not find
+ "true_parent" for return address
+Message-ID: <20241213152004.1e74ca81@gandalf.local.home>
+In-Reply-To: <20241213172947.GJ3387508@ZenIV>
+References: <20241213152647.904822987@goodmis.org>
+	<20241213152704.448212590@goodmis.org>
+	<eb7933ae-3462-49de-b76d-16ca652d714e@monstr.eu>
+	<20241213172947.GJ3387508@ZenIV>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213-athletic-strong-bumblebee-bfabf1@houat>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Maxime,
+On Fri, 13 Dec 2024 17:29:47 +0000
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-On Fri, Dec 13, 2024 at 12:59:57PM +0100, Maxime Ripard wrote:
-> On Wed, Dec 11, 2024 at 04:31:41PM -0800, Brian Norris wrote:
-> > --- a/drivers/base/test/platform-device-test.c
-> > +++ b/drivers/base/test/platform-device-test.c
-
-> > @@ -217,7 +219,45 @@ static struct kunit_suite platform_device_devm_test_suite = {
-> >  	.test_cases = platform_device_devm_tests,
-> >  };
-> >  
-> > -kunit_test_suite(platform_device_devm_test_suite);
-> > +static void platform_device_find_by_null_test(struct kunit *test)
-> > +{
-> > +	struct platform_device *pdev;
-> > +	int ret;
-> > +
-> > +	pdev = platform_device_alloc(DEVICE_NAME, PLATFORM_DEVID_NONE);
-> > +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
-> > +
-> > +	ret = platform_device_add(pdev);
-> > +	KUNIT_ASSERT_EQ(test, ret, 0);
+> On Fri, Dec 13, 2024 at 04:39:29PM +0100, Michal Simek wrote:
 > 
-> I *think* you have a bug there: if platform_device_add fails,
-> KUNIT_ASSERT will stop the test execution and thus you will leak the
-> platform_device you just allocated.
+> > > diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+> > > index 74c353164ca1..a75d107a45f8 100644
+> > > --- a/kernel/trace/trace_functions.c
+> > > +++ b/kernel/trace/trace_functions.c
+> > > @@ -176,7 +176,8 @@ static void function_trace_start(struct trace_array *tr)
+> > >   	tracing_reset_online_cpus(&tr->array_buffer);
+> > >   }
+> > > -#ifdef CONFIG_FUNCTION_GRAPH_TRACER
+> > > +/* Microblaze currently doesn't implement kernel_stack_pointer() */  
+> > 
+> > Does it mean that this function should depends on
+> > ARCH_HAS_CURRENT_STACK_POINTER instead of name the architecture?  
 > 
-> You need to call platform_device_put in such a case, but if
-> platform_device_add succeeds then you need to call
-> platform_device_unregister instead.
+> Nope.  ARCH_HAS_CURRENT_STACK_POINTER == "there's a current_stack_pointer variable"
+> (presumably something like register unsigned long current_stack_pointer asm("r1");
+> in case of microblaze).  kernel_stack_pointer() is "here's pt_regs, give me the
+> kernel stack pointer stored in it (assuming it _is_ stored there)".
+> 
+> And what ftrace code really want is "here's the structure formed by _mcount();
+> give me the kernel stack pointer at the time of _mcount() entry".  _IF_ that
+> structure is pt_regs (fairly common) and if there's kernel_stack_pointer(),
+> we get the default implementation of that helper in linux/ftrace_regs.h:
+> 
+> #define ftrace_regs_get_stack_pointer(fregs) \
+>         kernel_stack_pointer(&arch_ftrace_regs(fregs)->regs)
+> 
+> If it's not pt_regs, you are expected to define HAVE_ARCH_FTRACE_REGS, define
+> struct __arch_ftrace_regs to match whatever layout you are using and provide
+> the set of ftrace_regs_...() helpers.
+> 
+> >From my reading of your mcount.S, the layout is, indeed, different and  
+> r1 is not stored there at all - something like
+> 
+> struct __arch_ftrace_regs {
+> 	unsigned long r2, r3, r4, r6;
+> 	unsigned long r7, r8, r9, r10;
+> 	unsigned long r11, r12, r13, r14;
+> 	unsigned long r16, r17, r18, r19;
+> 	unsigned long r20, r21, r22, r23;
+> 	unsigned long r24, r25, r26, r27;
+> 	unsigned long r28, r29, r30, r31;
+> 	unsigned long r5;
+> }
+> 
+> static inline unsigned long ftrace_regs_get_stack_pointer(struct ftrace_regs *regs)
+> {
+> 	return (unsigned long)regs + sizeof(struct __arch_ftrace_regs) + 4;
+> }
 
-Hehe, well I'm imitating the existing leaks in the other tests in this
-file, then ;) But admittedly, those are a little more complex, because
-the unregistration is actually part of the test flow.
+OK, so this is still unique for Microblaze. I'll keep the patch, but fix
+the typo in the change log.
 
-> It would be better to use kunit_platform_device_alloc and
-> kunit_platform_device_add that already deal with this.
+Michal,
 
-Cool, thanks, I'll use those in v3 for my new test.
+Any objections?
 
-> The rest looks good to me, once fixed:
-> Reviewed-by: Maxime Ripard <mripard@kernel.org>
-
-Thanks for the tips and review.
-
-Brian
+-- Steve
 
