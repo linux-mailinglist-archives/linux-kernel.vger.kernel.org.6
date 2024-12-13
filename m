@@ -1,158 +1,199 @@
-Return-Path: <linux-kernel+bounces-444746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28939F0BF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:14:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2419F0C0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF8E281F94
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:14:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 086EB284E0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED691DF735;
-	Fri, 13 Dec 2024 12:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AF01DF739;
+	Fri, 13 Dec 2024 12:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="q4sPn34s";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="kh504LIt"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ni0HVaNs"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7721DF263
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734092057; cv=fail; b=kid0FStzWV8TiIRbY2HdD7koOxrA2Q2pCu0/JSeoZzaoNaUOh7qhEN4GBbBMaRPGcJnm0ku3me5Srr0P/dPNXo8EaX/2C+AqS0RFXmd1oYn+dwUJ3yPGsEp5Sww6PFVJWsLU4Y2FjRVlpGUQ4EBHZ2OXYJ6xklgLZn+gtcVgCyU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734092057; c=relaxed/simple;
-	bh=on+3kOjcl/tu3R48ep6Fp66Q8LyJDxFH/zcLNPzbXow=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FGJZTD5WjmFFxTFLdwg1AvqzKPSjglPJuxZBmf6D3fXQ+uY9pwv+h6bqr4Pq12D5Mum0ZmUGNlD6wJaVAZ5PHzfO++vMDlVmxlP/LD5yvP8F8FNJZQ07863uxZvRV0ADaBwcvdv+XcdTqqzOyrvRznbegGRTkigFMyT0DToEhJg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=q4sPn34s; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=kh504LIt; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id E862D480525;
-	Fri, 13 Dec 2024 07:14:08 -0500 (EST)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1734092048;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=on+3kOjcl/tu3R48ep6Fp66Q8LyJDxFH/zcLNPzbXow=;
- b=q4sPn34soKydu57/9MOjEXYwGdmyeJj2hCmSyqsRycrtjy3yZwIRXBe34Y97lrnBhAqrm
- J9yAY6yvZ5xLWmRBA==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1734092048;
-	cv=none; b=mCeFMKbRbWJPrZtEHGL/TRg+QOJAvmLaaQ0ncKPgHKhoJaeJ562QKEct8Xayqy2MYu9go083lqz2jj1Yd72FM/HNgPcItTiHL/mQUv27I/CxfaqmtnAcbOiRQ5LIiaPUbQM0jYSlNEYZbQGQHyzr+WYDVdE82C56dz+iTWBZlEfel9Ke+PrwbYPKgW48so3oxYnMmqpgGeNhmRl88ulY8Dl0tADvFZ+Vc/ILl+U5fDFC/1mFlb7UyB8pWyAktpfv2zvKJDfk8q2qJjQzVWSxITVqibyNZhK4y2MabECkM6749LXBfo1DqWpxDffJQsaRQSG/p1L2C6DOeISMNrEHrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1734092048; c=relaxed/simple;
-	bh=on+3kOjcl/tu3R48ep6Fp66Q8LyJDxFH/zcLNPzbXow=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=nAgS6qbKdI0yR3Gu075nKMDm1nY/aqPSU838DZqGbuK21hsThoP3rWs97j2ktbjKwY4NfeQcosTmTzsJiLzPFdV9RVQe1iuMu5F4OLzfBfF1fYd1CZV2o+zcJuqtabdy0ZJ/27wyfIAdlx0U5lfWYPufg5SLtQ6xdDJORZVKi57e6gGyyMjZSnoUgBAOZfv8BmNkojGqFIreUDvoGiX+WU82Vk61hhDtbWKPlkj4x6XFQru09xdUADM9iYmSifAO7/qkclq0mOdvUFrbd/UN6HHpHguvJlMYFwUA9LPSJIcOOpxoTn2Alw4HHRWk6fw4o86v8f8H53h7VIJXIzZPBA==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1734092048;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=on+3kOjcl/tu3R48ep6Fp66Q8LyJDxFH/zcLNPzbXow=;
- b=kh504LItE0Pj3pt4Wkqr//E6SOjF0D4S63h1tl240YyGFqwfOb48xV3OhaZ8xMxMEIMEL
- oD0H/yDDT1LT/fA/ae/hW9Y4HpdZsH+CeUAl3hmLPy/9eXPcN0fuccZjFEM1IkygQPWjQWh
- SgjClSUWvd8i3qqMFt1Vw8LomD/2/WGJSYdi0hbApWQ/dB//nA7n7pdm46JnPp07+o/T+CR
- AZmEt+tslcQrGRDtRXK13XQrZwP3UMO7M7NS/mBCSQCVKlZ1DJnWnbt3TsqcehPTDD1COfr
- Xul01E3Xe0eeh/+IQV+oO7FzcXPBymRWlCpAv/ThshpCo/AsQDw/FXGf3dZQ==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id B90A4280018;
-	Fri, 13 Dec 2024 07:14:08 -0500 (EST)
-Message-ID: <dd13efc9b3fe3e3acd599ca91b714fa92f6cb9a8.camel@sapience.com>
-Subject: Re: 6.13-rc1 graphics fail
-From: Genes Lists <lists@sapience.com>
-To: Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, 
-	rodrigo.vivi@intel.com, airlied@gmail.com, tzimmermann@suse.de, 
-	dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org
-Date: Fri, 13 Dec 2024 07:14:07 -0500
-In-Reply-To: <7db24095f935d874fae466853b0984103f97b40f.camel@sapience.com>
-References: <3b097dddd7095bccabe6791b90899c689f271a35.camel@sapience.com>
-		 <Z07Mg2_6y2MW22qV@intel.com>
-	 <7db24095f935d874fae466853b0984103f97b40f.camel@sapience.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-yjX0hr7VVXVlChB9wdQW"
-User-Agent: Evolution 3.54.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74611DF746;
+	Fri, 13 Dec 2024 12:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734092174; cv=none; b=GktsVNZuBS8WpNUwaYtsfEz3/ZnrspdEtuz9eTXdaawVb93Sensx+5VA4fmxDtWW6tADfmThkx2+LebxrvZSCkn3zKF0BTou4YznuCxrIVNqDcrvPU00s/aN2kI614bdYLmhiWTG0/VnARlvBCBPAhAVELZp+Td6KvGr9JExxjk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734092174; c=relaxed/simple;
+	bh=/xIPSZ/ZziO1VRaqjEyqpq0lSR/bhSq3vfO1oqrKSAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JrEGCUVT0Wn2Ax6gYSoH9uVvxZfkov0zaFM0RE0fOicTtjNitkwYa6ag5//iHSHK7YyhRmpUF4RY/8JA27FjtIGewzlN5nU5eQ1af9qsfoefduHjotrjFw2fPWcSMGG7548b/ULea/HvKOGNYj7yJ2dtoAXJ6XC5qiq/WKKSIsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ni0HVaNs; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30229d5b1caso15401951fa.2;
+        Fri, 13 Dec 2024 04:16:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734092171; x=1734696971; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WEzviB/INGBNIIppsw7fK4odS8Wp1IEwVFWkXeaDax4=;
+        b=Ni0HVaNsZxWH12uEuD/88YxOPFXCqYIUlmKPRDmLz6K+p1XI4sOhJvZRpuRVA/wf94
+         IMgkTwhi7TpRGesHCAdQGucx5Zj3gjV74hlllgSvevURG0f7h/AWHSFw1bXkjGNDPApM
+         cbTe/D3Uj6zu9e2DmmN+HIIoyqAvvqOgyfKa8Be0iplMoVq68sMhyD7ZoZJP3BKLQqbC
+         1xKrR0diEAIBvVjORdtYQw/hMOuZQcw1ZFSgMFsueAD3PBTupHA+BfBm45gTgtJAG5rO
+         itfxH/5IAkpcGqQpCKFuHPMHmSVX8mkoUms3b0Iqaapl5fbYd4zc8sFdgGTMEIezUVfH
+         UwoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734092171; x=1734696971;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WEzviB/INGBNIIppsw7fK4odS8Wp1IEwVFWkXeaDax4=;
+        b=I85BgNiSJKWz/DiY4nqgIiLqqcwMGe5etnag8D8QMtoHZaJ3cLKFp5y0FiEjWf5LiU
+         8MLCV5SrfakIiE4UYzB43bm5HE4acYKVlanLRA/V6qGGIv7PEL4T9lmTgmyVB5OrClLb
+         qSJVabyKdxvbKja4MIcNAJlf12Xlax35WSjnT75K1wGHRt67lPEIwrXkZ7FIqs6Qiwkr
+         B+LwrgwMZ/b/UuxUWbIiZLlgKLgYatYH9jjicUo7cyy+5lIqODH7nJX5brFd7pQuGrmC
+         1AcrfBhxQrfvvzqAbyGL0ldgMgkyT9kRP879HksCTxXxOMlRbwzvK2cowufxiEKE/Vsa
+         3/9A==
+X-Forwarded-Encrypted: i=1; AJvYcCW7pKHFgInRCC+3LJF4HmsZd38bAPh4T2muuJIrlopKprcKKag1fWEl2coy/o+p9Z6UeYT24y/PtFvINr8=@vger.kernel.org, AJvYcCWnZis08F7nu3cPRoDj5Cos+nUFxzOH9LgCzW/DTzaYkMu9Baetn7LlyKdSePVtSncsELX4R5q1BkRvMg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+FbLl6JOneqKIrBDbHrL8dLcmt5iiBNRHivAkE+looC3qmQt2
+	9ygCnvAvBe1ymCX/pX9iM7DgtnLvUSzSsI+2ykT0sloafLw2vZX1
+X-Gm-Gg: ASbGncvOQerjux6octZkRZKZNIqNNCIPFlcGM8LM0IgzEV5Y2afRfBDcN4NxLQhfRZU
+	ReMrxYrl4TyRZaYG8PLlLy5fcUsJU1FPkWyqmsJXVuBcapPy09ga/ilBpKwnom4wNFzoAfc7Hso
+	otFcIh9jS+9DOZ+8FthYDYC44vdbAs25+DmoZf+pUtX3AmI+9ENG35F+AOjBVLm/ZZYh0/xMuvG
+	2VifNcEB+RPJs8I7q2n0dyHk3146PuJdwlVGLnbzWHGz5HLmdMghdrYhywEvDPFWyXj9Q==
+X-Google-Smtp-Source: AGHT+IG9wmR1HdLUIscxgI933hBHpEJdVTgSh7mkcbgYu9IHF6Bn9g6wfE9etzLi1BXmv851ierEKA==
+X-Received: by 2002:a05:6512:1114:b0:53e:391c:e983 with SMTP id 2adb3069b0e04-5408ad81d0cmr729141e87.3.1734092170743;
+        Fri, 13 Dec 2024 04:16:10 -0800 (PST)
+Received: from [172.16.183.207] ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54020269fdasm1518740e87.182.2024.12.13.04.16.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 04:16:09 -0800 (PST)
+Message-ID: <a21531a7-13ae-45f5-a60d-dd80b3ef9834@gmail.com>
+Date: Fri, 13 Dec 2024 14:16:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] gpio: omap: save two lines by using
+ devm_clk_get_prepared()
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Grygorii Strashko <grygorii.strashko@ti.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Tony Lindgren <tony@atomide.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20241203164143.29852-1-brgl@bgdev.pl>
+ <20241203164143.29852-2-brgl@bgdev.pl>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241203164143.29852-2-brgl@bgdev.pl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi deeeee Ho peeps!
+
+On 03/12/2024 18:41, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> We can drop the else branch if we get the clock already prepared using
+> the relevant helper.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+
+Booting a beaglebone black with the linux-next from Today fails 
+(next-20241213). Enabling earlycon + debug yields below splat to be 
+printed to the console:
+
+[    2.628019] ------------[ cut here ]------------
+[    2.632793] WARNING: CPU: 0 PID: 34 at drivers/clk/clk.c:1254 
+clk_core_enable+0xb4/0x1b0
+[    2.641156] Enabling unprepared l4-wkup-clkctrl:0008:18
+[    2.646530] Modules linked in:
+[    2.649688] CPU: 0 UID: 0 PID: 34 Comm: kworker/u4:3 Not tainted 
+6.13.0-rc2-next-20241213-00002-gf2d4b29c8330 #15
+[    2.660256] Hardware name: Generic AM33XX (Flattened Device Tree)
+[    2.666531] Workqueue: events_unbound deferred_probe_work_func
+[    2.672553] Call trace:
+[    2.672570]  unwind_backtrace from show_stack+0x10/0x14
+[    2.680578]  show_stack from dump_stack_lvl+0x50/0x64
+[  7 2.685788]  dump_stack_lvl from __warn+0xc0/0x130
+[    2.690734]  __warn from warn_slowpath_fmt+0x80/0x1a0
+[    2.695944]  warn_slowpath_fmt from clk_core_enable+0xb4/0x1b0
+[    2.701963]  clk_core_enable from clk_core_enable_lock+0x18/0x2c
+[    2.708159]  clk_core_enable_lock from 
+sysc_enable_opt_clocks.part.9+0x28/0x84
+[    2.715611]  sysc_enable_opt_clocks.part.9 from 
+sysc_enable_module+0x254/0x2dc
+[    2.723052]  sysc_enable_module from sysc_runtime_resume+0x17c/0x1c0
+[    2.729599]  sysc_runtime_resume from __rpm_callback+0x4c/0x130
+[    2.735709]  __rpm_callback from rpm_callback+0x50/0x54
+[    2.741096]  rpm_callback from rpm_resume+0x614/0x660
+[    2.746304]  rpm_resume from __pm_runtime_resume+0x4c/0x64
+[    2.751960]  __pm_runtime_resume from __device_attach+0xd0/0x188
+[    2.758155]  __device_attach from bus_probe_device+0x88/0x8c
+or_thread from kthread+0x188/0x24c
+[    2.789476]  kthread from ret_from_fork+0x14/0x20
+[    2.794327] Exception stack(0xe0091fb0 to 0xe0091ff8)
+[    2.799528] 1fa0:                                     00000000 
+00000000 00000000 00000000
+[    2.807947] 1fc0: 00000000 00000000 00000000 00000000 00000000 
+00000000 00000000 00000000
+[    2.816365] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    2.823173] ---[ end trace 0000000000000000 ]---
+[    2.828070] ti-sysc 44e07000.target-module: Optional clocks failed 
+for enable: -108
+[    2.835998] ------------[ cut here ]------------
+
+reverting
+b7bbaff8c1bc ("gpio: omap: save two lines by using devm_clk_get_prepared()")
+
+fixes the boot for me.
 
 
---=-yjX0hr7VVXVlChB9wdQW
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+>   drivers/gpio/gpio-omap.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index 54c4bfdccf568..57d299d5d0b16 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -1449,13 +1449,11 @@ static int omap_gpio_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	if (bank->dbck_flag) {
+> -		bank->dbck = devm_clk_get(dev, "dbclk");
+> +		bank->dbck = devm_clk_get_prepared(dev, "dbclk");
+>   		if (IS_ERR(bank->dbck)) {
+>   			dev_err(dev,
+>   				"Could not get gpio dbck. Disable debounce\n");
+>   			bank->dbck_flag = false;
+> -		} else {
+> -			clk_prepare(bank->dbck);
+>   		}
+>   	}
+>   
 
-On Tue, 2024-12-03 at 06:34 -0500, Genes Lists wrote:
-> On Tue, 2024-12-03 at 11:16 +0200, Ville Syrj=C3=A4l=C3=A4 wrote:
-> > > ...
->=20
-> > Probably https://gitlab.freedesktop.org/drm/i915/kernel/-
-> > /issues/13057
-> >=20
-> Very helpful.
->=20
-> I tested your patch set on Linus' tree commit
-> cdd30ebb1b9f36159d66f088b61aee264e649d7a :
->=20
-> =C2=A0 =C2=A0=C2=A0https://patchwork.freedesktop.org/series/141911/
->=20
-> and confirm that this fixes the problem=C2=A0
->=20
-> Thank you.
->=20
->=20
+I can only spot a minor functional change. The code prior this commit 
+does not check the result of clk_prepare(), and does neither set 
+bank->dbck_flag = false; nor call clk_put();
 
-Just a CC to regressions list for tracking.
+Other than that, timing is likely to be changed. Not sure what is the 
+thing here.
 
-First report here:=C2=A0
-https://lore.kernel.org/lkml/3b097dddd7095bccabe6791b90899c689f271a35.c
-amel@sapience.com/
-
-Fixed by patch set as noted above, but not yet in mainline or linux-
-next.
-
-Thank you again Ville for quickly coming up with a fix.
-
---=20
-Gene
+Yours,
+	-- Matti
 
 
---=-yjX0hr7VVXVlChB9wdQW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ1wlEAAKCRA5BdB0L6Ze
-2191AP9B/XFuJzoozY9SuPe5rgJMEoYgdU1lPwVq7uI22li+UAEAtoZSAumqaeVA
-FYnoRJYhHfK4M/sUzUz5a0qaLhX4Egw=
-=3Hbb
------END PGP SIGNATURE-----
-
---=-yjX0hr7VVXVlChB9wdQW--
 
