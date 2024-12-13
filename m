@@ -1,101 +1,176 @@
-Return-Path: <linux-kernel+bounces-445128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158469F11BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:04:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8C29F11B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC611651B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FF0164E9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB93D1E3786;
-	Fri, 13 Dec 2024 16:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912311E3791;
+	Fri, 13 Dec 2024 16:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3VKsz5b"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MKOQFssY"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BF915098F;
-	Fri, 13 Dec 2024 16:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46B31E0B75;
+	Fri, 13 Dec 2024 16:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734105842; cv=none; b=ZrOqRY04HoiHDeXFUM573HRd9D2mXQJF4zo24UbfyGG6n7ha6WMEflg0qJ0Dhg+tt+baaeiBe6C5N72RZR1A2FeWZHz+87DaYrbK5FDkSGKjUQCvoCdq1PGHtccoH1OOrUIZU0dc4MRjmlSJAIT1eOc7OhK3O2Oizlkl4HpwQHg=
+	t=1734105830; cv=none; b=IFMkbSnKh9E0hkYsY1lBPBQvToRooDD+9AluSzADDmvZ1M9InG+HmCRUr2sEInPlrZcnxOhpzhxtcB9rkTD5r86laiNtBEG2Jm2z9dMWBKe0YmzzmCX/O2XhJCeSE3T8mQiW1AP9ZczwCMJSZU2sfnIzUTaGCUnLixxWrYyz3Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734105842; c=relaxed/simple;
-	bh=tWu4Le/UEszUkikfuTPw3UilP2yefN9WiatCnmqPaTI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ulelo5wJWF5v2ZF6R/dP+c68VbAjHwFFgxUmJvoisGyaNs3qV+eqW4MOFlaXMLYeiQc30hM4YsiBuUf0Np3tGcdPkPgpIswUJ/dl/AY5XRDzlztkzpsrSxQgK7Ht54oNsF+Q1ApuyjXusbFfTL2KitGjwai63RHEALT66AprTaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3VKsz5b; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a81324bbdcso14120825ab.1;
-        Fri, 13 Dec 2024 08:04:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734105840; x=1734710640; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4MyhE6p4xaQ3O2A7awygF6dZuTWlyJtp/nrxGTLFcJo=;
-        b=G3VKsz5bm+37qNusNMhsnQgc9XSR5qVt1toYZXRUhCkxiFwFty7GoZpJYp8KyeHqtK
-         MsdDA3wiUwwdYfHS2QsV9SrujQwZES3reKEjIy8JjtUwAMAKwviYp8YnkmA7j18nQdzR
-         IDqL/kF3um9rgjF1YNS2mnsuGUheO+BuV8GzydRVdvRv/dkhvR9wfE4aXFt2/PoPdGNM
-         q+Le6DoXiyS7azf1ALp5op/dUMuybRT1XGTlOcWHoEgeiHIqRvpeg1nKVUu3rIWIMb2V
-         U96NgHjQvQYbrdvkRC4KOh0mpiDX2u0lHclfoUF0QT3pNl7hi1BwQByBHUQ0R/PIbNsv
-         rJ/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734105840; x=1734710640;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4MyhE6p4xaQ3O2A7awygF6dZuTWlyJtp/nrxGTLFcJo=;
-        b=PEeDPBzSmiX9CBCa1jsKPGCqlPM2I/GN6yKO3Tz0URJL9Dhfo4dWUVevqiI68B2JKa
-         Gsp/+eq8noEQbXdp0h75VCk0b4S7uoisvYMGzNt3ef3PFxI2h46Z8XSlRRC9QHEe072o
-         LbHCm42B+45JVLKFD9QMS2u3lVlEc5fZH3vt0Cd/U6lfz9s/E5FT0po2Y624upxbZ7xD
-         JlEufBsceee66qG8SSCPaAw9Bh5Ss4FLKZjuPDpR5ykDpnQ2JxpbGllXNZROMiiaiYoA
-         YRLSyJ8I1HekRo4Dd9y0KeOkHCDoHpMJfFS2iwJ5eZdiLv/6zcDUrFiYAxEHOFNt8wRJ
-         u6/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtMUdnMWxGtZeV45YVc3gxkil+xY4uvgIU3c//J8bZillftRgSFiklfX75bti2CyaHSlsOnwKpQV8=@vger.kernel.org, AJvYcCXBs8nbRT/sGDZ648JP8lDFvr1495lkKcTHv+l8nD7VngkqEMYU2jbHFz1Sh5CH2yQMCx6ln4fVYabiTk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8lrzt59VeAD0htvI0DWnla2dcJ3jpzOJo7PEs2SR2nQA0NMOd
-	a/aKW0Efzr0qvXwY+n7hIHiSJKUry2ihpYyXW7KVq50eRAjSCqDr
-X-Gm-Gg: ASbGncuNIIMWniaTnkf5mWdM+KFSq4iDNzUJAG4/GYF/SLOtF2mYWrNCdE8VoGfJZrk
-	QSIXjZIOFSYsJbFj26m3GzigUvsN+GBANA00i1P1XvDsUf6bfuiRslBCbLfWew8plnk7EPl3UY0
-	OTcr5T9l3ZMrBV9kdChdOXV5aUvbNbQ0NxBPjcEVR8MtYnKhisiZ35IdcmtsfgN4Sowlf1x+/pH
-	/HLRbhtbK2PcUvd2TTQtgo3+7wPfDBGMISDYfJGBFreWk2fA8Sr3qZfzD73BM/fjMkc4KvdgFli
-	v7ABI3cWKgXS81pwqK/FFx6+esg=
-X-Google-Smtp-Source: AGHT+IEszlQXuqrkPYsX/HEMys/ZHxP36z40t4z9cG7j/MZLWhxTBqgX7gBXJMpgbC3JI27DgkLtcQ==
-X-Received: by 2002:a05:6e02:1a07:b0:3a7:1f72:ad3c with SMTP id e9e14a558f8ab-3aff0961e22mr37626355ab.19.1734105840042;
-        Fri, 13 Dec 2024 08:04:00 -0800 (PST)
-Received: from localhost.localdomain (65-128-205-244.mpls.qwest.net. [65.128.205.244])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a817f6e099sm40130415ab.23.2024.12.13.08.03.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 08:03:58 -0800 (PST)
-From: Shimrra Shai <shimrrashai@gmail.com>
-To: shimrrashai@gmail.com
-Cc: krzk@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: Re: Re: Re: [PATCH v1 2/2] [Draft] dt-bindings: arm: rockchip: Add Firefly ITX-3588J board
-Date: Fri, 13 Dec 2024 10:03:37 -0600
-Message-ID: <20241213160337.5561-1-shimrrashai@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241213154114.5078-1-shimrrashai@gmail.com>
-References: <20241213154114.5078-1-shimrrashai@gmail.com>
+	s=arc-20240116; t=1734105830; c=relaxed/simple;
+	bh=9CUyDLEEMV5qyxKzXcyDb9Bk0pHXrY+UG4VcLupdXmI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Drcgl5B6SD1OWW9lZP7XrqIi7BnjV2hxtND+feFWAvJzb4KuOnqINyalskhHnh9Q6xAGw+HMO4q4UWRytOlntbKpfwtQIDLz5iKw0ISTQAC26nrVjF6HVAI9oLJqPh8HstLIDEwt+aq6XUoCAArm9Y7nCw+sOvKxCYJnkUZ/CIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MKOQFssY; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DB21024000F;
+	Fri, 13 Dec 2024 16:03:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1734105819;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H9vZk0DTsI/bg+ANJhh1zU7eKOQQ40nhMEZ4aKgjFCA=;
+	b=MKOQFssY1ZmRAEmIhvcApp8YueSah6mdUcNLSYxoBuMs9ZXqFGLOgfT7uso+rgcQ8OAMUg
+	HmcJJW/qIeJGSqTLr/R49qSxhRrrLr5aMUx8dshXdXNc/WJSBGriQdEr6nAbblXcnBAyji
+	w1zIZMS+kCvLUmFKrZ3FdRxcZNLM7Ioz4jscCgNlw9eMN40PYlmfEN1J/Du4L6A07WinzJ
+	1U5HV1B3K/7uDzCJBQ/4EWs96vLLTwFCiQVqrwR+vCelah3VaGZ7NF//6arj8Eb+sQ8Hmz
+	7X66HdHTLXqrP6n5is3838mDEg+PxzmTSzahvzJeDE3A3U3BP9soBqMke8pXCQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 13 Dec 2024 17:03:38 +0100
+Message-Id: <D6AP7JCNSME9.3FS7XCZJ37GM8@bootlin.com>
+Subject: Re: [PATCH v6 4/5] xhci: introduce xhci->lost_power flag
+Cc: =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, <linux-usb@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Roger Quadros" <rogerq@kernel.org>, "Peter Chen"
+ <peter.chen@kernel.org>, "Pawel Laszczak" <pawell@cadence.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Mathias Nyman"
+ <mathias.nyman@intel.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241210-s2r-cdns-v6-0-28a17f9715a2@bootlin.com>
+ <20241210-s2r-cdns-v6-4-28a17f9715a2@bootlin.com>
+ <70aced7f-0311-43b9-96af-c8325c39ff2b@kernel.org>
+In-Reply-To: <70aced7f-0311-43b9-96af-c8325c39ff2b@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On 2024-12-13, Shimrra Shai wrote:
-> As you said that is necessary "for automated tools to work"
+On Thu Dec 12, 2024 at 1:37 PM CET, Roger Quadros wrote:
+> On 10/12/2024 19:13, Th=C3=A9o Lebrun wrote:
+> > The XHCI_RESET_ON_RESUME quirk allows wrappers to signal that they
+> > expect a reset after resume. It is also used by some to enforce a XHCI
+> > reset on resume (see needs-reset-on-resume DT prop).
+> >=20
+> > Some wrappers are unsure beforehands if they will reset. Add a mechanis=
+m
+> > to signal *at resume* if power has been lost. Parent devices can set
+> > this flag, that defaults to false.
+> >=20
+> > The XHCI_RESET_ON_RESUME quirk still triggers a runtime_pm_get() on the
+> > controller. This is required as we do not know if a suspend will
+> > trigger a reset, so the best guess is to avoid runtime PM.
+> >=20
+> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> > ---
+> >  drivers/usb/host/xhci.c | 3 ++-
+> >  drivers/usb/host/xhci.h | 6 ++++++
+> >  2 files changed, 8 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> > index 5ebde8cae4fc44cdb997b0f61314e309bda56c0d..ae2c8daa206a87da24d58a6=
+2b0a0485ebf68cdd6 100644
+> > --- a/drivers/usb/host/xhci.c
+> > +++ b/drivers/usb/host/xhci.c
+> > @@ -1017,7 +1017,8 @@ int xhci_resume(struct xhci_hcd *xhci, pm_message=
+_t msg)
+> > =20
+> >  	spin_lock_irq(&xhci->lock);
+> > =20
+> > -	if (hibernated || xhci->quirks & XHCI_RESET_ON_RESUME || xhci->broken=
+_suspend)
+> > +	if (hibernated || xhci->quirks & XHCI_RESET_ON_RESUME ||
+> > +	    xhci->broken_suspend || xhci->lost_power)
+> >  		reinit_xhc =3D true;
+> > =20
+> >  	if (!reinit_xhc) {
+> > diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+> > index 4914f0a10cff42dbc1448dcf7908534d582c848e..32526df75925989d40cbe7d=
+59a187c945f498a30 100644
+> > --- a/drivers/usb/host/xhci.h
+> > +++ b/drivers/usb/host/xhci.h
+> > @@ -1645,6 +1645,12 @@ struct xhci_hcd {
+> >  	unsigned		broken_suspend:1;
+> >  	/* Indicates that omitting hcd is supported if root hub has no ports =
+*/
+> >  	unsigned		allow_single_roothub:1;
+> > +	/*
+> > +	 * Signal from upper stacks that we lost power during system-wide
+> > +	 * suspend. Its default value is based on XHCI_RESET_ON_RESUME, meani=
+ng
+> > +	 * it is safe for wrappers to not modify lost_power at resume.
+> > +	 */
+> > +	unsigned                lost_power:1;
+>
+> I suppose this is private to XHCI driver and not legitimate to be accesse=
+d
+> by another driver after HCD is instantiated?
 
-Correction to make an exact quotation: I meant to refer to when you said
-"so this won't be tested by automated tooling".
+Yes it is private.
 
-     Shimrra
+> Doesn't access to xhci_hcd need to be serialized via xhci->lock?
+
+Good question. In theory maybe. In practice I don't see how
+cdns_host_resume(), called by cdns_resume(), could clash with anything
+else. I'll add that to be safe.
+
+> Just curious, what happens if you don't include patch 4 and 5?
+> Is USB functionality still broken for you?
+
+No it works fine. Patches 4+5 are only there to avoid the below warning.
+Logging "xHC error in resume" is a lie, so I want to avoid it.
+
+> Doesn't XHCI driver detect that power was lost and issue a reset in any c=
+ase
+> via the below code
+>
+>         /* re-initialize the HC on Restore Error, or Host Controller Erro=
+r */
+>         if ((temp & (STS_SRE | STS_HCE)) &&
+>             !(xhci->xhc_state & XHCI_STATE_REMOVING)) {
+>                 reinit_xhc =3D true;
+>                 if (!xhci->broken_suspend)
+>                         xhci_warn(xhci, "xHC error in resume, USBSTS 0x%x=
+, Reinit\n", temp);
+>         }
+>
+> >  	/* cached extended protocol port capabilities */
+> >  	struct xhci_port_cap	*port_caps;
+> >  	unsigned int		num_port_caps;
+> >=20
+
+I'll wait for your opinion on the [PATCH v6 2/5] email thread before
+sending a new revision.
+
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
