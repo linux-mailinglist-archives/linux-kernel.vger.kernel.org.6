@@ -1,85 +1,129 @@
-Return-Path: <linux-kernel+bounces-445681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0D09F19A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:09:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AC29F199F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6477D1887BB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:09:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F6C165E14
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3445B1B218D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345C21B21B3;
 	Fri, 13 Dec 2024 23:08:53 +0000 (UTC)
-Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="bUp+Xq4D"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E5E1AED5C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C981AE876
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734131331; cv=none; b=YJthkM32/tGZ3fCLW497ZlvQxGOeyLlm5AjTvMHmU8Sy71/ml6DEX8v/D6tzRlRhjMktFahNAWhE2Jh9Dx9SIVJVdmlrSui2w8eKIgkcBSW+P6Bp+UK0sI4sVj8nl9VAObsEiBHukI1yayJRkUAFw5mWVC1J/94mfCfl3r57FH4=
+	t=1734131331; cv=none; b=pM7Bw45TF57W+65Za5s9JXIoBtaUOEz0pLclpyWZhTMIffdYhnKeJ55sTuEkSQVlN8W2+XtSC2sGSAQXEN6922PV12b34735S3Il7hcUJUqKzCJ3DFIIar5aTN2A2DefXpCr8mXwmMv/lYJnkRvFZHcci7/048Y2BSipVODNGnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734131331; c=relaxed/simple;
-	bh=574geqgrCvxBHE53U1Huo+MbTMWwGYYgbCRZYx76LBw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bPndcyy10eHGVNGFxbygweDcaxpWvdwkXOwsjjmj7ZXaTMuS5V9B8NaZWI5GcAAGRY55b77eJVtHlj6TO7SqXv4i8ioeOxfC4LZRwhpN2m04oTphScCdPJ5JuD0jfswlciVh0zFdiAs4zaHoOID9HFSPt1eI2pSiZiDGSyLeXl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.50.238])
-	by sina.com (10.185.250.23) with ESMTP
-	id 675CBE6E00003624; Fri, 14 Dec 2024 07:08:36 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 512638913054
-X-SMAIL-UIID: 3BE65FF4A60141BE9018ABCAC0CE0B48-20241214-070836-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com>
-Cc: edumazet@google.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [tipc?] kernel BUG in __pskb_pull_tail
-Date: Sat, 14 Dec 2024 07:08:20 +0800
-Message-Id: <20241213230820.1957-1-hdanton@sina.com>
-In-Reply-To: <675b61aa.050a0220.599f4.00bb.GAE@google.com>
-References: 
+	bh=5V2fLkLyNAWyFFefIyLosNOmPZL7CEovGGUnqfNO05Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gax6a8u9WCXfIf/aPKrMlOsEjRl6B41oo//jj9wn3STCMddd+Lwol9kTfzmADfzR1Wmc0++B0MehUTEBqHvAOvbRAqe7oPkrFLEv+SJ0ew1VCLKV481xkRrBoYMBtfCZkdqFdFVqeiV3MD9+t2bMhX/qYX7uS/lVz++hQSMsfA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=bUp+Xq4D; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
+	by cmsmtp with ESMTPS
+	id MDhctWa3ivH7lMEm2tymTt; Fri, 13 Dec 2024 23:08:42 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id MEm0tyMwV4qpuMEm1tZMGE; Fri, 13 Dec 2024 23:08:41 +0000
+X-Authority-Analysis: v=2.4 cv=X9NUKnTe c=1 sm=1 tr=0 ts=675cbe79
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WmhfTsiZKZinPbTraIEa794TxoV+jumWeRlOkIJH+54=; b=bUp+Xq4DOd1CtNynCE5+PDXXf+
+	lHBfQJLqwwM5xB+mVckKIt98FFSja6lbAeljehomhq4TSs2vZWV2QDLvvNHAezyennoKyhMHvNoq7
+	N8fHA1VyW6H9h9zLZxuUC+DkZdxp8HTV1xw5JWkW3z57Svl6wSZb4h0XcpqWHJsLm9gXpMapt95UT
+	ovijYRDqOsWTAic9BIPQfJfPojDLlPbKfN+VI7egWvcKdndJPZalKy9lgJPFPeLV18E/Y1G7umjih
+	RyflHW+h/S2No0bLe4iohjBYGEoGZtpzz9g3NX1LAdCUmAyWnmLlrS0KdXCL3zmDiyBcJt2SzNNp7
+	IWshZaAw==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:54652 helo=[10.0.1.115])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tMElz-002OPN-28;
+	Fri, 13 Dec 2024 16:08:39 -0700
+Message-ID: <01e7e010-2571-4f01-a6a4-934dfe3218a0@w6rz.net>
+Date: Fri, 13 Dec 2024 15:08:36 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/467] 6.12.5-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241213145925.077514874@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20241213145925.077514874@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tMElz-002OPN-28
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:54652
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBgrLGQ+S/9+Um8H73f6x62Yx+pZW4dmV2tU+gdYXVYcyz2r/TiohFrWL31G7w3PUzvfCr5l/LU77wzYin+ViLI54gpIJe61n1I2y1rA5OmkjhSmcOw1
+ pptkAMJhg2Gtw2DVT49TKmrHQhHY7Y5YLSqolZb643Y9veXfV+MMSBXpf3S9lKlpEpWR7eyGXop45fJ1svwC8i3YhZHS1AQcnsg=
 
-On Thu, 12 Dec 2024 14:20:26 -0800
-> syzbot found the following issue on:
-> 
-> HEAD commit:    96b6fcc0ee41 Merge branch 'net-dsa-cleanup-eee-part-1'
-> git tree:       net-next
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117844f8580000
+On 12/13/24 07:03, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.5 release.
+> There are 467 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 15 Dec 2024 14:57:53 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.5-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Test fix (https://patchwork.kernel.org/project/netdevbpf/patch/20241212222247.724674-1-edumazet@google.com/ )
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-#syz test
+Tested-by: Ron Economos <re@w6rz.net>
 
---- x/drivers/net/tun.c
-+++ y/drivers/net/tun.c
-@@ -1485,7 +1485,7 @@ static struct sk_buff *tun_napi_alloc_fr
- 	skb->truesize += skb->data_len;
- 
- 	for (i = 1; i < it->nr_segs; i++) {
--		const struct iovec *iov = iter_iov(it);
-+		const struct iovec *iov = iter_iov(it) + i;
- 		size_t fragsz = iov->iov_len;
- 		struct page *page;
- 		void *frag;
---
 
