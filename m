@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-444370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA29F9F05C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:51:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1210D169FE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:51:01 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63638199FBA;
-	Fri, 13 Dec 2024 07:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWa6e5wq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F1D9F05CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:51:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B481F95E;
-	Fri, 13 Dec 2024 07:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D239281FDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:51:42 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EC91993B6;
+	Fri, 13 Dec 2024 07:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WjvfxRWq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F252E1F95E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734076257; cv=none; b=RYLQtUhIgcdOlSkTAqTU3JFW1sIT8cfeJMADIYj3GFtFHPPsfacpzBgsTpW9nMqLtolYuImBm0FKGh9GYbRScYI2U5ZDKFjrySbVI6vYGxJ2guEfmrn7ffsDwz/DnCsg5EXOAHNPCix2cZl0bplrTeiCetTOGfthZMTeLOVINzg=
+	t=1734076298; cv=none; b=ZCF+1DsxdBdqpvFxeWLAvWbGhvqt1EaM9IYek9tLfTn3Ig7t64lxhaRZBPQ082kjdi91W2+KCSTZDb+okjIAesrKXqKpGHef56zFPLl8LNrmqpCKOI9ZsP3lLz7rLl+pAIYWdTzY17+fal95UBk/9aVZ22lFf03HIzrOMBYB3m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734076257; c=relaxed/simple;
-	bh=AMG9kRm9Qxew9u8k5DDz7qBDREGCHQlLGIpM7IMMPEg=;
+	s=arc-20240116; t=1734076298; c=relaxed/simple;
+	bh=larGpKh+9UFAJlnun5/y0CrGRBNQTeLHUSeUZEQa9Ao=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qoGGPxoWP//7bIobSVgb/6jcaN6faBjKfyulGTDeKxkJ75ZhWCYAZUh7pzdqZZUiceYYlOb2vL/hvOSHNys+ScaGfHXUfrXvWlVaKV4PQPktBPegfrznmtLlUASEMdpjS2iJJ4BzRCZJ7QpmwDZWjLbdJElFOMESRD7PaugmWVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWa6e5wq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D244C4CED0;
-	Fri, 13 Dec 2024 07:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734076257;
-	bh=AMG9kRm9Qxew9u8k5DDz7qBDREGCHQlLGIpM7IMMPEg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oWa6e5wq4Uw1sPZ7eHwFJXaOHw8UVRhzqq3VocbxqV4CVC1IKE6CqGZoDNglMd5Jm
-	 /Bqb2Wvkkg2+pxiTXXEGKcX2gJi6nPrF93hVSqiFYp32arJnfLxdpqKDZCys6d4New
-	 9bvh4ICBfwiT3yxWXE8As+ILtWSLpGcJ/ZLUrh7UdftPFFI7w6+ahqgJc4PMXzrEFc
-	 oYMh5CvussGJHW9SLDZtkkgoLRpUQIeT3HB/poKThC31wgkaFxYbPh6FMXtGCabqM9
-	 9uD2Pq2xsZufYVTtntH7yrCSKg5uv70tfuS5n/8MAGAI5KnI8uJW7byXgCl0Sy4o2B
-	 nATdFD7XBpLfw==
-Message-ID: <c1b662d8-6470-49f2-a904-139a33061885@kernel.org>
-Date: Fri, 13 Dec 2024 08:50:53 +0100
+	 In-Reply-To:Content-Type; b=fYVp0HAHi3XfPQbi8RayoMdPBm/+EgjuZauusB1Cl72YLJJmUyRviVCd6ti2DfJk9ksEg8LQ1KMB+CGYRBotGrhRoxCNbv/e0rEtockZLKPyxu/sK8aiUH2kQh6rCgMysqxNKLqOmT+FKBG68a1HCJ9VxS1dBG49+8pU1t9kUTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WjvfxRWq; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734076297; x=1765612297;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=larGpKh+9UFAJlnun5/y0CrGRBNQTeLHUSeUZEQa9Ao=;
+  b=WjvfxRWqvMICSidhk5PmFEx+6XIGGNmhncFNJ61oZ37EMyWEhbGMiyj6
+   KifuonmdXFjiy1h8Zk9T81q20o5imXZZx364KgkP5Zn/CIKNV3+a06rw5
+   9ukBBl0rf0PY+yBDs4dw9Ge5Mi/SYx3U4l4SgepmShNLeUgmT7dbt7Rir
+   KDh+W2gi9oThbh3xqlwM4Sge/J7WTMeE6aRPm1n3Deo82mCWVtW+YWm6g
+   RepdiseU+epxDK4CEA8lzDB0nRg3f3dWwoR8Ja8W8Inm2sXID01Q0lYii
+   rRikDGlIhS4ZJokuirMR1esEZPIhsAFAq0mtRvZCGMysdfv7MZpWerij1
+   g==;
+X-CSE-ConnectionGUID: 8gZh43/uRDCIZenxWua26w==
+X-CSE-MsgGUID: 2clWzORwQUSS2S559rNT8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="37367396"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="37367396"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 23:51:36 -0800
+X-CSE-ConnectionGUID: 7KLrGwZaR+G1K8Ic5Dg/nw==
+X-CSE-MsgGUID: NcTJzcdjSXCRR78uAdRyOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="101432221"
+Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.124.244.96]) ([10.124.244.96])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 23:51:31 -0800
+Message-ID: <05d802b7-4491-4296-9e4f-223e9fdbae95@linux.intel.com>
+Date: Fri, 13 Dec 2024 15:51:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +66,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] [Draft] dt-bindings: arm: rockchip: Add Firefly
- ITX-3588J board
-To: Shimrra Shai <shimrrashai@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20241213013051.11095-1-shimrrashai@gmail.com>
- <20241213013051.11095-3-shimrrashai@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] x86/kexec: Disable global pages before writing to control
+ page
+To: David Woodhouse <dwmw2@infradead.org>, Dave Hansen
+ <dave.hansen@intel.com>, Nathan Chancellor <nathan@kernel.org>
+Cc: kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org, bsz@amazon.de
+References: <20241205153343.3275139-1-dwmw2@infradead.org>
+ <20241205153343.3275139-14-dwmw2@infradead.org>
+ <20241212014418.GA532802@ax162>
+ <10a4058d9a667ca7aef7e1862375c2da84ef53a3.camel@infradead.org>
+ <20241212150408.GA542727@ax162>
+ <38aaf87162d10c79b3d3ecae38df99e89ad16fce.camel@infradead.org>
+ <20241212174243.GA2149156@ax162>
+ <9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org>
+ <4517cb69-3c5c-4e75-8a14-dab136b29c19@intel.com>
+ <212CBB8E-CC94-4A56-8399-1419D8F2FA5C@infradead.org>
+ <a14ff894-9268-4a62-87bd-3b2553e0bc01@intel.com>
+ <ed7dd45f89e8f286478791137447a21d53735dbd.camel@infradead.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241213013051.11095-3-shimrrashai@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
+In-Reply-To: <ed7dd45f89e8f286478791137447a21d53735dbd.camel@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 13/12/2024 02:30, Shimrra Shai wrote:
-> Signed-off-by: Shimrra Shai <shimrrashai@gmail.com>
+
+
+On 2024/12/13 7:08, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> The kernel switches to a new set of page tables during kexec. The global
+> mappings (_PAGE_GLOBAL==1) can remain in the TLB after this switch. This
+> is generally not a problem because the new page tables use a different
+> portion of the virtual address space than the normal kernel mappings.
+> 
+> The critical exception to that generalisation (and the only mapping
+> which isn't an identity mapping) is the kexec control page itself —
+> which was ROX in the original kernel mapping, but should be RWX in the
+> new page tables. If there is a global TLB entry for that in its prior
+> read-only state, it definitely needs to be flushed before attempting to
+> write through that virtual mapping.
+> 
+> It would be possible to just avoid writing to the virtual address of the
+> page and defer all writes until they can be done through the identity
+> mapping. But there's no good reason to keep the old TLB entries around,
+> as they can cause nothing but trouble.
+> 
+> Clear the PGE bit in %cr4 early, before storing data in the control page.
+> 
+> Fixes: 5a82223e0743 ("x86/kexec: Mark relocate_kernel page as ROX instead of RWX")
+> Co-authored-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Reported-by: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219592
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
+
+Tested-by: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
+
 > ---
-Explain why this is draft, what does it even mean. Do you expect any
-review or not?
+> This supersedes the previous 'Only write through identity mapping of
+> control page' patch as Dave's approach is much saner now he's actually
+> figured out what's going on.
+> 
+> 
+>   arch/x86/kernel/relocate_kernel_64.S | 12 +++++++++---
+>   1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+> index 553d67845b84..cbadf0142fcb 100644
+> --- a/arch/x86/kernel/relocate_kernel_64.S
+> +++ b/arch/x86/kernel/relocate_kernel_64.S
+> @@ -90,14 +90,20 @@ SYM_CODE_START_NOALIGN(relocate_kernel)
+>   	movq	kexec_pa_table_page(%rip), %r9
+>   	movq	%r9, %cr3
+>   
+> +	/* Leave CR4 in %r13 to enable the right paging mode later. */
+> +	movq	%cr4, %r13
+> +
+> +	/* Disable global pages immediately to ensure this mapping is RWX */
+> +	movq	%r13, %r12
+> +	andq	$~(X86_CR4_PGE), %r12
+> +	movq	%r12, %cr4
+> +
+>   	/* Save %rsp and CRs. */
+> +	movq	%r13, saved_cr4(%rip)
+>   	movq    %rsp, saved_rsp(%rip)
+>   	movq	%rax, saved_cr3(%rip)
+>   	movq	%cr0, %rax
+>   	movq	%rax, saved_cr0(%rip)
+> -	/* Leave CR4 in %r13 to enable the right paging mode later. */
+> -	movq	%cr4, %r13
+> -	movq	%r13, saved_cr4(%rip)
+>   
+>   	/* save indirection list for jumping back */
+>   	movq	%rdi, pa_backup_pages_map(%rip)
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
-
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-
-Best regards,
-Krzysztof
 
