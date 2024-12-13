@@ -1,132 +1,238 @@
-Return-Path: <linux-kernel+bounces-444529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0ED99F085B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:47:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9B99F0860
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19EAF1691FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:47:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0292E188C1D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AAC1B3943;
-	Fri, 13 Dec 2024 09:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0681B4121;
+	Fri, 13 Dec 2024 09:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wqX9myFf"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKxf7ca6"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5091D1B392E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8491B392E;
+	Fri, 13 Dec 2024 09:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734083254; cv=none; b=VT3wwfgLuzhULXF5DmTSfBgGoZsGrw4Hm2Ztd1Kdt0bfAMqiZHOkwQSlfM2btP3jsVi8fIvnQwvZpVEv/1+QorbVUt7Ss/GI8EcKwdh0PafL4qQbx6WTP/Tytj7rOzhemLt3njdKuJkZUG6vpBHCPN/+we/3tchHug+AVUqsNUc=
+	t=1734083261; cv=none; b=TeRIciNubcdxllLsZF7VXQBtPqc09vZwMV7dTuOQfT51H4pKJ0efdN+Ejf79mAFGEaL3TvKla/aSFgiSx0mYeso50n7lRqaZLwkAkG21n4CcHmyMhqZ4SwTYVPPvsb9Gj0/FnfEKnP6tYR+/W4imemhCjwBO8hRMa2dPFHVWtbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734083254; c=relaxed/simple;
-	bh=QftEkgPw/0GI0tdyO/fV+/Wq6wLc69fz7Mk4V7VnBf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qFCIz3WJ9LIxqv9WbZXeQmFcXX8budc5RIdXTm/+HF8vDGLtnM4UzE0Rez1VOrLzZf6kozzEKDSEDx2DuDry3YuXxiYaVsbmCHhlKnxRFa+eNw5ZRP3/sda5abDZGpOSY3RxHLnNgDPACCKpEsvdM5YFEL3YBNpOjkAi/DV+VGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wqX9myFf; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so204976666b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:47:32 -0800 (PST)
+	s=arc-20240116; t=1734083261; c=relaxed/simple;
+	bh=oCE+dd5SPcmuqEdvLxpo+CPfYUW0b61fh7ss8dlVND0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IdeuckDc7cKGv+ldjfLM+Il4rhxwladEa5nw+LNCeQPNgTEIqrGpm53uCbNpBlISH3ROsfxFCeoMb1NqzU8TrriStN5xg5+v11FznWtlUtcD8hB/pdB28RB6dJPzLiJaWTYsP+MNRUDJeqjiQ8k4az9I9a1OQ/74UDaBELl64lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKxf7ca6; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso236566266b.1;
+        Fri, 13 Dec 2024 01:47:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734083251; x=1734688051; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=gmail.com; s=20230601; t=1734083258; x=1734688058; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=rdxFYaYZsFwA6EnsM4K6iSZW6gjULgohyiFusWzHRuE=;
-        b=wqX9myFfGq1RC5tbQJD7JL0OKd4Xbtx3irGbR2FR7CjeHh5YUUoLRZf/3G4Igx7EgD
-         YS2F7+bDyBoAbimKmbco76d1K03ooFDYvVO4rsUvZZhlpnnQgA/L4CX+IGC7UsZCvGuP
-         B6uOLcit1bxqK47Np9dp3jYtJQJ+B5FbeNwmOGmconQjCwWjxcRidQSSq+6titNrHvF/
-         tGGmITnkGYO2RN06J6vJZfdJywPzv/6jFNlL6lgnicWJghJ1A1AlcFS+gSVcN+4YeeIZ
-         Q7gbXzQgaMBhB7eHhO7Ye6n8YWq8zpxG0lfwui74XS1IxZs4epXQwwhQvIjTrLg3EhuQ
-         g70Q==
+        bh=kpephPbr8Jh4XgfdsqtKilUmRrp2rdQXAGdN0OMY/vk=;
+        b=fKxf7ca6K+6WicLWXPCyMapx1JZq3M3lzAhJWQU/2Wf3aV4rOR2ZM77fzA5MQGYGnj
+         3fsLoA/H/tud+N9o3ZvSHdIFKvrvpnsCvI8XI1f+w3J8jf0dP9zXGEWBvODwHutJn42G
+         774Y2lkvNXNnD2ciNzdR6mZ61Ug0ECO6Jm2+Ixk4oiSq8hmfqIpje1BjpUSMUkymfiDb
+         opajE6e1O3Cvw+j3AR5asamLXVkzFSaN7riRNEY+zxoj3rN1gTT7QtnqG+1Y5K91wC39
+         cJPqkZX5Xn5dTtBEIm2hWdsHx/7ICzwjYSZE2DLCIL8xZzZSVpWOQs6p8XRhzvv0zNgb
+         ztvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734083251; x=1734688051;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1734083258; x=1734688058;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rdxFYaYZsFwA6EnsM4K6iSZW6gjULgohyiFusWzHRuE=;
-        b=uvp0wU++so/kS+HXGpWJ41ypvjvzfiv1hlWk+IxDEvEppF0OKbY33HxI/1Go2PT7ZO
-         KRccDFOzbLS3QQV9kZDnd9iQ3BuWA1rnXuXJD4Hs/hZbDKTW+368wZeR167jgRJyZ9nH
-         VSvXU7hidUzpXZ+p0c7+pHsyKq4fP/13Isv8VW+WNjIA2mRaX3tP7cZrG6KNolUSXMnQ
-         dOOHWUJmhnsE45Fvgd6+jsnDOX8Oez9LkTq4Kl8VQrVAF6htFTaqZk5stIMJIT0NleNK
-         r1Zu2CZXjcvoeQnQKgWLb1LmAVR6hwAoaF8SvaLznV+rK+JlcWmfb/63IR1rsIhyeg7y
-         HJqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkexLQNb2BzU5cfvDfoBWPgt4W5Rc19UywR4NvHv+rkzX7kUwWCMIGlZ09U8IeUOx3XZC+j2+aVUnvwng=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx7SyScJr0nFWu+W8s/l25a00PGL+2ROoWr1PUtdSj9bMEJ/Qy
-	y3064dGosEjtzmQnX0cRYssnIgnk+jMPi9ucYKFi4qlJXENZlgeq74T2Qlt7XlQ=
-X-Gm-Gg: ASbGncuR3zFK0GGZ268w0yHa6jhxJtkC2mCoN9+MonxuTpOhkNozuWdBSVJKvKJABpV
-	g45oREL/u6VHnPUrVL8dwWNl2gE9bsj89wAcggGlYyuYO16+vMawTxMq3NVeYIiSSwnQLceGiCP
-	zJCiT0RrpCbRwBpwFRcnTmuYF42QbNUajcArM2P66gKRKyjX/3vkQAoSnH/6tkegVFaOp1Um7JC
-	Za5/3RMINoYcGixdJHghu+HDT5R4suz3TP/GIDBku+KLGPkkC9qmG1wv8k4tQ==
-X-Google-Smtp-Source: AGHT+IGltlAdrz0s/05wujMEiapProTMuSaTetpEvSQ5pgYx7uxayECdPRY4Y4KRwu3RO0NYkPh3qg==
-X-Received: by 2002:a05:6402:390a:b0:5d4:2ef7:1c with SMTP id 4fb4d7f45d1cf-5d63c3db8d9mr4114411a12.24.1734083250584;
-        Fri, 13 Dec 2024 01:47:30 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa671136c3esm814037566b.7.2024.12.13.01.47.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 01:47:30 -0800 (PST)
-Date: Fri, 13 Dec 2024 12:47:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Atul Gupta <atul.gupta@chelsio.com>
-Cc: Ayush Sawal <ayush.sawal@chelsio.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexander Zubkov <green@qrator.net>,
-	Simon Horman <horms@kernel.org>,
-	Michael Werner <werner@chelsio.com>,
-	Casey Leedom <leedom@chelsio.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH net] chelsio/chtls: prevent potential integer overflow on
- 32bit
-Message-ID: <c6bfb23c-2db2-4e1b-b8ab-ba3925c82ef5@stanley.mountain>
+        bh=kpephPbr8Jh4XgfdsqtKilUmRrp2rdQXAGdN0OMY/vk=;
+        b=BToBXfptDLvIDcWGiaMemCbKz3E0TWE4OipmVlIfNXXPPBFbIZS2llLOUAiASvtGbU
+         hhBfZn+7PpIjXnam6eA1YruOE6DQCZ0yJbbfwKOgRjnm3WJssmM1T5fmHf67m5Mwxbdl
+         aIGAgV4giOOnLQIDeP4i4zrDBFkwUgvdhqQHct17NyL2UPeZP7NzNB4JxeUTmTmgqVX1
+         7TY4VyPtSIVOjkWAcKIThGPWcFpmehVX1uZSl6C23Bo5nM+YgThvUMrFlwPZiRzusi7o
+         CYbH012KgRO+wQSAfp336z8UEpytJPVKqq7CrE9OwMgFhCIflXVaY+FWuhutQZPoTpzy
+         Hadg==
+X-Forwarded-Encrypted: i=1; AJvYcCVr03568UrbwGuRnADCqU3Lnd0Lvv5prgMbj2dGK5TtCf+GEcs8IyKZxEgn0umNYfbTUxZwa1ydyi+C/H9q@vger.kernel.org, AJvYcCW4m/fgUXi/WMFWt3B+Rb7124rLCnKyyl2x/PZ6u3dWREnF2EP4xAWxYQEMLFOyiFqEuFEy6ARyK0hQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhm2ZG+S5q0WtTnEbvnMP02vlqawOzzp7dTRbyPl4yVU/1Wss2
+	buII8RIHedyBE5nlkWlayQ2IssQGzPjFsnUQySZM4KEdJN1QmqPj
+X-Gm-Gg: ASbGnctvf3xRfVpgt/Xkt80NDE3HAwmcpY6KRzXcT+b6TMP+EGbW5lQEgF+i4UT/6+5
+	UAXRq1Aud9Rr+VqpC49XOIEhNVULmJGw1UjCU8gdesx4WTXodlKgWyX5cC2+AWwsmfEai2h2bcT
+	SMqJKBflW1ca8aux1vd1UjIj5jOxgbrppLO31tFPq1kmRzXzBj9igGYenkJjpaOzfLDgEl6S3rd
+	94CK3D+Mk3WLWhw8l82+sQCeoW6hR5tVP6IS1yZkqLip3kCboJ8puUXqhjYLa6g4Zdt
+X-Google-Smtp-Source: AGHT+IFbJyb8LbVaxZmbBTC8001dyPPQdOCNGCC+QQjAz4MNlXdB1nD7gssl9owCB/VTMauuYyt5IA==
+X-Received: by 2002:a17:906:3112:b0:aa6:82ea:69d6 with SMTP id a640c23a62f3a-aab77907a5fmr190336166b.18.1734083257326;
+        Fri, 13 Dec 2024 01:47:37 -0800 (PST)
+Received: from [192.168.31.111] ([194.39.226.133])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3bc829433sm10177180a12.38.2024.12.13.01.47.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 01:47:36 -0800 (PST)
+Message-ID: <7753293a-0ab1-48b1-abcd-a9cd544cc356@gmail.com>
+Date: Fri, 13 Dec 2024 11:47:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: soc: samsung: exynos-speedy: Document
+ SPEEDY host controller bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
+ <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
+ <207354ad-e363-4156-ba6b-86dbaa13ab95@kernel.org>
+Content-Language: en-US
+From: Markuss Broks <markuss.broks@gmail.com>
+In-Reply-To: <207354ad-e363-4156-ba6b-86dbaa13ab95@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The "gl->tot_len" variable is controlled by the user.  It comes from
-process_responses().  On 32bit systems, the "gl->tot_len +
-sizeof(struct cpl_pass_accept_req) + sizeof(struct rss_header)" addition
-could have an integer wrapping bug.  Use size_add() to prevent this.
+Hi Krzysztof,
 
-Fixes: a08943947873 ("crypto: chtls - Register chtls with net tls")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-I fixed a similar bug earlier:
-https://lore.kernel.org/all/86b404e1-4a75-4a35-a34e-e3054fa554c7@stanley.mountain
+On 12/13/24 9:40 AM, Krzysztof Kozlowski wrote:
+> On 12/12/2024 22:09, Markuss Broks wrote:
+>> Add the schema for the Samsung SPEEDY serial bus host controller.
+>> The bus has 4 bit wide addresses for addressing devices
+>> and 8 bit wide register addressing. Each register is also 8
+>> bit long, so the address can be 0-f (hexadecimal), node name
+>> for child device follows the format: node_name@[0-f].
+>
+> This wasn't tested so limited review.
+>
+> A nit, subject: drop second/last, redundant "bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>
+>> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
+>> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
+>> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+>> ---
+>>   .../bindings/soc/samsung/exynos-speedy.yaml        | 78 ++++++++++++++++++++++
+> Filename must match compatible.
+>
+>>   1 file changed, 78 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..304b322a74ea70f23d8c072b44b6ca86b7cc807f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml
+>> @@ -0,0 +1,78 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/soc/samsung/exynos-speedy.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Samsung Exynos SPEEDY serial bus host controller
+> Speedy or SPEEDY?
+Technically it's an acronym (Serial Protocol in an EffEctive Digital 
+waY), but we could agree on if we use the capitalized or uncapitalised 
+version and use it consistently throughout.
+>
+>> +
+>> +maintainers:
+>> +  - Markuss Broks <markuss.broks@gmail.com>
+>> +
+>> +description:
+>> +  Samsung SPEEDY is a proprietary Samsung serial 1-wire bus.
+> 1-wire? But not compatible with w1 (onwire)?
+Nope, I suppose this requires more clarification, as explained in the 
+previous letter, there are several differences between the protocols, 
+looking at the Samsung patent. [1]
+>
+>> +  It is used on various Samsung Exynos chips. The bus can
+>> +  address at most 4 bit (16) devices. The devices on the bus
+>> +  have 8 bit long register line, and the registers are also
+>> +  8 bit long each. It is typically used for communicating with
+>> +  Samsung PMICs (s2mps17, s2mps18, ...) and other Samsung chips,
+>> +  such as RF parts.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    - items:
+>> +        - enum:
+>> +            - samsung,exynos9810-speedy
+>> +        - const: samsung,exynos-speedy
+> Drop last compatible and use only SoC specific.
+Makes sense, for some reason I didn't realise it doesn't make much sense.
+>
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  clock-names:
+>> +    - const: pclk
+> Drop clock-names, not needed for one entry.
+>
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - "#address-cells"
+>> +  - "#size-cells"
+> You do not have them in the properties, anyway required goes before
+> additionalProperties
+>
+>> +
+>> +patternProperties:
+>> +  "^[a-z][a-z0-9]*@[0-9a-f]$":
+> That's odd regex. Look at other bus bindings.
+Okay, I'll look into it.
+>
+>> +    type: object
+>> +    additionalProperties: true
+>> +
+>> +    properties:
+>> +      reg:
+>> +        maxItems: 1
+> maximum: 15
+>
+>> +
+>> +    required:
+>> +      - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    speedy0: speedy@141c0000 {
+> Drop unused label.
+>
+>> +      compatible = "samsung,exynos9810-speedy",
+>> +                   "samsung-exynos-speedy";
+>> +      reg = <0x141c0000 0x2000>;
+>> +      #address-cells = <1>;
+>> +      #size-cells = <0>;
+>> +
+> No resources? No clocks? No interrupts?
+Will extend the example.
+>
+>
+>
+> Best regards,
+> Krzysztof
 
- .../net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c    | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+- Markuss
 
-diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
-index 96fd31d75dfd..daa1ebaef511 100644
---- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
-+++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
-@@ -346,8 +346,9 @@ static struct sk_buff *copy_gl_to_skb_pkt(const struct pkt_gl *gl,
- 	 * driver. Once driver synthesizes cpl_pass_accept_req the skb will go
- 	 * through the regular cpl_pass_accept_req processing in TOM.
- 	 */
--	skb = alloc_skb(gl->tot_len + sizeof(struct cpl_pass_accept_req)
--			- pktshift, GFP_ATOMIC);
-+	skb = alloc_skb(size_add(gl->tot_len,
-+				 sizeof(struct cpl_pass_accept_req)) -
-+			pktshift, GFP_ATOMIC);
- 	if (unlikely(!skb))
- 		return NULL;
- 	__skb_put(skb, gl->tot_len + sizeof(struct cpl_pass_accept_req)
--- 
-2.45.2
+
+[1] https://patents.google.com/patent/US9882711B1/en
 
 
