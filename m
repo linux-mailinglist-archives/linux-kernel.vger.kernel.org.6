@@ -1,86 +1,55 @@
-Return-Path: <linux-kernel+bounces-444099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A889F00BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:18:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B469F00C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CC991887AF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:18:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDDB716A595
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD1C4C76;
-	Fri, 13 Dec 2024 00:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9C74A06;
+	Fri, 13 Dec 2024 00:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="laxb/s81"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="HKdT9lJw"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3AB2913
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98059621;
+	Fri, 13 Dec 2024 00:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734049116; cv=none; b=MrUD2FHGYJnZROfh2CBJPw+nqHcFDFJnnNYEUC+N+Wa9lQEFPqrDVXpylT6TOMmiehBX14pZ3i5VyR4ElMr5rmH1RyjzK1qML4FhJvjaCxy8JqM/Jv9DXRev8ZmhaXz0h7qCCekFWHu1ZWiq/S/CzGTusIHqrVGKTQcM0ON0RgI=
+	t=1734049347; cv=none; b=h/8XCn2QyQdFqFbimGw+SlJXPR+Vv5wfwwzJ57ihjW6xVgckfY4iI8YzAcE7Akv23ofU7aGziegtJm6sEGCP3YJ5QZ59xcFBYuvu2Xnt8ZhUIIMwgaDM0Xt7cU0OC/c4a/oTpyOLfu3ME1/al8wHP2VxNO0zKmnM04NR9T2tSdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734049116; c=relaxed/simple;
-	bh=baRH6tcc0+6vgBvsDSbgP0uh0QG1T/57Mc3y9UTn9jo=;
+	s=arc-20240116; t=1734049347; c=relaxed/simple;
+	bh=3HNRmm/Q08QVyzMZ8XAUhAQfTbZ5JZRDoufN4hfqVDo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=COLULp+/apwmS4yCBsMUMiFc8M87YFKI4fiA7kccA7VwHmRjgeLOnD6u1qDHppzECNCigofOftu1T1MYz+Zk730zm23Ls69R6KrDkeRWtii2r++FQ0ElEmZOYHZ4YONdQWJNxTSl9Qll3Cldr0RRMXKGrdd9h7CBwuxEwLcxRXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=laxb/s81; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCHBjsv027780
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:18:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dnJPmrz0LeHN3qYUvxdboiVX678r8gqWXCFVwvYF50g=; b=laxb/s81I0HPC1cI
-	dS97cmIsp9fAMYJIfu5n/BJPibeMyPNrRFx6Dsk+BF8tD0o5abj3CxyHbJr6tTri
-	a2RHPaF7sXv/x/HHtU4g1lPbU2ixkY1br6atb1+iHfExuKqxZLOa2Ek2BrHdp5at
-	rVywxUrvxN50MJjFLJlmZfDlEz7weCBmfORifvf5o+gAzo7rWkH/4z/uZRmOF42l
-	hugZWdH0SjiYviDVtsUDlg7AZTV88ZYwUt845dTHZCc5F7uQCfj9L/sLkF5gy0kH
-	8j5dzDGnE+Ip1b2FbuKc0Yx6dPyon4eQY+tfpL4no9mpz5CMPjV0GqfYnujCVw4L
-	UO8lDw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40mkgv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:18:33 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d8e8153104so2692346d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:18:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734049112; x=1734653912;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dnJPmrz0LeHN3qYUvxdboiVX678r8gqWXCFVwvYF50g=;
-        b=aqeTSV7c3MR7yyfc3K1Kj3ZFYc07o3SkwAUbGGx0t47z4pM/1n0ycFnu0HbZjoNL9i
-         FXCQrHeXnBRjw+ae0f1UhXtr9rryZAeOf051oBvXF/bgkwO71yyfwYr0TRJBdItskfV1
-         kiSHap40IPx1qFr+4pOPXhK6NbRXKPKUBMFXojaSYlxaL8BXCmhLOuHyuGgaozdTIEgj
-         Kag73ydFGwNTuB949hk8fleAk1Xf9uZ2dPfNK46DE6sskClCOOErNwWYb6XgQdQHaCMA
-         tqV9RgAqh5o23MU93ih4GHCnkbJqMu3fid5aHXYSuyv/Vg2zcVsn+4g+Juyiuv6L68le
-         3jpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWtSg/Z83D+RBPNzEUGW+D7DrjBvlsYwlvRCdTol9cz6gyU/Gw1SUP0l3H5sda9at2Mm5jzsAmg2yO2wM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaBl+9IqXICR+pwjH23N8yhhwboK9LiBas1AfZh619H/tDRz7i
-	0JI1uMNDbIMH+KQlJNy2lB5rG+enNQvERO5ZE0vy3yD5q3kdUKOUejspycNWvSO+TDWES+0m0o3
-	4L1uNDfdd3q1Jeq36uYsqmzTwBaPDjyLQUcFro/bjvYE0dp/MSvEZOYcDUGo6KjU=
-X-Gm-Gg: ASbGncuK25KIvl7n/0GOD5v5f6AMIKAz4AYjddv3TPyDHGgvoGPVs4nx7RYe6xJiygI
-	HBBKZIb8XUhWkx361ongl5nMjZxERsnE0mBRnHaGrCeoUONnsI3FKUS45Dt2+CqPkCnuS+hK0HX
-	/ThDxvG90ABIv72UaxIt0fUfuu8jxzhX5dK1tfOKwCPUvZa1Y+Eb+jQZstKwIyZf2bPWCgIhsZP
-	gt/LKMgpGZWuCPJuoARemWbJa19Z9iA407ui69c3Ps71zHNpdaSHXb9ueUnMhfg+fGJ4hXfsuc1
-	6KOMS6DNnszWmRe5KNDRLsn6ScNHXnDEElZE
-X-Received: by 2002:a05:620a:192a:b0:7b6:d252:b4e8 with SMTP id af79cd13be357-7b6fbf088c3mr25644385a.7.1734049112273;
-        Thu, 12 Dec 2024 16:18:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHESuoUw/QDmsrIP5AQDKgWxFZtU5J+bURwDqhfhD9dKJRI8vhhA3/GIlyoCinrIglwX+eP0Q==
-X-Received: by 2002:a05:620a:192a:b0:7b6:d252:b4e8 with SMTP id af79cd13be357-7b6fbf088c3mr25642585a.7.1734049111911;
-        Thu, 12 Dec 2024 16:18:31 -0800 (PST)
-Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa671f14766sm769393466b.169.2024.12.12.16.18.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 16:18:31 -0800 (PST)
-Message-ID: <e3dff1d0-989c-48db-9fd6-6b3c209d1452@oss.qualcomm.com>
-Date: Fri, 13 Dec 2024 01:18:30 +0100
+	 In-Reply-To:Content-Type; b=Ts8S8oYt2vymu7RbzMQW16Xw4ceEvvk3Sc7keV/hs58x9EDw5z3MqvUQLP0JZdCj5CmSXdA9P5yTks6VrKjyBdqF9o4a1rFiXWnXAKh2wWPFI/KP7teNXhZ4c+NmpwCqFPK+JhrqNd8xsKW67clDlgFUgWpKsHsqqQxA5RspIh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=HKdT9lJw; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1734049310; x=1734654110; i=w_armin@gmx.de;
+	bh=pc4caFALq5op4/J6K3vAuBSZziJYzazQYmi+f4y4us4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=HKdT9lJw3caw772k0PNQomNYQqYZLiR13f8Vfz2/qvVrZZ5bHgHey1wk5jWWdlNO
+	 xy4bMsqhzHz9PaFZ9q6OUKvpuicmDCQ4wObsyAV9A92JXqxpTEQwfugFK3vgNofln
+	 9JP95F7Ogsj8Oe/K0l35N/wyfxOuULix1ZNtsJVTjpZo0Gp/YajB2c0LpmIXH5csO
+	 dmEqk98u1WIKa1wsNJOvSenjaOdoe3wm8nM0o/nG3YRkKnHkwQ+lmch33baUegI9w
+	 kCy9m8bJE3hPpW+josuT5veKifWkQU4ltg1U4fB9Hr8Y872BvYGrjPJXpeykH8IAi
+	 zfxb1VH/inKDSOXIUQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.14] ([91.14.230.110]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MPXhA-1szFyp3XOM-00QRfF; Fri, 13
+ Dec 2024 01:21:50 +0100
+Message-ID: <2fbf5d9d-8cfe-4ce4-a268-ec84c261d1bd@gmx.de>
+Date: Fri, 13 Dec 2024 01:21:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,84 +57,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/22] wifi: ath12k: add BDF address in hardware
- parameter
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        ath12k@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <20241015182637.955753-16-quic_rajkbhag@quicinc.com>
- <142f92d7-72e1-433b-948d-2c7e7d37ecfc@oss.qualcomm.com>
- <0796510c-20bd-4a81-bd60-40aacbcf61c0@quicinc.com>
- <83d216c4-bf9e-4eb4-86d3-e189602f37cc@oss.qualcomm.com>
- <30e5d714-2e52-4a0e-9dc8-b6cacf6ad382@quicinc.com>
- <e63af513-5fd8-40b0-a1b2-daa9821ebf5a@oss.qualcomm.com>
- <b3581663-8dc0-44d4-9395-df385316bb09@quicinc.com>
+Subject: Re: [PATCH 2/4] platform/x86: wmi-bmof: Switch to
+ sysfs_bin_attr_simple_read()
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net>
+ <20241205-sysfs-const-bin_attr-simple-v1-2-4a4e4ced71e3@weissschuh.net>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <b3581663-8dc0-44d4-9395-df385316bb09@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: V6QWRdAmjBMmFum3HbE8jslszcGM2XEC
-X-Proofpoint-ORIG-GUID: V6QWRdAmjBMmFum3HbE8jslszcGM2XEC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130001
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241205-sysfs-const-bin_attr-simple-v1-2-4a4e4ced71e3@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:sEqBGP2Ac0vGkBppc5TPHNF5GODfInD0hzbaCS0ddgYsItdBe5p
+ 2xdFdNBD2/3IFGQJS5l4ixxknu73P0PueOGSf9tMm/O8niUy+knHcsKr0WKRhQC8gmbaBRO
+ zRP2UQtl9CHmKQKZsGzQuvW6QSUTtv15p13jP7TsWPqOn7D9/3d8lvbKady/tS3sg6AjSv+
+ +gzIUgEAv0ESzIp9jiRtA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Q8yG4hNuxB0=;/TD9fKXzbRQiKwXr8w07+qxNhlk
+ i9vONWUhyajPHgxY29yscwuFBNzChl/gBenVrS5CfDX0TkBkU0QEVpCzoBgJYq8JCG8Ib+XKz
+ GU2fHxVRhscQyya3JySoKYRe4kfB2swn75GzgCw1PGvOIgV35oGKOHx4ZGs7bASK1FLGp4eNJ
+ E4VZjhq4A4IFE/QZVk2JfeUbBoJ5jSYfeRBzb0HNpXU4xt0NwzQxkApcWAaQUE0m56Oyfbw/Y
+ ihAjBrKUhYp76EnJcWbBFmll/Ln4bixJh2eclJdiYDzhZbddr3TzwxHXueHqwmZHJFKvDAp/g
+ /FHYbkNwA26UNhauIj01Gb4BEAQw4A/npxYsD5FtyFOuxglv+5fucEmKZt21NHEY7t6ciBTGI
+ b/cP1EOMstYEbPCKBldxE+j8g6vLgsEYl1k9ddA/s4hanj2x8zywItg54ZQOxuQOixBo3WS6k
+ HGToeT69iUuBtqTAAF86BYLlHFG9p/n1xIJCcK+8NN1frLriWHTp0ypcYxfjt8AqiQF9hAZvr
+ iTOxhdtEsr/10FkKIqHcqPNBYXdmYII+/Vt5/QOZd9MCKDOcISxmJpchayy5ER0EHeNaW+Obs
+ aYe08KwjSpKZmtiA+Z0n8242n77wdKhRumxxZ5xFJZ82bGFZH8OPfFAOpru6vI1UosCMAw4EI
+ xtTsnicAWtx+rsCPkNFAmAjsk0HtcqyG9yPepjiyA/JYqz95eSo6YpoeJ1Y6P3oJAWIA0QDab
+ 1fx02yBOS2xC8EnFQYNutlv09PeRIlMyWkY+tTWLt+jSDTl8oikDC2Np9UDo9SlsDuTMnCXrw
+ GK7P6Ik0Xy52/pyuFYelHuero7udeVxxt0r/eXM6+g/WUU6A2AFNf+hBpnyRzWmrV7lExakvq
+ CzKEHT+/JyDmLBsM7LjUKkmYNukMj2px+bj3hsKpzLjUZzq+8YzbWiVa007QspHQd9URppJ9K
+ tCHDbQrIrfqbItGZeV3da0wqkjAqrOVvtF6PszvoOA32E7Tjh0qcc6GO5Ao8B0buAIanTSRsU
+ 9D8UD98oTXLhcjTLYDSztcAYd8LWoI9xYZZvdokPBDim9rnucTKvwyoyUyxGBMBHPG+xoyn6r
+ YUBmZMg6vosbDcYZyJsE+BpIGE0PEI
 
-On 9.12.2024 5:23 AM, Raj Kumar Bhagat wrote:
-> On 12/6/2024 4:19 PM, Konrad Dybcio wrote:
->> On 6.12.2024 5:34 AM, Raj Kumar Bhagat wrote:
->>> On 12/5/2024 11:12 PM, Konrad Dybcio wrote:
->>>> On 3.12.2024 10:18 AM, Raj Kumar Bhagat wrote:
->>>>> On 11/4/2024 7:46 PM, Konrad Dybcio wrote:
->>>>>> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
->>>>>>> The Ath2k AHB device (IPQ5332) firmware requests BDF_MEM_REGION_TYPE
->>>>>>> memory during QMI memory requests. This memory is part of the
->>>>>>> HOST_DDR_REGION_TYPE. Therefore, add the BDF memory address to the
->>>>>>> hardware parameter and provide this memory address to the firmware
->>>>>>> during QMI memory requests.
->>>>>>
->>>>>> Sounds like something to put in the device tree, no?
->>>>>>
->>>>>
->>>>> This BDF memory address is the RAM offset. We did add this in device tree in
->>>>> version 1. This is removed from device tree in v2 based on the review comment that
->>>>> DT should not store RAM offset.
->>>>>
->>>>> refer below link:
->>>>> Link: https://lore.kernel.org/all/f8cd9c3d-47e1-4709-9334-78e4790acef0@kernel.org/
->>>>
->>>> Right, I think this could be something under /reserved-memory instead
->>>>
->>>
->>> Thanks for the suggestion. However, the BDF_MEM_REGION_TYPE is already within the
->>> memory reserved for HOST_DDR_REGION_TYPE through /reserved-memory. Therefore, reserving
->>> the memory for BDF_MEM_REGION_TYPE again in the Device Tree (DT) will cause a warning
->>> for 'overlapping memory reservation'.
->>
->> Then you can grab a handle to it with of_reserved_mem_lookup()
->> and of_reserved_mem_device_init_by_idx()
->>
-> 
-> The memory HOST_DDR_REGION_TYPE is a bigger memory around 43MB, while the memory
-> BDF_MEM_REGION_TYPE is smaller around 256KB within HOST_DDR_REGION_TYPE, Using the
-> above mentioned API we still have to store the offset in ath12k to point at memory
-> BDF_MEM_REGION_TYPE from the start of HOST_DDR_REGION_TYPE.
+Am 05.12.24 um 18:35 schrieb Thomas Wei=C3=9Fschuh:
 
-That's still way better than hardcoding platform specifics in the common
-driver
+> The generic function from the sysfs core can replace the custom one.
 
-Konrad
+Sorry for taking quite a bit to respond, i totally overlooked this patch.
+
+This patch is superseded by a patch of mine: https://lore.kernel.org/platf=
+orm-driver-x86/20241206215650.2977-1-W_Armin@gmx.de/
+
+This reworks the binary attribute handling inside the driver to use the ne=
+w .bin_size() callback. This allows the
+driver to have a static binary attribute which does not need a memory allo=
+cation.
+
+Because i think we cannot use sysfs_bin_attr_simple_read() anymore. So may=
+be you can just drop this patch?
+
+Thanks,
+Armin Wolf
+
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+>   drivers/platform/x86/wmi-bmof.c | 12 ++----------
+>   1 file changed, 2 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-=
+bmof.c
+> index df6f0ae6e6c7904f97c125297a21166f56d0b1f0..e6c217d70086a2896dc70cf8=
+ac1c27dafb501a95 100644
+> --- a/drivers/platform/x86/wmi-bmof.c
+> +++ b/drivers/platform/x86/wmi-bmof.c
+> @@ -25,15 +25,6 @@ struct bmof_priv {
+>   	struct bin_attribute bmof_bin_attr;
+>   };
+>
+> -static ssize_t read_bmof(struct file *filp, struct kobject *kobj, struc=
+t bin_attribute *attr,
+> -			 char *buf, loff_t off, size_t count)
+> -{
+> -	struct bmof_priv *priv =3D container_of(attr, struct bmof_priv, bmof_b=
+in_attr);
+> -
+> -	return memory_read_from_buffer(buf, count, &off, priv->bmofdata->buffe=
+r.pointer,
+> -				       priv->bmofdata->buffer.length);
+> -}
+> -
+>   static int wmi_bmof_probe(struct wmi_device *wdev, const void *context=
+)
+>   {
+>   	struct bmof_priv *priv;
+> @@ -60,7 +51,8 @@ static int wmi_bmof_probe(struct wmi_device *wdev, con=
+st void *context)
+>   	sysfs_bin_attr_init(&priv->bmof_bin_attr);
+>   	priv->bmof_bin_attr.attr.name =3D "bmof";
+>   	priv->bmof_bin_attr.attr.mode =3D 0400;
+> -	priv->bmof_bin_attr.read =3D read_bmof;
+> +	priv->bmof_bin_attr.read_new =3D sysfs_bin_attr_simple_read;
+> +	priv->bmof_bin_attr.private =3D priv->bmofdata->buffer.pointer;
+>   	priv->bmof_bin_attr.size =3D priv->bmofdata->buffer.length;
+>
+>   	ret =3D device_create_bin_file(&wdev->dev, &priv->bmof_bin_attr);
+>
 
