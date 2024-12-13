@@ -1,177 +1,143 @@
-Return-Path: <linux-kernel+bounces-444431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBED09F06A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:43:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27DBE9F06A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A23188AFFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:43:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BCA163CEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9081F1AB6CB;
-	Fri, 13 Dec 2024 08:43:39 +0000 (UTC)
-Received: from mail.wilcox-tech.com (mail.wilcox-tech.com [45.32.83.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110C11AC453;
+	Fri, 13 Dec 2024 08:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVllTk6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3966EB4C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.32.83.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D60A1AB6DD;
+	Fri, 13 Dec 2024 08:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734079419; cv=none; b=PZnh72nWzKAc9d57y3xJ13QbJc3eL/lIGFIc7h7agMEXjV9P7GdMg2aEQIK8QPmgOZAdOUFfksFbPLTZQqd12K7vk8s18+865HJt+QKA2iFDeSU3noKPhY6S9MT618Cj8JrdTPSqQF3F+bIBfZCTxbF6l4jFU0Yk/8JghtREpn8=
+	t=1734079384; cv=none; b=nNC8t30P/jcvNn4cN2HhDO1RvXb6U7vk4R/4wF5ZEFSYEn50XY6A58coydLJHDctz9C0vuoPeMaK5Y539usnxjrOadb6J0UgHKFInd7Y+VDFZOKi1Cwxdi8raXDrHJ3lov1FLiiG6HQvFn96Rvvo8JaSyuIq3fUVxSKjugbjTVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734079419; c=relaxed/simple;
-	bh=tD2YaIV4lPkATao5gb5bIsTbuJGivWsJampkC/PwnIw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=tNZImKFzNpPFKqtzVw5jcNLfP57vo4fp7sWP/+zlJrl8Y/I7IWKNnzi+mpB+MCwRq15zd0CqbiQaSNANommpGxUnZnkUop8Dj1l/zDsHgAi2TbCtC1yC94nqYxorqsu+6U0PRacP3lmXIBWBt1mEigrd6yqNEISoImpIwFSTmM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Wilcox-Tech.com; spf=pass smtp.mailfrom=Wilcox-Tech.com; arc=none smtp.client-ip=45.32.83.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Wilcox-Tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Wilcox-Tech.com
-Received: (qmail 23536 invoked from network); 13 Dec 2024 08:42:53 -0000
-Received: from ip98-184-130-195.tu.ok.cox.net (HELO smtpclient.apple) (AWilcox@Wilcox-Tech.com@98.184.130.195)
-  by mail.wilcox-tech.com with ESMTPA; 13 Dec 2024 08:42:53 -0000
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1734079384; c=relaxed/simple;
+	bh=btbY9PhFto5p1zLEFxXVLi0NRidg2pKgZRAMyQsvD2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IdX/purJmQKHAMPuXXENzMi8fMEG1KHexNlxCk5y+WoEehbNlRK9jAhC/1koQ8Q+KMM90fuwoqb3rN9s4rgD0p7a5KF/9INYta/AokOt1+SIomWboe+QwqYMFDxyKZXAzEFRoCWPxyT1Q8XD7xtgv8+UKPumRkWG3izltnb+GXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVllTk6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E400FC4CED0;
+	Fri, 13 Dec 2024 08:42:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734079383;
+	bh=btbY9PhFto5p1zLEFxXVLi0NRidg2pKgZRAMyQsvD2A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BVllTk6Xky/PeD/lDt4aDaR2IxiYKjbb7gFoD+vG+KgspqvQ1dNYam62TO8l0qlHS
+	 z1JdgbTzgLurNFMP8xjv7uIJBkhzh5PWVqhHipMNHiA/3hYtZvr11tB2GmhXTbU+o3
+	 JfBfg9jVsENYXeKEda/gOmai9rst0o3lXiaLYXMWWVHh5CGaKn3kwY2e3tvBnT1w25
+	 P9g8PMyYxDTDybN5jI3DW0yyZjEY1a5THcrLu4jMOVAxCGvHm8VuvU+wR3fkOLRe2t
+	 fvhATwJmNsVvGVNdBhOiQV/JmUSYQ6Y78DKpZfHmr/4c8FQsrfXssfagsdvoJeLVEi
+	 HM3l3wLm+tk6A==
+Message-ID: <0ff6f05f-fe6f-4433-a489-0447a165c8d0@kernel.org>
+Date: Fri, 13 Dec 2024 09:42:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [RFC 0/5] KVM: drop 32-bit host support on all architectures
-From: "A. Wilcox" <AWilcox@Wilcox-Tech.com>
-In-Reply-To: <79b9abfe-cfb8-4ef0-8a4b-7b87787e6549@redhat.com>
-Date: Fri, 13 Dec 2024 02:42:41 -0600
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Arnd Bergmann <arnd@kernel.org>,
- kvm@vger.kernel.org,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Huacai Chen <chenhuacai@kernel.org>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>,
- Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Alexander Graf <graf@amazon.com>,
- Crystal Wood <crwood@redhat.com>,
- Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Sean Christopherson <seanjc@google.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- Vitaly Kuznetsov <vkuznets@redhat.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Paul Durrant <paul@xen.org>,
- Marc Zyngier <maz@kernel.org>,
- linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CE1F96B2-7213-4352-B80F-6E669F5EED97@Wilcox-Tech.com>
-References: <20241212125516.467123-1-arnd@kernel.org>
- <35E5C2A3-94AC-446B-A0A1-84B043DBC890@Wilcox-Tech.com>
- <6e971322-8b21-4d73-922c-a6032c6fe9bd@app.fastmail.com>
- <79b9abfe-cfb8-4ef0-8a4b-7b87787e6549@redhat.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Add Samsung SPEEDY serial bus host controller driver
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Dec 13, 2024, at 2:20=E2=80=AFAM, Paolo Bonzini <pbonzini@redhat.com> =
-wrote:
->=20
-> On 12/13/24 09:03, Arnd Bergmann wrote:
->> On Fri, Dec 13, 2024, at 04:51, A. Wilcox wrote:
->>> On Dec 12, 2024, at 6:55=E2=80=AFAM, Arnd Bergmann <arnd@kernel.org> =
-wrote:
->>>> From: Arnd Bergmann <arnd@arndb.de>
->>>>=20
->>>> I submitted a patch to remove KVM support for x86-32 hosts earlier
->>>> this month, but there were still concerns that this might be useful =
-for
->>>> testing 32-bit host in general, as that remains supported on three =
-other
->>>> architectures. I have gone through those three now and prepared =
-similar
->>>> patches, as all of them seem to be equally obsolete.
->>>>=20
->>>> Support for 32-bit KVM host on Arm hardware was dropped back in =
-2020
->>>> because of lack of users, despite Cortex-A7/A15/A17 based SoCs =
-being
->>>> much more widely deployed than the other virtualization capable =
-32-bit
->>>> CPUs (Intel Core Duo/Silverthorne, PowerPC e300/e500/e600, MIPS =
-P5600)
->>>> combined.
->>>=20
->>>=20
->>> I do use 32-bit KVM on a Core Duo =E2=80=9CYonah=E2=80=9D and a =
-Power Mac G4 (MDD), for
->>> purposes of bisecting kernel issues without having to reboot the =
-host
->>> machine (when it can be duplicated in a KVM environment).
->>>=20
->>> I suppose it would still be possible to run the hosts on 6.12 LTS =
-for
->>> some time with newer guests, but it would be unfortunate.
->> Would it be an option for you to just test those kernels on 64-bit
->> machines? I assume you prefer to do native builds on 32-bit hardware
->> because that fits your workflow, but once you get into debugging
->> in a virtual machine, the results should generally be the same when
->> building and running on a 64-bit host for both x86-32 and =
-ppc32-classic,
->> right?
->=20
-> Certainly for x86-32; ppc32 should be able to use PR-state (aka
-> trap and emulate) KVM on a 64-bit host but it's a bit more picky.
-> Another possibility for ppc32 is just emulation with QEMU.
->=20
-> Paolo
+On 12/12/2024 22:09, Markuss Broks wrote:
+> Hey,
+> 
+> This series adds support for the Samsung SPEEDY serial bus host
+> controller. Samsung SPEEDY (actually an acronym) is a proprietary
+> Samsung 1 wire serial bus, which is used on various Samsung devices.
+> 
+It does not look like you tested the bindings, at least after quick
+look. Please run `make dt_binding_check` (see
+Documentation/devicetree/bindings/writing-schema.rst for instructions).
+Maybe you need to update your dtschema and yamllint.
 
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
 
-Most of the reason I use KVM instead of emulation is because I don=E2=80=99=
-t
-trust QEMU emulation at all.  There was even a kernel bug that was
-introduced affecting 32-bit x86 in the 4.0 cycle that only happened
-because QEMU wasn=E2=80=99t emulating writes to %cr4 properly[1].  And =
-PPC32
-emulation is far worse than x86_32.  However, I probably could end
-up doing x86_32 testing on a combination of bare metal machines and
-KVM on x86_64, sure.
+Please run standard kernel tools for static analysis, like coccinelle,
+smatch and sparse, and fix reported warnings. Also please check for
+warnings when building with W=1. Most of these commands (checks or W=1
+build) can build specific targets, like some directory, to narrow the
+scope to only your code. The code here looks like it needs a fix. Feel
+free to get in touch if the warning is not clear.
 
-As for Power: I will admit I haven=E2=80=99t tested lately, but well =
-into
-the 5 series (5.4, at least), you couldn=E2=80=99t boot a ppc32 Linux =
-kernel
-on any 64-bit capable hardware.  It would throw what I believe was an
-alignment error while quiescing OpenFirmware and toss you back to an
-=E2=80=98ok >=E2=80=99 prompt.  Unfortunately I can=E2=80=99t find any =
-of the bug reports
-or ML threads from the time - it was a known bug in the 2.6 days - but
-the answer was always =E2=80=9Cwhy are you booting a ppc32 kernel on =
-that
-hardware anyway?  It=E2=80=99s a ppc64 machine!=E2=80=9D  Is this a case =
-where
-that would be accepted as a legitimate bug now?  It would be lovely
-to use my largely-SMT 3.0 GHz Power9 box for more of my kernel testing
-(where possible) instead of relying on a 933 MHz single-thread G4.
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
 
--arw
-
-[1]: =
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/=
-?id=3Da833581e372a;
-It had some form of security impact on Pentium-class machines, too,
-as RDPMC became available to non-root even when /sys/devices/cpu/rdpmc
-was 0.=
+Best regards,
+Krzysztof
 
