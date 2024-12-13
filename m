@@ -1,110 +1,125 @@
-Return-Path: <linux-kernel+bounces-444288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726B89F042A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:27:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3239F042E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1AA161FEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:27:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A087188AB78
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A011885A1;
-	Fri, 13 Dec 2024 05:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6C61684AC;
+	Fri, 13 Dec 2024 05:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FgHLwlSp"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X+DmThaF"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80921822E5
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555FF79F5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734067629; cv=none; b=GUP352yjfm03tJv8MSNS+Ljx4eF6XROwnRo+CBkHBSQqkbDUa+YAOIGHqk3FKNnu9G8st+TN7SQSA2sAQCElenWYBZVQCHMU8yn/14B+70lYZCxiWCOiF/cDK5tu6x5wfdczyztg3i1mEK7foxfAFZOaY2Zpgn8mekeKRtPiJu8=
+	t=1734067673; cv=none; b=ip9f9Wqn78fPrbUawQvxyHarMnaWEmD8oTjjWnLhJ4VQ48cfoKkUaJbyEV7llLhHBNPmO+Bt7r6KljwR1JHjT/a0ZiMlNvseUQ+5j6RhXdL2oS/fJoxT9IVCCPuAD2ZyPDSJlh8jgjaRvvrunss0enWSuUny582ILyEstI/enNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734067629; c=relaxed/simple;
-	bh=Sdf13U4qdk1cMSPMh/hmbpEG7cuPIH7P2wBu29YqNYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AMvh/5CW/wcv6FwPYAvNG3G9ILnvMZdliahrAX1m4UJlPABtC1Vm4ONOdME4q9olmqc2Zvj9MuHFDVUdDaR6hbwdVDGmD5+TMuedrANsgY+MsS+khpMpjkeoCE7wUU98zLcZhhnGjNwI/mwyAUgrW2ClDfFte2IRYYjo4qnbZJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FgHLwlSp; arc=none smtp.client-ip=209.85.167.53
+	s=arc-20240116; t=1734067673; c=relaxed/simple;
+	bh=PKpp1ScewKJPqehPv2yTI+ebSdDc3GG9Q5vvBr/q23Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Rjiq0Z2VnrZMoSmSIyx2JyapuQbB0IAPe0l0ptBpgqTCc47eBKJhY9nVE7PBQNxMjlOkvEDL9OenU+vpZiSP59gYSpesOovFOEs76Kn4gwm91LPuxpMVxwe2q7mr7BLUCJ0y4UAY9JrORGwhfBgj8ojH3VMXmS0Q7ffz4hp8Y2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=X+DmThaF; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53df6322ea7so1891691e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:27:07 -0800 (PST)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-728f337a921so1520039b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:27:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734067626; x=1734672426; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EgQ1AfOgEV/WtM/A3+uz4rEIqiFfux5uHfmCT0tsGtI=;
-        b=FgHLwlSp/kysqN0ivzcXMSIr0RdaGObx2c7a72F9DZAi4iJL2TfVoADtDal/cE+xnu
-         cCMtnO2Hyl6oo2vAxqB714ToJ6bCA9fxCG+sbcjuCPAnBjHWXh62LqmmWGdbojqw/omz
-         qyp5DwKjCQJnV3m7a4hEdbk99hI6FDwEpdC5U=
+        d=chromium.org; s=google; t=1734067671; x=1734672471; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pHzjLDekd5mQV8SYfeuvwYKyGO1BHWQrWxmHdBR2+PM=;
+        b=X+DmThaFfFm5NVSRQkSPpeP/IMg98w8+hEd2FNS4jb0GpZucY83quXNY+zJKKKXh+f
+         vQEunykyg3lOYM01WeetEmioS0N3xeff3S5udYO2aBk3TfGaoyteO1MmJIZE5j7ejjvt
+         VfGKWJGOBfcyI8jH+Vwt0s3KIzS2EaPj1EIm4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734067626; x=1734672426;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EgQ1AfOgEV/WtM/A3+uz4rEIqiFfux5uHfmCT0tsGtI=;
-        b=CMSHBlRbehDEd3QBNXu8Uh4WYegRnajPPde5kPf0F45x3uEbuNzWZapIHh1Ke+8rlM
-         HtfzdO/CTwLU2b9iLFNARm6XGiRTpjvApKzlgQs+rGGfYKrCNTXP12lXjcipLMMglYLd
-         f6COh47P9O8WlXQQ//47K91noZ8YoxGGwkBbZK/eioJcw3shCSkbFnQVOImDy93WBHef
-         HHtzqCK0+glR4ZdWjGtFcpiLWOrQ2F51aiULX5pneECyoN5anH+URR1FlBv4rqb0pK60
-         Gm6+HqC2YmodVRCOoNurBuThJvu9+lgYaGtxQ6bs72hhb6b+43+m+TnrWQLKY5TKg/8y
-         rhKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXwaSDczM/lsm5AQ75B/AP7FnKiR6ha3WxnI+0If+kAvogUyMVQZaJkofJGGLXu9jcFh8dzLvjcrn7nPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7zYWCeFELHG+TGXj1boQffYgfzwezQ9TBjv8g6CPhRiiE5ZUX
-	v6VhMTTtFkSu3njIbUyQ9dgtaagHI6+s2Kq62N7FUkuHENAz0h/StgEGw2/LqeCGn1Ibb3pxBYW
-	2SLO6YmE5zOPD5eKnNHF7P5f/X8IcK3YmT//p
-X-Gm-Gg: ASbGncuBWPNWqePs1x+u89v/5Q85PDlXNErR8CnJaWnSk8oOT4pjoyCFscuOtFrzUEx
-	yyWvsR4vgSo+p3wZMAuSCqIpBzZ64RiPPGHb2iiXUbRWSbEWlcuOa5zOwreqGPx8=
-X-Google-Smtp-Source: AGHT+IGhA9h/qMEh3kQO//+RlkgxCOjtkEXubWQ5cyZXn60MBtkXvqcni0KnjZPJqjy4n1nnTxAQnsTV3Ek/V6fc5uA=
-X-Received: by 2002:a05:6512:104f:b0:540:3581:5047 with SMTP id
- 2adb3069b0e04-54099b69aefmr240381e87.48.1734067626143; Thu, 12 Dec 2024
- 21:27:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734067671; x=1734672471;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pHzjLDekd5mQV8SYfeuvwYKyGO1BHWQrWxmHdBR2+PM=;
+        b=JzR+6upjvxzzGtajMrjAj0C0non1MvteFRDmQ2hQC0AGJuASoYq+PitawUMhyIT77n
+         1LqYE/oN5Mf5RCEVLUo0Fn6CNSNnv6FwSP6pf+vaKAaCXdzTxwWx/31f8EyGIz6lZQpD
+         Ne21wdzoT2zDqy0Gc7ZwkbzmA8tBOBUGM2K98j0bG6Fb4Kcw8YhGjmq1a1MGRjfD1+aV
+         xxsDmMbieFSeszzTzUs/Hc+8u2LVkliFSiHWvnOo8tCSm8hmEqOZSKYg36B4BIA1Z7Ku
+         l6War7rkMDOcY2wiWQdE1YDBYfyD+AZPh6UDvxtvyXpdUInmKRFS5lOGde4G3uz8ITKl
+         nYUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAp4pt4yK1CaiqzjDXXxKafpM0svOHQJmTu8274I3kRAnN3yz+pUOo6aRjiOGgLeNjAi4NVbOzhpb1yz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4bhXcjavORPmd6yw0cskHjKc/zp02sguSTfwLTYML/VZOFZKG
+	dxuKiQt/bQxptcV8zC7j8W+qTjHynVuopZRLclqtvJarGATX2lo+YHfS0Ud8MQ==
+X-Gm-Gg: ASbGncvAvXWmgn/AOZd2+QpBPW+LwNeqB9kGv0AEK4FQ3rxS8Tr+Tjd+MCw7dtOvIIW
+	sGj7yqeiRSov5ivqVLLpyQ5UmefzPvRElX4P+prElhtadcEXJc9KENMXUceHzM9Np2rB52BAhXI
+	unjJtDsg7hmz+DJX1F4FJFSDB4ph38DKYro6ZhqggyGjSJFrqVU/ANtnpmk29hj+6mPayQhPKRu
+	9Xi9LuIEovelEFGXFa1TXoecpvaLh4KCltfQfglThtBN9qYL6x0QGLquItbgwo2YCbez++plyOG
+	ZZ2OzynUJQRu8iORpVrW0l1UWWwFNBgXuWbGGoiMFm3KrWI=
+X-Google-Smtp-Source: AGHT+IHB67SDjQZdu1KmnyQPCBhhCJuO+6RCt8yzJ21rj5AHz2vHeQnr45DTMywbF+2HqFLTeZ/Yjg==
+X-Received: by 2002:a05:6a00:ccc:b0:727:3cd0:122f with SMTP id d2e1a72fcca58-7290c1456b3mr1782962b3a.9.1734067671614;
+        Thu, 12 Dec 2024 21:27:51 -0800 (PST)
+Received: from yuanhsinte.c.googlers.com (176.220.194.35.bc.googleusercontent.com. [35.194.220.176])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7263803a805sm7386830b3a.14.2024.12.12.21.27.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 21:27:51 -0800 (PST)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Subject: [PATCH v3 0/2] Adding second source touchscreen used by some
+ mt8183 devices
+Date: Fri, 13 Dec 2024 05:27:46 +0000
+Message-Id: <20241213-touchscreen-v3-0-7c1f670913f9@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025075630.3917458-1-wenst@chromium.org> <173381930438.18469.15845444123528821647.b4-ty@collabora.com>
-In-Reply-To: <173381930438.18469.15845444123528821647.b4-ty@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 13 Dec 2024 13:26:55 +0800
-Message-ID: <CAGXv+5HY4s+0Yn35BezRWLKPnYkURhgg59eSVED1_6Z3QyQHiw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: mediatek: mt8183: Disable DPI display
- output by default
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANLFW2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0Nj3ZL80uSM4uSi1NQ83bTkRJNEU6OktDRTCyWgjoKi1LTMCrBp0bG
+ 1tQA7gEEWXQAAAA==
+X-Change-ID: 20241213-touchscreen-fca4a52bff58
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, 
+ Hsin-Yi Wang <hsinyi@chromium.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-7be4f
 
-On Tue, Dec 10, 2024 at 4:28=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> On Fri, 25 Oct 2024 15:56:27 +0800, Chen-Yu Tsai wrote:
-> > This reverts commit 377548f05bd0905db52a1d50e5b328b9b4eb049d.
-> >
-> > Most SoC dtsi files have the display output interfaces disabled by
-> > default, and only enabled on boards that utilize them. The MT8183
-> > has it backwards: the display outputs are left enabled by default,
-> > and only disabled at the board level.
-> >
-> > [...]
->
-> Applied to v6.13-next/dts64, thanks!
->
-> [1/2] arm64: dts: mediatek: mt8183: Disable DPI display output by default
->       commit: 93a680af46436780fd64f4e856a4cfa8b393be6e
-> [2/2] arm64: dts: mediatek: mt8183: Disable DSI display output by default
->       commit: 26f6e91fa29a58fdc76b47f94f8f6027944a490c
 
-Thanks! It seems you haven't updated the for-next branch, so it isn't
-appearing in linux-next yet.
+---
+Changes in v3:
+- Split from the v2 series
+- Link to v2: https://lore.kernel.org/r/20241018-post-reset-v2-0-28d539d79e18@chromium.org
+Changes in v2:
+- Add second source touchscreen patches since they should based on the
+  first patch of this series.
+- Link to v1: https://lore.kernel.org/r/20241018-post-reset-v1-0-5aadb7550037@chromium.org
 
-ChenYu
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+
+---
+Hsin-Te Yuan (2):
+      arm64: dts: mediatek: mt8183: kenzo: Support second source touchscreen
+      arm64: dts: mediatek: mt8183: willow: Support second source touchscreen
+
+ .../boot/dts/mediatek/mt8183-kukui-jacuzzi-kenzo.dts      | 15 +++++++++++++++
+ .../boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi    | 15 +++++++++++++++
+ 2 files changed, 30 insertions(+)
+---
+base-commit: eefa7a9c069908412f8f5d15833901d1b46ae1b2
+change-id: 20241213-touchscreen-fca4a52bff58
+
+Best regards,
+-- 
+Hsin-Te Yuan <yuanhsinte@chromium.org>
+
 
