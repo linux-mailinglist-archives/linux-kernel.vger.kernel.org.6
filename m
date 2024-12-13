@@ -1,153 +1,340 @@
-Return-Path: <linux-kernel+bounces-444320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120C89F04B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:19:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A54F9F04D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:34:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4B0188B39F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552EF285163
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD2318C031;
-	Fri, 13 Dec 2024 06:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w5x1RRPl"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FBE1531C1
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC97D18C337;
+	Fri, 13 Dec 2024 06:34:38 +0000 (UTC)
+Received: from invmail3.skhynix.com (exvmail3.skhynix.com [166.125.252.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4586815383B;
+	Fri, 13 Dec 2024 06:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734070763; cv=none; b=lGetYdNs8WrdQOR+YPe45FaiG0vkoaSVvY4NusMgPxTO0VZrfiyC6LiPMwMI1uuAVn/M5cL89ugKqVh980pDJPIwgBECWiFpX8n5Df3Kwu1meQ17FH+qeH3ve2lllGBMIXbOsCW9FwIbiyrbeIKPLQJucKjkUpiFBR6Zq3vkLHs=
+	t=1734071678; cv=none; b=rEhHgfDz9bQ2rTv0PIVhf3NXN8aUwFFdVzLoU0E2AeZicMjaLB1Z+d77uob74baR3SfGF0qxPp1rQWtMH8sq8N0mJAjyG/3rOf9ZWctDeUyEpKChGUjAqqI6M8StJzF7nniZUoJ55AU69+RmQ2EGWeGHpbTcecj9/1KOyGZLVms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734070763; c=relaxed/simple;
-	bh=K/4DN4i60pVUUdRoPlxfp3YaDzkLkgpBAjbBqyN1pa8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OF9aKtp8xDuy1Mkc/9JRm/vXEiRZzR96zwc0Pc6nGWkWywA9git4JMh5E3tvTBm3XlYf6ffOwoibL46yyfab5n6qM7MrKg5haSw+FLkmJg9Bdhs6YpdjtoOikB7NUfFk0q33dJaPjRq1GnftjqTlxvhI4FQ3PuwnQLG7HEnit0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w5x1RRPl; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-21638389f63so12280115ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 22:19:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734070761; x=1734675561; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n5oF9jov6joYFA3TQsmrGHK73Ci9n0mNzk5UXN2ZVo0=;
-        b=w5x1RRPl0jnjljVk8biKm5FuC20tYdGff1zmva7uY1u2Ss8Tb8m4x8jc+MiNYwy20j
-         wUD3hq3WifxRErQRK0AtuLtjOXELCG4FthSHyJN5PznZdCog+mxHJJXcmWl5Ut+RhCtZ
-         lrCcy3TLe4xjf0RhOeJydRecwzcUDxQfKxgFfeJ9UVa3rJX6z6KrZZwZTQAL2EI1uQFc
-         v0FVcQQCeYZ9UzjSsYiiZB/YEFqefj85CH0sUShmXPLSnDlo09wAZdtYIaR3stwf5jo9
-         AFxGMVafsss1lni47OLUdlIRl3J/q6SsXuFjCa7gRYayRGBASAcwCeVZl8blwBvYHiji
-         NWjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734070761; x=1734675561;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n5oF9jov6joYFA3TQsmrGHK73Ci9n0mNzk5UXN2ZVo0=;
-        b=gF0AIYuB/wJxhOXnCR5K19oPejqH4STSQxigTeSLhBLABoZoLpvLcNMlF+7rbyt1vK
-         QKAmkeNigKKV+FrvhE4l0uEpwkPmW2yE3kNPocFrXAuhSeExjC/Cbhha/dETn2MrOvFc
-         EamxQfOUdxHnmlaFdPOCphlgn24DOj5rNkkVsIK2Hlk3am189GopC/tB2Qnz/Kn8ozn3
-         bLi/S9tOt1iUoRYUhzFD17Y+j+ohN3tW1NjbyV0nwdrWNyukbMDg4F4KTzRF9Nmo79aS
-         p2HJECE70ynAlI197XNrzV0Lo+tPzaFqFHSm3hLAoXyALKyOOoFgtMAGJfzVE98Kxuga
-         PZzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSazz1p4FgtyASHu37bbpzDdLIqbGWusCFup1zw5PEkUIyvSIixteLDjfbQ+w9w1BCaLS0HhkiTwBEbVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsvWGrCcwmK5g2NEq3IeQ1KOHy98uBp7k/si4//DSnuOObf1zY
-	XRmx/C4WlPdiiapTKbtowt32Dbpw+IJCWOo3g+DeNjlPxckBWwEoYllt++59yKM/ZF+3lSKqY1+
-	rGA==
-X-Google-Smtp-Source: AGHT+IH8Tju6InYA6vGPE54wU0lZHft8YC7vV4TPTHR62raRBFJyNNwUg/F/hXnhEEHuLnSIeoRbN1q7Bg4=
-X-Received: from plqs9.prod.google.com ([2002:a17:902:a509:b0:216:2fcc:4084])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:234d:b0:216:70b6:8723
- with SMTP id d9443c01a7336-21892a5440cmr20189615ad.44.1734070761077; Thu, 12
- Dec 2024 22:19:21 -0800 (PST)
-Date: Thu, 12 Dec 2024 22:19:07 -0800
-In-Reply-To: <a3e75091f2b6b13d4907ac2fdf09058ab88c4ebf.camel@redhat.com>
+	s=arc-20240116; t=1734071678; c=relaxed/simple;
+	bh=WkuUsDhCdHDYIjlpg61nNp1C6QvBkOda1YPkvlq1O9s=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BXQQrScGmMrNwq7kPi2F+jFdVDXXJg1ES98MpPIsK3QPeU/6q0O1UXZ1iQ3jfc0FS21mrWbD2RlKdCZIY4UD65R0Rrxh+Pc9JOW+QLBy2iHzhjGOLK97b7TsgtrTXPVjvuOI00YJyA4crbwHT9bzGrFCrckzZ25fK4fuN9QJLsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc59-7a9ff700000194b3-cd-675bd1e96ec1
+Message-ID: <4ddfa283-eb64-4032-880b-c19b07e407e1@sk.com>
+Date: Fri, 13 Dec 2024 15:19:20 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241211193706.469817-1-mlevitsk@redhat.com> <20241211193706.469817-2-mlevitsk@redhat.com>
- <Z1ox4OHNT6kkincQ@google.com> <a3e75091f2b6b13d4907ac2fdf09058ab88c4ebf.camel@redhat.com>
-Message-ID: <Z1vR25ylN5m_DRSy@google.com>
-Subject: Re: [PATCH 1/4] KVM: VMX: read the PML log in the same order as it
- was written
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: kernel_team@skhynix.com, "rafael@kernel.org" <rafael@kernel.org>,
+ "lenb@kernel.org" <lenb@kernel.org>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ =?UTF-8?B?6rmA7ZmN6recKEtJTSBIT05HR1lVKSBTeXN0ZW0gU1c=?=
+ <honggyu.kim@sk.com>,
+ "ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+ =?UTF-8?B?6rmA65296riwKEtJTSBSQUtJRSkgU3lzdGVtIFNX?= <rakie.kim@sk.com>,
+ "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+ "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+ "dave.jiang@intel.com" <dave.jiang@intel.com>,
+ "horen.chuang@linux.dev" <horen.chuang@linux.dev>,
+ "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "kernel-team@meta.com" <kernel-team@meta.com>
+Subject: Re: [External Mail] [RFC PATCH] mm/mempolicy: Weighted interleave
+ auto-tuning
+To: Joshua Hahn <joshua.hahnjy@gmail.com>,
+ "gourry@gourry.net" <gourry@gourry.net>
+References: <20241210215439.94819-1-joshua.hahnjy@gmail.com>
+Content-Language: en-US
+From: Hyeonggon Yoo <hyeonggon.yoo@sk.com>
+In-Reply-To: <20241210215439.94819-1-joshua.hahnjy@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsXC9ZZnoe7Li9HpBg/va1rMWb+GzWL61AuM
+	FiduNrJZ/Lx7nN2iefF6NovVm3wtbvefY7VYtfAam8XxrfPYLfZdBKrd+fAtm8Xyff2MFpd3
+	zWGzuLfmP6vF3C9TmS1Wr8lwEPA4/OY9s8fOWXfZPbrbLrN7tBx5y+qxeM9LJo9NqzrZPDZ9
+	msTucWLGbxaPnQ8tPRY2TGX22D93DbvHuYsVHp83yQXwRnHZpKTmZJalFunbJXBlXLl3kang
+	qlfFjD8rWBoYl1l3MXJySAiYSCzZ+ZoFxv59uIkVxOYVsJQ407IcKM7BwSKgKnH4awlEWFDi
+	5MwnYOWiAvIS92/NYO9i5OJgFljJLnG1oZ0NJCEsECHxfeUZRhBbRCBE4szueUwgtpCAjcTK
+	yU1gcWYBcYlbT+YzgcxnE9CS2NGZChLmFLCVePFmKTNEiZlE19YuqHJ5ie1v5zCD7JIQOMUu
+	0fb8BTvEzZISB1fcYJnAKDgLyX2zkKyYhWTWLCSzFjCyrGIUycwry03MzDHWK87OqMzLrNBL
+	zs/dxAiM2WW1fyJ3MH67EHyIUYCDUYmHN+BeVLoQa2JZcWXuIUYJDmYlEd4b9pHpQrwpiZVV
+	qUX58UWlOanFhxilOViUxHmNvpWnCAmkJ5akZqemFqQWwWSZODilGhg9pecICd9gbuxZZlcU
+	/+H25e3+JSs23DZIDgo40aAfG9GvziQb33Sy9ZB/me+0WQy/M7c/kNTJYd31VCtef43KKUat
+	epnL6QE8LIK/k1aKGaxllBF8ZdailjDP5KV43Ml525bdDH3v0HpiqW8/d0ui1Ik1c1laLrDs
+	6H2fbi13zJ9965vuE0osxRmJhlrMRcWJAOQJvhbVAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKIsWRmVeSWpSXmKPExsXCNUOnRPflxeh0g+W3xC3mrF/DZjF96gVG
+	ixM3G9ksft49zm7RvHg9m8XqTb4Wn5+9Zra43X+O1WLVwmtsFse3zmO32HcRqOHw3JOsFjsf
+	vmWzWL6vn9Hi8q45bBb31vxntZj7ZSqzxaFrz1ktVq/JcBD2OPzmPbPHzll32T262y6ze7Qc
+	ecvqsXjPSyaPTas62Tw2fZrE7nFixm8Wj50PLT0WNkxl9tg/dw27x7mLFR7fbnt4LH7xgcnj
+	8ya5AP4oLpuU1JzMstQifbsErowr9y4yFVz1qpjxZwVLA+My6y5GTg4JAROJ34ebWEFsXgFL
+	iTMty1m6GDk4WARUJQ5/LYEIC0qcnPmEBcQWFZCXuH9rBnsXIxcHs8BKdomrDe1sIAlhgQiJ
+	7yvPMILYIgIhEmd2z2MCsYUEbCRWTm4CizMLiEvcejKfCWQ+m4CWxI7OVJAwp4CtxIs3S5kh
+	SswkurZ2QZXLS2x/O4d5AiPfLCRnzEIyaRaSlllIWhYwsqxiFMnMK8tNzMwx0yvOzqjMy6zQ
+	S87P3cQIjMxltX8m7WD8dtn9EKMAB6MSD2/Avah0IdbEsuLK3EOMEhzMSiK8N+wj04V4UxIr
+	q1KL8uOLSnNSiw8xSnOwKInzeoWnJggJpCeWpGanphakFsFkmTg4pRoYN3+dfJlxo1/F6uar
+	wWkNNx6HiGheYn9y5nlm/u8VBYJ8Ec+OKFzU1DnT8CZQ4UlcZ9tOlvPZwus332G8uaTqD0Ob
+	5qU97yY5dm2xM7AuS+4WsAuo+e0iPPPYHevK2GUHlN9d+cHfY3Dt1beKqYvsNgcY/jKa8t92
+	U/Xxw/MFEsVeLJ3y3OxnrhJLcUaioRZzUXEiALhuclrIAgAA
+X-CFilter-Loop: Reflected
 
-On Thu, Dec 12, 2024, Maxim Levitsky wrote:
-> On Wed, 2024-12-11 at 16:44 -0800, Sean Christopherson wrote:
-> > But, I can't help but wonder why KVM bothers emulating PML.  I can appreciate
-> > that avoiding exits to L1 would be beneficial, but what use case actually cares
-> > about dirty logging performance in L1?
+On 2024-12-11 06:54 AM, Joshua Hahn wrote:
+> On machines with multiple memory nodes, interleaving page allocations
+> across nodes allows for better utilization of each node's bandwidth.
+> Previous work by Gregory Price [1] introduced weighted interleave, which
+> allowed for pages to be allocated across NUMA nodes according to
+> user-set ratios.
 > 
-> It does help with performance by a lot and the implementation is emulated and simple.
+> Ideally, these weights should be proportional to their bandwidth, so
+> that under bandwidth pressure, each node uses its maximal efficient
+> bandwidth and prevents latency from increasing exponentially.
+> 
+> At the same time, we want these weights to be as small as possible.
+> Having ratios that involve large co-prime numbers like 7639:1345:7 leads
+> to awkward and inefficient allocations, since the node with weight 7
+> will remain mostly unused (and despite being proportional to bandwidth,
+> will not aid in relieving the pressure present in the other two nodes).
+> 
+> This patch introduces an auto-configuration for the interleave weights
+> that aims to balance the two goals of setting node weights to be
+> proportional to their bandwidths and keeping the weight values low.
+> This balance is controlled by a value max_node_weight, which defines the
+> maximum weight a single node can take.
 
-Yeah, it's not a lot of complexity, but it's architecturally flawed.  And I get
-that it helps with performance, I'm just stumped as to the use case for dirty
-logging in a nested VM in the first place.
+Hi Joshua,
 
-> Do you have any comments for the rest of the patch series? If not then I'll send
-> v2 of the patch series.
+I am wondering how this is going to work for host memory + CXL memory 
+interleaving. I guess by "the ACPI table" you mean the ACPI HMAT or CXL 
+CDAT, both of which does not provide the bandwidth of host memory.
+If this feature does not consider the bandwidth of host memory, manual 
+configuration will be inevitable anyway.
 
-*sigh*
+> Large max_node_weights generally lead to increased weight-bandwidth
+> proportionality, but can lead to underutilized nodes (think worst-case
+> scenario, which is 1:max_node_weight). Lower max_node_weights reduce the
+> effects of underutilized nodes, but may lead to improperly loaded
+> distributions.
+> 
+> This knob is exposed as a sysfs interface with a default value of 32.
+> Weights are re-calculated once at boottime and then every time the knob
+> is changed by the user, or when the ACPI table is updated.
+>> [1] 
+https://lore.kernel.org/linux-mm/20240202170238.90004-1-gregory.price@memverge.com/
+> 
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> Co-Developed-by: Gregory Price <gourry@gourry.net>
+> ---
+>   ...fs-kernel-mm-mempolicy-weighted-interleave |  24 +++
+>   drivers/acpi/numa/hmat.c                      |   1 +
+>   drivers/base/node.c                           |   7 +
+>   include/linux/mempolicy.h                     |   4 +
+>   mm/mempolicy.c                                | 195 ++++++++++++++++--
+>   5 files changed, 211 insertions(+), 20 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
+> index 0b7972de04e9..2ef9a87ce878 100644
+> --- a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
+> +++ b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
+> @@ -23,3 +23,27 @@ Description:	Weight configuration interface for nodeN
+>   		Writing an empty string or `0` will reset the weight to the
+>   		system default. The system default may be set by the kernel
+>   		or drivers at boot or during hotplug events.
+> +
+> +What:		/sys/kernel/mm/mempolicy/weighted_interleave/max_node_weight
+> +Date:		December 2024
+> +Contact:	Linux memory management mailing list <linux-mm@kvack.org>
+> +Description:	Weight limiting / scaling interface
+> +
+> +		The maximum interleave weight for a memory node. When it is
+> +		updated, any previous changes to interleave weights (i.e. via
+> +		the nodeN sysfs interfaces) are ignored, and new weights are
+> +		calculated using ACPI-reported bandwidths and scaled.
+> +
 
-I do.  Through no fault of your own.  I was trying to figure out a way to ensure
-the vCPU made meaningful progress, versus just guaranteeing at least one write,
-and stumbled onto a plethora of flaws and unnecessary complexity in the test.
+At first this paragraph sounded like "previously stored weights are 
+discarded after setting max_node_weight", but I think you mean
+"User can override the default values, but defaults values are 
+calculated regardless of the values set by the user". Right?
 
-Can you post this patch as a standalone v2?  I'd like to do a more agressive
-cleanup of the selftest, but I don't want to hold this up, and there's no hard
-dependency.
+> +		It is possible for weights to be greater than max_node_weight if
+> +		the nodeN interfaces are directly modified to be greater.
+> +
+> +		Minimum weight: 1
+> +		Default value: 32
+> +		Maximum weight: 255
+> +
+> +		Writing an empty string will set the value to be the default
+> +		(32). Writing a value outside the valid range  will return
+> +		EINVAL and will not re-trigger a weight scaling.
+> +
+> +		Setting max_node_weight to 1 is equivalent to unweighted
+> +		interleave.
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index ee32a10e992c..f789280acdcb 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -109,6 +109,7 @@
+>   #include <linux/mmu_notifier.h>
+>   #include <linux/printk.h>
+>   #include <linux/swapops.h>
+> +#include <linux/gcd.h>
+>   
+>   #include <asm/tlbflush.h>
+>   #include <asm/tlb.h>
+> @@ -153,24 +154,116 @@ static unsigned int mempolicy_behavior;
 
-As for the issues I encountered with the selftest:
+[...snip...]
 
- 1. Tracing how many pages have been written for the current iteration with a
-    guest side counter doesn't work without more fixes, because the test doesn't
-    collect all dirty entries for the current iterations.  For the dirty ring,
-    this results in a vCPU *starting* an iteration with a full dirty ring, and
-    the test hangs because the guest can't make forward progress until
-    log_mode_collect_dirty_pages() is called.
+> +int mempolicy_set_node_perf(unsigned int node, struct access_coordinate *coords)
+> +{
+> +	unsigned long *old_bw, *new_bw;
+> +	unsigned long bw_val;
+> +	u8 *old_iw, *new_iw;
+> +
+> +	/*
+> +	 * Bandwidths above this limit causes rounding errors when reducing
+> +	 * weights. This value is ~16 exabytes, which is unreasonable anyways.
+> +	 */
+> +	bw_val = min(coords->read_bandwidth, coords->write_bandwidth);
+> +	if (bw_val > (U64_MAX / 10))
+> +		return -EINVAL;
+> +
+> +	new_bw = kcalloc(nr_node_ids, sizeof(unsigned long), GFP_KERNEL);
+> +	if (!new_bw)
+> +		return -ENOMEM;
+> +
+> +	new_iw = kzalloc(nr_node_ids, GFP_KERNEL);
 
- 2. The test presumably doesn't collect all dirty entries because of the weird
-    and unnecessary kick in dirty_ring_collect_dirty_pages(), and all the
-    synchronization that comes with it.  The kick is "justified" with a comment
-    saying "This makes sure that hardware PML cache flushed", but there's no
-    reason to do *if* pages that the test collects dirty pages *after* stopping
-    the vCPU.  Which is easy to do while also collecting while the vCPU is
-    running, if the kick+synchronization is eliminated (i.e. it's a self-inflicted
-    wound of sorts).
+I think kcalloc(nr_node_ids, sizeof(u8), GFP_KERNEL); will be more readable.
 
- 3. dirty_ring_after_vcpu_run() doesn't honor vcpu_sync_stop_requested, and so
-    every other iteration runs until the ring is full.  Testing the "soft full"
-    logic is interesting, but not _that_ interesting, and filling the dirty ring
-    basically ignores the "interval".  Fixing this reduces the runtime by a
-    significant amount, especially on nested, at the cost of providing less
-    coverage for the dirty ring with default interval in a nested VM (but if
-    someone cares about testing the dirty ring soft full in a nested VM, they
-    can darn well bump the interval).
+> +	if (!new_iw) {
+> +		kfree(new_bw);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	mutex_lock(&default_iwt_lock);
+> +	old_bw = node_bw_table;
+> +	old_iw = rcu_dereference_protected(default_iw_table,
+> +					   lockdep_is_held(&default_iwt_lock));
+> +
+> +	if (old_bw)
+> +		memcpy(new_bw, old_bw, nr_node_ids*sizeof(unsigned long));
+> +	new_bw[node] = bw_val;
+> +	node_bw_table = new_bw;
+> +
+> +	reduce_interleave_weights(new_bw, new_iw);
+> +	rcu_assign_pointer(default_iw_table, new_iw);
+> +
+> +	mutex_unlock(&default_iwt_lock);
+> +	synchronize_rcu();
+> +	kfree(old_bw);
+> +	kfree(old_iw);
+> +	return 0;
+> +}
+> +
+>   /**
+>    * numa_nearest_node - Find nearest node by state
+>    * @node: Node id to start the search
+> @@ -2001,7 +2094,7 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
+>   {
+>   	nodemask_t nodemask;
+>   	unsigned int target, nr_nodes;
+> -	u8 *table;
+> +	u8 *table, *defaults;
+>   	unsigned int weight_total = 0;
+>   	u8 weight;
+>   	int nid;
+> @@ -2012,11 +2105,12 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
+>   
+>   	rcu_read_lock();
+>   	table = rcu_dereference(iw_table);
+> +	defaults = rcu_dereference(iw_table);
 
- 4. Fixing the test to collect all dirty entries for the current iteration
-    exposes another flaw.  The bitmaps (not dirty ring) start with all bits
-    set.  And so the first iteration can see "dirty" pages that have never
-    been written, but only when applying your fix to limit the hack to s390.
+Probably you intended rcu_dereference(default_iw_table)?
 
- 5. "iteration" is synched to the guest *after* the vCPU is restarted, i.e. the
-    guest could see a stale iteration if the main thread is delayed.
+>   	/* calculate the total weight */
+>   	for_each_node_mask(nid, nodemask) {
+>   		/* detect system default usage */
+> -		weight = table ? table[nid] : 1;
+> -		weight = weight ? weight : 1;
+> +		weight = table ? table[nid] : 0;
+> +		weight = weight ? weight : (defaults ? defaults[nid] : 1);
+>   		weight_total += weight;
+>   	}
+>   
+> @@ -2025,8 +2119,8 @@ static unsigned int weighted_interleave_nid(struct mempolicy *pol, pgoff_t ilx)
+>   	nid = first_node(nodemask);
+>   	while (target) {
+>   		/* detect system default usage */
+> -		weight = table ? table[nid] : 1;
+> -		weight = weight ? weight : 1;
+> +		weight = table ? table[nid] : 0;
+> +		weight = weight ? weight : (defaults ? defaults[nid] : 1);
+>   		if (target < weight)
+>   			break;
+>   		target -= weight;
+> @@ -2409,7 +2503,7 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
+>   	unsigned long nr_allocated = 0;
+>   	unsigned long rounds;
+>   	unsigned long node_pages, delta;
+> -	u8 *table, *weights, weight;
+> +	u8 *weights, weight;
+>   	unsigned int weight_total = 0;
+>   	unsigned long rem_pages = nr_pages;
+>   	nodemask_t nodes;
+> @@ -2458,16 +2552,8 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
+>   	if (!weights)
+>   		return total_allocated;
+>   
+> -	rcu_read_lock();
+> -	table = rcu_dereference(iw_table);
+> -	if (table)
+> -		memcpy(weights, table, nr_node_ids);
+> -	rcu_read_unlock();
+> -
+> -	/* calculate total, detect system default usage */
+>   	for_each_node_mask(node, nodes) {
+> -		if (!weights[node])
+> -			weights[node] = 1;
+> +		weights[node] = get_il_weight(node);
+>   		weight_total += weights[node];
+>   	}
+>   
+> @@ -3396,6 +3482,7 @@ static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
+>   }
+>   
+>   static struct iw_node_attr **node_attrs;
+> +static struct kobj_attribute *max_nw_attr;
 
- 6. host_bmap_track and all of the weird exemptions for writes from previous
-    iterations goes away if all entries are collected for the current iteration
-    (though a second bitmap is needed to handle the second collection; KVM's
-    "get" of the bitmap clobbers the previous value).
+Where is max_nw_attr initialized?
 
-I have everything more or less coded up, but I need to split it into patches,
-write changelogs, and interleave it with your fixes.  Hopefully I'll get to that
-tomorrow.
+Best,
+Hyeonggon
+
+>   static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
+>   				  struct kobject *parent)
+> @@ -3413,6 +3500,10 @@ static void sysfs_wi_release(struct kobject *wi_kobj)
+>   
+>   	for (i = 0; i < nr_node_ids; i++)
+>   		sysfs_wi_node_release(node_attrs[i], wi_kobj);
+> +
+> +	sysfs_remove_file(wi_kobj, &max_nw_attr->attr);
+> +	kfree(max_nw_attr->attr.name);
+> +	kfree(max_nw_attr);
+>   	kobject_put(wi_kobj);
+>   }
 
