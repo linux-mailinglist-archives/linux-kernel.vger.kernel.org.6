@@ -1,101 +1,79 @@
-Return-Path: <linux-kernel+bounces-444930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9AF9F0EB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:12:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3669F0EC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:14:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C479B282880
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:12:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64AA41632FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA77A1E3780;
-	Fri, 13 Dec 2024 14:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761921E3DCD;
+	Fri, 13 Dec 2024 14:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU+vdX6D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlpR6XB/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BD81E0DD9;
-	Fri, 13 Dec 2024 14:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34B51E04B3;
+	Fri, 13 Dec 2024 14:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734098998; cv=none; b=OzeGafOyxlJCTsfxyUaRe3YjcFSA2OT3yD8MzyIyErHpPgU1qWNye0oq87u9BLq9yA1sxMb2eXTiXizCuvG5PKmUdpKIkcM1YTWA3qCcaPbW/o1W/xU0/K9d43FjNHaH3vuvXhiuIxhOkMb+KIThLuXGtELc6w275SqEoiheJ0w=
+	t=1734099022; cv=none; b=s9zEZSRryHzVnzHZX2SxxfhpXwCoqyqj7iK6yQg4uHbbTQMHJ6KPqI6C0AMStxUo2JHp3JHhyfda12WvtA4DabGdAEHPZoAmqSCaGgqZbuGVVrXsl4BIfdfPa4IpbAoTCidkhVh6f9GyrnUixWq7Tzcm2Dr9YSCA1tz7HahB3qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734098998; c=relaxed/simple;
-	bh=IRH1stBRUakiJjpQaxFYp0Z7EC9QfLCaQVhvqTN/voQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0OlYfTqdQvI4RUZ06z9s8l5M18UH0yAF6peW9AqCDhWG/xn02dtwMyQqEJq1+YjWTMcFvX5b+FqrCNa3BnFKgTjAXaN4pf2GbdXUs/lq11ybj5PyfNyIILXOCBvfkPmXQw1Qzg8pDxiNQz0QeJFQu5cz8BwANsbrKKtC4ZqeXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hU+vdX6D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B709BC4CED0;
-	Fri, 13 Dec 2024 14:09:57 +0000 (UTC)
+	s=arc-20240116; t=1734099022; c=relaxed/simple;
+	bh=X1G8jyNdOTQp6RmoXhjSlh2R/WEz9Ja/0XTEzP+fWwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cr0ZjXLS4Rp5PDb9n+Gz73LB+AY8n/aNRddinJf9OVAldkUv0AW5Cfqzpv/kN2Tnt14fCqM477znjcvTr58wlUp8tZ22MH1ZpabgjBg1FNfNg625+Gmr4KPyWdZnrhs9GKLedxcCgmxFZ639Kxqijy/3WAWHqq4GUxq4i36PzvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RlpR6XB/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C07ABC4CED0;
+	Fri, 13 Dec 2024 14:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734098997;
-	bh=IRH1stBRUakiJjpQaxFYp0Z7EC9QfLCaQVhvqTN/voQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hU+vdX6D+sU5+MT+kCnnemUemI0nxmIs0SflS4vVPU1v261pl1xE1fA/l91BO7e5v
-	 yHev6cMNljHp34j+zG5U7cvnACCVYjmksL/MUySdGAaoDQFJYS1FXjZMxl7u38bAIZ
-	 YX/pjUwDrv8GZ+uXpXR1Z783DQc9Jx/sMupQjQvcmpfZ9NAdmBkjD/Uw9zRfiz70e1
-	 P3f1WLvrTvaIR7A0ScjVxTG4HYhnInAyDuRRV8WqnC1Z6k6N+80Qt6+ra4fgJr4bAE
-	 HbX5pEssFXfFamZOBfbxa/728+uEaIqQe1O0sQMdA5wAMN//KhFOGOJ1E9wxD8Jd7h
-	 15zKBAD313Jlw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tM6Mj-000000006xl-2dVW;
-	Fri, 13 Dec 2024 15:10:02 +0100
-Date: Fri, 13 Dec 2024 15:10:01 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] soc: qcom: llcc: Enable LLCC_WRCACHE at boot on X1
-Message-ID: <Z1xAOQWFy2J7zbdC@hovoldconsulting.com>
-References: <20241212-topic-llcc_x1e_wrcache-v2-1-e44d3058d06c@oss.qualcomm.com>
- <Z1vzddhyrnwq7Sl_@hovoldconsulting.com>
- <40bdbb34-94a5-4500-a660-57a530f066c8@oss.qualcomm.com>
+	s=k20201202; t=1734099022;
+	bh=X1G8jyNdOTQp6RmoXhjSlh2R/WEz9Ja/0XTEzP+fWwo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RlpR6XB/qnXaJXi1l7tthmJU7zeaD0PQbiidaPJYzkhQgxbbSCTCLI24pcF99v+3o
+	 3hT0WcWHIMo8z1aqmXnTvZpLt4UzWmlCENtPywXq6Xs7X7NyI96r5L90SEiBRHYjC0
+	 sLICrCYgymj7LC7ypOaw0/3nH7D6XXLE9GptEgIXExrMEB3V1+FUkqmOeVsP5TXC/l
+	 q6Et+sQ8npLd4ZRslCFpa8FlspuHWoMYcqroh2iYvD8ndfoNRH4nDD0H8w12DKxWP9
+	 6hsjyv4TorkWUUpLvZ6/tCPIna5n+ndCSecJB/+gz7/dA2arp2KA4dWqXROTk30YFK
+	 xk1VJGwatg4RQ==
+Date: Fri, 13 Dec 2024 06:10:20 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <andrew+netdev@lunn.ch>, <horms@kernel.org>, <shenjian15@huawei.com>,
+ <salil.mehta@huawei.com>, <liuyonglong@huawei.com>,
+ <wangpeiyang1@huawei.com>, <chenhao418@huawei.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND net 3/7] net: hns3: Resolved the issue that the
+ debugfs query result is inconsistent.
+Message-ID: <20241213061020.017b6f95@kernel.org>
+In-Reply-To: <1448b4a1-235c-4abe-9f95-fbf6e7f9d640@huawei.com>
+References: <20241107133023.3813095-1-shaojijie@huawei.com>
+	<20241107133023.3813095-4-shaojijie@huawei.com>
+	<20241111172511.773c71df@kernel.org>
+	<e4396ecc-7874-4caf-b25d-870a9d897eb1@huawei.com>
+	<20241113163145.04c92662@kernel.org>
+	<058dff3c-126a-423a-8608-aa2cebfc13eb@huawei.com>
+	<20241209131315.2b0e15bc@kernel.org>
+	<1448b4a1-235c-4abe-9f95-fbf6e7f9d640@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40bdbb34-94a5-4500-a660-57a530f066c8@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 13, 2024 at 01:24:24PM +0100, Konrad Dybcio wrote:
-> On 13.12.2024 9:42 AM, Johan Hovold wrote:
-> > On Thu, Dec 12, 2024 at 05:32:24PM +0100, Konrad Dybcio wrote:
-> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>
-> >> Do so in accordance with the internal recommendations.
-> > 
-> > Your commit message is still incomplete as it does not really say
-> > anything about what this patch does, why this is needed or what the
-> > implications are if not merging this patch.
-> 
-> I'm not sure I can say much more here..
+On Fri, 13 Dec 2024 21:11:49 +0800 Jijie Shao wrote:
+> If the framework does not call .release() for some reason, the buffer
+> cannot be freed, causing memory leakage. Maybe it's acceptable=EF=BC=9F
 
-If you don't know what this slice is used for or what impact enabling it
-has then saying so in the commit message is also useful information.
-
-But you should be able to provide some background for reviewers, stable
-maintainers, other devs, posterity, ...
-
-> > How would one determine that this patch is a valid candidate for
-> > backporting, for example.
-> 
-> "suboptimal hw presets"
-
-I'm sure the patch is correct, but spell something out in the commit
-message.
-
-Johan
+Are you sure? How did you test?
+Looking at the code debugfs itself uses release in a similar way
+(u32_array_fops, for example), so I think it should work.
 
