@@ -1,113 +1,87 @@
-Return-Path: <linux-kernel+bounces-445556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F709F17AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:59:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DB19F17AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B0127A1460
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82EE1188F77C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1231922E8;
-	Fri, 13 Dec 2024 20:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7201922CC;
+	Fri, 13 Dec 2024 21:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViBArYUm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="jR1BiDCj"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B3818D649;
-	Fri, 13 Dec 2024 20:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA38C18660F;
+	Fri, 13 Dec 2024 21:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734123586; cv=none; b=Nxp5CVNDNaxqzJkqTFjjSrareSXSJ76Qa6pBePqR/nbcszbMXI/qAJSU8xzCv0T+6pT20EZl1rP1IGbbWP0LhxENpwD/LqmPY3wiZrDW1LAM2to044YSpeaYony1+Oye97gFV6c0j8yYoiijnwF4VhWyidXSqu3NalKrkm0S8/A=
+	t=1734123656; cv=none; b=FYIOsksYyK5vYGBYQ54ZOe/wmSK+ZSGZkq5dhNeV9MnCKiB/a4AOyUba2JlCSgxqhOoJ0PKaBvZxB45upRCQRfQG8coDk52HE8YQay48vCePwKXLCKM21vcVUtZeA5bkTmBeDGNOzwGFlEi0FspNeVHAhXlbDviK0S6Um0/jguo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734123586; c=relaxed/simple;
-	bh=3YeXNRuMlfVX6Hhet1HpVXgeP/aknrTTP+vGGNpXpjc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=CW1KBimY+qAEo+1smQ3DOBUEHNPsyLTYroBs+UYK94VGMoe49+7j0npAAXpl7wqx/LK3MPNr6GknvMvTQ6Z93ExbgI+kDuhp09JiCVKDLut0tsbX7ZcIJb9T/3Gjqj+zEaDarFLPcCrE6ez8TZlQzSmDSo8Lga6FraiMf5kScuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViBArYUm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC08C4CED0;
-	Fri, 13 Dec 2024 20:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734123585;
-	bh=3YeXNRuMlfVX6Hhet1HpVXgeP/aknrTTP+vGGNpXpjc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ViBArYUmb9BzzmdssN/eFLBwD7mumFs6DhJfSjAYclv/tyaVkOz+dywIyF9TNdksM
-	 GZul+0ue60VwLSS0ZHEIsxjGD8B/6Imm8As1JBpgLck0HlpZlRo2Io/2h8qevSjjGi
-	 G64MO3GmZ1mYrK5zNXWT5iKQgzgUeRb8Kh6GkazKGBwB1rYdeGUxxnI8q8Y9rwH+Cu
-	 TRtMkOKpYnWoBsz8jypDRE4ZTezfQLYmfNRtUoY89lAOQrhCWzNdew6I4i3VG+EMt9
-	 7oufkfEJYwbNUqDnQEqTAPvGyByIbStIs+ApQAD6c7x2xskwo+KtUoMmQitctqd+3W
-	 kGz9f5fwOsxLQ==
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-71df1f45b0cso1540573a34.1;
-        Fri, 13 Dec 2024 12:59:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWCP3oFppDsuxwxS0EUXYHkAkJpQYlFlemJAgs/JqZ+NwuNLVoh77E4kjUhuGxw1RfFwgDXhjqPXPe4MIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd502++OPUYXWrCLSKCiVi33wZbmvliVlCVMr4LiNRdZ7T1XbC
-	l2Hcxo96pejcHwZIhyASSTzuAbumiksgMmFf87eeYDSuCV19ENxRwKliF3QRzRI7u21uLrHe/Er
-	lsKscA5Af9yGn7GwqRVwRoNxNwqs=
-X-Google-Smtp-Source: AGHT+IGLAq/W/0zIYeNA1tor36qZBAEe1/RBhRZj2dipXb9QgpFBYnYJ7ax5Q4KU8c531JXayYOQ+01eseK2/Uma3IA=
-X-Received: by 2002:a05:6808:1892:b0:3eb:47f9:a7fa with SMTP id
- 5614622812f47-3eba6bfe393mr1944660b6e.21.1734123584856; Fri, 13 Dec 2024
- 12:59:44 -0800 (PST)
+	s=arc-20240116; t=1734123656; c=relaxed/simple;
+	bh=In/CvyBOIy7P/fcaUpqhO1y9bSBdanIyX1QtjfBWla0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5Zo1CXhyuCCL9aJNgVx2I1kAlZKTpZCH43Hwh2aBXzh7r/Viya6k6WpDyt2FuCAgFJ6GE6gC/CANvcLSHeEZCQgSOVeik5KiSh46qCFimujW6lVGOys+eqkyRMMLMywH5e3UykcbSf5T/4IJ7nPPnvhFj7xSx7pqxWTd9NXFDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=jR1BiDCj; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1734123650;
+	bh=In/CvyBOIy7P/fcaUpqhO1y9bSBdanIyX1QtjfBWla0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jR1BiDCj6/a1leQjIquNf4GB4P45ny1qx+0C72dsUyB9hfGG4oiyMY6VyRnmmrzBx
+	 xW2YwSSAEeri6zldGU9SjsIfd/0CRpn/STIpik6oLcQYVDZNqfg3ybup7BMlJpKg+3
+	 IE2Wag1KC/OggCdrGjTMk1ReZnGx8mWLUQFRGNhQ=
+Date: Fri, 13 Dec 2024 22:00:50 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Sebastian Reichel <sre@kernel.org>, 
+	Hans de Goede <hdegoede@redhat.com>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] power: supply: extension API
+Message-ID: <0f6b04ea-c8e9-4fc5-b7c7-72080ed0c954@t-8ch.de>
+References: <20241211-power-supply-extensions-v6-0-9d9dc3f3d387@weissschuh.net>
+ <2e2f4845-7500-40ec-985d-3a495842e020@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 13 Dec 2024 21:59:34 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jUChwwKBfcPrUJ+05ULOJ1dtng=f=7T8iHjBce3k5Bhg@mail.gmail.com>
-Message-ID: <CAJZ5v0jUChwwKBfcPrUJ+05ULOJ1dtng=f=7T8iHjBce3k5Bhg@mail.gmail.com>
-Subject: [GIT PULL] ACPI fixes for v6.13-rc3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2e2f4845-7500-40ec-985d-3a495842e020@gmx.de>
 
-Hi Linus,
+On 2024-12-12 15:27:52+0100, Armin Wolf wrote:
+> Am 11.12.24 um 20:57 schrieb Thomas Weißschuh:
+> 
+> > Introduce a mechanism for drivers to extend the properties implemented
+> > by a power supply.
 
-Please pull from the tag
+[..]
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-6.13-rc3
+> > ---
+> > Changes in v6:
+> > - Drop alreay picked up ACPI battery hook rename patch
+> > - Only return bool from power_supply_property_is_writeable()
+> > - Improve naming for test_power symbols
+> > - Integrate cros_charge-control fixes from the psy/fixes branch
+> > - Add sysfs UAPI for extension discovery
+> > - Use __must_check on API
+> > - Make power_supply_for_each_extension() safer.
+> >    (And uglier, ideas welcome)
+> 
+> Maybe we can use a do { ... } while (0) construct here.
 
-with top-most commit e14d5ae28eb28c5edef53bd648037d2bb4fce1b3
+I don't think so. The macro needs to expand to a dangling loop
+condition. So whatever statement comes after gets executed in the loop.
 
- Merge branch 'acpica'
-
-on top of commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-
- Linux 6.13-rc2
-
-to receive ACPI fixes for 6.13-rc3.
-
-These fix two coding mistakes, one in the ACPI resources handling code
-and one in ACPICA:
-
- - Relocate the addr->info.mem.caching check in acpi_decode_space() to
-   only execute it if the resource is of the correct type (Ilpo J=C3=A4rvin=
-en).
-
- - Don't release a context_mutex that was never acquired in
-   acpi_remove_address_space_handler() (Daniil Tatianin).
-
-Thanks!
-
-
----------------
-
-Daniil Tatianin (1):
-      ACPICA: events/evxfregn: don't release the ContextMutex that was
-never acquired
-
-Ilpo J=C3=A4rvinen (1):
-      ACPI: resource: Fix memory resource type union access
-
----------------
-
- drivers/acpi/acpica/evxfregn.c | 2 --
- drivers/acpi/resource.c        | 6 +++---
- 2 files changed, 3 insertions(+), 5 deletions(-)
+[..]
 
