@@ -1,86 +1,81 @@
-Return-Path: <linux-kernel+bounces-445036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3582B9F102F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F449F1037
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:05:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3187616A98D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:02:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12D7F16BD0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B756A1EF0B9;
-	Fri, 13 Dec 2024 14:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2546A1E2009;
+	Fri, 13 Dec 2024 15:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CZcvG6tQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PI+wXOka"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785301EF0B2
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68C91DFD9A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101910; cv=none; b=k4KeXZQjuRbd25l/MVAg9GAadxSiX6eVEIaNBo4GHaMjK/ts/Voo3oMdmIkUKZTR7dnnedHM/BG8kDtXHjsTkAh4KVXNmQATMi8ymVISyHPA/WnM0d6BmH7BxEPM7twkOtcRiGHkSoyFKnZ0oZakRT7JBsyVITKNTRYelVYCrJs=
+	t=1734102182; cv=none; b=qGhtnM3ONneigzTm2m0yWsQnPTEbVY6JPP86WJRY9slGM8uKqhUdYqTnknXsuY6rlZzHsBLpw+E9/Dm67vw4aDG4tnAIfCJcM/ewnrzH0zD3vmXBdfZ1IpI0ShYo3+jfd1/kH5l9Hyu+XSZZlgGZ+YZ3zIfAi9D6CfpIcQYFSX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101910; c=relaxed/simple;
-	bh=lmjOqtmE3pQRfyAmA39ougBPtWQC5wOec62QRPP0k/k=;
+	s=arc-20240116; t=1734102182; c=relaxed/simple;
+	bh=yTXkG9xsORyjLBEoc5qhvGM9iruX9VHdVXkMcbsWiTY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kezLv4D+xhANcxhEl/+FR+xwKVfXlml6EpTMEoh0mDoZoCt89VJ45tENldacSz86xDy7ZDu6XNr1J74Z76Fq5MAEfs1yFu3zK3D/crBAkAXPnMCjil1QAt0yYQXSObt6X6Mjb8VV3TCggjbPElsIdG/b464BMzOHM1Gz3xnLkKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CZcvG6tQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDBhk07017764
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:58:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rlszV4A6z8fPOk5ll2vIiFFJYFkRjUHNY9V/Q/BxZbg=; b=CZcvG6tQAasT2y/7
-	6IKltI7NxHxyGZmWCTw/o48T+acAXDpkjf3pd64mMZzzzpqB4XeSLMazsykv+nSh
-	puhFcw+EJG3I2mvz5FI1k9aUHSK1qS4BcIPjIYBF0bycjJkf7EbUbYNUCdNXL9/0
-	1WSkwdGTIWxBazXtCmsLYgOO9flNzAUybYJLyOVZytRNvFkW1zBGfsLHn/bYNloF
-	yb9GO4kq9d7rmDp61XOMsUdsSSCCt9LTBkAfxChUPQAoiKD+ABCNQlgHTz+JHEkk
-	5ZBIfpRH6C8eNgm0Dl3cxVNkrYMNmvT1S6yAX5LRijQQiB55lEJa0J0aHBU6do9n
-	eY/qxA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gmac0gjr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:58:27 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-46748e53285so3703641cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:58:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101907; x=1734706707;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rlszV4A6z8fPOk5ll2vIiFFJYFkRjUHNY9V/Q/BxZbg=;
-        b=ac1ECcUXI3GT461tf8d5oLEuuYvL/oaeUluwIlKBzIketqeF3neZtLpSiVwnVDzOl3
-         yHdLCj2kfE04UoAFuecHHg1rFUjIv7xSfJMQmuEpNziQsp++88MAQMd/jhnjD1r4t5WM
-         QuV7DWZMEEdGJaKVBULGiDi7DPQQ7gh4FEeeOOg6uA6sO0tP3vtJU46euytmNJN+pPTR
-         /3MUfFhuOVB3UIFpYMJw1s870T584epoDeRCW0bqNa8z4CUx6CowyNJ0KTKfO0g2kBrt
-         ghrkyY36RPHJqOgwatz2/N0/FtPcmGzOEoh0FPuiePLPbBMN+o/uva8uPNzsTNx1oDgF
-         GLaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXyYviYi1GBiXE/eKGm8g92faDVhp0NxQlujBI5wkdqxm8h02WGIYvt0J5papFDwXZR3NADltyuDRnOAMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbFGUYziARkLmRCa0XowQuNlElr5O73/DgnWfI4iEvuWQsGUhs
-	fC4VfOuSsIub/xVfYOcTfD/RyrpiDJzV18fUYfTJFJFdAsqSKRlIRcqsjkznadCTQBezH5sEEBY
-	CafZpooRDGxw9ymBET7DxVBsYt3WwZjqTpfKxgk0+WT1zxkKyM9PVaP0t6bn6Xlw=
-X-Gm-Gg: ASbGnctw2o4kyw0weZ+tk+5T1Teft6crpzXeteSMRImxfrBDj33X/dkKs4AhpvvxxwZ
-	sYbwgWPMd6EiDdAuOdFEaOBfYa7zbVdbRI8kRSsnSgx4ODNEi11IlnuR+abPgAvC19fjUyuIZLw
-	V5VzYRhCx7AUYyDiotUS4ITO7xUVIUV4e7xFPBMGVyWTKSlPeDTWdGqLrHo81NxBoYJXI/Atlwg
-	6/FO9YCXzosRt3dUNrP4daWHkfWUJcjv+gHN8AsXt2yXp7sl6C3rEyrYPrBNe66R5iKCJptr5bY
-	Sph4D6Tzy8culP1cb5Y1dJLuqvwMFXk5FTk+
-X-Received: by 2002:a05:622a:345:b0:467:58ae:b8dd with SMTP id d75a77b69052e-467a576e84bmr19626451cf.4.1734101906655;
-        Fri, 13 Dec 2024 06:58:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IELIUPmPsk1X8y29poteG58GXKBn3T/cSJEha5oU5OV75WwSXinQDUc4TW/0YQf+IFo5kNT6A==
-X-Received: by 2002:a05:622a:345:b0:467:58ae:b8dd with SMTP id d75a77b69052e-467a576e84bmr19626161cf.4.1734101906210;
-        Fri, 13 Dec 2024 06:58:26 -0800 (PST)
-Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b609e56sm11517701a12.40.2024.12.13.06.58.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 06:58:25 -0800 (PST)
-Message-ID: <9b9158af-c66b-47dc-9a96-41e131aac82e@oss.qualcomm.com>
-Date: Fri, 13 Dec 2024 15:58:23 +0100
+	 In-Reply-To:Content-Type; b=OPXPaDlcx0D4nRv+GlCjMz0qBpnUgf8aiBnyulUQzHezkNcK7uEvtWBE4+yvd5NC72TjnUBG+VI4hFfjjkt/lPKs99whD5GCy0Miy223IWDkGFN8PKuVBxAps5MyNdDVVgln/Os4OFW9H9hhry9lc8fK30Z87oWASoQteaMQbw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PI+wXOka; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDEIt7M015193;
+	Fri, 13 Dec 2024 15:02:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=7JRJ2A
+	J6cj+ZwQl0vIZEIumux8D4wSZd5RQvS2sDKtw=; b=PI+wXOka5fTqls4H+7nLsn
+	TIl1WKIeU517xclOaSb8rNWBDaAq6n+VMwrdF925BaAhUYDswVMrKXDdG2cByIT+
+	7Qx6zN6HKbBP1iVJVeUDTYsmQKOGNQa7KJU1rpqsyMUZjUncSx9Yjo+awpYQb8iG
+	XjIx7Pd4NJ8bdErDPFAQuYczHuhbixYM7LDvGPAQhTwg+SLh91wjMz+suGia619x
+	PX4V2wwTvWRjFBxrtYPwrXX7qs/98w8YCz1itguxKA837dKW5iViYhSP9iE7n3dx
+	oz8hhxbcioXmllvX3qkO6nWh519g/33UejqRV1/5lOWtPUpvne8DTPgILDqsj43A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gddmay38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 15:02:31 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BDExsPP014500;
+	Fri, 13 Dec 2024 15:02:30 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gddmay32-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 15:02:30 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDCcdgC016930;
+	Fri, 13 Dec 2024 15:02:29 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12ypkkh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 15:02:29 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BDF2RnS22217136
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Dec 2024 15:02:27 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 11BCA2004B;
+	Fri, 13 Dec 2024 15:02:27 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 421FF20040;
+	Fri, 13 Dec 2024 15:02:22 +0000 (GMT)
+Received: from [9.124.213.1] (unknown [9.124.213.1])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 13 Dec 2024 15:02:22 +0000 (GMT)
+Message-ID: <de1c97e0-9dd7-4e7f-b6f8-ce3f856c96f3@linux.ibm.com>
+Date: Fri, 13 Dec 2024 20:32:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,59 +83,185 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 23/23] arm64: dts: qcom: sm6115: Fix ADSP memory base
- and length
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Abel Vesa
- <abel.vesa@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Luca Weiss <luca.weiss@fairphone.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241213-dts-qcom-cdsp-mpss-base-address-v3-0-2e0036fccd8d@linaro.org>
- <20241213-dts-qcom-cdsp-mpss-base-address-v3-23-2e0036fccd8d@linaro.org>
+Subject: Re: [RFC PATCH 8/8] sched/fair: Uncache asym_prefer_cpu and find it
+ during update_sd_lb_stats()
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        Meng Li <li.meng@amd.com>, Huang Rui <ray.huang@amd.com>,
+        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241211185552.4553-1-kprateek.nayak@amd.com>
+ <20241211185552.4553-9-kprateek.nayak@amd.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241213-dts-qcom-cdsp-mpss-base-address-v3-23-2e0036fccd8d@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20241211185552.4553-9-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: -o0L_hRduWP9y1G2HOyIEgcwG7FdS5Kw
-X-Proofpoint-GUID: -o0L_hRduWP9y1G2HOyIEgcwG7FdS5Kw
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: uqAz7kyaEwOAwE8QbJjZr5QSs_htFafM
+X-Proofpoint-GUID: TpWDiPfjuScJS2E29md0kEoCEpWeiLll
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- phishscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
- suspectscore=0 spamscore=0 adultscore=0 mlxlogscore=856 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1011
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2411120000 definitions=main-2412130106
 
-On 13.12.2024 3:54 PM, Krzysztof Kozlowski wrote:
-> The address space in ADSP PAS (Peripheral Authentication Service)
-> remoteproc node should point to the QDSP PUB address space
-> (QDSP6...SS_PUB): 0x0a40_0000 with length of 0x4040.
+
+
+On 12/12/24 00:25, K Prateek Nayak wrote:
+> On AMD processors supporting dynamic preferred core ranking, the
+> asym_prefer_cpu cached in sched_group can change dynamically. Since
+> asym_prefer_cpu is cached when the sched domain hierarchy is built,
+> updating the cached value across the system would require rebuilding
+> the sched domain which is prohibitively expensive.
 > 
-> 0x0ab0_0000, value used so far, is the SSC_QUPV3 block, so entierly
-> unrelated.
+> All the asym_prefer_cpu comparisons in the load balancing path are only
+> carried out post the sched group stats have been updated after iterating
+> all the CPUs in the group. Uncache the asym_prefer_cpu and compute it
+> while sched group statistics are being updated as a part of sg_lb_stats.
 > 
-> Correct the base address and length, which should have no functional
-> impact on Linux users, because PAS loader does not use this address
-> space at all.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 96ce9227fdbc ("arm64: dts: qcom: sm6115: Add remoteproc nodes")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+> Fixes: f3a052391822 ("cpufreq: amd-pstate: Enable amd-pstate preferred core support")
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 > ---
+>   kernel/sched/fair.c     | 21 +++++++++++++++++++--
+>   kernel/sched/sched.h    |  1 -
+>   kernel/sched/topology.c | 15 +--------------
+>   3 files changed, 20 insertions(+), 17 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 3f36805ecdca..166b8e831064 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9911,6 +9911,8 @@ struct sg_lb_stats {
+>   	unsigned int sum_nr_running;		/* Nr of all tasks running in the group */
+>   	unsigned int sum_h_nr_running;		/* Nr of CFS tasks running in the group */
+>   	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
+> +	unsigned int asym_prefer_cpu;		/* CPU with highest asym priority */
+> +	int highest_asym_prio;			/* Asym priority of asym_prefer_cpu */
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Its better to move this after group_asym_packing field, so all related 
+fields are together.
 
-Konrad
+>   	unsigned int group_weight;
+>   	enum group_type group_type;
+>   	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
+> @@ -10243,7 +10245,7 @@ sched_group_asym(struct lb_env *env, struct sg_lb_stats *sgs, struct sched_group
+>   	    (sgs->group_weight - sgs->idle_cpus != 1))
+>   		return false;
+>   
+> -	return sched_asym(env->sd, env->dst_cpu, group->asym_prefer_cpu);
+> +	return sched_asym(env->sd, env->dst_cpu, sgs->asym_prefer_cpu);
+>   }
+>   
+>   /* One group has more than one SMT CPU while the other group does not */
+> @@ -10324,6 +10326,17 @@ sched_reduced_capacity(struct rq *rq, struct sched_domain *sd)
+>   	return check_cpu_capacity(rq, sd);
+>   }
+>   
+> +static inline void
+> +update_sg_pick_asym_prefer(struct sg_lb_stats *sgs, int cpu)
+> +{
+> +	int asym_prio = arch_asym_cpu_priority(cpu);
+> +
+> +	if (asym_prio > sgs->highest_asym_prio) {
+> +		sgs->asym_prefer_cpu = cpu;
+> +		sgs->highest_asym_prio = asym_prio;
+> +	}
+> +}
+> +
+>   /**
+>    * update_sg_lb_stats - Update sched_group's statistics for load balancing.
+>    * @env: The load balancing environment.
+> @@ -10345,6 +10358,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>   	memset(sgs, 0, sizeof(*sgs));
+>   
+>   	local_group = group == sds->local;
+> +	sgs->highest_asym_prio = INT_MIN;
+>   
+>   	for_each_cpu_and(i, sched_group_span(group), env->cpus) {
+>   		struct rq *rq = cpu_rq(i);
+> @@ -10358,6 +10372,9 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>   		nr_running = rq->nr_running;
+>   		sgs->sum_nr_running += nr_running;
+>   
+> +		if (sd_flags & SD_ASYM_PACKING)
+> +			update_sg_pick_asym_prefer(sgs, i);
+> +
+>   		if (cpu_overutilized(i))
+>   			*sg_overutilized = 1;
+>   
+> @@ -10479,7 +10496,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+>   
+>   	case group_asym_packing:
+>   		/* Prefer to move from lowest priority CPU's work */
+> -		return sched_asym_prefer(sds->busiest->asym_prefer_cpu, sg->asym_prefer_cpu);
+> +		return sched_asym_prefer(busiest->asym_prefer_cpu, sgs->asym_prefer_cpu);
+>   
+>   	case group_misfit_task:
+>   		/*
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index aef716c41edb..a3f0d326bd11 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -2047,7 +2047,6 @@ struct sched_group {
+>   	unsigned int		group_weight;
+>   	unsigned int		cores;
+>   	struct sched_group_capacity *sgc;
+> -	int			asym_prefer_cpu;	/* CPU of highest priority in group */
+>   	int			flags;
+>   
+>   	/*
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 9c405f0e7b26..20aa087710f0 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -1302,7 +1302,7 @@ static void init_sched_groups_capacity(int cpu, struct sched_domain *sd)
+>   	WARN_ON(!sg);
+>   
+>   	do {
+> -		int cpu, cores = 0, max_cpu = -1;
+> +		int cpu, cores = 0;
+>   
+>   		sg->group_weight = cpumask_weight(sched_group_span(sg));
+>   
+> @@ -1314,19 +1314,6 @@ static void init_sched_groups_capacity(int cpu, struct sched_domain *sd)
+>   #endif
+>   		}
+>   		sg->cores = cores;
+> -
+> -		if (!(sd->flags & SD_ASYM_PACKING))
+> -			goto next;
+> -
+> -		for_each_cpu(cpu, sched_group_span(sg)) {
+> -			if (max_cpu < 0)
+> -				max_cpu = cpu;
+> -			else if (sched_asym_prefer(cpu, max_cpu))
+> -				max_cpu = cpu;
+> -		}
+> -		sg->asym_prefer_cpu = max_cpu;
+> -
+> -next:
+>   		sg = sg->next;
+>   	} while (sg != sd->groups);
+>   
+
+Tried minimal testing of ASYM_PACKING behavior on Power10 Shared VM. It 
+is working as expected with the patch as well. (functionality wise, 
+performance isn't tested)
 
