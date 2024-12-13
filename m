@@ -1,96 +1,266 @@
-Return-Path: <linux-kernel+bounces-444132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072F79F0141
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:50:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6059F0148
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:52:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B242866E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE1A164D54
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A0879F5;
-	Fri, 13 Dec 2024 00:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A55814287;
+	Fri, 13 Dec 2024 00:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EDyPU9ta"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="DskBrXLi"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0A410F9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0255410F9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734050995; cv=none; b=Oy1NnTwJvInBPhHzpo/VZVeoBkKX4T3aBjSBaiq/hHiWyg6gFNbsLP/prABvtrGj0CbnWkyZ9NR/4/wmHitVCA+/o3tiJnpOgROLyFYgtsDT0Pf8OF+qtrVonuWsPYI20cpBgq6/MtXe2V2rkeaWGXz/MuQzlK4zNI16H7VZ7N0=
+	t=1734051118; cv=none; b=Ac36i2+ro6VPtC/0xtoCVpOTrhgyhGfUUAPAPXlTUeeNwan0f3Bo5fabMy9zy1SUDZtQAvBNwe3EV54cWuSGyam2c/JvBdTtJ4d2CPpE+fYOFx+RBTQ3ZT6H+V/jpk6PrkhtI11cfeepAzoJwnTIz1ARZEvNFISJfqE/GUhWbGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734050995; c=relaxed/simple;
-	bh=DwXV4o14XPM+SNZqwjftGFrENhILzuj8vbZ8EdSk8Sk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AR4MwN16ljYVDhWqfHzp+w0neD59j2nnUNf+qTul4EBZDCtOdarYuCn45vAGlA017hfFDNzJS3x9AqOyE3ALU/dnPQbpsaPgpxwChn8H0wA6L5UdGk0qcDwDdAeMk/ayhh1toSEeUlirt2xixfW5XQfskgM1K8qtTc4tqXRFaXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EDyPU9ta; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 13 Dec 2024 00:49:43 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1734050990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5nIPWnjKprkNZasvPhVtfRiElviBP/q4ZO6QUFyEJt0=;
-	b=EDyPU9tafbgcXhGkaS3TjLXpnimikZgo4DCJaPiA+u7l+EolaHl1rMv+o0ISICVyg0nYJd
-	n706QWoFTj8pQ0/W/qR9ggYM1FZt3W3reW9DcGOE2ADiFxDz200YdFI4oe7wC3q6l2mqIe
-	fFR6/t269zyyxLpXYIxPyyYwcFtIjVg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Rik van Riel <riel@surriel.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Balbir Singh <balbirs@nvidia.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	hakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, Nhat Pham <nphamcs@gmail.com>
-Subject: Re: [PATCH v2] memcg: allow exiting tasks to write back data to swap
-Message-ID: <Z1uEp5lCGFQK4vFb@google.com>
-References: <20241212115754.38f798b3@fangorn>
- <Z1ssHQYI-Wyc1adP@google.com>
- <20241212150003.1a0ed845@fangorn>
+	s=arc-20240116; t=1734051118; c=relaxed/simple;
+	bh=iFK9zQnpu6ftwjP/G/D6vMn2aMsIdos6kgQPzfkf7dk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FEV/4Me30ZR8/z9VCvfnKKlbb+yFuHWrL1R7ClDd0t+IGw5oBWQIsNa7uJE9ul0Hald5GqlbW0NCMRqVhqPnozDG1fz9hHzcTDciJj/JhBXUyiEM4TWBaI3Jf/0V6hYavqM2GlNrLTyI6L8OZbdRwvQyTOeyHf7wIrocH3xxtkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=DskBrXLi; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 01BD12C02A5;
+	Fri, 13 Dec 2024 13:51:48 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1734051108;
+	bh=GxzUAEXAkhjtp42vA7TWZCbw4NxpvcuOU0R6+v4w44w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DskBrXLimYwcT0camdDAg/BJMuNSuZsRlPLh4+NlS52gpZgZXXx0uIreTe+fkbvGn
+	 QnykWI4qGEiIdD4czWCAhisXluFIRvqmG+cvqm9Y7lK/P0cd36Z8Hl+isA9qKZeV/U
+	 XcPzhaxF2T2YdZ4kiinfqZ+0taKjItlBJaMCpc++OS8VSZmvpFoLNu7b68UyJfkLND
+	 WXlPQXcSwokp2nY2JoOB1KnunvN0MmtfLO3QayS5Nk7g8wilV6odvdzT3SLE/VIG2e
+	 8XQbsxoNnTwOwMvwISV7LJPFotn3X9SgEgycy4cSyZHrG8mfoVplXJj5BsRQP6m4sZ
+	 XJYON5ZnKfyWA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B675b85230000>; Fri, 13 Dec 2024 13:51:47 +1300
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id A4DAD13EE00;
+	Fri, 13 Dec 2024 13:51:47 +1300 (NZDT)
+Message-ID: <6124c7a2-e949-452e-a88d-2d747cc0f776@alliedtelesis.co.nz>
+Date: Fri, 13 Dec 2024 13:51:47 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212150003.1a0ed845@fangorn>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 4/4] net: mdio: Add RTL9300 MDIO driver
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, tsbogend@alpha.franken.de,
+ hkallweit1@gmail.com, markus.stockhausen@gmx.de, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-mips@vger.kernel.org
+References: <20241211235342.1573926-1-chris.packham@alliedtelesis.co.nz>
+ <20241211235342.1573926-5-chris.packham@alliedtelesis.co.nz>
+ <Z1q0CuDXe8VFuBfZ@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <Z1q0CuDXe8VFuBfZ@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=BNQQr0QG c=1 sm=1 tr=0 ts=675b8523 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=iDlK1bvE_E-H61UyTd4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Thu, Dec 12, 2024 at 03:00:03PM -0500, Rik van Riel wrote:
-> On Thu, 12 Dec 2024 18:31:57 +0000
-> Roman Gushchin <roman.gushchin@linux.dev> wrote:
-> 
-> > Is it about a single task or groups of tasks or the entire cgroup?
-> > If former, why it's a problem? A tight memcg limit can slow things down
-> > in general and I don't see why we should treat the exit() path differently.
-> > 
-> I think the exit path does need to be treated a little differently,
-> since this exit may be the only way such a cgroup can free up memory.
+Hi Russell,
 
-It's true if all tasks in a cgroup are exiting. Otherwise there are
-other options (at least in theory).
+On 12/12/2024 22:59, Russell King (Oracle) wrote:
+> On Thu, Dec 12, 2024 at 12:53:42PM +1300, Chris Packham wrote:
+>> +#define SMI_GLB_CTRL			0x000
+>> +#define   GLB_CTRL_INTF_SEL(intf)	BIT(16 + (intf))
+>> +#define SMI_PORT0_15_POLLING_SEL	0x008
+>> +#define SMI_ACCESS_PHY_CTRL_0		0x170
+>> +#define SMI_ACCESS_PHY_CTRL_1		0x174
+>> +#define   PHY_CTRL_RWOP			BIT(2)
+> Presumably, reading the code, this bit is set when writing?
+Correct. I've tried to use the bit field names from the datasheet. RWOP 
+0=read, 1=write.
+>> +#define   PHY_CTRL_TYPE			BIT(1)
+> Presumably, reading the code, this bit indicates we want to use clause
+> 45?
 
-> 
-> > If it's about the entire cgroup and we have essentially a deadlock,
-> > I feel like we need to look into the oom reaper side.
-> 
-> You mean something like the below?
-> 
-> I have not tested it yet, because we don't have any stuck
-> cgroups right now among the workloads that I'm monitoring.
+Yes. Technically the datasheet says 0=normal register, 1=MMD register.
 
-Yeah, something like this...
+>> +#define   PHY_CTRL_CMD			BIT(0)
+>> +#define   PHY_CTRL_FAIL			BIT(25)
+>> +#define SMI_ACCESS_PHY_CTRL_2		0x178
+>> +#define SMI_ACCESS_PHY_CTRL_3		0x17c
+>> +#define SMI_PORT0_5_ADDR_CTRL		0x180
+>> +
+>> +#define MAX_PORTS       32
+>> +#define MAX_SMI_BUSSES  4
+>> +
+>> +struct realtek_mdio_priv {
+>> +	struct regmap *regmap;
+>> +	u8 smi_bus[MAX_PORTS];
+>> +	u8 smi_addr[MAX_PORTS];
+>> +	bool smi_bus_isc45[MAX_SMI_BUSSES];
+> Not sure about the support for !C45 - you appear to set this if you
+> find a PHY as a child of this device which has the PHY C45 compatible,
+> but as you don't populate the C22 MDIO bus operations, I'm not sure
+> how a C22 PHY can work.
 
-Thanks!
+Oops, yes I forgot to come back to C22. Most of the hardware I have 
+access to uses C45 so that's been my main test setup. I'll include C22 
+support in v2.
+
+>> +	u32 reg_base;
+>> +};
+>> +
+>> +static int realtek_mdio_wait_ready(struct realtek_mdio_priv *priv)
+>> +{
+>> +	u32 val;
+>> +
+>> +	return regmap_read_poll_timeout(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL_1,
+>> +					val, !(val & PHY_CTRL_CMD), 10, 500);
+>> +}
+>> +
+>> +static int realtek_mdio_read_c45(struct mii_bus *bus, int phy_id, int dev_addr, int regnum)
+>> +{
+>> +	struct realtek_mdio_priv *priv = bus->priv;
+>> +	u32 val;
+>> +	int err;
+>> +
+>> +	err = realtek_mdio_wait_ready(priv);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL_2, phy_id << 16);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL_3,
+>> +			   dev_addr << 16 | (regnum & 0xffff));
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = regmap_write(priv->regmap, priv->reg_base + SMI_ACCESS_PHY_CTRL_1,
+>> +			   PHY_CTRL_TYPE | PHY_CTRL_CMD);
+>> +	if (err)
+>> +		return err;
+> Maybe consider using a local variable for "regmap" and "reg_base" to
+> reduce the line length/wrapping?
+Ok
+>> +static int realtek_mdiobus_init(struct realtek_mdio_priv *priv)
+>> +{
+>> +	u32 port_addr[5] = { };
+>> +	u32 poll_sel[2] = { 0, 0 };
+>> +	u32 glb_ctrl_mask = 0, glb_ctrl_val = 0;
+> Please use reverse Christmas tree order.
+Ok.
+>> +	int i, err;
+>> +
+>> +	for (i = 0; i < MAX_PORTS; i++) {
+>> +		int pos;
+>> +
+>> +		if (priv->smi_bus[i] > 3)
+>> +			continue;
+>> +
+>> +		pos = (i % 6) * 5;
+>> +		port_addr[i / 6] |=  priv->smi_addr[i] << pos;
+> s/  / /
+Ok.
+>> +
+>> +		pos = (i % 16) * 2;
+>> +		poll_sel[i / 16] |= priv->smi_bus[i] << pos;
+>> +	}
+>> +
+>> +	for (i = 0; i < MAX_SMI_BUSSES; i++) {
+>> +		if (priv->smi_bus_isc45[i]) {
+>> +			glb_ctrl_mask |= GLB_CTRL_INTF_SEL(i);
+>> +			glb_ctrl_val |= GLB_CTRL_INTF_SEL(i);
+>> +		}
+>> +	}
+>> +
+>> +	err = regmap_bulk_write(priv->regmap, priv->reg_base + SMI_PORT0_5_ADDR_CTRL,
+>> +				port_addr, 5);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = regmap_bulk_write(priv->regmap, priv->reg_base + SMI_PORT0_15_POLLING_SEL,
+>> +				poll_sel, 2);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	err = regmap_update_bits(priv->regmap, priv->reg_base + SMI_GLB_CTRL,
+>> +				 glb_ctrl_mask, glb_ctrl_val);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int realtek_mdiobus_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct realtek_mdio_priv *priv;
+>> +	struct fwnode_handle *child;
+>> +	struct mii_bus *bus;
+>> +	int err;
+>> +
+>> +	bus = devm_mdiobus_alloc_size(dev, sizeof(*priv));
+>> +	if (!bus)
+>> +		return -ENOMEM;
+>> +
+>> +	bus->name = "Reaktek Switch MDIO Bus";
+>> +	bus->read_c45 = realtek_mdio_read_c45;
+>> +	bus->write_c45 =  realtek_mdio_write_c45;
+>> +	bus->parent = dev;
+>> +	priv = bus->priv;
+>> +
+>> +	priv->regmap = syscon_node_to_regmap(dev->parent->of_node);
+>> +	if (IS_ERR(priv->regmap))
+>> +		return PTR_ERR(priv->regmap);
+>> +
+>> +	err = device_property_read_u32(dev, "reg", &priv->reg_base);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	snprintf(bus->id, MII_BUS_ID_SIZE, "%s", dev_name(dev));
+>> +
+>> +	device_for_each_child_node(dev, child) {
+>> +		u32 pn, smi_addr[2];
+>> +
+>> +		err = fwnode_property_read_u32(child, "reg", &pn);
+>> +		if (err)
+>> +			return err;
+>> +
+>> +		if (pn > MAX_PORTS)
+>> +			return dev_err_probe(dev, -EINVAL, "illegal port number %d\n", pn);
+> You validate the port number.
+>
+>> +
+>> +		err = fwnode_property_read_u32_array(child, "realtek,smi-address", smi_addr, 2);
+>> +		if (err) {
+>> +			smi_addr[0] = 0;
+>> +			smi_addr[1] = pn;
+>> +		}
+> You don't validate the "smi_addr", so:
+>
+> 	realtek,smi-address = <4, ...>;
+>
+> would silently overflow priv->smi_bus_isc45. However, I haven't checked
+> whether the binding would warn about this.
+
+I'll make sure the smi bus and phy address are within an appropriate range.
+
+
 
