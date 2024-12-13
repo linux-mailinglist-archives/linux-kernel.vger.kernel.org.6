@@ -1,203 +1,155 @@
-Return-Path: <linux-kernel+bounces-445134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C26D9F11D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:12:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D629F11D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:13:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B90A1887767
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:12:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE6F169E70
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305871E3DC2;
-	Fri, 13 Dec 2024 16:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E6C1E3DD7;
+	Fri, 13 Dec 2024 16:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="QwYuToV9"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IFz2XB9K"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585AE1E048B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:12:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08771E048B;
+	Fri, 13 Dec 2024 16:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734106369; cv=none; b=hjIG6gpgqiRehwpyuKjoc9qygMvMT07xfOAKJfNeF5Uua28KhmbxpC9RgLyZj6OEkNTY9B/sHUnUdWBvRw3akqZEhK5DhPOdb2W6U/BB9W9ybJxheOXt/BqdFxbOCJY75Fdy2Gi6rgSPCLmrAhX8zFAEw57BqjX78DaBxnxQEj4=
+	t=1734106409; cv=none; b=X8P70WlKNsQ9UQmIg5K3tzYb0IfbtiWTXzHjasnOew7qWxVHxuJBD5X3DcBtXcLg+6YcexebYt+3Qa1GIT+kc3Ndfdko02tgfEze+LqG8jgCGkLfWpr3S24CvSUh8mY6zZ6EC/o1gQQoO1CiBFHevojelZCmohO6tqqcyxPTpNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734106369; c=relaxed/simple;
-	bh=IHKLIwvxCSKRMPWKFaJUk7AjboZXq91gsVNwCF5CDZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PamZNBZjLoWAiYsmuFeLQiXP1+60Qtk6KgAHMuq1CIEHZ8jQMFtx/ortbAnZgqGJCEkQGlTd2YZo/JJscTiB1lkpHyS+9SM6XPHe6LztiwBnO9RMOYyKIl2xIajtVJGQV4f3WrTlJnLzWjZ6jTOUYOSoG3sS/Ax/dPCNjVNcRa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=QwYuToV9; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-82-226.bstnma.fios.verizon.net [173.48.82.226])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4BDGCVS9018707
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 11:12:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1734106353; bh=NEm0SCpvUjxoOqFN4Z2pKV8E53Q/3QgqD/lByRVqljs=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=QwYuToV9Zry4EUJjCJeedYQ8xK2r9j9vTNL+W3mHqgjsObrooX6ET0VFALC16B7s5
-	 8nvfXMomy6JYmOnQchFQ/0Kg3IjIxDRCCjiXH7z+ZQD3V4aD3UnEo9stWurUuFxhOp
-	 2mwuTsxzcRsWgP09sZmW2tfrttsHTNB1b93HdPeHBWSAEECClCiZ084847aIB2ICmh
-	 f40pljDaUD/msPetbyNmKXQFNaJxR6GYXlGXbLI5TeoN0A5tpNj4FZ6ixcjU2Fq3tN
-	 Phm78XKLO51vVl2YKOrtZ9jI0uXBdh6cWOBV2v8NIQt1Slc6eke1T99PRGi6lToYso
-	 yiyuzgNzpv3fw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id D208D15C2045; Fri, 13 Dec 2024 11:12:30 -0500 (EST)
-Date: Fri, 13 Dec 2024 11:12:30 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Nikolai Zhubr <zhubr.2@gmail.com>
-Cc: linux-ext4@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jack@suse.cz
-Subject: Re: ext4 damage suspected in between 5.15.167 - 5.15.170
-Message-ID: <20241213161230.GF1265540@mit.edu>
-References: <CALQo8TpjoV8JtuYDH_nBU5i4e-iuCQ1-NORAE8uobpDD_yYBTA@mail.gmail.com>
- <20241212191603.GA2158320@mit.edu>
- <79af4b93-63a1-da4c-2793-8843c60068f5@gmail.com>
+	s=arc-20240116; t=1734106409; c=relaxed/simple;
+	bh=2aNxWGP9RBFyIZ2SBnAC7/aLNToELCNdvkqgTxTvl3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gSX261I6JsjkiD3cwjVyB+eyt4PvL1fs7gTbhQaRTDXMOYAfQtKr/o8UZD1sTam9Y7vLWhAt/aI8el+vQClunw16NZ10kvxrOJpzXj+P2jux92hTlRioRCd9GWoh35dT4bx3p5gMRrQa1DHQU3vX58UGSeaSRD14OHONo4U5n3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IFz2XB9K; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDEIuv6015637;
+	Fri, 13 Dec 2024 16:12:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=PW1LH2
+	F8Qxvgif3YU5Y3z1CGnrmFPIED3xPs36aiFdc=; b=IFz2XB9KxBQc8Ujd8Xiybl
+	y8j268CsM6r8SqPK89Jql5bAhJZxtMSNtBiguZWzNpe3UOGr2OUCtFDu6cgcLzWx
+	J90QX0C2oAH2PnsSFLjsC59qkkvX4dKReP8JOI639+rpZ686znUFKOiXcbl933rS
+	rHjBO3icTzSSwF6ZdzL+iNxVmbGov+xLbe37GDK6jfliaLszFkZ0bz4bcWGbFmOj
+	+2pGrlEelsjg9HOKuGahLSwcYDucIr8Nl1wq776HawnE5yRb0Bl8f12LxTLDBRJE
+	6F40wT06m46cbatgGlY1uIb1kdsg+uNe7E6ciLDo7alYl3EyOtb3tp1xIw/uu2XQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gh43a73g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 16:12:49 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BDGCmio015273;
+	Fri, 13 Dec 2024 16:12:48 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gh43a73d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 16:12:48 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDFWlBq032734;
+	Fri, 13 Dec 2024 16:12:47 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0psxx0g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 16:12:47 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BDGCkHw53936584
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Dec 2024 16:12:46 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EC53158058;
+	Fri, 13 Dec 2024 16:12:45 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F91458059;
+	Fri, 13 Dec 2024 16:12:42 +0000 (GMT)
+Received: from [9.61.68.160] (unknown [9.61.68.160])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 13 Dec 2024 16:12:42 +0000 (GMT)
+Message-ID: <c7717f89-65cc-4668-a3e0-ee042cdcd426@linux.ibm.com>
+Date: Fri, 13 Dec 2024 10:12:41 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79af4b93-63a1-da4c-2793-8843c60068f5@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/4] hwmon: pmbus-core: Add label for fan and temp
+To: Guenter Roeck <linux@roeck-us.net>, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
+        corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
+        Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org,
+        peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
+        naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
+        patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
+        peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org,
+        ninad@linux.ibm.com
+References: <20241212214927.3586509-1-ninad@linux.ibm.com>
+ <20241212214927.3586509-2-ninad@linux.ibm.com>
+ <f9d881b7-7301-476e-b281-0380dfcf0e10@roeck-us.net>
+Content-Language: en-US
+From: Ninad Palsule <ninad@linux.ibm.com>
+In-Reply-To: <f9d881b7-7301-476e-b281-0380dfcf0e10@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: NzpH0gdcpRWbYIcxxx5eotGsIgESifCn
+X-Proofpoint-GUID: OxreHfqoC1Ht6a91pdGiYTk7dSHkFhRl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 adultscore=0 impostorscore=0 spamscore=0
+ mlxlogscore=718 suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
+ mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130113
 
-On Fri, Dec 13, 2024 at 01:49:59PM +0300, Nikolai Zhubr wrote:
-> 
-> Not going to argue, but it'd seem if 5.15 is totally out of interest
-> already, why keep patching it? And as long as it keeps receiving patches,
-> supposedly they are backported and applied to stabilize, not damage it? Ok,
-> nevermind :-)
+Hello Guenter,
 
-The Long-Term Stable (LTS) kernels are maintained by the LTS team.  A
-description of how it works can be found here[1].
+On 12/12/24 16:06, Guenter Roeck wrote:
+> On 12/12/24 13:49, Ninad Palsule wrote:
+>> Adding label files for fan and temperature sensors in the power supply.
+>> The openbmc application dbus-sensor(psusensor) requires those files to
+>> consfigure those sensors.
+>> Note that prefix for temp label is temp[A..C] used instead of temp[1..3]
+>> as dbus-sensor(psusensor) application calculate index based on last
+>> digit in the name so we do not want to make index double digit after
+>> appending page index.
+>>
+>> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
+>
+> We are not going to fix userspace problems in the kernel.
+>
+> Guenter
+>
 
-[1] https://docs.kernel.org/process/2.Process.html#the-big-picture
+Thanks for the quick review.
 
-Subsystems can tag patches sent to the development head by adding "Cc:
-stable@kernel.org" to the commit description.  However, they are not
-obligated to do that, so there is an auxillary system which uses AI to
-intuit which patches might be a bug fix.  There is also automated
-systems that try to automatically figure out which patches might be
-prerequites that are needed.  This system is very automated, and after
-the LTS team uses their automated scripts to generate the LTS kernel,
-it gets published as an release candidate for 48 hours before it gets
-pushed out.
+Sorry I am not clear on this. I feel that it is better to support labels 
+for temperature
 
-Kernel developers are not obligated to support LTS kernels.  The fact
-that they tag commits as "you might want to consider it for
-backporting" might be all they do; and in some cases, not even that.
-Most kernel maintainers don't even bother testing the LTS candidate
-releases.  (I only started adding automated tests earlier this year to
-test the LTS release candidates.)
+sensors and fans like other. Are you saying we should not support these 
+labels or
 
-The primary use for LTS kernels are for companies that really don't
-want to update to newer kernels, and have kernel teams who can provide
-support for the LTS kernels and their customers.  So if Amazon,
-Google, and some Android manufacturers want to keep using 5.15, or
-6.1, or 6.6, it's provided as a starting point to make life easier for
-them, especially in terms of geting security bugs backported.
+I need update in the patch to support them better?
 
-If the kernel teams for thecompanies which use the LTS kernels find
-problems, they can let the LTS team know if there is some regression,
-or they can manually backport some patch that couldn't be handled by
-the automated scripts.  But it's all on a best-efforts basis.
+Please let me know.
 
-For hobbists and indeed most kernels, what I generally recommend is
-that they switch to the latest LTS kernel once a year.  So for
-example, the last LTS kernel released in 2023 was 6.6.  It looks very
-much like the last kerel released in 2024 will be 6.12, so that will
-likely be the next LTS kernel.  In general, there is more attention
-paid to the newer LTS kernels, and although *technically* there are
-LTS kernels going back to 5.4, pretty much no one pays attention to
-them other than the companies stubbornly hanging on because they don't
-have the engineering bandwidth to go to a newer kernel, despite the
-fact that many security bug fixes never make it all the way back to
-those ancient kernels.
+Thanks & Regards,
 
-> Yes. That is why I spent 2 days for solely testing hardware, booting from
-> separate media, stressing everything, and making plenty of copies. As I
-> mentioned in my initial post, this had revealed no hardware issues. And I'm
-> enjoying md raid-1 since around 2003 already (Not on this device though). I
-> can post all my "smart" values as is, but I can assure they are perfectly
-> fine for both raid-1 members. I encounter faulty hdds elsewhere routinely so
-> its not something unseen too.
+Ninad Palsule
 
-Note that some hardware errors can be caused by one-off errors, such
-as cosmic rays causing a bit-flip in memory DIMM.  If that happens,
-RAID won't save you, since the error was introduced before an updated
-block group descriptor (for example) gets written.  ECC will help;
-unfortunately, most consumer grade systems don't use ECC.  (And by the
-way, the are systems used in hyperscaler cloud companies which look
-for CPU-level failures, which can start with silent bit flips leading
-to crashes or rep-invariant failures, and correlating them with
-specific CPU cores.  For example, see[2].)
-
-[2] https://research.google/pubs/detection-and-prevention-of-silent-data-corruption-in-an-exabyte-scale-database-system/
-
-> This is a fsck run on a standalone copy taken before repair (after
-> successful raid re-check):
-> 
-> #fsck.ext4 -fn /dev/sdb1
-> ext2fs_check_desc: Corrupt group descriptor: bad block for block bitmap
-> fsck.ext4: Group descriptors look bad... trying backup blocks...
-
-What this means is that the block group descriptor has for one of
-ext4's block groups has the location for its block allcation bitmap to
-be a invalid value.  For example, if one of the high bits in the block
-allcation gets flipped, the block number will be wildly out of range,
-and so it's something that can be noticed very quickly at mount time.
-This is a lucky failure, because (a) it can get detected right away,
-and (b) it can be very easily fixed by consulting one of the backup
-copies of the block group descriptors.  This is what happened in this
-case, and rest of fsck transcript is consitent with that.
-
-The location of block allocation bitmaps never gets changed, so this
-sort of thing only happens due to hardware-induced corruption.
-
-Looking at the dumpe2fs output, it looks like it was created
-relatively recently (July 2024) but it doesn't have the metadata
-checksum feature enabled, which has been enabled for quite a long
-time.  I'm going to guess that this means that you're using a fairly
-old version version of e2fsprogs (it was enabled by default in
-e2fsprogs 1.43, released in May 2016[3]).
-
-[3] https://e2fsprogs.sourceforge.net/e2fsprogs-release.html#1.43
-
-You got lucky because it block allocation bitmap location was
-corrupted to an obviously invalid value.  But if it had been a
-low-order bit that had gotten flipped this could have lead to data
-corruption before the data and metadata corruption became obvious
-enough that ext4 would flag it.  Metadata checksums would catch that
-kind of error much more quickly --- and is an example of how RAID
-arrays shouldn't be treated as a magic bullet.
-
-> > Did you check for any changes to the md/dm code, or the block layer?
-> 
-> No. Generally, it could be just anything, therefore I see no point even
-> starting without good background knowledge. That is why I'm trying to draw
-> attention of those who are more aware instead. :-)
-
-The problem is that there are millions and millions of Linux users.
-If everyone were do that, it just wouldn't scale.  For companies who
-don't want to bother with upgrading to newer versions of software,
-that's why they pay the big bucks to companies like Red Hat or SuSE or
-Canonical.  Or if you are a platinum level customer for Amazon or
-Google, you can use Amazon Linux or Google's Container-Optimized OS,
-and the cloud company's tech support teams will help you out.  :-)
-
-Otherwise, I strongly encourage you to learn, and to take
-responsibility for the health of your own system.  And ideally, you
-can also use that knowledge to help other users out, which is the only
-way the free-as-in-beer ecosystem can flurish; by having everybody
-helping each other.  Who knows, maybe you could even get a job doing
-it for a living.  :-) :-) :-)
-
-Cheers,
 
 
