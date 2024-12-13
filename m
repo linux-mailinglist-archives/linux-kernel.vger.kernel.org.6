@@ -1,256 +1,599 @@
-Return-Path: <linux-kernel+bounces-445351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5B09F14F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:29:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C34188E570
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:29:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BF71E883E;
-	Fri, 13 Dec 2024 18:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aeLjx8eZ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C268D9F14F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:30:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391E8157E9F;
-	Fri, 13 Dec 2024 18:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D8F285254
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:30:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607941E47DB;
+	Fri, 13 Dec 2024 18:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Shm9nV5M"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509171E883A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734114566; cv=none; b=YlAZJd58oCCdde/NqZ/MkcoL11fEPzBYXh5SsbcHc7bFcURd0Dw7xpOY8NtDFxYnOor4b5DEYp2+dvVriR1L3LtOMhIOzw2CpVRrl4jtFZxSwDSsAk4lOTX5xw6EHnOnJEurScLEwpja+aqvdads9/PV1dlUwnfJdZsd/X0Rjdo=
+	t=1734114606; cv=none; b=u6wYVB42Fl2ThKsCoroD2h9Y/UUSJ3HeOaDWjbYb8b6KvNHEP2Yn63BhyKNLnvnXh6oNBO75ZU4s4m6Z276Nn1hv96URRsR65/2U0TpSMTOnJieX2hdnjJmQTy3VcUum6vcAwWvOAnpI3bMYdYZy/GPJo7wj5RoSX2QDV4+Pru8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734114566; c=relaxed/simple;
-	bh=JVk5RdH8jUY4kclcX+pZWMZJSGLYenDeELwKRHs+pww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZ7Wte/AvgipTNr3XsVwUHFlSxDGxjc8NCXf+Amn2/3psQ6TGt4b6M1YkOI2hrF4sZfZKrRvBuGcoasi3GOz6//5JMj6TVNpxfGb53ah7DKB5wn+crYHVg/1qrLFbnnfp6dofWhgI0VwReWt6KW4oy6uGWWWqNE+NVZfAuk3EYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aeLjx8eZ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDGfHWp013504;
-	Fri, 13 Dec 2024 18:29:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=kBEckMknow7qlqB7AuvJ+bg9JaWDEl
-	7eJi82f+le/Yg=; b=aeLjx8eZE4KR3bM34UExhpQfXWiMz8ttVEL7RURn2gVYZz
-	BHBH6YNXObak7i5IJQtW1ZvMntNj0Ly7O/3YCxICRRPZkQD+CGO3m/nrMJ5/SHec
-	PqVr/C3edGpHI5LjlPuAfl01cHLGKV76iWiuucm0FfkjpegVMA4YLMrVLrd2alK1
-	mLRQmTyexr/V2bdYuNwi79NtrYtB1e1R/pxjhB9IVD4Dnkc9lL8wuw8CeFRIUu0I
-	ZNcAWoN5akCVVKa186EyXFTNs7Ib6z5M6B8w0d5QQcW694o4lZUMfU8ruoRodyM/
-	/LsUkxJjRX+BBueIT1iAUn+7TP8b5hSnXy05I6cw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gh43atmy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 18:29:17 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BDIICvN013542;
-	Fri, 13 Dec 2024 18:29:17 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gh43atmv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 18:29:17 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDFoJJu016926;
-	Fri, 13 Dec 2024 18:29:16 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12yqekm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 18:29:16 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BDITEo931195732
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 18:29:14 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5DED820040;
-	Fri, 13 Dec 2024 18:29:14 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BE9762004B;
-	Fri, 13 Dec 2024 18:29:12 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.39.19.196])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 13 Dec 2024 18:29:12 +0000 (GMT)
-Date: Fri, 13 Dec 2024 23:59:08 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrey Albershteyn <aalbersh@kernel.org>,
-        John Garry <john.g.garry@oracle.com>
-Subject: Re: [RFC 2/3] xfs_io: Add ext4 support to show FS_IOC_FSGETXATTR
- details
-Message-ID: <Z1x89DDTQBcFenIp@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <cover.1733902742.git.ojaswin@linux.ibm.com>
- <3b4b9f091519d2b2085888d296888179da3bdb73.1733902742.git.ojaswin@linux.ibm.com>
- <20241211181706.GB6678@frogsfrogsfrogs>
- <Z1oTOUCui9vTgNoM@dread.disaster.area>
- <20241212161919.GA6657@frogsfrogsfrogs>
- <Z1tLEQmRiZc7alBo@dread.disaster.area>
- <20241212210758.GN6678@frogsfrogsfrogs>
+	s=arc-20240116; t=1734114606; c=relaxed/simple;
+	bh=aWd18ZwsBXDoMhJQGSXNqymKnTH67wiZpgP1TgurVWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PV64jHCxgTYPG7NAJvKPXdEv15njOdDqosS8LuXvmb7QFSVAq+3VzXI83lKvz4NVf0GoUjRZDD9OpstGnLg+An+djqnzOpigh3fBmJ2xLROATMllS12BB6TN/JzG2pm+466FlExcD+ROFyN2MdxlWodLAqHtTs9KLPcG7Vvfh3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Shm9nV5M; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e39841c8fd6so1572560276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:30:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734114603; x=1734719403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qfx9dVZRYyvAe+To+1Ux5w/pFeuMxXKQcObZK/xVCVY=;
+        b=Shm9nV5MoA4KjM5wQaYkUo/uKAqvwoo4NfBvC8fL8J7hbW9m+m/AkT84tz0yRiCQUn
+         ZOzwD7uMTF2SHkVUt2skaVLLaQYodsYV/mttus2c1dTocTIb90aPReG21S0Lg/OTsqkk
+         HQmOyDd0/b81bA1y2Rp2z3JZXMG+DRjgwInds=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734114603; x=1734719403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qfx9dVZRYyvAe+To+1Ux5w/pFeuMxXKQcObZK/xVCVY=;
+        b=J641M2K4jPoY6bovFJPYDrNHQ0OBjhWbY/y0ylLTLYGTiXCnPYrGEgpFMBV0jB9Jtp
+         X+QKuOSJAC5KvOlsqEFZkgtnoDvxMqIH/+in4ulbLyq4fx4evc9BIZJOhG+FKe2NG6tJ
+         /48yB82QBTdjgtTSCOxhKG4bKcyeteoHSZOiZH3vkPKk8Mo2xuSHSDzRdit4ABuhUvaN
+         ZoemIJDVNh6hPz4QbTLY5XRWeABTJBpUeVKxCReG0p8g5oDyC1MMD6zMFf/f5+kPYTQd
+         6M0Cimphvu+9sDlbfaztTtpYcoxaDkVl8RwgQR7CNW41h1B8wCUK6Z6Vtj94QCDT1O1Q
+         94TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXawQ+g6NeDpX7SE9U0w8FQ9vYhFC00erKHjeTqpwykkCNXiobxFtbNm4JtXsEiviIP0RfKn8ntdLLaM1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5hZkwr0vpWTYrDYadQo0UWQRUkXsy4oCqBkNePvyzyYGG05xw
+	akPy05HtIfkCucnPN8e/Gh7byDJKW9Xs0/dO63nkXc78Vj9t1WbgxcLyW3oXmtNX+I69r/1KykL
+	na87+zlvWEs6gyEcf4T+I3iU1vHdaK3H40Y+V/rrVGETy/lg=
+X-Gm-Gg: ASbGncuhmaHYtY28As8pIqgKbK6MXEjnKFqG94SGhEFDD2S7SK/RJ/7PTlC3TXMyf4t
+	W6A+wNge7Bo82Ot0DLar1OaVjePfpXvrSoQ0aoQ==
+X-Google-Smtp-Source: AGHT+IFJ4dFSQDlXbVhPLTWFaIYL2rQaeo5jGI63gUMvA4/VuSC5JCDiVmi0DKqC5WQq1y6AJNdeNW9v1vPfFGnBp+w=
+X-Received: by 2002:a05:6902:2303:b0:e39:59b6:4202 with SMTP id
+ 3f1490d57ef6-e434aee7cd3mr3570434276.22.1734114603255; Fri, 13 Dec 2024
+ 10:30:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212210758.GN6678@frogsfrogsfrogs>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: YnCrpXNBGC2P26eHjN6KYQ9IC9UU7XIM
-X-Proofpoint-GUID: NGxKQ3L5CjdOOvxeHRaItP2CjJmu3Htd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 adultscore=0 impostorscore=0 spamscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
- mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130131
+References: <20241206233830.2401638-1-abhishekpandit@chromium.org>
+ <20241206153813.v4.5.I142fc0c09df58689b98f0cebf1c5e48b9d4fa800@changeid> <CAE-0n513GoDKW7mA_rjCLsgZZFq=CEb5S8WLYr2rskq8fJW9LA@mail.gmail.com>
+In-Reply-To: <CAE-0n513GoDKW7mA_rjCLsgZZFq=CEb5S8WLYr2rskq8fJW9LA@mail.gmail.com>
+From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Date: Fri, 13 Dec 2024 10:29:51 -0800
+Message-ID: <CANFp7mU=wjXc6FrdzWT5oe25wtZnxOXvpVmbMqeVhOeEUchpcA@mail.gmail.com>
+Subject: Re: [PATCH v4 5/7] platform/chrome: cros_ec_typec: Displayport support
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, heikki.krogerus@linux.intel.com, 
+	linux-usb@vger.kernel.org, tzungbi@kernel.org, akuchynski@google.com, 
+	pmalani@chromium.org, jthies@google.com, dmitry.baryshkov@linaro.org, 
+	badhri@google.com, rdbabiera@google.com, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 12, 2024 at 01:07:58PM -0800, Darrick J. Wong wrote:
-> On Fri, Dec 13, 2024 at 07:44:01AM +1100, Dave Chinner wrote:
-> > On Thu, Dec 12, 2024 at 08:19:19AM -0800, Darrick J. Wong wrote:
-> > > On Thu, Dec 12, 2024 at 09:33:29AM +1100, Dave Chinner wrote:
-> > > > On Wed, Dec 11, 2024 at 10:17:06AM -0800, Darrick J. Wong wrote:
-> > > > > On Wed, Dec 11, 2024 at 01:24:03PM +0530, Ojaswin Mujoo wrote:
-> > > > > > Currently with stat we only show FS_IOC_FSGETXATTR details
-> > > > > > if the filesystem is XFS. With extsize support also coming
-> > > > > > to ext4 make sure to show these details when -c "stat" or "statx"
-> > > > > > is used.
-> > > > > > 
-> > > > > > No functional changes for filesystems other than ext4.
-> > > > > > 
-> > > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > > > > > ---
-> > > > > >  io/stat.c | 38 +++++++++++++++++++++-----------------
-> > > > > >  1 file changed, 21 insertions(+), 17 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/io/stat.c b/io/stat.c
-> > > > > > index 326f2822e276..d06c2186cde4 100644
-> > > > > > --- a/io/stat.c
-> > > > > > +++ b/io/stat.c
-> > > > > > @@ -97,14 +97,14 @@ print_file_info(void)
-> > > > > >  		file->flags & IO_TMPFILE ? _(",tmpfile") : "");
-> > > > > >  }
-> > > > > >  
-> > > > > > -static void
-> > > > > > -print_xfs_info(int verbose)
-> > > > > > +static void print_extended_info(int verbose)
-> > > > > >  {
-> > > > > > -	struct dioattr	dio;
-> > > > > > -	struct fsxattr	fsx, fsxa;
-> > > > > > +	struct dioattr dio;
-> > > > > > +	struct fsxattr fsx, fsxa;
-> > > > > > +	bool is_xfs_fd = platform_test_xfs_fd(file->fd);
-> > > > > >  
-> > > > > > -	if ((xfsctl(file->name, file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > > > > > -	    (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa)) < 0) {
-> > > > > > +	if ((ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0 ||
-> > > > > > +		(is_xfs_fd && (xfsctl(file->name, file->fd, XFS_IOC_FSGETXATTRA, &fsxa) < 0))) {
-> > > > > 
-> > > > > Urgh... perhaps we should call FS_IOC_FSGETXATTR and if it returns zero
-> > > > > print whatever is returned, no matter what filesystem we think is
-> > > > > feeding us information?
-> > > > 
-> > > > Yes, please. FS_IOC_FSGETXATTR has been generic functionality for
-> > > > some time, we should treat it the same way for all filesystems.
-> > > > 
-> > > > > e.g.
-> > > > > 
-> > > > > 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> > > > > 		if (is_xfs_fd || (errno != EOPNOTSUPP &&
-> > > > > 				  errno != ENOTTY))
-> > > > > 			perror("FS_IOC_GETXATTR");
-> > > > 
-> > > > Why do we even need "is_xfs_fd" there? XFS will never give a
-> > > > EOPNOTSUPP or ENOTTY error to this or the FS_IOC_GETXATTRA ioctl...
-> > > 
-> > > Yeah, in hindsight I don't think it's needed for FS_IOC_FSGETXATTR, but
-> > 
-> > *nod*
-> > 
-> > > it's definitely nice for XFS_IOC_FSGETXATTRA (which is not implemented
-> > > outside xfs) so that you don't get unnecessary error messages on ext4.
-> > 
-> > I don't think we even need it for FS_IOC_GETXATTRA - if the
-> > filesystem does not support that ioctl, we don't print the fields,
-> > nor do we output an error.
-> > 
-> > After all, this "extended info" and it's only ever been printed
-> > for XFS, so we can define whatever semantics we want for foreign
-> > filesystem output right now. As long as XFS always prints the same
-> > info as it always has (i.e. all of it), we can do whatever we want
-> > with the foreign filesystem stuff.
-> > 
-> > Keep in mind that we don't need platform tests for XFS files - that
-> > has already been done when the file was opened and the state stored
-> > in file->flags via the IO_FOREIGN flag. We already use that in the
-> > stat_f() to determine whether we print the "xfs info" or not.
-> > 
-> > IOWs, I think all we need to do is  move where we check the
-> > IO_FOREIGN flag. i.e.:
-> > 
-> > print_extented_info(file)
-> > {
-> > 	struct dioattr  dio = {};
-> >         struct fsxattr  fsx = {}, fsxa = {};
-> > 
-> > 	if (ioctl(file->fd, FS_IOC_FSGETXATTR, &fsx)) < 0) {
-> > 		perror("FS_IOC_GETXATTR");
-> > 		exitcode = 1;
-> > 		return;
-> > 	}
-> > 
-> > 	printf(_("fsxattr.xflags = 0x%x "), fsx.fsx_xflags);
-> > 	printxattr(fsx.fsx_xflags, verbose, 0, file->name, 1, 1);
-> > 	printf(_("fsxattr.projid = %u\n"), fsx.fsx_projid);
-> > 	printf(_("fsxattr.extsize = %u\n"), fsx.fsx_extsize);
-> > 	printf(_("fsxattr.cowextsize = %u\n"), fsx.fsx_cowextsize);
-> > 	printf(_("fsxattr.nextents = %u\n"), fsx.fsx_nextents);
-> > 
-> > 	/* Only XFS supports FS_IOC_FSGETXATTRA and XFS_IOC_DIOINFO */
-> > 	if (file->flags & IO_FOREIGN)
-> > 		return;
-> > 
-> > 	if (ioctl(file->fd, FS_IOC_FSGETXATTRA, &fsxa)) < 0) {
-> > 		perror("FS_IOC_GETXATTRA");
-> > 		exitcode = 1;
-> > 		return;
-> > 	}
-> > 	if ((xfsctl(file->name, file->fd, XFS_IOC_DIOINFO, &dio)) < 0) {
-> > 		perror("XFS_IOC_DIOINFO");
-> > 		exitcode = 1;
-> > 		return;
-> > 	}
-> > 
-> > 	printf(_("fsxattr.naextents = %u\n"), fsxa.fsx_nextents);
-> > 	printf(_("dioattr.mem = 0x%x\n"), dio.d_mem);
-> > 	printf(_("dioattr.miniosz = %u\n"), dio.d_miniosz);
-> > 	printf(_("dioattr.maxiosz = %u\n"), dio.d_maxiosz);
-> > }
-> > 
-> > Thoughts?
-> 
-> Seems fine to me, though I'd print the fsxa before trying to call
-> DIOINFO.
-> 
-> --D
+On Tue, Dec 10, 2024 at 4:08=E2=80=AFPM Stephen Boyd <swboyd@chromium.org> =
+wrote:
+>
+> Quoting Abhishek Pandit-Subedi (2024-12-06 15:38:16)
+> > diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform=
+/chrome/cros_ec_typec.c
+> > index e3eabe5e42ac..0f3bc335f583 100644
+> > --- a/drivers/platform/chrome/cros_ec_typec.c
+> > +++ b/drivers/platform/chrome/cros_ec_typec.c
+> > @@ -18,6 +18,7 @@
+> >
+> >  #include "cros_ec_typec.h"
+> >  #include "cros_typec_vdm.h"
+> > +#include "cros_typec_altmode.h"
+> >
+> >  #define DRV_NAME "cros-ec-typec"
+> >
+> > @@ -290,15 +291,15 @@ static int cros_typec_register_port_altmodes(stru=
+ct cros_typec_data *typec,
+> >         struct typec_altmode *amode;
+> >
+> >         /* All PD capable CrOS devices are assumed to support DP altmod=
+e. */
+> > +       memset(&desc, 0, sizeof(desc));
+> >         desc.svid =3D USB_TYPEC_DP_SID;
+> >         desc.mode =3D USB_TYPEC_DP_MODE;
+> >         desc.vdo =3D DP_PORT_VDO;
+> > -       amode =3D typec_port_register_altmode(port->port, &desc);
+> > +       amode =3D cros_typec_register_displayport(port, &desc,
+> > +                                               typec->ap_driven_altmod=
+e);
+> >         if (IS_ERR(amode))
+> >                 return PTR_ERR(amode);
+> >         port->port_altmode[CROS_EC_ALTMODE_DP] =3D amode;
+> > -       typec_altmode_set_drvdata(amode, port);
+> > -       amode->ops =3D &port_amode_ops;
+> >
+> >         /*
+> >          * Register TBT compatibility alt mode. The EC will not enter t=
+he mode
+> > @@ -575,6 +576,10 @@ static int cros_typec_enable_dp(struct cros_typec_=
+data *typec,
+> >         if (!ret)
+> >                 ret =3D typec_mux_set(port->mux, &port->state);
+> >
+> > +       if (!ret)
+> > +               cros_typec_displayport_status_update(port->state.alt,
+>
+> Should we forward the return value from here?
+Done
 
-Got it, this makes sense to me as well. I'll do something like this in
-v2. Thanks!
+>
+> > +                                                    port->state.data);
+> > +
+> >         return ret;
+> >  }
+> >
+> > @@ -1254,6 +1259,8 @@ static int cros_typec_probe(struct platform_devic=
+e *pdev)
+> >
+> >         typec->typec_cmd_supported =3D cros_ec_check_features(ec_dev, E=
+C_FEATURE_TYPEC_CMD);
+> >         typec->needs_mux_ack =3D cros_ec_check_features(ec_dev, EC_FEAT=
+URE_TYPEC_MUX_REQUIRE_AP_ACK);
+> > +       typec->ap_driven_altmode =3D cros_ec_check_features(
+> > +               ec_dev, EC_FEATURE_TYPEC_REQUIRE_AP_MODE_ENTRY);
+> >
+> >         ret =3D cros_ec_cmd(typec->ec, 0, EC_CMD_USB_PD_PORTS, NULL, 0,
+> >                           &resp, sizeof(resp));
+> > diff --git a/drivers/platform/chrome/cros_ec_typec.h b/drivers/platform=
+/chrome/cros_ec_typec.h
+> > index deda180a646f..9fd5342bb0ad 100644
+> > --- a/drivers/platform/chrome/cros_ec_typec.h
+> > +++ b/drivers/platform/chrome/cros_ec_typec.h
+> > @@ -39,6 +39,7 @@ struct cros_typec_data {
+> >         struct work_struct port_work;
+> >         bool typec_cmd_supported;
+> >         bool needs_mux_ack;
+> > +       bool ap_driven_altmode;
+>
+> Do we need to stash this? Can we cros_ec_check_features() in
+> cros_typec_init_ports() and pass the bool to
+> cros_typec_register_port_altmodes() instead to save a struct member?
 
-Regards,
-ojaswin
+We don't need to stash this but it keeps the feature checks
+consistently in `cros_typec_probe`.
 
-> 
-> > -Dave.
-> > -- 
-> > Dave Chinner
-> > david@fromorbit.com
-> > 
+>
+> >  };
+> >
+> >  /* Per port data. */
+> > diff --git a/drivers/platform/chrome/cros_typec_altmode.c b/drivers/pla=
+tform/chrome/cros_typec_altmode.c
+> > new file mode 100644
+> > index 000000000000..bb7c7ad2ff6e
+> > --- /dev/null
+> > +++ b/drivers/platform/chrome/cros_typec_altmode.c
+> > @@ -0,0 +1,281 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Alt-mode implementation on ChromeOS EC.
+> > + *
+> > + * Copyright 2024 Google LLC
+> > + * Author: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > + */
+> > +#include "cros_ec_typec.h"
+> > +
+> > +#include <linux/usb/typec_dp.h>
+> > +#include <linux/usb/pd_vdo.h>
+>
+> Please include workqueue.h, mutex.h, etc. for things used in this file.
+Done. Btw, is there a script that does this for you in the kernel like
+include-what-you-use does for userspace?
+
+>
+> > +
+> > +#include "cros_typec_altmode.h"
+> > +
+> > +struct cros_typec_altmode_data {
+> > +       struct work_struct work;
+> > +       struct cros_typec_port *port;
+> > +       struct typec_altmode *alt;
+> > +       bool ap_mode_entry;
+>
+> The UCSI driver (drivers/usb/typec/ucsi/displayport.c) calls this
+> 'override', can it be named the same thing? I also see that the UCSI
+> driver has two bools, 'override' and 'initialized', which seems to be to
+> support a DP_CMD_CONFIGURE that will respond with an ACK and then the
+> next DP_CMD_CONFIGURE will call ucsi_altmode_update_active() to set the
+> altmode as active. Maybe the same method can be followed here so that on
+> older chromebooks where EC is in control of mode entry we can emulate
+> entering the mode?
+
+The reason it's called `override` in UCSI is because the feature is
+called "alternate mode override supported". When this optional bit is
+set, the UCSI method "SET_NEW_CAM" can be used to change what
+alternate mode is active. However, it behaves differently from cros_ec
+because even when override is set, the PD controller can/will still
+autonomously enter a mode on connection. Whereas on cros_ec_typec, if
+you set "ap-driven-mode", the EC will not enter any modes until the AP
+tells it to.
+
+Also, the reason the UCSI driver does the DP_CMD_CONFIGURE dance is
+because the UCSI command, SET_NEW_CAM, requires the DP configuration
+VDO as a parameter. Since UCSI doesn't define a VDM mechanism, the
+UCSI driver fakes the ".entry" call and then uses the first
+DP_CONFIGURE to do the actual entry. This also doesn't match the
+cros_ec driver (either ap-driven or not) because the interface does
+not allow setting the DP VDO at all. DP_CONFIGURE will be generated
+and consumed entirely within the EC and all we can really use is the
+mux update to generate a status update for the DP state machine.
+
+Right now, EC driven Chromebooks will simply report active/inactive
+for DP without reporting any configuration/status info. If you want to
+handle DP_CONFIGURE and DP_STATUS from the altmode driver, you'll need
+to fake the interactions in the port driver in a subsequent CL.
+
+>
+> > +
+> > +       struct mutex lock;
+> > +       u32 header;
+> > +       u32 *vdo_data;
+> > +       u8 vdo_size;
+> > +
+> > +       u16 sid;
+> > +       u8 mode;
+> > +};
+> > +
+> > +struct cros_typec_dp_data {
+> > +       struct cros_typec_altmode_data adata;
+> > +       struct typec_displayport_data data;
+> > +       bool configured;
+> > +       bool pending_status_update;
+> > +};
+> > +
+> > +static void cros_typec_altmode_work(struct work_struct *work)
+> > +{
+> > +       struct cros_typec_altmode_data *data =3D
+> > +               container_of(work, struct cros_typec_altmode_data, work=
+);
+> > +
+> > +       mutex_lock(&data->lock);
+> > +
+> > +       if (typec_altmode_vdm(data->alt, data->header, data->vdo_data,
+> > +                             data->vdo_size))
+> > +               dev_err(&data->alt->dev, "VDM 0x%x failed", data->heade=
+r);
+>
+> These printks need newlines.
+Done.
+
+>
+>                dev_err(&data->alt->dev, "VDM 0x%x failed\n", data->header=
+);
+>
+> > +
+> > +       data->header =3D 0;
+> > +       data->vdo_data =3D NULL;
+> > +       data->vdo_size =3D 0;
+> > +
+> > +       mutex_unlock(&data->lock);
+> > +}
+> > +
+> > +static int cros_typec_altmode_enter(struct typec_altmode *alt, u32 *vd=
+o)
+> > +{
+> > +       struct cros_typec_altmode_data *data =3D typec_altmode_get_drvd=
+ata(alt);
+> > +       struct ec_params_typec_control req =3D {
+> > +               .port =3D data->port->port_num,
+> > +               .command =3D TYPEC_CONTROL_COMMAND_ENTER_MODE,
+> > +       };
+> > +       int svdm_version;
+> > +       int ret;
+> > +
+> > +       if (!data->ap_mode_entry) {
+> > +               dev_warn(&alt->dev,
+> > +                        "EC does not support AP driven mode entry\n");
+>
+> Like this one.
+>
+> > +               return -EOPNOTSUPP;
+> > +       }
+> > +
+> > +       if (data->sid =3D=3D USB_TYPEC_DP_SID)
+> > +               req.mode_to_enter =3D CROS_EC_ALTMODE_DP;
+> > +       else
+> > +               return -EOPNOTSUPP;
+> > +
+> > +       ret =3D cros_ec_cmd(data->port->typec_data->ec, 0, EC_CMD_TYPEC=
+_CONTROL,
+>
+> Do we plan to delete drivers/platform/chrome/cros_typec_vdm.c file at
+> some point? I ask because 'port_amode_ops' becomes unused after this
+> series.
+
+Yes - I don't think we ever launched with the VDM request/response
+feature enabled. I was going to do it as a follow-up to this CL to
+handle attention.
+
+>
+> > +                         &req, sizeof(req), NULL, 0);
+> > +       if (ret < 0)
+> > +               return ret;
+> > +
+> > +       svdm_version =3D typec_altmode_get_svdm_version(alt);
+> > +       if (svdm_version < 0)
+> > +               return svdm_version;
+> > +
+> > +       mutex_lock(&data->lock);
+> > +
+> > +       data->header =3D VDO(data->sid, 1, svdm_version, CMD_ENTER_MODE=
+);
+> > +       data->header |=3D VDO_OPOS(data->mode);
+> > +       data->header |=3D VDO_CMDT(CMDT_RSP_ACK);
+> > +       data->vdo_data =3D NULL;
+> > +       data->vdo_size =3D 1;
+> > +       schedule_work(&data->work);
+> > +
+> > +       mutex_unlock(&data->lock);
+> > +       return ret;
+> > +}
+> > +
+> > +static int cros_typec_altmode_exit(struct typec_altmode *alt)
+> > +{
+> > +       struct cros_typec_altmode_data *data =3D typec_altmode_get_drvd=
+ata(alt);
+> > +       struct ec_params_typec_control req =3D {
+> > +               .port =3D data->port->port_num,
+> > +               .command =3D TYPEC_CONTROL_COMMAND_EXIT_MODES,
+> > +       };
+> > +       int svdm_version;
+> > +       int ret;
+> > +
+> > +       if (!data->ap_mode_entry) {
+> > +               dev_warn(&alt->dev,
+> > +                        "EC does not support AP driven mode exit\n");
+> > +               return -EOPNOTSUPP;
+> > +       }
+> > +
+> > +       ret =3D cros_ec_cmd(data->port->typec_data->ec, 0, EC_CMD_TYPEC=
+_CONTROL,
+> > +                         &req, sizeof(req), NULL, 0);
+> > +
+> > +       if (ret < 0)
+> > +               return ret;
+> > +
+> > +       svdm_version =3D typec_altmode_get_svdm_version(alt);
+> > +       if (svdm_version < 0)
+> > +               return svdm_version;
+> > +
+> > +       mutex_lock(&data->lock);
+> > +
+> > +       data->header =3D VDO(data->sid, 1, svdm_version, CMD_EXIT_MODE)=
+;
+> > +       data->header |=3D VDO_OPOS(data->mode);
+> > +       data->header |=3D VDO_CMDT(CMDT_RSP_ACK);
+> > +       data->vdo_data =3D NULL;
+> > +       data->vdo_size =3D 1;
+> > +       schedule_work(&data->work);
+> > +
+> > +       mutex_unlock(&data->lock);
+> > +       return ret;
+> > +}
+> > +
+> > +static int cros_typec_displayport_vdm(struct typec_altmode *alt, u32 h=
+eader,
+> > +                                     const u32 *data, int count)
+> > +{
+> > +       struct cros_typec_dp_data *dp_data =3D typec_altmode_get_drvdat=
+a(alt);
+> > +       struct cros_typec_altmode_data *adata =3D &dp_data->adata;
+> > +
+> > +
+> > +       int cmd_type =3D PD_VDO_CMDT(header);
+> > +       int cmd =3D PD_VDO_CMD(header);
+> > +       int svdm_version;
+> > +
+> > +       svdm_version =3D typec_altmode_get_svdm_version(alt);
+> > +       if (svdm_version < 0)
+> > +               return svdm_version;
+> > +
+> > +       mutex_lock(&adata->lock);
+> > +
+> > +       switch (cmd_type) {
+> > +       case CMDT_INIT:
+> > +               if (PD_VDO_SVDM_VER(header) < svdm_version) {
+> > +                       typec_partner_set_svdm_version(adata->port->par=
+tner,
+> > +                                                      PD_VDO_SVDM_VER(=
+header));
+> > +                       svdm_version =3D PD_VDO_SVDM_VER(header);
+> > +               }
+> > +
+> > +               adata->header =3D VDO(adata->sid, 1, svdm_version, cmd)=
+;
+> > +               adata->header |=3D VDO_OPOS(adata->mode);
+> > +
+> > +               /*
+> > +                * DP_CMD_CONFIGURE: We can't actually do anything with=
+ the
+> > +                * provided VDO yet so just send back an ACK.
+> > +                *
+> > +                * DP_CMD_STATUS_UPDATE: We wait for Mux changes to sen=
+d
+> > +                * DPStatus Acks.
+> > +                */
+> > +               switch (cmd) {
+> > +               case DP_CMD_CONFIGURE:
+> > +                       dp_data->data.conf =3D *data;
+> > +                       adata->header |=3D VDO_CMDT(CMDT_RSP_ACK);
+> > +                       dp_data->configured =3D true;
+> > +                       schedule_work(&adata->work);
+> > +                       break;
+> > +               case DP_CMD_STATUS_UPDATE:
+> > +                       dp_data->pending_status_update =3D true;
+> > +                       break;
+> > +               default:
+> > +                       adata->header |=3D VDO_CMDT(CMDT_RSP_ACK);
+> > +                       schedule_work(&adata->work);
+> > +                       break;
+> > +               }
+> > +
+> > +               break;
+> > +       default:
+> > +               break;
+> > +       }
+> > +
+> > +       mutex_unlock(&adata->lock);
+> > +       return 0;
+> > +}
+> > +
+> > +static int cros_typec_altmode_vdm(struct typec_altmode *alt, u32 heade=
+r,
+> > +                                     const u32 *data, int count)
+> > +{
+> > +       struct cros_typec_altmode_data *adata =3D typec_altmode_get_drv=
+data(alt);
+> > +
+> > +       if (!adata->ap_mode_entry)
+> > +               return -EOPNOTSUPP;
+> > +
+> > +       if (adata->sid =3D=3D USB_TYPEC_DP_SID)
+> > +               return cros_typec_displayport_vdm(alt, header, data, co=
+unt);
+> > +
+> > +       return -EINVAL;
+> > +}
+> > +
+> > +static const struct typec_altmode_ops cros_typec_altmode_ops =3D {
+> > +       .enter =3D cros_typec_altmode_enter,
+> > +       .exit =3D cros_typec_altmode_exit,
+> > +       .vdm =3D cros_typec_altmode_vdm,
+> > +};
+> > +
+> > +#if IS_ENABLED(CONFIG_TYPEC_DP_ALTMODE)
+> > +int cros_typec_displayport_status_update(struct typec_altmode *altmode=
+,
+> > +                                        struct typec_displayport_data =
+*data)
+> > +{
+> > +       struct cros_typec_dp_data *dp_data =3D
+> > +               typec_altmode_get_drvdata(altmode);
+> > +       struct cros_typec_altmode_data *adata =3D &dp_data->adata;
+> > +
+> > +       if (!dp_data->pending_status_update) {
+> > +               dev_dbg(&altmode->dev,
+> > +                       "Got DPStatus without a pending request");
+> > +               return 0;
+> > +       }
+> > +
+> > +       if (dp_data->configured && dp_data->data.conf !=3D data->conf)
+> > +               dev_dbg(&altmode->dev,
+> > +                       "DP Conf doesn't match. Requested 0x%04x, Actua=
+l 0x%04x",
+> > +                       dp_data->data.conf, data->conf);
+> > +
+> > +       mutex_lock(&adata->lock);
+> > +
+> > +       dp_data->data =3D *data;
+> > +       dp_data->pending_status_update =3D false;
+> > +       adata->header |=3D VDO_CMDT(CMDT_RSP_ACK);
+> > +       adata->vdo_data =3D &dp_data->data.status;
+> > +       adata->vdo_size =3D 2;
+> > +       schedule_work(&adata->work);
+> > +
+> > +       mutex_unlock(&adata->lock);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +struct typec_altmode *
+> > +cros_typec_register_displayport(struct cros_typec_port *port,
+> > +                               struct typec_altmode_desc *desc,
+> > +                               bool ap_mode_entry)
+> > +{
+> > +       struct typec_altmode *alt;
+> > +       struct cros_typec_altmode_data *data;
+>
+> Can you name it 'adata' consistently? That makes it easy to search for
+> 'adata' in this file and know it's always talking about a struct
+> cros_typec_altmode_data type of data.
+Done
+
+>
+> > +
+> > +       alt =3D typec_port_register_altmode(port->port, desc);
+> > +       if (IS_ERR(alt))
+> > +               return alt;
+> > +
+> > +       data =3D devm_kzalloc(&alt->dev, sizeof(*data), GFP_KERNEL);
+> > +       if (!data) {
+> > +               typec_unregister_altmode(alt);
+> > +               return ERR_PTR(-ENOMEM);
+> > +       }
+> > +
+> > +       INIT_WORK(&data->work, cros_typec_altmode_work);
+> > +       mutex_init(&data->lock);
+> > +       data->alt =3D alt;
+> > +       data->port =3D port;
+> > +       data->ap_mode_entry =3D ap_mode_entry;
+> > +       data->sid =3D desc->svid;
+> > +       data->mode =3D desc->mode;
+> > +
+> > +       typec_altmode_set_ops(alt, &cros_typec_altmode_ops);
+> > +       typec_altmode_set_drvdata(alt, data);
+> > +
+> > +       return alt;
+> > +}
+> > +#endif
+> > diff --git a/drivers/platform/chrome/cros_typec_altmode.h b/drivers/pla=
+tform/chrome/cros_typec_altmode.h
+> > new file mode 100644
+> > index 000000000000..c6f8fb02c99c
+> > --- /dev/null
+> > +++ b/drivers/platform/chrome/cros_typec_altmode.h
+> > @@ -0,0 +1,34 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +
+> > +#ifndef __CROS_TYPEC_ALTMODE_H__
+> > +#define __CROS_TYPEC_ALTMODE_H__
+>
+> #include <linux/kconfig.h> for IS_ENABLED()
+> #include <linux/usb/typec.h> for typec_port_register_altmode()
+Done
+
+>
+> > +
+> > +struct cros_typec_port;
+> > +struct typec_altmode;
+> > +struct typec_altmode_desc;
+> > +struct typec_displayport_data;
+> > +
+> > +#if IS_ENABLED(CONFIG_TYPEC_DP_ALTMODE)
+> > +struct typec_altmode *
+> > +cros_typec_register_displayport(struct cros_typec_port *port,
+> > +                               struct typec_altmode_desc *desc,
+> > +                               bool ap_mode_entry);
+> > +
+> > +int cros_typec_displayport_status_update(struct typec_altmode *altmode=
+,
+> > +                                        struct typec_displayport_data =
+*data);
+> > +#else
+> > +static inline struct typec_altmode *
+> > +cros_typec_register_displayport(struct cros_typec_port *port,
+> > +                               struct typec_altmode_desc *desc,
+> > +                               bool ap_mode_entry)
+> > +{
+> > +       return typec_port_register_altmode(port->port, desc);
+> > +}
 
