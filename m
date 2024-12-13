@@ -1,169 +1,145 @@
-Return-Path: <linux-kernel+bounces-444983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933D49F0F80
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:49:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 982319F0F83
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:50:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41A116541F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:49:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9B0A165609
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B38D1E0DB5;
-	Fri, 13 Dec 2024 14:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229ED1E1C26;
+	Fri, 13 Dec 2024 14:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dZhdlTzP"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kDvcqnxz"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982C01E2309
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43BD71E0B7F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101371; cv=none; b=b4NbXQiZFYp1pDC8RS1meZ48iYRuiuxXaaSgvtkVojE7Ad8MkjKyRHRTp/ZKuzxA6ZHVIAK7C8MBikrHQwvGR5iRhAP0B5Uhp64zIr2HyN4gQKkJg+9aiHjHMZ92juz05GqGMBYNO0CTK/SIUwJhPZHHjoPGOoq3YxOKSiUXr+U=
+	t=1734101401; cv=none; b=MdZQ0qcbgWOwn06ke7cbmpZ+T5Ale/3B9n2qal/HmOdM+4P4jFyKiRc7NxhIXv+Yxey6BikmdQ0oupO8vDmRk/b437Spgq21Z+R17LD4PHDo6vlyP4tlWYG2b/fLTx6mQINl/IwtvNmFd2lkMF5oIAh8FipGnCVL8FIgVFnMzqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101371; c=relaxed/simple;
-	bh=m1RG8uDj8WQP7hbZHg/PSSoUtWF3HmCISvW9JYlyfUc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XY9YWUR8XMTu6ZEc8cFflExanInqUCNvYE3Rgn54fSO7IkGaU01y2+NP0zf1UIG2Oehc9mFYc492c1SCbVfF8w++acHda5EPQ1jzVlMiJmercOfriRzaIJbk1ET8MqoRWPbDYDBYGrejjqqz++SA6NWStPVQFqHQ+HMlS5ouP5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dZhdlTzP; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38632b8ae71so1340811f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:49:29 -0800 (PST)
+	s=arc-20240116; t=1734101401; c=relaxed/simple;
+	bh=5bPp8E+MpuFVxKboQhNt6/M7Z4iZDMHxwXj86tG/o2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ulAr3PwJAfCUGqTG66pP59dEbq5n0pmyaqNVDKVOE14yzE32JlinwxoLD4CkyJ/ToLIFl3kwC+MxTqLGFONe1917umNTyzX7b+RHBoPs2M4bmWHU8oP4+WLN1FPXANqzEn8BUiZuhTIYv8o41PHwvrMpy6up9ORAb+FsYDQeqPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kDvcqnxz; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-844dac0a8f4so136818839f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:49:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734101368; x=1734706168; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QqYUm1i7e1fblFqY9jJKn51mYoOB0b0xVEyAilyqTvk=;
-        b=dZhdlTzP4cRxkgIudvUB+aNZ00gwQDk8V+X1t8Bc5ZpQYvhx8OVZOppKKWFQQI8O5/
-         O423DO6DXwquWIUesOg9d9NfGGTlLSygAZIWhhYyesmPjTv7WPeBaLCVcBUP0WHtVh2Q
-         K8FUyH8NnFbN3/+13FtB1T4AAc6Ie/15s+cqcklcbxz3CJhv6nxZFJWDCAS4NDe97jWj
-         mjHwvThyENPXPqWwEz5sQYzLiwvI9HtIi5kh/s/30vK8dOpLb3ds9Y1z+Yta6k+YneeT
-         YUx+COKMVfd2bvT26lb0WM6BbHtX0Y1MQbtgRXbpmBEl2tyxBxk8CKvKR0u9ENm9ySvJ
-         DY8w==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734101398; x=1734706198; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gOWXs7WdzCpqTexnYKxKuVH/hJEpRnVT9ooHNt2C+JE=;
+        b=kDvcqnxzdkJsgsK8mKEIz+2trfYuorJuxsVF+3028F4/MKSzbw2ojj6RAbix4nuapO
+         5mZtXLK8gAxBC2nI5DwA4Rx/g8SmX6lGZrgA/GcbeYoR11kJcwJczS7SBF8xJzqPvKlG
+         YTwXI4+1leAlZoMYwXxh6ijsE43lXKxkdBUe/v9eGEaDYQgxHMHQmI+/arTnLZE6g0R3
+         M4SicChY3FDGIQ1y2pGOQXc59AUPEy96JQcLiM2JZDY8RuiRT5vVHhhQ2wcuuvqG/h8p
+         SAxL/ofquxNyIQezn8fsMuwbYn1nQVPhkJ+zbPpLyeiRdH4khSDfe2RBNyvjRQ/QB/1h
+         rkgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101368; x=1734706168;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QqYUm1i7e1fblFqY9jJKn51mYoOB0b0xVEyAilyqTvk=;
-        b=gPhB0DZYrsvmDuKQTx9HdQMMXuUsbRPZsu93Qwap163G0dDnwQzUtAK4DpYgM+48YE
-         PqXLNqIdgsda7Jbz/6ROnqGe4dUFzOsKKVZC7q0kkFwwv4sqjKDgLMiDEL8tt3VJb/1E
-         2I+5tV9C0okQ6jKhGkfgllmVFkMApgBv5XFQ7XhYTJpmJvxmEa4QvKsvin0OJO+guNbu
-         86f7PN9j9fDqwyTWkNZy2aX37TJ8BUn9zdyRS2TBlm0L7J2iRFRaic+7sZIabz7dd392
-         JonkHpWR7QG3QqaRZyEGbe6Ttgm0vxPet0a/23IFHK3KkdCP/hLl6Sly7PNh/HNX04EH
-         BdEw==
-X-Gm-Message-State: AOJu0YxOclzq14eWxFJbxFNf2Yc3VGIIQClYQMPBywROtdMGt2F2bQCV
-	JCBvRoTZuchj+q2gJ6TteT6C7bW5Nrq2flUpjWqAw8DzmmyyUflXtIh9u9lgJYU7TcuAsQ3y9Wa
-	C
-X-Gm-Gg: ASbGncvcYuAvPISXy5cLejyWhvpu8wzGPxJ/5a+B5PCQ6K8j2VbN9+umr86am08fpzv
-	MJ339RuPXvCTHfvmoMhFXPBe16ir8P0FZjULI/m/vf6+IKzT++m1wQuvVWrL0Th+e5EGwUiMYQz
-	kyv93KeCaP078lxynufYCfEzI3YhLx5E8XTJh1GydYo8GcmPfUdB+cV00b+3Gedwr6o8Q0qml1/
-	OLDU95bvY8NdoSUBpFG/3BNCuRc2ELXRHBbHK3RgSEiWKl/3l5ZETE7qw==
-X-Google-Smtp-Source: AGHT+IFDVH3ne6sNymKAo1QgYJon0YdqlPVHMjDohMOhYt3kQjiXEykwiHRGKr2ebn9u641ZWv+SCw==
-X-Received: by 2002:a05:6000:3cd:b0:385:df5d:622c with SMTP id ffacd0b85a97d-38880adb0b3mr2087916f8f.30.1734101367931;
-        Fri, 13 Dec 2024 06:49:27 -0800 (PST)
-Received: from linaro.org ([2a00:23c5:6829:901:dd7a:c2d:2b46:b1a9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824c50b7sm7196295f8f.57.2024.12.13.06.49.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 06:49:27 -0800 (PST)
-From: Mike Leach <mike.leach@linaro.org>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	coresight@lists.linaro.org
-Cc: james.clark@linaro.org,
-	mike.leach@linaro.org,
-	suzuki.poulose@arm.com,
-	alexander.shishkin@linux.intel.com
-Subject: [PATCH v2 3/3] coresight: etf: etr: Update logging around flush_and_stop() errors
-Date: Fri, 13 Dec 2024 14:49:19 +0000
-Message-Id: <20241213144919.110642-4-mike.leach@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241213144919.110642-1-mike.leach@linaro.org>
-References: <20241213144919.110642-1-mike.leach@linaro.org>
+        d=1e100.net; s=20230601; t=1734101398; x=1734706198;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gOWXs7WdzCpqTexnYKxKuVH/hJEpRnVT9ooHNt2C+JE=;
+        b=q4JqyWlV4BwTyUTTaXTGIs5GFG1Afy6UCkAMjpLbsUdCudUo4taRR6+qnX7hgMFTNp
+         tDCZLf9kSQ+T67KnJkiSwppWC2VLrqt8vnOBDgSLcONxWYi/t18138WrNceJXfnci0Z7
+         GG8FsxXE/ZItXTFcHmummYq2vYIQz8ASdVcP7XJNEkI/rl9wFYE1ejlRo2Rl/ShR6aof
+         UBjlKbVzudffmjzlM13EzqPUNpX/V+ls72cZ+Ks7985OI/PCiHIKLzynB66XsoUfhoNP
+         RzufcqXCYxLUg5Jur4zpyyGgeflHqeyKMh54Msf74I1mBQQUz7ZVLvMCvoauJPkFnNA6
+         yKmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKAOK9EaBMMxad20giHgyaU+BNDfO9NlKZgx019TmnHApVA8EkWxwQXP7rVTs/VoluWEnvNmvlf9KlReg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxovtgZYznmRA3fOq/smiNAJQksQHHBQsJfUV/ShElJye9T1X1E
+	PM7U7gSSjbNSSbQRet+DcBwdj1iG3g7g31PZVcciK3BWWHB1nKselpIm85w4I7s=
+X-Gm-Gg: ASbGncumr4RREz/VKsjOTRzarAb5bTvQyjR4ep2SOc6lBVMMqFhbVw6n12LO5MdnNgG
+	fXEWVnKwnvD45dhb0LtZDQ3l4g30yCjxQ+In7xs25CpozvzIWKm+J04eU9Rj8YunRKpmdfJWuSi
+	RLSJqzbL+ktsKbRuMsr8mA+U/AJwsBst4laI5aCIUSVeTKei65Ed491EbRqaQI3PPk6r13txs6I
+	uHaPEWBqUpWxr2yXMMntdhdMzbWzKebfu3qlPgQTzWyLVsI7r3a
+X-Google-Smtp-Source: AGHT+IGsjDcO7D5hn5oYhsVNjMXWk3wpIBqgOl1uenYRJsHT0MAGmNQD50mPAs2+sstojpGB6TLDNA==
+X-Received: by 2002:a05:6602:15ca:b0:841:a9d3:3b39 with SMTP id ca18e2360f4ac-844e87ed998mr438455939f.5.1734101398302;
+        Fri, 13 Dec 2024 06:49:58 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2ca9c3f89sm2154129173.0.2024.12.13.06.49.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 06:49:57 -0800 (PST)
+Message-ID: <3c85accb-69cd-46c2-bfb5-1074cedfeccd@kernel.dk>
+Date: Fri, 13 Dec 2024 07:49:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
+To: Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
+ Christoph Hellwig <hch@infradead.org>, "Darrick J. Wong"
+ <djwong@kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, kirill@shutemov.name,
+ bfoster@redhat.com
+References: <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
+ <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
+ <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
+ <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
+ <20241204055241.GA7820@frogsfrogsfrogs> <Z1gh0lCqkCoUKHtC@infradead.org>
+ <04e11417-cf68-4014-a7f7-e51392352e9d@kernel.dk>
+ <2f79ff03-48ee-54bf-b928-e9519b3edfc7@gentwo.org>
+ <383d3adc-e939-44b2-9110-4db9b4477401@kernel.dk>
+ <Z1s7AGxZKhK1V4qv@casper.infradead.org> <20241213050410.GA7054@cmpxchg.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241213050410.GA7054@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Insert additional context around tmc_flush_and_stop() errors.
+On 12/12/24 10:04 PM, Johannes Weiner wrote:
+> On Thu, Dec 12, 2024 at 07:35:28PM +0000, Matthew Wilcox wrote:
+>> On Thu, Dec 12, 2024 at 12:14:23PM -0700, Jens Axboe wrote:
+>>> Like I mentioned earlier, the fact that it's cached for the duration of
+>>> the operation is more of an implementation detail that developers need
+>>> not worry about. What's important is that it's not cached AFTER. I still
+>>> feel UNCACHED is the best description, but I'll change it to DONTCACHE
+>>> for the next version just to avoid the overlap with other in-kernel
+>>> uses.
+>>
+>> Regardless of the user API name, I like PG_streaming for the folio
+>> flag name.
+> 
+> If we're throwing names in the ring, I'm partial to PG_dropbehind.
+> 
+> It's a term I think has been used to describe this type of behavior
+> before; it juxtaposes nicely with readahead; it plainly names the
+> action of what will happen to the page after the current IO operation
+> against it has completed (i.e. pairs up with PG_reclaim).
 
-Signed-off-by: Mike Leach <mike.leach@linaro.org>
----
- drivers/hwtracing/coresight/coresight-tmc-etf.c | 12 +++++++++---
- drivers/hwtracing/coresight/coresight-tmc-etr.c |  8 ++++++--
- 2 files changed, 15 insertions(+), 5 deletions(-)
+True, I do think that's a good name for the folio flag. streaming isn't
+bad, but it's not fully descriptive as the IO may not be streaming at
+all, depending on the use case. I do remember when we used dropbehind
+naming in the vm, probably 20 some years ago?
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-index d4f641cd9de6..62b4b685c1a1 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-@@ -84,7 +84,9 @@ static void __tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
- {
- 	CS_UNLOCK(drvdata->base);
- 
--	tmc_flush_and_stop(drvdata);
-+	if (tmc_flush_and_stop(drvdata))
-+		dev_err(&drvdata->csdev->dev,
-+			"Flush and stop error disabling ETB\n");
- 	/*
- 	 * When operating in sysFS mode the content of the buffer needs to be
- 	 * read before the TMC is disabled.
-@@ -146,7 +148,9 @@ static void tmc_etf_disable_hw(struct tmc_drvdata *drvdata)
- 
- 	CS_UNLOCK(drvdata->base);
- 
--	tmc_flush_and_stop(drvdata);
-+	if (tmc_flush_and_stop(drvdata))
-+		dev_err(&drvdata->csdev->dev,
-+			"Flush and stop error disabling ETF\n");
- 	tmc_disable_hw(drvdata);
- 	coresight_disclaim_device_unlocked(csdev);
- 	CS_LOCK(drvdata->base);
-@@ -496,7 +500,9 @@ static unsigned long tmc_update_etf_buffer(struct coresight_device *csdev,
- 
- 	CS_UNLOCK(drvdata->base);
- 
--	tmc_flush_and_stop(drvdata);
-+	if (tmc_flush_and_stop(drvdata))
-+		dev_err(&drvdata->csdev->dev,
-+			"Flush and stop error updating perf buffer\n");
- 
- 	read_ptr = tmc_read_rrp(drvdata);
- 	write_ptr = tmc_read_rwp(drvdata);
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index a48bb85d0e7f..122a067d1bb8 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -1139,7 +1139,9 @@ static void __tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
- {
- 	CS_UNLOCK(drvdata->base);
- 
--	tmc_flush_and_stop(drvdata);
-+	if (tmc_flush_and_stop(drvdata))
-+		dev_err(&drvdata->csdev->dev,
-+			"Flush and stop error disabling ETR\n");
- 	/*
- 	 * When operating in sysFS mode the content of the buffer needs to be
- 	 * read before the TMC is disabled.
-@@ -1578,7 +1580,9 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
- 
- 	CS_UNLOCK(drvdata->base);
- 
--	tmc_flush_and_stop(drvdata);
-+	if (tmc_flush_and_stop(drvdata))
-+		dev_err(&csdev->dev,
-+			"Flush and Stop error updating perf buffer\n");
- 	tmc_sync_etr_buf(drvdata);
- 
- 	CS_LOCK(drvdata->base);
+If there are no objections to this, I'll change the folio flag to
+dropbehind. Also looks nicer with the bit operations on the folio, when
+you have:
+
+if (flags & RWF_DONTCACHE)
+	folio_set_dropbehind(folio);
+
+rather than:
+
+if (flags & RWF_DONTCACHE)
+	folio_set_streaming(folio);
+
+and so forth, as the former just intuitively makes sense.
+
 -- 
-2.25.1
-
+Jens Axboe
 
