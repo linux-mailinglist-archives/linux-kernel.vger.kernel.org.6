@@ -1,201 +1,346 @@
-Return-Path: <linux-kernel+bounces-444496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E56C9F07C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:24:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6879F07D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:26:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEDF42815A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:24:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D2A8167DC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F681B2187;
-	Fri, 13 Dec 2024 09:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D1B1B21B7;
+	Fri, 13 Dec 2024 09:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CD5XuMx8";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PE4gMWzL"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="PgKYW9tR"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D851B0F01
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AD11B0F04;
+	Fri, 13 Dec 2024 09:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734081852; cv=fail; b=ilL2yKTsnws5U1YwQEGrZkvCmC1AjYZTcTK0IbTs4zmiaGbxgewj39kRW0pkQ7DLqFXiYRHgah+26D8bco/NUIlgBj0R0Warg8a9LIh1bVtETxhUjH5IMRlqH4hzyCTIOnFRC2CAMdtPYplGa9kKjV4iBfepI/daj0h6F+s//Fg=
+	t=1734081950; cv=pass; b=Xw8FjeTXKkQxs4gT5X7I2tGBo/DIWpD+P7nCn5ej/T0u6WTS/4EG/2v991zfSAP31hjjABNWap44/SOiQCkr8NAJX19j7QbKOzToEUJbxpxx9FnjDBiMQbb4+As+5EcTNjH/8r9mD3K8jcxXLG0oAtohbdq5vizi1BNeF3VaVzk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734081852; c=relaxed/simple;
-	bh=ovB6GDAdrLE1TmJQr9IxX9/a3GmJjHtV72fwPQPRlC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Vtp73u4I9cEOXbUAXriE48Dt+iF8RDbQYIpdy9KjcHUd5dJCOhyQ64sHottBaVxVVTIqDfDoNpWIobqHHkrsYrJwLZL0R1UWOCXH0N3WynATYbxSM7m0ueiAFlhr+5/+U3OHWNl0GsLZDs5sw9zPmc0rVmVPIyK1oZVzm8WEXW4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CD5XuMx8; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=PE4gMWzL; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD1flqp024605;
-	Fri, 13 Dec 2024 09:24:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=ovB6GDAdrLE1TmJQr9
-	IxX9/a3GmJjHtV72fwPQPRlC8=; b=CD5XuMx8OIQt/YOe14F1efv0Ncd0hRBnkm
-	Gn2pek3NkK/LvFb6syMLGfOT3CeXdRpvwKKywcMm4RkI9JVAAoge5tDTIgF2n0kq
-	EMj6uL4YCmuwT/hdjse7ISiHSdmecxtocDEjRCwJRmOn9GNfL2WI2HAINQ1Ty9lH
-	A1StlOpUIbC5EbB3pCL8NINk7cp4oE/xR+FxBNITuksYiRe6TBer464FNCr6s7TL
-	IvznIC3F2nSVzntF5nwXROjwoki83PvtuJiQxbksKAaLYWlDiEHnNYsNBpIEZcoP
-	11y/rJ6gcy3Rv9wfQlEe2pw3+hM9YVp37ekK4vSqrccf7z+CY0Dw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43dx5sa5ub-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 09:24:00 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD7oF42035082;
-	Fri, 13 Dec 2024 09:23:59 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2049.outbound.protection.outlook.com [104.47.55.49])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43cctksxuc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 09:23:59 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rGC9jA8KR1bhZCxLLfZOQi3KGnOrdVQD218w4KC5Foo91EFEWe3q70kHiLboAF/xXpKM3B0fdAHAHHm+5HT7j+XpkWzBxzMePHkICvFqXtuJrr/jDZyZ+XpNdnanBx9uRcHHpY7v4xK2ewO5kPoUSD3Ev2Lh6J2Hys1e4tofAoNaPYxIUvnsScf1xUQw2pKUJlbg7P3YcKgS205nDhLh0FqX7Jus2hcynIElxR76RviBDsX6ruptcWvDTFpwMtzxQ+2SSA/gVTl1NshidVa5XBbBWXfTkE9LoqvFbWPdwwDTMnqfdFDoO9oeP02nwAtphP1S53ZkGb4TX8Uf6c98Tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ovB6GDAdrLE1TmJQr9IxX9/a3GmJjHtV72fwPQPRlC8=;
- b=yY4X3PyfyurTdjSO1X+3RjoQqetoI8FkU+Nuw0cWTk26fBMzrveTCxMW4E0/HhZgUMtQbOA4d6feGg6DnIdHV089HEuQrrTnS8i0uvWJpz1Jc9MPm7ipQ2FBGGICufGwaprC84SiFAVuyBiIjuz8nqSINYLLryszxo8JmXW7REWEVkw+JPZrjS60/SSNYzaFirMNzFkdg7f+lFVsjxeMJ3klDveNr7dflTOIVAbJ+M8TQl4DaTRR7FqJXOzqOAJtgPsJUU/RBjfe29hzQZCHWFtaPWoQy7a1+B7UMbZ1od5DG8a3VsRES4ZfFFhM3E0ah0lIqiKMRhYm/WGQC5cr8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ovB6GDAdrLE1TmJQr9IxX9/a3GmJjHtV72fwPQPRlC8=;
- b=PE4gMWzLdvMexeJhYF2G6kMKt3ZOZYdeHhMTOqAsunH9QLHBf+SvTrd/bC/Tk8oFU52gTrHAXE+U8iaxh9k4+lsnWDy7gFlqOwwOkc+PWi9yv/qJ9tydGclZRqnMYgSSdKCde7Lp2/Gm5PoBzloh5XjPopIPkc1igLCjce2MKCI=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by PH0PR10MB7097.namprd10.prod.outlook.com (2603:10b6:510:28f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.18; Fri, 13 Dec
- 2024 09:23:57 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
- 09:23:57 +0000
-Date: Fri, 13 Dec 2024 09:23:54 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jeff Xu <jeffxu@chromium.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: update MEMORY MAPPING section
-Message-ID: <4da9eeb4-c097-4b36-8c76-207a3d2f2c40@lucifer.local>
-References: <20241211105315.21756-1-lorenzo.stoakes@oracle.com>
- <CABi2SkXTSi8HKTyE1WoL3qqOTk4KDnF1-RkSOX+ne=cEFJL4qg@mail.gmail.com>
- <a2c43cfe-5c99-481a-b599-fca8b4fe1e38@lucifer.local>
- <CAOUHufYCF0i_aJZPceMXfcTZUcZsCY9fBuMr=25q1bROWx5nsg@mail.gmail.com>
- <cb5eea98-2515-4b06-8f65-515842e1081b@lucifer.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cb5eea98-2515-4b06-8f65-515842e1081b@lucifer.local>
-X-ClientProxiedBy: LO6P123CA0018.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:313::11) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	s=arc-20240116; t=1734081950; c=relaxed/simple;
+	bh=wpZWKto3YUjaWLEDbKUz1Yi+7s3Zag5arrGJ3uJk7Aw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aFqoYJF0/DGJDxUU84IbexFTcUDLBD03oRaXm2CpeYHiHMeEHFjtQHZ0ly8/MbW5MjOrt7Gcou3pyUaPuEUImxBBiDMt8d6SCsRWedwuGUSSmsAxpKh4vph31ggVL1Ouy/sYAvFcC5JGGBHtjtkORs8tk1uB1kEEerMH6bjg+X4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=PgKYW9tR; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1734081928; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HjqkwyGBy8oFpiH2OzBbdgLIjA6J/qJ+Z1tRCrZTgBlKf9fweZBx+lpCzz+ouQURY0eWWu3JaL90KEe68uYm8CwyzJyyYvgiRzMJSSiGzjrUeH9RuI9IACgRKCs1U0UmuBr+3sU0Jj8PTZGoVciWjUboCCD0noHSV8/XVzFpT/s=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734081928; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YnSfpiMRcV4J4vXvcSY+ixR1XW0AUmLlpepzk/A6xy0=; 
+	b=SOrr3tKcIvCFh9e4zcoVhw49t0Y8eTXDC+HrYHiwjEH9Dik1C0BBD9zyXfn4vkXrjTskZEbTOW0AI5I/jUYqfLaencplbOlarQlRO+FnO10fBrMsRTbdljr7Il1bijhnf9dohQTWZZMuZYpdKdxpo0uHT8Wp/aj6U8o2FuDuMw0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
+	dmarc=pass header.from=<laura.nao@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734081928;
+	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
+	bh=YnSfpiMRcV4J4vXvcSY+ixR1XW0AUmLlpepzk/A6xy0=;
+	b=PgKYW9tRgcP27jptrUtgW/N7L044UtUVDMmc9SmjC8RI7T+kb16sYU6NEcbRVAVM
+	7+N1lrMDCFr213kX5FwRldujDhgDiMum4wERmccIHfx+o37ewO/JQm46bDnsM28/peK
+	xV4jhmgljik4IjgBh3dLnmfxJ9scQuTlZDUfUEu8=
+Received: by mx.zohomail.com with SMTPS id 1734081926159795.2400700570497;
+	Fri, 13 Dec 2024 01:25:26 -0800 (PST)
+From: Laura Nao <laura.nao@collabora.com>
+To: stephen.s.brennan@oracle.com
+Cc: alan.maguire@oracle.com,
+	bpf@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	kernel@collabora.com,
+	laura.nao@collabora.com,
+	linux-kernel@vger.kernel.org,
+	olsajiri@gmail.com,
+	regressions@lists.linux.dev
+Subject: Re: [REGRESSION] module BTF validation failure (Error -22) on
+Date: Fri, 13 Dec 2024 10:26:03 +0100
+Message-Id: <20241213092603.13399-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <87zfl0mv0g.fsf@oracle.com>
+References: <87zfl0mv0g.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|PH0PR10MB7097:EE_
-X-MS-Office365-Filtering-Correlation-Id: aecf64e4-1452-4643-cfaf-08dd1b57df08
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xfqYyud9eerfNn/GDO/fRQq1LUs8MVJ+rdpp1t98c4+Y63tz5sKUbzTKGDdm?=
- =?us-ascii?Q?JBQZNJFvmeGhkmH8u9zAzTMsjHneEyceY4ZbksfEdfkNC1gcOi5bqhyhrpRF?=
- =?us-ascii?Q?xNxb1/fZFV+1VhvlPIT5xEWFc8a1dxddAz44Om5KD/c//7Ilxkkj6aA6Vq/H?=
- =?us-ascii?Q?d6nbE751KxJobHQT/i2VHzWwjOW11vk9MylybLFfeWH9cL93y3KKLtZMb4Bz?=
- =?us-ascii?Q?IU54Xqh0KS369TdZNWVXgT6/Q2YhmB4eABue8y8EshUM5padmM+XJeT5gS3W?=
- =?us-ascii?Q?OFQ6JwJX7meAwbgDM/x0nno/zxDITjveGiz5KFD9+qLFiAx6vR0cqOJGz9iH?=
- =?us-ascii?Q?lO+bHmGMQczC8Z1JtlRSbYGOCD6FWbgiugRVqcY4A/4IjyNnpgAdJwJJanP3?=
- =?us-ascii?Q?ZFRSEDrBcNyhp7i7Gc/Cr0nAa+8u2x5l93awBiO3VxSxC0xlrwb/hruvyhGq?=
- =?us-ascii?Q?Q4pGl+BPutAJgjmPExqyaLnyrQmj0sEiyUrjPwDrYhLAxz7AbbiVy6gTiLZk?=
- =?us-ascii?Q?fPY3VHzDRnE6S4hhrP2qTN5n6uv63EdplDEX2m463p9FngE4Mzo4KeXERJ8O?=
- =?us-ascii?Q?MFkGdk+v7dDW/d9Ya7q9GeMs/WY11rIwhNOTFPu65NF7gPnQw0XYVgIk9h0S?=
- =?us-ascii?Q?ZAXIoCbtgV81JoZYTgFfngER+XceIpN07KgHpYjluKFJShsEn1YcDb0u4iay?=
- =?us-ascii?Q?yKMR7ke1Q2pas3b8PJ8RAtEhbQTTZRFIhg+kgwQ2bT985dM2S3L7nEzb4jqm?=
- =?us-ascii?Q?g2XDbKLwOEO2l9AaCLz6UI35s/QyLFRfKqvJzP8A/xNJdI8fKgCGaBLedi54?=
- =?us-ascii?Q?cRsG/tk9Z3jgbWIbepQ+e9vxmoRoGldwNWyc/pOCVuJB0w3EBfeN+v/oNgm4?=
- =?us-ascii?Q?iMvZcO0SBU74A/X3KCiQqeUdp8kOvjPlNpnT/4CXT5s0PQx5r5MKgtJ1FS+i?=
- =?us-ascii?Q?M7NGIWHLdw8Lav/E6zQFB73Q2nicJ36AMrYSiQeXS0eGVjltU9iJhYQ37jkh?=
- =?us-ascii?Q?iEX5VJ/nWTwZTuuuOd/xsf9DdlFk+OkcgkB7cfyQc8Ani0zRvg7l8fojoGoN?=
- =?us-ascii?Q?tcbgsmdWttAuFFcQAf7c+jGcqQEO7IeNKDrR1xrcfXma6FVs50E6HdzIIRaU?=
- =?us-ascii?Q?vvObeudYQSy068hCjkJXTQMtcJwce7pgshidXnc3Zx4teQelWKMbNJG0Ix/J?=
- =?us-ascii?Q?DoEBCn6J7Rs2qY0TMCQ+X0afj+4BNzx4Aw4eRyWQcAIsvXMxz3CxTOzAVMom?=
- =?us-ascii?Q?R7BH2wM9uhVDKw8UIpFX26//9xkOpIgCxkaqrtsJoNBSfm3yEA69q8HR+PRt?=
- =?us-ascii?Q?ystdjGvh88AEFs5mOrnB2uiYLGRMqi573DGS73YCq4GXRA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8Og8i9Z/8Q7CaANRU0jywlWHh1rFrXluooeoW/sSahqUR/OqgRua/m5EduEJ?=
- =?us-ascii?Q?eCMqs08954JK0r7b6PyjNamG5uwUIsxGpaeli+UGopEcopNkEuG1TDEjIBaJ?=
- =?us-ascii?Q?bRQ5X/psShjcYDKzQvgrXHOUksFCkEvK9rEiWDfdrTSfs+neSFIKYWgtKKWe?=
- =?us-ascii?Q?ff7sKZfxu39T3U9Veefb0Hbl1d9DhvHUKcnkd4yLDeFeqpBpk8G0XCT+joDA?=
- =?us-ascii?Q?JXyJfNqEIWT69b3BDj5sh6H3MICjlX5pt1jtur2Q+DgsDCJFvCCQ7i0BsJyd?=
- =?us-ascii?Q?6fTVqu/jVxuv6k828hN7+tluiLX+aYH5jk2frKmaB54jo+HKW2t3pbBfFtnD?=
- =?us-ascii?Q?a064B3NkRsS8gHrbCKXkgKp8KFmTny/BCHyoKTcEcVvQjuI6ZjF2WqaP+zm9?=
- =?us-ascii?Q?wTKn0KDJUC0kF1VjQaAJvCLQYW29VYyre4DPCjwoaDe/W3Of+5Z6Lp63zNUS?=
- =?us-ascii?Q?9SQ2JXn+byPbQvy+mQ1NVeJ+6/ODbxjTyj+SHjzPLqxVeNPmNzh8x06atmy0?=
- =?us-ascii?Q?9FG+sq2jZ/vW2zGjjCLFsBzNu2LSz1XtwtBajsTtJ8uBW+XYR4mcTvNte6uL?=
- =?us-ascii?Q?AghbwMtz2g2kYPjp6S75DamZR9gmd3txtUQJfCkCsSUQaxudth6v8I23qCjj?=
- =?us-ascii?Q?nipKicEGOJNaUTtHcnBDzJheMEX4U1iXkv6QEsF4+kObHopvdwaSbYOKdpYS?=
- =?us-ascii?Q?qNlT3pu5iPdlYl8XyLHpdI8J2b5fK387beyM48q7Md9eSsKCpkvo3qMp4m8s?=
- =?us-ascii?Q?aE6q5eb8xcVpIve5k1WyXLZRcG8IfG7agpdtvLeF3wTNshTAtfBqSja30UZk?=
- =?us-ascii?Q?g8MUeuoZqGGuWqJx5JTxTTFozmkE8C8YAxJRUxrGsDmPzGTnpGlk4kxxjH4S?=
- =?us-ascii?Q?4rrKHHJpiXsjvy8nMgAtwhio/9aoThv4L6ykn+NqNCE13ceI+fOUIOFhqSRr?=
- =?us-ascii?Q?6eBYmUKJSSyywE+aywZhudH1KRDzmLYu0vUwvTcfwCylJfiA/oRaSoel46iK?=
- =?us-ascii?Q?G7wpZT4lDU7XWuMRulx0rCJYMCgjkCmzdx5drJo+UO+Amc/k1ehFY+CzJ2zA?=
- =?us-ascii?Q?PndXoCryJgvkQ9dluzwRR3nMJEAKo3von+pYMjlEI8v4RDsGLT/J3/4rKt/0?=
- =?us-ascii?Q?vsumpLS8p8UFzJcfyJFQQw5Lrwy9AfJICODFiIfgSnxLZC4V/wWiuEd7yaHJ?=
- =?us-ascii?Q?P+/qOF1hSQJMB0mH2BRRaEKG8Nryr0qOoHZulzKsofnvoL2ZqjMqEjTWyNCr?=
- =?us-ascii?Q?gn5sMyQV237KxDgLPOTlkagiF9n/0K5d3Y9KAvzJNjrHums/kKDjBd4fqQpk?=
- =?us-ascii?Q?sQ2ncSyQDJL6btN4RWZc2sbl7SAKqW7ViC4yqbXl6XM43Qijp+7mslvEfGND?=
- =?us-ascii?Q?0E5AK7fqVF5eE4jw+xa6LGk7BJYGxIZ3XNt47WPCYsG1waSi7inplmgUgWFY?=
- =?us-ascii?Q?OR7fk+8V9JQJW9Bq51w2VkS5UaO2KuHMlz9YyQeAkhxxsa+yJDUytahJZQjx?=
- =?us-ascii?Q?l8luTE6MhG/Bu1BfnMnfzHYh2OLpJJQTNui9Im32q0c3kf4MUhES4GUGnjYH?=
- =?us-ascii?Q?IbaKLZlgwsXJr1jPXsDteOAGau0dqfBCuuVq3z2dPlkqZsX0d1p+yw7DsGP3?=
- =?us-ascii?Q?sg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	YEJnJ8nD46IetwMAnaj5XZRUJiQHotbWrtIFC6qjLQrfCnjARAdIgGC77nLUB0V/vAEkC61ExnxFkqCGzKfq350/gAT/mVbmoiT/KF3ykm5NdJHiwCPOuioVEZW4+L+C+Uiw9owq6HMTbsnxClTub5J4Dblhs9hh4T6tEf9GCe6NL0I5uDOpfu2nxnb0xMsBegVzdN7+ycq6o7t2vm035sWZA/BpEoeEKxbc/jY/m154SWmbL76mEYy2ipfs9ObbEQ3Vph+FU0H75jqxKZsm3zJQ07fR7zvF8h8+s7U/ViDgd8t5MO1J++9MS9q7rdmcgnrdtUej4NiWsMdUeVh2YwXVT2MboSW2ip/x5W+6NN6sH030/LOfm11z9/PIJtOUoJtptv5MpIlnb7B+fsvX2hq638vCxPrtExuKgLv3y7kUVgMOZfdOPicJf0jRv7hFFIcVLSmGSeo/GGrzc97/CmMIa2wE3B8lIF3ChqJ2DCZ8zoVhG5H0XNSDuMuBYQFTYdleLVC5n5lQ9P00oxwh1d715yyL0Ol6WDkDo5CT3WksE28iCZJICfHhqCHPH4YaNyGTvjenjs41VqXi/W+8uuoNgz2CsuGWDrUVvd4baFk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aecf64e4-1452-4643-cfaf-08dd1b57df08
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 09:23:57.5489
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8aGy3K1mYBSctX4O5mQ23MnkAim4n37n7upSqvHf9+71s0G+spVk7C4e2QI02ZuLaDamQjXDHbJVIuO2h5L7Y95eNmMaYm6AjE1p3TO35nY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB7097
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-13_03,2024-12-12_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=815 adultscore=0
- phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2411120000 definitions=main-2412130064
-X-Proofpoint-ORIG-GUID: Ud3VJDRuW-JYbiiBOzdTTMfXR106HPk0
-X-Proofpoint-GUID: Ud3VJDRuW-JYbiiBOzdTTMfXR106HPk0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Fri, Dec 13, 2024 at 09:17:57AM +0000, Lorenzo Stoakes wrote:
-> However as Vlastimil points out - we can't separate out mseal.c here, not
-> reasonably. And it is so clearly strictly an mmap/vma bit of logic that it
-> really ought to be included here to ensure that we who maintain the overall
-> vma work can ensure everything works together - it doesn't make sense to.
+On 12/12/24 22:49, Stephen Brennan wrote:
+> Jiri Olsa <olsajiri@gmail.com> writes:
+>> On Wed, Dec 11, 2024 at 10:10:24PM +0100, Jiri Olsa wrote:
+>>> On Tue, Dec 10, 2024 at 02:55:01PM +0100, Laura Nao wrote:
+>>>> Hi Jiri,
+>>>>
+>>>> Thanks for the feedback!
+>>>>
+>>>> On 12/6/24 13:35, Jiri Olsa wrote:
+>>>>> On Fri, Nov 15, 2024 at 06:17:12PM +0100, Laura Nao wrote:
+>>>>>> On 11/13/24 10:37, Laura Nao wrote:
+>>>>>>>
+>>>>>>> Currently, KernelCI only retains the bzImage, not the vmlinux
+>>>>>>> binary. The
+>>>>>>> bzImage can be downloaded from the same link mentioned above by
+>>>>>>> selecting
+>>>>>>> 'kernel' from the dropdown menu (modules can also be downloaded
+>>>>>>> the
+>>>>>>> same
+>>>>>>> way). I’ll try to replicate the build on my end and share the
+>>>>>>> vmlinux
+>>>>>>> with DWARF data stripped for convenience.
+>>>>>>>
+>>>>>>
+>>>>>> I managed to reproduce the issue locally and I've uploaded the
+>>>>>> vmlinux[1]
+>>>>>> (stripped of DWARF data) and vmlinux.raw[2] files, as well as one
+>>>>>> of
+>>>>>> the
+>>>>>> modules[3] and its btf data[4] extracted with:
+>>>>>>
+>>>>>> bpftool -B vmlinux btf dump file cros_kbd_led_backlight.ko >
+>>>>>> cros_kbd_led_backlight.ko.raw
+>>>>>>
+>>>>>> Looking again at the logs[5], I've noticed the following is
+>>>>>> reported:
+>>>>>>
+>>>>>> [    0.415885] BPF: 	 type_id=115803 offset=177920 size=1152
+>>>>>> [    0.416029] BPF:
+>>>>>> [    0.416083] BPF: Invalid offset
+>>>>>> [    0.416165] BPF:
+>>>>>>
+>>>>>> There are two different definitions of rcu_data in
+>>>>>> '.data..percpu',
+>>>>>> one
+>>>>>> is a struct and the other is an integer:
+>>>>>>
+>>>>>> type_id=115801 offset=177920 size=1152 (VAR 'rcu_data')
+>>>>>> type_id=115803 offset=177920 size=1152 (VAR 'rcu_data')
+>>>>>>
+>>>>>> [115801] VAR 'rcu_data' type_id=115572, linkage=static
+>>>>>> [115803] VAR 'rcu_data' type_id=1, linkage=static
+>>>>>>
+>>>>>> [115572] STRUCT 'rcu_data' size=1152 vlen=69
+>>>>>> [1] INT 'long unsigned int' size=8 bits_offset=0 nr_bits=64
+>>>>>> encoding=(none)
+>>>>>>
+>>>>>> I assume that's not expected, correct?
+>>>>>
+>>>>> yes, that seems wrong.. but I can't reproduce with your config
+>>>>> together with pahole 1.24 .. could you try with latest one?
+>>>>
+>>>> I just tested next-20241210 with the latest pahole version (1.28
+>>>> from
+>>>> the master branch[1]), and the issue does not occur with this
+>>>> version
+>>>> (I can see only one instance of rcu_data in the BTF data, as
+>>>> expected).
+>>>>
+>>>> I can confirm that the same kernel revision still exhibits the
+>>>> issue
+>>>> with pahole 1.24.
+>>>>
+>>>> If helpful, I can also test versions between 1.24 and 1.28 to
+>>>> identify
+>>>> which ones work.
+>>>
+>>> I managed to reproduce finally with gcc-12, but had to use pahole
+>>> 1.25,
+>>> 1.24 failed with unknown attribute
+>>>
+>>> 	[95096] VAR 'rcu_data' type_id=94868, linkage=static
+>>> 	[95098] VAR 'rcu_data' type_id=4, linkage=static
+>>> 	type_id=95096 offset=177088 size=1152 (VAR 'rcu_data')
+>>> 	type_id=95098 offset=177088 size=1152 (VAR 'rcu_data')
+>>
+>> so for me the difference seems to be using gcc-12 and this commit in
+>> linux tree:
+>>    dabddd687c9e percpu: cast percpu pointer in PERCPU_PTR() via
+>>    unsigned long
+>>
+>> which adds extra __pcpu_ptr variable into dwarf, and it has the same
+>> address as the per cpu variable and that confuses pahole
+>>
+>> it ends up with adding per cpu variable twice.. one with real type
+>> (type_id=94868) and the other with unsigned long type (type_id=4)
+>>
+>> however this got fixed in pahole 1.28 commit:
+>>    47dcb534e253 btf_encoder: Stop indexing symbols for VARs
+>>
+>> which filters out __pcpu_ptr variable completely, adding Stephen to
+>> the loop
+> 
+> Thanks for sharing this. Your analysis is spot-on, but I can fill in
+> the
+> details a bit. I just grabbed 6.13-rc2 and built it with gcc 11 and
+> pahole 1.27, and observed the same issue:
+> 
+>    $ bpftool btf dump file vmlinux | grep "VAR 'rcu_data"
+>    [4045] VAR 'rcu_data' type_id=3962, linkage=static
+>    [4047] VAR 'rcu_data' type_id=1, linkage=static
+>            type_id=4045 offset=196608 size=520 (VAR 'rcu_data')
+>            type_id=4047 offset=196608 size=520 (VAR 'rcu_data')
+> 
+> In pahole 1.27, the (simplified) process for generating variables for
+> BTF is:
+> 
+> 1. Look through the ELF symbol table, and find all symbols whose
+> addresses are within the percpu section, and add them to a list.
+> 
+> 2. Look through the DWARF: for each tag of type DW_TAG_variable,
+> determine if the variable is "global". If so, and if the address
+> matches
+> one of the symbols found in Step 1, continue.
+> 
+> 3. Except for one special case, pahole doesn't check whether the DWARF
+> variable's name matches the symbol name. It simply emits a variable
+> using the name of the symbol from Step 1, and the type information
+> from
+> Step 2.
+> 
+> The result of this process, in this case, is:
+> 
+> 1. kernel/rcu/tree.c contains a declaration of "rcu_data". This
+> results
+> in an ELF symbol in vmlinux of the same name. Great!
+> 
+>    $ eu-readelf -s vmlinux | grep '\brcu_data\b'
+>    12319: 0000000000030000    520 OBJECT  LOCAL  DEFAULT       21
+>    rcu_data
+> 
+> 
+> 2. A DWARF entry is emitted for "rcu_data" which has a matching
+> location
+> (DW_AT_location has value DW_OP_addr 0x30000, matching the ELF
+> symbol).
+> So far so good - pahole emits a BTF variable with the expected type.
+> 
+>    $ llvm-dwarfdump --name=rcu_data
+>    ...
+>    0x01af03f1: DW_TAG_variable
+>                  DW_AT_name        ("rcu_data")
+>                  DW_AT_decl_file
+>                  ("/home/stepbren/repos/linux-upstream/kernel/rcu/tree.c")
+>                  DW_AT_decl_line   (80)
+>                  DW_AT_decl_column (8)
+>                  DW_AT_type        (0x01aefb38 "rcu_data")
+>                  DW_AT_alignment   (0x40)
+>                  DW_AT_location    (DW_OP_addr 0x30000)
+> 
+> 3. In kernel/rcu/tree.c, we also have the following declaration at
+> line
+> 5227 which uses per_cpu_ptr() on &rcu_data:
+> 
+> 5222 void rcutree_migrate_callbacks(int cpu)
+> 5223 {
+> 5224 	unsigned long flags;
+> 5225 	struct rcu_data *my_rdp;
+> 5226 	struct rcu_node *my_rnp;
+> 5227 	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
+>                                 ^^^^^^^^^^^
+> 
+> With the new changes in dabddd687c9e ("percpu: cast percpu pointer in
+> PERCPU_PTR() via unsigned long"), this expands to a lexical block
+> which
+> contains a variable named "__pcpu_ptr", of type unsigned long. The
+> compiler emits the following DW_TAG_variable in the DWARF:
+> 
+> 0x01b05d20:         DW_TAG_variable
+>                        DW_AT_name        ("__pcpu_ptr")
+>                        DW_AT_decl_file
+>                        ("/home/stepbren/repos/linux-upstream/kernel/rcu/tree.c")
+>                        DW_AT_decl_line   (5227)
+>                        DW_AT_decl_column (25)
+>                        DW_AT_type        (0x01adb52e "long unsigned
+>                        int")
+>                        DW_AT_location    (DW_OP_addr 0x30000,
+>                        DW_OP_stack_value)
+> 
+> Since the DW_AT_location has a DW_OP_addr - pahole understands this to
+> mean that the variable is located in global memory, and thus has
+> VSCOPE_GLOBAL. But of course, the actual "scope" of this variable is
+> not
+> global, it is limited to the lexical block, which is completely hidden
+> away by the macro. But pahole 1.27 does not consider this, and since
+> the
+> address matches the "rcu_data" symbol, it emits a variable of type
+> "long
+> unsigned int" under the name "rcu_data" -- despite the fact that the
+> DWARF info has a name of "__pcpu_ptr".
+> 
+> The changes I made in 1.28 address this (unintentionally) by:
+> 
+> 1. Requiring global variables be both "in the global scope" (i.e. in
+> the
+> CU-level, rather than any function or other lexical block.
+> 2. Requiring global variables have global memory (some of them could
+> be
+> register variables, despite having global scope -- e.g.
+> current_stack_pointer).
+> 3. No longer using the ELF symbol table, and instead using the DWARF
+> names for variables.
+> 
+> With #1, we would filter this variable. And with #3, even if the
+> variable were not filtered, we would output (a bunch of) variables
+> with
+> the correct __pcpu_ptr variable name, which is unhelpful but at least
+> helps us understand where these things come from.
+> 
+> Rebuilding with GCC 14, we can see that the "__pcpu_ptr" variable no
+> longer has a DW_AT_location:
+> 
+> 0x01afa82f:         DW_TAG_variable
+>                        DW_AT_name        ("__pcpu_ptr")
+>                        DW_AT_decl_file
+>                        ("/home/stepbren/repos/linux-upstream/kernel/rcu/tree.c")
+>                        DW_AT_decl_line   (5227)
+>                        DW_AT_decl_column (25)
+>                        DW_AT_type        (0x01ad0267 "long unsigned
+>                        int")
+> 
+> This is the reason that pahole 1.27 now recognizes it as
+> VSCOPE_OPTIMIZED. Without a memory location pahole can't do anything
+> to
+> match it against the "rcu_data" variable so nothing is emitted, and we
+> don't get the issue.
+> 
+> I'm not sure if this adds at all to the discussion, since the overall
+> answer is the same, an upgrade of pahole and/or gcc. (Pahole would be
+> recommended; GCC just changed the generated DWARF and I could imagine
+> other situations popping up elsewhere).
+>
 
-^ it doesn't make sense _NOT_ to :P a silly typo because I've not had coffee yet...
+Thank you for the help with debugging and for the detailed explanation!  
+                                                                         
+We'll proceed with updating pahole to v1.28 in the KernelCI build        
+environment.                                                             
+                                                                         
+Best,                                                                    
+                                                                         
+Laura                                                                    
+                                                                         
+#regzbot resolve: fixed by changes in pahole 1.28
+ 
+> 
+> Thanks,
+> Stephen
+> 
+>> with gcc-14 the __pcpu_ptr variable has VSCOPE_OPTIMIZED scope, so it
+>> won't
+>> get into btf even without above pahole fix
+>>
+>> I suggest gcc/pahole upgrade ;-)
+>>
+>> thanks,
+>> jirka
+
 
