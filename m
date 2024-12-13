@@ -1,98 +1,82 @@
-Return-Path: <linux-kernel+bounces-444218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89FD9F0301
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:21:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A82E9F0304
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:21:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D972845D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0D5A1884C2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D105413DDAA;
-	Fri, 13 Dec 2024 03:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BAE1537D7;
+	Fri, 13 Dec 2024 03:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Xp5zhAi7"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rt+/u5Eq"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA21F39AEB
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F3239AEB;
+	Fri, 13 Dec 2024 03:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734060072; cv=none; b=tnk2Mtu+O4OmBLPRQwPvN5vkePijabWKj/WXn8CN7aHLHQEL0tEY20BQBNpjwYbDc0jLuw3MzAbHEoikg5WWFdDF283GI7Tj5Zm70aW7TGKHuwtXlTU4Zk7WJHt0FqXpTsDi1j8Gc6c4OWOIl4ck27yXht5Dk6GzIkKj47caF8A=
+	t=1734060078; cv=none; b=YlB6hgGcmebtmq5U2scrEEBOKToiZPVDEgFRKGCCDr5SADmAId+pL/spxoiIYKJUgPYE92plfXLkB95YzVzmCY0QeKZwPLBSEWtN72aYN3n7D9wqOio0XEI732X1mIdP1GsjTuO9bhDN06DyeJo1W9Ol6i2XUi4q/wbLlMqMvSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734060072; c=relaxed/simple;
-	bh=51gZ7B73wC6cA+prhi3QgVPm74Zbk25bknu9h0zpxgg=;
+	s=arc-20240116; t=1734060078; c=relaxed/simple;
+	bh=0oMFQzpVIHd8WJVb/2Kqsg1QFhYtZRYi/4aVvaFGNMs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mT7OSfCXpSf+Oi2BhD5dM/r1x7fr2ib5x3jml6sl8ZFfZh+90f6vkVaAKjHpVJl9c9Acj1QeSwE9vk1c08MBebrv5s40nOu502azhxzyXiEHC4ephgMSRzzIGjAsgSsQrEvJfO6qGAe+NgtDiEMCQ5bLD0VKQBC+tlQAN0qj7is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Xp5zhAi7; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version:Content-Type; b=AqDopAlglS18fCJQtFskLW2LkbOuFuASNc75yS4EMGebwSSSxlHuDmyXK6/zbxu7d9hUAyJHhK/YF5a1rML2OoF+xeGCSZvInH5nGASQNMx/qAf01j4P+EHOH3lxuQ/dQLTq/e4yUeFPmVvvo7LZBQ1lexicOR03cBVrZtSyr0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rt+/u5Eq; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCNb4b6009143;
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD1vrCf029655;
 	Fri, 13 Dec 2024 03:20:46 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=5cz9i3
-	M8TRQA29VottoaesT1DE96npFPnHVhhNxs/SM=; b=Xp5zhAi7zww9S0PkTNQRoD
-	/aeKS++wEt8DzBbUioouJWg9xzgDPJbsofPMuwel+iS4r9jT2F6n68Il35ztu6A7
-	NmbkiBYgEBMQGWjRigaOGQUvca3+jFQaE7IYcXaYvzOJycKKECcpwNNCJHSyyd5m
-	IE1o3J+l+rgG5W8F7ZqgKFxyxSlCqtM2kZc9ZGWxlEy56RqTNytU4N1ERTWxX4w8
-	oC8tQxX4hAHLEkSjcLKuqRiDZylZaDWYLNtAhE5xtk1h4U2BZTBl/O8GRiZ1YUzK
-	wFWp82t0cIfXZ3Zawoq/RoRDqTi0o0w+iQ5TrVweQeHM1Nh0LLMc0lkhWXGsu5kQ
+	:message-id:mime-version:references:subject:to; s=pp1; bh=wwqtwk
+	WWnH5nao7UTyaduT5sV32y3v5muNnqixvJuAs=; b=rt+/u5EqqR1fjUlag9ibp5
+	G0Y2964ev+xVUvPIGXe7Z30T9auMBCIZQck2vQXnkEiTwmM8THOtrrQPjUwd613S
+	ZDVkHZKv8lSEn/Hm2iIf+VYwPvjaBHe+GE4AIdlmrr0ecK4Xf4BbHpQKncGH6Ou3
+	O1xBQI6yiXyu7KD9agNmNQsNUk276BrqVJk1ZMFgTmQsToLlvLxqetXueqbU/5dn
+	FjmkyIywOt+EByvgDqG9im8ru3HBuMMOce4TOunMmqRQxnKA37Ez8yIO7r32Lxqt
+	OnkEdYX70nAv4mIav+0GnOoE/Oc1RA+h0grXUZO02GMOgr97sl9Dj70SbGGwe9+Q
 	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43g9nb8nva-1
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsjxnxg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 13 Dec 2024 03:20:45 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BD3Kjg9012996;
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD08o6R017052;
 	Fri, 13 Dec 2024 03:20:45 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43g9nb8nv8-1
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12ym1ev-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 03:20:45 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD346OU029225;
-	Fri, 13 Dec 2024 03:20:44 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43gcprr1nn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 03:20:44 +0000
+	Fri, 13 Dec 2024 03:20:45 +0000
 Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BD3KfJa49086802
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BD3KhWK32768732
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 03:20:41 GMT
+	Fri, 13 Dec 2024 03:20:43 GMT
 Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EF5F020043;
-	Fri, 13 Dec 2024 03:20:40 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 4168720043;
+	Fri, 13 Dec 2024 03:20:43 +0000 (GMT)
 Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6858E20040;
-	Fri, 13 Dec 2024 03:20:38 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 06DDD20040;
+	Fri, 13 Dec 2024 03:20:42 +0000 (GMT)
 Received: from li-c439904c-24ed-11b2-a85c-b284a6847472.in.ibm.com (unknown [9.204.206.207])
 	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 13 Dec 2024 03:20:38 +0000 (GMT)
+	Fri, 13 Dec 2024 03:20:41 +0000 (GMT)
 From: Madhavan Srinivasan <maddy@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>,
-        Peter Xu <peterx@redhat.com>, Greg Kurz <groug@kaod.org>,
-        Shrikanth Hegde <sshegde@linux.ibm.com>,
-        Thorsten Blum <thorsten.blum@linux.dev>
+To: shuah@kernel.org, Zhu Jun <zhujun2@cmss.chinamobile.com>
 Cc: Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/xmon: Use str_yes_no() helper in dump_one_paca()
-Date: Fri, 13 Dec 2024 08:50:37 +0530
-Message-ID: <173405995389.325393.15062806694742180973.b4-ty@linux.ibm.com>
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/powerpc: Fix typo in test-vphn.c
+Date: Fri, 13 Dec 2024 08:50:41 +0530
+Message-ID: <173405995390.325393.4623287844597085204.b4-ty@linux.ibm.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241129173337.57890-2-thorsten.blum@linux.dev>
-References: <20241129173337.57890-2-thorsten.blum@linux.dev>
+In-Reply-To: <20241204080149.11759-1-zhujun2@cmss.chinamobile.com>
+References: <20241204080149.11759-1-zhujun2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,26 +86,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: gVRc9BX8JTfGmUYJNFZwpFZY1lT32Ca4
-X-Proofpoint-ORIG-GUID: rxlV9fPZ-xbkuENa81XLFAZDEsVAwKOd
+X-Proofpoint-GUID: wCBx2gDigqEbpsuzOL9zlUb8Hn95KpDl
+X-Proofpoint-ORIG-GUID: wCBx2gDigqEbpsuzOL9zlUb8Hn95KpDl
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- adultscore=0 impostorscore=0 malwarescore=0 phishscore=0 clxscore=1011
- mlxlogscore=555 lowpriorityscore=0 suspectscore=0 bulkscore=0 spamscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=536
+ mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
  definitions=main-2412130022
 
-On Fri, 29 Nov 2024 18:33:35 +0100, Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_yes_no() helper function.
+On Wed, 04 Dec 2024 00:01:49 -0800, Zhu Jun wrote:
+> The word 'accross' is wrong, so fix it.
 > 
 > 
 
 Applied to powerpc/next.
 
-[1/1] powerpc/xmon: Use str_yes_no() helper in dump_one_paca()
-      https://git.kernel.org/powerpc/c/6dca1d3af16a82552294596b66fee9e13eed0795
+[1/1] selftests/powerpc: Fix typo in test-vphn.c
+      https://git.kernel.org/powerpc/c/3a7a53c8d4813ef510a731f529b8c58208ab8896
 
 Thanks
 
