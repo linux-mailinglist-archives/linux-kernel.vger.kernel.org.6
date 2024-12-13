@@ -1,176 +1,118 @@
-Return-Path: <linux-kernel+bounces-444210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154C59F02E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:06:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCF09F02EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C582F28333D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:06:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E6A42831BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1821E14375C;
-	Fri, 13 Dec 2024 03:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DBE14A627;
+	Fri, 13 Dec 2024 03:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D00ONeSX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMt86Fm5"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70022AD14;
-	Fri, 13 Dec 2024 03:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE7F2AD14;
+	Fri, 13 Dec 2024 03:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734059154; cv=none; b=fn/1lI80JXwNJkTuQJiot3r7hgk/46YG5ojZ51ldnULSc+5ir5tbUz5XFpkKwY5AOdh81sW0y6h31TbWgF+4goL6ul3aYmE5bs7y3xHRIg2XsxVA/lRXc/2rI/1YKNqVFnJgWHWRiN/7bhSnFJBVBaPHpvB2bHler5m3qo3gmkA=
+	t=1734059317; cv=none; b=AN/wFzTsbzqG5x4FF6N5BMnbdua08DQtRgMCuBwcA1VyV7xsQxHGIrWmGfMtBvj18dt4gdV+hNYPj0Xeq7uGL1hoC5vMARJPfTuffWiRa/F7bLsBK4d1s374NxzRIyP2rGNKLItkLh5kik0I5xa2D8kF1rZQmkIut7FaSPFCD+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734059154; c=relaxed/simple;
-	bh=OLQG4WLA6+0h312mnxc/bRrFpXFgP1B1ifPDM/gfcKI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WMH8ELidlbzvob252nQ9N+oAsFX2q/aHXTX/JZiHQvy2jLHjIQMd7MidlGkvkdirbYhITA53V+1AYrbPQISJtxaTiRQqZ3JGb3uWfEuomRTiTTwnTA0oWWadqqwbkvpPDKKRgH7AO9dkAIWda+Fty+M6HD5Kd2VgIn7eX/b+P/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D00ONeSX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCKpm2l030100;
-	Fri, 13 Dec 2024 03:05:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Xb6eCXHuesyabFIl/WlILqji
-	0wRnUDU75m+XOpTvLxw=; b=D00ONeSXSFaCFljGXmK+LJBTFuaHOMIGifYyc7te
-	+unwx1c5w4YGNom07met5f/QA3NTDRc+GlMt0K1i+dEPr7zJ9Oj/TNrmxgeLY2wL
-	SbOzNehc7ldtgipGJKJixnNcazczbAQ/wtPgPlWGuKOeaIY+NLP7l0ntR0e4zllt
-	qhR5nfkf/3kWu8UTVx4LsKYnt2CJxZu1Arv+U9ZV5t73cLIzUhSW9VjOE/gHrWHj
-	PB2GgQ/ZTW13gfLza+Yo5I4JGQQmeHIR8Svik8appvaKJkAnEPes26z1tF8TWIvm
-	2rzVFvpb0jJLu2BpggydN1G1Cq1awVIdCjpElC4WapiKcA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fwgejcvg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 03:05:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD35aJ3007215
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 03:05:36 GMT
-Received: from hu-pkondeti-hyd (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
- 2024 19:05:30 -0800
-Date: Fri, 13 Dec 2024 08:35:27 +0530
-From: Pavan Kondeti <quic_pkondeti@quicinc.com>
-To: Mark Rutland <mark.rutland@arm.com>
-CC: Marc Zyngier <maz@kernel.org>, Pavan Kondeti <quic_pkondeti@quicinc.com>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
-Message-ID: <b71d89f9-fb72-405a-b5bf-a09a796561bb@quicinc.com>
-References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
- <87ed2fs03w.wl-maz@kernel.org>
- <92cee905-a505-4ce9-9bbc-6fba4cea1d80@quicinc.com>
- <86sequsdtp.wl-maz@kernel.org>
- <c197264b-3791-493a-b717-3dfd844de922@quicinc.com>
- <87bjxhs2t7.wl-maz@kernel.org>
- <Z1q9rnzOlB9J5dXb@J2N7QTR9R3>
+	s=arc-20240116; t=1734059317; c=relaxed/simple;
+	bh=c4yS/DaE4EHTpmyOzsZ+nFXQdXRCuXZckMtCqXiaAug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lg2XELogDZOogVWkQDHageg6OQIx5nd/DINtCwF/fiUX2CLX5etLDE4PZNSD/2cax6/1iJXbMVfWoP57tP+vHF3IZpa2iSIsw8r2j5Wn1ap0Pd0kLk5yW2VgVI2T4r594gQu9VKGbQc/vkQSGyy8J5RzKNfTIQC3Vfy+ONLBWzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMt86Fm5; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-728e1799d95so1500135b3a.2;
+        Thu, 12 Dec 2024 19:08:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734059315; x=1734664115; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BsVQQttPAUDux//1Wpy1fzssaRVCUnaS6/5ziBY5sHI=;
+        b=PMt86Fm59iz7iKuhbWsHjAQ9XP/7bDhb/YHZewcIaRQZOJwCXb+oJCcb5LMGgDnzyn
+         8QBILgP9vjUqCTEA3KeScWJdgJ4TRBhacJcLJY2RHBuEMjKzcGxZWfo3YQCI3zA0FPu4
+         HOdivKX1l5FkazS3BfKzz8vtsAtQ3xLUJBGds0AEXNct4gps1gAHYh/hgEuY+cPacqfL
+         jBrguBCEoSWZSQ5gKZijgBfnr1eYwaCCxO+OS0+llcDqN22zFk1hB+RisJSP2YLYalDi
+         JnWf1wKrpIA0Q6RXfwkwPv8FpvGe6jZgc3u5k3OCfqTALNu+p5t61nxhwu7Huh3C5rS9
+         3uYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734059315; x=1734664115;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BsVQQttPAUDux//1Wpy1fzssaRVCUnaS6/5ziBY5sHI=;
+        b=T97HvcuJ0Clb0NZw6/fGNscguKB93FUMcN+ybDVvXvazJCAVuIGn2PZ+49r0o28ezn
+         1TaHlQ8ZPtYbTXx7m37RYxRcH7z6+wbo4Mi7ah6QkZ7AG63qiSIt2nuY7XBA/mKOmfaE
+         K2XlxpfjhJctFy1KYaCHAGmGyFND8IdLsHfKpIWjUE6UZV+CXDqUDmuVWXCd9nOIoxif
+         VFtpQLY4BFrhL0JqsP6GsRgpBkjMeuTEzGw54tVU4GhPVcEeACon207XsTrNs8qPxmkh
+         WUkjzwCuRDdCvBeEfq7G+ByZthzIysKa2EoN0CKQ+qsGgCcXXl1BzbjfTqRNiw0yxJ0m
+         nK3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUS+ISP7a8VvGKz7+JmVhMVZc8jItV27eAypMzlRiGCQyPMLWALnlVMzEJU0cZl4TsnavYGDuRelQs9e53ID1h8@vger.kernel.org, AJvYcCUaVeIK0+xermNxPg6/oD5JnnoQUUzxQw5xvh7r5I+vB1j7PGEZQPOO0C3Vse5FyToPY9A=@vger.kernel.org, AJvYcCWtrD9tmWjgZvPKBa2d8syMaZJlPXWXEkACnIcD1hHh1ioLtrKsRoMyT6oeISDywXqaJ+BzNV1BZjXA2R0o@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFjYrD9EGxkcdN/0EXWEANO4y69yeYU+jIVXYZ0xFqpQT/UgBO
+	GAzWnSuFoJVvvdes+vWzxmP0nS8bQV2bk0MotKafxSJDqurFQOvM0LpJCP2e
+X-Gm-Gg: ASbGncuDKC8I6Wh9DJ0zVTpsfXq/NDSRXAx03CWDAek4p9VvBWrT5UeqDmoaIV0SVqw
+	r/aEMtiQY1JrYuerq4AK7NCKbmDZ5qfwghvKVxWUm9OcUN5IpwEkgGDWrfViTtPjhVK7Qy6d7Yj
+	eT+ZIJrDqkp8FJ3+VV3bhTtW9C3cDMD4pO5PsnZQxjbiiYkVD+SIwCGEX6mpkUV3D+RbUpxbqGc
+	Q3eobKZRjHy+F1B9kF/zo45y/XSEtyB8pRbBCETOhIxiedou0RilPsuWbsQjXFwrVwTtx8O2scY
+X-Google-Smtp-Source: AGHT+IH5T+12UrShKAcJ0VU5BfSw/tnglHGREsGWmhbe31fe5uxZw6FabVtRivIabCVNyDYxfmiysg==
+X-Received: by 2002:a05:6a20:c99a:b0:1e0:d851:cda5 with SMTP id adf61e73a8af0-1e1dfd2a7a6mr1667673637.14.1734059315338;
+        Thu, 12 Dec 2024 19:08:35 -0800 (PST)
+Received: from fedora.dns.podman ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e4b13545sm9152783b3a.126.2024.12.12.19.08.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 19:08:34 -0800 (PST)
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: netdev@vger.kernel.org
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>,
+	Phil Sutter <phil@nwl.cc>,
+	Florian Westphal <fw@strlen.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Yoann Congal <yoann.congal@smile.fr>,
+	wireguard@lists.zx2c4.com,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hangbin Liu <liuhangbin@gmail.com>
+Subject: [PATCHv3 net-next 0/2] selftests: wireguards: use nftables for testing
+Date: Fri, 13 Dec 2024 03:08:17 +0000
+Message-ID: <20241213030819.49987-1-liuhangbin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z1q9rnzOlB9J5dXb@J2N7QTR9R3>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dOH1GB_cEQesfUdqXmPeq8eFmXp0QQAP
-X-Proofpoint-ORIG-GUID: dOH1GB_cEQesfUdqXmPeq8eFmXp0QQAP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 clxscore=1011
- impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130022
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 12, 2024 at 10:40:46AM +0000, Mark Rutland wrote:
-> On Thu, Dec 12, 2024 at 08:50:12AM +0000, Marc Zyngier wrote:
-> > On Thu, 12 Dec 2024 05:31:00 +0000,
-> > Pavan Kondeti <quic_pkondeti@quicinc.com> wrote:
-> > > 
-> > > On Wed, Dec 11, 2024 at 10:40:02AM +0000, Marc Zyngier wrote:
-> > > > On Wed, 11 Dec 2024 00:37:34 +0000,
-> > > > Pavan Kondeti <quic_pkondeti@quicinc.com> wrote:
-> > > > > 
-> > > > > On Tue, Dec 10, 2024 at 09:24:03PM +0000, Marc Zyngier wrote:
-> > > > > > > +static int a6xx_switch_secure_mode(struct msm_gpu *gpu)
-> > > > > > > +{
-> > > > > > > +	int ret;
-> > > > > > > +
-> > > > > > > +#ifdef CONFIG_ARM64
-> > > > > > > +	/*
-> > > > > > > +	 * We can access SECVID_TRUST_CNTL register when kernel is booted in EL2 mode. So, use it
-> > > > > > > +	 * to switch the secure mode to avoid the dependency on zap shader.
-> > > > > > > +	 */
-> > > > > > > +	if (is_kernel_in_hyp_mode())
-> > > > > > > +		goto direct_switch;
-> > > > > > 
-> > > > > > No, please. To check whether you are *booted* at EL2, you need to
-> > > > > > check for is_hyp_available(). Whether the kernel runs at EL1 or EL2 is
-> > > > > > none of the driver's business, really. This is still absolutely
-> > > > > > disgusting from an abstraction perspective, but I guess we don't have
-> > > > > > much choice here.
-> > > > > > 
-> > > > > 
-> > > > > Thanks Marc. Any suggestions on how we can make is_hyp_mode_available()
-> > > > > available for modules? Do you prefer exporting
-> > > > > kvm_protected_mode_initialized and __boot_cpu_mode symbols directly or
-> > > > > try something like [1]?
-> > > > 
-> > > > Ideally, neither. These were bad ideas nine years ago, and they still
-> > > > are. The least ugly hack I can come up with is the patch below, and
-> > > > you'd write something like:
-> > > > 
-> > > > 	if (cpus_have_cap(ARM64_HAS_EL2_OWNERSHIP))
-> > > > 		blah();
-> > > > 
-> > > > This is obviously completely untested.
-> > > > 
-> > > 
-> > > I have tested your patch. It works as intended. Thanks Marc.
-> > 
-> > Note that you will probably get some push-back from the arm64
-> > maintainers on this front, because this is a fairly incomplete (and
-> > fragile) solution.
-> > 
-> > It would be much better if the discriminant came from the device tree.
-> > After all, the hypervisor is fscking-up^W^Wchanging the programming
-> > model of the GPU, and that should be reflected in the DT. Because for
-> > all intent and purposes, this is not the same hardware anymore.
-> 
-> FWIW I agree 100%, this should be described in DT.
-> 
-> The cpucap doesn't describe the actual property we care about, and it
-> cannot in general (e.g. for nested virt). I would strongly prefer to not
-> have that as it's setting ourselves up for failure.
-> 
-Thanks for the feedback. I understand that EL2 detection in kernel is
-not going to cover cases like bare metal EL1, nested virtualization. We
-plan to take the DT approach. 
+This patch set convert iptables to nftables for wireguard testing, as
+iptables is deparated and nftables is the default framework of most releases.
 
-Thanks,
-Pavan
+v3: drop iptables directly (Jason A. Donenfeld)
+    Also convert to using nft for qemu testing (Jason A. Donenfeld)
+v2: use one nft table for testing (Phil Sutter)
+
+Hangbin Liu (2):
+  selftests: wireguards: convert iptables to nft
+  selftests: wireguard: update to using nft for qemu test
+
+ tools/testing/selftests/wireguard/netns.sh    | 29 +++++++++-----
+ .../testing/selftests/wireguard/qemu/Makefile | 40 ++++++++++++++-----
+ .../selftests/wireguard/qemu/kernel.config    |  7 ++--
+ 3 files changed, 53 insertions(+), 23 deletions(-)
+
+-- 
+2.39.5 (Apple Git-154)
+
 
