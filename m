@@ -1,198 +1,162 @@
-Return-Path: <linux-kernel+bounces-444399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1EF9F0629
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:16:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4B01880687
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:16:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A5F1A7270;
-	Fri, 13 Dec 2024 08:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nv0OBx/H"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE0469F062D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:17:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73D17DA8C;
-	Fri, 13 Dec 2024 08:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89937285907
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:17:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C80B192D9D;
+	Fri, 13 Dec 2024 08:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bl49EiLE"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20A47DA8C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734077762; cv=none; b=EG3rfrrhzW6wjDco3bXGzS1nVKGtPTd6RzpGeFClB3j368S4s9dz4JrecHFX47rYeNMQWL9jVC+9cuWpOn01d4uZBrUlX9Dt02YxoAwPjLlhxT7sDQLNIBCIVXGT+VesTT0prQ2TRqhKra7WbvvGgPJV/Xmh44BmubC0STFSemU=
+	t=1734077841; cv=none; b=qfcKL07GnFtBD7QFTRFnztr6kF+G0rMSP72SdgyEOCydW6igo4xWVh5aV4+fiwtlsy6lG5qgJnF4wxLAY40VSDCKfNEjERhUMfudmP9dZ4oHuNXnzJ/lwveXtz6mlx+8oqbjF199x/kzqbKF08xB29ediBIL7KqORdBJEkHOugM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734077762; c=relaxed/simple;
-	bh=OvkHUmlOfntVSnhKJVDcCAy/inJbHd8hNdTsJ24NYwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QTQdxJB8kvJAbRI+T2LpkZZosJB1pw88TeuX0MBKBdM80ORqRsaqVPB/E2Qaa8BGMWCe1HVmpoSAQXnK+BylWwQ1UOA078rgO/zBwLdCrhgVWXsQ/Gy+Aa02EseRP5LzXqwB2lDk1zt6XpCutlocmAPlsAih25vm0ysHeoHZFd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nv0OBx/H; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD7ulu5029837;
-	Fri, 13 Dec 2024 08:15:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vLAICILLjIfyIA1ULZ2JLrUpUY1KfziegLW0IZav2cE=; b=Nv0OBx/HJFOjOxk7
-	6rQtYFHUiPcIxQSVx845QsOUt5CI20VBxjXiks3ab2hgYmwm1jnQPnsGv6rvlFv6
-	1eL73g9grkNwOTgrUanoX4yzxEOLlUczWpertv/mDnBT/9IySjEGES6G7S1HN8V8
-	aE/O6NrXSI7FdJ9kD6J3Ygxc5c6fbCmLaF4xFtBlUqj0f9z/ZjWoRWS+EfWA1bmM
-	NKJY77MUbV7OSy+OSZGJ4RLKWmf3l7u7zatAci6oS4HGPUZQ5D4VSBxLh2Te3uLm
-	NyCqKfd2N51loCbj6Z1klbjQDJUN0R62kvXFrbsigy4oQJgxbB+fu45Op31v/1G4
-	XFanRA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw4dy53-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 08:15:19 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD8FImL009787
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 08:15:18 GMT
-Received: from [10.239.133.118] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
- 2024 00:15:13 -0800
-Message-ID: <0a16d52c-eebe-40da-ba02-7f68a7849039@quicinc.com>
-Date: Fri, 13 Dec 2024 16:15:10 +0800
+	s=arc-20240116; t=1734077841; c=relaxed/simple;
+	bh=vFtiKg5oInJfRfvjoGCgWCYLLTho2gqfTWCjTVwo/1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iXI6xESPR18HgaIA9CmnEzYsZIAmK6IO2XyZDQKbubdPUDv11SierYt+VB4K8wE2wjP8pSBU1KJa+tNJ65/sg+wPEeoPXJvrxr3uvlx7gTUdMguI/fxdOTAJfxjBCIWTT8qzzY8T6fqdq6Gnms/KJbJ8I2Ihj4VRz+FyGXmT1Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bl49EiLE; arc=none smtp.client-ip=209.85.210.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-728ec840a8aso1707970b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:17:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734077839; x=1734682639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+aW5Mr9qE0qfjhgTO9mJhgzzfKvLM/ZWs/peRYXQh9c=;
+        b=bl49EiLEvhD5tpYgasgXyvGP5A0BoiZ6ZYipuHNSrmf/qi9o1CB+Dg+5IXBwtIQGme
+         RNuxF0GLO5saZGQnwxjNNmZRZHt7UpWbfQ1KKGrvMd1TuP24fwh6ICkPH8Chpt6WxZkO
+         CO6CmosmGL5kHiKpTmkfPpG+Q1sZd/+ypgS3zR0myZLe4YCMAGDhKLEd2E+vEsUA+9X4
+         ZXqjcnIW3gR6HreX1SDuAVYreQmxDcb5DedlRvl/88p8piD3ifsAJiMHR2nANdFXKTAZ
+         B8hfc6Qiug4iWTJThNIPbDZtEu0PatlUQQ/H7MQTB+kb0DFe+0Trf3SQdaJrGtbCURvw
+         j/pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734077839; x=1734682639;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+aW5Mr9qE0qfjhgTO9mJhgzzfKvLM/ZWs/peRYXQh9c=;
+        b=kcPKZU9ddjvTDFPXhDymkLre69TYwsQ3yhU2fP6/AgrOve435Abnun8wm5wNY9jQXb
+         tJzMKw4QPDE6BWhJlUYwzet9V8u3MlQjpao4pOrbPdrVgD3MBjmpLLZ7tAFr7HkwZUw6
+         +tcXQ+P1sG095NYD3aphn6Jo7KUKC7HpLkdknt6eq8Hwr2OydPYDbLJ8L5r6LSl7dKlu
+         e92Ilwhi9/+TdiN8N3FS/Gu3i8THDnYZY6tBRX9QMlgc6X0vTcXN7ceVtV7TW9WWsMFZ
+         LD+RCeMpGQXFb2OsRPUXUfnnEOpFAKpN6T61fBU8sKpg4Kug/6l6bzIKENpx34o6oS0j
+         W+lw==
+X-Gm-Message-State: AOJu0YwHbQy837Ki0vUbgkZnAUBfhMcTHreaRkU5RO/X5kWDLhFIo35e
+	boEgqjDbpj3OnvXp9H87n891uC0axvAx3g4l1cnhgmDuokvYYO9ElqbqTEOPpDc=
+X-Gm-Gg: ASbGncvP0wClb4jS+MexP4echFd6lcn4IIogA9X/kDLhSdOKMn5lHBk+rSGLj7HzuX/
+	pevVQuXFZiNUsed8Jee27JBkpCVQ/W2AGiBrUuDOvdsn5JJzp1SKrgavFjfk+DettUlewmyEKJv
+	NjbJWQM824t/obuSKX+gghnIE66+rIiIqitznq8/otXq3uVhFck/pHzLfxN63TV9/QJSh1CMfiE
+	UAxmrsgHpNj2471/PcSKwzs5m0xJWrTZbWIRlAJlnMBsADwHJjBm7L/
+X-Google-Smtp-Source: AGHT+IH8cuOL6gMPiRHYoBhv4wc/6qGhYbStcloPbWzZYYMeqZLoWaVKg5i2liQS8cUlDs9g0QtsQg==
+X-Received: by 2002:a05:6a00:2341:b0:728:e1e3:3d88 with SMTP id d2e1a72fcca58-7290c15d7bfmr2514688b3a.7.1734077838960;
+        Fri, 13 Dec 2024 00:17:18 -0800 (PST)
+Received: from localhost.localdomain ([192.169.96.197])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd4ec342b2sm7860660a12.70.2024.12.13.00.17.16
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 13 Dec 2024 00:17:18 -0800 (PST)
+From: zhouzihan30 <15645113830zzh@gmail.com>
+X-Google-Original-From: zhouzihan30 <zhouzihan30@jd.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	zhouzihan30 <zhouzihan30@jd.com>,
+	yaowenchao1 <yaowenchao@jd.com>
+Subject: [PATCH V1] mm: fix bug in some memory information update
+Date: Fri, 13 Dec 2024 16:16:19 +0800
+Message-Id: <20241213081618.53458-1-zhouzihan30@jd.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] phy: qcom-qusb2: Add regulator_set_load to Qualcomm
- usb phy
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Vivek Gautam
-	<vivek.gautam@codeaurora.org>, <kernel@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241121-add_set_load_to_qusb_phy-v2-1-1c5da1befec0@quicinc.com>
- <vbuo2yel2pdcwnmz32f4t5pb6v3ptt2bcs2t6ybab2jxnkd6e7@rjnsbawj4zpb>
-Content-Language: en-US
-From: Song Xue <quic_songxue@quicinc.com>
-In-Reply-To: <vbuo2yel2pdcwnmz32f4t5pb6v3ptt2bcs2t6ybab2jxnkd6e7@rjnsbawj4zpb>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XnpzsuXAGzRKEPNTTywcpOk98YOndc0Q
-X-Proofpoint-GUID: XnpzsuXAGzRKEPNTTywcpOk98YOndc0Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130056
+Content-Transfer-Encoding: 8bit
 
+In the kernel, the zone's lowmem_reserve and _watermark, and the global
+variable 'totalreserve_pages' depend on the value of managed_pages,
+but after running adjust_managed_page_count, these values didn't updated,
+which caused some problems.
 
+For example, in a system with six 1GB large pages, we found that the value
+of protection in zoneinfo (zone->lowmem_reserve), is not right.
+Its value seems calculated from the initial managed_pages,
+but after the managed_pages changed, was not updated. Only after reading
+ the file /proc/sys/vm/lowmem_reserve_ratio, updates happen.
 
-On 11/29/2024 12:43 AM, Bjorn Andersson wrote:
-> On Thu, Nov 21, 2024 at 04:09:27PM +0800, Song Xue wrote:
->> Set the current load before enable regulator supplies at QUSB phy.
->>
->> Encountered one issue where the board powered down instantly once the UVC
->> camera was attached to USB port while adding host mode on usb port and
->> testing a UVC camera with the driver on QCS615 platform. The extensible
->> boot loader mentioned that OCP(Over Current Protection) occurred at LDO12
->> from regulators-0 upon powered on board again. That indicates that the
->> current load set for QUSB phy, which use the regulator supply, is lower
->> than expected.
->>
->> As per QUSB spec, set the maximum current load at 30mA to avoid overcurrent
->> load when attach a device to the USB port.
->>
->> Fixes: 937e17f36a32 ("phy: qcom-qusb2: Power-on PHY before initialization")
->> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
-> 
-> The patch looks good. But if we describe the regulator(s) with
-> regulator-allow-set-load; and not all the consumers vote for load, the
-> sum of the load when USB phy is disabled goes to 0 and we will enter
-> LPM.
-> 
-Hi, Bjorn
+read file /proc/sys/vm/lowmem_reserve_ratio:
 
-Thanks for comment.
+lowmem_reserve_ratio_sysctl_handler
+----setup_per_zone_lowmem_reserve
+--------calculate_totalreserve_pages
 
-We dived into the code and found the other all Qualcomm platform's 
-device tree using the phy-qcom-qusb2's compatible don't use the 
-"regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>" and 
-"regulator-allow-set-load" together at the same time. We think the patch 
-is safe now.
+protection changed after reading file:
 
-Therefore, can we merge the patch?
+[root@test ~]# cat /proc/zoneinfo | grep protection
+        protection: (0, 2719, 57360, 0)
+        protection: (0, 0, 54640, 0)
+        protection: (0, 0, 0, 0)
+        protection: (0, 0, 0, 0)
+[root@test ~]# cat /proc/sys/vm/lowmem_reserve_ratio
+256     256     32      0
+[root@test ~]# cat /proc/zoneinfo | grep protection
+        protection: (0, 2735, 63524, 0)
+        protection: (0, 0, 60788, 0)
+        protection: (0, 0, 0, 0)
+        protection: (0, 0, 0, 0)
 
-Thanks,
-Song
-> For this reason we're not doing any load requests today. Can you confirm
-> that this works fine with a dtb where only HPM is permitted (as well as
-> LPM and HPM)? If so I'd be in favor of us merging this change, but
-> keeping the dts HPM-only until someone confirms that all consumers of
-> these regulators specify load-votes.
-> 
-> Regards,
-> Bjorn
-> 
->> ---
->> Changes in v2:
->> - Removed "---" above the Fixes.
->> - Link to v1: https://lore.kernel.org/r/20241121-add_set_load_to_qusb_phy-v1-1-0f44f3a3290e@quicinc.com
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qusb2.c | 13 ++++++++++++-
->>   1 file changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> index c52655a383cef008552ed4533b9f31d1cbf34a13..80f0d17c42717e843937255a9a780bbae5998535 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> @@ -722,16 +722,27 @@ static int __maybe_unused qusb2_phy_runtime_resume(struct device *dev)
->>   	return ret;
->>   }
->>   
->> +#define QUSB2PHY_HPM_LOAD 30000 /*uA*/
->> +
->>   static int qusb2_phy_init(struct phy *phy)
->>   {
->>   	struct qusb2_phy *qphy = phy_get_drvdata(phy);
->>   	const struct qusb2_phy_cfg *cfg = qphy->cfg;
->>   	unsigned int val = 0;
->>   	unsigned int clk_scheme;
->> -	int ret;
->> +	int ret, i;
->>   
->>   	dev_vdbg(&phy->dev, "%s(): Initializing QUSB2 phy\n", __func__);
->>   
->> +	/* set the current load */
->> +	for (i = 0; i < ARRAY_SIZE(qphy->vregs); i++) {
->> +		ret = regulator_set_load(qphy->vregs[i].consumer, QUSB2PHY_HPM_LOAD);
->> +		if (ret) {
->> +			dev_err(&phy->dev, "failed to set load at %s\n", qphy->vregs[i].supply);
->> +			return ret;
->> +		}
->> +	}
->> +
->>   	/* turn on regulator supplies */
->>   	ret = regulator_bulk_enable(ARRAY_SIZE(qphy->vregs), qphy->vregs);
->>   	if (ret)
->>
->> ---
->> base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
->> change-id: 20241121-add_set_load_to_qusb_phy-d1327c797ffe
->>
->> Best regards,
->> -- 
->> Song Xue <quic_songxue@quicinc.com>
->>
->>
+lowmem_reserve increased also makes the totalreserve_pages increased,
+which causes a decrease in available memory. The one above is just a
+ test machine, and the increase is not significant. On our online machine,
+the reserved memory will increase by several GB due to reading this file.
+It is clearly unreasonable to cause a sharp drop in available memory just
+ by reading a file.
+
+In this patch, we update reserve memory when update managed_pages, The
+size of reserved memory becomes stable. But it seems that the _watermark
+ should also be updated along with the managed_pages. We have not done
+ it because we are unsure if it is reasonable to set the watermark through
+ the initial managed_pages. If it is not reasonable, we will propose
+ new patch.
+
+Signed-off-by: zhouzihan30 <zhouzihan30@jd.com>
+Signed-off-by: yaowenchao1 <yaowenchao@jd.com>
+---
+ mm/page_alloc.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index b6958333054d..b23e128afbcd 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5826,10 +5826,13 @@ __meminit void zone_pcp_init(struct zone *zone)
+ 			 zone->present_pages, zone_batchsize(zone));
+ }
+ 
++static void setup_per_zone_lowmem_reserve(void);
++
+ void adjust_managed_page_count(struct page *page, long count)
+ {
+ 	atomic_long_add(count, &page_zone(page)->managed_pages);
+ 	totalram_pages_add(count);
++	setup_per_zone_lowmem_reserve();
+ }
+ EXPORT_SYMBOL(adjust_managed_page_count);
+ 
+-- 
+2.33.0
 
 
