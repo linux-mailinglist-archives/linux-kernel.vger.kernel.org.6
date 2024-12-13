@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-445082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525A89F10F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:27:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0573F9F10F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:26:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA67C1882BC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EED71882A5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658F21E377F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1B81E3761;
 	Fri, 13 Dec 2024 15:26:39 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC931E2850;
-	Fri, 13 Dec 2024 15:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC221E25FE
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734103599; cv=none; b=DzFOV98okFSC7UVxVhJ0Nbzf67EMb73WiwRhaUCXSt9C3udaApzPyjsRyLt1ArV/rwoWgUSfWrbUiDrOZ+o3NNu3t97+aTbW+RON4s/Nvf3PJPGCluROK9WooFteLNN4rzNtI6Q+9GYHjRsIi7lri4aI4RqWlLB+umkpmYXCWpg=
+	t=1734103598; cv=none; b=GA4qvpN2HVG8gN8HlEJFOv5MowLSQ2ZXmfkneqdseCMTEPeOTgH4L+6mfSmgSYxqol+S/6HzMm2diMEYi2xeMf6bSLcZCOjaLWEZNoTLrE8TYgrzqTSbLbiKN5i5uK3dBDTsamkhpbrP2M4SRVpK49bkl5lHy56REMW2oPnGh2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734103599; c=relaxed/simple;
-	bh=qDsAmNXR5n51iXB16Y3+OxPTekINrODSuNbEbMHwiJg=;
+	s=arc-20240116; t=1734103598; c=relaxed/simple;
+	bh=lmCm9UtAO2/cJpwPsH47vXHv0VeqqSpC/ZMVZXWHtHk=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=nSA91j5whXSWmiNJDJPO95sn0a5bcDgUCXSE7idJVujGVotIJj3for0OcXGt6j6CPSIe2LBfsNVevdOPuws5rA0PWepz9HhWNF2GQGG4LwZwm9UN7ZLXQH9gcBksNTfJ5rzvswWCgAeKcST2rxHHIdjTzZL96gme7zxP8VBVfPs=
+	 Content-Type; b=P+yJrnHit93e79tzZpZBKcE0DQm0kSONM87aBlAIK5GQOCo9GEyC7p+XQeqc4GMc2vlcDlGHttroHRi5wUNuIamWW4+qNEZYel0O0Vy/60xSPo2BoeSqDXxX0LSyoWlLHhIEuiVo59HFVpYyz0OcoO8VnBTJfJEnyy/fHlJ6YTY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92335C4CEE2;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D4A5C4CEE4;
 	Fri, 13 Dec 2024 15:26:38 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tM7ZI-00000005PHC-1nIt;
+	id 1tM7ZI-00000005PHg-2Vt6;
 	Fri, 13 Dec 2024 10:27:04 -0500
-Message-ID: <20241213152704.275936323@goodmis.org>
+Message-ID: <20241213152704.448212590@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 13 Dec 2024 10:26:49 -0500
+Date: Fri, 13 Dec 2024 10:26:50 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- stable@vger.kernel.org,
- Linus Walleij <linus.walleij@linaro.org>
-Subject: [for-linus][PATCH 2/3] fgraph: Still initialize idle shadow stacks when starting
+ Al Viro <viro@ZenIV.linux.org.uk>,
+ Michal Simek <monstr@monstr.eu>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Subject: [for-linus][PATCH 3/3] ftrace/microblaze: Do not find "true_parent" for return address
 References: <20241213152647.904822987@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,60 +56,48 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-A bug was discovered where the idle shadow stacks were not initialized
-for offline CPUs when starting function graph tracer, and when they came
-online they were not traced due to the missing shadow stack. To fix
-this, the idle task shadow stack initialization was moved to using the
-CPU hotplug callbacks. But it removed the initialization when the
-function graph was enabled. The problem here is that the hotplug
-callbacks are called when the CPUs come online, but the idle shadow
-stack initialization only happens if function graph is currently
-active. This caused the online CPUs to not get their shadow stack
-initialized.
+When function tracing and function graph tracing are both enabled (in
+different instances) the "parent" of some of the function tracing events
+is "return_to_handler" which is the trampoline used by function graph
+tracing. To fix this, ftrace_get_true_parent_ip() was introduced that
+returns the "true" parent ip instead of the trampoline.
 
-The idle shadow stack initialization still needs to be done when the
-function graph is registered, as they will not be allocated if function
-graph is not registered.
+To do this, the ftrace_regs_get_stack_pointer() is used, which uses
+kernel_stack_pointer(). The problem is that microblaze does not implement
+kerenl_stack_pointer() so when function graph tracing is enabled, the
+build fails.
 
-Cc: stable@vger.kernel.org
+Modify the #ifdef check to the code around ftrace_get_true_parent_ip() to
+include !defined(CONFIG_MICROBLAZE) which will default it to just return
+the parent ip passed in, which may still be the ip of the function garph
+trampoline.
+
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20241211135335.094ba282@batman.local.home
-Fixes: 2c02f7375e65 ("fgraph: Use CPU hotplug mechanism to initialize idle shadow stacks")
-Reported-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Linus Walleij <linus.walleij@linaro.org>
-Closes: https://lore.kernel.org/all/CACRpkdaTBrHwRbbrphVy-=SeDz6MSsXhTKypOtLrTQ+DgGAOcQ@mail.gmail.com/
+Cc: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Michal Simek <monstr@monstr.eu>
+Link: https://lore.kernel.org/20241211153634.69c75afa@batman.local.home
+Fixes: 60b1f578b578 ("ftrace: Get the true parent ip for function tracer")
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/fgraph.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/trace/trace_functions.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 0bf78517b5d4..ddedcb50917f 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -1215,7 +1215,7 @@ void fgraph_update_pid_func(void)
- static int start_graph_tracing(void)
+diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
+index 74c353164ca1..a75d107a45f8 100644
+--- a/kernel/trace/trace_functions.c
++++ b/kernel/trace/trace_functions.c
+@@ -176,7 +176,8 @@ static void function_trace_start(struct trace_array *tr)
+ 	tracing_reset_online_cpus(&tr->array_buffer);
+ }
+ 
+-#ifdef CONFIG_FUNCTION_GRAPH_TRACER
++/* Microblaze currently doesn't implement kernel_stack_pointer() */
++#if defined(CONFIG_FUNCTION_GRAPH_TRACER) && !defined(CONFIG_MICROBLAZE)
+ static __always_inline unsigned long
+ function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
  {
- 	unsigned long **ret_stack_list;
--	int ret;
-+	int ret, cpu;
- 
- 	ret_stack_list = kcalloc(FTRACE_RETSTACK_ALLOC_SIZE,
- 				 sizeof(*ret_stack_list), GFP_KERNEL);
-@@ -1223,6 +1223,12 @@ static int start_graph_tracing(void)
- 	if (!ret_stack_list)
- 		return -ENOMEM;
- 
-+	/* The cpu_boot init_task->ret_stack will never be freed */
-+	for_each_online_cpu(cpu) {
-+		if (!idle_task(cpu)->ret_stack)
-+			ftrace_graph_init_idle_task(idle_task(cpu), cpu);
-+	}
-+
- 	do {
- 		ret = alloc_retstack_tasklist(ret_stack_list);
- 	} while (ret == -EAGAIN);
 -- 
 2.45.2
 
