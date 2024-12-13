@@ -1,140 +1,103 @@
-Return-Path: <linux-kernel+bounces-445407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91B59F15E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:33:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBE79F15EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DCD07A0563
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:33:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9AF188C95B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7074B1EE019;
-	Fri, 13 Dec 2024 19:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12411EBA07;
+	Fri, 13 Dec 2024 19:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhNUIDKC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SiXy2iQh"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C424C1EC014;
-	Fri, 13 Dec 2024 19:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357571E0B75;
+	Fri, 13 Dec 2024 19:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734118362; cv=none; b=qoLdMBsYl2/XeuOGQ9FMChhRRf/9ikk7fE1l/g69ZiQBmkq08lBOKzcNEsyrUNN0PVK7z5qXYblwgOHbvJec8FVQ+lWfYfWMQPcLNnbs9Dy5l4H+Ntju4O2lvrojGY4YZq1BFUK1tFlD9zGXaRJunbtMnNjIroc2qbQQbfCpbq0=
+	t=1734118465; cv=none; b=dATa1cGHOUGqrHm30Exu8aENybseMISRDY2+GMWJnC2wLGrP3U4Blrvbt6o/126l9+hvgZ5wR/iBnnyucUfJ6nSbolPBemdIs9W3z+40D2hnslucRYHaiu+asKlSdDMiXs+0Cvm6ANjggeuoY7sJZkdDE/AsCXelIKefGXiTil8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734118362; c=relaxed/simple;
-	bh=hR2OWxnI4AiLexpWZFfBMDeP0lHpudXLW6rkM6ur0TU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=vDvIz/RuOqX8ruPcQQaUxiz+/04IVGdXd83hWQprwFFERoGZ38h25EuUTUrrrdMiM3KwxB0dJCesRhpi3qg2er6b2Va8SS0ShIvRDxKhx30TKpawSftgPr4926u1qxoetYOxKys0gY7SSmnuYQDg58bxu4hP0kL4b+/gowPYUo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhNUIDKC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 56AD5C4CED6;
-	Fri, 13 Dec 2024 19:32:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734118361;
-	bh=hR2OWxnI4AiLexpWZFfBMDeP0lHpudXLW6rkM6ur0TU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NhNUIDKCSaOKqdoStmKMjeWWK/yO74LY2oC+mp8cMzGkuprfyRYCCXDclP5G+8y6q
-	 ixe4oTeAbE+iXcW48h53BiGjstJyVGcAz6884CA5GcIOum3OS1bgTj2n/8KqICuYtM
-	 ADTCj2QxjGWAHhTsLACcjsanoHZbakxXGOKqrkPpPXXyLgYQa8aJ6q1OFd/kbLPmJ6
-	 bHdHOzActpcMd06X7hHthttFqP5cLlBs/J2TrqWxBUod0GNxgPoWHk7zuwBjMeESm1
-	 3wtSBV/xmDUooNQlGdrMp3OvkK8cLmFASk6RshgmTcXYOHJkLr/ssmZ091W2UXGYAe
-	 HJirBo90lrCyQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4371BE77184;
-	Fri, 13 Dec 2024 19:32:41 +0000 (UTC)
-From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Date: Fri, 13 Dec 2024 20:32:34 +0100
-Subject: [PATCH v2 2/2] power: supply: gpio-charger: add support for
- default charge current limit
+	s=arc-20240116; t=1734118465; c=relaxed/simple;
+	bh=WiLw78Fu2MfdYXFWvpfnuLS6ygLLJwiG366txN7q1GI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UAvNcKNYyseIx5DnFt7xmUgBqSAooPFoOCOPEETX5t0H6FIOLUAgwe8EnILLX+3t4B5aHp1j+eZbV+AQQ+iOa8wy3XfaB6hmgifJxH2xYMUdkHBtzEEZVhGXAyMIKawHajsaavL3zNNvqVJsAc/YYoe99BpbHQQNgKeE7W089/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SiXy2iQh; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734118461;
+	bh=WiLw78Fu2MfdYXFWvpfnuLS6ygLLJwiG366txN7q1GI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=SiXy2iQh7fbVutVuDZxfiiyvsEjTDHyiZSY7kzwGfSs4bNLVgoZU2DyJxMXQOFcmG
+	 pYiZHhSDqN3e1unCuWSiR7SNzj8AWthH8EeYskZX05kOxosn5bxBTVugh5qDHpI7aq
+	 VPUUUzkxs3IEA3vmhi6UlaX31LgqOaCmNP0+fDOfN+lSN64L6NVu6nJD/faU1hXC1v
+	 sd05tmf/o1WfGkx9UQAgj1iWiPttMbpW7hZ2J9mTKbdB98tSM4PEf6D4Id0tyJRtXt
+	 bm2hCW53mkvbzZ8W1+awsxvcuuO/DFdnFRerVjN62EPzO+6g7pMUi55AT2iZj9+czT
+	 A4f0U2NUSSrWQ==
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::7a9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7250317E37EB;
+	Fri, 13 Dec 2024 20:34:19 +0100 (CET)
+Message-ID: <e8f00be35f9859b5112793a42fe13191eef050cd.camel@collabora.com>
+Subject: Re: [PATCH v1 1/5] media: chips-media: wave5: Fix to display gray
+ color on screen
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
+	hverkuil-cisco@xs4all.nl, sebastian.fricke@collabora.com, 
+	bob.beckett@collabora.com, dafna.hirschfeld@collabora.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
+	nas.chung@chipsnmedia.com
+Date: Fri, 13 Dec 2024 14:34:17 -0500
+In-Reply-To: <20241209053654.52-2-jackson.lee@chipsnmedia.com>
+References: <20241209053654.52-1-jackson.lee@chipsnmedia.com>
+	 <20241209053654.52-2-jackson.lee@chipsnmedia.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241213-default-charge-current-limit-v2-2-45886fce905c@liebherr.com>
-References: <20241213-default-charge-current-limit-v2-0-45886fce905c@liebherr.com>
-In-Reply-To: <20241213-default-charge-current-limit-v2-0-45886fce905c@liebherr.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dimitri Fedrau <dimitri.fedrau@liebherr.com>, 
- Dimitri Fedrau <dima.fedrau@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734118360; l=2214;
- i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
- bh=8kkaeG3Fu8A0mMHCllTq6XlCfvacmcvVln/ePhFAfLE=;
- b=l1eFTt5Hpnmk4r5m9dimQx/rMfKLcUx4nHVb3uN0U9n72cqYd4WKhxzux+t615DWImfJgTDb9
- PbudIbCxdGEDfRoJiLC8J0+qokkTQ0ruJNf9krtZ2W4wtfsWA8lzBP6
-X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
- pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
-X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
- with auth_id=290
-X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Reply-To: dimitri.fedrau@liebherr.com
+Content-Transfer-Encoding: 8bit
 
-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Le lundi 09 décembre 2024 à 14:36 +0900, Jackson.lee a écrit :
+> When a decoder instance is created, W5_CMD_ERR_CONCEAL register should be
+> initialized to 0. If not set to 0, gray color can occasionally be displayed
+> on screen while decoding.
+> 
+> Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
+> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
 
-With DT properties charge-current-limit-gpios and
-charge-current-limit-mapping one can define charge current limits in uA
-using up to 32 GPIOs. At the moment the driver defaults to smallest charge
-current limitation for safety reasons. When disabling charging is
-supported, which should be common, the driver defaults to non charging on
-probe. By having a default, charging can be enabled on probe for such
-devices.
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
-Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
----
- drivers/power/supply/gpio-charger.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/power/supply/gpio-charger.c b/drivers/power/supply/gpio-charger.c
-index 68212b39785beabfe5536a18fa15bc249f7b1eea..56149545a1dc6004b474cec44984c6dfad3413b5 100644
---- a/drivers/power/supply/gpio-charger.c
-+++ b/drivers/power/supply/gpio-charger.c
-@@ -187,6 +187,8 @@ static int init_charge_current_limit(struct device *dev,
- {
- 	int i, len;
- 	u32 cur_limit = U32_MAX;
-+	bool set_def_limit;
-+	u32 def_limit;
- 
- 	gpio_charger->current_limit_gpios = devm_gpiod_get_array_optional(dev,
- 		"charge-current-limit", GPIOD_OUT_LOW);
-@@ -220,6 +222,9 @@ static int init_charge_current_limit(struct device *dev,
- 	if (len < 0)
- 		return len;
- 
-+	set_def_limit = !device_property_read_u32(dev,
-+						  "charge-current-limit-default-microamp",
-+						  &def_limit);
- 	for (i=0; i < gpio_charger->current_limit_map_size; i++) {
- 		if (gpio_charger->current_limit_map[i].limit_ua > cur_limit) {
- 			dev_err(dev, "charge-current-limit-mapping not sorted by current in descending order\n");
-@@ -227,8 +232,16 @@ static int init_charge_current_limit(struct device *dev,
- 		}
- 
- 		cur_limit = gpio_charger->current_limit_map[i].limit_ua;
-+		if (set_def_limit && def_limit == cur_limit) {
-+			set_charge_current_limit(gpio_charger, cur_limit);
-+			return 0;
-+		}
- 	}
- 
-+	if (set_def_limit)
-+		dev_warn(dev, "charge-current-limit-default-microamp %u not listed in charge-current-limit-mapping\n",
-+			 def_limit);
-+
- 	/* default to smallest current limitation for safety reasons */
- 	len = gpio_charger->current_limit_map_size - 1;
- 	set_charge_current_limit(gpio_charger,
-
--- 
-2.39.5
-
+> ---
+>  drivers/media/platform/chips-media/wave5/wave5-hw.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-hw.c b/drivers/media/platform/chips-media/wave5/wave5-hw.c
+> index c8a905994109..d94cf84c3ee5 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-hw.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-hw.c
+> @@ -585,7 +585,7 @@ int wave5_vpu_build_up_dec_param(struct vpu_instance *inst,
+>  		vpu_write_reg(inst->dev, W5_CMD_NUM_CQ_DEPTH_M1,
+>  			      WAVE521_COMMAND_QUEUE_DEPTH - 1);
+>  	}
+> -
+> +	vpu_write_reg(inst->dev, W5_CMD_ERR_CONCEAL, 0);
+>  	ret = send_firmware_command(inst, W5_CREATE_INSTANCE, true, NULL, NULL);
+>  	if (ret) {
+>  		wave5_vdi_free_dma_memory(vpu_dev, &p_dec_info->vb_work);
 
 
