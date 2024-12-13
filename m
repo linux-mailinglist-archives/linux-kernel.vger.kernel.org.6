@@ -1,145 +1,230 @@
-Return-Path: <linux-kernel+bounces-444825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345F99F0D10
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:12:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49161883261
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:12:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EF41DFE33;
-	Fri, 13 Dec 2024 13:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HEoStFZJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Esrj5Std"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF319F0D15
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:13:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F8D19AA58
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9207C2831FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:13:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E651E0091;
+	Fri, 13 Dec 2024 13:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c1jQTLS0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5421D19AA58;
+	Fri, 13 Dec 2024 13:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734095529; cv=none; b=bLw1NqZNc0MYAR6NxDq61lYwPkGfY2ZdoWDCHV6sdLUA2vSKQdWYwaDO9lGaQdwJT+AKmfM3rMA3yeJD5GSMXm7jNGAjuxaVaj1s/NFmdUg1i17AFh4DHaGjZXuN44D6DqjEQXz/jxNusxzH5ZQhS5Oou5tZEnEACPIyEF6ADfE=
+	t=1734095588; cv=none; b=AlpQqnEQ5DwjnErXsAFRCqo+FkM6KbsCD/d4TNP5FVojSGG1mvzD+NMXm+9Xw6RTavikT4Mm1ov7utqmlNAE3SPzM0OvMx1PfFBMoKB+hnzcc27we+8pXKwfDfBB4VK45DfF9RGrr0bAT0zI/0urLOEl3BN/ZE+gwlVF7AUu95o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734095529; c=relaxed/simple;
-	bh=2ZvHVx7+NTEqzjXPXYN0yUkkdRjFrxYsb0E1/nRiOGo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WZe9xtOtLRWyiZfW/BU9Ix1dHpBCfOVI0yTfdatNB46TBzl2x6nLshfNnCUAzcsllSO3f+VL8H8BfkgmBtqUbFXx5j2Gl4UjKTFllrKanXHcKclSjtL9x9gMu3aXf+DwCNACV5jkHDkC+VQhxbD+gNcGw6hdIJq9QR7XPZmx8i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HEoStFZJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Esrj5Std; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734095525;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1lE2poo2GMB98M3DjQRZUTgVcvXIDD7PPRxrzMRG9oM=;
-	b=HEoStFZJ5EfQAolr9+hEMAnBOKOo2iMkTXBWt8foCfFSMDcHnFPVKA50yTBJyla3fdGosl
-	HOJKQ1wi9Mku9Z3l2DzecaiWIIvkVzh2Rf3FRa1airQEh5s6XIIM4b8VqHz7tBbtvbkb4w
-	QTKYsjqQz5v7Q0y62btYk6qsrYq/Wgemhc47UNqoV6eVMzXHvdjCieiL38PAcvCyroAlI7
-	5aEj6yz9cLa/w2jz9eS8D/jQxV0sMjkdX52qTZrMFwVVyEkcYkdcxd8SCsC3OacvBE4AiM
-	kDEX58aR11BlyQCe7by/JHzfoVjmYzarlt6e0mwTS9b/Rf/NKt4Z833QByE3NQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734095525;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1lE2poo2GMB98M3DjQRZUTgVcvXIDD7PPRxrzMRG9oM=;
-	b=Esrj5StdaxwMDaPAcLNiXxAYNk9ctiiAfaJHXgTof+7R9B9+OYlpsjSDVrNs80W/Mjxkva
-	xu8P/0iPq9mWBqAA==
-To: Alexandre Ghiti <alexghiti@rivosinc.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Anup
- Patel <anup@brainfault.org>, Sunil V L <sunilvl@ventanamicro.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: Re: [RFC PATCH] riscv: Fix PCI warning by enabling
- PCI_MSI_ARCH_FALLBACKS
-In-Reply-To: <20241213115704.353665-1-alexghiti@rivosinc.com>
-References: <20241213115704.353665-1-alexghiti@rivosinc.com>
-Date: Fri, 13 Dec 2024 14:12:04 +0100
-Message-ID: <87v7vn917f.ffs@tglx>
+	s=arc-20240116; t=1734095588; c=relaxed/simple;
+	bh=wd8622TRSx99rENwfazPPM4Xq43TuxBxNrSWDEQkoOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=X7W8k931x8/nSOTrFSooo4u1K2u5bJSDpfZf5AZKCz0mZhLwtzdYgZaSxDGPJEYCAilPI/eoze49PzfHrO0rhmjpehDjFJEEEXyv/+dFcWZgu7VHUPdOprWSC43OpHeA6HbIRUwPNPDPmoSaV9+U2eZSIrWPvIrnLcO40BeDwkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c1jQTLS0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD8rlkB022838;
+	Fri, 13 Dec 2024 13:12:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Xl93Qz2eNY1D1QSVG/Nk69lF2GvJgYAIh32kdEjaYWo=; b=c1jQTLS09rxxxRgm
+	EcF3C+YkAyrra9gHbBLu2xvjoD5YHeZh+9hLTguKlSrOxL6nmeqCON2eYD/j9N/+
+	546y+BQdTxP9DlHd9GMfOS0Dy1RRgcnxherL6l1bSHOcKK0y4DtO0Kt2mwysEoO/
+	3r+mk3Hty7QBwGuElT6NK2p8dEvSFTWNxRDp7Q66405iqGd8cXWT2/N8Mb6mR55Z
+	vimaI0q4a30W4H/HDelLFpAL9TtQN50WHXVJbgQXak3F7C0MgfYhQkxfbaA86FWX
+	BhkbtsFXGdhBHgog4eD7esT3nvWSYLXLqtCTg5HBOtqPgz5XXvvVUBEFyo+Dfsou
+	l6smSA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43g4wnaj4d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 13:12:56 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDDCtLS029686
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 13:12:55 GMT
+Received: from [10.204.101.130] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
+ 2024 05:12:49 -0800
+Message-ID: <80bed70e-7802-4555-a15e-e06fe46214c6@quicinc.com>
+Date: Fri, 13 Dec 2024 18:42:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/7] drm/msm: adreno: find bandwidth index of OPP and
+ set it along freq index
+To: <neil.armstrong@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul
+	<sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Bjorn Andersson
+	<andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20241211-topic-sm8x50-gpu-bw-vote-v5-0-6112f9f785ec@linaro.org>
+ <20241211-topic-sm8x50-gpu-bw-vote-v5-4-6112f9f785ec@linaro.org>
+ <ddf91ba2-cab2-4653-b842-65a8e82b5160@oss.qualcomm.com>
+ <2f1c6deb-29f8-4144-b086-743fb0f8495c@linaro.org>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <2f1c6deb-29f8-4144-b086-743fb0f8495c@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: raObrXIn0QEBLmTEQfp2DpvAMswJDngQ
+X-Proofpoint-GUID: raObrXIn0QEBLmTEQfp2DpvAMswJDngQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
+ mlxscore=0 clxscore=1015 adultscore=0 phishscore=0 suspectscore=0
+ bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412130093
 
-On Fri, Dec 13 2024 at 12:57, Alexandre Ghiti wrote:
-> When the interrupt controller is not using the IMSIC and ACPI is enabled,
-> the following warning appears:
->
-> [    0.866401] WARNING: CPU: 1 PID: 1 at drivers/pci/msi/msi.h:121 pci_msi_setup_msi_irqs+0x2c/0x32
-> [    0.867071] Modules linked in:
-> [    0.867389] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.13.0-rc2-00001-g795582ce7e24-dirty #44
-> [    0.867538] Hardware name: QEMU QEMU Virtual Machine, BIOS
-> [    0.867672] epc : pci_msi_setup_msi_irqs+0x2c/0x32
-> [    0.867738]  ra : __pci_enable_msix_range+0x30c/0x596
+On 12/13/2024 3:07 AM, Neil Armstrong wrote:
+> On 12/12/2024 21:21, Konrad Dybcio wrote:
+>> On 11.12.2024 9:29 AM, Neil Armstrong wrote:
+>>> The Adreno GPU Management Unit (GMU) can also scale the DDR Bandwidth
+>>> along the Frequency and Power Domain level, until now we left the OPP
+>>> core scale the OPP bandwidth via the interconnect path.
+>>>
+>>> In order to enable bandwidth voting via the GPU Management
+>>> Unit (GMU), when an opp is set by devfreq we also look for
+>>> the corresponding bandwidth index in the previously generated
+>>> bw_table and pass this value along the frequency index to the GMU.
+>>>
+>>> The GMU also takes another vote called AB which is a 16bit quantized
+>>> value of the floor bandwidth against the maximum supported bandwidth.
+>>>
+>>> The AB is calculated with a default 25% of the bandwidth like the
+>>> downstream implementation too inform the GMU firmware the minimal
+>>> quantity of bandwidth we require for this OPP.
+>>>
+>>> Since we now vote for all resources via the GMU, setting the OPP
+>>> is no more needed, so we can completely skip calling
+>>> dev_pm_opp_set_opp() in this situation.
+>>>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>> ---
+>>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 39 ++++++++++++++++++++++++
+>>> +++++++++--
+>>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  2 +-
+>>>   drivers/gpu/drm/msm/adreno/a6xx_hfi.c |  6 +++---
+>>>   drivers/gpu/drm/msm/adreno/a6xx_hfi.h |  5 +++++
+>>>   4 files changed, 46 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/
+>>> msm/adreno/a6xx_gmu.c
+>>> index
+>>> 36696d372a42a27b26a018b19e73bc6d8a4a5235..46ae0ec7a16a41d55755ce04fb32404cdba087be 100644
+>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>> @@ -110,9 +110,11 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu,
+>>> struct dev_pm_opp *opp,
+>>>                  bool suspended)
+>>>   {
+>>>       struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+>>> +    const struct a6xx_info *info = adreno_gpu->info->a6xx;
+>>>       struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+>>>       struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+>>>       u32 perf_index;
+>>> +    u32 bw_index = 0;
+>>>       unsigned long gpu_freq;
+>>>       int ret = 0;
+>>>   @@ -125,6 +127,37 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu,
+>>> struct dev_pm_opp *opp,
+>>>           if (gpu_freq == gmu->gpu_freqs[perf_index])
+>>>               break;
+>>>   +    /* If enabled, find the corresponding DDR bandwidth index */
+>>> +    if (info->bcms && gmu->nr_gpu_bws > 1) {
+>>
+>> if (gmu->nr_gpu_bws)
+> 
+> gmu->nr_gpu_bws == 1 means there's not BW in the OPPs (index 0 is the
+> "off" state)
+> 
+>>
+>>> +        unsigned int bw = dev_pm_opp_get_bw(opp, true, 0);
+>>> +
+>>> +        for (bw_index = 0; bw_index < gmu->nr_gpu_bws - 1; bw_index+
+>>> +) {
+>>> +            if (bw == gmu->gpu_bw_table[bw_index])
+>>> +                break;
+>>> +        }
+>>> +
+>>> +        /* Vote AB as a fraction of the max bandwidth */
+>>> +        if (bw) {
+>>
+>> This seems to only be introduced with certain a7xx too.. you should
+>> ping the GMU with HFI_VALUE_GMU_AB_VOTE to check if it's supported
+> 
+> Good point
 
-Removing a ton of badly formatted stack trace:
+No no. Doing this will trigger some assert in pre-A750 gmu firmwares. We
+learned it the hard way. No improvisation please. :)
 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#backtraces-in-commit-messages
+-Akhil.
 
->
-> So enable PCI_MSI_ARCH_FALLBACKS to get rid of this.
+> 
+>>
+>>> +            u64 tmp;
+>>> +
+>>> +            /* For now, vote for 25% of the bandwidth */
+>>> +            tmp = bw * 25;
+>>> +            do_div(tmp, 100);
+>>> +
+>>> +            /*
+>>> +             * The AB vote consists of a 16 bit wide quantized level
+>>> +             * against the maximum supported bandwidth.
+>>> +             * Quantization can be calculated as below:
+>>> +             * vote = (bandwidth * 2^16) / max bandwidth
+>>> +             */
+>>> +            tmp *= MAX_AB_VOTE;
+>>> +            do_div(tmp, gmu->gpu_bw_table[gmu->nr_gpu_bws - 1]);
+>>> +
+>>> +            bw_index |= AB_VOTE(clamp(tmp, 1, MAX_AB_VOTE));
+>>> +            bw_index |= AB_VOTE_ENABLE;
+>>> +        }
+>>> +    }
+>>
+>> BTW, did you dump the values we send to the GMU here and in the RPMh
+>> builder part & validate against downstream?
+> 
+> It matches how downstream builds the Ab vote yes
+> 
+>>
+>> Konrad
+> 
 
-No. PCI_MSI_ARCH_FALLBACKS is really only meant for architectures which
-implement the legacy fallbacks and not to paper over the underlying
-logic bug in the pci/msi code. Of course the loongson folks ran into the
-same problem two years ago and went for the sloppy fix without talking
-to anyone...
-
-Thanks for bringing it up instead of silently slapping it into the RISCV
-tree !
-
-The uncompiled patch below should fix this for real.
-
-Thanks,
-
-        tglx
----
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -185,7 +185,6 @@ config LOONGARCH
- 	select PCI_DOMAINS_GENERIC
- 	select PCI_ECAM if ACPI
- 	select PCI_LOONGSON
--	select PCI_MSI_ARCH_FALLBACKS
- 	select PCI_QUIRKS
- 	select PERF_USE_VMALLOC
- 	select RTC_LIB
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -350,8 +350,11 @@ bool pci_msi_domain_supports(struct pci_
- 
- 	domain = dev_get_msi_domain(&pdev->dev);
- 
--	if (!domain || !irq_domain_is_hierarchy(domain))
--		return mode == ALLOW_LEGACY;
-+	if (!domain || !irq_domain_is_hierarchy(domain)) {
-+		if (IS_ENABLED(CONFIG_PCI_MSI_ARCH_FALLBACKS))
-+			return mode == ALLOW_LEGACY;
-+		return false;
-+	}
- 
- 	if (!irq_domain_is_msi_parent(domain)) {
- 		/*
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -442,6 +442,10 @@ int __pci_enable_msi_range(struct pci_de
- 	if (nvec > maxvec)
- 		nvec = maxvec;
- 
-+	/* Test for the availability of MSI support */
-+	if (!pci_msi_domain_supports(dev, 0, ALLOW_LEGACY))
-+		return -ENOTSUPP;
-+
- 	rc = pci_setup_msi_context(dev);
- 	if (rc)
- 		return rc;
 
