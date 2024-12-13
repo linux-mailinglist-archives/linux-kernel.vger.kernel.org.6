@@ -1,109 +1,110 @@
-Return-Path: <linux-kernel+bounces-444168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB469F025B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:39:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896E59F025C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:39:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AADDE165CF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A7B828533E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770652D052;
-	Fri, 13 Dec 2024 01:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44C57082C;
+	Fri, 13 Dec 2024 01:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NOajGzF7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UU3VsCP2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA1844C6C;
-	Fri, 13 Dec 2024 01:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399F83D0D5;
+	Fri, 13 Dec 2024 01:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734053976; cv=none; b=gipHYLeu8gRnRDWvJlvqXDhUjpN7qo7OiX5z7wS79A32dPnR6YBprZxDuYTefBu6EICz1n4to91yMwCsXqhvIvDkEqSsOyNOraJbdH+KZU3dBmX0dM1YeSyqz7CQ/blEFoJimRYCfi9pEg/O0hlU2nDVUPwwk06jck3Vl/iSafA=
+	t=1734053980; cv=none; b=fa+3TcW2wZtvA/aCrZEi7lfstzQ3TEf0KK7mUNU6GpGJ3aV27DBnb0HFzDfqfV+OKCpKZMSW9Wi2XF7A5BM/IBWjp9XNuKZMYo2mfDiu9ukyJoB79ULvgCqUc4dVO6M43IbbKBIWNcoZB8P6GzWPSiyCM8najU0322zOXDRkzC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734053976; c=relaxed/simple;
-	bh=z6KasiqXW9OocT/gPdXD8wxFCgxz3hJU5rxa3NS7ujM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=B7AtFy2Ac2um3oTsdQ+86tTvq9Avs4e8I5sC6wAb1R4rH3G+LzdiBOe86DGtEayXjsO9X1cSHGXSPPt6jzX4HVERMM1F3f3xFGtM7ZkSDi0QoRpyhTq3Fy8+9GGKit8YwTAsKBp3iR1eDUNhx+V/1E42sjsrp66zZHx04eFhkeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NOajGzF7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA84DC4CECE;
-	Fri, 13 Dec 2024 01:39:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1734053976;
-	bh=z6KasiqXW9OocT/gPdXD8wxFCgxz3hJU5rxa3NS7ujM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NOajGzF7Oghi2j823OVBOAGjMfDE2y8sqhBtABteyi+xNwCVBGrHLGBc4kP8k/ZzS
-	 nGpVqOiOxYmCXtpYVq8CDh3d/Emvq9T/1xFLC/6g4wNbedpjpYuIv/cuTxF0CeV0MY
-	 ibJbSfQIh1u6+D2zMIFRD+W8TWrIVtCfqGegBRio=
-Date: Thu, 12 Dec 2024 17:39:34 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>, lorenzo.stoakes@oracle.com,
- vbabka@suse.cz, yang@os.amperecomputing.com, riel@surriel.com,
- david@redhat.com, minchan@kernel.org, jyescas@google.com,
- linux@armlinux.org.uk, tsbogend@alpha.franken.de,
- James.Bottomley@hansenpartnership.com, ysato@users.sourceforge.jp,
- dalias@libc.org, glaubitz@physik.fu-berlin.de, davem@davemloft.net,
- andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net,
- jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com,
- leitao@debian.org, linux-alpha@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-mm@kvack.org, kernel-team@android.com,
- android-mm@google.com
-Subject: Re: [PATCH mm-unstable v2 06/16] mm: csky: Introduce
- arch_mmap_hint()
-Message-Id: <20241212173934.4dc429716acd4c71a76e15c2@linux-foundation.org>
-In-Reply-To: <vc2uhcysgosapznbuookcj5677w43a4kzxbotwqub237ccawww@i3pbqiacdwsx>
-References: <20241211232754.1583023-1-kaleshsingh@google.com>
-	<20241211232754.1583023-7-kaleshsingh@google.com>
-	<vc2uhcysgosapznbuookcj5677w43a4kzxbotwqub237ccawww@i3pbqiacdwsx>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734053980; c=relaxed/simple;
+	bh=x0Bq7X6GE2Lfhay2QQ2KLcM4IyBanclt9tX5/BtS8w0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xzw/uRqMXMiJQGt+ArysZv85727RrfIwoiHWXGkGkaFyhntr1clqCIys8gfL0AmjwjtDoKwhjOsnHquayQOvrMzKg39c6tjw+U1doE74ZOJWb2NsSq65fTEFSkBHnY+Nf6mTQFLLPFYTq2W0Z3LZtupG2cGH5pjHhVQAG1CdyK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UU3VsCP2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 573ACC4CED4;
+	Fri, 13 Dec 2024 01:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734053979;
+	bh=x0Bq7X6GE2Lfhay2QQ2KLcM4IyBanclt9tX5/BtS8w0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UU3VsCP2SCmMvz7u+ry4q2SWfbMg5BpiLo7nlhAZO/L+gDFLVEUuOTIF15wrXpUrI
+	 +WLLQFF2ysu3kx96u15iNIgDsjJ4JitZ6r2rvNdLisHpdACKU8znn0+VM+bUZoxMW3
+	 CCKgWs9auUpBwlrM/VPkBiAqmWzklV+VSoqLAf/4Wc576P27QjBQ3+LNm1xnivhAaQ
+	 3HQFCg6Y/VoUegMoe4T92Vai7+69PfrTjH0pTh/F04pvG4/pWTYfIU3X4DWFui+cGJ
+	 azKOIu/vSthQ5nXtOkHm1T7V5h7t4VDQwXgXvpGtPMop/Cku8lJxRgnbdkCc5j/Gv/
+	 qO1kWRoewaD4g==
+Date: Thu, 12 Dec 2024 17:39:38 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf test stat: Avoid hybrid assumption when
+ virtualized
+Message-ID: <Z1uQWmq3KAQx1tA3@google.com>
+References: <20241212173354.9860-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241212173354.9860-1-irogers@google.com>
 
-On Thu, 12 Dec 2024 16:40:10 -0500 "Liam R. Howlett" <Liam.Howlett@oracle.com> wrote:
+On Thu, Dec 12, 2024 at 09:33:54AM -0800, Ian Rogers wrote:
+> The cycles event will fallback to task-clock in the hybrid test when
+> running virtualized. Change the test to not fail for this.
+> 
+> Fixes: a6b8bb2addd0 ("perf test: Add a test for default perf stat command")
 
-> * Kalesh Singh <kaleshsingh@google.com> [241211 18:28]:
-> > Introduce csky arch_mmap_hint() and define HAVE_ARCH_MMAP_HINT.
-> > This is a preparatory patch, no functional change is introduced.
-> 
-> This also looks like it has changed the validation order and potentially
-> introduced functional changes?
-> 
-> All these stem from the same cloned code (sparc32 iirc), but were not
-> updated when the cloned code was updated.  This is why I am against
-> arch_* code.  We should find a better way to unify the code so that
-> there is nothing different.  You seem to have gotten some of the shared
-> code together, but some still exists.
-> 
-> In the addresses, there are upper and lower limits, and sometimes
-> "colours".  Could we not just define the upper/lower limits in each arch
-> and if colour is used?  Maybe this is complicated with 32/64 handled
-> both in the 64 bit code.
-> 
-> Is there any plan to unite this code further?
-> 
-> We have had errors for many years in cloned but not updated code.  I
-> really wish there was more information in the cover letter on what is
-> going on here.  I'd like to try and reduce the arch_ code to, basically
-> nothing.
-> 
-> I was also disappointed that I wasn't Cc'ed because I've spent a lot of
-> time in this code and this area.  I am probably the last one to crawl
-> through and change any of this.
+I cannot find this commit.
 
-Thanks, I removed this version of this series from mm-unstable.
+> Signed-off-by: Ian Rogers <irogers@google.com>
+
+Other than that,
+
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
+
+> ---
+>  tools/perf/tests/shell/stat.sh | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
+> index 5a2ca2bcf94d..da42427bb077 100755
+> --- a/tools/perf/tests/shell/stat.sh
+> +++ b/tools/perf/tests/shell/stat.sh
+> @@ -163,7 +163,11 @@ test_hybrid() {
+>    # Run default Perf stat
+>    cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/|  cycles  " | wc -l)
+>  
+> -  if [ "$pmus" -ne "$cycles_events" ]
+> +  # The expectation is that default output will have a cycles events on each
+> +  # hybrid PMU. In situations with no cycles PMU events, like virtualized, this
+> +  # can fall back to task-clock and so the end count may be 0. Fail if neither
+> +  # condition holds.
+> +  if [ "$pmus" -ne "$cycles_events" ] && [ "0" -ne "$cycles_events" ]
+>    then
+>      echo "hybrid test [Found $pmus PMUs but $cycles_events cycles events. Failed]"
+>      err=1
+> -- 
+> 2.47.1.613.gc27f4b7a9f-goog
+> 
 
