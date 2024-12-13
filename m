@@ -1,86 +1,81 @@
-Return-Path: <linux-kernel+bounces-445030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288009F1018
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:01:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C9B9F1027
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:03:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D827D28434C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:01:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE1C6162E99
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5521E5018;
-	Fri, 13 Dec 2024 14:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49CF1EC00B;
+	Fri, 13 Dec 2024 14:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YMyBstRg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KX1702B2"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360A01E5711
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D245A1EB9F7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101864; cv=none; b=fKf2IRSl7t6ifHpeUFxIsGKOeG58BmQfDD1ROLAgL9TSX8TAtXRGrJRpQ1kw1SdNiVDZILNk4exYC2+KCWU2JxXYWNMZHecyasJwBBOSTDmV135ViCrE/MbQCfweLUaudtiCDNToPYNcpoFO1ZjTnpq0H2OsiiwkglVGCtUvvI8=
+	t=1734101900; cv=none; b=lduHsJZAoHyOaziivgB/+b6pVcPzvR8VdIk1d8EpcgAs2dCKyXPILoyr0R2h8Rc9yPlA2c7jcRpNOqvoJX7v1f/cIBb+3uwOxXfnWiOg0IskfkbgoEQKJ74tnA9NrTIKBk1bkid4TmUWWSk7E+WKouNLwrIlXqXImX/pCvzRFec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101864; c=relaxed/simple;
-	bh=2wbusRXsQuSNC7B/G7v9dU51tNviFif89ZayEn5EW14=;
+	s=arc-20240116; t=1734101900; c=relaxed/simple;
+	bh=ETrhrfSm8SuXi7TD8b6A7t/bfSYz17h+tkqVOgkdbD4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bDYkh4ugdx51RLz8SjuTdzHV2iTbvH84cNUo9X4rtVXMHjvk7ExNOi8DgmSf8bUxqBM3c9fXmYKCxSwT8Dhuvt0OwGonwl1gg4ZBQpxKhLqfEfU3wqb9TPg32S6A+zZfGRIMTzXGLBgtwTfrb91ouYKtJFs+zj0NZZRTyRleZD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YMyBstRg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9pXUk019080
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:57:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yy+BqQEvdcyQQobfQdkXsHodirxNgq3Fxt9gXerLzbw=; b=YMyBstRgGmznZRrM
-	4IartXijBTa7hGTO93F0KYAQqrWq7mN/KcjCo5DF1Stg0H59a21C6sJ2soWL+jhR
-	jH4DOyLZM3wZuaCC996nwZzEcR8+VDBV69J7oTJEYOuWOcdJIJj/sDfBapEPpkiS
-	IEplGxZyulKFXgk34H20bXE9eYlniqGXp2d/EjeLLIzhGR6TGTfLc6/Yjop9YkRO
-	tXgS+uo3Wx8MWR1WY6jXn5IH/sZvpIoR75eVLwT+mYUiQu7L5IZZ5QQxt+puEcm+
-	wLdFyIaM5BSyAGFE0ir8hIhGFDxe8w/ze6W5q4ZD2BjOHT8di6zIJSPRL3oJAIDM
-	SHgosQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gjnb0ujd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:57:42 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7b66edf3284so17225585a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:57:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101861; x=1734706661;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yy+BqQEvdcyQQobfQdkXsHodirxNgq3Fxt9gXerLzbw=;
-        b=M1hBaxj6Rt3O/B1j8DYo6zAp6Fo1SQ371i7kCteNTzjgPaSKFYvQ0DuJGvarvF+2w9
-         50HTTxhzeGhf4ITZUrdYMg8Z7+00fv9O5naVJiNnyfzo2XwPuynSScjqfQj+2QC7/M3s
-         xU2n2nnZhTEEM/YH+czGI0iIyc4nZL4fga9sgQVB36DlpDbmPXHql75If3EAmlgeltdL
-         3AjsLW3pknZM42N9lrEbPcKvZuzoPv2ZNCh2c+OMfq7r2XsxA5kF+4eq8WlOg7WD3u3I
-         yqPN38muVZsvQkLOv3LfiTzEVbfj6J81E5oIdThFGYxek8rpHmeF4oLSvDR9UcYJtCN1
-         JLPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgF3UoIw6AN6cmVq8I0VW6W3WTVrqFKMJAjK/ZpJdzxy6GpHqHQLRK/eRGM9rV+11WD0jM3oyNX4djD0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuJHYEjmR2oFsF4k0XgueTRljjOltCwaYQvCo6bKJ8KR4T2pFy
-	ReL29lRbWV3OTK+o2Z3dsjIqLxjsGhcZ6STOG2cnX+Xtwzd+HgLkKyzjlQ2TsBR/dwPPJDAs8lq
-	kVurCz4tPFk0j4KDJwikEZqSotXkDkPeH8iB/M6D1f177yU7U5nInwaPUihm3PcA=
-X-Gm-Gg: ASbGncsgawZCvvv5F25UTSbnWwzFOdE6Vk9zd1xbMy8jbkiocQ0dZLyPhiRZoZtkfd2
-	pLgWg8MW2VOnFNFwtgRXRoAreolhV6SbGGdD6VSm3Fj8Tv2ZUETaQE8HHf3Hyca3FJmW3QMyDmE
-	CqUn7BmtDS+nMcE6cbW0tIVoXYc4xzeeOpdKiU5w+ZvjbCxhshlD52C2ONL/DAzDdq5wyogwSsE
-	frxRhjsoP6ElgRgWl2i6UhdbHs9vZrnWpv9rV0sOhBQg/zFX6uv2QnkjIPFsI0cDC1tdGH6Lv+1
-	S2scyBTUIomXPbSh4D3pCWXy/lA5Cd38P6yW
-X-Received: by 2002:a05:620a:4714:b0:7b6:e196:2219 with SMTP id af79cd13be357-7b6fbec47admr173853085a.2.1734101861178;
-        Fri, 13 Dec 2024 06:57:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHAimFcstVhPN2cuWe2dozek2VKAfYeR6Wf341B+nTNgMTxY3HBZFRX09MtFPmAK3JgpfclwA==
-X-Received: by 2002:a05:620a:4714:b0:7b6:e196:2219 with SMTP id af79cd13be357-7b6fbec47admr173851185a.2.1734101860837;
-        Fri, 13 Dec 2024 06:57:40 -0800 (PST)
-Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa65d18510asm936966766b.122.2024.12.13.06.57.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 06:57:40 -0800 (PST)
-Message-ID: <77b74653-7cbd-4dac-8faa-5f181b60e161@oss.qualcomm.com>
-Date: Fri, 13 Dec 2024 15:57:38 +0100
+	 In-Reply-To:Content-Type; b=lD0XAHEUzXZjss6q6VciUgr+84Z645BaZXNy77Si+4rflSdCGrITviC7Fk+xvwLcHjzcAwx3do5Tv5V7iBZ8bIKDNJnFaLIoBryXQy1EMIIttQiG3nvLj86tv78tck3kuro1yNr1fQZFd6/3qjUHHAaBWYit0nk9eOcG3ty0hNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KX1702B2; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDEIu2Z006419;
+	Fri, 13 Dec 2024 14:57:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=iHkuTP
+	yAoCmozzxa8vAo5RtIF97SumMfoFb56805b+o=; b=KX1702B2WgbiB+L7iYronb
+	SSza/ZCC9xCGa9ohp6hNdQEPx7o982AWGtrnOx5ULJqN5PSU2A+1ik56IltjG0rk
+	1Z9w30Xl6Y8k7+ugoPvK2t5c59sO3qCxwDSSUzuZ8HQzbPoNuPEwsSCktboMZgx9
+	lIuriejQyfacEnuYVPG6iIq0EuovO4ZXlwGCOdr5eLy1tEm+fA8HNhLJP3UUXthr
+	dXfrMv2sdMcY3CLpDpjXEgCT3Crb3Akbh6EhIuSrcbE9fFKBa1z7Fm99qGAv8LNC
+	utcK63q/B0foNpu6l6R0YpWQk7o4pq3xFwz7zbp/CVn9F30kV5BSfbIoQUH8n5ew
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43g9nbbhuj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 14:57:52 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BDEvpbI028689;
+	Fri, 13 Dec 2024 14:57:51 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43g9nbbhue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 14:57:51 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDBg69a007865;
+	Fri, 13 Dec 2024 14:57:50 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43ft11ytty-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 14:57:50 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BDEvm5x64422160
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Dec 2024 14:57:48 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 96C8A20043;
+	Fri, 13 Dec 2024 14:57:48 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 157DC20040;
+	Fri, 13 Dec 2024 14:57:44 +0000 (GMT)
+Received: from [9.124.213.1] (unknown [9.124.213.1])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 13 Dec 2024 14:57:43 +0000 (GMT)
+Message-ID: <3ce396ad-162c-4e60-90ee-01fd58a514de@linux.ibm.com>
+Date: Fri, 13 Dec 2024 20:27:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,55 +83,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 21/23] arm64: dts: qcom: sm6115: Fix MPSS memory length
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Abel Vesa
- <abel.vesa@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Luca Weiss <luca.weiss@fairphone.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241213-dts-qcom-cdsp-mpss-base-address-v3-0-2e0036fccd8d@linaro.org>
- <20241213-dts-qcom-cdsp-mpss-base-address-v3-21-2e0036fccd8d@linaro.org>
+Subject: Re: [PATCH 7/8] sched/fair: Do not compute overloaded status
+ unnecessarily during lb
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        Meng Li <li.meng@amd.com>, Huang Rui <ray.huang@amd.com>,
+        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241211185552.4553-1-kprateek.nayak@amd.com>
+ <20241211185552.4553-8-kprateek.nayak@amd.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241213-dts-qcom-cdsp-mpss-base-address-v3-21-2e0036fccd8d@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20241211185552.4553-8-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: FkMsGI-C_HU88JN_qaLlF4qPFtOgBFhL
-X-Proofpoint-GUID: FkMsGI-C_HU88JN_qaLlF4qPFtOgBFhL
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Z2ELeCwGM-SYul3EJjpxmm5ilLdvaR_U
+X-Proofpoint-ORIG-GUID: OIKc_nmc_xxH4pxCSyVBZ-8RE54qJDn-
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0
- priorityscore=1501 impostorscore=0 adultscore=0 malwarescore=0 mlxscore=0
- suspectscore=0 mlxlogscore=837 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412130106
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 malwarescore=0 phishscore=0 clxscore=1015
+ mlxlogscore=999 lowpriorityscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412130103
 
-On 13.12.2024 3:54 PM, Krzysztof Kozlowski wrote:
-> The address space in MPSS/Modem PAS (Peripheral Authentication Service)
-> remoteproc node should point to the QDSP PUB address space
-> (QDSP6...SS_PUB) which has a length of 0x10000.  Value of 0x100 was
-> copied from older DTS, but it grew since then.
+
+
+On 12/12/24 00:25, K Prateek Nayak wrote:
+> Only set sg_overloaded when computing sg_lb_stats() at the highest sched
+> domain since rd->overloaded status is updated only when load balancing
+> at the highest domain. While at it, move setting of sg_overloaded below
+> idle_cpu() check since an idle CPU can never be overloaded.
 > 
-> This should have no functional impact on Linux users, because PAS loader
-> does not use this address space at all.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 96ce9227fdbc ("arm64: dts: qcom: sm6115: Add remoteproc nodes")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
 > ---
+>   kernel/sched/fair.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index ec2a79c8d0e7..3f36805ecdca 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -10358,9 +10358,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>   		nr_running = rq->nr_running;
+>   		sgs->sum_nr_running += nr_running;
+>   
+> -		if (nr_running > 1)
+> -			*sg_overloaded = 1;
+> -
+>   		if (cpu_overutilized(i))
+>   			*sg_overutilized = 1;
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Maybe its worth moving the overutilized too after the idle checks. An 
+idle cpu can't be overutilized right?
 
-Konrad
+>   
+> @@ -10373,6 +10370,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>   			continue;
+>   		}
+>   
+> +		/* Overload indicator is only updated at root domain */
+> +		if (!env->sd->parent && nr_running > 1)
+> +			*sg_overloaded = 1;
+> +
+>   #ifdef CONFIG_NUMA_BALANCING
+>   		/* Only fbq_classify_group() uses this to classify NUMA groups */
+>   		if (sd_flags & SD_NUMA) {
+
+Other than the point above,
+Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 
