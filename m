@@ -1,129 +1,322 @@
-Return-Path: <linux-kernel+bounces-445356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701BA9F1500
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A139F1505
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:34:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31CBF28392D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:34:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4771B283DF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A1B1E47DD;
-	Fri, 13 Dec 2024 18:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231C61E766F;
+	Fri, 13 Dec 2024 18:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LuBMTEGh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="oQHOQHll"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054EF1E00B4;
-	Fri, 13 Dec 2024 18:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59631E377E;
+	Fri, 13 Dec 2024 18:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734114853; cv=none; b=q0ytKLJQ3NEs8szkJNiU0E4FyxUIxBD3nhOX56rkrFDgZAoGwCpyXwlGrcX00ri+D4AVhdNXdS4U50FG0VYfrDzvbpqfXHo0NgnaGwNu6wfRXlNzKj+PH4yF+IJg/u0zW7ZT4jDqvscJJZuzT+fBLPD5XNiluI+RZ6FYzQgUtDU=
+	t=1734114883; cv=none; b=r5fbM/wDQkN3TevmrBQ5iNYlzQ568DMjMzyjysdMS9i20UkZO6pKQTQ8hxkhVl0xpQUyvHObqS4bcaczBZF4L+/leWblygZljMbgP1rvHgZos1nsjFZsAaaSUon7sGBPIxevrLG06LnFFJJpX19LOtVwJlNhyT68sKEem//HshY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734114853; c=relaxed/simple;
-	bh=oM1Je83I0CSyi2U7GJfp+atfDrvaAqGgil3RfWpdjak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F877JjL1h0gWhpq/qRccMXSEUUEUxMHlcvNJIn3OQAw2tv8OAhiyRap1KW6oreboqIYqHXhSWT56GPZcNZXDOIo1yj3e4puNLkq1T3TpSjK+Mn29LFsI/+m9HgJLJHswY/LazSSzspjKro3l4o5LeDVNkNRTqMjuv8uk+W/pPDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LuBMTEGh; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734114852; x=1765650852;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oM1Je83I0CSyi2U7GJfp+atfDrvaAqGgil3RfWpdjak=;
-  b=LuBMTEGh3x6A1cu31LvMoub7K/VKSE5dlfIGhBsXDsRhgnjXnCbljWZY
-   ZIMiyq628cGciQVNhAIpEzrVg66Z66ZwGRWrRkTekZjeU+knwlsJsEDqX
-   JaV+J7KVJnOtsefAUVN/r2wklVSOxHv1PYAcewlMBeY1lkSKVQG+ztGnI
-   m0vvCyvfHOcUIYrFz2zoPs00nrzTT2nwufrblFAPgmYT+Y9STgmbl5AC7
-   vWCDa7IahoL/6btA5pGQ2r4LH/Bb28eTZ7w6z+zzaNg6xTwxSBSzlsRAl
-   kyFbG5v8PCf1OmskCFSpp793t3n84AB5MhvyERuci9cmkzvZiqdF4Z3+p
-   g==;
-X-CSE-ConnectionGUID: zmtdYquNThy5/VAooJDLhw==
-X-CSE-MsgGUID: J3uLWivZS2++0gKuSR4N9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="38257273"
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="38257273"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 10:34:10 -0800
-X-CSE-ConnectionGUID: aEYP/Q7bR1aiD4sD3W8CXg==
-X-CSE-MsgGUID: 49bMydHsSaa7SvS7BpAv4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="101449691"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 10:34:09 -0800
-Received: from [10.246.136.4] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.4])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 4AB4820B5713;
-	Fri, 13 Dec 2024 10:34:08 -0800 (PST)
-Message-ID: <66df2821-80a4-4ec2-b326-d0edda8fcde2@linux.intel.com>
-Date: Fri, 13 Dec 2024 13:34:07 -0500
+	s=arc-20240116; t=1734114883; c=relaxed/simple;
+	bh=oTJrs+tXfRVZhCgHZs29gdnuWC+WAFscMz4bFG/2kZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jIRjciF3LkMSPP2bXkSEgjdCl5Q1xjjKzydMd3yK/KzsX1mY4uBx9uAI00XBXN45xpgpgvvGThqOgATMldJ07cqdJcobbKBHvy2aAfH7+8rGpPtyHFB3c1/F3p7zIjBtmMrjcDLr1gcowkS4/7d6KJrwzKfxvReg1pNB/LscnTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=oQHOQHll; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=y+Is4l+QhZfpXEpYBJcEPsotkirV+fH0qWqP949FELk=; b=oQHOQHlloBXL+dlEq+hZEiVJ50
+	UXXJNGX2JQhxnxcyzop7cmApYLu1OFsTtqN35CnwDZZHJjP4EEjh9KQzOnEvaCtYm2TP4fenBRO+y
+	OP/5iqCb99S3sq+2CLXabTBYMbbJiZaANfopWRDhd6MAdC2DgUdT4NTHn+FqjkG+LV+WqZjl8Zohl
+	wMVBH00VDJ8L2dRfEPvSQGpgANNAnloFfoDbWql3tsxWgmQ58g8lnEwrqf2p8I17/11kTuTuooEAu
+	XmGTRpMilR0cMYofbshrWyEWebtSZd9d9qrgbi1ce3v9hhMIsTxOwKfl6B3WlEb25LBtwgpZDN8oq
+	5M5NLtRg==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tMAUn-0008GP-8k; Fri, 13 Dec 2024 19:34:37 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org, Shimrra Shai <shimrrashai@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org,
+ Shimrra Shai <shimrrashai@gmail.com>
+Subject:
+ Re: [PATCH v2 1/2] arm64: dts: rockchip: add DTs for Firefly ITX-3588J
+Date: Fri, 13 Dec 2024 19:34:36 +0100
+Message-ID: <10578885.nUPlyArG6x@diego>
+In-Reply-To: <20241213180855.16472-2-shimrrashai@gmail.com>
+References:
+ <20241213180855.16472-1-shimrrashai@gmail.com>
+ <20241213180855.16472-2-shimrrashai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf script: Fix output type for dynamically allocated
- core PMU's
-To: Ravi Bangoria <ravi.bangoria@amd.com>,
- Thomas Falcon <thomas.falcon@intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com
-References: <20241213003609.564709-1-thomas.falcon@intel.com>
- <fb6f17b7-8ee1-4197-afb6-923b372965c2@amd.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <fb6f17b7-8ee1-4197-afb6-923b372965c2@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-
-
-On 2024-12-13 2:07 a.m., Ravi Bangoria wrote:
-> Hi Thomas,
+Am Freitag, 13. Dezember 2024, 19:08:54 CET schrieb Shimrra Shai:
+> Main DTS for the board and Makefile addition.
 > 
->> @@ -386,6 +386,8 @@ static int evsel_script__fprintf(struct evsel_script *es, FILE *fp)
->>  
->>  static inline int output_type(unsigned int type)
->>  {
->> +	struct perf_pmu *pmu;
->> +
->>  	switch (type) {
->>  	case PERF_TYPE_SYNTH:
->>  		return OUTPUT_TYPE_SYNTH;
->> @@ -394,6 +396,10 @@ static inline int output_type(unsigned int type)
->>  			return type;
->>  	}
->>  
->> +	pmu = perf_pmus__find_by_type(type);
->> +	if (pmu && pmu->is_core)
->> +		return PERF_TYPE_RAW;
-> 
-> Minor nit ...
-> 
-> output_type() seems to be getting called a lot. For ex, for a perf.data
-> with 4530 samples, output_type() was called 181246 times when I ran
-> "perf script". IIUC, this pmu lookup is unnecessary for homogeneous
-> platforms? If so, can we make it conditional?
+> Signed-off-by: Shimrra Shai <shimrrashai@gmail.com>
+
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-firefly-itx-3588j.dts b/arch/arm64/boot/dts/rockchip/rk3588-firefly-itx-3588j.dts
+> new file mode 100644
+> index 000000000..a99c007c7
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-firefly-itx-3588j.dts
+> @@ -0,0 +1,1133 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/pinctrl/rockchip.h>
+> +#include <dt-bindings/pwm/pwm.h>
+> +#include <dt-bindings/soc/rockchip,vop2.h>
+> +#include "dt-bindings/usb/pd.h"
+> +#include "rockchip-pca9555.h"
+> +#include "rk3588.dtsi"
+
+in line with my comment in the binding, please split the system-on-module
+parts into a rk3588-firefly-core-3588j.dtsi and then include that file here.
+
+
+> +
+> +/ {
+> +	model = "Firefly ITX-3588J";
+> +	compatible = "firefly,itx-3588j", "rockchip,rk3588";
+> +
+> +	aliases {
+> +		ethernet0 = &gmac0;
+> +		ethernet1 = &gmac1;
+> +		mmc0 = &sdhci;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial2:1500000n8";
+> +	};
+> +
+> +	/* NB: There are also a "Reset" and "Mask ROM" button but I don't
+> +	 * know the right settings for these. - Shimrra Shai
+> +	 */
+
+same comment-style as below, plus
+
+/*
+ * There are additional Reset and Maskrom keys connected, but their
+ * settings are still unknown right now.
+ */
+
+> +	adc-keys-1 {
+
+why is it adc-keys-1 ? (where is -0 ?)
+
+> +		compatible = "adc-keys";
+> +		io-channels = <&saradc 1>;
+> +		io-channel-names = "buttons";
+> +		keyup-threshold-microvolt = <1800000>;
+> +		poll-interval = <100>;
+> +
+> +		button-recovery {
+> +			label = "Recovery";
+> +			linux,code = <KEY_VENDOR>;
+> +			press-threshold-microvolt = <2000>;
+> +		};
+> +	};
+> +
+> +	analog-sound {
+> +		compatible = "simple-audio-card";
+> +		pinctrl-0 = <&hp_detect>;
+> +		pinctrl-names = "default";
+> +		simple-audio-card,aux-devs = <&amp_headphones>, <&amp_speaker>;
+> +		simple-audio-card,format = "i2s";
+> +		simple-audio-card,hp-det-gpios = <&gpio1 RK_PC4 GPIO_ACTIVE_LOW>;
+> +		simple-audio-card,mclk-fs = <384>;
+> +		simple-audio-card,name = "rockchip_es8323";
+> +		simple-audio-card,pin-switches = "Headphones", "Speaker";
+> +		simple-audio-card,routing =
+> +			"Speaker Amplifier INL", "LOUT2",
+> +			"Speaker Amplifier INR", "ROUT2",
+> +			"Speaker", "Speaker Amplifier OUTL",
+> +			"Speaker", "Speaker Amplifier OUTR",
+> +			"Headphones Amplifier INL", "LOUT1",
+> +			"Headphones Amplifier INR", "ROUT1",
+> +			"Headphones", "Headphones Amplifier OUTL",
+> +			"Headphones", "Headphones Amplifier OUTR",
+> +			"LINPUT1", "Microphone Jack",
+> +			"RINPUT1", "Microphone Jack",
+> +			"LINPUT2", "Onboard Microphone",
+> +			"RINPUT2", "Onboard Microphone";
+> +		simple-audio-card,widgets =
+> +			"Microphone", "Microphone Jack",
+> +			"Microphone", "Onboard Microphone",
+> +			"Headphone", "Headphones",
+> +			"Speaker", "Speaker";
+> +
+> +		simple-audio-card,cpu {
+> +			sound-dai = <&i2s0_8ch>;
+> +		};
+> +
+> +		simple-audio-card,codec {
+> +			sound-dai = <&es8323>;
+> +			system-clock-frequency = <12288000>;
+> +		};
+> +	};
+> +
+> +	/* note: this does not seem to be a proper "amplifier" but is just
+
+	/*
+	 * note: this does not seem to be a proper "amplifier" but is just
+
+comment formatting please
+
+> +	 * a way to control the GPIO pins to switch on or off the given
+> +	 * sound output device
+> +	 */
+> +	amp_headphones: headphones-audio-amplifier {
+> +		compatible = "simple-audio-amplifier";
+> +		enable-gpios = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&headphone_amplifier_en>;
+> +		sound-name-prefix = "Headphones Amplifier";
+> +	};
+
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		/* NB: This Power LED control does not seem to work for
+> +		 * some reason. - Shimrra Shai
+> +		 */
+> +#if 0
+> +		power_led: led-0 {
+> +			gpios = <&gpio1 RK_PB3 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "default-on";
+> +		};
+> +#endif
+
+please don't add dead code
+
+> +
+> +		user_led: led-1 {
+> +			gpios = <&pca9555 PCA_IO0_3 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "disk-activity";
+> +		};
+> +	};
+> +
+> +	vcc_sata_pwr_en: vcc-sata-pwr-en-regulator {
+
+vcc_sata_pwr_en: regulator-vcc-sata-pwr-en
+
+Applied to all regulator nodes
+
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_sata_pwr_en";
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +		enable-active-high;
+> +		gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
+
+please sort properties (compatible, regs, [alphabetically], status) and please
+drop those comments at the end.
+
+Applied to all regulator nodes
+
+> +	};
+
+[...]
+
+> +&cpu_l0 {
+> +	cpu-supply = <&vdd_cpu_lit_s0>;
+> +	mem-supply = <&vdd_cpu_lit_mem_s0>;
+
+that mem-supply property is not specified and also is not necessary here.
+Same for the other cases above.
+
+> +};
+
+[...]
+
+> +	usbc0: usb-typec@22 {
+> +		compatible = "fcs,fusb302";
+> +		reg = <0x22>;
+> +		interrupt-parent = <&gpio0>;
+> +		interrupts = <RK_PD3 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&usbc0_int>;
+> +		vbus-supply = <&vbus5v0_typec_pwr_en>;
+> +		status = "okay";
+
+default status is always "okay", so no need to add it for new nodes.
+Same for possible other places in this file.
+
+
+> diff --git a/arch/arm64/boot/dts/rockchip/rockchip-pca9555.h b/arch/arm64/boot/dts/rockchip/rockchip-pca9555.h
+> new file mode 100644
+> index 000000000..c4c9a2471
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rockchip-pca9555.h
+
+if anything, that include needs to live in include/dt-bindings/something
+and needs to be a separate patch, if you really need that
+
+> @@ -0,0 +1,31 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+> +/*
+> + * Bindings for the PCA9555 GPIO extender used on some Rockchip devices, e.g.
+> + * Firefly.
+> + *
+> + * Copyright (c) 2013 MundoReader S.L.
+> + * Authors: Heiko Stuebner <heiko@sntech.de>
+
+where does this copyright come from? I don't remember being involved
+in a binding header for that expander?
+
+
+> + *          Shimrra Shai <shimrrashai@gmail.com>
+> + */
+> +
+> +#ifndef __RK_PCA9555_H__
+> +#define __RK_PCA9555_H__
+> +
+> +#define PCA_IO0_0          0
+> +#define PCA_IO0_1          1
+> +#define PCA_IO0_2          2
+> +#define PCA_IO0_3          3
+> +#define PCA_IO0_4          4
+> +#define PCA_IO0_5          5
+> +#define PCA_IO0_6          6
+> +#define PCA_IO0_7          7
+> +#define PCA_IO1_0          8
+> +#define PCA_IO1_1          9
+> +#define PCA_IO1_2          10
+> +#define PCA_IO1_3          11
+> +#define PCA_IO1_4          12
+> +#define PCA_IO1_5          13
+> +#define PCA_IO1_6          14
+> +#define PCA_IO1_7          15
+> +
+> +#endif
 > 
 
-Agreed. I think the search should only be applied for the
-perf_pmus__num_core_pmus() > 1 case.
+Heiko
 
-We should just need to search the core_pmus when comparing the type.
 
-Thanks,
-Kan
 
