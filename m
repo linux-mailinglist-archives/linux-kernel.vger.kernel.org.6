@@ -1,135 +1,101 @@
-Return-Path: <linux-kernel+bounces-445126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31BEA9F11AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:01:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158469F11BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:04:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67D33162859
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:01:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC611651B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EA21DFDBE;
-	Fri, 13 Dec 2024 16:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB93D1E3786;
+	Fri, 13 Dec 2024 16:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drwqEi1K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3VKsz5b"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEB91E00AC;
-	Fri, 13 Dec 2024 16:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BF915098F;
+	Fri, 13 Dec 2024 16:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734105658; cv=none; b=LAg4Pd49crfot/Tp0eySJO8F2K0FW0TEc2AEgL8csqNC7R3Pe0cQ3uKerBwaOBNSm0fyi2NtETLsL5XVVJEOVwPb81FgPEZzZN/Ggr333IiOzwuAQxCrxKGktt+dDNmoaru10BawBmRTCbBQdvvzceceUrshXO3BKvx+luSBAXw=
+	t=1734105842; cv=none; b=ZrOqRY04HoiHDeXFUM573HRd9D2mXQJF4zo24UbfyGG6n7ha6WMEflg0qJ0Dhg+tt+baaeiBe6C5N72RZR1A2FeWZHz+87DaYrbK5FDkSGKjUQCvoCdq1PGHtccoH1OOrUIZU0dc4MRjmlSJAIT1eOc7OhK3O2Oizlkl4HpwQHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734105658; c=relaxed/simple;
-	bh=5XQWrcX5GyYj8LFdIhYGQZjcjue5NcViLdKUXQX6Lxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ri4zoShkDI1nppMHQtjI9QGtiNzf+8ie8XadT/265vqVl6RXc9ZNhx7p7c0f4YW3aQwEow65tNGqQ/bogqju/uWrqFCA5W7VKgN+8SaysPxhpHgksXrDbbhIFOC6sGuWm12lIXkIANM3/Y7otqa9SNHQpNWkYLh9SCX3k/g4urI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drwqEi1K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94892C4CED0;
-	Fri, 13 Dec 2024 16:00:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734105657;
-	bh=5XQWrcX5GyYj8LFdIhYGQZjcjue5NcViLdKUXQX6Lxg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=drwqEi1KUb45YUFYPuSo7fSS3CvrrB4cd7pP6+asr3gUVR+0zWLlIoiwSC4Z/YJV0
-	 1vJfqDd7hWfU1BTM58kqEYDnQLK/4RAYzMlt2PH5APM1YOWFBIefrCkgnlTRxJQCEo
-	 IlxUytji6/3dL/IHjXaBUqq5mQvaI9RnTVJ7Vx3O1+0ax8P6QU8cymPxtS17j9Z+AP
-	 Mx2IeWA8LzXbgk3JpLdAJNIVKAykWrNS3STLVp+s4FK7UpTj5PYt5AgEwUOz9tUEUu
-	 2Ln+JafCNPnoQfaRkOm64U4iBQCB7N7x8CMcV0xkbe8WcB42ffxnR5DphgukxBMUkO
-	 ZPuoIXPVEYIDQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tM86A-000000005sw-2DjX;
-	Fri, 13 Dec 2024 17:01:02 +0100
-Date: Fri, 13 Dec 2024 17:01:02 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v3 13/23] arm64: dts: qcom: x1e80100: Fix ADSP memory
- base and length
-Message-ID: <Z1xaPvyBap5Q4vXC@hovoldconsulting.com>
-References: <20241213-dts-qcom-cdsp-mpss-base-address-v3-0-2e0036fccd8d@linaro.org>
- <20241213-dts-qcom-cdsp-mpss-base-address-v3-13-2e0036fccd8d@linaro.org>
- <Z1xUUAnxsCY33umS@hovoldconsulting.com>
- <7edc0cb7-d6fd-4395-b2ca-dfce243f066c@linaro.org>
+	s=arc-20240116; t=1734105842; c=relaxed/simple;
+	bh=tWu4Le/UEszUkikfuTPw3UilP2yefN9WiatCnmqPaTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ulelo5wJWF5v2ZF6R/dP+c68VbAjHwFFgxUmJvoisGyaNs3qV+eqW4MOFlaXMLYeiQc30hM4YsiBuUf0Np3tGcdPkPgpIswUJ/dl/AY5XRDzlztkzpsrSxQgK7Ht54oNsF+Q1ApuyjXusbFfTL2KitGjwai63RHEALT66AprTaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3VKsz5b; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a81324bbdcso14120825ab.1;
+        Fri, 13 Dec 2024 08:04:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734105840; x=1734710640; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4MyhE6p4xaQ3O2A7awygF6dZuTWlyJtp/nrxGTLFcJo=;
+        b=G3VKsz5bm+37qNusNMhsnQgc9XSR5qVt1toYZXRUhCkxiFwFty7GoZpJYp8KyeHqtK
+         MsdDA3wiUwwdYfHS2QsV9SrujQwZES3reKEjIy8JjtUwAMAKwviYp8YnkmA7j18nQdzR
+         IDqL/kF3um9rgjF1YNS2mnsuGUheO+BuV8GzydRVdvRv/dkhvR9wfE4aXFt2/PoPdGNM
+         q+Le6DoXiyS7azf1ALp5op/dUMuybRT1XGTlOcWHoEgeiHIqRvpeg1nKVUu3rIWIMb2V
+         U96NgHjQvQYbrdvkRC4KOh0mpiDX2u0lHclfoUF0QT3pNl7hi1BwQByBHUQ0R/PIbNsv
+         rJ/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734105840; x=1734710640;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4MyhE6p4xaQ3O2A7awygF6dZuTWlyJtp/nrxGTLFcJo=;
+        b=PEeDPBzSmiX9CBCa1jsKPGCqlPM2I/GN6yKO3Tz0URJL9Dhfo4dWUVevqiI68B2JKa
+         Gsp/+eq8noEQbXdp0h75VCk0b4S7uoisvYMGzNt3ef3PFxI2h46Z8XSlRRC9QHEe072o
+         LbHCm42B+45JVLKFD9QMS2u3lVlEc5fZH3vt0Cd/U6lfz9s/E5FT0po2Y624upxbZ7xD
+         JlEufBsceee66qG8SSCPaAw9Bh5Ss4FLKZjuPDpR5ykDpnQ2JxpbGllXNZROMiiaiYoA
+         YRLSyJ8I1HekRo4Dd9y0KeOkHCDoHpMJfFS2iwJ5eZdiLv/6zcDUrFiYAxEHOFNt8wRJ
+         u6/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWtMUdnMWxGtZeV45YVc3gxkil+xY4uvgIU3c//J8bZillftRgSFiklfX75bti2CyaHSlsOnwKpQV8=@vger.kernel.org, AJvYcCXBs8nbRT/sGDZ648JP8lDFvr1495lkKcTHv+l8nD7VngkqEMYU2jbHFz1Sh5CH2yQMCx6ln4fVYabiTk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8lrzt59VeAD0htvI0DWnla2dcJ3jpzOJo7PEs2SR2nQA0NMOd
+	a/aKW0Efzr0qvXwY+n7hIHiSJKUry2ihpYyXW7KVq50eRAjSCqDr
+X-Gm-Gg: ASbGncuNIIMWniaTnkf5mWdM+KFSq4iDNzUJAG4/GYF/SLOtF2mYWrNCdE8VoGfJZrk
+	QSIXjZIOFSYsJbFj26m3GzigUvsN+GBANA00i1P1XvDsUf6bfuiRslBCbLfWew8plnk7EPl3UY0
+	OTcr5T9l3ZMrBV9kdChdOXV5aUvbNbQ0NxBPjcEVR8MtYnKhisiZ35IdcmtsfgN4Sowlf1x+/pH
+	/HLRbhtbK2PcUvd2TTQtgo3+7wPfDBGMISDYfJGBFreWk2fA8Sr3qZfzD73BM/fjMkc4KvdgFli
+	v7ABI3cWKgXS81pwqK/FFx6+esg=
+X-Google-Smtp-Source: AGHT+IEszlQXuqrkPYsX/HEMys/ZHxP36z40t4z9cG7j/MZLWhxTBqgX7gBXJMpgbC3JI27DgkLtcQ==
+X-Received: by 2002:a05:6e02:1a07:b0:3a7:1f72:ad3c with SMTP id e9e14a558f8ab-3aff0961e22mr37626355ab.19.1734105840042;
+        Fri, 13 Dec 2024 08:04:00 -0800 (PST)
+Received: from localhost.localdomain (65-128-205-244.mpls.qwest.net. [65.128.205.244])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a817f6e099sm40130415ab.23.2024.12.13.08.03.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 08:03:58 -0800 (PST)
+From: Shimrra Shai <shimrrashai@gmail.com>
+To: shimrrashai@gmail.com
+Cc: krzk@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: Re: Re: Re: [PATCH v1 2/2] [Draft] dt-bindings: arm: rockchip: Add Firefly ITX-3588J board
+Date: Fri, 13 Dec 2024 10:03:37 -0600
+Message-ID: <20241213160337.5561-1-shimrrashai@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241213154114.5078-1-shimrrashai@gmail.com>
+References: <20241213154114.5078-1-shimrrashai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7edc0cb7-d6fd-4395-b2ca-dfce243f066c@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 13, 2024 at 04:45:30PM +0100, Krzysztof Kozlowski wrote:
-> On 13/12/2024 16:35, Johan Hovold wrote:
-> > On Fri, Dec 13, 2024 at 03:54:02PM +0100, Krzysztof Kozlowski wrote:
-> >> The address space in ADSP PAS (Peripheral Authentication Service)
-> >> remoteproc node should point to the QDSP PUB address space
-> >> (QDSP6...SS_PUB): 0x0680_0000 with length of 0x10000.
-> >>
-> >> 0x3000_0000, value used so far, is the main region of CDSP and was
-> >> simply copied from other/older DTS.
-> >>
-> >> Correct the base address and length, which also moves the node to
-> >> different place to keep things sorted by unit address.  The diff looks
-> >> big, but only the unit address and "reg" property were changed.  This
-> >> should have no functional impact on Linux users, because PAS loader does
-> >> not use this address space at all.
-> >>
-> >> Fixes: 5f2a9cd4b104 ("arm64: dts: qcom: x1e80100: Add ADSP/CDSP remoteproc nodes")
-> >> Cc: stable@vger.kernel.org
-> > 
-> > Why bother with backporting any of these when there is no functional
-> > impact?
-> 
-> Not sure, I assumed someone might be using kernel DTS from stable
-> branches in other projects. Kernel is the source of DTS and stable
-> kernel has the DTS in both stable and fixed way. If 3rd party project
-> keeps pulling always latest DTS from latest kernel, they will see so
-> many ABI breaks and so many incompatibilities (we discussed it in
-> Vienna) that they will probably curse their approach and say "never
-> again". Using stable branch DTS could be a solution.
+On 2024-12-13, Shimrra Shai wrote:
+> As you said that is necessary "for automated tools to work"
 
-That makes some sense.
+Correction to make an exact quotation: I meant to refer to when you said
+"so this won't be tested by automated tooling".
 
-> Such 3rd party project might actually use above device nodes in their
-> drivers. It's just some of Linux kernel drivers which do not use them
-> (other like PIL seems to use addresses).
-
-But this is more questionable given that the current addresses are
-completely off in this case.
-
-> Plus DTS is used by 3rd party Linux kernels (out of tree), which while
-> we do not care in a way of driving our development, but we do consider
-> them possible users. They also might be relying on stable kernel branch
-> for this.
-
-Same here.
-
-I realise this is a bit of a grey area, but given the size of the diffs
-and the no functional impact this could be an opportunity to try to
-uphold the stable kernel rules:
-
-	- It cannot be bigger than 100 lines, with context.
-	- It must either fix a real bug that bothers people or just add
-	  a device ID.
-
-Johan
+     Shimrra
 
