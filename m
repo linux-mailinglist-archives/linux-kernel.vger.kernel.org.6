@@ -1,142 +1,223 @@
-Return-Path: <linux-kernel+bounces-444672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0479F0AC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:19:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC989F0ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:21:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA2102835FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B357188488F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2181DED6F;
-	Fri, 13 Dec 2024 11:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1621DE4CB;
+	Fri, 13 Dec 2024 11:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oA1q7Z7H"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bRgXNTjH"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B684F1DE3B1
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974211B21BE
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734088739; cv=none; b=MdWVWBhbyh/nG4C0kiEvD6wJ6VhLduiptaZgdnayzfWV8dwhAFEv3We5ce2/QBb94vjb0cGjEXmX6ctQiKlgH4XTv34+j40Ej0sl58LHyFRoVhRbuxB0XyCwQUgTHOj94wieTVmxlUkhbt+mTz9Ueq3nUY5Q4JPNL1MKWGhowqY=
+	t=1734088869; cv=none; b=Psvy0DeX07TYwMmlJ0SlpGbR+LAvkAZPf2WZhlAX9t05xkdFqQ5eYUtMIArLyX6Vvl//17F6G8LaohstJeyh8q/ixJPJIbN7GzsgnU+jfNxzvmOSFLh7S+O0tPNThaF1RzdVsxheuDEnHR/8Ib7I26mhe+yei/+cMf2b0uT34jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734088739; c=relaxed/simple;
-	bh=4sWUtOjeYmhgS7vSba/RGHfcehHVoBrgsxjqxs2uKZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YYMN9o0+MEBp9BRja+S1423xQ7AZJVQlH04NuDmGx0Uwu0B0lF8JklYDmzJhJGFTlwQplFNZSDW3QygqYlfJN9g4GHMW0PL5rfTDVswJzgwbqtx3w1HXykvqZ71DnsCNGLEf+clkXhmChwJquXTJ/Adn/kRZXEseZUaOTYrQ+Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oA1q7Z7H; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-aa670ffe302so301230866b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:18:57 -0800 (PST)
+	s=arc-20240116; t=1734088869; c=relaxed/simple;
+	bh=r91TcR4H4Qda9i3ih8WZhOxfkv/5tKme0aANXJbKMfA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eJ6zQRbk2xaAkjxbh3ui6MUqQqGq0AVMtz2lc/98lUj08JN5VYfP+H89dF4yObPdNVu8eyDknicbyyH8B8BswSB4wET7IPrSydFtFkGukwAp0U8IWIO/HypVrAGr6xNqhHu/IBRJSl1OSgGmp9WoFlT5crYa7qbL/NcdcTzZ6dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bRgXNTjH; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4678afeb133so23558501cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:21:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734088736; x=1734693536; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SOH0ZpkdRhKcY2RdyrG5izzazJLX5YhFQ9ww5KfiGzQ=;
-        b=oA1q7Z7HKz9YyAS7uruOze5DV4+jvXINhKSNu65w3rVRRjJuYzZbD2r3b5kT8fMlwN
-         b+LPqWrS8LBv28jfLuMP6KvifDHAtWpBUumYigybBHdFWTTn2pz3KzZnsCpsYCppHNxL
-         YSJy0pPH+9v+CMxwk+jmlgGCJFGHCdjO2WK6tymuwRhCHhfQ1oV0vTz77pkKBX6PUie9
-         ZXEwDEyTdQEcG6Qttx8+2znTpZLAuvW+wJqZwADfqzWVLOf13l3TBzR1v3RjhXJes7+t
-         kDyraGzZ7a6ttUOKHQTE59M3nEUWtnt65C2Y26VAsNe0AvbitRWyljgk5i6c+PITcLlC
-         MJUg==
+        d=chromium.org; s=google; t=1734088866; x=1734693666; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G+/b0qpGL8geq0m5EZNK7pNyK7gxUILcFZV9hbWhObc=;
+        b=bRgXNTjHTRYfiuIOt7iaUC4yhRopaLtXUwdT3mS1QBErWXC/wFatCWxsJLUHQrI5VC
+         BTJeVsiJ3wjDS7UHc9I3EAC4SdvIFdGBoSK1nJz/lJpia2aKPegHsChLejc11iczQTGl
+         P2fBNOk3iSkG9RL3lo/uZJN5ZvcoMFARVc5Wc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734088736; x=1734693536;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SOH0ZpkdRhKcY2RdyrG5izzazJLX5YhFQ9ww5KfiGzQ=;
-        b=hSAm+TBhQczzrVRXquUKOXO74AHwNH+f81vMXL/0CXsLNoeLEn4UDB5jwNSmm2zwPg
-         PMnU+D+Z2vPsHoyuTUeVAeLCsBifNAGKvKLobiHlZdGZ6Gn/ETrUQe+jVPKTmdFKFF5t
-         lQR/Xvcl3YrE5kTXSVvks11XL49TxQgHBNsyac575u1HvOeaOFw/cVu4g8/Klti5nKSY
-         23meU6dg9SnIWmQ83QGq6zwcZyH+6UhG7UE/+ckcIb8iBHPGIQ6v001W/BAaK6q5uhgG
-         QlRaJpbSnyllKevWROGn3ce19cbsuL1xYlYu6sgHgBpVGjcF+8u6eKkral/lFausdoTn
-         gETQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl9WS79eZCM3p6uyMRxR0qLhwKUyzEl6HN960Cw1S/bJQ9xpU7a0rnO+DtitKlkh5PDYmkS960nXBehrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/koPK0jN6BZgoITS33Bl/y5ouwbAnWmI6zrOBhBZBL9OqeUre
-	jPpVf32XzuU4YjjNoKSplCJ0DNqyjA1Y/TfZtZRv1hKrudF7DtORwXf4OSYgVu8=
-X-Gm-Gg: ASbGncs1Bg7K+Pus0BvkYQOnIq9FV5b0trpMmgn+1VAPV2+u5JztATCKAY3aoaLbFkB
-	rdO3i8qTw25zba8DCVPXpsq+nYLw6HMwMhct8cr2nEX9mrCoWiIy+XkAaVFAd/MdSTOHTGCIK9x
-	K6EyN8dcLIcC/kkzjVfZ4ULFGU4ejwrZq5Wt3frRevvJiOqOQQSjnNzVvb/s5ApRCTrj5Rz1JA8
-	rcOldohUqH4JXDYS8nS8z54NIO9dbVT7pQ9ofO7TJb+G3pRXoSYOFIXhlSut09mJg==
-X-Google-Smtp-Source: AGHT+IHCNFIusKuDoVAQrVy2w3RyEGZxyWlRUmcQIBaYG0LZ5xafYNpj5fwC5H5p5Q6bHAeD7wm9rw==
-X-Received: by 2002:a17:906:32ce:b0:aa6:b5d8:d5c2 with SMTP id a640c23a62f3a-aab77e821e9mr229783666b.41.1734088736131;
-        Fri, 13 Dec 2024 03:18:56 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef80:998:492:1e8d:6193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6705a566dsm824777366b.162.2024.12.13.03.18.55
+        d=1e100.net; s=20230601; t=1734088866; x=1734693666;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G+/b0qpGL8geq0m5EZNK7pNyK7gxUILcFZV9hbWhObc=;
+        b=YtJDjbwN8N3wrg/PwnXjBElOazEsh/ncylOnVf1FA7T30YOxz8GL8eUAMDij56Jwm3
+         sYy1J/MWka10lZTPlHj9n199nkjw4Cp8wXWkPtu0m1FYnnbu5GgacLUFx6/V9Q0KLJw+
+         m51f7zkg8R61WtrctS1HC93sbQI40AjDQW2ig5KULMHk9lUzt2xh2A7ZlLHMdozoU/Z4
+         O4p+HUvvpCP7WpLLqWoO9yafp+iP1+rkpIozkC6shtWkk/2ZJuplu6iqF7iUizfWxxIf
+         bUwcg3nseJuz9RaWBDMevTSmsHakYv4fjQaYa/7icZU5RHjW5/UTStuvC9Zo2hbEpFzs
+         B3OA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzIRBQ/ileFXDcn/HwzC1P4AsBY8HOSHuRcCRUuWoTL4sTRFfc7Wk6Pm5hz7DVoDrWVuX2TmmjnSYFyJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzDznTGfRjJnN4xX7Hf6mbOdXg1BqIgU5uzJ7/ZOd5bxuqh4yE
+	umWNy0OMjzG0zdaxYaXeT12EX20k6JP3eANjo3mgpInUaOK4wumfvCjdsvEEfg==
+X-Gm-Gg: ASbGncv9sx4uamD6uzbFpyqXR2DLDDQPIhfwkSXxJ97zBCjERU2RFQ94cGDhJyxq8SC
+	KKt9wTmEMvJNAtQ6unr8BI78SjGe2LS1fQgu9+k4v9/F40KXLS/c1FDnLXggvDGV8FHScc+ySZq
+	szXBBXVe3cXfu+Ixur/ZUe7Z8TFHOy120kjpD6oQ8aa/c4JjzYxm3tJXqAOuutV47d1XlrfEmge
+	EKkD1jy91p78Uqah5Lcziwe2smxsyg1zK0wm2VevmiUrP8Cn5a6mGI+Hru7RSa1J11OEeAZMc4L
+	0opwUg1mtPR/bJbQU5IqKDg0++SRyoU=
+X-Google-Smtp-Source: AGHT+IFRiMo9YbmkS9prLVR88FjtQeMzkss4HutCc+qpf/GarrMWgiwM3ArO3aDzJzimFDxHBHXoEg==
+X-Received: by 2002:a05:622a:11d1:b0:456:919a:11e4 with SMTP id d75a77b69052e-467a5b408a9mr34708931cf.20.1734088866554;
+        Fri, 13 Dec 2024 03:21:06 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6d801632esm458685285a.7.2024.12.13.03.21.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 03:18:55 -0800 (PST)
-Date: Fri, 13 Dec 2024 12:18:51 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
-	Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: usb: gpio-sbu-mux: Add an entry for
- FSUSB42
-Message-ID: <Z1wYG8gpdFEvHCI3@linaro.org>
-References: <20241212-x1e80100-qcp-dp-v1-0-37cb362a0dfe@linaro.org>
- <20241212-x1e80100-qcp-dp-v1-1-37cb362a0dfe@linaro.org>
- <kq6qjrynlbqgz2ltdap67lsbehmzuudjhbhyjymy26wlffol6o@kggtwtbujilf>
+        Fri, 13 Dec 2024 03:21:04 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 13 Dec 2024 11:21:02 +0000
+Subject: [PATCH] media: uvcvideo: Filter hw errors while enumerating
+ controls
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <kq6qjrynlbqgz2ltdap67lsbehmzuudjhbhyjymy26wlffol6o@kggtwtbujilf>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241213-uvc-eaccess-v1-1-62e0b4fcc634@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAJ0YXGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0Nj3dKyZN3UxOTk1OJiXXNT0+RkAzPDRGMzAyWgjoKi1LTMCrBp0bG
+ 1tQDy2ooOXQAAAA==
+To: Hans Verkuil <hverkuil@xs4all.nl>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Fri, Dec 13, 2024 at 12:07:35PM +0100, Krzysztof Kozlowski wrote:
-> On Thu, Dec 12, 2024 at 02:08:23PM +0100, Stephan Gerhold wrote:
-> > Add a compatible entry for the onsemi FSUSB42 USB switch, which can be used
-> > for switching orientation of the SBU lines in USB Type-C applications.
-> > 
-> > Drivers work as-is with the existing fallback compatible.
-> > 
-> > Link to datasheet: https://www.onsemi.com/pdf/datasheet/fsusb42-d.pdf
-> > 
-> > Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml b/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
-> > index 8a5f837eff94b27bbd55bfe45f8d1156e3d183eb..e588514fab2d8c9d0d3717865fe2e733664fc28b 100644
-> > --- a/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
-> > +++ b/Documentation/devicetree/bindings/usb/gpio-sbu-mux.yaml
-> > @@ -20,6 +20,7 @@ properties:
-> >      items:
-> >        - enum:
-> >            - nxp,cbdtu02043
-> > +          - onnn,fsusb42
-> >            - onnn,fsusb43l10x
-> 
-> Is it different from onnn,fsusb43l10x?
-> 
+To implement VIDIOC_QUERYCTRL, we need to read from the hardware all the
+values that were not cached previously. If that read fails, we used to
+report back the error to the user.
 
-Yes, it's a different chip:
+Unfortunately this does not play nice with userspace. When they are
+enumerating the contols, the only expect an error when there are no
+"next" control.
 
-https://www.onsemi.com/pdf/datasheet/fsusb42-d.pdf
+This is probably a corner case, and could be handled in userspace, but
+both v4l2-ctl and yavta fail to enumerate all the controls if we return
+then -EIO during VIDIOC_QUERYCTRL. I suspect that there are tons of
+userspace apps handling this wrongly as well.
 
-vs
+This patch get around this issue by ignoring the hardware errors and
+always returning 0 if a control exists.
 
-https://www.onsemi.com/download/data-sheet/pdf/fsusb43-d.pdf
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Hi 2*Hans and Laurent!
 
-They are probably quite similar, but the fact that the usage/programming
-model is compatible is already represented by the fallback
-"gpio-sbu-mux" compatible. So I think my patch adds it correctly?
+I came around a device that was listing just a couple of controls when
+it should be listing much more.
 
-Thanks,
-Stephan
+Some debugging latter I found that the device was returning -EIO when
+all the focal controls were read.
+
+This could be solved in userspace.. but I suspect that a lot of people
+has copied the implementation of v4l-utils or yavta.
+
+What do you think of this workaround?
+
+Without this patch:
+$ v4l2-ctl --list-ctrls
+                  auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
+         exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
+     exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
+region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
+
+With this patch:
+$ v4l2-ctl --list-ctrls
+                  auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
+         exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
+     exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
+error 5 getting ext_ctrl Focus, Absolute
+error 5 getting ext_ctrl Focus, Automatic Continuous
+   region_of_interest_rectangle 0x009a1901 (unknown): type=107 value=unsupported payload type flags=has-payload
+region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
+
+--
+---
+ drivers/media/usb/uvc/uvc_ctrl.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+index 4fe26e82e3d1..a11048c9a105 100644
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -1283,7 +1283,8 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
+ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+ 	struct uvc_control *ctrl,
+ 	struct uvc_control_mapping *mapping,
+-	struct v4l2_queryctrl *v4l2_ctrl)
++	struct v4l2_queryctrl *v4l2_ctrl,
++	bool can_fail)
+ {
+ 	struct uvc_control_mapping *master_map = NULL;
+ 	struct uvc_control *master_ctrl = NULL;
+@@ -1307,17 +1308,28 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+ 	if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
+ 		s32 val;
+ 		int ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
+-		if (ret < 0)
+-			return ret;
+ 
+-		if (val != mapping->master_manual)
+-				v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
++		if (ret < 0) {
++			dev_warn_ratelimited(&chain->dev->udev->dev,
++					     "UVC non compliance: Error %d querying master control %x\n",
++					      ret, master_map->id);
++			if (can_fail)
++				return ret;
++		} else if (val != mapping->master_manual) {
++			v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
++		}
+ 	}
+ 
+ 	if (!ctrl->cached) {
+ 		int ret = uvc_ctrl_populate_cache(chain, ctrl);
+-		if (ret < 0)
+-			return ret;
++
++		if (ret < 0) {
++			dev_warn_ratelimited(&chain->dev->udev->dev,
++					     "UVC non compliance: Error %d populating cache of control %x\n",
++					     ret, mapping->id);
++			if (can_fail)
++				return ret;
++		}
+ 	}
+ 
+ 	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
+@@ -1420,7 +1432,8 @@ int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+ 			goto done;
+ 	}
+ 
+-	ret = __uvc_query_v4l2_ctrl(chain, ctrl, mapping, v4l2_ctrl);
++	ret = __uvc_query_v4l2_ctrl(chain, ctrl, mapping, v4l2_ctrl,
++				    !(v4l2_ctrl->id & V4L2_CTRL_FLAG_NEXT_CTRL));
+ done:
+ 	mutex_unlock(&chain->ctrl_mutex);
+ 	return ret;
+@@ -1513,7 +1526,7 @@ static void uvc_ctrl_fill_event(struct uvc_video_chain *chain,
+ {
+ 	struct v4l2_queryctrl v4l2_ctrl;
+ 
+-	__uvc_query_v4l2_ctrl(chain, ctrl, mapping, &v4l2_ctrl);
++	__uvc_query_v4l2_ctrl(chain, ctrl, mapping, &v4l2_ctrl, true);
+ 
+ 	memset(ev, 0, sizeof(*ev));
+ 	ev->type = V4L2_EVENT_CTRL;
+
+---
+base-commit: a7f5b36b34824415c28875d615c49a3cf5070615
+change-id: 20241213-uvc-eaccess-755cc061a360
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
