@@ -1,165 +1,114 @@
-Return-Path: <linux-kernel+bounces-445567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096369F17C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:04:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B979F17C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:05:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F2CD7A1367
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBCCF188F899
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2E91E5721;
-	Fri, 13 Dec 2024 21:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412E11922DE;
+	Fri, 13 Dec 2024 21:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IeNucRcw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VTuB/OCP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zkrU6ylR"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75001A8F60;
-	Fri, 13 Dec 2024 21:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313C71922C6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 21:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734123769; cv=none; b=d3DLsOzjKGwvafh28O2kH9dhpzAn0wFohI013PoW/urB4hFwsXk1xKRCWV/2PQ3kuLSy4RdJfSmW7XFyQx/kRu72QTtAVGQ9LV0SWjtsfOkyxlfBEUTUkht+uePqyWGdjMlSxRGI1cf5N+tW8lNSCoifiIJ3JkIgyILyBBNzFio=
+	t=1734123874; cv=none; b=dl7+eo7MyQWo2OsEbqpwt7/ayit1gUed8HmhbGH4YAjy96nfPBRakfEZ+KTYUpqmf2bgV860aAA8eUHmm79nj+vjCfefWzRpz2IRJToYG/ixlRQCx/cFBon3nb2EaInz9mcl3/o93PkmMBA5dvTvh93lqChPu3SY9ABNsgHn3+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734123769; c=relaxed/simple;
-	bh=dy7IuC3wohCQz6h8AsPtp9hQFu86VGIZIGShaR/I3Nk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Cldg6yjldyk0a27SYoHRfynn+gfMqv01vCU/O36jUQs9tD7gKGWimtq8QYsTtBe02KEAB7xKziKsN4dQVAH2fWEm7dSNwmrRNODIr7HdTEhoCDtIVAwMs2XqNmUzkHEJykNvRtN01go4/Jcdj6wViuxoF7MbO/EnTYHYAKIAIpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IeNucRcw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VTuB/OCP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 13 Dec 2024 21:02:45 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1734123766;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vpZjK133TngO0jA+6keLNSvsqYq2SYpMRve43G8kCZA=;
-	b=IeNucRcwVcMnOYbDW/xfj9gHltcc0QGL02GgSRFNtnvAAbPSXeaktSGYu4tatVZ0mxnZQj
-	WTB7FxmFVr8FgFRi2QqHhlod27sPSom64taj8WA77CR7hV+cDVXrjEgIUzIsxeI87JCrW2
-	AAv3RKnCsE7HNs7H8yAr6yUL4BCSVw0fYEyQKLLNQNQfoKD8hmHxa5sSo3xH7vBn6qmyQG
-	hWasrlRfOztCLVz9/KPAa5XXyDJ5dbdf8Yxn71CT1YQQqupoh5GxgEHkMSLzWUSm6tdsFX
-	GGSzkqgYYcy1W7B/53eec/Kjxl3JYJwhz4HKmkBrqc3EtXO5toow79TAA7m1Gw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1734123766;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vpZjK133TngO0jA+6keLNSvsqYq2SYpMRve43G8kCZA=;
-	b=VTuB/OCPaTdwHfDfhtVcqj32/mJ37mbJliaiDCti37xe9Sjnhir3lm+hDy7sTcanK+OjSb
-	T36wv3KehnRg9sCg==
-From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cache] x86/resctrl: Use kthread_run_on_cpu()
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240807160228.26206-3-frederic@kernel.org>
-References: <20240807160228.26206-3-frederic@kernel.org>
+	s=arc-20240116; t=1734123874; c=relaxed/simple;
+	bh=ktN2a6Agsngw/a+xvIA2bOuppFEVJpLgXXt40yJ+gIw=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=K35Bm1vvZ4JrF/fEXth+N3E7ZU1wTYCESVJLcoS+gZu5mf5hSHT2rWBgNoKDicc2qe3BNjPsQkYpHQO1u/E2saycoF8BDFnB1CMB3R+FjnNS36fn9PuoVkA6cax0kHbdCgqeJRNkhZDp4KNPwqCiaGqLkvRKiXZnSNoMoRoAjpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zkrU6ylR; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e3c7d56aa74so2979997276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:04:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734123872; x=1734728672; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tU6TjW1pINueKv07ctCyQz1WMBPnAwz6m5Ynu7ivTdM=;
+        b=zkrU6ylRXmSwxynkNeWKSy33cIuHvaRv30IcSnxHGwKlkzwJJvq1aGl287cO0LmIDq
+         +5nD5c7mKKMfzuKUAbjPfACWkoPY4M9JiEQa9j62T0MsUAllO01+RMjhcJY8Ayg/X8+9
+         98IRSMzHbs7Pkg9o0jr6X0ClEzjmL6pekczVQbPRXgIgc/PtXKUIUkR9KBo86mEh7cs0
+         qeWqjNDYc3xf4BJQsLakT08j8HJ0Esqq8+y1nIhoeSjHJS0g7IKg4f9gV6PAqdsHkPTZ
+         9ZhLe8gHPEKnT2Nn8kQr74w71vGM2P+xdl7t30fspblAaonOfQgeRAG74vYk7VE1XsEU
+         CyjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734123872; x=1734728672;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tU6TjW1pINueKv07ctCyQz1WMBPnAwz6m5Ynu7ivTdM=;
+        b=E+jpSlz2fEHCyxH0T4ooWEErok75/PwXWfYc7OFigNRtibr8eCBd37kgHlQyoyPTT5
+         V5OZQ35CUM6nVOh+IjgFts7j1jr90DVUxrR0FH6TaEiEo3wDi3XzX1d2+JxhZbO+VB8d
+         67+2RE+RI7HruMjYGjchIld6UyJjILjjBagSry+wVmdHkL9fc2rfFmOpFi/3Dm3spaAA
+         55PNjAdxRyOcsLbcwxLNtSZ9cj1PMG7E5hofyC08hpulE6HhmZ/TlBqGEzC3KhHC2uK9
+         q1j1H5g08Txe474gnnPVWX6bFipk29f6ne4NsFIhDJjewtN6Qq8anUMvOH6nKNnnabDx
+         qIBw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7aQbpeClWwVQxdKkg1GrR2pLvYABVcLQUTdiAv+XoBH/rWfT6qw60CtsE/2N7Wd9Zwa1qCRtCYtJuQNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPBa/lnAJ3oK/ea2di4ObQvdant7l0jf1+flBpdmX0QvE8j0iu
+	SPTWto+Xtq24u3ySCCyQpcIsApRBg0EHpXeetGNwiS1D+dAw04FSvq1PQhstUM5wn9hy64ytgdY
+	OGRhU3Q==
+X-Google-Smtp-Source: AGHT+IFkvmSk/8zglmDMq3J8SstOLsQKaXaNT3TY3/2pxe5wQCgKWjNVTmqP5xMQZVU2n3XHkgLGtFZCAfyU
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:9a50:5183:644a:3472])
+ (user=irogers job=sendgmr) by 2002:a25:d6d1:0:b0:e3c:9f2c:7083 with SMTP id
+ 3f1490d57ef6-e4348d26e95mr4367276.1.1734123871815; Fri, 13 Dec 2024 13:04:31
+ -0800 (PST)
+Date: Fri, 13 Dec 2024 13:04:17 -0800
+Message-Id: <20241213210425.526512-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <173412376503.412.2725711598101418834.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
+Subject: [PATCH v1 0/8] Various fixes around undefined behavior
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Wei Yang <richard.weiyang@gmail.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Ze Gao <zegao2021@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following commit has been merged into the x86/cache branch of tip:
+Fix various undefined behavior issues, improve tests to make them
+easier to diagnose and add assertions so that problems don't recur.
 
-Commit-ID:     135eef38d7e081303fd9cdb982b37fcad32f9be0
-Gitweb:        https://git.kernel.org/tip/135eef38d7e081303fd9cdb982b37fcad32f9be0
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Wed, 07 Aug 2024 18:02:08 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 09 Dec 2024 20:19:48 +01:00
+Ian Rogers (8):
+  perf disasm: Avoid undefined behavior in incrementing NULL
+  perf test trace_btf_enum: Skip if permissions are insufficient
+  tools headers: Update offsetof and container_of
+  perf evsel: Avoid container_of on a NULL leader
+  tools headers: Add non-NULL assert to container_of
+  perf maps: Avoid UB passing NULL to bsearch
+  perf test shell lock_contention: Extra debug diagnostics
+  libperf event: Ensure tracing data is multiple of 8 sized
 
-x86/resctrl: Use kthread_run_on_cpu()
+ tools/include/linux/kernel.h              | 16 ++++++++++------
+ tools/lib/perf/include/perf/event.h       |  1 +
+ tools/perf/tests/shell/lock_contention.sh |  9 +++++++--
+ tools/perf/tests/shell/trace_btf_enum.sh  | 11 +++++++++++
+ tools/perf/util/disasm.c                  |  7 +++++--
+ tools/perf/util/evsel.c                   |  2 ++
+ tools/perf/util/maps.c                    |  9 ++++++---
+ 7 files changed, 42 insertions(+), 13 deletions(-)
 
-Use the proper API instead of open coding it.
+-- 
+2.47.1.613.gc27f4b7a9f-goog
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Acked-by: Reinette Chatre <reinette.chatre@intel.com>
-Link: https://lore.kernel.org/r/20240807160228.26206-3-frederic@kernel.org
----
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 28 ++++++----------------
- 1 file changed, 8 insertions(+), 20 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 972e6b6..6c60c16 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -1205,20 +1205,14 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
- 	plr->cpu = cpu;
- 
- 	if (sel == 1)
--		thread = kthread_create_on_node(measure_cycles_lat_fn, plr,
--						cpu_to_node(cpu),
--						"pseudo_lock_measure/%u",
--						cpu);
-+		thread = kthread_run_on_cpu(measure_cycles_lat_fn, plr,
-+					    cpu, "pseudo_lock_measure/%u");
- 	else if (sel == 2)
--		thread = kthread_create_on_node(measure_l2_residency, plr,
--						cpu_to_node(cpu),
--						"pseudo_lock_measure/%u",
--						cpu);
-+		thread = kthread_run_on_cpu(measure_l2_residency, plr,
-+					    cpu, "pseudo_lock_measure/%u");
- 	else if (sel == 3)
--		thread = kthread_create_on_node(measure_l3_residency, plr,
--						cpu_to_node(cpu),
--						"pseudo_lock_measure/%u",
--						cpu);
-+		thread = kthread_run_on_cpu(measure_l3_residency, plr,
-+					    cpu, "pseudo_lock_measure/%u");
- 	else
- 		goto out;
- 
-@@ -1226,8 +1220,6 @@ static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp, int sel)
- 		ret = PTR_ERR(thread);
- 		goto out;
- 	}
--	kthread_bind(thread, cpu);
--	wake_up_process(thread);
- 
- 	ret = wait_event_interruptible(plr->lock_thread_wq,
- 				       plr->thread_done == 1);
-@@ -1315,18 +1307,14 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
- 
- 	plr->thread_done = 0;
- 
--	thread = kthread_create_on_node(pseudo_lock_fn, rdtgrp,
--					cpu_to_node(plr->cpu),
--					"pseudo_lock/%u", plr->cpu);
-+	thread = kthread_run_on_cpu(pseudo_lock_fn, rdtgrp,
-+				    plr->cpu, "pseudo_lock/%u");
- 	if (IS_ERR(thread)) {
- 		ret = PTR_ERR(thread);
- 		rdt_last_cmd_printf("Locking thread returned error %d\n", ret);
- 		goto out_cstates;
- 	}
- 
--	kthread_bind(thread, plr->cpu);
--	wake_up_process(thread);
--
- 	ret = wait_event_interruptible(plr->lock_thread_wq,
- 				       plr->thread_done == 1);
- 	if (ret < 0) {
 
