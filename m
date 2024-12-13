@@ -1,232 +1,248 @@
-Return-Path: <linux-kernel+bounces-444591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 427229F092A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:10:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA0F169C9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:10:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA09B1B415A;
-	Fri, 13 Dec 2024 10:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dwOVvD+Y"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2046.outbound.protection.outlook.com [40.107.220.46])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BED9F092C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:11:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D101AE850;
-	Fri, 13 Dec 2024 10:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734084625; cv=fail; b=HMDmjmvf2xWoVnuBDBZ+gWtU8AFg4IthhYM6xKJ+d+h+QfvmKqmLBlq9N4UD7k4YSSkrT0cEBmlXJJugzCML5lE87QrK2HE4A9ZcPaofTsQwfuhFvlYcNdTL7S2l6xBtuPiWJSnFWHJGDyiHiRGIquTqs7SH3LhRXYRuyqvOP2U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734084625; c=relaxed/simple;
-	bh=NcmW99C8J8lEmUoekHa5pEjyxKSF7MrfGy6VV/Hn86M=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MPwjrV0vISFk3zDduv+m+eMQaOTXmEYndbY8z5+G+jofy1L9guxTlmrK/B1F5WUVDyE7XTG+oLCrI1Itbi9M8FuhyR4ii/X4kFN2VioX7zdzZbiwAb/EZeNxDvuGA/kAwBmkprfbkQT6nrrnl4lajKlSXUauY4GeBZWp9q2ZcCY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dwOVvD+Y; arc=fail smtp.client-ip=40.107.220.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r5sIsKNpA3WRGkigAVZxLV0yCKPYCJTKOC9uRf7h8PcdWXDZISRklwXqcmk/v87/++KaeI/DSSdzaUwoYyV7RqtFrIX/w/iEI3N402bZduZkM0MUcnfPfIfhvMQhPRtq5VEH3bPLoVqqwa+7eFjz25msPX3phDfMQ7A4EopRY+hbyZBF6OZlXy+AwhOfkiR6+M4Pgo8rGjnEudmW1gmYaNqC27aGuBpfu/a1pLA282zijacxNgRnjTEkOW9m/Ji8SM1DDXXqrnnpAo5o3ZGFw/OIxhhJYGDokrXPVnf79sv3wFDgzxKqx/0fHBxH8l3rT87GsZHvgOGE+SPYsKFt2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4hzIwXSKXSNNd5n7Q0BDoD5rGLAyeyGjiHUfCUuq7mM=;
- b=gdg2KoAFHdbTl1M50RQxmaHYepOJ6q68BvcKEg7jvyfvL3R3TeRq/+nVUQYSwgavuKj6v5p0lTItxTV54FsnG4VUHz0V9UPTr0IJcFZQKDicELYUnLfSkMrTenBhbV/QGTj7WH3e+HCzV/iFNtSh73rvErKp/8yezu95GFLOOj+wRNejRzePzWMzNuSTTo5QLGQ0jFb+wU7iQme7y/ByYtvxHve9WE7FEwInYK4PCsdzY9XYaYk/XxnBZagFzCcg3s88HC+OiCiC243db355maN4SMHgjQIdIt4sFsiYNDDI5OtnpZChOsKC6tNuIHtrC1Pu/lsyJuizc1agwZXPcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4hzIwXSKXSNNd5n7Q0BDoD5rGLAyeyGjiHUfCUuq7mM=;
- b=dwOVvD+YDgp5cBTRL9GwhBt1n5JVU/u7hDM7BgSYRUdtldUxE67OZ2GiwPC+t+L4XdVQSjSTmeFC8HWJ4i06oBGjP+luk0IisoRqjvOY5X5EfRyfydlS/38ibvA2cl5OIpzopm4JmhddyyCrIH/Xgzwp6XATj1i9yQ+304+Pieh/eveMyNz8p7LQXBiM0ZbiW7iPlIR/Mb69lX5cPcsqfs4Q87r5JzWG8kh1cJb+Rm7QKKPjyGCif2/M6RhFPaekH8OyfmDkl6wAdPO0J+jAxcdTb2l0bfWMTTiYYvUKBWDQ99PbLovMcRzE13UfLMLE/DhX1NVjKPVae3VB7FIEdA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by PH7PR12MB7259.namprd12.prod.outlook.com (2603:10b6:510:207::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.14; Fri, 13 Dec
- 2024 10:10:22 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%2]) with mapi id 15.20.8230.016; Fri, 13 Dec 2024
- 10:10:22 +0000
-Message-ID: <7a8d6211-c006-40c7-ab44-0ec39b958bb9@nvidia.com>
-Date: Fri, 13 Dec 2024 10:10:14 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12 000/466] 6.12.5-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20241212144306.641051666@linuxfoundation.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20241212144306.641051666@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0187.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a::31) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CAFC283943
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:11:15 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2171B4155;
+	Fri, 13 Dec 2024 10:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="Jc5qThbK"
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351F618BBAC
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734084671; cv=none; b=VVWvpV9ouyD6niBjZsGdauVjle+iI7iO7ii7x2tr1L2D0zapSY5zMb/xTTjIpDVrXm0PhxlcNR9DvSoP7vauOdn6+axzkOVe70CRn4D1Lj+hjtcL1ZjyntayAEoqzvXyRKXunEZ4GR0igmZwLlX8YnwJKbWq2zQFjw3j3+ZIwFM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734084671; c=relaxed/simple;
+	bh=HSmqBvg2uJ6E8qwbF/B1PNF8UDQ14sxEkx7Jb98zX0k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qyd8mKDK5clG8hOE5v0ABhtO9p+Q5Ugmq9Mg0lndXk4y9c6BxgAGGKYnEMyf4UYM9Ar8OjOLD5TOhnmq+5uze10bTcPWTsxO6bVEDEZuC5VEl95OK+gpRLWbMT0tPqEoGK9/OvtqLUAqZ1y1wuFwsj/T+3kw4VGyRw83FxfpQUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=Jc5qThbK; arc=none smtp.client-ip=78.40.148.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap5-20230908; h=Sender:MIME-Version:
+	Content-Transfer-Encoding:Content-Type:References:In-Reply-To:Date:Cc:To:From
+	:Subject:Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1Gfc+Vrkvd26LKiAmo+TSFm/0LbQBumrfRatOY3carY=; b=Jc5qThbKUnnSg46he/CMIrPw8/
+	vZKE5Uye0YTYs8jsNR2sfAlO9tiFy8l6YHvzdPVbHDdzznkxU8mkRnldgaVA4XhaLjG51sP9hVJf3
+	+upyRQp0UaBvVkiWlDu8koypheYS4IoXe9kzJ6fyDPRQ/bw+2eDB6GErapwvAaixGW3ZxeAhK7+Z3
+	6+7HRkykIouA3OHfIpPFg31JFoLLzoYEAUOYcOdKgt55D7oqjtQZEC/BAPXfmpi1j7PGsC/2FbVUy
+	s/OErIuDTAy+TLZiZmpErduJ57YsoKHeMBWWYYX2jVI4kByPsRnuPaeIkHwzcyRLWSdLvb+xRlNIe
+	dbNqyImg==;
+Received: from [167.98.27.226] (helo=[10.17.3.146])
+	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1tM2dE-005wW3-EP; Fri, 13 Dec 2024 10:10:48 +0000
+Message-ID: <d047756f075be40dd4e5ed0e2c8a5fd7d5f66736.camel@codethink.co.uk>
+Subject: Re: [PATCH 1/2] sched/dlserver: flag to represent active status of
+ dlserver
+From: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+To: "Vineeth Pillai (Google)" <vineeth@bitbyteword.org>, Peter Zijlstra
+	 <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>,  Joel Fernandes <joel@joelfernandes.org>,
+ shraash@google.com, i.maximets@ovn.org, LKML <linux-kernel@vger.kernel.org>
+Date: Fri, 13 Dec 2024 11:10:47 +0100
+In-Reply-To: <20241213032244.877029-1-vineeth@bitbyteword.org>
+References: <20241213032244.877029-1-vineeth@bitbyteword.org>
+Organization: Codethink
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH7PR12MB7259:EE_
-X-MS-Office365-Filtering-Correlation-Id: b86ecffc-0c12-405e-3414-08dd1b5e5a9e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QVFKcVI5NzNmRFVqR1FVY1J4U05TL2VmVE9NYmNqT1RSblY0Z1dHMGx0dFd3?=
- =?utf-8?B?ZkFJT05XV3RUVkg2Rjl5aVNMKzdKY1pNUHRJZkxKM005Sm5xdXoydHEya2M5?=
- =?utf-8?B?d0tHc0owbDFXVitoLzhybjVxdGZlelFCbDBienowdk1oVy9EeVlMWkVQK0Yz?=
- =?utf-8?B?ZGJkUkFHYmkwNUs2NFdYSDVxcjdQTE9GODkzUzRsQXFXZWpZRS83MllPVCtk?=
- =?utf-8?B?Z0JvNDNjTFluVlZETHh3YmwrVkxBN1RCc1lNV2hlTjJSdklEZWdWU0RHSGVP?=
- =?utf-8?B?d1VkYjZFRTNDWkFsaW1ycFlxaW1zbWpDWTFUOGRPZVlWUTVQcUJaczd1Qkdt?=
- =?utf-8?B?Sy9jLzhmR1VkZElTRThJWHpYMXpURHJudjl3aE14RHRIWjFuZ1hHOU9hUkFH?=
- =?utf-8?B?SjBtYjV3eHdHVGNHRFpKMkk5STUxZHZFMGduZVZLL0RqTEVkYmFsY3E3ZTVF?=
- =?utf-8?B?TlNkVjFVb2c0OVB0VWMzVytZL3BrYThRZEk1bW1IblVoSS9MT1JURlE1K2hU?=
- =?utf-8?B?TTVQa25QLy82K25hR3JIdXV3a0taa1o0TG05ZHpzeVROb3Y4YjR2MUg3SU9i?=
- =?utf-8?B?TUphMzBNR0dIelB4eVVYajZSRENGcUtQWjhzSDZubCtBeU1sZjA2UnZNQkFY?=
- =?utf-8?B?T01vVThCZDRZVWZwQjJJMVBjR3hLUzdadHJUaXp0bVJDZ2wxRy9nOE0zM2hZ?=
- =?utf-8?B?UXU0QWVFaVByb3FVOHl3WHpmcUQ4Zk1jM1dtQlFFZG5BWElEODRuNFVQK3FF?=
- =?utf-8?B?d09xRDFsTzR4MlY2YU81WUJrSHFhb1c3WHdSaGVTaUxjZXZSVmpEci96c2Y2?=
- =?utf-8?B?K2pwVmNQdXE3eG1Ia0xxaVNaQ09wWnpiOEpXVjAzWCthMFM5WXZMQ1ZERzVU?=
- =?utf-8?B?dGlXMjhkdzJyMTFYYitSdW5rN0FHM3AydTF0czNmbUUyWkxLNHpHNE9KUjVo?=
- =?utf-8?B?TmdKRklLbllVNkNCVDJ0WjAwTEs1ZlgxUXVBcTJBVmI5ekdsdEpCTEZXZzUw?=
- =?utf-8?B?RFRxSStNWVJ0TU1JQmJjK0UvY2JKcndGOHNDUjNrOWZvU2k2d1dLdVBkOGwx?=
- =?utf-8?B?dzVHSDZjdWR6UGc3MzN4WlIxWDFlMVQzd3lhZUtIY3BLOVpRSzVLMVV2WnlZ?=
- =?utf-8?B?YnhnV0FxWE9qcTZ6VUIzWlpERjNWK0lxK3ZUcm1EL1FldGd0MVRiOU5KKzVP?=
- =?utf-8?B?cUFaQXF2azhSL0hsWW9EYTF4SEc1dWc0WlBvSS9LdzYzZmR1ZmZNV0grMEh2?=
- =?utf-8?B?Y0NocjBIbSt5a0ovOFNOZzlKMm9MQlY3ODF1QjVCOEYrTlN2Ulp3MWRacGdp?=
- =?utf-8?B?MHZudTZxcCsvRXpNUU1OMzNpc1JzMTJYbjBISzQwdjRkNjhDNUFibUpzUytj?=
- =?utf-8?B?MnZOOE1PY3JjWHVLdWV5UGpyUlVyejRhTDA4MEJhclFaQTRiVGx5MFJSSldM?=
- =?utf-8?B?NlpPLzNPTFg1bnhXN1Zvd3pKTzRQVUhXeCtGZWxxWGgrK0k2d2lsRDRZZGdx?=
- =?utf-8?B?RSt0UStVcmFJOEdyRXBBYlV4R2dMdzVYVWVUVTZsMzNsVlJJcEs2Z2hMSXZ3?=
- =?utf-8?B?c2VFeXc3YlUvUmFVKzNNa0xueXZvY0M2QXY5YlJFcmlobzVZM2EvWTlZa1dX?=
- =?utf-8?B?b0tHWUprbmwxMnBQWGM1M0lyQW8yc3JselBPcU9Tc1ZIb0ZGWTgvaWthREZw?=
- =?utf-8?B?SVdjaWJDSkRzTTVRa01sV2hvQWtwTjRlNmMySURuYzV2aStOTzlSVFlEeXlG?=
- =?utf-8?B?eXkrOVhiT1FXVTNEWmVINUFLVUVRcllnN0M5K1RHSFNkMWdUVTk0QldFWWFM?=
- =?utf-8?Q?27amKYqlqm+bXzO6NfY6/MtzGkF2N6hMnw8ss=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aVBWY21uaWZJSGY4UFhYR1FWdWQ0VnFveUE3QW9RbUZ5MFZzRnFLZHA1cFFS?=
- =?utf-8?B?Q1kxS1FYMDI1RVQ2SnBCMiswaWR0Z3dTWWt3WmNHc1B2bHpaam50NXk1Zi9W?=
- =?utf-8?B?eVNrZllZOFNhV2N3Nm43cGc2Tm5Ma1ZSTnV2Y25tRjYyWHBHYlFUeE1pK0l2?=
- =?utf-8?B?Zml6Y25oT0tnTmhnUCt0N1o1MTgzU1d2ZzlVZ251VC9KK0xPdjNvTlJoOWhR?=
- =?utf-8?B?ckc1dng4dEhjdTZsTlM4Q0tEb0FvZnk0cExYRFlsYm04T0NDN0RudlB1dVFK?=
- =?utf-8?B?UnpvTjNzazU3a1lVWUlTTGozbGk0MXVQeS96TmFuaXV3c0l6M1RtL3ZKTnpE?=
- =?utf-8?B?R1l0dHJDdDI1ZTFoZlV2dGVNbWNrN3dtUVNTc0l1YThyaVMvRXRVZjArMHdu?=
- =?utf-8?B?eTBIRlFzVDlIY3l6ejJNc0xESWc1NUJEYVVFenh6ZDRQNzB3TCt5RnJQWFZT?=
- =?utf-8?B?NTluQUNITUJ5VEpjT2lYNXEzRjNOWFB5VjQxd3IvVVlnakxKREk2SnRMa01n?=
- =?utf-8?B?T0VpdXRTQW0vVkhLMGxUQ2RmQ1RMaUkzY1YzM1Z6ZTNrOWZxQzNFNnFEL1dt?=
- =?utf-8?B?aXlBWGlBQUk4Zm1aQnBaUnVzUUhHM2RPTUJQYjVnNVd1OVFFaEF0ZTB0NDdP?=
- =?utf-8?B?K01TZzBZOTkxVkpjeHluWUZyUWZqeFBwNXM1anFacFlCS1BoSU5Sd0luMzRt?=
- =?utf-8?B?VUhyc0ZBUmZjbmNjNlB1SjVCTFVMQXJJNmJ1Wnd3dTN0U2RVWVZxbUdPUkI0?=
- =?utf-8?B?Z01EOXN5UmYrVkpEZ2xYZzJ4NURFZ1ZPMXhpd1ZRU1Fwbml1ZnhtVUNZRmdD?=
- =?utf-8?B?M2JjK05IOUxFKzFjbVBZWlJGdCttMjRwS2hYamxvOVl1ellyaGNZYWtiWExH?=
- =?utf-8?B?ZWRaSUlEbFp1OEFETXRhdVVhL00rSnhTeXhnaUxOZld5NHlRRGNHRmNpSVJM?=
- =?utf-8?B?VnpPbVEzS1RhWnUxaFpDODdENU9iU1lvSklzbmZHcWRNQVJYNVdSbDJZZmNV?=
- =?utf-8?B?bGR3WUJGaWJBM1grTUhVNnVPNWVaWXIrL1pMVUxCd042RjZJT2VtRjRPdmU2?=
- =?utf-8?B?NGE1MXAya3ByaksxN280SUhlZE5FejBEb3B6ZFQ5cWs0TjB4bGZRNVZrWm5l?=
- =?utf-8?B?QlpoUG9vV0FzdEpmWUdwU0RBZDJYQUNSRVoxL1FJWXl4YzNjTHNtOXZ6NWJB?=
- =?utf-8?B?NmQrcERiOHlzandwVkFSNnFyZUhmaXdCWmFaTGhRYjgwZmtRUW5TRWZwMWJX?=
- =?utf-8?B?NkZIQ2p1ZXhYZlJZWG15WE00bEJWVGJYYkw1R082UWJJbmhaRktiS09XYWVa?=
- =?utf-8?B?d0dWeWFjcDlBZGVLa0Z2ektBVHdwRnJVbmVCM0M4V0daUEZpTVdyNiswUk1E?=
- =?utf-8?B?ZGpSdEtkNk9QQTUwbkNFZmUzSVpySGUxdGU0RDJFbW1DZWlCZUZPNnU1djVO?=
- =?utf-8?B?cWJCWjJ2YnBNbzRKK0dLNllMRXhUT0pFZUdzNjZkYnZyQjVVNnNzL2JCWWlW?=
- =?utf-8?B?SWhCRjE0UUxXdzZHVUo4SWdUaUxKd0FiYnlIZjhwVXdlaDAvWlNhdm4yTEFN?=
- =?utf-8?B?NmVUd3Rtc0YzbjRTN25TS2UxRVR2RzBXWWN0Y2U1RGdsRkZ0bFZBS1VPQnV6?=
- =?utf-8?B?SGV2VGNhZXRGU3M4MFhzWW1NMGJoa2VQMFk2OW0vaDk3c2xNSkZVdVp2Z2RV?=
- =?utf-8?B?SmNoT3RHb0hDMFF1YmlzNVRvRERZeGVWcnA5eUxUdzFiVFZXazZmVGxrQmN1?=
- =?utf-8?B?SCs5S0gxb2xFODlMa3YwWHduMWRid20xQy9wdVFFa1liRGM5NDQ4dHNFWGVP?=
- =?utf-8?B?YjY2WDZBVzBGR1JycmVwM3lSakxVT1h2by83Z2RuQ2xTN3F5VUUweHFGWEdB?=
- =?utf-8?B?TDRJTFlrcDQrOU1ST3IyMWd2RjgvUEk3R0wwbXQydWdiVE13UHN6bDc4Ri9m?=
- =?utf-8?B?Mk5ERTV5VHh4K01QS3dnNmQ2cTBqQjR6K1Z6YVVZQTY1czkwV1VWcXZGanNT?=
- =?utf-8?B?NFFucWNCS3NQOG9EUTJoQmpwS0FMeUpHQXhYUHozODZOT0tyYUR6VDFLNlBp?=
- =?utf-8?B?emVoVmZSWDVEREQxTlpTVGZLV0RUU1VncXRpOG5xYjEvbVl0UkNCNHFscE1n?=
- =?utf-8?B?TzR3TUlUaHlsZGNBUnNWTVpQcjVKcHMvaldRS201OWNGRnBFM1ZUSGx5QVY0?=
- =?utf-8?Q?4YZJZGQPpAeCw2Phh1KUWC7175y0GyzX93EAYiL9DQoD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b86ecffc-0c12-405e-3414-08dd1b5e5a9e
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 10:10:21.9939
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pYrHZJtzrZHCOzlQeFmXDkRs6iISYKtYtT15GFounphHyYjBN8F9zR1FGMzzC/u3BUxnZ9kTok5mNnH2MhpCpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7259
+Sender: marcel.ziswiler@codethink.co.uk
 
+Thank you very much, Vineeth
 
-On 12/12/2024 14:52, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.5 release.
-> There are 466 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Thu, 2024-12-12 at 22:22 -0500, Vineeth Pillai (Google) wrote:
+> dlserver can get dequeued during a dlserver pick_task due to the delayed
+> deueue feature and this can lead to issues with dlserver logic as it
+> still thinks that dlserver is on the runqueue. The dlserver throttling
+> and replenish logic gets confused and can lead to double enqueue of
+> dlserver.
+>=20
+> Double enqueue of dlserver could happend due to couple of reasons:
+>=20
+> Case 1
+> ------
+>=20
+> Delayed dequeue feature[1] can cause dlserver being stopped during a
+> pick initiated by dlserver:
+> =C2=A0 __pick_next_task
+> =C2=A0=C2=A0 pick_task_dl -> server_pick_task
+> =C2=A0=C2=A0=C2=A0 pick_task_fair
+> =C2=A0=C2=A0=C2=A0=C2=A0 pick_next_entity (if (sched_delayed))
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dequeue_entities
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dl_server_stop
+>=20
+> server_pick_task goes ahead with update_curr_dl_se without knowing that
+> dlserver is dequeued and this confuses the logic and may lead to
+> unintended enqueue while the server is stopped.
+>=20
+> Case 2
+> ------
+> A race condition between a task dequeue on one cpu and same task's enqueu=
+e
+> on this cpu by a remote cpu while the lock is released causing dlserver
+> double enqueue.
+>=20
+> One cpu would be in the schedule() and releasing RQ-lock:
+>=20
+> current->state =3D TASK_INTERRUPTIBLE();
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 schedule();
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 deactivate_task()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dl_sto=
+p_server();
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pick_next_task()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pick_n=
+ext_task_fair()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 sched_balance_newidle()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 rq_unlock(this_rq)
+>=20
+> at which point another CPU can take our RQ-lock and do:
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 try_to_wake_up()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ttwu_queue()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rq_loc=
+k()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 activa=
+te_task()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 dl_server_start() --> first enqueue
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wakeup=
+_preempt() :=3D check_preempt_wakeup_fair()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 update_curr()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 update_curr_task()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (current->dl_server)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dl_server_update()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enqueue_dl_entity() =
+--> second enqueue
+>=20
+> This bug was not apparent as the enqueue in dl_server_start doesn't
+> usually happen because of the defer logic. But as a side effect of the
+> first case(dequeue during dlserver pick), dl_throttled and dl_yield will
+> be set and this causes the time accounting of dlserver to messup and
+> then leading to a enqueue in dl_server_start.
+>=20
+> Have an explicit flag representing the status of dlserver to avoid the
+> confusion. This is set in dl_server_start and reset in dlserver_stop.
+>=20
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Vineeth Pillai (Google) <vineeth@bitbyteword.org>
 
+Tested-by: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk> # ROCK 5B
 
-No new regressions for Tegra ...
+> ---
+> =C2=A0include/linux/sched.h=C2=A0=C2=A0 | 7 +++++++
+> =C2=A0kernel/sched/deadline.c | 8 ++++++--
+> =C2=A0kernel/sched/sched.h=C2=A0=C2=A0=C2=A0 | 5 +++++
+> =C2=A03 files changed, 18 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index d380bffee2ef..66b311fbd5d6 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -656,6 +656,12 @@ struct sched_dl_entity {
+> =C2=A0	 * @dl_defer_armed tells if the deferrable server is waiting
+> =C2=A0	 * for the replenishment timer to activate it.
+> =C2=A0	 *
+> +	 * @dl_server_active tells if the dlserver is active(started).
+> +	 * dlserver is started on first cfs enqueue on an idle runqueue
+> +	 * and is stopped when a dequeue results in 0 cfs tasks on the
+> +	 * runqueue. In other words, dlserver is active only when cpu's
+> +	 * runqueue has atleast one cfs task.
+> +	 *
+> =C2=A0	 * @dl_defer_running tells if the deferrable server is actually
+> =C2=A0	 * running, skipping the defer phase.
+> =C2=A0	 */
+> @@ -664,6 +670,7 @@ struct sched_dl_entity {
+> =C2=A0	unsigned int			dl_non_contending : 1;
+> =C2=A0	unsigned int			dl_overrun	=C2=A0 : 1;
+> =C2=A0	unsigned int			dl_server=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 : 1;
+> +	unsigned int			dl_server_active=C2=A0 : 1;
+> =C2=A0	unsigned int			dl_defer	=C2=A0 : 1;
+> =C2=A0	unsigned int			dl_defer_armed	=C2=A0 : 1;
+> =C2=A0	unsigned int			dl_defer_running=C2=A0 : 1;
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 33b4646f8b24..0abf14ac5ca7 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -1667,6 +1667,7 @@ void dl_server_start(struct sched_dl_entity *dl_se)
+> =C2=A0	if (!dl_se->dl_runtime)
+> =C2=A0		return;
+> =C2=A0
+> +	dl_se->dl_server_active =3D 1;
+> =C2=A0	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
+> =C2=A0	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->cur=
+r->dl))
+> =C2=A0		resched_curr(dl_se->rq);
+> @@ -1681,6 +1682,7 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
+> =C2=A0	hrtimer_try_to_cancel(&dl_se->dl_timer);
+> =C2=A0	dl_se->dl_defer_armed =3D 0;
+> =C2=A0	dl_se->dl_throttled =3D 0;
+> +	dl_se->dl_server_active =3D 0;
+> =C2=A0}
+> =C2=A0
+> =C2=A0void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+> @@ -2435,8 +2437,10 @@ static struct task_struct *__pick_task_dl(struct r=
+q *rq)
+> =C2=A0	if (dl_server(dl_se)) {
+> =C2=A0		p =3D dl_se->server_pick_task(dl_se);
+> =C2=A0		if (!p) {
+> -			dl_se->dl_yielded =3D 1;
+> -			update_curr_dl_se(rq, dl_se, 0);
+> +			if (dl_server_active(dl_se)) {
+> +				dl_se->dl_yielded =3D 1;
+> +				update_curr_dl_se(rq, dl_se, 0);
+> +			}
+> =C2=A0			goto again;
+> =C2=A0		}
+> =C2=A0		rq->dl_server =3D dl_se;
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index aef716c41edb..65fa64845d9f 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -398,6 +398,11 @@ extern void __dl_server_attach_root(struct sched_dl_=
+entity *dl_se, struct rq *rq
+> =C2=A0extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
+> =C2=A0		=C2=A0=C2=A0=C2=A0 u64 runtime, u64 period, bool init);
+> =C2=A0
+> +static inline bool dl_server_active(struct sched_dl_entity *dl_se)
+> +{
+> +	return dl_se->dl_server_active;
+> +}
+> +
+> =C2=A0#ifdef CONFIG_CGROUP_SCHED
+> =C2=A0
+> =C2=A0extern struct list_head task_groups;
 
-Test results for stable-v6.12:
-     10 builds:	10 pass, 0 fail
-     26 boots:	26 pass, 0 fail
-     116 tests:	115 pass, 1 fail
+Cheers
 
-Linux version:	6.12.5-rc1-g3f47dc0fd5b1
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                 tegra20-ventana, tegra210-p2371-2180,
-                 tegra210-p3450-0000, tegra30-cardhu-a04
-
-Test failures:	tegra186-p2771-0000: cpufreq
-
-Tegra186 tests are failing randomly but there is a fix now in the 
-mainline ...
-
-4c49f38e20a5 ("net: stmmac: fix TSO DMA API usage causing oops")
-
-Let me know if you want me to send a separate request to include in this 
-in stable.
-
-Otherwise ...
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks
-Jon
-
--- 
-nvpublic
-
+Marcel
 
