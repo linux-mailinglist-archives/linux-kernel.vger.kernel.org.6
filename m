@@ -1,87 +1,124 @@
-Return-Path: <linux-kernel+bounces-445175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8753D9F1254
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:37:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0379F1256
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A879188E2DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08CF2188C17A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6B91E0B7C;
-	Fri, 13 Dec 2024 16:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AD117A597;
+	Fri, 13 Dec 2024 16:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGomBkdf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="vkCS8yNk"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A06F152E1C;
-	Fri, 13 Dec 2024 16:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A315815573A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734107690; cv=none; b=bIERiJpZkple5X/o+mnzMJbr5ZDWW2Ex5M50KO5XbEkumIeT0J4fXIvf6ZzkoJ5wUzZCDsovzSqY3Yy2WivfYG59IxjmpIXiYEqdY2tuezzSNF5cTcxXh4XQBto8kCIk1pS38omFAOyhQFoXJ9SXlraDpj0Zz7Q4f82m4ZHxxh0=
+	t=1734107786; cv=none; b=lXHXAMCNKylw0r0BfObcfiTzDx1QHkB04KSa/hgOtoB21aKsqkTR5X6UvGpp07cyCEa8qjFI7iRVLY0OBnGw3Zcl+Tbqn8RiidsHcxcUnFe5RAxAcw67dUoH2vBmM4utnTJrCmvJsioP0LEyYpZhUQrsaJlOqcYk8XFk/iTEQ2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734107690; c=relaxed/simple;
-	bh=h5uR+V6aT4xqNDEvXbYnQpD1uS9tYIfFD+uu9x2KuVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ToY30mWgdsn4g8Bi5fopCozeT9tq47wzy8KLk3JzQh/ksT4V0gqwPHzXb2zRyXzusALt5rHbFJqJ09rJN2z900Tzvkd9Wi2n1mAj8g8gfUZBognGtF7PynRHrvyc7f32YqiR3+ZI0MJCc2tsRae7KPWMIlD2oET3nwzwFm/5XRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGomBkdf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81806C4CED0;
-	Fri, 13 Dec 2024 16:34:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734107689;
-	bh=h5uR+V6aT4xqNDEvXbYnQpD1uS9tYIfFD+uu9x2KuVc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XGomBkdfvZXMMPftkqYJAhvB1Fut8BPCwtzKETtQVXHozuT8nFL44emXukMlYqOiK
-	 DOW5F0WQoAZjzRdCaN6X/Jil6fjOB95Xwt7Fm+8Q2qUjyRzoOiDxX1Uhq5T66xHBJc
-	 gIdphaCNSmdDrYt7jaZ5rgSAaJupymPERC0PC09a+nlln+wIKgiOIJfvlTqFfEzwz1
-	 wRM3HTj4E0BOihEvJC4K3G2B7rj1VQneL8ToEd/v7zCwRf0sBFibPxdQON+Pl9SbRz
-	 9XMtvl4w8P4kUoEJv9PgLWRBoAfazU3/f9cDf8ueItqGVYkMqxksPmQKO2RyYgYE02
-	 BlYh0Wo7cfV5A==
-Date: Fri, 13 Dec 2024 16:34:45 +0000
-From: Lee Jones <lee@kernel.org>
-To: Jakob Riepler <jakob.riepler@chaosfield.at>
-Cc: Jakob Riepler <jakob+lkml@chaosfield.at>, Pavel Machek <pavel@ucw.cz>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v2] leds: pwm-multicolor: Disable PWM when going to
- suspend
-Message-ID: <20241213163445.GA2418536@google.com>
-References: <d7d930bc-4c82-4272-b2c6-88f7cac5a3e1@chaosfield.at>
- <50bbd767-b0e0-4788-975b-f5d9598208e5@chaosfield.at>
- <20241212174356.GJ7139@google.com>
- <d021d011-d5d4-4692-973a-f5a45be8db94@chaosfield.at>
+	s=arc-20240116; t=1734107786; c=relaxed/simple;
+	bh=fiWLHn1Vh7Rkee2vngeT6U/jlOV99M3VJ9PlRs+HJtQ=;
+	h=Date:Subject:CC:From:To:Message-ID; b=FKbBFsJncjY+yUZpz/zM70KtyDd2KAPRrNgymjvT6TCEZkiJFauNWec/aK3RgLx3yxOa0AUXdqgj2BkshAu3/brstPRMigXixL+Ek5IycJMh1xBEdSVe5yVGa/QmJW9XErjnXUNe37iqpQ9+n6MexCV+nTUfRVL7Uqpis8cXXt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=vkCS8yNk; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21680814d42so17526565ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:36:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734107783; x=1734712583; darn=vger.kernel.org;
+        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JVTI6igU8T6dL4skxylHch7ZipanOhb4/E7t8iY1Njw=;
+        b=vkCS8yNkUH6746hozdsUZP0+dYLXtm4PLRVRdxfsO1NckZbz4nXBOY1LX9+te+1wj0
+         IanRLsh7vs95YmK88ztT3wgAKwn7y8kpsANv/J+4xisvrvF3T+jFzH3dsfHKs2/wSEjs
+         ENNtmQ8jkNwktjpoTa44bbONhyTM9wG4jpmyOCjbHGpwjbaazQjvQrU+lmyRSs2KEMxF
+         vS66Ul5u1WlqmO6TA/VIMkWNs2RsyUGxDyDAYeCDe6Saj+Sn+vWbszhc9aFtBAWgWmX8
+         aZBVf9akIvfCeUSxA3XWE0NdK8L03br6+qCb9ly8QLH0yqCwcXq48HAscwsGEXgtLGl7
+         ez2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734107783; x=1734712583;
+        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JVTI6igU8T6dL4skxylHch7ZipanOhb4/E7t8iY1Njw=;
+        b=BkbooupZbCf+6cvlnWBNwrZ4ROsAT4I2NRmf1mgSz1h58j2wejgbrSckJIqH6kO9FY
+         mk3niA5ZxkEJCdIAiy6w3aG9zVSTS3jBKhJ+qI9nc+InX1igg22Sqcp5eG/jx23/A1e4
+         u21M1vHoe2ocDwJVQNrU56l3iKB32/+I0K9tDl47XCAVko3wRHl2tne1Rg1H0poQQKho
+         MfSThVkcEHCClbsxx0cXQKX7t6lIAlXN0kebEk7QVIQB2lJMJve+5WaQEeOxOh3Zon7e
+         sN/HTLyhFT+Hmtyy4PpCs5cKZLXgp3V9QsAhiT+ISa/bPLZz2fnc4VRrZno31GuUSOdK
+         28ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXytcT7qyNuaf2hkWsaqV7JUppGSjbzHOome3xNAVEQf2kEHEXlGJaHJ13vMtW9nIo9p63TPDbo0WkT0Js=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKKIk0XOBWGL9wuZgzJsa+40FBQfCwd8Vb5QTS5A4NrLmnR45Z
+	8Dz2e2edYhYz4nbkfwO1O2wgQGi4BmIU4VdAnR2+29mNSjtJfVyppzcMa69MQ3Mj8kl3UZve36M
+	F
+X-Gm-Gg: ASbGncvbgWgKSWBt9LGpAuk6oWYiFKDM5ngbjKi8m80we3PhIhU4ISR3AaDkvTFeINV
+	m27hIez7+diEiGIvtbbCLJZFeQB69IUj3OVI8yXxwYF7qjqZ7zYKcHrvyGlNKlgv0L5kyGVA0oX
+	NRFjzrM1bEBdaEpN5FBWXAeiGhlNFITJOfzzgAXH4WYmC9ESXzhymFmFnKK+0APTppC9upUnqj5
+	YAIrLn4kVxTCFS03u2KFTQUus+/etnmy3LdM4GqMhcVIi8gOWo+ewc=
+X-Google-Smtp-Source: AGHT+IHgrhZcyZQ6XsrxmSLV9cBdFXpMwXfCONCTz19YmGg/T3D8dGAPOzolX4aFTm6Bcmc0raKirA==
+X-Received: by 2002:a17:902:d4c8:b0:211:8404:a957 with SMTP id d9443c01a7336-21892a3fc7fmr48954265ad.41.1734107782899;
+        Fri, 13 Dec 2024 08:36:22 -0800 (PST)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21634f24f78sm103353275ad.32.2024.12.13.08.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 08:36:22 -0800 (PST)
+Date: Fri, 13 Dec 2024 08:36:22 -0800 (PST)
+X-Google-Original-Date: Fri, 13 Dec 2024 08:36:04 PST (-0800)
+Subject: [GIT PULL] RISC-V Fixes for 6.13-rc3
+CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@rivosinc.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-d041d4cd-3e9f-4533-ac26-e0d67be93496@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d021d011-d5d4-4692-973a-f5a45be8db94@chaosfield.at>
 
-On Fri, 13 Dec 2024, Jakob Riepler wrote:
+The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
-> > I get a warning that this patch is corrupt as well.
-> > 
-> > How are you creating them?
-> 
-> `git format-patch` and thunderbird with the settings mentioned in the kernel
-> documentation.
-> 
-> > Please use `git format-patch`, `git send-email` or `b4`.
-> 
-> If you'd like I can resend with a different mail server - I had trouble
-> setting up `git send-email` with my primary mail provider (enforced oauth)
+  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
 
-I haven't tried it for sending patches, but I hear b4 is good.
+are available in the Git repository at:
 
-I can't take what you have sent here - it doesn't apply.
+  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.13-rc3
 
--- 
-Lee Jones [李琼斯]
+for you to fetch changes up to 21f1b85c8912262adf51707e63614a114425eb10:
+
+  riscv: mm: Do not call pmd dtor on vmemmap page table teardown (2024-12-11 11:44:21 -0800)
+
+----------------------------------------------------------------
+RISC-V Fixes for 6.13-rc3
+
+* A fix to avoid taking a mutex while resolving jump_labels in the mutex
+  implementation.
+* A fix to avoid trying to resolve the early boot DT pointer via the
+  linear map.
+* A fix to avoid trying to IPI kfence TLB flushes, as kfence might flush
+  with IRQs disabled.
+* A fix to avoid calling PMD destructors on PMDs that were never
+  constructed.
+
+----------------------------------------------------------------
+Alexandre Ghiti (2):
+      riscv: Fix wrong usage of __pa() on a fixmap address
+      riscv: Fix IPIs usage in kfence_protect_page()
+
+Björn Töpel (1):
+      riscv: mm: Do not call pmd dtor on vmemmap page table teardown
+
+Guo Ren (1):
+      riscv: Fixup boot failure when CONFIG_DEBUG_RT_MUTEXES=y
+
+ arch/riscv/include/asm/kfence.h |  4 +++-
+ arch/riscv/kernel/jump_label.c  | 12 +++++++++---
+ arch/riscv/kernel/setup.c       |  2 +-
+ arch/riscv/mm/init.c            |  7 ++++---
+ 4 files changed, 17 insertions(+), 8 deletions(-)
 
