@@ -1,174 +1,188 @@
-Return-Path: <linux-kernel+bounces-445199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962049F129C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:47:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AEA59F1278
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7B4E164988
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:47:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B88C1645D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CB51F03EE;
-	Fri, 13 Dec 2024 16:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF4615383D;
+	Fri, 13 Dec 2024 16:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HDBkvfta"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="wat7oYKD"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B7A1F03ED
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD301E3768;
+	Fri, 13 Dec 2024 16:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734108322; cv=none; b=evx4vGtTXDtbvH2pD+didjNf8GXcc2tIB87WUmFMgvoN9GRRoUHTG6i4J84+KF2TsTIGRDm+7dzBYd1MmInR32pRBxu4F9OkJOPsptCGDKg+AKnTmtgpPFBP+aaMEn/KpKji/6aTFxDAy3qIDMj1b31BCTFYOwVALy0gAMHMiM4=
+	t=1734108309; cv=none; b=Jte4c28JZXy7hlxnaah2/FmpIodZBPR9VmLbo+UEg7JZbSNMFWFA09gkF70+OQI0aOI0XLiPpcgBmK3F+pFN8gW5nvi+smz4eHZ85S49Pm5EMRTt7vngX1rHg60kN/dTPXgT3AjYylMl6FGSb18cwa1KVT2xNcWY0F03aJz9m58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734108322; c=relaxed/simple;
-	bh=o8gcbchdk+NEFXIHiXqU7JXHFaPHjD7Nwegm7SL02NE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oozsoyodrQnQR++6Fe5SKhJxGfNT8JosmAGMP+Ew4MKpUMTWh45cE5rzmwZdcj+cA9IpNJNTp2VBMonKR5DUHJTs3B4ydW58TiBBDwCb9dPFoV2dPSDA3OD01JN5JArYk4KBkdq0bHJhrjIge8PvmSsn8CLtptcA7iOP/iszzM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HDBkvfta; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4361f65ca01so18787165e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:45:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734108318; x=1734713118; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZiXtRse753j+DxWe1l5vCc1FuT3NFlbx5vgI3bsEGjg=;
-        b=HDBkvftawV7r1++1inBkHQngNmw096FrIg/n6J8ozpriBmghxSFmUp0N0/ZmBh54R3
-         9A8eaBoi5NVZvlhN2patBM/+8+GLhVwrtJvED8FPbYSsNSNqlaW76JeHj+hkR8ejSwqQ
-         w/NBRhzzA4GVhZxWaB72GtNsAsQyNeZLf+INpmiRLDNrdtDm5BbG7DODK2iSXcmySBDW
-         yCnbiUmONTjSsymPz7pQCPXLtJXpy0ziCVVNe4tsyqragtKrTR2vlDZe1ADR82fgZenD
-         p8UH9/9dg0F0Gs8OQ9EMMwcf75+KzfcTI1t7d/tRaFZmxPl3cWksc15hUPcVTtFitN+w
-         eoIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734108318; x=1734713118;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZiXtRse753j+DxWe1l5vCc1FuT3NFlbx5vgI3bsEGjg=;
-        b=q5jma9ztb7wi9caWS/HbPnJNAQgliWgUJHFKwuEbL9InMqtvJoiePEc3gx6QNX0hCM
-         0DhZbR83GCAJd26jpGHHxKaAzxWaymX7BjmN0iSxfl4k2uczhOONKCA+12/tDK9UOzbk
-         w2cq2v3KQCEOh0CFqIXxabF/t0xRg+GiK4p6On82pBAOsTaLpXOB+tQ+cp6lueJKDmxy
-         CpgT4HDQuHkkO44kcU/DxRpjC06CSL85BZDt3t55K80EwuL3zDMGcHJz3OwrVRUlrHfW
-         iqZ/OBEcjqYelKk3gb4S7QWLMO21cjI06pptXzfrMKWSWV7/oOuoCsDxzwffg3DDHXet
-         WBFw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+B4gSjNVVv8JsexI+8YdToOBhBsioIUyCEH5jXjbLgeHEu7izGV7lRHZ4exnR+lAX4EJQ8YxFMHH0VyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHJP8KMI61prNApY2XEBKM7AHhfPfVahrd2AOEq3DD5AtQDmn+
-	xo9v3hpRBjFhWSNZCmQ8UWung/3e1K3ff69hHCRY/0nX4M71/zTS88EVUwYoIXY=
-X-Gm-Gg: ASbGncsRR31laSMdBpdtom5sPKawnNFznTh9hfkFzLin7t5FpfSvKnFFMugXf6ePy6M
-	sfZYZz8aL8MXxnROJyF3u7sy1hoPE9BcO6fEYViJtlj/YZxw3fu0X1h1zMbvXpKohGGcDHHyhtZ
-	FwTS1c3bgc4L8utKRtEbRHXmrtdkjaEbVybgwgPeABPw+P07QPf1TUyhO+HwDY0jWA1ucupjqc4
-	Z2DkzXOShKodS7JncNBjnu8eiLhHisYc72OTaUNkNyWCsFCPLPagb5zdDd27FiyrP8m7Et69pnQ
-	tJHt8EwtVw==
-X-Google-Smtp-Source: AGHT+IETyJSvR8KA8pphR1pBfr5KTpzF4NmNkeh7zYSJzCimMSajiU46jqPt2jw1d/p/w6ZGTou/bw==
-X-Received: by 2002:a05:600c:1d86:b0:435:330d:de86 with SMTP id 5b1f17b1804b1-4362a98a563mr32579905e9.0.1734108317815;
-        Fri, 13 Dec 2024 08:45:17 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([145.224.66.83])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625550523sm53900665e9.7.2024.12.13.08.45.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 08:45:17 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 13 Dec 2024 16:44:38 +0000
-Subject: [PATCH 1/4] dt-bindings: soc: samsung: exynos-pmu: gs101: add
- pmu-intr-gen reg region
+	s=arc-20240116; t=1734108309; c=relaxed/simple;
+	bh=JNBkkepurpgHeASQaR3aUsznEaPj2i1D7foUAUgsB/4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IbaAQAubExy15oMJ4mMSPQSqYoQSdgtn7jUUQdCwQWdcvzAQGz43H6nr4OKuHuZYrbkSs/JkRpMDzlHuPQ4nZ77ikdBoa5Yi++ZOBqxnbCrvD3F8tOOEYQM9P7fMc8RVku+4g5R8aqa8S9vf7yFh/I1sFCNWRQ9uZAyzv00fdZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=wat7oYKD; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDEpigI023598;
+	Fri, 13 Dec 2024 11:45:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=dzBfCB9/vbqiH0wk4MKNk5Ia2ZD
+	Pe3glozDw05djSlQ=; b=wat7oYKD0iMNEjxSbiKJqPAiJZ3j1qOVKYi0l8F/MgK
+	ScszZ3OU5DHZrITmhW+4DSuGX2kKg1UxvWyjchVeWT2IgSvoPL2OdhK72s7h0CvL
+	iyrtn3OTVAFO9TmBtPcgdnorm/OvNcpVGE9APtY/S+13ILBNp3T1W905fiTEVQQK
+	sN7ghuVogRm1WKJ96fUiDi53iLbg77csUNx/h2bDaQcbFZACDK9YX66w1GSk0CRm
+	Q8RxBt9hTWn+sGcOE7r4JD/wAdZofpkinWHJKAYxbDDmiE23kR1Sn7DyX59w9KVX
+	6IVw5EWZ4hX0g+Uu+UchD8fBGKgt6i3I68AB9pRTz0w==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 43gju79jpn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 11:45:03 -0500 (EST)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4BDGj2D4030688
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 13 Dec 2024 11:45:02 -0500
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 13 Dec 2024 11:45:02 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 13 Dec 2024 11:45:01 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 13 Dec 2024 11:45:01 -0500
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.187])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4BDGipcB025509;
+	Fri, 13 Dec 2024 11:44:53 -0500
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        David Lechner
+	<dlechner@baylibre.com>
+Subject: [PATCH v8 1/8] iio: backend: add API for interface get
+Date: Fri, 13 Dec 2024 18:44:38 +0200
+Message-ID: <20241213164445.23195-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-1-c72978f63713@linaro.org>
-References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
-In-Reply-To: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
- kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1571;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=o8gcbchdk+NEFXIHiXqU7JXHFaPHjD7Nwegm7SL02NE=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnXGSZluJfObTMSPxr05UelRIQWthOmoBtn2uyW
- PFgIFrAApqJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ1xkmQAKCRDO6LjWAjRy
- una2D/9ZUhnENnkW7zC4mxp8Vfkdy2PN4PE1leFf6JLDKZSIi/C5o5bed2t5p3af9nupwWd2zbX
- peM58sEtA9ZUAqP/1YmiJadFo6sfuhtOypo2wYYzUjE8HGMfxKIuTg5nyd9D18H+K0e/NOmC7z3
- 4gXcz52PlvDSsyAzxNtNdLgWLxSYiRRz9bltIjIePks1DMvTs96xR90k60cSLQWMRZxWxiczhFz
- pau6fIRsTGS+6c7e96EyW5mzt3F9+HP0s5jGpGt8HvnfuAmVgNaWSS7sXM5pRGxl92yL4dJK3VN
- NFnDPSGlozXblKBJVE6TxYlVUFoZnuOvMSEmL+k8up/Q+cE6JFHEwGlYoWghHLT0FNNEgT0SQzo
- u7j2psGxS3tUrrReg16UlSZNmSwWUgeeGjjvEZetP1bYE4cAGyC9ahPfnDJy83i90fYQ4kpE0F5
- g3xcS+JgbFWGZSKW7YfoTfztDRs4V43smbO+NsuqMX2p1JuENDC8J4vnZBuk2aKGcdLR66tjqJE
- vNrzh2qAynTwCuDTYpR0ilARhUboWOrzH/QFABBXe/EAsLHSWFEX04W9sj7OU9n1clJJhjo2AN0
- R1m5zqd47YsjZziMZYDcdvozt7t0nEMDeuUTUuLU91/3XAaZzVXhx3yCv1JuWwfrH/jVy7D9zZk
- f8dW7IgVRHpeT4Q==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: 81UuiPXlAvWEEZMY3_DulBxUHST97-qN
+X-Proofpoint-ORIG-GUID: 81UuiPXlAvWEEZMY3_DulBxUHST97-qN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ mlxscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130117
 
-gs101 also requires access to the pmu interrupt generation register region.
-Update the exynos-pmu bindings documentation to reflect this.
+Add backend support for obtaining the interface type used.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 ---
- .../bindings/soc/samsung/exynos-pmu.yaml           | 29 +++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+no changes in v8.
+ drivers/iio/industrialio-backend.c | 24 ++++++++++++++++++++++++
+ include/linux/iio/backend.h        | 11 +++++++++++
+ 2 files changed, 35 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-index 6cdfe7e059a3..5ac4864e4cde 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-@@ -73,7 +73,11 @@ properties:
-           - const: syscon
+diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+index 20b3b5212da7..c792cd1e24e8 100644
+--- a/drivers/iio/industrialio-backend.c
++++ b/drivers/iio/industrialio-backend.c
+@@ -636,6 +636,30 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *indio_dev, uintptr_t private,
+ }
+ EXPORT_SYMBOL_NS_GPL(iio_backend_ext_info_set, IIO_BACKEND);
  
-   reg:
--    maxItems: 1
-+    minItems: 1
-+    maxItems: 2
++/**
++ * iio_backend_interface_type_get - get the interface type used.
++ * @back: Backend device
++ * @type: Interface type
++ *
++ * RETURNS:
++ * 0 on success, negative error number on failure.
++ */
++int iio_backend_interface_type_get(struct iio_backend *back,
++				   enum iio_backend_interface_type *type)
++{
++	int ret;
 +
-+  reg-names:
-+    maxItems: 2
- 
-   '#clock-cells':
-     const: 1
-@@ -186,6 +190,29 @@ allOf:
-       properties:
-         dp-phy: false
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - google,gs101-pmu
-+    then:
-+      properties:
-+        reg:
-+          items:
-+            - description: PMU register region
-+            - description: PMU Interrupt Generation register region
-+        reg-names:
-+          items:
-+            - const: pmu
-+            - const: pmu-intr-gen
-+    else:
-+      properties:
-+        reg:
-+          maxItems: 1
-+        reg-name:
-+          maxItems: 1
++	ret = iio_backend_op_call(back, interface_type_get, type);
++	if (ret)
++		return ret;
 +
- examples:
-   - |
-     #include <dt-bindings/clock/exynos5250.h>
-
++	if (*type >= IIO_BACKEND_INTERFACE_MAX)
++		return -EINVAL;
++
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
++
+ /**
+  * iio_backend_extend_chan_spec - Extend an IIO channel
+  * @back: Backend device
+diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+index 37d56914d485..e5ea90f1c3e0 100644
+--- a/include/linux/iio/backend.h
++++ b/include/linux/iio/backend.h
+@@ -68,6 +68,12 @@ enum iio_backend_sample_trigger {
+ 	IIO_BACKEND_SAMPLE_TRIGGER_MAX
+ };
+ 
++enum iio_backend_interface_type {
++	IIO_BACKEND_INTERFACE_SERIAL_LVDS,
++	IIO_BACKEND_INTERFACE_SERIAL_CMOS,
++	IIO_BACKEND_INTERFACE_MAX
++};
++
+ /**
+  * struct iio_backend_ops - operations structure for an iio_backend
+  * @enable: Enable backend.
+@@ -86,6 +92,7 @@ enum iio_backend_sample_trigger {
+  * @extend_chan_spec: Extend an IIO channel.
+  * @ext_info_set: Extended info setter.
+  * @ext_info_get: Extended info getter.
++ * @interface_type_get: Interface type.
+  * @read_raw: Read a channel attribute from a backend device
+  * @debugfs_print_chan_status: Print channel status into a buffer.
+  * @debugfs_reg_access: Read or write register value of backend.
+@@ -121,6 +128,8 @@ struct iio_backend_ops {
+ 			    const char *buf, size_t len);
+ 	int (*ext_info_get)(struct iio_backend *back, uintptr_t private,
+ 			    const struct iio_chan_spec *chan, char *buf);
++	int (*interface_type_get)(struct iio_backend *back,
++				  enum iio_backend_interface_type *type);
+ 	int (*read_raw)(struct iio_backend *back,
+ 			struct iio_chan_spec const *chan, int *val, int *val2,
+ 			long mask);
+@@ -169,6 +178,8 @@ ssize_t iio_backend_ext_info_set(struct iio_dev *indio_dev, uintptr_t private,
+ 				 const char *buf, size_t len);
+ ssize_t iio_backend_ext_info_get(struct iio_dev *indio_dev, uintptr_t private,
+ 				 const struct iio_chan_spec *chan, char *buf);
++int iio_backend_interface_type_get(struct iio_backend *back,
++				   enum iio_backend_interface_type *type);
+ int iio_backend_read_raw(struct iio_backend *back,
+ 			 struct iio_chan_spec const *chan, int *val, int *val2,
+ 			 long mask);
 -- 
-2.47.1.613.gc27f4b7a9f-goog
+2.47.1
 
 
