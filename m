@@ -1,149 +1,176 @@
-Return-Path: <linux-kernel+bounces-444653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057219F0A57
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9399F0A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517A11889295
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4163118869F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CEA1CD205;
-	Fri, 13 Dec 2024 11:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BWUcAC6q"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3C11C3C0D;
+	Fri, 13 Dec 2024 11:04:11 +0000 (UTC)
+Received: from smtp134-25.sina.com.cn (smtp134-25.sina.com.cn [180.149.134.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67B01C3BF7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308E01C07FC
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734087785; cv=none; b=cSsmw+T5B/VIjTSIobGykanuJ0yOSutGSpo1PRq+2fCvLOTNM1Q/nyeD69j+dY8ogGlU5EBxDg0/FIq6BAVh4W7xGB0mc9cAKq+cQgGa75XJmnZ3k3aq6q8/PrCFsDZGYeb2z2F+Z1ToaXjRdJ3cBVCpZubOr3I3mdasl5NV1Y8=
+	t=1734087850; cv=none; b=VsDFQDK8R3b4eeWvDYn/nHfBPdUXCvn8lwKqqq0SLyCWxuXBVz71kw7/LVkozV2IvKlcQANz68/8M9sWg6LeWxqbINFO8ijn03rzL9n0gfZAlolLuo7xI0EZ7CuVWdKvTpr4qP8zpTB1APXqGueCO7/0hSL70IuviDBHBiNImZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734087785; c=relaxed/simple;
-	bh=qnkNPaMsb0tDHe6sxQvnBDZjuAa2B520VxXPvQjVm+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZU/BvV3Te+RPnX1sK06F98NvMXgknEPqcfsCRZQYxhYSSuXDoE5rVYN2kaFaZJ7gZzOVa+Ce85vrXLX3RDPt7TnoAe9JgMFCnty5P2JvI3eqzdC/HDK94D0EVkeldqR4ZCKd8+KmdX6S77cDzqKfx8gsCvHA75UcF5R111x37g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BWUcAC6q; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53e2ed7d951so256667e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:03:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734087782; x=1734692582; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cPrHEQPv1CwDbKkeMuoTmMG3oC4VaHuPVeckilyXmbw=;
-        b=BWUcAC6qpgqWTiAnCz9FHU7fz92V01XRRwf//jR/+EWtd2X9po+o2sS+p362e1iPD2
-         Tg0e4a/MunTkogXZXdfVX/d8vmFdmG6DSE7dAMIy1tfTMVsRZnTuJjgYp9yjeq0jdad9
-         oaDtMaWZyKTP/k+SWoatww2WjdftOsDHMSJe77MZsj8nvpj01tXY9cFm4TTZhTyxxh0r
-         AttqW0b3TJuK+QTv2h514FooI3bLEJ2Zmk2IAASJ0sFUL3T22xfSIy7ujldhnGwpfSk1
-         RpGituwnNMNw3rftBsT8DLnO59Jxd5REsH0WVCQb7LQQLqzRl9LlShlLIx7RcFuM4vfs
-         tenw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734087782; x=1734692582;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPrHEQPv1CwDbKkeMuoTmMG3oC4VaHuPVeckilyXmbw=;
-        b=ZhR4pk68xu/6dnBaghjEkZr43F9YDwjE/RPvH44+NYiA4Ch62kjlGBTf+QCVLRHeee
-         PfR3HRxxd+IfrvkNp4X4OiYOwoB7bJARN7oy/Ag49SSwDKibtbm6QnbMrHaW35s6gODe
-         ivhnL0tu/cQ0c+SG7Dk9J/cWUGlnPmCmWd9zBPMJB7M+tpEs2NJmPxFKb6jMoVOTpeKd
-         N5HZ8vdwpqU/SAAdq9mjrqCRSP8rCnNapQVb8wXzGoakogG/JyIHgVf8Mk5K2iHUnj6o
-         D9zCvZskTOwnM4WxHTeH4nXB2ZVzG4bF2iihRdNVwqcQLhzeB8r/ZKStg/ICGxxhSWqr
-         lm2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVu79ef863hK49Or4Y+WZRXqSu9JQVN8hG3D7wNJxLoD5j4Rryiov0obxz3sOKOlhVKva+WFDPt6SxycDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvNiK7j5vvBUEWowpfEhWa5JuIa7/qbC2sUHzlIWb8SqWPpw1K
-	WNKcawt0KFSNmseM/2czF+xITzKr1tlWMmmthyKnE+YyqQ90+36VfIO4cX5XY3U=
-X-Gm-Gg: ASbGnct8vrC49P/1+0xIFVI1vKlhSMCVzH9e9lF78vbRYbeOX615KltZeVryOf7TPBV
-	RcJVYxay5kKbv4qzVW5n/LtCvFWP3yiNDOyLpb0Y7ga955p9rmlRI3cCK40LMQfxuI3mFnamL6W
-	oUrOJORSAlbPBJ1hLu3MfH4CVrF+czuYjEmJmNyoSa6fH/WPhjgYR7Hh2XR5L0/fRWmjtX/kVKX
-	wb0RCfniQYP4awztGWrgYAvRsV8dyqC+pgFVUi49MWV5QsXcKFXgFlUFwZpbKne/5r7jhtm7t9U
-	9pajwdZvH9vBShqkrVAnpPfEGZtpOngl/W4=
-X-Google-Smtp-Source: AGHT+IF5+Ile5TFJDfu5dWJVDE0gHMtZwo3Q1j+ZWVbQP9H/N/T5Uylk2Nrnn2OcrR9w7ZkDQGevdA==
-X-Received: by 2002:a05:6512:2825:b0:540:3593:9fd8 with SMTP id 2adb3069b0e04-54090568008mr203132e87.7.1734087781891;
-        Fri, 13 Dec 2024 03:03:01 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401fbe50a4sm1495464e87.200.2024.12.13.03.02.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 03:03:00 -0800 (PST)
-Message-ID: <a047e4b8-c2d6-4486-8037-e7b854660cb1@linaro.org>
-Date: Fri, 13 Dec 2024 13:02:59 +0200
+	s=arc-20240116; t=1734087850; c=relaxed/simple;
+	bh=hc4CGaYrwIZL16AakL7s1Q9XiOloC0c6v9NZQOYF/+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZJ5wyChPFbiLn8SjqLIJ7NCgMP9rp+WXVHPzdMkcvLwAkHj7Nb5IukyfI6BgNGzqebk4n/sKJGvQfl/Qb01PhzUeYSpnycQBH+yAedt+Yqas5D6JB9H64UT70LSgp0FIC7837EVYPhcT8wtrc6XSLLovTFtr1ttrOWMEmRSxHxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.50.125])
+	by sina.com (10.185.250.21) with ESMTP
+	id 675C146E00000674; Fri, 13 Dec 2024 19:03:14 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 4016673408336
+X-SMAIL-UIID: 40F2E86CDD094C889E6AC88E44822EC6-20241213-190314-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+00a022dc9979d67df050@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [kernel?] WARNING in enqueue_dl_entity
+Date: Fri, 13 Dec 2024 19:03:05 +0800
+Message-Id: <20241213110305.1839-1-hdanton@sina.com>
+In-Reply-To: <67410a37.050a0220.363a1b.0150.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: qcom: camss: Restrict endpoint bus-type to
- D-PHY
-Content-Language: ru-RU
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Luca Weiss <luca.weiss@fairphone.com>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Barnabas Czeman <barnabas.czeman@mainlining.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
- Caleb Connolly <caleb.connolly@linaro.org>, David Heidelberg <david@ixit.cz>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
- <20241209-camss-dphy-v1-2-5f1b6f25ed92@fairphone.com>
- <9c89e6f4-a9af-4270-b266-537f3464ee32@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <9c89e6f4-a9af-4270-b266-537f3464ee32@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/9/24 14:32, Bryan O'Donoghue wrote:
-> On 09/12/2024 12:01, Luca Weiss wrote:
->> Currently the Qualcomm CAMSS driver only supports D-PHY while the
->> hardware on most SoCs also supports C-PHY. Until this support is added,
->> check for D-PHY to make it somewhat explicit that C-PHY won't work.
->>
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->>    drivers/media/platform/qcom/camss/camss.c | 9 +++++++++
->>    1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
->> index 9fb31f4c18adee886cd0bcf84438a8f27635e07f..b99af35074cdf6fa794a0d2f0d54ecf12ac354d9 100644
->> --- a/drivers/media/platform/qcom/camss/camss.c
->> +++ b/drivers/media/platform/qcom/camss/camss.c
->> @@ -1855,6 +1855,15 @@ static int camss_of_parse_endpoint_node(struct device *dev,
->>    	if (ret)
->>    		return ret;
->>    
->> +	/*
->> +	 * Most SoCs support both D-PHY and C-PHY standards, but currently only
->> +	 * D-PHY is supported in the driver.
->> +	 */
->> +	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
->> +		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
->> +		return -EINVAL;
->> +	}
->> +
-
-Looks like it would break all old board dtbs, which is not just bad, but NAK.
-
-V4L2_MBUS_UNKNOWN shall be properly handled without the risk of regressions.
-
->>    	csd->interface.csiphy_id = vep.base.port;
->>    
->>    	mipi_csi2 = &vep.bus.mipi_csi2;
->>
+On Fri, 22 Nov 2024 14:48:23 -0800
+> syzbot has found a reproducer for the following issue on:
 > 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> 
+> HEAD commit:    28eb75e178d3 Merge tag 'drm-next-2024-11-21' of https://gi..
+> git tree:       upstream
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1016fec0580000
 
+Test fix (https://lore.kernel.org/lkml/20241213032244.877029-1-vineeth@bitbyteword.org/ )
+
+#syz test upstream master
+
+diff -pur x/include/linux/sched.h y/include/linux/sched.h
+--- x/include/linux/sched.h	2024-12-13 18:53:21.592682100 +0800
++++ y/include/linux/sched.h	2024-12-13 18:55:17.754180400 +0800
+@@ -656,6 +656,12 @@ struct sched_dl_entity {
+ 	 * @dl_defer_armed tells if the deferrable server is waiting
+ 	 * for the replenishment timer to activate it.
+ 	 *
++	 * @dl_server_active tells if the dlserver is active(started).
++	 * dlserver is started on first cfs enqueue on an idle runqueue
++	 * and is stopped when a dequeue results in 0 cfs tasks on the
++	 * runqueue. In other words, dlserver is active only when cpu's
++	 * runqueue has atleast one cfs task.
++	 *
+ 	 * @dl_defer_running tells if the deferrable server is actually
+ 	 * running, skipping the defer phase.
+ 	 */
+@@ -664,6 +670,7 @@ struct sched_dl_entity {
+ 	unsigned int			dl_non_contending : 1;
+ 	unsigned int			dl_overrun	  : 1;
+ 	unsigned int			dl_server         : 1;
++	unsigned int			dl_server_active  : 1;
+ 	unsigned int			dl_defer	  : 1;
+ 	unsigned int			dl_defer_armed	  : 1;
+ 	unsigned int			dl_defer_running  : 1;
+diff -pur x/kernel/sched/deadline.c y/kernel/sched/deadline.c
+--- x/kernel/sched/deadline.c	2024-12-13 18:51:17.093081100 +0800
++++ y/kernel/sched/deadline.c	2024-12-13 18:55:17.770211500 +0800
+@@ -1647,6 +1647,7 @@ void dl_server_start(struct sched_dl_ent
+ 	if (!dl_se->dl_runtime)
+ 		return;
+ 
++	dl_se->dl_server_active = 1;
+ 	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
+ 	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
+ 		resched_curr(dl_se->rq);
+@@ -1661,6 +1662,7 @@ void dl_server_stop(struct sched_dl_enti
+ 	hrtimer_try_to_cancel(&dl_se->dl_timer);
+ 	dl_se->dl_defer_armed = 0;
+ 	dl_se->dl_throttled = 0;
++	dl_se->dl_server_active = 0;
+ }
+ 
+ void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+@@ -2421,8 +2423,10 @@ again:
+ 	if (dl_server(dl_se)) {
+ 		p = dl_se->server_pick_task(dl_se);
+ 		if (!p) {
+-			dl_se->dl_yielded = 1;
+-			update_curr_dl_se(rq, dl_se, 0);
++			if (dl_server_active(dl_se)) {
++				dl_se->dl_yielded = 1;
++				update_curr_dl_se(rq, dl_se, 0);
++			}
+ 			goto again;
+ 		}
+ 		rq->dl_server = dl_se;
+diff -pur x/kernel/sched/fair.c y/kernel/sched/fair.c
+--- x/kernel/sched/fair.c	2024-12-13 18:50:13.649803300 +0800
++++ y/kernel/sched/fair.c	2024-12-13 18:56:11.779225700 +0800
+@@ -1159,8 +1159,6 @@ static inline void update_curr_task(stru
+ 	trace_sched_stat_runtime(p, delta_exec);
+ 	account_group_exec_runtime(p, delta_exec);
+ 	cgroup_account_cputime(p, delta_exec);
+-	if (p->dl_server)
+-		dl_server_update(p->dl_server, delta_exec);
+ }
+ 
+ static inline bool did_preempt_short(struct cfs_rq *cfs_rq, struct sched_entity *curr)
+@@ -1237,11 +1235,16 @@ static void update_curr(struct cfs_rq *c
+ 		update_curr_task(p, delta_exec);
+ 
+ 		/*
+-		 * Any fair task that runs outside of fair_server should
+-		 * account against fair_server such that it can account for
+-		 * this time and possibly avoid running this period.
++		 * If the fair_server is active, we need to account for the
++		 * fair_server time whether or not the task is running on
++		 * behalf of fair_server or not:
++		 *  - If the task is running on behalf of fair_server, we need
++		 *    to limit its time based on the assigned runtime.
++		 *  - Fair task that runs outside of fair_server should account
++		 *    against fair_server such that it can account for this time
++		 *    and possibly avoid running this period.
+ 		 */
+-		if (p->dl_server != &rq->fair_server)
++		if (dl_server_active(&rq->fair_server))
+ 			dl_server_update(&rq->fair_server, delta_exec);
+ 	}
+ 
+diff -pur x/kernel/sched/sched.h y/kernel/sched/sched.h
+--- x/kernel/sched/sched.h	2024-12-13 18:50:42.985005300 +0800
++++ y/kernel/sched/sched.h	2024-12-13 18:55:17.801793100 +0800
+@@ -398,6 +398,11 @@ extern void __dl_server_attach_root(stru
+ extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
+ 		    u64 runtime, u64 period, bool init);
+ 
++static inline bool dl_server_active(struct sched_dl_entity *dl_se)
++{
++	return dl_se->dl_server_active;
++}
++
+ #ifdef CONFIG_CGROUP_SCHED
+ 
+ extern struct list_head task_groups;
 --
-Best wishes,
-Vladimir
 
