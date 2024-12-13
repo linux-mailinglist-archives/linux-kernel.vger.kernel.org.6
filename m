@@ -1,122 +1,153 @@
-Return-Path: <linux-kernel+bounces-444171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E819F0264
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:41:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554CE9F0267
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:42:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D233188E689
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:42:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5C12A1BB;
+	Fri, 13 Dec 2024 01:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="igmn5UHV"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A841C2855F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:41:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5052AF07;
-	Fri, 13 Dec 2024 01:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iVjTuOjM"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8384017BA1;
-	Fri, 13 Dec 2024 01:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E230E17C60
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734054093; cv=none; b=p+z0hU/GWfaZ3UjgwnEawMc87RdlAgfVqI2tibW17Hoe7vL+4DvcrClHR9WFxHylFDbd8obl3+huluAM3B4iJ8kRa3WL+TZJ3b1SWUo8k3IVXkUhJqrrAsrlVRpUulxUDCSlgZAcJ1TT52K88nNLraS0/a+JGPppCpKHMnSFs7A=
+	t=1734054134; cv=none; b=rJeoGBnea1APbww9R5NQha2GU5T1k8CCOUuHblDNev6ozCuDAZepGHQR+S9IE4oL9uhiBPQmbIBjxDg/xd2xzGkq2MysfyCoS5MFGlD6C+Q+JC80e4cO0kOOuA1HhYG/cC+9HsQof6MR5Y7U84F49eviFPSUVNA5uFOdN169HNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734054093; c=relaxed/simple;
-	bh=Pd+ekocBfu+A8T+xL7igF6cVVhFLkDF6GiCL05sUBSo=;
+	s=arc-20240116; t=1734054134; c=relaxed/simple;
+	bh=sbNnwrxdmPvVbwepQbobT9BdPrU4oV3hT1gtkBC2MrA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U1pOJw5uEdad6PkbyO1kEkqKbOS/x0vsDuLI0pJVaxClVCwwlWKXW6ITTQd5oD6xagy2kZxMfsG4On5jMBDQPuEKIkcyEB/oTciP/cX3RNk1gV+pqZA1y0el8TonCr4Hp91TVKQcC61A2EA1pgn0Nj6RkX4ePRbmFtCTa7xOyGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=iVjTuOjM; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3862d6d5765so789775f8f.3;
-        Thu, 12 Dec 2024 17:41:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1734054090; x=1734658890; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zamzeKdqQcRbUXp/Lnf8z4704A6wdTlF28/d3lSLSWI=;
-        b=iVjTuOjMQxasz7Ymdsiru7cr1pKK9F+H2kjc+bBU5SVZryzqjGn2grcfe0LT4F+lbM
-         HAD5EOsOixT7ANaIjh0r5erRmuWWN2X3AidbJfs0oCOHD3tP1xvoLNOidlL+EDlOvc1s
-         YNu8yyGU/ERhPu0JhocMXZwlrcdjDd5hU8Lq095UEjQ39sI+oGu8IqRGC+RdaMRvDLQu
-         TF6blb7V0irX2JswY3dW+rMv3jP1syx6ZiQgwrjwR0ZVLMdfIqlCzvp8SE76jCwHUsiO
-         QrRfqoyv7igPiQV2923XzsQ+vSGfcLWOUgDdXo0qOlMBF/fj2Y2OUskPaw5uG2eiYgiV
-         BjMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734054090; x=1734658890;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zamzeKdqQcRbUXp/Lnf8z4704A6wdTlF28/d3lSLSWI=;
-        b=n7wqQBnE4JLKXsceKjNYzUKgEmyfl8HF4d3c1T29mF4Zyw9ov02Mxj/uyna6/YwgJW
-         X82k21dIKhdFIj72oJe29uBt4ftRDD6kTC//HzN2V3bistbnNxWga3thG3NqCliu1xvh
-         Fy/yKmXDOssFMigQFsMnSiLanBH55z+J5FJH8ohYzvaaCpvCB8UTFVaLfOmMHjvhGOuG
-         cTO9GAysWQGzj76QzUKljtzYE4uapL0ujcaaBfSdMTx3PSLAooYWVaeVDcPK6ktoKaUM
-         Yc6k3Iw6dxWK6hSKnpHceNQWojBgzsidXRHerm0NI/pZh5i2yGRpr53Wu/cmz+hH3Rlm
-         Ii1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX4PS3o0bBckoVQgThyqozjniAr48atxKAVOvjVYV3A2NFH86Rb0mKfz845AaI90RlgsJNabl5D@vger.kernel.org, AJvYcCXRQoSyTax+b44o7ZHm9HCxhBoRddSMy9KD0+mnfMwFqTRaAUZj4Sf/NoZlv0RZVa9faXJcOObAhrZhoEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNJ9BaEm0+tdPBQWyuyKzWDQ+VhJCrEEL9rNLKhLo4HpStygHa
-	JTzzQjPf1ilrlXBLTqogoO2B9MoHOpq5ss6pK1VPpjgH7PVQtBY=
-X-Gm-Gg: ASbGncstgLqaYatWK52qUbvDfWfsm3xyuZtnqYswfbTZoDeVLZgPdoKx4rC/hPn025h
-	8bmapeo+HlGOFE3RXkY9aRvqGNkIXOHJRTTUSe4ifu7E+KaFNVLheDso7p2z4ZHvy/zZAWo5XOM
-	6wzMABUvfwysXIuvN/cbGVO0He0XkcmVhjpqUuFD7V4+wdqT5hDOq5kh8AsUYxBuNzIHivQPmtd
-	5uTTqRaDSiGig2wLxbdmLkIft9F9bvNgqh2+Vr+ofjvhwvGage/QbMoJ/TZCEh9yAma+221zfws
-	o9C1Zg2nL+uXZgXhOh2vrTfa8HiDtMRh
-X-Google-Smtp-Source: AGHT+IE+hraE/ToStnNdIfVIorMIHbqJHcrUC6BBhx/UOHiUJtO3CIPdndd2MazB1dQCd3wHunCl0g==
-X-Received: by 2002:a5d:6c6d:0:b0:385:fd07:85f8 with SMTP id ffacd0b85a97d-38880ad97b7mr332672f8f.29.1734054089622;
-        Thu, 12 Dec 2024 17:41:29 -0800 (PST)
-Received: from [192.168.1.3] (p5b057a27.dip0.t-ipconnect.de. [91.5.122.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514dcesm5451610f8f.65.2024.12.12.17.41.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 17:41:27 -0800 (PST)
-Message-ID: <3b73538d-9cff-4bcf-bde7-312c1721dd36@googlemail.com>
-Date: Fri, 13 Dec 2024 02:41:25 +0100
+	 In-Reply-To:Content-Type; b=gxlTIntNq26c7QceNtK5jcH0XQt+ZTb8nrMl9Wy2RXpQL01WZlqUAJxCgZ6nQJmWE5vu8FhimLezTftt5KraSa1fZjww3dC18Ta5JIRBAp5DMxc7HkVvWsL4c5Z7klWYdp/i3wj2WHxAN+cutwGw7KfXx24kSNCwCc98rOFRh7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=igmn5UHV; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=np8T7mWlht8plu2pa8HCEwfFHDwDqGqVQXZZGrLwAj8=; b=igmn5UHVgAc2+1vrRiR3RrBqDV
+	dWtYjbyKcKRZST+KOTaYeN1J/9W5g4qybJSsj7DAU9XUaY8d4Itm0yu9M9Z3UAHdJdD/lc46YP12i
+	ANbUTBO5h5uf4URfn15HLXGjZlOHj4ZTMNUCeU9vD3yN0ePv502zf+MMU+U9khFjZieNew2jVkZq4
+	Om2f6jb/ATAEG5vKhfOUIKPwr3wo/gzt8JZ7Kt4TkARi7JjiViAO/AyCKy+gD4WVZv/8u/0PrEp9H
+	mUURAZC3iMAaNUM/6VRzQpDEGOg4oDjwiJzCpktGCNvRQpTusVtY276dEwq1cWhiBVPSHBx58/aCF
+	k4SOYz2Q==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tLugs-002TY7-L6; Fri, 13 Dec 2024 02:42:02 +0100
+Message-ID: <f7924c58-dfaa-424c-9dd4-cec9a50137c9@igalia.com>
+Date: Fri, 13 Dec 2024 10:41:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/356] 6.6.66-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241212144244.601729511@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20241212144244.601729511@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] sched_ext: Implement scx_bpf_now_ns()
+To: Tejun Heo <tj@kernel.org>
+Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
+ kernel-dev@igalia.com, linux-kernel@vger.kernel.org
+References: <20241209061531.257531-1-changwoo@igalia.com>
+ <20241209061531.257531-5-changwoo@igalia.com>
+ <Z1lJ-AzRlFIv4OuP@slm.duckdns.org>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <Z1lJ-AzRlFIv4OuP@slm.duckdns.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Am 12.12.2024 um 15:55 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.66 release.
-> There are 356 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hello,
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+On 24. 12. 11. 17:14, Tejun Heo wrote:
+> Hello,
+> 
+> I'd roll the preceding two patches into this one.
+Sure. I will merge patches 2, 3, 4 into one.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+> On Mon, Dec 09, 2024 at 03:15:29PM +0900, Changwoo Min wrote:
+> ...
+>> 3) Monotonically non-decreasing clock for the same CPU: scx_bpf_now_ns()
+>>   guarantees the clock never goes backward when comparing them in the same
+>>   CPU. On the other hand, when comparing clocks in different CPUs, there
+>>   is no such guarantee -- the clock can go backward. It provides a
+>>   monotonically *non-decreasing* clock so that it would provide the same
+>>   clock values in two different scx_bpf_now_ns() calls in the same CPU
+>>   during the same period of when the rq clock is valid.
+> 
+> We probably should provide helpers to calculate deltas between timestamps
+> and use them consitently in SCX scheds. e.g. ops.runnable() and
+> ops.running() can run on different CPUs and it'd be useful and common to
+> calculate the delta between the two points in time.
+
+If I understand correctly, it should be something similar to
+jiffies_delta_to_msecs(). Regarding the API name, what about
+scx_time_delta(s64 time_delta) and/or scx_time_diff(u64 time_a,
+u64 time_b)?
+
+>> +	if (!(rq->scx.flags & SCX_RQ_CLK_VALID) ||
+>> +	    (rq->scx.prev_clock >= clock)) {
+> 
+> The clocks usually start at zero but it'd still be a good idea to use
+> time_after64() and friends when comparing the ordering between timestamps.
+
+Sure. I will update the code as suggested.
+
+> 
+>> +		/*
+>> +		 * If the rq clock is invalid or goes backward,
+>> +		 * start a new rq clock period with a fresh sched_clock_cpu().
+>> +		 *
+>> +		 * The cached rq clock can go backward because there is a
+>> +		 * race with a timer interrupt. Suppose that a timer interrupt
+> 
+> This is not limited to timer interrupts, right? This kfunc can be called
+> from anywhere including tracepoints for code running in IRQ
+Yup, you are right. I will update the comments.
 
 
-Beste Grüße,
-Peter Schneider
+> 
+>> +		 * occurred while running scx_bpf_now_ns() *after* reading the
+>> +		 * rq clock and *before* comparing the if condition. The timer
+>> +		 * interrupt will eventually call a BPF scheduler's ops.tick(),
+>> +		 * and the BPF scheduler can call scx_bpf_now_ns(). Since the
+>> +		 * scheduler core updates the rq clock before calling
+>> +		 * ops.tick(), the scx_bpf_now_ns() call will get the fresh
+>> +		 * clock. After handling the timer interrupt, the interrupted
+> 
+> This might be easier to explain with two column table explaning what each
+> party is doing in what order.
+I will beautify the text for readability.
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+> 
+>> +		 * scx_bpf_now_ns() will be resumed, so the if condition will
+>> +		 * be compared. In this case, the clock, which was read before
+>> +		 * the timer interrupt, will be the same as rq->scx.prev_clock.
+>> +		 * When such a case is detected, start a new rq clock period
+>> +		 * with a fresh sched_clock_cpu().
+>> +		 */
+>> +		clock = sched_clock_cpu(cpu_of(rq));
+>> +		scx_rq_clock_update(rq, clock);
+> 
+> Hmmm... what happens if e.g. a timer ends up performing multiple operations
+> each going through rq pin/unpin?
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+That should be okay. After multiple rq pin/unpin operations, the
+resumed scx_bpf_now_ns() will found that the prev_clock is
+greater (not equal) than the current clock, so it will get the
+fresh clock.
+
+Thanks!
+Changwoo Min
 
