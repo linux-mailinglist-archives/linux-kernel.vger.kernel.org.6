@@ -1,89 +1,53 @@
-Return-Path: <linux-kernel+bounces-444248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023B29F0354
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:00:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA219F0356
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:01:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55F961889336
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:00:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8509188B239
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97B7175D5D;
-	Fri, 13 Dec 2024 04:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B73315573A;
+	Fri, 13 Dec 2024 04:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d6YAOvUG"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EEE16D4E6
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="tJTITDo4"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E12D8F5E;
+	Fri, 13 Dec 2024 04:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734062406; cv=none; b=LhYGWdwW2O92TcfbfiTuSS2vGSO1B+BIINzL+7HLZlRkFoxzRE3j5BcmWnKBcG6IM7M/kGxMvXgu2WQi5hcvgX5NxfWQPs2rmfAS1vF6sJaf1TU3Z1NsC5xgNhv5TWLh/1/jyWU+BH///zZnHKnYetIax51IaGigJn9Ds40dZ24=
+	t=1734062466; cv=none; b=YHn151e7fJsBaJ47IdFOyfTOLyA4ArgFF1DBo7krCiMyDNdKzuIeA2blo7r0HW5yBLVbTxvTjYLYyxKfkQv9HEx0ZNz+RqcrVAIZECjHo4pTu8q8v5d6Gl6ko3kvnDrpMJcDS1XioEVGFYZhN6MbHWq8PR8dJAaElsx+A2EvZtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734062406; c=relaxed/simple;
-	bh=P01/0GoHPmuEpkWAv0N7wro68NmfQGGEanTXYNwOczo=;
+	s=arc-20240116; t=1734062466; c=relaxed/simple;
+	bh=uRWriS9TmvnXTrrSW96FZuKyb0Hnk2OCoMoq9P6eFzU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgS5rJpVWCEj5tFuU8uBITCk1TwemIsICcSWHGg0NJ1aiuubghABdgZol/cbjkt7Nv2kjbEkuqsmpIKhDgqzmcxoERAe7WkgZyy3kPl9sr0OxiNv7Tk3XJQlXMIQcvaM5oloeSMG3a0pNFA61nGLkUU1C4kc5FUCQtsbnegAGCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d6YAOvUG; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-728e1799d95so1533999b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:00:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734062404; x=1734667204; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uhXht5TlWW6CeNHzuz55gp9axLJIkTvb4c0JWEpQZMs=;
-        b=d6YAOvUGswYQvn4sx5Xzz409DT3A9wRiFs7hyXls7RKX/b0iQbSHVgA9tX5ySaYWO2
-         F+xWn7L3KsxniE4JxmQsnfuT8+6vf1d7RKsieUVvMmtbHuTSKxS7P+3yESyJcA2Y75ku
-         JLICNjK/FyPPFubP5H7I+LtI4AK65nJTo348m+jeAjFY330orOai9zStDF7JNFpKgSFD
-         ocYb7SeuF3E//wbCEwi1TvVygtE0mMNsJ1k068W199B6HiKCym1oH8Su0d2i0QFrCQqg
-         x1bGiSYZ8hEJnXF3R7swvAAF/fofDznrfJm5NauHIN7UL47J9ydSVrUbtLqdCxRMmtjF
-         nXDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734062404; x=1734667204;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uhXht5TlWW6CeNHzuz55gp9axLJIkTvb4c0JWEpQZMs=;
-        b=FmMcfIekP94iYUtD8+CfQNOMdoBhFPWClg0+a41EzRhEaEVN0ROwkP4A7PwVwk8ZOc
-         3cfWEzornLRCs9B5gVfOqI8UcsHHXPaQul2DvjnhUlwcVMGpcFuUZw7Ze0SqQZIvyr4X
-         Rx6DSXXFS5VD9HkDNXFNBn0+fmmkUeYDks+yZmc8ixqlsxgCInovdRWZxpJvOLEao9Be
-         l28xmBUov0Rqcn7vjXFLPqpGdhwUO1EGG22QMGonoLH4GMhO4Jn2Sr8b1HGKUbKZqkmq
-         oFLy83nyPCyaXlCodweUM21VvreN4ihlFrYikS/FZTBY+Lz4JpK7fEsI5ajrqIWbJPUY
-         f+TA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSX9ZNZmuQRjIz83KP979RtnU99FLGBB8qB7Hi8Vd0HUh3F1BtQ3aCj1TpkqkdRijPTcQz282wsa9w6mU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhmQABo+YVsDvqZCHxDfo3pVrAjZucqaI7suOLHWtmOkMIsmUr
-	ioluts1wdi4B6wv60m7Cvodr3ueZ41lzT2Y7vIuO3Z8Yl5qSWyMwMtnwRf7OhFg=
-X-Gm-Gg: ASbGncvofJbdlisSkomBf22Wg7riNkWbWRvsHW8vYfSAJWG/FXV8XK1P8qm2N7JACQG
-	WUui0+CMXfrLoUORsDwCwyTFhjrqJvfydreUJ84tEXHG/5qYlmNIib5STgOV3Qz9Th0DSWjuel5
-	PeN2R54AloAZvo00yBrn43IwmBW/1VY9A9Ld3ziGMoeLuTodyKksg0Qe27J+CZsXiv6GRHxLzd3
-	igvWbltrjfZqC+fzEfX2uaCGqkBpxOBRsn0JTeHUz+Yufn2se/cUw9QwlE=
-X-Google-Smtp-Source: AGHT+IEGiBKnjCtShkOggoGzo2ZF1oEbdV6d4yrpPr5N759VcuXFZHM+wVdwNBDeb1V2E/ylIgRB0A==
-X-Received: by 2002:a05:6a00:1885:b0:725:eb85:f7f7 with SMTP id d2e1a72fcca58-7290c0dfe03mr1559884b3a.5.1734062404251;
-        Thu, 12 Dec 2024 20:00:04 -0800 (PST)
-Received: from localhost ([122.172.83.132])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725de3cb93dsm9438945b3a.169.2024.12.12.20.00.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 20:00:03 -0800 (PST)
-Date: Fri, 13 Dec 2024 09:30:01 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH v7 2/2] cpufreq: airoha: Add EN7581 CPUFreq SMCCC driver
-Message-ID: <20241213040001.jaqeuxyuhcc73ihg@vireshk-i7>
-References: <20241206211145.2823-1-ansuelsmth@gmail.com>
- <20241206211145.2823-2-ansuelsmth@gmail.com>
- <CAPDyKFovtfR7BiXBfH-79Cyf1=rd-kmOoEnEdMArjGUxSks-Aw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SQiugdyWH0a5VPT8i5Ezsil73zTD8WvxHYvaLhPdtW/Hm9uBloZbbelpj4mFvZnRbsaXTKN2MyS0qkFK11O/PeDPpOGyyMv/7LYeu7IgcsZm4YARoV6PSIOu6hfMhRcnGnm16hCuzDN9+6cmI2Aj3doCrgwKxmq5P+d5tD7iXHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=tJTITDo4; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 1544C204BA91; Thu, 12 Dec 2024 20:01:02 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1544C204BA91
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1734062462;
+	bh=MpijeqXUNeUyOil+oVJz5PSoObnSGFyduR+sv5IfdIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tJTITDo4FrweMnVhObqQ4Ym2lHE+OWsC0S12rKPUZ4XU0yyXQs12zE3LBGIYwL8GQ
+	 Afesvco6wsRZo3uj2DvZvgU+YNC6Jcn7UP0nvT8m/hevYZIWBwGiUukANAeLfVsPyJ
+	 gFZdyLSmd2SCG0QuqbpIN9u5LeKp+5ZYqpAOr0jQ=
+Date: Thu, 12 Dec 2024 20:01:02 -0800
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Wei Liu <wei.liu@kernel.org>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ssengar@microsoft.com, avladu@cloudbasesolutions.com
+Subject: Re: [PATCH] tools: hv: Fix cross-compilation
+Message-ID: <20241213040102.GA28827@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1733992114-7305-1-git-send-email-ssengar@linux.microsoft.com>
+ <Z1tsaJJhUsSilZqq@liuwe-devbox-debian-v2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,26 +56,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFovtfR7BiXBfH-79Cyf1=rd-kmOoEnEdMArjGUxSks-Aw@mail.gmail.com>
+In-Reply-To: <Z1tsaJJhUsSilZqq@liuwe-devbox-debian-v2>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On 12-12-24, 13:01, Ulf Hansson wrote:
-> On Fri, 6 Dec 2024 at 22:16, Christian Marangi <ansuelsmth@gmail.com> wrote:
-> Hmm, it looks like this needs to be moved and possibly split up.
+On Thu, Dec 12, 2024 at 11:06:16PM +0000, Wei Liu wrote:
+> On Thu, Dec 12, 2024 at 12:28:34AM -0800, Saurabh Sengar wrote:
+> > Use the native ARCH only incase it is not set, this will allow
+> > the cross complilation where ARCH is explicitly set. Add few
+> > info prints as well to know what arch and toolchain is getting
+> > used to build it.
+> > 
+> > Additionally, simplify the check for ARCH so that fcopy daemon
+> > is build only for x86_64.
+> > 
+> > Fixes: 82b0945ce2c2 ("tools: hv: Add new fcopy application based on uio driver")
+> > Reported-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+> > Closes: https://lore.kernel.org/linux-hyperv/Z1Y9ZkAt9GPjQsGi@liuwe-devbox-debian-v2/
+> > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> > ---
+> >  tools/hv/Makefile | 14 +++++++++++---
+> >  1 file changed, 11 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/tools/hv/Makefile b/tools/hv/Makefile
+> > index 34ffcec264ab..d29e6be6309b 100644
+> > --- a/tools/hv/Makefile
+> > +++ b/tools/hv/Makefile
+> > @@ -2,7 +2,7 @@
+> >  # Makefile for Hyper-V tools
+> >  include ../scripts/Makefile.include
+> >  
+> > -ARCH := $(shell uname -m 2>/dev/null)
+> > +ARCH ?= $(shell uname -m 2>/dev/null)
+> >  sbindir ?= /usr/sbin
+> >  libexecdir ?= /usr/libexec
+> >  sharedstatedir ?= /var/lib
+> > @@ -20,18 +20,26 @@ override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+> >  override CFLAGS += -Wno-address-of-packed-member
+> >  
+> >  ALL_TARGETS := hv_kvp_daemon hv_vss_daemon
+> > -ifneq ($(ARCH), aarch64)
+> > +ifeq ($(ARCH), x86_64)
 > 
-> The provider part (for the clock and power-domain) belongs in
-> /drivers/pmdomain/*, along with the other power-domain providers.
-> 
-> Other than that, I was really expecting the cpufreq-dt to take care of the rest.
-> 
-> To me, the above code belongs in a power-domain provider driver. While
-> the below should be taken care of in cpufreq-dt, except for the device
-> registration of the cpufreq-dt device, I guess.
-> 
-> Viresh, what's your view on this?
+> Technically speaking, you can also build this for x86 (32bit). Whether
+> anybody uses it is another question.
 
-Sure, no issues.. These are all cpufreq related, but don't necessarily belong in
-the cpufreq directory.
+My intention is to allow fcopy daemon build only for the arch it has
+been tested. IMO its better than restricting only for arm64/aarch64.
 
--- 
-viresh
+I tried with gcc '-m32' switch which I believe is for 32 bit x86 compilation
+I see problems with it on other (kvp daemon) daemons too. I think we never
+cared about 32 bit.
+
+saurabh@Saurabh:/work/linux-next/tools/hv$ make ARCH=x86 CFLAGS=-m32
+make[1]: Entering directory '/work/linux-next/tools/hv'
+  CC      hv_kvp_daemon.o
+hv_kvp_daemon.c:25:10: fatal error: sys/poll.h: No such file or directory
+   25 | #include <sys/poll.h>
+      |          ^~~~~~~~~~~~
+compilation terminated.
+make[1]: *** [/work/linux-next/tools/build/Makefile.build:106: hv_kvp_daemon.o] Error 1
+make[1]: Leaving directory '/work/linux-next/tools/hv'
+make: *** [Makefile:37: hv_kvp_daemon-in.o] Error 2
+
+
+I don't have any strong opinion here, if you want I can allow x86 compilation
+for fcopy daemon as well.
+
+Please let me know what is your preference.
+
+> 
+> >  ALL_TARGETS += hv_fcopy_uio_daemon
+> >  endif
+> >  ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+> >  
+> >  ALL_SCRIPTS := hv_get_dhcp_info.sh hv_get_dns_info.sh hv_set_ifconfig.sh
+> >  
+> > -all: $(ALL_PROGRAMS)
+> > +all: info $(ALL_PROGRAMS)
+> >  
+> >  export srctree OUTPUT CC LD CFLAGS
+> >  include $(srctree)/tools/build/Makefile.include
+> >  
+> > +info:
+> > +	@echo "---------------------"
+> > +	@echo "Building for:"
+> > +	@echo "CC $(CC)"
+> > +	@echo "LD $(LD)"
+> > +	@echo "ARCH $(ARCH)"
+> > +	@echo "---------------------"
+> 
+> I don't think this is needed. Anyone who's building the kernel source
+> should know what tool chain they are using and architecture they're
+> building for.
+
+I am fine removing it in V2.
+
+- Saurabh
+
 
