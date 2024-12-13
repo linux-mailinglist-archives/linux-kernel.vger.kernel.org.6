@@ -1,133 +1,169 @@
-Return-Path: <linux-kernel+bounces-445257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EE29F1368
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:15:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CC39F136A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:15:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46ECD16B135
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:15:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01231E2850;
+	Fri, 13 Dec 2024 17:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwFnfZHt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE362842F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:14:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960891E47BC;
-	Fri, 13 Dec 2024 17:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ke3tSXs9"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1791E377E;
-	Fri, 13 Dec 2024 17:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22182364D6;
+	Fri, 13 Dec 2024 17:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734110093; cv=none; b=ZmN+dDHwdWEYi52pP0ad6GPaT4W8JRZ2+DeogHcoNDW5gzKfcGrmqiWESPnOfGQCDMvUVX2vZuG+AkFb73e3JWaeqGOhXltCebaDg4HctmqzmprnwiVVjrdtSO8Uqpgqquj80KQ5fuuVmLkQkwLj1wnyRPpWGP8o0ZOIGnr7o7c=
+	t=1734110132; cv=none; b=hlVq4Jc9VqJHn/yQgmL4Ws3hsJVgjJn1Nv9Avp1/k8NSU6JgdS9H0WIs1aQfwEBvuYn6+tjes/AlOu8YyMY3ZtS+n0koq7U3db6EPd5iFHzCgtRVUxYnFfFtSUuWlPR/9Si4eUBkxGxmM4/LajLGBQEWJBy/4DDHgXhrZJ6zshc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734110093; c=relaxed/simple;
-	bh=DXa4W9GxaEmCk7xdM+h/enoKF//SqpkgmoFmdNO6ZRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J5P0dpMESg0YyVw/joAsKldSz7GUoujlzj4DI7Aixvq7xVA8AZAgwSIidmBGcPGx9/vryRmXp7aWwRvDvfGncNAsu1TYWHX1K4IOXpVFfeunLy+1wKIv0q6Hku2UnA5O4BtFu84N7xmZX9wJxIkrSWqqVbZbsiAinpsTCSLD6so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ke3tSXs9; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ef718cb473so241271a91.1;
-        Fri, 13 Dec 2024 09:14:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734110091; x=1734714891; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DXa4W9GxaEmCk7xdM+h/enoKF//SqpkgmoFmdNO6ZRE=;
-        b=Ke3tSXs9JKV1UZe9zGVWUcEYPq+iNGqBaTFhCqQ/44CKn5D6sEFgrO0CR8PTyDFa5k
-         5xKwYtZTQBwiXpn1gfbbHwwGiO+35gGRQhXbTEbJHGdnvZv34KIlLAGjwjh8E/pzsWh+
-         SNA/3g0AflX0k62pS1Bpy0nhaquw/4t6a2nhwY/BnegzrMh+MkbOSg/5HcgijaS92+3A
-         mnWZHmchZg6PO9k+HjEJ1XxcJwsbCDA89qBRDQ8mnpsGmiyez/2AV3l6DHLpWrVMxF1L
-         9YNRRmlKHYtsGMw088y4pMemz7SLT4oarOqJhYPHUS/84GOq8ZcxFawHByoF2R4lR2Mz
-         jH7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734110091; x=1734714891;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DXa4W9GxaEmCk7xdM+h/enoKF//SqpkgmoFmdNO6ZRE=;
-        b=HGnMC7ESZTKCkjILkPfpagvmWE1j8g00YM6pqrn5fWNKShMqRBFAaBmNoE/VFZpwEt
-         aILjuWNuhCtx3ANo26oY0NbLZ0kz9OUMikyroNryDB1ojDIqFDTXVNCq9PP3s/o1VJ6D
-         0DSlEZbuXOhG8cG+gKsxmqbFO7yHnUF8AyYYjdU/xJlxdA9JM1zK93WNjFDWezRMT0qk
-         kIFtY4wtJiBC9z8lwrI5tx9BKKfLdVbvPyvbJCJApEwKThLEWFoHjn/vDaT/9+bcW5pH
-         fDhYEgEApgx3cI75MaXRwjmuX5hKif9rR1mSBOmW04Us1T3NaXLyURmXOaYewXehyEPp
-         7b4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfw5ka7kfXZGxAPdfaPO0Uk36xea6H3GrT9g/tFZhlMw/D4OiMOOcwt3v2Aa3XDT/NQ7ROqFUrvVdyS44=@vger.kernel.org, AJvYcCXSZB3o5dXb6/j4sx1ydSBdMj4S2BQ7KsH6uTM+vekfHtrB83s9xs0YXxUXScjWxv7sHHV2bjfcohwhLcLe@vger.kernel.org, AJvYcCXU1utJuluH5gRXt8lPJjfOxrQWplHjgZ2qXC3+1JyBnsWfLTjivSb0ZO/9uEKQ1GvXOX40LbJ4HG7dC/UrJL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbbKfgr8dfxioK2G2Nl4MBznRKuH0Q0uiP/O/iTRSHIQkrRCAX
-	wTur8Hz7z8w5qCCkqUrjE2tTlesnyFI+WMGoQrsmg0rAFJJFaDWVvpHjuSuiB6KcpHX0UHq3xz9
-	uMvmEi14D4V4roPmt7NtH+Qn4Urcy4Tx1bCg=
-X-Gm-Gg: ASbGncuQqDWYddsb6AGKaCRm7UK9zw4XtIpdB3Jvdx29ZDk2sZvqEsqOADVS/CqcygA
-	1LYCc/nU3WOIM9N7v8JZ8EtT7lXUqmh1c2wxk6g==
-X-Google-Smtp-Source: AGHT+IGuMlGMaI28Ia3NfUCgqkkdjulyORLsN43AgubKIZiZuD2P0LbX/OCkMN4/DrWZOaAh9abxsNe1bfzvL9V4yeM=
-X-Received: by 2002:a17:90b:4ccc:b0:2ee:a558:b6bf with SMTP id
- 98e67ed59e1d1-2f2904b6227mr1999125a91.8.1734110090755; Fri, 13 Dec 2024
- 09:14:50 -0800 (PST)
+	s=arc-20240116; t=1734110132; c=relaxed/simple;
+	bh=2YJ7aI7lgNgInMsZf1T3jkaRml+zGxaMkU8tu0NSViU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GAk9Nqb6zpBLQOKRv0avaYyY6EE25oFzHmEQ64MGtz56tMyU0lMP/9652FtWB+6r2/xSmZa7v7EDur/oS3O6xhJeNWRrqeDgtEtd3UHaS2VD9EX5DqBZLbN8bGRgyYXMHGIab2ChrM218hafzR2gWb974gIpA7vXJBtSHVOdU9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwFnfZHt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CAEFC4CED0;
+	Fri, 13 Dec 2024 17:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734110130;
+	bh=2YJ7aI7lgNgInMsZf1T3jkaRml+zGxaMkU8tu0NSViU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jwFnfZHtJRdNKH+ybm0QEKAg3qZ60IbY6L+VQxt6+YdW6BM9uAmHxcpXyXVYEzrWP
+	 zS6eE7+dWYNwAcELVtbJ8ASixRhGLltL43p7NN601ihIoHc2VFp1tK0cOMprJ1iUgy
+	 Sv/yj3sFyCi+2fo2qth+eR/ynsRTrG4gbk/sMkoZSQprSQlMZ+xD614plNzaEUwzaO
+	 taWeJtDMp8NIklaovuK6UEAV0H4q5z3lNBqUd4nNbTFsOFifCqtH6dCdI7WruFce93
+	 GBWzlkhIQKssH89xiDNeCVssv6vKGkDj+TpS1/rXUQ2h4B3eOJoDPFh4aryZtmsBWI
+	 /NKGalKaxhcXg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tM9GC-003W5f-7g;
+	Fri, 13 Dec 2024 17:15:28 +0000
+Date: Fri, 13 Dec 2024 17:15:27 +0000
+Message-ID: <86bjxfsdw0.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 1/3] KVM: arm64: timers: Fix percpu address space issues in kvm_timer_hyp_init()
+In-Reply-To: <20241213145809.2918-1-ubizjak@gmail.com>
+References: <20241213145809.2918-1-ubizjak@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
- <20241213-module-params-v3-v3-4-485a015ac2cf@kernel.org> <pw5PzA4YGsu7j6ET_-OYE2oq9l7ixtTTGhHtxMxmMP5ggHxLrjzMkNMvcMVjGPhu7FpBb2duDD3bRbtMJZZHIw==@protonmail.internalid>
- <CANiq72kb2ocNuE6n32vr4xCkZhZN0uPuCN3SFA1+Q5L+Ma4ByQ@mail.gmail.com> <87y10jd8o0.fsf@kernel.org>
-In-Reply-To: <87y10jd8o0.fsf@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 13 Dec 2024 18:14:37 +0100
-Message-ID: <CANiq72nBpVy911cVhNFM6teQ0EaE-xs0SB2Qx95O4=nKBdRDuQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] rust: add parameter support to the `module!` macro
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Trevor Gross <tmgross@umich.edu>, 
-	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: ubizjak@gmail.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Dec 13, 2024 at 2:17=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
-.org> wrote:
->
-> scheduled for removal. Interior mutability via `SyncUnsafeCell` provides
-> the same functionality and it is my understanding that this feature is
-> on track to be stabilized.
+On Fri, 13 Dec 2024 14:57:52 +0000,
+Uros Bizjak <ubizjak@gmail.com> wrote:
+> 
+> Cast return value from kvm_get_running_vcpus() in the __percpu
+> address space to the generic address space via uintptr_t [1]
+> to fix a couple of:
+> 
+> arch_timer.c:1395:66: warning: incorrect type in argument 2 (different address spaces)
+> arch_timer.c:1395:66:    expected void *vcpu_info
+> arch_timer.c:1395:66:    got struct kvm_vcpu *[noderef] __percpu *
+> 
+> sparse warnings.
+> 
+> There were no changes in the resulting object files.
+> 
+> [1] https://sparse.docs.kernel.org/en/latest/annotations.html#address-space-name
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Cc: Joey Gouly <joey.gouly@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Zenghui Yu <yuzenghui@huawei.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> ---
+>  arch/arm64/kvm/arch_timer.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
+> index 1215df590418..a13bb9e8dc19 100644
+> --- a/arch/arm64/kvm/arch_timer.c
+> +++ b/arch/arm64/kvm/arch_timer.c
+> @@ -1392,7 +1392,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
+>  
+>  	if (has_gic) {
+>  		err = irq_set_vcpu_affinity(host_vtimer_irq,
+> -					    kvm_get_running_vcpus());
+> +					    (void *)(uintptr_t)kvm_get_running_vcpus());
+>  		if (err) {
+>  			kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
+>  			goto out_free_vtimer_irq;
+> @@ -1416,7 +1416,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
+>  
+>  		if (has_gic) {
+>  			err = irq_set_vcpu_affinity(host_ptimer_irq,
+> -						    kvm_get_running_vcpus());
+> +						    (void *)(uintptr_t)kvm_get_running_vcpus());
+>  			if (err) {
+>  				kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
+>  				goto out_free_ptimer_irq;
 
-I am not sure about the last bit, but even if it is on track, we do
-not want to start using new language features or APIs that could
-potentially change.
+I think the fix is worse than the current code, because there is no
+real semantics behind the pointer being passed to
+irq_set_vcpu_affinity(). All that is required is that it is a non-NULL
+pointer.
 
-And even if it is a feature that we are sure will not change, we
-should still let upstream Rust know before using it, since we are
-actively discussing with them the remaining unstable items that the
-kernel needs and they are putting the kernel in their roadmap.
+I expect the following hack to work just as well and not suffer from
+any sparse indigestion. Untested though.
 
-So I suggest we mention it next week in the Rust/Rust for Linux meeting.
+	M.
 
-> Not sure. `val` being null not supposed to happen in the current
-> configuration. It should be an unreachable state. So BUG is the right thi=
-ng?
+diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
+index 1215df5904185..8058d92048fb4 100644
+--- a/arch/arm64/kvm/arch_timer.c
++++ b/arch/arm64/kvm/arch_timer.c
+@@ -1391,8 +1391,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
+ 	}
+ 
+ 	if (has_gic) {
+-		err = irq_set_vcpu_affinity(host_vtimer_irq,
+-					    kvm_get_running_vcpus());
++		err = irq_set_vcpu_affinity(host_vtimer_irq, info);
+ 		if (err) {
+ 			kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
+ 			goto out_free_vtimer_irq;
+@@ -1415,8 +1414,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
+ 		}
+ 
+ 		if (has_gic) {
+-			err = irq_set_vcpu_affinity(host_ptimer_irq,
+-						    kvm_get_running_vcpus());
++			err = irq_set_vcpu_affinity(host_ptimer_irq, info);
+ 			if (err) {
+ 				kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
+ 				goto out_free_ptimer_irq;
 
-Since you can easily return an error in this situation, I would say
-ideally a `WARN_ON_ONCE` + returning an error would be the best
-option, and covers you in case the rest changes and someone forgets to
-update this.
-
-> Not in the current configuration. The parameters can only be declared
-> "read only". It should be impossible for anyone to call this function.
-
-What I meant is, can you avoid writing the function to begin with, by
-leaving a null function pointer in the `kernel_param_ops` struct, i.e.
-`None`?
-
-Thanks!
-
-Cheers,
-Miguel
+-- 
+Without deviation from the norm, progress is not possible.
 
