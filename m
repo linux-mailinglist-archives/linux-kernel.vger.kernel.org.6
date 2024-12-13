@@ -1,122 +1,130 @@
-Return-Path: <linux-kernel+bounces-444280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4459F03F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:04:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A019F0404
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:08:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBA2A169A78
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2437188AAA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79D254765;
-	Fri, 13 Dec 2024 05:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4D0186E56;
+	Fri, 13 Dec 2024 05:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="upRbw9s/"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="C86JtZ1z"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E58D1632FA
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85F42C181;
+	Fri, 13 Dec 2024 05:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734066260; cv=none; b=lTPSjDKMN+9P9EVvnFfOdaD5xyFcNa4Z2adBWkNSYTbA5ZLjwuvpzs24/rnLRn10TONT2hRU8bfddXajXwWdnxLsPIL2fMNqn1nutGQ+gM8hGgkFexSTilXsdjnEhpE808hMuCnlgZ5sx7LkLhH4VIJ8G+ryTRqMaK6P0czST1g=
+	t=1734066488; cv=none; b=fKqzrB+hxDG/XMlx0ixIex9yi0XfZlSmYW4laugaciCCpZu/Aww2OIsFkAHXCNwZzFDiVVfjiIcqeLj1KgOyhB07Hud+Bfe7SX/D2G+blCjSaUutpp/lNOpvXz9poQyGhGnRga9UyE+tqvKpK7Ij+x6oBQ6EyZliGzEIXVQoojo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734066260; c=relaxed/simple;
-	bh=keKwcXQ609r5yU7HxQAQbla/cIYqHTecTZw3tMNlJPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9IcK5ZX8sSPPEoJDXOx+qX6UXGwmoEGkuOkSARV6XUX4UWeEkD9+4W61VAAihpzCCMkD3UnHeXiJsDgW5mF8+czqzAf0b2+PiygoMmt6HvesU+IoYpK8lIyhBiDTXQlKvcOZGT+kBnG6poG0jx/S3GD2lAUyLHwJ36xC7vaP2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=upRbw9s/; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d882619044so10485246d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 21:04:17 -0800 (PST)
+	s=arc-20240116; t=1734066488; c=relaxed/simple;
+	bh=9AEGl5ElwpjNS1/xC3yqlInieIsycY0WHHNck3fN87Y=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CSLcYtH0UX65EgXedzAv6tc9iXSiIncOm9rnqlHPYZWudOrNNKWV1yeLo/SOCTTTc5N/VW4KWaS3ctxjCISy3lccg5yBsvmzHY+fxNDvYV2GmWKf3mjuKMjTaKMS4SBCPpbmuK/2jByWHjGmknA+Nm2yZq3+ojHbFP50kxlZy0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=C86JtZ1z; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1734066256; x=1734671056; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a0qe4hp5s0sjQeJSoTAs4QQFFqdoJWYDhTzc4eU1LwY=;
-        b=upRbw9s/+dGbBfkhSeLc5BK1OtKDB+lZwS/hItFd/M+eSVm9w05BhpZCynJEwnagaA
-         O0DdQSUQtpBD3AeuxYPgQ0qG0MV8ZItd1GtBm5dKSkvEEkZr0OGkFKVfDQ7gq5D7qyt9
-         jX8DlkL4D2xedd5tG79ijwFeheRYigRy5Kjc4kdBxX9voDs2UWfG3N2a9Dx6oEthRZRb
-         Y6EJTTJI0tFFT8Q6wLlsuM5fs4zeas+Aip/yzDWs+IR4Y3BujvZZZaYzBMmVqSV9E1nF
-         EziLpGOJ8GXpz8nrriSt+2kEVntQraNYMiwlGAyvuYgsxi9Dm3fjL581ks5LxkdPYP89
-         Mu7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734066256; x=1734671056;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a0qe4hp5s0sjQeJSoTAs4QQFFqdoJWYDhTzc4eU1LwY=;
-        b=cEaIydC1/MhKuM7ktrvMD87ivw78zwI+nXF6Lk6HvwerChFk8ghDOLOdSvrN4HBolv
-         CQdXVcCOSZiLmU0IQIrL6G3u52PrIPjWfgrrDRporp8BdY3RATUgXEByGubQCHKBrUdb
-         UxlM5VhTl0ztgkF0H+XUBkbj5aFVIKCKJH4xHT492CdqXG/HkZ/rZeRo9EkhLI90oFSP
-         OFkTR9hTkTqVKw6RV9fvmmqMws0wrwMWfr1848WILXWHgJgVecHskTjgiwfrE9NYH/wc
-         cTrZp4jHbKW2r4VmCvv26oRz5ql+Q4oUcOEIDbS14lGhm4pKrmxkDAwXUMYHqdnqcQiC
-         lO1A==
-X-Forwarded-Encrypted: i=1; AJvYcCX8kx8WSn9TX5G6R/nMR6D0zeOIcLPPCrr/fAG4AJtIYaJF1twsblsEkskjjpwuP6/IObC5gYJbchts31U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoUNOQrj3fXZe8mW/dnCacqk9xXw8dqQiYrrZIYS8cyCHumDJ+
-	Lp8vjCZDnQdSg1xWcV1l9DtOEZwHprWexU1vYBXl0Z2Yd6TMShYq7g+kCrK53Qc=
-X-Gm-Gg: ASbGncuAamHT4dOMQkycx7QFbupeAfI3AnKpk9aOwti27DCbrhBfsTblQkMin4JRflI
-	4qFonw6JUKGtNwP1gVfhcrKYmBNQK6HGolpKQd+J4atWRqN294s8yc7fkZmPmwoO65h/AXUB3Sf
-	DOqHlwTh5IecFL7Rwtyc/cildSVCwfEBFIWY/xqeWWveARiQW4mNizCi9x2x0iNmPkzHMV+tx3a
-	VyVLDWZ2NSoNWfFsjHft/VikEpSjqyUwC3uIw1u/VQS3YGhTYrBdOw=
-X-Google-Smtp-Source: AGHT+IGW14bBpzm4Bv9Ow6MIsKOJXYUYsWnczFJ4gjzR44zqa57+4f4UGRIMI7sswCzh2/2i5gxQRw==
-X-Received: by 2002:a05:6214:21a9:b0:6d8:9002:bde2 with SMTP id 6a1803df08f44-6dc8ca93c47mr18376546d6.28.1734066256199;
-        Thu, 12 Dec 2024 21:04:16 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da6b651asm88925736d6.69.2024.12.12.21.04.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 21:04:15 -0800 (PST)
-Date: Fri, 13 Dec 2024 00:04:10 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	"Christoph Lameter (Ampere)" <cl@gentwo.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, clm@meta.com,
-	linux-kernel@vger.kernel.org, kirill@shutemov.name,
-	bfoster@redhat.com
-Subject: Re: [PATCHSET v6 0/12] Uncached buffered IO
-Message-ID: <20241213050410.GA7054@cmpxchg.org>
-References: <e31a698c-09f0-c551-3dfe-646816905e65@gentwo.org>
- <668f271f-dc44-49e1-b8dc-08e65e1fec23@kernel.dk>
- <36599cce-42ba-ddfb-656f-162548fdb300@gentwo.org>
- <f70b7fa7-f88e-4692-ad07-c1da4aba9300@kernel.dk>
- <20241204055241.GA7820@frogsfrogsfrogs>
- <Z1gh0lCqkCoUKHtC@infradead.org>
- <04e11417-cf68-4014-a7f7-e51392352e9d@kernel.dk>
- <2f79ff03-48ee-54bf-b928-e9519b3edfc7@gentwo.org>
- <383d3adc-e939-44b2-9110-4db9b4477401@kernel.dk>
- <Z1s7AGxZKhK1V4qv@casper.infradead.org>
+	d=codeconstruct.com.au; s=2022a; t=1734066479;
+	bh=Ob6gfCfTJHcT1k8fkHYM0XMpgJYwAe0EV0uca1nDr9I=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=C86JtZ1z9ScLdE1lNtMuIngcOj/VqRvKOHDmgo896hr3259jdBQvgCmOjjv884YfA
+	 xAKjpd0m+DxSyccXXYzrkjQwe9L5cTwm+0F8hSoMyCQVtMV2I2e1mXWWbyawdizg/6
+	 a7qJyp73jmuPa7/ow/rx0Eh+W3D5DGKqh4Y+X/fpeEuZxfmRmX424WCai3N8oudT2a
+	 hW0hQAIxJiDgt+gv8OlIDTbIR3cqXI3k9m1qCPXHp3GCCWh4HsKYCzQbrrvN4yzbTW
+	 B3B6qG1Zsc8BEaI1gAecV+2VIE66oIGPX3VP7YRviJXYiCkdVJWRRw3jZ1xmekqMCg
+	 QuPaKtwScp9UA==
+Received: from [192.168.68.112] (203-173-6-153.dyn.iinet.net.au [203.173.6.153])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 9893B6E54C;
+	Fri, 13 Dec 2024 13:07:53 +0800 (AWST)
+Message-ID: <5d91b7a7169e6db27b2493213d0df2b77699a49e.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v3 0/6] Introduce ASPEED AST27XX BMC SoC
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
+ krzk+dt@kernel.org,  conor+dt@kernel.org, joel@jms.id.au,
+ tglx@linutronix.de, catalin.marinas@arm.com,  will@kernel.org,
+ arnd@arndb.de, olof@lixom.net, quic_bjorande@quicinc.com, 
+ geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
+ konradybcio@kernel.org,  neil.armstrong@linaro.org,
+ johan+linaro@kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, soc@lists.linux.dev
+Date: Fri, 13 Dec 2024 15:37:52 +1030
+In-Reply-To: <20241212155237.848336-1-kevin_chen@aspeedtech.com>
+References: <20241212155237.848336-1-kevin_chen@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1s7AGxZKhK1V4qv@casper.infradead.org>
 
-On Thu, Dec 12, 2024 at 07:35:28PM +0000, Matthew Wilcox wrote:
-> On Thu, Dec 12, 2024 at 12:14:23PM -0700, Jens Axboe wrote:
-> > Like I mentioned earlier, the fact that it's cached for the duration of
-> > the operation is more of an implementation detail that developers need
-> > not worry about. What's important is that it's not cached AFTER. I still
-> > feel UNCACHED is the best description, but I'll change it to DONTCACHE
-> > for the next version just to avoid the overlap with other in-kernel
-> > uses.
-> 
-> Regardless of the user API name, I like PG_streaming for the folio
-> flag name.
+Hi Kevin,
 
-If we're throwing names in the ring, I'm partial to PG_dropbehind.
+On Thu, 2024-12-12 at 23:52 +0800, Kevin Chen wrote:
+> ---
+> v3:
+> =C2=A0 - Split clk and reset driver to other commits, which are in series
+> of
+> =C2=A0=C2=A0=C2=A0 "Add support for AST2700 clk driver".
+> =C2=A0 - For BMC console by UART12, add uart12 using ASPEED INTC
+> architecture.
+>=20
+> aspeed,ast2700-intc.yaml
+> =C2=A0 - Add minItems to 1 to fix the warning by "make dtbs_check W=3D1".
+> =C2=A0 - Add intc1 into example.
+>=20
+> Kconfig.platforms
+> =C2=A0 - Remove MACH_ASPEED_G7.
+>=20
+> Kevin Chen (6):
+> =C2=A0 dt-bindings: interrupt-controller: Refine size/interrupt-cell
+> usage.
+> =C2=A0 dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+> =C2=A0 arm64: aspeed: Add support for ASPEED AST27XX BMC SoC
+> =C2=A0 arm64: dts: aspeed: Add initial AST27XX device tree
+> =C2=A0 arm64: dts: aspeed: Add initial AST2700 EVB device tree
+> =C2=A0 arm64: defconfig: Add ASPEED AST2700 family support
 
-It's a term I think has been used to describe this type of behavior
-before; it juxtaposes nicely with readahead; it plainly names the
-action of what will happen to the page after the current IO operation
-against it has completed (i.e. pairs up with PG_reclaim).
+Do you mind sending a v4, because I received a confusing arrangement of
+patches:
+
+[PATCH v3 1/6] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+[PATCH v3 1/6] dt-bindings: interrupt-controller: Refine size/interrupt-cel=
+l usage.
+[PATCH v3 2/6] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+[PATCH v3 2/6] dt-bindings: interrupt-controller: Fix the size-cells in ast=
+2700-intc
+...
+
+Where the content of=20
+
+   [PATCH v3 1/6] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+  =20
+and
+
+   [PATCH v3 2/6] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+  =20
+Differs, as does the content of
+
+   [PATCH v3 1/6] dt-bindings: interrupt-controller: Refine size/interrupt-=
+cell usage.
+  =20
+and
+
+   [PATCH v3 2/6] dt-bindings: interrupt-controller: Fix the size-cells in =
+ast2700-intc
+
+Despite sounding like they might have the same intent
+
+Andrew
 
