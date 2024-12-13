@@ -1,61 +1,75 @@
-Return-Path: <linux-kernel+bounces-444556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F779F08B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:56:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99439F08CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:57:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE93168F8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95BC5284405
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C0F1DF741;
-	Fri, 13 Dec 2024 09:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B5B1B5823;
+	Fri, 13 Dec 2024 09:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lFu4s1La"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6621DF258
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a/DRviTR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F6B187355
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734083635; cv=none; b=R7EdviVGuwmLWLueMwap/XDh1od4/In46pEM1/Pm3Tche5P4TkfWIN4gpR75arBMHrKbM2nt/GILxwjeOT0JSzRsXejrGey72FmJm2W2/OO5cLYs9/iql5hIuLRpCljmwVamA+HQOGjlvG167bnCCJjfKKTDuaad42eeR3P8Dlk=
+	t=1734083707; cv=none; b=PqksXBEmSU3E/tXVYi6CPAIrOPyPs5x2zaK6BMPWSxg1UwMmoQbOg9gPmXYlqxy2Lu1UEaqxEUapkfHxC1CLiW/HhoNSsZZWMc95pWlVPaA8958g3zyxjMOEbCtT8culz1jVC9yCQSmbwnruA1Awbo9AA/OrmyNlUruhUq/KWus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734083635; c=relaxed/simple;
-	bh=RDbpqS+5p5jc2vCJhV1pqr0/MR5QesXG0JXc5E364WM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=StBiVHA2KPJIcJ8jaBZ7F2zsGXnKmlHiBjpBwbOZUFCtLIOMfvQ7IBLpvhuUmDywUdkOa0G+MEFJHUK0UiUx4RYJ8qQ7YXbi2xfGzdyS9BimZdj71CF6onNfeEoXYAeT2DpqncCdvk0ZHk4WFQEUGwPDiDJvcCtxqmFpb42amkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lFu4s1La; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=fYQCG
-	T5BhK2YiHwv+9QN3ezva5CB4PtsRASZ1Lx+Iqk=; b=lFu4s1La8W3lLt6IgofRk
-	GaQrQU33XzyqumBq+FTdeGDDZRs2ZT3MFS3cyzm/UHJ6cOwd3MXkiqMou0qSqKog
-	EvT7aOvk8TnlEi518Pdf/AZ7VBnkiZvIfda47fmYpYwWP4xPkumd9JTgPAyCxifu
-	pRcP9D9p+2aQxX8I/IaYl4=
-Received: from hello.company.local (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgDXvxn5A1xnmCCqBA--.30634S2;
-	Fri, 13 Dec 2024 17:52:58 +0800 (CST)
-From: Liang Jie <buaajxlj@163.com>
-To: tj@kernel.org
-Cc: void@manifault.com,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org,
-	fanggeng@lixiang.com,
-	yangchen11@lixiang.com,
-	Liang Jie <liangjie@lixiang.com>
-Subject: [PATCH] sched_ext: Use sizeof_field for key_len in dsq_hash_params
-Date: Fri, 13 Dec 2024 17:52:54 +0800
-Message-Id: <20241213095254.1577635-1-buaajxlj@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1734083707; c=relaxed/simple;
+	bh=umG0cYdQ2JJozYr5Ba6oUAeM0QWVFzCEhNY7j+IQmL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oouq7up53tik6ioBMZmt77zoQx9svCSQKxz6zcq6veGEJXId+lxPM/EM+EPA3tOXLOs8uxlKFsBpJEp/ZnW6fhCQNkcGXijvJCFxG7or8qTh2q1hrjN/MhIYPxX0oroqLVYqaWJ3OL2CTQxAd9LiiHFxdSXucwk6NEqFkGSDS+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a/DRviTR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734083703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PPyIgldpvo/jked4nYLYShwE2IQL5n/2BhYL9n0mJlg=;
+	b=a/DRviTRYKuKeFDp+yDTB6h9sOixMhxUxukB3NSf4I71yzq6aUP6j72VlWRFzy6Nkarv+x
+	AzJjGPGeiq6QLxf/z/5KZ5CK9hZo4YsRyMfr1XwrIs/0BLVUb7ScBYT81mWkE+Td6Fw1tp
+	u0J812Y0TGOGt7XuSBlYc/Ah2BPKb38=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-182-3Bqy_CRAMOq582ZUnN0NqQ-1; Fri,
+ 13 Dec 2024 04:54:57 -0500
+X-MC-Unique: 3Bqy_CRAMOq582ZUnN0NqQ-1
+X-Mimecast-MFC-AGG-ID: 3Bqy_CRAMOq582ZUnN0NqQ
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5FC401955D53;
+	Fri, 13 Dec 2024 09:54:55 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.192.43])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1CCAC195394B;
+	Fri, 13 Dec 2024 09:54:50 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Mel Gorman <mgorman@suse.de>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	Gabriele Monaco <gmonaco@redhat.com>
+Subject: [PATCH v2 0/4] sched: Move task_mm_cid_work to mm delayed work
+Date: Fri, 13 Dec 2024 10:54:03 +0100
+Message-ID: <20241213095407.271357-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,40 +77,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgDXvxn5A1xnmCCqBA--.30634S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtr15XFyUCF4DuF1rGF45ZFb_yoWDWFX_Zw
-	4FyrnFk3WDJr92qa15GF4fJr97t34ft3Z5uw4kGFWDX34kJr4qvwn5GFZ3J34DZrZ7KFyU
-	ArnagF15Aw15WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUb1lkDUUUUU==
-X-CM-SenderInfo: pexdtyx0omqiywtou0bp/1tbiNh20IGdb-kdn4gAAs-
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Liang Jie <liangjie@lixiang.com>
+This patchset moves the task_mm_cid_work to a preemptible and migratable
+context. This reduces the impact of this task to the scheduling latency
+of real time tasks.
+The change makes the recurrence of the task a bit more predictable.
+We also add optimisation and fixes to make sure the task_mm_cid_work
+works as intended.
 
-Update the `dsq_hash_params` initialization to use `sizeof_field`
-for the `key_len` field instead of a hardcoded value.
+Patch 1 contains the main changes, removing the task_work on the
+scheduler tick and using a delayed_work instead.
 
-This improves code readability and ensures the key length dynamically
-matches the size of the `id` field in the `scx_dispatch_q` structure.
+Patch 2 adds some optimisations to the approach, since we rely
+on a delayed_work, it is no longer required to check that the minimum
+interval passed since execution, we however terminate the call
+immediately if we see that no mm_cid is actually active, which could
+happen on processes sleeping for long time or which exited but whose mm
+has not been freed yet.
 
-Signed-off-by: Liang Jie <liangjie@lixiang.com>
----
- kernel/sched/ext.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 3 allows the mm_cids to be actually compacted when a process
+reduces its number of threads, which was not the case since the same
+mm_cids were reused to improve cache locality, more details in [1].
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 7fff1d045477..4bd964fc7bbb 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -960,7 +960,7 @@ static DEFINE_PER_CPU(struct task_struct *, direct_dispatch_task);
- static struct scx_dispatch_q **global_dsqs;
- 
- static const struct rhashtable_params dsq_hash_params = {
--	.key_len		= 8,
-+	.key_len		= sizeof_field(struct scx_dispatch_q, id),
- 	.key_offset		= offsetof(struct scx_dispatch_q, id),
- 	.head_offset		= offsetof(struct scx_dispatch_q, hash_node),
- };
+Patch 4 adds a selftest to validate the functionality of the
+task_mm_cid_work (i.e. to compact the mm_cids), this test requires patch
+3 to be applied.
+
+Changes since V1 [1]:
+* Re-arm the delayed_work at each invocation
+* Cancel the work synchronously at mmdrop
+* Remove next scan fields and completely rely on the delayed_work
+* Shrink mm_cid allocation with nr thread/affinity (Mathieu Desnoyers)
+* Add self test
+
+OVERHEAD COMPARISON
+
+In this section, I'm going to refer to head as the current state
+upstream without my patch applied, patch is the same head with these
+patches applied. Likewise, I'm going to refer to task_mm_cid_work as
+either the task or the function. The experiments are run on an aarch64
+machine with 128 cores. The kernel has a bare configuration with
+PREEMPT_RT enabled.
+
+- Memory
+
+The patch introduces some memory overhead:
+* head uses a callback_head per thread (16 bytes)
+* patch relies on a delayed work per mm but drops a long (80 bytes net)
+
+Tasks with 5 threads or less have lower memory footprint with the
+current approach.
+Considering a task_struct can be 7-13 kB and an mm_struct is about 1.4
+kB, the overhead should be acceptable.
+
+- Boot time
+
+I tested the patch booting a virtual machine with vng[2], both head and
+patch get similar boot times (around 8s).
+
+- Runtime
+
+I run some rather demanding tests to show what could possibly be a worst
+case in the approach introduced by this patch. The following tests are
+running again in vng to have a plain system, running mostly the
+stressors (if there). Unless differently specified, time is in us. All
+tests run for 30s.
+The stress-ng tests were run with 128 stressors, I will omit from the
+table for clarity.
+
+No load                       head           patch
+running processes(threads):   12(12)         12(12)
+duration(avg,max,sum):        75,426,987     2,42,45ms
+invocations:                  13             20k
+
+stress-ng --cpu-load 80       head           patch
+running processes(threads):   129(129)       129(129)
+duration(avg,max,sum):        20,2ms,740ms   7,774,280ms
+invocations:                  36k            39k
+
+stress-ng --fork              head           patch
+running processes(threads):   3.6k(3.6k)     4k(4k)
+duration(avg,max,sum):        34,41,720      19,457,880ms
+invocations:                  21             46k
+
+stress-ng --pthread-max 4     head           patch
+running processes(threads):   129(4k)        129(4k)
+duration(avg,max,sum):        31,195,41ms    21,1ms,830ms
+invocations:                  1290           38k
+
+It is important to note that some of those stressors run for a very
+short period of time to just fork/create a thread, this heavily favours
+head since the task won't simply run as often.
+Moreover, the duration time needs to be read carefully, since the task
+can now be preempted by threads, I tried to exclude that from the
+computation, but to keep the probes simple, I didn't exclude
+interference caused by interrupts.
+On the same system while isolated, the task runs in about 30-35ms, it is
+hence highly likely that much larger values are only due to
+interruptions, rather than the function actually running that long.
+
+I will post another email with the scripts used to retrieve the data and
+more details about the runtime distribution.
+
+[1] - https://lore.kernel.org/linux-kernel/20241205083110.180134-2-gmonaco@redhat.com/
+[2] - https://github.com/arighi/virtme-ng
+
+Gabriele Monaco (3):
+  sched: Move task_mm_cid_work to mm delayed work
+  sched: Remove mm_cid_next_scan as obsolete
+  rseq/selftests: Add test for mm_cid compaction
+
+Mathieu Desnoyers (1):
+  sched: Compact RSEQ concurrency IDs with reduced threads and affinity
+
+ include/linux/mm_types.h                      |  23 ++-
+ include/linux/sched.h                         |   1 -
+ kernel/sched/core.c                           |  66 +-------
+ kernel/sched/sched.h                          |  32 ++--
+ tools/testing/selftests/rseq/.gitignore       |   1 +
+ tools/testing/selftests/rseq/Makefile         |   2 +-
+ .../selftests/rseq/mm_cid_compaction_test.c   | 157 ++++++++++++++++++
+ 7 files changed, 203 insertions(+), 79 deletions(-)
+ create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
+
+
+base-commit: 231825b2e1ff6ba799c5eaf396d3ab2354e37c6b
 -- 
-2.25.1
+2.47.1
 
 
