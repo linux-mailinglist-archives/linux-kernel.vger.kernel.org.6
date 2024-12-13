@@ -1,140 +1,133 @@
-Return-Path: <linux-kernel+bounces-444445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835209F06FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:54:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D236E188B44A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:54:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40301ADFF1;
-	Fri, 13 Dec 2024 08:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYGQdt7g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 737789F06FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:55:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3A11AB6FF;
-	Fri, 13 Dec 2024 08:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334FC281B4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:55:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11951ACDF0;
+	Fri, 13 Dec 2024 08:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UpW6xPys"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1226502B1;
+	Fri, 13 Dec 2024 08:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734080040; cv=none; b=jZk7Lpv+ifhSUMeGuDAJlB0pIeTrztmR5s8m6NpW5WoUYISOfSidLHrkC84Fvht8LGBARp6evmCYxjIOyYOxbzi6+9v6nHOEneq8YQCH8w+Zu1ypncs/x1/IOvM+Qfyj4zdnBG7FbgFp5dFGo6htHg/BwHfx1w9WsboTCGBHftA=
+	t=1734080093; cv=none; b=PSE4HpMAmeiNjBYAFXUizl8gp01HICZQjdIzJ6dJZo/baln5/CfWHsKNy4xzTh8tKLnp43Z1y9xkv08J7/S9BgRCBOrGKTPDJw8bw4QUTANSuDAlK2zas1wjk5Xrh7APOwi+IMF93S4C7/aSMQjc2sYldNNd5w6Z6FGdk1Z1PJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734080040; c=relaxed/simple;
-	bh=xx1YCCc7x74d5prYar4rNsVjFMi0KmmH2/WshxrFgFA=;
+	s=arc-20240116; t=1734080093; c=relaxed/simple;
+	bh=GsxhVX2WxwG+5uCuda5A0oHfwftdzcUVjGufjb46HGw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rLGO+7TzOksW8KsNxZ0p9O9+QVvovqSK7dBLJ1ts62u9LWTnv0PhhZ06DpsXqTjqr4Wc6b0Ea4FQznOtSNFofLzxicWNZchqeh5DnG98V5iUIeV8Myc1AgMjRA5262WapfvSV9/Qm3fhUdBiPd4nDIEX0vrUqjca9zwHl08/nlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYGQdt7g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25961C4CED0;
-	Fri, 13 Dec 2024 08:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734080038;
-	bh=xx1YCCc7x74d5prYar4rNsVjFMi0KmmH2/WshxrFgFA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hYGQdt7gMOzrSpI2pNvkeXUp63YP6uhlskMyBMkZVNFKgWgsVIyWBme/cUxadA0P2
-	 QwQJMAxd353bmBC1yYj2NNPg3aY1RTUH5JekxE2QK6vlVDVO6s6d4mHnXQOUZgw5zH
-	 kWoeHYjZCxVVeRlSyM0vPJ7zdRiuRFKKZNzJ3UdakMoJk8TZKJQEPYefhLwJdErvxC
-	 S3Ghxtu7ICi/SOuCiNHjO/JPe/uFAYnLewlvKXgqadhEsynLJp+ifi0glwr3Z7jpuQ
-	 zjHnT4xACKJrovXHjHG1m/6wTW7tcqySsI7Vvu+TUbvLTLKyYzEKBFzbdKnUPo48lJ
-	 uEozC60hv/zTw==
-Date: Fri, 13 Dec 2024 09:53:55 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Sanyog Kale <sanyog.r.kale@intel.com>, 
-	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_pkumpatl@quicinc.com, kernel@quicinc.com
-Subject: Re: [PATCH v5 1/4] ASoC: dt-bindings: wcd937x-sdw: Add static
- channel mapping support
-Message-ID: <iuuxejlzes23ju4oy2m27oen2bhrenyuouq37ktvmiheoy7ow6@w6oqzh4bj4v6>
-References: <20241212162334.36739-1-quic_mohs@quicinc.com>
- <20241212162334.36739-2-quic_mohs@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uKGC/IcvE5OW5TcS90IVJMQIU0eASTtkf+Bs7tvM1IT5lkTnv9FcwprvMIBxPUCSjFsf3LXinKl2kRs5RHrKmEIT1xEqaund9MhCM4AC9T0aQra1GmdfIDkFABNWt7caV75dG8F41+wxQltZhM8WJVA09x+2Sr+qJOqLHw6hqac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UpW6xPys; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734080092; x=1765616092;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GsxhVX2WxwG+5uCuda5A0oHfwftdzcUVjGufjb46HGw=;
+  b=UpW6xPysknM342YNq3N4+2ELkry2WoXDd3gWOgpDGF1kdmM1tBfNKIFb
+   Lhq5Lj7XpYGAvxTlnMZB33qsWvqSVInKsWmC1ohsQjsyYjgcBH54pi3Lb
+   kuqlnCM4VFVdtTFC2EY+8kDKxxjhS9U9c7ooJuA4luLMrLniXM0XLdkaL
+   DaPu5Jutyg2PFWrvVHQG5iXsrpWVjFFKX+CxO5mIJC8h3Ir/tFmc6/Mg4
+   NO5d/QeWkSym1bkHkke9NFWlRO5zHghyjvabmeMxNgJX/l+rA1vn+27Aq
+   L2VsGIQDoTSEUaDroHui4W9+EO3VyEOgcD4qBg8AZmK61NsiEGzFeUnlU
+   A==;
+X-CSE-ConnectionGUID: 8xr4mxFrRCWq8tQEho+f2Q==
+X-CSE-MsgGUID: u/fmbWM/TxicxbVFNA5qcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="37376057"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="37376057"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 00:54:51 -0800
+X-CSE-ConnectionGUID: p7ValXwCRTib7XfkE/A7OQ==
+X-CSE-MsgGUID: jiD8E0OlQwuHBJHYDQz0HA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="97040043"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 00:54:48 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id D147412034A;
+	Fri, 13 Dec 2024 10:54:45 +0200 (EET)
+Date: Fri, 13 Dec 2024 08:54:45 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
+	git@xilinx.com, stable@kernel.org,
+	Sam Bobrowicz <sam@elite-embedded.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	"open list:V4L2 CAMERA SENSOR DRIVERS" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH v2] media: ov5640: fix get_light_freq on auto
+Message-ID: <Z1v2VRzgUVpHZvXR@kekkonen.localdomain>
+References: <2e79be9185cbb0dbe40e670eee996cf290bab0a6.1732264079.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241212162334.36739-2-quic_mohs@quicinc.com>
+In-Reply-To: <2e79be9185cbb0dbe40e670eee996cf290bab0a6.1732264079.git.michal.simek@amd.com>
 
-On Thu, Dec 12, 2024 at 09:53:31PM +0530, Mohammad Rafi Shaik wrote:
-> Add static channel mapping between master and slave rx/tx ports for
-> Qualcomm wcd937x soundwire codec.
+Hi Michal,
+
+Thanks for the patch.
+
+On Fri, Nov 22, 2024 at 09:28:01AM +0100, Michal Simek wrote:
+> From: Sam Bobrowicz <sam@elite-embedded.com>
 > 
-> Currently, the channel map index value for each soundwire port is
-> hardcoded in the wcd937x-sdw driver, and the same channel map index
-> value is configured in the soundwire master.
+> Light frequency was not properly returned when in auto
+> mode and the detected frequency was 60Hz.
 > 
-> The Qualcomm board like the QCM6490-IDP require static channel map
-> settings for the soundwire master and slave ports.
-> 
-> If another boards which are using enable wcd937x, the channel mapping
-> index values between master and slave may be different depending on the
-> board hw design and requirements. If the above properties are not used
-> in a SoC specific device tree, the channel mapping index values are set
-> to default.
-> 
-> With the introduction of the following channel mapping properties, it is
-> now possible to configure the master channel mapping directly from the
-> device tree.
-> 
-> The qcom,tx-channel-mapping property specifies the static channel mapping
-> between the slave and master tx ports in the order of slave port channels
-> which is adc1, adc2, adc3, adc4, dmic0, dmic1, mbhc, dmic2, dmic3, dmci4,
-> dmic5, dmic6, dmic7.
-> 
-> The qcom,rx-channel-mapping property specifies the static channel mapping
-> between the slave and master rx ports in the order of slave port channels
-> which is hph_l, hph_r, clsh, comp_l, comp_r, lo, dsd_r, dsd_l.
-> 
-> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> Fixes: 19a81c1426c1 ("[media] add Omnivision OV5640 sensor driver")
+> Signed-off-by: Sam Bobrowicz <sam@elite-embedded.com>
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> Cc: <stable@kernel.org>
+
+Cc: stable@vger.kernel.org
+
+And right after the Fixes: tag.
+
+I fixed it this time.
+
 > ---
->  .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
-> index d3cf8f59cb23..c8543f969ebb 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
-> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
-> @@ -58,6 +58,40 @@ properties:
->      items:
->        enum: [1, 2, 3, 4, 5]
+> Changes in v2:
+> - add Fixes tag and cc stable
+> 
+>  drivers/media/i2c/ov5640.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+> index c1d3fce4a7d3..8566bc2edde9 100644
+> --- a/drivers/media/i2c/ov5640.c
+> +++ b/drivers/media/i2c/ov5640.c
+> @@ -1982,6 +1982,7 @@ static int ov5640_get_light_freq(struct ov5640_dev *sensor)
+>  			light_freq = 50;
+>  		} else {
+>  			/* 60Hz */
+> +			light_freq = 60;
+>  		}
+>  	}
 >  
-> +  qcom,tx-channel-mapping:
-> +    description: |
-> +      Specifies static channel mapping between slave and master tx port
-> +      channels.
-> +      In the order of slave port channels which is adc1, adc2, adc3,
-> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    minItems: 12
-> +    maxItems: 12
-> +    additionalItems: false
-> +    items:
-> +      enum:
-> +        - 1  # WCD9370_SWRM_CH1
-> +        - 2  # WCD9370_SWRM_CH2
-> +        - 3  # WCD9370_SWRM_CH3
-> +        - 4  # WCD9370_SWRM_CH4
 
-I asked to drop the comments, because now they are obvious. 1 is channel
-1, obviously. Your description should say what are the values here:
-channels on the WCD9370 or Soundwire master device side.
+-- 
+Regards,
 
-Anyway, if it is understable to Mark, then I am happy as well:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Sakari Ailus
 
