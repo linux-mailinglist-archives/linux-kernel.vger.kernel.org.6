@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-445346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32629F14E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:26:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA809F14E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:27:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C7F284E4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:26:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DDEA188E7B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0271E764A;
-	Fri, 13 Dec 2024 18:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622D71E766F;
+	Fri, 13 Dec 2024 18:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l80XU+ez"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GW/hkW/w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E51157E9F;
-	Fri, 13 Dec 2024 18:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC5E1E048B;
+	Fri, 13 Dec 2024 18:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734114387; cv=none; b=Xmh/Lq/KtJjY2rudRw3tiVL8aaB03LxajfEoj0eF4mqTiAIdRMUlWdm6CshgY41BhMZeNsHbcsG5hbXx4G4IR9QhFsEeXXk0CTjidFFCaysfbi/H+ZSM+lXXnNN1Pvdk/eVJklt8iqaP0sFGdYrGAuKZIZUD8Qx8v2OxeeFqXdY=
+	t=1734114416; cv=none; b=du2wdoImurk9lDFeDkz4yI4r1GmeRaWQEjlXv/6KV5J/Z+fvAJQwo5G8Sg1+cyQgRGfOR0jZ4qbS/A8zlqcMlbNf1ZKzIwc4ncVjFrASwJNroDrmgI8dJ/jNLGYE19+TTeNvYODDCgRJ1qHEMkeo/8upcYWagEVYOu81+OioItw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734114387; c=relaxed/simple;
-	bh=4QlQ8Ys8G2MWmjm47JxPe6RF3jcZXqGLZ9LhHvUiEYw=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=CJ6RXUqB31v5po7TiNxvWMFOwNPaeIjAWwHGHmZKQ7DCsqlLgWZY00VowebiZXvLg9XhM5E/XxHA4BYhIO7VnEZdJtUuS/wHCSIaSxaaxaaktSN3BY2hjPMUAN8qLqyDswdCYvt6qSZ7x5zzbuZMf5k6IM70R6o56WShRR65xa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l80XU+ez; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D661C4CED0;
-	Fri, 13 Dec 2024 18:26:27 +0000 (UTC)
+	s=arc-20240116; t=1734114416; c=relaxed/simple;
+	bh=P3tmUV808PlrjWsZVtbrocOn94r84aBEve7EkJbB0EE=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=s00pA/zhMPaNDlwW1h2LPhXtNQ/YOlKAy4qojNH8N7VcHOlps7ahrzaPfY9uVVON9b+Agak0sCWPN5lByAtKb56ciP96Zccsbbz0ThenXl/hb/TfKyOF/J6oykblSQDNtW2H3I+DWQZe4g54uu3oC83a4pyEE52iKUgx3fs1xzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GW/hkW/w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9FE7C4CED0;
+	Fri, 13 Dec 2024 18:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734114387;
-	bh=4QlQ8Ys8G2MWmjm47JxPe6RF3jcZXqGLZ9LhHvUiEYw=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=l80XU+eziWwpelejTM/N5sXcHPuLiJKP62nQeM7hEPk45myreewJlbvwH7+PcWozZ
-	 sWpq5HQtC9PPIOg2m3p5wYw/JO3EiGtuNajgUiUJmqhfz0rsjJTG5rd+bRraxN9IT5
-	 aB9FzHXvb8B8gyYbqJ/ulSywHaQx6Ms9pVEpmJZnDi3ewVk1Tt7LLtJ2VPOBx+p6BD
-	 g8W9d/IPe+TJVuYuIbwN0uNgoQsnCgY2ZzsVuCAEUrRNS2mTvn7xxhU5vRDx9m4Npz
-	 o0DYxrvbxIMELDA9hinjFLEb+OQOiQNsrwRmGHMXKrzf9/OeCLoDp2Dyml9vjDyl8X
-	 YroHa82/vvJjQ==
-Date: Fri, 13 Dec 2024 12:26:25 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1734114416;
+	bh=P3tmUV808PlrjWsZVtbrocOn94r84aBEve7EkJbB0EE=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=GW/hkW/w4LfVW7vmvSCzUowi3MeqRbp9dbVmP0o3wRkp4JtMwCZCG79+FVhf/j0Of
+	 MnuSBxmfqlo0KPGBS++3BysSzndZu1Hdaxe3EHoLA15X40DFXT3JyWki5wO0dryuc2
+	 dWP6k9/leMI6l4gjoUqdSuNsVuv31O8woGU5dOvKz5fj5uCtpnp9936Nvp+Hx07I4O
+	 3d5tjoefGu5tMRn52ndgRX7MGveg2KkBFs33XqJViKu5p8o/DLiCP29uGNU/7zZZyT
+	 ZhPnTSn1Su9rQx0DKB8J6eAGu42NiGQSxPQqQtCmKw827xdcG0Mxhn9cVBs/Xmn5eH
+	 GMq//v75OxzOA==
+From: Mark Brown <broonie@kernel.org>
+To: vkoul@kernel.org, perex@perex.cz, tiwai@suse.com, 
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, 
+ festevam@gmail.com, nicoleotsuka@gmail.com, lgirdwood@gmail.com, 
+ linuxppc-dev@lists.ozlabs.org, Shengjiu Wang <shengjiu.wang@nxp.com>
+In-Reply-To: <20241211030849.1834450-1-shengjiu.wang@nxp.com>
+References: <20241211030849.1834450-1-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH v6 0/6] ASoC: fsl: add memory to memory function for
+ ASRC
+Message-Id: <173411441355.280424.14935284209276568628.b4-ty@kernel.org>
+Date: Fri, 13 Dec 2024 18:26:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, tudor.ambarus@linaro.org, 
- andre.draszik@linaro.org, willmcvicker@google.com, 
- linux-arm-kernel@lists.infradead.org, kernel-team@android.com, 
- Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-In-Reply-To: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
-References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
- <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
-Message-Id: <173411438555.1847522.16456703753774291235.robh@kernel.org>
-Subject: Re: [PATCH 2/4] dt-bindings: mfd: syscon: allow two reg regions
- for gs101-pmu
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-
-On Fri, 13 Dec 2024 16:44:39 +0000, Peter Griffin wrote:
-> To avoid dtschema warnings allow google,gs101-pmu to have
-> two reg regions.
+On Wed, 11 Dec 2024 11:08:43 +0800, Shengjiu Wang wrote:
+> This function is base on the accelerator implementation
+> for compress API:
+> 04177158cf98 ("ALSA: compress_offload: introduce accel operation mode")
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> I don't really like this patch, but also didn't want to submit the series
-> with a dtschema warning ;-)
+> Audio signal processing also has the requirement for memory to
+> memory similar as Video.
 > 
-> Possibly a better solution is when Robs patch
-> `mfd: syscon: Allow syscon nodes without a "syscon" compatible` [1]
-> 
-> gets updated with a v2, we could remove syscon compatible from
-> gs101.dtsi (an ABI issue). If I understood his patch correctly,
-> it would mean this yaml update would then no longer be required.
-> 
-> Let me know your thoughts
-> 
-> [1] https://lore.kernel.org/lkml/20241211-syscon-fixes-v1-0-b5ac8c219e96@kernel.org/T/#m5ad1ed5c69f693d2a5cc54342a87fbdf3df756d2
-> ---
->  Documentation/devicetree/bindings/mfd/syscon-common.yaml | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
+> [...]
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Applied to
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/mfd/syscon-common.yaml:68:3: [error] syntax error: expected <block end>, but found '?' (syntax)
-./Documentation/devicetree/bindings/mfd/syscon-common.yaml:69:5: [warning] wrong indentation: expected 6 but found 4 (indentation)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/syscon-common.yaml: ignoring, error parsing file
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/mfd/syscon-common.example.dts'
-Documentation/devicetree/bindings/mfd/syscon-common.yaml:68:3: expected <block end>, but found '?'
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/mfd/syscon-common.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-./Documentation/devicetree/bindings/mfd/syscon-common.yaml:68:3: expected <block end>, but found '?'
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1506: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
+Thanks!
 
-doc reference errors (make refcheckdocs):
+[1/6] ALSA: compress: Add output rate and output format support
+      commit: f4425e3ab2f796d442a44f31262eade9b6427ff7
+[2/6] ASoC: fsl_asrc: define functions for memory to memory usage
+      commit: 8ea7d04a4e9e30876c9d8184b4b8e4cab33e0372
+[3/6] ASoC: fsl_easrc: define functions for memory to memory usage
+      commit: 27147695aaf7ccb0edc3f21454b5405c9037b4ba
+[4/6] ASoC: fsl_asrc_m2m: Add memory to memory function
+      commit: 24a01710f6271ec32b629d714e6a64a69665128b
+[5/6] ASoC: fsl_asrc: register m2m platform device
+      commit: 286d658477a43284f7be2539b059ecc90ba109c2
+[6/6] ASoC: fsl_easrc: register m2m platform device
+      commit: b62eaff0650dc6dc2a4bf0f50714f2357a23fc71
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-pip3 install dtschema --upgrade
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Thanks,
+Mark
 
 
