@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-444650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775B09F0A4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:00:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A03A9F0A50
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:01:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F01C282BF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:00:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3767E1697A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293A41CDFAC;
-	Fri, 13 Dec 2024 11:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5702D1CC8A7;
+	Fri, 13 Dec 2024 11:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCTtHUZ2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBumTtSt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798A61C3C0D;
-	Fri, 13 Dec 2024 11:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F9D1C3C0C;
+	Fri, 13 Dec 2024 11:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734087650; cv=none; b=aB162fH6UknkMZZlp2pt83XGtA8115A1IiisTejytArnELauP2Qzk6VBWFLmeO2fZ5qRq4oCkfZlnAxAvqEN3covZeTYU/0YZyJETXPl7ZbmxZl4mnmtU0VE0gwNiEg/GqzWhQUQlM8jPrtZIOrF7WG6q7PQmhy7z8LAdbwsqsc=
+	t=1734087704; cv=none; b=aYkWsYNPULk+cHnN8uZPQD8uasETMuXmFkUZDySEaV0Mutf2dMVEpFEjr1ocT1yyLQowATSbvcH6VlHAcKsOHtxR1gb+8BuIYdoFOEqYOTUOsSeLzb+bV9DvnP5zYaZw1mV8nFBfj07at+e6vMmUZNxIk+pnsqks1N9wGr7e6yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734087650; c=relaxed/simple;
-	bh=xPaMFLDu/nqHKKwyxV+rOSMISn75qqvM0XYS7WHwLm4=;
+	s=arc-20240116; t=1734087704; c=relaxed/simple;
+	bh=IofNVG0zU7gHx4tYBw2xXCHROFDyOsBnsepuoYN+7qk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aYtpApwoYHkNrKK0VMhfpaUcETHsiizu34lrR8k0WIn2m8Tvcr5O84aItKomh39p0zkLbxNe8iEaPmXz9L3qZkZ/Xi2wKpkqr87b5c+/F/XUwtkc7+JdxYxvtdd4EVsWtYxthk3EvBLQnRVhtCUKbsXrhkYk+QMUrXOFJPU06B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCTtHUZ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E1F5C4CED0;
-	Fri, 13 Dec 2024 11:00:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjaxTK5fdT366W/c3N0xxtRcwRpHyTShsOYGrRntO49Zut6L0knRdGFmw/yG1whQXJa7XTAViXel2jYda+DMH4XH8XQ4ofphSQ4sJVT2B/IoQBtVBYlxti13fhn1X1PCH7b7K2CYBr2IlzpQwufUhdSEDLPpR9SXVPpDntBjB7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBumTtSt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F664C4CED0;
+	Fri, 13 Dec 2024 11:01:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734087650;
-	bh=xPaMFLDu/nqHKKwyxV+rOSMISn75qqvM0XYS7WHwLm4=;
+	s=k20201202; t=1734087704;
+	bh=IofNVG0zU7gHx4tYBw2xXCHROFDyOsBnsepuoYN+7qk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KCTtHUZ2gVegt6m+OrBB7y4SCt2ZBKFaFwu1SPqbNnnseaJ0DA8SifYwRV4jrFIw2
-	 aSxC4v4Ys6jG+wRxdWvepBgVhrrMbSqXbS4tW5TpnxZyONZAr8EYDrdaa7drcdPYU6
-	 cpYMTCTds95rfXWrMMDNfEt+yKaBOAQyjKzWfV6T3m6Fcex97a3h5xqsFnCGJrUoag
-	 fIoMgfADo2muryZClr/+uRE/XkI8tsOJfa6uaipolfX4VmNxR7D8opDDfxIKAo+kqA
-	 7CxNMYP0Ml6huMx2YfRnjU0Fxh1bvlIeKblQHNUK2IyyDP51V2asbjcELaCg3RXfrI
-	 A6sjTO/KN1FTw==
-Date: Fri, 13 Dec 2024 12:00:46 +0100
+	b=YBumTtStQXkF4wRu3+RXFGUINUB0TNoEPN9DVsTfSHCP9eQlB/thu6o+5igdfJQNW
+	 ZgA2uixVeyZfjlDS5kKiU8R1s2cyXm+1RpSJP/lTUVTyUkfvDCXAi6fbWIfWqCBfVC
+	 6fIaDRC5AAergpps4d3GrWKSDLfh2YzRNp/Uh4c587usk3sDQGp+iGkRKiumGqxngO
+	 bHzF3tE+wZ3xpH8Vj9GAWe0le8UbGA/R0C1AtbTIi5ZyT5tBTzlcCOc8LMb6QYwr8l
+	 nmcICjYMtkyKpU84roFAnHWlltAgO8H69ro81Z+tfnMuW6Sf4lk3tJ8BvF+V5ym8mf
+	 y24c9R5YPMi7w==
+Date: Fri, 13 Dec 2024 12:01:40 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: power: supply: gpio-charger: add
- support for default charge current limit
-Message-ID: <4lef2r5lblj5waulkc56xbfa4xnlxbrk7rawdjgmkatgfnlj3z@vmtcvza6wcna>
-References: <20241211-default-charge-current-limit-v1-0-7819ba06ee2a@liebherr.com>
- <20241211-default-charge-current-limit-v1-1-7819ba06ee2a@liebherr.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, upstream@airoha.com
+Subject: Re: [PATCH 1/2] dt-bindings: clock: add ID for eMMC for EN7581
+Message-ID: <bzdhbuxr6zyln2ecxnamfzlblcigdfe7r4vvwcggf35kgyozk6@it2sm6fpypa5>
+References: <20241211112253.27905-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,38 +58,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241211-default-charge-current-limit-v1-1-7819ba06ee2a@liebherr.com>
+In-Reply-To: <20241211112253.27905-1-ansuelsmth@gmail.com>
 
-On Wed, Dec 11, 2024 at 08:29:09AM +0100, Dimitri Fedrau wrote:
-> Add binding for default charge current limit.
-
-Why?
-
+On Wed, Dec 11, 2024 at 12:22:37PM +0100, Christian Marangi wrote:
+> Add ID for eMMC for EN7581. This is to control clock selection of eMMC
+> between 200MHz and 150MHz.
 > 
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  Documentation/devicetree/bindings/power/supply/gpio-charger.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+>  include/dt-bindings/clock/en7523-clk.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> index 89f8e2bcb2d7836c6a4308aff51721bd83fa3ba1..545fdd7133daf67b5bc238c5af26d0cbd8b44eae 100644
-> --- a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> @@ -58,6 +58,10 @@ properties:
->              charge-current-limit-gpios property. Bit 1 second to last
->              GPIO and so on.
+> diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+> index 717d23a5e5ae..78d16068228a 100644
+> --- a/include/dt-bindings/clock/en7523-clk.h
+> +++ b/include/dt-bindings/clock/en7523-clk.h
+> @@ -11,7 +11,8 @@
+>  #define EN7523_CLK_NPU		5
+>  #define EN7523_CLK_CRYPTO	6
+>  #define EN7523_CLK_PCIE		7
+> +#define EN7581_CLK_EMMC		8
 >  
-> +  charge-current-limit-default:
+> -#define EN7523_NUM_CLOCKS	8
+> +#define EN7523_NUM_CLOCKS	9
 
-Use standard property suffixes - see other bindings how they define
-charge current.
-git grep charge -- Documentation/devicetree/bindings/power/supply/
+This cannot change.
 
-But what I don't get is why GPIO chager needs it, since this is
-non-configurable for GPIO charger.
-
-You have entire commit msg or property description to explain such
-things.
+If this changes, then it is not a binding and first drop it in separate
+patch.
 
 Best regards,
 Krzysztof
