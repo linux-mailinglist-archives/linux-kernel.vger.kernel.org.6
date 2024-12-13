@@ -1,113 +1,89 @@
-Return-Path: <linux-kernel+bounces-444894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8169A9F0E2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:59:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FD69F0E2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:59:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B864218811C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:58:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 138D328129F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6432A1E0B7F;
-	Fri, 13 Dec 2024 13:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7BA1E0B62;
+	Fri, 13 Dec 2024 13:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+z1AV5m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHMWjb49"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80FF1E0487;
-	Fri, 13 Dec 2024 13:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB23C1E049F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734098302; cv=none; b=fXEltJU51f7vjfxFMq+uGB66F87n/2+9VG1UyNgyTWe+OPb1tnM3nWwR3TvpRamss99GXoNo84iagnotlUSe7ycD4y2CeE0jZKR76pC7fGJt5UCIGXFelbE2H1QwjUyVOHyTfbRn0DWcb73eO4Trxx6ldcyPQpjym/JhVxsFEZY=
+	t=1734098381; cv=none; b=SwbGZaFIHMjoTAivojmKH+Sw41VZm6s7a0sIsd6bNZ1Y7on6ZpWVKeMN//HYDQ7FLGVVKdkUl4XYAFWJv09o1i9R/584IlnplaKcU98BDdZxSfH1WmnwG2qYPTyuf1LUVvQvKNSB7ZTqWY4vVmIyevOWLnfqmKr31BwRgpTeo+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734098302; c=relaxed/simple;
-	bh=ZsRyVA73HFtwT3ge1nfoMMlMTV+JQGwl5qrL9G5GfZw=;
+	s=arc-20240116; t=1734098381; c=relaxed/simple;
+	bh=Xfjzlw+9SSmPrE+JqUAS8Ske9kX2tIaiBAqz05lk6BA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SufS4JECPNU+DXoPOD/ngxr0dOVfU61XcUCRUuxSAFZ4nZbFS7l89+OmGkzDiz4+OrI7eTUCEQRHqPoIIma15c4Jy2//xYFbpJQC4olRD81iFBhpwOj3IV1a3FPv5Zulwep+h4NcuNg0b3JRjfRJQmFiijs0EFXqhJTnQrgxJco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+z1AV5m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 724CFC4CED0;
-	Fri, 13 Dec 2024 13:58:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwtASV6GZendbrMzV1hFg1lpK9kYTcmoC3YHQ5Wi1et/359WYQfyhRwRNGcxqdhF+nCCkv61xqGzZxoN8xxOzAeUVot9gwtvVk4kuK+5YbBCi1nMHI9cYAn9kf+61sslQOG3+ekTCp53O1aRmCUXBNTmXwiyoimvIShEuZ4ifQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHMWjb49; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75DBC4CED0;
+	Fri, 13 Dec 2024 13:59:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734098302;
-	bh=ZsRyVA73HFtwT3ge1nfoMMlMTV+JQGwl5qrL9G5GfZw=;
+	s=k20201202; t=1734098380;
+	bh=Xfjzlw+9SSmPrE+JqUAS8Ske9kX2tIaiBAqz05lk6BA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I+z1AV5msD8rGWqVXJycPT7c07RUiX10NqhQGdARQsGYkzCOl0uSwo+aJVS118w4i
-	 H2IrmSA1F7mxVAHrP7ovJJOYKKksMcPYOLV5hj+Vceo9QgNDWKako6LWsqkjrT3NBz
-	 NylOHh6iEF7RAW60NX4Nqjfl4XjeTGkvsGInZ1UObwrg7YAQyJCIfKkv+XZcj0xER/
-	 OBR+bvxz1xupBa2ZNljdU2DqzOyKrYnHcM2G+XZJpp8+E3KKoShM+zmzNxYcTM4vGm
-	 bcU/uwsi6a8zYWFQ+tCREF6N58K6JCmcfcAHLGmjB1frZ1pDB5FE24N+/rI7TcBBvb
-	 C2sd1QVY+xfZQ==
-Date: Fri, 13 Dec 2024 13:58:18 +0000
-From: Simon Horman <horms@kernel.org>
-To: Lorenz Brun <lorenz@brun.one>
-Cc: Igor Russkikh <irusskikh@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Manuel Ullmann <labre@posteo.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: atlantic: keep rings across suspend/resume
-Message-ID: <20241213135818.GC561418@kernel.org>
-References: <20241212023946.3979643-1-lorenz@brun.one>
+	b=gHMWjb492acas73LA1fT9FNIC30Amps109tUCHYUlge2oYSu3NiqKIsfigDhXTTfu
+	 niuA/YpeH/2J2PvgeHLhZHRTEgHU4pXKxKYECanW33S5zhJbsDofo/bp/iESyWyQjA
+	 Ackeb+82rZHISP6m5HZ7ldqJzm6RvhOpa8FYHm1JFPvhIWzseAn8wzREPpkcATKP05
+	 dAU8jQpMLUb1NQ7QxK6Gpg1z2fnZTI/LBIyWuRqb7B34RJNXVplpma8dHZZrkHmbko
+	 0cxkBdEbNB/SutlBMjeGNbE8Osu0VCN9rCXVId9Ks0YcX0Zri64ACfzBM9gZ6iA8/M
+	 d4JYncZNCVp7A==
+Date: Fri, 13 Dec 2024 14:59:37 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
+	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com
+Subject: Re: [PATCH v3 5/7] rcu: handle quiescent states for PREEMPT_RCU=n,
+ PREEMPT_COUNT=y
+Message-ID: <Z1w9ydTN90Sl8qda@localhost.localdomain>
+References: <20241213040658.2282640-1-ankur.a.arora@oracle.com>
+ <20241213040658.2282640-6-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241212023946.3979643-1-lorenz@brun.one>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241213040658.2282640-6-ankur.a.arora@oracle.com>
 
-On Thu, Dec 12, 2024 at 03:39:24AM +0100, Lorenz Brun wrote:
-> The rings are order-6 allocations which tend to fail on suspend due to
-> fragmentation. As memory is kept during suspend/resume, we don't need to
-> reallocate them.
+Le Thu, Dec 12, 2024 at 08:06:56PM -0800, Ankur Arora a écrit :
+> With PREEMPT_RCU=n, cond_resched() provides urgently needed quiescent
+> states for read-side critical sections via rcu_all_qs().
+> One reason why this was needed: lacking preempt-count, the tick
+> handler has no way of knowing whether it is executing in a
+> read-side critical section or not.
 > 
-> This does not touch the PTP rings which, if enabled, still reallocate.
-> Fixing these is harder as the whole structure is reinitialized.
+> With (PREEMPT_LAZY=y, PREEMPT_DYNAMIC=n), we get (PREEMPT_COUNT=y,
+> PREEMPT_RCU=n). In this configuration cond_resched() is a stub and
+> does not provide quiescent states via rcu_all_qs().
+> (PREEMPT_RCU=y provides this information via rcu_read_unlock() and
+> its nesting counter.)
 > 
-> Fixes: cbe6c3a8f8f4 ("net: atlantic: invert deep par in pm functions, preventing null derefs")
-> Signed-off-by: Lorenz Brun <lorenz@brun.one>
-
-...
-
-> diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
-> index 9769ab4f9bef..3b51d6ee0812 100644
-> --- a/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
-> +++ b/drivers/net/ethernet/aquantia/atlantic/aq_vec.c
-> @@ -132,6 +132,16 @@ int aq_vec_ring_alloc(struct aq_vec_s *self, struct aq_nic_s *aq_nic,
->  	unsigned int i = 0U;
->  	int err = 0;
->  
-> +	if (self && self->tx_rings == aq_nic_cfg->tcs && self->rx_rings == aq_nic_cfg->tcs) {
-> +		/* Correct rings already allocated, nothing to do here */
-> +		return 0;
-> +	} else if (self && (self->tx_rings > 0 || self->rx_rings > 0)) {
-> +		/* Allocated rings are different, free rings and reallocate */
-> +		pr_notice("%s: cannot reuse rings, have %d, need %d, reallocating", __func__,
-> +			  self->tx_rings, aq_nic_cfg->tcs);
-> +		aq_vec_ring_free(self);
-> +	}
-> +
-
-Hi Lorenzo,
-
-Can self be NULL here?
-
-In the for loop below it is dereferenced unconditionally and
-thus assumed not to be NULL there.
-
-Flagged by Smatch.
-
->  	for (i = 0; i < aq_nic_cfg->tcs; ++i) {
->  		const unsigned int idx_ring = AQ_NIC_CFG_TCVEC2RING(aq_nic_cfg,
->  								    i, idx);
-> -- 
-> 2.44.1
+> So, use the availability of preempt_count() to report quiescent states
+> in rcu_flavor_sched_clock_irq().
 > 
-> 
+> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+> Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
