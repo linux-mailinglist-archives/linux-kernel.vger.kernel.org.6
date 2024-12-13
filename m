@@ -1,168 +1,162 @@
-Return-Path: <linux-kernel+bounces-445191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16CA9F127D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:45:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E619F12AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2DC41646FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0423188CE21
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA951E500C;
-	Fri, 13 Dec 2024 16:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC8A1F1316;
+	Fri, 13 Dec 2024 16:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="KiYYwwxW"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dK/lmBeW"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBF81E47BD;
-	Fri, 13 Dec 2024 16:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7191F12E6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734108311; cv=none; b=K2C6Sluc6eFrHv6LEFk3+Qs0worlAkcSB0G4nO3o58dzTc2oQx1mK/ijQcaWoq/RhshV3RZPZ4m0wHnixeG+49gEX7cgikfmilhLpfMUOjZjGkltlSa2Xz9xWLiazJ8b0avVBQhmFl3kdUTi5qYE4NQxkH47iFDqjFaA5cYV+Z4=
+	t=1734108323; cv=none; b=EKgt2W+5o47v9lTAiovbjEm8kXxtKW3RjOf1OvrSmXLRgj7VPZL9ZlcyT72EZjima8ppZ5l3Qi2O6Os3Zkmw8ArFZfxzl4zgOZoRRA/hlWXjIY9HWgq/LSOjhhaMnZDO88FjNHNA7Ld3aN1KUyasvjcZEk7Ovc4GC+Ok6MbCoRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734108311; c=relaxed/simple;
-	bh=M00HXLPq4NNRT8QMylCTn5Gwn6ArbHfMRWjygXlRNX8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aEEKm7U8JmAzRiRgpkmz4n1bfiy2MI1OQi0apDUSOnko4eu+yQ91jvs/lC/+fOjjypY0tGuwb0AT9LiVR4cC1zJT4a8onwXle+zv7Ddpg/P+SeWQLdnk5a7ONCCa6Q1k2rHlr93JVYJkXHzjuXixEY1oJbLXjDtSmLGiwYdgvoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=KiYYwwxW; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDFID9F023572;
-	Fri, 13 Dec 2024 11:45:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=wYQFp
-	7L38J4s2eGWo+Sn/rPFttMX7JkNkjzbInePd6M=; b=KiYYwwxW4kzrGw77VpkcP
-	wseIQo8xT/ACq9grFh1/HfD0Mokx5eLw5pFurGpXkaGr+yckRzdbaPOI/onqC7t5
-	7Hg+T8KLNRSZexG2Hwjvz1hq60B6CDuAJtPT26KmvB6qYy6RSp+UpmH19f2QjbMs
-	bzs79Xw36M9ZGi89A4DL/SmZEAozKmZBG74qWJJNGi/wQZkMgPOiYanxXenk7viF
-	T7FOslxNODT5/ZlQ42eFBeoer86YQ137qcSWpmskxd+DdsShHHJhhA9AjDcpKs/U
-	6QT57ylnb8dFsgHhofwH+p9TL2iBN7Xc+LaWUC8bPzlGf4ES0Y8yXRnIhaWb0JuY
-	g==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 43gju79jpx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 11:45:06 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4BDGj5I1030700
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 13 Dec 2024 11:45:05 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 13 Dec
- 2024 11:45:04 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 13 Dec 2024 11:45:04 -0500
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.187])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4BDGipcC025509;
-	Fri, 13 Dec 2024 11:44:57 -0500
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH v8 2/8] iio: backend: add support for data size set
-Date: Fri, 13 Dec 2024 18:44:39 +0200
-Message-ID: <20241213164445.23195-2-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241213164445.23195-1-antoniu.miclaus@analog.com>
-References: <20241213164445.23195-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1734108323; c=relaxed/simple;
+	bh=aKfOXqQGDukFzONr0CiKY/knEiGL73lWVm8HRLM5iLs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=WC1mLSVj0nhaA+tOP2UvVedsck/dp+J2R3mGQYNHcNRL5W5Vv69WHgC0JF6hJ7+5vhWeg7lIpXm/wTw6Ym5QHlAyPdaM40SqyseTzkdCzQtpKD2+W1Cl1d630UpFwaZiWZH1lW2HdgTYGVjsGeHoeFEKL20QcY9Nn0d0Vs5CFEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dK/lmBeW; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361815b96cso13411035e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:45:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734108320; x=1734713120; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rjlzbWl9chiW3b1bcyAnwj9F/eAWfXtVDjTLB3PlhTI=;
+        b=dK/lmBeWYzVB96j68wSXz7NTHH8yN2Q3C8satwswpIYXVj24cbbebbdloRYaqdO4bI
+         5idimxWX0oksvOOZpV5fuq4H+KWvBlmFb7otXz7JgIhOozRN5vx2alaNjq0u7EDQ7ZAL
+         brCKbRjHlMZElh6rqDqLK//2XE9aDRNW8CkANVLLzgg/DaHa4btvJyabTM8KsFvL+aGG
+         SEhOToSWOjEXuxdgl7T+KOlDdnRtd5PyqbtRnjbS5T3Y4ZqYbuFl/N/Id6ElZNjPtJR6
+         xqBpOzqudXK+HjMNlPmA1j9urZ4Pjxsy5pJA4Tw14/1LtcE9eU00litMdacrc720WQCn
+         sHew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734108320; x=1734713120;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rjlzbWl9chiW3b1bcyAnwj9F/eAWfXtVDjTLB3PlhTI=;
+        b=bE9glmhp1mjbzr/LFFRYWQy/AZtrlUApIGShpe/SqIRVO00/K8A6+xVjQVX4g0cqdW
+         hU70nBKxb6TicER9opW0BiFVX1QOkhdUDPpbC1XoqUsO528oM/IQTQiSecrzqR6iR0hr
+         gkqjwmf5kjxQcDarBzGzxVl6km2n8XlvUgOD5M2juH4H+kKp17/Nwc6SDgX9CheaT66W
+         ytRjlyummMea6ODa13ywCNrLwbeB3UCExkkZdJx1mEZlBrinPZyUctZMxR23FGpns9B1
+         GdNuA1fbhW1RkYeQ6gC4DbfGse6P2arB9OH1IWGS0whDWwYDBcxHl9vT0PFYVGP7F01n
+         zt+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWbYt7+vSgatmSrf8fnARacI+sHWw83TnvzxZmleUVOxmTqev00afNJ4KRiQHYUNYLnX6W4plYZsxWResk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnQm10CUBXXnZr2wf7ZRdBdwWV3ZIFIGdMczfs9EF1sdOG42ll
+	r0Onb4fbYqevSmSyWLHolvi7DKK42qIzSJTobmp18npfu6/icKPvA9YftYCyoQE=
+X-Gm-Gg: ASbGncs7qeyvD4aKZV37Hs4UcxChEipyMPqkja2CqnsegAHE3lkojvxHH1QFoaO1yjs
+	nN/Hir7qhuq75u7wH0oyW1MRCK++P7db7YdWm8QtodKilORc396s/pu6mONGpoerC+rx/eLVd2Q
+	UyrJUhEb0Dny7jaVLfV5Vp1PJ0ILvDqyOgbbzfsxYtQcbpNCxZydqzgF4z2dypXIzeCSokgUFBp
+	R0jknQfTT4GfW/7kpmvnjjsPtW5uU+PjA5ExlcuOK4+3o/wBbrF4zWWWy0HDrHKp2plNqikPH9I
+	r+BxyTAqIg==
+X-Google-Smtp-Source: AGHT+IGEMv1e/DIXO21O5MsRQ5xu7AvkX9VSUgw7Z5GjjX9HSgSRS8PPK1Q/zoWIWgCKahnDrQunCQ==
+X-Received: by 2002:a05:600c:510c:b0:436:1c04:aa8e with SMTP id 5b1f17b1804b1-4362aa3e398mr33232645e9.16.1734108319836;
+        Fri, 13 Dec 2024 08:45:19 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([145.224.66.83])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625550523sm53900665e9.7.2024.12.13.08.45.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 08:45:18 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 13 Dec 2024 16:44:39 +0000
+Subject: [PATCH 2/4] dt-bindings: mfd: syscon: allow two reg regions for
+ gs101-pmu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: wm08eG49kTttIZhcPF-Xzbr88CJx0jND
-X-Proofpoint-ORIG-GUID: wm08eG49kTttIZhcPF-Xzbr88CJx0jND
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- priorityscore=1501 suspectscore=0 clxscore=1015 lowpriorityscore=0
- mlxscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130117
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
+References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
+In-Reply-To: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
+ kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1498;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=aKfOXqQGDukFzONr0CiKY/knEiGL73lWVm8HRLM5iLs=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnXGSa4bgZiEwGnt8X8V7Vmo0R6b2jQKykl5ebV
+ 3aqYK3KqAyJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ1xkmgAKCRDO6LjWAjRy
+ utM+D/9Lk7ruFKfWr5gVg4qeHtniwokKKn/WAgFmW2kqL04Q3frRnu3hIB8xkoQ7CTPjR7CizPf
+ 6UPCsN88uZ1a7nBp93Gs1M3goA2x963JhBm+AEQs+zh1Y16BBMWQIwdfExz6Nc7o5fe+igiYYu1
+ LtrTWgFHIlOPvlCEN0MtjZn6RWT7aMfU88pln7puSgEe+CrY+eIiL/tCKRmsee5oLjFM5tvNWoE
+ 5a+tCA7o4zU3t93z95vwF/DJOucolzwDyeabj/6uMXvakh/umqYYsCIHgkHCStcPGXiW02IwmSn
+ v8y5eLd099K8jyA2GQzmXNQQPNFXtXz4oVmo5bWAsWTh9qSeO0qbwPEeUJ+D0X1kzXx4c2OiF+v
+ irhcrq+TtLF67/20GIpZlhrZKv0vs02CqH1VjdspQtJFKApzxMzs3x8kcoSAZFgtvp6bTCFNywk
+ a+fyOEzNidOvBSAc3IGCLlJWD2pkD7XUc9i6Fy9K1wFpuGwIBsweqrejFIf/arD6z/sGKleAxfx
+ laB+rnMD391eqZJGamVXGNA485w01JVITKcfxQMYWN/sABgS4bCxw8CUvSJtD+8mrjnuJKXfYHC
+ oDxsOUbrO7nM3BCrS0ao6/NjDiB4yMcAjY4Kt+iB4vcJsP+IDzJh82FOP3GwxBaj8nhM4//Q2+9
+ BjKjkQz0D3wdIvg==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Add backend support for setting the data size used.
-This setting can be adjusted within the IP cores interfacing devices.
+To avoid dtschema warnings allow google,gs101-pmu to have
+two reg regions.
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-no changes in v8.
- drivers/iio/industrialio-backend.c | 21 +++++++++++++++++++++
- include/linux/iio/backend.h        |  3 +++
- 2 files changed, 24 insertions(+)
+I don't really like this patch, but also didn't want to submit the series
+with a dtschema warning ;-)
 
-diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
-index c792cd1e24e8..ea184fc2c838 100644
---- a/drivers/iio/industrialio-backend.c
-+++ b/drivers/iio/industrialio-backend.c
-@@ -660,6 +660,27 @@ int iio_backend_interface_type_get(struct iio_backend *back,
- }
- EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
+Possibly a better solution is when Robs patch
+`mfd: syscon: Allow syscon nodes without a "syscon" compatible` [1]
+
+gets updated with a v2, we could remove syscon compatible from
+gs101.dtsi (an ABI issue). If I understood his patch correctly,
+it would mean this yaml update would then no longer be required.
+
+Let me know your thoughts
+
+[1] https://lore.kernel.org/lkml/20241211-syscon-fixes-v1-0-b5ac8c219e96@kernel.org/T/#m5ad1ed5c69f693d2a5cc54342a87fbdf3df756d2
+---
+ Documentation/devicetree/bindings/mfd/syscon-common.yaml | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mfd/syscon-common.yaml b/Documentation/devicetree/bindings/mfd/syscon-common.yaml
+index 451cbad467a3..9cd9739d5e97 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon-common.yaml
++++ b/Documentation/devicetree/bindings/mfd/syscon-common.yaml
+@@ -59,6 +59,16 @@ allOf:
+         compatible:
+           minItems: 3
+           maxItems: 5
++  - if:
++      properties:
++        compatible:
++          contains:
++            const:
++              - google,gs101-pmu
++  then:
++    properties:
++      reg:
++        maxItems: 2
  
-+/**
-+ * iio_backend_data_size_set - set the data width/size in the data bus.
-+ * @back: Backend device
-+ * @size: Size in bits
-+ *
-+ * Some frontend devices can dynamically control the word/data size on the
-+ * interface/data bus. Hence, the backend device needs to be aware of it so
-+ * data can be correctly transferred.
-+ *
-+ * Return:
-+ * 0 on success, negative error number on failure.
-+ */
-+int iio_backend_data_size_set(struct iio_backend *back, unsigned int size)
-+{
-+	if (!size)
-+		return -EINVAL;
-+
-+	return iio_backend_op_call(back, data_size_set, size);
-+}
-+EXPORT_SYMBOL_NS_GPL(iio_backend_data_size_set, IIO_BACKEND);
-+
- /**
-  * iio_backend_extend_chan_spec - Extend an IIO channel
-  * @back: Backend device
-diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
-index e5ea90f1c3e0..59b6651b7eaf 100644
---- a/include/linux/iio/backend.h
-+++ b/include/linux/iio/backend.h
-@@ -93,6 +93,7 @@ enum iio_backend_interface_type {
-  * @ext_info_set: Extended info setter.
-  * @ext_info_get: Extended info getter.
-  * @interface_type_get: Interface type.
-+ * @data_size_set: Data size.
-  * @read_raw: Read a channel attribute from a backend device
-  * @debugfs_print_chan_status: Print channel status into a buffer.
-  * @debugfs_reg_access: Read or write register value of backend.
-@@ -130,6 +131,7 @@ struct iio_backend_ops {
- 			    const struct iio_chan_spec *chan, char *buf);
- 	int (*interface_type_get)(struct iio_backend *back,
- 				  enum iio_backend_interface_type *type);
-+	int (*data_size_set)(struct iio_backend *back, unsigned int size);
- 	int (*read_raw)(struct iio_backend *back,
- 			struct iio_chan_spec const *chan, int *val, int *val2,
- 			long mask);
-@@ -180,6 +182,7 @@ ssize_t iio_backend_ext_info_get(struct iio_dev *indio_dev, uintptr_t private,
- 				 const struct iio_chan_spec *chan, char *buf);
- int iio_backend_interface_type_get(struct iio_backend *back,
- 				   enum iio_backend_interface_type *type);
-+int iio_backend_data_size_set(struct iio_backend *back, unsigned int size);
- int iio_backend_read_raw(struct iio_backend *back,
- 			 struct iio_chan_spec const *chan, int *val, int *val2,
- 			 long mask);
+ additionalProperties: true
+ 
+
 -- 
-2.47.1
+2.47.1.613.gc27f4b7a9f-goog
 
 
