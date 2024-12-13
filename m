@@ -1,132 +1,318 @@
-Return-Path: <linux-kernel+bounces-444663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C729F0A91
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:13:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B25F9F0A5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:04:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7632F18838C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:13:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C6CC1699D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EE91DB520;
-	Fri, 13 Dec 2024 11:13:34 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19DB1C3C0C;
+	Fri, 13 Dec 2024 11:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T4PpMeEk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2311CEEAB;
-	Fri, 13 Dec 2024 11:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F791C3C0D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734088414; cv=none; b=BDoy+lJMcMYczHnAdihw2/UkZOFA0urdcOiwzMb/QZkD9Pm8JM6Wqkq7em/6psJoMY3ha3f55wFuSpUY0bUNSUOAJ74FNpWdYD3yAvjApzDMQQ3xseM30Zkgph4nQ0HAzmT+KXuitatyDvfhH5lifWJRfnugrXxICy6mbvzHSw0=
+	t=1734087861; cv=none; b=IRZiBlkVVOa0OAyEIISuiKJRAu0AHwzsJ1nZi505x5qjoA3bPIgnrx2eDLASiyo71oHGm/P6IPt2Fq9iJVM6Ml4xiNQIj78tTHvKvyGCApTPAwd0v405P1eJDiojacknxOHNcEr5zYFs5yStlFO35zYESKT+PU4fSv/9ysVSoWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734088414; c=relaxed/simple;
-	bh=XSRw7MTv2+fiEhaS2zLrpA3fW4ALi9WgNTf/e9sl/28=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LHl4FaoPE+Q8dpQzrDbd849lRXyaOI8OThferV7SWVvRNo4rrENRYHJhme6sAvLyOBCv7lVkla5f7GMPFh2cPzK6/o5+QlOz4eBnTsnViuAT0fC8AgBz1JnXWQrWh2RcQeUaq3RbfM+GsV74sV1ryfkgzjwcWMqQF/2khusZHkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y8msY2Zc3z4f3l24;
-	Fri, 13 Dec 2024 19:13:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B12901A0568;
-	Fri, 13 Dec 2024 19:13:25 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgCng4fIFlxnia3pEQ--.50048S2;
-	Fri, 13 Dec 2024 19:13:25 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	tj@kernel.org,
-	mkoutny@suse.com,
-	roman.gushchin@linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	chenridong@huawei.com,
-	wangweiyang2@huawei.com
-Subject: [PATCH v2] freezer, sched: report the frozen task stat as 'D'
-Date: Fri, 13 Dec 2024 11:03:32 +0000
-Message-Id: <20241213110332.3105932-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734087861; c=relaxed/simple;
+	bh=8feasqDMNRGSqXgnrXNVRMsBVCYovHpwXdrFnhXAPTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oDudwHu9f2FpnOQO6E86rzvn4H7isYPmYgw5u+RB3/dilmejWaf+V4kTC+HlwIt6azug3NiQ3AOy6qUnF4r0wUba9Z/FStDnxPCgpxSLlQG2FJiaoP1QQ9ECMW7KXJM9WGwHIFyVigS6P8q/x/T9MPdkIuHVX/j/XnXOuudWCd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T4PpMeEk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD7VQjf032414
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:04:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Zf5tcpszL0I6CSUFS4CayyJ0mUkMjSZvXwP8wY2d3NI=; b=T4PpMeEkja7PnlT3
+	+PpeEFsTfsHV/LSfhm2TmHzVGk2uD+sCCourRojmAidHaOKTqfix2KPxdFlYEFBg
+	BGYjkFDMRXoNYxrYBfPbrBJTDZXhlSykITPKSG35qncG2PmOWb8yByzvtS6VXgJF
+	a7SBKri4J37oUvKL4zG+q86fusOdY3KPALdQ81Q/BD48wAX9NpoaTo0Cvs43tiJE
+	qW9W9yRN4t9hIYsVnCAhLU+P8AdlApbz7t2I2Nq7Hk1OLTTysGdn4rhIG8+Pjpeo
+	9f3EZJgSMNwDKQJn93x2bts4ap4KV95rV9XtLh5VXROM256Ut096IC9YMZ/1JggW
+	dJveUQ==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f6tffbqq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:04:18 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d887d2f283so4222036d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:04:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734087857; x=1734692657;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zf5tcpszL0I6CSUFS4CayyJ0mUkMjSZvXwP8wY2d3NI=;
+        b=PZgtW7kmus18Ht0SAEpQ5ctNTcWML9YoykGCXX++6NFFH27ukwTs0i+SrtdlIMy+NM
+         0++wymVB33jyF7ZoGQnZNPXtoJXvijT96SDUJtQ1ALbG/IKC9J+CTrUOwChwSDGyMkIR
+         t5YR4EYHXbd3qlccCqCxMfNHOFAq8v9ShDTLb5NI6uHJh8qzythi/m3HJo90BTtbaPAS
+         5xs3QNw3qnn9dO69dEmKkN4Tn8avm+c7S+oIM6576sXfIegBLKiN7h1gTpb9SlfaiKp9
+         kl863JHqtWMvlZkgAocbn5WF2xeGsnANUA3smWMM7djibrgvkw/+SP5ioMO25oj9p6lq
+         h8TA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtGpsEsa5wF+BOmNuTP1q/2y17X1cPYYXw+asXhsnfrkFhXspS1h0ykJ7suFHeSs4uWvufTTQjmZJZ1N8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAJUSM8kPDFmkuW06o58OgZJW2u+u8SekbCglE6rxxGk35+5Xc
+	7lPYI4Gi0Ae7Ecxy6m6OaONuvXMSF4UkRgKh6OjUe/2Abt/Li/PJ3S6RB41L58bpVP1D2Ihb2Vs
+	l9XKG5XCyQ+u1+iaLiknTIwguWNPS2So4AhcrFtCMFuAiz92mS/NJzFHLJ28LREc=
+X-Gm-Gg: ASbGnctDAZig33J4H0mIKWkz+mosIbcEgyJLi9fijgT6PMyf9oTzp7QBkOqtZs17Klc
+	wW0B0QxEdicdSVfSSlEp/8zC8LK1lwmkmJlfgQiLCNAcwrT6VyXxkmPliQTd4losdONNlERukuI
+	kUVTeeauyDVlsejFmbjEoOym3jpvH0a3Gp8mlijJ57YBYllF72tWZRA7SZnhNFMoyegO7cGbsM4
+	CG98JScwOv8Lc8uXD/jtnwOYSlzbzfw0kG3+ieDTggfPv62OwirIwBhSvYRgWQJzXLCiZx9TGqg
+	e/Ai49dbYjmzOmDl14L8wBEXBbWOMd1fetcv
+X-Received: by 2002:a05:6214:528d:b0:6d4:1bc2:386c with SMTP id 6a1803df08f44-6dc8ca88c66mr12119886d6.6.1734087857094;
+        Fri, 13 Dec 2024 03:04:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEwU07CFAexr1Cwdav3EaM4qqvfC+IfOGzgD65mUO8CZKe+Bc/O5r+o5/bbUyKkdi+zvUmNPA==
+X-Received: by 2002:a05:6214:528d:b0:6d4:1bc2:386c with SMTP id 6a1803df08f44-6dc8ca88c66mr12119636d6.6.1734087856602;
+        Fri, 13 Dec 2024 03:04:16 -0800 (PST)
+Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66f90d5f8sm833016466b.202.2024.12.13.03.04.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 03:04:16 -0800 (PST)
+Message-ID: <5b5ad9f7-5071-4b4e-940d-aedecf179600@oss.qualcomm.com>
+Date: Fri, 13 Dec 2024 12:04:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sc8280xp: Add Huawei Matebook E Go
+ (sc8280xp)
+To: Pengyu Luo <mitltlatltl@gmail.com>, konrad.dybcio@oss.qualcomm.com,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: andersson@kernel.org, chenxuecong2009@outlook.com, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, gty0622@gmail.com, johan+linaro@kernel.org,
+        konradybcio@kernel.org, krzk+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh@kernel.org
+References: <d5813d64-0cb2-4a87-9d98-cebbfd45a8c0@oss.qualcomm.com>
+ <20241213085100.564547-1-mitltlatltl@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241213085100.564547-1-mitltlatltl@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCng4fIFlxnia3pEQ--.50048S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFy7Zw4UKFy3Zry8ur4rKrg_yoW8WF1Dpa
-	9xur47Ga4IkFyUCrnFy3W7Wa48Wanrtr12kFZ0gF47JFy5X3WY9rn2vr98Kr45ArWFyFWU
-	AFs8Kr97CayDA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
-	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU17KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-Proofpoint-GUID: PRsBMyI75Qne1rVAVA8aZqJLkVIepZrF
+X-Proofpoint-ORIG-GUID: PRsBMyI75Qne1rVAVA8aZqJLkVIepZrF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130076
 
-From: Chen Ridong <chenridong@huawei.com>
+On 13.12.2024 9:50 AM, Pengyu Luo wrote:
+> Oh, I sent it by gamil wrongly(forgot cc to), I resend it by git send-email again
+> 
+> On Fri, Dec 13, 2024 at 1:13 AM Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
+>> On 11.12.2024 4:37 PM, Pengyu Luo wrote:
+>>> Add an initial devicetree for the Huawei Matebook E Go, which is based on
+>>> sc8280xp.
+>>>
+>>> There are 3 variants, Huawei released first 2 at the same time.
+>>> Huawei Matebook E Go LTE(sc8180x), codename should be gaokun2.
+>>> Huawei Matebook E Go(sc8280xp@3.0GHz), codename is gaokun3.
+>>> Huawei Matebook E Go 2023(sc8280xp@2.69GHz).
+>>>
+>>> We add support for the latter two variants.
+>>>
+>>> This work started by Tianyu Gao and Xuecong Chen, they made the
+>>> devicetree based on existing work(i.e. the Lenovo X13s and the
+>>> Qualcomm CRD), it can boot with framebuffer.
+>>>
+>>> Original work:
+>> https://github.com/matalama80td3l/matebook-e-go-boot-works/blob/main/dts/sc8280xp-huawei-matebook-e-go.dts
+>>>
+>>> Later, I got my device, I continue their work.
+>>>
+>>> Supported features:
+>>> - adsp
+>>> - bluetooth (connect issue)
+>>> - charge (with a lower power)
+>>> - framebuffer
+>>> - gpu
+>>> - keyboard (via internal USB)
+>>> - pcie devices (wifi and nvme, no modem)
+>>> - speakers and microphones
+>>> - tablet mode switch
+>>> - touchscreen
+>>> - usb
+>>> - volume key and power key
+>>>
+>>> Some key features not supported yet:
+>>> - battery and charger information report (EC driver required)
+>>> - built-in display (cannot enable backlight yet)
+>>> - charging thresholds control (EC driver required)
+>>> - camera
+>>> - LID switch detection (EC driver required)
+>>> - USB Type-C altmode (EC driver required)
+>>> - USB Type-C PD (EC driver required)
+>>
+>> Does qcom_battmgr / pmic_glink not work?
+>>
+> 
+> Unfortunately, different from many sc8280xp devices, device(PMGK) _STA is
+> Zero,
+> this device is quiet strange, also, it has no PM8008,
+> nor PMIC Battery Miniclass(PMBM), etc.
 
-Before the commit f5d39b020809 ("freezer,sched: Rewrite core freezer
-logic"), the frozen task stat was reported as 'D' in cgroup v1.
-However, after rewriting core freezer logic, the frozen task stat is
-reported as 'R'. This is confusing, especially when a task with stat of
-'S' is frozen.
+So it's not used on windows.. but have you tried checking if it's
+still provided by the firwmare?
 
-This can be reproduced as bellow step:
-cd /sys/fs/cgroup/freezer/
-mkdir test
-sleep 1000 &
-[1] 739         // task whose stat is 'S'
-echo 739 > test/cgroup.procs
-echo FROZEN > test/freezer.state
-ps -aux | grep 739
-root     739  0.1  0.0   8376  1812 pts/0    R    10:56   0:00 sleep 1000
+[...]
 
-As shown above, a task whose stat is 'S' was changed to 'R' when it was
-frozen. To solve this issue, simply maintain the same reported state as
-before the rewrite.
+>>
+>>> +     chosen {
+>>> +             #address-cells =3D <2>;
+>>> +             #size-cells =3D <2>;
+>>> +             ranges;
+>>> +
+>>> +             framebuffer0: framebuffer@c6200000 {
+>>> +                     compatible =3D "simple-framebuffer";
+>>> +                     reg =3D <0x0 0xC6200000 0x0 0x02400000>;
+>>> +                     width =3D <1600>;
+>>> +                     height =3D <2560>;
+>>> +                     stride =3D <(1600 * 4)>;
+>>> +                     format =3D "a8r8g8b8";
+>>> +             };
+>>> +     };
+>>
+>> This should be redundant, as you should have efifb
+>>
+> 
+> I think no, it won't boot up without it(stuck at EFI stub: Booting Linux
+> Kernel)
 
-Fixes: f5d39b020809 ("freezer,sched: Rewrite core freezer logic")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- include/linux/sched.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Do you have CONFIG_EFI and CONFIG_FB_EFI enabled?
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index d380bffee2ef..dbe0cb97461f 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1630,8 +1630,9 @@ static inline unsigned int __task_state_index(unsigned int tsk_state,
- 	 * We're lying here, but rather than expose a completely new task state
- 	 * to userspace, we can make this appear as if the task has gone through
- 	 * a regular rt_mutex_lock() call.
-+	 * Report the frozen task uninterruptible.
- 	 */
--	if (tsk_state & TASK_RTLOCK_WAIT)
-+	if (tsk_state & TASK_RTLOCK_WAIT || tsk_state & TASK_FROZEN)
- 		state = TASK_UNINTERRUPTIBLE;
- 
- 	return fls(state);
--- 
-2.34.1
+(also, your email client does something funny and posts 0x3d, which
+is ASCII for '=' after that symbol)
 
+
+> 
+> [...]
+> 
+>>
+>>> +
+>>> +     wcd938x: audio-codec {
+>>> +             compatible =3D "qcom,wcd9380-codec";
+>>> +
+>>> +             pinctrl-names =3D "default";
+>>> +             pinctrl-0 =3D <&wcd_default>;
+>>
+>> Please follow this order throughout the file:
+>>
+>> property-n
+>> property-names
+>>
+> 
+> Do you mean I should arragne as following? If so, I actually keep
+> reference devicetree untouched. x13s and crd are written like this.
+
+Yeah, we try to unify the style as we progress and we still haven't
+gotten around to cleaning up files that have been in the tree for
+years..
+
+> 
+> pinctrl-0 =3D <&wcd_default>>;
+> pinctrl-names =3D "default";
+
+Yes please
+
+[...]
+
+>>> +     gpio-keys {
+>>> +             compatible =3D "gpio-keys";
+>>> +
+>>> +             pinctrl-names =3D "default";
+>>> +             pinctrl-0 =3D <&mode_pin_active>, <&vol_up_n>;
+>>> +
+>>> +             switch-mode {
+>>> +                     gpios =3D <&tlmm 26 GPIO_ACTIVE_HIGH>;
+>>
+>> This could use a label too - "Tablet Mode Switch", perhaps?
+>>
+> 
+> This part I follow Lenovo Yoga C630 one (see [1]), it doesn't use it,
+> and this node is not referenced.
+
+So "label" could mean
+
+label: node-name@unit-address {
+	property = "value";
+};
+
+when talking about DT nodes, but here I'm speaking of the
+"label" property (which you set to "Volume Up" in the node below).
+That is read by Linux and provides a nice human-readable name to
+the userspace.
+
+>>
+>>> +
+>>> +             /* /lib/firmware/ath11k/WCN6855/hw2.1/board-2.bin
+>>> +              * there is no calibrate data for huawei,
+>>> +              * but they have the same subsystem-device id
+>>> +              */
+>>> +             qcom,ath11k-calibration-variant =3D "LE_X13S";
+>>
+>> Oh, this can be taken care of! See [2], [3].
+>>
+> 
+> I have a glance, now I know we should extract something or it won't be
+> there.
+> Question is how can I extract them? I have a quick search, got no luck.
+> As for windows drivers, in the folder
+> 
+> bdwlan.e02
+> bdwlan.e07
+> bdwlan.e1d
+> bdwlan.e1e
+> bdwlan.e23
+> bdwlan.e26
+> bdwlan.e32
+> bdwlan.e47
+> bdwlan.e81
+> bdwlan.e84
+> bdwlan.e85
+> bdwlan.e8c
+> bdwlan.e8e
+> bdwlan.e9f
+> bdwlan.ea3
+> bdwlan.eb8
+> bdwlan.elf
+> bdwlan.elf.g
+> bdwlang.e8b
+> bdwlang.e9f
+> bdwlang.ea3
+> bdwlang.eb8
+> bdwlang.elf
+> Data20.msc
+> Data.msc
+> m320.bin
+> m3.bin
+> qcwlan8280.cat
+> qcwlan8280.inf
+> qcwlan8280.sys
+> regdb.bin
+> wlanfw20.mbn
+> wlanfw.mbn
+
+Adding Dmitry who has gone through this multiple times and may be
+able to help
+
+Konrad
 
