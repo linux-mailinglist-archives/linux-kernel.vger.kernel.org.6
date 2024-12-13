@@ -1,117 +1,164 @@
-Return-Path: <linux-kernel+bounces-444361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE9C9F058F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:32:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A985169BB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:32:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FB319B5B8;
-	Fri, 13 Dec 2024 07:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YXws51p4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2299F0744
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:09:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AE93207;
-	Fri, 13 Dec 2024 07:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF73D280A1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:09:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77C71AC892;
+	Fri, 13 Dec 2024 09:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="oNtiZH5S"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC73157A6C;
+	Fri, 13 Dec 2024 09:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734075145; cv=none; b=HUihgheNum5cHsn6k2mbti28rtc/z3Ug4R0dl2Q8+8slhUKeS755Fp+s7+bYS8t457ukzuF875VgpFZlpMLq1+pWMiG+u3PNHwyzV7tM3Za3Qr++Hse0+ThJsml6UfMCK9LeVgU9ll1L/T0h6bcOZ5IOlugMwDc7RKMoposy5eg=
+	t=1734080962; cv=none; b=QedJKxqwFtfcbG9jCilTu+7uRISPF5THZ6qBccVqX4DalaYORUFZDA5cw4lmtcdtZpns+DuQXkSuVBIsjpBdKOebp9SCs/wqa61FU5vESt24rASwzG5YJVcDGal7H1lrVuiP9zsaFo2oqVbZGe5yAySkRPZK4dYKoN/PUl4/kJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734075145; c=relaxed/simple;
-	bh=KF2u61fFy2MhhhXHsq56NzRxS4bNBSmPrcwIzbiCk28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTt9bQ078C30Ko6QS3MosAWp1BX+ai+GNzNu16u5XMyrwBWgbR5YoXF6Wp2dOvWorYpefw3drqtiEsK/J18QX+fwziYfe7zQxXP04BFSCHS76P6hwiYGGvLRWBpr5hjjYFT0P6V5Ta1QLsaNsES3CUpP/r6z28ZqBgo1FGGx7+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YXws51p4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C47C4CED0;
-	Fri, 13 Dec 2024 07:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734075144;
-	bh=KF2u61fFy2MhhhXHsq56NzRxS4bNBSmPrcwIzbiCk28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YXws51p4OlwPq738uGlipsQN5HV9ZVc0qBQtIDFJ/RVNPLGvtjmm8j7Lruy9AroPG
-	 fwsqluHpE8hKxixfh9G9UkxLnr46YSpthgtDfA9vQaZk5drkqBVz90PEiil9zPChQB
-	 04xHlVOMH3ZIXzCGOFptOxKKf9WCynUw3GeIuYZg=
-Date: Fri, 13 Dec 2024 08:31:45 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Philipp Stanner <pstanner@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Alex Dubov <oakad@yahoo.com>, amien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Basavaraj Natikar <basavaraj.natikar@amd.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Sudarsana Kalluru <skalluru@marvell.com>,
-	Manish Chopra <manishc@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
-	Igor Mitsyanko <imitsyanko@quantenna.com>,
-	Sergey Matyukevich <geomatsi@gmail.com>,
-	Kalle Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Chen Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Yi Liu <yi.l.liu@intel.com>, Kunwu Chan <chentao@kylinos.cn>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>,
-	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v3 05/11] misc: Use never-managed version of pci_intx()
-Message-ID: <2024121335-blooper-cognitive-04ec@gregkh>
-References: <20241209130632.132074-7-pstanner@redhat.com>
- <20241212192637.GA3359920@bhelgaas>
+	s=arc-20240116; t=1734080962; c=relaxed/simple;
+	bh=p/kDpnOAmRuFrwuwWAmBCyskDVpa5M/lDVqr3+ucMis=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=kWrrFOr418i+DCdux0mS9su5Mmfr/P6n8M5HP0msQzlNoZ2zLzrvuZSmfQw8T527RVA8IsSfhHf7pOOV9AJje/ac+oU1T2QGaM2NQy+/3Oz9pPRKsaQng5JF1ixETMxSjvO27UihiOL8wKD3mnfyrJYHEi/S8KWuv08BkxAy510=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=oNtiZH5S; arc=none smtp.client-ip=220.197.31.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=tZlbGahY/vZQF2ii+w
+	yjY3Mp3aA9pSqBupXj4liHfDg=; b=oNtiZH5SL0WcRHrVKFYN6pvHfrqb6KqaOB
+	OFXwroFWI1GAyXQpt5UC+EAStqJVJ6xw5veTQhwwxeZuAYydUxoJmLoRcOqX7/xt
+	23f5ABq91jt6WhMHKYSA8DMoZoqAwv+Yb1svXQyXllFQG6EQv0Mra7wUoYlYkizU
+	cnogHq34o=
+Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDHz7wu5FtnmTDGAA--.2052S2;
+	Fri, 13 Dec 2024 15:37:18 +0800 (CST)
+From: yangge1116@126.com
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	21cnbao@gmail.com,
+	david@redhat.com,
+	baolin.wang@linux.alibaba.com,
+	vbabka@suse.cz,
+	liuzixing@hygon.cn,
+	yangge <yangge1116@126.com>
+Subject: [PATCH] mm, compaction: don't use ALLOC_CMA in long term GUP flow
+Date: Fri, 13 Dec 2024 15:37:12 +0800
+Message-Id: <1734075432-14131-1-git-send-email-yangge1116@126.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID:_____wDHz7wu5FtnmTDGAA--.2052S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXF4xCw1rXr1fXr4UCF17ZFb_yoWrXr1DpF
+	4xA3WDAws8XFyYkr4kJw4v9F4Ykw4xGF45Gr92gw18uw1akFySv3Z7KFy7AFW5WryYya1Y
+	qFWq93srAF43AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zNLvKwUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOge0G2db06TqnwAAss
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212192637.GA3359920@bhelgaas>
 
-On Thu, Dec 12, 2024 at 01:26:37PM -0600, Bjorn Helgaas wrote:
-> [cc->to: Arnd, Greg, Alex]
-> 
-> On Mon, Dec 09, 2024 at 02:06:27PM +0100, Philipp Stanner wrote:
-> > pci_intx() is a hybrid function which can sometimes be managed through
-> > devres. To remove this hybrid nature from pci_intx(), it is necessary to
-> > port users to either an always-managed or a never-managed version.
-> > 
-> > cardreader/rtsx_pcr.c and tifm_7xx1.c enable their PCI-Device with
-> > pci_enable_device(). Thus, they need the never-managed version.
-> > 
-> > Replace pci_intx() with pci_intx_unmanaged().
-> > 
-> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> 
-> Looking for ack from Arnd, Greg, Alex.
+From: yangge <yangge1116@126.com>
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
+in __compaction_suitable()") allow compaction to proceed when free
+pages required for compaction reside in the CMA pageblocks, it's
+possible that __compaction_suitable() always returns true, and in
+some cases, it's not acceptable.
+
+There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
+of memory. I have configured 16GB of CMA memory on each NUMA node,
+and starting a 32GB virtual machine with device passthrough is
+extremely slow, taking almost an hour.
+
+During the start-up of the virtual machine, it will call
+pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
+Long term GUP cannot allocate memory from CMA area, so a maximum
+of 16 GB of no-CMA memory on a NUMA node can be used as virtual
+machine memory. Since there is 16G of free CMA memory on the NUMA
+node, watermark for order-0 always be met for compaction, so
+__compaction_suitable() always returns true, even if the node is
+unable to allocate non-CMA memory for the virtual machine.
+
+For costly allocations, because __compaction_suitable() always
+returns true, __alloc_pages_slowpath() can't exit at the appropriate
+place, resulting in excessively long virtual machine startup times.
+Call trace:
+__alloc_pages_slowpath
+    if (compact_result == COMPACT_SKIPPED ||
+        compact_result == COMPACT_DEFERRED)
+        goto nopage; // should exit __alloc_pages_slowpath() from here
+
+To sum up, during long term GUP flow, we should remove ALLOC_CMA
+both in __compaction_suitable() and __isolate_free_page().
+
+Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in __compaction_suitable()")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: yangge <yangge1116@126.com>
+---
+ mm/compaction.c | 8 +++++---
+ mm/page_alloc.c | 4 +++-
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 07bd227..044c2247 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2384,6 +2384,7 @@ static bool __compaction_suitable(struct zone *zone, int order,
+ 				  unsigned long wmark_target)
+ {
+ 	unsigned long watermark;
++	bool pin;
+ 	/*
+ 	 * Watermarks for order-0 must be met for compaction to be able to
+ 	 * isolate free pages for migration targets. This means that the
+@@ -2395,14 +2396,15 @@ static bool __compaction_suitable(struct zone *zone, int order,
+ 	 * even if compaction succeeds.
+ 	 * For costly orders, we require low watermark instead of min for
+ 	 * compaction to proceed to increase its chances.
+-	 * ALLOC_CMA is used, as pages in CMA pageblocks are considered
+-	 * suitable migration targets
++	 * In addition to long term GUP flow, ALLOC_CMA is used, as pages in
++	 * CMA pageblocks are considered suitable migration targets
+ 	 */
+ 	watermark = (order > PAGE_ALLOC_COSTLY_ORDER) ?
+ 				low_wmark_pages(zone) : min_wmark_pages(zone);
+ 	watermark += compact_gap(order);
++	pin = !!(current->flags & PF_MEMALLOC_PIN);
+ 	return __zone_watermark_ok(zone, 0, watermark, highest_zoneidx,
+-				   ALLOC_CMA, wmark_target);
++				   pin ? 0 : ALLOC_CMA, wmark_target);
+ }
+ 
+ /*
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index dde19db..9a5dfda 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2813,6 +2813,7 @@ int __isolate_free_page(struct page *page, unsigned int order)
+ {
+ 	struct zone *zone = page_zone(page);
+ 	int mt = get_pageblock_migratetype(page);
++	bool pin;
+ 
+ 	if (!is_migrate_isolate(mt)) {
+ 		unsigned long watermark;
+@@ -2823,7 +2824,8 @@ int __isolate_free_page(struct page *page, unsigned int order)
+ 		 * exists.
+ 		 */
+ 		watermark = zone->_watermark[WMARK_MIN] + (1UL << order);
+-		if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
++		pin = !!(current->flags & PF_MEMALLOC_PIN);
++		if (!zone_watermark_ok(zone, 0, watermark, 0, pin ? 0 : ALLOC_CMA))
+ 			return 0;
+ 	}
+ 
+-- 
+2.7.4
+
 
