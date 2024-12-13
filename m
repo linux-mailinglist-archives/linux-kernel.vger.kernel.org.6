@@ -1,154 +1,122 @@
-Return-Path: <linux-kernel+bounces-445293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72899F1436
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:45:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498F79F143B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:45:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BD4283B4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 639BA188D3AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A308318785B;
-	Fri, 13 Dec 2024 17:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D22186616;
+	Fri, 13 Dec 2024 17:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DdUxQ6fQ"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3vApYyk/"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7373F41C85;
-	Fri, 13 Dec 2024 17:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC3E157E9F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734111929; cv=none; b=ud4xamSiw6S/GmQ6yKGWI2U6/zG0+dYA5QdhxSfs3Hz9309dB3MQDekzJc22FHeDi/TU1atHLpsoSSOwoEmISBCUugS4uE3Gzs/63W204xAJ5wf7kFNnAG0dD0Qajs0Ko3fF0FLJsJFra1DIxmvpHM83o3vVvgmRTYgZYWN+QM0=
+	t=1734111946; cv=none; b=ChF7po7+lo8eU3zvr5ddpgBuTHwhOt2BTijoz5CYzaML3ISYArf91OXMpVIuF1OvO5CfLP3R13q/wvw3oreLuc3C1Kp6FYcOIWUoKzAFsUJ9wIrpOcIKYYduTSqL22E+0fM3GTzs6om9vwEuwjFaeUeIgDuQ/hx+gBh5Dj0Jvk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734111929; c=relaxed/simple;
-	bh=tOYVtAj9SkLDMoTNOyJoJUdV7FYJ443zN1ZfvPQje+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nwjh1yRoIlvPIeO7DzFIUEuxSzX+yAbwgrZNwm3X+30nNfAJHb84nixVqTSWCUFki8Y4HGsh5H8kBGMdWGAURhzhvRLY+WHmpURQZa6olWtDdHqihR4mPkG2f+Fc/tx/d6nIR6pMrEa6scFr1cXRy+9CV8xIp27/5Gjrxs2W+/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DdUxQ6fQ; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2165cb60719so17001085ad.0;
-        Fri, 13 Dec 2024 09:45:28 -0800 (PST)
+	s=arc-20240116; t=1734111946; c=relaxed/simple;
+	bh=nXtDsY4sKwQC3Vhhz/YJXna0EVB/Q0vsfeA6qbjdHg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ii5ilAVWwF6KhG7Ew781FMkPzDS54K6dbE3TLPxhmgQt9mgvfryvTitb7AhQkHTtYJYxgYPXy+P9/MNMN44YqzFw2WqhQwCwdYQ5aQ965iJYLn/pSGj/R9pF0k+ODF3/sJ8N1ezBZATtJQYMkATPUW7Dtw6zLAep1w84kg+wU5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3vApYyk/; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4678c9310afso711cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:45:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734111928; x=1734716728; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=egm1r1XJDI/XKyBlKdpjMaoDrO9Jq/QkyEmeYJo0sfo=;
-        b=DdUxQ6fQmAijL9iEr6AW5If8acsSBgJrdY+dBtNPe4UrC3SewzbJEYsxbLs1npGfGR
-         1/JRodebVbFxf6FTgL22cHAUW2rQxUKyLf3gpvZCBHr0gE6N+SjzJszLz0tKyzBZczH5
-         PP3qPA0qpUI43QeYvtrVc2a4924f/mbEyx7bHi8xZohi9IW6mzxrRKOxyHoK7TfVHFru
-         Wuo9+PEz06HaXBtXTfaeKmDVTYXp72rczJ8Yz36tJW8WzkltwqlvdXRh9KsglOTPlkTX
-         lLhWVaa1hFzA25HmD7f5gMEBKQXleCgkX6OSpsA+0sM40JpI2DPiuntm4fUEUMnah31C
-         I9SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734111928; x=1734716728;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1734111944; x=1734716744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=egm1r1XJDI/XKyBlKdpjMaoDrO9Jq/QkyEmeYJo0sfo=;
-        b=iDccJBEYk9lLFSN8qVcb3Viq+wINQhoetMmFczdntakRfEH1ZJDuLdZejrhAL6+2U7
-         dZAO0OHEl7vc4C31NFujRGcN6BgSMUe0M47N73e57e+yfYGXYkk16IDRRshJreGouR+w
-         3VW5FUPXEPVV0Bj8QOPPsHYCXy70mPHyy4hCULH+p1/oDLyHAzh/Lafc78ViWvW66IRp
-         OE8VRQmZ5Fkjhxt7aw5btppAO27a8ywj6bxmxksiqOhNzwg+7wqtcHu8IG1i+ZNUqOse
-         c+gEzwJ9xGeq1luoTfwWH2IgM38GkEsofeI9N4MvB31HDNQEGxUyWvi1+3c6TjMavWab
-         UHAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnBFubF1DXEAW1pEUVt2JkaukIOMar2uGUPHvRh5YGmtrxmq2woWHi4noEzhSgDwwICHEaUA/XkWU5hJ28qRs=@vger.kernel.org, AJvYcCXO9qpUhmFBu+8ekgXD8TqNrWBzUF59G8e8U7Yu7gN50jSDzVFoMfdIqXiDaw0wdxypHqO30w9UnS+IWMWms7pcmw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW0yOG/QsPcVW+6Zm946Aa7LigQwU6GuVoHAho8kns0fty/XlW
-	fMNvuEzneYLODCY0dOmMFxPLQWYKJe6S3VFUvpD49sJ0QsJhWk9y
-X-Gm-Gg: ASbGncsEerZ47xjP7YJ/QT3uV6Os02oxy+XZKm/efjpBimrsmyZ4jMDlh5EJdEhhoKq
-	mvL78z/guSEaRrpgaXTerCNaZiMFN60rnrXV8+K4Kg/rm6zv5RjEcxkHazTJVTdr4Ewf8v76zWe
-	1R9pMRFAMUqDDLhg/gJrM6x7t3iLZiwp9/EAemEcrXP/5KT0vkM4bYOusFtQoD4A35Zv72IxqJT
-	QBWUi872+ge3dAuRlytPviBfxea8cYM1JS1WbHdv2YWxbtarTkVe7Kdm9j8XNJyWpYsz9I1FdMK
-	Fqte6dkaubz/Y860VkpLW6jzabJo7g==
-X-Google-Smtp-Source: AGHT+IEROapdowhPEWpqzjxV9RLFAral9fv5zLGqgo4tBJ9S2DhhOaU82N5IHIppYgVedLSVvYesvg==
-X-Received: by 2002:a17:903:22c2:b0:215:8809:b3b7 with SMTP id d9443c01a7336-2189298227cmr44388935ad.7.1734111927721;
-        Fri, 13 Dec 2024 09:45:27 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e655efsm281775ad.240.2024.12.13.09.45.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 09:45:27 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f6eaf325-935c-4bf7-ad55-cd3723b3b65a@roeck-us.net>
-Date: Fri, 13 Dec 2024 09:45:25 -0800
+        bh=HlVKHYsrjLmvj5laSk3FKQQhA8RJ98WLsv9xIi7uKWE=;
+        b=3vApYyk/VNFUm9l58E5M8E6WrBVnCc8TsH4748IxxxbcF//k2hkm4+rJK9ecZXOmPa
+         s2KY1oDwOSWDyStRidN4peJYqb1dZrcpe77a2v9wrBxXkICshUa1F9+UYOSP8NevNOty
+         2gXruFM4fbpxvt0xvrS55kKIrY8H2lR7k072vq8AaD03fY3WzrSGV1T4827KCKT4UsIz
+         9QdreF+yd8wkQVGtGoUr9Q4cl1Ba6sMw60dY2h/izqf2PPHhcsfhx9iy2xdihhHSCznf
+         zw/3yZcy0Y/k+uTwyZ1e2JkugatyL8G6VVNYRmIWRl06U7Dko1um9iVPLbnedKNCSNvZ
+         cozw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734111944; x=1734716744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HlVKHYsrjLmvj5laSk3FKQQhA8RJ98WLsv9xIi7uKWE=;
+        b=n7JP7wfZZk29XOkOKuCoZBl1sCdcLxM0oxY9VAnLxQHZVEFvn63+1bfxilzjpIEggt
+         Hky9T1Nl84nfSSDSn6QZtdfKD2atohlMsLlX2QNVffJyg96TE53bzwGXDtFtfcjgqXVo
+         yYT6h9TkvNYN6Ys1/RS6rnoKLYaZvxUSi5KNhN3IQRE0ivacYnO/PxOK+pc8Sn/yAjC2
+         JS7WcvNjmB1uTTWEF7h0U9aYmR5bmJNBGPXHhjbgWgXyMiBntJp2oBGnnnXZcCpHxMsg
+         IuSdVT7X+VV8Xo+2rY3See2018BAhAOqatJ/iPfwj4qqnrb1ImY+G9m3sDRB0fx02x2W
+         c2Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCW24xfXiLwdVGQ2q5Oo8wrqn2gMdj4vuYzyeGMxel5b6vNxxRGJ0+WX0ltaS35N55VYkD6dMbc3hHsLn0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/1zjDvo/CvYQFuc61OfF6TP8rzjtRg79H6CGm2rlb8bDGlUEG
+	gPUV5lRrJh4y0Pt1acnzQ87aTIUOteYvUPnAmp0L8xGx6USE5q6b0wsgAMk/3lT6Oj0PyCYGKzT
+	uKZPWcu2Zp6Kozaf74cRkrccYr8ZHwLziX0Cs
+X-Gm-Gg: ASbGncvdTVvrVcvsEyXLpneBZqnp828yPIoMpzY5hQ+vLLHUndcx4029/rZrt4+gSwJ
+	an3d5pkFJWP1SkQ7hL3siLV3QONEL6KQp7HM8vQ==
+X-Google-Smtp-Source: AGHT+IGplKxIBGZDhO3HALFCCrn/tSzaesddHD11PZyBQJ1Q/vgoLq/oS7ohQIcKhbW+fc2DmazVW8pCuKCd/dnml4A=
+X-Received: by 2002:a05:622a:4207:b0:462:b2f5:b24c with SMTP id
+ d75a77b69052e-467a59d66f3mr3648901cf.29.1734111944106; Fri, 13 Dec 2024
+ 09:45:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] watchdog: rzv2h_wdt: Use local `dev` pointer in probe
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>, linux-watchdog@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241213171157.898934-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241213171157.898934-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAJuCfpHpGSpix8+mB76Virb+HAMrOqB3wG8E4EXPrRCnBoBGeA@mail.gmail.com>
+ <20241210223850.GA2484@noisy.programming.kicks-ass.net> <CAJuCfpETJZVFYwf+P=6FnY_6n8E7fQsKH6HrOV1Q_q9cFizEKw@mail.gmail.com>
+ <20241211082541.GQ21636@noisy.programming.kicks-ass.net> <CAJuCfpEMYhAmOPwjGO+j1t+069MJZxUs1O1co-zJ4+vEeXCtng@mail.gmail.com>
+ <CAJuCfpGOOcRAJ46sbPRoCUNuuhi2fnkM97F=CfZ1=_N5ZFUcLw@mail.gmail.com>
+ <20241212091659.GU21636@noisy.programming.kicks-ass.net> <CAJuCfpHKFZ2Q1R1Knh-LFLUYcTX6CJuEsqNM5AwxRyDUAzdcVw@mail.gmail.com>
+ <CAJuCfpGKEthmc2JkbOcfEJqsM_cBcm0cAvv0VFe-acMi169fcQ@mail.gmail.com>
+ <CAJuCfpGJcrCkzOtaZDH98_oQK01+HNxHzzsf7SS95cXVRyXUPg@mail.gmail.com> <20241213095729.GC2484@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241213095729.GC2484@noisy.programming.kicks-ass.net>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 13 Dec 2024 09:45:33 -0800
+Message-ID: <CAJuCfpHJn9jLT4zW2vPc4kv-Y3_3BTNXkn7pjFEKLVeFjxL4oQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
+	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com, 
+	pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/13/24 09:11, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Update the `rzv2h_wdt_probe()` function to consistently use the local
-> `dev` pointer, which is already extracted from `&pdev->dev`.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, Dec 13, 2024 at 1:57=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Thu, Dec 12, 2024 at 08:48:52PM -0800, Suren Baghdasaryan wrote:
+>
+> > I'm not sure if this is the best way to deal with this circular
+> > dependency. Any other ideas?
+>
+> Move the waiting into an out-of-line slow-path?
+>
+>   if (atomic_read(&vma->refcnt) !=3D 2)
+>     __vma_write_start_wait(mm, vma);
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+The problem is not a function but the addition of struct rcuwait into
+struct mm_struct. The type should be known and I don't want to add it
+via a pointer to avoid extra dereferences. After thinking it over, I
+think the simplest way would be to move the definition of struct
+rcuwait into a separate header and include that header in mm_types.h.
+That, with some uninlining like you suggested, should do the trick.
 
+>
+> or somesuch..
 
