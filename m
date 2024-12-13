@@ -1,87 +1,147 @@
-Return-Path: <linux-kernel+bounces-445715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC679F1A39
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:38:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DEE69F1A3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A70907A0563
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 700FE16384F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B82B1E0E0D;
-	Fri, 13 Dec 2024 23:37:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBB71E5721;
+	Fri, 13 Dec 2024 23:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ilfxwnlr"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7881B85C9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DA11B5ED0
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734133026; cv=none; b=e64C3q7y8LpXYi9bytweRg42NO4gsilT/5uEwyAozj9yKTG0AA2QoS1EsVR6WNn/b+6ukUizOF25JEz1mVzRlRUw6G95GgYJ5miqgOGkzIDpmSgBE7jjUVJk3ICEDbOg+EnSM7pU/CiFboXBzv/yDxbjev70nlVj2CaXUriyBng=
+	t=1734133072; cv=none; b=rASqA0eS7ujpE/nrm7/tptr4+tu8KDXdP3RwCGA0QXrvcR6Me3HJ+3dqd96bY2/pK8lpXV22lozABXU3ZQ2m0AiTnP8VhTR3uzlVGH7AhgpBremHO8WsBTINVmY1gEbJzTwdCEMZvsIwrlE5014ahaa4RGWglh2kBkqdA+Na2SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734133026; c=relaxed/simple;
-	bh=tMo9z0KMvVLPZIk8gJBJFYqrwSB+a0gupKMzd0Lb4sY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YSLR4xZoAZjEdwftp+CYSE4Jmwreh89VEfrg2IpAAvQJk4fDh8RYTmewGm9RGHWQE0BB+RqqffajQyHqs2SxQ+jERPWuVBrnlyQjjh57r53iCplXdt6Z2TzaJZ7vX2JQtIHilz6Q3DFJHaUEJDtl7DNNjaEK1eJSo8n29yRF3+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3ab68717b73so22072555ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:37:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734133023; x=1734737823;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2yun2ZwFdy6SoRPdNnMAcn2qkYLCbCofrCyTIGF8v5g=;
-        b=tx/olb5f0jwynwsJ2dcPjE2CoJz9JeKr9M4e3OpPqi2NeORbFLl9f+cGGI0hOY2CaI
-         LtJjyKTUOq+8svw25Qchxr5mpd6M0dLdlNnao4kJM1Q1tw1kkJ09uZ7IQDpK17cCNEi1
-         K/Q7Xm4eInUzxkKH5VgZX0NLoSKzjTJqj3h+bic8GgeiOgJpHs7pdZ9ziScL+0HGwFqW
-         yPdplFixA7g7BYKZNvXI8eiSRSzEUWvYkD+SgFw9zmvNwdnM9Ye0DhRm6FTSL8MWQ2qD
-         wL7jNJGTg8uBL1Spp+7XJZnAJoxGMOeTN8IqRWs86RPTR76kUl+0P51Iuq2EQpeoV1MX
-         9TWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhmmNOH81nAnDOhmVEvWlf8ILwsDloHsOfteVguI+ysiCfI7QrtDdOvKbqc9blUSQm4H1lHMUCCbY3pH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1M+8y5KNa24oSIIY0qyKZZhRShYE7uYxxwn2mTKq+M7daHV9G
-	FpfeT4eLxrvlxgcQ+Em5kvocwLiXzW2NSbKq6hvNu/TF4YgFy9+YP2wG9RHXapJ2hwUZGpzKM0F
-	elc9M6hCN5XbIXU5FWVJ+2KENM/TkAlmhJDcpML6t0kANoXzndhvDy7o=
-X-Google-Smtp-Source: AGHT+IG+W6ImB9SjfMRf7eoERjHcXQJViE8cx5y5WtFAXU3eHvoGO5IPYzYQIPGTjtM8onQDXB7p+BGkR7j9vKs331EekEgNvBLS
+	s=arc-20240116; t=1734133072; c=relaxed/simple;
+	bh=EYQka2eEcKnLaAZZyxjkEjdgBi4TldqPEy8LhkOLXFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpMedj5dk3q/WQw8kqZhWHa0aJQuwfu1RtmzXk1x/v5082YCnaAhMWRRvN+kioL/tBpupadNi6EG21pDN4jQUzx5dGpPeFAHwiRk4A3g2jKIxZsSAg4cL1OKRw+TmQE8nU9ATIEH0zxsPd0CJJg/F7+YdwashOKnnUfo/4UecOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ilfxwnlr; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IETbRn3VqGD/a2y5jqYQQtPGrkqxTZz0g+dvOeb/DjE=; b=ilfxwnlrKOoEcUk0F5V66FkFLd
+	q1b7RBsc0SS/zw9aM15DvtDGeEZo+xgbN592GknU4zillS2HQtjbTiCa8jBolPMOOvLsOYq8rUNGA
+	lKUT2GF6dQCzNbSJetK1rk6gZ+v9uSerwFpZgC07gprOj9PHyG418RZeYxa7EiFN2XGBPiad/SOIR
+	Uqlde514vnqkWlJxKpjbH5W/zW26VwLFGg1MYD9wASjPf+Cx2H8xQoK3tyzxF66cxAi1v+e/QF01K
+	mC31gU/zlJMvSzXc4R7lufBRgFHM2vw5w6pVlQtC0z3Fjg6nztctEnthPHofaup8P4Vfqo9uLMZAz
+	d8faYPnw==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMFE4-0000000GW8C-3dst;
+	Fri, 13 Dec 2024 23:37:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6B7F430049D; Sat, 14 Dec 2024 00:37:40 +0100 (CET)
+Date: Sat, 14 Dec 2024 00:37:40 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
+Subject: Re: [RFC][PATCH v14 3/7] sched: Fix runtime accounting w/ split exec
+ & sched contexts
+Message-ID: <20241213233740.GB17501@noisy.programming.kicks-ass.net>
+References: <20241125195204.2374458-1-jstultz@google.com>
+ <20241125195204.2374458-4-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2169:b0:3a7:e86a:e80f with SMTP id
- e9e14a558f8ab-3aff4616efdmr64163395ab.3.1734133023743; Fri, 13 Dec 2024
- 15:37:03 -0800 (PST)
-Date: Fri, 13 Dec 2024 15:37:03 -0800
-In-Reply-To: <20241213230820.1957-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675cc51f.050a0220.37aaf.00b9.GAE@google.com>
-Subject: Re: [syzbot] [tipc?] kernel BUG in __pskb_pull_tail
-From: syzbot <syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com>
-To: edumazet@google.com, hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125195204.2374458-4-jstultz@google.com>
 
-Hello,
+On Mon, Nov 25, 2024 at 11:51:57AM -0800, John Stultz wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com
-Tested-by: syzbot+4f66250f6663c0c1d67e@syzkaller.appspotmail.com
 
-Tested on:
+> -static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
+> +static s64 update_curr_se(struct rq *rq, struct sched_entity *se)
+>  {
+>  	u64 now = rq_clock_task(rq);
+>  	s64 delta_exec;
+>  
+> -	delta_exec = now - curr->exec_start;
+> +	delta_exec = now - se->exec_start;
+>  	if (unlikely(delta_exec <= 0))
+>  		return delta_exec;
+>  
+> -	curr->exec_start = now;
+> -	curr->sum_exec_runtime += delta_exec;
+> +	se->exec_start = now;
+> +	if (entity_is_task(se)) {
+> +		struct task_struct *running = rq->curr;
+> +		/*
+> +		 * If se is a task, we account the time against the running
+> +		 * task, as w/ proxy-exec they may not be the same.
+> +		 */
+> +		running->se.exec_start = now;
+> +		running->se.sum_exec_runtime += delta_exec;
+> +	} else {
+> +		/* If not task, account the time against se */
+> +		se->sum_exec_runtime += delta_exec;
+> +	}
+>  
+>  	if (schedstat_enabled()) {
+>  		struct sched_statistics *stats;
+>  
+> -		stats = __schedstats_from_se(curr);
+> +		stats = __schedstats_from_se(se);
+>  		__schedstat_set(stats->exec_max,
+>  				max(delta_exec, stats->exec_max));
+>  	}
 
-commit:         2c27c766 Merge branch 'devmem-tcp-fixes'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=121ac730580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fee25f93665c89ac
-dashboard link: https://syzkaller.appspot.com/bug?extid=4f66250f6663c0c1d67e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1042a4f8580000
+Would it not be *much* clearer if we do it like:
 
-Note: testing is done by a robot and is best-effort only.
+static s64 update_curr_se(struct rq *rq, struct sched_entity *donor,
+			  struct sched_entity *curr)
+{
+	...
+	donor->exec_start = now;
+	curr->exec_start = now;
+	curr->sum_exec_runtime += delta_exec;
+	...
+}
+
+and update the callsites like so:
+
+update_curr_common()
+	update_curr_se(rq, &donor->se, &rq->curr.se)
+
+update_curr()
+	update_curr_se(rq, &curr->se, &curr->se);
+
+
+except, now I'm confused about the update_curr() case. That seems to
+always update the execution context, rather than the donor ?
 
