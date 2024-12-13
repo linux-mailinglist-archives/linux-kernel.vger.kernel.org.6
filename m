@@ -1,121 +1,181 @@
-Return-Path: <linux-kernel+bounces-444608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CFC9F0981
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:31:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFCF9F0986
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A0F166D9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2057716670D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629C71C1AB6;
-	Fri, 13 Dec 2024 10:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwAmFDLe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861481B6CFD;
-	Fri, 13 Dec 2024 10:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BCB1BBBDC;
+	Fri, 13 Dec 2024 10:31:10 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.104])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8351B6CFD;
+	Fri, 13 Dec 2024 10:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734085856; cv=none; b=ExWiUu+qloeSOTopfgIQ9bPgCOOylAEjCHTZrBRaZpNeLCL4dnSX2ydekr6qxtmiZkMZnaEakQhRa1z2Cma+cCgVmK+aNVFtVA/CPkIpNL/SDJomq/gJUJFPZSmQiTPzwAEtWoMC1yMsFSg6/aq863ygOIvMH9+ArmeNWzMJE3U=
+	t=1734085870; cv=none; b=J6vANZLuDZWax10EVwzwXcRH3aDtHUKfRjRODg6mcyED4Zpq19tIeCtkKdCVscz7bHGQK3xTzTx1ItKcAwmKSJ/MgJzIjcSyrWE1gWZu8TdnooASVlJCK7Md68MCqSPMwtJ4JVvyc5dwUilyCQw5WwZNHnPe6ValyMIQxocicUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734085856; c=relaxed/simple;
-	bh=BTQhG+pcPpVWdFU7M6WGNSEHiOAWlPk9OMovbRGe8jk=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=dnKbCgMEx1TUk/UVLXfkPV6OB9XV2Fse775L3/C86brW6n5/9Ax5EqtJDZ7F9AxqcmUF1IwI9wRjUcktS2q+fO2FtqFG2HaoHwFDqlDlRq6Yv+yKAoetO4sb16Z8KJQqxCGiND+c9GM/a1SvPK1W0UfXn8jxQ9lBz8mTmQ5H6kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwAmFDLe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65922C4CED0;
-	Fri, 13 Dec 2024 10:30:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734085855;
-	bh=BTQhG+pcPpVWdFU7M6WGNSEHiOAWlPk9OMovbRGe8jk=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=KwAmFDLewAK8qtG2JcgTDln5oAPvX7T6s21n+sVrQK/zovEQltlKTZMfOOydVCYBZ
-	 wexQmXSVYI3h7TBHmpxxuKJCAtIKDA3xJNa8/Im/UBR7LXeWQh180GN2AD0v8T0VFC
-	 xau4jIIld3rUWglJe0O5Ly1c3n+LVRPKkn4Ap2bFPikm9rfX1t0FvFxCEdhmOO7GmQ
-	 T1Kv1o7hm5xTuEGg8jC3v4laVOub2r/1lqEAAYkD9VqHdQWO6/vYMu4tQswLjScRFC
-	 qcBNgWj6+WXQRdmWrvKriaNXsmUfp6QHYu1lvvdq1sD36YHJ/Kyex37L0CjkCkv8o5
-	 SYIrwECkF64TQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Philipp Stanner <pstanner@redhat.com>,  Igor Mitsyanko
- <imitsyanko@quantenna.com>,  amien Le Moal <dlemoal@kernel.org>,  Niklas
- Cassel <cassel@kernel.org>,  Basavaraj Natikar
- <basavaraj.natikar@amd.com>,  Jiri Kosina <jikos@kernel.org>,  Benjamin
- Tissoires <bentiss@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Sergey
- Matyukevich <geomatsi@gmail.com>,  Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  Alex Dubov <oakad@yahoo.com>,  Sudarsana
- Kalluru <skalluru@marvell.com>,  Manish Chopra <manishc@marvell.com>,
-  Andrew Lunn <andrew+netdev@lunn.ch>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Rasesh Mody
- <rmody@marvell.com>,  GR-Linux-NIC-Dev@marvell.com,  Sanjay R Mehta
- <sanju.mehta@amd.com>,  Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,  Jon
- Mason <jdmason@kudzu.us>,  Dave Jiang <dave.jiang@intel.com>,  Allen Hubbe
- <allenbh@gmail.com>,  Bjorn Helgaas <bhelgaas@google.com>,  Alex
- Williamson <alex.williamson@redhat.com>,  Juergen Gross <jgross@suse.com>,
-  Stefano Stabellini <sstabellini@kernel.org>,  Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>,  Mario Limonciello
- <mario.limonciello@amd.com>,  Chen Ni <nichen@iscas.ac.cn>,  Ricky Wu
- <ricky_wu@realtek.com>,  Al Viro <viro@zeniv.linux.org.uk>,  Breno Leitao
- <leitao@debian.org>,  Thomas Gleixner <tglx@linutronix.de>,  Kevin Tian
- <kevin.tian@intel.com>,  Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,  Mostafa Saleh <smostafa@google.com>,
-  Jason Gunthorpe <jgg@ziepe.ca>,  Yi Liu <yi.l.liu@intel.com>,  Kunwu Chan
- <chentao@kylinos.cn>,  Dan Carpenter <dan.carpenter@linaro.org>,  "Dr.
- David Alan Gilbert" <linux@treblig.org>,  Ankit Agrawal
- <ankita@nvidia.com>,  Reinette Chatre <reinette.chatre@intel.com>,  Eric
- Auger <eric.auger@redhat.com>,  Ye Bin <yebin10@huawei.com>,
-  linux-ide@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-input@vger.kernel.org,  netdev@vger.kernel.org,
-  linux-wireless@vger.kernel.org,  ntb@lists.linux.dev,
-  linux-pci@vger.kernel.org,  kvm@vger.kernel.org,
-  xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v3 09/11] wifi: qtnfmac: use always-managed version of
- pcim_intx()
-References: <20241212192935.GA3360239@bhelgaas>
-Date: Fri, 13 Dec 2024 12:30:42 +0200
-In-Reply-To: <20241212192935.GA3360239@bhelgaas> (Bjorn Helgaas's message of
-	"Thu, 12 Dec 2024 13:29:35 -0600")
-Message-ID: <87cyhvoox9.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1734085870; c=relaxed/simple;
+	bh=YbczaccQQOQhzAwA1asa8/3Jw59z66MFlA9Gr62H1zc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=REGGQNypVgcRRcmpZ5lxDcaLTpicERjxwGMjT7GOfjLn5AaxMDaZP73Be6qqRlFx9LceXbHKxoM1WjeetAj7a3tLTyMEshogbR+zDpLCSRNpgyAACNz/v28DHPqxeX97AKBv2W+XcDQtUNPBpH8y8DlzBDNJJ5/QaVg11PwrVMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.243.18:12554.359801282
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.243.18])
+	by 189.cn (HERMES) with SMTP id 9A021100204;
+	Fri, 13 Dec 2024 18:30:57 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-5c5f88b874-pd459 with ESMTP id c2a65c2fa6a0433bb15426cf90653fff for krzk@kernel.org;
+	Fri, 13 Dec 2024 18:30:58 CST
+X-Transaction-ID: c2a65c2fa6a0433bb15426cf90653fff
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+Message-ID: <a06935f7-8d9a-478b-a3a0-25df3f404b44@189.cn>
+Date: Fri, 13 Dec 2024 18:30:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator:s5m8767 Fully convert to GPIO descriptors
+To: Krzysztof Kozlowski <krzk@kernel.org>, lgirdwood@gmail.com,
+ broonie@kernel.org, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20241206051358.496832-1-chensong_2000@189.cn>
+ <17a4dbd7-56cb-4c20-a913-0df5c39fc3ff@kernel.org>
+ <862662aa-c5a2-4e15-b97f-ca1b4757ab25@189.cn>
+ <bf80a815-a602-4bbe-a950-e8b6c1b0789a@kernel.org>
+Content-Language: en-US
+From: Song Chen <chensong_2000@189.cn>
+In-Reply-To: <bf80a815-a602-4bbe-a950-e8b6c1b0789a@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Bjorn Helgaas <helgaas@kernel.org> writes:
+Hi Krzysztof,
 
-> [cc->to: Igor]
->
-> On Mon, Dec 09, 2024 at 02:06:31PM +0100, Philipp Stanner wrote:
->> pci_intx() is a hybrid function which can sometimes be managed through
->> devres. To remove this hybrid nature from pci_intx(), it is necessary to
->> port users to either an always-managed or a never-managed version.
->> 
->> qtnfmac enables its PCI-Device with pcim_enable_device(). Thus, it needs
->> the always-managed version.
->> 
->> Replace pci_intx() with pcim_intx().
->> 
->> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
->> Acked-by: Kalle Valo <kvalo@kernel.org>
->
-> Hoping for an ack from Igor, too.
+I noticed that in s5m8767_set_high and s5m8767_set_low, the code looks 
+identical to each other, only order is different. Is there any problem 
+here or this way is on purpose correctly.
 
-Igor hasn't been around for a while so I'm not expecting see an ack from
-him, I think the whole qtnfmac driver should be removed in the future.
-Feel free to take the patch as is.
+static inline int s5m8767_set_high(struct s5m8767_info *s5m8767)
+{
+     int temp_index = s5m8767->buck_gpioindex;
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+     gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+     gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+     gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+     return 0;
+}
+
+static inline int s5m8767_set_low(struct s5m8767_info *s5m8767)
+{
+     int temp_index = s5m8767->buck_gpioindex;
+
+     gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+     gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+     gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+
+     return 0;
+}
+
+Song
+
+
+
+> On 07/12/2024 07:16, Song Chen wrote:
+>>>>    		}
+>>>> -		pdata->buck_gpios[i] = gpio;
+>>>> +
+>>>> +		/* SET GPIO*/
+>>>
+>>> What is a SET GPIO?
+>>>
+>>>> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
+>>>
+>>> Why using "SET" as name, not the actual name it is used for? Buck DVS?
+>>
+>> from below snippets:
+>> s5m8767_pmic_probe of drivers/regulator/s5m8767.c
+>>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
+>>                       "S5M8767 SET1");
+>>           if (ret)
+>>               return ret;
+>>
+>>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
+>>                       "S5M8767 SET2");
+>>           if (ret)
+>>               return ret;
+>>
+>>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
+>>                       "S5M8767 SET3");
+> 
+> 
+> Yeah, your code is fine.
+> 
+>>
+>> and arch/arm/boot/dts/samsung/exynos5250-spring.dts
+>>
+>>           s5m8767,pmic-buck-dvs-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>, /* DVS1 */
+>>                             <&gpd1 1 GPIO_ACTIVE_LOW>, /* DVS2 */
+>>                             <&gpd1 2 GPIO_ACTIVE_LOW>; /* DVS3 */
+>>
+>>           s5m8767,pmic-buck-ds-gpios = <&gpx2 3 GPIO_ACTIVE_LOW>, /* SET1 */
+>>                            <&gpx2 4 GPIO_ACTIVE_LOW>, /* SET2 */
+>>                            <&gpx2 5 GPIO_ACTIVE_LOW>; /* SET3 */
+>>
+>>>
+>>>> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
+>>>> +		gpiod_direction_output(pdata->buck_gpios[i],
+>>>> +					(pdata->buck_default_idx >> (2 - i)) & 0x1);
+>>>
+>>> This is not an equivalent code. You set values for GPIOs 0-1 even if
+>>> requesting GPIO 2 fails.
+>>>
+>>> On which board did you test it?
+>>
+>> You are right ,it's not equivalent with original code, i will fix it.
+>> but i have a question here:
+>>
+>>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
+>>                       "S5M8767 SET1");
+>>           if (ret)
+>>               return ret;
+>>
+>>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
+>>                       "S5M8767 SET2");
+>>           if (ret)
+>>               return ret;
+>>
+>>           ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
+>>                       "S5M8767 SET3");
+>>           if (ret)
+>>               return ret;
+>>
+>> if it fails to request buck_gpios[2] after successfully requests
+>> buck_gpios[0] and buck_gpios[1], the probe fails as well, should it call
+>> gpiod_put to return gpio resource?
+> 
+> 
+> Aren't you using devm interface? Please read the API. You do not need to
+> put anything, unless you use some other interface and I missed the point
+> of the question.
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
 
