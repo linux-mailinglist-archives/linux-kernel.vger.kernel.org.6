@@ -1,93 +1,249 @@
-Return-Path: <linux-kernel+bounces-445616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C01C9F1850
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:03:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8598A9F1854
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:14:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0B4188AECA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:03:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9941916B6C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3439D195B37;
-	Fri, 13 Dec 2024 22:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2797196D90;
+	Fri, 13 Dec 2024 22:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="o8LES4es"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60ED1DA4E;
-	Fri, 13 Dec 2024 22:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SbB9Y4Qf"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D391DA4E;
+	Fri, 13 Dec 2024 22:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734127414; cv=none; b=A4FiMQMWH1ISDXje203Cvcbsg8Asc8C56+K4btEyG1CuFVzmCRofWOx/UGD4sAes4Qm7dj+eM569tVsXMe1khMpNPmY4nUQU57raH98Y5UI/EdNoxSLFH9EWYS5lvM/Zl2MNXxACgAI9k7cstaM1mh/BCNkRGdBnXm2AqqzM6v0=
+	t=1734128047; cv=none; b=d4ttfhwvovyXLTXj+Pussb/iL6MzKybBtrsABDlWlsbdR24tRc3lmPmOtwfqh+KSRT6TsjXzfqj5hqdPlsdAIEPsrBp+jSqEFJPuDbpn/YYyc6MGv5ResNFOtITt4vNG9nUtd/pfW+T3wdgHzu/lBet5gqMnK+nrvtTa+k/ZQpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734127414; c=relaxed/simple;
-	bh=LU5Q54IyACTz/utArs59J3eKJnMem5IwvIjcL7beJBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8EIAb/jJ70GQcwF7IeqvcK+rVzdmXnuGIVnFE+ntsqQI9Py+4zvew8OmYUo0mkx4pT8dsC0QFUDaVjnDM9nkJW5SS10OTHkH0q9Cb4QXu2VHYKcVFYCVVdxp46hhXqHkyVXsp/prQcd5aDlV0zVACT+/Ys4hmLakhKfDtgLYUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=o8LES4es; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=eAJ5fUjEEvUD9VbWS1/Qwk4AOyP6PIZbu8dIgzfahvY=; b=o8LES4esZv5ix34Gc9JkGkRBTO
-	8jI9+EB6WnLt/SWorb5xz0+RR+w4GtBHikIa1l2xzyFOy/+DqD3IiiUsDn18/JmaOuNc1UqxmkS4G
-	+wtVybgpSzeROJwq1f272TjTknbbYXdq0TiI7LX+1XeEeYlsePbam5iUH4WdIwXgLHUc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tMDkd-000OJn-GH; Fri, 13 Dec 2024 23:03:11 +0100
-Date: Fri, 13 Dec 2024 23:03:11 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ninad Palsule <ninad@linux.ibm.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	joel@jms.id.au, andrew@codeconstruct.com.au,
-	devicetree@vger.kernel.org, eajames@linux.ibm.com,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	NINAD PALSULE <ninadpalsule@us.ibm.com>
-Subject: Re: [PATCH v1 3/8] ARM: dts: aspeed: system1: Add RGMII support
-Message-ID: <4a8788c1-8424-40f6-a9da-bf135acad29b@lunn.ch>
-References: <20241213145037.3784931-1-ninad@linux.ibm.com>
- <20241213145037.3784931-4-ninad@linux.ibm.com>
+	s=arc-20240116; t=1734128047; c=relaxed/simple;
+	bh=p6azuCGDAQ368IPG1UHvcab+/xjfcbSl30BEUtyq9iw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p/ikqZQnLhFRZd85V4Qoa833DqsuCc0Hbvd90fpR4D33LNKHHT1zsrOJK8PUk3m4jQF8tqHJBm7Ii/eVC1qb2RRGlZjPkrxCxRhsqwbKPMBDZ7xHCwE8NjLcvA5PzHQDQC/8nM+vlMPJ/bY5U2V7zmw4VYAf9ZKaeg2Wag6TE6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SbB9Y4Qf; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.1.13] (pool-96-241-22-207.washdc.fios.verizon.net [96.241.22.207])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 76B2A204BAAD;
+	Fri, 13 Dec 2024 14:14:04 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 76B2A204BAAD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1734128044;
+	bh=ARhpVWdQ9m1LpYAgpdtfmoz7VO0HAepK+OcoHk5+EM4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SbB9Y4QfbP6hNTxKJNfvKWPyjjeOwbltLawMjY5LB1yDlVPC9LFL5fXaOGCfOODLN
+	 Ft/OZ1qyYhvxmpXkjkgp18IJ6EblZDre1urAAt3nKyb0HZBPkvrQoRqMGtV7Ia3Z6u
+	 TnjlXUzaXLiFlFGQSiEldDoek94xLpAiBycG88Kc=
+Message-ID: <c4416dfa-ed1c-479d-9558-252775f3b8b6@linux.microsoft.com>
+Date: Fri, 13 Dec 2024 17:14:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213145037.3784931-4-ninad@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 22/22] selinux: restrict policy strings
+To: cgzones@googlemail.com, selinux@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, linux-kernel@vger.kernel.org
+References: <20241115133619.114393-1-cgoettsche@seltendoof.de>
+ <20241115133619.114393-22-cgoettsche@seltendoof.de>
+Content-Language: en-US
+From: Daniel Burgener <dburgener@linux.microsoft.com>
+In-Reply-To: <20241115133619.114393-22-cgoettsche@seltendoof.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> +&mac0 {
-> +	status = "okay";
+On 11/15/2024 8:35 AM, Christian Göttsche wrote:
+> From: Christian Göttsche <cgzones@googlemail.com>
+> 
+> Validate the characters and the lengths of strings parsed from binary
+> policies.
+> 
+>    * Disallow control characters
+>    * Limit characters of identifiers to alphanumeric, underscore, dash,
+>      and dot
+>    * Limit identifiers in length to 128, expect types to 1024 and
+>      categories to 32, characters (excluding NUL-terminator)
+> 
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> ---
+>   security/selinux/ss/conditional.c |  2 +-
+>   security/selinux/ss/policydb.c    | 60 ++++++++++++++++++++-----------
+>   security/selinux/ss/policydb.h    |  5 ++-
+>   3 files changed, 44 insertions(+), 23 deletions(-)
+> 
+> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+> index d37b4bdf6ba9..346102417cbf 100644
+> --- a/security/selinux/ss/conditional.c
+> +++ b/security/selinux/ss/conditional.c
+> @@ -280,7 +280,7 @@ int cond_read_bool(struct policydb *p, struct symtab *s, struct policy_file *fp)
+>   
+>   	len = le32_to_cpu(buf[2]);
+>   
+> -	rc = str_read(&key, GFP_KERNEL, fp, len);
+> +	rc = str_read(&key, GFP_KERNEL, fp, len, STR_IDENTIFIER, 128);
+>   	if (rc)
+>   		goto err;
+>
+
+It would be nice if these limits were named constants instead of magic 
+numbers.  Right now it's hard to tell if all the "128"s are essentially 
+the same limit referenced in different places, or if they could (in 
+theory) be changed independently.
+
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index 917b468c5144..d98dfa6c3f30 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -1221,8 +1221,9 @@ static int context_read_and_validate(struct context *c, struct policydb *p,
+>    * binary representation file.
+>    */
+>   
+> -int str_read(char **strp, gfp_t flags, struct policy_file *fp, u32 len)
+> +int str_read(char **strp, gfp_t flags, struct policy_file *fp, u32 len, int kind, u32 max_len)
+>   {
+> +	u32 i;
+>   	int rc;
+>   	char *str;
+>   
+> @@ -1232,19 +1233,35 @@ int str_read(char **strp, gfp_t flags, struct policy_file *fp, u32 len)
+>   	if (oom_check(sizeof(char), len, fp))
+>   		return -EINVAL;
+>   
+> +	if (max_len != 0 && len > max_len)
+> +		return -EINVAL;
 > +
-> +	phy-mode = "rgmii-rxid";
-
-Why is everybody getting RGMII wrong this week?
-
-Do you have an extra long clock line on the PCB for the TX clock?
-
-> +	phy-handle = <&ethphy0>;
+>   	str = kmalloc(len + 1, flags | __GFP_NOWARN);
+>   	if (!str)
+>   		return -ENOMEM;
+>   
+>   	rc = next_entry(str, fp, len);
+> -	if (rc) {
+> -		kfree(str);
+> -		return rc;
+> +	if (rc)
+> +		goto bad_str;
 > +
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_rgmii1_default>;
-> +};
+> +	rc = -EINVAL;
+> +	for (i = 0; i < len; i++) {
+> +		if (iscntrl(str[i]))
+> +			goto bad_str;
 > +
->  &mac2 {
->  	status = "okay";
+> +		if (kind == STR_IDENTIFIER &&
+> +		    !(isalnum(str[i]) || str[i] == '_' || str[i] == '-' || str[i] == '.'))
+> +			goto bad_str;
 > +
-> +	phy-mode = "rgmii";
+>   	}
+>   
+>   	str[len] = '\0';
+>   	*strp = str;
+>   	return 0;
+> +
+> +bad_str:
+> +	kfree(str);
+> +	return rc;
+>   }
+>   
+>   static int perm_read(struct policydb *p, struct symtab *s, struct policy_file *fp)
+> @@ -1269,7 +1286,7 @@ static int perm_read(struct policydb *p, struct symtab *s, struct policy_file *f
+>   	if (perdatum->value < 1 || perdatum->value > 32)
+>   		goto bad;
+>   
+> -	rc = str_read(&key, GFP_KERNEL, fp, len);
+> +	rc = str_read(&key, GFP_KERNEL, fp, len, STR_IDENTIFIER, 128);
+>   	if (rc)
+>   		goto bad;
+>   
+> @@ -1315,7 +1332,7 @@ static int common_read(struct policydb *p, struct symtab *s, struct policy_file
+>   		goto bad;
+>   	comdatum->permissions.nprim = le32_to_cpu(buf[2]);
+>   
+> -	rc = str_read(&key, GFP_KERNEL, fp, len);
+> +	rc = str_read(&key, GFP_KERNEL, fp, len, STR_IDENTIFIER, 128);
+>   	if (rc)
+>   		goto bad;
+>   
+> @@ -1552,12 +1569,12 @@ static int class_read(struct policydb *p, struct symtab *s, struct policy_file *
+>   
+>   	ncons = le32_to_cpu(buf[5]);
+>   
+> -	rc = str_read(&key, GFP_KERNEL, fp, len);
+> +	rc = str_read(&key, GFP_KERNEL, fp, len, STR_IDENTIFIER, 128);
+>   	if (rc)
+>   		goto bad;
+>   
+>   	if (len2) {
+> -		rc = str_read(&cladatum->comkey, GFP_KERNEL, fp, len2);
+> +		rc = str_read(&cladatum->comkey, GFP_KERNEL, fp, len2, STR_IDENTIFIER, 128);
+>   		if (rc)
+>   			goto bad;
+>   
+> @@ -1691,7 +1708,7 @@ static int role_read(struct policydb *p, struct symtab *s, struct policy_file *f
+>   	if (p->policyvers >= POLICYDB_VERSION_BOUNDARY)
+>   		role->bounds = le32_to_cpu(buf[2]);
+>   
+> -	rc = str_read(&key, GFP_KERNEL, fp, len);
+> +	rc = str_read(&key, GFP_KERNEL, fp, len, STR_IDENTIFIER, 128);
+>   	if (rc)
+>   		goto bad;
+>   
+> @@ -1758,7 +1775,7 @@ static int type_read(struct policydb *p, struct symtab *s, struct policy_file *f
+>   		typdatum->primary = le32_to_cpu(buf[2]);
+>   	}
+>   
+> -	rc = str_read(&key, GFP_KERNEL, fp, len);
+> +	rc = str_read(&key, GFP_KERNEL, fp, len, STR_IDENTIFIER, 1024);
+>   	if (rc)
+>   		goto bad;
+>   
+> @@ -1822,7 +1839,7 @@ static int user_read(struct policydb *p, struct symtab *s, struct policy_file *f
+>   	if (p->policyvers >= POLICYDB_VERSION_BOUNDARY)
+>   		usrdatum->bounds = le32_to_cpu(buf[2]);
+>   
+> -	rc = str_read(&key, GFP_KERNEL, fp, len);
+> +	rc = str_read(&key, GFP_KERNEL, fp, len, STR_IDENTIFIER, 128);
+>   	if (rc)
+>   		goto bad;
+>   
+> @@ -1871,7 +1888,7 @@ static int sens_read(struct policydb *p, struct symtab *s, struct policy_file *f
+>   		goto bad;
+>   	levdatum->isalias = val;
+>   
+> -	rc = str_read(&key, GFP_KERNEL, fp, len);
+> +	rc = str_read(&key, GFP_KERNEL, fp, len, STR_IDENTIFIER, 128);
+>   	if (rc)
+>   		goto bad;
+>   
+> @@ -1914,7 +1931,7 @@ static int cat_read(struct policydb *p, struct symtab *s, struct policy_file *fp
+>   		goto bad;
+>   	catdatum->isalias = val;
+>   
+> -	rc = str_read(&key, GFP_KERNEL, fp, len);
+> +	rc = str_read(&key, GFP_KERNEL, fp, len, STR_IDENTIFIER, 32);
+>   	if (rc)
+>   		goto bad;
 
-Do you have extra long clock lines on the PCB for both Rx and Tx
-clock?
+The category restriction is more tight than the sensitivity one because 
+a context may have many categories?  I guess that makes sense, but it 
+feels counterintuitive from a user perspective, because I feel like 
+users tend to think of categories and sensitivities as essentially the 
+same thing.  Would dropping the sensitivity limit to 32 to match the 
+category limit make sense?
 
-I suspect you don't and the RGMII delays are messed up somehow.
+Is there a more strict limit on the number of categories a context can 
+have than the U32_MAX from symtab.nprim?  Because that will allow 
+exceeding the page size using too many categories regardless of length 
+distinctions, which is a concern if the motivation here is about 
+potential future untrusted policy loaders in a namespaced environment.
 
-	Andrew
+-Daniel
+
 
