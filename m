@@ -1,116 +1,83 @@
-Return-Path: <linux-kernel+bounces-445368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110169F151D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:42:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7459F1520
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF427A0F85
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:42:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 051607A0F54
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A79D1EC4D4;
-	Fri, 13 Dec 2024 18:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdCOd66d"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DCA1EC012;
+	Fri, 13 Dec 2024 18:43:44 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A8B1DA5F;
-	Fri, 13 Dec 2024 18:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AD31EBA09;
+	Fri, 13 Dec 2024 18:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734115302; cv=none; b=UbGXghe6LFyHofESg0cKmg0T+Jh9kCdy1HMqZvTMXYNrK3+n9XxfU8X7u4iWc0VAtWpwUDgX4w5jXWl9+wK3nAPbfyl9Se7GQuGLWR8QxzyNVtOUpcqrgIw/lzhcBjLBYmPXCx4AiyU6JHtRirNkC+XDg12jlrY0cIo5M0mxWCU=
+	t=1734115423; cv=none; b=dWYaIO/MxwPlSt/FvsF1qDN2pl2HInFKpumq/KI8tWGjXbU9J2JdaF+iK88CBQTiKapiDsKIxZLIs5jNAstrKSNttyeSJ5Zko0+/wjgqU+UdZTJdF89mekALG9SuHC1ac81nqWKJ04ZCrdQ/AVQEWakZBg88bTmoI+kQCre+pzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734115302; c=relaxed/simple;
-	bh=glyiHlka/T+7KoYjjtQjbtYMTy9HElX+R5YtfVxKSx0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=SyNaIVZIhlFdzoCgiTvzscQukVBJHoZmCVNpTXLnSMWHE7hSeBiYecDoy0sshM62wxkoDUmOohl6/Q7evCzoUQcW2PvV7cb0jD5Lj3pHUWt33SO54Aa0X6jnFSmXtQZNKOHMqe3qYNv2/+6U0C8a7/ZVgInp2NutxpgIibHk10c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdCOd66d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF12C4CED1;
-	Fri, 13 Dec 2024 18:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734115302;
-	bh=glyiHlka/T+7KoYjjtQjbtYMTy9HElX+R5YtfVxKSx0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=SdCOd66d43pS6ViGuNfWzOkWlsJHcjMy/0F4+Uj29WEjLz1rh87KQGJOr6A2fVsBE
-	 oJzQxjFGrRwQxO8+H9CHe+Rd0g/EmzoOIoTE28ogtZCHjGW4iCRtHQEOnFFluYbmMe
-	 5GGTLSPoljzykDskw3ablP+2yiRLhKBt5XILYPBEua1rNIOyErNlecL/w37HNqeDOX
-	 gqjwgG61W+5YmUKRJpvIacEP3wbWiBR9ZBJ+BguBiy8y2LIY+k3Wx5Cf2sdT82qQpB
-	 nS2CmM4/sCnN9TA0JIkzotJ0tVB7WJRMPCgvZKtQ3zIjL25R6vnZ/ZzkFD7p/wplk0
-	 1P1tgx6lQGNqQ==
-Date: Fri, 13 Dec 2024 12:41:40 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1734115423; c=relaxed/simple;
+	bh=bGvIfd5AOwNuYD6zFLGtCpri6iQsOsGEZFDvNR2wATs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nHPuGx1SD2ozzDZFXqwa7snBxB1Vn4AwpP39GNlMDDHtxEoUyud20Wy58yxwfVkBfm8M5qSLAuk9otMchsdVi8YGpbBDf/N0RzFYZtphx5LowCrR6cTcu/TcWMq+pUhzodj4EIcnTd6wBitTvtP+9WOdUMf+DvPsJg8Y9MW8/uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01963C4CED0;
+	Fri, 13 Dec 2024 18:43:40 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 2016410604D3; Fri, 13 Dec 2024 19:43:38 +0100 (CET)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Mike Looijmans <mike.looijmans@topic.nl>, 
+ Kim Seer Paller <kimseer.paller@analog.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241213023746.34168-1-kimseer.paller@analog.com>
+References: <20241213023746.34168-1-kimseer.paller@analog.com>
+Subject: Re: [PATCH v6 0/2] Add support for ltc4162-f/s and ltc4015
+Message-Id: <173411541807.2640994.986756810907074368.b4-ty@collabora.com>
+Date: Fri, 13 Dec 2024 19:43:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>, 
- Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <20241213165240.3652961-4-vincenzo.frascino@arm.com>
-References: <20241213165240.3652961-1-vincenzo.frascino@arm.com>
- <20241213165240.3652961-4-vincenzo.frascino@arm.com>
-Message-Id: <173411529693.1996544.10315799423274402409.robh@kernel.org>
-Subject: Re: [PATCH 3/3] xlnx: dt-bindings: xlnx,spdif: Convert to
- json-schema
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-On Fri, 13 Dec 2024 16:52:40 +0000, Vincenzo Frascino wrote:
-> Convert the Xilinx SPDIF 2.0 device tree binding documentation to
-> json-schema.
+On Fri, 13 Dec 2024 10:37:44 +0800, Kim Seer Paller wrote:
+> This patch series adds support for:
+>   * LTC4162-F 35V/3.2A Multi-Cell LiFePO4 Step-Down Battery Charger
+>   * LTC4162-S 35V/3.2A Lead-Acid Step-Down Battery Charger
+>   * LTC4015 35V/3.2A Multichemistry Buck Battery Charger Controller
 > 
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->  .../devicetree/bindings/sound/xlnx,spdif.txt  |  28 -----
->  .../devicetree/bindings/sound/xlnx,spdif.yaml | 100 ++++++++++++++++++
->  2 files changed, 100 insertions(+), 28 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.yaml
+> The LTC4162-L/F/S variants and LTC4015 share a common set of registers. The
+> difference lies in the resolution value of the scaling factor for battery
+> voltage and battery current measurement, input voltage, and input current for
+> different battery chemistries. The difference also includes the calculation of
+> setting and getting the actual voltage setting applied to the charge voltage,
+> as well as getting the die temperature.
 > 
+> [...]
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Applied, thanks!
 
-yamllint warnings/errors:
+[1/2] dt-bindings: power/supply: Add ltc4162-f/s and ltc4015
+      commit: 649399c5dad9cd7a42fe7eb8a32c31627d35492d
+[2/2] power/supply: Add support for ltc4162-f/s and ltc4015
+      commit: 57e5a9a85bd03d8cc4992cb2e15ca23450e016c4
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/xlnx,spdif.yaml: xlnx,aud_clk_i: missing type definition
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/xlnx,spdif.yaml: properties:xlnx,spdif-mode: 'minimum' should not be valid under {'enum': ['const', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'minimum', 'maximum', 'multipleOf', 'pattern']}
-	hint: Scalar and array keywords cannot be mixed
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/xlnx,spdif.yaml: properties:xlnx,spdif-mode: 'maximum' should not be valid under {'enum': ['const', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'minimum', 'maximum', 'multipleOf', 'pattern']}
-	hint: Scalar and array keywords cannot be mixed
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/xlnx,spdif.yaml: properties:xlnx,spdif-mode:maxItems: False schema does not allow 1
-	hint: Scalar properties should not have array keywords
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/xlnx,spdif.yaml: title: 'Device-Tree bindings for Xilinx SPDIF IP' should not be valid under {'pattern': '([Bb]inding| [Ss]chema)'}
-	hint: Everything is a binding/schema, no need to say it. Describe what hardware the binding is for.
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/xlnx,spdif.example.dtb: spdif@80010000: reg: [[0, 2147549184], [0, 65536]] is too long
-	from schema $id: http://devicetree.org/schemas/sound/xlnx,spdif.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241213165240.3652961-4-vincenzo.frascino@arm.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
 
