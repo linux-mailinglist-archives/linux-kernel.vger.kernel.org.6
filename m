@@ -1,155 +1,127 @@
-Return-Path: <linux-kernel+bounces-445136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D629F11D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:13:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7F49F11D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:13:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE6F169E70
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8731887AFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E6C1E3DD7;
-	Fri, 13 Dec 2024 16:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5CC1E3791;
+	Fri, 13 Dec 2024 16:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IFz2XB9K"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndh8KagD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08771E048B;
-	Fri, 13 Dec 2024 16:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD542F24
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734106409; cv=none; b=X8P70WlKNsQ9UQmIg5K3tzYb0IfbtiWTXzHjasnOew7qWxVHxuJBD5X3DcBtXcLg+6YcexebYt+3Qa1GIT+kc3Ndfdko02tgfEze+LqG8jgCGkLfWpr3S24CvSUh8mY6zZ6EC/o1gQQoO1CiBFHevojelZCmohO6tqqcyxPTpNA=
+	t=1734106381; cv=none; b=u5EX1+WeIHDLN6ug6Yj0GbkTsJQ2Htf7PlR7GnV0RPdftYfVBsWwhMXf6FXCFhFjel6wKU4WN4vAGaPvc8v1kfrS6eisTdHFcydmx56/7brJuH+eqVm/C0uNepiY+ZNSNiWCT9ik7+SThSa/s0YMShEIgg1gby4w9WRVNqOB2zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734106409; c=relaxed/simple;
-	bh=2aNxWGP9RBFyIZ2SBnAC7/aLNToELCNdvkqgTxTvl3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gSX261I6JsjkiD3cwjVyB+eyt4PvL1fs7gTbhQaRTDXMOYAfQtKr/o8UZD1sTam9Y7vLWhAt/aI8el+vQClunw16NZ10kvxrOJpzXj+P2jux92hTlRioRCd9GWoh35dT4bx3p5gMRrQa1DHQU3vX58UGSeaSRD14OHONo4U5n3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IFz2XB9K; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDEIuv6015637;
-	Fri, 13 Dec 2024 16:12:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=PW1LH2
-	F8Qxvgif3YU5Y3z1CGnrmFPIED3xPs36aiFdc=; b=IFz2XB9KxBQc8Ujd8Xiybl
-	y8j268CsM6r8SqPK89Jql5bAhJZxtMSNtBiguZWzNpe3UOGr2OUCtFDu6cgcLzWx
-	J90QX0C2oAH2PnsSFLjsC59qkkvX4dKReP8JOI639+rpZ686znUFKOiXcbl933rS
-	rHjBO3icTzSSwF6ZdzL+iNxVmbGov+xLbe37GDK6jfliaLszFkZ0bz4bcWGbFmOj
-	+2pGrlEelsjg9HOKuGahLSwcYDucIr8Nl1wq776HawnE5yRb0Bl8f12LxTLDBRJE
-	6F40wT06m46cbatgGlY1uIb1kdsg+uNe7E6ciLDo7alYl3EyOtb3tp1xIw/uu2XQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gh43a73g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 16:12:49 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BDGCmio015273;
-	Fri, 13 Dec 2024 16:12:48 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gh43a73d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 16:12:48 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDFWlBq032734;
-	Fri, 13 Dec 2024 16:12:47 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0psxx0g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 16:12:47 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BDGCkHw53936584
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 16:12:46 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EC53158058;
-	Fri, 13 Dec 2024 16:12:45 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1F91458059;
-	Fri, 13 Dec 2024 16:12:42 +0000 (GMT)
-Received: from [9.61.68.160] (unknown [9.61.68.160])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 13 Dec 2024 16:12:42 +0000 (GMT)
-Message-ID: <c7717f89-65cc-4668-a3e0-ee042cdcd426@linux.ibm.com>
-Date: Fri, 13 Dec 2024 10:12:41 -0600
+	s=arc-20240116; t=1734106381; c=relaxed/simple;
+	bh=kdhy92VFTEQXiuo32/qsaRnNKb4dWA/LMwOiSwmh7Os=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=olqWyZkhv+k3xpQZXWC24Pd4CzuWyBjHycJRNMwqxqcqiFC9fwevvmvb7jVnFvi7WsCLRuJpqMWAKEvYNH59n5PISZSedxtvIIXOij/a9w0fkp/jJqcsmL+4bhTFyr6BlKjuzYx+WP0min3ERtA9855RcD9k3S9259FieUiUSRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndh8KagD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E1FE4C4CED0;
+	Fri, 13 Dec 2024 16:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734106380;
+	bh=kdhy92VFTEQXiuo32/qsaRnNKb4dWA/LMwOiSwmh7Os=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ndh8KagDiB1CW6XJ8O2sqCuLvOa0PEyAuR+65XShcsuqLEYnBVpMTGSwa7flczias
+	 cR/3WpiKVPjyPhluTuf/WrZ8Wy1ergXuSWPmZa9h0MEvRJdmLCkaDKJ687yuJaJJtZ
+	 Ry/5ZaYRpHpnat0oJtI7w8Nz/KK5j3n/eUNmoboS+1LrOycklMLDFpqIHsaz5e+OJX
+	 ST+pwHsdigg5q3guwFvGIy0lFw6rrbZFkca+F0fZ+oADwkUzQl1J9YsljDtCO/b8Wp
+	 qtuGQ32L4Md2c67lcZV98cxrZK0D6OLxhyp4y02TiBT76bggZAPi1SbOnBfqXIij8N
+	 6xM8kGdo7wrHw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6318E7717F;
+	Fri, 13 Dec 2024 16:13:00 +0000 (UTC)
+From: Ross Burton via B4 Relay <devnull+ross.burton.arm.com@kernel.org>
+Date: Fri, 13 Dec 2024 16:12:58 +0000
+Subject: [PATCH] arm64: defconfig: remove obsolete CONFIG_SM_DISPCC_8650
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] hwmon: pmbus-core: Add label for fan and temp
-To: Guenter Roeck <linux@roeck-us.net>, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
-        corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
-        Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org,
-        peteryin.openbmc@gmail.com, noahwang.wang@outlook.com,
-        naresh.solanki@9elements.com, lukas@wunner.de, jbrunet@baylibre.com,
-        patrick.rudolph@9elements.com, gregkh@linuxfoundation.org,
-        peterz@infradead.org, pbiel7@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-i2c@vger.kernel.org,
-        ninad@linux.ibm.com
-References: <20241212214927.3586509-1-ninad@linux.ibm.com>
- <20241212214927.3586509-2-ninad@linux.ibm.com>
- <f9d881b7-7301-476e-b281-0380dfcf0e10@roeck-us.net>
-Content-Language: en-US
-From: Ninad Palsule <ninad@linux.ibm.com>
-In-Reply-To: <f9d881b7-7301-476e-b281-0380dfcf0e10@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: NzpH0gdcpRWbYIcxxx5eotGsIgESifCn
-X-Proofpoint-GUID: OxreHfqoC1Ht6a91pdGiYTk7dSHkFhRl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 adultscore=0 impostorscore=0 spamscore=0
- mlxlogscore=718 suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
- mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130113
+Message-Id: <20241213-clkmaster-v1-1-dcbf7fad37b1@arm.com>
+X-B4-Tracking: v=1; b=H4sIAAldXGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDI0Nj3eSc7NzE4pLUIl1TU4tU0xTzZEszs2QloPqCotS0zAqwWdGxtbU
+ AZmVDoFsAAAA=
+X-Change-ID: 20241213-clkmaster-558e5d7c966c
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Ross Burton <ross.burton@arm.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1058;
+ i=ross.burton@arm.com; h=from:subject:message-id;
+ bh=epENDaJFaEN+XJXFXZ723Iyyxb7oJBNFgTPKcQODkWo=;
+ b=kA0DAAgBZItO7TOROJ0ByyZiAGdcXQvIqGC4hPhLJYfOvCIyA/T+rzDsNRxIyP39hHE1cxwB3
+ IkCMwQAAQgAHRYhBIf9jOMBgVWcojlzDGSLTu0zkTidBQJnXF0LAAoJEGSLTu0zkTidtUUQALlI
+ eHpo8h7c6m53q4NRc5Oca+Yj504O56wR7RfZApjR1hmzhklavRFuDBkfXtpYmoja3Mg73mN1cu0
+ jhnHVRn8azedLxL5BQnh5UNa6ZH7voXrmeFyp+DrEPnozElBSlYilXvyfmj5sdkU7J/hxSiux8g
+ Egyclnn6TYepZ+t59SajE3gmtQLj/Q731dS8B/7Tc/pr0dcxLxozTohv3o1Yl2c9vCK/r5AvgNy
+ +t3Xm85Dc6JLnDgv00iR8a/FsbKC7N0/jcv0RwZZKfjAu8TFdSsZCM7ki/ppKRa9H9ZPQ4NLkgK
+ YlnY3h9wtj5BI/cpDecn/X4cg5hln5RvjmAMRurk/zDwjekzmFUGCMV+UKdMT4FmWHcpvE0BWvx
+ CNHLMb8Adu2wDe+1VYqJbZY1vHWUZSKNlbSb2AOEjaNf3K/jDiTEy6aaxAtuzipb2Hs/JvT/n20
+ HM6i2Gy2tsvLsonwd/T2U8fDhAPOH2/nJEj5HjH+r/f6DnPn61Oqed1DR99GJtV7YwLVaClXa1J
+ 63WeHvvVi71mEaBpWSUV+QJo8Ygfq9AREPUZrTEGX8N9VadFUNIbvphZQnoUKA0ScHeIqS73ml9
+ qfNGVimrwZc5Mz+2Itqrq1k2paKu8CESgrbgSP5O78mlsuTpXIjZN/W/eyWv3A7hkzTGItFsU2N
+ 6VWsg
+X-Developer-Key: i=ross.burton@arm.com; a=openpgp;
+ fpr=87FD8CE30181559CA239730C648B4EED3391389D
+X-Endpoint-Received: by B4 Relay for ross.burton@arm.com/default with
+ auth_id=59
+X-Original-From: Ross Burton <ross.burton@arm.com>
+Reply-To: ross.burton@arm.com
 
-Hello Guenter,
+From: Ross Burton <ross.burton@arm.com>
 
-On 12/12/24 16:06, Guenter Roeck wrote:
-> On 12/12/24 13:49, Ninad Palsule wrote:
->> Adding label files for fan and temperature sensors in the power supply.
->> The openbmc application dbus-sensor(psusensor) requires those files to
->> consfigure those sensors.
->> Note that prefix for temp label is temp[A..C] used instead of temp[1..3]
->> as dbus-sensor(psusensor) application calculate index based on last
->> digit in the name so we do not want to make index double digit after
->> appending page index.
->>
->> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
->
-> We are not going to fix userspace problems in the kernel.
->
-> Guenter
->
+This option was removed from the Kconfig in commit 802b83205519 ("clk:
+qcom: fold dispcc-sm8650 info dispcc-sm8550") but it was not removed
+from the defconfig.
 
-Thanks for the quick review.
+Fixes: 802b83205519 ("clk: qcom: fold dispcc-sm8650 info dispcc-sm8550")
+Signed-off-by: Ross Burton <ross.burton@arm.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/configs/defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-Sorry I am not clear on this. I feel that it is better to support labels 
-for temperature
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index c62831e6158633f07c1f3532fba62f09b31e7448..c6d6a31a8f48c7ce9c9ca74e29db3b8835bfd556 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1352,7 +1352,6 @@ CONFIG_SM_DISPCC_6115=m
+ CONFIG_SM_DISPCC_8250=y
+ CONFIG_SM_DISPCC_8450=m
+ CONFIG_SM_DISPCC_8550=m
+-CONFIG_SM_DISPCC_8650=m
+ CONFIG_SM_GCC_4450=y
+ CONFIG_SM_GCC_6115=y
+ CONFIG_SM_GCC_8350=y
 
-sensors and fans like other. Are you saying we should not support these 
-labels or
+---
+base-commit: 231825b2e1ff6ba799c5eaf396d3ab2354e37c6b
+change-id: 20241213-clkmaster-558e5d7c966c
 
-I need update in the patch to support them better?
-
-Please let me know.
-
-Thanks & Regards,
-
-Ninad Palsule
+Best regards,
+-- 
+Ross Burton <ross.burton@arm.com>
 
 
 
