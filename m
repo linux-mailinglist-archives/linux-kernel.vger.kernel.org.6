@@ -1,58 +1,104 @@
-Return-Path: <linux-kernel+bounces-445514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1CB9F171E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:08:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829C19F1724
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A6F67A1A2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:08:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 415C6160F1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013501F03E2;
-	Fri, 13 Dec 2024 20:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D9C1F1900;
+	Fri, 13 Dec 2024 20:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqHRGAL9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="QaOiHdKK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="npwipiP1"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6B11EF0B9;
-	Fri, 13 Dec 2024 20:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FFB190471;
+	Fri, 13 Dec 2024 20:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734120063; cv=none; b=kbKi5wJK7fxzoXHmvMA7d7jyO5V6TbrlJ6jLXXSjY9s2JL4/8KPC2QueqIMvmuRpS42S/QHsEjv0KvIYrKfx39NU0XSJM+Dy5zIMCM+1GD0yg8ZJbXe3YjZnzU44kNWA0yO6zHyhbhaktK3uvanyLRklY7ioqJvK5BUl62lPonc=
+	t=1734120132; cv=none; b=dguIrS5ul4EbhmwxU8HIcyc1nCtTXBPRhnQi1acYSlSs9G8h4QLmOOowXyJHdY3GmbstALd9WIYhl5bifH9DEnG+cRuoUoi38czImhrCjlvw8Aum6KiCN/hkh9GIaZ+CEyGEdPkC9vsAmMmywmFBTHN/h1eGgFgWllPsE3OtiX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734120063; c=relaxed/simple;
-	bh=AvM0NO3WrFwUfwKf5uWQ9PtzjbzQ3ygKYFLHP0iYUSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cGtrPihwoqx+iSEECKXCERz+p5bQ/zURyPPlthvWGa4ZZwatX5aVdMkwlMZi66RDmfQRCEBns69FGG5fOSc4ffO1G6MdPC4QpX14rM/DjCtfcgF/KDgAahSJLbOoB1iF9bYD3km9VZvZqsBYqRnkpiggmn/rAZK+ODmHZ95n3CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqHRGAL9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2ADC4CED0;
-	Fri, 13 Dec 2024 20:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734120063;
-	bh=AvM0NO3WrFwUfwKf5uWQ9PtzjbzQ3ygKYFLHP0iYUSI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RqHRGAL9OfGbQEEn1RKY/Lhs77RHZH0vuVRx9xT9ZN3k4BzIKQXp1TEo1hBRvEDxx
-	 Ijo+59zlTYqIK0e42pQ019m6vVQ3DsP1nIccupudST47+dm70jF5e2hitaZH4bhP1b
-	 lE3+v5IR7w5OUQL6M0id6zY6lHWxaj6mjXubZL0jlEfAueoKF1r0LpCaW5B/mPJC15
-	 ci2V714BMXFnt+hy/BmkKBck1mOU6LlbpAgdOvpPN85Fk54WuSGKu3EU5gg97Ap8X3
-	 CRC2hl6Ipz2/JbR07YWac6m9hgKpFilmMLZz90Z+lX2Ch+rZzeODX9Ock7ehB0Hbag
-	 NYpUPpuuwe6pQ==
-Date: Fri, 13 Dec 2024 17:01:00 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1 v2] perf tests switch-tracking: Set this test to run
- exclusively
-Message-ID: <Z1ySfJAebZyEv8qE@x1>
+	s=arc-20240116; t=1734120132; c=relaxed/simple;
+	bh=cQ7JGQb4NBBf1Vsc9XB1qFiRbuBlTCVNsKyI+dsWoFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=madOa7XmyC8oadtIutfXwug/9zzVGAjZy8ooPg9SNaD+D/OaF89QX3CiyDL5y3hprPuSTzW/Wz5dwC7dYUNwwwybZ8/GEESfRVHVtr5AuFBIQVkmeFFYZ8miixyyynbAPERSEXwknVD3TADfha2HShcFpfe77M4G+KGk63RfhYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=QaOiHdKK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=npwipiP1; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 1DE081382149;
+	Fri, 13 Dec 2024 15:02:10 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 13 Dec 2024 15:02:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1734120130; x=1734206530; bh=oZSIPzAhQd
+	6vMkfp3yMQ1DBeWcFBflQVOjU83wzxEX4=; b=QaOiHdKKYfMaqckjyQp2jyBt70
+	TNQZ9wbVN0hS8LoeUM0Uf4as2f8fEEd0zQmBJn9nPNnAosINt3wCW2FXbu4iKDrU
+	2NG+IwCrn+dvpAykLDXx9Xn7NWoMoRUO8XyMNQUZbBSeodLfAHs5Ahd7us7jyTN3
+	sVt8xYd5nQsuJWixAzePTvnzqjy71eW5V3jFOStho+145G1QypGSa4jtmWcjNdsm
+	FptiqWaAEk7kjy1L7PzlN7HWU30gTwpgeKwvXK0gpBlWKooQdIXMhQx5qLRUiRWF
+	ZdpgL+/JgtO+UFvwbAU91Waoqd/6CQwY9FNakNzVjHi/hhtkksv+8JgSFl6g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1734120130; x=1734206530; bh=oZSIPzAhQd6vMkfp3yMQ1DBeWcFBflQVOjU
+	83wzxEX4=; b=npwipiP1XXC2keiLDgS4skVFf57oEJxqMFIg2wrWPLmrLoLm0qo
+	ff9VPo/lq5SzuxayZ1qQwQJ85B29XG5N1FHHw9RP7k6LON+WKFfFL/JHmAF59AZc
+	zfIF5Rb4RqUlgTzvuU7wFSjPUZHpycihMDsPmqsv2VqfngQJhjyLF3N4UqhLdX/p
+	S3nQiqUrgil8/BSac85SYjv71Gd/TF07XSjc43IVv5+sycYpW5tBO+ISPG4Or18D
+	1UXXZfgIR75Xo2/WDjdl1kaDy8ps8VFp0lDDr+gj907ZmrCHcIyVv395Qa7LEvZi
+	L4lb10YHHh19Q7Caz2IsZZCH2odIx3RxyyQ==
+X-ME-Sender: <xms:wZJcZ0WgkYbzWqiAjt18KImf03Tm8rYkNAVORZ_oAtQPC8tVjGoupg>
+    <xme:wZJcZ4lXkf9NCylP0JqFFD9cqfAm9EQooK7iCeOvZWignuW6EiKow32bV8kDT8cL1
+    Auyf2TugP6Mc886pw>
+X-ME-Received: <xmr:wZJcZ4azM93Sv3SSPD2xB6B3NCzflyPluMxk7l4IIDQfFzXVj-sZSIwKqXF8fJ-zgccRdoAL29iwGU-o3pGu4vS1UB0rg5L62vJEFDZU4e1enA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeejgddufeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlje
+    dtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpeff
+    rghnihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnh
+    epvdefkeetuddufeeigedtheefffekuedukeehudffudfffffggeeitdetgfdvhfdvnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesug
+    iguhhuuhdrgiihiidpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnug
+    hrihhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurg
+    hnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopehjohhhnhdrfhgrshht
+    rggsvghnugesghhmrghilhdrtghomhdprhgtphhtthhopehmrghrthhinhdrlhgruheslh
+    hinhhugidruggvvhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvh
+X-ME-Proxy: <xmx:wZJcZzVAuZoo_2tDsg6gQgXZbVOiPgqlD3wNsaphtsHG3dO4cQDPnA>
+    <xmx:wZJcZ-m4r7NVbXa1e__aK0bY2ojwi4zXhzLI2T_JFW5x1NJu7JASvQ>
+    <xmx:wZJcZ4etpWewECywR9VZ9iMk32de5di6Ekv7arBhe6jCuNsh0hWoWA>
+    <xmx:wZJcZwG-g3hDriQIbatprdiZNUTPppPi91VzzKYOdQ2-g0b2f1Uqbg>
+    <xmx:wpJcZ0pbJKun6Nq6gQOkEMqvVGN8jJOtoZQAmCqu9IZ4W98mHU_B-79P>
+Feedback-ID: i6a694271:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 13 Dec 2024 15:02:07 -0500 (EST)
+Date: Fri, 13 Dec 2024 13:02:06 -0700
+From: Daniel Xu <dxu@dxuuu.xyz>
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: andrii@kernel.org, ast@kernel.org, shuah@kernel.org, 
+	daniel@iogearbox.net, john.fastabend@gmail.com, martin.lau@linux.dev, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
+	jolsa@kernel.org, mykolal@fb.com, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v5 3/5] bpf: verifier: Refactor helper access
+ type tracking
+Message-ID: <fsclbw3cvixxy3p3toxqegi55wew6mpqmkjs3uyhfxxgfwg5ic@k7g6iu6qgzze>
+References: <cover.1734045451.git.dxu@dxuuu.xyz>
+ <4727abf12fbc53723359d4edcdf5b6dd7d33f9cb.1734045451.git.dxu@dxuuu.xyz>
+ <341df2d52af6c1584353b89a8a65d9d0fb5f0f27.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,36 +107,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <341df2d52af6c1584353b89a8a65d9d0fb5f0f27.camel@gmail.com>
 
-This test was failing when run with the default 'perf test' mode, which
-is to run multiple regression tests in parallel.
+On Thu, Dec 12, 2024 at 08:04:28PM GMT, Eduard Zingerman wrote:
+> On Thu, 2024-12-12 at 16:22 -0700, Daniel Xu wrote:
+> > Previously, the verifier was treating all PTR_TO_STACK registers passed
+> > to a helper call as potentially written to by the helper. However, all
+> > calls to check_stack_range_initialized() already have precise access type
+> > information available.
+> > 
+> > Rather than treat ACCESS_HELPER as a proxy for BPF_WRITE, pass
+> > enum bpf_access_type to check_stack_range_initialized() to more
+> > precisely track helper arguments.
+> > 
+> > One benefit from this precision is that registers tracked as valid
+> > spills and passed as a read-only helper argument remain tracked after
+> > the call.  Rather than being marked STACK_MISC afterwards.
+> > 
+> > An additional benefit is the verifier logs are also more precise. For
+> > this particular error, users will enjoy a slightly clearer message. See
+> > included selftest updates for examples.
+> > 
+> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> > ---
+> 
+> I think this change is ok.
+> With it there is only one use of 'enum bpf_access_src' remains,
+> but it doesn't look like it could be removed.
+> 
+> Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+> 
+> [...]
+> 
+> > --- a/tools/testing/selftests/bpf/progs/uninit_stack.c
+> > +++ b/tools/testing/selftests/bpf/progs/uninit_stack.c
+> > @@ -55,33 +55,4 @@ exit_%=:	r0 = 0;					\
+> >  		      : __clobber_all);
+> >  }
+> >  
+> > -static __noinline void dummy(void) {}
+> > -
+> > -/* Pass a pointer to uninitialized stack memory to a helper.
+> > - * Passed memory block should be marked as STACK_MISC after helper call.
+> > - */
+> > -SEC("socket")
+> > -__log_level(7) __msg("fp-104=mmmmmmmm")
+> > -__naked int helper_uninit_to_misc(void *ctx)
+> 
+> Is it possible to peek a helper that writes into memory and not delete
+> this test?
 
-Since it checks system_wide mode, set it to run in exclusive mode.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>
-Link: https://lore.kernel.org/lkml/Z1yPYqYYs_isO1PJ@x1
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/switch-tracking.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
-index 5cab17a1942e67d7..576f82a15015371a 100644
---- a/tools/perf/tests/switch-tracking.c
-+++ b/tools/perf/tests/switch-tracking.c
-@@ -583,4 +583,4 @@ static int test__switch_tracking(struct test_suite *test __maybe_unused, int sub
- 	goto out;
- }
- 
--DEFINE_SUITE("Track with sched_switch", switch_tracking);
-+DEFINE_SUITE_EXCLUSIVE("Track with sched_switch", switch_tracking);
--- 
-2.47.0
-
+Yeah, good idea. Will do.
 
