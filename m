@@ -1,145 +1,89 @@
-Return-Path: <linux-kernel+bounces-445338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E324C9F14CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:18:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0379F14D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:20:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 161C67A0291
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:18:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 302D628313D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46C21E5711;
-	Fri, 13 Dec 2024 18:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D801E570B;
+	Fri, 13 Dec 2024 18:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="IV92xMl3"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Szo36KE7"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADFE188A3B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CC6157E9F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734113924; cv=none; b=BP070e2fd252huifP9qqQimKoRFA/wljyAbwzhHrCw+fkBesFxKYGSaklPfBwUiyOy8FRh6DfFCbsrHp8XCe9T1BiZUNeq9Aikaob0FNuBv56ITqthG+F9TlhLnRPFAyk2suZuYbLwwHOyFsaY+EHEPW7uzhW/YLRsQhf0GcvWc=
+	t=1734113989; cv=none; b=hIQikO17BXNF6gA6+gI69/dNRhwHtgP6sZCJrDy9gwI5Amr0zq3nJzBvs25tgw1+k2Yobp1c9YUrD4GYvkiE3YQkVW+zFW4kBVn8KQB+/HUHqOvIN8HVj6xzPUkbyFKsaIyZM5p3+wTFBNLZn0KEfIfHxsAxsO7xyGQI5dekqnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734113924; c=relaxed/simple;
-	bh=QoJ9wIT0tNSk422O5280znHoGwGjmCOoIxPRadNja2U=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ht9za2YfCcte/amqqOopkhcMn3DRElArOibkanrql2LHlH7pZXNE8wbOHGjTPduOoWeAd9U+z/+J8fm1H1D+/6zt6QGdJQGad210gRRqzZc1zZtrA0ad1WP5AqOdgA/R1V+sT0rVvWQEK9jIJgLnwRnDEty8Wg0ok4GXHolBXc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=IV92xMl3; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ef6edddf70so212017a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:18:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1734113921; x=1734718721; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QoJ9wIT0tNSk422O5280znHoGwGjmCOoIxPRadNja2U=;
-        b=IV92xMl30p6RGUGPAEGCNC0rxriN/rhL6rJVTX60i+BsYigQhqS0MXGcFHBfCeEu9l
-         ULzYs53eL3oaGSDhGy0le6Sb19+5uBht1GNG3GNnKOW6aBQyNhFh8EsD8jkIh4Ghoo3H
-         fHNEvEX2o3aBmrtahWQznGiulLijqkxRY+QQ+ZA8Z7FJoYxxI5duR7CcDKcvJNYxQVWO
-         H5e7fl0VtzqMCJTgru959840/QfOYCdBu8YZgDslUmEi59zpeXgO1CVjmj2ihuDUW7RI
-         dO9Q2gjN0PjqkHHzQjpeBoDO9lRvqncyNkdYAYKcv352fVw3O9dgRxwc+R30ADt+XsUa
-         WUvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734113921; x=1734718721;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QoJ9wIT0tNSk422O5280znHoGwGjmCOoIxPRadNja2U=;
-        b=sH/5N345MlMPkIXZ+yjqzdFw80qLP4te87X0HbDInbOflqN1FLA/tbcPzHGE0UusUX
-         ukgvsURS9IEaIlgasVJBYv6V4iViEvyMES9eSl4SxJasfxJ/BvWId0LLAm/WWgRyS1YB
-         MCq7WRFQZTy6IY+9UjURRKpHICJvrVI/2n25OBeoneS/DjgpVgEALwkdXxkzMC3/vGH6
-         4E6uaWR/7vhRh2ywGOY73HshNOCPExSo48tdwlann+QLiHU/1fyGiou53xYIM5YvLt1J
-         Ei5I8CSP2HCbhgP8rBvEo8Pr18aXSDvueZMcxn75SVmNEmgwmDYHiEurm3LbPrbY2dVQ
-         uynw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdWSCFwyQ97g1NpuUZDE5Xe51cyM3wbS+wKWf6+pfez+372sRj/IO6YTllhlpmxOlVWDff9DuLzjtmBmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy69mR4JPD7TNCiTXMe4+bkNGtcQ2PGdM4OQejpjgBN+IEwMQ9a
-	HVTmsz0M2ln4Xgi+UBTQdi1g6y+bCJUzdXO1UoPNI2iE24tleKmRNTeJADjxxRL3ErWf6uUdXrk
-	YkPUoGUvToe4Dp/jb5DlkOopDYOp/kqeMHylLoQ==
-X-Gm-Gg: ASbGncuUJ7OC+THwcw7YygrJDpjpH9zlE5sRlnR5kJgLX7cae3OSNlzS6yith1XZngo
-	VAGpNf6qEb9PQWgJyygDon/vd8zHZ5I6WbPeL6A==
-X-Google-Smtp-Source: AGHT+IEDENRWkWaHA4dEUSjEVRyRrWfcUmiuJJNTHexoh5D/osvBWi3qb63Ace4xyAH0nPQH+O2iUSMAqU1y5jREJYY=
-X-Received: by 2002:a17:90b:4d08:b0:2ee:f64b:9aab with SMTP id
- 98e67ed59e1d1-2f2901a8b82mr1988210a91.6.1734113921292; Fri, 13 Dec 2024
- 10:18:41 -0800 (PST)
+	s=arc-20240116; t=1734113989; c=relaxed/simple;
+	bh=pBRhGkgZxX0zvUoQiesXTl3MbXRcnvzIGjRjrAAWVBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pBN7+qtyMQwAQhptoTrxz6aEBfI8WflaF9FKNp+8VXiV/OoBYmtrB2Z1+Il7sn9Qh0FXFjr8T1rT7j0meAqmVUvi5j4UIP/O49V7/wGxxBpFSBrOvHakc5Q2w8Vuc51OFcYDyJy9wGbnOWlpeVpHDBLPSh0BDTezNnMEA0rgft4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Szo36KE7; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pBRhGkgZxX0zvUoQiesXTl3MbXRcnvzIGjRjrAAWVBo=; b=Szo36KE7ZNhm73wXRKShO7e9ux
+	UDSS8PZfynPyyw1R4y3/X9qj73BvIXwPMen1+yE+HLxQvmj47oMq/hjcgUY8+FQXFG2DwnI0O3AkA
+	L+Svbl+w82guGUZxmYEhyx3MgDetTHMXrEO1x/2onPFMDQCqp0fZEwHqnouJWXyYk408NBgl10J7K
+	m6wl9OwNsN68fikh8vkVMNGDHLtKUJG1QlPmAupZfZ6kq9fFxpf+Ft0DEJiFYtA0kgfbB6rTuniRv
+	IlXKeE+v2DSD3P37ylahyUXQzo2jbARUu5lR5wRMM+ui7OoNdglN/JRcrYHFgh+xeWm2UXg3iAMVG
+	KQerXNXA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tMAG7-0000000EtDL-0PtS;
+	Fri, 13 Dec 2024 18:19:27 +0000
+Date: Fri, 13 Dec 2024 18:19:26 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, akpm@linux-foundation.org,
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+	mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
+	hughd@google.com, minchan@google.com, jannh@google.com,
+	shakeel.butt@linux.dev, souravpanda@google.com,
+	pasha.tatashin@soleen.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH 3/4] mm: replace rw_semaphore with atomic_t in vma_lock
+Message-ID: <Z1x6rmsfUjlU5evJ@casper.infradead.org>
+References: <CAJuCfpETJZVFYwf+P=6FnY_6n8E7fQsKH6HrOV1Q_q9cFizEKw@mail.gmail.com>
+ <20241211082541.GQ21636@noisy.programming.kicks-ass.net>
+ <CAJuCfpEMYhAmOPwjGO+j1t+069MJZxUs1O1co-zJ4+vEeXCtng@mail.gmail.com>
+ <CAJuCfpGOOcRAJ46sbPRoCUNuuhi2fnkM97F=CfZ1=_N5ZFUcLw@mail.gmail.com>
+ <20241212091659.GU21636@noisy.programming.kicks-ass.net>
+ <CAJuCfpHKFZ2Q1R1Knh-LFLUYcTX6CJuEsqNM5AwxRyDUAzdcVw@mail.gmail.com>
+ <CAJuCfpGKEthmc2JkbOcfEJqsM_cBcm0cAvv0VFe-acMi169fcQ@mail.gmail.com>
+ <CAJuCfpGJcrCkzOtaZDH98_oQK01+HNxHzzsf7SS95cXVRyXUPg@mail.gmail.com>
+ <20241213095729.GC2484@noisy.programming.kicks-ass.net>
+ <CAJuCfpHJn9jLT4zW2vPc4kv-Y3_3BTNXkn7pjFEKLVeFjxL4oQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Caleb Sander <csander@purestorage.com>
-Date: Fri, 13 Dec 2024 10:18:30 -0800
-Message-ID: <CADUfDZpUFmBCJPX+u3GYeyFUbQ3RgqevvCpL=ZE48E4_p_BpPA@mail.gmail.com>
-Subject: cpu_rmap maps CPUs to wrong interrupts after reprogramming affinities
-To: David Miller <davem@davemloft.net>, Tom Herbert <therbert@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Eli Cohen <elic@nvidia.com>, 
-	Ben Hutchings <ben@decadent.org.uk>, Jakub Kicinski <kuba@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpHJn9jLT4zW2vPc4kv-Y3_3BTNXkn7pjFEKLVeFjxL4oQ@mail.gmail.com>
 
-Hi netdev,
-While testing ARFS, we found set_rps_cpu() was calling
-ndo_rx_flow_steer() with an RX queue that was not affinitized to the
-desired CPU. The issue occurred only after modifying interrupt
-affinities. It looks to be a bug in cpu_rmap, where cpu_rmap_update()
-can leave CPUs mapped to interrupts which are no longer the most
-closely affinitized to them.
+On Fri, Dec 13, 2024 at 09:45:33AM -0800, Suren Baghdasaryan wrote:
+> think the simplest way would be to move the definition of struct
+> rcuwait into a separate header and include that header in mm_types.h.
+> That, with some uninlining like you suggested, should do the trick.
 
-Here is the simplest scenario:
-1. A network device has 2 IRQs, 1 and 2. Initially only CPU A is
-available to process the network device. So both IRQs 1 and 2 are
-affinitized to CPU A.
-rx_cpu_rmap maps CPU A to IRQ 2 (assuming the affinity of IRQ 2 was
-set after IRQ 1)
-2. CPU B becomes available to process the network device. So IRQ 2's
-affinity is changed from CPU A to CPU B.
-cpu_rmap_update() is called for IRQ 2 with its new affinity (CPU B).
-It maps CPU B to IRQ 2. CPU A remains mapped to IRQ 2, though with a
-higher distance.
-rx_cpu_rmap now maps both CPUs A and B to IRQ 2. Any traffic meant to
-be steered to CPU A will end up being processed in IRQ 2 on CPU B
-instead, even though there is still an IRQ (1) affinitized to CPU A.
-
-If IRQ 1 had been affinitized to CPU A and IRQ 2 to CPU B initially,
-the cpu_rmap would have correctly mapped CPU A to IRQ 1 and CPU B to
-IRQ 2. So the state of the cpu_rmap depends on the history of the IRQ
-affinities, not just the current IRQ affinities.
-
-This behavior was surprising to me, but perhaps it's working as
-intended. It seems to be a limitation of struct cpu_rmap: it stores
-only one IRQ with the lowest "distance" for each CPU, even if there
-are other IRQs of equivalent or higher distance. When an IRQ's
-affinity changes, each CPU currently affinitized to it has its
-distance invalidated, but its new closest IRQ is selected based on
-other CPUs' closest IRQs, ignoring existing IRQs that may be
-affinitized to that CPU.
-
-I can see a few possible ways to address this:
-- Store the current affinity masks for all the IRQs in struct cpu_rmap
-so the next closest IRQ can be computed when a CPU's closest IRQ is
-invalidated. This would significantly increase the size of struct
-cpu_rmap.
-- Store all candidate IRQs and their distances for each CPU in struct
-cpu_rmap so the next closest IRQ can be computed when a CPU's closest
-IRQ is invalidated. Again, this would significantly increase the size
-of struct cpu_rmap.
-- Re-fetch the affinity masks of all the IRQs from the irq layer
-whenever one IRQ's affinity changes so the next closest IRQ can be
-computed for each invalidated CPU. This would avoid using any
-additional memory, but would add a lot of calls into the irq layer.
-- Work around the cpu_rmap behavior by having userspace always write
-to all IRQs' affinity masks when changing the affinity of any one.
-This is probably the simplest solution, but I worry that other
-userspace applications would hit the same unexpected behavior.
-
-Let me know whether you see this behavior as a bug in cpu_rmap or
-something that userspace should work around. If you do think it's a
-cpu_rmap bug, how would you like to fix it?
-
-Thanks,
-Caleb
+I'd suggest struct rcuwait should live in types.h alongside list_head,
+rcuref and so on.
 
