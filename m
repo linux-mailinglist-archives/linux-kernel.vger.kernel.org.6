@@ -1,122 +1,198 @@
-Return-Path: <linux-kernel+bounces-444398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2FAD9F0626
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:14:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1EF9F0629
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:16:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4B01880687
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:16:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A5F1A7270;
+	Fri, 13 Dec 2024 08:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nv0OBx/H"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD19284CEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:14:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FED1A7060;
-	Fri, 13 Dec 2024 08:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPvvWrIe"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C51F19F40E;
-	Fri, 13 Dec 2024 08:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73D17DA8C;
+	Fri, 13 Dec 2024 08:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734077652; cv=none; b=peEX2rEkkBM2Z7xDuQZLAx1kVjNXrNdMinfAZ0IRO1EgGQ+j9o7ILN75bLXHWNQZ5swtAdmaiGPP5F5YTrs2SjAKXpXxTfXQ/sDDu3ZcnMTYCYhJ/dOa4OZQR3b7eVffBNlwiTfj5XJSRZn95XezKUKww3ZIgDcX8JKacHDLchg=
+	t=1734077762; cv=none; b=EG3rfrrhzW6wjDco3bXGzS1nVKGtPTd6RzpGeFClB3j368S4s9dz4JrecHFX47rYeNMQWL9jVC+9cuWpOn01d4uZBrUlX9Dt02YxoAwPjLlhxT7sDQLNIBCIVXGT+VesTT0prQ2TRqhKra7WbvvGgPJV/Xmh44BmubC0STFSemU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734077652; c=relaxed/simple;
-	bh=DeuTWikIwBDL8XxaGJqSSaBzW8ftzrIQcnnjpV15GrE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UNVyn3WON/NkR/ye+FrmnpojtPn9Sd/s8DqvsopccdKltF7MhNxyIWtwoUovh317Cy4cu3FBbDt9CNPvLTOL5MBJAmRY668WwYsUhvwvFudUVXuQ0PQ27CSiC774sZJLC43qVnVPTXbVI1mZUAW/ENf3Q4MR7Z9+xdPsXKmcJ5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPvvWrIe; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5401bd6cdb4so1462103e87.2;
-        Fri, 13 Dec 2024 00:14:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734077649; x=1734682449; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kXFXfj7o8MwwmFfKPy6HLkitXoH/KOnee4XhQ59bWDA=;
-        b=VPvvWrIeilsmHAoh0XAm7j61/b9F6vdoQdGHJ6frVZl8lSaa1HJV7F3eaDrMz3YxPM
-         JYxEjzJpACG27T9H5zAzDj7eKBViRjy55OwoBDo6EPSXKoJ/SuOnUSVQrMj5bijaCr4G
-         KQaJYKbNLH4FVlVqU4j32AZ361W0pKLzJk/tYbzhadLCpgxBO7/BJqxv4pbuRm2hQpXm
-         k6LNWZ7aFmdm+KdvUjQENATA62t2/HSEthDYy4mrlecKSfozUdKw27y1tP1yqvH0pEVZ
-         BjHsINVfo8E1ymtSNo8b5pGNISgaOuCYslRMViRRyZurGUxEdCT3VGo7iA2W4fjCUf6S
-         FiTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734077649; x=1734682449;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kXFXfj7o8MwwmFfKPy6HLkitXoH/KOnee4XhQ59bWDA=;
-        b=uy/3T4eSQNV+RYondSdF1Tj8lSccFwYXRwswdF9oXXG7IbBtWqPCmDSSgIaPArPT29
-         jTNZsJvmbn9sqeP+Gd3bX4jDvvcJ7RRxQ1snHZyAmOBXIYQVq1Z3DMIxA3NDNf97Xsvi
-         dhGBqS5l/jb18SQzpzC6iTh/UpPKGhq5r7/SeCVSNgJZDUsWykXbXphtG9rBpFHvkiYQ
-         gQyvfaNck5Taw0U5Wn9rckRoOBhmmI+lz8qAqreaWUWBElXzrZ5sBI/f3AZoBzIw6PRz
-         AAtvcVt1e7Yv68fuJcpj94InkWA7WETpAMM4uJxoudwJt8D0Y+Xkl4oDoVugSYQKu/2+
-         M8hA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAqwkhnfU5j5K1+OU5tIcPkwpe42BZlTqiUEHwF+emKwgmefAZdaO4JaEaWaK1uiVhKdL8kEy64RTcksE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkN8AVMHg2H4T7Xu22rN3qbvHzcaiudpIjnGUmsl7ljny9teT1
-	C0i1LHtOCyzaLroBYMOgdEEGL6mG7rozf9o6OjJYGTvmgsF81r5HOZi3FbBg4dw=
-X-Gm-Gg: ASbGnctksBGY9sLPvZPRKDBwFQ/ZiuEcMzprnd98RxNUlJaxZuAiZXmaFnnVgXIkQ2Y
-	bEO735oZUT0hJRAzRd3LU0eIiRnhUgoftoDsAPWdoALKOYBuUGflpPHJxejqtDsv2kYDciMKsAk
-	CitkwACY0oUcwz7027P9pwyAQhFHZMNoe0/SUQlpMKyJLNg7IOtkh1iYcrMumKeQVKg60xguMrN
-	gXw4xs/3aH8sgq9jYRAmp4VqjMGPZ7ey0Drun5Z+iqVhsckG6U4oexBColKnC2gsA==
-X-Google-Smtp-Source: AGHT+IG5nk114gmKOdKv3MZJeb4DCsyi11f7Ro9alkdACiWlDrzYvWpKnd/qR9uD5+29IvGYRN8Ldg==
-X-Received: by 2002:a05:6512:3b26:b0:53e:350a:72a0 with SMTP id 2adb3069b0e04-54099b69aabmr495775e87.51.1734077648604;
-        Fri, 13 Dec 2024 00:14:08 -0800 (PST)
-Received: from alex3d.netup (team.netup.ru. [91.213.249.1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401a3a4c24sm1822010e87.199.2024.12.13.00.14.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 00:14:07 -0800 (PST)
-From: Alex Shumsky <alexthreed@gmail.com>
-To: linux-wireless@vger.kernel.org
-Cc: Alex Shumsky <alexthreed@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	brcm80211-dev-list.pdl@broadcom.com,
-	brcm80211@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] wifi: brcmfmac: clarify unmodifiable headroom log message
-Date: Fri, 13 Dec 2024 11:14:02 +0300
-Message-Id: <20241213081402.625003-1-alexthreed@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1734077762; c=relaxed/simple;
+	bh=OvkHUmlOfntVSnhKJVDcCAy/inJbHd8hNdTsJ24NYwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QTQdxJB8kvJAbRI+T2LpkZZosJB1pw88TeuX0MBKBdM80ORqRsaqVPB/E2Qaa8BGMWCe1HVmpoSAQXnK+BylWwQ1UOA078rgO/zBwLdCrhgVWXsQ/Gy+Aa02EseRP5LzXqwB2lDk1zt6XpCutlocmAPlsAih25vm0ysHeoHZFd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nv0OBx/H; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD7ulu5029837;
+	Fri, 13 Dec 2024 08:15:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vLAICILLjIfyIA1ULZ2JLrUpUY1KfziegLW0IZav2cE=; b=Nv0OBx/HJFOjOxk7
+	6rQtYFHUiPcIxQSVx845QsOUt5CI20VBxjXiks3ab2hgYmwm1jnQPnsGv6rvlFv6
+	1eL73g9grkNwOTgrUanoX4yzxEOLlUczWpertv/mDnBT/9IySjEGES6G7S1HN8V8
+	aE/O6NrXSI7FdJ9kD6J3Ygxc5c6fbCmLaF4xFtBlUqj0f9z/ZjWoRWS+EfWA1bmM
+	NKJY77MUbV7OSy+OSZGJ4RLKWmf3l7u7zatAci6oS4HGPUZQ5D4VSBxLh2Te3uLm
+	NyCqKfd2N51loCbj6Z1klbjQDJUN0R62kvXFrbsigy4oQJgxbB+fu45Op31v/1G4
+	XFanRA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw4dy53-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 08:15:19 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD8FImL009787
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 08:15:18 GMT
+Received: from [10.239.133.118] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
+ 2024 00:15:13 -0800
+Message-ID: <0a16d52c-eebe-40da-ba02-7f68a7849039@quicinc.com>
+Date: Fri, 13 Dec 2024 16:15:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] phy: qcom-qusb2: Add regulator_set_load to Qualcomm
+ usb phy
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Vivek Gautam
+	<vivek.gautam@codeaurora.org>, <kernel@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241121-add_set_load_to_qusb_phy-v2-1-1c5da1befec0@quicinc.com>
+ <vbuo2yel2pdcwnmz32f4t5pb6v3ptt2bcs2t6ybab2jxnkd6e7@rjnsbawj4zpb>
+Content-Language: en-US
+From: Song Xue <quic_songxue@quicinc.com>
+In-Reply-To: <vbuo2yel2pdcwnmz32f4t5pb6v3ptt2bcs2t6ybab2jxnkd6e7@rjnsbawj4zpb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: XnpzsuXAGzRKEPNTTywcpOk98YOndc0Q
+X-Proofpoint-GUID: XnpzsuXAGzRKEPNTTywcpOk98YOndc0Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
+ clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130056
 
-Replace misleading log "insufficient headroom (0)" with more clear
-"unmodifiable headroom".
 
-Signed-off-by: Alex Shumsky <alexthreed@gmail.com>
----
 
-Changes in v2:
-- don't remove log completely, but reword it
+On 11/29/2024 12:43 AM, Bjorn Andersson wrote:
+> On Thu, Nov 21, 2024 at 04:09:27PM +0800, Song Xue wrote:
+>> Set the current load before enable regulator supplies at QUSB phy.
+>>
+>> Encountered one issue where the board powered down instantly once the UVC
+>> camera was attached to USB port while adding host mode on usb port and
+>> testing a UVC camera with the driver on QCS615 platform. The extensible
+>> boot loader mentioned that OCP(Over Current Protection) occurred at LDO12
+>> from regulators-0 upon powered on board again. That indicates that the
+>> current load set for QUSB phy, which use the regulator supply, is lower
+>> than expected.
+>>
+>> As per QUSB spec, set the maximum current load at 30mA to avoid overcurrent
+>> load when attach a device to the USB port.
+>>
+>> Fixes: 937e17f36a32 ("phy: qcom-qusb2: Power-on PHY before initialization")
+>> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
+> 
+> The patch looks good. But if we describe the regulator(s) with
+> regulator-allow-set-load; and not all the consumers vote for load, the
+> sum of the load when USB phy is disabled goes to 0 and we will enter
+> LPM.
+> 
+Hi, Bjorn
 
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for comment.
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
-index da72fd2d541f..c3a57e30c855 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
-@@ -327,8 +327,8 @@ static netdev_tx_t brcmf_netdev_start_xmit(struct sk_buff *skb,
- 	if (skb_headroom(skb) < drvr->hdrlen || skb_header_cloned(skb)) {
- 		head_delta = max_t(int, drvr->hdrlen - skb_headroom(skb), 0);
- 
--		brcmf_dbg(INFO, "%s: insufficient headroom (%d)\n",
--			  brcmf_ifname(ifp), head_delta);
-+		brcmf_dbg(INFO, "%s: %s headroom\n", brcmf_ifname(ifp),
-+			  head_delta ? "insufficient" : "unmodifiable");
- 		atomic_inc(&drvr->bus_if->stats.pktcowed);
- 		ret = pskb_expand_head(skb, ALIGN(head_delta, NET_SKB_PAD), 0,
- 				       GFP_ATOMIC);
--- 
-2.34.1
+We dived into the code and found the other all Qualcomm platform's 
+device tree using the phy-qcom-qusb2's compatible don't use the 
+"regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>" and 
+"regulator-allow-set-load" together at the same time. We think the patch 
+is safe now.
+
+Therefore, can we merge the patch?
+
+Thanks,
+Song
+> For this reason we're not doing any load requests today. Can you confirm
+> that this works fine with a dtb where only HPM is permitted (as well as
+> LPM and HPM)? If so I'd be in favor of us merging this change, but
+> keeping the dts HPM-only until someone confirms that all consumers of
+> these regulators specify load-votes.
+> 
+> Regards,
+> Bjorn
+> 
+>> ---
+>> Changes in v2:
+>> - Removed "---" above the Fixes.
+>> - Link to v1: https://lore.kernel.org/r/20241121-add_set_load_to_qusb_phy-v1-1-0f44f3a3290e@quicinc.com
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qusb2.c | 13 ++++++++++++-
+>>   1 file changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>> index c52655a383cef008552ed4533b9f31d1cbf34a13..80f0d17c42717e843937255a9a780bbae5998535 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>> @@ -722,16 +722,27 @@ static int __maybe_unused qusb2_phy_runtime_resume(struct device *dev)
+>>   	return ret;
+>>   }
+>>   
+>> +#define QUSB2PHY_HPM_LOAD 30000 /*uA*/
+>> +
+>>   static int qusb2_phy_init(struct phy *phy)
+>>   {
+>>   	struct qusb2_phy *qphy = phy_get_drvdata(phy);
+>>   	const struct qusb2_phy_cfg *cfg = qphy->cfg;
+>>   	unsigned int val = 0;
+>>   	unsigned int clk_scheme;
+>> -	int ret;
+>> +	int ret, i;
+>>   
+>>   	dev_vdbg(&phy->dev, "%s(): Initializing QUSB2 phy\n", __func__);
+>>   
+>> +	/* set the current load */
+>> +	for (i = 0; i < ARRAY_SIZE(qphy->vregs); i++) {
+>> +		ret = regulator_set_load(qphy->vregs[i].consumer, QUSB2PHY_HPM_LOAD);
+>> +		if (ret) {
+>> +			dev_err(&phy->dev, "failed to set load at %s\n", qphy->vregs[i].supply);
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>>   	/* turn on regulator supplies */
+>>   	ret = regulator_bulk_enable(ARRAY_SIZE(qphy->vregs), qphy->vregs);
+>>   	if (ret)
+>>
+>> ---
+>> base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
+>> change-id: 20241121-add_set_load_to_qusb_phy-d1327c797ffe
+>>
+>> Best regards,
+>> -- 
+>> Song Xue <quic_songxue@quicinc.com>
+>>
+>>
 
 
