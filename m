@@ -1,89 +1,146 @@
-Return-Path: <linux-kernel+bounces-444581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079BF9F090C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:05:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 268239F0910
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:07:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFADD1679A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:05:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5181697CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6021B415A;
-	Fri, 13 Dec 2024 10:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18C11B415A;
+	Fri, 13 Dec 2024 10:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hughsie.com header.i=@hughsie.com header.b="C1PSvcAg"
-Received: from mail-4018.proton.ch (mail-4018.proton.ch [185.70.40.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S90kxGFa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C/a+/jBB";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S90kxGFa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C/a+/jBB"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9903A1B6D1C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DFF1B413D;
+	Fri, 13 Dec 2024 10:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734084334; cv=none; b=tmWoF5W9OxfgGcrHqOuBhhd0zZpzRUuV/d2XGkfS+wsPjoDfqU4SacjqPCMg5QstN0MxMJe0aS2nptQLnY5RRUBs0CIP307osFt0n2y8LwelCEzDVZMIJdbPSIvxGwYw3M5FyUfP3OTQGQnoBDO3k8ENPWFZT0xwEtfN+9BUREI=
+	t=1734084423; cv=none; b=ho2iPsz8CYWwvPOXe8td7q76QorZp72jwLopPfoMpWO0DZe7ginT4otU1ZSBR1GOycLmn5F4UAwUX1MYVbe/VbP7VzBxa4E9MUGf/XGjxmwLJtH2ajNP4swKNLY2aWPx1tvoVHl2ycfhCJ+fxwlr78LCb8KVvKB0kaf0Hm7e3sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734084334; c=relaxed/simple;
-	bh=tH827m4h4XLHI6oAAXVZE+nLImUPaQ79hjHCS2ChNZg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ke39rNbV70DINIRQcUF4ZEfXp+3VEdZr5Kk6bZBPABnPeECjNJEhdAysKKU1l8lXgv9jI1935RB7iICXbkHa9y8a3uL3gHO75Vwit5a65LcPsrULgppN/ZS5khQIINyif5FMG6cdoCFQmuQE0AWhypJwy/uGXuou0T9O71oI2QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hughsie.com; spf=pass smtp.mailfrom=hughsie.com; dkim=pass (2048-bit key) header.d=hughsie.com header.i=@hughsie.com header.b=C1PSvcAg; arc=none smtp.client-ip=185.70.40.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hughsie.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hughsie.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hughsie.com;
-	s=protonmail2; t=1734084324; x=1734343524;
-	bh=tH827m4h4XLHI6oAAXVZE+nLImUPaQ79hjHCS2ChNZg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=C1PSvcAgJ+w3YeZgnXpRL+A4V4qpOa2UBMFNfzgNUSx/Kj+Qwz/yyCo3tebwd/S0t
-	 C9G8FQc1Po3HfUlQ6JluyGfSBKYXihKNA8loSBYvny8e9Fi21MPvlF6dIGZQnfDGGv
-	 4qbgCyXUybIKHg7gMzeaprKvKF4KfWPmqeKnDvKym6wRuEZCjtcfQQHxxSZ/0VbY1N
-	 wNpsaxx/o8Ps1OHtaEgtcXFu8rAfo3j5IioBdp1XdufXFIV/Dq/7yswj4hi6vnnE4j
-	 jhpccPYZzOWlaTEp7nyruz+JSj/Lai15h+v5srYVpAPZ3PnRZUUNpbZ8uT88XSk+1W
-	 Dc+RN8Ur9+Fjw==
-Date: Fri, 13 Dec 2024 10:05:19 +0000
-To: Mario Limonciello <mario.limonciello@amd.com>
-From: Richard Hughes <richard@hughsie.com>
-Cc: Werner Sembach <wse@tuxedocomputers.com>, Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Richard Hughes <hughsient@gmail.com>, ggo@tuxedocomputers.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: Avoid putting some root ports into D3 on some Ryzen chips
-Message-ID: <vVLu9MdNWVCG96sN3xqjkmMVQpr_1iu61hX0w0q5dSQtFBi9ERc3b6hSoCjobPSTNgkIp3PBheheyUlayhMeQjShsx62zNqxWnPsrHt-xaM=@hughsie.com>
-In-Reply-To: <20cfa4ed-d25d-4881-81b9-9f1698efe9ff@amd.com>
-References: <20241209193614.535940-1-wse@tuxedocomputers.com> <215cd12e-6327-4aa6-ac93-eac2388e7dab@amd.com> <23c6140b-946e-4c63-bba4-a7be77211948@tuxedocomputers.com> <823c393d-49f6-402b-ae8b-38ff44aeabc4@amd.com> <2b38ea7b-d50e-4070-80b6-65a66d460152@tuxedocomputers.com> <e0ee3415-4670-4c0c-897a-d5f70e0f65eb@amd.com> <6a809349-016a-42bf-b139-544aeec543aa@tuxedocomputers.com> <20cfa4ed-d25d-4881-81b9-9f1698efe9ff@amd.com>
-Feedback-ID: 110239754:user:proton
-X-Pm-Message-ID: 8c998f637c16f699820e7fb8c69c173bc45aab2a
+	s=arc-20240116; t=1734084423; c=relaxed/simple;
+	bh=AwluwYoEo/LWU8DX/RRlt7eMziioOGAKxa3KLRsfQAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eRslYV7zEFZoq8unTOIm4/r/hpwOleagwFOanC99M4eG2NZsJW80n4cSApHtOy3OUPO8XmYBESUia+6WJB24sgWFlRwYtVGhahpYu+e27rbbl6Ump3Me1lBzGeeuZrgtD4P6pMbFU/9KQCWzV/6slquTfqgmefgdAwomD3bawSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S90kxGFa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C/a+/jBB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S90kxGFa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C/a+/jBB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 94ED71F450;
+	Fri, 13 Dec 2024 10:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734084418; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=z8QDugiJ/KSY9yKmQ+pVAhnv9kYxVPDhuH0MdQod650=;
+	b=S90kxGFap8fiYclSa40tV3TsR+uTRfWfmld7jcT+QKsJcwUgvuLUnTNaoeeV0duHW5pQfZ
+	9CtFSps6I3Tw0wkLDc7B2AOkBPH8ZGWRT2rgWnjTRKXiLzRLcsihDguq/DZ80uUZJA5vTI
+	d/zNNhZxsRxJUVACwM/okpBkNHd1p7Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734084418;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=z8QDugiJ/KSY9yKmQ+pVAhnv9kYxVPDhuH0MdQod650=;
+	b=C/a+/jBB5/0DfQc3jmKn1/ecu7CulK2OL4sE/k441ZqKr0iF79uX8+6y392zem6dNzpH5y
+	9rqOjfOPGpgHBCBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1734084418; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=z8QDugiJ/KSY9yKmQ+pVAhnv9kYxVPDhuH0MdQod650=;
+	b=S90kxGFap8fiYclSa40tV3TsR+uTRfWfmld7jcT+QKsJcwUgvuLUnTNaoeeV0duHW5pQfZ
+	9CtFSps6I3Tw0wkLDc7B2AOkBPH8ZGWRT2rgWnjTRKXiLzRLcsihDguq/DZ80uUZJA5vTI
+	d/zNNhZxsRxJUVACwM/okpBkNHd1p7Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1734084418;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=z8QDugiJ/KSY9yKmQ+pVAhnv9kYxVPDhuH0MdQod650=;
+	b=C/a+/jBB5/0DfQc3jmKn1/ecu7CulK2OL4sE/k441ZqKr0iF79uX8+6y392zem6dNzpH5y
+	9rqOjfOPGpgHBCBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5654F137CF;
+	Fri, 13 Dec 2024 10:06:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Qm0GE0IHXGfpQgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 13 Dec 2024 10:06:58 +0000
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: [PATCH] platform/x86: dell-uart-backlight: Use blacklight power constant
+Date: Fri, 13 Dec 2024 11:05:51 +0100
+Message-ID: <20241213100647.200598-1-tzimmermann@suse.de>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On Thursday, 12 December 2024 at 19:01, Mario Limonciello <mario.limonciell=
-o@amd.com> wrote:
-> > > > > Sadly fwupd/LVFS does not support executing arbitrary efi binarie=
-s/
-> > > > > nsh scripts which still is the main form ODMs provide bios update=
-s.
+The backlight subsystem has gotten its own power constants. Replace
+FB_BLANK_UNBLANK with BACKLIGHT_POWER_ON.
 
-Of course fwupd can't do this; it would be a huge security hole as the nsh =
-script isn't signed.
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/platform/x86/dell/dell-uart-backlight.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> It sounds like some bugs in the implementation of the capsule handler
-> for this system.
+diff --git a/drivers/platform/x86/dell/dell-uart-backlight.c b/drivers/platform/x86/dell/dell-uart-backlight.c
+index 6e5dc7e3674f..b1003c170ca1 100644
+--- a/drivers/platform/x86/dell/dell-uart-backlight.c
++++ b/drivers/platform/x86/dell/dell-uart-backlight.c
+@@ -159,7 +159,7 @@ static int dell_uart_set_bl_power(struct dell_uart_backlight *dell_bl, int power
+ 
+ 	set_power[0] = DELL_SOF(SET_CMD_LEN);
+ 	set_power[1] = CMD_SET_BL_POWER;
+-	set_power[2] = (power == FB_BLANK_UNBLANK) ? 1 : 0;
++	set_power[2] = (power == BACKLIGHT_POWER_ON) ? 1 : 0;
+ 	set_power[3] = dell_uart_checksum(set_power, 3);
+ 
+ 	ret = dell_uart_bl_command(dell_bl, set_power, SET_CMD_LEN, resp, SET_RESP_LEN);
+-- 
+2.47.1
 
-I've seen this with AmiFlash + BIOS.ROM, but never from a capsule. I'm pret=
-ty sure Aptio builder is more than capable of constructing a capsule file w=
-ith the correct DMI data.
-
-> It's not an Insyde problem. I use Insyde capsules regularly myself from
-> fwupd. I also know several other OEMs that ship capsules to LVFS that
-> use Insyde.
-
-100% agreed; Insyde firmware makes up more than 20% of the updates on the L=
-VFS now.
-
-Richard.
 
