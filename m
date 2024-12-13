@@ -1,155 +1,127 @@
-Return-Path: <linux-kernel+bounces-444384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73EF9F05F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:04:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00B3F1655FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:03:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF119D096;
-	Fri, 13 Dec 2024 08:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCflS9Wq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19EE9F05FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:06:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EC918DF7C;
-	Fri, 13 Dec 2024 08:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93312283A9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:06:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BF319F101;
+	Fri, 13 Dec 2024 08:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JLi1Ub40"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8CA192D70
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734077036; cv=none; b=AwfB8o83Y6jjly7dCyBotZ3/zvsRzp7Wj//dllmI1ctbdz57tbwcY26AgMa5KIl8ULWCgoMHM1P2UIi8d9AJ6upXLvnqqPAySLPB7jKxUabDEsHS3TVFAqta/Qqdk+qL3I/6cPcmbV8IBj8eQZ2qm6m/Cr+iSAavff8HbE0SnTI=
+	t=1734077154; cv=none; b=UcJwihyK/IYg/2244bjr/GKrewVEcRm0WBOusudfpwS4PwJx098KAlDCA4VBZXkUBPZhY3fvVKPyNG6blsdtNtnkiW6z5c8O6ZRybScVT6dfBXq92r1YU9pyWGGD7f600W0MN2kE3rEg7iP79nhnsip591YotNOpRc9pLy92Vr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734077036; c=relaxed/simple;
-	bh=a427peznSb9rd/430/QkT+uXHAFd5aCvLum2pl93qig=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=F3JxiMqUR2bF1w8WrLyjQc5QcjgaVZlELgcd8mt7vN6haCNIr2g+bkaq5l7f45QFuPoZ5I3n8HAkNvvfXphrHOIZVNZvhmjgQVt4wS8GpSzebT5S6KRvhDaeo8Mk23/CVt4pLklypa0iiSFh0BTPGmzs4xVAe9s4uwlrz0kY9dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCflS9Wq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF10C4CED0;
-	Fri, 13 Dec 2024 08:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734077035;
-	bh=a427peznSb9rd/430/QkT+uXHAFd5aCvLum2pl93qig=;
-	h=Date:Subject:From:To:References:In-Reply-To:From;
-	b=VCflS9WqFIdAL12O6EMv/nY5QV0YiVxxWGfv9lb26mzyIccZ8nTm8zXNJMeels9T4
-	 GDo8sfUj5ycdYnH9L3cimdj+wqOD8KyKgPicfOtzOOJ1VUmacZMpXfxDlpaofGW2Hp
-	 l7egv5NduCSgMBV3P+kCpU1L6PhQNebemKo1yKktJfC0bJYSSqrn6HC/+3NkvXtSCg
-	 6nlyPoqSohERvegkJvdo4ieXfKHz5ULK33N7xEn9X7CeVAq8i9a6lWbHmob2SskDfw
-	 SmYTFz12ZBJoAJyRMRuSvY6tchjYU9OMik9tzhmwcrKXo95oT+JAyFUSIKMfYSmlBC
-	 46OrqHN4y/+8Q==
-Message-ID: <7b991fca-6e2f-454f-a94d-6a583854769b@kernel.org>
-Date: Fri, 13 Dec 2024 09:03:46 +0100
+	s=arc-20240116; t=1734077154; c=relaxed/simple;
+	bh=Gm1aSfPWn+6Iv90/f+5lwr4JIOMPpgZfZJbELp9SPys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Om3A/1mqn5N191UUsHFJLpAGJkBtRmNm24cPCZlCQo9afFRqRUJaR/ti2TQ1iJIopGuX7Ly+cJtvGlKOo/eshAzf5e0AnWy7K2QJYt3zDgu46mF9JX+glM0x0wfjPwiqJmqwsxknPnE+Z4K5FTmLN1GjJCeseyKwAP/G+pMib4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JLi1Ub40; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso191754766b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:05:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1734077150; x=1734681950; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lgwYE8AkKohlShjZLrwteb4c+nimfkWQZUupQYO5W68=;
+        b=JLi1Ub40QBv66ZjD7LttDdNXIL9STIwTkkza6loCqucui2uM3j9xdISG+PuR+Ks4Dw
+         VFQm2ZqQDTqOMUf26R5D4jr4ELtV//qcPMOupX3H2QD38yq3LwEL9JRUY7kMvdi+chwg
+         rpmhxVyEShwyfM3PHOB4uYy5OfJv/z9SljmG8PLFEd8Wd3OFrq+11rPlhaf0jphRYp5/
+         KOE0Hj0vqdVtvPWVcyy8IVbXrKSUUV82lvIM/0O+038nVI/fPRGrHuitVOgj5Aq24nS1
+         vuOheIixL6exmB/lKTzdTtIB/c0Ru20ZK2SveaNytzw3QMb5lGXpaP4PCI8XKb2vb7VL
+         n1QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734077150; x=1734681950;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lgwYE8AkKohlShjZLrwteb4c+nimfkWQZUupQYO5W68=;
+        b=PSNBdjFrPBxTIZ7/LqG/KaP8LtOJqABOW2hYPYGghwZZJudKkYVy5FCcFJAtMVCbhF
+         /J51MDdsfR4YFnRorZIQSdn+TmCyfWAQjvd01sPmCxxrapO/qvdXnLONMabNhAGtMPKD
+         NOy7pp81hNSGQG9jbmt0xUT2vzfLlAgK8rjMgH4EFIXF6d52wx5og9Blf4f4op3zNZsL
+         7prAEeCRy8NwAk4sVNg5bftz+5Kh0MNRC3keM2sFu1En2cqUJ5FW3pQGAzt+vNHIntxO
+         jmASdxcH5Z+Q+33Ec4d6U76xEKl+e1MzKnZzK5ffAaIpUUQFi1vbBRCA/E3Gt5R4mhI7
+         GRqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCivfVlkf9AxsErlWcr7IWubmA0F0JrW47oGxie9Lww5Oop8gulJDoTmyKYYOxx5vYW0DlKj+8kTg0zRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO+FjLTVJ6RRyyJnhsd7zqH7VklrKgvKOjJSiM1YSv8eWnGqAR
+	uDRJpFiCA8WSRCbJFMRNI6O/eXGuaDS+vQyppMltudF9jRCSg5NgLkX5u2HARZs=
+X-Gm-Gg: ASbGncvDEKJvGAbz3JNat0FOiRHYlkFfsPzAyX7lBVMACDUNCPx47WVSRe9WCf5xBGW
+	BTwe5b5scAa+1DxGEy3hY6tWy+WnIkT1UV7qe4t1FNNPMI+KBhtUYxxGl/YGQq4gyGbghKqHsuA
+	qtJ4poEgMvped1UaOoVxzu0r3vcbRCsopi/cf6lSTOHrC2ONPvRINLDzo2eCU89Z/3fB60PuOGz
+	llarKHiKs/zCndMHJ4CJ4selDZ+/bAoURepN7cX7NPNkMOpkLPF92KXfA==
+X-Google-Smtp-Source: AGHT+IEBU3KaEVduDDJFmDiYKp43p4o//mXEFM4u7vCzKG7h47JoeDZ5E1DdrcH3VOsdWE+nfKrYuQ==
+X-Received: by 2002:a05:6402:4584:b0:5d0:ea4f:972f with SMTP id 4fb4d7f45d1cf-5d63c318beemr3590523a12.8.1734077150211;
+        Fri, 13 Dec 2024 00:05:50 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ef026a41sm7507030a12.15.2024.12.13.00.05.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 00:05:49 -0800 (PST)
+Date: Fri, 13 Dec 2024 09:05:47 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	x86@kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-wireless@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, ocfs2-devel@lists.linux.dev,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH 1/7] vsprintf: Add %pTN to print task name
+Message-ID: <Z1vq2-V7vB5KhBR9@pathway.suse.cz>
+References: <20241213054610.55843-1-laoar.shao@gmail.com>
+ <20241213054610.55843-2-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, tglx@linutronix.de, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, olof@lixom.net, quic_bjorande@quicinc.com,
- geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
- konradybcio@kernel.org, neil.armstrong@linaro.org, johan+linaro@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- soc@lists.linux.dev
-References: <20241212155237.848336-1-kevin_chen@aspeedtech.com>
- <20241212155237.848336-4-kevin_chen@aspeedtech.com>
- <7289a50a-e139-453f-a512-3dd68a0839a2@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <7289a50a-e139-453f-a512-3dd68a0839a2@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213054610.55843-2-laoar.shao@gmail.com>
 
-On 13/12/2024 08:59, Krzysztof Kozlowski wrote:
-> On 12/12/2024 16:52, Kevin Chen wrote:
->> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
->> ---
->>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
->> index 2f92b8ab08fa..20191fee1f5b 100644
->> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
->> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
->> @@ -101,4 +101,10 @@ properties:
->>                - ufispace,ncplite-bmc
->>            - const: aspeed,ast2600
->>  
->> +      - description: AST2700 based boards
->> +        items:
->> +          - enum:
->> +              - aspeed,ast2700-evb
->> +          - const: aspeed,ast2700
->> +
->>  additionalProperties: true
-> 
-> 
-> 
-> This patchset is just corrupted. You already sent it as patch #1.
-> 
-> Please run scripts/checkpatch.pl and fix reported warnings. Then please
-> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-> Some warnings can be ignored, especially from --strict run, but the code
-> here looks like it needs a fix. Feel free to get in touch if the warning
-> is not clear.
-BTW, you already got here same comments before and this is third time
-you send exactly the same without implementing what we asked you.
+On Fri 2024-12-13 13:46:04, Yafang Shao wrote:
+> Since the task->comm is guaranteed to be NUL-ternimated, we can print it
+> directly. Add a new vsnprintf format specifier "%pTN" to print task comm,
+> where 'p' represents the task Pointer, 'T' stands for Task, and 'N' denots
+> Name. With this abstraction, the user no longer needs to care about
+> retrieving task name.
 
-Three times same issue.
+What is the advantage, please?
 
-NAK
+Honestly, I believe that the meaning of
 
-Best regards,
-Krzysztof
+	printk("%s\n", task->comm);
+
+is much more clear than using a cryptic %pXYZ modifier:
+
+	printk("%pTN\n", task);
+
+
+The %pXYZ modifiers makes sense only when the formatting of the printed
+information needs some processing. But this is a plain string.
+IMHO, it is not worth it. In fact, I believe that it is a
+counter productive.
+
+Best Regards,
+Petr
 
