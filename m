@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-444509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEE49F0804
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:37:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C964E9F080D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:38:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA9C168AD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:37:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF1E188B1AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8471B3932;
-	Fri, 13 Dec 2024 09:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABD31B21B5;
+	Fri, 13 Dec 2024 09:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGyYqb3y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="PaUn84Hx"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B53F1B3724;
-	Fri, 13 Dec 2024 09:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D14A1B0F20
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734082637; cv=none; b=aC6ARbYUrS7GgkD6rr2xJ3Qzy+BqJwmUxDMQpcD0e0FUbtH0ywbKzWvwwzfbLbMGMbLkRnUPpQ+ewIYqeaWEei9KQGV2+UE5slFg94VaXF9orWvsWGPJ+fkEAxgkilPaH8r1jHQe5a6btMFfQxXE25OU6qxUd7k6GvLL+73YWdQ=
+	t=1734082685; cv=none; b=OxR/nE8JgOooxHbE+O4fuMqkB8ks3QDuBUyv9lmQmcaLQUYAcAGkezFIhotOA0H2tvkWh5ZcJugce0Xp7Izp1Rtxpal7WPlrcXS2UdIeZSll+okPDFlOkwLl0JvHNLdMR/9cPRraY3wfVLLmLVAiiKwVnchfdxfLcP/JBlAmnq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734082637; c=relaxed/simple;
-	bh=Ot+Keot2DSbDeQxxNeM9NIquE52Bf3AknFppl0pabGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D40Hp1vokdgqZWCD9Y6bdAz92N4MK89m2rBrE2hjnhQwGXw9P2Cgfp6ydmz2cP6kUdAORtGvOatgulRZoIq5FG+bZqE5WrrVmkBG3XPPd+Ok9uiiKjbpejf92c/VsozSmxBgCn6fggPaYhX3iyc1fsZk3cxJTnyxPD/QhSKwI+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGyYqb3y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F4FC4CED0;
-	Fri, 13 Dec 2024 09:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734082636;
-	bh=Ot+Keot2DSbDeQxxNeM9NIquE52Bf3AknFppl0pabGY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bGyYqb3ysRMoR7UkMA1HPxEr/qT4ULL2oXJQ75QOUBd81afntfB+G4PHdVLh14Kdl
-	 Uk194Gtiu8YgHfgLtUIkACzCApDCqhH6z/CAVswPAm/glOdGkeMIYRQ0L1zg/avv0w
-	 yUPbMMATbj9yIfdhYR7DQmVsw15QzdPIsegvRHxPxs2tXN+SQMiGSs5FArgxZwPqEN
-	 noFRwU6AljgYbP6mhZbDN13t9QoVt5oNaslnK0tIsvmItB6pgOHYmw59L4xbvP7Qq4
-	 tumNVQRdzjaSsizGZi0e7mJp7/55Jq/9z65Zt4HzACzBAuK7oMiqJrwX9j7TX02FCz
-	 ZPRblFu7tQ1xg==
-Date: Fri, 13 Dec 2024 10:37:14 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: E Shattow <e@freeshell.de>
-Cc: Emil Renner Berthing <kernel@esmil.dk>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Hal Feng <hal.feng@starfivetech.com>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: dts: starfive: Fix a typo in StarFive JH7110 pin
- function definitions
-Message-ID: <oacmcw5yvdlsmvqbt4dbdmsx6rvd6x43qv2ejmypw57jgraqu7@txhhsxdg2agq>
-References: <20241210042002.165297-1-e@freeshell.de>
+	s=arc-20240116; t=1734082685; c=relaxed/simple;
+	bh=oQpzYtOejXAwIFbpnjsdqVXPeMH8rc28IecS7Aq9/50=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jqg1PCplrD64STU+46R1l4w1iLPB2xCyJoigf0GR+WVx67erT9rvD0uaYnoOzQfIzUpUYDpOqZOk6LYolMXG/M6Hxxs6XquUsqiXYDMbdllK4SDNccNpvDo3zA2AGf00I2FV1ixKaebOTiaB5DiOs3yHmhNaDm2dQWrRjm2tjM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=PaUn84Hx; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1734082682; x=1734341882;
+	bh=oQpzYtOejXAwIFbpnjsdqVXPeMH8rc28IecS7Aq9/50=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=PaUn84Hxaqn47iGdI9O9vUWWLYCo3qHbJYGnyPgieIkfFAzOVaIocQjRaa+90DCnD
+	 BjsWN9KIO+yUGx0PWfABY+ydOZCQLiAf5Kz6Euy0IzMbUbK0TaEHVhofPo2DdVkaEA
+	 n+6SVrnSVtobLgJ1prtno3uoG+yoVjIyHf1gj20s9CG26xsoYdCJdb+B/53tMzcf8f
+	 UcSMWD7IYxl3UwnPw/77DY5kGsV84ckHkbZWOcQXgsTdt8j/zg1CtTxr2dlBTTiCgV
+	 5HQWfy0PX71LSSTlDd+LVq3kt9R6T04Gpg5lrAcGQDdronusNvxYg5L8kjGjnfWD2T
+	 B7FXx5F26b3bA==
+Date: Fri, 13 Dec 2024 09:37:55 +0000
+To: Arnd Bergmann <arnd@kernel.org>
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: Dave Penkler <dpenkler@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, Nathan Chancellor <nathan@kernel.org>, "Everest K.C." <everestkc@everestkc.com.np>, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: gpib: add module author and description fields
+Message-ID: <MGy6QhNfv7Nkp5Z1jG8CBnrfIL7idxS2qFncLvVaWUaIETm6hpWlQ5le4wpmw5RtMZx7utyDvuAGg2aks7E9seY_umnTkGSdkzYL5oVBxhM=@protonmail.com>
+In-Reply-To: <20241213083119.2607901-1-arnd@kernel.org>
+References: <20241213083119.2607901-1-arnd@kernel.org>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 0c7a6274337e56c3497552b65fca9db309cf2ba4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,21 +59,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241210042002.165297-1-e@freeshell.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 08:19:56PM -0800, E Shattow wrote:
-> Fix a typo in StarFive JH7110 pin function definitions for GPOUT_SYS_SDIO1_DATA4
-> 
-> Fixes: e22f09e598d12 ("riscv: dts: starfive: Add StarFive JH7110 pin function definitions")
-> Signed-off-by: E Shattow <e@freeshell.de>
-> Acked-by: Hal Feng <hal.feng@starfivetech.com>
+On Friday, December 13th, 2024 at 09:31, Arnd Bergmann <arnd@kernel.org> wr=
+ote:
+
+>=20
+>=20
+> From: Arnd Bergmann arnd@arndb.de
+>=20
+>=20
+> The FMH driver is still missing both, so take them from the comment
+> at the start of the file.
+>=20
+> Fixes: 8e4841a0888c ("staging: gpib: Add Frank Mori Hess FPGA PCI GPIB dr=
+iver")
+> Signed-off-by: Arnd Bergmann arnd@arndb.de
+>=20
 > ---
+> drivers/staging/gpib/fmh_gpib/fmh_gpib.c | 2 ++
+> 1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c b/drivers/staging/g=
+pib/fmh_gpib/fmh_gpib.c
+> index 2ed286fa5d6e..0662b20a45e7 100644
+> --- a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
+> +++ b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
+> @@ -24,6 +24,8 @@
+> #include <linux/slab.h>
+>=20
+>=20
+> MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("GPIB Driver for fmh_gpib_core");
+> +MODULE_AUTHOR("Frank Mori Hess fmh6jj@gmail.com");
+>=20
+>=20
+> static irqreturn_t fmh_gpib_interrupt(int irq, void *arg);
+> static int fmh_gpib_attach_holdoff_all(gpib_board_t *board, const gpib_bo=
+ard_config_t *config);
+> --
+> 2.39.5
 
-Why are you sending the same multiple times? Where is the changelog and
-proper patch versioning?
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@proton=
+mail.com>
 
