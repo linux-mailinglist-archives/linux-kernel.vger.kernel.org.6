@@ -1,234 +1,187 @@
-Return-Path: <linux-kernel+bounces-444261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E12B9F0369
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:08:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DBB9F036B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:11:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE138188B2F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45710188B457
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9218718C01E;
-	Fri, 13 Dec 2024 04:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656BA17BB34;
+	Fri, 13 Dec 2024 04:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IbIAjDI9";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="AQpw7ptb"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="arWfmKCc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A00218BC26
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734062869; cv=fail; b=Z9L1HLQZh9B3AYwp5g8BHFCWFwIH3MJRPk9Ek2DU8VE49Iu841v4F57PIJrRa0MCsINLxeUASHZbeOj924y2HQm2ybUXlL3RXccLN1wrxsoUuzgCpgAAZlO2wWzOpWEgCJV8fUqtRFyts/hSh8KsQ8uOwIGIVqlqMFlpzFu7voc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734062869; c=relaxed/simple;
-	bh=ornf5Kp53K37TbPbviijyBAd+DwCOzHhwk4gj01HTm4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BSq9vG37lQrPNl17Qyj7sJsCv55UU9XCucv/aeyMrYjsGC3v7Jkothb0yhJGgg+g8voiZrk5rdUxkh+Y/z1FhYGTGuOsBSg6DgX7dqJj+xzRWxN1r9uz8qrHYJeFI16WQFAgNn0HfCaQuUZvEEvpJW+MdmjBiW/ObiR55hu+I2M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IbIAjDI9; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=AQpw7ptb; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD1fo63023719;
-	Fri, 13 Dec 2024 04:07:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=lnHUxIAmGE322q6BsYiHeXC3AlXMc+x3uGC+3fLGqV0=; b=
-	IbIAjDI919Im6lY3yFdNMU7IXygxZtVuch1ckZoXiWtSUBT4/pFVrzdEhEJid2rn
-	8vE48/7EDFVbzL0rdw84ap3P1XjfYRUxHfvTvOg/HClxTFOZgE/WbhA+/fLaF4RI
-	l2ll8UV6IUTHJZ+ByW6qVQXVLHnDPdwCaa3bTSklm2ENpEofn8t5dabSvvlOwXnb
-	HFKvcTOAnclYUjBOfNv6sx0+UrxsXdElvRFdnFHagV+sMgPUPEij41AgSSYMjloX
-	W9k4+/XumeWMa0ajfxwxjmyOiFRcTH3C1SutTVNErXEuKv1lFtEPD2etrzhC0XeX
-	kedNJnA28fMSCGm87Z6CJQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43cewtcrvq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 04:07:30 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD1oeOM009411;
-	Fri, 13 Dec 2024 04:07:29 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2047.outbound.protection.outlook.com [104.47.58.47])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 43cctc10n6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Dec 2024 04:07:29 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pr13ejnk4iPCnjvXz91is9wU/XW3DSLgU8+5ev7oQytw9GHL6ydl74QZJVYA+v/VL47Z0RzBBPPnDJOFjlpyjVdh5mNOXxQHxxkL4pIQqCoYe609qQpEuAJ4voj2iayz5qlpUmkkLIywb2XsHOLgrla714kyxAsIM93QnYdkn7qt1IUOrGcawe/3gOYQ2lz+h4W5JkkjJYV/oSQp2J3SScMjgN/y7uy2Yh5OwcDpKBZ9izzmtTtKw65rcvAoenOIMzy10/ZP8Q2Fik/quP51U8PBGsTD2FYwoSIv2EGCFbw1Ft9oe0EKqCV9C4otGwOmdIVyc8tBUk4LbWT9VU93ZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lnHUxIAmGE322q6BsYiHeXC3AlXMc+x3uGC+3fLGqV0=;
- b=cH8KdG5flbXfumY+0wj6uQRJUxV/TKSr6SSf/RvTett4RKaxfboVgZABvDNsyMg56TGLKfUroPZxErHuSCnR2UoN+DnyRP6j4urscUmVZdskL7JTStN8KpRKIKkgnzD8e3dHOqrOSmEOd9lAzxlf5uJBZbgTb2yRZpzyBMEK8Dhe0R/gUNeZOnbSqil62J1xvIeOgWLNsbiQqtdBhtNLj/Ym5az0f2rF6RBuLMBBneRtGtWXbeT4Z5d+gv4zAkpkVvec+c/YtqmE2kcrbxZoT7Epa/ekrigqt5x9y2Lzx4xm6uPEvKuldYTw2bIbJ6PEX2XnruwhtxurVvXvsYdXhg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lnHUxIAmGE322q6BsYiHeXC3AlXMc+x3uGC+3fLGqV0=;
- b=AQpw7ptbhIeR2AdBQ9lASIbI+k+kCAmo2BjkXNZ03m9ctvhyCpjs+Vg3h5DYbBIcrhtMH9rX1WRwmxmc2FE/KHAnblUkGmtGqSHVswQFLQg+3B6mxU5cpS4x2Yio/bV+92UAx3VXb0phPGN/8wBHaYHX/Q3e66/PJypTFP734lA=
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
- by PH0PR10MB5848.namprd10.prod.outlook.com (2603:10b6:510:149::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Fri, 13 Dec
- 2024 04:07:27 +0000
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e%3]) with mapi id 15.20.8230.016; Fri, 13 Dec 2024
- 04:07:27 +0000
-From: Ankur Arora <ankur.a.arora@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: peterz@infradead.org, tglx@linutronix.de, paulmck@kernel.org,
-        mingo@kernel.org, bigeasy@linutronix.de, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, frederic@kernel.org, ankur.a.arora@oracle.com,
-        efault@gmx.de, sshegde@linux.ibm.com, boris.ostrovsky@oracle.com
-Subject: [PATCH v3 7/7] rcu: limit PREEMPT_RCU configurations
-Date: Thu, 12 Dec 2024 20:06:58 -0800
-Message-Id: <20241213040658.2282640-8-ankur.a.arora@oracle.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20241213040658.2282640-1-ankur.a.arora@oracle.com>
-References: <20241213040658.2282640-1-ankur.a.arora@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN8PR04CA0041.namprd04.prod.outlook.com
- (2603:10b6:408:d4::15) To CO6PR10MB5409.namprd10.prod.outlook.com
- (2603:10b6:5:357::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CAC171658
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734063083; cv=none; b=uX1HbagoXJSi0PAOfM/rwcyQKN5vP28awvN33Vy1N0f2lShovorU6QG8fqs7YsuuSmwPZpeCHxCtY0GAgyB7rLQzQixp7NLyVCVPJVPS8FXcHxY+LtAfAE738VCnOx3HXuhLS8eAAbcVSfA9VExEAh2efCbYgKiVV5/OU/q0dpg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734063083; c=relaxed/simple;
+	bh=V260stKIcRbvWJCBHBnTHE6F0uCtF1ojstrld7D9kqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=f5XtcdmwLFgp5pU36F/D6n+eBk+WxFMDy71k7x5ZURiIHPKjKS4lx/wrWy5e2gMhsdVzLBbY/mQolBUhSzmQfV7iuIZfwaveWlN8xZDs5tP6jQ+BEuCywpclAhhd/U9A0uB7Gw0qEpq7NogjfaSFa44EJ8RB06ZhvhFJY+vL6sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=arWfmKCc; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734063082; x=1765599082;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=V260stKIcRbvWJCBHBnTHE6F0uCtF1ojstrld7D9kqA=;
+  b=arWfmKCcmVKuZPnITuQsQfa35moQFVLNBdbo4dV2oNAH3HoN2OP3VMMu
+   DTYlPT/USEWidjTrb/ZeUAakRVCc+HgXbf+Kvx7KdOl31erK6LrDFC/iG
+   MHGLg9tfQytLVZCMxPzoqrXK4DuOem3pyny4Cr2D1havEoQ/7lt0J0lva
+   H3z7AGBzIhJxWG/hRumpPDzOVmivfVV928QvSlU0ibdxXBkgN6e+F4Pkm
+   WQGChSJXN+RcpTm98y4XdgsZy6DDz7qQUCnhKFu++lJRCm5tbrGRgoxV2
+   CCS9XpopI03rI3F9xixZAybw7ziLgI+6B2R3ZTBCK9r2L2WaC4gaGdmay
+   g==;
+X-CSE-ConnectionGUID: IE33lLfxSVSraDKQEG1qiw==
+X-CSE-MsgGUID: zY4bCpcQTkeae853Oh4obg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="22096972"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="22096972"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 20:11:21 -0800
+X-CSE-ConnectionGUID: FGzsd+2tTYOKpLCzThb9hQ==
+X-CSE-MsgGUID: JlRQEnTKQbef965BQWOrtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="133803205"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 12 Dec 2024 20:11:19 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tLx1I-000BgI-2K;
+	Fri, 13 Dec 2024 04:11:16 +0000
+Date: Fri, 13 Dec 2024 12:10:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Alexandre Chartre <alexandre.chartre@oracle.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: arch/x86/entry/common.c:211: warning: Function parameter or struct
+ member 'regs' not described in 'do_int80_emulation'
+Message-ID: <202412131236.a5HhOqXo-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|PH0PR10MB5848:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c18e65a-ad7f-4596-0e32-08dd1b2ba7d1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xXaPAUViumWKGjsxn3vj0VlMtX7RkY0zOETpCxBhKYd3qcjZfLHNs8tmrmGh?=
- =?us-ascii?Q?nW3ksgRRJcLjePD5gZIACWaQxt40p9Tz2k/QbuaWquG3gxxZ1Fid3pMvrZqz?=
- =?us-ascii?Q?Fgs1uZa6ulYT1P75Y6lAPrFRGcwMi4jHTMl45cJsAKYbt3otCBGIE11uvnyi?=
- =?us-ascii?Q?fWJQNITolcoDYZU/kQCUb+h/R9Vda3HPi6V1fH3hBFbTaVD+0gEvz8Wie2Rj?=
- =?us-ascii?Q?guIwry9IgGN3PfH/js1oJyRQhFoWf9+uQiSCsm7d+8W1cqassxSHOxnH9OqK?=
- =?us-ascii?Q?+WmWb0q1dZNbuSB0ia4o5rexMOTc3hCQ/Hr3ObuWW24iTkYX6BBT0giL18GJ?=
- =?us-ascii?Q?PtbK3VTvjAtJ0KJjJfC+dXzha8w3mMpUV85+fFulHYRQ2FE4nSHcUqT28COO?=
- =?us-ascii?Q?0bQVlMcULNL8OaX+ZblO7E9FkE3HqB4kvXDmbceEPm26qRhxIgkLhsyVwe5U?=
- =?us-ascii?Q?aA/5DtJ8myynefyG8S0G0n3ltxIvLWC6BXQvrJKLUf0GH7wkHsohi8UUIE7G?=
- =?us-ascii?Q?Uypvq4fc5i70BwfDtgzs9jZGNUiJEfOQ6amEM7w8sbEeWRXiT75xZF0nVFk2?=
- =?us-ascii?Q?N/JQ5rZQhK4NE2qCzaTvi0Q0FXaXLHZVVDLnkDQZg/X5vd3Dkvm7AEqTQzfN?=
- =?us-ascii?Q?e6rrGJYLpsPIuWxTMglKk1kcBSORN7rDUJfZkBG6NI4MwWk+eAxPd16HKX9s?=
- =?us-ascii?Q?b5+sFR/81Op11xPqRD7saUp4h4SqMUZDTNdav1W4KOCwJEnsJMZ0UdoIUdgv?=
- =?us-ascii?Q?WOv8uh5/21UaT07wDg1QmNCMcCDoqRYPgQNAvRygnmij0d3d7CbC49UqYMQG?=
- =?us-ascii?Q?YLgJ2BsPFfJj2SPWPBhxT4qOvWwafJVOHTDpwjfVXt3T/z1awPGovp7r/bf5?=
- =?us-ascii?Q?MQMOROQu1YX04fsrmfPwkemgyeqUZzgh+0xqqc/NgRTTi0GXNfZxu5Zr3Om4?=
- =?us-ascii?Q?15rGJ5p7V51zftbG0YUYIyDKqGGb1HUckuvkCWbQIEN9YjI5TCoGBuBdYC3+?=
- =?us-ascii?Q?aoM9GeBqKBmMwwUxHs8XQtF82NR37Ws4wI0qrom91avwnfVU7l8yZQIesCiz?=
- =?us-ascii?Q?yWfOwtplTDbZS0zXJtFjlvH0vXZ+pq+vyhyXRMj2yrsbQZkE9TUjZJbFrDFe?=
- =?us-ascii?Q?hzABF/N4TWbClxqEwI91j30R0AL28aelLfi/X0p7cIPxouqfiLGcBmZqrYL+?=
- =?us-ascii?Q?stjBBU6bbRyN2shi3beFkea/aTN7NZJS3Anh5j6l5Z0bo752GRLaf/8R/Pja?=
- =?us-ascii?Q?kAG2JYg5cuaI0nx8rNsSCNcJUb0Oat/2rysArMjs4HFjk6mHlwxp7KbVHXfO?=
- =?us-ascii?Q?GlMgDfwAjNYky4lYgTypprVlYH2H9CRO+UCCEWzbXj9VpspvEYx7UJqBdjrq?=
- =?us-ascii?Q?6Ibbd8DTkRKmjhrcG8RuXPpJRVYl?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?joYMWrUCXmP1QQ7axL9+6HBKrHsqhQ/2+pArRWr93HWyqhocw7byG6WD+uP0?=
- =?us-ascii?Q?Aezma6AceKj0rveGFdf4xmlPXL8QK3RtWqbsfbqKZL85oGbXkKxt3FvvkbNF?=
- =?us-ascii?Q?UNVR0fdekfECRSOfvrdTTfcjr5yxoTvaj7zuJDSGx5Dr3es16lYAhcYc5og5?=
- =?us-ascii?Q?nAYUDzEaOp8t5tWFMr6KlNzBXikFBMbrhZ6cAWFxIJZaMfwJ0FBGnJj88vh8?=
- =?us-ascii?Q?vmFXfE9u0Vd94QQZszkDRjBM5kgWs3cjnhP30QD96fxQDkXyShLSrIYULKUi?=
- =?us-ascii?Q?S17LB4NBuOxdklMcIyNqlvQHhQyeph2XAw9/CJhbXMX+nRzicSAr4wR3NNt6?=
- =?us-ascii?Q?Li1hQDCLeNYlyCGyoK7/pskOi4bQfbuOjB+mpe2DqM+7wpftOjgUMCfTQ1R6?=
- =?us-ascii?Q?0lsCBp5OWje7pitJX9CMmf0FH1gR2YHL5sw/PPH5OzIN2W+O7PH7BFdVMSY1?=
- =?us-ascii?Q?aZwxq8tKSYeun/ZSvXwR8UY6tUvns1sxlQcF655awVSxW5XV+7R0xOFvEWJt?=
- =?us-ascii?Q?2NmmMVyrtgHtkfugm5GPekEpD7Y4Jk4JsAJsdgPD3RegowxrdcLsn9G6lJQV?=
- =?us-ascii?Q?wTKOps7KoPkBzpFtnXNK9QJV72JR9nGocU8nHgmO2aiG+BWrMYNdUPqW7fgG?=
- =?us-ascii?Q?Z710Au2Bdnazz/kX64TQpb6EwHGQgIGNfXkmYE5UtCW8uaPkvEuH2zoYFVO+?=
- =?us-ascii?Q?JPhCEhu08EawHf3/u7VWRhaGoU8fI6mNffQsA38oU2DNqWTFWpsRUvi/Qwbj?=
- =?us-ascii?Q?t5t2rFYOWkSHe7f0hqv+GWK7Shz3Ul7KUPsbLAyRCU8dVG54wTyVS/I05R2X?=
- =?us-ascii?Q?/IZU7I2Y1AY7Vq5psw5RS/Fq4Fh0tjT6CQt6gYgvKnbkpUXUrTwQV94mPdG7?=
- =?us-ascii?Q?iZ80DfDUsoWaQji8vmxJdinuSGHnY4OrDOpuQv2l9CMd2qMjcFPQTXQxzWkU?=
- =?us-ascii?Q?XK5zYji9h4ArxquXb2NenZE9JS+FJJRqwHHgKWDdew+ESILxoRiCaYyO1Off?=
- =?us-ascii?Q?YbgI/axeXHbcQ+7U18fjMJ/WTrNIo9TYJDmkKSNeTCg+9N/AYyLS2mb7k+27?=
- =?us-ascii?Q?GawwIZ7+qF1ALPEYlhdKcxN9xfaGLOmrF4xttkpYI41d9ua6C1fFICBQxUw1?=
- =?us-ascii?Q?34d1xy+H78GSZG9iH/w34cmJdoV9CZV++3xxHTe9FEHwXbJ/8Qw59Z919G8i?=
- =?us-ascii?Q?cZarPcdfFE/3o1XzEOamAu8ek5F0XYebDwLjAeWdh/g/fjg2eJ7fJCc0OhWm?=
- =?us-ascii?Q?gGoJuMpsts0ExosduWLZ8pWpW+vLZJYY/IQcdf7XcxzBsfE3ZohA8h3lAAeF?=
- =?us-ascii?Q?X9vv/CJGY1dbfHhS+fNX7vludlZfGEgH7hf0v+nEda1pgfbsKKjV0OrmwPyB?=
- =?us-ascii?Q?iBqsjWpk0qsy0CCIMYciY0q9l2aqXH+eZmA6rBPMqPfGDJBoURPAEqEekXjT?=
- =?us-ascii?Q?t4sDV1SMrWZlEOsloWc9wU7cux9uWF2DPd1y4xWlzLwhKwQvV1nd6qUncmV0?=
- =?us-ascii?Q?lew8wmIfHSiIK3pK/0zL4Zk1W1rJ272G/D2uOOwMxchZ+n+oOovF/yQUOFwQ?=
- =?us-ascii?Q?3tDrTFz587OMuP8Qi4l0mI/B+BdFXfeKj4CuZf/EZXo1pOmNZfxPWodfgPB+?=
- =?us-ascii?Q?Vg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	SS/uyrCITIXZx9IQzR8S1hp1DpkSAe4wkOmLuKne7qIOONHVoaYAJalq9ygD1zGEckZjboVNn0kqWjZhjNBPhu4MmhmCQvnQf8EcPeqD/a6Nn+8hx99P8ZmHIk0mApZj9fWIhm3OKQh/V53XjA7z1vfwa3SxrfH8KwflZwRoXjBUeVmCob4rLGXLB1QVSZUB2AIdGlIuCpP6ZZs4NbS1tUut6qLtCtXtoeTBAbEEA7+VkdxSPqnMKSYfTNie8FjpvzXc5jMlrjXbaAzatxxJoPlfRgKNtEO3b1UXgUYkgyCO2QaNNgDZIzE4tpbIfuFAzY/PxH+bMsiB3xTLr5lMvycYuPx2kDJag3JO80pkOyxjAfu3id725Gn1AZBXoEafIn92MhXz5HOPUESRLF14xTlqM12DjypAFS/+O2q47ho6hdRBMTH5LYLSfIvu9j19NYBlR8Gutoq/WOY2OUaQKq3/fEBR8xQnkAnH8qPrneickfjXDBfeo52ODzGwwSar6auYq6QD0apx/2wa83yABdirFXX6HFZZFSuoNdhQ0UpnSoC4733muJv1G6Ls37X/8W9o/V2+sJKGvhMCOC+mWstuQ5mNc1T4xkeAEvlwOLE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c18e65a-ad7f-4596-0e32-08dd1b2ba7d1
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 04:07:27.1250
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hQTWhpit9QHyYRlEKln1Q6U6AQe6+FH2Sn7G1T/M33467j8RxkEtApYGrgDue+lmiDonN9vt9SwiHY1jdL06pB2CIrNsta4zFUvTOSxOCUc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5848
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-13_01,2024-12-12_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
- malwarescore=0 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
- definitions=main-2412130029
-X-Proofpoint-ORIG-GUID: F3OZO866Sqp32S4SBaE6LFiRzilikKvf
-X-Proofpoint-GUID: F3OZO866Sqp32S4SBaE6LFiRzilikKvf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-PREEMPT_LAZY can be enabled stand-alone or alongside PREEMPT_DYNAMIC
-which allows for dynamic switching of preemption models.
+Hi Pawan,
 
-The choice of PREEMPT_RCU or not, however, is fixed at compile time.
+FYI, the error/warning still remains.
 
-Given that PREEMPT_RCU makes some trade-offs to optimize for latency
-as opposed to throughput, configurations with limited preemption
-might prefer the stronger forward-progress guarantees of PREEMPT_RCU=n.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   eefa7a9c069908412f8f5d15833901d1b46ae1b2
+commit: 7390db8aea0d64e9deb28b8e1ce716f5020c7ee5 x86/bhi: Add support for clearing branch history at syscall entry
+date:   8 months ago
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20241213/202412131236.a5HhOqXo-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241213/202412131236.a5HhOqXo-lkp@intel.com/reproduce)
 
-Accordingly, explicitly limit PREEMPT_RCU=y to the latency oriented
-preemption models: PREEMPT, PREEMPT_RT, and the runtime configurable
-model PREEMPT_DYNAMIC.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412131236.a5HhOqXo-lkp@intel.com/
 
-This means the throughput oriented models, PREEMPT_NONE,
-PREEMPT_VOLUNTARY, and PREEMPT_LAZY will run with PREEMPT_RCU=n.
+All warnings (new ones prefixed by >>):
 
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
----
- kernel/rcu/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> arch/x86/entry/common.c:211: warning: Function parameter or struct member 'regs' not described in 'do_int80_emulation'
 
-diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-index e2206f3a070c..dd6251678e99 100644
---- a/kernel/rcu/Kconfig
-+++ b/kernel/rcu/Kconfig
-@@ -18,7 +18,7 @@ config TREE_RCU
- 
- config PREEMPT_RCU
- 	bool
--	default y if PREEMPTION
-+	default y if (PREEMPT || PREEMPT_RT || PREEMPT_DYNAMIC)
- 	select TREE_RCU
- 	help
- 	  This option selects the RCU implementation that is
+
+vim +211 arch/x86/entry/common.c
+
+55617fb991df535 Thomas Gleixner 2023-12-04  190  
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  191  /**
+7390db8aea0d64e Pawan Gupta     2024-03-11  192   * do_int80_emulation - 32-bit legacy syscall C entry from asm
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  193   *
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  194   * This entry point can be used by 32-bit and 64-bit programs to perform
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  195   * 32-bit system calls.  Instances of INT $0x80 can be found inline in
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  196   * various programs and libraries.  It is also used by the vDSO's
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  197   * __kernel_vsyscall fallback for hardware that doesn't support a faster
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  198   * entry method.  Restarted 32-bit system calls also fall back to INT
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  199   * $0x80 regardless of what instruction was originally used to do the
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  200   * system call.
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  201   *
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  202   * This is considered a slow path.  It is not used by most libc
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  203   * implementations on modern hardware except during process startup.
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  204   *
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  205   * The arguments for the INT $0x80 based syscall are on stack in the
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  206   * pt_regs structure:
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  207   *   eax:				system call number
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  208   *   ebx, ecx, edx, esi, edi, ebp:	arg1 - arg 6
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  209   */
+7390db8aea0d64e Pawan Gupta     2024-03-11  210  __visible noinstr void do_int80_emulation(struct pt_regs *regs)
+be5341eb0d43b1e Thomas Gleixner 2023-12-04 @211  {
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  212  	int nr;
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  213  
+55617fb991df535 Thomas Gleixner 2023-12-04  214  	/* Kernel does not use INT $0x80! */
+55617fb991df535 Thomas Gleixner 2023-12-04  215  	if (unlikely(!user_mode(regs))) {
+55617fb991df535 Thomas Gleixner 2023-12-04  216  		irqentry_enter(regs);
+55617fb991df535 Thomas Gleixner 2023-12-04  217  		instrumentation_begin();
+55617fb991df535 Thomas Gleixner 2023-12-04  218  		panic("Unexpected external interrupt 0x80\n");
+55617fb991df535 Thomas Gleixner 2023-12-04  219  	}
+55617fb991df535 Thomas Gleixner 2023-12-04  220  
+55617fb991df535 Thomas Gleixner 2023-12-04  221  	/*
+55617fb991df535 Thomas Gleixner 2023-12-04  222  	 * Establish kernel context for instrumentation, including for
+55617fb991df535 Thomas Gleixner 2023-12-04  223  	 * int80_is_external() below which calls into the APIC driver.
+55617fb991df535 Thomas Gleixner 2023-12-04  224  	 * Identical for soft and external interrupts.
+55617fb991df535 Thomas Gleixner 2023-12-04  225  	 */
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  226  	enter_from_user_mode(regs);
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  227  
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  228  	instrumentation_begin();
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  229  	add_random_kstack_offset();
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  230  
+55617fb991df535 Thomas Gleixner 2023-12-04  231  	/* Validate that this is a soft interrupt to the extent possible */
+55617fb991df535 Thomas Gleixner 2023-12-04  232  	if (unlikely(int80_is_external()))
+55617fb991df535 Thomas Gleixner 2023-12-04  233  		panic("Unexpected external interrupt 0x80\n");
+55617fb991df535 Thomas Gleixner 2023-12-04  234  
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  235  	/*
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  236  	 * The low level idtentry code pushed -1 into regs::orig_ax
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  237  	 * and regs::ax contains the syscall number.
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  238  	 *
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  239  	 * User tracing code (ptrace or signal handlers) might assume
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  240  	 * that the regs::orig_ax contains a 32-bit number on invoking
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  241  	 * a 32-bit syscall.
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  242  	 *
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  243  	 * Establish the syscall convention by saving the 32bit truncated
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  244  	 * syscall number in regs::orig_ax and by invalidating regs::ax.
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  245  	 */
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  246  	regs->orig_ax = regs->ax & GENMASK(31, 0);
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  247  	regs->ax = -ENOSYS;
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  248  
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  249  	nr = syscall_32_enter(regs);
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  250  
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  251  	local_irq_enable();
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  252  	nr = syscall_enter_from_user_mode_work(regs, nr);
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  253  	do_syscall_32_irqs_on(regs, nr);
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  254  
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  255  	instrumentation_end();
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  256  	syscall_exit_to_user_mode(regs);
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  257  }
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  258  #else /* CONFIG_IA32_EMULATION */
+be5341eb0d43b1e Thomas Gleixner 2023-12-04  259  
+
+:::::: The code at line 211 was first introduced by commit
+:::::: be5341eb0d43b1e754799498bd2e8756cc167a41 x86/entry: Convert INT 0x80 emulation to IDTENTRY
+
+:::::: TO: Thomas Gleixner <tglx@linutronix.de>
+:::::: CC: Dave Hansen <dave.hansen@linux.intel.com>
+
 -- 
-2.43.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
