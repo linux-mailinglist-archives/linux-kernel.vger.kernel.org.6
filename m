@@ -1,207 +1,181 @@
-Return-Path: <linux-kernel+bounces-445187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D699F1271
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:44:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 041E39F1298
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD331630C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:44:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C020163C0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970C01E3768;
-	Fri, 13 Dec 2024 16:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADECA1F12E8;
+	Fri, 13 Dec 2024 16:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dz4o4yG3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cOH0KNWX"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B281534F7;
-	Fri, 13 Dec 2024 16:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0041E47AD
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734108261; cv=none; b=M0QOxOQ7xtu8fWyr4h1G/K4GDtNiAsO+ua9QFaAK2kMbIb0OYpNSbDhQxBBDpKFi4B1PH2OM4d6gWBhcIZufZlU3J2q5unD/Z/oO8H8jcBKvZUkiHm2jOgsztWbTlqkP84PEvsA96yGzcvlvSYYQ7SRmhLJpXMJQH8JfMLrGfUg=
+	t=1734108320; cv=none; b=gYAcjXRvqPPaqrzL4zErXBiXOhVNqggT9rktn1KkoPlabfhF9nnSqN8s2/hBWiwnE9L6764gpdkMvKEJAHrPsZHFd4IqIkjnU0//kOWr90NZDns/cU/argphkJ84OPNi2JbmprlPLEsaLXoiDUGq3NKxHPuAV3Be7j76oDml1lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734108261; c=relaxed/simple;
-	bh=366EGQGlugHCRw82dXXSJxegN4J/XvsAoNdowBfIIWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R02TB12KBe9nMDoSuWDlNouchJklgjfIo87IAlttWO/ZJuwFzMQ63Y+f75Pl7GGj6XOD+DYtb9mwOkOV+DF1H5Yuix+RojW5vhlne3K/HgE53CFDoAp6HUbSM+UQkQKc8XF1l6C06fBwEvdw5lDxr7opxKhyiiZVIBNEIip/9rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dz4o4yG3; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734108260; x=1765644260;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=366EGQGlugHCRw82dXXSJxegN4J/XvsAoNdowBfIIWQ=;
-  b=Dz4o4yG3hlFiP3E9b0eXf/HwaxQttlfRDE2b8hSnQtp4Qr43dVa9CR9R
-   0VVPDW6O2di5N7CDpO3FGK4Ilabb7ydMBUsADw5V4nGvxN+5Lo5bBucx1
-   evmTvYmLXNrbHPXuM58cTL3sQJf8wfv/QYDdDM91uzOJs3HVWl4PNNz9w
-   YwzZ1qaDMgriJCBHMEZe5JMLg8YNjYG4hMfIyeWXdmMYkqcMNbRoBhx9C
-   9h0NmR5q+6DXqszVwb6g8HoRBKuJEsZuRbN2WaLsh8JJCA1BaPJQzIgct
-   L3ojBtbsmtwo5GICVOG5M/bgFz89Ltw8wVfICN089lE8KSVgif1hgtvZl
-   w==;
-X-CSE-ConnectionGUID: 82A/iagQR9m7SxPvvNp1aQ==
-X-CSE-MsgGUID: reBlpuO5QTyKDnBXEg0QSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="45258985"
-X-IronPort-AV: E=Sophos;i="6.12,231,1728975600"; 
-   d="scan'208";a="45258985"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 08:44:18 -0800
-X-CSE-ConnectionGUID: Wly8Pup0TKSC6hOc/Yq/Iw==
-X-CSE-MsgGUID: ZsuXyWofSRGT3Ll0k6EGQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,231,1728975600"; 
-   d="scan'208";a="96465913"
-Received: from philliph-desk.amr.corp.intel.com (HELO [10.124.223.121]) ([10.124.223.121])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 08:44:17 -0800
-Message-ID: <91ebbd09-a02b-4287-a192-9259a6a78c4c@intel.com>
-Date: Fri, 13 Dec 2024 08:44:16 -0800
+	s=arc-20240116; t=1734108320; c=relaxed/simple;
+	bh=2o7v5L9OD4+jL7eoS1HSAH1rlsefrFIImLxiX+uatp0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LpPWTs6FWbOlC+14Aqab5TIxYcxkBFeT+StxkiVc+WrCjqqXn1bZ5ES/747TCUaQ7UQGArPvoWiSkeYgSAO4i0zOHYfxfdk8FGrVhOrUWBY0Uh8r3jGqqZMjpEaG8XoRhFALgXwPyi6oPsDxurk/FYC6xSN0ttaz1T7inIrZWFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cOH0KNWX; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-436202dd730so14393985e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:45:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734108316; x=1734713116; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U2A0DSQsBZCyHCjJuq/xQMDgQGYmtUN7RbB1oPXeNuw=;
+        b=cOH0KNWXDRdECImKQsGB7lnWPKBocD9QJ41fMcP3iHKTpUJtQdKbNAr1dKznCubaGc
+         GoUN/UaOO1OnlaWMA6e5kfRxTQ6K3lnJGnigu45idk2gtETEylkaKeWFJH3RC5+xBTu/
+         pLI4pMI3PGZcoKfFNrNBpDkwh2nB/E3WdtVZtPLPx1Ka1DQNqI7zpcjYoegPPppFtKl5
+         4d4/EafYgn1HnI6qLYME15uUH+/2TNe99r+q+CGmKxlO2c9jCxTL+qrBPl4L4zoChEFp
+         /DLktYL/aQmVDMmdQj4JpIr6PkMez/XlLNZMkUBvkfygU2dy1B9eZ3tj/AuBN52agLCJ
+         EqVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734108316; x=1734713116;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U2A0DSQsBZCyHCjJuq/xQMDgQGYmtUN7RbB1oPXeNuw=;
+        b=GUTMPq9RM3MEdbE16+N/zNEpoAmVMAtNG4WIBtHXtVdjNerSptBy2dNxpuxP6Q7wEG
+         T51s6M0uvaVmLahCdZ6MkFF31538VDUlcZI6j236UCHPoENpkacclr0VuYWzZg+BD6jI
+         //TzN0GcaXo05sd2F/Df3UDg691uCHgyYaCR3befPxmj5DalLR7YbsCwnzmV96sSvelB
+         fguSYJfa8h7pnlPEJPO4pOSXa4s+RR2XdGZnTpVUhSfq2iXAYkwn1QrL6RwgxExYr/QS
+         lZIKmrpJ0p5Y7i6wzUsayBw0d8oGXWfgtfXpLDaZUkT1vh3wkcPgugl8AR6D1HuyxfCF
+         E/9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVaw0w1LQj2rbcqRR/1Yn5N+B8PwVr3QWuHuHp2fUmC3AzBQgNKe0+5EJP5HbpUQhm+4gRHSL4FE/+Suxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyHbK8GaPtpgK/giARnOk2zwH+2fZaChDM0vgZRyEc4VjRn678
+	HDb5+uuT8FqOSxqLnLjWV7U9RMFb0XqicVCpfJO/Bby1+WfW+bf+4nYQ7yhboc4=
+X-Gm-Gg: ASbGncuE33biwxGHErKr7A1FGNTVD/QEjJkSu2UunaGUtjlcWULznsudovQgzyAY7Xf
+	jMnFKrZNkD1BiYoetw43XeFIHlxkW9h/v+UPWuJUbuwp0loyAs+pDe9MIBUL8qnvRiIYOblskdE
+	No0/DP/Ih7MY+PcC2gF4PFIkvb94abVw3FFcm0PD1mKehBVZ8XTQMAUOD0AIPxJmUzBNvCkulFU
+	rQ6r5FQxYWp+L3CaWwF1HE4Ezx3z3aTdYnA3oLyklFHe6z2lBitIlAeA1zC+kKmQvwOvNwU4avo
+	Dw+vaUQEvQ==
+X-Google-Smtp-Source: AGHT+IHZJ2di20HJpkRNIWKJIeFs0CuIRmOYxZ3U2nkyoSYzcTlosFGe1cGxVE2LTdjgH6l8IIepXw==
+X-Received: by 2002:a05:600c:1907:b0:434:fbd5:2f0a with SMTP id 5b1f17b1804b1-4362aa425edmr34728655e9.9.1734108316537;
+        Fri, 13 Dec 2024 08:45:16 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([145.224.66.83])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625550523sm53900665e9.7.2024.12.13.08.45.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 08:45:16 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH 0/4] Fix Google Tensor GS101 CPU hotplug support
+Date: Fri, 13 Dec 2024 16:44:37 +0000
+Message-Id: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/7] x86/virt/tdx: Add SEAMCALL wrapper to enter/exit
- TDX guest
-To: Adrian Hunter <adrian.hunter@intel.com>, pbonzini@redhat.com,
- seanjc@google.com, kvm@vger.kernel.org, dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
- reinette.chatre@intel.com, xiaoyao.li@intel.com,
- tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
- dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
- linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
- chao.gao@intel.com, weijiang.yang@intel.com
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-2-adrian.hunter@intel.com>
- <fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com>
- <0226840c-a975-42a5-9ddf-a54da7ef8746@intel.com>
- <56db8257-6da2-400d-8306-6e21d9af81f8@intel.com>
- <d1952eb7-8eb0-441b-85fc-3075c7b11cb9@intel.com>
- <6af0f1c3-92eb-407e-bb19-6aeca9701e41@intel.com>
- <ff4d5877-52ad-4e12-94a0-dfbe01a7a8a0@intel.com>
- <d1b0323f-2458-420b-800e-a26ba6550de7@intel.com>
- <f7cd9af3-8b6a-4984-80ef-e9129d8d94bd@intel.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <f7cd9af3-8b6a-4984-80ef-e9129d8d94bd@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHVkXGcC/x3MQQrCMBBA0auUWTvQiSmiVxEXMZmmA5qETFOE0
+ rsbunx8+DsoV2GFx7BD5U1UcuqgywB+cSkySugGMxpLhq7oc1qrvLFE9KXhktfyaRG1aeEUTHV
+ fnOXHihshzTcXrLfTfSTox1L5bH34fB3HH1sgkqd9AAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
+ kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2996;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=2o7v5L9OD4+jL7eoS1HSAH1rlsefrFIImLxiX+uatp0=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnXGSZfuIaCNB2a/OJnzHqAuOiyM2etUNKYbV+0
+ C/C0x0YvVOJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ1xkmQAKCRDO6LjWAjRy
+ utWQD/0eoK8RIO7nrEuBMHD793BwLl1lcBfzxKcA9w4q1BUI16yVBb7izZ+8E1TOcgPHzyqn3vk
+ MHWJragitUXibjNIbh/tM4xdc5ko1jL7n1wBE1R5GP83D4W/2jY63oZPrFFqy88ZfcQICn2taf2
+ 0erNKDBTc3ZODWaBgKur/vBgXYLrooFG437jik6CrF4W6DUiEakoixuIsJZm7aIwM1IwAFRlI3z
+ pXnvhqcODqJb2YkNQ/isDehKftaZ/ySujrP63gBeNaRK3yC+q93FPW5O7jDgkNifUHFra2hRpyx
+ a/fHHACO7K9u0qN444AAWlHb2hsffq+rOQ41zZLjKDRqazYlczaeANiZHJAfa9dDu58vKtvTkK1
+ Lpc7miIhQUtZBm7ouSPh+d8lLf/MZrmjH1fcjJWsLYmG1dG3HpiS3kS8IOwP4pe0VWUuJbqw/DR
+ E3ULI6jeJJDgR30BFajfgKAjfY2hazulsFGQR0mtYWajbCiDcEPd9EqXodXGgrQJzgqHGWJ6ISe
+ YfN7BJy0AcIBVl2E+2dSLASGVc2g7geepJ1p+5goRuSH/5lYCBbDxIJ4nFRGy3QZZpsksHjCZkC
+ FGd7x3ogt55av0XRgo8zX+Qrk2IWfKFRj5+uTr+T/esi88NPkNKMkeLEvQcxwVyUESBgV1AiMz6
+ JPYxpWDGm9hdv1w==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On 12/13/24 08:30, Adrian Hunter wrote:
-> On 13/12/24 18:16, Dave Hansen wrote:
->> On 12/11/24 10:43, Adrian Hunter wrote:
->> ...
->>> -	size = tdvmcall_a0_read(vcpu);
->>> -	write = tdvmcall_a1_read(vcpu);
->>> -	port = tdvmcall_a2_read(vcpu);
->>> +	size  = tdx->vp_enter_out.io_size;
->>> +	write = tdx->vp_enter_out.io_direction == TDX_WRITE;
->>> +	port  = tdx->vp_enter_out.io_port;
->> ...> +	case TDVMCALL_IO:
->>> +		out->io_size		= args.r12;
->>> +		out->io_direction	= args.r13 ? TDX_WRITE : TDX_READ;
->>> +		out->io_port		= args.r14;
->>> +		out->io_value		= args.r15;
->>> +		break;
->>
->> I honestly don't understand the need for the abstracted structure to sit
->> in the middle. It doesn't get stored or serialized or anything, right?
->> So why have _another_ structure?
->>
->> Why can't this just be (for instance):
->>
->> 	size = tdx->foo.r12;
->>
->> ?
->>
->> Basically, you hand around the raw arguments until you need to use them.
-> 
-> That sounds like what we have at present?  That is:
-> 
-> u64 tdh_vp_enter(u64 tdvpr, struct tdx_module_args *args)
-> {
-> 	args->rcx = tdvpr;
-> 
-> 	return __seamcall_saved_ret(TDH_VP_ENTER, args);
-> }
-> 
-> And then either add Rick's struct tdx_vp?  Like so:
-> 
-> u64 tdh_vp_enter(struct tdx_vp *vp, struct tdx_module_args *args)
-> {
-> 	args->rcx = tdx_tdvpr_pa(vp);
-> 
-> 	return __seamcall_saved_ret(TDH_VP_ENTER, args);
-> }
-> 
-> Or leave it to the caller:
-> 
-> u64 tdh_vp_enter(struct tdx_module_args *args)
-> {
-> 	return __seamcall_saved_ret(TDH_VP_ENTER, args);
-> }
-> 
-> Or forget the wrapper altogether, and let KVM call
-> __seamcall_saved_ret() ?
+Hi folks,
 
-Rick's version, please.
+As part of an effort to make suspend to RAM functional upstream on
+Pixel 6 I noticed that CPU hotplug leads to a system hang.
 
-I don't want __seamcall_saved_ret() exported to modules. I want to at
-least have a clean boundary beyond which __seamcall_saved_ret() is not
-exposed.
+After debugging and comparing with downstream drivers it became clear
+that some extra register writes are required to make CPU hotplug
+functional on these older devices which use the el3mon firmware.
 
-My nit with the "u64 tdvpr" version was that there's zero type safety.
+This series adds support for programming the CPU_INFORM register hint
+required by the firmware and also adds support for the pmu-intr-gen
+register region. This is achieved using cpuhp_setup_state() to setup
+a cpu hotplug state. This is similar to soc/xilinx/xlnx_event_manager.c
+and soc/fsl/qbman/bman_portal.c drivers.
 
-The tdvp-less tdh_vp_enter() is even *less* safe of a calling convention
-and also requires that each caller do tdx_tdvpr_pa() or equivalent.
+With these changes CPU hotplug is now functional :)
 
-But I feel like I'm repeating myself a bit at this point.
+It can be tested with commands such as
+
+echo 0 > /sys/devices/system/cpu/cpu6/online
+echo 1 > /sys/devices/system/cpu/cpu6/online
+[   15.880597][    T0] Detected PIPT I-cache on CPU6
+[   15.880638][    T0] GICv3: CPU6: found redistributor 600 region 0:0x0000000010500000
+[   15.880685][    T0] CPU6: Booted secondary processor 0x0000000600 [0x411fd440]
+
+This would (prior to this series) hang the system.
+
+Note 1: It is highly likely that similar changes are required for other
+Exynos based SoCs using el3mon. For anyone following along who is
+accustomed to looking at downstream Exynos based drivers this replaces
+register writes defined in 
+
+drivers/soc/<google|samsung>/cal-if/<socname>/flexpmu_cal_cpu_<socname>.h
+
+Which are used by files in the cal-if folder and exynos-cpupm.c driver.
+
+For the moment I've used the GS101 CPU inform register offsets directly
+but these can be moved to driver data once we've established other SoCs
+benefit from this.
+
+Note 2: To ensure older DTs which don't define pmu-intr-gen register
+region still work. The driver only issues a warning if the registers
+can't be mapped, and the behaviour remains the same as today (system
+boots, but CPU hotplug will not be functional).
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Peter Griffin (4):
+      dt-bindings: soc: samsung: exynos-pmu: gs101: add pmu-intr-gen reg region
+      dt-bindings: mfd: syscon: allow two reg regions for gs101-pmu
+      arm64: dts: exynos: gs101: add pmu-intr-gen regs to the PMU node
+      soc: samsung: exynos-pmu: enable CPU hotplug support for gs101
+
+ .../devicetree/bindings/mfd/syscon-common.yaml     | 10 +++
+ .../bindings/soc/samsung/exynos-pmu.yaml           | 29 ++++++++-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  4 +-
+ drivers/soc/samsung/exynos-pmu.c                   | 73 +++++++++++++++++++++-
+ drivers/soc/samsung/exynos-pmu.h                   |  1 +
+ include/linux/soc/samsung/exynos-regs-pmu.h        | 11 ++++
+ 6 files changed, 125 insertions(+), 3 deletions(-)
+---
+base-commit: ed9a4ad6e5bd3a443e81446476718abebee47e82
+change-id: 20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-1f7ad4c45901
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
+
 
