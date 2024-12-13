@@ -1,196 +1,282 @@
-Return-Path: <linux-kernel+bounces-444598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BE59F0948
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:20:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DAE9F094E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:20:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D912284BAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:20:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C3D4169A5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC621B85DB;
-	Fri, 13 Dec 2024 10:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360321B87C6;
+	Fri, 13 Dec 2024 10:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MUO1xWtq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hafosO0p";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="3x+4DxUU"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA66563D;
-	Fri, 13 Dec 2024 10:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389CF63D;
+	Fri, 13 Dec 2024 10:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734085201; cv=none; b=dDZ7RPs+2LFb6M7LElb/PrhZ6vh2URYz4EtoqqBYFgOGmvWNmKXfpu7uhc3X7gk1pim7AE1oPcmCwyXMcEhzosYmMUykH9uSmAJ1+Oh1xTwhqcNEdZCX/yjwlD1NDdeImZQQ80yHORth5SBjSKxU3Y9ZdSRqmGekFyOvwGGEyew=
+	t=1734085247; cv=none; b=mryQP99h7ZMhKHGxhryaCGaNWv89MO0a/LMiJWv3wCVB5pbT3z24UYflKNpHCrGM/Bip9BozdRw1FtVBELgKimWAAAJZRCxXvOBB/5b/wmdilGxetTMrN2R5glvp0m0547J7qcU8PFCntkPw1QU46EjWe6Oh68REpZDEeXtQ8BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734085201; c=relaxed/simple;
-	bh=mIztik0KHt4P+PYZlO/0EFcicfdXCm4F+pDDcCAJbnA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qZ6Jzg+DCtpU8skUH+lLmekJnj06f+0gu11P1gKCaNAAEqesRCvW0komjYHzT1BlFCwq1uosHPW3+ZAULqNoU+j/NFUr8q9AJb2MkdmO5SaaKMTZw8lD4ASCD8nST0yx0m0wkaEcqneV56Z1vgY+VOX/FPwuIWg6A+AZy9z837E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MUO1xWtq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9h2N6007034;
-	Fri, 13 Dec 2024 10:19:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XQs+AGFMTO97O5R6hUE0mHw8+5TlLZpHfv1SqfOKcTo=; b=MUO1xWtqlE1DVJrg
-	eeTbYA6lzlE+E0UHyAiRRREys7iFAjTcoN1U/wK0aGWKz1Wys5RxD/sCLwGn49+P
-	+UPkNhr33HCKe4RTODFpaffvJJiZc1h+rrfVQphr4AuuK4/8RR/wh2DTva8Q7Ru6
-	lkUj1Aj/bO66FzhIZA1NdHWZiu4XO2hStiPVwEZED7BpXz+7SAc2yd1Ugfrfhs08
-	DvkBE5JDSdbgYAWKlp5sIWiv+NqNefjVHl4C78yMH+HoY9Y2TWmzxkgl5ivEgG9z
-	3gTWsK1BTJGIntB3B0BTtXtZB037sgBcd1Fi6USS6ktIKsbuFP/9Ix1PWB1ndkcC
-	i1VQ0Q==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43g6xusrqa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 10:19:50 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDAJnfg008946
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 10:19:49 GMT
-Received: from [10.235.8.17] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
- 2024 02:19:43 -0800
-Message-ID: <a3ddacc9-73cd-4214-9a39-5aaaa91fc93e@quicinc.com>
-Date: Fri, 13 Dec 2024 18:19:40 +0800
+	s=arc-20240116; t=1734085247; c=relaxed/simple;
+	bh=LOjegZ/Xiq5oEy2Wc2CpSGGoNbCRQOVFPJn0BWVjuT0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=DTrOK31FXvlkMKPTWdOOY8Kz0FCJo0lhwxPD1Mhm327/0CB+LHHuZP9C/CUVUdxTngBBbcy63gB9sp2FXHXrt0tdn7GLl9znWm9qh93eWjPhulpvFNAuCWrS4p72PAK98uFjavxbbP8aMvvrua3VwaSMtYhAw+UsNJ14Cc+p2HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hafosO0p; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=3x+4DxUU; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 49C4911401EE;
+	Fri, 13 Dec 2024 05:20:43 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 13 Dec 2024 05:20:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1734085243;
+	 x=1734171643; bh=IMb1NpbRY5gQZp1GGEw6l+bgS26lmUCIQ/gBSo44bCo=; b=
+	hafosO0pH2ac5V+nw0ZbLPTQPoCnj1AnMwiOphXwbkjr1QUumcWVOk+JCGzm6Vmb
+	73nqdZMrmCmbHyU430dG2gjy4tDZ775WHwtR1MEiSYXwTfywli7b0zEMaHRIHSdh
+	AE1H13704vBMNuzvJODkJQy5lG3XYE8HkHgINCpxlVFDfzg/PQLu7yYC/1vmOkH0
+	E54PHfiAFIW5yl+zCHy2iUwzwK/6xX7NSwLqi228bb0yomLI8MToIL3qwswfCmQM
+	H3tRpqyfS+mteHS16dbMR/ErgM0WNxEU8A5AIv16aghWGbSONNMlbfWQzebOKNYd
+	/KFQCy5py8tXpXUFgRjg9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734085243; x=
+	1734171643; bh=IMb1NpbRY5gQZp1GGEw6l+bgS26lmUCIQ/gBSo44bCo=; b=3
+	x+4DxUUnFK1oAP04tuB+w/czp3uTokr/Zg9W2b9Zjm630zQGMrBTi7LlvsthmHDF
+	v4/n4Fk4g3Zagod+Xc9JyXFWFP5vYTDp5rWmaacipX4mnVDIVKTSojdJ4ioU3A8e
+	uwscCfAdWDaV9O09NNUUAkQKVJJMfdiUNxixyh5bJkbTYqKbyuiwtR4YuVDr5LD9
+	sflY9mRXNWdt8qb9634QVNe4BzlqbJY1+OrSMiXI653DnKhnRhvf7yZ5LoZqpcc0
+	tgtckn6lJN1umcAb3hw3qpJo7MmWcZNcnZhsiwXXq9wRyHrrZJUMx2iIUqYUhNWW
+	yVFIUsb95eoywfolRo4qQ==
+X-ME-Sender: <xms:eQpcZ3huzLNM1lDyiMsvx3zdY-XIPlyj85bTVQ28NNItrL90D4PEBw>
+    <xme:eQpcZ0D14Gc52X5S5ZtfNduM96IUCXe7iD_C4IjaB9BHFrGbc9FpC4kwx3NgdVEmJ
+    TFesn6TphuzzfUsCKs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeejgddugecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpeevgfeigeffgfekteehvedvlefhgeeghedvfedukeeu
+    keeugfetveeludeuieehtdenucffohhmrghinhephhgvrggupgekheiggidrshgsnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
+    rhhnuggsrdguvgdpnhgspghrtghpthhtohepfeegpdhmohguvgepshhmthhpohhuthdprh
+    gtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehtshgsohhgvghnuges
+    rghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepghhrrghfsegrmhgriihonh
+    drtghomhdprhgtphhtthhopegrthhishhhphesrghtihhshhhprghtrhgrrdhorhhgpdhr
+    tghpthhtoheprghnuhhpsegsrhgrihhnfhgruhhlthdrohhrghdprhgtphhtthhopegthh
+    hrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthhtohepphgr
+    lhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvg
+    hrkhgvlhgvhidrvgguuhdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgr
+    uh
+X-ME-Proxy: <xmx:eQpcZ3FEgOWNkcGeKkURorYx6QvueeNLqkuTc_Hwx94hTEsT9_8MjA>
+    <xmx:egpcZ0QWKlBjJmj7g4B_YZtG_NZWIGeroqsXKuAsAsZjN5Mq79wB0g>
+    <xmx:egpcZ0xX4KzLhFwxphxSuo4EEuBLRe9OFVrz62tF1b5HJgyn_Ncy0A>
+    <xmx:egpcZ64P6gxah9oEjaEyU5qKQVeZk6phMOorf8qb-RmlMlHNpRDZvA>
+    <xmx:ewpcZyi2q0m3LnnLOp-IJ-luaQ5vhyjpu8MHEogB8umRK8eOuJjQ2PhV>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D070E2220072; Fri, 13 Dec 2024 05:20:41 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] clk: qcom: Add CMN PLL clock controller driver for
- IPQ SoC
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
-References: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
- <20241107-qcom_ipq_cmnpll-v6-2-a5cfe09de485@quicinc.com>
- <7f0f2ad6-7895-46f8-8f80-0375dde2e763@oss.qualcomm.com>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <7f0f2ad6-7895-46f8-8f80-0375dde2e763@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _L0bXBXUc9Ftttnz-VjMHWv1-PTyJ-YZ
-X-Proofpoint-GUID: _L0bXBXUc9Ftttnz-VjMHWv1-PTyJ-YZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 clxscore=1015 malwarescore=0 adultscore=0 mlxlogscore=999
- suspectscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130070
+Date: Fri, 13 Dec 2024 11:20:21 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Arnd Bergmann" <arnd@kernel.org>, kvm@vger.kernel.org
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Naveen N Rao" <naveen@kernel.org>,
+ "Madhavan Srinivasan" <maddy@linux.ibm.com>,
+ "Alexander Graf" <graf@amazon.com>, "Crystal Wood" <crwood@redhat.com>,
+ "Anup Patel" <anup@brainfault.org>,
+ "Atish Patra" <atishp@atishpatra.org>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Vitaly Kuznetsov" <vkuznets@redhat.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Paul Durrant" <paul@xen.org>,
+ "Marc Zyngier" <maz@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
+Message-Id: <43a3765d-709b-4583-ad27-f9bb46a88440@app.fastmail.com>
+In-Reply-To: <1f1beb34-65cc-4038-a8b2-de8af3e0703e@csgroup.eu>
+References: <20241212125516.467123-1-arnd@kernel.org>
+ <20241212125516.467123-3-arnd@kernel.org>
+ <3589ad69-13df-40f1-88c2-55d39790bbac@csgroup.eu>
+ <1633f30e-d885-4f31-a14d-11881e16deb9@app.fastmail.com>
+ <1f1beb34-65cc-4038-a8b2-de8af3e0703e@csgroup.eu>
+Subject: Re: [RFC 2/5] powerpc: kvm: drop 32-bit booke
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Dec 13, 2024, at 07:25, Christophe Leroy wrote:
+> Le 12/12/2024 =C3=A0 22:08, Arnd Bergmann a =C3=A9crit=C2=A0:
+>
+> So yes it is used on e5500/e6500 but only when they run a 32 bits kern=
+el=20
+> built with CONFIG_PPC_85xx. Isn't it what you want to get rid of with=20
+> this patch ?
+>
+> Am I missing something ?
 
+I think I mixed up CONFIG_PPC_E500 and CONFIG_PPC_85xx and hadn't
+realized that we use CONFIG_PPC_BOOK3E_64 instead of PPC_85xx for
+the 64-bit mode. I found a few more things that can be removed
+now and folded in the patch below, which includes your suggestions.
 
-On 12/13/2024 2:30 AM, Konrad Dybcio wrote:
-> On 7.11.2024 10:50 AM, Luo Jie wrote:
->> The CMN PLL clock controller supplies clocks to the hardware
->> blocks that together make up the Ethernet function on Qualcomm
->> IPQ SoCs and to GCC. The driver is initially supported for
->> IPQ9574 SoC.
->>
->> The CMN PLL clock controller expects a reference input clock
->> from the on-board Wi-Fi block acting as clock source. The input
->> reference clock needs to be configured to one of the supported
->> clock rates.
->>
->> The controller supplies a number of fixed-rate output clocks.
->> For the IPQ9574, there is one output clock of 353 MHZ to PPE
->> (Packet Process Engine) hardware block, three 50 MHZ output
->> clocks and an additional 25 MHZ output clock supplied to the
->> connected Ethernet devices. The PLL also supplies a 24 MHZ
->> clock as XO and a 32 KHZ sleep clock to GCC, and one 31.25
->> MHZ clock to PCS.
->>
->> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->> ---
-> 
-> [...]
-> 
->> +	/* Enable PLL locked detect. */
->> +	ret = regmap_update_bits(cmn_pll->regmap, CMN_PLL_CTRL,
->> +				 CMN_PLL_CTRL_LOCK_DETECT_EN,
->> +				 CMN_PLL_CTRL_LOCK_DETECT_EN);
->> +	if (ret)
-> 
-> you can streamline these with regmap_set/clear_bits
+     Arnd
 
-Ok, thanks, I will update to use it.
-
-> 
->> +		return ret;
->> +
->> +	/*
->> +	 * Reset the CMN PLL block to ensure the updated configurations
->> +	 * take effect.
->> +	 */
->> +	ret = regmap_update_bits(cmn_pll->regmap, CMN_PLL_POWER_ON_AND_RESET,
->> +				 CMN_ANA_EN_SW_RSTN, 0);
->> +	if (ret)
->> +		return ret;
->> +
->> +	usleep_range(1000, 1200);
->> +	ret = regmap_update_bits(cmn_pll->regmap, CMN_PLL_POWER_ON_AND_RESET,
->> +				 CMN_ANA_EN_SW_RSTN, CMN_ANA_EN_SW_RSTN);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Stability check of CMN PLL output clocks. */
->> +	return regmap_read_poll_timeout(cmn_pll->regmap, CMN_PLL_LOCKED, val,
->> +					(val & CMN_PLL_CLKS_LOCKED),
->> +					100, 100 * USEC_PER_MSEC);
->> +}
-> 
-> [...]
-> 
->> +static int ipq_cmn_pll_clk_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	int ret;
->> +
->> +	ret = devm_pm_runtime_enable(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_pm_clk_create(dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * To access the CMN PLL registers, the GCC AHB & SYSY clocks
-> 
-> SYS?
-> 
-> Konrad
-
-Yes, I will correct it.
-
+diff --git a/arch/powerpc/kernel/head_85xx.S b/arch/powerpc/kernel/head_=
+85xx.S
+index f9a73fae6464..661903d31b54 100644
+--- a/arch/powerpc/kernel/head_85xx.S
++++ b/arch/powerpc/kernel/head_85xx.S
+@@ -425,16 +425,10 @@ interrupt_base:
+ 	mtspr	SPRN_SPRG_WSCRATCH0, r10 /* Save some working registers */
+ 	mfspr	r10, SPRN_SPRG_THREAD
+ 	stw	r11, THREAD_NORMSAVE(0)(r10)
+-#ifdef CONFIG_KVM_BOOKE_HV
+-BEGIN_FTR_SECTION
+-	mfspr	r11, SPRN_SRR1
+-END_FTR_SECTION_IFSET(CPU_FTR_EMB_HV)
+-#endif
+ 	stw	r12, THREAD_NORMSAVE(1)(r10)
+ 	stw	r13, THREAD_NORMSAVE(2)(r10)
+ 	mfcr	r13
+ 	stw	r13, THREAD_NORMSAVE(3)(r10)
+-	DO_KVM	BOOKE_INTERRUPT_DTLB_MISS SPRN_SRR1
+ START_BTB_FLUSH_SECTION
+ 	mfspr r11, SPRN_SRR1
+ 	andi. r10,r11,MSR_PR
+@@ -517,16 +511,10 @@ END_BTB_FLUSH_SECTION
+ 	mtspr	SPRN_SPRG_WSCRATCH0, r10 /* Save some working registers */
+ 	mfspr	r10, SPRN_SPRG_THREAD
+ 	stw	r11, THREAD_NORMSAVE(0)(r10)
+-#ifdef CONFIG_KVM_BOOKE_HV
+-BEGIN_FTR_SECTION
+-	mfspr	r11, SPRN_SRR1
+-END_FTR_SECTION_IFSET(CPU_FTR_EMB_HV)
+-#endif
+ 	stw	r12, THREAD_NORMSAVE(1)(r10)
+ 	stw	r13, THREAD_NORMSAVE(2)(r10)
+ 	mfcr	r13
+ 	stw	r13, THREAD_NORMSAVE(3)(r10)
+-	DO_KVM	BOOKE_INTERRUPT_ITLB_MISS SPRN_SRR1
+ START_BTB_FLUSH_SECTION
+ 	mfspr r11, SPRN_SRR1
+ 	andi. r10,r11,MSR_PR
+@@ -660,8 +648,6 @@ END_BTB_FLUSH_SECTION
+ 	DEBUG_DEBUG_EXCEPTION
+ 	DEBUG_CRIT_EXCEPTION
+=20
+-	GUEST_DOORBELL_EXCEPTION
+-
+ 	CRITICAL_EXCEPTION(0, GUEST_DBELL_CRIT, CriticalGuestDoorbell, \
+ 			   unknown_exception)
+=20
+diff --git a/arch/powerpc/kernel/head_booke.h b/arch/powerpc/kernel/head=
+_booke.h
+index 0b5c1993809e..d1ffef4d05b5 100644
+--- a/arch/powerpc/kernel/head_booke.h
++++ b/arch/powerpc/kernel/head_booke.h
+@@ -3,8 +3,6 @@
+ #define __HEAD_BOOKE_H__
+=20
+ #include <asm/ptrace.h>	/* for STACK_FRAME_REGS_MARKER */
+-#include <asm/kvm_asm.h>
+-#include <asm/kvm_booke_hv_asm.h>
+ #include <asm/thread_info.h>	/* for THREAD_SHIFT */
+=20
+ #ifdef __ASSEMBLY__
+@@ -52,7 +50,6 @@ END_BTB_FLUSH_SECTION
+ 	stw	r13, THREAD_NORMSAVE(2)(r10);				     \
+ 	mfcr	r13;			/* save CR in r13 for now	   */\
+ 	mfspr	r11, SPRN_SRR1;		                                     \
+-	DO_KVM	BOOKE_INTERRUPT_##intno SPRN_SRR1;			     \
+ 	andi.	r11, r11, MSR_PR;	/* check whether user or kernel    */\
+ 	LOAD_REG_IMMEDIATE(r11, MSR_KERNEL);				\
+ 	mtmsr	r11;							\
+@@ -114,25 +111,7 @@ END_BTB_FLUSH_SECTION
+=20
+ .macro SYSCALL_ENTRY trapno intno srr1
+ 	mfspr	r10, SPRN_SPRG_THREAD
+-#ifdef CONFIG_KVM_BOOKE_HV
+-BEGIN_FTR_SECTION
+-	mtspr	SPRN_SPRG_WSCRATCH0, r10
+-	stw	r11, THREAD_NORMSAVE(0)(r10)
+-	stw	r13, THREAD_NORMSAVE(2)(r10)
+-	mfcr	r13			/* save CR in r13 for now	   */
+-	mfspr	r11, SPRN_SRR1
+-	mtocrf	0x80, r11	/* check MSR[GS] without clobbering reg */
+-	bf	3, 1975f
+-	b	kvmppc_handler_\intno\()_\srr1
+-1975:
+-	mr	r12, r13
+-	lwz	r13, THREAD_NORMSAVE(2)(r10)
+-FTR_SECTION_ELSE
+ 	mfcr	r12
+-ALT_FTR_SECTION_END_IFSET(CPU_FTR_EMB_HV)
+-#else
+-	mfcr	r12
+-#endif
+ 	mfspr	r9, SPRN_SRR1
+ 	BOOKE_CLEAR_BTB(r11)
+ 	mr	r11, r1
+@@ -198,7 +177,6 @@ ALT_FTR_SECTION_END_IFSET(CPU_FTR_EMB_HV)
+ 	stw	r11,GPR11(r8);						     \
+ 	stw	r9,_CCR(r8);		/* save CR on stack		   */\
+ 	mfspr	r11,exc_level_srr1;	/* check whether user or kernel    */\
+-	DO_KVM	BOOKE_INTERRUPT_##intno exc_level_srr1;		             \
+ 	BOOKE_CLEAR_BTB(r10)						\
+ 	andi.	r11,r11,MSR_PR;						     \
+ 	LOAD_REG_IMMEDIATE(r11, MSR_KERNEL & ~(MSR_ME|MSR_DE|MSR_CE));	\
+@@ -272,23 +250,6 @@ ALT_FTR_SECTION_END_IFSET(CPU_FTR_EMB_HV)
+ 		EXC_LEVEL_EXCEPTION_PROLOG(MC, trapno+4, MACHINE_CHECK, \
+ 			SPRN_MCSRR0, SPRN_MCSRR1)
+=20
+-/*
+- * Guest Doorbell -- this is a bit odd in that uses GSRR0/1 despite
+- * being delivered to the host.  This exception can only happen
+- * inside a KVM guest -- so we just handle up to the DO_KVM rather
+- * than try to fit this into one of the existing prolog macros.
+- */
+-#define GUEST_DOORBELL_EXCEPTION \
+-	START_EXCEPTION(GuestDoorbell);					     \
+-	mtspr	SPRN_SPRG_WSCRATCH0, r10;	/* save one register */	     \
+-	mfspr	r10, SPRN_SPRG_THREAD;					     \
+-	stw	r11, THREAD_NORMSAVE(0)(r10);				     \
+-	mfspr	r11, SPRN_SRR1;		                                     \
+-	stw	r13, THREAD_NORMSAVE(2)(r10);				     \
+-	mfcr	r13;			/* save CR in r13 for now	   */\
+-	DO_KVM	BOOKE_INTERRUPT_GUEST_DBELL SPRN_GSRR1;			     \
+-	trap
+-
+ /*
+  * Exception vectors.
+  */
 
