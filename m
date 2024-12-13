@@ -1,133 +1,78 @@
-Return-Path: <linux-kernel+bounces-444446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737789F06FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:55:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C4B49F0702
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:55:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334FC281B4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:55:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 386FC16AA20
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11951ACDF0;
-	Fri, 13 Dec 2024 08:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFA31AD418;
+	Fri, 13 Dec 2024 08:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UpW6xPys"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A7ZLnkgY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1226502B1;
-	Fri, 13 Dec 2024 08:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D21502B1;
+	Fri, 13 Dec 2024 08:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734080093; cv=none; b=PSE4HpMAmeiNjBYAFXUizl8gp01HICZQjdIzJ6dJZo/baln5/CfWHsKNy4xzTh8tKLnp43Z1y9xkv08J7/S9BgRCBOrGKTPDJw8bw4QUTANSuDAlK2zas1wjk5Xrh7APOwi+IMF93S4C7/aSMQjc2sYldNNd5w6Z6FGdk1Z1PJQ=
+	t=1734080149; cv=none; b=jUYpFUeFn9SeI1ARpIXe7V+t7+mWRTTSttjpUwKdsK1s5smSvBMukOfOduWoYfwI6mweDhOFxHRFpAephvKwyiKG2tOtDLWo5E8oGCFjpeeMR8JXzUDBUb+BwoKIvkKsv9F0oMQQXsD+HLbbEgoQYgguMHqmjTDhySGK4TGiqaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734080093; c=relaxed/simple;
-	bh=GsxhVX2WxwG+5uCuda5A0oHfwftdzcUVjGufjb46HGw=;
+	s=arc-20240116; t=1734080149; c=relaxed/simple;
+	bh=ctju1O2xk24+Jenhm52LvUFDbfNHZcP7hOyuWseV9Hw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKGC/IcvE5OW5TcS90IVJMQIU0eASTtkf+Bs7tvM1IT5lkTnv9FcwprvMIBxPUCSjFsf3LXinKl2kRs5RHrKmEIT1xEqaund9MhCM4AC9T0aQra1GmdfIDkFABNWt7caV75dG8F41+wxQltZhM8WJVA09x+2Sr+qJOqLHw6hqac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UpW6xPys; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734080092; x=1765616092;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GsxhVX2WxwG+5uCuda5A0oHfwftdzcUVjGufjb46HGw=;
-  b=UpW6xPysknM342YNq3N4+2ELkry2WoXDd3gWOgpDGF1kdmM1tBfNKIFb
-   Lhq5Lj7XpYGAvxTlnMZB33qsWvqSVInKsWmC1ohsQjsyYjgcBH54pi3Lb
-   kuqlnCM4VFVdtTFC2EY+8kDKxxjhS9U9c7ooJuA4luLMrLniXM0XLdkaL
-   DaPu5Jutyg2PFWrvVHQG5iXsrpWVjFFKX+CxO5mIJC8h3Ir/tFmc6/Mg4
-   NO5d/QeWkSym1bkHkke9NFWlRO5zHghyjvabmeMxNgJX/l+rA1vn+27Aq
-   L2VsGIQDoTSEUaDroHui4W9+EO3VyEOgcD4qBg8AZmK61NsiEGzFeUnlU
-   A==;
-X-CSE-ConnectionGUID: 8xr4mxFrRCWq8tQEho+f2Q==
-X-CSE-MsgGUID: u/fmbWM/TxicxbVFNA5qcQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="37376057"
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="37376057"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 00:54:51 -0800
-X-CSE-ConnectionGUID: p7ValXwCRTib7XfkE/A7OQ==
-X-CSE-MsgGUID: jiD8E0OlQwuHBJHYDQz0HA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="97040043"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 00:54:48 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id D147412034A;
-	Fri, 13 Dec 2024 10:54:45 +0200 (EET)
-Date: Fri, 13 Dec 2024 08:54:45 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
-	git@xilinx.com, stable@kernel.org,
-	Sam Bobrowicz <sam@elite-embedded.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	"open list:V4L2 CAMERA SENSOR DRIVERS" <linux-media@vger.kernel.org>
-Subject: Re: [PATCH v2] media: ov5640: fix get_light_freq on auto
-Message-ID: <Z1v2VRzgUVpHZvXR@kekkonen.localdomain>
-References: <2e79be9185cbb0dbe40e670eee996cf290bab0a6.1732264079.git.michal.simek@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CgA7LCGLhXAc/3nbc8M64d9R69+bV3sBnjSe6Dx0J1b19iHPdbuE8F5e6uK/Zd8l1mawEAoQIYg+1PjdsBWMcLES0s8m/O4JU9SP+5MKXm/b+gCCvoPVVxgAdopbk0qsBoUs4gaQAEUo0i7NqmQommUVwbaef+YNyLLAxKxFQTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A7ZLnkgY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E52C4CED0;
+	Fri, 13 Dec 2024 08:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734080149;
+	bh=ctju1O2xk24+Jenhm52LvUFDbfNHZcP7hOyuWseV9Hw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A7ZLnkgY/6kp59eWcD92U6v+flo/Tu4NIOY3s/5kfJH8sKeUNXr/nte1hMK2D5zSj
+	 jX1+4wfkqgZhytRoP+kC3Dz+RRwb/wGlOxEzm72XVh83qNc0MdCiByIiNOOFQaY5i9
+	 mSnX45VtBXP/wxA+7+BJPHeJ+c+Q/lxeZaKFuc5xWIW7QVh9y7s+ORPvTpXer1qmb0
+	 0OZN7K4kaab8C3qPjteRjXsWFcD7AQznyOfjyGVV+TQ1pb3jz6tXtAjdgGuSNNuv4F
+	 Y+zPufXvm7gRj5w23bJKY2IlGcDTe22IUeUeXvVhap2neJPyuZ0pnErxtZNbnTI2v4
+	 E+YWVsGY8D36Q==
+Date: Fri, 13 Dec 2024 09:55:45 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, 
+	manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jingoohan1@gmail.com, michal.simek@amd.com, bharat.kumar.gogada@amd.com
+Subject: Re: [RESEND PATCH v5 0/3] Add support for AMD MDB IP as Root Port
+Message-ID: <njrgaeqjw4csczzvkf7rqgc7fr5cctgidbstygrpasprcrja7v@oah6glzexhsf>
+References: <20241213064035.1427811-1-thippeswamy.havalige@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2e79be9185cbb0dbe40e670eee996cf290bab0a6.1732264079.git.michal.simek@amd.com>
+In-Reply-To: <20241213064035.1427811-1-thippeswamy.havalige@amd.com>
 
-Hi Michal,
-
-Thanks for the patch.
-
-On Fri, Nov 22, 2024 at 09:28:01AM +0100, Michal Simek wrote:
-> From: Sam Bobrowicz <sam@elite-embedded.com>
+On Fri, Dec 13, 2024 at 12:10:32PM +0530, Thippeswamy Havalige wrote:
+> This series of patch add support for AMD MDB IP as Root Port.
 > 
-> Light frequency was not properly returned when in auto
-> mode and the detected frequency was 60Hz.
-> 
-> Fixes: 19a81c1426c1 ("[media] add Omnivision OV5640 sensor driver")
-> Signed-off-by: Sam Bobrowicz <sam@elite-embedded.com>
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-> Cc: <stable@kernel.org>
+> The AMD MDB IP support's 32 bit and 64bit BAR's at Gen5 speed.
+> As Root Port it supports MSI and legacy interrupts.
 
-Cc: stable@vger.kernel.org
+Why are you resending patches after 5 days? Your cover letter should
+explain this.
 
-And right after the Fixes: tag.
+Read submitting patches about timeframes so you won't annoy/spam
+maintainers.
 
-I fixed it this time.
+Best regards,
+Krzysztof
 
-> ---
-> 
-> Changes in v2:
-> - add Fixes tag and cc stable
-> 
->  drivers/media/i2c/ov5640.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-> index c1d3fce4a7d3..8566bc2edde9 100644
-> --- a/drivers/media/i2c/ov5640.c
-> +++ b/drivers/media/i2c/ov5640.c
-> @@ -1982,6 +1982,7 @@ static int ov5640_get_light_freq(struct ov5640_dev *sensor)
->  			light_freq = 50;
->  		} else {
->  			/* 60Hz */
-> +			light_freq = 60;
->  		}
->  	}
->  
-
--- 
-Regards,
-
-Sakari Ailus
 
