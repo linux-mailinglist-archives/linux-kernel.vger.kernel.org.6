@@ -1,76 +1,62 @@
-Return-Path: <linux-kernel+bounces-444845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3356A9F0D53
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:32:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289599F0D69
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411FF161881
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C98188BD4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04071E048F;
-	Fri, 13 Dec 2024 13:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E0D1E0492;
+	Fri, 13 Dec 2024 13:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gvsbLUAz"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WR9W7c00"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023801C07D1
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA95338DE1;
+	Fri, 13 Dec 2024 13:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734096761; cv=none; b=WBzVhd6Uz/GFAFfzyTsZWH3CS+UEtoUXO01VjvSiAxRK0OMRlBhEQajs8DcpN4d2jOFww87srXkAHRttdre5LaCGrgZZIEiBfEg+XEeRP75elc+VT/QKGniEisx90lEKM2ZwfY41w7CXoOqtdAupb2bv3am2KWAgHcdQgYOovSQ=
+	t=1734097060; cv=none; b=Q4KQPoUI1bP9/x8W/wkTnuy+d3KdelLiIZU32GSSv8E1AgiegPb94IdTtupwBU8Yxd9ebIpZbGxFZKgImLRNMDsP1VbWh8/BwM22nD+bYDf2GQNfFIzdLoP19DyekyTTuXKYAW+XnbQjWz2DHQCpNzu//iqm6oB0SCQ9c9aCmr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734096761; c=relaxed/simple;
-	bh=UaQZsDkd+B1A07SI0lWEiaYS38mm+HnAA4NfPmXgsSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QLY0zfBP5fJ3HDnz3/6rO929lO4SugjRTElcsw50tPraz5lENpJPo+0csgyeXaQBbdj+SqGKPcZafTloheTTMyQvHMI01cCAWLmweYwFcs4bOD5Mq62zX5U8vnxrkDenZI5DKOMDLwqjDUN+HvjmlNZjOb5MjeDb20XM0jf+ppg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gvsbLUAz; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2166360285dso16468615ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:32:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1734096758; x=1734701558; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=o6w5USa9s1QNn+1ezXty7PMBbfv5OsXZnA28H4J0kmA=;
-        b=gvsbLUAzD24YkTdyvqXop9ZDZdbnRmIdcWhbVvO+yLzDvOvbZkCt/Eb+jWKZVkOO3e
-         da0rz2VDRkuMr/xr2BS94ykDeMgYrJ1O5I76eY6kEW2mUvdYX9IjeATc89p6WJm0QFb2
-         4J3Q1/zWnhpX4HcnXqj8uDuSEdprcRtKEi9rU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734096758; x=1734701558;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6w5USa9s1QNn+1ezXty7PMBbfv5OsXZnA28H4J0kmA=;
-        b=FYVxX7g4QmTjd4auQGwPbA8Dcm/nth51lD1UISgc0mYSZmFbOl9ESmWJnGpTycK69x
-         I5xTwScFGDIt8YAAKbK/Nr9egZjnkJ/WiXZuN8VMiq5iwffnAWMIiC7Z8WcyZuwYejJg
-         Z+bpYGO/RD9MN438CIZstP/2dGMFD8RjcMk2gc1jg854KzdMZEM88AZnVxvA/mVMNaaq
-         hWh1y4E4AinRhvWwO7Flr4Ne64zTulIC4yF/nULQX3nXHSD63wD65T1J/B9RL/8ZHnli
-         w0JMI/+xsu1JSFVHbbgz8H9yGkhBwYs3OJ88+EqH5RYr7017zdTJl7YmyOp2QPKiu6py
-         9CiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjraXZWpnHxL5XepOU8VZfk3xZ2KN8QtuixndVJZvwuaRn/xk9Gr5UPiPop0KO9Or1rlbTgDo4/9bLhHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7B3wPKWcmfOKAPI16H1I4GmgFuPGnZaGst2WnrNycXKiO3Apl
-	ZgJcUzp11cUy0S6h4rYobB0JGQyep9wpjnBhwm28gVAve7t8eL1zD2ZqLzGDbg==
-X-Gm-Gg: ASbGnctywB1RR4qLbDg3GiP/wMTSYoP1bwVMFWNPAUFycSedVW0976gkg8Dl0MjAeqT
-	f+4KgsUWxF4MXJYDe3TYwdzwqittd97vZdZeUE2bXxKaR5jjY3nH2iwDWcc1KjBNRBdY8Czl1R+
-	nRVVdZu4HUzFm2/SLhUzu5LCmBK6C7nkULnAXfr27MpL0MXb/YIYleVXygPdRKvYiZ9YSaW18O0
-	zVdv7E45y+8K42ukkTyR5eeK4Js4xMLgwiE9lSkIifZ7KvrJWTwg8ULKUCRU9dZRVR958Hksqtd
-	NwhCn2WA2rKVA9ZOw1k8y+nChuA6DzdB
-X-Google-Smtp-Source: AGHT+IE0qGaUbFZoGusMOweMOfwSLmnmQahwkZgehkh9CKTcMpQsEjZpQ4Wtc0TIsuaU4ho4RUT4hA==
-X-Received: by 2002:a17:902:f908:b0:216:69ca:7714 with SMTP id d9443c01a7336-21892980b8dmr31144465ad.11.1734096758207;
-        Fri, 13 Dec 2024 05:32:38 -0800 (PST)
-Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216432f3809sm92088945ad.153.2024.12.13.05.32.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 05:32:37 -0800 (PST)
-Message-ID: <75bf61d4-ad43-4272-a6d8-4c78dbedee2c@broadcom.com>
-Date: Fri, 13 Dec 2024 14:32:32 +0100
+	s=arc-20240116; t=1734097060; c=relaxed/simple;
+	bh=qoFk5BHIQXYDzLpPruQaqO0fOwCLOUhE6gz5VlyFQPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oTanHOY9/nlIURupLtfTTVmriaLZF7Nr11HJbkom/xvi7KuQbqz7hhS/VHM2eL9phw8a89vOE5boh0TvKs9joX4e4d0VF4skke27fRj1rLDojVIGDg61vNJdp9BUWoiSOoVPxylUDM6hLjWvBoLwEhribRLTz787L5LTWCxSsMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WR9W7c00; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDBhkrg017764;
+	Fri, 13 Dec 2024 13:37:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6oSf14VYTD1Dy2OgN5EQWQcU/iRtkhJhW3V9nmUxeNA=; b=WR9W7c00T3eeYcq6
+	mlqzuu3xjHe8Pzrh8EjGXhoEFmXXPiefxmVSsUCQ6g2F1Ge7KavuyDpe8M33ZWQZ
+	9wZT0YSP+BffhqT/wMenfdfogsYKZ6ikHyCPR8CrwcTfSp64mfvotA55AxH4ytTb
+	lcamLdaBpvNjl2yJaiaRkFcNQjIVZtuVW5Pe2xjXPROmcLd42PFZO6wdoe+dhFa6
+	OO4MBb9u1n1ObmArd1DomysBl8GMzh4xtCWEfKOMo6NUfcUnBdh28p02LI9Eizd6
+	AStpW4FYSWZk7eocJJBQIshixd6sFg+LrvFeTLtkUeu0v29r62sDKvrhSMw1wrpc
+	Rq2c+A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gmac09hu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 13:37:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDDbOnQ017995
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 13:37:24 GMT
+Received: from [10.204.101.130] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
+ 2024 05:37:17 -0800
+Message-ID: <e2ae139a-0285-455a-a2b1-520deeeacc0b@quicinc.com>
+Date: Fri, 13 Dec 2024 19:07:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,73 +64,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] wifi: brcmfmac: clarify unmodifiable headroom log
- message
-To: Alex Shumsky <alexthreed@gmail.com>, linux-wireless@vger.kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Kalle Valo <kvalo@kernel.org>,
- brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20241213081402.625003-1-alexthreed@gmail.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: display/msm/gmu: Document RGMU
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <20241104-add_initial_support_for_qcs615-v5-4-9dde8d7b80b0@quicinc.com>,
+        <20241022-qcs615-clock-driver-v4-3-3d716ad0d987@quicinc.com>,
+        <20240924143958.25-2-quic_rlaggysh@quicinc.com>,
+        <20241108-qcs615-mm-clockcontroller-v3-7-7d3b2d235fdf@quicinc.com>,
+        <20241108-qcs615-mm-dt-nodes-v1-1-b2669cac0624@quicinc.com>,
+        <20241122074922.28153-1-quic_qqzhou@quicinc.com>
+References: <20241213-qcs615-gpu-dt-v2-0-6606c64f03b5@quicinc.com>
+ <20241213-qcs615-gpu-dt-v2-2-6606c64f03b5@quicinc.com>
+ <28bf46a5-dedb-4491-b9be-23fdfb99035f@oss.qualcomm.com>
 Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- xsFNBGP96SABEACfErEjSRi7TA1ttHYaUM3GuirbgqrNvQ41UJs1ag1T0TeyINqG+s6aFuO8
- evRHRnyAqTjMQoo4tkfy21XQX/OsBlgvMeNzfs6jnVwlCVrhqPkX5g5GaXJnO3c4AvXHyWik
- SOd8nOIwt9MNfGn99tkRAmmsLaMiVLzYfg+n3kNDsqgylcSahbd+gVMq+32q8QA+L1B9tAkM
- UccmSXuhilER70gFMJeM9ZQwD/WPOQ2jHpd0hDVoQsTbBxZZnr2GSjSNr7r5ilGV7a3uaRUU
- HLWPOuGUngSktUTpjwgGYZ87Edp+BpxO62h0aKMyjzWNTkt6UVnMPOwvb70hNA2v58Pt4kHh
- 8ApHky6IepI6SOCcMpUEHQuoKxTMw/pzmlb4A8PY//Xu/SJF8xpkpWPVcQxNTqkjbpazOUw3
- 12u4EK1lzwH7wjnhM3Fs5aNBgyg+STS1VWIwoXJ7Q2Z51odh0XecsjL8EkHbp9qHdRvZQmMu
- Ns8lBPBkzpS7y2Q6Sp7DcRvDfQQxPrE2sKxKLZVGcRYAD90r7NANryRA/i+785MSPUNSTWK3
- MGZ3Xv3fY7phISvYAklVn/tYRh88Zthf6iDuq86m5mr+qOO8s1JnCz6uxd/SSWLVOWov9Gx3
- uClOYpVsUSu3utTta3XVcKVMWG/M+dWkbdt2KES2cv4P5twxyQARAQABzS9BcmVuZCB2YW4g
- U3ByaWVsIDxhcmVuZC52YW5zcHJpZWxAYnJvYWRjb20uY29tPsLBhwQTAQgAMRYhBLX1Z69w
- T4l/vfdb0pZ6NOIYA/1RBQJj/ek9AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQlno04hgD/VGw
- 8A//VEoGTamfCks+a12yFtT1d/GjDdf3i9agKMk3esn08JwjJ96x9OFFl2vFaQCSiefeXITR
- K4T/yT+n/IXntVWT3pOBfb343cAPjpaZvBMh8p32z3CuV1H0Y+753HX7gdWTEojGWaWmKkZh
- w3nGoRZQEeAcwcF3gMNwsM5Gemj7aInIhRLUeoKh/0yV85lNE1D7JkyNheQ+v91DWVj5/a9X
- 7kiL18fH1iC9kvP3lq5VE54okpGqUj5KE5pmHNFBp7HZO3EXFAd3Zxm9ol5ic9tggY0oET28
- ucARi1wXLD/oCf1R9sAoWfSTnvOcJjG+kUwK7T+ZHTF8YZ4GAT3k5EwZ2Mk3+Rt62R81gzRF
- A6+zsewqdymbpwgyPDKcJ8YUHbqvspMQnPTmXNk+7p7fXReVPOYFtzzfBGSCByIkh1bB45jO
- +TM5ZbMmhsUbqA0dFT5JMHjJIaGmcw21ocgBcLsJ730fbLP/L08udgWHywPoq7Ja7lj5W0io
- ZDLz5uQ6CEER6wzD07vZwSl/NokljVexnOrwbR3wIhdr6B0Hc/0Bh7T8gpeM+QcK6EwJBG7A
- xCHLEacOuKo4jinf94YQrOEMnOmvucuQRm9CIwZrQ69Mg6rLn32pA4cK4XWQN1N3wQXnRUnb
- MTymLAoxE4MInhDVsZCtIDFxMVvBUgZiZZszN33OwU0EY/3pIgEQAN35Ii1Hn90ghm/qlvz/
- L+wFi3PTQ90V6UKPv5Q5hq+1BtLA6aj2qmdFBO9lgO9AbzHo8Eizrgtxp41GkKTgHuYChijI
- kdhTVPm+Pv44N/3uHUeFhN3wQ3sTs1ZT/0HhwXt8JvjqbhvtNmoGosZvpUCTwiyM1VBF/ICT
- ltzFmXd5z7sEuDyZcz9Q1t1Bb2cmbhp3eIgLmVA4Lc9ZS3sK1UMgSDwaR4KYBhF0OKMC1OH8
- M5jfcPHR8OLTLIM/Thw0YIUiYfj6lWwWkb82qa4IQvIEmz0LwvHkaLU1TCXbehO0pLWB9HnK
- r3nofx5oMfhu+cMa5C6g3fBB8Z43mDi2m/xM6p5c3q/EybOxBzhujeKN7smBTlkvAdwQfvuD
- jKr9lvrC2oKIjcsO+MxSGY4zRU0WKr4KD720PV2DCn54ZcOxOkOGR624d5bhDbjw1l2r+89V
- WLRLirBZn7VmWHSdfq5Xl9CyHT1uY6X9FRr3sWde9kA/C7Z2tqy0MevXAz+MtavOJb9XDUlI
- 7Bm0OPe5BTIuhtLvVZiW4ivT2LJOpkokLy2K852u32Z1QlOYjsbimf77avcrLBplvms0D7j6
- OaKOq503UKfcSZo3lF70J5UtJfXy64noI4oyVNl1b+egkV2iSXifTGGzOjt50/efgm1bKNkX
- iCVOYt9sGTrVhiX1ABEBAAHCwXYEGAEIACAWIQS19WevcE+Jf733W9KWejTiGAP9UQUCY/3p
- PgIbDAAKCRCWejTiGAP9UaC/EACZvViKrMkFooyACGaukqIo/s94sGuqxj308NbZ4g5jgy/T
- +lYBzlurnFmIbJESFOEq0MBZorozDGk+/p8pfAh4S868i1HFeLivVIujkcL6unG1UYEnnJI9
- uSwUbEqgA8vwdUPEGewYkPH6AaQoh1DdYGOleQqDq1Mo62xu+bKstYHpArzT2islvLdrBtjD
- MEzYThskDgDUk/aGPgtPlU9mB7IiBnQcqbS/V5f01ZicI1esy9ywnlWdZCHy36uTUfacshpz
- LsTCSKICXRotA0p6ZiCQloW7uRH28JFDBEbIOgAcuXGojqYx5vSM6o+03W9UjKkBGYFCqjIy
- Ku843p86Ky4JBs5dAXN7msLGLhAhtiVx8ymeoLGMoYoxqIoqVNaovvH9y1ZHGqS/IYXWf+jE
- H4MX7ucv4N8RcsoMGzXyi4UbBjxgljAhTYs+c5YOkbXfkRqXQeECOuQ4prsc6/zxGJf7MlPy
- NKowQLrlMBGXT4NnRNV0+yHmusXPOPIqQCKEtbWSx9s2slQxmXukPYvLnuRJqkPkvrTgjn5d
- eSE0Dkhni4292/Nn/TnZf5mxCNWH1p3dz/vrT6EIYk2GSJgCLoTkCcqaM6+5E4IwgYOq3UYu
- AAgeEbPV1QeTVAPrntrLb0t0U5vdwG7Xl40baV9OydTv7ghjYZU349w1d5mdxg==
-In-Reply-To: <20241213081402.625003-1-alexthreed@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <28bf46a5-dedb-4491-b9be-23fdfb99035f@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: F2-cLpN7sj4SRHwnUinA5cU8tO6xNmBd
+X-Proofpoint-GUID: F2-cLpN7sj4SRHwnUinA5cU8tO6xNmBd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ phishscore=0 impostorscore=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 spamscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130096
 
-On 12/13/2024 9:14 AM, Alex Shumsky wrote:
-> Replace misleading log "insufficient headroom (0)" with more clear
-> "unmodifiable headroom".
+On 12/13/2024 4:23 PM, Konrad Dybcio wrote:
+> On 13.12.2024 11:35 AM, Akhil P Oommen wrote:
+>> RGMU a.k.a Reduced Graphics Management Unit is a small state machine
+>> with the sole purpose of providing IFPC support. Compared to GMU, it
+>> doesn't manage GPU clock, voltage scaling, bw voting or any other
+>> functionalities. All it does is detect an idle GPU and toggle the
+>> GDSC switch. So it doesn't require iommu & opp table.
+>>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+> 
+> The bindings file exists so that people that are not in the know, can
+> reference it and learn about the hardware. Please spell out IFPC, as
+> that's a non-obvious, hw-specific  acronym.
+> 
+> Otherwise looks ok
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Alex Shumsky <alexthreed@gmail.com>
-> ---
+Ah right. Krzysztof schooled me that a while ago.
+Will update.
+
+-Akhil.
+
 > 
-> Changes in v2:
-> - don't remove log completely, but reword it
-> 
->   drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> Konrad
+
 
