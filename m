@@ -1,396 +1,253 @@
-Return-Path: <linux-kernel+bounces-444104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227E79F00D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:32:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EEE9F00D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5DF188D43E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:32:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E53516336F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C58653BE;
-	Fri, 13 Dec 2024 00:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD34117D2;
+	Fri, 13 Dec 2024 00:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="PiQE1S2O"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="xcrmqTaH"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4B5136E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E31C567D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734049964; cv=none; b=N5e/0rdVMG7ew4ZWBGFSX1/HJA9XIZZ360dX70sPu1WKHssOlOvmzRxJPd1WuweCUph8uYj/m5d2c7L4drsg2WgskXfiYifreQ/vPgstJVpq31BRYkhHEURraDkUvZxsuO7NzRk6bdj+8j3KjD1Kn3pO6YgTxj/naUba3HS0N/M=
+	t=1734049991; cv=none; b=sZnuGv3SQUOFUSDYapo/o6qYmlkiQKgew00fqWuCQkVa6u0HvMHmDcwZR4qcOdtfG5mX+wW7wXnrYBRgVRVvvT8pFQtgpX+eZZkli0D8kPoZLIoLSnPeMLXoNpL+PdAxWrF/7B2uxtZI0NdAzN4AETfXoKra4NbtIfwX5fKXV0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734049964; c=relaxed/simple;
-	bh=UGBSLmiHtdHlQW61iJdVtiJgYeOeFZv7Sjbh/KXxNlY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tapSxHVdRRP9t+bkUALZPZzozlIUNAuSIHaqtTFbJGCbgQMb38dvXIC5q0pElsOn2gaH3FxLfQSQ74E3ob169hAKxBm49cWv0j3d/FKeOWXgAZBgQtLVG/0wrQ44lLrVqgib55bd06S0XYMfh42VxU4PKl7Oc9902XBhjbcHFeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=PiQE1S2O; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3978c00a5aso881571276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:32:40 -0800 (PST)
+	s=arc-20240116; t=1734049991; c=relaxed/simple;
+	bh=WZq3jkoID8QunDd/Lk9gkIo3P2ul9rqI69DPd+QU7VY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=H1NJtYbouX6E/oG032IUMLQcIt4FWGZuwDmG3OVdECsh95bhJfJ9adq4zhsQ4D7TVdLI388+pNxtD9Qym6yGO1b6YFWCw5jQPdFlk0VnG8p8+K5Td1DGdJ1qLov0hCZj0kaWp6TojtoM4GqqvqhHzclbNCbaLFSkMLvik9cB1Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=xcrmqTaH; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ee67e9287fso1058849a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 16:33:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks.com; s=google; t=1734049960; x=1734654760; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p1xqVE/4FZUuHPUklFrnCBLjAYIJGtDzqs84F5snF0k=;
-        b=PiQE1S2O3/RAiIaSJjDWrOGzVTn+UqVFLNwkn9kAEJCnjaOevvOPI+NizozU3lSrwG
-         zcimLFigDDlujgmQqa2tTugFHlJZpJI2p9mOao5JgMInI0FKXbGmLE7qu/3tUW9jDI2o
-         J/d9MTnc6j+dwBLVgQcdJHTqq0aJhnyP+pAa5kwNNzAShmMgXiIiIi3Pp/tekzL4bp6P
-         H8bCM6zPMbFVEuqTLIfDlHVgODnQCcdxAWrKSs/7JnRGn1pmU6lxw9Ka9cXxpuSeVrCH
-         Kqp+VwxZlZ/SeTIPPe4n3nnmkXJ5Mk1/YfZ3upfvCE77Y9g6u5nATgf3A2/S+sbEWnm5
-         1kdQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734049988; x=1734654788; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QJpXILRLfXKK0+MdF5T9u9jkQmQMEKo5rgup6DDy1VM=;
+        b=xcrmqTaHu99U1yAcZFSRxwAwkcR2hVmCgIqspwP8JL5Fhd+zL9KylVFCrtr8wl6BbY
+         IvaCIsMsIHgKqcZicqVDsLVIZczYxz1HzpoHlmwrWOLLS2f9yraGyXtVfbZiOmg9T/Ja
+         emBxTEjcnDIc7Kg7POyEsefmFzCo6mLC86gKsaI0oFOCCfx7/7mK/xZV70OWKjrfK2XW
+         OuD37a3i7TVJdcVS9yeL3ibkEvt6RZUVn5E/50aCkQhHMG9e2NFCw5PAeDi2vxjhOC97
+         ze8rg1L5kHkyUQozSaeFcdbzJb4xoMv2e5dVnjRDcDF0TETBd2/EfHIT9u2fWhH66fLC
+         nb7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734049960; x=1734654760;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p1xqVE/4FZUuHPUklFrnCBLjAYIJGtDzqs84F5snF0k=;
-        b=H+kr5nsIG0QjhCfWQVV9fTI4e3Twih/cvVhBQRWc9VBZKu5BMijRnEjbphS0UYpNKV
-         zo02fsvAMDhexk9HEGRHTJoQDgZDIWVDsgMpfW4ctmz7CGZastIrr+eR/sMl34x2hcaU
-         B5t1PogRA6V5PXhMsLbeU5Ia5mPmznRkJwsKk69yddOGc5z0SNiAofNs7So+tpnTcHQh
-         y2s6CY49TZTYR/WWZX2cgZABIw//ZzalI3Z8Pwm4FbNm02RwMbcii8ap8Cl/AQ6gsByq
-         t3JyG7v4UFkyot5JgAACTrumwPEa0GQfqPnbovKtUbVwXPuGoHZD2yicy5jjodjpcRf/
-         S41Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX95k2HEeTAZ2Lbb/+iEkwO6WqQivmYlufpSiaAIzKNgxc3NnCE0WVCEL3mu8m82bwaZy+/gcXvGTVqNzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznMU2bRBIN8VNBxxkz1vLB9vlaG6rlJtQxktZFguc5MGWLhYHD
-	u14DjOvHxgoHiytwvsojoSgE+qi4V5WA1wlRglnrWlf/Cyas4Xtc3BShAGCSxXpbBF6h+L5/Cr9
-	X4Kzqp1dxdHmr35GiS8Ac9jWHt9oG9VkpjBTrlA==
-X-Gm-Gg: ASbGnctpmZ7zuEibbiYLhg9rDm+Odp76eXEH3TNB+yxlRvVQfLaEs0OfOrWSmZ3PyhE
-	vMpgcWxxj5QZjnoCJDitrN6HjU4lw0EasCgoIpQ==
-X-Google-Smtp-Source: AGHT+IF39f2BqM4YRqvWo4v8Shf3KrfB3H9aJWunSkI4rryXWHgKAdGM2jLC0uDz1OQ/vECYe+aqEg9DoP8ztBEjoiE=
-X-Received: by 2002:a05:6902:1893:b0:e30:cd96:4001 with SMTP id
- 3f1490d57ef6-e434d19a0e6mr545000276.7.1734049960053; Thu, 12 Dec 2024
- 16:32:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734049988; x=1734654788;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QJpXILRLfXKK0+MdF5T9u9jkQmQMEKo5rgup6DDy1VM=;
+        b=n62CKEyYKyVHbv7uATx/N0vczI1sTBExcSFoSD5oWqwrIMCqRwdtkNausod3PfHE/s
+         XYP60HFq2L2y++L2sO+49l+E5PUBDdzueqF5NmrBTPhWn/OsPkJvjIi8A6yl+bwmRYid
+         CIvEFCPppXJ7sac3In9QOevVRYZX54Eyu4IfSUMjIBcLSwsSX2t3CeMowt085OKcuW8c
+         5BiLqbyVuqkEbfZnWQeD/4K4O46Vdtelv5X3J2rP9VCRB3kV/kAsFNdwUFmeOQQjir/J
+         XsrGG5qoWbphmUT+EVvMBhP+8NK8D5XG3BLf3cwOH/zWuyZ7TDi5uv7ReTQL9yrTcE4v
+         Fwtg==
+X-Gm-Message-State: AOJu0Ywdm6Vh+MQ+20RmUqKcF6YqtV5GPyyXC/gpcNpj7i1L0lIqLkmu
+	xLGpKZD2wKaI6+dDDIxY00rTZydU8G26UJ4Y7tMU3rgNYnJfCrTOZh26wuftbvY=
+X-Gm-Gg: ASbGncuYeRUXO0czoTGyYTK+1vImy0cUyRQQtSqlhxswwRUvkP0qTHmuuOosvCezlA2
+	xwS5aco4vruvBT4oMpvK9FKqEq69bb09na7n5JYo5Hb3e5+QxsIQ7TvKyvHhLn1y/RnCMSM8ZEX
+	7LGri8ujaqNYehzHIbASRuRguKgyFYK1eIBge4Yv4Ekr+1BDkDkqlOcv1aRpygVrehaxTvT1kyr
+	2o6uRkJBb9L98t4QadwB8yIGoYUob348EJTsdjkJzuxXkJtO2BV9J9o8fwRpOibmLgoz+mX
+X-Google-Smtp-Source: AGHT+IG9JHkY7uaO8cnj26AhO6FgsLiu0T95fS/O5OYFvSj2rewtkHH5sLKhgnXsj2ZgFA4t6YukOA==
+X-Received: by 2002:a17:90b:3b48:b0:2ee:7415:4768 with SMTP id 98e67ed59e1d1-2f28fd6f5c1mr1368966a91.17.1734049988177;
+        Thu, 12 Dec 2024 16:33:08 -0800 (PST)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142e0ce50sm1934462a91.39.2024.12.12.16.33.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 16:33:07 -0800 (PST)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH v2 00/16] perf tools: Use generic syscall scripts for all
+ archs
+Date: Thu, 12 Dec 2024 16:32:50 -0800
+Message-Id: <20241212-perf_syscalltbl-v2-0-f8ca984ffe40@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212215132.3111392-1-tharvey@gateworks.com> <20241213000023.jkrxbogcws4azh4w@skbuf>
-In-Reply-To: <20241213000023.jkrxbogcws4azh4w@skbuf>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Thu, 12 Dec 2024 16:32:28 -0800
-Message-ID: <CAJ+vNU2WQ2n588vOcofJ5Ga76hsyff51EW-e6T8PbYFY_4xu0A@mail.gmail.com>
-Subject: Re: [PATCH net] net: dsa: microchip: ksz9477: fix multicast filtering
-To: Vladimir Oltean <olteanv@gmail.com>, Arun Ramadoss <arun.ramadoss@microchip.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALKAW2cC/2WNQQ6CMBBFr0JmbU2LgOLKexhi6jCVSbAlHdJIC
+ He3snX5XvLfX0EoMglcixUiJRYOPkN5KAAH61+kuM8MpS4r3ZqTmii6hyyCdhzn56ga1156coi
+ NqyGvpkiOP3vx3mUeWOYQl/0gmZ/dW8bo6q+VjNKqtb2lGs+NIXeLnIKwxyOGN3Tbtn0Br+Vo5
+ LEAAAA=
+X-Change-ID: 20240913-perf_syscalltbl-6f98defcc6f5
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, 
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+ James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+ Leo Yan <leo.yan@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+ =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-csky@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7428; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=WZq3jkoID8QunDd/Lk9gkIo3P2ul9rqI69DPd+QU7VY=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3p0w7aTgWd5pnZ/dZ3zhM/4IM9yXcsqu3SRWaUCUtzCO
+ 5vf8U3rKGVhEONgkBVTZOG51sDceke/7Kho2QSYOaxMIEMYuDgFYCK9/IwMzXFPkxqubI248pU9
+ c9HS4/ej7Wcdck6u0kgR6mvs+j1dgpGhryyV5SP7/mXevnGM7//87Dw6vfhr+q72gz5Ce5W/OCr
+ yAAA=
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-On Thu, Dec 12, 2024 at 4:00=E2=80=AFPM Vladimir Oltean <olteanv@gmail.com>=
- wrote:
->
-> On Thu, Dec 12, 2024 at 01:51:32PM -0800, Tim Harvey wrote:
-> > commit 331d64f752bb ("net: dsa: microchip: add the enable_stp_addr
-> > pointer in ksz_dev_ops") introduced enabling of the reserved multicast
-> > address table function to filter packets based on multicast MAC address
-> > but only configured one MAC address group, group 0 for
-> > (01-80-C2-00)-00-00 for bridge group data.
-> >
-> > This causes other multicast groups to fail to be received such as LLDP
-> > which uses a MAC address of 01-80-c2-00-00-0e (group 6).
-> >
-> > Enabling the reserved multicast address table requires configuring the
-> > port forward mask for all eight address groups as the mask depends on
-> > the port configuration.
->
+Standardize the generation of syscall headers around syscall tables.
+Previously each architecture independently selected how syscall headers
+would be generated, or would not define a way and fallback onto
+libaudit. Convert all architectures to use a standard syscall header
+generation script and allow each architecture to override the syscall
+table to use if they do not use the generic table.
 
-Hi Vladimir,
+As a result of these changes, no architecture will require libaudit, and
+so the fallback case of using libaudit is removed by this series.
 
-> Personal experience reading your commit message: it took me a long while
-> to realize that the reason why the 8 pre-configured Reserved Multicast
-> table entries don't work is written here: "the mask depends on the port
-> configuration." It is absolutely understated IMO.
->
+Testing:
 
-Yes, if you are going to enable the reserved multicast address table
-it should be configured fully as the default configuration makes an
-assumption on what user/host ports are valid.
+I have tested that the syscall mappings of id to name generation works
+as expected for every architecture, but I have only validated that perf
+trace compiles and runs as expected on riscv, arm64, and x86_64.
 
-> > The table determines the forwarding ports for
-> > 48 specific multicast addresses and is addressed by the least
-> > significant 6 bits of the multicast address. Changing a forwarding
-> > port mask for one address also makes the same change for all other
-> > addresses in the same group.
-> >
-> > Add configuration of the groups as such:
-> >  - leave these as default:
-> >    group 1 (01-80-C2-00)-00-01 (MAC Control Frame) (drop)
-> >    group 3 (01-80-C2-00)-00-10) (Bridge Management) (all ports)
-> >  - forward to cpu port:
-> >    group 0 (01-80-C2-00)-00-00 (Bridge Group Data)
-> >    group 2 (01-80-C2-00)-00-03 (802.1X access control)
-> >    group 6 (01-80-C2-00)-00-02, (01-80-C2-00)-00-04 =E2=80=93 (01-80-C2=
--00)-00-0F
-> >  - forward to all but cpu port:
->
-> Why would you not forward packets to the CPU port as a hardcoded configur=
-ation?
-> What if the KSZ ports are bridged together with a foreign interface
-> (different NIC, WLAN, tunnel etc), how should the packets reach that?
->
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+Changes in v2:
+- Rebase onto 6.13-rc2
+- Fix output path so it generates to /tools/perf/arch properly
+- Link to v1: https://lore.kernel.org/r/20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com
 
-If that is the correct thing to do I can certainly do that. I was
-assuming that the default policy above must be somewhat standard. This
-patch leaves the policy that was created by the default table
-configuration and just updates the port configuration based on the dt
-definition of the user vs host ports.
+---
+Charlie Jenkins (16):
+      perf tools: Create generic syscall table support
+      perf tools: arc: Support generic syscall headers
+      perf tools: csky: Support generic syscall headers
+      perf tools: arm: Support syscall headers
+      perf tools: sh: Support syscall headers
+      perf tools: sparc: Support syscall headers
+      perf tools: xtensa: Support syscall header
+      perf tools: x86: Use generic syscall scripts
+      perf tools: alpha: Support syscall header
+      perf tools: parisc: Support syscall header
+      perf tools: arm64: Use syscall table
+      perf tools: loongarch: Use syscall table
+      perf tools: mips: Use generic syscall scripts
+      perf tools: powerpc: Use generic syscall table scripts
+      perf tools: s390: Use generic syscall table scripts
+      perf tools: Remove dependency on libaudit
 
-> >    group 4 (01-80-C2-00)-00-20 (GMRP)
-> >    group 5 (01-80-C2-00)-00-21 (GVRP)
-> >    group 7 (01-80-C2-00)-00-11 - (01-80-C2-00)-00-1F,
-> >            (01-80-C2-00)-00-22 - (01-80-C2-00)-00-2F
->
-> Don't you want to forgo the (odd) hardware defaults for the Reserved Mult=
-icast
-> table, and instead follow what the Linux bridge does in br_handle_frame()=
-?
-> Which is to trap all is_link_local_ether_addr() addresses to the CPU, do
-> _not_ call dsa_default_offload_fwd_mark() for those packets (aka let the
-> bridge know that they haven't been forwarded in hardware, and if they
-> should reach other bridge ports, this must be done in software), and let =
-the
-> user choose, via the bridge group_fwd_mask, if they should be forwarded
-> to other bridge ports or not?
+ Documentation/admin-guide/workload-tracing.rst     |   2 +-
+ tools/build/feature/Makefile                       |   4 -
+ tools/build/feature/test-libaudit.c                |  11 -
+ tools/perf/Documentation/perf-check.txt            |   1 -
+ tools/perf/Makefile.config                         |  39 +-
+ tools/perf/Makefile.perf                           |  12 +-
+ tools/perf/arch/alpha/entry/syscalls/Kbuild        |   2 +
+ .../arch/alpha/entry/syscalls/Makefile.syscalls    |   5 +
+ tools/perf/arch/alpha/entry/syscalls/syscall.tbl   | 504 ++++++++++++++++++++
+ tools/perf/arch/alpha/include/syscall_table.h      |   2 +
+ tools/perf/arch/arc/entry/syscalls/Kbuild          |   2 +
+ .../perf/arch/arc/entry/syscalls/Makefile.syscalls |   3 +
+ tools/perf/arch/arc/include/syscall_table.h        |   2 +
+ tools/perf/arch/arm/entry/syscalls/Kbuild          |   4 +
+ .../perf/arch/arm/entry/syscalls/Makefile.syscalls |   2 +
+ tools/perf/arch/arm/entry/syscalls/syscall.tbl     | 483 +++++++++++++++++++
+ tools/perf/arch/arm/include/syscall_table.h        |   2 +
+ tools/perf/arch/arm64/Makefile                     |  22 -
+ tools/perf/arch/arm64/entry/syscalls/Kbuild        |   3 +
+ .../arch/arm64/entry/syscalls/Makefile.syscalls    |   6 +
+ tools/perf/arch/arm64/entry/syscalls/mksyscalltbl  |  46 --
+ .../perf/arch/arm64/entry/syscalls/syscall_32.tbl  | 476 +++++++++++++++++++
+ .../perf/arch/arm64/entry/syscalls/syscall_64.tbl  |   1 +
+ tools/perf/arch/arm64/include/syscall_table.h      |   8 +
+ tools/perf/arch/csky/entry/syscalls/Kbuild         |   2 +
+ .../arch/csky/entry/syscalls/Makefile.syscalls     |   3 +
+ tools/perf/arch/csky/include/syscall_table.h       |   2 +
+ tools/perf/arch/loongarch/Makefile                 |  22 -
+ tools/perf/arch/loongarch/entry/syscalls/Kbuild    |   2 +
+ .../loongarch/entry/syscalls/Makefile.syscalls     |   3 +
+ .../arch/loongarch/entry/syscalls/mksyscalltbl     |  45 --
+ tools/perf/arch/loongarch/include/syscall_table.h  |   2 +
+ tools/perf/arch/mips/entry/syscalls/Kbuild         |   2 +
+ .../arch/mips/entry/syscalls/Makefile.syscalls     |   5 +
+ tools/perf/arch/mips/entry/syscalls/mksyscalltbl   |  32 --
+ tools/perf/arch/mips/include/syscall_table.h       |   2 +
+ tools/perf/arch/parisc/entry/syscalls/Kbuild       |   3 +
+ .../arch/parisc/entry/syscalls/Makefile.syscalls   |   6 +
+ tools/perf/arch/parisc/entry/syscalls/syscall.tbl  | 463 +++++++++++++++++++
+ tools/perf/arch/parisc/include/syscall_table.h     |   8 +
+ tools/perf/arch/powerpc/Makefile                   |  25 -
+ tools/perf/arch/powerpc/entry/syscalls/Kbuild      |   3 +
+ .../arch/powerpc/entry/syscalls/Makefile.syscalls  |   6 +
+ .../perf/arch/powerpc/entry/syscalls/mksyscalltbl  |  39 --
+ tools/perf/arch/powerpc/include/syscall_table.h    |   8 +
+ tools/perf/arch/riscv/Makefile                     |  22 -
+ tools/perf/arch/riscv/entry/syscalls/Kbuild        |   2 +
+ .../arch/riscv/entry/syscalls/Makefile.syscalls    |   4 +
+ tools/perf/arch/riscv/entry/syscalls/mksyscalltbl  |  47 --
+ tools/perf/arch/riscv/include/syscall_table.h      |   8 +
+ tools/perf/arch/s390/Makefile                      |  21 -
+ tools/perf/arch/s390/entry/syscalls/Kbuild         |   2 +
+ .../arch/s390/entry/syscalls/Makefile.syscalls     |   5 +
+ tools/perf/arch/s390/entry/syscalls/mksyscalltbl   |  32 --
+ tools/perf/arch/s390/include/syscall_table.h       |   2 +
+ tools/perf/arch/sh/entry/syscalls/Kbuild           |   2 +
+ .../perf/arch/sh/entry/syscalls/Makefile.syscalls  |   4 +
+ tools/perf/arch/sh/entry/syscalls/syscall.tbl      | 472 +++++++++++++++++++
+ tools/perf/arch/sh/include/syscall_table.h         |   2 +
+ tools/perf/arch/sparc/entry/syscalls/Kbuild        |   3 +
+ .../arch/sparc/entry/syscalls/Makefile.syscalls    |   5 +
+ tools/perf/arch/sparc/entry/syscalls/syscall.tbl   | 514 +++++++++++++++++++++
+ tools/perf/arch/sparc/include/syscall_table.h      |   8 +
+ tools/perf/arch/x86/Build                          |   1 -
+ tools/perf/arch/x86/Makefile                       |  25 -
+ tools/perf/arch/x86/entry/syscalls/Kbuild          |   3 +
+ .../perf/arch/x86/entry/syscalls/Makefile.syscalls |   6 +
+ tools/perf/arch/x86/entry/syscalls/syscalltbl.sh   |  42 --
+ tools/perf/arch/x86/include/syscall_table.h        |   8 +
+ tools/perf/arch/xtensa/entry/syscalls/Kbuild       |   2 +
+ .../arch/xtensa/entry/syscalls/Makefile.syscalls   |   4 +
+ tools/perf/arch/xtensa/entry/syscalls/syscall.tbl  | 439 ++++++++++++++++++
+ tools/perf/arch/xtensa/include/syscall_table.h     |   2 +
+ tools/perf/builtin-check.c                         |   1 -
+ tools/perf/builtin-help.c                          |   2 -
+ tools/perf/builtin-trace.c                         |  30 --
+ tools/perf/check-headers.sh                        |   9 +
+ tools/perf/perf.c                                  |   6 +-
+ tools/perf/scripts/Makefile.syscalls               |  60 +++
+ tools/perf/scripts/syscalltbl.sh                   |  86 ++++
+ tools/perf/tests/make                              |   7 +-
+ tools/perf/util/env.c                              |   4 +-
+ tools/perf/util/generate-cmdlist.sh                |   4 +-
+ tools/perf/util/syscalltbl.c                       |  91 +---
+ tools/scripts/syscall.tbl                          | 409 ++++++++++++++++
+ 85 files changed, 4101 insertions(+), 620 deletions(-)
+---
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+change-id: 20240913-perf_syscalltbl-6f98defcc6f5
+-- 
+- Charlie
 
-Again, I really don't know what the 'right' thing to do is for
-multicast packets but the enabling of the reserved multicast table
-done in commit 331d64f752bb ("net: dsa: microchip: add the
-enable_stp_addr pointer in ksz_dev_ops") breaks forwarding of all
-multicast packets that are not sent to 01-80-C2-00-00-00
-
-> >
-> > Datasheets:
-> > [1] https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ9897S-Data-Shee=
-t-DS00002394C.pdf
-> > [2] https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ9896C-Data-Shee=
-t-DS00002390C.pdf
-> > [3] https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ9893R-Data-Shee=
-t-DS00002420D.pdf
-> > [4] https://ww1.microchip.com/downloads/en/DeviceDoc/00002330B.pdf
-> > [5] https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ9563R-Data-Shee=
-t-DS00002419D.pdf
-> > [6] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/Prod=
-uctDocuments/DataSheets/KSZ9567R-Data-Sheet-DS00002329.pdf
-> > [7] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/Prod=
-uctDocuments/DataSheets/KSZ9567R-Data-Sheet-DS00002329.pdf
->
-> [6] and [7] are the same.
->
-> Also, you'd better specify in the commit message what's with these datash=
-eet
-> links, which to me and I suppose all other non-expert readers, are pasted=
- here
-> out of the blue, with no context.
->
-> Like for example: "KSZ9897, ..., have arbitrary CPU port assignments, as
-> can be seen in the driver's ksz_chip_data :: cpu_ports entries for these
-> families, and the CPU port selection on a certain board rarely coincides
-> with the default host port selection in the Reserved Multicast address
-> table".
-
-I was just trying to be thorough. I took the time to look up the
-datasheets for all the switches that the ksz9447 driver supports to
-ensure they all had the same default configuration policy and same
-configuration method/registers so I thought I would include them in
-the message. I can drop the datasheet links if they add no value. I
-was also expecting perhaps the commit message was confusing so I
-wanted to show where the information came from.
-
-What you're suggesting above regarding trapping all
-is_link_local_ether_addr() addresses to the CPU and not calling
-dsa_default_offload_fwd_mark() is beyond my understanding. If the
-behavior of the reserved multicast address table is non-standard then
-it should be disabled and the content of ksz9477_enable_stp_addr()
-removed. However based on Arun's commit message it seems that prior to
-that patch STP BPDU packets were not being forwarded to the CPU so
-it's unclear to me what the default behavior was for multicast without
-the reserved muticast address table being enabled. I know that if the
-table is disabled by removing the call to ksz9477_enable_stp_addr then
-LLDP packets are forwarded to the cpu port like they were before that
-patch.
-
-All of your coding style comments below make complete sense to me so
-as soon as we figure out what the proper fix is for commit
-331d64f752bb ("net: dsa: microchip: add the enable_stp_addr pointer in
-ksz_dev_ops") breaking multicast I can resubmit with those resolved.
-
-Best Regards,
-
-Tim
-
->
-> >
-> > Fixes: 331d64f752bb ("net: dsa: microchip: add the enable_stp_addr poin=
-ter in ksz_dev_ops")
-> > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> > ---
-> >  drivers/net/dsa/microchip/ksz9477.c | 84 +++++++++++++++++++++++++----
-> >  1 file changed, 75 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/net/dsa/microchip/ksz9477.c b/drivers/net/dsa/micr=
-ochip/ksz9477.c
-> > index d16817e0476f..d8fe809dd461 100644
-> > --- a/drivers/net/dsa/microchip/ksz9477.c
-> > +++ b/drivers/net/dsa/microchip/ksz9477.c
-> > @@ -1138,25 +1138,24 @@ void ksz9477_config_cpu_port(struct dsa_switch =
-*ds)
-> >       }
-> >  }
-> >
-> > -int ksz9477_enable_stp_addr(struct ksz_device *dev)
-> > +static int ksz9477_reserved_muticast_group(struct ksz_device *dev, int=
- index, int mask)
-> >  {
-> > +     const u8 *shifts;
-> >       const u32 *masks;
-> >       u32 data;
-> >       int ret;
-> >
-> > +     shifts =3D dev->info->shifts;
-> >       masks =3D dev->info->masks;
-> >
-> > -     /* Enable Reserved multicast table */
-> > -     ksz_cfg(dev, REG_SW_LUE_CTRL_0, SW_RESV_MCAST_ENABLE, true);
-> > -
-> > -     /* Set the Override bit for forwarding BPDU packet to CPU */
-> > -     ret =3D ksz_write32(dev, REG_SW_ALU_VAL_B,
-> > -                       ALU_V_OVERRIDE | BIT(dev->cpu_port));
-> > +     /* write the PORT_FORWARD value to the Reserved Multicast Address=
- Table Entry 2 Register */
->
-> In netdev the coding style limits the line length to 80 characters where
-> that is easy, like here.
->
-> > +     ret =3D ksz_write32(dev, REG_SW_ALU_VAL_B, mask);
-> >       if (ret < 0)
-> >               return ret;
-> >
-> > -     data =3D ALU_STAT_START | ALU_RESV_MCAST_ADDR | masks[ALU_STAT_WR=
-ITE];
-> > -
-> > +     /* write to the Static Address and Reserved Multicast Table Contr=
-ol Register */
-> > +     data =3D (index << shifts[ALU_STAT_INDEX]) |
-> > +             ALU_STAT_START | ALU_RESV_MCAST_ADDR | masks[ALU_STAT_WRI=
-TE];
-> >       ret =3D ksz_write32(dev, REG_SW_ALU_STAT_CTRL__4, data);
-> >       if (ret < 0)
-> >               return ret;
-> > @@ -1167,8 +1166,75 @@ int ksz9477_enable_stp_addr(struct ksz_device *d=
-ev)
-> >               dev_err(dev->dev, "Failed to update Reserved Multicast ta=
-ble\n");
-> >               return ret;
-> >       }
-> > +     return ksz9477_wait_alu_sta_ready(dev);
-> > +}
-> > +
-> > +int ksz9477_enable_stp_addr(struct ksz_device *dev)
-> > +{
-> > +     int ret;
-> > +     int cpu_mask =3D dsa_cpu_ports(dev->ds);
-> > +     int user_mask =3D dsa_user_ports(dev->ds);
->
-> Also, in netdev, the coding style is to sort lines with variable
-> declarations in the reverse order of their length (so-called reverse
-> Christmas tree).
->
-> > +     /* array of indexes into table:
-> > +      * The table is indexed by the low 6 bits of the MAC address.
-> > +      * Changing the PORT_FORWARD value for any single address affects
-> > +      * all others in group
-> > +      */
-> > +     u16 addr_groups[8] =3D {
->
-> Array can be static const. Also, since all elements are initialized,
-> specifying its size explicitly is not necessary ("[8]" can be "[]").
->
-> > +             /* group 0: (01-80-C2-00)-00-00 (Bridge Group Data) */
-> > +             0x000,
-> > +             /* group 1: (01-80-C2-00)-00-01 (MAC Control Frame) */
-> > +             0x001,
-> > +             /* group 2: (01-80-C2-00)-00-03 (802.1X access control) *=
-/
-> > +             0x003,
-> > +             /* group 3: (01-80-C2-00)-00-10) (Bridge Management) */
-> > +             0x010,
-> > +             /* group 4: (01-80-C2-00)-00-20 (GMRP) */
-> > +             0x020,
-> > +             /* group 5: (01-80-C2-00)-00-21 (GVRP) */
-> > +             0x021,
-> > +             /* group 6: (01-80-C2-00)-00-02, (01-80-C2-00)-00-04 =E2=
-=80=93 (01-80-C2-00)-00-0F */
-> > +             0x002,
-> > +             /* group 7: (01-80-C2-00)-00-11 - (01-80-C2-00)-00-1F,
-> > +              *          (01-80-C2-00)-00-22 - (01-80-C2-00)-00-2F
-> > +              */
-> > +             0x011,
-> > +     };
-> > +
-> > +     /* Enable Reserved multicast table */
-> > +     ksz_cfg(dev, REG_SW_LUE_CTRL_0, SW_RESV_MCAST_ENABLE, true);
-> > +
-> > +     /* update reserved multicast address table:
-> > +      * leave as default:
-> > +      *  - group 1 (01-80-C2-00)-00-01 (MAC Control Frame) (drop)
-> > +      *  - group 3 (01-80-C2-00)-00-10) (Bridge Management) (all ports=
-)
-> > +      * forward to cpu port:
-> > +      *  - group 0 (01-80-C2-00)-00-00 (Bridge Group Data)
-> > +      *  - group 2 (01-80-C2-00)-00-03 (802.1X access control)
-> > +      *  - group 6 (01-80-C2-00)-00-02, (01-80-C2-00)-00-04 =E2=80=93 =
-(01-80-C2-00)-00-0F
-> > +      * forward to all but cpu port:
-> > +      *  - group 4 (01-80-C2-00)-00-20 (GMRP)
-> > +      *  - group 5 (01-80-C2-00)-00-21 (GVRP)
-> > +      *  - group 7 (01-80-C2-00)-00-11 - (01-80-C2-00)-00-1F,
-> > +      *            (01-80-C2-00)-00-22 - (01-80-C2-00)-00-2F
-> > +      */
-> > +     if (ksz9477_reserved_muticast_group(dev, addr_groups[0], cpu_mask=
-))
-> > +             goto exit;
->
-> err =3D (function return code), and print it with %pe, ERR_PTR(err) pleas=
-e.
-> We want to distinguish between -ETIMEDOUT in ksz9477_wait_alu_sta_ready()
-> vs whatever ksz_write32() may return.
->
-> > +     if (ksz9477_reserved_muticast_group(dev, addr_groups[2], cpu_mask=
-))
-> > +             goto exit;
-> > +     if (ksz9477_reserved_muticast_group(dev, addr_groups[6], cpu_mask=
-))
-> > +             goto exit;
-> > +     if (ksz9477_reserved_muticast_group(dev, addr_groups[4], user_mas=
-k))
-> > +             goto exit;
-> > +     if (ksz9477_reserved_muticast_group(dev, addr_groups[5], user_mas=
-k))
-> > +             goto exit;
-> > +     if (ksz9477_reserved_muticast_group(dev, addr_groups[7], user_mas=
-k))
-> > +             goto exit;
-> >
-> >       return 0;
-> > +
-> > +exit:
-> > +     dev_err(dev->dev, "Failed to update Reserved Multicast table\n");
-> > +     return ret;
-> >  }
-> >
-> >  int ksz9477_setup(struct dsa_switch *ds)
-> > --
-> > 2.34.1
-> >
->
 
