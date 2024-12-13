@@ -1,182 +1,231 @@
-Return-Path: <linux-kernel+bounces-445156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524429F1213
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:28:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665369F121E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:28:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A06028353F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:28:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 858F6161700
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1201E3DED;
-	Fri, 13 Dec 2024 16:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3B11E0B75;
+	Fri, 13 Dec 2024 16:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="HFDpKVjy"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QaqF4vjD"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A041E379B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036851C3BEB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734107302; cv=none; b=f2oQVWYoY3mdH/SbH4MnzT29SqR0xyT/2QpyNyf9FfOvOeGP4GzlL2H+qH76WHFKXSCjyXD53EsGRFLo6J/I8cRPRRBR4aPj18wXK3aZ+qAidh6U+e/kdQof3GHYkeqBrsUne2KeGD7EXCU22fPiT51ldRqck4EhZmsQOu3oC/E=
+	t=1734107319; cv=none; b=X6ZKygkYuOdaEaLcCuTKgdtc5Yrt5t15//WlWbj5RMHKlKmEocBEiOZR3xxectmJgDMXdicLk6RN496PlOR2RseURR78YqnsrpVsLWEigJS7IoQiP7kEo2gy0EhPGvbRTCUQ6qmeLM30QgyARe4OHD1F2LSg3HOjmYMdYQ5TjKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734107302; c=relaxed/simple;
-	bh=Kqh/N7dctfb6yjgMfoH2Bl7LG1gFmDipJeF7A7hHmrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G3nkFL/Ih1/MHKDCTkCymlfHpdvnpAdPjS7Bb89EFc6412dLiFeZRYxWICDjBv/FtTm13Oy+14cZSWuGVpy7UpT5yqHoAwOB8tfX1UhhuaTSOElwA0w8ZCO/kDFRc4GNmE/VWPr1D4f0i/fxIkk0Yq3sDGmZTXhYG9zecI5zlLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=HFDpKVjy; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-467a37a2a53so12403791cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:28:19 -0800 (PST)
+	s=arc-20240116; t=1734107319; c=relaxed/simple;
+	bh=IGOW1/Ld6fnxRnkFzWWv9PbBQ4NFw8bXWOQ7w1gCZEo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rgw8e2K5t5jT9yZLbRN7uoRUpwQFpTqJpnS9ezeAijiMBJGXM/Xsqw4zvYS9Aiyr6VGHRA4Mv4vuWGvGVqnS6/xi0HqTHLu6KDoRTc1MTbv47BuY1/3DSWZG/dVNutkVwHKnabRtdDuTJi865JDzP+qEKNXAVXJMwo9G0iOBIcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QaqF4vjD; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4361a50e337so14050645e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:28:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1734107298; x=1734712098; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0HkpUMdpT1bOGFdhaxI+95tgENUX+xpDF8wyAC3G/e8=;
-        b=HFDpKVjyFU2rd1aRv+B/qx/o+HSZpAwtgtnF0bNm1Kf4sCGSPf/nTWBnUWWv0tn3hw
-         M/ybGjWiiLLe7qmTpNPyRTOFLYT3h1YLfc8mVkxMY4AyLSV4SW9jnaylBUVVRzFJzd6j
-         oOlXERLaVUAvPWbxhOQdVOZznw/pQ9O1yyy7eyvjfrYHGveFfXd/WSPAoi5KENRHHbr8
-         81FPuxw29WNhzPIpy1UoQsRbpMZsvbXMswmPgQyqcVz9yXdK+IAMQDNOTAxyyOHQN5DO
-         Xzw9XM+I6wWhAwazped0PI15rx5vLnpMXxeJ4wKC9kwMkeUzdeckH/pQ+RVRgCl2SNQY
-         JvXw==
+        d=linaro.org; s=google; t=1734107316; x=1734712116; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2I58Ux8ZY0ny+rlH6gmLJtOle4a/IZMpAzFy/1Nda2k=;
+        b=QaqF4vjDtThzDGka2BGgkNJ1KM+HcdKakr/987+MKREDFKEpvnxjBxjwnRT3Muw3+M
+         8JQlAfc9JaYaPU/vbahKvnQgPA2lHZp5JZextqzD7FepR99mcFLkGHBt60s27A4ZbABT
+         wI8TDslsiA9J9AnLfAngwRA4IHiONoNJyEF215JPLSNwRbQ/X2HQBQrCZAi+fALYrIDm
+         ohS1qISS0dY4rwh+whyMsgFqA1lOO2UZNOnOZjxeHKuL+a+jo5FitUW89z8PkcOUQWuH
+         4vpxs1aEDMcHKZAEJT2Pbc7Yijp86reGBkTcrd2ewTPVyPcf4pMZyUbPoh9SGt66rnOi
+         Lwmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734107298; x=1734712098;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0HkpUMdpT1bOGFdhaxI+95tgENUX+xpDF8wyAC3G/e8=;
-        b=qpSoBtrabL6NB1lqqE5befhxT2B7zK8ch+bE48xgqNyqCUCyzlicvM8Q0Jsq04Wnpq
-         eQ3EASt7Aw7dsl8JtuN12znviEiHctm7fiWks9Ezsfe3/rQg3gI3g6J5GpwNdlfp/YTV
-         FA0u0NJjSlNuqB0NqfMewPCWWNVXuue2nvPceZnsninKlX9JFZA4/S1K6mR2OKKLRhK0
-         s9hAVhD0kXvo0t2YPBtd47jVpxyFbTiM8vFiZmXb27J+YxSCNYMfjHn+0j+MCxawBgAH
-         0ziru8n8N0ECVJjlum2T36ebTq7T2E8rEuqRrI1jM1quIqom2wqzsNqQthRb6WP78Ycm
-         u8Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1szVP+OyP5aCV4UhG0HG6BUTRMlaXXcUug2jcRySOxskVUR2JCEibN3gb98TCNH4vxWcoU66t3Xzz1AU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTLF/k7RYyqfv9aGWS/ucei5KGhlefOGsjZeRW9peLI3BS+nXU
-	qnt2GceIsqEezZkoc2ICscpd5kiiaEKobCIBW7+6aEFW7EinKfHhDuwpxyBP7xE=
-X-Gm-Gg: ASbGncsffRWxd2gI1wAqjtJaWiI1zgs+lZnflVaQ53sbQT4vtYaBUplEvHWWtYtQzou
-	eDzraL6yRF1I9bF9JfoVi3iH0IM3w+AQa4hD+v5YQ0e0gPBzDTA9vyWeJ3ExbL9LNyDJXFDBFnv
-	Wx1WTAEdA9++vufCfAnBb/O0oRq+cEdcnlrpszZ3tpWFdk/830RypY1siGWkdanQUahDGRpfFjQ
-	+W5fIjh/2FJK5/pulYPHwDZ78UPTIVbJZGGlSCBqH1OU9YC+1NKky5MnXi4+BuapH4x3cx0FEb9
-	KcEk+vZVxTvqwhIqa0v2zXoJ9Yu/w3Hg6gjOnombjQ==
-X-Google-Smtp-Source: AGHT+IHEbODzADsorYd+LpJC068MW4TXFz13cw2XglTXpEdo0jaL87bcR5cQpr16MMrGC5XroMk8Hg==
-X-Received: by 2002:ac8:5a93:0:b0:466:a983:a15a with SMTP id d75a77b69052e-467a581d253mr49010891cf.42.1734107298364;
-        Fri, 13 Dec 2024 08:28:18 -0800 (PST)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4676e091d95sm49623571cf.12.2024.12.13.08.28.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 08:28:16 -0800 (PST)
-Date: Fri, 13 Dec 2024 11:28:05 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Hyeonggon Yoo <hyeonggon.yoo@sk.com>
-Cc: Joshua Hahn <joshua.hahnjy@gmail.com>, kernel_team@skhynix.com,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	=?utf-8?B?6rmA7ZmN6recKEtJTSBIT05HR1lVKQ==?= System SW <honggyu.kim@sk.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	=?utf-8?B?6rmA65296riwKEtJTSBSQUtJRSk=?= System SW <rakie.kim@sk.com>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"horen.chuang@linux.dev" <horen.chuang@linux.dev>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"kernel-team@meta.com" <kernel-team@meta.com>
-Subject: Re: [External Mail] [RFC PATCH] mm/mempolicy: Weighted interleave
- auto-tuning
-Message-ID: <Z1xglcL7wb_2IwnS@PC2K9PVX.TheFacebook.com>
-References: <20241210215439.94819-1-joshua.hahnjy@gmail.com>
- <4ddfa283-eb64-4032-880b-c19b07e407e1@sk.com>
+        d=1e100.net; s=20230601; t=1734107316; x=1734712116;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2I58Ux8ZY0ny+rlH6gmLJtOle4a/IZMpAzFy/1Nda2k=;
+        b=cECBvGZEx2yzHvWyOdDX9PfgfuPhqMxIPmgp3Em1ZK65Z16EB+MlYBh9QeYPJd2yHS
+         AShD141x/G5Irt2IaSWQpc06iFDK1ysU3C6KxoI3fi7N6n2JdZHbEVF94GZBnSSMJv1T
+         fUCHUF/7Og0hy0Fg/8/SBr/SGvnoJq2qPJ3qQdRHGjsGMFvxbV7TjL2C5IdxwhuUJEqQ
+         z8Ggev2QG83udytqNz96FAinaqTFAhoIWqB+iTHvKyqZhQpRPQLSdHIuTFxtgEV8t9LQ
+         ts/FutwUS9QPxxXMu+VV6BUUKQ6DiIxoH+v2lr6qyQnFpOphABrIvgPRcMMW64wgGnb6
+         Q2SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhYO9/f+W+W+03OsNBIzfVZQNbDHCxLggf3toylK68XRFpsVMhqzV0ban4227QMqiLOOsRKL2YzmGmn4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfAE3jyBzsX4AiqZKXkfEJMpFNb7OiZ6lQijyQdsBw7BKMd8VT
+	v8/iJKBdCAIKJdSPK89a6KC9hzWiDkV7Y9yCz/MQ430GvUGnX7Eo5obOw73bdng=
+X-Gm-Gg: ASbGnctoaYZrM3noxor+UoZgw7VK6ZybwmiAo+xNftWep1RmotfGobDSqNcb6oHJWW3
+	Damwibys2Cc4/ZQdEnRuaoZKY/eL63ipwJTJqlkWNkBsiOKCqkKMyx+EOKI35LxV8m+uAst/uge
+	vRUOZ/K6VJ5dhdhudlcmonu+0ejCCSbsDrWdzwSMKNICPYcIdMTGDOAvqlUC2Ji/LJI6L89/NZn
+	+zjvoT+RQ0+Ew5xe4UpiI4I39ITezpTSBTDQahWI1VdObQHV/GAOwAAlfeuJgkSfxhyLChENdJj
+	AKRS4IVVG7dcwi827Mi3Vd4AXWjhe4A1lQ==
+X-Google-Smtp-Source: AGHT+IG10KHBp4AjIN6xfhVMKlOUcoFdTkAxXshzx/1Y8OW+O4y1zH3Z0ZF6t8CbjS1337UOxrK/BA==
+X-Received: by 2002:a05:600c:5254:b0:434:a902:97cd with SMTP id 5b1f17b1804b1-4362aa3f7damr27164525e9.12.1734107314723;
+        Fri, 13 Dec 2024 08:28:34 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:4795:2d16:2587:ed70? ([2a01:e0a:982:cbb0:4795:2d16:2587:ed70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878248f680sm7680018f8f.9.2024.12.13.08.28.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 08:28:34 -0800 (PST)
+Message-ID: <268d67c0-efdf-4ad4-b5fe-5b4f04e73131@linaro.org>
+Date: Fri, 13 Dec 2024 17:28:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ddfa283-eb64-4032-880b-c19b07e407e1@sk.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v5 4/7] drm/msm: adreno: find bandwidth index of OPP and
+ set it along freq index
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark <robdclark@gmail.com>,
+ Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241211-topic-sm8x50-gpu-bw-vote-v5-0-6112f9f785ec@linaro.org>
+ <20241211-topic-sm8x50-gpu-bw-vote-v5-4-6112f9f785ec@linaro.org>
+ <ddf91ba2-cab2-4653-b842-65a8e82b5160@oss.qualcomm.com>
+ <2f1c6deb-29f8-4144-b086-743fb0f8495c@linaro.org>
+ <80bed70e-7802-4555-a15e-e06fe46214c6@quicinc.com>
+ <c2d8f443-5876-4293-8d2b-ecd13eaf8285@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <c2d8f443-5876-4293-8d2b-ecd13eaf8285@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 13, 2024 at 03:19:20PM +0900, Hyeonggon Yoo wrote:
-> On 2024-12-11 06:54 AM, Joshua Hahn wrote:
-> > This patch introduces an auto-configuration for the interleave weights
-> > that aims to balance the two goals of setting node weights to be
-> > proportional to their bandwidths and keeping the weight values low.
-> > This balance is controlled by a value max_node_weight, which defines the
-> > maximum weight a single node can take.
+On 13/12/2024 16:37, Konrad Dybcio wrote:
+> On 13.12.2024 2:12 PM, Akhil P Oommen wrote:
+>> On 12/13/2024 3:07 AM, Neil Armstrong wrote:
+>>> On 12/12/2024 21:21, Konrad Dybcio wrote:
+>>>> On 11.12.2024 9:29 AM, Neil Armstrong wrote:
+>>>>> The Adreno GPU Management Unit (GMU) can also scale the DDR Bandwidth
+>>>>> along the Frequency and Power Domain level, until now we left the OPP
+>>>>> core scale the OPP bandwidth via the interconnect path.
+>>>>>
+>>>>> In order to enable bandwidth voting via the GPU Management
+>>>>> Unit (GMU), when an opp is set by devfreq we also look for
+>>>>> the corresponding bandwidth index in the previously generated
+>>>>> bw_table and pass this value along the frequency index to the GMU.
+>>>>>
+>>>>> The GMU also takes another vote called AB which is a 16bit quantized
+>>>>> value of the floor bandwidth against the maximum supported bandwidth.
+>>>>>
+>>>>> The AB is calculated with a default 25% of the bandwidth like the
+>>>>> downstream implementation too inform the GMU firmware the minimal
+>>>>> quantity of bandwidth we require for this OPP.
+>>>>>
+>>>>> Since we now vote for all resources via the GMU, setting the OPP
+>>>>> is no more needed, so we can completely skip calling
+>>>>> dev_pm_opp_set_opp() in this situation.
+>>>>>
+>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>>> ---
+>>>>>    drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 39 ++++++++++++++++++++++++
+>>>>> +++++++++--
+>>>>>    drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  2 +-
+>>>>>    drivers/gpu/drm/msm/adreno/a6xx_hfi.c |  6 +++---
+>>>>>    drivers/gpu/drm/msm/adreno/a6xx_hfi.h |  5 +++++
+>>>>>    4 files changed, 46 insertions(+), 6 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/
+>>>>> msm/adreno/a6xx_gmu.c
+>>>>> index
+>>>>> 36696d372a42a27b26a018b19e73bc6d8a4a5235..46ae0ec7a16a41d55755ce04fb32404cdba087be 100644
+>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>>>> @@ -110,9 +110,11 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu,
+>>>>> struct dev_pm_opp *opp,
+>>>>>                   bool suspended)
+>>>>>    {
+>>>>>        struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+>>>>> +    const struct a6xx_info *info = adreno_gpu->info->a6xx;
+>>>>>        struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+>>>>>        struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+>>>>>        u32 perf_index;
+>>>>> +    u32 bw_index = 0;
+>>>>>        unsigned long gpu_freq;
+>>>>>        int ret = 0;
+>>>>>    @@ -125,6 +127,37 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu,
+>>>>> struct dev_pm_opp *opp,
+>>>>>            if (gpu_freq == gmu->gpu_freqs[perf_index])
+>>>>>                break;
+>>>>>    +    /* If enabled, find the corresponding DDR bandwidth index */
+>>>>> +    if (info->bcms && gmu->nr_gpu_bws > 1) {
+>>>>
+>>>> if (gmu->nr_gpu_bws)
+>>>
+>>> gmu->nr_gpu_bws == 1 means there's not BW in the OPPs (index 0 is the
+>>> "off" state)
+>>>
+>>>>
+>>>>> +        unsigned int bw = dev_pm_opp_get_bw(opp, true, 0);
+>>>>> +
+>>>>> +        for (bw_index = 0; bw_index < gmu->nr_gpu_bws - 1; bw_index+
+>>>>> +) {
+>>>>> +            if (bw == gmu->gpu_bw_table[bw_index])
+>>>>> +                break;
+>>>>> +        }
+>>>>> +
+>>>>> +        /* Vote AB as a fraction of the max bandwidth */
+>>>>> +        if (bw) {
+>>>>
+>>>> This seems to only be introduced with certain a7xx too.. you should
+>>>> ping the GMU with HFI_VALUE_GMU_AB_VOTE to check if it's supported
+>>>
+>>> Good point
+>>
+>> No no. Doing this will trigger some assert in pre-A750 gmu firmwares. We
+>> learned it the hard way. No improvisation please. :)
 > 
-> Hi Joshua,
+> We shouldn't be sending that AB data to firmware that doesn't expect
+> it either too, though..
+
+Well we don't !
+
 > 
-> I am wondering how this is going to work for host memory + CXL memory
-> interleaving. I guess by "the ACPI table" you mean the ACPI HMAT or CXL
-> CDAT, both of which does not provide the bandwidth of host memory.
+> Konrad
 
-Then your BIOS vendor needs to fix their ACPI table generation, because
-HMAT can absolutely contain that information.
-
-[078h 0120   2]               Structure Type : 0001 [System Locality Latency and Bandwidth Information]
-[07Ah 0122   2]                     Reserved : 0000
-[07Ch 0124   4]                       Length : 00000030
-[080h 0128   1]        Flags (decoded below) : 00
-                            Memory Hierarchy : 0
-                   Use Minimum Transfer Size : 0
-                    Non-sequential Transfers : 0
-[081h 0129   1]                    Data Type : 00
-[082h 0130   1]        Minimum Transfer Size : 00
-[083h 0131   1]                    Reserved1 : 00
-[084h 0132   4] Initiator Proximity Domains # : 00000001
-[088h 0136   4]   Target Proximity Domains # : 00000002
-[08Ch 0140   4]                    Reserved2 : 00000000
-[090h 0144   8]              Entry Base Unit : 00000000000003E8
-[098h 0152   4] Initiator Proximity Domain List : 00000000
-[09Ch 0156   4] Target Proximity Domain List : 00000000
-[0A0h 0160   4] Target Proximity Domain List : 00000001
-[0A4h 0164   2]                        Entry : 006E
-[0A6h 0166   2]                        Entry : 01FE
-
-[0A8h 0168   2]               Structure Type : 0001 [System Locality Latency and Bandwidth Information]
-[0AAh 0170   2]                     Reserved : 0000
-[0ACh 0172   4]                       Length : 00000030
-[0B0h 0176   1]        Flags (decoded below) : 00
-                            Memory Hierarchy : 0
-                   Use Minimum Transfer Size : 0
-                    Non-sequential Transfers : 0
-[0B1h 0177   1]                    Data Type : 03
-[0B2h 0178   1]        Minimum Transfer Size : 00
-[0B3h 0179   1]                    Reserved1 : 00
-[0B4h 0180   4] Initiator Proximity Domains # : 00000001
-[0B8h 0184   4]   Target Proximity Domains # : 00000002
-[0BCh 0188   4]                    Reserved2 : 00000000
-[0C0h 0192   8]              Entry Base Unit : 0000000000000064
-[0C8h 0200   4] Initiator Proximity Domain List : 00000000
-[0CCh 0204   4] Target Proximity Domain List : 00000000
-[0D0h 0208   4] Target Proximity Domain List : 00000001
-[0D4h 0212   2]                        Entry : 1200
-[0D6h 0214   2]                        Entry : 0064
-
-Obviously if information is missing, then manual is the only way forward.
-
-> > +		The maximum interleave weight for a memory node. When it is
-> > +		updated, any previous changes to interleave weights (i.e. via
-> > +		the nodeN sysfs interfaces) are ignored, and new weights are
-> > +		calculated using ACPI-reported bandwidths and scaled.
-> > +
-> 
-> At first this paragraph sounded like "previously stored weights are
-> discarded after setting max_node_weight", but I think you mean
-> "User can override the default values, but defaults values are calculated
-> regardless of the values set by the user". Right?
-> 
-
-Agree that these comments need clarification, we'll workshop it.
-
-~Gregory
 
