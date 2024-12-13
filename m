@@ -1,139 +1,133 @@
-Return-Path: <linux-kernel+bounces-444737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7519F0BD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:04:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C3E9F0BE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:06:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E44B283D52
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94983282758
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF94D1DF27B;
-	Fri, 13 Dec 2024 12:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E3A1DF733;
+	Fri, 13 Dec 2024 12:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rfqd4581"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oVEYNQUs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ONQlSYEk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3702E1DE2B2;
-	Fri, 13 Dec 2024 12:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0523E1DE3D5;
+	Fri, 13 Dec 2024 12:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734091487; cv=none; b=V8nzPTpg7bwnhI2+weeeF+e/R0su/3gKhyNE7ZFzKDOVwSWl6hHQEfJaqO3sqqwFBz4yJebFvynzednMk0Ox7vMueubFzAdtEofBPhIAIbQR388naR6qtyWSsRhHorGLi77hBDHf0nYSisBs37jibii3EcmdDvKaKopqbIVVa60=
+	t=1734091565; cv=none; b=QX1QyYuCnkdIxpmCcQFvq4Iyg+XYb8YD5X1qNSE6hzCedGGCI8T4t7pO5rInlW7KDb6SSsvwqfq1ziaXIFWHC3hXcski5kAJOVhu3SfZHJ9MsfQcO3zIxKG3XLCnRxX+cIBuYak7uB3yYse0Ths5AtrdbzYksUUos1vhhz15K+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734091487; c=relaxed/simple;
-	bh=WcniSQgVJLHfCMtrvyW4Luo0Ii/2lI46/4EdKPcjfMg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cuOygoNtK2FgUgXJyHV5ED9SvgDOI4IXlRYgqFjUj0MBIhXEuRDCOOA6V6uQ1CUEduToaioChfAnr4GH2+E9e+NmCcN5VggbNzkhmjGY6ApVEoZOFMdX8rPKk7BBEL/IdhGMPk5d/nYicxhBQIFYCvzmb/SqYZP0a+9eiHexhBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rfqd4581; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FC1C4CED6;
-	Fri, 13 Dec 2024 12:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734091486;
-	bh=WcniSQgVJLHfCMtrvyW4Luo0Ii/2lI46/4EdKPcjfMg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Rfqd4581qrcDIQFwOCUczRbjnEamfD0qAPDNh7ywxPYEkzGr0IHt6bfexb9ljc/9q
-	 MyvTczyoDYo9Vv477YRNUMTxIkDVtP85Fl6JgqlSt4ZA+xqQS1TyTZ+yY8fUyJYeUw
-	 aYfXY/eVdLXi8y0cOJ7WapOBOZBwEuD+RmAanG85dfbC5c2zRuL0A5xhiJ8/Jn7lk9
-	 mhJt4Bj0N9fCueY+6bwRogUO6a/OSvleeuQtjFOaLjEBWZ2iPr2Zcs88mzehB3455e
-	 on+mixI13SuRqO4kZPOwbBYU25YH+zRDbuCFIUlBJD6Yixn8Cf8oa/9KGFesEFktMJ
-	 gTwMzSEbLJlCw==
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9ec267b879so230881366b.2;
-        Fri, 13 Dec 2024 04:04:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUx6BOd1C5512Gfn2DSfzj5R6DTlJ73My1/nYgimn/Wj33A3/afkKLTgXVdf5jGz4uoH2X41Xg38L1t2BXh@vger.kernel.org, AJvYcCVUzW79Sr1oOXK2ITIGlFmLZ7zq/pIAU+z8CPEjMUkDKBpg0NEND9IkQSSfjWwySJ4kEniAEIyXUNkmsQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS7tsUSM1V0vErSpOzlNE3rB3JsAuUFkAybvUTj9cTRTtOCtwy
-	A8dRSdIUdC4HMswmgIVCSyPH02QG/Re9EyY+01Vrboa8C/W3sta1VbNZqtT1OoV3zM5dP74r9FD
-	wtji/IPCzSi2sc3CAgkIRutCGcCA=
-X-Google-Smtp-Source: AGHT+IEAc5VTRs/VwLLEfupJwd8Mbf6qXGbxNToLw+JMu2Ex/AKcsct0fgEj0J3Vp2xJp+P3/whyFBcpvDLol+aL7dc=
-X-Received: by 2002:a17:907:7f17:b0:aa6:519c:ef9a with SMTP id
- a640c23a62f3a-aab77ead24bmr206389166b.53.1734091485302; Fri, 13 Dec 2024
- 04:04:45 -0800 (PST)
+	s=arc-20240116; t=1734091565; c=relaxed/simple;
+	bh=+RZFa2Xfhc8BH2RESSI3IRpzEiCblXT+GkQ/ZoYO32g=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=of44pa+2d4z7YUXq98NP9X0vjbJ5KmxLUAyrGkZknByltiRSPf6Y5E0wWNGKAiCB1y/cCdWfXHiVpHPrW3PNtE2EZSkHDkrZsVTggus/6k9aZaF8/wWTF2InUlYuiZJQ0gXU+78r04CmNs7xJnws/hTE/uplfX9EBG/iMpkqCLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oVEYNQUs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ONQlSYEk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 13 Dec 2024 12:05:58 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1734091559;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=muAdKLGkA67I6SLs6zGptZMBU+e9lqYpUtvz61biYfs=;
+	b=oVEYNQUsT00JOByA19FH5hpYirk7e3t+Y14HT4i7P6F5QbRD+lCXXW1UO6BBgKCVy+0aPV
+	zTW3TdUc591hDNyvsdx/glciqMjHzHA56TR4AF6SPJIz/9DinIJI4kHWoRiuBYKjTIU1dz
+	JSY3QxL5dToR+oIP+eENPDVFXYzRW9vY3mYKMiOwFEgphfJ5iU30xM4qk71qz82vPUmzR2
+	EyaCeajV39/iIlWfzlaS9AeHDDMVhxlQlxSdlSO86YQZP3e5C/qyqwt5cfuMw1t3VtwySZ
+	KHLEyR2kXiv7EnrGZGhwRbY97eko9NGKOIFug0f4JbWdw2XUKu4hXPnuGIp9RQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1734091559;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=muAdKLGkA67I6SLs6zGptZMBU+e9lqYpUtvz61biYfs=;
+	b=ONQlSYEkg3kFxGHhrYcgXE8JvSU5i5MK79A3Ou55jR1BN4+DQqvdwgmNhgoJ9RZL6rKJJu
+	XZzLeaoUYYVuxsDQ==
+From: "tip-bot2 for John Stultz" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched: deadline: Cleanup goto label in
+ pick_earliest_pushable_dl_task
+Cc: Todd Kjos <tkjos@google.com>, John Stultz <jstultz@google.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241206000009.1226085-1-jstultz@google.com>
+References: <20241206000009.1226085-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212-btrfs_need_stripe_tree_update-cleanups-v1-0-d842b6d8d02b@kernel.org>
- <20241212-btrfs_need_stripe_tree_update-cleanups-v1-1-d842b6d8d02b@kernel.org>
-In-Reply-To: <20241212-btrfs_need_stripe_tree_update-cleanups-v1-1-d842b6d8d02b@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 13 Dec 2024 12:04:08 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H5wOD4fJQ2BTpeqMmscbcS6pV9UN7ThHgi_W6vF4nPrAg@mail.gmail.com>
-Message-ID: <CAL3q7H5wOD4fJQ2BTpeqMmscbcS6pV9UN7ThHgi_W6vF4nPrAg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] btrfs: cache stripe tree usage in io_geometry
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Johannes Thumshirn <johannes.thjumshirn@wdc.com>, 
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <173409155850.412.11730564987439132370.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 12:55=E2=80=AFPM Johannes Thumshirn <jth@kernel.org=
-> wrote:
->
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->
-> Cache the return of btrfs_need_stripe_tree_update() in struct
-> btrfs_io_geometry.
->
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+The following commit has been merged into the sched/core branch of tip:
 
-You can also mention this reduces the object size, since
-btrfs_need_stripe_tree_update() is inlined and has quite some logic
-there.
+Commit-ID:     7675361ff9a1d9038025c05267600d0c762c0236
+Gitweb:        https://git.kernel.org/tip/7675361ff9a1d9038025c05267600d0c762c0236
+Author:        John Stultz <jstultz@google.com>
+AuthorDate:    Thu, 05 Dec 2024 15:59:35 -08:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 10 Dec 2024 15:07:06 +01:00
 
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
+sched: deadline: Cleanup goto label in pick_earliest_pushable_dl_task
 
-Looks good, thanks.
+Commit 8b5e770ed7c0 ("sched/deadline: Optimize pull_dl_task()")
+added a goto label seems would be better written as a while
+loop.
 
+So replace the goto with a while loop, to make it easier to read.
 
-> ---
->  fs/btrfs/volumes.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index 1cccaf9c2b0d5d4029440c46a4a92c7d6541d474..fa190f7108545eacf82ef2b5f=
-1f3838d56ca683e 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -48,6 +48,7 @@ struct btrfs_io_geometry {
->         u64 raid56_full_stripe_start;
->         int max_errors;
->         enum btrfs_map_op op;
-> +       bool use_rst;
->  };
->
->  const struct btrfs_raid_attr btrfs_raid_array[BTRFS_NR_RAID_TYPES] =3D {
-> @@ -6346,8 +6347,7 @@ static int set_io_stripe(struct btrfs_fs_info *fs_i=
-nfo, u64 logical,
->  {
->         dst->dev =3D map->stripes[io_geom->stripe_index].dev;
->
-> -       if (io_geom->op =3D=3D BTRFS_MAP_READ &&
-> -           btrfs_need_stripe_tree_update(fs_info, map->type))
-> +       if (io_geom->op =3D=3D BTRFS_MAP_READ && io_geom->use_rst)
->                 return btrfs_get_raid_extent_offset(fs_info, logical, len=
-gth,
->                                                     map->type,
->                                                     io_geom->stripe_index=
-, dst);
-> @@ -6579,6 +6579,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
-enum btrfs_map_op op,
->         io_geom.raid56_full_stripe_start =3D (u64)-1;
->         max_len =3D btrfs_max_io_len(map, map_offset, &io_geom);
->         *length =3D min_t(u64, map->chunk_len - map_offset, max_len);
-> +       io_geom.use_rst =3D btrfs_need_stripe_tree_update(fs_info, map->t=
-ype);
->
->         if (dev_replace->replace_task !=3D current)
->                 down_read(&dev_replace->rwsem);
->
-> --
-> 2.43.0
->
->
+Reported-by: Todd Kjos <tkjos@google.com>
+Signed-off-by: John Stultz <jstultz@google.com>
+Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Link: https://lore.kernel.org/r/20241206000009.1226085-1-jstultz@google.com
+---
+ kernel/sched/deadline.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 33b4646..643d101 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2516,16 +2516,13 @@ static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu
+ 		return NULL;
+ 
+ 	next_node = rb_first_cached(&rq->dl.pushable_dl_tasks_root);
+-
+-next_node:
+-	if (next_node) {
++	while (next_node) {
+ 		p = __node_2_pdl(next_node);
+ 
+ 		if (task_is_pushable(rq, p, cpu))
+ 			return p;
+ 
+ 		next_node = rb_next(next_node);
+-		goto next_node;
+ 	}
+ 
+ 	return NULL;
 
