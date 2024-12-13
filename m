@@ -1,57 +1,66 @@
-Return-Path: <linux-kernel+bounces-444412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB279F065C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:31:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE5B9F065E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:32:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA02282089
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:31:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A66D16474A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69451A8F95;
-	Fri, 13 Dec 2024 08:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4221A8F9A;
+	Fri, 13 Dec 2024 08:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIHHESbt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyWcYPxB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A84A1A8F7D;
-	Fri, 13 Dec 2024 08:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A489A1925A4;
+	Fri, 13 Dec 2024 08:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734078687; cv=none; b=TgGHX/B2E0idDUtJ7sif9W2GzIUIZDAPFUsCrJQAVFBiuSotnI0aZgJhkH0K6kFmGyzXmX5UHVMSBflnIOHDUEHpL07RTPipboW42PXDpMSYP0yCisw07VXcnwGatgV11P45LjFWT66R3XmE2QFIaJ2CFuOLy5VhXD64Mv/lUUQ=
+	t=1734078756; cv=none; b=DLMZJpzDsoxU5JUl7O06bftrFliGWmXevXkAe9Vud/JRYaNMNAjFP0hVW6arJObAGcs6Vj78bZwXO400ielnwo2xyC42l/3HKtoQCh6a5Q1GbHVE9ePCZ/NQoPFIkv4vY/4nguhZEL1dhRIHpXAdORZemb1hBPgEDdjxL3Fdfog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734078687; c=relaxed/simple;
-	bh=e/MEF4pvPAfE0mbIC8ioAQB5ZG388Lw8xBNOl6bDvvY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E6czaaazjCoBTB5uG0qMjNULUEloXlt5CN8F/BF4/+Nd16MEIS1GvscVn823fPxAktcSBaNI8brehOlseXDOfKx/E7eKFDnn+RywMfqGIdxFzQAweDKpIsvkMEdZ7JmrnIISVOD0KFoxXD8cT4MJnjA/WOXkgcZxrrx90zMn2Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIHHESbt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B5CAC4CED0;
-	Fri, 13 Dec 2024 08:31:23 +0000 (UTC)
+	s=arc-20240116; t=1734078756; c=relaxed/simple;
+	bh=VsnNfOyHMOOyO6kBZYiq2DtvTDiNv3udddU/7YBRqUE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OCLQPWneebNZzv4bkx/CGRnmhdtNy+Wy/kRUDWlSKqOBCPbBRVxgL9ztA1X6WbkCSuOfiaiVKt6qTPaPhrv6ALAFNK4C8t1EiWx+M78WLpUjnmVFxxRqTNL5hCXAVMFXmOzbONx7YEJJ2gbJ9J6WU3qbV4pZH7E8F9y6OHA5+CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyWcYPxB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 688CBC4CED0;
+	Fri, 13 Dec 2024 08:32:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734078685;
-	bh=e/MEF4pvPAfE0mbIC8ioAQB5ZG388Lw8xBNOl6bDvvY=;
+	s=k20201202; t=1734078756;
+	bh=VsnNfOyHMOOyO6kBZYiq2DtvTDiNv3udddU/7YBRqUE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=aIHHESbtauga0Oa1GfdHpHqNixTZHui7FS6fu4Bmy8SimUcf2AM3l+IMcrXhbaPWe
-	 D0JDf2Iv6i0hE1kitporKVuz3RvIGv5Dm/w1g3091VWu3puvnGMo+jW70lT3SEIHWg
-	 HyhjsO2W13sXSvYJov9Mo8dwwzcyGVqzSTO/jaJyfWvl4bpXVMGn+r6Iq37dFi6E98
-	 bRkVojmEvdJiNcGFn7GgnQH144czCDjpKtPfhi0aZ0VGoEFWdarUfai6zOJ4ydPVb5
-	 ZX3FGBBdhiIr5aPWgyH4xHpGpswDSoUj34do16p8QNhHI9Acv26LqEs/e3d28uTVci
-	 +IZ2vpDFgveIg==
+	b=PyWcYPxBTCqZrLl0Kv8s7RlVSxhukOhXC20z4c1+hwMzHX5y5Z5k+JOrU2LKbdY57
+	 AoEAa/GySlX/5DJNSJaRQ1Jtyoy0WbOVWSQoYg1XCAnINmlBgGtWLES2bUmKMPfIrd
+	 p7WdvZY6QmFQzdF3hi4zujpJVBASqTxIM8OxcjOooeY+Xy32UmepDWLUfUuh2cUWzg
+	 x5EbJUIgvAh4x9zcCQg0Ek7KY6JVYUzC+SEzsXzJYbjnnmNnFkz/POjnYeplqH5w8H
+	 ZIOlyCST0vhE4HNj3DR/KWXzUeMVcqdAzPZOSsDkh0F01P/GGYLgm2e0l7oi1p8Dv6
+	 CVzqKuc30EFsQ==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Bharat Bhushan <bbhushan2@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	"Everest K.C." <everestkc@everestkc.com.np>,
-	=?UTF-8?q?Dominik=20Karol=20Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>,
-	linux-staging@lists.linux.dev,
+	Simon Horman <horms@kernel.org>,
+	Zhipeng Lu <alexious@zju.edu.cn>,
+	Dipendra Khadka <kdipendra88@gmail.com>,
+	Ratheesh Kannoth <rkannoth@marvell.com>,
+	Sai Krishna <saikrishnag@marvell.com>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: gpib: add module author and description fields
-Date: Fri, 13 Dec 2024 09:31:12 +0100
-Message-Id: <20241213083119.2607901-1-arnd@kernel.org>
+Subject: [PATCH net-next] octeontx2-af: fix build regression without CONFIG_DCB
+Date: Fri, 13 Dec 2024 09:32:18 +0100
+Message-Id: <20241213083228.2645757-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,28 +72,54 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The FMH driver is still missing both, so take them from the comment
-at the start of the file.
+When DCB is disabled, the pfc_en struct member cannot be accessed:
 
-Fixes: 8e4841a0888c ("staging: gpib: Add Frank Mori Hess FPGA PCI GPIB driver")
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c: In function 'otx2_is_pfc_enabled':
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c:22:48: error: 'struct otx2_nic' has no member named 'pfc_en'
+   22 |         return IS_ENABLED(CONFIG_DCB) && !!pfvf->pfc_en;
+      |                                                ^~
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c: In function 'otx2_nix_config_bp':
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c:1755:33: error: 'IEEE_8021QAZ_MAX_TCS' undeclared (first use in this function)
+ 1755 |                 req->chan_cnt = IEEE_8021QAZ_MAX_TCS;
+      |                                 ^~~~~~~~~~~~~~~~~~~~
+
+Move the member out of the #ifdef block to avoid putting back another
+check in the source file and add the missing include file unconditionally.
+
+Fixes: a7ef63dbd588 ("octeontx2-af: Disable backpressure between CPT and NIX")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/staging/gpib/fmh_gpib/fmh_gpib.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c | 1 +
+ drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-index 2ed286fa5d6e..0662b20a45e7 100644
---- a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-+++ b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-@@ -24,6 +24,8 @@
- #include <linux/slab.h>
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+index bf56888e7fe7..2b49bfec7869 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+@@ -10,6 +10,7 @@
+ #include <net/page_pool/helpers.h>
+ #include <net/tso.h>
+ #include <linux/bitfield.h>
++#include <linux/dcbnl.h>
+ #include <net/xfrm.h>
  
- MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("GPIB Driver for fmh_gpib_core");
-+MODULE_AUTHOR("Frank Mori Hess <fmh6jj@gmail.com>");
+ #include "otx2_reg.h"
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+index 44d737a0dd09..65814e3dc93f 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
+@@ -505,9 +505,9 @@ struct otx2_nic {
  
- static irqreturn_t fmh_gpib_interrupt(int irq, void *arg);
- static int fmh_gpib_attach_holdoff_all(gpib_board_t *board, const gpib_board_config_t *config);
+ 	/* Devlink */
+ 	struct otx2_devlink	*dl;
+-#ifdef CONFIG_DCB
+ 	/* PFC */
+ 	u8			pfc_en;
++#ifdef CONFIG_DCB
+ 	u8			*queue_to_pfc_map;
+ 	u16			pfc_schq_list[NIX_TXSCH_LVL_CNT][MAX_TXSCHQ_PER_FUNC];
+ 	bool			pfc_alloc_status[NIX_PF_PFC_PRIO_MAX];
 -- 
 2.39.5
 
