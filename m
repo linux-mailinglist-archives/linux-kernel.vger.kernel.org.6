@@ -1,124 +1,142 @@
-Return-Path: <linux-kernel+bounces-445029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771139F1014
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:01:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288009F1018
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32AD02842F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D827D28434C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A161E570B;
-	Fri, 13 Dec 2024 14:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5521E5018;
+	Fri, 13 Dec 2024 14:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D2Dd3GJQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YMyBstRg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956781E2843
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360A01E5711
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101862; cv=none; b=bONgF8T7TNbx1Lp6fYZ0lIGHAJCe6v3/tu4tuUMoGFtfJlgGtl/H1vVdnOVRUjlvYkDLEftpg+SqdFxG3iPqOxgViJ0E/VPxyqcBTGuSU5Lveh3Rp3KPz+th9fi+N/kY58gdS4sNPJgy8oHaF/tfjg0pLL4Wh0UraNBHL9Dz1Ts=
+	t=1734101864; cv=none; b=fKf2IRSl7t6ifHpeUFxIsGKOeG58BmQfDD1ROLAgL9TSX8TAtXRGrJRpQ1kw1SdNiVDZILNk4exYC2+KCWU2JxXYWNMZHecyasJwBBOSTDmV135ViCrE/MbQCfweLUaudtiCDNToPYNcpoFO1ZjTnpq0H2OsiiwkglVGCtUvvI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101862; c=relaxed/simple;
-	bh=lrh7m0lFZHJvmErfOP+qhjC3hXEdqN8L3UwU5ksc/iI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eK3J8xG0DGYLCJKoZN2xjjph53pTK0ny4Prb2tw/Hf0navEox6eS2q2/sq6LPMafIeLYaNpAvtEq9Dw49w4GNJJQaHttvbQqtLCLcVL4KYPp0a9BDN62FErAxvrVtQ/Lsmyz8IdwG6MmUkYRJkz6RcWLeKHU7BevWwB16TDyLbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D2Dd3GJQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734101858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A2tfhKUbIcOYUrk0xuJCPYYt5LLC03zn1Q0XJSOfGSs=;
-	b=D2Dd3GJQp2xDnjdvTn6om9h1xPsJqJMcnEH3zrbLMhFqfRpDZ+c7pD9WkC6Zj8hn71ESvr
-	hADm8EIjHHwzWsrH/uAkeE9/FsqdLxx5IK7HS6+V4SaVG0sm9Sg36jAP2qXm8nyZcIAwG8
-	K8j721WnrQgLo2Et3+CXFYgDcbzO00M=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-154-MqVWHY9rPAq7-_-gd4dA8w-1; Fri, 13 Dec 2024 09:57:35 -0500
-X-MC-Unique: MqVWHY9rPAq7-_-gd4dA8w-1
-X-Mimecast-MFC-AGG-ID: MqVWHY9rPAq7-_-gd4dA8w
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4362153dcd6so11044555e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:57:34 -0800 (PST)
+	s=arc-20240116; t=1734101864; c=relaxed/simple;
+	bh=2wbusRXsQuSNC7B/G7v9dU51tNviFif89ZayEn5EW14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bDYkh4ugdx51RLz8SjuTdzHV2iTbvH84cNUo9X4rtVXMHjvk7ExNOi8DgmSf8bUxqBM3c9fXmYKCxSwT8Dhuvt0OwGonwl1gg4ZBQpxKhLqfEfU3wqb9TPg32S6A+zZfGRIMTzXGLBgtwTfrb91ouYKtJFs+zj0NZZRTyRleZD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YMyBstRg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9pXUk019080
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:57:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yy+BqQEvdcyQQobfQdkXsHodirxNgq3Fxt9gXerLzbw=; b=YMyBstRgGmznZRrM
+	4IartXijBTa7hGTO93F0KYAQqrWq7mN/KcjCo5DF1Stg0H59a21C6sJ2soWL+jhR
+	jH4DOyLZM3wZuaCC996nwZzEcR8+VDBV69J7oTJEYOuWOcdJIJj/sDfBapEPpkiS
+	IEplGxZyulKFXgk34H20bXE9eYlniqGXp2d/EjeLLIzhGR6TGTfLc6/Yjop9YkRO
+	tXgS+uo3Wx8MWR1WY6jXn5IH/sZvpIoR75eVLwT+mYUiQu7L5IZZ5QQxt+puEcm+
+	wLdFyIaM5BSyAGFE0ir8hIhGFDxe8w/ze6W5q4ZD2BjOHT8di6zIJSPRL3oJAIDM
+	SHgosQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gjnb0ujd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:57:42 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7b66edf3284so17225585a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:57:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101854; x=1734706654;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A2tfhKUbIcOYUrk0xuJCPYYt5LLC03zn1Q0XJSOfGSs=;
-        b=Zu67ZIjpFrvWJMD4VKipTlAqe8xQgauwR7d7sUBsTvcN8B5gK3alhzHu0xRf5hboDH
-         jcHJZWhmf7FBHkVPNh1JA0LL50nD+a5FseP9ypLTaH+tcCsSpxHBoKxliWe1Q6rxcPcC
-         OKq+WEGhPLdlyhhwEFi3F4jFfedQz8AcgoJA5fxvkhxufP5UrVck/d+ftmaUkSHTquP1
-         6g/D5pSsajy1+EMGUqSyry9QD2z9EiUNIpWyEdHaJIKkEGbmNqHsrHeOCmF4P3eeMZXV
-         90N6aw6ZS2brQ6L9//X3oCdLHQA//y3NSrE4mjOfUpYlk+9P/w4OlDjVonVWfPwVGUdI
-         JwUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVj3Enw9wsYKQsgf3rf0c4NnMPp9kJrlCdq2j7cuFh47c2QiJ/TZwi/+WLaG2qCvIkEpN8bs7+NortGRbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzSC4wrxYD/bc1a6T+nwC/udIBzc7VsaehySChjMdyMHcZbxW9
-	2HaSn+qEwVLMRiwWvstVvs6FEd26if7sxFh21mnbkdMhpmEjR+T5DLNSPnwhcw3es29z/qsv+Zg
-	lqcLovmUfx0DO0LCAmwGA/UArUOxUNfObXz9FFN/o4Ciy0ScZj73UU5IqRZSvHQ==
-X-Gm-Gg: ASbGncus8tReR3nvH77WQCMLMsoiNm99IsjM3XJU4BpqhIQNvSwh9f7GL3PsXuvi3MH
-	BSDwGteErvu48qYch0FGvo7vUxWCZjdwtEPP10vAu8NXmC46KZV9fiSV7p/lHyoenWYwEQ8fKL2
-	iK+wRR8azFhMQGB7dC8tVxUWMyDDhACq6SYdktVGwGzkK2iXuKr1vWXJ3whqbKcSQp/sT2Br8Tf
-	1oeAKQy2kvBpg5AWP7XTRvTndRhiwk5qywKO+Y+jEpnKjNtf1Ur5W1MCZWweb9+yvRpH+iKVMJj
-	Y4nB6G73Vj+IlHKcSb4PbXoXIDopIo7EZ18TeMvJ390=
-X-Received: by 2002:a5d:64eb:0:b0:385:f465:12f8 with SMTP id ffacd0b85a97d-3888e0b84c9mr1774252f8f.47.1734101853843;
-        Fri, 13 Dec 2024 06:57:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGTMz3HW7eTVstHUaz5OcXKBl8XXEsV7siwbGA1VkR83AwBxBhNp9Z4CNB/JxySD245uHdfjQ==
-X-Received: by 2002:a5d:64eb:0:b0:385:f465:12f8 with SMTP id ffacd0b85a97d-3888e0b84c9mr1774235f8f.47.1734101853538;
-        Fri, 13 Dec 2024 06:57:33 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-197-226.as13285.net. [80.47.197.226])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824a5085sm7303896f8f.38.2024.12.13.06.57.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 06:57:33 -0800 (PST)
-Date: Fri, 13 Dec 2024 14:57:31 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Vineeth Pillai (Google)" <vineeth@bitbyteword.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Joel Fernandes <joel@joelfernandes.org>, shraash@google.com,
-	marcel.ziswiler@codethink.co.uk, i.maximets@ovn.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] sched/dlserver: flag to represent active status of
- dlserver
-Message-ID: <Z1xLW1_URkdWdjwG@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241213032244.877029-1-vineeth@bitbyteword.org>
- <20241213125147.GC35539@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1734101861; x=1734706661;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yy+BqQEvdcyQQobfQdkXsHodirxNgq3Fxt9gXerLzbw=;
+        b=M1hBaxj6Rt3O/B1j8DYo6zAp6Fo1SQ371i7kCteNTzjgPaSKFYvQ0DuJGvarvF+2w9
+         50HTTxhzeGhf4ITZUrdYMg8Z7+00fv9O5naVJiNnyfzo2XwPuynSScjqfQj+2QC7/M3s
+         xU2n2nnZhTEEM/YH+czGI0iIyc4nZL4fga9sgQVB36DlpDbmPXHql75If3EAmlgeltdL
+         3AjsLW3pknZM42N9lrEbPcKvZuzoPv2ZNCh2c+OMfq7r2XsxA5kF+4eq8WlOg7WD3u3I
+         yqPN38muVZsvQkLOv3LfiTzEVbfj6J81E5oIdThFGYxek8rpHmeF4oLSvDR9UcYJtCN1
+         JLPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgF3UoIw6AN6cmVq8I0VW6W3WTVrqFKMJAjK/ZpJdzxy6GpHqHQLRK/eRGM9rV+11WD0jM3oyNX4djD0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuJHYEjmR2oFsF4k0XgueTRljjOltCwaYQvCo6bKJ8KR4T2pFy
+	ReL29lRbWV3OTK+o2Z3dsjIqLxjsGhcZ6STOG2cnX+Xtwzd+HgLkKyzjlQ2TsBR/dwPPJDAs8lq
+	kVurCz4tPFk0j4KDJwikEZqSotXkDkPeH8iB/M6D1f177yU7U5nInwaPUihm3PcA=
+X-Gm-Gg: ASbGncsgawZCvvv5F25UTSbnWwzFOdE6Vk9zd1xbMy8jbkiocQ0dZLyPhiRZoZtkfd2
+	pLgWg8MW2VOnFNFwtgRXRoAreolhV6SbGGdD6VSm3Fj8Tv2ZUETaQE8HHf3Hyca3FJmW3QMyDmE
+	CqUn7BmtDS+nMcE6cbW0tIVoXYc4xzeeOpdKiU5w+ZvjbCxhshlD52C2ONL/DAzDdq5wyogwSsE
+	frxRhjsoP6ElgRgWl2i6UhdbHs9vZrnWpv9rV0sOhBQg/zFX6uv2QnkjIPFsI0cDC1tdGH6Lv+1
+	S2scyBTUIomXPbSh4D3pCWXy/lA5Cd38P6yW
+X-Received: by 2002:a05:620a:4714:b0:7b6:e196:2219 with SMTP id af79cd13be357-7b6fbec47admr173853085a.2.1734101861178;
+        Fri, 13 Dec 2024 06:57:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHAimFcstVhPN2cuWe2dozek2VKAfYeR6Wf341B+nTNgMTxY3HBZFRX09MtFPmAK3JgpfclwA==
+X-Received: by 2002:a05:620a:4714:b0:7b6:e196:2219 with SMTP id af79cd13be357-7b6fbec47admr173851185a.2.1734101860837;
+        Fri, 13 Dec 2024 06:57:40 -0800 (PST)
+Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa65d18510asm936966766b.122.2024.12.13.06.57.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 06:57:40 -0800 (PST)
+Message-ID: <77b74653-7cbd-4dac-8faa-5f181b60e161@oss.qualcomm.com>
+Date: Fri, 13 Dec 2024 15:57:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213125147.GC35539@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 21/23] arm64: dts: qcom: sm6115: Fix MPSS memory length
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Abel Vesa
+ <abel.vesa@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Luca Weiss <luca.weiss@fairphone.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241213-dts-qcom-cdsp-mpss-base-address-v3-0-2e0036fccd8d@linaro.org>
+ <20241213-dts-qcom-cdsp-mpss-base-address-v3-21-2e0036fccd8d@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241213-dts-qcom-cdsp-mpss-base-address-v3-21-2e0036fccd8d@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: FkMsGI-C_HU88JN_qaLlF4qPFtOgBFhL
+X-Proofpoint-GUID: FkMsGI-C_HU88JN_qaLlF4qPFtOgBFhL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0
+ priorityscore=1501 impostorscore=0 adultscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=837 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412130106
 
-On 13/12/24 13:51, Peter Zijlstra wrote:
+On 13.12.2024 3:54 PM, Krzysztof Kozlowski wrote:
+> The address space in MPSS/Modem PAS (Peripheral Authentication Service)
+> remoteproc node should point to the QDSP PUB address space
+> (QDSP6...SS_PUB) which has a length of 0x10000.  Value of 0x100 was
+> copied from older DTS, but it grew since then.
 > 
+> This should have no functional impact on Linux users, because PAS loader
+> does not use this address space at all.
 > 
-> Thanks, I've invented a Fixes tag for them and stuck them in
-> queue/sched/urgent for the robot (although I don't expect many
-> complaints from it).
+> Cc: stable@vger.kernel.org
+> Fixes: 96ce9227fdbc ("arm64: dts: qcom: sm6115: Add remoteproc nodes")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> I'll graduate them to tip/sched/urgent if nothing comes up.
-> 
+> ---
 
-Thanks a lot Peter and Vineeth for working on this! The changes look
-good to me so feel free to also add my
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
-
-At our end, Tomas should be testing them as we speak.
-
-Best,
-Juri
-
+Konrad
 
