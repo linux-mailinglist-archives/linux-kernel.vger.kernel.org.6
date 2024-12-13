@@ -1,174 +1,140 @@
-Return-Path: <linux-kernel+bounces-444710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526059F0B5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4239F0B59
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD1D161743
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:36:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7FCF1656C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700B41DF988;
-	Fri, 13 Dec 2024 11:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24591DF969;
+	Fri, 13 Dec 2024 11:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t8yg3K4H"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Rw4RuQip"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFEC1DF242
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC58F1DEFC1;
+	Fri, 13 Dec 2024 11:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734089669; cv=none; b=HAmvNgx98hvdTquSTpVWSt7pnQunXPNM2/fOB4TiXrbM4sKp3YaR0G1U/gfj05xyLMkrcP6P5FBGOC4lEP/w265HvD9NbPEo8ejvxkoYJ0skKNasJUP5Ri+VfyRuLgng5SOyEdxO/QfwfySP5Q/v1V+pQbVSLZO78IJwPyxSAEM=
+	t=1734089668; cv=none; b=sliMwfuA1T3bTo747aniZL6pxpJqdRMe24EWag4jvzZufAupjKVkDX/oyGkmpbH4P7jVkm56TwlRSgFnxl3jPRIxxZVRVznV+FCL8Zx6MEbkl4cv7PFbAq82wqwzJXewKFfpmEDk+PDa25riHmrryrduP9tqq8UZAz45DAc+4oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734089669; c=relaxed/simple;
-	bh=4XfO9sgRR89Q+W9l3UVT/d7WgRINh0RFlj7iisUzSSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qZjCxfwD92xx10oMSr3begBISWtUrsxdV8mzAzrm0Ls0Cs7CSm/eiBX0rBd87onXFbGYDfHoRgY3hekboBpMmTsphqwK1nKD1Qi7zsb4IKYt8vyreHfVhQJlaqM96MKEr3b6R0VHwIAHq2PsDSqUhNb2wr0ex40G8R0hsBINBuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t8yg3K4H; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361b0ec57aso15582525e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:34:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734089666; x=1734694466; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VoLSaqzOSgXTHhnrnBIXiVWZQerMmrmkF4OQm6gfaXQ=;
-        b=t8yg3K4HuJOQUWWwhafEpqBrJaKiZKZmA5y1s36J0W4dUmZmLI6y0nzF0S3u5eBbyU
-         thHcVU5L+OdrrnXZft4OTJK6APLOMrD7jaWmsFZvZZiPKuCTFXsk9h6NiezLuJej3QYj
-         fTrLxnSXOFrlgQGNxRbrA3KuUWmqK9Y6lx64vnsvFfEuZ6aGYDwNZ0YJGQyfi/0dtdVS
-         6fGEyGW7vBg3j/yLwMHqZjiRs2PIIU4wUQ+qjAR6irmZU/EowyNM7Ph7/KEky7hXLM2L
-         ZkiKZldsU9dpj2bvjOPaPHH5jYUF5dd15Lv/1UzXWDk1w458WwHAQfhAXRL3DZaBJL+D
-         v0/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734089666; x=1734694466;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VoLSaqzOSgXTHhnrnBIXiVWZQerMmrmkF4OQm6gfaXQ=;
-        b=u45whVFOky6zUwuP9JhQcZdesOtAyZTbC+52ASs7U8AVRNTvW5Vj+Xj63GKa+H4d+B
-         enuoRUeWMdz/TpMUUvFNOJszLk1yP4MSUfYPv6onJAnoBNYbWJwWDo3hJax6Ij2ZC3WY
-         QZ9ukrSrDI1soy+Fr7nTFBQi62hFd+Kvln/WA2BhGegvablb9HANEY6BgKyRpGOEZcBW
-         dxiJV6e+ll/CNCxZkddT6mIVtIRKSgoicYTkWZzm2Yo9b8HcUvdnWLrPdhYWkwrTRw2O
-         z2m/IgU9XRE70TV5o0I7/rs93VLZ6QNZxysKzKUpwKXnc6zeJtYuWqSBRTqPKdLFnu4X
-         S5+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUp51GE2B9YzZObHtbo313ruW01WoS7SZMXDeioBiPQEqze5pAOZ+ybW7oeObrWMLVG/4DxEYNPEDhcI/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz137xozpcBVTYBrfPoWjp4Q5VazoqI5fL7VVqJTj1mFTB/ssBL
-	IrFP6xCeUQ4Wr086pubyHrwHlFQFJDvr+pUwITCm8zOLNKkGuVp0rkaDtTHqICs=
-X-Gm-Gg: ASbGnct2KBf3nMDdzZK2hS3qr5VilAYdHvyHsdkcMl0ueySAofDBRjbX8p/drNixvTv
-	J753s8+/AzRKdIvRhFPTGWc/ikWQaOHKSK9hJ0pb1eh+NlEmFLHY1xXLGVtNWHgyH+WBAX6X7vu
-	KqAjYtBdILVoxRm+rjxoCLC/6Za1+EpM5FG10MxMQ1LKju6iBNcFuwZ+G8cGE98GtTMYTG39CYb
-	DUD9Q/C0W72MZxpsKau0wmmB1iSKLT/khIdYkFlzp7iyf3XY/LD3hn8kWUpm3w4LO/WSA==
-X-Google-Smtp-Source: AGHT+IFa8ec15w1W+mCJa8qiRjb8wSbVwQDAXu4RYHaXXbcgV53ag8xsVJvsFwXS3y/+5di8npaPTQ==
-X-Received: by 2002:a05:600c:384e:b0:431:12a8:7f1a with SMTP id 5b1f17b1804b1-4362aa52e39mr20921645e9.16.1734089666146;
-        Fri, 13 Dec 2024 03:34:26 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824ca9absm6818336f8f.61.2024.12.13.03.34.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 03:34:25 -0800 (PST)
-Message-ID: <d7e3076e-5b32-4ab8-afe8-f52458769f23@linaro.org>
-Date: Fri, 13 Dec 2024 11:34:24 +0000
+	s=arc-20240116; t=1734089668; c=relaxed/simple;
+	bh=aWaCOZ8r5I02327/CVzZfqrLjJphOn1zrnuB5mpBb20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nzm80gZs/fdqmipjAWMei6suFJ15rjtEjj+yMj/f4waUBIqmGHz7AZLwhCKFRgeTYTr+ukbUMZJcfRKmo9LNCKJM9RK3JGOxq5qj92xTVLrOo/mMwn8oGiQ6Xqnmoyb7fsnDgdWkxWAt7dbGWZJgDsBRsRTmtHRkRdjSUT3WsZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Rw4RuQip; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD741C4CED0;
+	Fri, 13 Dec 2024 11:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1734089668;
+	bh=aWaCOZ8r5I02327/CVzZfqrLjJphOn1zrnuB5mpBb20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rw4RuQipt7TCsn+VAdAai8q+Kw+DJyFPXBg0fKy/th8khbA9d/58bxxZEwvorTlmh
+	 P4Yo6IUUTO9Y9sNWioYGecwpqZzRSa6q1PX+EUBuaIQQKh2oX3ppaVFZ1r+I4W7Plt
+	 s71rsY5DNF9tx8EtTxxQtDL68WjOq48U7mvr8Ob4=
+Date: Fri, 13 Dec 2024 12:34:25 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH 6.12 000/466] 6.12.5-rc1 review
+Message-ID: <2024121358-isolation-tanned-6a2d@gregkh>
+References: <20241212144306.641051666@linuxfoundation.org>
+ <CA+G9fYuX2BsEOCZPC+2aJZ6mEh10kGY69pEQU3oo1rmK-8kTRg@mail.gmail.com>
+ <CA+G9fYu3SmdFKRkSDU0UV=bMs69UHx8UOeuniqTSD9haQ2yBvQ@mail.gmail.com>
+ <CA+G9fYvV21_-3QYWh_gmKMRZ89AYn-KM99DbmghsLQJEL2+4Nw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] media: dt-bindings: media: camss: Restrict bus-type
- property
-To: Luca Weiss <luca.weiss@fairphone.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Barnabas Czeman <barnabas.czeman@mainlining.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
- Caleb Connolly <caleb.connolly@linaro.org>, David Heidelberg
- <david@ixit.cz>, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
- <20241209-camss-dphy-v1-1-5f1b6f25ed92@fairphone.com>
- <nqggstwkytqxpxy3iuhkl6tup5elf45lqi3qlgyv6eaizvnfdr@2uy57umdzqfa>
- <e4bd515a-eb98-4ea1-8d73-4ba5e7c9b66e@linaro.org>
- <D6AJ9U23ANWI.1DLHNPU5A6HQ4@fairphone.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <D6AJ9U23ANWI.1DLHNPU5A6HQ4@fairphone.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYvV21_-3QYWh_gmKMRZ89AYn-KM99DbmghsLQJEL2+4Nw@mail.gmail.com>
 
-On 13/12/2024 11:24, Luca Weiss wrote:
-> On Fri Dec 13, 2024 at 11:50 AM CET, Vladimir Zapolskiy wrote:
->> On 12/13/24 11:34, Krzysztof Kozlowski wrote:
->>> On Mon, Dec 09, 2024 at 01:01:05PM +0100, Luca Weiss wrote:
->>>> The CSIPHY of Qualcomm SoCs support both D-PHY and C-PHY standards for
->>>> CSI-2, but not any others so restrict the bus-type property describing
->>>> this to the supported values.
->>>>
->>>> The only exception here is MSM8916 which only supports D-PHY. C-PHY was
->>>> introduced with newer SoCs.
->>>>
->>>> Do note, that currently the Linux driver only supports D-PHY.
->>>>
->>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>>> ---
->>>>    .../bindings/media/qcom,msm8916-camss.yaml         |  8 ++++++
->>>>    .../bindings/media/qcom,msm8953-camss.yaml         | 15 +++++++++++
->>>>    .../bindings/media/qcom,msm8996-camss.yaml         | 20 +++++++++++++++
->>>>    .../bindings/media/qcom,sc8280xp-camss.yaml        | 20 +++++++++++++++
->>>>    .../bindings/media/qcom,sdm660-camss.yaml          | 20 +++++++++++++++
->>>>    .../bindings/media/qcom,sdm845-camss.yaml          | 20 +++++++++++++++
->>>>    .../bindings/media/qcom,sm8250-camss.yaml          | 30 ++++++++++++++++++++++
->>>>    7 files changed, 133 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/media/qcom,msm8916-camss.yaml b/Documentation/devicetree/bindings/media/qcom,msm8916-camss.yaml
->>>> index 9cc0a968a401836814560c1af3ee84d946500b4f..3de2a3d2b5b761106975aab65ff614b2ef579ef5 100644
->>>> --- a/Documentation/devicetree/bindings/media/qcom,msm8916-camss.yaml
->>>> +++ b/Documentation/devicetree/bindings/media/qcom,msm8916-camss.yaml
->>>> @@ -94,6 +94,10 @@ properties:
->>>>                    minItems: 1
->>>>                    maxItems: 4
->>>>    
->>>> +              bus-type:
->>>> +                enum:
->>>> +                  - 4 # MEDIA_BUS_TYPE_CSI2_DPHY
->>>> +
->>>>                required:
->>>>                  - data-lanes
->>>>    
->>>> @@ -113,6 +117,10 @@ properties:
->>>>                    minItems: 1
->>>>                    maxItems: 4
->>>>    
->>>> +              bus-type:
->>>> +                enum:
->>>> +                  - 4 # MEDIA_BUS_TYPE_CSI2_DPHY
->>>> +
->>
->> But is it really needed to specify the single supported bus-type?
->>
->> I believe it is not, at least it's not ever done for other media devices
->> like sensors.
+On Fri, Dec 13, 2024 at 01:18:07AM +0530, Naresh Kamboju wrote:
+> On Fri, 13 Dec 2024 at 01:04, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> >
+> > On Thu, 12 Dec 2024 at 23:35, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> > >
+> > > On Thu, 12 Dec 2024 at 20:30, Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > This is the start of the stable review cycle for the 6.12.5 release.
+> > > > There are 466 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > >
+> > > > Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> > > > Anything received after that time might be too late.
+> > > >
+> > > > The whole patch series can be found in one patch at:
+> > > >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.5-rc1.gz
+> > > > or in the git tree and branch at:
+> > > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> > > > and the diffstat can be found below.
+> > > >
+> > > > thanks,
+> > > >
+> > > > greg k-h
+> > >
+> > > The riscv builds failed on Linux stable-rc linux-6.12.y due to following build
+> > > warnings / errors.
+> > >
+> > > riscv:
+> > >   * build/gcc-13-defconfig
+> > >   * build/clang-19-defconfig
+> > >   * build/clang-nightly-defconfig
+> > >   * build/gcc-8-defconfig
+> > >
+> > > First seen on Linux stable-rc linux-6.12.y v6.12.4-467-g3f47dc0fd5b1,
+> > >   Good: v6.12.4
+> > >   Bad:  6.12.5-rc1
+> > >
+> > >
+> > > Build log:
+> > > -----------
+> > > kernel/time/timekeeping.c: In function 'timekeeping_debug_get_ns':
+> > > kernel/time/timekeeping.c:263:17: error: too few arguments to function
+> > > 'clocksource_delta'
+> > >   263 |         delta = clocksource_delta(now, last, mask);
+> > >       |                 ^~~~~~~~~~~~~~~~~
+> > > In file included from kernel/time/timekeeping.c:30:
+> > > kernel/time/timekeeping_internal.h:18:19: note: declared here
+> > >    18 | static inline u64 clocksource_delta(u64 now, u64 last, u64
+> > > mask, u64 max_delta)
+> > >       |                   ^~~~~~~~~~~~~~~~~
+> > > make[5]: *** [scripts/Makefile.build:229: kernel/time/timekeeping.o] Error 1
+> >
+> > The bisect log pointing to first bad commit,
+> >
+> >     clocksource: Make negative motion detection more robust
+> >     commit 76031d9536a076bf023bedbdb1b4317fc801dd67 upstream.
 > 
-> Through video-interfaces.yaml 'bus-type' is already allowed but not
-> restricted to the values that actually make any sense on such hardware,
-> so in my opinion this makes sense to have here.
-This is additive not prescriptive.
+> This issue was fixed in the upstream by adding the following patch,
+>   timekeeping: Remove CONFIG_DEBUG_TIMEKEEPING
+>   commit d44d26987bb3df6d76556827097fc9ce17565cb8 upstream
 
-New additions should include this bus-type number as we will need it 
-when we add CPHY support and the subsequently move to the PHY API for 
-CAMSS PHYs.
+Kind of, it needed another commit as well, I've queued up the needed
+ones and will push out a -rc2 soon.
 
-So still in favour of this amendment.
+thanks for testing!
 
----
-bod
+greg k-h
 
