@@ -1,240 +1,237 @@
-Return-Path: <linux-kernel+bounces-444139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478B39F0188
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:05:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 932669F0190
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED986282882
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA61286D0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A9317BA6;
-	Fri, 13 Dec 2024 01:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78397125D6;
+	Fri, 13 Dec 2024 01:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tyLYcYYB"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xuwr+D3F"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7912B3FB0E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4578F629;
+	Fri, 13 Dec 2024 01:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734051932; cv=none; b=lO/KjSuUqDlOEh7FXoY2tJdYXMt9dC6cEyTTIjFhk5306B5P+uyQxQjfL5ilfgNO7W8i8pAadBJxK0wwOF9t5JIFFKvcggrDfIJETW8EdWigbsl+ed+7Avksb1L8RUsvdWy7fhTRW7+Rgh6kQLsIjW3UzcBge5l4wPEAfxFGt5I=
+	t=1734052015; cv=none; b=megU9vQjsnjujM6BjRjvozp6Ay7yX9exIAi/e7ohcShGS7yzCGkdMAsqmo6DkNAsXJQ2JfBBUVYdUKuC+1S8r11L0S911eJGF+dOXrdUoLXuKLG+12upT1m23u0VCzPEVURyw7BX668Er0aDSX4a9ygZp6B2nhCK07HUvXatz00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734051932; c=relaxed/simple;
-	bh=ScM5/9Ay7Vkz7tAjQ2Z6vwqow41NuqfSG2EgI0jzjJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y13j49tnGfNftGIFmOlUP02CP8KSeFPGOE+fZm857of8oj3bsgeYIeMIMMHHL6H0vsZq6k6CVcb1RYdvIyrBqUTUXsXxg9av3T21kMyH/yLIQeBCuIgvEK7W4bnRVVUFNn4P1/OJ0bjl7B4QgZoMFqVuC/44fhOoX5DGPEatPkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tyLYcYYB; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ff976ab0edso9340081fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:05:30 -0800 (PST)
+	s=arc-20240116; t=1734052015; c=relaxed/simple;
+	bh=n7wVq+1UCyrG6+zQt3uQKmOrBrFfDhp8VV/cRQQhCU0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HH9SMesdhdRqrWSr1Ce8pFzqWVBzhk30GsiJOI2/NoS5WH4w+s8atlTekJaY0F/Qp4+Jqd02lumsNO0IA/Qpsc+OCW7dlJaZxxBkmH/jDrxWwACD+uhUVnBWtu0gZvzoQFaU5SJpXcygWyPH5GNAFEmngN33+AdyNgn/UZvMlpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xuwr+D3F; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-844e12f702dso36632939f.3;
+        Thu, 12 Dec 2024 17:06:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734051929; x=1734656729; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O84U3RWKov9iL5zvKm0AQk1apvgpcPjBJGZeGo9vHKY=;
-        b=tyLYcYYByBoQVedEovDK1nso3msSmxwLouKdJYKZYjrTQ9f+hzYOylKq8lZqL+mvuU
-         y4zrtuKe2btGcephY8f0/Y+iC8CqQl7opTGHbi6xBFcp33UvRBGRa6gaM01O54IGc4NT
-         pmBhkR4sPNxtZVo1ZGz3QsF0q76ILSj9xg9ezeOCgD3V2juclCOzNRF3St7Pp9k34rH5
-         BlbF/nvx2ohEjChP/ROMcx0Jk/I75IORvai12C4fDf3rzPPVTygnvTSyngqSq2EeVszJ
-         lG9ZXiFmx3lwRcjKu+5lEb5hrhZPd0qUcL/H+KcvK39PeI4b7/OVbZ+qsoqBezYbZjRy
-         GIMA==
+        d=gmail.com; s=20230601; t=1734052013; x=1734656813; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2c/XwSCr59KYiV5COV+QijUTe/cctADBA4FfAWvsC6E=;
+        b=Xuwr+D3FhhSQIckcDwangsAjZpi83SoSWHF3cAD3fOuNBHSyNvImfBECwNey/TXV61
+         LNkPegz1UIt0QeuMadkWUWlS5gsn1qJcDg9YZbtdCR2HLODhG3jhvETHWDV7ra//I7Dn
+         kyHEHz2EZASn1dE/jarPOhsYUKsQTztU0z/8Prj6Zx+B1zcNNgyU09d7bfVFYeam1R1Y
+         V64MPnA6np8WUNR2OOmF0IovSnNG/jJxtsLJvFvvA50Tf4FSKLF2A0MPt5PGjTrIh8Js
+         5AnNBpsALMcd0Kpjj+nhnKs6flhOM2uPM1Lx6Z8+Fp79dGuA3tLpWMHylWfFO8qajrd2
+         qC+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734051929; x=1734656729;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O84U3RWKov9iL5zvKm0AQk1apvgpcPjBJGZeGo9vHKY=;
-        b=af9X1/m92S6rp+lfs/fcuSp9k7LH1Dxjdbr/PW3an90S1KcQm63SXJFmmM/CtHXSqm
-         6l39NQ7Qw61ZBlP+bIEvIrdac7VwDqWoJzPUXoje++IQDgnZrJG8OcNkfIS+X0RPZPYQ
-         w/uCDN6VglDIJaYyrav/MDdXKChhk424wBVd/68g+5lfN9HVUn3lGGIeELLQxC4eZ29t
-         YLIGF5mLaydRRE2W4mgzRTEPHb/Vfb8y9RLp9FvY0T9Z75N+wVXf+QJwHxoeGdCs8s+t
-         G87Fd8KNxuzeoVL/dJk0/T92UZ8BK7kKXoaCyjfk2DpdTYe4fEg4STBHUteu1Xqb6JSj
-         ynQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSm0Mc9igmWWuc6oQX4ClJQbRbN128ZxoB32qChLa4oCVdJP+vCoISD/zEinUZnFMdXcwDRRYMwfRL+VY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBMiobGpIRXwvrNJaNVdJo4bL46KahG8p/tUPqDwf6AeMfIddV
-	/JHBb42KiZJoX8ERV6HMamqhpBXxXJH9pMky8IJBTXf1n7t67BfG0H1tJDbjlrw=
-X-Gm-Gg: ASbGncvndseXNXKM0txfcAWPVKPpxOvmFdVzLQRyFmnC7jMebIqqibNZkubrT3A/MeQ
-	vUefxO9uqv7X0fqD40ANrK1NRcqUJigwEPGsOsLqROUyDJaJV+UEzR8kOvECg3QD/9qdoKj99PD
-	xGSlM3WSdmfkHwrCUu4sgIxTY2pwlIOFhKjEq7DCUaVrUg7LBhoGinO8dhKXWH2k0HUNmG+Cv4Z
-	44N+xouP84ech10u0F+5l7ILeT330nGi6DcTkyxq0ImKdKYEBZzMcmSjvZD8XZL4fSC6u3Ojkxm
-	2BEUox2NBMcvY4CcAg7KT00h0so6AWBu4jT9
-X-Google-Smtp-Source: AGHT+IElifT8QoUNzxHAVYbqMQx4DiVI2tllM0h7CLeS8lFzZ7Esr23V8mawY8s6S56t+ueici+FJQ==
-X-Received: by 2002:a05:6512:3d0f:b0:540:22bd:e25c with SMTP id 2adb3069b0e04-54099b729f6mr127691e87.50.1734051928607;
-        Thu, 12 Dec 2024 17:05:28 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5402bfd8d20sm632306e87.26.2024.12.12.17.05.26
+        d=1e100.net; s=20230601; t=1734052013; x=1734656813;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2c/XwSCr59KYiV5COV+QijUTe/cctADBA4FfAWvsC6E=;
+        b=LMgRMPE/WfgZClKMXOPtMZcWKwqfGoodH+XCxNgRd8ki7FPPLnAfIrN33IXIHeZYCu
+         neOeY1HCpbNvCpllenTItawszfOso4iGJKDXT6PaMjJADN2xPrrqXvsICxyEF9xRU+7H
+         MjUIoWHEA2WD2FI9VrYp2pn37yGYR9iRa7LDGu3innP6U2P3NydSPmv6b/Cj1BcaUEos
+         DB9d7aY+iDQvWk2Mu+FceRTp3lgZ1AcGzRq5l5z+4MpsM2TfX75Gpp2EsFTGcan9vClj
+         dA7727G2/WM8OmT2IXLIVly3yrG4Ca0kJLECvdE+BYLuulQxhS/OuVUgSYXpf9Fi5LNI
+         KWUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiECK9X9KNix0oWXCocb72lXwZ51JlNpT+FtfKaVba+2EGRrEwLXHTzqYZvR1yOihhNfRunkbb0V40@vger.kernel.org, AJvYcCX9F627GRmfyb51Wjv2hk5JqSVy5odXqyFmiPxt8pm4Be1vEQpyGFZk0O2R2gv1Zp7OHqxzp8UmNuDssdPi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuO5bGdzVNzWKemABiUqlfznUVQOxeqdqv1EYUnZ338P8Ky8YC
+	gRdLbyWddDIM+AXcK7BvmM+ZqwbJMXMPrulsbU46rqKKgOd5UwlW
+X-Gm-Gg: ASbGncsR3Ldn7QInEKMl1qydlBC03vvXPjz9sdgIYsc4vjZ0/Lm8RuREhSndXjdnaC6
+	QeQGkngbXFdoDrGCR6ooqURboIIXiMEZaay/jmy2FTfxyPHXU0zhwtrc0QU95p+HTDisdoQLMNE
+	3mHGnvGDr7ROUGCiCNSiPVr/xerOX6DkN6C7GAuHWndd3ZQiSBfR5VXCxqXxvIRKd33qODQnQpX
+	H+laT9DYqbHaSMjyWVQ505P7uTA5fVNA8EsE+hFNzgqZP167gTCHwYXXxwFi30rjP0t
+X-Google-Smtp-Source: AGHT+IE0aRqUJwlA5+FNU6Sqc7UszAClayD0xVEQXFIIaM793yvcNU2uDJsHlxIEfHs4it75DfgO/g==
+X-Received: by 2002:a05:6e02:13a5:b0:3a7:e0c0:5f0d with SMTP id e9e14a558f8ab-3aff4616f35mr9786085ab.3.1734052013275;
+        Thu, 12 Dec 2024 17:06:53 -0800 (PST)
+Received: from localhost.localdomain ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a9628ba832sm32644325ab.64.2024.12.12.17.06.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 17:05:27 -0800 (PST)
-Date: Fri, 13 Dec 2024 03:05:24 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, quic_abhinavk@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: Filter modes based on adjusted mode clock
-Message-ID: <onavg2s7uamgwh34ozhbt56c74ktj5chp3jnn4bw5m22y5sdjr@fktyn5yt4gmw>
-References: <20241212-filter-mode-clock-v1-1-f4441988d6aa@quicinc.com>
+        Thu, 12 Dec 2024 17:06:51 -0800 (PST)
+From: Mingwei Zheng <zmw12306@gmail.com>
+To: marex@denx.de,
+	antonio.borneo@foss.st.com
+Cc: linus.walleij@linaro.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	make24@iscas.ac.cn,
+	peng.fan@nxp.com,
+	fabien.dessenne@foss.st.com,
+	linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Mingwei Zheng <zmw12306@gmail.com>,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH v4] pinctrl: stm32: Add check for clk_enable()
+Date: Thu, 12 Dec 2024 20:09:48 -0500
+Message-Id: <20241213010948.2623382-1-zmw12306@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212-filter-mode-clock-v1-1-f4441988d6aa@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 12, 2024 at 11:11:54AM -0800, Jessica Zhang wrote:
-> Filter out modes that have a clock rate greater than the max core clock
-> rate when adjusted for the perf clock factor
-> 
-> This is especially important for chipsets such as QCS615 that have lower
-> limits for the MDP max core clock.
-> 
-> Since the core CRTC clock is at least the mode clock (adjusted for the
-> perf clock factor) [1], the modes supported by the driver should be less
-> than the max core clock rate.
-> 
-> [1] https://elixir.bootlin.com/linux/v6.12.4/source/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c#L83
-> 
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c | 29 +++++++++++++++++++--------
->  drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h |  3 +++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      | 12 +++++++++++
->  3 files changed, 36 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
-> index 6f0a37f954fe8797a4e3a34e7876a93d5e477642..0afd7c81981c722a1a9176062250c418255fe6d0 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
-> @@ -31,6 +31,26 @@ enum dpu_perf_mode {
->  	DPU_PERF_MODE_MAX
->  };
->  
-> +/**
-> + * dpu_core_perf_adjusted_crtc_clk - Adjust given crtc clock rate according to
+Convert the driver to clk_bulk*() API.
+Add check for the return value of clk_bulk_enable() to catch
+the potential error.
 
-Nit: CRTC (here and further)
+Fixes: 05d8af449d93 ("pinctrl: stm32: Keep pinctrl block clock enabled when LEVEL IRQ requested")
+Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+Changelog:
 
-> + *   the perf clock factor.
-> + * @crtc_clk_rate - Unadjusted crtc clock rate
-> + * @perf_cfg: performance configuration
-> + */
-> +u64 dpu_core_perf_adjusted_crtc_clk(u64 crtc_clk_rate,
-> +				    const struct dpu_perf_cfg *perf_cfg)
+v3 -> v4:
+1. Add initialization for  pctl->clks.
+2. Adjust alignment.
 
-It's not just the CRTC clocks
+v2 -> v3:
 
-> +{
-> +	u32 clk_factor;
-> +
-> +	clk_factor = perf_cfg->clk_inefficiency_factor;
-> +	if (clk_factor) {
-> +		crtc_clk_rate *= clk_factor;
-> +		do_div(crtc_clk_rate, 100);
-> +	}
-> +
-> +	return crtc_clk_rate;
-> +}
-> +
->  /**
->   * _dpu_core_perf_calc_bw() - to calculate BW per crtc
->   * @perf_cfg: performance configuration
-> @@ -76,7 +96,6 @@ static u64 _dpu_core_perf_calc_clk(const struct dpu_perf_cfg *perf_cfg,
->  	struct dpu_plane_state *pstate;
->  	struct drm_display_mode *mode;
->  	u64 crtc_clk;
+1. Convert clk_disable_unprepare to clk_bulk_disable
+and clk_bulk_unprepare.
 
-While you are at it, could you please also add a patch, replacing height
-* vidth * vrefresh with mode->clock * 1000? The former one has limited
-precision.
+v1 -> v2:
 
-> -	u32 clk_factor;
->  
->  	mode = &state->adjusted_mode;
->  
-> @@ -90,13 +109,7 @@ static u64 _dpu_core_perf_calc_clk(const struct dpu_perf_cfg *perf_cfg,
->  		crtc_clk = max(pstate->plane_clk, crtc_clk);
->  	}
+1. Move int ret declaration into if block.
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 37 +++++++++++++++------------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
 
-This function calculates crtc_clk as max(plane_clk, crtc_clk). Shouldn't
-we also reject the atomic_state if for any of the planes the corrected
-clock is lower than max_core_clk_rate
-
->  
-> -	clk_factor = perf_cfg->clk_inefficiency_factor;
-> -	if (clk_factor) {
-> -		crtc_clk *= clk_factor;
-> -		do_div(crtc_clk, 100);
-> -	}
-> -
-> -	return crtc_clk;
-> +	return dpu_core_perf_adjusted_crtc_clk(crtc_clk, perf_cfg);
->  }
->  
->  static struct dpu_kms *_dpu_crtc_get_kms(struct drm_crtc *crtc)
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
-> index 451bf8021114d9d4a2dfdbb81ed4150fc559c681..c3bcd567cdfb66647c83682d1feedd69e33f0680 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
-> @@ -54,6 +54,9 @@ struct dpu_core_perf {
->  	u64 fix_core_ab_vote;
->  };
->  
-> +u64 dpu_core_perf_adjusted_crtc_clk(u64 clk_rate,
-> +				    const struct dpu_perf_cfg *perf_cfg);
-> +
->  int dpu_core_perf_crtc_check(struct drm_crtc *crtc,
->  		struct drm_crtc_state *state);
->  
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> index ad3462476a143ec01a3b8817a2c85b0f50435a9e..cd7b84ab57a7526948c2beb7c5cefdddcbe4f6d9 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> @@ -1257,6 +1257,7 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
->  						const struct drm_display_mode *mode)
->  {
->  	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
-> +	u64 adjusted_mode_clk;
->  
->  	/* if there is no 3d_mux block we cannot merge LMs so we cannot
->  	 * split the large layer into 2 LMs, filter out such modes
-> @@ -1264,6 +1265,17 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
->  	if (!dpu_kms->catalog->caps->has_3d_merge &&
->  	    mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
->  		return MODE_BAD_HVALUE;
-> +
-> +	adjusted_mode_clk = dpu_core_perf_adjusted_crtc_clk(mode->clock,
-> +							    dpu_kms->perf.perf_cfg);
-> +
-> +	/*
-> +	 * The given mode, adjusted for the perf clock factor, should not exceed
-> +	 * the max core clock rate
-> +	 */
-> +	if (adjusted_mode_clk > dpu_kms->perf.max_core_clk_rate / 1000)
-> +		return MODE_CLOCK_HIGH;
-> +
->  	/*
->  	 * max crtc width is equal to the max mixer width * 2 and max height is 4K
->  	 */
-> 
-> ---
-> base-commit: 423c1c96d6b2d3bb35072e33a5fdd8db6d2c0a74
-> change-id: 20241212-filter-mode-clock-8cb2e769f05b
-> 
-> Best regards,
-> -- 
-> Jessica Zhang <quic_jesszhan@quicinc.com>
-> 
-
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 5b7fa77c1184..427749d4f6a5 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -86,7 +86,6 @@ struct stm32_pinctrl_group {
+ 
+ struct stm32_gpio_bank {
+ 	void __iomem *base;
+-	struct clk *clk;
+ 	struct reset_control *rstc;
+ 	spinlock_t lock;
+ 	struct gpio_chip gpio_chip;
+@@ -108,6 +107,7 @@ struct stm32_pinctrl {
+ 	unsigned ngroups;
+ 	const char **grp_names;
+ 	struct stm32_gpio_bank *banks;
++	struct clk_bulk_data *clks;
+ 	unsigned nbanks;
+ 	const struct stm32_pinctrl_match_data *match_data;
+ 	struct irq_domain	*domain;
+@@ -1308,7 +1308,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
+ 	if (IS_ERR(bank->base))
+ 		return PTR_ERR(bank->base);
+ 
+-	err = clk_prepare_enable(bank->clk);
++	err = clk_prepare_enable(pctl->clks[pctl->nbanks].clk);
+ 	if (err) {
+ 		dev_err(dev, "failed to prepare_enable clk (%d)\n", err);
+ 		return err;
+@@ -1397,7 +1397,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
+ 	return 0;
+ 
+ err_clk:
+-	clk_disable_unprepare(bank->clk);
++	clk_disable_unprepare(pctl->clks[pctl->nbanks].clk);
+ 	return err;
+ }
+ 
+@@ -1617,10 +1617,18 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 	pctl->banks = devm_kcalloc(dev, banks, sizeof(*pctl->banks),
+-			GFP_KERNEL);
++				   GFP_KERNEL);
+ 	if (!pctl->banks)
+ 		return -ENOMEM;
+ 
++	pctl->clks = devm_kcalloc(dev, banks, sizeof(*pctl->clks),
++				  GFP_KERNEL);
++	if (!pctl->clks)
++		return -ENOMEM;
++
++	for (i = 0; i < banks; ++i)
++		pctl->clks[i].id = "";
++
+ 	i = 0;
+ 	for_each_gpiochip_node(dev, child) {
+ 		struct stm32_gpio_bank *bank = &pctl->banks[i];
+@@ -1631,11 +1639,10 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 			fwnode_handle_put(child);
+ 			return -EPROBE_DEFER;
+ 		}
+-
+-		bank->clk = of_clk_get_by_name(np, NULL);
+-		if (IS_ERR(bank->clk)) {
++		pctl->clks[i].clk = of_clk_get_by_name(np, NULL);
++		if (IS_ERR(pctl->clks[i].clk)) {
+ 			fwnode_handle_put(child);
+-			return dev_err_probe(dev, PTR_ERR(bank->clk),
++			return dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
+ 					     "failed to get clk\n");
+ 		}
+ 		i++;
+@@ -1646,8 +1653,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
+ 		if (ret) {
+ 			fwnode_handle_put(child);
+ 
+-			for (i = 0; i < pctl->nbanks; i++)
+-				clk_disable_unprepare(pctl->banks[i].clk);
++			clk_bulk_disable_unprepare(pctl->nbanks, pctl->clks);
+ 
+ 			return ret;
+ 		}
+@@ -1726,10 +1732,8 @@ static int __maybe_unused stm32_pinctrl_restore_gpio_regs(
+ int __maybe_unused stm32_pinctrl_suspend(struct device *dev)
+ {
+ 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
+-	int i;
+ 
+-	for (i = 0; i < pctl->nbanks; i++)
+-		clk_disable(pctl->banks[i].clk);
++	clk_bulk_disable(pctl->nbanks, pctl->clks);
+ 
+ 	return 0;
+ }
+@@ -1738,10 +1742,11 @@ int __maybe_unused stm32_pinctrl_resume(struct device *dev)
+ {
+ 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
+ 	struct stm32_pinctrl_group *g = pctl->groups;
+-	int i;
++	int i, ret;
+ 
+-	for (i = 0; i < pctl->nbanks; i++)
+-		clk_enable(pctl->banks[i].clk);
++	ret = clk_bulk_enable(pctl->nbanks, pctl->clks);
++	if (ret)
++		return ret;
+ 
+ 	for (i = 0; i < pctl->ngroups; i++, g++)
+ 		stm32_pinctrl_restore_gpio_regs(pctl, g->pin);
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
