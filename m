@@ -1,689 +1,218 @@
-Return-Path: <linux-kernel+bounces-444159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C871A9F023A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:30:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110679F023E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:30:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9783516B546
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:30:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A335E2A1BB;
+	Fri, 13 Dec 2024 01:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q9TU2t1B"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A66C281338
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:30:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D08E2C181;
-	Fri, 13 Dec 2024 01:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+INR3rp"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB452A1BB;
-	Fri, 13 Dec 2024 01:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734053398; cv=none; b=aC4GFOO90gEgdJ2vshUat8ooktF5FZ8/UVEfwtVWcQQUSdHifz5vFdRASQ08Hok4Ta2wOjfRxwt+TiUyF4YMy9VfXghxborrluqqjF7g8X/LJnRR0IQ3PsAtvCjr1I6N9861cv7mImH0Va3m8pMG02JzqsM4l6ZK1+5Mq8DN/Cg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734053398; c=relaxed/simple;
-	bh=u4URgFVYWXLUu6KybPJDK1Z3JZLMq22nJ9B+YVMxALY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UAmlwEoFRcEwFCfVVG2S1ci/mMchRsQvYTYCaGj26yUnvqEHpb1cspk3mEom2uOQKKi+Rbw6hrpaaYEeQSDwu41UT2+pBc9OHAfiXnQCnZOJJmM8hAxm4N8VdcCzmXJa0QjeyRK4QZ3SMVJFMfiSrw/V5CsZ+NJX944FHVYnXi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D+INR3rp; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-725e71a11f7so1909993b3a.1;
-        Thu, 12 Dec 2024 17:29:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734053395; x=1734658195; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHxuky/SCPbxlr/K9QZgjbJ2leIhHL7DLNdsBhTbdC4=;
-        b=D+INR3rpXD9MUtkGexkyeJkf8fIVt9yrIh9v8ve/qyhiPQ8cI2kC6bVUy5ftM2YqDY
-         GvAvmpO0TLJsPmL3uXojAN2AsrQ9tFgh7/iIGkJ2gL2kDBNxwSOZ7qC1gTNNq5AFusif
-         w/X+BzphUNK/Fhq/bi4cAe5WYLsWe/0UnDJlRClXZBsQFLEO61LWS0pWm3tKLeJ1LKqf
-         P8pbXiWBzIHMtGLo3pnp0uK6fzm3YiqUwIR9IRgyiIWtqfjaN6pb0dOkPg6Y+ioR8RvU
-         JG4LXLUS9AiMkP0nPtyPDNrdAeOr2APSEcDw4g5qis4kLUFSLjE8zRwmRdS/JjM/U7nm
-         ChFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734053395; x=1734658195;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UHxuky/SCPbxlr/K9QZgjbJ2leIhHL7DLNdsBhTbdC4=;
-        b=BZYMKWKKPFq2f/bdImA3CoFnaNZA/IxrmWEcV35oeQRDAUAZ5QGwfe78d9rnn2O9QX
-         wYegXhUAYVobkWyDTqCs9smOtdci+EaRnv8trrWt44laafAe/leKwij5fKD30k6Y6/Pz
-         Zq9Sd4eJeYo5/yDTSkHW4JO16Q+FBqS/aNf7c/DZ1koa1P1Dx1V40UZIEkkvwcAGz1Bi
-         4EO9SU0QKi7/881d+V77sAn50okg/7vzFAs9ztuUT4FNwDheU91kH3iAiCJOQ0fS0X4K
-         uTmR/KAXa3rcFCgwQoP/QPobn3+47eOmWA9aPrtFc0v3Rvj1VhKMPKkbj1r9HcmBdpHW
-         H3PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+cuY350Gm4o1/WngW277oLnMqSkCYzK5Y/5vtLpUf68oRY4ZVCu7BKv4ZaNUvq5ZMvsSlDhkVGcLY@vger.kernel.org, AJvYcCVTs8lJArMBrFN9l7YVoKrKGfyWn9n1dGFcrDWdWAO/3DrV93oFYUwexZEKaCpLmceujswpA6AbShPw6NDP@vger.kernel.org, AJvYcCWtv9Dl+27uR8EFKengq/uU/A2wTpkk+SS9CD0L6HVKf7l5AL+YcnXCkNuSh43BM8I5ubfbXsxHzIKxNvA=@vger.kernel.org, AJvYcCXavCKIp+vPgB14oYqMhE8WSEuZNNusDU2e9/ZRH/9N9+xoHC0QDHo9jPdbOxpR3ANMovGgwov4Cv3+@vger.kernel.org, AJvYcCXcC7pTDUy40qiXj+9VNU5lW+mI/vT/944GsDOrjqK0R2UNecgtvkedaUkxeTR60mWWk9s4t2Oxgk/1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yykjf4mFAeAt2c8y+WfILPFL1uNQ9yy+kKNf/gjN1tTQluGDGoq
-	fTkz6tVv/KByOVWRNlzypbqbaA4adZr4ZKgSYNoecCDHekOb/z5m
-X-Gm-Gg: ASbGncuSKVOPVlXSF41wTebY1TBFXyWpcKFJeasweMElB7xjj6VmtGhwgBFwRzqoX07
-	SUfUtfhTXopfxTmt2QwFvcTsbBtWtBwPqiv0WMSwFCqUGljhldh6g06ekRmkqKW2fpOU6j87CVN
-	VMXr5LLKhg97W7L3u/ZR/EHF4Ppr1MiUIB+Rso04n7Nnc0ofP53Ah4Q+QZLUQXgAikaWDJ/IHc1
-	aIwcgPiTMkRPX7TsV6vIGIqpGjsgpU7tFpGJhisi7iDy6FgrUkaGATrRN2cIrGd149Ze8z+gS2I
-	UPQTmIB5WGM0j59IUCBOzZZsBXIW1w==
-X-Google-Smtp-Source: AGHT+IGI4Ve+ApM2wGnjbhyWZAaIqje+11k7lRzjKGuZqrFJsTvt87E9pQe6xCjoZiGAairhYxSjJw==
-X-Received: by 2002:a05:6a20:9f04:b0:1e1:a449:ff71 with SMTP id adf61e73a8af0-1e1dff86960mr1031915637.1.1734053395225;
-        Thu, 12 Dec 2024 17:29:55 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7261829be9dsm7146387b3a.89.2024.12.12.17.29.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Dec 2024 17:29:54 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <5b095371-f835-4c23-aa43-deefa33123bb@roeck-us.net>
-Date: Thu, 12 Dec 2024 17:29:51 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC401373;
+	Fri, 13 Dec 2024 01:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734053445; cv=fail; b=smeSh7EHnzR05lPwC/PqxTZu78/PaSXOp7frbtEH9+hfVQBp/aBA9sX/vHphDglHKAhk8XHdvU1B1jkZjHXPq1oL3c1aB8aWc/VaPtCAMWkok5/ZNQ5EH6Tcv96wxGKV1HCOZv6VNfCscn31T7qNBFfJ1AWoL3J+k7Cj0KIyHcc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734053445; c=relaxed/simple;
+	bh=j0HgcO2RHOWuJ9GJqFdfSlYKITgDdDFADK68QqZ6p/A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GEcb8YREQ2Ypdwvn8erx+hcpIuaUWsujmQgMXEsR/cef7WfCpogs8murz21CvsuuSDEwd7nqvERFZun6ksxb5k2rsODECoXJ/R/6pSdoYO2fsDVfeRtcUfEUjj3lgvOH3L5PEnt+7swgNwLdXt7bjPkBv/WS/hSFtxUfh1cpUac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q9TU2t1B; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734053444; x=1765589444;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=j0HgcO2RHOWuJ9GJqFdfSlYKITgDdDFADK68QqZ6p/A=;
+  b=Q9TU2t1Bhdux2J3qk0K3PTlsEy88zTsaOIlAeQw3ThQPS5nh8LvNakEB
+   roWzQFaKnP79yYDUX8UTkSXw9hMm8IbDMLhIii3kH7Fm/NsN3JKGiEEzS
+   6TOP4CsFpyEduB/5Kl6FDppzUnvNO7amN4hHvdPRM+Ixm4RDq4rr1Siyw
+   PbgnlBya6+UYw55qe13BAJJPeHbAOd0bALXCd0up2B1v2PHMUcp5visGZ
+   gL4UvBErsQdOhbRSiTBOV8nGhSaXKggUyXVawm/tF7Y3KxXkvaoBTPQTt
+   W1WG2ftgILOu9B+sgc7vrT8GTodDXxZStHDQbz0yJ0ihxMZPPvNgdgB0R
+   A==;
+X-CSE-ConnectionGUID: zNrM1RiYQc2oVf56eRXAgw==
+X-CSE-MsgGUID: IOnw55QlRHiQfdcsAkzf3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="38277275"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="38277275"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 17:30:43 -0800
+X-CSE-ConnectionGUID: +6/wfkqkQ2ibrzn0Xq34qg==
+X-CSE-MsgGUID: VqvPK2V9QsWjCsvaOQGv/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="101425843"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Dec 2024 17:30:43 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 12 Dec 2024 17:30:42 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Thu, 12 Dec 2024 17:30:42 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.48) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 12 Dec 2024 17:30:42 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rQemuHqBnCWqMY6P4PnAdkG6ySgAE2KAQ6ROO4HNNxT1URGXE3P2GdTGXSJ4AhPN9s4cKuRcfxeTRv6O2oKTKZMjtHR+chszkCE1hdTmSAk0ZzzuR9yd4xIt+Q4P6PmMOk8KrQ4XNwQ59SeYgTukDxQEokqDcHUxcj+09mggndcPa/CMDLVvJe6hAXVfrsEifQ77KbuMZESykRM5Wtqdrago9ZtIN4X6cU2Z9aMWicZAt5iT1R9xW1PyD9Q4b05Kk88YEhz8JPpFlVk22SxK4irAaLvYgO3+SbT+fo45kTiQbFJvDUor736SL2elWYSZwev0N/SlnMUiA91dJfOW4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iF8NGVAF1mYfqgSbBg9v738SRNDrEohxCeGXJ0cR/TI=;
+ b=vRZdKUc8X1JiMJOPJH/u1hWaxuo1RFR5XLFHBB0Q+hAH+0cE8pI/Q7vCl3JtXjUZecgvnJn4UcLXbduwji60jGAs++67XIPN0hSGMGETQntobRhRilQyyCIJaw5WQQJNJTpg6euKZDx8pw1hbc9CBl0uejn3ynHu9eFi+BDSc8fqyPT5/gCShVSO6SC/6sri2LW8sklP+H+ey2WBoouC9bUgNHnomMeW50/Ddkzow7SUvesFLTpNLtADDqfqZXUsD0uW2KE8ffylSj5bNOW+HGPt5uB5ZWU0Sx5Mp2ypeFwLeJ2UifuwEHHWsLXpRz3hN8hS9SAXw8u6VDxEkdgt2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by SA1PR11MB5899.namprd11.prod.outlook.com (2603:10b6:806:22a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.20; Fri, 13 Dec
+ 2024 01:30:36 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%2]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
+ 01:30:36 +0000
+Date: Fri, 13 Dec 2024 09:30:25 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
+	<vkuznets@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>,
+	<kvm@vger.kernel.org>, <linux-sgx@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Maxim Levitsky <mlevitsk@redhat.com>, "Hou
+ Wenlong" <houwenlong.hwl@antgroup.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>,
+	"Binbin Wu" <binbin.wu@linux.intel.com>, Yang Weijiang
+	<weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
+Subject: Re: [PATCH v3 05/57] KVM: x86: Account for KVM-reserved CR4 bits
+ when passing through CR4 on VMX
+Message-ID: <Z1uOMdYiWz68LAPo@intel.com>
+References: <20241128013424.4096668-1-seanjc@google.com>
+ <20241128013424.4096668-6-seanjc@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241128013424.4096668-6-seanjc@google.com>
+X-ClientProxiedBy: SG2PR06CA0214.apcprd06.prod.outlook.com
+ (2603:1096:4:68::22) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] hwmon: (pmbus/crps) Add Intel CRPS185 power supply
-To: Ninad Palsule <ninad@linux.ibm.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, eajames@linux.ibm.com, jdelvare@suse.com,
- corbet@lwn.net, joel@jms.id.au, andrew@codeconstruct.com.au,
- Delphine_CC_Chiu@Wiwynn.com, broonie@kernel.org, peteryin.openbmc@gmail.com,
- noahwang.wang@outlook.com, naresh.solanki@9elements.com, lukas@wunner.de,
- jbrunet@baylibre.com, patrick.rudolph@9elements.com,
- gregkh@linuxfoundation.org, peterz@infradead.org, pbiel7@gmail.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-i2c@vger.kernel.org
-References: <20241212214927.3586509-1-ninad@linux.ibm.com>
- <20241212214927.3586509-3-ninad@linux.ibm.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241212214927.3586509-3-ninad@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|SA1PR11MB5899:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71a264fb-e954-4edc-51a4-08dd1b15bead
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?fQZCSzQt39gV/nHNSTD6B7YWplTo+QmDAQIWg6AI/ncCFEeOUq2AAcjVWvQg?=
+ =?us-ascii?Q?uhEfXrfsG6SPPfe4WNA3RGuQkRVJHwSTdebOdn5Vq45H0/WLPc+zjS6sin94?=
+ =?us-ascii?Q?E/ic6oqJOw8hYgNbJ1E5YghLgFduP+kujwOCJNx18nwNi/uMMVS+BMqAU8As?=
+ =?us-ascii?Q?h8RmwerlstfEK1zhLcAiKWSClqPqDsjdjMvlusT/SMDoPTZ9lzHKue0ehCpZ?=
+ =?us-ascii?Q?5HLwEdaRRYd1ouygpyqtjTR1nSh0zpZYdjEhvkutmrbXkOl0bJwAcU9ksFsl?=
+ =?us-ascii?Q?9ILFHsVWiSWEwhqQcAtCvbEiHxUenmfK5s4yCbxmsc6S9N+qPci7QAE7GSXc?=
+ =?us-ascii?Q?vPU245dsmWfozwA7I5PZQRKDl7UbQbS9IuGPlv5M5VIqxVzpfEhHNGQ0PJNE?=
+ =?us-ascii?Q?ulg3roAtnG4YnTD45OfgNVHVU2uv7TJsmA1XLgkSPya+l61boxvAlJ2JOOyz?=
+ =?us-ascii?Q?BHRJCuxFvC3TrI6qhnlNKUvkdRaxp3OKol5MB8ud5E8CrwcJlgH+EN058oXK?=
+ =?us-ascii?Q?Fo3kUXBWyzpa83/843p6qF+WhKYhgrW3kQsCWhIioThP0LKZ/RORjmBfHG+2?=
+ =?us-ascii?Q?7KQXyu5SFqchIXGbg8gBr/G6KL61KeYRpg8l5IPJqUuHP82V/OXONTpiA8no?=
+ =?us-ascii?Q?kDW1uL4hp1/2d4OFnbtaubdfRJ/2JGWHeIjmmbW9Jn5OWRYDD6YTSzXVx464?=
+ =?us-ascii?Q?5DDgD20JzDUJnZSj8IsJi/75cOe1LBRW7mtKvRVrYsRfAEWSfBpYjJpMmDX0?=
+ =?us-ascii?Q?DBQQwM4EQCecKf16cf7zzfLskiMsGeZPtspbo/jLp+uZCKy5+HU3TzMNzlFg?=
+ =?us-ascii?Q?lyG3Nada2vL2wIhqYpsllBHlsj5hkfhfOnxmeTr64RJ+FSn4BIi6BiFAEAUR?=
+ =?us-ascii?Q?JrcsU1pkhIk7wt2fXqyBEG0xK73m95MBfrJY+2TGJDBXvpbEQgSnehSqBIvy?=
+ =?us-ascii?Q?wi07UbMrWauhc/xjxQCjbWX/0eW4yx4k1aZqLRhSB7zH64X4mKQg8Y31yErZ?=
+ =?us-ascii?Q?Qae7F93+JoNVU0Cacqk3G0DZGt/x9GFjnqUukO2RBwSqG7k03inexIzpcNnC?=
+ =?us-ascii?Q?SpJ14sel5LfQ/0iZaATac4/rFkpqBOxSSBshmnYb/Q4cbWIgjJZ3Z49aRmaM?=
+ =?us-ascii?Q?9547mYCyeibAFOufzyjTIcNqxge28N/pKS5q24zO/mZyUpyAhQFjGdTrmV2e?=
+ =?us-ascii?Q?6ZV5MmZmCXm6Wz4vgN3hnT57LOu0MpL/3mvCbCwMwC+04nU5qDDazlMNr8jh?=
+ =?us-ascii?Q?SlyWzUnHyQE0JtCM0uQ88j1zaPn0+OOS1b313H3LLix/1ZPxd2pTKZ4HrkqA?=
+ =?us-ascii?Q?Ocs/hcwryKtHTMH/TEZyvYSTkTFlr4CBi3Q35tTHXbmW2A=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?GYKioX5043gZRrUM6LXwfb6Gc3rrX3cxLwBmZx/UuAaSwxYbOs3CehfezEKk?=
+ =?us-ascii?Q?WJ9rw7Na0NPZhl4TyfqHJNZWTjbGiMIOBc0n6XDhGcl7cPboHi2MBQHUJCQt?=
+ =?us-ascii?Q?36Qr9eoG4H/W0EfJYEzAnbtHozjwmKswDEjFedQgm6NyulloA3HrlROqwQHU?=
+ =?us-ascii?Q?8h4ujDyW7Yy2fB5z7gkXrPv7BhGv3mcZHoXynPSpaCK/lLQf8N280ybbokQO?=
+ =?us-ascii?Q?+O6XQdreElseFHFHZ7wSdIXn8dwuNcoiNt44mhhMp1DLat8EGUbo6c/vSaIn?=
+ =?us-ascii?Q?Gripyyd18luBW3q92SyUvJi6XCMjPvAYbjhegKgdbtLeK3pwyPIJ5jpKUnTn?=
+ =?us-ascii?Q?0e9b6M53j90mqPf/wyWORaOojHsl+lyih47I/Zq3gM+VOGs0LX6iYLsC49g7?=
+ =?us-ascii?Q?3/PJQoL+zVPr0a7x0qkxBdIexB0bDolrKIsniITZJc0i4ZTUL48gGBnEYUct?=
+ =?us-ascii?Q?Elu+XluaDaBOqk9EiWEWjpjSEpMsdLLxrnZ13vPPpqJc3jaIXL708sxzhM+O?=
+ =?us-ascii?Q?tB1DzACSdQKYjW69gwhnZYe6gZPU3yaGPcYwLzBI6hKDI5MRn31U0b9y3ctO?=
+ =?us-ascii?Q?81d9qezqtRU6uNPNad1NVNZeKKe95n7ntTY5rc88IQBHfikff6espZOEpqQt?=
+ =?us-ascii?Q?NuEOcoc59Y3ZkZiYBiwwi1RuIGBpGA54fv4PaKhs4BAn+stLaT1GllMaSjH/?=
+ =?us-ascii?Q?DnZjfIl1m6Ae3JgWDmPPso3L4xWjmgv77ZMklTrz1s6FSIXHDnD0m4blZ5yo?=
+ =?us-ascii?Q?92YdMcXktrRGA1EJTkuKvprDpZe9RjSI/7ZxThTrRwM4E2Q/zLCsShqzDmAR?=
+ =?us-ascii?Q?fkkSspeZ+cpb0wJ1q8AiS8hHfnSR6SJIihgA0aPs9nMel0oeHlM3dmCEB25H?=
+ =?us-ascii?Q?z2bbEuS4ucj/XwkBKvwtfwumDwcOOilEnFMUZm/NJ0gs9etTJKTPJTAXMlcu?=
+ =?us-ascii?Q?HcM5QIK+H6fIl47QhqznDl+esnia4xq4ZxKp//htLh7DnLJocGHtEWNPXWi8?=
+ =?us-ascii?Q?IDrqYj485NWJ0ZrO2i1ygHvaYcTrpVjc+/pBI497haOK0eCCpdpCSNSCapmr?=
+ =?us-ascii?Q?Fhf3hAOOZ2S3NQa++MrKyRycxijq6dUGyqPeU8kXpWP+brjsFp73OXCBdDmb?=
+ =?us-ascii?Q?1N3NddF7TK3w6r1qa6dsxXWNBoMgmLlE+wqD4EzrDNZ+8cVDn7QfqNuG0ibK?=
+ =?us-ascii?Q?gvPQrIH7zhFiSnXK24cNOZ1GG0xaU3SgQXIv7ScOCM1gAAmcGO4QqXR1E9X/?=
+ =?us-ascii?Q?p111yXkYfGXu56L++PkDyKKQw1REYE5Jvk0Vz+KNlQNjwqjDcuaeF6i53SuS?=
+ =?us-ascii?Q?HiDAIhO//KewsXdJgS0JfLlv1b2IUf57S+hhFSJ8Ru8K8Z4OOUieJ8/MIT7f?=
+ =?us-ascii?Q?GE/rvbnzh8ymKgjE2HdEmzfamMmMRXmPwOR4pupxwyFRtJcPUy2JWEu70L0Q?=
+ =?us-ascii?Q?dnVMibPGzkrLgbjx3agTJn0jLgiHNls3jbPKbR3kC2jRdMtevHMW4PIQs2Yp?=
+ =?us-ascii?Q?XBJlIDJJsRJCJznA0cOnxhC5ozpOek/9cGmFIfJLUiVlmPTVBN3kRROvA31i?=
+ =?us-ascii?Q?+XGvWzUZLA1nzQ9UFw5XJR+vwrWZIhznY3qON7qz?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71a264fb-e954-4edc-51a4-08dd1b15bead
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 01:30:36.5438
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gmnO7ilTYdVIZdj9UxgDoGlGIPMGWD4y/B1K++YUdZzO3YLh2xL8f0WEyNbYjgWbclRDP8h6aNnLgmKWDdXt6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5899
+X-OriginatorOrg: intel.com
 
-On 12/12/24 13:49, Ninad Palsule wrote:
-> Add the driver to monitor Intel common redundant power supply (crps185)
-> with hwmon over pmbus.
-> 
-> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
-> ---
->   Documentation/hwmon/crps.rst |  95 +++++++++++
+On Wed, Nov 27, 2024 at 05:33:32PM -0800, Sean Christopherson wrote:
+>Drop x86.c's local pre-computed cr4_reserved bits and instead fold KVM's
+>reserved bits into the guest's reserved bits.  This fixes a bug where VMX's
+>set_cr4_guest_host_mask() fails to account for KVM-reserved bits when
+>deciding which bits can be passed through to the guest.  In most cases,
+>letting the guest directly write reserved CR4 bits is ok, i.e. attempting
+>to set the bit(s) will still #GP, but not if a feature is available in
+>hardware but explicitly disabled by the host, e.g. if FSGSBASE support is
+>disabled via "nofsgsbase".
+>
+>Note, the extra overhead of computing host reserved bits every time
+>userspace sets guest CPUID is negligible.  The feature bits that are
+>queried are packed nicely into a handful of words, and so checking and
+>setting each reserved bit costs in the neighborhood of ~5 cycles, i.e. the
+>total cost will be in the noise even if the number of checked CR4 bits
+>doubles over the next few years.  In other words, x86 will run out of CR4
+>bits long before the overhead becomes problematic.
+>
+>Note #2, __cr4_reserved_bits() starts from CR4_RESERVED_BITS, which is
+>why the existing __kvm_cpu_cap_has() processing doesn't explicitly OR in
+>CR4_RESERVED_BITS (and why the new code doesn't do so either).
+>
+>Fixes: 2ed41aa631fc ("KVM: VMX: Intercept guest reserved CR4 bits to inject #GP fault")
+>Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+>Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Documentation/hwmon/index.rst needs to be updated.
-
->   MAINTAINERS                  |   7 +
->   drivers/hwmon/pmbus/Kconfig  |   9 ++
->   drivers/hwmon/pmbus/Makefile |   1 +
->   drivers/hwmon/pmbus/crps.c   | 299 +++++++++++++++++++++++++++++++++++
->   5 files changed, 411 insertions(+)
->   create mode 100644 Documentation/hwmon/crps.rst
->   create mode 100644 drivers/hwmon/pmbus/crps.c
-> 
-> diff --git a/Documentation/hwmon/crps.rst b/Documentation/hwmon/crps.rst
-> new file mode 100644
-> index 000000000000..81d5dfd68a46
-> --- /dev/null
-> +++ b/Documentation/hwmon/crps.rst
-> @@ -0,0 +1,95 @@
-> +.. SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +Kernel driver crps
-> +========================
-
-I am quite sure that this triggers a documentation warning.
-
-> +
-> +Supported chips:
-> +
-> +  * Intel CRPS185
-> +
-> +    Prefix: 'crps185'
-> +
-> +    Addresses scanned: -
-> +
-> +Authors:
-> +    Ninad Palsule <ninad@linux.ibm.com>
-> +
-> +
-
-Is the documentation available somewhere ?
-If yes, please add a reference. If not, add a comment explaining that
-it is not available to the public.
-
-> +Description
-> +-----------
-> +
-> +This driver implements support for Common Redundant Power supply with PMBus
-
-For _Intel_ ...
-
-> +support.
-> +
-> +The driver is a client driver to the core PMBus driver.
-> +Please see Documentation/hwmon/pmbus.rst for details on PMBus client drivers.
-> +
-> +
-> +Usage Notes
-> +-----------
-> +
-> +This driver does not auto-detect devices. You will have to instantiate the
-> +devices explicitly. Please see Documentation/i2c/instantiating-devices.rst for
-> +details.
-> +
-> +
-> +Sysfs entries
-> +-------------
-> +
-> +======================= ======================================================
-> +curr1_label		"iin"
-> +curr1_input		Measured input current
-> +curr1_max		Maximum input current
-> +curr1_max_alarm         Input maximum current high alarm
-> +curr1_crit              Critial high input current
-> +curr1_crit_alarm        Input critical current high alarm
-> +curr1_rated_max		Maximum rated input current
-> +
-> +curr2_label		"iout1"
-> +curr2_input		Measured output current
-> +curr2_max		Maximum output current
-> +curr2_max_alarm         Output maximum current high alarm
-> +curr2_crit	        Critial high output current
-> +curr2_crit_alarm        Output critical current high alarm
-> +curr2_rated_max		Maximum rated output current
-> +
-> +in1_label		"vin"
-> +in1_input		Measured input voltage
-> +in1_crit                Critical input over voltage
-> +in1_crit_alarm          Critical input over voltage alarm
-> +in1_max                 Maximum input over voltage
-> +in1_max_alarm           Maximum input over voltage alarm
-> +in1_rated_min		Minimum rated input voltage
-> +in1_rated_max		Maximum rated input voltage
-> +
-> +in2_label		"vout1"
-> +in2_input		Measured input voltage
-> +in2_crit                Critical input over voltage
-> +in2_crit_alarm          Critical input over voltage alarm
-> +in2_lcrit               Critical input under voltage fault
-> +in2_lcrit_alarm         Critical input under voltage fault alarm
-> +in2_max                 Maximum input over voltage
-> +in2_max_alarm           Maximum input over voltage alarm
-> +in2_min                 Minimum input under voltage warning
-> +in2_min_alarm           Minimum input under voltage warning alarm
-> +in2_rated_min		Minimum rated input voltage
-> +in2_rated_max		Maximum rated input voltage
-> +
-> +power1_label		"pin"
-> +power1_input		Measured input power
-> +power1_alarm		Input power high alarm
-> +power1_max  		Maximum input power
-> +power1_rated_max        Maximum rated input power
-> +
-> +temp[1-2]_input		Measured temperature
-> +temp[1-2]_crit 		Critical temperature
-> +temp[1-2]_crit_alarm    Critical temperature alarm
-> +temp[1-2]_max  		Maximum temperature
-> +temp[1-2]_max_alarm     Maximum temperature alarm
-> +temp[1-2]_rated_max     Maximum rated temperature
-> +
-> +fan1_alarm		Fan 1 warning.
-> +fan1_fault		Fan 1 fault.
-> +fan1_input		Fan 1 speed in RPM.
-> +fan1_target             Fan 1 target.
-> +======================= ======================================================
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 637ddd44245f..6b31d545f0f1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6100,6 +6100,13 @@ L:	linux-input@vger.kernel.org
->   S:	Maintained
->   F:	drivers/hid/hid-creative-sb0540.c
->   
-> +CRPS COMMON REDUNDANT PSU DRIVER
-
-This is _INTEL_ CRPS.
-
-> +M:	Ninad Palsule <ninad@linux.ibm.com>
-> +L:	linux-hwmon@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/hwmon/crps.rst
-> +F:	drivers/hwmon/pmbus/crps.c
-> +
->   CRYPTO API
->   M:	Herbert Xu <herbert@gondor.apana.org.au>
->   M:	"David S. Miller" <davem@davemloft.net>
-> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-> index 22418a05ced0..56c4eb4b846e 100644
-> --- a/drivers/hwmon/pmbus/Kconfig
-> +++ b/drivers/hwmon/pmbus/Kconfig
-> @@ -85,6 +85,15 @@ config SENSORS_BPA_RS600
->   	  This driver can also be built as a module. If so, the module will
->   	  be called bpa-rs600.
->   
-> +config SENSORS_CRPS
-> +	tristate "Common Redundant Power Supply"
-
-Again, this is an Intel product.
-
-> +	help
-> +	  If you say yes here you get hardware monitoring support for the Common
-> +	  Redundant Power Supply.
-> +
-> +	  This driver can also be built as a module. If so, the module will
-> +	  be called crps.
-> +
->   config SENSORS_DELTA_AHE50DC_FAN
->   	tristate "Delta AHE-50DC fan control module"
->   	help
-> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-> index 3d3183f8d2a7..c7eb7739b7f8 100644
-> --- a/drivers/hwmon/pmbus/Makefile
-> +++ b/drivers/hwmon/pmbus/Makefile
-> @@ -62,3 +62,4 @@ obj-$(CONFIG_SENSORS_XDPE122)	+= xdpe12284.o
->   obj-$(CONFIG_SENSORS_XDPE152)	+= xdpe152c4.o
->   obj-$(CONFIG_SENSORS_ZL6100)	+= zl6100.o
->   obj-$(CONFIG_SENSORS_PIM4328)	+= pim4328.o
-> +obj-$(CONFIG_SENSORS_CRPS)	+= crps.o
-> diff --git a/drivers/hwmon/pmbus/crps.c b/drivers/hwmon/pmbus/crps.c
-> new file mode 100644
-> index 000000000000..44d309f81803
-> --- /dev/null
-> +++ b/drivers/hwmon/pmbus/crps.c
-> @@ -0,0 +1,299 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright 2024 IBM Corp.
-> + */
-> +
-> +#include <linux/debugfs.h>
-> +#include <linux/i2c.h>
-> +#include <linux/of.h>
-> +#include <linux/pmbus.h>
-> +
-> +#include "pmbus.h"
-> +
-> +/* Intel crps185 specific commands. */
-> +#define CRPS185_MFR_IOUT_MAX		0xA6
-> +#define CRPS185_MFR_POUT_MAX		0xA7
-> +
-
-I fail to see the point in those defines, even more so since
-PMBUS_MFR_POUT_MAX and PMBUS_MFR_IOUT_MAX are used below.
-
-> +enum {
-> +	CRPS_DEBUGFS_PMBUS_REVISION = 0,
-> +	CRPS_DEBUGFS_MAX_POWER_OUT,
-> +	CRPS_DEBUGFS_MAX_CURRENT_OUT,
-> +	CRPS_DEBUGFS_NUM_ENTRIES
-> +};
-> +
-> +enum models { crps185 = 1, crps_unknown };
-
-Pointless enum. The driver only supports a single power supply.
-
-> +
-> +struct crps {
-> +	enum models version;
-> +	struct i2c_client *client;
-> +
-> +	int debugfs_entries[CRPS_DEBUGFS_NUM_ENTRIES];
-> +};
-> +
-> +#define to_psu(x, y) container_of((x), struct crps, debugfs_entries[(y)])
-> +
-> +static struct pmbus_platform_data crps_pdata = {
-> +	.flags = PMBUS_SKIP_STATUS_CHECK,
-> +};
-
-Did you confirm that it is needed ? If so, explain why it is needed.
-
-> +
-> +static const struct i2c_device_id crps_id[] = {
-> +	{ "intel_crps185", crps185 },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(i2c, crps_id);
-> +
-> +/*
-> + * Convert linear format word to machine format. 11 LSB side bits are two's
-> + * complement integer mantissa and 5 MSB side bits are two's complement
-> + * exponent
-> + */
-> +static int crps_convert_linear(int rc)
-> +{
-> +	s16 exponent;
-> +	s32 mantissa;
-> +	s64 val;
-> +
-> +	exponent = ((s16)rc) >> 11;
-> +	mantissa = ((s16)((rc & 0x7ff) << 5)) >> 5;
-> +
-> +	val = mantissa;
-> +	if (exponent >= 0)
-> +		val <<= exponent;
-> +	else
-> +		val >>= -exponent;
-> +
-> +	return (int)val;
-> +}
-> +
-> +static ssize_t crps_debugfs_read(struct file *file, char __user *buf,
-> +				 size_t count, loff_t *ppos)
-> +{
-> +	int rc;
-> +	int *idxp = file->private_data;
-> +	int idx = *idxp;
-> +	struct crps *psu = to_psu(idxp, idx);
-> +	char data[2 * I2C_SMBUS_BLOCK_MAX] = { 0 };
-> +
-> +	rc = pmbus_lock_interruptible(psu->client);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = pmbus_set_page(psu->client, 0, 0xff);
-> +	if (rc)
-> +		goto unlock;
-> +
-> +	switch (idx) {
-> +	case CRPS_DEBUGFS_PMBUS_REVISION:
-> +		rc = i2c_smbus_read_byte_data(psu->client, PMBUS_REVISION);
-> +		if (rc >= 0) {
-> +			if (psu->version == crps185) {
-> +				if (rc == 0)
-> +					rc = sprintf(data, "%s", "1.0");
-> +				else if (rc == 0x11)
-> +					rc = sprintf(data, "%s", "1.1");
-> +				else if (rc == 0x22)
-> +					rc = sprintf(data, "%s", "1.2");
-> +				else
-> +					rc = snprintf(data, 3, "0x%02x", rc);
-> +			} else {
-> +				rc = snprintf(data, 3, "%02x", rc);
-> +			}
-> +		}
-
-This attribute should be added into the PMBus core.
-
-> +		break;
-> +	case CRPS_DEBUGFS_MAX_POWER_OUT:
-> +		rc = i2c_smbus_read_word_data(psu->client, PMBUS_MFR_POUT_MAX);
-> +		if (rc >= 0) {
-> +			rc = crps_convert_linear(rc);
-> +			rc = snprintf(data, I2C_SMBUS_BLOCK_MAX, "%d", rc);
-> +		}
-> +		break;
-> +	case CRPS_DEBUGFS_MAX_CURRENT_OUT:
-> +		rc = i2c_smbus_read_word_data(psu->client, PMBUS_MFR_IOUT_MAX);
-> +		if (rc >= 0) {
-> +			rc = crps_convert_linear(rc);
-> +			rc = snprintf(data, I2C_SMBUS_BLOCK_MAX, "%d", rc);
-> +		}
-> +		break;
-
-What is the point of those two attributes ? There are already
-standard sysfs attributes reporting those values.
-
-> +	default:
-> +		rc = -EINVAL;
-> +		break;
-> +	}
-> +
-> +unlock:
-> +	pmbus_unlock(psu->client);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	data[rc] = '\n';
-> +	rc += 2;
-> +
-> +	return simple_read_from_buffer(buf, count, ppos, data, rc);
-> +}
-> +
-> +static const struct file_operations crps_debugfs_fops = {
-> +	.llseek = noop_llseek,
-> +	.read = crps_debugfs_read,
-> +	.open = simple_open,
-> +};
-> +
-> +static int crps_read_word_data(struct i2c_client *client, int page,
-> +				int phase, int reg)
-> +{
-> +	int rc;
-> +
-> +	switch (reg) {
-> +	case PMBUS_STATUS_WORD:
-> +		rc = pmbus_read_word_data(client, page, phase, reg);
-> +		if (rc < 0)
-> +			return rc;
-> +		break;
-
-Why is this needed ?
-
-> +	case PMBUS_OT_WARN_LIMIT:
-> +		rc = pmbus_read_word_data(client, page, phase,
-> +					  PMBUS_MFR_MAX_TEMP_1);
-> +		if (rc < 0)
-> +			return rc;
-> +		break;
-> +	case PMBUS_IOUT_OC_WARN_LIMIT:
-> +		rc = pmbus_read_word_data(client, page, phase,
-> +					  CRPS185_MFR_IOUT_MAX);
-> +		if (rc < 0)
-> +			return rc;
-> +		break;
-> +	case PMBUS_POUT_OP_WARN_LIMIT:
-> +		rc = pmbus_read_word_data(client, page, phase,
-> +					  CRPS185_MFR_POUT_MAX);
-> +		if (rc < 0)
-> +			return rc;
-> +		break;
-
-The above three values are more than odd. They duplicate the respective
-standard rated_max attributes as warning limits. Why ?
-
-On top of that, on writes, the actual warning limits are overwritten.
-That makes even less sense.
-
-> +	default:
-> +		rc = -ENODATA;
-> +		break;
-> +	}
-> +
-> +	return rc;
-> +}
-> +
-> +static struct pmbus_driver_info crps_info[] = {
-> +	[crps185] = {
-> +		.pages = 1,
-> +		/* PSU uses default linear data format. */
-> +		.func[0] = PMBUS_HAVE_PIN | PMBUS_HAVE_IOUT |
-> +			PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_IIN |
-> +			PMBUS_HAVE_VIN | PMBUS_HAVE_STATUS_INPUT |
-> +			PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
-> +			PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 |
-> +			PMBUS_HAVE_STATUS_TEMP |
-> +			PMBUS_HAVE_FAN12 | PMBUS_HAVE_STATUS_FAN12,
-> +		.read_word_data = crps_read_word_data,
-> +	},
-> +};
-> +
-> +#define to_psu(x, y) container_of((x), struct crps, debugfs_entries[(y)])
-> +
-> +static void crps_init_debugfs(struct crps *psu)
-> +{
-> +	struct i2c_client *client = psu->client;
-> +	struct dentry *debugfs;
-> +	int i;
-> +
-> +	/* Don't fail the probe if we can't create debugfs */
-> +	debugfs = pmbus_get_debugfs_dir(client);
-> +	if (!debugfs)
-> +		return;
-> +
-> +	for (i = 0; i < CRPS_DEBUGFS_NUM_ENTRIES; ++i)
-> +		psu->debugfs_entries[i] = i;
-> +
-> +	debugfs_create_file("pmbus_revision", 0444, debugfs,
-> +			    &psu->debugfs_entries[CRPS_DEBUGFS_PMBUS_REVISION],
-> +			    &crps_debugfs_fops);
-> +	debugfs_create_file("max_power_out", 0444, debugfs,
-> +			    &psu->debugfs_entries[CRPS_DEBUGFS_MAX_POWER_OUT],
-> +			    &crps_debugfs_fops);
-> +	debugfs_create_file("max_current_out", 0444, debugfs,
-> +			    &psu->debugfs_entries[CRPS_DEBUGFS_MAX_CURRENT_OUT],
-> +			    &crps_debugfs_fops);
-> +}
-> +
-> +static int crps_probe(struct i2c_client *client)
-> +{
-> +	int rc;
-> +	struct device *dev = &client->dev;
-> +	enum models vs = crps_unknown;
-> +	struct crps *psu;
-> +	const void *md = of_device_get_match_data(&client->dev);
-> +	const struct i2c_device_id *id = NULL;
-> +	char buf[I2C_SMBUS_BLOCK_MAX + 2] = { 0 };
-> +
-> +	if (md) {
-> +		vs = (uintptr_t)md;
-> +	} else {
-> +		id = i2c_match_id(crps_id, client);
-> +		if (id)
-> +			vs = (enum models)id->driver_data;
-> +	}
-> +
-Consider using i2c_get_match_data().
-
-> +	if (!vs || vs >= crps_unknown) {
-> +		dev_err(dev, "Version %d not supported\n", vs);
-> +		return -EINVAL;
-> +	}
-
-This is very much pointless. The driver would not be instantiated withut match.
-
-> +
-> +	rc = i2c_smbus_read_block_data(client, PMBUS_MFR_MODEL, buf);
-> +	if (rc < 0) {
-> +		dev_err(dev, "Failed to read PMBUS_MFR_MODEL\n");
-> +		return rc;
-
-dev_err_probe().
-
-> +	}
-> +	if (strncmp(buf, "03NK260", 7)) {
-
-This should also check and ensure that rc == 7.
-
-> +		buf[rc] = '\0';
-> +		dev_err(dev, "Model '%s' not supported\n", buf);
-
-dev_err_probe()
-
-> +		return -ENODEV;
-> +	}
-> +
-> +	client->dev.platform_data = &crps_pdata;
-> +	rc = pmbus_do_probe(client, &crps_info[vs]);
-> +	if (rc) {
-> +		dev_err(dev, "Failed to probe %d\n", rc);
-> +		return rc;
-
-dev_err_probe().
-
-> +	}
-> +
-> +	/*
-> +	 * Don't fail the probe if there isn't enough memory for debugfs.
-> +	 */
-> +	psu = devm_kzalloc(&client->dev, sizeof(*psu), GFP_KERNEL);
-> +	if (!psu) {
-> +		dev_warn(dev, "Failed to allocate memory. debugfs are not supported.\n");
-> +		return 0;
-> +	}
-> +
-> +	psu->version = vs;
-> +	psu->client = client;
-> +
-
-Drop all this. Add the PMBus version as standard debugfs attribute to the PMBus core
-if needed/wanted. The rest is already provided as standard sysfs attributes, and
-reporting the same value in debugfs files adds no value.
-
-> +	crps_init_debugfs(psu);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id crps_of_match[] = {
-> +	{
-> +		.compatible = "intel,crps185",
-> +		.data = (void *)crps185
-> +	},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, crps_of_match);
-> +
-> +static struct i2c_driver crps_driver = {
-> +	.driver = {
-> +		.name = "crps",
-> +		.of_match_table = crps_of_match,
-> +	},
-> +	.probe = crps_probe,
-> +	.id_table = crps_id,
-> +};
-> +
-> +module_i2c_driver(crps_driver);
-> +
-> +MODULE_AUTHOR("Ninad Palsule");
-> +MODULE_DESCRIPTION("PMBus driver for Common Redundant power supplies");
-
-Again, this is for _Intel_ power supplies.
-
-> +MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS("PMBUS");
-
+Reviewed-by: Chao Gao <chao.gao@intel.com>
 
