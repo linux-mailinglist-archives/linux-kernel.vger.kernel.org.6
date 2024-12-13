@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-445116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EFD99F1190
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:57:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66FF79F1194
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E27861652C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:56:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 039AC1884999
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2425B1E571B;
-	Fri, 13 Dec 2024 15:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508381E32DC;
+	Fri, 13 Dec 2024 15:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="obyOaWIl"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AAeHJeZd"
 Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68E51E3DFE
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B961E47D7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734105371; cv=none; b=ZT2pBLHA7cRZO1NMsNQHxjnds2wI/YF2LnLwnPOdkIQjKcBS92jtP9cikfDNnyU2RLTc8CZQ/QZGw3rQIby0cPBSD8yyzt+04spgh1zZIgv16fXuywK3JXKuEH63SM/YyUSxDrMnxg5oVveKo4wYza/qX8ndAYHzW1qNXaHhLN0=
+	t=1734105372; cv=none; b=KKSTVmfWNfKDp0ZKAb80L9AagiPoxxKv/H2+walI7tKaERThbcIF0wN/FJaHQN7Mzq8deed8vgrm4W/mJYVxyiZFUMYGxx+Qhajg+slXHZujZbEg/xoFu3tsSLL7BzvSmsTpi/UOALTtVgw6PTcuBFEXoQZP/MYpXCb9pc2AFN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734105371; c=relaxed/simple;
-	bh=sPnR3qBnsWLGEr22pRK2TCMcNSO2RW9SlspmNOIT9ew=;
+	s=arc-20240116; t=1734105372; c=relaxed/simple;
+	bh=SKl6hxJdy3uyJbhZpOOdAiYhB+0FB2yQzq5XqnnCoF8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ek+LzIUrAiT1jXOTns5m3HO0X1f4tAZ+srJGDLdEWwY86mW9JN4F2e0cun6tkLNefX2Ts/SjF+07RNTEfSe6786o+OHYAVWQ/xUCEF3VvZk8k8Ag8AUsVyn+xCyLM8lIzvjvPJRCaCemjnCDUxjgTYGm0/Zy2AjwCb75Sr321z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=obyOaWIl; arc=none smtp.client-ip=209.85.166.41
+	 MIME-Version; b=KBEOr0Lo3w4tqdw8NjL9VL6O6K7TQQrHb4r5skCYyDZwGiZVj9g19r23iqIhhvud56wa8gVuUrmTKGKnboQILDcL2X2/OwaJFBNBVfpZB6C86aiZ1AR1TZxaW82ToWfy5o1IM+FNG+ER9h1tYeU3f5AoVyDicAb9Pq1RKulNVFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AAeHJeZd; arc=none smtp.client-ip=209.85.166.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-84435dbda4bso104648139f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:56:09 -0800 (PST)
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-844e6d1283aso39025139f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:56:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734105369; x=1734710169; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734105370; x=1734710170; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HOQaUrSMrbMaSJ8tKHsfpEHyiDws1YYfXq+2bH3/e/Y=;
-        b=obyOaWIlLgEsnjXV7gMx/G3rChEhT3ViesKVO0mDuP1ASnoUTdHT/MOdQLx6tFeFCS
-         68sfgPX2jZBlKMS6C1TnsGBTyAlkwhdeL3L0rpJqF8gdynDHZGWrxPkH3Z0w+n2gyjuG
-         AYUcKJFnFw4qGqcXUGxleGgzUSU9eaAtaubpt4iTHYuofBvbY9MU7xOPAkeV4kBcACny
-         WpuiSxbjIxGn89SGOWcguKS7+2MN2HjdezPSoIzCp/88od/7d3eN0ImQtejzPHwvlb7B
-         RHO9uDxi72CCUPgseMsdr+YW6Sqjrk22kbaCmHlG3X3OZBs91D1Bjd2tkQqWVvNqv/Py
-         kpjw==
+        bh=kz0Pdg9jqnEJMYLqH2tprv5bkemx7uetlhB6shaJiPY=;
+        b=AAeHJeZdtfP/2H1iy+ldIoEDGS54o7//Dw0LyEhQdwB2FK9yFFGFcrabdhflnp0wSE
+         r4/OU71VRA2b2GHywltcJnJlEL1ybczlTCu7MiRyPZL4gHKbl9uq8e/I+jYAtiAR0p8b
+         /HSiDCDdIwWN2KJ1ZA7CVvimVvrQK8YBnpEeKzchSpnBKlVDSH4xXiwlMNSs+rj7CWQn
+         /ZPx9n6tpXNmdHn+5S2uFX+cZJDFowx0rXuu50y3DH2XqOyofqO4v32vjRTUT1OuleQG
+         PEMbCUTiTt15tdYbNozMlbAvfmBcw+52Y+IVA1bOp+woVNHYK3HQ5w9p/BDSOI1UnKxN
+         QM/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734105369; x=1734710169;
+        d=1e100.net; s=20230601; t=1734105370; x=1734710170;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HOQaUrSMrbMaSJ8tKHsfpEHyiDws1YYfXq+2bH3/e/Y=;
-        b=C6KFMABgei48U7tE4F9cg5RRygAXM7OK9ItMca0ZZrd2dvxchRtNYkz+nMI1a6Q43N
-         ifzaTewV8nXBAdQZAUesNxzetSCKlomPDSBWJedtqv/1xGBu41tOr/0APP7w+zxmJQtB
-         17xvyb8ENz2a46OTf4uQiDUoUuDS4lzl1easM9T/ff3mB9VV29rSiyVkhJxMyrs2Z+Of
-         7u/b8LjtJOw85TxX0Jrp1d0g5xEJ/ghKFJXAD8l6bmlAfZ35eRV23pnC0JyPpSGgEH/Z
-         4yB2uYYSwWiYCjSMF5bBJO5dhwh3IOZqYqWE3VTltI25PcD1te5erY7DeVZqRFx0P3om
-         AygA==
-X-Forwarded-Encrypted: i=1; AJvYcCURePgvA0qghRn8E8OSyseetQide98aiLULVnqMkehlU5rc09k8ZHQaUsf7Sp0/2qC73T1xGHBjlZhB+fU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB0Pqiwi8dYXnteNxWldGqFJAR6SenBQtdZQm4Tgzo2V5l/F1a
-	pRGozDoxH9J/PLSQ3mOoQuistO6zXA8+xiVY8QTUhxcTsuf9K6Qc7wA786HapvMB7P3hTkeJn+Q
-	J
-X-Gm-Gg: ASbGncsjHupvJ6xtU+m9T2ggX3sA77ORhbnmQ36vHN8qpRYz7/x/JU7RVF6E8dGcO94
-	3s+N2m+UzNpuJ8s28mU/kl7H55jJuRkMTlYhf77oXMidAMquRZ1z+Tis1zVDEM/5F0NXUJ2DELl
-	gJ9JyBVObDN/LqFhS/jHjBxf1alYbcCvgEUC+BvQepCEAACfsguJl/zyOrTjhMoOadMshgOXM9r
-	9evze38RjyAwe9o89fjdr/lcj6HcX03Rnk5DiUUoeTMfliwo/AdEnUlFhrM
-X-Google-Smtp-Source: AGHT+IFBVlz5yZz/k+skWWprsCIycLK8jgnRkqf8RE4HqF0RJQv2gkIr0yeXfbClfRWoooTGgqlEcg==
-X-Received: by 2002:a05:6e02:156f:b0:3a7:e8df:3fcb with SMTP id e9e14a558f8ab-3b02d788a63mr20845625ab.7.1734105369001;
-        Fri, 13 Dec 2024 07:56:09 -0800 (PST)
+        bh=kz0Pdg9jqnEJMYLqH2tprv5bkemx7uetlhB6shaJiPY=;
+        b=KEYuPxSy9raQ54kvkeRTQzg/dPzAsKFlx30uNjaAzl3JeNtokihiLkBXvus0ijyAKS
+         uH2DerJkyC7su3XnIxOQe7WR8NzgLxKbLtigyXQJBXUW/rP/RK0uOp7Bm6zLjmU+jAYO
+         tY7bFIwPzEKSh8tGw9GOyIhyBEz6I49TXLrzMiy9wvDELguLEVXJN+i5BpWYCc7s4HgR
+         zZEiO8rVWap5UlY1zmYAEGer1crUblKy+8uUXg4CScCh6LyhdRnvdbtgPst0uWzNQGeg
+         2rud+YC7itSClNYUGjZLzy+IvhlxBdVWD2zFI4LCvYcvUrBU5ViKwSjZ710bB1ZU0S6C
+         qCng==
+X-Forwarded-Encrypted: i=1; AJvYcCXoikyW+M5kyYyHBYmzb7ygIvXjzx9zlfdITiB0QMkpGj0w00ET11T4fTDEiMYUEuR9m3Yo8Bu6705dqL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN3F9300gnUyyLDtrlDreoLX0qIXgh4p4XT+wP9E3QJqD7R1B+
+	kwBjV/mIHdtnDxSPv1DqYNYH1hzNr7JAVdNhuLJFtSaHSjEyKxWNL/HEFxwhGrE=
+X-Gm-Gg: ASbGncsCFvuWUpyQXbLb9UbSJlDLbIBNhxz+AXuo+1O0XdLU2NJiCVdyAHehn3+Rkoi
+	MuSV7nJDx919dXxM38+dw5uXT9nz0vRq9pfemsVtWsQ1hbnIIWu6nlLyXpeddvCArqrBSTEcg6/
+	eE1J6kOyhr+Ue3lc+blals9nEMw7ZVA/LE5YxCoxYuu5zJzD50vsLcQQqP4VcnbVurpn0xOA9af
+	VTkREspdYHzYh+w44CWwmKASCD4y0FihmtjWxij5bVLZVezxF0SA2gIAgyr
+X-Google-Smtp-Source: AGHT+IHcUplw3Q6ECt5DnQxOZIMw6sSCxN/kZ+qm1VNkzK8N15/r675oe1NRLkEoEeFprb07mxKCyg==
+X-Received: by 2002:a92:d10c:0:b0:3a8:13d5:bd2c with SMTP id e9e14a558f8ab-3ae61f23bb3mr46583235ab.2.1734105370422;
+        Fri, 13 Dec 2024 07:56:10 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a9ca03ae11sm35258405ab.41.2024.12.13.07.56.07
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a9ca03ae11sm35258405ab.41.2024.12.13.07.56.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 07:56:08 -0800 (PST)
+        Fri, 13 Dec 2024 07:56:09 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
@@ -81,9 +80,9 @@ Cc: hannes@cmpxchg.org,
 	kirill@shutemov.name,
 	bfoster@redhat.com,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 04/11] mm: add PG_dropbehind folio flag
-Date: Fri, 13 Dec 2024 08:55:18 -0700
-Message-ID: <20241213155557.105419-5-axboe@kernel.dk>
+Subject: [PATCH 05/11] mm/readahead: add readahead_control->dropbehind member
+Date: Fri, 13 Dec 2024 08:55:19 -0700
+Message-ID: <20241213155557.105419-6-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241213155557.105419-1-axboe@kernel.dk>
 References: <20241213155557.105419-1-axboe@kernel.dk>
@@ -95,52 +94,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a folio flag that file IO can use to indicate that the cached IO
-being done should be dropped from the page cache upon completion.
+If ractl->dropbehind is set to true, then folios created are marked as
+dropbehind as well.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/page-flags.h     | 5 +++++
- include/trace/events/mmflags.h | 3 ++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ include/linux/pagemap.h | 1 +
+ mm/readahead.c          | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index cf46ac720802..16607f02abd0 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -110,6 +110,7 @@ enum pageflags {
- 	PG_reclaim,		/* To be reclaimed asap */
- 	PG_swapbacked,		/* Page is backed by RAM/swap */
- 	PG_unevictable,		/* Page is "unevictable"  */
-+	PG_dropbehind,		/* drop pages on IO completion */
- #ifdef CONFIG_MMU
- 	PG_mlocked,		/* Page is vma mlocked */
- #endif
-@@ -562,6 +563,10 @@ PAGEFLAG(Reclaim, reclaim, PF_NO_TAIL)
- FOLIO_FLAG(readahead, FOLIO_HEAD_PAGE)
- 	FOLIO_TEST_CLEAR_FLAG(readahead, FOLIO_HEAD_PAGE)
- 
-+FOLIO_FLAG(dropbehind, FOLIO_HEAD_PAGE)
-+	FOLIO_TEST_CLEAR_FLAG(dropbehind, FOLIO_HEAD_PAGE)
-+	__FOLIO_SET_FLAG(dropbehind, FOLIO_HEAD_PAGE)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index bcf0865a38ae..5da4b6d42fae 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1353,6 +1353,7 @@ struct readahead_control {
+ 	pgoff_t _index;
+ 	unsigned int _nr_pages;
+ 	unsigned int _batch_count;
++	bool dropbehind;
+ 	bool _workingset;
+ 	unsigned long _pflags;
+ };
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 8a62ad4106ff..c0a6dc5d5686 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -191,7 +191,13 @@ static void read_pages(struct readahead_control *rac)
+ static struct folio *ractl_alloc_folio(struct readahead_control *ractl,
+ 				       gfp_t gfp_mask, unsigned int order)
+ {
+-	return filemap_alloc_folio(gfp_mask, order);
++	struct folio *folio;
 +
- #ifdef CONFIG_HIGHMEM
- /*
-  * Must use a macro here due to header dependency issues. page_zone() is not
-diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index bb8a59c6caa2..3bc8656c8359 100644
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -116,7 +116,8 @@
- 	DEF_PAGEFLAG_NAME(head),					\
- 	DEF_PAGEFLAG_NAME(reclaim),					\
- 	DEF_PAGEFLAG_NAME(swapbacked),					\
--	DEF_PAGEFLAG_NAME(unevictable)					\
-+	DEF_PAGEFLAG_NAME(unevictable),					\
-+	DEF_PAGEFLAG_NAME(dropbehind)					\
- IF_HAVE_PG_MLOCK(mlocked)						\
- IF_HAVE_PG_HWPOISON(hwpoison)						\
- IF_HAVE_PG_IDLE(idle)							\
++	folio = filemap_alloc_folio(gfp_mask, order);
++	if (folio && ractl->dropbehind)
++		__folio_set_dropbehind(folio);
++
++	return folio;
+ }
+ 
+ /**
 -- 
 2.45.2
 
