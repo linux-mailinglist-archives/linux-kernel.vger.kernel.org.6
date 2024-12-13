@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-444819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33BD9F0CF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:07:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F75188B388
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:07:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527FD1DFE36;
-	Fri, 13 Dec 2024 13:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boBHWnff"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15ADF9F0D01
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:08:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7CB1DFD87;
-	Fri, 13 Dec 2024 13:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6313283280
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:08:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20891E0B82;
+	Fri, 13 Dec 2024 13:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZrHexda"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96341E0B67;
+	Fri, 13 Dec 2024 13:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734095269; cv=none; b=NeXO4q+/bJ//1stvhyd9wkl22m47V0K1SPLjNoYIhBjYNhUIGQLVCVfRNqL5Ecu+aoUIcdEw9ZL8783LbIJ0PQ0kS0gcO3gnUhxA3+aBzx7x+lRqzs7Q05LsrFmKlzhk82p08MVJ6MZS/9UaKthuc7pKu9vBTOrdA/eWMGoKohw=
+	t=1734095280; cv=none; b=o6DlCr7pcJdAntAwIWYiq3aAdMwzyXr2FYe7LYolhVGEjG1nQDwedk7nUw9jLBXWBWs6iwg8D1cZU3gzAmBBmhBiGjx0lhs/rkTTmyM6oGUBT/atRIiTDlY8PeGswNYnrx1uQxF3SzbJKxdDQEwAl/9ITbjgva/Lc+VzJ74t8fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734095269; c=relaxed/simple;
-	bh=uMeScOuP+OJQ7++MVgDmQiNlrlV1cFBdw7c/2oZGj7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HRJMonXMV/tn49tRkgH2JuHLfpqUYiVu+PHysyzN9Mh2tmrGO5+mhff5l6533QwBonAHJYClx4C+cNYC1/tLdW8uEfulQixxHbi1a3DXFTGIeG6NMN3vt7ZgIKJYobpyBZoHge8iCUpg6PetGjxmQlE5hcPF4XuLQQjHd9FXhwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boBHWnff; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CF5C4CED0;
-	Fri, 13 Dec 2024 13:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734095269;
-	bh=uMeScOuP+OJQ7++MVgDmQiNlrlV1cFBdw7c/2oZGj7M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=boBHWnff/hgF7FYpIcsbAdtTvCOOWyqgQsee2l9hMkLuPWV4IsqpqT/Zol8V/qD5f
-	 vcJ08nFVsJudxKOCrDLx9T1Y5+/XYlXgrAtLgSApA2Ww9+2K9uMW3ARAVPHr+A8eow
-	 p/9UANhuvy7QD6Ui1V9/9c2FRbbEEkUor1MFWxGq0yrd0hNDxlfYNH0aKfe7qDvLXq
-	 UIazpUkuxj8v0414ScUCdzRNaj2WA7GJUo0EeSs9coMoh5uZtOcX8AX329P+qdoFXz
-	 ja9Hbp47XFsAbR39aR7Bp2Mu4smGtkouBFVMarZKi7Sal39ezC2CggPXSeWaBFa1QK
-	 OPyLB2/6FvJWQ==
-Date: Fri, 13 Dec 2024 14:07:46 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Friedrich Vock <friedrich.vock@gmx.de>
-Cc: Maarten Lankhorst <dev@lankhorst.se>, linux-kernel@vger.kernel.org, 
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
- cgroup.
-Message-ID: <20241213-sceptical-maize-gazelle-fadc34@houat>
-References: <20241204134410.1161769-1-dev@lankhorst.se>
- <29a71119-04de-4c76-a98a-d0fcb906390f@gmx.de>
+	s=arc-20240116; t=1734095280; c=relaxed/simple;
+	bh=T2qbFS/VfyLNKut3R+kmJ10y9llOEamkGLxbu+C5gbU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kB6A4MgltCV51fyLj1XImVfPawyXiqsKhYImEiWkP3z+ZmET74U3qJq661dNJA0H44jKm7gFcxZt6wSs/ftzE24ztAQV1EEJ4vWi3Gj7K0loe2YvbyovnnlbEYmErrmlF8iCITvwPzjpA4TMQGYrXdR8j4opwfPMYzN45XofcHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZrHexda; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385ddcfc97bso1317192f8f.1;
+        Fri, 13 Dec 2024 05:07:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734095277; x=1734700077; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+pny43IjbXA+/wIRDe08ndy2RzpYe+YfTzRllKJrGWM=;
+        b=IZrHexdalB1Z7rIs5RcE9QxoZ7i5Bjq/5MVTANfYViIDkLe7cm9gr+CZQFzthp1PRw
+         i9bK7GsQXv9qoiMD7Wz5vRY+b12Oq73wA0fi7rBETFae3oiI9L5ObGTQUcVznezuv7rE
+         68axRFwnxJS1sIHJ3yFhz9Rq3DIhrqxlGBKAAUD5G2EN7TVKUZUnLUeKzxXRGFjopIfS
+         l6QhpBq4YIE25NSG0VIbD+uIIcLx6a9lrl3poPeg+8I1ERlcRYFelxnKhr2wr+8By9Gz
+         9U3et2MzMCePIfKSHpc8y851Oh1H94tSwQ13JUDkbeIPTjicF6wJFzYXF8cnx0kPjsfS
+         b/+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734095277; x=1734700077;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+pny43IjbXA+/wIRDe08ndy2RzpYe+YfTzRllKJrGWM=;
+        b=vyW4rTPQgSTAWp0oNcXDnwE+tua5LluA32fzN1ZEjsW0VVgHx2VGzesEYEDXoh6vrT
+         8Mqz8icSXM4aIuFAJYjJ758bE6F6bQVGp/b1efTr+MGlzcSFOzUqsCQDj6oL+T807woe
+         zIqV1XAJVKmuTmFLBEq/ck9wtW2VA0iiVHX/Mym3cerW/pISn+Q07oyV1X4Ktg6o3K0M
+         M07Pgd9YakLCg3kYy0q4XQxoQVv2Rk0UMaXir43SELnhXKQD11Gv26zrmsw+EfsgmSrp
+         w+Fqyq8GnH/mdJtO8rskQLKQn5Ozff0t54JOAmAxsTShOAD4IfXzNl+v+QxruOZPzk2H
+         /rog==
+X-Forwarded-Encrypted: i=1; AJvYcCUKrIAeYVGhGxY+qHIwGxM1Rcm5YCtI5N3R0VUAMpdqejCdD3pK3/oGXjJQ2M0v4FJMbNZv8hJ5OSoGO3gjw97om4At@vger.kernel.org, AJvYcCUh3dEW4PkNsAFIOYArUtIyzqLep6izyMwla6xp5nMIbR49gBWjaonPI+sB7BSvD7ustrg=@vger.kernel.org, AJvYcCXJwK28N/UjG2LoEEVdZuQ+3EZmlviOu2Zdwv6iOoXqhWFH5YpTIVN1IhZPK6z7KnXu+MrMzw8fo5ArkA5H@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOMBYwPN0cRiTJg3uWHiK7Afufk35mv0Z/1eN//0iEheiK2kyN
+	gsxoUckwpm05W/zHdjP2IjTOKGRE0dflmWTVUFiIlBaFfjt8/FU2
+X-Gm-Gg: ASbGncvW1q1m94Q5S6gfQtwcjmk9demYfD/9/YRQa8fjYOPWB7ht1Hrk1DsppJ46VKQ
+	NQHbfk3PRuajCillSX5jfO9AbW6nE7MRlNcsPQxUr0BmNWBNLpaIkoYKhSDz/IS7nWAkE8APb+/
+	LkI7VAl4HR5lI+sDFJCMcKA3qrh6Y656UqRUV3DTM7fsrEa5MTkUrgnTevANYSuHR+GN1eub4Yb
+	07R3Svn60bS4jT1XO0HkCUxwXLNRvhsjy5nv6Z8ILDCBw4m4GfcfqhHXpDrBjkmkZD22Ky+ACRc
+	pzHkOm7dKkxPhWarhOIXl9ltoMqHJw==
+X-Google-Smtp-Source: AGHT+IHQU/LJQSTsO+zwOz3R3N381tEUMmonmZYiRo4Pz1pz8GCx7ErWSq2cPo56jMEV3z8Z+bk6kg==
+X-Received: by 2002:a5d:584a:0:b0:386:42a6:21f2 with SMTP id ffacd0b85a97d-38880af1406mr2089867f8f.10.1734095276768;
+        Fri, 13 Dec 2024 05:07:56 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878248e61dsm7033788f8f.21.2024.12.13.05.07.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 05:07:56 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 13 Dec 2024 14:07:54 +0100
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 00/13] uprobes: Add support to optimize usdt
+ probes on x86_64
+Message-ID: <Z1wxqhwHbDbA2UHc@krava>
+References: <20241211133403.208920-1-jolsa@kernel.org>
+ <20241213105105.GB35539@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="xokrzpyhqued3d7l"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <29a71119-04de-4c76-a98a-d0fcb906390f@gmx.de>
+In-Reply-To: <20241213105105.GB35539@noisy.programming.kicks-ass.net>
 
+On Fri, Dec 13, 2024 at 11:51:05AM +0100, Peter Zijlstra wrote:
+> On Wed, Dec 11, 2024 at 02:33:49PM +0100, Jiri Olsa wrote:
+> > hi,
+> > this patchset adds support to optimize usdt probes on top of 5-byte
+> > nop instruction.
+> > 
+> > The generic approach (optimize all uprobes) is hard due to emulating
+> > possible multiple original instructions and its related issues. The
+> > usdt case, which stores 5-byte nop seems much easier, so starting
+> > with that.
+> > 
+> > The basic idea is to replace breakpoint exception with syscall which
+> > is faster on x86_64. For more details please see changelog of patch 8.
+> 
+> So ideally we'd put a check in the syscall, which verifies it comes from
+> one of our trampolines and reject any and all other usage.
+> 
+> The reason to do this is that we can then delete all this code the
+> moment it becomes irrelevant without having to worry userspace might be
+> 'creative' somewhere.
 
---xokrzpyhqued3d7l
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
- cgroup.
-MIME-Version: 1.0
+yes, we do that already in SYSCALL_DEFINE0(uprobe):
 
-On Sun, Dec 08, 2024 at 01:15:34PM +0100, Friedrich Vock wrote:
-> Hi,
->=20
-> On 04.12.24 14:44, Maarten Lankhorst wrote:
->
-> > Because it only deals with memory regions, the UAPI has been updated
-> > to use dmem.min/low/max/current, and to make the API cleaner, the
-> > names are changed too.
-> >=20
-> > dmem.current could contain a line like:
-> > "drm/0000:03:00.0/vram0 1073741824"
-> >=20
-> > But I think using "drm/card0/vram0" instead of PCIID would perhaps
-> > be good too. I'm open to changing it to that based on feedback.
->=20
-> Agree, allowing userspace to reference DRM devices via "cardN" syntax
-> sounds good.
->
-> What about other subsystems potentially using dmem cgroups?
-> I'm not familiar with the media subsystem, but I imagine we might be
-> dealing with things like USB devices there? Is something like a
-> "deviceN" possible there as well, or would device IDs look completely
-> different?
+        /* Allow execution only from uprobe trampolines. */
+        vma = vma_lookup(current->mm, regs->ip);
+        if (!vma || vma->vm_private_data != (void *) &tramp_mapping) {
+                force_sig(SIGILL);
+                return -1;
+        }
 
-I have some patches to enable the cgroup in GEM-based drivers, media
-ones and dma-buf heaps. The dma-buf heaps are simple enough since the
-heaps names are supposed to be stable.
-
-I don't think using card0 vs card1 (or v4l0 vs v4l1 for example) will
-work because I don't think we have any sort of guarantee that these
-names will always point to the same devices across reboots or updates.
-
-If the module is loaded later than it used to for example, we could very
-well end up in a situation where card0 and card1 are swapped, while the
-constraints apply to the previous situation.
-
-Maxime
-
---xokrzpyhqued3d7l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ1wxogAKCRAnX84Zoj2+
-dq5iAX4rcVUShdPwwoe/RfA57qN/7Mx6+hgYbzJMWnzIBnKJz0dn+kbUlv3KGdwz
-hWlIPsoBgJvEzg91vZJBiGdsdYRPIlkVHTfuFH/UOtHiSzM1KliMd5zv+JdtITN3
-VU2IF4OnZg==
-=efDB
------END PGP SIGNATURE-----
-
---xokrzpyhqued3d7l--
+jirka
 
