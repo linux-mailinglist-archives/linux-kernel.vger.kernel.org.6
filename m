@@ -1,170 +1,174 @@
-Return-Path: <linux-kernel+bounces-444757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D649F0C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:23:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E9C9F0C2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:24:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1F80169739
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:23:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92D4618889B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1781DF73E;
-	Fri, 13 Dec 2024 12:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C131DF744;
+	Fri, 13 Dec 2024 12:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nm/VgZJa"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ioxRIeCz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0695364D6;
-	Fri, 13 Dec 2024 12:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0461DACA9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734092587; cv=none; b=ikxE0CLeJF5PgyP4d5PFIms9KFw+jTLDyGuKEkflGn0iWF2G1fS+FiGnrg4b1aL/z6itCYLIO31aiFW+8L9myILtYMx2amotg7rRqeB7dFw8Ftpfqo2BLWuLDDO/kXC4gU0MeTb1cwRbJnS3axlI3BK/i81hkttHcTroXZzjM6k=
+	t=1734092671; cv=none; b=reVkh2FE3vEY6gPxpQNrIPpKJ+ISMgR6PdMOMOtu0PYGm3bvHhV4dXoEzDqSqp7S9V+ewkEiyotp1EzhKxaqMOgOJqGtw0pOoiqfkUBVY/eZCwpLF9hvJuX7RAkBUnHUnbIWMcCItGFEHHvPqOWjAUWPaheKosGQL3b9PZVldh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734092587; c=relaxed/simple;
-	bh=SITgVZ66SSnpkb9oByp6UgEh6tRqAQ9hIasKl6K8kU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NAF0g8cD0NIbUGDJgjbNTMRXKtgYqsZQVHifIk6Wjcrm4A4GlQMKOl/zT2tpHCPEEXsDrOHB3m3SjVVozJnFNnvHblqgtzEvN0WKBbGNr/JPcu7qmbFVLXG48zvfSyw+6zMIEHBFA4sCIy4Vxu2PM5vFrOIRWKjy02o0QI21a+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=nm/VgZJa; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8o62DSx4bVg4R+vubTqLz/49UYeh2IHQsgoBXnPSoeY=; b=nm/VgZJaaGNr3qq3O2J2BpfjOy
-	zAxxKNtWRr5bjL8YFcYmb7sVk3TEZEI3BfnL9VDeLRh5JJCPeDkqQdUZnanAqpQRvGEM0gB8Toi8o
-	L5cWUv2bnjpZO3hEVRdzaQQhovHZ/sHuy1cXwHGJ/MUo2kv6LZmQSG6OZAU4xbDHfEAKF5khexb65
-	Jynpcj6Gvpk4R+isbCAyEbVFi8MVmU3h3MSM7LKTTuMhwF7iIUewsfVJTx0IGdRLt6iAagplGxgn6
-	Gk6g6lxO4ipv+GQ5L2j92NTaVUGqcCiIFUZszetmcGRCC/8C3zP5FhRD+tGsn/BIMd3E3fKRytJ3p
-	Op5ULE4Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53938)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tM4h0-0006gB-13;
-	Fri, 13 Dec 2024 12:22:50 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tM4gv-0006J0-2R;
-	Fri, 13 Dec 2024 12:22:45 +0000
-Date: Fri, 13 Dec 2024 12:22:45 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: stmmac: dwmac-socfpga: Set interface
- modes from Lynx PCS as supported
-Message-ID: <Z1wnFXlgEU84VX8F@shell.armlinux.org.uk>
-References: <20241213090526.71516-1-maxime.chevallier@bootlin.com>
- <20241213090526.71516-3-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1734092671; c=relaxed/simple;
+	bh=tD17HkrkjwHc/HyJb5615Eo+jPA69PLVs85GiGzdgJU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rV+jItoqZrzdCeUcOCwL8pKZn1AnIj9gEO0nAT3oFKuwEKaO2bcSRWGfLU2imzF1FCO+EpoH5FPOAvlyHkH4086PrzktpcVbuAB39ky3gVGrJ/0Uq+5sR0Glo/7b4gwdFjAkerKmwbR10Igp0208jwZ+Mgr9kLhwvKv+hn7yG5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ioxRIeCz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD81hX2022255
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:24:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hSakwGz/qif/zcmahl1MGSvr3z7MyIjajOoGXN3iwwI=; b=ioxRIeCzkslyJbSk
+	Et1CVOx1y7LfzrzFbGNh3xFlfvx+nrQvnaVTiuXbkbzAvhdiCBnfmhgKSeRtiRe+
+	czMlHxZBKYhobHLvNtGc8yHEqVp0FHnwuMXRKDVZKoepVdCQ9PblyhO2YegPYS9X
+	fMVsePc47Thile8IdMV+Xj1MlggDlYEmFxS+IfKvc+RVBvH2HM8lCPi76eN0byU5
+	Gu376g32B4qkVabRmHUzxoubxXOhHu/Qs17PKu6XctKasLSVQ9nK2tsZac4sxk5U
+	iilv9fKZ7DSG8t66Vd5mcbrmLuFKcztGjTXbUkfoe61l4nBEVbnWzwhZea+pcEh4
+	6esS+w==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gh270rf0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:24:28 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4679ef4565aso3166541cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:24:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734092668; x=1734697468;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hSakwGz/qif/zcmahl1MGSvr3z7MyIjajOoGXN3iwwI=;
+        b=DUnDVZpcKVhkINxg4Xx4R/sCx9kvYWLJwKOyQ0KzDiqsmPkqREe1rYdkyZhrEhRVGZ
+         kXT9n6/6Tr83HhtgbalzbnAE7eublqOF805ScXBEidgwmlFcouDYy8pJWRzpG0LXLbPD
+         8BbggyiSBWvMeYyCBh+GHWSZFz3iShNnj5BYH2W52V072NQqkrzzowSXuew5mLp1e2cV
+         8DYjsR15Pk1BICZa9DdgOJgn2mf+hvTyeJC+tNmOS0om/CwieVCixJ90KBA8g7F1+rOm
+         mCzNegJoa/GotOeCXFj6ygUIX1JELxCnLNEFaJqufzCUKw7LTdRIXk3CSEGMju51/ot5
+         Jutg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG/fFNkGhE8OBe4LPIatJogL2actWVQLdx8vg/NmWhImmryAVhjCKmhoxlW8NL3nglzqVGCwmE6QDMrBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEorx4tFFbXkCWx53mykESVddCxW8tvRS/hN5Gl41pvN5A3W5P
+	UB1Mx3Pe8O8nBAvXeKnJbvpp9mQdPHZz0875xcF/peixeqPAKeEW5hvCqIpQ3k+GOlTqa8P4D1O
+	dDJFd8Ud/oEahr92DDkeQAABR/3d7TNrZb8rfQeYWHzO1P1F3UVbyHXGsaID0ZMc=
+X-Gm-Gg: ASbGncvVfUhLe3Ji55loJO+ko9+V2ApYyv5qRjD7ebI87YvOE/P+R8iEhNUeIpEZ0rp
+	j5zEcsTe9hqOOD93ib8reR2QwNMZufoT5CE/MnEO8h65tyZJ8Tpih2XHDsZ8GkKpKDHQtfqQqOf
+	vg5gG6Raoesrq/F3MjYMSthzzET80jsO+28T1ZkEA+QjjaxkLxXLWhK6Y4vevlyOE1ITsXn5eIa
+	xgMKPgSnKpQltrcuCGKpW0QgWzu1TQVUk+OADDUC5QPXHef0lls8LyoCp6/xY3tF66RGBp52w5q
+	o/fmLjm4om+FbUm5Q6rhPBAzh6X8QWQzOvvC
+X-Received: by 2002:ac8:574b:0:b0:467:5fd2:9963 with SMTP id d75a77b69052e-467a5757d84mr16327501cf.6.1734092667915;
+        Fri, 13 Dec 2024 04:24:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF65NgsdFcTVYtqrAw8zNApgyyd4jHo1Dv1pzOx2jmjXPzcuAJErfS0afRSei3yts2ia6f5pQ==
+X-Received: by 2002:ac8:574b:0:b0:467:5fd2:9963 with SMTP id d75a77b69052e-467a5757d84mr16327291cf.6.1734092667528;
+        Fri, 13 Dec 2024 04:24:27 -0800 (PST)
+Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b609e56sm11386055a12.40.2024.12.13.04.24.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 04:24:26 -0800 (PST)
+Message-ID: <40bdbb34-94a5-4500-a660-57a530f066c8@oss.qualcomm.com>
+Date: Fri, 13 Dec 2024 13:24:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213090526.71516-3-maxime.chevallier@bootlin.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] soc: qcom: llcc: Enable LLCC_WRCACHE at boot on X1
+To: Johan Hovold <johan@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, stable@vger.kernel.org
+References: <20241212-topic-llcc_x1e_wrcache-v2-1-e44d3058d06c@oss.qualcomm.com>
+ <Z1vzddhyrnwq7Sl_@hovoldconsulting.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <Z1vzddhyrnwq7Sl_@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: WvQmUiFjzn4s0Xm3sXjtgwRBf2WDnvnD
+X-Proofpoint-GUID: WvQmUiFjzn4s0Xm3sXjtgwRBf2WDnvnD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 mlxlogscore=999 impostorscore=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130087
 
-On Fri, Dec 13, 2024 at 10:05:25AM +0100, Maxime Chevallier wrote:
-> On Socfpga, the dwmac controller uses a variation of the Lynx PCS to get
-> additional support for SGMII and 1000BaseX. The switch between these
-> modes may occur at runtime (e.g. when the interface is wired to an SFP
-> cage). In such case, phylink will validate the newly selected interface
-> between the MAC and SFP based on the internal "supported_interfaces"
-> field.
+On 13.12.2024 9:42 AM, Johan Hovold wrote:
+> On Thu, Dec 12, 2024 at 05:32:24PM +0100, Konrad Dybcio wrote:
+>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>> Do so in accordance with the internal recommendations.
 > 
-> For now in stmmac, this field is populated based on :
->  - The interface specified in firmware (DT)
->  - The interfaces supported by XPCS, when XPCS is in use.
+> Your commit message is still incomplete as it does not really say
+> anything about what this patch does, why this is needed or what the
+> implications are if not merging this patch.
+
+I'm not sure I can say much more here..
+
+> How would one determine that this patch is a valid candidate for
+> backporting, for example.
+
+"suboptimal hw presets"
+
 > 
-> In our case, the PCS in Lynx and not XPCS.
+>> Fixes: b3cf69a43502 ("soc: qcom: llcc: Add configuration data for X1E80100")
+>> Cc: stable@vger.kernel.org
+>> Reviewed-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> ---
+>> Changes in v2:
+>> - Cc stable
+>> - Add more context lines
+>> - Pick up r-b
+>> - Link to v1: https://lore.kernel.org/r/20241207-topic-llcc_x1e_wrcache-v1-1-232e6aff49e4@oss.qualcomm.com
+>> ---
+>>  drivers/soc/qcom/llcc-qcom.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+>> index 32c3bc887cefb87c296e3ba67a730c87fa2fa346..1560db00a01248197e5c2936e785a5ea77f74ad8 100644
+>> --- a/drivers/soc/qcom/llcc-qcom.c
+>> +++ b/drivers/soc/qcom/llcc-qcom.c
+>> @@ -2997,20 +2997,21 @@ static const struct llcc_slice_config x1e80100_data[] = {
+>>  		.bonus_ways = 0xfff,
+>>  		.cache_mode = 0,
+>>  	}, {
+>>  		.usecase_id = LLCC_WRCACHE,
+>>  		.slice_id = 31,
+>>  		.max_cap = 1024,
+>>  		.priority = 1,
+>>  		.fixed_size = true,
+>>  		.bonus_ways = 0xfff,
+>>  		.cache_mode = 0,
+>> +		.activate_on_init = true,
 > 
-> This commit makes so that the .pcs_init() implementation of
-> dwmac-socfpga populates the supported_interface when the Lynx PCS was
-> successfully initialized.
+> If this is so obviously correct, why isn't this flag set for
+> LLCC_WRCACHE for all the SoCs?
 
-I think it would also be worth adding this to Lynx, so phylink also
-gets to know (via its validation) which PHY interface modes the PCS
-can support.
+The other SoCs where it's disabled (8180 and 8150) have it in line
+with the recommendations.
 
-However, maybe at this point we need to introduce an interface bitmap
-into struct phylink_pcs so that these kinds of checks can be done in
-phylink itself when it has the PCS, and it would also mean that stmmac
-could do something like:
-
-	struct phylink_pcs *pcs;
-
-	if (priv->hw->xpcs)
-		pcs = xpcs_to_phylink_pcs(priv->hw->xpcs);
-	else
-		pcs = priv->hw->phylink_pcs;
-
-	if (pcs)
-		phy_interface_or(priv->phylink_config.supported_interfaces,
-				 priv->phylink_config.supported_interfaces,
-				 pcs->supported_interfaces);
-
-and not have to worry about this from individual PCS or platform code.
-
-8<===
-From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH net-next] net: pcs: lynx: implement pcs_validate()
-
-Implement .pcs_validate() to restrict the interfaces to those which the
-Lynx PCS supports.
-
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
----
- drivers/net/pcs/pcs-lynx.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/drivers/net/pcs/pcs-lynx.c b/drivers/net/pcs/pcs-lynx.c
-index 767a8c0714ac..fd2e06dba92e 100644
---- a/drivers/net/pcs/pcs-lynx.c
-+++ b/drivers/net/pcs/pcs-lynx.c
-@@ -326,7 +326,22 @@ static void lynx_pcs_link_up(struct phylink_pcs *pcs, unsigned int neg_mode,
- 	}
- }
- 
-+static int lynx_pcs_validate(struct phylink_pcs *pcs, unsigned long *supported,
-+			     const struct phylink_link_state *state)
-+{
-+	if (state->interface != PHY_INTERFACE_MODE_SGMII &&
-+	    state->interface != PHY_INTERFACE_MODE_QSGMII &&
-+	    state->interface != PHY_INTERFACE_MODE_1000BASEX &&
-+	    state->interface != PHY_INTERFACE_MODE_2500BASEX &&
-+	    state->interface != PHY_INTERFACE_MODE_10GBASER &&
-+	    state->interface != PHY_INTERFACE_MODE_USXGMII)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static const struct phylink_pcs_ops lynx_pcs_phylink_ops = {
-+	.pcs_validate = lynx_pcs_validate,
- 	.pcs_inband_caps = lynx_pcs_inband_caps,
- 	.pcs_get_state = lynx_pcs_get_state,
- 	.pcs_config = lynx_pcs_config,
--- 
-2.30.2
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Konrad
 
