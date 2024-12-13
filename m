@@ -1,257 +1,433 @@
-Return-Path: <linux-kernel+bounces-444958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6689F0F13
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:27:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FD29F0F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:28:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDB1C162E23
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416E8283354
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A8F1E1020;
-	Fri, 13 Dec 2024 14:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A661E0DE5;
+	Fri, 13 Dec 2024 14:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jie6iTmA"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MP9BQji9"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DFF1B6D0F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E995A1E0DFD
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734100052; cv=none; b=ZYJ6y7iB3Nwk0yxYqsDRhgeG6jh/As/p8kOeOkLs+QZllbGbNM8CjQAInzdXzC7j3I7sDOpGDCjmdAzGJ4xhm5EDdu6T1NBxCGrJjqJI9t/MPxvGu3tVupYIgj+EwJ73Y6LFME1nZhS0z0T2SpzAyJxhVIt93VMWiXAFcNZPm4I=
+	t=1734100087; cv=none; b=ToKHNZWb0IMW+oUurLspwRa46Z0JVO46TiDCdTZra2Yh9oy7rE4uiMgtnBQ//rHaq6/au30wACwchL/n5h6VHYT/kuHyg8HwAiCowW/ZNc6zWAunaQUQkBx1mv6cEt9wOvmam86rknRr1XRlrUJV6GdcOmiDpDATVwRwiEhhXjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734100052; c=relaxed/simple;
-	bh=Mpm/LRwd7IySOim0PidDsZae2gN8BufbqTdj7uEiDdU=;
+	s=arc-20240116; t=1734100087; c=relaxed/simple;
+	bh=ScH4bkyCInfcqH/0+qEtAbv/AjGhsPAQ1SUF/Cjb9YI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EcCXfhVN5k43AgNAQMVtC9RrrZJb6C1Y185n1w48PXhZqIH2CyEz0Li/5++ALLVh6UPvlY2gSAJmzDPDXXwsMBdYA+PiwjX5Lmloeyp04AFcV5UbWAxocaxlwXiftmIUKOVJ+c+klhiiJSOcV6eOOeYJpEq311C21141NCI5yiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jie6iTmA; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5188311e61cso506950e0c.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:27:30 -0800 (PST)
+	 To:Cc:Content-Type; b=W1l0sh21x1EAK4DLPbnDB41A7QPkgtBmHmopP02/dFZv85I5UOUVoR4zrq3VlOgzZvZzJtSU4KYir+3Mtzctcfk0Ur83U1LW4NaloreytEzAHvibWiXoubBD744W0nydMhan9KVWAmexZTrHaJda2FUXzG9uOtfMlBRf/EC1N3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MP9BQji9; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3862d16b4f5so1206474f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:28:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734100049; x=1734704849; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDrucwrqBIUmyUbK2gTGdYC/lYz1YCAOzgB9+QZb9JQ=;
-        b=jie6iTmAWqf7KFExCS0HZJroPqnUS0mZ0fvTTJKlq81UnHikvtOzyQBsgosWohpiG1
-         P58qIxVB3vZsPwkdpvhjkNfK9CybqZzczO6QWlAWBIYAYtdZPQGlYr4qFXp/B1uesNsD
-         K70gT+KBKDZkkgO9nLMalHmx3cOge//403M9aae+FIfxNnRc1h1JBtw+Iso1fx/R/k8y
-         INHv6E7iox4L3BJ3qSiHDIR0tl9NMichXcF10rCRvqcKUAFhs1gJft34nWnyK2eGT1xp
-         aIluwkUooh8DpyCBe34LAaU5xVfsG7fkZbvfcOSdWSMOuwOmKT063O7LtJhVxPRErnAS
-         oXpw==
+        d=google.com; s=20230601; t=1734100083; x=1734704883; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T/9jU9AnB7Y5dYh4ffQBQ6JeOp1AoI63hdNnuWCSoNA=;
+        b=MP9BQji9V4CK3GxlANQ/hB028EiQ0oRkfk2scx21ad4vNGSNW4Z1ii19Kps9kpkPSK
+         u4wYc585gI5nqFcQGn1zYiV66Fh8DUSmO5kTFRod6sxsRXcsW0/o1Q2FrBdJP3eC4iYR
+         kjXUC/wC8QIxy7PvMZAQPcfVwAt8CG66Mc86VCawZT6FW0UQdZ8BtFgJbzCjxXW4Kz/r
+         2WL0iEd6+3aXyyrQptbuVsLH7r6zweIHt7fdBzYQetx/3oQLUM1TUp5pugmkAndHIn0K
+         AybvqaG8nG6/hAKbO6dtOkElMRqmafpyp71HaS3XbmsnPqhc084jYxHFhrcLtBdzPocU
+         4mBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734100049; x=1734704849;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jDrucwrqBIUmyUbK2gTGdYC/lYz1YCAOzgB9+QZb9JQ=;
-        b=SwfCnqfpWehv3XE6T8QgKuBHwwsiaO0acFq3W+NNiGnDDLUaj7vMtAsu5SUWN3Jo1h
-         mlvm58YWSPMZl3INuE7VeQGzqD+bFYRCjyj/UpswVw0aA73B6CrFELY9CcnaoFYqDjG1
-         18FnEtdJbWoAJw/JGZuSMq5tm+qnSBL1nxQZaqJ+Ij4QeItyEVQLT9OeT6vaOosxRRo7
-         10fhY5spiwx7uF9JBcR4wH+U5fZ9tKspBu0p7re6ucnyX5VDzAS5K4cLYmFFF8c5LXec
-         Fj6Nqw6B9KoHs4KFfeIBnm1l61QXphF2r8PRTWx+ycqbgWcHlH7i+Fugt4C8f4DYKZ8k
-         4gog==
-X-Forwarded-Encrypted: i=1; AJvYcCUtGcWk6yE+mXhNnQ6aRgM7m4Pd6k7lOWXDz0zpEm11hcP9mgmvCvxWc669YyYVoICAVgAx3hPtdjedcH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywtn7NdNmQ7CI38RpIGh+LX3lMsmdHgLwGV1/0yzL8rBZja9BAV
-	Hz9DL5/YjYthJQtS6QkHNTNO1PnX455mK9GSa0Kz19UjpbhAok+gpkbephCpdP5RgewmIH/5P2O
-	XZXbFz2UxagOEfrv6e0mRbgKZoP14m0njU8He1g==
-X-Gm-Gg: ASbGncs/cL5Ys7v7T+ndAy/BGGLAyn1A58Wf4q+co3HI3W8E0AG/68ifhl6Tc7dCq1R
-	JT4tHUGLikrQGq/VUrbor3iDUixD3mstOoufv+1E=
-X-Google-Smtp-Source: AGHT+IF9Zpfo6h5y90m06XlevNuAJRPH+b8VWzhOQ2n7NHbhAbY4bKoFRFrDeNJvMZVeIv6vbwAbVLbWpFW8tTRxZf8=
-X-Received: by 2002:a05:6122:a0e:b0:518:a261:adca with SMTP id
- 71dfb90a1353d-518ca460b50mr2578122e0c.8.1734100049567; Fri, 13 Dec 2024
- 06:27:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734100083; x=1734704883;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T/9jU9AnB7Y5dYh4ffQBQ6JeOp1AoI63hdNnuWCSoNA=;
+        b=ewfUz4fS/XM+LvRe86rk9dSNMyT8hAXfjQa7/i0f0K960rn3jNwYoD/OyQBkFOhqcy
+         LOaw3NwdK63K4GOJAxf8XZr71T38BZ2Ff5xsJ4mCEd0X1BykerWKzy6buZS7o6ZB2mz2
+         RsnpQhTwazCWN17POJiDuHeCjXwIvuWR6s5L4PUyaGCDgqNKpzPcrU9EdwiKdSIlRl0p
+         2jV3VzuRBieCFYnqXF3NPOJBq8dAu9IeYX0QOr3m9IZ0LWfRPTFh48xePCCBcPIceYER
+         x2gsVuACLnaxOVUlCbKaossYBk0TXMj7D84R2th58PX80vfWtgDhGhrxuErM5sHkAKil
+         OnbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVw+VKHLV0V5fhNQORL+fM+BplewH5JAuQ08WeP9giP27jOQwEyzlmOLeDJSsqzakH1bEbtulFVQkWVnv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQxq7zxsfpzKHoD3ECYB3Tj5wZrGBoI9DaiSTWC6oGSPvuBkK0
+	nWipr12DNgekfiVFfmmddFCH8F5R2D4SVdNRrI56RV4t4TrS98sp9/S1UjmMc5uMzmkhADoP4pu
+	AI9pNykEMWD+eeMAhwpqoX3E13eC/KksojqK4
+X-Gm-Gg: ASbGncv6jkISc9C70ZBpawmIhNvA6CE5hJUmigaBaV0qczvcNTM2g6Cb/IcygjcUJy4
+	Sb+UjAwdPZpbAEhnJUGePni6bpjgJa/UPODL1/bA=
+X-Google-Smtp-Source: AGHT+IHpuwhh+BOjtWh9TTURUYd+INUTVwzHOO8kzcIpj83VSOLQU675nZWAUPvOOhDAxG33KNAJUML62XldUOxxc5Q=
+X-Received: by 2002:a05:6000:785:b0:386:3327:4f21 with SMTP id
+ ffacd0b85a97d-388c3a8f4a9mr2131234f8f.27.1734100081554; Fri, 13 Dec 2024
+ 06:28:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212144311.432886635@linuxfoundation.org>
-In-Reply-To: <20241212144311.432886635@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 13 Dec 2024 19:57:18 +0530
-Message-ID: <CA+G9fYtbkj_VWQYjPsojO66rRgbcovrWSCDsgcp6PGqWEzGxgw@mail.gmail.com>
-Subject: Re: [PATCH 5.15 000/565] 5.15.174-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
+References: <20241210221603.3174929-1-abdiel.janulgue@gmail.com> <20241210221603.3174929-3-abdiel.janulgue@gmail.com>
+In-Reply-To: <20241210221603.3174929-3-abdiel.janulgue@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 13 Dec 2024 15:27:48 +0100
+Message-ID: <CAH5fLgjO-GbB85dDdxLSSWY74cUn8-Lt-yaRGkUVxb-E8YaO2Q@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] rust: add dma coherent allocator abstraction.
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Valentin Obst <kernel@valentinobst.de>, open list <linux-kernel@vger.kernel.org>, 
+	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, airlied@redhat.com, 
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>, Daniel Almeida <daniel.almeida@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 12 Dec 2024 at 22:11, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Tue, Dec 10, 2024 at 11:16=E2=80=AFPM Abdiel Janulgue
+<abdiel.janulgue@gmail.com> wrote:
 >
-> This is the start of the stable review cycle for the 5.15.174 release.
-> There are 565 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Add a simple dma coherent allocator rust abstraction. Based on
+> Andreas Hindborg's dma abstractions from the rnvme driver, which
+> was also based on earlier work by Wedson Almeida Filho.
 >
-> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> Anything received after that time might be too late.
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+>  rust/bindings/bindings_helper.h |   1 +
+>  rust/kernel/dma.rs              | 223 ++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs              |   1 +
+>  3 files changed, 225 insertions(+)
+>  create mode 100644 rust/kernel/dma.rs
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.174-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_hel=
+per.h
+> index 5c4dfe22f41a..49bf713b9bb6 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/blk_types.h>
+>  #include <linux/blkdev.h>
+>  #include <linux/cred.h>
+> +#include <linux/dma-mapping.h>
+>  #include <linux/errname.h>
+>  #include <linux/ethtool.h>
+>  #include <linux/file.h>
+> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+> new file mode 100644
+> index 000000000000..29ae744d6f2b
+> --- /dev/null
+> +++ b/rust/kernel/dma.rs
+> @@ -0,0 +1,223 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Direct memory access (DMA).
+> +//!
+> +//! C header: [`include/linux/dma-mapping.h`](srctree/include/linux/dma-=
+mapping.h)
+> +
+> +use crate::{
+> +    bindings,
+> +    build_assert,
+> +    device::Device,
+> +    error::code::*,
+> +    error::Result,
+> +    types::ARef,
+> +    transmute::{AsBytes, FromBytes},
+> +};
+> +
+> +/// Possible attributes associated with a DMA mapping.
+> +///
+> +/// They can be combined with the operators `|`, `&`, and `!`.
+> +///
+> +/// Values can be used from the [`attrs`] module.
+> +#[derive(Clone, Copy, PartialEq)]
+> +pub struct Attribs(u32);
+> +
+> +impl Attribs {
+> +    /// Get the raw representation of this attribute.
+> +    pub(crate) fn as_raw(self) -> u64 {
+> +        self.0.into()
+> +    }
+> +
+> +    /// Check whether `flags` is contained in `self`.
+> +    pub fn contains(self, flags: Attribs) -> bool {
+> +        (self & flags) =3D=3D flags
+> +    }
+> +}
+> +
+> +impl core::ops::BitOr for Attribs {
+> +    type Output =3D Self;
+> +    fn bitor(self, rhs: Self) -> Self::Output {
+> +        Self(self.0 | rhs.0)
+> +    }
+> +}
+> +
+> +impl core::ops::BitAnd for Attribs {
+> +    type Output =3D Self;
+> +    fn bitand(self, rhs: Self) -> Self::Output {
+> +        Self(self.0 & rhs.0)
+> +    }
+> +}
+> +
+> +impl core::ops::Not for Attribs {
+> +    type Output =3D Self;
+> +    fn not(self) -> Self::Output {
+> +        Self(!self.0)
+> +    }
+> +}
+> +
+> +/// DMA mapping attrributes.
+> +pub mod attrs {
+> +    use super::Attribs;
+> +
+> +    /// Specifies that reads and writes to the mapping may be weakly ord=
+ered, that is that reads
+> +    /// and writes may pass each other.
+> +    pub const DMA_ATTR_WEAK_ORDERING: Attribs =3D Attribs(bindings::DMA_=
+ATTR_WEAK_ORDERING);
+> +
+> +    /// Specifies that writes to the mapping may be buffered to improve =
+performance.
+> +    pub const DMA_ATTR_WRITE_COMBINE: Attribs =3D Attribs(bindings::DMA_=
+ATTR_WRITE_COMBINE);
+> +
+> +    /// Lets the platform to avoid creating a kernel virtual mapping for=
+ the allocated buffer.
+> +    pub const DMA_ATTR_NO_KERNEL_MAPPING: Attribs =3D Attribs(bindings::=
+DMA_ATTR_NO_KERNEL_MAPPING);
+> +
+> +    /// Allows platform code to skip synchronization of the CPU cache fo=
+r the given buffer assuming
+> +    /// that it has been already transferred to 'device' domain.
+> +    pub const DMA_ATTR_SKIP_CPU_SYNC: Attribs =3D Attribs(bindings::DMA_=
+ATTR_SKIP_CPU_SYNC);
+> +
+> +    /// Forces contiguous allocation of the buffer in physical memory.
+> +    pub const DMA_ATTR_FORCE_CONTIGUOUS: Attribs =3D Attribs(bindings::D=
+MA_ATTR_FORCE_CONTIGUOUS);
+> +
+> +    /// This is a hint to the DMA-mapping subsystem that it's probably n=
+ot worth the time to try
+> +    /// to allocate memory to in a way that gives better TLB efficiency.
+> +    pub const DMA_ATTR_ALLOC_SINGLE_PAGES: Attribs =3D Attribs(bindings:=
+:DMA_ATTR_ALLOC_SINGLE_PAGES);
+> +
+> +    /// This tells the DMA-mapping subsystem to suppress allocation fail=
+ure reports (similarly to
+> +    /// __GFP_NOWARN).
+> +    pub const DMA_ATTR_NO_WARN: Attribs =3D Attribs(bindings::DMA_ATTR_N=
+O_WARN);
+> +
+> +    /// Used to indicate that the buffer is fully accessible at an eleva=
+ted privilege level (and
+> +    /// ideally inaccessible or at least read-only at lesser-privileged =
+levels).
+> +    pub const DMA_ATTR_PRIVILEGED: Attribs =3D Attribs(bindings::DMA_ATT=
+R_PRIVILEGED);
+> +}
+> +
+> +/// An abstraction of the `dma_alloc_coherent` API.
+> +///
+> +/// This is an abstraction around the `dma_alloc_coherent` API which is =
+used to allocate and map
+> +/// large consistent DMA regions.
+> +///
+> +/// A [`CoherentAllocation`] instance contains a pointer to the allocate=
+d region (in the
+> +/// processor's virtual address space) and the device address which can =
+be given to the device
+> +/// as the DMA address base of the region. The region is released once [=
+`CoherentAllocation`]
+> +/// is dropped.
+> +///
+> +/// # Invariants
+> +///
+> +/// For the lifetime of an instance of [`CoherentAllocation`], the cpu a=
+ddress is a valid pointer
+> +/// to an allocated region of consistent memory and we hold a reference =
+to the device.
+> +pub struct CoherentAllocation<T: AsBytes + FromBytes> {
+> +    dev: ARef<Device>,
+> +    dma_handle: bindings::dma_addr_t,
+> +    count: usize,
+> +    cpu_addr: *mut T,
+> +    dma_attrs: Attribs,
+> +}
+> +
+> +impl<T: AsBytes + FromBytes> CoherentAllocation<T> {
+> +    /// Allocates a region of `size_of::<T> * count` of consistent memor=
+y.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::device::Device;
+> +    /// use kernel::dma::{attrs::*, CoherentAllocation};
+> +    ///
+> +    /// # fn test(dev: &Device) -> Result {
+> +    /// let c: CoherentAllocation<u64> =3D CoherentAllocation::alloc_att=
+rs(dev, 4, GFP_KERNEL,
+> +    ///                                                                 =
+ DMA_ATTR_NO_WARN)?;
+> +    /// # Ok::<(), Error>(()) }
+> +    /// ```
+> +    pub fn alloc_attrs(
+> +        dev: &Device,
+> +        count: usize,
+> +        gfp_flags: kernel::alloc::Flags,
+> +        dma_attrs: Attribs,
+> +    ) -> Result<CoherentAllocation<T>> {
+> +        build_assert!(core::mem::size_of::<T>() > 0,
+> +                      "It doesn't make sense for the allocated type to b=
+e a ZST");
+> +
+> +        let size =3D count.checked_mul(core::mem::size_of::<T>()).ok_or(=
+EOVERFLOW)?;
+> +        let mut dma_handle =3D 0;
+> +        // SAFETY: device pointer is guaranteed as valid by invariant on=
+ `Device`.
+> +        // We ensure that we catch the failure on this function and thro=
+w an ENOMEM
+> +        let ret =3D unsafe {
+> +            bindings::dma_alloc_attrs(
+> +                dev.as_raw(),
+> +                size,
+> +                &mut dma_handle, gfp_flags.as_raw(),
+> +                dma_attrs.as_raw(),
+> +            )
+> +        };
+> +        if ret.is_null() {
+> +            return Err(ENOMEM)
+> +        }
+> +        // INVARIANT: We just successfully allocated a coherent region w=
+hich is accessible for
+> +        // `count` elements, hence the cpu address is valid. We also hol=
+d a refcounted reference
+> +        // to the device.
+> +        Ok(Self {
+> +            dev: dev.into(),
+> +            dma_handle,
+> +            count,
+> +            cpu_addr: ret as *mut T,
+> +            dma_attrs,
+> +        })
+> +    }
+> +
+> +    /// Performs the same functionality as `alloc_attrs`, except the `dm=
+a_attrs` is 0 by default.
+> +    pub fn alloc_coherent(dev: &Device,
+> +                          count: usize,
+> +                          gfp_flags: kernel::alloc::Flags) -> Result<Coh=
+erentAllocation<T>> {
+> +        CoherentAllocation::alloc_attrs(dev, count, gfp_flags, Attribs(0=
+))
+> +    }
+
+Please run rustfmt.
+
+> +    /// Returns the base address to the allocated region and the dma han=
+dle. The caller takes
+> +    /// ownership of the returned resources.
+> +    pub fn into_parts(self) -> (usize, bindings::dma_addr_t) {
+> +        let ret =3D (self.cpu_addr as _, self.dma_handle);
+> +        core::mem::forget(self);
+> +        ret
+> +    }
+
+Not only does this skip the destructor of `dma_free_attrs`. It also
+skips the destructor of fields including the `dev` field. Did you
+intend to leave the refcount on `struct device` without decrementing
+it?
+
+> +    /// Returns the base address to the allocated region in the CPU's vi=
+rtual address space.
+> +    pub fn start_ptr(&self) -> *const T {
+> +        self.cpu_addr as _
+
+This conversion happens without needing a cast.
+
+> +    }
+> +
+> +    /// Returns the base address to the allocated region in the CPU's vi=
+rtual address space as
+> +    /// a mutable pointer.
+> +    pub fn start_ptr_mut(&mut self) -> *mut T {
+> +        self.cpu_addr
+> +    }
+> +
+> +    /// Returns a DMA handle which may given to the device as the DMA ad=
+dress base of
+> +    /// the region.
+> +    pub fn dma_handle(&self) -> bindings::dma_addr_t {
+> +        self.dma_handle
+> +    }
+> +
+> +    /// Returns the CPU-addressable region as a slice.
+> +    pub fn cpu_buf(&self) -> &[T]
+> +    {
+> +        // SAFETY: The pointer is valid due to type invariant on `Cohere=
+ntAllocation` and
+> +        // is valid for reads for `self.count * size_of::<T>` bytes.
+> +        unsafe { core::slice::from_raw_parts(self.cpu_addr, self.count) =
+}
+
+Immutable slices require that the data does not change while the
+reference is live. Is that the case? If so, your safety comment should
+explain that.
+
+> +    }
+> +
+> +    /// Performs the same functionality as `cpu_buf`, except that a muta=
+ble slice is returned.
+> +    pub fn cpu_buf_mut(&mut self) -> &mut [T]
+> +    {
+> +        // SAFETY: The pointer is valid due to type invariant on `Cohere=
+ntAllocation` and
+> +        // is valid for reads for `self.count * size_of::<T>` bytes.
+> +        unsafe { core::slice::from_raw_parts_mut(self.cpu_addr, self.cou=
+nt) }
+
+Mutable slices require that the data is not written to *or read* by
+anybody else while the reference is live. Is that the case? If so,
+your safety comment should explain that.
+
+> +    }
+> +}
+> +
+> +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
+> +    fn drop(&mut self) {
+> +        let size =3D self.count * core::mem::size_of::<T>();
+> +        // SAFETY: the device, cpu address, and the dma handle is valid =
+due to the
+> +        // type invariants on `CoherentAllocation`.
+> +        unsafe { bindings::dma_free_attrs(self.dev.as_raw(), size,
+> +                                          self.cpu_addr as _,
+> +                                          self.dma_handle,
+> +                                          self.dma_attrs.as_raw(),) }
+> +    }
+> +}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index e1065a7551a3..6e90ebf5a130 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -35,6 +35,7 @@
+>  mod build_assert;
+>  pub mod cred;
+>  pub mod device;
+> +pub mod dma;
+>  pub mod error;
+>  #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
+>  pub mod firmware;
+> --
+> 2.43.0
 >
-> thanks,
->
-> greg k-h
-
-The following build warnings were noticed on Linux stable-rc linux-5.15.y
-while building parisc.
-
-* parisc, build
-  - gcc-11-allnoconfig
-  - gcc-11-defconfigcd
-  - gcc-11-tinyconfig
-
-Build log:
------------
-arch/parisc/include/asm/cache.h:28: note: this is the location of the
-previous definition
-   28 | #define ARCH_KMALLOC_MINALIGN   16      /* ldcw requires
-16-byte alignment */
-      |
-In file included from include/linux/skbuff.h:31,
-                 from include/net/net_namespace.h:42,
-                 from init/main.c:104:
-include/linux/dma-mapping.h:546:47: error: macro "cache_line_size"
-passed 1 arguments, but takes just 0
-  546 | static inline int dma_get_cache_alignment(void)
-      |                                               ^
-
-Links:
-  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2q7pt39eCahVwI49vKMQD6qe12I/
-  - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.173-566-g4b281055ccfb/testrun/26287983/suite/build/test/gcc-11-defconfig/log
-  - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.173-566-g4b281055ccfb/testrun/26287983/suite/build/test/gcc-11-defconfig/history/
-
- Steps to reproduce:
-  - # tuxmake --runtime podman --target-arch parisc --toolchain gcc-11
---kconfig defconfig
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 5.15.174-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: 4b281055ccfba614e9358cac95fc81a1e79a5d7e
-* git describe: v5.15.173-566-g4b281055ccfb
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15.173-566-g4b281055ccfb
-
-## Test Regressions (compared to v5.15.171-100-g056657e11366)
-
-## Metric Regressions (compared to v5.15.171-100-g056657e11366)
-
-## Test Fixes (compared to v5.15.171-100-g056657e11366)
-
-## Metric Fixes (compared to v5.15.171-100-g056657e11366)
-
-## Test result summary
-total: 54603, pass: 38929, fail: 2776, skip: 12823, xfail: 75
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 101 total, 101 passed, 0 failed
-* arm64: 28 total, 28 passed, 0 failed
-* i386: 22 total, 22 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 22 total, 22 passed, 0 failed
-* riscv: 8 total, 8 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 24 total, 24 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
