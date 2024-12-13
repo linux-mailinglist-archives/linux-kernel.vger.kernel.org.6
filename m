@@ -1,129 +1,112 @@
-Return-Path: <linux-kernel+bounces-444150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEEBD9F0201
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:20:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2908F9F01EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:18:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9D02885CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0200B18874E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04FD82866;
-	Fri, 13 Dec 2024 01:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G8yQ9iSS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4CD17C60;
+	Fri, 13 Dec 2024 01:18:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C843A42A97
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5521510F7;
+	Fri, 13 Dec 2024 01:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734052776; cv=none; b=fhD6KHBP24qfWqnl/aPyEStQpcDHvj2ONLJrmZJR5j3xcTVRpAIq2A9/SPTZyK3+kZQRisGT7dc6v2y3MijvXBvFLm97Za/quX9jMYJT13Njz9JYtdK0pmsVv/51NHyFz+3HdyxjSsUFLkcR0XnhL56pOWc/X19nX3D3/2mgmOo=
+	t=1734052693; cv=none; b=bZrLPM4TM0NFHzNO6rRPdCsHiKXcz/wKELjOBYjdhYF3SVoGgu4LY0o0WhbYouyWayJmSMiVYQCUMemsbF9Uomh9HxZ7DyAGYUmM5xXyKFukfSe2T3dfqy8LYRqZgTE39EHglfo/dlF78ZlRxiy+b2xEVqZvzPVdge9LLViPpKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734052776; c=relaxed/simple;
-	bh=LI4TUKQcvu8NMrFjCnSkKO5OlCTfkkPU/tftsaNGm9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PGSBXKdJKy2Qbyg/gNNDqOeOz8/W9z+DliInujSkJkNQeOOcmkk+CsHkxQzAmFu0HMzRwDMU9siXdpJOdMpA791dZELqJyV+MpjQXvdCoAdKscjA4dXMvq8uY4qGiJp+Joi5nmPYUi9Uu3h9gx2P9XkIeXOgcTPeG7ZW3N0SFHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G8yQ9iSS; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734052774; x=1765588774;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=LI4TUKQcvu8NMrFjCnSkKO5OlCTfkkPU/tftsaNGm9Y=;
-  b=G8yQ9iSSSoIk0ghk7D+Q6AoyUMrqepnFy/XWGP0xu3DqA4uBSsWK4tBC
-   1TDt7PZPjV/Dmy1beMuUtH5YGAvipkV/KSFdE6KP+C+N6+ZATzF3+eQgO
-   WhZud7mQgySN0asFHGwVmccazDY4kTU1wx7YCOEv+zBYFroni4J9mM7TI
-   I7FBJQ7p0mWDEy4/sLthpUmoL0MV6DEyPJtfv9uCnBMIBHLc4UtBxX/8K
-   tpf78vEYUFNNMDZGPRig/AAzwEHKs/tlM0GEOpkAv/46iDTRhhg0nV6N8
-   4HvnoPwb88wfVMa0zVr2FmI9hZCXZ1THCprAjKHnlHbfqpkZ7lfI5Qv2D
-   A==;
-X-CSE-ConnectionGUID: nX9f1cGPQz69DDw3qIFj8g==
-X-CSE-MsgGUID: 4gmuDOKURWieeBgaPgVaJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="45510022"
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="45510022"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 17:19:33 -0800
-X-CSE-ConnectionGUID: cZLgcs2cTW6maeyaHdtyjQ==
-X-CSE-MsgGUID: d3uU5sVFSpSfPRYoNviNZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="96835641"
-Received: from allen-sbox.sh.intel.com ([10.239.159.30])
-  by orviesa007.jf.intel.com with ESMTP; 12 Dec 2024 17:19:32 -0800
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Yi Liu <yi.l.liu@intel.com>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] iommu/vt-d: Avoid draining PRQ in sva mm release path
-Date: Fri, 13 Dec 2024 09:17:52 +0800
-Message-ID: <20241213011752.1177061-4-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241213011752.1177061-1-baolu.lu@linux.intel.com>
-References: <20241213011752.1177061-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1734052693; c=relaxed/simple;
+	bh=gTE1N93sFqKn2I3sZ6f2P2R4bz+rKmvD57/AzoSgZoY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KrIRazL2PMwtAdzWsbh0BS9aytrsust2JQjSNwh9AZLtRMvq1Z4qAjRQ14VO1zQ4C7ARFje5I6jaNQp9E8oGe3IJcWvXa4uZTMsXz8b2860RnjZFqjuDHa6+Ge4hFmpFsRB8/cm3x+djueHM+LQjUGKmklVoNj2oki8jt47LLtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y8Wfh4PJ4z4f3jq4;
+	Fri, 13 Dec 2024 09:17:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id E62C01A058E;
+	Fri, 13 Dec 2024 09:18:02 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgBXTK5Ji1tnIfpREQ--.28484S2;
+	Fri, 13 Dec 2024 09:18:02 +0800 (CST)
+Message-ID: <24568f8a-f31d-4349-8641-b4c1450ce93c@huaweicloud.com>
+Date: Fri, 13 Dec 2024 09:18:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] freezer, sched: report the frozen task stat as 'D'
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, peterz@infradead.org,
+ Valentin Schneider <vschneid@redhat.com>, mingo@redhat.com,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ linux-kernel@vger.kernel.org, wangweiyang2@huawei.com,
+ cgroups@vger.kernel.org
+References: <20241111135431.1813729-1-chenridong@huaweicloud.com>
+ <xhsmhv7wrb3sc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <4f78d752-52ab-493d-8bf5-f12dc4f554c8@huaweicloud.com>
+ <ZzYo19k9ZvkC7V-1@slm.duckdns.org>
+ <2f755161-ec7e-4785-b0ca-ea68c01785a2@huaweicloud.com>
+ <ZzajsLHrXXtYk04l@slm.duckdns.org>
+ <3b03520e-775d-416a-91b1-1d78f3e91b1d@huaweicloud.com>
+ <c56b2347-7475-4190-85a5-a38954ae9c08@huaweicloud.com>
+ <j5kjjy5ibp2yw4zhaxc7jm5bw65we4oifhawlljvtjzdox5ck2@kdgpgawwr7kf>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <j5kjjy5ibp2yw4zhaxc7jm5bw65we4oifhawlljvtjzdox5ck2@kdgpgawwr7kf>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBXTK5Ji1tnIfpREQ--.28484S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUtVW8ZwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-When a PASID is used for SVA by a device, it's possible that the PASID
-entry is cleared before the device flushes all ongoing DMA requests and
-removes the SVA domain. This can occur when an exception happens and the
-process terminates before the device driver stops DMA and calls the
-iommu driver to unbind the PASID.
 
-There's no need to drain the PRQ in the mm release path. Instead, the PRQ
-will be drained in the SVA unbind path.
 
-Unfortunately, commit c43e1ccdebf2 ("iommu/vt-d: Drain PRQs when domain
-removed from RID") changed this behavior by unconditionally draining the
-PRQ in intel_pasid_tear_down_entry(). This can lead to a potential
-sleeping-in-atomic-context issue.
+On 2024/12/12 0:02, Michal Koutný wrote:
+> Hi.
+> 
+> On Wed, Dec 04, 2024 at 09:52:15AM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
+>> Does anyone have any opinions?
+> 
+> When an 'R' task is frozen (v1) and it's shown as (unchanged) 'R' it's
+> acceptable.
+> When an 'S' task is equally frozen and its apparent state switches to
+> 'R', I agree it's confusing.
+> 
+> Showing 'D' state in any case of a frozen task (like before that rework)
+> makes sense too. Please add Fixes: if you need to restore this behavior.
+> 
+> HTH,
+> Michal
 
-Smatch static checker warning:
+Thank you, Michal. I will update.
 
-	drivers/iommu/intel/prq.c:95 intel_iommu_drain_pasid_prq()
-	warn: sleeping in atomic context
-
-To avoid this issue, prevent draining the PRQ in the SVA mm release path
-and restore the previous behavior.
-
-Fixes: c43e1ccdebf2 ("iommu/vt-d: Drain PRQs when domain removed from RID")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-iommu/c5187676-2fa2-4e29-94e0-4a279dc88b49@stanley.mountain/
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-Link: https://lore.kernel.org/r/20241212021529.1104745-1-baolu.lu@linux.intel.com
----
- drivers/iommu/intel/pasid.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-index 0f2a926d3bd5..5b7d85f1e143 100644
---- a/drivers/iommu/intel/pasid.c
-+++ b/drivers/iommu/intel/pasid.c
-@@ -265,7 +265,8 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu, struct device *dev,
- 		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
- 
- 	devtlb_invalidation_with_pasid(iommu, dev, pasid);
--	intel_iommu_drain_pasid_prq(dev, pasid);
-+	if (!fault_ignore)
-+		intel_iommu_drain_pasid_prq(dev, pasid);
- }
- 
- /*
--- 
-2.43.0
+Thanks,
+Ridong
 
 
