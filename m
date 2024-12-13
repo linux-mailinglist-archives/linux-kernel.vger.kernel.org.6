@@ -1,136 +1,152 @@
-Return-Path: <linux-kernel+bounces-445159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0996E9F1229
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:30:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4895D9F122A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF3551616AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:30:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A225518818EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACA516FF37;
-	Fri, 13 Dec 2024 16:30:22 +0000 (UTC)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB611E3DF4;
+	Fri, 13 Dec 2024 16:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SfMYwcVb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0BE1474A9;
-	Fri, 13 Dec 2024 16:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8DC57C9F;
+	Fri, 13 Dec 2024 16:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734107422; cv=none; b=eAEoHrCQcO6ijRy22ubxTWZdljJ8kDVSTeVPK31y6BjntyyH5ltswEZ/WTwJEK/OPeoNqrJFAg9Lwjn9gcUCizBk6YgJmL5BrcGpkt1fuQTGb8ZXhvEbtws/IEAOuJp5AQp7cGHQgcQbgn8/UHNWk5koRTfRhTNm4ELi0+o1DQ0=
+	t=1734107423; cv=none; b=essuIm6Y6xWO1gMde4oiafuLfpwytHs4Ltjcat6YKoV/Hb1b1cfR9dBAgjMscmMkN6uEPbJUmvmnIB2GbIacSspLROa+couM07JWh9pac+oGFzF9BwhBHbK31cZfIv9x63+7hHL520DyG/3oyMn9Ek+axJBEsPX3J29jLEdPD9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734107422; c=relaxed/simple;
-	bh=egMufDEMdZ4IXHCWD2K6q3bkG+TtJ1YPvF/7LzWKAcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LfYYcc8Ar3mcdTDgSepDFMDReVmaSeoder2jX1CwsS63GyU8SQCwzABRXe5SXeNx/0R5ATBqydlkttqACit9uYcE8DH8RRDeuxgQwxLx2tz59b/lAWHDqPvvwb1FssOqSW2GNVZnWGMxAlyq22eqpi9mPHR/wRsilXNsDH/0aAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4b24d969db1so303330137.0;
-        Fri, 13 Dec 2024 08:30:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734107419; x=1734712219;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gKQTw5TL8ZYENpD/MvDIPDbuaPA5S+3yDu2O/3xPriY=;
-        b=VMlCDBt+AeVbl4y+BWzF1wFJlb2AHd/hC1ALZFA9lMBHnenG0W/gvQ9gep+Y3FUE+L
-         8tkl4r3H7KqZ20cKzC9DO8NgrlzaslYO6eU1X24Xk6FBp8fEJspLCTsBLCIJZKLXsQgl
-         oySYMgQa34b7g4LEn27/KuS6JgeOVFHo8Jd40hvXnc9HcGk5tTXHOzaO/kKdzI4tSwCR
-         UpqsjyuSnBBN2z36mvSOn/ba1Jjqrk9/XPECU3X0ffGcbFYNgcKC+Oh5gvIRkECYcyK2
-         jl7E0LbhEesm8jF0Sje3+Fn8RjcY/AGEEfDpNb13dUOaDlpv/cYuwnOUaEwSEW1hsqES
-         l0+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWJUfUZ8Qzyz/1Dara8JANamxKfFC1qwI10eo6oBnqVquZrzEfU2PNbHxUG+zqsF4lVR4G9biOXb5mO0203@vger.kernel.org, AJvYcCXEJefNKcBgpKVwxNh9tyvakqIVuomJTIoaECXNSvz1dad/xJav1t1NQ2UUCzOkHO1MqXC3ctOS/PoA@vger.kernel.org, AJvYcCXTtau2/PvjF6Sc64du5c2mVPEUx3UZSIOjeFSLzJXD3AviA8Ptn1gKxEbi7kiJicsRxAs6uXHDWhYiKPvnpYC0upI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOJ2d9tPBNOxGL4Y93/5u13DUas/jobI2pLgZTiUgFZ/uj59yd
-	eCt9xEOjixuQ4M/paVJSaSFRsO5NFlpNe5te+tYAGNL2P0JFDv4QsEGnLHp6
-X-Gm-Gg: ASbGnct13w+lhKZ2YU8wb1AJtr97xPzArwRwyXMjyGpZN6DBHm4nU/0diF7p93fEdxZ
-	taiKQLfpOKw7Rcs/sn5tZQwxuNqazzIrLVp/uW9HQebaZFb8aGNcxGE3mB4KK+JNhVRgSrqvuZ4
-	2ZH7+EGH/FeHSvYuTbJb3ZL9bAMtMfPhIfzi8Ux/wmr7CkF1G990MlThSFwwVfq0nUzbdG8MVhh
-	KN3YVA4yjSgKffZnlfn+D9tfmJYsKFm/JP4xWUN6NSAnA3U35/n+eT+wvXUhmxGt+VpykC/Yp3G
-	GTKKtmb+u5FlBwGbmcg=
-X-Google-Smtp-Source: AGHT+IHX0nGI3BEwqYpYR7m1ymIy3PIIiwzJKXb/KH8w1Xska2x7LfnwLGXEZLnRR4jjgBnnFs9IAg==
-X-Received: by 2002:a05:6102:4b04:b0:4b1:1def:3d10 with SMTP id ada2fe7eead31-4b25ddb2c56mr3991533137.19.1734107419216;
-        Fri, 13 Dec 2024 08:30:19 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c56a6da7esm2046909241.34.2024.12.13.08.30.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 08:30:19 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-85c4b057596so446246241.3;
-        Fri, 13 Dec 2024 08:30:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUH6WizBs+klIssjC6l0whjJ3OLYPApU/99OLseakTwT2qPDlVvsFziqmx3EaHIezinBrx/2Zde/4L1Wjpo4OutUV0=@vger.kernel.org, AJvYcCV92zzp9SoUN477/JAR4y467koMKPWbVXZuFUWTZDiYs9Fq18A8OTPcrPwpHHHOoXwOtNL0bnqKurgz@vger.kernel.org, AJvYcCWUfq96pGibJ17dx0QPltssDM6Xk0WHm5mdluJ68kwzrkpDAj9Jyo0qrEqCv+FDqxOTaHeu/Qcpd0LHeWoH@vger.kernel.org
-X-Received: by 2002:a05:6102:1594:b0:4b2:49ec:1b77 with SMTP id
- ada2fe7eead31-4b25de2ede6mr4076076137.23.1734107418529; Fri, 13 Dec 2024
- 08:30:18 -0800 (PST)
+	s=arc-20240116; t=1734107423; c=relaxed/simple;
+	bh=n7Y3u1viKbpen2gpCV4aMU6Z6h7LLCZKOtcecnQzgMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iyQ0UwTJpJhKC+kJhFo9KxVl5DwnIqA+n/xS93qe+a2i22t+65rURoDsWQsozxyoaCxIxPCH293xiLTJVQcHgUsZdrgWCs9IB49ZRDpDqQwvQBadOsYQjXMgv/BXnsbWIWfZKVscfXQp8sUx15LRMKmaXaHZIVo68q+dVb+D060=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SfMYwcVb; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734107421; x=1765643421;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=n7Y3u1viKbpen2gpCV4aMU6Z6h7LLCZKOtcecnQzgMo=;
+  b=SfMYwcVbO1Q/E5FULhxjuVjZs4KmKvCiYd1F9jUb/0rQep0JmyZQS06M
+   9BVwcmvTnvPI19iQdrYQlJwI2p0Vn5BtMeL+KPBsYniqffC2JZ7oAwez3
+   bEqqlwISOBdqlOY47a28ooXlJCML8wCGa0RHr3V841gmAjbj4SnXG4d3v
+   fgZRvNZpT51tZUaYczC+l/ud8fCXIG+6BVIpc7HYdeOl8PAVTHRKDSqS3
+   8zRdPVAhOjGjDutdjniSEsXwfIVy/hjUiE82M7QN+IGHKO0F5TjwL46Iq
+   1uPwSRotLRvBSV9Ph9S4gSxT5Tfv3S0pMZNw2OuvVXcQffDws2VlMbVil
+   A==;
+X-CSE-ConnectionGUID: Woh5SEC2QgqrdIdLFlunPg==
+X-CSE-MsgGUID: jkDPurkHSIWGmUGaBBc9yw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="59960622"
+X-IronPort-AV: E=Sophos;i="6.12,231,1728975600"; 
+   d="scan'208";a="59960622"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 08:30:21 -0800
+X-CSE-ConnectionGUID: 11fwTFv/TG6aYKyRWj7Nhg==
+X-CSE-MsgGUID: CL43aukUQauL+gUCEFF/pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="96439824"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.163])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 08:30:15 -0800
+Message-ID: <f7cd9af3-8b6a-4984-80ef-e9129d8d94bd@intel.com>
+Date: Fri, 13 Dec 2024 18:30:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com> <20241206212559.192705-5-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20241206212559.192705-5-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Dec 2024 17:30:06 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW2cddSFNRe9Q8AG7wE47HfEEc-A=cixCdnGcPg3J+9Fg@mail.gmail.com>
-Message-ID: <CAMuHMdW2cddSFNRe9Q8AG7wE47HfEEc-A=cixCdnGcPg3J+9Fg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] arm64: dts: renesas: r9a09g047: add sys node
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/7] x86/virt/tdx: Add SEAMCALL wrapper to enter/exit
+ TDX guest
+To: Dave Hansen <dave.hansen@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com, kvm@vger.kernel.org, dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+ dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
+ chao.gao@intel.com, weijiang.yang@intel.com
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <20241121201448.36170-2-adrian.hunter@intel.com>
+ <fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com>
+ <0226840c-a975-42a5-9ddf-a54da7ef8746@intel.com>
+ <56db8257-6da2-400d-8306-6e21d9af81f8@intel.com>
+ <d1952eb7-8eb0-441b-85fc-3075c7b11cb9@intel.com>
+ <6af0f1c3-92eb-407e-bb19-6aeca9701e41@intel.com>
+ <ff4d5877-52ad-4e12-94a0-dfbe01a7a8a0@intel.com>
+ <d1b0323f-2458-420b-800e-a26ba6550de7@intel.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <d1b0323f-2458-420b-800e-a26ba6550de7@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi John,
+On 13/12/24 18:16, Dave Hansen wrote:
+> On 12/11/24 10:43, Adrian Hunter wrote:
+> ...
+>> -	size = tdvmcall_a0_read(vcpu);
+>> -	write = tdvmcall_a1_read(vcpu);
+>> -	port = tdvmcall_a2_read(vcpu);
+>> +	size  = tdx->vp_enter_out.io_size;
+>> +	write = tdx->vp_enter_out.io_direction == TDX_WRITE;
+>> +	port  = tdx->vp_enter_out.io_port;
+> ...> +	case TDVMCALL_IO:
+>> +		out->io_size		= args.r12;
+>> +		out->io_direction	= args.r13 ? TDX_WRITE : TDX_READ;
+>> +		out->io_port		= args.r14;
+>> +		out->io_value		= args.r15;
+>> +		break;
+> 
+> I honestly don't understand the need for the abstracted structure to sit
+> in the middle. It doesn't get stored or serialized or anything, right?
+> So why have _another_ structure?
+> 
+> Why can't this just be (for instance):
+> 
+> 	size = tdx->foo.r12;
+> 
+> ?
+> 
+> Basically, you hand around the raw arguments until you need to use them.
 
-On Fri, Dec 6, 2024 at 10:26=E2=80=AFPM John Madieu
-<john.madieu.xa@bp.renesas.com> wrote:
-> Add system controller node to RZ/G3E (R9A09G047) SoC DTSI.
->
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+That sounds like what we have at present?  That is:
 
-Thanks for your patch!
+u64 tdh_vp_enter(u64 tdvpr, struct tdx_module_args *args)
+{
+	args->rcx = tdvpr;
 
-> --- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-> @@ -154,6 +154,13 @@ cpg: clock-controller@10420000 {
->                         #power-domain-cells =3D <0>;
->                 };
->
-> +               sys: system-controller@10430000 {
-> +                       compatible =3D "renesas,r9a09g047-sys", "syscon";
+	return __seamcall_saved_ret(TDH_VP_ENTER, args);
+}
 
-The "syscon" may be dropped again depending on the outcome of
-Rob's series, we'll see...
+And then either add Rick's struct tdx_vp?  Like so:
 
-> +                       reg =3D <0 0x10430000 0 0x10000>;
-> +                       clocks =3D <&cpg CPG_CORE R9A09G047_SYS_0_PCLK>;
-> +                       resets =3D <&cpg 0x30>;
-> +               };
-> +
->                 scif0: serial@11c01400 {
->                         compatible =3D "renesas,scif-r9a09g047", "renesas=
-,scif-r9a09g057";
->                         reg =3D <0 0x11c01400 0 0x400>;
+u64 tdh_vp_enter(struct tdx_vp *vp, struct tdx_module_args *args)
+{
+	args->rcx = tdx_tdvpr_pa(vp);
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+	return __seamcall_saved_ret(TDH_VP_ENTER, args);
+}
 
-Gr{oetje,eeting}s,
+Or leave it to the caller:
 
-                        Geert
+u64 tdh_vp_enter(struct tdx_module_args *args)
+{
+	return __seamcall_saved_ret(TDH_VP_ENTER, args);
+}
 
+Or forget the wrapper altogether, and let KVM call
+__seamcall_saved_ret() ?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
