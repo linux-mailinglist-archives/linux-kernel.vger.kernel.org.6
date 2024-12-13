@@ -1,126 +1,118 @@
-Return-Path: <linux-kernel+bounces-444458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37AE9F072D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:05:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2089F0735
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:05:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92CF4280F4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:05:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6A8283106
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E85E1AC884;
-	Fri, 13 Dec 2024 09:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9705A1AF0CE;
+	Fri, 13 Dec 2024 09:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MflO+6nv"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JaL5zOhb"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70D618E377;
-	Fri, 13 Dec 2024 09:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EB819CC2D;
+	Fri, 13 Dec 2024 09:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734080715; cv=none; b=sKghxMFZkuIdKvsUuzdEj/Tt9OHiz1VSL38X7RsvDqUoPzqBkGMzL2e+OCVBvzDsu0PTXB7VvWf6psaXEbMZ+J+gqgZu2saqVZyaeg+JaC1hFq4spq4u2o0wxpiGzR+UnUskiVFXnt5/uw4EwyF/2SkrWnEDC7gx4IfQFebwOxo=
+	t=1734080735; cv=none; b=GpIerndlQ5dAk0ksWKB6McY29FBzk/3TI8UKk3Z+wLldwAgzDn799vjkZ+mDrDGWn8tPKXWLiu9PktQD7UCF/y0UNPEmkTEoRl+Fo1PN7vKBUrVX9XesGkxTFd4K5uouM+BWVYqy3YaxpYPzHKnLYN6ZIJiVuukQMqpwL+rBPdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734080715; c=relaxed/simple;
-	bh=GdUYKk1NnGTL1RKij+QpGMfkiUryDvmruO1tEqbzjDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CkeD1j94eOiXfntr0IydjU1BlKr5bUh/wYXLdP22BnraJ2BHIqwru6bp/IrtuaqEavBbTmrCUkJfKskmDhezelO5lhRGvqS8kp5BkdDpWDxsWUCx5RDKvnJkzlNSKewjU4w4uv61nDHIrmDvkKmF+44R7aC/n8+amzoHCKoOmJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MflO+6nv; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=MOpxGLnB0Zdlwwn6qH2xMgY5IO9WDMOFqPHpvJonJHI=; b=MflO+6nvKOtu2AXwbdJ5n1nedE
-	opnOzu3b01KF4SrQR3M245/Se8YXsyCcliDtgOmYdDyDa1clOCphqjy1rC4V/FpS/cnmOAKJcJTd7
-	sIg5Hm5gZGHQDeCzUyfK77d8W3HdMbpqg2E7qiL7q3yElXEqzVhzB3ElK1IXaECQTIUoaf2k8fWjX
-	XizOCVbydNhMuEsF16HvR1QgF11wiGSetObHVPxuOA3SxM9i5kRo55wbadhs2gMfil7aRRMjHa+a4
-	7xzfwtdqZfkPI0z9C29sDel/UeYY7HOpEwtHAoW8txUjodTyQr4ovst3PwYEj20CSLJFa5AtEeJSb
-	3+PB23BA==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tM1bg-0000000Bk1v-07MY;
-	Fri, 13 Dec 2024 09:05:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9253830049D; Fri, 13 Dec 2024 10:05:07 +0100 (CET)
-Date: Fri, 13 Dec 2024 10:05:07 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: "Roger L. Beckermeyer III" <beckerlee3@gmail.com>, dsterba@suse.cz,
-	oleg@redhat.com, mhiramat@kernel.org, linux-kernel@vger.kernel.org,
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, lkp@intel.com
-Subject: Re: [PATCH 1/6] rbtree: add rb_find_add_cached() to rbtree.h
-Message-ID: <20241213090507.GB21636@noisy.programming.kicks-ass.net>
-References: <cover.1733850317.git.beckerlee3@gmail.com>
- <4768e17a808c754748ac9264b5de9e8f00f22380.1733850317.git.beckerlee3@gmail.com>
- <f4d62504-140b-4fde-9b52-65cf3a0ddd0a@gmx.com>
+	s=arc-20240116; t=1734080735; c=relaxed/simple;
+	bh=n5ZcLBHj7pfsmR/9MuwhngnQRBs3J+uwb0CL9BUR8Cw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F6u2JKjhc4FgKt33lk0WvTAtlMahT8RUdliqDVHDoewFP73jn6u7Ho+1NUACmuV1RckD3fX07tWicKdMp6iXIA+HqaBPeRgCQh191XeresGS5/Hbw5euMBXDoWsFMiMLJS9bf6q1DjWjyYzv5tXxE4XyDeiBJ3F92BpLR5dkc6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JaL5zOhb; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6F8BC1BF207;
+	Fri, 13 Dec 2024 09:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1734080730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oMe35rpj3pGiRrVthFbN55YWzxRRPpFse7Y8Q5/jxqg=;
+	b=JaL5zOhbshsW8+n7cBu7ZUVx3aRCCpSTvbQZkydzCq2K1aFWd/DAM0B9WvMnCmRxwWlzGW
+	uh2MRn9ref2MKLQqurotEa+QH2KCG+Uu3eeuFttjFgrLvhOSfRYp4beZ3wkVG9KWiE9NIZ
+	73L81hYlOmS9UKYb//0LcyZ6EduS9mtv2kf+3+s2/2+LbYUHiO2GLu6cmIwsjw9ssYfUyI
+	/dyp7lG2YK4dY+tpc4C93baFrIL1659QYlw3DbtAFYSp+jL4wC2tSs9S2yFSMGHCedJJ4Z
+	o+y/qRFHwI9MmTf5GG8OpMs5Ld8NIXSXeVrHy2QuH5xTykTMUwbRHlP+pRNkCA==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/2] net: stmmac: dwmac-socfpga: Allow using 1000BaseX
+Date: Fri, 13 Dec 2024 10:05:23 +0100
+Message-ID: <20241213090526.71516-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f4d62504-140b-4fde-9b52-65cf3a0ddd0a@gmx.com>
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Fri, Dec 13, 2024 at 05:51:44PM +1030, Qu Wenruo wrote:
-> 
-> 
-> 在 2024/12/13 03:16, Roger L. Beckermeyer III 写道:
-> > Adds rb_find_add_cached() as a helper function for use with
-> > red-black trees. Used in btrfs to reduce boilerplate code.
-> 
-> I won't call it boilerplate code though, it's just to utilize the cached
-> rb tree feature as an optimization.
+Hello everyone,
 
-Nah, all this is boilerplate :-)
+This short series enables 1000BaseX support in dwmac-socfpga. The support
+for this mode is coming from the Lync PCS, however some internal
+configuration is also needed in dwmac-socfpga as well.
 
-> > 
-> > Suggested-by: Josef Bacik <josef@toxicpanda.com>
-> > Signed-off-by: Roger L. Beckermeyer III <beckerlee3@gmail.com>
-> > ---
-> >   include/linux/rbtree.h | 37 +++++++++++++++++++++++++++++++++++++
-> >   1 file changed, 37 insertions(+)
-> > 
-> > diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
-> > index 7c173aa64e1e..0d4444c0cfb3 100644
-> > --- a/include/linux/rbtree.h
-> > +++ b/include/linux/rbtree.h
-> > @@ -210,6 +210,43 @@ rb_add(struct rb_node *node, struct rb_root *tree,
-> >   	rb_insert_color(node, tree);
-> >   }
-> > 
-> > +/**
-> > + * rb_find_add_cached() - find equivalent @node in @tree, or add @node
-> > + * @node: node to look-for / insert
-> > + * @tree: tree to search / modify
-> > + * @cmp: operator defining the node order
-> > + *
-> > + * Returns the rb_node matching @node, or NULL when no match is found and @node
-> > + * is inserted.
-> > + */
-> > +static __always_inline struct rb_node *
-> > +rb_find_add_cached(struct rb_node *node, struct rb_root_cached *tree,
-> > +	    int (*cmp)(struct rb_node *, const struct rb_node *))
-> 
-> This function is almost the same as rb_add_cached(), the only difference
-> is the extra handling for the cmp function returning 0.
-> 
-> So I'm wondering if it's possible to enhance rb_add_cached(), or even
-> refactor it so there can be a shared core function and rb_add_cached()
-> and rb_find_add_cached() can reuse the same function.
+Patch 1 makes so that we enable the "sgmii_adapter" when using 1000BaseX
+as well. The name is a bit misleading for that field, as this is merely
+a GMII serializer, the 1000BaseX vs SGMII differences are handled in the
+Lynx PCS.
 
-Nope, rb_add_cached() can add multiple entries with the same key,
-rb_find_add() cannot.
+Patch 2 makes so that both 1000BaseX and SGMII are set in the phylink
+supported_interfaces. The supported_interfaces are populated by what's
+set in DT, which isn't enough for SFP use-cases as the interface mode
+will change based on the inserted module, thus failing the validation of
+the new interface if it's not the one specified in DT.
 
-Also, note that all these things are effectively 'templates', they
-generate code at the call site. The cmp() function as required for
-find_add() is a tri-state return and generates more logic than the
-binary less() required for add().
+When XPCS is used, the interfaces list if populated by asking XPCS for
+its supported interfaces. I considered using the same kind of approach
+(asking Lynx for the supported modes), but dwmac-socfpga would be the
+sole user for that, and this would also need modifying Lynx so that the
+driver would maintain different sets of capabilities depending on how
+it's integrated (it only supports SGMII/1000BaseX in dwmac-socfpga, but
+other modes are supported on other devices that use Lynx).
+
+I've chosen to "just" populate the interfaces in .pcs_init() from
+stmmac, which is called before phylink_create() so we should be good in
+that regard.
+
+Thanks,
+
+Maxime
+
+Maxime Chevallier (2):
+  net: stmmac: dwmac-socfpga: Add support for 1000BaseX
+  net: stmmac: dwmac-socfpga: Set interface modes from Lynx PCS as
+    supported
+
+ .../ethernet/stmicro/stmmac/dwmac-socfpga.c   | 20 +++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+-- 
+2.47.1
 
 
