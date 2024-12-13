@@ -1,128 +1,94 @@
-Return-Path: <linux-kernel+bounces-445210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A669F12D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:51:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3F49F12D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:51:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608AB188CD1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FA9E188128B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70D41EE031;
-	Fri, 13 Dec 2024 16:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E081F03C2;
+	Fri, 13 Dec 2024 16:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Obc22KRF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEgQQIMf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181161EE01A;
-	Fri, 13 Dec 2024 16:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA291EF09A;
+	Fri, 13 Dec 2024 16:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734108477; cv=none; b=pcl0oE5F3GVcV3sFe6v+I0j8zo1EaH+IVXPzn+NZ+JFPJadvx/EKI0TcFg4qoiDmSS3Go2tUIobEgvoayoi9CI1vN67q8JtmiPnP7rKKIyZ3ZGsQscuql+arzwLMkE1Ce1JY4iA2nyfv6E3Ng+OgC6y5ouv1r2k3UywHV0kPWU0=
+	t=1734108497; cv=none; b=P2VG7MyqKmd+9nK/RWbKH7fl025D3lNNUTAtyxWwi/mFyNd7z19VKb8Psb+0YYs7WR43UNWhHtR1GgCtrHVMfALMJUAfMmuLVFAve+KOQ9x0wavq+VFepdgQ7mUlSMFHlH8aoLGWK7bCUOaNccWj3FsUCYkexiRz9c7LNnT7DL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734108477; c=relaxed/simple;
-	bh=uWEdNHIMgEICLx/219NN4IpI9tlWutXVpHbjkmMSr1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=no9y1mpiN1OlzduU9KFYQXHGzgmI5aGmAZWyO8/eQSr/jGVsOdreE/JcnglyX53k8j3jNwXopIvtkvwp2MW4x2RZDYU24mfXY/zd0p3KOIyZD1vpP18mH50sLxl6o3RTFwqxVSsIDE2x4qcQLKkpfgPrr4l2dUFO0W+e/YCd4a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Obc22KRF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A05BC4CED0;
-	Fri, 13 Dec 2024 16:47:54 +0000 (UTC)
+	s=arc-20240116; t=1734108497; c=relaxed/simple;
+	bh=iqodaNwcQy8DjyhSjaVhXhRAKYjFTeod8iz9/BuzS7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EmFR+or0wGIXofXv/mB+oLbiRVlZAJg0O1jTowmZ0PAV4jOgorRgR0yN/GAUhnMND1jmF+0SqavTJDQHZRrSTBQZX6QzbZisag5tJhDyL0jRCNTg1ddru9PP7Xbd7eHFqHr43SF28rr+3eW9xNGqDs++ZSmIjihIE4aoJB8DKZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEgQQIMf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E3ECC4CED0;
+	Fri, 13 Dec 2024 16:48:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734108476;
-	bh=uWEdNHIMgEICLx/219NN4IpI9tlWutXVpHbjkmMSr1M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Obc22KRFmveaPB6dYBAYlmKZYE5pL65KzrqRslSjP1z4MXCE7I6xTYA8PhhCZkYt8
-	 +m3jS+IwTCGpROYrfmMGVNqDNQb96uoE87AEzreAUJ+PN1X9yVt5c+ulfH59ZozCuz
-	 aSM93yYIs3E0EOQ77xfitx1l0B4or6YACThlSTeIx4bcQ0d3l/kW/FcVTDTm1IVtOO
-	 jJ5yPiqWkotSNv/HIUDs/U0dZKa66FmHtsnqiyQ9ebi7y86JzBuZxQ9tpWGDIks+09
-	 p2g1cmDFd+fF9iCn3IRbSkjZH74PwJhx33YjcHPnq35vTU97Sm9kop5HcYJVWuEP3M
-	 JMG9NZgNFyXxA==
-Message-ID: <76a403e0-f801-4d68-830c-370e0291efe1@kernel.org>
-Date: Fri, 13 Dec 2024 17:47:52 +0100
+	s=k20201202; t=1734108497;
+	bh=iqodaNwcQy8DjyhSjaVhXhRAKYjFTeod8iz9/BuzS7M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jEgQQIMf1dutBJKV2bIJZMzROdoGx/AemYuS2SRGQJTL8OS9tTQUdQmeyqt4HJ0/D
+	 Q/nx0O05iBY3aNKRJOIH6F1f4fpOq6tv6iPTNCNFZ5XaPUMnAz087Ei2Dy87XCN3qh
+	 exo+6UteJ66wF9B4Fsa/+++zIokG20kKdFmqSrSc2ubT2rkFQuNb9aTCOEUi2FI57N
+	 VtQjEjteAzWDHNdUz2NEY2EzzfRPnHMUpOZHTtEkjj3AJDhMSEIs8ep027cATB59w4
+	 Ecbr2WQXUkBHp7dsP6jgcbSmDZc1rYGsiRjEQfKB1UzbNENWjO6duwhhlYYsud9H9r
+	 09jTFXR9fISXw==
+Date: Fri, 13 Dec 2024 16:48:10 +0000
+From: Lee Jones <lee@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] rust: miscdevice: access file in fops
+Message-ID: <20241213164810.GD2418536@google.com>
+References: <20241210-miscdevice-file-param-v3-0-b2a79b666dc5@google.com>
+ <20241210-miscdevice-file-param-v3-1-b2a79b666dc5@google.com>
+ <20241211115651.GB7139@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] memory: omap-gpmc: deadcode a pair of functions
-To: Kevin Hilman <khilman@baylibre.com>, rogerq@kernel.org, tony@atomide.com,
- linux@treblig.org
-Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241211214227.107980-1-linux@treblig.org>
- <173410830317.3067997.3764368773601763146.b4-ty@baylibre.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <173410830317.3067997.3764368773601763146.b4-ty@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241211115651.GB7139@google.com>
 
-On 13/12/2024 17:45, Kevin Hilman wrote:
-> 
-> On Wed, 11 Dec 2024 21:42:27 +0000, linux@treblig.org wrote:
->> gpmc_get_client_irq() last use was removed by
->> commit ac28e47ccc3f ("ARM: OMAP2+: Remove legacy gpmc-nand.c")
->>
->> gpmc_ticks_to_ns() last use was removed by
->> commit 2514830b8b8c ("ARM: OMAP2+: Remove gpmc-onenand")
->>
->> Remove them.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] memory: omap-gpmc: deadcode a pair of functions
->       commit: 56d96fc5539003a95b8ab631a4ebb5d1b0a24885
-This should not go via soc tree, it's memory.
+jn Wed, 11 Dec 2024, Lee Jones wrote:
 
-Best regards,
-Krzysztof
+> On Tue, 10 Dec 2024, Alice Ryhl wrote:
+> 
+> > This allows fops to access information about the underlying struct file
+> > for the miscdevice. For example, the Binder driver needs to inspect the
+> > O_NONBLOCK flag inside the fops->ioctl() hook.
+> > 
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/miscdevice.rs | 31 +++++++++++++++++++++++++------
+> >  1 file changed, 25 insertions(+), 6 deletions(-)
+> 
+> Reviewed-by: Lee Jones <lee@kernel.org>
+
+Tested-by: Lee Jones <lee@kernel.org>
+
+-- 
+Lee Jones [李琼斯]
 
