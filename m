@@ -1,149 +1,134 @@
-Return-Path: <linux-kernel+bounces-445106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B789F1156
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:49:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5579F115F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:51:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2981718840E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:49:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C663618840ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCC31E32CA;
-	Fri, 13 Dec 2024 15:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmM+p3RC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85001E1C26;
+	Fri, 13 Dec 2024 15:50:48 +0000 (UTC)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E34915383D;
-	Fri, 13 Dec 2024 15:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795BB1E1A18;
+	Fri, 13 Dec 2024 15:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734104960; cv=none; b=endj4V55mKu5RGIzHZmiitj8YdnnemDGaEFn3UCU6kicevSH2Oa89ZpemzBMGqE07J+9P1/Fg7Vf8Y4Tl177Co+5SJDwY+bp6a6N/QmnZjiGlm5wIfLRQsCBU+GvkFbfMPUuQW0hOfRk/s7ubWK4yNbf7lwnkU3AyAOUFxnI7Qc=
+	t=1734105048; cv=none; b=mgw1Gz+0Iw8TWYasWkmr8SoJXT0uafC+E6I9i2Z6x+JHHvI46vK4Cb0GnO1puBuXZTkeHHLNQvcrpL0QtNxk4wNz9pOhk95iSUGJZSbdnOmMIzVJnitKkIBMc1YKXFRVyr7HVYa9WD2f6bCTPWomPFhsJv0BVWV1KcMkXSMfkGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734104960; c=relaxed/simple;
-	bh=/hDdjLzEU/NW7kyxw2WQHiNd3hIOj8UaYlN8AblZ6GY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QBb+T94eUPnGsyJFZKGzPvrc2O9yuj2tGOE4oGQMrXTA/AtkTTqbZpW4OyxNgvb7eDe45O/SF7oxkSDHWZIv57wbL8Boc+bYvio22Te+kgIWDLj4Ymm+OrejML+Oi5WddyzW5wNNx3a6P4RIw6wlX25OjiZuVpFeVaY/UM/zFJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmM+p3RC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2348C4CED0;
-	Fri, 13 Dec 2024 15:49:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734104960;
-	bh=/hDdjLzEU/NW7kyxw2WQHiNd3hIOj8UaYlN8AblZ6GY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OmM+p3RCtfPhAYT3Hz7bPotVhqgDa3gVt4f2/DAR32WQ86R1wwTeMRgVCnK6lXUXo
-	 pC5f2pBPmK0oveVlXE3hCksa5tr+QP2StnGDMJJy37+w+3vxHCAxOf49fmLRoQEkRw
-	 0XGv0orDKVE5fZEUHga0zid8fA3PieuibAIwuBkee27mvctkP6elKYQq2l3pOUR7E1
-	 34UdzSLW8j0pbtsUL6yl0V59YlcYTi6b5xGjnhFrnxHqHNHdYW3XK6pVz+V5vy2bIa
-	 8owvlZWcQzahmPqf1HErEUBq33k3l411jHtd7NuFdYT6BShaT89ZLPqubSACCTDH5+
-	 XlNz+koYFDwdA==
-Message-ID: <de59078c-8410-4c4f-bfce-db402e92635c@kernel.org>
-Date: Fri, 13 Dec 2024 16:49:13 +0100
+	s=arc-20240116; t=1734105048; c=relaxed/simple;
+	bh=+vWx/xla3NmdPy6AaCslllDhobZi1UfzUcfCWw0UWFQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QKSKm2gQxe1spyDVU9gUjc3rMsiiA9AV0OYB1secpXxmI9QSj9rtF4GKb/wE0LpGftSHXRMeszzztPbxtvcOq8cDt6GFqnc4cqEBFAfDQNLe8yMM9qWwwREicBGwEeOADrXzP5/7+5zFf9UpB3cAqualwhp/IzWuI5lXEYmZwGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4b11a11a4f0so520352137.3;
+        Fri, 13 Dec 2024 07:50:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734105044; x=1734709844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GYg2VybSe9zczJSOfwqRrhBe0hYZTtXKLrOxz5c9cnE=;
+        b=lW0aWku6IS1qmZIZAJCXyt2kNaJ44yOnpEN1ZaE6dnmg3VYw/wytUHrru3C38/FpgJ
+         TeA0bxicsw52WoFHR54HfSQEXPm0kHwD/BuelDNOAQhZ5NiSWxU7Hzw8HuoTzSCQPy7/
+         GVJ3CzCJ8VdZXLSFYY49ZbP4Jhlc4HVHNNA54GbvEgRiSHPaZ6JWE6SNn8gbeJA9LyWj
+         y3BbkgJe45YrnpQggzix49swErqBBsVxpBc8/Z/99sKYWNMTXLl1Hb9ozJs2yBIwDwQd
+         NoWaeL+Gy4piA9o7x5B7+nro1tzt2jdsJLnZk6Jf/Pc5rTUqDNFI/kdmJ5uznygm1VVX
+         C1qg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+u4VPBFcyYQ2x06VxdF2v2zM9laOJnsB4ErBnB07QhCIuJZ2JonPOO9gf5Udh3rpyADF3Nht6NguP@vger.kernel.org, AJvYcCXuM5wSZYyMrfyasQff3IKtuuF3MucfJIP+BHgJdyCXuRCJEtUeWYxV5W8RpmeSDx/w8eLkFtXGjFCiB0kN@vger.kernel.org, AJvYcCXwyXCpNA7bogtZBhR9wTDyuW+Wx2u9j/rtycP/KTCR/eTyFWwe6WHaPqU5/2cbUhX48HR94oQ+l/k2twgjmmCnhWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxvcCKOrrcElHqoNH3zqwK2C4iIWB6e0Co7hfoj7IY7Qfk7ZEL
+	eW9952Dq3+qyhQAEkdX3Se0MhRp6gkAw4LHFFHsuVJ/ue1wjKErtxvS3rLsw
+X-Gm-Gg: ASbGnct4kkLNxzgpOzeEUnB6loePl6R/aytMHoAVoMaGrua6Jm3boTR2ZH4fiHaVBhh
+	bDHdOKVN+nGjinghUyyUecSFr3uVeslvpLyLx66CcN29LOBhO4v/+g7xa/qPWhGS6tv1GaFs+iW
+	G1Ra1/RzQ92Ryup16SDHHOiY5mp24n3TuhKdNeQo/DU0pwfprgDC7y+5Kq1RRWJiPjCEOgnm0CO
+	CglQNxg7ime10y+cd6yhcC73N8hNZS8legLITxMRBvwWIB3ZSZ5J1Vx+fMpMjp1m95FtQLhXxSA
+	U9quY7/SLe+RSHNKZcU=
+X-Google-Smtp-Source: AGHT+IFDXwUdNezvBhEqdepdpypz2MiP13dVsTX3oq0cAyKTbeB6SlypJKmwpWBlxGSGrQvbr8w1Jg==
+X-Received: by 2002:a67:e7ca:0:b0:4af:f8b9:bea0 with SMTP id ada2fe7eead31-4b25db08266mr3564656137.18.1734105044298;
+        Fri, 13 Dec 2024 07:50:44 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afd719eb3fsm2026441137.27.2024.12.13.07.50.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 07:50:43 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4afeb79b52fso501569137.0;
+        Fri, 13 Dec 2024 07:50:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV/0pbmQ8owJ4L86pkfj+QRkX439SRuNX0vfpA0w26Mk1NmHUUobs4i+BsxlWBQY6/+FDuCto82BcuZFg31@vger.kernel.org, AJvYcCV8zywGOTPxXEPwe39i5G0bzCq4ojgr8FOGRLf5OSenR8VBi4ElrNTQzcG4aKxh/HMsChiWEOSgoAHE@vger.kernel.org, AJvYcCWsukhLZpVbtDhmyt3kggQt+dJucuvcATHrG35V3unj4iDCAD+HhkVVUxpHxApWz/Sjx4nZ1CnRSt77IIL3isX8TN4=@vger.kernel.org
+X-Received: by 2002:a05:6102:441c:b0:4b1:1b24:7241 with SMTP id
+ ada2fe7eead31-4b25d9e2f8cmr3698882137.15.1734105043676; Fri, 13 Dec 2024
+ 07:50:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 7/8] ARM: dts: aspeed: system1: Mark GPIO line high/low
-To: Ninad Palsule <ninad@linux.ibm.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
- devicetree@vger.kernel.org, eajames@linux.ibm.com,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Cc: NINAD PALSULE <ninadpalsule@us.ibm.com>
-References: <20241213145037.3784931-1-ninad@linux.ibm.com>
- <20241213145037.3784931-8-ninad@linux.ibm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241213145037.3784931-8-ninad@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com> <20241211210853.GA3708218-robh@kernel.org>
+In-Reply-To: <20241211210853.GA3708218-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Dec 2024 16:50:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWhi3n==N6AniKcr8n+mkLdvpHtTTC1jGhPzUbXkGw9sg@mail.gmail.com>
+Message-ID: <CAMuHMdWhi3n==N6AniKcr8n+mkLdvpHtTTC1jGhPzUbXkGw9sg@mail.gmail.com>
+Subject: Re: [PATCH 0/5] soc: renesas: Add system controller support for
+ RZ/G3E SoC
+To: Rob Herring <robh@kernel.org>
+Cc: John Madieu <john.madieu.xa@bp.renesas.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/12/2024 15:50, Ninad Palsule wrote:
-> From: NINAD PALSULE <ninadpalsule@us.ibm.com>
-> 
-> - Mark following GPIO lines as input high:
->   - GPIOL4 (reset PCH registers)
->   - GPIOL5 (reset portition of intel ME)
-> - Mark isolate errors from cpu1 gpio (GPIOO6) as active low output.
-> - The fan controller reset line should be active high.
-> 
-> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
-> ---
->  .../dts/aspeed/aspeed-bmc-ibm-system1.dts     | 28 +++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-> index ca2d4a292687..be0cd6152c61 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-> @@ -383,6 +383,34 @@ &gpio0 {
->  	/*X0-X7*/	"fpga-pgood","power-chassis-good","pch-pgood","","","","","",
->  	/*Y0-Y7*/	"","","","","","","","",
->  	/*Z0-Z7*/	"","","","","","","","";
-> +
-> +	rtc_reset {
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+Hi Rob,
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
+On Wed, Dec 11, 2024 at 10:08=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
+e:
+> On Fri, Dec 06, 2024 at 10:25:54PM +0100, John Madieu wrote:
+> > This patch series adds support for the RZ/G3E system controller and ext=
+ends
+> > the existing RZ/V2H(P) system controller to support syscon. The RZ/G3E
+> > system controller allows detecting various SoC features like core count=
+,
+> > NPU availability, and CA55 PLL configuration.
+> >
+> > Key features:
+> > - Syscon support for both RZ/V2H and RZ/G3E system controllers
+> > - Detection of quad/dual core configuration
+> > - Detection of Ethos-U55 NPU presence
+> > - Validation of CA55 PLL frequency setting
+> > - SoC-specific extended identification through callbacks
+>
+> This series and some other questions about syscon prompted me to look
+> into syscon driver a bit. Consider this resulting series[1] in context
+> with your changes.
+>
+> Rob
+>
+> [1] https://lore.kernel.org/all/20241211-syscon-fixes-v1-3-b5ac8c219e96@k=
+ernel.org/
 
-Best regards,
-Krzysztof
+Thank you, not having to add a "syscon" compatible value makes
+perfect sense!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
