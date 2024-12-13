@@ -1,53 +1,62 @@
-Return-Path: <linux-kernel+bounces-444172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554CE9F0267
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:42:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870E09F026A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:43:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D233188E689
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDE7188E614
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5C12A1BB;
-	Fri, 13 Dec 2024 01:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C411F347C7;
+	Fri, 13 Dec 2024 01:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="igmn5UHV"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PTRrlbN4"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E230E17C60
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E0617C60;
+	Fri, 13 Dec 2024 01:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734054134; cv=none; b=rJeoGBnea1APbww9R5NQha2GU5T1k8CCOUuHblDNev6ozCuDAZepGHQR+S9IE4oL9uhiBPQmbIBjxDg/xd2xzGkq2MysfyCoS5MFGlD6C+Q+JC80e4cO0kOOuA1HhYG/cC+9HsQof6MR5Y7U84F49eviFPSUVNA5uFOdN169HNg=
+	t=1734054185; cv=none; b=dy9jPtyLs51HPIcW1IhXxXAEV3FMTgCAtJs8Nc6bzUbOSH4fQhpDf5RUXOdyilBEL7voa2XR5XqdnTcxhC3e7eqNwZIaF7VMx4Xub7jHF88RxTvEsYXN3bp21XViL0DQqjdmkwZPMHstWHLqdVH64YSFJfSrUMoJjdqQ4nv+uh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734054134; c=relaxed/simple;
-	bh=sbNnwrxdmPvVbwepQbobT9BdPrU4oV3hT1gtkBC2MrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gxlTIntNq26c7QceNtK5jcH0XQt+ZTb8nrMl9Wy2RXpQL01WZlqUAJxCgZ6nQJmWE5vu8FhimLezTftt5KraSa1fZjww3dC18Ta5JIRBAp5DMxc7HkVvWsL4c5Z7klWYdp/i3wj2WHxAN+cutwGw7KfXx24kSNCwCc98rOFRh7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=igmn5UHV; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=np8T7mWlht8plu2pa8HCEwfFHDwDqGqVQXZZGrLwAj8=; b=igmn5UHVgAc2+1vrRiR3RrBqDV
-	dWtYjbyKcKRZST+KOTaYeN1J/9W5g4qybJSsj7DAU9XUaY8d4Itm0yu9M9Z3UAHdJdD/lc46YP12i
-	ANbUTBO5h5uf4URfn15HLXGjZlOHj4ZTMNUCeU9vD3yN0ePv502zf+MMU+U9khFjZieNew2jVkZq4
-	Om2f6jb/ATAEG5vKhfOUIKPwr3wo/gzt8JZ7Kt4TkARi7JjiViAO/AyCKy+gD4WVZv/8u/0PrEp9H
-	mUURAZC3iMAaNUM/6VRzQpDEGOg4oDjwiJzCpktGCNvRQpTusVtY276dEwq1cWhiBVPSHBx58/aCF
-	k4SOYz2Q==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tLugs-002TY7-L6; Fri, 13 Dec 2024 02:42:02 +0100
-Message-ID: <f7924c58-dfaa-424c-9dd4-cec9a50137c9@igalia.com>
-Date: Fri, 13 Dec 2024 10:41:55 +0900
+	s=arc-20240116; t=1734054185; c=relaxed/simple;
+	bh=1oiUqvrncY2Yr11Fob0HEMwESXO57uFrf9aYMBqQpNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kJbsc0YY16tJVxN15ivqE81RXhFr2sh1PML7qRJfvb+8OWXlJdz4FclZ3SWINAiFLx23fH58QDU8+KrSA+A5eFPZuOzw6gDo+0uBbKBLrQqzaZeV6GcEFTJyDI4XkAgvJii8wML34B1YvFrICeSWnk+WOXhymi1kUKEGhLb3u9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PTRrlbN4; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCH6Sqv002093;
+	Fri, 13 Dec 2024 01:42:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iP0Gu0h9qxvwSP97c21KOwd0MwILv2ly/FR0/lF7tEI=; b=PTRrlbN4ExDu/y6O
+	psuCcTzCF+vRVd4xYAveUxOVi607Wy2oWlmnI2o+Vgco4h0dDO8QvJ542OoHkVjE
+	nBvnaMMrceUXxZ8h/KjW/lbSZKnYhRNyaNYyUr36MpmzHrLMszcTfc5nvtaUTQpk
+	xIs3XZCvedirCebi7GXnpVr/QYnpsM+IBo8oR7N9WR8oAw1Cb37io8zl+FHMpDK5
+	AHTisR/MAdGnoxm8cHExGuyydXtLrKm63VQLaqCFnsYlPTlZXmrLjOQIRsMnkN8r
+	TYCE5Ky9S2TxE3KkMl85TTg9aic/o6Lrjnj9Gu4tM73hRhFCpHW225iIZ7j7qB1R
+	vpESoA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f0r9y5me-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 01:42:59 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD1gwBa010080
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 01:42:58 GMT
+Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
+ 2024 17:42:55 -0800
+Message-ID: <409678b0-339e-4d93-86f1-117d358a2d33@quicinc.com>
+Date: Fri, 13 Dec 2024 09:42:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,99 +64,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] sched_ext: Implement scx_bpf_now_ns()
-To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, mingo@redhat.com, peterz@infradead.org,
- kernel-dev@igalia.com, linux-kernel@vger.kernel.org
-References: <20241209061531.257531-1-changwoo@igalia.com>
- <20241209061531.257531-5-changwoo@igalia.com>
- <Z1lJ-AzRlFIv4OuP@slm.duckdns.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <Z1lJ-AzRlFIv4OuP@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] arm64: dts: qcom: Add coresight nodes for QCS8300
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        "Aiqun Yu (Maria)"
+	<quic_aiquny@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241205084418.671631-1-quic_jiegan@quicinc.com>
+ <16efb6a8-ecaf-4097-ac5f-368ebab177a8@quicinc.com>
+ <25a410a7-2418-45bd-be06-3672a9fb1928@quicinc.com>
+ <04d23c55-9167-4e8a-9e5b-6dcf66b02b8f@oss.qualcomm.com>
+Content-Language: en-US
+From: Jie Gan <quic_jiegan@quicinc.com>
+In-Reply-To: <04d23c55-9167-4e8a-9e5b-6dcf66b02b8f@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: til3tEG194fQ4v9Ifs8D-Y5HdreVy-So
+X-Proofpoint-GUID: til3tEG194fQ4v9Ifs8D-Y5HdreVy-So
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 phishscore=0 spamscore=0 clxscore=1015 mlxlogscore=934
+ malwarescore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130012
 
-Hello,
 
-On 24. 12. 11. 17:14, Tejun Heo wrote:
-> Hello,
+
+On 12/13/2024 8:35 AM, Konrad Dybcio wrote:
+> On 9.12.2024 3:01 AM, Jie Gan wrote:
+>>
+>>
+>> On 12/8/2024 12:28 AM, Aiqun Yu (Maria) wrote:
+>>>
+>>>
+>>> On 12/5/2024 4:44 PM, Jie Gan wrote:
+>>>> Add following coresight components for QCS8300 platform.
+>>>> It includes CTI, dummy sink, dynamic Funnel, Replicator, STM,
+>>>> TPDM, TPDA and TMC ETF.
+>>>>
+>>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>>>> ---
+>>>> Changes in V2:
+>>>> 1. Rebased on tag next-20241204.
+>>>> 2. Padding the register address to 8 bits.
+>>>> Link to V1 - https://lore.kernel.org/linux-arm-msm/20240929-add_coresight_devices_for_qcs8300-v1-1-4f14e8cb8955@quicinc.com/
+>>>> ---
+>>>>    arch/arm64/boot/dts/qcom/qcs8300.dtsi | 2150 +++++++++++++++++++++++++
+>>>>    1 file changed, 2150 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>>>> index 73abf2ef9c9f..eaec674950d8 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
+>>>> @@ -293,6 +293,18 @@ system_sleep: domain-sleep {
+>>>>            };
+>>>>        };
+>>>>    +    dummy_eud: dummy-sink {
+>>>> +        compatible = "arm,coresight-dummy-sink";
+>>>> +
+>>>> +        in-ports {
+>>>> +            port {
+>>>> +                eud_in: endpoint {
+>>>> +                    remote-endpoint = <&swao_rep_out1>;
+>>>> +                };
+>>>> +            };
+>>>> +        };
+>>>> +    };
+>>>> +
+>>
+>> [...]
+>>
+>>>> +
+>>>> +        tpdm@482c000 {
+>>>> +            compatible = "qcom,coresight-tpdm", "arm,primecell";
+>>>> +            reg = <0x0 0x0482c000 0x0 0x1000>;
+>>>> +
+>>>> +            clocks = <&aoss_qmp>;
+>>>> +            clock-names = "apb_pclk";
+>>>> +
+>>>> +            qcom,dsb-element-bits = <32>;
+>>>> +            qcom,dsb-msrs-num = <32>;
+>>>> +            status = "disabled";
+>>>
+>>> Could you please provide more detailed information on why some TPDM
+>>> nodes are disabled by default while others are not?
+>> Some of TPDM nodes are disabled by default because the one of the following reasons:
+>> 1. TPDM device are designed to generate HW events, it needs a clock source to read&write its registers. Coresight driver cannot control the clock source ouside AP core, so those TPDM devices without enabled clock source will crash device in probe.
+>> 2. Some of TPDM devices can't bootup with fused devices.
+>> 3. Some of TPDM devices have known hardware issues that not resolved.
+>>
+>> I put those disabled TPDM devices in DT in case some of them may be "fixed" in future.
 > 
-> I'd roll the preceding two patches into this one.
-Sure. I will merge patches 2, 3, 4 into one.
-
-> On Mon, Dec 09, 2024 at 03:15:29PM +0900, Changwoo Min wrote:
-> ...
->> 3) Monotonically non-decreasing clock for the same CPU: scx_bpf_now_ns()
->>   guarantees the clock never goes backward when comparing them in the same
->>   CPU. On the other hand, when comparing clocks in different CPUs, there
->>   is no such guarantee -- the clock can go backward. It provides a
->>   monotonically *non-decreasing* clock so that it would provide the same
->>   clock values in two different scx_bpf_now_ns() calls in the same CPU
->>   during the same period of when the rq clock is valid.
+> Please mark them as
 > 
-> We probably should provide helpers to calculate deltas between timestamps
-> and use them consitently in SCX scheds. e.g. ops.runnable() and
-> ops.running() can run on different CPUs and it'd be useful and common to
-> calculate the delta between the two points in time.
-
-If I understand correctly, it should be something similar to
-jiffies_delta_to_msecs(). Regarding the API name, what about
-scx_time_delta(s64 time_delta) and/or scx_time_diff(u64 time_a,
-u64 time_b)?
-
->> +	if (!(rq->scx.flags & SCX_RQ_CLK_VALID) ||
->> +	    (rq->scx.prev_clock >= clock)) {
+> /* Hardware issues */
+> status = "fail";
 > 
-> The clocks usually start at zero but it'd still be a good idea to use
-> time_after64() and friends when comparing the ordering between timestamps.
 
-Sure. I will update the code as suggested.
+Maybe I should remove these devices, to avoid confusion. Is that ok?
 
-> 
->> +		/*
->> +		 * If the rq clock is invalid or goes backward,
->> +		 * start a new rq clock period with a fresh sched_clock_cpu().
->> +		 *
->> +		 * The cached rq clock can go backward because there is a
->> +		 * race with a timer interrupt. Suppose that a timer interrupt
-> 
-> This is not limited to timer interrupts, right? This kfunc can be called
-> from anywhere including tracepoints for code running in IRQ
-Yup, you are right. I will update the comments.
+> Konrad
+
+Thanks,
+Jie
 
 
-> 
->> +		 * occurred while running scx_bpf_now_ns() *after* reading the
->> +		 * rq clock and *before* comparing the if condition. The timer
->> +		 * interrupt will eventually call a BPF scheduler's ops.tick(),
->> +		 * and the BPF scheduler can call scx_bpf_now_ns(). Since the
->> +		 * scheduler core updates the rq clock before calling
->> +		 * ops.tick(), the scx_bpf_now_ns() call will get the fresh
->> +		 * clock. After handling the timer interrupt, the interrupted
-> 
-> This might be easier to explain with two column table explaning what each
-> party is doing in what order.
-I will beautify the text for readability.
-
-> 
->> +		 * scx_bpf_now_ns() will be resumed, so the if condition will
->> +		 * be compared. In this case, the clock, which was read before
->> +		 * the timer interrupt, will be the same as rq->scx.prev_clock.
->> +		 * When such a case is detected, start a new rq clock period
->> +		 * with a fresh sched_clock_cpu().
->> +		 */
->> +		clock = sched_clock_cpu(cpu_of(rq));
->> +		scx_rq_clock_update(rq, clock);
-> 
-> Hmmm... what happens if e.g. a timer ends up performing multiple operations
-> each going through rq pin/unpin?
-
-That should be okay. After multiple rq pin/unpin operations, the
-resumed scx_bpf_now_ns() will found that the prev_clock is
-greater (not equal) than the current clock, so it will get the
-fresh clock.
-
-Thanks!
-Changwoo Min
 
