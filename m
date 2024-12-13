@@ -1,127 +1,100 @@
-Return-Path: <linux-kernel+bounces-444860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6989F0D9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:45:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D929F0DA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:47:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33038169704
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:45:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84CE1881535
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174C21E049C;
-	Fri, 13 Dec 2024 13:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C331E04B3;
+	Fri, 13 Dec 2024 13:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Y76ajKur"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gboqsmsw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD856F30F;
-	Fri, 13 Dec 2024 13:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9B717548;
+	Fri, 13 Dec 2024 13:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734097544; cv=none; b=VfN5apU4o/KQD3tsjbrRE9Pw/majJOcJlHdP0CEBIoYrZhr1nBSfbDMyxXR+XkEpzph3qAYFKBJ2hocJqclvyuBQ0zBWE5icaxhuOtps9g9m2T9QVztp5pBHRY//Gm7MRhlVbWVs7gYYyDoN+1BuXv7mg/TIMsFG0H84cIixpDE=
+	t=1734097660; cv=none; b=VuE4FsA7cZ3aClO1rOKMVbvB30O00CTnLvfl8iOlHKKOUfmJ2wYqNGC/rXoWPgotqhUmZB6SwiWacURWxO5rOx0NaJ2Sni84JZcDCkGZ9XhvjgAEFUqQrbBv60betCv7J2sdSXLs9QqhQ7ge9av0w1k9FX5HzzME1BeiXUANeqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734097544; c=relaxed/simple;
-	bh=Fwn8Lk/ttab1XUIk4P6AXTCr+1bXvJRipK2h+AOLyhY=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RyslnknJikVVIr6WObb97WlnKCgbDTG6yqfEO0SIDWkfUkvZ9azmHg4Myjd458RB8FCVqqY7buoe4V3fcKcqSxz9zJDIHEIxJ7llTFdmLThcsyK1kre4Ml4r5PDJ46wmx2MwzefC7e1X6ygUw2xGVVgVxBenGGmB8DnnnuWUGZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Y76ajKur; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDAwJxn007433;
-	Fri, 13 Dec 2024 14:45:21 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Fwn8Lk/ttab1XUIk4P6AXTCr+1bXvJRipK2h+AOLyhY=; b=Y76ajKurx4fFzyX8
-	mGfXG58Uz0SX5DBiuxE/ritxhAKXfjrTebRd3mFacDoLdlKNLM7vHUignbGci4q4
-	CPRDjo9uuAtUvE2kEo3TEK0FiS8vPxx0cfbPdP3TXw7Sy8/8VG3MyKXqNqg2aQLU
-	cC7nmN2OjotF41ZulTzUOkOpMTuKCUumZkz5SHh5vkqNaGFB3Aoy5beqgudEjlLE
-	cowPCsgMjt5hhIRV1lyKll1yvBu5Joy0Luj36kKDX2shgv2UIPvL02aJ3GIaYdxs
-	ldMNMtlCJZjeS4Bdb+UbmKfUzLDYs5g6UstbBHCc4Nw5sC2BtTc4QrY+c5/Vmhxf
-	PPR+Hg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ffwc8mkr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 14:45:21 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E3D8140049;
-	Fri, 13 Dec 2024 14:44:06 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AF55F27667B;
-	Fri, 13 Dec 2024 14:43:21 +0100 (CET)
-Received: from [192.168.8.15] (10.48.87.33) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 13 Dec
- 2024 14:43:21 +0100
-Message-ID: <05081f6ebe19ce3e0e989aebf415c9ff86a39e3d.camel@foss.st.com>
-Subject: Re: [PATCH v4] pinctrl: stm32: Add check for clk_enable()
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Marek Vasut <marex@denx.de>, Mingwei Zheng <zmw12306@gmail.com>
-CC: <linus.walleij@linaro.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <make24@iscas.ac.cn>,
-        <peng.fan@nxp.com>, <fabien.dessenne@foss.st.com>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Date: Fri, 13 Dec 2024 14:43:18 +0100
-In-Reply-To: <a47b567d-96a6-4a87-9f60-33a311c281ae@denx.de>
-References: <20241213010948.2623382-1-zmw12306@gmail.com>
-	 <a47b567d-96a6-4a87-9f60-33a311c281ae@denx.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1734097660; c=relaxed/simple;
+	bh=VIMig2II2mNgjbylAE+qGc7rd0TqLWtlscaZ2SC+AiM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UGETnX6vH5mr8msNGNfYIM6SJXXyr14GiJQDgDY/0KAEm+AkWNUm1qPpyuEFvcdfl5DrLfyji2nvoaVryGP1J1c1m8E3vybaFh6KhG8hSXbpthKajk6H/9T2a5X13LGBSe3xPEF0rW356PbrBCyVZdEWR+cYi8l/9cqraY57tW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gboqsmsw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FE2C4CED0;
+	Fri, 13 Dec 2024 13:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734097659;
+	bh=VIMig2II2mNgjbylAE+qGc7rd0TqLWtlscaZ2SC+AiM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GboqsmswPX2ALN4uAHgrk8022juznHmZ8HVfND+VEO3hsYtLBujxfkYQ1VZruCAzi
+	 PyxuMw2TZCRWLSh7riBqDROtX1JF+qAvoQg8tSgAMuzQwoY3e5lYQEnUM7J4TqnUyQ
+	 JJy2IF96FAt8e7EeykuBQBgLuSfMOHpRzP/LlahlFUZAHkZTNacelm/o0RGi5i+901
+	 rwqjVblG5/QkkmrBmGSeQJo/tlnK/Xl+0YI2EDt7KiNWues0Wx3BEAGJEE/qeOKV/v
+	 XjFUgxwZFM1dNVAz3muHgKB3g0Lsyo01T6WwHuYgtHUo8PO0BmS/ExBCPbte1OkCEP
+	 KXxzA8d56G29A==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH v6 0/5] rust: miscdevice: Provide sample driver using the new MiscDevice bindings
+Date: Fri, 13 Dec 2024 13:47:05 +0000
+Message-ID: <20241213134715.601415-1-lee@kernel.org>
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Transfer-Encoding: 8bit
 
-T24gRnJpLCAyMDI0LTEyLTEzIGF0IDEyOjQ1ICswMTAwLCBNYXJlayBWYXN1dCB3cm90ZToKPiBP
-biAxMi8xMy8yNCAyOjA5IEFNLCBNaW5nd2VpIFpoZW5nIHdyb3RlOgo+IAo+IFsuLi5dCj4gCj4g
-PiBAQCAtMTM5Nyw3ICsxMzk3LDcgQEAgc3RhdGljIGludCBzdG0zMl9ncGlvbGliX3JlZ2lzdGVy
-X2Jhbmsoc3RydWN0IHN0bTMyX3BpbmN0cmwgKnBjdGwsIHN0cnVjdCBmd25vZGUKPiA+IMKgwqDC
-oMKgwqDCoMKgwqByZXR1cm4gMDsKPiA+IMKgIAo+ID4gwqAgZXJyX2NsazoKPiA+IC3CoMKgwqDC
-oMKgwqDCoGNsa19kaXNhYmxlX3VucHJlcGFyZShiYW5rLT5jbGspOwo+ID4gK8KgwqDCoMKgwqDC
-oMKgY2xrX2Rpc2FibGVfdW5wcmVwYXJlKHBjdGwtPmNsa3NbcGN0bC0+bmJhbmtzXS5jbGspOwo+
-IAo+IAo+IFNob3VsZCB0aGlzIGJlCj4gCj4gLWNsa19kaXNhYmxlX3VucHJlcGFyZShwY3RsLT5j
-bGtzW3BjdGwtPm5iYW5rc10uY2xrKTsKPiArY2xrX2Rpc2FibGVfdW5wcmVwYXJlKHBjdGwtPmNs
-a3NbYmFuay0+YmFua19ucl0uY2xrKTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBeXl5eXl5eXl5eXl5eCj4gCgpO
-byBNYXJlaywKcGN0bC0+bmJhbmtzIGlzIHRoZSBwcm9ncmVzc2l2ZSBpbmRleCBvZiB0aGUgYmFu
-aydzIHN1Ym5vZGUsIHRoYXQgaXMgYWxzbyB0aGUgaW5kZXggZm9yIHBjdGwtPmNsa3NbXS4KSW5z
-dGVhZCBiYW5rLT5iYW5rX25yIGNhbiBiZSBjb21wdXRlZCBmcm9tIGdwaW8tcmFuZ2VzLCBhbmQg
-dGhlcmUgaXMgbm8gZ3VhcmFudGVlIGl0IHdvdWxkIG1hdGNoIHRoZSBpbmRleCBmb3IgcGN0bC0+
-Y2xrc1tdLgoKQWN0dWFsbHkgdGhpcyBpcyBxdWl0ZSBjb25mdXNpbmc7IEkgdGhpbmsgaXQgd291
-bGQgYmUgbXVjaCBjbGVhbmVyIGRyb3BwaW5nIHRoZSBjbG9jayBoYW5kbGluZyBmcm9tIHN0bTMy
-X2dwaW9saWJfcmVnaXN0ZXJfYmFuaygpIGFuZCBtb3ZpbmcgaXQgdG8gaXRzIGNhbGxlci4KSW4g
-c3RtMzJfcGN0bF9wcm9iZSgpIHdlIGNhbiBqdXN0IGNhbGwgY2xrX2J1bGtfcHJlcGFyZV9lbmFi
-bGUoKSBhbmQsIGluIGNhc2Ugb2YgZXJyb3IsIGNsa19idWxrX2Rpc2FibGVfdW5wcmVwYXJlKCkK
-CkFudG9uaW8KCj4gPwo+IAo+ID4gwqDCoMKgwqDCoMKgwqDCoHJldHVybiBlcnI7Cj4gPiDCoCB9
-Cj4gPiDCoCAKPiA+IEBAIC0xNjE3LDEwICsxNjE3LDE4IEBAIGludCBzdG0zMl9wY3RsX3Byb2Jl
-KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoHJldHVybiAtRUlOVkFMOwo+ID4gwqDCoMKgwqDCoMKgwqDCoH0KPiA+IMKgwqDC
-oMKgwqDCoMKgwqBwY3RsLT5iYW5rcyA9IGRldm1fa2NhbGxvYyhkZXYsIGJhbmtzLCBzaXplb2Yo
-KnBjdGwtPmJhbmtzKSwKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgR0ZQX0tFUk5FTCk7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIEdGUF9LRVJORUwpOwo+ID4gwqDC
-oMKgwqDCoMKgwqDCoGlmICghcGN0bC0+YmFua3MpCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoHJldHVybiAtRU5PTUVNOwo+ID4gwqAgCj4gPiArwqDCoMKgwqDCoMKgwqBwY3Rs
-LT5jbGtzID0gZGV2bV9rY2FsbG9jKGRldiwgYmFua3MsIHNpemVvZigqcGN0bC0+Y2xrcyksCj4g
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBHRlBfS0VSTkVMKTsKPiA+ICvCoMKgwqDCoMKgwqDCoGlmICghcGN0bC0+Y2xr
-cykKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gLUVOT01FTTsKPiA+
-ICsKPiA+ICvCoMKgwqDCoMKgwqDCoGZvciAoaSA9IDA7IGkgPCBiYW5rczsgKytpKQo+IAo+IGkr
-KwoK
+This set depends on Alice's most recent MiscDevice changes:
+
+https://lore.kernel.org/all/20241210-miscdevice-file-param-v3-0-b2a79b666dc5@google.com/
+
+Changelog v5 -> v6:
+ - pr_info() to dev_info() conversion (based on Alice's new set)
+ - Moved the example C program from the commit message to the file comments
+ - Changed mutex-drop commentary
+
+Lee Jones (5):
+  Documentation: ioctl-number: Carve out some identifiers for use by
+    sample drivers
+  samples: rust: Provide example using the new Rust MiscDevice
+    abstraction
+  samples: rust_misc_device: Demonstrate additional get/set value
+    functionality
+  MAINTAINERS: Add Rust Misc Sample to MISC entry
+  samples: rust_misc_device: Provide an example C program to exercise
+    functionality
+
+ .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+ MAINTAINERS                                   |   1 +
+ samples/rust/Kconfig                          |  10 +
+ samples/rust/Makefile                         |   1 +
+ samples/rust/rust_misc_device.rs              | 238 ++++++++++++++++++
+ 5 files changed, 251 insertions(+)
+ create mode 100644 samples/rust/rust_misc_device.rs
+
+-- 
+2.47.1.613.gc27f4b7a9f-goog
 
 
