@@ -1,246 +1,125 @@
-Return-Path: <linux-kernel+bounces-444176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DEB9F0279
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:58:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79029F027A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:02:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80EC284499
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFBDB162499
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21C6433AB;
-	Fri, 13 Dec 2024 01:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536952AEE9;
+	Fri, 13 Dec 2024 02:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKd8cD/8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="leyo8V+a"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4DA27715;
-	Fri, 13 Dec 2024 01:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36388846F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 02:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734055122; cv=none; b=DH3/fi6hb4/XXNL4Upu8fycoGR3Py8L5r2d8qL9P4LyHR2fDBFFi0LP8WzEz9LaUV9tnBw1SefvFJcCVui6xkVdZc++eAbf5yEa78Bzu5vp2tn1SH5Oc/ALjPti5tsCE85NeEHb1Pjeal9a8YyD5OVdETJA8Opg4zYx2UsKSFxk=
+	t=1734055333; cv=none; b=Q2g2fJhMXOaZHy56Rhv3xticeAVz+jfVhBaUwiiQlejKiRGiFjBd7xOPt4bXI+bUutP8zswH96OPcNLKBsPDoTE3TLkPjK9gTllyrNe5/3ZXdcztbMDCY49TI9fXx0sjZdvCeiAIkO4sgg9renKbFrH4I9tLWz9xVHao/XAUHUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734055122; c=relaxed/simple;
-	bh=2q5aAnyDml+6z3V7SV7EY5YIUtY8cnXL6EDDvBgB2YM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DeGR1oINrP3uzTWtnxe0NZjpysxo+VG7zMdQFJkEGQbhbaxAd+HA+SLpq/y6XPTewM05DNq33LAxat4QgBYlukSf3S7mo9L4n1d8+bdAlUE6W5xgIBmukH3H0EUs4FOs8mkJ4Tvmi0guw44EErube9BbKJO4lzllnp1ePaNexuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKd8cD/8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1FD2C4CECE;
-	Fri, 13 Dec 2024 01:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734055121;
-	bh=2q5aAnyDml+6z3V7SV7EY5YIUtY8cnXL6EDDvBgB2YM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MKd8cD/8qsqTeTHK9DgR8/03CAcdVmMhosMCTjrWbf3+COji8IZfA5V08jAg1Q/JT
-	 79yPlW3nZuHT/lKNWXs2T2JfGVka2mIEHtlbkxHZNpeLfpo1RDpxB/Zje67nmfuO9L
-	 kfGKCOasgXg1VV7IdmH3EU5+aRLuplD0kS4krAjXskRiVONBWyjgXEZhol5jcuUdAh
-	 evwqWuHdC0YwWWFePhxk3GIxv/arWWvwvzIBpdHkJwiFSk+Ze3B72RZFLzzSSbFWIJ
-	 QwdKy+DcY5XwY7iSDf/mRVU2ki7ysHrdZZ35jCAV7Mq2cV8wkAJhgzcxRiNfmjnQ+/
-	 8tijQboVyr+Pw==
-Date: Thu, 12 Dec 2024 17:58:39 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v13 09/10] perf record --off-cpu: Add --off-cpu-thresh
- option
-Message-ID: <Z1uUz6sU90IQQAyp@google.com>
-References: <20241212232717.232507-1-howardchu95@gmail.com>
- <20241212232717.232507-10-howardchu95@gmail.com>
+	s=arc-20240116; t=1734055333; c=relaxed/simple;
+	bh=gnbgtPzcEDsASikfB6jgokSPAazc1Vtapd0SU7k5skU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F00xG/nmpSVqMfed5i5CpNLN+0OHM+L9bZpQSVV20zGTGH76hRGMqWVbnbiKTVGXemWM4Z1j+REPyfW+xNpp+a09kKzEd0MzUYVwBFM7ykAzvWm4GGykQ7v2jg6NsXGN38Yx6EyTWMm6+6hOBxhsDFfxc7Ptl9obP1YvrshtnQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=leyo8V+a; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=QGdNKkiSBGBLzGEVFXwgDerw9/cLkP8NiqmikqE4lNw=; b=leyo8V+a8M02afmy+hWX7XrR4o
+	08qp8R/Zd5DB+hucuhfkel5IRzuLxPw1O8FtwewVAflGKMVC3gI4RzdnYiqjlYbklDj0Bwmbw3S13
+	wLGv76yvqK9kgCSne2rMo82qAF1aXLiMUFmiLgPk5roCUlJSsY92MlJtOa5ZAHBqplaP1/iGNL8C+
+	qSAZsFBd/GH8DEHg7xNEsPtzaYt8S6ooYAGz9c/4kuMnwsl+2OXTrzpPNtWEQckUXg5B46Unxnlm/
+	8WVPtejVeFWnBU6jM2LfcWUeekPh9Il9r6WL2y67QX8lJTPTIefByDs+gRus0lnJQOjDffiLUnwYk
+	in/OuJxQ==;
+Received: from [58.29.143.236] (helo=[192.168.1.6])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tLv0B-002ToF-GT; Fri, 13 Dec 2024 03:01:59 +0100
+Message-ID: <8cb978cf-39dd-43e0-948c-1632a11b0da5@igalia.com>
+Date: Fri, 13 Dec 2024 11:01:53 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241212232717.232507-10-howardchu95@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/6] sched_ext: Implement scx_bpf_now_ns()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tj@kernel.org, void@manifault.com, mingo@redhat.com,
+ kernel-dev@igalia.com, linux-kernel@vger.kernel.org
+References: <20241209061531.257531-1-changwoo@igalia.com>
+ <20241209061531.257531-5-changwoo@igalia.com>
+ <20241211093256.GY35539@noisy.programming.kicks-ass.net>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <20241211093256.GY35539@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 03:27:16PM -0800, Howard Chu wrote:
-> Specify the threshold for dumping offcpu samples with --off-cpu-thresh,
-> the unit is milliseconds. Default value is 500ms.
-> 
-> Example:
-> 
->   perf record --off-cpu --off-cpu-thresh 824
-> 
-> The example above collects off-cpu samples where the off-cpu time is
-> longer than 824ms
-> 
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: James Clark <james.clark@linaro.org>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Link: https://lore.kernel.org/r/20241108204137.2444151-2-howardchu95@gmail.com
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/Documentation/perf-record.txt |  9 ++++++++
->  tools/perf/builtin-record.c              | 26 ++++++++++++++++++++++++
->  tools/perf/util/bpf_off_cpu.c            |  3 +++
->  tools/perf/util/bpf_skel/off_cpu.bpf.c   |  2 +-
->  tools/perf/util/off_cpu.h                |  1 +
->  tools/perf/util/record.h                 |  1 +
->  6 files changed, 41 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-> index 242223240a08..f3ac4c739d5f 100644
-> --- a/tools/perf/Documentation/perf-record.txt
-> +++ b/tools/perf/Documentation/perf-record.txt
-> @@ -829,6 +829,15 @@ filtered through the mask provided by -C option.
->  	only, as of now.  So the applications built without the frame
->  	pointer might see bogus addresses.
->  
-> +	off-cpu profiling consists two types of samples: direct samples, which
-> +	share the same behavior as regular samples, and the accumulated
-> +	samples, stored in BPF stack trace map, presented after all the regular
-> +	samples.
-> +
-> +--off-cpu-thresh::
-> +	Once a task's off-cpu time reaches this threshold (in milliseconds), it
-> +	generates a direct off-cpu sample. The default is 500ms.
-> +
->  --setup-filter=<action>::
->  	Prepare BPF filter to be used by regular users.  The action should be
->  	either "pin" or "unpin".  The filter can be used after it's pinned.
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index 0b637cea4850..62183a6857f2 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -3147,6 +3147,28 @@ static int record__parse_mmap_pages(const struct option *opt,
->  	return ret;
->  }
->  
-> +static int record__parse_off_cpu_thresh(const struct option *opt,
-> +					const char *str,
-> +					int unset __maybe_unused)
-> +{
-> +	struct record_opts *opts = opt->value;
-> +	char *endptr;
-> +	u64 off_cpu_thresh_ms; // converted to us for potential future improvements
+Hello,
 
-I'm not sure about the future, but we now have the option in msec and
-convert it to usec, and finally BPF uses nsec.  Is the usec conversion
-really needed?  Maybe we can just use nsec internally.
+Thank you for the review!
 
-Thanks,
-Namhyung
-
-> +
-> +	if (!str)
-> +		return -EINVAL;
-> +
-> +	off_cpu_thresh_ms = strtoull(str, &endptr, 10);
-> +
-> +	/* the threshold isn't string "0", yet strtoull() returns 0, parsing failed */
-> +	if (*endptr || (off_cpu_thresh_ms == 0 && strcmp(str, "0")))
-> +		return -EINVAL;
-> +	else
-> +		opts->off_cpu_thresh_us = off_cpu_thresh_ms * USEC_PER_MSEC;
-> +
-> +	return 0;
-> +}
-> +
->  void __weak arch__add_leaf_frame_record_opts(struct record_opts *opts __maybe_unused)
->  {
->  }
-> @@ -3340,6 +3362,7 @@ static struct record record = {
->  		.ctl_fd              = -1,
->  		.ctl_fd_ack          = -1,
->  		.synth               = PERF_SYNTH_ALL,
-> +		.off_cpu_thresh_us   = OFFCPU_THRESH,
->  	},
->  };
->  
-> @@ -3562,6 +3585,9 @@ static struct option __record_options[] = {
->  	OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu analysis"),
->  	OPT_STRING(0, "setup-filter", &record.filter_action, "pin|unpin",
->  		   "BPF filter action"),
-> +	OPT_CALLBACK(0, "off-cpu-thresh", &record.opts, "ms",
-> +		     "Dump off-cpu samples if off-cpu time exceeds this threshold (in milliseconds). (Default: 500ms)",
-> +		     record__parse_off_cpu_thresh),
->  	OPT_END()
->  };
->  
-> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.c
-> index 2e7e4ae43ffc..c3ac19393c0f 100644
-> --- a/tools/perf/util/bpf_off_cpu.c
-> +++ b/tools/perf/util/bpf_off_cpu.c
-> @@ -14,6 +14,7 @@
->  #include "util/strlist.h"
->  #include <bpf/bpf.h>
->  #include <internal/xyarray.h>
-> +#include <linux/time64.h>
->  
->  #include "bpf_skel/off_cpu.skel.h"
->  
-> @@ -286,6 +287,8 @@ int off_cpu_prepare(struct evlist *evlist, struct target *target,
->  		}
->  	}
->  
-> +	skel->bss->offcpu_thresh_ns = opts->off_cpu_thresh_us * NSEC_PER_USEC;
-> +
->  	err = off_cpu_bpf__attach(skel);
->  	if (err) {
->  		pr_err("Failed to attach off-cpu BPF skeleton\n");
-> diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> index 77fdc9e81db3..aae63d999abb 100644
-> --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> @@ -123,7 +123,7 @@ const volatile bool uses_cgroup_v1 = false;
->  
->  int perf_subsys_id = -1;
->  
-> -__u64 offcpu_thresh_ns = 500000000ull;
-> +__u64 offcpu_thresh_ns;
->  
->  /*
->   * Old kernel used to call it task_struct->state and now it's '__state'.
-> diff --git a/tools/perf/util/off_cpu.h b/tools/perf/util/off_cpu.h
-> index 2a4b7f9b2c4c..f07ab2e36317 100644
-> --- a/tools/perf/util/off_cpu.h
-> +++ b/tools/perf/util/off_cpu.h
-> @@ -16,6 +16,7 @@ struct record_opts;
->  			      PERF_SAMPLE_PERIOD | PERF_SAMPLE_RAW | \
->  			      PERF_SAMPLE_CGROUP)
->  
-> +#define OFFCPU_THRESH 500000ull
->  
->  #ifdef HAVE_BPF_SKEL
->  int off_cpu_prepare(struct evlist *evlist, struct target *target,
-> diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
-> index a6566134e09e..2ca74add26c0 100644
-> --- a/tools/perf/util/record.h
-> +++ b/tools/perf/util/record.h
-> @@ -79,6 +79,7 @@ struct record_opts {
->  	int	      synth;
->  	int	      threads_spec;
->  	const char    *threads_user_spec;
-> +	u64	      off_cpu_thresh_us;
->  };
->  
->  extern const char * const *record_usage;
-> -- 
-> 2.43.0
+On 24. 12. 11. 18:32, Peter Zijlstra wrote:
+> On Mon, Dec 09, 2024 at 03:15:29PM +0900, Changwoo Min wrote:
+>> +	if (!(rq->scx.flags & SCX_RQ_CLK_VALID) ||
+>> +	    (rq->scx.prev_clock >= clock)) {
 > 
+> As TJ said, it's best to consider that the clock can wrap.
+I will update it as Tejun suggested.
+
+> 
+>> +		/*
+>> +		 * If the rq clock is invalid or goes backward,
+>> +		 * start a new rq clock period with a fresh sched_clock_cpu().
+>> +		 *
+>> +		 * The cached rq clock can go backward because there is a
+>> +		 * race with a timer interrupt. Suppose that a timer interrupt
+>> +		 * occurred while running scx_bpf_now_ns() *after* reading the
+>> +		 * rq clock and *before* comparing the if condition. The timer
+>> +		 * interrupt will eventually call a BPF scheduler's ops.tick(),
+>> +		 * and the BPF scheduler can call scx_bpf_now_ns(). Since the
+>> +		 * scheduler core updates the rq clock before calling
+>> +		 * ops.tick(), the scx_bpf_now_ns() call will get the fresh
+>> +		 * clock. After handling the timer interrupt, the interrupted
+>> +		 * scx_bpf_now_ns() will be resumed, so the if condition will
+>> +		 * be compared. In this case, the clock, which was read before
+>> +		 * the timer interrupt, will be the same as rq->scx.prev_clock.
+>> +		 * When such a case is detected, start a new rq clock period
+>> +		 * with a fresh sched_clock_cpu().
+> 
+> This has a wall-of-text problem; use paragraphs?
+I will improve the presentation using multiple paragraphs
+and time chart.
+
+>> +		clock = sched_clock_cpu(cpu_of(rq));
+>> +		scx_rq_clock_update(rq, clock);
+> Doesn't this set the VALID bit again? How is using this outside of
+> RQ-lock and setting VALID a good idea?
+
+You are right. The current implementation sets the VALID bit, so
+the clock can be reused until the next update_rq_clock(). Another
+approach would be not setting the VALID flag, so it gets the
+fresh clock every time until next update_rq_clock(). Considering
+the clock usages of the scx schedulers, both would be almost the
+same in number of sched_clock_cpu() calls. But the second
+approach -- not setting the VALID flag outside of rqlock -- would
+be more predictable. I will double-check the difference of
+sched_clock_cpu() calls, and if they are similar, I will change
+it not setting the VALID flag.
+
+Regards,
+Changwoo Min
 
