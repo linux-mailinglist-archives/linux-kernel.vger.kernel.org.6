@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-445232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FEB29F1317
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:58:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46459F1321
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:01:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F471883949
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DDB716AD3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2721E32A3;
-	Fri, 13 Dec 2024 16:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B901E47AD;
+	Fri, 13 Dec 2024 17:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="axPdZEwC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=brun.one header.i=@brun.one header.b="WaP2LlmE"
+Received: from mx.dolansoft.org (s2.dolansoft.org [212.51.146.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE0715573A
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABB01422D4;
+	Fri, 13 Dec 2024 17:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.51.146.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734109128; cv=none; b=dOMWF9/9K0GygE+C6ZlXYe8Dvjd6iuHqr8NpJWTgSYTWqxRyaBMmBb95kOmwjWJTwo6U5tzudc+DYguSgya86LlgAw0+ih2CvuWFL5NZ7PIKTEx1nD0dubCigNbbkQG6PED/q/75Ua1p0hyVcZjeUvDdYbxuCdeAi6sMKk74BN4=
+	t=1734109254; cv=none; b=cExvZ47KG5WbCoknv4LB3ZBKG63VqOYkkhRSwNdHoWh4RhittbB08Aqqh0xB5pgBcAo++qXtrnofLr2F+21xw4jNTqAaqSaHvIk4LYTITcSMYhM+vePY5Wq2Hdn8UMO4i1UZWiEGxPsOuI0QCvpHBt6bE6hpGTTtL3sU6ovSBy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734109128; c=relaxed/simple;
-	bh=D0z8RW+N6gZ5JCltukdoktT+HmmvEufTU12N5kFKvwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nDnG/9mkkB7kD/V8XFB5EE7iQTJblD/jLqOi6UHtrtt3jZksOtEAOEjuK6NjK6NDT0uiKPH5CNG7q1zxIxINvmWkMl6c4Oxpbp79uapiRBCQatzYz3SwbyHYQ1Wp6yZo69ODBud3w69E9LhyS0a5SFW+wZmbVz9ijVZXo+MsJwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=axPdZEwC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9plcR019566;
-	Fri, 13 Dec 2024 16:58:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UOtFz7REUz4+AgQJxq3QS1WPjdIxLwCBvUCqJ/5aq50=; b=axPdZEwCYPmNatxK
-	ge/mdbfAN7yE9cz9h3sXtAWtl1YDQs5S9apwoF34lXrNu1HavlW1xyP25wNCsObj
-	48hSZXFosfBwDvhsXRM5Trselb2kOtBsUrGxGKbcWJWSPpLC9IQutZllTuXEctzk
-	frvp3CxK3w0JcPzoiBR58YlYABgITz9TtuAhz6BdZQ7DKQ6X9KJ1pWofMXnf2WXp
-	v+FmjsFXUtbbdR9cuDV80p7HiDSw2Gv6S8vd+RtKWKKp5k06qE5sbf66RY36e8MR
-	pjGbb+SzaRF4YTP09jf6VHgC/UqRvVo717OVReBhl81oK/S0DEalW5Y3SMX81Yfm
-	weFwag==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gjnb15b5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 16:58:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDGwfsh003988
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 16:58:41 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
- 2024 08:58:41 -0800
-Message-ID: <d4db5e3c-56b5-ed77-95af-15e9271339ce@quicinc.com>
-Date: Fri, 13 Dec 2024 09:58:40 -0700
+	s=arc-20240116; t=1734109254; c=relaxed/simple;
+	bh=G36R8NXw7mb55c/2JQU0c3hGoc+MXWGbESzEI7JUUBc=;
+	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gEc67FFSpW+VM0+g2rxYFWOXPYBvnzbiMVxJGIwofgre60PA3o61Qtj0JaHsMGTeKxV6rvf7nk3fjMYUuvqyTjIjPxTu7yLHXGLVy0dHskq4mWevoh6TeXxIxMYaE5oK596w5/W/Ms6beNmqoeNLDIazxGZTyAf+tmNgTBFckXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brun.one; spf=pass smtp.mailfrom=brun.one; dkim=pass (2048-bit key) header.d=brun.one header.i=@brun.one header.b=WaP2LlmE; arc=none smtp.client-ip=212.51.146.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brun.one
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brun.one
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=brun.one;
+	s=s1; h=MIME-Version:References:In-Reply-To:Message-Id:Cc:To:Subject:From:
+	Date:From:To:Subject:Date:Message-ID:Reply-To;
+	bh=Agp337t9HufqQqyypTdkJtJXEKPsUy8NiaqQfv8eEw8=; b=WaP2LlmE633wdtrQPxa6ZtXhfI
+	be48Cls+N6m9midh/N9OpR5UwzePYlBCMJr8Uf+aGn1thnVblzsI9fjqGJJr+bO/bELlPmBlIcPnn
+	JVP0uYQh456s2Tea4qmS5ZVIzHj0UifUs+pctZ5XIqkQ68pnFQwEBXxKksRStejt1hr6U8Ur7q9J2
+	xeL1S55tejR9fRi9tt7dJ1Dq+R5GGx6+pE0+jSudwFfDBUx10Gedv9RYDtgXU7GL1TFPlPx3Bt32N
+	iq8ILCwoYUO2Dis6+764sZmFYfSZ2qZ4in1+xsgtjyWi9fBcvAEUbXiCyq+onPUQXUw2H/akSSuV7
+	q2nsLvCA==;
+Received: from [212.51.153.89] (helo=[192.168.9.177])
+	by mx.dolansoft.org with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98)
+	(envelope-from <lorenz@dolansoft.org>)
+	id 1tM91p-00000001WXO-2PAS;
+	Fri, 13 Dec 2024 17:00:37 +0000
+Date: Fri, 13 Dec 2024 18:00:31 +0100
+From: Lorenz Brun <lorenz@brun.one>
+Subject: Re: [PATCH net] net: atlantic: keep rings across suspend/resume
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Igor Russkikh <irusskikh@marvell.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Manuel Ullmann
+	<labre@posteo.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <V8ZFOS.N7LNJ4P9ABW3@brun.one>
+In-Reply-To: <bbcd37de-c731-4f0b-92f0-8c332bb01c5b@lunn.ch>
+References: <20241212023946.3979643-1-lorenz@brun.one>
+	<bbcd37de-c731-4f0b-92f0-8c332bb01c5b@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V2 7/8] accel/amdxdna: Read firmware interface version
- from registers
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>,
-        <mario.limonciello@amd.com>
-References: <20241206220001.164049-1-lizhi.hou@amd.com>
- <20241206220001.164049-8-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20241206220001.164049-8-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zfh18d9HyhH_T7KUcojeSRkCjAN_zQKH
-X-Proofpoint-GUID: zfh18d9HyhH_T7KUcojeSRkCjAN_zQKH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0
- priorityscore=1501 impostorscore=0 adultscore=0 malwarescore=0 mlxscore=0
- suspectscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412130119
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Sender: lorenz@dolansoft.org
 
-On 12/6/2024 3:00 PM, Lizhi Hou wrote:
-> The latest released firmware supports reading firmware interface version
-> from registers directly. The driver's probe routine reads the major and
-> minor version numbers. If the firmware interface does not compatible with
-> the driver, the driver's probe routine returns failure.
+
+
+Am Do, 12. Dez 2024 um 18:20:26 +01:00:00 schrieb Andrew Lunn 
+<andrew@lunn.ch>:
+> On Thu, Dec 12, 2024 at 03:39:24AM +0100, Lorenz Brun wrote:
+>>  The rings are order-6 allocations which tend to fail on suspend due 
+>> to
+>>  fragmentation. As memory is kept during suspend/resume, we don't 
+>> need to
+>>  reallocate them.
 > 
-> Co-developed-by: Min Ma <min.ma@amd.com>
-> Signed-off-by: Min Ma <min.ma@amd.com>
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> ---
->   drivers/accel/amdxdna/aie2_message.c | 26 ----------
->   drivers/accel/amdxdna/aie2_pci.c     | 74 ++++++++++++++++++++++------
->   drivers/accel/amdxdna/aie2_pci.h     |  6 +--
->   drivers/accel/amdxdna/npu1_regs.c    |  2 +-
->   drivers/accel/amdxdna/npu2_regs.c    |  2 +-
->   drivers/accel/amdxdna/npu4_regs.c    |  2 +-
->   drivers/accel/amdxdna/npu5_regs.c    |  2 +-
+> I don't know this driver. Are there other reasons to reallocate the
+> rings? Change of MTU? ethtool settings? If they are also potentially
+> going to run into memory fragmentation issues, maybe it would be
+> better to use smaller order allocations, or vmalloc, if the hardware
+> supports that, etc.
+> 
+> 	Andrew
 
-Do you need an update to npu6_regs?
+ethtool settings do indeed reallocate, but not during unsuspend where 
+we have GFP_NOIO. Smaller oder allocations would definitely be better, 
+but on systems without IOMMU that would probably pose a problem as 
+rings are generally assumed to be contigous by hardware (as far as I 
+understand). I don't have access to hardware docs, so I don't know if 
+you can make the HW work without physically-contiguous memory.
 
--Jeff
+Linux just really doesn't handle high-order allocations well, I got one 
+unsuspend failure with 6GiB (!!) of free space in the relevant region 
+(but no order-6 or higher). I have no idea why it doesn't defragment 
+before failing the allocation as it clearly has enough memory.
+
+kworker/u97:14: page allocation failure: order:6, 
+mode:0x40d00(GFP_NOIO|__GFP_COMP|__GFP_ZERO), 
+nodemask=(null),cpuset=/,mems_allowed=0
+Node 0 Normal: 787628*4kB (UME) 234026*8kB (UME) 50882*16kB (UME) 
+13751*32kB (UME) 35*64kB (UME) 9*128kB (M) 0*256kB 0*512kB 0*1024kB 
+1*2048kB (H) 0*4096kB = 6282304kB
+
+
+Regards,
+Lorenz
+
+
 
