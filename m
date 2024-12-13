@@ -1,144 +1,272 @@
-Return-Path: <linux-kernel+bounces-445323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67EEF9F14A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:03:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617249F14A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:02:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36EF5188F1FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:01:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0334163301
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03381EB9F3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0ED1EB9E2;
 	Fri, 13 Dec 2024 18:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GX6C+roD"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="qlCO3LtR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="W9IeDx6+"
+Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919FB1E4937
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A93B53804;
+	Fri, 13 Dec 2024 18:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734112878; cv=none; b=EjBONZ3vWCLkfjf+ZnmR34EaI7Yc8l912Bx+87s6Ye+YVXruaxjV5slLwi4Tc7d7ZRTGlngm/pJkLzFhX1IEjyEkTehxPWntuBnIO89iPBFoTZyrOpeerboHQOsrTpG38UU/M0e7o3A1TCq1LBlaLFx1QaJV6P6VF6DSYY70r64=
+	t=1734112877; cv=none; b=saE1/K6eFhnR3lWOj8jtQL+sn91XC6kUztoIhLa0QnwQ7lUzL3vt2KqdvNAf2ksmtcEchby3lPEwgQspSnMXTCxcKkjsfgG6HHBqAo31WbSxwBOZnIZ28+ABVP8kqm8o7LdJy9CEaHI7LQHqJ+3+kQ0kRYVTM3k5Kle6lDTBsDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734112878; c=relaxed/simple;
-	bh=eGq8X2cQn5Avkj8xSv4CjUXuHP5mxbeSDOJ4KzyQ+Tc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A1KKabvMB+sVlBfTc5/onRCLI7k0bMg57CVp57qUyWW3lTjoJm4Lm4jksx85BenrQUs8fSmMAKxoTe4qqX6QpUz4G44EiZQEZoByykDLZ/p5vMvPP43r/QKHf/AGAre94DVOzxzRpZn1W8SlnI9/gY9h6tgyw3KS2dwtUaiFd4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GX6C+roD; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e3984b1db09so1532623276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:01:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734112875; x=1734717675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qPeH+betN1f6uv0SwXfZrHgC9aEQIrrjFSKIB2w0wUQ=;
-        b=GX6C+roDAVEnvRyVEfpaeIfGvOfmY+lEzEmlAum3erHbz+eKBn2amCiXePxEllNzrO
-         OAf+Mj8clqqzEuzTIWNh5AVNhThvOP/8UEKESx7ez7N+pwQuIjljQHSShh1gWVRlA1Mf
-         /kMrR9f4voU89hJrMvKINvgkap7aEqOxqwIHI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734112875; x=1734717675;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qPeH+betN1f6uv0SwXfZrHgC9aEQIrrjFSKIB2w0wUQ=;
-        b=lmtWzfXXLJWRl16KsScwNUJNQD2iRTJskJdFwZK2q+/Mh7HNXUxxOWszvlxF4k1R75
-         FVJlyJghLSNNH7Qrs3hssfalNGUJ2hccnWKAUdJY2awctGj61ZK0PUhhYOWmQ0QFHBbJ
-         gsu4bJ7ILPoqUEDT3Lj0YpyNaRr0wMpKiAsjkFSr/RpbBtW2ZRHGRyEo+WnJiNeKJNtK
-         aNwtv+itk9YpslrkHoaY8QiDfumU9TH8UyojwJTy3f7uTSF4j6KFsG055xDgCY420RSv
-         e4HIG7wvHqCmib7RHhqKdogLzb1BXeTbh8hOTVcd88j4M71BkvMAUIHF1P9G4HLjgX9N
-         CVCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwQkD/e0uAPwKE8MqeWsAT6iXzSu5B4MmzR9v0CJL1isPCho2d2wBA+EuA5OYl1rbM6hNUjbs+SY0r/3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+5+5kcY68RLbj2jN3DqtJN2o09XlgCpqFN9FdEfDbX82fw8Yj
-	Nhr8iGtmVqhfDwVMnD7Q4xjmAqxhyGMIUioj6MbQfdp9BXwfCG4gIzjzBPiTcJyW6/FXxV+wQK9
-	dk5I/rvTmgvhwo2vBmjwUPWnvbdrQut92l50P
-X-Gm-Gg: ASbGncugwDsXXHSXMyLJBUX9keTZ64N8SuqryuVd6reZVpriSDtNrUuFz3Zq67j/Q0K
-	xJqOKNdlK78S1/AjDwlF0xWPmCxtIq+EHP69FXQ==
-X-Google-Smtp-Source: AGHT+IESL/tWUgNpSAQzrl87j2eCkOc09/+to8cMqhW7uI835WQ1LUGaxeGORtfqmEOGd/ePuPsgZvrU3N3ocWweWvc=
-X-Received: by 2002:a05:6902:2292:b0:e30:b98e:b111 with SMTP id
- 3f1490d57ef6-e434aa0e976mr2988627276.17.1734112875416; Fri, 13 Dec 2024
- 10:01:15 -0800 (PST)
+	s=arc-20240116; t=1734112877; c=relaxed/simple;
+	bh=C1yCEIwt6l7ZvZTwD4u/ellvTelA5hZEluzmzVmSScA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6LapZkzK5KAm/w8JElS6v4PanrKlp1ldAMJXcMEGdyPDHP6DN/yl3G4KTG8KGaCMSvSh820f3b+8Tscluo+Z7IYE7RM5Ln5yDeVHjrOz/nvGGsBbnKrRXNXNV53KcDAkeC3CVQHbFR10xF98N6t/ZwQ2SM17dx9DAnD68e+SCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=qlCO3LtR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=W9IeDx6+; arc=none smtp.client-ip=103.168.172.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailflow.phl.internal (Postfix) with ESMTP id 61EA5200B16;
+	Fri, 13 Dec 2024 13:01:14 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Fri, 13 Dec 2024 13:01:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1734112874; x=1734120074; bh=Dmvw0rCsRR
+	ueJvfdxfPSx1zC7SxhbRa0dqGAjjP6/Y0=; b=qlCO3LtR3dovJ+gjjYX5qVcBjB
+	Xr2WAiDUN3GZUeePFZdbtkNJtRvnKggLKeQxAf8fz+N2uhNgW7QxJpTZrueWQiAS
+	XJi/4VmYTFpqVEWcppKiSFzUOVATPcyqwOS3SpU1Rx40kqFHF9ON0mnivIc7JzEp
+	pt4nAGdJANVih2eOhHDUUy3S2AcDJIzVmFudCvdor/n8KQtB99I062W08MRjFFJz
+	us8zutv4RPMqrkZq0hJ9cIRaY7OwFstFIYTs7nnRNecaj6xmzeIKKVkWUQ2lcuE/
+	QAfEmcuNEZ2SJh2mHzJ7w7ayi9vD+/jIMpdiih+dQ2hKf1UGaYv5M0/CYWdg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1734112874; x=1734120074; bh=Dmvw0rCsRRueJvfdxfPSx1zC7SxhbRa0dqG
+	AjjP6/Y0=; b=W9IeDx6+d2Xzc4knja20KviN4c7A5Ak+W0xINAdfQwB6u8GOjDI
+	gVDeTZmGVXAl5yEY6nAeskFrXn/whjJE9/YZ9uA3ACfeZA6lF+BCn345ktmHkKKe
+	reiDPzw7lPy5anKD5X+Nu4b/T6B9YGwMqnfnw/AJvabtKbKeFW4CpsRLG5bV1Rxx
+	7q/tBG2+FeuSO3uV599ZFyuqONHGlnxF8374bcMHpEM954juEtYRWKoQ4DsKywmY
+	IX4Y0kDM7h7muDPG7ndyLlg/MuO237Wb73yUDb8c+uATcutKOrsVYG1t9YL/0Xmy
+	Ui+T4UTaTvfpmKJgoz5+Qp2C7IXeVYikGEQ==
+X-ME-Sender: <xms:aXZcZ2ylgbbwzrZTAz6ZyhIK__1jZSddyZJwetaqF6fq1iSJS-Vcaw>
+    <xme:aXZcZySTWJ_jpWoDQVpOPT1Iam_3dSEqrGCD4AEVRYj_ULCd83eF1F4j2gF9XNjBV
+    4SWkvVAXMiR_qEnhQ>
+X-ME-Received: <xmr:aXZcZ4VWeUFt2lSrAwSDQVIwoJVEnuxcq9aYUIZescuODJCZsn7i3Z6BkBDeFuEvV_Gby_eRULTJj1u6i1Y2M46Li8lrTZnvfkkhmX1etBWpaw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeejgddutdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdlfeehmdenucfjughrpeffhffvvefukfhf
+    gggtuggjsehttdfstddttddvnecuhfhrohhmpeffrghnihgvlhcuighuuceougiguhesug
+    iguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnheptdejkeduleeitedvfeegvdegjeeh
+    hfdvgffgjeduuedtgeevieevtdfhheefleeknecuffhomhgrihhnpehgihhthhhusgdrtg
+    homhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegu
+    gihusegugihuuhhurdighiiipdhnsggprhgtphhtthhopedvvddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepqhhmoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgr
+    fihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehj
+    ohhhnhdrfhgrshhtrggsvghnugesghhmrghilhdrtghomhdprhgtphhtthhopegrshhtse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidr
+    nhgvthdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpth
+    htohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghv
+X-ME-Proxy: <xmx:aXZcZ8jA5EFI3DuDP4YHH7Nn5wTwm3D0TKE9VxZUM9ZE9a8TQTe1gA>
+    <xmx:aXZcZ4CJPfj55ggbMDuP9tElhqGASk1S-khhbJz8QImGO1EourG24Q>
+    <xmx:aXZcZ9Inoz6UVWbPWOiWtYknRU1NIvPvhkH_IGCxG33_5TEnC-mEww>
+    <xmx:aXZcZ_AxdIVFopb-IeVUmhzGD8FJiPJ9qJkrlhjltGUvAHpS7PPw8Q>
+    <xmx:anZcZ7U04C5LRMkZ5HeW6UvPxGdAFeIQAohaZVtkKlDYrxX4WDJMEwJp>
+Feedback-ID: i6a694271:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 13 Dec 2024 13:01:10 -0500 (EST)
+Date: Fri, 13 Dec 2024 11:01:09 -0700
+From: Daniel Xu <dxu@dxuuu.xyz>
+To: Quentin Monnet <qmo@kernel.org>
+Cc: hawk@kernel.org, kuba@kernel.org, andrii@kernel.org, 
+	john.fastabend@gmail.com, ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	andrii.nakryiko@gmail.com, antony@phenome.org, toke@kernel.org
+Subject: Re: [PATCH bpf-next v4 3/4] bpftool: btf: Support dumping a specific
+ types from file
+Message-ID: <jhsgk2wajtebpwiivam5zdv7wr5rzmqjcdey6ad3gbvgiyjcpe@ff6xmxvadnkc>
+References: <cover.1734052995.git.dxu@dxuuu.xyz>
+ <5ec7617fd9c28ff721947aceb80937dc10fca770.1734052995.git.dxu@dxuuu.xyz>
+ <7fa902e5-0916-4bc9-b1e0-2729903d3de0@kernel.org>
+ <fojqbtlpjh3jrpzzctgllxtnyncbtbzw6q7qfrezrigpc2qqek@6m7cppwvgwb5>
+ <0a8b9448-7e1c-4a30-8011-1505e2133263@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206233830.2401638-1-abhishekpandit@chromium.org>
- <20241206153813.v4.4.I083bf9188947be8cb7460211cfdf3233370a28f6@changeid> <CAE-0n52AG8henLkzAyO112pBmNAskcC0SXKFNCyQQ3MG01xkGg@mail.gmail.com>
-In-Reply-To: <CAE-0n52AG8henLkzAyO112pBmNAskcC0SXKFNCyQQ3MG01xkGg@mail.gmail.com>
-From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date: Fri, 13 Dec 2024 10:01:04 -0800
-Message-ID: <CANFp7mXCChVFaQHiW_RCu_97BnPHc5qHs=E6WcGRGLUEniZieA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] platform/chrome: cros_ec_typec: Update partner
- altmode active
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, heikki.krogerus@linux.intel.com, 
-	linux-usb@vger.kernel.org, tzungbi@kernel.org, akuchynski@google.com, 
-	pmalani@chromium.org, jthies@google.com, dmitry.baryshkov@linaro.org, 
-	badhri@google.com, rdbabiera@google.com, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a8b9448-7e1c-4a30-8011-1505e2133263@kernel.org>
 
-On Tue, Dec 10, 2024 at 3:32=E2=80=AFPM Stephen Boyd <swboyd@chromium.org> =
-wrote:
->
-> Quoting Abhishek Pandit-Subedi (2024-12-06 15:38:15)
-> > diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform=
-/chrome/cros_ec_typec.c
-> > index c7781aea0b88..e3eabe5e42ac 100644
-> > --- a/drivers/platform/chrome/cros_ec_typec.c
-> > +++ b/drivers/platform/chrome/cros_ec_typec.c
-> > @@ -676,6 +677,16 @@ static int cros_typec_configure_mux(struct cros_ty=
-pec_data *typec, int port_num,
-> >                         port->mux_flags);
-> >         }
-> >
-> > +       /* Iterate all partner alt-modes and set the active alternate m=
-ode. */
-> > +       list_for_each_entry_safe(node, n, &port->partner_mode_list, lis=
-t) {
->
-> This can just be list_for_each_entry() because the list isn't changing
-> during iteration.
-Done
+On Fri, Dec 13, 2024 at 04:55:34PM GMT, Quentin Monnet wrote:
+> 2024-12-13 09:45 UTC-0700 ~ Daniel Xu <dxu@dxuuu.xyz>
+> > Hi Quentin,
+> > 
+> > On Fri, Dec 13, 2024 at 03:17:36PM GMT, Quentin Monnet wrote:
+> >> 2024-12-12 18:24 UTC-0700 ~ Daniel Xu <dxu@dxuuu.xyz>
+> >>> Some projects, for example xdp-tools [0], prefer to check in a minimized
+> >>> vmlinux.h rather than the complete file which can get rather large.
+> >>>
+> >>> However, when you try to add a minimized version of a complex struct (eg
+> >>> struct xfrm_state), things can get quite complex if you're trying to
+> >>> manually untangle and deduplicate the dependencies.
+> >>>
+> >>> This commit teaches bpftool to do a minimized dump of a specific types by
+> >>> providing a optional root_id argument(s).
+> >>>
+> >>> Example usage:
+> >>>
+> >>>     $ ./bpftool btf dump file ~/dev/linux/vmlinux | rg "STRUCT 'xfrm_state'"
+> >>>     [12643] STRUCT 'xfrm_state' size=912 vlen=58
+> >>>
+> >>>     $ ./bpftool btf dump file ~/dev/linux/vmlinux root_id 12643 format c
+> >>>     #ifndef __VMLINUX_H__
+> >>>     #define __VMLINUX_H__
+> >>>
+> >>>     [..]
+> >>>
+> >>>     struct xfrm_type_offload;
+> >>>
+> >>>     struct xfrm_sec_ctx;
+> >>>
+> >>>     struct xfrm_state {
+> >>>             possible_net_t xs_net;
+> >>>             union {
+> >>>                     struct hlist_node gclist;
+> >>>                     struct hlist_node bydst;
+> >>>             };
+> >>>             union {
+> >>>                     struct hlist_node dev_gclist;
+> >>>                     struct hlist_node bysrc;
+> >>>             };
+> >>>             struct hlist_node byspi;
+> >>>     [..]
+> >>>
+> >>> [0]: https://github.com/xdp-project/xdp-tools/blob/master/headers/bpf/vmlinux.h
+> >>>
+> >>> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> >>> ---
+> >>>  .../bpf/bpftool/Documentation/bpftool-btf.rst |  8 +++-
+> >>>  tools/bpf/bpftool/btf.c                       | 39 ++++++++++++++++++-
+> >>>  2 files changed, 43 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/tools/bpf/bpftool/Documentation/bpftool-btf.rst b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> >>> index 245569f43035..dbe6d6d94e4c 100644
+> >>> --- a/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> >>> +++ b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> >>> @@ -24,7 +24,7 @@ BTF COMMANDS
+> >>>  =============
+> >>>  
+> >>>  | **bpftool** **btf** { **show** | **list** } [**id** *BTF_ID*]
+> >>> -| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*]
+> >>> +| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*] [**root_id** *ROOT_ID*]
+> >>>  | **bpftool** **btf help**
+> >>>  |
+> >>>  | *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* }
+> >>> @@ -43,7 +43,7 @@ bpftool btf { show | list } [id *BTF_ID*]
+> >>>      that hold open file descriptors (FDs) against BTF objects. On such kernels
+> >>>      bpftool will automatically emit this information as well.
+> >>>  
+> >>> -bpftool btf dump *BTF_SRC* [format *FORMAT*]
+> >>> +bpftool btf dump *BTF_SRC* [format *FORMAT*] [root_id *ROOT_ID*]
+> >>>      Dump BTF entries from a given *BTF_SRC*.
+> >>>  
+> >>>      When **id** is specified, BTF object with that ID will be loaded and all
+> >>> @@ -67,6 +67,10 @@ bpftool btf dump *BTF_SRC* [format *FORMAT*]
+> >>>      formatting, the output is sorted by default. Use the **unsorted** option
+> >>>      to avoid sorting the output.
+> >>>  
+> >>> +    **root_id** option can be used to filter a dump to a single type and all
+> >>> +    its dependent types. It cannot be used with any other types of filtering.
+> >>> +    It can be passed multiple times to dump multiple types.
+> >>> +
+> >>>  bpftool btf help
+> >>>      Print short help message.
+> >>>  
+> >>> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
+> >>> index 3e995faf9efa..2636655ac180 100644
+> >>> --- a/tools/bpf/bpftool/btf.c
+> >>> +++ b/tools/bpf/bpftool/btf.c
+> >>> @@ -27,6 +27,8 @@
+> >>>  #define KFUNC_DECL_TAG		"bpf_kfunc"
+> >>>  #define FASTCALL_DECL_TAG	"bpf_fastcall"
+> >>>  
+> >>> +#define MAX_ROOT_IDS		16
+> >>> +
+> >>>  static const char * const btf_kind_str[NR_BTF_KINDS] = {
+> >>>  	[BTF_KIND_UNKN]		= "UNKNOWN",
+> >>>  	[BTF_KIND_INT]		= "INT",
+> >>> @@ -880,7 +882,8 @@ static int do_dump(int argc, char **argv)
+> >>>  {
+> >>>  	bool dump_c = false, sort_dump_c = true;
+> >>>  	struct btf *btf = NULL, *base = NULL;
+> >>> -	__u32 root_type_ids[2];
+> >>> +	__u32 root_type_ids[MAX_ROOT_IDS];
+> >>> +	bool have_id_filtering;
+> >>>  	int root_type_cnt = 0;
+> >>>  	__u32 btf_id = -1;
+> >>>  	const char *src;
+> >>> @@ -974,6 +977,8 @@ static int do_dump(int argc, char **argv)
+> >>>  		goto done;
+> >>>  	}
+> >>>  
+> >>> +	have_id_filtering = !!root_type_cnt;
+> >>> +
+> >>>  	while (argc) {
+> >>>  		if (is_prefix(*argv, "format")) {
+> >>>  			NEXT_ARG();
+> >>> @@ -993,6 +998,36 @@ static int do_dump(int argc, char **argv)
+> >>>  				goto done;
+> >>>  			}
+> >>>  			NEXT_ARG();
+> >>> +		} else if (is_prefix(*argv, "root_id")) {
+> >>> +			__u32 root_id;
+> >>> +			char *end;
+> >>> +
+> >>> +			if (have_id_filtering) {
+> >>> +				p_err("cannot use root_id with other type filtering");
+> >>> +				err = -EINVAL;
+> >>> +				goto done;
+> >>> +			} else if (root_type_cnt == MAX_ROOT_IDS) {
+> >>> +				p_err("only %d root_id are supported", MAX_ROOT_IDS);
+> >>
+> >>
+> >> I doubt users will often reach this limit, but if they do, the message
+> >> can be confusing, because MAX_ROOT_IDS also accounts for root_type_ids[]
+> >> cells used when we pass map arguments ("key" or "value" or "kv"), so you
+> >> could pass 15 "root_id" on the command line and get a message telling
+> >> only 16 are supported.
+> >>
+> >> Maybe add a counter to tell how many were defined from the rest of the
+> >> command line, and adjust the value in the error message?
+> > 
+> > The above `if (have_id_filtering)` check prevents mixing key/value/kv
+> > map args with root_id. That ought to prevent overcounting, right?
+> 
+> Ah, you're right, you even mentioned it in the docs, sorry. All good on
+> that side, then.
+> 
+> Regarding the restriction, would you mind making the mention from the
+> man page a bit more explicit, please? Something along:
+> 
+>     [...] It cannot be used with any other types of filtering, such as
+>     the "key", "value", or "kv" arguments when dumping BTF for a map.
+>     **root_id** can be passed multiple times...
 
->
-> > +               if (port->state.alt !=3D NULL &&
-> > +                   node->amode->svid =3D=3D port->state.alt->svid) {
-> > +                       typec_altmode_update_active(node->amode, true);
-> > +               } else {
-> > +                       typec_altmode_update_active(node->amode, false)=
-;
-> > +               }
->
-> It could also be shorter:
->
->         list_for_each_entry(node, &port->partner_mode_list, list) {
->                 typec_altmode_update_active(node->amode,
->                         port->state.alt && node->amode->svid =3D=3D port-=
->state.alt->svid);
->         }
-Done
-
->
-> As far as I can tell, cros_typec_configure_mux() is called when the HPD
-> state changes. We'll iterate through here unnecessarily in that case.
-> Can that be avoided somehow?
-Writing the same value to `typec_altmode_update_active` is a no-op.
-I'd prefer to leave this code as-is since it's quite simple (having to
-determine HPD vs non-HPD, whether DP is currently active, etc. is
-going to be more work than it saves from not calling this loop).
-
->
-> > +
-> >  mux_ack:
-> >         if (!typec->needs_mux_ack)
-> >                 return ret;
+Ack, will do.
 
