@@ -1,196 +1,93 @@
-Return-Path: <linux-kernel+bounces-444179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053079F027C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:09:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082849F0280
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:11:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3582E1882E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1C12836E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D302374FF;
-	Fri, 13 Dec 2024 02:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6414051C4A;
+	Fri, 13 Dec 2024 02:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkOPoXTi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iblInRZw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67440846F;
-	Fri, 13 Dec 2024 02:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B530D846F;
+	Fri, 13 Dec 2024 02:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734055781; cv=none; b=oCPE4LSFcFJtCxRmgaBI9C5yyjMsFvtqwiZIoPEAQSEX6j0RkK+8P5ukY8atIzICVv6lpTO+OHQTp2ur9euFArxPbcYhiSLHqoyoVjWdfht9QtJCeJK0IKWZnlvnG0DKPbHqTHSLhPieq2D7qFe+LPf4dLXMI6bptyRd4pF6Lrc=
+	t=1734055891; cv=none; b=eD7LHlohXeyx00QdIl4R/1L/zRHMsFDvOLmX/ILLQIfr2rfmPbTry/SCPtbmiiuGpvqUxlYrbHa/ZTJ9dRSVjNg7ehgbwKO5hvhuehP4pDOoMeUIOjlSfAoXiVyQrsqiSIBwALG8tcKsydoW6Blyw3x3BEqrrLCxJzwouHeYkew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734055781; c=relaxed/simple;
-	bh=Np3GnoNjjRYHNMfs4ajAm6/M35qHq8wB6mRPx06qig8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=eR5ZBJn8DeHZ285YvrYg7bqqLdViIWnrhPZc6oC+ERXd6QJLH2aYoSvDTeCdVwR1Gej1dNkHq8qJSZKUklifl1ryGefVVn+Jua+9Rn877WXCOpNo9667f3wJMXjswGEuL5NE9K0B0O+12PPp6p+S0JyJ34r2c3GRx77kA3MHflU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EkOPoXTi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5602C4CECE;
-	Fri, 13 Dec 2024 02:09:40 +0000 (UTC)
+	s=arc-20240116; t=1734055891; c=relaxed/simple;
+	bh=MCm3XtnbsE1H2aeVlhuGSuuBQRvpkl0io+wcdYVc0ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oPYOw4F8qh4h5R1tAYtKCw1AwMGoIA+CaR15BVpklRnud0XVxU+C0tBu3kzVMfH5pFGF81ykZoimz/6OU8ORf9yjiEDveZ0zLEGFFBm7HukjX2wZ1WCcudv2KwjIcnApvhD5zOXd1Uw0SzmSSo72zNM0a5UYSQuOLrK7T9bHqRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iblInRZw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2721AC4CECE;
+	Fri, 13 Dec 2024 02:11:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734055781;
-	bh=Np3GnoNjjRYHNMfs4ajAm6/M35qHq8wB6mRPx06qig8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EkOPoXTiOH+lSEh1RK4mRrb6GsB3lVZA9LPd/XWhh+XKK1AJ59QfdC5NlHdtLjvKH
-	 +9+18f7TuiUUFDPDFth8v/sIZtGAodUqZNOr3IEuFA/9rooNAS37MXNs/4GHfCM9eM
-	 NUHKPLNEokl8sEGR0WgsbTbI+o+6SGLaJrNnOxvLhPlW2oJUfXKrwVkAACEVfmUUKm
-	 oP7uQRf7mIxLmn+4/spVBYGY9edDwEExX0bl0jp3OeOCtofOI8gRAU7ef4GsamxOF1
-	 IGzaHc651BcHlUli9/AkrNg2mWwkPY3+pgGl+BmaBcTrAkjC28r7jbl7loYTiGVI34
-	 LZ39hE2ZAx7bw==
-From: Kees Cook <kees@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	Nilay Shroff <nilay@linux.ibm.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	"Qing Zhao" <qing.zhao@oracle.com>,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fortify: Hide run-time copy size from value range tracking
-Date: Thu, 12 Dec 2024 18:09:33 -0800
-Message-Id: <20241213020929.work.498-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=k20201202; t=1734055891;
+	bh=MCm3XtnbsE1H2aeVlhuGSuuBQRvpkl0io+wcdYVc0ak=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iblInRZwn9weLIHdDCy3jIZbhY/hDHqQ4axl5kEF/xs63yQGPDZ5uHX2Zr5AMwS4U
+	 1Oubb4ajZPQoeE/HMZcZ3aEzvV8Iagj2IRmVrl+YIH1pMUkmXW08W3XhfkEIIOSNzH
+	 +yO18CebZmciLwkM4Zl0jAsxoaGVf/TSQicJ0ItbTZUEhNQGOqWIDMSnDvyfyUr44Q
+	 u3Tfp43IawQOYQ/fCTzoU985byTKYEaFL8jOnDu22WMnH4JbcywHWgWfa2VBnFpp7l
+	 UHW/vRM+5lWGA8QqWaZZdkxIZAHMhF/N60G7zT+fQCabdggJq169TNR+qTPcGPxCuD
+	 Q2c++WgKESFzg==
+Date: Thu, 12 Dec 2024 18:11:29 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Josh
+ Poimboeuf <jpoimboe@kernel.org>, "Jose E. Marchesi"
+ <jose.marchesi@oracle.com>, Toke =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?=
+ <toke@redhat.com>, Magnus Karlsson <magnus.karlsson@intel.com>, Maciej
+ Fijalkowski <maciej.fijalkowski@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Jason Baron <jbaron@akamai.com>, Casey
+ Schaufler <casey@schaufler-ca.com>, Nathan Chancellor <nathan@kernel.org>,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 05/12] xdp: add generic
+ xdp_build_skb_from_buff()
+Message-ID: <20241212181129.7156d39b@kernel.org>
+In-Reply-To: <20241211172649.761483-6-aleksander.lobakin@intel.com>
+References: <20241211172649.761483-1-aleksander.lobakin@intel.com>
+	<20241211172649.761483-6-aleksander.lobakin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6060; i=kees@kernel.org; h=from:subject:message-id; bh=Np3GnoNjjRYHNMfs4ajAm6/M35qHq8wB6mRPx06qig8=; b=owGbwMvMwCVmps19z/KJym7G02pJDOnR02NmbxateHynujTJ/MZ7Xf6dJ6+l9a5Xkpx9qeDel rDGB1HxHaUsDGJcDLJiiixBdu5xLh5v28Pd5yrCzGFlAhnCwMUpABOJPcfIsGzrAv5rjifzVtg+ aJgxy/n8uy23v2+TuuzbExj2o/v6nJkMv9k1yta6ml4/6brybuGyXa8n7nvM1HAt3zKgZorYd5d PggwA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-GCC performs value range tracking for variables as a way to provide better
-diagnostics. One place this is regularly seen is with warnings associated
-with bounds-checking, e.g. -Wstringop-overflow, -Wstringop-overread,
--Warray-bounds, etc. In order to keep the signal-to-noise ratio high,
-warnings aren't emitted when a value range spans the entire value range
-representable by a given variable. For example:
+On Wed, 11 Dec 2024 18:26:42 +0100 Alexander Lobakin wrote:
+> +	if (rxq->mem.type == MEM_TYPE_PAGE_POOL && is_page_pool_compiled_in())
+> +		skb_mark_for_recycle(skb);
 
-	unsigned int len;
-	char dst[8];
-	...
-	memcpy(dst, src, len);
+I feel like the check for mem.type is unnecessary. I can't think of 
+a driver that would build a skb out of pp pages, and not own pp
+refs on those pages. Setting pp_recycle on non-pp skb should be safe,
+even if slightly wasteful.
 
-If len's value is unknown, it has the full "unsigned int" range of [0,
-UINT_MAX], and bounds checks against memcpy() will be ignored. However,
-when a code path has been able to narrow the range:
+Also:
 
-	if (len > 16)
-		return;
-	memcpy(dst, src, len);
+static inline void skb_mark_for_recycle(struct sk_buff *skb)
+{
+#ifdef CONFIG_PAGE_POOL
+	skb->pp_recycle = 1;
+#endif
+}
 
-Then a range will be updated for the execution path. Above, len is now
-[0, 16], so we might see a -Wstringop-overflow warning like:
-
-	error: '__builtin_memcpy' writing between 9 and 16 bytes from to region of size 8 [-Werror=stringop-overflow]
-
-When building with CONFIG_FORTIFY_SOURCE, the run-time bounds checking
-can appear to narrow value ranges for lengths for memcpy(), depending on
-how the compile constructs the execution paths during optimization
-passes, due to the checks on the size. For example:
-
-	if (p_size_field != SIZE_MAX &&
-	    p_size != p_size_field && p_size_field < size)
-
-As intentionally designed, these checks only affect the kernel warnings
-emitted at run-time and do not block the potentially overflowing memcpy(),
-so GCC thinks it needs to produce a warning about the resulting value
-range that might be reaching the memcpy().
-
-We have seen this manifest a few times now, with the most recent being
-with cpumasks:
-
-In function ‘bitmap_copy’,
-    inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
-    inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
-  114 | #define __underlying_memcpy     __builtin_memcpy
-      |                                 ^
-./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-  633 |         __underlying_##op(p, q, __fortify_size);                        \
-      |         ^~~~~~~~~~~~~
-./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-      |                          ^~~~~~~~~~~~~~~~~~~~
-./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
-  259 |                 memcpy(dst, src, len);
-      |                 ^~~~~~
-kernel/padata.c: In function ‘__padata_set_cpumasks’:
-kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
-  713 |                                  cpumask_var_t pcpumask,
-      |                                  ~~~~~~~~~~~~~~^~~~~~~~
-
-This warning is _not_ emitted when CONFIG_FORTIFY_SOURCE is disabled,
-and with the recent -fdiagnostics-details we can confirm the origin of
-the warning is due to the FORTIFY range checking:
-
-../include/linux/bitmap.h:259:17: note: in expansion of macro 'memcpy'
-  259 |                 memcpy(dst, src, len);
-      |                 ^~~~~~
-  '__padata_set_cpumasks': events 1-2
-../include/linux/fortify-string.h:613:36:
-  612 |         if (p_size_field != SIZE_MAX &&
-      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  613 |             p_size != p_size_field && p_size_field < size)
-      |             ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
-      |                                    |
-      |                                    (1) when the condition is evaluated to false
-      |                                    (2) when the condition is evaluated to true
-  '__padata_set_cpumasks': event 3
-  114 | #define __underlying_memcpy     __builtin_memcpy
-      |                                 ^
-      |                                 |
-      |                                 (3) out of array bounds here
-
-(Note that this warning started appearing since bitmap functions were
-recently marked __always_inline, which allowed GCC to gain visibility
-into the variables as they passed through the FORTIFY implementation.)
-
-In order to silence this false positive but keep deterministic
-compile-time warnings intact, hide the length variable from GCC with
-OPTIMIZE_HIDE_VAR() before calling the builtin memcpy.
-
-Reported-by: "Thomas Weißschuh" <linux@weissschuh.net>
-Closes: https://lore.kernel.org/all/db7190c8-d17f-4a0d-bc2f-5903c79f36c2@t-8ch.de/
-Reported-by: Nilay Shroff <nilay@linux.ibm.com>
-Closes: https://lore.kernel.org/all/20241112124127.1666300-1-nilay@linux.ibm.com/
-Acked-by: Yury Norov <yury.norov@gmail.com>
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: "Qing Zhao" <qing.zhao@oracle.com>
-Cc: linux-hardening@vger.kernel.org
----
- include/linux/fortify-string.h | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
-index 0d99bf11d260..cab419f3a05f 100644
---- a/include/linux/fortify-string.h
-+++ b/include/linux/fortify-string.h
-@@ -630,7 +630,16 @@ __FORTIFY_INLINE bool fortify_memcpy_chk(__kernel_size_t size,
- 		  __fortify_size,					\
- 		  "field \"" #p "\" at " FILE_LINE,			\
- 		  __p_size_field);					\
--	__underlying_##op(p, q, __fortify_size);			\
-+	if (__builtin_constant_p(__fortify_size)) {			\
-+		/* Pass through compile-time value for real warnings. */\
-+		__underlying_##op(p, q, __fortify_size);		\
-+	} else {							\
-+		/* Hide the run-time size from compile-time value */	\
-+		/* range tracking to silence false positives. */	\
-+		size_t ___fortify_size = __fortify_size;		\
-+		OPTIMIZER_HIDE_VAR(___fortify_size);			\
-+		__underlying_##op(p, q, ___fortify_size);		\
-+	}								\
- })
- 
- /*
--- 
-2.34.1
-
+You don't have to check if PP is complied in explicitly.
 
