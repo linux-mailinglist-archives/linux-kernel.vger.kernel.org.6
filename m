@@ -1,156 +1,182 @@
-Return-Path: <linux-kernel+bounces-444744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B689F0BF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:11:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368C99F0BF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 432851690DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:10:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45C96168104
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EE41DF728;
-	Fri, 13 Dec 2024 12:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6651DF739;
+	Fri, 13 Dec 2024 12:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gslJveAU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yv4EpTPm"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCB31DE3BB;
-	Fri, 13 Dec 2024 12:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6E3364D6;
+	Fri, 13 Dec 2024 12:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734091855; cv=none; b=nHfiClaOKOwD2GPxWHg898+8ZWfShQ+3Bk5+efCMSA96hGUE74kGXN/89mMH9+5s+hOjhERJ6Sc2avFykobWcQyjGgQpTuV5lxWH3760wjDAu/4GA48Sqdryl88/bnAlXM1/z0eRTSmWUiHJhQ/RgC2/afaOVGWikA4RIvafUKE=
+	t=1734091999; cv=none; b=Vv4wRW5cZQc9oGOfHf+hg1RI3thJaF0A5kYR97+7+pGT3MkImu5+elpBm4qK8s9Q9b5LiEsOO3emdcL1xAwShNltwUPV7dKbGVY3qmV14MrQ1EX7ZohCx1dFbvoU2aQq9bpZr6kIzWtLbfqBOEpatEalGYN11NOKQBxf1lr69pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734091855; c=relaxed/simple;
-	bh=xMRuNPTj8LbtBlRYpPCkBgneS+7LAseKtv/8FEuen3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mH1/uURsAmOo0zDOMVQncvhiH6zpYUdbj0J2kdWhRGf0u9msEAmAFf65gPKeOz7OmFSR+5YjXo8j/orLlXnID173ln2r6u3V9DrsEavNwrqn/ji12jXzRJXtTHzNHj4yXWfhPMdwClfemLYw4SfsL1u780ia1bI3/5QNED4xog4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gslJveAU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0251DC4CED6;
-	Fri, 13 Dec 2024 12:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734091855;
-	bh=xMRuNPTj8LbtBlRYpPCkBgneS+7LAseKtv/8FEuen3k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gslJveAU8h6+an8e/lhC6s9CtEof1O68fEomYv/V21DwJhIypchNgB4Fuc3EIfX8l
-	 /+Cibti4TmRFOcT4kXr3oIjFd4oq3E8mZj896qomBVtz1BQpSFcphqmVJqqNaIxQ1A
-	 2DrhmMPUh8aEv3ElKOS6eMJ/U10TaFjLMbq0zEv4douDs5P9T4+3T1527f3yGStpcr
-	 Mx9lcP0fFv3l9ZiioZReXsrwQY1qju9uexuKbClpNUv5jGUIuzcJ32n9nXi6RjOJNX
-	 ceftQjpR7V3wS2Izx183sCEkuz4RuGpK2lzT0GR/05IsqxGmhpJ070syxbB4Yxdteq
-	 V8Yqzkwd36kVg==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa69251292dso328310566b.2;
-        Fri, 13 Dec 2024 04:10:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWAhuZE1YOpDOp4Ho4kqyj0tsN7lpeAvt2jqBk9VIOjRNr4HKS3ujkEMuigOn5fbSLruBbosgittsqd8w==@vger.kernel.org, AJvYcCWNOqF9uwzyWe37XB/pyANifxWpD9v/yEkxS/qexFXWj/ZxOjsCa7sgP3RyiRGjbYbX9zkT97OW/7XuENbt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylbw2RyY+pVCWt0mUx1/JNwqwy1il9/HJM93s9r1E+fzedtYxu
-	9NTM9xn8wNKCx+1i55FIIhMWx4/26w06tbuRfzdDIC06bu3daJSa5LlQsniKEnNnEtMIQQEWg85
-	0NsgKm7IF9HdFvuVLDUX1DPfxGwQ=
-X-Google-Smtp-Source: AGHT+IH1/GhbRsWSyANh50uc8M88WSxjprZCDk8VoeIYC1jtxBcv4TnQK+5M7MLYjGQig1BT6KeOLruZs65IMzaTUzk=
-X-Received: by 2002:a17:906:3112:b0:aa6:707a:af59 with SMTP id
- a640c23a62f3a-aab77ec20acmr202767666b.50.1734091853539; Fri, 13 Dec 2024
- 04:10:53 -0800 (PST)
+	s=arc-20240116; t=1734091999; c=relaxed/simple;
+	bh=QskZQvslLVj4HjbQl2uk8qRIKosHAzSG0q42ESxfpZs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=I/qwzQDwlu7PCN6D0p8Ue8RWxKp5d4ATe5kbDgRvmY3Ki/mpOey6oliKEy/jMN/17NHQCjhNr43pHvniHXn1+qMfDPinhO2jT4xHR2r77uoK8QhB4kiBuzoU9z+JZAIrJcYNGZCBrr2kkkkij0HdluaDY7JgWhf1nhmKJbnIBBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yv4EpTPm; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa69107179cso320757266b.0;
+        Fri, 13 Dec 2024 04:13:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734091996; x=1734696796; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XHoWAaNUTau/ZJNAbGaTAOeFqOn+pvI6Wnww/slr7kA=;
+        b=Yv4EpTPmFdnuulp5ByZ1D6ByB70sLqBFxvcWHsUnc7KdhzLIlN5syXyIkOXgfmjBZv
+         EGr3CGftPF5aSda5ouW5CWFE0kgc7XfKx4gTnc2G5F2a5iXdZMEk5A7qOUiA/wKn+A4E
+         aVN6qBAPluF9WUu1vR0q3mPdTdohJnmsVB4ZmeCApo/lqx1ANX+mGlZNQHvet5SCrjiV
+         YIb7wfrZx6fkqDIas4jWBmjTR++25lqNaiiA0SBUjM9wWuhaR3dVvxH274Gh08F/C1SR
+         dtUnBx4xPpCDbcxMZO3OPnKLFzbBg5LtDVu34DiWH8iU6TaJHrLpfGHrD1+xfbgg8IeR
+         Hq2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734091996; x=1734696796;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XHoWAaNUTau/ZJNAbGaTAOeFqOn+pvI6Wnww/slr7kA=;
+        b=AKjYduvpAYQXXJpEgczF1pDTaza7+5kg+B1e+vZt+IaX/SKUnTzyWt8FRh4jOjFVAO
+         HTKNlLNcJxsJimBFJ2o7tdR7Wv6vytSQRectGWgcVvoXTGKKfOjVjrLshXg35v4TUJ/a
+         F5hB5hRRgyZJi1IVlV73LeKu+LLUOknwSkq6kGlk4gPBAiwXtDAYVUyJ0ymxFFncX1RM
+         0VzTBwovf5NhYhXPrd3ww8Jn/cx4JAZVlvbmJbFrN10pQHivQ/qWJLKWoNn5iX8hnvNr
+         O9+lq/aPcbhrJ9QhHwE8UtU/NtOBZQjEG8xSDrx/B63JoA+rA9yjGiyMY7SfA0w18eo8
+         MKpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVN1gW2N2gOs2rvz0jrtneUlpgaoNqeNAnA7rJ9KIM1ThoeWtzm/VxwiKCDRapYzrmNXnr8HS1a8pCvTkU=@vger.kernel.org, AJvYcCWcv8HTSvmibUP5Xm6V5wU7eTKEF28jD0ldQOAayC0+FUCKOW+7rhPdRZu9+bTx8C0dGtwY34HT@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc5nixJ8tkbP4M26+cGB0Y1MSh4LmZ3wmgKljy2m7YnwArFmvl
+	LwyIw3K9/DW/+WnKRUJbeYf17pZ5G3d2QBwNXl637XtCLRS0z31I
+X-Gm-Gg: ASbGncuCXZO9TvsJIQ8YVyqTMDZgRYLBoWCYbOoKTlsHpeOufOtonZrgAcMsl6jculH
+	9pVGfy7fQ/b0cH46AawF8uNiGvc/maSTjpWWqBiCxyvQNxZ1xAIDmlrD1eBWMwCNtXjveT9Tc9N
+	X9xsX609fsRDx8mD1GSv5oM6C10z577mBlD1aloj3nKhnDlyL92es0ZIK3pn9siVyCRNV10Pk8Q
+	oKieVETaKILXauI8JYw4MlG50UJvd6yVm0Meh4PSWXq5R1UNoFgtCde4nlWhzf4lPoZF34uAvq/
+	vhbUCdhND5YcLSXnvqh+IidLVac=
+X-Google-Smtp-Source: AGHT+IGBBvwkxE5NmXU5QgAu7OuBzh2HW9LMP3QsXo4HrCgIjBobtQKUTzQc5xVS25c2bA7mVA4Q4w==
+X-Received: by 2002:a17:907:1ca3:b0:aab:7588:f411 with SMTP id a640c23a62f3a-aab779c8bcamr239272066b.25.1734091995997;
+        Fri, 13 Dec 2024 04:13:15 -0800 (PST)
+Received: from ?IPV6:2a01:e11:5400:7400:9783:96e5:406:9a59? ([2a01:e11:5400:7400:9783:96e5:406:9a59])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab8dd35b19sm12355366b.33.2024.12.13.04.13.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 04:13:15 -0800 (PST)
+Message-ID: <cdbe92eb-0d35-457b-b661-d7aaf4026984@gmail.com>
+Date: Fri, 13 Dec 2024 13:13:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212-btrfs_need_stripe_tree_update-cleanups-v1-0-d842b6d8d02b@kernel.org>
- <20241212-btrfs_need_stripe_tree_update-cleanups-v1-3-d842b6d8d02b@kernel.org>
-In-Reply-To: <20241212-btrfs_need_stripe_tree_update-cleanups-v1-3-d842b6d8d02b@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 13 Dec 2024 12:10:17 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H53==1femrx1u+T-azp0rjVpdvFgSEpufQGVR2+zdvf1Q@mail.gmail.com>
-Message-ID: <CAL3q7H53==1femrx1u+T-azp0rjVpdvFgSEpufQGVR2+zdvf1Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] btrfs: pass btrfs_io_geometry to is_single_device_io
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Johannes Thumshirn <johannes.thjumshirn@wdc.com>, 
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Gianfranco Trad <gianf.trad@gmail.com>
+Subject: Re: [PATCH] qed: fix uninit pointer read in
+ qed_mcp_nvm_info_populate()
+To: Simon Horman <horms@kernel.org>
+Cc: manishc@marvell.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org
+References: <20241211134041.65860-2-gianf.trad@gmail.com>
+ <20241212170400.GC73795@kernel.org>
+Content-Language: en-US, it
+In-Reply-To: <20241212170400.GC73795@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 1:01=E2=80=AFPM Johannes Thumshirn <jth@kernel.org>=
- wrote:
->
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->
-> Now that we have the stripe tree decision saved in struct
-> btrfs_io_geometry we can pass it into is_single_device_io() and get rid o=
-f
-> another call to btrfs_need_raid_stripe_tree_update().
->
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  fs/btrfs/volumes.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index 088ba0499e184c93a402a3f92167cccfa33eec58..3636586371f6de2df76ecc67c=
-2dbf2fdf3848995 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -6362,7 +6362,7 @@ static bool is_single_device_io(struct btrfs_fs_inf=
-o *fs_info,
->                                 const struct btrfs_io_stripe *smap,
->                                 const struct btrfs_chunk_map *map,
->                                 int num_alloc_stripes,
-> -                               enum btrfs_map_op op, int mirror_num)
-> +                               struct btrfs_io_geometry *io_geom)
->  {
->         if (!smap)
->                 return false;
-> @@ -6370,10 +6370,11 @@ static bool is_single_device_io(struct btrfs_fs_i=
-nfo *fs_info,
->         if (num_alloc_stripes !=3D 1)
->                 return false;
->
-> -       if (btrfs_need_stripe_tree_update(fs_info, map->type) && op !=3D =
-BTRFS_MAP_READ)
-> +       if (io_geom->use_rst && io_geom->op !=3D BTRFS_MAP_READ)
->                 return false;
->
-> -       if ((map->type & BTRFS_BLOCK_GROUP_RAID56_MASK) && mirror_num > 1=
-)
-> +       if ((map->type & BTRFS_BLOCK_GROUP_RAID56_MASK) &&
-> +           io_geom->mirror_num > 1)
+On 12/12/24 18:04, Simon Horman wrote:
+> On Wed, Dec 11, 2024 at 02:40:42PM +0100, Gianfranco Trad wrote:
+>> Coverity reports an uninit pointer read in qed_mcp_nvm_info_populate().
+>> If qed_mcp_bist_nvm_get_num_images() returns -EOPNOTSUPP, this leads to
+>> jump to label out with nvm_info.image_att being uninit while assigning it
+>> to p_hwfn->nvm_info.image_att.
+>> Add check on rc against -EOPNOTSUPP to avoid such uninit pointer read.
+>>
+>> Closes: https://scan5.scan.coverity.com/#/project-view/63204/10063?selectedIssue=1636666
+>> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+>> ---
+>> Note:
+>> - Fixes: tag should be "7a0ea70da56e net/qed: allow old cards not supporting "num_images" to work" ?
+>>    
+>>   drivers/net/ethernet/qlogic/qed/qed_mcp.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.c b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+>> index b45efc272fdb..127943b39f61 100644
+>> --- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+>> +++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+>> @@ -3387,7 +3387,7 @@ int qed_mcp_nvm_info_populate(struct qed_hwfn *p_hwfn)
+>>   	}
+>>   out:
+>>   	/* Update hwfn's nvm_info */
+>> -	if (nvm_info.num_images) {
+>> +	if (nvm_info.num_images && rc != -EOPNOTSUPP) {
+>>   		p_hwfn->nvm_info.num_images = nvm_info.num_images;
+>>   		kfree(p_hwfn->nvm_info.image_att);
+>>   		p_hwfn->nvm_info.image_att = nvm_info.image_att;
+> 
 
-You can leave this in a single line, it stays at 83 characters, which
-is not too long, making the code a bit more readable.
+Hi Simon,
 
->                 return false;
+> Are you sure that nvm_info.num_images can be non-zero if rc == -EOPNOTSUPP?
 >
->         return true;
-> @@ -6648,8 +6649,8 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
-enum btrfs_map_op op,
->          * physical block information on the stack instead of allocating =
-an
->          * I/O context structure.
->          */
-> -       if (is_single_device_io(fs_info, smap, map, num_alloc_stripes, op=
-,
-> -                               io_geom.mirror_num)) {
-> +       if (is_single_device_io(fs_info, smap, map, num_alloc_stripes,
-> +                               &io_geom)) {
 
-Same here, can place the whole thing in a single line, it stays at 82
-characters, making it more readable than 2 lines.
+In the coverity report, the static analyzer is able to take the true 
+branch on nvm_info.num_images. I didn't physically reproduce this 
+logical state as I don't possess the matching hardware.
 
-Like suggested for the previous patches, you can also mention this
-reduces the object size since btrfs_need_stripe_tree_update() is a
-non-trivial inline function.
-
-Thanks.
-
->                 ret =3D set_io_stripe(fs_info, logical, length, smap, map=
-, &io_geom);
->                 if (mirror_num_ret)
->                         *mirror_num_ret =3D io_geom.mirror_num;
+> The cited commit state:
+> 
+>      Commit 43645ce03e00 ("qed: Populate nvm image attribute shadow.")
+>      added support for populating flash image attributes, notably
+>      "num_images". However, some cards were not able to return this
+>      information. In such cases, the driver would return EINVAL, causing the
+>      driver to exit.
+> 
+>      Add check to return EOPNOTSUPP instead of EINVAL when the card is not
+>      able to return these information. The caller function already handles
+>      EOPNOTSUPP without error.
+> 
+> So I would expect that nvm_info.num_images is 0.
+> 
+> If not, perhaps an alternate fix is to make that so, either by setting
+> it in qed_mcp_bist_nvm_get_num_images, or where the return value of
+> qed_mcp_bist_nvm_get_num_images is checked (just before the goto out).
 >
-> --
-> 2.43.0
->
->
+
+Makes sense, so something like this I suppose:
+
+--- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
+@@ -3301,8 +3301,10 @@ int qed_mcp_bist_nvm_get_num_images(struct 
+qed_hwfn *p_hwfn,
+   	if (rc)
+   		return rc;
+
+-	if (((rsp & FW_MSG_CODE_MASK) == FW_MSG_CODE_UNSUPPORTED))
++	if (((rsp & FW_MSG_CODE_MASK) == FW_MSG_CODE_UNSUPPORTED)) {
++		*num_images = 0;
+   		rc = -EOPNOTSUPP;
++	}
+
+Or the second option you stated.
+
+> And, in any case I think some testing is in order.
+
+I strongly agree. Let me know if I can help more with this.
+
+Thanks for your time,
+--Gian
+
 
