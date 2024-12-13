@@ -1,420 +1,243 @@
-Return-Path: <linux-kernel+bounces-444935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB9609F0EC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:13:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D58269F0ECF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:15:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98AF4282A1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:13:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D5A16C81E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15681E1A18;
-	Fri, 13 Dec 2024 14:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="JCgUkKMx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9335D1E0B86;
+	Fri, 13 Dec 2024 14:13:32 +0000 (UTC)
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A078C1E0B86;
-	Fri, 13 Dec 2024 14:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734099189; cv=pass; b=DT4n58vKkFM15YgbwKEpIpt5/aHyN7WqnbG1g+fSqBmlkUAXvxxFGgQdwkM+Dqn/VfICrvQ0FXha3gmTlZ5rLkoosFIID+Kami9yEyHg7WH9gY1ZB+3anWmHFwEjDGBiZtCXMQeEpd9ZXhTuWAjn87dOi4MazVUTRCPKbbvV/+k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734099189; c=relaxed/simple;
-	bh=XDETTIyPbgciKO6m+3XcG78Qoc9t3kYJa30hLOW5tCQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=miY66ah1K5S7KPKyLBf7MVgNv9zmxCjdtrjKMUVvBx7tVLlVGr5NJ+pChkmFM/DIT2/IcOzRxI1bpcYS5Hw0fd0m0uc6oGawozAns2Rymsdy3Iuv6eB/9QCPzuLXqM6561iMhnFuLyDa/MMnSsnqjE/MkPZICDd9ArkkY4Rdfqc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=JCgUkKMx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1734099159; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=M2+2T3RuUZdzs1XiY7znOBQkJjZ34pf5GmoaInN0r14h/nqfK9V51m5M+KDxGGVU16Mas0aq8KDzDq//eTzw3yQrUmOeQfrhjxng0vyXehzfrT8Jm/lAmgJcwaS//9Bp3FbTB544foT8Gx5Bmc9U157VnGbCOPNxTcSohpprQ/Q=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734099159; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ddE/oZrq5Lv+KhS7vNHFxIHZowLyEsxWIQEI9irdIU8=; 
-	b=ntpywtddIHGB3cXqPJer7r5aMAp2eUFKQR6BfBSxpUJWVY5g6SVSKeoFSTeOclSwGSdeO8uw7RO4KiBRJqG9HQIpZc/fj3+q+jCu0fQNKRNAIJEoeMKkeFx5UoGjKxIA0sJfBT65zV5VjdtIwN1YhtZXDK1wIa3icWcppIEIknE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734099159;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=ddE/oZrq5Lv+KhS7vNHFxIHZowLyEsxWIQEI9irdIU8=;
-	b=JCgUkKMx5a/GNfhqSKxzLuCtsRDIa4bwwq6w2YSb1SxHc9NdBXVG84nUyNgYaw55
-	d0ebx7BvhpKLUJJvy267CdPau4l2b89ndO9zRetmsJELcfYOklD9roRyX71ffLyC4j8
-	6tvQ1klbrIF1h2oyDIryy83ftpZ5YaCX1vCv+Fds=
-Received: by mx.zohomail.com with SMTPS id 1734099157632562.9735577379887;
-	Fri, 13 Dec 2024 06:12:37 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6C51E04BA
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734099212; cv=none; b=GsS0xtv9T98LvJIdtVR8H/X6JbqEl7St7os+yzayxMD9QA7LuGFpSUN8NeErA1jhzhoP4x637kQuQTks1CyZG7MsuRX2HMEsJZSZ7u1uZ+g1cSpPNy6djKuSgVn7NomTYvi3qQkQ160zHFMwfG7EyX7Jb3raOy8WTOQui5DpJo4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734099212; c=relaxed/simple;
+	bh=3W1he1wclmGdMP1YWtwaSCF6denb2KvzPPAmeLfLkJk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HR1mMf+5wJnTeLJY+5cshZw+XXhyD54n8tJ7wDNjhNCJ2+4uYVBQvh7xFtvZ8F9RGNDH7PH2Eghaqg58bgfykhKk73meTNhZbX9fhYk1HX0OvLy88AHzSGQA+6QuVaP7Tut+wM+7ZgdJL4gh+R7EzEmcbGxRWxEXzEoi/ASUAS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6d87ceb58a0so14749216d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:13:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734099208; x=1734704008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=35iE//JjwwJVa2lJd+7iAycrV7dSlJWEOt08EOLoAcU=;
+        b=uEPLAcsMTMt/uWvlm9g/MMMSdWg2QMaMBKqJMXXO00p0N2HhPf6D/r/VFFcHEPbXns
+         QEtycbeeyr602JZzmkHfGJBr2jN9sxYj/xXAE8wZwODr9u/T8R7oRCj2cLM5Vb0bpmsj
+         ysbyUm4BweXjjeqH/uegU91/chsFK1Fy1RQhScQbkYBJJ2q7sbMF8QxA2LhK5Kcrh/ZQ
+         nHQptY2wwPm12yDYTWne7neQ8Jm6+MKgixVsREFpuKMW0IfGj065LFGXNj58akRAAtOb
+         jWQhtGlip/uhVkIu9z2FO9q0G1ApbiqjN+kW+SzJ7Jsmo5kaM5zXEuJNhsB5TYRScqxd
+         2HAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWncYOJkuJpDP8Fg76jEhizspGglpy7Zbn3JM01ORoN49ePo4Z1aI7ivaLgeOJwZX7UOw8JpdoifzKhVf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjP4BsPwNUAxHQCNq2xPu55/OfNxJrNP1cNW1qKOb3Xwk+lCgY
+	kIceSkebySt/pyYZ//NA4U4E4wIf5VbSXVBhgbSEfvIs3NZssnTYdckDdTIR
+X-Gm-Gg: ASbGncv9l28Iq3bmnnpgwU20cIz90v4ioEdiaAviEhrpGehDL96BVj4ndLi20nU+FcY
+	xKLd4fS+CKuaES9y3idJgX3lfgSIOU/QQNH0pZZwP4M/w1MPnvHMLJo0b/uCHDuhOkwzKE6ic3g
+	ffzAcsZPslxDxgz1Z6r5OHkMdytOboQ4nQ1irU1WtcJNaNqLhl1RxQTYVETuac+z0QpBO2MDyau
+	PW3biG4UWyxYNzWWWwZLqtq0u3S+H/zoor3zgDDsji7TcKjobYReav1VQ7Ub5EA0rBAI8Zw3fBc
+	JHC3h4o3eZ0w2RMcnBORtuo=
+X-Google-Smtp-Source: AGHT+IFx+EmNvD1FLXcTNEbqtpIeZrYXp+PescKjlJge5GQbDXFEcs/SWXoUnkwA9AFvDMgPv2KhTQ==
+X-Received: by 2002:a05:6214:d49:b0:6d8:a5f7:f116 with SMTP id 6a1803df08f44-6dc9698ef15mr46453236d6.42.1734099207699;
+        Fri, 13 Dec 2024 06:13:27 -0800 (PST)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da695ca3sm92613846d6.32.2024.12.13.06.13.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 06:13:27 -0800 (PST)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b6fc5bf609so48025985a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:13:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWLB6fN7CToxK8qHaPHLhyxwRu25Klye41Om17z4NY08f9l5KMuh/S5yOhxrYCSgTbQAMBphabhVlRSJjo=@vger.kernel.org
+X-Received: by 2002:a05:620a:1990:b0:7b6:d050:7210 with SMTP id
+ af79cd13be357-7b6fbee7b25mr462900485a.15.1734099206681; Fri, 13 Dec 2024
+ 06:13:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v7 2/2] rust: add dma coherent allocator abstraction.
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20241210221603.3174929-3-abdiel.janulgue@gmail.com>
-Date: Fri, 13 Dec 2024 11:12:20 -0300
-Cc: rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>,
- Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>,
- airlied@redhat.com,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+MIME-Version: 1.0
+References: <20241026132014.73050-1-aford173@gmail.com> <20241026132014.73050-3-aford173@gmail.com>
+In-Reply-To: <20241026132014.73050-3-aford173@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Dec 2024 15:13:15 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVx9zYw7ZpyH=d_rs==a+_jzi--Fax5cVe-8UW+RvRx+g@mail.gmail.com>
+Message-ID: <CAMuHMdVx9zYw7ZpyH=d_rs==a+_jzi--Fax5cVe-8UW+RvRx+g@mail.gmail.com>
+Subject: Re: [PATCH V2 3/3] phy: freescale: fsl-samsung-hdmi: Clean up
+ fld_tg_code calculation
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-phy@lists.infradead.org, aford@beaconembedded.com, sandor.yu@nxp.com, 
+	Frieder Schrempf <frieder.schrempf@kontron.de>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Dominique Martinet <dominique.martinet@atmark-techno.com>, 
+	Marco Felsch <m.felsch@pengutronix.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <7FB6BC6B-732B-48C0-A07A-B2C545C876C9@collabora.com>
-References: <20241210221603.3174929-1-abdiel.janulgue@gmail.com>
- <20241210221603.3174929-3-abdiel.janulgue@gmail.com>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
 
-Hi Abdiel,
+Hi Adam,
 
-> On 10 Dec 2024, at 19:14, Abdiel Janulgue <abdiel.janulgue@gmail.com> =
-wrote:
->=20
-> Add a simple dma coherent allocator rust abstraction. Based on
-> Andreas Hindborg's dma abstractions from the rnvme driver, which
-> was also based on earlier work by Wedson Almeida Filho.
->=20
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> ---
-> rust/bindings/bindings_helper.h |   1 +
-> rust/kernel/dma.rs              | 223 ++++++++++++++++++++++++++++++++
-> rust/kernel/lib.rs              |   1 +
-> 3 files changed, 225 insertions(+)
-> create mode 100644 rust/kernel/dma.rs
->=20
-> diff --git a/rust/bindings/bindings_helper.h =
-b/rust/bindings/bindings_helper.h
-> index 5c4dfe22f41a..49bf713b9bb6 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -11,6 +11,7 @@
-> #include <linux/blk_types.h>
-> #include <linux/blkdev.h>
-> #include <linux/cred.h>
-> +#include <linux/dma-mapping.h>
-> #include <linux/errname.h>
-> #include <linux/ethtool.h>
-> #include <linux/file.h>
-> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> new file mode 100644
-> index 000000000000..29ae744d6f2b
-> --- /dev/null
-> +++ b/rust/kernel/dma.rs
-> @@ -0,0 +1,223 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Direct memory access (DMA).
-> +//!
-> +//! C header: =
-[`include/linux/dma-mapping.h`](srctree/include/linux/dma-mapping.h)
-> +
-> +use crate::{
-> +    bindings,
-> +    build_assert,
-> +    device::Device,
-> +    error::code::*,
-> +    error::Result,
-> +    types::ARef,
-> +    transmute::{AsBytes, FromBytes},
-> +};
-> +
-> +/// Possible attributes associated with a DMA mapping.
-> +///
-> +/// They can be combined with the operators `|`, `&`, and `!`.
-> +///
-> +/// Values can be used from the [`attrs`] module.
-> +#[derive(Clone, Copy, PartialEq)]
-> +pub struct Attribs(u32);
-> +
-> +impl Attribs {
-> +    /// Get the raw representation of this attribute.
-> +    pub(crate) fn as_raw(self) -> u64 {
-> +        self.0.into()
-> +    }
-> +
-> +    /// Check whether `flags` is contained in `self`.
-> +    pub fn contains(self, flags: Attribs) -> bool {
-> +        (self & flags) =3D=3D flags
-> +    }
-> +}
-> +
-> +impl core::ops::BitOr for Attribs {
-> +    type Output =3D Self;
-> +    fn bitor(self, rhs: Self) -> Self::Output {
-> +        Self(self.0 | rhs.0)
-> +    }
-> +}
-> +
-> +impl core::ops::BitAnd for Attribs {
-> +    type Output =3D Self;
-> +    fn bitand(self, rhs: Self) -> Self::Output {
-> +        Self(self.0 & rhs.0)
-> +    }
-> +}
-> +
-> +impl core::ops::Not for Attribs {
-> +    type Output =3D Self;
-> +    fn not(self) -> Self::Output {
-> +        Self(!self.0)
-> +    }
-> +}
-> +
-> +/// DMA mapping attrributes.
-> +pub mod attrs {
-> +    use super::Attribs;
-> +
-> +    /// Specifies that reads and writes to the mapping may be weakly =
-ordered, that is that reads
-> +    /// and writes may pass each other.
-> +    pub const DMA_ATTR_WEAK_ORDERING: Attribs =3D =
-Attribs(bindings::DMA_ATTR_WEAK_ORDERING);
-> +
-> +    /// Specifies that writes to the mapping may be buffered to =
-improve performance.
-> +    pub const DMA_ATTR_WRITE_COMBINE: Attribs =3D =
-Attribs(bindings::DMA_ATTR_WRITE_COMBINE);
-> +
-> +    /// Lets the platform to avoid creating a kernel virtual mapping =
-for the allocated buffer.
-> +    pub const DMA_ATTR_NO_KERNEL_MAPPING: Attribs =3D =
-Attribs(bindings::DMA_ATTR_NO_KERNEL_MAPPING);
-> +
-> +    /// Allows platform code to skip synchronization of the CPU cache =
-for the given buffer assuming
-> +    /// that it has been already transferred to 'device' domain.
-> +    pub const DMA_ATTR_SKIP_CPU_SYNC: Attribs =3D =
-Attribs(bindings::DMA_ATTR_SKIP_CPU_SYNC);
-> +
-> +    /// Forces contiguous allocation of the buffer in physical =
-memory.
-> +    pub const DMA_ATTR_FORCE_CONTIGUOUS: Attribs =3D =
-Attribs(bindings::DMA_ATTR_FORCE_CONTIGUOUS);
-> +
-> +    /// This is a hint to the DMA-mapping subsystem that it's =
-probably not worth the time to try
-> +    /// to allocate memory to in a way that gives better TLB =
-efficiency.
-> +    pub const DMA_ATTR_ALLOC_SINGLE_PAGES: Attribs =3D =
-Attribs(bindings::DMA_ATTR_ALLOC_SINGLE_PAGES);
-> +
-> +    /// This tells the DMA-mapping subsystem to suppress allocation =
-failure reports (similarly to
-> +    /// __GFP_NOWARN).
-> +    pub const DMA_ATTR_NO_WARN: Attribs =3D =
-Attribs(bindings::DMA_ATTR_NO_WARN);
-> +
-> +    /// Used to indicate that the buffer is fully accessible at an =
-elevated privilege level (and
-> +    /// ideally inaccessible or at least read-only at =
-lesser-privileged levels).
-> +    pub const DMA_ATTR_PRIVILEGED: Attribs =3D =
-Attribs(bindings::DMA_ATTR_PRIVILEGED);
-> +}
-> +
-> +/// An abstraction of the `dma_alloc_coherent` API.
-> +///
-> +/// This is an abstraction around the `dma_alloc_coherent` API which =
-is used to allocate and map
-> +/// large consistent DMA regions.
-> +///
-> +/// A [`CoherentAllocation`] instance contains a pointer to the =
-allocated region (in the
-> +/// processor's virtual address space) and the device address which =
-can be given to the device
-> +/// as the DMA address base of the region. The region is released =
-once [`CoherentAllocation`]
-> +/// is dropped.
-> +///
-> +/// # Invariants
-> +///
-> +/// For the lifetime of an instance of [`CoherentAllocation`], the =
-cpu address is a valid pointer
-> +/// to an allocated region of consistent memory and we hold a =
-reference to the device.
-> +pub struct CoherentAllocation<T: AsBytes + FromBytes> {
-> +    dev: ARef<Device>,
-> +    dma_handle: bindings::dma_addr_t,
-> +    count: usize,
-> +    cpu_addr: *mut T,
-> +    dma_attrs: Attribs,
-> +}
-> +
-> +impl<T: AsBytes + FromBytes> CoherentAllocation<T> {
-> +    /// Allocates a region of `size_of::<T> * count` of consistent =
-memory.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::device::Device;
-> +    /// use kernel::dma::{attrs::*, CoherentAllocation};
-> +    ///
-> +    /// # fn test(dev: &Device) -> Result {
-> +    /// let c: CoherentAllocation<u64> =3D =
-CoherentAllocation::alloc_attrs(dev, 4, GFP_KERNEL,
-> +    ///                                                               =
-   DMA_ATTR_NO_WARN)?;
-> +    /// # Ok::<(), Error>(()) }
-> +    /// ```
-> +    pub fn alloc_attrs(
-> +        dev: &Device,
-> +        count: usize,
-> +        gfp_flags: kernel::alloc::Flags,
-> +        dma_attrs: Attribs,
-> +    ) -> Result<CoherentAllocation<T>> {
-> +        build_assert!(core::mem::size_of::<T>() > 0,
-> +                      "It doesn't make sense for the allocated type =
-to be a ZST");
-> +
-> +        let size =3D =
-count.checked_mul(core::mem::size_of::<T>()).ok_or(EOVERFLOW)?;
-> +        let mut dma_handle =3D 0;
-> +        // SAFETY: device pointer is guaranteed as valid by invariant =
-on `Device`.
-> +        // We ensure that we catch the failure on this function and =
-throw an ENOMEM
-> +        let ret =3D unsafe {
-> +            bindings::dma_alloc_attrs(
-> +                dev.as_raw(),
-> +                size,
-> +                &mut dma_handle, gfp_flags.as_raw(),
-> +                dma_attrs.as_raw(),
-> +            )
-> +        };
-> +        if ret.is_null() {
-> +            return Err(ENOMEM)
-> +        }
-> +        // INVARIANT: We just successfully allocated a coherent =
-region which is accessible for
-> +        // `count` elements, hence the cpu address is valid. We also =
-hold a refcounted reference
-> +        // to the device.
-> +        Ok(Self {
-> +            dev: dev.into(),
-> +            dma_handle,
-> +            count,
-> +            cpu_addr: ret as *mut T,
-> +            dma_attrs,
-> +        })
-> +    }
-> +
-> +    /// Performs the same functionality as `alloc_attrs`, except the =
-`dma_attrs` is 0 by default.
-> +    pub fn alloc_coherent(dev: &Device,
-> +                          count: usize,
-> +                          gfp_flags: kernel::alloc::Flags) -> =
-Result<CoherentAllocation<T>> {
-> +        CoherentAllocation::alloc_attrs(dev, count, gfp_flags, =
-Attribs(0))
-> +    }
-> +
-> +    /// Returns the base address to the allocated region and the dma =
-handle. The caller takes
-> +    /// ownership of the returned resources.
-> +    pub fn into_parts(self) -> (usize, bindings::dma_addr_t) {
-> +        let ret =3D (self.cpu_addr as _, self.dma_handle);
-> +        core::mem::forget(self);
-> +        ret
-> +    }
-> +
-> +    /// Returns the base address to the allocated region in the CPU's =
-virtual address space.
-> +    pub fn start_ptr(&self) -> *const T {
-> +        self.cpu_addr as _
-> +    }
-> +
-> +    /// Returns the base address to the allocated region in the CPU's =
-virtual address space as
-> +    /// a mutable pointer.
-> +    pub fn start_ptr_mut(&mut self) -> *mut T {
-> +        self.cpu_addr
-> +    }
-> +
-> +    /// Returns a DMA handle which may given to the device as the DMA =
-address base of
-> +    /// the region.
-> +    pub fn dma_handle(&self) -> bindings::dma_addr_t {
-> +        self.dma_handle
-> +    }
-> +
-> +    /// Returns the CPU-addressable region as a slice.
-> +    pub fn cpu_buf(&self) -> &[T]
-> +    {
-> +        // SAFETY: The pointer is valid due to type invariant on =
-`CoherentAllocation` and
-> +        // is valid for reads for `self.count * size_of::<T>` bytes.
-> +        unsafe { core::slice::from_raw_parts(self.cpu_addr, =
-self.count) }
-> +    }
-> +
-> +    /// Performs the same functionality as `cpu_buf`, except that a =
-mutable slice is returned.
-> +    pub fn cpu_buf_mut(&mut self) -> &mut [T]
-> +    {
-> +        // SAFETY: The pointer is valid due to type invariant on =
-`CoherentAllocation` and
-> +        // is valid for reads for `self.count * size_of::<T>` bytes.
-> +        unsafe { core::slice::from_raw_parts_mut(self.cpu_addr, =
-self.count) }
-> +    }
-> +}
-> +
-> +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
-> +    fn drop(&mut self) {
-> +        let size =3D self.count * core::mem::size_of::<T>();
-> +        // SAFETY: the device, cpu address, and the dma handle is =
-valid due to the
-> +        // type invariants on `CoherentAllocation`.
-> +        unsafe { bindings::dma_free_attrs(self.dev.as_raw(), size,
-> +                                          self.cpu_addr as _,
-> +                                          self.dma_handle,
-> +                                          self.dma_attrs.as_raw(),) }
-> +    }
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index e1065a7551a3..6e90ebf5a130 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -35,6 +35,7 @@
-> mod build_assert;
-> pub mod cred;
-> pub mod device;
-> +pub mod dma;
-> pub mod error;
-> #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
-> pub mod firmware;
-> --=20
-> 2.43.0
->=20
+On Sat, Oct 26, 2024 at 3:21=E2=80=AFPM Adam Ford <aford173@gmail.com> wrot=
+e:
+> Currently, the calcuation for fld_tg_code is based on a lookup table,
 
+calculation (everywhere)
 
-This still looks good to me.
+> but there are gaps in the lookup table, and frequencies in these
+> gaps may not properly use the correct divider.  Based on the description
+> of FLD_CK_DIV, the internal PLL frequency should be less than 50 MHz,
+> so directly calcuate the value of FLD_CK_DIV from pixclk.
+> This allow for proper calcuation of any pixel clock and eliminates a
+> few gaps in the LUT.
+>
+> Since the value of the int_pllclk is in Hz, do the fixed-point
+> math in Hz to achieve a more accurate value and reduces the complexity
+> of the caluation to 24MHz * (256 / int_pllclk).
+>
+> Fixes: 6ad082bee902 ("phy: freescale: add Samsung HDMI PHY")
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-=E2=80=94 Daniel
+Thanks for your patch, which is now commit d567679f2b6a8bce ("phy:
+freescale: fsl-samsung-hdmi: Clean up fld_tg_code calculation") in
+next-20241209 and later.
 
+> --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> @@ -331,25 +331,17 @@ fsl_samsung_hdmi_phy_configure_pll_lock_det(struct =
+fsl_samsung_hdmi_phy *phy,
+>  {
+>         u32 pclk =3D cfg->pixclk;
+>         u32 fld_tg_code;
+> -       u32 pclk_khz;
+> -       u8 div =3D 1;
+> -
+> -       switch (cfg->pixclk) {
+> -       case  22250000 ...  47500000:
+> -               div =3D 1;
+> -               break;
+> -       case  50349650 ...  99000000:
+> -               div =3D 2;
+> -               break;
+> -       case 100699300 ... 198000000:
+> -               div =3D 4;
+> -               break;
+> -       case 205000000 ... 297000000:
+> -               div =3D 8;
+> -               break;
+> +       u32 int_pllclk;
+> +       u8 div;
+> +
+> +       /* Find int_pllclk speed */
+> +       for (div =3D 0; div < 4; div++) {
+> +               int_pllclk =3D pclk / (1 << div);
+> +               if (int_pllclk < (50 * MHZ))
+> +                       break;
+>         }
+>
+> -       writeb(FIELD_PREP(REG12_CK_DIV_MASK, ilog2(div)), phy->regs + PHY=
+_REG(12));
+> +       writeb(FIELD_PREP(REG12_CK_DIV_MASK, div), phy->regs + PHY_REG(12=
+));
+
+This causes a build failure on m68k with gcc version 9.5.0 (Ubuntu
+9.5.0-1ubuntu1~22.04):
+
+  CC [M]  drivers/phy/freescale/phy-fsl-samsung-hdmi.o
+In file included from ./arch/m68k/include/asm/io_mm.h:25,
+                 from ./arch/m68k/include/asm/io.h:8,
+                 from ./include/linux/io.h:14,
+                 from ./include/linux/iopoll.h:14,
+                 from drivers/phy/freescale/phy-fsl-samsung-hdmi.c:12:
+In function =E2=80=98fsl_samsung_hdmi_phy_configure_pll_lock_det=E2=80=99,
+    inlined from =E2=80=98fsl_samsung_hdmi_phy_configure=E2=80=99 at
+drivers/phy/freescale/phy-fsl-samsung-hdmi.c:470:2:
+././include/linux/compiler_types.h:542:38: error: call to
+=E2=80=98__compiletime_assert_147=E2=80=99 declared with attribute error: F=
+IELD_PREP:
+value too large for the field
+  542 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNT=
+ER__)
+      |                                      ^
+./arch/m68k/include/asm/raw_io.h:30:82: note: in definition of macro =E2=80=
+=98out_8=E2=80=99
+   30 | #define out_8(addr,b) (void)((*(__force volatile u8 *)
+(unsigned long)(addr)) =3D (b))
+      |
+                  ^
+drivers/phy/freescale/phy-fsl-samsung-hdmi.c:344:2: note: in expansion
+of macro =E2=80=98writeb=E2=80=99
+  344 |  writeb(FIELD_PREP(REG12_CK_DIV_MASK, div), phy->regs + PHY_REG(12)=
+);
+      |  ^~~~~~
+././include/linux/compiler_types.h:530:2: note: in expansion of macro
+=E2=80=98__compiletime_assert=E2=80=99
+  530 |  __compiletime_assert(condition, msg, prefix, suffix)
+      |  ^~~~~~~~~~~~~~~~~~~~
+././include/linux/compiler_types.h:542:2: note: in expansion of macro
+=E2=80=98_compiletime_assert=E2=80=99
+  542 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNT=
+ER__)
+      |  ^~~~~~~~~~~~~~~~~~~
+./include/linux/build_bug.h:39:37: note: in expansion of macro
+=E2=80=98compiletime_assert=E2=80=99
+   39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg=
+)
+      |                                     ^~~~~~~~~~~~~~~~~~
+./include/linux/bitfield.h:68:3: note: in expansion of macro =E2=80=98BUILD=
+_BUG_ON_MSG=E2=80=99
+   68 |   BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?  \
+      |   ^~~~~~~~~~~~~~~~
+./include/linux/bitfield.h:115:3: note: in expansion of macro =E2=80=98__BF=
+_FIELD_CHECK=E2=80=99
+  115 |   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: "); \
+      |   ^~~~~~~~~~~~~~~~
+drivers/phy/freescale/phy-fsl-samsung-hdmi.c:344:9: note: in expansion
+of macro =E2=80=98FIELD_PREP=E2=80=99
+  344 |  writeb(FIELD_PREP(REG12_CK_DIV_MASK, div), phy->regs + PHY_REG(12)=
+);
+      |         ^~~~~~~~~~
+
+As it builds fine on i386, I looked at the preprocessed source files,
+but didn't see any differences that could explain this.
+
+I changed cross-compiler to gcc version 10.5.0 (Ubuntu 10.5.0-1ubuntu1~22.0=
+4),
+and that fixed the issue on m68k.
+I changed the native compiler to gcc-9, and the build started failing
+on i386 and x86_64, too....
+
+>
+>         /*
+>          * Calculation for the frequency lock detector target code (fld_t=
+g_code)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
