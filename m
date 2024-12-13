@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-444362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342329F059B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:40:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6648F9F05A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622A418851CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588E1169C40
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B1919993E;
-	Fri, 13 Dec 2024 07:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79C61991CD;
+	Fri, 13 Dec 2024 07:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZdzTf/o8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Swb949eS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A3C188CC9;
-	Fri, 13 Dec 2024 07:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D65188CC9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734075639; cv=none; b=eSj9iDNH9MvzDuN0MMRLpanIE8rqLWVL4L6jag3TN/qAVK7ymn/2fyEspykLj7Q1b32pUp52VPlIfwumrzh+Jc/8cYOJmpJ+qgEUqrytvfOZSYiokhSC2nbnsRmA6BHz1ZmeyezYqeoL07UrYwDz6+HdFjNpQX0m+zzMWSHV8uo=
+	t=1734075693; cv=none; b=pxYg0ImRw3sSj0aG15w1noou2eq4MBoCWL8pHhWZc+AERtxBhrpY/kodJ0A1Af/xrysoL6crSiv7XbeJm8STbj8Yn9++0WQNj5RdIiw58nKM0S3HSOF42nwQTP3BjPb8bV+QPz7NnrNU9XOa1imxVN693Gn6bbzNPvDsxKDKYtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734075639; c=relaxed/simple;
-	bh=z+QOYR6IAaXu9IrXrCJYATLfMZuGKCN7F03jfOvDO+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZHDoeRV9wMF1yVJIjZzoAlRCXFxRJtj6N+KHICD6A6lYPnB12UKScgCVrvnueofWMJTI33etYUZwwI+3KEcO0CpSQPIWBuNtREQu+RWb0VKPCQveWSHioS5cZ9H9jZuoVvSJVMhhL/sNUiQ/WUYXhiPxZ5o/UJP8DIMjE8hk/YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZdzTf/o8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F4CBC4CED0;
-	Fri, 13 Dec 2024 07:40:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734075638;
-	bh=z+QOYR6IAaXu9IrXrCJYATLfMZuGKCN7F03jfOvDO+Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZdzTf/o8P3OgApWUgLgc63+Jve+OJn36APqyfcMJrA1I9KRigR1DbwTWD0B2HS7Eh
-	 9m7KDaugbjrjV+/x0zbl3VtdD5rx/9pYwFhUnMRNNWYApkei+B9ux50bySecAKlE0z
-	 031frx74FTFjiIozFeNR2M1Hqt8Tm8EBcUoIF3GXXF6cRoNBEszIbB+Y6GGIm7Elgr
-	 k/0xz2/DKoWciBopFREtfGbiMgxcvORQFI6egKXDqDHFhhmZxoKeDdZgRVfrC8HJH8
-	 pKe/xWj8uIoeTCoEXDIQ2wnDxE1Y8sDVDIojnxxK6LnPA8dcqJ/2taOnLJLNBQNvIG
-	 7oOfnY3cuyStw==
-Message-ID: <207354ad-e363-4156-ba6b-86dbaa13ab95@kernel.org>
-Date: Fri, 13 Dec 2024 08:40:33 +0100
+	s=arc-20240116; t=1734075693; c=relaxed/simple;
+	bh=qe/DRkZqurcuEiMRLcjhf4qFchIOWtU4Kj0uAbt85Uk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=WouT0RuSC6tJHHNCFyFO7Ta7moxtnROxJKSSkVzXQeaS0ZwJD+2y4brCzYkjtBpla0e4x5jsNXoVx2w7fPjYQXxmgdhce84vrVeF1/xoKUrk98hI+dRuWvJa5mEirHsfPwORba6Q4bs4qX7UUSndrOl45STeLA5BSP+myo8Ljp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Swb949eS; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734075691; x=1765611691;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=qe/DRkZqurcuEiMRLcjhf4qFchIOWtU4Kj0uAbt85Uk=;
+  b=Swb949eSiW0W1c9+usHHQhni+o09HkClap801iUCRUO0JWp/Zg2//r0/
+   gHYjUtDHgqj2iV4nMNoAyRCKYKUrA/m1diTaUc67I1WZkJgmP0fYIWpru
+   QHZzCvDirazer3ZAh2p8susf1R2AGHeGnS5lsr//fb28ArlETgNx+RqVy
+   +WM4W2RNCPx/yAfqTGjCbqz8F+cf6cI+Ti5I0KKTm2z/TWGa4R0JW4SgT
+   h49Tlo/5vfbYXUb8Si9hMsLJ46rvGBrqY8yomKFJLx9NV1F1tqybn3hxz
+   v3kBmmlg36QErL00ct+kJozNh/j+L/I8r31A+2WGWy+NewTA5eVp2/eOe
+   w==;
+X-CSE-ConnectionGUID: M9g5ZQyCTbChfw7tt2ilLA==
+X-CSE-MsgGUID: Kg9X+YovQiGwBUk2G5Tb/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="59916754"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="59916754"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 23:41:30 -0800
+X-CSE-ConnectionGUID: KwcmarQeTGKFseYtnaVssQ==
+X-CSE-MsgGUID: cfzBmJPnRUO8J/8tfieSog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="101489393"
+Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.124.244.96]) ([10.124.244.96])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 23:41:26 -0800
+Message-ID: <44ddaae9-fde0-4bd9-8662-ee88141ff0a3@linux.intel.com>
+Date: Fri, 13 Dec 2024 15:41:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,196 +66,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: soc: samsung: exynos-speedy: Document
- SPEEDY host controller bindings
-To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Maksym Holovach <nergzd@nergzd723.xyz>
-References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
- <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
+ instead of RWX
+From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
+To: David Woodhouse <dwmw2@infradead.org>, kexec@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org, bsz@amazon.de
+References: <20241205153343.3275139-1-dwmw2@infradead.org>
+ <20241205153343.3275139-14-dwmw2@infradead.org>
+ <5bb26488-f5fb-4186-92c3-de6a07631f91@linux.intel.com>
+ <b4104c271b461dc1958ffac299d6741746a0728a.camel@infradead.org>
+ <56fdfffc-9a5e-4f9e-ae5b-57dd27d647cc@linux.intel.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <56fdfffc-9a5e-4f9e-ae5b-57dd27d647cc@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/12/2024 22:09, Markuss Broks wrote:
-> Add the schema for the Samsung SPEEDY serial bus host controller.
-> The bus has 4 bit wide addresses for addressing devices
-> and 8 bit wide register addressing. Each register is also 8
-> bit long, so the address can be 0-f (hexadecimal), node name
-> for child device follows the format: node_name@[0-f].
 
 
-This wasn't tested so limited review.
-
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
+On 2024/12/13 14:45, Ning, Hongyu wrote:
 > 
-> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
-> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
-> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
-> ---
->  .../bindings/soc/samsung/exynos-speedy.yaml        | 78 ++++++++++++++++++++++
-
-Filename must match compatible.
-
->  1 file changed, 78 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..304b322a74ea70f23d8c072b44b6ca86b7cc807f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/samsung/exynos-speedy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung Exynos SPEEDY serial bus host controller
+> On 2024/12/12 18:13, David Woodhouse wrote:
+>> On Thu, 2024-12-12 at 11:03 +0800, Ning, Hongyu wrote:
+>>>
+>>> Hi David,
+>>>
+>>> I've hit some kdump/kexec regression issue for guest kernel in KVM/QEMU
+>>> based VM and reported in https://bugzilla.kernel.org/show_bug.cgi? 
+>>> id=219592.
+>>>
+>>> based on further git bisect, it seems to be related with this commit,
+>>> would you help to take a look?
+>>
+>> Thanks for the report; I'll take a look. Please could you share your
+>> kernel .config?
+>>
+> 
+> kernel config updated in the bugzilla https://bugzilla.kernel.org/ 
+> show_bug.cgi?id=219592
+> 
+>> Also, you say that this is in QEMU running on an IA64 host. Is that
+>> true, or did you mean x86_64 host? Are you using OVMF or SeaBIOS as the
+>> QEMU firmware?
+>>
+> 
+> You're right, it's x86_64 host, I miss-selected it in bugzilla.
+> I'm using OVMF as the QEMU firmware.
+> 
+>> In the short term, I think that just reverting the 'offending' commit
+>> should be OK. I'd *prefer* not to leave the page RWX for the whole time
+>> period that the image is loaded, but that's how it's been on i386 for
+>> ever anyway.
+> 
+> And your latest patch https://lore.kernel.org/ 
+> kexec/9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org/ 
+> could fix this issue now.
 
-Speedy or SPEEDY?
+my local email app went wrong, didn't receive latest patch in email thread.
 
-> +
-> +maintainers:
-> +  - Markuss Broks <markuss.broks@gmail.com>
-> +
-> +description:
-> +  Samsung SPEEDY is a proprietary Samsung serial 1-wire bus.
-
-1-wire? But not compatible with w1 (onwire)?
-
-> +  It is used on various Samsung Exynos chips. The bus can
-> +  address at most 4 bit (16) devices. The devices on the bus
-> +  have 8 bit long register line, and the registers are also
-> +  8 bit long each. It is typically used for communicating with
-> +  Samsung PMICs (s2mps17, s2mps18, ...) and other Samsung chips,
-> +  such as RF parts.
-> +
-> +properties:
-> +  compatible:
-> +    - items:
-> +        - enum:
-> +            - samsung,exynos9810-speedy
-> +        - const: samsung,exynos-speedy
-
-Drop last compatible and use only SoC specific.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    - const: pclk
-
-Drop clock-names, not needed for one entry.
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-
-You do not have them in the properties, anyway required goes before
-additionalProperties
-
-> +
-> +patternProperties:
-> +  "^[a-z][a-z0-9]*@[0-9a-f]$":
-
-That's odd regex. Look at other bus bindings.
-
-> +    type: object
-> +    additionalProperties: true
-> +
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-
-maximum: 15
-
-> +
-> +    required:
-> +      - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    speedy0: speedy@141c0000 {
-
-Drop unused label.
-
-> +      compatible = "samsung,exynos9810-speedy",
-> +                   "samsung-exynos-speedy";
-> +      reg = <0x141c0000 0x2000>;
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-
-No resources? No clocks? No interrupts?
-
-
-
-Best regards,
-Krzysztof
+later version patch 
+https://lore.kernel.org/kexec/ed7dd45f89e8f286478791137447a21d53735dbd.camel@infradead.org/ 
+could fix this issue too.
 
