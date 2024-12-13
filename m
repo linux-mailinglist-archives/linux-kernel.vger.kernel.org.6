@@ -1,78 +1,144 @@
-Return-Path: <linux-kernel+bounces-445320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A8D9F149B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:01:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EEF9F14A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8F316A24D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36EF5188F1FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175B71EB9FF;
-	Fri, 13 Dec 2024 18:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03381EB9F3;
+	Fri, 13 Dec 2024 18:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aa4KxUIT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GX6C+roD"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B91B1E885A;
-	Fri, 13 Dec 2024 18:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919FB1E4937
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734112845; cv=none; b=EGe5i5lk4WRpyR/PQBie2gNrG3LATIoPa0macBM9e+aD2Yz+O5HAc56SDjd97ZEoSoD0XmrTXB9DcG+NlaBtQJrrA8gRwSLeePQCD1VHMQoYVVF5NwaZzMDW7E/yLxkmHjMTn8ilEwepVVy7VVeSeziXJqBOpCdHb4TmlwQsM4o=
+	t=1734112878; cv=none; b=EjBONZ3vWCLkfjf+ZnmR34EaI7Yc8l912Bx+87s6Ye+YVXruaxjV5slLwi4Tc7d7ZRTGlngm/pJkLzFhX1IEjyEkTehxPWntuBnIO89iPBFoTZyrOpeerboHQOsrTpG38UU/M0e7o3A1TCq1LBlaLFx1QaJV6P6VF6DSYY70r64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734112845; c=relaxed/simple;
-	bh=WgB2jziZv49k7KWhEC//JPDky76w9/53XoNiCw/2/Pc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=THVigiy/nRGczCw62sWHPojSkA1KGlBvd7TA1FCQtoYBgnqu9xmi9OMgHtS61q1Yn9DmNXzCVzawsYHOV+XCH1W7flGEHPonjhA5FaXKr//NDQilNdgVcK/hJdOmuIP8fuqe3SH+4R2zAlPLD1dWFKYwcddxebVgOpLdbFXWOK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aa4KxUIT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0267CC4CED0;
-	Fri, 13 Dec 2024 18:00:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734112845;
-	bh=WgB2jziZv49k7KWhEC//JPDky76w9/53XoNiCw/2/Pc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Aa4KxUITO0df9FYGd5X54Eq7Hv+cRt8q77sMxlOF6mqQHlsZqKcGdR/gV2Zjtmi5K
-	 sha1azfET7pjN7oOXnrH3Gkh9Wkfq1KWQJpuSeddQt9sMBLQe0aqX1iaUanuviN/Ow
-	 p2+oELP7SyZ+H1fd6+vu+QGxJ2JfiJKKCKujNiMzUSRkfZKNgWBeqLaOGp4pPTXfuI
-	 ehCe2ntMYFTNeq5T3xcV+UWgju2xVKLwHq9QKxDYIizf2h/I+QsHX+6dLSe34GDmal
-	 m43C6460xGfaOgwP93m7yTNyFO0LYqAkUM1/bEy1M96IH4OGfJXucLJ4gvNlOOir6K
-	 +f8J9uVPB3hBQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0F2380A959;
-	Fri, 13 Dec 2024 18:01:02 +0000 (UTC)
-Subject: Re: [GIT PULL] Documentation fix for 6.13
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <87pllvy57r.fsf@trenco.lwn.net>
-References: <87pllvy57r.fsf@trenco.lwn.net>
-X-PR-Tracked-List-Id: <linux-doc.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87pllvy57r.fsf@trenco.lwn.net>
-X-PR-Tracked-Remote: git://git.lwn.net/linux.git tags/docs-6.13-fix
-X-PR-Tracked-Commit-Id: d9339496729f1471b8dc326face17c4cf108b027
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a3170b7d9319f79235a4747164ba1aaba981e758
-Message-Id: <173411286146.3116882.9541776255412455989.pr-tracker-bot@kernel.org>
-Date: Fri, 13 Dec 2024 18:01:01 +0000
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1734112878; c=relaxed/simple;
+	bh=eGq8X2cQn5Avkj8xSv4CjUXuHP5mxbeSDOJ4KzyQ+Tc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A1KKabvMB+sVlBfTc5/onRCLI7k0bMg57CVp57qUyWW3lTjoJm4Lm4jksx85BenrQUs8fSmMAKxoTe4qqX6QpUz4G44EiZQEZoByykDLZ/p5vMvPP43r/QKHf/AGAre94DVOzxzRpZn1W8SlnI9/gY9h6tgyw3KS2dwtUaiFd4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GX6C+roD; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e3984b1db09so1532623276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:01:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734112875; x=1734717675; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qPeH+betN1f6uv0SwXfZrHgC9aEQIrrjFSKIB2w0wUQ=;
+        b=GX6C+roDAVEnvRyVEfpaeIfGvOfmY+lEzEmlAum3erHbz+eKBn2amCiXePxEllNzrO
+         OAf+Mj8clqqzEuzTIWNh5AVNhThvOP/8UEKESx7ez7N+pwQuIjljQHSShh1gWVRlA1Mf
+         /kMrR9f4voU89hJrMvKINvgkap7aEqOxqwIHI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734112875; x=1734717675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qPeH+betN1f6uv0SwXfZrHgC9aEQIrrjFSKIB2w0wUQ=;
+        b=lmtWzfXXLJWRl16KsScwNUJNQD2iRTJskJdFwZK2q+/Mh7HNXUxxOWszvlxF4k1R75
+         FVJlyJghLSNNH7Qrs3hssfalNGUJ2hccnWKAUdJY2awctGj61ZK0PUhhYOWmQ0QFHBbJ
+         gsu4bJ7ILPoqUEDT3Lj0YpyNaRr0wMpKiAsjkFSr/RpbBtW2ZRHGRyEo+WnJiNeKJNtK
+         aNwtv+itk9YpslrkHoaY8QiDfumU9TH8UyojwJTy3f7uTSF4j6KFsG055xDgCY420RSv
+         e4HIG7wvHqCmib7RHhqKdogLzb1BXeTbh8hOTVcd88j4M71BkvMAUIHF1P9G4HLjgX9N
+         CVCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwQkD/e0uAPwKE8MqeWsAT6iXzSu5B4MmzR9v0CJL1isPCho2d2wBA+EuA5OYl1rbM6hNUjbs+SY0r/3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+5+5kcY68RLbj2jN3DqtJN2o09XlgCpqFN9FdEfDbX82fw8Yj
+	Nhr8iGtmVqhfDwVMnD7Q4xjmAqxhyGMIUioj6MbQfdp9BXwfCG4gIzjzBPiTcJyW6/FXxV+wQK9
+	dk5I/rvTmgvhwo2vBmjwUPWnvbdrQut92l50P
+X-Gm-Gg: ASbGncugwDsXXHSXMyLJBUX9keTZ64N8SuqryuVd6reZVpriSDtNrUuFz3Zq67j/Q0K
+	xJqOKNdlK78S1/AjDwlF0xWPmCxtIq+EHP69FXQ==
+X-Google-Smtp-Source: AGHT+IESL/tWUgNpSAQzrl87j2eCkOc09/+to8cMqhW7uI835WQ1LUGaxeGORtfqmEOGd/ePuPsgZvrU3N3ocWweWvc=
+X-Received: by 2002:a05:6902:2292:b0:e30:b98e:b111 with SMTP id
+ 3f1490d57ef6-e434aa0e976mr2988627276.17.1734112875416; Fri, 13 Dec 2024
+ 10:01:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20241206233830.2401638-1-abhishekpandit@chromium.org>
+ <20241206153813.v4.4.I083bf9188947be8cb7460211cfdf3233370a28f6@changeid> <CAE-0n52AG8henLkzAyO112pBmNAskcC0SXKFNCyQQ3MG01xkGg@mail.gmail.com>
+In-Reply-To: <CAE-0n52AG8henLkzAyO112pBmNAskcC0SXKFNCyQQ3MG01xkGg@mail.gmail.com>
+From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Date: Fri, 13 Dec 2024 10:01:04 -0800
+Message-ID: <CANFp7mXCChVFaQHiW_RCu_97BnPHc5qHs=E6WcGRGLUEniZieA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/7] platform/chrome: cros_ec_typec: Update partner
+ altmode active
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, heikki.krogerus@linux.intel.com, 
+	linux-usb@vger.kernel.org, tzungbi@kernel.org, akuchynski@google.com, 
+	pmalani@chromium.org, jthies@google.com, dmitry.baryshkov@linaro.org, 
+	badhri@google.com, rdbabiera@google.com, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Fri, 13 Dec 2024 08:26:16 -0700:
+On Tue, Dec 10, 2024 at 3:32=E2=80=AFPM Stephen Boyd <swboyd@chromium.org> =
+wrote:
+>
+> Quoting Abhishek Pandit-Subedi (2024-12-06 15:38:15)
+> > diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform=
+/chrome/cros_ec_typec.c
+> > index c7781aea0b88..e3eabe5e42ac 100644
+> > --- a/drivers/platform/chrome/cros_ec_typec.c
+> > +++ b/drivers/platform/chrome/cros_ec_typec.c
+> > @@ -676,6 +677,16 @@ static int cros_typec_configure_mux(struct cros_ty=
+pec_data *typec, int port_num,
+> >                         port->mux_flags);
+> >         }
+> >
+> > +       /* Iterate all partner alt-modes and set the active alternate m=
+ode. */
+> > +       list_for_each_entry_safe(node, n, &port->partner_mode_list, lis=
+t) {
+>
+> This can just be list_for_each_entry() because the list isn't changing
+> during iteration.
+Done
 
-> git://git.lwn.net/linux.git tags/docs-6.13-fix
+>
+> > +               if (port->state.alt !=3D NULL &&
+> > +                   node->amode->svid =3D=3D port->state.alt->svid) {
+> > +                       typec_altmode_update_active(node->amode, true);
+> > +               } else {
+> > +                       typec_altmode_update_active(node->amode, false)=
+;
+> > +               }
+>
+> It could also be shorter:
+>
+>         list_for_each_entry(node, &port->partner_mode_list, list) {
+>                 typec_altmode_update_active(node->amode,
+>                         port->state.alt && node->amode->svid =3D=3D port-=
+>state.alt->svid);
+>         }
+Done
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a3170b7d9319f79235a4747164ba1aaba981e758
+>
+> As far as I can tell, cros_typec_configure_mux() is called when the HPD
+> state changes. We'll iterate through here unnecessarily in that case.
+> Can that be avoided somehow?
+Writing the same value to `typec_altmode_update_active` is a no-op.
+I'd prefer to leave this code as-is since it's quite simple (having to
+determine HPD vs non-HPD, whether DP is currently active, etc. is
+going to be more work than it saves from not calling this loop).
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+>
+> > +
+> >  mux_ack:
+> >         if (!typec->needs_mux_ack)
+> >                 return ret;
 
