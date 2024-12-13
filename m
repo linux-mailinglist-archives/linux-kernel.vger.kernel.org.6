@@ -1,169 +1,104 @@
-Return-Path: <linux-kernel+bounces-445258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CC39F136A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:15:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6B99F136E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46ECD16B135
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0A2188D378
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01231E2850;
-	Fri, 13 Dec 2024 17:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63731E501C;
+	Fri, 13 Dec 2024 17:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwFnfZHt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+L6qAou"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22182364D6;
-	Fri, 13 Dec 2024 17:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335CD364D6;
+	Fri, 13 Dec 2024 17:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734110132; cv=none; b=hlVq4Jc9VqJHn/yQgmL4Ws3hsJVgjJn1Nv9Avp1/k8NSU6JgdS9H0WIs1aQfwEBvuYn6+tjes/AlOu8YyMY3ZtS+n0koq7U3db6EPd5iFHzCgtRVUxYnFfFtSUuWlPR/9Si4eUBkxGxmM4/LajLGBQEWJBy/4DDHgXhrZJ6zshc=
+	t=1734110139; cv=none; b=fosVDgh06nYnu7pn2dg+eg+EpOFDwKT0Sohx5OzaNptj8jestbgV9mPe6mZu4ixEzk3fCwO+xpn8Rv6QWS+wh3AafI2tGuMSfe4PTQ6ylg5flWyLPk7aAo5JTqlZrBz623J2xwF+bvHXw2m2JA4i9DvTPCKfUwhCRNXkT0RSsMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734110132; c=relaxed/simple;
-	bh=2YJ7aI7lgNgInMsZf1T3jkaRml+zGxaMkU8tu0NSViU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GAk9Nqb6zpBLQOKRv0avaYyY6EE25oFzHmEQ64MGtz56tMyU0lMP/9652FtWB+6r2/xSmZa7v7EDur/oS3O6xhJeNWRrqeDgtEtd3UHaS2VD9EX5DqBZLbN8bGRgyYXMHGIab2ChrM218hafzR2gWb974gIpA7vXJBtSHVOdU9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwFnfZHt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CAEFC4CED0;
-	Fri, 13 Dec 2024 17:15:30 +0000 (UTC)
+	s=arc-20240116; t=1734110139; c=relaxed/simple;
+	bh=NjO68/4nw+UEWFu3KmtWhUhnC0oLYN4ipiYpYuD9K5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MzCZMtyi6AvGlSyqut9wocqsCVTtz0ZbfpyNHd8bXc67hLjCJ4VtCqKpQwh6WZiz1W8z18teva2RviKXRei7u7MpSGFzG4k/HoTXa1eyAQrUAbSuSCKZyMZGUo5hmPK7fr4RTJDCA7IAksUR6W0/T1+NkmE+Djmrd7gyKXqBbvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+L6qAou; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30639C4CED6;
+	Fri, 13 Dec 2024 17:15:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734110130;
-	bh=2YJ7aI7lgNgInMsZf1T3jkaRml+zGxaMkU8tu0NSViU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jwFnfZHtJRdNKH+ybm0QEKAg3qZ60IbY6L+VQxt6+YdW6BM9uAmHxcpXyXVYEzrWP
-	 zS6eE7+dWYNwAcELVtbJ8ASixRhGLltL43p7NN601ihIoHc2VFp1tK0cOMprJ1iUgy
-	 Sv/yj3sFyCi+2fo2qth+eR/ynsRTrG4gbk/sMkoZSQprSQlMZ+xD614plNzaEUwzaO
-	 taWeJtDMp8NIklaovuK6UEAV0H4q5z3lNBqUd4nNbTFsOFifCqtH6dCdI7WruFce93
-	 GBWzlkhIQKssH89xiDNeCVssv6vKGkDj+TpS1/rXUQ2h4B3eOJoDPFh4aryZtmsBWI
-	 /NKGalKaxhcXg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tM9GC-003W5f-7g;
-	Fri, 13 Dec 2024 17:15:28 +0000
-Date: Fri, 13 Dec 2024 17:15:27 +0000
-Message-ID: <86bjxfsdw0.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 1/3] KVM: arm64: timers: Fix percpu address space issues in kvm_timer_hyp_init()
-In-Reply-To: <20241213145809.2918-1-ubizjak@gmail.com>
-References: <20241213145809.2918-1-ubizjak@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1734110138;
+	bh=NjO68/4nw+UEWFu3KmtWhUhnC0oLYN4ipiYpYuD9K5g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V+L6qAouX7ebPUEU7rg451bIO2bAuBVcQx+aw+c9s3wAomHfVNqJpvAkSU3nnTTTu
+	 udPTG6A9zgi8i4YMXByqvhxvSEpEC6wHBxbUepbk9k1utvsPbqvzQ10ggmC2bEyfXp
+	 HFEZVsPlMFMgv6aLEN7mZPDpcBjMaPmzf3LiBgydLHI4yeHEz6lSc6fYGr5sF3v1Kt
+	 5hWIqt7I5QCF65b4Rf6mfqhPlkQNxfhfUcC5G4bDgHLWQfIE4+0vZ8ho7/djUyPxjM
+	 U+tY6YYSbMkERryXPdJ/HMqVh3WX9pA5gtKDJsdsHz18FioFl0zTIeDGYoAlK1Pbww
+	 0A/UuQtaqXHUw==
+Date: Fri, 13 Dec 2024 17:15:29 +0000
+From: Lee Jones <lee@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
+	Larisa Grigore <larisa.grigore@nxp.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v6 2/7] mfd: nxp-siul2: add support for NXP SIUL2
+Message-ID: <20241213171529.GF2418536@google.com>
+References: <20241113101124.1279648-1-andrei.stefanescu@oss.nxp.com>
+ <20241113101124.1279648-3-andrei.stefanescu@oss.nxp.com>
+ <20241211124454.GE7139@google.com>
+ <3b090335-20b4-4d73-aabc-ddac98311e33@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: ubizjak@gmail.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3b090335-20b4-4d73-aabc-ddac98311e33@sirena.org.uk>
 
-On Fri, 13 Dec 2024 14:57:52 +0000,
-Uros Bizjak <ubizjak@gmail.com> wrote:
-> 
-> Cast return value from kvm_get_running_vcpus() in the __percpu
-> address space to the generic address space via uintptr_t [1]
-> to fix a couple of:
-> 
-> arch_timer.c:1395:66: warning: incorrect type in argument 2 (different address spaces)
-> arch_timer.c:1395:66:    expected void *vcpu_info
-> arch_timer.c:1395:66:    got struct kvm_vcpu *[noderef] __percpu *
-> 
-> sparse warnings.
-> 
-> There were no changes in the resulting object files.
-> 
-> [1] https://sparse.docs.kernel.org/en/latest/annotations.html#address-space-name
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: Joey Gouly <joey.gouly@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Cc: Zenghui Yu <yuzenghui@huawei.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> ---
->  arch/arm64/kvm/arch_timer.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-> index 1215df590418..a13bb9e8dc19 100644
-> --- a/arch/arm64/kvm/arch_timer.c
-> +++ b/arch/arm64/kvm/arch_timer.c
-> @@ -1392,7 +1392,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
->  
->  	if (has_gic) {
->  		err = irq_set_vcpu_affinity(host_vtimer_irq,
-> -					    kvm_get_running_vcpus());
-> +					    (void *)(uintptr_t)kvm_get_running_vcpus());
->  		if (err) {
->  			kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
->  			goto out_free_vtimer_irq;
-> @@ -1416,7 +1416,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
->  
->  		if (has_gic) {
->  			err = irq_set_vcpu_affinity(host_ptimer_irq,
-> -						    kvm_get_running_vcpus());
-> +						    (void *)(uintptr_t)kvm_get_running_vcpus());
->  			if (err) {
->  				kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
->  				goto out_free_ptimer_irq;
+On Wed, 11 Dec 2024, Mark Brown wrote:
 
-I think the fix is worse than the current code, because there is no
-real semantics behind the pointer being passed to
-irq_set_vcpu_affinity(). All that is required is that it is a non-NULL
-pointer.
+> On Wed, Dec 11, 2024 at 12:45:56PM +0000, Lee Jones wrote:
+> 
+> > Seeing as the vast majority of this 400 line driver pertains to Regmap
+> > handling (!), would you be kind enough to cast your expert eye over it
+> > please?
+> 
+> Is there something specific you're concerned about there?  It looks like
+> it's just data which should be fine.
 
-I expect the following hack to work just as well and not suffer from
-any sparse indigestion. Untested though.
+Just the mass of complex hoop-jumping to get all of these Regmaps
+registered.  But if nothing stands out to you, then it's probably okay.
 
-	M.
-
-diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-index 1215df5904185..8058d92048fb4 100644
---- a/arch/arm64/kvm/arch_timer.c
-+++ b/arch/arm64/kvm/arch_timer.c
-@@ -1391,8 +1391,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
- 	}
- 
- 	if (has_gic) {
--		err = irq_set_vcpu_affinity(host_vtimer_irq,
--					    kvm_get_running_vcpus());
-+		err = irq_set_vcpu_affinity(host_vtimer_irq, info);
- 		if (err) {
- 			kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
- 			goto out_free_vtimer_irq;
-@@ -1415,8 +1414,7 @@ int __init kvm_timer_hyp_init(bool has_gic)
- 		}
- 
- 		if (has_gic) {
--			err = irq_set_vcpu_affinity(host_ptimer_irq,
--						    kvm_get_running_vcpus());
-+			err = irq_set_vcpu_affinity(host_ptimer_irq, info);
- 			if (err) {
- 				kvm_err("kvm_arch_timer: error setting vcpu affinity\n");
- 				goto out_free_ptimer_irq;
+Still, I can't review / take this until it's a proper MFD.
 
 -- 
-Without deviation from the norm, progress is not possible.
+Lee Jones [李琼斯]
 
