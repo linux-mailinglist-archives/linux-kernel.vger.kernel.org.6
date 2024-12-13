@@ -1,118 +1,173 @@
-Return-Path: <linux-kernel+bounces-445527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994D99F1754
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:19:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C7A9F1755
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:21:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC6F164127
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:19:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4468E188A4D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C8619146E;
-	Fri, 13 Dec 2024 20:19:40 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA083191F62;
+	Fri, 13 Dec 2024 20:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jS+ilNGd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F148018F2FB
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 20:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52B418F2FB;
+	Fri, 13 Dec 2024 20:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734121180; cv=none; b=i7XDRzycT7XvyshCoLQA/gYPUBmDuEwCAV6rSQfbrqO9dzMAIJO39IzNUP+xEWNF191KCxE+7ZzdatAr6BJ8JILXlqSUu0gzAbzOYe6180tsJ8ZHnSYhl9/t6LcQmJfHvZNsluqrHfBe2iWY63OW5y0KiLywKLym2i4JpHoyFkM=
+	t=1734121271; cv=none; b=G8L6zWNSS4KEPdoc+8dlxfBFtttb8vlWG6JeRPs1YoWZGC1KgAaWlS0PFrPQ7Hyfqemng2WCngV8MaYzKeoHyALZimy8Ioogva0qSIb/eD+MlSV7qVOS3C1/+GMt0eXgK5Rt9zHiEUYXrPlrCmngDxaXqFsqhBZDtU3DrI4NTBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734121180; c=relaxed/simple;
-	bh=w0a5QAnr+DawvGVOT19kGK8AYML+YC9VmvysdHeuvX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zd4X7eg+7jktLrqc2NEnKAvCXcAYVAkC5rFEiq0g4VKmVKXpA2medS7sPCXHM2Q33svtSnwdAd+btmuorgFdH941v9M3/CsSB5CSEo0OT6Opb8WFQV2lnPfZxumBZ4d7MXQX6kITYECaq+CmHLE12HEJBGLCqsp4phdLu8kXoRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9983CC4CED0;
-	Fri, 13 Dec 2024 20:19:38 +0000 (UTC)
-Date: Fri, 13 Dec 2024 15:20:04 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Michal Simek <monstr@monstr.eu>, linux-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [for-linus][PATCH 3/3] ftrace/microblaze: Do not find
- "true_parent" for return address
-Message-ID: <20241213152004.1e74ca81@gandalf.local.home>
-In-Reply-To: <20241213172947.GJ3387508@ZenIV>
-References: <20241213152647.904822987@goodmis.org>
-	<20241213152704.448212590@goodmis.org>
-	<eb7933ae-3462-49de-b76d-16ca652d714e@monstr.eu>
-	<20241213172947.GJ3387508@ZenIV>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1734121271; c=relaxed/simple;
+	bh=E3bOxijDc+kqtfBtyblaqVT6S3rrhM7udJksoxIrnYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IMawrbcCFolUvYBICjbT9LtwkZSRpJykOitxWM6HRBUDmYtW/HeD5PoAeJzT/8owRADgZyc6vOwxsGNdWPiZKzUFwRUNrtPiF/UAO1pPBwTlLkJoRz2Y9BoQl0FbxOaNpZOKr+J0mBL196cGh6/bYzjtTFYSQ7nw4lqNBGnZeQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jS+ilNGd; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734121269; x=1765657269;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=E3bOxijDc+kqtfBtyblaqVT6S3rrhM7udJksoxIrnYc=;
+  b=jS+ilNGdUfq+0AFck7JTRQb678vlErKSUp3+vpJuKt1pA7Y9Krovv8Zc
+   pZtZgkRCPlnE1Q7WQ10p9L6KOPnVlYdMmnD5NRSZIJaJ+dnVLGj60BQrU
+   9ul4DeQ8Bp7G8uI5bTA7n6JaOBHfXprlVLcDijH4VTIEzaxT1girfUFTj
+   Vd7M8EbhVwNBLwIZ6Bg21IoyXFeVz2kB+oN7/u5q+SvVDFrHhDs4rtdZr
+   v1dnCxaReRhanbhJKzWnKyo6qJCjqHns8VCsXfn2VNkP9v3qvoqI5Xoqg
+   pgAz0CFlD30bT1aHQmXn9GjzmluvA4LLJipKH3YeW1YcuA/p5KFuMStQw
+   w==;
+X-CSE-ConnectionGUID: 25TYSjPeQIS6w25xqfxO3w==
+X-CSE-MsgGUID: s0CkCpkWRsyxY7TtUUtKiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="34723734"
+X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
+   d="scan'208";a="34723734"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 12:21:09 -0800
+X-CSE-ConnectionGUID: fi9u+KgfRCKZfVixy+NTzQ==
+X-CSE-MsgGUID: wwcO/nNzRlel1ew0TLPPSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
+   d="scan'208";a="96852210"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 12:21:08 -0800
+Received: from [10.246.136.4] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.4])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 76A8420B5713;
+	Fri, 13 Dec 2024 12:21:07 -0800 (PST)
+Message-ID: <219e5f79-d2c2-45df-9298-142597ebb404@linux.intel.com>
+Date: Fri, 13 Dec 2024 15:21:06 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf script: Fix output type for dynamically allocated
+ core PMU's
+To: Thomas Falcon <thomas.falcon@intel.com>, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com
+Cc: ravi.bangoria@amd.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241213201109.630658-1-thomas.falcon@intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20241213201109.630658-1-thomas.falcon@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 13 Dec 2024 17:29:47 +0000
-Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-> On Fri, Dec 13, 2024 at 04:39:29PM +0100, Michal Simek wrote:
-> 
-> > > diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
-> > > index 74c353164ca1..a75d107a45f8 100644
-> > > --- a/kernel/trace/trace_functions.c
-> > > +++ b/kernel/trace/trace_functions.c
-> > > @@ -176,7 +176,8 @@ static void function_trace_start(struct trace_array *tr)
-> > >   	tracing_reset_online_cpus(&tr->array_buffer);
-> > >   }
-> > > -#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-> > > +/* Microblaze currently doesn't implement kernel_stack_pointer() */  
-> > 
-> > Does it mean that this function should depends on
-> > ARCH_HAS_CURRENT_STACK_POINTER instead of name the architecture?  
-> 
-> Nope.  ARCH_HAS_CURRENT_STACK_POINTER == "there's a current_stack_pointer variable"
-> (presumably something like register unsigned long current_stack_pointer asm("r1");
-> in case of microblaze).  kernel_stack_pointer() is "here's pt_regs, give me the
-> kernel stack pointer stored in it (assuming it _is_ stored there)".
-> 
-> And what ftrace code really want is "here's the structure formed by _mcount();
-> give me the kernel stack pointer at the time of _mcount() entry".  _IF_ that
-> structure is pt_regs (fairly common) and if there's kernel_stack_pointer(),
-> we get the default implementation of that helper in linux/ftrace_regs.h:
-> 
-> #define ftrace_regs_get_stack_pointer(fregs) \
->         kernel_stack_pointer(&arch_ftrace_regs(fregs)->regs)
-> 
-> If it's not pt_regs, you are expected to define HAVE_ARCH_FTRACE_REGS, define
-> struct __arch_ftrace_regs to match whatever layout you are using and provide
-> the set of ftrace_regs_...() helpers.
-> 
-> >From my reading of your mcount.S, the layout is, indeed, different and  
-> r1 is not stored there at all - something like
-> 
-> struct __arch_ftrace_regs {
-> 	unsigned long r2, r3, r4, r6;
-> 	unsigned long r7, r8, r9, r10;
-> 	unsigned long r11, r12, r13, r14;
-> 	unsigned long r16, r17, r18, r19;
-> 	unsigned long r20, r21, r22, r23;
-> 	unsigned long r24, r25, r26, r27;
-> 	unsigned long r28, r29, r30, r31;
-> 	unsigned long r5;
-> }
-> 
-> static inline unsigned long ftrace_regs_get_stack_pointer(struct ftrace_regs *regs)
-> {
-> 	return (unsigned long)regs + sizeof(struct __arch_ftrace_regs) + 4;
-> }
 
-OK, so this is still unique for Microblaze. I'll keep the patch, but fix
-the typo in the change log.
+On 2024-12-13 3:11 p.m., Thomas Falcon wrote:
+> perf script output may show different fields on different core PMU's
+> that exist on heterogeneous platforms. For example,
+> 
+> perf record -e "{cpu_core/mem-loads-aux/,cpu_core/event=0xcd,\
+> umask=0x01,ldlat=3,name=MEM_UOPS_RETIRED.LOAD_LATENCY/}:upp"\
+> -c10000 -W -d -a -- sleep 1
+> 
+> perf script:
+> 
+> chromium-browse   46572 [002] 544966.882384:      10000 	cpu_core/MEM_UOPS_RETIRED.LOAD_LATENCY/: 7ffdf1391b0c     10268100142 \
+>  |OP LOAD|LVL L1 hit|SNP None|TLB L1 or L2 hit|LCK No|BLK    N/A    5   7    0   7fad7c47425d [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
+> 
+> perf record -e cpu_atom/event=0xd0,umask=0x05,ldlat=3,\
+> name=MEM_UOPS_RETIRED.LOAD_LATENCY/upp -c10000 -W -d -a -- sleep 1
+> 
+> perf script:
+> 
+> gnome-control-c  534224 [023] 544951.816227:      10000 cpu_atom/MEM_UOPS_RETIRED.LOAD_LATENCY/:   7f0aaaa0aae0  [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
+> 
+> Some fields, such as data_src, are not included by default.
+> 
+> The cause is that while one PMU may be assigned a type such as
+> PERF_TYPE_RAW, other core PMU's are dynamically allocated at boot time.
+> If this value does not match an existing PERF_TYPE_X value,
+> output_type(perf_event_attr.type) will return OUTPUT_TYPE_OTHER.
+> 
+> Instead search for a core PMU with a matching perf_event_attr type
+> and, if one is found, return PERF_TYPE_RAW to match output of other
+> core PMU's.
+> 
+> Suggested-by: Kan Liang <kan.liang@intel.com>
+> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
+> ---
+> v2: restrict pmu lookup to platforms with more than one core pmu
+> ---
+>  tools/perf/builtin-script.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index 9e47905f75a6..459794c737ce 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -384,6 +384,18 @@ static int evsel_script__fprintf(struct evsel_script *es, FILE *fp)
+>  		       st.st_size / 1024.0 / 1024.0, es->filename, es->samples);
+>  }
+>  
+> +static bool output_type_many_core_pmus(unsigned int type)
+> +{
+> +	struct perf_pmu *pmu;
+> +
+> +	if (perf_pmus__num_core_pmus() > 1) {
+> +		pmu = perf_pmus__find_by_type(type);
+> +		if (pmu && pmu->is_core)> +			return true;
 
-Michal,
+I think it should be good enough to search the core_pmus.
+	list_for_each_entry(pmu, &core_pmus, list) {
+		if (pmu->type == type)
+			return true;
+	}
 
-Any objections?
+Thanks,
+Kan
+> +	}
+> +	return false;
+> +}
+> +
+>  static inline int output_type(unsigned int type)
+>  {
+>  	switch (type) {
+> @@ -394,6 +406,9 @@ static inline int output_type(unsigned int type)
+>  			return type;
+>  	}
+>  
+> +	if (output_type_many_core_pmus(type))
+> +		return PERF_TYPE_RAW;
+> +
+>  	return OUTPUT_TYPE_OTHER;
+>  }
+>  
 
--- Steve
 
