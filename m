@@ -1,98 +1,156 @@
-Return-Path: <linux-kernel+bounces-445228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0129F130B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:56:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7949F130F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:56:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53046188D596
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:56:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9961E3DF2;
+	Fri, 13 Dec 2024 16:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qqxb8nGo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E461C284687
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:56:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E2D1E3DEC;
-	Fri, 13 Dec 2024 16:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7U/RxCy"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED731684AE;
-	Fri, 13 Dec 2024 16:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF1C1E04B8
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734108977; cv=none; b=mrJ24GYFmstTi18CYCfbacqjNGCKoVm0Y5tqRpep2OWDTv0DJFyDTeDdnRDe3Q2kEh9gWCj95rkY1wtipnSqzEZAoERfn0wnxxYfqEBS7+77B7f3KYKL2wSABrPW6A7tPbr+48NeVwgTyywOWomeEGrAA1n86ACub8fzgoGIEHw=
+	t=1734108949; cv=none; b=sE8F3BE7A0gSGlld8coatEVacC9s2JoLh2J5Pc0DCu+vrpgqAlquIMOk7z8Upuem8+kbwFXn6b5L2iGEQzPAf4llO0zr/yWFoYmSlLkrPEv/EaQOXl2s+p+zVRrXT9VKnbTzo9lXzjEt5xDV+ciYRW/wTfbYfPWj1WrmRpHwW0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734108977; c=relaxed/simple;
-	bh=QDu92WMRvCNzYowrSM2zgW9TeimKB2kSvwDc/TXJfuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oAdx86BR4BHUZZKpHlRS/riHZtyuQ+cR2kPmdVbsq9elB/xXcXHiGmrEilY0M9JlKQ+bGWfBqpXumAJ+ev2Pwjz4cirrRw2/emFbyzOgTQdUcy2Zl6NtufS61mqm6qYAts59ONbfbWFanI1WNTC1nYPQmVa2D2kbgvqTPRidsKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7U/RxCy; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso22071861fa.0;
-        Fri, 13 Dec 2024 08:56:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734108974; x=1734713774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QDu92WMRvCNzYowrSM2zgW9TeimKB2kSvwDc/TXJfuU=;
-        b=D7U/RxCyW7ehvDndWaoyuZSdiCDCppmGVYbzwWgIrAbOR0t21g2gdnj3spliKj4phu
-         bhKClgn7gcbsrruDidaDhWT2H3uUC4PX+U3r2zx+j4dTfm+CzOw3EdkRp+HBQqSZ2UHR
-         LmIxK9t2hmC5OXYQloVJkiYX8KPFOuUDb24bauHyaVcn37zGtAP7DPlZXODC0PVmeGTL
-         n5iUorNuMsBAWPKQGS6R2dMwiZ/k9KrK8ZKMdDsPLJV9PDBY9MXaK3kRRtvH8f+1aHF3
-         i2VTNcRnKgSKzkDzcxPjP1Xrx/JH+styq6OUfuC3i4BoL8wLQZ1lG0Q/7mLJGTqGgJEk
-         gcfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734108974; x=1734713774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QDu92WMRvCNzYowrSM2zgW9TeimKB2kSvwDc/TXJfuU=;
-        b=VnXeqA63DqCqrCTWa4J6oX0SNsY8C4qdm51hR0QKIo7OAySBqtWhOeWl06115KsoG2
-         V8fLv6SEV8b62tP7tAXAtnwbS29Lk+qt/jKxZ4P8U99/cnvT3+kgKspMi83b+3ERrpsm
-         sIpkROhIPltWSzna1kRieXs/tdvT1jTjTeUOjPKQLIvSQcosnTDFG/VlSTrg6oMj699y
-         hmZvPaU3FPb757n84h+HneR+5Q6C75OieVhwOq3CC7XV4s8gEfmejt6vI5LLEQeVDQOm
-         VUbzJmcYw7lzwe8zY/S31vNlmY7l+w+VYrwpsK29rw/BtD2hPFLKPnfdV8J7r6y6zVz2
-         W8uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaNkRTmDXZD46kkcp5d6akXVvAYGENDfji7nB8iwDjZJLnU8QOrLaFKBmtMY9jXFI7IfzJwa1Y3WbypMlCgtw=@vger.kernel.org, AJvYcCW8e/MDZh55sR2MtUH0Wva3+lYYJWlpQ/xIYZTe9526lqNVT3nDsiORgtFKo5LoAs8WjaYrtCFPxohrVn8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDe9QXck5xP6EyzNGLuHgb0dAOmnZ4wWmRcDiqB2NusLRzTUlX
-	TZ3osc9ewY+mF/AIMXZjAYGudE8dn1jmnIG+64LUQllFYfoDbgeCpsEb5FaIR9/phlCExibbZr6
-	rr8MmsC7i2iT1LYbApnZue00J4Yk=
-X-Gm-Gg: ASbGncvI3XGkwRE5LfElntIomBRn56BCuDXUeYq+GGh8Zy5zy4eIWZ4fSk948qNiJr1
-	4uhYJmpOZEv+WRpYO5f2R7ORrBYVrj1OLeLyfvi27vpAIpZ1WFHI6
-X-Google-Smtp-Source: AGHT+IEHmJc/LcMgwBVMSGVt9nxNDthWvphEJeIY5rd9j70w7ZM/3ixy5jYbC9YcXY1vwynX2vPejCVNCS0i9k+g2Rk=
-X-Received: by 2002:a05:651c:b27:b0:302:3e14:34c5 with SMTP id
- 38308e7fff4ca-30254611194mr13627461fa.28.1734108973901; Fri, 13 Dec 2024
- 08:56:13 -0800 (PST)
+	s=arc-20240116; t=1734108949; c=relaxed/simple;
+	bh=0OTul8bI5rWXtsT+uQ0v5z3rSTVDK0iYdJ8pLwxIP6o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KKozdol9igiM6laLYL15aYDQ9BY+r5aYT0U/rrR1+uH1L+sKSwFix8Ll3qPoLf3mhlwOM20OTrIPZx4IpglI758gEL4jj5JCnjLHbh9RrFuUmZL92cjaHt9VjL4tL8YcMmiLs1o7Xob9A9C3q9B9V/Iew1weP7/OaiZjLG//XJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qqxb8nGo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD91R7H022816;
+	Fri, 13 Dec 2024 16:55:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GMOZxZhdaMQj27AqvsnB0B0ki10wfKOas4Sd1wNzl+A=; b=Qqxb8nGonEMJtFQx
+	bUr+0Jjf5W0Bo2RYQGGhE4/TfYf3vQSyh2PWF3DpvEQO+hvKwzIVC+2ZZvTcUvO/
+	DkArS6KijDfKsdBV+2QdiDCHN46t2IvQ+rb/Xtq1yxU+bauJJTeRbiNaubot/hUL
+	vrwDqihtly3XhTzpFVCwoFx9ECDPl4aEsPD29hhhZjdtqBNndGWwmwJUY/BJOSrk
+	jPXdVL3aQ/R3FlL9MNkqtBOxx83eDIpqpdxU2Fovxz09xnbV6om9ameO8AVRl/5j
+	/hBaS2XZzuZ8/0yWI7/cHA3KH+HHi8GhcMWePRftEnNw4koV+zBEpAki3QlasN+d
+	7UO3Nw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43g4wnb45u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 16:55:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDGth4x013964
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 16:55:43 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
+ 2024 08:55:42 -0800
+Message-ID: <58715579-1dc4-acc7-0cd4-870f1cd1f579@quicinc.com>
+Date: Fri, 13 Dec 2024 09:55:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212-rust-xarray-bindings-v12-0-59ab9b1f4d2e@gmail.com>
-In-Reply-To: <20241212-rust-xarray-bindings-v12-0-59ab9b1f4d2e@gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 13 Dec 2024 11:55:37 -0500
-Message-ID: <CAJ-ks9=GSJYSqTvbzwq9MPUPohFM+b_96pVOw4jRC6b=NTxYcA@mail.gmail.com>
-Subject: Re: [PATCH v12 0/2] rust: xarray: Add a minimal abstraction for XArray
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Cc: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V2 6/8] accel/amdxdna: Enhance power management settings
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>,
+        <mario.limonciello@amd.com>,
+        Narendra Gutta <VenkataNarendraKumar.Gutta@amd.com>,
+        George Yang
+	<George.Yang@amd.com>
+References: <20241206220001.164049-1-lizhi.hou@amd.com>
+ <20241206220001.164049-7-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20241206220001.164049-7-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: dDAQBv4TgH-7mLvczJNy9oRZwBFpQed3
+X-Proofpoint-GUID: dDAQBv4TgH-7mLvczJNy9oRZwBFpQed3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 mlxlogscore=925 spamscore=0
+ mlxscore=0 clxscore=1015 adultscore=0 phishscore=0 suspectscore=0
+ bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412130118
 
-On Thu, Dec 12, 2024 at 3:31=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> teststs
+On 12/6/2024 2:59 PM, Lizhi Hou wrote:
+> +/**
+> + * struct amdxdna_drm_get_power_mode - Get the configured power mode
+> + * @power_mode: The mode type from enum amdxdna_power_mode_type
+> + * @pad: MBZ.
 
-Oops, please ignore this fragment. Having a bit of trouble with b4.
+I don't see a check for zero in the implementation
+
+> + */
+> +struct amdxdna_drm_get_power_mode {
+> +	__u8 power_mode;
+> +	__u8 pad[7];
+> +};
+> +
+>   /**
+>    * struct amdxdna_drm_query_firmware_version - Query the firmware version
+>    * @major: The major version number
+> @@ -397,6 +416,7 @@ enum amdxdna_drm_get_param {
+>   	DRM_AMDXDNA_QUERY_SENSORS,
+>   	DRM_AMDXDNA_QUERY_HW_CONTEXTS,
+>   	DRM_AMDXDNA_QUERY_FIRMWARE_VERSION = 8,
+> +	DRM_AMDXDNA_GET_POWER_MODE,
+>   };
+>   
+>   /**
+> @@ -411,6 +431,34 @@ struct amdxdna_drm_get_info {
+>   	__u64 buffer; /* in/out */
+>   };
+>   
+> +enum amdxdna_drm_set_param {
+> +	DRM_AMDXDNA_SET_POWER_MODE,
+> +	DRM_AMDXDNA_WRITE_AIE_MEM,
+> +	DRM_AMDXDNA_WRITE_AIE_REG,
+> +};
+> +
+> +/**
+> + * struct amdxdna_drm_set_state - Set the state of the AIE hardware.
+> + * @param: Value in enum amdxdna_drm_set_param.
+> + * @buffer_size: Size of the input param.
+> + * @buffer: Input param.
+
+Is this a pointer address?  Maybe clarify that?
+
+> + */
+> +struct amdxdna_drm_set_state {
+> +	__u32 param; /* in */
+> +	__u32 buffer_size; /* in */
+> +	__u64 buffer; /* in */
+> +};
+> +
+> +/**
+> + * struct amdxdna_drm_set_power_mode - Set the power mode of the AIE hardware
+> + * @power_mode: The sensor type from enum amdxdna_power_mode_type
+> + * @pad: MBZ.
+
+I don't see a check for zero in the implementation.
+
 
