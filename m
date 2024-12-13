@@ -1,125 +1,210 @@
-Return-Path: <linux-kernel+bounces-445355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD74C9F14FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:34:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3E79F1507
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:35:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B69728392B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:34:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E5B7A0658
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765971E47DD;
-	Fri, 13 Dec 2024 18:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3D31EBA0D;
+	Fri, 13 Dec 2024 18:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLyRhUpg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="fZnO6G4P"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89B3364D6;
-	Fri, 13 Dec 2024 18:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734114844; cv=none; b=cgE9SXfVuHKSL45sokdmLYRQpnO3g1ge+9nxIGI9vAel5Cz+JcfZFhYFOb0QyMkvryF/FmD71A1pHFCuj/tVOlfS20QK94Htufy/khSX1YeSFuBnx0ZGMM/adU7+QZIOREOnx59XfBWCOfGERptyPhiSTP9wJ3AwGGhc986qqBk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734114844; c=relaxed/simple;
-	bh=c6QaCi+csUzrFKqJQeJC3Iz7NJnFz8biXkSovhI1qys=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Wtnqozko+Qr/CwDk5UHdiDVWZpf171f4oPPFNKt2S0JcW1Qx44KFU4hqYt9ZUvikby7D8/gWjgG/AvsvxMhOhMbv1Q+gQZQ6WY+RLHFhSoWJM6v/ewk767jV8uTURLElUgwrCU1uGR2OpttK51gzyVTzFQ37/nQ3Z9VHLUVAVmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLyRhUpg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FA5CC4CED0;
-	Fri, 13 Dec 2024 18:34:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734114844;
-	bh=c6QaCi+csUzrFKqJQeJC3Iz7NJnFz8biXkSovhI1qys=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hLyRhUpgouUVhiR34XPcal6WlQi5HwA3ipGlNVvqgOjL8qPikY1YbrNTL6DOgIKYv
-	 LMrtV2IKZ00rD1Z5j4xu+flrvf1m4GApKargcop1zjmlRyDUaRlNGW3C8Y5H7UBkHl
-	 OMGmeQSrUco29YPYomRM9OG7yUOtp7r10Okw2mVXicT/EPZcMt5yzSnYpQzRz5oLHt
-	 s5HaS418zTRP5fygbxfe8767dVduOkNnL/wl/LUhM3Ms+LYxP+56oNaKGdCMZdtxNq
-	 /9BpanODXo1IHQf5ATswmEVPhbP/8BMaIth1BqkZWELvCYCBlho9ftPG3SJZLe7EoO
-	 5HLEDRItDXX1w==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 5.15 000/565] 5.15.174-rc1 review
-Date: Fri, 13 Dec 2024 10:34:00 -0800
-Message-Id: <20241213183401.52726-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241212144311.432886635@linuxfoundation.org>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784E41EB9F4;
+	Fri, 13 Dec 2024 18:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734114888; cv=pass; b=C8/mDB+VwDBrbv1Tn8m54jSQsTgMVyQnN11XmKuBT941FyBnumN8WqRnVEDkkCdSZf4mX8YO/afeOgElI80Esyb6iMl+jxc67eJP8bsX3w07uf5fVrFs93TQtIqKtOz6iaakqcWk2ZIJSwvslAWIjAsOdMCbaMd55RoFI6hsWew=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734114888; c=relaxed/simple;
+	bh=JP+inYdnVT5YePzMgqMVexoxF4Cf/ftPdRDwv/Ytn4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jB+758aNFsRdAd4LUB17dsRyUsOanvsn+6oqEQ2fA65SZkbGKBhvyYFECtlxvCoNFIMvdzoyRzk/K2QTO1vHn6KxE04VYwrsTlLhIdjjG3CO/0MGnCryWmNGP77CmqthhphdFG6JUbgfdpwcqE3G0fn+aWoFAwaLB0A3n13lsys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=fZnO6G4P; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1734114847; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SvAcOJY4ENjwkh4yqc8jzgQIfxnftgaq/eaNj7wJ7zOpHvNVDof2/8UZUAOZtn3UDGFiO5UxSEf2N+f/u1dwgt0JyjQfHtXqc6FyTifepQ5fDQ4Ko5ZrS2VbsJYu5zVnClkLDr/FTrfTU/4xsattOjY0e8Hye/LY6POLKztRoMw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734114847; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9Dm+phNaOF6lF+9DcLSZb4FaAsRUdmNhMpbAh3iEkgU=; 
+	b=ZU+D4io+X1w4oKuq6ToZYMbh5iFAGnA1sJ2JDrggylvYCBA40E49jWo6mobOBca7I+JuBE5Ynxj5o+9T6D/CoYsuSqHgy0/yIfjCIVZWtBhoEQ6IBCtHkeshC9mvDyO2sj0VW+jZZ2/zHz5m4qEsd+sLcB7XO7s1SW8DSWq+iNg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734114847;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=9Dm+phNaOF6lF+9DcLSZb4FaAsRUdmNhMpbAh3iEkgU=;
+	b=fZnO6G4PjfRmzE1ndXHGkWFhk5VnRDMGhRwPOoouZRcQG6yh8BmRnfrVL48NL2Rv
+	1dwxMrN/S0qxFh+9UrgVhJUs7xDWcUXFGMjz4eGbsrG1R12g3nczGvnyIphB/bMsUwa
+	v9Z+yXOwQ4Qu8fIhnte1rR7FZ0K0xbWhm1k77qOg=
+Received: by mx.zohomail.com with SMTPS id 1734114845510958.4473681288645;
+	Fri, 13 Dec 2024 10:34:05 -0800 (PST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Andy Yan <andyshrk@163.com>
+Cc: heiko@sntech.de, hjc@rock-chips.com, krzk+dt@kernel.org,
+ s.hauer@pengutronix.de, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ derek.foreman@collabora.com, Andy Yan <andy.yan@rock-chips.com>,
+ kernel@collabora.com
+Subject: Re: [PATCH v5 05/18] drm/rockchip: vop2: Set AXI id for rk3588
+Date: Fri, 13 Dec 2024 13:34:03 -0500
+Message-ID: <13660005.uLZWGnKmhe@bootstrap>
+In-Reply-To: <3f1eace4.75cf.193b9daf585.Coremail.andyshrk@163.com>
+References:
+ <20241209122943.2781431-1-andyshrk@163.com> <5843712.DvuYhMxLoT@bootstrap>
+ <3f1eace4.75cf.193b9daf585.Coremail.andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ZohoMailClient: External
 
-Hello,
+On Thursday, 12 December 2024 02:52:34 EST Andy Yan wrote:
+> Hi Detlev,
+>=20
+> At 2024-12-11 23:45:01, "Detlev Casanova" <detlev.casanova@collabora.com>=
+=20
+wrote:
+> >On Wednesday, 11 December 2024 01:34:34 EST Andy Yan wrote:
+> >> Hi Detlev,
+> >>=20
+> >> At 2024-12-11 02:40:14, "Detlev Casanova" <detlev.casanova@collabora.c=
+om>
+> >
+> >wrote:
+> >> >Hi Andy,
+> >> >
+> >> >On Monday, 9 December 2024 07:29:18 EST Andy Yan wrote:
+> >> >> From: Andy Yan <andy.yan@rock-chips.com>
+> >> >>=20
+> >> >> There are two AXI bus in vop2, windows attached on the same bus must
+> >> >> have a unique channel YUV and RGB channel ID.
+> >> >>=20
+> >> >> The default IDs will conflict with each other on the rk3588, so they
+> >> >> need to be reassigned.
+> >> >>=20
+> >> >> Fixes: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
+> >> >> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> >> >> Tested-by: Derek Foreman <derek.foreman@collabora.com>
+> >> >>=20
+> >> >> ---
+> >> >>=20
+> >> >> Changes in v5:
+> >> >> - Added in V5
+> >> >>=20
+> >> >>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 14 +++++++++++
+> >> >>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.h |  9 +++++++
+> >> >>  drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 26
+> >> >>  +++++++++++++++++++-
+> >> >>  3 files changed, 48 insertions(+), 1 deletion(-)
+> >> >>=20
+> >> >> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> >> >> b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c index
+> >> >> dc4edd65bc9e..8b9ca046eeeb 100644
+> >> >> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> >> >> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> >> >> @@ -1426,6 +1426,12 @@ static void vop2_plane_atomic_update(struct
+> >> >> drm_plane *plane, &fb->format->format,
+> >> >>=20
+> >> >>  		afbc_en ? "AFBC" : "", &yrgb_mst);
+> >> >>=20
+> >> >> +	if (vop2->data->soc_id > 3568) {
+> >> >
+> >> >Shouldn't this be done only for rk3588, as specified in the comments
+> >> >below
+> >> >? The test we did before showed that it is failing on rk3576 and 3576=
+ is
+> >> >>
+> >> >3588.
+> >>=20
+> >> I think this is because you tested before with the patch I gave Derek
+> >> without axi id assigned for rk3576.
+> >> I assigned axi id for rk3576 in this version 18/18=EF=BC=88The new ID =
+assignment
+> >> can adapt to more application scenarios.=EF=BC=89, can you test it wit=
+h the
+> >> whole V5 version again?
+> >
+> >Yes, I will do that. But patch 18 mentions:
+> >+       /* Read only bit on rk3576*/
+> >+       [VOP2_WIN_AXI_BUS_ID] =3D REG_FIELD(RK3568_CLUSTER_CTRL, 13, 13),
+> >
+> >And the bit is being written here. If it is indeed writable, then I would
+> >drop that comment.
+>=20
+> The AXI_BUS_ID for two Cluster windows on RK3576 are fixed by hardware, t=
+hat
+> means whether we write it or not, it won't change anything.
+> But the AXI_BUS_ID for Esmart windows on rk3576 and  AXI_YRGB/UV_R_ID for
+> all cluster/esmart windows on rk3576 are writeable.
+> I think we directly write it here as the current code can make things eas=
+y.
 
-On Thu, 12 Dec 2024 15:53:15 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+I see, saying it is read only may be a bit confusing then, but it makes sen=
+se.=20
+You could be more specific adding that writing has no effect.
 
-> This is the start of the stable review cycle for the 5.15.174 release.
-> There are 565 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> Anything received after that time might be too late.
+Anyway, I tested this and it works as expected:
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
+Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
 
-Tested-by: SeongJae Park <sj@kernel.org>
+Regards,
+Detlev.
 
-[1] https://github.com/damonitor/damon-tests/tree/next/corr
-[2] 8d1a4b85ba4b ("Linux 5.15.174-rc1")
+> >> >I suggest
+> >> >
+> >> >	if (vop2->data->soc_id =3D=3D 3588) {
+> >> >
+> >> >Regards,
+> >> >Detlev
+> >> >
+> >> >> +		vop2_win_write(win, VOP2_WIN_AXI_BUS_ID, win->data-
+> >> >>
+> >> >>axi_bus_id);
+> >> >>
+> >> >> +		vop2_win_write(win, VOP2_WIN_AXI_YRGB_R_ID, win->data-
+> >> >>
+> >> >>axi_yrgb_r_id);
+> >> >>
+> >> >> +		vop2_win_write(win, VOP2_WIN_AXI_UV_R_ID, win->data-
+> >> >>
+> >> >>axi_uv_r_id);
+> >> >>
+> >> >> +	}
+> >> >> +
+> >> >>=20
+> >> >>  	if (vop2_cluster_window(win))
+> >> >>  =09
+> >> >>  		vop2_win_write(win, VOP2_WIN_AFBC_HALF_BLOCK_EN,
+> >> >
+> >> >half_block_en);
+> >
+> >Detlev.
+> >
+> >
+> >
+> >_______________________________________________
+> >Linux-rockchip mailing list
+> >Linux-rockchip@lists.infradead.org
+> >http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
-Thanks,
-SJ
 
-[...]
 
----
 
-ok 1 selftests: damon: debugfs_attrs.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh # SKIP
-ok 12 selftests: damon-tests: build_m68k.sh # SKIP
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
 
