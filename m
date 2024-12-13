@@ -1,125 +1,153 @@
-Return-Path: <linux-kernel+bounces-444177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79029F027A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:02:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7249F027B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFBDB162499
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:02:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456DC1663AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536952AEE9;
-	Fri, 13 Dec 2024 02:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ECC364D6;
+	Fri, 13 Dec 2024 02:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="leyo8V+a"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iT0brg8b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36388846F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 02:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDC1846F;
+	Fri, 13 Dec 2024 02:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734055333; cv=none; b=Q2g2fJhMXOaZHy56Rhv3xticeAVz+jfVhBaUwiiQlejKiRGiFjBd7xOPt4bXI+bUutP8zswH96OPcNLKBsPDoTE3TLkPjK9gTllyrNe5/3ZXdcztbMDCY49TI9fXx0sjZdvCeiAIkO4sgg9renKbFrH4I9tLWz9xVHao/XAUHUM=
+	t=1734055699; cv=none; b=eGV0zl9pu9MNoIlEyRRZWreEtj6KmLfWZ0LEmV1pNXGeQblG0w2acZrmQVz9pV1Y3g1VeTUL2fCcDGvILM3hApLenckn6Yic+Yfth4Pf5Bju90KYPONrixXowY3j7pfESK5EISso5MeuZFs8oc1sc5g+qMEIVl7UuTBPruDKh0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734055333; c=relaxed/simple;
-	bh=gnbgtPzcEDsASikfB6jgokSPAazc1Vtapd0SU7k5skU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F00xG/nmpSVqMfed5i5CpNLN+0OHM+L9bZpQSVV20zGTGH76hRGMqWVbnbiKTVGXemWM4Z1j+REPyfW+xNpp+a09kKzEd0MzUYVwBFM7ykAzvWm4GGykQ7v2jg6NsXGN38Yx6EyTWMm6+6hOBxhsDFfxc7Ptl9obP1YvrshtnQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=leyo8V+a; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QGdNKkiSBGBLzGEVFXwgDerw9/cLkP8NiqmikqE4lNw=; b=leyo8V+a8M02afmy+hWX7XrR4o
-	08qp8R/Zd5DB+hucuhfkel5IRzuLxPw1O8FtwewVAflGKMVC3gI4RzdnYiqjlYbklDj0Bwmbw3S13
-	wLGv76yvqK9kgCSne2rMo82qAF1aXLiMUFmiLgPk5roCUlJSsY92MlJtOa5ZAHBqplaP1/iGNL8C+
-	qSAZsFBd/GH8DEHg7xNEsPtzaYt8S6ooYAGz9c/4kuMnwsl+2OXTrzpPNtWEQckUXg5B46Unxnlm/
-	8WVPtejVeFWnBU6jM2LfcWUeekPh9Il9r6WL2y67QX8lJTPTIefByDs+gRus0lnJQOjDffiLUnwYk
-	in/OuJxQ==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tLv0B-002ToF-GT; Fri, 13 Dec 2024 03:01:59 +0100
-Message-ID: <8cb978cf-39dd-43e0-948c-1632a11b0da5@igalia.com>
-Date: Fri, 13 Dec 2024 11:01:53 +0900
+	s=arc-20240116; t=1734055699; c=relaxed/simple;
+	bh=tm5RF1spERBhNh027vl264Wk2gO7rUaUP/g9RZDDAXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QGPTBNJu/uHKSiQRnZt+2qKzsbBRmG+HYMZiawaXVaTVdUyEenTSpb5V2fKx7STk0icO0lrqrVVxQzhtPocg9QmC1X2HlmkDZ7JWunbBmdJrsofagw5oPxjoka3xC67wUXPFYRaFZLIC9aUZAQAvP64ACbGYSyJdE2OcAbLvUnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iT0brg8b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76BF4C4CECE;
+	Fri, 13 Dec 2024 02:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734055696;
+	bh=tm5RF1spERBhNh027vl264Wk2gO7rUaUP/g9RZDDAXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iT0brg8b062XiSgLTzCnkQXbfUXFsFggloyJ1Dsqn+tPzzdEBSLP3blO9on5hm5vd
+	 Qu3OsoFFVPk1MACpeQ49v6/Im3AShTZm7Jf3M8HsX91d4CUgWxWx/U43JFsYZibRgs
+	 Mvts1wBEIoLE0wRZay/W9qvDCr5xllIETIV5YDL1Zs93iVUiBikPHhNfk7kpfvX0by
+	 hDis6rc3KOof54Adc6KdptBKo40EIlMcCI7MSC0IDFymVLi5W+VABCBm2qbOlNsX8r
+	 ySIOoVtiOurSrZduxgAC/VOALPnGrNffGAKuAjgxXGRYQf0dn3+TrD2XzrtMNlCygG
+	 ujBbJN9Se1PpQ==
+Date: Thu, 12 Dec 2024 18:08:15 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Howard Chu <howardchu95@gmail.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [RFC/PATCH] perf trace: Add --syscall-period option
+Message-ID: <Z1uXDxdIE4g6BaZB@google.com>
+References: <20241211222110.2430610-1-namhyung@kernel.org>
+ <Z1oXs1xjCG1Ee27p@x1>
+ <CAP-5=fXYke_n7TDe+mB-webNH7vCvea7ZVPqfqygw7bTNd8G3g@mail.gmail.com>
+ <CAH0uvogs8EAzLemVQXq238KGFXJhD2TBhpXHQUnRYaQtcn_HPQ@mail.gmail.com>
+ <CAP-5=fXTSZtcrc3hgYHQAHyZVsJ6eLQ_RMzQgVrKFhjvdcwSqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] sched_ext: Implement scx_bpf_now_ns()
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tj@kernel.org, void@manifault.com, mingo@redhat.com,
- kernel-dev@igalia.com, linux-kernel@vger.kernel.org
-References: <20241209061531.257531-1-changwoo@igalia.com>
- <20241209061531.257531-5-changwoo@igalia.com>
- <20241211093256.GY35539@noisy.programming.kicks-ass.net>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20241211093256.GY35539@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXTSZtcrc3hgYHQAHyZVsJ6eLQ_RMzQgVrKFhjvdcwSqw@mail.gmail.com>
 
-Hello,
-
-Thank you for the review!
-
-On 24. 12. 11. 18:32, Peter Zijlstra wrote:
-> On Mon, Dec 09, 2024 at 03:15:29PM +0900, Changwoo Min wrote:
->> +	if (!(rq->scx.flags & SCX_RQ_CLK_VALID) ||
->> +	    (rq->scx.prev_clock >= clock)) {
+On Wed, Dec 11, 2024 at 08:28:33PM -0800, Ian Rogers wrote:
+> On Wed, Dec 11, 2024 at 5:47 PM Howard Chu <howardchu95@gmail.com> wrote:
+> >
+> > Hello Ian,
+> >
+> > On Wed, Dec 11, 2024 at 5:34 PM Ian Rogers <irogers@google.com> wrote:
+> > >
+> > > On Wed, Dec 11, 2024 at 2:52 PM Arnaldo Carvalho de Melo
+> > > <acme@kernel.org> wrote:
+> > > >
+> > > > On Wed, Dec 11, 2024 at 02:21:10PM -0800, Namhyung Kim wrote:
+> > > > > This option is to implement the event sampling for system calls.
+> > > > > The period is given in msec as it shows the time in msec.
+> > > > >
+> > > > >   # perf trace -C 0 --syscall-period 100 sleep 1
+> > > > >            ? (         ): fleetspeakd/1828559  ... [continued]: futex())                                            = -1 ETIMEDOUT (Connection timed out)
+> > > > >        0.050 (100.247 ms): gnome-shell/572531 recvmsg(fd: 10<socket:[3355761]>, msg: 0x7ffef8b39d20)                = 40
+> > > > >      100.357 (100.149 ms): pipewire-pulse/572245 read(fd: 5<anon_inode:[eventfd]>, buf: 0x7ffc0b9dc8f0, count: 8)      = 8
+> > > > >      200.553 (100.268 ms): NetworkManager/3424 epoll_wait(epfd: 19<anon_inode:[eventpoll]>, events: 0x5607b85bb880, maxevents: 6) = 0
+> > > > >      300.876 (         ): mon/4932 poll(ufds: 0x7fa392784df0, nfds: 1, timeout_msecs: 100)            ...
+> > > > >      400.901 ( 0.025 ms): TaskCon~ller #/620145 futex(uaddr: 0x7f3fc596fa00, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+> > > > >      300.876 (100.123 ms): mon/4932  ... [continued]: poll())                                             = 0 (Timeout)
+> > > > >      500.901 ( 0.012 ms): evdefer/2/2335122 futex(uaddr: 0x5640baac5198, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+> > > > >      602.701 ( 0.017 ms): Compositor/1992200 futex(uaddr: 0x7f1a51dfdd40, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+> > > > >      705.589 ( 0.017 ms): JS Watchdog/947933 futex(uaddr: 0x7f4cac1d4240, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+> > > > >      812.667 ( 0.027 ms): fix/1985151 futex(uaddr: 0xc0008f7148, op: WAKE|PRIVATE_FLAG, val: 1)             = 1
+> > > > >      912.807 ( 0.017 ms): Xorg/572315 setitimer(value: 0x7ffc375d6ba0)                                      = 0
+> > > > >
+> > > > > The timestamp is kept in a per-cpu array and the allowed task is saved
+> > > > > in a hash map.
+> > > >
+> > > > Interesting concept, and one that is done just on the BPF part, so I
+> > > > think we should at least warn a user that is running this on a build
+> > > > without BPF skels.
+> > > >
+> > > > Will try it tomorrow,
+> > > >
+> > > > - Arnaldo
+> > > >
+> > > > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > > > ---
+> > > > >  tools/perf/Documentation/perf-trace.txt       |  6 ++
+> > > > >  tools/perf/builtin-trace.c                    |  5 ++
+> > > > >  .../bpf_skel/augmented_raw_syscalls.bpf.c     | 67 ++++++++++++++++++-
+> > > > >  3 files changed, 76 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documentation/perf-trace.txt
+> > > > > index 6e0cc50bbc13fc7f..9f338a8c5357a67e 100644
+> > > > > --- a/tools/perf/Documentation/perf-trace.txt
+> > > > > +++ b/tools/perf/Documentation/perf-trace.txt
+> > > > > @@ -241,6 +241,12 @@ the thread executes on the designated CPUs. Default is to monitor all CPUs.
+> > > > >       printing using the existing 'perf trace' syscall arg beautifiers to map integer
+> > > > >       arguments to strings (pid to comm, syscall id to syscall name, etc).
+> > > > >
+> > > > > +--syscall-period::
+> > > > > +     Trace a system call in the given period (in msec).  This implements
+> > > > > +     sampling for syscalls in order to reduce the monitoring overhead.
+> > > > > +     For example, setting the sysall period to 100 (msec) means it will
+> > > > > +     sample a syscall and next one after 100 msec.
+> > >
+> > > Is this similar to the -D/--delay option to perf-record? Perhaps share the name?
+> >
+> > I think this is more like a throttling for the perf trace output,
+> > instead of a one-time delay or a range of enabled time like -D, as the
+> > prev_ts here is continuously updated. This restricts the maximum
+> > sampling frequency to 1 / syscall-period, meaning every syscall is
+> > sampled just after the syscall-period has passed.
 > 
-> As TJ said, it's best to consider that the clock can wrap.
-I will update it as Tejun suggested.
+> Thanks Howard, so it is some kind of "throttle" or "max-per" value.
+> I'd suggest rephrasing the text.
 
-> 
->> +		/*
->> +		 * If the rq clock is invalid or goes backward,
->> +		 * start a new rq clock period with a fresh sched_clock_cpu().
->> +		 *
->> +		 * The cached rq clock can go backward because there is a
->> +		 * race with a timer interrupt. Suppose that a timer interrupt
->> +		 * occurred while running scx_bpf_now_ns() *after* reading the
->> +		 * rq clock and *before* comparing the if condition. The timer
->> +		 * interrupt will eventually call a BPF scheduler's ops.tick(),
->> +		 * and the BPF scheduler can call scx_bpf_now_ns(). Since the
->> +		 * scheduler core updates the rq clock before calling
->> +		 * ops.tick(), the scx_bpf_now_ns() call will get the fresh
->> +		 * clock. After handling the timer interrupt, the interrupted
->> +		 * scx_bpf_now_ns() will be resumed, so the if condition will
->> +		 * be compared. In this case, the clock, which was read before
->> +		 * the timer interrupt, will be the same as rq->scx.prev_clock.
->> +		 * When such a case is detected, start a new rq clock period
->> +		 * with a fresh sched_clock_cpu().
-> 
-> This has a wall-of-text problem; use paragraphs?
-I will improve the presentation using multiple paragraphs
-and time chart.
+How about this?
 
->> +		clock = sched_clock_cpu(cpu_of(rq));
->> +		scx_rq_clock_update(rq, clock);
-> Doesn't this set the VALID bit again? How is using this outside of
-> RQ-lock and setting VALID a good idea?
+--syscall-sample=<period>::
+	Enable sampling of system calls with a given period in msec.
+	The sampling frequency would be 1 / period, in other words,
+	it will trace a system call only after the given period of
+	time is passed.  The sampling period is tracked per CPU.
 
-You are right. The current implementation sets the VALID bit, so
-the clock can be reused until the next update_rq_clock(). Another
-approach would be not setting the VALID flag, so it gets the
-fresh clock every time until next update_rq_clock(). Considering
-the clock usages of the scx schedulers, both would be almost the
-same in number of sched_clock_cpu() calls. But the second
-approach -- not setting the VALID flag outside of rqlock -- would
-be more predictable. I will double-check the difference of
-sched_clock_cpu() calls, and if they are similar, I will change
-it not setting the VALID flag.
+Thanks,
+Namhyung
 
-Regards,
-Changwoo Min
 
