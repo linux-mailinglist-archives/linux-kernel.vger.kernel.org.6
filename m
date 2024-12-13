@@ -1,142 +1,118 @@
-Return-Path: <linux-kernel+bounces-445083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5CC9F1101
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:28:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0941F9F1104
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:29:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261A2188394E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:29:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4DC1E2850;
+	Fri, 13 Dec 2024 15:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RCfPk2I9"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82F4028238A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:28:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517F11E2828;
-	Fri, 13 Dec 2024 15:28:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3431DFDB8;
-	Fri, 13 Dec 2024 15:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7342E1E25EA;
+	Fri, 13 Dec 2024 15:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734103710; cv=none; b=L9a7GM7FOzw3wbDCHtJjlTurPdyhtadLBEkPli1Px966Hsoj3AdybewAtYoOKwxFb0o7kxp0wEiyGmD3IhxyZjF8v6gnVA3EARWGbbDdAfD3iWSN9LJ+dYcjjU9tkVb7bZI/jKY4kkd1mim8yw5yLcFT28bb+KVGEerArffd+mg=
+	t=1734103736; cv=none; b=n2CkRgUzkPkaWZ8Id1JDmIzNJ4Lr76SSqcnLBJiYImsStHU/ZzhNyEX3RoIpOiy9TIGPBtFycnUfIASO+3XNoDPQ98wbYgludu8cIue3/OM4/6LDuQjJi0zjku7MZZ1+R5axPDtXNR7/IwwpHrcLkWhCS7f8g+7p+IJa5i6D26I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734103710; c=relaxed/simple;
-	bh=S6ngcvffWreb1pIBx+eV1GL9aDoASQZY3lV3XiCaRC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ab+v6t4m7ncxbLriVwNVaO3VAlmrnAujLdfDLaNAlGBg8uY7G4Bwkh1Wwz6kvoZWlA0lr/YqzXJ+vpMAfag6qXzFGkzoSQKIZHPw0nQg0GuMk32w/pqlk76UDA50razQiADgpjfPapCtjBS4yzWyhaLmWpgmzbkZIxo4dh8ef5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DF551480;
-	Fri, 13 Dec 2024 07:28:50 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDD083F720;
-	Fri, 13 Dec 2024 07:28:19 -0800 (PST)
-Message-ID: <b7130ae2-6314-41d9-bda2-d875b22463bb@arm.com>
-Date: Fri, 13 Dec 2024 15:28:18 +0000
+	s=arc-20240116; t=1734103736; c=relaxed/simple;
+	bh=hqRZ6dn+eREKBjKhUZdWiXvrYAwInb1fPmI75e/MYx0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=JcAIHcBjLGT9PdpK2FCxeRcwvGyipNDvaAzh7HVa6RaCl8E8ojR274PPOEkRFGJ07OBZ3Ak4KPLxy8ucBwswsvGJ3U/6KhVT3/us6mhUZc8xan7+UiseIVTV0Hq/FVPSIIaEP3USxc/yyfftWtsQv1J5TSH67duN5ByfNUsVyc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RCfPk2I9; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 143C94000D;
+	Fri, 13 Dec 2024 15:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1734103731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hqRZ6dn+eREKBjKhUZdWiXvrYAwInb1fPmI75e/MYx0=;
+	b=RCfPk2I9+5mLLiIe9f/HJsOEZW2WsldFsV8snRVTTH/oObO1X+rZPmHIywEyoUv15XYtYI
+	RBlsXK3Zz0s3Vp9RAiMvK5c6kqQXsOgCpA6LhgVtnfLOfycWfuVz8aQ9THRyz4FKjv5Jr5
+	EAI1OwSi0am6SBXDkRZu6mSzZSsx4sBnbufRLMVAXF4Y8U3x5bqJlFB2GLjn1JrZGI2hRe
+	0xxYLknhy7x/PrdtgboW0MxCBFrDtPQV4PvwYvm/RCEeYG5akuu51hneiO3eWzbf/LtlC6
+	85NA7SEzjL4rE1kAIFvxj8fQO0IhYyyye0pO5VvcHFMMpTKMfLpWZAJN0ZqsLQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/2] rust: add dma coherent allocator abstraction.
-To: Daniel Almeida <daniel.almeida@collabora.com>,
- Alice Ryhl <aliceryhl@google.com>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
- rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
-References: <20241210221603.3174929-1-abdiel.janulgue@gmail.com>
- <20241210221603.3174929-3-abdiel.janulgue@gmail.com>
- <CAH5fLgjO-GbB85dDdxLSSWY74cUn8-Lt-yaRGkUVxb-E8YaO2Q@mail.gmail.com>
- <0F719804-2AD3-4C4E-A98C-2862295990BA@collabora.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <0F719804-2AD3-4C4E-A98C-2862295990BA@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 13 Dec 2024 16:28:50 +0100
+Message-Id: <D6AOGW7IXUEK.1AKKZZT0LAF0Q@bootlin.com>
+Subject: Re: [PATCH v6 2/5] usb: cdns3-ti: run HW init at resume() if HW was
+ reset
+Cc: =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>, <linux-usb@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Roger Quadros" <rogerq@kernel.org>, "Peter Chen"
+ <peter.chen@kernel.org>, "Pawel Laszczak" <pawell@cadence.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Mathias Nyman"
+ <mathias.nyman@intel.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241210-s2r-cdns-v6-0-28a17f9715a2@bootlin.com>
+ <20241210-s2r-cdns-v6-2-28a17f9715a2@bootlin.com>
+ <4e1eb8d2-c725-4572-8419-3027cac10c92@kernel.org>
+In-Reply-To: <4e1eb8d2-c725-4572-8419-3027cac10c92@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On 13/12/2024 2:47 pm, Daniel Almeida wrote:
-[...]
->>> +    /// Returns the CPU-addressable region as a slice.
->>> +    pub fn cpu_buf(&self) -> &[T]
->>> +    {
->>> +        // SAFETY: The pointer is valid due to type invariant on `CoherentAllocation` and
->>> +        // is valid for reads for `self.count * size_of::<T>` bytes.
->>> +        unsafe { core::slice::from_raw_parts(self.cpu_addr, self.count) }
->>
->> Immutable slices require that the data does not change while the
->> reference is live. Is that the case? If so, your safety comment should
->> explain that.
->>
->>> +    }
->>> +
->>> +    /// Performs the same functionality as `cpu_buf`, except that a mutable slice is returned.
->>> +    pub fn cpu_buf_mut(&mut self) -> &mut [T]
->>> +    {
->>> +        // SAFETY: The pointer is valid due to type invariant on `CoherentAllocation` and
->>> +        // is valid for reads for `self.count * size_of::<T>` bytes.
->>> +        unsafe { core::slice::from_raw_parts_mut(self.cpu_addr, self.count) }
->>
->> Mutable slices require that the data is not written to *or read* by
->> anybody else while the reference is live. Is that the case? If so,
->> your safety comment should explain that.
->>
-> 
-> The buffer will probably be shared between the CPU and some hardware device, since this is the
-> point of the dma mapping API.
-> 
-> It’s up to the caller to ensure that no hardware operations that involve the buffer are currently taking
-> place while the slices above are alive.
+On Thu Dec 12, 2024 at 1:18 PM CET, Roger Quadros wrote:
+> On 10/12/2024 19:13, Th=C3=A9o Lebrun wrote:
+> > At runtime_resume(), read the W1 (Wrapper Register 1) register to detec=
+t
+> > if an hardware reset occurred. If it did, run the hardware init sequenc=
+e.
+> >=20
+> > This callback will be called at system-wide resume. Previously, if a
+> > reset occurred during suspend, we would crash. The wrapper config had
+> > not been written, leading to invalid register accesses inside cdns3.
+> >=20
+>
+> Did I understand right that the Controller reset can happen only at
+> system suspend and never at runtime suspend?
 
-Hmm, that sounds troublesome... the nature of coherent allocations is 
-that both CPU and device may access them at any time, and you can 
-definitely expect ringbuffer-style usage models where a CPU is writing 
-to part of the buffer while the device is reading/writing another part, 
-but also cases where a CPU needs to poll for a device write to a 
-particular location.
+J7200 + upstream kernel =3D> if the power domain is cut off (it is
+implicitly at runtime PM) then it resets. This is 100% board dependent.
+We just never let it go into runtime suspend, for the moment.
+
+> If so do you really need the runtime suspend/resume hooks?
+> you should have different system suspend/resume hooks than runtime suspen=
+d/resume
+> hooks and deal with the re-initialization in system resume hook.
+
+The patch series works in the current setup with the wrapper that is
+never shut off. But it would also work if someone decides to use RPM on
+the wrapper.
+
+Overall, the current kernel-wide strategy is to minimise
+suspend/resume-specific code. Having only the concept of "runtime PM"
+and triggering that at system-wide suspend/resume is easier to reason
+about. It unifies concepts and reduces the states a device can be in.
+
+We could even imagine a future where ->suspend|resume() callbacks
+are pm_runtime_force_suspend|resume() by default.
+That'd be the dream, at least.
 
 Thanks,
-Robin.
 
-> I think that adding that as a safety requirement to `cpu_buf` and `cpu_buf_mut` will be sufficient.
-> 
->>> +    }
->>> +}
->>> +
->>> +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
->>> +    fn drop(&mut self) {
->>> +        let size = self.count * core::mem::size_of::<T>();
->>> +        // SAFETY: the device, cpu address, and the dma handle is valid due to the
->>> +        // type invariants on `CoherentAllocation`.
->>> +        unsafe { bindings::dma_free_attrs(self.dev.as_raw(), size,
->>> +                                          self.cpu_addr as _,
->>> +                                          self.dma_handle,
->>> +                                          self.dma_attrs.as_raw(),) }
->>> +    }
->>> +}
->>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
->>> index e1065a7551a3..6e90ebf5a130 100644
->>> --- a/rust/kernel/lib.rs
->>> +++ b/rust/kernel/lib.rs
->>> @@ -35,6 +35,7 @@
->>> mod build_assert;
->>> pub mod cred;
->>> pub mod device;
->>> +pub mod dma;
->>> pub mod error;
->>> #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
->>> pub mod firmware;
->>> —
->>> 2.43.0
-> 
-> — Daniel
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
