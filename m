@@ -1,74 +1,139 @@
-Return-Path: <linux-kernel+bounces-444507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737519F07FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:36:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FCC9F0807
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFAF8188B677
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D390188BF08
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8380E1B21A6;
-	Fri, 13 Dec 2024 09:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A+zTUY2z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4B31B4126;
+	Fri, 13 Dec 2024 09:37:19 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC52C1AD403;
-	Fri, 13 Dec 2024 09:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1397B1B21BD;
+	Fri, 13 Dec 2024 09:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734082601; cv=none; b=sNhPCmoRm4Vx1qHXbH6eSqafuPodiWkSnZz6XT1yQc6QXL9Hw0wbfpqAZ5hBoPLwCYp3KLT3Mfg01GmXet4QZF8QPDkFjkXCrai7WIspDy7QVtqbDFnovymw0k+zaPLRH2Ytm9vMNbzS+ZG5y3C/BPIQFBPkgvQGtCZMYbs5Q9o=
+	t=1734082638; cv=none; b=bO09kuXcczmFy8p8I5S4+cWAVIZd2RWVzQ0FaZ25upiLwwQN4rLUk3E9+OxdZhN2ss5dXv6DSgWZArSmxNSHqWNAcCeCFISiH13DkynBzo+A1ZSclJU2+nDryob0tk83vHAZmSJDPqAzgtTiHPUCaFNtl4SwBc3Xadep1avFttk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734082601; c=relaxed/simple;
-	bh=2398Dink1XI0qXX1lmBE/iLuxkdh/Ul2IAUIGRgTvqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n3YHtcoGYFag8ZzFGHJcZ8/fkvAlHnzLWru2mbhYBua3+QCSb6z5gqnUXbv8UnBGBjm9O5vKuHpq1FyvQUu2WjJVsPW/803wdEvKAdSXUlAnM4PxtDkhlHRZlBAbFtUb/5UT0GcSaQIoADG2wO2ynZ4Tso/cMlPIQCbv2eHsq+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A+zTUY2z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1295C4CED0;
-	Fri, 13 Dec 2024 09:36:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734082600;
-	bh=2398Dink1XI0qXX1lmBE/iLuxkdh/Ul2IAUIGRgTvqY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A+zTUY2zEx1rezaCPp4xGqN3x28llyz6ivL6Fe6I9JGNIaG3hreL27Ic9wnjlm2hJ
-	 wX16cQILlbJZXV+A3zcotEdaArsKhgp+FM/rco/QgeXzfKY6MrlhgKP1nA/NkDoqYX
-	 hTMCU9LAbUjXfvtm95IPUuVfftMDQuHo6Ck+q0Z3UsUiBCnk9Is8Mt0a07nSeltRyc
-	 mKZELaFR/CPAfs+7ofURRuVTg/aX6ckJXYN5mdD3AkEZz4R3EwJUfhyWCnMLk/7GY/
-	 kolvtBYl739jAJ7E9lP9R6y7BcDLB/bAxYswMIQRe987sF+8HcctUChZdwObh7hoZ9
-	 W6DtVPlsoEJww==
-Date: Fri, 13 Dec 2024 10:36:37 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: E Shattow <e@freeshell.de>
-Cc: Conor Dooley <conor@kernel.org>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Hal Feng <hal.feng@starfivetech.com>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: dts: starfive: jh7110-pinfunc.h
-Message-ID: <rqqh56dyxblzsigse6drluhoeuapsxlr3qbzkzvy2lnpzotma5@ltydfatcrtpx>
-References: <20241210014903.154551-1-e@freeshell.de>
+	s=arc-20240116; t=1734082638; c=relaxed/simple;
+	bh=Mo9Z67jFIiZICtAQQ1EDqzcjkIR1b4mu13cvc1qGynU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YZIeDKYn3DPtIz57E/x1ujj2CinUl/KI654VRCSpxvT1pT4332U+zlSF9X38IemgrdcoJQQ6zy+lFxekPJtBeVrWuakTa6u27kWu2E7KxlGL9AuVD18XJTBQN5TGMcoliq+vRk0Y3kCBG41DrSASFre3JAa/H20jsF49nI2M57o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af5e3.dynamic.kabel-deutschland.de [95.90.245.227])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 2C6AE61E646F9;
+	Fri, 13 Dec 2024 10:36:42 +0100 (CET)
+Message-ID: <bc95ab79-6b4a-41be-b5b7-daaec04f23d0@molgen.mpg.de>
+Date: Fri, 13 Dec 2024 10:36:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241210014903.154551-1-e@freeshell.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [iwl-next PATCH v3 3/3] idpf: add more info
+ during virtchnl transaction time out
+To: Brian Vazquez <brianvv@google.com>,
+ Manoj Vishwanathan <manojvishy@google.com>
+Cc: Brian Vazquez <brianvv.kernel@gmail.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ intel-wired-lan@lists.osuosl.org, David Decotigny <decot@google.com>,
+ Vivek Kumar <vivekmr@google.com>, Anjali Singhai <anjali.singhai@intel.com>,
+ Sridhar Samudrala <sridhar.samudrala@intel.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ emil.s.tantilov@intel.com, Jacob Keller <jacob.e.keller@intel.com>,
+ Pavan Kumar Linga <pavan.kumar.linga@intel.com>
+References: <20241212233333.3743239-1-brianvv@google.com>
+ <20241212233333.3743239-4-brianvv@google.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20241212233333.3743239-4-brianvv@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 09, 2024 at 05:48:57PM -0800, E Shattow wrote:
-> Fix a typo in StarFive JH7110 pin function definitions
+Dear Brian, dear Manoj,
 
-That's not a "typo", but entire wrong value with actual impact.
 
-Best regards,
-Krzysztof
+Thank you for your patch.
 
+Am 13.12.24 um 00:33 schrieb Brian Vazquez:
+> From: Manoj Vishwanathan <manojvishy@google.com>
+> 
+> Add more information related to the transaction like cookie, vc_op,
+> salt when transaction times out and include similar information
+> when transaction salt does not match.
+
+If possible, the salt mismatch should also go into the summary/title. Maybe:
+
+idpf: Add more info during virtchnl transaction timeout/salt mismatch
+
+> Info output for transaction timeout:
+> -------------------
+> (op:5015 cookie:45fe vc_op:5015 salt:45 timeout:60000ms)
+> -------------------
+
+For easier comparison, before it was:
+
+(op 5015, 60000ms)
+
+> Signed-off-by: Manoj Vishwanathan <manojvishy@google.com>
+> Signed-off-by: Brian Vazquez <brianvv@google.com>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+> Reviewed-by: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
+> ---
+>   drivers/net/ethernet/intel/idpf/idpf_virtchnl.c | 13 +++++++++----
+>   1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+> index 13274544f7f4..c7d82f142f4e 100644
+> --- a/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+> +++ b/drivers/net/ethernet/intel/idpf/idpf_virtchnl.c
+> @@ -517,8 +516,10 @@ static ssize_t idpf_vc_xn_exec(struct idpf_adapter *adapter,
+>   		retval = -ENXIO;
+>   		goto only_unlock;
+>   	case IDPF_VC_XN_WAITING:
+> -		dev_notice_ratelimited(&adapter->pdev->dev, "Transaction timed-out (op %d, %dms)\n",
+> -				       params->vc_op, params->timeout_ms);
+> +		dev_notice_ratelimited(&adapter->pdev->dev,
+> +				       "Transaction timed-out (op:%d cookie:%04x vc_op:%d salt:%02x timeout:%dms)\n",
+> +				       params->vc_op, cookie, xn->vc_op,
+> +				       xn->salt, params->timeout_ms);
+>   		retval = -ETIME;
+>   		break;
+>   	case IDPF_VC_XN_COMPLETED_SUCCESS:
+> @@ -615,8 +613,9 @@ idpf_vc_xn_forward_reply(struct idpf_adapter *adapter,
+>   	idpf_vc_xn_lock(xn);
+>   	salt = FIELD_GET(IDPF_VC_XN_SALT_M, msg_info);
+>   	if (xn->salt != salt) {
+> -		dev_err_ratelimited(&adapter->pdev->dev, "Transaction salt does not match (%02x != %02x)\n",
+> -				    xn->salt, salt);
+> +		dev_err_ratelimited(&adapter->pdev->dev, "Transaction salt does not match (exp:%d@%02x(%d) != got:%d@%02x)\n",
+> +				    xn->vc_op, xn->salt, xn->state,
+> +				    ctlq_msg->cookie.mbx.chnl_opcode, salt);
+>   		idpf_vc_xn_unlock(xn);
+>   		return -EINVAL;
+>   	}
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
