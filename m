@@ -1,114 +1,93 @@
-Return-Path: <linux-kernel+bounces-444638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E40589F0A0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:51:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12270188C920
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:51:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFD91C3BF9;
-	Fri, 13 Dec 2024 10:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="c9bKyVtN"
-Received: from mr85p00im-ztdg06021101.me.com (mr85p00im-ztdg06021101.me.com [17.58.23.180])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A246F9F0A10
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:51:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0841F1C07F1
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.180
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57ED3281FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:51:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204861C3BF8;
+	Fri, 13 Dec 2024 10:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YzVoyTUM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDBF1C3BE7;
+	Fri, 13 Dec 2024 10:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734087063; cv=none; b=TaXdglmTbrCcJvRjg9RuQDztWnlw9g9pS4H8ttZ8V6VRN5kYmSryDiqDRWOrLf3tfJ6yuoaUXIeM2UA28HnVg8qCcMjFEYVJL5z0MK3YZdYvmKreU1/ynfFqqwJDaSdZP2UhRBul1RsEuWoWNFez7OOa+9wvVjZjU0EVIuM0c5s=
+	t=1734087074; cv=none; b=r39gzaMTVeRxyvHQOrLN1NYypL4jUaiailAWdaAhEDlchATBSKc4GME/msKhwZT7TAC13LubUKvxhYS7ZYG7TON2j5fS/U1zx5C9YIkChFVFlghMHrSyluBvRgyFyjaYKcGFTNqLnCaFPadDKKcj9bIWJG9WCCxz9QiHDGzP95U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734087063; c=relaxed/simple;
-	bh=z0iXpoNb4O/AXMoJ113xZe5lMIUsxk1J8XGPhZijSK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LvHLaI4okTn6OYwQYWX7yYsJy886QW82fQCV5mhhXN/r6en7avoyg1qFMuAqZBGpMGdrjwyJ2R+9oNO9KU5jHSXH4M8QOTMrjLqJJYo2h1P3bhGLJQaIYlgA4ODj6s5X/68sNhOQxcLqAKx9LpRvzf9kr6/bJwMYgD1j1Dr78MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=c9bKyVtN; arc=none smtp.client-ip=17.58.23.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1734087061;
-	bh=K4LFQWPW7szczQxv+lJdGb4IxngOT+WcKY1uNekNjGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=c9bKyVtNHrmkkh/4lM0GW3fyK49HYdqywdGrW5a12y2qIRmNdC3NmRgK+53jYLoVG
-	 dCMuWhLnwiWWFQQeOS5kGCg6bWMBclDJioobcRtmGTA4757aeH+dceKwOd9Vz4NV5p
-	 Q78Rchh1e5wH0SooT9XibtlSSFNEGkP/a0L7jWBp05rWjpAlUGOPwncozFrxWgQy6d
-	 O1HzxXxew7LtypdOpBx+n1B3Ulqu0xTdGH9Q3fLBP8OHTLEUfvJzEWPO6o2/Mtl/TJ
-	 n92FzVEvPEXAP8tqkWZpHuKqk08CdbnjYAhPi5PeZQfn4HB/3BqsX16jQrjNadj4p/
-	 RkfXaufLUc3jQ==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06021101.me.com (Postfix) with ESMTPSA id DE6E480108;
-	Fri, 13 Dec 2024 10:50:56 +0000 (UTC)
-Message-ID: <34d1ccdf-f4dd-44c0-afb5-fe1c7fe49a61@icloud.com>
-Date: Fri, 13 Dec 2024 18:50:52 +0800
+	s=arc-20240116; t=1734087074; c=relaxed/simple;
+	bh=9jal2VahLy96XPiDIJleSTCKELmmzCYfJN6BnY0gfB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WiMC2ms17RxcLVZoI7B9nw0PBFX0CNlnpNHXeitvUnJBv5eXfziWEd/vC67E3gG6lifrtEThFhKkxX+oO+hXd8ggvW6sPYF9MnaCsF6galKWFCMNQ1jpa/CI8aqkVl7QM2O7cnnUVFdnsesUWJ+wByOOY1HymL20lH6soGaEMik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YzVoyTUM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wM7zL4wH+om2tKa4NMCs9jdln8VzYmbtWynNFpbCW3Y=; b=YzVoyTUMK0ufsh7yJ3E1aqZvyq
+	RkzqnX5dPVyBSjzBSNd6lLVyXxCBCAID+b3eJBV7anMzNS2sp/b8+dMecDSOa8ay+BRW6ahtW0In+
+	mvBC7qAK1H7mAU0DwwXqjAog0YvEXYFbiORAEkT5GnhNPjMMCuFHRuyRwm3Hpo/TT5dWsNDTXOfVQ
+	FPsM4BJDVJcTXu6W8RlqpdOk1beKirgNMYfbek38vY01yTZylAOTVvLsn2O8r5XlLwedMC7eg3T3F
+	ovlQl/LtRF3iPFp8cxvMSJab5UoIkTQT7vCwueSO0KhtkTszUQqcbR/6q9H8rRuccAmuZqV8jIZFA
+	xzLzFMlg==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tM3GE-0000000CJrr-1VHY;
+	Fri, 13 Dec 2024 10:51:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D5CBA30049D; Fri, 13 Dec 2024 11:51:05 +0100 (CET)
+Date: Fri, 13 Dec 2024 11:51:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 00/13] uprobes: Add support to optimize usdt
+ probes on x86_64
+Message-ID: <20241213105105.GB35539@noisy.programming.kicks-ass.net>
+References: <20241211133403.208920-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 0/2] net: Fix 2 OF device node refcount leakage issues
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Justin Chen <justin.chen@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241212-drivers_fix-v1-0-a3fbb0bf6846@quicinc.com>
- <20241212163317.5e6829ec@kmaincent-XPS-13-7390>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20241212163317.5e6829ec@kmaincent-XPS-13-7390>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: a6lKxkS-OUGyU397s7wp3R5cr1qbysVN
-X-Proofpoint-GUID: a6lKxkS-OUGyU397s7wp3R5cr1qbysVN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-13_04,2024-12-12_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
- malwarescore=0 spamscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999
- phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412130075
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211133403.208920-1-jolsa@kernel.org>
 
-On 2024/12/12 23:33, Kory Maincent wrote:
-> On Thu, 12 Dec 2024 23:06:53 +0800
-> Zijun Hu <zijun_hu@icloud.com> wrote:
+On Wed, Dec 11, 2024 at 02:33:49PM +0100, Jiri Olsa wrote:
+> hi,
+> this patchset adds support to optimize usdt probes on top of 5-byte
+> nop instruction.
 > 
->> This patch series is to fix 2 OF device node refcount leakage issues.
->>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->> Zijun Hu (2):
->>       net: pse-pd: tps23881: Fix device node refcount leakage in
->> tps23881_get_of_channels() net: bcmasp: Fix device node refcount leakage in
->> bcmasp_probe()
+> The generic approach (optimize all uprobes) is hard due to emulating
+> possible multiple original instructions and its related issues. The
+> usdt case, which stores 5-byte nop seems much easier, so starting
+> with that.
 > 
-> Thanks for the patch. This fix was already sent by Zhang Zekun:
-> https://lore.kernel.org/netdev/20241024015909.58654-1-zhangzekun11@huawei.com/
-> 
-thank you for sharing this info.
+> The basic idea is to replace breakpoint exception with syscall which
+> is faster on x86_64. For more details please see changelog of patch 8.
 
-> net maintainers would prefer to have the API changed as calling of_node_get
-> before of_find_node_by_name is not intuitive.
-> 
+So ideally we'd put a check in the syscall, which verifies it comes from
+one of our trampolines and reject any and all other usage.
 
-agree.
-
-> Still, don't know if we should fix it until the API is changed?  
-> 
-
-(^^)
-> Regards,
-
+The reason to do this is that we can then delete all this code the
+moment it becomes irrelevant without having to worry userspace might be
+'creative' somewhere.
 
