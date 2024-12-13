@@ -1,252 +1,160 @@
-Return-Path: <linux-kernel+bounces-445718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D639F1A47
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:46:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A00A9F1A4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F901628F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF04188CDFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F374E1A8F96;
-	Fri, 13 Dec 2024 23:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78FF1CDA0B;
+	Fri, 13 Dec 2024 23:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gZqrro9X"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtbDPPlZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522D529A9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D067190696;
+	Fri, 13 Dec 2024 23:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734133577; cv=none; b=r2m2KYgXQN5ih/yAb5l4uIutEPgquzUh66HoI3iGO8IMtj5KQLEv087jwFq6ZErg2lbWg1sSjqcPcyn93Lh0Jx8/3LHyiutCeVr6RkUZ1csdxry+dwG4Hmcf3IYFrKx9DoQJ3W5qpubz/6ruSmNemwcKOqbEYTnAVqi7heYhw9I=
+	t=1734133911; cv=none; b=aoKa6lLC+oR3L6A5RRs4FBjKlGvfpRw9Z9+hhRBo4jSK6w5NmsQbt3yYeVP3r8KyvM+owPYilb69+3ySytDtmkm+WXeCjU83VZxKOVNX2BbfSWSd45PNRrQMNzlwGdEvgNuLgQE594rmlV7fESaYegM7uMemchqv+N3E/6Jmvl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734133577; c=relaxed/simple;
-	bh=ilmERVDQcQfQY9jUB23pjGZQq7bpkPAy0OibfoxEP9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AFDAwp7yWqF/I+BNPW6GtIUVzsvHhUuNtLv8i9jxY/+mPv5GDbdot+gQhlL1k1jmhPFXz2A2XT1itiGBAVBUf0Zq3rPGwXJ74yInoFp8nrpova6NJweMfnAC5xNvNpDw5tYo5Bfj0IqubfeQRPZfo3zzUbDXy34ADZfqXxn+xPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gZqrro9X; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9nq3N017524
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:46:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A3QIerfx78NmYkCrlJfcZSdKmbPQzIVKrXzxKR8GzwQ=; b=gZqrro9Xq6luInFH
-	fKdSPF3V07/iUegNtsRGUSFf6J041zkpWMldxDp70NnI0IvX/pSqT7UjlDXeJo9v
-	t3tqqKq7VwynQKaThojT8NRYagmbmVqx1ZCuXucHmw0eXxcuCv7cKTOtOFqt01yp
-	hmWtwHUhUTjtyPMV/gVXNC2TfAoGLJ00BCbWZBAJzOEB9W20jTpUapo+sSgwIAjI
-	TounpVek0PPEMoUBJNCuZLQGgvGobqwMqwVdNEQoVfiNDbKHW2l3X2UYIGsWIzas
-	GnNc9tzDu9Wqrq1CtJ2tP40FGPnSp90WvqY5R1XBpeEnHYtURv24NcJFf9f1NRwZ
-	tTNO+Q==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gjmt1wp8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:46:13 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4678aa83043so5793331cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:46:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734133572; x=1734738372;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A3QIerfx78NmYkCrlJfcZSdKmbPQzIVKrXzxKR8GzwQ=;
-        b=fWDkH6IbPk4gvG6KMsH2B27LBBexRQH2l34Pu6ij1f0KmbgJMdONDKPmViYDys0kYr
-         oiLvmoLQ4ZOELCgojPb+ZiTn6b7QSE+irTS8wU7VcLOKvKxiV72aoHAp+C7ZVSYg6z4Z
-         /ztlDqNDMv0fl439zcaU/O8DSh0DkrsIj8/tM489+pcmS9/zxGDTWeGZa8E67vOpWmFN
-         PgugY+6pInEmO0RcRhqihfyCmEp7Vxh9RLn7yn19pr0iHXxCPOLQASqLFVXzFv9nl0Er
-         VslBeOds+NogaGKQQyQptZ6lQGUttEz3ngIdaaQ9DbP5oJS5jWJpnJDcpuzue8rwh+Hz
-         U3vw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0WeKLItHUPjUyZYCWRMUkbCaODYs/P0tlP56MO31pjq100GpGQ6T6qsW3o47fMiu6UC0r5KDwoGfO/WQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDBUnDPo+zttHeOVlLBTFCf4I+elpjtoWo/4RtssW2eCZtPdc6
-	XJ+pwOUq+nD6z7OkT43btu0x36eIZWehMPH/tdf4Yg4w+HTXAWYOHboVMW0gDup28ELtSrtUEbS
-	0Ps1IalaHxmq2zCUO25OaNGe9DjHtCq4YaKuIplSeOdq2RT9qf0DqUWp47QaCUTs=
-X-Gm-Gg: ASbGncvjc2HhpA0zeUL68E7bAr1ssG79CrFQkF8kLvWVPrRoXx+t47Z9s7kGjyFUneK
-	0qPnx2l3BM+J7qTCNLrIL6Ze5U+09D4WHtG6GJUPSzMybIM12Y6iR/PD/zIxNLAupPBf/cNSW7B
-	JC+ZpG9mFFl4oKbETTaOUe3OqGuxU6LKUfMHCukXdbJbIbbi0k3OlIP57I+jxaZhWabu3orTgWs
-	NBPCMTRaEIzrHw3Q8eedb5+ecfU68FmplPn+TKPkAc7I/ylyK/7vIUDhdwY4sfnJTC3f+Mcc1Cm
-	S3g2yZzRe8pAtprY3+9Fnsz08grtwCS8s/Q=
-X-Received: by 2002:a05:622a:1306:b0:467:5eaf:7d23 with SMTP id d75a77b69052e-467a5720eebmr29977511cf.2.1734133572205;
-        Fri, 13 Dec 2024 15:46:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE1rwFoU7hAM5HFaRUBQFO6amnIenH6rDzSz7apTrGST9e0IKot5CQTz+/0AqZmQjtaXr+0AA==
-X-Received: by 2002:a05:622a:1306:b0:467:5eaf:7d23 with SMTP id d75a77b69052e-467a5720eebmr29977261cf.2.1734133571808;
-        Fri, 13 Dec 2024 15:46:11 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652ad1805sm319345a12.27.2024.12.13.15.46.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 15:46:10 -0800 (PST)
-Message-ID: <f730135f-b952-4f5c-bcb8-dc725e7db336@oss.qualcomm.com>
-Date: Sat, 14 Dec 2024 00:46:07 +0100
+	s=arc-20240116; t=1734133911; c=relaxed/simple;
+	bh=LBl8bC14OQtqtIKs1HukcWT3y7YKXmSmDiIE/yMGSmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBYWL5kWj3xp5ZRKeIHO56165wo624WY1G1og1YY5K8amLkpLilhC8KlyWifHYvnwn1At5RkBY+9sJXuE7ku8O/wJK1bnpY67m59oVVFijrZiNad3e6GT1V/LKf0BaBNOjxkWnhp0w1oxMpop2TwrGY6fh2uKxEUZ0qjYc5WGZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtbDPPlZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94490C4CED0;
+	Fri, 13 Dec 2024 23:51:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734133910;
+	bh=LBl8bC14OQtqtIKs1HukcWT3y7YKXmSmDiIE/yMGSmc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XtbDPPlZbvqi8CN6Oxf/cp0n+oSr7ObvLvF/U2VDgAChn1LmY9vPTTrZPXt16xhat
+	 inbTnXZlRscl4snJJ6UgFlEeSj8INrtWj3w+kY5Zw6Xwg/PSii2l0HnKE9BmyS9OVT
+	 8N0rE6al1xzB6jamo6faQdVxRpqtjSmRmiAwfcJhnFdx0fBBSN910Mi1qMJ5n+kktQ
+	 5hNIUPaZXmQiXX9jVYYu5/7CRPAvUoy2K6AFHWYU/z5bFe44BQV9tOCZxs16Vn8N4x
+	 pKammezScSiU7mB84NioErtAEA5PzW9kkj2h4m+pmdJm0TyG9CjJqpZAVG7w4/b+7Y
+	 1sa1Hb94hlvOw==
+Date: Fri, 13 Dec 2024 15:51:48 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 02/16] perf tools: arc: Support generic syscall headers
+Message-ID: <Z1zIlKq19lAXMoGs@google.com>
+References: <20241212-perf_syscalltbl-v2-0-f8ca984ffe40@rivosinc.com>
+ <20241212-perf_syscalltbl-v2-2-f8ca984ffe40@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/7] drm/msm: adreno: find bandwidth index of OPP and
- set it along freq index
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>, neil.armstrong@linaro.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20241211-topic-sm8x50-gpu-bw-vote-v5-0-6112f9f785ec@linaro.org>
- <20241211-topic-sm8x50-gpu-bw-vote-v5-4-6112f9f785ec@linaro.org>
- <ddf91ba2-cab2-4653-b842-65a8e82b5160@oss.qualcomm.com>
- <2f1c6deb-29f8-4144-b086-743fb0f8495c@linaro.org>
- <80bed70e-7802-4555-a15e-e06fe46214c6@quicinc.com>
- <c2d8f443-5876-4293-8d2b-ecd13eaf8285@oss.qualcomm.com>
- <268d67c0-efdf-4ad4-b5fe-5b4f04e73131@linaro.org>
- <0d4d3ca3-ec8a-4e85-9838-a2bf1e07e872@oss.qualcomm.com>
- <9dcf26e5-1c25-4a18-ab01-58ddf3fbd607@linaro.org>
- <cf298ca5-e2fe-4e0e-a0e7-a2cdad3c657b@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <cf298ca5-e2fe-4e0e-a0e7-a2cdad3c657b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 7zgzXuw0wRCkv0tr8sPPUW70dlcYHo-n
-X-Proofpoint-ORIG-GUID: 7zgzXuw0wRCkv0tr8sPPUW70dlcYHo-n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412130169
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241212-perf_syscalltbl-v2-2-f8ca984ffe40@rivosinc.com>
 
-On 13.12.2024 5:55 PM, Akhil P Oommen wrote:
-> On 12/13/2024 10:10 PM, neil.armstrong@linaro.org wrote:
->> On 13/12/2024 17:31, Konrad Dybcio wrote:
->>> On 13.12.2024 5:28 PM, neil.armstrong@linaro.org wrote:
->>>> On 13/12/2024 16:37, Konrad Dybcio wrote:
->>>>> On 13.12.2024 2:12 PM, Akhil P Oommen wrote:
->>>>>> On 12/13/2024 3:07 AM, Neil Armstrong wrote:
->>>>>>> On 12/12/2024 21:21, Konrad Dybcio wrote:
->>>>>>>> On 11.12.2024 9:29 AM, Neil Armstrong wrote:
->>>>>>>>> The Adreno GPU Management Unit (GMU) can also scale the DDR
->>>>>>>>> Bandwidth
->>>>>>>>> along the Frequency and Power Domain level, until now we left
->>>>>>>>> the OPP
->>>>>>>>> core scale the OPP bandwidth via the interconnect path.
->>>>>>>>>
->>>>>>>>> In order to enable bandwidth voting via the GPU Management
->>>>>>>>> Unit (GMU), when an opp is set by devfreq we also look for
->>>>>>>>> the corresponding bandwidth index in the previously generated
->>>>>>>>> bw_table and pass this value along the frequency index to the GMU.
->>>>>>>>>
->>>>>>>>> The GMU also takes another vote called AB which is a 16bit
->>>>>>>>> quantized
->>>>>>>>> value of the floor bandwidth against the maximum supported
->>>>>>>>> bandwidth.
->>>>>>>>>
->>>>>>>>> The AB is calculated with a default 25% of the bandwidth like the
->>>>>>>>> downstream implementation too inform the GMU firmware the minimal
->>>>>>>>> quantity of bandwidth we require for this OPP.
->>>>>>>>>
->>>>>>>>> Since we now vote for all resources via the GMU, setting the OPP
->>>>>>>>> is no more needed, so we can completely skip calling
->>>>>>>>> dev_pm_opp_set_opp() in this situation.
->>>>>>>>>
->>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>>>>>> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>>>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>>>>>> ---
->>>>>>>>>     drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 39 +++++++++++++++++
->>>>>>>>> +++++++
->>>>>>>>> +++++++++--
->>>>>>>>>     drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  2 +-
->>>>>>>>>     drivers/gpu/drm/msm/adreno/a6xx_hfi.c |  6 +++---
->>>>>>>>>     drivers/gpu/drm/msm/adreno/a6xx_hfi.h |  5 +++++
->>>>>>>>>     4 files changed, 46 insertions(+), 6 deletions(-)
->>>>>>>>>
->>>>>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/
->>>>>>>>> gpu/drm/
->>>>>>>>> msm/adreno/a6xx_gmu.c
->>>>>>>>> index
->>>>>>>>> 36696d372a42a27b26a018b19e73bc6d8a4a5235..46ae0ec7a16a41d55755ce04fb32404cdba087be 100644
->>>>>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>>>>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>>>>>>>> @@ -110,9 +110,11 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu,
->>>>>>>>> struct dev_pm_opp *opp,
->>>>>>>>>                    bool suspended)
->>>>>>>>>     {
->>>>>>>>>         struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->>>>>>>>> +    const struct a6xx_info *info = adreno_gpu->info->a6xx;
->>>>>>>>>         struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->>>>>>>>>         struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
->>>>>>>>>         u32 perf_index;
->>>>>>>>> +    u32 bw_index = 0;
->>>>>>>>>         unsigned long gpu_freq;
->>>>>>>>>         int ret = 0;
->>>>>>>>>     @@ -125,6 +127,37 @@ void a6xx_gmu_set_freq(struct msm_gpu
->>>>>>>>> *gpu,
->>>>>>>>> struct dev_pm_opp *opp,
->>>>>>>>>             if (gpu_freq == gmu->gpu_freqs[perf_index])
->>>>>>>>>                 break;
->>>>>>>>>     +    /* If enabled, find the corresponding DDR bandwidth
->>>>>>>>> index */
->>>>>>>>> +    if (info->bcms && gmu->nr_gpu_bws > 1) {
->>>>>>>>
->>>>>>>> if (gmu->nr_gpu_bws)
->>>>>>>
->>>>>>> gmu->nr_gpu_bws == 1 means there's not BW in the OPPs (index 0 is the
->>>>>>> "off" state)
->>>>>>>
->>>>>>>>
->>>>>>>>> +        unsigned int bw = dev_pm_opp_get_bw(opp, true, 0);
->>>>>>>>> +
->>>>>>>>> +        for (bw_index = 0; bw_index < gmu->nr_gpu_bws - 1;
->>>>>>>>> bw_index+
->>>>>>>>> +) {
->>>>>>>>> +            if (bw == gmu->gpu_bw_table[bw_index])
->>>>>>>>> +                break;
->>>>>>>>> +        }
->>>>>>>>> +
->>>>>>>>> +        /* Vote AB as a fraction of the max bandwidth */
->>>>>>>>> +        if (bw) {
->>>>>>>>
->>>>>>>> This seems to only be introduced with certain a7xx too.. you should
->>>>>>>> ping the GMU with HFI_VALUE_GMU_AB_VOTE to check if it's supported
->>>>>>>
->>>>>>> Good point
->>>>>>
->>>>>> No no. Doing this will trigger some assert in pre-A750 gmu
->>>>>> firmwares. We
->>>>>> learned it the hard way. No improvisation please. :)
->>>>>
->>>>> We shouldn't be sending that AB data to firmware that doesn't expect
->>>>> it either too, though..
->>>>
->>>> Well we don't !
->>>
->>> The code in the scope that I quoted above does that
->>
->> No it doesn't, if the proper bcms are not declared in the gpu_info, it
->> won't
+On Thu, Dec 12, 2024 at 04:32:52PM -0800, Charlie Jenkins wrote:
+> Arc uses the generic syscall table, use that in perf instead of
+> requiring libaudit.
 > 
-> I think what Konrad meant was that IB voting is supported from a650+,
-> but AB voting is support only from a750+. So we can add bcm nodes to
-> enable IB voting, but how do we ensure AB voting via GMU is done only on
-> a750+.
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+>  tools/perf/Makefile.config                           | 2 +-
+>  tools/perf/Makefile.perf                             | 2 +-
+>  tools/perf/arch/arc/entry/syscalls/Kbuild            | 2 ++
+>  tools/perf/arch/arc/entry/syscalls/Makefile.syscalls | 3 +++
+>  tools/perf/arch/arc/include/syscall_table.h          | 2 ++
+>  5 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index a72f25162714f0117a88d94474da336814d4f030..3959a9c9972999f6d1bb85e8c1d7dc5dce92fd09 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -36,7 +36,7 @@ ifneq ($(NO_SYSCALL_TABLE),1)
+>    endif
+>  
+>    # architectures that use the generic syscall table scripts
+> -  ifeq ($(SRCARCH),riscv)
+> +  ifeq ($(SRCARCH),$(filter $(SRCARCH),riscv arc))
 
-Yep, relying on incomplete data in the catalog is not a great way
-to ensure that
+This might work as well.
 
-Konrad
+  ifneq ($(filter $(SRCARCH), riscv arc),)
+
+And maybe you can add a variable for supported archs.
+
+Thanks,
+Namhyung
+
+
+>      NO_SYSCALL_TABLE := 0
+>      CFLAGS += -DGENERIC_SYSCALL_TABLE
+>      CFLAGS += -I$(OUTPUT)/tools/perf/arch/$(SRCARCH)/include/generated
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index f5278ed9f778f928436693a14e016c5c3c5171c1..3b463b42b0e3982e74056e672b2ee6adad5a3f0e 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -311,7 +311,7 @@ FEATURE_TESTS := all
+>  endif
+>  endif
+>  # architectures that use the generic syscall table
+> -ifeq ($(SRCARCH),riscv)
+> +ifeq ($(SRCARCH),$(filter $(SRCARCH),riscv arc))
+>  include $(srctree)/tools/perf/scripts/Makefile.syscalls
+>  endif
+>  include Makefile.config
+> diff --git a/tools/perf/arch/arc/entry/syscalls/Kbuild b/tools/perf/arch/arc/entry/syscalls/Kbuild
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..11707c481a24ecf4e220e51eb1aca890fe929a13
+> --- /dev/null
+> +++ b/tools/perf/arch/arc/entry/syscalls/Kbuild
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +syscall-y += syscalls_32.h
+> diff --git a/tools/perf/arch/arc/entry/syscalls/Makefile.syscalls b/tools/perf/arch/arc/entry/syscalls/Makefile.syscalls
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..391d30ab7a831b72d2ed3f2e7966fdbf558a9ed7
+> --- /dev/null
+> +++ b/tools/perf/arch/arc/entry/syscalls/Makefile.syscalls
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +syscall_abis_32 += arc time32 renameat stat64 rlimit
+> diff --git a/tools/perf/arch/arc/include/syscall_table.h b/tools/perf/arch/arc/include/syscall_table.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..4c942821662d95216765b176a84d5fc7974e1064
+> --- /dev/null
+> +++ b/tools/perf/arch/arc/include/syscall_table.h
+> @@ -0,0 +1,2 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#include <asm/syscalls_32.h>
+> 
+> -- 
+> 2.34.1
+> 
 
