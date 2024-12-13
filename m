@@ -1,120 +1,241 @@
-Return-Path: <linux-kernel+bounces-445066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3518D9F10A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:17:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DE89F10AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:17:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49670162007
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E9DB1620BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C861E22EF;
-	Fri, 13 Dec 2024 15:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E13A1E1C3F;
+	Fri, 13 Dec 2024 15:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ncG9MPA5"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyPk+qYP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F121DE4FF;
-	Fri, 13 Dec 2024 15:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5351DFE08;
+	Fri, 13 Dec 2024 15:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734103041; cv=none; b=Q+GborPhhdahGJqLadeFmt3RnMB0GJC7pZYk50wPFP3f2tOyKovD6CQUKEt/3YYetHl5Of6f/Sy8o3YOii600yw/5cYHT5vYOV9pyj4QbwZMT7iHYtot9Rkf52a1zuItWLsw6GROjrOWd4xAcKolEXgsIhiuOes1WHOBnj43Dbw=
+	t=1734103062; cv=none; b=RoK6+3rXXHxX+JGg7nuYISxLmHFmczxCq9wLZkOnVnCkVSg+U9eAgDeyfhFP/rYMpcHOeD/8/W8PuJ3fJFtUvUA8eyGa4dHSa28oYZB85BFNQUaW05KyPLMHu6SeU+/7Pt91BFSpOAm9Ly+GTyhgQlcTodohBS+//yjbjkEYdQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734103041; c=relaxed/simple;
-	bh=vU2lwiJ0NU8bPtYkBRMPIXY4l6NNjiChHDMI7SgQBo4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z9fbsmGwG2Jkhba25rVZF2fDwbJEh3vQe5eFNbJblrVFVp+MaIGg+ipFLrGbqpVbYZwoV/69q4Mg1re+kDyDBSdLZMCHFIaupaisjq35actHBijMluSeM2heKTSM7E9FzSjZQt0YRjiK8Zu0S2b3UHWPd7QSKrKU/OUvCMpN7UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ncG9MPA5; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-728e1799d95so2254316b3a.2;
-        Fri, 13 Dec 2024 07:17:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734103039; x=1734707839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=snR0l35al56QxuLvp2av1CppmOJ19UO4yxrssrqk870=;
-        b=ncG9MPA5rSsNNeQhxTfX/uSF6fdeZC751XLDB8+pPM8CCR50At5GQ5OZPtkQevB1dO
-         XU/OMnftux82c7uBZrVeOCt2/fHlwoSLR2pNMGYhBXzCwKvuwJpNXJtpVUBg/D4G0llW
-         H/v9Sgdp4Qz0WYWqb73RTBDWRPlqV4N8osANfeunMvbZlG/0JnK9ZQqcL+xdqq6e0deM
-         I8G5mSZueMotKChJr1tUeLZPccWN75O0jn1whtiV/yiRyOEwRnqzvXRbKOYtUeHef+h/
-         IL46cv1JAOEjO/+MJ50dGTbwut3fG3agCKN6evpBp3iOLeTV4+CYPQxMbyYECB0pe0zZ
-         gdng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734103039; x=1734707839;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=snR0l35al56QxuLvp2av1CppmOJ19UO4yxrssrqk870=;
-        b=dr+XHiqMgSxl84rJTceo9lFL7c85oFopt/7DCxT8JwOXBwdBUliPrAcM4Fin50myxa
-         IVpW1Zv9IduRiCAb2dK32a7co3TejhlheRBZk7gGCLA1RM+NloqNmInJKqMYbicNSMiT
-         lzhoWihc4S5P9ypx3PRXdCDng7ud/QBPIlEiScAhmleZryS6uhsojopVWH5duTtozRY2
-         1vOXqhy8lkZqhfuAnO5R12LwTIWq/S2yxHWbw2xoQ22HwdIWu/VjcqfTUyNzdhLF0hrQ
-         INlV9STJuivfFNEsaZN2L84fFy9WSI33YticYTLyKjJ+MUuYqFSVIQ/3KQtsOw89EF1k
-         4+lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQcYOkZkSSfKQy31DoZ56mycXM9xLWlHkpOpufvroxN5jsDNgGfy8atcdMn98YC++PCr6+DTo3PO6M@vger.kernel.org, AJvYcCVC/pRkXRPBIEiiaWcPekkq5QyfAGbkU/q+O4wRRn3mzhAqLv8HiQbZmRBtzTfnTOZE/4/pFw6auU+BVhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIDPllQ5zpIcMNmmRx+4bjTiq84RPZDBFxXKt2hUV93d+MpRjx
-	3uG84wHzC51o/WVLTaQLGIFKFV6U1PmpriNgANBn+TQCCI2LyGDU
-X-Gm-Gg: ASbGncujJYsNhN2rVRe6sh69wniJWAWQUVisbog0CZguwjDcoU0vLpPfYY317/EkkSw
-	x23FMEyiIlWA+3Dvc8vGExJShgNWm19SNuwLduIGEQlx6y8AVAZvqGtHB8N3QvHQsshu0W7di36
-	xeE46eZDnznWWhweAQ41c5bLH5TmJDEbdm9zJK4xn8zoi03Y/A8wbmIH8zYq4ISNfWqC1WuSQqR
-	YHe8heVDJu66LBVhT8KqERLa+WVcRoLs7p+BYZyEXyrtxA2Sj+ZNZ/mhkyPgFg=
-X-Google-Smtp-Source: AGHT+IFVn+GJ2jRCHXJc1gz5c06gb9eKcTyAu/jHztOJDnMg44onAa/qQA2fWJHRzF6EmHGntPmbLQ==
-X-Received: by 2002:a05:6a20:9f96:b0:1e0:f05b:e727 with SMTP id adf61e73a8af0-1e1dfc09e7cmr4467502637.2.1734103039386;
-        Fri, 13 Dec 2024 07:17:19 -0800 (PST)
-Received: from linuxsimoes.. ([177.21.143.14])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725c64272d2sm12588673b3a.145.2024.12.13.07.17.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 07:17:19 -0800 (PST)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: helgaas@kernel.org
-Cc: bhelgaas@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	namcao@linutronix.de,
-	ngn@ngn.tf,
-	scott@spiteful.org,
-	trintaeoitogc@gmail.com
-Subject: Re: [RESEND PATCH] PCI: remove already resolved TODO
-Date: Fri, 13 Dec 2024 12:17:10 -0300
-Message-Id: <20241213151710.805485-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241212163629.GA3346193@bhelgaas>
-References: <20241212163629.GA3346193@bhelgaas>
+	s=arc-20240116; t=1734103062; c=relaxed/simple;
+	bh=NiDfmXtW+uz6UI4KoebVo4W4iFF81SHUU7f57O7/WlI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G3G4Vu1AReyfKgsyJxsu/tbZGrEEnmfgO8u/7fMdvh9DSu3sRRVjtt4SnrGOX0+dwvbu2Wprf9yYKPHoWqajvPn1ORj9my3JtD3eQQu9LE4FeA7Y74S+XEGAXMZwxinxgXYsYaUkwrzCx0UwDY0kXyKGLO5BCEyucmlR6VKn3bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyPk+qYP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5340FC4CED0;
+	Fri, 13 Dec 2024 15:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734103062;
+	bh=NiDfmXtW+uz6UI4KoebVo4W4iFF81SHUU7f57O7/WlI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CyPk+qYPhrrRkKRa8SO1JC2T0u/u4WMi3valxYwWnbohsJJGc67pRQvnRAkPEVudV
+	 pHzsNRpbUmpLXyp5uPBOPMk84vf97JaR7sZ0RWcXjU2Nn388hzqVE3qrqrGGBQs56t
+	 LGAtaWgdBltGsAPDrMh9QO5Nv9gH/ENWQIj4cK4yQ0v8gKVw/iaqEh7MbdgVPHNZ7Q
+	 /Q8sbY5PVubIk080Ba2+pyv0l83Uf9+RnI0qdCtv6/pVzB6eGxd/tbtT1ByitPqjiE
+	 VmVd0Ymqqxw4A/MNCiQr8d1OzGYeEym7PsSNG4WC7NCcXqwJ/rnZESHHTykVnWn8SA
+	 BIRIBr5GgBTlA==
+Message-ID: <7fa902e5-0916-4bc9-b1e0-2729903d3de0@kernel.org>
+Date: Fri, 13 Dec 2024 15:17:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v4 3/4] bpftool: btf: Support dumping a specific
+ types from file
+To: Daniel Xu <dxu@dxuuu.xyz>, hawk@kernel.org, kuba@kernel.org,
+ andrii@kernel.org, john.fastabend@gmail.com, ast@kernel.org,
+ daniel@iogearbox.net, davem@davemloft.net
+Cc: martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ andrii.nakryiko@gmail.com, antony@phenome.org, toke@kernel.org
+References: <cover.1734052995.git.dxu@dxuuu.xyz>
+ <5ec7617fd9c28ff721947aceb80937dc10fca770.1734052995.git.dxu@dxuuu.xyz>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <5ec7617fd9c28ff721947aceb80937dc10fca770.1734052995.git.dxu@dxuuu.xyz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Bjorn Helgaas <helgaas@kernel.org> wrote:
-> I see a test and call for .get_power() and .set_power(), but no actual
-> implementations, so I think they can be removed as well, can't they?
-> If so, I'll wait for that removal before applying this patch.
-You are right. Both only have a check if exist the {g|s}et_power(), then this
-is called.
-But, as you already said, seems that really don't have a implementations for
-both. So, I can work on remove this fields an tests this.  
+2024-12-12 18:24 UTC-0700 ~ Daniel Xu <dxu@dxuuu.xyz>
+> Some projects, for example xdp-tools [0], prefer to check in a minimized
+> vmlinux.h rather than the complete file which can get rather large.
+> 
+> However, when you try to add a minimized version of a complex struct (eg
+> struct xfrm_state), things can get quite complex if you're trying to
+> manually untangle and deduplicate the dependencies.
+> 
+> This commit teaches bpftool to do a minimized dump of a specific types by
+> providing a optional root_id argument(s).
+> 
+> Example usage:
+> 
+>     $ ./bpftool btf dump file ~/dev/linux/vmlinux | rg "STRUCT 'xfrm_state'"
+>     [12643] STRUCT 'xfrm_state' size=912 vlen=58
+> 
+>     $ ./bpftool btf dump file ~/dev/linux/vmlinux root_id 12643 format c
+>     #ifndef __VMLINUX_H__
+>     #define __VMLINUX_H__
+> 
+>     [..]
+> 
+>     struct xfrm_type_offload;
+> 
+>     struct xfrm_sec_ctx;
+> 
+>     struct xfrm_state {
+>             possible_net_t xs_net;
+>             union {
+>                     struct hlist_node gclist;
+>                     struct hlist_node bydst;
+>             };
+>             union {
+>                     struct hlist_node dev_gclist;
+>                     struct hlist_node bysrc;
+>             };
+>             struct hlist_node byspi;
+>     [..]
+> 
+> [0]: https://github.com/xdp-project/xdp-tools/blob/master/headers/bpf/vmlinux.h
+> 
+> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> ---
+>  .../bpf/bpftool/Documentation/bpftool-btf.rst |  8 +++-
+>  tools/bpf/bpftool/btf.c                       | 39 ++++++++++++++++++-
+>  2 files changed, 43 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/bpf/bpftool/Documentation/bpftool-btf.rst b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> index 245569f43035..dbe6d6d94e4c 100644
+> --- a/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> +++ b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> @@ -24,7 +24,7 @@ BTF COMMANDS
+>  =============
+>  
+>  | **bpftool** **btf** { **show** | **list** } [**id** *BTF_ID*]
+> -| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*]
+> +| **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*] [**root_id** *ROOT_ID*]
+>  | **bpftool** **btf help**
+>  |
+>  | *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* }
+> @@ -43,7 +43,7 @@ bpftool btf { show | list } [id *BTF_ID*]
+>      that hold open file descriptors (FDs) against BTF objects. On such kernels
+>      bpftool will automatically emit this information as well.
+>  
+> -bpftool btf dump *BTF_SRC* [format *FORMAT*]
+> +bpftool btf dump *BTF_SRC* [format *FORMAT*] [root_id *ROOT_ID*]
+>      Dump BTF entries from a given *BTF_SRC*.
+>  
+>      When **id** is specified, BTF object with that ID will be loaded and all
+> @@ -67,6 +67,10 @@ bpftool btf dump *BTF_SRC* [format *FORMAT*]
+>      formatting, the output is sorted by default. Use the **unsorted** option
+>      to avoid sorting the output.
+>  
+> +    **root_id** option can be used to filter a dump to a single type and all
+> +    its dependent types. It cannot be used with any other types of filtering.
+> +    It can be passed multiple times to dump multiple types.
+> +
+>  bpftool btf help
+>      Print short help message.
+>  
+> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
+> index 3e995faf9efa..2636655ac180 100644
+> --- a/tools/bpf/bpftool/btf.c
+> +++ b/tools/bpf/bpftool/btf.c
+> @@ -27,6 +27,8 @@
+>  #define KFUNC_DECL_TAG		"bpf_kfunc"
+>  #define FASTCALL_DECL_TAG	"bpf_fastcall"
+>  
+> +#define MAX_ROOT_IDS		16
+> +
+>  static const char * const btf_kind_str[NR_BTF_KINDS] = {
+>  	[BTF_KIND_UNKN]		= "UNKNOWN",
+>  	[BTF_KIND_INT]		= "INT",
+> @@ -880,7 +882,8 @@ static int do_dump(int argc, char **argv)
+>  {
+>  	bool dump_c = false, sort_dump_c = true;
+>  	struct btf *btf = NULL, *base = NULL;
+> -	__u32 root_type_ids[2];
+> +	__u32 root_type_ids[MAX_ROOT_IDS];
+> +	bool have_id_filtering;
+>  	int root_type_cnt = 0;
+>  	__u32 btf_id = -1;
+>  	const char *src;
+> @@ -974,6 +977,8 @@ static int do_dump(int argc, char **argv)
+>  		goto done;
+>  	}
+>  
+> +	have_id_filtering = !!root_type_cnt;
+> +
+>  	while (argc) {
+>  		if (is_prefix(*argv, "format")) {
+>  			NEXT_ARG();
+> @@ -993,6 +998,36 @@ static int do_dump(int argc, char **argv)
+>  				goto done;
+>  			}
+>  			NEXT_ARG();
+> +		} else if (is_prefix(*argv, "root_id")) {
+> +			__u32 root_id;
+> +			char *end;
+> +
+> +			if (have_id_filtering) {
+> +				p_err("cannot use root_id with other type filtering");
+> +				err = -EINVAL;
+> +				goto done;
+> +			} else if (root_type_cnt == MAX_ROOT_IDS) {
+> +				p_err("only %d root_id are supported", MAX_ROOT_IDS);
 
-In the cpci_hotplug.h we can crate a `flags` field in `cpci_hp_controller_ops`
-struct, in addition of remove the {g|s}et_power(). In the cpci_hotplug_core.c
-that the cpci_hp_controller_ops struct is in use, maybe we can create a #define
-SLOT_ENABLED 0x00000001, and we can do `ops->flags |= ENABLED_SLOT` when we
-need enable the slot in the enable_slot() function and `ops->flags &=
-~ENABLE_SLOT` in the disable_slot() function. In the get_power() function we
-only need return `ops->flags & SLOT_ENABLED`.
-what do you think?
 
-> In
-> https://lore.kernel.org/r/20241014131917.324667-1-trintaeoitogc@gmail.com,
-> you capitalized your names.  What's your preference?  I'd like to use
-> your name correctly and consistently.
-I make mistake, sorry for this. In the next commit I will send with my name
-capitalized. 
+I doubt users will often reach this limit, but if they do, the message
+can be confusing, because MAX_ROOT_IDS also accounts for root_type_ids[]
+cells used when we pass map arguments ("key" or "value" or "kv"), so you
+could pass 15 "root_id" on the command line and get a message telling
+only 16 are supported.
+
+Maybe add a counter to tell how many were defined from the rest of the
+command line, and adjust the value in the error message?
+
+
+> +				err = -E2BIG;
+> +				goto done;
+> +			}
+> +
+> +			NEXT_ARG();
+> +			root_id = strtoul(*argv, &end, 0);
+> +			if (*end) {
+> +				err = -1;
+> +				p_err("can't parse %s as root ID", *argv);
+> +				goto done;
+> +			}
+> +			for (i = 0; i < root_type_cnt; i++) {
+> +				if (root_type_ids[i] == root_id) {
+> +					err = -EINVAL;
+> +					p_err("duplicate root_id %d supplied", root_id);
+> +					goto done;
+> +				}
+> +			}
+> +			root_type_ids[root_type_cnt++] = root_id;
+> +			NEXT_ARG();
+>  		} else if (is_prefix(*argv, "unsorted")) {
+>  			sort_dump_c = false;
+>  			NEXT_ARG();
+> @@ -1403,7 +1438,7 @@ static int do_help(int argc, char **argv)
+>  
+>  	fprintf(stderr,
+>  		"Usage: %1$s %2$s { show | list } [id BTF_ID]\n"
+> -		"       %1$s %2$s dump BTF_SRC [format FORMAT]\n"
+> +		"       %1$s %2$s dump BTF_SRC [format FORMAT] [root_id ROOT_ID]\n"
+>  		"       %1$s %2$s help\n"
+>  		"\n"
+>  		"       BTF_SRC := { id BTF_ID | prog PROG | map MAP [{key | value | kv | all}] | file FILE }\n"
+
 
