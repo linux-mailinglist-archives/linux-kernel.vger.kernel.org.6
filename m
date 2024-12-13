@@ -1,162 +1,146 @@
-Return-Path: <linux-kernel+bounces-445606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB489F1835
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:55:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2ED99F1837
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD9718875CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:55:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C52167E0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18578198A36;
-	Fri, 13 Dec 2024 21:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07894195381;
+	Fri, 13 Dec 2024 21:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WH6rMcmi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDmEwuRI"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD7D1917C7;
-	Fri, 13 Dec 2024 21:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187C4192D9A;
+	Fri, 13 Dec 2024 21:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734126865; cv=none; b=qmptuzgRnYfrseCJvMlPyG2TXGzAK5Ek2xpscGJms3xEAnn3/nMn3RnBpi5CT12F9cFBSNNUc6DK4Tln0OAlZSdgAH+aYniD1Ul0fYcVvIwp0rn11B+v40wY4Sfk0RXrRihwZBsBEPaa8B4xvY6flCqTBTLJUVdztcSI7rm2O4k=
+	t=1734127091; cv=none; b=dvrAGgddiuMToRPFKUaG6jF6GjXLCdtTcPLccWCXJ1xFDo1oxwYIylOwsaNBo/q2M5zgNCtmTU+c2SR4UIHDXY+923bH+83AZvKb7d3G6I0Jyl9a/dPGCLu/HK+LAJoretkyJ/opiHUKP8YWXhLDOEinvxG5BrHXipBsDeSeXwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734126865; c=relaxed/simple;
-	bh=IguZmxeB+5sRbxSSNN7lLV+iorfglNnB8i3GQDbaXWY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g2bGictiW5hFYwgjOb2N22AHZg+O4PLGW7schzZsLKbZ6T+50pO2rhsdUZK/93B3fxLglyCrIWtwdEUgnEQtYnU5QUzLtFtrNGneR+2PeXRcS0wAWragNiSeuEtFu0/5Q9fXr3RLDMsE5ViSEt24FSQjDnxBHu8GfN3dgGtf9hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WH6rMcmi; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734126864; x=1765662864;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=IguZmxeB+5sRbxSSNN7lLV+iorfglNnB8i3GQDbaXWY=;
-  b=WH6rMcmiIe+hXN57TGMy7DOmARNuLOqILG2FBqE/B8a3dWvntfViobZD
-   Xwe2CdBEz/LaUZNdIZ+p0qKXWG526q3b0ptJ235bGxGHVJ83n3TTykwB2
-   lyusK3XvE7g8ln0LadUGZwbNGgAXBvFR5ia5PsMMHirrufOqOT1ETeBmT
-   eBMM3XCqhd+7LzoFh4TPtR+dBW5ZYwsMtPRTmDKzPMY7s2YYpOh2alJ/G
-   0Wo+z4SjEf+wn+rLUGFdYWrC/PvJ4SbccpB10kqFIZe7R7ktWw3iNPXBa
-   qCVP9gHu87EeMXXtizbaAfZGOdJGNvjQyj97loOzpTz8W/mD3CXl+qWy6
-   w==;
-X-CSE-ConnectionGUID: 5BTtnKWTRuClF05UgTed6Q==
-X-CSE-MsgGUID: sm93y+3sSn6vJMpGmVw5XQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="45281659"
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="45281659"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 13:54:23 -0800
-X-CSE-ConnectionGUID: j0ljZYx4Tt2wozB2NMgpAg==
-X-CSE-MsgGUID: n6kvB9UsSVOfmUJnFjO9VQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="96704530"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO tfalcon-desk.intel.com) ([10.124.223.114])
-  by orviesa006.jf.intel.com with ESMTP; 13 Dec 2024 13:54:22 -0800
-From: Thomas Falcon <thomas.falcon@intel.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: ravi.bangoria@amd.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Falcon <thomas.falcon@intel.com>
-Subject: [PATCH v3] perf script: Fix output type for dynamically allocated core PMU's
-Date: Fri, 13 Dec 2024 15:54:21 -0600
-Message-ID: <20241213215421.661139-1-thomas.falcon@intel.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734127091; c=relaxed/simple;
+	bh=hrOMY4Mfp1mTyWOapXYYwvWkYv4Al6PgVi1cl3XVRQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pshUsN7Qe/cuTJhbxupKariZvNTnKXGL9MlfsH71s29QZe91nuIyZLzayNmhUTA6kPd/f94+maPDiq5rPakEj0pMoxzdaarvcdwvWYkdFB/6ABkY6VjwUW1AShhgdNvgfPl1cNR02MDUzAFdfxPfoaiyqRzuKsO88Pd6QChmEBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDmEwuRI; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ee8aa26415so1947157a91.1;
+        Fri, 13 Dec 2024 13:58:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734127089; x=1734731889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9joODY5IOWuY5Sk7lEDYqOk1qJVMi/mA0wV9LlQ6Ra0=;
+        b=mDmEwuRIruDHjYzLvaGoxFeZ/5u2jCQZ4bIyTE986v+WCZ8SANaVD7JGuOQqZBUqsx
+         fIfixjQCwWHLT+5Y9vZjELl3dM/N0gPNOMY3WlxERAM/4ReIdlZ9hr35yaRJ+K5Baw7i
+         cFJE/jtAfgnlV6oUaAryBLDjM0Y05Ihbp+BDHLTmaLRXqKzdkYHSZ0o+kVttRoaRp51T
+         azxXKdAtM0Ytop9BPRptpHjTYAwjn5qQUyoOZTBOYmWEUC+gnlGCJC63HLqQNp0NrLob
+         Sa8C+wxHeOrnDYSzbc2e0HNk0q3WJpPP4JmO0q1UlmOfKdM0MgrPmkl8cnaOzbBNakmc
+         umOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734127089; x=1734731889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9joODY5IOWuY5Sk7lEDYqOk1qJVMi/mA0wV9LlQ6Ra0=;
+        b=u2ngZWEhsJX5RQa78ffAZkudkgZ+hjd7q4KwTkSZY2cPmo08r+RYr7ChAfOUlITV1y
+         ehmRRWqoURPNavcYY0oqNOR4BqLEN7popbjzRUgQcAQ8KISf5Ps08eIfq0ip6R7RCBmM
+         CapZZZjunLbv7nQsJdF2K8ajvzloU0Xcas8c5qrZyPBa0R0SOnx+HxcBgVJBAqXrhfdF
+         t1ype8k3e8eJ+gEbzGp7/Sf1Tmq2wR4anbnDyZ4IpasK3og3aNvncY8wRfEYzvBKSaA3
+         3eEQN2z5UBQRzS1q5kpfVQscgk2ydbIf1kTU1Wo3ORbsQtbBsAhg0+CBU3gtsdA73pbc
+         1yFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkTPL1esElWip6NvykplJkSJ4AA1ELvt2jrLvCQkFJhhzJnvK3Jf3QKzyBOn2/5+izOrA47HyzuNP/yLpJ0C528W5H@vger.kernel.org, AJvYcCW2Zd8BpMbyQXENQdiRrLBmD9vnQhbJDRIArbHf1+uYLyB+SwAPu8ecLhQvgmTAByE07fk=@vger.kernel.org, AJvYcCWQjNtA6qJOpoob5TMI997/vCgeyyraNZkpBBLE9SFGNENtkmcZUFuOqLuNdij7GnDeIrCLNpsqXsXOXV0B@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyjf4iFNvVSjVcc5oOMe26x7ZiQC+9YFaLoVrrMkCFZJXutGsj
+	JJTZGZ/UJejBXynth+9v613hVM7/FQUj5u6XrBb4GMc7RN3O8xfYb2KTiy/qQSiU1i7I8YO+jlZ
+	xCIisC7n1t8vLTwK3JhZ/+CasJOU=
+X-Gm-Gg: ASbGncstltuG2TSD1Du+zNwha3adeF9aem+HkfGiZf+Cl9MxuA/ZO8CqUAaFd0sSZCX
+	MKk5XSJSy+4+aAbwqoIoXopM+piGd+9Z5M50PpKOKvxgU845Zls4q0A==
+X-Google-Smtp-Source: AGHT+IFMs/Ib4YLj9SiwztkuJAUnKH/dHadPUJCRlDC35bss40vRZx3h+c+yNCnfOc78z6jahVPjyiIkEik2pwWgL3I=
+X-Received: by 2002:a17:90b:2652:b0:2ea:4a6b:79d1 with SMTP id
+ 98e67ed59e1d1-2f28fb6e8dbmr6322561a91.11.1734127089478; Fri, 13 Dec 2024
+ 13:58:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241211133403.208920-1-jolsa@kernel.org> <20241211133403.208920-14-jolsa@kernel.org>
+In-Reply-To: <20241211133403.208920-14-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 13 Dec 2024 13:57:56 -0800
+Message-ID: <CAEf4BzZPCdRPyXH1xDed2m3VvNkzzpY33Gbd_vWxivxLZQCdLQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 13/13] selftests/bpf: Add 5-byte nop uprobe
+ trigger bench
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
+	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-perf script output may show different fields on different core PMU's
-that exist on heterogeneous platforms. For example,
+On Wed, Dec 11, 2024 at 5:36=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> Add 5-byte nop uprobe trigger bench (x86_64 specific) to measure
+> uprobes/uretprobes on top of nop5 instruction.
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/testing/selftests/bpf/bench.c           | 12 ++++++
+>  .../selftests/bpf/benchs/bench_trigger.c      | 42 +++++++++++++++++++
+>  .../selftests/bpf/benchs/run_bench_uprobes.sh |  2 +-
+>  3 files changed, 55 insertions(+), 1 deletion(-)
+>
 
-perf record -e "{cpu_core/mem-loads-aux/,cpu_core/event=0xcd,\
-umask=0x01,ldlat=3,name=MEM_UOPS_RETIRED.LOAD_LATENCY/}:upp"\
--c10000 -W -d -a -- sleep 1
+[...]
 
-perf script:
+>  static void usetup(bool use_retprobe, bool use_multi, void *target_addr)
+>  {
+>         size_t uprobe_offset;
+> @@ -448,6 +462,28 @@ static void uretprobe_multi_ret_setup(void)
+>         usetup(true, true /* use_multi */, &uprobe_target_ret);
+>  }
+>
+> +#ifdef __x86_64__
+> +static void uprobe_nop5_setup(void)
+> +{
+> +       usetup(false, false /* !use_multi */, &uprobe_target_nop5);
+> +}
+> +
+> +static void uretprobe_nop5_setup(void)
+> +{
+> +       usetup(false, false /* !use_multi */, &uprobe_target_nop5);
+> +}
 
-chromium-browse   46572 [002] 544966.882384:      10000 	cpu_core/MEM_UOPS_RETIRED.LOAD_LATENCY/: 7ffdf1391b0c     10268100142 \
- |OP LOAD|LVL L1 hit|SNP None|TLB L1 or L2 hit|LCK No|BLK    N/A    5   7    0   7fad7c47425d [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
+true /* use_retprobe */
 
-perf record -e cpu_atom/event=0xd0,umask=0x05,ldlat=3,\
-name=MEM_UOPS_RETIRED.LOAD_LATENCY/upp -c10000 -W -d -a -- sleep 1
+that's the problem with bench setup, right?
 
-perf script:
+> +
+> +static void uprobe_multi_nop5_setup(void)
+> +{
+> +       usetup(false, true /* use_multi */, &uprobe_target_nop5);
+> +}
+> +
+> +static void uretprobe_multi_nop5_setup(void)
+> +{
+> +       usetup(false, true /* use_multi */, &uprobe_target_nop5);
+> +}
+> +#endif
+> +
+>  const struct bench bench_trig_syscall_count =3D {
+>         .name =3D "trig-syscall-count",
+>         .validate =3D trigger_validate,
 
-gnome-control-c  534224 [023] 544951.816227:      10000 cpu_atom/MEM_UOPS_RETIRED.LOAD_LATENCY/:   7f0aaaa0aae0  [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
-
-Some fields, such as data_src, are not included by default.
-
-The cause is that while one PMU may be assigned a type such as
-PERF_TYPE_RAW, other core PMU's are dynamically allocated at boot time.
-If this value does not match an existing PERF_TYPE_X value,
-output_type(perf_event_attr.type) will return OUTPUT_TYPE_OTHER.
-
-Instead search for a core PMU with a matching perf_event_attr type
-and, if one is found, return PERF_TYPE_RAW to match output of other
-core PMU's.
-
-Suggested-by: Kan Liang <kan.liang@intel.com>
-Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
----
-v2: restrict pmu lookup to platforms with more than one core pmu
-v3: only scan core pmu list
----
- tools/perf/builtin-script.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 9e47905f75a6..685232883f9c 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -384,6 +384,19 @@ static int evsel_script__fprintf(struct evsel_script *es, FILE *fp)
- 		       st.st_size / 1024.0 / 1024.0, es->filename, es->samples);
- }
- 
-+static bool output_type_many_core_pmus(unsigned int type)
-+{
-+	struct perf_pmu *pmu = NULL;
-+
-+	if (perf_pmus__num_core_pmus() > 1) {
-+		while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
-+			if (pmu->type == type)
-+				return true;
-+		}
-+	}
-+	return false;
-+}
-+
- static inline int output_type(unsigned int type)
- {
- 	switch (type) {
-@@ -394,6 +407,9 @@ static inline int output_type(unsigned int type)
- 			return type;
- 	}
- 
-+	if (output_type_many_core_pmus(type))
-+		return PERF_TYPE_RAW;
-+
- 	return OUTPUT_TYPE_OTHER;
- }
- 
--- 
-2.47.1
-
+[...]
 
