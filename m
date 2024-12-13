@@ -1,164 +1,204 @@
-Return-Path: <linux-kernel+bounces-444797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE8449F0CA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:46:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7875C9F0CA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71E522821E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A872282FA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890FC1DFD96;
-	Fri, 13 Dec 2024 12:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CB51DF736;
+	Fri, 13 Dec 2024 12:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NX5vicBS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B+ft+Ry+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C5D23C9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE281DFE04
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734093978; cv=none; b=AKSF5i4J4/9dwSs+s1vywD2FL9jjVLQ8QWx+kqZAYdjEA2J4qcbmlZGbc0zeoKSDlIZgp+O9SbtHjNFgnFb5xtxCFTNaIDYeQr5LgmVredHwCO1Gav662GlF+1dEIOBzUZNgBC41w//MlJyeebS0UCX448tQ0AkiuzymytGakUQ=
+	t=1734093984; cv=none; b=WtQKBNuET4sfg3ovAoV54PCJlsWdvb9sX5JQ/pJisU9iy/ifE1MpQwqIV/PhsQKUpSJIiaoBxinmMZv4424wWzJOx8Hc1+9q1yzuwC6K7SEKI8ovtxVhq9OIBp3NwyEaUmUuX+EBhK3SI/Rv1n8IAJxypiM06I68Yh0exEyPIQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734093978; c=relaxed/simple;
-	bh=3p+CQsbB5i+cFiZUS0/AgT6MTGwqwoSiTAyXjy4jBAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hKUww1GrrWGViYd3oX3SIT9PYgY5W1z0hiES2rfGxVkTbYn68Fe+1RGIvgA4yRlTAHggcAMFnOlDMvqSYX0779N/E+E4R98RvOc1jlIkSYaLJoiGFO3UeKnycllXEuFomKiTaaono8/VjkQQ8Wg9wl4w3+dukcfQUXp2GiUoUO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NX5vicBS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDBTqEa001416
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:46:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	322sb65Govxzmaokzre8m+pPsTL1q77XpnWd+ZZ4Vfs=; b=NX5vicBS+cYhDFSG
-	+AxglO78kt0oG1XJNQbP9lHLvxWVHd4IeiVbmMtOE2Kjj4jW7p6yuI/Thz2PmUQr
-	q/7DaIW021P/wco8t1ofFsagBlfHlaOOdcjOswa4Gr6OySOVmOXWymxui/d5hlW/
-	kapNGAF5FjCnnhj4DdHEoJG6xwY/9rTSHoFPE52zZ7iYV854+om9oGNfjSjJepE5
-	qoqklVW/mLNjd9ofByDZlNX7ZU5wT46V00Wck2kji/TMBsubQNWQDqQXzm+dMFUm
-	0yMkWvnXAMwyP6czhBqcK+z22SABg0u9ovxVqiuXn1KKninfI5yTbGthBS6x+bsi
-	KeJ3ag==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gm3s06pj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:46:16 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7b6f85325c3so24263985a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:46:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734093975; x=1734698775;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=322sb65Govxzmaokzre8m+pPsTL1q77XpnWd+ZZ4Vfs=;
-        b=CvoAEw/TsvG/dD1KAjYM2EQZLaKej1lRSn3Y0HSGSziPjXOUb9rvOzb8TkhIkFJzoY
-         qRgIkjvsx5Pb6PB4KCciuQKrk0TwvUnj2++Rb8hysWrNKJ8nr2GbRG/Jfar9M5ytOEBq
-         6cMyWblFqSli+E870kTsGkgLTy7oeMdN1nZim794Fxh2eRM0MgGjLK+hMAoBk58vDxEl
-         oBHnPm+IJd4trGOxUS9O6DU4IuLx7YbASOpbN5DH0JjdUUEloFG+5jI8wStTSqbVyJzy
-         bfbyyu1p3/3FC4dqm/ow2ns57KjJG7ZgAEZUDqZmGsJ2UGAGEjawLAc7hWQviDx44zdx
-         QhXA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9JolxFr9y6JehDmYKDqwl+GzuxMdvvPEWyOUABMfDNBxCRhw1nr2GKh2s0y3GtPG8T7mP4DqthzLP12Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLOqnYGvWicgYvUkDkfEO66FOKX+his8CGUhrGK5Ile3qw0ro0
-	vVpNWeu58g3ABYDqJwR+ldZPf9TaTjmzgrUfIdzUl43ijQc70XPu/6shny6C2AwmvV0NyLz4QJZ
-	IFvclheG1RKq4ke/tyZ1hRL2xPc9/HSALNvep19GHbBILx8u7v+QqVTpqrIsuPVCwVu9uMwI=
-X-Gm-Gg: ASbGnctH2J8qhGWuc6xtmYA6YaQtdPiC078tGxJOUTpOLH8xxfYIeJgpnXkNI/BCY1A
-	lyfbNYXF/EKw1xp0TM0OnaJHTKftCfXmguTH5gBJPcb0sDZW+RKOQXTxLM1cS4LXEuKXdWLlm3P
-	EnbWBu09oK8qOqolPpWQZB+o/0IK5HVBXZbWxjAbuslFiPoJFJtTbQchhO0eFgmOXY5J8+EjElo
-	mRqloTXf31uuBzi3ebv40Cv0Ac4AIJzAEWg/FHPXNKiQ+E+qTxynq0Q9l2s4lDvq5x8I4SYwTJY
-	K6Igc6JA6vFtSqtVGlpo5IdAHvpVZlXIXNHT
-X-Received: by 2002:a05:620a:46a4:b0:7b6:753b:9b5e with SMTP id af79cd13be357-7b6fbf14fe8mr117322185a.9.1734093975544;
-        Fri, 13 Dec 2024 04:46:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHCgXgVIRepMOK1PH0RtfqUKtKg09dCU/YpMDIeE2+caqG/wtCIds7uJFW7qJdKipl3vT8NAA==
-X-Received: by 2002:a05:620a:46a4:b0:7b6:753b:9b5e with SMTP id af79cd13be357-7b6fbf14fe8mr117320685a.9.1734093975193;
-        Fri, 13 Dec 2024 04:46:15 -0800 (PST)
-Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6873814d4sm700901766b.54.2024.12.13.04.46.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 04:46:14 -0800 (PST)
-Message-ID: <ee245c01-b5bb-4ed4-963c-57c979f26091@oss.qualcomm.com>
-Date: Fri, 13 Dec 2024 13:46:13 +0100
+	s=arc-20240116; t=1734093984; c=relaxed/simple;
+	bh=thlok1CfL06wcvQX+28Qnz6C04TjoNd5+5nx+qUM5xs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZNs6mALxTVBUt8xKMNLipGJeeClsGPD6LQUT2wgMsgWBkJzHaQuJm7XRsBd3GL6lJlvrFHFFR2PDmM/noGmNdIe1qLSx/Kx4FeeCO+nU7Qavgh2fn/SbVF59a9DnyiomfXCwekMfzWGDVHCedvSr19Vrcl/45Y8wSLsNSfkdgSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B+ft+Ry+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kKnnXGxBgrXo8pBr3PlNv3tQuU4P1ia/Phvtxts7lNQ=; b=B+ft+Ry+cYpNY6UkYRhn/+nAiL
+	MOxUohUCE2Cvg2qxxUq+wpGGPyZV8xjfxsV953cAjrPBuooBa3sc3CbvW8MjqBA2wJAGfJ7WXBsl3
+	kQD5qFLZO0vjXEq0qZ0kHegCO+BPn3sk7oMpCkdiDnj6dAB0IZC8/CpeBCLYAsStzwvGl1Dc9Qv5E
+	jQT5zE7KVPDCgH9gwpwr0zD6u5pwGC9H0UqNXb9vb4jqGGMa8iRn6t3LCXzSdS/cXfqXz32BJP5CR
+	AAin50pK/uMyi9jHUI6megLvLdnzPOFDCWpiLHwYgTChbYg+8/Ruk8DFOVcpFvz1+2btLg4tVr9+I
+	Bvtpu9XA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tM53f-0000000Cwi0-2sdD;
+	Fri, 13 Dec 2024 12:46:15 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 125CE30049D; Fri, 13 Dec 2024 13:46:15 +0100 (CET)
+Date: Fri, 13 Dec 2024 13:46:14 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bert Karwatzki <spasswolf@web.de>, kernel-team@android.com
+Subject: Re: [RFC][PATCH] locking/rtmutex: Make sure we wake anything on the
+ wake_q when we release the lock->wait_lock
+Message-ID: <20241213124614.GA12338@noisy.programming.kicks-ass.net>
+References: <20241212222138.2400498-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: sm8750-mtp: Enable CDSP and mention
- MPSS
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241122-b4-sm8750-cdsp-v1-0-9a69a889d1b7@linaro.org>
- <20241122-b4-sm8750-cdsp-v1-3-9a69a889d1b7@linaro.org>
- <d43a2a74-9867-42b7-8810-df081f037831@oss.qualcomm.com>
- <28afe0ac-5d16-4786-9259-6de5d090b491@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <28afe0ac-5d16-4786-9259-6de5d090b491@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: U1jZK3XL4S16A8ApB0oWiYmDE-KLKr-_
-X-Proofpoint-GUID: U1jZK3XL4S16A8ApB0oWiYmDE-KLKr-_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0
- spamscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 malwarescore=0
- mlxlogscore=798 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130090
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241212222138.2400498-1-jstultz@google.com>
 
-On 6.12.2024 9:56 AM, Krzysztof Kozlowski wrote:
-> On 05/12/2024 18:34, Konrad Dybcio wrote:
->> On 22.11.2024 4:26 PM, Krzysztof Kozlowski wrote:
->>> Enable the CDSP on MPT8750 board and add firmware for the modem, however
->>> keep it as failed because modem crashes after booting for unknown
->>> reasons.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 15 +++++++++++++++
->>>  1 file changed, 15 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
->>> index 8eeed7f2f7766326cfc7830002768087e9783b9b..e2562ea5996ddfb1bee03b367082f4e1890131f3 100644
->>> --- a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
->>> +++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
->>> @@ -791,6 +791,21 @@ &remoteproc_adsp {
->>>  	status = "okay";
->>>  };
->>>  
->>> +&remoteproc_cdsp {
->>> +	firmware-name = "qcom/sm8750/cdsp.mbn",
->>> +			"qcom/sm8750/cdsp_dtb.mbn";
->>> +
->>> +	status = "okay";
->>> +};
->>> +
->>> +&remoteproc_mpss {
->>> +	firmware-name = "qcom/sm8750/modem.mbn",
->>> +			"qcom/sm8750/modem_dtb.mbn";
->>> +
->>> +	/* Modem crashes with "DOG detects stalled initialization" */
->>> +	status = "fail";
->>
->> That is a bad sign, let's hold off merging this as we may be
->> missing some resource..
+On Thu, Dec 12, 2024 at 02:21:33PM -0800, John Stultz wrote:
+> Bert reported seeing occasional boot hangs when running with
+> PREEPT_RT and bisected it down to commit 894d1b3db41c
+> ("locking/mutex: Remove wakeups from under mutex::wait_lock").
 > 
-> Luckily there are reports that all modems on recent boards crash (sm8550
-> and newer), so probably nothing wrong was in this DTS. :)
+> It looks like I missed a few spots where we drop the wait_lock and
+> potentially call into schedule without waking up the tasks on the
+> wake_q structure. Since the tasks being woken are ww_mutex tasks
+> they need to be able to run to release the mutex and unblock the
+> task that currently is planning to wake them. Thus we can deadlock.
+> 
+> So make sure we wake the wake_q tasks when we unlock the wait_lock.
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Bert Karwatzki <spasswolf@web.de>
+> Cc: kernel-team@android.com
+> Reported-by: Bert Karwatzki <spasswolf@web.de>
+> Closes: https://lore.kernel.org/lkml/20241211182502.2915-1-spasswolf@web.de
+> Fixes: 894d1b3db41c ("locking/mutex: Remove wakeups from under mutex::wait_lock")
+> Signed-off-by: John Stultz <jstultz@google.com>
+> ---
 
-Do we have anyone looking into that?
+I don't suppose this actually makes things much better -- but I had to
+try.
 
-Konrad
+
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1192,6 +1192,17 @@ try_to_take_rt_mutex(struct rt_mutex_bas
+ 	return 1;
+ }
+ 
++#define WRAP_WAKE(_stmt, _q) \
++do { \
++	struct wake_q_head *_Q = (_q); \
++	guard(preempt)(); \
++	_stmt; \
++	if (_Q && !wake_q_empty(_Q)) { \
++		wake_up_q(_Q); \
++		wake_q_init(_Q); \
++	} \
++} while (0)
++
+ /*
+  * Task blocks on lock.
+  *
+@@ -1248,10 +1259,7 @@ static int __sched task_blocks_on_rt_mut
+ 
+ 		/* Check whether the waiter should back out immediately */
+ 		rtm = container_of(lock, struct rt_mutex, rtmutex);
+-		preempt_disable();
+-		res = __ww_mutex_add_waiter(waiter, rtm, ww_ctx, wake_q);
+-		wake_up_q(wake_q);
+-		preempt_enable();
++		WRAP_WAKE(res = __ww_mutex_add_waiter(waiter, rtm, ww_ctx, wake_q), wake_q);
+ 		if (res) {
+ 			raw_spin_lock(&task->pi_lock);
+ 			rt_mutex_dequeue(lock, waiter);
+@@ -1295,13 +1303,7 @@ static int __sched task_blocks_on_rt_mut
+ 	 */
+ 	get_task_struct(owner);
+ 
+-	preempt_disable();
+-	raw_spin_unlock_irq(&lock->wait_lock);
+-	/* wake up any tasks on the wake_q before calling rt_mutex_adjust_prio_chain */
+-	wake_up_q(wake_q);
+-	wake_q_init(wake_q);
+-	preempt_enable();
+-
++	WRAP_WAKE(raw_spin_unlock_irq(&lock->wait_lock), wake_q);
+ 
+ 	res = rt_mutex_adjust_prio_chain(owner, chwalk, lock,
+ 					 next_lock, waiter, task);
+@@ -1645,13 +1647,8 @@ static int __sched rt_mutex_slowlock_blo
+ 			owner = rt_mutex_owner(lock);
+ 		else
+ 			owner = NULL;
+-		preempt_disable();
+-		raw_spin_unlock_irq(&lock->wait_lock);
+-		if (wake_q) {
+-			wake_up_q(wake_q);
+-			wake_q_init(wake_q);
+-		}
+-		preempt_enable();
++
++		WRAP_WAKE(raw_spin_unlock_irq(&lock->wait_lock), wake_q);
+ 
+ 		if (!owner || !rtmutex_spin_on_owner(lock, waiter, owner))
+ 			rt_mutex_schedule();
+@@ -1802,10 +1799,7 @@ static int __sched rt_mutex_slowlock(str
+ 	 */
+ 	raw_spin_lock_irqsave(&lock->wait_lock, flags);
+ 	ret = __rt_mutex_slowlock_locked(lock, ww_ctx, state, &wake_q);
+-	preempt_disable();
+-	raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
+-	wake_up_q(&wake_q);
+-	preempt_enable();
++	WRAP_WAKE(raw_spin_unlock_irqrestore(&lock->wait_lock, flags), &wake_q);
+ 	rt_mutex_post_schedule();
+ 
+ 	return ret;
+@@ -1863,11 +1857,8 @@ static void __sched rtlock_slowlock_lock
+ 			owner = rt_mutex_owner(lock);
+ 		else
+ 			owner = NULL;
+-		preempt_disable();
+-		raw_spin_unlock_irq(&lock->wait_lock);
+-		wake_up_q(wake_q);
+-		wake_q_init(wake_q);
+-		preempt_enable();
++
++		WRAP_WAKE(raw_spin_unlock_irq(&lock->wait_lock), wake_q);
+ 
+ 		if (!owner || !rtmutex_spin_on_owner(lock, &waiter, owner))
+ 			schedule_rtlock();
+@@ -1896,10 +1887,8 @@ static __always_inline void __sched rtlo
+ 
+ 	raw_spin_lock_irqsave(&lock->wait_lock, flags);
+ 	rtlock_slowlock_locked(lock, &wake_q);
+-	preempt_disable();
+-	raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
+-	wake_up_q(&wake_q);
+-	preempt_enable();
++
++	WRAP_WAKE(raw_spin_unlock_irqrestore(&lock->wait_lock, flags), &wake_q);
+ }
+ 
+ #endif /* RT_MUTEX_BUILD_SPINLOCKS */
 
