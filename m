@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-444372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179E79F05CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:53:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 748DD9F05D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:54:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A90816A2AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86ABB16A2BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD9719A2A3;
-	Fri, 13 Dec 2024 07:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27C519CC21;
+	Fri, 13 Dec 2024 07:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r0qLUAbv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4SJm+f3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0551F95E;
-	Fri, 13 Dec 2024 07:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405C21F95E;
+	Fri, 13 Dec 2024 07:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734076376; cv=none; b=eg9/IlLsvvLNlwRAcBPP+F+8Rcpg7Wn7666M9Jy6DhYN7JQHdIntnz5NWr6YYA+xHGDBOhwE2rvnVLjK1bmFDajwkYKqfmCMMDgEWYPAwkURhYJdUwWDJa0IeV/2EdHLsEQslWFgxasbweBeDKJW1gY+wuvobBif/RhJmnzzhtw=
+	t=1734076459; cv=none; b=eySZRT97kCIYRra7zvMXvMCqTcK6jkzzONVRlAhUEgaN96picHK/UzVvlBoa1rHcysQvN0I0tBx4FR57wx6TTxfeHUop2yJztlgyy7YGv3VXiwvHOGwwj2MhiJ6O7OxB+et639xT2lksRrqu6o1lLxPtVVDzuFdsaNfBZwZQrsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734076376; c=relaxed/simple;
-	bh=sIKJxOhq8Y8pGK7ztAR92w2utGmqaU9elHq5cSzGwyM=;
+	s=arc-20240116; t=1734076459; c=relaxed/simple;
+	bh=6kJQZwMumhwRYNcj/Z3DSEK4rvPl4raB4PSzTVGqE/k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IsU5/GO7uqIu9wMahUCy1bmckf0V77mv1XBZ2A8kDR6QCF0ev9OlEJZisSOaqqUZiea1HTt4iUnKAO0HHqe/q4XXLrvB0pHBiEjgOzJ30jNteXXO1yvsdKc2dulcECielpRDaNIuC7Pnp8GU38viuXnr8W0ZD188nVPajYsHQCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r0qLUAbv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B54CC4CED0;
-	Fri, 13 Dec 2024 07:52:50 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=h9J70t0W6epZwm9cLe3/VvrYgck4huBlLUSMI1cOJaKabNZzfIHFJJiV0krTEyVhJonFV9k0QgvMtpNkysa8diKWqrgSQtnt537GiHxzizxOh5Phiqms2CyiPhz7yifEK2CkjskW8axgwW2tlQlhkAsVRw7VGKmg3h4Xv3cxN4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4SJm+f3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1546C4CED6;
+	Fri, 13 Dec 2024 07:54:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734076375;
-	bh=sIKJxOhq8Y8pGK7ztAR92w2utGmqaU9elHq5cSzGwyM=;
+	s=k20201202; t=1734076458;
+	bh=6kJQZwMumhwRYNcj/Z3DSEK4rvPl4raB4PSzTVGqE/k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r0qLUAbvkDAtaeOmGqQbBwtCYKK1D3dyVCBwPNgs/SXizwv5OFE2btO2vV41652kS
-	 8kNwFxeaVNb36ZDl3nUmYVUv/FbhETIjFvtVwoRpUpwj1eX73Dd9I8/LZvo0vQw/GF
-	 DKqCWgMRziyDje5KAskHJ9AKxs0GpBNunj+MPMv9G6RRfpY9LKFrtpeR7/xbBsT5vU
-	 mvapj7Xud7sXbPZLaT96qVZa1NNZ97JkRiBr7tVe/LBZtZNhESabBjFpX4w06lP54k
-	 s5dUXwgKkX5/W1HpPyTuuj9hRa06QXofJLlg6P0bIzhV3CdSszdVuGEU1JKB+kJrlF
-	 YkDKRVFg5X8iw==
-Message-ID: <cf153dd6-f82c-47d9-9ab4-f247437d607e@kernel.org>
-Date: Fri, 13 Dec 2024 08:52:49 +0100
+	b=U4SJm+f36j1aUjDnpyBWvEhYhIk4Djn+o72TDoiQTIIyBt6Vop/n+dzdoVhdAVYfX
+	 Fub2Mqg2wKbtJ32LxUl+dkV/VMxjIRaDX5nJFQsQWk9ovgW8KJ1VFE9OTN6R/CvkHe
+	 UVCFWHYaLy9kR73uP7MNONA3ve8p5cs/mF0DKM+WL2kY8WDCASkTr4Bo2Gz+YDJ8HE
+	 kN4M9EyZOdDiKRPZRDp3sXkT29O2H6NnrhNYeEb3ZNlwgvCI4SzwsnN7WUREuPEigG
+	 dw/xO/VXuCyRKx7pevkkH9jroYthbVmHouLqRJSLzfkSZa5OIgpWD2blblmqEsObia
+	 9Yx8deZJaquGQ==
+Message-ID: <5770256d-0227-423d-9b6e-4db834284552@kernel.org>
+Date: Fri, 13 Dec 2024 08:54:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] nvmem: imx-ocotp-ele: Support accessing controller
- for i.MX9
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Peng Fan <peng.fan@nxp.com>
-References: <20241212-imx-ocotp-v1-0-198bb0af86a0@nxp.com>
- <20241212-imx-ocotp-v1-2-198bb0af86a0@nxp.com>
-Content-Language: en-US
+Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: Add support for secondary USB
+ node on QCS615
+To: Song Xue <quic_songxue@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+References: <20241211-add_usb_host_mode_for_qcs615-v2-0-2c4abdf67635@quicinc.com>
+ <20241211-add_usb_host_mode_for_qcs615-v2-1-2c4abdf67635@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -108,33 +105,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241212-imx-ocotp-v1-2-198bb0af86a0@nxp.com>
+In-Reply-To: <20241211-add_usb_host_mode_for_qcs615-v2-1-2c4abdf67635@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/12/2024 09:24, Peng Fan (OSS) wrote:
-> +
-> +			if (imx_ele_ocotp_check_access(pdev, id)) {
-> +				of_detach_node(child);
-> +				dev_err(dev, "%s: Not granted, device driver will not be probed\n",
-> +					child->full_name);
-> +			}
-> +		}
-> +
-> +		imx_ele_ocotp_grant_access(pdev, child);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_ele_ocotp_access_control(struct platform_device *pdev)
-> +{
-> +	struct imx_ocotp_priv *priv = platform_get_drvdata(pdev);
-> +	struct device_node *soc __free(device_node) = of_find_node_by_path("/soc");
+On 11/12/2024 09:26, Song Xue wrote:
+> From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> 
+> Add support for secondary USB controller and its high-speed phy
+> on QCS615.
+> 
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> Co-developed-by: Song Xue <quic_songxue@quicinc.com>
+> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
 
-No, you just created undocumented ABI on the name.
 
-Drop/replace or express the ABI (which is impossible, so basically: drop).
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
 
 
 Best regards,
