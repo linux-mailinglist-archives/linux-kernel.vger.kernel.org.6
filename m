@@ -1,121 +1,121 @@
-Return-Path: <linux-kernel+bounces-445243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591F19F1332
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:07:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D94DD9F1333
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B49931884065
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45DE51884144
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044FB1E377E;
-	Fri, 13 Dec 2024 17:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2DA1E32CD;
+	Fri, 13 Dec 2024 17:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l0hxUDtU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eY534SAz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CDC1DF737
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3598A175AB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734109630; cv=none; b=AI4f0D+LnFZ4gpyZ+MEXRMGCMv2tM8ZrszNNPNW8q4JKBuFAR89K8mi5uNvzaOL5kP/vvUh7grX/M5IQb9jEUt4EDytyEN+qVh+mhprDfUTEXoIwRRtdc12KtJzWiGNhWfHHJ7cOoC4tYbBbFXx16nBuxoRNBbiKB/kZMD3xe+A=
+	t=1734109662; cv=none; b=Cn2HoHtTSWWsnYSn4yEOzi5EjkZpknt5kZ4DG0yJDrqA70GcBGHjroxOkTMj7iw92jiWIIqk/OZRUwOLnET3ecWCwvF0rH7tQRpJA9kxb7dCZLy6e9cpgaZKL6nx3gRRvmIxms9RTxE7zN8wrR7S3OCk1o9lnFwt477abA1QWjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734109630; c=relaxed/simple;
-	bh=jM1VuUsAvL5QaaPwbRKq8XIEup7wMzfjJsriExih+UU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kXHtq/Dy3DjoDGe0MIXW7K/oHZHR5XvsaQXJFrC6KfamflwRhYwSJfeAoKqy53ifXV5hY2aDHG0sFZtGhVFs50gkxldmBzlO8gMLh8gxAgXnzmhR3Av5KljCe81Xqg2JS25kRIWzKOsWTJeMwenca1BPQ57gmxfyj74xqNm5Pwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l0hxUDtU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDAPf5u024170;
-	Fri, 13 Dec 2024 17:07:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	alFXy0ty0D/1n6X6CFmkqO3ZMBSqiEh8oPNESPe1Fzk=; b=l0hxUDtUe54+4VzD
-	uP38gEAYcGCJs0bVgiaC4tqnwFAAHdXFvu7w04xvmhR15/tMtj2/yp2ciGt+kxFE
-	7A1ale/LnVoxq/KQwcRopGieCiD+/oExysyFOZy8g0tZo/F3hdvka0fyqKiRuhRf
-	2dGQXudogcF7AL/I5KC92kXcGG/ElczgV/rTN7jJkYyoRVPT7ZmIoWvVMmFGHPv2
-	M0Rzaxup0eL2hm7OnsN/X6LIWdJVMvUdekSBMx1mGqz+30D1CLohPAtL5ZjBsm6o
-	6JYzF+5JbuM+6Xo5OMXzOIk+4KJyhoKzZTXYkl+gwMPRxBCGm6EkEN0+Xga0a2ud
-	XBlkwA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40q2m4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 17:07:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDH71f8004926
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 17:07:01 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
- 2024 09:07:01 -0800
-Message-ID: <828570ae-1ff6-4bef-4bb8-51da9237e63e@quicinc.com>
-Date: Fri, 13 Dec 2024 10:07:00 -0700
+	s=arc-20240116; t=1734109662; c=relaxed/simple;
+	bh=9h2P6ELdMzx/Gu7OEnPIQA6Pmdclf6xQrgpKHh0542A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q4QVt8rRqANzN0hHvYctGn7qDCjWHw48MlWuHYF8c58hOrO8m0iqb8xZFHyd4XhAMKTHipn6Vr6HT/yVPTDvpkj1ELHUskUesISu0JbiNZafdj0eO9StGIo0BbsUr/rdftNnffrjHonyPgNrN2UUutsFXUZNoFOzy3Teqpo0Qgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eY534SAz; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734109661; x=1765645661;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=9h2P6ELdMzx/Gu7OEnPIQA6Pmdclf6xQrgpKHh0542A=;
+  b=eY534SAzHFf9SQI742LpYx/DcGgJO1bMrtDAetahh9BooqQDr9XqxGWn
+   Vk1F/OhpD5GZPQ19v3e4e28+qp9EdxAHE88P2kHru2VwJbqaQlWZf+pvr
+   Cg59YtUOutrx+pAwhAfs41VctoOf03Oq6iTYvttsIF6g+xdkc2Ok1Xq4+
+   +5ULn6H1fIIK51Lx8MG32B4VtZ5sGvOkuY9bbJFfnmjgYNA6L8buZWqBa
+   Ji9QWlGRYeXQAXceQty2TuN6tCEUkeoTDnEEaeUznS90Cu1E3bPurM0bm
+   W8JTQle8avn/XU+tUC9Vj1gFXGZ0AKHe2y1kKRm6kmyiFFmJoay4fJnzz
+   w==;
+X-CSE-ConnectionGUID: yqYY/AI0RWukuixGZflHqg==
+X-CSE-MsgGUID: CVBVi7dyS0WId9cD4utIkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="22156299"
+X-IronPort-AV: E=Sophos;i="6.12,231,1728975600"; 
+   d="scan'208";a="22156299"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 09:07:40 -0800
+X-CSE-ConnectionGUID: vt3drGVZS566O67j18l/5A==
+X-CSE-MsgGUID: R2CKISlLTKWU8fVnWwDOag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="97373648"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 09:07:38 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tM98Z-00000007Py8-27f7;
+	Fri, 13 Dec 2024 19:07:35 +0200
+Date: Fri, 13 Dec 2024 19:07:35 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>
+Subject: Re: [PATCH v2 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
+Message-ID: <Z1xp1xwLXAvkKgwD@smile.fi.intel.com>
+References: <20241118123254.620519-1-andriy.shevchenko@linux.intel.com>
+ <514964ea-0795-41d6-91d3-f3d4f193fc6d@csgroup.eu>
+ <Z1sOTf6UZbruptnl@smile.fi.intel.com>
+ <991aee8b-fb10-4152-89fb-6ac542ee87c1@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 1/2] accel/amdxdna: use modern PM helpers
-Content-Language: en-US
-To: Arnd Bergmann <arnd@kernel.org>, Min Ma <min.ma@amd.com>,
-        Lizhi Hou
-	<lizhi.hou@amd.com>, Oded Gabbay <ogabbay@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>,
-        Narendra Gutta
-	<VenkataNarendraKumar.Gutta@amd.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241213090259.68492-1-arnd@kernel.org>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20241213090259.68492-1-arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 66rOj-dLyLPuJviDA4kCT2ERzYfke_Qb
-X-Proofpoint-ORIG-GUID: 66rOj-dLyLPuJviDA4kCT2ERzYfke_Qb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- suspectscore=0 impostorscore=0 phishscore=0 clxscore=1011 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130121
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <991aee8b-fb10-4152-89fb-6ac542ee87c1@csgroup.eu>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 12/13/2024 2:02 AM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Fri, Dec 13, 2024 at 07:28:45AM +0100, Christophe Leroy wrote:
+> Le 12/12/2024 à 17:24, Andy Shevchenko a écrit :
+> > On Mon, Nov 18, 2024 at 03:10:09PM +0100, Christophe Leroy wrote:
+> > > Le 18/11/2024 à 13:31, Andy Shevchenko a écrit :
+> > > > Remove legacy-of-mm-gpiochip.h header file. The above mentioned
+> > > > file provides an OF API that's deprecated. There is no agnostic
+> > > > alternatives to it and we have to open code the logic which was
+> > > > hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
+> > > > drivers are using their own labeling schemas and resource retrieval
+> > > > that only a few may gain of the code deduplication, so whenever
+> > > > alternative is appear we can move drivers again to use that one.
+> > > > 
+> > > > As a side effect this change fixes a potential memory leak on
+> > > > an error path, if of_mm_gpiochip_add_data() fails.
+> > > > 
+> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > 
+> > > Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> > 
+> > Thanks, what's next?
 > 
-> The old SET_SYSTEM_SLEEP_PM_OPS and SET_RUNTIME_PM_OPS macros cause a build
-> warning when CONFIG_PM is disabled:
-> 
-> drivers/accel/amdxdna/amdxdna_pci_drv.c:343:12: error: 'amdxdna_pmops_resume' defined but not used [-Werror=unused-function]
->    343 | static int amdxdna_pmops_resume(struct device *dev)
->        |            ^~~~~~~~~~~~~~~~~~~~
-> drivers/accel/amdxdna/amdxdna_pci_drv.c:328:12: error: 'amdxdna_pmops_suspend' defined but not used [-Werror=unused-function]
->    328 | static int amdxdna_pmops_suspend(struct device *dev)
->        |            ^~~~~~~~~~~~~~~~~~~~~
-> 
-> Change these to the modern replacements.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Next step is that Michael or Madhavan apply it I guess ?
 
-Looks sane to me.
+Folks, do you have any comments? Can you apply this and we move forward towards
+removing the legacy API from the kernel?
 
-Lizhi, can you verify that this works as expected for you?  I'd hate to 
-accidentally break something.
+-- 
+With Best Regards,
+Andy Shevchenko
 
--Jeff
 
 
