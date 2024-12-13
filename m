@@ -1,133 +1,114 @@
-Return-Path: <linux-kernel+bounces-445239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18C79F1328
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:05:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBFF9F132B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:05:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C65285AFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:05:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D451C18840F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28601E377E;
-	Fri, 13 Dec 2024 17:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3803E1E377E;
+	Fri, 13 Dec 2024 17:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzLpXGwh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Bf7ah6+v"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492E2175AB;
-	Fri, 13 Dec 2024 17:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DC6175AB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734109506; cv=none; b=SRXp3IhgBoMOWYcyNzaLPpBA/D7L+lfPTnifZyNmPornFLujFMrNfCEAchoTYlixHDHdrhYNxrAqx6s0I/31yqwqtq2C66++igsGAlhwpGAJm4BukyNNZkq/qIyIhgsvtrRksDwzgem34QVaIgiIqzAwcaOOX3atsl3cxmYPhg4=
+	t=1734109553; cv=none; b=epJoKm9rsEyBoO42PUcnpM8SiweWNBgLE/3DPvaD9hvAN2rDj4WzrP7mbVQ52O0Z0SP88N3r2vkBSPU/YTM107jmLjwAUY/yuffjrmZppGtEB5Ijy0AUGKyHgT6aXMPi/iADCugzxccAAuotUcA91zss9cha8OzK5Dnx+Bd5Dhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734109506; c=relaxed/simple;
-	bh=61bXG60i+jrRdV9+oCAxeLnAz20I+9y5LRabAtXcBIA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q8GrTDsLWCtfsR8PtMY4/8okP1UfrOjJGKOLlNuZiWcqvgwfYj+QgfWNK9Mb/zArI0C/mARr4AJiNXwNA6TmLnqviMZG2eMyeSijE7DwawQ3D+s22lKAeYrmOItXs7iVun4g6OrkZjPXFthzn6+1WgdxxEv10ZjjPGYML7Rm+78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzLpXGwh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21F79C4CED0;
-	Fri, 13 Dec 2024 17:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734109506;
-	bh=61bXG60i+jrRdV9+oCAxeLnAz20I+9y5LRabAtXcBIA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lzLpXGwhsOwiC/u5pupNLMOg5zx+DlxIyADRES4IOsCcC4mD++gtUX29U8c6uI0P9
-	 OUjPsit3ujZJmErTU1/8pznVfSh9NaV6DHP5y+0CCuJ+Yd8A9F01P9NwOXtp7+yhLu
-	 1HuRVayC5FQibnP44JI3rwLnnzbj8d8FFhq7l+HMaECDBawsfCrKcE//ValqmC+2X6
-	 ybmENiU5SegEV0+USuTMjW37a7hGCGirqJuHAaBhOi4OwYHdCHvMXG6zUNPdLLPn4h
-	 3617ut7HXFZr6R3GaguBQ8eEeNE3VdkI211pc6ZV3sNNnE+rSDASsORaRbiAYQA7SL
-	 +H+tAx5zOmHDg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tM968-003Vth-03;
-	Fri, 13 Dec 2024 17:05:04 +0000
-Date: Fri, 13 Dec 2024 17:05:03 +0000
-Message-ID: <86cyhvsedc.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 2/3] irqchip/gic: Correct declaration of *percpu_base pointer in union gic_base
-In-Reply-To: <20241213145809.2918-2-ubizjak@gmail.com>
-References: <20241213145809.2918-1-ubizjak@gmail.com>
-	<20241213145809.2918-2-ubizjak@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1734109553; c=relaxed/simple;
+	bh=vFAOm4pNLK/QlcmDNbwxD9S37tx+rhy/y7bn1LZy1JU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nBJQGkzAe0CzTCF81/skemW2vyEEJHWRYiiY6SI3qTHK4Cr9ZU7FyT2WPWAwaYh3Ha6tqL3o+JK6kzAic7XWlLaixx8iyhhD35LGy9CrqFv1cD2h/DTnpbFWEjSrvk+NYY0ZiSeNe0VSfC9NX498rDS6sUXkvBdTRFYBSA+oEpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Bf7ah6+v; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDA3hK6012465;
+	Fri, 13 Dec 2024 17:05:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/6qHiN8iaAgyIJA/OG/dTOr30636DFaQB8QCSV02rjM=; b=Bf7ah6+v/YBEcSJo
+	Qc2u9LYfec0zFDZduvBNQ3M/Et1KpUbVODXM8QLSlDlDBNiygne5ebBM8Hh1crkn
+	Ku2ypuwyXEJsji8mNPqueYZQauAakSH/FPF+24KPA8RLHkekO5VntyYCH/ERAXib
+	ZcS6WQr38frdMem24PD3T7wM/oLoeQSggxHh66jF9WqeY54i2P8OL6hUDeGRtKr4
+	aFSXyPaRwlhXFm5NWfPf10kXaHYWbJt33Sx/cqUbo/VPVGYte/O5jPXZtHFyBA8R
+	R6Ry/wiRWAKeaCXmdB5tCijArDgWD4Ja31moh0h6MSF8M+tLLb29/yWyKGiJCR8F
+	xGeaog==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gjudh4kr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 17:05:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDH5hTM003612
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 17:05:43 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
+ 2024 09:05:42 -0800
+Message-ID: <07c321a2-2304-c318-3630-7bff8839968d@quicinc.com>
+Date: Fri, 13 Dec 2024 10:05:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: ubizjak@gmail.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, tglx@linutronix.de
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH] accel/amdxdna: Add include interrupt.h to
+ amdxdna_mailbox.c
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <mike@fireburn.co.uk>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>,
+        <mario.limonciello@amd.com>
+References: <20241213163856.1472207-1-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20241213163856.1472207-1-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xqFwDcwMWJQf7hSIzWKAi8zR3UCuJbQv
+X-Proofpoint-ORIG-GUID: xqFwDcwMWJQf7hSIzWKAi8zR3UCuJbQv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 phishscore=0 mlxlogscore=931 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130120
 
-On Fri, 13 Dec 2024 14:57:53 +0000,
-Uros Bizjak <ubizjak@gmail.com> wrote:
+On 12/13/2024 9:38 AM, Lizhi Hou wrote:
+> From: Mike Lothian <mike@fireburn.co.uk>
 > 
-> percpu_base is used in various percpu functions that expect variable in
-> __percpu address space. Correct the declaration of percpu_base to
+> For amdxdna_mailbox.c, linux/interrupt.h is indirectly included by
+> trace/events/amdxdna.h. So if TRACING is disabled, driver compiling will
+> fail.
 > 
-> void __iomem * __percpu *percpu_base;
-> 
-> to declare the variable as __percpu pointer.
-> 
-> The patch fixes several sparse warnings:
-> 
-> irq-gic.c:1172:44: warning: incorrect type in assignment (different address spaces)
-> irq-gic.c:1172:44:    expected void [noderef] __percpu *[noderef] __iomem *percpu_base
-> irq-gic.c:1172:44:    got void [noderef] __iomem *[noderef] __percpu *
-> ...
-> irq-gic.c:1184:26: warning: incorrect type in initializer (different address spaces)
-> irq-gic.c:1184:26:    expected void const [noderef] __percpu *__vpp_verify
-> irq-gic.c:1184:26:    got void [noderef] __percpu *[noderef] __iomem *
-> ...
-> irq-gic.c:1184:71: warning: incorrect type in assignment (different address spaces)
-> irq-gic.c:1184:71:    expected void [noderef] __percpu *
-> irq-gic.c:1184:71:    got void [noderef] __iomem *
-> ...
-> irq-gic.c:1231:43: warning: incorrect type in argument 1 (different address spaces)
-> irq-gic.c:1231:43:    expected void [noderef] __percpu *__pdata
-> irq-gic.c:1231:43:    got void [noderef] __percpu *[noderef] __iomem *percpu_base
-> 
-> There were no changes in the resulting object files.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  drivers/irqchip/irq-gic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-> index 8fae6dc01024..6503573557fd 100644
-> --- a/drivers/irqchip/irq-gic.c
-> +++ b/drivers/irqchip/irq-gic.c
-> @@ -64,7 +64,7 @@ static void gic_check_cpu_features(void)
->  
->  union gic_base {
->  	void __iomem *common_base;
-> -	void __percpu * __iomem *percpu_base;
-> +	void __iomem * __percpu *percpu_base;
->  };
->  
->  struct gic_chip_data {
+> Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
+> Reported-by: Mike Lothian <mike@fireburn.co.uk>
+> Closes: https://lore.kernel.org/dri-devel/CAHbf0-E+Z2O7rW-x+-EKNQ-nLbf=_ohaNzXxE7WD2cj9kFJERQ@mail.gmail.com/
+> Signed-off-by: Mike Lothian <mike@fireburn.co.uk>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Pushed to drm-misc-next
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+-Jeff
 
