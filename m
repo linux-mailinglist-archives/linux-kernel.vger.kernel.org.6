@@ -1,72 +1,101 @@
-Return-Path: <linux-kernel+bounces-444970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B459F0F5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:38:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B862C9F0F62
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59799164C5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:38:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D51A8164C2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2171E1E04BF;
-	Fri, 13 Dec 2024 14:38:49 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4649C1E1A2D;
+	Fri, 13 Dec 2024 14:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n7cm5HXO"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B461E1A3F;
-	Fri, 13 Dec 2024 14:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D6F1AAC9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734100728; cv=none; b=l2kPGbRD/DxwcqXUhK8LdQhrvroZX4mklRe4AErVH2+DcInA4VkGLWvUiurWwlxE1LqvHb+dPXLpEwFOZsT29cyDmF/YaeR5ZCJptsRQfth9kxfnk7UE8WuNYb6L1GiS+tskbIE402/pvcGRhbQuE+pdMcd2plGCYtb421rIYCw=
+	t=1734100804; cv=none; b=NN7n2Lav3IkstfEIj9caB8mKUDnFf96WNyRiWaSqAFVHtgIbbZx0GL8TNNVmjEyW13vtL7mllkI2UKZaxckEnmbU0KZ+8R3WNmjrDRKUmORN9AitP7ykVP3+9hijeU9jMphxmnSzguWVF0Pp8Q4jQOAVVdbx9yxoXrBXZD3Xs3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734100728; c=relaxed/simple;
-	bh=yC2qjJ0KFbww/rP0l1Por3/dUYaM2XpDttf+3ul07+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bv7BabYcbXoaH9k4p8/MdTJcqxVvF3RInVZ/T39773f+UhOblB9oZfm6USS6rnxX+HUrPlWgElDf3iPaOD09lnLZj8sev59JxPUY1Z0BzbJZVjttLa0QyelXMUebS1RH0kz2JcZzN+HSwReKBGatclABO+WDl/RfnUV5ayzCKto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C614B68AA6; Fri, 13 Dec 2024 15:38:41 +0100 (CET)
-Date: Fri, 13 Dec 2024 15:38:41 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	dchinner@redhat.com, hch@lst.de, ritesh.list@gmail.com,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, martin.petersen@oracle.com
-Subject: Re: [PATCH v2 0/7] large atomic writes for xfs
-Message-ID: <20241213143841.GC16111@lst.de>
-References: <20241210125737.786928-1-john.g.garry@oracle.com>
+	s=arc-20240116; t=1734100804; c=relaxed/simple;
+	bh=wBqUYrDGzq8/Ph2W7HoSJKRld+XHMM3JOZ3PqC7C6+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JpjzHyRgbpjDToJ/fHAYc/I4gg/b0poqYD8yXS1spttXjhH0ajrL4mvFd5Y0NP0N25xHbppV3vIwdwjMXNLnWNB/ZaRox3oIjcvP7hg8LUEup5o4sl/ewiXcdPph/7RqEvthNGuWXG8KHp1Zjtol2MxFwSUUUpLjcQPVJkQZJRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n7cm5HXO; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a7dfcd40fcso168805ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:40:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734100802; x=1734705602; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y1o6cXCczlOJrW820tbI3ejXvq3a/VUwUy4HgwjZcug=;
+        b=n7cm5HXOII7l0pifckG1G0KO5jIfknmR/vRJSZsnyjND9PnQuX7g6B+lJvUF+4zBxi
+         eC6OW3yBky/+tXdDqRhB7ut+kCzqIHo5jXn+gBy5GctznrfFL+SPmiEQD6gk+Rd3EUIJ
+         kMvRngSsg2/FfdyOKSo9eVYMmAFT0oDs1fb0kHD3jCBfQUHgjIldEHjYgzLYYSgIWY9R
+         WJrockPS/4csYzk3gJFE7330vyEEnmJtod9RPNQJF88qmT8KpeJrg2/KdBX1kt3wdI1g
+         T3z4UFxBlbK7ZqVwKiwo1ai+11VGD78rjIrT1mHios6KrDhVDThK0oYq7KTzYVQSYb1q
+         Atzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734100802; x=1734705602;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y1o6cXCczlOJrW820tbI3ejXvq3a/VUwUy4HgwjZcug=;
+        b=gohCTWWf5WxuDmv3V6zqS0X3UMGfBahHZHRqNe1xqyM0WN4QypmH51EBUYuWhp/7nZ
+         T6JvEWjUXQenlPx6ciCSt+MeA7pMREPSL4V11xzRf8c7a0BMPwK2TZZItZF2Usxo0SdH
+         1t3MNHu2G9q4DamHoHCtWfWO3++KyVqRPaApAG/lwjtGvw1eJleMk9+Wg4M5zRj+tGdR
+         dhwfhwYK2/x4CaQin6GzGebsSLRBI1sBEvonBaBKqqeZf3hbsnQUP7OoGytm8iJWyrcb
+         7/lAPNgNklbQTZI1l1zvIVX2VzpWMS1u9IovHC3tx3YTB8kujp7Gz1s+HSLqAxkPC5B5
+         YcPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuQuHNL7Ri5s/9xkxnYRy8gIQhGOorLsGb3g9Q1elm+ce7Y1nHJS73AG1YxAQ/orB4LeHeHieZNzSp2Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu/iZQYHQXioVjJCvTjegviZa6bAAEkFZdasVx9UEVLRZQ5K/u
+	jmsHcFY0S2IMui/MH0ERVqFPHcPy9LiR2OQAf6XNY1kP6fEvcGkAmxP+SzRnopHSWGgueb2P3YN
+	4YXZ2xTz6lOlrMXr2zejnj7DpLhMV0FtovY/bxVHsUiYSvKPQGO+1
+X-Gm-Gg: ASbGncs9zILJ/Q6fTF0PqRTC/2Oq6tAlD6KNUrXbrN8OH/z9vBhCpnJvnzyfZpDbsL3
+	e7cc+UWX/NS4bfgjjeSFs1V0Smy4qDxsUrQWb
+X-Google-Smtp-Source: AGHT+IG9Da28jDo3gMfdHEXumlT9aNakfaU2EFaMPQ/m5hhfUBa5umXHfjGD94SKFdUR9uWgqT27M8DdZa0v4Faq+Cc=
+X-Received: by 2002:a92:912:0:b0:3a7:deca:1fe6 with SMTP id
+ e9e14a558f8ab-3b0287e813cmr2140715ab.13.1734100802321; Fri, 13 Dec 2024
+ 06:40:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241210125737.786928-1-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20241211013302.1347853-1-seanjc@google.com> <20241211013302.1347853-4-seanjc@google.com>
+In-Reply-To: <20241211013302.1347853-4-seanjc@google.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 13 Dec 2024 06:39:51 -0800
+Message-ID: <CALMp9eQjGXrCpuwqYc5sddrTNWRO+gA-P0jONtzfb8W-E2STBw@mail.gmail.com>
+Subject: Re: [PATCH 3/5] KVM: x86: Apply TSX_CTRL_CPUID_CLEAR if and only if
+ the vCPU has RTM or HLE
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2024 at 12:57:30PM +0000, John Garry wrote:
-> Currently the atomic write unit min and max is fixed at the FS blocksize
-> for xfs and ext4.
-> 
-> This series expands support to allow multiple FS blocks to be written
-> atomically.
+On Tue, Dec 10, 2024 at 5:33=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> When emulating CPUID, retrieve MSR_IA32_TSX_CTRL.TSX_CTRL_CPUID_CLEAR if
+> and only if RTM and/or HLE feature bits need to be cleared.  Getting the
+> MSR value is unnecessary if neither bit is set, and avoiding the lookup
+> saves ~80 cycles for vCPUs without RTM or HLE.
+>
+> Cc: Jim Mattson <jmattson@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Can you explain the workload you're interested in a bit more? 
+I'm not sure why you cc'd me :), but...
 
-I'm still very scared of expanding use of the large allocation sizes.
-
-IIRC you showed some numbers where increasing the FSB size to something
-larger did not look good in your benchmarks, but I'd like to understand
-why.  Do you have a link to these numbers just to refresh everyones minds
-why that wasn't a good idea.  Did that also include supporting atomic
-writes in the sector size <= write size <= FS block size range, which
-aren't currently supported, but very useful?
-
+Reviewed-by: Jim Mattson <jmattson@google.com>
 
