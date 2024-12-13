@@ -1,138 +1,158 @@
-Return-Path: <linux-kernel+bounces-444269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040B39F03D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:29:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9829F03D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B38062842A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:29:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B363528405E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B452185B58;
-	Fri, 13 Dec 2024 04:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0F9185B78;
+	Fri, 13 Dec 2024 04:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFVs/7RZ"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OYLiRB8Z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EDE3398B;
-	Fri, 13 Dec 2024 04:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB28199B8;
+	Fri, 13 Dec 2024 04:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734064145; cv=none; b=gPT//XfYJzkoevbbfQxI6wUuYBjMHHiKmuL8UJOflF45pCPznHjNEvT5p5Dtv6dJO771wwWVHg3a2dkESaYsSnVa2/HR549BHnR2CvAoucWduFBAQwh74QIFUUKTLHoCsp5yY2u+NUlNSVr/uf+/Wuk92IXIqux/LdrdfJXevQ8=
+	t=1734064162; cv=none; b=LRh+Xfo2AhPck5dpv65TAKQ0ie+you/bLG9EkCkOq7Z/DBFXhxGY2zy7qef+aqtOQUXoHRrfVpjtp3JfvC2j5m2Y87+sG2lJXAqiS7t91Q1X9/++qXLfaNamu8op4Ze/+no+6OEDINXEtXJ+TKfGzZ/njHiEigPJkmLIrfbLrkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734064145; c=relaxed/simple;
-	bh=+L4rIwPf+GveKcDw4d37qzefPMQEtHgjvmRhVI9XKBk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tc9RWHNCKzwbuNt0K/hERjfa7uw4nIW8bALKJtaRlazpVG4HsGRDY2yCpXcVnCUtJTJjKJJ8YFw8yi2u1iQpJic3VfawT0YChEi2+CqyeTqE+2q10w4k47IXKW6PHUZRrCxAmNhMOWoDwHi8HrIGVJXVOQE0K6KyxZ/vepuAwD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFVs/7RZ; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30033e07ef3so14022221fa.0;
-        Thu, 12 Dec 2024 20:29:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734064142; x=1734668942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCvQILuEqni9koGNIRPa0LCov9Nq5Mb+hDK4nC1Iwh8=;
-        b=bFVs/7RZq66j1bzM53269Dqr/3hVrZZMIIlMGHIy8/tPgNco2kciSM4n2OSxxTWKX7
-         HXC0xjIXfsWdq5WIsrSw/5AGXXt128/PYjOJy1HcrkMNmeE8bhKp8As26eh5Y0rIXZlc
-         eDy01AOTkOSGbcJ03IvbO8UyqQnuc1PlqSGz7r8ekKI2MPAl8hq7vN/DHAni+0gMN+D7
-         +znFxdt271L3w7mudY+esdonChJnMm5aDaNY1fos+4hViLtLr3rKpEg4NwZdPkcyK5YF
-         YKap4mBV9joJdx9iwTgTkBr53kWwNS6lDKWMls0m93pNcDfNNKzPn9sr1kBMZ6srTliY
-         TYeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734064142; x=1734668942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uCvQILuEqni9koGNIRPa0LCov9Nq5Mb+hDK4nC1Iwh8=;
-        b=auiiqbJHSdlAs734IAVqbdpCG3RSN5CPsHwK0LVul+T5uWV20XznkNYg3xaX07rnEG
-         meQUCje6GgbubYSN2wEuN8o8mGqtG9gmujhVAq7k/+IIyMG4HjuZ2czTDN+/SKZsiVHf
-         nbsGQVFsKc6kGbLpqHqnpzHhAF7j+/7wt1NhnT9+LH9hKZic4IcXyKBGH6d1Pmy6GqoK
-         DDUXDugpkFBDJMnO1Sz4iBplk2eL6yG/3rHu+0qn93QDZiXjnUXITM3QXX6fl4VGJO3x
-         HKurmqAqtDjRW3+sADGvd4Z+5IN/vsXyplstqViIhYJjDzwNOHDXBalfFryxEGvv+79K
-         p0Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUy55YimgFtto+y3CNs+XVlyq93Jkk0bj3z5u0HInJlNLHfhd/nC95MFYzB6t5OCbnF3yX7ce9i@vger.kernel.org, AJvYcCWBzqjsYW6lrq5owSUlXusudar+V9vmJcOq4BUHbtg+qX2zGjQmoiV5A/o0QYaay4I5mBzgAuDRWIkIJA6ewt0=@vger.kernel.org, AJvYcCWJBgXXueseWS67A9bHZ1t7QDAZCNOmqk6zD3nB6L7WKf3Ph16MQ4PQxt0DzPhzA+8NwYwCbt/zhJEd@vger.kernel.org, AJvYcCX2gP34MKcSXHMGZuyYuMnShxVe3iyCTjXTpGTKYXWXzdPE9vg/3awspDe2r1pNt1uidtCudK9BpeCE0wSH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0pjVzFdgGyOZN5Z5RnTkwo0VH8LcYRP5VVA/Fw9qJ0HpPWF+c
-	Hlqy6bfQMvIHPcxfj/EBGpfvzwfdrDNfBPFqymJI1r5XyIF8p9vlljZf0gwIYIMmoEBzjs2lXEm
-	dRPWFZsQ23n6NpQeKC25hf2hDHSPTmLBO
-X-Gm-Gg: ASbGncvQAiKhph8yopljBaZmOUVxLYLbIVq0lU/dhl5ZYjvQTdk1VTKX029Sp9jiqmF
-	3qYQLLwfHo9tkfJp+gYZXkvzt0121k75C2j7Csw==
-X-Google-Smtp-Source: AGHT+IHhIZMzrUjX6OhgTdgCbFrO6miMc56t5nTDb6E+vXxnejuRboiGgCQouuWXc64JICWARJa+c4QiTrxibRLPcbM=
-X-Received: by 2002:a2e:a58e:0:b0:302:215f:94ee with SMTP id
- 38308e7fff4ca-30251be6cc4mr9687611fa.4.1734064141597; Thu, 12 Dec 2024
- 20:29:01 -0800 (PST)
+	s=arc-20240116; t=1734064162; c=relaxed/simple;
+	bh=SPORDt2xpifl4rMMTZ5+F0WP+3OGnwZtF678L0XEiug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eKqqjbOislh0ukd0YDHur23Hl/8XNey/in3ner/hvbLhDPUS+kKZh0yrifS6b5TV+jmaCdYNXCQ56CfnBgoF0KU3EWUGHJZzJvwMuFjYEyXHlTP+mm1EonRY/bvZq/WAcwc5Oz7Cb5ll0bI/xIt8CJkHRglDB0A6JUJ8/+7cIqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OYLiRB8Z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCHaiT9026866;
+	Fri, 13 Dec 2024 04:29:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VRtKfWOTxHgeaHEN5DPAcru9H3wyqs+TXKFWq0Pxzcg=; b=OYLiRB8Z6xuLGRWW
+	NxKQ8ai6SDFev3SX4cDN5c0ez0sW45yyBhJtPc/5Atc5NHdrmq/xHLiP4B9DNroa
+	cw6RETUvNzVbeR2zO3vUIGsz2w/Xjh37VyD2Is3BYtxLXw8cmCIcHZhfw30d9Cfz
+	xPorKLaNE4eHKqbpXdcTdsNG5YmVGMv2ClwmXW/SID3klT92YzXkBSrQixRjuBH2
+	04dOwxipjw5stOvmC/T9voQLdF/1mbNYra5m/vnXskvx81RXXOtHIedCa2xLl1Lk
+	QIO/QEjQHNTwCeEs2AGdSvIlDQiXEC7x1JPy4Bki3l8l6ZQ7rxo9PneUfGRaoOP+
+	aNjBNQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fd40n2px-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 04:29:11 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD4TAgm001630
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 04:29:10 GMT
+Received: from [10.216.12.63] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
+ 2024 20:29:06 -0800
+Message-ID: <980d4a8f-2ea8-4138-8885-5ace5d87e0d2@quicinc.com>
+Date: Fri, 13 Dec 2024 09:59:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241208204708.3742696-1-ubizjak@gmail.com> <20241212193541.fa3dcac867421a971c38135c@linux-foundation.org>
-In-Reply-To: <20241212193541.fa3dcac867421a971c38135c@linux-foundation.org>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Fri, 13 Dec 2024 05:28:50 +0100
-Message-ID: <CAFULd4bJ71PT8-CetpF6fb7ufUQb24ZPNnStkvbjXSsuXGMqew@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Enable strict percpu address space checks
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org, linux-arch@vger.kernel.org, 
-	netdev@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Ingo Molnar <mingo@kernel.org>, Nadav Amit <nadav.amit@gmail.com>, Brian Gerst <brgerst@gmail.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/22] wifi: ath12k: add BDF address in hardware
+ parameter
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+ <20241015182637.955753-16-quic_rajkbhag@quicinc.com>
+ <142f92d7-72e1-433b-948d-2c7e7d37ecfc@oss.qualcomm.com>
+ <0796510c-20bd-4a81-bd60-40aacbcf61c0@quicinc.com>
+ <83d216c4-bf9e-4eb4-86d3-e189602f37cc@oss.qualcomm.com>
+ <30e5d714-2e52-4a0e-9dc8-b6cacf6ad382@quicinc.com>
+ <e63af513-5fd8-40b0-a1b2-daa9821ebf5a@oss.qualcomm.com>
+ <b3581663-8dc0-44d4-9395-df385316bb09@quicinc.com>
+ <e3dff1d0-989c-48db-9fd6-6b3c209d1452@oss.qualcomm.com>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <e3dff1d0-989c-48db-9fd6-6b3c209d1452@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cBaRtzOHvgnCQAhClYx1Ulc7ewwG_TwU
+X-Proofpoint-ORIG-GUID: cBaRtzOHvgnCQAhClYx1Ulc7ewwG_TwU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130031
 
-On Fri, Dec 13, 2024 at 4:35=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Sun,  8 Dec 2024 21:45:15 +0100 Uros Bizjak <ubizjak@gmail.com> wrote:
->
-> > Enable strict percpu address space checks via x86 named address space
-> > qualifiers. Percpu variables are declared in __seg_gs/__seg_fs named
-> > AS and kept named AS qualified until they are dereferenced via percpu
-> > accessor. This approach enables various compiler checks for
-> > cross-namespace variable assignments.
-> >
-> > Please note that current version of sparse doesn't know anything about
-> > __typeof_unqual__() operator. Avoid the usage of __typeof_unqual__()
-> > when sparse checking is active to prevent sparse errors with unknowing
-> > keyword. The proposed patch by Dan Carpenter to implement
-> > __typeof_unqual__() handling in sparse is located at:
->
-> google("what the hell is typeof_unequal") failed me.
+On 12/13/2024 5:48 AM, Konrad Dybcio wrote:
+> On 9.12.2024 5:23 AM, Raj Kumar Bhagat wrote:
+>> On 12/6/2024 4:19 PM, Konrad Dybcio wrote:
+>>> On 6.12.2024 5:34 AM, Raj Kumar Bhagat wrote:
+>>>> On 12/5/2024 11:12 PM, Konrad Dybcio wrote:
+>>>>> On 3.12.2024 10:18 AM, Raj Kumar Bhagat wrote:
+>>>>>> On 11/4/2024 7:46 PM, Konrad Dybcio wrote:
+>>>>>>> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
+>>>>>>>> The Ath2k AHB device (IPQ5332) firmware requests BDF_MEM_REGION_TYPE
+>>>>>>>> memory during QMI memory requests. This memory is part of the
+>>>>>>>> HOST_DDR_REGION_TYPE. Therefore, add the BDF memory address to the
+>>>>>>>> hardware parameter and provide this memory address to the firmware
+>>>>>>>> during QMI memory requests.
+>>>>>>>
+>>>>>>> Sounds like something to put in the device tree, no?
+>>>>>>>
+>>>>>>
+>>>>>> This BDF memory address is the RAM offset. We did add this in device tree in
+>>>>>> version 1. This is removed from device tree in v2 based on the review comment that
+>>>>>> DT should not store RAM offset.
+>>>>>>
+>>>>>> refer below link:
+>>>>>> Link: https://lore.kernel.org/all/f8cd9c3d-47e1-4709-9334-78e4790acef0@kernel.org/
+>>>>>
+>>>>> Right, I think this could be something under /reserved-memory instead
+>>>>>
+>>>>
+>>>> Thanks for the suggestion. However, the BDF_MEM_REGION_TYPE is already within the
+>>>> memory reserved for HOST_DDR_REGION_TYPE through /reserved-memory. Therefore, reserving
+>>>> the memory for BDF_MEM_REGION_TYPE again in the Device Tree (DT) will cause a warning
+>>>> for 'overlapping memory reservation'.
+>>>
+>>> Then you can grab a handle to it with of_reserved_mem_lookup()
+>>> and of_reserved_mem_device_init_by_idx()
+>>>
+>>
+>> The memory HOST_DDR_REGION_TYPE is a bigger memory around 43MB, while the memory
+>> BDF_MEM_REGION_TYPE is smaller around 256KB within HOST_DDR_REGION_TYPE, Using the
+>> above mentioned API we still have to store the offset in ath12k to point at memory
+>> BDF_MEM_REGION_TYPE from the start of HOST_DDR_REGION_TYPE.
+> 
+> That's still way better than hardcoding platform specifics in the common
+> driver
+> 
 
-It is not "typeof_unequal", but "typeof_unqual", as in "unqualified".
-
-Apparently, google does not like expletives, googling for "What is
-typeof_unqual?" returns some very informative hits, e.g.:
-
-https://en.cppreference.com/w/c/keyword/typeof_unqual
-https://learn.microsoft.com/en-us/cpp/c-language/typeof-unqual-c?view=3Dmsv=
-c-170
-https://gcc.gnu.org/onlinedocs/gcc/Typeof.html
-https://dev.to/pauljlucas/typeof-in-c23-55p2
-
-> I think it would be nice to include within the changelog (and code
-> comments!) an explanation-for-others of what this thing is and why
-> anyone would want to use it.  Rather than assuming that all kernel
-> developers are typeof() experts!
-
-The comment above definition of TYPEOF_UNQUAL in [PATCH 2/6]
-summarises the above as:
-
-+ * Define TYPEOF_UNQUAL() to use __typeof_unqual__() as typeof
-+ * operator when available, to return unqualified type of the exp.
-
-which is basically what the standard says in its reference document.
-
-Thanks,
-Uros.
+Sure, I agree. I'll update in latest version to store the offset for BDF_MEM_REGION_TYPE.
+Thanks!
 
