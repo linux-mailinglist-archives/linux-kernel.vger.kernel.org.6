@@ -1,145 +1,137 @@
-Return-Path: <linux-kernel+bounces-445614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8D89F1846
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:02:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC2A9F184C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:03:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52731672D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:01:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A0517A0310
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC26196446;
-	Fri, 13 Dec 2024 22:01:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B670194C86;
+	Fri, 13 Dec 2024 22:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EL3hq83d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ipN4AOPT"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09581DA4E;
-	Fri, 13 Dec 2024 22:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E2B1DA4E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 22:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734127301; cv=none; b=FN2xC1JhGkvWM/gwMAhAaAf3cxDQ4fzwjPpfQP/oAeqdyohxtywxSliMAyzTNIdKb6suRpAwzon4rVRoO+ciAil/N0xGA8tiXzpqLbEdIk1+hurFF+Qf8yRSq0J4wkaVKySX0FC5uRzlXxEbC+H/rbuBvwDRvSkdPmm21bAdqBI=
+	t=1734127370; cv=none; b=ERFuD84mumIzqe70+5WWsvk3q7JWNu7TM0xjey8F9DEWZsogGwsb3wgnOBQvGtL98DnDf7AFsyPI4UNsaTX2KMs8RyC0tFzLV49rbIzScmlvDl4/Otg9sZsckAielIIsCIRVb3wqZpgk/yqda+Fn+dyFwu4Ty2CnZYai+HNdJxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734127301; c=relaxed/simple;
-	bh=DAYWgjbpzdwfTbL6Q4+XD5NxSEJ76iHQuJ0aIVL25+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r8BFViPTKlnzo3ifN45usoI0FpZa6dJwuivQdMDjcgHN+FjszXEvkvWsnTxT3R4CG8ovYg68pq/A6XnUXZKy4cQzwXVNjAesPEBHVAgN1uYutJp9TySg3hGg4Dd7Geqvdt5pUWzy5abRLqYuCdwBDsuS9w1p5JDhA0X2q9wFR2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EL3hq83d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 354E4C4CED6;
-	Fri, 13 Dec 2024 22:01:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734127300;
-	bh=DAYWgjbpzdwfTbL6Q4+XD5NxSEJ76iHQuJ0aIVL25+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EL3hq83dxp6IU4BETWH43koxDKv17qkSQ81KJqxCyzmxFmWdw8Q1QEBNvImUoNe1s
-	 ilGOE81TFWoLYJtcRhy2YQJXVIOS2eHk5YsX8OjVrRlLfQf37ULe6ESpKImAQwjF20
-	 rXLZp90b9AUNzfy+UOEY510bP7sdWyYq7TLxqPDDm1K9icJa6gI02ct96UyI5AQrnf
-	 Byqokq5pEkJhy1f3594kShtSa42RAGZgHw2dadVaiiTfgax2P1gia0ZI6xPE44evCT
-	 Gx0BhG7UNx8d5dkb6Rrg731CBHxSUSkkNY8SqH3DEpJSwcujnqH8ntrkR7phxtSt2e
-	 Qw/4xjyHAx6DQ==
-Received: by mercury (Postfix, from userid 1000)
-	id 6411310604D3; Fri, 13 Dec 2024 23:01:37 +0100 (CET)
-Date: Fri, 13 Dec 2024 23:01:37 +0100
-From: Sebastian Reichel <sre@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Kim Seer Paller <kimseer.paller@analog.com>, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH v6 2/2] power/supply: Add support for ltc4162-f/s and
- ltc4015
-Message-ID: <v4apnrdr2ydc3jpuiqfqk4ttof45zj37wpm5vr3u4w3drtfbl7@wk7khzxnfg3q>
-References: <20241213023746.34168-1-kimseer.paller@analog.com>
- <20241213023746.34168-3-kimseer.paller@analog.com>
- <723a8253-a936-4901-9a05-a20f27fdb07c@wanadoo.fr>
+	s=arc-20240116; t=1734127370; c=relaxed/simple;
+	bh=3fT6QBQL/2MhJSNZuMQZny8f9lxbnoEvXOfu47IDsj8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hbOHDrmwnG4W8LSiQYnf8H8JpKQljUgFYyu4yRJF1iTCeZPoCfSf7er2SVcEgLkjisJHNqrDdncv2xD+THC/zLXQ8ZmjFfx+rwmsMJ3hEOis5lRUST5PLGyX+OQSiuwUBKVgOabpeYB4IFyl/a6NjF6y3JGyPBEPST54ahWDERU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ipN4AOPT; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df6322ea7so3164560e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:02:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734127367; x=1734732167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3fT6QBQL/2MhJSNZuMQZny8f9lxbnoEvXOfu47IDsj8=;
+        b=ipN4AOPTP4SLVJf4lKBjWC5IhoWXEk5LPJ+Rfh5p98h2vCM9/Iv+hznb0trZiXV26p
+         Oa8S+TEtImfLRwnMbRdonKTHkT2SV6SkGydwt4AQTADHWGmsbs7dkujfKmREC+VMbh9M
+         Mry7zRcEs4l7zOq+QbtxVpNRErm/O9VXfqxNTduWupB188fxJVEJPRYsbnD5Jh+z+5gf
+         IHPgBYlDEtvOKbImjceuKRWmvPDlx4If2o1jDWuBRQd+jgM2EPUpfN9WZY6KUukuhr1E
+         HbOZ98GDaW2WOt5WzstofEC/LPfqStbfO9YsTDbo9vGite7QvL7i5kY/T5qfMCQBTKFX
+         gtLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734127367; x=1734732167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3fT6QBQL/2MhJSNZuMQZny8f9lxbnoEvXOfu47IDsj8=;
+        b=q3e+9eMaXlO1L/LleoR5ErvuBb5/h4zscIjE6DY7bHZp5FBrAI5NAHSaOIvbFX5koy
+         ZdS8ZrSj1HMgnLQ3xgAXNO8gK3fsZUpqrY1IT+98xj7oRg02ezpi4p4rujMe1yiJ+pzt
+         pXaEZYOh9KCWGqoXC4tZ0fuRVg7noxKuHi4LJwE/VXyc67G/uKl6J/s1QKv0D5dGHQ+E
+         UYHOSFE53kUCWmximPNRBZOEqGPWbSaNUGd/RsBIOKPVOQSlpEZcOmdi3FPaqIWFbAAC
+         2dvTJAMrGE4+GuWmVkCoDKYTvnnM/yvSjylwxMOhwk4Q2uIr2UsWCcOlazrwJxZQmSh4
+         U92Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUv07ycYEBkt6diDoZDMM2eNKjKjn0bByUX0I0ciBBirLELWZ3mLvyBjDrLkcqSJwMXJcs0BRtXNzSCevk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTWOPohbvv2GGqsF+i2L/7t9WTByt0STIdqNLoY8meQ61IStu+
+	LZ/jYRqJSGQ6mWU+1eX44eNDVz8eh7WjpOEiPeSYUHb/f+XDww8qOChnZb12SMo7SD0muPG9p6u
+	tFebIYa573cWewPHyemIxRNEGl0IlDtBSCIx/r7qwDSvX8/aQXw==
+X-Gm-Gg: ASbGnct+Zh6wV8srWxqa0q0u5uEMTDwMmcl6LtNPoKxvf9yqCYFn8DIia33Ih8w9qDL
+	7rT0pZtDP63WZ6tnz1lxBDUEnKO6Eh0RkMDUth+/EfD+NEPrkIy0r2NzM1C/imJxK
+X-Google-Smtp-Source: AGHT+IEdvX8UCDRHwMsM6tElC5pzCUR6NnPXZ6/2dYHPyLngGaSRf0A3HFQ57okaG6m08xez14kCUm816z6DCZuXJI0=
+X-Received: by 2002:a05:6512:2815:b0:53e:3740:4a92 with SMTP id
+ 2adb3069b0e04-5409059572bmr1481442e87.42.1734127366767; Fri, 13 Dec 2024
+ 14:02:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fephdck4dwpqzcfc"
-Content-Disposition: inline
-In-Reply-To: <723a8253-a936-4901-9a05-a20f27fdb07c@wanadoo.fr>
-
-
---fephdck4dwpqzcfc
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
+References: <CAFERDQ2hLHek+0ViVqbqgOD+4xwC2ZwK1KhgGdLP_zGnonEs4w@mail.gmail.com>
+ <d02a7143-43e7-4851-a06e-d57981362a5a@gmx.net> <CAFERDQ0AUhCp_c0LLRRR9SWyvDON-CdXFvK3eqcLFc_SMhdPRw@mail.gmail.com>
+In-Reply-To: <CAFERDQ0AUhCp_c0LLRRR9SWyvDON-CdXFvK3eqcLFc_SMhdPRw@mail.gmail.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Fri, 13 Dec 2024 14:02:10 -0800
+X-Gm-Features: AbW1kvaRZEbg79r0iuOt3DfYvyY31TNdR3EOMiJgmzNfAPz6oPlmMYNe9esc_zM
+Message-ID: <CAGETcx-NWnBDfVq7hwrS7dQDdbEeBaVOuS=YzAfTyS6e6xCUCQ@mail.gmail.com>
+Subject: Re: Raspberry Pi 3B: Failed to create device link with soc:firmware:gpio
+To: Martin Wetterwald <martin@wetterwald.eu>
+Cc: Stefan Wahren <wahrenst@gmx.net>, f.fainelli@gmail.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 2/2] power/supply: Add support for ltc4162-f/s and
- ltc4015
-MIME-Version: 1.0
 
-Hi,
+On Thu, Dec 12, 2024 at 10:13=E2=80=AFAM Martin Wetterwald <martin@wetterwa=
+ld.eu> wrote:
+>
+> On Thu, Dec 12, 2024 at 2:16=E2=80=AFPM Stefan Wahren <wahrenst@gmx.net> =
+wrote:
+> > What happens if you replace your custom config with arm64/defconfig?
+> > Does the issue still occurs?
+>
+> I've just launched a kernel with the arm64 defconfig:
+>
+> > 3f201000.serial: ttyAMA0 at MMIO 0x3f201000 (irq =3D 99, base_baud =3D =
+0) is a PL011 rev2
+> > serial serial0: tty port ttyAMA0 registered
+> > raspberrypi-firmware soc:firmware: Attached to firmware from 2024-09-13=
+T16:00:01
+> > hci_uart_bcm serial0-0: supply vbat not found, using dummy regulator
+> > hci_uart_bcm serial0-0: supply vddio not found, using dummy regulator
+> > Bluetooth: hci0: BCM: chip id 94
+> > Bluetooth: hci0: BCM: features 0x2e
+> > Bluetooth: hci0: BCM43430A1
+> > Bluetooth: hci0: BCM43430A1 (001.002.009) build 0000
+>
+> And it worked perfectly. Thanks for your suggestion. It confirmed the pro=
+blem
+> came from my kernel config.
+>
+> I then compared both .config and it appeared I was missing this config fl=
+ag:
+>
+> > CONFIG_SERIAL_DEV_CTRL_TTYPORT
+>
+> I had already enabled CONFIG_SERIAL_DEV_BUS, but not CTRL_TTYPORT.
+> Nevertheless, that first kernel config item's prompt had been clear about=
+ that,
+> but I missed the advice:
+>
+> > CONFIG_SERIAL_DEV_BUS
+> > Core support for devices connected via a serial port.
+> > Note that you typically also want to enable TTY port controller support=
+.
+>
+> It's so much better now to see the HCI attachment handled by the kernel
+> directly!
 
-On Fri, Dec 13, 2024 at 07:31:45PM +0100, Christophe JAILLET wrote:
-> Le 13/12/2024 =E0 03:37, Kim Seer Paller a =E9crit=A0:
-> > LTC4162-L 35V/3.2A Multi-Cell Lithium-Ion Step-Down Battery Charger
-> > LTC4162-F 35V/3.2A Multi-Cell LiFePO4 Step-Down Battery Charger
-> > LTC4162-S 35V/3.2A Lead-Acid Step-Down Battery Charger
-> > LTC4015 35V/3.2A Multichemistry Buck Battery Charger Controller
->=20
-> ...
->=20
-> > +static int ltc4015_get_vcharge(struct ltc4162l_info *info,
-> > +			       unsigned int reg,
-> > +			       union power_supply_propval *val)
-> >   {
-> > -	u8 cell_count =3D ltc4162l_get_cell_count(info);
-> > +	unsigned int regval, chem_type;
-> > +	int ret;
-> > +	u32 voltage;
-> > +
-> > +	ret =3D regmap_read(info->regmap, reg, &regval);
-> > +	if (ret)
-> > +		return ret;
-> > -	if (!cell_count)
-> > -		return -EBUSY; /* Not available yet, try again later */
-> > +	regval &=3D BIT(6) - 1; /* Only the lower 5 bits */
->=20
-> Nitpick, should there be a v7:
-> 	Would using GENMASK(5, 0) be clearer and self-explanatory?
+Glad this got sorted out without my help :) Thanks Stefan!
 
-I merged the driver, but getting a follow-up patch with this change
-would be nice :)
 
--- Sebastian
-
->=20
-> > +
-> > +	/*
-> > +	 * charge voltage setting can be computed from:
-> > +	 * cell_count =D7 (vcharge_setting =D7 a + b)
-> > +	 * where vcharge_setting ranges from 0 to c (d).
-> ...
->=20
-> CJ
->=20
-
---fephdck4dwpqzcfc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdcrroACgkQ2O7X88g7
-+prGJQ/7BwF5dLIDqN0sCRSaskwIpW+2+zx+UmFZ8bnKP8ZqmPhHCeyrm0VT0Whg
-OJS477D/IHBW8CJeTYF6vm61cVsVg1Ee4pqLsEcgyi7ivOL7aYD3Hb15EZ6jrvhb
-twXBY3VQcIbrw0js61DemMR+U1THsEq9D0x1vCxoBJbtIRkYJTJtRksUGMQK4oer
-ymmreZJUJ2kJhU2ctDSAlTlWhEBWmczPxjuhknQF7iM4oJAkcNIT/z4cQyGOPCGh
-ORJQpc+GXgmSr87MZvPNTbpW0fJm0DXtosk4B25Oyev0tr4khBnRmLE1b8NzgZpR
-pBJ/CJ/GJ2jr+wn/9aVt0HhRWPUtpxb/MZpXkqeQtXtt1guHmmp6wnHK7mbwzAJk
-EQ7akhDLLquuAdHe4F3LEPuW0eA3f+8wmqJB23/R/lHt4QAAFP0BzaHu1TYo8gq0
-7qMuZgTcnLSTO223XyeFSg3BBABuec0V5m8TiduHNI0q5piL0ztx5Z5Jv3Q58fLu
-R6lLW1EmDA8I0iaScl6QDfLD5Z40rlX2o3x1TX6KCSikQZ8nD2R1lCA3w7NQ0Vi/
-o1nI9VPT1OO35keKWDv0dawsW8Z+t35aZx1wkzBTWiVZ6T4Htnhx8qZe/PCloFiY
-lL2keVOXaZwzR/LeMR5uDprPVHSxgNTycoDYiF6kXgJFk91555M=
-=+9Rc
------END PGP SIGNATURE-----
-
---fephdck4dwpqzcfc--
+-Saravana
 
