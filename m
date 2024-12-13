@@ -1,91 +1,126 @@
-Return-Path: <linux-kernel+bounces-444337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B61B9F04FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2099F0501
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEB32827C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:43:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4B3282CDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9786218D64B;
-	Fri, 13 Dec 2024 06:43:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C4D18CBEC;
+	Fri, 13 Dec 2024 06:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VAdF6Zle"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C204918CC1C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347A3155398
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734072184; cv=none; b=ovbRDNUQrf7z/u0HxUT8SbtRkLBi8Sj4ksqwmHDAD+K9vOCSoiCYNp6U8cWgnD5GVOFc4AoNGQrIg2tMTQaEZ4aKzpMZWkwHmxAOu3eaT2UEUZ9UGH9MeB1aQkGmiT/11NnLcxxMNkqlmNAwdd6OC9TG1QbChMypDO+JpsL4Ork=
+	t=1734072337; cv=none; b=MI05gAPxdPyrTs4346nLbbxCPZu7u868v98VnlpuuZYVMuXQZ5jVRfkYyODbUcgKrF4QCb3AQnZHM9qITLc1dN9XiScN1jrmkc74V6VxMQMrCssgISuOfT6IgbsG9QDQO27DEMf2b+Jz4Aeacy7J6ZV2LiAuk8390dTb5XxLwj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734072184; c=relaxed/simple;
-	bh=VLePF9S7rVDUSwVk6uQ5L7i1mGXupDwz6glD2zHvwtM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dx+DgcTjZzRCAPlDIPle1oNQgDELPqLmnPoPgviKyGXPp0z53yfMc2F6eFoF2Jtxnz5c0hv371PtwCjBwI9Qmp8Z8D4EGlYO1CX/ob7D7kXw203oWzg+trb/hvn3MRzDrjPtoQwJUHCs2aW7919vVchl4ps5WuiChBpTW83CUI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a9cc5c246bso14851265ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 22:43:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734072182; x=1734676982;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LZNloNTBBzvVn9dHzNDhBIezpwKVH3QvQganD60bjAU=;
-        b=PCmFOqIUFq2rVaaevzw/NAyFVhnvAMlbDAzNJpg4l5smqRI6c3kE6ZlWIrjTVlXCFw
-         qmIN+GRhwndGYNGp3eHd2uaBomnZrgZ9QaCzBrBhWJChOaVimxi0JYAGkpyn10Eb8Rjq
-         PslbT4ANsHy2sbYlQ5g/5NVqJIPSIWv4KfCh7KOywmRJjBf7G1YTjCUSV/I9LZcv463I
-         gMIUGP9upNr8kRiQjBoClMQnQdzt571ROhYvCuZnv+xhLOPSnt98noynO3WKwDSoDHH2
-         vKWpnfQt3TRKBHpDzEb16SwYGgM6rupIJDCucqnOUx9HhXu5O9CajHQCzpF5wn257X4h
-         7XKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBv/W8f+v9N4N+0tO3pmtjmMX7ixYFpUS7BfF/AT+z3LzTwud7ff7QZ8l0kX1MA105h6NKYrzigmIuNV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaZB1NYig+ZVQVmYR2t5Fejyjfga9REfuJrOPNT0vdqGOxR3Mm
-	YYQj0/OYQyi2cdI9EL00ntIRQgpjSpc3WXJTJgbncnA1nPQSrIxLhf2k16eeprIlDLgvFWL0mbY
-	ssK7DN4VbwrJwvs/GftoWf+Cz0XHp/XtU75+1GsQ7ateLv8CjPr7X0Fw=
-X-Google-Smtp-Source: AGHT+IHX5wFpMY5vudI70KCTEuKr3oeK/7NogyKnkKlPpALk3VxdD3z62XiapBuseesr7rGWFEV7c0v3k2sJlcfddn2rm8BlPe7T
+	s=arc-20240116; t=1734072337; c=relaxed/simple;
+	bh=Y3V3QXxnk6ioz2X6g8iJlmn+yyJNHa0oVjvimRPuvw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OgehxlS2r985al3Fy/Jthr+3v+EFwcLY57/rKL0pwJVY4o6cx5jjs18CKxLvnsKxZ+6submjJerXCWugaPVK4QZYcs8ASTf8EzcSA2rD1pTU0Kly5T+wWMHY/7EDiKlIZnvQKV5wGj7W5KUYGUCUr4wG1YLGqSWObY8EE3lJyzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VAdF6Zle; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734072335; x=1765608335;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Y3V3QXxnk6ioz2X6g8iJlmn+yyJNHa0oVjvimRPuvw0=;
+  b=VAdF6ZlemyXj2RmOYOXDTiztvuqkmiO823hb6mOdgkzSeGXtSPMmpl0c
+   WxaisET8GHmIfh4agNJ/SOqLqAlgZxCfzwoZI6fGM3eP0Z9e9xeZjwTwG
+   MTQ0F7UADj8h1TUvmNzccpF+7tD3UUfE1EF5C2Q0jn2/iIAai/MaW7PoA
+   ceG6GJCrJ0cVXDyapdxfenLNystV/rLoZ0VXJC3Vmtau2YPb0mTfnOxOH
+   AhR69QcVfHQegB1gfAA5LNiwREz4BJMh871R84OSTIISBwfQU5zbx4tV6
+   ZrNXv1INuL9P4b8Q5igryNRiSOEeBdt+CipH9I9CFc0/Es9+qt7OCdhFf
+   w==;
+X-CSE-ConnectionGUID: 3C7bmxVCQ62celQnBD9kQw==
+X-CSE-MsgGUID: 62MOimwYSZ+17ERGHe5Xaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34649493"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="34649493"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 22:45:34 -0800
+X-CSE-ConnectionGUID: fURkU1yZRrW+hvR2JNT3GQ==
+X-CSE-MsgGUID: 1kFj6ZH7RpeklJ9CO0RjLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="96529879"
+Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.124.244.96]) ([10.124.244.96])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 22:45:29 -0800
+Message-ID: <56fdfffc-9a5e-4f9e-ae5b-57dd27d647cc@linux.intel.com>
+Date: Fri, 13 Dec 2024 14:45:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54a:0:b0:3a7:c5b1:a55f with SMTP id
- e9e14a558f8ab-3afef34cf79mr15203195ab.0.1734072182055; Thu, 12 Dec 2024
- 22:43:02 -0800 (PST)
-Date: Thu, 12 Dec 2024 22:43:02 -0800
-In-Reply-To: <672dbff0.050a0220.69327.0002.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675bd776.050a0220.1a2d0d.0002.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in mark_as_free_ex (2)
-From: syzbot <syzbot+8df514c431bd240c5644@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
+ instead of RWX
+To: David Woodhouse <dwmw2@infradead.org>, kexec@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org, bsz@amazon.de
+References: <20241205153343.3275139-1-dwmw2@infradead.org>
+ <20241205153343.3275139-14-dwmw2@infradead.org>
+ <5bb26488-f5fb-4186-92c3-de6a07631f91@linux.intel.com>
+ <b4104c271b461dc1958ffac299d6741746a0728a.camel@infradead.org>
+Content-Language: en-US
+From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
+In-Reply-To: <b4104c271b461dc1958ffac299d6741746a0728a.camel@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
 
-commit 5fc982fe7eca9d0cf7b25832450ebd4f7c8e1c36
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Thu Oct 10 17:09:24 2024 +0000
 
-    fs/ntfs3: Fix case when unmarked clusters intersect with zone
+On 2024/12/12 18:13, David Woodhouse wrote:
+> On Thu, 2024-12-12 at 11:03 +0800, Ning, Hongyu wrote:
+>>
+>> Hi David,
+>>
+>> I've hit some kdump/kexec regression issue for guest kernel in KVM/QEMU
+>> based VM and reported in https://bugzilla.kernel.org/show_bug.cgi?id=219592.
+>>
+>> based on further git bisect, it seems to be related with this commit,
+>> would you help to take a look?
+> 
+> Thanks for the report; I'll take a look. Please could you share your
+> kernel .config?
+> 
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a78730580000
-start commit:   231825b2e1ff Revert "unicode: Don't special case ignorable..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17a78730580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a78730580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c7c9f223bfe8924e
-dashboard link: https://syzkaller.appspot.com/bug?extid=8df514c431bd240c5644
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=128e6cdf980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1784b20f980000
+kernel config updated in the bugzilla 
+https://bugzilla.kernel.org/show_bug.cgi?id=219592
 
-Reported-by: syzbot+8df514c431bd240c5644@syzkaller.appspotmail.com
-Fixes: 5fc982fe7eca ("fs/ntfs3: Fix case when unmarked clusters intersect with zone")
+> Also, you say that this is in QEMU running on an IA64 host. Is that
+> true, or did you mean x86_64 host? Are you using OVMF or SeaBIOS as the
+> QEMU firmware?
+> 
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+You're right, it's x86_64 host, I miss-selected it in bugzilla.
+I'm using OVMF as the QEMU firmware.
+
+> In the short term, I think that just reverting the 'offending' commit
+> should be OK. I'd *prefer* not to leave the page RWX for the whole time
+> period that the image is loaded, but that's how it's been on i386 for
+> ever anyway.
+
+And your latest patch 
+https://lore.kernel.org/kexec/9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org/ 
+could fix this issue now.
 
