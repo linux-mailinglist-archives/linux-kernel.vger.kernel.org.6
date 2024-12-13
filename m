@@ -1,88 +1,122 @@
-Return-Path: <linux-kernel+bounces-445247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08CF9F1348
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:09:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368F09F134A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB71D16AC8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92FD018863D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD141E3DC6;
-	Fri, 13 Dec 2024 17:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B840B1E47B3;
+	Fri, 13 Dec 2024 17:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QT5McpZZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLSB5NV7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D3E17C21E;
-	Fri, 13 Dec 2024 17:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1886A17C21E;
+	Fri, 13 Dec 2024 17:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734109775; cv=none; b=kDMuRGEZJ2A+zlRwXDoolkKflFkMwyKHZU4uXY/MviMP5DjSZfVO/j2Ndpol8so72wObOdy3fhQLuPj+yPp5XulocsXY9KtHLbRsb+r85G7z2xuJB2+9uROvvJfmups6qsDN3yy6siTY4J9/Bw2THDarsyndOArsiSQKQYpA2Cg=
+	t=1734109815; cv=none; b=Ek6fvjLs/MjxlnzoFS3CmvxyGR3aMM+UMPgLLNUOdFZDsTucwWf7QuJpDa5NayThIatZ4TJt291UuDWO2xi39E1XfVxCl638AuFSrLzJsfAZH906wtaHiSiajiA8l+h7B/T+HabJWrWIy4LXFSrrYci/9xw/Qfr1ymsl6M+DPAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734109775; c=relaxed/simple;
-	bh=JZ2USEEEV7FFcVBTCgSNTmRnykylc2iH9qSCZf1QpHw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SpTjo1VncPV1ZkGYVRXqBmki29rU2LrrOf/UlOGEASP2rAeNFxZVXarp4/09rw8/27tiLKZ78iCfkBFuw8PTd3QORRnTVUmK327Vsuz8Fll5C22d7o4dD+pkohEF+vU1ccM2bO2IIv8JNfq50HUKWmo46/0h+10ZYiFwiwWHEeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QT5McpZZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B20C4CED0;
-	Fri, 13 Dec 2024 17:09:32 +0000 (UTC)
+	s=arc-20240116; t=1734109815; c=relaxed/simple;
+	bh=FzbxNtPRI9eJSeo8RCJjgFaAAq9gXHyaLbj1CzzKD8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxJ8E7Wwa6N/vF/xLgxJ3hk8yl0kZIgil2hBADnMZ4JvDdgYRqDnw027dcl536q/MfanfTCV5oTo5aQjRU5KHuCdePAf601xt6iY6KLVlhGFILPMiYV3wCpq6IbrvFDxnDH++qQZUEA0XBWxXK2nWbbEg8IIzucAmdTFnZMjTpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLSB5NV7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CF73C4CED0;
+	Fri, 13 Dec 2024 17:10:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734109775;
-	bh=JZ2USEEEV7FFcVBTCgSNTmRnykylc2iH9qSCZf1QpHw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=QT5McpZZONNcg7KADmbU2DPbaBeP8mlRlKQHNkSI9YZmDWrQRRKDUevKF72qD4psW
-	 19KAfNdNGsk/0I9B+eimsCrsOB4OPh3x6D3qzkCVx/KvXYK/0MPn9LKxQPpNFKFuF8
-	 CpmTjJMCbNQ3oyXTGp524MsYj1KPoWHw9DDysKV3IDlCInt/Gpgbxh+g3LTbPQ8odV
-	 9amrJGml01xQ29W432ZegOypMgyqzLByXHRo6T7sp4BRoRG9ErZySJAjKtzvdvvunl
-	 ejTwv1LOvO+V9vcrPqXQVgH5XIm1do9dxmTivb/Dn98gqBdzvSxtPNYiJ82KAjG82G
-	 CRG5paaOHNyyQ==
-From: Lee Jones <lee@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@ucw.cz>, Thomas Richard <thomas.richard@bootlin.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-leds@vger.kernel.org, thomas.petazzoni@bootlin.com, 
- DanieleCleri@aaeon.eu, GaryWang@aaeon.com.tw
-In-Reply-To: <20241211-aaeon-up-board-pinctrl-support-v1-0-24719be27631@bootlin.com>
-References: <20241211-aaeon-up-board-pinctrl-support-v1-0-24719be27631@bootlin.com>
-Subject: Re: (subset) [PATCH 0/5] Add support for the AAEON UP board FPGA
-Message-Id: <173410977288.944644.7928182846086408038.b4-ty@kernel.org>
-Date: Fri, 13 Dec 2024 17:09:32 +0000
+	s=k20201202; t=1734109814;
+	bh=FzbxNtPRI9eJSeo8RCJjgFaAAq9gXHyaLbj1CzzKD8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LLSB5NV7qLwPeUWsPfcfbfreuZjY4hYPf9J+yxiOD+gJdl6N7KFAQArDJ8a4dFWx0
+	 FwCuqwbwOpMF0fhib95adoQ6urHuUg2tUMs20eJXhMVDMZg18u6b3iS7SnZcqka7K5
+	 BwgLPiWP2h+lWwacvklTgbZ8D6MNWyCYCNCqFuD9NYtwa2ovDMolOxZMMBd6Sr/WDX
+	 X9b143zzvPsrGosV45ozXfsLoxBfrBmMAkjEMXUrCnUzrpd6Ywu/y233fl827WQU3e
+	 JT+C5rF2uaP9h6RYmYBBPxX3WRRkOlGJM++6VJ13iEqM6i5gixFszEEMvzkrlXjSu8
+	 8jJTkdoTF45mw==
+Date: Fri, 13 Dec 2024 09:10:12 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
+	bpf@vger.kernel.org, Stephane Eranian <eranian@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v2 0/4] perf lock contention: Symbolize locks using slab
+ cache names
+Message-ID: <Z1xqdFB0210tP3RY@google.com>
+References: <20241108061500.2698340-1-namhyung@kernel.org>
+ <CAP-5=fWqE6bM=MVQy7P0tTSWW-ZBXY4in_bfQYFK-C4h6L-Ykw@mail.gmail.com>
+ <ZzuI_08huDfK0Vvu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+In-Reply-To: <ZzuI_08huDfK0Vvu@google.com>
 
-On Wed, 11 Dec 2024 17:27:15 +0100, Thomas Richard wrote:
-> This is the revival of the AAEON UP boards FPGA.
-> The latest version was sent one year ago [1].
+Hello,
+
+On Mon, Nov 18, 2024 at 10:35:43AM -0800, Namhyung Kim wrote:
+> On Mon, Nov 11, 2024 at 11:46:37AM -0800, Ian Rogers wrote:
+> > On Thu, Nov 7, 2024 at 10:15 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > >
+> > > Hello,
+> > >
+> > > This is to support symbolization of dynamic locks using slab
+> > > allocator's metadata.  The kernel support is in the bpf-next tree now.
+> > >
+> > > It provides the new "kmem_cache" BPF iterator and "bpf_get_kmem_cache"
+> > > kfunc to get the information from an address.  The feature detection is
+> > > done using BTF type info and it won't have any effect on old kernels.
+> > >
+> > > v2 changes)
+> > >
+> > >  * don't use libbpf_get_error()  (Andrii)
+> > >
+> > > v1) https://lore.kernel.org/linux-perf-users/20241105172635.2463800-1-namhyung@kernel.org
+> > >
+> > > With this change, it can show locks in a slab object like below.  I
+> > > added "&" sign to distinguish them from global locks.
+> > 
+> > I know the & is intentional but I worry it could later complicate
+> > parsing of filters. Perhaps @ is a viable alternative. Other than
+> > that:
+> > 
+> > Acked-by: Ian Rogers <irogers@google.com>
 > 
-> I started a new series, as I re-wrote all the drivers using the AAEON
-> DKMS driver [2] as reference. I also read all series sent to the ML to
-> collect the comments sent by the maintainers and reviewers (to not
-> reproduce the same errors).
+> Thanks for the review!
 > 
-> [...]
+> I don't think it clashes with BPF sample filters which works on sample
+> data generated from a perf_event.  Technically this command doesn't use
+> perf_event and just attaches the BPF program to tracepoint directly.
+> 
+> Also sample filters don't use '&' symbol in the syntax as of now. :)
 
-Applied, thanks!
+Can we merge this series if no more feedback?
 
-[1/5] mfd: Add support for AAEON UP board FPGA
-      commit: 577ced9b8ac3791edfddc7c371a7f948cdd0e35c
-[2/5] leds: Add AAEON UP board LED driver
-      commit: 5885a1731d0052d5d8a8cbc9871f94fae1f3baa3
-[5/5] MAINTAINERS: Add entry for AAEON UP board FPGA drivers
-      commit: f35d82b6f63994e7d7944daa99651ab88300ce22
+About the build issue, I think it's transient and it's not the default
+to build with generated vmlinux.h.  We could disable the generation but
+it might be better to keep it to test other issues.  Anyway, it can be
+done independently.
 
---
-Lee Jones [李琼斯]
+Thanks,
+Namhyung
 
 
