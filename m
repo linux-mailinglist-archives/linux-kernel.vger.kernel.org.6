@@ -1,176 +1,116 @@
-Return-Path: <linux-kernel+bounces-445127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D8C29F11B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:03:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4EA9F11BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80FF0164E9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:03:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6BF1651FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912311E3791;
-	Fri, 13 Dec 2024 16:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9D11E379B;
+	Fri, 13 Dec 2024 16:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MKOQFssY"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yGWClciV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46B31E0B75;
-	Fri, 13 Dec 2024 16:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93892F24;
+	Fri, 13 Dec 2024 16:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734105830; cv=none; b=IFMkbSnKh9E0hkYsY1lBPBQvToRooDD+9AluSzADDmvZ1M9InG+HmCRUr2sEInPlrZcnxOhpzhxtcB9rkTD5r86laiNtBEG2Jm2z9dMWBKe0YmzzmCX/O2XhJCeSE3T8mQiW1AP9ZczwCMJSZU2sfnIzUTaGCUnLixxWrYyz3Q8=
+	t=1734105950; cv=none; b=fLuUvnZmzl1tvA8uvl00pdogbn88B3fpxbvXOo35DktpVfYfPf3ksljFX5hnihKk7iExgx3ALzjQByTvjt0EhW2GKpvbFJkC1XI0m3ks1gd/8/DP/5VTBCX269QpNnat3DSXmysu/xrfdPgX65Q8TUrHk9bhiOmKQB+0fj+b0e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734105830; c=relaxed/simple;
-	bh=9CUyDLEEMV5qyxKzXcyDb9Bk0pHXrY+UG4VcLupdXmI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Drcgl5B6SD1OWW9lZP7XrqIi7BnjV2hxtND+feFWAvJzb4KuOnqINyalskhHnh9Q6xAGw+HMO4q4UWRytOlntbKpfwtQIDLz5iKw0ISTQAC26nrVjF6HVAI9oLJqPh8HstLIDEwt+aq6XUoCAArm9Y7nCw+sOvKxCYJnkUZ/CIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MKOQFssY; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DB21024000F;
-	Fri, 13 Dec 2024 16:03:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1734105819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H9vZk0DTsI/bg+ANJhh1zU7eKOQQ40nhMEZ4aKgjFCA=;
-	b=MKOQFssY1ZmRAEmIhvcApp8YueSah6mdUcNLSYxoBuMs9ZXqFGLOgfT7uso+rgcQ8OAMUg
-	HmcJJW/qIeJGSqTLr/R49qSxhRrrLr5aMUx8dshXdXNc/WJSBGriQdEr6nAbblXcnBAyji
-	w1zIZMS+kCvLUmFKrZ3FdRxcZNLM7Ioz4jscCgNlw9eMN40PYlmfEN1J/Du4L6A07WinzJ
-	1U5HV1B3K/7uDzCJBQ/4EWs96vLLTwFCiQVqrwR+vCelah3VaGZ7NF//6arj8Eb+sQ8Hmz
-	7X66HdHTLXqrP6n5is3838mDEg+PxzmTSzahvzJeDE3A3U3BP9soBqMke8pXCQ==
+	s=arc-20240116; t=1734105950; c=relaxed/simple;
+	bh=3rLYhkJv0wVJDWqO6nVaBxFOTIIEYFwOow4rYd0GBLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xv4OQIaH6pMA/tLHscW8AsjYZnKzV79EJleopdF7oJUzmd/QZHhsXTNVv9JZsuC2D12h4d2//pjkIXxCAZiVByGaoSued5AFB9wdhNMRR+dSh1bnlf9r2m9XhF8H+FaHiN5FUTBafGVlpYB2GbX3t2evJrTM6EpE/dn77JwiIL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yGWClciV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD807C4CED0;
+	Fri, 13 Dec 2024 16:05:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1734105949;
+	bh=3rLYhkJv0wVJDWqO6nVaBxFOTIIEYFwOow4rYd0GBLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yGWClciVgeYIl2KzDKW70FLfuIP1W6yrjsJbm9mocK4RlUs+SZdrgFuYesG+CG2Ve
+	 bWudWvdTbhC1A7XTWIGDsA3yQnSFWKABNwYd1KvqsmWiBEN0dmMI4F0/ZdFXeZiJrk
+	 BX8oyMUlnIOsch9MlwdyKQMHv+x/lLRZDNDPzn6M=
+Date: Fri, 13 Dec 2024 17:05:46 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Trevor Gross <tmgross@umich.edu>,
+	Adam Bratschi-Kaye <ark.email@gmail.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] rust: extend `module!` macro with integer
+ parameter support
+Message-ID: <2024121344-excusably-resurrect-d01a@gregkh>
+References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
+ <4Dsa69UGULRGsMbRbwOJNp_puyfsSSFt1QTcYU9AL4azd8vbfEFFtc7YNSsGegc40AfCZqVqZETfxg4TggUlSw==@protonmail.internalid>
+ <2024121324-overdue-giggly-bdb8@gregkh>
+ <87frmrepo5.fsf@kernel.org>
+ <I0v8YGJe3e1ex1oF3mki-7QKimYLCJHnBy6g1taHgoOFvpNmQSrSnsMGJyGS064pGJsJDsTsei-pInFRz5INWA==@protonmail.internalid>
+ <2024121309-lethargic-ended-5f99@gregkh>
+ <87ttb7d24p.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 13 Dec 2024 17:03:38 +0100
-Message-Id: <D6AP7JCNSME9.3FS7XCZJ37GM8@bootlin.com>
-Subject: Re: [PATCH v6 4/5] xhci: introduce xhci->lost_power flag
-Cc: =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, <linux-usb@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Roger Quadros" <rogerq@kernel.org>, "Peter Chen"
- <peter.chen@kernel.org>, "Pawel Laszczak" <pawell@cadence.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Mathias Nyman"
- <mathias.nyman@intel.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241210-s2r-cdns-v6-0-28a17f9715a2@bootlin.com>
- <20241210-s2r-cdns-v6-4-28a17f9715a2@bootlin.com>
- <70aced7f-0311-43b9-96af-c8325c39ff2b@kernel.org>
-In-Reply-To: <70aced7f-0311-43b9-96af-c8325c39ff2b@kernel.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ttb7d24p.fsf@kernel.org>
 
-On Thu Dec 12, 2024 at 1:37 PM CET, Roger Quadros wrote:
-> On 10/12/2024 19:13, Th=C3=A9o Lebrun wrote:
-> > The XHCI_RESET_ON_RESUME quirk allows wrappers to signal that they
-> > expect a reset after resume. It is also used by some to enforce a XHCI
-> > reset on resume (see needs-reset-on-resume DT prop).
-> >=20
-> > Some wrappers are unsure beforehands if they will reset. Add a mechanis=
-m
-> > to signal *at resume* if power has been lost. Parent devices can set
-> > this flag, that defaults to false.
-> >=20
-> > The XHCI_RESET_ON_RESUME quirk still triggers a runtime_pm_get() on the
-> > controller. This is required as we do not know if a suspend will
-> > trigger a reset, so the best guess is to avoid runtime PM.
-> >=20
-> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> > ---
-> >  drivers/usb/host/xhci.c | 3 ++-
-> >  drivers/usb/host/xhci.h | 6 ++++++
-> >  2 files changed, 8 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> > index 5ebde8cae4fc44cdb997b0f61314e309bda56c0d..ae2c8daa206a87da24d58a6=
-2b0a0485ebf68cdd6 100644
-> > --- a/drivers/usb/host/xhci.c
-> > +++ b/drivers/usb/host/xhci.c
-> > @@ -1017,7 +1017,8 @@ int xhci_resume(struct xhci_hcd *xhci, pm_message=
-_t msg)
-> > =20
-> >  	spin_lock_irq(&xhci->lock);
-> > =20
-> > -	if (hibernated || xhci->quirks & XHCI_RESET_ON_RESUME || xhci->broken=
-_suspend)
-> > +	if (hibernated || xhci->quirks & XHCI_RESET_ON_RESUME ||
-> > +	    xhci->broken_suspend || xhci->lost_power)
-> >  		reinit_xhc =3D true;
-> > =20
-> >  	if (!reinit_xhc) {
-> > diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-> > index 4914f0a10cff42dbc1448dcf7908534d582c848e..32526df75925989d40cbe7d=
-59a187c945f498a30 100644
-> > --- a/drivers/usb/host/xhci.h
-> > +++ b/drivers/usb/host/xhci.h
-> > @@ -1645,6 +1645,12 @@ struct xhci_hcd {
-> >  	unsigned		broken_suspend:1;
-> >  	/* Indicates that omitting hcd is supported if root hub has no ports =
-*/
-> >  	unsigned		allow_single_roothub:1;
-> > +	/*
-> > +	 * Signal from upper stacks that we lost power during system-wide
-> > +	 * suspend. Its default value is based on XHCI_RESET_ON_RESUME, meani=
-ng
-> > +	 * it is safe for wrappers to not modify lost_power at resume.
-> > +	 */
-> > +	unsigned                lost_power:1;
->
-> I suppose this is private to XHCI driver and not legitimate to be accesse=
-d
-> by another driver after HCD is instantiated?
+On Fri, Dec 13, 2024 at 04:38:30PM +0100, Andreas Hindborg wrote:
+> "Greg KH" <gregkh@linuxfoundation.org> writes:
+> > On Fri, Dec 13, 2024 at 01:24:42PM +0100, Andreas Hindborg wrote:
+> >> "Greg KH" <gregkh@linuxfoundation.org> writes:
+> >> > On Fri, Dec 13, 2024 at 12:30:45PM +0100, Andreas Hindborg wrote:
+> I'm not getting a clear reading on the following, perhaps you can
+> clarify:
+> 
+>  - Is the community aligned on dropping module parameters for all new
+>    drivers?
+>    - If so, was this decided upon at some point or is this a fluid
+>      decision that is just manifesting now?
 
-Yes it is private.
+It's something that I've been saying in review comments of drivers for
+many many years now.  Again, it was one of the main reasons we created
+configfs and sysfs all those decades ago, because module parameters just
+do not work properly for drivers in almost all cases.
 
-> Doesn't access to xhci_hcd need to be serialized via xhci->lock?
+>  - Does this ban of module parameters also cover cases where backwards
+>    compatibility is desirable?
 
-Good question. In theory maybe. In practice I don't see how
-cdns_host_resume(), called by cdns_resume(), could clash with anything
-else. I'll add that to be safe.
+No, we don't break existing kernel features, but if you are writing a
+new driver, don't add them and then there's no compatibility issue.
 
-> Just curious, what happens if you don't include patch 4 and 5?
-> Is USB functionality still broken for you?
+We don't normally allow "rewrites" of drivers, but if we do, yes, you
+would have to implement the old features if needed.
 
-No it works fine. Patches 4+5 are only there to avoid the below warning.
-Logging "xHC error in resume" is a lie, so I want to avoid it.
+As you just seem to want to write an "example" block driver, no need to
+add the module option there, just do it right this time in how to
+properly configure things.
 
-> Doesn't XHCI driver detect that power was lost and issue a reset in any c=
-ase
-> via the below code
->
->         /* re-initialize the HC on Restore Error, or Host Controller Erro=
-r */
->         if ((temp & (STS_SRE | STS_HCE)) &&
->             !(xhci->xhc_state & XHCI_STATE_REMOVING)) {
->                 reinit_xhc =3D true;
->                 if (!xhci->broken_suspend)
->                         xhci_warn(xhci, "xHC error in resume, USBSTS 0x%x=
-, Reinit\n", temp);
->         }
->
-> >  	/* cached extended protocol port capabilities */
-> >  	struct xhci_port_cap	*port_caps;
-> >  	unsigned int		num_port_caps;
-> >=20
+>  - Can we merge this so I can move forward at my current projected
+>    course, or should I plan on dealing with not having this available?
 
-I'll wait for your opinion on the [PATCH v6 2/5] email thread before
-sending a new revision.
+We generally do not want to merge apis without any real users, as it's
+hard to justify them, right?  Also, we don't even know if they work
+properly or not.
 
-Thanks,
+thanks,
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+greg k-h
 
