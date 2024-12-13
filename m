@@ -1,198 +1,356 @@
-Return-Path: <linux-kernel+bounces-444579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1E89F0905
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:04:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDEB9F0909
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08445166E88
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:04:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50A71880440
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A87F1B6D0B;
-	Fri, 13 Dec 2024 10:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943A41B4C35;
+	Fri, 13 Dec 2024 10:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sMwyISL9"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2060.outbound.protection.outlook.com [40.107.243.60])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hJTs6O4j";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HFX4e7Ea"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0058518BBAC;
-	Fri, 13 Dec 2024 10:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734084224; cv=fail; b=aIeJ7HuN7Jq+CcBrmS1jWC1Dm7mm6pdAkrp6Xf9yzoJJb5dyPankltXWdukbPyzXrR3ZABirWy4VFQA1nPazgtTnbfuIew8hD7oFp3c/ii4S/ZqjFYRGTbadWZb+WJ/ZRE2UZZHnbCCx4681UH4GOtrbVbZRCN1eyG+TXRKh0Fs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734084224; c=relaxed/simple;
-	bh=hgkkwSL/xJ+H2F5rkl3HEW7zgQgivj0SAVUFwHIeEng=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=G2Vpw79oU61C/T0vMJyGrJHnt7jl3aHmJXfcl46TfBnJTclsJuCSBhDGYWqh8WU76cUNnztk6nUmKNavYz2cSFAMkkqnyG3aOZk8MDiyud2dl51v9gnAO+ag6nBjRifdHhTVPi845ML2GIKFI5losvqSbtXrM8qVyiwDM0KsGYk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sMwyISL9; arc=fail smtp.client-ip=40.107.243.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KRd5jHtYtaGeQezqd8R9Ygt2XZVdaQacc3fFObPzCXWfSZ4UroO0YsBgO34mSGJIcvKujpfs818Clkp6vxZXJfDSoXujt8hCmAClniVW1ZPFEuuEZeRG21HADtnNBiECMhIxEo2xaNaOqVq9kbyni5wb3D9GjtKwbwC4ZaimSIHcKtDoMaU428+1ItsqwgT/LI0FTNP5S/CinpGCbZh4QFcBbSCNXbyASK/6MEkNdCrRHTTLEIHB+8MywyQl8Ga3tbPEEeUDxbblNvaMumPM2kVehT8NejPvvAgneYgzOB8AjyQGZnkgfwZO27+w9TTncBL6HrQGwoiMrrO9B/pNOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BcLa/p9M+nHZYA+ZVm6qwiLv98ObDn4uLzckuPSOghE=;
- b=xytNfqvZWlSDrz55vE0hejMq0iyS2rzOHGBkDhe71j8d1stvVRPH5gsN5WmLlFeNB1l4uImpGbjn6CeOwWV2IDqm0Nkimis3hT1sprbJHFSdTOk2xfD5Sy5jD9JrjuPrDLDks78lCf0Q2G2pASTerN+c0s4gZ8rmmPLr19gzu73bNfH03paG8wxdL0+dzsXJwr2ZPPgOCzICUTQsLZbFQkwvucD6K78Z2Z5GklLLI00MpsKkPU42gk9ankopAmIh5LXkb61ho7wwdO7jEUsSMZJCFyTeE9wT6WIUltrUsP5VI7P8F8gnSoS/0tep5FtLnyv8DKvYJMPWn3/C733z/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BcLa/p9M+nHZYA+ZVm6qwiLv98ObDn4uLzckuPSOghE=;
- b=sMwyISL9vy5E2+xoEsAznyd5NbuTpN5knwLCzykuq3D6WHNNHn8fBpXTjPv8/Az597nDupdfbVAa5t+n6aLw8zsFd12KIKsCTft0PUhjpU15T0s1vQQffYJNgd8JjturVMp18NjtkxxYMkKaxQojrzFh70V4Uv72FS5Lyqs7qeNg0R2qL2K2JkPAikr2Grn8CfCLCffOW4LhnMPm18rrpO2KU8te0boQw4SD3ftMtQOd6lySuqfvZ1Oh/YxT6ipcNy7mc/al4OVaGppI8EZRvOAFhIy2TUiXoXeIM9NmlGlSeOQksidzt2g+fYKqJ9X+sDWfK0Rc0Kv5JFzD6fQP/A==
-Received: from CH0PR03CA0051.namprd03.prod.outlook.com (2603:10b6:610:b3::26)
- by LV8PR12MB9358.namprd12.prod.outlook.com (2603:10b6:408:201::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Fri, 13 Dec
- 2024 10:03:38 +0000
-Received: from CH2PEPF0000013F.namprd02.prod.outlook.com
- (2603:10b6:610:b3:cafe::3d) by CH0PR03CA0051.outlook.office365.com
- (2603:10b6:610:b3::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8182.21 via Frontend Transport; Fri,
- 13 Dec 2024 10:03:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH2PEPF0000013F.mail.protection.outlook.com (10.167.244.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8251.15 via Frontend Transport; Fri, 13 Dec 2024 10:03:38 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 13 Dec
- 2024 02:03:25 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 13 Dec
- 2024 02:03:25 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 13 Dec 2024 02:03:24 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/772] 6.1.120-rc1 review
-In-Reply-To: <20241212144349.797589255@linuxfoundation.org>
-References: <20241212144349.797589255@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF641ADFE0;
+	Fri, 13 Dec 2024 10:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734084327; cv=none; b=aiz4HI21n9GbAO0NGoNPcAvvkE21VYS/ALIwkLERtkRkwL9OBPaG2nhdRfx6SRKxRS//L6eF5gLaNFUdplfYy3Tyl5J9btHC8ci3R65Uo4/njljTO3r1XXhWtM33CXzU0rZC09EPkywW+IkHxZBS+X0KgOjXpvqJuE7aX2J7qjI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734084327; c=relaxed/simple;
+	bh=ymXE3faXnL7YCxEthqO0Uf01/bWpkO4Ji/yQFGICK9s=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=HWwJc5TwUXjKqXP8daOX4vaD04nkeS0hD2mgW2ezU/GyCbc5XBfPD+D8tAajwci1rrCTVo1TkzLJwMLu9f7C/cc9Pu9TD/A0nD3OLPwKEqg6HNOatuWXkKoljk9zdVU/R2jP2lhbNfgNoVnqaNyDJ60loG52ppiTqf/i7R9Q1C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hJTs6O4j; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HFX4e7Ea; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id A70611140205;
+	Fri, 13 Dec 2024 05:05:23 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 13 Dec 2024 05:05:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1734084323;
+	 x=1734170723; bh=VWc63gruN2VUu9vw6nxAr+LDqu/9hdgDSp/fkHJQsu0=; b=
+	hJTs6O4jMcoFF/jTBxZ7Mf7S/NmWHzb5koQQF3Eb9WHSulTbMHw3W1eQss/MOaPM
+	PhMpOfHpxgSXCZkv4FpoCEzNcuSCcBFTgK2z/lhvONGZxYnXKXMIIXxP48+b/q/u
+	bMdKiePQow5lOLD1dHC1Bsb0/tJwEH6+pY+p3sdN1UsVbpOMqKShUznrd5gLsv2n
+	Aft6Xh3E+OMO0jhvM0FxUnhpYbUarMPslkIVTU2RgvaPORk0tvJXA5pW9QJNdzGG
+	gtz3cIFYO21NG16Tnot8Rtw2dKP0rxpaTf01RiQ6R65Dv9wgHzszSq4u9rgMNMWu
+	nLrEtC/gqHPsF6DQD2zk0g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734084323; x=
+	1734170723; bh=VWc63gruN2VUu9vw6nxAr+LDqu/9hdgDSp/fkHJQsu0=; b=H
+	FX4e7EatIGXIPghYMHzYYg7oVO2wsOaTJo1rjY53TZscHX0GF9TY7zVQb8KWkOvo
+	tz/31eZURkCgrhyqB32m987s/gB70HA/fEVgcXYMGRr8tKT6SzmaMiEPSvjNHLXv
+	LWV99xe4Ra2lcAZ2+2QKeB5r1KZLue3yobmAdsjs6bHSKwQfGzgyMZofsuZmCJtF
+	Td7sesOd5b0haOW0lbrT7SeMe7QXu7OtMD8gsoteIYHzSIbDNyB4bmwi4+UM8J+d
+	1WdY7/ETmWyiowfoV1mPxErwQb6kfenaWjEyBRaWY/t1JUs/a3LXlBmuHGmYMHEx
+	lPYDh0E0C7ttTpQL2bFFA==
+X-ME-Sender: <xms:4gZcZzsLTRRWMEamSKkFp_1NlWwkUjBdgN3X_VTvc3F_QDrtxV41RA>
+    <xme:4gZcZ0fmPqmn0tr0vhZKg6uja8tNMgqMp5_CRf9djITMlWa_S_ep-JSj-rouiSMGJ
+    7z55GT9inc2F6F9ld8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeejgdduudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhuedugeeuudehkeetfeefteduhfduffdthfekuddt
+    jefgvdffvddvlefgteffkeenucffohhmrghinhephhgvrggupggsohhokhefshgpfedvrd
+    hssgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegr
+    rhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeefgedpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepthhssgho
+    ghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopehgrhgrfhesrg
+    hmrgiiohhnrdgtohhmpdhrtghpthhtoheprghtihhshhhpsegrthhishhhphgrthhrrgdr
+    ohhrghdprhgtphhtthhopegrnhhuphessghrrghinhhfrghulhhtrdhorhhgpdhrtghpth
+    htoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdprhgtphht
+    thhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegrohhusegvvg
+    gtshdrsggvrhhkvghlvgihrdgvughupdhrtghpthhtohepmhhpvgesvghllhgvrhhmrghn
+    rdhiugdrrghu
+X-ME-Proxy: <xmx:4gZcZ2wugGXNW3b8ogHmYVCNVAvimp1PAnCa-ge6w-DjDnEUp1pTRA>
+    <xmx:4gZcZyM4vBnanwQZNU24VzO3XsVwvNmc1HL9DSsu_fhvLDFnbNrk3g>
+    <xmx:4gZcZz8dG2Zf7lkSaXunSCPhcbAUWWoXv6eKul3X9obR0pGPiMoSzg>
+    <xmx:4gZcZyWqzO64bf-xsf1w0v_lumo_G23RUW4d0v_eRuSTJIxcEvroIw>
+    <xmx:4wZcZ2fgbwJdA_4G_XdVMUnA2fWGukOTnpsKbWMRMWhgqhsDauIV94ix>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 297C02220072; Fri, 13 Dec 2024 05:05:22 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <4d7673af-8dd5-4b3c-88c3-71140aa20ff0@rnnvmail202.nvidia.com>
-Date: Fri, 13 Dec 2024 02:03:24 -0800
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013F:EE_|LV8PR12MB9358:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6f90b701-de06-4f3f-5530-08dd1b5d6a40
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?anlDamxFRG5VMm9hUnIvSkF1dlhxaSs4dHNQVFpjY2ZMZTdKNE5nM2MxWjBI?=
- =?utf-8?B?K3UyNER5OW5BaTNxZ3l4eVZFMlRVbVRVWVBqREZxa21xM1k0dFdjRDc1eXNV?=
- =?utf-8?B?VXdZZ0xxSU43UVhoZFRpaHFDNWRWb250RHhxMkpVMXVyMUhGNFVGNFFUSWJ0?=
- =?utf-8?B?N3V4OEdEUG40S00xYVcyZzFyeWk4MFlkTUMwUVJzZHJQZXh2NkRZRGRlZTk0?=
- =?utf-8?B?Vk9PRW93Q0NiamhkL3U4ckVlM0hia2tUeU5LMmQ0Z0tDVkNLVC9Rd21HcG10?=
- =?utf-8?B?aUxSNWF3K0UwaW9KY3hEN05NSTRPZERkYUk5RW5KdFhJNXVjUkI2bms5Y3V1?=
- =?utf-8?B?SHBsRkl4WU5XS29aNWlwN2ZUWGRCWXdMN2pKTTNrdnRkcDlCdWhhdTFQdG93?=
- =?utf-8?B?QS9jZ3Zod0dORC9LZ3IyNzZpZW9hN25EQlZqQlIxcXRRVk44Mk1IalB3RWxJ?=
- =?utf-8?B?d2dNQUE2dlY1YTQzRU45VkF6UnUxZ3dLWThRNUs0ejdPUUNOMHViNFhlbTRX?=
- =?utf-8?B?TTRkeFBhTmxJQUcrTlRPcDdGRmJTM3ppUXd4aVJhc1krRVpMcVlmRUc3dkxU?=
- =?utf-8?B?WjR3d1ZMRWM3dk02NXlsLzhJNk9CcWxuWFlOcHhTbTlxdjdodk81OTlhK1RB?=
- =?utf-8?B?RkI1bTJYTmtCYm1YczFRUjJGNGxpejVzZUJiMkU2NURLOWphcVBYTWhROFR2?=
- =?utf-8?B?ZGlVRFozSUJacGpaZE9kNXBDQ1Jwczg1TjY3NlRqR0xzcUJRRVlIRStVYlZx?=
- =?utf-8?B?NkwwTG9GK015TWhFamV5a25jVjl0NVdVTzZxeHV1OEUreFB4dEdCbGd2Rlh6?=
- =?utf-8?B?MUlnNW05d1VlYmJUT0tTeHphREpKaHVRdXZxelZKRHpmalUrbHY2UitKRWhX?=
- =?utf-8?B?YTdNMkl1SkdyalhIcmZTSU5QbWtZN0xPRmVTdWV2Z1lnb1pXcWJxQkpleXVp?=
- =?utf-8?B?YXJJZEdaaExWMmJCcDNrK01wcWMydm9JaTJQRm1jTVdVVnFlcVdMUDRxeWpI?=
- =?utf-8?B?N0VZZFJ0WDFwc0V4ZzJld1JmSGNqc3BwQkhZa3JhUFIyNllDL3NONkp3ZVhQ?=
- =?utf-8?B?azFzaHVVTzJiYk84ZnQweDIwMVNKb3A4cUFZaWhKOXRQNi9kS29MczRCVWFX?=
- =?utf-8?B?MTZjbHV5K1E5SE1sZjBDcjEydUV0NDBCeEtyRlVXMnFaaFlyRUZiZzNpVytz?=
- =?utf-8?B?NE5EdTJNbTA3YUsvZEhGVTkzV05ONlVNejlySGI2Q2doaVptNmsrcDVJQnRN?=
- =?utf-8?B?WWxQUy9ZOHFLTlkrbkdsR2llWkZDM0dKMGF1cFUzVGw2dnljaFZMVnp5Y2lQ?=
- =?utf-8?B?TzhvcWJlQ3lad3VxSi8yMW1QTTgwTXNzRnB4QWZnN3czZkdtQzdsVkh1Q3R1?=
- =?utf-8?B?UW83Y0E4YktPZGJ4QjRObGpwOFI0MDBGejI0aEJlSC9nTDIrem9uUit4WTJH?=
- =?utf-8?B?SWlkdk05MWlQUUJZZUpvSlNlMTRVUWRoVlhLbEpLRkRjSGFWenJDU1Fhdktm?=
- =?utf-8?B?a0ZsMXpwamV5dE5TN3hSZG44Q2U4U1FneU1VQ2lDV1NJd3p1MEs0NkJUdlFt?=
- =?utf-8?B?a3ZYM05SeWNTaTYzOGxiaW9rWlVHMm4waVhtUWdNUE84L1VBVzQ1UUpBMzRF?=
- =?utf-8?B?RFRVY013MUNOSGgrb0RBS0k2Myt6RXM2cndPQ2lDUFJ4eXk3U0E5aHpPRnl5?=
- =?utf-8?B?bFBjL09WVll0RGlRZGpja1dFQWx4YUxSMkNoQ3JBT2hyUk1aVEVZUVZITjJY?=
- =?utf-8?B?MnJwV2IzelRsY1JSSjRzRlA0S0M4R2htVmdqZ01WREhNNThkRDJjTVN1OWVI?=
- =?utf-8?B?Wk5ONHNrZHJ4eEd6NW96eExtcllmai9SNXUwQnVLcEhxdVFBaTRwbC9xUVpw?=
- =?utf-8?B?TjZVUVFUVDJacWc5Z3VZZmlaWjAzODV5ZVpvNE5KcWp6WmY1SkczTGlESmg1?=
- =?utf-8?B?TGpuK3Z1Q3V1R1pGQWZCQUdkckNEQmg2YXZsWDJaVHN0OEVEK0h4bUxETXYz?=
- =?utf-8?Q?En+Fcs9cwz+jRm5YcbmbVgGciryC9I=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 10:03:38.3269
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f90b701-de06-4f3f-5530-08dd1b5d6a40
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000013F.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9358
+Date: Fri, 13 Dec 2024 11:04:08 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Arnd Bergmann" <arnd@kernel.org>, kvm@vger.kernel.org
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Naveen N Rao" <naveen@kernel.org>,
+ "Madhavan Srinivasan" <maddy@linux.ibm.com>,
+ "Alexander Graf" <graf@amazon.com>, "Crystal Wood" <crwood@redhat.com>,
+ "Anup Patel" <anup@brainfault.org>,
+ "Atish Patra" <atishp@atishpatra.org>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>,
+ "Sean Christopherson" <seanjc@google.com>,
+ "Paolo Bonzini" <pbonzini@redhat.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Vitaly Kuznetsov" <vkuznets@redhat.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Paul Durrant" <paul@xen.org>,
+ "Marc Zyngier" <maz@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
+Message-Id: <3380464f-5db4-487d-936f-1b5503905793@app.fastmail.com>
+In-Reply-To: <2809dcce-3405-430e-b43d-d75f35bdb7d5@csgroup.eu>
+References: <20241212125516.467123-1-arnd@kernel.org>
+ <20241212125516.467123-4-arnd@kernel.org>
+ <2809dcce-3405-430e-b43d-d75f35bdb7d5@csgroup.eu>
+Subject: Re: [RFC 3/5] powerpc: kvm: drop 32-bit book3s
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 12 Dec 2024 15:49:05 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.120 release.
-> There are 772 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.120-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Thu, Dec 12, 2024, at 19:34, Christophe Leroy wrote:
+> Le 12/12/2024 =C3=A0 13:55, Arnd Bergmann a =C3=A9crit=C2=A0:
+>
+> $ git grep KVM_BOOK3S_32_HANDLER
+> arch/powerpc/include/asm/processor.h:#ifdef CONFIG_KVM_BOOK3S_32_HANDL=
+ER
+> arch/powerpc/include/asm/processor.h:#endif /*=20
+> CONFIG_KVM_BOOK3S_32_HANDLER */
+> arch/powerpc/kernel/asm-offsets.c:#ifdef CONFIG_KVM_BOOK3S_32_HANDLER
 
-All tests passing for Tegra ...
+Fixed now.
 
-Test results for stable-v6.1:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    115 tests:	115 pass, 0 fail
+> What about the following in asm-offsets.c, should it still test=20
+> CONFIG_PPC_BOOK3S_64 ? Is CONFIG_KVM_BOOK3S_PR_POSSIBLE still possible=20
+> on something else ?
+>
+> #if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_KVM_BOOK3S_PR_POSS=
+IBLE)
+> 	OFFSET(VCPU_SHAREDBE, kvm_vcpu, arch.shared_big_endian);
+> #endif
+>
+> Shouldn't CONFIG_KVM and/or CONFIG_VIRTUALISATION be restricted to=20
+> CONFIG_PPC64 now ?
 
-Linux version:	6.1.120-rc1-g9f320894b9c2
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Agreed, fixed and found one more in that file.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+> What about:
+>
+> arch/powerpc/kernel/head_book3s_32.S:#include <asm/kvm_book3s_asm.h>
+> arch/powerpc/kernel/head_book3s_32.S:#include "../kvm/book3s_rmhandler=
+s.S"
 
-Jon
+Removed.
+
+> There is still arch/powerpc/kvm/book3s_32_mmu.c
+
+This one is used for 32-bit guests and needs to stay I think.
+
+See below for the changes I've now folded into this patch.
+
+     Arnd
+
+diff --git a/arch/powerpc/include/asm/kvm_book3s.h b/arch/powerpc/includ=
+e/asm/kvm_book3s.h
+index 71532e0e65a6..7e13e48dbc6b 100644
+--- a/arch/powerpc/include/asm/kvm_book3s.h
++++ b/arch/powerpc/include/asm/kvm_book3s.h
+@@ -377,7 +377,9 @@ static inline struct kvmppc_vcpu_book3s *to_book3s(s=
+truct kvm_vcpu *vcpu)
+=20
+ /* Also add subarch specific defines */
+=20
++#ifdef CONFIG_KVM_BOOK3S_64_HANDLER
+ #include <asm/kvm_book3s_64.h>
++#endif
+=20
+ static inline void kvmppc_set_gpr(struct kvm_vcpu *vcpu, int num, ulong=
+ val)
+ {
+diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/=
+asm/kvm_host.h
+index 6e1108f8fce6..56b01a135fcb 100644
+--- a/arch/powerpc/include/asm/kvm_host.h
++++ b/arch/powerpc/include/asm/kvm_host.h
+@@ -793,7 +793,7 @@ struct kvm_vcpu_arch {
+ 	struct machine_check_event mce_evt; /* Valid if trap =3D=3D 0x200 */
+=20
+ 	struct kvm_vcpu_arch_shared *shared;
+-#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_KVM_BOOK3S_PR_POSSI=
+BLE)
++#ifdef CONFIG_KVM_BOOK3S_PR_POSSIBLE
+ 	bool shared_big_endian;
+ #endif
+ 	unsigned long magic_page_pa; /* phys addr to map the magic page to */
+diff --git a/arch/powerpc/include/asm/kvm_ppc.h b/arch/powerpc/include/a=
+sm/kvm_ppc.h
+index ca3829d47ab7..001cd00d18f0 100644
+--- a/arch/powerpc/include/asm/kvm_ppc.h
++++ b/arch/powerpc/include/asm/kvm_ppc.h
+@@ -951,7 +951,7 @@ static inline void kvmppc_mmu_flush_icache(kvm_pfn_t=
+ pfn)
+  */
+ static inline bool kvmppc_shared_big_endian(struct kvm_vcpu *vcpu)
+ {
+-#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_KVM_BOOK3S_PR_POSSI=
+BLE)
++#if defined(CONFIG_KVM_BOOK3S_PR_POSSIBLE)
+ 	/* Only Book3S_64 PR supports bi-endian for now */
+ 	return vcpu->arch.shared_big_endian;
+ #elif defined(CONFIG_PPC_BOOK3S_64) && defined(__LITTLE_ENDIAN__)
+diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include=
+/asm/processor.h
+index 6b94de17201c..d77092554788 100644
+--- a/arch/powerpc/include/asm/processor.h
++++ b/arch/powerpc/include/asm/processor.h
+@@ -223,9 +223,6 @@ struct thread_struct {
+ 	struct thread_vr_state ckvr_state; /* Checkpointed VR state */
+ 	unsigned long	ckvrsave; /* Checkpointed VRSAVE */
+ #endif /* CONFIG_PPC_TRANSACTIONAL_MEM */
+-#ifdef CONFIG_KVM_BOOK3S_32_HANDLER
+-	void*		kvm_shadow_vcpu; /* KVM internal data */
+-#endif /* CONFIG_KVM_BOOK3S_32_HANDLER */
+ #if defined(CONFIG_KVM) && defined(CONFIG_BOOKE)
+ 	struct kvm_vcpu	*kvm_vcpu;
+ #endif
+diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm=
+-offsets.c
+index 7a390bd4f4af..c4186061694c 100644
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@ -147,9 +147,6 @@ int main(void)
+ 	OFFSET(THREAD_USED_SPE, thread_struct, used_spe);
+ #endif /* CONFIG_SPE */
+ #endif /* CONFIG_PPC64 */
+-#ifdef CONFIG_KVM_BOOK3S_32_HANDLER
+-	OFFSET(THREAD_KVM_SVCPU, thread_struct, kvm_shadow_vcpu);
+-#endif
+ #if defined(CONFIG_KVM) && defined(CONFIG_BOOKE)
+ 	OFFSET(THREAD_KVM_VCPU, thread_struct, kvm_vcpu);
+ #endif
+@@ -401,7 +398,7 @@ int main(void)
+ 	OFFSET(VCPU_SHARED, kvm_vcpu, arch.shared);
+ 	OFFSET(VCPU_SHARED_MSR, kvm_vcpu_arch_shared, msr);
+ 	OFFSET(VCPU_SHADOW_MSR, kvm_vcpu, arch.shadow_msr);
+-#if defined(CONFIG_PPC_BOOK3S_64) && defined(CONFIG_KVM_BOOK3S_PR_POSSI=
+BLE)
++#ifdef CONFIG_KVM_BOOK3S_PR_POSSIBLE
+ 	OFFSET(VCPU_SHAREDBE, kvm_vcpu, arch.shared_big_endian);
+ #endif
+=20
+@@ -511,19 +508,13 @@ int main(void)
+ 	OFFSET(VCPU_TAR_TM, kvm_vcpu, arch.tar_tm);
+ #endif
+=20
+-#ifdef CONFIG_PPC_BOOK3S_64
+ #ifdef CONFIG_KVM_BOOK3S_PR_POSSIBLE
+ 	OFFSET(PACA_SVCPU, paca_struct, shadow_vcpu);
+ # define SVCPU_FIELD(x, f)	DEFINE(x, offsetof(struct paca_struct, shado=
+w_vcpu.f))
+ #else
+ # define SVCPU_FIELD(x, f)
+ #endif
+-# define HSTATE_FIELD(x, f)	DEFINE(x, offsetof(struct paca_struct, kvm_=
+hstate.f))
+-#else	/* 32-bit */
+-# define SVCPU_FIELD(x, f)	DEFINE(x, offsetof(struct kvmppc_book3s_shad=
+ow_vcpu, f))
+-# define HSTATE_FIELD(x, f)	DEFINE(x, offsetof(struct kvmppc_book3s_sha=
+dow_vcpu, hstate.f))
+-#endif
+-
++#define HSTATE_FIELD(x, f)	DEFINE(x, offsetof(struct paca_struct, kvm_h=
+state.f))
+ 	SVCPU_FIELD(SVCPU_CR, cr);
+ 	SVCPU_FIELD(SVCPU_XER, xer);
+ 	SVCPU_FIELD(SVCPU_CTR, ctr);
+@@ -547,14 +538,9 @@ int main(void)
+ 	SVCPU_FIELD(SVCPU_FAULT_DAR, fault_dar);
+ 	SVCPU_FIELD(SVCPU_LAST_INST, last_inst);
+ 	SVCPU_FIELD(SVCPU_SHADOW_SRR1, shadow_srr1);
+-#ifdef CONFIG_PPC_BOOK3S_32
+-	SVCPU_FIELD(SVCPU_SR, sr);
+-#endif
+-#ifdef CONFIG_PPC64
+ 	SVCPU_FIELD(SVCPU_SLB, slb);
+ 	SVCPU_FIELD(SVCPU_SLB_MAX, slb_max);
+ 	SVCPU_FIELD(SVCPU_SHADOW_FSCR, shadow_fscr);
+-#endif
+=20
+ 	HSTATE_FIELD(HSTATE_HOST_R1, host_r1);
+ 	HSTATE_FIELD(HSTATE_HOST_R2, host_r2);
+@@ -601,12 +587,9 @@ int main(void)
+ 	OFFSET(KVM_SPLIT_NAPPED, kvm_split_mode, napped);
+ #endif /* CONFIG_KVM_BOOK3S_HV_POSSIBLE */
+=20
+-#ifdef CONFIG_PPC_BOOK3S_64
+ 	HSTATE_FIELD(HSTATE_CFAR, cfar);
+ 	HSTATE_FIELD(HSTATE_PPR, ppr);
+ 	HSTATE_FIELD(HSTATE_HOST_FSCR, host_fscr);
+-#endif /* CONFIG_PPC_BOOK3S_64 */
+-
+ #else /* CONFIG_PPC_BOOK3S */
+ 	OFFSET(VCPU_CR, kvm_vcpu, arch.regs.ccr);
+ 	OFFSET(VCPU_XER, kvm_vcpu, arch.regs.xer);
+diff --git a/arch/powerpc/kernel/head_32.h b/arch/powerpc/kernel/head_32=
+.h
+index 9cba7dbf58dd..24e89dadc74d 100644
+--- a/arch/powerpc/kernel/head_32.h
++++ b/arch/powerpc/kernel/head_32.h
+@@ -172,7 +172,6 @@ _ASM_NOKPROBE_SYMBOL(\name\()_virt)
+ #define	START_EXCEPTION(n, label)		\
+ 	__HEAD;					\
+ 	. =3D n;					\
+-	DO_KVM n;				\
+ label:
+=20
+ #else
+diff --git a/arch/powerpc/kernel/head_book3s_32.S b/arch/powerpc/kernel/=
+head_book3s_32.S
+index cb2bca76be53..505d0009ddc9 100644
+--- a/arch/powerpc/kernel/head_book3s_32.S
++++ b/arch/powerpc/kernel/head_book3s_32.S
+@@ -30,7 +30,6 @@
+ #include <asm/asm-offsets.h>
+ #include <asm/ptrace.h>
+ #include <asm/bug.h>
+-#include <asm/kvm_book3s_asm.h>
+ #include <asm/feature-fixups.h>
+ #include <asm/interrupt.h>
+=20
+@@ -861,10 +860,6 @@ END_MMU_FTR_SECTION_IFCLR(MMU_FTR_HPTE_TABLE)
+ 	rfi
+ #endif /* CONFIG_SMP */
+=20
+-#ifdef CONFIG_KVM_BOOK3S_HANDLER
+-#include "../kvm/book3s_rmhandlers.S"
+-#endif
+-
+ /*
+  * Load stuff into the MMU.  Intended to be called with
+  * IR=3D0 and DR=3D0.
 
