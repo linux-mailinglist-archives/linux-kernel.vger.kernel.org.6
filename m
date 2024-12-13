@@ -1,182 +1,136 @@
-Return-Path: <linux-kernel+bounces-444885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4B79F0E0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:56:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7080D9F0E09
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:56:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85E69162152
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:55:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30CBB2815B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1891E0DE8;
-	Fri, 13 Dec 2024 13:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30E91E2847;
+	Fri, 13 Dec 2024 13:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zjE8yaN/"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFlXtQFS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17147186607
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82591E049E;
+	Fri, 13 Dec 2024 13:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734097930; cv=none; b=GH+9kZyoXs3l8ZkqAP9FJh0Ajks0d/SI2RSe3B9Fxs08sqbwFhhwYNyvedSdPY3f4RTVJJMEvo03iFA2E6l1U6Gz7S3buwBMnz/vt2XyKBboYTs3VgsXOWF95z2zBAK7XaaJC5rS9gjfyqp99Oru0bFNM3+ey9gQNEozXxQEm88=
+	t=1734098017; cv=none; b=c0HjVsmkTHYQ2sbkC41fdnlhEnqN6S5kNcuxSsyiFD5SAgl+PSSJjwPvcFHd0yVNElJ0RcyXVRuvFfVUrcXEHPc8VmvFlF69jM4gDEE8z/7HJvXi4RBESOq7Rw/9NZBjTAeivy1lQAzoXLdA1VQQzBjXz4sjT/GKO2t6StbhzSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734097930; c=relaxed/simple;
-	bh=PrMNRDWV+EfKGb1B+Wbd2gu/doynSpcPbc2Q8qTdRmo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KWXzmIghMnS4AqMOJWaNZFq1fFkoc5bCTR8jW0fF44+syMfK4T6Jo6sWEK2V/IIHsB+JkQMNFHyzx84T61+y0YxC0iclkOuavN7aoS7uGZt+cdzSREmtwZPVQDfBhXXDJNHguNjmSQPg5bWL7MDV9xGlBt9mmjBPHWmUo09gR1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zjE8yaN/; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d3d0205bd5so2478905a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:52:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734097926; x=1734702726; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LFxRqoUDcxRTLhzcB0bq/QXLdWIm6pyY40R4SG8HtGg=;
-        b=zjE8yaN/GTcTrqm4SQZuc92ylSfFWQbeZVhnLc9dvDXkqSwUYDaVtadwigTevydeO2
-         e1FiR9WJQ17887mR56+vKxC/aNHXbZDlb4333Qu6eRlLtmya75EJD959WVoSsCumnKsF
-         IGvFg8ew4XPicCxOK7kaBUb2ho7ia4fa6feGG2yaw6RwzTco4N9tL66xR1eRsKZpDfm5
-         Tyw+510utuD4Nhnyuug6Yg5Gx7Mss6bPNM/oudeR5ZUaOGeMMWjZGXUYVNAHnsGTvKLU
-         b7JNvbgN1/9dsTDsuJQcGuBY6Qz8cT0vzURZA/WMrq+h7hYjbSOCRmnt2ZhMP0QHC4cp
-         58zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734097926; x=1734702726;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LFxRqoUDcxRTLhzcB0bq/QXLdWIm6pyY40R4SG8HtGg=;
-        b=naOR4tAr0UtY6p8SE4mLIq6SxEvavFhQzTB1BuhKd9Jdg6NjeAqQzr/33O4FNyxPOu
-         vHZNlYS4hDrgF8VBwfGZrLQoG0OLQBeD4QS+TEm/jKJyby42MCuu3GUdOYujmp1R8y0j
-         BvnVaFbQ6C42kGxqPh9csCr9+RsqxlYRMbi5CYSYgDfhue0MNEyrf80+PUcnhvZgfu0L
-         tKQSKHzDH6wX5Gxtc3eSjPztt6MCjaQt8OV6H/TIlGMJOaT+Vm1miPDUfp+dZZx0FnuS
-         UMXQcB08Lre9uLDH3vy6Y88gfJbTRW3dQtX9iRugr08FyLjT5BVBpHGor87IzNIHdl1z
-         QguA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaftnmrhZnnn/GKonBfPux7vFGlzg8ryslvsusGT1MD+ey/7Yb4Jq20yFIealSAkPOGpqaieTLIBnrpuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYoPoap27Tg2e6Juve+k9y+E0ovng1quHgAk25jyEr9NDiqBl1
-	BHHxCUgvLc8R1Zgmzjn0CZdRZcBvCvAJGCAlRMSPQ9N47fZw6mIkjnTin84PGwhKoFBcALsyTXF
-	cXyL0Vm3e7GmSAlM2ol1y1TW7yCpyHCfr56PnOQ==
-X-Gm-Gg: ASbGncteG3AYGjkQeIzKlgxCifvmJLgFflGYZzkf6SEmxIMz141Vj7KUAHk1wocwvAl
-	IJAL/B71K6dFdH8zdDKgxw9hC2hGqLHTy
-X-Google-Smtp-Source: AGHT+IHWrpVtcx/k1VJWXnEECzEmYBxI/vWGNlZpsxqk0hQ9aDH2QOA2X4nisy8++11duJ4WnH/4HhQyJaIOmtD6qKg=
-X-Received: by 2002:a05:6402:528f:b0:5d2:7456:9812 with SMTP id
- 4fb4d7f45d1cf-5d63c39fba0mr2316225a12.22.1734097926046; Fri, 13 Dec 2024
- 05:52:06 -0800 (PST)
+	s=arc-20240116; t=1734098017; c=relaxed/simple;
+	bh=fIuJ9Ysk9gL+ewa+bZt/zoZBjAsb6V7Ms7TdivTupdo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NgC217vtyTnHck9t/fcWB+Sh5muhaDQ6KW4yllV4eyInklkPOmgIeah11np/9ftr8D5MakCq8QkmYtQ/roTjig6QMJbCAZkTRlP5LMexuFnAe/NM6Z0qVKHyHVrMobT+youyPXPE7hayUyvwU9NshS94HVm+DMNOUPidY44FuLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFlXtQFS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 67264C4CED0;
+	Fri, 13 Dec 2024 13:53:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734098016;
+	bh=fIuJ9Ysk9gL+ewa+bZt/zoZBjAsb6V7Ms7TdivTupdo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=AFlXtQFSpaUAKVfh0o1xkhyDkn6F9lsIJQNY+WJUVsYDo5V1zgp1HApaaRysltKrH
+	 /ZZKD1Sx8yNk8MRov/oiFlGkCzFBtxDukZh2Q1DjeFUZR31l/k4MjLlMN+HMnAw5QA
+	 aRsPzpfVGwC/Wn1F7dMyC3BgRdPexm5U4QCVzD2V43HPBDWW0E7aX/ERKfEpw2Ed3q
+	 iGJByceDJG/b2Qo2lIAqaSkgOn0RXtJxch3pk2DvpWmvYUey/OKAPNYpy8gNNTidd1
+	 Q2Qa67PGMrY15Gw9wxlxP0LYNgfZySuZc/3rCBJAJaA8bf5X1UmzvAWa2zgHmXvBzO
+	 FWrzhBvM+UhbA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFE0E7717D;
+	Fri, 13 Dec 2024 13:53:36 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Subject: [PATCH v2 0/3] scsi: ufs: qcom: Suspend fixes
+Date: Fri, 13 Dec 2024 19:23:28 +0530
+Message-Id: <20241213-ufs-qcom-suspend-fix-v2-0-1de6cd2d6146@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213115704.353665-1-alexghiti@rivosinc.com> <87v7vn917f.ffs@tglx>
-In-Reply-To: <87v7vn917f.ffs@tglx>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Fri, 13 Dec 2024 14:51:55 +0100
-Message-ID: <CAHVXubiNMp9chdUdvYjiQC2LMhNMMaGEiLMWZ-4RSV54jakP3g@mail.gmail.com>
-Subject: Re: [RFC PATCH] riscv: Fix PCI warning by enabling PCI_MSI_ARCH_FALLBACKS
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Anup Patel <anup@brainfault.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFg8XGcC/4WNQQ6CMBBFr0K6dgxTBMGV9zAsaDvAJNpiR4iGc
+ HcrF3D5XvLfX5VQZBJ1yVYVaWHh4BPoQ6bs2PmBgF1ipXN9Qo0Icy/wtOEBMstE3kHPbygrrKm
+ xZeWaQqXpFCnpPXtrE48srxA/+8uCP/snuCDkUBdkjKNzZdBe7+y7GI4hDqrdtu0LZeQanrkAA
+ AA=
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Amit Pundir <amit.pundir@linaro.org>, 
+ Nitin Rawat <quic_nitirawa@quicinc.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ stable@vger.kernel.org, Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1899;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=fIuJ9Ysk9gL+ewa+bZt/zoZBjAsb6V7Ms7TdivTupdo=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnXDxb3KcXOghNgIpuuCcdfyVgKGCwAcCekf5fQ
+ LpHRst7b0+JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ1w8WwAKCRBVnxHm/pHO
+ 9XY3B/wLzUP0NCGuuYLBOLe0RaLeeWkLOene69s5naQb3jmGe58IDnTYvyusrK3iC9RyYFpamGq
+ M1PPlvCjuWcFa51KtKvdjISqMc37XqBZfe7qzsyJCtz1srHqbgOx0jkvQYuKFU1NLEWTx2jE3J0
+ XjBA6biHVHcRjbHFs5XzuoIOih19uMmv0ADGM2pVtADUVPNhtH4WaAx/25EGpQW5ppuOmLBSaSw
+ 9VNNN8EPEH3ePwu+vODoYmbFjeabB7R03o1knI4nHBgjvB5qyxWznWAvd8WNi3IMZlpJhwk1GSb
+ 5i+8p0FNF2dp2mM+SNHREjKelzyJWLTvQy1tTtvIrOzlcGqx
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-Hi Thomas,
+Hi,
 
-On Fri, Dec 13, 2024 at 2:12=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Fri, Dec 13 2024 at 12:57, Alexandre Ghiti wrote:
-> > When the interrupt controller is not using the IMSIC and ACPI is enable=
-d,
-> > the following warning appears:
-> >
-> > [    0.866401] WARNING: CPU: 1 PID: 1 at drivers/pci/msi/msi.h:121 pci_=
-msi_setup_msi_irqs+0x2c/0x32
-> > [    0.867071] Modules linked in:
-> > [    0.867389] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.13.0-=
-rc2-00001-g795582ce7e24-dirty #44
-> > [    0.867538] Hardware name: QEMU QEMU Virtual Machine, BIOS
-> > [    0.867672] epc : pci_msi_setup_msi_irqs+0x2c/0x32
-> > [    0.867738]  ra : __pci_enable_msix_range+0x30c/0x596
->
-> Removing a ton of badly formatted stack trace:
->
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#ba=
-cktraces-in-commit-messages
+This series fixes the several suspend issues on Qcom platforms. Patch 1 fixes
+the resume failure with spm_lvl=5 suspend on most of the Qcom platforms. For
+this patch, I couldn't figure out the exact commit that caused the issue. So I
+used the commit that introduced reinit support as a placeholder.
 
-Thanks for the pointer.
+Patch 3 fixes the suspend issue on SM8550 and SM8650 platforms where UFS
+PHY retention is not supported. Hence the default spm_lvl=3 suspend fails. So
+this patch configures spm_lvl=5 as the default suspend level to force UFSHC/
+device powerdown during suspend. This supersedes the previous series [1] that
+tried to fix the issue in clock drivers.
 
->
-> >
-> > So enable PCI_MSI_ARCH_FALLBACKS to get rid of this.
->
-> No. PCI_MSI_ARCH_FALLBACKS is really only meant for architectures which
-> implement the legacy fallbacks and not to paper over the underlying
-> logic bug in the pci/msi code. Of course the loongson folks ran into the
-> same problem two years ago and went for the sloppy fix without talking
-> to anyone...
->
-> Thanks for bringing it up instead of silently slapping it into the RISCV
-> tree !
->
-> The uncompiled patch below should fix this for real.
+This series is tested on Qcom SM8550 MTP and Qcom RB5 boards.
 
-It does, when applied the warning disappears (on riscv at least). You can a=
-dd:
+[1] https://lore.kernel.org/linux-arm-msm/20241107-ufs-clk-fix-v1-0-6032ff22a052@linaro.org
 
-Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Changes in v2:
+- Changed 'ufs_qcom_drvdata::quirks' type to 'enum ufshcd_quirks'
+- Collected tags
+- Link to v1: https://lore.kernel.org/r/20241211-ufs-qcom-suspend-fix-v1-0-83ebbde76b1c@linaro.org
 
-Thanks for your quick answer!
+---
+Manivannan Sadhasivam (3):
+      scsi: ufs: qcom: Power off the PHY if it was already powered on in ufs_qcom_power_up_sequence()
+      scsi: ufs: qcom: Allow passing platform specific OF data
+      scsi: ufs: qcom: Power down the controller/device during system suspend for SM8550/SM8650 SoCs
 
-Alex
+ drivers/ufs/core/ufshcd-priv.h |  6 ------
+ drivers/ufs/core/ufshcd.c      |  1 -
+ drivers/ufs/host/ufs-qcom.c    | 31 +++++++++++++++++++------------
+ drivers/ufs/host/ufs-qcom.h    |  5 +++++
+ include/ufs/ufshcd.h           |  2 --
+ 5 files changed, 24 insertions(+), 21 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241211-ufs-qcom-suspend-fix-5618e9c56d93
 
->
-> Thanks,
->
->         tglx
-> ---
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -185,7 +185,6 @@ config LOONGARCH
->         select PCI_DOMAINS_GENERIC
->         select PCI_ECAM if ACPI
->         select PCI_LOONGSON
-> -       select PCI_MSI_ARCH_FALLBACKS
->         select PCI_QUIRKS
->         select PERF_USE_VMALLOC
->         select RTC_LIB
-> --- a/drivers/pci/msi/irqdomain.c
-> +++ b/drivers/pci/msi/irqdomain.c
-> @@ -350,8 +350,11 @@ bool pci_msi_domain_supports(struct pci_
->
->         domain =3D dev_get_msi_domain(&pdev->dev);
->
-> -       if (!domain || !irq_domain_is_hierarchy(domain))
-> -               return mode =3D=3D ALLOW_LEGACY;
-> +       if (!domain || !irq_domain_is_hierarchy(domain)) {
-> +               if (IS_ENABLED(CONFIG_PCI_MSI_ARCH_FALLBACKS))
-> +                       return mode =3D=3D ALLOW_LEGACY;
-> +               return false;
-> +       }
->
->         if (!irq_domain_is_msi_parent(domain)) {
->                 /*
-> --- a/drivers/pci/msi/msi.c
-> +++ b/drivers/pci/msi/msi.c
-> @@ -442,6 +442,10 @@ int __pci_enable_msi_range(struct pci_de
->         if (nvec > maxvec)
->                 nvec =3D maxvec;
->
-> +       /* Test for the availability of MSI support */
-> +       if (!pci_msi_domain_supports(dev, 0, ALLOW_LEGACY))
-> +               return -ENOTSUPP;
-> +
->         rc =3D pci_setup_msi_context(dev);
->         if (rc)
->                 return rc;
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+
 
