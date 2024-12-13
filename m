@@ -1,121 +1,236 @@
-Return-Path: <linux-kernel+bounces-444980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25C89F0F7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:49:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5999F0F81
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28CD418822DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:49:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7CF118823AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024631E105B;
-	Fri, 13 Dec 2024 14:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638871E1A3F;
+	Fri, 13 Dec 2024 14:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iqBOu3VI"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OLPKboXF"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B99D8F5E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3821E1C3B
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101367; cv=none; b=Np5pIL89cSW34gu1ohKmBtb9cEVq+Wl/6LCfNK4dIV7m4kiwSJK3inUwK/GgnOlrP/+GFgkXRroOLS1sVnSkX+lWC28oicqDIQk2KHn3guQXj7FPrj5qwhH2V/LiybIFlTcRihP/X6ppzRA/QfNWmUK6TSEzRrE7wyVkqqmMI3Q=
+	t=1734101372; cv=none; b=PVp04fztC8SJ4S5LA0wRNtmnrZm4Sz8RFvnawnObMi4wz4RQdH3/TrOpYn4sx7b/mJF1aaBPtRW3yg1cgBs0gcBKFPIWoodQxpcbtS18lQ1LO8zg/bOQDk4OWxd6vg8iHzGU3cBNWOr1wiCIyN+4lhfzgvKUZz3SRS8XN7j5u6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101367; c=relaxed/simple;
-	bh=75t03ladYEpJNk/lo5VPfvNoe5j+bZgltvvQYOZ0yV0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JOapAWMcU6IZzSNWLNXScfTpu+dAmqc348/kN+8syOAsJsitE0bygyVFIZlj5HJt7ugXndzzfKVikxD98GlrczeDrOCeyHwkuna+ZVwZbpjbsNH/UoKPV4i/0Tk2/CCpkEhHR6+TW5W9kCsxDjfiMO7kAltrrD7rPAJToIW1aV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iqBOu3VI; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1734101372; c=relaxed/simple;
+	bh=hByqeNYL+TZV1cYmgGYkHNhMiCkV4v9idGQn3nu0lpU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EbPzFwNc0UB0Z8SuvJhM4m8TjabJRv5WnPMDh2guThq1IYgBQTh5peaMM5ojKua7hwAwxoNO9lI2Z8Tsw8/dxyY4hckiZUmlsfM4mdCGA9JQLQuhPzfl+3+N9bagisJLUlfZ7V88CdlemhhsU4GYds2IVA5DrPOUiQUdgxmW92E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OLPKboXF; arc=none smtp.client-ip=209.85.221.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4361d5dcf5bso19287405e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:49:25 -0800 (PST)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-51889930cb1so467869e0c.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:49:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734101364; x=1734706164; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E8GoCBmwykt6c3qkAuns3te+tR7WufYhRllGnYRB9TU=;
-        b=iqBOu3VIDRofZgSKmlba3xQLe4KPs+YTpL7Qdwtx1RJZ7kXJMXPOOGI7u4tGCR9VIM
-         Uap81M/ebmBUcdfGSGuo8JbE9RLtuzxETX6ffpF2xPsZRl6He2xU5SyMOF5nt6WBKkJh
-         jmCgf00rbRBvK+Bz6pXrA13R9herzysTAAp/WMWvOG1iUosGiVTjYR+xqir0HyRRqKuD
-         3pwRFn2NPLp6Ihdp7EvzQdsGaRDM96+JDERqqercOHKE08V488YofqqK34rqFDljZodK
-         y/CBdSOAZeaYXVAQVETx3iO3MxY4p65y9PVP6ctkF3ZBDuzjBqCeL8UDUe6U1gq77h1W
-         jKIQ==
+        d=linaro.org; s=google; t=1734101368; x=1734706168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7bKxIAldnf2WV3uWw0aRPXep5q1Q5wgQLNkyd2UuYH8=;
+        b=OLPKboXFnIxAPo7/SqBWrCNO6t1B0u3paoH5tdDeh4JwNXuaz999zt6bHh2UpiWKME
+         zSlLi3rV7VB/GJTdp+ANXYM06iDrxFNF1Y6tJFiusphSEVF+a6KWsb1kCs/GmQJ27WVN
+         fo4YifI2Ug9uP+wKypwDpHh+HlAgsH89EbcVNuwzsedHRSHM3UZdplvQnuNECuxI+bFv
+         QG7HL7UeJe9fC3wI7efjjdgqnt2O9Z6J7+A4Fz8KGNY/va/mhd/v5WFTZg0kcDvZhwhC
+         1dfRBbOhUeHEPwHDA+FbyiO1zKGTwkARZavp5t1enN3cyAW1gu4Q/xyQyvH82igPJHIb
+         Sk5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101364; x=1734706164;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E8GoCBmwykt6c3qkAuns3te+tR7WufYhRllGnYRB9TU=;
-        b=U5tvYoUra7t3o48oBoZ4X9KbaMSxj0DplkzERaxtJAPJxe7wC9BuMMbyAu+7SvHqSP
-         LUNeHxb0lgEvlKmBuKNBLO15ERJEQYnkxe7zMxECw8bzURg8KMdV2u/rERlIsF8Aw+Wu
-         OncSFvf70tK0/RRRM/21PTD7z9iJbGpPrERb79w6M9JyPYS/J182tJFx+p+Nyf4SZXy8
-         aFewul8Rc2B5/7AE8tglNWAlpQTxvSf3JuzdZkWpEVGZQQJvcXtlhQ9S9Qm4WMVfkkwk
-         mhCKxhiJZh41JZJmahLQkvT39JECGMrqWqwX8wvzoYJXce5WjDsMqMOCh6+gq6ei+Rq3
-         3EcQ==
-X-Gm-Message-State: AOJu0YxQFmD/aV92cP4khjllcHTq2xE1oDoloFRQS/fCbgdqb2DE/rq9
-	95xb27KvvTzIekA/Io8/PCATs1NGRIn2wV5ATXnmjIgNnm0GCMrwU2NLs9QEiDqFIJV8uExVsx1
-	i
-X-Gm-Gg: ASbGncvQD9H5l/omGk33FSAIfJmMwtcy9SvwjPwc7boen8CBH941Sfy7rThKH7hYcJu
-	yzY7vAEdATyKaAD9cUvPK7cVrGVuNNI4X4Ew8EdVx1cbqqKMK1ESwgVJkjVYwrun2fw3nnX/Wg3
-	n6DK8vlliaVGZ+1oD4/M30dEscauNGAIcxcJSuGvwk0Usg9h8bLGw7wxxgYCXJH6b6cLniPBcs1
-	NgCRv6GpAGudzd7v37hBRTDdYa1O/ENmMcYhlYyQPLPLBNjpnWz0vVKZQ==
-X-Google-Smtp-Source: AGHT+IHuKTAtkAStuGvLvPcrpQeQQpsEVf2xFpYQ2v2zKJ5P0Iz/QfOrm/aJ+WBkyPYCOtebr28gcw==
-X-Received: by 2002:a5d:64a7:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-38880ac23d0mr2122716f8f.1.1734101363889;
-        Fri, 13 Dec 2024 06:49:23 -0800 (PST)
-Received: from linaro.org ([2a00:23c5:6829:901:dd7a:c2d:2b46:b1a9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824c50b7sm7196295f8f.57.2024.12.13.06.49.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 06:49:22 -0800 (PST)
-From: Mike Leach <mike.leach@linaro.org>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	coresight@lists.linaro.org
-Cc: james.clark@linaro.org,
-	mike.leach@linaro.org,
-	suzuki.poulose@arm.com,
-	alexander.shishkin@linux.intel.com
-Subject: [PATCH v2 0/3] Extend logging on TMC start / stop errors
-Date: Fri, 13 Dec 2024 14:49:16 +0000
-Message-Id: <20241213144919.110642-1-mike.leach@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1734101368; x=1734706168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7bKxIAldnf2WV3uWw0aRPXep5q1Q5wgQLNkyd2UuYH8=;
+        b=F+2APxbz6f/a0Pxz0jofk86n2rWNmRTEboDwphU/U5x4bWIWd15Wz6Q1+C9kAbAmee
+         bXrHt9EYkO2JuDSvlnbcSPC9VYgyy2f4fR8/MGKBICC6/WMnhhwabrFg3+XFJP/cMztt
+         atFZ+XaWpfZESJRm+4spxJPTPUvE1z4DRsvq00PlyVNLnibW9wNiswwtWolEkZIVrDFH
+         3+khOyAAtGCuCa6DsuK2w2V8O0FlugQrtVzhJZd82bj4bBvJoQKXrpGqsm7y7sq6wkZD
+         oRbgJ4h5iFcI/1JoB3YMNAA1IDbltZdFqLrc1U+uI+kDjku0ll5GnKwrlA6Qkczo67Nf
+         9V1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuxwm5sQzb4kB2dXmKyBlS7r/Tnf5SW2ouah0ac9K5QU4BiimCzX4J63WA/iLmUkZrfQKN/ehMTLMjExQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJdO/mz/mxH2imlN+2oCdZZvv1epWExSJ/vzT15wEm5oDcBGVW
+	HJ/YSn9GRQNdSQWmcCaQp+3NBX3fepXXMbKg5CwFnXRkSHdEEdiIGbY2k8F5s55x2pTEP66uiaT
+	b/rnlrLIgOgNft9VFrOdvbR2gCO4G6mq4oLV00w==
+X-Gm-Gg: ASbGnctGmBOqSF3TdHxeylJlCYfvfdX/DChrOB5wUSSwRHFvArjskI3M0WQYyaLgdS7
+	zbJNYS/X6iMLfOHAkIWaZ+Rek7rTc33yQ8T9khvE=
+X-Google-Smtp-Source: AGHT+IFvRz6amg0/LCv795PFdcXSwZFAuHmhc08GDUubo7a8UJkjnqdzDOeeViMLb5gcFryVLpGHBJmY4rTH42n0lRA=
+X-Received: by 2002:a05:6122:8c12:b0:515:c769:9d32 with SMTP id
+ 71dfb90a1353d-518ca399ec3mr3099699e0c.4.1734101367579; Fri, 13 Dec 2024
+ 06:49:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241212144244.601729511@linuxfoundation.org>
+In-Reply-To: <20241212144244.601729511@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 13 Dec 2024 20:19:16 +0530
+Message-ID: <CA+G9fYv-qg_TbgP9o_VyBcBAYfecxFvRPjq0w3SFX_PvJWDbkw@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/356] 6.6.66-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Extend logging on TMC start / stop errors
+On Thu, 12 Dec 2024 at 21:01, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.66 release.
+> There are 356 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.66-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Recent issues with trying to debug TMC timeouts and flush issues shows
-a general lack of logging and context around the possible errors
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Add logging to general wait for stop coresight routines and return values of
-watched registers.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Update TMC to use this logging.
+## Build
+* kernel: 6.6.66-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: ae86bb742fa81e7826a49817e016bf288015f456
+* git describe: v6.6.65-357-gae86bb742fa8
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.6=
+5-357-gae86bb742fa8
 
-Changes since v1:
-Rebase to coresight/next (kernel 6.13-rc2)
+## Test Regressions (compared to v6.6.63-677-g1415e716e528)
 
-Mike Leach (3):
-  coresight: Update timeout functions to allow return of test register
-    value
-  coresight: tmc: Update error logging in tmc common functions
-  coresight: etf: etr: Update logging around flush_and_stop() errors
+## Metric Regressions (compared to v6.6.63-677-g1415e716e528)
 
- drivers/hwtracing/coresight/coresight-core.c  | 50 +++++++++++++++----
- .../hwtracing/coresight/coresight-tmc-core.c  | 37 +++++++++++---
- .../hwtracing/coresight/coresight-tmc-etf.c   | 12 +++--
- .../hwtracing/coresight/coresight-tmc-etr.c   |  8 ++-
- drivers/hwtracing/coresight/coresight-tmc.h   |  2 +-
- include/linux/coresight.h                     |  2 +
- 6 files changed, 86 insertions(+), 25 deletions(-)
+## Test Fixes (compared to v6.6.63-677-g1415e716e528)
 
--- 
-2.25.1
+## Metric Fixes (compared to v6.6.63-677-g1415e716e528)
 
+## Test result summary
+total: 130339, pass: 106681, fail: 3098, skip: 20494, xfail: 66
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 128 total, 128 passed, 0 failed
+* arm64: 40 total, 40 passed, 0 failed
+* i386: 27 total, 25 passed, 2 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 32 total, 31 passed, 1 failed
+* riscv: 19 total, 19 passed, 0 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 7 total, 7 passed, 0 failed
+* x86_64: 32 total, 32 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-filecaps
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
