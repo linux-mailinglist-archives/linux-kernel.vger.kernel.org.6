@@ -1,105 +1,101 @@
-Return-Path: <linux-kernel+bounces-444929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CCE89F0EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:12:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9AF9F0EB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:12:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D022828E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:12:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C479B282880
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEE71E0DB3;
-	Fri, 13 Dec 2024 14:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA77A1E3780;
+	Fri, 13 Dec 2024 14:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Vn/DV3wt"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hU+vdX6D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60541E25E7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BD81E0DD9;
+	Fri, 13 Dec 2024 14:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734098994; cv=none; b=I1Ac6S3C3bAeTmFXi5f01wLF8YBcInTH1z9VqWqxtEeWOT/5gCDyIBu3WL6yqEQzTxyh9F7YS2i1Zr+NdQLm6Bp+3EbQJpPl2oHUaSZecc2vgE7IGNqt1TFRaBqUqwxHhRRtdhkKD8Ec6y8AqBR7xNIVo8sqdp8Rv6K0CVr9g9k=
+	t=1734098998; cv=none; b=OzeGafOyxlJCTsfxyUaRe3YjcFSA2OT3yD8MzyIyErHpPgU1qWNye0oq87u9BLq9yA1sxMb2eXTiXizCuvG5PKmUdpKIkcM1YTWA3qCcaPbW/o1W/xU0/K9d43FjNHaH3vuvXhiuIxhOkMb+KIThLuXGtELc6w275SqEoiheJ0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734098994; c=relaxed/simple;
-	bh=Z4k204suA60/SXJuVjRwwHu5G541O7oLWa1RT9V0WnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IklatAGS0ZZxn+KVUPiPk+qv83CK+SfXK+L9JidnlX+bWhYxEL1VZwnQFh4COk1iz+2A5icWtNjyzxuX2kl03xIp8Z44rn38s9KgO3EBpDQF78A0V0WqqALTIbOTFu1EPPBnlPR6WB15OFwBr8O3VJifhR4MmRWb//PeIa3C1ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Vn/DV3wt; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-844d555491eso61779039f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:09:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734098990; x=1734703790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zWSFlALklVPWBvuhYOI1ONlxQ38UgxUHGcn3LfxanEU=;
-        b=Vn/DV3wtc/ogxNV6n2/+2nsw3tHZKk2PY00DIkiBRDa8Y/p1HaHpnk6g42NMHk3jbA
-         4lTjdxYJwrYDr3Dcb+g0or85oQIvmCb18gZL1TDmV4yP3Bet1W252zlBiCZ2BHHKeM7i
-         9cfssRgsYSGdf3OM+pDd7rSlE2R8kPY2nhKuLUaXhzMJH37MzGGMQ5E2CzLDUNvryQHb
-         8YJFFqGp027b8UGhn2dWkI3G0AoSz1vO5TF71gWByjp1+UUNuPJGNvKLZiYle43JGcUi
-         jrhhWU1hW1amrzd9wHOTF8SHHKRo2yihL+YVzNs2x7fMef94OQ7hRjzQHrsKqAT0XfxN
-         3FsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734098990; x=1734703790;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zWSFlALklVPWBvuhYOI1ONlxQ38UgxUHGcn3LfxanEU=;
-        b=KeRcADtR/+Qxwldo/G7IZJQthvcoVeDTyhEBhrKfStEdtPz0ruKsxXCW3vttJX7N7d
-         kv2LPrCvyGq8+jj7CrRb+SI1NkuNYmCor1IzlcD3+EqdH2k6/HvH9lg05cOrc5Alk16N
-         E+Uxq2pFG7i+YLHn5X8VJbHcGWSePpY+3l++xnn2dftcBgQ0mrozC1Bc0YKiwGVBLtdt
-         KADM0w7juuVu6dhRvCJoEXhFHtkoz1IG1ZowUlNCWMWPmTMxRWCfzKz4bTiJukPFXid+
-         Hdo79UBNd0o/PHSjEJpbfJfQsq6Ii66jNSUV5QgHJLsziBoRG2dsj8FJQpx9wmhI7gds
-         PNlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8wFjbFlD5onBzheJFbYav7iQvUKWyYclar2RSvMWsfEVW1aiHim89FqfYGRXZpR6cSrsblKHAQlth8Z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi/r1VJSfPPkrIODCmv9L3de/yRVO08s5qFvp/4VpgxkqEvJvB
-	POaN2GJ5yC/OVnNlyDp4Xx+q5mgMnEyTjsy9NPwxwxJacSubGsaCNY4FzYL5cbo=
-X-Gm-Gg: ASbGncvmpVUWZDOgqTe260hkSpSdwqvdPZet9x5Ap1H0VvUYNWYN6QXFuDgsaXBuGZW
-	nWva9jH5O+BT5D2199wZF6BZ6hb5KUiHr9qKihvGQX8AoXCu0mg+LqBBVyzlL1OXrNTpEe+vX4C
-	65wmLm5AyAHHtuPPLy5KDj4iGp+06tXJtbg5iRV0Q4hnvCa5kBWt1fBei+OBcm1nB/euVSAP88P
-	0ikfWJfz5fd30K0I/W4DPr0xIvKTrXAVcg9ZLglGeo19a/W2yCS
-X-Google-Smtp-Source: AGHT+IFxfLsEYNSzt1ijeVP2axPSjVHTMFNfMKOLhfeGPGhogWa2tIb3yIz5mXqPGgr0csMBvr1Vfw==
-X-Received: by 2002:a05:6e02:13a5:b0:3a7:e0c0:5f0d with SMTP id e9e14a558f8ab-3aff4616f35mr34733195ab.3.1734098990648;
-        Fri, 13 Dec 2024 06:09:50 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a808cdcdd1sm50139615ab.0.2024.12.13.06.09.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 06:09:49 -0800 (PST)
-Message-ID: <b4b2993e-1684-47b5-b8d2-5ade368c6b28@kernel.dk>
-Date: Fri, 13 Dec 2024 07:09:49 -0700
+	s=arc-20240116; t=1734098998; c=relaxed/simple;
+	bh=IRH1stBRUakiJjpQaxFYp0Z7EC9QfLCaQVhvqTN/voQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0OlYfTqdQvI4RUZ06z9s8l5M18UH0yAF6peW9AqCDhWG/xn02dtwMyQqEJq1+YjWTMcFvX5b+FqrCNa3BnFKgTjAXaN4pf2GbdXUs/lq11ybj5PyfNyIILXOCBvfkPmXQw1Qzg8pDxiNQz0QeJFQu5cz8BwANsbrKKtC4ZqeXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hU+vdX6D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B709BC4CED0;
+	Fri, 13 Dec 2024 14:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734098997;
+	bh=IRH1stBRUakiJjpQaxFYp0Z7EC9QfLCaQVhvqTN/voQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hU+vdX6D+sU5+MT+kCnnemUemI0nxmIs0SflS4vVPU1v261pl1xE1fA/l91BO7e5v
+	 yHev6cMNljHp34j+zG5U7cvnACCVYjmksL/MUySdGAaoDQFJYS1FXjZMxl7u38bAIZ
+	 YX/pjUwDrv8GZ+uXpXR1Z783DQc9Jx/sMupQjQvcmpfZ9NAdmBkjD/Uw9zRfiz70e1
+	 P3f1WLvrTvaIR7A0ScjVxTG4HYhnInAyDuRRV8WqnC1Z6k6N+80Qt6+ra4fgJr4bAE
+	 HbX5pEssFXfFamZOBfbxa/728+uEaIqQe1O0sQMdA5wAMN//KhFOGOJ1E9wxD8Jd7h
+	 15zKBAD313Jlw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tM6Mj-000000006xl-2dVW;
+	Fri, 13 Dec 2024 15:10:02 +0100
+Date: Fri, 13 Dec 2024 15:10:01 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] soc: qcom: llcc: Enable LLCC_WRCACHE at boot on X1
+Message-ID: <Z1xAOQWFy2J7zbdC@hovoldconsulting.com>
+References: <20241212-topic-llcc_x1e_wrcache-v2-1-e44d3058d06c@oss.qualcomm.com>
+ <Z1vzddhyrnwq7Sl_@hovoldconsulting.com>
+ <40bdbb34-94a5-4500-a660-57a530f066c8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [io-uring] general protection fault in io_register_clone_buffers
-To: chase xd <sl1589472800@gmail.com>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <CADZouDRcO6QORhUUHGRBQvZ_q8nip0S+Mn4Hb61W8zi_OfmSag@mail.gmail.com>
- <85c4b3a6-559a-4f1d-bf2d-ec2db876dec7@kernel.dk>
- <CADZouDRVN0eVMNXDPX9vSGXYbOPSHRgspWz20VO4fzNeFq18ew@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CADZouDRVN0eVMNXDPX9vSGXYbOPSHRgspWz20VO4fzNeFq18ew@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <40bdbb34-94a5-4500-a660-57a530f066c8@oss.qualcomm.com>
 
-On 12/13/24 2:39 AM, chase xd wrote:
-> Sure, I'm glad I could help. The kernel no longer crashes after this
-> patch, so it seems to be the right fix.
+On Fri, Dec 13, 2024 at 01:24:24PM +0100, Konrad Dybcio wrote:
+> On 13.12.2024 9:42 AM, Johan Hovold wrote:
+> > On Thu, Dec 12, 2024 at 05:32:24PM +0100, Konrad Dybcio wrote:
+> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> >>
+> >> Do so in accordance with the internal recommendations.
+> > 
+> > Your commit message is still incomplete as it does not really say
+> > anything about what this patch does, why this is needed or what the
+> > implications are if not merging this patch.
+> 
+> I'm not sure I can say much more here..
 
-Great, thanks for testing. The fix will go into the next 6.13-rc. And
-thanks again for running syzbot against the current git tree and sending
-reports, very useful!
+If you don't know what this slice is used for or what impact enabling it
+has then saying so in the commit message is also useful information.
 
--- 
-Jens Axboe
+But you should be able to provide some background for reviewers, stable
+maintainers, other devs, posterity, ...
+
+> > How would one determine that this patch is a valid candidate for
+> > backporting, for example.
+> 
+> "suboptimal hw presets"
+
+I'm sure the patch is correct, but spell something out in the commit
+message.
+
+Johan
 
