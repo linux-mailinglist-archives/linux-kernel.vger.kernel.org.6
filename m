@@ -1,314 +1,461 @@
-Return-Path: <linux-kernel+bounces-445458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A43A9F16AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:46:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAE289F1692
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:44:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDA81887B1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C93C286095
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB241F429C;
-	Fri, 13 Dec 2024 19:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAB51EE031;
+	Fri, 13 Dec 2024 19:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x/brDf+5"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m58Nghcb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF75D1F426A
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 19:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734119072; cv=none; b=WvNZ25M5t6pfL6cE96hqF1DBqOCu2fkiYrgRKFyG4g1cOTPW4VPB76QeJEI7XcGltNIAC3O6D7llT0vrOyLJjfliBCO/LJ/8uE7EQN0nfrT0ZXP/+7D6M3EbKsARQNYIbkS2qvHwwJyZHEGvplKR/uNFjVs9CYPx67mOOu0YwzA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734119072; c=relaxed/simple;
-	bh=XmKRWUTlsa3Mcxe2jdAqyar9IgXug5+WNPTct1r+J30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SiWsmVDYgZk0OaSl9tht9ZzLTsSK6OfsF4l4xj+KQPC2rwd/36BNRyS95U4cXFfI58ReotOEY1r11BbuUjcCuupvKRpMeuOW/bchNU1LzS6TRIpLzoNoYcQBg0GjknJLwB6UiTVOrGIeuiJ/mYc58ZXjAfWgnRxPZK2fpi0Rzec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x/brDf+5; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53e3a2264e1so1354e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:44:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734119069; x=1734723869; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XDwUb1CX6Sr6nHPLw6pFpl0RRopDNIXW9mErFWzYtxQ=;
-        b=x/brDf+5CnJmY5HdVmywVCD5wwVlnMGtEzjBjfeP4oynsLPSyxGnGyyg28khON32Tm
-         6Y5z4GqWHaynOvxEL08h1mjOD8Vw7rDbk8p1lzgjm9j+OlMaIaveNac9vJpi0VJ2+He2
-         V3K/HFwNYivW9n8LjB+vrYZtjEwwujbBwYJ4fJXH0sUPcrcZci+ZXANHgDtOWShPvhHW
-         rdOIwjmiQ/nHa+H6gDcG1KVwbW1bIHb05qJKrkcxsAU9aeqSJ3wkdnYmtEgZCt8HqURu
-         uOICLYJtya+FlbonYK8Kfp59fgRsXcbvmOBaT+Vx0TQfXmNiIajK5wz/lYzl3Ga6yuDd
-         4AWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734119069; x=1734723869;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XDwUb1CX6Sr6nHPLw6pFpl0RRopDNIXW9mErFWzYtxQ=;
-        b=F2QiJyBNdMx0mXNu9D64U3FRpzREK8WThgYSjXoJmp+Vb/E/WS/RhKYeb0z7wilwoj
-         B2aXN5LCw1Vpo9MrpFkUGU1CT05k91mmvI+yfwu0Jx9tE7FTQtuzGWLExh1rCtnDrUST
-         krxN29ECIQF2VfW9MNCkusbUURoYAU626NZXvVFe9FUHmLcWf54Hw7Q/dMlA54poToTS
-         ZPn+qcKw24RXu3fNy0poP9FKHL+nLhsPP+H7HkmutDApC8n8WERBIYy58iEt0iaoVY9J
-         UoVA7voEn5eYvxglJe0d672Q8d0cXL4wd5cFFPN96V2H4pqo8enugdOORHj0hPfGSBAV
-         MxRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVflHntRosPJyR1rlCDZ7cG4i4cZFMA+/RYbLzkKccMqx1a5JpErHOsp9syIakL2wX+71v86nbBMl6YVLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylz8El0ImcHPwvTNdsJbRbCS9qy9lf2PDKB94eD3Sb+w92vzHj
-	kzImzrEqGaQ8WzUbo9Ybgez/tfEqXV0os1IipHyXLYVxF4k51FVrayvvO5lybowhb7wKiquvlHS
-	fsw==
-X-Gm-Gg: ASbGnctYnL2hSatSmnAQa21g7zdSJnOB0jNy3wAmgzVqGb14QcEddUPE9H5S2ktdCQK
-	hdBwukeTBZZJHQZmBzARGx4dAK+wcmYwvU188otgvplaGgbv/2Hc9PXIomtlDWELfMutGTzmQPG
-	Krsi20SBXudNExHV+5q40bj5Eec+QYGzoVE6hoB7cRL+/vl9sq7jODxyhvnOPczv64IF1F7d4f6
-	dPC4jNOWh55zzFhSVnzMljc4dWpgjJSjcsYLRhDy27+zmFJMRzJhUgjnf1KfHQ4FB51yL6TgtSS
-	iPb2iDDOWf93TXVsaGM=
-X-Google-Smtp-Source: AGHT+IHdFtR6nWbEKqYw854N5Zc8zTfw4isez/5ifoPu3S8WlhrESs7+a6kca8RFQjDNrPJyOsPwuA==
-X-Received: by 2002:a05:600c:35c5:b0:428:e6eb:1340 with SMTP id 5b1f17b1804b1-436367928cfmr91385e9.4.1734118749096;
-        Fri, 13 Dec 2024 11:39:09 -0800 (PST)
-Received: from google.com (158.100.79.34.bc.googleusercontent.com. [34.79.100.158])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625550523sm57782095e9.7.2024.12.13.11.39.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 11:39:08 -0800 (PST)
-Date: Fri, 13 Dec 2024 19:39:04 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: iommu@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, robdclark@gmail.com, joro@8bytes.org,
-	robin.murphy@arm.com, jean-philippe@linaro.org, nicolinc@nvidia.com,
-	vdonnefort@google.com, qperret@google.com, tabba@google.com,
-	danielmentz@google.com, tzukui@google.com
-Subject: Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM
-Message-ID: <Z1yNWI9lBNIZg6Le@google.com>
-References: <20241212180423.1578358-1-smostafa@google.com>
- <20241212194119.GA4679@ziepe.ca>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0D11EBA1C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 19:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734118730; cv=fail; b=YM8yh7pHuckLY1ebmPddGVHwGnfR3XQiDK94zu4Hzx7n+9LD8tjXa7RZzj6dLmCZkYWCVDaaiYTVxNpd35CjRy8QuI9hA5saY3NVKCoDJaIhZwAA/XlE6INDCDX6PnAzW7QZ1Y7ff/NsSCutrGA2nVPJCnpbwkG2f8gvxtbVFzE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734118730; c=relaxed/simple;
+	bh=1d0oLUX/fe/b9ME1nrvSUfVn1aVu/NzYtiR7cxMw8k8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ExHNe+IEg47W6TeuoQTlqTuH/8PtOUMcWs9p6fQwpJ2yTYZ09QgaH6KrzRI8L3+pKO/bm9LICcFTaq/1yiqclmYVkNzxhCFAy0OzQmnrUrMGqB0AT/62qRnbXHymCfCx8nIa21NofchXkocfuj7uTRN0wLHd9yH7hEGL9GOZz6U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m58Nghcb; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734118728; x=1765654728;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=1d0oLUX/fe/b9ME1nrvSUfVn1aVu/NzYtiR7cxMw8k8=;
+  b=m58Nghcb3PdPfuSwe3O7hWm/dCtxOOyqHKHrtlrQ/3/XLCFUMgJxPwsi
+   uCc2eLqXKhaTPCJRFEoBicxfdLHVfrPZx6hjZpSKA4M1tA3xhfAe6PVkp
+   4AA+qXEezyJgdc0oNpjLMWMIS+CkFMuI7oKjDs8CJN2qmW+Rn8dMgLffQ
+   kRhy/AtJUyjO0kYHtBaBqvyWPPvyS0o8uMNBuyVuf7PYEtPh4F92j4vaW
+   ztQSbO//9Jk6BUu2SaRpt/kOLJ9rrq1Mig5965qMdWYANFViFOeDV6NOd
+   K29SAwT41LFPfFZci5E6ALtNPS8DBma1vUuczmoT6/7miEUHLF+hEBThs
+   A==;
+X-CSE-ConnectionGUID: YsqM0OGHTZOu8+nqFNbbuA==
+X-CSE-MsgGUID: 9X6627pRSPWj03/jLES0eQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="34483456"
+X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
+   d="scan'208";a="34483456"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 11:38:29 -0800
+X-CSE-ConnectionGUID: RlzQhfK+SYGxBtueOlbw8g==
+X-CSE-MsgGUID: gBFzAntuRBqi0PbMk01nLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="96489450"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Dec 2024 11:38:30 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 13 Dec 2024 11:38:29 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Fri, 13 Dec 2024 11:38:29 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 13 Dec 2024 11:38:28 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lHjU8TCB9nOwMHVTG5fQmwOuaCorAlNOdYOt2RX6EPd+4xxHq56yPRijI2kuUF8U+RlnWKR4klM/Gqy/GjLwNG3NWrRt+AamYR6V2sL2l/iZ6h1r0s2hoH3qSCXNqkPXf4i47tfBJGqN1Rizipu5mSncF3glju/DTWjfhbtxonsYhOtaMTtGo4VbhlHDoGOlPXOD4WA58gHULii16hKXgS0E5m8YpBR+5BIe0SGVHRq1yLNWtdoNjBzkXtATcjU0hhnVQWZzliFssEOqe88hGeZ8w2Plrt6M9DO8VW+ZQAax+0PwaetqvmOI8PHaugppluR5NHZ2EVZY/UMeAOgjYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZgFY0c/v+y2hLIsFy/B2gg0bIgxKjWo2tBe6J4zpe88=;
+ b=cFkJpWGCHVRZ6OtGFvPA04jAQexVe0faJn6abbgkBrn9gpy1ABdyf1xQeOybHwkh75V5BdOH3z9OrLCzM8ofbjGCzNZvPZMFrEAf7X79RnUflwV7asKuGclyuyUBgxZR7JRpI42gDizBZiiVP7uqtRExS/Ii2Q/TuCtPulgrpwuoFdRrgvQEM1WtngnbKFhan482xoLH2pmLRYV8j2gUxdPuYzYNyScneSpnEXwMY20+bcIZMJARS7dnCa1Obu5PFBVpEcr7f1hKaU/TUs2RSE9oguXitrDpLfI1qz+xGFQfonj49zSpk0a9MhOyy+rvxoPPwuKtYAVb6Oz4ucj7cQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by DS7PR11MB7740.namprd11.prod.outlook.com (2603:10b6:8:e0::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Fri, 13 Dec
+ 2024 19:38:26 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%4]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
+ 19:38:26 +0000
+Date: Fri, 13 Dec 2024 11:39:08 -0800
+From: Matthew Brost <matthew.brost@intel.com>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+CC: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Mika Kuoppala
+	<mika.kuoppala@linux.intel.com>, <intel-xe@lists.freedesktop.org>, lkml
+	<linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+	<dri-devel@lists.freedesktop.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
+	Maciej Patelczyk <maciej.patelczyk@intel.com>, Jonathan Cavitt
+	<jonathan.cavitt@intel.com>
+Subject: Re: [PATCH 14/26] drm/xe/eudebug: implement userptr_vma access
+Message-ID: <Z1yNXPgAomYoilvc@lstrano-desk.jf.intel.com>
+References: <20241209133318.1806472-1-mika.kuoppala@linux.intel.com>
+ <20241209133318.1806472-15-mika.kuoppala@linux.intel.com>
+ <ec42fe8b-9be0-41cc-96f4-f1869c6bb7e6@amd.com>
+ <Z1cNQTvGdAUPp4Y-@phenom.ffwll.local>
+ <3c1cc9403eb50bc8c532d180f766eb7a429e8913.camel@linux.intel.com>
+ <Z1q3F81k2TkUzKW7@phenom.ffwll.local>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1q3F81k2TkUzKW7@phenom.ffwll.local>
+X-ClientProxiedBy: BYAPR05CA0087.namprd05.prod.outlook.com
+ (2603:10b6:a03:e0::28) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241212194119.GA4679@ziepe.ca>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|DS7PR11MB7740:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d648fa7-4c3f-47f2-3bb1-08dd1badb667
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?Dz7gFdUQOUS3YzXj4d0ajsdLJZj211cBStLQJLJpGX2jBB0Uc7y/Nvydy2?=
+ =?iso-8859-1?Q?ePeNzzIAzEMDyzhV2d8LYmDVLzD0wx8dXJ+ydvp3u3hflbnr0brspVAJbS?=
+ =?iso-8859-1?Q?OHakjfmPPKVFrUdFlyHpEUQT8MaEfHrWd4u6k+AxSv8Ct4ws/F20mY75bP?=
+ =?iso-8859-1?Q?jkmb2Is05FqWvk/H0i7624gTeGO8MN23fwe2QCivdGmVXQQwl61birRUlr?=
+ =?iso-8859-1?Q?uBd2AIWfvF/jqOMQZITafKX2acFsBAXqdsRmj60qJTIPjgojoa8LknPcUJ?=
+ =?iso-8859-1?Q?FFTj6turNMtK80TxFu8h64V5Vy1LD4SgTJy9ufDsaJ6kBySKqzbSbZUaZg?=
+ =?iso-8859-1?Q?RKXI7LeBPuM61pDTST+kb3UkntQ7aNbuMrhthaY5xAJGy4FJRAHCoIGF7j?=
+ =?iso-8859-1?Q?l5BPD2LwilszjOkNFt06sJoGAP23pKWTy+1AYn4TjKf36jrWzvk/2tldsh?=
+ =?iso-8859-1?Q?BGmU3Oe8s09CFXHV8QdmqrPJW2NAW2GUYC9Xsq93qDD2NpkMEaRhM2bUyJ?=
+ =?iso-8859-1?Q?nC3R7AGmnYlKWcLQ6qARD+/e3mOz0GIknWHvwMwECes2euk3HpUmOr0jYo?=
+ =?iso-8859-1?Q?wNUk/uLptnTiMVFVBujETNpBSjaI3oFMh/eUvsTY07tk0iuDofUEDpZPx3?=
+ =?iso-8859-1?Q?w2v8kh6rtfXHYwf6/ukEf8lAtWQrlD4GlXxaNZjEhmbJPoemc4y8aFi9W5?=
+ =?iso-8859-1?Q?1q7Ig+ZGSL6UMsvR4iST1VIsapIYFGVMgdo90vrxdMh778YlFlM6RqQNT/?=
+ =?iso-8859-1?Q?7tSQmZ1UY3gZ6mrVuXUKysOYkpRhWJW+PoyLRfj+zw9B2kejAd47r4xeIK?=
+ =?iso-8859-1?Q?cxUaWglR4L6tXEhqdTQ5a4s7UB/uiklnJPWuRQd0xasNKE2F2kLeHj1OtW?=
+ =?iso-8859-1?Q?2wlwLuo5T77imSBuh1pWZWUw7e9WGpuY9A0b7X46cuGX3j4yrYuGBIIvwV?=
+ =?iso-8859-1?Q?Y++CIG+BbmmutKQjJ9PgyDlmyrhoGET1ZR8w0ABe4Ogh1OnNUr9os5zR0o?=
+ =?iso-8859-1?Q?SfeM3qr029iayUkK/FphPQMKLyWqGBHVuMfFmJm6y0CYHaZ6nSXuKZm6ig?=
+ =?iso-8859-1?Q?nGf+LkVUAv6EywuOpHyPpBAM39oF5eslxVr+BlveiFkBW5XjddVL2FhK3F?=
+ =?iso-8859-1?Q?HMR81Y3xZzq/KqgA4Df45rSAX22OIYWbuURNszAuusguJ425jDnsWUfzK3?=
+ =?iso-8859-1?Q?s/dVTugluP3oxKANHeD0V0kCPrVZxFc2pPAYUGAUJ5hSqtDoby0BwfXL/z?=
+ =?iso-8859-1?Q?ZANPQrpJszvrYHlkoFlEV7uZ8VkyKhYIptf9/mYkkgEneRP82RyqU/RcaT?=
+ =?iso-8859-1?Q?OkdWVRvE30rDCK327c4xhcWKKbR6x+t5cgVc4dB7NHFc54c=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?yyaeGrDSkBIoQt4j9niPz26EWgA+xPEmFFQNQIAe4r7z31TV47Uq1dGlrK?=
+ =?iso-8859-1?Q?eLAdZ4eh20KZXaIcxyX0whSmX/CXEwre10xNyGBiZIxXMF7VH3pWOe5IdD?=
+ =?iso-8859-1?Q?uuHEouRIOEWyb4/BNj1nGmeHyvqbREn9gJ7BCpG7ziLHrnVCShaMh2c10t?=
+ =?iso-8859-1?Q?g0Ccq5jvmyK2i+xPhUn9UQVYtFxwyqpQUQSCy7dB1qm8GrjEgawAQFYBK5?=
+ =?iso-8859-1?Q?cnW+e0LkaHDXP0CKrccPyATO0cXQ3U+aJRi4+zaDRfZycukdOFpLL/3VRZ?=
+ =?iso-8859-1?Q?fERH3XtjadAgjl0KstHkK9N7hJJciIEfvM9VVeTz4ojgvlfKI5Vh87QB45?=
+ =?iso-8859-1?Q?h61e3lQKRX46ehmxTptS+j15m3PJddo5x/Q+UNHXgcZx4vRo6mAEjKBTbt?=
+ =?iso-8859-1?Q?iBPMSnnq+ZctbJRAT2dX6eceWxFkcLaO39CTsZ0g5nQHn6+R40Gcgl2cdI?=
+ =?iso-8859-1?Q?TIQeRzsyfbLC0GkzJvY0pTS+TIu60UD/gRl3vtV08pquwuQUGE50niCSDg?=
+ =?iso-8859-1?Q?YqIbsgcpD8yG+pujc0FxMaHrLaYK3XnsG6pxH0X9RhOMIb8GcGMfeP+wcr?=
+ =?iso-8859-1?Q?RaIlkte6W0F7REWaBvOAUhMeVEKjKiuJIlEOk3drEVP89e/O6v4y3t5xER?=
+ =?iso-8859-1?Q?HfKDFW3fg9i8BKgnJdQ2FB/g2Fns9tc4b00+FP3LWE5DlbTyXBy2QxxiDq?=
+ =?iso-8859-1?Q?gOmj3ZoM7wsGwOaoJp4YVAeWLWwKD5E48ye/j+01l2q/T+zEoVKkIPrJEH?=
+ =?iso-8859-1?Q?z3irsyOhSYf8U0GtPFq1kAy4UEZD30rvFd5pOwnxv/HsNE7UjEyUNGLyr9?=
+ =?iso-8859-1?Q?Kw/9dhyk6ofmZqMrzjkV2DzZeNaYtX5aB8WW3s/P1eJj65rmsgew6ulj0Z?=
+ =?iso-8859-1?Q?yFfTVJbEUmQEHAvWECPmjutI4hQYoiG9wgSY0xChgjatHuXMpVxR5RlHzF?=
+ =?iso-8859-1?Q?4Ei4VIfaCwTLUtg8K8px7kP4WMpFDTYqMlYlKDbVBhYdI9qRPFhH0eWQES?=
+ =?iso-8859-1?Q?ElvAg9IjuwLh3r7NTU18A45d1cJeAmWe2egsyr/uTbrVoveZFkb2PKDoZd?=
+ =?iso-8859-1?Q?4pC/fzlE5WjTtFXHEvPwCvvXcDPXynhIBujfjn9L8diTVU5YFUArpifd4R?=
+ =?iso-8859-1?Q?SwFD7/e6wHUJeQdn6wK/dJnO9WCRe0Mir2PDGoIpB1xLRBuHONJsEDAy2G?=
+ =?iso-8859-1?Q?mvBAx/e+zEbMsejnYsPc6PyRQQjFU2YO1z6IhTKtfBWrv79qzZUOGkZr/j?=
+ =?iso-8859-1?Q?X50BUj8NqIVM2jYrFaMrbFaqIoO5lYrfVOqu74GFl/lvCU3UFJ4iZSfGyp?=
+ =?iso-8859-1?Q?QhCpJtixbLZpOJZgorTFg+vjw256h8siDsis7/hRmUcfPjyBW/JSa8bdiB?=
+ =?iso-8859-1?Q?rC3P8GpORTbqqfIXMb5vQfvwyHa+ljFzq8qk8xEt0mUh21RrkwryjfhTQe?=
+ =?iso-8859-1?Q?DOxmIMby8/Z66Am87JLyEEtLt813Ii5XZI0DEYVX46O+VAaB6CWgYEAVqB?=
+ =?iso-8859-1?Q?02qzOPTyav0AazK6dGV0wE4nfDMec7nk7CbXXkd59kesGcZ3tteh9OQDKP?=
+ =?iso-8859-1?Q?UIZ9k1o9LSQBmEMRFKjFVDjqlgjt6Y1Kj+kJ+EiS0Ww/Q08b/OfK8t02d8?=
+ =?iso-8859-1?Q?P5mT7ABCderEKf6giQRwyJBtMtyumWE7dkSyg5Xjr95NRf6He5PBUVbA?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d648fa7-4c3f-47f2-3bb1-08dd1badb667
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 19:38:26.2302
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UieUgyZsPtOTgWLXvPlZDV9qd2peEfcaLI/yJUmx7SdBrC2/Smjv2fKCHxpd2gi7iqMDXCMnP5I4sHf7DDKp+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7740
+X-OriginatorOrg: intel.com
 
-Hi Jason,
+On Thu, Dec 12, 2024 at 11:12:39AM +0100, Simona Vetter wrote:
+> On Thu, Dec 12, 2024 at 09:49:24AM +0100, Thomas Hellström wrote:
+> > On Mon, 2024-12-09 at 16:31 +0100, Simona Vetter wrote:
+> > > On Mon, Dec 09, 2024 at 03:03:04PM +0100, Christian König wrote:
+> > > > Am 09.12.24 um 14:33 schrieb Mika Kuoppala:
+> > > > > From: Andrzej Hajda <andrzej.hajda@intel.com>
+> > > > > 
+> > > > > Debugger needs to read/write program's vmas including
+> > > > > userptr_vma.
+> > > > > Since hmm_range_fault is used to pin userptr vmas, it is possible
+> > > > > to map those vmas from debugger context.
+> > > > 
+> > > > Oh, this implementation is extremely questionable as well. Adding
+> > > > the LKML
+> > > > and the MM list as well.
+> > > > 
+> > > > First of all hmm_range_fault() does *not* pin anything!
+> > > > 
+> > > > In other words you don't have a page reference when the function
+> > > > returns,
+> > > > but rather just a sequence number you can check for modifications.
+> > > 
+> > > I think it's all there, holds the invalidation lock during the
+> > > critical
+> > > access/section, drops it when reacquiring pages, retries until it
+> > > works.
+> > > 
+> > > I think the issue is more that everyone hand-rolls userptr. Probably
+> > > time
+> > > we standardize that and put it into gpuvm as an optional part, with
+> > > consistent locking, naming (like not calling it _pin_pages when it's
+> > > unpinnged userptr), kerneldoc and all the nice things so that we
+> > > stop consistently getting confused by other driver's userptr code.
+> > > 
+> > > I think that was on the plan originally as an eventual step, I guess
+> > > time
+> > > to pump that up. Matt/Thomas, thoughts?
+> > 
+> > It looks like we have this planned and ongoing but there are some
+> > complications and thoughts.
+> > 
+> > 1) A drm_gpuvm implementation would be based on vma userptrs, and would
+> > be pretty straightforward based on xe's current implementation and, as
+> > you say, renaming.
+> > 
 
-Thanks a lot for taking the time to review this, I tried to reply to all
-points. However I think a main source of confusion was that this is only
-for the host kernel not guests, with this series guests still have no
-access to DMA under pKVM. I hope that clarifies some of the points.
+My thoughts...
 
-On Thu, Dec 12, 2024 at 03:41:19PM -0400, Jason Gunthorpe wrote:
-> On Thu, Dec 12, 2024 at 06:03:24PM +0000, Mostafa Saleh wrote:
+Standardize gpuvm userptrs gpuvmas a bit. In Xe I think we basically set
+the BO to NULL in the gpuvmas then have some helpers in Xe to determine
+if gpuvma is a userptr. I think some this code could be moved into gpuvm
+so drivers are doing this in a standard way.
+
+I think NULL bindings also set te BO to NULL too, perhaps we standardize
+that too in gpuvm. 
+
+> > 2) Current Intel work to land this on the drm level is based on
+> > drm_gpusvm (minus migration to VRAM). I'm not fully sure yet how this
+> > will integrate with drm_gpuvm.
+> > 
+
+Implement the userptr locking / page collection (i.e. hmm_range_fault
+call) on top of gpusvm. Perhaps decouple the current page collection
+from drm_gpusvm_range into an embedded struct like drm_gpusvm_devmem.
+The plan was to more or less land gpusvm which in on the list addressing
+Thomas's feedback before doing the userptr rework on top. 
+
+As of now, different engineer will own this rework. Ofc, with Thomas and
+myself providing guidance and welcoming community input. Xe will likely
+be the first user of this so if we have to tweak this as more drivers
+start to use this, ofc that is fine and will be open to any changes.
+
+> > 3) Christian mentioned a plan to have a common userptr implementation
+> > based off drm_exec. I figure that would be bo-based like the amdgpu
+> > implemeentation still is. Possibly i915 would be interested in this but
+> > I think any VM_BIND based driver would want to use drm_gpuvm /
+> > drm_gpusvm implementation, which is also typically O(1), since userptrs
+> > are considered vm-local.
+
+I don't think any new driver would want a userptr implementation based
+on drm_exec because of having to use BO's and this isn't required if
+drm_gpuvm / drm_gpusvm is used which I suspect all new drivers will use.
+Sure could be useful for amdgpu / i915 but for Xe we certainly wouldn't
+want this nor would a VM bind only driver.
+
+> > 
+> > Ideas / suggestions welcome
 > 
-> > This series adds a hypervisor driver for the Arm SMMUv3 IOMMU. Since the
-> > hypervisor part of pKVM (called nVHE here) is minimal, moving the whole
-> > host SMMU driver into nVHE isn't really an option. It is too large and
-> > complex and requires infrastructure from all over the kernel. We add a
-> > reduced nVHE driver that deals with populating the SMMU tables and the
-> > command queue, and the host driver still deals with probing and some
-> > initialization.
+> So just discussed this a bit with Joonas, and if we use access_remote_vm
+> for the userptr access instead of hand-rolling then we really only need
+> bare-bones data structure changes in gpuvm, and nothing more. So
 > 
-> The cover letter doesn't explain why someone needs page tables in the
-> guest at all?
-
-This is not for guests but for the host, the hypervisor needs to
-establish DMA isolation between the host and the hypervisor/guests.
-Before these patches; as mentioned, a host can program a DMA device
-to read/write any memory (that has nothing to do with whether the
-guest has DMA access or not).
-
-So itâ€™s mandatory for pKVM to establish DMA isolation, otherwise
-it can be easily defeated.
-
-However, guest DMA support is optional and only needed for device
-passthrough, I have some patches to support that in pKVM also(only with
-vfio-platform), but itâ€™s unlikely to be posted upstream before merging a
-host DMA isolation solution first as itâ€™s mandatory.
-
+> - add the mm pointer to struct drm_gpuvm
+> - add a flag indicating that it's a userptr + userspace address to struct
+>   drm_gpuva
+> - since we already have userptr in drivers I guess there should be any
+>   need to adjust the actual drm_gpuvm code to cope with these
 > 
-> If you are able to implement nested support then you can boot the
-> guest with no-iommu and an effective identity translation through a
-> hypervisor controlled S2. ie no guest map/unmap. Great DMA
-> performance.
-
-We can do that for the host also, which is discussed in the v1 cover
-letter. However, we try to keep feature parity with the normal (VHE)
-KVM arm64 support, so constraining KVM support to not have IOVA spaces
-for devices seems too much and impractical on modern systems (phones for
-example).
-
+> Then with this you can write the access helper using access_remote_vm
+> since that does the entire remote mm walking internally, and so there's
+> no need to also have all the mmu notifier and locking lifted to gpuvm. But
+> it does already give us some great places to put relevant kerneldocs (not
+> just for debugging architecture, but userptr stuff in general), which is
+> already a solid step forward.
 > 
-> I thought the point of doing the paravirt here was to allow dynamic
-> pinning of the guest memory? This is the primary downside with nested.
-> The entire guest memory has to be pinned down at guest boot.
+> Plus I think it'd would also be a solid first step that we need no matter
+> what for figuring out the questions/options you have above.
+> 
+> Thoughts?
 
-As this is for the host, memory pinning is not really an issue (However,
-with nesting and shared CPU stage-2 there are other challenges as
-mentioned).
+This seems like it could work with everything I've written above. Maybe
+this lives in gpusvm though so we have clear divide where gpuvm is GPU
+address space, and gpusvm is CPU address space. Kinda a bikeshed, but
+agree in general if we need to access / modify userptrs this lives in
+common code.
 
-> 
-> > 1. Paravirtual I/O page tables
-> > This is the solution implemented in this series. The host creates
-> > IOVA->HPA mappings with two hypercalls map_pages() and unmap_pages(), and
-> > the hypervisor populates the page tables. Page tables are abstracted into
-> > IOMMU domains, which allow multiple devices to share the same address
-> > space. Another four hypercalls, alloc_domain(), attach_dev(), detach_dev()
-> > and free_domain(), manage the domains, the semantics of those hypercalls
-> > are almost identical to the IOMMU ops which make the kernel driver part
-> > simpler.
-> 
-> That is re-inventing virtio-iommu. I don't really understand why this
-> series is hacking up arm-smmuv3 so much, that is not, and should not,
-> be a paravirt driver. Why not create a clean new pkvm specific driver
-> for the paravirt?? Or find a way to re-use parts of virtio-iommu?
-> 
-> Shouldn't other arch versions of pkvm be able to re-use the same guest
-> iommu driver?
+Do we view this userptr rework as a blocker for EuDebug? My thinking was
+we don't as we (Intel) have fully committed to a common userptr
+implementation.
 
-As mentioned, this is for the host kernel not the guest. However the
-hypervisor/kernel interface is not IOMMU specific. And it can be extended
-to other IOMMUs/archs.
+FWIW, I really don't think the implementation in this patch and I stated
+this may times but that feedback seems to have been ignored yet again.
+I'd prefer an open code hmm_range_fault loop for now rather than a new
+xe_res_cursor concept that will get thrown away.
 
-There is no hacking for the arm-smmu-v3 driver, but mostly splitting
-the driver so it can be re-used + introduction for a separate hypervisor
-driver, itâ€™s similar to how SVA re-use part of the driver also but just
-on a bigger scale.
+Matt
 
+> -Sima
 > 
-> > b- Locking: The io-pgtable-arm is lockless under some guarantees of how
-> >    the IOMMU code behaves. However with pKVM, the kernel is not trusted
-> >    and a malicious kernel can issue concurrent requests causing memory
-> >    corruption or UAF, so that it has to be locked in the hypervisor.
+> > 
+> > > -Sima
+> > > 
+> > > > 
+> > > > > v2: pin pages vs notifier, move to vm.c (Matthew)
+> > > > > v3: - iterate over system pages instead of DMA, fixes iommu
+> > > > > enabled
+> > > > >      - s/xe_uvma_access/xe_vm_uvma_access/ (Matt)
+> > > > > 
+> > > > > Signed-off-by: Andrzej Hajda <andrzej.hajda@intel.com>
+> > > > > Signed-off-by: Maciej Patelczyk <maciej.patelczyk@intel.com>
+> > > > > Signed-off-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+> > > > > Reviewed-by: Jonathan Cavitt <jonathan.cavitt@intel.com> #v1
+> > > > > ---
+> > > > >   drivers/gpu/drm/xe/xe_eudebug.c |  3 ++-
+> > > > >   drivers/gpu/drm/xe/xe_vm.c      | 47
+> > > > > +++++++++++++++++++++++++++++++++
+> > > > >   drivers/gpu/drm/xe/xe_vm.h      |  3 +++
+> > > > >   3 files changed, 52 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > > b/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > > index 9d87df75348b..e5949e4dcad8 100644
+> > > > > --- a/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > > +++ b/drivers/gpu/drm/xe/xe_eudebug.c
+> > > > > @@ -3076,7 +3076,8 @@ static int xe_eudebug_vma_access(struct
+> > > > > xe_vma *vma, u64 offset_in_vma,
+> > > > >   		return ret;
+> > > > >   	}
+> > > > > -	return -EINVAL;
+> > > > > +	return xe_vm_userptr_access(to_userptr_vma(vma),
+> > > > > offset_in_vma,
+> > > > > +				    buf, bytes, write);
+> > > > >   }
+> > > > >   static int xe_eudebug_vm_access(struct xe_vm *vm, u64 offset,
+> > > > > diff --git a/drivers/gpu/drm/xe/xe_vm.c
+> > > > > b/drivers/gpu/drm/xe/xe_vm.c
+> > > > > index 0f17bc8b627b..224ff9e16941 100644
+> > > > > --- a/drivers/gpu/drm/xe/xe_vm.c
+> > > > > +++ b/drivers/gpu/drm/xe/xe_vm.c
+> > > > > @@ -3414,3 +3414,50 @@ void xe_vm_snapshot_free(struct
+> > > > > xe_vm_snapshot *snap)
+> > > > >   	}
+> > > > >   	kvfree(snap);
+> > > > >   }
+> > > > > +
+> > > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64
+> > > > > offset,
+> > > > > +			 void *buf, u64 len, bool write)
+> > > > > +{
+> > > > > +	struct xe_vm *vm = xe_vma_vm(&uvma->vma);
+> > > > > +	struct xe_userptr *up = &uvma->userptr;
+> > > > > +	struct xe_res_cursor cur = {};
+> > > > > +	int cur_len, ret = 0;
+> > > > > +
+> > > > > +	while (true) {
+> > > > > +		down_read(&vm->userptr.notifier_lock);
+> > > > > +		if (!xe_vma_userptr_check_repin(uvma))
+> > > > > +			break;
+> > > > > +
+> > > > > +		spin_lock(&vm->userptr.invalidated_lock);
+> > > > > +		list_del_init(&uvma->userptr.invalidate_link);
+> > > > > +		spin_unlock(&vm->userptr.invalidated_lock);
+> > > > > +
+> > > > > +		up_read(&vm->userptr.notifier_lock);
+> > > > > +		ret = xe_vma_userptr_pin_pages(uvma);
+> > > > > +		if (ret)
+> > > > > +			return ret;
+> > > > > +	}
+> > > > > +
+> > > > > +	if (!up->sg) {
+> > > > > +		ret = -EINVAL;
+> > > > > +		goto out_unlock_notifier;
+> > > > > +	}
+> > > > > +
+> > > > > +	for (xe_res_first_sg_system(up->sg, offset, len, &cur);
+> > > > > cur.remaining;
+> > > > > +	     xe_res_next(&cur, cur_len)) {
+> > > > > +		void *ptr = kmap_local_page(sg_page(cur.sgl)) +
+> > > > > cur.start;
+> > > > 
+> > > > The interface basically creates a side channel to access userptrs
+> > > > in the way
+> > > > an userspace application would do without actually going through
+> > > > userspace.
+> > > > 
+> > > > That is generally not something a device driver should ever do as
+> > > > far as I
+> > > > can see.
+> > > > 
+> > > > > +
+> > > > > +		cur_len = min(cur.size, cur.remaining);
+> > > > > +		if (write)
+> > > > > +			memcpy(ptr, buf, cur_len);
+> > > > > +		else
+> > > > > +			memcpy(buf, ptr, cur_len);
+> > > > > +		kunmap_local(ptr);
+> > > > > +		buf += cur_len;
+> > > > > +	}
+> > > > > +	ret = len;
+> > > > > +
+> > > > > +out_unlock_notifier:
+> > > > > +	up_read(&vm->userptr.notifier_lock);
+> > > > 
+> > > > I just strongly hope that this will prevent the mapping from
+> > > > changing.
+> > > > 
+> > > > Regards,
+> > > > Christian.
+> > > > 
+> > > > > +	return ret;
+> > > > > +}
+> > > > > diff --git a/drivers/gpu/drm/xe/xe_vm.h
+> > > > > b/drivers/gpu/drm/xe/xe_vm.h
+> > > > > index 23adb7442881..372ad40ad67f 100644
+> > > > > --- a/drivers/gpu/drm/xe/xe_vm.h
+> > > > > +++ b/drivers/gpu/drm/xe/xe_vm.h
+> > > > > @@ -280,3 +280,6 @@ struct xe_vm_snapshot
+> > > > > *xe_vm_snapshot_capture(struct xe_vm *vm);
+> > > > >   void xe_vm_snapshot_capture_delayed(struct xe_vm_snapshot
+> > > > > *snap);
+> > > > >   void xe_vm_snapshot_print(struct xe_vm_snapshot *snap, struct
+> > > > > drm_printer *p);
+> > > > >   void xe_vm_snapshot_free(struct xe_vm_snapshot *snap);
+> > > > > +
+> > > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64
+> > > > > offset,
+> > > > > +			 void *buf, u64 len, bool write);
+> > > > 
+> > > 
+> > 
 > 
-> ? I don't get it, the hypervisor page table has to be private to the
-> hypervisor. It is not that io-pgtable-arm is lockless, it is that it
-> relies on a particular kind of caller supplied locking. pkvm's calls
-> into its private io-pgtable-arm would need pkvm specific locking that
-> makes sense for it. Where does a malicious guest kernel get into this?
-
-At the moment when the kernel driver uses the io-pgtable-arm, it doesnâ€™t
-protect it with any locks under some assumptions, for example, unmapping
-a table with block size and a leaf inside it with page size concurrently
-can cause a UAF, but the DMA API never does that.
-
-With pKVM, the host kernel is not trusted, and if compromised it can
-instrument such attacks to corrupt hypervisor memory, so the hypervisor
-would lock io-pgtable-arm operations in EL2 to avoid that.
-
-> 
-> > 2. Nested SMMUv3 translation (with emulation)
-> > Another approach is to rely on nested translation support which is
-> > optional in SMMUv3, that requires an architecturally accurate emulation
-> > of SMMUv3 which can be complicated including cmdq emulation.
-> 
-> The confidential compute folks are going in this direction.
-
-I see, but one key advantage for pKVM that it requires minimum hardware,
-with the paravirtual approach we can support single stage SMMUv3 or even
-non-architected IOMMUs, that + the DMA performance, might give it slight
-edge, but as I mentioned I plan to do more throughout comparison with
-nesting and maybe discuss it in a conference this year.
-
-> 
-> > The trade off between the 2 approaches can be roughly summarised as:
-> > Paravirtualization:
-> > - Compatible with more HW (and IOMMUs).
-> > - Better DMA performance due to shorter table walks/less TLB pressure
-> > - Needs extra complexity to squeeze the last bit of optimization (around
-> >   unmap, and map_sg).
-> 
-> It has better straight line DMA performance if the DMAs are all
-> static. Generally much, much worse performance if the DMAs are
-> dynamically mapped as you have to trap so much stuff.
-
-I agree itâ€™s not that clear, I will finish the nested implementation
-and run some standard IO benchmarks.
-
-> 
-> The other negative is there is no way to get SVA support with
-> para-virtualization.
-> 
-Yeah, SVA is tricky, I guess for that we would have to use nesting,
-but tbh, I donâ€™t think itâ€™s a deal breaker for now.
-
-> The positive is you don't have to pin the VM's memory.
-> 
-> > Nested Emulation
-> > - Faster map_pages (not sure about unmap because it requires cmdq
-> >   emulation for TLB invalidation if DVM not used).
-> 
-> If you can do nested then you can run in identity mode and then you
-> don't have any performance down side. It is a complete win.
-
-Unfortunately, as mentioned above itâ€™s not that practical, many devices
-in mobile space expect IO translation capability.
-
-> 
-> Even if you do non-idenity nested is still likely faster for changing
-> translation than paravirt approaches. A single cmdq range invalidate
-> should be about the same broad overhead as a single paravirt call to
-> unmap except they can be batched under load.
-> 
-> Things like vCMDQ eliminate this overhead entirely, to my mind that is
-> the future direction of this HW as you obviously need to HW optimize
-> invalidation...
-> 
-> > - Needs extra complexity for architecturally emulating SMMUv3.
-> 
-> Lots of people have now done this, it is not really so bad. In
-> exchange you get a full architected feature set, better performance,
-> and are ready for HW optimizations.
-
-Itâ€™s not impossible, itâ€™s just more complicated doing it in the
-hypervisor which has limited features compared to the kernel + I havenâ€™t
-seen any open source implementation for that except for Qemu which is in
-userspace.
-
-> 
-> > - Add IDENTITY_DOMAIN support, I already have some patches for that, but
-> >   didnâ€™t want to complicate this series, I can send them separately.
-> 
-> This seems kind of pointless to me. If you can tolerate identity (ie
-> pin all memory) then do nested, and maybe don't even bother with a
-> guest iommu.
-
-As mentioned, the choice for para-virt was not only to avoid pinning,
-as this is the host, for IDENTITY_DOMAIN we either share the page table,
-then we have to deal with lazy mapping (SMMU features, BBM...) or mirror
-the table in a shadow SMMU only identity page table.
-
-> 
-> If you want most of the guest memory to be swappable/movable/whatever
-> then paravirt is the only choice, and you really don't want the guest
-> to have any identiy support at all.
-> 
-> Really, I think you'd want to have both options, there is no "best"
-> here. It depends what people want to use the VM for.
-> 
-> My advice for merging would be to start with the pkvm side setting up
-> a fully pinned S2 and do not have a guest driver. Nesting without
-> emulating smmuv3. Basically you get protected identity DMA support. I
-> think that would be a much less sprawling patch series. From there it
-> would be well positioned to add both smmuv3 emulation and a paravirt
-> iommu flow.
-> 
-
-I am open to any suggestions, but I believe any solution considered for
-merge, should have enough features to be usable on actual systems (translating
-IOMMU can be used for example) so either para-virt as this series or full
-nesting as the PoC above (or maybe both?), which IMO comes down to the
-trade-off mentioned above.
-
-Thanks,
-Mostafa
-
-> Jason
+> -- 
+> Simona Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
