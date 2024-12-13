@@ -1,169 +1,244 @@
-Return-Path: <linux-kernel+bounces-444906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A3C9F0E69
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:04:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B8A9F0E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:05:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0D2B2817CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:04:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91AFB161579
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35C71E3787;
-	Fri, 13 Dec 2024 14:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71F91E1023;
+	Fri, 13 Dec 2024 14:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Lcb1XEUy"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fbW1lkm9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7269E1E32B9;
-	Fri, 13 Dec 2024 14:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0816C1E049E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734098612; cv=none; b=GqKoeAo7krUT0Nsc4EBgVj1VblTdWlxv59rXF8ueHLpdcngvcL5PPpd0Ha91WxPXQVKJZUMmV04W+qeribCOFhpLuWHZLk0QOK6AsGtiDxh2cSCQp5efGTR1L3HZ5rtFnnXqvuOi1oD84yFCm+DK4c6mMDatY9UmavZ0Zsntf0I=
+	t=1734098678; cv=none; b=K7dWb/QbhodiRoFtkMD9J7ph1gD5mJzgLvF3PhQ6wtiljoKjhq32+WJkcuQ90+uKCN/+oADi0ld5jhvtOQm6oEJQTVoDHN0o8J1cwJEL/rqTxFOj0HsEWWQYbVu2YUg6Vavzr8xYzsuKfAigMlx7XtszbhiAAx0iiPSM+uhW9zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734098612; c=relaxed/simple;
-	bh=HJjdaetRXcuLU24F2z7EC0FJKWFygfWcwCkCu8S7T2c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EBGTpSrhQ0u5Wp6eYfCN04dpn85v4EkdsZkAjIWnoseSgqmAf5bWTBVlK8mdVESvVU8pBWGZeYjwMLEBOyqzxghn9QSjtO6moQj3O06IuOgycCjOiXtoECi4N3qOh2M4UESx7nJlinkMzRgo2UO8j8Xp5dofCDiuWusJd/2+X14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Lcb1XEUy; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5FCD49CE;
-	Fri, 13 Dec 2024 15:02:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1734098573;
-	bh=HJjdaetRXcuLU24F2z7EC0FJKWFygfWcwCkCu8S7T2c=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Lcb1XEUyL25uCRWVcOxKHRpt8tf5Lm9nUEvc6EnHL2jeFNfoSXDRA4e2Iryej08rG
-	 kqXch5z3ESVpdL4SvABlsUffqi/Fdx0uoccMEJc3XhHqC1XJ54FU7sgMssApvOoMhB
-	 fdy1G7HYGouG8Sb+Wxbq7VMSS4ESB+Qk504/vb0M=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Fri, 13 Dec 2024 16:03:03 +0200
-Subject: [PATCH v4 7/7] drm/rcar-du: Add support for r8a779h0
+	s=arc-20240116; t=1734098678; c=relaxed/simple;
+	bh=BLcmeVJ5U4DYQzHKAiQZlh7Ak2tSTMDloMiK5se3BJg=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=i2bFP+xhxRSQHglVHgLx9UH3eVoO3txG9Xtl20spnOsgX9hUhKQtq4Y7zKZ0XGn0Xyi+MbBpcqjxY7Dvc9gISbJPjYPsUUjg8SZE9x+Ho/rOJUaE4uwtVy4+RIos+ERujaTGCXQGWn7dZ7m6AQW15GOPbWI6W4hsBcz5FGSO3bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fbW1lkm9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734098676;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BMjJh3rNwqJWG/q45S190yCaLe7IaLUoUOyUtTRrI4M=;
+	b=fbW1lkm9MwHLhbM6SF61UyyGxvPMRKwkKHnwWZUZ/abJhwWA9Gg3UEMt8/AXNo7rEejY58
+	ouWse9VNbN0WmKOjtyHnEtsyTvE6lVqSv58yTZlkO9wO/gg4kVDXE9NFAnlPhy9BoYBrtQ
+	HIlWNC+N+y2H6Qqw9f1r/x2mV/yK5Js=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-A8uEA95lOSGhAgZJarh21Q-1; Fri,
+ 13 Dec 2024 09:04:32 -0500
+X-MC-Unique: A8uEA95lOSGhAgZJarh21Q-1
+X-Mimecast-MFC-AGG-ID: A8uEA95lOSGhAgZJarh21Q
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BCB9F1955E9A;
+	Fri, 13 Dec 2024 14:04:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9948F195605A;
+	Fri, 13 Dec 2024 14:04:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20241213135013.2964079-1-dhowells@redhat.com>
+References: <20241213135013.2964079-1-dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+    Ilya Dryomov <idryomov@gmail.com>
+Cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
+    Xiubo Li <xiubli@redhat.com>, Trond Myklebust <trondmy@kernel.org>,
+    Jeff Layton <jlayton@kernel.org>,
+    Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    linux-kernel@vger.kernel.org
+Subject: ceph xfstests failures [was Re: [PATCH 00/10] netfs, ceph, nfs, cachefiles: Miscellaneous fixes/changes]
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241213-rcar-gh-dsi-v4-7-f8e41425207b@ideasonboard.com>
-References: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
-In-Reply-To: <20241213-rcar-gh-dsi-v4-0-f8e41425207b@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- linux-clk@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2759;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=Bg7AGqZhWjHR0bYNz/CL0hPBvLMMsgBEIiurfa4R0Mk=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnXD6hMiE6LpTIejFqPVMLTkxlgOIQMUKapjsSR
- 9ZGNhvk1f6JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1w+oQAKCRD6PaqMvJYe
- 9X5CD/9/+IaIB6QQdHs+R4b1yIh5AlHt1wcoocrP37/+xWxLh1TJn/XCCVcOfqVI8ebJgMW6NGQ
- eyBrFitS4zaFINOBBOmH098m2T4+Mehwa2E0iRfH5eVRMoTvBoF8P/iooO/ZUDzAgyMn4GT6YjS
- 8valhQjZQg4Ce1zITReFRsfA69tMnfyXTW8kMvrM/aPyd+YyioYpLVtDRKThI8skd5Xbpq0qKgi
- FbeHJVRju4lr0w7KYFYYwOdu5i8ZHw/OK/EN+IotOJC+bS7ZKN23CZtmLHMoEMy8Xv+ZbL157S3
- uHbnd2a5sO84ocRo0j9fnVdSpENHNtG93HviHJrUKK5XGIUWe1iQhDZNQZCy3aG8oYw9bKwgksD
- Yjxm9OJ5xJxiqusUS2kmMzq+a1ckzsWuSmD9nSElebGjwMAvveovktUF8uipd/LZNVAoOCZTT0G
- aGJkFLYLsZDEX0UJ95OBhsbWsGR3wazyyd9xQUn0wksw5wXP71tkTdHMrBHKBVwPJ6F/GIHWCzA
- F7AJNzmWPFI3ZFVjwPxCoVg1Z3ZGNPzFbd0ns2QCZQYRIJHVK7cVLxI0xxWXwYeEbqsqKPEU7aD
- op3vh1gFAyhG2NZ3T/SvbnBOtbrjfNcXB7J+y/Hhpqy09RdSJ2lgF917TkDN6Wn83MP9H4Q/fg4
- mJ25WNW7A9QuqNQ==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2964552.1734098664.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 13 Dec 2024 14:04:24 +0000
+Message-ID: <2964553.1734098664@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+David Howells <dhowells@redhat.com> wrote:
 
-Add support for r8a779h0. It is very similar to r8a779g0, but has only
-one output.
+> With these patches, I can run xfstest -g quick to completion on ceph wit=
+h a
+> local cache.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+I should qualify that.  The thing completes and doesn't hang, but I get 6
+failures:
+
+    Failures: generic/604 generic/633 generic/645 generic/696 generic/697 =
+generic/732
+
+Though these don't appear to be anything to do with netfslib (see attached=
+).
+There are two cases where the mount is busy and the rest seems to be due t=
+o
+id-mapped mounts and/or user namespaces.
+
+The xfstest local.config file looks something like:
+
+    export FSTYP=3Dceph
+    export TEST_DEV=3D<ipaddr>:/test
+    export TEST_DIR=3D/xfstest.test
+    TEST_FS_MOUNT_OPTS=3D'-o name=3Dadmin,mds_namespace=3Dtest,fs=3Dtest,f=
+sc'
+    export SCRATCH_DEV=3D<ipaddr>:/scratch
+    export SCRATCH_MNT=3D/xfstest.scratch
+    export MOUNT_OPTIONS=3D'-o name=3Dadmin,mds_namespace=3Dscratch,fs=3Ds=
+cratch,fsc=3Dscratch'
+
+David
 ---
- drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c   | 18 ++++++++++++++++++
- drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c |  4 +++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+# ./check -E .exclude generic/604 generic/633 generic/645 generic/696 gene=
+ric/697 generic/732
+FSTYP         -- ceph
+PLATFORM      -- Linux/x86_64 andromeda 6.13.0-rc2-build3+ #5311 SMP Fri D=
+ec 13 09:03:34 GMT 2024
+MKFS_OPTIONS  -- <ipaddr>:/scratch
+MOUNT_OPTIONS -- -o name=3Dadmin,mds_namespace=3Dscratch,fs=3Dscratch,fsc=3D=
+scratch -o context=3Dsystem_u:object_r:root_t:s0 <ipaddr>:/scratch /xfstes=
+t.scratch
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-index fb719d9aff10..7858e10839f2 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-@@ -545,6 +545,23 @@ static const struct rcar_du_device_info rcar_du_r8a779g0_info = {
- 	.dsi_clk_mask =  BIT(1) | BIT(0),
- };
- 
-+static const struct rcar_du_device_info rcar_du_r8a779h0_info = {
-+	.gen = 4,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE
-+		  | RCAR_DU_FEATURE_NO_BLENDING,
-+	.channels_mask = BIT(0),
-+	.routes = {
-+		/* R8A779H0 has one MIPI DSI output. */
-+		[RCAR_DU_OUTPUT_DSI0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 0,
-+		},
-+	},
-+	.num_rpf = 5,
-+	.dsi_clk_mask = BIT(0),
-+};
-+
- static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7742", .data = &rcar_du_r8a7790_info },
- 	{ .compatible = "renesas,du-r8a7743", .data = &rzg1_du_r8a7743_info },
-@@ -571,6 +588,7 @@ static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a77995", .data = &rcar_du_r8a7799x_info },
- 	{ .compatible = "renesas,du-r8a779a0", .data = &rcar_du_r8a779a0_info },
- 	{ .compatible = "renesas,du-r8a779g0", .data = &rcar_du_r8a779g0_info },
-+	{ .compatible = "renesas,du-r8a779h0", .data = &rcar_du_r8a779h0_info },
- 	{ }
- };
- 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-index 1ec806c8e013..068c106e586c 100644
---- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-@@ -107,10 +107,12 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
- 		 */
- 		rcrtc = rcdu->crtcs;
- 		num_crtcs = rcdu->num_crtcs;
--	} else if (rcdu->info->gen >= 3 && rgrp->num_crtcs > 1) {
-+	} else if ((rcdu->info->gen == 3 && rgrp->num_crtcs > 1) ||
-+		   rcdu->info->gen == 4) {
- 		/*
- 		 * On Gen3 dot clocks are setup through per-group registers,
- 		 * only available when the group has two channels.
-+		 * On Gen4 the registers are there for single channel too.
- 		 */
- 		rcrtc = &rcdu->crtcs[rgrp->index * 2];
- 		num_crtcs = rgrp->num_crtcs;
+generic/604 2s ... [failed, exit status 1]- output mismatch (see /root/xfs=
+tests-dev/results//generic/604.out.bad)
+    --- tests/generic/604.out   2024-09-12 12:36:14.187441830 +0100
+    +++ /root/xfstests-dev/results//generic/604.out.bad 2024-12-13 13:18:5=
+1.910900871 +0000
+    @@ -1,2 +1,4 @@
+     QA output created by 604
+    -Silence is golden
+    +mount error 16 =3D Device or resource busy
+    +mount -o name=3Dadmin,mds_namespace=3Dscratch,fs=3Dscratch,fsc=3Dscra=
+tch -o context=3Dsystem_u:object_r:root_t:s0 <ipaddr>:/scratch /xfstest.sc=
+ratch failed
+    +(see /root/xfstests-dev/results//generic/604.full for details)
+    ...
+    (Run 'diff -u /root/xfstests-dev/tests/generic/604.out /root/xfstests-=
+dev/results//generic/604.out.bad'  to see the entire diff)
+generic/633       [failed, exit status 1]- output mismatch (see /root/xfst=
+ests-dev/results//generic/633.out.bad)
+    --- tests/generic/633.out   2024-09-12 12:36:14.187441830 +0100
+    +++ /root/xfstests-dev/results//generic/633.out.bad 2024-12-13 13:18:5=
+5.958979531 +0000
+    @@ -1,2 +1,4 @@
+     QA output created by 633
+     Silence is golden
+    +idmapped-mounts.c: 307: tcore_create_in_userns - Input/output error -=
+ failure: open file
+    +vfstest.c: 2418: run_test - Success - failure: create operations in u=
+ser namespace
+    ...
+    (Run 'diff -u /root/xfstests-dev/tests/generic/633.out /root/xfstests-=
+dev/results//generic/633.out.bad'  to see the entire diff)
+generic/645       [failed, exit status 1]- output mismatch (see /root/xfst=
+ests-dev/results//generic/645.out.bad)
+    --- tests/generic/645.out   2024-09-12 12:36:14.191441810 +0100
+    +++ /root/xfstests-dev/results//generic/645.out.bad 2024-12-13 13:19:2=
+5.526908024 +0000
+    @@ -1,2 +1,4 @@
+     QA output created by 645
+     Silence is golden
+    +idmapped-mounts.c: 6671: nested_userns - Invalid argument - failure: =
+sys_mount_setattr
+    +vfstest.c: 2418: run_test - Invalid argument - failure: test that nes=
+ted user namespaces behave correctly when attached to idmapped mounts
+    ...
+    (Run 'diff -u /root/xfstests-dev/tests/generic/645.out /root/xfstests-=
+dev/results//generic/645.out.bad'  to see the entire diff)
+generic/696       - output mismatch (see /root/xfstests-dev/results//gener=
+ic/696.out.bad)
+    --- tests/generic/696.out   2024-09-12 12:36:14.195441791 +0100
+    +++ /root/xfstests-dev/results//generic/696.out.bad 2024-12-13 13:19:3=
+0.254804087 +0000
+    @@ -1,2 +1,6 @@
+     QA output created by 696
+    +idmapped-mounts.c: 7763: setgid_create_umask_idmapped - Input/output =
+error - failure: create
+    +vfstest.c: 2418: run_test - Success - failure: create operations by u=
+sing umask in directories with setgid bit set on idmapped mount
+    +idmapped-mounts.c: 7763: setgid_create_umask_idmapped - Input/output =
+error - failure: create
+    +vfstest.c: 2418: run_test - Success - failure: create operations by u=
+sing umask in directories with setgid bit set on idmapped mount
+     Silence is golden
+    ...
+    (Run 'diff -u /root/xfstests-dev/tests/generic/696.out /root/xfstests-=
+dev/results//generic/696.out.bad'  to see the entire diff)
 
--- 
-2.43.0
+HINT: You _MAY_ be missing kernel fix:
+      ac6800e279a2 fs: Add missing umask strip in vfs_tmpfile 1639a49ccdce=
+ fs: move S_ISGID stripping into the vfs_*() helpers
+
+generic/697       - output mismatch (see /root/xfstests-dev/results//gener=
+ic/697.out.bad)
+    --- tests/generic/697.out   2024-09-12 12:36:14.195441791 +0100
+    +++ /root/xfstests-dev/results//generic/697.out.bad 2024-12-13 13:19:3=
+1.749225548 +0000
+    @@ -1,2 +1,4 @@
+     QA output created by 697
+    +idmapped-mounts.c: 8218: setgid_create_acl_idmapped - Input/output er=
+ror - failure: create
+    +vfstest.c: 2418: run_test - Success - failure: create operations by u=
+sing acl in directories with setgid bit set on idmapped mount
+     Silence is golden
+    ...
+    (Run 'diff -u /root/xfstests-dev/tests/generic/697.out /root/xfstests-=
+dev/results//generic/697.out.bad'  to see the entire diff)
+
+HINT: You _MAY_ be missing kernel fix:
+      1639a49ccdce fs: move S_ISGID stripping into the vfs_*() helpers
+
+generic/732 1s ... [failed, exit status 1]- output mismatch (see /root/xfs=
+tests-dev/results//generic/732.out.bad)
+    --- tests/generic/732.out   2024-09-12 12:36:14.195441791 +0100
+    +++ /root/xfstests-dev/results//generic/732.out.bad 2024-12-13 13:19:3=
+4.482858235 +0000
+    @@ -1,2 +1,5 @@
+     QA output created by 732
+     Silence is golden
+    +mount error 16 =3D Device or resource busy
+    +mount -o name=3Dadmin,mds_namespace=3Dscratch,fs=3Dscratch,fsc=3Dscra=
+tch -o context=3Dsystem_u:object_r:root_t:s0 <ipaddr>:/scratch /xfstest.te=
+st/mountpoint2-732 failed
+    +(see /root/xfstests-dev/results//generic/732.full for details)
+    ...
+    (Run 'diff -u /root/xfstests-dev/tests/generic/732.out /root/xfstests-=
+dev/results//generic/732.out.bad'  to see the entire diff)
+Ran: generic/604 generic/633 generic/645 generic/696 generic/697 generic/7=
+32
+Failures: generic/604 generic/633 generic/645 generic/696 generic/697 gene=
+ric/732
+Failed 6 of 6 tests
 
 
