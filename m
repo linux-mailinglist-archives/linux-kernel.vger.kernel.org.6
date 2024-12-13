@@ -1,185 +1,122 @@
-Return-Path: <linux-kernel+bounces-444173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870E09F026A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:43:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDE7188E614
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:43:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C411F347C7;
-	Fri, 13 Dec 2024 01:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PTRrlbN4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A96C9F026B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:46:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E0617C60;
-	Fri, 13 Dec 2024 01:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8C6E2857EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:46:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CAA42D7BF;
+	Fri, 13 Dec 2024 01:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmXVaVjE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882D58F6E;
+	Fri, 13 Dec 2024 01:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734054185; cv=none; b=dy9jPtyLs51HPIcW1IhXxXAEV3FMTgCAtJs8Nc6bzUbOSH4fQhpDf5RUXOdyilBEL7voa2XR5XqdnTcxhC3e7eqNwZIaF7VMx4Xub7jHF88RxTvEsYXN3bp21XViL0DQqjdmkwZPMHstWHLqdVH64YSFJfSrUMoJjdqQ4nv+uh4=
+	t=1734054362; cv=none; b=sKEb0TdLWaktvMyP4ydpawa0ZOgvNL2CSrH52SZWckzvqVvk/A7z1Dq3rNM5kSR0g7w+RksN/YfPtj+SOFoX9tR2dBcMheBN9FibmV4RxuR7g8CKnImlr3fXyVb/7R/88b0zMmAUMosGr/nj+eKBbf98NR4iBPV8fSpzOOgWyN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734054185; c=relaxed/simple;
-	bh=1oiUqvrncY2Yr11Fob0HEMwESXO57uFrf9aYMBqQpNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kJbsc0YY16tJVxN15ivqE81RXhFr2sh1PML7qRJfvb+8OWXlJdz4FclZ3SWINAiFLx23fH58QDU8+KrSA+A5eFPZuOzw6gDo+0uBbKBLrQqzaZeV6GcEFTJyDI4XkAgvJii8wML34B1YvFrICeSWnk+WOXhymi1kUKEGhLb3u9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PTRrlbN4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCH6Sqv002093;
-	Fri, 13 Dec 2024 01:42:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iP0Gu0h9qxvwSP97c21KOwd0MwILv2ly/FR0/lF7tEI=; b=PTRrlbN4ExDu/y6O
-	psuCcTzCF+vRVd4xYAveUxOVi607Wy2oWlmnI2o+Vgco4h0dDO8QvJ542OoHkVjE
-	nBvnaMMrceUXxZ8h/KjW/lbSZKnYhRNyaNYyUr36MpmzHrLMszcTfc5nvtaUTQpk
-	xIs3XZCvedirCebi7GXnpVr/QYnpsM+IBo8oR7N9WR8oAw1Cb37io8zl+FHMpDK5
-	AHTisR/MAdGnoxm8cHExGuyydXtLrKm63VQLaqCFnsYlPTlZXmrLjOQIRsMnkN8r
-	TYCE5Ky9S2TxE3KkMl85TTg9aic/o6Lrjnj9Gu4tM73hRhFCpHW225iIZ7j7qB1R
-	vpESoA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f0r9y5me-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 01:42:59 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD1gwBa010080
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 01:42:58 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
- 2024 17:42:55 -0800
-Message-ID: <409678b0-339e-4d93-86f1-117d358a2d33@quicinc.com>
-Date: Fri, 13 Dec 2024 09:42:52 +0800
+	s=arc-20240116; t=1734054362; c=relaxed/simple;
+	bh=DQkbB4cllLviy0WjfVmB3HApYm34ssK4CyA4cmbSXjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KNpmhe259lnAOq0dHfk5qQK7n6PVTPYw0y64Ru8bvRmRt/ZJrsk8QGOmihWMCpXvyraZRBuV61LEN+eI17pSvFySx1LLHBsVhqpZ0BZc8izjmoFM1+mYC9F0FPVAARiblYHQcY753SfFlR6ineNYvhZqWY3ZyuDTrV00Y8eHkY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HmXVaVjE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F039C4CECE;
+	Fri, 13 Dec 2024 01:46:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734054362;
+	bh=DQkbB4cllLviy0WjfVmB3HApYm34ssK4CyA4cmbSXjc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HmXVaVjEP7mHzbQrp7Nmicnzbt+MiJh5pcJ8YWiSDL1YtptNv4hCcAyQGrvI52fgf
+	 4FcO5RrJ8+15OicbZVpXUU+NJYrdyWk5cYYJBnr5ATHVLFniYnkr/b9eLepKxPUfHX
+	 RnxbZM6uU2yN3xuAjstGBSiJoi1RD5XQTv+3WVHd4CxNBusYDJVVclTHlcG64Js9X8
+	 RbWnMekglA+nCnTssMPkSgGXaU3KO6bspMZ1gZAZhepSf1P2uFHRjtSIO4J/OSfRIx
+	 cYEN7DK1voYmmjOJNSv6SsMTCQPYJvF9b+pcYWR28RX4PsYQ0S7E/xendFLEKtU5zR
+	 Z4INJBRn/TuLA==
+Date: Thu, 12 Dec 2024 17:46:00 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf tools: Avoid unaligned pointer operations
+Message-ID: <Z1uR2EhgfuzLL3a4@google.com>
+References: <20241127212655.922196-1-namhyung@kernel.org>
+ <CAP-5=fW5bbxXakiFuUAG-HTH2aH_hTXQjJp6o-bZcjcPvNmVrA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: Add coresight nodes for QCS8300
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        "Aiqun Yu (Maria)"
-	<quic_aiquny@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241205084418.671631-1-quic_jiegan@quicinc.com>
- <16efb6a8-ecaf-4097-ac5f-368ebab177a8@quicinc.com>
- <25a410a7-2418-45bd-be06-3672a9fb1928@quicinc.com>
- <04d23c55-9167-4e8a-9e5b-6dcf66b02b8f@oss.qualcomm.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <04d23c55-9167-4e8a-9e5b-6dcf66b02b8f@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: til3tEG194fQ4v9Ifs8D-Y5HdreVy-So
-X-Proofpoint-GUID: til3tEG194fQ4v9Ifs8D-Y5HdreVy-So
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 phishscore=0 spamscore=0 clxscore=1015 mlxlogscore=934
- malwarescore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130012
+In-Reply-To: <CAP-5=fW5bbxXakiFuUAG-HTH2aH_hTXQjJp6o-bZcjcPvNmVrA@mail.gmail.com>
 
-
-
-On 12/13/2024 8:35 AM, Konrad Dybcio wrote:
-> On 9.12.2024 3:01 AM, Jie Gan wrote:
->>
->>
->> On 12/8/2024 12:28 AM, Aiqun Yu (Maria) wrote:
->>>
->>>
->>> On 12/5/2024 4:44 PM, Jie Gan wrote:
->>>> Add following coresight components for QCS8300 platform.
->>>> It includes CTI, dummy sink, dynamic Funnel, Replicator, STM,
->>>> TPDM, TPDA and TMC ETF.
->>>>
->>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->>>> ---
->>>> Changes in V2:
->>>> 1. Rebased on tag next-20241204.
->>>> 2. Padding the register address to 8 bits.
->>>> Link to V1 - https://lore.kernel.org/linux-arm-msm/20240929-add_coresight_devices_for_qcs8300-v1-1-4f14e8cb8955@quicinc.com/
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/qcs8300.dtsi | 2150 +++++++++++++++++++++++++
->>>>    1 file changed, 2150 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->>>> index 73abf2ef9c9f..eaec674950d8 100644
->>>> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->>>> @@ -293,6 +293,18 @@ system_sleep: domain-sleep {
->>>>            };
->>>>        };
->>>>    +    dummy_eud: dummy-sink {
->>>> +        compatible = "arm,coresight-dummy-sink";
->>>> +
->>>> +        in-ports {
->>>> +            port {
->>>> +                eud_in: endpoint {
->>>> +                    remote-endpoint = <&swao_rep_out1>;
->>>> +                };
->>>> +            };
->>>> +        };
->>>> +    };
->>>> +
->>
->> [...]
->>
->>>> +
->>>> +        tpdm@482c000 {
->>>> +            compatible = "qcom,coresight-tpdm", "arm,primecell";
->>>> +            reg = <0x0 0x0482c000 0x0 0x1000>;
->>>> +
->>>> +            clocks = <&aoss_qmp>;
->>>> +            clock-names = "apb_pclk";
->>>> +
->>>> +            qcom,dsb-element-bits = <32>;
->>>> +            qcom,dsb-msrs-num = <32>;
->>>> +            status = "disabled";
->>>
->>> Could you please provide more detailed information on why some TPDM
->>> nodes are disabled by default while others are not?
->> Some of TPDM nodes are disabled by default because the one of the following reasons:
->> 1. TPDM device are designed to generate HW events, it needs a clock source to read&write its registers. Coresight driver cannot control the clock source ouside AP core, so those TPDM devices without enabled clock source will crash device in probe.
->> 2. Some of TPDM devices can't bootup with fused devices.
->> 3. Some of TPDM devices have known hardware issues that not resolved.
->>
->> I put those disabled TPDM devices in DT in case some of them may be "fixed" in future.
+On Thu, Dec 12, 2024 at 03:56:31PM -0800, Ian Rogers wrote:
+> On Wed, Nov 27, 2024 at 1:26 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > The sample data is 64-bit aligned basically but raw data starts with
+> > 32-bit length field and data follows.  In perf_event__synthesize_sample
+> > it treats the sample data as a 64-bit array.  And it needs some trick
+> > to update the raw data properly.
+> >
+> > But it seems some compilers are not happy with this and the program dies
+> > siliently.  I found the sample parsing test failed without any messages
+> > on affected systems.
+> >
+> > Let's update the code to use a 32-bit pointer directly and make sure the
+> > result is 64-bit aligned again.  No functional changes intended.
+> >
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/util/synthetic-events.c | 14 +++++++++-----
+> >  1 file changed, 9 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
+> > index a58444c4aed1f1ea..385383ef6cf1edaf 100644
+> > --- a/tools/perf/util/synthetic-events.c
+> > +++ b/tools/perf/util/synthetic-events.c
+> > @@ -1686,12 +1686,16 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type, u64 read_fo
+> >         }
+> >
+> >         if (type & PERF_SAMPLE_RAW) {
+> > -               u.val32[0] = sample->raw_size;
+> > -               *array = u.val64;
+> > -               array = (void *)array + sizeof(u32);
+> > +               u32 *array32 = (void *)array;
+> > +
+> > +               *array32 = sample->raw_size;
+> > +               array32++;
+> > +
+> > +               memcpy(array32, sample->raw_data, sample->raw_size);
+> > +               array = (void *)(array32 + (sample->raw_size / sizeof(u32)));
+> >
+> > -               memcpy(array, sample->raw_data, sample->raw_size);
+> > -               array = (void *)array + sample->raw_size;
+> > +               /* make sure the array is 64-bit aligned */
+> > +               BUG_ON(((long)array) / sizeof(u64));
 > 
-> Please mark them as
+> I think you intended:
 > 
-> /* Hardware issues */
-> status = "fail";
-> 
+> BUG_ON(((long)array) % sizeof(u64));
 
-Maybe I should remove these devices, to avoid confusion. Is that ok?
+Yep, fixed in v2.
 
-> Konrad
+https://lore.kernel.org/r/20241128010325.946897-1-namhyung@kernel.org
 
 Thanks,
-Jie
-
+Namhyung
 
 
