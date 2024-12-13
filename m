@@ -1,78 +1,184 @@
-Return-Path: <linux-kernel+bounces-444804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786CC9F0CBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:52:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CC89F0CBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:54:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31B21884DB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3C1C16260A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287AE1DEFEC;
-	Fri, 13 Dec 2024 12:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26461DF97C;
+	Fri, 13 Dec 2024 12:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nZwSAN1M"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBbapU80"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C132DB640
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA2AB640;
+	Fri, 13 Dec 2024 12:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734094316; cv=none; b=roKk0VVDIM3xqk1VTTP/6oS5FP1whKWZUEO49bT6OeCYKBexugstMEQYPmDY/co7Aig0XNE0j79FClhfRfQD8b07kMxP3MNPhdG3yRzjN4OhW0WH8+a8+o+4O26o24VcriaGOVEJVsldj7Rk3iu7lB8HMDu5LhM62w9l3O9wbMg=
+	t=1734094470; cv=none; b=WCSaEeRC92rQ2EjJIwgR80d9Zgup7dI39bGDGL2PdDAAdW2evJQRFEWp6vLGpSfSF1W3dEuzuKb9SP9OSwOAELVu3+Oq305XQUcl81IMHhZcwRm56Ah4P/paY1RRMfmYdoDiAdT0WIwrUH8u3N6rjP64dufzXbUsYfydt2B9pOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734094316; c=relaxed/simple;
-	bh=NEj+03j0Q5jtOHwVsBd0UEFq58v0bsMouvOLQjPfG8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=luhRjoXMY53VvzwFfEl6RKeH90TY5f4SQ/J8ZZvB6LhQtjAFPhSvgiiVekaqQhrcafFpLnDYB65HjtN8rO63PCniWH7cw5ACHRXGncEbGgG+iH7epe/nXJeSpZjW5WkpJQ8hWQQaa0yTj1zlH/TIhCtD7q/tU0WjPO/pYZgRDIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nZwSAN1M; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NEj+03j0Q5jtOHwVsBd0UEFq58v0bsMouvOLQjPfG8Q=; b=nZwSAN1MIyyS7pVuNjLeX4U93e
-	U38SCjes+yiyy3YEQWQY98EG0pUtkKPOGlK1f0T8STbu5evi7/9bGkW0vy+SD8tOrqTLKrLWschfB
-	R8J3ZFjxOFo41xXYQorDXNgEffgPfjWj+zsRjzltoDFsDwRAoN1YoF2WnGxc+ApXpO8591VZxokqf
-	57HU9wWdfEw+TUdmnGeItkQPLIokQQsQxjJ2jwZM2o29gp14TMIIFo/wrjWSLJkjI8AlzDfrnamoR
-	joZY9wZ1x+lZi2N55VsHR+VZLqarmdShNztkzruLJtYlmrbPYydpzPFkIOT0mv7iwk8i1payvfLFE
-	SZ37SbRg==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tM591-0000000Cyih-3WsA;
-	Fri, 13 Dec 2024 12:51:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 27DC130049D; Fri, 13 Dec 2024 13:51:47 +0100 (CET)
-Date: Fri, 13 Dec 2024 13:51:47 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Vineeth Pillai (Google)" <vineeth@bitbyteword.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Joel Fernandes <joel@joelfernandes.org>, shraash@google.com,
-	marcel.ziswiler@codethink.co.uk, i.maximets@ovn.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] sched/dlserver: flag to represent active status of
- dlserver
-Message-ID: <20241213125147.GC35539@noisy.programming.kicks-ass.net>
-References: <20241213032244.877029-1-vineeth@bitbyteword.org>
+	s=arc-20240116; t=1734094470; c=relaxed/simple;
+	bh=qX9CQORPfhHhUnYRNCuiCL54UEvqGl7G3XM71Ad67zE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GHJmTwAzfBF6pn03wWN0EVfrmG8ytGms25q7FslzhQQMYduGys9vgFO8F1t7tpDEf7XUKyPvXnKl3t1JCfoRDvqTcLmHSJzfGHD1FRi/aI1NN2/TOwBwznkGQpNd5V5/7jy36fkyv2S1gMaEHDFDkfIQ0FQEu6KQIlPOrui7SPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBbapU80; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ef7733a1dcso225109a91.3;
+        Fri, 13 Dec 2024 04:54:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734094467; x=1734699267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M7lnX6pvesFm1bbysPw8dNJ52plSEA0FJvjad/vogKs=;
+        b=QBbapU80UhK/vyICRFqGvdL7GwM3CxLWtPEzFSmiElUwuaQwo8Ijzc1an5KR1xDhxB
+         uxi44uSpA6heav3o7iiARdhNOCyRpzoSM+nYskg+gkR7MPCpvvnHflLJQPyl3AGEZX7l
+         KqNSNGI0UjCPLgmk7WtLhIiiTmB/RN6rh10DJrSEDvSc3guZcy/UfErtwF7DZvh8LiQs
+         N0N+yrBHvah8O3Fawtau8djfeJxN2gh12YGUb7e57oT7sisTNFbNNE+1oO/qHe/dVWFB
+         IEAprHHj+N0q4gA64bXut8RjQDLHk78s3sfqyOc5NOlTbCe1u42TA4X8O1YPcSO5Mzkx
+         6f5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734094467; x=1734699267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M7lnX6pvesFm1bbysPw8dNJ52plSEA0FJvjad/vogKs=;
+        b=TtXtEoiIw5PA65ZDNHgWORyUB4DvbDAx4Kugr8vB+uzns961tpsLJ/r6ZxEtndBlW0
+         PshgWu7c4ePi2JggA2nxciEKz+5Tfyls3hKRoJi1YC83N6dZhShn4VxxszxKKPQhC5Nx
+         Zx/D8yT9aWyg/TANJ0AUFbUPC93+ptRVhh5QRtkDwSk45ZtQG699G7FaVXuSIXz3QjDl
+         4b8yH8FVPyHH1OVHlMiJ9T51ACx/7VTzG1vo8/vxV49OXVjr+/8DowGaIl18Kec6T8oA
+         StjysH+7H8/RXxPUlZIR5NGSLLJXB0RU7J+L+FIu9FoLKTxWg9wgIdTJoKDr1GedSLyF
+         9Fkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWubTEynDERkq5miamBEj31pEzWYXS5BRkFlEhOl5Kk95gzymxvkSb3mBzOtjaAZs+lLvuvxjSPVsbfnjB@vger.kernel.org, AJvYcCVxeblgi6jFR/MJ4cVqqSC6TouoMpI4D8MfbYAB4sL0NDr1Gkz7LF+KDOeOnFTMTUD3g/Q/ZZ5lm+mg0HnGpV0=@vger.kernel.org, AJvYcCXXoMU9BL5Cre5Ekz+YvLU3eTvCYPyCiD/z0JaiFJ3TwK0l2f799EARuhwUf/9QPugu5cSfuiuB+kXQiqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyevBTqRmzOoqb3ZAZifsRuAtzos42M1l7yYDdf0dIccAh0fZ82
+	v4EMzhXsxKvhYuycsTI+Y3YIMQkWys4TTHR5XmHIealKrUb1nRgLNsQWLQkDKzGiD+ZcgJ1V1M2
+	wuQu5f7sHGE+5f0F6/jqYUI37ENo=
+X-Gm-Gg: ASbGncsi/BIHUodn+b3BhvtC89/klppzHIJbK7/AJZhrCAK0/Cl1Z97I3TS4+aYpArx
+	hvncX2huU9qHYu7eqLCmRkQ+qocEk98t1Oqhrjw==
+X-Google-Smtp-Source: AGHT+IGvucEnaiwg2rn7HNjFMCe4CcCSHAM26nUewErkdil6HFmiwrWXHjk2vWKd8ZBP9NRXw42RLJcwbNCGpeZOmHU=
+X-Received: by 2002:a17:90a:e70f:b0:2ee:6a70:c5d1 with SMTP id
+ 98e67ed59e1d1-2f28fb5dbdfmr1554108a91.3.1734094466818; Fri, 13 Dec 2024
+ 04:54:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241213032244.877029-1-vineeth@bitbyteword.org>
+References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org> <20241213-module-params-v3-v3-4-485a015ac2cf@kernel.org>
+In-Reply-To: <20241213-module-params-v3-v3-4-485a015ac2cf@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 13 Dec 2024 13:54:14 +0100
+Message-ID: <CANiq72kb2ocNuE6n32vr4xCkZhZN0uPuCN3SFA1+Q5L+Ma4ByQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] rust: add parameter support to the `module!` macro
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Trevor Gross <tmgross@umich.edu>, 
+	Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Dec 13, 2024 at 12:33=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
+>
+> +#![feature(sync_unsafe_cell)]
 
+Please mention this in the commit message, the status of the feature
+and justify the addition.
 
-Thanks, I've invented a Fixes tag for them and stuck them in
-queue/sched/urgent for the robot (although I don't expect many
-complaints from it).
+> +//! C header: [`include/linux/moduleparam.h`](../../../include/linux/mod=
+uleparam.h)
 
-I'll graduate them to tip/sched/urgent if nothing comes up.
+Please use `srctree`.
+
+> +/// Newtype to make `bindings::kernel_param` `Sync`.
+
+Please add intra-doc links where applicable, e.g. `Sync` here.
+
+> +unsafe extern "C" fn set_param<T>(
+> +    val: *const core::ffi::c_char,
+> +    param: *const crate::bindings::kernel_param,
+> +) -> core::ffi::c_int
+> +where
+> +    T: ModuleParam,
+> +{
+> +    // NOTE: If we start supporting arguments without values, val _is_ a=
+llowed
+> +    // to be null here.
+> +    assert!(!val.is_null());
+
+Should this return an error instead?
+
+> +/// Write a string representation of the current parameter value to `buf=
+`.
+> +///
+> +/// # Safety
+> +///
+> +/// Must not be called.
+> +///
+> +/// # Note
+> +///
+> +/// This should not be called as we declare all parameters as read only.
+> +#[allow(clippy::extra_unused_type_parameters)]
+> +unsafe extern "C" fn get_param<T>(
+> +    _buf: *mut core::ffi::c_char,
+> +    _param: *const crate::bindings::kernel_param,
+> +) -> core::ffi::c_int
+> +where
+> +    T: ModuleParam,
+> +{
+> +    unreachable!("Parameters are not readable");
+> +}
+
+Do we need this? Can't the `ops` callback be `null`?
+
+> +/// The `arg` field of `param` must be an initialized instance of `Self`=
+.
+
+`Self`?
+
+> +/// Generate a static [`kernel_param_ops`](../../../include/linux/module=
+param.h) struct.
+
+`srctree`.
+
+> +/// Parse a token stream of the form `expected_name: "value",` and retur=
+n the
+> +/// string in the position of "value". Panics on parse error.
+
+`# Panics` section.
+
+> +/// `type` may be one of
+> +///
+> +/// - `i8`
+> +/// - `u8`
+> +/// - `i8`
+> +/// - `u8`
+> +/// - `i16`
+> +/// - `u16`
+> +/// - `i32`
+> +/// - `u32`
+> +/// - `i64`
+> +/// - `u64`
+> +/// - `isize`
+> +/// - `usize`
+
+Can these be intra-doc links?
+
+Thanks!
+
+Cheers,
+Miguel
 
