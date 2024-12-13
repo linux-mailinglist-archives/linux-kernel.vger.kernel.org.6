@@ -1,125 +1,98 @@
-Return-Path: <linux-kernel+bounces-444760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BF89F0C2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:24:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6B29F0C2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:25:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 878DB18898F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557F216975D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80DA1DF741;
-	Fri, 13 Dec 2024 12:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327111DFE1D;
+	Fri, 13 Dec 2024 12:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jqbRJaaY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7GFwEG2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAAE1DACA9;
-	Fri, 13 Dec 2024 12:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856991DF728;
+	Fri, 13 Dec 2024 12:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734092683; cv=none; b=X1votKB3TqhObQTobNS8F4RzIIcA3bAXEda9kVM+rNaKzxzurYT+koImHoscp8m+LYWR0gSqhV680j+zg8ApeWyJe0F3WUYfaEKCACJKoJ2ZPY4uaQ6U0nsMEMW5kXVSonFnmYaVCksqOz1jjogRUeWWS2NRET/zpWovREv0gRc=
+	t=1734092692; cv=none; b=g4/6FmAiyiniPO4aVmeNvGNJlaT5lpWKalNyJnK63CBzw3gGUGTYrC71zl01587BfhT7NnJ7vvmODrzCEWI11VQn10o17T4wDH5Q6KL8MOfqWUv8Fz4ZSyrGFY5rjbEsjN9cvDlhPGwBZqkVRetCK2IqTfmTyQVbHcP98fChZbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734092683; c=relaxed/simple;
-	bh=h7Yf9hoG5pmZDET0C/hweumNfc9fPnihksuPcmnl2Fk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckAxWjT7tsIlcgbEOlPcPKUOo80cCYGn7KfQ3h2nZbKrdVAXZgN5s3yiLOlJKx5mudX2EbVrt4jGw7B70P2FrWvSlYFmvngMfJhbwhydifBnPYzxkBUr37c/GgMGn594/8iQ1+D/HBqn7Frn3OUoJq77lZ4299Tk21phMrZlFWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jqbRJaaY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00094C4CED0;
-	Fri, 13 Dec 2024 12:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734092681;
-	bh=h7Yf9hoG5pmZDET0C/hweumNfc9fPnihksuPcmnl2Fk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jqbRJaaYWAM9jdSmNeW5lADqPc4Okd8vgPRoDfTMCmJ5suM3coe7dqJ34xcvejlZJ
-	 vzYKwLypZyXYINXsiAMzCjUOTBu+SOxImbP5f6A8P8qzALxzJQ8NtNSeqNQg6AIsRY
-	 E/Lqx+nAuvGkV1p3oE1nII7m51AdgQAWPnJhyr+4=
-Date: Fri, 13 Dec 2024 13:24:38 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH 6.1 000/772] 6.1.120-rc1 review
-Message-ID: <2024121311-stays-moonlit-ee5e@gregkh>
-References: <20241212144349.797589255@linuxfoundation.org>
- <CA+G9fYu+u4a+63vCCeLo1LdWhvK75B9j-znx7kp2ZVtzK_H4AQ@mail.gmail.com>
+	s=arc-20240116; t=1734092692; c=relaxed/simple;
+	bh=rBm6VmK5092sy9qhzdeHWbMEyUBtzplqF0duZjHqUnE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MgcIqp4IRzk7TjbOWBLLkeM56iHLIfkSQu+4Fbn2YMsALTx44cXtC/wlE9ioUtLhoqIODo03v6zU1oDdfquyX+FTdTwcIC2aUhqw/7HCZTyTeNunyooFVluohYnmlKkZlPtyNPNYzDaJcRA+9A7W1bOgiMkw8Y77PxoegIKnL1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7GFwEG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E733C4CED6;
+	Fri, 13 Dec 2024 12:24:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734092692;
+	bh=rBm6VmK5092sy9qhzdeHWbMEyUBtzplqF0duZjHqUnE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=G7GFwEG24h5J3/UaCEZwsDFXOtBkhH+nOtCSRtfB94p0RRA2P4ifouu6dIZJ/tzkk
+	 hXCVVAE7bzCo7/SWaS0qWPz+TniK6CmidPPBwXyPNF7TBri80cmTEDJqj662zX7uUW
+	 xdliXFT32flfsCHYYcopBs1cIvbToPUDnUDraVSzkWKnmkXowvjPScV6FuPo5Jr5cV
+	 0H7qM/NO9I1ImVnXs0DErVH8pR5V7TgbGdCf7vFcf1sT9JQUP5vjiAO1es0a6Ps2PW
+	 ubg7CxYk8DrKvNg3Me8E7cMSXrJtfOFHYdiZLxUqNpNo8WqrjUXE3VOWP9gz+XZYpI
+	 dR5xVJ1RWbauA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Greg KH" <gregkh@linuxfoundation.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
+ <nathan@kernel.org>,  "Nicolas Schier" <nicolas@fjasle.eu>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-kbuild@vger.kernel.org>
+Subject: Re: [PATCH v3 0/4] rust: extend `module!` macro with integer
+ parameter support
+In-Reply-To: <2024121324-overdue-giggly-bdb8@gregkh> (Greg KH's message of
+	"Fri, 13 Dec 2024 12:43:40 +0100")
+References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
+	<4Dsa69UGULRGsMbRbwOJNp_puyfsSSFt1QTcYU9AL4azd8vbfEFFtc7YNSsGegc40AfCZqVqZETfxg4TggUlSw==@protonmail.internalid>
+	<2024121324-overdue-giggly-bdb8@gregkh>
+Date: Fri, 13 Dec 2024 13:24:42 +0100
+Message-ID: <87frmrepo5.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYu+u4a+63vCCeLo1LdWhvK75B9j-znx7kp2ZVtzK_H4AQ@mail.gmail.com>
+Content-Type: text/plain
 
-On Fri, Dec 13, 2024 at 02:29:56AM +0530, Naresh Kamboju wrote:
-> On Thu, 12 Dec 2024 at 21:23, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.1.120 release.
-> > There are 772 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.120-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> The powerpc builds failed on Linux stable-rc linux-6.1.y due to following build
-> warnings / errors.
-> 
-> powerpc:
->   * build/gcc-13-tqm8xx_defconfig
-> 
-> First seen on Linux stable-rc v6.1.119-773-g9f320894b9c2.
->   Good: v6.1.119
->   Bad: v6.1.119-773-g9f320894b9c2
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> Build log:
-> -----
-> /builds/linux/arch/powerpc/include/asm/page_32.h:16: error:
-> "ARCH_DMA_MINALIGN" redefined [-Werror]
->    16 | #define ARCH_DMA_MINALIGN       L1_CACHE_BYTES
->       |
-> In file included from /builds/linux/include/linux/slab.h:15:
-> /builds/linux/include/linux/cache.h:104: note: this is the location of
-> the previous definition
->   104 | #define ARCH_DMA_MINALIGN __alignof__(unsigned long long)
->       |
-> cc1: all warnings being treated as errors
-> 
-> The bisection pointed to,
->    mm/slab: decouple ARCH_KMALLOC_MINALIGN from ARCH_DMA_MINALIGN
->    commit 4ab5f8ec7d71aea5fe13a48248242130f84ac6bb upstream.
+"Greg KH" <gregkh@linuxfoundation.org> writes:
 
-Ick, this was to fix a different build error.  Looks like I need to
-queue up 78615c4ddb73 ("powerpc: move the ARCH_DMA_MINALIGN definition
-to asm/cache.h") as well, I'll go do that now...
+> On Fri, Dec 13, 2024 at 12:30:45PM +0100, Andreas Hindborg wrote:
+>> This series extends the `module!` macro with support module parameters.
+>
+> Eeek, why?
+>
+> Module parameters are from the 1990's, back when we had no idea what we
+> were doing and thought that a simple "one variable for a driver that
+> controls multiple devices" was somehow a valid solution :)
+>
+> Please only really add module parameters if you can prove that you
+> actually need a module parameter.
 
-thanks,
+I really need module parameters to make rust null block feature
+compatible with C null block.
 
-greg k-h
+Let's not block interfacing parts of the kernel because we decided that
+the way we (well not me, I was not around) did things in the 80's was
+less than stellar. I mean, we would get nowhere.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
