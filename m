@@ -1,236 +1,207 @@
-Return-Path: <linux-kernel+bounces-444984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5999F0F81
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:50:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF9E9F0F7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7CF118823AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7702188281B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638871E1A3F;
-	Fri, 13 Dec 2024 14:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211791E22E6;
+	Fri, 13 Dec 2024 14:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OLPKboXF"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t6n7TOqC"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3821E1C3B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9522E1DFE33
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101372; cv=none; b=PVp04fztC8SJ4S5LA0wRNtmnrZm4Sz8RFvnawnObMi4wz4RQdH3/TrOpYn4sx7b/mJF1aaBPtRW3yg1cgBs0gcBKFPIWoodQxpcbtS18lQ1LO8zg/bOQDk4OWxd6vg8iHzGU3cBNWOr1wiCIyN+4lhfzgvKUZz3SRS8XN7j5u6A=
+	t=1734101368; cv=none; b=sRoLX6y+H8iwKXo9XwajynMdCsMMKU0u+EAVbjs7VkQpac1eWYP/TdMrq33Ill2AfdGWquIpyi441CE+HJ37zKvzDZY1YuNYszr1MsAkgskUea5Jf5bdwWgHHC+TmnDfbnzpsJdQ+1zbLOce4pV4cNeTehQ/nvUMFxrS967o/tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101372; c=relaxed/simple;
-	bh=hByqeNYL+TZV1cYmgGYkHNhMiCkV4v9idGQn3nu0lpU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EbPzFwNc0UB0Z8SuvJhM4m8TjabJRv5WnPMDh2guThq1IYgBQTh5peaMM5ojKua7hwAwxoNO9lI2Z8Tsw8/dxyY4hckiZUmlsfM4mdCGA9JQLQuhPzfl+3+N9bagisJLUlfZ7V88CdlemhhsU4GYds2IVA5DrPOUiQUdgxmW92E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OLPKboXF; arc=none smtp.client-ip=209.85.221.172
+	s=arc-20240116; t=1734101368; c=relaxed/simple;
+	bh=SIsC3C9i1wELYLT6FCZ2zsprbHI9S3yM2hqoLVMVBu0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PtW/4Ysu0W4QGnTjLZydKlEIcIteEC1324ECYTeluEo1H4hKwasvuB9gsrSVbdqxdVgSE+tLaScsy6RpIhhDD13OmWdNY1t/4LrJoIsCMxKyEVQ/MrISsmzxyl3V7MJQPSQCqGNSl3tgQ53ZNNaQaFjGpva4TS0xEWQ6TwAe9X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t6n7TOqC; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-51889930cb1so467869e0c.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:49:28 -0800 (PST)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43618283d48so13409015e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:49:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734101368; x=1734706168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1734101365; x=1734706165; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7bKxIAldnf2WV3uWw0aRPXep5q1Q5wgQLNkyd2UuYH8=;
-        b=OLPKboXFnIxAPo7/SqBWrCNO6t1B0u3paoH5tdDeh4JwNXuaz999zt6bHh2UpiWKME
-         zSlLi3rV7VB/GJTdp+ANXYM06iDrxFNF1Y6tJFiusphSEVF+a6KWsb1kCs/GmQJ27WVN
-         fo4YifI2Ug9uP+wKypwDpHh+HlAgsH89EbcVNuwzsedHRSHM3UZdplvQnuNECuxI+bFv
-         QG7HL7UeJe9fC3wI7efjjdgqnt2O9Z6J7+A4Fz8KGNY/va/mhd/v5WFTZg0kcDvZhwhC
-         1dfRBbOhUeHEPwHDA+FbyiO1zKGTwkARZavp5t1enN3cyAW1gu4Q/xyQyvH82igPJHIb
-         Sk5w==
+        bh=15AaAK2+TNf0pjNDy/UAqLLtCRlZm3/kpGALTDknfLk=;
+        b=t6n7TOqCj4oVvwCCeh05j/IHlJZ1PtXHobd6m3/Wkq5CrU/6lzpQ/QJVmvp4cL0H0o
+         QDIPBzhvY8YSExEg+20JTNgi0Yr3pQ2+zjs/rJCTfbg0Et3uM3t9xpGwJIyHGeSMMIGs
+         rjyNjLHUiWObxjJvTBUbhoKR8+1Yu+ZYSqlq3q8cGBGXYqA7jA8zxQuX1DYyRLvGKYGK
+         rtHSb3PQ3XMKgeE2s2mVVpRiE20OujMFd4CTWaz5A77X/khsVkTRljI+xwpeVzbWaR9W
+         bep5hEd0MyRoeFIYfmiZhDyQw6sDuu1hEbx3N7rPl1JL4+zhhm3tM79fUs67DLgCbolG
+         XKeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101368; x=1734706168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1734101365; x=1734706165;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7bKxIAldnf2WV3uWw0aRPXep5q1Q5wgQLNkyd2UuYH8=;
-        b=F+2APxbz6f/a0Pxz0jofk86n2rWNmRTEboDwphU/U5x4bWIWd15Wz6Q1+C9kAbAmee
-         bXrHt9EYkO2JuDSvlnbcSPC9VYgyy2f4fR8/MGKBICC6/WMnhhwabrFg3+XFJP/cMztt
-         atFZ+XaWpfZESJRm+4spxJPTPUvE1z4DRsvq00PlyVNLnibW9wNiswwtWolEkZIVrDFH
-         3+khOyAAtGCuCa6DsuK2w2V8O0FlugQrtVzhJZd82bj4bBvJoQKXrpGqsm7y7sq6wkZD
-         oRbgJ4h5iFcI/1JoB3YMNAA1IDbltZdFqLrc1U+uI+kDjku0ll5GnKwrlA6Qkczo67Nf
-         9V1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUuxwm5sQzb4kB2dXmKyBlS7r/Tnf5SW2ouah0ac9K5QU4BiimCzX4J63WA/iLmUkZrfQKN/ehMTLMjExQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJdO/mz/mxH2imlN+2oCdZZvv1epWExSJ/vzT15wEm5oDcBGVW
-	HJ/YSn9GRQNdSQWmcCaQp+3NBX3fepXXMbKg5CwFnXRkSHdEEdiIGbY2k8F5s55x2pTEP66uiaT
-	b/rnlrLIgOgNft9VFrOdvbR2gCO4G6mq4oLV00w==
-X-Gm-Gg: ASbGnctGmBOqSF3TdHxeylJlCYfvfdX/DChrOB5wUSSwRHFvArjskI3M0WQYyaLgdS7
-	zbJNYS/X6iMLfOHAkIWaZ+Rek7rTc33yQ8T9khvE=
-X-Google-Smtp-Source: AGHT+IFvRz6amg0/LCv795PFdcXSwZFAuHmhc08GDUubo7a8UJkjnqdzDOeeViMLb5gcFryVLpGHBJmY4rTH42n0lRA=
-X-Received: by 2002:a05:6122:8c12:b0:515:c769:9d32 with SMTP id
- 71dfb90a1353d-518ca399ec3mr3099699e0c.4.1734101367579; Fri, 13 Dec 2024
- 06:49:27 -0800 (PST)
+        bh=15AaAK2+TNf0pjNDy/UAqLLtCRlZm3/kpGALTDknfLk=;
+        b=skCTEEFG9n2GFVRrCkAyf0bwn38r077hGJHo3cyC/YtCVbGVHIdypSiRB7Ve1ompi2
+         fS85xnun+MQzE2KiwqZMSWHGHotIRHejmYu6PDUEYXjmBVdHp7jEmkzU/1qbOUoZP6Jt
+         zQ21s0ySRr3ZQAKwjn+bHtGOTBR2kGuw9cTkLGT09JRx/I6nlTasK226iYuio42v1dz2
+         tE5U59lkEZCd9RZhr/Wi+b6irI2dpB6bJjp8ItFKkuzHQdBPoa1hW7SQiHlE6kgl09yV
+         DghD0n8FuqQCTyNu6/HLs7sYu73468Fg7mMsxDsD+l3NKYo3ZJVV2bKnaNpEXl5u0k7j
+         foiA==
+X-Gm-Message-State: AOJu0YzEeGMbMpIBzCgd4J6qghq8acCSsku3ryT6n1DgubvuTHKwtr+l
+	IWZWXeUIrJpGR5Z+Y+Yk/lhQlJ39GlyMnACsFtRV9fwxIUDXMDPWDsBf4Hfc/8Baf6+lVzWQhXW
+	w
+X-Gm-Gg: ASbGncsGKFk+wPM0QSCgOFV5MtST+OSZIzrktib944zIYMhcKQQKCmtRSYw9nI1aqXm
+	5cYc/RTYsOVt+sBTd6r98A6tov06n56Kph1M/MLbB0jJqnSoLh3NdHtvq4dy3nHUVLqWj2cwz8T
+	MSfDoQ1KUCj25DXjiAHv1MznPn3urN0YeHG/XRtXz15lrGAXgABfMMBksD5hLuAOxhvKQHP5e60
+	rgqBuMjW6UXG1H9jZohwmQ4MPBqK5chCp9kxD2upC+9d4uzvlu0KTZtUw==
+X-Google-Smtp-Source: AGHT+IHO0M2mkaBgTv2bRXcbzSWDj4N1+DMABwuK3YzAtH8N7NuvAFA9fIE961ZHfmLSmGa1Mu+Zcg==
+X-Received: by 2002:a05:6000:2ad:b0:385:df6b:7ef6 with SMTP id ffacd0b85a97d-3888e0be442mr1907627f8f.51.1734101364916;
+        Fri, 13 Dec 2024 06:49:24 -0800 (PST)
+Received: from linaro.org ([2a00:23c5:6829:901:dd7a:c2d:2b46:b1a9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-387824c50b7sm7196295f8f.57.2024.12.13.06.49.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 06:49:24 -0800 (PST)
+From: Mike Leach <mike.leach@linaro.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	coresight@lists.linaro.org
+Cc: james.clark@linaro.org,
+	mike.leach@linaro.org,
+	suzuki.poulose@arm.com,
+	alexander.shishkin@linux.intel.com
+Subject: [PATCH v2 1/3] coresight: Update timeout functions to allow return of test register value
+Date: Fri, 13 Dec 2024 14:49:17 +0000
+Message-Id: <20241213144919.110642-2-mike.leach@linaro.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241213144919.110642-1-mike.leach@linaro.org>
+References: <20241213144919.110642-1-mike.leach@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212144244.601729511@linuxfoundation.org>
-In-Reply-To: <20241212144244.601729511@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 13 Dec 2024 20:19:16 +0530
-Message-ID: <CA+G9fYv-qg_TbgP9o_VyBcBAYfecxFvRPjq0w3SFX_PvJWDbkw@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/356] 6.6.66-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Dec 2024 at 21:01, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.66 release.
-> There are 356 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.66-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Current coresight_timeout function spins on a bit on a test register,
+till bit value achieved or timeout hit.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Add another function to return the full value of the register being
+tested.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Signed-off-by: Mike Leach <mike.leach@linaro.org>
+---
+ drivers/hwtracing/coresight/coresight-core.c | 50 +++++++++++++++-----
+ include/linux/coresight.h                    |  2 +
+ 2 files changed, 41 insertions(+), 11 deletions(-)
 
-## Build
-* kernel: 6.6.66-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: ae86bb742fa81e7826a49817e016bf288015f456
-* git describe: v6.6.65-357-gae86bb742fa8
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.6=
-5-357-gae86bb742fa8
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index ea38ecf26fcb..feb1a1db355f 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -1017,32 +1017,37 @@ static void coresight_remove_conns(struct coresight_device *csdev)
+ }
+ 
+ /**
+- * coresight_timeout - loop until a bit has changed to a specific register
+- *			state.
++ * coresight_timeout_retval - loop until a bit has changed to a specific register
++ *			      state. Return final register value
+  * @csa: coresight device access for the device
+  * @offset: Offset of the register from the base of the device.
+  * @position: the position of the bit of interest.
+  * @value: the value the bit should have.
++ * @rval:  the last read value of the register being tested.
+  *
+  * Return: 0 as soon as the bit has taken the desired state or -EAGAIN if
+  * TIMEOUT_US has elapsed, which ever happens first.
+  */
+-int coresight_timeout(struct csdev_access *csa, u32 offset,
+-		      int position, int value)
++int coresight_timeout_retval(struct csdev_access *csa, u32 offset,
++			     int position, int value, u32 *rval)
+ {
+-	int i;
+-	u32 val;
++	int i, rc = -EAGAIN;
++	u32 val = 0;
+ 
+ 	for (i = TIMEOUT_US; i > 0; i--) {
+ 		val = csdev_access_read32(csa, offset);
+ 		/* waiting on the bit to go from 0 to 1 */
+ 		if (value) {
+-			if (val & BIT(position))
+-				return 0;
++			if (val & BIT(position)) {
++				rc = 0;
++				goto return_rval;
++			}
+ 		/* waiting on the bit to go from 1 to 0 */
+ 		} else {
+-			if (!(val & BIT(position)))
+-				return 0;
++			if (!(val & BIT(position))) {
++				rc = 0;
++				goto return_rval;
++			}
+ 		}
+ 
+ 		/*
+@@ -1054,7 +1059,30 @@ int coresight_timeout(struct csdev_access *csa, u32 offset,
+ 			udelay(1);
+ 	}
+ 
+-	return -EAGAIN;
++return_rval:
++	*rval = val;
++
++	return rc;
++}
++EXPORT_SYMBOL_GPL(coresight_timeout_retval);
++
++/**
++ * coresight_timeout - loop until a bit has changed to a specific register
++ *		       state
++ * @csa: coresight device access for the device
++ * @offset: Offset of the register from the base of the device.
++ * @position: the position of the bit of interest.
++ * @value: the value the bit should have.
++ *
++ * Return: 0 as soon as the bit has taken the desired state or -EAGAIN if
++ * TIMEOUT_US has elapsed, which ever happens first.
++ */
++int coresight_timeout(struct csdev_access *csa, u32 offset,
++		      int position, int value)
++{
++	u32 rval = 0;
++
++	return coresight_timeout_retval(csa, offset, position, value, &rval);
+ }
+ EXPORT_SYMBOL_GPL(coresight_timeout);
+ 
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index 055ce5cd5c44..29cb71e82b0b 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -639,6 +639,8 @@ extern int coresight_enable_sysfs(struct coresight_device *csdev);
+ extern void coresight_disable_sysfs(struct coresight_device *csdev);
+ extern int coresight_timeout(struct csdev_access *csa, u32 offset,
+ 			     int position, int value);
++extern int coresight_timeout_retval(struct csdev_access *csa, u32 offset,
++				    int position, int value, u32 *rval);
+ 
+ extern int coresight_claim_device(struct coresight_device *csdev);
+ extern int coresight_claim_device_unlocked(struct coresight_device *csdev);
+-- 
+2.25.1
 
-## Test Regressions (compared to v6.6.63-677-g1415e716e528)
-
-## Metric Regressions (compared to v6.6.63-677-g1415e716e528)
-
-## Test Fixes (compared to v6.6.63-677-g1415e716e528)
-
-## Metric Fixes (compared to v6.6.63-677-g1415e716e528)
-
-## Test result summary
-total: 130339, pass: 106681, fail: 3098, skip: 20494, xfail: 66
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 128 total, 128 passed, 0 failed
-* arm64: 40 total, 40 passed, 0 failed
-* i386: 27 total, 25 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 31 passed, 1 failed
-* riscv: 19 total, 19 passed, 0 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 32 total, 32 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
