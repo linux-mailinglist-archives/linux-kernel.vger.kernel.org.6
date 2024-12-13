@@ -1,84 +1,131 @@
-Return-Path: <linux-kernel+bounces-445078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B029F10EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:26:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0879F10F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:26:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186DD282983
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45AD21882DAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B451E25F8;
-	Fri, 13 Dec 2024 15:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Nqnlcbvs"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108E91E32A2;
+	Fri, 13 Dec 2024 15:26:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76131DFDB8;
-	Fri, 13 Dec 2024 15:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F0C1E25F1
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734103585; cv=none; b=uOQCYpiWe6coDhJpvlieEE3YmWxHd/UuXvrofL0iTd6iB1fOlcwIVxy8XFV+ArCdJaWnS5IhrPKv6sjhHgdVIRc/27W0QnfxGnPANmXeE3W25DD1BmWCk7+RRut5m78UBEs67WSXtChiMFmnKOrFIluu3b026CApPvOQy7GvLDg=
+	t=1734103598; cv=none; b=rP3HfCwoFJrBTlrlMIGErLqKUugc1WYRDiYFK0ThokB/jlmkzakCZCtw00OeCRhlaO5TFEiEIP6cE2unFWbuEP4II7dF52QO4mRZaszvF1iAYpAFy+E+fUhYfzC6A/aTK4Y7AVpfBdamP52H+3SBo57bo7YwS8+zXd6b++ait9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734103585; c=relaxed/simple;
-	bh=0MjicvKkhLgq/ktWt38IRvLCNv/297HKJ3K0CUMj+eE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bgKr2jBwZTG/jPs0phAcY93qAB5czLLRW9d1+QDVmqPkxPIWy8OLWRzqMsKTljG9fJte0dS8jks4uM0kNTJTzRsZUTF1tC+48DbjWtJJEtdKIwB7Acy3YXs3cD5XSbw5YmT6nOcDgH8VAgb6XPqDFCZx4iXMOrr/RfmQHrZ+Yec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Nqnlcbvs; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D9055403FA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1734103577; bh=pAmWCifknZ0BZ1v9Uey7D7W3oWlObrlPtqSCFV0f4LY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Nqnlcbvs/synvKJqDep9n3cH1GOVvIYTdnCFmtV+QJqVU31l+Kd06YEgGElZQ0+FS
-	 xmt3MveaRxnklWMczE3SKgjvZsNoWq3Dn0yzeXSl/cxgu5Kg0mqkHbj9iNRprwtVqo
-	 iQu9/Nq5U7XwGU76dJs9By8Xib9fw7+VTuXYXhhFmU62j1U7rFmVGVR3DIhtHT/j37
-	 CNEzg+UwrJzGgKvSCDoArKLC6jy8Ru0+11sVugeyHPvFR5agHnU4sapX9U8ergUUg9
-	 aJv64t9oByspHoznZFBE7pb+8/0l4Yb7QL4gJezQTekqglUh9iiIP1ha6Cu9ttWm/4
-	 4RvHYXGHtfwBw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id D9055403FA;
-	Fri, 13 Dec 2024 15:26:16 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Documentation fix for 6.13
-Date: Fri, 13 Dec 2024 08:26:16 -0700
-Message-ID: <87pllvy57r.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1734103598; c=relaxed/simple;
+	bh=nOB9TGc/K7G7JutJ90iy9R08Uz9M1vdYyX7WZTt3rYs=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=IgyhbUBLTkuKKoTloZp0sDRCiJEhdZqlOz/uN+HbrGdUBY0Dl6bhjKJFejFaqjFpYziOIGLrtJiI7v2v7AoT0EFm/MkpZxZYST6cCie/KULEr1nNmAxa9jR7vyvIn7ZOfOtwxTvdkmbw6cIOyOoyEvRI2rmwjsC67gQBPxYujzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE58C4CED6;
+	Fri, 13 Dec 2024 15:26:38 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tM7ZI-00000005PFz-0Jpq;
+	Fri, 13 Dec 2024 10:27:04 -0500
+Message-ID: <20241213152647.904822987@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 13 Dec 2024 10:26:47 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-linus][PATCH 0/3] ftrace: Fixes for 6.13
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-The following changes since commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4:
 
-  Linux 6.13-rc2 (2024-12-08 14:03:39 -0800)
+Ftrace fixes for 6.13:
 
-are available in the Git repository at:
+- Fix output of trace when hashing a pointer is disabled
 
-  git://git.lwn.net/linux.git tags/docs-6.13-fix
+  Pointers are recorded into the ring buffer by simply copying them.
+  When the ring buffer is read directly in binary format, the
+  pointers are unhashed, and tools like perf will show them as such.
+  But when the pointers are printed from the trace file, they are
+  hashed because the output from the trace uses vsnprintf() which will
+  hash "%p". Since the tracing infrastructure requires just as much
+  privileged as kallsyms this was an unneeded protection. An option
+  was created to allow the pointers to not be hashed, as in some cases
+  in debugging, the unhashed pointer was required.
 
-for you to fetch changes up to d9339496729f1471b8dc326face17c4cf108b027:
+  To do this, the unhashing would add a "x" after a "%p" to make it
+  "%px" and not hash. It used the iter->fmt temp buffer to accomplish
+  this. The problem was that the iter->fmt temp buffer was already
+  being used as a temp buffer to check if pointers in the event format
+  output were being called indirectly (like using a "%pI4 or %pI6)
+  where the pointer may be pointing to a freed location. The check
+  code will catch that.
 
-  scripts/kernel-doc: Get -export option working again (2024-12-11 09:15:26 -0700)
+  The issue was that when the hash pointer was being disabled, that
+  logic that used the temporary iter->fmt buffer passed that buffer
+  to the function that would test bad pointers and that function
+  would use iter->fmt buffer as well, causing the output to be
+  screwed up.
 
-----------------------------------------------------------------
-A single fix for a docs-build regression caused by the EXPORT_SYMBOL_NS()
-mass change.
+  The solution was to change the bad pointer logic to use the iter->fmt
+  buffer directly and not as a temp buffer. If the fmt parameter passed
+  in was not the iter->fmt buffer, it would copy the content to the
+  iter->fmt buffer and process that buffer directly. This now allows
+  passing the iter->fmt buffer as the fmt parameter to the bad pointer
+  check function.
 
-----------------------------------------------------------------
-Akira Yokosawa (1):
-      scripts/kernel-doc: Get -export option working again
+- Always try to initialize the idle functions when graph tracer starts
 
- scripts/kernel-doc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  A bug was found that when a CPU is offline when graph tracing starts
+  and then comes online, that CPU is not traced. The fix to that was
+  to move the initialization of the idle shadow stack over to the
+  hot plug online logic, which also handle onlined CPUs. The issue was
+  that it removed the initialization of the shadow stack when graph tracing
+  starts, but the callbacks to the hot plug logic do nothing if graph
+  tracing isn't currently running. Although that fix fixed the onlining
+  of a CPU during tracing, it broke the CPUs that were already online.
+
+- Have microblaze not try to get the "true parent" in function tracing
+
+  If function tracing and graph tracing are both enabled at the same time
+  the parent of the functions traced by the function tracer may sometimes
+  be the graph tracing trampoline. The graph tracing hijacks the return
+  pointer of the function to trace it, but that can interfere with the
+  function tracing parent output. This was fixed by using the
+  ftrace_graph_ret_addr() function passing in the kernel stack pointer
+  using the ftrace_regs_get_stack_pointer() function. But Al Viro reported
+  that Microblaze does not implement the kernel_stack_pointer(regs)
+  helper function that ftrace_regs_get_stack_pointer() uses and fails
+  to compile when function graph tracing is enabled.
+
+  The real fix would be to have microblaze implement the kernel_stack_pointer()
+  function, but they haven't responded to emails. For now, just make
+  microblaze use the old logic which prints the function graph trampoline
+  in the function tracer.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ftrace/fixes
+
+Head SHA1: 617bbefc102f266b23beac72185a2b0e13aa378d
+
+
+Steven Rostedt (3):
+      tracing: Fix trace output when pointer hash is disabled
+      fgraph: Still initialize idle shadow stacks when starting
+      ftrace/microblaze: Do not find "true_parent" for return address
+
+----
+ kernel/trace/fgraph.c          |  8 +++-
+ kernel/trace/trace.c           | 90 ++++++++++++++++++++++++++----------------
+ kernel/trace/trace_functions.c |  3 +-
+ 3 files changed, 64 insertions(+), 37 deletions(-)
 
