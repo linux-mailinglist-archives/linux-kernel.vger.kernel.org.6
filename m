@@ -1,192 +1,96 @@
-Return-Path: <linux-kernel+bounces-444131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E92A9F013F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:48:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072F79F0141
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:50:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE0B1888430
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:48:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B242866E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1838ABE4E;
-	Fri, 13 Dec 2024 00:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A0879F5;
+	Fri, 13 Dec 2024 00:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKGW+/Mg"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EDyPU9ta"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B624C7D;
-	Fri, 13 Dec 2024 00:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0A410F9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734050899; cv=none; b=OasQbMBqUBGoqg3G+laEOoFT0ggF+xYwUlOwnBuVbR4BJ2vVHnUDWRDM+BvK01o5ZDqn6FgCLd+toinXa1tFKx46Q43s3oqTNzq4Jtq1mcts+IytPCl7jpUP/r83WlBM6x/9awYmvBcxxheygZPbGUjnz2GBGPX0SVwRlG7yhcs=
+	t=1734050995; cv=none; b=Oy1NnTwJvInBPhHzpo/VZVeoBkKX4T3aBjSBaiq/hHiWyg6gFNbsLP/prABvtrGj0CbnWkyZ9NR/4/wmHitVCA+/o3tiJnpOgROLyFYgtsDT0Pf8OF+qtrVonuWsPYI20cpBgq6/MtXe2V2rkeaWGXz/MuQzlK4zNI16H7VZ7N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734050899; c=relaxed/simple;
-	bh=HC5PDz/HHoF+AR2P9tP6KJb+2GshOm5NaL1PdaQVN5E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JZ99jHJ2R1/vWwmlZD6om6wNGz1mBSLQKTxc0PqI/02FwVqA8vXCUkFsyg9FiPrwtfYpDnmSHgvG3RTu0o+H/j/PurBwlLrHC0XYTCbzkpimcr1SUuMqHcvvXcVxNx7h5GzVZMBRDvG9QuXpTsy/WotjC7gTlapkgcgiyJ46NvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKGW+/Mg; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7fdc6e04411so733550a12.2;
-        Thu, 12 Dec 2024 16:48:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734050897; x=1734655697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sNRmVQanQATFAfXikHHEScNAYqmRpENEmwgU9NonBBU=;
-        b=BKGW+/MgM72uei8Ltd9GhDyCT+3jKP8WCLJHNFB1506qxlYbVI5gGubxceHQDyBQdn
-         psq+ctzNtrb9yuZ9W/Zm69xBoDLpMQtQzvtaArpxMeAur48MAmp3ejZ/ASm5Q2vkMySU
-         8K8OQz4U8/Izt2CK8eHRxYLSWu+tbCJvCQ1XjOqO8nrqMU/7qeQI24L8sriD+Pxw7LEp
-         YFzDzQE7pg8Q7e6U0BSqWlJNAYt1/bfTA6xPVn7JsUiK4Qcjfr4fjWIBxUVNwLvM2JY1
-         OT3Zl1zx19K6u8nat+lvfENnCyODs8++m/KgLgJA/Yk07EkLYl1Qh35L1PcB39/ZZnJ4
-         xqOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734050897; x=1734655697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sNRmVQanQATFAfXikHHEScNAYqmRpENEmwgU9NonBBU=;
-        b=Z8P4nohyEsNxJGXLHZiBHr+rofMbpJbf4zP+DlhCK4WJ0wxrz9wuQPdsnw+CABqdo3
-         jcnx10b0dpALo5uaib5E/pIHBvLBaYLFuJamidxIdJLFYaTmmDP2CtEI5YsjR4WyLfUt
-         2RXksEPjF+Y+GActuONjgn1WSrkquVGBH+Bq2RV2uM8QxnyPpInSMlmhQiOzKmGf0oLL
-         wNMKpjwCnlrWKsiAX1sJGRTAdYUF0VRwNWLoWsSnUKuwXxrCDP+sOv7aUHmJjnNxNmPk
-         p1SLb875vj9riGXMVorAJ1edqXqBGrQi2FxWpjx1BjKZlU5qKBMk20BpXXVXPTmdv/By
-         oI/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUelYnbMjHDh6SdghracRImLxO7S8J34+roKkMQCNpwyi6UsBbUqafbvRTomjjeo4OlcDQtRd5sgLsH31gokqaWoHCx@vger.kernel.org, AJvYcCVTQ8hXMYK0iWnDzB1zCqXVZEiJIp89C73O13ZOzC5TfVUGTA3x9LJ/ID9KQRRhyB+DNT0=@vger.kernel.org, AJvYcCXy1YF8D6VkXiFHvOsMCDQzEyOEpF8mymlwqZMjBpTm/5yhMC1TIn9Q4tXxkadH+K3hU0rUYQM8OKRNx1lM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+8QJviY3SAwzfHYue5QbldWStgAem1ZZgT08+fMBkmL7m5PoA
-	YZjTmMTcE+SdxTMgRHd/IH2nl4TZbuL5mZbrWrVZ9U++uB6efFtSCcR8D1lzXWpQMOdicAahM02
-	oGLth+UF6L/BtV64Mm4YhtoimusY=
-X-Gm-Gg: ASbGncs2wIk75sjXbF+lExXwDdszU079DlhmQ63bRWK9J+kOJUakBvRBmG6eGb9RVct
-	iYXLx3w5K5muvpqkzz9z/x4Ho4faOcq5lHxqYZesOebj82YI3tyJxnQ==
-X-Google-Smtp-Source: AGHT+IG7dp0Z5iGLnt6GYt5ILBXBuhMWJwqHdKaPat1iVR/Xa4PGGgeC1pTeSXC9R7ofX+Zt8Q5gbUd90I7W9+s//+s=
-X-Received: by 2002:a17:90b:3512:b0:2ee:f440:53ed with SMTP id
- 98e67ed59e1d1-2f290dbcbddmr941851a91.31.1734050897147; Thu, 12 Dec 2024
- 16:48:17 -0800 (PST)
+	s=arc-20240116; t=1734050995; c=relaxed/simple;
+	bh=DwXV4o14XPM+SNZqwjftGFrENhILzuj8vbZ8EdSk8Sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AR4MwN16ljYVDhWqfHzp+w0neD59j2nnUNf+qTul4EBZDCtOdarYuCn45vAGlA017hfFDNzJS3x9AqOyE3ALU/dnPQbpsaPgpxwChn8H0wA6L5UdGk0qcDwDdAeMk/ayhh1toSEeUlirt2xixfW5XQfskgM1K8qtTc4tqXRFaXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EDyPU9ta; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 13 Dec 2024 00:49:43 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1734050990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5nIPWnjKprkNZasvPhVtfRiElviBP/q4ZO6QUFyEJt0=;
+	b=EDyPU9tafbgcXhGkaS3TjLXpnimikZgo4DCJaPiA+u7l+EolaHl1rMv+o0ISICVyg0nYJd
+	n706QWoFTj8pQ0/W/qR9ggYM1FZt3W3reW9DcGOE2ADiFxDz200YdFI4oe7wC3q6l2mqIe
+	fFR6/t269zyyxLpXYIxPyyYwcFtIjVg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Rik van Riel <riel@surriel.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Balbir Singh <balbirs@nvidia.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	hakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, Nhat Pham <nphamcs@gmail.com>
+Subject: Re: [PATCH v2] memcg: allow exiting tasks to write back data to swap
+Message-ID: <Z1uEp5lCGFQK4vFb@google.com>
+References: <20241212115754.38f798b3@fangorn>
+ <Z1ssHQYI-Wyc1adP@google.com>
+ <20241212150003.1a0ed845@fangorn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211133403.208920-1-jolsa@kernel.org> <20241211133403.208920-5-jolsa@kernel.org>
-In-Reply-To: <20241211133403.208920-5-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 12 Dec 2024 16:48:05 -0800
-Message-ID: <CAEf4BzZ2g6PwY+Ah-39F7Dw2AFZUE7AxEqOuNbs5LouHtKMZbQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 04/13] uprobes: Add arch_uprobe_verify_opcode function
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
-	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241212150003.1a0ed845@fangorn>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Dec 11, 2024 at 5:34=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> Adding arch_uprobe_verify_opcode function, so we can overload
-> verification for each architecture in following changes.
->
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  include/linux/uprobes.h |  5 +++++
->  kernel/events/uprobes.c | 19 ++++++++++++++++---
->  2 files changed, 21 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> index cc723bc48c1d..8843b7f99ed0 100644
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -215,6 +215,11 @@ extern void uprobe_handle_trampoline(struct pt_regs =
-*regs);
->  extern void *arch_uretprobe_trampoline(unsigned long *psize);
->  extern unsigned long uprobe_get_trampoline_vaddr(void);
->  extern void uprobe_copy_from_page(struct page *page, unsigned long vaddr=
-, void *dst, int len);
-> +extern int uprobe_verify_opcode(struct page *page, unsigned long vaddr, =
-uprobe_opcode_t *new_opcode);
-> +extern int arch_uprobe_verify_opcode(struct arch_uprobe *auprobe, struct=
- page *page,
-> +                                    unsigned long vaddr, uprobe_opcode_t=
- *new_opcode,
-> +                                    int nbytes);
-> +extern bool arch_uprobe_is_register(uprobe_opcode_t *insn, int nbytes);
->  #else /* !CONFIG_UPROBES */
->  struct uprobes_state {
->  };
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 7c2ecf11a573..8068f91de9e3 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -263,7 +263,13 @@ static void uprobe_copy_to_page(struct page *page, u=
-nsigned long vaddr, const vo
->         kunmap_atomic(kaddr);
->  }
->
-> -static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_=
-opcode_t *new_opcode)
-> +__weak bool arch_uprobe_is_register(uprobe_opcode_t *insn, int nbytes)
-> +{
-> +       return is_swbp_insn(insn);
+On Thu, Dec 12, 2024 at 03:00:03PM -0500, Rik van Riel wrote:
+> On Thu, 12 Dec 2024 18:31:57 +0000
+> Roman Gushchin <roman.gushchin@linux.dev> wrote:
+> 
+> > Is it about a single task or groups of tasks or the entire cgroup?
+> > If former, why it's a problem? A tight memcg limit can slow things down
+> > in general and I don't see why we should treat the exit() path differently.
+> > 
+> I think the exit path does need to be treated a little differently,
+> since this exit may be the only way such a cgroup can free up memory.
 
-a bit weird that we ignore nbytes here... should we have nbytes =3D=3D
-UPROBE_SWBP_INSN_SIZE check somewhere here or inside is_swbp_insn()?
+It's true if all tasks in a cgroup are exiting. Otherwise there are
+other options (at least in theory).
 
-> +}
-> +
-> +int uprobe_verify_opcode(struct page *page, unsigned long vaddr,
-> +                        uprobe_opcode_t *new_opcode)
->  {
->         uprobe_opcode_t old_opcode;
->         bool is_swbp;
-> @@ -291,6 +297,13 @@ static int verify_opcode(struct page *page, unsigned=
- long vaddr, uprobe_opcode_t
->         return 1;
->  }
->
-> +__weak int arch_uprobe_verify_opcode(struct arch_uprobe *auprobe, struct=
- page *page,
-> +                                    unsigned long vaddr, uprobe_opcode_t=
- *new_opcode,
-> +                                    int nbytes)
-> +{
-> +       return uprobe_verify_opcode(page, vaddr, new_opcode);
+> 
+> > If it's about the entire cgroup and we have essentially a deadlock,
+> > I feel like we need to look into the oom reaper side.
+> 
+> You mean something like the below?
+> 
+> I have not tested it yet, because we don't have any stuck
+> cgroups right now among the workloads that I'm monitoring.
 
-again, dropping nbytes on the floor here
+Yeah, something like this...
 
-> +}
-> +
->  static struct delayed_uprobe *
->  delayed_uprobe_check(struct uprobe *uprobe, struct mm_struct *mm)
->  {
-> @@ -479,7 +492,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, =
-struct mm_struct *mm,
->         bool orig_page_huge =3D false;
->         unsigned int gup_flags =3D FOLL_FORCE;
->
-> -       is_register =3D is_swbp_insn(insn);
-> +       is_register =3D arch_uprobe_is_register(insn, nbytes);
->         uprobe =3D container_of(auprobe, struct uprobe, arch);
->
->  retry:
-> @@ -490,7 +503,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, =
-struct mm_struct *mm,
->         if (IS_ERR(old_page))
->                 return PTR_ERR(old_page);
->
-> -       ret =3D verify_opcode(old_page, vaddr, insn);
-> +       ret =3D arch_uprobe_verify_opcode(auprobe, old_page, vaddr, insn,=
- nbytes);
->         if (ret <=3D 0)
->                 goto put_old;
->
-> --
-> 2.47.0
->
+Thanks!
 
