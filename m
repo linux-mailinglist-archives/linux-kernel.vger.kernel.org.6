@@ -1,152 +1,110 @@
-Return-Path: <linux-kernel+bounces-445429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9F79F1644
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:38:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7CD9F15F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FCDA16B893
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:38:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABDCD7A0542
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0151F5416;
-	Fri, 13 Dec 2024 19:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3CC1EBA1E;
+	Fri, 13 Dec 2024 19:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="nAeehgDO"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="t3BbWIbt"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23201F4260;
-	Fri, 13 Dec 2024 19:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B879F1E4929;
+	Fri, 13 Dec 2024 19:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734118551; cv=none; b=tfv5vQ0Q84byhsaon0G0PEWsxrZJdWrYx5AlI95VEPNRBDJq0mf9i30+O1GakzBqzZysCj8BNelNnKy6FtGjDs/Av06NqIu0Nn0R7i2mKTYJyZyTCsM8Sm+MkjR7C8z1svX+c6VFYmIhzAC/MC5CjQx8yBsy/UgtwJBudxlDlaI=
+	t=1734118509; cv=none; b=mwzOMbk+A9AqMPMHyvXzFI5WmxCPRYS+OHqR9SAk7XFc9QiB63mec0R3wQG0MhZa6qnFcYAuZvzSfReXe5hZI9F8LSqDAr6FJQlxZcfplgZ5DpG26DbVecBhis5+zrUDdqL9kkjRP5/Bigs8sHGtQ5kHSxHQNxR/342aTCJkH50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734118551; c=relaxed/simple;
-	bh=5u67zKVa5RU7MQlgLiJDfF2It3YHbhWWFlwjw/F2oBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eKt+HDhuuDDj+ZsQkOH5D6Zk+24CKnkkFrozpQKq+6Rpfl25i0FtcwUun+Fl2W9mfNE/Pp8XRs7xEgWePne/CW4sjaLO7umaSK35QejsfvHPNn2jgiKg/m4eNh83742v1BRHs6oxGF+0d8VLzS7tx7B0hbjrJ69F2bWt6FMn0Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=nAeehgDO; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
+	s=arc-20240116; t=1734118509; c=relaxed/simple;
+	bh=vM5pF/N6BKSuBzDOjQcB0i26QSKYjkA+UMc3cwL2/p0=;
+	h=In-Reply-To:References:From:To:Cc:Subject:MIME-Version:
+	 Content-Disposition:Content-Type:Message-Id:Date; b=SkPKfB4mRyCdDeHyY0C7vVoKC7YKhaOueV7q4aTQFYy2H2Br3YHk34V+O1zLlMQzbanhAGSwcnXxhvnW0LYZMN5QSfRkpu2TOS2Wu8PYWK7gkQOOusR3pprW8ecLEalEd5w77AsSmrODxs9qYWDR/D9TkXwyu2arV69vcNTe1hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=t3BbWIbt; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GjqmdWYcY3chHGsxf2lTHkmxX9CvoUQ42FGe/WL091E=; b=nAeehgDOaumNetvmXiJsSK+3qp
-	Q+ToS2FRd5DAPMe2fn+UoTiF60W/7HtoYFnuZN9hpJ9q2Ot3g2Clh8RtECtfBI11Wf4kjpZDoX0mF
-	Zvr57Dv+M/RhbnnZFiFikH33pOI2+Aav2w395zLfROAhG+nkSmuWp42fePquwP8DH2kmBLUSQFvci
-	xYKwlJLUXoMZbex/CGxx1CNVPIyjUmFFTxtCr9di+JnMIuB0QV/PBOaZShkh60YJhQHDKd82u3hpy
-	avv/Q7nLrmyw189rLVxjB9Yat4TGQfpG/jeNTJ8fD67hr+9upPWT9u2EsJQEYtu6/zmQhyOri9tjY
-	D9OrTl0Q==;
-Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.mn.codeweavers.com)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
+	In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HdDCxRaTUX9FGCD245j20jXl1EXkrNlD8Fe9FHouQUM=; b=t3BbWIbt0mNjNv/q72K2ziPS/i
+	AY/p8nVScTMol5dSAKTKnfdtkXLXZPGh89Cj3mjEhdCu0Nfc3BV028PdJeGK+WNwZsawUIdkm/mO0
+	735oeSHWCV2/tVwzV7lG7WmVzojiIxqhMya7f9MOq1HqMlRHfQRsIDOB4eaN9k9NYjIjDuHEQz7vQ
+	H7VvT5e6gw2ZC8LAnuRPjAo2bnTqElRdzxRtlFqXeu78z/tdWNQUeXlUDvjWUZv0Lcvn/dWzTqpl1
+	4GnVWcgUh96ugv0dLl25WqOdyvtr079spbDDFisw9pJOa6KwxxLQdhPEkpq679IHPwIMpPmBoseFq
+	8Kb+LFCA==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:32846 helo=rmk-PC.armlinux.org.uk)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1tMBRx-00ASsZ-1w;
-	Fri, 13 Dec 2024 13:35:45 -0600
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	wine-devel@winehq.org,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Arkadiusz Hiler <ahiler@codeweavers.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Elizabeth Figura <zfigura@codeweavers.com>
-Subject: [PATCH v7 14/30] ntsync: Introduce NTSYNC_IOC_EVENT_READ.
-Date: Fri, 13 Dec 2024 13:34:55 -0600
-Message-ID: <20241213193511.457338-15-zfigura@codeweavers.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241213193511.457338-1-zfigura@codeweavers.com>
-References: <20241213193511.457338-1-zfigura@codeweavers.com>
+	(envelope-from <rmk@armlinux.org.uk>)
+	id 1tMBRC-0007DD-2v;
+	Fri, 13 Dec 2024 19:34:58 +0000
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
+	id 1tMBRA-006vaY-Sv; Fri, 13 Dec 2024 19:34:56 +0000
+In-Reply-To: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
+References: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	 Jose Abreu <joabreu@synopsys.com>,
+	 Andrew Lunn <andrew+netdev@lunn.ch>,
+	 davem@davemloft.net,
+	 Eric Dumazet <edumazet@google.com>,
+	 Jakub Kicinski <kuba@kernel.org>,
+	 Paolo Abeni <pabeni@redhat.com>,
+	 Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	 Alexis =?UTF-8?B?TG90aG9yw6k=?= <alexis.lothore@bootlin.com>,
+	 Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	 netdev@vger.kernel.org,
+	 linux-stm32@st-md-mailman.stormreply.com,
+	 linux-arm-kernel@lists.infradead.org,
+	 linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 2/5] net: pcs: xpcs: fill in PCS supported_interfaces
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1tMBRA-006vaY-Sv@rmk-PC.armlinux.org.uk>
+Sender: Russell King <rmk@armlinux.org.uk>
+Date: Fri, 13 Dec 2024 19:34:56 +0000
 
-This corresponds to the NT syscall NtQueryEvent().
+Fill in the new PCS supported_interfaces member with the interfaces
+that XPCS supports.
 
-This returns the signaled state of the event and whether it is manual-reset.
-
-Signed-off-by: Elizabeth Figura <zfigura@codeweavers.com>
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 ---
- drivers/misc/ntsync.c       | 24 ++++++++++++++++++++++++
- include/uapi/linux/ntsync.h |  1 +
- 2 files changed, 25 insertions(+)
+ drivers/net/pcs/pcs-xpcs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/misc/ntsync.c b/drivers/misc/ntsync.c
-index 0047b13b6ebd..78dc405bb759 100644
---- a/drivers/misc/ntsync.c
-+++ b/drivers/misc/ntsync.c
-@@ -629,6 +629,28 @@ static int ntsync_mutex_read(struct ntsync_obj *mutex, void __user *argp)
- 	return ret;
- }
+diff --git a/drivers/net/pcs/pcs-xpcs.c b/drivers/net/pcs/pcs-xpcs.c
+index f70ca39f0905..cf41dc5e74e8 100644
+--- a/drivers/net/pcs/pcs-xpcs.c
++++ b/drivers/net/pcs/pcs-xpcs.c
+@@ -1446,6 +1446,8 @@ static struct dw_xpcs *xpcs_create(struct mdio_device *mdiodev)
+ 	if (ret)
+ 		goto out_clear_clks;
  
-+static int ntsync_event_read(struct ntsync_obj *event, void __user *argp)
-+{
-+	struct ntsync_event_args __user *user_args = argp;
-+	struct ntsync_device *dev = event->dev;
-+	struct ntsync_event_args args;
-+	bool all;
++	xpcs_get_interfaces(xpcs, xpcs->pcs.supported_interfaces);
 +
-+	if (event->type != NTSYNC_TYPE_EVENT)
-+		return -EINVAL;
-+
-+	all = ntsync_lock_obj(dev, event);
-+
-+	args.manual = event->u.event.manual;
-+	args.signaled = event->u.event.signaled;
-+
-+	ntsync_unlock_obj(dev, event, all);
-+
-+	if (copy_to_user(user_args, &args, sizeof(args)))
-+		return -EFAULT;
-+	return 0;
-+}
-+
- static int ntsync_obj_release(struct inode *inode, struct file *file)
- {
- 	struct ntsync_obj *obj = file->private_data;
-@@ -662,6 +684,8 @@ static long ntsync_obj_ioctl(struct file *file, unsigned int cmd,
- 		return ntsync_event_reset(obj, argp);
- 	case NTSYNC_IOC_EVENT_PULSE:
- 		return ntsync_event_set(obj, argp, true);
-+	case NTSYNC_IOC_EVENT_READ:
-+		return ntsync_event_read(obj, argp);
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
-diff --git a/include/uapi/linux/ntsync.h b/include/uapi/linux/ntsync.h
-index 207646e63ef3..b9d208a8c00f 100644
---- a/include/uapi/linux/ntsync.h
-+++ b/include/uapi/linux/ntsync.h
-@@ -53,5 +53,6 @@ struct ntsync_wait_args {
- #define NTSYNC_IOC_EVENT_PULSE		_IOR ('N', 0x8a, __u32)
- #define NTSYNC_IOC_SEM_READ		_IOR ('N', 0x8b, struct ntsync_sem_args)
- #define NTSYNC_IOC_MUTEX_READ		_IOR ('N', 0x8c, struct ntsync_mutex_args)
-+#define NTSYNC_IOC_EVENT_READ		_IOR ('N', 0x8d, struct ntsync_event_args)
- 
- #endif
+ 	if (xpcs->info.pma == WX_TXGBE_XPCS_PMA_10G_ID)
+ 		xpcs->pcs.poll = false;
+ 	else
 -- 
-2.45.2
+2.30.2
 
 
