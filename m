@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-444223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5259F030A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:22:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF289F030B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:23:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FEAB284486
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE9B228440E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9591459EA;
-	Fri, 13 Dec 2024 03:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37610154433;
+	Fri, 13 Dec 2024 03:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b="peElN5SB"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b="GmUjXgpn"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F6F39AEB
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05A342077
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734060170; cv=none; b=bCgeL0N1vqXD4vUCzsBVMGxbzPjydGtY5FE7+MZGyK2y14+WSMjCts9RvIo7Mswx5Nk03JwvVjG1aqkQsEWLfXgsybZbohmSt4ubW8+NH8MGyodOGDNO0x4+uyrD1FkV+yTZzOMxOAtQlP5mjbXThJQciedoGFWFAL6r43m7qVQ=
+	t=1734060171; cv=none; b=RGEWKG+44xpl8i9yVmM/TSioYDMmeTcAXLr10RgU/YCi3SgQc8Pcw9y7CEV5q98I/ZWaAtN8J5/etfcGkAMbtlPI2ad032PMcQNBRpNTAlb+S5PGRk0MCaW2mP1CTXSuO3a9n9cnZtPrxpzZSIkdnHjbD+e/pDFeQgl+nK4aB8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734060170; c=relaxed/simple;
-	bh=mBgqn2ObmBthm2BmC4PR5aOY4YbzFLpJ5xqXeNlnq5I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iNqrGvnyrOTH3u7/2hgOfbuCPUzxhNmrEIAhDcH3stGRIoBl7RXzDL1g/Gx5LaNQdgNVDuQp2NzqiZKNEi6dfaUrru5/QaydvmXaEWFCfu8S4BpUTILp72GW7XEC6DpWT0EycDq7qSVz+SPiv1MvrSRNYrWwKB3M6/3GkYjRb9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org; spf=pass smtp.mailfrom=bitbyteword.org; dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b=peElN5SB; arc=none smtp.client-ip=209.85.219.52
+	s=arc-20240116; t=1734060171; c=relaxed/simple;
+	bh=MtB0mROcSpXaQd+kLVxPy3Q12xPN02ia9KfqhN8C7Qg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E0T+kVxP3lM8Ibi+WviyfsmP0xZe5RvecWQ8hDhFp4SEg96GwshBouTfJUvCn4+h9IN9FKx/XBLYM3Kd5lDkO8tggs7Fj84MwazInhltg3dnhHU72HsXGBwtsKT4M85SeItUoKmbu6STS0UkJmelaFHoHqctgDU/GeTp77WaoKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org; spf=pass smtp.mailfrom=bitbyteword.org; dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b=GmUjXgpn; arc=none smtp.client-ip=209.85.219.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitbyteword.org
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6d888c38841so10892926d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:22:48 -0800 (PST)
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d89a727a19so23675786d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:22:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bitbyteword.org; s=google; t=1734060167; x=1734664967; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUakkspjM852kYB415+rOLMVA918IhDFlEhqsIe/2zo=;
-        b=peElN5SBi4fU5CNmcRAcYgNu0JxHd7pT6h71EC53uZjotjtL6Swn35u+Ij1JJye+no
-         p77OQSCDlrTV1qE6envBq8UjAxBQTFze4tXHicF/5xFijWICalI/AQ+eHDR1u2abOZ5O
-         QvOxM6iV3parqLUXl/KsgeCv1s3mi3UfMJf9QKMxy7EDT5A6FseJGoqLxuzn6L/YP2mw
-         vntCoTUiR/ZZuy8GASZ8opPezreNqr4P+Ve1QPdv/4HX1PJd38V/NGIayl67yh4bOOjd
-         f/oQMr1GDUDTXX69uP/bCAb2p3nNl63PnSZEI0+8BfyTIZelKnJr1EclQ0n7qvgZNOrJ
-         ApZA==
+        d=bitbyteword.org; s=google; t=1734060169; x=1734664969; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aq3QSGCcIg8jrEPHQ+OcejvMIfKcnYcAG7J1U1mqBEk=;
+        b=GmUjXgpnjryuHifrZyzas8533wPs3QHgx8gyyWScYZBYnnYa5925vWHF8lmJlN5A+F
+         5TSKtTv25BAshtwIK2m5EZ8nzbfD7Pn5LuuCVRiccJotvAdsEIFrZAJt7/AROcWsNx0S
+         TjFamRJbUdZJz/bOb432acdbcpznI8F0bKPXFMH2b/UGUJyngB+f/RfWkdNCZJU1WydR
+         ba0gNGi22+S9t4BXT6SF5GTrZOU8DPzeCy4BgILkbBRZCgXcpmfddheBEeK2JeMuyb4f
+         HNMMMXvLeLWoH4qVRWuDPLJ1xWJHMVCl+6JYrKNVZYOL6dLoPFF9m9yVj8NBfufxfG/N
+         juxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734060167; x=1734664967;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EUakkspjM852kYB415+rOLMVA918IhDFlEhqsIe/2zo=;
-        b=sjAlSP8HrRNyJJmA+Iqnvsg5o8DEjUthulcrtztI4vUMFffJQhG+sYyYCKuEDFDBNG
-         IxVVUl7VWVu0fP+CWkT7WAz5qLMa16XRhOnz9AMbBHVNZjharO7Oh90Vbet2hK4xt+Vt
-         KP1rfDZLhpeAZg4494h0adno+AnT1YO3ZgWKW71JIo/cCp9vzi4qMiNh9WglYfarMHdl
-         tak2ybKMOdBomUexEQYsybzRm+TRq/HNNuU2tGTKZNs/yqKZNTFUEWumbG2DzmX3MxIG
-         7cJGDW7cliWCcflLqOn2mzEOSCDopg4tGJ47wDaT4dqVTpPCCART1BdOVrlNahlC920N
-         0lgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqOVLH5G9iABszeB/2bHFerL/daSkybXpwx+CaJEqVS8sjv2oL6889Wz+ak9JbI5SD67++i7RJneNzh+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLpexvKwLfIN7Qyv8TSZtWBXwvtVViJiAhHGugy4wV2tteY0zC
-	eJgwmlIua++bBt4oFbOST0cRV1cPYU9R1iVzRPRaeM5Wt/+5nPOXeTDQKHQidyI=
-X-Gm-Gg: ASbGncsKC3XwyFj5yxJDHKvStke307nZLm1qWJFQIQVR3kugslut86HhOczLIkcyUUN
-	ePAAf74P0jKaHacUJJ+83DDy7ni4h7IAjFg+lOafybbxsICnEQFJS0vzc7EUMXzXkTB6hljn9DY
-	z95ioLMR0i5dZUwyrEPG3E6Hq2xyqCKUfQLWRRYjVpvQa9mVLGYAqv4pRGcKViSBHSI++HjNyer
-	CS3d+1+KOjSV6WYsQdt1qnBz/TsxUwkoxc5NjbNWJ+PNKt4ngZQ7I0AEwSJ+RvXcIlzBcq14wrp
-	na40DH6cwj7ADFlOiUZtFfeJTRs=
-X-Google-Smtp-Source: AGHT+IGXBXCfLtT79d9kk/zLtfiwaLVJ+fFMkVeEiPxHKwySOTmFIh9MbwQeR2MkLxYeUh96h2EurQ==
-X-Received: by 2002:a05:6214:19e7:b0:6d8:6a74:ae68 with SMTP id 6a1803df08f44-6dc8ca94760mr12140016d6.29.1734060167479;
-        Thu, 12 Dec 2024 19:22:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734060169; x=1734664969;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aq3QSGCcIg8jrEPHQ+OcejvMIfKcnYcAG7J1U1mqBEk=;
+        b=UflRqjzi6lyHPrX0sdV2eL4YjRPu9vqSmhnXhdvg70hjrlp1jKUnAGE2kHBF8i1yYP
+         j4rIhu9KsM8kopJ5m88KiRXynxlU00ASMC59RpZOd6qh0y3n1vXJOwo22/4MNG1s8MYO
+         DUwQuKGEPkRTNMWinG+rZmGOAFQYScbaxERK8D6U/fwSIsXUHyoAg2b4SQ02HHmCxrod
+         zSpxsU3MYOeJWV6TEuSowKP2lGETiQadV44RJTDNtcmBuUyEhn7wPcKgtuspI4UDCPce
+         7iuwCT1so+fO+X2jvfOO7T3zC/T4I4rNgcau8FmltoNYOylLJ1cLeGGLzHzWtpj3xb8A
+         aehw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb79f2mOVlrDdZVICIcUexPD9RtIrQoQ1ARwhpxvuCCesINWUyxGrkHYBlWDmQuayBpn32AYz2B09f+Wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweAkoPuOJGDAWhiSBBmL9Y7j+GZtY8vqkZwdJYCoIMTE/Nrtg7
+	J4OwZ94c48BZEY54m0yz9T/4aY4L9ScTceBn7DTcR9blBGBINdgcarNA2wEyJQA=
+X-Gm-Gg: ASbGnct7/CXvPRF2dxKZPBn5Mokst6ZdXc3opxFJx1+MLbVx7Rd/8q/9VxLoSnjQZ+p
+	Nb0RYnGOYGNY0XByEJEvhKNGwii2ynT3No0S6DXGQ3GjaDWtwqv3/6mxtJ5PAOn8XwSObuQqwTz
+	qyeLpmpmyeaPza5DlU5pSYmwTsMvmZOYXcb/QXpqHXYU68M5jJRDLGAkBcwCGmo1DUdFqo/fbbF
+	GEagtYAoY62iY+RYw2pQJKl5bEwetpuQyz6aZlCpb0kom4ljcFlrZudf5Bp9CLLfgbNwUi1GFrN
+	WcHUSxemq4J+ClMtTwfyCs47fZk=
+X-Google-Smtp-Source: AGHT+IGnKBjuba9VJ7JKNVqRiU9SxPWK7rd6rwbBNA3r9Kt7mDm0a4h4RwaYTgB9nvl2mF18ShsKkg==
+X-Received: by 2002:a05:6214:491:b0:6d9:ac3:e730 with SMTP id 6a1803df08f44-6db0f3ae28bmr59884676d6.5.1734060168712;
+        Thu, 12 Dec 2024 19:22:48 -0800 (PST)
 Received: from vinbuntup3.lan (c-73-143-21-186.hsd1.vt.comcast.net. [73.143.21.186])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da696d87sm88111736d6.40.2024.12.12.19.22.46
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da696d87sm88111736d6.40.2024.12.12.19.22.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 19:22:47 -0800 (PST)
+        Thu, 12 Dec 2024 19:22:48 -0800 (PST)
 From: "Vineeth Pillai (Google)" <vineeth@bitbyteword.org>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Juri Lelli <juri.lelli@redhat.com>
@@ -80,10 +82,12 @@ Cc: "Vineeth Pillai (Google)" <vineeth@bitbyteword.org>,
 	marcel.ziswiler@codethink.co.uk,
 	i.maximets@ovn.org,
 	LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/2] sched/dlserver: flag to represent active status of dlserver
-Date: Thu, 12 Dec 2024 22:22:36 -0500
-Message-ID: <20241213032244.877029-1-vineeth@bitbyteword.org>
+Subject: [PATCH 2/2] sched/dlserver: fix dlserver time accounting
+Date: Thu, 12 Dec 2024 22:22:37 -0500
+Message-ID: <20241213032244.877029-2-vineeth@bitbyteword.org>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241213032244.877029-1-vineeth@bitbyteword.org>
+References: <20241213032244.877029-1-vineeth@bitbyteword.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,153 +96,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-dlserver can get dequeued during a dlserver pick_task due to the delayed
-deueue feature and this can lead to issues with dlserver logic as it
-still thinks that dlserver is on the runqueue. The dlserver throttling
-and replenish logic gets confused and can lead to double enqueue of
-dlserver.
+dlserver time is accounted when:
+- dlserver is active and the dlserver proxies the cfs task.
+- dlserver is active but deferred and cfs task runs after being picked
+  through the normal fair class pick.
 
-Double enqueue of dlserver could happend due to couple of reasons:
+dl_server_update is called in two places to make sure that both the
+above times are accounted for. But it doesn't check if dlserver is
+active or not. Now that we have this dl_server_active flag, we can
+consolidate dl_server_update into one place and all we need to check is
+whether dlserver is active or not. When dlserver is active there is only
+two possible conditions:
+- dlserver is deferred.
+- cfs task is running on behalf of dlserver.
 
-Case 1
-------
-
-Delayed dequeue feature[1] can cause dlserver being stopped during a
-pick initiated by dlserver:
-  __pick_next_task
-   pick_task_dl -> server_pick_task
-    pick_task_fair
-     pick_next_entity (if (sched_delayed))
-      dequeue_entities
-       dl_server_stop
-
-server_pick_task goes ahead with update_curr_dl_se without knowing that
-dlserver is dequeued and this confuses the logic and may lead to
-unintended enqueue while the server is stopped.
-
-Case 2
-------
-A race condition between a task dequeue on one cpu and same task's enqueue
-on this cpu by a remote cpu while the lock is released causing dlserver
-double enqueue.
-
-One cpu would be in the schedule() and releasing RQ-lock:
-
-current->state = TASK_INTERRUPTIBLE();
-        schedule();
-          deactivate_task()
-            dl_stop_server();
-          pick_next_task()
-            pick_next_task_fair()
-              sched_balance_newidle()
-                rq_unlock(this_rq)
-
-at which point another CPU can take our RQ-lock and do:
-
-        try_to_wake_up()
-          ttwu_queue()
-            rq_lock()
-            ...
-            activate_task()
-              dl_server_start() --> first enqueue
-            wakeup_preempt() := check_preempt_wakeup_fair()
-              update_curr()
-                update_curr_task()
-                  if (current->dl_server)
-                    dl_server_update()
-                      enqueue_dl_entity() --> second enqueue
-
-This bug was not apparent as the enqueue in dl_server_start doesn't
-usually happen because of the defer logic. But as a side effect of the
-first case(dequeue during dlserver pick), dl_throttled and dl_yield will
-be set and this causes the time accounting of dlserver to messup and
-then leading to a enqueue in dl_server_start.
-
-Have an explicit flag representing the status of dlserver to avoid the
-confusion. This is set in dl_server_start and reset in dlserver_stop.
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Vineeth Pillai (Google) <vineeth@bitbyteword.org>
 ---
- include/linux/sched.h   | 7 +++++++
- kernel/sched/deadline.c | 8 ++++++--
- kernel/sched/sched.h    | 5 +++++
- 3 files changed, 18 insertions(+), 2 deletions(-)
+ kernel/sched/fair.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index d380bffee2ef..66b311fbd5d6 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -656,6 +656,12 @@ struct sched_dl_entity {
- 	 * @dl_defer_armed tells if the deferrable server is waiting
- 	 * for the replenishment timer to activate it.
- 	 *
-+	 * @dl_server_active tells if the dlserver is active(started).
-+	 * dlserver is started on first cfs enqueue on an idle runqueue
-+	 * and is stopped when a dequeue results in 0 cfs tasks on the
-+	 * runqueue. In other words, dlserver is active only when cpu's
-+	 * runqueue has atleast one cfs task.
-+	 *
- 	 * @dl_defer_running tells if the deferrable server is actually
- 	 * running, skipping the defer phase.
- 	 */
-@@ -664,6 +670,7 @@ struct sched_dl_entity {
- 	unsigned int			dl_non_contending : 1;
- 	unsigned int			dl_overrun	  : 1;
- 	unsigned int			dl_server         : 1;
-+	unsigned int			dl_server_active  : 1;
- 	unsigned int			dl_defer	  : 1;
- 	unsigned int			dl_defer_armed	  : 1;
- 	unsigned int			dl_defer_running  : 1;
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 33b4646f8b24..0abf14ac5ca7 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1667,6 +1667,7 @@ void dl_server_start(struct sched_dl_entity *dl_se)
- 	if (!dl_se->dl_runtime)
- 		return;
- 
-+	dl_se->dl_server_active = 1;
- 	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
- 	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
- 		resched_curr(dl_se->rq);
-@@ -1681,6 +1682,7 @@ void dl_server_stop(struct sched_dl_entity *dl_se)
- 	hrtimer_try_to_cancel(&dl_se->dl_timer);
- 	dl_se->dl_defer_armed = 0;
- 	dl_se->dl_throttled = 0;
-+	dl_se->dl_server_active = 0;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 2d80aaac4413..f5329672815b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1159,8 +1159,6 @@ static inline void update_curr_task(struct task_struct *p, s64 delta_exec)
+ 	trace_sched_stat_runtime(p, delta_exec);
+ 	account_group_exec_runtime(p, delta_exec);
+ 	cgroup_account_cputime(p, delta_exec);
+-	if (p->dl_server)
+-		dl_server_update(p->dl_server, delta_exec);
  }
  
- void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
-@@ -2435,8 +2437,10 @@ static struct task_struct *__pick_task_dl(struct rq *rq)
- 	if (dl_server(dl_se)) {
- 		p = dl_se->server_pick_task(dl_se);
- 		if (!p) {
--			dl_se->dl_yielded = 1;
--			update_curr_dl_se(rq, dl_se, 0);
-+			if (dl_server_active(dl_se)) {
-+				dl_se->dl_yielded = 1;
-+				update_curr_dl_se(rq, dl_se, 0);
-+			}
- 			goto again;
- 		}
- 		rq->dl_server = dl_se;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index aef716c41edb..65fa64845d9f 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -398,6 +398,11 @@ extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq
- extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
- 		    u64 runtime, u64 period, bool init);
+ static inline bool did_preempt_short(struct cfs_rq *cfs_rq, struct sched_entity *curr)
+@@ -1237,11 +1235,16 @@ static void update_curr(struct cfs_rq *cfs_rq)
+ 		update_curr_task(p, delta_exec);
  
-+static inline bool dl_server_active(struct sched_dl_entity *dl_se)
-+{
-+	return dl_se->dl_server_active;
-+}
-+
- #ifdef CONFIG_CGROUP_SCHED
+ 		/*
+-		 * Any fair task that runs outside of fair_server should
+-		 * account against fair_server such that it can account for
+-		 * this time and possibly avoid running this period.
++		 * If the fair_server is active, we need to account for the
++		 * fair_server time whether or not the task is running on
++		 * behalf of fair_server or not:
++		 *  - If the task is running on behalf of fair_server, we need
++		 *    to limit its time based on the assigned runtime.
++		 *  - Fair task that runs outside of fair_server should account
++		 *    against fair_server such that it can account for this time
++		 *    and possibly avoid running this period.
+ 		 */
+-		if (p->dl_server != &rq->fair_server)
++		if (dl_server_active(&rq->fair_server))
+ 			dl_server_update(&rq->fair_server, delta_exec);
+ 	}
  
- extern struct list_head task_groups;
 -- 
 2.45.2
 
