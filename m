@@ -1,116 +1,138 @@
-Return-Path: <linux-kernel+bounces-444795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3204A9F0C9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:42:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20C409F0CA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23AD11880863
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2471889E21
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C1D1DFDB5;
-	Fri, 13 Dec 2024 12:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9317F1DFE23;
+	Fri, 13 Dec 2024 12:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzLFMXV3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="niipu787"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDECF1547CA;
-	Fri, 13 Dec 2024 12:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC981DFE04
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734093767; cv=none; b=dlfLcgl1yFW4f76mUxEE8+mtKpUzgRcHjIll9+M0zyaH5BIMcGcm7STBiEby3QJ+pLwgEHyLpsBtCVIHBhvDQMeerTm9wiS2I3nYFdebtju3ViggC+2yn/WPO36wmDFyNKSVIx6D71APlA6LloVkXy7TA+OcTrofuiV27l+v/dY=
+	t=1734093909; cv=none; b=YumBgGoPc/avUQsJ8cooZQ+AOTz9XeWnii2IyJgzfB37ta339ooLZNogD82Kr5C64286BvSMl/XmEiv94jnaN8iuwbDPvbXHUFpjTNFqTcrwTUhlXTaOgZ4ESaVz0hYrnS7HjgZI114HneuMX8/UujMeNctYbFMPYjz3nlXv/ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734093767; c=relaxed/simple;
-	bh=5LnOks83tJiUJQ/hqa6qlPkuoi59TR5A0TBTEtlupew=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cGOKK5pAw8UbF6cP5Po6mKss59eCEZ/+TBGTn0DMx6LwhoEzXtAACFPI/wb4silDrd1+7jw9WPs4N62QDinicbdZiVW7FLTVZX7RKR3qir8f5vD4AcVtZ2KtMOUqv4eTL1J1NC7EvPgwR3Kcv9ngAwL1zoA2huw24rv+tr39ctA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzLFMXV3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A49EC4CED0;
-	Fri, 13 Dec 2024 12:42:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734093767;
-	bh=5LnOks83tJiUJQ/hqa6qlPkuoi59TR5A0TBTEtlupew=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lzLFMXV3bxf8X/e5fkkLsB6aPnLMw/HJEznHGvCM629GZWma+M4dQMkfajCWIVmHP
-	 Pb4id/2tgVy/LdMLfLLP5OFybBEvOHLhZlTKUPsyOFAR3aIVIWHiVNnG844kfbIrmQ
-	 XvcR5HJ+nyaYyBXHtJD9/wF4b3u5Wij0c0cRvqjLQlxNRJdjN4GagNyKxfV7kWqHAJ
-	 dG+eXgosF7MDFfvZm+/HF1z+KCqgHyCNFuVV4jUrDRagISFTo0RSlTFmjTpsgN2KvM
-	 zU3rcNY1v5Zz3mhLkaVdt/0zhiCxckPGf062hrNUHbebCJPVBiv3RcgNBbjbeDEcJk
-	 uN3n5flCRm7Nw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Greg KH" <gregkh@linuxfoundation.org>, Jens Axboe <axboe@kernel.dk>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
- <nathan@kernel.org>,  "Nicolas Schier" <nicolas@fjasle.eu>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-kbuild@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>
-Subject: Re: [PATCH v3 4/4] rust: add parameter support to the `module!` macro
-In-Reply-To: <2024121324-ravine-kinswoman-c0d1@gregkh> (Greg KH's message of
-	"Fri, 13 Dec 2024 12:46:13 +0100")
-References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
-	<20241213-module-params-v3-v3-4-485a015ac2cf@kernel.org>
-	<awVcHcjxc0Q67ZefTn9cIb0LYzo881oLzGHP7dDnE2osOrgV7M6VJxjmiF65Uyj1Lo0JumqoDtOYbfVIth7HMA==@protonmail.internalid>
-	<2024121324-ravine-kinswoman-c0d1@gregkh>
-Date: Fri, 13 Dec 2024 13:42:35 +0100
-Message-ID: <877c83eouc.fsf@kernel.org>
+	s=arc-20240116; t=1734093909; c=relaxed/simple;
+	bh=JYpFD2JTyAPHJh0LcGmkihjMxrYJLIJGHzffjuy4Oh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=flFo3SU9TOjS9y0dgQa0qmOVi95s/yxI66ADxagWniF2xXSD+17cXqgBjabUtzm3CoYECAYvVHv1eN+q0EY5+wgBovvMXLXu2ho6Gm7osx2j+qZRcIJUY76M7nyYLCsraJrouBmDfClQd3Lrc6X48XXd59oEbooklRneBHYxXRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=niipu787; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDABdPW006448
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:45:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+py4yuAWBmdgeW1jPtgIlP3H1NVXLVQsrI1tZ7iOqmo=; b=niipu787Rs0b8dCX
+	0NQOz72fcxoh6msFFF4aZASD9R/vn6eKHtZU9OmNgmgH53G/UoLz2BfjNGuHZ5Cq
+	PL2c8YOumVhZ31YOCMIxeUsDrEAf+ny/8rf30IatXI/oijdsQT8Nlw7bX6WTTHpc
+	z+Kfds7klzn+OSscqid69ObgI4nylWOYkmkSlgTv0SZ6LLJAKzo8uBgqG+VexCOn
+	dcWFUvJWBBcCK516Md7HACL/ePoU7Q6u+orZw7YJ8EG7CHSRBUVQTOhq5gUT6gWE
+	jo/+dhxCsqRCMrpnnm0gl/7oy2as+TyZ1MWTm0c5LRpClYkudCnkv4LhbaqkU7L+
+	/3ygMQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f6tffkxu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:45:06 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4678aa83043so4315201cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:45:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734093905; x=1734698705;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+py4yuAWBmdgeW1jPtgIlP3H1NVXLVQsrI1tZ7iOqmo=;
+        b=h9jZTgGd3Y7LjkQwKJ2cxipsaZRovGx/pIMbvXxwPHKXZ2kmJef/GN0IcrsvG6sKpG
+         V/BXtSre2kVqSrZzwyZ/sKaAyP0fmrWHHfAC6oKRxW+InxhzHUPcOs78ZpzJ6z4QIEH4
+         UZjdzgWqvzO6NxVX+Ibl+TmQO8oQyG9X2sCGVA46WQ+tYAFyFq1j+xjby9LDlEsMLCwT
+         DZJHarH3LRw4H0fbSH3L1ZpImIQRls/WkvRjcuhf3RUipSzT/vT7Nq8T+sMRZUEsnAJu
+         w5bnA+ZZ7r+i71ZwKnK0YOOt/1ulAqSmi8GKkCd8yOTZidVBsZ9HXSCn3zBp3wnjUwT7
+         vnmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX25PtlsVgNOgDfGoc5EjI0HRY4unTKCm1N7G5Guo+71j9/zUbItYUF2LJb6XvwXOC24usrGxg0YWQkpvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEDM8GISghA/I4uDIJWY1YU1m6Yhm0teDkKiNq/LRuKQi90Fcv
+	9NN+ewCvO6Ad4kSPIQflISlwxOmFuhZOKy54/6XyjZ55V6oz/+4JQrhSXUpIWmHsOAFUHKoPuci
+	DBJHD+dvsOCfJK87NjO19Aek9UmrNqQbchWE46rYdJ5Zth7mk0Jqz/Ji/z96/3hQ=
+X-Gm-Gg: ASbGncvWrrSgd4XE2fo4iIVwroycBUzzsTjgYp0QcGW5pmS8EvQinPEc9nSJ+BMmZK5
+	IBl4NfcuckCTXe4xryL/Z8oZnyl9de5TowxzMrtsEXDfveJrRi0JvHnPWEVegzjng3qyqJfguwk
+	T/cJtz19dZkNUKPtVCtmHX7+Iqi+y+U4wwF+O+x3EojJsLFOcx9upEheK2O48CfUdWJxpoq0G3Q
+	E2EUJk+6clvF1XgiO0sJUu9X+3igLyZbbLB8ymhF0uKXbzzBBHuHGlgy2mXvJBTyrcMfxs7TW6M
+	bdcWzedyKoKOjeCUzjDSRxLZ4OgGrbA5fzA4
+X-Received: by 2002:ac8:5dd4:0:b0:464:af83:ba34 with SMTP id d75a77b69052e-467a580084dmr15701021cf.10.1734093905508;
+        Fri, 13 Dec 2024 04:45:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGWpBo8jDKAUGFcsAt5h3utlrt4X9Lyu++J7Nctz8IrQCa+saJdAY2YnvB6PCnanR2c4n+x3Q==
+X-Received: by 2002:ac8:5dd4:0:b0:464:af83:ba34 with SMTP id d75a77b69052e-467a580084dmr15700481cf.10.1734093904269;
+        Fri, 13 Dec 2024 04:45:04 -0800 (PST)
+Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa699487854sm592175166b.13.2024.12.13.04.45.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 04:45:03 -0800 (PST)
+Message-ID: <3d54859a-0f10-4e67-a05d-be5546a949f0@oss.qualcomm.com>
+Date: Fri, 13 Dec 2024 13:45:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: dts: qcom: sdm845-xiaomi-beryllium-common:
+ add touchscreen related nodes
+To: Joel Selvaraj <joelselvaraj.oss@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Joel Selvaraj <foss@joelselvaraj.com>
+References: <20241208-pocof1-touchscreen-support-v2-0-5a6e7739ef45@joelselvaraj.com>
+ <20241208-pocof1-touchscreen-support-v2-2-5a6e7739ef45@joelselvaraj.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241208-pocof1-touchscreen-support-v2-2-5a6e7739ef45@joelselvaraj.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: HvJJSY94o3XGd7hBtszb07Qf3yQR8x_d
+X-Proofpoint-ORIG-GUID: HvJJSY94o3XGd7hBtszb07Qf3yQR8x_d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ mlxlogscore=772 malwarescore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130089
 
-"Greg KH" <gregkh@linuxfoundation.org> writes:
+On 8.12.2024 4:23 PM, Joel Selvaraj wrote:
+> From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+> 
+> Enable qupv3_id_1 and gpi_dma1 as they are required for configuring
+> touchscreen. Also add pinctrl configurations needed for touchscreen.
+> These are common for both the tianma and ebbg touchscreen variant.
+> In the subsequent patches, we will enable support for the Novatek NT36672a
+> touchscreen and FocalTech FT8719 touchscreen that are used in the Poco F1
+> Tianma and EBBG panel variant respectively. This is done in preparation
+> for that.
+> 
+> Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+> ---
 
-> On Fri, Dec 13, 2024 at 12:30:49PM +0100, Andreas Hindborg wrote:
->> This patch includes changes required for Rust kernel modules to utilize
->> module parameters. This code implements read only support for integer
->> types without `sysfs` support.
->
-> read-only is VERY limited, and as such, only good for boot options,
-> which as I mentioned before, is not how any "modern" kernel driver
-> should be doing things.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-I only added what is required to get rust null block compatibility
-going. I did not want to add dead code - I heard that is frowned upon.
-
-> And no sysfs interaction?  That's going to confuse the heck out of
-> people wondering why the option they added doesn't show up in the same
-> place it normally would if they did it in C, right?  Not that I'm saying
-> this should be done at all, just that this is going to be confusing
-> right off the bat which is probably not a good idea.
-
-No, these work the same way as their counter parts in C. They reuse the
-same C machinery. They just only allow the user to specify a subset of
-the permission flags.
-
-The C null_blk parameters are actually configured to appear read-only in
-sysfs. I guess I should add that in a follow-up.
-
-> Friends don't let friends add new module parameters to the kernel :)
-
-OK, that makes sense. But I'm trying to build something that plugs
-in where we currently have a piece of C code that relies on module
-parameters.
-
-Jens, would you be OK with Rust null block only providing configuration
-through configfs?
-
-
-Best regards,
-Andreas Hindborg
-
-
-
-
-
+Konrad
 
