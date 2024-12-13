@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-445716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEE69F1A3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:39:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33F89F1A41
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 700FE16384F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A42188E35F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBB71E5721;
-	Fri, 13 Dec 2024 23:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C091A8F94;
+	Fri, 13 Dec 2024 23:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ilfxwnlr"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Uvyt9x9+"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DA11B5ED0
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9741D1AB6C9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734133072; cv=none; b=rASqA0eS7ujpE/nrm7/tptr4+tu8KDXdP3RwCGA0QXrvcR6Me3HJ+3dqd96bY2/pK8lpXV22lozABXU3ZQ2m0AiTnP8VhTR3uzlVGH7AhgpBremHO8WsBTINVmY1gEbJzTwdCEMZvsIwrlE5014ahaa4RGWglh2kBkqdA+Na2SI=
+	t=1734133392; cv=none; b=pq3VJEYJ//ko4cQPTF8zR+6RpnJyihGAgOaYiYzmFG0UGfpy55grNrjAyFzXRHtJ3wwVEAgoJ3Z4kqbl9oFDMzgLNF89DvR/m7ghL2bdAlG8mHlrQEwW5W0olVTEr+0qs5fvhC6OvY+yE6JOsEIcPYGGwNTsEHMh2PbhRerXWcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734133072; c=relaxed/simple;
-	bh=EYQka2eEcKnLaAZZyxjkEjdgBi4TldqPEy8LhkOLXFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YpMedj5dk3q/WQw8kqZhWHa0aJQuwfu1RtmzXk1x/v5082YCnaAhMWRRvN+kioL/tBpupadNi6EG21pDN4jQUzx5dGpPeFAHwiRk4A3g2jKIxZsSAg4cL1OKRw+TmQE8nU9ATIEH0zxsPd0CJJg/F7+YdwashOKnnUfo/4UecOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ilfxwnlr; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IETbRn3VqGD/a2y5jqYQQtPGrkqxTZz0g+dvOeb/DjE=; b=ilfxwnlrKOoEcUk0F5V66FkFLd
-	q1b7RBsc0SS/zw9aM15DvtDGeEZo+xgbN592GknU4zillS2HQtjbTiCa8jBolPMOOvLsOYq8rUNGA
-	lKUT2GF6dQCzNbSJetK1rk6gZ+v9uSerwFpZgC07gprOj9PHyG418RZeYxa7EiFN2XGBPiad/SOIR
-	Uqlde514vnqkWlJxKpjbH5W/zW26VwLFGg1MYD9wASjPf+Cx2H8xQoK3tyzxF66cxAi1v+e/QF01K
-	mC31gU/zlJMvSzXc4R7lufBRgFHM2vw5w6pVlQtC0z3Fjg6nztctEnthPHofaup8P4Vfqo9uLMZAz
-	d8faYPnw==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tMFE4-0000000GW8C-3dst;
-	Fri, 13 Dec 2024 23:37:41 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6B7F430049D; Sat, 14 Dec 2024 00:37:40 +0100 (CET)
-Date: Sat, 14 Dec 2024 00:37:40 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
-Subject: Re: [RFC][PATCH v14 3/7] sched: Fix runtime accounting w/ split exec
- & sched contexts
-Message-ID: <20241213233740.GB17501@noisy.programming.kicks-ass.net>
-References: <20241125195204.2374458-1-jstultz@google.com>
- <20241125195204.2374458-4-jstultz@google.com>
+	s=arc-20240116; t=1734133392; c=relaxed/simple;
+	bh=g6LzPVDAC/w05vA9m81+JnaAYi9R2afMBfHb5xaaD9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ehy1m0LDjhZ3ui2ZPqvOHgFmynOU5BWyDqOeV0yI7hFhiBM/kDviKLK1mLfQLJiGXPw0E4Cy4So4TkLwkJNfFq51w6lQHVhHe5SHB46DfA1d4VYyWiFm6sUnqLc1YkYgbQszdDw7APhlMgH8cKKslpZQI1Vk7VZaGC+2KsKrmK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Uvyt9x9+; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-71e2851de95so676232a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:43:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734133389; x=1734738189; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=kAixFUvh++BurSMkwv5vN8338veAVkTLhHRp3R2yZxQ=;
+        b=Uvyt9x9+ZvL+2YVCKqyu5LtcrpE8s+mfqibir6TlhtoTq7vnZKuj+Q0iMSQ21YkDgS
+         tFlAg5JQZ+JDEOiV7EFJ//q6+79EapXttLygpGGzdVPbqsApmyP9VfrH/efK51o317IW
+         I4hEOLUbs4UC1ZTL9DpGdXU4ZIjSt8SQTKOkv9fnXTvyHVdnLXhuOSnW5thqtKFkcSTq
+         zHTBnz8qVOCOCsbngPeDR4pJFozwfOM9ldkSY38S56a67AK8OIGbAWRhAvg+cGKnK73w
+         56gOEOKyY6QZXqfaVD9xqy+zqzfGBclhegOAdiIKrjMS2/x5zLYsN77onzQ6v3QcnTYY
+         8Prw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734133389; x=1734738189;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kAixFUvh++BurSMkwv5vN8338veAVkTLhHRp3R2yZxQ=;
+        b=TXPUQuMeS1QFZpouf9IAPeSoGCsTUjCJzYSTJO5sAz1XC7xzccI4QVk67xUGAhFdqR
+         Z5cgsvPBim3c0L22GPphdoKNr3rhgkrY3Lh/YrghK2QwGJygIbiH/dqLs6xeLx4nh+Fv
+         fezeyfS8uRHjmMW83NJK4ow6H84C9morfJ/6pEJPdh6ra9KTgfxfWMsmJHZ1bmSB5lLn
+         TR0PyeS74Oj0nf/ls5Ji6V75TpFhmwh1DbH8WO6pFSXiDUe7tMu7yNCLQj4hMgHdg+2m
+         QKsPm8S0lGED7NXbPpJeyiFm1+ptJwnsakJecGfvbmf7j6RG89qYw5GhbnR1PQOUEa0g
+         azpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPV0Kd34oMAWmsdNm48Dsp430lWnHALnTjL55cTGKr5dIpReuqOBmwWDfBB+idxBA7FqK5LX8eySFhfWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE7yDzFmQLWDTBL0bseDBlHpYjSXcSQnx2vqDEOSJwNpXPfG8K
+	F6gPZLB/YSM3RuIbKUWPXba4HqLz8PvKuJYJ3DWQYnr0IxCL6YoOEd72plJBwsw=
+X-Gm-Gg: ASbGnctRqCMoUTk0vFdC+gKLez2OTcdwshUGRevyEaS7qvQZLVgrAHQNr54SZYUV+EF
+	XuIAdy+yOBAqFkIBUU8p87rI8aw5QzH4PcjysRMkZMB7smN1gB/jh3UM3v2D8Fo/FELTysYajzf
+	cJd2klocigUiNGooLazAibFiJsSsnFx5qZaOvmuMIND8we4rbab0XPesD7e0DN1ut2aS3hEZFUr
+	ASrTVO7rGZLsOV8N5Bqb1VeMsv6jNVLf9iRU/nuG6izA9irNrxRPH+e08w+DJWYTBrvJsZNjdMK
+	kSjM3fVDrXg1N16aww==
+X-Google-Smtp-Source: AGHT+IHNZOV5c740YHYR+v0obhIdti/m3jkuM6vF+0vNZPknqgd1GPEaToKR/m8TrGe5zgpMrsnlwQ==
+X-Received: by 2002:a05:6830:258c:b0:710:fef4:3c92 with SMTP id 46e09a7af769-71e3ba26862mr3269055a34.21.1734133388498;
+        Fri, 13 Dec 2024 15:43:08 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71e48370f23sm157126a34.37.2024.12.13.15.43.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 15:43:07 -0800 (PST)
+Message-ID: <2f7c5893-695c-4633-9142-10e70c1b3220@baylibre.com>
+Date: Fri, 13 Dec 2024 17:43:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125195204.2374458-4-jstultz@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 8/8] iio: adc: ad4851: add ad485x driver
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, jic23@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+References: <20241213164445.23195-1-antoniu.miclaus@analog.com>
+ <20241213164445.23195-8-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241213164445.23195-8-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 11:51:57AM -0800, John Stultz wrote:
+On 12/13/24 10:44 AM, Antoniu Miclaus wrote:
+> Add support for the AD485X a fully buffered, 8-channel simultaneous
+> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
+> differential, wide common-mode range inputs.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v8:
+>  - fix kernel bot warnings.
+>  - drop optional members from chip info struct
+>  - drop final line continuation
+>  - drop ext_scan_type and num_ext_scan_type duplicate set.
+>  - create common function for parsing channels to avoid code duplication.
+>  - add comment for fields not set in the parts chip info struct.
+>  - add safety margin for pwm duty cycle.
+>  - use FIELD_PREP where indicated.
+>  - use chip resolution instead of chan->scan_type.realbits where indicated.
+>  - move the reset procedure before setting refbuf/refsel registers.
+>  - use iio_get_current_scan_type where indicated.
+>  - refull and compute scales if osr is changed.
+>  - take into account the osr for the sampling frequency.
+>  - drop num_channels division by 2 which remained from v6.
+>  - drop ad4851_scan_type_16 since it is not used.
+>  - change sign based on diff in iio channel definition.
+>  - shrink same register writes into a single operation.
+I'm a bit confused on what the intention is now. In v7, diff-channels
+was added to the DT bindings but in v8 it was removed again.
 
+Did you change your mind internally again? Or is the intention still
+to specify single-ended/differential in the devicetree?
 
-
-> -static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
-> +static s64 update_curr_se(struct rq *rq, struct sched_entity *se)
->  {
->  	u64 now = rq_clock_task(rq);
->  	s64 delta_exec;
->  
-> -	delta_exec = now - curr->exec_start;
-> +	delta_exec = now - se->exec_start;
->  	if (unlikely(delta_exec <= 0))
->  		return delta_exec;
->  
-> -	curr->exec_start = now;
-> -	curr->sum_exec_runtime += delta_exec;
-> +	se->exec_start = now;
-> +	if (entity_is_task(se)) {
-> +		struct task_struct *running = rq->curr;
-> +		/*
-> +		 * If se is a task, we account the time against the running
-> +		 * task, as w/ proxy-exec they may not be the same.
-> +		 */
-> +		running->se.exec_start = now;
-> +		running->se.sum_exec_runtime += delta_exec;
-> +	} else {
-> +		/* If not task, account the time against se */
-> +		se->sum_exec_runtime += delta_exec;
-> +	}
->  
->  	if (schedstat_enabled()) {
->  		struct sched_statistics *stats;
->  
-> -		stats = __schedstats_from_se(curr);
-> +		stats = __schedstats_from_se(se);
->  		__schedstat_set(stats->exec_max,
->  				max(delta_exec, stats->exec_max));
->  	}
-
-Would it not be *much* clearer if we do it like:
-
-static s64 update_curr_se(struct rq *rq, struct sched_entity *donor,
-			  struct sched_entity *curr)
-{
-	...
-	donor->exec_start = now;
-	curr->exec_start = now;
-	curr->sum_exec_runtime += delta_exec;
-	...
-}
-
-and update the callsites like so:
-
-update_curr_common()
-	update_curr_se(rq, &donor->se, &rq->curr.se)
-
-update_curr()
-	update_curr_se(rq, &curr->se, &curr->se);
-
-
-except, now I'm confused about the update_curr() case. That seems to
-always update the execution context, rather than the donor ?
+It really helps reviewers if you include a cover letter and explain
+the reasoning behind big changes like this. Otherwise we are left
+guessing.
 
