@@ -1,117 +1,113 @@
-Return-Path: <linux-kernel+bounces-445555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267FF9F17A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:58:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F709F17AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E3C1888112
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:58:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B0127A1460
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CF518D649;
-	Fri, 13 Dec 2024 20:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1231922E8;
+	Fri, 13 Dec 2024 20:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P87UrOQW"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViBArYUm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E348D18B492
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 20:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B3818D649;
+	Fri, 13 Dec 2024 20:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734123491; cv=none; b=d5tK+KOAxmJbYSY8qQkKfWVZwuDNBMQqFzOl8SgBnx2r8q3CQRhzvi1+kIHUf4B72jYeXxfrZoUSl743K1vpH7V2Mon3+ytkK2mM19OaOhCyG9PurLlweS1KEsGpOFFM54p+MMDGH/0Ngk5fLnx3rMn50Djpj7x45OrBaq6RJio=
+	t=1734123586; cv=none; b=Nxp5CVNDNaxqzJkqTFjjSrareSXSJ76Qa6pBePqR/nbcszbMXI/qAJSU8xzCv0T+6pT20EZl1rP1IGbbWP0LhxENpwD/LqmPY3wiZrDW1LAM2to044YSpeaYony1+Oye97gFV6c0j8yYoiijnwF4VhWyidXSqu3NalKrkm0S8/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734123491; c=relaxed/simple;
-	bh=AMFyDa2waJbDtQEqF+pSjIPS4HLmTfo1/bF558eIdmg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JVcqoRYenDNQm5hYYQFjf1K102gsbkpO+3xuE2yGE2Kgx6H0BfftXcoCILdRYzk7iiQaYXDnhcJwnlcF7pYeHrXNRFqQZXs37RztHVKuNoXqZSDtHprMJdSE+zVqI+fMLgif2vipgUka4Ftv7q88mqL+ILRXsoMncLwNj6FR2yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P87UrOQW; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a814c54742so1705ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:58:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734123488; x=1734728288; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5IPebKZoDc4cq9RTO8NfPXE4gbH6+uaL4YtlB4CSwj0=;
-        b=P87UrOQWns11tHNT3QYfL2kce7eVQ8rOxD4r6O472KY10AK8sYRiq8zAVinhnOmDud
-         q3Wmp/cBkbt1t6UdPEQvdO003+e6Qc26qBA9WTCAG6Wp9DlpNoAbvPbJHUeSi85iDCFr
-         BxSgxN75zHuWtrv8XcE7MKTMlRpMNwAXLJZWXZJY7oxmWTZTeZ259KXhjXtS8x830pRt
-         sWA8Z5VfWH9e4hhwLl+kcDbXqGE3CAtg3cTRlvMQx19+jJcawBeZctcjQdAlozTpVkOh
-         r8f2oMLLNoJpS5zSt6Vf8ZNoI6hG3cwTsFK3IPaU2GkwGqNuBFbW2luBWzCnPyQHBueV
-         LraQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734123488; x=1734728288;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5IPebKZoDc4cq9RTO8NfPXE4gbH6+uaL4YtlB4CSwj0=;
-        b=kNR6lvdUhzBvsZ/JO2CxzZm7y1FFjUBdXopDcgM+fBVozkPufSV/9+F9mmuE4O/MKs
-         W29IwT0+BJ1L+Y75S+ihp1NOT9kw4nTgjXpHTT1QZqEtjCSFvR7DZZyd9nSOQ5AgLMqC
-         vkpSnpBFXjQ5LsDnDWw9ifFaNmdMimUDB/XMA9tkziBsXIps+pm7gyC0IWUAKBk8sn7+
-         Q5of+UuxERJql6EIXQMEc7ugt59u3S3Pcx5Uj6KxaArywwICWC3bi+g2q7kXdN+wHmat
-         1bScCXOh4oVZZft/asIsGb6jfkujI9m90a1E8Y/GDwtxH73mQieIZVfjjnMLIMXNpquE
-         EYmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/M4Ok2OsuwsG1AulQ/ihCPZfdAsmrO4z8o82vsYRwxsCCSIKddHpUdPd6refGYo1vudn3qnkZ7AqH34E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzMT8kxHeAutJGfWa0UnwnebGpuahcfnQBcnFfh3ZDDH4bk83s
-	G6AY//qgK2Oad4fqghMvBWPWspiXSpBGdY2y/crEs5pPxhqrzeWA6lyqlWRr7ZbNkJWzfCOdDtW
-	F6RhZBd7cFQmKEuRYGUJv7G+rUdkqoGEZJUmr
-X-Gm-Gg: ASbGncturEp57XAPwmjNpBNIME5iSjMH1/JGiF30bBBft1rDjHCp+vydDIYPjgorLkq
-	LdjKt8c5kORnfaHXUsu/RSoWm4VWPptafnCfAzDE=
-X-Google-Smtp-Source: AGHT+IFSYEl59MfLtXFXH4y2N6tuuaJ6F99N8iq1eoc67wUQ5QCGC8GRoRh8B300l5jEa9E2FeJkBl8QXCNaiL7MWL8=
-X-Received: by 2002:a92:606:0:b0:3a7:aa54:ce07 with SMTP id
- e9e14a558f8ab-3b273372381mr518825ab.22.1734123487953; Fri, 13 Dec 2024
- 12:58:07 -0800 (PST)
+	s=arc-20240116; t=1734123586; c=relaxed/simple;
+	bh=3YeXNRuMlfVX6Hhet1HpVXgeP/aknrTTP+vGGNpXpjc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=CW1KBimY+qAEo+1smQ3DOBUEHNPsyLTYroBs+UYK94VGMoe49+7j0npAAXpl7wqx/LK3MPNr6GknvMvTQ6Z93ExbgI+kDuhp09JiCVKDLut0tsbX7ZcIJb9T/3Gjqj+zEaDarFLPcCrE6ez8TZlQzSmDSo8Lga6FraiMf5kScuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViBArYUm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC08C4CED0;
+	Fri, 13 Dec 2024 20:59:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734123585;
+	bh=3YeXNRuMlfVX6Hhet1HpVXgeP/aknrTTP+vGGNpXpjc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ViBArYUmb9BzzmdssN/eFLBwD7mumFs6DhJfSjAYclv/tyaVkOz+dywIyF9TNdksM
+	 GZul+0ue60VwLSS0ZHEIsxjGD8B/6Imm8As1JBpgLck0HlpZlRo2Io/2h8qevSjjGi
+	 G64MO3GmZ1mYrK5zNXWT5iKQgzgUeRb8Kh6GkazKGBwB1rYdeGUxxnI8q8Y9rwH+Cu
+	 TRtMkOKpYnWoBsz8jypDRE4ZTezfQLYmfNRtUoY89lAOQrhCWzNdew6I4i3VG+EMt9
+	 7oufkfEJYwbNUqDnQEqTAPvGyByIbStIs+ApQAD6c7x2xskwo+KtUoMmQitctqd+3W
+	 kGz9f5fwOsxLQ==
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-71df1f45b0cso1540573a34.1;
+        Fri, 13 Dec 2024 12:59:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWCP3oFppDsuxwxS0EUXYHkAkJpQYlFlemJAgs/JqZ+NwuNLVoh77E4kjUhuGxw1RfFwgDXhjqPXPe4MIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd502++OPUYXWrCLSKCiVi33wZbmvliVlCVMr4LiNRdZ7T1XbC
+	l2Hcxo96pejcHwZIhyASSTzuAbumiksgMmFf87eeYDSuCV19ENxRwKliF3QRzRI7u21uLrHe/Er
+	lsKscA5Af9yGn7GwqRVwRoNxNwqs=
+X-Google-Smtp-Source: AGHT+IGLAq/W/0zIYeNA1tor36qZBAEe1/RBhRZj2dipXb9QgpFBYnYJ7ax5Q4KU8c531JXayYOQ+01eseK2/Uma3IA=
+X-Received: by 2002:a05:6808:1892:b0:3eb:47f9:a7fa with SMTP id
+ 5614622812f47-3eba6bfe393mr1944660b6e.21.1734123584856; Fri, 13 Dec 2024
+ 12:59:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241128010325.946897-1-namhyung@kernel.org> <d40c6d0e-3755-4cfa-bb9e-e2aa520edb0f@linux.intel.com>
-In-Reply-To: <d40c6d0e-3755-4cfa-bb9e-e2aa520edb0f@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 13 Dec 2024 12:57:56 -0800
-Message-ID: <CAP-5=fXAhYGmBpnCZ_YkePAD5hOpiKoXZ8agHWPi_wHyzjWyTg@mail.gmail.com>
-Subject: Re: [PATCH v2] perf tools: Avoid unaligned pointer operations
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 13 Dec 2024 21:59:34 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jUChwwKBfcPrUJ+05ULOJ1dtng=f=7T8iHjBce3k5Bhg@mail.gmail.com>
+Message-ID: <CAJZ5v0jUChwwKBfcPrUJ+05ULOJ1dtng=f=7T8iHjBce3k5Bhg@mail.gmail.com>
+Subject: [GIT PULL] ACPI fixes for v6.13-rc3
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 28, 2024 at 6:59=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.c=
-om> wrote:
->
-> On 2024-11-27 8:03 p.m., Namhyung Kim wrote:
-> > The sample data is 64-bit aligned basically but raw data starts with
-> > 32-bit length field and data follows.  In perf_event__synthesize_sample
-> > it treats the sample data as a 64-bit array.  And it needs some trick
-> > to update the raw data properly.
-> >
-> > But it seems some compilers are not happy with this and the program die=
-s
-> > siliently.  I found the sample parsing test failed without any messages
-> > on affected systems.
-> >
-> > Let's update the code to use a 32-bit pointer directly and make sure th=
-e
-> > result is 64-bit aligned again.  No functional changes intended.
-> >
-> > Reviewed-by: Ian Rogers <irogers@google.com>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->
-> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+Hi Linus,
 
-nit: The commit message subject is somewhat generic. Perhaps "perf
-synthetic-events: Avoid unaligned accesses for raw samples".
+Please pull from the tag
 
-Thanks,
-Ian
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-6.13-rc3
+
+with top-most commit e14d5ae28eb28c5edef53bd648037d2bb4fce1b3
+
+ Merge branch 'acpica'
+
+on top of commit fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+
+ Linux 6.13-rc2
+
+to receive ACPI fixes for 6.13-rc3.
+
+These fix two coding mistakes, one in the ACPI resources handling code
+and one in ACPICA:
+
+ - Relocate the addr->info.mem.caching check in acpi_decode_space() to
+   only execute it if the resource is of the correct type (Ilpo J=C3=A4rvin=
+en).
+
+ - Don't release a context_mutex that was never acquired in
+   acpi_remove_address_space_handler() (Daniil Tatianin).
+
+Thanks!
+
+
+---------------
+
+Daniil Tatianin (1):
+      ACPICA: events/evxfregn: don't release the ContextMutex that was
+never acquired
+
+Ilpo J=C3=A4rvinen (1):
+      ACPI: resource: Fix memory resource type union access
+
+---------------
+
+ drivers/acpi/acpica/evxfregn.c | 2 --
+ drivers/acpi/resource.c        | 6 +++---
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
