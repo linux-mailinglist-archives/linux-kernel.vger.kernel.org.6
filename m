@@ -1,461 +1,204 @@
-Return-Path: <linux-kernel+bounces-445449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE289F1692
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:44:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0CC9F16B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:47:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C93C286095
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6884016C1B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAB51EE031;
-	Fri, 13 Dec 2024 19:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB03190661;
+	Fri, 13 Dec 2024 19:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m58Nghcb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mo2N9yUJ"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0D11EBA1C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 19:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734118730; cv=fail; b=YM8yh7pHuckLY1ebmPddGVHwGnfR3XQiDK94zu4Hzx7n+9LD8tjXa7RZzj6dLmCZkYWCVDaaiYTVxNpd35CjRy8QuI9hA5saY3NVKCoDJaIhZwAA/XlE6INDCDX6PnAzW7QZ1Y7ff/NsSCutrGA2nVPJCnpbwkG2f8gvxtbVFzE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734118730; c=relaxed/simple;
-	bh=1d0oLUX/fe/b9ME1nrvSUfVn1aVu/NzYtiR7cxMw8k8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ExHNe+IEg47W6TeuoQTlqTuH/8PtOUMcWs9p6fQwpJ2yTYZ09QgaH6KrzRI8L3+pKO/bm9LICcFTaq/1yiqclmYVkNzxhCFAy0OzQmnrUrMGqB0AT/62qRnbXHymCfCx8nIa21NofchXkocfuj7uTRN0wLHd9yH7hEGL9GOZz6U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m58Nghcb; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734118728; x=1765654728;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=1d0oLUX/fe/b9ME1nrvSUfVn1aVu/NzYtiR7cxMw8k8=;
-  b=m58Nghcb3PdPfuSwe3O7hWm/dCtxOOyqHKHrtlrQ/3/XLCFUMgJxPwsi
-   uCc2eLqXKhaTPCJRFEoBicxfdLHVfrPZx6hjZpSKA4M1tA3xhfAe6PVkp
-   4AA+qXEezyJgdc0oNpjLMWMIS+CkFMuI7oKjDs8CJN2qmW+Rn8dMgLffQ
-   kRhy/AtJUyjO0kYHtBaBqvyWPPvyS0o8uMNBuyVuf7PYEtPh4F92j4vaW
-   ztQSbO//9Jk6BUu2SaRpt/kOLJ9rrq1Mig5965qMdWYANFViFOeDV6NOd
-   K29SAwT41LFPfFZci5E6ALtNPS8DBma1vUuczmoT6/7miEUHLF+hEBThs
-   A==;
-X-CSE-ConnectionGUID: YsqM0OGHTZOu8+nqFNbbuA==
-X-CSE-MsgGUID: 9X6627pRSPWj03/jLES0eQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="34483456"
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="34483456"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 11:38:29 -0800
-X-CSE-ConnectionGUID: RlzQhfK+SYGxBtueOlbw8g==
-X-CSE-MsgGUID: gBFzAntuRBqi0PbMk01nLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="96489450"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Dec 2024 11:38:30 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 13 Dec 2024 11:38:29 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Fri, 13 Dec 2024 11:38:29 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 13 Dec 2024 11:38:28 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lHjU8TCB9nOwMHVTG5fQmwOuaCorAlNOdYOt2RX6EPd+4xxHq56yPRijI2kuUF8U+RlnWKR4klM/Gqy/GjLwNG3NWrRt+AamYR6V2sL2l/iZ6h1r0s2hoH3qSCXNqkPXf4i47tfBJGqN1Rizipu5mSncF3glju/DTWjfhbtxonsYhOtaMTtGo4VbhlHDoGOlPXOD4WA58gHULii16hKXgS0E5m8YpBR+5BIe0SGVHRq1yLNWtdoNjBzkXtATcjU0hhnVQWZzliFssEOqe88hGeZ8w2Plrt6M9DO8VW+ZQAax+0PwaetqvmOI8PHaugppluR5NHZ2EVZY/UMeAOgjYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZgFY0c/v+y2hLIsFy/B2gg0bIgxKjWo2tBe6J4zpe88=;
- b=cFkJpWGCHVRZ6OtGFvPA04jAQexVe0faJn6abbgkBrn9gpy1ABdyf1xQeOybHwkh75V5BdOH3z9OrLCzM8ofbjGCzNZvPZMFrEAf7X79RnUflwV7asKuGclyuyUBgxZR7JRpI42gDizBZiiVP7uqtRExS/Ii2Q/TuCtPulgrpwuoFdRrgvQEM1WtngnbKFhan482xoLH2pmLRYV8j2gUxdPuYzYNyScneSpnEXwMY20+bcIZMJARS7dnCa1Obu5PFBVpEcr7f1hKaU/TUs2RSE9oguXitrDpLfI1qz+xGFQfonj49zSpk0a9MhOyy+rvxoPPwuKtYAVb6Oz4ucj7cQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by DS7PR11MB7740.namprd11.prod.outlook.com (2603:10b6:8:e0::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Fri, 13 Dec
- 2024 19:38:26 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332%4]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
- 19:38:26 +0000
-Date: Fri, 13 Dec 2024 11:39:08 -0800
-From: Matthew Brost <matthew.brost@intel.com>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-CC: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Mika Kuoppala
-	<mika.kuoppala@linux.intel.com>, <intel-xe@lists.freedesktop.org>, lkml
-	<linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-	<dri-devel@lists.freedesktop.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
-	Maciej Patelczyk <maciej.patelczyk@intel.com>, Jonathan Cavitt
-	<jonathan.cavitt@intel.com>
-Subject: Re: [PATCH 14/26] drm/xe/eudebug: implement userptr_vma access
-Message-ID: <Z1yNXPgAomYoilvc@lstrano-desk.jf.intel.com>
-References: <20241209133318.1806472-1-mika.kuoppala@linux.intel.com>
- <20241209133318.1806472-15-mika.kuoppala@linux.intel.com>
- <ec42fe8b-9be0-41cc-96f4-f1869c6bb7e6@amd.com>
- <Z1cNQTvGdAUPp4Y-@phenom.ffwll.local>
- <3c1cc9403eb50bc8c532d180f766eb7a429e8913.camel@linux.intel.com>
- <Z1q3F81k2TkUzKW7@phenom.ffwll.local>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1q3F81k2TkUzKW7@phenom.ffwll.local>
-X-ClientProxiedBy: BYAPR05CA0087.namprd05.prod.outlook.com
- (2603:10b6:a03:e0::28) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA0F383
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 19:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734119156; cv=none; b=ktMGwxpsrcUfSICJlzY7u5mAnwyk2g9CIHY7+vHLiHElwhJQQ5PVN2oeYov+yttY14L0RjPm1kJ6INb8mbm8Qx+4xdk1+4dixWmYvRt1Anb5FW7dVIaGyNTpnNvwzWJBuHWf+/cC2KxpzTefgXKrJ6mNNNbytx4RmH3I03CAcVs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734119156; c=relaxed/simple;
+	bh=C45oS/l3TMjrzyNFmdEFlaeWkp4K4nkYHgXrHiEutt4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=t1JklJ4/lGEVFS8Y8j7Qit04I4/Mmedeilej6GksxYgun1/Z/L02gz6mHqSyuYiZs0/p01rVlcF+5PPVbdxd8w8ggBuv+HVPe7vKT3WDBYn7hyYPQRRHGCL37SJKOmrJIkqE/DEAQlSPLXxu+xfkk1LxShOj1bUkbEtQ213P6SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mo2N9yUJ; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3eba783ec88so63756b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:45:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734119153; x=1734723953; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0vbTY4Hgki2VPY0Js9xYK7VSk929u3ZYFaX7VD85rXE=;
+        b=Mo2N9yUJ5YaT6mayGICNjZ/+VncwUrU5GhPz3pFdL8NZ7kQT9F96cUp7XCZl1VQIco
+         2kuFxn/xGoQV0dYTuKPcJ/gPaLYGM5Q7Z2W8LqHo1p72SPbU2AZmPkv8IGCnPIq82kxB
+         uaejZTZ1ilNb0FPpVFLsHFIWMHsarlAe09LZq9d/8OxjAYDOmZYCzJILMUkLmyJsFezp
+         oF2JEbXirh1rnOJK97OEM+1MA7AjXFfHRpKzOrC/PLSK3DKHtdOlt0D0N5h95MC+fif7
+         yCqB9cQxqO9irwcph82szkouRqIibdd6LvGD1cPkp4xFUVNG+JMAW7IMR1W/fI+KPWWA
+         W2RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734119153; x=1734723953;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0vbTY4Hgki2VPY0Js9xYK7VSk929u3ZYFaX7VD85rXE=;
+        b=QjleeMqpPO0d62h5loqwQkKMrhRMjJGDA1qUUj2VRM0lYyf/Ax+H1mfI7cwvEuznMQ
+         TPsYeX/86BaEXC1MwqVmlMWVSfk9L3d/Foh/afzKhMK6tSvsBLrHFTfLoZgkeK77tbPx
+         uk/koZw8n9B9qM2qYiH+80cNW1Xx7iUxXbc5lEWPiSre3AVPGALNPub93D/tW4S9yuLQ
+         xRWbzObdNmBhqPm2klwYWZs42EGlSKnHVP7CAxEJYdmUqs/Ac3QQ4v3Hf7atoEcWBH5d
+         kTg3ltZeLLn2yL0fjRdE1YLM0+ra9k2o4ng5yiS+UvE66Q9+qwPqNJkcsAmlUlbuHhjt
+         qlJw==
+X-Gm-Message-State: AOJu0Yyfhdhetxm1N3Vb6H/b26Fl/UO3R6m2XuLxowGRaAowGbG7t7z/
+	NfrejQTryW2E1aWyed21gxeKtQJs4AmKXPY81sSFp2FaHant/CClwGEJYYbmz/KYjVr9vfnvvQT
+	krvC7d+Vq7XJ7/jNXp7bjfD/GoUDdKzT+
+X-Gm-Gg: ASbGnctczr+pMaQBG6Blt+1AVt6iZj8+sfexycvAsaM2w69hV9rt/67xyOMX00L001R
+	dXqL9fDv+KeUSlz66fNLfSioxVOdtyQ8TETbjcg==
+X-Google-Smtp-Source: AGHT+IE9h1AU4ma9XxmCA9XgEBIyNhTCl7f4XJSJhEBRf56CPLMJ3IHKkAWMQXJ1OVVl9okMD63saD+v+3JAFkYl7/k=
+X-Received: by 2002:a17:90b:4ccc:b0:2ee:a558:b6bf with SMTP id
+ 98e67ed59e1d1-2f2904b6227mr2251154a91.8.1734118772104; Fri, 13 Dec 2024
+ 11:39:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|DS7PR11MB7740:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d648fa7-4c3f-47f2-3bb1-08dd1badb667
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?Dz7gFdUQOUS3YzXj4d0ajsdLJZj211cBStLQJLJpGX2jBB0Uc7y/Nvydy2?=
- =?iso-8859-1?Q?ePeNzzIAzEMDyzhV2d8LYmDVLzD0wx8dXJ+ydvp3u3hflbnr0brspVAJbS?=
- =?iso-8859-1?Q?OHakjfmPPKVFrUdFlyHpEUQT8MaEfHrWd4u6k+AxSv8Ct4ws/F20mY75bP?=
- =?iso-8859-1?Q?jkmb2Is05FqWvk/H0i7624gTeGO8MN23fwe2QCivdGmVXQQwl61birRUlr?=
- =?iso-8859-1?Q?uBd2AIWfvF/jqOMQZITafKX2acFsBAXqdsRmj60qJTIPjgojoa8LknPcUJ?=
- =?iso-8859-1?Q?FFTj6turNMtK80TxFu8h64V5Vy1LD4SgTJy9ufDsaJ6kBySKqzbSbZUaZg?=
- =?iso-8859-1?Q?RKXI7LeBPuM61pDTST+kb3UkntQ7aNbuMrhthaY5xAJGy4FJRAHCoIGF7j?=
- =?iso-8859-1?Q?l5BPD2LwilszjOkNFt06sJoGAP23pKWTy+1AYn4TjKf36jrWzvk/2tldsh?=
- =?iso-8859-1?Q?BGmU3Oe8s09CFXHV8QdmqrPJW2NAW2GUYC9Xsq93qDD2NpkMEaRhM2bUyJ?=
- =?iso-8859-1?Q?nC3R7AGmnYlKWcLQ6qARD+/e3mOz0GIknWHvwMwECes2euk3HpUmOr0jYo?=
- =?iso-8859-1?Q?wNUk/uLptnTiMVFVBujETNpBSjaI3oFMh/eUvsTY07tk0iuDofUEDpZPx3?=
- =?iso-8859-1?Q?w2v8kh6rtfXHYwf6/ukEf8lAtWQrlD4GlXxaNZjEhmbJPoemc4y8aFi9W5?=
- =?iso-8859-1?Q?1q7Ig+ZGSL6UMsvR4iST1VIsapIYFGVMgdo90vrxdMh778YlFlM6RqQNT/?=
- =?iso-8859-1?Q?7tSQmZ1UY3gZ6mrVuXUKysOYkpRhWJW+PoyLRfj+zw9B2kejAd47r4xeIK?=
- =?iso-8859-1?Q?cxUaWglR4L6tXEhqdTQ5a4s7UB/uiklnJPWuRQd0xasNKE2F2kLeHj1OtW?=
- =?iso-8859-1?Q?2wlwLuo5T77imSBuh1pWZWUw7e9WGpuY9A0b7X46cuGX3j4yrYuGBIIvwV?=
- =?iso-8859-1?Q?Y++CIG+BbmmutKQjJ9PgyDlmyrhoGET1ZR8w0ABe4Ogh1OnNUr9os5zR0o?=
- =?iso-8859-1?Q?SfeM3qr029iayUkK/FphPQMKLyWqGBHVuMfFmJm6y0CYHaZ6nSXuKZm6ig?=
- =?iso-8859-1?Q?nGf+LkVUAv6EywuOpHyPpBAM39oF5eslxVr+BlveiFkBW5XjddVL2FhK3F?=
- =?iso-8859-1?Q?HMR81Y3xZzq/KqgA4Df45rSAX22OIYWbuURNszAuusguJ425jDnsWUfzK3?=
- =?iso-8859-1?Q?s/dVTugluP3oxKANHeD0V0kCPrVZxFc2pPAYUGAUJ5hSqtDoby0BwfXL/z?=
- =?iso-8859-1?Q?ZANPQrpJszvrYHlkoFlEV7uZ8VkyKhYIptf9/mYkkgEneRP82RyqU/RcaT?=
- =?iso-8859-1?Q?OkdWVRvE30rDCK327c4xhcWKKbR6x+t5cgVc4dB7NHFc54c=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?yyaeGrDSkBIoQt4j9niPz26EWgA+xPEmFFQNQIAe4r7z31TV47Uq1dGlrK?=
- =?iso-8859-1?Q?eLAdZ4eh20KZXaIcxyX0whSmX/CXEwre10xNyGBiZIxXMF7VH3pWOe5IdD?=
- =?iso-8859-1?Q?uuHEouRIOEWyb4/BNj1nGmeHyvqbREn9gJ7BCpG7ziLHrnVCShaMh2c10t?=
- =?iso-8859-1?Q?g0Ccq5jvmyK2i+xPhUn9UQVYtFxwyqpQUQSCy7dB1qm8GrjEgawAQFYBK5?=
- =?iso-8859-1?Q?cnW+e0LkaHDXP0CKrccPyATO0cXQ3U+aJRi4+zaDRfZycukdOFpLL/3VRZ?=
- =?iso-8859-1?Q?fERH3XtjadAgjl0KstHkK9N7hJJciIEfvM9VVeTz4ojgvlfKI5Vh87QB45?=
- =?iso-8859-1?Q?h61e3lQKRX46ehmxTptS+j15m3PJddo5x/Q+UNHXgcZx4vRo6mAEjKBTbt?=
- =?iso-8859-1?Q?iBPMSnnq+ZctbJRAT2dX6eceWxFkcLaO39CTsZ0g5nQHn6+R40Gcgl2cdI?=
- =?iso-8859-1?Q?TIQeRzsyfbLC0GkzJvY0pTS+TIu60UD/gRl3vtV08pquwuQUGE50niCSDg?=
- =?iso-8859-1?Q?YqIbsgcpD8yG+pujc0FxMaHrLaYK3XnsG6pxH0X9RhOMIb8GcGMfeP+wcr?=
- =?iso-8859-1?Q?RaIlkte6W0F7REWaBvOAUhMeVEKjKiuJIlEOk3drEVP89e/O6v4y3t5xER?=
- =?iso-8859-1?Q?HfKDFW3fg9i8BKgnJdQ2FB/g2Fns9tc4b00+FP3LWE5DlbTyXBy2QxxiDq?=
- =?iso-8859-1?Q?gOmj3ZoM7wsGwOaoJp4YVAeWLWwKD5E48ye/j+01l2q/T+zEoVKkIPrJEH?=
- =?iso-8859-1?Q?z3irsyOhSYf8U0GtPFq1kAy4UEZD30rvFd5pOwnxv/HsNE7UjEyUNGLyr9?=
- =?iso-8859-1?Q?Kw/9dhyk6ofmZqMrzjkV2DzZeNaYtX5aB8WW3s/P1eJj65rmsgew6ulj0Z?=
- =?iso-8859-1?Q?yFfTVJbEUmQEHAvWECPmjutI4hQYoiG9wgSY0xChgjatHuXMpVxR5RlHzF?=
- =?iso-8859-1?Q?4Ei4VIfaCwTLUtg8K8px7kP4WMpFDTYqMlYlKDbVBhYdI9qRPFhH0eWQES?=
- =?iso-8859-1?Q?ElvAg9IjuwLh3r7NTU18A45d1cJeAmWe2egsyr/uTbrVoveZFkb2PKDoZd?=
- =?iso-8859-1?Q?4pC/fzlE5WjTtFXHEvPwCvvXcDPXynhIBujfjn9L8diTVU5YFUArpifd4R?=
- =?iso-8859-1?Q?SwFD7/e6wHUJeQdn6wK/dJnO9WCRe0Mir2PDGoIpB1xLRBuHONJsEDAy2G?=
- =?iso-8859-1?Q?mvBAx/e+zEbMsejnYsPc6PyRQQjFU2YO1z6IhTKtfBWrv79qzZUOGkZr/j?=
- =?iso-8859-1?Q?X50BUj8NqIVM2jYrFaMrbFaqIoO5lYrfVOqu74GFl/lvCU3UFJ4iZSfGyp?=
- =?iso-8859-1?Q?QhCpJtixbLZpOJZgorTFg+vjw256h8siDsis7/hRmUcfPjyBW/JSa8bdiB?=
- =?iso-8859-1?Q?rC3P8GpORTbqqfIXMb5vQfvwyHa+ljFzq8qk8xEt0mUh21RrkwryjfhTQe?=
- =?iso-8859-1?Q?DOxmIMby8/Z66Am87JLyEEtLt813Ii5XZI0DEYVX46O+VAaB6CWgYEAVqB?=
- =?iso-8859-1?Q?02qzOPTyav0AazK6dGV0wE4nfDMec7nk7CbXXkd59kesGcZ3tteh9OQDKP?=
- =?iso-8859-1?Q?UIZ9k1o9LSQBmEMRFKjFVDjqlgjt6Y1Kj+kJ+EiS0Ww/Q08b/OfK8t02d8?=
- =?iso-8859-1?Q?P5mT7ABCderEKf6giQRwyJBtMtyumWE7dkSyg5Xjr95NRf6He5PBUVbA?=
- =?iso-8859-1?Q?=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d648fa7-4c3f-47f2-3bb1-08dd1badb667
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 19:38:26.2302
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UieUgyZsPtOTgWLXvPlZDV9qd2peEfcaLI/yJUmx7SdBrC2/Smjv2fKCHxpd2gi7iqMDXCMnP5I4sHf7DDKp+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7740
-X-OriginatorOrg: intel.com
+From: Jeff Chua <jeff.chua.linux@gmail.com>
+Date: Sat, 14 Dec 2024 03:39:20 +0800
+Message-ID: <CAAJw_ZtppNqC9XA=-WVQDr+vaAS=di7jo15CzSqONeX48H75MA@mail.gmail.com>
+Subject: linux 6.12.0-rc6+ hangs on mkfs.ext4 on USB microSD
+To: lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 12, 2024 at 11:12:39AM +0100, Simona Vetter wrote:
-> On Thu, Dec 12, 2024 at 09:49:24AM +0100, Thomas Hellström wrote:
-> > On Mon, 2024-12-09 at 16:31 +0100, Simona Vetter wrote:
-> > > On Mon, Dec 09, 2024 at 03:03:04PM +0100, Christian König wrote:
-> > > > Am 09.12.24 um 14:33 schrieb Mika Kuoppala:
-> > > > > From: Andrzej Hajda <andrzej.hajda@intel.com>
-> > > > > 
-> > > > > Debugger needs to read/write program's vmas including
-> > > > > userptr_vma.
-> > > > > Since hmm_range_fault is used to pin userptr vmas, it is possible
-> > > > > to map those vmas from debugger context.
-> > > > 
-> > > > Oh, this implementation is extremely questionable as well. Adding
-> > > > the LKML
-> > > > and the MM list as well.
-> > > > 
-> > > > First of all hmm_range_fault() does *not* pin anything!
-> > > > 
-> > > > In other words you don't have a page reference when the function
-> > > > returns,
-> > > > but rather just a sequence number you can check for modifications.
-> > > 
-> > > I think it's all there, holds the invalidation lock during the
-> > > critical
-> > > access/section, drops it when reacquiring pages, retries until it
-> > > works.
-> > > 
-> > > I think the issue is more that everyone hand-rolls userptr. Probably
-> > > time
-> > > we standardize that and put it into gpuvm as an optional part, with
-> > > consistent locking, naming (like not calling it _pin_pages when it's
-> > > unpinnged userptr), kerneldoc and all the nice things so that we
-> > > stop consistently getting confused by other driver's userptr code.
-> > > 
-> > > I think that was on the plan originally as an eventual step, I guess
-> > > time
-> > > to pump that up. Matt/Thomas, thoughts?
-> > 
-> > It looks like we have this planned and ongoing but there are some
-> > complications and thoughts.
-> > 
-> > 1) A drm_gpuvm implementation would be based on vma userptrs, and would
-> > be pretty straightforward based on xe's current implementation and, as
-> > you say, renaming.
-> > 
+I tried to run 'mkfs.ext4  /dev/sda2' (usb microSD) and it hung the
+whole system.
 
-My thoughts...
+# dmesg
+sd 0:0:0:0: [sda] Attached SCSI removable disk
+BUG: unable to handle page fault for address: 00000004145cf5ce
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0
+Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+CPU: 7 UID: 0 PID: 15287 Comm: usb-storage Tainted: G     U
+ 6.12.0-rc6+ #26
+Tainted: [U]=USER
+Hardware name: LENOVO 21FWS6UK00/21FWS6UK00, BIOS N3ZET33W (1.20 ) 02/29/2024
+RIP: 0010:xhci_ring_expansion+0xf3/0x340
+Code: c2 48 83 c0 10 83 4a 0c 01 48 3d 00 10 00 00 75 ea 48 8b 49 08
+48 3b 0b 74 05 48 85 c9 75 da 48 8b 53 08 48 8b 85 78 ff ff ff <48> 8b
+7e 08 44 8b 4d b8 48 85 d2 48 89 c1 0f 84 34 01 00 00 48 85
+RSP: 0018:ffffc90000787978 EFLAGS: 00010006
+RAX: ffff8881089056c0 RBX: ffff88810484b780 RCX: ffff888139b2d000
+RDX: ffff888104845680 RSI: 00000004145cf5c6 RDI: 0000000000000000
+RBP: ffffc90000787a10 R08: 0000000000000002 R09: ffff8881458bd000
+R10: 0000000000000100 R11: ffff8881088ce228 R12: ffff888102cd7250
+R13: 0000000000000820 R14: 0000000000000000 R15: ffff88810484b780
+FS:  0000000000000000(0000) GS:ffff8897ff3c0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000004145cf5ce CR3: 0000000002a2a000 CR4: 0000000000750ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ ? show_regs+0x5f/0x70
+ ? __die+0x1f/0x70
+ ? page_fault_oops+0x15a/0x450
+ ? apic_smt_update+0x10/0x50
+ ? exc_page_fault+0x2d4/0x500
+ ? asm_exc_page_fault+0x27/0x30
+ ? xhci_ring_expansion+0xf3/0x340
+ ? xhci_ring_expansion+0x6a/0x340
+ ? ktime_get+0x35/0xd0
+ ? xhci_dbg_trace+0x55/0x80
+ prepare_ring+0x11b/0x2e0
+ prepare_transfer+0x82/0x150
+ xhci_queue_bulk_tx+0x11c/0xa30
+ ? dma_direct_map_sg+0x9a/0x290
+ ? psi_group_change+0x138/0x360
+ xhci_urb_enqueue+0x251/0x290
+ usb_hcd_submit_urb+0xb8/0xa90
+ ? schedule+0x22/0xe0
+ ? schedule_timeout+0xda/0xf0
+ ? sched_clock_cpu+0x10/0x1a0
+usb_submit_urb+0x24c/0x5c0
+ ? usb_alloc_urb+0x34/0x80
+ usb_sg_wait+0x7c/0x170
+ usb_stor_bulk_transfer_sglist+0x7c/0x120 [usb_storage]
+ usb_stor_Bulk_transport+0x215/0x3e0 [usb_storage]
+ usb_stor_invoke_transport+0x39/0x4f0 [usb_storage]
+ ? schedule_timeout+0xda/0xf0
+ ? wait_for_completion_interruptible+0x17f/0x1a0
+ usb_stor_transparent_scsi_command+0x9/0x10 [usb_storage]
+ usb_stor_control_thread+0x1e4/0x2b0 [usb_storage]
+ ? __pfx_usb_stor_control_thread+0x10/0x10 [usb_storage]
+ kthread+0xdc/0x110
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x35/0x60
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+Modules linked in: uas usb_storage snd_ctl_led bnep
+snd_hda_codec_realtek snd_hda_codec_generic snd_hda_scodec_component
+snd_hda_codec_hdmi snd_soc_dmic snd_hda_intel
+snd_hda_scodec_cs35l41_i2c snd_hda_scodec_cs35l41 snd_hda_cs_dsp_ctls
+snd_soc_cs_amp_lib cs_dsp snd_soc_cs35l41_lib serial_multi_instantiate
+pinctrl_tigerlake snd_soc_skl_hda_dsp snd_soc_intel_sof_board_helpers
+snd_soc_intel_hda_dsp_common snd_soc_acpi_intel_match snd_soc_acpi
+snd_soc_core snd_compress snd_pcm_dmaengine snd_hda_codec snd_hda_core
+ac97_bus snd_hwdep snd_pcm snd_timer snd soundcore snd_intel_dspcfg
+snd_intel_sdw_acpi intel_lpss_pci intel_lpss idma64 iwlmvm iwlwifi
+mac80211 cfg80211 ax88179_178a usbnet mii usbhid btusb btrtl btintel
+btbcm bluetooth ecdh_generic ecc
+CR2: 00000004145cf5ce
+---[ end trace 0000000000000000 ]---
+RIP: 0010:xhci_ring_expansion+0xf3/0x340
+Code: c2 48 83 c0 10 83 4a 0c 01 48 3d 00 10 00 00 75 ea 48 8b 49 08
+48 3b 0b 74 05 48 85 c9 75 da 48 8b 53 08 48 8b 85 78 ff ff ff <48> 8b
+7e 08 44 8b 4d b8 48 85 d2 48 89 c1 0f 84 34 01 00 00 48 85
+RSP: 0018:ffffc90000787978 EFLAGS: 00010006
+RAX: ffff8881089056c0 RBX: ffff88810484b780 RCX: ffff888139b2d000
+RDX: ffff888104845680 RSI: 00000004145cf5c6 RDI: 0000000000000000
+RBP: ffffc90000787a10 R08: 0000000000000002 R09: ffff8881458bd000
+R10: 0000000000000100 R11: ffff8881088ce228 R12: ffff888102cd7250
+R13: 0000000000000820 R14: 0000000000000000 R15: ffff88810484b780
+FS:  0000000000000000(0000) GS:ffff8897ff3c0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000004145cf5ce CR3: 0000000002a2a000 CR4: 0000000000750ef0
+PKRU: 55555554
+note: usb-storage[15287] exited with irqs disabled
+note: usb-storage[15287] exited with preempt_count 1
 
-Standardize gpuvm userptrs gpuvmas a bit. In Xe I think we basically set
-the BO to NULL in the gpuvmas then have some helpers in Xe to determine
-if gpuvma is a userptr. I think some this code could be moved into gpuvm
-so drivers are doing this in a standard way.
 
-I think NULL bindings also set te BO to NULL too, perhaps we standardize
-that too in gpuvm. 
+# git bisect bad
+fe688e5006133b2609c136f599e120a95cc450cb is the first bad commit
+commit fe688e5006133b2609c136f599e120a95cc450cb (HEAD)
+Author: Niklas Neronin <niklas.neronin@linux.intel.com>
+Date:   Wed Nov 6 12:14:40 2024 +0200
 
-> > 2) Current Intel work to land this on the drm level is based on
-> > drm_gpusvm (minus migration to VRAM). I'm not fully sure yet how this
-> > will integrate with drm_gpuvm.
-> > 
+    usb: xhci: refactor xhci_link_rings() to use source and destination rings
 
-Implement the userptr locking / page collection (i.e. hmm_range_fault
-call) on top of gpusvm. Perhaps decouple the current page collection
-from drm_gpusvm_range into an embedded struct like drm_gpusvm_devmem.
-The plan was to more or less land gpusvm which in on the list addressing
-Thomas's feedback before doing the userptr rework on top. 
+    Refactor the xhci_link_rings() function to accept two rings: a source ring
+    and a destination ring. Previously, the function accepted a ring and a
+    segment list as arguments, now the function splices the source ring segment
+    list into the destination ring. This new approach reduces the number of
+    arguments and simplifies the code, making it easier to follow.
 
-As of now, different engineer will own this rework. Ofc, with Thomas and
-myself providing guidance and welcoming community input. Xe will likely
-be the first user of this so if we have to tweak this as more drivers
-start to use this, ofc that is fine and will be open to any changes.
+    Signed-off-by: Niklas Neronin <niklas.neronin@linux.intel.com>
+    Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+    Link: https://lore.kernel.org/r/20241106101459.775897-15-mathias.nyman@linux.intel.com
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> > 3) Christian mentioned a plan to have a common userptr implementation
-> > based off drm_exec. I figure that would be bo-based like the amdgpu
-> > implemeentation still is. Possibly i915 would be interested in this but
-> > I think any VM_BIND based driver would want to use drm_gpuvm /
-> > drm_gpusvm implementation, which is also typically O(1), since userptrs
-> > are considered vm-local.
+ drivers/usb/host/xhci-mem.c | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
-I don't think any new driver would want a userptr implementation based
-on drm_exec because of having to use BO's and this isn't required if
-drm_gpuvm / drm_gpusvm is used which I suspect all new drivers will use.
-Sure could be useful for amdgpu / i915 but for Xe we certainly wouldn't
-want this nor would a VM bind only driver.
 
-> > 
-> > Ideas / suggestions welcome
-> 
-> So just discussed this a bit with Joonas, and if we use access_remote_vm
-> for the userptr access instead of hand-rolling then we really only need
-> bare-bones data structure changes in gpuvm, and nothing more. So
-> 
-> - add the mm pointer to struct drm_gpuvm
-> - add a flag indicating that it's a userptr + userspace address to struct
->   drm_gpuva
-> - since we already have userptr in drivers I guess there should be any
->   need to adjust the actual drm_gpuvm code to cope with these
-> 
-> Then with this you can write the access helper using access_remote_vm
-> since that does the entire remote mm walking internally, and so there's
-> no need to also have all the mmu notifier and locking lifted to gpuvm. But
-> it does already give us some great places to put relevant kerneldocs (not
-> just for debugging architecture, but userptr stuff in general), which is
-> already a solid step forward.
-> 
-> Plus I think it'd would also be a solid first step that we need no matter
-> what for figuring out the questions/options you have above.
-> 
-> Thoughts?
+Reverted the above and system worked ok.
 
-This seems like it could work with everything I've written above. Maybe
-this lives in gpusvm though so we have clear divide where gpuvm is GPU
-address space, and gpusvm is CPU address space. Kinda a bikeshed, but
-agree in general if we need to access / modify userptrs this lives in
-common code.
-
-Do we view this userptr rework as a blocker for EuDebug? My thinking was
-we don't as we (Intel) have fully committed to a common userptr
-implementation.
-
-FWIW, I really don't think the implementation in this patch and I stated
-this may times but that feedback seems to have been ignored yet again.
-I'd prefer an open code hmm_range_fault loop for now rather than a new
-xe_res_cursor concept that will get thrown away.
-
-Matt
-
-> -Sima
-> 
-> > 
-> > > -Sima
-> > > 
-> > > > 
-> > > > > v2: pin pages vs notifier, move to vm.c (Matthew)
-> > > > > v3: - iterate over system pages instead of DMA, fixes iommu
-> > > > > enabled
-> > > > >      - s/xe_uvma_access/xe_vm_uvma_access/ (Matt)
-> > > > > 
-> > > > > Signed-off-by: Andrzej Hajda <andrzej.hajda@intel.com>
-> > > > > Signed-off-by: Maciej Patelczyk <maciej.patelczyk@intel.com>
-> > > > > Signed-off-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-> > > > > Reviewed-by: Jonathan Cavitt <jonathan.cavitt@intel.com> #v1
-> > > > > ---
-> > > > >   drivers/gpu/drm/xe/xe_eudebug.c |  3 ++-
-> > > > >   drivers/gpu/drm/xe/xe_vm.c      | 47
-> > > > > +++++++++++++++++++++++++++++++++
-> > > > >   drivers/gpu/drm/xe/xe_vm.h      |  3 +++
-> > > > >   3 files changed, 52 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/gpu/drm/xe/xe_eudebug.c
-> > > > > b/drivers/gpu/drm/xe/xe_eudebug.c
-> > > > > index 9d87df75348b..e5949e4dcad8 100644
-> > > > > --- a/drivers/gpu/drm/xe/xe_eudebug.c
-> > > > > +++ b/drivers/gpu/drm/xe/xe_eudebug.c
-> > > > > @@ -3076,7 +3076,8 @@ static int xe_eudebug_vma_access(struct
-> > > > > xe_vma *vma, u64 offset_in_vma,
-> > > > >   		return ret;
-> > > > >   	}
-> > > > > -	return -EINVAL;
-> > > > > +	return xe_vm_userptr_access(to_userptr_vma(vma),
-> > > > > offset_in_vma,
-> > > > > +				    buf, bytes, write);
-> > > > >   }
-> > > > >   static int xe_eudebug_vm_access(struct xe_vm *vm, u64 offset,
-> > > > > diff --git a/drivers/gpu/drm/xe/xe_vm.c
-> > > > > b/drivers/gpu/drm/xe/xe_vm.c
-> > > > > index 0f17bc8b627b..224ff9e16941 100644
-> > > > > --- a/drivers/gpu/drm/xe/xe_vm.c
-> > > > > +++ b/drivers/gpu/drm/xe/xe_vm.c
-> > > > > @@ -3414,3 +3414,50 @@ void xe_vm_snapshot_free(struct
-> > > > > xe_vm_snapshot *snap)
-> > > > >   	}
-> > > > >   	kvfree(snap);
-> > > > >   }
-> > > > > +
-> > > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64
-> > > > > offset,
-> > > > > +			 void *buf, u64 len, bool write)
-> > > > > +{
-> > > > > +	struct xe_vm *vm = xe_vma_vm(&uvma->vma);
-> > > > > +	struct xe_userptr *up = &uvma->userptr;
-> > > > > +	struct xe_res_cursor cur = {};
-> > > > > +	int cur_len, ret = 0;
-> > > > > +
-> > > > > +	while (true) {
-> > > > > +		down_read(&vm->userptr.notifier_lock);
-> > > > > +		if (!xe_vma_userptr_check_repin(uvma))
-> > > > > +			break;
-> > > > > +
-> > > > > +		spin_lock(&vm->userptr.invalidated_lock);
-> > > > > +		list_del_init(&uvma->userptr.invalidate_link);
-> > > > > +		spin_unlock(&vm->userptr.invalidated_lock);
-> > > > > +
-> > > > > +		up_read(&vm->userptr.notifier_lock);
-> > > > > +		ret = xe_vma_userptr_pin_pages(uvma);
-> > > > > +		if (ret)
-> > > > > +			return ret;
-> > > > > +	}
-> > > > > +
-> > > > > +	if (!up->sg) {
-> > > > > +		ret = -EINVAL;
-> > > > > +		goto out_unlock_notifier;
-> > > > > +	}
-> > > > > +
-> > > > > +	for (xe_res_first_sg_system(up->sg, offset, len, &cur);
-> > > > > cur.remaining;
-> > > > > +	     xe_res_next(&cur, cur_len)) {
-> > > > > +		void *ptr = kmap_local_page(sg_page(cur.sgl)) +
-> > > > > cur.start;
-> > > > 
-> > > > The interface basically creates a side channel to access userptrs
-> > > > in the way
-> > > > an userspace application would do without actually going through
-> > > > userspace.
-> > > > 
-> > > > That is generally not something a device driver should ever do as
-> > > > far as I
-> > > > can see.
-> > > > 
-> > > > > +
-> > > > > +		cur_len = min(cur.size, cur.remaining);
-> > > > > +		if (write)
-> > > > > +			memcpy(ptr, buf, cur_len);
-> > > > > +		else
-> > > > > +			memcpy(buf, ptr, cur_len);
-> > > > > +		kunmap_local(ptr);
-> > > > > +		buf += cur_len;
-> > > > > +	}
-> > > > > +	ret = len;
-> > > > > +
-> > > > > +out_unlock_notifier:
-> > > > > +	up_read(&vm->userptr.notifier_lock);
-> > > > 
-> > > > I just strongly hope that this will prevent the mapping from
-> > > > changing.
-> > > > 
-> > > > Regards,
-> > > > Christian.
-> > > > 
-> > > > > +	return ret;
-> > > > > +}
-> > > > > diff --git a/drivers/gpu/drm/xe/xe_vm.h
-> > > > > b/drivers/gpu/drm/xe/xe_vm.h
-> > > > > index 23adb7442881..372ad40ad67f 100644
-> > > > > --- a/drivers/gpu/drm/xe/xe_vm.h
-> > > > > +++ b/drivers/gpu/drm/xe/xe_vm.h
-> > > > > @@ -280,3 +280,6 @@ struct xe_vm_snapshot
-> > > > > *xe_vm_snapshot_capture(struct xe_vm *vm);
-> > > > >   void xe_vm_snapshot_capture_delayed(struct xe_vm_snapshot
-> > > > > *snap);
-> > > > >   void xe_vm_snapshot_print(struct xe_vm_snapshot *snap, struct
-> > > > > drm_printer *p);
-> > > > >   void xe_vm_snapshot_free(struct xe_vm_snapshot *snap);
-> > > > > +
-> > > > > +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64
-> > > > > offset,
-> > > > > +			 void *buf, u64 len, bool write);
-> > > > 
-> > > 
-> > 
-> 
-> -- 
-> Simona Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+My best.,
+Jeff
 
