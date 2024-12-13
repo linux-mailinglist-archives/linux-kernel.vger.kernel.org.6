@@ -1,75 +1,117 @@
-Return-Path: <linux-kernel+bounces-444837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94ED99F0D36
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:21:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3689F0D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:23:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01044188A882
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:21:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE39283E11
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A631E009E;
-	Fri, 13 Dec 2024 13:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118DC1E009C;
+	Fri, 13 Dec 2024 13:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gx0JSC7T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVWAvOsf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F221DFE39
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699061A8F85;
+	Fri, 13 Dec 2024 13:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734096106; cv=none; b=KhvKoSKXsoYrJyCuEAMQvU2HUMsGvcKTznYzsGUkfmApl6tZ7zfLlXzMN0liIrBQOSgtlTvM4uHT2rI0xuR9WpnqRnon/vAPvknYLFauTI05Nfe1goZgTEz9WXUZSbDMFrf2zdAq/36c2c+LpEYjFLmm12evD8P3BpP5gWGldSs=
+	t=1734096210; cv=none; b=lADCWUqb29xh4pBfSE8ElJUg8To6/Z0C+7l/31nOrnbA5PBQCVjGsK9ICaYxLJJ4sBLyeEREx5N8ImgODjMHejQ7fCJlJBWiwpPgn+If24fuEGe/08TtDp0ZxPAJNtOuQNl6cRT+/bix9u/XR/I/j+W6dD7E0fg1xsxne+ry0IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734096106; c=relaxed/simple;
-	bh=VHEAr5KYFvo5hIggiVMSNmkx+Ww1/5VcddrGY3bKj34=;
+	s=arc-20240116; t=1734096210; c=relaxed/simple;
+	bh=F2JHZ3ZqREJM7UXkBh6hU0VBtuNOKKvDI50ITAB9R1I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6N9+84s3+yOArDsSEHn3c8l9iaAHODVOBWndX/9VtW75jlxXreDwmK2H6jtq/96gDxXInVOpufcU3igPsYEys1FEmaRpyklUj7QJ6s/iRiS84V5dsj+tbimsIIu3nfJMrT+HyemOuWeLCy8nA/to0SV2jKVv1pD+v+iy6aGvDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gx0JSC7T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F13C4CED0;
-	Fri, 13 Dec 2024 13:21:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oqi9GoHQ/QMs1AHmWFThwFcwIw+DscCAO0o5zkfmIywErzjunJx3WHjZGI+12lTWvRIQNES4r7z+YpQMS12okw5FIM/zW16MhIe9GUtSKW5ddqI181av8hNzv8v0RZPc+FTV3ymQTjQIs5SGiagsNl+soEKHu1FZMlDsbB5+TWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVWAvOsf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64FAAC4CED0;
+	Fri, 13 Dec 2024 13:23:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734096105;
-	bh=VHEAr5KYFvo5hIggiVMSNmkx+Ww1/5VcddrGY3bKj34=;
+	s=k20201202; t=1734096209;
+	bh=F2JHZ3ZqREJM7UXkBh6hU0VBtuNOKKvDI50ITAB9R1I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gx0JSC7TA1WgdL+zEjJI4/2C/BE/wP0f6ORk7/1YxFiGrCFeJMSUnSESelFT9XJ0u
-	 55WHGS4Qi4FKGt/k25pELZK9HBSSkYEW8yRu42aPqvipoiJbDDL8wIYn7pNei39Coj
-	 0nxyNr1judqA0uD+bj3F89kOt9yzc0KEdzZnvNeM/ZxZsvvXKc1yeDiOYimk6GxQjn
-	 IzqUwDYB8BkJUFC7bFhqSrmBcUuxFbY9o3u6Zq6bToSDr5DcqiiFWPhw0g1ed9Yhik
-	 E9Uc/br72AQ3qmk58xiVAoB3QOrswnUiWXA+LsYvkObOIBabmsc8tWa5kr2M/4FKJ/
-	 iZ1mvICDCfxyg==
-Date: Fri, 13 Dec 2024 14:21:42 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, efault@gmx.de,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com
-Subject: Re: [PATCH v3 3/7] sched: update __cond_resched comment about RCU
- quiescent states
-Message-ID: <Z1w05hCkmHT5JIf2@localhost.localdomain>
-References: <20241213040658.2282640-1-ankur.a.arora@oracle.com>
- <20241213040658.2282640-4-ankur.a.arora@oracle.com>
+	b=YVWAvOsfrn+z5H+to4WP9x9cFnYLmbokzusYjkzOMe/w4ztkBy5yWwMhSSRAK7VoL
+	 R12dTOc80iw7z8YVnq3grv69rHtDx06XxAzGxyq+bfQtaymF/CVqeUdsgxuLdsf2xr
+	 1ByZEN3uyZXTVjOP+w5vcRSy64QbG7QD0UvJF7inpFsVjVp1G66Fxt1QMCthEgxmB0
+	 LTGtRN3IjOaJO44PBV+k99x4ujwkSi6UWg6zmLLk8o2FblQ03zGHxHXX+VQesQIBOC
+	 FOSFW9oRoFnsW0sF3k2P3NLkwFoZoKX+aDW7ZlK8mDGmMyQq61q4xP5RL1rgx+ZVy1
+	 kV3u6kiY7oA5w==
+Date: Fri, 13 Dec 2024 13:23:23 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 5.4 000/321] 5.4.287-rc1 review
+Message-ID: <975004ea-7eb0-4412-a9af-d10486df4bb7@sirena.org.uk>
+References: <20241212144229.291682835@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oDESnGT8e7eMbJCA"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241213040658.2282640-4-ankur.a.arora@oracle.com>
+In-Reply-To: <20241212144229.291682835@linuxfoundation.org>
+X-Cookie: Not for human consumption.
 
-Le Thu, Dec 12, 2024 at 08:06:54PM -0800, Ankur Arora a écrit :
-> Update comment in __cond_resched() clarifying how urgently needed
-> quiescent state are provided.
-> 
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+--oDESnGT8e7eMbJCA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Dec 12, 2024 at 03:58:38PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.287 release.
+> There are 321 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+arm64 defconfig is failing to build with GCC 13 for me:
+
+/build/stage/linux/arch/arm64/include/asm/memory.h: In function =E2=80=98__=
+tag_set=E2=80=99:
+/build/stage/linux/arch/arm64/include/asm/memory.h:238:22: warning: cast fr=
+om po
+inter to integer of different size [-Wpointer-to-int-cast]
+  238 |         u64 __addr =3D (u64)addr & ~__tag_shifted(0xff);
+      |                      ^
+/tmp/ccGiqYDV.s: Assembler messages:
+/tmp/ccGiqYDV.s:129: Error: invalid barrier type -- `dmb ishld'
+/tmp/ccGiqYDV.s:234: Error: invalid barrier type -- `dmb ishld'
+/tmp/ccGiqYDV.s:510: Error: invalid barrier type -- `dmb ishld'
+/tmp/ccGiqYDV.s:537: Error: invalid barrier type -- `dmb ishld'
+/tmp/ccGiqYDV.s:1132: Error: invalid barrier type -- `dmb ishld'
+/tmp/ccGiqYDV.s:1216: Error: invalid barrier type -- `dmb ishld'
+make[2]: *** [/build/stage/linux/arch/arm64/kernel/vdso32/Makefile:166: arc=
+h/arm64/kernel/vdso32/vgettimeofday.o] Error 1
+
+I'm also seeing the 32 bit arm build errors Naresh reported.
+
+--oDESnGT8e7eMbJCA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdcNUsACgkQJNaLcl1U
+h9AOsgf/YS8f5nY+l2SezJL+QnB5q1p4weA59U3RTuK0voyyziv1T4Lz7TEzR34B
+XXYVs3sneahX70nGRUJKqo/wgAoqA1tv8T7etcGfRSLDLMlCaT6W+CL1ZrzmemIN
+hBS6tYgnpECLd1xxf6WxNIAdpwoouTZwRQ5J0Rm79KvG4q37HtJGqQ3Jlu0wtXjU
+YMIYvnZBwm2atoEJxOExQw0THqNWT0NMqoW2lMCkq1wkeqDj5PQIayWluSN3JphJ
+oo7CUClZrXOiGudD4HHADPmXrQaMBSeqip2j9fSUH7xXy2IEdmFWF1mbipLM3Adb
+nEQXi0MKiYrnjAVgekMRVZlRt8i30w==
+=9361
+-----END PGP SIGNATURE-----
+
+--oDESnGT8e7eMbJCA--
 
