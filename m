@@ -1,242 +1,257 @@
-Return-Path: <linux-kernel+bounces-445474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56BE9F16CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:53:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84A69F171C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAACA162A3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:53:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F4E31889600
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134A818FDB1;
-	Fri, 13 Dec 2024 19:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A5C1E2838;
+	Fri, 13 Dec 2024 20:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n7JKL7U4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="bwMXwBpC"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61FA18027;
-	Fri, 13 Dec 2024 19:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734119596; cv=fail; b=NkamQNMeQkH9SXvNqY5OQHeViLEE3Q3n/QLXUTtkP5DRAkeKBLVjaFrZgeWI9haBK7V6ixKFDGh7TrhFiJSQeuJwPE2fRjdJhbX64FfuOqfkpGHPrGbIUQ2HjlUuF1TxOPAQ9jh5tvQVkIWQRhn76KEj9KVmPqiwwh2CAtyoHVs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734119596; c=relaxed/simple;
-	bh=tf433BKe0rLXUi09iqWIXmMMMwKiAuJxMovfdX563tU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GwT6PG2LMhOG8jwhxM8YjmBS6d5scQ4ArtE9zmpcOG2Uv2w6O/ISFOfgHZiixzNWN7BRuPEneOWHTa8ECIc+baE1AudF0+b1CZFalefXHEir95v/qOSrSi/4QowQV4ShEloAFijaXQhrGavR0exOepFdGFpiUOTKT8eQ5Gxk3mw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n7JKL7U4; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734119595; x=1765655595;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=tf433BKe0rLXUi09iqWIXmMMMwKiAuJxMovfdX563tU=;
-  b=n7JKL7U4YCwWzlk3/EhZmUZhQxICQG+hGVkycP+Z69p+2LFsqajVXyht
-   uJps6z+vBwo3eh2NkWYfGz8LsuAExALZjyYuVlOutI2s1DsHH5z0ML7Tr
-   29cBsfaqbfTBxrIIiPMUhw2HdwVy1qMNzZwRjeMBSDQ3WTfS9fUSsDrXJ
-   j+TRTcep50DZltF4v6Dc5QKJ/OUXEfbr21YyLHzJt0JA46hS4+FTWpEgG
-   sDf8bogfsBcWyZmuhcm+S5bgLQdLu+25CIc7cstGd96u48szFf+dvdqS+
-   +WIj7oAUl7xSVXrQGMpwAaQyQ/sPIlqmoM1zOUH8F08rlv8APZ/iyJgqt
-   g==;
-X-CSE-ConnectionGUID: zM/exG36RO2af1rhEFyHWw==
-X-CSE-MsgGUID: VqGmoxxoTU+UmsQO3itayg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="38263556"
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="38263556"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 11:53:15 -0800
-X-CSE-ConnectionGUID: psMimCRKT3uANcCbdOP5Lw==
-X-CSE-MsgGUID: Q8yPZ/CQQsSDO+hAE0jZ6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="101468281"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Dec 2024 11:53:13 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Fri, 13 Dec 2024 11:53:12 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Fri, 13 Dec 2024 11:53:12 -0800
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.46) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 13 Dec 2024 11:53:12 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wIx893SdWdXZQQUolCoSl70brjfjMdP8yRrsTlqy/9BzzqD9kWk2ynmpVD8rlb5rLr0JGSvp7+uw4Zm8M0UhG4KsJ50slQYAD27RJP//oJLUc6X9myJp6gKsZ09GDtkmmdEWkyyw/TBLjGJqd+t1YFflPZBaqyG3k0qeqR7yt7womd2PB5nKrg6vyduRXZA63LEIbCK4UyP4jE91Bp2+4JfbEAyBET7YRlkPzmMy9UL6pZeSJITz/fC+PFVhSS+17wX/dTz0Kt/O4CahIx3pLo0PmcwSupM8NJ83FR6OUuxXkdZOIbSEdnLFPsRe9GQJvZhe5g7+8QOkxsbqDTW1iA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tf433BKe0rLXUi09iqWIXmMMMwKiAuJxMovfdX563tU=;
- b=A/YJT7dYUe2P1GHAelyQRBlVm7mC6aKpoAxK6m6djCZfya/XdWkoV9OdDN+iSXWgGiGVGjTP1mJgiUfz2qwzcTSQVwqD0ltg0gJa3yfOwSitLM/e8U9Ff8smv1YkcGiT6gS9LgHB+6NIsttRenkgLg3pUjlw7YKIEQq4B6EJbsYxsMI567jvwo/VgdLXPottC2+Lwhfe/rWDgC3OghEeteGHk0sNPQP9/YR5/TMbxwkYpApm0PhrLrhFrMz610msfFmfQWIUDeLRV/f2RrO0fbqUJ9LiNiEvgWvDFEWkepl0cDui58Sjadrsjlx2uYanLw4dWi+0Kg7hOjJqbModjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CH3PR11MB8383.namprd11.prod.outlook.com (2603:10b6:610:171::6)
- by SA1PR11MB8319.namprd11.prod.outlook.com (2603:10b6:806:38c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.16; Fri, 13 Dec
- 2024 19:53:10 +0000
-Received: from CH3PR11MB8383.namprd11.prod.outlook.com
- ([fe80::56d4:6f50:dd04:d11b]) by CH3PR11MB8383.namprd11.prod.outlook.com
- ([fe80::56d4:6f50:dd04:d11b%7]) with mapi id 15.20.8251.008; Fri, 13 Dec 2024
- 19:53:10 +0000
-From: "Falcon, Thomas" <thomas.falcon@intel.com>
-To: "ravi.bangoria@amd.com" <ravi.bangoria@amd.com>,
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>
-CC: "irogers@google.com" <irogers@google.com>,
-	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
-	"acme@kernel.org" <acme@kernel.org>, "namhyung@kernel.org"
-	<namhyung@kernel.org>, "jolsa@kernel.org" <jolsa@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Hunter,
- Adrian" <adrian.hunter@intel.com>
-Subject: Re: [PATCH] perf script: Fix output type for dynamically allocated
- core PMU's
-Thread-Topic: [PATCH] perf script: Fix output type for dynamically allocated
- core PMU's
-Thread-Index: AQHbTPcTVeAr4JlFVkOKIA8g2nIB6bLjwWgAgAC/2YCAABYVgA==
-Date: Fri, 13 Dec 2024 19:53:10 +0000
-Message-ID: <c7e865010699fc10c1e16b2720c31feb6beb5357.camel@intel.com>
-References: <20241213003609.564709-1-thomas.falcon@intel.com>
-	 <fb6f17b7-8ee1-4197-afb6-923b372965c2@amd.com>
-	 <66df2821-80a4-4ec2-b326-d0edda8fcde2@linux.intel.com>
-In-Reply-To: <66df2821-80a4-4ec2-b326-d0edda8fcde2@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH3PR11MB8383:EE_|SA1PR11MB8319:EE_
-x-ms-office365-filtering-correlation-id: bb5048ba-4ada-4b7b-a1cb-08dd1bafc585
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?VllZQmpFaElrWXltQW5XUEJ3SHd0TVJGaGdqeXdvT0twRmpSMFlpeU9vT0tT?=
- =?utf-8?B?cElERUNRY3p0Tjc2NmxSVDdPdExtQjlyKzZ0dVZHb0R2d2pYaTF3bEtaMFlv?=
- =?utf-8?B?TGFCV3Zib1B3aVdwT2pGQ1BCakc0TytlUnNPaFF6OExJYzdMQ2hDRUw4Qksy?=
- =?utf-8?B?MXZlc2xOK3gvUmVNcFIzY3Azb1NFekVwSjNUbjlQTlptUWQ0TFNDUnBiaCtq?=
- =?utf-8?B?U0xicTI4anJTWDlBOFdMMEV4L3dKWXhDL0c4YXI5R3JDRmZzekhoQ2ZrMzlJ?=
- =?utf-8?B?Tm1KWEJFZ1QxY2o4OW5iSjIyTnRoRnQ0OEVzbGsxd2lIM1JBWXlaK0tuVndY?=
- =?utf-8?B?OEZnSU9hcWhqRlBTbnMzTHU4ZjZCbFphVkt3cWExWjRLTVBsMWNYWFRZeEFi?=
- =?utf-8?B?TEdzRW9taThBZkRoVG4yZDZkNWpSUEZKT0U2WllNQ1E5VEwxTmdJdnhFVkdt?=
- =?utf-8?B?NHhoeFJWU3Q2VEd4cUJJK1pFa3FOclBacUpwTDVkbEVISCtqUGVXTk1IOSt3?=
- =?utf-8?B?YXl1R0dhZ3YwWFVadXpwbWZwZTlLUi9OY0N2bXpDVVpCOHR4RG8xVGVUQlJE?=
- =?utf-8?B?dzhrVXNRZVYvRENyV1lLUG1xNFVvQjZpUWxSdWlDYUpoeEs0V2dROXNDZVdz?=
- =?utf-8?B?NWdYZWtCVWpzS2ZvU0Q0RmZXM1hGMUg4cC9BWUY4TndPbGtONUJaVm52d2p1?=
- =?utf-8?B?OFNPUjE2Q0luWGU4UGh1cnhPclhkQVBacHd1bWh2a0ZtSlpKYS9xa2pZWXNB?=
- =?utf-8?B?QzBCUXBnWFozOENDaCtXakZDS0phd2dCaHJIUFBNL0dFdExoZlVEUHRvWmZw?=
- =?utf-8?B?ekhldkFUWS9SWmg4L3N0dzVxUXdRU1JWT1ZuNnNtd09KcEZLcENyWDdPZjcr?=
- =?utf-8?B?TmM4UDVjR2lFWjJNM2V1RTNUV0Zodi9TU0E3blhZYU1kN09sSkY1RzJ1WldN?=
- =?utf-8?B?UDdTUHlGSUNOSGduWW9tc1N6a2UvMWVhVDh0bjJhK1Vmc0Y4WklWSkZoUlVz?=
- =?utf-8?B?S1Y1UUhlSkd3OGFvcklqblBXa3NBRkd4NnZjdUp5RDVvN0JpR3hVamd1bDhD?=
- =?utf-8?B?eEtQZGxIYWlFRzVIa0lXQmFqTDZBME96QXFwRVZnWHRpYlVlT2tlREpYQ2xa?=
- =?utf-8?B?U291SXpzVlozSmFYRDJ6cE9kbmJ2cENyRmFDYW9tS05neE9WRi9YQlpLYTdE?=
- =?utf-8?B?TWJBV2sxZ05JazdlczdsS1N5L244enN6ZEtJNzB6eGJMSjZMcXZwbTZvaHRm?=
- =?utf-8?B?RXBtTThkRnJoVUtCckh3eWJqN3pORFhVWW85cHk3T2hReDNUY3dweUVZdzVp?=
- =?utf-8?B?dHFnS1JpZHRiZEx3aFBmdkdIbm1XVWxuVHFhOEUwcnkrdVRUTXR2bjM0N0Ja?=
- =?utf-8?B?L2xJZFVXZzUrRzNpcG9EbithZ05YQllYbWsrbU1ZQWxaandUS0xVZEhTRC9O?=
- =?utf-8?B?ZEkyN0RDbWJFTGhnRytsMkF4UDByc2MxK0ZlcWF0aHZJb3pjNEZkWVN1Kzl0?=
- =?utf-8?B?bTVsR2tFMTJEWVJrMm1COXhIU3M5SUZnM3BtdmNnOUVVb29NYi9zS0ZCZVZH?=
- =?utf-8?B?d0NkZFk0K0VpOUh1ZDdTUWpXR1JVcmpwOUpXV01ySkFHNmM5V0pJOFg2VXp0?=
- =?utf-8?B?eUJjaW12VEJNR0xtUzhvdkJaTktjL25jOGcxK0pNSXY1cUk1VzNzMUFWazk5?=
- =?utf-8?B?QktnTGcrOC9vOEQ1Rm84aVJoRk1QSHA4Uk5WMEhLbkM1bGFRUWhQcmFoSkJY?=
- =?utf-8?B?R0JvTnFLYmNqQUthZmZnWGo3ZzhCYmhBTkRxWThwODlLSDF6Y0ZudXc4SEhH?=
- =?utf-8?B?ZmhGZDhLazU4ZGsyWVlZWXAzYzFuNU5rMHQyOUJaUkNHenNxRDF4OEJpamxa?=
- =?utf-8?B?eFNLejJmVDUzek5zWUFJcWlaVWxldTdaTzhjeUpUUUlsd1E9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8383.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OU1VSnNqMlU0STgzSStWNFhPWmpWbTBTbXJwZ1l6WnNjQlE4VDRlWWltak5i?=
- =?utf-8?B?UHRzQ3NEWmZ1T2ZEa2sxcUFoR0xEZHZvRkZobU94UjY3aDVVWWcxdW52Q0hH?=
- =?utf-8?B?R1BGR3dTeUl0dVhBbnVXVWx2LzFzb2tnNWtmQXZDK3p1clF5Zm8rbkhrdjdx?=
- =?utf-8?B?RTdXbndEZzJnTjFONE51VkZaa1VxTnpSWlgxUFVmSzZGT1g3ekNWZ003Vkov?=
- =?utf-8?B?YVFpS0hIVXdYaUk5VUFwZStOclVnRkdDUXBXRXdDakNScG1lMnYybU9yd1pE?=
- =?utf-8?B?dlFPTGg4dmEvNTNYWTZTa2RpTUVYTWNLOVVmc09IQVBTcXNqZ1hsU1c3VGs1?=
- =?utf-8?B?WGRHNFJxQXZhYXpqSkt0RE1YbkxkbHh1RkNJVDR4dlBuK2VaU3NDVHk0RFpF?=
- =?utf-8?B?a2ovTDN4NWtwSlRDUDdSVyt1aVFLVnpRcXYybHoxdzc3QXJlbXgyMEFOazZZ?=
- =?utf-8?B?aGFoelVHLzNVNWNNSTh4RktkMStFOVJ0aDRxelBaLzZCY0xpblZESjVyVW50?=
- =?utf-8?B?bzJmRlVjeTFJbTkzb0pqZ09YTGRtc3N0YldMNDhjY0duTE9LTzNIRDZQU2NL?=
- =?utf-8?B?UVpDMkR1c053dWwwMkVxNmoxWWl4MVA2cDNlaTh0V0V2WlFXQlBpTThIQlh1?=
- =?utf-8?B?SzZPblp5SzZRdkRwT2p2Y0xWd1FnWGF3TXZXVjd2V1MyVmFQTFoxRWU3YzJm?=
- =?utf-8?B?UW9rWkZJajV3WFQybkVnaWthV05jNmVhOS96c2xHMHFTMEJQZjUwN2FFeTU3?=
- =?utf-8?B?MjNQVFkyVnJiU0ViZDROU2J5djVoSWxHbnNOREVEUkhVS3RScEVwUHN6ai9l?=
- =?utf-8?B?U1pIZmF2TXNsZ0VkcmpZSXBLOEhsVGZtLzJYUTBOSEtBT2JRQi9PRmhqRDBB?=
- =?utf-8?B?OWJ5UlpJMUthZU1LakF3MmlQY0JlT2RIelE2YVVMNVQxeGxhb1pnZHgzTFM0?=
- =?utf-8?B?WEY2akZHTTJMRWFBb3lma2F6MVVlNk9mSDU3MVU4TE8xaHphclNXeEM3T3JB?=
- =?utf-8?B?dlRjbkJiMW9jY0k1d0Z5YUhXZi9uOXpKYnNZSm12R0ZrOEVGSzJ1eEFYVnpC?=
- =?utf-8?B?VzJoMmdkcEhwM2JLMEVEdXRoSk44cWh0SnJ6UG50WnZZVjdBTGdMZnhMWU5t?=
- =?utf-8?B?bWdkQmFjTjJFR0x0aVBMYnl2eW5NTUtvb09TVHRiUTk5cER3Q3lYeTczc0Z5?=
- =?utf-8?B?L2VsSVg1VWF3Z1ZadzZJT0x0dFNXN2YyVGV5WUU4cWxDTUw3d1ZwZDREU25t?=
- =?utf-8?B?OG90VHRBRmoxelBsNDRzMFArZEpTc1hrQ1FoUEtCMFV6WjAwWlRRc1BHL0RE?=
- =?utf-8?B?eUtCdks2MW9qNlNIWFRoNGd5cXE5N1J3QndYWCtEdGdWMjlwd3FuNDZqTVFn?=
- =?utf-8?B?cHdEdm9UU2k5d3VmZUNpa0N4NkxESkI2ZXRTdEhqeC9ESzRCbHFMalBiempK?=
- =?utf-8?B?amNiSG54aE5CQUtwbmFqaDhCd0cxT25jUVI0VzQyaXJIb1NIcHNTdXBndUpa?=
- =?utf-8?B?WVRxVlFyeUtUS2VGNjUyZEZ6K2NlTHpDdDhMQmRiMS9LSmFrbklpcjM1aFRx?=
- =?utf-8?B?bGtzRU50WDI4bCtZcTB6UEN3VGtaZUJUc2pSWXg3ZDV4ZVNiVVYvaFptOTY3?=
- =?utf-8?B?OU1CeEZOYTBUcFUwemxadXJTRlVybUJEZUVzOS9JZVdDMnNaenNGVHJZWDZ4?=
- =?utf-8?B?WExBbjBKTWdTdGJobmZ4clZBWTRBR01xdHR4NlFRRVo1VTIrbWNpQUI5ZVhV?=
- =?utf-8?B?TmFBZ2M5OEdHeXhBN1NxVWwyZHo3cDR0K3MxTUdpdWVkcEp5Y1VpYU1TUTEr?=
- =?utf-8?B?K1QrOW5GOERqNVoyWFZDWnViendXWDAyT2FQcFpLajRhTU1KVVRXbDdEYXlE?=
- =?utf-8?B?dXBwMG9XV1RWOUhrTnJPdnhqd3lzTFpCN3JkQWRDaTlkbGdpZ3A0MDgrT2Va?=
- =?utf-8?B?OFRxZmVpNHhWTmJtOE1Yc2dIYUxtdHNnenlPWnFJaTN6VTJqOUw0M3hnMFFv?=
- =?utf-8?B?S0J1c0VUWDhVRHpSdTVCTnJHSjZKVGt2NG5SL0tuRGlTY2g5SXhObGF3ZXh4?=
- =?utf-8?B?dVMrUGcxbmk3MmdBN1B6c2VPaFlobnBPR3p1d0R6U205NGJYNTd2K095QzRp?=
- =?utf-8?B?SHc0eWZmYkljRnhvRjRPc1RHQTd6cGdZdEpBM0NMbFRpQUFISlZJUFFMQUtH?=
- =?utf-8?B?RHc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E1FE8F9D1CCE9045A957768577358DD4@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F5651C4A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 20:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734120041; cv=none; b=ADliwgjNOaZScKipnQr6Zf6Khsx/umhbvIgKV9rAMHbI/i+Q7POokw5NPsk0nj3UN9ezL2rVnRKW9iLn5tZbrteN0shMJm7DSkGAK1ZDjye4+huXaeuPhN28j5nf/Y5EdajTZuPcoP+tCZ8uv9eA7ig1gdopwVTf079u35FXFKU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734120041; c=relaxed/simple;
+	bh=+IBdDuUpH0ffV3eW21HSRtsMzybmo8R7I3/oqhIog4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pFbx8NL5xjRPeUBsDuBqlKOZwJIGKYfSVgFUB9YVG14T82IZNvJCf3ikdVeCsCIFoBQN6IIF7ew7Z6d9s90LobfY1sJnCL5V8fId4bxmQ8jMVPLIFL7niTCiXOcvAssR4Yq+oDQP3UaAKk6xSisaLCprpzif6mJWauqMxRoeA74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=bwMXwBpC; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6d8f65ef5abso17864806d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:00:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura.hr; s=sartura; t=1734120039; x=1734724839; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WjFjYpSxXBJz9M1hdmG3iiPhNXo18zA2UB8YwR16DTw=;
+        b=bwMXwBpC8C//IjD7Tc14MGro3NHE7lVSjXm9Qrm4Ep8123XbRwOs0frYTLu7G3fC9Z
+         im9o7kUtsH9nWbOY95R6dQTEC/X6T/WKul+Omoigunj5vHieDGwTt9rvIXOKtbi9b52D
+         b6mDzKzTrJiXzrmbEf4hR0CJbsrl/1tmbi/JnkY2gBMw9Io+t+L+V5y4+hza/ReUrByq
+         23Obgac52tvGXRMapjBEVRfBz0ny0iZAI1WRWT3wZ4driVl0vixE40ZlI2wtMW2hobDg
+         hHZcsKoo7xuF0t4a90Oi+ww8ftOT5V9lvycx3PuXmMHZfVntNARVwFhhd1xcJV26qHrI
+         MM5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734120039; x=1734724839;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WjFjYpSxXBJz9M1hdmG3iiPhNXo18zA2UB8YwR16DTw=;
+        b=GmJy22H44UdykQoedPfVXxRLC1eVgpGN7vb9QtBBjkQFd9zv3tIdbM+UHg0zxNnnuc
+         O4ZGWyJC9nLTlpAbB4CKB6cZZsal6Q+BcL73+unJF/htg/5AEFQ37K2yc+uWJUusnwHr
+         JCQ/XkrhZThhcdNqUSqhvN8HzKKROeIwetFcEIRIHprJF+BbPAF96onkK4RXyLjif+dj
+         te7WQqcH8Wvwurt55Yn3ZqcKuNwwXEpyMv/IaNOPe0ia3Vq8bpQIOic4dZud7j06HQX1
+         gHH5RZdBaIsl2qDDVUlB+hUkg+UHjBESM7ERSbZGAsLd+ewlIUmxAVzQ4YbZJJSmJxQN
+         dkRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdqYIPwXbHy1Z59/kozehMtH91kmaP9ginMArCHhjRbrQ49hWzd2QSHEStr7teeVPAD/uMgv8Shv4c7xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCa3VG1cD6x7UVm0RzYWiF2xcUUObfP1Ttf326JqPxmu3ZjsLE
+	CeWyaSw1vKYXtX9cB3ICoo/ZKZPQdUE60KXnVRePUQ8mldI3qJRNZZQptSEghqqwxI2aKxya9DP
+	849ISuoL2PuHPWqR7n/QGZOHhGIV3QGbzqhH6ABJQ2nWbvRUqlSM=
+X-Gm-Gg: ASbGnctCVOFOU3S5h+0/PL/pugqLbGAUx7xhAANHwAvcYSrG5jqOBeTDozbCey+oTQn
+	ZoPbM2ZwBSgxNNMiMVtMeuO/ABU4oIpoWAZGvWg==
+X-Google-Smtp-Source: AGHT+IEywBNIbwjppPoVSQ/XELBsV0fF8sTiDrKGwA9AnZLBRibm/aOssHinTtzowKOKfn5HmY+4fB4H6J+nE2ZGRjI=
+X-Received: by 2002:a17:90b:2242:b0:2ee:ba0c:1726 with SMTP id
+ 98e67ed59e1d1-2f2901b253dmr5268444a91.34.1734119680395; Fri, 13 Dec 2024
+ 11:54:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8383.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb5048ba-4ada-4b7b-a1cb-08dd1bafc585
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2024 19:53:10.2994
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +ggMWmf7m58kZcq9EkXWjsaoww4e/6P22mUf3qfqCqDR1e9F/9Lp2p7JTa1eRTUF4fWOnMxJBY6PbGfPHW5IHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8319
-X-OriginatorOrg: intel.com
+References: <20241213-sparx5-lan969x-switch-driver-4-v4-0-d1a72c9c4714@microchip.com>
+In-Reply-To: <20241213-sparx5-lan969x-switch-driver-4-v4-0-d1a72c9c4714@microchip.com>
+From: Robert Marko <robert.marko@sartura.hr>
+Date: Fri, 13 Dec 2024 20:54:29 +0100
+Message-ID: <CA+HBbNG0k24fO5OG42jw-7trWbT3iVTdo6Hh=55s1MaTh28p-A@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 0/9] net: lan969x: add RGMII support
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, Russell King <linux@armlinux.org.uk>, 
+	jacob.e.keller@intel.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gRnJpLCAyMDI0LTEyLTEzIGF0IDEzOjM0IC0wNTAwLCBMaWFuZywgS2FuIHdyb3RlOg0KPiAN
-Cj4gDQo+IE9uIDIwMjQtMTItMTMgMjowNyBhLm0uLCBSYXZpIEJhbmdvcmlhIHdyb3RlOg0KPiA+
-IEhpIFRob21hcywNCj4gPiANCj4gPiA+IEBAIC0zODYsNiArMzg2LDggQEAgc3RhdGljIGludCBl
-dnNlbF9zY3JpcHRfX2ZwcmludGYoc3RydWN0DQo+ID4gPiBldnNlbF9zY3JpcHQgKmVzLCBGSUxF
-ICpmcCkNCj4gPiA+IMKgDQo+ID4gPiDCoHN0YXRpYyBpbmxpbmUgaW50IG91dHB1dF90eXBlKHVu
-c2lnbmVkIGludCB0eXBlKQ0KPiA+ID4gwqB7DQo+ID4gPiArCXN0cnVjdCBwZXJmX3BtdSAqcG11
-Ow0KPiA+ID4gKw0KPiA+ID4gwqAJc3dpdGNoICh0eXBlKSB7DQo+ID4gPiDCoAljYXNlIFBFUkZf
-VFlQRV9TWU5USDoNCj4gPiA+IMKgCQlyZXR1cm4gT1VUUFVUX1RZUEVfU1lOVEg7DQo+ID4gPiBA
-QCAtMzk0LDYgKzM5NiwxMCBAQCBzdGF0aWMgaW5saW5lIGludCBvdXRwdXRfdHlwZSh1bnNpZ25l
-ZCBpbnQNCj4gPiA+IHR5cGUpDQo+ID4gPiDCoAkJCXJldHVybiB0eXBlOw0KPiA+ID4gwqAJfQ0K
-PiA+ID4gwqANCj4gPiA+ICsJcG11ID0gcGVyZl9wbXVzX19maW5kX2J5X3R5cGUodHlwZSk7DQo+
-ID4gPiArCWlmIChwbXUgJiYgcG11LT5pc19jb3JlKQ0KPiA+ID4gKwkJcmV0dXJuIFBFUkZfVFlQ
-RV9SQVc7DQo+ID4gDQo+ID4gTWlub3Igbml0IC4uLg0KPiA+IA0KPiA+IG91dHB1dF90eXBlKCkg
-c2VlbXMgdG8gYmUgZ2V0dGluZyBjYWxsZWQgYSBsb3QuIEZvciBleCwgZm9yIGENCj4gPiBwZXJm
-LmRhdGENCj4gPiB3aXRoIDQ1MzAgc2FtcGxlcywgb3V0cHV0X3R5cGUoKSB3YXMgY2FsbGVkIDE4
-MTI0NiB0aW1lcyB3aGVuIEkgcmFuDQo+ID4gInBlcmYgc2NyaXB0Ii4gSUlVQywgdGhpcyBwbXUg
-bG9va3VwIGlzIHVubmVjZXNzYXJ5IGZvciBob21vZ2VuZW91cw0KPiA+IHBsYXRmb3Jtcz8gSWYg
-c28sIGNhbiB3ZSBtYWtlIGl0IGNvbmRpdGlvbmFsPw0KPiA+IA0KPiANCj4gQWdyZWVkLiBJIHRo
-aW5rIHRoZSBzZWFyY2ggc2hvdWxkIG9ubHkgYmUgYXBwbGllZCBmb3IgdGhlDQo+IHBlcmZfcG11
-c19fbnVtX2NvcmVfcG11cygpID4gMSBjYXNlLg0KPiANCj4gV2Ugc2hvdWxkIGp1c3QgbmVlZCB0
-byBzZWFyY2ggdGhlIGNvcmVfcG11cyB3aGVuIGNvbXBhcmluZyB0aGUgdHlwZS4NCj4gDQpUaGFu
-a3MsIHdpbGwgc2VuZCB2MiBzb29uLg0KDQpUb20NCg0KPiBUaGFua3MsDQo+IEthbg0KPiANCg0K
+On Fri, Dec 13, 2024 at 2:41=E2=80=AFPM Daniel Machon
+<daniel.machon@microchip.com> wrote:
+>
+> =3D=3D Description:
+>
+> This series is the fourth of a multi-part series, that prepares and adds
+> support for the new lan969x switch driver.
+>
+> The upstreaming efforts is split into multiple series (might change a
+> bit as we go along):
+>
+>         1) Prepare the Sparx5 driver for lan969x (merged)
+>
+>         2) Add support for lan969x (same basic features as Sparx5
+>            provides excl. FDMA and VCAP, merged).
+>
+>         3) Add lan969x VCAP functionality (merged).
+>
+>     --> 4) Add RGMII support.
+>
+>         5) Add FDMA support.
+>
+> =3D=3D RGMII support:
+>
+> The lan969x switch device includes two RGMII port interfaces (port 28
+> and 29) supporting data speeds of 1 Gbps, 100 Mbps and 10 Mbps.
+>
+> =3D=3D Patch breakdown:
+>
+> Patch #1 does some preparation work.
+>
+> Patch #2 adds new function: is_port_rgmii() to the match data ops.
+>
+> Patch #3 uses the is_port_rgmii() in a number of places.
+>
+> Patch #4 makes sure that we do not configure an RGMII device as a
+>          low-speed device, when doing a port config.
+>
+> Patch #5 makes sure we only return the PCS if the port mode requires
+>          it.
+>
+> Patch #6 adds checks for RGMII PHY modes in sparx5_verify_speeds().
+>
+> Patch #7 adds registers required to configure RGMII.
+>
+> Patch #8 adds RGMII implementation.
+>
+> Patch #9 documents RGMII delays in the dt-bindings.
+>
+> Details are in the commit description of the individual patches
+>
+> To: UNGLinuxDriver@microchip.com
+> To: Andrew Lunn <andrew+netdev@lunn.ch>
+> To: David S. Miller <davem@davemloft.net>
+> To: Eric Dumazet <edumazet@google.com>
+> To: Jakub Kicinski <kuba@kernel.org>
+> To: Paolo Abeni <pabeni@redhat.com>
+> To: Lars Povlsen <lars.povlsen@microchip.com>
+> To: Steen Hegelund <Steen.Hegelund@microchip.com>
+> To: Horatiu Vultur <horatiu.vultur@microchip.com>
+> To: Russell King <linux@armlinux.org.uk>
+> To: jacob.e.keller@intel.com
+> To: robh@kernel.org
+> To: krzk+dt@kernel.org
+> To: conor+dt@kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: robert.marko@sartura.hr
+>
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+
+Tested-by: Robert Marko <robert.marko@sartura.hr>
+
+> ---
+> Changes in v4:
+>
+> - Split patch #4 in v3 into two patches, where the new patch #5 handles
+>   PCS selection, by returning the PCS only for ports that require it.
+>
+> - Got rid of the '|' symbol for {rx,tx}-internal-delay-ps property
+>   description in the dt-bindings (patch #9).
+>
+> - Link to v3: https://lore.kernel.org/r/20241118-sparx5-lan969x-switch-dr=
+iver-4-v3-0-3cefee5e7e3a@microchip.com
+>
+> Changes in v3:
+>
+> v2 was kindly tested by Robert Marko. Not carrying the tag to v3 since
+> we have changes to the handling of the delays.
+>
+> - Modified lan969x_rgmii_delay_config() to not apply any MAC delay when
+>   the {rx,tx}-internal-delay-ps properties are missing or set to 0
+>   (patch #7).
+>
+> - Removed 'required' constraint from {rx-tx}-internal-delay-ps
+>   properties. Also added description and default value (Patch #8).
+>
+> - Link to v2: https://lore.kernel.org/r/20241113-sparx5-lan969x-switch-dr=
+iver-4-v2-0-0db98ac096d1@microchip.com
+>
+> Changes in v2:
+>
+>   Most changes are in patch #7. RGMII implementation has been moved to
+>   it's own file lan969x_rgmii.c.
+>
+>   Details:
+>
+>     - Use ETH_P_8021Q and ETH_P_8021AD instead of the Sparx5 provided
+>       equivalents (patch #7).
+>     - Configure MAC delays through "{rx,tx}-internal-delay-ps"
+>       properties (patch #7).
+>     - Add selectors for all the phase shifts that the hardware supports
+>       (instead of only 2.0 ns, patch #7).
+>     - Add selectors for all the port speeds (instead of only 1000 mbps.)
+>     - Document RGMII delays in dt-bindings.
+>
+>   - Link to v1: https://lore.kernel.org/r/20241106-sparx5-lan969x-switch-=
+driver-4-v1-0-f7f7316436bd@microchip.com
+>
+> ---
+> Daniel Machon (9):
+>       net: sparx5: do some preparation work
+>       net: sparx5: add function for RGMII port check
+>       net: sparx5: use is_port_rgmii() throughout
+>       net: sparx5: skip low-speed configuration when port is RGMII
+>       net: sparx5: only return PCS for modes that require it
+>       net: sparx5: verify RGMII speeds
+>       net: lan969x: add RGMII registers
+>       net: lan969x: add RGMII implementation
+>       dt-bindings: net: sparx5: document RGMII delays
+>
+>  .../bindings/net/microchip,sparx5-switch.yaml      |  18 ++
+>  drivers/net/ethernet/microchip/sparx5/Makefile     |   3 +-
+>  .../ethernet/microchip/sparx5/lan969x/lan969x.c    |   5 +
+>  .../ethernet/microchip/sparx5/lan969x/lan969x.h    |  10 +
+>  .../microchip/sparx5/lan969x/lan969x_rgmii.c       | 224 +++++++++++++++=
+++++++
+>  .../net/ethernet/microchip/sparx5/sparx5_main.c    |  29 ++-
+>  .../net/ethernet/microchip/sparx5/sparx5_main.h    |   3 +
+>  .../ethernet/microchip/sparx5/sparx5_main_regs.h   | 145 +++++++++++++
+>  .../net/ethernet/microchip/sparx5/sparx5_phylink.c |  14 +-
+>  .../net/ethernet/microchip/sparx5/sparx5_port.c    |  57 ++++--
+>  .../net/ethernet/microchip/sparx5/sparx5_port.h    |   5 +
+>  11 files changed, 484 insertions(+), 29 deletions(-)
+> ---
+> base-commit: 2c27c7663390d28bc71e97500eb68e0ce2a7223f
+> change-id: 20241104-sparx5-lan969x-switch-driver-4-d59b7820485a
+>
+> Best regards,
+> --
+> Daniel Machon <daniel.machon@microchip.com>
+>
+
+
+--=20
+Robert Marko
+Staff Embedded Linux Engineer
+Sartura d.d.
+Lendavska ulica 16a
+10000 Zagreb, Croatia
+Email: robert.marko@sartura.hr
+Web: www.sartura.hr
 
