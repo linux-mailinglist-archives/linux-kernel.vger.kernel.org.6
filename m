@@ -1,83 +1,96 @@
-Return-Path: <linux-kernel+bounces-444202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D299F02C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:52:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573139F02CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:53:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41D49284FC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:52:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB60188829D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66E7502B1;
-	Fri, 13 Dec 2024 02:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE7780038;
+	Fri, 13 Dec 2024 02:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="RJXijTrp"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMGTanXO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0281A22071
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 02:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495B428DA1;
+	Fri, 13 Dec 2024 02:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734058363; cv=none; b=Dqv0aATj/X1UQTQi1304tJS8FHTL0SRlKBCQP8g9iymui8BduEaKMliHIeMwVyIfl+pIL2g2mmmLjHn+5y4oJ3csdnckXMXIk8edaL3rLpE0OFEiKMsAOjgj745tQfaItWw7kVopjnAfT34kLatmvTl/gfIKPJCxG+8cxoL1C3I=
+	t=1734058393; cv=none; b=rA2aGdO5CFZzs9ifadQHCBycpMC/Yh0czF6N24B3il77Yxp0svxZjRQNwmLQqhd3s/RsDacqtWZnRZj8Q5fafthF1k/QdhbfCX+H9/jOy4i0HoxfATcNlA5k4Nr3f7knGq9uRYHAZVW/Hv8gJWzC+GEX5fZcN6V7Jpiiad/89Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734058363; c=relaxed/simple;
-	bh=exClpigfPfIIrI1kZEyC16EKlnWhgMxhgbry8sy63SQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XhvWst3xcrO5iht7DXvR+CC00qDdMqxejEulYsWFsMJvLO8/MzrKfhVGD5ww2EqlOp5u0sSFFgyaar1OgWrxT+cfYv8sriCU4PfN3IOsZPoiE0c/4Jrvl+hPb1/u1/IxuuDT25rQFlM+fOQrdjKRVKL0+gVZvQaigP8PMP3DODE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=RJXijTrp; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1734058357; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=SblZ8XyRVUvaYco4AsuKXu2C2gvZSzI5y7mFRPl2zfI=;
-	b=RJXijTrp0RLevVSJFquvMPEr1PPMnu6MUEmnKJv1jLxv03Qnp8avYORu1Hgv3+lfaAzetee9DaB6aEq6DlS6WOLF0bqjeb2NATIaqs+SQ1lEbCr/xP5d/xxU4ldvUzaSkyVWcJ/8NjMKFybI3FN86d4nE6M6neFkJAfjRDZJu6c=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WLNPugh_1734058347 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 13 Dec 2024 10:52:37 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] kthread: Modify mismatched function name
-Date: Fri, 13 Dec 2024 10:52:26 +0800
-Message-Id: <20241213025226.121901-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1734058393; c=relaxed/simple;
+	bh=No5N+ZNMFiFGAgxk2848SL0jVCsEhHgAvE4/eJDnpno=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hD73K8Ca0tnGCcFejqDo3bnVYVe1qOeHYIXyu035S7+1as91nA3VqZthdhpipqUqbEA9OL9opPMQwRS0pHSERPzdnehxcyI77dkWCql2licDGdzlbWQqb8mEnXLb2n2nkv7FhZvFN834VsoaQHUb1uL8dhl5vVwjZqf9SSXjRkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMGTanXO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F434C4CECE;
+	Fri, 13 Dec 2024 02:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734058392;
+	bh=No5N+ZNMFiFGAgxk2848SL0jVCsEhHgAvE4/eJDnpno=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kMGTanXOvkOyGlAM4G2Xk39zwiSNOhISJ9gZ5Ox8omGDAMxM7qeZlDJAGdfYk1PYZ
+	 /o7nroGeBOIPmCVDxbAfR1jUNQQxwvk442C+tVgdDszwUQyPPJFWWC0JuDMx8uu+4F
+	 JL4QsKtAjPpl626LXcUypMFhQ5al/+L0dvf3WmXSYzWepq0Z+rzxS34gPJTBG27cIU
+	 lh3HsohlJvdXHjGLEeCSK1oC4q2MhXt8DQWEKqybc11S8IHqykiCAMd2T+1f0QHfvP
+	 hqUlgtPG5S1Emif6g4MoR9Xz8PfSFmw2wd3J0dRru85GQYXqmCwte8H4ipaiJYgrd9
+	 t6i+I39MqE4mw==
+Date: Thu, 12 Dec 2024 18:53:11 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>, Willem
+ de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>,
+ Samiullah Khawaja <skhawaja@google.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>
+Subject: Re: [PATCH net-next v4 5/5] net: Document netmem driver support
+Message-ID: <20241212185311.66bb4445@kernel.org>
+In-Reply-To: <20241211212033.1684197-6-almasrymina@google.com>
+References: <20241211212033.1684197-1-almasrymina@google.com>
+	<20241211212033.1684197-6-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-No functional modification involved.
+On Wed, 11 Dec 2024 21:20:32 +0000 Mina Almasry wrote:
+> +
+> +================
+> +Netmem
+> +================
 
-kernel/kthread.c:1072: warning: expecting prototype for kthread_create_worker(). Prototype was for kthread_create_worker_on_node() instead.
+The length of the ==== lines must match the title.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=12367
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- kernel/kthread.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +Introduction
+> +============
+> +
+> +Device memory TCP, and likely more upcoming features, are reliant on netmem
+> +support in the driver. This outlines what drivers need to do to support netmem.
+> +
+> +
+> +Driver support
+> +==============
+> +
+> +1. The driver must support page_pool. The driver must not do its own recycling
+> +   on top of page_pool.
 
-diff --git a/kernel/kthread.c b/kernel/kthread.c
-index 83bf73d2355c..5d14ee046c80 100644
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -1058,7 +1058,7 @@ __kthread_create_worker_on_node(unsigned int flags, int node,
- }
- 
- /**
-- * kthread_create_worker - create a kthread worker
-+ * kthread_create_worker_on_node - create a kthread worker
-  * @flags: flags modifying the default behavior of the worker
-  * @node: task structure for the thread is allocated on this node
-  * @namefmt: printf-style name for the kthread worker (task).
--- 
-2.32.0.3.g01195cf9f
+We discussed this one, probably needs a bit of rewording at least.
 
+> +2. The driver must support the tcp-data-split ethtool option.
+> +
+> +3. The driver must use the page_pool netmem APIs.
+
+We should probably mention that this is only for payload pages?
 
