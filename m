@@ -1,203 +1,132 @@
-Return-Path: <linux-kernel+bounces-444357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A519F0568
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 072C39F0579
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:27:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A331885872
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:22:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4CC188840D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DC218F2F8;
-	Fri, 13 Dec 2024 07:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="r0cHOnhq"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD09190471;
+	Fri, 13 Dec 2024 07:27:21 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDB91552FC;
-	Fri, 13 Dec 2024 07:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCB018FC9F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734074536; cv=none; b=C+OrtxfMYsrrhDd8TGm0gFzZ5ZCpa1KcVNIQp4pVhIQMgkXfqmAId369EJ8h9XP483zAW6z9KAQ++6QUmQ5PLG2tqPlgw+B7pp7+TW7Z24WScypetiY5T7YWDzSn5yZpNs9/icoyyt00OLXW2lE13yS6fwFELnbxjmy42J8s27M=
+	t=1734074841; cv=none; b=Z+3PwSnqZ6hmUB3UUX7xzr2mJMqNOO1jVVxC+SXQ9lRGjXESbzpSiY8vphxI9ahy+vAb8W+GG9dS7a/tMStfs2FZkqQUHfoCqVOiXiQdNc93sJeK0Z1XA0V3lcxnW9wTad5Vpp4AxXUJ1rzK6jxlIYBqFz7fTVzaVH5elB9TZGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734074536; c=relaxed/simple;
-	bh=mJ1OiMwN2pzdmUnGBHBHWTomtgZRAWVK2IZLrfQzgk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JRWvZom5XrZNsqb7Fr8ZFmzsZ/TWgooFpFCJlnnHBVewDOabcW0skclv6pst+vAJ7mBJKGIAmvYHxsrb1vXCWUSlQQBDl42PohGivfGhoasddeiQQ5zotqn4yoKEmadsYFfRbAaFTVIzcSH0pWjXKtORS+Oqw05DSfkYVDH6aCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=r0cHOnhq; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1734074509; x=1734679309; i=quwenruo.btrfs@gmx.com;
-	bh=Hh2nJXKwAbSNc1ASwtm/H6f9Y0e51clqp0kjErAQ9Y0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=r0cHOnhqmAMWMO57h46MHSsbs+xnYrxIz/cHNhn8ePx5Z3tueRmRY8/uiZBS7/ux
-	 0Q/3mSk/Cs7UGid9Bj/7xJV8kAZdE5A/b46SE1Ibh27GCs3Ln/dAO046lrifMElJE
-	 d+c6teazsgOfo8YfB9AY7YvLw84r5AG4f7ok7YpkaoAp0fm21Uf9bAUOfURUqNmfT
-	 ZSwWmDtp0bMRERMB2/U58Q8WggXvkbRoba6v3USNqHFMhbDIhRSDnUwvMXhblDf9z
-	 TFMCb1kopgurYn6oNV6+dJsF+3OZ+hG3/WfJT4sqnoykSLTK8SKwoQKzfigLOeW/a
-	 oPy0UWPlz7EGKvjtuQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MoO6C-1txFZ70h4K-00q7Gb; Fri, 13
- Dec 2024 08:21:49 +0100
-Message-ID: <f4d62504-140b-4fde-9b52-65cf3a0ddd0a@gmx.com>
-Date: Fri, 13 Dec 2024 17:51:44 +1030
+	s=arc-20240116; t=1734074841; c=relaxed/simple;
+	bh=fWkBlWpo9o/6W90lOS1o8aqPGNjst66iRAXtFEWx2PY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UWtG1yDMEwAfM/V1Wfss1cfsRuJj4u1kaqJCSlCQCCXMSFQtNTVJtBxuiMF5exZ0q0i7OIzcha4XEBl4zsjxvWwjfLRrvSYN1RsICKafVAZ/q+buLFMSZ/En6PUkLiQvj9DNlOVYwWTxRVPYBY67ZUM1OrFe/QFYilnKLx06RdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD51a1L001159;
+	Thu, 12 Dec 2024 23:26:56 -0800
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx1u6tx5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 12 Dec 2024 23:26:56 -0800 (PST)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Thu, 12 Dec 2024 23:26:55 -0800
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Thu, 12 Dec 2024 23:26:51 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <dhowells@redhat.com>
+CC: <asmadeus@codewreck.org>, <brauner@kernel.org>, <ericvh@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux_oss@crudebyte.com>, <lizhi.xu@windriver.com>,
+        <lucho@ionkov.net>,
+        <syzbot+1fc6f64c40a9d143cfb6@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <v9fs@lists.linux.dev>
+Subject: Re: [PATCH] netfs: If didn't read new data then abandon retry
+Date: Fri, 13 Dec 2024 15:26:51 +0800
+Message-ID: <20241213072651.1475826-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2133166.1733759584@warthog.procyon.org.uk>
+References: <2133166.1733759584@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] rbtree: add rb_find_add_cached() to rbtree.h
-To: "Roger L. Beckermeyer III" <beckerlee3@gmail.com>, dsterba@suse.cz,
- peterz@infradead.org, oleg@redhat.com, mhiramat@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: josef@toxicpanda.com, linux-btrfs@vger.kernel.org, lkp@intel.com
-References: <cover.1733850317.git.beckerlee3@gmail.com>
- <4768e17a808c754748ac9264b5de9e8f00f22380.1733850317.git.beckerlee3@gmail.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <4768e17a808c754748ac9264b5de9e8f00f22380.1733850317.git.beckerlee3@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ttZsohH/6G1P1aG583141dt6XkSP4gzDXSAPJLI6xq5jZXwpsR9
- K6N+3FVgsQEA/x/YmM2oMbJAb9Y2JDHdf/Qu6cYukhePrPumAE01EcAPmY0xjGIViTXWubD
- IZIxjo4Yc8FlZzyYQzkX28gFG7pjbeZvuVwPHmMkWy+TTaY3pqdhzKavSPSDQ3Bp2qMNBL1
- Er/IB1r5KtDWPKqaguRnA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Ho966R3LCLg=;+2y20v8esE6GnCooNsoV7Qi6kUr
- Nj84rqZx5J9yx8wwalIxril9a6E6OOW2amoTRMqPAgiSTDdFu4iviGcIf3LPyaFAnNuoD7CEg
- vlcmudrb2NLSAQjsB1ujSqT740wOqAsxMcwDdzs2D6Oya+pJSryDmDjMDl7VeUwfiZTyPOZjj
- X5GW2RfefRYt7g23bmtcVE0PG4Tr5nqMbxc39QGwA9mIN/3EfxAI6ftr4pJ42/ZpqCEiyKHZo
- L12s5k7WaOzEnmp1AjYaNxeap+mdN4MDpj+5zpEmmh9xc6k2aJugzEUJ8HqIQ57X3uircA4VR
- 8t47a/KuFuVc0zfKJAH6IYzqKQZZ92hqwZzAm5h40s7idgWIklDfCJ0/YJT6sTFimhjXJ5u8Y
- w/fi2Bo02Zo2iJqZ9LclbZSfAY+cEUcyAuRJBhAaedNgaBDtNga6KcyokEFkZG5CaPJcJ5+iD
- pGjuPnux7fTlyPqUWI2CBg/KzmAy79rNylADCZmJnF8jlPt/trmCxSRKDiZf9xoq2vpx/83kL
- 8hC672ArgWaInBAnrUablcTqFtINwhhimCOcmyEoiGOE9Ms32lnLSYzPElhj0k9bs29AZfp5V
- BeMH9Sy0yVegT8i9C3ggQY8e2ZYigYIO3y0+56cwCjg8MH0OwwvLaaSc0urukFrbl2+Y+o2F2
- bcet02JoHIUKeMfh1T4L8x5+eQOa2pKIJL6pdJD/o5QmrN4hq9uJOTwis+WhvXSL92QTFPiyC
- i1gBJ/51HZrGvUq5uzpNBMamkiIYtXU4EsfDxCa/zC6tfVxce28+bZkX47YKnwstH1IOZTHFH
- /o0OcoviJaFRVKRxyCK1i3/kIvkKE9GJt9RAOHBWCPIE1wHzlR3SLQmedwDkyuPec9a5Qarr0
- CklPIGxdg8KvNmh5TUgBZtJpaWduM3WTzmN9MW42f5t2hsVXDNY8Pk0nMeF3h38PGVcH9dy1L
- hUPIfR9W8lTf7AQalaOQdD7uEH7FOkis9bh6AXZe/ppdBVEWtfQJJfzp3/tIdzHculxxNSQv4
- Vr+s2XnOlRCNK5kK2TWXmHDNvm3FBApSmJDB4WGqyRU5ag4PypXQjInL2LcoGPm65zpkhXr0v
- I0/teSJw2JqoWLRceQAyfE6V921Y0f
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=H/shw/Yi c=1 sm=1 tr=0 ts=675be1c0 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=20KFwNOVAAAA:8 a=_HjyD2lY4jCciDRJ1kwA:9
+X-Proofpoint-ORIG-GUID: 1zFU_zYCelM2ko5GnrQK31GXHGref2uG
+X-Proofpoint-GUID: 1zFU_zYCelM2ko5GnrQK31GXHGref2uG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-13_02,2024-12-12_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1011
+ impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2411120000 definitions=main-2412130051
 
-
-
-=E5=9C=A8 2024/12/13 03:16, Roger L. Beckermeyer III =E5=86=99=E9=81=93:
-> Adds rb_find_add_cached() as a helper function for use with
-> red-black trees. Used in btrfs to reduce boilerplate code.
-
-I won't call it boilerplate code though, it's just to utilize the cached
-rb tree feature as an optimization.
-
-And since rbtree is a tree-wide infrastructure, you need to be more
-persuasive to add a new interface.
-
-Yes, btrfs is utilizing this cached rb tree, but since you're adding a
-new tree-wide interface, it will be much better to find another
-driver/subsystem that can benefit from the new interface.
-
->
-> Suggested-by: Josef Bacik <josef@toxicpanda.com>
-> Signed-off-by: Roger L. Beckermeyer III <beckerlee3@gmail.com>
+On Mon, 09 Dec 2024 15:53:04 +0000, David Howells wrote:
+> David
 > ---
->   include/linux/rbtree.h | 37 +++++++++++++++++++++++++++++++++++++
->   1 file changed, 37 insertions(+)
->
-> diff --git a/include/linux/rbtree.h b/include/linux/rbtree.h
-> index 7c173aa64e1e..0d4444c0cfb3 100644
-> --- a/include/linux/rbtree.h
-> +++ b/include/linux/rbtree.h
-> @@ -210,6 +210,43 @@ rb_add(struct rb_node *node, struct rb_root *tree,
->   	rb_insert_color(node, tree);
->   }
->
-> +/**
-> + * rb_find_add_cached() - find equivalent @node in @tree, or add @node
-> + * @node: node to look-for / insert
-> + * @tree: tree to search / modify
-> + * @cmp: operator defining the node order
-> + *
-> + * Returns the rb_node matching @node, or NULL when no match is found a=
-nd @node
-> + * is inserted.
-> + */
-> +static __always_inline struct rb_node *
-> +rb_find_add_cached(struct rb_node *node, struct rb_root_cached *tree,
-> +	    int (*cmp)(struct rb_node *, const struct rb_node *))
+> commit d0906b4a4611709c02de610d3c34d6172aa28aaf
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Fri Nov 8 11:40:20 2024 +0800
+> 
+>     netfs: Work around recursion by abandoning retry if nothing read
+>     
+>     syzkaller reported recursion with a loop of three calls (netfs_rreq_assess,
+>     netfs_retry_reads and netfs_rreq_terminated) hitting the limit of the stack
+>     during an unbuffered or direct I/O read.
+>     
+>     There are a number of issues:
+>     
+>      (1) There is no limit on the number of retries.
+>     
+>      (2) A subrequest is supposed to be abandoned if it does not transfer
+>          anything (NETFS_SREQ_NO_PROGRESS), but that isn't checked under all
+>          circumstances.
+>     
+>      (3) The actual root cause, which is this:
+>     
+>             if (atomic_dec_and_test(&rreq->nr_outstanding))
+>                     netfs_rreq_terminated(rreq, ...);
+>     
+>          When we do a retry, we bump the rreq->nr_outstanding counter to
+>          prevent the final cleanup phase running before we've finished
+>          dispatching the retries.  The problem is if we hit 0, we have to do
+>          the cleanup phase - but we're in the cleanup phase and end up
+>          repeating the retry cycle, hence the recursion.
+>     
+>     Work around the problem by limiting the number of retries.  This is based
+>     on Lizhi Xu's patch[1], and makes the following changes:
+>     
+>      (1) Replace NETFS_SREQ_NO_PROGRESS with NETFS_SREQ_MADE_PROGRESS and make
+>          the filesystem set it if it managed to read or write at least one byte
+>          of data.  Clear this bit before issuing a subrequest.
+Will there be conflicts when reading and writing use the same flag to mark?
+>     
+>      (2) Add a ->retry_count member to the subrequest and increment it any time
+>          we do a retry.
+>     
+>      (3) Remove the NETFS_SREQ_RETRYING flag as it is superfluous with
+>          ->retry_count.  If the latter is non-zero, we're doing a retry.
+>     
+>      (4) Abandon a subrequest if retry_count is non-zero and we made no
+>          progress.
+>     
+>      (5) Use ->retry_count in both the write-side and the read-size.
 
-This function is almost the same as rb_add_cached(), the only difference
-is the extra handling for the cmp function returning 0.
-
-So I'm wondering if it's possible to enhance rb_add_cached(), or even
-refactor it so there can be a shared core function and rb_add_cached()
-and rb_find_add_cached() can reuse the same function.
-
-Thanks,
-Qu
-
-> +{
-> +	bool leftmost =3D true;
-> +	struct rb_node **link =3D &tree->rb_root.rb_node;
-> +	struct rb_node *parent =3D NULL;
-> +	int c;
-> +
-> +	while (*link) {
-> +		parent =3D *link;
-> +		c =3D cmp(node, parent);
-> +
-> +		if (c < 0) {
-> +			link =3D &parent->rb_left;
-> +		} else if (c > 0) {
-> +			link =3D &parent->rb_right;
-> +			leftmost =3D false;
-> +		} else {
-> +			return parent;
-> +		}
-> +	}
-> +
-> +	rb_link_node(node, parent, link);
-> +	rb_insert_color_cached(node, tree, leftmost);
-> +	return NULL;
-> +}
-> +
->   /**
->    * rb_find_add() - find equivalent @node in @tree, or add @node
->    * @node: node to look-for / insert
-
+BR,
+Lizhi
 
