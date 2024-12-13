@@ -1,263 +1,118 @@
-Return-Path: <linux-kernel+bounces-444489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A211B9F07AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:21:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464619F07B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:22:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9DD51884C36
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:21:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5468F164E2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E1F1B0103;
-	Fri, 13 Dec 2024 09:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9361B0F01;
+	Fri, 13 Dec 2024 09:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SUbKsSaR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXtO6Sec"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BD2199956;
-	Fri, 13 Dec 2024 09:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9D8199956;
+	Fri, 13 Dec 2024 09:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734081695; cv=none; b=H5ugwFfWDVsud0Rf/SfbmEEwAp5rLGcZREEGyZYKWiZmO5uFY1k+dR5SjuSNOffk+jWDiD9Iq2sqAeTQtFXoF2KmtgGje4C8R3zZzbCNGSA943+DPsFOUUdRy2/sax3j1OC0lQqESe75Dr4p3p4wXrLTlCWgyEo0iDtAvwEMDEk=
+	t=1734081721; cv=none; b=XO6e4pZ0tQ3SQTXmj2iIi0FZ373LGGXBPF2YqhdBE0tjEWdAFkVWGqvKmEReWGnD7gMOyCCz/+e7u3zo4+4xPxZ9ImBgEHUex8kO4Gxq6+ZFHtXXqoQklZ/zxLd57uzMFSi5RtC7k6J8Se0U5GJpQGSXLgWxN8ggiME409nOv1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734081695; c=relaxed/simple;
-	bh=p6Jz7tZlPEdoOauhWybr0gvcFMeDefWQkrEL+W/ndME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kssg+Em/vxQa+vR8l0Qlb5DHSgOinlU20db8Co2y0CQKTa5sXkDu64mXrzulj5+P4scgZ7uq3PtfRTw0oAa2mqWGZteWbw99OQ6J8kQh6DU6GP8TID+rthyUky6UswNXrxdCAhGZ3tBlsb0d0YiDNzb/dcni18vcOd4vIx1Hoj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SUbKsSaR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD76Z3K019198;
-	Fri, 13 Dec 2024 09:21:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ukopdj6A2fR/T6/FUn0RYpdMkUOSevoetHyzgX0Wxe4=; b=SUbKsSaRLqF9HrjN
-	WWjwkJMkSOThep1biAbZbjTPRKJlUlEDzmFoEWv1t5Yt8XgBy+oGEanNiKilqMyM
-	ZwmIRP78xwpG7O9z3rtoxTq05uD7s996Fwyr2ZdAVWhm9jJQH4ITZXzGewKSINV4
-	e95C+DgLgMwqOUbKvrAmhzjv575SBno84o/rawf7pzSVnSPPwhaJJMkaOOHXlLkc
-	dJVdInLE773o8BI6G1LB6UthBAyo6/qVXomGH/p0z0/SPkubJQ42LOzXCqC6QbrA
-	UnPJDa34twCa8Iue2Tan+2tzi2qqIQ+EJyPl95Nm+NKTP9cElMzHpe/82WCdl3ZT
-	KHPiAg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ffdywbba-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 09:21:21 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD9LEIN000445
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 09:21:14 GMT
-Received: from [10.64.16.151] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
- 2024 01:21:09 -0800
-Message-ID: <92b6335e-a303-49d3-9b77-f951663fc10c@quicinc.com>
-Date: Fri, 13 Dec 2024 17:21:06 +0800
+	s=arc-20240116; t=1734081721; c=relaxed/simple;
+	bh=1pZwS7TcmAmvi1wRt87ykSfWXKxO0bgHI7AQxo14fME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xa7ofvcnjL1GZ/qU+h0oEwUvdUfTgwgZcGT5qUHqSHnYDPn2ycgPQBhDFHScADF5+m2tncZCyTlfAPjSmykcnf1PYtkX1H0/sbIpgo83ReohD0uSGXrEOWqfKUcqF3eURjbu3pRC8mq5jkdDVJyNEpSJMofU4ZzecloEWTQtlvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXtO6Sec; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87C6C4CED0;
+	Fri, 13 Dec 2024 09:22:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734081720;
+	bh=1pZwS7TcmAmvi1wRt87ykSfWXKxO0bgHI7AQxo14fME=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZXtO6SecypVwW4bZOZYHoRONZHfX6IegE1muMPfVtDTFvbtrwzKTmaTDj4b3BTzuS
+	 rEz/tRuT3vckwAmnhZs55Fl3l5H81f5zP0naV3bEUcwXur+BbFPml2Ieeduefx6Xel
+	 2fmuedUWzM4ghvsvXTk0brXPVIobaAuj0WGJIeZnsoDQ1MV8tnahutmn653nIITYfi
+	 yyoqSug08QA6YEDSB2T7eciPcUcEJu28chNV22Za9X6iEH4m4D0wakkhF1wxHBqwgd
+	 dfRgbnQZbtzKvu895tVvZezkoJ/aAou2EvnmWphNy/vb5ZmBBcA6f8NHBQNu2n1yNL
+	 oU2iryPTJw2ug==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tM1s4-000000001O9-3lSL;
+	Fri, 13 Dec 2024 10:22:04 +0100
+Date: Fri, 13 Dec 2024 10:22:04 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Zijun Hu <quic_zijuhu@quicinc.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Steev Klimaszewski <steev@kali.org>,
+	Paul Menzel <pmenzel@molgen.mpg.de>, Zijun Hu <zijun_hu@icloud.com>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	Bjorn Andersson <bjorande@quicinc.com>,
+	"Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>,
+	Cheng Jiang <quic_chejiang@quicinc.com>,
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+	stable@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH v2] Bluetooth: qca: Support downloading board ID specific
+ NVM for WCN6855
+Message-ID: <Z1v8vLWH7TmwwzQl@hovoldconsulting.com>
+References: <20241116-x13s_wcn6855_fix-v2-1-c08c298d5fbf@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 9/9] arm64: dts: qcom: Add display support for QCS615
- RIDE board
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Krishna
- Manikandan" <quic_mkrishn@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Liu Li
-	<quic_lliu6@quicinc.com>,
-        Xiangxu Yin <quic_xiangxuy@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241210-add-display-support-for-qcs615-platform-v4-0-2d875a67602d@quicinc.com>
- <20241210-add-display-support-for-qcs615-platform-v4-9-2d875a67602d@quicinc.com>
- <cfdyvcxdkmf4sv5f75koflayyx74wd3tuscdl7byp5peaag5ty@yhr3275jhftn>
-Content-Language: en-US
-From: fange zhang <quic_fangez@quicinc.com>
-In-Reply-To: <cfdyvcxdkmf4sv5f75koflayyx74wd3tuscdl7byp5peaag5ty@yhr3275jhftn>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4Jh573vj85O-Adq22hIfMDdmI0Fch4ZT
-X-Proofpoint-GUID: 4Jh573vj85O-Adq22hIfMDdmI0Fch4ZT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0 adultscore=0
- spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412130064
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241116-x13s_wcn6855_fix-v2-1-c08c298d5fbf@quicinc.com>
 
+Hi Luiz,
 
+On Sat, Nov 16, 2024 at 07:49:23AM -0800, Zijun Hu wrote:
+> For WCN6855, board ID specific NVM needs to be downloaded once board ID
+> is available, but the default NVM is always downloaded currently, and
+> the wrong NVM causes poor RF performance which effects user experience.
+> 
+> Fix by downloading board ID specific NVM if board ID is available.
+> 
+> Cc: Bjorn Andersson <bjorande@quicinc.com>
+> Cc: Aiqun Yu (Maria) <quic_aiquny@quicinc.com>
+> Cc: Cheng Jiang <quic_chejiang@quicinc.com>
+> Cc: Johan Hovold <johan@kernel.org>
+> Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Cc: Steev Klimaszewski <steev@kali.org>
+> Cc: Paul Menzel <pmenzel@molgen.mpg.de>
+> Fixes: 095327fede00 ("Bluetooth: hci_qca: Add support for QTI Bluetooth chip wcn6855")
+> Cc: stable@vger.kernel.org # 6.4
+> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> Tested-by: Steev Klimaszewski <steev@kali.org>
+> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 
-On 2024/12/10 19:02, Dmitry Baryshkov wrote:
-> On Tue, Dec 10, 2024 at 02:54:00PM +0800, Fange Zhang wrote:
->> From: Li Liu <quic_lliu6@quicinc.com>
->>
->> Add display MDSS and DSI configuration for QCS615 RIDE board.
->> QCS615 has a DP port, and DP support will be added in a later patch.
->>
->> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
->> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 89 ++++++++++++++++++++++++++++++++
->>   1 file changed, 89 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->> index a25928933e2b66241258e418c6e5bc36c306101e..694719a09ac46bfa2fe34f1883c0970b9d0902be 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->> @@ -32,6 +32,18 @@ xo_board_clk: xo-board-clk {
->>   			#clock-cells = <0>;
->>   		};
->>   	};
->> +
->> +	dp-connector {
->> +		compatible = "dp-connector";
->> +		label = "DP";
->> +		type = "mini";
->> +
->> +		port {
->> +			dp_connector_out: endpoint {
->> +				remote-endpoint = <&anx_7625_out>;
->> +			};
->> +		};
->> +	};
->>   };
->>   
->>   &apps_rsc {
->> @@ -202,6 +214,83 @@ &gcc {
->>   		 <&sleep_clk>;
->>   };
->>   
->> +&i2c2 {
->> +	clock-frequency = <400000>;
->> +	status = "okay";
->> +
->> +	ioexp: gpio@3e {
->> +		compatible = "semtech,sx1509q";
->> +		reg = <0x3e>;
->> +		interrupt-parent = <&tlmm>;
->> +		interrupts = <58 0>;
-> 
-> Use IRQ flags instead of just 0 (here and further on). Also it might be
-> better to use interrupts-extended instead.
-Got it, will use interrupts-extended instead
--               interrupt-parent = <&tlmm>;
--               interrupts = <58 0>;
-+               interrupts-extended = <&tlmm 58 IRQ_TYPE_NONE>;
-> 
->> +		gpio-controller;
->> +		#gpio-cells = <2>;
->> +		interrupt-controller;
->> +		#interrupt-cells = <2>;
->> +		semtech,probe-reset;
->> +	};
->> +
->> +	i2c-mux@77 {
->> +		compatible = "nxp,pca9542";
->> +		reg = <0x77>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
-> 
-> Add empty line before device nodes (here and furher on).
-Sorry, will add it in next patch.
-> 
->> +		i2c@0 {
->> +			reg = <0>;
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +
->> +			anx7625@58 {
->> +				compatible = "analogix,anx7625";
->> +				reg = <0x58>;
->> +				interrupt-parent = <&ioexp>;
->> +				interrupts = <0 0>;
-will change it to interrupts-extended in next patch
--               interrupt-parent = <&ioexp>;
--               interrupts = <0 0>;
-+               interrupts-extended = <&ioexp 0 IRQ_TYPE_NONE>;
->> +				enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
->> +				reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
->> +				wakeup-source;
->> +
->> +				ports {
->> +					#address-cells = <1>;
->> +					#size-cells = <0>;
->> +
->> +					port@0 {
->> +						reg = <0>;
->> +						anx_7625_in: endpoint {
->> +							remote-endpoint = <&mdss_dsi0_out>;
->> +						};
->> +					};
->> +
->> +					port@1 {
->> +						reg = <1>;
->> +						anx_7625_out: endpoint {
->> +							remote-endpoint = <&dp_connector_out>;
->> +						};
->> +					};
->> +				};
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&mdss {
->> +	status = "okay";
->> +};
->> +
->> +&mdss_dsi0 {
->> +	vdda-supply = <&vreg_l11a>;
->> +	status = "okay";
->> +};
->> +
->> +&mdss_dsi0_out {
->> +	remote-endpoint = <&anx_7625_in>;
->> +	data-lanes = <0 1 2 3>;
->> +};
->> +
->> +&mdss_dsi0_phy {
->> +	vdds-supply = <&vreg_l5a>;
->> +	status = "okay";
->> +};
->> +
->>   &qupv3_id_0 {
->>   	status = "okay";
->>   };
->>
->> -- 
->> 2.34.1
->>
-> 
+> I will help to backport it to LTS kernels ASAP once this commit
+> is mainlined.
+> ---
+> Changes in v2:
+> - Correct subject and commit message
+> - Temporarily add nvm fallback logic to speed up backport.
+> — Add fix/stable tags as suggested by Luiz and Johan
+> - Link to v1: https://lore.kernel.org/r/20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com
 
+The board-specific NVM configuration files have now been included in the
+linux-firmware-20241210 release and are making their way into the
+distros (e.g. Arch Linux ARM and Fedora now ship them).
+
+Could we get this merged for 6.13-rc (and backported) so that Lenovo
+ThinkPad X13s users can finally enjoy excellent Bluetooth range? :)
+
+Johan
 
