@@ -1,155 +1,145 @@
-Return-Path: <linux-kernel+bounces-445452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACBA9F169F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:45:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172409F16A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:45:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 654541887CEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00BDF188A737
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87B71F2375;
-	Fri, 13 Dec 2024 19:41:34 +0000 (UTC)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF561F2C49;
+	Fri, 13 Dec 2024 19:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DkjgQu8F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481511EF0B6;
-	Fri, 13 Dec 2024 19:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3761F238B
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 19:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734118894; cv=none; b=MHGsFD7CeZI11pSPKxbH0F0hcE3lKXPfb7QBnCYTcc7Fsnu8MfL+dg7dUd8+lW5Ve0Nyq/NvyZS+lArxiHHEOZCt2jvpfP9oXVVaV0JGfUmDbG8sEcn5454NLNyTGUEBeJSYUBQ5ZWSAU5V5HNInRhm94I2TC8uSEuqWoh8FAEE=
+	t=1734118906; cv=none; b=n0Da3G4mpIq6FvB3xcdDZpBJ1VLTXHm29oG8kml7MbrK/wmJ9oafzVDTanb9/0+j7CYw/fUUKNDielswr0Ai2ITkadHHVGtHlhAAiQsQlmtqqBr4E4NPRWirm1c79HWwGVz8hZ464V76t4A9jPy+38K7bmgDq4Tbl190SpAxhgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734118894; c=relaxed/simple;
-	bh=WcmpwK8L+1rdyFXu6+ygLABocvmTT9mSI/qvmMxq1vM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mZ0L3IOTlDbNgI4TxvuM9UdLXD+3wBmubqxq4xp3YXCtGGD1GX9lnQfI/PgPMED2/G8WWcQydFvi/wfHWYlh0wUJ0mQyfx8JZAWdZAcAMyxMN8KMRxUXZCk1ZzIMvdDvUCukkSGZbw5djrW4k//x200n4LP7I9UvzPD8PJQnovI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4afe7429d37so566307137.2;
-        Fri, 13 Dec 2024 11:41:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734118890; x=1734723690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+NNjRUZHM5uucEv6fy+3ktXfQNKuRR8mDXFkC5X+CBM=;
-        b=RFnmQNynqw2NkXPjp2Oxh1PFKpHWp4l5XbMt9oNEqlFGAKRMCmjKvp0x74wC8iU4TY
-         8I+wTmdvLuRg/anGQroRUDd/QVpod4Sk/9cYQG/hcUS55WWfjjCAr+CIJoo2o8VLiPbv
-         ikuuZaFGyeG025b/4TGDyJq9JOUYCVkRLcWxwsW9jRCX7mUnb46o6a63BXLFtZyzrW66
-         Zr0GM+6q01glgeR8BQ/hmo396+Ch/6dD3YcaSqxFs+hEACZHOOqWleGruFIqcZOw9hdn
-         sFOT9xgqnNwvijaHuHwbYbqxWEXIrjcj+shQZJgImvE30AocBDrruVWGvjEFkZB2FQHZ
-         mY7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVU5OmT03P4fKTcllopWB6R+ywd4bLrVFPdhFo5n8ssO8DC32Oq0sI0dPxz61Gmm4m/lHyfObV0K1s=@vger.kernel.org, AJvYcCXJvhrbkvALItaYbFrPhAVbFZQYxWLZkVdd+xAG1reqV8ciuMweZUPNvrgE2SLqEowwAR0eq/IbvmiNJ2tG@vger.kernel.org, AJvYcCXM/5sp5xsWOt6/g+MfTGQEyiH/RfqVR6HhFAoD9sVq/TKAeHGAvaiRtdGjF38LKOqnJmT8AJGJ8o27@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyO+l9R4zlpoQXXFujI97DqHq/LLT+d6D8Jg/LyQ+63xUoDpct
-	HHbk8ZxskbLfs5S67FuX3KNkAdTfUm7eGIKk3jopC+jA55QEPJi7EPZa9t5H
-X-Gm-Gg: ASbGncvqFJZR4Dm5mVDoiXroNppDDsWJC0NMoZ2jzmyXD5VwhuzalT5ORxqeVtT7O4r
-	shw/17bjpy3Rt+YUc0QYdHpoZC6L12jxDep+cbz8jYqbSHYcNxre3hgH7W/sxDU3e/EkEBHkIP6
-	XcQMjwwGW4taFBmXwD+hzjyUe6y9RxjUwjYoJRSFbRhc6XPqyC3FIl4rDylv8c6zWsjtrx1mhHB
-	1Ep47kq7ihsnn/GWGxHvK2IB32GaUTN6TYc1Dap/F1Q8jnVl6CE/tkA11Db8uQlwcYBQV6rKFCe
-	ch8hhbp1I5abJDcIB/wwBUA=
-X-Google-Smtp-Source: AGHT+IE3FUP7NwkHryvGs8lB8qPl/CWB38xrqMRXss3js+pZWDS09s6TBZKB8TtM0W2KSNW6VLFQug==
-X-Received: by 2002:a05:6102:2082:b0:4b2:5de5:faea with SMTP id ada2fe7eead31-4b25de60878mr4448666137.0.1734118890041;
-        Fri, 13 Dec 2024 11:41:30 -0800 (PST)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-860ab71683csm9134241.34.2024.12.13.11.41.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 11:41:29 -0800 (PST)
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5187f6f7bcaso568486e0c.3;
-        Fri, 13 Dec 2024 11:41:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVdrqF02k7dB2jqHrlU6h4Y3Wh5Sj/DkJc8XEfmdH/IsA30Kt/AVAVgR9mnM3uTIrNANp67Rzl6AJU=@vger.kernel.org, AJvYcCVxeJf3PpGKIQrecpYuQZ911/cXI8KXUwLFE7tWXsF41oSla6bGX0yGJmYEJi6Yufcfk01k+huH8KUi@vger.kernel.org, AJvYcCX4+/fbcBQNy+KUnXD9xzyOgo+tEojo6ONUC18DiCxJ7Uomx/STtC9OG2xuAg/B9wAIJNDs4uPixwIzh7YL@vger.kernel.org
-X-Received: by 2002:a05:6122:3290:b0:517:4fb0:74bc with SMTP id
- 71dfb90a1353d-518ca369a45mr5040949e0c.3.1734118889186; Fri, 13 Dec 2024
- 11:41:29 -0800 (PST)
+	s=arc-20240116; t=1734118906; c=relaxed/simple;
+	bh=Yh+sne4IpfqCJSwrc1iRvM2s6394h3cXE90gTTysKLc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C8LodG9mxvsRK579bIosI/bc3qqZEdOzCT6sJnfhPAwxDdTErxHPVPqxkMfpknQP1ABPC9zN0lnbrn/jwnMzxLfrhMOL2eV+ijVRY+9f9vfJy0Mh8jcTyaFrZxuSLf3e/rYhzd8OIVTbKzTcMmyNhHrh+hUNeL3JssndYop/opM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DkjgQu8F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734118903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wVuHcWlwHXbKjGdfLpNkCYLXye6nsoXJz08iuoO6Nbc=;
+	b=DkjgQu8FIgN3oZuCNeuBQgjGH+l5c1Ct4liQ2Y05khz0cFUTEXWOtGnW5W6YbgIjJH2wAU
+	2YkBIXS9U4foObiQYClY6QMk98dnwr5HVL9DwraGwjbMuAFjj9XDwzlMp1VUfQMlHGB7uF
+	q7k84di0dHWPtPoDPKtVT/fdfXUEM6c=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-518-oCsgWXqENNmU8kI3BFUZNA-1; Fri,
+ 13 Dec 2024 14:41:40 -0500
+X-MC-Unique: oCsgWXqENNmU8kI3BFUZNA-1
+X-Mimecast-MFC-AGG-ID: oCsgWXqENNmU8kI3BFUZNA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC1331956064;
+	Fri, 13 Dec 2024 19:41:38 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DBF611955F41;
+	Fri, 13 Dec 2024 19:41:37 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: seanjc@google.com,
+	Binbin Wu <binbin.wu@linux.intel.com>
+Subject: [PATCH] KVM: x86: clear vcpu->run->hypercall.ret before exiting for KVM_EXIT_HYPERCALL
+Date: Fri, 13 Dec 2024 14:41:37 -0500
+Message-ID: <20241213194137.315304-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1733421037.git.geert+renesas@glider.be> <46b320b91b8d86fade3c1b1c72ef94da85b45d0d.1733421037.git.geert+renesas@glider.be>
- <CAHk-=wiwAz3UgPOWK3RdGXDnTRHcwVbxpuxCQt_0SoAJC-oGXQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wiwAz3UgPOWK3RdGXDnTRHcwVbxpuxCQt_0SoAJC-oGXQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Dec 2024 20:41:17 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXxqRRePJ_HHo---6ayjRnQcDRE--mx0kUDg0ceDELG9g@mail.gmail.com>
-Message-ID: <CAMuHMdXxqRRePJ_HHo---6ayjRnQcDRE--mx0kUDg0ceDELG9g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] Increase minimum git commit ID abbreviation to 16 characters
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Thorsten Leemhuis <linux@leemhuis.info>, Andy Whitcroft <apw@canonical.com>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@corigine.com>, 
-	Simon Horman <horms@kernel.org>, Conor Dooley <conor@kernel.org>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Junio C Hamano <gitster@pobox.com>, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Linus,
+QEMU up to 9.2.0 is assuming that vcpu->run->hypercall.ret is 0 on exit and
+it never modifies it when processing KVM_EXIT_HYPERCALL.  Make this explicit
+in the code, to avoid breakage when KVM starts modifying that field.
 
-On Thu, Dec 5, 2024 at 8:19=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, 5 Dec 2024 at 10:16, Geert Uytterhoeven <geert+renesas@glider.be>=
- wrote:
-> > Hence according to the Birthday Paradox, collisions of 12-chararacter
-> > git commit IDs are imminent, or already happening.
->
-> Note that ambiguous commit IDs are not even remotely as scary as this imp=
-lies.
->
-> Yes, the current kernel tree has over ten million objects, and when
-> you look at stable trees etc, you can easily see more.
->
-> But commits are only a fraction (about 1/8th) of the total objects. My
-> tree is at about 1.3M commits, so we're basically an order of
-> magnitude off the point where collisions start being an issue wrt
-> commit IDs.
->
-> Can you find collisions by looking at all objects? Yes. Git will do
-> that for you, and tell you their types. But to take one recent
-> example, let's do the 6.12 commit:
-> adc218676eef25575469234709c2d87185ca223a. To get an ambiguous ID, you
-> have to go down to 6 characters, and even then git will tell you
-> there's only one object that is a commit, ie
->
->    $ git show adc218
->
-> results in
->
->   error: short object ID adc218 is ambiguous
->   hint: The candidates are:
->   hint:   adc218676eef commit 2024-11-17 - Linux 6.12
->   hint:   adc2184009c5 blob
->
-> so right now you have a collision in six digits for that commit, but
-> even then it's actually still entirely unambiguous once you know
-> you're talking about a commit.
+This in principle is not a good idea... It would have been much better if
+KVM had set the field to -KVM_ENOSYS from the beginning, so that a dumb
+userspace that does nothing on KVM_EXIT_HYPERCALL would tell the guest it
+does not support KVM_HC_MAP_GPA_RANGE.  However, breaking userspace is
+a Very Bad Thing, as everybody should know.
 
-That's true for the basic command line tools...
+Reported-by: Binbin Wu <binbin.wu@linux.intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/kvm/svm/sev.c | 14 ++++++++++++++
+ arch/x86/kvm/x86.c     |  7 +++++++
+ 2 files changed, 21 insertions(+)
 
-> Make the tools deal with the cases we already have, and you'll find
-> that the shortening is a complete non-issue.
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 943bd074a5d3..9ffb0fb5aacd 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -3634,6 +3634,13 @@ static int snp_begin_psc_msr(struct vcpu_svm *svm, u64 ghcb_msr)
+ 
+ 	vcpu->run->exit_reason = KVM_EXIT_HYPERCALL;
+ 	vcpu->run->hypercall.nr = KVM_HC_MAP_GPA_RANGE;
++	/*
++	 * In principle this should have been -KVM_ENOSYS, but userspace (QEMU <=9.2)
++	 * assumed that vcpu->run->hypercall.ret is never changed by KVM and thus that
++	 * it was always zero on KVM_EXIT_HYPERCALL.  Since KVM is now overwriting
++	 * vcpu->run->hypercall.ret, ensuring that it is zero to not break QEMU.
++	 */
++	vcpu->run->hypercall.ret = 0;
+ 	vcpu->run->hypercall.args[0] = gpa;
+ 	vcpu->run->hypercall.args[1] = 1;
+ 	vcpu->run->hypercall.args[2] = (op == SNP_PAGE_STATE_PRIVATE)
+@@ -3797,6 +3804,13 @@ static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc)
+ 	case VMGEXIT_PSC_OP_SHARED:
+ 		vcpu->run->exit_reason = KVM_EXIT_HYPERCALL;
+ 		vcpu->run->hypercall.nr = KVM_HC_MAP_GPA_RANGE;
++		/*
++		 * In principle this should have been -KVM_ENOSYS, but userspace (QEMU <=9.2)
++		 * assumed that vcpu->run->hypercall.ret is never changed by KVM and thus that
++		 * it was always zero on KVM_EXIT_HYPERCALL.  Since KVM is now overwriting
++		 * vcpu->run->hypercall.ret, ensuring that it is zero to not break QEMU.
++		 */
++		vcpu->run->hypercall.ret = 0;
+ 		vcpu->run->hypercall.args[0] = gfn_to_gpa(gfn);
+ 		vcpu->run->hypercall.args[1] = npages;
+ 		vcpu->run->hypercall.args[2] = entry_start.operation == VMGEXIT_PSC_OP_PRIVATE
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 2e713480933a..705fa475179f 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -10052,6 +10052,13 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+ 
+ 		vcpu->run->exit_reason        = KVM_EXIT_HYPERCALL;
+ 		vcpu->run->hypercall.nr       = KVM_HC_MAP_GPA_RANGE;
++		/*
++		 * In principle this should have been -KVM_ENOSYS, but userspace (QEMU <=9.2)
++		 * assumed that vcpu->run->hypercall.ret is never changed by KVM and thus that
++		 * it was always zero on KVM_EXIT_HYPERCALL.  Since KVM is now overwriting
++		 * vcpu->run->hypercall.ret, ensuring that it is zero to not break QEMU.
++		 */
++		vcpu->run->hypercall.ret = 0;
+ 		vcpu->run->hypercall.args[0]  = gpa;
+ 		vcpu->run->hypercall.args[1]  = npages;
+ 		vcpu->run->hypercall.args[2]  = attrs;
+-- 
+2.43.5
 
-FTR, cgit can use some improvements, as
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3Dadc218
-just tells you "Bad object id: adc218".
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
