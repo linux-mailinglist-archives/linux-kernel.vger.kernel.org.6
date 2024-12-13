@@ -1,217 +1,143 @@
-Return-Path: <linux-kernel+bounces-445674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18FC9F198F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:02:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF0E9F1991
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA2718865DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:02:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44965164BF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AB31B0F1B;
-	Fri, 13 Dec 2024 23:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+tFVfyT"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92891ADFF7;
+	Fri, 13 Dec 2024 23:03:12 +0000 (UTC)
+Received: from algol.kleine-koenig.org (algol.kleine-koenig.org [162.55.41.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAD6189F57;
-	Fri, 13 Dec 2024 23:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98535194A45;
+	Fri, 13 Dec 2024 23:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.55.41.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734130946; cv=none; b=rRyC/5AbJlvJxNODpM/tEoqyWnYKNE43BOOE/TsKerBeBmPNvFN8Z6Qt9X4xfrHUvGfMyE6kWHT4GEbLu8WdUKqEDEDhbWIUicDWDoIDgEAU6u/jmQR/H0DVoNdw7JXlXC8niatsoFIZpfL4HW8FB96B0ajp4TFIXF9R/TusHpA=
+	t=1734130992; cv=none; b=X+Zx2FN1bDLo1iBWi4OzGcZZX79fLk/zUBPuD/bZTZA3q/LFeTdzWbmfrdrjUYLvbsYfYHfYKvPFqjGrw7rLeON9pa+xkZn8G05055qquxXeQKhHEJtczkBVadqiASi8ursTzQDTRu1uUADZfs89Nt98LEVF7NHgJEcT5VzBWB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734130946; c=relaxed/simple;
-	bh=0hXPPeazK47KkVCir4tsVhL3yxd1Kary+/TTq7stzMs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YgpZHQrQGDgVqBPVDO7ATrUh2ZtPqAzCXDGr7ASBIKv3E3BXlbF3UqkTvdqPmJ8KWnbSwnJb+eydsGYwl56eajwdosVLDDK1eYCTaMwmfhAPj6o7aWO2AV5kcwIWJyyZfzAN/+FLW0fXHZd/IUvGw7o9vHmIsPtvcTt7LK2xX6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+tFVfyT; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-8019f048bc7so1648914a12.1;
-        Fri, 13 Dec 2024 15:02:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734130944; x=1734735744; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NKv5XzUh0C4meBPgAZwwhAJ6ZgqRgXN0C8Ta/CNq1Sk=;
-        b=m+tFVfyTEDzRCkZOtjXGe7mynSAQmvaCddnRQkg+emjFZnZoJHZnfcAgy0hDSyx7SJ
-         LRTo8Q6kA4UVPtvk0Uc0WQkY0rjpAQAI9es7WohJmTdIvT6LAVuJFXZ8/9XzitOSibG4
-         3z/FiXyKBOuP7MUxJzaQqoOSEpMEIrWHC6sL/4DreABKPOiAhDCgqRDh2DKUmqbM8Hwv
-         LTWM7PM1lYMuvTc+D8GgyKacevhZEXZavtS6hx/MVvYzovRM5NU5H4m1sB82zUCoNqgr
-         Zu9En7ZuUIJe7FwMmzWgCTFrz5ooLu3ZFZ2NDm2/8DyomwGsSPMW5kjhQ2Frov1QRskv
-         x30w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734130944; x=1734735744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NKv5XzUh0C4meBPgAZwwhAJ6ZgqRgXN0C8Ta/CNq1Sk=;
-        b=L83+JgQKSWYUnK639lb6e/FFfW4Ny2ccr3bOUBuZjiav2RG5vWYBcgtPtgx5DUy+VN
-         Gl/kxbl9xT8n660zCC+Kg7HJ2Qq1Ef5SYMO4XJc7Xhwq/puRLplfEdlBdqivyu7S8MgH
-         bAM/9SfIz9VX760rtUSrtbh/EjJ5RvCD0PvE3Y+VweMkFqSAHeysuaubI7syQPMviVoD
-         fK0OgKnxqplebUjkA3QlOGRramT+MfDE5CRxBBlj4suVrMj++lflvy2AU0vofsMcH8Ec
-         xXujpTreWEXIj6Ag1NI6L884IpXbItTyLCXNdO/JRWtbGMXLeRqLcGvu/AHTKNe60YnO
-         WW5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUaDJCLn+FNV36g53KoPKZGn9Hl1lR9GvRYjpQGXJoWg95Zj4Y4PiG2PhLUHlf3GOcbMTM=@vger.kernel.org, AJvYcCVn13wN4ngknalZgPDrrE/NsXU3v6SJm+W/7Lx4RL3TtlAL/HfpOZ6SG3D0/1U8VzOX1rYvbuPOvJBNyXSrUlqK@vger.kernel.org, AJvYcCW9bykodn6Eud1ruF7Cdm3vDoGsiFlKSp2NitdjNUF8R6KSjJDNZNCLqQ8tvWUwPJo+75WVkmxp1Oy5Ceuj@vger.kernel.org, AJvYcCWWRwlei3zXiqCklISJPJebKFM8uOdbWVI7+BULoXptHUbRZlwjNp3plW08z1mGl+KK2KaJ9C0Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx76ADVMN9ivbhXbo2MV+nr6TANEReY9J4pqwzsBJIKGCUTbx4g
-	bCeZSeDIHQSGx+1ym8YlDfrqsZDGhTYEg6u1qzEpMFBpdNYkvwf90JnTsAZtxfElzDY6COvmTEe
-	U/4Hx+BR0SCESlW3376TnooGJUfI=
-X-Gm-Gg: ASbGncsO5EAuodpXuiV7Ff2rnC1k8nExSyTwHIjc/crl/+k9oTIQu6XEbuiYJ46LxeF
-	zziF4uAXiNtAEMtsv9/XOrGR61/hhDtPMIwB/udh0aUFCNkLQENm3UQ==
-X-Google-Smtp-Source: AGHT+IEgTN9e12AHmnF7HTjA1lax9Frb1p24w1dpS+ljzdVozwO5C+WHDrmStzbx4j/IoTB4mh2jvLb24bzCZlZyNZI=
-X-Received: by 2002:a17:90b:1a92:b0:2ee:c4f2:a77d with SMTP id
- 98e67ed59e1d1-2f28fd6e7d2mr5785464a91.21.1734130944218; Fri, 13 Dec 2024
- 15:02:24 -0800 (PST)
+	s=arc-20240116; t=1734130992; c=relaxed/simple;
+	bh=lk5mvp92/iXRKUxEWi9l+yTi81VmxX/RH0JhJ1goZ4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUC3PMjSFvehnUZ3ZT40VChVX6LpeA0MNJaUsTxtwZzLa0QQHnOucwsMbuxlbmK+Kzgh6VPCNw1lZwkdzZS/2xNTtweF9EXEYi2ygVC5KqvYs75+8PeYnuTVxQ1ORz3XdK3USKlSNE0syLa4wMqT1DPptJIHxaoh3bMK7MGE048=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=kleine-koenig.org; arc=none smtp.client-ip=162.55.41.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kleine-koenig.org
+Received: by algol.kleine-koenig.org (Postfix, from userid 1000)
+	id 88C0BF5334F; Sat, 14 Dec 2024 00:03:01 +0100 (CET)
+Date: Sat, 14 Dec 2024 00:02:56 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Luwei Zhou <b45643@freescale.com>, Vipul Kumar <vipul_kumar@mentor.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, 
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] input: mma8450: Add chip ID check in probe
+Message-ID: <bzzzezoon5u5pufpbkn3fnm2dtbrzatx4w4tbdstcdmowvfzzn@cplbmxtgmu6z>
+References: <20241213222310.189443-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1734045451.git.dxu@dxuuu.xyz> <92065ca054beccd6d0f35efe9715ef965e8d379f.1734045451.git.dxu@dxuuu.xyz>
-In-Reply-To: <92065ca054beccd6d0f35efe9715ef965e8d379f.1734045451.git.dxu@dxuuu.xyz>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 13 Dec 2024 15:02:11 -0800
-Message-ID: <CAEf4BzaqCgW9keiT+tJUBQWT6Q+jMwuvn4O2ZghO0c+ZvACNrw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 4/5] bpf: verifier: Support eliding map lookup nullness
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: andrii@kernel.org, ast@kernel.org, eddyz87@gmail.com, shuah@kernel.org, 
-	daniel@iogearbox.net, john.fastabend@gmail.com, martin.lau@linux.dev, 
-	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="va2ulxp2mo3losn2"
+Content-Disposition: inline
+In-Reply-To: <20241213222310.189443-1-Frank.Li@nxp.com>
+
+
+--va2ulxp2mo3losn2
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/1] input: mma8450: Add chip ID check in probe
+MIME-Version: 1.0
 
-On Thu, Dec 12, 2024 at 3:23=E2=80=AFPM Daniel Xu <dxu@dxuuu.xyz> wrote:
->
-> This commit allows progs to elide a null check on statically known map
-> lookup keys. In other words, if the verifier can statically prove that
-> the lookup will be in-bounds, allow the prog to drop the null check.
->
-> This is useful for two reasons:
->
-> 1. Large numbers of nullness checks (especially when they cannot fail)
->    unnecessarily pushes prog towards BPF_COMPLEXITY_LIMIT_JMP_SEQ.
-> 2. It forms a tighter contract between programmer and verifier.
->
-> For (1), bpftrace is starting to make heavier use of percpu scratch
-> maps. As a result, for user scripts with large number of unrolled loops,
-> we are starting to hit jump complexity verification errors.  These
-> percpu lookups cannot fail anyways, as we only use static key values.
-> Eliding nullness probably results in less work for verifier as well.
->
-> For (2), percpu scratch maps are often used as a larger stack, as the
-> currrent stack is limited to 512 bytes. In these situations, it is
-> desirable for the programmer to express: "this lookup should never fail,
-> and if it does, it means I messed up the code". By omitting the null
-> check, the programmer can "ask" the verifier to double check the logic.
->
-> Tests also have to be updated in sync with these changes, as the
-> verifier is more efficient with this change. Notable, iters.c tests had
-> to be changed to use a map type that still requires null checks, as it's
-> exercising verifier tracking logic w.r.t iterators.
->
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+Hello Frank,
+
+On Fri, Dec 13, 2024 at 05:23:09PM -0500, Frank Li wrote:
+> From: Luwei Zhou <b45643@freescale.com>
+>=20
+> Prevent continuous polling error logs by adding a chip ID check in the
+> probe  function. This ensures the driver only proceeds when the mma8450 is
+> present, avoiding issues in scenarios like missing add-on cards.
+>=20
+> Signed-off-by: Luwei Zhou <b45643@freescale.com>
+> Signed-off-by: Fugang Duan <B38611@freescale.com>
+> Signed-off-by: Vipul Kumar <vipul_kumar@mentor.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  kernel/bpf/verifier.c                         | 80 ++++++++++++++++++-
->  tools/testing/selftests/bpf/progs/iters.c     | 14 ++--
->  .../selftests/bpf/progs/map_kptr_fail.c       |  2 +-
->  .../selftests/bpf/progs/verifier_map_in_map.c |  2 +-
->  .../testing/selftests/bpf/verifier/map_kptr.c |  2 +-
->  5 files changed, 87 insertions(+), 13 deletions(-)
->
+>  drivers/input/misc/mma8450.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/input/misc/mma8450.c b/drivers/input/misc/mma8450.c
+> index 08412239b8e69..da941748ed29b 100644
+> --- a/drivers/input/misc/mma8450.c
+> +++ b/drivers/input/misc/mma8450.c
+> @@ -38,6 +38,8 @@
+> =20
+>  #define MMA8450_CTRL_REG1	0x38
+>  #define MMA8450_CTRL_REG2	0x39
+> +#define MMA8450_ID		0xc6
+> +#define MMA8450_WHO_AM_I	0x0f
+> =20
+>  static int mma8450_read(struct i2c_client *c, unsigned int off)
+>  {
+> @@ -148,8 +150,20 @@ static void mma8450_close(struct input_dev *input)
+>   */
+>  static int mma8450_probe(struct i2c_client *c)
+>  {
+> +	struct i2c_adapter *adapter =3D to_i2c_adapter(c->dev.parent);
 
-Eduard has great points. I've added a few more comments below.
++	struct i2c_adapter *adapter =3D c->adapter;
 
-pw-bot: cr
-
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 58b36cc96bd5..4947ef884a18 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -287,6 +287,7 @@ struct bpf_call_arg_meta {
->         u32 ret_btf_id;
->         u32 subprogno;
->         struct btf_field *kptr_field;
-> +       s64 const_map_key;
->  };
->
->  struct bpf_kfunc_call_arg_meta {
-> @@ -9163,6 +9164,53 @@ static int check_reg_const_str(struct bpf_verifier=
-_env *env,
->         return 0;
->  }
->
-> +/* Returns constant key value if possible, else -1 */
-> +static s64 get_constant_map_key(struct bpf_verifier_env *env,
-> +                               struct bpf_reg_state *key,
-> +                               u32 key_size)
-> +{
-> +       struct bpf_func_state *state =3D func(env, key);
-> +       struct bpf_reg_state *reg;
-> +       int zero_size =3D 0;
-> +       int stack_off;
-> +       u8 *stype;
-> +       int slot;
-> +       int spi;
-> +       int i;
+>  	struct input_dev *input;
+> -	int err;
+> +	int err, client_id;
 > +
-> +       if (!env->bpf_capable)
-> +               return -1;
-> +       if (key->type !=3D PTR_TO_STACK)
-> +               return -1;
-> +       if (!tnum_is_const(key->var_off))
-> +               return -1;
-> +
-> +       stack_off =3D key->off + key->var_off.value;
-> +       slot =3D -stack_off - 1;
-> +       spi =3D slot / BPF_REG_SIZE;
-> +
-> +       /* First handle precisely tracked STACK_ZERO, up to BPF_REG_SIZE =
-*/
-> +       stype =3D state->stack[spi].slot_type;
-> +       for (i =3D 0; i < BPF_REG_SIZE && stype[i] =3D=3D STACK_ZERO; i++=
-)
+> +	err =3D i2c_check_functionality(adapter,
+> +				      I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA);
+> +	if (!err)
+> +		return err;
 
-it's Friday and I'm lazy, but please double-check that this works for
-both big-endian and little-endian :)
+How unusual. I would have expected no ! here.
 
-with Eduard's suggestion this also becomes interesting when you have
-000mmm mix (as one example), because that gives you a small range, and
-all values might be valid keys for arrays
+> +	client_id =3D i2c_smbus_read_byte_data(c, MMA8450_WHO_AM_I);
+> +	if (client_id !=3D MMA8450_ID)
+> +		return dev_err_probe(&c->dev, -EINVAL,
+> +				     "read chip ID 0x%x is not equal to 0x%x!\n",
+> +				     client_id, MMA8450_ID);
 
-> +               zero_size++;
-> +       if (zero_size =3D=3D key_size)
-> +               return 0;
-> +
-> +       if (!is_spilled_reg(&state->stack[spi]))
-> +               /* Not pointer to stack */
+Given that here you emit an error message, maybe add an error message
+above, too?
 
-!is_spilled_reg and "Not pointer to stack" seem to be not exactly the
-same things?
+>  	input =3D devm_input_allocate_device(&c->dev);
+>  	if (!input)
 
-btw, we also have is_spilled_scalar_reg() which you can use here
-instead of two separate checks?
+Best regards
+Uwe
 
-> +               return -1;
-> +
-> +       reg =3D &state->stack[spi].spilled_ptr;
-> +       if (reg->type !=3D SCALAR_VALUE)
-> +               /* Only scalars are valid array map keys */
-> +               return -1;
-> +       else if (!tnum_is_const(reg->var_off))
-> +               /* Stack value not statically known */
-> +               return -1;
-> +
-> +       return reg->var_off.value;
-> +}
-> +
+--va2ulxp2mo3losn2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[...]
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdcvR4ACgkQj4D7WH0S
+/k6cUgf/aQBHQhC9Xx3XVkFm/ev+d9abFz4SzCLCfVluKVBBBQhon/7Y4CeXhHid
+Swy3CWr6QSk85MTCxkrWrijEXZRiJVqS7x8knSKqzO3eB6Wo6MlhUnfJbx9u5I+I
+5mNT6og+PuvPi5UId9KxxOUIWH8AZ8IvBJ/CL52QZ11KR0/kIPL+eDLv187y+b6h
+cNnpptaYBvLXpbdDVjZ42P+l9+2LO/uo2LpAkeFcApKJ6dCphcG+lUf6pV4wPOyD
+Mn8v8OYc4Kecn9HJ5KhBPdAQUsjYqvABoGyIZLPPHbujVc9XcbevU2/QInnwG3bS
+TYXWhGxt3bvh4EMu/ucG2jSTQ3xDWA==
+=gL+O
+-----END PGP SIGNATURE-----
+
+--va2ulxp2mo3losn2--
 
