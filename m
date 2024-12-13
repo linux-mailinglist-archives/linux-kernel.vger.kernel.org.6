@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-445255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648649F1364
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:14:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF089F1366
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:14:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D54284311
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36793188D49F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19E218D625;
-	Fri, 13 Dec 2024 17:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6CD1E47AD;
+	Fri, 13 Dec 2024 17:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VvQgecTO"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Wglq7siq"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F8F17C21E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D5017C21E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734110051; cv=none; b=NA9YmCx5gw4QEnDBJSBUfxyWTrCTfj52D4OC6UDUUTPFwpzMCOxBXJK4ROWwotbWpJ50BLQOWX7fTz0HHLgYJZbVGLjMFay3lrjp2AjzhMh8lL1aiTsakA7nAvOHca2HfV4xkxL/h7UnnpkBRLDB2vpo6cCaCroq9Ga2osQCCrg=
+	t=1734110078; cv=none; b=eUIFoqHkfChU8uuo4wKZcRvqzx7DvW6j18nwQQ0Xy9X9tTcQk6ZPyPwBAbYFqbZy7u3B9vyXwKGEPlZwa8gisQsVR2VQsp8T5c39cICRYhoHmGRWRISvNgBfvjC7BZ/BMtsExzd4H/w5lcrIscBNWDoskQhTxXmYy/mGTX7LvIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734110051; c=relaxed/simple;
-	bh=dkl1vjExkNHN467ZbYwI3PMG9/qjOxFzGlNy8WgFn7Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZCTp1CUk89ksYptPCKYmtsLIgqedj6eMZ0IsfIJo7R32MyCPouqROdZv+f7vW+iNiIeJWFpp3lo4FgGz+cyjy088eB4xjNVuPEcEByglCwp93hNA5jqmFgJn/XNhLUdRDNHMSm8GdJ7gr0YWD1Nhqw+owxTYrNVVTZ+CneTcTWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VvQgecTO; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ef760a1001so1699291a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:14:08 -0800 (PST)
+	s=arc-20240116; t=1734110078; c=relaxed/simple;
+	bh=nEQAJ7tMAVKoPCrSrHaaafwI82XnnJ+HSEY0wGbZcJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sTA7qE0Wc6Ew9RGFsWt3S3fsgu/PtQZL7Rblek1hiL0aVHWfEJSH9UmGts/fA9qZKaJGZ6lZ32EN0QQ9xabLcaVSJu1sXmO2vHrFbfV005gOeGCUsLzFZWkkD8NlkXDd+0+nK8KEE/k2G5sR3M+2ODWq35C29ik6E360ejRpnVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Wglq7siq; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a8c7b02d68so15821235ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:14:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1734110048; x=1734714848; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQS6Z9FyQjNjUvUa06jVeIec5yS1GziJ5Jhlo/w/K+Q=;
-        b=VvQgecTOIHd6iyVFTb4/dACsvdQjoBYn3dhzY1aqiq3GZO54SZM1Q7hpfF5A+R5cgy
-         RBHGxooVhhx4gipxDKDZMSvGnm//I+8DfiOtsc1OCx5XKVdB6mTEE1tJiljb5U0Zyr+7
-         SZgF7uXHjU/EmSbBkh3lw31bozJyFS64eXOTdwz+h2ac25ONNIvStACX/5Tb8DqcyQu2
-         MwK5IhbsJiWchOfsro78LQEG1emf0Z8In52ysQzUWT9J+wm5e5c7PIuFfDD93SIeOgVk
-         s/0L8f6QbXCNx0dWZfO9WCENVVi/b8ifdvTxcS/067eeyZsN2Vr/IvxLBfbyT1yK5PNr
-         7w0Q==
+        d=linuxfoundation.org; s=google; t=1734110075; x=1734714875; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HhPL9NYTRXT2OymQSUELSnul5634w4kN0UX4t+krxe8=;
+        b=Wglq7siqvFHpT52GbQe123lMtX7kiFzUhci7nAIi3BvFt18YZVpA3i+KsXoRdnxBKK
+         TLW57Cg4thcGYD+ew1bkEnltRP7/Ga6jxFLcIwj4DUq2aTLqde1opKTe4Fj9oc4fyMQH
+         9AiBDKHpZx0VZmqujmQqpckB8JIInFmVTfl10=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734110048; x=1734714848;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQS6Z9FyQjNjUvUa06jVeIec5yS1GziJ5Jhlo/w/K+Q=;
-        b=TfvGYvqL7bdo8dXOk4Ms5drCJnDZfo02xpNlXd+sQZDuSTnGtxKRUy2vfTSW1jtRpa
-         B5x1DgcaFqS0Z7wIagVT5cpDjkvGYH+XQjfG+X8dqpIqw8ed/GWsWu2JdYiwCX5yYlHC
-         XrzdWTjxgEQPHhsAa7Nd6lZ27bSEx6A7bvKMW4vAQO/6m7KLmS802FOmZsTmwH24ci24
-         lOjJvopGIMtokv/2P6zlqAMmm7pEeOXTBTGPMGKwcqDPn7pClyePq8BRTxMyPuA9OOcI
-         z6kIB4XQe0vXexa1sx2DbN1NLMK0hTWGTq7KXNvR3iCKyuP+lTqRyGQxiFRWFub1V7ll
-         fLcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDRBFT/g5UxPqpG5k0gbwUo5sxl223oBHKAb1p0KIGJtN8i1YXXmoDb1M2r8osHund1M3PIKYwTMCB9+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/HUVuIn88IlIj3CfvptpZimEydolJOods6ltEDVAQ/Xij7FX9
-	0N8sG9mVSY4gTQbXULwxKfmXQFYhFbdo6W1DFBMSGcRcFmIYlfD4hcp82JyKs6U=
-X-Gm-Gg: ASbGncvLh/DarEdJG64HrQtrPxmM/hGEdCagDQjZSqJEvFNdggtGw2QaYwcMkkG71Xn
-	D90oP0LT8346o4uLXdHePyzQlccSWmTgTOkrvv+eWMiCiqxnXOTvifYNNd9f3d1KEVd99T1bp7f
-	ZZdnc6i7GxoqKCmSSXQxaIiKrcaTe+Ec5GSQh0A+L422xSD0f8VI/FiQL1jvBB4UQ19HIrYKVdd
-	lzNA/z/1Uf68B36tpcuFpp/BgiM8k/yZTwd67ThEUcyGfssEGBQX+M=
-X-Google-Smtp-Source: AGHT+IHbDl/lD0XexKp/6ybZ9FGVzKKw50y42Xo2NTcgNMjdYLLe2IjXMvJ7b8PmucE3bj8DHntnnA==
-X-Received: by 2002:a17:90b:5284:b0:2ee:8430:b847 with SMTP id 98e67ed59e1d1-2f28fa54f36mr4916566a91.6.1734110048442;
-        Fri, 13 Dec 2024 09:14:08 -0800 (PST)
-Received: from localhost ([97.126.182.119])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2a24349edsm11077a91.41.2024.12.13.09.14.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 09:14:08 -0800 (PST)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, rogerq@kernel.org,
- tony@atomide.com, linux@treblig.org
-Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] memory: omap-gpmc: deadcode a pair of functions
-In-Reply-To: <76a403e0-f801-4d68-830c-370e0291efe1@kernel.org>
-References: <20241211214227.107980-1-linux@treblig.org>
- <173410830317.3067997.3764368773601763146.b4-ty@baylibre.com>
- <76a403e0-f801-4d68-830c-370e0291efe1@kernel.org>
-Date: Fri, 13 Dec 2024 09:14:07 -0800
-Message-ID: <7hikrncxpc.fsf@baylibre.com>
+        d=1e100.net; s=20230601; t=1734110075; x=1734714875;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HhPL9NYTRXT2OymQSUELSnul5634w4kN0UX4t+krxe8=;
+        b=hiigeHiyjewKBhp7gKmXUQs8bni1bTdSM74gbdICxrL6h6CobWUZmYEHGaQdIA/v5h
+         9bEwWIb5Jw8g5AOpCQZZVWrM9JJZeiKtCDSOHym5mKSOsnLgzBQrY9kogk3ynOSc/4dA
+         F7f6vU6VXAkPz1XFqGOKjU4ZlxBxJxVMxZUpYGLkm+dEh3hGB7lLG/Wf6H2aZ/fT6cZ6
+         PaRsw4J4gOYQHwdqNZ5DCPbHayivo7mhSwKTHVV2XW81C5C/3z/sYbiXBzYe9tbx4XuM
+         6vwjOIBLrfOZRFxMNFRloXibtZAhSvnwtvAyGO7jSc08SmH3cMHyAO47TNIN8z1Bpiyh
+         xMSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnXXhTDNXnRj8gqhKmD3YMLlSwMFSYqyyle2A0XCYg0f5ZaQbRuGNGfKD68SW9cUA5KfqtrXnOs13eDg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFvzkm61ajD2zC6DrVsBfRm1mLuoiOx8y+9wSPb6K4GqVfB2LK
+	+XcpMnp89Y9J3lDU+4WyFHKe5fZgbx6ZvBsFF2wcKpgjX33/BXbBigKsxHdtHlc=
+X-Gm-Gg: ASbGncv1yPw4BBhL4NX5IRzC0ka2tOm8KQ0jXUL3OKvWCY8qSS9RlNn9hqE0bnBaKBa
+	I3CscacBG5LCjuvBbskmFKTdoSNy+i1MT5E0g10fiMRBduE0rYCdJthltuf3EBBonbQsDvittrd
+	6XzSSUlN0mgQ1Y8rFehHD9Y+y116Sr9ESYB2FAYE143D+EH+pPdsVxoETIZc4yOUcymrKxDE0Nj
+	Wm6BZm2mkA5cxjbNtoFvE5hB/OD5R5mb//yptdJQsKf39lBlviGe5kfI+2b5aAWNCdh
+X-Google-Smtp-Source: AGHT+IE787W9PHbVdoivn28P7E8AqG8a0BDD76LSQQ9TR7ermXtOOZEn/BIwAAOAjlwDZ7A+ZBGldA==
+X-Received: by 2002:a05:6e02:1aa8:b0:3a7:d84c:f2b0 with SMTP id e9e14a558f8ab-3aff50b340emr41233965ab.8.1734110074882;
+        Fri, 13 Dec 2024 09:14:34 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2c835a054sm2288061173.77.2024.12.13.09.14.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 09:14:34 -0800 (PST)
+Message-ID: <b71d9339-4b5e-43a7-a728-8016daf4a90f@linuxfoundation.org>
+Date: Fri, 13 Dec 2024 10:14:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/565] 5.15.174-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241212144311.432886635@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241212144311.432886635@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Krzysztof Kozlowski <krzk@kernel.org> writes:
+On 12/12/24 07:53, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.174 release.
+> There are 565 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.174-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-> On 13/12/2024 17:45, Kevin Hilman wrote:
->> 
->> On Wed, 11 Dec 2024 21:42:27 +0000, linux@treblig.org wrote:
->>> gpmc_get_client_irq() last use was removed by
->>> commit ac28e47ccc3f ("ARM: OMAP2+: Remove legacy gpmc-nand.c")
->>>
->>> gpmc_ticks_to_ns() last use was removed by
->>> commit 2514830b8b8c ("ARM: OMAP2+: Remove gpmc-onenand")
->>>
->>> Remove them.
->>>
->>> [...]
->> 
->> Applied, thanks!
->> 
->> [1/1] memory: omap-gpmc: deadcode a pair of functions
->>       commit: 56d96fc5539003a95b8ab631a4ebb5d1b0a24885
->
-> This should not go via soc tree, it's memory.
->
+Compiled and booted on my test system. No dmesg regressions.
 
-Indeed, thanks for catching.  That's what I get for trying to
-review/apply patches first thing in the moring.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-I dropped it from my tree, sorry for the noise.
-
-What should've said was simply
-
-Acked-by: Kevin Hilman <khilman@baylibre.com>
-
-Kevin
+thanks,
+-- Shuah
 
