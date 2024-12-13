@@ -1,233 +1,140 @@
-Return-Path: <linux-kernel+bounces-444673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EAC9F0AC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:20:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDE19F0AB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:17:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C7DF1884334
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:20:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906D1169DCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D2B1DE3C2;
-	Fri, 13 Dec 2024 11:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6F41C3C05;
+	Fri, 13 Dec 2024 11:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="pWJbylCt"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQ/5j9q+"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5281B21BE;
-	Fri, 13 Dec 2024 11:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9896944C6C;
+	Fri, 13 Dec 2024 11:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734088815; cv=none; b=GblkGrjCwKUw6b916PB2O6s9W0svQwAYEPkoBUVQ6U1RvsXdKVbe4TArDESv9A4N4+OIXdIr4zaknqpvPXIK0MqnHK8NedYxr4AdFL5VcrpuhmzQY9hvgpmNQcQA3PaSFobo5EcWYwQEPEtrXq48omgUzcc4BaloTv7NdVlF+JU=
+	t=1734088627; cv=none; b=pNX7G3qDkCPBlZZ906XCQx5WohguApg3hMd1j3rqWfK0rGjgkVAFdu5s/F+OtLaVFETMlhUxwZtsqzBF2I8ipPFEURmQeOZBLBThO9EhmNHoq+CPCt45/U/0bBDlwqaNd+rtTtWqTjBhARpyCrg1jJgGfNUFAkFbMxyQC6aZ28w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734088815; c=relaxed/simple;
-	bh=XKgyjgUHrAsS1Rhf8ffclhHXQyzI5wvfIinpxGEBqIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oaCIULem9GAWkFjGFMKZ1WQGOTzfK6ny5HePap8eIDVY7/mm7SRZ8v+z4m8icEgxj/kVybLz2PYXJe3JXJ+nuEJ5iLyXbjzqBKAHyOc/jX8Tv6k05cgSxtkn80g5ZkX0g/WR+pZIlDbqRS/gBdUVs6iDfY0baSbIjAN7dtqVl4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=pWJbylCt; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDAwDvD013489;
-	Fri, 13 Dec 2024 12:19:48 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	4mZdvhtRvGCfpQh2PJTw1zy782LwMEIbYoJwSZ47DZ8=; b=pWJbylCt/dHXMFLT
-	nup21j37+Uh+cj5yPSAwz5H3m3pYQSkvrp6h4YN5trvJK91XoCD1GgF7KXpLE6Pp
-	lY7BZpiNeETuSt0C9ZUCpPJqksMXw+F3keWTwlHto4XlzIPzg7vTANkA6uJl0+tE
-	W+HFjVirm3thC15mnxOqbL/LlG7dQiUQ4HWa/jMR5pJ9y5Ld/v4n+9W5Rek10/g8
-	ft256Ov1yLCBgsBTr8qf384ZxjJWFTdyNIOm1ybevxXTQRTH+rS+Ug2RUe3PRlq6
-	XopHThXKsnJAMxbFj1Ury/iUMvboW36R39ueCQCCp+0K3GX6y2WTNDBG3eyoMpHW
-	wJI+TQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ftj761y4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 12:19:48 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C06D040047;
-	Fri, 13 Dec 2024 12:18:22 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7F671264FE2;
-	Fri, 13 Dec 2024 12:16:35 +0100 (CET)
-Received: from [10.48.86.108] (10.48.86.108) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 13 Dec
- 2024 12:16:34 +0100
-Message-ID: <6d893831-7a2e-4a9a-a519-2e257e249f0f@foss.st.com>
-Date: Fri, 13 Dec 2024 12:16:33 +0100
+	s=arc-20240116; t=1734088627; c=relaxed/simple;
+	bh=JEx/qZ4zixKgNWa79zI1uqk1bWFi+4d3tFuS0XiPPy0=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uoN/+9X73tVzb/sNHnHd2rRyJiMWgoyFKHgdNaSCdc+7ooDvWu2wI/DYxm1SleYaXlArgJYmRa3Cj0hD0e5WM99KpMZRmkaGmcqfyPFmisiCYPIumiriXwjqmcEiFzWzWiKsI1tloXno61Je48xmREefihhYfXeUh4R9aCR5qYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQ/5j9q+; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434b3e32e9dso17063465e9.2;
+        Fri, 13 Dec 2024 03:17:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734088624; x=1734693424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/cEY5Wv2VLzOhiYjn7VDO3P/7ASYT1bpc5HwHfTn/pA=;
+        b=CQ/5j9q+cm0pH1Yo0qUoWW0jv79yIJm3dvOFp9ofH3FDraFr84z2C8W2WFrNjdT5SL
+         3Ao7Wl8owqKEJNAxqES8aFQCt9nJPivTrSk8Wc0F3cd9PovFj+DlgRxY4NifSrGJjgtJ
+         rfXKyL1gCgAaYk4kXggBEov12qcNzQWEldjZPiVDYgF0tDWD3GIvJwIeVmRYhL9YWkx2
+         4kR1B4SPms1jcSXSUfX9T01rwec5Nn6zQ2KuHN7g20lovqFwBaUFXyQLEeupbXqvGwUl
+         /2bBED10Q+WCrxmzts0nKydTJXlIztFYO40ZJtbZeMTdQPj10Eji34PvTEZHEbYcGQeT
+         7p2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734088624; x=1734693424;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/cEY5Wv2VLzOhiYjn7VDO3P/7ASYT1bpc5HwHfTn/pA=;
+        b=H4xnBKA6HS1zQkJVARLjy9h/cGpNTW3ZnSL+bPCtlCQMKlkxDFSdVBREDRkQANQYl/
+         yN/QNLfQcAFnQksW8mh1aV8dQRVOyRUYRq5zJIopaXqtprRjQWGq/xSqXe1F/0zrvSLU
+         eZmtFyu2IhKijszh+Da8ScJTLXzPl66ULzYSYaIEkWDUYTapMj07AZnh5CbPcpPhkTg1
+         N/R+dYMd4crCjkxcpPr+ngGIfnTKawqVP/z5dnc1j41mSwXz1YBI4tWCy/BuUaAtzybF
+         XQKSx+ttuc0aZNOdwgZUy1pLeEzWQEuRjaKZ/EIHRjNHudiSbHS/21v5jg0O7Q7JpaVE
+         4zRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn0/NhLT3EngqVMvlu0bWahLru/6bk03CZUAzUAtfLLmU5W4xH9hYvgMZzgspOtTE3h6A8Ys29qqR0@vger.kernel.org, AJvYcCWEvPrSlUh3u399nLroC6zJtPBiaBXiz+Fqnupf8I0cnd+o8EmgteGltVCoSRD5V3VFmmyY0VTXikYO@vger.kernel.org, AJvYcCXdRAvGZwIpW5p+KcqucXRh9W2XUXLP5ijDPVjzpxuAtNprTJJG5mDjlLlxwwXBBwOn65h7m45Ek7d/cN0L@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP8dgy/eMERf44j88kgCiJl2dLQhaLUmQOWFvE7Wnpb425skZb
+	tebUEy0vZoiUeH4QW/1auT4FfI+ZY/CqpIEp1O/qaySRL/1BuLMT5bbpiQ==
+X-Gm-Gg: ASbGncvR+LQjuV53pWCL0hIdH0ylGC7f6au8KN7j/L5hBXy6VZIHZ+s8zVZXVW3qIOo
+	BaSw10zCAnRF2d4PtmshiwrwHBs9AGQzHhgYMnta4x8Gi4D+csnqpKGAMHAccV44FO8JTdBH8Kr
+	h9LiEo6VxhRKoGm8biweSDi9xAR/zt4Ni7hAdD5ZxaCDvPBG3xHiSlHeVLdpADvmxorC/RGvcqt
+	Ae7G7/ij+m1EFER4liEvXWTCgj18abjiVEgBOOYomabVgIY8uit290pe0XBuqOIx5UbsoLG0DnJ
+	BeiNTOjkCd1J
+X-Google-Smtp-Source: AGHT+IHhsHWy3PdvZo5ZPuzpgQ9ziiyM9Xp0QpEzv7d1NqYqUJosuh8WE5XAOjHAW3GEMEPhfUUMWA==
+X-Received: by 2002:a05:600c:1c07:b0:434:fff1:1ade with SMTP id 5b1f17b1804b1-4362aa27ee6mr18031455e9.13.1734088623538;
+        Fri, 13 Dec 2024 03:17:03 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514bf9sm6929690f8f.80.2024.12.13.03.17.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 03:17:03 -0800 (PST)
+Message-ID: <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
+X-Google-Original-Message-ID: <Z1wXq2W4agQ-Qinn@Ansuel-XPS.>
+Date: Fri, 13 Dec 2024 12:16:59 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH 1/2] dt-bindings: clock: add ID for eMMC for EN7581
+References: <20241211112253.27905-1-ansuelsmth@gmail.com>
+ <bzdhbuxr6zyln2ecxnamfzlblcigdfe7r4vvwcggf35kgyozk6@it2sm6fpypa5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linux-stm32] [PATCH v4] pinctrl: stm32: Add check for
- clk_enable()
-To: Mingwei Zheng <zmw12306@gmail.com>, <marex@denx.de>,
-        <antonio.borneo@foss.st.com>
-CC: <peng.fan@nxp.com>, <make24@iscas.ac.cn>, <linus.walleij@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        Jiasheng Jiang
-	<jiashengjiangcool@gmail.com>,
-        <fabien.dessenne@foss.st.com>, <mcoquelin.stm32@gmail.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20241213010948.2623382-1-zmw12306@gmail.com>
-Content-Language: en-US
-From: Clement LE GOFFIC <clement.legoffic@foss.st.com>
-In-Reply-To: <20241213010948.2623382-1-zmw12306@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bzdhbuxr6zyln2ecxnamfzlblcigdfe7r4vvwcggf35kgyozk6@it2sm6fpypa5>
 
+On Fri, Dec 13, 2024 at 12:01:40PM +0100, Krzysztof Kozlowski wrote:
+> On Wed, Dec 11, 2024 at 12:22:37PM +0100, Christian Marangi wrote:
+> > Add ID for eMMC for EN7581. This is to control clock selection of eMMC
+> > between 200MHz and 150MHz.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  include/dt-bindings/clock/en7523-clk.h | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+> > index 717d23a5e5ae..78d16068228a 100644
+> > --- a/include/dt-bindings/clock/en7523-clk.h
+> > +++ b/include/dt-bindings/clock/en7523-clk.h
+> > @@ -11,7 +11,8 @@
+> >  #define EN7523_CLK_NPU		5
+> >  #define EN7523_CLK_CRYPTO	6
+> >  #define EN7523_CLK_PCIE		7
+> > +#define EN7581_CLK_EMMC		8
+> >  
+> > -#define EN7523_NUM_CLOCKS	8
+> > +#define EN7523_NUM_CLOCKS	9
+> 
+> This cannot change.
+> 
+> If this changes, then it is not a binding and first drop it in separate
+> patch.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-On 12/13/24 02:09, Mingwei Zheng wrote:
-> Convert the driver to clk_bulk*() API.
-> Add check for the return value of clk_bulk_enable() to catch
-> the potential error.
-> 
-> Fixes: 05d8af449d93 ("pinctrl: stm32: Keep pinctrl block clock enabled when LEVEL IRQ requested")
-> Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> ---
-> Changelog:
-> 
-> v3 -> v4:
-> 1. Add initialization for  pctl->clks.
-> 2. Adjust alignment.
-> 
-> v2 -> v3:
-> 
-> 1. Convert clk_disable_unprepare to clk_bulk_disable
-> and clk_bulk_unprepare.
-> 
-> v1 -> v2:
-> 
-> 1. Move int ret declaration into if block.
-> ---
->   drivers/pinctrl/stm32/pinctrl-stm32.c | 37 +++++++++++++++------------
->   1 file changed, 21 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> index 5b7fa77c1184..427749d4f6a5 100644
-> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> @@ -86,7 +86,6 @@ struct stm32_pinctrl_group {
->   
->   struct stm32_gpio_bank {
->   	void __iomem *base;
-> -	struct clk *clk;
->   	struct reset_control *rstc;
->   	spinlock_t lock;
->   	struct gpio_chip gpio_chip;
-> @@ -108,6 +107,7 @@ struct stm32_pinctrl {
->   	unsigned ngroups;
->   	const char **grp_names;
->   	struct stm32_gpio_bank *banks;
-> +	struct clk_bulk_data *clks;
->   	unsigned nbanks;
->   	const struct stm32_pinctrl_match_data *match_data;
->   	struct irq_domain	*domain;
-> @@ -1308,7 +1308,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
->   	if (IS_ERR(bank->base))
->   		return PTR_ERR(bank->base);
->   
-> -	err = clk_prepare_enable(bank->clk);
-> +	err = clk_prepare_enable(pctl->clks[pctl->nbanks].clk);
->   	if (err) {
->   		dev_err(dev, "failed to prepare_enable clk (%d)\n", err);
->   		return err;
-> @@ -1397,7 +1397,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
->   	return 0;
->   
->   err_clk:
-> -	clk_disable_unprepare(bank->clk);
-> +	clk_disable_unprepare(pctl->clks[pctl->nbanks].clk);
->   	return err;
->   }
->   
-> @@ -1617,10 +1617,18 @@ int stm32_pctl_probe(struct platform_device *pdev)
->   		return -EINVAL;
->   	}
->   	pctl->banks = devm_kcalloc(dev, banks, sizeof(*pctl->banks),
-> -			GFP_KERNEL);
-> +				   GFP_KERNEL);
->   	if (!pctl->banks)
->   		return -ENOMEM;
->   
-> +	pctl->clks = devm_kcalloc(dev, banks, sizeof(*pctl->clks),
-> +				  GFP_KERNEL);
-> +	if (!pctl->clks)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < banks; ++i)
-> +		pctl->clks[i].id = "";
-> +
->   	i = 0;
->   	for_each_gpiochip_node(dev, child) {
->   		struct stm32_gpio_bank *bank = &pctl->banks[i];
-> @@ -1631,11 +1639,10 @@ int stm32_pctl_probe(struct platform_device *pdev)
->   			fwnode_handle_put(child);
->   			return -EPROBE_DEFER;
->   		}
-> -
-> -		bank->clk = of_clk_get_by_name(np, NULL);
-> -		if (IS_ERR(bank->clk)) {
-> +		pctl->clks[i].clk = of_clk_get_by_name(np, NULL);
-> +		if (IS_ERR(pctl->clks[i].clk)) {
->   			fwnode_handle_put(child);
-> -			return dev_err_probe(dev, PTR_ERR(bank->clk),
-> +			return dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
->   					     "failed to get clk\n");
->   		}
->   		i++;
-> @@ -1646,8 +1653,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
->   		if (ret) {
->   			fwnode_handle_put(child);
->   
-> -			for (i = 0; i < pctl->nbanks; i++)
-> -				clk_disable_unprepare(pctl->banks[i].clk);
-> +			clk_bulk_disable_unprepare(pctl->nbanks, pctl->clks);
->   
->   			return ret;
->   		}
-> @@ -1726,10 +1732,8 @@ static int __maybe_unused stm32_pinctrl_restore_gpio_regs(
->   int __maybe_unused stm32_pinctrl_suspend(struct device *dev)
->   {
->   	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
-> -	int i;
->   
-> -	for (i = 0; i < pctl->nbanks; i++)
-> -		clk_disable(pctl->banks[i].clk);
-> +	clk_bulk_disable(pctl->nbanks, pctl->clks);
->   
->   	return 0;
->   }
-> @@ -1738,10 +1742,11 @@ int __maybe_unused stm32_pinctrl_resume(struct device *dev)
->   {
->   	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
->   	struct stm32_pinctrl_group *g = pctl->groups;
-> -	int i;
-> +	int i, ret;
->   
-> -	for (i = 0; i < pctl->nbanks; i++)
-> -		clk_enable(pctl->banks[i].clk);
-> +	ret = clk_bulk_enable(pctl->nbanks, pctl->clks);
-> +	if (ret)
-> +		return ret;
->   
->   	for (i = 0; i < pctl->ngroups; i++, g++)
->   		stm32_pinctrl_restore_gpio_regs(pctl, g->pin);
+Hi Krzysztof,
 
+maybe I can introduce EN7581_NUM_CLOCKS with the correct number? Just to
+give more info about this... It's not clear to me why NUM_CLOCKS is
+needed considering is only needed in clk-en7523.c to probe the driver
+and allock memory...
 
-Tested-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+Anyway is a different define OK for you?
+
+-- 
+	Ansuel
 
