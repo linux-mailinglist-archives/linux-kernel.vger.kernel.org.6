@@ -1,164 +1,244 @@
-Return-Path: <linux-kernel+bounces-444464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2299F0744
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:09:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342329F059B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:40:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622A418851CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:40:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B1919993E;
+	Fri, 13 Dec 2024 07:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZdzTf/o8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF73D280A1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:09:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77C71AC892;
-	Fri, 13 Dec 2024 09:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="oNtiZH5S"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC73157A6C;
-	Fri, 13 Dec 2024 09:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A3C188CC9;
+	Fri, 13 Dec 2024 07:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734080962; cv=none; b=QedJKxqwFtfcbG9jCilTu+7uRISPF5THZ6qBccVqX4DalaYORUFZDA5cw4lmtcdtZpns+DuQXkSuVBIsjpBdKOebp9SCs/wqa61FU5vESt24rASwzG5YJVcDGal7H1lrVuiP9zsaFo2oqVbZGe5yAySkRPZK4dYKoN/PUl4/kJo=
+	t=1734075639; cv=none; b=eSj9iDNH9MvzDuN0MMRLpanIE8rqLWVL4L6jag3TN/qAVK7ymn/2fyEspykLj7Q1b32pUp52VPlIfwumrzh+Jc/8cYOJmpJ+qgEUqrytvfOZSYiokhSC2nbnsRmA6BHz1ZmeyezYqeoL07UrYwDz6+HdFjNpQX0m+zzMWSHV8uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734080962; c=relaxed/simple;
-	bh=p/kDpnOAmRuFrwuwWAmBCyskDVpa5M/lDVqr3+ucMis=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=kWrrFOr418i+DCdux0mS9su5Mmfr/P6n8M5HP0msQzlNoZ2zLzrvuZSmfQw8T527RVA8IsSfhHf7pOOV9AJje/ac+oU1T2QGaM2NQy+/3Oz9pPRKsaQng5JF1ixETMxSjvO27UihiOL8wKD3mnfyrJYHEi/S8KWuv08BkxAy510=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=oNtiZH5S; arc=none smtp.client-ip=220.197.31.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=tZlbGahY/vZQF2ii+w
-	yjY3Mp3aA9pSqBupXj4liHfDg=; b=oNtiZH5SL0WcRHrVKFYN6pvHfrqb6KqaOB
-	OFXwroFWI1GAyXQpt5UC+EAStqJVJ6xw5veTQhwwxeZuAYydUxoJmLoRcOqX7/xt
-	23f5ABq91jt6WhMHKYSA8DMoZoqAwv+Yb1svXQyXllFQG6EQv0Mra7wUoYlYkizU
-	cnogHq34o=
-Received: from hg-OptiPlex-7040.hygon.cn (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDHz7wu5FtnmTDGAA--.2052S2;
-	Fri, 13 Dec 2024 15:37:18 +0800 (CST)
-From: yangge1116@126.com
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	21cnbao@gmail.com,
-	david@redhat.com,
-	baolin.wang@linux.alibaba.com,
-	vbabka@suse.cz,
-	liuzixing@hygon.cn,
-	yangge <yangge1116@126.com>
-Subject: [PATCH] mm, compaction: don't use ALLOC_CMA in long term GUP flow
-Date: Fri, 13 Dec 2024 15:37:12 +0800
-Message-Id: <1734075432-14131-1-git-send-email-yangge1116@126.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID:_____wDHz7wu5FtnmTDGAA--.2052S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXF4xCw1rXr1fXr4UCF17ZFb_yoWrXr1DpF
-	4xA3WDAws8XFyYkr4kJw4v9F4Ykw4xGF45Gr92gw18uw1akFySv3Z7KFy7AFW5WryYya1Y
-	qFWq93srAF43AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zNLvKwUUUUU=
-X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOge0G2db06TqnwAAss
+	s=arc-20240116; t=1734075639; c=relaxed/simple;
+	bh=z+QOYR6IAaXu9IrXrCJYATLfMZuGKCN7F03jfOvDO+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZHDoeRV9wMF1yVJIjZzoAlRCXFxRJtj6N+KHICD6A6lYPnB12UKScgCVrvnueofWMJTI33etYUZwwI+3KEcO0CpSQPIWBuNtREQu+RWb0VKPCQveWSHioS5cZ9H9jZuoVvSJVMhhL/sNUiQ/WUYXhiPxZ5o/UJP8DIMjE8hk/YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZdzTf/o8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F4CBC4CED0;
+	Fri, 13 Dec 2024 07:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734075638;
+	bh=z+QOYR6IAaXu9IrXrCJYATLfMZuGKCN7F03jfOvDO+Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZdzTf/o8P3OgApWUgLgc63+Jve+OJn36APqyfcMJrA1I9KRigR1DbwTWD0B2HS7Eh
+	 9m7KDaugbjrjV+/x0zbl3VtdD5rx/9pYwFhUnMRNNWYApkei+B9ux50bySecAKlE0z
+	 031frx74FTFjiIozFeNR2M1Hqt8Tm8EBcUoIF3GXXF6cRoNBEszIbB+Y6GGIm7Elgr
+	 k/0xz2/DKoWciBopFREtfGbiMgxcvORQFI6egKXDqDHFhhmZxoKeDdZgRVfrC8HJH8
+	 pKe/xWj8uIoeTCoEXDIQ2wnDxE1Y8sDVDIojnxxK6LnPA8dcqJ/2taOnLJLNBQNvIG
+	 7oOfnY3cuyStw==
+Message-ID: <207354ad-e363-4156-ba6b-86dbaa13ab95@kernel.org>
+Date: Fri, 13 Dec 2024 08:40:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: soc: samsung: exynos-speedy: Document
+ SPEEDY host controller bindings
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
+ <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: yangge <yangge1116@126.com>
+On 12/12/2024 22:09, Markuss Broks wrote:
+> Add the schema for the Samsung SPEEDY serial bus host controller.
+> The bus has 4 bit wide addresses for addressing devices
+> and 8 bit wide register addressing. Each register is also 8
+> bit long, so the address can be 0-f (hexadecimal), node name
+> for child device follows the format: node_name@[0-f].
 
-Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
-in __compaction_suitable()") allow compaction to proceed when free
-pages required for compaction reside in the CMA pageblocks, it's
-possible that __compaction_suitable() always returns true, and in
-some cases, it's not acceptable.
 
-There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
-of memory. I have configured 16GB of CMA memory on each NUMA node,
-and starting a 32GB virtual machine with device passthrough is
-extremely slow, taking almost an hour.
+This wasn't tested so limited review.
 
-During the start-up of the virtual machine, it will call
-pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
-Long term GUP cannot allocate memory from CMA area, so a maximum
-of 16 GB of no-CMA memory on a NUMA node can be used as virtual
-machine memory. Since there is 16G of free CMA memory on the NUMA
-node, watermark for order-0 always be met for compaction, so
-__compaction_suitable() always returns true, even if the node is
-unable to allocate non-CMA memory for the virtual machine.
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-For costly allocations, because __compaction_suitable() always
-returns true, __alloc_pages_slowpath() can't exit at the appropriate
-place, resulting in excessively long virtual machine startup times.
-Call trace:
-__alloc_pages_slowpath
-    if (compact_result == COMPACT_SKIPPED ||
-        compact_result == COMPACT_DEFERRED)
-        goto nopage; // should exit __alloc_pages_slowpath() from here
+> 
+> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
+> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
+> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+> ---
+>  .../bindings/soc/samsung/exynos-speedy.yaml        | 78 ++++++++++++++++++++++
 
-To sum up, during long term GUP flow, we should remove ALLOC_CMA
-both in __compaction_suitable() and __isolate_free_page().
+Filename must match compatible.
 
-Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in __compaction_suitable()")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: yangge <yangge1116@126.com>
----
- mm/compaction.c | 8 +++++---
- mm/page_alloc.c | 4 +++-
- 2 files changed, 8 insertions(+), 4 deletions(-)
+>  1 file changed, 78 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..304b322a74ea70f23d8c072b44b6ca86b7cc807f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml
+> @@ -0,0 +1,78 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/samsung/exynos-speedy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung Exynos SPEEDY serial bus host controller
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 07bd227..044c2247 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2384,6 +2384,7 @@ static bool __compaction_suitable(struct zone *zone, int order,
- 				  unsigned long wmark_target)
- {
- 	unsigned long watermark;
-+	bool pin;
- 	/*
- 	 * Watermarks for order-0 must be met for compaction to be able to
- 	 * isolate free pages for migration targets. This means that the
-@@ -2395,14 +2396,15 @@ static bool __compaction_suitable(struct zone *zone, int order,
- 	 * even if compaction succeeds.
- 	 * For costly orders, we require low watermark instead of min for
- 	 * compaction to proceed to increase its chances.
--	 * ALLOC_CMA is used, as pages in CMA pageblocks are considered
--	 * suitable migration targets
-+	 * In addition to long term GUP flow, ALLOC_CMA is used, as pages in
-+	 * CMA pageblocks are considered suitable migration targets
- 	 */
- 	watermark = (order > PAGE_ALLOC_COSTLY_ORDER) ?
- 				low_wmark_pages(zone) : min_wmark_pages(zone);
- 	watermark += compact_gap(order);
-+	pin = !!(current->flags & PF_MEMALLOC_PIN);
- 	return __zone_watermark_ok(zone, 0, watermark, highest_zoneidx,
--				   ALLOC_CMA, wmark_target);
-+				   pin ? 0 : ALLOC_CMA, wmark_target);
- }
- 
- /*
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index dde19db..9a5dfda 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2813,6 +2813,7 @@ int __isolate_free_page(struct page *page, unsigned int order)
- {
- 	struct zone *zone = page_zone(page);
- 	int mt = get_pageblock_migratetype(page);
-+	bool pin;
- 
- 	if (!is_migrate_isolate(mt)) {
- 		unsigned long watermark;
-@@ -2823,7 +2824,8 @@ int __isolate_free_page(struct page *page, unsigned int order)
- 		 * exists.
- 		 */
- 		watermark = zone->_watermark[WMARK_MIN] + (1UL << order);
--		if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
-+		pin = !!(current->flags & PF_MEMALLOC_PIN);
-+		if (!zone_watermark_ok(zone, 0, watermark, 0, pin ? 0 : ALLOC_CMA))
- 			return 0;
- 	}
- 
--- 
-2.7.4
+Speedy or SPEEDY?
 
+> +
+> +maintainers:
+> +  - Markuss Broks <markuss.broks@gmail.com>
+> +
+> +description:
+> +  Samsung SPEEDY is a proprietary Samsung serial 1-wire bus.
+
+1-wire? But not compatible with w1 (onwire)?
+
+> +  It is used on various Samsung Exynos chips. The bus can
+> +  address at most 4 bit (16) devices. The devices on the bus
+> +  have 8 bit long register line, and the registers are also
+> +  8 bit long each. It is typically used for communicating with
+> +  Samsung PMICs (s2mps17, s2mps18, ...) and other Samsung chips,
+> +  such as RF parts.
+> +
+> +properties:
+> +  compatible:
+> +    - items:
+> +        - enum:
+> +            - samsung,exynos9810-speedy
+> +        - const: samsung,exynos-speedy
+
+Drop last compatible and use only SoC specific.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    - const: pclk
+
+Drop clock-names, not needed for one entry.
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+
+You do not have them in the properties, anyway required goes before
+additionalProperties
+
+> +
+> +patternProperties:
+> +  "^[a-z][a-z0-9]*@[0-9a-f]$":
+
+That's odd regex. Look at other bus bindings.
+
+> +    type: object
+> +    additionalProperties: true
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+
+maximum: 15
+
+> +
+> +    required:
+> +      - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    speedy0: speedy@141c0000 {
+
+Drop unused label.
+
+> +      compatible = "samsung,exynos9810-speedy",
+> +                   "samsung-exynos-speedy";
+> +      reg = <0x141c0000 0x2000>;
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+
+No resources? No clocks? No interrupts?
+
+
+
+Best regards,
+Krzysztof
 
