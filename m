@@ -1,157 +1,172 @@
-Return-Path: <linux-kernel+bounces-445385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9089F1554
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:59:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B71C99F1561
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:01:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9CA188C666
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:59:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F20C5188E388
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828551E764A;
-	Fri, 13 Dec 2024 18:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8D41EE021;
+	Fri, 13 Dec 2024 19:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lop/zUVh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="IiQJDRk9"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5340E18A92C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734116340; cv=none; b=HUU7uHLCKrUax9Ue0mrcr3eqjyHJ/yEr2oWqonKh4xqKVbRU90TnKzKtaqH/TIbwiDZhT7AEj6XQLcsOu7E4umQlVOutguHnfngBrC22TbFnEpWzH23cPjzYlqrAz3RYJcz3Km+wgchd4HcoWhJyA5rKzHwICxk08tkBW67nHJg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734116340; c=relaxed/simple;
-	bh=t7Np4Aa+tgtujgWBmCLmpiOGbTdtLucpjvWi7GEHhkM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EgQeHKYsURZoI4nwjquszktdVHyJJxBVY1PGHUnfrbs3vo2LRVmBt0ZVQKSc1Fa4A2DvmgLSz2KBn3mYYvWWnbPtZ9RnWDfW/NocfcnU1xUjedpR7dJg1mmfCG2hQU7962qRt1PvtuWFzyAj6QeyQYfHk/tMBY+3wOg27LZcX0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lop/zUVh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734116338;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mI1mOtjG4nC/az8D+B88vVhaoQDxbNllCYmgLL5S3Ec=;
-	b=Lop/zUVhKwcCBwhc3+mGaKy6iTjNlfwwQlN0JRePiLfj9clSxXltzjGac1K/HSKT+53uUE
-	xnEl7K3vKpBdFGg/o7GW5VlzCM8U0/l2qjY9bjXhWmRrdyVnXOtVOFF2rhf/6konNrCxG2
-	mJoRfyPvc/BXxhsYa6uvNMsDQxILga0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-487-f6e4rTGnMniMlIO-_4MroQ-1; Fri, 13 Dec 2024 13:58:57 -0500
-X-MC-Unique: f6e4rTGnMniMlIO-_4MroQ-1
-X-Mimecast-MFC-AGG-ID: f6e4rTGnMniMlIO-_4MroQ
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4361d4e8359so16753055e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:58:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734116336; x=1734721136;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mI1mOtjG4nC/az8D+B88vVhaoQDxbNllCYmgLL5S3Ec=;
-        b=mBsch3xwACDhfE9NaxEJrPUMojYDvzUeIrfS+5UnFVM708/snyxBwAKbnVgPCP+L8Y
-         yKE5uQuDcbEyDSZqHa931RyxK2kOIBvBgkruP5F/z/B0n64j5Zvg9JI/wQ+oXF9mGu3Q
-         GjGA/jLgHIDrTRDdBzV/6jVqw7Ia9rS8zreVow5z7dFQL8HzxWafIeB/vp0xKqQAt1tv
-         nMjr7fdmIm5rmzF/EBbsn7T2THqi+AARFwl12JOX07rQWCDIgbxRiWV8eCAcAXet072e
-         SHq5Zk9neDQYO0F7d9H2KFxFcuTalWuTpdKwY4A7UX2ZTn0ohCPTrnBpAVVt4U80CBjn
-         aFmA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3IdAHT5eRYfbADturnSp5G9S4Iy5aY6BG/OTO8/ilFkHorbxtDgDw39jieRRYgkswaPFJg0+A9QAuits=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKo0I2z5XjSU1TuCK3QF34MLBz5k76JnMc/dy2q2PccVdOm/Fu
-	rxYjOl+n0yikDatbOnyWBOxI1PLiTrEB5xwiqcsak4nbZc8sgkXLKUHmetYLe6jxUZcZ1mmIBHx
-	SVKaQ7J1dW7avlk8Yr5dRe+ddB62D1iM37vKl7UZbbIt7lHJtdEwxx7StrnxSTQ==
-X-Gm-Gg: ASbGnctb03Yw7PhwFH84KT8SChzoqMpNWiEAO/J11pXZki+ZPwjo791jXBYAvDf144c
-	Y+i+1Z0LEFqOOP3sSBeF10OoGq+ecnvl2NmhS3ffwv+gWIwxIcWQIR4iJ6yZ0ICdUwE41n7BIaH
-	1KXZ+LmfVKHmAiANAf+mgOb33Xj8toLEhVWKIkURpC6B95A/HolDspLuRENkjPi28ohqQFccThk
-	WA6nntczdXSGlauZIhixpmIhLWzpwCIRvwZZycSpkeSYfhmCAcIKYiKBQs=
-X-Received: by 2002:a05:600c:190c:b0:42c:c28c:e477 with SMTP id 5b1f17b1804b1-4362aa9d675mr34183115e9.23.1734116335992;
-        Fri, 13 Dec 2024 10:58:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGCocN09lwrJ18yznQg6RRv3t1XmTAkjMEIYeGuE67QjSo4SyJA5WAXCajyTNxHaPEkuz0Z7A==
-X-Received: by 2002:a05:600c:190c:b0:42c:c28c:e477 with SMTP id 5b1f17b1804b1-4362aa9d675mr34182965e9.23.1734116335622;
-        Fri, 13 Dec 2024 10:58:55 -0800 (PST)
-Received: from [192.168.10.3] ([151.81.118.45])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-388c80602a1sm251014f8f.97.2024.12.13.10.58.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 10:58:55 -0800 (PST)
-Message-ID: <257491b6-f70a-4347-b97d-cc7fa22aac85@redhat.com>
-Date: Fri, 13 Dec 2024 19:58:54 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36031EB9F8;
+	Fri, 13 Dec 2024 19:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734116432; cv=pass; b=KJOCJIZWxDRRVAYpYg67rRv5A33A/rnaP7QImCbifxbrG2/eMPfe+T464ZZPwuTgekS5V1lv0EIwjstjRY9JncyF+RzoiCbQ8HAe5NwVK2SdE/1ngoSgC0vBmi9rUUonnVrLEkFrnFMoATM7do5Po6yS3rP9jB/d3sa3FhvUPE4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734116432; c=relaxed/simple;
+	bh=2QLIMmXwq0PC90DcHTuI1EJV9YDPCuFvlKGVyMw45Fs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HglxtzScNigufTsimmNO5UTMwyvhXBs4FQgkoUO0I3G0b2JkYv+6T5TN5VkPkOa7QUYalJCy4L1wshT8rxvmakkgaXdTBMxeZGvdQaSw6uvvQcorvPsH9GCb1xXKDpy05oT4cHaJp9UI2YzLbshqBqvjcRqg4LkNKxloFqxS0AU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=IiQJDRk9; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1734116412; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MFblYMimd0gGPr2HXq9BRBOoZP7EfNJ6KiDCC2SX0s/nPI1wQTXGWD1g/AUoV++6bFO9sZUnOqQqKAnmhInQVFHqWV02QBu9W5yfpTJPArsGT17NokaFuPhDCkQBd+wDd/OhMfDwZAu4xPtwNd2s0jtKIGyLs7ijMa+NLK1fCek=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1734116412; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2fQYeZnIEuXaZlLvcxerDjDSXLZNHqNtUkzd6tb+dXs=; 
+	b=LOnNDThME+fROHYnLlRRDIka09DYS+3/PBidnNXLwpoOA2uHwPu2epbqqu8xrwCuplrO/3IlKH2BdvGCzNvtCtDNRfpadKlQZA4DXrRlxyYp1xcJFdDaWW6tnPu6ZGPggZTooqodOfkFHEh1bIp+pGAcRc+oLUi+UtmwvdiY/Ws=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734116412;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=2fQYeZnIEuXaZlLvcxerDjDSXLZNHqNtUkzd6tb+dXs=;
+	b=IiQJDRk9R7OM5mhE4R2KulWaxHilo2bKAn2doQGiVR6h2JhFlfXoDkrDgpg0a/SL
+	zrHB8eKRxw6njrlAGMeo3UPDHSiQf9OsXP70LNiLa/ZWycyE8xumgJ91y9hIUqCGeip
+	1aSnAYe85B65ROzLa8S777tmTZOA1iMMFOYaX5vM=
+Received: by mx.zohomail.com with SMTPS id 1734116409928313.33760806040016;
+	Fri, 13 Dec 2024 11:00:09 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id D7B2610604D3; Fri, 13 Dec 2024 20:00:04 +0100 (CET)
+Date: Fri, 13 Dec 2024 20:00:04 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
+Cc: christophe.jaillet@wanadoo.fr, 
+	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 2/2] power: supply: Add STC3117 fuel gauge unit driver
+Message-ID: <45rho3eswmyqf2ufnbzfbogftqhm7xxe5ylfvs3a4yvu3hrdhi@ljwxpgzzvkge>
+References: <20241213063813.32371-1-bhavin.sharma@siliconsignals.io>
+ <20241213063813.32371-3-bhavin.sharma@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] KVM: x86: Address xstate_required_size() perf
- regression
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jim Mattson <jmattson@google.com>
-References: <20241211013302.1347853-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
- UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
- 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
- jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
- VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
- CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
- SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
- AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
- AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
- nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
- bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
- KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
- m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
- tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
- dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
- JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
- sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
- OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
- GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
- Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
- usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
- xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
- JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
- dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
- b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
-In-Reply-To: <20241211013302.1347853-1-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d52vomtdu3j4esp6"
+Content-Disposition: inline
+In-Reply-To: <20241213063813.32371-3-bhavin.sharma@siliconsignals.io>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/233.960.20
+X-ZohoMailClient: External
 
-On 12/11/24 02:32, Sean Christopherson wrote:
-> Fix a hilarious/revolting performance regression (relative to older CPU
-> generations) in xstate_required_size() that pops up due to CPUID _in the
-> host_ taking 3x-4x longer on Emerald Rapids than Skylake.
-> 
-> The issue rears its head on nested virtualization transitions, as KVM
-> (unnecessarily) performs runtime CPUID updates, including XSAVE sizes,
-> multiple times per transition.  And calculating XSAVE sizes, especially
-> for vCPUs with a decent number of supported XSAVE features and compacted
-> format support, can add up to thousands of cycles.
-> 
-> To fix the immediate issue, cache the CPUID output at kvm.ko load.  The
-> information is static for a given CPU, i.e. doesn't need to be re-read
-> from hardware every time.  That's patch 1, and eliminates pretty much all
-> of the meaningful overhead.
 
-Queued this one, thanks!
+--d52vomtdu3j4esp6
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v9 2/2] power: supply: Add STC3117 fuel gauge unit driver
+MIME-Version: 1.0
 
-Paolo
+Hi,
 
+Thanks for including the test output. Looks like everything is
+returned with the correct units now :)
+
+On Fri, Dec 13, 2024 at 12:08:10PM +0530, Bhavin Sharma wrote:
+> Adds initial support for the STC3117 fuel gauge.
+>=20
+> The driver provides functionality to monitor key parameters including:
+> - Voltage
+> - Current
+> - State of Charge (SOC)
+> - Temperature
+> - Status
+>=20
+> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+> Signed-off-by: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
+> ---
+
+You probably want to document Co-authorship? In that case you should
+also add
+
+Co-developed-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+
+in addition to the Signed-off-by. See Documentation/process/submitting-patc=
+hes.rst
+for details.
+
+> [...]
+> +#define INVALID_TEMPERATURE		250
+> [...]
+> +	/* INIT state, wait for batt_current & temperature value available: */
+> +	if (ram_data.reg.state =3D=3D STC3117_INIT && count_m > 4) {
+> +		data->avg_voltage =3D data->voltage;
+> +		data->avg_current =3D data->batt_current;
+> +		ram_data.reg.state =3D STC3117_RUNNING;
+> +	}
+> +
+> +	if (ram_data.reg.state !=3D STC3117_RUNNING) {
+> +		data->batt_current =3D 0;
+> +		data->temp =3D INVALID_TEMPERATURE;
+
+Please don't return arbitrary values when there is no data
+available. We have error codes for this. I suppose in your case
+-ENODATA makes most sense.
+
+> +	} else {
+> +		if (data->voltage < APP_CUTOFF_VOLTAGE)
+> +			data->soc =3D 0;
+> +
+> +		if (mode & STC3117_VMODE) {
+> +			data->avg_current =3D 0;
+> +			data->batt_current =3D 0;
+> +		}
+> +	}
+> [...]
+
+Otherwise looks good to me.
+
+Thanks,
+
+-- Sebastian
+
+--d52vomtdu3j4esp6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdchCkACgkQ2O7X88g7
++pqsqw/+N1Z6Xi+hiucuvTQmAmfWE2R/Y51VSSmXoKd5uQvZnFCRrsQeROUnpNGe
+4pUqHi+bACY9+vMBHYk5pSKLrfbrYg9BGoF+KevwL+XHCgA7KHZNwrZCAEpAZRJV
+rL0yOA4eP6UHcdSq24+3zZ0fKZQt0Zh6N9/nG9HTIFB+W14cKxpDyy1Y1is16EIs
+7d6PYBlTF3pdi5f2ccmpkaoDUEn80rcOEvJXyLzr9BCn6nm5MW6ZYBO/Qw6Ujgs5
+uib+cqYt+Lb7caO350C3e5+LjAuez/iRYoYpjbrPKmn516eIJhnPo/+qyiu+aJEV
+pemKQ03TO5AAfawXzd7smRfKfpuL7jh1AM4tYuhu2OjFfTKLrohkByxIlPMx6v6z
+FceDLesbXeVmT+PTDcuUrYWpWaVI0tAbIzub+EdneWpewox9CaRfg5RzyXJEmxCL
+h4+fliRW6t2aav16KhaYbYfsg5fwQJ76B471bswQtlJCx8W+r7fvfzVJQBUD6Abs
+VCKbgJP3EDVv/xCESnNJRao9D7p0IWuBF2SS4Iav8+nsXjujv9iguN+5pD+DKSl+
+WFw13/TGWm8faWyl3KINsBiNpXFCBNKa/vXvsICerLrWn/pxaTAv+TnxMrgFy776
+Frc8SyfvTk9/lbOpDv2CyOC27J2trErWGxyPNbtWW4jk/ebcJSk=
+=LtuL
+-----END PGP SIGNATURE-----
+
+--d52vomtdu3j4esp6--
 
