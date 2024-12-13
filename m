@@ -1,129 +1,229 @@
-Return-Path: <linux-kernel+bounces-445705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86C69F1A24
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:35:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3499F1A27
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Dec 2024 00:36:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C104B16483E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:35:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8173B7A04FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792DE1B85C9;
-	Fri, 13 Dec 2024 23:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87971D8E1A;
+	Fri, 13 Dec 2024 23:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="JZAv5/XL"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W2Eshdft"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F708192B84
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7ED1B86CC
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 23:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734132938; cv=none; b=reX0HKTmw0u7W1rb/bBIv1c+//RJszif4Sg8jS8UFxv8jHzIQ8BsbSgsY6/FSJyDAsr7r+JzaPkHwZf6wjn1omUGz6ZS2u4dmh0894IiaotXJ+848MwAQFfjvOm7y8RHgOi7KZ2HPpY9ARIZm0qLBzCLqsC8T0/kXQAy62oQQO4=
+	t=1734132957; cv=none; b=ikPlOl7/yTW63gFw6PfpLVcPTHsLdDNHiyRg/L3BOcnTmKa4ImbNKNXbCcRkJkqkOqeS+LbkJY51SCS2Q0sqdQv8QMVyLdu7go1y7hyPZ0MYDpxXWySMYzMq1J5MEMoTTmq9Ok6xuTrMBpB8kQ2s9G0P2lafRY0dGmuX8YfX8ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734132938; c=relaxed/simple;
-	bh=MMd09NUDrNtnOC8NmenQG41UThQUqD7+DAdT6Zeev/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZhQcJBnjmGxlEA1k/D2jQQgGMX8RCcE/Zu3lAzA5IH5ZhJJRRK1yAAjTeId7XF4y23Ik95zSIox1T+kmB8YEmYesMkUTVJkkoUaQraDtJHETXACbSQlABibZ1WGya22sb7okqh9w5E9KvNK7bXLypvQrPBX6prhCWhSFrOYX1mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=JZAv5/XL; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
-	by cmsmtp with ESMTPS
-	id MDhatTLxPg2lzMFC3tvhno; Fri, 13 Dec 2024 23:35:35 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id MFC2tlqsFjcdmMFC3tZCf1; Fri, 13 Dec 2024 23:35:35 +0000
-X-Authority-Analysis: v=2.4 cv=DrWd+3/+ c=1 sm=1 tr=0 ts=675cc4c7
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=U14AhigymTHLZSuqQ78A:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0yyYX3vr7rXLLk5LRQep12YtMqmm1Hhxnc6isvMbu/E=; b=JZAv5/XLt/5FQ274b0daCOvi+p
-	qC0h3MzP5fDXFKEGgt/q5QAaq/9UoIHdvpipYa2MZPnGwcpIJgA4FFG7/ICbYHV99XOyIMCClnq9T
-	2UcqDhQJgYFViPfX1lBYgVqxUEYLrlqIQV3To83tkOAbb8/nidsCNyKdByIHRvdAOou9cTStJb+tI
-	kR+4rsIpVB65OiiR+n3s/6bE7KuCcXlRJoZ1gMg8uPTUCBVs6lNlVOQLblwfuCMJfk1hb8VEyi51B
-	LdnL9Oyr0DbTfDrWXJA4Ol9KIArxv4lHm2uYnVqQSh32f3eAACSNk4Qsxz6RZAfDSL7ZLEAMlvZbY
-	OAH+8jwQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:34866 helo=[10.0.1.115])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1tMFC1-002YJ2-1j;
-	Fri, 13 Dec 2024 16:35:33 -0700
-Message-ID: <01fe4794-2ee7-476b-bfeb-9cc3ae2eee82@w6rz.net>
-Date: Fri, 13 Dec 2024 15:35:30 -0800
+	s=arc-20240116; t=1734132957; c=relaxed/simple;
+	bh=0j+16PpN+91mUK3wyIrIzkLt+SoJgk/lLKUzYw0f3S4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TEKDOWR5zRr+qCS4k4iZqJsnNLSGfFX9DCuydVCBMdlC+O9pNOJeVBdsHJqNnJSiMKtcc3nc8olmT/x2uJJD2iPOKqR6vMZJTbZ9E+dieX/uDD5b82U9YvMB07oVdQaWTvMnk9DW8/I/Xlk0wB9sZj3pbT/8sGarhl4YWzbHI9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W2Eshdft; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21634338cfdso27599345ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:35:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1734132954; x=1734737754; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PTFT9yz4pM1OFjc+buOwPNQT6jdZkXPwXL3n28Tfbzs=;
+        b=W2EshdftAyJ6NblwCEAydEKCaUT53b1xn6OfAegr3VF7mcgTirF+/EGRt9yxay2RqF
+         P5lXmURy8jRXOYs5d5KgAqTotxBotiEdT2p3cj6LL+jD6m3ZWqj0RPncE22MzA2w1btf
+         e95aYPfaT9Ii008A46qgYbZ3QJ6jQPc3+cfwE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734132954; x=1734737754;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PTFT9yz4pM1OFjc+buOwPNQT6jdZkXPwXL3n28Tfbzs=;
+        b=JLaqwLHGxtwUJ4I3y97cpWYWp7/LQiNnXJMzu42mevtspePhrpRk6LCJfsvDhrbGQM
+         aD8OCGERDw6IVA5IkeKSlnwnju1s2lgAADJsSMdvCqACxnSdEtb1BQgbX378mDE7mYyf
+         HNl09V/iGB4livWuGK/OYyVlFMX/apCB8hhzuKn8z3TlYfdOYbXO2eSFz/0tlLkEub6a
+         O814ygSU4/TWp1a9Nxwj/CY+wR3VE2tWu5LjTeFuDOzKoPxy8ESypW6v6TuXZkc2mVFa
+         mtT2DHoW+Iy+XnVFq0UfcdNgdn7CsWzjhl55uEeLNjN1gHmjYlXgNyw4EHY6rhvzPvxJ
+         l3/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVkCc1Tf2+hOUGjQKkLRumykqpHyTBJKjuVhcnhssQ0YZ5/Q6Q7ctYKg0UaEcYmveIJ6bq4vk6o6aU46Bs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp9JEJdhWbpXKsqiEPAaC0ItOBNQ7P5FvFdxAPajxCGAcLHMpE
+	uVyMKAYjHXznumPKrA7AwHx0ObS7RgDdbvasQQQtEnqRz3DxjtxlD5yrxU0D9w==
+X-Gm-Gg: ASbGncvhIIFEd4y9LAPqaw/OS7Rh2fhdZufuNu/Qz8gjUwGzCix7ZubsCNo04dvqmMy
+	ie0ZodI+k4PF6+CKVyRKGyYZMrqsPCCnaWDoRzSccYDdFD92YLlHrGlU6naRod2pOWv5oddHQsm
+	2MOU9yV39taQUjPPSHg7f+a+17l5RH3kc2fQ6sWHQDRJ0xqWbnGOuml5MbZ7D59gvJwCq8DRitQ
+	aH17CWphI9d6gY+4+06cpWgH4HcCCDh9injUhnRRHhIGcmbp4I71u74eTVMAHwN7r33q60DMbwg
+	idk8ZfvWQcULnWCboM4A8S+n9aumyDE=
+X-Google-Smtp-Source: AGHT+IG5j4AMarUnG2ZSC8v4QEARGsFW4ax9MqO8wiJjh8pP/1TphunmTJECxAqe49LgP2wG4I0BzA==
+X-Received: by 2002:a17:902:e542:b0:211:3275:3fe with SMTP id d9443c01a7336-21892a22a56mr48820505ad.17.1734132954576;
+        Fri, 13 Dec 2024 15:35:54 -0800 (PST)
+Received: from localhost (227.180.227.35.bc.googleusercontent.com. [35.227.180.227])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-218a1dcb1c0sm3024755ad.65.2024.12.13.15.35.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 15:35:54 -0800 (PST)
+From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+To: heikki.krogerus@linux.intel.com,
+	tzungbi@kernel.org,
+	linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev
+Cc: akuchynski@google.com,
+	sboyd@kernel.org,
+	pmalani@chromium.org,
+	badhri@google.com,
+	rdbabiera@google.com,
+	dmitry.baryshkov@linaro.org,
+	jthies@google.com,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Bill Wendling <morbo@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v5 0/8] Thunderbolt and DP altmode support for cros-ec-typec
+Date: Fri, 13 Dec 2024 15:35:41 -0800
+Message-ID: <20241213233552.451927-1-abhishekpandit@chromium.org>
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/565] 5.15.174-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241212144311.432886635@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20241212144311.432886635@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1tMFC1-002YJ2-1j
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:34866
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 73
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLxwOuxrVhBGlOUsY4RKfX2QVgN8N9G6mVGf+vluRcqCwrK4WVLjyOzGQ8HwrX+v9Z2riTxxWaEwmT5BfI1rI6dl/p32Gqhq4h9S/xoNmCnqoqY9Nnbo
- vR4oo6xt2XENuHFkgOOyrwewrefmKk0cc06F6iDAdZ6ffyHyxTjZgTKbiXW4j8U2AIj/rja+uPmgqg5h8BAkYIbOtJy+Ff3oqdY=
+Content-Transfer-Encoding: 8bit
 
-On 12/12/24 06:53, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.174 release.
-> There are 565 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 14 Dec 2024 14:41:35 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.174-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Hi Heikki, Tzung-Bi et al,
 
-Tested-by: Ron Economos <re@w6rz.net>
+This patch series adds support for alternate mode entry for the
+cros-ec-typec driver for Displayport and Thunderbolt.
+
+Thunderbolt support is added by adapting an RFC Heikki had posted
+previously:
+
+https://lore.kernel.org/linux-usb/20191230152857.43917-1-heikki.krogerus@linux.intel.com/
+
+A few comments on the series:
+
+* The cros-ec interface will not accept any VDOs/VDMs so we simply
+  ignore any configurations we are passed (i.e. DPConfigure). This means
+  the sysfs control of DP lanes won't work.
+* ChromeOS has two modes of operation for alt-modes: entirely EC driven
+  or AP-driven from userspace (via the typec daemon). Thus, we don't
+  expect the kernel alt-mode drivers to auto-enter modes in all cases.
+  This series allows auto-enter for displayport but disables it for TBT
+  for this reason.
+
+This was tested with a ChromeOS Brya device using kernel 6.6 and built
+with allmodconfig for linux-usb.
+
+Thanks,
+Abhishek
+
+Changes in v5:
+- Rebase with module_alias_printf
+- Add lockdep, missing includes and fix up block comment style.
+- Extract port altmode ".active" changes to its own patch
+- Put dev_err on single line.
+- Slip clang-format a washington to look the other way.
+- Use list_for_each_entry and simplify conditional statement within
+- Include missing headers for altmodes
+- Consistent use of `adata` for altmode data
+- Fix incorrect alloc size of dp_data
+
+Changes in v4:
+- Large refactor to use cable_altmodes
+- Fixed ordering of cable mode enter/exit (SOP', SOP", then port for
+  enter; reverse order for exit)
+- Other small fixes from v3 feedback
+- memset struct typec_altmode_desc
+- Add CONFIG_CROS_EC_TYPEC_ALTMODES for Makefile use
+- Move ap_driven_altmode check to common vdm function
+- Add locking to protect shared data
+- Update enter/exit error messages
+- Update Makefile + Kconfig to use CONFIG_CROS_EC_TYPEC_ALTMODES
+- Add locking in vdm function
+
+Changes in v3:
+- Removed mode from altmode device ids
+- Updated modalias for typecd bus to remove mode
+- Re-ordered to start of series
+- Revert rename of TYPEC_TBT_MODE
+- Remove mode from typec_device_id
+- Refactored typec_altmode_dp_data per review request
+- Removed unused vdm operations during altmode registration
+- Fix usage of TBT sid and mode.
+- Removed unused vdm operations during altmode registration
+- Set port.inactive = true instead of auto-enter.
+
+Changes in v2:
+- Update altmode_match to ignore mode entirely
+- Also apply the same behavior to typec_match
+- Use <linux/usb/typec_tbt.h> and add missing TBT_CABLE_ROUNDED
+- Pass struct typec_thunderbolt_data to typec_altmode_notify
+- Rename TYPEC_TBT_MODE to USB_TYPEC_TBT_MODE
+- Use USB_TYPEC_TBT_SID and USB_TYPEC_TBT_MODE for device id
+- Change module license to GPL due to checkpatch warning
+- Refactored displayport into cros_typec_altmode.c to extract common
+  implementation between altmodes
+- Refactored thunderbolt support into cros_typec_altmode.c
+- Only disable auto-enter for Thunderbolt
+- Update commit message to clearly indicate the need for userspace
+  intervention to enter TBT mode
+
+Changes in v1:
+- Delay cable + plug checks so that the module doesn't fail to probe
+  if cable + plug information isn't available by the time the partner
+  altmode is registered.
+- Remove unncessary brace after if (IS_ERR(plug))
+
+Abhishek Pandit-Subedi (7):
+  usb: typec: Only use SVID for matching altmodes
+  usb: typec: Make active on port altmode writable
+  usb: typec: Print err when displayport fails to enter
+  platform/chrome: cros_ec_typec: Update partner altmode active
+  platform/chrome: cros_ec_typec: Displayport support
+  platform/chrome: cros_ec_typec: Thunderbolt support
+  platform/chrome: cros_ec_typec: Disable tbt on port
+
+Heikki Krogerus (1):
+  usb: typec: Add driver for Thunderbolt 3 Alternate Mode
+
+ MAINTAINERS                                  |   3 +
+ drivers/platform/chrome/Kconfig              |   7 +
+ drivers/platform/chrome/Makefile             |   4 +
+ drivers/platform/chrome/cros_ec_typec.c      |  46 ++-
+ drivers/platform/chrome/cros_ec_typec.h      |   1 +
+ drivers/platform/chrome/cros_typec_altmode.c | 373 ++++++++++++++++++
+ drivers/platform/chrome/cros_typec_altmode.h |  51 +++
+ drivers/usb/typec/altmodes/Kconfig           |   9 +
+ drivers/usb/typec/altmodes/Makefile          |   2 +
+ drivers/usb/typec/altmodes/displayport.c     |   4 +-
+ drivers/usb/typec/altmodes/nvidia.c          |   2 +-
+ drivers/usb/typec/altmodes/thunderbolt.c     | 388 +++++++++++++++++++
+ drivers/usb/typec/bus.c                      |   6 +-
+ drivers/usb/typec/class.c                    |   9 +-
+ include/linux/usb/typec.h                    |   2 +
+ include/linux/usb/typec_tbt.h                |   1 +
+ scripts/mod/devicetable-offsets.c            |   1 -
+ scripts/mod/file2alias.c                     |   9 +-
+ 18 files changed, 885 insertions(+), 33 deletions(-)
+ create mode 100644 drivers/platform/chrome/cros_typec_altmode.c
+ create mode 100644 drivers/platform/chrome/cros_typec_altmode.h
+ create mode 100644 drivers/usb/typec/altmodes/thunderbolt.c
+
+-- 
+2.47.1.613.gc27f4b7a9f-goog
 
 
