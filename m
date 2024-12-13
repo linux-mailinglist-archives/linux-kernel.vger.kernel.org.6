@@ -1,161 +1,182 @@
-Return-Path: <linux-kernel+bounces-445023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C969F100D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:00:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077889F101E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:02:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0041E16650F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:00:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40EB188E451
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C8C1F4E3F;
-	Fri, 13 Dec 2024 14:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0A61E1A33;
+	Fri, 13 Dec 2024 14:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bc9a/hKD"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aJglMFZj"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC531F4E33
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD411E105B
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101704; cv=none; b=BNnPiP7aiG/Ssg1CcYQrCkxpew+/WO5rBHym0FmskiNGs053oaMtvncQu1EE1ObxzIIvzXCciR3o0zQZ/MLERpWm/nUZZR2Rn0Ir/ARO6cnQzE+cLbhViSgxBQlmOSxWibiyNl3YMEHG/yUu2B+XyAt9wXe89EHDuhTANYEkRF0=
+	t=1734101759; cv=none; b=L9iPOnmGEse78vLP2ZO6FVdKVariVbvCxyhECXhoLzu3kEcfPf3JK2GVQoovS7N+JbuKS2SEKZNmhcJxAxFUKmdajedBiotIuwJezAVaYxj7tnkMbLRT2A1woBBgmuo54YHEHryqhFTxbztmLxDLP28Z1e6L+3xEWkaYndgLOR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101704; c=relaxed/simple;
-	bh=btFJAKLRpjAbwRO13C2RFWSubPCt1TUEVwik5JGJNfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wygjvkofep5O6tWmD8Cmv4wDamfCKfjnQvvy/v8he2ufhxZjdsGa97pBhiVef4TwPDB3BEAUgR32tCaTx4RtsocLxZsGJZvdtEQkYKtybHrqocyYlutsUgGLlEbN5SVipCqYx8YY2zHOOqwNdALz5QCABwT5IzLMEYg2THD7UC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bc9a/hKD; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361f09be37so2071945e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:55:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734101701; x=1734706501; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3joqArWq8Xo0bUXq2TH4e58G2D5QNG6LG17sSDpr+L4=;
-        b=bc9a/hKDmzrY+IXueRDTfse1GtoDgm9OIJcp1MsndTzkL+j2nvaQ6v5ZW+S+dzX4gG
-         xUN56/TGVLcfjZh0L2LgXfQ3dmJPbiDS//UCGfZ8rForxSipIClKY1tmsZ5X2GHKQokR
-         /5+mYC7/DM/y7INGNWHtQX9oVvDoAlAuVm+AjjCaRgxCNbIJE8dxBYGwHB5fQiAJNoaH
-         wvFd3gw4AKb4yKhy8VNjlzO3bQ9Q9zIq78kC6Jl0bznWrmhGXpN8w2ES2ZXGpLiiRBL2
-         2sh/CylosFaxZMyo3XG0WrJ5xcW0uA2bb7c25RfVHWCHIGb+G2qS1PmQNJScybfmkqJd
-         vLMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734101701; x=1734706501;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3joqArWq8Xo0bUXq2TH4e58G2D5QNG6LG17sSDpr+L4=;
-        b=K8Vxkq6MusswTD4D0D5DAalvhnjPWfEjvBG1TZdpIC+BKYJo42+OrUUlupkGGkbYiw
-         bbxG/F4E4pVHeadK6LHbiAZk6K1A34WeXE+hTxzkBbt/WyC7GCqgU3BtcwhMcV6nhrwd
-         ZtMj+6qqtB98Sp17Z/FvJ6LkFEDbC3Yr66ihr9Xt6H0hWKwdfXN6Bw6Y2rT/nCxxUMlS
-         sbgnpVBmcfB9nebO2rF2FRYbHFv/NcksudEap+OwiqyduouMG11aEH5GuX3b6TxZwGBh
-         AsF9gfIV/yPGjSuQiSBwcEXtIMY/FRQeJNwxacgrSyJr7urS8ljJjj9kkrwCzsMvz76U
-         VEKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWy73ZpBtBsLcOvDJ4gLWkZpyiNnqwcdDaYEr8UPmCZTXepuCj4OkTguhjSVPXsReF6DkSs2ZoNugcvhfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMaytK3pHkFakfypOdZzf4YuFamCXUzzs8s41kV8j0ZnrHSVJD
-	LtO100pklG0pAx03yz8reNJ6XEHTpqsTgdwDMAOQMrQm9ONxze+9TWPXhA7tiDU=
-X-Gm-Gg: ASbGnctmFLIEcyjuragCtvUX1ne+NYJZPgUz5hYZ5Ff50tZeqnL+2tJCjhh4X0/q9ML
-	vQMBoJgiqJSsbw0ktA44+QQBUipap3Psy2DvBjz5goIrjs9m1U0DCJFB5mC+A6mdIlP5Dl5xnDD
-	GfqazpCD0G64siAvBqFFn2chK40bw3478FhmynZ5rqGKaUsrJdOG5LKo1XCNYNGDSldcZT/IHRb
-	/huhMRAUTu7oq7kv5xwWAOtD+92QjbB9r2XvxjHy/lPMEnWgVPra9346zyQyF8Cw8Cnh4wM
-X-Google-Smtp-Source: AGHT+IGktHKSCT0/oB7TdaTtItEMuQ9ENjK+o1VpLL3HPmQ+jQAUEgWvpC4FVpOl83eBSFYkFkteUw==
-X-Received: by 2002:a05:600c:190b:b0:434:f1d5:144a with SMTP id 5b1f17b1804b1-4362a996bb0mr9288285e9.0.1734101700656;
-        Fri, 13 Dec 2024 06:55:00 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436256b42c8sm51547305e9.29.2024.12.13.06.54.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 06:55:00 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 13 Dec 2024 15:54:12 +0100
-Subject: [PATCH v3 23/23] arm64: dts: qcom: sm6115: Fix ADSP memory base
- and length
+	s=arc-20240116; t=1734101759; c=relaxed/simple;
+	bh=q91KS/0q5q9k3lhPdBYWdeYnReE3m9vfNKZLQ2fe5Bw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uZwgRXyL8VFYG3d2H6HZ4qU1r54KewH7J/70wWt3uQISBL3k9QvtInsrE9YCS1FRUDDXf+LwlSnaMRBbUW6zLNd9GpOm8HrBrjy/s71jjOvG6eo8Xo83f/WvMTKhcP/gPNh/BdxO8BDoCVl35gRis1UHGIEqH9zdusrX/9jbXAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aJglMFZj; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDEItnQ015238;
+	Fri, 13 Dec 2024 14:55:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=MDP5Nm
+	HKsAXFD9N2yMDtd3MBsqjN8bvK4ztkk7Fekgw=; b=aJglMFZjh/kfnTDS+agfFz
+	6ukKp6jKWmcu5JNm0KR03uGomQGPY5bAiiwPJIXm2yqVwCJG5ZL59+W+ZwRcIqTR
+	gmjU+JJPyuhxLkWtajGCPXQgoXuVGa1DA60evjpd3zew3PEM8bdQWtb1+SD5mZ+B
+	p8w54E8erjuz55FbwazjovSnYKAFIitkoJdEYomDgdxrNqslXyfgLYBUAquO2A7W
+	9noHHn0IQOSRmuxuCTdIH1lKxoum6Mpahs4S1Wx40xNRzcVe23SX7mpUXbRg41eG
+	Gb9er+ld5T/aLCATPmOB718FPoXNfahtmL4n3ibWteoeQ9QJE0sTF2c0eHNPULkQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gddmawdb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 14:55:21 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BDEiipb006826;
+	Fri, 13 Dec 2024 14:55:21 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43gddmawd6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 14:55:21 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BDBRAgL029309;
+	Fri, 13 Dec 2024 14:55:20 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43gcprtjh5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 14:55:20 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BDEtISu21103042
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Dec 2024 14:55:18 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5A8492004D;
+	Fri, 13 Dec 2024 14:55:18 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C672B2004B;
+	Fri, 13 Dec 2024 14:55:13 +0000 (GMT)
+Received: from [9.124.213.1] (unknown [9.124.213.1])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 13 Dec 2024 14:55:13 +0000 (GMT)
+Message-ID: <ddbb4070-e7bd-485a-bcd6-d6b9192656d6@linux.ibm.com>
+Date: Fri, 13 Dec 2024 20:25:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] sched/fair: Do not compute NUMA Balancing stats
+ unnecessarily during lb
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        Meng Li <li.meng@amd.com>, Huang Rui <ray.huang@amd.com>,
+        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241211185552.4553-1-kprateek.nayak@amd.com>
+ <20241211185552.4553-7-kprateek.nayak@amd.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20241211185552.4553-7-kprateek.nayak@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241213-dts-qcom-cdsp-mpss-base-address-v3-23-2e0036fccd8d@linaro.org>
-References: <20241213-dts-qcom-cdsp-mpss-base-address-v3-0-2e0036fccd8d@linaro.org>
-In-Reply-To: <20241213-dts-qcom-cdsp-mpss-base-address-v3-0-2e0036fccd8d@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Abel Vesa <abel.vesa@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
- Luca Weiss <luca.weiss@fairphone.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1422;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=btFJAKLRpjAbwRO13C2RFWSubPCt1TUEVwik5JGJNfA=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnXEqbINGZnMb1v1KDLbjoOCnX+GbVHVNXy5mA4
- WDf6tWsJfOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ1xKmwAKCRDBN2bmhouD
- 17PFD/4wDPVn9DwgACTp1CKbltZWBU2vDSSj4msZ9x6VJSIuK4O9FcxB/nwzVo2Ds4eej5EibWV
- 6K1tmQh7CCeQfm27kvODPLfQYf2VXv2myyPHOszp/dOcJ4uOEkpJKSdtviHsrBgyFUHnnfNCS8X
- 2tf6WsWhs4hASTsnNmKXwHKRA663W+7V2K6yK/fkKM7d5+qWz8ypLa7fwtH3zLesPu1u9OrmaYn
- n/2tzZqwogBs+ZOEnETbMtXwBC3jKmE1wGrrO1BSn4Ikdz4l1m8o/kOjO4rniLUb+Ait81kHaCJ
- US+LUhgLpTxVo58fL6b4PzvZ1gjwgqkr8NAjssBB4qx8Qhq3s5Z59UrtHLPGVgLK6XklyS0Oq82
- rENzyVOMyFdHh0EhMg2WyzD3vzLWpamOPBCuhK9HhpQ8gDvsV21UMYq4ijttDtsTJXnoTlHvFw8
- JHKRkbeizqDr9NjLhA1CFRCfiX0JmlNLp9f6Or6sgTMd3nIKpdXY8hv8f64NwYsePApXkRacaTD
- tJUMCUPcJ750CgDypxyjyLPa933SYUuU5rLWqNNT3/pk+Uf2ZH/tCXJzlL+ORTl5EzWKjREcMDA
- KgX2AY7YDuKeq1b5O+AOkTSeOelMlWBAfNIE+URqC8K2fomqBL0sNV7zoF4SmFtQxAu/EhtuMmQ
- TTKTRNdQUm8MKiw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: G9toq4KhWHuJL4D6JK-VsOieYsJDuj8N
+X-Proofpoint-GUID: eqyanjVg8eos1ZAeWAfGtkpKw5qQECyj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 adultscore=0 bulkscore=0 priorityscore=1501 clxscore=1011
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130103
 
-The address space in ADSP PAS (Peripheral Authentication Service)
-remoteproc node should point to the QDSP PUB address space
-(QDSP6...SS_PUB): 0x0a40_0000 with length of 0x4040.
 
-0x0ab0_0000, value used so far, is the SSC_QUPV3 block, so entierly
-unrelated.
 
-Correct the base address and length, which should have no functional
-impact on Linux users, because PAS loader does not use this address
-space at all.
+On 12/12/24 00:25, K Prateek Nayak wrote:
+> Aggregate nr_numa_running and nr_preferred_running when load balancing
+> at NUMA domains only. While at it, also move the aggregation below the
+> idle_cpu() check since an idle CPU cannot have any preferred tasks.
+> 
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+>   kernel/sched/fair.c | 15 +++++++++------
+>   1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 2c4ebfc82917..ec2a79c8d0e7 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -10340,7 +10340,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>   				      bool *sg_overloaded,
+>   				      bool *sg_overutilized)
+>   {
+> -	int i, nr_running, local_group;
+> +	int i, nr_running, local_group, sd_flags = env->sd->flags;
+>   
+>   	memset(sgs, 0, sizeof(*sgs));
+>   
+> @@ -10364,10 +10364,6 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>   		if (cpu_overutilized(i))
+>   			*sg_overutilized = 1;
+>   
+> -#ifdef CONFIG_NUMA_BALANCING
+> -		sgs->nr_numa_running += rq->nr_numa_running;
+> -		sgs->nr_preferred_running += rq->nr_preferred_running;
+> -#endif
+>   		/*
+>   		 * No need to call idle_cpu() if nr_running is not 0
+>   		 */
+> @@ -10377,10 +10373,17 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+>   			continue;
+>   		}
+>   
+> +#ifdef CONFIG_NUMA_BALANCING
+> +		/* Only fbq_classify_group() uses this to classify NUMA groups */
+> +		if (sd_flags & SD_NUMA) {
+> +			sgs->nr_numa_running += rq->nr_numa_running;
+> +			sgs->nr_preferred_running += rq->nr_preferred_running;
+> +		}
+> +#endif
+>   		if (local_group)
+>   			continue;
+>   
+> -		if (env->sd->flags & SD_ASYM_CPUCAPACITY) {
+> +		if (sd_flags & SD_ASYM_CPUCAPACITY) {
+>   			/* Check for a misfit task on the cpu */
+>   			if (sgs->group_misfit_task_load < rq->misfit_task_load) {
+>   				sgs->group_misfit_task_load = rq->misfit_task_load;
 
-Cc: stable@vger.kernel.org
-Fixes: 96ce9227fdbc ("arm64: dts: qcom: sm6115: Add remoteproc nodes")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
----
-
-Changes in v3:
-New patch
----
- arch/arm64/boot/dts/qcom/sm6115.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-index 5af2c7a3f6ff67c216f1c817a3d5f54e10b65450..7016843c2ca560e93dcb7e3a6da7025cb001eef0 100644
---- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-@@ -2670,9 +2670,9 @@ funnel_apss1_in: endpoint {
- 			};
- 		};
- 
--		remoteproc_adsp: remoteproc@ab00000 {
-+		remoteproc_adsp: remoteproc@a400000 {
- 			compatible = "qcom,sm6115-adsp-pas";
--			reg = <0x0 0x0ab00000 0x0 0x100>;
-+			reg = <0x0 0x0a400000 0x0 0x4040>;
- 
- 			interrupts-extended = <&intc GIC_SPI 282 IRQ_TYPE_EDGE_RISING>,
- 					      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-
--- 
-2.43.0
-
+Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 
