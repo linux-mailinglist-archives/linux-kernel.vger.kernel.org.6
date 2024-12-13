@@ -1,121 +1,150 @@
-Return-Path: <linux-kernel+bounces-445271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFEC9F1393
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:27:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DFC9F1397
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89671888C2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:27:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF86D16A24A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C9C1E47CE;
-	Fri, 13 Dec 2024 17:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DEB1E4928;
+	Fri, 13 Dec 2024 17:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TjyDZR4w"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfB2uES2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5F51E3DC6
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAF057C9F;
+	Fri, 13 Dec 2024 17:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734110845; cv=none; b=DDYFa6VGL6SC5rdJrr8sCDccnRn67nTangmE5GrbsgnNdfIGElSLwO8zPxzc8nl0pesm7xubugDvv7DfWIaU5C1jtJ7iVzSAP7Katrgjx0DPSluib2n6/5jxQ3OEjSjCDBQ48ah6GrmV8/a43VRawCp1G5iTUhrQFpO/eOPygP4=
+	t=1734110882; cv=none; b=DzrZDHxN/vP1AVPXEgiSgaWPwaZaqe7M0gdqEi5hw5y6FLu4yBHRfE0bmhhNOUWRRpdbwWk7YDkNM4WzMgZqwPhcryYnnyPdnxtQgUC2TRkau9dAve9cDvy72QX5nL1YI2LA8XlB8NS2xcywijhvmRfk/CRF5Zf5dnak3wRUTAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734110845; c=relaxed/simple;
-	bh=MwpY+eaTHW6ZPilONEG0CjNGfxYk7BcIdF5jRQfjrkw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KjlpuzIQmKrQx87LSW+HKDQ1TrJG6egYgenKRbYnJyYceOiIi7qBMLeqMIiDo7vGICOf2SoJmitsMEqj8ooxQCcr1DaDuq49qFcWQ9Zt84ewcXVGL2c2utdm3A+3s7xgE1R1fX9iDQJxiYOxZWRMQSe6jHUTxBh/Vwbb6gSm2Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TjyDZR4w; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a9cee9d741so15902425ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:27:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1734110843; x=1734715643; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UZ873rr8z0y8ShQd+LncMxaWKOoC4jcirXRjLJy1nJI=;
-        b=TjyDZR4wWIcZ+Nc6kQEcrFqPmfjUfvzNiPp20fP7f1AqHg3jbXXKUuTbwqjglfaGZC
-         sxM8zU17B4w7n8mee0UhZNkt3kuWetBnhY5k6MD8eaDoZlS3MdXGM4tQ9pO9ORSgAbv3
-         MjVHZ4crOlG4nNrWjNsUNuUWIkcOeS9INoaTM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734110843; x=1734715643;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UZ873rr8z0y8ShQd+LncMxaWKOoC4jcirXRjLJy1nJI=;
-        b=G2ucnlaxC01CcqX3n8xurZjC3JsO7cCYiB5LmVNs4+EkDEun1Dg/M996k9kXPkh6e5
-         QTuRvg73Ylp2O9kJ2rUXeSlkzb4wuJMv+KC/TaT+Vt7w0REIAw6A+GudXKcCO7DPSr2d
-         lieyXLaLjO79cysFKnuGn0tN+GXFfetD0uvQ+Vtpoh1+FvbT+8Dq9yUF+Okp3t8/vInF
-         CdO0seWD3gOATgDEr/KKz0hW2uQ8LSXWZmoa+00aG7ZHX1DrjC1U3/jFXBO555eqowYy
-         HyJ0crMTt9IyNh7HWeW1Mssf5emHrV7HBWAeSH8oQ7qSJ2iFmXsH1j2Jannrsi99OlMd
-         v17w==
-X-Forwarded-Encrypted: i=1; AJvYcCWfnX4SQ8qiSBa2Eh95fZfwFhXRYkprzmgr8CNvxc5XnPW8pFPtX3tmVoMoM5oy2B8y54gxwAo1CwN0Kc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi0+7H9+qTuuGqRr1yxFWTX9uRmHHlCCnr4yAAsfUUA7PfRKfq
-	z8wlO3I+RGeM2TkIXaIdC/NHgMSn/kOK08ScGJgSywWJZ93dPIQ/q7XY//Rxqcw=
-X-Gm-Gg: ASbGncsEaOh3Fh3uLtfEZyRkOtup3HEU7oxOOPC54gsJEaTmsmZ1FjBbxAPBwkQfVL7
-	HIvzlEX2ayrrwwuz2tN8ZuxXjXc1/pLBOATgJiNRI/eM0P+rzYi+XXviZl3evKSiaqjXRvcTn7n
-	yRjbeAY8dvMovsHlhFJpcoBVkKD94IgH0c60Za9KF+e/3O5dIm3OqRhhzMdJQzq0ymg42xvHbC0
-	0QUwq89r7eA4r67ZZsTyotgsEQG83426oWD1F8Uh5jHJfAUftDwQU2lDsm/E1SFezA/
-X-Google-Smtp-Source: AGHT+IEMEr3uAWKMVxI9slphjbVdYchSxXggpcr5ca9kl39X9OR4taB2Resxa0Fh4jOpJvOjJQ1o1w==
-X-Received: by 2002:a05:6e02:1ca8:b0:3a7:4674:d637 with SMTP id e9e14a558f8ab-3afeda2ebadmr41301295ab.3.1734110842854;
-        Fri, 13 Dec 2024 09:27:22 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3b24d8dc980sm84075ab.67.2024.12.13.09.27.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 09:27:22 -0800 (PST)
-Message-ID: <e31df167-1a15-4015-a6bb-85ce29ada6fd@linuxfoundation.org>
-Date: Fri, 13 Dec 2024 10:27:20 -0700
+	s=arc-20240116; t=1734110882; c=relaxed/simple;
+	bh=bLCKsDCiBo0kNuLFovfzPV3Qx9RxoALs0B0RMVkjEPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=u9sbfEBGh26y7OHEi2ZUNi7UoFUtAvpjPiNT8+HtIiSLOehgNHhrWKISIsc617P+3OIoTABRrvpiKRYar+w89fz4oTDHkmmx5iRFg6bXq8P5qYz7FnpoYUpm5XJWb0Ydq2+m+yUCq7gEvrZBprLSFAZyxorcPxhOYbIVKvnVmI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PfB2uES2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C20A6C4CED0;
+	Fri, 13 Dec 2024 17:28:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734110882;
+	bh=bLCKsDCiBo0kNuLFovfzPV3Qx9RxoALs0B0RMVkjEPU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=PfB2uES2XZZecOqIkIVdAG+6Kb3t5Oq46kKPQn5Gieh9OvL+FfcYJwFn1CT7FZ9XB
+	 nbwhVN5dD7zgUQ7Z8SzZeIEe6/H+WrWZd7MAjrHROLnc9F51s7EZdyaugE2faPh0pZ
+	 //rNghc3Gnb4+0ae2j6uy5Pt46T9ZOaKf7j87iwWTU8TL1zcCl+7yM7HI2tReCVFC/
+	 byFdjIRV/1IJS17P7X0qfAP61UmM8quvNeTA/1L0wlanEpyhaWRjCAqWEWDpi6TSnV
+	 OjLmRKcrDSiUTX1Gkn03w0UnplG5XEB3HKiExdRgohWFdH1Z1Px1BxNwVFGLJfWVtQ
+	 TAJdUoM+keauA==
+Date: Fri, 13 Dec 2024 11:27:59 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jingoohan1@gmail.com, michal.simek@amd.com,
+	bharat.kumar.gogada@amd.com
+Subject: Re: [RESEND PATCH v5 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
+Message-ID: <20241213172759.GA3418116@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.4 000/316] 5.4.287-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241213145847.112340475@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241213145847.112340475@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241213064035.1427811-4-thippeswamy.havalige@amd.com>
 
-On 12/13/24 08:03, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.287 release.
-> There are 316 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 15 Dec 2024 14:57:53 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.287-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Fri, Dec 13, 2024 at 12:10:35PM +0530, Thippeswamy Havalige wrote:
+> Add support for AMD MDB(Multimedia DMA Bridge) IP core as Root Port.
 
-Compiled and booted on my test system. No dmesg regressions.
+Add space before "(".
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+> +config PCIE_AMD_MDB
+> +	bool "AMD PCIe controller (host mode)"
 
-thanks,
--- Shuah
+Seems too generic to describe this as "the AMD PCIe controller".
+Perhaps at least "AMD MDB PCIe controller"?  And/or include "Versal2"?
+
+> +	depends on OF || COMPILE_TEST
+> +	depends on PCI && PCI_MSI
+> +	select PCIE_DW_HOST
+> +	help
+> +	  Say Y here to enable PCIe controller support on AMD SoCs. The
+> +	  PCIe controller is based on DesignWare Hardware and uses AMD
+> +	  hardware wrappers.
+
+Make this help text a little more specific, too.
+
+> + * struct amd_mdb_pcie - PCIe port information
+> + * @pci: DesignWare PCIe controller structure
+> + * @mdb_base: MDB System Level Control and Status Register(SLCR) Base
+
+Add space before "(".
+
+Thanks for expanding this initialism.  Capitalize it in the text of
+other patches so it's obvious that it's an initialism, not a word.
+
+> + * @intx_domain: Legacy IRQ domain pointer
+
+Just say "INTx IRQ domain pointer".  No point in using two terms when
+we use "INTx" everywhere else.
+
+> + * @mdb_domain: MDB IRQ domain pointer
+> + */
+> +struct amd_mdb_pcie {
+> +	struct dw_pcie			pci;
+> +	void __iomem			*mdb_base;
+> +	struct irq_domain		*intx_domain;
+> +	struct irq_domain		*mdb_domain;
+> +};
+
+> + * amd_mdb_pcie_init_port - Initialize hardware
+> + * @pcie: PCIe port information
+> + * @pdev: platform device
+> + */
+> +static int amd_mdb_pcie_init_port(struct amd_mdb_pcie *pcie,
+> +				  struct platform_device *pdev)
+
+"pdev" is unused, why include it?
+
+> +static irqreturn_t amd_mdb_pcie_event_flow(int irq, void *args)
+> +{
+> +	struct amd_mdb_pcie *pcie = args;
+> +	unsigned long val;
+> +	int i;
+> +
+> +	val =  pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
+
+Spurious extra space.
+
+> +static int amd_mdb_pcie_init_irq_domains(struct amd_mdb_pcie *pcie,
+> +					 struct platform_device *pdev)
+> +{
+> +	struct dw_pcie *pci = &pcie->pci;
+> +	struct dw_pcie_rp *pp = &pci->pp;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
+> +	struct device_node *pcie_intc_node;
+> +
+> +	/* Setup INTx */
+> +	pcie_intc_node = of_get_next_child(node, NULL);
+> +	if (!pcie_intc_node) {
+> +		dev_err(dev, "No PCIe Intc node found\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	pcie->mdb_domain = irq_domain_add_linear(pcie_intc_node, 32,
+> +						 &event_domain_ops,
+> +					       pcie);
+
+Fix whitespace.  "pcie" would fit on the previous line.
+
+Bjorn
 
