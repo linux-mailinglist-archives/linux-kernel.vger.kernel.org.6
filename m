@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-444310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A129F0497
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:08:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4129F049A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:08:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ED1B284339
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:08:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4911216A03D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288FC18A6BC;
-	Fri, 13 Dec 2024 06:08:40 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5C918C928;
+	Fri, 13 Dec 2024 06:08:41 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FD54A21
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913B31547CC
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734070119; cv=none; b=Maz13ItA6sBuOAR9Ht7TU8AO2ZI46pZpwQKiytzbPTGt5oApqP56CebTjEl4krvt0VHz1+5Nxn56wOKnOvJw630ujVoIrStSoQMUdQz56BGoeTFqXujPLZ7HPeD4IS5rJiSf+TTqvNypGtuW9PYFN3woivxW7245KDeSd2d41ro=
+	t=1734070121; cv=none; b=cYxvnFV4sgXZne17UXOSI8k9S33sEPNM6KO9pwkaG1hgEri+eNQVn3/1DriYv7u3loor6Tu3oTcDOZcYcTfV6rkVl5t1RjqZSlVdzDcYucOlikBqyX3GhGN/5rKE8BTWCsWcLCwfMxv1jhyazMu9qzCYM9oDHzN5IfK0YZNZJQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734070119; c=relaxed/simple;
-	bh=Vxz4IZYyM7q9hiWx1aOGfRmjlgiRpTMLX0ejFV1neMs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o1w7D0jGdFWb5MGugV1bTSDki4EPZm7VzD3PzDnYVBBZB+U0+H6WUQC8/7Fiqnoms7IheJc4gcHDzby2HJzLrIRf2dyo0Ruw/bK0ciuCv+i8Qdr++NqrYxVH9DhOmirD0JVxYv0qyeJ0J7LtGPJeAvcl8FN0aNy8Xj2MG52ds1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	s=arc-20240116; t=1734070121; c=relaxed/simple;
+	bh=8KBxXoqFQYGLluSpZ3qADIbYI0Lf58kVSCJSm70iLZA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jnJkBW/GH1EJofJGsycVH/nff/NRjGG7TdkKo97MqySFmKrYWZdamGrR7WyK6lESqu8Zd0HgyhLnsZmtHv188336XOXPPC5GC4Y1P2kVYWMHg76ppLhHMwNWi04bsUi9W4HJT1PaWYwmO0bcUd9Rso9Mh7+yiqt3vJevnh6VesE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Y8f2Y42Z3z1V65x;
-	Fri, 13 Dec 2024 14:05:25 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Y8f4769z3z21n51;
+	Fri, 13 Dec 2024 14:06:47 +0800 (CST)
 Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8469618009B;
-	Fri, 13 Dec 2024 14:08:33 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id AAB321A0188;
+	Fri, 13 Dec 2024 14:08:34 +0800 (CST)
 Received: from localhost.huawei.com (10.169.71.169) by
  kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 13 Dec 2024 14:08:32 +0800
+ 15.2.1258.34; Fri, 13 Dec 2024 14:08:33 +0800
 From: Yongbang Shi <shiyongbang@huawei.com>
 To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
 	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
@@ -46,10 +47,12 @@ CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
 	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
 	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
 	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 drm-dp 0/5] Add dp module in hibmc driver
-Date: Fri, 13 Dec 2024 14:02:24 +0800
-Message-ID: <20241213060229.1191037-1-shiyongbang@huawei.com>
+Subject: [PATCH v8 drm-dp 1/5] drm/hisilicon/hibmc: add dp aux in hibmc drivers
+Date: Fri, 13 Dec 2024 14:02:25 +0800
+Message-ID: <20241213060229.1191037-2-shiyongbang@huawei.com>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20241213060229.1191037-1-shiyongbang@huawei.com>
+References: <20241213060229.1191037-1-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,39 +66,19 @@ X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
 
 From: baihan li <libaihan@huawei.com>
 
-Realizing the basic display function of DP cable for DP connector
-displaying. Add DP module in hibmc drm driver, which is for Hisilicon
-Hibmc SoC which used for Out-of-band management. Blow is the general
-hardware connection, both the Hibmc and the host CPU are on the same
-mother board.
+Add dp aux read/write functions. They are basic functions
+and will be used later.
 
-+----------+       +----------+      +----- ----+      +----------------+
-|          | PCIe  |  Hibmc   |      |          |      |                |
-|host CPU( |<----->| display  |<---->| dp kapi  |<---->| dp aux moduel  |
-|arm64,x86)|       |subsystem |      |  moduel  |<---->| dp link moduel |
-+----------+       +----------+      +----------+      +----------------+
-
+Signed-off-by: Baihan Li <libaihan@huawei.com>
+Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
 ChangeLog:
-v7 -> v8:
-  - adding DP_AUX_NATIVE_WRITE case in switch statement in hibmc_dp_aux_parse_xfer().
-  - adding pci_set_master() in hibmc_pci_probe().
-  v7:https://lore.kernel.org/all/20241209144840.1933265-1-shiyongbang@huawei.com/
-v6 -> v7:
-  - deleteing unset fields in struct hibmc_link_cap, suggested by Dmitry Baryshkov.
-  - using macro instead of constants in hibmc_dp_link_training_configure(), suggested by Dmitry Baryshkov.
-  - lowercasing hex, suggested by Dmitry Baryshkov.
-  v6:https://lore.kernel.org/all/20241202131322.1847078-1-shiyongbang@huawei.com/
 v5 -> v6:
   - adding do{} while(0) in macro defination function, suggested by Dmitry Baryshkov.
-  - using drm_dbg_dp() to print debug info instead of drm_info(), suggested by Dmitry Baryshkov.
-  - adding code comments in hibmc_dp_set_sst(), suggested by Dmitry Baryshkov.
-  - adding hpd and get_edid comments in the beginning of patch, suggested by Dmitry Baryshkov.
-  v5:https://lore.kernel.org/all/20241118142805.3326443-1-shiyongbang@huawei.com/
 v4 -> v5:
   - fixing build errors reported by kernel test robot <lkp@intel.com>
     Closes: https://lore.kernel.org/oe-kbuild-all/202411131438.RZWYrWTE-lkp@intel.com/
-  v4:https://lore.kernel.org/all/20241112132348.2631150-1-shiyongbang@huawei.com/
 v3 -> v4:
   - retun error codes in  result incorrect branch, suggested by Dmitry Baryshkov.
   - replacing all ret= with returns, suggested by Dmitry Baryshkov.
@@ -104,76 +87,289 @@ v3 -> v4:
   - reanaming dp_prefix to hibmc_dp_prefix, suggested by Dmitry Baryshkov.
   - changing hibmc_dp_reg_write_field to static inline and lock, suggested by Dmitry Baryshkov.
   - moving some structs to later patch, suggested by Dmitry Baryshkov.
-  - optimizing hibmc_dp_link_get_adjust_train() to delete for loop, suggested by Dmitry Baryshkov.
-  - changing ELNRNG to EIO error code, suggested by Dmitry Baryshkov.
-  - deleting meaningless macro, suggested by Dmitry Baryshkov.
-  - fixing build errors reported by kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202411041559.WIfxRN6n-lkp@intel.com/
-  - changed the type of train_set to array, suggested by Dmitry Baryshkov.
-  - using actual link rate instead of magic num, suggested by Dmitry Baryshkov.
-  - deleting hibmc_dp_hw_uninit(), suggested by Dmitry Baryshkov.
-  - separating hibmc_vdac and hibmc_dp changes into separate patche, suggested by Dmitry Baryshkov.
-  - static int hibmc_dp_prepare(), suggested by Dmitry Baryshkov.
-  v3:https://lore.kernel.org/all/20241101105028.2177274-1-shiyongbang@huawei.com/
 v2 -> v3:
   - put the macro definations in latter patch where they are actually used, suggested by Dmitry Baryshkov.
   - rename some macro definations to make them sensible, suggested by Dmitry Baryshkov.
   - using FIELD_PREP and FIELD_GET, suggested by Dmitry Baryshkov.
   - using DP_DPCD_REV_foo, suggested by Dmitry Baryshkov.
-  - using switchcase in dp_link_reduce_lane, suggested by Dmitry Baryshkov.
-  - deleting dp_link_pattern2dpcd function and using macros directly, suggested by Dmitry Baryshkov.
-  - deleting EFAULT error codes, suggested by Dmitry Baryshkov.
   - fix build errors reported by kernel test robot <lkp@intel.com>
     Closes: https://lore.kernel.org/oe-kbuild-all/202410250305.UHKDhtxy-lkp@intel.com/
-    Closes: https://lore.kernel.org/oe-kbuild-all/202410250931.UDQ9s66H-lkp@intel.com/
-    Closes: https://lore.kernel.org/oe-kbuild-all/202410251136.1m7BlR68-lkp@intel.com/
-  v2:https://lore.kernel.org/all/20241022124148.1952761-1-shiyongbang@huawei.com/
 v1 -> v2:
   - using drm_dp_aux frame implement dp aux read and write functions, suggested by Jani Nikula.
   - using drm dp header files' dp macros instead, suggested by Andy Yan.
-  - using drm_dp_* functions implement dp link training process, suggested by Jani Nikula.
-  - changed some defines and functions to former patch, suggested by Dmitry Baryshkov.
-  - sorting the headers including in dp_hw.h and hibmc_drm_drv.c files, suggested by Dmitry Baryshkov.
-  - deleting struct dp_mode and dp_mode_cfg function, suggested by Dmitry Baryshkov.
-  - modifying drm_simple_encoder_init function, suggested by Dmitry Baryshkov.
-  - refactoring struct hibmc_connector, suggested by Dmitry Baryshkov.
-  - withdrawing the modification in hibmc_kms_init, suggested by Dmitry Baryshkov.
-  - fix build errors reported by kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202410031735.8iRZZR6T-lkp@intel.com/
-    Closes: https://lore.kernel.org/oe-kbuild-all/202410040328.VeVxM9yB-lkp@intel.com/
   v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
 ---
-
-baihan li (5):
-  drm/hisilicon/hibmc: add dp aux in hibmc drivers
-  drm/hisilicon/hibmc: add dp link moduel in hibmc drivers
-  drm/hisilicon/hibmc: add dp hw moduel in hibmc driver
-  drm/hisilicon/hibmc: refactored struct hibmc_drm_private
-  drm/hisilicon/hibmc: add dp module in hibmc
-
- drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   | 164 +++++++++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  63 ++++
- .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  19 +
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 220 ++++++++++++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  28 ++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 332 ++++++++++++++++++
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  76 ++++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 118 +++++++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  14 +
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  19 +-
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c   |  41 ++-
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  |  20 +-
- 13 files changed, 1078 insertions(+), 39 deletions(-)
+ drivers/gpu/drm/hisilicon/hibmc/Makefile     |   3 +-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c  | 164 +++++++++++++++++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  42 +++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |  27 +++
+ 4 files changed, 235 insertions(+), 1 deletion(-)
  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
 
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+index d25c75e60d3d..8770ec6dfffd 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
++++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o
++hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
++	       dp/dp_aux.o
+ 
+ obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+new file mode 100644
+index 000000000000..0a903cce1fa9
+--- /dev/null
++++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// Copyright (c) 2024 Hisilicon Limited.
++
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/minmax.h>
++#include <drm/drm_device.h>
++#include <drm/drm_print.h>
++#include "dp_comm.h"
++#include "dp_reg.h"
++
++#define HIBMC_AUX_CMD_REQ_LEN		GENMASK(7, 4)
++#define HIBMC_AUX_CMD_ADDR		GENMASK(27, 8)
++#define HIBMC_AUX_CMD_I2C_ADDR_ONLY	BIT(28)
++#define HIBMC_BYTES_IN_U32		4
++#define HIBMC_AUX_I2C_WRITE_SUCCESS	0x1
++#define HIBMC_DP_MIN_PULSE_NUM		0x9
++#define BITS_IN_U8			8
++
++static inline void hibmc_dp_aux_reset(struct hibmc_dp_dev *dp)
++{
++	hibmc_dp_reg_write_field(dp, HIBMC_DP_DPTX_RST_CTRL, HIBMC_DP_CFG_AUX_RST_N, 0x0);
++	usleep_range(10, 15);
++	hibmc_dp_reg_write_field(dp, HIBMC_DP_DPTX_RST_CTRL, HIBMC_DP_CFG_AUX_RST_N, 0x1);
++}
++
++static void hibmc_dp_aux_read_data(struct hibmc_dp_dev *dp, u8 *buf, u8 size)
++{
++	u32 reg_num;
++	u32 value;
++	u32 num;
++	u8 i, j;
++
++	reg_num = DIV_ROUND_UP(size, HIBMC_BYTES_IN_U32);
++	for (i = 0; i < reg_num; i++) {
++		/* number of bytes read from a single register */
++		num = min(size - i * HIBMC_BYTES_IN_U32, HIBMC_BYTES_IN_U32);
++		value = readl(dp->base + HIBMC_DP_AUX_RD_DATA0 + i * HIBMC_BYTES_IN_U32);
++		/* convert the 32-bit value of the register to the buffer. */
++		for (j = 0; j < num; j++)
++			buf[i * HIBMC_BYTES_IN_U32 + j] = value >> (j * BITS_IN_U8);
++	}
++}
++
++static void hibmc_dp_aux_write_data(struct hibmc_dp_dev *dp, u8 *buf, u8 size)
++{
++	u32 reg_num;
++	u32 value;
++	u32 num;
++	u8 i, j;
++
++	reg_num = DIV_ROUND_UP(size, HIBMC_BYTES_IN_U32);
++	for (i = 0; i < reg_num; i++) {
++		/* number of bytes written to a single register */
++		num = min_t(u8, size - i * HIBMC_BYTES_IN_U32, HIBMC_BYTES_IN_U32);
++		value = 0;
++		/* obtain the 32-bit value written to a single register. */
++		for (j = 0; j < num; j++)
++			value |= buf[i * HIBMC_BYTES_IN_U32 + j] << (j * BITS_IN_U8);
++		/* writing data to a single register */
++		writel(value, dp->base + HIBMC_DP_AUX_WR_DATA0 + i * HIBMC_BYTES_IN_U32);
++	}
++}
++
++static u32 hibmc_dp_aux_build_cmd(const struct drm_dp_aux_msg *msg)
++{
++	u32 aux_cmd = msg->request;
++
++	if (msg->size)
++		aux_cmd |= FIELD_PREP(HIBMC_AUX_CMD_REQ_LEN, (msg->size - 1));
++	else
++		aux_cmd |= FIELD_PREP(HIBMC_AUX_CMD_I2C_ADDR_ONLY, 1);
++
++	aux_cmd |= FIELD_PREP(HIBMC_AUX_CMD_ADDR, msg->address);
++
++	return aux_cmd;
++}
++
++/* ret >= 0, ret is size; ret < 0, ret is err code */
++static int hibmc_dp_aux_parse_xfer(struct hibmc_dp_dev *dp, struct drm_dp_aux_msg *msg)
++{
++	u32 buf_data_cnt;
++	u32 aux_status;
++
++	aux_status = readl(dp->base + HIBMC_DP_AUX_STATUS);
++	msg->reply = FIELD_GET(HIBMC_DP_CFG_AUX_STATUS, aux_status);
++
++	if (aux_status & HIBMC_DP_CFG_AUX_TIMEOUT)
++		return -ETIMEDOUT;
++
++	/* only address */
++	if (!msg->size)
++		return 0;
++
++	if (msg->reply != DP_AUX_NATIVE_REPLY_ACK)
++		return -EIO;
++
++	buf_data_cnt = FIELD_GET(HIBMC_DP_CFG_AUX_READY_DATA_BYTE, aux_status);
++
++	switch (msg->request) {
++	case DP_AUX_NATIVE_WRITE:
++		return msg->size;
++	case DP_AUX_I2C_WRITE | DP_AUX_I2C_MOT:
++		if (buf_data_cnt == HIBMC_AUX_I2C_WRITE_SUCCESS)
++			return msg->size;
++		else
++			return FIELD_GET(HIBMC_DP_CFG_AUX, aux_status);
++	case DP_AUX_NATIVE_READ:
++	case DP_AUX_I2C_READ | DP_AUX_I2C_MOT:
++		buf_data_cnt--;
++		if (buf_data_cnt != msg->size) {
++			/* only the successful part of data is read */
++			return -EBUSY;
++		}
++
++		/* all data is successfully read */
++		hibmc_dp_aux_read_data(dp, msg->buffer, msg->size);
++		return msg->size;
++	default:
++		return -EINVAL;
++	}
++}
++
++/* ret >= 0 ,ret is size; ret < 0, ret is err code */
++static ssize_t hibmc_dp_aux_xfer(struct drm_dp_aux *aux, struct drm_dp_aux_msg *msg)
++{
++	struct hibmc_dp_dev *dp = container_of(aux, struct hibmc_dp_dev, aux);
++	u32 aux_cmd;
++	int ret;
++	u32 val; /* val will be assigned at the beginning of readl_poll_timeout function */
++
++	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA0);
++	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA1);
++	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA2);
++	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA3);
++
++	hibmc_dp_aux_write_data(dp, msg->buffer, msg->size);
++
++	aux_cmd = hibmc_dp_aux_build_cmd(msg);
++	writel(aux_cmd, dp->base + HIBMC_DP_AUX_CMD_ADDR);
++
++	/* enable aux transfer */
++	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_REQ, 0x1);
++	ret = readl_poll_timeout(dp->base + HIBMC_DP_AUX_REQ, val,
++				 !(val & HIBMC_DP_CFG_AUX_REQ), 50, 5000);
++	if (ret) {
++		hibmc_dp_aux_reset(dp);
++		return ret;
++	}
++
++	return hibmc_dp_aux_parse_xfer(dp, msg);
++}
++
++void hibmc_dp_aux_init(struct hibmc_dp_dev *dp)
++{
++	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_SYNC_LEN_SEL, 0x0);
++	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_TIMER_TIMEOUT, 0x1);
++	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_MIN_PULSE_NUM,
++				 HIBMC_DP_MIN_PULSE_NUM);
++
++	dp->aux.transfer = hibmc_dp_aux_xfer;
++	dp->aux.is_remote = 0;
++	drm_dp_aux_init(&dp->aux);
++}
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+new file mode 100644
+index 000000000000..7d3cd32393c0
+--- /dev/null
++++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+@@ -0,0 +1,42 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* Copyright (c) 2024 Hisilicon Limited. */
++
++#ifndef DP_COMM_H
++#define DP_COMM_H
++
++#include <linux/types.h>
++#include <linux/bitops.h>
++#include <linux/errno.h>
++#include <linux/mutex.h>
++#include <linux/kernel.h>
++#include <linux/bitfield.h>
++#include <linux/io.h>
++#include <drm/display/drm_dp_helper.h>
++
++struct hibmc_dp_dev {
++	struct drm_dp_aux aux;
++	struct drm_device *dev;
++	void __iomem *base;
++	struct mutex lock; /* protects concurrent RW in hibmc_dp_reg_write_field() */
++};
++
++#define dp_field_modify(reg_value, mask, val)				\
++	do {								\
++		(reg_value) &= ~(mask);					\
++		(reg_value) |= FIELD_PREP(mask, val);			\
++	} while (0)							\
++
++#define hibmc_dp_reg_write_field(dp, offset, mask, val)			\
++	do {								\
++		typeof(dp) _dp = dp;					\
++		typeof(_dp->base) addr = (_dp->base + (offset));	\
++		mutex_lock(&_dp->lock);					\
++		u32 reg_value = readl(addr);				\
++		dp_field_modify(reg_value, mask, val);			\
++		writel(reg_value, addr);				\
++		mutex_unlock(&_dp->lock);				\
++	} while (0)
++
++void hibmc_dp_aux_init(struct hibmc_dp_dev *dp);
++
++#endif
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+new file mode 100644
+index 000000000000..f3e6781e111a
+--- /dev/null
++++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* Copyright (c) 2024 Hisilicon Limited. */
++
++#ifndef DP_REG_H
++#define DP_REG_H
++
++#define HIBMC_DP_AUX_CMD_ADDR			0x50
++#define HIBMC_DP_AUX_WR_DATA0			0x54
++#define HIBMC_DP_AUX_WR_DATA1			0x58
++#define HIBMC_DP_AUX_WR_DATA2			0x5c
++#define HIBMC_DP_AUX_WR_DATA3			0x60
++#define HIBMC_DP_AUX_RD_DATA0			0x64
++#define HIBMC_DP_AUX_REQ			0x74
++#define HIBMC_DP_AUX_STATUS			0x78
++#define HIBMC_DP_DPTX_RST_CTRL			0x700
++
++#define HIBMC_DP_CFG_AUX_SYNC_LEN_SEL		BIT(1)
++#define HIBMC_DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
++#define HIBMC_DP_CFG_AUX_MIN_PULSE_NUM		GENMASK(13, 9)
++#define HIBMC_DP_CFG_AUX_REQ			BIT(0)
++#define HIBMC_DP_CFG_AUX_RST_N			BIT(4)
++#define HIBMC_DP_CFG_AUX_TIMEOUT		BIT(0)
++#define HIBMC_DP_CFG_AUX_READY_DATA_BYTE	GENMASK(16, 12)
++#define HIBMC_DP_CFG_AUX			GENMASK(24, 17)
++#define HIBMC_DP_CFG_AUX_STATUS			GENMASK(11, 4)
++
++#endif
 -- 
 2.33.0
 
