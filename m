@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-445131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E386F9F11C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:06:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423379F11C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:06:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E981652CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:06:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DD32F24;
+	Fri, 13 Dec 2024 16:06:11 +0000 (UTC)
+Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A90281FE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:06:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579E21E411D;
-	Fri, 13 Dec 2024 16:06:18 +0000 (UTC)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1EB15098F;
-	Fri, 13 Dec 2024 16:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2351D1E00AC;
+	Fri, 13 Dec 2024 16:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734105977; cv=none; b=tgDJL9O9Z9OcT5jwOKI4DwDRYG/xAsGkFifOtUrgHTGRql/Lu5V1fxrsXIUGLxa5xhCT3h+WScFGLx1cyaGYXAiVjSiqpjoMxZ99Qadc4qEUNTQbdEfGMdo1IwCtkq9gdjZfknDNNuoocEoQUDJAjJBumj0EWl1m6rsUrQr8U3Q=
+	t=1734105971; cv=none; b=vCP1fkr7XFay/H87X8AjrOKzbCAQ3JGPcgP7NNWc8k/9uwL+lQh4qX3nGfypY/bjqeYYZaWs5ej8aqN443leGQDou315ZS1gzQMpYbjCRYPzSSLWFb8y7w7m83nV4tVga9qKr70BOsWttrZ7hPIFIaxwMLNdgaEI1PgNLQ7lo9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734105977; c=relaxed/simple;
-	bh=umwQbquOmQpSyqT8CeD4qRvdyuRZF+hkF+vQy8sZSPg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BvbPaMXDoYYrFl2WK0qJoGR9nndMP8HSyRHIYwZMtPPLYmhceMxEv75oVFxcXcTbM5iHosb5j30KkahcaiUVIFthhzi8qWwbAPyGHpAOPtF0TzNpTbyvxWl7764/cf3TfipDKJR4YSdsN8eKemc11HWvZmSxrgnR/5hEJhm/gLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b1b224f6c6so228002685a.3;
-        Fri, 13 Dec 2024 08:06:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734105974; x=1734710774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4hxVTlCHR2PE8KoCjj0xfYDTwL0zPvBBh0MBs4/U+9k=;
-        b=Wn1i5w/Fb9W1VrtK37B46dL6zT8kUd2xO3oiZblhe8+xI4oVJ/Z7gn/1HK+4N1R3lt
-         fJNpdDoZNw5sGcFjaAyxG8BQ+/lFusYOA6EYWw6z/kt9zGWW49Xqynu+QF4i9zxdnJ7J
-         CqeCdguOl8y7tVnJq6Duc6B3urilibDvrH53n6KD8jKydJWlbXOXiDmqpBJO0qinTXNH
-         4upOZZyGkaxo+vPRjgET8cdnliix1vzUc5CLN+QqZ2EXyaqILgisbRhTTjSTSZ4P5loI
-         DN+DjyPGzK8IEFDjR7WXNSY8hXN4ZMZIeMrlJOjdprX8RqZRlwpBDTSoKa3PVQh+pSjX
-         dUpA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+IfYyc/4czqEUHk33al0UsZv0YtOl3GC9zceK56PTvQsBy0xb646cjnk3b59a+5L0P4X2UTgpGOjXkPPA@vger.kernel.org, AJvYcCVUnA9h7iATBW+skEOXjO0xjAq28bxNaKQEoJL5B74dymGhAgix8shd5px8hIr+39FkM+EG2/F/IPI8@vger.kernel.org, AJvYcCVlKhJ/mo8laygBTkMn/q/Z1xVD8awAMsFV1V5bQDWH9/XwvAUH26uDcG+F9KKqxPlYRW1IzdIb7GhHF4Q2aBM9zo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmhk522ZZkxkfsWx4SEOqWI4wQvzK1PSOhunxrLprpMql/F+Ys
-	ZqkWXCAE07B4yxeCgybzL2DgRV4z6qnOM4qYW22ZXI6pje//zr3EXFgCHdCL
-X-Gm-Gg: ASbGnctzP7iBpv2jrh9dQ+ZRl0M5AANGl6LAuaRpJd8bIhDm4QxoikxfSFce8OA8b+V
-	1sfsQW+GdwTkluBob3RA02fQQC8jxq1JCplt4dvajU6T+d7+btYoKlxyEI7Re6bT6zJ7i4QknRz
-	nBRTmtcJjQjErpCFhTsTT7gMNWDNVjmbhmguEE5mkBYWAhl+w4iUCTOAgIy6oN6YvVLBSxf6CNK
-	lEyi1Sr2vwpt5nqC422DaMDOjs/M4+416/64fCAEHMxCKbW5nEyfT76ZS/Y5O/xJmqUQaTuHiHA
-	P6EckhkKugVe/vzqRharcPU=
-X-Google-Smtp-Source: AGHT+IGvzOZYGllSP47lVqz1SCLhFs9EC02BOKziJOgX7Pts7ptKM8GfugYHZ76ro0NUqhQOx0+N4w==
-X-Received: by 2002:a05:620a:2412:b0:7b6:6756:eefc with SMTP id af79cd13be357-7b6fbf14f55mr565192285a.27.1734105973915;
-        Fri, 13 Dec 2024 08:06:13 -0800 (PST)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com. [209.85.222.180])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6ffdf1577sm34182385a.122.2024.12.13.08.06.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 08:06:13 -0800 (PST)
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b68e73188cso220735385a.0;
-        Fri, 13 Dec 2024 08:06:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU6sOvWYD0g37WHYQvBdMA2SwRwVFFhXnLnpg++2Gebuw4ythFjQ3BLAdJ9HevtBoYPD3K2QfK450qRpU4j@vger.kernel.org, AJvYcCW+VyXlLKUxnkR0mGcvSWfQAnX9yI7ztp46Z/T+IfnLH25Gl26NaDq5zqzEbn5FwXEL8F4ABTJAsxoZ@vger.kernel.org, AJvYcCWqIIzw+kr8oFWl7wUPfQE6T9pqSUcGVyQ6VP8jBc+OIxOQUgBjHhHG/A4H1tQz9YNSpbsZOlbDgG/cKAwKlCYBCDM=@vger.kernel.org
-X-Received: by 2002:a05:620a:31a3:b0:7b6:d4a2:f11f with SMTP id
- af79cd13be357-7b6fbcfdbc1mr463124085a.0.1734105973379; Fri, 13 Dec 2024
- 08:06:13 -0800 (PST)
+	s=arc-20240116; t=1734105971; c=relaxed/simple;
+	bh=gG4pvx1SWSbqEL+vYeIhUPiJr6rkS5m31KYP9zkOlyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JB2hA+FDcv7+VQJlt7rHQ9ZqYhEC3xXfb3hko7nmm4jaS4NgCQ29rG6pV0WG9kDMkNt7gisZdP07JJet5qP6qcsVzeJAt/AFmg6O9nNCrW5TGlOl6+vONsnajNGRdOIXDJrIX047GsijbhxNrJvRDP484TUu17YwG5r3/DWGy2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se; spf=none smtp.mailfrom=lankhorst.se; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lankhorst.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lankhorst.se
+Message-ID: <5a50a992-9286-4179-8031-ffb514bca34f@lankhorst.se>
+Date: Fri, 13 Dec 2024 17:06:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com> <20241206212559.192705-3-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20241206212559.192705-3-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Dec 2024 17:06:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXAy=1bo2o1rbO-Z0EVD6LPNbR5N6zTH4+agA4Q=V6gXg@mail.gmail.com>
-Message-ID: <CAMuHMdXAy=1bo2o1rbO-Z0EVD6LPNbR5N6zTH4+agA4Q=V6gXg@mail.gmail.com>
-Subject: Re: [PATCH 2/5] dt-bindings: soc: renesas: Document Renesas RZ/G3E
- SoC variants
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
+ cgroup.
+To: Maxime Ripard <mripard@kernel.org>
+Cc: linux-kernel@vger.kernel.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+References: <20241204134410.1161769-1-dev@lankhorst.se>
+ <20241213-proud-kind-uakari-df3a70@houat>
+ <80c49a80-d49c-4ca5-9568-9f7950618275@lankhorst.se>
+ <20241213-gentle-glittering-salamander-22addf@houat>
+Content-Language: en-US
+From: Maarten Lankhorst <dev@lankhorst.se>
+In-Reply-To: <20241213-gentle-glittering-salamander-22addf@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Dec 6, 2024 at 10:26=E2=80=AFPM John Madieu
-<john.madieu.xa@bp.renesas.com> wrote:
-> Document RZ/G3E (R9A09G047) SoC variants.
->
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Hey,
 
-With the subject and description fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Den 2024-12-13 kl. 16:21, skrev Maxime Ripard:
+> On Fri, Dec 13, 2024 at 03:53:13PM +0100, Maarten Lankhorst wrote:
+>>
+>>
+>> Den 2024-12-13 kl. 14:03, skrev Maxime Ripard:
+>>> Hi,
+>>>
+>>> Thanks for the new update!
+>>>
+>>> On Wed, Dec 04, 2024 at 02:44:00PM +0100, Maarten Lankhorst wrote:
+>>>> New update. Instead of calling it the 'dev' cgroup, it's now the
+>>>> 'dmem' cgroup.
+>>>>
+>>>> Because it only deals with memory regions, the UAPI has been updated
+>>>> to use dmem.min/low/max/current, and to make the API cleaner, the
+>>>> names are changed too.
+>>>
+>>> The API is much nicer, and fits much better into other frameworks too.
+>>>
+>>>> dmem.current could contain a line like:
+>>>> "drm/0000:03:00.0/vram0 1073741824"
+>>>>
+>>>> But I think using "drm/card0/vram0" instead of PCIID would perhaps be
+>>>> good too. I'm open to changing it to that based on feedback.
+>>>
+>>> Do we have any sort of guarantee over the name card0 being stable across
+>>> reboots?
+>>>
+>>> I also wonder if we should have a "total" device that limits the amount
+>>> of memory we can allocate from any region?
+>>
+>> I don't think it is useful. Say your app can use 1 GB of main memory or 2 GB
+>> of VRAM, it wouldn't make sense to limit the total of those. In a lot of
+>> cases there is only 1 region, so the total of that would still be the same.
+>>
+>> On top, we just separated the management of each region, adding a 'total'
+>> would require unseparating it again. :-)
+> 
+> I didn't mean the total for a device, but for the system. It would
+> definitely not make sense for a VRAM, but for CMA for example, you have
+> a single, limited, allocator that will be accessible from heaps, v4l2
+> and DRM devices.
+> 
+> If an application has to allocate both from v4l2 and DRM buffers, we
+> should be able to limit its total usage of CMA, not just on a single
+> device.
+In this case, I think it makes more sense if CMA creates a region, then 
+use that region in both v4l2 and DRM instead of a separate region for 
+both, with CMA being responsible for lifetime.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Cheers,
+~Maarten
 
