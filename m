@@ -1,223 +1,169 @@
-Return-Path: <linux-kernel+bounces-444688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2375C9F0B0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:31:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50A79F0B4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:35:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B211889E33
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:31:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D332283691
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5D61DEFE2;
-	Fri, 13 Dec 2024 11:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7EC1E0E13;
+	Fri, 13 Dec 2024 11:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J9TzfDFQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Nvrmho5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="J9TzfDFQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0Nvrmho5"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDQ5dIgX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297551AC8B9;
-	Fri, 13 Dec 2024 11:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01F41DF736;
+	Fri, 13 Dec 2024 11:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734089497; cv=none; b=RaMt4T5j3/0z/f7Ocp4/y9sNNmFM9nOSRZylewt8LaWuU/+y3hS9O9vjAmHQ6n8TLOkBH74P66CYHczQplTDJakuCgFko4C6BgsQ1ztO5VM7OBYfrYIKdnrmD5xsxW4t3vYqrn6d9+mGiNDu8fQ3mpxQRt/uFjTa25+ldUn0nBk=
+	t=1734089624; cv=none; b=bhDEShlEwllpsfufGGE2XZmb+mg550FDQmlSqw1RMF2R7xO3fdUmCtHRxDvf1yEENQXRnXMoy9msG9fInQPo8yY5UA00aKw9Zvaacz+kITNdyZMvhdUNP0ylHKWM0bgmoAzfBzfd9KockhHdxXPj38PxkXFVHjOizZ/PobBr5e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734089497; c=relaxed/simple;
-	bh=2kZDUN0oXZxDltOM76SVSzHfd2+bJipUkD4hmTp2BeE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OYqoH6moUfKUPi1wpoKCkINMFBZW0dAp3zHBvzP6GHcpYFx8AbfRP8PrRF0kRzGuxanmJq5ZSai4z7T30Mb0dKFyR2cfaLewmsvk/ZuC6vArtGTkhis8vYXWE1ZEgBBc8LrGhdfX+r4w4sNNqqg27f1SWP2U52aNLJk+5bvNTY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J9TzfDFQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Nvrmho5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=J9TzfDFQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0Nvrmho5; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2BB4B2118F;
-	Fri, 13 Dec 2024 11:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734089493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=3Otja/V8iVkjpbxSaRwfSQ2uR5NuRiE8gnzz4GB7804=;
-	b=J9TzfDFQJaQGpszKnpoeWtB9HMxPxbkUZwXtyC/yqZA1c6gWsVemNteLK9oaMKXy0DjEZS
-	rxEL9V++NAQLoiNPHnmvImav4+YcFNQZ7Q1BtCWpxOkiSg7pxqV0pw14Eean/kdJI+KQ21
-	dZ4w80/dxKU7VPqcDSgGuBB3ddln0Hw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734089493;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=3Otja/V8iVkjpbxSaRwfSQ2uR5NuRiE8gnzz4GB7804=;
-	b=0Nvrmho5UfUG22FOsPdU1jkCeeDFix5kXjVD4X1H080PPvSnp0bVKSiOYbWCI7iKXv/ls7
-	rzfQVdjOCUsJaFDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734089493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=3Otja/V8iVkjpbxSaRwfSQ2uR5NuRiE8gnzz4GB7804=;
-	b=J9TzfDFQJaQGpszKnpoeWtB9HMxPxbkUZwXtyC/yqZA1c6gWsVemNteLK9oaMKXy0DjEZS
-	rxEL9V++NAQLoiNPHnmvImav4+YcFNQZ7Q1BtCWpxOkiSg7pxqV0pw14Eean/kdJI+KQ21
-	dZ4w80/dxKU7VPqcDSgGuBB3ddln0Hw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734089493;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=3Otja/V8iVkjpbxSaRwfSQ2uR5NuRiE8gnzz4GB7804=;
-	b=0Nvrmho5UfUG22FOsPdU1jkCeeDFix5kXjVD4X1H080PPvSnp0bVKSiOYbWCI7iKXv/ls7
-	rzfQVdjOCUsJaFDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1113213927;
-	Fri, 13 Dec 2024 11:31:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pJ7ZAxUbXGdfYAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 13 Dec 2024 11:31:33 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-To: Joe Perches <joe@perches.com>,
-	workflows@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: [RFC PATCH] get_maintainer: decouple subsystem status from maintainer role
-Date: Fri, 13 Dec 2024 12:29:22 +0100
-Message-ID: <20241213112921.180978-2-vbabka@suse.cz>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734089624; c=relaxed/simple;
+	bh=jn1+kwErRSsB5tbg2oGFUgowoj8MlSLJ2/SRH/JeQmM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PswrXkR9ptbSMq563+V2jYOvqGr3rNhsFi1sOPD+rGv9nyjE8jb/KtiLwtizXtS7gy5pdpPRgroZCVYbwMZbXVtG2npHBXczkrRqx7Z4jMndp4m392e0MSCd854ukvqtCyIT7YZwjNRVYmE7A2dluguDW5YoXlmsy7PzvPv8UCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDQ5dIgX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44FBC4CEDD;
+	Fri, 13 Dec 2024 11:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734089624;
+	bh=jn1+kwErRSsB5tbg2oGFUgowoj8MlSLJ2/SRH/JeQmM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=sDQ5dIgXsch9/E4ObBb7dYLt1CMJDE+1uaYpIrltl0BLYFCUh8gzlMfBCZv8rtf9l
+	 x7riOOYVxIAuLGRKfAZcGS1doiTgzeJILDQibOzWclMxtdPLnO1LAqxB1E8xp8Nt2F
+	 cFobAm6wfzdhzSxYzjSf8v1oHNQhq21fGwnEuItf5KexQNXtPASq0g0wr0mXogAxpk
+	 g7Ich5qQz3aNf7H3DOe3pyOKzNO/g32X3Twz9IeZIWrJ3V7S8yALv3H4wMShj+K3W/
+	 CT4A5YuVFYGDhNSY5CjsK4OotTCTCaVXRA7jXckLfC1YGrYYAoY2HxeJxXZSzq+Ld8
+	 ACRKxCIy1BmqQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Subject: [PATCH v3 0/4] rust: extend `module!` macro with integer parameter
+ support
+Date: Fri, 13 Dec 2024 12:30:45 +0100
+Message-Id: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOUaXGcC/x3MQQqAIBBA0avErBtILYquEi2mnGqgNJQkiO6et
+ HyL/x+IHIQj9MUDgZNE8S7DlAXMG7mVUWw26ErXSiuFh7fXznhSoCNiMkjccjN3tpsagpydgRe
+ 5/+Uwvu8HpqE7MWIAAAA=
+X-Change-ID: 20241211-module-params-v3-ae7e5c8d8b5a
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+ Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Cc: Trevor Gross <tmgross@umich.edu>, 
+ Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3680; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=jn1+kwErRSsB5tbg2oGFUgowoj8MlSLJ2/SRH/JeQmM=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnXBrr0zsNb2QcluQ3v0wkkSyjDhb02usZ3esuJ
+ diQngHvJgSJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ1wa6wAKCRDhuBo+eShj
+ d83wD/4+9Pj/7slOT/674RxtE6Eo/6z2lNzvbDAzozudCdLD7JiUToKxx+mNoPttOYhJ+x0+3Vk
+ BzLi2eusFMNErvnfAIL7rHTC4zkWn0bM4rmjlJxBR6e/1haYsfY1nO5Lv7p3sQ5GTuz6SfIudsa
+ lO5Br+TITIAo8urxOS5hvHPYaRxpxAShxpSbkbu1UrNEJHKziI7zHv/mH3LEq08zL+ijvAbVB9Y
+ J4BzyZRKyzGqxC1XQLGnVxSDYtmQdYf9cYGI0V2vhTLmhsJ4NAM/1kr6BQau9gXLkrKVAlL6IZJ
+ WHJKLp0wsxw+b2WnNk3xjr1luop8WVNZOiP2uZE5fLUi6R+1xSnhCfHLLByiUi9UfX7iZDeUhgG
+ 6HEUC6D72vbqCl2zBl1KQj/iijrMYcT+diEQGMzJmne7jqCN+zrfSL71kLmE5bfB9INPHScRNpG
+ KwAXZE+pe9O7KaIqygKM7TfAf2YEuDZvkGtJ8rZ8jKyZi2AJUKhfss1MzpTljU3awSE/BJPB/Xc
+ K5nuLvZMfj66BHEHeavqhbhn6CT41xHPG45oMCya64i6R1N+zIF+1d+TvjY/+DlBrexlmgbZv//
+ /rwKS4WR5p8v+1nZiEfJaejv6HVNwAFclnM6XaXZby2qw1zCayJ4GFvp23sQUJzoW+oE4oxzt2X
+ 1sOzPPGdeomR3pA==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-The script currently uses the subystem's status (S: field) to change how
-maintainers are reported. One prominent example is when the status is
-Supported, the maintainers are reported as "(supporter:SUBSYSTEM)".
+This series extends the `module!` macro with support module parameters. It
+also adds some string to integer parsing functions and updates `BStr` with
+a method to strip a string prefix.
 
-This is misleading, as the Supported status defined as "Someone is
-actually paid to look after this." may not in fact apply to everyone
-listed as a maintainer, but only to some of them.
+This series stated out as code by Adam Bratschi-Kaye lifted from the original
+`rust` branch [1].
 
-It has also been confusing people to what "supporter" means and has
-required updates to the documentation [1].
-
-Thus stop applying the subsystem status to change "maintainer:" to
-anything else, as maintainers are maintainers. Instead, if the subsystem
-status is not the most common one (Maintained), indicate it as part of
-the subsystem name. So for example, instead of "(supporter:SUBSYSTEM)"
-report "(maintainer:SUBSYSTEM [supported])".
-
-[1] https://lore.kernel.org/all/20221006162413.858527-1-bryan.odonoghue@linaro.org/
-
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Link: https://github.com/Rust-for-Linux/linux/tree/bc22545f38d74473cfef3e9fd65432733435b79f [1]
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
-I have been confused myself in the past seeing "supporter" and have seen
-somebody recently wondering what it means as well.
+Changes since v2 [1]:
+- use `SyncUnsafeCell` rather than `static mut` and simplify parameter access
+- remove `Display` bound from `ModuleParam`
+- automatically generate documentation for `PARAM_OPS_.*`
+- remove `as *const _ as *mut_` phrasing
+- inline parameter name in struct instantiation in  `emit_params`
+- move `RacyKernelParam` out of macro template
+- use C string literals rather than byte string literals with explicit null
+- template out `__{name}_{param_name}` in `emit_param`
+- indent template in `emit_params`
+- use let-else expression in `emit_params` to get rid of an indentation level
+- document `expect_string_field`
+- move invication of `impl_int_module_param` to be closer to macro def
+- move attributes after docs in `make_param_ops`
+- rename `impl_module_param` to impl_int_module_param`
+- use `ty` instead of `ident` in `impl_parse_int`
+- use `BStr` instead of `&str` for string manipulation
+- move string parsing functions to seperate patch and add examples, fix bugs
+- degrade comment about future support from doc comment to regular comment
+- remove std lib path from `Sized` marker
+- update documentation for `trait ModuleParam`
 
-I have read the threads from 2022 that in the end resulted in adjusting
-documentation only [1]. I very much agree with Ted's points about taking
-the subsystem status and applying it to all maintainers being wrong [2].
+Changes since v1 [2]:
+- Remove support for params without values (`NOARG_ALLOWED`).
+- Improve documentation for `try_from_param_arg`.
+- Use prelude import.
+- Refactor `try_from_param_arg` to return `Result`.
+- Refactor `ParseInt::from_str` to return `Result`.
+- Move C callable functions out of `ModuleParam` trait.
+- Rename literal string field parser to `expect_string_field`.
+- Move parameter parsing from generation to parsing stage.
+- Use absolute type paths in macro code.
+- Inline `kparam`and `read_func` values.
+- Resolve TODO regarding alignment attributes.
+- Remove unnecessary unsafe blocks in macro code.
+- Improve error message for unrecognized parameter types.
+- Do not use `self` receiver when reading parameter value.
+- Add parameter documentation to `module!` macro.
+- Use empty `enum` for parameter type.
+- Use `addr_of_mut` to get address of parameter value variable.
+- Enabled building of docs for for `module_param` module.
 
-The attempt to modify get_maintainer output was retracted after Joe
-objected that the status becomes not reported at all [3]. This RFC
-attempts to address that by reporting the status (unless it's the most
-common one) as part of the subsystem.
+Link: https://lore.kernel.org/rust-for-linux/20240705111455.142790-1-nmi@metaspace.dk/ [2]
+Link: https://lore.kernel.org/all/20240819133345.3438739-1-nmi@metaspace.dk/ [1]
 
-The patch is not perfect, as with this approach, the logical thing would
-be to do the same also for reviewers and mailing lists. In fact,
-subsystems with a status of Orphan typically only have some catch-all
-mailing list and no maintainers, so the "(orphan minder:SUBSYSTEM)"
-would never be currently reported by checkpatch. It would be thus
-logical to report the status in the same way for lists (and reviewers).
+---
 
-But I didn't attempt a full implementation as I'm not fluent in Perl and
-would like to see if we can get a consensus first. If we do, I don't
-insist in this particular "SUBSYSTEM [status]" syntax nor on
-implementing the full solution myself - I would be happy if somebody
-else did. My main point is that maintainer is a maintainer and the
-subsystem status should be indicated for the subsystem, not for the
-maintainer.
+---
+Andreas Hindborg (4):
+      rust: str: implement `PartialEq` for `BStr`
+      rust: str: implement `strip_prefix` for `BStr`
+      rust: str: add radix prefixed integer parsing functions
+      rust: add parameter support to the `module!` macro
 
-[1] https://lore.kernel.org/all/20221006162413.858527-1-bryan.odonoghue@linaro.org/
-[2] https://lore.kernel.org/all/Yzen4X1Na0MKXHs9@mit.edu/
-[3] https://lore.kernel.org/all/30776fe75061951777da8fa6618ae89bea7a8ce4.camel@perches.com/
+ rust/kernel/lib.rs           |   2 +
+ rust/kernel/module_param.rs  | 238 +++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/str.rs           | 138 +++++++++++++++++++++++++
+ rust/macros/helpers.rs       |  10 ++
+ rust/macros/lib.rs           |  31 ++++++
+ rust/macros/module.rs        | 188 ++++++++++++++++++++++++++++++----
+ samples/rust/rust_minimal.rs |  10 ++
+ scripts/Makefile.build       |   2 +-
+ 8 files changed, 600 insertions(+), 19 deletions(-)
+---
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+change-id: 20241211-module-params-v3-ae7e5c8d8b5a
 
- scripts/get_maintainer.pl | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
-
-diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-index 5ac02e198737..a2f578f2d93b 100755
---- a/scripts/get_maintainer.pl
-+++ b/scripts/get_maintainer.pl
-@@ -1286,6 +1286,7 @@ sub get_maintainer_role {
- 
-     my $role = "unknown";
-     my $subsystem = get_subsystem_name($index);
-+    my $substatus = "";
- 
-     for ($i = $start + 1; $i < $end; $i++) {
- 	my $tv = $typevalue[$i];
-@@ -1299,21 +1300,10 @@ sub get_maintainer_role {
-     }
- 
-     $role = lc($role);
--    if      ($role eq "supported") {
--	$role = "supporter";
--    } elsif ($role eq "maintained") {
--	$role = "maintainer";
--    } elsif ($role eq "odd fixes") {
--	$role = "odd fixer";
--    } elsif ($role eq "orphan") {
--	$role = "orphan minder";
--    } elsif ($role eq "obsolete") {
--	$role = "obsolete minder";
--    } elsif ($role eq "buried alive in reporters") {
--	$role = "chief penguin";
--    }
--
--    return $role . ":" . $subsystem;
-+    if ($role ne "maintained") {
-+	$substatus = " [" . $role . "]";
-+    }
-+    return "maintainer:" . $subsystem . $substatus;
- }
- 
- sub get_list_role {
+Best regards,
 -- 
-2.47.1
+Andreas Hindborg <a.hindborg@kernel.org>
+
 
 
