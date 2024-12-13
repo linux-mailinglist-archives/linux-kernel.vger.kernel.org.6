@@ -1,79 +1,86 @@
-Return-Path: <linux-kernel+bounces-444783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0869F0C7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:37:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEE19F0C8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:40:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E053188E238
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:37:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B576C2893A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013341DFDB8;
-	Fri, 13 Dec 2024 12:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4B91DF97F;
+	Fri, 13 Dec 2024 12:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="K+C5v8Y3"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G01sJSyO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4081DF969
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E798A1DF741
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734093433; cv=none; b=lhJl4A8KCiCIIKN7iWV73hwu/9OYYTadDmB7aM6t4WrUajTyhcaV5a+dHDiX+5tRH+GEjxHxf+piZydM/U3aFyUwPSMqeO4aVqVFoS9aRP0kqc6KsPPmNuymm6VVz356Lnq9g6bfYfgrQcZYjJsY/32TQc4AbAi+Fjl77SVmKl4=
+	t=1734093596; cv=none; b=KqqsX2o7pJBmyOzbiYD1VhAzsj9FqGe5m902dlEChxpiJ0YunOsUYLNgdXKs9JnpqV5YBMO5SElvThVhDv38LSuF9/NzORsn8VCIhk5yUV9qE30SKKP1n15GvhyzMN+jnGrTR6YYeq/ykB92Etgv7LcmCxD9RMwIzLR9L7i/CwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734093433; c=relaxed/simple;
-	bh=Nmi9GyDGQHCmYPBPOfLMTtqurvXheZhg9NmNBo3YxcU=;
+	s=arc-20240116; t=1734093596; c=relaxed/simple;
+	bh=u89LrWgijApdxo4L99Ej0ByAW7ycADQAsKXMBBhj+4c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DHd2hi7VpQhpFJ+2UEZLF7OE7n4ePpuOum8ks8DAOh22CEHC59UnVT37lPaBzmsK/5sWhJlL0a9yFyqobXd16+AZ9UaWf0fO95gQ3Z6fYJ6ZhmdmPNs532dpKdykiES59ixaPQZ9L5Ahm21NJDMB1i0I3CgoeWF86GgznaXAn6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=K+C5v8Y3; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa67333f7d2so257329066b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:37:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1734093429; x=1734698229; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ltuE2+W/QkL0PmrBT7zRDBDtGcXVxn3gh0L5g4K6QKk=;
-        b=K+C5v8Y3W75xxgrONXSxelRLWCApWJehMQThBj1A1AywLFKDulVzQJMVa3Oa0aO9pQ
-         of2IJ5//2U5fGMSy5XCXGgj+tYEkKEpu6YtHCV8gC9t+vdJGyRKR1rtGp8d4LIIGBeYJ
-         eotPoHzGKu4Q1BXPnJTJheGWv0Sooc6ev0Rcsv+bmAq1XeoJTSNyPvAER44uPnuOg8rj
-         kY6eUAvvLz3nSTUURECk/sKJLsT1eptTxCVZE5cOJ11HFwJtTcgINPIhPvsT01ISPx8K
-         WtIHCS90fL4XfItYWiBCP3bL5uct7WCNfyROdd1akHvmPqvkKZcsY3M1/jXU9DqBGvzC
-         dXmw==
+	 In-Reply-To:Content-Type; b=ncxUCLqFS8CVHpL+KTs8hHCoWp29WZwUypioam40FyudB7nzpN0mbPnC5dMz+bmHMRH7X33viWB15qDlu5FFEaccYMfSL2aJhSn9Q0tvHy1kWvHaF8uFALNbDzlBAWPro+W9HfqMB5Xn7/VybpSdTyfvwwmwAcLbSCK50qZD0pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G01sJSyO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9nqNZ017524
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:39:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9F9F/oa6KnYOh6nwKXJwdcyz5bofoAigh7/wW+YIVsE=; b=G01sJSyOMKdSWUKy
+	LaCXcxmPGtWXLZkNLxN/OCa9XxxDNu7ei8eByZAdk18rLtcpxnrwU7Gd92Isvup7
+	kIk+SVcD4Zf+7mUZocVQdDRDowFqcUxhM8XwKhAC6i0NpF+Jjhnwxbk+y3hEyNlm
+	N8x62F31eEzjEmleNo6p69MLg8WHRounLOLeTnRKCnY9OW/G2RhPR8e7a5zsGwjp
+	fpgXZ4mAAujWmyZkV+TycHu56tr9QW+I67eiu5kyEjLszvFehebxW4IoDCSL51kp
+	Bmphb+AEcFvWkt6aFn3/W9WUqv07FOpaAO9FARsf3ewJ6T7tpe/plhUUm0lo0tEB
+	DBw0rQ==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gjmt0gjh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:39:53 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-46748e53285so3432781cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:39:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734093429; x=1734698229;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ltuE2+W/QkL0PmrBT7zRDBDtGcXVxn3gh0L5g4K6QKk=;
-        b=wHe2O2jQyPSoD+aYbdv72wSlnrJ9IurJ49B3c0rCc2w384V5yu4h38cB25OFPL1QaZ
-         jreErXJyo0EWjSUT6SAM6rT9EJnjKukU3anajguG4KiXwrC9cz3KhSYfZPd6G1zMxnHN
-         QSQIvh/MGPuMC8niwKzNiV1her2bzZVp8/4lJetg2zw2lNKM2mRT9EsqivULjuKMKoPl
-         LQAG1E/zOqs77gwE3Oh1RF6Puki4FIakS7173FXlP5OmTZyHLiZnUOQ1N5/DDTzbML+2
-         oUsE/Jh0Z4yPzAH3H2tYQiS56CZZCkOzZoISCDX4eWjkr/8CMTr5vhNuCMzlkUWZfJKm
-         DpJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGly4v+4MFUqHmY5I1oPd+Jfaqk+auBhs4Q6ogLzgFNR2vAmpA7KM3r4s77e7kZKZxAKyUE5LGsP7zPE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8VPCcCufRHta9mK0s6FqragEJr3K2dRwhWEOHbqMvyHomH8Zo
-	J80xySJSE9soqPiEBRUDRaj3o9MO8NHFGvzBuPNgMXXKHuSFqmeyAjalo4MPsng=
-X-Gm-Gg: ASbGncuRuanJuzzcQ+5+b7EmsPBsY6CKGoZSSB3UPN/cvF4RL37ff2m/ejHxwAoNCa5
-	ithyu0lXjVZevZsU52ltxN7NBgHk6dytZqzaCrn6nlQ6gXau1xSLsNHL9By2HRkk5Bzk4zXYuBw
-	/EdzPV0eMJtS1vx/wLXcNSvxMi0M46P1O8lApyR5Ak0eM+/TYzz+4hUqd/7bPLsRfRk17GXOvoZ
-	wxd7YT1E3r5f9WFACz2rAYY5x1r+SMxPi9OQ1jB4WQg55thAVT1Hde7zm8pZ0yQsNpSi/LTUjdi
-	shCI7Vau2bZ1c/3WpBI=
-X-Google-Smtp-Source: AGHT+IEzo7yOAMIbo+2ZeO9KjOvgByarMKbpvTYUgjdcE+ovUy0pWk7Akq3CzcQvJ/6fvAVrohq13Q==
-X-Received: by 2002:a17:906:3145:b0:aa6:3f93:fb99 with SMTP id a640c23a62f3a-aab779d16aamr245324866b.36.1734093429329;
-        Fri, 13 Dec 2024 04:37:09 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:b5f9:333c:ae7e:f75e? ([2001:67c:2fbc:1:b5f9:333c:ae7e:f75e])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c7aa3besm11388409a12.75.2024.12.13.04.37.08
+        d=1e100.net; s=20230601; t=1734093593; x=1734698393;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9F9F/oa6KnYOh6nwKXJwdcyz5bofoAigh7/wW+YIVsE=;
+        b=cEgVEqSD5WkKg+69ri+VMCiz26UrH6QrSyyeUeMQUMNwwQ+GqHj3M2jWrbv3pRaXhi
+         RCAJFUssJZzVPNF3SoV/xn011YQjYN9xXd/BMHWQ1jAQKB5SdPjUgPzsBmH8Mho9z1xH
+         i7XaiwGfiMtfzcpIzn4o8Jcc/9NWRBecj7RWQJbnrb0ngsVtkL1fvD40/lgAaFyt4XIi
+         vFkyZhj7zHHP+A60sL2FUs7qvXmmdDOk5ePLoBDzrenlBaEI1tmiXblbsYtbsmLgvKd4
+         jUGYdjQbl1j9gDf7BC/H0ikQpre5Eu1zGBD33gtHR2X3bnZHWKYvEaruc2OCy3iDBPX5
+         2MVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKszZ34PjL8/AMhuLdlK5+WVONy35bp+ofOJLV3X2lr4Wh75+0hbs3+PRFzPViBojSxgYkSJ4DpLd2Ze4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy58WiMV6yS/1b/hHmKgTk04WVfU5UU8J2as31UQO1OpYCpePbE
+	4zWpKcHDMW8jY8UdxqxIkQwchrL+skK6VpBahbX72vKfybbtQyjIjeFJcsFDRO5u94gmvbt6V+q
+	yiJ2LQFvnjBPdPXiN3Amfos9o6rC3QnO+CE+hSUGu3nJmZyqP+rLAmGbHKJRu1jo=
+X-Gm-Gg: ASbGncsRSRR/HpSmJvIA8BlDyypWGT3yzo9WzS9fifbOjctPThHiDM84d0HrLdXEqFu
+	TSzWIfSktoslgeWwELLel5gl2XIrSJbA3+6mdAWOM+VbJSPO4kbf46sitvTpe+gjaEEMVvyOS83
+	Y3EKf2Umg+iAe4Q5+S3iobX5PKIurL7Hk8V4+KdQM88QeyuQTSFu5+2BBjPFrYOMay0jzQ7s2ux
+	5HpBh85Xq9c7Y5zJimNU1/OwQcQjjJiD+VCmJOonAyrmUYY8GuE4HU5fPTslUwPYcyhY/WVOkGx
+	3cR+Q7xg5vm4olms+UfJ6AMHzLhrdJkBH3Aq
+X-Received: by 2002:a05:620a:4410:b0:7b6:dc4f:8874 with SMTP id af79cd13be357-7b6fbf3d252mr140860585a.12.1734093592941;
+        Fri, 13 Dec 2024 04:39:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHizu5Ba85DKQuxdTDo+aKc1Ajo8QrAOao/BfP4OE0LSBLUvAIPd8kr45CvfnT9+hDRFnKKFg==
+X-Received: by 2002:a05:620a:4410:b0:7b6:dc4f:8874 with SMTP id af79cd13be357-7b6fbf3d252mr140859185a.12.1734093592599;
+        Fri, 13 Dec 2024 04:39:52 -0800 (PST)
+Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d149a49dc6sm11352497a12.31.2024.12.13.04.39.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 04:37:08 -0800 (PST)
-Message-ID: <8db525b6-3384-4e12-b16c-47b0a2898f1e@openvpn.net>
-Date: Fri, 13 Dec 2024 13:37:55 +0100
+        Fri, 13 Dec 2024 04:39:52 -0800 (PST)
+Message-ID: <230eb99b-b223-4d5f-92f6-27edc6827cb0@oss.qualcomm.com>
+Date: Fri, 13 Dec 2024 13:39:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,112 +88,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v15 03/22] ovpn: add basic interface
- creation/destruction/management routines
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Xiao Liang <shaw.leon@gmail.com>
-References: <20241211-b4-ovpn-v15-0-314e2cad0618@openvpn.net>
- <20241211-b4-ovpn-v15-3-314e2cad0618@openvpn.net>
- <CAD4GDZyXK6rBH_ccHkYrA4h71bDkKxVy_B5o-bj0ezzdHTJKxQ@mail.gmail.com>
+Subject: Re: [PATCH v5 5/7] drm/msm: adreno: enable GMU bandwidth for A740 and
+ A750
+To: neil.armstrong@linaro.org, Konrad Dybcio
+ <konrad.dybcio@oss.qualcomm.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20241211-topic-sm8x50-gpu-bw-vote-v5-0-6112f9f785ec@linaro.org>
+ <20241211-topic-sm8x50-gpu-bw-vote-v5-5-6112f9f785ec@linaro.org>
+ <31264e68-2cdc-41b2-8d84-459dc257f0f5@oss.qualcomm.com>
+ <76592f0b-85f4-4c84-b45b-859d55c4e87d@linaro.org>
 Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <CAD4GDZyXK6rBH_ccHkYrA4h71bDkKxVy_B5o-bj0ezzdHTJKxQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <76592f0b-85f4-4c84-b45b-859d55c4e87d@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: _J4CqiOqCZCxEaltgcURxev3U1XBUxuW
+X-Proofpoint-ORIG-GUID: _J4CqiOqCZCxEaltgcURxev3U1XBUxuW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ phishscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
+ malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412130089
 
-On 13/12/2024 13:32, Donald Hunter wrote:
-> On Wed, 11 Dec 2024 at 21:32, Antonio Quartulli <antonio@openvpn.net> wrote:
+On 12.12.2024 10:36 PM, Neil Armstrong wrote:
+> On 12/12/2024 21:32, Konrad Dybcio wrote:
+>> On 11.12.2024 9:29 AM, Neil Armstrong wrote:
+>>> Now all the DDR bandwidth voting via the GPU Management Unit (GMU)
+>>> is in place, declare the Bus Control Modules (BCMs) and the
+>>> corresponding parameters in the GPU info struct.
+>>>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>> ---
+>>>   drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 22 ++++++++++++++++++++++
+>>>   1 file changed, 22 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>>> index 0c560e84ad5a53bb4e8a49ba4e153ce9cf33f7ae..edffb7737a97b268bb2986d557969e651988a344 100644
+>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>>> @@ -1388,6 +1388,17 @@ static const struct adreno_info a7xx_gpus[] = {
+>>>               .pwrup_reglist = &a7xx_pwrup_reglist,
+>>>               .gmu_chipid = 0x7020100,
+>>>               .gmu_cgc_mode = 0x00020202,
+>>> +            .bcms = (const struct a6xx_bcm[]) {
+>>> +                { .name = "SH0", .buswidth = 16 },
 >>
->>   static int ovpn_newlink(struct net *src_net, struct net_device *dev,
->>                          struct nlattr *tb[], struct nlattr *data[],
->>                          struct netlink_ext_ack *extack)
->>   {
->> -       return -EOPNOTSUPP;
->> +       struct ovpn_priv *ovpn = netdev_priv(dev);
->> +       enum ovpn_mode mode = OVPN_MODE_P2P;
->> +
->> +       if (data && data[IFLA_OVPN_MODE]) {
->> +               mode = nla_get_u8(data[IFLA_OVPN_MODE]);
->> +               netdev_dbg(dev, "setting device mode: %u\n", mode);
->> +       }
->> +
->> +       ovpn->dev = dev;
->> +       ovpn->mode = mode;
->> +
->> +       /* turn carrier explicitly off after registration, this way state is
->> +        * clearly defined
->> +        */
->> +       netif_carrier_off(dev);
->> +
->> +       return register_netdevice(dev);
->>   }
->>
->>   static struct rtnl_link_ops ovpn_link_ops = {
->>          .kind = "ovpn",
->>          .netns_refund = false,
->> +       .priv_size = sizeof(struct ovpn_priv),
->> +       .setup = ovpn_setup,
->> +       .policy = ovpn_policy,
->> +       .maxtype = IFLA_OVPN_MAX,
->>          .newlink = ovpn_newlink,
->>          .dellink = unregister_netdevice_queue,
->>   };
+>> All a7xx targets use the same BCMs with the only difference being
+>> the ACV voting mask. You may want to make these non-anonymous structs.
 > 
-> You need to implement .fill_info to add IFLA_OVPN_MODE into get / dump ops.
+> it can be done in a second step
+> 
+>>
+>>> +                { .name = "MC0", .buswidth = 4 },
+>>> +                {
+>>> +                    .name = "ACV",
+>>> +                    .fixed = true,
+>>> +                    .perfmode = BIT(3),
+>>> +                    .perfmode_bw = 16500000,
+>>
+>> I think perfmode is simply supposed to be set when bw == max_bw
+> 
+> Not for a750
 
-Ok, I'll add it in v16.
+Akhil, is there any way to determine a suitable OPP for this
+dynamically?
 
-Thanks a lot.
-Regards,
-
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+Konrad
 
