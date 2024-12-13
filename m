@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-444424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7639F068B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:39:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD909F068C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:40:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7FF188AE18
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20F45168C82
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EAE1AB6D8;
-	Fri, 13 Dec 2024 08:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="K71SpjP4"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198781AAE0B;
+	Fri, 13 Dec 2024 08:40:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81161AA789;
-	Fri, 13 Dec 2024 08:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5180A19992D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 08:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734079156; cv=none; b=qCcxEKvM7+BXc7xy+hd/yJ3BDFNhlAoYB/Wke0B35pKqROpWCBJfC/oGTJzMz4wO9bdyph0zzwmwbNLqFac/Rg7USFDGzqOW3pbztpy9BMGxPyRJHz+WFv6facPtCzhETYzYlvOuSNiSuQJQUHKnl6d5BO4Fwd+1ITa945CfETQ=
+	t=1734079204; cv=none; b=FFYYCy0yRk0fNlgsHq7x4DfLbzxR7yLslA1Yr7Fp/rX7m0IFZlfdMZyduq/dUXLvZNL4DljPUl2nkHUNYanOPUtM4LVqGiN/2Vvj2bZFsXTdUYuMYNzl2Nwqn2yzmPf3tVudLK7f/GKe7vQQ893+3CxMvJyCWdwgnxBZ3O8X32M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734079156; c=relaxed/simple;
-	bh=Wuc1rQ4nZcih7sGyKwzNTjxL/+GXCsNYiAEkp6eIfzE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lSl9XkMBQJeUE0vl/giXWxncX81SNTzlNhtC/OgM0+6JBKkCgw0dXhunpMbdKEYmTLQrDqW5b5CIsWGvEqev0VLKmng7a7buZ7XyaqnzmYZsUJ2JZW3o+ZkaQ8HDwDdOAYb2jHkI5SvRn6kACtrpsj2xtnlFj9YZ9IOuxxcvD/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=K71SpjP4; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=c2tm0O1Fl9XERg7MDuC4aahqChWMFK/kmdhCvqemab8=;
-	t=1734079154; x=1735288754; b=K71SpjP4upyZsKwjJQ4wPLTPNcwNGywW50JYy1De0SmUEVd
-	1jHIZmnobv5m1jF6FQcR7HG4yCEOiHj0VBspcYmmS5F8lz+N177T6grir4h3B1gukdSFCJWA4pzNZ
-	/AdAAo+dKluhLj3rUs3oiXH5zSL8PVJTvwXSIpk7vBAQ0QEEl9ND1OAJTwf94X1nvDTSsWn8+9rlU
-	HJAABmEoHYLonlWZR6kQ196juhq/QxDDgfWBuP8GGEAbIDZpnbO8mqN7PK+601684Rz4u9DDT0wmh
-	RXN5IuvLeCXVSPhQWCt2oLrL6x1j67s6LOlEFPef5fPTCH8Zf5v/2029knB/giRw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tM1CT-0000000FPOu-1OgI;
-	Fri, 13 Dec 2024 09:39:05 +0100
-Message-ID: <104be155826cbf9ba3b3e65fa5186b39dbcf4906.camel@sipsolutions.net>
-Subject: Re: [syzbot] [wireless?] BUG: sleeping function called from invalid
- context in wext_netdev_notifier_call
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: jv@jvosburgh.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzbot+3647b9259b77c1bb8e94@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Date: Fri, 13 Dec 2024 09:39:04 +0100
-In-Reply-To: <20241213083607.8520-1-kuniyu@amazon.com>
-References: 
-	<301ccb4cf2451c748d2b9b68648be7cfadf75c6a.camel@sipsolutions.net>
-	 <20241213083607.8520-1-kuniyu@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	s=arc-20240116; t=1734079204; c=relaxed/simple;
+	bh=n8FZ4bj7YmFORZJ4h/F18SxiEw/fQMdUz9CBCWduX4g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IOfHsyvjv7FQcbU6o10jPvsrHAmBGzbeg60TmVJsib/Q+recw2HpQBwjNzV6aXTxvk1Q/fxKyUz662uiK6l1nssEdz5mMFAD1RpRWrCfLD5fPzTBvCEadV91n77kdMk5nAzMh5AwEUObq+PnwAIATedzBVvG/pgnpbHsYu4Xj90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a9d3e48637so13548365ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 00:40:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734079202; x=1734684002;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=58EGlvdaiugOBQ9LCJG+wfdlsQahddhH4BozOY32Avc=;
+        b=mnuxKjDPxbVeogU0sxzOVcHB0ik5J/9yaghNW2fUyFEUooHLwC/0B/yXZJhxRLpMNa
+         GN6n9EJrRtlObMi5/zkTmm4KlCmiTwDqSvxuEAyrbVslpVaZL/PXoXnhPTsT8tDaHO7k
+         c4E3OEzLpnZ3Tah9dYA9D8pK2aAOGNvk7xnqzK3lSbSvF02nVf1L5VfieD2RqgQJgy6M
+         CA+tNCDQPWrGX/v9VskIrPOIWWQzFsuEcr7UXiCTy1AXK/kyQ0aZhRj1yoayOGy62qbz
+         dGFA9tvYnPFIUg5Uqkdu+lSaZRP7PnJU/DUdHeW8RBhQ6XvUuleFw+zziHi2zlAV6d3G
+         Gdmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVw8OJ7hErS7lyQDjj2OD6Z0fJwrW1rMaqTscMfZ7theAe95VjIPpKC2ueJ1eBsgJyqFS6XNc0bxmOQnlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwedT7olNWGIbnWeCRqEX2XRpgXpuTEYGMA9fIGeHDEsDkS9crO
+	pw9EUt/qWXwNkjIXS+u5tKdcVVoDHdznKWV6esvQXBGlHAT3lCxdYArtK6OzOLfrTVAt2y9FqeK
+	hYXMMUGL/s9ZEdhB9xaR/fhhd6n9qg7P+9Gr7ieF/QsYGwF1U50uDzpk=
+X-Google-Smtp-Source: AGHT+IHVkq1zYKCtR79sOp99nQ/ILfc7hyG0sbt2fy5vtGcr1olGmZKQJBAFmaMZi0M4T59IjyFs8h+sn0l3VnXCLALj0UKIZM4o
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+X-Received: by 2002:a05:6e02:1aaf:b0:3a7:764c:42fc with SMTP id
+ e9e14a558f8ab-3aff8b9ce4cmr20834385ab.21.1734079202428; Fri, 13 Dec 2024
+ 00:40:02 -0800 (PST)
+Date: Fri, 13 Dec 2024 00:40:02 -0800
+In-Reply-To: <20241213081711.WmGWv%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675bf2e2.050a0220.cd16f.0044.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] general protection fault in exfat_get_dentry_cached
+From: syzbot <syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 2024-12-13 at 17:36 +0900, Kuniyuki Iwashima wrote:
-> From: Johannes Berg <johannes@sipsolutions.net>
-> Date: Thu, 12 Dec 2024 09:52:44 +0100
-> > On Wed, 2024-12-11 at 20:41 -0800, syzbot wrote:
-> > > CPU: 1 UID: 0 PID: 12894 Comm: kworker/u8:18 Not tainted 6.13.0-rc1-s=
-yzkaller-00183-g4c49f38e20a5 #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BI=
-OS Google 09/13/2024
-> > > Workqueue: bond0 bond_mii_monitor
-> > > Call Trace:
-> > >  <TASK>
-> > >  __dump_stack lib/dump_stack.c:94 [inline]
-> > >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> > >  __might_resched+0x5d4/0x780 kernel/sched/core.c:8758
-> > >  down_read+0x8e/0xa40 kernel/locking/rwsem.c:1523
-> > >  wireless_nlevent_flush net/wireless/wext-core.c:351 [inline]
-> > >  wext_netdev_notifier_call+0x1f/0x120 net/wireless/wext-core.c:371
-> > >  notifier_call_chain+0x1a5/0x3f0 kernel/notifier.c:85
-> > >  netdev_state_change+0x11f/0x1a0 net/core/dev.c:1378
-> > >  linkwatch_do_dev+0x112/0x170 net/core/link_watch.c:182
-> > >  ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
-> > >  bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:873
-> > >  bond_miimon_inspect drivers/net/bonding/bond_main.c:2740 [inline]
-> > >  bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2962
-> >=20
-> > Yeah this isn't new. I thought we were going to just squash this with
-> >=20
-> > https://lore.kernel.org/netdev/2730097.1721581672@famine/
-> >=20
-> > Whatever came of that?
->=20
-> Now I remember I forgot to respin this patch.
-> https://lore.kernel.org/linux-wireless/20241014205543.94787-4-kuniyu@amaz=
-on.com/
->=20
-> If the issue above is still not fixed, I will respin it on
-> wireless.git with Fixes tag.
+Hello,
 
-Wait, that's not related at all? The bonding issue still is that it
-calls ethtool ops under RCU but ethtool ops can sleep. That issue has
-nothing to do with the wext nlevent namespace-ification?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
+Tested-by: syzbot+8f8fe64a30c50b289a18@syzkaller.appspotmail.com
 
-We can still do the namespace thing for wext nlevent, but it's not going
-to fix this issue, and I don't think we need to on wireless (rather than
-wireless-next)
+Tested on:
 
-johannes
+commit:         f932fb9b Merge tag 'v6.13-rc2-ksmbd-server-fixes' of g..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=136a5be8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df9504e360281ee5
+dashboard link: https://syzkaller.appspot.com/bug?extid=8f8fe64a30c50b289a18
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12204730580000
+
+Note: testing is done by a robot and is best-effort only.
 
