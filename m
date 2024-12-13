@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-444378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6AD9F05DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5F19F05E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C6F2284032
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:59:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9F4284020
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8C219D886;
-	Fri, 13 Dec 2024 07:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5DF19D8AD;
+	Fri, 13 Dec 2024 07:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8xDmd7V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpGpeq7b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F66E192D9D;
-	Fri, 13 Dec 2024 07:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF1C192D9D;
+	Fri, 13 Dec 2024 07:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734076768; cv=none; b=gOItVjwxo53AX9KaifCzU4hAFNDCfDUb/vENeHOp3xmQDldlZQVgZrRLfE1AAm8qk9E8uXl1WM0CYR3kVUayYQKVtZmFmGMzetfXzVhXJi0dWVObM2b6hvbFj3lBpyFoXWAHu4w46Y/+qiPTkNBoXJ/7Ee8LX1IjqqvMm99a4aE=
+	t=1734076794; cv=none; b=aO/TQi0fAO9mJsDyd0GFbGx1gJRexBoxKuSSEzZt83RizwWWGwNFsv9W3SRGH9LyaH18JBt8GYfKRprhbkTti52iohfSwNMC4UdI7G8RUS1J8iWX3n+g5R0n/uVAbjTZPXTiSq8GDfUtsXrxpoDg/0zBvauuAaVeGmSP319XFCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734076768; c=relaxed/simple;
-	bh=mmeXuR7jX0+cdPS+dNqIHwCfiX6r6wzMOuIh7ErAcYA=;
+	s=arc-20240116; t=1734076794; c=relaxed/simple;
+	bh=Zk2t2gNIqw1Fr3k0oMx9b92c0wRmzmcHtlYDobnwy5g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EsqWUZFdSdB80pNWUkAIhYtdP/7Du7Ez5dgTVz7WTI42OGf0Sy2QNfVrNsbABqEpnh3tmD/xObWHPSe6i0Uw4ttK7NqegnvjK5Ep/ybpiX409UVpaBT3bgN8AcNKjtbSKHXZ322iH2pMxO6l2yzzmoD7E3Babs0XRlQUmPYsnFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8xDmd7V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA6F4C4CED0;
-	Fri, 13 Dec 2024 07:59:17 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=rFB6c+Bo2iq7+Db3y8rm7scWIFu51NPTVRiAkO5FhNu3qspNyx8VofzTV8Xuu5pUqR1RRx716XIgBdPamE6W0CdvMYPuPvbaE6np08h8Bar4U/g6BXV6q0gstOTFu37rtQAPfuwnUy7ha3lOygz1omwzWsYTw5rEMC7YpLbbIco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpGpeq7b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5073C4CED0;
+	Fri, 13 Dec 2024 07:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734076765;
-	bh=mmeXuR7jX0+cdPS+dNqIHwCfiX6r6wzMOuIh7ErAcYA=;
+	s=k20201202; t=1734076793;
+	bh=Zk2t2gNIqw1Fr3k0oMx9b92c0wRmzmcHtlYDobnwy5g=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=R8xDmd7VuwbDLrhXzFhubEb8fSUozlxYAFjLwcPbLw/TwSctcf4aqu49hzGf3dt7+
-	 KY/q6VHFIe5ZjcF4H3lUqUW6z3trSBpexVjzNgivxe8Gl+J28Ql0y83DMZ6VBGbDpo
-	 aRQphlz7pPuxLmQQhidyaItcZGJdSZHoOeuuB834MwaYt33zHsQrPeMAJnFb7lKXsk
-	 5/7WJqnB/cn/D2FaCGoK+Rodi2wVGmmBETtj71dhy5dCkVqpnwuRSV9/+e3olUBhzY
-	 2wLjme2klBhTXQUizUJ87IY2v5nlQC9SWOPuDUnxxqvBM32GJbooum7+7aAWrMeIoJ
-	 /Fj+4MRqEovzQ==
-Message-ID: <7289a50a-e139-453f-a512-3dd68a0839a2@kernel.org>
-Date: Fri, 13 Dec 2024 08:59:15 +0100
+	b=dpGpeq7bMlUF0fXGU/PpNaWDwNLPYp3mDzeqZb6lVpY5OgNCZzBCKi3ZvZAiZQqTc
+	 6WfTatWetFCdCRuq28PfGdPN8W85HhzbZCks3xZW3l/o+cxDopAej7rEVu+i4dOzkv
+	 aZCcYOPzuyXDH5fCtHfaU2z5snJMeCsBli3DYSUBIytLIEod6RE+5t5dWmUN3U/sTc
+	 jHZF3UjY95BqoyxwNqekTNYGAGwv6nut1rbWXdYOKACXFaDPq8kaYLSspymE99edCa
+	 JIBxtuPVF7t3qhZlNIjRykdseF9+GXElPk2xTDlblKafJj9tunusH6ijjJtCPcz5/T
+	 frcUQMuNibYTA==
+Message-ID: <7a1244db-7ab7-4374-b44d-e55a25d766a2@kernel.org>
+Date: Fri, 13 Dec 2024 08:59:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+Subject: Re: [PATCH v3 2/6] dt-bindings: interrupt-controller: Fix the
+ size-cells in ast2700-intc
 To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au, tglx@linutronix.de, catalin.marinas@arm.com,
@@ -60,7 +61,7 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  soc@lists.linux.dev
 References: <20241212155237.848336-1-kevin_chen@aspeedtech.com>
- <20241212155237.848336-4-kevin_chen@aspeedtech.com>
+ <20241212155237.848336-5-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,41 +107,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241212155237.848336-4-kevin_chen@aspeedtech.com>
+In-Reply-To: <20241212155237.848336-5-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 12/12/2024 16:52, Kevin Chen wrote:
+> It is no need to let size-cells to 2 for the ASPEED AST27XX INTC. Modify
+> the ast2700-intc example usage.
+
+Why?
+
+This just looks useless.
+
+> 
 > Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
 > ---
->  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  .../bindings/interrupt-controller/aspeed,ast2700-intc.yaml    | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> index 2f92b8ab08fa..20191fee1f5b 100644
-> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> @@ -101,4 +101,10 @@ properties:
->                - ufispace,ncplite-bmc
->            - const: aspeed,ast2600
->  
-> +      - description: AST2700 based boards
-> +        items:
-> +          - enum:
-> +              - aspeed,ast2700-evb
-> +          - const: aspeed,ast2700
-> +
->  additionalProperties: true
 
-
-
-This patchset is just corrupted. You already sent it as patch #1.
-
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
 
 Best regards,
 Krzysztof
