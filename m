@@ -1,78 +1,73 @@
-Return-Path: <linux-kernel+bounces-444539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54209F0887
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:52:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 289B9162FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:52:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65201B6CE0;
-	Fri, 13 Dec 2024 09:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="aoEpoMFi"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5A79F088A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:53:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2221AB52F;
-	Fri, 13 Dec 2024 09:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A19282B9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:53:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD2A1B4126;
+	Fri, 13 Dec 2024 09:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iZbsOfEz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D481B392D;
+	Fri, 13 Dec 2024 09:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734083555; cv=none; b=l8z7homUZ2eLCQwrNQghXVmNT3cJ04TqOfxGL3Ldd2tVqwLMN3My9O6TIsff/YY4P+sLnL4aKUSd7RLUV2EpBykHaHCKyr3XJcNjHIzG/DJxrbQaJaXkZ57m1bYfQ4DXAI/fIRE5ikyjTWbHTIlx+QlkqGzVmer4y7W0KVUOupI=
+	t=1734083578; cv=none; b=kggWKC1fH8T0UUjgvE8bYSw2ZDlNpU/5m3utcW9HgJMwJ9yy88jyLYr2zHjQommwqf1yz7+qp/6EfZUpnqUgtaKmAaNoHvmoabqNzhv4lFRinM6sb/8UDxPf6Ho3Nr5lcfof8b/cxzwSIPHSL4IcTEISLoICMwOdXiKNCt7iW7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734083555; c=relaxed/simple;
-	bh=cd9NqLOijTRwdCaVc8DRWAeAFgI2q5TadgwL4zJRbok=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=O+ba/d2rMi3aWyUPqzq5VcV51XgG4VfMLGyxiRqBQjBRegUctOi9UbzSgyo01s9nnEDQSURX0n2uXornztynSqkkC/FPdt4YyOvoJ39tDZlaFVc3aFN7C4AJTkWb1WbvTdgJK10i2QcLErF7Glb0R7yRhMYPH0iYog0OJGpdUms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=aoEpoMFi; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1734083540; bh=TVPhRNZsc0KVZKByo5SwHRZxFBB8+plO/AoY0SJ/5mc=;
-	h=From:To:Cc:Subject:Date;
-	b=aoEpoMFil/A7cCyY5gaQ2vF3TeDcfWhDGVAlwZYrMBe6WmwQz9w+Vqsmca5E/m3oi
-	 STAlbOAAiq7nbkphAGfB1cCvuL+lkqCspldFIdCU4bZOl7dSDiBGp5T04FHc1Z1NMd
-	 1FderU2h86YfoHDWfx1F6cWIrRIOjSS6drRys9Ic=
-Received: from localhost.localdomain ([101.90.54.94])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id D1039039; Fri, 13 Dec 2024 17:52:16 +0800
-X-QQ-mid: xmsmtpt1734083536tg2s9yevf
-Message-ID: <tencent_50D7C8F43461B5F8CF055C15970A1A36C305@qq.com>
-X-QQ-XMAILINFO: NbgegmlEc3Ju4eIjdW+r/kSs2qIIentIBpbxDXUiMizGA72YU7ZWgMMsOe6oUJ
-	 fzdXFV4nRGzKbcXxJ2aIwuy+4PuZXwW8t7hMlXiBukPL+RuhvChkFfk05zhqsPtnKD8E1NaQ+mew
-	 cYNINJHjetm9WMAAO3OhYTpM4LAMi/E/oik3mnRDe8es2GvSWjHDpB18Je6iPackWF7/+S3ewPwR
-	 ZJMuV4y7eXIOTbsUMO4GRb0hx4sIP9sGLoOsV1Cg/qZecIr87Aisu6tjHOuAvfc9Bhl4iH7QxWHX
-	 oM2NYp4xa3vMxdHS5S7YLaGlkcTrNvYyp0KCSGSRl3mIwkZrskxI1z52091pz1ksfJ6ygb8w9/mv
-	 zhsLLiTus3pEP7YbQ4lOFg+Q6bPClFM/SOwrGUl2DH6rlE3E+Eym8XPieYBNBwcB8P/Q00Mueyfg
-	 PuMl6s4+FxtwtyaQAwR/VFVjYEgmVJFoj0ze0NfrOCuM97LM2IrYJXYz80I07up1han5nPd4Cb91
-	 LxPnkOropEH0ZmbA86/v5YZ2RSzxFdPQwclygS8M/LJCTJ4yIl33ZY1gg3VuGizB0L31SfQ4z1Xz
-	 MWBr44dklXEt8CJqt108TJBu0TQkJvIOIAifIwTrCAiJzDXs99dG4BE7Cwz/NXxJ48DesSMOWEt4
-	 qAdJ6CU4MRdxjalZR/qU0YX6LaO4fvR7jgUs+R1snmp8kaHqnYsdCGQ9zIr0tTEnPj8akAE9hVls
-	 H188niamYBjz7tPTE2ZoH1+grOxSs+yXvTapdEc+vzKxxo4vk1mC5Cp/RCe2VS4qArS5i8dEasfp
-	 XAKxMe8ZK3eSyQwPsu5EztPhGTJJcJjPn3rE8AYdkkM9kSeeTVdbBZ8eFzbHsjZ3hXnDvsgkKVqj
-	 mlHWsRuswRKzInwZE8YHqjZeeBVm8WQaxwOYWS7GNRLtt/jjOJnfLLd9nohE6b0FoWQNPwpA/9n8
-	 JY/phoY47RJD8pVaVfcgiKcMzSRD9i+m4w6310x5AFdXyUVc2DEdzJDm0KhRAlhHpIrbTQepP/gp
-	 hl3T/Eh0Dz/8A0AuEPeREJXoeHSiHj3clMHV1wmw==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Jianhui Zhou <jianhuizz@qq.com>
-To: corbet@lwn.net,
-	akpm@linux-foundation.org,
-	paulmck@kernel.org,
-	jonaszhou@zhaoxin.com
-Cc: thuth@redhat.com,
-	rostedt@goodmis.org,
-	david@redhat.com,
-	victor@mojatatu.com,
-	andrii@kernel.org,
-	xiongwei.song@windriver.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jianhui Zhou <jianhuizz@qq.com>
-Subject: [PATCH] Documentation: Remove the outdated prompt under cgroup_disable option in kernel-parameters.txt
-Date: Fri, 13 Dec 2024 17:52:15 +0800
-X-OQ-MSGID: <20241213095215.5091-1-jianhuizz@qq.com>
+	s=arc-20240116; t=1734083578; c=relaxed/simple;
+	bh=D5x1kjQyUtSBg2dv5lB3maUl34jpfbsFMh2+wuE7EW8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W0PSFMdamLlLzNvUXcavUnGqSTys9xiDq1raHjvuQAY/X+VzvVmakZNafO+05QlPjNFR24toz2uUr+/f0Z/9c2H166TNkV5K0S849S/BSWgG3Do+9oJF6AeH70ztdx+Gd6u1JKAWyi5mL4aDLujLCnYCZSUVhE5pJivUfsxy3jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iZbsOfEz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9p2Hk018175;
+	Fri, 13 Dec 2024 09:52:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=InPO1+WU5YDK73QFww1bpH
+	G1jn5Y75852Jo3G2q1r/Y=; b=iZbsOfEzX/sgc5qNjYIntJnvwAKzaTsmjr0+Gg
+	YDrxuQPSKf8G3uEaLBAS0nOb6TgaOQCST5PwjUvfP1r1uO/fFZ23HudDQPLRmfiC
+	77VXhuZ67JW3eExvdfJrsw4SlMFaAJpzoQ8rJ1HJ5/TTtYU5GqIVTCgnHLCl5Xq8
+	SJ8E3GoN5DfTcI3/34Hx3LzfJcyY30VvuFz7BN6v0ImMs9emL9BuSdm5iVxDGxh3
+	DGzUaU83dbqDAlG/JaikYA5n9dE6F68T76Of8KK0PK6f4VMRHvhv6bZd6PAwjQEv
+	TS69W69L82uEnq6M3VaWVoQO9UndWbabC1CiBKp9q6HfmElA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gjnb003r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 09:52:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD9qqCA008828
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 09:52:52 GMT
+Received: from hu-prashk-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 13 Dec 2024 01:52:47 -0800
+From: Prashanth K <quic_prashk@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krishna Kurapati
+	<krishna.kurapati@oss.qualcomm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <cros-qcom-dts-watchers@chromium.org>,
+        Prashanth K <quic_prashk@quicinc.com>
+Subject: [PATCH v2 00/19] Disable USB U1/U2 entry for QC targets
+Date: Fri, 13 Dec 2024 15:22:18 +0530
+Message-ID: <20241213095237.1409174-1-quic_prashk@quicinc.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -81,30 +76,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HUBxptbCLdjxbbemU0tGQhxtfXkqnfoc
+X-Proofpoint-GUID: HUBxptbCLdjxbbemU0tGQhxtfXkqnfoc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_spam policy=outbound score=52 spamscore=52 lowpriorityscore=0
+ bulkscore=0 clxscore=1011 phishscore=0 priorityscore=1501 impostorscore=0
+ adultscore=0 malwarescore=0 mlxscore=52 suspectscore=0 mlxlogscore=-2
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412130067
 
-Disabling options other than memory is currently
-supported according to the cgroup_disable function.
-So it can be removed.
+Enabling U1 and U2 power-saving states can lead to stability and
+performance issues, particularly for latency-sensitive or high-
+throughput applications. These low-power link states are intended
+to reduce power consumption by allowing the device to enter partial
+low-power modes during idle periods. However, they can sometimes
+result in unexpected behavior. Over the years, some of the issues
+seen are as follows:
 
-Signed-off-by: Jianhui Zhou <jianhuizz@qq.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 3 ---
- 1 file changed, 3 deletions(-)
+1. In device mode of operation, when UVC is active, enabling U1/U2
+is sometimes causing packets drops due to delay in entry/exit of
+intermittent low power states. These packet drops are often reflected
+as Missed Isochronous transfers as the controller was not able to
+send the packet in that microframe interval and hence glitches are
+seen on the final transmitted video output.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 3872bc6ec49d..3c562653016f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -609,9 +609,6 @@
- 			- if foo is an optional feature then the feature is
- 			  disabled and corresponding cgroup files are not
- 			  created
--			{Currently only "memory" controller deal with this and
--			cut the overhead, others just disable the usage. So
--			only cgroup_disable=memory is actually worthy}
- 			Specifying "pressure" disables per-cgroup pressure
- 			stall information accounting feature
- 
+2. On QCS6490-Rb3Gen2 Vision kit, ADB connection is heavily unstable
+when U1/U2 is enabled. Often when link enters U2, there is a re-
+enumeration seen and device is unusable for many use cases.
+
+3. On QCS8300/QCS9100, it is observed that when Link enters U2, when
+the cable is disconnected and reconnected to host PC in HS, there
+is no link status change interrupt seen and the plug-in in HS doesn't
+show up a bus reset and enumeration failure happens.
+
+4. On older targets like SM8150/SM8250/SM8350, there have been
+throughput issues seen during tethering use cases.
+
+5. On targets like SDX75, intermittent disconnects were observed
+with certain cables due to impedence variations.
+
+To avoid such issues, the USB team at Qualcomm added these quirks
+to all targets in the past 4-5 years and extensive testing was done.
+Although these are intermittent power states, disabling them didn't
+cause any major increase in power numbers.
+
+This series was earlier started by Krishna Kurapati where he disabled
+U1/U2 on some SM targets. I'm extending this to more devices including
+Auto, Compute and IOT platforms. On a side note, this quirk has been
+already included on some mobile targets like SM8550/8650.
+
+Link to v1:
+https://lore.kernel.org/all/20241107073650.13473-1-quic_kriskura@quicinc.com/#Z31arch:arm64:boot:dts:qcom:sm8250.dtsi
+
+Krishna Kurapati (8):
+  arm64: dts: qcom: Disable USB U1/U2 entry for SM8350
+  arm64: dts: qcom: Disable USB U1/U2 entry for SM8450
+  arm64: dts: qcom: Disable USB U1/U2 entry for SM8150
+  arm64: dts: qcom: Disable USB U1/U2 entry for SM6125
+  arm64: dts: qcom: Disable USB U1/U2 entry for SM8250
+  arm64: dts: qcom: Disable USB U1/U2 entry for SM6350
+  arm64: dts: qcom: Disable USB U1/U2 entry for SC7280
+  arm64: dts: qcom: Disable USB U1/U2 entry for SA8775P
+
+Prashanth K (11):
+  arm64: dts: qcom: Disable USB U1/U2 entry for SDM630
+  arm64: dts: qcom: Disable USB U1/U2 entry for SDM845
+  arm64: dts: qcom: Disable USB U1/U2 entry for SDX75
+  ARM: dts: qcom: Disable USB U1/U2 entry for SDX65
+  ARM: dts: qcom: Disable USB U1/U2 entry for SDX55
+  arm64: dts: qcom: Disable USB U1/U2 entry for QCS404
+  arm64: dts: qcom: Disable USB U1/U2 entry for SC7180
+  arm64: dts: qcom: Disable USB U1/U2 entry for X1E80100
+  arm64: dts: qcom: Disable USB U1/U2 entry for QDU1000
+  arm64: dts: qcom: Disable USB U1/U2 entry for SC8280XP
+  arm64: dts: qcom: Disable USB U1/U2 entry for SC8180X
+
+ arch/arm/boot/dts/qcom/qcom-sdx55.dtsi |  2 ++
+ arch/arm/boot/dts/qcom/qcom-sdx65.dtsi |  2 ++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi   |  4 ++++
+ arch/arm64/boot/dts/qcom/qdu1000.dtsi  |  2 ++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi  |  8 ++++++++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi   |  2 ++
+ arch/arm64/boot/dts/qcom/sc7280.dtsi   |  4 ++++
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi  |  6 ++++++
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi |  6 ++++++
+ arch/arm64/boot/dts/qcom/sdm630.dtsi   |  4 ++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi   |  4 ++++
+ arch/arm64/boot/dts/qcom/sdx75.dtsi    |  2 ++
+ arch/arm64/boot/dts/qcom/sm6125.dtsi   |  2 ++
+ arch/arm64/boot/dts/qcom/sm6350.dtsi   |  2 ++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi   |  4 ++++
+ arch/arm64/boot/dts/qcom/sm8250.dtsi   |  4 ++++
+ arch/arm64/boot/dts/qcom/sm8350.dtsi   |  4 ++++
+ arch/arm64/boot/dts/qcom/sm8450.dtsi   |  2 ++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 10 ++++++++++
+ 19 files changed, 74 insertions(+)
+
 -- 
 2.25.1
 
