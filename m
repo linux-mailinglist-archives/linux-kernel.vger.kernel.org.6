@@ -1,122 +1,94 @@
-Return-Path: <linux-kernel+bounces-444174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A96C9F026B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:46:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D03FF9F0274
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 02:55:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8C6E2857EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:46:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E0B2858E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CAA42D7BF;
-	Fri, 13 Dec 2024 01:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HmXVaVjE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4272B2CF;
+	Fri, 13 Dec 2024 01:55:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882D58F6E;
-	Fri, 13 Dec 2024 01:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EAA8F6E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 01:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734054362; cv=none; b=sKEb0TdLWaktvMyP4ydpawa0ZOgvNL2CSrH52SZWckzvqVvk/A7z1Dq3rNM5kSR0g7w+RksN/YfPtj+SOFoX9tR2dBcMheBN9FibmV4RxuR7g8CKnImlr3fXyVb/7R/88b0zMmAUMosGr/nj+eKBbf98NR4iBPV8fSpzOOgWyN0=
+	t=1734054905; cv=none; b=r8qD4sLfvZPGKA0D4YHrHkB9xpm746i4J1uDF7Yzx6/GphIkVf1Jm3kelDYHD7+UUcmiu6uYUANR1zaq6Et5JU/IF3Ygi2QTxKOorqh6yF1NHiYbavf3JIk19kn/uyyhfpKtBpVkqqAz6a8zsT2eib360e2v53c3f+88cSCoIlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734054362; c=relaxed/simple;
-	bh=DQkbB4cllLviy0WjfVmB3HApYm34ssK4CyA4cmbSXjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNpmhe259lnAOq0dHfk5qQK7n6PVTPYw0y64Ru8bvRmRt/ZJrsk8QGOmihWMCpXvyraZRBuV61LEN+eI17pSvFySx1LLHBsVhqpZ0BZc8izjmoFM1+mYC9F0FPVAARiblYHQcY753SfFlR6ineNYvhZqWY3ZyuDTrV00Y8eHkY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HmXVaVjE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F039C4CECE;
-	Fri, 13 Dec 2024 01:46:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734054362;
-	bh=DQkbB4cllLviy0WjfVmB3HApYm34ssK4CyA4cmbSXjc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HmXVaVjEP7mHzbQrp7Nmicnzbt+MiJh5pcJ8YWiSDL1YtptNv4hCcAyQGrvI52fgf
-	 4FcO5RrJ8+15OicbZVpXUU+NJYrdyWk5cYYJBnr5ATHVLFniYnkr/b9eLepKxPUfHX
-	 RnxbZM6uU2yN3xuAjstGBSiJoi1RD5XQTv+3WVHd4CxNBusYDJVVclTHlcG64Js9X8
-	 RbWnMekglA+nCnTssMPkSgGXaU3KO6bspMZ1gZAZhepSf1P2uFHRjtSIO4J/OSfRIx
-	 cYEN7DK1voYmmjOJNSv6SsMTCQPYJvF9b+pcYWR28RX4PsYQ0S7E/xendFLEKtU5zR
-	 Z4INJBRn/TuLA==
-Date: Thu, 12 Dec 2024 17:46:00 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Avoid unaligned pointer operations
-Message-ID: <Z1uR2EhgfuzLL3a4@google.com>
-References: <20241127212655.922196-1-namhyung@kernel.org>
- <CAP-5=fW5bbxXakiFuUAG-HTH2aH_hTXQjJp6o-bZcjcPvNmVrA@mail.gmail.com>
+	s=arc-20240116; t=1734054905; c=relaxed/simple;
+	bh=sMbG9riobuXOyJGLrpUFFnLjlATW+hceuLc0u3eKVR4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=idFOYGSYaIc0f/myy98Jrx74PvL5GdKT0/x1Ld4+xhIHbiNfG/qSx0KJPwf2GgLJqhRxh7kwi7WRAQYF5Ij0/QczqsDUPq3056gPlP4OYYeAhA8N9Q55N3tMP9fuLhy8AZ/QCPNsGVGb4e/TwOLi4Cg7HAufRb0fq0bDQqM/Vcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83e5dd390bfso209795839f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 17:55:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734054903; x=1734659703;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iELJ9oDF+n+OkIdnPEcLQYaPaf9zNhUx3ZHVebowCaI=;
+        b=rpWTrrHDXcN5YSDAi9IE1DV2vokMwSbOBqGRIeMLO3U3HN/WXo9cn5Z1hFFGu5M2LX
+         EuSnuVtuu/BCEOKBdj4RSkGNNf6C+sPO3EAZd+DnHBHnA5mQBDKJ52ntefPgfPEemtGx
+         trcLq3erfTg57iG+8Mb0unZXAx03LOVg9/c0lUrdGh7A1FsWq0iA6mFS/B5o3gbPTN0l
+         IOjkdvVQui9t78aE3UnzYZl/1FzOlEHvNXJcO1b7LeJZ2aGDHrpgy6lKjUT5keivYkLd
+         I/n46At7TwrsFxlyuN94IOhAf7HjJ1M+YMtTswGDdZUB6axnRCSKSPgwi5uXtCnadpKH
+         jYXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkGYUYdZHOEmlJWPlstvI+uX67e7ID+dByNqLLiMZw1kuvKJRHwJkuTLvjLRwlbQZGuCeXwJ10caFFzWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfDgOrtjSd7rW2ppcF+lxaFQD0rgHkLqCMCQEem3QZEgDGpskP
+	R6SAGTta5zPkXqJOxeog7G9aJvJzhZNmg9ORarerWqPymesf/6MBMpZ2gH6kBLzg8NOP4OiHeYu
+	4qYP34srVHDaGLGm3zF7R960HdfcDGxLnX0RmoxnPNwHXNhOxys3KqeQ=
+X-Google-Smtp-Source: AGHT+IGV6ZMjmQoUKHh83o8Pij6XBjDQOmua0bk1B8xERrkaiKZuVVaXG1ixA72Bq9jfxUI+rjovBHRu8vGrw8cwfO1UK6y/SCig
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fW5bbxXakiFuUAG-HTH2aH_hTXQjJp6o-bZcjcPvNmVrA@mail.gmail.com>
+X-Received: by 2002:a92:c549:0:b0:3ab:502c:b523 with SMTP id
+ e9e14a558f8ab-3ae62c90e23mr24286095ab.4.1734054903594; Thu, 12 Dec 2024
+ 17:55:03 -0800 (PST)
+Date: Thu, 12 Dec 2024 17:55:03 -0800
+In-Reply-To: <671fbcd6.050a0220.21b2f.0009.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675b93f7.050a0220.599f4.00d6.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] kernel BUG in binder_alloc_deferred_release (2)
+From: syzbot <syzbot+dee8aa54cb2f5a150f9e@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, arve@android.com, brauner@kernel.org, 
+	cmllamas@google.com, gregkh@linuxfoundation.org, hdanton@sina.com, 
+	jannh@google.com, joel@joelfernandes.org, liam.howlett@oracle.com, 
+	linux-kernel@vger.kernel.org, lorenzo.stoakes@oracle.com, maco@android.com, 
+	surenb@google.com, syzkaller-bugs@googlegroups.com, tkjos@android.com, 
+	vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Dec 12, 2024 at 03:56:31PM -0800, Ian Rogers wrote:
-> On Wed, Nov 27, 2024 at 1:26 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > The sample data is 64-bit aligned basically but raw data starts with
-> > 32-bit length field and data follows.  In perf_event__synthesize_sample
-> > it treats the sample data as a 64-bit array.  And it needs some trick
-> > to update the raw data properly.
-> >
-> > But it seems some compilers are not happy with this and the program dies
-> > siliently.  I found the sample parsing test failed without any messages
-> > on affected systems.
-> >
-> > Let's update the code to use a 32-bit pointer directly and make sure the
-> > result is 64-bit aligned again.  No functional changes intended.
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/util/synthetic-events.c | 14 +++++++++-----
-> >  1 file changed, 9 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-> > index a58444c4aed1f1ea..385383ef6cf1edaf 100644
-> > --- a/tools/perf/util/synthetic-events.c
-> > +++ b/tools/perf/util/synthetic-events.c
-> > @@ -1686,12 +1686,16 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type, u64 read_fo
-> >         }
-> >
-> >         if (type & PERF_SAMPLE_RAW) {
-> > -               u.val32[0] = sample->raw_size;
-> > -               *array = u.val64;
-> > -               array = (void *)array + sizeof(u32);
-> > +               u32 *array32 = (void *)array;
-> > +
-> > +               *array32 = sample->raw_size;
-> > +               array32++;
-> > +
-> > +               memcpy(array32, sample->raw_data, sample->raw_size);
-> > +               array = (void *)(array32 + (sample->raw_size / sizeof(u32)));
-> >
-> > -               memcpy(array, sample->raw_data, sample->raw_size);
-> > -               array = (void *)array + sample->raw_size;
-> > +               /* make sure the array is 64-bit aligned */
-> > +               BUG_ON(((long)array) / sizeof(u64));
-> 
-> I think you intended:
-> 
-> BUG_ON(((long)array) % sizeof(u64));
+syzbot suspects this issue was fixed by commit:
 
-Yep, fixed in v2.
+commit 4080ef1579b2413435413988d14ac8c68e4d42c8
+Author: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Date:   Tue Oct 29 18:11:45 2024 +0000
 
-https://lore.kernel.org/r/20241128010325.946897-1-namhyung@kernel.org
+    mm: unconditionally close VMAs on error
 
-Thanks,
-Namhyung
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1329cd44580000
+start commit:   c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a34ca8ca33c0e535
+dashboard link: https://syzkaller.appspot.com/bug?extid=dee8aa54cb2f5a150f9e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1484165f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132b2ebb980000
 
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: mm: unconditionally close VMAs on error
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
