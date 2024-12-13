@@ -1,140 +1,152 @@
-Return-Path: <linux-kernel+bounces-444246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514389F034D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B7D9F034F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:57:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA924283D8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7362B283E77
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A013E16D4E6;
-	Fri, 13 Dec 2024 03:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5817416C684;
+	Fri, 13 Dec 2024 03:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b="ZK2+XluK"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JT8NgZxu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9511607A4
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE2B15B97D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734062190; cv=none; b=doOlh+J1Yz6nt/71xAdwWlhVJcgaWMtBwdXXjMTkjxQqaj+ID5dtviv3ohsyKy7TQ70Sc5u7nZiVvii/H4rYK0+yYcJSlWhf7lYfROGG7dI1Qfy3o/UtBafKfn49vJZjJP1NCRaVZuUrM58yrmW6PuXYaJOKb/yT2VnE8ls7tZU=
+	t=1734062240; cv=none; b=QwrYk+JyeNdA9UCy08QjqUakSSajCLpw16WhYnxb5r1rk5uqokYJXO6krcKwf3GfhEyms26rz3Do+QH6Op5RhzyaFZLRz61wQH56QJeCJi/1AyCcuwKpNCEIBvHHEmRzzrxCZdd2Ofhl8yHJPPaxSrNfqUY2b/A7MIYw/ki0NGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734062190; c=relaxed/simple;
-	bh=BeHtFePJfyc2ZXX+Pz1KMyierr7nozLLrITrdDd9u70=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DEbnuinUC8aX/CxBCbFbhWEUPL6I9TMdTNmqpmDLCutmzGBz72q3U3QsIld2+O9DWsi6XUhofdLLalN8kRXCI3LNaYsYCl7sQXs7habB8b8x4kITHxOf3cOlL3t5K/q0uUwZjsO57sQfNTrULatp3SyD9GGqLJvNWeAkEZ/9bGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com; spf=pass smtp.mailfrom=engflow.com; dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b=ZK2+XluK; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engflow.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-728e3826211so1120756b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:56:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=engflow.com; s=google; t=1734062185; x=1734666985; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0NBoThIqxIKKiwm3GomOJ/WljxVwVkbca9vdkXkgA30=;
-        b=ZK2+XluK+j0h+xH4K5H2g4oCuSh7jRpMrQHtPWzd3Cp9gxzntuyAWwGEuHvWdFdXk3
-         E3u6airokDt6g/T6oqUFVvlKFW4l8OuVfnlSrFlVP2EcDH9fMr5Q7mx5WQyIiGbC3gM1
-         eRo2yGONYdgW8F+ipWfgaKrE+DWKbtbuBfX/I=
+	s=arc-20240116; t=1734062240; c=relaxed/simple;
+	bh=FXb7zfdtlFu9GBIjB0tryV1aOvS/z6JwtcsImBQ1aHc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o9mzedfoFXBCUO3x1tbvsZxgc/OYdK3DwfdBIeaTeWMS1xhTr3ioId4e2Sn0St3WZcxMB0XdWSuD4sjry+uOtmQLtMKvmY4ZeIX3toMtjz/2h4S5fPGjM2KhXCMmPUhnPhjDNSVtP1wYGgHI7iVd7ACbX40yeJX4aiAOSyka3TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JT8NgZxu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734062237;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s+zQC/AspIICVZze8P03srX8nFk7q1UzX/5YiLdcZN4=;
+	b=JT8NgZxuwGRtq68/TvvYQz17FAfEXHOGIA1e/JEzSB9nJIHQtEGjgqCCHt6ybAu3rebWis
+	hLpT7YdlZwhRACSxp8MHzNj8ICGpptKH2tnueLy72ZhSf8pZ9cPOdfDiQei4VI4MATnZTR
+	Y0vUCEhmjrgCxexs9y/ltX6a/ZFgnUc=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-224-TUbIbr7LPO6tsfMvquK97A-1; Thu, 12 Dec 2024 22:57:16 -0500
+X-MC-Unique: TUbIbr7LPO6tsfMvquK97A-1
+X-Mimecast-MFC-AGG-ID: TUbIbr7LPO6tsfMvquK97A
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ef91d5c863so1301063a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 19:57:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734062185; x=1734666985;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0NBoThIqxIKKiwm3GomOJ/WljxVwVkbca9vdkXkgA30=;
-        b=RFb+xcr0ixr9G9wtDFVCqSp8PdRmlN+sEUAK6PbgkY9NFXErI0xuOuUHOxSjFVdiIf
-         uyDm096VwDmNVzDuZMNlO94zN13TMfr/2wZ1thYulDc+Z0eNCTtv0m24PyN76wPm3Xut
-         tnNrtJ+ZBduVX2yF15A1RIXOHb+/XYW2F2cWccDk6NO9vF6TXtkelcdNKviO/HuuXrF/
-         3PiaSFAHZO4sGH6aoBu2r4CR9sxGkb2LGcVh4gE7fxD/oHCbyrGlNlDVLQSSiKMg133i
-         IrUkLSXsPwo0TO9+57HsH8+hcOSH/NeuE6HJfkCbc9/luRqUzv0lyyv3tB0eKeBurcFs
-         mKTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIM7n3jUXoQvLQ+hZ/3gLXtnIcj9ubTxHtgwCREjjokbBpmTLHE1/KPZSI8VNEtvQNvDsTVH6UtMyGUZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxRGfBZ1QBc49iB6n5LPKqcABY1xIENhXY0fZ4m4lTL0J5yJ1X
-	wFNolHOF+oeOj1qhjvgdphzTgjDZb2KsrQ2CcXpnQoEZei81uCVlMn7UKSAS0e0=
-X-Gm-Gg: ASbGnctUR6nHJQkZg07KM1mtNDHT9OQgCHBgQp6wnxZTJXOLwhbJkNh1I8DnNJfcl/P
-	CHDvHQc6cx2X1cap1d2qzH7e24pQfFgphxnQS8Hp6d4O22tsopoeLEMfZvSkGEde7+nJbvZcDBx
-	4j9DVePTbHMS/MlTGqlwxIgPCTSpa6fK2f+Oo0ggstUNxpCEt4NzkK/6Lz6vLYQLTmHc3Pmi1W+
-	ykdGhxrExHHgavnkx22t1JBw3DzbozSn3M+JvurRjf6VCExMo6e/yUBvMQ4OBGMrWrBk9ema23R
-	xIuRZsEIguzgbf9DPCdaKQ==
-X-Google-Smtp-Source: AGHT+IGTKuRX3MygaTiBOJeSJ+G2bErJRuqiMTRj8Zs31TJEgo6o5hS3Dy7Cma0QVKE0e+xy5pD3Sw==
-X-Received: by 2002:a17:90b:2708:b0:2ef:33a4:ae6e with SMTP id 98e67ed59e1d1-2f28fb700b4mr2510834a91.12.1734062185080;
-        Thu, 12 Dec 2024 19:56:25 -0800 (PST)
-Received: from [127.0.1.1] (158-247-70-44.PUBLIC.monkeybrains.net. [158.247.70.44])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f142e37cb0sm2137756a91.48.2024.12.12.19.56.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 19:56:24 -0800 (PST)
-From: Benjamin Peterson <benjamin@engflow.com>
-Date: Thu, 12 Dec 2024 19:56:22 -0800
-Subject: [PATCH] perf trace: Remove return value of
- trace__fprintf_tp_fields
+        d=1e100.net; s=20230601; t=1734062234; x=1734667034;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s+zQC/AspIICVZze8P03srX8nFk7q1UzX/5YiLdcZN4=;
+        b=javVWNnuW+oH2gowHj2ocrupMP5D9xQreeLBUv/Pv+xkVEFssa3S4xUrHB+uL0h+qt
+         TWTJIkFeuEkRWThl0HpjBmooGyE1svQjjzk4Fy1LkIut7Z294KRtUrIhw6qZQt+PXSQA
+         ZRPn3YaFob/fbxqTNnJJLLI2WlK9CX20haZ0vxm6BZYH0cPH3eLRE0bgmEtLKXZ5826c
+         PpfmQ76NbmABbxo9HE2okVbOZ1RAg4aPD89Ol9qjDwsjHCmFSTkUcriC8Nexcdr+IIly
+         OC8PpH86RrMGYB3jWgWICg801ejagyy7wV47leg2voD/BMu37hSktSb9CDuK1hnTSrCR
+         glEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5810iXAPTngGI7w/7Hh0mTRvQteUBYyaa6oJYjrpJ3AEGNt8TwGSmPWC93shwkK4X8i9zGMvlE6Kz59Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPf76q5kWus1ofu8sA95lrFEX98s15SsEwrUINk/47sHCjH65U
+	IGzMiD0ONeTWIdjnZ9781vv7ia9TB2qSygToPYHqtjehJvArfDBb/34geEA0hqx1iSOU9hWtD5b
+	tSG3b/3GssRF0pY8qR2D1elEuVbs4i2PgxoLKQ3TUx1uokVzF8+9CPFXgN/IFtC3dTXG8FFnxRZ
+	79RGE4UD1YHYOm9AjhoamTY1rqxgNJQcHJQlyUOaUF3M3e
+X-Gm-Gg: ASbGncuT0fUJWjVddiRenioTp9+dGhJX9PSRmeJZjLV8EyYIFUFyu6d452U+52vQK8U
+	/xxDDEoEvnyHloQtBwgqZBLK4Iv9p6s9JtgXyhMQ=
+X-Received: by 2002:a17:90b:3c02:b0:2ee:5958:86d with SMTP id 98e67ed59e1d1-2f28fb6764amr1931597a91.9.1734062234618;
+        Thu, 12 Dec 2024 19:57:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEh3fj/HXPiH/AF6JoMV2Y0Sft32EqIZr/Wg7xCm7BFvcJfN2LWRsNMAdRhZEer22QFkA6gf+Eyi/3v1wqkjoo=
+X-Received: by 2002:a17:90b:3c02:b0:2ee:5958:86d with SMTP id
+ 98e67ed59e1d1-2f28fb6764amr1931573a91.9.1734062234229; Thu, 12 Dec 2024
+ 19:57:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241212-void-fprintf_tp_fields-v1-1-b0c23fff4c54@engflow.com>
-X-B4-Tracking: v=1; b=H4sIAGWwW2cC/x3MQQqAIBBA0avIrBNySIiuEhGSMzUQJhoSSHdPW
- r7F/xUyJaEMk6qQqEiWKzSYTsF2uLCTFt8M2ONg0KAul3jNMUm4eb3jykKnz3p0zhGytWgZWhw
- TsTz/eF7e9wNSlJdbaAAAAA==
-X-Change-ID: 20241212-void-fprintf_tp_fields-8aaae2f5525f
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Benjamin Peterson <benjamin@engflow.com>
-X-Mailer: b4 0.14.2
+References: <20241209151427.3720026-1-sthotton@marvell.com> <20241209151427.3720026-4-sthotton@marvell.com>
+In-Reply-To: <20241209151427.3720026-4-sthotton@marvell.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 13 Dec 2024 11:57:03 +0800
+Message-ID: <CACGkMEvuObS4RCk2BjQ4sm6r4jaC3fN4ui5EXd6SVzYxYZV7iA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] vdpa/octeon_ep: read vendor-specific PCI capability
+To: Shijith Thotton <sthotton@marvell.com>
+Cc: virtualization@lists.linux.dev, mst@redhat.com, dan.carpenter@linaro.org, 
+	schalla@marvell.com, vattunuru@marvell.com, ndabilpuram@marvell.com, 
+	jerinj@marvell.com, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Satha Rao <skoteshwar@marvell.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The return value of this function was meaningless and therefore ignored by
-the caller. Remove it.
+On Mon, Dec 9, 2024 at 11:16=E2=80=AFPM Shijith Thotton <sthotton@marvell.c=
+om> wrote:
+>
+> Added support to read the vendor-specific PCI capability to identify the
+> type of device being emulated.
+>
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
+> ---
+>  drivers/vdpa/octeon_ep/octep_vdpa.h      | 20 ++++++++++++++
+>  drivers/vdpa/octeon_ep/octep_vdpa_hw.c   | 33 +++++++++++++++++++++++-
+>  drivers/vdpa/octeon_ep/octep_vdpa_main.c |  4 ++-
+>  3 files changed, 55 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/vdpa/octeon_ep/octep_vdpa.h b/drivers/vdpa/octeon_ep=
+/octep_vdpa.h
+> index 2cadb878e679..53b020b019f7 100644
+> --- a/drivers/vdpa/octeon_ep/octep_vdpa.h
+> +++ b/drivers/vdpa/octeon_ep/octep_vdpa.h
+> @@ -8,6 +8,7 @@
+>  #include <linux/pci_regs.h>
+>  #include <linux/vdpa.h>
+>  #include <linux/virtio_pci_modern.h>
+> +#include <uapi/linux/virtio_crypto.h>
+>  #include <uapi/linux/virtio_net.h>
+>  #include <uapi/linux/virtio_blk.h>
+>  #include <uapi/linux/virtio_config.h>
+> @@ -52,6 +53,24 @@ struct octep_vring_info {
+>         phys_addr_t notify_pa;
+>  };
+>
+> +enum octep_pci_vndr_cfg_type {
+> +       OCTEP_PCI_VNDR_CFG_TYPE_VIRTIO_ID,
+> +       OCTEP_PCI_VNDR_CFG_TYPE_MAX,
+> +};
+> +
+> +struct octep_pci_vndr_data {
+> +       struct virtio_pci_vndr_data hdr;
+> +       u8 id;
+> +       u8 bar;
+> +       union {
+> +               u64 data;
+> +               struct {
+> +                       u32 offset;
+> +                       u32 length;
+> +               };
+> +       };
+> +};
 
-Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
----
-This is a small followup cleanup to my earlier commit 5fb8e56542a3 ("perf
-trace: avoid garbage when not printing a trace event's arguments").
----
- tools/perf/builtin-trace.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This seems not to be padded to a multiple of 4 bytes?
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 6a1a128fe645014d0347ad4ec3e0c9e77ec59aee..246be66fd59a4b9d76e4d3c42b68d0a444ca366a 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3022,8 +3022,8 @@ static void bpf_output__fprintf(struct trace *trace,
- 	++trace->nr_events_printed;
- }
- 
--static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel, struct perf_sample *sample,
--				       struct thread *thread, void *augmented_args, int augmented_args_size)
-+static void trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel, struct perf_sample *sample,
-+				     struct thread *thread, void *augmented_args, int augmented_args_size)
- {
- 	char bf[2048];
- 	size_t size = sizeof(bf);
-@@ -3088,7 +3088,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
- 		printed += syscall_arg_fmt__scnprintf_val(arg, bf + printed, size - printed, &syscall_arg, val);
- 	}
- 
--	return printed + fprintf(trace->output, "%.*s", (int)printed, bf);
-+	fprintf(trace->output, "%.*s", (int)printed, bf);
- }
- 
- static int trace__event_handler(struct trace *trace, struct evsel *evsel,
+Others look good.
 
----
-base-commit: eefa7a9c069908412f8f5d15833901d1b46ae1b2
-change-id: 20241212-void-fprintf_tp_fields-8aaae2f5525f
-
-Best regards,
--- 
-Benjamin Peterson <benjamin@engflow.com>
+Thanks
 
 
