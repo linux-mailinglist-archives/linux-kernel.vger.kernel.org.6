@@ -1,210 +1,188 @@
-Return-Path: <linux-kernel+bounces-445655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC459F1915
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:28:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B9D9F191B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D26BF188F080
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:28:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51C3188E59C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BA21B219D;
-	Fri, 13 Dec 2024 22:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B92192B9D;
+	Fri, 13 Dec 2024 22:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="btS4p3ti"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2065.outbound.protection.outlook.com [40.107.20.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpqlYFki"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203141DE89C;
-	Fri, 13 Dec 2024 22:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734128613; cv=fail; b=Nx0QS4xXk0qI0X73mSOSrvZN7WC1baN7405FMYK1LmNGEsRikWHfbRlippZmWjIHpbRAgRykg/DVDzgGD7k8WmkRN/6rjmH0k2BlBRhf/Pb8PkXfm1Ex+uiWhCMe8ZZNKrZm9r+pkSEuT6Hd6wroX8o3OVcZA+c0pRqGOnLprY0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734128613; c=relaxed/simple;
-	bh=cOT7xf/RkLx9Nsv2I9mWRJmJKXTjn7v9+2NnLONMGKA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jccErH1gM+phwsYlcVPEZb5MvgaN/dgCqkIJb4bIZpeVI8eFqX8PvvrJkK0zDVeuFLk3OExwE1Ef8rLc9TQ9KgIOZXjN1fsMadU85YfyOCytAG6g+O11bRjNtnssN1n4VrmPlrgKtzacxXmPr8M4Gf48UB5kgFp/3aI6DmeixgY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=btS4p3ti; arc=fail smtp.client-ip=40.107.20.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qhBF9rTLceS94LQBigvKOAZRxeG86feVIy4GbravXJcLB7GHunTPTW4kriW0GjL5yZcFN7gnoW6UeOF6WhxhFA8y2C7SOOqb6TdbwC5xT1tc+fsBIU73WeMlmkFoKksGXfNnVCsw1UxITkztsbVvhapoN+H92tLSZntCaXPRwXRx88EtIlvytitTe5F3YSciTU5KoEOi8EatAY+WTrZAB6tUa9DMpELy1xF1aifSto0ItGoZImS9z3W+Ty9jqIbBF/M8c0OTj/A1s1hVQp0G+BjalOf8YVnek2y8zFoL8knGjGi3U02AATo43YY68UQZYZoQxGp75rDzxp4Snhm54w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LH4oi+ZePpm6ZDGS61ibs9OJ7zE6PY8ZChOG7YDNal8=;
- b=fkPjVzUa1unCaROBPV6IVYevGPu9dhTGX2pzf2YreqyR5FJfe044j/NTZftFwmQfpuziEnEUgxavlsl/TNoPgPGxq2AayB6o2jIw4pBJFVq1U2ms2Apnb4euQXuzn5Qg2VTTWXTRBEuKbbOms8Bdajh0ZbcVMfG6eRSnR86wYBxS/UarKMcNjqYfu2wCrQb4nvlL0NBMhIpaTRgv9Z2XnwavU++CvsjwwGnmcjIms4690PMDrI2pkEy14s2eu4HVNEerUbW6K7f4YKyjDC8vMLt4CvlMHk5WvoTkgOVZpek1wG6cGo4BjOVV/OTDEelrFqtjiw/NnRvrE38uaGd2Ow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LH4oi+ZePpm6ZDGS61ibs9OJ7zE6PY8ZChOG7YDNal8=;
- b=btS4p3tiga5RPwyeYnj7C5ylEM8W/M59Rp/m2yw3TjxZFe/bbxOWI4lF5dVoBnvJz77ax3No39m9/hRBmCTrbBPh0Z8Un1kGirIuSFEGU6JoEMv9koapA+uWrag3aEfTSwqX5DHXkJoRLjj40IoRsFHV+G5c+qVoDFw+Ak9hOjUphE0RbIlIHvziBoVM5au/1QXfvusmLqtwtJfya9x/e025l4pmUVy1ZSZn3Had6toIsXFnSoPsPsN6jiB182RK9zMX/bYSgo6l3sUAQeuiDhYBKR/HBZgr0FYUIOKCVlAImIafQjDEc8Ea02xA8CdyW9rgV9mbKFRCQjt66+CRSA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM9PR04MB8810.eurprd04.prod.outlook.com (2603:10a6:20b:409::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.18; Fri, 13 Dec
- 2024 22:23:28 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8251.008; Fri, 13 Dec 2024
- 22:23:28 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Luwei Zhou <b45643@freescale.com>,
-	Vipul Kumar <vipul_kumar@mentor.com>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] input: mma8450: Add chip ID check in probe
-Date: Fri, 13 Dec 2024 17:23:09 -0500
-Message-Id: <20241213222310.189443-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR05CA0176.namprd05.prod.outlook.com
- (2603:10b6:a03:339::31) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEBE2AD14;
+	Fri, 13 Dec 2024 22:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734128970; cv=none; b=NLkdPWJl7FNJXnC/SCaVjm/AIaq0L9eJAAGY5fjY463m4l8XuTMbb8kL5n+jo2wezZGr9kpZE1uA6Or9EZSPt4DpVoCa6KZ4xtMckOdV0Pwcwte/1FWlOgsh4RGo5OzXIG36lRyfJ5xhcP/qao2biTsk+5DkLF5+tp9o/BJuOsA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734128970; c=relaxed/simple;
+	bh=+y+6Sxg8bBJD86S5RnQwTrKhEnCwkYLHgfLaG2AWTk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kcakpd6HGebkmWiC9nwrIrSZUf+hMWAgVYWmc2qy7BpJeFksbVduRQrnhn9XORs0OwbHHtP0vyerYek59mGyB75/QAJYBEv9nEyZKSgL+Dx0xgpu2XJKt+VHt6FVFNM8JLRpnscj0X8DCrR5ZUaaowXiYel++OFD+KoDTHwz3Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpqlYFki; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4907EC4CED0;
+	Fri, 13 Dec 2024 22:29:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734128969;
+	bh=+y+6Sxg8bBJD86S5RnQwTrKhEnCwkYLHgfLaG2AWTk8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dpqlYFkikU0gm3AoOViNp1RCOXY7DzIO7gCKKZLfieEikUyHBw+gu1c5cYM0+5ARt
+	 J2HGeAL3AfiJez7DMZGhrA+U2gg1CagBTtkxsE31WFufBHrp7Stxw2QBsrGd4bSOuI
+	 1/QD/VK9uAC9+khSsU2+zhqPP5SC5xEKTexew/AXAGcz9RGQf3RECAruCKl6Bqq00H
+	 RPXe6ugiMKVThooTrqlYjLSgn3I/10j+AycMEfRCDvf8yzKQoHMW3UhkbcbnoT7a1v
+	 lf9H3aXT3EklgWpUODLLgQUlC1UcIHkUYL7XWPR2qvawfgLCtCAwaQlqHQiKAiAyXV
+	 TrI/AMSsLevDg==
+Date: Fri, 13 Dec 2024 23:29:26 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: tglx@linutronix.de, paulmck@kernel.org, vlad.wing@gmail.com,
+	rcu@vger.kernel.org, boqun.feng@gmail.com,
+	linux-kernel@vger.kernel.org, joel@joelfernandes.org,
+	neeraj.upadhyay@amd.com, urezki@gmail.com,
+	qiang.zhang1211@gmail.com, Cheng-Jui.Wang@mediatek.com,
+	leitao@debian.org, kernel-team@meta.com
+Subject: Re: [RFC 1/1] sched: defer completion task to online CPU
+Message-ID: <Z1y1RtE_z0b8mP7B@pavilion.home>
+References: <20241213203739.1519801-1-usamaarif642@gmail.com>
+ <20241213203739.1519801-2-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8810:EE_
-X-MS-Office365-Filtering-Correlation-Id: cbe7ed30-9a43-4d07-0b3e-08dd1bc4c4a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|10070799003|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1DNbQ46F/MTXyACq1HHTHL41n4C/h7a32F5AbpZR3+/2cE2mGur1NF3m8VGe?=
- =?us-ascii?Q?f5gXpO+VInKY5iuQgMxVZjhKCeC85+qmyi8W8dbfthaZcunZH8iKSBCmVQgJ?=
- =?us-ascii?Q?HMetmNmmPHoMSg/IldOD4wBF141aDLqLQh127J+2qzGrA/BuWX3XLVnbvm+k?=
- =?us-ascii?Q?+exVi1a9RJ8jX1Bp0h1G7SXqKuRCrRHJSjYd6bRw9p3GTAg2MgVJWGPpxgd1?=
- =?us-ascii?Q?OG7UrTGb9kdHqE9wK98+/Keo39u06IvKhfq9UNH5laqOnm4DTKQ0pSqevP3i?=
- =?us-ascii?Q?nwctUi8zLpr3WtQPvsqxVG/FhtaqEL+FmdZCWhNwKcYXaflTz5hZJpQIpXkO?=
- =?us-ascii?Q?Frjn8tfM80b66zxJAabOfn3AxjgmneCe+VWa97WZN/mie/PSPHdIrxqpBJ/h?=
- =?us-ascii?Q?P7AR4eUu8+iZ7ujjeT8DcoiOt3VBHlsEqPtQVsnn1DYRKpB1yaHnzD7va176?=
- =?us-ascii?Q?7hUWp0ylv4R5lXpM7KVGxWqlDSxnZAipdKqsBh4SbSxNbaYgrM+kcc5R37bs?=
- =?us-ascii?Q?cL/8c146sCdov4r3U8AuQ9cBUr1d4+wYkEuetJDNiPDfvIe8odTPXiu2juSI?=
- =?us-ascii?Q?aNFJTawpO5CAhGw86e2NaZrDJ7jyZXQAp/SlSMnO+xw+x8bftyj35XQcI1wI?=
- =?us-ascii?Q?exQpvDOuOeBsxqtLMFUokOMVMC4LCBVFLUEo6WIrH5k694k1aFPontPvAC7u?=
- =?us-ascii?Q?vJ/7t9TXQYjLGugtjj8bMrk3Lf+Hy5eYB6/nXmhiQM9vm0G3Aocmeg0QVemK?=
- =?us-ascii?Q?MOL24+a2qbErxMAACL0d/JXF1Fh6giILJL8oU7YBYn4TshLeplXK7RE9U2F+?=
- =?us-ascii?Q?o/G7eTDMK3DgPDqMefR2sxJeegncKX2CODUFhz1lSNZiVqO/4QdWGPyqHOzi?=
- =?us-ascii?Q?+u8Mm4lzwPpwHN6jUxNBFlq0KNR6I9N6CqKEUxIDKkryaadoenT+I0USPaf7?=
- =?us-ascii?Q?2BSQ5aNOfI1V3roxAF2dMl9mh6+HKBVIb4VzY+nuVmcuBkiBUR7R5IuDSrHq?=
- =?us-ascii?Q?Xv8DrGamDbtxzJ0Ii9FW3EOUQdh2tw5lDIEzXt7ImmFrMAScs6WlyPTSN/4v?=
- =?us-ascii?Q?qhjjni03lZ/sji0gbLS4Ih0SvpvIfDBd1eCUN10uyNPvcUKwfkonXBsDLYua?=
- =?us-ascii?Q?Z+KDQQrLLfcd1N8gEIWe5ggX4yG11ja9gLx1AsNlrQbhQstqDckW2dS4OeyL?=
- =?us-ascii?Q?tjHa0L3g4Glf6ZfsBZFZjaMYLM2ORpCciXnl+Avr7grmAld4KvlgsFxem8P4?=
- =?us-ascii?Q?uexXFQ9xIKCdTLtUa+bkW9HXmWOXpOZuNp8VgcGmKMMiPmOMXG4UVAWaAOhi?=
- =?us-ascii?Q?wEAComEcFI/ZBVOhh8/9RtRnR/GOCjOpwx3MXCUrazxJo075uai6tCYUzscv?=
- =?us-ascii?Q?TA+sT5iwXdaSEc+qXfw9TElnnkSkrQFwlu4jl7a3eNr5CpIILA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(10070799003)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?X/jQ1KkvcVzngr8sIbPHxzfKV1fhAprGZZmZrrE5x4uqsk7Q63E4Y28Xa6zR?=
- =?us-ascii?Q?Hkez/PP/pBqkHB4nSmhd0wr4BD0jMSFjOTPQjrlzOM9/aqTTKwwfAMcq6VuJ?=
- =?us-ascii?Q?DckrxE0plF0xK6FkDCplHNRyzwj5mgyJGxDmJmQpiYT3hwj4xW+FPKBisFUY?=
- =?us-ascii?Q?m/dwtFZxG+JBY0n14ZkK7w/uingIbMj5bVvW84LbB+Zh5+Ku/V9LG5WmkAKO?=
- =?us-ascii?Q?zREn/agAuRAEjOGlRkp52JhRR/Yb5KAeUWG8H0d1qT/DC99zr5u7qCVwfJP8?=
- =?us-ascii?Q?8ZpWIVbYLWCtGe4rcylNHz3zKUnvhirCXviWFUpuVuI0WJFC0Tb/6vPQasDS?=
- =?us-ascii?Q?GY0DXsDUu3BGRyYGnfn4B9u5wNnOWOnyqoPUP95wAwTTRcC+VmuovmY4go15?=
- =?us-ascii?Q?SvZ7awalaLGybPzRrxYBy/yEW+h9gpe/8tcsLX/elM835Uf5WiW7/jTNaX56?=
- =?us-ascii?Q?27cBiTiEv8ygsJjSUKdNDtwUBHQ4ht00b4xuODGAsRmN6emPyMq5SE54uglo?=
- =?us-ascii?Q?AFTRej9mWdcvs3psNCqLzMLST5AOwUKags3paAO4hC5l5W9n65dRig2is/3U?=
- =?us-ascii?Q?O1aSumTMyxiIFhMwPazIgVDwnIOmWZWhCdB8UVUD+BO05V7DY3+F9daMBVkM?=
- =?us-ascii?Q?rVrUw2WldMPZIt80Jxak4jALxPLVpBM8voRuG+14U6lLn90kSA8Zo7VGHAEd?=
- =?us-ascii?Q?wfl0wcy6TjM31JOMEbBBkOQ/WDqNFhX28fI/XhLLercx2+3QsGJTVixGHKm2?=
- =?us-ascii?Q?dCUqBUX3yZPhFSby90cyzqnF2G1Fw+g6ciNutEfPq2qCWXZzNEWH8/BERU4a?=
- =?us-ascii?Q?OuBcQA2FdGgpolB860BIt8CFEzIOxIalh4+M/eTm3uMVf9QCk7t3aNE9XPsE?=
- =?us-ascii?Q?WSLNn/WgxLvs4Aj1VVNxwb8GKwH8IGlK/rocvxai4JlbzUGwPgfeyU1yuW4Z?=
- =?us-ascii?Q?Ojxp1Z13jw1YPlh1Doy7gBkFRAzmkZGUmjaDz/ncfSIYl3sfUb2hYvo9DvOA?=
- =?us-ascii?Q?P5wu6hBXtaZkNnwM5MpL1cVSPqNTBwBYviMepiYaWpTNFWP1TpcETC9tZzXe?=
- =?us-ascii?Q?KKL8GBbRGhawMOVL9aaJK1YHziCUp1WwcYUuML2bgGhowSukdquvlUz+L+lU?=
- =?us-ascii?Q?SErc/o9VPz6bQ7R9a//KGHkGMH8qARbmag9MdOOPs4GHw971/r6ZPUUy8VdY?=
- =?us-ascii?Q?I1pelt5dHfRAerZc6px0g4XFLEsZkb97TatnCA9Fw5CNJLaP83jVKvcT5E88?=
- =?us-ascii?Q?IybFZWhezvDZdNb2l59HdK/T3gMRlD7hM5TdRI55u8TXvny7a6UWVPtaihlB?=
- =?us-ascii?Q?kGwoLIpwvRht2t6oaxgCrQyiS+QNAIAo9Kgg1AN1+P68Vr9QbMJeohXAsbSF?=
- =?us-ascii?Q?fIo2Hf2TO1WbJvv1Wm+czXUtkeTt4Jen92RkYrGU5dabayEpxD/POBSn0T4c?=
- =?us-ascii?Q?SwgjB1qt8tKbupzA5FjodBZ5lQ/oNpqhzes5Nk6v6Mo4vN0RYzmWM0iFtB/k?=
- =?us-ascii?Q?Z7CyFLIxJ1Z5mqFqJtVxoJdeYoAVDsAD1h9tkLiczBOFzK2+GBIO3NIqED1I?=
- =?us-ascii?Q?wsyvZ6QCCNntLP7Zrp96+KSyA6ZgWUb1HHazkg5DIEWKlm6CPdZgsqUaYpXD?=
- =?us-ascii?Q?tTHL8pmU+/Oq0hpAzm3+33DePwrjlfp8jXV5M8wQAm9k?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbe7ed30-9a43-4d07-0b3e-08dd1bc4c4a8
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 22:23:28.5119
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MHWWfU+BYktRDfJGn5Sr+aDvdR3zwEfq3k1rI2JqHxWFtKEIJ68fWrqV/jV8fAfdKGd72KQ94YUWpmPw26pR4g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8810
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241213203739.1519801-2-usamaarif642@gmail.com>
 
-From: Luwei Zhou <b45643@freescale.com>
+Le Fri, Dec 13, 2024 at 08:33:45PM +0000, Usama Arif a écrit :
+> The following warning is being encountered at boot time:
+> 
+>            WARNING: CPU: 94 PID: 588 at kernel/time/hrtimer.c:1086 hrtimer_start_range_ns+0x289/0x2d0
+>            Modules linked in:
+>            CPU: 94 UID: 0 PID: 588 Comm: migration/94 Not tainted
+>            Stopper: multi_cpu_stop+0x0/0x120 <- stop_machine_cpuslocked+0x66/0xc0
+>            RIP: 0010:hrtimer_start_range_ns+0x289/0x2d0
+>            Code: 41 5c 41 5d 41 5e 41 5f 5d e9 63 94 ea 00 0f 0b 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d e9 39 fc 15 01 0f 0b e9 c1 fd ff ff <0f> 0b 48 8b 45 00 e9 59 ff ff ff f3 0f 1e fa 65 8b 05 1d ec e8 7e
+>            RSP: 0018:ffffc900019cbcc8 EFLAGS: 00010046
+>            RAX: ffff88bf449a4c40 RBX: 0000000000000082 RCX: 0000000000000001
+>            RDX: 0000000000000001 RSI: ffff88bf43224c80 RDI: ffff88bf449a4c40
+>            RBP: ffff88bf449a4c80 R08: ffff888280970090 R09: 0000000000000000
+>            R10: ffff88bf432252e0 R11: ffffffff811abf70 R12: ffff88bf449a4c40
+>            R13: ffff88bf43234b28 R14: ffff88bf43224c80 R15: 0000000000000000
+>            FS:  0000000000000000(0000) GS:ffff88bf44980000(0000) knlGS:0000000000000000
+>            CR2: 0000000000000000 CR3: 000000404b230001 CR4: 0000000000770ef0
+>            PKRU: 55555554
+>            Call Trace:
+>             <TASK>
+>             ? __warn+0xcf/0x1b0
+>             ? hrtimer_start_range_ns+0x289/0x2d0
+>             ? report_bug+0x120/0x1a0
+>             ? handle_bug+0x60/0x90
+>             ? exc_invalid_op+0x1a/0x50
+>             ? asm_exc_invalid_op+0x1a/0x20
+>             ? register_refined_jiffies+0xb0/0xb0
+>             ? hrtimer_start_range_ns+0x289/0x2d0
+>             ? hrtimer_start_range_ns+0x186/0x2d0
+>             start_dl_timer+0xfc/0x150
+>             enqueue_dl_entity+0x367/0x640
+>             dl_server_start+0x53/0xa0
+>             enqueue_task_fair+0x363/0x460
+>             enqueue_task+0x3c/0x200
+>             ttwu_do_activate+0x94/0x240
+>             try_to_wake_up+0x315/0x600
+>             complete+0x4b/0x80
+>             ? stop_two_cpus+0x2f0/0x2f0
+>             cpu_stopper_thread+0xb1/0x120
+>             ? smpboot_unregister_percpu_thread+0xc0/0xc0
+>             smpboot_thread_fn+0xf7/0x150
+>             kthread+0x121/0x130
+>             ? kthread_blkcg+0x40/0x40
+>             ret_from_fork+0x39/0x50
+>             ? kthread_blkcg+0x40/0x40
+>             ret_from_fork_asm+0x11/0x20
+>             </TASK>
+> 
+> It looks like completion that requires an hrtimer is being scheduled on a
+> CPU that is not yet completely online. There have been other issues with
+> hrtimer that have been fixed recently [1]. A possible fix would be to
+> defer the completion to be done by a CPU already online.
+> This bug might have been introduced in [2].
+> 
+> [1] https://lore.kernel.org/all/20240913214205.12359-2-frederic@kernel.org/
+> [2] https://lore.kernel.org/all/169972295552.3135.1094880886431606890.tip-bot2@tip-bot2/
+> Reported-by: Vlad Poenaru <vlad.wing@gmail.com>
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> ---
+>  kernel/sched/completion.c | 25 ++++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
+> index 3561ab533dd4..b79d0868f997 100644
+> --- a/kernel/sched/completion.c
+> +++ b/kernel/sched/completion.c
+> @@ -30,6 +30,13 @@ void complete_on_current_cpu(struct completion *x)
+>  	return complete_with_flags(x, WF_CURRENT_CPU);
+>  }
+>  
+> +static void complete_ipi(void *arg)
+> +{
+> +	struct completion *x = arg;
+> +
+> +	complete_with_flags(x, 0);
+> +}
+> +
+>  /**
+>   * complete: - signals a single thread waiting on this completion
+>   * @x:  holds the state of this particular completion
+> @@ -44,7 +51,23 @@ void complete_on_current_cpu(struct completion *x)
+>   */
+>  void complete(struct completion *x)
+>  {
+> -	complete_with_flags(x, 0);
+> +	int cpu = get_cpu();
+> +
+> +	/* The scheduler might queue an ignored hrtimer. Defer the wake up
+> +	 * to an online CPU instead.
+> +	 */
+> +	if (unlikely(cpu_is_offline(cpu))) {
+> +		int target;
+> +
+> +		target = cpumask_any_and(housekeeping_cpumask(HK_TYPE_RCU),
+> +					 cpu_online_mask);
+> +
+> +		smp_call_function_single(target, complete_ipi, x, 1);
+> +		put_cpu();
+> +	} else {
+> +		put_cpu();
+> +		complete_with_flags(x, 0);
+> +	}
 
-Prevent continuous polling error logs by adding a chip ID check in the
-probe  function. This ensures the driver only proceeds when the mma8450 is
-present, avoiding issues in scenarios like missing add-on cards.
+Right, we are doing something similar with RCU (swake_up_one_oneline() for
+example). But I've never been satisfied with that bandaid. And now it's
+spreading.
 
-Signed-off-by: Luwei Zhou <b45643@freescale.com>
-Signed-off-by: Fugang Duan <B38611@freescale.com>
-Signed-off-by: Vipul Kumar <vipul_kumar@mentor.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- drivers/input/misc/mma8450.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Should we force switch_hrtimer_base() to designate an online CPU for unpinned
+timers if the current one is offline? And then send a retrigger_next_event()
+with smp_call_function_async() with some special care?
 
-diff --git a/drivers/input/misc/mma8450.c b/drivers/input/misc/mma8450.c
-index 08412239b8e69..da941748ed29b 100644
---- a/drivers/input/misc/mma8450.c
-+++ b/drivers/input/misc/mma8450.c
-@@ -38,6 +38,8 @@
- 
- #define MMA8450_CTRL_REG1	0x38
- #define MMA8450_CTRL_REG2	0x39
-+#define MMA8450_ID		0xc6
-+#define MMA8450_WHO_AM_I	0x0f
- 
- static int mma8450_read(struct i2c_client *c, unsigned int off)
- {
-@@ -148,8 +150,20 @@ static void mma8450_close(struct input_dev *input)
-  */
- static int mma8450_probe(struct i2c_client *c)
- {
-+	struct i2c_adapter *adapter = to_i2c_adapter(c->dev.parent);
- 	struct input_dev *input;
--	int err;
-+	int err, client_id;
-+
-+	err = i2c_check_functionality(adapter,
-+				      I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA);
-+	if (!err)
-+		return err;
-+
-+	client_id = i2c_smbus_read_byte_data(c, MMA8450_WHO_AM_I);
-+	if (client_id != MMA8450_ID)
-+		return dev_err_probe(&c->dev, -EINVAL,
-+				     "read chip ID 0x%x is not equal to 0x%x!\n",
-+				     client_id, MMA8450_ID);
- 
- 	input = devm_input_allocate_device(&c->dev);
- 	if (!input)
--- 
-2.34.1
+Thomas, does that sound like a good way out?
 
+Thanks.
+
+>  }
+>  EXPORT_SYMBOL(complete);
+>  
+> -- 
+> 2.43.5
+> 
 
