@@ -1,124 +1,226 @@
-Return-Path: <linux-kernel+bounces-444228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD509F0314
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:27:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA6439F0C35
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:27:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D216D1696D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 03:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D361887530
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6A217BB34;
-	Fri, 13 Dec 2024 03:27:17 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697521DF964;
+	Fri, 13 Dec 2024 12:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sTl5zanL"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EC713A26D;
-	Fri, 13 Dec 2024 03:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972B11DF256;
+	Fri, 13 Dec 2024 12:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734060436; cv=none; b=hpfHtIYwC1b1E78pLgnIhmm0nwiGvcMvoTySJSYiSMKL3v4or1884T5ogb9vMZWPD6mCG+B/C5YwaHAtHGsAoL0IOcnt0FBTM/syF9OdbLUOJBFt101CNAfCLLyIXC4cdT+4mOPmXEUf1EQqRENlkNzbVWBzEyqCszEUhlxfOSk=
+	t=1734092843; cv=none; b=XF9FY//WUtI9VODVxrXlJAOpM+a/qoZrSHv0SNcu/tbasTMJAfwnFVLkXdMeFVUMoWao6zWpmRq8YOd+qqvs+a0sW1Dx58BNeEFYjqEfoHUrbuEAusIz68nwtjcW8GBbmr6SKIw7DJAjC/HO+l2ygluWsBvhdUu/f8DHUr/msek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734060436; c=relaxed/simple;
-	bh=tyU/E7IdI0PoI6xnGSKBcD21KiHHsKL6ZTo0hZJt4KA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Y4vxVdxBCh1X+ewMKLo/y/AVhOTMNpbxSPjhNQHSq2jZp2Kt+roaNvEZescDbllGJDjT7cSRfXxHIYuv8RCadhAppNoSDmIgSau6DffPa+DEV+Ui6aQEHk+FEWdSATtTLh9mOPwX98WCVRYhhf0lVANRdJrQlUwL4tBMmx9r12o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y8ZWb67Slz4f3jrp;
-	Fri, 13 Dec 2024 11:26:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 307181A018C;
-	Fri, 13 Dec 2024 11:27:11 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP4 (Coremail) with SMTP id gCh0CgBHcISMqVtnfJ3KEQ--.55430S7;
-	Fri, 13 Dec 2024 11:27:11 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH v3 5/5] Xarray: use xa_mark_t in xas_squash_marks() to keep code consistent
-Date: Fri, 13 Dec 2024 20:25:23 +0800
-Message-Id: <20241213122523.12764-6-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241213122523.12764-1-shikemeng@huaweicloud.com>
-References: <20241213122523.12764-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1734092843; c=relaxed/simple;
+	bh=RNe5ohNpUyEDQ89uT1QfgzBzs2jm2Vw0Oha4SoeU/gM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QEGSi+JfUFGzrQKMhTOXYAeqPGOGc05P5XodtjBMScWFx3sfH+ajlnQ3uXfhxaEboIfBsOjMHOg36ZPluHhd5JPeUlT8LcY6HPhUGbKh0v/4OBXLm2OUO5S6DVEeqrSMuwoztQ6e9ZbV2Jp0R+mekjM4xB3RxbSXqNXXIMWNpa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sTl5zanL; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4BDCQw6T3086016
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Dec 2024 06:26:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1734092818;
+	bh=STXJOLYyzLHgBSnUGBfmxsn3ExlIXLRjzN5ci1FD8As=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=sTl5zanLe+f9MmjsXgc64Z6gwv0BT6Xb9IJEroD+PQWyQ3Wb3TQTSLFBNrW6Icu+j
+	 MgDdiIECu7HEfHocq029dHBmakeaKHVPuNTv+KGXNXG9uPh2E8t97i7Cp6Pmf8lJxa
+	 n4xgq6x8iRAaMJ0tfvxlc8v6OjxQ4ACGJA/M//ig=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BDCQwGc008976
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 13 Dec 2024 06:26:58 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 13
+ Dec 2024 06:26:58 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 13 Dec 2024 06:26:58 -0600
+Received: from [10.24.69.13] (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BDCQqoV123016;
+	Fri, 13 Dec 2024 06:26:53 -0600
+Message-ID: <5ed274f9-ca25-40a7-96c6-43b36b7663af@ti.com>
+Date: Fri, 13 Dec 2024 17:56:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: [PATCH net v4 1/2] net: ti: icssg-prueth: Fix
+ firmware load sequence.
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: <vigneshr@ti.com>, <matthias.schiffer@ew.tq-group.com>, <robh@kernel.org>,
+        <u.kleine-koenig@baylibre.com>, <javier.carrasco.cruz@gmail.com>,
+        <diogo.ivo@siemens.com>, <horms@kernel.org>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+References: <20241211135941.1800240-1-m-malladi@ti.com>
+ <20241211135941.1800240-2-m-malladi@ti.com>
+ <304870d9-10c7-43b3-8255-8f2b0422d759@stanley.mountain>
+Content-Language: en-US
+From: Meghana Malladi <m-malladi@ti.com>
+In-Reply-To: <304870d9-10c7-43b3-8255-8f2b0422d759@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHcISMqVtnfJ3KEQ--.55430S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1UuF13JryrGFWxCFyfWFg_yoW8GrWkpF
-	97C3s8Ka1xA3WUKrnFvan7t345Ja1kK3yjyr4xGwnayFZ8Gr1Yqay7tryjqFnxGFy8ZFy3
-	Cr1Fg3y5Wa1UZw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAv
-	FVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7Jw
-	A2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq
-	3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7
-	AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07ja
-	g4hUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Besides xas_squash_marks(), all functions use xa_mark_t type to iterate
-all possible marks. Use xa_mark_t in xas_squash_marks() to keep code
-consistent.
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- lib/xarray.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 4231af284bd8..a74795911f1c 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -125,16 +125,20 @@ static inline void node_mark_all(struct xa_node *node, xa_mark_t mark)
-  */
- static void xas_squash_marks(const struct xa_state *xas)
- {
--	unsigned int mark = 0;
-+	xa_mark_t mark = 0;
- 	unsigned int limit = xas->xa_offset + xas->xa_sibs + 1;
- 
--	do {
--		unsigned long *marks = xas->xa_node->marks[mark];
--		if (find_next_bit(marks, limit, xas->xa_offset + 1) == limit)
--			continue;
--		__set_bit(xas->xa_offset, marks);
--		bitmap_clear(marks, xas->xa_offset + 1, xas->xa_sibs);
--	} while (mark++ != (__force unsigned)XA_MARK_MAX);
-+	for (;;) {
-+		unsigned long *marks = node_marks(xas->xa_node, mark);
-+
-+		if (find_next_bit(marks, limit, xas->xa_offset + 1) != limit) {
-+			__set_bit(xas->xa_offset, marks);
-+			bitmap_clear(marks, xas->xa_offset + 1, xas->xa_sibs);
-+		}
-+		if (mark == XA_MARK_MAX)
-+			break;
-+		mark_inc(mark);
-+	}
- }
- 
- /* extracts the offset within this node from the index */
--- 
-2.30.0
+On 11/12/24 21:16, Dan Carpenter wrote:
+> On Wed, Dec 11, 2024 at 07: 29: 40PM +0530, Meghana Malladi wrote: > 
+> -static int prueth_emac_start(struct prueth *prueth, struct prueth_emac 
+> *emac) > +static int prueth_emac_start(struct prueth *prueth, int slice) 
+>  > { > struct icssg_firmwares
+> ZjQcmQRYFpfptBannerStart
+> This message was sent from outside of Texas Instruments.
+> Do not click links or open attachments unless you recognize the source 
+> of this email and know the content is safe.
+> Report Suspicious
+> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK!uldqfRcOdo0RqyXEHNnjPxku43QuA2sRmrlczDVj-denyMX3qWPEeHokm6IS-fNmWZGSvK3Wn7nSFeNotanVMDOTlZZjZ8Ausf9AkMk$>
+> ZjQcmQRYFpfptBannerEnd
+> 
+> On Wed, Dec 11, 2024 at 07:29:40PM +0530, Meghana Malladi wrote:
+>> -static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>> +static int prueth_emac_start(struct prueth *prueth, int slice)
+>>  {
+>>  	struct icssg_firmwares *firmwares;
+>>  	struct device *dev = prueth->dev;
+>> -	int slice, ret;
+>> +	int ret;
+>>  
+>>  	if (prueth->is_switch_mode)
+>>  		firmwares = icssg_switch_firmwares;
+>> @@ -177,16 +177,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>>  	else
+>>  		firmwares = icssg_emac_firmwares;
+>>  
+>> -	slice = prueth_emac_slice(emac);
+>> -	if (slice < 0) {
+>> -		netdev_err(emac->ndev, "invalid port\n");
+>> -		return -EINVAL;
+>> -	}
+>> -
+>> -	ret = icssg_config(prueth, emac, slice);
+>> -	if (ret)
+>> -		return ret;
+>> -
+>>  	ret = rproc_set_firmware(prueth->pru[slice], firmwares[slice].pru);
+>>  	ret = rproc_boot(prueth->pru[slice]);
+> 
+> This isn't introduced by this patch but eventually Colin King is going to
+> get annoyed with you for setting ret twice in a row.
+> 
 
+Yeah ok, I will fix this as part of this patch.
+
+>>  	if (ret) {
+>> @@ -208,7 +198,6 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>>  		goto halt_rtu;
+>>  	}
+>>  
+>> -	emac->fw_running = 1;
+>>  	return 0;
+>>  
+>>  halt_rtu:
+>> @@ -220,6 +209,78 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>>  	return ret;
+>>  }
+>>  
+>> +static int prueth_emac_common_start(struct prueth *prueth)
+>> +{
+>> +	struct prueth_emac *emac;
+>> +	int ret = 0;
+>> +	int slice;
+>> +
+>> +	if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
+>> +		return -EINVAL;
+>> +
+>> +	/* clear SMEM and MSMC settings for all slices */
+>> +	memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
+>> +	memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
+>> +
+>> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
+>> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
+>> +
+>> +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
+>> +		icssg_init_fw_offload_mode(prueth);
+>> +	else
+>> +		icssg_init_emac_mode(prueth);
+>> +
+>> +	for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
+>> +		emac = prueth->emac[slice];
+>> +		if (emac) {
+>> +			ret |= icssg_config(prueth, emac, slice);
+>> +			if (ret)
+>> +				return ret;
+> 
+> Here we return directly.
+> 
+>> +		}
+>> +		ret |= prueth_emac_start(prueth, slice);
+> 
+> Here we continue.  Generally, I would expect there to be some clean up
+> on this error path like this:
+> 
+> 		ret = prueth_emac_start(prueth, slice);
+> 		if (ret)
+> 			goto unwind_slices;
+> 
+> 	...
+> 
+> 	return 0;
+> 
+> unwind_slices:
+> 	while (--slice >= 0)
+> 		prueth_emac_stop(prueth, slice);
+> 
+> 	return ret;
+> 
+> I dread to see how the cleanup is handled on this path...
+> 
+> Ok.  I've looked at it and, nope, it doesn't work.  This is freed in
+> prueth_emac_common_stop() but partial allocations are not freed.
+> Also the prueth_emac_stop() is open coded as three calls to
+> rproc_shutdown() which is ugly.
+> 
+> I've written a blog which describes a system for writing error
+> handling code.  If each function cleans up after itself by freeing
+> its own partial allocations then you don't need to have a variable
+> like "prueth->prus_running = 1;" to track how far the allocation
+> process went before failing.
+> https://urldefense.com/v3/__https://staticthinking.wordpress.com/2022/04/28/free-the-last-thing-style/__;!!G3vK!T5VCna8tMLVZNSL49zSwJOQBnoAQEa2xqXUUsIYY78CYm5mEH2wAdMX9CDEfMHXWsjTn0sG4mwKevVIOrgfAuQ$  <https://urldefense.com/v3/__https://staticthinking.wordpress.com/2022/04/28/free-the-last-thing-style/__;!!G3vK!T5VCna8tMLVZNSL49zSwJOQBnoAQEa2xqXUUsIYY78CYm5mEH2wAdMX9CDEfMHXWsjTn0sG4mwKevVIOrgfAuQ$>
+> 
+
+I agree that current error handling is all over the place. But I wasn't 
+sure what would be the cleanest approach here. Thanks for sharing the 
+blog, I have looked into it and looks very promising. I will try this 
+approach and get back to you.
+
+thanks & regards,
+Meghana Malladi.
+
+> regards,
+> dan carpenter
+> 
 
