@@ -1,210 +1,257 @@
-Return-Path: <linux-kernel+bounces-445533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDB79F1772
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:38:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA5C9F1776
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:38:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00E317A04CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:38:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEDD8168803
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9387C1925BB;
-	Fri, 13 Dec 2024 20:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF961922DC;
+	Fri, 13 Dec 2024 20:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="miL62lH1"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gnbYkzGT"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464C11917D4;
-	Fri, 13 Dec 2024 20:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0543F191473
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 20:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734122267; cv=none; b=AhWPJUuD10CuVpZNMUcudOfDOGdLhAjPZyzAohTLEp4RzaECJiYna7xWAeoXvbt9ShAftJr0pcGuDd4N9hi4CYjlhKtfYWjlaJ+F4K0iE0D8gOC9dN+26oOfZn4Audo2a3dnVGtrZzRDy5YchhFakXQg1g1FP4ArE/Q+MfPVsEs=
+	t=1734122302; cv=none; b=XtlfShrO1oi0Vdon05rVkH9FXoIEgsPw7ch9mhZRpjucEImgMxfgcmF4EeBE2/QYPBI19+TSAjGGZixRq1sv7iGAC9eGb9UF8BP4F85pJ1soPZvjT5fAEbsSXnP+v07HTHEJGrgvGhZRmDvgElRi0sWTcnw9oz/WWWeXk3Wk528=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734122267; c=relaxed/simple;
-	bh=dgBhccywBUi1Z1Jrf/UmDmrf7/D+q5cAvcMcLNPy01U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EygauKTXUtBMzcSp0+9tY0EQ5k1XGNXCUsBzsRaiwx2laM9fPcCRJ9lhEyu/EnHudefq8dvvIIui1QQVSLNwuDR/jvmqtEpVDN2UCuPLotyMbb7rukXxW22gh7aNJ5ZBKTKOhVs0qSoJQbr/CKM6U4pzs9Vf8SqlSok82ZCcB1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=miL62lH1; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b6e8814842so211098685a.0;
-        Fri, 13 Dec 2024 12:37:46 -0800 (PST)
+	s=arc-20240116; t=1734122302; c=relaxed/simple;
+	bh=2RgIBbWgHVCKLHsj8nqNKNT5O0lXAjsfp8Hgz26Cjek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=skbJmPqRUIYpP+ioJZ67OCvV3XcUPmMoU78UP7dOt0Kci1KKi2fdWwGqLy2A3KPfQn3nR1Pp+dR5iASwgE8QuKttkk//wW4ewyuGvQBTiFWRAD0LW1xAPvWcN7fIn2dKM2W61Ad+mMs9UzlKGsOXztKWTOWrU8g518bpJHQ79xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gnbYkzGT; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ef7f8d4f30so19271887b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 12:38:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734122265; x=1734727065; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w2hCD8dxslZh6qdjajfz4JhbUYrlSzYCmognMfbfPug=;
-        b=miL62lH1BrOARr5C8Z9hD1teDj4Krth70XsTbo8ftyv3Y6zrDj0EnzwXFOIT2MrYrV
-         FXSLdA5tn1W/h3r9poKpKczkkrhil3VgU3gVX5ywRe/RljryPZ34yTlxx30QrDyga6wQ
-         /dW+yE4Iarv/vCxUmcAVU6La8aFDy8DV8o9OOaFkfYAo6ljBGwUlOQJScEOu6akWoEnS
-         e8QN/Mg3Oem3cShKb8IEMKRdUezwJNig4ANPpWNFKsQZOyey6XGXVJqwg3UEYZlS4qh/
-         DYKtu/N5TdKwROxWh5CueWHXMzB7MSevPHTd8SxsvpUp1NIAnvRk1NOHzgybpPaK4+Jg
-         hN6g==
+        d=linaro.org; s=google; t=1734122298; x=1734727098; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=K+k5fKdkj/4CuPycJ1siIOzYtXibL2hQFpVwz2mgPAk=;
+        b=gnbYkzGTZwn5Tg2YQ9ls9Z2WZnzdys6RpN7H+61FuLdDYPz1kmdiXfsV9aF32yCSSz
+         vpEJd/gh+31hZ1MT9QyZKdxNVnyxlMvmYnuXqnCzRxrMdOZK08v6wKY+sWR8YpzMxJty
+         Gd7WmnDV1jTdYu60u52nT97iAsmA8biH5ylXfq2T77ftzw1u/tLPUgPjlKr5s+4zZa7D
+         yxrgTjpUH9n39LFDW+V3xh5JCyDbH8mgoeC8ZVcy+pkhauPBnUZnl69VDJAlQnSbK+xD
+         rEdtHeV70KcNUbvNMFy4sKGf5lQS+DZt4aUEsKIuZOxewmt/drls8eDn47Vr2zRHW0Ao
+         lVog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734122265; x=1734727065;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w2hCD8dxslZh6qdjajfz4JhbUYrlSzYCmognMfbfPug=;
-        b=hLDa+mmB35vf57UZA3xB4yZ+3a0Xm6k37cIYMTV1jkqIfg8ZK62Q3QRjjXWIgIhS7s
-         cMkIBlRV24XRQLUp4+mNCvfOWdWEIT43WfsKLo5Epo86HKD64QRH7TIaxqXvCN40hgWP
-         NJGJZl7Lom4jGk0jcQLERVMBjgR2flRCi2hCvVK23mzZm0Lu7h71M7ChsO6YGK3kgibV
-         LNteGnMxQtSpC2xB2KmAUVZJFRbDD/YPXNl7d3A2V013u7CQMZ49frUdpQjP+0xodjnM
-         JXXH7m03Lz49/5CV4lZN1bR30lOo5Fa+ieFeukhbNeLZN8PxMJYLRQNxb8cJkaEYEej0
-         bYFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWS3Xn6TbHZuHck8/W1bBloyfsmvxQ9Hsp9A8LgQeZ2fRHFt2vxGSkfxRLHjTPZ0DrUQZH@vger.kernel.org, AJvYcCWUWwg4klmJM0f1+xir/DoP8lAXCJf4Jgdi6CPrRx63/NexlfN6lIkzzXi6LC+OeHduEf0GXOlrlOHpswA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydZi/qWwg/2BUxOdtFqpft66ElMAgD65t4810XQmyn3Cr+YRI1
-	3K1KnmQ3EGK8vwnejAzXG/xjBhZwf9O+y4LQW53bikpQIBP+tajQ
-X-Gm-Gg: ASbGncvBaHl+WbKOW/CsCx7uN+ldtXQrnWcrEj0EIk3UwZjkvRE1RTS1olbOnp+BPVF
-	7zEVJHS61ReHagnXh0JTR7Lzg+bXlTwiIJsWzUoFdotpKfaIUuomQin7sOVsaNnzAj2v1WXTRa9
-	77H5JxEYmdeguNUWgbzSmzSkjeZ55q0v7SE5OxTcJhKjWKwSK4ImnDoHKwcOnnzRAXBo17iS1Pj
-	KFOx8U67qCHUnHbzaUqq1gNr7AfhK7LJGidwGX5sEwSZI3bco0bvw==
-X-Google-Smtp-Source: AGHT+IEd6vFvaoKvpCfh5RZWFZyloaTzshD/S9KFbQ4lTog5nXVcBMVF610olcrJB+CM/UzbRWBjQA==
-X-Received: by 2002:a05:620a:4720:b0:7b6:70b5:306c with SMTP id af79cd13be357-7b6fbf7ae02mr637794785a.61.1734122265090;
-        Fri, 13 Dec 2024 12:37:45 -0800 (PST)
-Received: from localhost ([2a03:2880:20ff:3::])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b7048bc4acsm11043685a.74.2024.12.13.12.37.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 12:37:43 -0800 (PST)
-From: Usama Arif <usamaarif642@gmail.com>
-To: frederic@kernel.org,
-	tglx@linutronix.de,
-	paulmck@kernel.org
-Cc: vlad.wing@gmail.com,
-	rcu@vger.kernel.org,
-	boqun.feng@gmail.com,
-	linux-kernel@vger.kernel.org,
-	joel@joelfernandes.org,
-	neeraj.upadhyay@amd.com,
-	urezki@gmail.com,
-	qiang.zhang1211@gmail.com,
-	Cheng-Jui.Wang@mediatek.com,
-	leitao@debian.org,
-	kernel-team@meta.com,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [RFC 1/1] sched: defer completion task to online CPU
-Date: Fri, 13 Dec 2024 20:33:45 +0000
-Message-ID: <20241213203739.1519801-2-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241213203739.1519801-1-usamaarif642@gmail.com>
-References: <20241213203739.1519801-1-usamaarif642@gmail.com>
+        d=1e100.net; s=20230601; t=1734122298; x=1734727098;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+k5fKdkj/4CuPycJ1siIOzYtXibL2hQFpVwz2mgPAk=;
+        b=pfL6UfoQ5xIqP2RV3Bfgzlj2SfspjlscOCvOdySpgGQ0Ss/egOEEa+sG2Lbc/W+5l4
+         UZUfYuzzuTUFb1P0dDCjkHTSAScFHpCkrAN6MZlDuvQJ0gpdxStbLwp4TVAnZna7Dc1l
+         SJDIBWjO8JDCs4LmBzvzPW23TsAP13LB2Ae7oFnHuFClxRr2QpNtIXXOw4lXgTCyZSK0
+         dUUN5fF3VEuYZCUuQuifX8HJiFBUaKVyNcCSN/NNJ0r4XlzT4Q1dtmiGevIFbH7L39N2
+         +oblxQfu4e8LJFQoKrJ96V4u8g6KjP+rxkcZkonmqFJGsVUW+6Uy72HX2n7pmXll3uxn
+         A8vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+5M1XkqkaJ4GrpaqhqhBAbsnGMNqnDxjIAnyYVX2KZBqiICcatw55G/Z8ucTAQFGqDfKzq7msNhNwUCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/DbFo0ZhC5JHPxjtcF/Y1N4HE4nhYAXZsr+3hYCbeqMhi3lwX
+	LWPf26O1DlnuXtZAlioIumdEoZxmm6x9oaQimXqLLTCox6c6wM4iyXnh1/16urw26bbS1ynr+Ge
+	KgL8rQEMaSUqcI2bjSagU7/+Apsgwd1K73KuFIA==
+X-Gm-Gg: ASbGncshVagefDhLd1wHTGYkhmgNFRq48Wl2zLx3ERr3GvTMaIWxdu2AcFyc35Lwhdi
+	wm6dZfCAGEAQA8nPV4YaIlvrYnX94qHxXT3UiWZc8F4yoNySYZNf9
+X-Google-Smtp-Source: AGHT+IFOHxgqNg+sN7EOtBunHW1em5TfmLksd63iIdUybzrhYuWy5ZpRnCEphZhMbq+wQyfFBmYaHhDNrvmwOqtTc9M=
+X-Received: by 2002:a05:690c:fd5:b0:6ef:4a1f:36d6 with SMTP id
+ 00721157ae682-6f279b23db1mr35730337b3.23.1734122297673; Fri, 13 Dec 2024
+ 12:38:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241212-filter-mode-clock-v1-1-f4441988d6aa@quicinc.com>
+ <onavg2s7uamgwh34ozhbt56c74ktj5chp3jnn4bw5m22y5sdjr@fktyn5yt4gmw> <1f71a352-ab8a-47fb-a4ed-ae0a4767aec6@quicinc.com>
+In-Reply-To: <1f71a352-ab8a-47fb-a4ed-ae0a4767aec6@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 13 Dec 2024 22:38:07 +0200
+Message-ID: <CAA8EJprwE-zV1cX4OUJJfJ1en1+riHZVCQNGNYHxnPe_S=2cwA@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/dpu: Filter modes based on adjusted mode clock
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The following warning is being encountered at boot time:
+On Fri, 13 Dec 2024 at 21:15, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>
+>
+>
+> On 12/12/2024 5:05 PM, Dmitry Baryshkov wrote:
+> > On Thu, Dec 12, 2024 at 11:11:54AM -0800, Jessica Zhang wrote:
+> >> Filter out modes that have a clock rate greater than the max core clock
+> >> rate when adjusted for the perf clock factor
+> >>
+> >> This is especially important for chipsets such as QCS615 that have lower
+> >> limits for the MDP max core clock.
+> >>
+> >> Since the core CRTC clock is at least the mode clock (adjusted for the
+> >> perf clock factor) [1], the modes supported by the driver should be less
+> >> than the max core clock rate.
+> >>
+> >> [1] https://elixir.bootlin.com/linux/v6.12.4/source/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c#L83
+> >>
+> >> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> >> ---
+> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c | 29 +++++++++++++++++++--------
+> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h |  3 +++
+> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      | 12 +++++++++++
+> >>   3 files changed, 36 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
+> >> index 6f0a37f954fe8797a4e3a34e7876a93d5e477642..0afd7c81981c722a1a9176062250c418255fe6d0 100644
+> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
+> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.c
+> >> @@ -31,6 +31,26 @@ enum dpu_perf_mode {
+> >>      DPU_PERF_MODE_MAX
+> >>   };
+> >>
+> >> +/**
+> >> + * dpu_core_perf_adjusted_crtc_clk - Adjust given crtc clock rate according to
+> >
+> > Nit: CRTC (here and further)
+> >
+> >> + *   the perf clock factor.
+> >> + * @crtc_clk_rate - Unadjusted crtc clock rate
+> >> + * @perf_cfg: performance configuration
+> >> + */
+> >> +u64 dpu_core_perf_adjusted_crtc_clk(u64 crtc_clk_rate,
+> >> +                                const struct dpu_perf_cfg *perf_cfg)
+> >
+> > It's not just the CRTC clocks
+> >
+>
+> Do you mean we should use adjusted mode clock here?
 
-           WARNING: CPU: 94 PID: 588 at kernel/time/hrtimer.c:1086 hrtimer_start_range_ns+0x289/0x2d0
-           Modules linked in:
-           CPU: 94 UID: 0 PID: 588 Comm: migration/94 Not tainted
-           Stopper: multi_cpu_stop+0x0/0x120 <- stop_machine_cpuslocked+0x66/0xc0
-           RIP: 0010:hrtimer_start_range_ns+0x289/0x2d0
-           Code: 41 5c 41 5d 41 5e 41 5f 5d e9 63 94 ea 00 0f 0b 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d e9 39 fc 15 01 0f 0b e9 c1 fd ff ff <0f> 0b 48 8b 45 00 e9 59 ff ff ff f3 0f 1e fa 65 8b 05 1d ec e8 7e
-           RSP: 0018:ffffc900019cbcc8 EFLAGS: 00010046
-           RAX: ffff88bf449a4c40 RBX: 0000000000000082 RCX: 0000000000000001
-           RDX: 0000000000000001 RSI: ffff88bf43224c80 RDI: ffff88bf449a4c40
-           RBP: ffff88bf449a4c80 R08: ffff888280970090 R09: 0000000000000000
-           R10: ffff88bf432252e0 R11: ffffffff811abf70 R12: ffff88bf449a4c40
-           R13: ffff88bf43234b28 R14: ffff88bf43224c80 R15: 0000000000000000
-           FS:  0000000000000000(0000) GS:ffff88bf44980000(0000) knlGS:0000000000000000
-           CR2: 0000000000000000 CR3: 000000404b230001 CR4: 0000000000770ef0
-           PKRU: 55555554
-           Call Trace:
-            <TASK>
-            ? __warn+0xcf/0x1b0
-            ? hrtimer_start_range_ns+0x289/0x2d0
-            ? report_bug+0x120/0x1a0
-            ? handle_bug+0x60/0x90
-            ? exc_invalid_op+0x1a/0x50
-            ? asm_exc_invalid_op+0x1a/0x20
-            ? register_refined_jiffies+0xb0/0xb0
-            ? hrtimer_start_range_ns+0x289/0x2d0
-            ? hrtimer_start_range_ns+0x186/0x2d0
-            start_dl_timer+0xfc/0x150
-            enqueue_dl_entity+0x367/0x640
-            dl_server_start+0x53/0xa0
-            enqueue_task_fair+0x363/0x460
-            enqueue_task+0x3c/0x200
-            ttwu_do_activate+0x94/0x240
-            try_to_wake_up+0x315/0x600
-            complete+0x4b/0x80
-            ? stop_two_cpus+0x2f0/0x2f0
-            cpu_stopper_thread+0xb1/0x120
-            ? smpboot_unregister_percpu_thread+0xc0/0xc0
-            smpboot_thread_fn+0xf7/0x150
-            kthread+0x121/0x130
-            ? kthread_blkcg+0x40/0x40
-            ret_from_fork+0x39/0x50
-            ? kthread_blkcg+0x40/0x40
-            ret_from_fork_asm+0x11/0x20
-            </TASK>
+This also applies, etc. But my point was that you can not name it just
+"adjusted CRTC clock" if you also add the plane clocks handling.
 
-It looks like completion that requires an hrtimer is being scheduled on a
-CPU that is not yet completely online. There have been other issues with
-hrtimer that have been fixed recently [1]. A possible fix would be to
-defer the completion to be done by a CPU already online.
-This bug might have been introduced in [2].
+>
+> >> +{
+> >> +    u32 clk_factor;
+> >> +
+> >> +    clk_factor = perf_cfg->clk_inefficiency_factor;
+> >> +    if (clk_factor) {
+> >> +            crtc_clk_rate *= clk_factor;
+> >> +            do_div(crtc_clk_rate, 100);
+> >> +    }
+> >> +
+> >> +    return crtc_clk_rate;
+> >> +}
+> >> +
+> >>   /**
+> >>    * _dpu_core_perf_calc_bw() - to calculate BW per crtc
+> >>    * @perf_cfg: performance configuration
+> >> @@ -76,7 +96,6 @@ static u64 _dpu_core_perf_calc_clk(const struct dpu_perf_cfg *perf_cfg,
+> >>      struct dpu_plane_state *pstate;
+> >>      struct drm_display_mode *mode;
+> >>      u64 crtc_clk;
+> >
+> > While you are at it, could you please also add a patch, replacing height
+> > * vidth * vrefresh with mode->clock * 1000? The former one has limited
+> > precision.
+> >
+> >> -    u32 clk_factor;
+> >>
+> >>      mode = &state->adjusted_mode;
+> >>
+> >> @@ -90,13 +109,7 @@ static u64 _dpu_core_perf_calc_clk(const struct dpu_perf_cfg *perf_cfg,
+> >>              crtc_clk = max(pstate->plane_clk, crtc_clk);
+> >>      }
+> >
+> > This function calculates crtc_clk as max(plane_clk, crtc_clk). Shouldn't
+> > we also reject the atomic_state if for any of the planes the corrected
+> > clock is lower than max_core_clk_rate
+> >
+>
+> You mean higher than max_core_clk_rate? If so, yes we can fix that up.
 
-[1] https://lore.kernel.org/all/20240913214205.12359-2-frederic@kernel.org/
-[2] https://lore.kernel.org/all/169972295552.3135.1094880886431606890.tip-bot2@tip-bot2/
-Reported-by: Vlad Poenaru <vlad.wing@gmail.com>
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
----
- kernel/sched/completion.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+Yes
 
-diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
-index 3561ab533dd4..b79d0868f997 100644
---- a/kernel/sched/completion.c
-+++ b/kernel/sched/completion.c
-@@ -30,6 +30,13 @@ void complete_on_current_cpu(struct completion *x)
- 	return complete_with_flags(x, WF_CURRENT_CPU);
- }
- 
-+static void complete_ipi(void *arg)
-+{
-+	struct completion *x = arg;
-+
-+	complete_with_flags(x, 0);
-+}
-+
- /**
-  * complete: - signals a single thread waiting on this completion
-  * @x:  holds the state of this particular completion
-@@ -44,7 +51,23 @@ void complete_on_current_cpu(struct completion *x)
-  */
- void complete(struct completion *x)
- {
--	complete_with_flags(x, 0);
-+	int cpu = get_cpu();
-+
-+	/* The scheduler might queue an ignored hrtimer. Defer the wake up
-+	 * to an online CPU instead.
-+	 */
-+	if (unlikely(cpu_is_offline(cpu))) {
-+		int target;
-+
-+		target = cpumask_any_and(housekeeping_cpumask(HK_TYPE_RCU),
-+					 cpu_online_mask);
-+
-+		smp_call_function_single(target, complete_ipi, x, 1);
-+		put_cpu();
-+	} else {
-+		put_cpu();
-+		complete_with_flags(x, 0);
-+	}
- }
- EXPORT_SYMBOL(complete);
- 
+>
+> >>
+> >> -    clk_factor = perf_cfg->clk_inefficiency_factor;
+> >> -    if (clk_factor) {
+> >> -            crtc_clk *= clk_factor;
+> >> -            do_div(crtc_clk, 100);
+> >> -    }
+> >> -
+> >> -    return crtc_clk;
+> >> +    return dpu_core_perf_adjusted_crtc_clk(crtc_clk, perf_cfg);
+> >>   }
+> >>
+> >>   static struct dpu_kms *_dpu_crtc_get_kms(struct drm_crtc *crtc)
+> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
+> >> index 451bf8021114d9d4a2dfdbb81ed4150fc559c681..c3bcd567cdfb66647c83682d1feedd69e33f0680 100644
+> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
+> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_core_perf.h
+> >> @@ -54,6 +54,9 @@ struct dpu_core_perf {
+> >>      u64 fix_core_ab_vote;
+> >>   };
+> >>
+> >> +u64 dpu_core_perf_adjusted_crtc_clk(u64 clk_rate,
+> >> +                                const struct dpu_perf_cfg *perf_cfg);
+> >> +
+> >>   int dpu_core_perf_crtc_check(struct drm_crtc *crtc,
+> >>              struct drm_crtc_state *state);
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> >> index ad3462476a143ec01a3b8817a2c85b0f50435a9e..cd7b84ab57a7526948c2beb7c5cefdddcbe4f6d9 100644
+> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> >> @@ -1257,6 +1257,7 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
+> >>                                              const struct drm_display_mode *mode)
+> >>   {
+> >>      struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
+> >> +    u64 adjusted_mode_clk;
+> >>
+> >>      /* if there is no 3d_mux block we cannot merge LMs so we cannot
+> >>       * split the large layer into 2 LMs, filter out such modes
+> >> @@ -1264,6 +1265,17 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
+> >>      if (!dpu_kms->catalog->caps->has_3d_merge &&
+> >>          mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
+> >>              return MODE_BAD_HVALUE;
+> >> +
+> >> +    adjusted_mode_clk = dpu_core_perf_adjusted_crtc_clk(mode->clock,
+> >> +                                                        dpu_kms->perf.perf_cfg);
+> >> +
+> >> +    /*
+> >> +     * The given mode, adjusted for the perf clock factor, should not exceed
+> >> +     * the max core clock rate
+> >> +     */
+> >> +    if (adjusted_mode_clk > dpu_kms->perf.max_core_clk_rate / 1000)
+> >> +            return MODE_CLOCK_HIGH;
+> >> +
+> >>      /*
+> >>       * max crtc width is equal to the max mixer width * 2 and max height is 4K
+> >>       */
+> >>
+> >> ---
+> >> base-commit: 423c1c96d6b2d3bb35072e33a5fdd8db6d2c0a74
+> >> change-id: 20241212-filter-mode-clock-8cb2e769f05b
+> >>
+> >> Best regards,
+> >> --
+> >> Jessica Zhang <quic_jesszhan@quicinc.com>
+> >>
+> >
+
+
+
 -- 
-2.43.5
-
+With best wishes
+Dmitry
 
