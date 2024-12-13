@@ -1,188 +1,199 @@
-Return-Path: <linux-kernel+bounces-444604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A8C9F096D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:28:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB63B9F0973
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:29:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA9C8165592
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:29:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C939C1B87EA;
+	Fri, 13 Dec 2024 10:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hCOZoeP2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB502838A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:28:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604E41B87E8;
-	Fri, 13 Dec 2024 10:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpRcZmyr"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9BA1AF0BA;
-	Fri, 13 Dec 2024 10:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836791AF0BA;
+	Fri, 13 Dec 2024 10:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734085710; cv=none; b=XXfWhyMtcUltnyV/S/BqdHHImCqUQrK5/inFSZ8hEF8bLV/+sOeI41a3VOAfJ4mxaZMStrKBCmcnfJwa5/j86QlpiqIgT9X8LJnc7yMryhmO7SIyHs5LYcj3IehXJojxCljq3T4crFP0u1oGZJm6DOokrbIIIrRWcWMEyRoaSYc=
+	t=1734085738; cv=none; b=n4vaNbj7H1yHw89QDDWzM6ZyzPLLP/481gbfcsgfzBEi36ZPDvYJXyB3fffT0MhkFE+ztFTd1tiTBQCH2+nXd4kIFFX8juyBGVh9wICC739TzYdgaC1x7tMEBfF6Lld5byykiTNYbg8bmbTUvxeBENY1mIaBvQOAAOutk8ErMjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734085710; c=relaxed/simple;
-	bh=XsrY83B2NDr3SjOMmv0QjTOwRJyParKulTQwwFd1QK0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aozxqN+JAnREyRF4/GBfACEKOhjfvh53vLyKjeem9GbwvjQT+eS2Ryoc2RRpv8Axb0Ltm2OkKUESA6QBnL5V+W7CVDNFzmtaWb0JWhCo4k6Ag6DQ4GhCEx20AYr7iBsXOiD2AaMZ/f0zEy0bUKxuIe9J8sib30KlOucA7IxbHVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpRcZmyr; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d3bdccba49so2792571a12.1;
-        Fri, 13 Dec 2024 02:28:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734085707; x=1734690507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pB3X14PXp5zWzZdZYfYtvpoLg+Uk1L/28oXElwNGNQM=;
-        b=fpRcZmyrr0BomZrWzlAIZwRzpi/KRANbQy6ZqepwQinyxGwxb2ddc3yuWpnanpodZn
-         yVF9EsLQDYEIlcdXTgAcw90oqEiohiu/n9jDZqhU5iGmMqWakHgtTBET898+M44RyNQB
-         E3eSl0Yhsc2m2y+R5WSNez3oRiPnswCUuT7o7NoRJKUfKurpBRl8Hb1xxuCmBMnr0rZh
-         iRc7v7N+c27Z/3ttuBP5/eyWQZ5JwMRA0lDpFipuhmv5UZIvaI7PnOSA92B/3WXA/IRS
-         UrjX2Wc2GQEWIN6tsFbjYU5/ZllcwgD1mWfd+jUKrUq/3PhZs/0B+IWS+9veDM+BxYuq
-         ctuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734085707; x=1734690507;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pB3X14PXp5zWzZdZYfYtvpoLg+Uk1L/28oXElwNGNQM=;
-        b=L+kTnEEXeGf0fZLrn+nmnp+VVRmwYTlHbOLtY+VAyI9yAdgSckfnKqxYttQU7XC18e
-         F9xYIj/2zSkm9Wplc3M4MIycBwAn8bziHfHjn2RFKqDF5YzZC1BkK/cnKpWfweLO6boU
-         oV8c53EOVHiJznJTEsjGzPFQfrKwbB+Y1+4xCU5/RZDzfXI/5QDJVpxeDgXx9p9h8Rwm
-         TvTRiiujBJlzN+u00ynwZeAN4kYHtYAv+Zm93n32oOf9foZx3TYMMS+3XWbi6NQCBbOs
-         SSGe6mR+IYiKpReLZF03IKe3KZJuqfOf0/pH8NvS2Zco/6P9ajk+ygUDYA2QANl9EWv+
-         4Wxw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2lfXUwAM7Kiua+FUdnYYRxJTXpEtnfCiBjuMHS8ZDIbdUh1WTE2i6gjXH74ZVTBNuCTRnFRexi1WqPz9o@vger.kernel.org, AJvYcCV7UnCA5ra9B/gjVD57cY52kOnbdBTIOX3e7whRM/Zrz5xpnVpFwwkVwtat+EKwMoJ96+irRLb7NO1m@vger.kernel.org, AJvYcCXwQSlNl9Kr60D36A8T68AprNCUXP8Diy9PeTgnbK+eYwyUC+jH7vsmd5mJSg82ccjLMoZDcK+ozq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp/mM7/FUwwT0szswGv4AQD15euk4BFLN0uof+LO2DBJNZdG0f
-	mGM83DGFvI/4eMRFbmFgR4tX/F3A5s4m67HEeS74bDOUursj8Mml
-X-Gm-Gg: ASbGncvQPcGkwILqDV81z1mIaTLMWx4k60fW3xwarEgUyUrOZx/YZm16xBP7z7kLICX
-	Nz4yN7hMfolm9Des0aWjQS04c0judt+OF+v/QkVyslNXOA+HRhVtcSpaerxld6FdJQGU3MA5zI7
-	tpnufavdJrtAYbAZ6kBk7oDfGyFofd7TRkOnaKmgXjjcOuDEgrcHq3r+qojZj4OaAn1HTXOFlKi
-	E6rIvXGzioADYLKESWAaVDGNN8AYy+A2vIZFCy1fq9w0TmyOR8tQsk1Tt0Eojb9Js7ZR0K+cC4k
-	g1As7866BWLqLrq2NywertU43VmnyoQzymm/KL41vPr76JBUz9qL7Q==
-X-Google-Smtp-Source: AGHT+IFZxQE+krq/M7jh1dybVLmfsf1m5lOU0V/p6tDh7RuYI2DGId9Qv0f5pkVlUGjsOIut2AxuSg==
-X-Received: by 2002:a05:6402:5292:b0:5d3:ce7f:abe4 with SMTP id 4fb4d7f45d1cf-5d63c3ac7a8mr1613831a12.25.1734085707300;
-        Fri, 13 Dec 2024 02:28:27 -0800 (PST)
-Received: from stefan.beckhoff.com (dyndsl-082-149-178-025.ewe-ip-backbone.de. [82.149.178.25])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5d3eb109bc9sm7957184a12.42.2024.12.13.02.28.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 02:28:26 -0800 (PST)
-From: Stefan Raufhake <raufhakestefan@gmail.com>
-To: krzk@kernel.org
-Cc: sre@kernel.org,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	s.raufhake@beckhoff.com,
-	s.dirkwinkel@beckhoff.com,
-	s.raufhake@beckhoff.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Subject: Re: [PATCH v2 1/1] power: supply: gpio-charger: Support to disable charger
-Date: Fri, 13 Dec 2024 10:28:25 +0000
-Message-Id: <20241213102825.5509-1-raufhakestefan@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <4tvn5k6zbsbyc2n3r2jnkrasyfhzfua4cap6ql65yjfmwzu3xw@lx6jmqvzypqv>
-References: <4tvn5k6zbsbyc2n3r2jnkrasyfhzfua4cap6ql65yjfmwzu3xw@lx6jmqvzypqv>
+	s=arc-20240116; t=1734085738; c=relaxed/simple;
+	bh=v49punjc8mU97RYfY/bfGjWSOdjVC+SUl68y6pmScGY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ozQUJytOOvgxIJ7NxYTNF9HDUAnyu2XOoc46ObzLOGYNrn0/ylJF5DO+oQJt7s3Bk6TjChhxPzE21eEXtuThjrNl0Hj+xcaPyhoe5by74zlr3H6kB/ZwK088tI2B6o3xCT2zivFsDpUNCSAxGoE0Pv6KDOZNHXEVDIYGqLf34mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hCOZoeP2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCNlbta028140;
+	Fri, 13 Dec 2024 10:28:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FeGtjd3ooOcj/j2uoxhqRcyAT0zdW07RyPWDGJAn9tA=; b=hCOZoeP2tM6Ym54u
+	f/U/OY25aCiS4/R/HzN9GaUafW0NTVOxw1BFM3n2pvYTt1pwis+BOSLXzjbYHG2l
+	fT0Wnz2PHuxIbxNFLBIqX7kLosFKy4AisdW0YiwAH0Jnr/13QozE3VDpz3ECtelu
+	ihMi3ZFdnro35YZmR7NtM+QlDqeizGm+8boNLAHs2wGRwuM7mfM7zv4QOhw80Oaz
+	PCMhUddQ7wrQcpMwIlCOTeWIGXp+f6is92oOo+uzwWFIRZhcBXZIPJOhs4iv6AKF
+	K2CSrR3X1WLCm+p8jclfwAycalsVF9AK1JlY1Mb4z8H/EpwlvwaLBuyadZ/jAfj/
+	HeFE9g==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fxw4u9nn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 10:28:48 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDASlfY006165
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 10:28:47 GMT
+Received: from [10.235.8.17] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
+ 2024 02:28:42 -0800
+Message-ID: <0b9a1e91-a3bb-4cff-96b8-7c5e853354a1@quicinc.com>
+Date: Fri, 13 Dec 2024 18:28:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-Hallo Krzysztof,
-
->
-> On Tue, Dec 10, 2024 at 09:23:43AM +0000, Stefan Raufhake wrote:
-> > From: Stefan Raufhake <s.raufhake@beckhoff.de>
-> >
-> > Some GPIO-controlled power supplies can be turned off (charging disabled).
-> > Support changing the charging state by setting charge_type to
-> > POWER_SUPPLY_CHARGE_TYPE_STANDARD and disabling charging by setting
-> > charge_type to POWER_SUPPLY_CHARGE_TYPE_NONE. One potential use case for
-> > this is disabling battery backup on a UPS.
-> >
-> > Signed-off-by: Stefan Raufhake <s.raufhake@beckhoff.de>
-> > ---
-> >  .../bindings/power/supply/gpio-charger.yaml   |  6 +++
-> >  drivers/power/supply/gpio-charger.c           | 43 +++++++++++++++++++
-> >  2 files changed, 49 insertions(+)
-> >
->
-> <form letter>
-> This is a friendly reminder during the review process.
->
-> It seems my or other reviewer's previous comments were not fully
-> addressed. Maybe the feedback got lost between the quotes, maybe you
-> just forgot to apply it. Please go back to the previous discussion and
-> either implement all requested changes or keep discussing them.
->
-> Thank you.
-> </form letter>
-
-Sorry, it seems I made a mistake during the patch review process. 
-Should I reply to your email about version 1 of the patch or only about
-version 2? I don't want to make another mistake and open two discussions 
-at the same time. 
-I hope to do better in the future.
-
->
-> > diff --git a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> > index 89f8e2bcb2d7..084520bfc040 100644
-> > --- a/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> > +++ b/Documentation/devicetree/bindings/power/supply/gpio-charger.yaml
-> > @@ -44,6 +44,10 @@ properties:
-> >      maxItems: 32
-> >      description: GPIOs used for current limiting
-> >
-> > +  enable-gpios:
-> > +    maxItems: 1
-> > +    description: GPIO is used to enable/disable the charger
-> > +
->
-> You did not respond to my comments, nothing improved. Without
-> explanation based on hardware - which I asked - this is still a no.
->
-> Implement and respond fully to previous feedback.
->
-> Best regards,
-> Krzysztof
->
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com>
+ <20241107-qcom_ipq_cmnpll-v6-4-a5cfe09de485@quicinc.com>
+ <22491b41-f081-45cc-8766-6b4c851516f4@oss.qualcomm.com>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <22491b41-f081-45cc-8766-6b4c851516f4@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Trk6MSK4OVkRuequNOU-GulbC6NbIOIG
+X-Proofpoint-GUID: Trk6MSK4OVkRuequNOU-GulbC6NbIOIG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 clxscore=1015 phishscore=0 spamscore=0 priorityscore=1501
+ malwarescore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130071
 
 
-Sorry, I'm new to this and don't really know what exactly you want for the
-hardware description and how best to represent our hardware in dts.
-For the gpio power supply, it can basically be any circuit that implements
-a "fully charged" GPIO and a "disable ups" GPIO.
 
-We're using a circuit built around the LTC3350 (super capacitor ups chip):
-We use this pin to indicate that our UPS is fully charged (once the input
-is gone, it's not fully charged anymore):
-PFO (pin 38): Power-Fail Status Output. This open-drain output is pulled
-low when a power failure has occurred.
- 
-For the "disable ups" GPIO, we have some external circuitry around the 
-LTC3350. I can't share the schematic, but it boils down to "disable usage
-of ups" so that the device shuts down immediately when power is lost.
- 
-We've implemented this in many of our devices, but first we're looking 
-at [1] and [2], which we also want to upstream the device trees for.
-[1] https://www.beckhoff.com/en-en/products/ipc/embedded-pcs/cx9240-arm-r-cortex-r-a53/cx9240.html
-[2] https://www.beckhoff.com/en-en/products/ipc/embedded-pcs/cx8200-arm-r-cortex-r-a53/cx8200.html
+On 12/13/2024 2:32 AM, Konrad Dybcio wrote:
+> On 7.11.2024 10:50 AM, Luo Jie wrote:
+>> The CMN PLL clock controller allows selection of an input clock rate
+>> from a defined set of input clock rates. It in-turn supplies fixed
+>> rate output clocks to the hardware blocks that provide the ethernet
+>> functions such as PPE (Packet Process Engine) and connected switch or
+>> PHY, and to GCC.
+>>
+>> The reference clock of CMN PLL is routed from XO to the CMN PLL through
+>> the internal WiFi block.
+>> .XO (48 MHZ or 96 MHZ)-->WiFi (multiplier/divider)-->48 MHZ to CMN PLL.
+>>
+>> The reference input clock from WiFi to CMN PLL is fully controlled by
+>> the bootstrap pins which select the XO frequency (48 MHZ or 96 MHZ).
+>> Based on this frequency, the divider in the internal Wi-Fi block is
+>> automatically configured by hardware (1 for 48 MHZ, 2 for 96 MHZ), to
+>> ensure output clock to CMN PLL is 48 MHZ.
+>>
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 16 ++++++++++++++-
+>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 26 +++++++++++++++++++++++-
+>>   2 files changed, 40 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+>> index 91e104b0f865..78f6a2e053d5 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+>> @@ -3,7 +3,7 @@
+>>    * IPQ9574 RDP board common device tree source
+>>    *
+>>    * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
+>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>    */
+>>   
+>>   /dts-v1/;
+>> @@ -164,6 +164,20 @@ &usb3 {
+>>   	status = "okay";
+>>   };
+>>   
+>> +/*
+>> + * The bootstrap pins for the board select the XO clock frequency,
+>> + * which automatically enables the right dividers to ensure the
+>> + * reference clock output from WiFi is 48 MHZ.
+> 
+> I'm a bit puzzled by this comment. Does it mean this clock could
+> run at some different speeds?
 
-For the LTC3350, there is a separate driver posted to the Linux kernel
-mail list [3] by another devolper that we would like to use in the future,
-but without this gpio, our circuit won't work.
-[3] https://lore.kernel.org/all/?q=power%3A+supply%3A+ltc3350-charger
+The reference clock of CMN PLL is routed from XO to the CMN PLL through
+the internal WiFi block.
 
-Best regards, 
+.XO (48 MHZ or 96 MHZ)-->WiFi (multiplier/divider)-->48 MHZ to CMN PLL.
 
-Stefan 
+The CMN PLL reference clock from WiFi always runs at 48 MHZ on IPQ9574,
+but the XO clock could be 48 MHZ or 96 MHZ on different IPQ9574 boards.
+The bootstrap pins select the right divider to ensure eventual clock
+rate from Wi-Fi is always 48 MHZ.
+
+To avoid confusion, I will update this comment to mention that the
+XO clock frequency could run at 48 MHZ or 96 MHZ.
+
+> 
+> [...]
+> 
+>>   
+>> +		cmn_pll: clock-controller@9b000 {
+>> +			compatible = "qcom,ipq9574-cmn-pll";
+>> +			reg = <0x0009b000 0x800>;
+>> +			clocks = <&ref_48mhz_clk>,
+>> +				 <&gcc GCC_CMN_12GPLL_AHB_CLK>,
+>> +				 <&gcc GCC_CMN_12GPLL_SYS_CLK>;
+>> +			clock-names = "ref", "ahb", "sys";
+>> +			#clock-cells = <1>;
+>> +			assigned-clocks = <&cmn_pll CMN_PLL_CLK>;
+>> +			assigned-clock-rates-u64 = /bits/ 64 <12000000000>;
+> 
+> Does devlink not complain about self-referencing the clock here?
+> 
+> Konrad
+
+This code is validated on IPQ9574 RDP433 reference board, there is no
+complaint reported about this self-referencing the clock of the clock
+supplier DT node. It seems the API of_clk_set_defaults(struct
+device_node *node, bool clk_supplier) called by this DT property
+"assigned-clocks" allows this kind of self-reference.
+
 
