@@ -1,160 +1,158 @@
-Return-Path: <linux-kernel+bounces-444725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4929F0B9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:49:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409B69F0B9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A87781886D11
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:49:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784181888922
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED541DEFF1;
-	Fri, 13 Dec 2024 11:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C751C3C11;
+	Fri, 13 Dec 2024 11:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eb0fMbi9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kwNHO1Km"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01DA1C3C11
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AFB4A21
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734090543; cv=none; b=hq/YT/tT4wt4cyj6YX+LgbHZNFB76VzN05gMbm5Jmn+tkxBKGKzFgfwbGgVIG1KjPzMBY+GNhTHfqUxzt/gKc4pH0fbsbLaoS0haa5qFr7AYoGV1lYgv/bbt3SrR+Hcdo39vnQEZwhoym+5hpqm1KIc1NdQbhHqrO7vSxgc4sh8=
+	t=1734090602; cv=none; b=E4l8z7VpQUZPP3f5TC2o6gWoGiREUmhAfmwMBqhf+q3QrgpJY12PBnJdv9/vbI/sVc3tuOGg18NWsyx7aYPDay5AJqMb1G66laH98aY60ahDsVvBzjXhxZUOxlFOWN02AjlihJSarZprVNGvbZ0LykxQFqrH3oVuxcQIFp6O4+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734090543; c=relaxed/simple;
-	bh=QGT2SF2RrviqaJQfbCFot02KwB9XhZnwgAtpBU5l9lM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7v91nKoDn/utZrYimx9djnG22G05tWdERdnWZBBMQSmaBg2vdjRIZZEbYz8zBUB9EP9onft0YDhyHZWApJMmud6fPyP03JEPz47OfVBE80N7LweIx7CypxBPbAiCJFYIsiJc+fll2TtbG7WddofhLx30TxIqi67YnvDjfyqry4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eb0fMbi9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734090540;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Pp0PgMN56ieGrHNFi7i6KMaUXuRE1vzehzF7+bFcb8=;
-	b=eb0fMbi9csmZfFfgPdJx+nxNirr1mG1/M3KNyn+pooCoxN1B1UAjZ+CMFF5n7+Ug51GDej
-	ZgbQ2yvjb+69Tf+lPASDUi49dDcxuwtj3Ib85NDuozXVp6szWwB/JxSyEV+T+gFFc7ym4s
-	qEu8tXybX3sjFKadNQIpDMgYSy+rL1E=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-558-snoktqyoPc2kBngGKok8jw-1; Fri, 13 Dec 2024 06:48:59 -0500
-X-MC-Unique: snoktqyoPc2kBngGKok8jw-1
-X-Mimecast-MFC-AGG-ID: snoktqyoPc2kBngGKok8jw
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d87efed6c4so27397126d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:48:59 -0800 (PST)
+	s=arc-20240116; t=1734090602; c=relaxed/simple;
+	bh=rseqG1N7BkubN/07fCW2g1V5YNbhgZMmYrUXJDT4lHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rU0qGxppoNpfi8MV3vYku98q7JWsnM5jfxeZvmvNkawYZyM+ooIpcqyO18DVDWxcPvkfNliG7WvdPk92Jk/FxKmh1CQmGAfgkDwkEg63KSh8VVs3A7tFEDjLXTVnLSrB66BUdQr6XwEhYJoSZTzxARoXc492G4oHNwELMPZtEwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kwNHO1Km; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54019dfd6f1so209934e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:50:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734090599; x=1734695399; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UZNvkdVhdOTKRjQLQWRnWH7IxlshGdmbBQhAJdL+f3Q=;
+        b=kwNHO1KmTH8zu/hoO3ZP64VuRS4sIeoLta+FafK6O5/yYGcBF87Db3nqf7YTnUxHBP
+         VEK/d22jy96pcGGJXyyWwLDAhLanSbgey51Ut7iN/QB5aQUDRl3BmBhRGKkOjb21BHE+
+         VEvcxVVl0sF52D7rlYulA9DIGONJarmYBVOdMl/29FsegtP+oSQ1dr2Zo5f2y5GCOcDz
+         y6Ql3Q65RWZyx1XvXAkOn3H1xZaYqQVTjSy1+8FCnT5IkoIEdCKhc38FvBO7VykRxln3
+         Sat6oVsDiawtBLLOqqX/HY4B4+umBtTpjw+9SMfBEm0FWPlK8Brz9+umjYh0hSQiNTTb
+         cmYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734090539; x=1734695339;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1734090599; x=1734695399;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Pp0PgMN56ieGrHNFi7i6KMaUXuRE1vzehzF7+bFcb8=;
-        b=MI5IH8VlvfuyKiqlsjgY0Rlu9bmZSis6ezKC3kac9a4erkYrFa0nf2e58YU/ZnEM1s
-         JXdfEmEHdeH80G5hZqDvGpkxAJVBEXk2dTGRmrlqciYe+A/XG65SRFuNYItGL1qvQzt7
-         hRS9OALDAC187764ElzNuu8+efsM8NOi7lls5fs2x4NVXUSLBXMC8u9hSZbWQsdbdonw
-         0gefgYdzSKrzCgvQhfM65+chJQGVRVxFUDkDGrN69AOQqW23+QwQC1MCM6O3C0VJsUnx
-         JQw2WkXgaga5x5vFnpVnh3xV2+IM1STwwBHAthMYj9OikibhthLcEpuzmtSW7G3/9jeo
-         M0vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKG5gpt2HmfWxdkLXW/lLaFdtq8lMjSMfodm4HcEbwzsysCT3nXLv9GY8IeBTd9vX1hcwVsjU8V3hOVMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvjDgNN5+e3BJYeot2WaNOrjTUTA8Jn537CMIrgjQIuQ2W5+qi
-	9vsfjJ3d/amfQyqqpohcbSuqKu3Ouegxnzy+KzY2rGScRd+U64ryG8blkAMXfXs43k2pgCKGvft
-	z/+dslPUvWHCG7auESbDr0ROwNineZLAKU8/pnOqItAObtXcTJ47Ck3COai5EHg==
-X-Gm-Gg: ASbGncs2EsaBXVAJmEYwGShwqHiNc5bEnfwbQKFwRxf1YLP5aZ0sud7x/C8OQ6eidio
-	iirDcvDu2BoWd5RoqMxx7kKFyDN8J4TnXXikL/qZ9lf4xPwYEWImtzPn28JqEdeV5GVrN4M96bc
-	NpHSHtCK6bfI+Hw6OP2goBmITXB2cS1VWbYO/Bt4jBdsLTJ0hg936yXpjp/AOoPYdUlF60VwJHy
-	ZYRX6nsMNOP9vg4rqVyRb9AWdTyuC44k0SkjQnIvtnRnxzn0IpotvZyaiJQsA85I1/eQo+L7mKp
-	uYfcu13x9SjkqMOLtH42e1U0CGPO/D0j
-X-Received: by 2002:a05:6214:2622:b0:6d8:a5dc:866e with SMTP id 6a1803df08f44-6dc96998c54mr41274686d6.47.1734090539034;
-        Fri, 13 Dec 2024 03:48:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHVe9Bmg971vhiBdlReKshUrR7Ut9jwZGEsYOm0pIixkfuL80sk4rWNQhEv9/FV31WsOy9c9w==
-X-Received: by 2002:a05:6214:2622:b0:6d8:a5dc:866e with SMTP id 6a1803df08f44-6dc96998c54mr41274186d6.47.1734090538603;
-        Fri, 13 Dec 2024 03:48:58 -0800 (PST)
-Received: from sgarzare-redhat (host-87-12-185-21.business.telecomitalia.it. [87.12.185.21])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da673441sm90963686d6.1.2024.12.13.03.48.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 03:48:58 -0800 (PST)
-Date: Fri, 13 Dec 2024 12:48:50 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-coco@lists.linux.dev, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Peter Huewe <peterhuewe@gmx.de>, "H. Peter Anvin" <hpa@zytor.com>, 
-	linux-integrity@vger.kernel.org, x86@kernel.org, Joerg Roedel <jroedel@suse.de>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Claudio Carvalho <cclaudio@linux.ibm.com>, 
-	Dov Murik <dovmurik@linux.ibm.com>
-Subject: Re: [PATCH 3/3] x86/sev: add a SVSM vTPM platform device
-Message-ID: <4valfkw7wtx3fpdv2qbymzggcu7mp4mhkd65j5q7zncs2dzorc@jjjevuwfchgl>
-References: <20241210143423.101774-1-sgarzare@redhat.com>
- <20241210143423.101774-4-sgarzare@redhat.com>
- <f8c6c1e0-a42d-6fa6-a10e-925592d7992f@amd.com>
- <9083d4cd50649ea1971e31445c554f44e8d12bf9.camel@HansenPartnership.com>
+        bh=UZNvkdVhdOTKRjQLQWRnWH7IxlshGdmbBQhAJdL+f3Q=;
+        b=AvZRbImL/v9S1w1BdgncWXpwmTlwRMUq5EmKW0lEO1bnMbsarv1bpEkB5T0LWVhkBP
+         DK1htlkTT0HQ57GaJV66HMzZaff8UqcC13+MQwbFVDa2iQGCtlssB0WA+eXI8EbvOVA/
+         /aQpY+3/3QixKzEdHnCJR09eyNI1mTB1MTsd/9F6XvTC5ZDCufiMgJ/BEAOoRjC45RtM
+         Fcc2JhmN1kwuweWaH6+ZjFhaUSI6CyxrnU5EwpX4sPdYvI29vyUpp8XmkCXTwkOkwlhO
+         LOJzfHzylRb7zQSRvryMMo7Bn1Xmjn1RkJf6B713TTjgeI72dqGKtcfS2ymXcZHn5uTy
+         9gLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmxAfZrFtVy9lhLxEu3lL+imygQHrs+dbE6CWmP736nTSP7QBnrq2xqhVfg89/YtdeIJmFsBnHMZ10/dA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLFQ0YRRNCyWk10I8sasiWZeUquLTvFrSMH5cvrPrq8gQR9sS5
+	0tka2vAR1unOnL98Aw1N8PgPKnIfCjf5Xln/aMBPr3BYljGCKorUquqcFOQ9WjQ=
+X-Gm-Gg: ASbGnctO0nh+kOWvWZfjIa0wUobV7BFun1yAEcvNXzCeD/APE0LlMy3B7tXkQMOHSz8
+	mV9DSG+p7I8+taEiL7rsJBMbSHkuKibSEnsrI3o1bgUvsSk9rvFGQsgaf2tZ/G7IiPinTinC/y5
+	oLEkA5mUoARPjUHxiID/35yUTg83VUyrTfcVzCX0pEajWEgQYOox+XNQwa8yV2XfOhDrTxL/sio
+	0MnWJwg0ce0ZUYlKGkE4AJ3bpmS9dtatFLrKmCDtpvqhiLfPEnzcRfj0NOlMdS+VVey6J0iO+dz
+	PFCg1KnxtY+JPxrekmffbOcEAkxxDNne1Y8=
+X-Google-Smtp-Source: AGHT+IE7DQ2pj/KUeERm3qCZ9d65Km3gnEvSTNiDUBZ2SHDIDeNSeDP69n07wAfxEAhqwpPx2pLp1g==
+X-Received: by 2002:a05:6512:6c6:b0:540:2300:25d2 with SMTP id 2adb3069b0e04-54099b72a8cmr257596e87.14.1734090598971;
+        Fri, 13 Dec 2024 03:49:58 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53f4001fb53sm1948890e87.157.2024.12.13.03.49.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 03:49:57 -0800 (PST)
+Message-ID: <12618e8f-6f7b-4578-8315-1dc3d7049688@linaro.org>
+Date: Fri, 13 Dec 2024 13:49:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9083d4cd50649ea1971e31445c554f44e8d12bf9.camel@HansenPartnership.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] media: qcom: camss: Restrict endpoint bus-type to
+ D-PHY
+Content-Language: ru-RU
+To: Luca Weiss <luca.weiss@fairphone.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Barnabas Czeman <barnabas.czeman@mainlining.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+ Caleb Connolly <caleb.connolly@linaro.org>, David Heidelberg <david@ixit.cz>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
+ <20241209-camss-dphy-v1-2-5f1b6f25ed92@fairphone.com>
+ <9c89e6f4-a9af-4270-b266-537f3464ee32@linaro.org>
+ <a047e4b8-c2d6-4486-8037-e7b854660cb1@linaro.org>
+ <D6AJ8KNRUHB7.1EC9O3WSCSNIP@fairphone.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <D6AJ8KNRUHB7.1EC9O3WSCSNIP@fairphone.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Dec 11, 2024 at 12:02:49PM -0500, James Bottomley wrote:
->On Wed, 2024-12-11 at 10:30 -0600, Tom Lendacky wrote:
->> On 12/10/24 08:34, Stefano Garzarella wrote:
->[...]
->> > +static bool is_svsm_vtpm_send_command_supported(void)
->> > +{
->> > +       struct svsm_call call = {};
->> > +       u64 send_cmd_mask = 0;
->> > +       u64 platform_cmds;
->> > +       u64 features;
->> > +       int ret;
->> > +
->> > +       call.caa = svsm_get_caa();
->> > +       call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
->> > +
->> > +       ret = svsm_perform_call_protocol(&call);
->> > +
->> > +       if (ret != SVSM_SUCCESS)
->> > +               return false;
->> > +
->> > +       features = call.rdx_out;
->> > +       platform_cmds = call.rcx_out;
->> > +
->> > +       /* No feature supported, it must be zero */
->> > +       if (features)
->> > +               return false;
+On 12/13/24 13:22, Luca Weiss wrote:
+> On Fri Dec 13, 2024 at 12:02 PM CET, Vladimir Zapolskiy wrote:
+>> On 12/9/24 14:32, Bryan O'Donoghue wrote:
+>>> On 09/12/2024 12:01, Luca Weiss wrote:
+>>>> Currently the Qualcomm CAMSS driver only supports D-PHY while the
+>>>> hardware on most SoCs also supports C-PHY. Until this support is added,
+>>>> check for D-PHY to make it somewhat explicit that C-PHY won't work.
+>>>>
+>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>> ---
+>>>>     drivers/media/platform/qcom/camss/camss.c | 9 +++++++++
+>>>>     1 file changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+>>>> index 9fb31f4c18adee886cd0bcf84438a8f27635e07f..b99af35074cdf6fa794a0d2f0d54ecf12ac354d9 100644
+>>>> --- a/drivers/media/platform/qcom/camss/camss.c
+>>>> +++ b/drivers/media/platform/qcom/camss/camss.c
+>>>> @@ -1855,6 +1855,15 @@ static int camss_of_parse_endpoint_node(struct device *dev,
+>>>>     	if (ret)
+>>>>     		return ret;
+>>>>     
+>>>> +	/*
+>>>> +	 * Most SoCs support both D-PHY and C-PHY standards, but currently only
+>>>> +	 * D-PHY is supported in the driver.
+>>>> +	 */
+>>>> +	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
+>>>> +		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
 >>
->> I think this check should be removed. The SVSM currently returns all
->> zeroes for the features to allow for future support. If a new feature
->> is added in the future, this then allows a driver that supports that
->> feature to operate with a version of an SVSM that doesn't have that
->> feature implemented. It also allows a version of the driver that
->> doesn't know about that feature to work with an SVSM that has that
->> feature.
+>> Looks like it would break all old board dtbs, which is not just bad, but NAK.
 >>
->> A feature added to the vTPM shouldn't alter the behavior of something
->> that isn't using or understands that feature.
->
->I actually don't think this matters, because I can't see any reason to
->use the SVSM features flag for the vTPM.  The reason is that the TPM
->itself contains a versioned feature mechanism that external programs
->already use, so there's no real need to duplicate it.
->
->That said, I'm happy with either keeping or removing this.
+>> V4L2_MBUS_UNKNOWN shall be properly handled without the risk of regressions.
+> 
+> Please see drivers/media/v4l2-core/v4l2-fwnode.c around line 218.
+> The code there sets bus_type if it's UNKNOWN
+> 
+>      if (bus_type == V4L2_MBUS_UNKNOWN)
+>          vep->bus_type = V4L2_MBUS_CSI2_DPHY;
+> 
+> So setting "bus-type" in dt is not necessary, even if it makes things
+> more explicit from dt side. I don't think we'll ever get UNKNOWN here in
+> camss.
 
-If we remove the check, should we print some warning if `feature` is not 
-0 or just ignore it?
+Thank you for pointing it out, I haven't tested the change yet, but hopefully
+I will find time today to do it later on, it should exclude any doubts.
 
-Thanks,
-Stefano
-
+--
+Best wishes,
+Vladimir
 
