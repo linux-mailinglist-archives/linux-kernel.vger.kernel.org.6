@@ -1,73 +1,79 @@
-Return-Path: <linux-kernel+bounces-444977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CCF99F0F76
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:47:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED69C1654E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:47:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E801E1C01;
-	Fri, 13 Dec 2024 14:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YrBcLVhV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FC59F0F78
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:47:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE00F8F5E;
-	Fri, 13 Dec 2024 14:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ACEA2834A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:47:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7291E1C1A;
+	Fri, 13 Dec 2024 14:47:47 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31CA1E00BF;
+	Fri, 13 Dec 2024 14:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734101240; cv=none; b=JEGYpyaE01yEQXxbDWuhnpgPgeElsvwLODR3/dc32Zo/UdLOQlxx/WUf7OpcF/CG73upyzVkrRk9DxngrYnZTVVWpMdm5YdRCGCzc1KACL3dFTrsFtbwJBqi1xiUVav9z7fD+PWWHvUJ5vQ0nlDa9/5GMJqYzeS2F1vNvsAoZbM=
+	t=1734101267; cv=none; b=gbsj7I9pYE5tYT920LBCKoHYF8vx8/OGryZfE779Nely5ACOYv9vFIOjHBnLJwv80gUuXwk3nXwZbX5XJNIWGYeFLOx/O6YBffDRTTy14PEoPxX279me72uUsj9kpiwCN2Hbz2OAwkZyXqvwYstgKjIe0+DIftZonRRNFNJHNC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734101240; c=relaxed/simple;
-	bh=hPlLyQyT9q+n+xhlDjjfNeo4Y/HqzccMYlpGK2+cwNk=;
+	s=arc-20240116; t=1734101267; c=relaxed/simple;
+	bh=L6CFcyMqqVLdt5CWJ0q58cYARtig/SXPSyyR5Z3hqe4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8sheohaH+n6djb3pqPpzAf3P5LWvL1E/pN0GTolrgujSHYO72INRg7joGUJmS0l4bDRy5fMHTZpmn+zQlln77TGYY4nRj94KLOK9VzeuezOf8XwQEt67y6A+v5AFb0z56SyBiUM0RYdNhwcOfYZy8aTr7nsznv6PeeLr5TYBys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YrBcLVhV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19859C4CED0;
-	Fri, 13 Dec 2024 14:47:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1734101239;
-	bh=hPlLyQyT9q+n+xhlDjjfNeo4Y/HqzccMYlpGK2+cwNk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YrBcLVhVf55qyf4t+A/U94wBTfU7QU8DDJ+tyYZGGP1xHbi+/Hpnek8vao6n9YtGw
-	 ISfYubhYVJkJAbNR/xxfpetROzvPILxW6zeXv4EOzuKm+Cj12wQAP0SvJR/2fvbRjt
-	 QMH/+N+R8YftXrnMGztKOVKLhaCsgctyY5OyFA8Y=
-Date: Fri, 13 Dec 2024 09:47:16 -0500
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v11 0/8] Rust support for mm_struct, vm_area_struct, and
- mmap
-Message-ID: <jc7vl3ltqage7v3desza5ftav6mrgagbczn6pbzv6c4fnyfgqa@xcsquxientfz>
-References: <20241211-vma-v11-0-466640428fc3@google.com>
- <CAH5fLgiB_j=WbTqFs6o9-WaUOHC_-0+nPXT_PYD_1bZ75+2wBg@mail.gmail.com>
- <dvpyp2d4rrxdzdcyu3mh3wdsegi5qcmnp2hitfu4guft2igacg@xfvixz3tsiss>
- <CAH5fLggpBTZ7E4M5W7fN928z82_+zpD3kpvxinG9nfsu07Wkuw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jhFCr80u4UeNEtxyeAdvlTt5wpFq0yUE6Xzdc4bNjp/DeSNrc5doQPF7Bt1mrrdktGP6VXN0iUKBHD4ur5wIXV+QeuwQquvx2TCrRzc6vGeJMNAmqOGbgx8oduCH5LrL8p9lFJfw+7YAP935pjFsPcBFWKA2wvEyEjbgSTrHZ2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id AAEFB68AA6; Fri, 13 Dec 2024 15:47:40 +0100 (CET)
+Date: Fri, 13 Dec 2024 15:47:40 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	ritesh.list@gmail.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v2 2/7] iomap: Add zero unwritten mappings dio support
+Message-ID: <20241213144740.GA17593@lst.de>
+References: <20241210125737.786928-1-john.g.garry@oracle.com> <20241210125737.786928-3-john.g.garry@oracle.com> <20241211234748.GB6678@frogsfrogsfrogs> <4d34e14f-6596-483b-86e8-d4b7e44acd9a@oracle.com> <20241212204007.GL6678@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAH5fLggpBTZ7E4M5W7fN928z82_+zpD3kpvxinG9nfsu07Wkuw@mail.gmail.com>
+In-Reply-To: <20241212204007.GL6678@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Dec 13, 2024 at 03:42:48PM +0100, Alice Ryhl wrote:
-> Could you print an error if the --- is missing, that is, if the number
-> of sections is incorrect?
+On Thu, Dec 12, 2024 at 12:40:07PM -0800, Darrick J. Wong wrote:
+> > However, I still think that we should be able to atomic write mixed extents,
+> > even though it is a pain to implement. To that end, I could be convinced
+> > again that we don't require it...
+> 
+> Well... if you /did/ add a few entries to include/uapi/linux/fs.h for
+> ways that an untorn write can fail, then we could define the programming
+> interface as so:
+> 
+> "If you receive -EBADMAP, then call fallocate(FALLOC_FL_MAKE_OVERWRITE)
+> to force all the mappings to pure overwrites."
 
-I don't think that's the right way to go, either, because the number of "---"
-sections can vary (including having none at all). Throwing an error when that
-happens would just annoy a different set of people.
+Ewwwwwwwwwwwwwwwwwwwww.
 
-I'll think of something.
+That's not a sane API in any way.
 
--K
+> ...since there have been a few people who have asked about that ability
+> so that they can write+fdatasync without so much overhead from file
+> metadata updates.
+
+And all of them fundamentally misunderstood file system semantics and/or
+used weird bypasses that are dommed to corrupt the file system sooner
+or later.
+
 
