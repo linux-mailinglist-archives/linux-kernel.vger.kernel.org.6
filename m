@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-445329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692109F14B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:07:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF989F14B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:09:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72CA188CDB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:07:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544CE282C10
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902D71E8836;
-	Fri, 13 Dec 2024 18:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214BB1E377E;
+	Fri, 13 Dec 2024 18:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+l/BTB0"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WMcjDWjC"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7209F1E5702;
-	Fri, 13 Dec 2024 18:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E3B824A3
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734113226; cv=none; b=g3p9k/Z6Ch5pn0ExQvPoe0P0vy4B82NF+1BA2Qcn2MWWdmpTuQhug0ziZqitdeCm2OapOE+JjOmlAxouqwU3uiRjGqxvD6dxgZXg+g9DEgFK7i42jEGZnzNcBzwv124XjVwDLt1BL0duQ9Bkd++R2MjpHPiMtTiT/zcXIaHSQLE=
+	t=1734113356; cv=none; b=BjY+nlYclqoEcNycikseXXYvQhd6cg9wZSwg8ZVTl4TgbKGsGeG6Y15I+1hnzlvW+0Os3zWxZlN3kwFXYQEy3a5IIRFmkcXBoGmplFrja/R1iP4sC5jTyClXYi/pl6yGnZVmHFBHtrB6lYV2fi10TXRSVpr4+9UXzdM+QdUYYdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734113226; c=relaxed/simple;
-	bh=y76mljT7nOJZX+9smI4E5kVDv3j7iyA7b79w8knGirA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LPKouUsJEgUTRybCd9C7NrQvoAa/PWfLDLeJVNu/bK8U1jtGcpHUHD8Mv7eIBaW3BaPhEYLbEtXQS5RXqns0I5MfOpU1sABl5dhTGrBHYJ8hEbGDzN8KjoJSSXdiTLZN058k/zR/hEnsl6bzcLhZ2jrSo6LaFfnKVgkXRxrqR2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M+l/BTB0; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6ef60e500d7so16059307b3.0;
-        Fri, 13 Dec 2024 10:07:04 -0800 (PST)
+	s=arc-20240116; t=1734113356; c=relaxed/simple;
+	bh=2FkUQMX1Wz7gCMohsC4is4/F6UOzBSxDPYQwoMWH53A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OkaNcnQQ2CH63Pqz8230NdTEUQFbjIk8C9QerhrT7zN8sHFHmygWDvNblgf3NBeO8Odc0Q3zJ+Y8JhKfNJ++2F7/9ZyWKygM87UwaGLwBFegWKfTjOPQdKiBfnkMHL3TU1F3Qip+AOwAJVp4yfz4flhCXvN+b04aK/VwkhqlEFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WMcjDWjC; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2163b0c09afso19841655ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:09:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734113223; x=1734718023; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O5xb26hD12aHWKTOlfWO8Uk9hIxk2tJj/0+ghr1aXpA=;
-        b=M+l/BTB0AHDqJ/eHFnIKA5x+NLN8n34k81mT8yWtVYO69pZzlCOdfRsVLQa/6ZGnke
-         YpH1liL33laZfoHNblzkKGAXzW/mFAJS4b9eA53Ha/GL2sMe4N7Camo9LD4Gv7+Uk2/h
-         8N4crUk3ZfP1H358zwMR+ZUKStHGqIUhyLwOXZ7MdUQJPNgMBvieTFm3OOVg6NhQJS0d
-         rU/36eNCV6VTGB0SvocImzTQeB2iWYyUEcRkkAlG4d1amRv2VsR8CJyPDbSFcarnRHoC
-         fntGMLEN6i7oWyW7sv6kBehM8cjMQR8r33Q8HvpeiTKLExrUTO1g4mpRa4plEJxVjDmH
-         GkMw==
+        d=chromium.org; s=google; t=1734113354; x=1734718154; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xHvnRBAgWIA4Hg5hzc9AixQBc9yGg8x7tmWobIWOu2Y=;
+        b=WMcjDWjCn3c9amKhFuko+wJEhS9p8mBaBcqfjbwIjyXHalGRrygjW8C150TGI1/W2R
+         psFz+/9bzl8acM/XM+EK5c+pS91SxBJ4zs/8LlA96UhNfnTtl9jMfOEA/X0j94pPwXvQ
+         /bjsfZhMmrxL+SBzKcFZHXNavbvvNTN9P2P9k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734113223; x=1734718023;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O5xb26hD12aHWKTOlfWO8Uk9hIxk2tJj/0+ghr1aXpA=;
-        b=HXjyIJ59aZd5qwnIkazFKthOe3TARVtNgqEei9keEAdq3JupVPCMWpiHml448zd1Ls
-         WilyHjJ3GHdDcMpOPL+2B9Nv3hdEc7l3vKZDJl6pzHTxT4kTq7bYg7qcGKh5QR2FrW3W
-         SQPZWFYfL2g/tMGIY+OGDctRyrOdgODl4dJFz2O56t1aXW3B1KKKew7TJfWP+pxxD7V4
-         hfO4uYDlMB7On7F5RgBVXvVEp8kqolxVhTiG3ebYkIgqGoL5I2pwBS8oRQlsPoalgX6T
-         FsFmt59QBUcNYYp316EYTOZER9zM1DHxrFooaW5BoruRFqExDbq/Uz+JgkK6AbrwMjiu
-         jLsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDYCEyV5pn2mmxKE6OME2w7uc7VkWLN35/u11Ev3WZStqdynRmJ7kslf29c/sXY7jmnNFyYrS24FVErHk=@vger.kernel.org, AJvYcCXI4wA1EWqq1lWK5V14bGSi3H0CjQuYmOtQvR31Kgp7mpeQ3bBx9W8LCCc3XYRyGMmnMfmc2A87APetpiaTaO/6lQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKrjva6PgSAuIpVG/wN8QOHxH1TWCRZC4Ih1/DHu7JEeIM3Gs7
-	pfWQjxEX93ruKSKGfeH2oYw7Iy6L4LYyNBQ+WimDkNhhxo/fi7ZnuosDambHuoja/kUPcaEeuAz
-	V9qie67KnnG9DqBOhp7qlArPxbcYEPwb8Weo=
-X-Gm-Gg: ASbGncs0lFilKz+sQ5JJbh72/JpLfjRT/X5i85kDOKnRQL4zqNwNcfg3n8rxv4hi9gW
-	SkbUAgq0B9BjeD+iM+2npGVKLM7nmi2DLLhHj
-X-Google-Smtp-Source: AGHT+IEU/Pl66E2SGbCipCacLGs2IlPhoT5fb9enrA2EO5P5qYiujXvFk6Y8kq43fObhg6+YWse1ZKwyPwrBWiCX8CM=
-X-Received: by 2002:a05:690c:60ca:b0:6ea:7afd:d901 with SMTP id
- 00721157ae682-6f279b15cdfmr27422567b3.18.1734113223468; Fri, 13 Dec 2024
- 10:07:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734113354; x=1734718154;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xHvnRBAgWIA4Hg5hzc9AixQBc9yGg8x7tmWobIWOu2Y=;
+        b=NczLX4bvK9qfVcoC/O2E62K++igDDirTXtmT0I9qkAChl0kc8exiHU69pA6Pw+c41B
+         /By2ufXrsgV/yRUr7ZbSxeqPCWjjVR2obwu4L7P+u38tIBGJv/prV+kNO2vrpE7gEX/f
+         6vooHn6bOf8EA7xYBC6qfhWW8lwxmy4jGov0F/fAUzcpR2sea0BymYtALgux9GZPyKhy
+         pG7iY7lJgdHO/yRsfiE5XbpwqzLD2QJbxScFOv1DMdcqQTESY71sYWAWcIOUFiy26HbL
+         ouOUEIotDTqeWndiSRtSodjQDkSuJ/ds+2zXXhF2csIQf4CSngDiu2ZjtREoUpa7mvov
+         eF2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUrVxBFnRie5QvowFsKmywq/mYge9kNgCS4bHnSAaIilU1HkQ7X/1dNpPGHqecE3u7y/X+vi+QlNUAOjPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCy8FcIk4lfak/Yqzb34zb55wNbiXO5sVg9AT45XcLaS1avQry
+	ySM8dk/NdJRyboFxP7PwDwcnQLGgXCr6iEAkiXhT40rVmGaKkJpUQ6mgR2q+VQ==
+X-Gm-Gg: ASbGncuIlE7aqWKWGJ7Lmmw3885OxMygt0b8XF2Hmg6f2Tb4jayNvxNxyZy99aDLNF9
+	4Bnud1kyiWAaXKzY6x/jcRmW5Nk1kd02Ln89kuZ9kkUA/z9tEszmPmAnEzZ1YZqExGYomYa+9Ti
+	4UZw27Rvfj6uPcvjXRYBAl46epFzbvC5XRaVrUsGIPg6pLXlfWugF0XzcorEyvSXDw/qcABMCj3
+	768xHGGEZXFY0IIiLKZTr0jdCAvEF7YkSB+o4T8iZrcvX8k5QuNOY39iHbhtBnfhXsdXh02Ge28
+	z2iy8k2soKUomTEJ7w==
+X-Google-Smtp-Source: AGHT+IG1HsmkzaKGdsmHNaYqVpdfLznabnEnuLB97sA8uGNrKH90vnL20KSruZDKaLUaHNEBxjTn9A==
+X-Received: by 2002:a17:90b:3d4e:b0:2ef:67c2:4030 with SMTP id 98e67ed59e1d1-2f28ffa7efamr5275060a91.27.1734113354488;
+        Fri, 13 Dec 2024 10:09:14 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:356a:489a:83c:f7d9])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-218a1db8676sm646005ad.12.2024.12.13.10.09.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 10:09:14 -0800 (PST)
+From: Brian Norris <briannorris@chromium.org>
+To: Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Rae Moar <rmoar@google.com>,
+	kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH] kunit: platform: Resolve 'struct completion' warning
+Date: Fri, 13 Dec 2024 10:08:23 -0800
+Message-ID: <20241213180841.3023843-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212-void-fprintf_tp_fields-v1-1-b0c23fff4c54@engflow.com>
-In-Reply-To: <20241212-void-fprintf_tp_fields-v1-1-b0c23fff4c54@engflow.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Fri, 13 Dec 2024 10:06:56 -0800
-Message-ID: <CAH0uvoi6=JmtX2xit9y7+NR5O+1S5zbxWpmLpbzC9+9nrkudHQ@mail.gmail.com>
-Subject: Re: [PATCH] perf trace: Remove return value of trace__fprintf_tp_fields
-To: Benjamin Peterson <benjamin@engflow.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Benjamin,
+If the <kunit/platform_device.h> header is included in a test without
+certain other headers, it produces compiler warnings like:
 
-On Thu, Dec 12, 2024 at 7:56=E2=80=AFPM Benjamin Peterson <benjamin@engflow=
-.com> wrote:
->
-> The return value of this function was meaningless and therefore ignored b=
-y
-> the caller. Remove it.
->
-> Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
-> ---
-> This is a small followup cleanup to my earlier commit 5fb8e56542a3 ("perf
-> trace: avoid garbage when not printing a trace event's arguments").
-> ---
->  tools/perf/builtin-trace.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 6a1a128fe645014d0347ad4ec3e0c9e77ec59aee..246be66fd59a4b9d76e4d3c42=
-b68d0a444ca366a 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -3022,8 +3022,8 @@ static void bpf_output__fprintf(struct trace *trace=
-,
->         ++trace->nr_events_printed;
->  }
->
-> -static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel=
- *evsel, struct perf_sample *sample,
-> -                                      struct thread *thread, void *augme=
-nted_args, int augmented_args_size)
-> +static void trace__fprintf_tp_fields(struct trace *trace, struct evsel *=
-evsel, struct perf_sample *sample,
-> +                                    struct thread *thread, void *augment=
-ed_args, int augmented_args_size)
->  {
->         char bf[2048];
->         size_t size =3D sizeof(bf);
-> @@ -3088,7 +3088,7 @@ static size_t trace__fprintf_tp_fields(struct trace=
- *trace, struct evsel *evsel,
->                 printed +=3D syscall_arg_fmt__scnprintf_val(arg, bf + pri=
-nted, size - printed, &syscall_arg, val);
->         }
->
-> -       return printed + fprintf(trace->output, "%.*s", (int)printed, bf)=
-;
-> +       fprintf(trace->output, "%.*s", (int)printed, bf);
->  }
->
->  static int trace__event_handler(struct trace *trace, struct evsel *evsel=
-,
->
-> ---
-> base-commit: eefa7a9c069908412f8f5d15833901d1b46ae1b2
-> change-id: 20241212-void-fprintf_tp_fields-8aaae2f5525f
->
-> Best regards,
-> --
-> Benjamin Peterson <benjamin@engflow.com>
->
->
+In file included from [...]
+../include/kunit/platform_device.h:15:57: warning: ‘struct completion’
+declared inside parameter list will not be visible outside of this
+definition or declaration
+   15 |                                                  struct completion *x);
+      |                                                         ^~~~~~~~~~
 
-Thank you for the follow-up patch, LGTM. Built and tested.
+Add a 'struct completion' forward declaration to resolve this.
 
-perf $ ./perf test "perf trace"
-109: perf trace enum augmentation tests                              : Ok
-110: perf trace exit race                                            : Ok
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+I'm not bothering with a Fixes tag, since this only shows up with new
+tests I'm writing.
 
-Reviewed-by: Howard Chu <howardchu95@gmail.com>
+ include/kunit/platform_device.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Howard
+diff --git a/include/kunit/platform_device.h b/include/kunit/platform_device.h
+index 0fc0999d2420..f8236a8536f7 100644
+--- a/include/kunit/platform_device.h
++++ b/include/kunit/platform_device.h
+@@ -2,6 +2,7 @@
+ #ifndef _KUNIT_PLATFORM_DRIVER_H
+ #define _KUNIT_PLATFORM_DRIVER_H
+ 
++struct completion;
+ struct kunit;
+ struct platform_device;
+ struct platform_driver;
+-- 
+2.47.1.613.gc27f4b7a9f-goog
+
 
