@@ -1,169 +1,173 @@
-Return-Path: <linux-kernel+bounces-444712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140A89F0B66
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:37:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71AB49F0AFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:29:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DA9188388D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B24188C785
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29451DFE36;
-	Fri, 13 Dec 2024 11:35:32 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F30A1DEFE2;
+	Fri, 13 Dec 2024 11:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RDUSqa2f"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6AE1DE899;
-	Fri, 13 Dec 2024 11:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7292187325;
+	Fri, 13 Dec 2024 11:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734089732; cv=none; b=FOldc7ORvXSsrLJ9n2QzKVbrOhhd0jpS3zSFx2qx79WBMtVsxR6qUX7/dClJxIpuFbNDrhcUuBMtoycQppL57t7e0AI5vpo6c1RiKpRjzwKWhddxc2VxaMrAOUO9OA44S3R4NyrYzvwnWPCMQfsndYIS5BGr0q4OUkQM73/PSDE=
+	t=1734089316; cv=none; b=Ec+S4jCISU1Ovn0UuE9DOCCXSwK1G98tlq4AlzGEIpLFYIkCGEMj4uAvNN2CK+twGkWYTanqHjlrE4zNlOVcLJTRdDseekJcdZZ8T0ap4E3WQ6x7ugupSq4zMVe8+gOAYpbWtELk7ozfmiT+R8LMHbu7DoBs1+mVpf2Fa4J92L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734089732; c=relaxed/simple;
-	bh=sQUCe9J8BdQtIT92lnvd4wAHr/Zh7afIUFCoH8PFptw=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=U10yTwTpGxA5LPcVZpHJl+qfyf3jh23MkpLeJEu4qDbTedK7yxVKOH9O5mOvXuxj2y2qgck5elTLPb1jRsP0Zwho8nrzSv5dATZllwJeAKmHJjM+DqGNfryRZ5VOsW9df/sM4HLy7LALTNVU3/EczHK8yZdKpDbuXJT5pTh8XqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxde.zte.com.cn (unknown [10.35.20.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Y8nB82zcMz1DDT;
-	Fri, 13 Dec 2024 19:27:28 +0800 (CST)
-Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4Y8nB30nMdzBRHKP;
-	Fri, 13 Dec 2024 19:27:23 +0800 (CST)
-Received: from mxct.zte.com.cn (unknown [192.168.251.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Y8n9t1DG0z5B1KQ;
-	Fri, 13 Dec 2024 19:27:14 +0800 (CST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Y8n9d6Whmz50FXL;
-	Fri, 13 Dec 2024 19:27:01 +0800 (CST)
-Received: from njb2app06.zte.com.cn ([10.55.23.119])
-	by mse-fl1.zte.com.cn with SMTP id 4BDBQvZo004681;
-	Fri, 13 Dec 2024 19:26:57 +0800 (+08)
-	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njb2app05[null])
-	by mapi (Zmail) with MAPI id mid204;
-	Fri, 13 Dec 2024 19:27:00 +0800 (CST)
-Date: Fri, 13 Dec 2024 19:27:00 +0800 (CST)
-X-Zmail-TransId: 2afd675c1a04ffffffffc14-1f4ed
-X-Mailer: Zmail v1.0
-Message-ID: <20241213192700771XKZ8H30OtHSeziGqRVMs0@zte.com.cn>
+	s=arc-20240116; t=1734089316; c=relaxed/simple;
+	bh=jbyZf0Tgv/RU1fdlBR7iKCTSnMRGD5EA5b3AgB6Qb2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aqsCBRo0LRgEIm65XLlLixLxKzQEFrACMe7A5By2hp5S8j2Nb2eir89KxOUyb01p4ReZ3uuvogqtGuTn05XXnMD1fVyUNuldZ9GI4J+ieF1nOCQEzGpbhbQCPcPne5DRUwgJCqe0KJICdFt7sFDydXTdcuT/9olrCsA1viyD6DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RDUSqa2f; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 10CE5C0006;
+	Fri, 13 Dec 2024 11:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1734089311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n5fFG4vE+vkwACpIop1Zpb8KlDP1HSG6Jo6PWR1GFGM=;
+	b=RDUSqa2ff8PZtcbs78wVV5g6G6GweSxEeW37gg/ZzBhEtIEAH1xQAiQbBrxVCFDHQ3SS3t
+	auF2eEcz/EtZGAMdYeeSYNEgDrXJAQroWXbFHOPnY1VrSCiyXbUhcIWiIFGlRKTs0qPGeY
+	9W9MUdHzEFiXwMRf+MBSogMMDPrSbpXw3VsrHIqd3HCNFcd5JJLrfzL90ImhuSCQbBP90S
+	R+pNLq58KKjFQUOm16EjlrsQu32tVuMoJZvqb6qeDCkVecBiFhWmr+NERpKXwOTquXho9l
+	BbFcTYVSYse9QBTygwZHtipwZ2348CwcqvfyGJZhhEII6culDLHEPFBqW1/Ckw==
+Date: Fri, 13 Dec 2024 12:28:26 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
+Cc: "rafael@kernel.org" <rafael@kernel.org>, "jingoohan1@gmail.com"
+ <jingoohan1@gmail.com>, "robh@kernel.org" <robh@kernel.org>,
+ "rfoss@kernel.org" <rfoss@kernel.org>, "Laurent.pinchart@ideasonboard.com"
+ <Laurent.pinchart@ideasonboard.com>, "mripard@kernel.org"
+ <mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "daniel@ffwll.ch" <daniel@ffwll.ch>, "conor+dt@kernel.org"
+ <conor+dt@kernel.org>, "maarten.lankhorst@linux.intel.com"
+ <maarten.lankhorst@linux.intel.com>, "andrzej.hajda@intel.com"
+ <andrzej.hajda@intel.com>, "daniel.thompson@linaro.org"
+ <daniel.thompson@linaro.org>, "wsa+renesas@sang-engineering.com"
+ <wsa+renesas@sang-engineering.com>, "lee@kernel.org" <lee@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
+ "jonas@kwiboo.se" <jonas@kwiboo.se>, "saravanak@google.com"
+ <saravanak@google.com>, "airlied@gmail.com" <airlied@gmail.com>,
+ "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ "derek.kiernan@amd.com" <derek.kiernan@amd.com>, "deller@gmx.de"
+ <deller@gmx.de>, "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+ "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+ "contact@paulk.fr" <contact@paulk.fr>, "herve.codina@bootlin.com"
+ <herve.codina@bootlin.com>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "paul.kocialkowski@bootlin.com"
+ <paul.kocialkowski@bootlin.com>, "linux-i2c@vger.kernel.org"
+ <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH v4 5/8] i2c: i2c-core-of: follow i2c-parent phandle to
+ probe devices from added nodes
+Message-ID: <20241213122826.1c01a284@booty>
+In-Reply-To: <ad1b0f8a662d748580bef83b6f7d8d24d80bd46c.camel@siemens.com>
+References: <20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com>
+	<20240917-hotplug-drm-bridge-v4-5-bc4dfee61be6@bootlin.com>
+	<ad1b0f8a662d748580bef83b6f7d8d24d80bd46c.camel@siemens.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <jiang.kun2@zte.com.cn>
-To: <bsingharora@gmail.com>, <akpm@linux-foundation.org>, <david@redhat.com>
-Cc: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-doc@vger.kernel.org>, <wang.yong12@zte.com.cn>,
-        <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
-        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
-        <zhang.yunkai@zte.com.cn>, <ye.xingchen@zte.com.cn>,
-        <xu.xin16@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHRdIGRlbGF5YWNjdDogdXBkYXRlIGRvY3MgYW5kIGZpeCBzb21lIHNwZWxsaW5nIGVycm9ycw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 4BDBQvZo004681
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 675C1A1F.000/4Y8nB82zcMz1DDT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-From: Yaxin Wang <wang.yaxin@zte.com.cn>
+Hello Alexander,
 
-Update delay-accounting.rst to include the 'delay max' in the output
-of getdelays, and fix some spelling errors before.
+On Thu, 12 Dec 2024 19:12:02 +0000
+"Sverdlin, Alexander" <alexander.sverdlin@siemens.com> wrote:
 
-Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
-Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
----
-Some fixes according to:
-https://lore.kernel.org/all/20241203170816.3fe81941fe1866ca1672eba8@linux-foundation.org/
-1.fix some spelling errors
-2.update Documentation/accounting/delay-accounting.rst
+> Hi Luca!
+> 
+> On Tue, 2024-09-17 at 10:53 +0200, Luca Ceresoli wrote:
+> > When device tree nodes are added, the I2C core tries to probe client
+> > devices based on the classic DT structure:
+> > 
+> >   i2c@abcd0000 {
+> >       some-client@42 { compatible = "xyz,blah"; ... };
+> >   };
+> > 
+> > However for hotplug connectors described via device tree overlays there is
+> > additional level of indirection, which is needed to decouple the overlay
+> > and the base tree:
+> > 
+> >   --- base device tree ---
+> > 
+> >   i2c1: i2c@abcd0000 { compatible = "xyz,i2c-ctrl"; ... };
+> >   i2c5: i2c@cafe0000 { compatible = "xyz,i2c-ctrl"; ... };
+> > 
+> >   connector {
+> >       i2c-ctrl {
+> >           i2c-parent = <&i2c1>;
+> >           #address-cells = <1>;
+> >           #size-cells = <0>;
+> >       };
+> > 
+> >       i2c-sensors {
+> >           i2c-parent = <&i2c5>;
+> >           #address-cells = <1>;
+> >           #size-cells = <0>;
+> >       };
+> >   };
+> > 
+> >   --- device tree overlay ---
+> > 
+> >   ...
+> >   // This node will overlay on the i2c-ctrl node of the base tree  
+> 
+> Why don't you overlay it right over &i2c1?
+> It should have worked since commit ea7513bbc041
+> ("i2c/of: Add OF_RECONFIG notifier handler").
+> Doesn't it work for your use-case?
 
- Documentation/accounting/delay-accounting.rst | 42 +++++++++----------
- kernel/delayacct.c                            |  2 +-
- 2 files changed, 22 insertions(+), 22 deletions(-)
+One reason is decoupling the base board and addon. A different base
+board may wire the same connector pins to 'i2c4' instead of 'i2c1'. We
+want a single overlay to describe the addon, independently of the base
+board, so it has to mention only connector pins, not base board
+hardware.
 
-diff --git a/Documentation/accounting/delay-accounting.rst b/Documentation/accounting/delay-accounting.rst
-index f61c01fc376e..8a0277428ccf 100644
---- a/Documentation/accounting/delay-accounting.rst
-+++ b/Documentation/accounting/delay-accounting.rst
-@@ -100,29 +100,29 @@ Get delays, since system boot, for pid 10::
- 	# ./getdelays -d -p 10
- 	(output similar to next case)
+Another reason is that using phandles to labels in the base tree in the
+overlay (such as &i2c1) would need properties added by the __symbols__
+node, and overlays adding properties to nodes in the live tree are not
+welcome. This is both for a conceptual reason (adding an overlay ==
+adding hardware and not _changing_ hardware, so adding nodes should be
+enough) and an implementation one (properties added to nodes in the
+live tree become deadprops and thus leak memory.
 
--Get sum of delays, since system boot, for all pids with tgid 5::
-+Get sum and peak of delays, since system boot, for all pids with tgid 242::
+This topic was discussed at the latest Linux Plumbers Conference last
+September. Slides and video of the discussion are available here:
+https://lpc.events/event/18/contributions/1696/
 
--	# ./getdelays -d -t 5
-+	bash-4.4# ./getdelays -d -t 242
- 	print delayacct stats ON
--	TGID	5
--
--
--	CPU             count     real total  virtual total    delay total  delay average
--	                    8        7000000        6872122        3382277          0.423ms
--	IO              count    delay total  delay average
--                   0              0          0.000ms
--	SWAP            count    delay total  delay average
--                       0              0          0.000ms
--	RECLAIM         count    delay total  delay average
--                   0              0          0.000ms
--	THRASHING       count    delay total  delay average
--                       0              0          0.000ms
--	COMPACT         count    delay total  delay average
--                       0              0          0.000ms
--	WPCOPY          count    delay total  delay average
--                       0              0          0.000ms
--	IRQ             count    delay total  delay average
--                       0              0          0.000ms
-+	TGID    242
-+
-+
-+	CPU         count     real total  virtual total    delay total  delay average      delay max
-+	              239      296000000      307724885        1127792          0.005ms     0.238382ms
-+	IO          count    delay total  delay average      delay max
-+	                0              0          0.000ms     0.000000ms
-+	SWAP        count    delay total  delay average      delay max
-+	                0              0          0.000ms     0.000000ms
-+	RECLAIM     count    delay total  delay average      delay max
-+	                0              0          0.000ms     0.000000ms
-+	THRASHING   count    delay total  delay average      delay max
-+	                0              0          0.000ms     0.000000ms
-+	COMPACT     count    delay total  delay average      delay max
-+	                0              0          0.000ms     0.000000ms
-+	WPCOPY      count    delay total  delay average      delay max
-+	              230       19100476          0.083ms     0.383822ms
-+	IRQ         count    delay total  delay average      delay max
-+	                0              0          0.000ms     0.000000ms
+More info are in the cover letter. Discussion leading to this
+implementation started after v2:
+https://lore.kernel.org/all/20240510163625.GA336987-robh@kernel.org/
 
- Get IO accounting for pid 1, it works only with -p::
+Luca
 
-diff --git a/kernel/delayacct.c b/kernel/delayacct.c
-index d64ad2a48b4f..23212a0c88e4 100644
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -93,7 +93,7 @@ void __delayacct_tsk_init(struct task_struct *tsk)
-
- /*
-  * Finish delay accounting for a statistic using its timestamps (@start),
-- * accumalator (@total) and @count
-+ * accumulator (@total) and @count
-  */
- static void delayacct_end(raw_spinlock_t *lock, u64 *start, u64 *total, u32 *count, u64 *max)
- {
 -- 
-2.25.1
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
