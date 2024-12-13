@@ -1,118 +1,165 @@
-Return-Path: <linux-kernel+bounces-445592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC68E9F181B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:35:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9C79F1825
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA251636FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B5618879BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E34192D83;
-	Fri, 13 Dec 2024 21:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4633D194147;
+	Fri, 13 Dec 2024 21:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dEOKJqTJ"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jMYa6N/F"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE535191F62
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 21:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD37F84039;
+	Fri, 13 Dec 2024 21:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734125741; cv=none; b=ZK1cfNOZnae9gcQ7R8i4AkfbcYcf89NxgryjdSyTysPwSPHDCgo1lTmXbIqLuK/keQsIeCkHT4eaSXHbLh5txdbOWELweACDOv94ii0t0QxAvglSGmXmBpoSfzZEq+GJeY3/fYdXVOvwpNRuzjU5BXgXv55kQHbiJKZRYsLsS98=
+	t=1734126733; cv=none; b=XI/GZLYUZh21WlRmaZALL/Oop3IcG6N0HL2ouoxZfcl9mMVRbdNEvADbELb5g3FpqrTeb6E3LCwon13wld5l6d3x8d5y4JiENBMJe3qm6s00ngNwh4vds8EY+48ax74fBREbtnpMN/ZYIJ5XGGaHgUSuHdXN6jzng0avP1PXBn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734125741; c=relaxed/simple;
-	bh=x3GHhDDz+w/e2kTp0CgeTu7Ox8Xxto17JSa17pTcRhE=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=I9KjP2kUvOCe7BSDviOokQfydWjLxRyASSrnui01IFx7Y9t+JDO11cCWUsmpZlcM4jFzl2ZlNKD3xUiYtYOaVa779S7dyZFkJ1+ktU1pJGWzplbjGIZLUI1p/guUusZAV4NzdEPK3PGZ40HefnXKTYXt0ccuS09625lC7FDVoBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dEOKJqTJ; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b6f53c12adso142222885a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:35:38 -0800 (PST)
+	s=arc-20240116; t=1734126733; c=relaxed/simple;
+	bh=VEbAqhLoFMU/UoefqB+aA8+wiZ0qPNT/h3bEq9xnuGg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ugVPJi1drNVHgA+36+Fjrf6R0DUEKJXUMbDaZ7mXKtloA6Nf6A/cpDp/IPu8A20CjZ0u7FhLuwDlVTjR5wJ0FZ3cOf0FqN4MXItPHYbPmR38GbRfo9vZbTj17d7FsP9uQV/PEw+Nkybr125ZdCPhhQHxnmFjHu+h1EZbyZJYpH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jMYa6N/F; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3e9f60bf4so3482175a12.3;
+        Fri, 13 Dec 2024 13:52:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1734125737; x=1734730537; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HFHmZqO8rwrFHWPgtsb6iToA/B4b/YAVHMgtPHT7prE=;
-        b=dEOKJqTJ2bXaVkBjsAJwpnmXxrLrGGw5AJFRSPJ+wnJcPmO0Pjvj3DoI6mUQgAWzAQ
-         IzoXyzo23IsUYdkHA2vIgcyrZWArGXMU/AzSnD/xwLxTDyYMpDvuDjqu5T7eIZm5+iLH
-         1NFwxtObE5qsSaCPjECFgWxeVN1WZ4WxMUzvfhPwSzZYCIrD9iKWU+FjmLBMnbp8WxaQ
-         r3urnAwldzpAF746ozEmWMTUW7xBS95pzFTC1755KXCsc30AlcRSuP9OzNqbCEbGvh6X
-         ux8ZRaw5DVH0RVa3n/etlhjKY8kgg1OC4/Z1U6ltA41uQ48n6BURI8UJnIbmXRQaGGak
-         7v7w==
+        d=gmail.com; s=20230601; t=1734126730; x=1734731530; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=J5wzDKPzJnMM02kKA5AIsGL2ncAxhsfcXx2ChL8Znrg=;
+        b=jMYa6N/FCHBkAKhop2eK7udm+AdjY2YXaW7KlvTUjBe8Ii7Kq8RvBfhbSwqZ1NsCD2
+         aYffZV06PwdUhHbcE+/DCfZgpytT6sjy9xkPjv/XovlIoFw3DLG3E8FGimpmyDecjoQU
+         s0Q6gohbSQ1TrPgGM2ctG2gR2OXtE5EU5R1dvtigVf3pfc00amNn/0zY6etYrYYMiXgJ
+         tDFCvLzaziTUukl30Z1X16KshPBzMp6ngxyym/5fQZVV1+FjEwk4vz2Xi3aqQaoDBf4y
+         YkeQiKcdjENJqQ1mTq/6/ySiDw/+GJnxYVzrAbJA3NdXfRw5a2oHAyVbUPXBPD3L417J
+         5PJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734125737; x=1734730537;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HFHmZqO8rwrFHWPgtsb6iToA/B4b/YAVHMgtPHT7prE=;
-        b=k8OB6zZzFUyIs9SlzazF7kULuCq32c/DQ7Bv7STtJwEGkmFWGXyZB6ZFvV2MJ/Nehe
-         2l2XQZ3DziNomPQ5KG4Gh5Pngy/U/q9pHQX6GnQ+eUO8IVXn9A9IWcvzpcuPw/LLDRZ2
-         9K7o7ozoLoWfmI++sg3FNIZ0MJWf6Jk/yv6noolDFyluyT7OhbHj0dRkW2VhVaFoBD5q
-         9Bk4niy22oPj8pWEm2TDBQC6hsAAorYYEOd82LafeeOQ2pGM0+qtdqYozVCeQhkSqVvA
-         vGipw7KmGEySSY6tUS/mz2ATvJ65k69zr0W37WeNqynrYeD4J70lnzEMu95T+2VHNKAC
-         s+jA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtCgQa3ApUrkZZ8cyGW4hN0WXRaMq1diCTzFmPGj4tzzEIFpPgWeIy/SCc6fMJjGpBqsil9c4cvkwkVfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcbbAvtSODEPwZ1Xs+6OsFf/4U+VPqKWs0nJ+qMkSsQ7QG8iX4
-	iF3YyHsAr4PUAOgc/c5n2z/fxZTuswihizWJcGVno6mS+KwH1oK+YtVDK+m9NA==
-X-Gm-Gg: ASbGncsuxxNHTNotTBJjTE9caowJuSiRNen6vXj7W9VzxulxtmmwYBx6vplIqJi+41o
-	SZ3MqEo5xEZBu+6SNjRgtIXmueWLPAT2gBXu28bxMFoGU+6KeY2LtnrpcT14a/KHOTfsPgs7t0p
-	0CRNzfNO1zTGA6t/6+KHdgrWImxfa5MDmcqgMhflmOMhwpvsEIhtFdvRGHBvPqR8BTeY3X4epc7
-	QjmR38MTHUGCCG05NO+a5EFTFRB22Vvb4jH3Eii94t+PhC5Poo=
-X-Google-Smtp-Source: AGHT+IG+fLiThWzfd2vnNSoUStixEM3TTG2o3/E9Its8SqN9dsLcqFmi2iUwPpvSIVoZOiYVmfrKAA==
-X-Received: by 2002:a05:620a:414a:b0:7b3:577b:6d9c with SMTP id af79cd13be357-7b6fbf42174mr600237685a.38.1734125737584;
-        Fri, 13 Dec 2024 13:35:37 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b7048bbef7sm16364285a.90.2024.12.13.13.35.37
+        d=1e100.net; s=20230601; t=1734126730; x=1734731530;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J5wzDKPzJnMM02kKA5AIsGL2ncAxhsfcXx2ChL8Znrg=;
+        b=FsAuFXyKnDicPVxT68zemnG6aLUJO542+DyCVB5wJrp+A9qRh1jA7y3YzbhhEkzsF8
+         BfBNtuDdqzCJVCiivwluGEynvFte45L7mCp1fmhB/CBnNkWyPSNH47h0Wegp1++KiSFb
+         rCxDqep6vUbG7LbpA2qeTi89aH4JRW8P23iQmIScg0YfQC+9gpZGkTRzuHZmmbdX4rrP
+         PPpG53U77mw7XVhOSCT7zpOgTUtaYbfCMDH9j2DgfR6fUUUvFjJQL7KVlNZf/pWDM4+4
+         cO2CBhtDkbe+XEdMIdWtgs+J5JaR8B0zQLvpC2nuj+MtzQk2kx2wwAWTJrNQR/GCx2f2
+         3OxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/plFe2Z9zSH6h4qy9uMHPWQ1GCSGnbrmUK7M/ZtuoBREbuqAPdDtXOQwZewwFDNz+bVs=@vger.kernel.org, AJvYcCU3NKFrOKdsdt88BuegvileyYyHHAQ1w/S8C67bWVsIIdJaqbFzbsnMC793fxcGMnnhdUGKPugiiKJH4Nf5iXDvLh2a@vger.kernel.org, AJvYcCXtATJQvFzIKmxobAtoUis3aV4/OdOKpof26Hel9uOqXgI30H3TE+BbVbKZcrHTKftEpqqTCcgnFoEynVxO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxitf8ik+RacnHfo1N3QM6GqymntZqeFR/qoLcD4d82wNSpgJc1
+	j6b83oHT8GU5TOUaI7mJzEiqZgOUWJ4VJSLqPvjcPMRvEOWN9m6D
+X-Gm-Gg: ASbGncvKJGhTey+XZSPdAl17cEyOuWot0Uh0ikRKPAJZglQJxeXXFpOrgVa6kmoLiUN
+	mJoHMG8v42AJ+FfbO50sLJKhosB2s0PgnHxcFloqn0BbpA4DWsBPZDeHw00ShrT/hRPEzgYnaq8
+	YgYCSlCH6EQVtAgu+LNzS0LWSY3qqiunp1m+VZD72qmogCv6A0Nf+l1P/wK6T/wx+DfwZ1LYflh
+	Y4a9LUACSkgIYX9chGHqFXW7vCUowqs+CkbrCUAtzfNrhjptx66BP87c2ate74hsw==
+X-Google-Smtp-Source: AGHT+IFb/i/SWozFuKvqUEwsGeSYtS//xdr6WVR0c51i/8mHsM9kgg9YsycjLz1DP+94ooB6Zvu6zA==
+X-Received: by 2002:a17:907:7d90:b0:aa6:7d82:5414 with SMTP id a640c23a62f3a-aab779b04edmr465919566b.30.1734126729733;
+        Fri, 13 Dec 2024 13:52:09 -0800 (PST)
+Received: from krava (85-193-35-130.rib.o2.cz. [85.193.35.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab960684fesm17785666b.56.2024.12.13.13.52.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 13:35:37 -0800 (PST)
-Date: Fri, 13 Dec 2024 16:35:36 -0500
-Message-ID: <dd43826c8fb600f967196c72958fc6e5@paul-moore.com>
+        Fri, 13 Dec 2024 13:52:09 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 13 Dec 2024 22:52:06 +0100
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 04/13] uprobes: Add arch_uprobe_verify_opcode
+ function
+Message-ID: <Z1yshuMy5UOUWwF7@krava>
+References: <20241211133403.208920-1-jolsa@kernel.org>
+ <20241211133403.208920-5-jolsa@kernel.org>
+ <CAEf4BzZ2g6PwY+Ah-39F7Dw2AFZUE7AxEqOuNbs5LouHtKMZbQ@mail.gmail.com>
+ <Z1w0z2KSgFGggAVD@krava>
+ <CAEf4BzZ+nkvZFADq9HzLUUcDGNa44G+hPfzOhUexKW7WqBxS6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20241213_1548/pstg-lib:20241213_1547/pstg-pwork:20241213_1548
-From: Paul Moore <paul@paul-moore.com>
-To: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>, selinux@vger.kernel.org
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>, =?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>, Jacob Satterfield <jsatterfield.linux@gmail.com>, Eric Suen <ericsu@linux.microsoft.com>, Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, Canfeng Guo <guocanfeng@uniontech.com>, GUO Zihua <guozihua@huawei.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selinux: add support for xperms in conditional policies
-References: <20241023152719.24118-1-cgoettsche@seltendoof.de>
-In-Reply-To: <20241023152719.24118-1-cgoettsche@seltendoof.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZ+nkvZFADq9HzLUUcDGNa44G+hPfzOhUexKW7WqBxS6A@mail.gmail.com>
 
-On Oct 23, 2024 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
+On Fri, Dec 13, 2024 at 01:11:30PM -0800, Andrii Nakryiko wrote:
+> On Fri, Dec 13, 2024 at 5:21 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Thu, Dec 12, 2024 at 04:48:05PM -0800, Andrii Nakryiko wrote:
+> > > On Wed, Dec 11, 2024 at 5:34 AM Jiri Olsa <jolsa@kernel.org> wrote:
+> > > >
+> > > > Adding arch_uprobe_verify_opcode function, so we can overload
+> > > > verification for each architecture in following changes.
+> > > >
+> > > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > > > ---
+> > > >  include/linux/uprobes.h |  5 +++++
+> > > >  kernel/events/uprobes.c | 19 ++++++++++++++++---
+> > > >  2 files changed, 21 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> > > > index cc723bc48c1d..8843b7f99ed0 100644
+> > > > --- a/include/linux/uprobes.h
+> > > > +++ b/include/linux/uprobes.h
+> > > > @@ -215,6 +215,11 @@ extern void uprobe_handle_trampoline(struct pt_regs *regs);
+> > > >  extern void *arch_uretprobe_trampoline(unsigned long *psize);
+> > > >  extern unsigned long uprobe_get_trampoline_vaddr(void);
+> > > >  extern void uprobe_copy_from_page(struct page *page, unsigned long vaddr, void *dst, int len);
+> > > > +extern int uprobe_verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t *new_opcode);
+> > > > +extern int arch_uprobe_verify_opcode(struct arch_uprobe *auprobe, struct page *page,
+> > > > +                                    unsigned long vaddr, uprobe_opcode_t *new_opcode,
+> > > > +                                    int nbytes);
+> > > > +extern bool arch_uprobe_is_register(uprobe_opcode_t *insn, int nbytes);
+> > > >  #else /* !CONFIG_UPROBES */
+> > > >  struct uprobes_state {
+> > > >  };
+> > > > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > > > index 7c2ecf11a573..8068f91de9e3 100644
+> > > > --- a/kernel/events/uprobes.c
+> > > > +++ b/kernel/events/uprobes.c
+> > > > @@ -263,7 +263,13 @@ static void uprobe_copy_to_page(struct page *page, unsigned long vaddr, const vo
+> > > >         kunmap_atomic(kaddr);
+> > > >  }
+> > > >
+> > > > -static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t *new_opcode)
+> > > > +__weak bool arch_uprobe_is_register(uprobe_opcode_t *insn, int nbytes)
+> > > > +{
+> > > > +       return is_swbp_insn(insn);
+> > >
+> > > a bit weird that we ignore nbytes here... should we have nbytes ==
+> > > UPROBE_SWBP_INSN_SIZE check somewhere here or inside is_swbp_insn()?
+> >
+> > the original is_swbp_insn function does not need that and we need
+> > nbytes in the overloaded arch_uprobe_is_register to distinguish
+> > between 1 byte and 5 byte update..
+> >
 > 
-> Add support for extended permission rules in conditional policies.
-> Currently the kernel accepts such rules already, but evaluating a
-> security decision will hit a BUG() in
-> services_compute_xperms_decision().  Thus reject extended permission
-> rules in conditional policies for current policy versions.
-> 
-> Add a new policy version for this feature.
-> 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> ---
-> v2:
->   rebased onto the netlink xperm patch
-> ---
->  security/selinux/include/security.h |  3 ++-
->  security/selinux/ss/avtab.c         | 11 +++++++++--
->  security/selinux/ss/avtab.h         |  2 +-
->  security/selinux/ss/conditional.c   |  2 +-
->  security/selinux/ss/policydb.c      |  5 +++++
->  security/selinux/ss/services.c      | 12 ++++++++----
->  6 files changed, 26 insertions(+), 9 deletions(-)
+> and that's my point, if some architecture forgot to override it for
+> nop5 (or similar stuff), this default implementation should reject
+> instruction that's not an original nop, no?
 
-Merged into selinux/dev, thanks for working on this and your patience!
+ok, makes sense, will add that
 
---
-paul-moore.com
+thanks,
+jirka
 
