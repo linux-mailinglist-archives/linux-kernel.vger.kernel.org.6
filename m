@@ -1,207 +1,157 @@
-Return-Path: <linux-kernel+bounces-445384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E9F9F154E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:55:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9089F1554
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D45B67A0387
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:55:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9CA188C666
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ECF1E5713;
-	Fri, 13 Dec 2024 18:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828551E764A;
+	Fri, 13 Dec 2024 18:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dJSlD+ht"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lop/zUVh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD5F18CBE1
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5340E18A92C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 18:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734116112; cv=none; b=GqNmSw3g0Rw+GXfAmhyWURKZ4j0scnomi2lsgJ2Xb2N1PYMMgoGTmCwMtTSd2GNR2rARnNLrZ+opnC1c9X0i5GElJ4dQ02ZDTEWqyzRFj+8XK6tBCDrIQ0BkZXUuCUx7rcVaS4T+dk+LNuIUgQ707QvXKQoUay4iurj4yXYy6Bg=
+	t=1734116340; cv=none; b=HUU7uHLCKrUax9Ue0mrcr3eqjyHJ/yEr2oWqonKh4xqKVbRU90TnKzKtaqH/TIbwiDZhT7AEj6XQLcsOu7E4umQlVOutguHnfngBrC22TbFnEpWzH23cPjzYlqrAz3RYJcz3Km+wgchd4HcoWhJyA5rKzHwICxk08tkBW67nHJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734116112; c=relaxed/simple;
-	bh=RcJODScoXNF3HP4hDUffKS9Z470PUHCkZnTLG0obbnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAyWZdtY6ABRPK0WdIqc7Gi8CqdJn0oD+UFlpiaBaYrXgj3s/AqGnBn3ql8zmMeC6go+GBLDLckk5x1SyxdsiIYK0wzwJZQ8EhXmdGcGoSTD8vE+jqfO6etzghrAiTYHRcH5Sz68psvO2NXjdRsmRf9mk3QzyyVYt1VkBS5i1Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dJSlD+ht; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1734116340; c=relaxed/simple;
+	bh=t7Np4Aa+tgtujgWBmCLmpiOGbTdtLucpjvWi7GEHhkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EgQeHKYsURZoI4nwjquszktdVHyJJxBVY1PGHUnfrbs3vo2LRVmBt0ZVQKSc1Fa4A2DvmgLSz2KBn3mYYvWWnbPtZ9RnWDfW/NocfcnU1xUjedpR7dJg1mmfCG2hQU7962qRt1PvtuWFzyAj6QeyQYfHk/tMBY+3wOg27LZcX0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lop/zUVh; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734116108;
+	s=mimecast20190719; t=1734116338;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Oi5mdK80AGx2gnUMpCyjJOjx4fPGiU1BQmQpKsVJLQ=;
-	b=dJSlD+htC2r03eudPNEunzVYzYymUamwzGnvG7PxkbSNWBdxDOj649MeNCFt4WSeWZKw8r
-	QrA9GzEOovqrkcM3iKH05NUtGmQrGgE/3oU/JEHWq659seGtVYNkk78QANxHS4wywBBJxE
-	OT8A8FxcADArRsslicePrANd9sRpwa0=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=mI1mOtjG4nC/az8D+B88vVhaoQDxbNllCYmgLL5S3Ec=;
+	b=Lop/zUVhKwcCBwhc3+mGaKy6iTjNlfwwQlN0JRePiLfj9clSxXltzjGac1K/HSKT+53uUE
+	xnEl7K3vKpBdFGg/o7GW5VlzCM8U0/l2qjY9bjXhWmRrdyVnXOtVOFF2rhf/6konNrCxG2
+	mJoRfyPvc/BXxhsYa6uvNMsDQxILga0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-548-roIupEnhNEq70YQjlG8TLQ-1; Fri, 13 Dec 2024 13:55:06 -0500
-X-MC-Unique: roIupEnhNEq70YQjlG8TLQ-1
-X-Mimecast-MFC-AGG-ID: roIupEnhNEq70YQjlG8TLQ
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385e3cbf308so868180f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:55:06 -0800 (PST)
+ us-mta-487-f6e4rTGnMniMlIO-_4MroQ-1; Fri, 13 Dec 2024 13:58:57 -0500
+X-MC-Unique: f6e4rTGnMniMlIO-_4MroQ-1
+X-Mimecast-MFC-AGG-ID: f6e4rTGnMniMlIO-_4MroQ
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4361d4e8359so16753055e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 10:58:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734116105; x=1734720905;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Oi5mdK80AGx2gnUMpCyjJOjx4fPGiU1BQmQpKsVJLQ=;
-        b=SucqwGcEG/hzGShNbQZUEY8GngWB8+YB7pv7mSSWuIKH2gP6KDCyEpiOtWlrn+XMRN
-         vO7h7ddt7pg9yQRKJZQANNOS1hFmsp0eE+kHdZw4J4Hq7pBvYuQyGL3XfSDexX59HV6u
-         aUnSQ/DfmtGbE6kB6L9HfywjxTQZfFYPecpnZUhFlPsFzskyCxBg4K9ByJz0iRQBUG+y
-         26Ghy8rEiQgRycxymX3s7vc3vwLlTF6UiSO/r5CDcEUirkCLqmqXQlMblVRg2ewkUgGW
-         7GV8lG0ga4fTI4S5JyVkOitF6uexXiHpXH9iDOcbBM0RBI7glexvo4/sknFroYQavKUH
-         7bpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXVk1WoHHODxVo34R3Ff6JJsHeO2IvRXV2xso+bvIw+nFFY6cdm2Z8fCNzWvda/c6Rp67tBivbBrwURWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys2PhHa0ot2aI2eQt42ongsrYxUSv4OCg5pgZ5oskI31zT3WCH
-	IQPL6Uf8gD8N4elviHdmvItuNEtA66aClNUf/CYptHRyd8F07rxkttRMe//bkoe6RhPM5P7SXxN
-	clH9iwyJG3SXeJwp+989DsMs7RR6O1MAf+rvYhFbF/whRfvATqeHPkRyzof4x6w==
-X-Gm-Gg: ASbGncsV6uT9KzacV06Tm4FfXrH3kUnydbo3hFFKHFWoI+jIskjsvSwnYsq2158UXa+
-	5R9zhDVasd9CIxCTtXIHNluJGA/O2+oxfPcMJcW3NELK+jnGkWAnnfq2ewEySJzlQNG0nClxTCI
-	F7LXMPqC9J7jM8j3+imyREFx107d/3Rp9L6vycOhApVkxPz7DT5s7JKScP48n0WKjeJZsLRs87/
-	PgRK5Y7CwlYNtW0CK3L7Ebn6m1htiApfzO5357t0+zKnZbnLw==
-X-Received: by 2002:a05:6000:4024:b0:386:3f3e:ab11 with SMTP id ffacd0b85a97d-3888e0bd231mr3018509f8f.34.1734116105453;
-        Fri, 13 Dec 2024 10:55:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEqDsqjIlsKqyhHXSOnxjVEITmP6zRNZkmfcHEacMFRdJtvP0V9402C97CiW3ObpgUPBopi4w==
-X-Received: by 2002:a05:6000:4024:b0:386:3f3e:ab11 with SMTP id ffacd0b85a97d-3888e0bd231mr3018485f8f.34.1734116105103;
-        Fri, 13 Dec 2024 10:55:05 -0800 (PST)
-Received: from redhat.com ([2a02:14f:1f4:66af:6381:7d28:90f3:9fad])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80163b8sm265821f8f.35.2024.12.13.10.55.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 10:55:03 -0800 (PST)
-Date: Fri, 13 Dec 2024 13:55:00 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Shijith Thotton <sthotton@marvell.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
-	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
-	Srujana Challa <schalla@marvell.com>,
-	Vamsi Krishna Attunuru <vattunuru@marvell.com>,
-	Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Satha Koteswara Rao Kottidi <skoteshwar@marvell.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] vdpa/octeon_ep: read vendor-specific PCI
- capability
-Message-ID: <20241213135321-mutt-send-email-mst@kernel.org>
-References: <20241209151427.3720026-1-sthotton@marvell.com>
- <20241209151427.3720026-4-sthotton@marvell.com>
- <CACGkMEvuObS4RCk2BjQ4sm6r4jaC3fN4ui5EXd6SVzYxYZV7iA@mail.gmail.com>
- <PH0PR18MB442538D91F856F27F3C37A9AD9382@PH0PR18MB4425.namprd18.prod.outlook.com>
- <PH0PR18MB4425BB6DE30C3805F31D75CED9382@PH0PR18MB4425.namprd18.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1734116336; x=1734721136;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mI1mOtjG4nC/az8D+B88vVhaoQDxbNllCYmgLL5S3Ec=;
+        b=mBsch3xwACDhfE9NaxEJrPUMojYDvzUeIrfS+5UnFVM708/snyxBwAKbnVgPCP+L8Y
+         yKE5uQuDcbEyDSZqHa931RyxK2kOIBvBgkruP5F/z/B0n64j5Zvg9JI/wQ+oXF9mGu3Q
+         GjGA/jLgHIDrTRDdBzV/6jVqw7Ia9rS8zreVow5z7dFQL8HzxWafIeB/vp0xKqQAt1tv
+         nMjr7fdmIm5rmzF/EBbsn7T2THqi+AARFwl12JOX07rQWCDIgbxRiWV8eCAcAXet072e
+         SHq5Zk9neDQYO0F7d9H2KFxFcuTalWuTpdKwY4A7UX2ZTn0ohCPTrnBpAVVt4U80CBjn
+         aFmA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3IdAHT5eRYfbADturnSp5G9S4Iy5aY6BG/OTO8/ilFkHorbxtDgDw39jieRRYgkswaPFJg0+A9QAuits=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKo0I2z5XjSU1TuCK3QF34MLBz5k76JnMc/dy2q2PccVdOm/Fu
+	rxYjOl+n0yikDatbOnyWBOxI1PLiTrEB5xwiqcsak4nbZc8sgkXLKUHmetYLe6jxUZcZ1mmIBHx
+	SVKaQ7J1dW7avlk8Yr5dRe+ddB62D1iM37vKl7UZbbIt7lHJtdEwxx7StrnxSTQ==
+X-Gm-Gg: ASbGnctb03Yw7PhwFH84KT8SChzoqMpNWiEAO/J11pXZki+ZPwjo791jXBYAvDf144c
+	Y+i+1Z0LEFqOOP3sSBeF10OoGq+ecnvl2NmhS3ffwv+gWIwxIcWQIR4iJ6yZ0ICdUwE41n7BIaH
+	1KXZ+LmfVKHmAiANAf+mgOb33Xj8toLEhVWKIkURpC6B95A/HolDspLuRENkjPi28ohqQFccThk
+	WA6nntczdXSGlauZIhixpmIhLWzpwCIRvwZZycSpkeSYfhmCAcIKYiKBQs=
+X-Received: by 2002:a05:600c:190c:b0:42c:c28c:e477 with SMTP id 5b1f17b1804b1-4362aa9d675mr34183115e9.23.1734116335992;
+        Fri, 13 Dec 2024 10:58:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGCocN09lwrJ18yznQg6RRv3t1XmTAkjMEIYeGuE67QjSo4SyJA5WAXCajyTNxHaPEkuz0Z7A==
+X-Received: by 2002:a05:600c:190c:b0:42c:c28c:e477 with SMTP id 5b1f17b1804b1-4362aa9d675mr34182965e9.23.1734116335622;
+        Fri, 13 Dec 2024 10:58:55 -0800 (PST)
+Received: from [192.168.10.3] ([151.81.118.45])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-388c80602a1sm251014f8f.97.2024.12.13.10.58.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 10:58:55 -0800 (PST)
+Message-ID: <257491b6-f70a-4347-b97d-cc7fa22aac85@redhat.com>
+Date: Fri, 13 Dec 2024 19:58:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH0PR18MB4425BB6DE30C3805F31D75CED9382@PH0PR18MB4425.namprd18.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] KVM: x86: Address xstate_required_size() perf
+ regression
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jim Mattson <jmattson@google.com>
+References: <20241211013302.1347853-1-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20241211013302.1347853-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Dec 13, 2024 at 02:20:24PM +0000, Shijith Thotton wrote:
-> >>>
-> >>> Added support to read the vendor-specific PCI capability to identify the
-> >>> type of device being emulated.
-> >>>
-> >>> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-> >>> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
-> >>> ---
-> >>>  drivers/vdpa/octeon_ep/octep_vdpa.h      | 20 ++++++++++++++
-> >>>  drivers/vdpa/octeon_ep/octep_vdpa_hw.c   | 33
-> >>+++++++++++++++++++++++-
-> >>>  drivers/vdpa/octeon_ep/octep_vdpa_main.c |  4 ++-
-> >>>  3 files changed, 55 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/vdpa/octeon_ep/octep_vdpa.h
-> >>b/drivers/vdpa/octeon_ep/octep_vdpa.h
-> >>> index 2cadb878e679..53b020b019f7 100644
-> >>> --- a/drivers/vdpa/octeon_ep/octep_vdpa.h
-> >>> +++ b/drivers/vdpa/octeon_ep/octep_vdpa.h
-> >>> @@ -8,6 +8,7 @@
-> >>>  #include <linux/pci_regs.h>
-> >>>  #include <linux/vdpa.h>
-> >>>  #include <linux/virtio_pci_modern.h>
-> >>> +#include <uapi/linux/virtio_crypto.h>
-> >>>  #include <uapi/linux/virtio_net.h>
-> >>>  #include <uapi/linux/virtio_blk.h>
-> >>>  #include <uapi/linux/virtio_config.h>
-> >>> @@ -52,6 +53,24 @@ struct octep_vring_info {
-> >>>         phys_addr_t notify_pa;
-> >>>  };
-> >>>
-> >>> +enum octep_pci_vndr_cfg_type {
-> >>> +       OCTEP_PCI_VNDR_CFG_TYPE_VIRTIO_ID,
-> >>> +       OCTEP_PCI_VNDR_CFG_TYPE_MAX,
-> >>> +};
-> >>> +
-> >>> +struct octep_pci_vndr_data {
-> >>> +       struct virtio_pci_vndr_data hdr;
-> >>> +       u8 id;
-> >>> +       u8 bar;
-> >>> +       union {
-> >>> +               u64 data;
-> >>> +               struct {
-> >>> +                       u32 offset;
-> >>> +                       u32 length;
-> >>> +               };
-> >>> +       };
-> >>> +};
-> >>
-> >>This seems not to be padded to a multiple of 4 bytes?
-> >>
-> >
-> >Looks like, the structure is naturally aligned.
-> >
-> >struct virtio_pci_vndr_data {
-> >        uint8_t                    cap_vndr;             /*     0     1 */
-> >        uint8_t                    cap_next;             /*     1     1 */
-> >        uint8_t                    cap_len;              /*     2     1 */
-> >        uint8_t                    cfg_type;             /*     3     1 */
-> >        uint16_t                   vendor_id;            /*     4     2 */
-> >        /* size: 6, cachelines: 1, members: 5 */
-> >        /* last cacheline: 6 bytes */
-> >};
-> >struct octep_pci_vndr_data {
-> >        struct virtio_pci_vndr_data hdr;                 /*     0     6 */
-> >        uint8_t                    id;                   /*     6     1 */
-> >        uint8_t                    bar;                  /*     7     1 */
-> >        union {
-> >                uint64_t           data;                 /*     8     8 */
-> >                struct {
-> >                        uint32_t   offset;               /*     8     4 */
-> >                        uint32_t   length;               /*    12     4 */
-> >                };                                       /*     8     8 */
-> >        };                                               /*     8     8 */
-> >
-> >        /* size: 16, cachelines: 1, members: 4 */
-> >        /* last cacheline: 16 bytes */
-> >};
-> >
-> >I will add __attribute__((aligned(4))) to be safe.
-> >
+On 12/11/24 02:32, Sean Christopherson wrote:
+> Fix a hilarious/revolting performance regression (relative to older CPU
+> generations) in xstate_required_size() that pops up due to CPUID _in the
+> host_ taking 3x-4x longer on Emerald Rapids than Skylake.
 > 
-> Small correction, I meant   __attribute__((packed, aligned(4))).
+> The issue rears its head on nested virtualization transitions, as KVM
+> (unnecessarily) performs runtime CPUID updates, including XSAVE sizes,
+> multiple times per transition.  And calculating XSAVE sizes, especially
+> for vCPUs with a decent number of supported XSAVE features and compacted
+> format support, can add up to thousands of cycles.
 > 
-> Thanks,
-> Shijith
+> To fix the immediate issue, cache the CPUID output at kvm.ko load.  The
+> information is static for a given CPU, i.e. doesn't need to be re-read
+> from hardware every time.  That's patch 1, and eliminates pretty much all
+> of the meaningful overhead.
 
-Don't add packed pls, for me it means "something is not packed naturally
-here". when in fact it is.
+Queued this one, thanks!
 
-aligned is also bad, since it can add padding which creates all
-kind of security issues.
-
-If you want to be sure, add BUILD_BUG_ON and check that it is aligned
-as expected.
+Paolo
 
 
