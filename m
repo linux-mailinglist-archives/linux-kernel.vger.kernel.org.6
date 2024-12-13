@@ -1,142 +1,305 @@
-Return-Path: <linux-kernel+bounces-444387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C766E9F0601
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:07:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A76969F0604
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:08:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE8018837F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:07:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9501883023
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3F919E98B;
-	Fri, 13 Dec 2024 08:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD6C1A01C3;
+	Fri, 13 Dec 2024 08:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5k1o8q8"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6ze0NEO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD961192D70;
-	Fri, 13 Dec 2024 08:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A3619D096;
+	Fri, 13 Dec 2024 08:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734077239; cv=none; b=c8DnfnTAwadU3ToFj3WjxwoknksLcXdpV0l5FvSWBoiuw7uuTkr20y8ZKEHf+CLpBJ1mLarb9ZYegMq62Jk5vfWv28blyqn8nTwMxwGYopewCywXAgZQ0h665YpLMk+bq10v36U64AFmA1OJ4rmh8U8wTSHZshuPcYQ+AXUZCHU=
+	t=1734077281; cv=none; b=SAMYOKiHb4Gt56eZUSGlDKBB9N2r4hWvR4Z7+qC8raJu0JyDmh4xD3av1fkmmrJDiyUnh+Si9PHdEEcmbfw2oOs2696B2uswvuvGEfD73qhMlk+f/i6tJCQJXoB9P+NTPb3Jq+Sua7G6g60cBHVYMLHPZSdo+2tY/43leTf8THg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734077239; c=relaxed/simple;
-	bh=lMngbI0/z97n+hdCLmt0jLziyBdQJ7fRHaH2DkZPF0g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BHhJn+5lhCmFWN/wbqP1uq65WL0PJ3OEx2kpBLTGbkhkkQqulos9r6iFCnm5/NOym18tHFzJPWru2ZWyEut033UHC7vaJPhK1S/KrwsqQoDTwPtYUZFopn1aVYYhXNf0XhzUd+UOJ0w8hORXS0DilIgthMLNSV6qh47ixNdOI8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V5k1o8q8; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e3c88163a00so187153276.2;
-        Fri, 13 Dec 2024 00:07:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734077236; x=1734682036; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lMngbI0/z97n+hdCLmt0jLziyBdQJ7fRHaH2DkZPF0g=;
-        b=V5k1o8q8dacPx/N9ECUsAyofa0FMACOsD0vyBaYJ16OBxc2sGYylcynnDRit3TIIO/
-         nnwyDoTq+SMzmaeU9WdLKmOPBIak6YLHZ2AklgdJlvVocs1NMro0EKwyiSjHnQCjEbD0
-         qpPDVdzxQLB9IqqVmFizXO7cxDnLHizAOKlF/GH6rDEKFjEpQC7+WxE7Zs/JqQTZsX2r
-         RPsLsPywGyycEGyDvA6ntGhptvJAcF0Gh0oqihrFz+lohZLb2YsrdrpH3nVXqq0NQIJ7
-         kC1n4VTD/Kd8l8SLvTjZXUaFaaV8O3ehBnyN+MS/ALKF6IuN2+c0gl8vQQNeWVLvXMJS
-         krpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734077236; x=1734682036;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lMngbI0/z97n+hdCLmt0jLziyBdQJ7fRHaH2DkZPF0g=;
-        b=spdmGsZhvrthQTa95a1o+chJirztIhHZKicFIL1S5qZGJGEPjyjtFhZ/x7r67G5Iq8
-         K5QqUPQciUlG41dbtJ3bnRcEgDicUSa3hXc2HyH/BNF5nbB68ynZhYqX5j8ZMbo50N3r
-         ASK4Dk/blgxDxGWLTqkFsy9TjJZ2k/u8CHXQWYmxKFNcNnghxNXNLCf/u1YjwPPxQm1X
-         l/LYvuuKfEtkFbeGYBMtH3c0xYculhGFnjc3styXe1sNhq4rmQ86tHoa4fZiwcp84wl+
-         u0d6edcGSWJ/kSZla2G3DMNcKlJt+W7sBbGqRY8frsrF/gKmJmd8XXqkEGZsZ+xlLip1
-         tuAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrv95YwZiAzfKxYj4uve81Fd3hgaa9KL+kml6gx5BbVC1xX0t6OFgGjMfjYfPNDHf/mmonVHxtJyp//gLn@vger.kernel.org, AJvYcCW95XXeqv/erBrfP34bwvtZfLNzA3Quq9vaDo4K1IzRJ6lfXM/8SbiINy023+FC5NM32JVEzpmSR0Zn@vger.kernel.org, AJvYcCWOab9Y+eMMjfuFvPRHqEo0m6nf8WdeaQYiPormdRPyLd9WS+p9JFqtNFrVAmdXM3ycV4ghyqFC/ndE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww4j3vsf2e0kPcMj7ezxA9/pJbkMzItUI6FVY2tOsej+CJylQj
-	VnX7aEV45ojHHveRAp3ruHJLGFYnEwZ0pzP0mtGR+dYba/X7z1sW/99DvS5LZl2LzZX1fV8GnQ4
-	oVAH4+WzNCPkUpu32rPkceLDbUMs=
-X-Gm-Gg: ASbGncvvUfh24vBWLaJ2cPQ8qgvwN/cr8YG1LKXXg/Rvf4UJCr7vv4o+EIV+H5Vos/y
-	ICd97v6rXaVsdK4ElsE3ONx1ZhyXc9mk2xnfwyQ==
-X-Google-Smtp-Source: AGHT+IHln3GREML7DSIIx+2UAC2Ue9EF+yfWddVt3c1PyKWO74it203O7aM9MJ+fsu7FSNHL/nCpazUmIlfqwgNQqDE=
-X-Received: by 2002:a05:690c:3588:b0:6ea:8a23:7679 with SMTP id
- 00721157ae682-6f279ac3723mr7759957b3.1.1734077235665; Fri, 13 Dec 2024
- 00:07:15 -0800 (PST)
+	s=arc-20240116; t=1734077281; c=relaxed/simple;
+	bh=4Nf1UU/SnNwDXvP2B/8JWRJ3WOl+O09ei5sfPo6vky0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rA8HZWg08vmdaF00K1YwTMWKCIze/UKl9TAyw9rCaLk8p/gNUuoPbJmrTDWJeIFGp8W7CdzvWqCfXWOtteozWCRrcdOu9KF3l9JelH6YtVr9zKjT5ssgsBQqp9nyfX89udWcFeoFDIPKsCU4OfIy++A/kfqg1vtbA6XMMfBmWHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6ze0NEO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A7D2C4CED0;
+	Fri, 13 Dec 2024 08:07:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734077280;
+	bh=4Nf1UU/SnNwDXvP2B/8JWRJ3WOl+O09ei5sfPo6vky0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=c6ze0NEOU/yrDYKWTT4cgRbTqVsi7seZZlssE+xlRliYvUQRiRTifYsLcIEC8DO1Z
+	 szj0Hi8BtNmoM/LyCCNA3pQH3vA1bz+FQR5Dk23dktYFy+sKSB2/pCaPwHnHKKXLgP
+	 4GOJMWBMWrdVDPb4UpumCRhEunGdU1N73ZQ8/qoYEhMnQQeTUMHlhAxPX0qDu/t3hK
+	 Z5f+qhFyrz2kiulgf/piYgu8xqM4t3xRjiH+S8cz2oN3f/4q6QyIQ26/m2ab7mzDRN
+	 hpyvqtdiZmtSz2+TwdmpdhF/sxn5zcywUVPaGYQKmMFy48yiqA2M8Xd7au04XeQKi3
+	 sOKpAnj7LumHg==
+Message-ID: <9e54c828-0640-462a-9f91-0913504266f2@kernel.org>
+Date: Fri, 13 Dec 2024 09:07:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211230648.205806-1-l.rubusch@gmail.com> <20241211230648.205806-5-l.rubusch@gmail.com>
- <iqdm3x6fhyosqkm4mdknf6ee2idizq3p2nt7rjqgtuzxr75iaj@tcdl2e6l5g2s>
-In-Reply-To: <iqdm3x6fhyosqkm4mdknf6ee2idizq3p2nt7rjqgtuzxr75iaj@tcdl2e6l5g2s>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Fri, 13 Dec 2024 09:06:39 +0100
-Message-ID: <CAFXKEHatgV9gYVCvcxmjce9qcHtVLhvQuuSuC7rxtqFa5XLtMg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/7] dt-bindings: iio: accel: adxl345: make interrupts
- not a required property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, eraretuya@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: qcom: Add coresight node for SM8650
+To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241210-sm8650-cs-dt-v2-1-cf24c6c9bddc@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241210-sm8650-cs-dt-v2-1-cf24c6c9bddc@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 9:11=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Wed, Dec 11, 2024 at 11:06:45PM +0000, Lothar Rubusch wrote:
-> > Remove interrupts from the list of required properties. The ADXL345
-> > provides two interrupt lines. Anyway, the interrupts are an option, to
-> > be used for additional event features. The driver can measure without
-> > interrupts. Hence, interrupts should never have been required for the
-> > ADXL345. Thus having interrupts required can be considered to be a
-> > mistake.
->
-> Partially this explains my question on previous patch, so consider
-> reordering them.
->
+On 10/12/2024 09:23, Yuanfang Zhang wrote:
+> Add coresight components: Funnel, ETE and ETF for SM8650.
+> 
+> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
+> ---
 
-I understand.
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-> And with combined knowledge, your driver now depends on interrupt names
-> to setup interrupts. "interrupts" property alone is not sufficient, so
-> you should encode it in the binding and explain in rationale why this is
-> required (it is a change in ABI).
->
-> https://elixir.bootlin.com/linux/v6.8-rc3/source/Documentation/devicetree=
-/bindings/example-schema.yaml#L193
->
+> Changes in v2:
+> - Update compatible for funnel and etf.
+> - remove unnecessary property: reg-names and arm,primecell-periphid.
+> - Link to v1: https://lore.kernel.org/r/20241210-sm8650-cs-dt-v1-1-269693451584@quicinc.com
+> ---
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 165 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 165 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> index 25e47505adcb790d09f1d2726386438487255824..76620d478e872a2b725693dc32364e2a183572b7 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> @@ -5654,6 +5654,171 @@ compute-cb@12 {
+>  				};
+>  			};
+>  		};
+> +
+> +		ete0 {
 
-The accelerometer does not need interrupts connected/configured for
-basic functionality. Interrupt declaration allows for additional
-features. Then there are two possible interrupt lines, only one is
-connected. Thus, either only one INT out of two, or none needs to be
-configured in the DT depending on the hardware setup. This also needs
-to be configured then in the sensor, which INT line to use for
-signalling. Thus we need the information if INT1 or INT2 was setup, if
-any.
+ete or ete-0
 
-Hence, configuring an "interrupts" property only makes sense, if also
-a "interrupt-names" is configured, and vice versa. None of them are
-required for basic accelerometer functionality.
+> +			compatible = "arm,embedded-trace-extension";
+> +
+> +			cpu = <&cpu0>;
+> +			qcom,skip-power-up;
+> +
+> +			out-ports {
+> +				port {
+> +					ete0_out_funnel_ete: endpoint {
+> +						remote-endpoint = <&funnel_ete_in_ete0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		funnel_ete {
 
-Thank you so much for providing me the link to the annotated
-example-schema. I'll try then to set vice versa dependency of
-interrupts and interrupt-names and hope.. I'm sure you'll let me know
-right away if I'm doing something wrong.
 
-Seriously, thanks the link is really helpful!
-Best,
-L
+Follow DTS coding style. Don't send us your downstream code.
 
-> Best regards,
-> Krzysztof
->
+> +			compatible = "arm,coresight-static-funnel";
+> +
+> +			in-ports {
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					funnel_ete_in_ete0: endpoint {
+> +						remote-endpoint = <&ete0_out_funnel_ete>;
+> +					};
+> +				};
+> +			};
+> +
+> +			out-ports {
+> +				port {
+> +					funnel_ete_out_funnel_apss: endpoint {
+> +						remote-endpoint = <&funnel_apss_in_funnel_ete>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		funnel@13810000 {
+
+This is all wrongly placed. And tools would tell you that. But anyway,
+do not introduce different style. Look how all other nodes are placed.
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+
+
+> +			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
+> +
+> +			reg = <0x0 0x13810000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +
+> +			in-ports {
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					funnel_apss_in_funnel_ete: endpoint {
+> +						remote-endpoint = <&funnel_ete_out_funnel_apss>;
+> +					};
+> +				};
+> +			};
+> +
+> +			out-ports {
+> +				port {
+> +					funnel_apss_out_funnel_in1: endpoint {
+> +						remote-endpoint = <&funnel_in1_in_funnel_apss>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		funnel@10042000 {
+> +			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
+> +
+> +			reg = <0x0 0x10042000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +
+> +			in-ports {
+> +				port@4 {
+> +					reg = <4>;
+> +
+> +					funnel_in1_in_funnel_apss: endpoint {
+> +						remote-endpoint = <&funnel_apss_out_funnel_in1>;
+> +					};
+> +				};
+> +			};
+> +
+> +			out-ports {
+> +				port {
+> +					funnel_in1_out_funnel_qdss: endpoint {
+> +						remote-endpoint = <&funnel_qdss_in_funnel_in1>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		funnel@10045000 {
+> +			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
+> +
+> +			reg = <0x0 0x10045000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +
+> +			in-ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					funnel_qdss_in_funnel_in1: endpoint {
+> +						remote-endpoint = <&funnel_in1_out_funnel_qdss>;
+> +					};
+> +				};
+> +			};
+> +
+> +			out-ports {
+> +				port {
+> +					funnel_qdss_out_funnel_aoss: endpoint {
+> +						remote-endpoint = <&funnel_aoss_in_funnel_qdss>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		funnel@10b04000 {
+> +			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
+> +
+> +			reg = <0x0 0x10b04000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +
+> +			in-ports {
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+> +				port@7 {
+> +					reg = <7>;
+> +
+> +					funnel_aoss_in_funnel_qdss: endpoint {
+> +						remote-endpoint = <&funnel_qdss_out_funnel_aoss>;
+> +					};
+> +				};
+> +			};
+> +
+Best regards,
+Krzysztof
 
