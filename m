@@ -1,223 +1,173 @@
-Return-Path: <linux-kernel+bounces-444674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC989F0ACA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:21:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15679F0AD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:23:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B357188488F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:21:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1610E1884867
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1621DE4CB;
-	Fri, 13 Dec 2024 11:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5841DE882;
+	Fri, 13 Dec 2024 11:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bRgXNTjH"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="QU0FsxaP"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974211B21BE
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E3F1DE2C1
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734088869; cv=none; b=Psvy0DeX07TYwMmlJ0SlpGbR+LAvkAZPf2WZhlAX9t05xkdFqQ5eYUtMIArLyX6Vvl//17F6G8LaohstJeyh8q/ixJPJIbN7GzsgnU+jfNxzvmOSFLh7S+O0tPNThaF1RzdVsxheuDEnHR/8Ib7I26mhe+yei/+cMf2b0uT34jE=
+	t=1734088978; cv=none; b=dLODpg4QAIN7GUXsghg5c3looXEEzg5avBfpAb5C/D1kZVDdnKLAyJzjXMnWY3lvoitkGVZ8uLiBL8xaYufxOvF8sSzqPFhymZGQD+sgbvgtV+v2cvmhy7FCKy1K2ADfpaU1IFDka37riFtpT4lEvK7IfIiGIAfP9Y5RQ8DvRZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734088869; c=relaxed/simple;
-	bh=r91TcR4H4Qda9i3ih8WZhOxfkv/5tKme0aANXJbKMfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eJ6zQRbk2xaAkjxbh3ui6MUqQqGq0AVMtz2lc/98lUj08JN5VYfP+H89dF4yObPdNVu8eyDknicbyyH8B8BswSB4wET7IPrSydFtFkGukwAp0U8IWIO/HypVrAGr6xNqhHu/IBRJSl1OSgGmp9WoFlT5crYa7qbL/NcdcTzZ6dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bRgXNTjH; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4678afeb133so23558501cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:21:07 -0800 (PST)
+	s=arc-20240116; t=1734088978; c=relaxed/simple;
+	bh=N6v1cyR9J/zI+Q0ORnKRS/ZchvHrsmRuEczw3AxZGk4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Z183mTDbqyEM20geb61WGCqW1VVuOCemBcqTEF+AUwGsBRX8CeH2IU3IQRc/cXLwRFHq/FQ2utNQqGloTvVh7aUu9zZdvWADSavJzhwE2+6eu4waO+v2j2kDtxoLwva2DiZ9W09tZcqPXajBuqg+BiIuApWQ3AKfRJNgMjesrQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=QU0FsxaP; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4361f664af5so17170085e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:22:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1734088866; x=1734693666; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+/b0qpGL8geq0m5EZNK7pNyK7gxUILcFZV9hbWhObc=;
-        b=bRgXNTjHTRYfiuIOt7iaUC4yhRopaLtXUwdT3mS1QBErWXC/wFatCWxsJLUHQrI5VC
-         BTJeVsiJ3wjDS7UHc9I3EAC4SdvIFdGBoSK1nJz/lJpia2aKPegHsChLejc11iczQTGl
-         P2fBNOk3iSkG9RL3lo/uZJN5ZvcoMFARVc5Wc=
+        d=fairphone.com; s=fair; t=1734088974; x=1734693774; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R0x+W2FV8c0fNb2FM/fYmcZMsw9cp5lY0mr2d1TA5uY=;
+        b=QU0FsxaPM1rSU+dSnUlkvl5AuKgamgDMRrxAkzpTgG+J3r9c8DW0drUNK45o5kvPQa
+         OIG1ZcAfX69XqfudCTx6Der3tgT2YDYYC01ZFviPa6N9xfQvP5X/PhHd76NqBjsxUx85
+         L4qtFIzYvvFwTJtNbngCGC8uTehv0ZeqHQ07W2+QptLjqvdRqx/XzqVHCfVwk6u6E4+M
+         DvpEB0hk+pOarK4kuXLVz7Zl6fsTnwl2Z10oqpQkHsl2V+alHK8qGssrO/q6PU819f6n
+         RtTtWrWJLqbRgJzQxHwgH4ZweDyMYqnZHLuVWeQMGsFUJnVQHkx/AgrbpEGwzUJwSRYi
+         HdQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734088866; x=1734693666;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G+/b0qpGL8geq0m5EZNK7pNyK7gxUILcFZV9hbWhObc=;
-        b=YtJDjbwN8N3wrg/PwnXjBElOazEsh/ncylOnVf1FA7T30YOxz8GL8eUAMDij56Jwm3
-         sYy1J/MWka10lZTPlHj9n199nkjw4Cp8wXWkPtu0m1FYnnbu5GgacLUFx6/V9Q0KLJw+
-         m51f7zkg8R61WtrctS1HC93sbQI40AjDQW2ig5KULMHk9lUzt2xh2A7ZlLHMdozoU/Z4
-         O4p+HUvvpCP7WpLLqWoO9yafp+iP1+rkpIozkC6shtWkk/2ZJuplu6iqF7iUizfWxxIf
-         bUwcg3nseJuz9RaWBDMevTSmsHakYv4fjQaYa/7icZU5RHjW5/UTStuvC9Zo2hbEpFzs
-         B3OA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzIRBQ/ileFXDcn/HwzC1P4AsBY8HOSHuRcCRUuWoTL4sTRFfc7Wk6Pm5hz7DVoDrWVuX2TmmjnSYFyJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzDznTGfRjJnN4xX7Hf6mbOdXg1BqIgU5uzJ7/ZOd5bxuqh4yE
-	umWNy0OMjzG0zdaxYaXeT12EX20k6JP3eANjo3mgpInUaOK4wumfvCjdsvEEfg==
-X-Gm-Gg: ASbGncv9sx4uamD6uzbFpyqXR2DLDDQPIhfwkSXxJ97zBCjERU2RFQ94cGDhJyxq8SC
-	KKt9wTmEMvJNAtQ6unr8BI78SjGe2LS1fQgu9+k4v9/F40KXLS/c1FDnLXggvDGV8FHScc+ySZq
-	szXBBXVe3cXfu+Ixur/ZUe7Z8TFHOy120kjpD6oQ8aa/c4JjzYxm3tJXqAOuutV47d1XlrfEmge
-	EKkD1jy91p78Uqah5Lcziwe2smxsyg1zK0wm2VevmiUrP8Cn5a6mGI+Hru7RSa1J11OEeAZMc4L
-	0opwUg1mtPR/bJbQU5IqKDg0++SRyoU=
-X-Google-Smtp-Source: AGHT+IFRiMo9YbmkS9prLVR88FjtQeMzkss4HutCc+qpf/GarrMWgiwM3ArO3aDzJzimFDxHBHXoEg==
-X-Received: by 2002:a05:622a:11d1:b0:456:919a:11e4 with SMTP id d75a77b69052e-467a5b408a9mr34708931cf.20.1734088866554;
-        Fri, 13 Dec 2024 03:21:06 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6d801632esm458685285a.7.2024.12.13.03.21.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 03:21:04 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 13 Dec 2024 11:21:02 +0000
-Subject: [PATCH] media: uvcvideo: Filter hw errors while enumerating
- controls
+        d=1e100.net; s=20230601; t=1734088974; x=1734693774;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=R0x+W2FV8c0fNb2FM/fYmcZMsw9cp5lY0mr2d1TA5uY=;
+        b=Cnq/Bz6hRtK5RmBPowEQ/ghPwcy5iYLk6aHYIgnlcyfm/cMwP8aF3Git5EYmOmbnbK
+         kBTwDOis/sf9Cix2lrWBMNZ3g9pBSlLG5SrtA2JTM5GH9049STXDjmHlULH9x7LL+zFX
+         nEE5GGuKtyfVZesLzJ4JGq+h9kaze6vFz5GRs3gLC1LwKc9E1KeTM1uoeHsUkETUaXYG
+         2IgNbW6rQKwLF6FQKnXbSTSzZt0RZKs/UqeIhRythHSuCJFLps3j3e3SuygQbp3lKyV/
+         KtvO1qBzTW9/yUTwAQMGDW5ve9CMyIOrM120+K5G02iPT1DIyMEwwnuHW1HEmMH+Oh5N
+         v7vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkcWUPpKplLg1SUOKDFqpdeurWo/PL1ZL5RjNdtSHefUH5uAxxx7dHejYQCu0UoGMfmK1LQBLgwblM+c8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0fLlO4XpqHFbIuawJI5UIviTdQIU4BuHDNN0GksCw76LvzvXX
+	mfj2AEHMKjfeIDkGckAwgCnjG0LBjDKTewvx1Zjjjg1vokPeukvvEiY6qiXTbFY=
+X-Gm-Gg: ASbGnct93TvzrCsSW/PVQ58jF1M1XGUkgAJSFzySVo3kS9YVFzMARCdJB3SfTrBUl6D
+	8S0Rec4T7LjfLC4nrt6Er45Lne1BpT+wf0rqENqj+N/WhJOPAJsm07WnXkQqL46sN8GGqiL7+hb
+	LhlVz0aPvoH57Ihh980WO1UCLV+b6WpOhGTFvU2Eyc+CoygGM67Mv/bDIETeHOtLut1a8FQZ7F2
+	g+xHYOyw+IvPNBtZ8m9W+Nt2QiB09YDAYXh0M/BaoMKaJqm4qIiiWU8q1Vkjxht4R4dudehjYYL
+	nDJO7abSbrOtcjcMrSP558eSzw==
+X-Google-Smtp-Source: AGHT+IGX5tUiDSBzaO6MT7A0xWnpvOc0YW7KrOiuYx1f0SQxj+bIuIxBHtCdFRMgkKA6+olSdAlgFQ==
+X-Received: by 2002:a05:6000:79e:b0:385:e0d6:fb6e with SMTP id ffacd0b85a97d-3888e0ac4c1mr1337773f8f.37.1734088973848;
+        Fri, 13 Dec 2024 03:22:53 -0800 (PST)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878251c3a7sm6710697f8f.94.2024.12.13.03.22.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 03:22:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241213-uvc-eaccess-v1-1-62e0b4fcc634@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAJ0YXGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDI0Nj3dKyZN3UxOTk1OJiXXNT0+RkAzPDRGMzAyWgjoKi1LTMCrBp0bG
- 1tQDy2ooOXQAAAA==
-To: Hans Verkuil <hverkuil@xs4all.nl>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 13 Dec 2024 12:22:53 +0100
+Message-Id: <D6AJ8KNRUHB7.1EC9O3WSCSNIP@fairphone.com>
+Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] media: qcom: camss: Restrict endpoint bus-type to
+ D-PHY
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Vladimir Zapolskiy" <vladimir.zapolskiy@linaro.org>, "Bryan O'Donoghue"
+ <bryan.odonoghue@linaro.org>, "Robert Foss" <rfoss@kernel.org>, "Todor
+ Tomov" <todor.too@gmail.com>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Barnabas
+ Czeman" <barnabas.czeman@mainlining.org>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@somainline.org>, "Caleb Connolly"
+ <caleb.connolly@linaro.org>, "David Heidelberg" <david@ixit.cz>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
+ <20241209-camss-dphy-v1-2-5f1b6f25ed92@fairphone.com>
+ <9c89e6f4-a9af-4270-b266-537f3464ee32@linaro.org>
+ <a047e4b8-c2d6-4486-8037-e7b854660cb1@linaro.org>
+In-Reply-To: <a047e4b8-c2d6-4486-8037-e7b854660cb1@linaro.org>
 
-To implement VIDIOC_QUERYCTRL, we need to read from the hardware all the
-values that were not cached previously. If that read fails, we used to
-report back the error to the user.
+On Fri Dec 13, 2024 at 12:02 PM CET, Vladimir Zapolskiy wrote:
+> On 12/9/24 14:32, Bryan O'Donoghue wrote:
+> > On 09/12/2024 12:01, Luca Weiss wrote:
+> >> Currently the Qualcomm CAMSS driver only supports D-PHY while the
+> >> hardware on most SoCs also supports C-PHY. Until this support is added=
+,
+> >> check for D-PHY to make it somewhat explicit that C-PHY won't work.
+> >>
+> >> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> >> ---
+> >>    drivers/media/platform/qcom/camss/camss.c | 9 +++++++++
+> >>    1 file changed, 9 insertions(+)
+> >>
+> >> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media=
+/platform/qcom/camss/camss.c
+> >> index 9fb31f4c18adee886cd0bcf84438a8f27635e07f..b99af35074cdf6fa794a0d=
+2f0d54ecf12ac354d9 100644
+> >> --- a/drivers/media/platform/qcom/camss/camss.c
+> >> +++ b/drivers/media/platform/qcom/camss/camss.c
+> >> @@ -1855,6 +1855,15 @@ static int camss_of_parse_endpoint_node(struct =
+device *dev,
+> >>    	if (ret)
+> >>    		return ret;
+> >>   =20
+> >> +	/*
+> >> +	 * Most SoCs support both D-PHY and C-PHY standards, but currently o=
+nly
+> >> +	 * D-PHY is supported in the driver.
+> >> +	 */
+> >> +	if (vep.bus_type !=3D V4L2_MBUS_CSI2_DPHY) {
+> >> +		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
+> >> +		return -EINVAL;
+> >> +	}
+> >> +
+>
+> Looks like it would break all old board dtbs, which is not just bad, but =
+NAK.
+>
+> V4L2_MBUS_UNKNOWN shall be properly handled without the risk of regressio=
+ns.
 
-Unfortunately this does not play nice with userspace. When they are
-enumerating the contols, the only expect an error when there are no
-"next" control.
+Please see drivers/media/v4l2-core/v4l2-fwnode.c around line 218.
+The code there sets bus_type if it's UNKNOWN
 
-This is probably a corner case, and could be handled in userspace, but
-both v4l2-ctl and yavta fail to enumerate all the controls if we return
-then -EIO during VIDIOC_QUERYCTRL. I suspect that there are tons of
-userspace apps handling this wrongly as well.
+    if (bus_type =3D=3D V4L2_MBUS_UNKNOWN)
+        vep->bus_type =3D V4L2_MBUS_CSI2_DPHY;
 
-This patch get around this issue by ignoring the hardware errors and
-always returning 0 if a control exists.
+So setting "bus-type" in dt is not necessary, even if it makes things
+more explicit from dt side. I don't think we'll ever get UNKNOWN here in
+camss.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-Hi 2*Hans and Laurent!
+Regards
+Luca
 
-I came around a device that was listing just a couple of controls when
-it should be listing much more.
 
-Some debugging latter I found that the device was returning -EIO when
-all the focal controls were read.
-
-This could be solved in userspace.. but I suspect that a lot of people
-has copied the implementation of v4l-utils or yavta.
-
-What do you think of this workaround?
-
-Without this patch:
-$ v4l2-ctl --list-ctrls
-                  auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
-         exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
-     exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
-region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
-
-With this patch:
-$ v4l2-ctl --list-ctrls
-                  auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
-         exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
-     exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
-error 5 getting ext_ctrl Focus, Absolute
-error 5 getting ext_ctrl Focus, Automatic Continuous
-   region_of_interest_rectangle 0x009a1901 (unknown): type=107 value=unsupported payload type flags=has-payload
-region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
-
---
----
- drivers/media/usb/uvc/uvc_ctrl.c | 31 ++++++++++++++++++++++---------
- 1 file changed, 22 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 4fe26e82e3d1..a11048c9a105 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1283,7 +1283,8 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
- static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 	struct uvc_control *ctrl,
- 	struct uvc_control_mapping *mapping,
--	struct v4l2_queryctrl *v4l2_ctrl)
-+	struct v4l2_queryctrl *v4l2_ctrl,
-+	bool can_fail)
- {
- 	struct uvc_control_mapping *master_map = NULL;
- 	struct uvc_control *master_ctrl = NULL;
-@@ -1307,17 +1308,28 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 	if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
- 		s32 val;
- 		int ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
--		if (ret < 0)
--			return ret;
- 
--		if (val != mapping->master_manual)
--				v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
-+		if (ret < 0) {
-+			dev_warn_ratelimited(&chain->dev->udev->dev,
-+					     "UVC non compliance: Error %d querying master control %x\n",
-+					      ret, master_map->id);
-+			if (can_fail)
-+				return ret;
-+		} else if (val != mapping->master_manual) {
-+			v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
-+		}
- 	}
- 
- 	if (!ctrl->cached) {
- 		int ret = uvc_ctrl_populate_cache(chain, ctrl);
--		if (ret < 0)
--			return ret;
-+
-+		if (ret < 0) {
-+			dev_warn_ratelimited(&chain->dev->udev->dev,
-+					     "UVC non compliance: Error %d populating cache of control %x\n",
-+					     ret, mapping->id);
-+			if (can_fail)
-+				return ret;
-+		}
- 	}
- 
- 	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
-@@ -1420,7 +1432,8 @@ int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 			goto done;
- 	}
- 
--	ret = __uvc_query_v4l2_ctrl(chain, ctrl, mapping, v4l2_ctrl);
-+	ret = __uvc_query_v4l2_ctrl(chain, ctrl, mapping, v4l2_ctrl,
-+				    !(v4l2_ctrl->id & V4L2_CTRL_FLAG_NEXT_CTRL));
- done:
- 	mutex_unlock(&chain->ctrl_mutex);
- 	return ret;
-@@ -1513,7 +1526,7 @@ static void uvc_ctrl_fill_event(struct uvc_video_chain *chain,
- {
- 	struct v4l2_queryctrl v4l2_ctrl;
- 
--	__uvc_query_v4l2_ctrl(chain, ctrl, mapping, &v4l2_ctrl);
-+	__uvc_query_v4l2_ctrl(chain, ctrl, mapping, &v4l2_ctrl, true);
- 
- 	memset(ev, 0, sizeof(*ev));
- 	ev->type = V4L2_EVENT_CTRL;
-
----
-base-commit: a7f5b36b34824415c28875d615c49a3cf5070615
-change-id: 20241213-uvc-eaccess-755cc061a360
-
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
+>
+> >>    	csd->interface.csiphy_id =3D vep.base.port;
+> >>   =20
+> >>    	mipi_csi2 =3D &vep.bus.mipi_csi2;
+> >>
+> >=20
+> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> >=20
+>
+> --
+> Best wishes,
+> Vladimir
 
 
