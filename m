@@ -1,105 +1,145 @@
-Return-Path: <linux-kernel+bounces-445304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B24F9F1471
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:55:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA2889F1472
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:56:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D2916A80B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:55:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64EEC28214A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608401E6311;
-	Fri, 13 Dec 2024 17:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AF41E3DE6;
+	Fri, 13 Dec 2024 17:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k12EJZfa"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rfsoc31s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715FB1E5713;
-	Fri, 13 Dec 2024 17:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF6418873F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734112535; cv=none; b=aoLiaCGqLShSvG7tuvNsXJmeGLDe7gKCvpD+cF+2VzDM0c4d9iolLmt2v0i0/Y80dZNL+E9lMoKlfq19TNBDPViRRa1NuoHlAjGkljpGf7oOIWXGzlV4ikoxcV29y4/i7r6cMM0Rg79y7uxF2QvT6PPJSX6j/SOYxs4Cgt/TIGc=
+	t=1734112544; cv=none; b=nQGWTwQF67KxufLo2r4CMo+2XZp+Iqqqqgof9XybKQUtHOn9NmFCbDPFdlzEWd3b6qzwoImPMqH6/hEfjfeRJFQVCqGhw0becIhbiLBfuf82m9pcqZkLbTSoiNm1oPKa4L+kmjcT8TN73CnVnCPcmyusQwDia/eZ55aVSm7lIyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734112535; c=relaxed/simple;
-	bh=X0A9zXrkB8ndBKO3B1/8vCoeKklNyOkao1ANMos884Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tWfIuhVht02S/frC6+t1QSKeRQRKMyxsmrSgyjh1wNFXVc/NdOmThN2pxBE/tA2ztNXR99ZQ7Z6oBQ9SkRmszyHKuFkHTK57jTZudJ2r/KEhZYmAQrRdDcxtIlLK/bD4CHCaecCyn1rESuRDZdNDIligSC5kXGRUX0xBq8X+YL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k12EJZfa; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3c8f39cab1so1666737276.0;
-        Fri, 13 Dec 2024 09:55:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734112533; x=1734717333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X0A9zXrkB8ndBKO3B1/8vCoeKklNyOkao1ANMos884Y=;
-        b=k12EJZfaKMHz3JRgix/E93grEoxEdpj/wzti4FvwPOUU250Rcs7A6omxA6QXf5whGW
-         xT0oQDlpZ68pwp7Zkj5kb3KRvSqZWHLEYXgpnJng7Or8fpLDsUcwxBJCSM8STkFYZNJZ
-         81Ad726BrR+q/AJ4qzz7OZ/i1cTWwExeOBl7cWDtuidMTgAz+Yt+GqClyuVn6JdXMCUT
-         UVMWlA5hjk8f85cBuqI4dNK5QKHtSwna8JUB6ytKb0M5uK0T4smAK2oIidBisMJZPzwf
-         QlY7TEDM1aiJg/mEfTCcQOFH6oJMhhc4VJzPsjiYwle15cP4Br6r62Y6gXBfdLrckIXW
-         GAhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734112533; x=1734717333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X0A9zXrkB8ndBKO3B1/8vCoeKklNyOkao1ANMos884Y=;
-        b=XudJMX3Z+ooIZIjDLQ6tbSuhwjC//UkuRUVMDl7ElmXWWXxRwQcJvM1IJ/IQwqPp+z
-         gRxw2RWDZcsFmCPS3oqMlfCOfMdomUDSuWne79WByYmDCG3f7i5vRmaDWekDoU+yoyfM
-         wKjS/f9KbWpvgh6iZjc1Jd+Vsl9SPS6OTBXetSYlhhyHtnhxsFi0CRQgrHlye4vS67lw
-         HDJM31VjMn/0ovXQMXRF87L774SqvfD97v4npUYrx4uq7Ds1bu/37G156IZdj+x+huCR
-         7jPE7NuaymW07n0fRZsnyc70FcPJJNQkg/JVuHmw7lg5dpjcvHmTBHBIyY5fou01cXF1
-         7Jng==
-X-Forwarded-Encrypted: i=1; AJvYcCVg637KQQfVOn6EfFfhPtKEH4L8ta0PrxuRcT0g2n4nfZnA3WReEzJuto32JEMlO+4ICcNuqujF+8JDy6Rz@vger.kernel.org, AJvYcCVmPlLkCW1xvwURh5qVEP/Y0/QWSqQ6cuskOP027OyBrBkJSk9qBSEGIItuns6LOH60BJQHRzJUpQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxPNEWjPAx9lzJqJ4lBZvMGVc55p6tAX8Z+17oRSDvr4kbb6Nd
-	rmDOrjbmlP/1bLUnTbO769IVL/Nh9MW9jVOHlBvvI9GnhC1RRSLrOZcbWWg6G26T+J5OdMlCpp9
-	7LwWZ57lMHqym/sqrYvnlDIVYukw=
-X-Gm-Gg: ASbGnctUFaOB5Pi3e7AeJ+RHkuMYOo72OzjIJKBqwc06FmsSKB0FWVgPgeDzUcOzZ1a
-	LW8GgRr8fZsRLKi6VFz50TlRyRnF+rhU8ZCyO1sXjSAUT6cHp8qbTkody1HgWQ04r9YjI8M0a
-X-Google-Smtp-Source: AGHT+IFAiJAcWRk2FhnIo4PD0nMMAf5Yg4hOP9gdcitpeidVl8VtxcT+1wk/TuZY2QcFBZPWFutzbWtDhXAo5dKS6eQ=
-X-Received: by 2002:a05:6902:2701:b0:e2b:b9bf:f248 with SMTP id
- 3f1490d57ef6-e438fe52dcemr3357472276.24.1734112533355; Fri, 13 Dec 2024
- 09:55:33 -0800 (PST)
+	s=arc-20240116; t=1734112544; c=relaxed/simple;
+	bh=p4coKaAgHP182k4oX8zmk/36sTSDXs62eag7uZOirZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=crWv1Jw7LaSIEw1uH8MD49ZtcyyE/iZMSXtyQjU/W9ZKeh8Si7BDj9fuqVIhhIdEV+t3zaQ8mgBcv3W6RQAk+yK0a7H31GkaA4CXWN2zscfdjkjJN8KZzbKqjYBt1kRggYVqtJSC/l4Ou9lBid2bO/Q8nzwuSlv+VzrLjIkXNYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rfsoc31s; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734112543; x=1765648543;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=p4coKaAgHP182k4oX8zmk/36sTSDXs62eag7uZOirZM=;
+  b=Rfsoc31sBCrSCr5iRPwDIL/raf59+mrT2lew+8In3svP15L14G6ws4nW
+   wPE3st2zMKpsJUcr719lCJtRFwiVBXrihB0Oc5hPauVWeAFtgiFqmiDKc
+   qLW/CwQ3HBxgSLup76bCqzDA8vmCDSYmUMk3vK5hoIKpdnFQBmdzMam0W
+   8m/LcU4YvL89Qi7q6T9YBQJsDqs/h+g5CNd65i4gvaWhHMeB0pvFDCKZg
+   RZS/qiwml8QBqo6QgnqhG3hinRwOX6I0iU3Pnx9eu1zIKN1n63EZrr6Tm
+   KQzjZhXNCVVXoYsPGA+M2S1iUL43bq2VvpcVo/3UbDuPF/3z1RveyLb5D
+   g==;
+X-CSE-ConnectionGUID: RwuWwSasTQ+h4BINd9nikg==
+X-CSE-MsgGUID: inCRZ4R0SO6581j3Oj090w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="45182670"
+X-IronPort-AV: E=Sophos;i="6.12,231,1728975600"; 
+   d="scan'208";a="45182670"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 09:55:42 -0800
+X-CSE-ConnectionGUID: Qq9KsRfRRRaqqzpZPx6gpg==
+X-CSE-MsgGUID: eI0PIY2tTois6CPnHfkatw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="97380961"
+Received: from philliph-desk.amr.corp.intel.com (HELO [10.124.223.121]) ([10.124.223.121])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 09:55:41 -0800
+Message-ID: <67c7f7df-9954-429c-b625-f894dfe8a8ac@intel.com>
+Date: Fri, 13 Dec 2024 09:55:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CADZouDQpNvEd7ntUgOAQpU18PErENx2NsMMm05SXXODik6Vmtw@mail.gmail.com>
- <ca3b85d6-ddbf-48b9-bdf5-7962ef3b46ed@kernel.dk> <CADZouDTH=t7WTFgrVyL_vYsJaWF4stjAj5W8NF2qAK0bW2HVHA@mail.gmail.com>
- <2310bb0c-8a8d-4520-a1ab-40a0489312e5@kernel.dk>
-In-Reply-To: <2310bb0c-8a8d-4520-a1ab-40a0489312e5@kernel.dk>
-From: chase xd <sl1589472800@gmail.com>
-Date: Fri, 13 Dec 2024 18:55:22 +0100
-Message-ID: <CADZouDS7MWbFdh69DXeSdzUSt4AhEqN-+gy_PTdUV2pAAYyEjA@mail.gmail.com>
-Subject: Re: WARNING in get_pat_info
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] x86/cpu: Introduce new microcode matching helper
+To: Chao Gao <chao.gao@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+ bp@alien8.de, kan.liang@linux.intel.com, mingo@kernel.org,
+ peterz@infradead.org, tony.luck@intel.com, pawan.kumar.gupta@linux.intel.com
+References: <20241206193829.89E12D0B@davehans-spike.ostc.intel.com>
+ <20241206193831.3BBA3834@davehans-spike.ostc.intel.com>
+ <Z1fVslUeUwjBNwdI@intel.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Z1fVslUeUwjBNwdI@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This should be the right fix on their side? I was just wondering why
-the newest lts5.15 not applied this backport.
-https://lore.kernel.org/all/262aa19c-59fe-420a-aeae-0b1866a3e36b@redhat.com=
-/T/#u
+On 12/9/24 21:46, Chao Gao wrote:
+>> +bool x86_match_min_microcode_rev(const struct x86_cpu_id *table)
+>> +{
+>> +	const struct x86_cpu_id *res = x86_match_cpu(table);
+>> +
+>> +	if (!res || res->driver_data > boot_cpu_data.microcode)
+>> +		return false;
+>> +
+>> +	return true;
+> Maybe we can simplify the logic to:
+> 
+> 	return res && res->driver_data <= boot_cpu_data.microcode;
 
-On Fri, Dec 13, 2024 at 6:49=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 12/13/24 10:47 AM, chase xd wrote:
-> > The bug was found in October and the newest update on lts5.15 was on
-> > 2024-11-17 but still it has not been backported yet umm...
->
-> What do you want to backport?
->
-> --
-> Jens Axboe
->
+So, yeah, it can be made shorter.
+
+But it's 100% a style thing and I'm not at all in the camp of fewer
+lines meaning better code. It's all short enough to see without even
+really moving your eyeballs so it's short _enough_ for sure.  There's
+only one line of real logic either way.
 
