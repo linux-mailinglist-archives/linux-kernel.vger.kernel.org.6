@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-444339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2099F0501
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:45:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE379F0500
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:45:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4B3282CDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:45:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFCC61884622
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C4D18CBEC;
-	Fri, 13 Dec 2024 06:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF06918CBF2;
+	Fri, 13 Dec 2024 06:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VAdF6Zle"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347A3155398
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 06:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UrlWiLYm"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EA333F3;
+	Fri, 13 Dec 2024 06:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734072337; cv=none; b=MI05gAPxdPyrTs4346nLbbxCPZu7u868v98VnlpuuZYVMuXQZ5jVRfkYyODbUcgKrF4QCb3AQnZHM9qITLc1dN9XiScN1jrmkc74V6VxMQMrCssgISuOfT6IgbsG9QDQO27DEMf2b+Jz4Aeacy7J6ZV2LiAuk8390dTb5XxLwj0=
+	t=1734072331; cv=none; b=ozxnQS7cahzoh+jmRcHjZ8SM3DxNhJGZmiCtP/+H5nkRxPPxib1N50juruNISOaG+6IvvN84AXPBuyzMTjhD+8jwAQDWVitzLBY8i//IkI63XhO+kf1cMXMVN9TfiWeDG8NYPWTLg8wFNBGGuy0eEWgvjDTp4ERTbvZ1/6kccbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734072337; c=relaxed/simple;
-	bh=Y3V3QXxnk6ioz2X6g8iJlmn+yyJNHa0oVjvimRPuvw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OgehxlS2r985al3Fy/Jthr+3v+EFwcLY57/rKL0pwJVY4o6cx5jjs18CKxLvnsKxZ+6submjJerXCWugaPVK4QZYcs8ASTf8EzcSA2rD1pTU0Kly5T+wWMHY/7EDiKlIZnvQKV5wGj7W5KUYGUCUr4wG1YLGqSWObY8EE3lJyzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VAdF6Zle; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734072335; x=1765608335;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Y3V3QXxnk6ioz2X6g8iJlmn+yyJNHa0oVjvimRPuvw0=;
-  b=VAdF6ZlemyXj2RmOYOXDTiztvuqkmiO823hb6mOdgkzSeGXtSPMmpl0c
-   WxaisET8GHmIfh4agNJ/SOqLqAlgZxCfzwoZI6fGM3eP0Z9e9xeZjwTwG
-   MTQ0F7UADj8h1TUvmNzccpF+7tD3UUfE1EF5C2Q0jn2/iIAai/MaW7PoA
-   ceG6GJCrJ0cVXDyapdxfenLNystV/rLoZ0VXJC3Vmtau2YPb0mTfnOxOH
-   AhR69QcVfHQegB1gfAA5LNiwREz4BJMh871R84OSTIISBwfQU5zbx4tV6
-   ZrNXv1INuL9P4b8Q5igryNRiSOEeBdt+CipH9I9CFc0/Es9+qt7OCdhFf
-   w==;
-X-CSE-ConnectionGUID: 3C7bmxVCQ62celQnBD9kQw==
-X-CSE-MsgGUID: 62MOimwYSZ+17ERGHe5Xaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="34649493"
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="34649493"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 22:45:34 -0800
-X-CSE-ConnectionGUID: fURkU1yZRrW+hvR2JNT3GQ==
-X-CSE-MsgGUID: 1kFj6ZH7RpeklJ9CO0RjLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="96529879"
-Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.124.244.96]) ([10.124.244.96])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2024 22:45:29 -0800
-Message-ID: <56fdfffc-9a5e-4f9e-ae5b-57dd27d647cc@linux.intel.com>
-Date: Fri, 13 Dec 2024 14:45:18 +0800
+	s=arc-20240116; t=1734072331; c=relaxed/simple;
+	bh=GzL2AtSDMbTNYxTMSPdcwc2SIerdy8fdBdsvpRXc3ZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CPa9K4VW7Ipr6ql2qCcgAnTepsQioYNnxHtPTprTZFwq0mWi5wfu8PJ0nFmu0xaCVZJ0e5I2Kfp6qTmoD6eNJxi05E4iMpNTYvyD1AC0nDORtsv1HgdWwe53Vhj/60PXKLRWLtv7Y5yFwYPnqVZZYAOkODJTiNsqJ0nm4zSJTdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UrlWiLYm; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 61A89204BA95; Thu, 12 Dec 2024 22:45:29 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 61A89204BA95
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1734072329;
+	bh=0zbGji4qwwGq65ZdKdxz7k9d0tV8I0XmHkLnVnKe27I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UrlWiLYmfeMUqCR8rcNj1vzOi35kzJ66ymiJ4XSMd5ZYmwW8Grbe+DfEbrptsBjgg
+	 V7mnVAaj8CSOXMPxd/9YRTBDgoix/05tnETNGYZLew1lnoDlEoUfBvlPHnk2KgguVS
+	 jU2ULyF/s1rQgSxGnAPi2whvEamGgH1oPXfe2YnU=
+Date: Thu, 12 Dec 2024 22:45:29 -0800
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	Steve Wahl <steve.wahl@hpe.com>, stable@vger.kernel.org,
+	ssengar@microsoft.com, srivatsa@csail.mit.edu
+Subject: Re: [PATCH v2] sched/topology: Enable topology_span_sane check only
+ for debug builds
+Message-ID: <20241213064529.GA17588@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1731922777-7121-1-git-send-email-ssengar@linux.microsoft.com>
+ <1e4c0bda-380e-5aba-984f-2a48debd7562@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 13/20] x86/kexec: Mark relocate_kernel page as ROX
- instead of RWX
-To: David Woodhouse <dwmw2@infradead.org>, kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
- linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
- Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- jpoimboe@kernel.org, bsz@amazon.de
-References: <20241205153343.3275139-1-dwmw2@infradead.org>
- <20241205153343.3275139-14-dwmw2@infradead.org>
- <5bb26488-f5fb-4186-92c3-de6a07631f91@linux.intel.com>
- <b4104c271b461dc1958ffac299d6741746a0728a.camel@infradead.org>
-Content-Language: en-US
-From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
-In-Reply-To: <b4104c271b461dc1958ffac299d6741746a0728a.camel@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1e4c0bda-380e-5aba-984f-2a48debd7562@amd.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-
-
-On 2024/12/12 18:13, David Woodhouse wrote:
-> On Thu, 2024-12-12 at 11:03 +0800, Ning, Hongyu wrote:
->>
->> Hi David,
->>
->> I've hit some kdump/kexec regression issue for guest kernel in KVM/QEMU
->> based VM and reported in https://bugzilla.kernel.org/show_bug.cgi?id=219592.
->>
->> based on further git bisect, it seems to be related with this commit,
->> would you help to take a look?
+On Tue, Nov 19, 2024 at 11:54:57AM +0530, K Prateek Nayak wrote:
+> (+ Steve)
 > 
-> Thanks for the report; I'll take a look. Please could you share your
-> kernel .config?
+> Hello Saurabh,
+> On 11/18/2024 3:09 PM, Saurabh Sengar wrote:
+> >On a x86 system under test with 1780 CPUs, topology_span_sane() takes
+> >around 8 seconds cumulatively for all the iterations. It is an expensive
+> >operation which does the sanity of non-NUMA topology masks.
 > 
-
-kernel config updated in the bugzilla 
-https://bugzilla.kernel.org/show_bug.cgi?id=219592
-
-> Also, you say that this is in QEMU running on an IA64 host. Is that
-> true, or did you mean x86_64 host? Are you using OVMF or SeaBIOS as the
-> QEMU firmware?
+> Steve too was optimizing this path. I believe his latest version can be
+> found at:
+> https://lore.kernel.org/lkml/20241031200431.182443-1-steve.wahl@hpe.com/
 > 
+> Does that approach help improving bootup time for you? Valentine
+> suggested the same approach as yours on a previous version of Steve's
+> optimization but Steve believed returning true can possibly have other
+> implication in the sched-domain building path. The thread can be found
+> at:
+> https://lore.kernel.org/lkml/Zw_k_WFeYFli87ck@swahl-home.5wahls.com/
+>
 
-You're right, it's x86_64 host, I miss-selected it in bugzilla.
-I'm using OVMF as the QEMU firmware.
+I see that Steve's patch focuses on optimizing the topology sanity check,
+whereas my patch aims to make it optional. I believe both patches can
+coexist, as even with optimization, there will still be some performance
+overhead for this check. My goal is to provide an option to bypass it
+if desired. Please do check my discussion with Valentin on V1.
 
-> In the short term, I think that just reverting the 'offending' commit
-> should be OK. I'd *prefer* not to leave the page RWX for the whole time
-> period that the image is loaded, but that's how it's been on i386 for
-> ever anyway.
+> >
+> >CPU topology is not something which changes very frequently hence make
+> >this check optional for the systems where the topology is trusted and
+> >need faster bootup.
+> >
+> >Restrict this to sched_verbose kernel cmdline option so that this penalty
+> >can be avoided for the systems who wants to avoid it.
+> >
+> >Cc: stable@vger.kernel.org
+> >Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
+> >Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> >---
+> >[V2]
+> >	- Use kernel cmdline param instead of compile time flag.
+> >
+> >  kernel/sched/topology.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> >diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> >index 9748a4c8d668..4ca63bff321d 100644
+> >--- a/kernel/sched/topology.c
+> >+++ b/kernel/sched/topology.c
+> >@@ -2363,6 +2363,13 @@ static bool topology_span_sane(struct sched_domain_topology_level *tl,
+> >  {
+> >  	int i = cpu + 1;
+> >+	/* Skip the topology sanity check for non-debug, as it is a time-consuming operatin */
+> >+	if (!sched_debug_verbose) {
+> 
+> nit.
+> 
+> I think the convention in topology.c is to call "sched_debug()" and not
+> check "sched_debug_verbose" directly.
 
-And your latest patch 
-https://lore.kernel.org/kexec/9c68688625f409104b16164da30aa6d3eb494e5d.camel@infradead.org/ 
-could fix this issue now.
+I will add this in next version
+
+It would be greatly appreciated if a maintainer could share their
+thoughts on these two patches aimed at enhancing the performance
+of large-scale machines.
+
+- Saurabh
 
