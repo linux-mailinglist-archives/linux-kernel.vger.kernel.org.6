@@ -1,170 +1,155 @@
-Return-Path: <linux-kernel+bounces-444385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB0F9F05F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:04:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73EF9F05F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:04:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694BE283F8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:04:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00B3F1655FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C3A19F120;
-	Fri, 13 Dec 2024 08:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AF119D096;
+	Fri, 13 Dec 2024 08:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kwRlWruO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wf5Gfd1b"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCflS9Wq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF9F192D7B;
-	Fri, 13 Dec 2024 08:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EC918DF7C;
+	Fri, 13 Dec 2024 08:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734077051; cv=none; b=QDbxB8mCeYSp/KLzxW5nWHShBXcRlxJo40msc0NwBuFaI6UCFvOD8VGK5pmz6wxbct4/wyGBdQ2ofzqDQ8V92eO3GSHM3krr8YIBUhnCbOHSdoOERKqco8bN9V9+LNtUtkqaqnYifDYCp0CewMHYpdM9AL+NnKhHarKpTRfKqMM=
+	t=1734077036; cv=none; b=AwfB8o83Y6jjly7dCyBotZ3/zvsRzp7Wj//dllmI1ctbdz57tbwcY26AgMa5KIl8ULWCgoMHM1P2UIi8d9AJ6upXLvnqqPAySLPB7jKxUabDEsHS3TVFAqta/Qqdk+qL3I/6cPcmbV8IBj8eQZ2qm6m/Cr+iSAavff8HbE0SnTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734077051; c=relaxed/simple;
-	bh=SseRUNOOKUJAdxzVTz4HSQv3JlpkLlwSIWWX+XWKtgQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bzuBsx8PH7eepgW1qCx9hHLMMJgpO4V0mDj5hkGUt7+c5pDn4IvvpOZEOitiD8SGETEU+pK1EJO06PYZ0BstuJpB3Q7Hz+LvMWhQvdfvYF0fwWId8NQ9XewNdh6uorH7NYIXptHgx72GvAmLbG1/roovg5jCZDGl8uPSOVp4hp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kwRlWruO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wf5Gfd1b; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 54FCB25401E2;
-	Fri, 13 Dec 2024 03:04:04 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 13 Dec 2024 03:04:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1734077044;
-	 x=1734163444; bh=xkdaBG8UMFyF010HWwrn18x+gfYMEYxilRcPMsaZiVs=; b=
-	kwRlWruOQXnYuoGU4ct7wnbZzpq8GbzYC5uXTtj+ieZM03zuV+Tt9PLNpT0OkMP6
-	K+i+RioQx0MTsgKt/M2b/PppfO3/x8ivdmXMgbKUtmfNssVe+GGwRCqCkPq5bfbN
-	N8dyhtPQ4Y8dIw971ni0aAoroFXoZxvgetECTodVWa9EpbwIvPIt4iAHApW4roYn
-	PLrV8oyDOOASxjzAJyxzXvs+w4ofKcTCDsZGygnEaPjBbVKKTcJ7ROn5U4zmudTy
-	pHmGayBV63ZE/DwrQOOgYnfHnYBuEJEH5T2XxdxRUAamVnwYsphSP+hCQiLbMifs
-	oeM1bdqzKH8E+n2zDWnHaQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1734077044; x=
-	1734163444; bh=xkdaBG8UMFyF010HWwrn18x+gfYMEYxilRcPMsaZiVs=; b=w
-	f5Gfd1bCGgDhcncBvskPNse389eQ0QEfGBCs/NoAeMsbZBsXO0YkbIDC96jSrJMp
-	cNCa/5XjhA9LfhZLrr53T1E4loiHvDt1z6QQB8J1wFfiLQFQKw8FXuqapGsrT7H3
-	3aygnrdo/gs3YOJRdiVQ//Rs2j4wszfdrvufgk8UlHWrhRdlWosh1d47qkqAAYmB
-	khTX32HWGUwaBjac774RnINOTDWu5CQPe6Ug4YkIu7urQDpHwn157ajEAIblPN1d
-	PXruLjz38Mj0+8MiAVWehfM8jxaCtTPZqVTvceHDBYe0vw7bdf7vvMez/f94RXZJ
-	FGQnbO2l3OSOVvbmRJsgA==
-X-ME-Sender: <xms:cepbZwHYOLdK2uLiclp-OM6t1Q7gEnVCC9TlLMzbw6ClQ1So0jUu5g>
-    <xme:cepbZ5X6JlxRboE-OfGKmIOU19X6A6KLzaGL6IIsRwzSmlXK0mcMvG9MPVdsEZmsw
-    ZN8TN8gQeTOoFz0KY8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeeigdduudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedvvdeg
-    jedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepfeeh
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprh
-    gtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghp
-    thhtohepghhrrghfsegrmhgriihonhdrtghomhdprhgtphhtthhopegrthhishhhphesrg
-    htihhshhhprghtrhgrrdhorhhgpdhrtghpthhtoheprghnuhhpsegsrhgrihhnfhgruhhl
-    thdrohhrghdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhroh
-    huphdrvghupdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghp
-    thhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehmph
-    gvsegvlhhlvghrmhgrnhdrihgurdgruh
-X-ME-Proxy: <xmx:cepbZ6LndnD8ZSZeGggeTF_B5V_DgMVWx-1ulNhV23ajSDoVV-Ti_w>
-    <xmx:cepbZyGY9wBofw83hXJKg-3q6hMTZIhwUkue-0Cp7reEPrBTSbMuKQ>
-    <xmx:cepbZ2UwyfQQq1czPmiqjUcFhf7znIqD5iwIE5qoLNE82ddwPCTk7Q>
-    <xmx:cepbZ1P1Jq82_ZoB3xLrj4H6gt9wqcGRFechLH3v8hR7FqCjabg6Sw>
-    <xmx:dOpbZw0XsZIrhDEJP9jq1aOwBLm0frAM5cG3_b5M1E0thNTIztJg5TAk>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6A3682220072; Fri, 13 Dec 2024 03:04:01 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1734077036; c=relaxed/simple;
+	bh=a427peznSb9rd/430/QkT+uXHAFd5aCvLum2pl93qig=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=F3JxiMqUR2bF1w8WrLyjQc5QcjgaVZlELgcd8mt7vN6haCNIr2g+bkaq5l7f45QFuPoZ5I3n8HAkNvvfXphrHOIZVNZvhmjgQVt4wS8GpSzebT5S6KRvhDaeo8Mk23/CVt4pLklypa0iiSFh0BTPGmzs4xVAe9s4uwlrz0kY9dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCflS9Wq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF10C4CED0;
+	Fri, 13 Dec 2024 08:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734077035;
+	bh=a427peznSb9rd/430/QkT+uXHAFd5aCvLum2pl93qig=;
+	h=Date:Subject:From:To:References:In-Reply-To:From;
+	b=VCflS9WqFIdAL12O6EMv/nY5QV0YiVxxWGfv9lb26mzyIccZ8nTm8zXNJMeels9T4
+	 GDo8sfUj5ycdYnH9L3cimdj+wqOD8KyKgPicfOtzOOJ1VUmacZMpXfxDlpaofGW2Hp
+	 l7egv5NduCSgMBV3P+kCpU1L6PhQNebemKo1yKktJfC0bJYSSqrn6HC/+3NkvXtSCg
+	 6nlyPoqSohERvegkJvdo4ieXfKHz5ULK33N7xEn9X7CeVAq8i9a6lWbHmob2SskDfw
+	 SmYTFz12ZBJoAJyRMRuSvY6tchjYU9OMik9tzhmwcrKXo95oT+JAyFUSIKMfYSmlBC
+	 46OrqHN4y/+8Q==
+Message-ID: <7b991fca-6e2f-454f-a94d-6a583854769b@kernel.org>
+Date: Fri, 13 Dec 2024 09:03:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 13 Dec 2024 09:03:30 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "A. Wilcox" <AWilcox@wilcox-tech.com>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: kvm@vger.kernel.org, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N Rao" <naveen@kernel.org>,
- "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Alexander Graf" <graf@amazon.com>, "Crystal Wood" <crwood@redhat.com>,
- "Anup Patel" <anup@brainfault.org>,
- "Atish Patra" <atishp@atishpatra.org>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>,
- "Albert Ou" <aou@eecs.berkeley.edu>,
- "Sean Christopherson" <seanjc@google.com>,
- "Paolo Bonzini" <pbonzini@redhat.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Vitaly Kuznetsov" <vkuznets@redhat.com>,
- "David Woodhouse" <dwmw2@infradead.org>, "Paul Durrant" <paul@xen.org>,
- "Marc Zyngier" <maz@kernel.org>, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org
-Message-Id: <6e971322-8b21-4d73-922c-a6032c6fe9bd@app.fastmail.com>
-In-Reply-To: <35E5C2A3-94AC-446B-A0A1-84B043DBC890@Wilcox-Tech.com>
-References: <20241212125516.467123-1-arnd@kernel.org>
- <35E5C2A3-94AC-446B-A0A1-84B043DBC890@Wilcox-Tech.com>
-Subject: Re: [RFC 0/5] KVM: drop 32-bit host support on all architectures
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, tglx@linutronix.de, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, olof@lixom.net, quic_bjorande@quicinc.com,
+ geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
+ konradybcio@kernel.org, neil.armstrong@linaro.org, johan+linaro@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ soc@lists.linux.dev
+References: <20241212155237.848336-1-kevin_chen@aspeedtech.com>
+ <20241212155237.848336-4-kevin_chen@aspeedtech.com>
+ <7289a50a-e139-453f-a512-3dd68a0839a2@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <7289a50a-e139-453f-a512-3dd68a0839a2@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Dec 13, 2024, at 04:51, A. Wilcox wrote:
-> On Dec 12, 2024, at 6:55=E2=80=AFAM, Arnd Bergmann <arnd@kernel.org> w=
-rote:
->> From: Arnd Bergmann <arnd@arndb.de>
->>=20
->> I submitted a patch to remove KVM support for x86-32 hosts earlier
->> this month, but there were still concerns that this might be useful f=
-or
->> testing 32-bit host in general, as that remains supported on three ot=
-her
->> architectures. I have gone through those three now and prepared simil=
-ar
->> patches, as all of them seem to be equally obsolete.
->>=20
->> Support for 32-bit KVM host on Arm hardware was dropped back in 2020
->> because of lack of users, despite Cortex-A7/A15/A17 based SoCs being
->> much more widely deployed than the other virtualization capable 32-bit
->> CPUs (Intel Core Duo/Silverthorne, PowerPC e300/e500/e600, MIPS P5600)
->> combined.
->
->
-> I do use 32-bit KVM on a Core Duo =E2=80=9CYonah=E2=80=9D and a Power =
-Mac G4 (MDD), for
-> purposes of bisecting kernel issues without having to reboot the host
-> machine (when it can be duplicated in a KVM environment).
->
-> I suppose it would still be possible to run the hosts on 6.12 LTS for
-> some time with newer guests, but it would be unfortunate.
+On 13/12/2024 08:59, Krzysztof Kozlowski wrote:
+> On 12/12/2024 16:52, Kevin Chen wrote:
+>> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+>> ---
+>>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>> index 2f92b8ab08fa..20191fee1f5b 100644
+>> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+>> @@ -101,4 +101,10 @@ properties:
+>>                - ufispace,ncplite-bmc
+>>            - const: aspeed,ast2600
+>>  
+>> +      - description: AST2700 based boards
+>> +        items:
+>> +          - enum:
+>> +              - aspeed,ast2700-evb
+>> +          - const: aspeed,ast2700
+>> +
+>>  additionalProperties: true
+> 
+> 
+> 
+> This patchset is just corrupted. You already sent it as patch #1.
+> 
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
+BTW, you already got here same comments before and this is third time
+you send exactly the same without implementing what we asked you.
 
-Would it be an option for you to just test those kernels on 64-bit
-machines? I assume you prefer to do native builds on 32-bit hardware
-because that fits your workflow, but once you get into debugging
-in a virtual machine, the results should generally be the same when
-building and running on a 64-bit host for both x86-32 and ppc32-classic,
-right?
+Three times same issue.
 
-      Arnd
+NAK
+
+Best regards,
+Krzysztof
 
