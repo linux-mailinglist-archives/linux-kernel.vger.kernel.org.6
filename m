@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-445597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40B29F182C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:53:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D68D9F182E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5B13165F98
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:53:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66291188326F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F56196455;
-	Fri, 13 Dec 2024 21:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9721990D3;
+	Fri, 13 Dec 2024 21:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JIHoa8xv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfdfXvct"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58438196446;
-	Fri, 13 Dec 2024 21:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6732F1974EA;
+	Fri, 13 Dec 2024 21:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734126799; cv=none; b=S9pJj7PJcI+Ex1Rf5lmDc1DU4k59Kf7n/cxrD/M6Yj1Hn3Gm9IsDcl+YG2IoBxhaxWkhMTatzipIhQ1OeuXZM0yeKtSAWUhD7iVvYjrzLasPrk//aIdMOu7YYNVioc9FIOPmbPmlwA+6xHLu1VYePLUJn748tmbL4swZyYsNeK0=
+	t=1734126800; cv=none; b=JLkgbuLTsMiSOTb6JvCawDFPpMtPFrW2HOs033iKxXArD7kxGBXh0kk56dIoIZY/lA4lxmceSmaFv+SHzv7k94FvIbP1NVIaqWNEdLPBZSXBqyK2//qPElkNsZpEHbDRnqHx+3W0EDIJ4m91f6GUdPUNYuCrDUsnr4mFaq05dfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734126799; c=relaxed/simple;
-	bh=LaL2B6Z67E0pzAwlb61QS3yiBPbVveY7ewg0M8543bU=;
+	s=arc-20240116; t=1734126800; c=relaxed/simple;
+	bh=KeUP+pCvuxkILHBLCBzmbDq6X8tGBEnSsOyYCFO9ER4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WBcIoCLxjFO808PUeFXHpnYCeoskNNUCdtj6HzG2A7OHYRUMJEiMVNFHQfBddIM1uSmBn+TLLM7eDv3ADPW6//cvEhPLS+m7L+0G2Udhw7sHWwkW1F3w6bmkq+M/fpHezXpbQAoIN45GaVPA8yocX0Cbaa+KXMggk50UGI/djMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JIHoa8xv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4042C4CED4;
-	Fri, 13 Dec 2024 21:53:16 +0000 (UTC)
+	 MIME-Version; b=UlTqAzYzoWhWSMpvaK5e1gY9pRP8EslwK6YGjsa6G6cv8A/RwGw2IXeK+rr09prkhkyY9z7yqV31cl/Oqu9fPiiRwZglA1mMzQQOPrjJAxqo2Cm8/6U559VeDOvoZWlLQe0E05JeE/zabG5n1cKCkqO+11cAYLXe7Cjx0LyMHfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfdfXvct; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C029EC4CED0;
+	Fri, 13 Dec 2024 21:53:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734126797;
-	bh=LaL2B6Z67E0pzAwlb61QS3yiBPbVveY7ewg0M8543bU=;
+	s=k20201202; t=1734126798;
+	bh=KeUP+pCvuxkILHBLCBzmbDq6X8tGBEnSsOyYCFO9ER4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JIHoa8xvHtBEgKfFgfmzr8JhU8wuYdm22oBq3aXrAJdLT92I+YnPf+q/gazur1Svt
-	 H9IJ4O5mRQQJIXElDQ0J31E4A7AQOGeqVPy0Kpz6Gz97Whk1qNbxbeYnFL6YMf0w9J
-	 NxZhLEBwNgdQUk/b0Ub7ZMqCbFcqfNH7vZchKvHkSjFdzUCUCuX4hExGnI4n0j6Kx3
-	 YHsIFHkl/x3L5l3dE+8A2jdnvmMTWACMZu46ymdApCGVPC36eS13a+tXgzno5OIgt6
-	 Ff5siVphwaYrP4Mc2Ef1h9jtHp3dfEItjBTppVVBUnBOXXa7UpW7Sfoh7BW6Ep/FCr
-	 oYIJWZBC0khMw==
+	b=nfdfXvct2DhdTzFkuAL1Stw3Y9RViraAPNw5F4RuvEghu7rw6op1PLPMfFfxpXCW0
+	 5LJzRigU/GJ/mRfHzc9VQX6l6oHyTTVCjmB9NMg0DaZg8agdG/eD724XV5v3X9BMAi
+	 F8qDykQFR2H+N7nxiKbeCVnAwvj4lGlyycCkP1QBWzgUresQuwCq0rRtPS1Q1yTnwm
+	 jYmDkEEN8fr5jrWWDF4LZiZ8va00lghmI5bs2sfzaC4+pRXzfHZmrHofsw4b0jbcSx
+	 TOvfpyKgFLqU6NqZqvLD6isQxnHwsVeDea5QfsfInrora/kv2V1GBtWIlGzoQE31aU
+	 B9FT0mSE6X4Bg==
 From: SeongJae Park <sj@kernel.org>
 To: 
 Cc: SeongJae Park <sj@kernel.org>,
 	damon@lists.linux.dev,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 1/9] mm/damon/sysfs-schemes: remove unnecessary schemes existence check in damon_sysfs_schemes_clear_regions()
-Date: Fri, 13 Dec 2024 13:52:58 -0800
-Message-Id: <20241213215306.54778-2-sj@kernel.org>
+Subject: [RFC PATCH 2/9] mm/damon/sysfs: handle clear_schemes_tried_regions from DAMON sysfs context
+Date: Fri, 13 Dec 2024 13:52:59 -0800
+Message-Id: <20241213215306.54778-3-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241213215306.54778-1-sj@kernel.org>
 References: <20241213215306.54778-1-sj@kernel.org>
@@ -60,83 +60,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-damon_sysfs_schemes_clear_regions() skips removing the scheme tried
-region directories only if the matching scheme is still ongoing.  It is
-unnecessary check, since what users want is just removing the entire
-region directories.  Remove the unnecessary check.
+DAMON sysfs interface handles clear_schemes_tried_regions from DAMON
+callback context (damon_sysfs_cmd_request_callback()).  But no DAMON
+internal data is accessed for the work.  Directly handle it from DAMON
+sysfs interface context, namely damon_sysfs_handle_cmd().
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/damon/sysfs-common.h  |  3 +--
- mm/damon/sysfs-schemes.c | 16 +++++-----------
- mm/damon/sysfs.c         |  2 +-
- 3 files changed, 7 insertions(+), 14 deletions(-)
+ mm/damon/sysfs-schemes.c |  2 +-
+ mm/damon/sysfs.c         | 17 +++--------------
+ 2 files changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/mm/damon/sysfs-common.h b/mm/damon/sysfs-common.h
-index 9a18f3c535d3..e79b4a65ff2d 100644
---- a/mm/damon/sysfs-common.h
-+++ b/mm/damon/sysfs-common.h
-@@ -56,8 +56,7 @@ bool damos_sysfs_regions_upd_done(void);
- int damon_sysfs_schemes_update_regions_stop(struct damon_ctx *ctx);
- 
- int damon_sysfs_schemes_clear_regions(
--		struct damon_sysfs_schemes *sysfs_schemes,
--		struct damon_ctx *ctx);
-+		struct damon_sysfs_schemes *sysfs_schemes);
- 
- int damos_sysfs_set_quota_scores(struct damon_sysfs_schemes *sysfs_schemes,
- 		struct damon_ctx *ctx);
 diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-index 25356fe99273..65f6d3339a77 100644
+index 65f6d3339a77..6c8f9eae75af 100644
 --- a/mm/damon/sysfs-schemes.c
 +++ b/mm/damon/sysfs-schemes.c
-@@ -2213,20 +2213,14 @@ void damos_sysfs_mark_finished_regions_updates(struct damon_ctx *ctx)
- 
- /* Called from damon_sysfs_cmd_request_callback under damon_sysfs_lock */
- int damon_sysfs_schemes_clear_regions(
--		struct damon_sysfs_schemes *sysfs_schemes,
--		struct damon_ctx *ctx)
-+		struct damon_sysfs_schemes *sysfs_schemes)
- {
--	struct damos *scheme;
--	int schemes_idx = 0;
-+	int i;
- 
--	damon_for_each_scheme(scheme, ctx) {
-+	for (i = 0; i < sysfs_schemes->nr; i++) {
- 		struct damon_sysfs_scheme *sysfs_scheme;
- 
--		/* user could have removed the scheme sysfs dir */
--		if (schemes_idx >= sysfs_schemes->nr)
--			break;
--
--		sysfs_scheme = sysfs_schemes->schemes_arr[schemes_idx++];
-+		sysfs_scheme = sysfs_schemes->schemes_arr[i];
- 		damon_sysfs_scheme_regions_rm_dirs(
- 				sysfs_scheme->tried_regions);
- 		sysfs_scheme->tried_regions->total_bytes = 0;
-@@ -2276,7 +2270,7 @@ int damon_sysfs_schemes_update_regions_start(
- 		struct damon_sysfs_schemes *sysfs_schemes,
- 		struct damon_ctx *ctx, bool total_bytes_only)
- {
--	damon_sysfs_schemes_clear_regions(sysfs_schemes, ctx);
-+	damon_sysfs_schemes_clear_regions(sysfs_schemes);
- 	damon_sysfs_schemes_for_damos_callback = sysfs_schemes;
- 	damos_tried_regions_init_upd_status(sysfs_schemes, ctx);
- 	damos_regions_upd_total_bytes_only = total_bytes_only;
-diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
-index 4daac92be30b..71bc2622ab35 100644
---- a/mm/damon/sysfs.c
-+++ b/mm/damon/sysfs.c
-@@ -1262,7 +1262,7 @@ static int damon_sysfs_clear_schemes_regions(
- 	if (!ctx)
- 		return -EINVAL;
- 	return damon_sysfs_schemes_clear_regions(
--			kdamond->contexts->contexts_arr[0]->schemes, ctx);
-+			kdamond->contexts->contexts_arr[0]->schemes);
+@@ -2265,7 +2265,7 @@ static void damos_tried_regions_init_upd_status(
+ 	}
  }
  
+-/* Called from damon_sysfs_cmd_request_callback under damon_sysfs_lock */
++/* Called while damon_sysfs_lock is hold */
+ int damon_sysfs_schemes_update_regions_start(
+ 		struct damon_sysfs_schemes *sysfs_schemes,
+ 		struct damon_ctx *ctx, bool total_bytes_only)
+diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
+index 71bc2622ab35..8cb940d21fbe 100644
+--- a/mm/damon/sysfs.c
++++ b/mm/damon/sysfs.c
+@@ -1254,17 +1254,6 @@ static int damon_sysfs_upd_schemes_regions_stop(
+ 	return damon_sysfs_schemes_update_regions_stop(ctx);
+ }
+ 
+-static int damon_sysfs_clear_schemes_regions(
+-		struct damon_sysfs_kdamond *kdamond)
+-{
+-	struct damon_ctx *ctx = kdamond->damon_ctx;
+-
+-	if (!ctx)
+-		return -EINVAL;
+-	return damon_sysfs_schemes_clear_regions(
+-			kdamond->contexts->contexts_arr[0]->schemes);
+-}
+-
  static inline bool damon_sysfs_kdamond_running(
+ 		struct damon_sysfs_kdamond *kdamond)
+ {
+@@ -1417,9 +1406,6 @@ static int damon_sysfs_cmd_request_callback(struct damon_ctx *c, bool active,
+ 			damon_sysfs_schemes_regions_updating = false;
+ 		}
+ 		break;
+-	case DAMON_SYSFS_CMD_CLEAR_SCHEMES_TRIED_REGIONS:
+-		err = damon_sysfs_clear_schemes_regions(kdamond);
+-		break;
+ 	case DAMON_SYSFS_CMD_UPDATE_SCHEMES_EFFECTIVE_QUOTAS:
+ 		err = damon_sysfs_upd_schemes_effective_quotas(kdamond);
+ 		break;
+@@ -1549,6 +1535,9 @@ static int damon_sysfs_handle_cmd(enum damon_sysfs_cmd cmd,
+ 		return damon_sysfs_turn_damon_on(kdamond);
+ 	case DAMON_SYSFS_CMD_OFF:
+ 		return damon_sysfs_turn_damon_off(kdamond);
++	case DAMON_SYSFS_CMD_CLEAR_SCHEMES_TRIED_REGIONS:
++		return damon_sysfs_schemes_clear_regions(
++			kdamond->contexts->contexts_arr[0]->schemes);
+ 	default:
+ 		break;
+ 	}
 -- 
 2.39.5
 
