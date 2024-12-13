@@ -1,86 +1,47 @@
-Return-Path: <linux-kernel+bounces-445055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF799F1077
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:11:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB8E9F1085
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:13:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DF516B433
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B54188375B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2781E22EF;
-	Fri, 13 Dec 2024 15:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97051E1C1B;
+	Fri, 13 Dec 2024 15:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HLh6j38D"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZH2HMLXh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFF31E04BF
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFB91E105B;
+	Fri, 13 Dec 2024 15:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734102591; cv=none; b=kZ9yD9l8szKA2g6mUuNog3le/w5f/YL3+7s9LSdxmCPNEbAUhNjhQg4lQZjVN8YvsH1xvzMivDZEaeqFm3Fsp38FuEWdwIjn/HwvHHrcHW3iFKJQwMXgvoH0bD+fzWWkwQNuBHqN6vIdDwL/JcQtOgATjCMaCWn0BiG+odpq07c=
+	t=1734102612; cv=none; b=MhWrV1E6Q/wV+18yC0LZn0xveY6zLpRyr9lRG8MQBuPRK5vrJbJV6FDpOVqLQ5FpOZ46AWbsFJNyHNOEy5q9JZyqP3LSaBW7RKjGnf5h+okOOm2K8HvF56dfjctSqh+vaAZ+Q5AgowxTmCfOHNkBUiTopNk5AUABA3uT+8K3WL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734102591; c=relaxed/simple;
-	bh=mpFykbivlJtZ1anyQnIkiiJi7mV0Gsy5/+S8fgqj8kk=;
+	s=arc-20240116; t=1734102612; c=relaxed/simple;
+	bh=pu7CV/W001EZcdH5bxBKbdu6/xFC5CpjJ1xPFnY9AB4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jDCHCbrSuQ37kj8IplifCyaEI35sCwKtZZ1vSM7EBLTnNSiQ2/zJRZK4ccbZOAxVJewygt/6NVChrA529aji5m/13VtPRwrOTQLrqD7OEBYbHH64LVUv5izT3FC3OGFDqVFahvloVn2MXTIv/j+YNLCTdw5+pB7mOLd+lToS178=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HLh6j38D; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD7VQ6U032414
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:09:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RUGCbElRfwnoPpxFnu1ETCSpv33WWX1zIEDuWigaaa8=; b=HLh6j38DcQ4ou29Z
-	zg6t44nmuDnYNQxPMmaXJBMdzexH+BRyUCloz5+QbUZtcZzjva0PtLWusTMzBBQN
-	eMN+rPhRJ8xcH7OhDpMmb7zgQARiGCG4LD+ZnKxer8L27lwrfFFpFqjJaZ9y8iR8
-	Kt3IVUxKXrVmqLNvaQTxddrLCdz7n0CS/+4bjbd+3ui/lRYjYvEyTT66ozpNDc8m
-	ZrCzSMT1+Ew/vCBPkkCUlV3h38gdNDaxrVRAnTHyfpTCdH/8JqR1IpXy1EeS/g6L
-	pJEliXfJMHBl80edHXPefAxe5h6jYn6WlYnpmRtqwfhEGxs4zWXguN3rkDiwQNBu
-	jc1fgw==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f6tffyh5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:09:49 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d8e7016630so4466986d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:09:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734102588; x=1734707388;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RUGCbElRfwnoPpxFnu1ETCSpv33WWX1zIEDuWigaaa8=;
-        b=GnOaxs48kekajJScLMRFZ3bbF8pWlexi3qQSC6AhJkGupp2pVNpNkkNPDlvTXllrcd
-         RHyn8UzxSyObOajarZUl3HPCti6vkw3J0TQCEZfx7tZk0UJu4MxMoKbsGVQKO1Jn+hEG
-         SVxPdM7JN4lYGmXPxQnRvFuNkuAuI5DQa8ofCyjW7bCgqc8sZOajQyrmQMhUr38TnMWq
-         lTpOvH12jKImCdH5DNZvwh2a8S/WDB8K8/B0BfbbotG6k5ha/fhhR2OafzgfkHxhVKlI
-         nat6F6BDdcodfdp4crO5M9XUFrXC+ofX1TfbvfDuSLLbml3crufHnSiH4Yvh4T0fznVE
-         17Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFufqxtABozoT5Rox3b+bxOoU8F6ULzZRJtYZULmEE7VumfZ7XVd3X/W41CcJx8SHZPmCBd8iWRtmYZ80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVx9CSQADdqvIn38cZQF7G/CemdKU3gf2XXQgwnweHtV7W2Vns
-	Wbjz6fLJyPlGoluouTeksx9ErKJh6WWzPkzKghve1W8VNTTkaLiwaTywSfvh3rowVHvcJgKSSbv
-	XFHCjo5jUAt2w8Ne2tdRC/YOWOYBp6dZxrw64xFpx8VtNGGEsXiQxhL+4GH/pZRs=
-X-Gm-Gg: ASbGncsHxWaMyxDJkRIe1Og5gGabnid2l7CHV6a1mmaDIAPYM5i5rO/AZjJUQjqKUhN
-	XZHnbGl8iA/qK23bGptnulOFvb2qiTXRc5xM9AwCiWHN+XMAnxMpMIEc3eP1kimGsJLjCZnb7Lx
-	yclu5OV9Xn4z99i9sciXMpK2Rr33J2QAlUdoE7PX7nXB3Xg8pB2spKRy4DTZYeMzBqNxjdWN1NQ
-	j1C7K0Jj72/TgI9H5nzULfDgHWELNSfs6Fshi/7h7P3rmpjxL7E1EQs0ufZcMPmUIxFTb14jSIv
-	tCD2MLcTh64V6jPr+jks+u8veefL5b1YfTo6
-X-Received: by 2002:a05:620a:2993:b0:7b6:c3ad:6cc4 with SMTP id af79cd13be357-7b6fbed9855mr159798185a.5.1734102587797;
-        Fri, 13 Dec 2024 07:09:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHCNOTuH/JeSKj+950krsW+duBDTSos0kfQOVpuA6pb//nTscPC9RvF8gzspY+TD5ARI2Du8w==
-X-Received: by 2002:a05:620a:2993:b0:7b6:c3ad:6cc4 with SMTP id af79cd13be357-7b6fbed9855mr159795485a.5.1734102587439;
-        Fri, 13 Dec 2024 07:09:47 -0800 (PST)
-Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa68770c481sm708781266b.110.2024.12.13.07.09.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 07:09:46 -0800 (PST)
-Message-ID: <a41eb4ab-2045-49b3-b571-b49eb5a05057@oss.qualcomm.com>
-Date: Fri, 13 Dec 2024 16:09:43 +0100
+	 In-Reply-To:Content-Type; b=b8GcIBaSR2EjlXZ4nUuhuRzcS6CwxYenmWEyc0hFv7H3p1+bzI2Wo8Xr2HsAr8qMkH6Jr76l+6FsnHmaJO6SOnAdYvUeD5abWj835l65t2wh3rxvcpQYRaHtLOZlg8uHnwCaYQfXOF9ErOfeBhSTThkntLZMoH3Ukpx58u8dwa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZH2HMLXh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B49C4CED2;
+	Fri, 13 Dec 2024 15:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734102611;
+	bh=pu7CV/W001EZcdH5bxBKbdu6/xFC5CpjJ1xPFnY9AB4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZH2HMLXhf+HaXkVd4g7VWSnt05dxkfUUn6CE7dA1EwwNwzB+7o1duGdBiPY2HHRM7
+	 CBGaC4Nl03QUmtvpXohss4cpoqmS2Vc0RO7+jxY5qetSMDg40U7ni1Flrn8kNJ8Ilo
+	 VxVXjlKmgNODyDYW2e1pYikP0Wu7I7UmfHcjXO6BvC5sx8ZSNncjzl+74W8uFHZI30
+	 kiIappyHpwF9T0dw8QRDra2c8fA9YmotkxmoZf5Y7ZpoqmGSokhNsWFaMF2P9TDHq2
+	 7sMMp2nE8ahRWbLF80Z+wS9zwoLKu/WfoNGLRJnfEJoEqxOHzG/Xa8UkuxwloU7PE1
+	 j8wVejcH2qC1g==
+Message-ID: <ca3f43f8-f96a-4d2b-9273-a4d936fab6a6@kernel.org>
+Date: Fri, 13 Dec 2024 16:10:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,55 +49,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 3/4] arm64: dts: qcom: qcs615: Add gpu and gmu
- nodes
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Rob Clark
- <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jie Zhang <quic_jiezh@quicinc.com>
-References: <20241213-qcs615-gpu-dt-v2-0-47f3b312b178@quicinc.com>
- <20241213-qcs615-gpu-dt-v2-3-47f3b312b178@quicinc.com>
+Subject: Re: [PATCH v1 2/2] [Draft] dt-bindings: arm: rockchip: Add Firefly
+ ITX-3588J board
+To: Shimrra Shai <shimrrashai@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <c1b662d8-6470-49f2-a904-139a33061885@kernel.org>
+ <20241213150225.3538-1-shimrrashai@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241213-qcs615-gpu-dt-v2-3-47f3b312b178@quicinc.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241213150225.3538-1-shimrrashai@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: jBL111xt5grw5sij8crmr6YNj7sKK5Ig
-X-Proofpoint-ORIG-GUID: jBL111xt5grw5sij8crmr6YNj7sKK5Ig
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=666 malwarescore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130107
 
-On 13.12.2024 12:31 PM, Akhil P Oommen wrote:
-> From: Jie Zhang <quic_jiezh@quicinc.com>
+On 13/12/2024 16:02, Shimrra Shai wrote:
+> On 2024-12-13, Krzysztof Kozlowski wrote:
 > 
-> Add gpu and gmu nodes for qcs615 chipset.
+>> Explain why this is draft, what does it even mean. Do you expect any
+>> review or not?
 > 
-> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+> Correct. As I pointed out, not 100% of things work.
+> 
+>> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+>> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+>> Some warnings can be ignored, especially from --strict run, but the code
+>> here looks like it needs a fix. Feel free to get in touch if the warning
+>> is not clear.
+> 
+> I did this, but I do not see any warnings beyond
+> 
+> "Prefer a maximum 75 chars per line (possible unwrapped commit
+> description?)"
+> 
+> for the 0th patch, which does not seem to be from the description and
+> 
+> "Missing commit description - Add an appropriate one"
+> 
+> for the others, and
+> 
+> "added, moved or deleted file(s), does MAINTAINERS need updating?"
+> 
+> on the 1st.
+> 
+> There don't seem to be any substantial errors indicated with the code
+> itself. What issues did you find, as you said it "looks like it needs a
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+""Missing commit description - Add an appropriate one"" is a substantial
+one - clearly we cannot take empty commits.
 
-Konrad
+> fix"? Nonetheless I wasn't planning on this one being a final submit
+> anyway, since as I said it was a draft because there were things not
+> working yet. But if there are other problems with it, I need to know what
+> they are esp. given as I said those tools have not indicated more problems
+> than those and they seem to do more with not adding further info to the
+> emails than the code itself, yet you say the actual code needs a fix.
+> 
+>> Please use scripts/get_maintainers.pl to get a list of necessary people
+>> and lists to CC. It might happen, that command when run on an older
+>> kernel, gives you outdated entries. Therefore please be sure you base
+>> your patches on recent Linux kernel.
+> 
+> Thanks for all this part. When you say this though:
+> 
+>> You missed at least devicetree list (maybe more), so this won't be
+>> tested by automated tooling. Performing review on untested code might be
+>> a waste of time.
+> 
+> what do you mean by "device tree list"? I was not aware of this part of
+
+I mean exactly what is written. Use the tools and the tools will do the job.
+
+> the kernel source code. I modeled this submission off of others I've seen
+
+This does not work like this. Use the tools, not other people's
+incorrect CC list.
+
+> here and I have only seen them submit the .dts, Makefile entry, and .yaml
+> entry in rockchip.yaml. I have not seen a "device tree list" different from
+> those. E.g. for this submission for the Orange Pi 5,
+> 
+> https://lore.kernel.org/linux-rockchip/20241111045408.1922-1-honyuenkwun@gmail.com/
+> 
+> those are the only items touched that I can see unless I missed something
+
+Cc list is entirely different... Did you really read my message? I state
+you Cc wrong addresses and you claim that above link has the same as
+yours, which is obviously not correct. So two things - my earlier
+message and above link - are kind of proofs. What else do you need?
+
+I gave you instruction which tools to use, so I do not understand why do
+you insist on not using them.
+
+
+
+Best regards,
+Krzysztof
 
