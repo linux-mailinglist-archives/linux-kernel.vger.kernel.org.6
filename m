@@ -1,126 +1,115 @@
-Return-Path: <linux-kernel+bounces-445415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641C59F1606
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:36:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F3B9F1691
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:44:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03A367A0547
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:36:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2E5188BDD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A9C1F03EC;
-	Fri, 13 Dec 2024 19:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080EA1F9A91;
+	Fri, 13 Dec 2024 19:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="L/niVw4t"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gt+hq/Up"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8C01F03E2;
-	Fri, 13 Dec 2024 19:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800AC1F03EB;
+	Fri, 13 Dec 2024 19:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734118525; cv=none; b=dIfd7TsLxndcr9ZQvC0nmRaa/8Ir5klsdqy8wlhG4TIHZPOtnZ6yAFQqfyO0Ul5bG45HnzD73QNQGTVgj12E8y9ygHqdcriUu7FGsvNn7Xn3YIPgqZ/vYqIpjrjyO9S6ntkrZgfiP+dIU/Bmv6HpybPV2FA6iWYz/1HRDPZqHG0=
+	t=1734118583; cv=none; b=p4OToulrEmVfDnV/aNkvOvj4Ndp59TOFhuaRcKzvC9I5WTWumdeROiJpVzgMNudzFVb3O5szGgAzI9yZyYd7CojA1zUlJ1+Jicts+5KyA/R1W9pPz7BdQK9+ge05687cmYvAl6NBkcnjHF5TjOdNydc09jECrb63Gi+Ys0G05uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734118525; c=relaxed/simple;
-	bh=qm2FBUfP120JYJBGjVWf6BHggAiBDu2UJXq1cdQTu2M=;
-	h=In-Reply-To:References:From:To:Cc:Subject:MIME-Version:
-	 Content-Disposition:Content-Type:Message-Id:Date; b=XzPY+1yKx1fscYmiprnetQGmJTYc0fjCmBe2+Ivn24cgfo0k3tK3p0+fPs64/anOUtSiJQNWBllQl70JLuY2mrRUqJJVoagUIDteOuoL4/0jgS4WxuPAGl3TVYdynMRqyzSe6Fy6ylw5N561R/xuJu4Ewv8Tu5T5okIfuIhX3Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=L/niVw4t; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
-	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
-	In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yydHl5BH5Sb6MLQ4m8pTbWEBjAsjzLNECa7MKHOHJLc=; b=L/niVw4tv8rIjtUYlrmUm/to63
-	7TWOizwe65Scj1N18yS/1bNUTtMQU/c4fovuuQxm+QDWYWUgKpHzcOOzjqOccwnwRX0RpkPS/n7O+
-	rHnQvWMJHc+ZiOVEVzF8VqQ6iBrJKR3pjzSvaVyDHiVifTBkhwyglwKX3dDkI0Wb5Xe6q5cfyVkg3
-	A/0Io2liQyGXd4xgS2zw/fzPlhokjXGsBK79SRVmMyTIyxUWsIRDascvHL3C2oPrFmcT3jb3WM0vN
-	GJLU0LWrkTkmET7jTC3iebx1OuGeQNeDoBAWKB5wT2IJTfTBYGqTrLo64zTHi+PkXykYMe5ClCKCG
-	BZ6ne/oQ==;
-Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:41426 helo=rmk-PC.armlinux.org.uk)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <rmk@armlinux.org.uk>)
-	id 1tMBRT-0007EF-09;
-	Fri, 13 Dec 2024 19:35:15 +0000
-Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
-	id 1tMBRQ-006vat-7F; Fri, 13 Dec 2024 19:35:12 +0000
-In-Reply-To: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
-References: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
-From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	 Jose Abreu <joabreu@synopsys.com>,
-	 Andrew Lunn <andrew+netdev@lunn.ch>,
-	 davem@davemloft.net,
-	 Eric Dumazet <edumazet@google.com>,
-	 Jakub Kicinski <kuba@kernel.org>,
-	 Paolo Abeni <pabeni@redhat.com>,
-	 Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	 Alexis =?UTF-8?B?TG90aG9yw6k=?= <alexis.lothore@bootlin.com>,
-	 Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	 netdev@vger.kernel.org,
-	 linux-stm32@st-md-mailman.stormreply.com,
-	 linux-arm-kernel@lists.infradead.org,
-	 linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 5/5] net: stmmac: use PCS supported_interfaces
+	s=arc-20240116; t=1734118583; c=relaxed/simple;
+	bh=LBRn7osDqXe/qf+KiQRKkN2I4wgAtgsnoye5yF+RoLg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=l4qTikBks24Xb0T8K17aZDVLAF+vvOWe2yMHCA1WmQyaz4AqS1/VGDmO7yfHkI+Op/fdllCG5Sl8CcO3iQMBp7/Tg+tcphTbfp48DeZ0qnKDgovAVLP1yKQnmGMNndsKXVnpC5p+7R5DCdJCqRylahb24VyilZsnSnS9QDZvbgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gt+hq/Up; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1734118578;
+	bh=LBRn7osDqXe/qf+KiQRKkN2I4wgAtgsnoye5yF+RoLg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=gt+hq/UpR1FcxF6/5k1a0vh+3jy7VmXl4wXmk3hOcMIeIvZeTFmdTYJnDQzy6JzR8
+	 RAYHfXj0SKKP+lu1yr8eyd48QV7WvtlT4kz+N9iV/npho1imm30ruriq5Sd2fw4ABJ
+	 RbC+ZLPv1rquprlvCcJsbFra3ekjuW8crfdtYgZPhjNQCG/UKKBqY/hj7Sl+5qtFB+
+	 74Q2ASfw8s9h15PhAFPJMKe6g5UpYm50imdsTXMXYm4/OPrxSjSIgZNdZuceugMml1
+	 6Zl13O2vIK/0XMgAKNYpdp6ezwuUVLk3iIQB655IbldEYr63LfnJQdkpeOH3NVeB9m
+	 l/uYVm/O47KlQ==
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::7a9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C170117E3767;
+	Fri, 13 Dec 2024 20:36:16 +0100 (CET)
+Message-ID: <9b7be78c58d0bd157541a6c4db0d742e3f9bab58.camel@collabora.com>
+Subject: Re: [PATCH v1 2/5] media: chips-media: wave5: Avoid race condition
+ for interrupt handling
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
+	hverkuil-cisco@xs4all.nl, sebastian.fricke@collabora.com, 
+	bob.beckett@collabora.com, dafna.hirschfeld@collabora.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
+	nas.chung@chipsnmedia.com
+Date: Fri, 13 Dec 2024 14:36:15 -0500
+In-Reply-To: <20241209053654.52-3-jackson.lee@chipsnmedia.com>
+References: <20241209053654.52-1-jackson.lee@chipsnmedia.com>
+	 <20241209053654.52-3-jackson.lee@chipsnmedia.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <E1tMBRQ-006vat-7F@rmk-PC.armlinux.org.uk>
-Sender: Russell King <rmk@armlinux.org.uk>
-Date: Fri, 13 Dec 2024 19:35:12 +0000
 
-Use the PCS' supported_interfaces member to build the MAC level
-supported_interfaces bitmap.
+Le lundi 09 décembre 2024 à 14:36 +0900, Jackson.lee a écrit :
+> In case of multi instance, interrupts can occurr for other instances as
+> soon as interrupt is cleared. If driver reads the instance_info after
+> clearing the interrupt, it is not guaranteed that the instance_info is
+> valid for the current interrupt.
+> 
+> Read the instance_info register for each interrupt before clearing the
+> interrupt.
+> 
+> Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
+> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+> ---
+>  drivers/media/platform/chips-media/wave5/wave5-vpu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu.c b/drivers/media/platform/chips-media/wave5/wave5-vpu.c
+> index 6b294a2d6717..63a607d10433 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu.c
+> @@ -55,12 +55,12 @@ static void wave5_vpu_handle_irq(void *dev_id)
+>  	struct vpu_device *dev = dev_id;
+>  
+>  	irq_reason = wave5_vdi_read_register(dev, W5_VPU_VINT_REASON);
+> +	seq_done = wave5_vdi_read_register(dev, W5_RET_SEQ_DONE_INSTANCE_INFO);
+> +	cmd_done = wave5_vdi_read_register(dev, W5_RET_QUEUE_CMD_DONE_INST);
+>  	wave5_vdi_write_register(dev, W5_VPU_VINT_REASON_CLR, irq_reason);
+>  	wave5_vdi_write_register(dev, W5_VPU_VINT_CLEAR, 0x1);
+>  
+>  	list_for_each_entry(inst, &dev->instances, list) {
+> -		seq_done = wave5_vdi_read_register(dev, W5_RET_SEQ_DONE_INSTANCE_INFO);
+> -		cmd_done = wave5_vdi_read_register(dev, W5_RET_QUEUE_CMD_DONE_INST);
 
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Right, and was a bit silly to read the register N-times, good catch.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index d45fd7a3acd5..0e45c4a48bb5 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1206,6 +1206,7 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
- 	struct stmmac_mdio_bus_data *mdio_bus_data;
- 	int mode = priv->plat->phy_interface;
- 	struct fwnode_handle *fwnode;
-+	struct phylink_pcs *pcs;
- 	struct phylink *phylink;
- 
- 	priv->phylink_config.dev = &priv->dev->dev;
-@@ -1227,8 +1228,14 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
- 
- 	/* If we have an xpcs, it defines which PHY interfaces are supported. */
- 	if (priv->hw->xpcs)
--		xpcs_get_interfaces(priv->hw->xpcs,
--				    priv->phylink_config.supported_interfaces);
-+		pcs = xpcs_to_phylink_pcs(priv->hw->xpcs);
-+	else
-+		pcs = priv->hw->phylink_pcs;
-+
-+	if (pcs)
-+		phy_interface_or(priv->phylink_config.supported_interfaces,
-+				 priv->phylink_config.supported_interfaces,
-+				 pcs->supported_interfaces);
- 
- 	fwnode = priv->plat->port_node;
- 	if (!fwnode)
--- 
-2.30.2
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+>  
+>  		if (irq_reason & BIT(INT_WAVE5_INIT_SEQ) ||
+>  		    irq_reason & BIT(INT_WAVE5_ENC_SET_PARAM)) {
 
 
