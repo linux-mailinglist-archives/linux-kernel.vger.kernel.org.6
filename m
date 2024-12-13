@@ -1,110 +1,78 @@
-Return-Path: <linux-kernel+bounces-445654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6349F18F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:26:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06ADE9F1928
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73615188F21A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:26:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785EE188750C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C5B19A2A3;
-	Fri, 13 Dec 2024 22:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4FC193436;
+	Fri, 13 Dec 2024 22:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OUXqNWTY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwq2bq5U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1F4185949;
-	Fri, 13 Dec 2024 22:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8F515573A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 22:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734128330; cv=none; b=t3zJGm5LiLIHpEE6uAlLxTW9Gl9gTEIOaPL1n5qf+FK1ojipP3j2j7mlhM3t+8DU7LK80pG8L8xAP6KzLkG7Y1s4OLIUXt+pXf4kzEjvF8giHPXLTcXjaWfqfSUYXUHBaWZ31b6sNqXdVRWkIjHqeorMf59swmj9b43sKF/3GSE=
+	t=1734129275; cv=none; b=ELjHWa9VU3Qn1E5OlY0JvLER70kELQau6TeppfmqSiVDj6JpEWovwd+gz3qHCsXt/9upg1ziK2+LublY330fsVs760zEFgMfAyV6u0mLS1XCD3SPj0XEd2HmDrLJxBZuhlUqtmO8R8m3n5iJjyDJ+aDIIOm3gP84asJLdT5NsR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734128330; c=relaxed/simple;
-	bh=yGVF+lGT8ur8QZFdxP3rJGdxQv5/psNez7G9/LlnyAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k7c1h3UoF9ZrJTNfNa0KosM+3xva0NH+lycpLQKItuMPhf6BFYUDjhoctZagm1er1cjpQWDx/iVCe96uw2LyKEhgWMt+bIcKlLyOVlwR4tp2nraPE5NlsJZU19/YbVF4EZuLzMf9rWAI6s8k1LO+E2mNsYNyI/7Mmz1bwl7A5Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OUXqNWTY; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734128329; x=1765664329;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=yGVF+lGT8ur8QZFdxP3rJGdxQv5/psNez7G9/LlnyAo=;
-  b=OUXqNWTYlBzbvRqM+qKeVVc4M4q9SM7LEXOk+5ei+E/0FrT3/YMUKmtz
-   si9i3bp+bffBTixi3wt3cchanWo3cxOYK4+hcj3pIl1IJCleSapnoH7e9
-   ntqDfPE0kMD7UO5WBk6Mlpg+RSYG9wxKQQTjzSrZgVg2n7rLgWw6+16NL
-   5eJ7BH06Gwg35yBinH9AcSiwtvv9Xx/Z91T8DTSTtayZ5F2n1PgumU++L
-   /ioz70YfrN1D6xx2ImT96QhLZBGH+EfM9RbX9JQ1/VfxxSCahlVKJbhxG
-   6BcNSp4i+Hc1ocNSQUm/Unn5jfD+VwGt++IYY3NrekXJ3lpb5nGhFh5Kn
-   w==;
-X-CSE-ConnectionGUID: UcEOFs5GQ1W0S9Z/foQ1fg==
-X-CSE-MsgGUID: YYHLya8YSYm6UKBfkkU6ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="38526460"
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="38526460"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 14:18:48 -0800
-X-CSE-ConnectionGUID: cYDbbYl9QR2Pm3TS6wPPlw==
-X-CSE-MsgGUID: CyLYLFNcQ4Cbf0jiSe7UyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,232,1728975600"; 
-   d="scan'208";a="96708626"
-Received: from rchatre-desk1.jf.intel.com ([10.165.154.99])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 14:18:48 -0800
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	shuah@kernel.org
-Cc: isaku.yamahata@intel.com,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	reinette.chatre@intel.com
-Subject: [PATCH] KVM: selftests: Add printf attribute to _no_printf()
-Date: Fri, 13 Dec 2024 14:30:00 -0800
-Message-ID: <898ec01580f6f4af5655805863239d6dce0d3fb3.1734128510.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1734129275; c=relaxed/simple;
+	bh=4R1yhE9pAWNS67ycWv8EN0gZQwo2wTlHZFpGXsFka5g=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=C3a42wKUl36wM5JED+PI160/ZkEiO6Bb7eJ51AZKysO39XW1+GxF3ge3UruACi3/xoxaeGnVKWNz+CpeB3Msahf7iKJN/HvKKGTSt4uilXBOk8YH4zlCV8yGneFgHlt6hF2KESrE6Yt1r99owqnFF2U16B/lDfVLJ61fqfWZVVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwq2bq5U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04900C4CED0;
+	Fri, 13 Dec 2024 22:34:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734129275;
+	bh=4R1yhE9pAWNS67ycWv8EN0gZQwo2wTlHZFpGXsFka5g=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=qwq2bq5U0lpZQy4fN3+HOnuf4mJXisILGw4y8TMyShwhH6pcix7cDqwmw2prP+fnm
+	 j0ymYMQDzIXRg5Q/C9Z2kXXWyp8Mm8OtQLD7KvL2VFpDq4b8fFeQ0W8gewYeZKkJqk
+	 aag/QMQQxn3n/VGFr94yFYnRRWzQDi3nUu3PNGsF1TCyoSBXEZ+sDD9/trfGIXTTmR
+	 DkiEdTYcqBFOfpWB+Wb/ea3W8Hqp9GjE+Q4UwGJE0gUsqpVVOxc9/un0ZyOtJ+tZey
+	 Rz6kD27IeMccqP2zytg+BikySdeJoSlX2hQrRz1ZdAcY0Ezx8jP+HpT0XLcPTcOmZr
+	 uT9SgHa9tj5xw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE55C380A959;
+	Fri, 13 Dec 2024 22:34:52 +0000 (UTC)
+Subject: Re: [GIT PULL] arm64 fixes for 6.13-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z1xx0ha7lbKkdhRC@arm.com>
+References: <Z1xx0ha7lbKkdhRC@arm.com>
+X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
+X-PR-Tracked-Message-Id: <Z1xx0ha7lbKkdhRC@arm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
+X-PR-Tracked-Commit-Id: ce03573a1917532da06057da9f8e74a2ee9e2ac9
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 01af50af760b5b796794282d997a3610f74039da
+Message-Id: <173412929121.3178864.3766212521863822880.pr-tracker-bot@kernel.org>
+Date: Fri, 13 Dec 2024 22:34:51 +0000
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Isaku Yamahata <isaku.yamahata@intel.com>
+The pull request you sent on Fri, 13 Dec 2024 17:41:38 +0000:
 
-Annotate the KVM selftests' _no_printf() with the printf format attribute
-so that the compiler can help check parameters provided to pr_debug() and
-pr_info() irrespective of DEBUG and QUIET being defined.
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
 
-[reinette: move attribute right after storage class, rework changelog]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/01af50af760b5b796794282d997a3610f74039da
 
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- tools/testing/selftests/kvm/include/test_util.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you!
 
-diff --git a/tools/testing/selftests/kvm/include/test_util.h b/tools/testing/selftests/kvm/include/test_util.h
-index 3e473058849f..77d13d7920cb 100644
---- a/tools/testing/selftests/kvm/include/test_util.h
-+++ b/tools/testing/selftests/kvm/include/test_util.h
-@@ -22,7 +22,7 @@
- 
- #define msecs_to_usecs(msec)    ((msec) * 1000ULL)
- 
--static inline int _no_printf(const char *format, ...) { return 0; }
-+static inline __printf(1, 2) int _no_printf(const char *format, ...) { return 0; }
- 
- #ifdef DEBUG
- #define pr_debug(...) printf(__VA_ARGS__)
 -- 
-2.47.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
