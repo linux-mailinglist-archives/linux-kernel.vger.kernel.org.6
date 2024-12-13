@@ -1,90 +1,94 @@
-Return-Path: <linux-kernel+bounces-444524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8919F0840
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:42:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B439F084B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:43:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1BB188C802
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:42:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68922188BCF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93361B4155;
-	Fri, 13 Dec 2024 09:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F7E1B392E;
+	Fri, 13 Dec 2024 09:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z1QML+NM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qDqzvdyQ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z1QML+NM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qDqzvdyQ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="18mkgl6u";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SUyj1gyX";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="18mkgl6u";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SUyj1gyX"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D8B1B412F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244C919CD08
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734082943; cv=none; b=E83jiCVNEizGtTJ9cbaiZXlb/MjSzsvXXz4Gxyg05ExvDiM+72Q+64RcSYe/JG6k+/kQdYAHlDJkEVuplinKhYrqL9L47weF1VekJWYf92bwsNIoKxV4ZhDVxCm6GYnArh7mdc2kc4OA4jl78SIq9w0dnQWSD8kRvrovj1ROPcU=
+	t=1734083023; cv=none; b=BBa2iAMb0lOVSdGOokrWwDYffjiamz9vGm2o560C4hNlG1+5+nlZ0fqcTjAZ4FjB5JOXZtfLLeX5AHeHfrD/ne/qXCGMVA40n4+T6t3NHG0T5mvKh3XBolRB/pqVLfg2np/pTMmHqgv29NueGH/gtZl46PsJ+xMmX2FrO0fZkSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734082943; c=relaxed/simple;
-	bh=8Q8m74bIjtm5/lEn7kg56z1R9l1NXL1c8Wt63aG4Uew=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=pg1cTIaLaozsf8obrfknpgt2Ikw5v2WoCABhqMPi7jLuyGdrjn+RvACr4jFe+NhNqnAdqZgbJR5ES5SCjU/w9vzwwGLhWq8EY9B9tfyIAutEQQanDxUCeehjPJ97C2mIm7t0hdusIgp/UnIoM1wsgI3i6DR/9z/g8U2uxF0LxH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z1QML+NM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qDqzvdyQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z1QML+NM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qDqzvdyQ; arc=none smtp.client-ip=195.135.223.131
+	s=arc-20240116; t=1734083023; c=relaxed/simple;
+	bh=AQd3S+xs51usu71lDWzUudlYhLL15wQuF9tlyw6JVXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pgFOfm6eGT7T+AvmaV0a2igeuwPUvwg9i9skbECKztSCdn6pmV3MoRSrufy3wLoR0omroyQ3GMez3PSGCL526z+tSWEUc9esR9fli3PWLjqJwGbcx+32eGACR9a69GRcFyX5xw764xAlGQImTXI8u3FHNvAxemZsc7pP03HtdT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=18mkgl6u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SUyj1gyX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=18mkgl6u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SUyj1gyX; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 43A221F78F;
-	Fri, 13 Dec 2024 09:42:18 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 542901FB8D;
+	Fri, 13 Dec 2024 09:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734082938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734083019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=bnbdh4SUICTjhLR1TPjO98dMRcAqauApSXOBgwOGjU4=;
-	b=z1QML+NMXn7yQ9TfLsv58i50s6p3OLlNEkd4ovcGPli88hNBDSYPKGhrGBp9HNFdwQS8fB
-	FbDefH5dsYXzL9Edr2VBPCGVyVxHDCS9yUdCtbGkxII1gnYXGNptKc1OYOsGltJoaKkL81
-	k+NGNr9J0Y8l+WzTrVKDsZP3IrJkQ7U=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bpDr+K3HzmOak4rOgFWlt2XmV8ZYdARLjwaNOge1TCA=;
+	b=18mkgl6uuhMgQetrtf2zg40FwXNW/DLfuNClW7xH5BddFar3UScjT2fWjLupq5ifp/Jr7W
+	ySwnl1571FD08VaUlqvwKvICa1GU5kT5NBv42pMzSvqAM4eJMzfrJaoOaz4IcpjXnSf/hA
+	ShaWiGzODgt2yP0Z/mo9IuGuVYwgqpc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734082938;
+	s=susede2_ed25519; t=1734083019;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=bnbdh4SUICTjhLR1TPjO98dMRcAqauApSXOBgwOGjU4=;
-	b=qDqzvdyQBk5G1ApRX5SvU4EQAYILMaaSFWa/RIORa+Vbv7WtC6BbmdRA0eZ0T0v+Xy4IWj
-	x9t7Y/Myvu5UE/AQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bpDr+K3HzmOak4rOgFWlt2XmV8ZYdARLjwaNOge1TCA=;
+	b=SUyj1gyXx/fGyrlPsWU0QmgSDPBvp0ycX06tNQTispy/4KRnlhYwx1ovY9o2LKZoa/WGsN
+	cnI53iXXxOtVmXAQ==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=z1QML+NM;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qDqzvdyQ
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734082938; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734083019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=bnbdh4SUICTjhLR1TPjO98dMRcAqauApSXOBgwOGjU4=;
-	b=z1QML+NMXn7yQ9TfLsv58i50s6p3OLlNEkd4ovcGPli88hNBDSYPKGhrGBp9HNFdwQS8fB
-	FbDefH5dsYXzL9Edr2VBPCGVyVxHDCS9yUdCtbGkxII1gnYXGNptKc1OYOsGltJoaKkL81
-	k+NGNr9J0Y8l+WzTrVKDsZP3IrJkQ7U=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bpDr+K3HzmOak4rOgFWlt2XmV8ZYdARLjwaNOge1TCA=;
+	b=18mkgl6uuhMgQetrtf2zg40FwXNW/DLfuNClW7xH5BddFar3UScjT2fWjLupq5ifp/Jr7W
+	ySwnl1571FD08VaUlqvwKvICa1GU5kT5NBv42pMzSvqAM4eJMzfrJaoOaz4IcpjXnSf/hA
+	ShaWiGzODgt2yP0Z/mo9IuGuVYwgqpc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734082938;
+	s=susede2_ed25519; t=1734083019;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=bnbdh4SUICTjhLR1TPjO98dMRcAqauApSXOBgwOGjU4=;
-	b=qDqzvdyQBk5G1ApRX5SvU4EQAYILMaaSFWa/RIORa+Vbv7WtC6BbmdRA0eZ0T0v+Xy4IWj
-	x9t7Y/Myvu5UE/AQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bpDr+K3HzmOak4rOgFWlt2XmV8ZYdARLjwaNOge1TCA=;
+	b=SUyj1gyXx/fGyrlPsWU0QmgSDPBvp0ycX06tNQTispy/4KRnlhYwx1ovY9o2LKZoa/WGsN
+	cnI53iXXxOtVmXAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 228B7137CF;
-	Fri, 13 Dec 2024 09:42:18 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2C01413AEC;
+	Fri, 13 Dec 2024 09:43:39 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id B/oQCHoBXGfLOQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 13 Dec 2024 09:42:18 +0000
-Message-ID: <e68da20c-9f5d-493e-a436-cd9aa95a5441@suse.cz>
-Date: Fri, 13 Dec 2024 10:42:17 +0100
+	id rp79CcsBXGdsOgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 13 Dec 2024 09:43:39 +0000
+Message-ID: <7f047f18-077b-40a3-bcfc-56944fd79530@suse.cz>
+Date: Fri, 13 Dec 2024 10:43:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,8 +96,9 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] slab fixes for 6.13-rc3
+Content-Language: en-US
 From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab fixes for 6.12-rc6
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
  Andrew Morton <akpm@linux-foundation.org>,
@@ -101,7 +106,7 @@ Cc: David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
  LKML <linux-kernel@vger.kernel.org>,
  Roman Gushchin <roman.gushchin@linux.dev>,
  Hyeonggon Yoo <42.hyeyoo@gmail.com>, Shakeel Butt <shakeelb@google.com>
-Content-Language: en-US
+References: <e68da20c-9f5d-493e-a436-cd9aa95a5441@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
  KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
@@ -141,64 +146,59 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
  1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
  EP+ylKVEKb0Q2A==
+In-Reply-To: <e68da20c-9f5d-493e-a436-cd9aa95a5441@suse.cz>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 43A221F78F
 X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
 	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FROM_HAS_DN(0.00)[];
 	FREEMAIL_CC(0.00)[google.com,linux.com,linux-foundation.org,kvack.org,vger.kernel.org,linux.dev,gmail.com];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.80
 X-Spam-Flag: NO
 
-Hi Linus,
+Meh, wrong subject again. Glad the xmas holidays start tomorrow.
 
-please pull the latest slab fixes from:
+On 12/13/24 10:42, Vlastimil Babka wrote:
+> Hi Linus,
+> 
+> please pull the latest slab fixes from:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.13-rc3
+> 
+> Thanks,
+> Vlastimil
+> 
+> ======================================
+> 
+> - Fix for memcg unreclaimable slab stats drift when post-charging large
+>   kmalloc allocations (Shakeel Butt).
+> 
+> ----------------------------------------------------------------
+> Shakeel Butt (1):
+>       memcg: slub: fix SUnreclaim for post charged objects
+> 
+>  mm/slub.c | 21 ++++++++++++++++++---
+>  1 file changed, 18 insertions(+), 3 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.13-rc3
-
-Thanks,
-Vlastimil
-
-======================================
-
-- Fix for memcg unreclaimable slab stats drift when post-charging large
-  kmalloc allocations (Shakeel Butt).
-
-----------------------------------------------------------------
-Shakeel Butt (1):
-      memcg: slub: fix SUnreclaim for post charged objects
-
- mm/slub.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
 
