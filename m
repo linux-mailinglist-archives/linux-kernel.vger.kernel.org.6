@@ -1,209 +1,97 @@
-Return-Path: <linux-kernel+bounces-444833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33559F0D2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:17:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2D29F0D2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:18:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53D301685ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:17:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AFFA283D85
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D53F1E04B8;
-	Fri, 13 Dec 2024 13:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0DD1E00AC;
+	Fri, 13 Dec 2024 13:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCYKX/MI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjRsjTM+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFC01DFE2C;
-	Fri, 13 Dec 2024 13:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D251DF268;
+	Fri, 13 Dec 2024 13:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734095852; cv=none; b=brtiuB++8kPL3IpNoxmZ5Hja41bNYaCDs2NB4Gbh4tWzxszOXIGxWgUQyyPWgoezSa7tK3pW/emYtxOdV8yyKT0FlB0FAddWfc45YJVr3qC2+Ob+VYYuBWYsb2KizXGbLvL1XCAwSw4dmRcPPDldFBsauSEd5x8Rmlvw8XzUnRg=
+	t=1734095880; cv=none; b=lCLS0ZgYSfHJpETKnvZhx3nvvqsKLR+RT1+TRfqMM/TqNhfSP+pLnKujY70xMRgojGxmmn6UqPqmkxmFZCcOPer80UOEAcHymyrkkc1gJbpH7Q5gOIjBMYlrKXQIkIGHlBdOA7ObFXL3OknxQLsXL9lwMWMq3yQ84X+NttOrYJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734095852; c=relaxed/simple;
-	bh=tMXE95FfkjhkdFZo7cyuYKKGbHS/ZBxnfSxNp0VgYiM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tAyR6rsg/+AbD0VYUJA5pi5tkR8o+RAvGjeyWx2iAIZiyROVVihvaEmJVUMDoNAZemRQDip019aJrkbLHSV81Es5WssG9pPzbMzmZLVqUUfzSmUuEx0ZyLmk3lYfrkgB/vYbCEv9kxZqOdDCBfSvpb+N/2XZwSGJ3RJaVpwoGoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCYKX/MI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 993E2C4CED7;
-	Fri, 13 Dec 2024 13:17:28 +0000 (UTC)
+	s=arc-20240116; t=1734095880; c=relaxed/simple;
+	bh=fudyOq/MGATlRGtTkG7LBWuM+AyYQy/r5L4TX4UjKNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qz+O/w7nFspWFF6aLI8VIoJjjwTHpKxxSPT4OnaqopN3cgYoTTn+4aCjarOIIh1+7TWXgJsTw8AFnXwEA3oMXElyUw8KAF0Y6P5LSVq27dODJaD88QyV05A1W0DdACaCETaWQc8HcKPoroYyBFsF5JrsIW/ZZhKDdrfMdzXKuZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjRsjTM+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D97C4CED2;
+	Fri, 13 Dec 2024 13:17:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734095852;
-	bh=tMXE95FfkjhkdFZo7cyuYKKGbHS/ZBxnfSxNp0VgYiM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CCYKX/MIgky9byQK2GGKBUqrXedQcPRVdNhargwyBMeHFzUYdgB21qQtUqIblJpcH
-	 E9AtC7MMji5y7iia648qfhnNAX4pFRB1vWiJaa0kPcBkt/v4/3H8ufGKKNYrT0rUu3
-	 ZwnYSJyYlS04s0lQzGHQ6paXpFinQiHsF4qWtM/xdj8KMd/2E+caNRX5LI4MLVqMbB
-	 4km1suW1AgZq8hAL6vePKSYbP7uN/Tk97t0EHg75I0ttm6/NCcHjX62+1ltQQI9NRJ
-	 i24K+fLC5dul7ZWRDSPmwQKbUkDA127dGrvz9Z44YSuwRxA59d5ZYA6EhB+1tYJMBc
-	 5tFjklHYM8tcA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
- <nathan@kernel.org>,  "Nicolas Schier" <nicolas@fjasle.eu>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Adam Bratschi-Kaye" <ark.email@gmail.com>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-kbuild@vger.kernel.org>
-Subject: Re: [PATCH v3 4/4] rust: add parameter support to the `module!` macro
-In-Reply-To: <CANiq72kb2ocNuE6n32vr4xCkZhZN0uPuCN3SFA1+Q5L+Ma4ByQ@mail.gmail.com>
- (Miguel
-	Ojeda's message of "Fri, 13 Dec 2024 13:54:14 +0100")
-References: <20241213-module-params-v3-v3-0-485a015ac2cf@kernel.org>
-	<20241213-module-params-v3-v3-4-485a015ac2cf@kernel.org>
-	<pw5PzA4YGsu7j6ET_-OYE2oq9l7ixtTTGhHtxMxmMP5ggHxLrjzMkNMvcMVjGPhu7FpBb2duDD3bRbtMJZZHIw==@protonmail.internalid>
-	<CANiq72kb2ocNuE6n32vr4xCkZhZN0uPuCN3SFA1+Q5L+Ma4ByQ@mail.gmail.com>
-Date: Fri, 13 Dec 2024 14:17:19 +0100
-Message-ID: <87y10jd8o0.fsf@kernel.org>
+	s=k20201202; t=1734095880;
+	bh=fudyOq/MGATlRGtTkG7LBWuM+AyYQy/r5L4TX4UjKNw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pjRsjTM+isYF1WWm66/ilscRrjiPmr+9NkoJCTwggo1pG66aBicM+4dTADvof9kS6
+	 qJ5zzjHzDcN2QZeGBvrzLqHRZOxKGpC0H6kFX8z2fIvOCl+9rkClMPXJrDpbZIzuB1
+	 fqBD0LQ3bVD+OVEom9Yp/s6AD0+YyFBivXIeJrAlC9mUfxcfKIvUKCKucCrsb9g8dA
+	 0OuGGKivAumu8qpoAAqsh8MC56RL2v6uTcGMJ/PNzv/m+DVDFyBtS7smKBkiGwllpc
+	 GIOC9NUHxuDGjF1cLxR+IL//fQXYfN2jfaBEh0tkey3IAny+e1ksxWCXYMWUsglk5j
+	 On4BfaZllJTNA==
+Date: Fri, 13 Dec 2024 13:17:53 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 5.10 000/459] 5.10.231-rc1 review
+Message-ID: <1b9afed6-ba3d-4ce2-bf8b-0524ee6c4804@sirena.org.uk>
+References: <20241212144253.511169641@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi Miguel,
-
-"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
-
-> On Fri, Dec 13, 2024 at 12:33=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
-nel.org> wrote:
->>
->> +#![feature(sync_unsafe_cell)]
->
-> Please mention this in the commit message, the status of the feature
-> and justify the addition.
-
-I forgot, thanks for pointing that out. Following the discussion of v2
-of this series I can understand that `mut static` is discouraged and
-scheduled for removal. Interior mutability via `SyncUnsafeCell` provides
-the same functionality and it is my understanding that this feature is
-on track to be stabilized.
-
->
->> +//! C header: [`include/linux/moduleparam.h`](../../../include/linux/mo=
-duleparam.h)
->
-> Please use `srctree`.
-
-Ok.
-
->
->> +/// Newtype to make `bindings::kernel_param` `Sync`.
->
-> Please add intra-doc links where applicable, e.g. `Sync` here.
-
-Will do.
-
->
->> +unsafe extern "C" fn set_param<T>(
->> +    val: *const core::ffi::c_char,
->> +    param: *const crate::bindings::kernel_param,
->> +) -> core::ffi::c_int
->> +where
->> +    T: ModuleParam,
->> +{
->> +    // NOTE: If we start supporting arguments without values, val _is_ =
-allowed
->> +    // to be null here.
->> +    assert!(!val.is_null());
->
-> Should this return an error instead?
-
-Not sure. `val` being null not supposed to happen in the current
-configuration. It should be an unreachable state. So BUG is the right thing?
-
->
->> +/// Write a string representation of the current parameter value to `bu=
-f`.
->> +///
->> +/// # Safety
->> +///
->> +/// Must not be called.
->> +///
->> +/// # Note
->> +///
->> +/// This should not be called as we declare all parameters as read only.
->> +#[allow(clippy::extra_unused_type_parameters)]
->> +unsafe extern "C" fn get_param<T>(
->> +    _buf: *mut core::ffi::c_char,
->> +    _param: *const crate::bindings::kernel_param,
->> +) -> core::ffi::c_int
->> +where
->> +    T: ModuleParam,
->> +{
->> +    unreachable!("Parameters are not readable");
->> +}
->
-> Do we need this? Can't the `ops` callback be `null`?
-
-Not in the current configuration. The parameters can only be declared
-"read only". It should be impossible for anyone to call this function.
-
->
->> +/// The `arg` field of `param` must be an initialized instance of `Self=
-`.
->
-> `Self`?
-
-That whole line is wrong, thanks for spotting. It should read "`arg` must
-be an initialized instance of `T`. This function takes ownership of
-the `T` pointed to by `arg`.".
-
->
->> +/// Generate a static [`kernel_param_ops`](../../../include/linux/modul=
-eparam.h) struct.
->
-> `srctree`.
-
-=F0=9F=91=8D
-
->
->> +/// Parse a token stream of the form `expected_name: "value",` and retu=
-rn the
->> +/// string in the position of "value". Panics on parse error.
->
-> `# Panics` section.
-
-Ok.
-
->
->> +/// `type` may be one of
->> +///
->> +/// - `i8`
->> +/// - `u8`
->> +/// - `i8`
->> +/// - `u8`
->> +/// - `i16`
->> +/// - `u16`
->> +/// - `i32`
->> +/// - `u32`
->> +/// - `i64`
->> +/// - `u64`
->> +/// - `isize`
->> +/// - `usize`
->
-> Can these be intra-doc links?
-
-Yes!
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fkDtrbxChaCBgThG"
+Content-Disposition: inline
+In-Reply-To: <20241212144253.511169641@linuxfoundation.org>
+X-Cookie: Not for human consumption.
 
 
-Thanks for the comments!
+--fkDtrbxChaCBgThG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Thu, Dec 12, 2024 at 03:55:38PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.231 release.
+> There are 459 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Best regards,
-Andreas Hindborg
+--fkDtrbxChaCBgThG
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdcNAEACgkQJNaLcl1U
+h9A8Rwf/T5P6IvFYmvGKKBqY49luehqujJn9Co84m0qUhRR4DaaMW5tM2K/pnwit
+2FtY1iz9n+48EY64KCqHpYcI0ykAByg/+EoaZFI5p1HehfyhLXLlbq3IXP/rBxa6
+Em+THoI6KDSwjtN9aTP6+r9BbS6ScF+Z/habTGY5+73B6oTZHm6c9fKH+wuluuos
+Ook8ALpj7qJrnLnqvU/h89Hs5y3j3DurFKREgud8oEdyUnAg/hPLqD4pYlNbR7+Z
+NW3w+/zmoBerSqf7zMwZiuClqtUw3Wn6x1FfNpdriyRrSHjGw0kplKx7abfS+I+4
+y++eST8xMUNXVfu9kxXCsOgFJxAUQQ==
+=tOJQ
+-----END PGP SIGNATURE-----
 
+--fkDtrbxChaCBgThG--
 
