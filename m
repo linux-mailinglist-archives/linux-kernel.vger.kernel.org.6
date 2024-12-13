@@ -1,201 +1,145 @@
-Return-Path: <linux-kernel+bounces-444824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B039F0D0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:12:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 345F99F0D10
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EFD3166BC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49161883261
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1AA1E008B;
-	Fri, 13 Dec 2024 13:11:57 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EF41DFE33;
+	Fri, 13 Dec 2024 13:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HEoStFZJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Esrj5Std"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F18F19AA58;
-	Fri, 13 Dec 2024 13:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F8D19AA58
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734095517; cv=none; b=K8kun04Z1KtqYrHzyLd1bxkJ2Cz+69GLuvcaZPoJ6Ca/lfOYgfqvPEIEEVRuLUqfotDIBNGyqWfjDFZKwngb63Vv5mKSaz6lDNvL/umsCpMC197BUR4wCxNziGT5YIMZjJccTXz9otwFi4c7jfWEvGVKG7ez65xzQkc3rPA+r4U=
+	t=1734095529; cv=none; b=bLw1NqZNc0MYAR6NxDq61lYwPkGfY2ZdoWDCHV6sdLUA2vSKQdWYwaDO9lGaQdwJT+AKmfM3rMA3yeJD5GSMXm7jNGAjuxaVaj1s/NFmdUg1i17AFh4DHaGjZXuN44D6DqjEQXz/jxNusxzH5ZQhS5Oou5tZEnEACPIyEF6ADfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734095517; c=relaxed/simple;
-	bh=g2nLpU0bqiewCWWl7q7f8Y20UQ5FJfmstD4qoaMlUEM=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Gndhtalq5vGsZzwRXqVUzwIFOAJbEMDsskH5PkKQUUd6PD4CRdbVGS3GDS5UD6XiI+A+Kvh6lFhx5n/+Bv+hAc4g7hPoQN03jFE+J0D7iulau/rB+8Qtuog5Fm7Nwa5iTZLzgTTogu0XcgvuCWzqDBDepu/HTwWUqwx5Jn+BgT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Y8qSX2j6wzqTjy;
-	Fri, 13 Dec 2024 21:10:04 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3A8A11800D9;
-	Fri, 13 Dec 2024 21:11:51 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 13 Dec 2024 21:11:50 +0800
-Message-ID: <1448b4a1-235c-4abe-9f95-fbf6e7f9d640@huawei.com>
-Date: Fri, 13 Dec 2024 21:11:49 +0800
+	s=arc-20240116; t=1734095529; c=relaxed/simple;
+	bh=2ZvHVx7+NTEqzjXPXYN0yUkkdRjFrxYsb0E1/nRiOGo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WZe9xtOtLRWyiZfW/BU9Ix1dHpBCfOVI0yTfdatNB46TBzl2x6nLshfNnCUAzcsllSO3f+VL8H8BfkgmBtqUbFXx5j2Gl4UjKTFllrKanXHcKclSjtL9x9gMu3aXf+DwCNACV5jkHDkC+VQhxbD+gNcGw6hdIJq9QR7XPZmx8i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HEoStFZJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Esrj5Std; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1734095525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1lE2poo2GMB98M3DjQRZUTgVcvXIDD7PPRxrzMRG9oM=;
+	b=HEoStFZJ5EfQAolr9+hEMAnBOKOo2iMkTXBWt8foCfFSMDcHnFPVKA50yTBJyla3fdGosl
+	HOJKQ1wi9Mku9Z3l2DzecaiWIIvkVzh2Rf3FRa1airQEh5s6XIIM4b8VqHz7tBbtvbkb4w
+	QTKYsjqQz5v7Q0y62btYk6qsrYq/Wgemhc47UNqoV6eVMzXHvdjCieiL38PAcvCyroAlI7
+	5aEj6yz9cLa/w2jz9eS8D/jQxV0sMjkdX52qTZrMFwVVyEkcYkdcxd8SCsC3OacvBE4AiM
+	kDEX58aR11BlyQCe7by/JHzfoVjmYzarlt6e0mwTS9b/Rf/NKt4Z833QByE3NQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1734095525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1lE2poo2GMB98M3DjQRZUTgVcvXIDD7PPRxrzMRG9oM=;
+	b=Esrj5StdaxwMDaPAcLNiXxAYNk9ctiiAfaJHXgTof+7R9B9+OYlpsjSDVrNs80W/Mjxkva
+	xu8P/0iPq9mWBqAA==
+To: Alexandre Ghiti <alexghiti@rivosinc.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Anup
+ Patel <anup@brainfault.org>, Sunil V L <sunilvl@ventanamicro.com>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: Re: [RFC PATCH] riscv: Fix PCI warning by enabling
+ PCI_MSI_ARCH_FALLBACKS
+In-Reply-To: <20241213115704.353665-1-alexghiti@rivosinc.com>
+References: <20241213115704.353665-1-alexghiti@rivosinc.com>
+Date: Fri, 13 Dec 2024 14:12:04 +0100
+Message-ID: <87v7vn917f.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <salil.mehta@huawei.com>, <liuyonglong@huawei.com>,
-	<wangpeiyang1@huawei.com>, <chenhao418@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND net 3/7] net: hns3: Resolved the issue that the
- debugfs query result is inconsistent.
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20241107133023.3813095-1-shaojijie@huawei.com>
- <20241107133023.3813095-4-shaojijie@huawei.com>
- <20241111172511.773c71df@kernel.org>
- <e4396ecc-7874-4caf-b25d-870a9d897eb1@huawei.com>
- <20241113163145.04c92662@kernel.org>
- <058dff3c-126a-423a-8608-aa2cebfc13eb@huawei.com>
- <20241209131315.2b0e15bc@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20241209131315.2b0e15bc@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: text/plain
 
-
-on 2024/12/10 5:13, Jakub Kicinski wrote:
-> On Mon, 9 Dec 2024 22:14:37 +0800 Jijie Shao wrote:
->> Another way is seq_file, which may be a solution,
->> as far as I know, each seq_file has a separate buffer and can be expanded automatically.
->> So it might be possible to solve the problem
->> But even if the solution is feasible, this will require a major refactoring of hns3 debugfs
-> seq_file is generally used for text output
+On Fri, Dec 13 2024 at 12:57, Alexandre Ghiti wrote:
+> When the interrupt controller is not using the IMSIC and ACPI is enabled,
+> the following warning appears:
 >
-> can you not hook in the allocation and execution of the cmd into the
-> .open handler and freeing in to the .close handler? You already use
-> explicit file_ops for this file.
+> [    0.866401] WARNING: CPU: 1 PID: 1 at drivers/pci/msi/msi.h:121 pci_msi_setup_msi_irqs+0x2c/0x32
+> [    0.867071] Modules linked in:
+> [    0.867389] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.13.0-rc2-00001-g795582ce7e24-dirty #44
+> [    0.867538] Hardware name: QEMU QEMU Virtual Machine, BIOS
+> [    0.867672] epc : pci_msi_setup_msi_irqs+0x2c/0x32
+> [    0.867738]  ra : __pci_enable_msix_range+0x30c/0x596
 
+Removing a ton of badly formatted stack trace:
 
-Thank you very much for your advice.
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#backtraces-in-commit-messages
 
-When I modified the code according to your comments,
-I found that the problem mentioned in this path can be solved.
-I implement .open() and .release() handler for debugfs file_operations，
-Move allocation buffer and execution of the cmd to the .open() handler
-and freeing in to the .release() handler.
-Also allocate separate buffer for each reader and associate the buffer with the file pointer.
-In this case, there is no shared buffer, which causes data inconsistency.
+>
+> So enable PCI_MSI_ARCH_FALLBACKS to get rid of this.
 
-However, a new problem is introduced：
-If the framework does not call .release() for some reason, the buffer cannot be freed, causing memory leakage.
-Maybe it's acceptable？
+No. PCI_MSI_ARCH_FALLBACKS is really only meant for architectures which
+implement the legacy fallbacks and not to paper over the underlying
+logic bug in the pci/msi code. Of course the loongson folks ran into the
+same problem two years ago and went for the sloppy fix without talking
+to anyone...
 
+Thanks for bringing it up instead of silently slapping it into the RISCV
+tree !
 
-  static ssize_t hns3_dbg_read(struct file *filp, char __user *buffer,
-  			     size_t count, loff_t *ppos)
-  {
--	struct hns3_dbg_data *dbg_data = filp->private_data;
-+	char *buf = filp->private_data;
+The uncompiled patch below should fix this for real.
+
+Thanks,
+
+        tglx
+---
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -185,7 +185,6 @@ config LOONGARCH
+ 	select PCI_DOMAINS_GENERIC
+ 	select PCI_ECAM if ACPI
+ 	select PCI_LOONGSON
+-	select PCI_MSI_ARCH_FALLBACKS
+ 	select PCI_QUIRKS
+ 	select PERF_USE_VMALLOC
+ 	select RTC_LIB
+--- a/drivers/pci/msi/irqdomain.c
++++ b/drivers/pci/msi/irqdomain.c
+@@ -350,8 +350,11 @@ bool pci_msi_domain_supports(struct pci_
+ 
+ 	domain = dev_get_msi_domain(&pdev->dev);
+ 
+-	if (!domain || !irq_domain_is_hierarchy(domain))
+-		return mode == ALLOW_LEGACY;
++	if (!domain || !irq_domain_is_hierarchy(domain)) {
++		if (IS_ENABLED(CONFIG_PCI_MSI_ARCH_FALLBACKS))
++			return mode == ALLOW_LEGACY;
++		return false;
++	}
+ 
+ 	if (!irq_domain_is_msi_parent(domain)) {
+ 		/*
+--- a/drivers/pci/msi/msi.c
++++ b/drivers/pci/msi/msi.c
+@@ -442,6 +442,10 @@ int __pci_enable_msi_range(struct pci_de
+ 	if (nvec > maxvec)
+ 		nvec = maxvec;
+ 
++	/* Test for the availability of MSI support */
++	if (!pci_msi_domain_supports(dev, 0, ALLOW_LEGACY))
++		return -ENOTSUPP;
 +
-+	return simple_read_from_buffer(buffer, count, ppos, buf, strlen(buf));
-+}
-+
-+static int hns3_dbg_open(struct inode *inode, struct file *filp)
-+{
-+	struct hns3_dbg_data *dbg_data = inode->i_private;
-  	struct hnae3_handle *handle = dbg_data->handle;
-  	struct hns3_nic_priv *priv = handle->priv;
--	ssize_t size = 0;
--	char **save_buf;
--	char *read_buf;
-  	u32 index;
-+	char *buf;
-  	int ret;
-  
-+	if (!test_bit(HNS3_NIC_STATE_INITED, &priv->state) ||
-+	    test_bit(HNS3_NIC_STATE_RESETTING, &priv->state))
-+		return -EBUSY;
-+
-  	ret = hns3_dbg_get_cmd_index(dbg_data, &index);
-  	if (ret)
-  		return ret;
-  
--	mutex_lock(&handle->dbgfs_lock);
--	save_buf = &handle->dbgfs_buf[index];
--
--	if (!test_bit(HNS3_NIC_STATE_INITED, &priv->state) ||
--	    test_bit(HNS3_NIC_STATE_RESETTING, &priv->state)) {
--		ret = -EBUSY;
--		goto out;
--	}
--
--	if (*save_buf) {
--		read_buf = *save_buf;
--	} else {
--		read_buf = kvzalloc(hns3_dbg_cmd[index].buf_len, GFP_KERNEL);
--		if (!read_buf) {
--			ret = -ENOMEM;
--			goto out;
--		}
--
--		/* save the buffer addr until the last read operation */
--		*save_buf = read_buf;
--
--		/* get data ready for the first time to read */
--		ret = hns3_dbg_read_cmd(dbg_data, hns3_dbg_cmd[index].cmd,
--					read_buf, hns3_dbg_cmd[index].buf_len);
--		if (ret)
--			goto out;
--	}
-+	buf = kvzalloc(hns3_dbg_cmd[index].buf_len, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-  
--	size = simple_read_from_buffer(buffer, count, ppos, read_buf,
--				       strlen(read_buf));
--	if (size > 0) {
--		mutex_unlock(&handle->dbgfs_lock);
--		return size;
-+	ret = hns3_dbg_read_cmd(dbg_data, hns3_dbg_cmd[index].cmd,
-+				buf, hns3_dbg_cmd[index].buf_len);
-+	if (ret) {
-+		kvfree(buf);
-+		return ret;
-  	}
-  
--out:
--	/* free the buffer for the last read operation */
--	if (*save_buf) {
--		kvfree(*save_buf);
--		*save_buf = NULL;
--	}
-+	filp->private_data = buf;
-+	return 0;
-+}
-  
--	mutex_unlock(&handle->dbgfs_lock);
--	return ret;
-+static int hns3_dbg_release(struct inode *inode, struct file *filp)
-+{
-+	kvfree(filp->private_data);
-+	filp->private_data = NULL;
-+	return 0;
-  }
-  
-  static const struct file_operations hns3_dbg_fops = {
-  	.owner = THIS_MODULE,
--	.open  = simple_open,
-+	.open  = hns3_dbg_open,
-  	.read  = hns3_dbg_read,
-+	.release = hns3_dbg_release,
-  };
-
-
+ 	rc = pci_setup_msi_context(dev);
+ 	if (rc)
+ 		return rc;
 
