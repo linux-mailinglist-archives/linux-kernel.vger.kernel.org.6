@@ -1,217 +1,129 @@
-Return-Path: <linux-kernel+bounces-445393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E369F1577
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:09:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16DE59F15B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 640007A1451
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:09:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7878A188D253
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D73C1E8850;
-	Fri, 13 Dec 2024 19:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114611EB9E7;
+	Fri, 13 Dec 2024 19:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="kn6j4ECm"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=permerror (0-bit key) header.d=paranoidlabs.org header.i=@paranoidlabs.org header.b="Z+6zO/ak";
+	dkim=pass (2048-bit key) header.d=paranoidlabs.org header.i=@paranoidlabs.org header.b="JcwlwK3z"
+Received: from mail.hypatia.paranoidlabs.org (hypatia.paranoidlabs.org [45.11.248.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D76B13EFE3;
-	Fri, 13 Dec 2024 19:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734116963; cv=pass; b=auWjZxoM7lEXMiAbKDz4FbigZmhEVUhQc8hzfDFDsLPm9HRskq+TRdIz5zTfO7thXNLxD43AU8tB5wUSJ48lPZ5Yg4ba91B3HuCn58LlsUVTg/SzQfziZyZHxSbceFm+mtLuGtwhR3Bq3RrAtX66rIonsOZxcfSZq3CU/XD+cT4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734116963; c=relaxed/simple;
-	bh=jD5UHxV6oEgWkausVvj3Lb5W06+sApxFVzCnNvpU/sc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=JEZ93qASX5ovmCr/arTvuxtl+Z/S8Xrek1uKmrkXwBmoUmL3fcYPdRwXcJYroJPPc30LwzJHqZJbWTKVyfqk+mNsDTuDHqKhtWkR3IKl3J4tTiSCt8aQCRSHX8HRSVR7rb1BAm+r8957kCmUfWwYlI7VaCI1DZXKHF61vpcYE0E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=kn6j4ECm; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1734116931; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QUoxdusHF2d5/Q3AKJ4csKs4kVzaRZb9XzozVlgFRswu63KzqZjo85ZDxt3mtsSR5mBXLzLuSuKLaTXqyu2v9qPQJLhsH5sq3kBEdkBOVLAO6YhcVkzyP67gxb3mWx7s7cp/NTLh3A85g1ymP4/O70UKUI9ttwLZ8eXZAupAU1E=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1734116931; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QYJpl/mguOY/+ZOvlZbQZhWNe1kTaOmWbTfP27VR/jY=; 
-	b=jfj5m379wuqpJ+7b66jt/aTHqLndPYw2JWxpJgPefOof4nPYiPNmGbRcguQyGwlAQ+rhVNCGnoqc2f/F6KrC6fwnNZdhWgpnLjfMlnBBLIFqbTjA5TWOxYfqArJNrXHCnwJb1D1fZdohc82eXYdy8mNPhQWLDdLvUKoKxSk4Z74=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1734116931;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=QYJpl/mguOY/+ZOvlZbQZhWNe1kTaOmWbTfP27VR/jY=;
-	b=kn6j4ECmGuzEMFRvLU4vplub9wPDMnPyqCQMqYOlNJRl4EXzCr4TBMUVoMZPLjVx
-	jkw90f5nRf0U3WVbf2NHyxQTboMDXBL+endtgmngMufmrd8QE62AHuSEfqzIxasXBAq
-	XHPltS+hX+Wd4nY8BG85vOZTC5pLEMGDQ0m49g38=
-Received: by mx.zohomail.com with SMTPS id 1734116927987131.02626907270326;
-	Fri, 13 Dec 2024 11:08:47 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491B71E501C;
+	Fri, 13 Dec 2024 19:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.11.248.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734117614; cv=none; b=Ef1+JKOtpzx0Sx/QdxqWSle8fgdJl0GWWwttMlwlAwSEqodRnHN4vChtBh7NbyIdcbY1ZImVgVWDwY7kHdQwgw8mvieVYvyY/0feKJEjmdlgb7MFDnPmnMA7TM8uLOy5IbcdAxouJeVq1icI2IbTxSfH0HS/Kzw4fHqbK/65qY4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734117614; c=relaxed/simple;
+	bh=9OoqmauZQxohnJFZN4P+wamIlR3i4wpOOCK/m7yVa1g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qOb3YNRRKztQbASFravCa/Fo7W2ouRQ21tjispCafsSdoZcr5Cwq4h9nf1YkNrTy/E7zLxSwuorZJyypcd4oySAQeHAjHcuCHqt1E2kKk8s+qmOjy4KTENHHUWLAZT0kTfxTAxwopL3xb+XLV2cs5T77cIJDhJmu5OqqToyI5b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paranoidlabs.org; spf=pass smtp.mailfrom=paranoidlabs.org; dkim=permerror (0-bit key) header.d=paranoidlabs.org header.i=@paranoidlabs.org header.b=Z+6zO/ak; dkim=pass (2048-bit key) header.d=paranoidlabs.org header.i=@paranoidlabs.org header.b=JcwlwK3z; arc=none smtp.client-ip=45.11.248.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paranoidlabs.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paranoidlabs.org
+Received: from caph.lan (unknown [IPv6:2a02:1748:dd4e:ded0::3ab])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.hypatia.paranoidlabs.org (PlabsMail) with ESMTPSA id C2F621DB80;
+	Fri, 13 Dec 2024 19:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=paranoidlabs.org;
+	s=ed25519-20210101; t=1734117191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yQ8n5rTevTsEagDkA9CThrufiGSWMm/mG2qZW+/pzSQ=;
+	b=Z+6zO/ak+dNkVat4nDjkQYeN5w9UZrge2k44A1oF5xuLUhqTJu2ybLMp6O5LSOwM9JoUwr
+	8ObkavOgfgMOUqAA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=paranoidlabs.org;
+	s=rsa-20210101; t=1734117191;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yQ8n5rTevTsEagDkA9CThrufiGSWMm/mG2qZW+/pzSQ=;
+	b=JcwlwK3z7+TjYCQwVsn6bMMZPrYZAq/gd7D49TkqWNGarXxSfHMCeahfkhqfZ0JEzLNBNL
+	BD8xXppPnNiyyy0FLxQQOuh9SBU4/2rh0TQXy/TthEZVb74KH3cP8RlPlnQflFZZXNZUBd
+	DA80P/FWaaNGLZ4HLVxPcViqSSaj6QBhds78Ju/nRD06t3F4gEy9jmcn/+3ugxjiAvE881
+	03is+8bP34LHLsoqsvioePvTHgask0Wpy62vG/5psd0qKoYtT9Tp1uhwWRElMC2hMhEQql
+	YGLSDd2sAB/LOWdoQjqhd6b8WAE3AOED8BfUL+oggA9plmP0ARqoLIfxE0duXg==
+From: Jakob Riepler <jakob+lkml@paranoidlabs.org>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+	Jakob Riepler <jakob+lkml@paranoidlabs.org>,
+	Jakob Riepler <jakob+lkml@chaosfield.at>
+Subject: [PATCH v3] leds: pwm-multicolor: Disable PWM when going to suspend
+Date: Fri, 13 Dec 2024 20:10:41 +0100
+Message-ID: <20241213191039.181169-3-jakob+lkml@paranoidlabs.org>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241213163445.GA2418536@google.com>
+References: <d7d930bc-4c82-4272-b2c6-88f7cac5a3e1@chaosfield.at> <50bbd767-b0e0-4788-975b-f5d9598208e5@chaosfield.at> <20241212174356.GJ7139@google.com> <d021d011-d5d4-4692-973a-f5a45be8db94@chaosfield.at> <20241213163445.GA2418536@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v7 2/2] rust: add dma coherent allocator abstraction.
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <b7130ae2-6314-41d9-bda2-d875b22463bb@arm.com>
-Date: Fri, 13 Dec 2024 16:08:31 -0300
-Cc: Alice Ryhl <aliceryhl@google.com>,
- Abdiel Janulgue <abdiel.janulgue@gmail.com>,
- rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>,
- Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- airlied@redhat.com,
- "open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <263C49EB-5A5D-4DF4-B80A-A39E6CE58851@collabora.com>
-References: <20241210221603.3174929-1-abdiel.janulgue@gmail.com>
- <20241210221603.3174929-3-abdiel.janulgue@gmail.com>
- <CAH5fLgjO-GbB85dDdxLSSWY74cUn8-Lt-yaRGkUVxb-E8YaO2Q@mail.gmail.com>
- <0F719804-2AD3-4C4E-A98C-2862295990BA@collabora.com>
- <b7130ae2-6314-41d9-bda2-d875b22463bb@arm.com>
-To: Robin Murphy <robin.murphy@arm.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Robin,
+This fixes suspend on platforms like stm32mp1xx, where the PWM consumer
+has to be disabled for the PWM to enter suspend.
+Another positive side effect is that active-low LEDs now properly
+turn off instead of going back to full brightness when they are set to 0.
 
-> On 13 Dec 2024, at 12:28, Robin Murphy <robin.murphy@arm.com> wrote:
->=20
-> On 13/12/2024 2:47 pm, Daniel Almeida wrote:
-> [...]
->>>> +    /// Returns the CPU-addressable region as a slice.
->>>> +    pub fn cpu_buf(&self) -> &[T]
->>>> +    {
->>>> +        // SAFETY: The pointer is valid due to type invariant on =
-`CoherentAllocation` and
->>>> +        // is valid for reads for `self.count * size_of::<T>` =
-bytes.
->>>> +        unsafe { core::slice::from_raw_parts(self.cpu_addr, =
-self.count) }
->>>=20
->>> Immutable slices require that the data does not change while the
->>> reference is live. Is that the case? If so, your safety comment =
-should
->>> explain that.
->>>=20
->>>> +    }
->>>> +
->>>> +    /// Performs the same functionality as `cpu_buf`, except that =
-a mutable slice is returned.
->>>> +    pub fn cpu_buf_mut(&mut self) -> &mut [T]
->>>> +    {
->>>> +        // SAFETY: The pointer is valid due to type invariant on =
-`CoherentAllocation` and
->>>> +        // is valid for reads for `self.count * size_of::<T>` =
-bytes.
->>>> +        unsafe { core::slice::from_raw_parts_mut(self.cpu_addr, =
-self.count) }
->>>=20
->>> Mutable slices require that the data is not written to *or read* by
->>> anybody else while the reference is live. Is that the case? If so,
->>> your safety comment should explain that.
->>>=20
->> The buffer will probably be shared between the CPU and some hardware =
-device, since this is the
->> point of the dma mapping API.
->> It=E2=80=99s up to the caller to ensure that no hardware operations =
-that involve the buffer are currently taking
->> place while the slices above are alive.
->=20
-> Hmm, that sounds troublesome... the nature of coherent allocations is =
-that both CPU and device may access them at any time, and you can =
-definitely expect ringbuffer-style usage models where a CPU is writing =
-to part of the buffer while the device is reading/writing another part, =
-but also cases where a CPU needs to poll for a device write to a =
-particular location.
->=20
+Link: https://lore.kernel.org/all/20240417153846.271751-2-u.kleine-koenig@pengutronix.de/
+Signed-off-by: Jakob Riepler <jakob+lkml@chaosfield.at>
+---
+Changes in v2:
+ - fix wrong line-breaks in patch
+Changes in v3:
+ - use git send-email
 
-Ok, I had based my answer on some other drivers I=E2=80=99ve worked on =
-in the past where the approach I cited would work.
+Sorry for the issues.
+I'm using git send-email with a different mailserver now so the patch
+formatting should now be correct - at least in my tests git am was
+happy now.
 
-I can see it not working for what you described, though.
+Best regards
+Jakob
 
-This is a bit unfortunate, because it means we are back to square one, =
-i.e.: back to read() and write() functions and
-to the bound on `Copy`. That=E2=80=99s because, no matter how you try to =
-dress this, there is no way to give safe and direct access
-to the underlying memory if you can=E2=80=99t avoid situations where =
-both the CPU and the device will be accessing the memory
-at the same time.
+ drivers/leds/rgb/leds-pwm-multicolor.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-I guess the only improvement that could be made over the approach used =
-for v2 is to at least use copy_nonoverlapping
-instead, because I assume the performance of things like:
-
-+ /// Reads a value on a location specified by index.
-+ pub fn read(&self, index: usize) -> Result<T>
-+ where
-+ T: Copy
-+ {
-+ if let Some(val) =3D self.cpu_buf().get(index) {
-+ Ok(*val)
-+ } else {
-+ Err(EINVAL)
-+ }
-+ }
-
-will be atrocious.
-
-
-> Thanks,
-> Robin.
->=20
->> I think that adding that as a safety requirement to `cpu_buf` and =
-`cpu_buf_mut` will be sufficient.
->>>> +    }
->>>> +}
->>>> +
->>>> +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
->>>> +    fn drop(&mut self) {
->>>> +        let size =3D self.count * core::mem::size_of::<T>();
->>>> +        // SAFETY: the device, cpu address, and the dma handle is =
-valid due to the
->>>> +        // type invariants on `CoherentAllocation`.
->>>> +        unsafe { bindings::dma_free_attrs(self.dev.as_raw(), size,
->>>> +                                          self.cpu_addr as _,
->>>> +                                          self.dma_handle,
->>>> +                                          =
-self.dma_attrs.as_raw(),) }
->>>> +    }
->>>> +}
->>>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
->>>> index e1065a7551a3..6e90ebf5a130 100644
->>>> --- a/rust/kernel/lib.rs
->>>> +++ b/rust/kernel/lib.rs
->>>> @@ -35,6 +35,7 @@
->>>> mod build_assert;
->>>> pub mod cred;
->>>> pub mod device;
->>>> +pub mod dma;
->>>> pub mod error;
->>>> #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
->>>> pub mod firmware;
->>>> =E2=80=94
->>>> 2.43.0
->> =E2=80=94 Daniel
-
+diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/leds-pwm-multicolor.c
+index e1a81e0109e8..f80a06cc31f8 100644
+--- a/drivers/leds/rgb/leds-pwm-multicolor.c
++++ b/drivers/leds/rgb/leds-pwm-multicolor.c
+@@ -50,7 +50,13 @@ static int led_pwm_mc_set(struct led_classdev *cdev,
+ 			duty = priv->leds[i].state.period - duty;
+ 
+ 		priv->leds[i].state.duty_cycle = duty;
+-		priv->leds[i].state.enabled = duty > 0;
++		/*
++		 * Disabling a PWM doesn't guarantee that it emits the inactive level.
++		 * So keep it on. Only for suspending the PWM should be disabled because
++		 * otherwise it refuses to suspend. The possible downside is that the
++		 * LED might stay (or even go) on.
++		 */
++		priv->leds[i].state.enabled = !(cdev->flags & LED_SUSPENDED);
+ 		ret = pwm_apply_might_sleep(priv->leds[i].pwm,
+ 					    &priv->leds[i].state);
+ 		if (ret)
+-- 
+2.47.1
 
 
