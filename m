@@ -1,222 +1,116 @@
-Return-Path: <linux-kernel+bounces-444519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE119F0829
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:41:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 572119F082F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:41:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7584E188B1AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:41:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A80C168D1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F9F1B392F;
-	Fri, 13 Dec 2024 09:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101CF1B392E;
+	Fri, 13 Dec 2024 09:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G3JEszPU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ProEbuOs"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766E41B21A6;
-	Fri, 13 Dec 2024 09:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6680918FDDF;
+	Fri, 13 Dec 2024 09:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734082858; cv=none; b=KVunKgHK2r7vfb7MXI+tVvL+tnSU5LQpxdYBM4Gh9kiDsa+TaUPLi0+KzYzCvD75ki2OPZ5JJbJHwccPTxy5X2zcDlm1/tKtXFQ0d1rQuuiMKERj/YEG1cHiPOiA/FdfMHzyLfKPAgZzpslscmJTexEgINtjEOb/mf7uaypGSIc=
+	t=1734082893; cv=none; b=DlC9ewsnG3SPhE2mgSrnI5yCRKv7iYa1jYHzev3VAfrTjS5jpwihzjY490zz5DVLc5lftRW6hehrBwBUZp5jGFjJpuDqpnefQpbNCAbCZLpdxahyiMwRKFB3dz1wrvZpvCPgiEUUyCnmc5Su8gM7GA1OmXkxvvbS76zxQxfoPew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734082858; c=relaxed/simple;
-	bh=J8uEGXAMi3YY0F+tyr8ALgZHMklBAPU3Mc8yWWTc/NU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qkR6PjDyCt7xFx8tOrqd2Xk+1ZUDKYT6ES52XQwtDD6MJXl8YAFatHXBPwM1o0GN/vhHZH6JX9NCjyf9aiijp+0geuW2FSLczABj7B5UnxukhsBtz9/fULgKpOQdUZX+CuulEpRUup+R28Jw9uEgfcfOx0szS6RP2bEsCOW5pTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G3JEszPU; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734082856; x=1765618856;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=J8uEGXAMi3YY0F+tyr8ALgZHMklBAPU3Mc8yWWTc/NU=;
-  b=G3JEszPUDTdQzhn/bYfT7sw0L/NjcN3FlNE0LTcUc/L+86xOgC1ZWCfJ
-   Iqtl+eAjB+YjKREfBygTdMPCLm/6t035dxUybnJTfWT80rDqgV6DufQuB
-   S6hwBgRSlB8ZnOwxikykUkDPmgKAZ/OLCEWdYokVl0sY0oe4DErxC+b0X
-   mQw6RzDPF+p9Twh4KC0fciCvf6j0KcvORFY7b8hUSlxUGNxgrRg23TK8u
-   ROEOkq/I33eJF8o7feDpDBASgLxxOP3h9UDMP/9uHtlc7VU+K6KZu8n75
-   Bwm2b6iHKtcBFyCyjIMuzyGxkKE+aDXfLxz71TuGMIKedlS8Y9jY3qU++
-   g==;
-X-CSE-ConnectionGUID: 57cuT/xOS1y7J6cuN11KDQ==
-X-CSE-MsgGUID: 6v4gq7MnR3mXhbCA/s83Bg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="51948982"
-X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
-   d="scan'208";a="51948982"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 01:40:56 -0800
-X-CSE-ConnectionGUID: TcIQ1h52QQyvlcNXhZN7kg==
-X-CSE-MsgGUID: BzGj08GXQTuWAsSdSebWCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119749396"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 01:40:52 -0800
-Message-ID: <dfe4c078-e7f9-44ee-8320-a189ea2ce51b@intel.com>
-Date: Fri, 13 Dec 2024 17:40:48 +0800
+	s=arc-20240116; t=1734082893; c=relaxed/simple;
+	bh=xOXiS2wRIDztLaIqs5qYSwXYJdPN5DTOH3N7PYSnCUc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J+etidfA12OFtdRt5oVCghp7kyvRPPf7QpTYxkJiI5h72KgKSt8jmVHsaPNSCeS+CP5b1IwhNPtSRZj/HzQpyfBBLUjeF4nQ0+Puj1Wj74rAuRY3TcIWBtPvJk0AhCA/vkgVZ1O/tMNjd5cAyGYbG6iUfhMyF/ofckUGu6v1obc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ProEbuOs; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 6bfe8a20b93611ef99858b75a2457dd9-20241213
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=LrfMJ3h3u1jnLMa7N2XZu8l1yWiNNUJSdAbw5NA1lr0=;
+	b=ProEbuOsj8K154YQtZb9p2clWWXNhER+iRpQX4XuPB8Ak8X+Ec7lJ/dkhcLt5D/slJ7O1H+UP1hEfxV0uvGWaQFrFS2VD6lzknVWlM9vuWPMSi7gkQKPvJZ0BFxj3UEKXgz07KLSi1/D7vJu3n2al+7IANptlUDHWBwt+HmKDs4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:6840c50e-ba88-4aa5-a160-83e296f94a2b,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:6493067,CLOUDID:b2581513-8f5d-4ac6-9276-7b9691c7b8d6,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:1,IP:nil,UR
+	L:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 6bfe8a20b93611ef99858b75a2457dd9-20241213
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 276874414; Fri, 13 Dec 2024 17:41:26 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 13 Dec 2024 17:41:22 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 13 Dec 2024 17:41:22 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Hao Qin <hao.qin@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, "Steve
+ Lee" <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH] Bluetooth: btmtk: add quirk to support HCI_QUIRK_SIMULTANEOUS_DISCOVERY
+Date: Fri, 13 Dec 2024 17:41:18 +0800
+Message-ID: <20241213094118.23647-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] KVM: TDX: Handle TDG.VP.VMCALL<ReportFatalError>
-To: Binbin Wu <binbin.wu@linux.intel.com>, pbonzini@redhat.com,
- seanjc@google.com, kvm@vger.kernel.org
-Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com, adrian.hunter@intel.com,
- reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
- isaku.yamahata@intel.com, yan.y.zhao@intel.com, chao.gao@intel.com,
- michael.roth@amd.com, linux-kernel@vger.kernel.org
-References: <20241201035358.2193078-1-binbin.wu@linux.intel.com>
- <20241201035358.2193078-6-binbin.wu@linux.intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20241201035358.2193078-6-binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--1.642100-8.000000
+X-TMASE-MatchedRID: tiRXYRqWr+tocr5vRHCIaibMb0f5D0uqTJDl9FKHbrmtwWMX5hmdv6PF
+	jJEFr+olKE0Je8DR/D4NXwNUB3oA790H8LFZNFG7MGpgBNI6BaPvMA9WW7X2a/mHADpWjR4Nxll
+	YNXARfpWxz8p0BoLSI+B+R4NVzQv5shljvamtnvY1mT6tqJoFqKL8uYddyDmU+IfoVuvrGMeAhO
+	caQrQ0U1GyRcoeF18qmKP0zzpTAeGwod8xOMKmvMCBO+zxAW5pftwZ3X11IV0=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--1.642100-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	CEC39923689531D895F816C4BA509C57F9BD1D15EBDF4B59EB11286153AEA5682000:8
 
-On 12/1/2024 11:53 AM, Binbin Wu wrote:
-> Convert TDG.VP.VMCALL<ReportFatalError> to KVM_EXIT_SYSTEM_EVENT with
-> a new type KVM_SYSTEM_EVENT_TDX_FATAL and forward it to userspace for
-> handling.
-> 
-> TD guest can use TDG.VP.VMCALL<ReportFatalError> to report the fatal
-> error it has experienced.  This hypercall is special because TD guest
-> is requesting a termination with the error information, KVM needs to
-> forward the hypercall to userspace anyway, KVM doesn't do sanity checks
-> and let userspace decide what to do.
-> 
-> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
-> ---
-> Hypercalls exit to userspace breakout:
-> - New added.
->    Implement one of the hypercalls need to exit to userspace for handling after
->    reverting "KVM: TDX: Add KVM Exit for TDX TDG.VP.VMCALL", which tries to resolve
->    Sean's comment.
->    https://lore.kernel.org/kvm/Zg18ul8Q4PGQMWam@google.com/
-> - Use TDVMCALL_STATUS prefix for TDX call status codes (Binbin)
-> ---
->   Documentation/virt/kvm/api.rst |  8 ++++++
->   arch/x86/kvm/vmx/tdx.c         | 50 ++++++++++++++++++++++++++++++++++
->   include/uapi/linux/kvm.h       |  1 +
->   3 files changed, 59 insertions(+)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index edc070c6e19b..bb39da72c647 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -6815,6 +6815,7 @@ should put the acknowledged interrupt vector into the 'epr' field.
->     #define KVM_SYSTEM_EVENT_WAKEUP         4
->     #define KVM_SYSTEM_EVENT_SUSPEND        5
->     #define KVM_SYSTEM_EVENT_SEV_TERM       6
-> +  #define KVM_SYSTEM_EVENT_TDX_FATAL      7
->   			__u32 type;
->                           __u32 ndata;
->                           __u64 data[16];
-> @@ -6841,6 +6842,13 @@ Valid values for 'type' are:
->      reset/shutdown of the VM.
->    - KVM_SYSTEM_EVENT_SEV_TERM -- an AMD SEV guest requested termination.
->      The guest physical address of the guest's GHCB is stored in `data[0]`.
-> + - KVM_SYSTEM_EVENT_TDX_FATAL -- an TDX guest requested termination.
-> +   The error codes of the guest's GHCI is stored in `data[0]`.
-> +   If the bit 63 of `data[0]` is set, it indicates there is TD specified
-> +   additional information provided in a page, which is shared memory. The
-> +   guest physical address of the information page is stored in `data[1]`.
-> +   An optional error message is provided by `data[2]` ~ `data[9]`, which is
-> +   byte sequence, LSB filled first. Typically, ASCII code(0x20-0x7e) is filled.
->    - KVM_SYSTEM_EVENT_WAKEUP -- the exiting vCPU is in a suspended state and
->      KVM has recognized a wakeup event. Userspace may honor this event by
->      marking the exiting vCPU as runnable, or deny it and call KVM_RUN again.
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 553f4cbe0693..a79f9ca962d1 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -1093,6 +1093,54 @@ static int tdx_map_gpa(struct kvm_vcpu *vcpu)
->   	return 1;
->   }
->   
-> +static int tdx_report_fatal_error(struct kvm_vcpu *vcpu)
-> +{
-> +	u64 reg_mask = kvm_rcx_read(vcpu);
-> +	u64* opt_regs;
-> +
-> +	/*
-> +	 * Skip sanity checks and let userspace decide what to do if sanity
-> +	 * checks fail.
-> +	 */
-> +	vcpu->run->exit_reason = KVM_EXIT_SYSTEM_EVENT;
-> +	vcpu->run->system_event.type = KVM_SYSTEM_EVENT_TDX_FATAL;
-> +	vcpu->run->system_event.ndata = 10;
-> +	/* Error codes. */
-> +	vcpu->run->system_event.data[0] = tdvmcall_a0_read(vcpu);
-> +	/* GPA of additional information page. */
-> +	vcpu->run->system_event.data[1] = tdvmcall_a1_read(vcpu);
-> +	/* Information passed via registers (up to 64 bytes). */
-> +	opt_regs = &vcpu->run->system_event.data[2];
-> +
-> +#define COPY_REG(REG, MASK)						\
-> +	do {								\
-> +		if (reg_mask & MASK)					\
-> +			*opt_regs = kvm_ ## REG ## _read(vcpu);		\
-> +		else							\
-> +			*opt_regs = 0;					\
-> +		opt_regs++;						\
+Add quirk to support HCI_QUIRK_SIMULTANEOUS_DISCOVERY feature for MT79xx
+series chipset.
 
-I'm not sure if we need to skip the "opt_regs++" the corresponding 
-register is not set valid in reg_mask. And maintain ndata to actual 
-valid number instead of hardcoding it to 10.
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+---
+ drivers/bluetooth/btmtk.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> +	} while (0)
-> +
-> +	/* The order is defined in GHCI. */
-> +	COPY_REG(r14, BIT_ULL(14));
-> +	COPY_REG(r15, BIT_ULL(15));
-> +	COPY_REG(rbx, BIT_ULL(3));
-> +	COPY_REG(rdi, BIT_ULL(7));
-> +	COPY_REG(rsi, BIT_ULL(6));
-> +	COPY_REG(r8, BIT_ULL(8));
-> +	COPY_REG(r9, BIT_ULL(9));
-> +	COPY_REG(rdx, BIT_ULL(2));
-> +
-> +	/*
-> +	 * Set the status code according to GHCI spec, although the vCPU may
-> +	 * not return back to guest.
-> +	 */
-> +	tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_SUCCESS);
-> +
-> +	/* Forward request to userspace. */
-> +	return 0;
-> +}
-> +
->   static int handle_tdvmcall(struct kvm_vcpu *vcpu)
->   {
->   	if (tdvmcall_exit_type(vcpu))
-> @@ -1101,6 +1149,8 @@ static int handle_tdvmcall(struct kvm_vcpu *vcpu)
->   	switch (tdvmcall_leaf(vcpu)) {
->   	case TDVMCALL_MAP_GPA:
->   		return tdx_map_gpa(vcpu);
-> +	case TDVMCALL_REPORT_FATAL_ERROR:
-> +		return tdx_report_fatal_error(vcpu);
->   	default:
->   		break;
->   	}
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 637efc055145..c173c8dfcf83 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -375,6 +375,7 @@ struct kvm_run {
->   #define KVM_SYSTEM_EVENT_WAKEUP         4
->   #define KVM_SYSTEM_EVENT_SUSPEND        5
->   #define KVM_SYSTEM_EVENT_SEV_TERM       6
-> +#define KVM_SYSTEM_EVENT_TDX_FATAL      7
->   			__u32 type;
->   			__u32 ndata;
->   			union {
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index 8a3f7c3fcfec..562d6ecf0b71 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -1367,6 +1367,9 @@ int btmtk_usb_setup(struct hci_dev *hdev)
+ 			return err;
+ 		}
+ 
++		/* Apply common HCI quirks for MediaTek chipset */
++		set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
++
+ 		hci_set_msft_opcode(hdev, 0xFD30);
+ 		hci_set_aosp_capable(hdev);
+ 
+-- 
+2.18.0
 
 
