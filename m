@@ -1,160 +1,145 @@
-Return-Path: <linux-kernel+bounces-445613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E2459F1843
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:00:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8D89F1846
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:02:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C842A7A047D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52731672D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE9419992B;
-	Fri, 13 Dec 2024 22:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC26196446;
+	Fri, 13 Dec 2024 22:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cN8oLFL+"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EL3hq83d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0598191F6C;
-	Fri, 13 Dec 2024 22:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09581DA4E;
+	Fri, 13 Dec 2024 22:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734127204; cv=none; b=jH2/Eqwcj1WKcJBZ0zEScBSf7grQO80OTeT9waTTviOUfu90avhRp+YEJAWFZdNjafj+uz38LjZgzGiGERjoFor7HAtghqe5q5orGmnz29uEy05mBLBQ5mYzOCQcoflU2+Y/Z4jgXE5tOfsQrBM3JNvOTsOE/niDHHTCGZtk3i0=
+	t=1734127301; cv=none; b=FN2xC1JhGkvWM/gwMAhAaAf3cxDQ4fzwjPpfQP/oAeqdyohxtywxSliMAyzTNIdKb6suRpAwzon4rVRoO+ciAil/N0xGA8tiXzpqLbEdIk1+hurFF+Qf8yRSq0J4wkaVKySX0FC5uRzlXxEbC+H/rbuBvwDRvSkdPmm21bAdqBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734127204; c=relaxed/simple;
-	bh=9I7jc1DX3DaIFFopBSZ4wu1k+NPSlYdd9tFsgLMkvGk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UWBkFNwBko6EalNaXXFukRlh3SN0C3rDI4ughprf0P1zHuAxyZuoOMJj2qb2keqDmthziue/vDEUNTyq0GexQAapb/y4X6b2ZVB0xfA18i4b6UqLJ7qeIaNI07AJy8J845m1aY+3KruFfOiuIDGSSmDPvgcMnscKkxy6qdn13cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cN8oLFL+; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21628b3fe7dso19061415ad.3;
-        Fri, 13 Dec 2024 14:00:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734127202; x=1734732002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5ewD8EgJf55IsD5hRUbEqPM4ENcw2eA3d/FI7PPWYuQ=;
-        b=cN8oLFL+zBWN7vYa8UH+op9mEt5iOSNx1ZeyYRqKe7d2FdNYG5ulqjqUiMb33x7Y75
-         upYuX4lgabU62bckMvJ+6rkHMtBArb5L6PrYWv9gAUoppn5nB0sNeVFm5tg/aNi8FeAS
-         3OhAs4qsDAMwSJBKsv6xuRFdWZRrpoNlI1szDttvTXoWyaO3iXlH01Wz/UEB61x151/L
-         7khG1fAj5Np0hKA9ypMsDqmq5Li3h+X/cjyoS3xHPmdvRhPZV7GLT6tFRRmGHSTIchEV
-         1ODE6KfDG0mKa2YMd64xHMXvcwybIW+n9eARbpBYlkFsSC/5OY8EXYJKtDLLh2vgXCHt
-         BVcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734127202; x=1734732002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5ewD8EgJf55IsD5hRUbEqPM4ENcw2eA3d/FI7PPWYuQ=;
-        b=TAfuooerhy2/26f6KnPPTKPJF1B8KCC8Yru/ZQmj4n//SX824Zo2ngclHQJ5pyFW9Y
-         XEBOAwUK3h8L5kcgAuJG/Gcd5vRxypYlmPVSpzdn+YA9mJF3broyIg6UWIZIZuUVM8Al
-         CWjLoxN7myM86/G9ydK7yQj25+rPtOfqqgsT6m2l21g+qo19TpoPDFOMA4/hoqU5NLb+
-         yH1CPkYKEZcnfcUYNz/QoEB5QYaK0kDefFouHSOhRLUV7tyD+2EioMUtEXfN+/Wdtoim
-         b2p6XFLhQMAfH0KP9wT0wdZzMB8s+Px5qtI1wZP4viP3zzqoeR5iNA70tmZ9aIxiORTN
-         TO7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWAitbXB2jN6bDJgLJKJQn0TlWrNRVzl5ESMY7weH62mTDyBYeKYQf+RK4hKDtjPZsw6pM=@vger.kernel.org, AJvYcCWgtsdW5HgjZwsQTg1yVdUIyS/lPFiCbL+LY/DpL0CyzeJY9YurLgKIGaYDpWnRQaV0GrRiklngUdTe/vO6@vger.kernel.org, AJvYcCX0epVAfSDG4OZDhBjyCZ8bks9jcPFmU68k/unn6UwLbA0FMNMj+BfQSfYtFgGlpcMmDDqLPbNXy3w3aOREnnbGrext@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHZQOFXW+Ppwg7zi2HWUuZTJX4ijL6SaDtzQjFK2cY1F28NAty
-	mx36DRyP/TlBpsdteriMewBhcMXews29X/c95runm2/fooXo/FZWY9LVu1FMOEfOrbJnekdrlq2
-	TTQSBRIxNUE1bTD9+H09oxKUxaLA=
-X-Gm-Gg: ASbGnctaLzvAoDhR3CrM3a908marTqAEq0gn/MOqOVtRZ7WmSw98yPLGd9oz2VmRkED
-	5eWtFAXJ/bP40cCt/iVFlIz0b7AOBBBOF6R+DklXIKOeKDHy3WkCiDA==
-X-Google-Smtp-Source: AGHT+IFZpl12YmemAcyWgQMb0bUsiVqzKLSjYNMZRG50kZGLjKtv2W6IyGN4k/haaBN7zt8pDvcRrd7omTL+yPNHh9I=
-X-Received: by 2002:a17:90b:3b52:b0:2ef:2d9f:8e55 with SMTP id
- 98e67ed59e1d1-2f28fd66b3dmr7300719a91.17.1734127202257; Fri, 13 Dec 2024
- 14:00:02 -0800 (PST)
+	s=arc-20240116; t=1734127301; c=relaxed/simple;
+	bh=DAYWgjbpzdwfTbL6Q4+XD5NxSEJ76iHQuJ0aIVL25+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8BFViPTKlnzo3ifN45usoI0FpZa6dJwuivQdMDjcgHN+FjszXEvkvWsnTxT3R4CG8ovYg68pq/A6XnUXZKy4cQzwXVNjAesPEBHVAgN1uYutJp9TySg3hGg4Dd7Geqvdt5pUWzy5abRLqYuCdwBDsuS9w1p5JDhA0X2q9wFR2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EL3hq83d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 354E4C4CED6;
+	Fri, 13 Dec 2024 22:01:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734127300;
+	bh=DAYWgjbpzdwfTbL6Q4+XD5NxSEJ76iHQuJ0aIVL25+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EL3hq83dxp6IU4BETWH43koxDKv17qkSQ81KJqxCyzmxFmWdw8Q1QEBNvImUoNe1s
+	 ilGOE81TFWoLYJtcRhy2YQJXVIOS2eHk5YsX8OjVrRlLfQf37ULe6ESpKImAQwjF20
+	 rXLZp90b9AUNzfy+UOEY510bP7sdWyYq7TLxqPDDm1K9icJa6gI02ct96UyI5AQrnf
+	 Byqokq5pEkJhy1f3594kShtSa42RAGZgHw2dadVaiiTfgax2P1gia0ZI6xPE44evCT
+	 Gx0BhG7UNx8d5dkb6Rrg731CBHxSUSkkNY8SqH3DEpJSwcujnqH8ntrkR7phxtSt2e
+	 Qw/4xjyHAx6DQ==
+Received: by mercury (Postfix, from userid 1000)
+	id 6411310604D3; Fri, 13 Dec 2024 23:01:37 +0100 (CET)
+Date: Fri, 13 Dec 2024 23:01:37 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Kim Seer Paller <kimseer.paller@analog.com>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mike Looijmans <mike.looijmans@topic.nl>
+Subject: Re: [PATCH v6 2/2] power/supply: Add support for ltc4162-f/s and
+ ltc4015
+Message-ID: <v4apnrdr2ydc3jpuiqfqk4ttof45zj37wpm5vr3u4w3drtfbl7@wk7khzxnfg3q>
+References: <20241213023746.34168-1-kimseer.paller@analog.com>
+ <20241213023746.34168-3-kimseer.paller@analog.com>
+ <723a8253-a936-4901-9a05-a20f27fdb07c@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241211133403.208920-1-jolsa@kernel.org> <20241213105105.GB35539@noisy.programming.kicks-ass.net>
- <Z1wxqhwHbDbA2UHc@krava> <20241213135433.GD35539@noisy.programming.kicks-ass.net>
- <Z1w_Qi_Wya56YDO_@krava> <20241213183954.GC12338@noisy.programming.kicks-ass.net>
- <Z1yslwyX0yYzS_sb@krava>
-In-Reply-To: <Z1yslwyX0yYzS_sb@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 13 Dec 2024 13:59:49 -0800
-Message-ID: <CAEf4BzaOSAW6cQ3DYK-WJCFs-cW8+ayt5Qk9cBJ=VRXzi81htg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 00/13] uprobes: Add support to optimize usdt
- probes on x86_64
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
-	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fephdck4dwpqzcfc"
+Content-Disposition: inline
+In-Reply-To: <723a8253-a936-4901-9a05-a20f27fdb07c@wanadoo.fr>
+
+
+--fephdck4dwpqzcfc
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 2/2] power/supply: Add support for ltc4162-f/s and
+ ltc4015
+MIME-Version: 1.0
 
-On Fri, Dec 13, 2024 at 1:52=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Fri, Dec 13, 2024 at 07:39:54PM +0100, Peter Zijlstra wrote:
-> > On Fri, Dec 13, 2024 at 03:05:54PM +0100, Jiri Olsa wrote:
-> > > On Fri, Dec 13, 2024 at 02:54:33PM +0100, Peter Zijlstra wrote:
-> > > > On Fri, Dec 13, 2024 at 02:07:54PM +0100, Jiri Olsa wrote:
-> > > > > On Fri, Dec 13, 2024 at 11:51:05AM +0100, Peter Zijlstra wrote:
-> > > > > > On Wed, Dec 11, 2024 at 02:33:49PM +0100, Jiri Olsa wrote:
-> > > > > > > hi,
-> > > > > > > this patchset adds support to optimize usdt probes on top of =
-5-byte
-> > > > > > > nop instruction.
-> > > > > > >
-> > > > > > > The generic approach (optimize all uprobes) is hard due to em=
-ulating
-> > > > > > > possible multiple original instructions and its related issue=
-s. The
-> > > > > > > usdt case, which stores 5-byte nop seems much easier, so star=
-ting
-> > > > > > > with that.
-> > > > > > >
-> > > > > > > The basic idea is to replace breakpoint exception with syscal=
-l which
-> > > > > > > is faster on x86_64. For more details please see changelog of=
- patch 8.
-> > > > > >
-> > > > > > So ideally we'd put a check in the syscall, which verifies it c=
-omes from
-> > > > > > one of our trampolines and reject any and all other usage.
-> > > > > >
-> > > > > > The reason to do this is that we can then delete all this code =
-the
-> > > > > > moment it becomes irrelevant without having to worry userspace =
-might be
-> > > > > > 'creative' somewhere.
-> > > > >
-> > > > > yes, we do that already in SYSCALL_DEFINE0(uprobe):
-> > > > >
-> > > > >         /* Allow execution only from uprobe trampolines. */
-> > > > >         vma =3D vma_lookup(current->mm, regs->ip);
-> > > > >         if (!vma || vma->vm_private_data !=3D (void *) &tramp_map=
-ping) {
-> > > > >                 force_sig(SIGILL);
-> > > > >                 return -1;
-> > > > >         }
-> > > >
-> > > > Ah, right I missed that. Doesn't that need more locking through? Th=
-e
-> > > > moment vma_lookup() returns that vma can go bad.
-> > >
-> > > ugh yes.. I guess mmap_read_lock(current->mm) should do, will check
-> >
-> > If you check
-> > tip/perf/core:kernel/events/uprobe.c:find_active_uprobe_speculative()
-> > you'll find means of doing it locklessly using RCU.
->
-> right, will use that
+Hi,
 
-phew, yep, came here to ask not to add mmap_read_lock() into the hot
-path again :)
+On Fri, Dec 13, 2024 at 07:31:45PM +0100, Christophe JAILLET wrote:
+> Le 13/12/2024 =E0 03:37, Kim Seer Paller a =E9crit=A0:
+> > LTC4162-L 35V/3.2A Multi-Cell Lithium-Ion Step-Down Battery Charger
+> > LTC4162-F 35V/3.2A Multi-Cell LiFePO4 Step-Down Battery Charger
+> > LTC4162-S 35V/3.2A Lead-Acid Step-Down Battery Charger
+> > LTC4015 35V/3.2A Multichemistry Buck Battery Charger Controller
+>=20
+> ...
+>=20
+> > +static int ltc4015_get_vcharge(struct ltc4162l_info *info,
+> > +			       unsigned int reg,
+> > +			       union power_supply_propval *val)
+> >   {
+> > -	u8 cell_count =3D ltc4162l_get_cell_count(info);
+> > +	unsigned int regval, chem_type;
+> > +	int ret;
+> > +	u32 voltage;
+> > +
+> > +	ret =3D regmap_read(info->regmap, reg, &regval);
+> > +	if (ret)
+> > +		return ret;
+> > -	if (!cell_count)
+> > -		return -EBUSY; /* Not available yet, try again later */
+> > +	regval &=3D BIT(6) - 1; /* Only the lower 5 bits */
+>=20
+> Nitpick, should there be a v7:
+> 	Would using GENMASK(5, 0) be clearer and self-explanatory?
 
->
-> thanks,
-> jirka
+I merged the driver, but getting a follow-up patch with this change
+would be nice :)
+
+-- Sebastian
+
+>=20
+> > +
+> > +	/*
+> > +	 * charge voltage setting can be computed from:
+> > +	 * cell_count =D7 (vcharge_setting =D7 a + b)
+> > +	 * where vcharge_setting ranges from 0 to c (d).
+> ...
+>=20
+> CJ
+>=20
+
+--fephdck4dwpqzcfc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdcrroACgkQ2O7X88g7
++prGJQ/7BwF5dLIDqN0sCRSaskwIpW+2+zx+UmFZ8bnKP8ZqmPhHCeyrm0VT0Whg
+OJS477D/IHBW8CJeTYF6vm61cVsVg1Ee4pqLsEcgyi7ivOL7aYD3Hb15EZ6jrvhb
+twXBY3VQcIbrw0js61DemMR+U1THsEq9D0x1vCxoBJbtIRkYJTJtRksUGMQK4oer
+ymmreZJUJ2kJhU2ctDSAlTlWhEBWmczPxjuhknQF7iM4oJAkcNIT/z4cQyGOPCGh
+ORJQpc+GXgmSr87MZvPNTbpW0fJm0DXtosk4B25Oyev0tr4khBnRmLE1b8NzgZpR
+pBJ/CJ/GJ2jr+wn/9aVt0HhRWPUtpxb/MZpXkqeQtXtt1guHmmp6wnHK7mbwzAJk
+EQ7akhDLLquuAdHe4F3LEPuW0eA3f+8wmqJB23/R/lHt4QAAFP0BzaHu1TYo8gq0
+7qMuZgTcnLSTO223XyeFSg3BBABuec0V5m8TiduHNI0q5piL0ztx5Z5Jv3Q58fLu
+R6lLW1EmDA8I0iaScl6QDfLD5Z40rlX2o3x1TX6KCSikQZ8nD2R1lCA3w7NQ0Vi/
+o1nI9VPT1OO35keKWDv0dawsW8Z+t35aZx1wkzBTWiVZ6T4Htnhx8qZe/PCloFiY
+lL2keVOXaZwzR/LeMR5uDprPVHSxgNTycoDYiF6kXgJFk91555M=
+=+9Rc
+-----END PGP SIGNATURE-----
+
+--fephdck4dwpqzcfc--
 
