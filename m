@@ -1,324 +1,210 @@
-Return-Path: <linux-kernel+bounces-445653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795449F18EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:25:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC459F1915
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 23:28:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8378C16B9AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:25:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D26BF188F080
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 22:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9AA1F869D;
-	Fri, 13 Dec 2024 22:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BA21B219D;
+	Fri, 13 Dec 2024 22:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFP1FteA"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="btS4p3ti"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2065.outbound.protection.outlook.com [40.107.20.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D601F867C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 22:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734128159; cv=none; b=cHWdTpyM8dALdjZTs11Ze40xWTjWmWQdogoHufYcL64fZDQV3rclozjED7HQUSnGtwcxrTstlpqTZE+tRWWEEqA124Mrn1W29BAdHLaVH9O5jvo9EPx0SHRjIztqXYbte4e6inIlGF3fCsivGr7nWTUbCK0SOwrDRBz2lqCKWYY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734128159; c=relaxed/simple;
-	bh=Af4lNqDRBtEwDGhR4x2FMHimHIIOZBX43DGFT65Ne1M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ifxC6rDFkRZHq7QtJqU7YWMcBckCLx8IeDStmzoSyg2TaWZZYw7l0N8by23B8o88Ya5JeoRHb/rYgyzcfLlx5nn3utv0FVXaHa7xnAEEdNnQ1LzwYAL6aLgTs9M1ASPe6BqqM/+/uvrjf3dz7fghPTvP1xc3SFqva3cQFaeirNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RFP1FteA; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-540215984f0so2475433e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 14:15:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734128155; x=1734732955; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CABUdGAPZQuHjkRiiuh+SCZo2fnFwA0U/zBsUBBa8Sc=;
-        b=RFP1FteAOdElz3UhVwH3b/ZAbfqOSbyAlY53plBzMTQsccETh75g5ZF12j8xCZe5P9
-         6odcILZxVeYv7XNBBUCcbbmgtom/EcypfgwAJhDKK0gORUO4Oz3UkAnvxaeF/VazB5RM
-         Ptx6hYyH7Hq1t/YRdw+qpt6rtYW0pdfDLNyoh3kBDbqjmUKzFTWx6DaaPboeg8EdHj6T
-         duamjh+rE7wQiCosws/es9dCQRVyWxIHY+o4riaiEiudCzfSqD/3K2O6TkveZWINEK9S
-         MGHKJt+DPm/+u1xSEwsEQE/YMfpYpcXsrMPkjPeTmr44CQCuQEIfkrMMeNpQP7Ptm0dE
-         iVRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734128155; x=1734732955;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CABUdGAPZQuHjkRiiuh+SCZo2fnFwA0U/zBsUBBa8Sc=;
-        b=xM0m4FlLISnTirYEinw6UVWJuutV7cSQg3kB1qp0Q9nY17kAvsLMATL57b6/7GX66R
-         k8Cy6zSUC7mZUqPgtYSZ0rBB+mEvXK5MyGRhWowY6JGkYuNOHtwFA+lmc9qvqEOWd0Xc
-         Bq4y+tqkXxAcsSryFZhKBcdrJwgbAZQuFh5V96Gab1SGM4n0BugxFHB3fJqEufpVHRjP
-         1RmY46GGDCEb2tDt5ykRiVxTpGW3BW3wnRnAu/GOi4N9VlP0lUMCVEPZ7Lq3/tXpI2Z7
-         UVbuj8nG5oqK5T4ZATo1WgrIAgXLidCJkcBmrXnt9eSD9iU0njTaAJ7xwJkn1t4QjMXZ
-         02bw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4NHVcO3Jj8mwVqmKbWse3w5NUCHNjlD9DS0esQbQZEjWX6g4q6jekTGlQM4tShKwwnRoIAWjYPCbapAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztS9j5FY1uPOabytEzjz9MZ2oYy6R834OQjeXyVXVQIu0jGJKi
-	lWJPjGVl90lwfaSYBSzkDLXeeUxZ9cU27k3upbclSxfBr0fxZGCHcmGzT6F4riU=
-X-Gm-Gg: ASbGnct98ZuHwmOeQ0p1Oy84ktRq8PjwNb1mFz8Cx6MDK1ziDX1c2a+yp1IOgDvF86f
-	/vWhTG8DbbcrEV83fABushmSZLkH518JIC/bYCxqCwIAdG29eaoo4MUKy+hJl/HCM3AcpaAr3TM
-	2xqYp0YEt51+ipMO5h8CzeBWXQfEde6GYYNUWre4zsQyN6kNdO7GnfALFZLis5FPpoHi68aDEgC
-	fvI49s4rEB6OqPrUIqSyDNXrGYKEQHQRGLx8HLYKaAlFtTJ8bZrv1TdFOc8cwqB
-X-Google-Smtp-Source: AGHT+IGyOYTojXpmRt2LX96dwxv8o6yjOnMD4KsG40pFmNcv8t+wdyibwjBTgc6u5Ro1JXU5F8u7gg==
-X-Received: by 2002:a05:6512:2208:b0:53e:2900:89b4 with SMTP id 2adb3069b0e04-54099b69b49mr1207055e87.49.1734128155553;
-        Fri, 13 Dec 2024 14:15:55 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-303441e0f43sm413451fa.125.2024.12.13.14.15.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 14:15:54 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 14 Dec 2024 00:14:51 +0200
-Subject: [PATCH 35/35] drm/msm/dpu: move features out of the
- DPU_HW_BLK_INFO
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203141DE89C;
+	Fri, 13 Dec 2024 22:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734128613; cv=fail; b=Nx0QS4xXk0qI0X73mSOSrvZN7WC1baN7405FMYK1LmNGEsRikWHfbRlippZmWjIHpbRAgRykg/DVDzgGD7k8WmkRN/6rjmH0k2BlBRhf/Pb8PkXfm1Ex+uiWhCMe8ZZNKrZm9r+pkSEuT6Hd6wroX8o3OVcZA+c0pRqGOnLprY0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734128613; c=relaxed/simple;
+	bh=cOT7xf/RkLx9Nsv2I9mWRJmJKXTjn7v9+2NnLONMGKA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jccErH1gM+phwsYlcVPEZb5MvgaN/dgCqkIJb4bIZpeVI8eFqX8PvvrJkK0zDVeuFLk3OExwE1Ef8rLc9TQ9KgIOZXjN1fsMadU85YfyOCytAG6g+O11bRjNtnssN1n4VrmPlrgKtzacxXmPr8M4Gf48UB5kgFp/3aI6DmeixgY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=btS4p3ti; arc=fail smtp.client-ip=40.107.20.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qhBF9rTLceS94LQBigvKOAZRxeG86feVIy4GbravXJcLB7GHunTPTW4kriW0GjL5yZcFN7gnoW6UeOF6WhxhFA8y2C7SOOqb6TdbwC5xT1tc+fsBIU73WeMlmkFoKksGXfNnVCsw1UxITkztsbVvhapoN+H92tLSZntCaXPRwXRx88EtIlvytitTe5F3YSciTU5KoEOi8EatAY+WTrZAB6tUa9DMpELy1xF1aifSto0ItGoZImS9z3W+Ty9jqIbBF/M8c0OTj/A1s1hVQp0G+BjalOf8YVnek2y8zFoL8knGjGi3U02AATo43YY68UQZYZoQxGp75rDzxp4Snhm54w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LH4oi+ZePpm6ZDGS61ibs9OJ7zE6PY8ZChOG7YDNal8=;
+ b=fkPjVzUa1unCaROBPV6IVYevGPu9dhTGX2pzf2YreqyR5FJfe044j/NTZftFwmQfpuziEnEUgxavlsl/TNoPgPGxq2AayB6o2jIw4pBJFVq1U2ms2Apnb4euQXuzn5Qg2VTTWXTRBEuKbbOms8Bdajh0ZbcVMfG6eRSnR86wYBxS/UarKMcNjqYfu2wCrQb4nvlL0NBMhIpaTRgv9Z2XnwavU++CvsjwwGnmcjIms4690PMDrI2pkEy14s2eu4HVNEerUbW6K7f4YKyjDC8vMLt4CvlMHk5WvoTkgOVZpek1wG6cGo4BjOVV/OTDEelrFqtjiw/NnRvrE38uaGd2Ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LH4oi+ZePpm6ZDGS61ibs9OJ7zE6PY8ZChOG7YDNal8=;
+ b=btS4p3tiga5RPwyeYnj7C5ylEM8W/M59Rp/m2yw3TjxZFe/bbxOWI4lF5dVoBnvJz77ax3No39m9/hRBmCTrbBPh0Z8Un1kGirIuSFEGU6JoEMv9koapA+uWrag3aEfTSwqX5DHXkJoRLjj40IoRsFHV+G5c+qVoDFw+Ak9hOjUphE0RbIlIHvziBoVM5au/1QXfvusmLqtwtJfya9x/e025l4pmUVy1ZSZn3Had6toIsXFnSoPsPsN6jiB182RK9zMX/bYSgo6l3sUAQeuiDhYBKR/HBZgr0FYUIOKCVlAImIafQjDEc8Ea02xA8CdyW9rgV9mbKFRCQjt66+CRSA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM9PR04MB8810.eurprd04.prod.outlook.com (2603:10a6:20b:409::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.18; Fri, 13 Dec
+ 2024 22:23:28 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8251.008; Fri, 13 Dec 2024
+ 22:23:28 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Luwei Zhou <b45643@freescale.com>,
+	Vipul Kumar <vipul_kumar@mentor.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] input: mma8450: Add chip ID check in probe
+Date: Fri, 13 Dec 2024 17:23:09 -0500
+Message-Id: <20241213222310.189443-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0176.namprd05.prod.outlook.com
+ (2603:10b6:a03:339::31) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241214-dpu-drop-features-v1-35-988f0662cb7e@linaro.org>
-References: <20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org>
-In-Reply-To: <20241214-dpu-drop-features-v1-0-988f0662cb7e@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Vinod Koul <vkoul@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9218;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=Af4lNqDRBtEwDGhR4x2FMHimHIIOZBX43DGFT65Ne1M=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnXLHJL2FJWQFF839dS/KnzAEEZTFboJVTZNlkk
- CRuyAntJ1GJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ1yxyQAKCRCLPIo+Aiko
- 1SJnB/46kmnZg7DpHoj7NY7kZO3C62UNtSiuh2qCK7cqyS7nxJnc9CaSaeheETLtZGnHUY48QA+
- dVY2Ubq8ZMigd17F2/4WSGI6SleeN6XEqGsec3H2U87KBwKVtuodD05EIw3TeFz/1+l1bsOw8rx
- HCb/kp2j1jkwWTNfb1kdsw5xnjUHFfpqxHM4etsrvrMXtLuDSL+UpdN2ArSZuSzTqhNBYU+2JOE
- +B/gilUpb0Trep+oXwUGTa8nxYLnl+4Hut30igaszAAiR1jopbSVbsDOVeTDBeDpS8UTtjJOIhZ
- tVQRLa6oZ9T4hRdXO6SfQvPzZOUibNdIPKc4w5MlR4+m+T6d
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM9PR04MB8810:EE_
+X-MS-Office365-Filtering-Correlation-Id: cbe7ed30-9a43-4d07-0b3e-08dd1bc4c4a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|10070799003|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1DNbQ46F/MTXyACq1HHTHL41n4C/h7a32F5AbpZR3+/2cE2mGur1NF3m8VGe?=
+ =?us-ascii?Q?f5gXpO+VInKY5iuQgMxVZjhKCeC85+qmyi8W8dbfthaZcunZH8iKSBCmVQgJ?=
+ =?us-ascii?Q?HMetmNmmPHoMSg/IldOD4wBF141aDLqLQh127J+2qzGrA/BuWX3XLVnbvm+k?=
+ =?us-ascii?Q?+exVi1a9RJ8jX1Bp0h1G7SXqKuRCrRHJSjYd6bRw9p3GTAg2MgVJWGPpxgd1?=
+ =?us-ascii?Q?OG7UrTGb9kdHqE9wK98+/Keo39u06IvKhfq9UNH5laqOnm4DTKQ0pSqevP3i?=
+ =?us-ascii?Q?nwctUi8zLpr3WtQPvsqxVG/FhtaqEL+FmdZCWhNwKcYXaflTz5hZJpQIpXkO?=
+ =?us-ascii?Q?Frjn8tfM80b66zxJAabOfn3AxjgmneCe+VWa97WZN/mie/PSPHdIrxqpBJ/h?=
+ =?us-ascii?Q?P7AR4eUu8+iZ7ujjeT8DcoiOt3VBHlsEqPtQVsnn1DYRKpB1yaHnzD7va176?=
+ =?us-ascii?Q?7hUWp0ylv4R5lXpM7KVGxWqlDSxnZAipdKqsBh4SbSxNbaYgrM+kcc5R37bs?=
+ =?us-ascii?Q?cL/8c146sCdov4r3U8AuQ9cBUr1d4+wYkEuetJDNiPDfvIe8odTPXiu2juSI?=
+ =?us-ascii?Q?aNFJTawpO5CAhGw86e2NaZrDJ7jyZXQAp/SlSMnO+xw+x8bftyj35XQcI1wI?=
+ =?us-ascii?Q?exQpvDOuOeBsxqtLMFUokOMVMC4LCBVFLUEo6WIrH5k694k1aFPontPvAC7u?=
+ =?us-ascii?Q?vJ/7t9TXQYjLGugtjj8bMrk3Lf+Hy5eYB6/nXmhiQM9vm0G3Aocmeg0QVemK?=
+ =?us-ascii?Q?MOL24+a2qbErxMAACL0d/JXF1Fh6giILJL8oU7YBYn4TshLeplXK7RE9U2F+?=
+ =?us-ascii?Q?o/G7eTDMK3DgPDqMefR2sxJeegncKX2CODUFhz1lSNZiVqO/4QdWGPyqHOzi?=
+ =?us-ascii?Q?+u8Mm4lzwPpwHN6jUxNBFlq0KNR6I9N6CqKEUxIDKkryaadoenT+I0USPaf7?=
+ =?us-ascii?Q?2BSQ5aNOfI1V3roxAF2dMl9mh6+HKBVIb4VzY+nuVmcuBkiBUR7R5IuDSrHq?=
+ =?us-ascii?Q?Xv8DrGamDbtxzJ0Ii9FW3EOUQdh2tw5lDIEzXt7ImmFrMAScs6WlyPTSN/4v?=
+ =?us-ascii?Q?qhjjni03lZ/sji0gbLS4Ih0SvpvIfDBd1eCUN10uyNPvcUKwfkonXBsDLYua?=
+ =?us-ascii?Q?Z+KDQQrLLfcd1N8gEIWe5ggX4yG11ja9gLx1AsNlrQbhQstqDckW2dS4OeyL?=
+ =?us-ascii?Q?tjHa0L3g4Glf6ZfsBZFZjaMYLM2ORpCciXnl+Avr7grmAld4KvlgsFxem8P4?=
+ =?us-ascii?Q?uexXFQ9xIKCdTLtUa+bkW9HXmWOXpOZuNp8VgcGmKMMiPmOMXG4UVAWaAOhi?=
+ =?us-ascii?Q?wEAComEcFI/ZBVOhh8/9RtRnR/GOCjOpwx3MXCUrazxJo075uai6tCYUzscv?=
+ =?us-ascii?Q?TA+sT5iwXdaSEc+qXfw9TElnnkSkrQFwlu4jl7a3eNr5CpIILA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(10070799003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?X/jQ1KkvcVzngr8sIbPHxzfKV1fhAprGZZmZrrE5x4uqsk7Q63E4Y28Xa6zR?=
+ =?us-ascii?Q?Hkez/PP/pBqkHB4nSmhd0wr4BD0jMSFjOTPQjrlzOM9/aqTTKwwfAMcq6VuJ?=
+ =?us-ascii?Q?DckrxE0plF0xK6FkDCplHNRyzwj5mgyJGxDmJmQpiYT3hwj4xW+FPKBisFUY?=
+ =?us-ascii?Q?m/dwtFZxG+JBY0n14ZkK7w/uingIbMj5bVvW84LbB+Zh5+Ku/V9LG5WmkAKO?=
+ =?us-ascii?Q?zREn/agAuRAEjOGlRkp52JhRR/Yb5KAeUWG8H0d1qT/DC99zr5u7qCVwfJP8?=
+ =?us-ascii?Q?8ZpWIVbYLWCtGe4rcylNHz3zKUnvhirCXviWFUpuVuI0WJFC0Tb/6vPQasDS?=
+ =?us-ascii?Q?GY0DXsDUu3BGRyYGnfn4B9u5wNnOWOnyqoPUP95wAwTTRcC+VmuovmY4go15?=
+ =?us-ascii?Q?SvZ7awalaLGybPzRrxYBy/yEW+h9gpe/8tcsLX/elM835Uf5WiW7/jTNaX56?=
+ =?us-ascii?Q?27cBiTiEv8ygsJjSUKdNDtwUBHQ4ht00b4xuODGAsRmN6emPyMq5SE54uglo?=
+ =?us-ascii?Q?AFTRej9mWdcvs3psNCqLzMLST5AOwUKags3paAO4hC5l5W9n65dRig2is/3U?=
+ =?us-ascii?Q?O1aSumTMyxiIFhMwPazIgVDwnIOmWZWhCdB8UVUD+BO05V7DY3+F9daMBVkM?=
+ =?us-ascii?Q?rVrUw2WldMPZIt80Jxak4jALxPLVpBM8voRuG+14U6lLn90kSA8Zo7VGHAEd?=
+ =?us-ascii?Q?wfl0wcy6TjM31JOMEbBBkOQ/WDqNFhX28fI/XhLLercx2+3QsGJTVixGHKm2?=
+ =?us-ascii?Q?dCUqBUX3yZPhFSby90cyzqnF2G1Fw+g6ciNutEfPq2qCWXZzNEWH8/BERU4a?=
+ =?us-ascii?Q?OuBcQA2FdGgpolB860BIt8CFEzIOxIalh4+M/eTm3uMVf9QCk7t3aNE9XPsE?=
+ =?us-ascii?Q?WSLNn/WgxLvs4Aj1VVNxwb8GKwH8IGlK/rocvxai4JlbzUGwPgfeyU1yuW4Z?=
+ =?us-ascii?Q?Ojxp1Z13jw1YPlh1Doy7gBkFRAzmkZGUmjaDz/ncfSIYl3sfUb2hYvo9DvOA?=
+ =?us-ascii?Q?P5wu6hBXtaZkNnwM5MpL1cVSPqNTBwBYviMepiYaWpTNFWP1TpcETC9tZzXe?=
+ =?us-ascii?Q?KKL8GBbRGhawMOVL9aaJK1YHziCUp1WwcYUuML2bgGhowSukdquvlUz+L+lU?=
+ =?us-ascii?Q?SErc/o9VPz6bQ7R9a//KGHkGMH8qARbmag9MdOOPs4GHw971/r6ZPUUy8VdY?=
+ =?us-ascii?Q?I1pelt5dHfRAerZc6px0g4XFLEsZkb97TatnCA9Fw5CNJLaP83jVKvcT5E88?=
+ =?us-ascii?Q?IybFZWhezvDZdNb2l59HdK/T3gMRlD7hM5TdRI55u8TXvny7a6UWVPtaihlB?=
+ =?us-ascii?Q?kGwoLIpwvRht2t6oaxgCrQyiS+QNAIAo9Kgg1AN1+P68Vr9QbMJeohXAsbSF?=
+ =?us-ascii?Q?fIo2Hf2TO1WbJvv1Wm+czXUtkeTt4Jen92RkYrGU5dabayEpxD/POBSn0T4c?=
+ =?us-ascii?Q?SwgjB1qt8tKbupzA5FjodBZ5lQ/oNpqhzes5Nk6v6Mo4vN0RYzmWM0iFtB/k?=
+ =?us-ascii?Q?Z7CyFLIxJ1Z5mqFqJtVxoJdeYoAVDsAD1h9tkLiczBOFzK2+GBIO3NIqED1I?=
+ =?us-ascii?Q?wsyvZ6QCCNntLP7Zrp96+KSyA6ZgWUb1HHazkg5DIEWKlm6CPdZgsqUaYpXD?=
+ =?us-ascii?Q?tTHL8pmU+/Oq0hpAzm3+33DePwrjlfp8jXV5M8wQAm9k?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbe7ed30-9a43-4d07-0b3e-08dd1bc4c4a8
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 22:23:28.5119
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MHWWfU+BYktRDfJGn5Sr+aDvdR3zwEfq3k1rI2JqHxWFtKEIJ68fWrqV/jV8fAfdKGd72KQ94YUWpmPw26pR4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8810
 
-Only SSPP, WB and VBIF still have feature bits remaining, all other
-hardware blocks don't have feature bits anymore. Remove the 'features'
-from the DPU_HW_BLK_INFO so that it doesn't get included into hw info
-structures by default and only include it when necessary.
+From: Luwei Zhou <b45643@freescale.com>
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Prevent continuous polling error logs by adding a chip ID check in the
+probe  function. This ensures the driver only proceeds when the mma8450 is
+present, avoiding issues in scenarios like missing add-on cards.
+
+Signed-off-by: Luwei Zhou <b45643@freescale.com>
+Signed-off-by: Fugang Duan <B38611@freescale.com>
+Signed-off-by: Vipul Kumar <vipul_kumar@mentor.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h |  1 -
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h         | 17 ++++-------------
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c         |  5 ++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c         |  5 ++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c             |  4 ++--
- 5 files changed, 10 insertions(+), 22 deletions(-)
+ drivers/input/misc/mma8450.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-index e5057bc445ff74e2b02be64cfba90a7fdd1c6ad4..32f083f729ef17cbfc3bc67c7a31a43b98665875 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-@@ -22,7 +22,6 @@ static const struct dpu_caps sm6125_dpu_caps = {
- static const struct dpu_mdp_cfg sm6125_mdp = {
- 	.name = "top_0",
- 	.base = 0x0, .len = 0x45c,
--	.features = 0,
- 	.clk_ctrls = {
- 		[DPU_CLK_CTRL_VIG0] = { .reg_off = 0x2ac, .bit_off = 0 },
- 		[DPU_CLK_CTRL_DMA0] = { .reg_off = 0x2ac, .bit_off = 8 },
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index 93d15af04657dcd961fd9bdce68bedab3fb02335..c260b0ae5ed96d5b700a1e04aa9b83f75e1157f2 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -124,14 +124,12 @@ enum {
-  * @id:                enum identifying this block
-  * @base:              register base offset to mdss
-  * @len:               length of hardware block
-- * @features           bit mask identifying sub-blocks/features
-  */
- #define DPU_HW_BLK_INFO \
- 	char name[DPU_HW_BLK_NAME_LEN]; \
- 	u32 id; \
- 	u32 base; \
--	u32 len; \
--	unsigned long features
-+	u32 len
+diff --git a/drivers/input/misc/mma8450.c b/drivers/input/misc/mma8450.c
+index 08412239b8e69..da941748ed29b 100644
+--- a/drivers/input/misc/mma8450.c
++++ b/drivers/input/misc/mma8450.c
+@@ -38,6 +38,8 @@
  
- /**
-  * struct dpu_scaler_blk: Scaler information
-@@ -348,7 +346,6 @@ struct dpu_clk_ctrl_reg {
- /* struct dpu_mdp_cfg : MDP TOP-BLK instance info
-  * @id:                index identifying this block
-  * @base:              register base offset to mdss
-- * @features           bit mask identifying sub-blocks/features
-  * @clk_ctrls          clock control register definition
-  */
- struct dpu_mdp_cfg {
-@@ -359,7 +356,6 @@ struct dpu_mdp_cfg {
- /* struct dpu_ctl_cfg : MDP CTL instance info
-  * @id:                index identifying this block
-  * @base:              register base offset to mdss
-- * @features           bit mask identifying sub-blocks/features
-  * @intr_start:        interrupt index for CTL_START
-  * @has_split_display:	CTL supports video mode split display
-  */
-@@ -381,6 +377,7 @@ struct dpu_ctl_cfg {
-  */
- struct dpu_sspp_cfg {
- 	DPU_HW_BLK_INFO;
-+	unsigned long features;
- 	const struct dpu_sspp_sub_blks *sblk;
- 	u32 xin_id;
- 	enum dpu_clk_ctrl_type clk_ctrl;
-@@ -391,7 +388,6 @@ struct dpu_sspp_cfg {
-  * struct dpu_lm_cfg - information of layer mixer blocks
-  * @id:                index identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  * @sblk:              LM Sub-blocks information
-  * @pingpong:          ID of connected PingPong, PINGPONG_NONE if unsupported
-  * @lm_pair:           ID of LM that can be controlled by same CTL
-@@ -410,7 +406,6 @@ struct dpu_lm_cfg {
-  * struct dpu_dspp_cfg - information of DSPP blocks
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  *                     supported by this block
-  * @sblk               sub-blocks information
-  */
-@@ -423,7 +418,6 @@ struct dpu_dspp_cfg  {
-  * struct dpu_pingpong_cfg - information of PING-PONG blocks
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  * @intr_done:         index for PINGPONG done interrupt
-  * @intr_rdptr:        index for PINGPONG readpointer done interrupt
-  * @sblk               sub-blocks information
-@@ -440,8 +434,6 @@ struct dpu_pingpong_cfg  {
-  * struct dpu_merge_3d_cfg - information of DSPP blocks
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-- *                     supported by this block
-  * @sblk               sub-blocks information
-  */
- struct dpu_merge_3d_cfg  {
-@@ -454,7 +446,6 @@ struct dpu_merge_3d_cfg  {
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-  * @len:               length of hardware block
-- * @features           bit mask identifying sub-blocks/features
-  * @sblk:              sub-blocks information
-  * @have_native_42x:	Supports NATIVE_422 and NATIVE_420 encoding
-  */
-@@ -468,7 +459,6 @@ struct dpu_dsc_cfg {
-  * struct dpu_intf_cfg - information of timing engine blocks
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  * @type:              Interface type(DSI, DP, HDMI)
-  * @controller_id:     Controller Instance ID in case of multiple of intf type
-  * @prog_fetch_lines_worst_case	Worst case latency num lines needed to prefetch
-@@ -499,6 +489,7 @@ struct dpu_intf_cfg  {
-  */
- struct dpu_wb_cfg {
- 	DPU_HW_BLK_INFO;
-+	unsigned long features;
- 	u8 vbif_idx;
- 	u32 maxlinewidth;
- 	u32 xin_id;
-@@ -557,6 +548,7 @@ struct dpu_vbif_qos_tbl {
-  */
- struct dpu_vbif_cfg {
- 	DPU_HW_BLK_INFO;
-+	unsigned long features;
- 	u32 default_ot_rd_limit;
- 	u32 default_ot_wr_limit;
- 	u32 xin_halt_timeout;
-@@ -574,7 +566,6 @@ struct dpu_vbif_cfg {
-  * @name               string name for debug purposes
-  * @id                 enum identifying this block
-  * @base               register offset of this block
-- * @features           bit mask identifying sub-blocks/features
-  */
- struct dpu_cdm_cfg {
- 	DPU_HW_BLK_INFO;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c
-index 42b4a5dbc2442ae0f2adab80a5a3df96b35e62b0..df6e43672422f1d796e38c32256582900f58523e 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc_1_2.c
-@@ -360,8 +360,7 @@ static void dpu_hw_dsc_bind_pingpong_blk_1_2(struct dpu_hw_dsc *hw_dsc,
- 	DPU_REG_WRITE(hw, sblk->ctl.base + DSC_CTL, mux_cfg);
- }
+ #define MMA8450_CTRL_REG1	0x38
+ #define MMA8450_CTRL_REG2	0x39
++#define MMA8450_ID		0xc6
++#define MMA8450_WHO_AM_I	0x0f
  
--static void _setup_dcs_ops_1_2(struct dpu_hw_dsc_ops *ops,
--			       const unsigned long features)
-+static void _setup_dcs_ops_1_2(struct dpu_hw_dsc_ops *ops)
+ static int mma8450_read(struct i2c_client *c, unsigned int off)
  {
- 	ops->dsc_disable = dpu_hw_dsc_disable_1_2;
- 	ops->dsc_config = dpu_hw_dsc_config_1_2;
-@@ -391,7 +390,7 @@ struct dpu_hw_dsc *dpu_hw_dsc_init_1_2(struct drm_device *dev,
- 
- 	c->idx = cfg->id;
- 	c->caps = cfg;
--	_setup_dcs_ops_1_2(&c->ops, c->caps->features);
-+	_setup_dcs_ops_1_2(&c->ops);
- 
- 	return c;
- }
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c
-index 0b3325f9c8705999e1003e5c88872562e880229b..83b1dbecddd2b30402f47155fa2f9a148ead02c1 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_merge3d.c
-@@ -33,8 +33,7 @@ static void dpu_hw_merge_3d_setup_3d_mode(struct dpu_hw_merge_3d *merge_3d,
- 	}
- }
- 
--static void _setup_merge_3d_ops(struct dpu_hw_merge_3d *c,
--				unsigned long features)
-+static void _setup_merge_3d_ops(struct dpu_hw_merge_3d *c)
+@@ -148,8 +150,20 @@ static void mma8450_close(struct input_dev *input)
+  */
+ static int mma8450_probe(struct i2c_client *c)
  {
- 	c->ops.setup_3d_mode = dpu_hw_merge_3d_setup_3d_mode;
- };
-@@ -62,7 +61,7 @@ struct dpu_hw_merge_3d *dpu_hw_merge_3d_init(struct drm_device *dev,
++	struct i2c_adapter *adapter = to_i2c_adapter(c->dev.parent);
+ 	struct input_dev *input;
+-	int err;
++	int err, client_id;
++
++	err = i2c_check_functionality(adapter,
++				      I2C_FUNC_SMBUS_BYTE | I2C_FUNC_SMBUS_BYTE_DATA);
++	if (!err)
++		return err;
++
++	client_id = i2c_smbus_read_byte_data(c, MMA8450_WHO_AM_I);
++	if (client_id != MMA8450_ID)
++		return dev_err_probe(&c->dev, -EINVAL,
++				     "read chip ID 0x%x is not equal to 0x%x!\n",
++				     client_id, MMA8450_ID);
  
- 	c->idx = cfg->id;
- 	c->caps = cfg;
--	_setup_merge_3d_ops(c, c->caps->features);
-+	_setup_merge_3d_ops(c);
- 
- 	return c;
- }
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
-index 5c811f0142d5e2a012d7e9b3a918818f22ec11cf..96dc10589bee6cf144eabaecf9f8ec5777431ac3 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
-@@ -264,7 +264,7 @@ static void dpu_hw_dp_phy_intf_sel(struct dpu_hw_mdp *mdp,
- }
- 
- static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
--		unsigned long cap, const struct dpu_mdss_version *mdss_rev)
-+			   const struct dpu_mdss_version *mdss_rev)
- {
- 	ops->setup_split_pipe = dpu_hw_setup_split_pipe;
- 	ops->setup_clk_force_ctrl = dpu_hw_setup_clk_force_ctrl;
-@@ -313,7 +313,7 @@ struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
- 	 * Assign ops
- 	 */
- 	mdp->caps = cfg;
--	_setup_mdp_ops(&mdp->ops, mdp->caps->features, mdss_rev);
-+	_setup_mdp_ops(&mdp->ops, mdss_rev);
- 
- 	return mdp;
- }
-
+ 	input = devm_input_allocate_device(&c->dev);
+ 	if (!input)
 -- 
-2.39.5
+2.34.1
 
 
