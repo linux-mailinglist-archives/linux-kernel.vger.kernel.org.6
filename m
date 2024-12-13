@@ -1,47 +1,44 @@
-Return-Path: <linux-kernel+bounces-444430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DBE9F06A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:43:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7869F06AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35BCA163CEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC3771889AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110C11AC453;
-	Fri, 13 Dec 2024 08:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5773192D87;
+	Fri, 13 Dec 2024 08:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVllTk6X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D60A1AB6DD;
-	Fri, 13 Dec 2024 08:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="Br7TXAJ6"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD7D502B1;
+	Fri, 13 Dec 2024 08:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734079384; cv=none; b=nNC8t30P/jcvNn4cN2HhDO1RvXb6U7vk4R/4wF5ZEFSYEn50XY6A58coydLJHDctz9C0vuoPeMaK5Y539usnxjrOadb6J0UgHKFInd7Y+VDFZOKi1Cwxdi8raXDrHJ3lov1FLiiG6HQvFn96Rvvo8JaSyuIq3fUVxSKjugbjTVE=
+	t=1734079518; cv=none; b=A6BsYX+0MchTHUxIQghEkoveYhqXRJ91MtsEb7dR2TT4dmcI+kk8QmImEyMNfib8YSFz2xFiZzA3KYM0N9jT1g9EbdyyXcHsT47P59zqQaFtt1wAK5Hm3t7cCJGeJXn5ZW6V9dJv1rNoB6ABnEIJIuJA3v6L/bHqJD+jhoV5ymw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734079384; c=relaxed/simple;
-	bh=btbY9PhFto5p1zLEFxXVLi0NRidg2pKgZRAMyQsvD2A=;
+	s=arc-20240116; t=1734079518; c=relaxed/simple;
+	bh=R4lOByC38bcsXyI+lvJteskzBW3zHltZzdR72FWJ0BE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IdX/purJmQKHAMPuXXENzMi8fMEG1KHexNlxCk5y+WoEehbNlRK9jAhC/1koQ8Q+KMM90fuwoqb3rN9s4rgD0p7a5KF/9INYta/AokOt1+SIomWboe+QwqYMFDxyKZXAzEFRoCWPxyT1Q8XD7xtgv8+UKPumRkWG3izltnb+GXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVllTk6X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E400FC4CED0;
-	Fri, 13 Dec 2024 08:42:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734079383;
-	bh=btbY9PhFto5p1zLEFxXVLi0NRidg2pKgZRAMyQsvD2A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BVllTk6Xky/PeD/lDt4aDaR2IxiYKjbb7gFoD+vG+KgspqvQ1dNYam62TO8l0qlHS
-	 z1JdgbTzgLurNFMP8xjv7uIJBkhzh5PWVqhHipMNHiA/3hYtZvr11tB2GmhXTbU+o3
-	 JfBfg9jVsENYXeKEda/gOmai9rst0o3lXiaLYXMWWVHh5CGaKn3kwY2e3tvBnT1w25
-	 P9g8PMyYxDTDybN5jI3DW0yyZjEY1a5THcrLu4jMOVAxCGvHm8VuvU+wR3fkOLRe2t
-	 fvhATwJmNsVvGVNdBhOiQV/JmUSYQ6Y78DKpZfHmr/4c8FQsrfXssfagsdvoJeLVEi
-	 HM3l3wLm+tk6A==
-Message-ID: <0ff6f05f-fe6f-4433-a489-0447a165c8d0@kernel.org>
-Date: Fri, 13 Dec 2024 09:42:57 +0100
+	 In-Reply-To:Content-Type; b=Ol7nt2Zwn6fv71Avgc5blBytsxYfwhhDpQSQ+6IzuuQXbVabYOj7uteuQ98uZsVfuNHwQRQtNOSwAIfacoDIS5ha2VlctOV/eV36CLLzbROH0QHwhRPhpjCoB0jpV3OFAHgPty80PR9SI3Nc8hUme6pbSvrVuQDuAB5SJItj38I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=Br7TXAJ6; arc=none smtp.client-ip=220.197.31.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=21o0XTtNuQcRS+Oc7dde/R2xtmPgrdOT4SD3ZXbhO8o=;
+	b=Br7TXAJ63rL76NDlkqboL0MkTRngkqIr1kxmhNprvIh7mQjhnvFHSB4iqqIpaX
+	nWqqil1Iz8pmX/hEtbaScok5ERRiZXDocHtUaStDQipGIDtUun9QBu35eWlBIetr
+	RS46bUpATIFy+E+K7vwtzFKGz/36diQzdU2qRlXDGPvfk=
+Received: from [172.21.22.210] (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3t2bL81tnFV3LAA--.50419S2;
+	Fri, 13 Dec 2024 16:43:55 +0800 (CST)
+Message-ID: <3651bce1-f84b-4537-bc57-ef6d7460749f@126.com>
+Date: Fri, 13 Dec 2024 16:43:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,95 +46,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Add Samsung SPEEDY serial bus host controller driver
-To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Maksym Holovach <nergzd@nergzd723.xyz>
-References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] mm, compaction: don't use ALLOC_CMA in long term GUP flow
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ 21cnbao@gmail.com, david@redhat.com, vbabka@suse.cz, liuzixing@hygon.cn
+References: <1734075432-14131-1-git-send-email-yangge1116@126.com>
+ <df357a47-7d76-47b8-b91f-3f4bd4d2176e@linux.alibaba.com>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <df357a47-7d76-47b8-b91f-3f4bd4d2176e@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3t2bL81tnFV3LAA--.50419S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZw13KrWUXF47CFW7JFW5Wrg_yoWrZr45pF
+	1xA3WDAws8XFy5Cr48ta1v9F4Yvw4xKF45GryIqw18Zw1akF9a9F1kKry7AFWUur1Ykw4Y
+	qFWq9asrZFsxZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6KZXUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOh20G2db5cfQGwACsf
 
-On 12/12/2024 22:09, Markuss Broks wrote:
-> Hey,
+
+
+在 2024/12/13 16:23, Baolin Wang 写道:
 > 
-> This series adds support for the Samsung SPEEDY serial bus host
-> controller. Samsung SPEEDY (actually an acronym) is a proprietary
-> Samsung 1 wire serial bus, which is used on various Samsung devices.
 > 
-It does not look like you tested the bindings, at least after quick
-look. Please run `make dt_binding_check` (see
-Documentation/devicetree/bindings/writing-schema.rst for instructions).
-Maybe you need to update your dtschema and yamllint.
+> On 2024/12/13 15:37, yangge1116@126.com wrote:
+>> From: yangge <yangge1116@126.com>
+>>
+>> Since commit 984fdba6a32e ("mm, compaction: use proper alloc_flags
+>> in __compaction_suitable()") allow compaction to proceed when free
+>> pages required for compaction reside in the CMA pageblocks, it's
+>> possible that __compaction_suitable() always returns true, and in
+>> some cases, it's not acceptable.
+>>
+>> There are 4 NUMA nodes on my machine, and each NUMA node has 32GB
+>> of memory. I have configured 16GB of CMA memory on each NUMA node,
+>> and starting a 32GB virtual machine with device passthrough is
+>> extremely slow, taking almost an hour.
+>>
+>> During the start-up of the virtual machine, it will call
+>> pin_user_pages_remote(..., FOLL_LONGTERM, ...) to allocate memory.
+>> Long term GUP cannot allocate memory from CMA area, so a maximum
+>> of 16 GB of no-CMA memory on a NUMA node can be used as virtual
+>> machine memory. Since there is 16G of free CMA memory on the NUMA
+>> node, watermark for order-0 always be met for compaction, so
+>> __compaction_suitable() always returns true, even if the node is
+>> unable to allocate non-CMA memory for the virtual machine.
+>>
+>> For costly allocations, because __compaction_suitable() always
+>> returns true, __alloc_pages_slowpath() can't exit at the appropriate
+>> place, resulting in excessively long virtual machine startup times.
+>> Call trace:
+>> __alloc_pages_slowpath
+>>      if (compact_result == COMPACT_SKIPPED ||
+>>          compact_result == COMPACT_DEFERRED)
+>>          goto nopage; // should exit __alloc_pages_slowpath() from here
+>>
+>> To sum up, during long term GUP flow, we should remove ALLOC_CMA
+>> both in __compaction_suitable() and __isolate_free_page().
+>>
+>> Fixes: 984fdba6a32e ("mm, compaction: use proper alloc_flags in 
+>> __compaction_suitable()")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: yangge <yangge1116@126.com>
+>> ---
+>>   mm/compaction.c | 8 +++++---
+>>   mm/page_alloc.c | 4 +++-
+>>   2 files changed, 8 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/mm/compaction.c b/mm/compaction.c
+>> index 07bd227..044c2247 100644
+>> --- a/mm/compaction.c
+>> +++ b/mm/compaction.c
+>> @@ -2384,6 +2384,7 @@ static bool __compaction_suitable(struct zone 
+>> *zone, int order,
+>>                     unsigned long wmark_target)
+>>   {
+>>       unsigned long watermark;
+>> +    bool pin;
+>>       /*
+>>        * Watermarks for order-0 must be met for compaction to be able to
+>>        * isolate free pages for migration targets. This means that the
+>> @@ -2395,14 +2396,15 @@ static bool __compaction_suitable(struct zone 
+>> *zone, int order,
+>>        * even if compaction succeeds.
+>>        * For costly orders, we require low watermark instead of min for
+>>        * compaction to proceed to increase its chances.
+>> -     * ALLOC_CMA is used, as pages in CMA pageblocks are considered
+>> -     * suitable migration targets
+>> +     * In addition to long term GUP flow, ALLOC_CMA is used, as pages in
+>> +     * CMA pageblocks are considered suitable migration targets
+>>        */
+>>       watermark = (order > PAGE_ALLOC_COSTLY_ORDER) ?
+>>                   low_wmark_pages(zone) : min_wmark_pages(zone);
+>>       watermark += compact_gap(order);
+>> +    pin = !!(current->flags & PF_MEMALLOC_PIN);
+>>       return __zone_watermark_ok(zone, 0, watermark, highest_zoneidx,
+>> -                   ALLOC_CMA, wmark_target);
+>> +                   pin ? 0 : ALLOC_CMA, wmark_target);
+>>   }
+> 
+> Seems a little hack for me. Using the 'cc->alloc_flags' passed from the 
+> caller to determin if ‘ALLOC_CMA’ is needed looks more reasonable to me.
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
+Ok, thanks.
 
-Please run standard kernel tools for static analysis, like coccinelle,
-smatch and sparse, and fix reported warnings. Also please check for
-warnings when building with W=1. Most of these commands (checks or W=1
-build) can build specific targets, like some directory, to narrow the
-scope to only your code. The code here looks like it needs a fix. Feel
-free to get in touch if the warning is not clear.
+> 
+>>   /*
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index dde19db..9a5dfda 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -2813,6 +2813,7 @@ int __isolate_free_page(struct page *page, 
+>> unsigned int order)
+>>   {
+>>       struct zone *zone = page_zone(page);
+>>       int mt = get_pageblock_migratetype(page);
+>> +    bool pin;
+>>       if (!is_migrate_isolate(mt)) {
+>>           unsigned long watermark;
+>> @@ -2823,7 +2824,8 @@ int __isolate_free_page(struct page *page, 
+>> unsigned int order)
+>>            * exists.
+>>            */
+>>           watermark = zone->_watermark[WMARK_MIN] + (1UL << order);
+>> -        if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
+>> +        pin = !!(current->flags & PF_MEMALLOC_PIN);
+>> +        if (!zone_watermark_ok(zone, 0, watermark, 0, pin ? 0 : 
+>> ALLOC_CMA))
+>>               return 0;
+>>       }
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
-
-Best regards,
-Krzysztof
 
