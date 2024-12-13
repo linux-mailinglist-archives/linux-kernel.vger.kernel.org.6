@@ -1,161 +1,227 @@
-Return-Path: <linux-kernel+bounces-444266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C9D9F03C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:23:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381179F03CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:27:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBC89283DD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:23:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74BB418835FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 04:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2024917D354;
-	Fri, 13 Dec 2024 04:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A4418452C;
+	Fri, 13 Dec 2024 04:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="HwfKNMnM"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nE8NNnh3"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BF315442D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 04:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D04C149E00;
+	Fri, 13 Dec 2024 04:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734063810; cv=none; b=Hbb2QxzkLNRe5A8eY4Eiq0pBB3teFwugy5XG3qtScuJdUAfmgn4YGZzhVjI6g51tQNGMgW9pbd71RTpFGzeUK4KhpKkjfmsGLJqY5q61auD4KvPNWY+fwFsU+4PzgdNDV71p97AESCwjqBBooInhirQNG/UZcyx8BtbsXVZFXRw=
+	t=1734064029; cv=none; b=Y+DatMsIQcRFI6wIWEl993h1TxzunpDMTTXBAonsXBoX/VtbWXNtVRv3O/ErhfRUI3eZD1IK5GSUio/e5/8Zj1wVddcyKP/iY8ftiIMOAbPDd+Zl1uOKrcMNmrCUBqHn6/FNGbmM5PrfcgBQ0gvozqux04x7z6YxscFCChlykgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734063810; c=relaxed/simple;
-	bh=41Wa87e1yvbGfsU8DFkP/vhEvzNEa4miGRYqLGm8xTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZVelc0bg4ikJwC+i8DAE7O+MX1iNZed06XnqbMRkWlCSI3SQ2SICgHXWkvfodN+HKD5E1KpqS9dgayeR4JsqeET65e1a3UGjxE4Yy7yDg0mix1heJOBLObkVjza8ZfaNEizPaf1w0ZKZVY5HcMrKzYt3PPcDTlghSwq9f0DJlkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=HwfKNMnM; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-728f337a921so1477714b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Dec 2024 20:23:28 -0800 (PST)
+	s=arc-20240116; t=1734064029; c=relaxed/simple;
+	bh=PjL1Ykco8HVzG9IFl88OM+jnPP6HT71hIZ9O3TF4fb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BioEwyiuY2saC2kRv7ZB6HJAvqEWIvUMirD2NqNpG+eNGNxsbtlAdtv+yMtTkTgRsiyq99F1bA/9Ya0kgLfaFUzOXME7/jTUu6cfCyNsngICkBz8EWfDsYtV2MnuP8Kfa2lPrrEzYdto0EXqrJDqFhzRtBxtyUK1HK49GFsEwYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nE8NNnh3; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5189105c5f5so673845e0c.0;
+        Thu, 12 Dec 2024 20:27:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1734063808; x=1734668608; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NVpovzDFXwge3Q3+ToA6U1Heg/KQVI3DYGJ0qfmqewk=;
-        b=HwfKNMnMhXuLGpnzrX1nBNdA+VTldFz9Pq551ZJVnapLWQkpHzhiQ5qDzQQru3l5qM
-         fySnbgujnBlF/mmQv9Tg8U9B94OfmYlc+II4+hIPRdrvcI4Bg6BD57DEdA7A9PIzqRkq
-         CXG1WqMVH76VFdRPg5ye8yGfiZma1ycDUHmngw2TlX6xRMkXWBwXTpfMHcRthgtlsaEq
-         AZVQahN57jSS6Lgn/ADtvHWeIAjKiOFsgqoyn5U5sgwAq5eR2cPq/MPEQhP+EQsDvk5v
-         w2m4eu3HibAwfBjyqywFgxHzjp7noytKF0jl+qwTX7qaRuWW8EuCwH/UgbK26fDVtJQu
-         WFAg==
+        d=gmail.com; s=20230601; t=1734064027; x=1734668827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZFIE2oFTL5RsiGL4yGnXOTeASsgxqZiZltFWWa94vak=;
+        b=nE8NNnh3OkpRYnsDKnQQxhRKM2SxrMP8G6PXdvorZ7eq85MwJrRzdvlFCCu1N+jRg/
+         ion19ogZ0hE6Y5fgZFSscMZFE6yES7uslaxTUh0TwZl1EXJVTFhSFMXLM/AB4QOOhqPH
+         ubnWfOtgA3JtZ2EOFFJ7F4KLKER1pXrgmtVqRlGoQRxO+aMPtU76YIIa7qENx/jim2bf
+         pMU/QJeBWaBVxnfE0gjukT8VHnIzHRlH9kpn78E0HtJWTOA0CSZKVcRXuUcoT3pIb3No
+         L8mcoBX5vf743Rbz78g3PyE8PqJz1ANrQasFm+QqrWR70vNG3Y6mEo6K/OlfSvVKNs9B
+         ODDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734063808; x=1734668608;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NVpovzDFXwge3Q3+ToA6U1Heg/KQVI3DYGJ0qfmqewk=;
-        b=pTLkE7MSGj+6jrezJcI0V2cok/Ugpby+nOPPpjB8OoxF199vg9ohF3pPb8K4CnJnnG
-         CyO9r7zm8RgZWyQWND6okr9jLoUs0M1qx6EDMV27mKbJrmzIDI0VFOR4VnIrovhmevyr
-         YZJe0LQV1Gr7HZwrIuDhl5+2NVAcRiJgnCTzlcSN9ta+YtXBOZl3JYNrxyruKUUnbs8t
-         0lvxwM89rehM+w7Fr68TYZTBlnGsIhzumPRSW9VyS55gauUU6iF9WuQUo3oErSJStAR7
-         8K4AeJTGnfqVfBoWMQGLWpR6TRz19vxoXUOU8bH2vlpyXr26U5kGzjN0SMLUsg9ZK4+W
-         O0Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsW30RnD4c7CROFMr2Jm5dMX4C2m1snqfIe2cNT5DDz+DKhdUk75uXUM215ENFK0DwmoRZ5nyV8XxyY1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBnPMC3WjlKVQhgg06RzmnTzezcWoMTFRf3gKadwvyeJjd5HYY
-	imtJIK/k9LbHDOueah8z0xPF3HWM8Uco/WLbkidLZQjVHwHVavt2pFdwExmK9w0=
-X-Gm-Gg: ASbGnctS18AD3Ml4pxWx8mixRXaWjnCiCxqEU7DdqBIESnyKk8+SHWEm9f5JCyvAkjo
-	isb1PUvfmclhR/ZPJ6319dZPBD4M0gO56DmN4hMCWJYROP8fzd+MC07IaMgEJQotcUKXXXXBvOn
-	xsFD+vEllji6L8njschNrtIeuHSKJ/KGRHnWooXMjUgeepKrzD516Mm+b2eAO0MJgs6We0fK8Tq
-	sgpOBNSyRk2R/1bVBffIt33FFhxBr46BX68x3OljbH4xCKVsM4hqGA34QpE8JSNP0QhCF4jtEeF
-	afAS
-X-Google-Smtp-Source: AGHT+IE1gWRpEWOOFyENRCzyuHkw+v1u7Rpqnlivn3esqNQkA9AcnHNhDDeYbLWGFzJcgO2JHohwSg==
-X-Received: by 2002:a05:6a20:6a11:b0:1e1:c748:13c1 with SMTP id adf61e73a8af0-1e1dfdb04dcmr1876388637.27.1734063808159;
-        Thu, 12 Dec 2024 20:23:28 -0800 (PST)
-Received: from x1 (75-164-218-15.ptld.qwest.net. [75.164.218.15])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd313f0ffbsm10396549a12.82.2024.12.12.20.23.27
+        d=1e100.net; s=20230601; t=1734064027; x=1734668827;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZFIE2oFTL5RsiGL4yGnXOTeASsgxqZiZltFWWa94vak=;
+        b=heF/uX79KhqaqD3J6nIFe9XLxdT4+qw7lSFdIsZVmm5YTV2u0P5RAjpAzfjb2YdeVv
+         B/TOuunAkdSyKL6tOlZfrVgBTwWYPijUdfSaCMbRA69xq70Dab6LMEQN0Ygrf9BewzVb
+         92xlZRdT2RdocLf1IMVxHhcXLbbw8BGiG/CJ2pfUjQxf94Omlz3sd09cS2LYxKq9Pxw1
+         rPpEyUa2uO/0QtyP4OT/fRnrZlyTDGRziwLGNOiG6U1mK67pYkV5V7x63jqXvlOwnvjO
+         m+OAS7WrATOtVtsllc4JE7+zikpDQHuyTdtvHfTLYc4sojAqMy7YAV54U6aOuMhTDSXN
+         6qKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHeDYDaZy/SG0W5+Vsb3aMfXHVhu111n1ybiGQ1OnMUorBCT/xbsUvgamPwu+ScgX7qMXlwyZulARx7MM=@vger.kernel.org, AJvYcCW685ZeyvMfuDwTpuvba5IA02l5XrUgc2LCs64lWcrFnA3kCz5gdSQc4vnVjyCr+fodCN0mpCyeQeG1GGze+HeG@vger.kernel.org
+X-Gm-Message-State: AOJu0YznrGq7tB6xY8ZZVt4Kj0tw2KQSmRvzF0RmlD8qX1qgBBHcFOr0
+	Y+q8Vd9r9ypoOIZ3ovG38c+0QTbIj01dXvQgtAY3AwkV/GqW3UBj
+X-Gm-Gg: ASbGncvfOLtILsjZzT5drWKSPCMu63I7/fnFX/WADl/BWqmJ5qI7PslvOuoRUuRFK1j
+	FpQBw/vR4hOCL2wuHsa494I2LK5iFOtxPyB/2UaBDoUGkMbFFjH2aSFOJ5S6EaHjz0Dw9Vl7kzy
+	vYI8GCiKi5kLOiLIfAhC2/bcar13WcdAvp6qzCsgAA9g3Q525ycZHXcubvLKcPJLvBkYkMkrDd7
+	JDwUWaoaXB1pNd0c8rFIvmHYSwud898Tc0AoMKUX1LswAtdI/yXgIAvVUr1AajoTn/mtHxps1Xu
+	hPDwGkW75hbSIlSy4Z4xW5LTXit9anbBZYFc
+X-Google-Smtp-Source: AGHT+IGMpCNDA5EpRH+Yj2oXjYJ5jqJbGHiTvFiUeGCAQV6LTCnPR+Fm5peOQUpqg30Npa50ajF0IQ==
+X-Received: by 2002:a05:6122:8c0f:b0:510:3a9:bb87 with SMTP id 71dfb90a1353d-518ca3850b9mr1575459e0c.1.1734064027137;
+        Thu, 12 Dec 2024 20:27:07 -0800 (PST)
+Received: from x13.localdomain (syn-142-197-128-048.res.spectrum.com. [142.197.128.48])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51887e3ef80sm716399e0c.18.2024.12.12.20.27.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 20:23:27 -0800 (PST)
-Date: Thu, 12 Dec 2024 20:23:26 -0800
-From: Drew Fustini <dfustini@tenstorrent.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
-	jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, m.szyprowski@samsung.com,
-	samuel.holland@sifive.com, emil.renner.berthing@canonical.com,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v6 3/3] riscv: dts: thead: Add mailbox node
-Message-ID: <Z1u2vsoCmmcNm82V@x1>
-References: <20241104100734.1276116-1-m.wilczynski@samsung.com>
- <CGME20241104100801eucas1p27cd0d7b9b5b4500604470664884c42fb@eucas1p2.samsung.com>
- <20241104100734.1276116-4-m.wilczynski@samsung.com>
- <Z1oO5ewIOMFco4KI@x1>
- <Z1uiWXWo9szbgfx9@x1>
+        Thu, 12 Dec 2024 20:27:05 -0800 (PST)
+From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+To: davidgow@google.com,
+	akpm@linux-foundation.org
+Cc: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
+	skhan@linuxfoundation.org,
+	rbm@suse.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7] lib/math: Add int_sqrt test suite
+Date: Thu, 12 Dec 2024 23:26:50 -0500
+Message-ID: <20241213042701.1037467-1-luis.hernandez093@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1uiWXWo9szbgfx9@x1>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 12, 2024 at 06:56:25PM -0800, Drew Fustini wrote:
-> On Wed, Dec 11, 2024 at 02:15:01PM -0800, Drew Fustini wrote:
-> > On Mon, Nov 04, 2024 at 11:07:34AM +0100, Michal Wilczynski wrote:
-> > > Add mailbox device tree node. This work is based on the vendor kernel [1].
-> > > 
-> > > Link: https://github.com/revyos/thead-kernel.git [1]
-> > > 
-> > > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> > > ---
-> > >  arch/riscv/boot/dts/thead/th1520.dtsi | 16 ++++++++++++++++
-> > >  1 file changed, 16 insertions(+)
-> > > 
-> > > diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> > > index 6992060e6a54..89de5634d3d3 100644
-> > > --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> > > +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> > > @@ -520,6 +520,22 @@ timer7: timer@ffffc3303c {
-> > >  			status = "disabled";
-> > >  		};
-> > >  
-> > > +		mbox_910t: mailbox@ffffc38000 {
-> > > +			compatible = "thead,th1520-mbox";
-> > > +			reg = <0xff 0xffc38000 0x0 0x6000>,
-> > > +			      <0xff 0xffc40000 0x0 0x6000>,
-> > > +			      <0xff 0xffc4c000 0x0 0x2000>,
-> > > +			      <0xff 0xffc54000 0x0 0x2000>;
-> > > +			reg-names = "local", "remote-icu0", "remote-icu1", "remote-icu2";
-> > > +			clocks = <&clk CLK_MBOX0>, <&clk CLK_MBOX1>, <&clk CLK_MBOX2>,
-> > > +				 <&clk CLK_MBOX3>;
-> > > +			clock-names = "clk-local", "clk-remote-icu0", "clk-remote-icu1",
-> > > +				      "clk-remote-icu2";
-> > > +			interrupt-parent = <&plic>;
-> > > +			interrupts = <28 IRQ_TYPE_LEVEL_HIGH>;
-> > > +			#mbox-cells = <1>;
-> > > +		};
-> > > +
-> > >  		ao_gpio0: gpio@fffff41000 {
-> > >  			compatible = "snps,dw-apb-gpio";
-> > >  			reg = <0xff 0xfff41000 0x0 0x1000>;
-> > > -- 
-> > > 2.34.1
-> > > 
-> > 
-> > Reviewed-by: Drew Fustini <dfustini@tenstorrent.com>
-> > 
-> > dt_binding_check and dtbs_check are clean when I apply this patch to
-> > v6.13-rc1. There is trivial conflict due to the gpio node label having
-> > changed. I'll resolve it when I apply the patch to thead-dt-for-next.
-> 
-> I've applied this patch to thead-dt-for-next [1].
-> 
-> Thanks,
-> Drew
-> 
-> [1] https://github.com/pdp7/linux/commit/98064af36cbc0c216d0a2d11da5e3746a57ccce7
+Adds test suite for integer based square root function.
 
-I forgot my SoB so it is now a new hash [1].
+The test suite is designed to verify the correctness of the int_sqrt()
+math library function.
 
--Drew
+Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+---
+ lib/Kconfig.debug               | 15 ++++++++
+ lib/math/Makefile               |  1 +
+ lib/math/tests/Makefile         |  1 +
+ lib/math/tests/int_sqrt_kunit.c | 66 +++++++++++++++++++++++++++++++++
+ 4 files changed, 83 insertions(+)
+ create mode 100644 lib/math/tests/int_sqrt_kunit.c
 
-[1] https://github.com/pdp7/linux/commit/c95c1362e5bcd90c45987828bbef02236d181ffd
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index f3d723705879..147d9fef42e7 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -3161,6 +3161,21 @@ config INT_POW_TEST
+ 
+ 	  If unsure, say N
+ 
++config INT_SQRT_KUNIT_TEST
++	tristate "Integer square root test" if !KUNIT_ALL_TESTS
++	depends on KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  This option enables the KUnit test suite for the int_sqrt() function,
++	  which performs square root calculation. The test suite checks
++	  various scenarios, including edge cases, to ensure correctness.
++
++	  Enabling this option will include tests that check various scenarios
++	  and edge cases to ensure the accuracy and reliability of the square root
++	  function.
++
++	  If unsure, say N
++
+ endif # RUNTIME_TESTING_MENU
+ 
+ config ARCH_USE_MEMTEST
+diff --git a/lib/math/Makefile b/lib/math/Makefile
+index 3ef11305f8d2..853f023ae537 100644
+--- a/lib/math/Makefile
++++ b/lib/math/Makefile
+@@ -9,3 +9,4 @@ obj-$(CONFIG_INT_POW_TEST)  += tests/int_pow_kunit.o
+ obj-$(CONFIG_TEST_DIV64)	+= test_div64.o
+ obj-$(CONFIG_TEST_MULDIV64)	+= test_mul_u64_u64_div_u64.o
+ obj-$(CONFIG_RATIONAL_KUNIT_TEST) += rational-test.o
++obj-$(CONFIG_INT_SQRT_KUNIT_TEST) += tests/int_sqrt_kunit.o
+\ No newline at end of file
+diff --git a/lib/math/tests/Makefile b/lib/math/tests/Makefile
+index 6a169123320a..e1a79f093b2d 100644
+--- a/lib/math/tests/Makefile
++++ b/lib/math/tests/Makefile
+@@ -1,3 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ 
+ obj-$(CONFIG_INT_POW_TEST) += int_pow_kunit.o
++obj-$(CONFIG_INT_SQRT_KUNIT_TEST) += int_sqrt_kunit.o
+diff --git a/lib/math/tests/int_sqrt_kunit.c b/lib/math/tests/int_sqrt_kunit.c
+new file mode 100644
+index 000000000000..1798e1312eb7
+--- /dev/null
++++ b/lib/math/tests/int_sqrt_kunit.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <kunit/test.h>
++#include <linux/limits.h>
++#include <linux/math.h>
++#include <linux/module.h>
++#include <linux/string.h>
++
++struct test_case_params {
++	unsigned long x;
++	unsigned long expected_result;
++	const char *name;
++};
++
++static const struct test_case_params params[] = {
++	{ 0, 0, "edge case: square root of 0" },
++	{ 1, 1, "perfect square: square root of 1" },
++	{ 2, 1, "non-perfect square: square root of 2" },
++	{ 3, 1, "non-perfect square: square root of 3" },
++	{ 4, 2, "perfect square: square root of 4" },
++	{ 5, 2, "non-perfect square: square root of 5" },
++	{ 6, 2, "non-perfect square: square root of 6" },
++	{ 7, 2, "non-perfect square: square root of 7" },
++	{ 8, 2, "non-perfect square: square root of 8" },
++	{ 9, 3, "perfect square: square root of 9" },
++	{ 15, 3, "non-perfect square: square root of 15 (N-1 from 16)" },
++	{ 16, 4, "perfect square: square root of 16" },
++	{ 17, 4, "non-perfect square: square root of 17 (N+1 from 16)" },
++	{ 80, 8, "non-perfect square: square root of 80 (N-1 from 81)" },
++	{ 81, 9, "perfect square: square root of 81" },
++	{ 82, 9, "non-perfect square: square root of 82 (N+1 from 81)" },
++	{ 255, 15, "non-perfect square: square root of 255 (N-1 from 256)" },
++	{ 256, 16, "perfect square: square root of 256" },
++	{ 257, 16, "non-perfect square: square root of 257 (N+1 from 256)" },
++	{ 2147483648, 46340, "large input: square root of 2147483648" },
++	{ 4294967295, 65535, "edge case: ULONG_MAX for 32-bit" },
++};
++
++static void get_desc(const struct test_case_params *tc, char *desc)
++{
++	strscpy(desc, tc->name, KUNIT_PARAM_DESC_SIZE);
++}
++
++KUNIT_ARRAY_PARAM(int_sqrt, params, get_desc);
++
++static void int_sqrt_test(struct kunit *test)
++{
++	const struct test_case_params *tc = (const struct test_case_params *)test->param_value;
++
++	KUNIT_EXPECT_EQ(test, tc->expected_result, int_sqrt(tc->x));
++}
++
++static struct kunit_case math_int_sqrt_test_cases[] = {
++	KUNIT_CASE_PARAM(int_sqrt_test, int_sqrt_gen_params),
++	{}
++};
++
++static struct kunit_suite int_sqrt_test_suite = {
++	.name = "math-int_sqrt",
++	.test_cases = math_int_sqrt_test_cases,
++};
++
++kunit_test_suites(&int_sqrt_test_suite);
++
++MODULE_DESCRIPTION("math.int_sqrt KUnit test suite");
++MODULE_LICENSE("GPL");
+-- 
+2.47.1
+
 
