@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-445121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6A09F11A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:59:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3B69F119B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:58:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96E08188516C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC005281E4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 15:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF13E1EF0B9;
-	Fri, 13 Dec 2024 15:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC441F03DA;
+	Fri, 13 Dec 2024 15:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VY3watQ2"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xBsqQG4W"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919761EE00E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0371EF088
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 15:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734105378; cv=none; b=g+zmbhz/gOqi7EHhl4EulK6VpSyAYlQX9yEiZ2DMepgQLUF4bNNLKfdvBLR7zD/tFLj2yWu5rgA98N/4WM4UdGlghl+5g7E0Zx5pq3hqh4xJDH2QlgvY8RM/Uj1JmSYJRcDkpnPJWCR8RGtkl0Ru6E2rbWMYJbQ3wjnNVWaeiTo=
+	t=1734105379; cv=none; b=Oming3qvMgxel8pbe1UQ7eeiqtKPJ/NyKxujXJhmd/vi1hHmiBRPzSdWgMYzZChHWkuCiFhtFMEwgitRfunOuCFDBgawxmcJQY2usvHeRFuyOqqbDwU10zgEmKrSsmk3J8aaI9snTR/xnjooLfmzqjFXycNp5ZPihVM5V8aVVrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734105378; c=relaxed/simple;
-	bh=ZeMsDsphln50o1XFtLmHIP6lHmPNtmzQzlZFWxh1ZaQ=;
+	s=arc-20240116; t=1734105379; c=relaxed/simple;
+	bh=5nnCX/ugaux253bLZRpzYYnFsErlHtBtfq4h5ryDOj8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cbS5wY7hBKZQ5/RCFnkJ+xjAs2BEmGOpGdu7zMehtCDoQRzP8L6/tIRowc/KwLgMcuUwfQ7ip58Bs0ezpTtfMj4iXZLBSCVWRREI3CBX/HN1aMtVOlqWg3sL2s+NF1FSGBu7u5mnbBG5tgYKXJYA8C7Lbdf8bBe1OraOOVg1i4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VY3watQ2; arc=none smtp.client-ip=209.85.166.170
+	 MIME-Version; b=H0hp9ak9WnBlWM5O/JSmem7UvXw43xEiKeS4+xeaycXckjVwGb5DIAmd7B9cvIbrGQKlowxAO40ROMFT6pKiT61EUdVLBuQft5HKAOn4wPIJdj3pYXpOXA61Xxgr7+3ObAHuWor12HJAS5w38YP0dXV/oMvQr6k0UZJ3DiX5UpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xBsqQG4W; arc=none smtp.client-ip=209.85.166.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a761a622dcso14691945ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:56:16 -0800 (PST)
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a8160382d4so6011025ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:56:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734105376; x=1734710176; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1734105377; x=1734710177; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eL7TH1+psm5CeVquxo+D9Ecvv3+RlpadAVoxegN1mFk=;
-        b=VY3watQ2NR6jGnPZ6XQYSClGFKgxvsCoMHMZGD/dDEHNkXkum2+pHmho6aFmqJhf6h
-         ehfSPV74UjBpmV85H8x0IbLd8VJCG2oLkYJctyquH7XYpePbvIZT5Vcyf6Rkm8Uw4LAH
-         i25IJI0J1mFgRzMLo8fVstBkRzjnfxZCzu2PYl0pyTsNIBYlhMYqRwk1djlTCgWzZ6rk
-         sFyMW/rBmnfw0yeawjS3wohXuRO/BKMJrRQqNaO+I0/ksVNiK9MKc/E4ofzGy5oAiuwO
-         tHaCZKxU0TbTHUwDSt8rceIU2ttCHKamjds4J9/M3DRYMIlOljSUYiaUADvvqBbJMUZy
-         sySA==
+        bh=CJvpEUV5aCutO0n1vzbjd3IdvpDLlQuRWwd0hw2DTJ8=;
+        b=xBsqQG4WWzJ40QYjSZYrM1RDXg+bzMi0GiUO4zqLy4cZRfW+o08/20ZGDrQY2xx9tf
+         2fAeWjLv/apNFx53ZsgOSVYfiGEZLt5NFsXDnQVtMBkp7FdI15rVO/VBgloMjPVb9Y8e
+         F9aulmRj6oBbflzIRYO0Xo+jwlNYxQx0IoMqkyCRXZs+d7g4EkS7Ag/x7ZCSHTSHp6aL
+         qHHHHQgJX0+3U21vc7pIVSiochjtnyM4woNvbvqAQasC52GPpCW4bPnXN9/GiwULZNpJ
+         p7uaYm3Is+Kx952PvSZDTwAHZR/+q9OASOfMBkVMItN4iJJBOkhYumDdsl+m72lJ0XDD
+         Rakw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734105376; x=1734710176;
+        d=1e100.net; s=20230601; t=1734105377; x=1734710177;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eL7TH1+psm5CeVquxo+D9Ecvv3+RlpadAVoxegN1mFk=;
-        b=W8dwHPB83F/LHCppQvB8K3vrnFOQ/XKoZGxGl3f1EIJFCU1PCtO5gz3XaLk0Gh2hgo
-         Xnu0vHmrB7o3qBCIYaLXJUSZBB+NDoYNq8aspYZUrAr7Ik3v+alPxRrIh2VJh5NUKy9l
-         cD5WpF37PfyqAyj8VC/y2dk/QzJA6CNBDxYkclj7PMnFIM/OlZqt7qcKKOfyOXM0iwY4
-         vlAu3wNjXzygKPFk8uHpllBFxZhnZOiDHLmlqqV3HF5N9ymsiXHXYHXPliN58Awl+li3
-         1ky7nyaOWQXjI+aq+zM1shKcgw88071lTrbinVh8SE+i3Wpu1Fc+bYJ2rVzdE1+KbZTN
-         wVEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXltThygLCNzqXgmQTQE7tRpownCJkZTPFieu/P+cS9nK/YXDH4Osm+PwwkdaSd1irUlw4fMBUdSaX5CE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHG+jHI9xHgsn0C8E+9xCND5mJMMbHVrjZZdLwXChchkZqB6o0
-	2ufvghTOsbPzNQela7n+MPdbOtIc6UN2nTywPBCiSgvsoTY3T5awzj8Yh7J6KmE=
-X-Gm-Gg: ASbGncvoZh9Da92mCxK/UB47R+rOEscIx/+C0zSSIgRBXvnHHlMTrwuEC6JzQgzzK3x
-	DWvI4KkrZ0jWaxaUsKb3kJZshOgJA6ZP5tj21ZoL60mIyTLp1AB46PncbtH9/q4cIPNCTzJsIZr
-	+CEHuzGGs12zhx4inb0IozXKkK5J9T1d3ZqOVAKZetvVciR4VViN8tEEfKWV3Gf66QSRTHvnEzs
-	qEo8FzhycXXwxRw92BLxbJN1et+CJQ6b2445kGf+JqKJ9/HevGC44CjDBwG
-X-Google-Smtp-Source: AGHT+IG5PcGGwL+OAF8BWXN0MfzrquLg0U95m3qvCvU2aqYiecyxUUHKeEBe+q/HNr+0PzMX/oeVbw==
-X-Received: by 2002:a05:6e02:12e2:b0:3a6:c98d:86bc with SMTP id e9e14a558f8ab-3aff4619e11mr40735545ab.1.1734105375832;
-        Fri, 13 Dec 2024 07:56:15 -0800 (PST)
+        bh=CJvpEUV5aCutO0n1vzbjd3IdvpDLlQuRWwd0hw2DTJ8=;
+        b=IH/cDNFIrBYuEUg+DMDn6x49OXHN77rTyO0IALD50T/H5wAvA4XRHDqzvaGugNsx4W
+         H2VS9udd0DcnGAnOu3Zc3aFqifz2VoFY6+UJGErWzbpbX3FSvV9vMYIgnq33N5/zUdE2
+         1c+s9KL3W5/cAkTMfUMn6VEsDMzzK/U74rlIgsWC81jaWk9MShpy37YRhAx3iBknbS71
+         rbDE9H2glezdy15u06VHx98PC6cv1y7WLfoTfTgt4DpvdvY9MTL4qM83cyhgFmKzigeU
+         LaeFuueDfDstOHx1r/2SDAxNKDIWzIJ1FV8rQUkQHNIa5IrHUxl1mTUAnN0AHhsDNAgv
+         xEyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtc8ni4Myzyjrk8yHuw/BBQwfe9Rv0ItnYscn8pj9XNH+m3g8l7vdRdw/Gp4sVccuo1/Q3KS8mVHlAyL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj2HItANUuDxK3YkYVDeds9+8Pq1mq4Hl1UqzqYndX4GxlGkMD
+	S3D8Rhlj5VflsNHBVhkxfK2TARQGTYy8tL9MqSxSaCPAC/y2cHcbs9zKdTExYtU=
+X-Gm-Gg: ASbGncsyUGHh5LUMOYa+b+LWBLNbg3exxpvFpst/qhgpdMuwSL9gZFf2hFC+lrCmXMa
+	FkdyNXq5IY8uRS8/HeUbpIXkVQHUxjnrzK+1oKfHLpPCtD36buDmRgYpJVeDRUFMJvtLq2Wd3kK
+	gQsWPMQ7AiqNHaa/EdK0J8T4ce7xJ1Js2QIhXxiRE/kaJpy5WaOaKrpMGmbf1TFXZPDOOAmPpmr
+	E5gbHcIV0WFdMs5tOYvoo3W+EtYq3WAOBP/YXr5sHwHKG0Do4eRxkZCaEL9
+X-Google-Smtp-Source: AGHT+IGauJ9uKAF5WxLAKMTF0QyH5oGnff/+E24GczIOzswP0NPnXSGxgq/rQ7IZv36KxS5lv0tqHw==
+X-Received: by 2002:a05:6e02:1564:b0:3a2:6cd7:3250 with SMTP id e9e14a558f8ab-3aff50b64c1mr29557815ab.10.1734105377176;
+        Fri, 13 Dec 2024 07:56:17 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a9ca03ae11sm35258405ab.41.2024.12.13.07.56.14
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a9ca03ae11sm35258405ab.41.2024.12.13.07.56.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 07:56:15 -0800 (PST)
+        Fri, 13 Dec 2024 07:56:16 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
@@ -80,9 +80,9 @@ Cc: hannes@cmpxchg.org,
 	kirill@shutemov.name,
 	bfoster@redhat.com,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 09/11] mm/filemap: drop streaming/uncached pages when writeback completes
-Date: Fri, 13 Dec 2024 08:55:23 -0700
-Message-ID: <20241213155557.105419-10-axboe@kernel.dk>
+Subject: [PATCH 10/11] mm/filemap: add filemap_fdatawrite_range_kick() helper
+Date: Fri, 13 Dec 2024 08:55:24 -0700
+Message-ID: <20241213155557.105419-11-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241213155557.105419-1-axboe@kernel.dk>
 References: <20241213155557.105419-1-axboe@kernel.dk>
@@ -94,71 +94,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the folio is marked as streaming, drop pages when writeback completes.
-Intended to be used with RWF_DONTCACHE, to avoid needing sync writes for
-uncached IO.
+Works like filemap_fdatawrite_range(), except it's a non-integrity data
+writeback and hence only starts writeback on the specified range. Will
+help facilitate generically starting uncached writeback from
+generic_write_sync(), as header dependencies preclude doing this inline
+from fs.h.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- mm/filemap.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ include/linux/fs.h |  2 ++
+ mm/filemap.c       | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 6a838b5479a6..653b5efa3d3f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2878,6 +2878,8 @@ extern int __must_check file_fdatawait_range(struct file *file, loff_t lstart,
+ extern int __must_check file_check_and_advance_wb_err(struct file *file);
+ extern int __must_check file_write_and_wait_range(struct file *file,
+ 						loff_t start, loff_t end);
++int filemap_fdatawrite_range_kick(struct address_space *mapping, loff_t start,
++		loff_t end);
+ 
+ static inline int file_write_and_wait(struct file *file)
+ {
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 77290ac205dc..ec087bab1c97 100644
+index ec087bab1c97..7db995cb5179 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1599,6 +1599,27 @@ int folio_wait_private_2_killable(struct folio *folio)
+@@ -449,6 +449,24 @@ int filemap_fdatawrite_range(struct address_space *mapping, loff_t start,
  }
- EXPORT_SYMBOL(folio_wait_private_2_killable);
+ EXPORT_SYMBOL(filemap_fdatawrite_range);
  
-+/*
-+ * If folio was marked as dropbehind, then pages should be dropped when writeback
-+ * completes. Do that now. If we fail, it's likely because of a big folio -
-+ * just reset dropbehind for that case and latter completions should invalidate.
++/**
++ * filemap_fdatawrite_range_kick - start writeback on a range
++ * @mapping:	target address_space
++ * @start:	index to start writeback on
++ * @end:	last (non-inclusive) index for writeback
++ *
++ * This is a non-integrity writeback helper, to start writing back folios
++ * for the indicated range.
++ *
++ * Return: %0 on success, negative error code otherwise.
 + */
-+static void folio_end_dropbehind(struct folio *folio)
++int filemap_fdatawrite_range_kick(struct address_space *mapping, loff_t start,
++				  loff_t end)
 +{
-+	/*
-+	 * Hitting !in_task() should not happen off RWF_DONTCACHE writeback,
-+	 * but can happen if normal writeback just happens to find dirty folios
-+	 * that were created as part of uncached writeback, and that writeback
-+	 * would otherwise not need non-IRQ handling. Just skip the
-+	 * invalidation in that case.
-+	 */
-+	if (in_task() && folio_trylock(folio)) {
-+		if (folio->mapping)
-+			folio_unmap_invalidate(folio->mapping, folio, 0);
-+		folio_unlock(folio);
-+	}
++	return __filemap_fdatawrite_range(mapping, start, end, WB_SYNC_NONE);
 +}
++EXPORT_SYMBOL_GPL(filemap_fdatawrite_range_kick);
 +
  /**
-  * folio_end_writeback - End writeback against a folio.
-  * @folio: The folio.
-@@ -1609,6 +1630,8 @@ EXPORT_SYMBOL(folio_wait_private_2_killable);
-  */
- void folio_end_writeback(struct folio *folio)
- {
-+	bool folio_dropbehind = false;
-+
- 	VM_BUG_ON_FOLIO(!folio_test_writeback(folio), folio);
- 
- 	/*
-@@ -1630,9 +1653,14 @@ void folio_end_writeback(struct folio *folio)
- 	 * reused before the folio_wake_bit().
- 	 */
- 	folio_get(folio);
-+	if (!folio_test_dirty(folio))
-+		folio_dropbehind = folio_test_clear_dropbehind(folio);
- 	if (__folio_end_writeback(folio))
- 		folio_wake_bit(folio, PG_writeback);
- 	acct_reclaim_writeback(folio);
-+
-+	if (folio_dropbehind)
-+		folio_end_dropbehind(folio);
- 	folio_put(folio);
- }
- EXPORT_SYMBOL(folio_end_writeback);
+  * filemap_flush - mostly a non-blocking flush
+  * @mapping:	target address_space
 -- 
 2.45.2
 
