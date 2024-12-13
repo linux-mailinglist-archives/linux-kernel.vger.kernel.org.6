@@ -1,126 +1,181 @@
-Return-Path: <linux-kernel+bounces-444813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3211A9F0CDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:02:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449DB9F0CE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 14:03:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B5D282FFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:02:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2144F188A9DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF82F1DFDA4;
-	Fri, 13 Dec 2024 13:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDD51DFE1C;
+	Fri, 13 Dec 2024 13:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DRbcDfuZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aCxdUq1Z"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF2A1DE8BC
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0EE1B6D14;
+	Fri, 13 Dec 2024 13:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734094938; cv=none; b=mWd1gc1y+Yvc7G5iCPBUS6EmY9Ik12GtNxcXkN0FGRdiJdPHODknkT5iKW7S97or8m5F7zgPIMDS2O+0Gyc/0XHct5I42+UkpeW4hienJXqla5Qy3FA4tU9gH8tk33Slbr0QH7XIQx1dN4Ecd/VVChJCeEv1R25J1d3cviNBZxc=
+	t=1734094983; cv=none; b=N7YgRIrj1BmVQBl/vSWtxmhgyHNl8Lo+jCU4qIapa1qg7WMJPJKuTXHl8B81zAfasvP4QtLlmAJtEI38rXgdzKTAVNSVQaw8rf+Ge5XDcXkkeE/9qSHi1hXhziPlpuyYOeYwDvoCb6yyFhP1dbnB6/EpU/IoBrkOSEWdp4Go8bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734094938; c=relaxed/simple;
-	bh=iOEfQyQsNuXaf3N32OHosNe97aGB+AUkThk0r0LsUN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jer+zOFseQo/adCcT0mxp7Ye637LuN9scMKLzZAm9m5CNIr0vLeWLlxlFUbK7JJC0G2JI7hrH2RSenMGbZYwFerasa/8zBbr07FrAyqnLiu3zYKAN8jcV6h/FCe/5otpIai6n59XDZCa501nMc18vBo+mIR7jn4qVoX6lvKwRv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DRbcDfuZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD8PQZV032215
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:02:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AyLKSkxMfzLQMuOI6wWqcI6M3kDCMcIlv74yPFOfap0=; b=DRbcDfuZMwE9goX9
-	uKyxPkauLTAzUqvfJYfbwafmivCRzFtTAHaHCVyp56Wi6zVRkKemiXI6TNtNlInK
-	iXSN0e3tjaiqLAtVjxz9XW71db8G4QRDjoFDUWCDPp7cM0JaQ2e76s/R+anUfUqM
-	2TJX7fSVo1Hd39vR3MtQeK1utIQp3c+FxeE6n50r1sHHkDKhY0RQbgHEUUZTChLC
-	kJkYjYvPaO8Y9KD/zigW9iCuK+feYMiF43+w1N7rFhc5wrtmsVzujAXxsjykVKMx
-	P6XL/BgDP+GbURUzjBcGXdnCzjO9IznkmePRlBJsAc7QcSzbKDSZukZUv6cd57D3
-	L2aFQg==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43f6tffn70-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 13:02:16 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7b66edf3284so14992885a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:02:15 -0800 (PST)
+	s=arc-20240116; t=1734094983; c=relaxed/simple;
+	bh=eOHv9bgSptLqDXcvvlILRpCCRGBprfHIR9LeZ6+5n9w=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O1OgdOBDgfI/BozlbDzC+FgkHWuy+aEoorduh12L4g2k3XVd5yNM/9wLLW1rV9GhfYz77m+owzqBcKiicutpVoBj8sJsAWH0LRFqx0sCh4kWLVfkFIqcFHTUgint0HixeWgFVlVLk4mFRcQ8hBe8lxOQuKs0NDPe63mRvzDwVlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aCxdUq1Z; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361f664af5so18152265e9.1;
+        Fri, 13 Dec 2024 05:03:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734094979; x=1734699779; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cVqA3EWWaY9TRkvPct1HGfcQOD/FwItMYVggUcSmkOw=;
+        b=aCxdUq1ZTFVD4YFSXO7NediauPKUqX48h7bTdFGwHSZc7OvMgnnFDGxwYXH4Hws18n
+         q9MITL5kLHIC1p/CHDxRZ6oUAaJJt2xVMBh2ROxOyBjmnECTF6hf7qjFdhbN6abp2Vnm
+         nCEFRgJom3RkEG19bxsXYqaOYUFurJQ6VHcyZQ6Y2as0u+xTxu3R4TBGHLhN0C1eutBr
+         kUKa9OYl1JOCzlsv6CVX2C5/QVszjj+Fa4A0D0d4Vwg4cuELGE/cVhhPOUkaP9Mz7y8/
+         MErc6HbcT5cJmF/Zbsdi2dtIqqv2IPsDHmCVP+qoceRyWPMC1hq4lC8kkiMImhtCYYZd
+         voVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734094935; x=1734699735;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1734094979; x=1734699779;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AyLKSkxMfzLQMuOI6wWqcI6M3kDCMcIlv74yPFOfap0=;
-        b=hi+7nGBLRrW+71vRGK37wfKyhAKrsNvVUG62kBK4XqiE7Efn8A6Om3hhcLiLoU2EC7
-         GR26jjduFXNVjR4mC52eZ6sCTbUCT2ek+J6tk8hySEvOtaBzVBymR0GuSu+oicTF/wso
-         AwV2LL/4RXkldULPsJNICHeL2hcmilV/5El+mtIb4CJ8hqET6uFx7B20jcD+DY3OqrHk
-         KrPBfcnYYiyjlOLDo4dxoBfuSbPYNiroBeXO23YiHQSHZeEXD+t5Zrsa0gLNHymlStPb
-         rk5u9bRJYn56Sgg+eI+MhGH2JD5NfkLcmcvmcRXNW4C/98whdLf6ij8dxkVxYXGvd3yW
-         gGjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdHQ5Zu7oFvNmqCnfUd/oBoFegFKguHjPTC02DoyC8eFQbANMkrL1mbJO5IfYZg2aOUpkXXDTYXGGlNKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/08bgHxEKqIaY0SzBXUn5VXjHjrBg7/GPgx5kFLg3EN8mWPWS
-	X8YvD2+OhHVxQXcxKxnAGkcjV2aqIObjYH3ftHXFdo2RVpliTJlhmK8LGSDe+cujZ22zdiPL/X3
-	nVnMA58twnOyP1uo32/kads1usVZV33i0nbS+au8X1PjukbYymkJCOnfbtB4gulQ=
-X-Gm-Gg: ASbGnctIcuhHi8Fx5tF1ET0zdY7Dz/5acw3EYCgvJVILpBuBhsoUuWRlA0xCiUm/kL5
-	BN0O3DfMvSj2OTcmlSQTu7X01GyV8PRXjrnwtR9QimD+Gc9Jqx5+04txCXw5zDU2LrvCh50fh13
-	tleUeR80DaiYAaKHvj5zwRZ6P7sEunM1ttrJYtFyapRBm72nF+wwZ198fi4fNieF43ex+ZZu2Zj
-	vkXNfUYTBPtFyCbcRvrnmh3gMG/oHj/KlOawUHqzlnozcRfodoWAFPwkoVsBtaUGM8UU9nxU3dF
-	I5Lwij4fr1n2DniwIoZF3YTdnsEtg8PL0ysz
-X-Received: by 2002:ac8:588a:0:b0:467:515e:f6cb with SMTP id d75a77b69052e-467a581d8c6mr16572071cf.13.1734094934825;
-        Fri, 13 Dec 2024 05:02:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEB/qKsO2qQ9TqH35BOvKh8R+oWfZaDUjS/Hnb+D88tpTtjOAzvdxZJdhsflb5KmuYtAR8pPA==
-X-Received: by 2002:ac8:588a:0:b0:467:515e:f6cb with SMTP id d75a77b69052e-467a581d8c6mr16571681cf.13.1734094934178;
-        Fri, 13 Dec 2024 05:02:14 -0800 (PST)
-Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6ab44e881sm418927966b.26.2024.12.13.05.02.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 05:02:13 -0800 (PST)
-Message-ID: <da39ded1-8904-49a9-b58f-4d31c768bb55@oss.qualcomm.com>
-Date: Fri, 13 Dec 2024 14:02:12 +0100
+        bh=cVqA3EWWaY9TRkvPct1HGfcQOD/FwItMYVggUcSmkOw=;
+        b=hfziDn8BW+andfHI+DLNYSrv+zF23D5UWPZRMDMtq7hL49Sm3tlN5Nk5MYvxgdP//6
+         2Her4L0vKwORdpM5sHXDQ1HfaLBRpq+D8y0AvN5FB0FXY7MfHuU5+P2sOHxZHl0P70WU
+         DsT8633FZwq8Pt4RxVDWEQVgBEJFiADWFdl2++STQCEQp6oMLBCSmuA99AuR7EoXzntz
+         hMv6ksCloVgTCmCFsB+pez30H0UKt3636157UqM80J8WdZJknP/fok3ye/MQ3MxOqyPt
+         7IYVOe4MPYx8oVij7PBKHN5IcDBNh59iTvW/DNBbFIfq1tovrUe+wIUNVN4niohHlxdE
+         +kEw==
+X-Forwarded-Encrypted: i=1; AJvYcCV671GVp/wKT8PueR8oyO1ZJWVWKnYU9FZXdvdy8GzjgGE8fYv/iQwPa6d4j3XtOFRe2ZA=@vger.kernel.org, AJvYcCWIe++o9tAMlV1THEdCDXRIJNmpXxO9tjan7ofG+TwsafyOcZbzKTpXZ7JWGc5+HUdT5UmYSYe4ROQK5fz0fuZHxD7Q@vger.kernel.org, AJvYcCXo4JE4YboL1bRrJtrINJwolTVZVmkqrZJTTR4feHajrUKPP9QexUCUVjc8F1ApH1cT1lUapvmSpdAI6+F6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ1IAdCOJ/eWu4DZta9Hyr6ziE4WaRA+/unkppILusThFXiTTN
+	xLNG0InD76OQNq+neeLZNF3ZnhHKfvjdjmfr4/w2sFT7KL9FzNoN
+X-Gm-Gg: ASbGncsIJ/X4ij6Ik3TbwbpYwMuwaWYbOfmrIhdh0tnmyI8RqttTtWpsJq8nZt/xOPr
+	pE7Kkl0Dk8Po2xH1tGMqu8eRrUre8cnjel7AEc3DDK9naXkyGywcxBokH5LvRKfkxy5/NQAm7P2
+	DqZT0oLwozFetWW/dXvUMUnu6TuNKqFP6u9xP+tUW6588fQCBUSSB+E4K5AlepH3aMGXiK0Pu/w
+	WBYwvdqXnJn2u1bXY2oz7/HGM/Hk9xx7AhbNFoBVndNgsJkvLdFSnued9YHMyiioy5cjkYSlqMa
+	C1nfyTRK0UI5UG4cy1zj/GgMzqXU6Q==
+X-Google-Smtp-Source: AGHT+IG4B3IGdjHz7hPYBV8Vxy3CuZvgFizI2WTe2k4yzRL5aPRIszxm1lA/KfX+nRZknTRPM6OBvQ==
+X-Received: by 2002:a05:600c:511a:b0:434:f804:a992 with SMTP id 5b1f17b1804b1-4362aa9fe0amr18821835e9.32.1734094979206;
+        Fri, 13 Dec 2024 05:02:59 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4362559ea75sm48750535e9.19.2024.12.13.05.02.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Dec 2024 05:02:58 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 13 Dec 2024 14:02:56 +0100
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 07/13] uprobes/x86: Add support to emulate nop5
+ instruction
+Message-ID: <Z1wwgIPh7dieKSPV@krava>
+References: <20241211133403.208920-1-jolsa@kernel.org>
+ <20241211133403.208920-8-jolsa@kernel.org>
+ <20241213104536.GZ35539@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: qcom: scm: Allow QSEECOM on the asus vivobook
- s15
-To: Maud Spierings <maud_spierings@hotmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241116-add_asus_qcom_scm-v1-1-5aa2b0fb52bd@hotmail.com>
- <AM7P189MB10099F929FCE7AE7B348399DE33D2@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <AM7P189MB10099F929FCE7AE7B348399DE33D2@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 4S8593tWvixnC1I8ANCAfJ4HCXUvpOgU
-X-Proofpoint-ORIG-GUID: 4S8593tWvixnC1I8ANCAfJ4HCXUvpOgU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=845 malwarescore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130092
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241213104536.GZ35539@noisy.programming.kicks-ass.net>
 
-On 10.12.2024 8:13 PM, Maud Spierings wrote:
-> I fear this may have slipped through the cracks as it has not yet gotten a response.
+On Fri, Dec 13, 2024 at 11:45:36AM +0100, Peter Zijlstra wrote:
+> On Wed, Dec 11, 2024 at 02:33:56PM +0100, Jiri Olsa wrote:
+> > Adding support to emulate nop5 as the original uprobe instruction.
+> > 
+> > This speeds up uprobes on top of nop5 instructions:
+> > (results from benchs/run_bench_uprobes.sh)
+> > 
+> > current:
+> > 
+> >      uprobe-nop     :    3.252 ± 0.019M/s
+> >      uprobe-push    :    3.097 ± 0.002M/s
+> >      uprobe-ret     :    1.116 ± 0.001M/s
+> >  --> uprobe-nop5    :    1.115 ± 0.001M/s
+> >      uretprobe-nop  :    1.731 ± 0.016M/s
+> >      uretprobe-push :    1.673 ± 0.023M/s
+> >      uretprobe-ret  :    0.843 ± 0.009M/s
+> >  --> uretprobe-nop5 :    1.124 ± 0.001M/s
+> > 
+> > after the change:
+> > 
+> >      uprobe-nop     :    3.281 ± 0.003M/s
+> >      uprobe-push    :    3.085 ± 0.003M/s
+> >      uprobe-ret     :    1.130 ± 0.000M/s
+> >  --> uprobe-nop5    :    3.276 ± 0.007M/s
+> >      uretprobe-nop  :    1.716 ± 0.016M/s
+> >      uretprobe-push :    1.651 ± 0.017M/s
+> >      uretprobe-ret  :    0.846 ± 0.006M/s
+> >  --> uretprobe-nop5 :    3.279 ± 0.002M/s
+> > 
+> > Strangely I can see uretprobe-nop5 is now much faster compared to
+> > uretprobe-nop, while perf profiles for both are almost identical.
+> > I'm still checking on that.
+> > 
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  arch/x86/kernel/uprobes.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> > index 23e4f2821cff..cdea97f8cd39 100644
+> > --- a/arch/x86/kernel/uprobes.c
+> > +++ b/arch/x86/kernel/uprobes.c
+> > @@ -909,6 +909,11 @@ static const struct uprobe_xol_ops push_xol_ops = {
+> >  	.emulate  = push_emulate_op,
+> >  };
+> >  
+> > +static int is_nop5_insn(uprobe_opcode_t *insn)
+> > +{
+> > +	return !memcmp(insn, x86_nops[5], 5);
+> > +}
+> > +
+> >  /* Returns -ENOSYS if branch_xol_ops doesn't handle this insn */
+> >  static int branch_setup_xol_ops(struct arch_uprobe *auprobe, struct insn *insn)
+> >  {
+> > @@ -928,6 +933,8 @@ static int branch_setup_xol_ops(struct arch_uprobe *auprobe, struct insn *insn)
+> >  		break;
+> >  
+> >  	case 0x0f:
+> > +		if (is_nop5_insn((uprobe_opcode_t *) &auprobe->insn))
+> > +			goto setup;
 > 
-> or does it have to do with [1]?
+> This isn't right, this is not x86_64 specific code, and there's a bunch
+> of 32bit 5 byte nops that do not start with 0f.
 > 
-> [1]: https://lore.kernel.org/all/20241103-rework-qseecom-v1-0-1d75d4eedc1e@linaro.org/
+> Also, since you already have the insn decoded, I would suggest you
+> simply check OPCODE2(insn) == 0x1f /* NOPL */ and length == 5.
 
-I'm not sure, but I'd much prefer for that one to land instead of
-having this list grow
+ah right.. ok will change, thanks
 
-Konrad
+jirka
+
+> 
+> >  		if (insn->opcode.nbytes != 2)
+> >  			return -ENOSYS;
+> >  		/*
+> > -- 
+> > 2.47.0
+> > 
 
