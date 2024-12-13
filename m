@@ -1,140 +1,235 @@
-Return-Path: <linux-kernel+bounces-444668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DDE19F0AB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:17:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7338B9F0AB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:17:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906D1169DCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:17:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F7332832F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6F41C3C05;
-	Fri, 13 Dec 2024 11:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A17E1DB55C;
+	Fri, 13 Dec 2024 11:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQ/5j9q+"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ty1UiBt1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9896944C6C;
-	Fri, 13 Dec 2024 11:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F184D1A8F86
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734088627; cv=none; b=pNX7G3qDkCPBlZZ906XCQx5WohguApg3hMd1j3rqWfK0rGjgkVAFdu5s/F+OtLaVFETMlhUxwZtsqzBF2I8ipPFEURmQeOZBLBThO9EhmNHoq+CPCt45/U/0bBDlwqaNd+rtTtWqTjBhARpyCrg1jJgGfNUFAkFbMxyQC6aZ28w=
+	t=1734088658; cv=none; b=dHSOxCtShprjmbaeW9ZLtS4nOdzNph8lQj70RNwpEooBfZjCfIfAFhpxig4/BkraHRrCIlZN1o1wrbAZSdlLr4jUSG0ahKFPZZS319TmwTpjZD3Bh4h3dzCVxaRr/7ascaqniDJ+bMQgZTjOHi5655URNiy71Qd+a8cwXWRrNnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734088627; c=relaxed/simple;
-	bh=JEx/qZ4zixKgNWa79zI1uqk1bWFi+4d3tFuS0XiPPy0=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uoN/+9X73tVzb/sNHnHd2rRyJiMWgoyFKHgdNaSCdc+7ooDvWu2wI/DYxm1SleYaXlArgJYmRa3Cj0hD0e5WM99KpMZRmkaGmcqfyPFmisiCYPIumiriXwjqmcEiFzWzWiKsI1tloXno61Je48xmREefihhYfXeUh4R9aCR5qYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQ/5j9q+; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434b3e32e9dso17063465e9.2;
-        Fri, 13 Dec 2024 03:17:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734088624; x=1734693424; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=/cEY5Wv2VLzOhiYjn7VDO3P/7ASYT1bpc5HwHfTn/pA=;
-        b=CQ/5j9q+cm0pH1Yo0qUoWW0jv79yIJm3dvOFp9ofH3FDraFr84z2C8W2WFrNjdT5SL
-         3Ao7Wl8owqKEJNAxqES8aFQCt9nJPivTrSk8Wc0F3cd9PovFj+DlgRxY4NifSrGJjgtJ
-         rfXKyL1gCgAaYk4kXggBEov12qcNzQWEldjZPiVDYgF0tDWD3GIvJwIeVmRYhL9YWkx2
-         4kR1B4SPms1jcSXSUfX9T01rwec5Nn6zQ2KuHN7g20lovqFwBaUFXyQLEeupbXqvGwUl
-         /2bBED10Q+WCrxmzts0nKydTJXlIztFYO40ZJtbZeMTdQPj10Eji34PvTEZHEbYcGQeT
-         7p2Q==
+	s=arc-20240116; t=1734088658; c=relaxed/simple;
+	bh=K+cyT7IH7s13bj/nzoms8a0X++/cCDX95iiwNa5P4dQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bgq0r+DZjG2whouk70ykgjSTeNurUCyLlWXd9b8UA8q0Bd33tritWFZ15XxGpzlmlUYEaKBxR35iDENpbWev9JWbejHfMPgBFpjTn/AUZuIHuVQnKqM7uSG0wV7Z2GcJoGvnZifkBrNwlFVWFERYunpa4Skl+Mz331dC6VLJJ4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ty1UiBt1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9t23h006142
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:17:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	22DdllJUx8c525feb9BABGaXYzEDkdsU1L5H+dtpqJk=; b=Ty1UiBt1pMVbIqjG
+	uTAczAQNfUqNz+JS0mmWcqXkmGhu8NzcOlWEurDv0ylOSLDm/UrVDeyzgmI+6Hz6
+	M/sYoolyV8482tKuzx2LyVF8PQP/ENexWPdU2yy0ygdmifYOW/Lx0Qg7sfx95DwM
+	tNdNwbt2CgIM4xaJcxBYyu0vNop0remU9UrazB+pFTSFSSep51GR5SD4R7EqxSE3
+	t9lu62faWanIbRuZdF32t/m1q8ZwXXHPw0RCCa6g6tUgg/8y2zc6zHFpVV6krvkJ
+	4g2uiP0ccT2+fpsedkZ4HdgMW/z1il9tQ+yb3xTzzM/pvZ2x+LrPLbSkIFKN73Uz
+	kM6xfA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43g6xusx7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:17:34 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d8e7016630so4034746d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:17:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734088624; x=1734693424;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/cEY5Wv2VLzOhiYjn7VDO3P/7ASYT1bpc5HwHfTn/pA=;
-        b=H4xnBKA6HS1zQkJVARLjy9h/cGpNTW3ZnSL+bPCtlCQMKlkxDFSdVBREDRkQANQYl/
-         yN/QNLfQcAFnQksW8mh1aV8dQRVOyRUYRq5zJIopaXqtprRjQWGq/xSqXe1F/0zrvSLU
-         eZmtFyu2IhKijszh+Da8ScJTLXzPl66ULzYSYaIEkWDUYTapMj07AZnh5CbPcpPhkTg1
-         N/R+dYMd4crCjkxcpPr+ngGIfnTKawqVP/z5dnc1j41mSwXz1YBI4tWCy/BuUaAtzybF
-         XQKSx+ttuc0aZNOdwgZUy1pLeEzWQEuRjaKZ/EIHRjNHudiSbHS/21v5jg0O7Q7JpaVE
-         4zRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVn0/NhLT3EngqVMvlu0bWahLru/6bk03CZUAzUAtfLLmU5W4xH9hYvgMZzgspOtTE3h6A8Ys29qqR0@vger.kernel.org, AJvYcCWEvPrSlUh3u399nLroC6zJtPBiaBXiz+Fqnupf8I0cnd+o8EmgteGltVCoSRD5V3VFmmyY0VTXikYO@vger.kernel.org, AJvYcCXdRAvGZwIpW5p+KcqucXRh9W2XUXLP5ijDPVjzpxuAtNprTJJG5mDjlLlxwwXBBwOn65h7m45Ek7d/cN0L@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP8dgy/eMERf44j88kgCiJl2dLQhaLUmQOWFvE7Wnpb425skZb
-	tebUEy0vZoiUeH4QW/1auT4FfI+ZY/CqpIEp1O/qaySRL/1BuLMT5bbpiQ==
-X-Gm-Gg: ASbGncvR+LQjuV53pWCL0hIdH0ylGC7f6au8KN7j/L5hBXy6VZIHZ+s8zVZXVW3qIOo
-	BaSw10zCAnRF2d4PtmshiwrwHBs9AGQzHhgYMnta4x8Gi4D+csnqpKGAMHAccV44FO8JTdBH8Kr
-	h9LiEo6VxhRKoGm8biweSDi9xAR/zt4Ni7hAdD5ZxaCDvPBG3xHiSlHeVLdpADvmxorC/RGvcqt
-	Ae7G7/ij+m1EFER4liEvXWTCgj18abjiVEgBOOYomabVgIY8uit290pe0XBuqOIx5UbsoLG0DnJ
-	BeiNTOjkCd1J
-X-Google-Smtp-Source: AGHT+IHhsHWy3PdvZo5ZPuzpgQ9ziiyM9Xp0QpEzv7d1NqYqUJosuh8WE5XAOjHAW3GEMEPhfUUMWA==
-X-Received: by 2002:a05:600c:1c07:b0:434:fff1:1ade with SMTP id 5b1f17b1804b1-4362aa27ee6mr18031455e9.13.1734088623538;
-        Fri, 13 Dec 2024 03:17:03 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514bf9sm6929690f8f.80.2024.12.13.03.17.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 03:17:03 -0800 (PST)
-Message-ID: <675c17af.df0a0220.1ed8f5.5215@mx.google.com>
-X-Google-Original-Message-ID: <Z1wXq2W4agQ-Qinn@Ansuel-XPS.>
-Date: Fri, 13 Dec 2024 12:16:59 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH 1/2] dt-bindings: clock: add ID for eMMC for EN7581
-References: <20241211112253.27905-1-ansuelsmth@gmail.com>
- <bzdhbuxr6zyln2ecxnamfzlblcigdfe7r4vvwcggf35kgyozk6@it2sm6fpypa5>
+        d=1e100.net; s=20230601; t=1734088654; x=1734693454;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=22DdllJUx8c525feb9BABGaXYzEDkdsU1L5H+dtpqJk=;
+        b=QavgjzSny0tvhtQLx7wxGQyZV8Ab8ObeFLGKtyOkr5Zy9vTfKN4o2uFudHzfqbtPUS
+         UdabecMMalt9jBxSZfUq8FrkYrjPNBdxqj5wfXTe5hILDd8HvfRJoNmC89SKmBR/JR0G
+         7YeS4u3Ir/gk8++DVGIPKd6ekQLrZH+O/3/UgSgSG5IweXdzLhzsiJLKQ6BJ2Dm5kLe2
+         fAOwziN6Vsia6PK+tOyiDzBiXv94wnGC2yv9ES6M4V9l8qlnAcXp1zP5rjWXhT2+zkhI
+         PXWnvdKTirTK4S0ZOWtp2isNWD2fC+A6CEWvL1gO59THZTmgnPrZQFDcINUU3PDBLTSk
+         Xhsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ56KImsd4/pUWsm3bHexLekc7V8I1WFnedT8i8Lm/YPDNpkYa4K0G3cEkE6ERqFPHJ+eZ6kFoBmUXE/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkUp1UKuqJu1vul/J/PyGuIQv/hCrnqsH2U37Yi+AY11hNvUGm
+	3csA2I0JP5CWBhylfqFTH49cSuoV3iMA+YEitesURQ9tyLddnpDVAG+GdkZOc38YEjTUN1GOip0
+	awXrnn0mOf6X7XwT1EpFdh9wB26ljn4ut9GqYSEVKhCRtRxsWnsVIZ5MheNksPmU=
+X-Gm-Gg: ASbGncsRHmbps4ZQwe3/3WkZSnmLyFAoUX6vPNx0Jj0MFA87gFe569BJb5qVcKz4iOZ
+	lI153kyTK+J2Q0uS0kQ9LOyHDwME7HjADLj4hKZXt0Ozn0RGGD/00m+QyJ9druUpOBvjzQAiqFd
+	UUAOZ6TB7KYJHjEI0shoR12gg5tsiHhNn/CFyED3KORPy6DcylOcj6MffZemqgQIMed3n5ttLG6
+	nZJFspW7mY8Rsa/SpIPc5fQqN3eF47f4m81pKT4o0+ZZ0b7wWC88/chxaukEhI3J48FU1Z3RHch
+	/JMx5Q2kzOrNigT7Yk5brnorGtNREqAfa60X
+X-Received: by 2002:a05:620a:1a95:b0:7b6:d089:2749 with SMTP id af79cd13be357-7b6fbf0713fmr117971885a.7.1734088654035;
+        Fri, 13 Dec 2024 03:17:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGD+GDmKeinZ6iYtcXL0S/mpK+8aIUpXK3aOY+mNBKrJvpqSkt1hyGsBzayOsJI+bMandu74A==
+X-Received: by 2002:a05:620a:1a95:b0:7b6:d089:2749 with SMTP id af79cd13be357-7b6fbf0713fmr117969185a.7.1734088653665;
+        Fri, 13 Dec 2024 03:17:33 -0800 (PST)
+Received: from [192.168.58.241] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aab88d930a9sm27933266b.95.2024.12.13.03.17.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Dec 2024 03:17:33 -0800 (PST)
+Message-ID: <f38e0aa3-e10e-4e5a-923a-76686baf2482@oss.qualcomm.com>
+Date: Fri, 13 Dec 2024 12:17:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bzdhbuxr6zyln2ecxnamfzlblcigdfe7r4vvwcggf35kgyozk6@it2sm6fpypa5>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 4/5] arm64: dts: qcom: sc7280: Add support for camss
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+        todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
+        konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+        cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
+        will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@quicinc.com,
+        Luca Weiss <luca.weiss@fairphone.com>
+References: <20241206191900.2545069-1-quic_vikramsa@quicinc.com>
+ <20241206191900.2545069-5-quic_vikramsa@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241206191900.2545069-5-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: SwO6cJMmuvgxKKzY1_U2hxCje9fPBP29
+X-Proofpoint-GUID: SwO6cJMmuvgxKKzY1_U2hxCje9fPBP29
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 clxscore=1015 malwarescore=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412130078
 
-On Fri, Dec 13, 2024 at 12:01:40PM +0100, Krzysztof Kozlowski wrote:
-> On Wed, Dec 11, 2024 at 12:22:37PM +0100, Christian Marangi wrote:
-> > Add ID for eMMC for EN7581. This is to control clock selection of eMMC
-> > between 200MHz and 150MHz.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  include/dt-bindings/clock/en7523-clk.h | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
-> > index 717d23a5e5ae..78d16068228a 100644
-> > --- a/include/dt-bindings/clock/en7523-clk.h
-> > +++ b/include/dt-bindings/clock/en7523-clk.h
-> > @@ -11,7 +11,8 @@
-> >  #define EN7523_CLK_NPU		5
-> >  #define EN7523_CLK_CRYPTO	6
-> >  #define EN7523_CLK_PCIE		7
-> > +#define EN7581_CLK_EMMC		8
-> >  
-> > -#define EN7523_NUM_CLOCKS	8
-> > +#define EN7523_NUM_CLOCKS	9
+On 6.12.2024 8:18 PM, Vikram Sharma wrote:
+> Add changes to support the camera subsystem on the SC7280.
 > 
-> This cannot change.
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Tested-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 178 +++++++++++++++++++++++++++
+>  1 file changed, 178 insertions(+)
 > 
-> If this changes, then it is not a binding and first drop it in separate
-> patch.
-> 
-> Best regards,
-> Krzysztof
-> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> index 55db1c83ef55..afe7113df4af 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+> @@ -4426,6 +4426,184 @@ cci1_i2c1: i2c-bus@1 {
+>  			};
+>  		};
+>  
+> +		camss: isp@acb3000 {
+> +			compatible = "qcom,sc7280-camss";
+> +
+> +			reg = <0x0 0x0acb3000 0x0 0x1000>,
+> +			      <0x0 0x0acba000 0x0 0x1000>,
+> +			      <0x0 0x0acc1000 0x0 0x1000>,
+> +			      <0x0 0x0acc8000 0x0 0x1000>,
+> +			      <0x0 0x0accf000 0x0 0x1000>,
+> +			      <0x0 0x0ace0000 0x0 0x2000>,
+> +			      <0x0 0x0ace2000 0x0 0x2000>,
+> +			      <0x0 0x0ace4000 0x0 0x2000>,
+> +			      <0x0 0x0ace6000 0x0 0x2000>,
+> +			      <0x0 0x0ace8000 0x0 0x2000>,
+> +			      <0x0 0x0acaf000 0x0 0x4000>,
+> +			      <0x0 0x0acb6000 0x0 0x4000>,
+> +			      <0x0 0x0acbd000 0x0 0x4000>,
+> +			      <0x0 0x0acc4000 0x0 0x4000>,
+> +			      <0x0 0x0accb000 0x0 0x4000>;
+> +			reg-names = "csid0",
+> +				    "csid1",
+> +				    "csid2",
+> +				    "csid_lite0",
+> +				    "csid_lite1",
+> +				    "csiphy0",
+> +				    "csiphy1",
+> +				    "csiphy2",
+> +				    "csiphy3",
+> +				    "csiphy4",
+> +				    "vfe0",
+> +				    "vfe1",
+> +				    "vfe2",
+> +				    "vfe_lite0",
+> +				    "vfe_lite1";
+> +
+> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
+> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
+> +				 <&camcc CAM_CC_CSIPHY0_CLK>,
+> +				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
+> +				 <&camcc CAM_CC_CSIPHY1_CLK>,
+> +				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
+> +				 <&camcc CAM_CC_CSIPHY2_CLK>,
+> +				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
+> +				 <&camcc CAM_CC_CSIPHY3_CLK>,
+> +				 <&camcc CAM_CC_CSI3PHYTIMER_CLK>,
+> +				 <&camcc CAM_CC_CSIPHY4_CLK>,
+> +				 <&camcc CAM_CC_CSI4PHYTIMER_CLK>,
+> +				 <&gcc GCC_CAMERA_AHB_CLK>,
 
-Hi Krzysztof,
+This one's permanently enabled, you can drop it
 
-maybe I can introduce EN7581_NUM_CLOCKS with the correct number? Just to
-give more info about this... It's not clear to me why NUM_CLOCKS is
-needed considering is only needed in clk-en7523.c to probe the driver
-and allock memory...
+> +				 <&gcc GCC_CAMERA_HF_AXI_CLK>,
 
-Anyway is a different define OK for you?
+Is GCC_CAMERA_SF_AXI_CLK required too?
 
--- 
-	Ansuel
+> +				 <&camcc CAM_CC_ICP_AHB_CLK>,
+> +				 <&camcc CAM_CC_IFE_0_CLK>,
+> +				 <&camcc CAM_CC_IFE_0_AXI_CLK>,
+> +				 <&camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
+> +				 <&camcc CAM_CC_IFE_0_CSID_CLK>,
+> +				 <&camcc CAM_CC_IFE_1_CLK>,
+> +				 <&camcc CAM_CC_IFE_1_AXI_CLK>,
+> +				 <&camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
+> +				 <&camcc CAM_CC_IFE_1_CSID_CLK>,
+> +				 <&camcc CAM_CC_IFE_2_CLK>,
+> +				 <&camcc CAM_CC_IFE_2_AXI_CLK>,
+> +				 <&camcc CAM_CC_IFE_2_CPHY_RX_CLK>,
+> +				 <&camcc CAM_CC_IFE_2_CSID_CLK>,
+> +				 <&camcc CAM_CC_IFE_LITE_0_CLK>,
+> +				 <&camcc CAM_CC_IFE_LITE_0_CPHY_RX_CLK>,
+> +				 <&camcc CAM_CC_IFE_LITE_0_CSID_CLK>,
+> +				 <&camcc CAM_CC_IFE_LITE_1_CLK>,
+> +				 <&camcc CAM_CC_IFE_LITE_1_CPHY_RX_CLK>,
+> +				 <&camcc CAM_CC_IFE_LITE_1_CSID_CLK>;
+> +			clock-names = "camnoc_axi",
+> +				      "cpas_ahb",
+> +				      "csiphy0",
+> +				      "csiphy0_timer",
+> +				      "csiphy1",
+> +				      "csiphy1_timer",
+> +				      "csiphy2",
+> +				      "csiphy2_timer",
+> +				      "csiphy3",
+> +				      "csiphy3_timer",
+> +				      "csiphy4",
+> +				      "csiphy4_timer",
+> +				      "gcc_camera_ahb",
+> +				      "gcc_cam_hf_axi",
+
+No other binding calls it that, please use `gcc_axi_hf` for
+consistency
+
+Other than that, looks good
+
+Konrad
 
