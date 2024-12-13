@@ -1,103 +1,87 @@
-Return-Path: <linux-kernel+bounces-445409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBE79F15EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:34:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9AF188C95B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:34:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12411EBA07;
-	Fri, 13 Dec 2024 19:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SiXy2iQh"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3EC9F15F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:34:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357571E0B75;
-	Fri, 13 Dec 2024 19:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734118465; cv=none; b=dATa1cGHOUGqrHm30Exu8aENybseMISRDY2+GMWJnC2wLGrP3U4Blrvbt6o/126l9+hvgZ5wR/iBnnyucUfJ6nSbolPBemdIs9W3z+40D2hnslucRYHaiu+asKlSdDMiXs+0Cvm6ANjggeuoY7sJZkdDE/AsCXelIKefGXiTil8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734118465; c=relaxed/simple;
-	bh=WiLw78Fu2MfdYXFWvpfnuLS6ygLLJwiG366txN7q1GI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UAvNcKNYyseIx5DnFt7xmUgBqSAooPFoOCOPEETX5t0H6FIOLUAgwe8EnILLX+3t4B5aHp1j+eZbV+AQQ+iOa8wy3XfaB6hmgifJxH2xYMUdkHBtzEEZVhGXAyMIKawHajsaavL3zNNvqVJsAc/YYoe99BpbHQQNgKeE7W089/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SiXy2iQh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734118461;
-	bh=WiLw78Fu2MfdYXFWvpfnuLS6ygLLJwiG366txN7q1GI=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SiXy2iQh7fbVutVuDZxfiiyvsEjTDHyiZSY7kzwGfSs4bNLVgoZU2DyJxMXQOFcmG
-	 pYiZHhSDqN3e1unCuWSiR7SNzj8AWthH8EeYskZX05kOxosn5bxBTVugh5qDHpI7aq
-	 VPUUUzkxs3IEA3vmhi6UlaX31LgqOaCmNP0+fDOfN+lSN64L6NVu6nJD/faU1hXC1v
-	 sd05tmf/o1WfGkx9UQAgj1iWiPttMbpW7hZ2J9mTKbdB98tSM4PEf6D4Id0tyJRtXt
-	 bm2hCW53mkvbzZ8W1+awsxvcuuO/DFdnFRerVjN62EPzO+6g7pMUi55AT2iZj9+czT
-	 A4f0U2NUSSrWQ==
-Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::7a9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DF582832DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:34:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F331EC4FF;
+	Fri, 13 Dec 2024 19:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQ3Kyszb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7250317E37EB;
-	Fri, 13 Dec 2024 20:34:19 +0100 (CET)
-Message-ID: <e8f00be35f9859b5112793a42fe13191eef050cd.camel@collabora.com>
-Subject: Re: [PATCH v1 1/5] media: chips-media: wave5: Fix to display gray
- color on screen
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: "Jackson.lee" <jackson.lee@chipsnmedia.com>, mchehab@kernel.org, 
-	hverkuil-cisco@xs4all.nl, sebastian.fricke@collabora.com, 
-	bob.beckett@collabora.com, dafna.hirschfeld@collabora.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lafley.kim@chipsnmedia.com, b-brnich@ti.com, hverkuil@xs4all.nl, 
-	nas.chung@chipsnmedia.com
-Date: Fri, 13 Dec 2024 14:34:17 -0500
-In-Reply-To: <20241209053654.52-2-jackson.lee@chipsnmedia.com>
-References: <20241209053654.52-1-jackson.lee@chipsnmedia.com>
-	 <20241209053654.52-2-jackson.lee@chipsnmedia.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1C41E0B75;
+	Fri, 13 Dec 2024 19:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734118471; cv=none; b=I08yJUpWn9iMrqbcl2/v21XRThxyO43SdCq1pYTSDfZ9iWgAcB8zkd/4dsSSre6JnxTYJi18OU05TWhsdlYqtw1sK7vmtN5UZiDKHRAfog9g5SAmpLOpy3coQIghBEL0/1O56pqeY44NML3kSF0yM6ZVKqRw7/wEldQL0utUjh8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734118471; c=relaxed/simple;
+	bh=uazp8q3I6dRTgBXIMOo6n/VQO98UXytUK4cybDD7kcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKytqFj2vVQGJ4Xw/AFoYtBO2WvuLXHgVNLfz3y2Sxf0GwVqobR9+9bNwhXu+vskv4LmUd9hR8Qk34iN9RhWIsbUGvWdK9D+Y00oZPE3wjWXkcNwPxUc7bMwiu62Z9/Teb8N6iYzzGiHrXgrJNqqU/MY8eGmRTmFhctsedxXggw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQ3Kyszb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6021C4CED0;
+	Fri, 13 Dec 2024 19:34:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734118471;
+	bh=uazp8q3I6dRTgBXIMOo6n/VQO98UXytUK4cybDD7kcc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EQ3Kyszb66u4VFirEw7paQAkGi12s8Z/lWCax6qsas82QKyma0JQgYxzaVjfdEQmG
+	 agrIgdhjPbUICT9CEHskftVKB4fHC9GepalJTv4d3zpc0JzCW92cy3MX+fwrEq0ckB
+	 f7hA4Mb/d0yrx1kMiFi6LYwaShsD0nBI3dfZkTnkUZnEfNtopE7hiqIF2btlfFwqWD
+	 9B29StxKyNIMtCzmJLkc1QkdTIHIxnN1Dg//14iIbBzIsWGf0Fnem8jdZd4NNTwjY3
+	 fpfw9E/oP25OpzogBX0TebFhb8Panua8wC886MLDP/CCp5gDeH4K8rKTPiFC2rfX6I
+	 H38ozCO7OpUnA==
+Date: Fri, 13 Dec 2024 19:34:26 +0000
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Atul Gupta <atul.gupta@chelsio.com>,
+	Ayush Sawal <ayush.sawal@chelsio.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexander Zubkov <green@qrator.net>,
+	Michael Werner <werner@chelsio.com>,
+	Casey Leedom <leedom@chelsio.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH net] chelsio/chtls: prevent potential integer overflow on
+ 32bit
+Message-ID: <20241213193426.GE561418@kernel.org>
+References: <c6bfb23c-2db2-4e1b-b8ab-ba3925c82ef5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6bfb23c-2db2-4e1b-b8ab-ba3925c82ef5@stanley.mountain>
 
-Le lundi 09 décembre 2024 à 14:36 +0900, Jackson.lee a écrit :
-> When a decoder instance is created, W5_CMD_ERR_CONCEAL register should be
-> initialized to 0. If not set to 0, gray color can occasionally be displayed
-> on screen while decoding.
+On Fri, Dec 13, 2024 at 12:47:27PM +0300, Dan Carpenter wrote:
+> The "gl->tot_len" variable is controlled by the user.  It comes from
+> process_responses().  On 32bit systems, the "gl->tot_len +
+> sizeof(struct cpl_pass_accept_req) + sizeof(struct rss_header)" addition
+> could have an integer wrapping bug.  Use size_add() to prevent this.
 > 
-> Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
-> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
-
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-
+> Fixes: a08943947873 ("crypto: chtls - Register chtls with net tls")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/media/platform/chips-media/wave5/wave5-hw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/chips-media/wave5/wave5-hw.c b/drivers/media/platform/chips-media/wave5/wave5-hw.c
-> index c8a905994109..d94cf84c3ee5 100644
-> --- a/drivers/media/platform/chips-media/wave5/wave5-hw.c
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-hw.c
-> @@ -585,7 +585,7 @@ int wave5_vpu_build_up_dec_param(struct vpu_instance *inst,
->  		vpu_write_reg(inst->dev, W5_CMD_NUM_CQ_DEPTH_M1,
->  			      WAVE521_COMMAND_QUEUE_DEPTH - 1);
->  	}
-> -
-> +	vpu_write_reg(inst->dev, W5_CMD_ERR_CONCEAL, 0);
->  	ret = send_firmware_command(inst, W5_CREATE_INSTANCE, true, NULL, NULL);
->  	if (ret) {
->  		wave5_vdi_free_dma_memory(vpu_dev, &p_dec_info->vb_work);
+> I fixed a similar bug earlier:
+> https://lore.kernel.org/all/86b404e1-4a75-4a35-a34e-e3054fa554c7@stanley.mountain
 
+Thanks Dan,
+
+Reviewed-by: Simon Horman <horms@kernel.org>
 
