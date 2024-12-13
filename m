@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-444350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A660F9F0528
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:05:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9353E1888A2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:05:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A47618F2CF;
-	Fri, 13 Dec 2024 07:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i8N96T8G"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0D09F052B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:06:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82781372;
-	Fri, 13 Dec 2024 07:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BC7428208E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:06:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972F918F2DB;
+	Fri, 13 Dec 2024 07:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWHuvmh1"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4275C1372;
+	Fri, 13 Dec 2024 07:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734073541; cv=none; b=IDsaJdQJVj7Lv1BrD1xN+wArNKANLd9iKfVZkEVjW3RLOMgRWM5ojQ342SkcTK/TleqSk+Ffgw8KO3SaGCbmgQM8SqaTZXTOHQcOlKAwhBwUQcI04RFrXD1/C8MFM6mTyb+ktnO1NIpZhvBks3wHwU8xAb66BmV1EFlLU8L83kc=
+	t=1734073580; cv=none; b=BthLqh2yXwYO/yehbwAAen7XrVjEMzTntbzMM/uazQk2WYnuR+ubsSp5DeHDSdiKFjleXgVJITI2kD+d86CFBCeTBUfy4UxO8pOXVOv7rl1sbZl/LsVBlc9xYGiV8R1e8zYPrT/CVC7sH2vITGAA2mOBgZ61lVjB4we4d3f6iww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734073541; c=relaxed/simple;
-	bh=ZvYtqX+eSokpKmEijsquiwbTJ1FCI5gZjbWLwPE5AaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SIAxE5rTttfVOheGlDZqunFmpv/gi0pqWuYteSpHn9u9n//CCOHnjgNdeDqzN5jC7kj2ambVGJr2lDN8HgyBrONGldJmnlcxHb/s1XpcUQenlVBp/X7KW+tdvKrKv7zJvqyi7n8XZ+rJetNmTueAGBeOSc8/WuGqy53S9pvh8WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i8N96T8G; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BCKWvAv008001;
-	Fri, 13 Dec 2024 07:05:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uwopbJqHPFxk70TkKRIqomYWEn1n7k+gonzorpybkBQ=; b=i8N96T8Gjl6zsIko
-	g/jDK+e9jqzw2u4PMZEgjj7syIjBoValPewA7ddWZumxeFX09C2EYcsTXmB7LdEZ
-	xWw+wZQuGeuBn6mt5Eubg2sUgGMECSh+vhE/H7tpPTB0oMH+qeZOUxbRPiZNGhLK
-	VRo0QzoUEJoXwYws9NZkKIqaA5xMpharxCCw2V1T3Hr8lPgXHx9rgKfkN/QgkHFs
-	SFgycN1cqmeW+ohrh6PVBagFULh0nldp1809qN0T7jArK6f4l/PRRp9KFZzGtSMg
-	sxpLCMzbNfrFiBW10EyD5BtV9uz02DYknAG5LuSIzXnWUIxhOHJULjRV5UGne+f0
-	8tfdGQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43g6xus6c0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 07:05:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD75Vst026396
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 07:05:31 GMT
-Received: from [10.231.216.175] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
- 2024 23:05:26 -0800
-Message-ID: <db516034-81de-4e41-932d-c1bb26e1c55b@quicinc.com>
-Date: Fri, 13 Dec 2024 15:05:24 +0800
+	s=arc-20240116; t=1734073580; c=relaxed/simple;
+	bh=9XnvVYl+YZ24uJZB1nNo0oLCc3tEoJXLzFdrQlqruV8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W1gIoYbqhR7Ii+Fb0jt/pGLZOvnXJwSFgjd5rGDT2xESSeM3mNc1ygaVEcBkY2X7U/ovUyvfTmS/uLNzWhPo7BwdHp0zyw6NWqSqEXMjuAhmAVFNY2Sh55U05k4VdTIZNAnNBnEGlJhHVXND120NHH2CVo/br+sRN13yXmzWkRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWHuvmh1; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa68d0b9e7bso263244766b.3;
+        Thu, 12 Dec 2024 23:06:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734073575; x=1734678375; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zxrQwrMDRX39hUvqMvsuz8UTw88tsq0nhYKLS4FpEXc=;
+        b=GWHuvmh1RUdZHF1XGUijnMqCz0CupU/mH/bHmbUSdXx3plUIShWnIvtKIhWg06l/3p
+         4jjOE8QkB12IDLY5IFrMiWnN36r1r2VCHm0dMJJooKKk8rFW+VSmln8RB4nipD07US+k
+         KxZjBjbSgH9RBlvrn6ZNiP2yDBrqOaSzKpy47mYpKqs7o2+g3mNBrw6kVU36WrZe61ww
+         rCuiZ2qGJGP4tHRMJn3HYPys4lXbPlfX8SzW8pREYSxvE4Gp7270dfgOQ9H3xHz5/fpS
+         BPIUGa9vbAjnvnEuBUuJndRqUOraPN9JJeAAeCIDf6QfVJFFvErYmCqARyY0g8VUyy3C
+         QOAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734073575; x=1734678375;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zxrQwrMDRX39hUvqMvsuz8UTw88tsq0nhYKLS4FpEXc=;
+        b=Vhp3PLeRzJYTB0YVutNkRAjYV/FDaMBN4P3gTmyPBDj5BGxxADO10PBSQT/BH+X5XE
+         123mJpl6T5sNV4RJmFXH17zaeiUqYUnvQvmJHB+XEoSypha9FbQfmXkwqSvG1xMwqZv3
+         yVeY47UsFA4wLnstMS7s3+PIGvmVV4QfacA14tZJDuI9oYl6JWSt3IhJdz4JHtn/3wJs
+         Tb+avWJ9sjPP3D7jpUIQE4gDx7GG98cz+N9ji7orU1QuLU+F8ZIj3MqR76FgAzPWUKsJ
+         5Hyq8/PnBuc0zRBeevXChLEau6sc0BZYk5Ucwe4otjPwVfrWxtRdVBCsoXpTLcQdsz19
+         wg6w==
+X-Forwarded-Encrypted: i=1; AJvYcCU0NSTGBUksVKxgtaBZLvl+S9PiOD1x9HFvu/nlw5y/OsO6frEV4EDrXOs2uueDXDOpLUf+@vger.kernel.org, AJvYcCVQAiUBT6xkDcPdDhXEph+6bbZ6+uwsSn2fp2MJKSKgPkrLwG0wvzbjTBeV5duFIM7680P8Eid+ffNs@vger.kernel.org, AJvYcCVo60E2Lj8oD73OwEZkIhYSOWbbC0B/Hx7mF/t9j0an8eJgwML2k6s2baI8PdYG9DPB4bEEuq2QnqNNGlMQ@vger.kernel.org, AJvYcCXtctm6F//BoL9A04NE5tK+poqKLpwzZIDfinqerYprNH3Yu7zRwW0mEqtdjpuvTKrWzvsuCUQEpfD0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQjrNwzos72EJfJDSe4ZWEx0te7g1fYQBX81f0WFLp53SCA0WI
+	LtQBaGyz115I7Pmo/tieU+B6J8N33rcqPcZAFpL5UKWXk6N7yzuH
+X-Gm-Gg: ASbGnctXwUdW2VnoaBtTfUCyeZMcNgnV5myvBQu2jKbyuKHRW4KmDyMEKVX3/aZ20LC
+	uZ78bG/v8SIMwBS2H45C36S0cw8H80fCzIGIn4NrPDyNSl3vbKusdPxY29Of973qZWUJhdICeJC
+	9fhXBHtkUdH2gxoT5X7asI699niF0dFLlYhvHtBcVkXKCDkhIwyVuZrPQA42JkpWyFRM0vGFV81
+	7CTJMj1cEkmhtj/+B9QUzrBNbq4J0mcXaNvUXXj/cLpdoy/SHahEdnbTsPGyNQWroVj4umueAXr
+	iBc0IKsdu5k228FC2ena68r0p9wKK2OExQsV0AY0m06vYF8EMotpOTzajqdFZr+FMnMs6Em/Csi
+	BawChY2cuTIAE
+X-Google-Smtp-Source: AGHT+IHFJ+kRGpSorLtHc8TbJrTe4EAI6jr1TsoG5rRi6v2qDv0r5gf2yVynewdjhGrIVYCgXoTJJg==
+X-Received: by 2002:a17:906:6a04:b0:aa6:800a:1295 with SMTP id a640c23a62f3a-aab778d9d9cmr155786966b.5.1734073575257;
+        Thu, 12 Dec 2024 23:06:15 -0800 (PST)
+Received: from ?IPV6:2003:df:bf0d:b400:9583:b351:67da:b15e? (p200300dfbf0db4009583b35167dab15e.dip0.t-ipconnect.de. [2003:df:bf0d:b400:9583:b351:67da:b15e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa685b6cf77sm687526266b.83.2024.12.12.23.06.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Dec 2024 23:06:14 -0800 (PST)
+Message-ID: <00dd07c9-21a6-4515-9b62-351c6aff2d1b@gmail.com>
+Date: Fri, 13 Dec 2024 08:06:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,212 +81,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] Bluetooth: qca: Update firmware-name to support
- board specific nvm
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Marcel Holtmann
-	<marcel@holtmann.org>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        Balakrishna Godavarthi
-	<quic_bgodavar@quicinc.com>,
-        Rocky Liao <quic_rjliao@quicinc.com>
-CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_jiaymao@quicinc.com>, <quic_shuaz@quicinc.com>,
-        <quic_zijuhu@quicinc.com>, <quic_mohamull@quicinc.com>
-References: <20241212150232.3823088-1-quic_chejiang@quicinc.com>
- <20241212150232.3823088-3-quic_chejiang@quicinc.com>
- <94eae703-ed9e-4f57-9786-99db7aaa07d1@oss.qualcomm.com>
-Content-Language: en-US
-From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-In-Reply-To: <94eae703-ed9e-4f57-9786-99db7aaa07d1@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v6 00/16] Device / Driver PCI / Platform Rust abstractions
+To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org,
+ rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
+ a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+ fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+ ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+ daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com,
+ j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com,
+ paulmck@kernel.org
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org, rcu@vger.kernel.org
+References: <20241212163357.35934-1-dakr@kernel.org>
+Content-Language: de-AT-frami, en-US
+From: Dirk Behme <dirk.behme@gmail.com>
+In-Reply-To: <20241212163357.35934-1-dakr@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: QRsW2BO7fFcVmjWYAMWB3m5L6U1kYXMX
-X-Proofpoint-GUID: QRsW2BO7fFcVmjWYAMWB3m5L6U1kYXMX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 clxscore=1015 malwarescore=0 adultscore=0 mlxlogscore=999
- suspectscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130048
 
-Hi Konrad,
+On 12.12.24 17:33, Danilo Krummrich wrote:
+> This patch series implements the necessary Rust abstractions to implement
+> device drivers in Rust.
+> 
+> This includes some basic generalizations for driver registration, handling of ID
+> tables, MMIO operations and device resource handling.
+> 
+> Those generalizations are used to implement device driver support for two
+> busses, the PCI and platform bus (with OF IDs) in order to provide some evidence
+> that the generalizations work as intended.
+> 
+> The patch series also includes two patches adding two driver samples, one PCI
+> driver and one platform driver.
+> 
+> The PCI bits are motivated by the Nova driver project [1], but are used by at
+> least one more OOT driver (rnvme [2]).
+> 
+> The platform bits, besides adding some more evidence to the base abstractions,
+> are required by a few more OOT drivers aiming at going upstream, i.e. rvkms [3],
+> cpufreq-dt [4], asahi [5] and the i2c work from Fabien [6].
+> 
+> The patches of this series can also be [7], [8] and [9].
 
-On 12/13/2024 8:17 AM, Konrad Dybcio wrote:
-> On 12.12.2024 4:02 PM, Cheng Jiang wrote:
->> Different connectivity boards may be attached to the same platform. For
->> example, QCA6698-based boards can support either a two-antenna or
->> three-antenna solution, both of which work on the sa8775p-ride platform.
->> Due to differences in connectivity boards and variations in RF
->> performance from different foundries, different NVM configurations are
->> used based on the board ID.
->>
->> Therefore, in the firmware-name property, if the NVM file has an
->> extension, the NVM file will be used. Otherwise, the system will first
->> try the .bNN (board ID) file, and if that fails, it will fall back to
->> the .bin file.
->>
->> Possible configurations:
->> firmware-name = "QCA6698/hpnv21";
->> firmware-name = "QCA6698/hpnv21.bin";
-> 
-> I think we should agree on one and then do some magic to look up
-> the other variants.
-> 
-These two possible configurations in DT to specific the NVM file. 
+With v6.13-rc2 and Fabien's regmap/regulator/I2C on top I gave it a
+try on x86 with qemu. Additionally cross compiled for arm64 and will
+try it on real hardware once I have it available. But previous
+versions of this series have been fine on that, already. No issues
+observed for running the samples and for the examples/KUnit. So:
 
-In the existing driver implementation, the firmware-name will specify a 
-exactly nvm file. Driver will loaded it directory. But on some platform, 
-we may attach different board, then need load the board-specific nvm. 
- 
-We assume if the nvm file has an extension, user should know the exactly 
-connectivity board to attach to the platform, then the exactly nvm file 
-will be loaded. This keeps back compatible.
- 
-If user think different connectivity boards will be attached to the 
-platform, the nvm should depends on the board id. Then just leave the 
-extension empty. Driver will append the board id info as extension. 
+Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
 
->>
->> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->> ---
->>  drivers/bluetooth/btqca.c | 112 ++++++++++++++++++++++++++++----------
->>  1 file changed, 84 insertions(+), 28 deletions(-)
->>
->> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
->> index dfbbac922..4842f4335 100644
->> --- a/drivers/bluetooth/btqca.c
->> +++ b/drivers/bluetooth/btqca.c
->> @@ -272,6 +272,38 @@ int qca_send_pre_shutdown_cmd(struct hci_dev *hdev)
->>  }
->>  EXPORT_SYMBOL_GPL(qca_send_pre_shutdown_cmd);
->>  
->> +static bool qca_filename_has_extension(const char *filename)
->> +{
->> +	const char *suffix;
->> +
->> +	suffix = strrchr(filename, '.');
->> +	if (suffix && suffix != filename && *(suffix + 1) != '\0' && strchr(suffix, '/') == NULL)
->> +		return true;
->> +	else
->> +		return false;
-> 
-> How about:
-> 
-> const char *suffix = strrchr(filename, '.');
-> 
-> /* File extensions require a dot, but not as the last character */
-> if (!suffix || *(suffix + 1) == NULL)
-> 	return false;
-> 
-> /* Avoid matching directories with names that look like files with extensions */
-> return !(suffix, '/');
-> 
-> 
-Ack. Thanks!
->> +		}
->> +		/* For nvm, if desired nvm file is not present and it's not the
->> +		 * default nvm file(ends with .bin), try to load the default nvm.
-> 
-> nvm appears 4 times in two lines, how about:
-> 
-> /*
->  * If the board-specific file is missing, try loading the default
->  * one, unless that was attempted already
->  */
-> 
-> But, even more importantly:
-> 
-> a) do we want to load the "incorrect" file?
-Normally, there is a default NVM file ending with .bin, which is suitable 
-for most boards. However, some boards have different configurations that 
-require a specific NVM. If a board-specific NVM is not found, a default 
-NVM is preferred over not loading any NVM.
+Many thanks!
 
-> b) why would we want to specify the .bin file if it's the default anyway?
-The default NVM directory is the root of qca. The 'firmware-name' property 
-can specify an NVM file in another directory. This can be either a default 
-NVM like 'QCA6698/hpnv21.bin' or a board-specific NVM like 'QCA6698/hpnv21.b205'.
-
-> 
->> +		 */
->> +		else if (config->type == TLV_TYPE_NVM &&
->> +			 qca_get_alt_nvm_file(config->fwname, sizeof(config->fwname))) {
->> +			bt_dev_info(hdev, "QCA Downloading %s", config->fwname);
->> +			ret = request_firmware(&fw, config->fwname, &hdev->dev);
->> +			if (ret) {
->> +				bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
->> +					   config->fwname, ret);
->> +				return ret;
->> +			}
->>  		} else {
->>  			bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
->>  				   config->fwname, ret);
->> @@ -700,34 +745,38 @@ static int qca_check_bdaddr(struct hci_dev *hdev, const struct qca_fw_config *co
->>  	return 0;
->>  }
->>  
->> -static void qca_generate_hsp_nvm_name(char *fwname, size_t max_size,
->> +static void qca_get_nvm_name_by_board(char *fwname, size_t max_size,
->> +		const char *stem, enum qca_btsoc_type soc_type,
->>  		struct qca_btsoc_version ver, u8 rom_ver, u16 bid)
->>  {
->>  	const char *variant;
->> +	const char *prefix;
->>  
->> -	/* hsp gf chip */
->> -	if ((le32_to_cpu(ver.soc_id) & QCA_HSP_GF_SOC_MASK) == QCA_HSP_GF_SOC_ID)
->> -		variant = "g";
->> -	else
->> -		variant = "";
->> +	/* Set the defalut value to variant and prefixt */
-> 
-> typos: default, prefix
-> 
-Ack.
->> +	variant = "";
->> +	prefix = "b";
->>  
->> -	if (bid == 0x0)
->> -		snprintf(fwname, max_size, "qca/hpnv%02x%s.bin", rom_ver, variant);
->> -	else
->> -		snprintf(fwname, max_size, "qca/hpnv%02x%s.%x", rom_ver, variant, bid);
->> -}
->> +	if (soc_type == QCA_QCA2066)
->> +		prefix = "";
->>  
->> -static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg,
->> -					    const char *stem, u8 rom_ver, u16 bid)
->> -{
->> -	if (bid == 0x0)
->> -		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/%snv%02x.bin", stem, rom_ver);
->> -	else if (bid & 0xff00)
->> -		snprintf(cfg->fwname, sizeof(cfg->fwname),
->> -			 "qca/%snv%02x.b%x", stem, rom_ver, bid);
->> -	else
->> -		snprintf(cfg->fwname, sizeof(cfg->fwname),
->> -			 "qca/%snv%02x.b%02x", stem, rom_ver, bid);
->> +	if (soc_type == QCA_WCN6855 || soc_type == QCA_QCA2066) {
->> +		/* hsp gf chip */
-> 
-> This is a good opportunity to explain what that means
-> 
-Ack. This means the chip is produced by GlobalFoundries.
-
-> Konrad
-
+Dirk
 
