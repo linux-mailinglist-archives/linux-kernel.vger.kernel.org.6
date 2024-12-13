@@ -1,111 +1,126 @@
-Return-Path: <linux-kernel+bounces-445447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B9529F168E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:43:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 641C59F1606
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:36:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E57287F1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:43:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03A367A0547
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251271F9433;
-	Fri, 13 Dec 2024 19:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A9C1F03EC;
+	Fri, 13 Dec 2024 19:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="KQfc0hwH"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="L/niVw4t"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3329D1F941B;
-	Fri, 13 Dec 2024 19:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8C01F03E2;
+	Fri, 13 Dec 2024 19:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734118581; cv=none; b=sccyDyZOXhhEHE3XR9hy7OCSAXMxbpktzGyXcAK2gGdo5Ero2r3Y/Kl/pZCRX/x7pj5lj6TR9jpHBlqnQb8gDXBvNI/n1B2yNGI3Ogl70WqgHvOI9Plf9kfsSi441LyXHgdTUEBMhgjCts3v/mY4Ec8mIwXMAsmOmAuWlIFxBw0=
+	t=1734118525; cv=none; b=dIfd7TsLxndcr9ZQvC0nmRaa/8Ir5klsdqy8wlhG4TIHZPOtnZ6yAFQqfyO0Ul5bG45HnzD73QNQGTVgj12E8y9ygHqdcriUu7FGsvNn7Xn3YIPgqZ/vYqIpjrjyO9S6ntkrZgfiP+dIU/Bmv6HpybPV2FA6iWYz/1HRDPZqHG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734118581; c=relaxed/simple;
-	bh=U2jvLVxDBW1wqTl+8HqpuZ+B2aEhALkVpMFRfXjOGKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kdmH+qVOIq5GV+Erie3Y4dmNsZSj1kWVATtAgu9MOzxtvs23V+wAZ3fbbprSKAHHYt/fKYng1s7ao9RlOL00oFZOt1K0ppSxZSmanxgKi+pVX2NlGxgP4Nhg0iruqWrOXBEI8gK+cHbfG6U7DVCr+ELhg0qCXAtFDrCWwJNk2xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=KQfc0hwH; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
+	s=arc-20240116; t=1734118525; c=relaxed/simple;
+	bh=qm2FBUfP120JYJBGjVWf6BHggAiBDu2UJXq1cdQTu2M=;
+	h=In-Reply-To:References:From:To:Cc:Subject:MIME-Version:
+	 Content-Disposition:Content-Type:Message-Id:Date; b=XzPY+1yKx1fscYmiprnetQGmJTYc0fjCmBe2+Ivn24cgfo0k3tK3p0+fPs64/anOUtSiJQNWBllQl70JLuY2mrRUqJJVoagUIDteOuoL4/0jgS4WxuPAGl3TVYdynMRqyzSe6Fy6ylw5N561R/xuJu4Ewv8Tu5T5okIfuIhX3Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=L/niVw4t; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=H78XD7mVtyigbR9tP1mufDrwr59LEZXCMX3E9nnMZnc=; b=KQfc0hwHr12D7BqQNvjPQ9PAHz
-	OpCN/ST3o2WE5w1fzloAiS2FW/sOHv0p23pFztOpzrTr5K0dwCNsacDNCnge5Jb8306pIWq4snMSf
-	iCGBkRk6K3fSxB1o2GWRqVqSYhHoqyppoLbOEuo+tRzGnhQoG/cZPLeg22aKXRu21Zv8P6BuehhUk
-	wRii0IC6KTXiDZMQBZtJHtI3mh+Oa7TAxcvLmNY/285fJw0DGmxYUHvrT2ubcG+j0jlWmWkNVSRgN
-	mZ+M8C6zBm81RJuOFM6csqMKXso35yuEO+kMs62SjdY3Rte9rqcpNX8kFiHMT7D+igCn++VpRISIR
-	sJE2UzjA==;
-Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.mn.codeweavers.com)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	d=armlinux.org.uk; s=pandora-2019; h=Date:Sender:Message-Id:Content-Type:
+	Content-Transfer-Encoding:MIME-Version:Subject:Cc:To:From:References:
+	In-Reply-To:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yydHl5BH5Sb6MLQ4m8pTbWEBjAsjzLNECa7MKHOHJLc=; b=L/niVw4tv8rIjtUYlrmUm/to63
+	7TWOizwe65Scj1N18yS/1bNUTtMQU/c4fovuuQxm+QDWYWUgKpHzcOOzjqOccwnwRX0RpkPS/n7O+
+	rHnQvWMJHc+ZiOVEVzF8VqQ6iBrJKR3pjzSvaVyDHiVifTBkhwyglwKX3dDkI0Wb5Xe6q5cfyVkg3
+	A/0Io2liQyGXd4xgS2zw/fzPlhokjXGsBK79SRVmMyTIyxUWsIRDascvHL3C2oPrFmcT3jb3WM0vN
+	GJLU0LWrkTkmET7jTC3iebx1OuGeQNeDoBAWKB5wT2IJTfTBYGqTrLo64zTHi+PkXykYMe5ClCKCG
+	BZ6ne/oQ==;
+Received: from e0022681537dd.dyn.armlinux.org.uk ([fd8f:7570:feb6:1:222:68ff:fe15:37dd]:41426 helo=rmk-PC.armlinux.org.uk)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1tMBSO-00ASsZ-1T;
-	Fri, 13 Dec 2024 13:36:12 -0600
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	wine-devel@winehq.org,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Arkadiusz Hiler <ahiler@codeweavers.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Elizabeth Figura <zfigura@codeweavers.com>
-Subject: [PATCH v7 30/30] ntsync: No longer depend on BROKEN.
-Date: Fri, 13 Dec 2024 13:35:11 -0600
-Message-ID: <20241213193511.457338-31-zfigura@codeweavers.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241213193511.457338-1-zfigura@codeweavers.com>
-References: <20241213193511.457338-1-zfigura@codeweavers.com>
+	(envelope-from <rmk@armlinux.org.uk>)
+	id 1tMBRT-0007EF-09;
+	Fri, 13 Dec 2024 19:35:15 +0000
+Received: from rmk by rmk-PC.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <rmk@rmk-PC.armlinux.org.uk>)
+	id 1tMBRQ-006vat-7F; Fri, 13 Dec 2024 19:35:12 +0000
+In-Reply-To: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
+References: <Z1yJQikqneoFNJT4@shell.armlinux.org.uk>
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	 Jose Abreu <joabreu@synopsys.com>,
+	 Andrew Lunn <andrew+netdev@lunn.ch>,
+	 davem@davemloft.net,
+	 Eric Dumazet <edumazet@google.com>,
+	 Jakub Kicinski <kuba@kernel.org>,
+	 Paolo Abeni <pabeni@redhat.com>,
+	 Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	 Alexis =?UTF-8?B?TG90aG9yw6k=?= <alexis.lothore@bootlin.com>,
+	 Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	 netdev@vger.kernel.org,
+	 linux-stm32@st-md-mailman.stormreply.com,
+	 linux-arm-kernel@lists.infradead.org,
+	 linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 5/5] net: stmmac: use PCS supported_interfaces
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <E1tMBRQ-006vat-7F@rmk-PC.armlinux.org.uk>
+Sender: Russell King <rmk@armlinux.org.uk>
+Date: Fri, 13 Dec 2024 19:35:12 +0000
 
-f5b335dc025cfee90957efa90dc72fada0d5abb4 ("misc: ntsync: mark driver as "broken"
-to prevent from building") was committed to avoid the driver being used while
-only part of its functionality was released. Since the rest of the functionality
-has now been committed, revert this.
+Use the PCS' supported_interfaces member to build the MAC level
+supported_interfaces bitmap.
 
-Signed-off-by: Elizabeth Figura <zfigura@codeweavers.com>
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 ---
- drivers/misc/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 09cbe3f0ab1e..fb772bfe27c3 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -517,7 +517,6 @@ config OPEN_DICE
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index d45fd7a3acd5..0e45c4a48bb5 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -1206,6 +1206,7 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
+ 	struct stmmac_mdio_bus_data *mdio_bus_data;
+ 	int mode = priv->plat->phy_interface;
+ 	struct fwnode_handle *fwnode;
++	struct phylink_pcs *pcs;
+ 	struct phylink *phylink;
  
- config NTSYNC
- 	tristate "NT synchronization primitive emulation"
--	depends on BROKEN
- 	help
- 	  This module provides kernel support for emulation of Windows NT
- 	  synchronization primitives. It is not a hardware driver.
+ 	priv->phylink_config.dev = &priv->dev->dev;
+@@ -1227,8 +1228,14 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
+ 
+ 	/* If we have an xpcs, it defines which PHY interfaces are supported. */
+ 	if (priv->hw->xpcs)
+-		xpcs_get_interfaces(priv->hw->xpcs,
+-				    priv->phylink_config.supported_interfaces);
++		pcs = xpcs_to_phylink_pcs(priv->hw->xpcs);
++	else
++		pcs = priv->hw->phylink_pcs;
++
++	if (pcs)
++		phy_interface_or(priv->phylink_config.supported_interfaces,
++				 priv->phylink_config.supported_interfaces,
++				 pcs->supported_interfaces);
+ 
+ 	fwnode = priv->plat->port_node;
+ 	if (!fwnode)
 -- 
-2.45.2
+2.30.2
 
 
