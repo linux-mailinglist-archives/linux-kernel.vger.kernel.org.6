@@ -1,89 +1,118 @@
-Return-Path: <linux-kernel+bounces-445231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 713439F1314
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:58:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEB29F1317
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:58:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F471883949
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:58:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2721E32A3;
+	Fri, 13 Dec 2024 16:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="axPdZEwC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3054E285389
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:58:01 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5971E3DEF;
-	Fri, 13 Dec 2024 16:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YON/FWCT"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE06D1E0B74;
-	Fri, 13 Dec 2024 16:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE0715573A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734109075; cv=none; b=IXoq4lyZsqVcnycV8avvGrVHdxqcE2wg1Yfzg2gECIkm6AFKRRQ0jkRIFHpG0uMXxI+WwzI8pRT5ymMR9dJMq4hK4HwMNhH0TG8xaFcdxGMBr6auRdgeZy0dt/06xvcqgmsH6HDddqsfmGl7c0bEN+5HU9gwM5KBQRfkEaDaZa8=
+	t=1734109128; cv=none; b=dOMWF9/9K0GygE+C6ZlXYe8Dvjd6iuHqr8NpJWTgSYTWqxRyaBMmBb95kOmwjWJTwo6U5tzudc+DYguSgya86LlgAw0+ih2CvuWFL5NZ7PIKTEx1nD0dubCigNbbkQG6PED/q/75Ua1p0hyVcZjeUvDdYbxuCdeAi6sMKk74BN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734109075; c=relaxed/simple;
-	bh=9tKfVKHxrk5dru2TiY/h6eJP348r7CDCU+evc63Yon8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YisjDSzTfxn44IjBqxYl/Arsuh9RHMp/mb96aZZ8wM/wsrFHhxf/U4RWbgY2xLnWaV/0ve/n66tR8/9mREVnQF+vDlNM1AvOYthhe9KRwbiUb3In9cU1ctOnwTd/t9/OyQQA+zBIimo+oJ+YpAoQtnS8lW1fsJRhhPOM6oLKzU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YON/FWCT; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3022c6155edso18147161fa.2;
-        Fri, 13 Dec 2024 08:57:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734109072; x=1734713872; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9tKfVKHxrk5dru2TiY/h6eJP348r7CDCU+evc63Yon8=;
-        b=YON/FWCTM4K+B5YFs/NDqWPWucj4SNHf+HNgbJHH5NZ1bKB3jidcbJdcrOFyCAFkUk
-         6+XbXz2N1p4s/q/82mnoYgh7+6VsJSWJMNirdtVBP3qEZgTHBDqkRwyAxKrT0K7oPde8
-         ttQlb8nsf2sXanE1PKywH1RkRx3+W6veBux2zu63PJ2h0Qqrfn/7dnrOhfL28JUKtX1v
-         PwTq1ceKF5i6nLZyn/zgaom/1inmO5GRMsDUAZCInBXTbnUiMB0YWRrOqDR2icqPDAQt
-         CHWo6rXcflrONZfRmnaGIiXnAgxuwxZsaF8FA/NjvX807KnUcdcQGliLeYRX6U0XkW8e
-         Mb9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734109072; x=1734713872;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9tKfVKHxrk5dru2TiY/h6eJP348r7CDCU+evc63Yon8=;
-        b=B2BEfIXW/uubTudfDvHQs63L0fURqr2RH0FgvH48FNvXdEhd/CJB2Ko0G+rZcG8w5g
-         8KmPX78syqnztLkTyGY+vTVFdvNmusWL8GLiHJmw+8aTTMUsEPJpUckdZ1wN2wTqYHqV
-         3OTfuckqcB1N57rvRdd/iQBr8bGQupelyoQ2YF2rIWmBEs0FN09J4UToUUl9qWYLWdoG
-         bQA9jEFqHldjsTiCy/jwoKo2o4UcZEqN51vwyYjneYQRgdhOrQRzHkUA9foQOWNQETjV
-         JgBIEK8+0my0NAER6sXBolqpwxAqKZwWkMta2bTLOpD3DXPsmRE0+NGFzzT1S6/wjInL
-         zu8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUmug9hNIUk4Ad77N6WXrI2etOchwRTdw1/mG8XojPJmc/Dxn6xGgOfc1FZMAK/q1If8kjXJgzqoOE=@vger.kernel.org, AJvYcCXyy/288aHG10snNNSKMtsMeKj6L+3zAs1bMPS3D6Y3pydnUVcRn/+YbQfWFJ46Fs3sI9wsaSxVnAY+jquS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt2KUJ8RMhrrYc+7r4L7AUNxl+7hjWWXgnMeo52XwiH1hayUnY
-	syop3K9Vnj+GrKIgGNfTbUiIyuHMcql4QH3upi14bT+OSYUSayGcExji34cKQZXzJdlQI4Cs5K8
-	hnbdy1FAgPIyroCioI791G+4OEwk=
-X-Gm-Gg: ASbGncvABRtKWwZpPw8zDBdLNvx8IW2qyRvTw5zoaZtUZ9K+haiKF3J8qqxULe+KcBr
-	XfaXpAm24AeGJVtfe2ga01uyof97+CuaaWCbGtXtocJyeSbTtmoJZ
-X-Google-Smtp-Source: AGHT+IEj0a50PpPSA3XfbrkR7UoflZUpcMLRa+mSCxTx81NIq94ulb3bvJLoawJJrFEoQEiahA0dEhVt0NlVqzQnqzc=
-X-Received: by 2002:a2e:9f13:0:b0:300:38ff:f8de with SMTP id
- 38308e7fff4ca-3025444ae89mr10026781fa.16.1734109071944; Fri, 13 Dec 2024
- 08:57:51 -0800 (PST)
+	s=arc-20240116; t=1734109128; c=relaxed/simple;
+	bh=D0z8RW+N6gZ5JCltukdoktT+HmmvEufTU12N5kFKvwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nDnG/9mkkB7kD/V8XFB5EE7iQTJblD/jLqOi6UHtrtt3jZksOtEAOEjuK6NjK6NDT0uiKPH5CNG7q1zxIxINvmWkMl6c4Oxpbp79uapiRBCQatzYz3SwbyHYQ1Wp6yZo69ODBud3w69E9LhyS0a5SFW+wZmbVz9ijVZXo+MsJwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=axPdZEwC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD9plcR019566;
+	Fri, 13 Dec 2024 16:58:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UOtFz7REUz4+AgQJxq3QS1WPjdIxLwCBvUCqJ/5aq50=; b=axPdZEwCYPmNatxK
+	ge/mdbfAN7yE9cz9h3sXtAWtl1YDQs5S9apwoF34lXrNu1HavlW1xyP25wNCsObj
+	48hSZXFosfBwDvhsXRM5Trselb2kOtBsUrGxGKbcWJWSPpLC9IQutZllTuXEctzk
+	frvp3CxK3w0JcPzoiBR58YlYABgITz9TtuAhz6BdZQ7DKQ6X9KJ1pWofMXnf2WXp
+	v+FmjsFXUtbbdR9cuDV80p7HiDSw2Gv6S8vd+RtKWKKp5k06qE5sbf66RY36e8MR
+	pjGbb+SzaRF4YTP09jf6VHgC/UqRvVo717OVReBhl81oK/S0DEalW5Y3SMX81Yfm
+	weFwag==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43gjnb15b5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 16:58:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BDGwfsh003988
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Dec 2024 16:58:41 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Dec
+ 2024 08:58:41 -0800
+Message-ID: <d4db5e3c-56b5-ed77-95af-15e9271339ce@quicinc.com>
+Date: Fri, 13 Dec 2024 09:58:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105-xarray-documentation-v5-1-8e1702321b41@gmail.com> <CAJ-ks9kJSNMJCzVSyp1YUJ7RHsLU+QLsVdUkGuAnu-ny-kturA@mail.gmail.com>
-In-Reply-To: <CAJ-ks9kJSNMJCzVSyp1YUJ7RHsLU+QLsVdUkGuAnu-ny-kturA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 13 Dec 2024 11:57:16 -0500
-Message-ID: <CAJ-ks9=7NeZ87-gHp2Q87FNAfrxgNZvQ1F+F8OomO=9En84niw@mail.gmail.com>
-Subject: Re: [PATCH RESEND v5] XArray: minor documentation improvements
-To: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V2 7/8] accel/amdxdna: Read firmware interface version
+ from registers
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>,
+        <mario.limonciello@amd.com>
+References: <20241206220001.164049-1-lizhi.hou@amd.com>
+ <20241206220001.164049-8-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20241206220001.164049-8-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zfh18d9HyhH_T7KUcojeSRkCjAN_zQKH
+X-Proofpoint-GUID: zfh18d9HyhH_T7KUcojeSRkCjAN_zQKH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0
+ priorityscore=1501 impostorscore=0 adultscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412130119
 
-Andrew, would you mind having a look? I've not had engagement from
-Matthew in the last 2 months.
+On 12/6/2024 3:00 PM, Lizhi Hou wrote:
+> The latest released firmware supports reading firmware interface version
+> from registers directly. The driver's probe routine reads the major and
+> minor version numbers. If the firmware interface does not compatible with
+> the driver, the driver's probe routine returns failure.
+> 
+> Co-developed-by: Min Ma <min.ma@amd.com>
+> Signed-off-by: Min Ma <min.ma@amd.com>
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> ---
+>   drivers/accel/amdxdna/aie2_message.c | 26 ----------
+>   drivers/accel/amdxdna/aie2_pci.c     | 74 ++++++++++++++++++++++------
+>   drivers/accel/amdxdna/aie2_pci.h     |  6 +--
+>   drivers/accel/amdxdna/npu1_regs.c    |  2 +-
+>   drivers/accel/amdxdna/npu2_regs.c    |  2 +-
+>   drivers/accel/amdxdna/npu4_regs.c    |  2 +-
+>   drivers/accel/amdxdna/npu5_regs.c    |  2 +-
+
+Do you need an update to npu6_regs?
+
+-Jeff
 
