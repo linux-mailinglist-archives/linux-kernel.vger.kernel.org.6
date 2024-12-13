@@ -1,98 +1,119 @@
-Return-Path: <linux-kernel+bounces-445461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9096D9F16B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:47:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E01518802B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:47:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB2018756A;
-	Fri, 13 Dec 2024 19:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="0UV6EKHn"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F3A9F16B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:48:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1383383;
-	Fri, 13 Dec 2024 19:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8AF286DB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:48:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC4818E351;
+	Fri, 13 Dec 2024 19:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IexHdLgA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8418E187555;
+	Fri, 13 Dec 2024 19:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734119138; cv=none; b=ATDo58JdcwI+9/3v0EPeB2cZdJyo8G4a6qLlhneKws+CfqstSnlu+0sjbPDAVsQyXAa4qQthwfAOztzdMHcJdBqqM51Z6/1XAbasuP+AmhTuZQhGsbqZ5dMN2VZo8QBiLjH361rL0y8f6nZx8wYKVRBCb11dXql1u0Qo1Y2dk38=
+	t=1734119269; cv=none; b=K8Pkm2621dgmlo2/HvJU/VV/7qoq1i1KMIA0OTdDR6s5WXoRyxv9UccCV033oWdaRWWjI5cApH/TdR/sxhqvtYWzNym/7rfwbF5XShSG7HOlE1h/RXCHH1SDrqjRtg6SEDQu/t4LIYDxgT7cI+oIISrVqdTyIQO0VnkwbSo+MqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734119138; c=relaxed/simple;
-	bh=/NGVVzayzEEZuxZAoyNwRjkMZVsgtmClsk+jQ6Ass9s=;
+	s=arc-20240116; t=1734119269; c=relaxed/simple;
+	bh=b7MjwmDslvQUgvJRafTt4c52KGWnMHGO53zWlaU0WlY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zi/54WYQie9UptyDT0VRlQKJvVolv2qSvu8LyYGthykbjSZ3eKz9mkCFBk590TBP5YjS/y5duHNHHB957khoHmaWpkmTgTWGzzsY7t7tGbpsshbXM8ii0rrNPEvZKaZ+FPk+SwT2h3sGOveNYK23hdw5Hd8kel+L5wYeM/1Vw1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=0UV6EKHn; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=2OKWWGal3o7LbTV2TO3uDGVhmx9PqnQujifRZi9s2So=; b=0UV6EKHnRYzDrMqVxlBYCouvTp
-	FlYRRMm0syDARUJNEYq7CGX0KQCnszoZMQCtZ93d0oGy7OGL2t/a7f+uCcGXMRSfRGqILVSZRp2yJ
-	cWNVXNCKl3yRizT26AuIaDtOmNIuUjKOLkGpJB87Vc0gO+15C9lxkb0sDboR+eAg2sjyfghav+OBi
-	9O3VJBM9xERg6lUmPOIBWUvYpf6SgbEowi/FuHczwpBcWEEPUXjY0yHyONW6nCIUqc4K/ivQe9sOJ
-	cou9JA3e/M2lKQPihGgaFbz8YFBZrKZvOjP0bvdNRmTl2G/bM/NVXXWWlWqY98O558A8vs+K1u+fx
-	RVOYHXiA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34272)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tMBbE-0007Fd-2S;
-	Fri, 13 Dec 2024 19:45:20 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tMBbC-0006Yr-0S;
-	Fri, 13 Dec 2024 19:45:18 +0000
-Date: Fri, 13 Dec 2024 19:45:17 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Daniel Machon <daniel.machon@microchip.com>
-Cc: UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	jacob.e.keller@intel.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, robert.marko@sartura.hr
-Subject: Re: [PATCH net-next v4 5/9] net: sparx5: only return PCS for modes
- that require it
-Message-ID: <Z1yOzaL-gwXIE94O@shell.armlinux.org.uk>
-References: <20241213-sparx5-lan969x-switch-driver-4-v4-0-d1a72c9c4714@microchip.com>
- <20241213-sparx5-lan969x-switch-driver-4-v4-5-d1a72c9c4714@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=naeDc89jhst3a3aYXucw/rMQNNCB9fEYyZNAkpu2w5ytjG206Bnobsn+peqnzmc1ElzBYmwtKEyAgYQgvLwD0aIQbnNhz+e9ioXKcLFHG+RN2ayS3K77zqz2qcmhw+ie7xz4TQHIxvFxJhNTzyy/51HT+GR2aykV4pVT01havyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IexHdLgA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE0CC4CED0;
+	Fri, 13 Dec 2024 19:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734119269;
+	bh=b7MjwmDslvQUgvJRafTt4c52KGWnMHGO53zWlaU0WlY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IexHdLgAF4ubCSFiFOXoJmacAx2k6Ho9g6NR8vX1f9f8OC24t0NaGDPMVjbv7Xtxk
+	 A77wGRYCpTQ/Tc7CYuXDMnHsmiqXfyGx+OcZzEZB9BTBxire/xaaFqfQkDhs6Gs2aP
+	 1p1vr56gQE7KAgZXO6Bmx3KhGI8RUMamW/YOLKC7ZB6TWcbsmanIpyHY59ikW0z5ju
+	 kTZ+ae4T3mIXOfDwz1uZCs7fnTlbNXsyui13VMnnlg0i1h5sK2A5xFTJwlQqEVTb+O
+	 PnobD6JdYXvY3ZRRNzXwR3hJFV6ATBBipnQtIAK08HIizCDqCLR/E/llUbT5p+PuOq
+	 ROj4xSDTi8y8Q==
+Date: Fri, 13 Dec 2024 16:47:46 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/1 next] perf tests switch-tracking: Set this test to
+ run exclusively
+Message-ID: <Z1yPYqYYs_isO1PJ@x1>
+References: <Z1x3o0YoeZS2kQzr@x1>
+ <CAP-5=fVBrssdqwz0YiJ9snKgEJSiAhMVpZcP=sNr6gGEwhMUsA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241213-sparx5-lan969x-switch-driver-4-v4-5-d1a72c9c4714@microchip.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVBrssdqwz0YiJ9snKgEJSiAhMVpZcP=sNr6gGEwhMUsA@mail.gmail.com>
 
-On Fri, Dec 13, 2024 at 02:41:04PM +0100, Daniel Machon wrote:
-> The RGMII ports have no PCS to configure. Make sure we only return the
-> PCS for port modes that require it.
+On Fri, Dec 13, 2024 at 10:10:32AM -0800, Ian Rogers wrote:
+> On Fri, Dec 13, 2024 at 10:06 AM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > This test was failing when run with the default 'perf test' mode, which
+> > is to run multiple regression tests in parallel.
+> >
+> > Since it checks system_wide mode, set it to run in exclusive mode.
+> >
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Cc: Ian Rogers <irogers@google.com>
+> > Cc: James Clark <james.clark@linaro.org>
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Kan Liang <kan.liang@linux.intel.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > ---
+> >  tools/perf/tests/switch-tracking.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
+> > index 5cab17a1942e67d7..88a03bcbecb2b11f 100644
+> > --- a/tools/perf/tests/switch-tracking.c
+> > +++ b/tools/perf/tests/switch-tracking.c
+> > @@ -583,4 +583,11 @@ static int test__switch_tracking(struct test_suite *test __maybe_unused, int sub
+> >         goto out;
+> >  }
+> >
+> > -DEFINE_SUITE("Track with sched_switch", switch_tracking);
+> > +struct test_case tests__switch_tracking[] = {
+> > +        TEST_CASE_EXCLUSIVE("Track with sched_switch", switch_tracking),
+> > +        {       .name = NULL, }
+> > +};
+> > +struct test_suite suite__switch_tracking = {
+> > +        .desc = "Track with sched_switch",
+> > +        .test_cases = tests__switch_tracking,
+> > +};
 > 
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+> With Ravi's change:
+> https://lore.kernel.org/lkml/20241210093449.1662-10-ravi.bangoria@amd.com/
+> This could be s/DEFINE_SUITE/DEFINE_SUITE_EXCLUSIVE/ , wdyt?
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Sure, I saw that, forgot about it, then when looking for
+DEFINE_SUITE_EXCLUSIVE and not finding it, I just copy'n'pasted from
+what was in some other test.
 
-Thanks!
+I'll backtrack, add Ravi's patch, then resubmit.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks!	
+
+- Arnaldo
 
