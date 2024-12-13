@@ -1,88 +1,84 @@
-Return-Path: <linux-kernel+bounces-444293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13B69F043C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:32:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0C2188ABA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:32:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C53185B68;
-	Fri, 13 Dec 2024 05:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="uY9cPSp0"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2104.outbound.protection.outlook.com [40.107.223.104])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A739F0441
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 06:39:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C359844C6C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 05:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.104
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5712841D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 05:39:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6804618A6C1;
+	Fri, 13 Dec 2024 05:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="Lx7ecLwC"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2047.outbound.protection.outlook.com [40.107.22.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3C744C6C;
+	Fri, 13 Dec 2024 05:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734067921; cv=fail; b=CAKV+yfVXFll42tC3DLHAq7karPva33bpv1Ww00dqB0/yyeYm/jtAMqxFeGgX+DONlu9tD8TrUbTQUawtQMlvXV+d4tkJ24HuFQY52a0N6+R9d1Lnkp8Lx9xGxIHaA9SGMlDDFqtkT+1aUQbAGbLO24wAPt6Upk37gyV58dwx4A=
+	t=1734068357; cv=fail; b=iCM/zTe1UAZdrSYhlqThd1NNe/4GCP/K/9a2bxz/pmya6ejDmBiKfEHBuinFIt4XAJfm7Ef4n9VgGGN2xB29S10hwgEoaeU8T4wi0EfmTAAou0BvbycJaoGBXCW/xtWc3z7yqp9ClYBFa6NnW0hzHUYr/HfEMoqOR3YcmUyyfqo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734067921; c=relaxed/simple;
-	bh=9xIXuXBkQY8pv4e1gWIk1HU28tR8UokS7WP2FWBzZ3g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NqRWQWx4i/2WdAjEwrXIkNTh/HOXf2UO0m7GKDMr5SfsDLCDeDa7RDSZyTBv1dRE7eZlpC/T2sTNzp6SyOK9Zy794SmFkd//vFtnwQRnmTsolQX11QCvAdKJYYm5eyJeFMuYborrVYTDyihWNhva/7oamY5dwFGysS4j84/8RyE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=uY9cPSp0; arc=fail smtp.client-ip=40.107.223.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1734068357; c=relaxed/simple;
+	bh=p8svsTQylkSBItYNbXWVXmQMTtIkbpU3i/CG+qRNvDY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lZG/razoLtoL/B45UmKe31FRsknLvSfvbe1qNBjW8t5x/TTsP3JVbxI9COv7dDX8uqy0lZxKZ++nsX688ww8vspTRDR4ILgewQw8A0Rj4ZE32cZZkwha74LqbK8W5C3pzx87cBwarNaqiH27Vza4Hn78djWUN8F8lxWxhk0Qlhg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=Lx7ecLwC; arc=fail smtp.client-ip=40.107.22.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xOkx6JLuSQ72ETOimRPA+IfXw1DUbDGDu1yVECFQOPmTL/VZAL0GDo/XNSCCWvvc5gbQcm5N5ABu6N+hEMDEZrLWqNF0cIz+LR8HdkezOzgPWTurGT35RFgGZuHKZC6dOSUZS0xWowbBtZHNLG89lUYJYSCqs6ZmKQA+Ipkuy12MKN28e2OMjdxI1H1qg3DSg6N1luW+8VgdBR2ME2F63Hc97JlmvqfoRCbDHhrlJeUAGQm+S4ZPEAQVTz3nmR55GZri/4iCWKcajN6LDw0QbcdONndkym8zYfxn7kl9Glk+YyYwcTf2RpEX2v5Z8M/x93p+rkCt02o2pZ0fhK7Vbg==
+ b=zDsX3hMd5T59Xqh/GIpvTVu8q83b1Oo8kHByXMJjBmadm/sQQqSvAT7wGoLoj0ObbohUL5KeyUQKXczXrzu6sY9qAvHfRHMEBaHWYMBltUJI9e7+YgHRs39WDflhSDK3t8Ml4pYHWJKON+RugfHFwFlJq4kE4HsCe3P7rpp6bVK1UxcFF1IYAJzwTtveyEqZhM2x4jkgK3CC0JpC3J14iVLfW/2KNIkIXCfjKKRLXFOE6baik6nY//w3Ra6S432mitw2zopN2gGhii12ReZBjN2PfIOyNHilhljXq7DZRM66nfVqDoow7T5L/GmpuKjIcT+016pSuCnfybgyxWh0gQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nRHhT8hWESy6pQarMOcmjVGiA0htP/Pw6bI07K0UWTU=;
- b=UPShFByfDhoqKyKqo6/d4szctLfmYIS+IsPCcgqhGN6ORy+msg3GYbxF1i952LbeQirRZpyLifZ6hzPJt2BXp+0i9u3weKvAFWWt9khfOoqXyRm8kEMpRBKTxZgv/Wf2tKXT6z6woDrsY13a0BL4+J0+H76EDRsr7H7HUMOGISHfuzKEQZvOXyyddauQYPUJmmcVI3grLqLgjevYGek+xWZ4nvogygRGoYN0tyNooCHeAvrHxPCFGubfexMIAdy6isor96wIsg7Jnyy/cZB+m+Out+tjZwgXgYRf7naA2ciM2yPXNtVy8XIk3bz9RSA3XQf8ucIm8ZIKoaJcMBJC5g==
+ bh=hnHoL+n7JwyeyvlLyRQINUoTNn90+r9CSGLx0FN781s=;
+ b=KDAUqqCkMcK9vbeaupVErdc9FnYQD5YwuedRWeRCSznFiOmVhZPCNOzW4oLwyBrODODwWMJakonhW4QMMwzzwH60u/nSH4//L4tfNpu74KViB6ci1M3OlbskOxd5aLSasjWPD/pI9u8iNBkHxFzbazW0SfUygt1/vfxqIlWzJGCe1CLMtzf54aGBU+S7jKAfBgqPn5lCsgzSJ73kFvJk4QIqXC/ViYPdVANZQJaJ6uZ4LLwhc+2r12pRZuBPLJDVj5+5yKkxZG52SCpAL9q3KwMddI+8ILoyCOp2QLQOelsViYbRwbIoTGQlb4uqJPnLOZP3G8S6K6u0j4kXEEIAWg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
+ smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
+ dkim=pass header.d=axis.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nRHhT8hWESy6pQarMOcmjVGiA0htP/Pw6bI07K0UWTU=;
- b=uY9cPSp0U8nZcp2FiDo12R3kuz6x40yjgbKLj2wCqNXXNcohW5ngvmcULgNFvuSRAh+hzvSMKQ1xJGjQlfv7XeHTikxfmqZICVBXKK+C7+odJEdjPBoJhSokJ1YDUu/ialPb5bxEvOth/Yy7sE7knYHhT39sh3LJRFQb+bkNEDo=
+ bh=hnHoL+n7JwyeyvlLyRQINUoTNn90+r9CSGLx0FN781s=;
+ b=Lx7ecLwCoQ1iGKuMSVtFsIyS8Y26JX/HpDzTo4xLLtUdFhNReNAWN8Xb6IRwFbMkowER6SLVxARkhroEa+A95zWMPWZk7eAgvT2KS9r042xRk9tbZMA5Vg1qjdyp73pEApUKJL9R3J8DpM4933nRLdx9QoZgatEaIROb2HjtAO0=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from PH0PR01MB7975.prod.exchangelabs.com (2603:10b6:510:26d::15) by
- BY1PR01MB8851.prod.exchangelabs.com (2603:10b6:a03:5b0::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8251.16; Fri, 13 Dec 2024 05:31:56 +0000
-Received: from PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050]) by PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050%3]) with mapi id 15.20.8251.008; Fri, 13 Dec 2024
- 05:31:56 +0000
-From: Huang Shijie <shijie@os.amperecomputing.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	anshuman.khandual@arm.com,
-	corbet@lwn.net
-Cc: patches@amperecomputing.com,
-	cl@linux.com,
-	akpm@linux-foundation.org,
-	thuth@redhat.com,
-	rostedt@goodmis.org,
-	xiongwei.song@windriver.com,
-	ardb@kernel.org,
-	inux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Huang Shijie <shijie@os.amperecomputing.com>
-Subject: [PATCH v4 1/2 fix] arm64: refactor the rodata=xxx
-Date: Fri, 13 Dec 2024 13:30:49 +0800
-Message-Id: <20241213053049.7592-1-shijie@os.amperecomputing.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20241212082426.4110-2-shijie@os.amperecomputing.com>
-References: <20241212082426.4110-2-shijie@os.amperecomputing.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MA0PR01CA0094.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:af::20) To PH0PR01MB7975.prod.exchangelabs.com
- (2603:10b6:510:26d::15)
+ header.d=none;dmarc=none action=none header.from=axis.com;
+Received: from VI0PR02MB10536.eurprd02.prod.outlook.com
+ (2603:10a6:800:1b9::14) by PAVPR02MB9497.eurprd02.prod.outlook.com
+ (2603:10a6:102:306::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.18; Fri, 13 Dec
+ 2024 05:39:10 +0000
+Received: from VI0PR02MB10536.eurprd02.prod.outlook.com
+ ([fe80::e014:24e9:48ef:92e9]) by VI0PR02MB10536.eurprd02.prod.outlook.com
+ ([fe80::e014:24e9:48ef:92e9%4]) with mapi id 15.20.8251.015; Fri, 13 Dec 2024
+ 05:39:10 +0000
+Message-ID: <3a5c0c73-0d80-bbd0-b53b-522e2f3e936e@axis.com>
+Date: Fri, 13 Dec 2024 13:39:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH 2/2] hwmon: Add support for D3-323-AA Pyroelectric IR
+ sensor
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Guenter Roeck <linux@roeck-us.net>
+Cc: Hermes Zhang <Hermes.Zhang@axis.com>, jdelvare@suse.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, kernel@axis.com,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+References: <20241212042412.702044-1-Hermes.Zhang@axis.com>
+ <20241212042412.702044-3-Hermes.Zhang@axis.com>
+ <5b53cffd-ae7f-45e5-b265-8e700d753275@roeck-us.net>
+ <20241212165945.0000584b@huawei.com>
+From: Hermes Zhang <chenhuiz@axis.com>
+In-Reply-To: <20241212165945.0000584b@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: KL1PR01CA0096.apcprd01.prod.exchangelabs.com
+ (2603:1096:820:2::36) To VI0PR02MB10536.eurprd02.prod.outlook.com
+ (2603:10a6:800:1b9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,179 +86,159 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR01MB7975:EE_|BY1PR01MB8851:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7552657-f823-4a3c-1516-08dd1b377532
+X-MS-TrafficTypeDiagnostic: VI0PR02MB10536:EE_|PAVPR02MB9497:EE_
+X-MS-Office365-Filtering-Correlation-Id: e822e541-acaa-4fb3-8baf-08dd1b3877aa
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kq/7xJF6ashhEFKQaBtz+bAT5R4r1FU8subU/A/KOITHrfp+q83jY0GYco2n?=
- =?us-ascii?Q?AiV7PoUAc49ZWbYguJG6cqCNlNBKsW9N8ZTEbOFL0XD/HO8R83mwKOEsF/cX?=
- =?us-ascii?Q?zyHj1McDYmp3dwXE91n4cJjSaEAU38pOadu9w+2jBikqRslpl9HgKxbBj8cj?=
- =?us-ascii?Q?O9Q7JEN72NoM4y0bsu3tiQbxXRl3v1skl+jcCf6Q6gBHNdThx7S0qEhUGnK3?=
- =?us-ascii?Q?s0LpovW2s5WD8loDr52IC7+iP3/f+32dE53b8+cuW6suiD3jSSki78TGgvhn?=
- =?us-ascii?Q?mcXOqWEAG1WSwuO/kdzLgH/AfddR2TVPCqskHIzzIUKP3ROF2AIgQ45xBiVe?=
- =?us-ascii?Q?lwduEI4zkA4ud2QdBu4aYU4Oh4/IBo4wWUq3KU5hh4dY06fvWZ4cBd6zUhc7?=
- =?us-ascii?Q?dRw0JUfSRIfl3Swjc9pdCD2PUYwcKB58CJCcCFbixKjySaag3TGu7qWmhi2q?=
- =?us-ascii?Q?6bcv5T7HMIZZ7f/BU4JXLsAizPMkyPz/I58AzODQe64UThosl6+xJL4BC1k0?=
- =?us-ascii?Q?o8PFF5S3GJH5qcaPVxvooTkckUJErOvriswUg6x2UNn3KA2q6+TpMjDLaDRJ?=
- =?us-ascii?Q?Wj0UIrjB0OoiosP3/5Zxirc5ilIODs0POcNmw8CjJoftncEMiZOK2x7Mb4Sr?=
- =?us-ascii?Q?HjT4bBkx5ae9rHe9sbt9Qv0sCTwRy6UDH7PHZUMURJxvjeqO1RPGMC6Z+yN/?=
- =?us-ascii?Q?VeVYA2tkt6rZ4pqK1Crgkoct7C5825cvEEYqzaj88DzsUwJz2QCm85M763nq?=
- =?us-ascii?Q?antCq4NfiZ03z0BKqrXO2dEmKKXSSo8vkquPa2b2BrBXqFo2QXsgABceCpbg?=
- =?us-ascii?Q?UsDtWdtkWnvv5W82TeGIvjyrkGNWT7m4XIHSzHw+8bkkS7n70vEGTCD+qGGX?=
- =?us-ascii?Q?DfVUNqshTQVDpEKWBVX7rTZdND6g5Y0AD2kVlGOXP6NmZ9AO0NxZUhUnxVzi?=
- =?us-ascii?Q?UOxZMf6edjXNqgktBhueuNk3R7jb+oPWmcj3z3lZG4wxqQWVxHK7MLm9gHqx?=
- =?us-ascii?Q?aX/VuoVUzrFKvP4aLWYfYEIqmAKJSE2dWrqwS4KCE8HJoz2TTBxlBEVi+AZu?=
- =?us-ascii?Q?siCZ7glB8ZDDa3YB76foD8jhrET4lH/TbXVPLwFdrWgTNIMg+QQ3i1kxIEML?=
- =?us-ascii?Q?cSpH78+kMk9GLqLyypJPGwRLEvC15oWCwwqktdJXS3q2sNWXkWV5AGgArIJS?=
- =?us-ascii?Q?NddGOBUZvnKs0iwuHb7qLre0AkmJ6q8xvls25yrjG1+NcjStO29sg152hkyF?=
- =?us-ascii?Q?OTCTACGhgNaCndpRp0x8jJCDnR2nOnMk6tuSCN8/Aesz40r4KE9Ki1xlS6dB?=
- =?us-ascii?Q?gB04dt7CjZJxzWxgh2wRrTCJjdP81Bfq1uJFWll3ajqPkZUVA0WgJLo+IhK0?=
- =?us-ascii?Q?AZ4aibP9e+fAzDXWMQJSctymJ7GTAOFs8MJte16dk8mDFp3CEw=3D=3D?=
+	=?utf-8?B?blFhSFEwbElxZE1HaEZVcFBvK2o3b1dINUNsTm55WEZIaWpMa1BRM2Y1SlBz?=
+ =?utf-8?B?OFRjSGpEN0ZzOUNTN3VhYi9hZjhKeTFLSFlFMHdSeWRiTng1U2tVc0Y0anlO?=
+ =?utf-8?B?T2NyeWFMWkVqYjZwWldORUlLbmdOWWwwaW5heHZjd2dyUDlOSC9UaDJ0dTVO?=
+ =?utf-8?B?bUFxSXdnTUNGaUxNUjYrZGRVaGVVMytpdkY1UmZGZWZ6eGhWVVNSaktYNGJT?=
+ =?utf-8?B?ZllqeER3dElOR1Q2RmxmR0g1SGhGNjgzSXY4M21SZmhON0lFN2x3VCtqOStK?=
+ =?utf-8?B?d3pENEV1SzdSSTJMYW44K09DWjJhT1prMDZDTTVKUnI4d3dCMXVnRmNwTEU1?=
+ =?utf-8?B?WFFYQ3o4RkI4cks0SDNHRkFBclZZVDRsSFV0SXZXb2E2L1daSnVpenRQZzNa?=
+ =?utf-8?B?aXNWNi9ybGZOTGNUNmtTSFQ1clNycGp3QW1kVFhmNzBQaVVkVTM0ajJaMkhH?=
+ =?utf-8?B?Z0ZwRCtPTGZBcG03aWR3bjV1OXFQUnpSM2dGUlhrcktOWndUcURwcHFXMmcy?=
+ =?utf-8?B?ZGJUTVpNUHBPYWV0bC8zZ09oVkxjb2hPdGNRVFBJaVJBdzlFZmhUMXJweHNr?=
+ =?utf-8?B?Q1o1dTIzODVIUGFIcXhuRk9uY0Zkb2x5ZUZwbWlFVW80MTd5aFgzcWtjVnZk?=
+ =?utf-8?B?Y2M2R0tzb1FBL2ZUemx6SEE5MlhRZXdHZU4rVllqdFA1d3FvOENoU2VZQmZ0?=
+ =?utf-8?B?a2h4K1pmOHRMYXl1S0g5V3IxcHV6eW9DakJIQ2p6elJGMUt5VnBXTEl6alMy?=
+ =?utf-8?B?cG90WE1wMVNMeW5ObDlQMTFaS2o5dmU2c1k0UHlaL3grR2wrdmRGNWt6aWFT?=
+ =?utf-8?B?bEZsOHFta0laa3RjSmJKM3JmRCtGUFhYODVJaDZlQWZSVGU1dXVhTTZycGJm?=
+ =?utf-8?B?RTRVNUdkVCtCVWMyOW9oVTJuSG1WQ0NZMXZURCtualV6VG83QkxIZ1Aybmxj?=
+ =?utf-8?B?dXhWQUtQcERhQ1JDQ3E5b2pjTFc5aFhsSlZZc2tsTExLNnp5V3k1ekFDM0gv?=
+ =?utf-8?B?OWdxbWJSTXVZcHludm5OR0xoYmc5NVAva2FjOW1JalhPbWtFUmJmQkZKZyts?=
+ =?utf-8?B?MllHcE5HT05Xb3VGamFUSG12b3NYREQ2dHdhaTErdzI2cFBDdVkrTzV1N1FY?=
+ =?utf-8?B?aTN2SkpOcnY5UFNETmtwRnE1Ymo0ZmtxUnY5RExTL25YV3B3b1BlOTVHdUIz?=
+ =?utf-8?B?amdiR3F4TTF5bUtlSURZdFMyYmhSQ09OS1VGNndBSm5kV3NySWtvNGJEcHhZ?=
+ =?utf-8?B?TGZ2NG5salRJcWpQeHZ1RFNKQTVZaUtPOUZzaGwxaEdHMGYyaGRpN3VldmJB?=
+ =?utf-8?B?MGF2cFpxNVY2VjN0Qm12T2VwekRRcHNpS3lIR2d4UjZUZWZXbEFRZXVDTUpN?=
+ =?utf-8?B?bjBvU3duWEp4ci94djNCU1BJb2dUaXdBTXVMVkk1b2RHMGdHMzRhSEpxTG1H?=
+ =?utf-8?B?OUJ4Q3Zoenl6aGpwUEliTDBWS1F4VVQvdHY4V05pNkF1TW90RXdyQlVOblFG?=
+ =?utf-8?B?Z3RuWGtYbTVmNVlDZ3krN21aZzNRaDRUL3N4WDMzTlo0K1E2QUdLbktRZ0da?=
+ =?utf-8?B?akd5WHFuUnlWbWx3M05mcFFLWE5BUUtOUE5DRXVuSDJEd0VZVXN3YTBENFkw?=
+ =?utf-8?B?RGVYRVl4S2daL3NYRkNDOHJsZHpTVlhITWtoaktvTXBocTF6OURaUCtERWRm?=
+ =?utf-8?B?YlkyNTV6RkthZGhxMkxBMTJRSTd4cnBPOVpvRmNoRldpeHFKRC90ZXpTc0xp?=
+ =?utf-8?B?c2dYVU5iaVlTRitVRzRwOEtKNEtxWmpjalpSNnBxY2dLQnFBQ1Nvc3lNeEZh?=
+ =?utf-8?B?OTF4V3ZkRWcyL0hCTkdPdz09?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB7975.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR02MB10536.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?d1a2jqTKeq3rvIWMAeG86Df33vWraIivAaVCZojeJXBTPgNQdGtisOXO7yHh?=
- =?us-ascii?Q?hmhNUj5ddUrgDxZhi99QVlk19RpXkPpCSP6T2nxMzopxaOUOmx3NxIOhVABy?=
- =?us-ascii?Q?gChmwDUC4aK+WQBH0d8f50LI/dDSKpUO6O+dRlXogY15/nBG4jbqYa3nIyA8?=
- =?us-ascii?Q?T3szEdcXZuBY3bZ3MwMJon/p5xqDTntLReNYCRzPVjlgyruouMnQEmLKaed6?=
- =?us-ascii?Q?8DU3S/aYTu4F/okGRQw9oGeVsZ6xsCG+FNmnRAsylnfOz6l61LMAlfpNbcTe?=
- =?us-ascii?Q?RJTXFajy2VbRjlmrZDi4nNWDgYVVcCyjxS+pQ0c7qvKsU6Glqvtd/lwElIgP?=
- =?us-ascii?Q?BXttQ52ACIYf01AZrzbjBjfp//fbNkVUv/c4Gn8sTeRlkIYJMKFsiUwlDotg?=
- =?us-ascii?Q?Nu2jO4TyMhn3uOW7aJSWVK3/fDolGJVT0d82u3ewqkeLC03eZGdTao6APpH7?=
- =?us-ascii?Q?2plFQ3xfz99ff20Peb8iO5XZk3QtAwX/MwNZsWtzPWp+86S7iGOtMCCv3cfT?=
- =?us-ascii?Q?wAKtdulWfUgxR3DFnQhUiibUmnObGw5AeJlJrTlopS7q1wHTJlz/BxBgwDqy?=
- =?us-ascii?Q?GHAHIaKUwV+cQCklXbcpHzSZK6e1VWXtnuGMedfmNsywsZ4XV50AFgFNKGO3?=
- =?us-ascii?Q?J3PohDxIbMm8+LBZ6B0kw/osUAul3lmEv33vBbMd6YMoTHOx7L3ID2g43HgH?=
- =?us-ascii?Q?guqH2YPpMK7wBOMzlStAnpcVs+wGcGgXVHueqLf/wg9B+/UzrsNLMkaJ43bI?=
- =?us-ascii?Q?zC8IiPoxes1MUkabMiMkCcUJn+9fI35AjmTCLYPAqWN4U4jWEM9YplZ2xDhX?=
- =?us-ascii?Q?Yt7EPNgUvi2zJfHB7Hj2A2rXNJhuBzgExNls7TRodhxBv6/PyIAQMeKlJ3Dy?=
- =?us-ascii?Q?3s+gWyMgSeypCJeIzB3xRV0c3LhxrZJc3DF+gA1nRluW7lwginZ1E79Bzrct?=
- =?us-ascii?Q?t6wRVa11XnBko54nqhbqIMwb9dZNL4ggAQR8o/oHsY0gFga1SRJPGVW+ZGyK?=
- =?us-ascii?Q?92kkPUSJ35WJOcGc3F2/8+A7SNGXKBsoON/Qt8Lqdpe+qZ7CJV8bL9Sx4l+R?=
- =?us-ascii?Q?aDMV6kVOoVn6Arp0w0DYe2wgcjH/SJs9FAbZkBdERDImOx61xYSTxy/fI8nQ?=
- =?us-ascii?Q?lmLcsqk6L5XAm5JIZQNhgmvw3zNXCrp6/H2GLjdsYZoMjDkE4XyPiPH8HhAr?=
- =?us-ascii?Q?f2NBSQVT2E4M8l5eu191TPDEzRuTq73Gqe/sliOP6VLG90AcmOiAVUQQYsxy?=
- =?us-ascii?Q?tROIpizGEM1uCFS6zkK7QsfXwetK9l73kNy3Mmk31I3pU0qVSINVocL5BK4O?=
- =?us-ascii?Q?U3baG7HWFvvBh6O3dV61kElhH2IoR+FHT7jlFxdNS2ugfLppv1nlKQYBHAyc?=
- =?us-ascii?Q?kepCi8t9OFmL4SN38Z8xvtrHRSYeiClIuOsHT3QfwiLgI5AGbkdaqX90b7Le?=
- =?us-ascii?Q?hsaGza7ORGKvTh6t2FrvCX8b0GTsSXVwtOGNDif/toKYfokdCfVJ9qBVsDIj?=
- =?us-ascii?Q?hrpg5Fv1lhixBHTQF4AodTocOeUXSkdVwKTAZKEGEBiTJMyjcZE9eQizUzqm?=
- =?us-ascii?Q?KS3aCIuzDQvfnhXDpsVCJTLRksubBJFfObYYXFdHn87SkTm18/dEkIPwGsxR?=
- =?us-ascii?Q?uBEGBF5XAESRjV/Xju5db5g=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7552657-f823-4a3c-1516-08dd1b377532
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB7975.prod.exchangelabs.com
+	=?utf-8?B?aHBVUnM4NGxKYmljYitONVNqZ3ZOcFdCRmVwZk12Ui9CVTRYdW9XeUc4Nzhj?=
+ =?utf-8?B?UkMwN1JBTmZFb0VITlJnYUNidHRONXRQY09UZzNib1pKR0RnMkJLVi9tQ1Bq?=
+ =?utf-8?B?K0xCc3hRRS94ajZxdkNWRDdXdmNYOWE0NTRkUVozSFI2TlJlUWViaDBsTHVI?=
+ =?utf-8?B?MHhwMXJpMi9ESzl0MTUxSTJmb0x3VE5SQmRVODhCTFN6SXFSb0RUV2taM09i?=
+ =?utf-8?B?eUJLMnBZK0N4T0FEeHI2amhMQVc5OVRRc09yU1hPU1J6cndCQkp5dWM3VnZU?=
+ =?utf-8?B?eWZ6cUQ4TEpUekE3VHo5YVE3cVJuMXhwTm9rOWVUdG1EaTVZV1lGaWg2SFk3?=
+ =?utf-8?B?cGQyVDhLekpXcVR6RWdZNHFtS1BnckJDM2xtdkt6K2xJRHpkUWh1bTlsVmI1?=
+ =?utf-8?B?ai9pQk05U1IxMnZ0VDBWdEhoQ1RKdmNrMUZKazVuYmhFcGxZTy9SZ2hXRW82?=
+ =?utf-8?B?SDhid01pNEpmbERnWVBpSGhJemZoRStWK1dUZ2E0VXdsckkvdWQwMEViNE5V?=
+ =?utf-8?B?ZThWakVoNWtzaVJaWWpIc3Q5SWpyZTdud1ZoSS9xbmdCYkFFajNuTTdNeWpM?=
+ =?utf-8?B?Wm54alNNKysvM2Jxd2hVZlJVU0xOUlByTkFSdWZPbVV1aS9ORHNFcS9RN09C?=
+ =?utf-8?B?bDJZOHJwZ09XS0JUTG80ait4UG9UYUxxNFVLRjluK1VYT05IbGRwSXpLemtx?=
+ =?utf-8?B?TmozWjZLUnpvUkliWElEdDhDRDFhaVhsQzFhWXNQZFRIK05yMG1ZTHBuZStE?=
+ =?utf-8?B?TU5uT0JRRTRlZ0ZtVUIybW94ekJybVlLVmtOb2FFNTRqQzN2QlJJWWJLNHVw?=
+ =?utf-8?B?UzNOMEpzc3VqamdxMnJpOWQ2TnVvNXBYY0tOanNmZzNwdTl0QWJsQTNxTklm?=
+ =?utf-8?B?Nk9rOUhiT3JIdVlLalVYNnVvNml6STRHazRaU3ZBUFEzL3VOVERvdFlzaE1u?=
+ =?utf-8?B?ZDNIVW1GLzN0YXlmVytoTXFMa2VCZEMvczhsa0t2MFpic3AwamZMVFlMKzFZ?=
+ =?utf-8?B?ZmE0dEhxMnZPL2E5aHhCS0JhYW5tOGdVTlRBcmhSNzcwaEtUcGJ5bXFaQ2tm?=
+ =?utf-8?B?ZTJZMjcyWVNkWUpHZ3dtZ3NCcUNTTnpHUEFCWnNlOXd0NWF2Qm1tak5rTHI5?=
+ =?utf-8?B?M2t0WFJsUTk4eFgwZkxyZHlzS0xKWnAzRHZLaTN3VGZTZU45dTFOUDBUbjJu?=
+ =?utf-8?B?QndXMzJ5VGNmeXJrWGprdEc4ckFOS1F6dndaQ0lTU0JBMk9DNlkvNnJ0eity?=
+ =?utf-8?B?bUJBampHU0UrNmNGWEthcEExczArUHhrczBGT2NjVHdSQU00NTNOeG9reEVK?=
+ =?utf-8?B?eGZBWFp4Q1NmZDRFNmxoWGRCditxTDdqdkJOMWtsNVN1YVVldHkwR1MxWXhq?=
+ =?utf-8?B?d2FKczdwcEVmd2ljNWRMS1Jza2s2cXBxbDhlaENUY1lmVVIrZHhDM2VsQmNj?=
+ =?utf-8?B?cU1XZElMWGh1QlVVOHZSQzZNd0FLTk1BaGtrNlEzek1sNlAyclJidzQvd1g5?=
+ =?utf-8?B?L282dFNkTmRDekVJZ0hRR09NWVdtbmRyMjdZSmdmOGxxVHlYTEFIK2tuSFI1?=
+ =?utf-8?B?MThZemtPaHRBOGxoQ25WWTg3N2hkbGFlamFuQk51UDR1KzNjVnRWUGpoRXZU?=
+ =?utf-8?B?TkNmL0xPV3BxaG9UZENmRTNBMDZERjJRcnkrWmNzZWVDSjcrSFQ5Y3NLbTQ5?=
+ =?utf-8?B?UVZZdHE3U2FFSXFNZVRFdVBRRldRakxERkVPQm1qVnFkZGFvMWN5UDF1MTM4?=
+ =?utf-8?B?UzBZMWQrMythdGdCYXVFVVBKQVZIQmxNOG9XQU50TnNrRW9nMmFxN2E1ZFFZ?=
+ =?utf-8?B?eWpRY3VTaTRBZXBrK1ZnUmwxaE5RdXJBNGhPV0RoOFZkOUJoVUNVNXNNMFF6?=
+ =?utf-8?B?QlZwT3BrQWxmTWhERjFNS3R4aGh3dVVLSDJRcVVsc3VtemNqL3I3a2NRbGZ0?=
+ =?utf-8?B?WjhpQ1lGeWVacnRnL2JRTktRVSs5bjVqT3lmQW1tRjZWSjB5UW5HdWV6eUlp?=
+ =?utf-8?B?QlNmN2hUc0dBQWhHanZ2NDBKWXgrNDB3dlowOGJwTlFFU1ZKUFBpSXo1U1Bw?=
+ =?utf-8?B?S04rbkwzaXlaQ01DVkdyQkhjTWM0bXJMMm8xS2lNN05HK2laZ0ZIWEhmSFdZ?=
+ =?utf-8?Q?QbD/IDorkw30s7nuBXJHp7UCz?=
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e822e541-acaa-4fb3-8baf-08dd1b3877aa
+X-MS-Exchange-CrossTenant-AuthSource: VI0PR02MB10536.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 05:31:56.2620
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 05:39:09.9698
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pmy2aB5Od5Qvwp+QdcGAj+Iut6UFZ6GR9X6uNi9pCC1F6gbssZ6e0dH0ls/d/BslcfYtpe+yXbDdpKFS/+V7bG9Hg25lE9kyG+V1YSJs0jMKSWfw4358ZgGKgLBbPFOR
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR01MB8851
+X-MS-Exchange-CrossTenant-UserPrincipalName: C8AjhbVZQIRnFZoWY2HhvAIMQSMUI3qkSiqAFHs3H7M0U3KaNHRBiM7tmeFzIO6Ie0VguI70/2LAuIQWllojLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR02MB9497
 
-As per admin guide documentation, "rodata=on" should be the default on
-platforms. Documentation/admin-guide/kernel-parameters.txt describes
-these options as
+Hi
 
-   rodata=         [KNL,EARLY]
-           on      Mark read-only kernel memory as read-only (default).
-           off     Leave read-only kernel memory writable for debugging.
-           full    Mark read-only kernel memory and aliases as read-only
-                   [arm64]
+On 2024/12/13 0:59, Jonathan Cameron wrote:
+> On Wed, 11 Dec 2024 22:17:49 -0800
+> Guenter Roeck <linux@roeck-us.net> wrote:
+>
+>> Hi,
+>>
+>> On 12/11/24 20:24, Hermes Zhang wrote:
+>>> Add support for Nicera D3-323-AA Pyroelectric IR sensor. The sensor
+>>> support to config the threshold/filter_type/filter_step and return the
+>>> detect result in sysfs attribute.
+>>>
+>>> Signed-off-by: Hermes Zhang <Hermes.Zhang@axis.com>
+>>> ---
+>>>   
+>> ...
+>>
+>>> +
+>>> +static DEVICE_ATTR_WO(pir_threshold);
+>>> +static DEVICE_ATTR_WO(pir_filter_step);
+>>> +static DEVICE_ATTR_WO(pir_filter_type);
+>>> +static DEVICE_ATTR_RO(pir_detector);
+>>> +
+>>> +static struct attribute *d3323aa_attrs[] = {
+>>> +	&dev_attr_pir_threshold.attr,
+>>> +	&dev_attr_pir_filter_step.attr,
+>>> +	&dev_attr_pir_filter_type.attr,
+>>> +	&dev_attr_pir_detector.attr,
+>>> +	NULL,
+>>> +};
+>>> +
+>>> +ATTRIBUTE_GROUPS(d3323aa);
+>>> +
+>> I don't know what this is, but it is most definitely not a hardware
+>> monitoring device. I don't see a definition of those attributes,
+>> so I have no idea what they represent.
+>>
+>> Maybe this is an iio device, but given the unusual attributes
+>> I am not even sure about that. Jonathan, any thoughts ?
+> New type of sensor, but sure could be in IIO.
+>
+> Seems mostly a human presence sensor. Not that different from some
+> types of proximity sensor and indeed that might be the path to take
+> here.
+>
+> Taking a quick look at the driver suggests there is lots more information
+> needed to understand the ABI.  At very least needs ABI docs so we can
+> discuss how that is generalized. So if submitting an IIO driver
+> I want to see
+> Documenation/ABI/testing/sysfs-bus-iio-xxxx
+> with significant detail. The datasheet provides no where near enough
+> info.
+>
+> Jonathan
 
-But on arm64 platform, "rodata=full" is the default instead. This patch
-implements the following changes.
+Thanks for your suggestions. For the new sensor, it seems require three 
+attributes, e.g. /sys/bus/iio/devices/iio:deviceX/in_threshold 
+(in_filter_step, in_filter_type), then one data to indicate if it is 
+been triggerred (bool), but I'm not sure what is sutible IIO type could 
+it used? Do you have any suggestion?
 
- - Make "rodata=on" behaviour same as the original "rodata=full"
- - Make "rodata=noalias" (new) behaviour same as the original "rodata=on"
- - Drop the original "rodata=full"
- - Add comment for arch_parse_debug_rodata()
- - Update kernel-parameters.txt as required
+Best Regards,
+Hermes
 
-After this patch, the "rodata=on" will be the default on arm64 platform
-as well.
-
-Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
----
-Add more descriptions for "noalias":
-  It is not a security feature yet.
----
- .../admin-guide/kernel-parameters.txt         |  3 ++-
- arch/arm64/include/asm/setup.h                | 27 +++++++++++++++++--
- 2 files changed, 27 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a22b7e621007..f5db01eecbd3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5901,7 +5901,8 @@
- 	rodata=		[KNL,EARLY]
- 		on	Mark read-only kernel memory as read-only (default).
- 		off	Leave read-only kernel memory writable for debugging.
--		full	Mark read-only kernel memory and aliases as read-only
-+		noalias	Use more block mappings,may have better performance.
-+			But this is not a security feature.
- 		        [arm64]
- 
- 	rockchip.usb_uart
-diff --git a/arch/arm64/include/asm/setup.h b/arch/arm64/include/asm/setup.h
-index ba269a7a3201..0ef57d19fc2a 100644
---- a/arch/arm64/include/asm/setup.h
-+++ b/arch/arm64/include/asm/setup.h
-@@ -13,6 +13,29 @@
- extern phys_addr_t __fdt_pointer __initdata;
- extern u64 __cacheline_aligned boot_args[4];
- 
-+/*
-+ * rodata=on (default)
-+ *
-+ *    This applies read-only attributes to VM areas and to the linear
-+ *    alias of the backing pages as well. This prevents code or read-
-+ *    only data from being modified (inadvertently or intentionally),
-+ *    via another mapping for the same memory page.
-+ *
-+ *    But this might cause linear map region to be mapped down to base
-+ *    pages, which may adversely affect performance in some cases.
-+ *
-+ * rodata=off
-+ *
-+ *    This provides more block mappings and contiguous hints for linear
-+ *    map region which would minimize TLB footprint. This also leaves
-+ *    read-only kernel memory writable for debugging.
-+ *
-+ * rodata=noalias
-+ *
-+ *    This provides more block mappings and contiguous hints for linear
-+ *    map region which would minimize TLB footprint. This is not a
-+ *    security feature yet.
-+ */
- static inline bool arch_parse_debug_rodata(char *arg)
- {
- 	extern bool rodata_enabled;
-@@ -21,7 +44,7 @@ static inline bool arch_parse_debug_rodata(char *arg)
- 	if (!arg)
- 		return false;
- 
--	if (!strcmp(arg, "full")) {
-+	if (!strcmp(arg, "on")) {
- 		rodata_enabled = rodata_full = true;
- 		return true;
- 	}
-@@ -31,7 +54,7 @@ static inline bool arch_parse_debug_rodata(char *arg)
- 		return true;
- 	}
- 
--	if (!strcmp(arg, "on")) {
-+	if (!strcmp(arg, "noalias")) {
- 		rodata_enabled = true;
- 		rodata_full = false;
- 		return true;
--- 
-2.40.1
 
 
