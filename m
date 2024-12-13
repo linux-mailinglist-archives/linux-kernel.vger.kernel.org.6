@@ -1,151 +1,120 @@
-Return-Path: <linux-kernel+bounces-444346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065489F0520
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:00:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2869F0521
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 08:02:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B20ED284078
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07081281F47
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 07:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8EA18E377;
-	Fri, 13 Dec 2024 07:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C1317CA0B;
+	Fri, 13 Dec 2024 07:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SRa9qMnj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FOhxFC9A"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA3117AE1C;
-	Fri, 13 Dec 2024 06:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8691372
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 07:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734073202; cv=none; b=RRTE5HG5N3pK61W53AGK7R4ma1hkQgSST4QIszo/pc1M17EveOFu/b474v0SZns44WlPwMyUsDMPrErKBWH3GFgbo23GAROgJc6oxCWHyUQC8qyf8R4vu/sg0V/mJoOtDOobrXBBRTInDVYtKZjG/zMZMNau0ifsFC0eiPyGaRw=
+	t=1734073318; cv=none; b=Qvk3PdVkFlQRj7z2qbg9ukEG8JDFjc++zs6FHQAjokAiv7CT+EJlwI0u7e7MVxN9/lX2cymCFnYyH9HvMRbbDqjRyp+227M/Ycr5KQB5J0hKz5RyHf3AFHCDPRmNw9TzbD/zKemf3ysVp/tWGdJY2CMuMTJJ5JySAHnd/Rz67HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734073202; c=relaxed/simple;
-	bh=relB7YyEyIf37d9inl0r0VNFoRygQ8XFfJbQSdbIUmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nSJxFZw92pCCelBTzwrn560kmvcSpHinBT5xEs35L5Y3zOvtyFvqJVBEF5TQQNs+q2259frXvxs2tgCeax08G0oIBO6HjUE+yqfYXxyYOFufCqt4UYV5MPcZQKIk4k+/cc4U68BKomF9RNDnTjmYiKef8h0TMIe9xn6alv/Kj3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SRa9qMnj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BD1Vqkx001463;
-	Fri, 13 Dec 2024 06:59:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IKpn9IfbcV2+QnCiE+6i+BLqDUXR6T0iXZZBvyQXf/w=; b=SRa9qMnjmOOfNShE
-	PTdqJm7lT88oy1OQsFKDHU8SQlU/0mLR/QOarpOamK6C46DnP/svDmp/JSSuXzQc
-	6KUat4TVr/nwSJFAUAMFisO8t38oQ0SuNe2ukBqy76LTPxZeEA3C3Pr12EAP34yg
-	p8+L7w2EofHDEVr+febQ5xP9e6/eZc6U95BjJEiN/UYhRsvakh3FsX4Ijn99kxPy
-	uM1+fqThd9PwdLR6+wk0acMSBnP4NP3CVOjDvJevJWZ20/76Bn3JXvz7uFpPPfN9
-	qK2peLcE19ky4+kZzd4EmHWgq9u2RCjVC30IvAFAFsp/Hz+PhrHRfmnUjKEt8I5t
-	s/2Z+g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43fqes3v3c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 06:59:54 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BD6xrcc007790
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Dec 2024 06:59:53 GMT
-Received: from [10.239.133.118] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Dec
- 2024 22:59:47 -0800
-Message-ID: <4476bfe9-41fb-4ec3-b352-624fba75cf3f@quicinc.com>
-Date: Fri, 13 Dec 2024 14:59:45 +0800
+	s=arc-20240116; t=1734073318; c=relaxed/simple;
+	bh=EsD+OaRfYxo4XdvH3wCFgLOpIqR8LP2p7B6sMwwrDbw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=slOvfmCr0JIeXxk01hSctuScttNAAbE5MLAL/OkvYPc9LCtbfNZFZrlxzvsMlfAQnfda0xilq9ijCbmACvw3tQ9RRsMZnVONsAl+mqgMX9EXvPHEBPxEN07tCuE82I2MeXSCPm4dKZP/Ga6G9V32vd/5Jlvh6XE7UPOhSLMr6oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FOhxFC9A; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=EsD+OaRfYxo4XdvH3wCFgLOpIqR8LP2p7B6sMwwrDbw=; b=FOhxFC9Ant8X9Ng/U7dnLYbgS1
+	rYAF+WzVpmvJqFpVxvLDj2/dMdaXyZtaIhCKP1FHMUZ+ouLrfHnYk+Votsvhi3EIWwDHY8L5+j3c0
+	3aHYF5HH4Rq51B0pd4ljDHoKOyDqPcHcV8KVp+NAdySY45VdwmjRw2cfNQPscsppMsHIOMYrz70G9
+	oMKlplOT8erpubEF9hU/2C9RTfs/azkx7wea/Zy6AXPQSuLix8KrBXXewZ3rLvQWiGQpgg9ySiASc
+	e5v5vrEduF5AYaW5+kvkLtXT+nIXTRAN/VZ0RgXcsnp+A/oAmlKXttqmSLF8egknDpzbmfkilOH38
+	0o7/1BIg==;
+Received: from [172.31.31.140] (helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tLzgF-00000004Dxc-44VF;
+	Fri, 13 Dec 2024 07:01:44 +0000
+Date: Fri, 13 Dec 2024 07:01:44 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: "Ning, Hongyu" <hongyu.ning@linux.intel.com>, kexec@lists.infradead.org
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org, bsz@amazon.de
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_13/20=5D_x86/kexec=3A_Mark_re?=
+ =?US-ASCII?Q?locate=5Fkernel_page_as_ROX_instead_of_RWX?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <56fdfffc-9a5e-4f9e-ae5b-57dd27d647cc@linux.intel.com>
+References: <20241205153343.3275139-1-dwmw2@infradead.org> <20241205153343.3275139-14-dwmw2@infradead.org> <5bb26488-f5fb-4186-92c3-de6a07631f91@linux.intel.com> <b4104c271b461dc1958ffac299d6741746a0728a.camel@infradead.org> <56fdfffc-9a5e-4f9e-ae5b-57dd27d647cc@linux.intel.com>
+Message-ID: <E03AA833-B883-4249-90A8-3CD1EFC9390A@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: Enable secondary USB controller
- on QCS615 Ride
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Krishna Kurapati
-	<krishna.kurapati@oss.qualcomm.com>
-References: <20241211-add_usb_host_mode_for_qcs615-v2-0-2c4abdf67635@quicinc.com>
- <20241211-add_usb_host_mode_for_qcs615-v2-2-2c4abdf67635@quicinc.com>
- <cc3edfc6-f53c-401b-b766-f8e560eb24b9@oss.qualcomm.com>
-Content-Language: en-US
-From: Song Xue <quic_songxue@quicinc.com>
-In-Reply-To: <cc3edfc6-f53c-401b-b766-f8e560eb24b9@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vWoFvXnAE8lWMsSN4fjbpKs2MoB_SKSM
-X-Proofpoint-ORIG-GUID: vWoFvXnAE8lWMsSN4fjbpKs2MoB_SKSM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 clxscore=1015 malwarescore=0
- mlxlogscore=989 priorityscore=1501 bulkscore=0 phishscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412130049
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
+On 13 December 2024 06:45:18 GMT, "Ning, Hongyu" <hongyu=2Ening@linux=2Eint=
+el=2Ecom> wrote:
+>
+>
+>On 2024/12/12 18:13, David Woodhouse wrote:
+>> On Thu, 2024-12-12 at 11:03 +0800, Ning, Hongyu wrote:
+>>>=20
+>>> Hi David,
+>>>=20
+>>> I've hit some kdump/kexec regression issue for guest kernel in KVM/QEM=
+U
+>>> based VM and reported in https://bugzilla=2Ekernel=2Eorg/show_bug=2Ecg=
+i?id=3D219592=2E
+>>>=20
+>>> based on further git bisect, it seems to be related with this commit,
+>>> would you help to take a look?
+>>=20
+>> Thanks for the report; I'll take a look=2E Please could you share your
+>> kernel =2Econfig?
+>>=20
+>
+>kernel config updated in the bugzilla https://bugzilla=2Ekernel=2Eorg/sho=
+w_bug=2Ecgi?id=3D219592
+>
+>> Also, you say that this is in QEMU running on an IA64 host=2E Is that
+>> true, or did you mean x86_64 host? Are you using OVMF or SeaBIOS as the
+>> QEMU firmware?
+>>=20
+>
+>You're right, it's x86_64 host, I miss-selected it in bugzilla=2E
+>I'm using OVMF as the QEMU firmware=2E
+>
+>> In the short term, I think that just reverting the 'offending' commit
+>> should be OK=2E I'd *prefer* not to leave the page RWX for the whole ti=
+me
+>> period that the image is loaded, but that's how it's been on i386 for
+>> ever anyway=2E
+>
+>And your latest patch https://lore=2Ekernel=2Eorg/kexec/9c68688625f409104=
+b16164da30aa6d3eb494e5d=2Ecamel@infradead=2Eorg/ could fix this issue now=
+=2E
 
-
-On 12/13/2024 2:14 AM, Konrad Dybcio wrote:
-> On 11.12.2024 9:26 AM, Song Xue wrote:
->> From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->>
->> Enable secondary USB controller on QCS615 Ride platform. The secondary
->> USB controller is made "host", as it is a Type-A port.
->>
->> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->> Co-developed-by: Song Xue <quic_songxue@quicinc.com>
->> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 28 ++++++++++++++++++++++++++++
->>   1 file changed, 28 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->> index f41319ff47b983d771da52775fa78b4385c4e532..26ce0496d13ccbfea392c6d50d9edcab85fbc653 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->> @@ -203,6 +203,15 @@ &gcc {
->>   		 <&sleep_clk>;
->>   };
->>   
->> +&pm8150_gpios {
->> +	usb2_en_state: usb2-en-state {
->> +		pins = "gpio10";
->> +		function = "normal";
->> +		output-high;
->> +		power-source = <0>;
->> +	};
-> 
-> Does this go to an enable pin of a vreg / switch?
-
-Thanks for comment.
-We go to enable the pin of PMIC chip. The pin of PMIC is connecting to 
-host-enable pin of USB converter. Need pin of PMIC chip to be high 
-level, when USB is as host mode.
-> 
-> I think we settled on describing such cases as fixed regulators
-> (that are always-on for now) - would you remember, +Dmitry?
-> 
-> The rest looks good.
-> 
-> Konrad
-
+Thanks=2E Does the newer patch at <https://lore=2Ekernel=2Eorg/kexec/ed7dd=
+45f89e8f286478791137447a21d53735dbd=2Ecamel@infradead=2Eorg/> work too? Tha=
+t's the cleaner option, I think=2E
 
