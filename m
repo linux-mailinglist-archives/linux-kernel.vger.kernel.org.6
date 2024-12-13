@@ -1,121 +1,182 @@
-Return-Path: <linux-kernel+bounces-445244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94DD9F1333
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:07:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE96C9F1344
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45DE51884144
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:07:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931CD16AC92
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2DA1E32CD;
-	Fri, 13 Dec 2024 17:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96841E493C;
+	Fri, 13 Dec 2024 17:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eY534SAz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="29b4MEey"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3598A175AB
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8C41DF737
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 17:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734109662; cv=none; b=Cn2HoHtTSWWsnYSn4yEOzi5EjkZpknt5kZ4DG0yJDrqA70GcBGHjroxOkTMj7iw92jiWIIqk/OZRUwOLnET3ecWCwvF0rH7tQRpJA9kxb7dCZLy6e9cpgaZKL6nx3gRRvmIxms9RTxE7zN8wrR7S3OCk1o9lnFwt477abA1QWjw=
+	t=1734109719; cv=none; b=YPrW/at9eoIhzJ3MV9z8nwekGsdfwJRVt6Ll3uNXRo8pNanH2yFX1K9oLLAMdSRMvj9C/wEWeNtZRvMT0waR7OUCJVyhOmpQnaBs1MRqtPxs/kNqGEDuC7rjvNBbdKRvX9G2lX8gxXX6QPwTLPtrCPoLNr0tXfE+Qm2y2onTB8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734109662; c=relaxed/simple;
-	bh=9h2P6ELdMzx/Gu7OEnPIQA6Pmdclf6xQrgpKHh0542A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q4QVt8rRqANzN0hHvYctGn7qDCjWHw48MlWuHYF8c58hOrO8m0iqb8xZFHyd4XhAMKTHipn6Vr6HT/yVPTDvpkj1ELHUskUesISu0JbiNZafdj0eO9StGIo0BbsUr/rdftNnffrjHonyPgNrN2UUutsFXUZNoFOzy3Teqpo0Qgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eY534SAz; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734109661; x=1765645661;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=9h2P6ELdMzx/Gu7OEnPIQA6Pmdclf6xQrgpKHh0542A=;
-  b=eY534SAzHFf9SQI742LpYx/DcGgJO1bMrtDAetahh9BooqQDr9XqxGWn
-   Vk1F/OhpD5GZPQ19v3e4e28+qp9EdxAHE88P2kHru2VwJbqaQlWZf+pvr
-   Cg59YtUOutrx+pAwhAfs41VctoOf03Oq6iTYvttsIF6g+xdkc2Ok1Xq4+
-   +5ULn6H1fIIK51Lx8MG32B4VtZ5sGvOkuY9bbJFfnmjgYNA6L8buZWqBa
-   Ji9QWlGRYeXQAXceQty2TuN6tCEUkeoTDnEEaeUznS90Cu1E3bPurM0bm
-   W8JTQle8avn/XU+tUC9Vj1gFXGZ0AKHe2y1kKRm6kmyiFFmJoay4fJnzz
-   w==;
-X-CSE-ConnectionGUID: yqYY/AI0RWukuixGZflHqg==
-X-CSE-MsgGUID: CVBVi7dyS0WId9cD4utIkQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11285"; a="22156299"
-X-IronPort-AV: E=Sophos;i="6.12,231,1728975600"; 
-   d="scan'208";a="22156299"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 09:07:40 -0800
-X-CSE-ConnectionGUID: vt3drGVZS566O67j18l/5A==
-X-CSE-MsgGUID: R2CKISlLTKWU8fVnWwDOag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="97373648"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 09:07:38 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tM98Z-00000007Py8-27f7;
-	Fri, 13 Dec 2024 19:07:35 +0200
-Date: Fri, 13 Dec 2024 19:07:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>
-Subject: Re: [PATCH v2 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
-Message-ID: <Z1xp1xwLXAvkKgwD@smile.fi.intel.com>
-References: <20241118123254.620519-1-andriy.shevchenko@linux.intel.com>
- <514964ea-0795-41d6-91d3-f3d4f193fc6d@csgroup.eu>
- <Z1sOTf6UZbruptnl@smile.fi.intel.com>
- <991aee8b-fb10-4152-89fb-6ac542ee87c1@csgroup.eu>
+	s=arc-20240116; t=1734109719; c=relaxed/simple;
+	bh=wE+q7QeqF7YQbDHKzcLUrEGn0D/xKRMVNiL8FZYTzQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=JZb+PLSQHj4eVlJOe8WAUBey2VIfCM0S9MeFkqgrTffQ4pf6ZH+sZX3bqqJB4RbarWBmT3tPyQ6yOodwN9UXECQE1Q2bCPTGiFFXkvqxvutcooW020PEqW0vvFYlvP2AfnBrtfaKaUHjkZUJB4fcNmZezrsaYw0L+zHTEWEQ9Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=29b4MEey; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d442f9d285so9591a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:08:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734109715; x=1734714515; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7A4zwHQX+g8AxxOfbgXufhzVAB4FWsc6ZChZM+91J+Q=;
+        b=29b4MEeyBWkVqUolfzYcE3Jdwe7eQHVydzI7lGKVgmmConI+6fH8W2P+q2VO49uDZU
+         C9TfKKZuLFMdARUuq6mANwRls3tczCxmzBvg0mpeB6exQq5q1UNiToBEPR2Aq/s9jcUv
+         4X1t3MRrxJK8Ow8Tix1kwDBH7MzB65liCWjkSHJGGm6SyeQr0FuJCa/NhsUzZQz3Kivz
+         k3keI7cVj46jO3yV1rZim5teLqYabD+WToJTOWQT73CAEj6tSajtmdWGmMK9kFijo5FW
+         JOn6Wat/cc96//d75BRW2AX3jCfi9sNSZdMpfV2KRsuza6meR3S4Ufr7evF5pJ5tMOr2
+         xycg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734109715; x=1734714515;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7A4zwHQX+g8AxxOfbgXufhzVAB4FWsc6ZChZM+91J+Q=;
+        b=wCIY+tVLpvOKjJ/HLSrcWyiQD4s/ctbdHlwSgduNcZtvG277cou+3WLDizmUM0IMYS
+         zN1yLYwBMsIA0mxnv56C6zF9GoXW+j7eWBH45wpweha/6eylGLXUshr2ImOp4tvNOwlW
+         PUZ2Jo2ubf8ja/2aj5FT5BvW7/JYcEABrxKAt+dPThxV+oqv610rPITp8Au502cIN5j8
+         9NbdyH+pK+SKGp+UuI3lAWVORD7gYanp6WNPFqYg/D8wHulUaeMVBRdTSdDEeVSLhusa
+         VCb02kzsAvLn6DKvkEcEBHVwI33MndLWBSjSbnUCyySzYfpo4kYm+Rvx0Xawg83lZCuN
+         PKTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNR10KWj49hjDKEMv8/kYIE9taTXyHZBpdo9kCKcYjDkN/tyP86eTa17sjRMW4AqtPOzM8cLDcedCnB3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwksXqCjCAHyqWQNAXX507tXnb7TsiCDKkp05mneCvzYaJAHA7f
+	FTWjha6cQCnGXjR8P7ZQ+Fo8WBNNTzPYhc3m0iHF0YZJlzTcsxmm1Sz66vktG5hafpRc3ccaobC
+	lKVhhNaT0tLNTJ9DH/SPa4cOOBtmPWt7JIeHA
+X-Gm-Gg: ASbGncszeb5osHzroMTLwN3gEOKcmzHuWTVEOQSmUvi4fqpWgY/8wwFAVor59+xlk0+
+	kdyTALGUadv+tpvDImgDFa4u/kRGfPxj1uV6QJA==
+X-Google-Smtp-Source: AGHT+IE0pzRAvhpWcDoHVTc25a7VJDPqOoxFfUFUvV3kZNJPG0d3Y6hVFQO+pd+M5jbFDlDiTJn/R0kKY+NzL+UHXcQ=
+X-Received: by 2002:a05:6402:1517:b0:5d0:b20c:2063 with SMTP id
+ 4fb4d7f45d1cf-5d63c09e36emr92135a12.7.1734109713373; Fri, 13 Dec 2024
+ 09:08:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <991aee8b-fb10-4152-89fb-6ac542ee87c1@csgroup.eu>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241211232754.1583023-1-kaleshsingh@google.com>
+ <hmuzfspqjzb36xlj2x44keihacrrhzj5madqrfbcnhqouzredv@wo75achgkuh5>
+ <1818e2ea-f170-4a9c-8d93-2a24f2755a41@lucifer.local> <20241212173609.afd41d1dffbefe0d731ed4ed@linux-foundation.org>
+ <695eabb8-ba28-4031-bc4d-66dc4f1d096f@lucifer.local> <CAC_TJvcdz854DmBoVRkb_B5j+u-t=4zHkLtHVeB5RJ=bXcBJag@mail.gmail.com>
+ <9675c409-b495-46a5-a90c-c952892b4121@lucifer.local> <x2y7rewvmri25wj72qaeuunqqsqj7pqcliahoxkprcbfxg5owv@icvnojkhrdch>
+In-Reply-To: <x2y7rewvmri25wj72qaeuunqqsqj7pqcliahoxkprcbfxg5owv@icvnojkhrdch>
+From: Kalesh Singh <kaleshsingh@google.com>
+Date: Fri, 13 Dec 2024 12:08:18 -0500
+Message-ID: <CAC_TJvdZxQ0-O3Y1bzH0-XdjQYuJPkkpn-umVan--Z6As-tSow@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v2 00/16] mm: Introduce arch_mmap_hint()
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Kalesh Singh <kaleshsingh@google.com>, Andrew Morton <akpm@linux-foundation.org>, vbabka@suse.cz, 
+	yang@os.amperecomputing.com, riel@surriel.com, david@redhat.com, 
+	minchan@kernel.org, jyescas@google.com, linux@armlinux.org.uk, 
+	tsbogend@alpha.franken.de, James.Bottomley@hansenpartnership.com, 
+	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, 
+	davem@davemloft.net, andreas@gaisler.com, tglx@linutronix.de, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net, 
+	jcmvbkbc@gmail.com, bhelgaas@google.com, jason.andryuk@amd.com, 
+	leitao@debian.org, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-mm@kvack.org, 
+	kernel-team@android.com, android-mm@google.com, Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 13, 2024 at 07:28:45AM +0100, Christophe Leroy wrote:
-> Le 12/12/2024 à 17:24, Andy Shevchenko a écrit :
-> > On Mon, Nov 18, 2024 at 03:10:09PM +0100, Christophe Leroy wrote:
-> > > Le 18/11/2024 à 13:31, Andy Shevchenko a écrit :
-> > > > Remove legacy-of-mm-gpiochip.h header file. The above mentioned
-> > > > file provides an OF API that's deprecated. There is no agnostic
-> > > > alternatives to it and we have to open code the logic which was
-> > > > hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
-> > > > drivers are using their own labeling schemas and resource retrieval
-> > > > that only a few may gain of the code deduplication, so whenever
-> > > > alternative is appear we can move drivers again to use that one.
-> > > > 
-> > > > As a side effect this change fixes a potential memory leak on
-> > > > an error path, if of_mm_gpiochip_add_data() fails.
-> > > > 
-> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > 
-> > > Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > 
-> > Thanks, what's next?
-> 
-> Next step is that Michael or Madhavan apply it I guess ?
+On Fri, Dec 13, 2024 at 11:45=E2=80=AFAM 'Liam R. Howlett' via kernel-team
+<kernel-team@android.com> wrote:
+>
+> * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [241213 10:16]:
+> > On Fri, Dec 13, 2024 at 10:06:55AM -0500, Kalesh Singh wrote:
+> > > On Fri, Dec 13, 2024 at 4:00=E2=80=AFAM Lorenzo Stoakes
+> > > <lorenzo.stoakes@oracle.com> wrote:
+>
+> ...
+>
+> > >
+> > > On the technical side, Liam is right that the copy-pasted arch code
+> > > has inconsistencies (missing checks, order of checks, ...). I agree
+> > > there=E2=80=99s room for further consolidation. I=E2=80=99ll take ano=
+ther stab at it
+> > > and resend it as an RFC with an updated cover letter, as Lorenzo and
+> > > others suggested.
+>
+> Thanks.  Can you please include what platforms you have tested in your
+> cover letter (and level of testing - booting, running something, etc).
+>
+> If you have not tested them, then it might be worth it to have it as an
+> RFC to point this out - at least initially.  Some of these are very
+> difficult to set up for testing, but it is also possible that you did
+> that and the maintainers/people who usually test these things will
+> assume it's fine if you don't spell out what's going on.
+>
 
-Folks, do you have any comments? Can you apply this and we move forward towards
-removing the legacy API from the kernel?
+I build-tested most of these except (csky and loongarch) and ran
+android runtime (ART) tests on arm64 and x86. I can try to spin up a
+few of the others and will add it to the description.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> >
+> > The most useful thing here as well to help us understand would be to wr=
+ite
+> > more in the cover letter to expand on what it is you ultimately what to
+> > achieve here - it seems like an extension on the existing THP work on a
+> > per-arch basis (I may be wrong)? So adding more detail would be super
+> > useful here! :)
+> >
+> > We do hope to avoid arch hooks if at all possible explicitly for the re=
+ason
+> > that they can be applied at unfortunate times in terms of locking/wheth=
+er
+> > the objects in question are fully/partially instantiated, VMA visibilit=
+y
+> > etc. etc. based on having had issues in these areas before.
+> >
+> > Also if a hook means 'anything' can happen at a certain point, it means=
+ we
+> > can't make any assumptions about what has/hasn't and have to account fo=
+r
+> > anything which seriously complicates things.
+> >
+> > Ideally we'd find a means to achieve the same thing while also exposing=
+ us
+> > as little as possible to what may be mutated.
+>
+>
+> Yes, I'm not sure of what your plans are, but I would like to see all of
+> these custom functions removed, if at all possible.
 
+Initially I think we can remove the mmap hint portion of the logic;
+and follow up with removing arch_get_unmapped_area[_topdown](). Some
+of those may not make sense to consolidate e.g. powerpc's
+slice_get_unmapped_area() which doesn't share much in common with the
+rest.
 
+Thanks,
+Kalesh
+
+>
+> Thanks,
+> Liam
+>
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kernel-team+unsubscribe@android.com.
+>
 
