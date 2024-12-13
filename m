@@ -1,317 +1,153 @@
-Return-Path: <linux-kernel+bounces-444088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3ED9F009D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:00:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 777CA9F009F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 01:03:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47F5A188813B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:03:40 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8232A7FD;
+	Fri, 13 Dec 2024 00:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=doridian.net header.i=@doridian.net header.b="uo+f+YT6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="5Zu30W5S"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF74F285FCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 00:00:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CDB2A1D7;
-	Fri, 13 Dec 2024 00:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/JtUqdg"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB964A31;
-	Fri, 13 Dec 2024 00:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8943F7E1;
+	Fri, 13 Dec 2024 00:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734048032; cv=none; b=i68XNvYd0N8WTvP4eolWx1ZxKrGfYf3Xua4MgYoKIEoKn0oL3R1+VnZQgXoZfHAXTbagNri326x7UrkSk8HgzUySPTm8tq31rv5rw+h+JJUgHwU8ud326d1yKRfsLgdVmJEMeIkdHSe+idDzwJtBRNv98PsEABVynTnFqbGg0QE=
+	t=1734048211; cv=none; b=iTiGw6DzP5gSRl2VEtzDso0J7in7T9/Vlm7dxx/EKNSP1NGtwXotj/+ulK251PApH/4asHpFr7tRijWBmBfTpLAuBSXCg5quz3U+udF2ICbFd0wz/eX4zd6pxKFxtloVHIm2VXylzbaz1ys88lB36uc1ggq9aGaXzkCWEC53p9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734048032; c=relaxed/simple;
-	bh=9p7YHaZbq/dx9n2Yjc/OIF1INCIhH6YHwdTFSkpy1CY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgZb8yavdnpfVYA9VuelDkl7yqd5qfY+F+5s2YAFI0bL0qbWd7e0cK/h097Ph9pSm3KJfUC+trgnOJQWdQOqNvQiSDq9k3G5iALnJQBlexOGAcRQ//8vkMBf68kEmTvIA+e1fEqkhYObzH8CZmWwfXoiFmLyjUNG4FEFk13NkEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/JtUqdg; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa67bc91f87so15055966b.1;
-        Thu, 12 Dec 2024 16:00:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734048028; x=1734652828; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vcclPUIV9hN7sAKsxaBgUUDDyLhCyXI/utLd1IiKtfY=;
-        b=O/JtUqdglciY+So1V8eEHuHYyHlwDjmyjNo1iu6/WXHUozeRhWf9VXOvC30Aykw30W
-         V8YjAkmENz3V+rYMqrsHEyqnoZYXxQjM4fU5uFzACrq82u3nEtIVzZUVo84ceUNK7ZQd
-         vBW1RLHy3cxAI/ZTAFWj+yNwz+9QcgFdRxJAPyGi+FN91diSK9BpsFrOm1c0g8LbF8uF
-         HLwpaeQqo9rSbd36G9XHUOgbYqcjYAregYQo4vnlTsc6nXZwXJ/12TtP1jh1U5GZCyKA
-         IyDkOTR4nV03xJ7/egssKwN36DQdrJkWu5+aVLk5UQnzG4HSCjnr57geZWOJGPNKwk+8
-         ekqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734048028; x=1734652828;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vcclPUIV9hN7sAKsxaBgUUDDyLhCyXI/utLd1IiKtfY=;
-        b=g2uB8S5qYMKzfrTkkFhZGg5XbHWoLmAA0FQkJSQNNwiv0tpzwODwH58AkJE7LVLpFw
-         LNAw9Py4VsJSnE1nAzgJyudWwNdujZUZ0f0K4SLQR2Hcj1Wfwk6dNXrwiWRpb5DZRzN4
-         kXpn+XW2rHbhC3Oj5y/oBT8wmlmWfAz/+ug3LG29a4SdH1C1MKNY0uCjIga1/nCDo3oY
-         4vq6RBskO1863pAo6wR3rf0ZyeXRc5eCmJAyADDJIzVHsaWj9F67LLtMIfgNulS4GoZ5
-         mH9q2iXzdw7tDBjgp4Zvg5b8X84f5BOa/d2816VVfgcmIM/TO9Y+C8zfMtTI/o7C+v6r
-         b2QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/G2Puyv7zM4FU4+Jqvl4ym+XTEEjzN6A2pRZYwUO+/qAY/spwGk/IU5OY/RIt3zL86wCF3Ake@vger.kernel.org, AJvYcCXqmtIrYVX7vosMC+qNyvW9bwhuGio7yQJInN4Hk+wgaMZTqAj3Cw84qWWkS3QOpdQXCVIBtCpOoXyGD6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxueyNIJwKbLNzVK2lBDc4iIO8XTavbuy6Y8Te8B2JJacg/BQu4
-	NxCCudQGRETPRkOCJVfrGUX7lTJVZaSIz43cFa6XlvpzdOsHmL2X
-X-Gm-Gg: ASbGncs4wn1WyKwzgsz+Zrtf0FXqfjPr8+XcsytHnFO45LnAt8+qQwSYUlMb27di8U0
-	+fvzmMTmxKWdmOh+i+70WOIqmw80z/EMqckhcfAv5uP50tZKH44cy02CgNksKO3Oli85bEKEkIE
-	008XN3G1mwturYDmsutx+P0NErvwa4tmbfjJhxy5M7Af6PtRT5flaatVNlwgJ99ObZGyABVG5jg
-	lT3Ef1axNonvq4Cz5mtV8cTldcofFAYzGz9Fgjjy1YC
-X-Google-Smtp-Source: AGHT+IEX0vHAiQvbAxuBHI2nFlWSLhH5iA+A6F1sg1Z0GU8++HkwbQyAuRfuKlroxaJU9N1xhb9/kQ==
-X-Received: by 2002:a05:6402:50cc:b0:5d0:b7c5:c406 with SMTP id 4fb4d7f45d1cf-5d63c2e16c1mr90402a12.1.1734048028037;
-        Thu, 12 Dec 2024 16:00:28 -0800 (PST)
-Received: from skbuf ([86.127.124.81])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b60789asm10731626a12.37.2024.12.12.16.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 16:00:26 -0800 (PST)
-Date: Fri, 13 Dec 2024 02:00:23 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: dsa: microchip: ksz9477: fix multicast filtering
-Message-ID: <20241213000023.jkrxbogcws4azh4w@skbuf>
-References: <20241212215132.3111392-1-tharvey@gateworks.com>
- <20241212215132.3111392-1-tharvey@gateworks.com>
+	s=arc-20240116; t=1734048211; c=relaxed/simple;
+	bh=Lk6f0uzezwahTh8JH7ef4ZHbgva7DIkzzA3sc6WR7U0=;
+	h=MIME-Version:Date:From:To:Message-Id:Subject:Content-Type; b=VDj7L6O+qTIlkff2xqUnDcLb4lS+Ylpuev0X3QtlyA2ewjvUr1GrcvcJpHcIKL1kO/+caBNVFV1jBrErHOchUYXgK06ZJrskxmjeFb84FfSNqhd67s6vHVFTmGWZL2IM4sZPKTjmIFZzEykHogelGeVjVrFTb2evsL/xaEqiHkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=doridian.net; spf=pass smtp.mailfrom=doridian.net; dkim=pass (2048-bit key) header.d=doridian.net header.i=@doridian.net header.b=uo+f+YT6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=5Zu30W5S; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=doridian.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=doridian.net
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 584DC1140205;
+	Thu, 12 Dec 2024 19:03:27 -0500 (EST)
+Received: from phl-imap-06 ([10.202.2.83])
+  by phl-compute-12.internal (MEProxy); Thu, 12 Dec 2024 19:03:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=doridian.net; h=
+	cc:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1734048207; x=1734134607; bh=DV5U0ZWSR1
+	rohst9/i4ud6oX1W3yQnMrXQx4zizLV7E=; b=uo+f+YT6ySP2DcJCsGO1tc6Wdm
+	/m02PE8rzpmBBmaYFTCnX2p4LT0vBB6no4wdz6bCPRLhCDYL8uUG3qJuI64FfvK/
+	LLH8zDCIedaOasQbvP6DWEWII3mT8nPlWho8cVuzXQ11qyR23UNohO/SaDPzT5Z9
+	ySitZ05cW/szadCynWbzCRDXlrmEhgSKWzCVNwqRPZ1kF13+xDxYb+fr6fK6HhSl
+	WNVGOquIdaf1nyIq4Y4cdeP6Tvp/z1oe8RqTmNASoSvupuz2t+ZZfkEsjOrpFV+F
+	FWxV5kd4stwtvK7ckQMlJ3v9DTlvsqE69F98BhQDiEusbgT8v7XEz9ZQSwkQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1734048207; x=1734134607; bh=DV5U0ZWSR1rohst9/i4ud6oX1W3yQnMrXQx
+	4zizLV7E=; b=5Zu30W5SoOEZH2HWb2nzq8T1Qrb84RiuLR6102U4EnCQ5F7w6nW
+	1zsxLBODN3A7AsI7JvUGzLxbZpEBvJIjbaaCkHHu9MeKn99lL1N3RhKE0kOlbJnb
+	RssD+Vtuuxk+xrw5acgyKFhdppY0TJD0+ebD90TlCAA6Nh4B3Ykh0G2Ur7jc8DOv
+	wyFiV4GSO7Fb7CkYlDJTOrgAOe5ruQ51ssLpDNt4axycNsV0b243R45kWqBA/Vhf
+	oQ69bLFO5uAI0mlVMjp/6Aw5cQNS1f8D6er2MhNZUs75+ZgOEhMr+mlxPtIEjCEu
+	UjnhjOwVZf8tDJoYUmj8mc/xmgsR8vGmf4w==
+X-ME-Sender: <xms:znlbZ3faqvZffwSj8T0eeDDrKwfCoMynJZOgf1N4rkXNtaHOQiXRhQ>
+    <xme:znlbZ9MKsGaHJtOyaEKfHh-SQSieZh6uXolRjKqS3W8i2MD-9gqujOT3sG5fKPu41
+    ijHkhTWOAoV92pVQp4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeeigddujecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepofggfffhvf
+    fkufgtgfesthejredtredttdenucfhrhhomhepfdforghrkhcuffhivghtiigvrhdfuceo
+    ghhithesughorhhiughirghnrdhnvghtqeenucggtffrrghtthgvrhhnpeekudevueehie
+    eitdeutdeitddtheelfefgteelleegteeludfgteehtdejudejleenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgihhtseguohhrihguihgrnh
+    drnhgvthdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    oheplhhinhhugidqsghluhgvthhoohhthhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:znlbZwiGks4Q98YVDGbTsVg36dmbl3yBN70PJ-Bif5ux7wdKI7vRYw>
+    <xmx:znlbZ4-tEV2ApH2jGxnLEnfkQWWGoYGueFI04bee2kR1gLX7kQsoSA>
+    <xmx:znlbZzskjcBLMo7AF8V963ZbEPkXpts6G24WDOvyaNO6LucDTMcMbQ>
+    <xmx:znlbZ3EL8NsEWHV09Rpk_-DY0fc7DDfutHc2RkzWU_YEPOkeV8LrEQ>
+    <xmx:z3lbZ8U7FfxudOHfX7vBijusmCVPhhVn7EYTsMu75sAu0DeT1J6RRkF_>
+Feedback-ID: ie91947d0:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B685529C006F; Thu, 12 Dec 2024 19:03:26 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241212215132.3111392-1-tharvey@gateworks.com>
- <20241212215132.3111392-1-tharvey@gateworks.com>
+Date: Thu, 12 Dec 2024 16:02:55 -0800
+From: "Mark Dietzer" <git@doridian.net>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <b9a5c3cb-d3d4-4fae-8171-5b8c2ab9744a@app.fastmail.com>
+Subject: [PATCH Resend] Bluetooth: btusb: Add ID 0x2c7c:0x0130 for Qualcomm WCN785x
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 01:51:32PM -0800, Tim Harvey wrote:
-> commit 331d64f752bb ("net: dsa: microchip: add the enable_stp_addr
-> pointer in ksz_dev_ops") introduced enabling of the reserved multicast
-> address table function to filter packets based on multicast MAC address
-> but only configured one MAC address group, group 0 for
-> (01-80-C2-00)-00-00 for bridge group data.
-> 
-> This causes other multicast groups to fail to be received such as LLDP
-> which uses a MAC address of 01-80-c2-00-00-0e (group 6).
-> 
-> Enabling the reserved multicast address table requires configuring the
-> port forward mask for all eight address groups as the mask depends on
-> the port configuration.
+Adds a new entry with VID 0x2c7c and PID 0x0130 to the btusb quirks table as it uses a Qualcomm WCN785x chipset
 
-Personal experience reading your commit message: it took me a long while
-to realize that the reason why the 8 pre-configured Reserved Multicast
-table entries don't work is written here: "the mask depends on the port
-configuration." It is absolutely understated IMO.
+The device information from /sys/kernel/debug/usb/devices is provided below:
+T:  Bus=01 Lev=01 Prnt=01 Port=04 Cnt=05 Dev#=  7 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=2c7c ProdID=0130 Rev= 0.01
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:  If#= 1 Alt= 7 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  65 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  65 Ivl=1ms
 
-> The table determines the forwarding ports for
-> 48 specific multicast addresses and is addressed by the least
-> significant 6 bits of the multicast address. Changing a forwarding
-> port mask for one address also makes the same change for all other
-> addresses in the same group.
-> 
-> Add configuration of the groups as such:
->  - leave these as default:
->    group 1 (01-80-C2-00)-00-01 (MAC Control Frame) (drop)
->    group 3 (01-80-C2-00)-00-10) (Bridge Management) (all ports)
->  - forward to cpu port:
->    group 0 (01-80-C2-00)-00-00 (Bridge Group Data)
->    group 2 (01-80-C2-00)-00-03 (802.1X access control)
->    group 6 (01-80-C2-00)-00-02, (01-80-C2-00)-00-04 – (01-80-C2-00)-00-0F
->  - forward to all but cpu port:
+Signed-off-by: Mark Dietzer <git@doridian.net>
+---
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Why would you not forward packets to the CPU port as a hardcoded configuration?
-What if the KSZ ports are bridged together with a foreign interface
-(different NIC, WLAN, tunnel etc), how should the packets reach that?
-
->    group 4 (01-80-C2-00)-00-20 (GMRP)
->    group 5 (01-80-C2-00)-00-21 (GVRP)
->    group 7 (01-80-C2-00)-00-11 - (01-80-C2-00)-00-1F,
->            (01-80-C2-00)-00-22 - (01-80-C2-00)-00-2F
-
-Don't you want to forgo the (odd) hardware defaults for the Reserved Multicast
-table, and instead follow what the Linux bridge does in br_handle_frame()?
-Which is to trap all is_link_local_ether_addr() addresses to the CPU, do
-_not_ call dsa_default_offload_fwd_mark() for those packets (aka let the
-bridge know that they haven't been forwarded in hardware, and if they
-should reach other bridge ports, this must be done in software), and let the
-user choose, via the bridge group_fwd_mask, if they should be forwarded
-to other bridge ports or not?
-
-> 
-> Datasheets:
-> [1] https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ9897S-Data-Sheet-DS00002394C.pdf
-> [2] https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ9896C-Data-Sheet-DS00002390C.pdf
-> [3] https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ9893R-Data-Sheet-DS00002420D.pdf
-> [4] https://ww1.microchip.com/downloads/en/DeviceDoc/00002330B.pdf
-> [5] https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ9563R-Data-Sheet-DS00002419D.pdf
-> [6] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/DataSheets/KSZ9567R-Data-Sheet-DS00002329.pdf
-> [7] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/DataSheets/KSZ9567R-Data-Sheet-DS00002329.pdf
-
-[6] and [7] are the same.
-
-Also, you'd better specify in the commit message what's with these datasheet
-links, which to me and I suppose all other non-expert readers, are pasted here
-out of the blue, with no context.
-
-Like for example: "KSZ9897, ..., have arbitrary CPU port assignments, as
-can be seen in the driver's ksz_chip_data :: cpu_ports entries for these
-families, and the CPU port selection on a certain board rarely coincides
-with the default host port selection in the Reserved Multicast address
-table".
-
-> 
-> Fixes: 331d64f752bb ("net: dsa: microchip: add the enable_stp_addr pointer in ksz_dev_ops")
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> ---
->  drivers/net/dsa/microchip/ksz9477.c | 84 +++++++++++++++++++++++++----
->  1 file changed, 75 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/dsa/microchip/ksz9477.c b/drivers/net/dsa/microchip/ksz9477.c
-> index d16817e0476f..d8fe809dd461 100644
-> --- a/drivers/net/dsa/microchip/ksz9477.c
-> +++ b/drivers/net/dsa/microchip/ksz9477.c
-> @@ -1138,25 +1138,24 @@ void ksz9477_config_cpu_port(struct dsa_switch *ds)
->  	}
->  }
->  
-> -int ksz9477_enable_stp_addr(struct ksz_device *dev)
-> +static int ksz9477_reserved_muticast_group(struct ksz_device *dev, int index, int mask)
->  {
-> +	const u8 *shifts;
->  	const u32 *masks;
->  	u32 data;
->  	int ret;
->  
-> +	shifts = dev->info->shifts;
->  	masks = dev->info->masks;
->  
-> -	/* Enable Reserved multicast table */
-> -	ksz_cfg(dev, REG_SW_LUE_CTRL_0, SW_RESV_MCAST_ENABLE, true);
-> -
-> -	/* Set the Override bit for forwarding BPDU packet to CPU */
-> -	ret = ksz_write32(dev, REG_SW_ALU_VAL_B,
-> -			  ALU_V_OVERRIDE | BIT(dev->cpu_port));
-> +	/* write the PORT_FORWARD value to the Reserved Multicast Address Table Entry 2 Register */
-
-In netdev the coding style limits the line length to 80 characters where
-that is easy, like here.
-
-> +	ret = ksz_write32(dev, REG_SW_ALU_VAL_B, mask);
->  	if (ret < 0)
->  		return ret;
->  
-> -	data = ALU_STAT_START | ALU_RESV_MCAST_ADDR | masks[ALU_STAT_WRITE];
-> -
-> +	/* write to the Static Address and Reserved Multicast Table Control Register */
-> +	data = (index << shifts[ALU_STAT_INDEX]) |
-> +		ALU_STAT_START | ALU_RESV_MCAST_ADDR | masks[ALU_STAT_WRITE];
->  	ret = ksz_write32(dev, REG_SW_ALU_STAT_CTRL__4, data);
->  	if (ret < 0)
->  		return ret;
-> @@ -1167,8 +1166,75 @@ int ksz9477_enable_stp_addr(struct ksz_device *dev)
->  		dev_err(dev->dev, "Failed to update Reserved Multicast table\n");
->  		return ret;
->  	}
-> +	return ksz9477_wait_alu_sta_ready(dev);
-> +}
-> +
-> +int ksz9477_enable_stp_addr(struct ksz_device *dev)
-> +{
-> +	int ret;
-> +	int cpu_mask = dsa_cpu_ports(dev->ds);
-> +	int user_mask = dsa_user_ports(dev->ds);
-
-Also, in netdev, the coding style is to sort lines with variable
-declarations in the reverse order of their length (so-called reverse
-Christmas tree).
-
-> +	/* array of indexes into table:
-> +	 * The table is indexed by the low 6 bits of the MAC address.
-> +	 * Changing the PORT_FORWARD value for any single address affects
-> +	 * all others in group
-> +	 */
-> +	u16 addr_groups[8] = {
-
-Array can be static const. Also, since all elements are initialized,
-specifying its size explicitly is not necessary ("[8]" can be "[]").
-
-> +		/* group 0: (01-80-C2-00)-00-00 (Bridge Group Data) */
-> +		0x000,
-> +		/* group 1: (01-80-C2-00)-00-01 (MAC Control Frame) */
-> +		0x001,
-> +		/* group 2: (01-80-C2-00)-00-03 (802.1X access control) */
-> +		0x003,
-> +		/* group 3: (01-80-C2-00)-00-10) (Bridge Management) */
-> +		0x010,
-> +		/* group 4: (01-80-C2-00)-00-20 (GMRP) */
-> +		0x020,
-> +		/* group 5: (01-80-C2-00)-00-21 (GVRP) */
-> +		0x021,
-> +		/* group 6: (01-80-C2-00)-00-02, (01-80-C2-00)-00-04 – (01-80-C2-00)-00-0F */
-> +		0x002,
-> +		/* group 7: (01-80-C2-00)-00-11 - (01-80-C2-00)-00-1F,
-> +		 *          (01-80-C2-00)-00-22 - (01-80-C2-00)-00-2F
-> +		 */
-> +		0x011,
-> +	};
-> +
-> +	/* Enable Reserved multicast table */
-> +	ksz_cfg(dev, REG_SW_LUE_CTRL_0, SW_RESV_MCAST_ENABLE, true);
-> +
-> +	/* update reserved multicast address table:
-> +	 * leave as default:
-> +	 *  - group 1 (01-80-C2-00)-00-01 (MAC Control Frame) (drop)
-> +	 *  - group 3 (01-80-C2-00)-00-10) (Bridge Management) (all ports)
-> +	 * forward to cpu port:
-> +	 *  - group 0 (01-80-C2-00)-00-00 (Bridge Group Data)
-> +	 *  - group 2 (01-80-C2-00)-00-03 (802.1X access control)
-> +	 *  - group 6 (01-80-C2-00)-00-02, (01-80-C2-00)-00-04 – (01-80-C2-00)-00-0F
-> +	 * forward to all but cpu port:
-> +	 *  - group 4 (01-80-C2-00)-00-20 (GMRP)
-> +	 *  - group 5 (01-80-C2-00)-00-21 (GVRP)
-> +	 *  - group 7 (01-80-C2-00)-00-11 - (01-80-C2-00)-00-1F,
-> +	 *            (01-80-C2-00)-00-22 - (01-80-C2-00)-00-2F
-> +	 */
-> +	if (ksz9477_reserved_muticast_group(dev, addr_groups[0], cpu_mask))
-> +		goto exit;
-
-err = (function return code), and print it with %pe, ERR_PTR(err) please.
-We want to distinguish between -ETIMEDOUT in ksz9477_wait_alu_sta_ready()
-vs whatever ksz_write32() may return.
-
-> +	if (ksz9477_reserved_muticast_group(dev, addr_groups[2], cpu_mask))
-> +		goto exit;
-> +	if (ksz9477_reserved_muticast_group(dev, addr_groups[6], cpu_mask))
-> +		goto exit;
-> +	if (ksz9477_reserved_muticast_group(dev, addr_groups[4], user_mask))
-> +		goto exit;
-> +	if (ksz9477_reserved_muticast_group(dev, addr_groups[5], user_mask))
-> +		goto exit;
-> +	if (ksz9477_reserved_muticast_group(dev, addr_groups[7], user_mask))
-> +		goto exit;
->  
->  	return 0;
-> +
-> +exit:
-> +	dev_err(dev->dev, "Failed to update Reserved Multicast table\n");
-> +	return ret;
->  }
->  
->  int ksz9477_setup(struct dsa_switch *ds)
-> -- 
-> 2.34.1
-> 
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 279fe6c115fa..20ba8ceff7d1 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -377,6 +377,8 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3623), .driver_info = BTUSB_QCA_WCN6855 |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x2c7c, 0x0130), .driver_info = BTUSB_QCA_WCN6855 |
++						     BTUSB_WIDEBAND_SPEECH },
+ 
+ 	/* Broadcom BCM2035 */
+ 	{ USB_DEVICE(0x0a5c, 0x2009), .driver_info = BTUSB_BCM92035 },
+-- 
+2.47.1
 
 
