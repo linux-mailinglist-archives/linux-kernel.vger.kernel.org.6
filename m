@@ -1,528 +1,88 @@
-Return-Path: <linux-kernel+bounces-444689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C1E9F0B23
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A15C69F0B32
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77140166806
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:31:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82BCE1648B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04571DEFF0;
-	Fri, 13 Dec 2024 11:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ovuj/WMd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481771E009C;
+	Fri, 13 Dec 2024 11:32:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840751AB528
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5935B1DFE34
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734089505; cv=none; b=l8mzLH84PfPMDwWYWEGuQnHy1zW7AXFzFXdNil+SnlznnBi6Tj8xJZP9D7mLClSoKtdYYdqDxoUrtdcQeNgwieHAVaE6lPJjm+7yuzMpfnV+lXulpuvZFESs1Rsse8RMt6C9wYk/wy9Bs2oKXwiAya96Nn//RebbK4AYpofC4Ak=
+	t=1734089525; cv=none; b=EQgeE0ReDgypHleJQv68GTwV/FFFwlsuEHEGoGuhSwWlY7yF7V2OloKN6FBZ/94o+okFSCLTQIVM+9eOdjUbZN+nD06ya2yN1YAqGxmqyshSyDif5zIalXOI++6UL1aRyjIql4pryCOBg1J1wxicp6twv/fGgBoOQUXvTuvPcX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734089505; c=relaxed/simple;
-	bh=a7m4bFXrXJLnDmxxGYmlQ6gOMwQRAw150r5fPTyWsY4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XyxAju+Yr1jqm+t2cmlmNKj7dpASyXqR1wRxHpDMw+89U4QEH9zC6oYT+NSBAi8EScxMIBzQkXq5ubVYzyow3u7g546eAN2h1b0XWjBkGph95M1UvuEpocaROquW7zWyuk+Po/ANU/pJf21avAyfQIQXVUAxBaiY32RpxYICW04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ovuj/WMd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734089502;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9LA1MdNqnVl2M5tE7C+xYNHhC6zMqlfDAUaHlPhnPTw=;
-	b=Ovuj/WMdikNjTkcA773dgoI6jHB1rGHGmyPc1waymVookGptjLL2Do5TaMWY2FH4+XHyCl
-	za++55Yij39xV5FJDnT3AuRN6Y57ycRsb2HYNSD961/f/7hzM5FyFgkUA89sFseWC1sz8a
-	Sz6VEm+5EwQk2H88AYVd7cY40hEYcNU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-610-Xy_weKQqOTO358eCTqGpYg-1; Fri, 13 Dec 2024 06:31:39 -0500
-X-MC-Unique: Xy_weKQqOTO358eCTqGpYg-1
-X-Mimecast-MFC-AGG-ID: Xy_weKQqOTO358eCTqGpYg
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385e2579507so673335f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:31:39 -0800 (PST)
+	s=arc-20240116; t=1734089525; c=relaxed/simple;
+	bh=UlBVfnHOQhfhrIWtRxL9FPBVQZ+b17FLVteFuw/B0Ps=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fZDwtZTJGm1zjQyL0HTrPddY05AU68HbKO0bVTUhS9r75VMInHO07G3PGUvBke4BA0bkCXOOdScp8DqW6uQa2qYE+VWBZuAfuIPdxKBpo/nITaSlPiS7+bFp8H2lTP2PZ1+Opbnvy0AMBzFBuLmbyOuBwGD0lOnh+JV/HF5zUhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-844eac513efso33369539f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 03:32:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734089498; x=1734694298;
-        h=mime-version:user-agent:autocrypt:references:in-reply-to:date:cc:to
-         :from:subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9LA1MdNqnVl2M5tE7C+xYNHhC6zMqlfDAUaHlPhnPTw=;
-        b=uCiUgtF4znRnS3BSjwhkLsDR4jv+P7PJe8qSTev0p0m1fST6uWna4yQgNnejDni+NX
-         3p55mztjhuHxrct05RZvWghVep2VSbA2ENTxFN5QFml0m2YcUsywmUb/sKGzT20c1npq
-         2vfjlJihfYyo7K41ddQPHL+AfwhSccYgeSF74lvzyxDinXq19TjDO5bRuMRnD9ksnPHv
-         vJn9XWettX2aLs7E97xAmMKI8/KG1EEVCaNaWIof+7OtMstuRzUA+jmxfHM9o3lhuprF
-         PAnb+kVaizcrTq5fWtoPqnjnp3cNhydo/q1GgkXs32wOWHe5Mie7YqUpuoK9cZqGvUqS
-         bMLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYsrcP8N33aC6nEPvWKyBpdlL66yMWmu2X8gHCXIMoH0k58QIGkmsJ+36wb2sPvz5eZOAilbd0m5loxWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzbqJ62lXL3BleQVao4m6PqyXJne6vQLZzZk0mWAp1QNZRRCxh
-	95/5Z/2mfvQO7yanuCh7MY86m3s2ifR0easFzX3WqR1ScLyzHBlRipIu0SbOt0f7l5ZJ981KcPF
-	f3uQCsWOG9+5HQaQnnsUo9AQkM8tuem2MORYVJcLfIRJmwUBKop+U0XXvCFYivw==
-X-Gm-Gg: ASbGnctj+m9ezNgrrKH8YxA+w7FHcOZEhH2ddu4rM/Sh/0iIS8yjucrSRuQS3n3Pe+i
-	4IbGS5QwN1E+yTfsGV/zNZxpJy1jv9K5nm6fPNhQgRdvmbMALv4lF+lJx2yjjk99LEu68YNBL5+
-	2F4yrWH2I83A1FBSF145FJxA91Vp9JgPmEIcT39DlPJbNJGWTZegWV09Ls9cdgAOX+6/cqAPTdR
-	zkTb3k4pBdqlEJIFk+7lnZdx58h/7uQ9AF6Z3UemfOF3j+BgiTgMcYn2SaydPVbNExC8aoWvWqW
-	O3Lv0aM=
-X-Received: by 2002:a5d:6d03:0:b0:385:dc45:ea26 with SMTP id ffacd0b85a97d-38880ac244fmr1622418f8f.12.1734089498111;
-        Fri, 13 Dec 2024 03:31:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGgMs36iw2eBDK+bKYO9UpdsQZJbbyABbG+SohxQ7EUMAPumZJ5gVhyrbA84M6jrczW1CkjBg==
-X-Received: by 2002:a5d:6d03:0:b0:385:dc45:ea26 with SMTP id ffacd0b85a97d-38880ac244fmr1622388f8f.12.1734089497692;
-        Fri, 13 Dec 2024 03:31:37 -0800 (PST)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782521845sm6781912f8f.106.2024.12.13.03.31.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 03:31:37 -0800 (PST)
-Message-ID: <7cf8c25f325d433c2abc473f3d877067e216ff6c.camel@redhat.com>
-Subject: Re: [PATCH v2 0/4] sched: Move task_mm_cid_work to mm delayed work
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar	
- <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton	
- <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	 <vincent.guittot@linaro.org>, Mel Gorman <mgorman@suse.de>, Shuah Khan
-	 <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Date: Fri, 13 Dec 2024 12:31:35 +0100
-In-Reply-To: <20241213095407.271357-1-gmonaco@redhat.com>
-References: <20241213095407.271357-1-gmonaco@redhat.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: multipart/mixed; boundary="=-8FZMQ6942QnxILGUQGmB"
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+        d=1e100.net; s=20230601; t=1734089523; x=1734694323;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1M2whBLftejeF8a4BvJbIP3P805WYUeDyMbF+6ThAtI=;
+        b=jKb26bU/ENJMBCdZ4xUQiv1khJbTEByg29fJ1sgMEbQeR09iJph9D4IokP6/gYxVqO
+         PIyFgG0VdmygkSVcuXYjQ6reeo9MXdeEAw9UlCMX3n0z3tZbWsS1hHeFq1dKnClEKt8w
+         cn8soH1G2rgorWHNzHnm9dtSPQhR/LzPl5yb8DjmcdO4EH55Zhfv64SvbHHik2Y7kbY1
+         AAvD9YCGLY0wk3Y7iaGJmOwkjjKuCKqVLX+dNF/pn9Nba7ZzUPACdDy1CD8Lthu2JD/i
+         8HJmSD/cQk5kKQ5HwjYIGIOQ8zUUuK+uaREtA3CJrai6coJ7jEgfDXuLZpNSINryYypz
+         QRUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUB9Zsn7hbkQatAmcvXQLBYNwFFm5pevYD2sA+DNEcflSVmFbO2Bl1KFiThAYvKeHpMI2cTHlkJxe2GQg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6tPyxW4USr0lZlYiEQMHJ829/acVT6cYolWZWlUOGmgIkAB1x
+	GCzOy/oNSHsCwTj/T80fsdO7iGCINFjSazTo8dnBAgKn+kblBT0qOseBoYk4sohemRp8yO9jBVR
+	Y3Gv6zAKET/F9retUCn1GqwUdMfBy4Vj3CSzzix077Bk4QyjklSpp57c=
+X-Google-Smtp-Source: AGHT+IEYoFmE5BG/wfAUTVJPiY3bCDLJp+xLZp3wvELFeqcyEwd04wyuEZ2kj80Af1Rp8o7zEHFjkup2wcKjZzVTmiBq85HgOKCU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
---=-8FZMQ6942QnxILGUQGmB
+X-Received: by 2002:a05:6e02:12c9:b0:3a7:86ab:be6d with SMTP id
+ e9e14a558f8ab-3affac565d0mr24554265ab.16.1734089523536; Fri, 13 Dec 2024
+ 03:32:03 -0800 (PST)
+Date: Fri, 13 Dec 2024 03:32:03 -0800
+In-Reply-To: <20241213110305.1839-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675c1b33.050a0220.17d782.000b.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] WARNING in enqueue_dl_entity
+From: syzbot <syzbot+00a022dc9979d67df050@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-12-13 at 10:54 +0100, Gabriele Monaco wrote:
-> OVERHEAD COMPARISON
->
-> [..]
->
-> I will post another email with the scripts used to retrieve the data
-> and
-> more details about the runtime distribution.
+Hello,
 
-This message contains the performance results produced by my scripts, which=
- are attached.
-The tracing is done via bpftrace while a simple bash script is spawning and=
- killing the loads.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-From the histograms it's easier to see the distribution of the durations an=
-d if there are clear outliers.
+Reported-by: syzbot+00a022dc9979d67df050@syzkaller.appspotmail.com
+Tested-by: syzbot+00a022dc9979d67df050@syzkaller.appspotmail.com
 
-TEST RESULTS ON HEAD
+Tested on:
 
-Running without loads on virtme-ng
+commit:         f932fb9b Merge tag 'v6.13-rc2-ksmbd-server-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a12d44580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a42226445f75136a
+dashboard link: https://syzkaller.appspot.com/bug?extid=00a022dc9979d67df050
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1567c4f8580000
 
-@duration_max: 426
-@duration_total: count 13, average 75, total 987
-
-@durations:
-[25, 30)               1 |@@@@@@@@@@@@@@@@@                                =
-   |
-[30, 35)               2 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               =
-   |
-[35, 40)               2 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               =
-   |
-[40, 45)               0 |                                                 =
-   |
-[45, 50)               3 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[50, 55)               2 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               =
-   |
-[55, 60)               0 |                                                 =
-   |
-[60, 65)               1 |@@@@@@@@@@@@@@@@@                                =
-   |
-[65, 70)               0 |                                                 =
-   |
-[70, 75)               0 |                                                 =
-   |
-[75, 80)               0 |                                                 =
-   |
-[80, 85)               0 |                                                 =
-   |
-[85, 90)               0 |                                                 =
-   |
-[90, 95)               1 |@@@@@@@@@@@@@@@@@                                =
-   |
-[95, 100)              0 |                                                 =
-   |
-[100, ...)             1 |@@@@@@@@@@@@@@@@@                                =
-   |
-
-@processes: 12
-@threads: 12
-
-Running with cpu loads on virtme-ng
-
-@duration_max: 2508
-@duration_total: count 35948, average 20, total 742603
-
-@durations:
-[10, 15)            1889 |@@@@@                                            =
-   |
-[15, 20)           17278 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[20, 25)           10742 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                 =
-   |
-[25, 30)            3327 |@@@@@@@@@@                                       =
-   |
-[30, 35)            2350 |@@@@@@@                                          =
-   |
-[35, 40)             326 |                                                 =
-   |
-[40, 45)               5 |                                                 =
-   |
-[45, 50)               1 |                                                 =
-   |
-[50, 55)               2 |                                                 =
-   |
-[55, 60)               1 |                                                 =
-   |
-[60, 65)               2 |                                                 =
-   |
-[65, 70)               2 |                                                 =
-   |
-[70, 75)               0 |                                                 =
-   |
-[75, 80)               0 |                                                 =
-   |
-[80, 85)               1 |                                                 =
-   |
-[85, 90)               0 |                                                 =
-   |
-[90, 95)               1 |                                                 =
-   |
-[95, 100)              1 |                                                 =
-   |
-[100, ...)            20 |                                                 =
-   |
-
-@processes: 129
-@threads: 129
-
-Running with fork loads on virtme-ng
-
-@duration_max: 41
-@duration_total: count 21, average 34, total 720
-
-@durations:
-[30, 35)              12 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[35, 40)               8 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               =
-   |
-[40, 45)               1 |@@@@                                             =
-   |
-
-@processes: 3592
-@threads: 3592
-
-Running with thread loads on virtme-ng
-
-@duration_max: 195
-@duration_total: count 1286, average 31, total 41082
-
-@durations:
-(..., 10)            326 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     =
-   |
-[10, 15)              10 |@                                                =
-   |
-[15, 20)               0 |                                                 =
-   |
-[20, 25)               1 |                                                 =
-   |
-[25, 30)              61 |@@@@@@@@                                         =
-   |
-[30, 35)             377 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[35, 40)             264 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@             =
-   |
-[40, 45)              65 |@@@@@@@@                                         =
-   |
-[45, 50)              32 |@@@@                                             =
-   |
-[50, 55)              12 |@                                                =
-   |
-[55, 60)              13 |@                                                =
-   |
-[60, 65)               7 |                                                 =
-   |
-[65, 70)              10 |@                                                =
-   |
-[70, 75)              10 |@                                                =
-   |
-[75, 80)              33 |@@@@                                             =
-   |
-[80, 85)              26 |@@@                                              =
-   |
-[85, 90)              13 |@                                                =
-   |
-[90, 95)               6 |                                                 =
-   |
-[95, 100)              2 |                                                 =
-   |
-[100, ...)            18 |@@                                               =
-   |
-
-@processes: 129
-@threads: 4096
-
-TEST RESULTS ON PATCH
-
-Running without loads on virtme-ng
-
-@duration_max: 42
-@duration_total: count 20601, average 2, total 45496
-
-@durations:
-(..., 10)          20304 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[10, 15)               1 |                                                 =
-   |
-[15, 20)               4 |                                                 =
-   |
-[20, 25)              29 |                                                 =
-   |
-[25, 30)              33 |                                                 =
-   |
-[30, 35)              11 |                                                 =
-   |
-[35, 40)             156 |                                                 =
-   |
-[40, 45)              63 |                                                 =
-   |
-
-@processes: 12
-@threads: 12
-
-Running with cpu loads on virtme-ng
-
-@duration_max: 774
-@duration_total: count 38612, average 7, total 281558
-
-@durations:
-(..., 10)          34607 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[10, 15)            2558 |@@@                                              =
-   |
-[15, 20)             735 |@                                                =
-   |
-[20, 25)             454 |                                                 =
-   |
-[25, 30)             225 |                                                 =
-   |
-[30, 35)              17 |                                                 =
-   |
-[35, 40)               8 |                                                 =
-   |
-[40, 45)               2 |                                                 =
-   |
-[45, 50)               4 |                                                 =
-   |
-[50, 55)               0 |                                                 =
-   |
-[55, 60)               0 |                                                 =
-   |
-[60, 65)               0 |                                                 =
-   |
-[65, 70)               0 |                                                 =
-   |
-[70, 75)               0 |                                                 =
-   |
-[75, 80)               0 |                                                 =
-   |
-[80, 85)               0 |                                                 =
-   |
-[85, 90)               0 |                                                 =
-   |
-[90, 95)               0 |                                                 =
-   |
-[95, 100)              0 |                                                 =
-   |
-[100, ...)             2 |                                                 =
-   |
-
-@processes: 129
-@threads: 129
-
-Running with fork loads on virtme-ng
-
-@duration_max: 457
-@duration_total: count 45683, average 19, total 878511
-
-@durations:
-(..., 10)           8452 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@               =
-   |
-[10, 15)            7287 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    =
-   |
-[15, 20)           12727 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[20, 25)            2942 |@@@@@@@@@@@@                                     =
-   |
-[25, 30)            2975 |@@@@@@@@@@@@                                     =
-   |
-[30, 35)            7305 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    =
-   |
-[35, 40)            2994 |@@@@@@@@@@@@                                     =
-   |
-[40, 45)             676 |@@                                               =
-   |
-[45, 50)             180 |                                                 =
-   |
-[50, 55)              57 |                                                 =
-   |
-[55, 60)              19 |                                                 =
-   |
-[60, 65)               6 |                                                 =
-   |
-[65, 70)               4 |                                                 =
-   |
-[70, 75)               2 |                                                 =
-   |
-[75, 80)               5 |                                                 =
-   |
-[80, 85)               6 |                                                 =
-   |
-[85, 90)               4 |                                                 =
-   |
-[90, 95)               5 |                                                 =
-   |
-[95, 100)              2 |                                                 =
-   |
-[100, ...)            34 |                                                 =
-   |
-
-@processes: 3982
-@threads: 3982
-
-Running with thread loads on virtme-ng
-
-@duration_max: 1046
-@duration_total: count 38643, average 21, total 833034
-
-@durations:
-(..., 10)           1631 |@@@@@                                            =
-   |
-[10, 15)           11027 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@           =
-   |
-[15, 20)           14832 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
-@@@|
-[20, 25)            1338 |@@@@                                             =
-   |
-[25, 30)            1112 |@@@                                              =
-   |
-[30, 35)            3781 |@@@@@@@@@@@@@                                    =
-   |
-[35, 40)            1994 |@@@@@@                                           =
-   |
-[40, 45)             464 |@                                                =
-   |
-[45, 50)             262 |                                                 =
-   |
-[50, 55)             200 |                                                 =
-   |
-[55, 60)             294 |@                                                =
-   |
-[60, 65)             620 |@@                                               =
-   |
-[65, 70)             256 |                                                 =
-   |
-[70, 75)             119 |                                                 =
-   |
-[75, 80)             232 |                                                 =
-   |
-[80, 85)             220 |                                                 =
-   |
-[85, 90)              55 |                                                 =
-   |
-[90, 95)              30 |                                                 =
-   |
-[95, 100)             19 |                                                 =
-   |
-[100, ...)           157 |                                                 =
-   |
-
-@processes: 129
-@threads: 4096
-
-
---=20
-  Gabriele Monaco=20
- Senior Software Engineer - Kernel Real Time=20
-=20
-Red Hat=20
-  gmonaco@redhat.com=C2=A0 =C2=A0=20
-
-
---=-8FZMQ6942QnxILGUQGmB
-Content-Disposition: attachment; filename="func_benchmark.bt"
-Content-Type: text/plain; name="func_benchmark.bt"; charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-IyEvdXNyL2Jpbi9lbnYgYnBmdHJhY2UKLyoqCiAqIFByaW50IGR1cmF0aW9ucyBhbmQgaW52b2Nh
-dGlvbnMKICogQ2FsbCB0aGlzIHNjcmlwdCB3aXRoIHRoZSBkdXJhdGlvbiBpbiBzZWNvbmRzIGFz
-IGFyZ3VtZW50CiAqIGUuZy4gYnBmdHJhY2UgZnVuY19iZW5jaG1hcmsuYnQgMzAKICovCgovL3Ry
-YWNlcG9pbnQ6c2NoZWQ6c2NoZWRfd2FrZXVwCmZlbnRyeTp0cnlfdG9fd2FrZV91cAp7CiAgaWYo
-YXJncy0+cC0+bW0gIT0gMCkgewogICAgQF9tbXNbYXJncy0+cC0+bW1dID0gdHJ1ZTsKICAgIEBf
-cHJvY2Vzc2VzW2FyZ3MtPnAtPnRnaWRdID0gdHJ1ZTsKICAgIEBfdGhyZWFkc1thcmdzLT5wLT5w
-aWRdID0gdHJ1ZTsKICB9Cn0KCmZlbnRyeTp0YXNrX21tX2NpZF93b3JrCnsKICBAc3RhcnRbdGlk
-XSA9IG5zZWNzOwogIEBwcmVlbXB0aW9uc1t0aWRdID0gKHVpbnQ2NCkwOwp9CgpmZXhpdDp0YXNr
-X21tX2NpZF93b3JrCi9Ac3RhcnRbdGlkXS8KewogICRjdXJyX3ByZWVtcHRpb24gPSBAcHJlZW1w
-dGVkW3RpZF0gPyBAcHJlZW1wdGlvbnNbdGlkXSA6IDA7CiAgJGR1cmF0aW9uID0gKG5zZWNzIC0g
-QHN0YXJ0W3RpZF0gLSAkY3Vycl9wcmVlbXB0aW9uKS8xMDAwOwogIEBkdXJhdGlvbnMgPSBsaGlz
-dCgkZHVyYXRpb24sIDEwLCAxMDAsIDUpOwogIEBkdXJhdGlvbl90b3RhbCA9IHN0YXRzKCRkdXJh
-dGlvbik7CiAgQGR1cmF0aW9uX21heCA9IG1heCgkZHVyYXRpb24pOwogIGRlbGV0ZShAc3RhcnRb
-dGlkXSk7CiAgZGVsZXRlKEBwcmVlbXB0aW9uc1t0aWRdKTsKICBkZWxldGUoQHByZWVtcHRlZFt0
-aWRdKTsKfQoKLyogU3VwcG9ydCBvbmx5IG9uZSBwcmVlbXB0aW9uLCBzaG91bGQgYmUgZmluZSBm
-b3Igbm9uLXNsZWVwaW5nIGZ1bmN0aW9ucyAqLwp0cmFjZXBvaW50OnNjaGVkOnNjaGVkX3N3aXRj
-aAovLyAvQHN0YXJ0W2FyZ3MucHJldl9waWRdIHx8IEBzdGFydFthcmdzLm5leHRfcGlkXS8Kewog
-IGlmIChAc3RhcnRbYXJncy5wcmV2X3BpZF0pIHsKICAgIEBwcmVlbXB0ZWRbYXJncy5wcmV2X3Bp
-ZF0gPSB0cnVlOwogICAgQHByZWVtcHRpb25zW2FyZ3MucHJldl9waWRdID0gbnNlY3M7CiAgfQog
-IGlmIChAc3RhcnRbYXJncy5uZXh0X3BpZF0gJiYgQHByZWVtcHRlZFthcmdzLm5leHRfcGlkXSkg
-ewogICAgQHByZWVtcHRpb25zW2FyZ3MubmV4dF9waWRdID0gbnNlY3MgLSBAcHJlZW1wdGlvbnNb
-YXJncy5uZXh0X3BpZF07CiAgfQp9CgovL2ludGVydmFsOnM6MzAKaW50ZXJ2YWw6czokMQp7CiAg
-ZXhpdCgpOwp9CgpFTkQKewogIEBtbXMgPSBsZW4oQF9tbXMpOwogIEBwcm9jZXNzZXMgPSBsZW4o
-QF9wcm9jZXNzZXMpOwogIEB0aHJlYWRzID0gbGVuKEBfdGhyZWFkcyk7CiAgY2xlYXIoQF9tbXMp
-OwogIGNsZWFyKEBfcHJvY2Vzc2VzKTsKICBjbGVhcihAX3RocmVhZHMpOwogIGNsZWFyKEBzdGFy
-dCk7CiAgY2xlYXIoQHByZWVtcHRpb25zKTsKICBjbGVhcihAcHJlZW1wdGVkKTsKfQo=
-
-
-
---=-8FZMQ6942QnxILGUQGmB
-Content-Type: application/x-shellscript; name="runtest_mm_cid.sh"
-Content-Disposition: attachment; filename="runtest_mm_cid.sh"
-Content-Transfer-Encoding: base64
-
-bnByb2M9JChucHJvYykKZHVyYXRpb249MzAKCmVjaG8gUnVubmluZyB3aXRob3V0IGxvYWRzIG9u
-ICRIT1NUTkFNRQpicGZ0cmFjZSBmdW5jX2JlbmNobWFyay5idCAiJGR1cmF0aW9uIgpzbGVlcCAi
-JGR1cmF0aW9uIgoKZWNobyBSdW5uaW5nIHdpdGggY3B1IGxvYWRzIG9uICRIT1NUTkFNRQpzdHJl
-c3MtbmcgLS1jcHUgIiRucHJvYyIgLS1jcHUtbG9hZCA4MCAmPiAvZGV2L251bGwgJgpicGZ0cmFj
-ZSBmdW5jX2JlbmNobWFyay5idCAiJGR1cmF0aW9uIgpwa2lsbCBzdHJlc3MtbmcKc2xlZXAgIiRk
-dXJhdGlvbiIKCmVjaG8gUnVubmluZyB3aXRoIGZvcmsgbG9hZHMgb24gJEhPU1ROQU1FCnN0cmVz
-cy1uZyAtLWZvcmsgIiRucHJvYyIgJj4gL2Rldi9udWxsICYKYnBmdHJhY2UgZnVuY19iZW5jaG1h
-cmsuYnQgIiRkdXJhdGlvbiIKcGtpbGwgc3RyZXNzLW5nCnNsZWVwICIkZHVyYXRpb24iCgplY2hv
-IFJ1bm5pbmcgd2l0aCB0aHJlYWQgbG9hZHMgb24gJEhPU1ROQU1FCnN0cmVzcy1uZyAtLXB0aHJl
-YWQgIiRucHJvYyIgLS1wdGhyZWFkLW1heCA0ICY+IC9kZXYvbnVsbCAmCmJwZnRyYWNlIGZ1bmNf
-YmVuY2htYXJrLmJ0ICIkZHVyYXRpb24iCnBraWxsIHN0cmVzcy1uZwo=
-
-
---=-8FZMQ6942QnxILGUQGmB--
-
+Note: testing is done by a robot and is best-effort only.
 
