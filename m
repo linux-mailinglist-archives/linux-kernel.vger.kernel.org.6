@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-445341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A699F14D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:21:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5BEE9F14D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6166F188E767
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0130716A8C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 18:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8601E572F;
-	Fri, 13 Dec 2024 18:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214411E882F;
+	Fri, 13 Dec 2024 18:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="N/DUZZyA"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="VyUn/nkK"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECCC188A3B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079FB18A6D5;
 	Fri, 13 Dec 2024 18:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734114090; cv=none; b=ZXjQPvdYeLg+3vWjypk0ZKWZTRoEfH1TjRJ4fE/57kJRNrkeAunVhkfKEHqI9hHGm6ogAlL9v3acYty+EbUfAxTPSZ523MIDCzvkq8rjBw+ATVVk/PXx1eMwsghqmle1eNcl10TBh0caTs3EpSsPPaEf6nnaavGHCQic+Tizb/c=
+	t=1734114090; cv=none; b=L4IAFNLbM3cKh2ZQGF6Ajl1dis2HqNCm1oypx0bosXJj7QnrQ21/xY/WA+OOlsKP7twZsb2qpEZH5mGn5LIPm0T4ICJOQpACPFMpwocns2JDqWGKXnRlf64XW1SyaITzl5RBCbhbpXrFwh2f0Rul5NJhUZUvzb743jYHMBhYmCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734114090; c=relaxed/simple;
-	bh=4Rk14MGbK7ObaOlembCmnHMWeIHbML14bvkFY0+kMDA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hD6pBO+R5eLGjEO/bfoz4JiSeKW0XMQkkZ5ayY5iHo7lqblZ9E2EQOT/twdwb54DErxNXeRKeMoYqI12JhP8rxHhKmqQrl/fVhqFmPJTcAHTb01x5ewgTWAzo1FU8etp66nghspRF4ghhVVCgSSyAN8yj0WNjkc0WPwn4BkYwm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=N/DUZZyA; arc=none smtp.client-ip=45.79.88.28
+	bh=P0PrWDL3CG+647eom8x1NzoVJppZe2tsxKJaG5QN0iM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ff8Wr7Y6rCRQ66KHbYcZg1nrV6uSVNVGl6tGg7W0VmOfkIo0lbXaPtXwu0DAyfr+n1dPyRyix5k7qgL8cN5u1NlN5qDYI5VjM8z1bm8z/LlV6th3TODUjruBnRoQoc6FCdwfal6Gtoi3rstWKhYlGQ1vVk9ERDyv6cVPXpYJNW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=VyUn/nkK; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B9BFF403E4
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 36BD9403FD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1734114088; bh=vRb87epXnBywj9W4QAVZfrWdRH92aSVIW+5+17HqZg8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=N/DUZZyAqmlQixt5t4J5u8uqXJAjWAtHfUGiryd+pdhTWOHVLrW3V9JSM2raThH11
-	 XftyNXqyDiUA1fEn+71nMRcw432/MngIg5r44r36iBF6Bm5kkLffbrlmLBLgaTuUK8
-	 nJDVPigZjd27AcrJyyw7rkC5qh9pHrMIzV1u58OK+o/k0/O3ATdl/PDB8TsurKsaCA
-	 TW3WnZxfvTIP8sUIqAxGpezjY9refuPMbDa4EJMxlvPCtum1x2Kdyr2ca7wMs3IKNV
-	 F/iUui62e6vLsBPxE+mobny8OLSbRKLEksFErlhTfwCDuEhPhPCKGBHvksU+QhgaaR
-	 mP8w79Usomd1Q==
+	t=1734114088; bh=QXEu0v0T33DDpelHsiC6ROVGofv4AqOE4HtQlF7GJzE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VyUn/nkKs1nVzPnAY8U1r5u3I4UaBtmNC6qhCRkia2IdXbdgFOo/IQpPm2OFffuR+
+	 A0ybZmi6gS6+zRCMlw9G4XfBHmkTHFCGKCukd3QqNO6BM6U/T8RCACAZnFz4n5fJj4
+	 xdxNnW7QkOaGfM/zq0XrVPUilftGliWZ7dH8lfmkI+0JtAMLBXdK5+b+8tHP/BnuFA
+	 rmjJuo6WAlPYzbZ38ssR6DPmFK2adQnm0VNrGoN3KSVdIHyXAHiMHR4a+CUTri7ehA
+	 fl6GTMahRc70emKDCKVr6FBlWPIh6WJmFen/aSPvrrxKB3s9Qcet47l4kkF2R+mX0k
+	 O6abUkIcEiQow==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:5e00:625::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id B9BFF403E4;
-	Fri, 13 Dec 2024 18:21:27 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id 36BD9403FD;
+	Fri, 13 Dec 2024 18:21:28 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 0/3] docs: organize the admin guide
-Date: Fri, 13 Dec 2024 11:20:51 -0700
-Message-ID: <20241213182057.343527-1-corbet@lwn.net>
+Subject: [PATCH 1/3] docs: admin-guide: join the sysfs information in one place
+Date: Fri, 13 Dec 2024 11:20:52 -0700
+Message-ID: <20241213182057.343527-2-corbet@lwn.net>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241213182057.343527-1-corbet@lwn.net>
+References: <20241213182057.343527-1-corbet@lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,28 +61,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Our documentation directories inevitably turn into an unorganized
-pile of material that is less than friendly to our users; that has
-happened with the admin guide.  Reorganize the index.rst file to make
-it easier to find the material of interest.
+The documents describing sysfs are spread out in the admin guide; bring
+them together in one place.
 
-The rendered version of the reworked guide can be viewed at:
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+---
+ Documentation/admin-guide/index.rst | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-  https://static.lwn.net/kerneldoc/admin-guide/
-
-I've not done anything to update or weed out any of the documents
-found here, which would be a great next step.  When you have, say, a
-document describing how to partition your 50MB disk (ldm.rst), that's
-a sign that the cobwebs have started to build up.
-
-Jonathan Corbet (3):
-  docs: admin-guide: join the sysfs information in one place
-  docs: admin-guide: add some subsection headings
-  docs: admin-guide: bring some order to the "everything else" section
-
- Documentation/admin-guide/index.rst | 163 ++++++++++++++++++----------
- 1 file changed, 108 insertions(+), 55 deletions(-)
-
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index 15a522a96e76..94b70bb203cc 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -19,7 +19,6 @@ etc.
+    devices
+    sysctl/index
+ 
+-   abi
+    features
+ 
+ This section describes CPU vulnerabilities and their mitigations.
+@@ -49,14 +48,14 @@ problems and bugs in particular.
+    perf/index
+    pstore-blk
+ 
+-This is the beginning of a section with information of interest to
+-application developers.  Documents covering various aspects of the kernel
+-ABI will be found here.
++A big part of the kernel's administrative interface is the sysfs virtual
++filesystem; these documents describe how to interact with sysfs.
+ 
+ .. toctree::
+    :maxdepth: 1
+ 
+    sysfs-rules
++   abi
+ 
+ This is the beginning of a section with information of interest to
+ application developers and system integrators doing analysis of the
 -- 
 2.47.1
 
