@@ -1,155 +1,167 @@
-Return-Path: <linux-kernel+bounces-444734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7889F0BCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:00:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC529F0BCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:02:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388D31674F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C9F8283332
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5AC1DF728;
-	Fri, 13 Dec 2024 12:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A961DF263;
+	Fri, 13 Dec 2024 12:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h20qHjUa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yj8VUVJ2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474761A08A6;
-	Fri, 13 Dec 2024 11:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFBE2F43;
+	Fri, 13 Dec 2024 12:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734091200; cv=none; b=pjYCgIIYIv+BK7ne0allwnK04vWn2qaQVtAWtk2Kq4Lt/+u+iSznVkXSL/Tjz0sv2g4krToDoVYpcfKZObtR5m1BJdBg27/x+LmkVIt4SiX4yeNCe9N+zYBI6enyMED31G8im0Ecf8fEix1sBIL0wNS8plig7Ssrf+7llPyoS7s=
+	t=1734091331; cv=none; b=qyHSGKodSFS1/V66CPifyzjCNb3o7I8ENWkD79l0NFErFll5wGCP3duRZalv5/qQEeGlQMI21egeXpyJuGkgIy9VMaoL9gwd/KIjm0seriz/68Cid9Fs+bJwF3uk+/cIhvgoUhEpiOc+EeNVds1z3TvLeYZD9rUL5QSGTBTvlLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734091200; c=relaxed/simple;
-	bh=u0Sb066jR4i3kqSYmXzuGtO7rP72CJmz06cNlBH0hcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czMnj5Qk2zlBGVhaHDadCnA8VQmibzfK0EQAXsRtgQTxDEeLJ5mVXQZqq0mrhX7Ik24s+nJuoytLPVgpBtBR/dE5Rc0ZxywOmqoeIPbWRw3jSyB93mi85KIneQ57MLdiDHCJuEGpAZxPJg60IC3NYK7dpXilEv/x1miJsIndLKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h20qHjUa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE4CC4CED0;
-	Fri, 13 Dec 2024 11:59:59 +0000 (UTC)
+	s=arc-20240116; t=1734091331; c=relaxed/simple;
+	bh=az4GPp6xvC23EpE7U8RzOeKh5Dy4c21F4RX5zPylDxA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X5noW0DWwFXP74zw6SWGdIzPGHU5xVr14kUc5xa3QobT4VJN/5ISY8dvLSLHYEd5m0BDZnMj7A/M/3r2T00xRUHLtu6oBq/UsfPMtiSiXuWeL3LBApxtJLKyO8DQx4L3tk+T2z37t8Q8+oQaySt5LdLlNKHODtdWzGRsN8VUAwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yj8VUVJ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDB30C4CEDD;
+	Fri, 13 Dec 2024 12:02:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734091199;
-	bh=u0Sb066jR4i3kqSYmXzuGtO7rP72CJmz06cNlBH0hcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h20qHjUaqsqR+9NToxHdTB+ZXljbPxXf5x7esKb1rptLnC+k0tAuDX7BDYy/Rxs9b
-	 FIe28TYqmNsuONipa9+1Oo3lnfvmxFU72y3DX+ExlO6j4WUtqg87z92VUp+jk4dqU1
-	 6FgmsVHGzERI2i50vy56E8dSWPmeC9VyLuDabda/AkdOjtKKXRrNczr9A3/UOQ2suK
-	 qdaHx+6l4ZmUZWjKKgemuVKveceuqNHwgjyaKy0nBcXEQapF7xo+0iQGdgliiJdnvv
-	 lLw93Pcd6XH4nmnOJZCsRQ++NngErwz1vQCOMmSVD+vL1zT+UkpUen/2ME8sC+h5k5
-	 AboVCEqYCSlBA==
-Date: Fri, 13 Dec 2024 12:59:57 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 3/3] drivers: base: test: Add ...find_device_by...(...
- NULL) tests
-Message-ID: <20241213-athletic-strong-bumblebee-bfabf1@houat>
-References: <20241212003201.2098123-1-briannorris@chromium.org>
- <20241212003201.2098123-4-briannorris@chromium.org>
+	s=k20201202; t=1734091329;
+	bh=az4GPp6xvC23EpE7U8RzOeKh5Dy4c21F4RX5zPylDxA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Yj8VUVJ2MQ6yZhBeQjVriJ5EcZxJiSaOtZ3rQlzaFhLMr4odU1QulnneuaOKj1j/9
+	 JeXSI/SnP0kE5Bt0Kc0HIn+vQZ7Y7WwMfFnvmpjNWdaRNRtr0SlklU/hEaB6Hb5Qnz
+	 Je6d2DPFuB9aov+u0egvPcBa8A8YlR7+Ui45rBSULo0WsGo3lWfxIT+infDnCa7auc
+	 8ahNctIFeFJ6OwXteWvmTh8VbWsY55jEf9ltSWOSoK0St5F/YxUrvxyaqm4DUIONgZ
+	 TwtzbNgUMzPBb1aUkHcY1ZJtZsBuCi9LNco0gouRh+DlxU658e3kt/arvlPrzVGC8p
+	 V9Fo2as3cebPw==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so338274766b.0;
+        Fri, 13 Dec 2024 04:02:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU7455x9a51PGDeYoTRBvNtyZPl0rHP30/fJEnPrFGXZomk/+4RNdFeRsx4Au5DUEQZL5IPwWNCZSFVaO5s@vger.kernel.org, AJvYcCUTxnGt5pdzH66cMkVnd4/4UJWqx6jw9QLCF5ThQ3aVlI3EZFsugfRN8kYgb0Wx7vC2ccyd9Nw/Jh2zxg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpDmn5G9dibzoQ5rJNC+djl7TsK25S9U0kOAoZOZbpeLlF9D9Z
+	mTGfPpb7dVkUFF8liG4dpNg22njgfD6qHyUcr/e/a90mqBZbA0wT6k+K5aqTyWMHoHXeASrIT4m
+	nv3DkhaV7vZHfJowv6BOV36iaAp8=
+X-Google-Smtp-Source: AGHT+IE590SvZFni5wi9V0YJXvJzj+4Q6UkW0OPLK50tM7BnVFLWiiIzWug5JnRCPdlgkxndaPZKR7PMICX/GJU8R+4=
+X-Received: by 2002:a17:907:72cb:b0:aa6:af4b:7c88 with SMTP id
+ a640c23a62f3a-aab77ec58cdmr274161666b.57.1734091327850; Fri, 13 Dec 2024
+ 04:02:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="7snr6qwlmjeebc3w"
-Content-Disposition: inline
-In-Reply-To: <20241212003201.2098123-4-briannorris@chromium.org>
-
-
---7snr6qwlmjeebc3w
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20241212-btrfs_need_stripe_tree_update-cleanups-v1-0-d842b6d8d02b@kernel.org>
+ <20241212-btrfs_need_stripe_tree_update-cleanups-v1-2-d842b6d8d02b@kernel.org>
+In-Reply-To: <20241212-btrfs_need_stripe_tree_update-cleanups-v1-2-d842b6d8d02b@kernel.org>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Fri, 13 Dec 2024 12:01:31 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H4XY7FBMHUUBjjStZCfwvR=ZWTGsZ-xnPdmagaF6HJ+bw@mail.gmail.com>
+Message-ID: <CAL3q7H4XY7FBMHUUBjjStZCfwvR=ZWTGsZ-xnPdmagaF6HJ+bw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] btrfs: cache RAID stripe tree decission in btrfs_io_context
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Johannes Thumshirn <johannes.thjumshirn@wdc.com>, 
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/3] drivers: base: test: Add ...find_device_by...(...
- NULL) tests
-MIME-Version: 1.0
 
-Hi,
+On Thu, Dec 12, 2024 at 12:55=E2=80=AFPM Johannes Thumshirn <jth@kernel.org=
+> wrote:
+>
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>
+> Cache the decission if a particular I/O needs to update RAID stripe tree
 
-On Wed, Dec 11, 2024 at 04:31:41PM -0800, Brian Norris wrote:
-> We recently updated these device_match*() (and therefore, various
-> *find_device_by*()) functions to return a consistent 'false' value when
-> trying to match a NULL handle. Add tests for this.
->=20
-> This provides regression-testing coverage for the sorts of bugs that
-> underly commit 5c8418cf4025 ("PCI/pwrctrl: Unregister platform device
-> only if one actually exists").
->=20
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+decission -> decision
+
+The subject also has this typo.
+
+> entries in struct btrfs_io_context.
+>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > ---
->=20
-> Changes in v2:
->  * Keep "devm" and "match" tests in separate suites
->=20
->  drivers/base/test/platform-device-test.c | 42 +++++++++++++++++++++++-
->  1 file changed, 41 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/base/test/platform-device-test.c b/drivers/base/test=
-/platform-device-test.c
-> index ea05b8785743..c8d4b0a385f2 100644
-> --- a/drivers/base/test/platform-device-test.c
-> +++ b/drivers/base/test/platform-device-test.c
-> @@ -3,6 +3,8 @@
->  #include <kunit/resource.h>
-> =20
->  #include <linux/device.h>
-> +#include <linux/device/bus.h>
-> +#include <linux/of_platform.h>
->  #include <linux/platform_device.h>
-> =20
->  #define DEVICE_NAME "test"
-> @@ -217,7 +219,45 @@ static struct kunit_suite platform_device_devm_test_=
-suite =3D {
->  	.test_cases =3D platform_device_devm_tests,
->  };
-> =20
-> -kunit_test_suite(platform_device_devm_test_suite);
-> +static void platform_device_find_by_null_test(struct kunit *test)
-> +{
-> +	struct platform_device *pdev;
-> +	int ret;
-> +
-> +	pdev =3D platform_device_alloc(DEVICE_NAME, PLATFORM_DEVID_NONE);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
-> +
-> +	ret =3D platform_device_add(pdev);
-> +	KUNIT_ASSERT_EQ(test, ret, 0);
+>  fs/btrfs/bio.c     | 3 +--
+>  fs/btrfs/volumes.c | 1 +
+>  fs/btrfs/volumes.h | 2 ++
+>  3 files changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
+> index 7ea6f0b43b95072b380172dc16e3c0de208a952b..bc80ee4f95a5a8de05f2664f6=
+8ac4fcb62864d7b 100644
+> --- a/fs/btrfs/bio.c
+> +++ b/fs/btrfs/bio.c
+> @@ -725,8 +725,7 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio=
+, int mirror_num)
+>                         bio->bi_opf |=3D REQ_OP_ZONE_APPEND;
+>                 }
+>
+> -               if (is_data_bbio(bbio) && bioc &&
+> -                   btrfs_need_stripe_tree_update(bioc->fs_info, bioc->ma=
+p_type)) {
+> +               if (is_data_bbio(bbio) && bioc && bioc->use_rst) {
+>                         /*
+>                          * No locking for the list update, as we only add=
+ to
+>                          * the list in the I/O submission path, and list
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index fa190f7108545eacf82ef2b5f1f3838d56ca683e..088ba0499e184c93a402a3f92=
+167cccfa33eec58 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -6663,6 +6663,7 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, =
+enum btrfs_map_op op,
+>                 goto out;
+>         }
+>         bioc->map_type =3D map->type;
+> +       bioc->use_rst =3D io_geom.use_rst;
+>
+>         /*
+>          * For RAID56 full map, we need to make sure the stripes[] follow=
+s the
+> diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+> index 3a416b1bc24cb0735c783de90fb7490d795d7d96..0a00ee36f66b6d6831c43abda=
+4a791684c11ea02 100644
+> --- a/fs/btrfs/volumes.h
+> +++ b/fs/btrfs/volumes.h
+> @@ -490,6 +490,8 @@ struct btrfs_io_context {
+>         u64 size;
+>         /* Raid stripe tree ordered entry. */
+>         struct list_head rst_ordered_entry;
+> +       /* This I/O operation uses the RAID stripe tree */
 
-I *think* you have a bug there: if platform_device_add fails,
-KUNIT_ASSERT will stop the test execution and thus you will leak the
-platform_device you just allocated.
+The comment seems kind of pointless as the variable name makes it
+clear what the purpose is.
+In the previous patch there's no comment about the new field in the
+btrfs_io_geometry structure, which is fine, so I don't see why it's
+needed here.
 
-You need to call platform_device_put in such a case, but if
-platform_device_add succeeds then you need to call
-platform_device_unregister instead.
+Also, for style consistency we should finish the sentence with punctuation.
 
-It would be better to use kunit_platform_device_alloc and
-kunit_platform_device_add that already deal with this.
+> +       bool use_rst;
 
-The rest looks good to me, once fixed:
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+This increases the structure size from 88 bytes to 96 bytes on a
+release kernel for x86_64.
 
-Maxime
+As we can have many of these structures allocated at any given time,
+it would be better to avoid increasing the size.
+One way is to place the field in a hole such as right after the
+'max_errors' field, so that the size of the structure doesn't change.
 
---7snr6qwlmjeebc3w
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks.
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ1whtgAKCRAnX84Zoj2+
-drgVAYC25+nvuEysmbcasOB2RjIFmcZ9PldsACXyDBDoeJeXBpB3YhMh6Vw90BIG
-EQQ03CABgKbWgKqxNLrM68+yaHDG9u7bdRhZDyRHxPS9jx20dAxOJSsQ1J3uB8Kq
-pc2gSDAyqw==
-=sA+0
------END PGP SIGNATURE-----
-
---7snr6qwlmjeebc3w--
+>
+>         /*
+>          * The total number of stripes, including the extra duplicated
+>
+> --
+> 2.43.0
+>
+>
 
