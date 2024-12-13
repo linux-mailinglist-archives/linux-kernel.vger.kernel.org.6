@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-445490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575CA9F16EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:59:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB4C9F16F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 21:01:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C11747A3036
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 19:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0158C188B9A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 20:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DE81EBA02;
-	Fri, 13 Dec 2024 19:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E6C1EF0B1;
+	Fri, 13 Dec 2024 19:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WUbHfwte"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MfWwHX/X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392931974EA
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 19:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E44B1EC019
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 19:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734119844; cv=none; b=CvMZ+d3Ym/bMCFg8lAnoYKn+EAOEmaQ6GlS9//J5RFSUPfg415qruDYOjOI2Nua8iqSMTeRkbeCaWPQap+9css4p7BpNaGlX6QhzBB+Dx1nhH27b5oiNLnMvGYmo2CAvGPqm4LP7gSCzZcfzMvukDu6yp3kCdnO4ZQ7NAp5surU=
+	t=1734119848; cv=none; b=C6G1O05LmrO9v/wiQWdrj3LmkSBbEs7Y5gTYvfVWfjVD4bm5ANxPay6sN1RkSVTs0WUOdwXfyEugkah52A4hYjxrSER1fCWkBPgaR7Akgqliso1WSvPtsu506QBr2ASQ74eLe8UNtEkvVlZS0oK0fQKbNl9U5VFqU9LLH+hfaEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734119844; c=relaxed/simple;
-	bh=sthHUtFKrqUaPxQfCF60mgyDHtH6m55/15Jq0vpOz5c=;
+	s=arc-20240116; t=1734119848; c=relaxed/simple;
+	bh=/IwTpj+UAyxrOOLurzt+l1sLLKRzY1gIFHEoxNQPQPQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IgcZKZQkcWpwXePnLMkdgIU1PDauFR4y3GxUs0Fzz1FUz90SPiQkhiMHrIS0X6LgpVUvHdM3AOX8MnH3w1JIBXJNRAfjAO/9IcnI5oheYkhGKPZ5zkL7TWkndGYpEdbEUyPOP7Flz7ELjiD4gSS7BTs1QaQJl7K1dD8J0tw3Wdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WUbHfwte; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-Type; b=rHFSg9M49FjYyKWiczugooClPrJoFWV6gV7EMd55RIyB4IVuctHVhSYs4M+UM2HhFvX/BHpBA/PkMRwIOTubjx9hppPtHrgL1RUQD7SHcqeOpbGkofdhes7/W8htlixD/2LCEXYsDH/iH3vLsjUJpEhzU/K5okW84fSmccvuzVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MfWwHX/X; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734119842;
+	s=mimecast20190719; t=1734119844;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qcwioA+8IUPWsl77mjGc+fBvaRQn2foraJmcVc4D09c=;
-	b=WUbHfwteO3iiBiSoAXVy4F8sHcyrbFM7/cRagbZeaz4qtU8UlhbCUdunEWVy8ALLaEVKOK
-	V7AnGUX6wWxUbNCwPSYXUtzI9NPhWqaq/WePbZqa7n/8OAP1A5Q/xUoLxCD+hNIMj3ZIrR
-	o0RO85QMcmxKD8y2Jy30qSLklXgyWKk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	bh=hje4JKHr4ghgBal4NU6uwLrFHCTJ6qK8Xyxe/U8+Vs4=;
+	b=MfWwHX/X28t0ydS8PvgZbDJU5lxPiS7S/D6mWl3ke7IuLYXNTF1vzmYlXzJDK34xScw2wb
+	xhKn56OT3Z4T9Q5HD73HBjIyk0D6AQpdI5pf498E/wbmXwTblilB7Q+kbo2soVdffdch+u
+	5Tstw88K7BxY7/MLg6hlNjqhWoOYFCo=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-as6MmIRqNQmgjgOoiinsUQ-1; Fri,
- 13 Dec 2024 14:57:18 -0500
-X-MC-Unique: as6MmIRqNQmgjgOoiinsUQ-1
-X-Mimecast-MFC-AGG-ID: as6MmIRqNQmgjgOoiinsUQ
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-488-OFS6tqJXO_ysJLokL05ogA-1; Fri,
+ 13 Dec 2024 14:57:20 -0500
+X-MC-Unique: OFS6tqJXO_ysJLokL05ogA-1
+X-Mimecast-MFC-AGG-ID: OFS6tqJXO_ysJLokL05ogA
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 86BB6195609E;
-	Fri, 13 Dec 2024 19:57:17 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B3A3519560B3;
+	Fri, 13 Dec 2024 19:57:18 +0000 (UTC)
 Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 89D901955F3C;
-	Fri, 13 Dec 2024 19:57:16 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B848A195605A;
+	Fri, 13 Dec 2024 19:57:17 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org
@@ -63,9 +63,9 @@ Cc: yan.y.zhao@intel.com,
 	isaku.yamahata@intel.com,
 	binbin.wu@linux.intel.com,
 	rick.p.edgecombe@intel.com
-Subject: [PATCH 03/18] KVM: x86: Add a VM type define for TDX
-Date: Fri, 13 Dec 2024 14:56:56 -0500
-Message-ID: <20241213195711.316050-4-pbonzini@redhat.com>
+Subject: [PATCH 04/18] KVM: x86/mmu: Add an external pointer to struct kvm_mmu_page
+Date: Fri, 13 Dec 2024 14:56:57 -0500
+Message-ID: <20241213195711.316050-5-pbonzini@redhat.com>
 In-Reply-To: <20241213195711.316050-1-pbonzini@redhat.com>
 References: <20241213195711.316050-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -78,31 +78,201 @@ Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-From: Rick Edgecombe <rick.p.edgecombe@intel.com>
+From: Isaku Yamahata <isaku.yamahata@intel.com>
 
-Add a VM type define for TDX.
+Add a external pointer to struct kvm_mmu_page for TDX's private page table
+and add helper functions to allocate/initialize/free a private page table
+page. TDX will only be supported with the TDP MMU. Because KVM TDP MMU
+doesn't use unsync_children and write_flooding_count, pack them to have
+room for a pointer and use a union to avoid memory overhead.
 
-Future changes will need to lay the ground work for TDX support by
-making some behavior conditional on the VM being a TDX guest.
+For private GPA, CPU refers to a private page table whose contents are
+encrypted. The dedicated APIs to operate on it (e.g. updating/reading its
+PTE entry) are used, and their cost is expensive.
 
+When KVM resolves the KVM page fault, it walks the page tables. To reuse
+the existing KVM MMU code and mitigate the heavy cost of directly walking
+the private page table allocate two sets of page tables for the private
+half of the GPA space.
+
+For the page tables that KVM will walk, allocate them like normal and refer
+to them as mirror page tables. Additionally allocate one more page for the
+page tables the CPU will walk, and call them external page tables. Resolve
+the KVM page fault with the existing code, and do additional operations
+necessary for modifying the external page table in future patches.
+
+The relationship of the types of page tables in this scheme is depicted
+below:
+
+              KVM page fault                     |
+                     |                           |
+                     V                           |
+        -------------+----------                 |
+        |                      |                 |
+        V                      V                 |
+     shared GPA           private GPA            |
+        |                      |                 |
+        V                      V                 |
+    shared PT root      mirror PT root           |    private PT root
+        |                      |                 |           |
+        V                      V                 |           V
+     shared PT           mirror PT        --propagate--> external PT
+        |                      |                 |           |
+        |                      \-----------------+------\    |
+        |                                        |      |    |
+        V                                        |      V    V
+  shared guest page                              |    private guest page
+                                                 |
+                           non-encrypted memory  |    encrypted memory
+                                                 |
+PT          - Page table
+Shared PT   - Visible to KVM, and the CPU uses it for shared mappings.
+External PT - The CPU uses it, but it is invisible to KVM. TDX module
+              updates this table to map private guest pages.
+Mirror PT   - It is visible to KVM, but the CPU doesn't use it. KVM uses
+              it to propagate PT change to the actual private PT.
+
+Add a helper kvm_has_mirrored_tdp() to trigger this behavior and wire it
+to the TDX vm type.
+
+Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Message-ID: <20240718211230.1492011-4-rick.p.edgecombe@intel.com>
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+Message-ID: <20240718211230.1492011-5-rick.p.edgecombe@intel.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/x86/include/uapi/asm/kvm.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/kvm_host.h |  5 +++++
+ arch/x86/kvm/mmu.h              |  5 +++++
+ arch/x86/kvm/mmu/mmu.c          |  7 +++++++
+ arch/x86/kvm/mmu/mmu_internal.h | 31 +++++++++++++++++++++++++++----
+ arch/x86/kvm/mmu/tdp_mmu.c      |  1 +
+ 5 files changed, 45 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index 88585c1de416..9e75da97bce0 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -925,5 +925,6 @@ struct kvm_hyperv_eventfd {
- #define KVM_X86_SEV_VM		2
- #define KVM_X86_SEV_ES_VM	3
- #define KVM_X86_SNP_VM		4
-+#define KVM_X86_TDX_VM		5
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index c1251b371421..5f020b097922 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -813,6 +813,11 @@ struct kvm_vcpu_arch {
+ 	struct kvm_mmu_memory_cache mmu_shadow_page_cache;
+ 	struct kvm_mmu_memory_cache mmu_shadowed_info_cache;
+ 	struct kvm_mmu_memory_cache mmu_page_header_cache;
++	/*
++	 * This cache is to allocate external page table. E.g. private EPT used
++	 * by the TDX module.
++	 */
++	struct kvm_mmu_memory_cache mmu_external_spt_cache;
  
- #endif /* _ASM_X86_KVM_H */
+ 	/*
+ 	 * QEMU userspace and the guest each have their own FPU state.
+diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
+index e9322358678b..538eb3156f09 100644
+--- a/arch/x86/kvm/mmu.h
++++ b/arch/x86/kvm/mmu.h
+@@ -287,4 +287,9 @@ static inline gpa_t kvm_translate_gpa(struct kvm_vcpu *vcpu,
+ 		return gpa;
+ 	return translate_nested_gpa(vcpu, gpa, access, exception);
+ }
++
++static inline bool kvm_has_mirrored_tdp(const struct kvm *kvm)
++{
++	return kvm->arch.vm_type == KVM_X86_TDX_VM;
++}
+ #endif
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index e87f22e8dd44..b2a6cddde643 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -599,6 +599,12 @@ static int mmu_topup_memory_caches(struct kvm_vcpu *vcpu, bool maybe_indirect)
+ 				       1 + PT64_ROOT_MAX_LEVEL + PTE_PREFETCH_NUM);
+ 	if (r)
+ 		return r;
++	if (kvm_has_mirrored_tdp(vcpu->kvm)) {
++		r = kvm_mmu_topup_memory_cache(&vcpu->arch.mmu_external_spt_cache,
++					       PT64_ROOT_MAX_LEVEL);
++		if (r)
++			return r;
++	}
+ 	r = kvm_mmu_topup_memory_cache(&vcpu->arch.mmu_shadow_page_cache,
+ 				       PT64_ROOT_MAX_LEVEL);
+ 	if (r)
+@@ -618,6 +624,7 @@ static void mmu_free_memory_caches(struct kvm_vcpu *vcpu)
+ 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_pte_list_desc_cache);
+ 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_shadow_page_cache);
+ 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_shadowed_info_cache);
++	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_external_spt_cache);
+ 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_header_cache);
+ }
+ 
+diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
+index b00abbe3f6cf..d9425064ecc5 100644
+--- a/arch/x86/kvm/mmu/mmu_internal.h
++++ b/arch/x86/kvm/mmu/mmu_internal.h
+@@ -101,7 +101,22 @@ struct kvm_mmu_page {
+ 		int root_count;
+ 		refcount_t tdp_mmu_root_count;
+ 	};
+-	unsigned int unsync_children;
++	union {
++		/* These two members aren't used for TDP MMU */
++		struct {
++			unsigned int unsync_children;
++			/*
++			 * Number of writes since the last time traversal
++			 * visited this page.
++			 */
++			atomic_t write_flooding_count;
++		};
++		/*
++		 * Page table page of external PT.
++		 * Passed to TDX module, not accessed by KVM.
++		 */
++		void *external_spt;
++	};
+ 	union {
+ 		struct kvm_rmap_head parent_ptes; /* rmap pointers to parent sptes */
+ 		tdp_ptep_t ptep;
+@@ -124,9 +139,6 @@ struct kvm_mmu_page {
+ 	int clear_spte_count;
+ #endif
+ 
+-	/* Number of writes since the last time traversal visited this page.  */
+-	atomic_t write_flooding_count;
+-
+ #ifdef CONFIG_X86_64
+ 	/* Used for freeing the page asynchronously if it is a TDP MMU page. */
+ 	struct rcu_head rcu_head;
+@@ -145,6 +157,17 @@ static inline int kvm_mmu_page_as_id(struct kvm_mmu_page *sp)
+ 	return kvm_mmu_role_as_id(sp->role);
+ }
+ 
++static inline void kvm_mmu_alloc_external_spt(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp)
++{
++	/*
++	 * external_spt is allocated for TDX module to hold private EPT mappings,
++	 * TDX module will initialize the page by itself.
++	 * Therefore, KVM does not need to initialize or access external_spt.
++	 * KVM only interacts with sp->spt for private EPT operations.
++	 */
++	sp->external_spt = kvm_mmu_memory_cache_alloc(&vcpu->arch.mmu_external_spt_cache);
++}
++
+ static inline bool kvm_mmu_page_ad_need_write_protect(struct kvm_mmu_page *sp)
+ {
+ 	/*
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index b0bddcb2f781..633c07c63fa6 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -53,6 +53,7 @@ void kvm_mmu_uninit_tdp_mmu(struct kvm *kvm)
+ 
+ static void tdp_mmu_free_sp(struct kvm_mmu_page *sp)
+ {
++	free_page((unsigned long)sp->external_spt);
+ 	free_page((unsigned long)sp->spt);
+ 	kmem_cache_free(mmu_page_header_cache, sp);
+ }
 -- 
 2.43.5
 
