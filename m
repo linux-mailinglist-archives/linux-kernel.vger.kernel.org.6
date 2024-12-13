@@ -1,223 +1,155 @@
-Return-Path: <linux-kernel+bounces-444733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6BA9F0BC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:59:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7889F0BCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 13:00:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCD8F2833CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 11:59:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388D31674F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 12:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87381DF268;
-	Fri, 13 Dec 2024 11:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5AC1DF728;
+	Fri, 13 Dec 2024 12:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="tQgxBTJ7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uHJTAYSv"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h20qHjUa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC921632F0
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 11:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474761A08A6;
+	Fri, 13 Dec 2024 11:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734091171; cv=none; b=VggVf+wo2PkXctA24uinMIn92xKidC9iJOhyFsaBGw/eQXs1O4Nla+mThqSt6NMB5af+y34p3wZvYOdz6FJSy7RyQDSDTlOoTBL1Vc44XNRK514ZsBR+rlWUmnM00vcnCM01s/+V48N6R6oPHUkIrFCK0KYZHtjlel3XY/ldZDI=
+	t=1734091200; cv=none; b=pjYCgIIYIv+BK7ne0allwnK04vWn2qaQVtAWtk2Kq4Lt/+u+iSznVkXSL/Tjz0sv2g4krToDoVYpcfKZObtR5m1BJdBg27/x+LmkVIt4SiX4yeNCe9N+zYBI6enyMED31G8im0Ecf8fEix1sBIL0wNS8plig7Ssrf+7llPyoS7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734091171; c=relaxed/simple;
-	bh=rUpySWGEsFvcUXIQXaBJepeaYu0L20ijo9gqw3q9u5k=;
+	s=arc-20240116; t=1734091200; c=relaxed/simple;
+	bh=u0Sb066jR4i3kqSYmXzuGtO7rP72CJmz06cNlBH0hcA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LK8dCEOsTsrh5fS9bSjuP1mOz6+3WDDJ3Q4bG7zFiTLYVVaf5ulgOdIyw2Nll+p8AilbvJ7L9rQxmCViTHtatT8zVcrVIVZnRyf4hkoM7W65dth5iK9redoTRHXhe3NjsUVAi8nT+DcOmIXLIxdj5tP9ORstBXeM1tZZ10SbivM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=tQgxBTJ7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uHJTAYSv; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 9DEE31140216;
-	Fri, 13 Dec 2024 06:59:26 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Fri, 13 Dec 2024 06:59:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1734091166; x=
-	1734177566; bh=YY9Ny37WV/e8XNd3tcZJEJMvfANE4ZRS8J1X5XId050=; b=t
-	QgxBTJ7cI21MODHm5IIhsr9qQzk4lUA0CTYP4QXEFNOgSxelQHeakjL+MZkdtoSw
-	ld7ieKDSHQKVUZJ03hzJ1b4ApDYLShIMZ2/1sQ/07AmlG+/WqCEIkwmJUoSMVuxf
-	lE46e4YNbqvpRzK3Er+9gVFjHXCmcI/Iz9vdMIMZzJ5Pfp2+AGW0GcYY+JO+0I9o
-	7dU1+wSufBh8U149cRZAVjGaNfVF2qwDh0zkYs5V0v8aojQaYlLgh3BH64mtDwF/
-	Uz9OV+qisQPQj1ovy5JQlHG2I0+RDihEkEcY7wqnEPtcDixc/fDiAk7EwCiEBz+u
-	k9wr+T8lfG2rdpxyIFU/g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1734091166; x=1734177566; bh=YY9Ny37WV/e8XNd3tcZJEJMvfANE4ZRS8J1
-	X5XId050=; b=uHJTAYSvYyol+OslkmlWVtjJxWlbd6yvuoAI+aLInxA51QCTJ+w
-	0zgUiCFT5M3BkYay9NetzJ9vIKz8Rgl4jPugaEXY/7MwiWU7Q95moFYBNktPp7Rs
-	xLlTMyq/0meVG4P6x3w9OSnouLbB8Y0UYi728bJ/WluPkeYT1sg/U3guL9ZMu0Q1
-	u/9lOFirZb5EHkekq8HhWCU5T/4ueLYsdvKMuTEO4Jk1GnLUFMMjQuZimGTCLc1e
-	8ygE0yPAtfa9FCxYhHauPrTfHoVE0az+9tm3UXC0TUEZz96zvov/NErDhXTU/AIW
-	xOySIUmbdP6OPjtwdgpo9amPsZsKG3KOylg==
-X-ME-Sender: <xms:nCFcZ9jwvYrdqGJY5AXoELdLaHGuUUfWoHHb7qyvrcs7otL--F9zcQ>
-    <xme:nCFcZyC4V1hIWZSgfKWznAW135Kb86FiCIDfn-3_TTYBrClnjPMAFz_QtuZbIpiU-
-    5pL5JxhyYjwld8sO4g>
-X-ME-Received: <xmr:nCFcZ9F9puHXqz8UHyPic35ImT0xh5322Wrg0RuDrW1285oZXBluiCDQENsEoz8MWdodpA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrkeejgdefgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
-    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
-    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffev
-    lefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
-    nhgrmhgvpdhnsggprhgtphhtthhopeeftddpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepthhhohhmrghsrdhlvghnuggrtghkhiesrghmugdrtghomhdprhgtphhtthhopehk
-    ihhrihhllhdrshhhuhhtvghmohhvsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpth
-    htohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepthhglhigsehlihhnuhhtrhho
-    nhhigidruggvpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpth
-    htohepuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphht
-    thhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhphgrseiihihtohhrrd
-    gtohhmpdhrtghpthhtoheplhhuthhosehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:nCFcZyTEfCh21EnlTiPrK6G66zjhnkSICcPVJ5yGL_XX7CPK1LepTg>
-    <xmx:nCFcZ6yfy5onCbvtfbE9MjEOnuFY59LeQraVqzy6cMwh2dZO7nNzwQ>
-    <xmx:nCFcZ44gnrVsQRUU0evquTZE4W0t006Zwd1VWEzwQw8dmXJ7O69QwA>
-    <xmx:nCFcZ_wBGf8yVd5DPOy-M9IiNQcdKezDc7xTboVD_T-5GwLBVrORwA>
-    <xmx:niFcZz8dofWI4yELC61Xl2mY9kvqAIng5IyYovyCZ3-xyAvp6G73usVl>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 13 Dec 2024 06:59:15 -0500 (EST)
-Date: Fri, 13 Dec 2024 13:59:12 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- 	Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
- 	Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- 	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- 	Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>,
- 	Andrea Parri <parri.andrea@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- 	Daniel Borkmann <daniel@iogearbox.net>,
- Eric Chan <ericchancf@google.com>, 	Jason Gunthorpe <jgg@ziepe.ca>,
- Kai Huang <kai.huang@intel.com>,
- 	Kefeng Wang <wangkefeng.wang@huawei.com>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- 	Palmer Dabbelt <palmer@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- 	Russell King <linux@armlinux.org.uk>,
- Samuel Holland <samuel.holland@sifive.com>,
- 	Suren Baghdasaryan <surenb@google.com>, Yuntao Wang <ytcoode@gmail.com>,
- 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, 	Ashish Kalra <ashish.kalra@amd.com>,
- "Maciej W. Rozycki" <macro@orcam.me.uk>
-Subject: Re: [PATCHv2 2/2] x86/mm: Make memremap(MEMREMAP_WB) map memory as
- encrypted by default
-Message-ID: <myzpconz5z7xf4j7fnofb5zgxv7fc3evxhcys6wnqlao2c3xkj@aoapggj7lchq>
-References: <20241021105723.2707507-1-kirill.shutemov@linux.intel.com>
- <20241021105723.2707507-3-kirill.shutemov@linux.intel.com>
- <20241118164616.GAZztvWGs9cOV8t20_@fat_crate.local>
- <s4frmqwtuvclinuu7ttyzfpe7bj7hju5xgt6sxzy3gyt3prr62@rrgvhkv4lgwv>
- <20241121114952.GCZz8eYEVa3yubYQzO@fat_crate.local>
- <bz3vlh3lri7yfckdkddopwhsgvkmizhw5q6ecomgeba7q22ufp@ntu2kugiho4o>
- <079cb87c-78aa-5fb5-b28f-e7a54e51aa78@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=czMnj5Qk2zlBGVhaHDadCnA8VQmibzfK0EQAXsRtgQTxDEeLJ5mVXQZqq0mrhX7Ik24s+nJuoytLPVgpBtBR/dE5Rc0ZxywOmqoeIPbWRw3jSyB93mi85KIneQ57MLdiDHCJuEGpAZxPJg60IC3NYK7dpXilEv/x1miJsIndLKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h20qHjUa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE4CC4CED0;
+	Fri, 13 Dec 2024 11:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734091199;
+	bh=u0Sb066jR4i3kqSYmXzuGtO7rP72CJmz06cNlBH0hcA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h20qHjUaqsqR+9NToxHdTB+ZXljbPxXf5x7esKb1rptLnC+k0tAuDX7BDYy/Rxs9b
+	 FIe28TYqmNsuONipa9+1Oo3lnfvmxFU72y3DX+ExlO6j4WUtqg87z92VUp+jk4dqU1
+	 6FgmsVHGzERI2i50vy56E8dSWPmeC9VyLuDabda/AkdOjtKKXRrNczr9A3/UOQ2suK
+	 qdaHx+6l4ZmUZWjKKgemuVKveceuqNHwgjyaKy0nBcXEQapF7xo+0iQGdgliiJdnvv
+	 lLw93Pcd6XH4nmnOJZCsRQ++NngErwz1vQCOMmSVD+vL1zT+UkpUen/2ME8sC+h5k5
+	 AboVCEqYCSlBA==
+Date: Fri, 13 Dec 2024 12:59:57 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 3/3] drivers: base: test: Add ...find_device_by...(...
+ NULL) tests
+Message-ID: <20241213-athletic-strong-bumblebee-bfabf1@houat>
+References: <20241212003201.2098123-1-briannorris@chromium.org>
+ <20241212003201.2098123-4-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="7snr6qwlmjeebc3w"
 Content-Disposition: inline
-In-Reply-To: <079cb87c-78aa-5fb5-b28f-e7a54e51aa78@amd.com>
+In-Reply-To: <20241212003201.2098123-4-briannorris@chromium.org>
 
-On Thu, Dec 12, 2024 at 08:23:07AM -0600, Tom Lendacky wrote:
-> On 12/10/24 07:26, Kirill A. Shutemov wrote:
-> > On Thu, Nov 21, 2024 at 12:49:52PM +0100, Borislav Petkov wrote:
-> >> On Tue, Nov 19, 2024 at 10:21:05AM +0200, Kirill A. Shutemov wrote:
-> >>> Sure, we can workaround every place that touches such ranges.
-> >>
-> >> Every place? Which every place? I thought this is only an EISA issue?
-> > 
-> > I looked at other places where we call memremap(MEMREMAP_WB) such as
-> > acpi_wakeup_cpu(). We actually get encrypted/private mapping for this
-> > callsite despite __ioremap_caller() being called encrypted == false.
-> > This happens because of IORES_MAP_ENCRYPTED check in __ioremap_caller().
-> > 
-> > So we depend on the BIOS here. The EISA problem happens because the
-> > target memory is in !IORES_MAP_ENCRYPTED memory.
-> > 
-> > It's hard to say if any other memremap(MEMREMAP_WB) would trigger the
-> > issue. And what will happen after next BIOS update.
-> > 
-> >> Then clearly your changelogs need to expand considerably more what we're
-> >> *really* addressing here.
-> >>
-> >>> Or we can address problem at the root and make creating decrypted/shared
-> >>> mappings explicit.
-> >>
-> >> What is the problem? That KVM implicitly converts memory to shared? Why does
-> >> KVM do that an can it be fixed not to?
-> >>
-> >> Doesn't sound like the guest's problem.
-> > 
-> > Well, the problem is on the both sides.
-> > 
-> > VMM behaviour on such accesses is not specified in any spec. AFAIK all
-> > current VMM implementations do this implicit conversion.
-> > 
-> > I think it has to be fixed. VMMs (not only KVM) should not silently
-> > convert memory to shared. But VMMs cannot make memory access to go away.
-> > The only option they have is to inject #VE instead indicating bogus
-> > access. At this point it becomes a guest problem.
-> > 
-> > It will get fixed in VMMs naturally when TDX Connect gets enabled.
-> > With a secure device assigned to a TD, VMM would loose the ability to
-> > convert memory on its own. The guest would have to unlock the memory
-> > first. This will make implicit conversion impossible.
-> > 
-> > But it also means guest should never initiate shared access without
-> > explicit conversion. Otherwise #VE will crash it.
-> > 
-> >> Or maybe this needs a lot more explanation what we're fixing here.
-> >>
-> >>> Such mappings have both functional (as we see here) and security
-> >>> implications (VMM can manipulate the guest memory range). We should not
-> >>> create decrypted mappings by default on legacy interfaces.
-> >>
-> >> So we're getting closer.
-> >>
-> >> The changes themselves are fine but your text is missing a lot about what
-> >> we're fixing here. When I asked, I barely scratched the surface. So can we
-> >> elaborate here pls?
-> > 
-> > What about this:
-> > 
-> > x86/mm: Make memremap(MEMREMAP_WB) map memory as encrypted by default
-> > 
-> > Currently memremap(MEMREMAP_WB) can produce decrypted/shared mapping:
-> > 
-> > memremap(MEMREMAP_WB)
-> >   arch_memremap_wb()
-> >     ioremap_cache()
-> >       __ioremap_caller(.encrytped = false)
-> 
-> That's because try_ram_remap() invokes arch_memremap_can_ram_remap()
-> which is returning false (for some reason).
 
-In EISA case try_ram_remap() is not called. is_ram is REGION_DISJOINT
+--7snr6qwlmjeebc3w
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 3/3] drivers: base: test: Add ...find_device_by...(...
+ NULL) tests
+MIME-Version: 1.0
 
-> When arch_memremap_can_ram_remap() returns false, ioremap_cache() is
-> invoked. ioremap() should provide shared mappings unless specifically
-> requested to provide an encrypted mapping (via encrypted parameter) or
-> if __ioremap_check_mem() determines that an encrypted mapping is needed.
+Hi,
 
-I don't propose changing ioremap() behaviour. It's about memremap().
+On Wed, Dec 11, 2024 at 04:31:41PM -0800, Brian Norris wrote:
+> We recently updated these device_match*() (and therefore, various
+> *find_device_by*()) functions to return a consistent 'false' value when
+> trying to match a NULL handle. Add tests for this.
+>=20
+> This provides regression-testing coverage for the sorts of bugs that
+> underly commit 5c8418cf4025 ("PCI/pwrctrl: Unregister platform device
+> only if one actually exists").
+>=20
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
+>=20
+> Changes in v2:
+>  * Keep "devm" and "match" tests in separate suites
+>=20
+>  drivers/base/test/platform-device-test.c | 42 +++++++++++++++++++++++-
+>  1 file changed, 41 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/base/test/platform-device-test.c b/drivers/base/test=
+/platform-device-test.c
+> index ea05b8785743..c8d4b0a385f2 100644
+> --- a/drivers/base/test/platform-device-test.c
+> +++ b/drivers/base/test/platform-device-test.c
+> @@ -3,6 +3,8 @@
+>  #include <kunit/resource.h>
+> =20
+>  #include <linux/device.h>
+> +#include <linux/device/bus.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+> =20
+>  #define DEVICE_NAME "test"
+> @@ -217,7 +219,45 @@ static struct kunit_suite platform_device_devm_test_=
+suite =3D {
+>  	.test_cases =3D platform_device_devm_tests,
+>  };
+> =20
+> -kunit_test_suite(platform_device_devm_test_suite);
+> +static void platform_device_find_by_null_test(struct kunit *test)
+> +{
+> +	struct platform_device *pdev;
+> +	int ret;
+> +
+> +	pdev =3D platform_device_alloc(DEVICE_NAME, PLATFORM_DEVID_NONE);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
+> +
+> +	ret =3D platform_device_add(pdev);
+> +	KUNIT_ASSERT_EQ(test, ret, 0);
 
-> Can logic be added to arch_memremap_can_ram_remap() to return true for
-> the cases that TDX is having issues with?
+I *think* you have a bug there: if platform_device_add fails,
+KUNIT_ASSERT will stop the test execution and thus you will leak the
+platform_device you just allocated.
 
-It will not help EISA case, because we don't get this path.
+You need to call platform_device_put in such a case, but if
+platform_device_add succeeds then you need to call
+platform_device_unregister instead.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+It would be better to use kunit_platform_device_alloc and
+kunit_platform_device_add that already deal with this.
+
+The rest looks good to me, once fixed:
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+
+Maxime
+
+--7snr6qwlmjeebc3w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ1whtgAKCRAnX84Zoj2+
+drgVAYC25+nvuEysmbcasOB2RjIFmcZ9PldsACXyDBDoeJeXBpB3YhMh6Vw90BIG
+EQQ03CABgKbWgKqxNLrM68+yaHDG9u7bdRhZDyRHxPS9jx20dAxOJSsQ1J3uB8Kq
+pc2gSDAyqw==
+=sA+0
+-----END PGP SIGNATURE-----
+
+--7snr6qwlmjeebc3w--
 
