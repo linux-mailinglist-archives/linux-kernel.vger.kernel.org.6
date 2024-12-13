@@ -1,238 +1,234 @@
-Return-Path: <linux-kernel+bounces-444530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-444537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9B99F0860
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:47:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 404E49F0884
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 10:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0292E188C1D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:47:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499C716314A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 09:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0681B4121;
-	Fri, 13 Dec 2024 09:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B551B413D;
+	Fri, 13 Dec 2024 09:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fKxf7ca6"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SiS1nwZj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8491B392E;
-	Fri, 13 Dec 2024 09:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B411AB52F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 09:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734083261; cv=none; b=TeRIciNubcdxllLsZF7VXQBtPqc09vZwMV7dTuOQfT51H4pKJ0efdN+Ejf79mAFGEaL3TvKla/aSFgiSx0mYeso50n7lRqaZLwkAkG21n4CcHmyMhqZ4SwTYVPPvsb9Gj0/FnfEKnP6tYR+/W4imemhCjwBO8hRMa2dPFHVWtbw=
+	t=1734083544; cv=none; b=sauEYF45YWh3bv6+MWUbVylBYWkG2AHs4ZFz63DrkaTEAjwnZymmwQW/3+NlN1GsjkJinu6nQGnK2vNOWQ3kz18BPZYyT9xitNNL1lfKOf/J8pPO9xSykEaWFLcwFnveX190d39gGFoiQs2rJfbqGcod4k23Y5Q24UQ0Ck8BtGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734083261; c=relaxed/simple;
-	bh=oCE+dd5SPcmuqEdvLxpo+CPfYUW0b61fh7ss8dlVND0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IdeuckDc7cKGv+ldjfLM+Il4rhxwladEa5nw+LNCeQPNgTEIqrGpm53uCbNpBlISH3ROsfxFCeoMb1NqzU8TrriStN5xg5+v11FznWtlUtcD8hB/pdB28RB6dJPzLiJaWTYsP+MNRUDJeqjiQ8k4az9I9a1OQ/74UDaBELl64lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fKxf7ca6; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso236566266b.1;
-        Fri, 13 Dec 2024 01:47:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734083258; x=1734688058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kpephPbr8Jh4XgfdsqtKilUmRrp2rdQXAGdN0OMY/vk=;
-        b=fKxf7ca6K+6WicLWXPCyMapx1JZq3M3lzAhJWQU/2Wf3aV4rOR2ZM77fzA5MQGYGnj
-         3fsLoA/H/tud+N9o3ZvSHdIFKvrvpnsCvI8XI1f+w3J8jf0dP9zXGEWBvODwHutJn42G
-         774Y2lkvNXNnD2ciNzdR6mZ61Ug0ECO6Jm2+Ixk4oiSq8hmfqIpje1BjpUSMUkymfiDb
-         opajE6e1O3Cvw+j3AR5asamLXVkzFSaN7riRNEY+zxoj3rN1gTT7QtnqG+1Y5K91wC39
-         cJPqkZX5Xn5dTtBEIm2hWdsHx/7ICzwjYSZE2DLCIL8xZzZSVpWOQs6p8XRhzvv0zNgb
-         ztvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734083258; x=1734688058;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kpephPbr8Jh4XgfdsqtKilUmRrp2rdQXAGdN0OMY/vk=;
-        b=BToBXfptDLvIDcWGiaMemCbKz3E0TWE4OipmVlIfNXXPPBFbIZS2llLOUAiASvtGbU
-         hhBfZn+7PpIjXnam6eA1YruOE6DQCZ0yJbbfwKOgRjnm3WJssmM1T5fmHf67m5Mwxbdl
-         aIGAgV4giOOnLQIDeP4i4zrDBFkwUgvdhqQHct17NyL2UPeZP7NzNB4JxeUTmTmgqVX1
-         7TY4VyPtSIVOjkWAcKIThGPWcFpmehVX1uZSl6C23Bo5nM+YgThvUMrFlwPZiRzusi7o
-         CYbH012KgRO+wQSAfp336z8UEpytJPVKqq7CrE9OwMgFhCIflXVaY+FWuhutQZPoTpzy
-         Hadg==
-X-Forwarded-Encrypted: i=1; AJvYcCVr03568UrbwGuRnADCqU3Lnd0Lvv5prgMbj2dGK5TtCf+GEcs8IyKZxEgn0umNYfbTUxZwa1ydyi+C/H9q@vger.kernel.org, AJvYcCW4m/fgUXi/WMFWt3B+Rb7124rLCnKyyl2x/PZ6u3dWREnF2EP4xAWxYQEMLFOyiFqEuFEy6ARyK0hQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhm2ZG+S5q0WtTnEbvnMP02vlqawOzzp7dTRbyPl4yVU/1Wss2
-	buII8RIHedyBE5nlkWlayQ2IssQGzPjFsnUQySZM4KEdJN1QmqPj
-X-Gm-Gg: ASbGnctvf3xRfVpgt/Xkt80NDE3HAwmcpY6KRzXcT+b6TMP+EGbW5lQEgF+i4UT/6+5
-	UAXRq1Aud9Rr+VqpC49XOIEhNVULmJGw1UjCU8gdesx4WTXodlKgWyX5cC2+AWwsmfEai2h2bcT
-	SMqJKBflW1ca8aux1vd1UjIj5jOxgbrppLO31tFPq1kmRzXzBj9igGYenkJjpaOzfLDgEl6S3rd
-	94CK3D+Mk3WLWhw8l82+sQCeoW6hR5tVP6IS1yZkqLip3kCboJ8puUXqhjYLa6g4Zdt
-X-Google-Smtp-Source: AGHT+IFbJyb8LbVaxZmbBTC8001dyPPQdOCNGCC+QQjAz4MNlXdB1nD7gssl9owCB/VTMauuYyt5IA==
-X-Received: by 2002:a17:906:3112:b0:aa6:82ea:69d6 with SMTP id a640c23a62f3a-aab77907a5fmr190336166b.18.1734083257326;
-        Fri, 13 Dec 2024 01:47:37 -0800 (PST)
-Received: from [192.168.31.111] ([194.39.226.133])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3bc829433sm10177180a12.38.2024.12.13.01.47.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 01:47:36 -0800 (PST)
-Message-ID: <7753293a-0ab1-48b1-abcd-a9cd544cc356@gmail.com>
-Date: Fri, 13 Dec 2024 11:47:33 +0200
+	s=arc-20240116; t=1734083544; c=relaxed/simple;
+	bh=xwlk6T0nmyV++vOWX/z4H8mtusZ/0NhrBUoKvYKhCZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aQpoG1ttYluC5DGMjgqUfWncV7l5dOvtZKYgl6aLqD1f5sc1qStCaZsMavMi7zPREXr90rN6PtH5du8b/JpDVR2uOyaYSuwFk0xLkZSahXQXq7umOtdpw1CgrGGCmIwwLfkRgG0c5/idnbakQ4l+y54HMNebs5a+Mn3cvvhojFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SiS1nwZj; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1734083543; x=1765619543;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xwlk6T0nmyV++vOWX/z4H8mtusZ/0NhrBUoKvYKhCZM=;
+  b=SiS1nwZj3cYMW2Sllzp6H1xXll+E4lbTveq+bSraneH4XkMzS2JmurhW
+   NVnO0M1sCne+SWNjpOQrpcAWlp0ydP3XtwJkYQ+2IFdBmDugAZwuaSMlB
+   eLxiqon2rb8yjUVXfmIbbDa7aJjRQeZCbApslfvMHGcgmh0EllUkIaK3m
+   /Pw959G7zRk49o5vxiKDssnTDAGi61CTzVnD0SOrmDp7H1iKnUEbw6QNv
+   KtZo4UESxFq7wFy4RRl06V5JcSnsR8prgcQSMs0jhJpiZ/tc7aKWi0jXg
+   yUAOWgo4O3YhRGkVTnovdEtToQRL09EGfR27DCW7vsKYC0bKSGxrS2DvM
+   Q==;
+X-CSE-ConnectionGUID: b56/TcvySBiRQFwVEBjN/Q==
+X-CSE-MsgGUID: RzcgfbOLT1imQ89TdJ2Aew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11284"; a="38208347"
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="38208347"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 01:52:23 -0800
+X-CSE-ConnectionGUID: RbaQtVoiRRCjzNuo9wo9dw==
+X-CSE-MsgGUID: xampagART3u7nhSiZyDG4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,230,1728975600"; 
+   d="scan'208";a="96394961"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2024 01:52:19 -0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: ebiederm@xmission.com
+Cc: kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev,
+	x86@kernel.org,
+	rick.p.edgecombe@intel.com,
+	kirill.shutemov@linux.intel.com,
+	bhe@redhat.com,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v2 0/1] Accept unaccepted kexec segments' destination addresses
+Date: Fri, 13 Dec 2024 17:49:30 +0800
+Message-ID: <20241213094930.748-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: soc: samsung: exynos-speedy: Document
- SPEEDY host controller bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Maksym Holovach <nergzd@nergzd723.xyz>
-References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
- <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
- <207354ad-e363-4156-ba6b-86dbaa13ab95@kernel.org>
-Content-Language: en-US
-From: Markuss Broks <markuss.broks@gmail.com>
-In-Reply-To: <207354ad-e363-4156-ba6b-86dbaa13ab95@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+Hi Eric,
 
-On 12/13/24 9:40 AM, Krzysztof Kozlowski wrote:
-> On 12/12/2024 22:09, Markuss Broks wrote:
->> Add the schema for the Samsung SPEEDY serial bus host controller.
->> The bus has 4 bit wide addresses for addressing devices
->> and 8 bit wide register addressing. Each register is also 8
->> bit long, so the address can be 0-f (hexadecimal), node name
->> for child device follows the format: node_name@[0-f].
->
-> This wasn't tested so limited review.
->
-> A nit, subject: drop second/last, redundant "bindings". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
->
->> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
->> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
->> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
->> ---
->>   .../bindings/soc/samsung/exynos-speedy.yaml        | 78 ++++++++++++++++++++++
-> Filename must match compatible.
->
->>   1 file changed, 78 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..304b322a74ea70f23d8c072b44b6ca86b7cc807f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml
->> @@ -0,0 +1,78 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/soc/samsung/exynos-speedy.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Samsung Exynos SPEEDY serial bus host controller
-> Speedy or SPEEDY?
-Technically it's an acronym (Serial Protocol in an EffEctive Digital 
-waY), but we could agree on if we use the capitalized or uncapitalised 
-version and use it consistently throughout.
->
->> +
->> +maintainers:
->> +  - Markuss Broks <markuss.broks@gmail.com>
->> +
->> +description:
->> +  Samsung SPEEDY is a proprietary Samsung serial 1-wire bus.
-> 1-wire? But not compatible with w1 (onwire)?
-Nope, I suppose this requires more clarification, as explained in the 
-previous letter, there are several differences between the protocols, 
-looking at the Samsung patent. [1]
->
->> +  It is used on various Samsung Exynos chips. The bus can
->> +  address at most 4 bit (16) devices. The devices on the bus
->> +  have 8 bit long register line, and the registers are also
->> +  8 bit long each. It is typically used for communicating with
->> +  Samsung PMICs (s2mps17, s2mps18, ...) and other Samsung chips,
->> +  such as RF parts.
->> +
->> +properties:
->> +  compatible:
->> +    - items:
->> +        - enum:
->> +            - samsung,exynos9810-speedy
->> +        - const: samsung,exynos-speedy
-> Drop last compatible and use only SoC specific.
-Makes sense, for some reason I didn't realise it doesn't make much sense.
->
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  clock-names:
->> +    - const: pclk
-> Drop clock-names, not needed for one entry.
->
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - "#address-cells"
->> +  - "#size-cells"
-> You do not have them in the properties, anyway required goes before
-> additionalProperties
->
->> +
->> +patternProperties:
->> +  "^[a-z][a-z0-9]*@[0-9a-f]$":
-> That's odd regex. Look at other bus bindings.
-Okay, I'll look into it.
->
->> +    type: object
->> +    additionalProperties: true
->> +
->> +    properties:
->> +      reg:
->> +        maxItems: 1
-> maximum: 15
->
->> +
->> +    required:
->> +      - reg
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    speedy0: speedy@141c0000 {
-> Drop unused label.
->
->> +      compatible = "samsung,exynos9810-speedy",
->> +                   "samsung-exynos-speedy";
->> +      reg = <0x141c0000 0x2000>;
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +
-> No resources? No clocks? No interrupts?
-Will extend the example.
->
->
->
-> Best regards,
-> Krzysztof
+This is a repost of the patch "kexec_core: Accept unaccepted kexec
+destination addresses" [1], rebased to v6.13-rc2.
 
-- Markuss
+The code implementation remains unchanged, but the patch message now
+includes more background and explanations to address previous concerns from
+you and Baoquan.
+
+Additionally, below is a more detailed explanation of unaccepted memory in
+TDX. Please let me know if it is still not clear enough.
 
 
-[1] https://patents.google.com/patent/US9882711B1/en
+== UnAccepted memory in TDX ==
+
+Intel TDX (Trusted Domain Extension) provides a hardware-based trusted
+execution environment for TDs (hardware-isolated VMs). The host OS is not
+trusted. Although it allocates physical pages for TDs, it does not and
+cannot know the content of TD's pages.
+
+TD's memory is added via two methods by invoking different instructions in
+the host:
+1. For TD's initial private memory, such as for firmware HOBs:
+   - This type of memory is added without requiring the TD's acceptance.
+   - The TD will perform attestation of the page GPA and content later.
+
+2. For TD's runtime private memory:
+   - After the host adds memory, it is pending for the TD's acceptance.
+
+Memory added by method 1 is not relevant to the unaccepted memory we will
+discuss.
+
+For memory added by method 2, the TD's acceptance can occur before or after
+the TD's memory access:
+(a) Access first:
+    - TD accesses a private GPA,
+    - Host OS allocates physical memory,
+    - Host OS requests hardware to map the physical page to the GPA,
+    - TD accepts the GPA.
+
+(b) Accept first:
+    - TD accepts a private GPA,
+    - Host OS allocates physical memory,
+    - Host OS requests hardware to map the physical page to the GPA,
+    - TD accesses the GPA.
+
+For "(a) Access first", it is regarded as unsafe for a Linux guest and is
+therefore not chosen.
+For "(b) Accept first", the TD's "accept" operation includes the following
+steps:
+- Trigger a VM-exit
+- The host OS allocates a physical page and requests hardware to map the
+  physical page to the GPA.
+- Initialize the physical page with content set to 0.
+- Encrypt the memory 
+
+
+To enable the "Accept first" approach, an "unaccepted memory" mechanism is
+used, which requires cooperation from the virtual firmware and the Linux
+guest.
+
+1. The host OS adds initial private memory that does not require TD's
+   acceptance. The host OS composes EFI_HOB_RESOURCE_DESCRIPTORs and loads
+   the virtual firmware first. Guest RAM, excluding that for initial
+   memory, is reported as UNACCEPTED in the descriptor.
+
+2. The virtual firmware parses the descriptors and accepts the UNACCEPTED
+   memory below 4G. It then excludes the below-4G range from the UNACCEPTED
+   range.
+
+3. The virtual firmware loads the Linux guest image (the address to load is
+   below 4G).
+
+4. The Linux guest requests the UNACCEPTED bitmap from the virtual
+   firmware:
+   - Locate EFI_UNACCEPTED_MEMORY entries from the memory map returned by
+     the efi_get_memory_map boot service.
+   - Request via EFI boot service to allocate an unaccepted_table in memory
+     of type EFI_ACPI_RECLAIM_MEMORY (E820_TYPE_ACPI) to hold the
+     unaccepted bitmap.
+   - Install the unaccepted_table as an EFI configuration table via the
+     boot service.
+   - Initialize the unaccepted bitmap according to the
+     EFI_UNACCEPTED_MEMORY entries.
+
+5. The Linux guest decompresses the kernel image. It accepts the target GPA
+   for decompression first in case it is not accepted by the virtual
+   firmware.
+
+6. The Linux guest calls memblock_free_all() to put all memory into the
+   freelists for the buddy allocator. memblock_free_all() further calls
+   down to __free_pages_core() to handle memory in 4M (order 10) units.
+
+  - In eager mode, the Linux guest accepts all memory and appends it to the
+    freelists.
+  - In lazy mode, the Linux guest checks if the entire 4M memory has been
+    accepted by querying the unaccepted bitmap.
+    a) If all memory is accepted, it adds the 4M memory to the freelists.
+    b) If any memory is unaccepted (even if the range contains accepted
+       pages), the Linux guest does not add the 4M memory to the freelists.
+       Instead, it queues the first page in the 4M range onto the list
+       zone->unaccepted_pages and sets the first page with the Unaccepted
+       flag.
+
+7. When there is not enough free memory, cond_accept_memory() in the Linux
+   guest calls try_to_accept_memory_one() to dequeue a page from the list
+   zone->unaccepted_pages, clear its Unaccepted flag, accept the entire 4M
+   memory range represented by the page, and add the 4M memory to the
+   freelists.
+
+
+== Conclusion ==
+- The zone->unaccepted_pages is a mechanism to conditionally make accepted
+  private memory available to the page allocators.
+- The unaccepted bitmap resides in the firmware's reserved memory and
+  persists across guest OSs. It records exactly which pages have not been
+  accepted.
+- Memory ranges represented by zone->unaccepted_pages may contain accepted
+  pages.
+
+
+For kexec in TDs,
+- If the segments' destination addresses are within the range managed by
+  the buddy allocator, the pages must have been in an accepted state.
+  Calling accept_memory() will check the unaccepted bitmap and do nothing.
+- If the segments' destination addresses are not yet managed by the buddy
+  allocator, the pages may or may not have been accepted.
+  Calling accept_memory() will perform the "accept" operation if they are
+  not accepted.
+
+For the kexec's second guest kernel, it obtains the unaccepted bitmap by
+locating the unaccepted_table in the EFI configuration tables. So, pages
+unset in the unaccepted bitmap are not accepted repeatedly.
+
+
+The unaccepted table/bitmap is only useful for TDs. For a Linux host, it
+will detect that the physical firmware does not support the memory
+acceptance protocol, and accept_memory() will simply bail out.
+
+Thanks
+Yan
+
+[1] https://lore.kernel.org/all/20241021034553.18824-1-yan.y.zhao@intel.com
+
+Yan Zhao (1):
+  kexec_core: Accept unaccepted kexec segments' destination addresses
+
+ kernel/kexec_core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+-- 
+2.43.2
 
 
