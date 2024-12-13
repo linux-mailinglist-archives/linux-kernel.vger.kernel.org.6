@@ -1,144 +1,98 @@
-Return-Path: <linux-kernel+bounces-445152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-445153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D81F9F1207
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:26:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE66E9F1209
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 17:26:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD45216B02A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:25:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED79281714
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Dec 2024 16:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC331E3DEA;
-	Fri, 13 Dec 2024 16:25:45 +0000 (UTC)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6BA1E3DD3;
+	Fri, 13 Dec 2024 16:26:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D421E0B75;
-	Fri, 13 Dec 2024 16:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98CA16C684
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Dec 2024 16:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734107145; cv=none; b=Ip4PbMI+XNPF0Bd0nH62d5AlVX0snZ0/uv33y8lIuJcLB7R7bQYDT/RQn4/RitjKWI2VblmYPw2ED7Md79p2C3UF+izjiPHh3o5Blz9UVu/LPIO5ZoUKTpy7MSG6HvSzEFdsJhsjpSnJ1zhwA3n+jXwdeX3Mjye1IeMM08GpATg=
+	t=1734107203; cv=none; b=AYIsgeywYXz755hbCsgHQ0u9jrXJib3+YPRGLL2GA/VXoPNG0xESj53234W2LSqKXaHhJj/Wbocz2gFikj63mkf5RpbN1+7d/Y5kLIVD5BMGV+iMwsKU0AYPu0oWsDfB/cLvikoiZJnLuoaYTmgAw0s0hI0G+XOr265rUs0Gsg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734107145; c=relaxed/simple;
-	bh=rrTTmrkXdWW9Vfhi3DVIjDYMSlESWh8Fl8G0ERBSHDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iErcb8eHCyXD5TvrAEs3i5IpT4IdZwGZYA1ThlJAH8QiggXBwSWSbddm9rXcPonZp+vUqvx9NzYT2SrtE7O7UvnTxAqLhT/x94xZcWKgXiK1XUe5zdMJcg8pSdPDaYYhn6AgJcJELh7SomoVRUCBj+rK5ml+yfEylSNiGU1vG6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4afdfefc6c1so446240137.0;
-        Fri, 13 Dec 2024 08:25:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734107141; x=1734711941;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AfQUGbGu5Ly/s3c0co1Q92nJFlMbfpSu1uFfH0m0/rc=;
-        b=RFaJnmsuOi35BhwthRBKIhrKdVam25b+tQqUNztd4d5YRxBdH+OOtA+TorXKYHRw6J
-         q6m55ne8kYHk6eSQbc9v+2f0nB5GfIbeonX/YlREEJptchUYsEGUVM+PImW0SCohAtcv
-         YS4rz2FM4BWVQdevI5wQCsbl0CCIspQSPI6eVIo4Wp01gfMY3G2DesBq3xhCiKrubbwJ
-         UtS4q3KsleBO8UZt9VEirJQiGI+Po3bxRlnYHheR1yIVrDJZ4Vp5+iMFrfbkWaZJYA2S
-         BjyNWD3OMHk1yurioVYfELTYRKll1QJXY8egBCwzov/OpQw9s+F+8RWZv0gAQ1A2OkbX
-         9Jpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDDax6/kqAjXN464WXc2hRHjkvYqGBfSoeMYDMrEZaDGYqlUZsDAi21WeVufrvBUNYOsyHIEwhv+m2/2q9@vger.kernel.org, AJvYcCXYTANU2+UqDfxErdseXPmMnQrirHzh6COvWC1YNJ5e5w5J4u3/8Dd2GSZY2KiWk4oe3EWjspSvCZrYYlQy/b62a0g=@vger.kernel.org, AJvYcCXhf/vd+X24AzLu+CXAnbVWI+805S7v+iMgWqN69JRSfUXriUo75Xy4X7wd7wJdOoVKi8mPtAJl3yim@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfTobuaJUpH6bXD/DPNNLgWK1nHzZwnTJ+X9eSjlhedW0S+Cxk
-	vaVGJwMInYy2mAMsEUIPROZdeIyS8TXfU+jofszujZAilpOdYOVK5lHsqWnY
-X-Gm-Gg: ASbGncvvBs6itxOXzHEiSaJLGflcLdLYjC7WUBblMwh6TxuZGGJ6mvmqMoDqWl1ZtZ/
-	hlhxhguuCxhX/2qVuxICPmACK7Fi8ps1r+td+FGkfQa6VH0+pB2KWP+N0kyMsXvoQsAzqNaJMVq
-	55dcZc2YQitIkJvWZViOxZ/K93gnzR5fYJCoZMW+SfENouQE+P978KUw3CbPQguNaldXDdT+wQE
-	ZbOPo4zBP6yRowNQLgqAaS/oJXGSuyllIyTn+8E0vatZWeyJEG7KeNP7bP9mvGzAeJoH+7AV4sj
-	0+4VK7/HxJsMxwEBZzw=
-X-Google-Smtp-Source: AGHT+IHc+yNqrhXB1BH/QOSSOnGCb/mAl42oiWZnNCyQY6I150tPJ+imguIwcrbOkvodpuRzW+ahbA==
-X-Received: by 2002:a05:6102:32d4:b0:4b2:5d65:6f0 with SMTP id ada2fe7eead31-4b25db2a96fmr3956543137.19.1734107141502;
-        Fri, 13 Dec 2024 08:25:41 -0800 (PST)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c66b1ee44sm1813214241.11.2024.12.13.08.25.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 08:25:41 -0800 (PST)
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4aff5b3845eso541744137.2;
-        Fri, 13 Dec 2024 08:25:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUikTmkmFSyIUbuDFA8YFL8dHj5OvkzIdM7L3HCpGILNTGV0NfL1EJ96psoAvGiQlMbDZ+1meUPzPbp@vger.kernel.org, AJvYcCWYdMy1n5M1JfdCWxX1jztzVvi4nE18G69rmfQNMplx2Ijs0251yrri/Esc6/Z97rtdRMNr+aCkHopTGAmHmV8QKA4=@vger.kernel.org, AJvYcCX/a1Nn8uUyKFOgOMZd+DLQTOq1i6sZvwklf82X2BLs4PCu1Kcan6y6lz1lQZUi6QYIDDONrHGrfMLppY4b@vger.kernel.org
-X-Received: by 2002:a05:6102:dc8:b0:4b1:24c0:4274 with SMTP id
- ada2fe7eead31-4b25db8af04mr3966780137.26.1734107140816; Fri, 13 Dec 2024
- 08:25:40 -0800 (PST)
+	s=arc-20240116; t=1734107203; c=relaxed/simple;
+	bh=WSzUeZEX+vbwTOwABDiQ8myBW2GiekoAD8zNpChJlBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uInpPUxPEFiBndblae+4gz5t0L+3wHalnj15yvG6fF3i2lsVevllHHzNvxGKCAPXz6F7oMqeU/WgOFBafGfJb748ozY9mYa+gBzFIMEucR+XBmUbDVHxDxNQ+iWXQM3bTPTGXkJuwPruE22ZZBwY9zBqa7cZa64opMF7YQ9zN7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16AEFC4CED0;
+	Fri, 13 Dec 2024 16:26:41 +0000 (UTC)
+Date: Fri, 13 Dec 2024 16:26:40 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2] arm64/signal: Silence sparse warning storing GCSPR_EL0
+Message-ID: <Z1xgQGNZzR6h0Uly@arm.com>
+References: <20241211-arm64-gcs-signal-sparse-v2-1-c22f37216135@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com>
-In-Reply-To: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Dec 2024 17:25:28 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUBWWmtcL98Roz3kaJvTUk_gwLGT0GVZRHqn2=FRhj-Aw@mail.gmail.com>
-Message-ID: <CAMuHMdUBWWmtcL98Roz3kaJvTUk_gwLGT0GVZRHqn2=FRhj-Aw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] soc: renesas: Add system controller support for
- RZ/G3E SoC
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241211-arm64-gcs-signal-sparse-v2-1-c22f37216135@kernel.org>
 
-Hi John,
+On Wed, Dec 11, 2024 at 01:00:35AM +0000, Mark Brown wrote:
+> diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
+> index 14ac6fdb872b9672e4b16a097f1b577aae8dec50..08d51fabdb9d47c848f14c9b25d6be04f109c2ee 100644
+> --- a/arch/arm64/kernel/signal.c
+> +++ b/arch/arm64/kernel/signal.c
+> @@ -39,7 +39,7 @@
+>  #ifdef CONFIG_ARM64_GCS
+>  #define GCS_SIGNAL_CAP(addr) (((unsigned long)addr) & GCS_CAP_ADDR_MASK)
+>  
+> -static bool gcs_signal_cap_valid(u64 addr, u64 val)
+> +static bool gcs_signal_cap_valid(unsigned long __user *addr, u64 val)
+>  {
+>  	return val == GCS_SIGNAL_CAP(addr);
+>  }
 
-On Fri, Dec 6, 2024 at 10:26=E2=80=AFPM John Madieu
-<john.madieu.xa@bp.renesas.com> wrote:
-> This patch series adds support for the RZ/G3E system controller and exten=
-ds
-> the existing RZ/V2H(P) system controller to support syscon. The RZ/G3E
-> system controller allows detecting various SoC features like core count,
-> NPU availability, and CA55 PLL configuration.
->
-> Key features:
-> - Syscon support for both RZ/V2H and RZ/G3E system controllers
-> - Detection of quad/dual core configuration
-> - Detection of Ethos-U55 NPU presence
-> - Validation of CA55 PLL frequency setting
-> - SoC-specific extended identification through callbacks
+Another personal preference - addresses should be (unsigned long),
+pointer to be accessed (... __user *). But we could even scrap this
+function, there's a single caller to a one-line function.
 
-Thanks for your series!
+> @@ -1094,15 +1094,15 @@ static int gcs_restore_signal(void)
+>  	/*
+>  	 * Check that the cap is the actual GCS before replacing it.
+>  	 */
+> -	if (!gcs_signal_cap_valid((u64)gcspr_el0, cap))
+> +	if (!gcs_signal_cap_valid(gcspr_el0, cap))
+>  		return -EINVAL;
+>  
+>  	/* Invalidate the token to prevent reuse */
+> -	put_user_gcs(0, (__user void*)gcspr_el0, &ret);
+> +	put_user_gcs(0, gcspr_el0, &ret);
+>  	if (ret != 0)
+>  		return -EFAULT;
+>  
+> -	write_sysreg_s(gcspr_el0 + 1, SYS_GCSPR_EL0);
+> +	write_sysreg_s((__force u64)(gcspr_el0 + 1), SYS_GCSPR_EL0);
+>  
+>  	return 0;
+>  }
 
-> This patch series depends upon [1] and [2].
->
-> Tested:
-> - Example of SoC detection:
-> [    0.065608] renesas-rz-sysc 10430000.system-controller: Detected Renes=
-as Quad Core RZ/G3E r9a09g047 Rev 0  with Ethos-U55
-> - Example of PLL misconfiguration warning:
->  [    0.065616] renesas-rz-sysc 10430000.system-controller: CA55 PLL is n=
-ot set to 1.7GHz
->
-> [1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=
-=3D914097
-> [2] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=
-=3D912697
+Looking through the code, do we have a similar problem in
+gcs_signal_entry()? Or do we rely on sparse ignoring (unsigned long)
+casts?
 
-The latter points to an already-applied unrelated series.  I assume you
-meant "[PATCH v2 00/15] Add initial USB support for the Renesas RZ/G3S
-SoC"[3]?
+Whichever way we go, I think we should have consistency between these
+two functions.
 
-[3] https://lore.kernel.org/all/20241126092050.1825607-1-claudiu.beznea.uj@=
-bp.renesas.com/
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+Catalin
 
